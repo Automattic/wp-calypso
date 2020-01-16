@@ -78,6 +78,10 @@ export function createExistingCardMethod( {
 			debug( 'transaction is successful' );
 			return { type: 'EXISTING_CARD_TRANSACTION_END', payload };
 		},
+		resetTransaction() {
+			debug( 'resetting transaction' );
+			return { type: 'EXISTING_CARD_TRANSACTION_RESET' };
+		},
 	};
 
 	const selectors = {
@@ -105,6 +109,11 @@ export function createExistingCardMethod( {
 			action
 		) {
 			switch ( action.type ) {
+				case 'EXISTING_CARD_TRANSACTION_RESET':
+					return {
+						...state,
+						transactionStatus: null,
+					};
 				case 'EXISTING_CARD_TRANSACTION_END':
 					return {
 						...state,
@@ -208,7 +217,9 @@ function ExistingCardPayButton( { disabled, id } ) {
 		select( `existing-card-${ id }` ).getTransactionAuthData()
 	);
 	const redirectUrl = useSelect( select => select( `existing-card-${ id }` ).getRedirectUrl() );
-	const { beginCardTransaction, setTransactionComplete } = useDispatch( `existing-card-${ id }` );
+	const { beginCardTransaction, setTransactionComplete, resetTransaction } = useDispatch(
+		`existing-card-${ id }`
+	);
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 	const { stripeConfiguration } = useStripe();
 
@@ -259,12 +270,14 @@ function ExistingCardPayButton( { disabled, id } ) {
 					showErrorMessage(
 						localize( 'Authorization failed for that card. Please try a different payment method.' )
 					);
+					isSubscribed && resetTransaction();
 					isSubscribed && setFormReady();
 				} );
 		}
 
 		return () => ( isSubscribed = false );
 	}, [
+		resetTransaction,
 		setTransactionComplete,
 		setFormReady,
 		showInfoMessage,
@@ -290,6 +303,7 @@ function ExistingCardPayButton( { disabled, id } ) {
 					showErrorMessage,
 					beginCardTransaction,
 					setFormSubmitting,
+					resetTransaction,
 				} )
 			}
 			buttonState={ disabled ? 'disabled' : 'primary' }
@@ -327,6 +341,7 @@ async function submitExistingCardPayment( {
 	beginCardTransaction,
 	setFormSubmitting,
 	setFormReady,
+	resetTransaction,
 } ) {
 	debug( 'submitting existing card payment with the id', id );
 	try {
@@ -336,6 +351,7 @@ async function submitExistingCardPayment( {
 			total,
 		} );
 	} catch ( error ) {
+		resetTransaction();
 		setFormReady();
 		showErrorMessage( error );
 		return;

@@ -69,6 +69,10 @@ export function createStripeMethod( {
 			debug( 'stripe transaction is successful' );
 			return { type: 'STRIPE_TRANSACTION_END', payload };
 		},
+		resetTransaction() {
+			debug( 'resetting transaction' );
+			return { type: 'STRIPE_TRANSACTION_RESET' };
+		},
 		*beginStripeTransaction( payload ) {
 			let stripeResponse;
 			try {
@@ -193,6 +197,11 @@ export function createStripeMethod( {
 						...state,
 						transactionStatus: 'redirect',
 						redirectUrl: action.payload.redirect_url,
+					};
+				case 'STRIPE_TRANSACTION_RESET':
+					return {
+						...state,
+						transactionStatus: null,
 					};
 				case 'CARDHOLDER_NAME_SET':
 					return { ...state, cardholderName: action.payload };
@@ -510,7 +519,7 @@ function StripePayButton( { disabled } ) {
 	const transactionStatus = useSelect( select => select( 'stripe' ).getTransactionStatus() );
 	const transactionError = useSelect( select => select( 'stripe' ).getTransactionError() );
 	const transactionAuthData = useSelect( select => select( 'stripe' ).getTransactionAuthData() );
-	const { beginStripeTransaction, setStripeComplete } = useDispatch( 'stripe' );
+	const { beginStripeTransaction, setStripeComplete, resetTransaction } = useDispatch( 'stripe' );
 	const name = useSelect( select => select( 'stripe' ).getCardholderName() );
 	const redirectUrl = useSelect( select => select( 'stripe' ).getRedirectUrl() );
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
@@ -521,6 +530,7 @@ function StripePayButton( { disabled } ) {
 			showErrorMessage(
 				transactionError || localize( 'An error occurred during the transaction' )
 			);
+			resetTransaction();
 			setFormReady();
 		}
 		if ( transactionStatus === 'complete' ) {
@@ -533,6 +543,7 @@ function StripePayButton( { disabled } ) {
 			window.location = redirectUrl;
 		}
 	}, [
+		resetTransaction,
 		setFormReady,
 		setFormComplete,
 		showErrorMessage,
@@ -562,6 +573,7 @@ function StripePayButton( { disabled } ) {
 					showErrorMessage(
 						localize( 'Authorization failed for that card. Please try a different payment method.' )
 					);
+					isSubscribed && resetTransaction();
 					isSubscribed && setFormReady();
 				} );
 		}
@@ -569,6 +581,7 @@ function StripePayButton( { disabled } ) {
 		return () => ( isSubscribed = false );
 	}, [
 		setStripeComplete,
+		resetTransaction,
 		setFormReady,
 		showInfoMessage,
 		showErrorMessage,
@@ -595,6 +608,7 @@ function StripePayButton( { disabled } ) {
 					showErrorMessage,
 					beginStripeTransaction,
 					setFormSubmitting,
+					resetTransaction,
 				} )
 			}
 			buttonState={ disabled ? 'disabled' : 'primary' }
@@ -629,6 +643,7 @@ async function submitStripePayment( {
 	beginStripeTransaction,
 	setFormSubmitting,
 	setFormReady,
+	resetTransaction,
 } ) {
 	debug( 'submitting stripe payment' );
 	try {
@@ -641,6 +656,7 @@ async function submitStripePayment( {
 			stripeConfiguration,
 		} );
 	} catch ( error ) {
+		resetTransaction();
 		setFormReady();
 		debug( 'showing error for submit', error );
 		showErrorMessage( error );
