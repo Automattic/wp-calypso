@@ -1,5 +1,5 @@
 const { merge } = require( 'lodash' );
-const reactVersion = require( './package.json' ).dependencies.react;
+const reactVersion = require( './client/package.json' ).dependencies.react;
 
 module.exports = {
 	root: true,
@@ -174,6 +174,6 @@ module.exports = {
 
 		// Disallow importing or requiring packages that are not listed in package.json
 		// This prevents us from depending on transitive dependencies, which could break in unexpected ways.
-		'import/no-extraneous-dependencies': [ 'error', { packageDir: './' } ],
+		'import/no-extraneous-dependencies': 'error',
 	},
 };

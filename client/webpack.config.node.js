@@ -10,13 +10,12 @@
 const path = require( 'path' );
 // eslint-disable-next-line import/no-extraneous-dependencies
 const webpack = require( 'webpack' );
-const _ = require( 'lodash' );
 
 /**
  * Internal dependencies
  */
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
-const config = require( 'config' );
+const config = require( './server/config' );
 const bundleEnv = config( 'env' );
 const { workerCount } = require( './webpack.common' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
@@ -59,22 +58,19 @@ function getExternals() {
 		} ),
 		// Don't bundle webpack.config, as it depends on absolute paths (__dirname)
 		'webpack.config',
-		// Exclude hot-reloader, as webpack will try and resolve this in production builds,
-		// and error.
-		'bundler/hot-reloader',
 		// Exclude the devdocs search-index, as it's huge.
-		'devdocs/search-index',
-		// Exclude server/bundler/assets, since the files it requires don't exist until the bundler has run
-		'bundler/assets',
+		'server/devdocs/search-index',
 	];
 }
 
+const buildDir = path.resolve( 'build' );
+
 const webpackConfig = {
 	devtool: 'source-map',
-	entry: './index.js',
+	entry: path.join( __dirname, 'server' ),
 	target: 'node',
 	output: {
-		path: path.join( __dirname, 'build' ),
+		path: buildDir,
 		filename: 'bundle.js',
 	},
 	mode: isDevelopment ? 'development' : 'production',
@@ -82,7 +78,7 @@ const webpackConfig = {
 	module: {
 		rules: [
 			{
-				include: path.join( __dirname, 'client/sections.js' ),
+				include: path.join( __dirname, 'sections.js' ),
 				use: {
 					loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
 					options: { forceRequire: true, onlyIsomorphic: true },
@@ -90,8 +86,8 @@ const webpackConfig = {
 			},
 			TranspileConfig.loader( {
 				workerCount,
-				configFile: path.join( __dirname, 'babel.config.js' ),
-				cacheDirectory: path.join( __dirname, 'build', '.babel-server-cache' ),
+				configFile: path.resolve( 'babel.config.js' ),
+				cacheDirectory: path.join( buildDir, '.babel-server-cache' ),
 				cacheIdentifier,
 				exclude: /(node_modules|devdocs[/\\]search-index)/,
 			} ),
@@ -103,14 +99,11 @@ const webpackConfig = {
 		],
 	},
 	resolve: {
-		modules: [
-			__dirname,
-			path.join( __dirname, 'server' ),
-			path.join( __dirname, 'client' ),
-			path.join( __dirname, 'client', 'extensions' ),
-			'node_modules',
-		],
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+		modules: [ __dirname, path.join( __dirname, 'extensions' ), 'node_modules' ],
+		alias: {
+			config: 'server/config',
+		},
 	},
 	node: {
 		// Tell webpack we want to supply absolute paths for server code,
@@ -118,7 +111,7 @@ const webpackConfig = {
 		__filename: true,
 		__dirname: true,
 	},
-	plugins: _.compact( [
+	plugins: [
 		// Require source-map-support at the top, so we get source maps for the bundle
 		new webpack.BannerPlugin( {
 			banner: 'require( "source-map-support" ).install();',
@@ -138,7 +131,7 @@ const webpackConfig = {
 			/^my-sites[/\\]themes[/\\]theme-upload$/,
 			'components/empty-component'
 		), // Depends on BOM
-	] ),
+	].filter( Boolean ),
 };
 
 if ( ! config.isEnabled( 'desktop' ) ) {

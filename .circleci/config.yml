@@ -339,10 +339,6 @@ jobs:
     steps:
       - prepare
       - run:
-          name: Install Full Site Editing specific test deps
-          command: |
-            npm ci
-      - run:
           name: Run Full Site Editing client tests
           command: |
             npm run test:unit
@@ -468,7 +464,7 @@ jobs:
             npm run build-css                                      \
               && npm run preanalyze-bundles                        \
               && node bin/icfy-analyze.js                          \
-              && mv stats.json chart.json style.json "$CIRCLE_ARTIFACTS/icfy" \
+              && mv client/stats.json client/chart.json client/style.json "$CIRCLE_ARTIFACTS/icfy" \
               || rm -fr build/.babel-client-cache # In case of failure do not save a potentially bad cache
             exit 0
       - save_cache: *save-terser-cache

@@ -24,9 +24,9 @@ import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
 import initialReducer from 'state/reducer';
 import { SERIALIZE } from 'state/action-types';
-import stateCache from 'state-cache';
-import { getNormalizedPath } from 'isomorphic-routing';
 import { logToLogstash } from 'state/logstash/actions';
+import stateCache from 'server/state-cache';
+import { getNormalizedPath } from 'server/isomorphic-routing';
 
 const debug = debugFactory( 'calypso:server-render' );
 const HOUR_IN_MS = 3600000;
@@ -51,7 +51,7 @@ function bumpStat( group, name ) {
  * @returns {string} Rendered markup
  */
 export function renderJsx( view, props ) {
-	const requireComponent = require.context( '../../client/document', true, /\.jsx$/ );
+	const requireComponent = require.context( 'document', true, /\.jsx$/ );
 	const component = requireComponent( './' + view + '.jsx' ).default;
 	const doctype = `<!DOCTYPE html><!--
 	<3

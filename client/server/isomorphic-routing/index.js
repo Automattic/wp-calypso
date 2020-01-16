@@ -7,10 +7,9 @@ import { stringify } from 'qs';
 /**
  * Internal dependencies
  */
-import { serverRender } from 'render';
-import { setSection as setSectionMiddlewareFactory } from '../../client/controller';
+import { serverRender, setShouldServerSideRender } from 'server/render';
+import { setSection as setSectionMiddlewareFactory } from 'controller';
 import { setRoute as setRouteAction } from 'state/ui/actions';
-import { setShouldServerSideRender } from '../render';
 
 export function serverRouter( expressApp, setUpRoute, section ) {
 	return function( route, ...middlewares ) {

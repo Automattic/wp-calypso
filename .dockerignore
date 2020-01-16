@@ -12,9 +12,12 @@ Dockerfile
 /server/devdocs/components-usage-stats.json
 /server/devdocs/proptypes-index.json
 /server/devdocs/search-index.js
+/client/server/bundler/*.json
+/client/server/devdocs/components-usage-stats.json
+/client/server/devdocs/proptypes-index.json
+/client/server/devdocs/search-index.js
 
 # Tests do not need to be included in build
-/server/**/test/**
 /client/**/test/**
 
 # Monorepo output

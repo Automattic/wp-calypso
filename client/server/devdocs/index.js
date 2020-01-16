@@ -16,7 +16,7 @@ import 'prismjs/components/prism-scss';
  * Internal dependencies
  */
 import config from 'config';
-import searchIndex from './search-index';
+import searchIndex from 'server/devdocs/search-index';
 import selectors from './selectors';
 
 const docsIndex = lunr.Index.load( searchIndex.index );

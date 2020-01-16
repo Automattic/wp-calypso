@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-const _ = require( 'lodash' );
 const path = require( 'path' );
 // eslint-disable-next-line import/no-extraneous-dependencies
 const webpack = require( 'webpack' );
@@ -35,7 +34,7 @@ const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
-const getAliasesForExtensions = require( './config/webpack/extensions' );
+const getAliasesForExtensions = require( './webpack/extensions' );
 
 /**
  * Internal variables
@@ -97,15 +96,15 @@ const webpackConfig = {
 	bail: ! isDevelopment,
 	context: __dirname,
 	entry: {
-		'entry-main': [ path.join( __dirname, 'client', 'boot', 'app' ) ],
-		'entry-domains-landing': [ path.join( __dirname, 'client', 'landing', 'domains' ) ],
-		'entry-login': [ path.join( __dirname, 'client', 'landing', 'login' ) ],
-		'entry-gutenboarding': [ path.join( __dirname, 'client', 'landing', 'gutenboarding' ) ],
+		'entry-main': [ path.join( __dirname, 'boot', 'app' ) ],
+		'entry-domains-landing': [ path.join( __dirname, 'landing', 'domains' ) ],
+		'entry-login': [ path.join( __dirname, 'landing', 'login' ) ],
+		'entry-gutenboarding': [ path.join( __dirname, 'landing', 'gutenboarding' ) ],
 	},
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
 	output: {
-		path: path.join( __dirname, 'public', extraPath ),
+		path: path.resolve( 'public', extraPath ),
 		pathinfo: false,
 		publicPath: `/calypso/${ extraPath }/`,
 		filename: outputFilename,
@@ -138,27 +137,24 @@ const webpackConfig = {
 		rules: [
 			TranspileConfig.loader( {
 				workerCount,
-				configFile: path.join( __dirname, 'babel.config.js' ),
-				cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache', extraPath ),
+				configFile: path.resolve( 'babel.config.js' ),
+				cacheDirectory: path.resolve( 'build', '.babel-client-cache', extraPath ),
 				cacheIdentifier,
 				exclude: /node_modules\//,
 			} ),
 			TranspileConfig.loader( {
 				workerCount,
 				presets: [ require.resolve( '@automattic/calypso-build/babel/dependencies' ) ],
-				cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache', extraPath ),
+				cacheDirectory: path.resolve( 'build', '.babel-client-cache', extraPath ),
 				cacheIdentifier,
 				include: shouldTranspileDependency,
 			} ),
 			SassConfig.loader( {
-				includePaths: [ path.join( __dirname, 'client' ) ],
-				prelude: `@import '${ path.join(
-					__dirname,
-					'client/assets/stylesheets/shared/_utils.scss'
-				) }';`,
+				includePaths: [ __dirname ],
+				prelude: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' ) }';`,
 			} ),
 			{
-				include: path.join( __dirname, 'client/sections.js' ),
+				include: path.join( __dirname, 'sections.js' ),
 				loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
 				options: {
 					include: process.env.SECTION_LIMIT ? process.env.SECTION_LIMIT.split( ',' ) : null,
@@ -181,21 +177,21 @@ const webpackConfig = {
 	},
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
-		modules: [ path.join( __dirname, 'client' ), 'node_modules' ],
+		modules: [ __dirname, 'node_modules' ],
 		alias: Object.assign(
 			{
 				'react-virtualized': 'react-virtualized/dist/es',
-				debug: path.resolve( __dirname, 'node_modules/debug' ),
+				debug: path.resolve( __dirname, '../node_modules/debug' ),
 				store: 'store/dist/store.modern',
-				gridicons$: path.resolve( __dirname, 'client/components/gridicon' ),
+				gridicons$: path.resolve( __dirname, 'components/gridicon' ),
 			},
 			getAliasesForExtensions( {
-				extensionsDirectory: path.join( __dirname, 'client', 'extensions' ),
+				extensionsDirectory: path.resolve( __dirname, 'extensions' ),
 			} )
 		),
 	},
 	node: false,
-	plugins: _.compact( [
+	plugins: [
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 			'process.env.GUTENBERG_PHASE': JSON.stringify( 1 ),
@@ -244,19 +240,14 @@ const webpackConfig = {
 		shouldShowProgress && new IncrementalProgressPlugin(),
 		new MomentTimezoneDataPlugin( {
 			startYear: 2000,
-			cacheDir: path.join(
-				__dirname,
-				'build',
-				'.moment-timezone-data-webpack-plugin-cache',
-				extraPath
-			),
+			cacheDir: path.resolve( 'build', '.moment-timezone-data-webpack-plugin-cache', extraPath ),
 		} ),
 		new ConfigFlagPlugin( {
 			flags: { desktop: config.isEnabled( 'desktop' ) },
 		} ),
 		isCalypsoClient && new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
 		isDevelopment && new webpack.HotModuleReplacementPlugin(),
-	] ),
+	].filter( Boolean ),
 	externals: [ 'electron' ],
 };
 

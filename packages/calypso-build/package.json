@@ -34,6 +34,7 @@
 		"extends @wordpress/browserslist-config"
 	],
 	"dependencies": {
+		"@babel/cli": "7.7.5",
 		"@babel/core": "7.7.5",
 		"@babel/plugin-proposal-class-properties": "7.7.4",
 		"@babel/plugin-proposal-nullish-coalescing-operator": "7.7.4",
@@ -55,7 +56,6 @@
 		"caniuse-api": "3.0.0",
 		"css-loader": "3.2.1",
 		"duplicate-package-checker-webpack-plugin": "3.0.0",
-		"enzyme": "3.10.0",
 		"enzyme-adapter-react-16": "1.15.1",
 		"enzyme-to-json": "3.4.3",
 		"file-loader": "4.2.0",
@@ -75,5 +75,8 @@
 		"webpack-cli": "3.3.10",
 		"webpack-filter-warnings-plugin": "1.2.1",
 		"webpack-rtl-plugin": "2.0.0"
+	},
+	"peerDependencies": {
+		"enzyme": "^3.11.0"
 	}
 }

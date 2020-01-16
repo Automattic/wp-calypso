@@ -1,4 +1,4 @@
-const config = require( './server/config' );
+const config = require( './client/server/config' );
 const isBrowser = process.env.BROWSERSLIST_ENV !== 'server';
 
 // Use commonjs for Node

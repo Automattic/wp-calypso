@@ -19,7 +19,7 @@ import EnvironmentBadge, {
 } from 'components/environment-badge';
 import { chunkCssLinks } from './utils';
 import WordPressLogo from 'components/wordpress-logo';
-import { jsonStringifyForHtml } from '../../server/sanitize';
+import { jsonStringifyForHtml } from 'server/sanitize';
 
 class Document extends React.Component {
 	render() {

@@ -25,8 +25,5 @@
 	},
 	"dependencies": {
 		"debug": "4.1.1"
-	},
-	"devDependencies": {
-		"@automattic/calypso-build": "file:../../packages/calypso-build"
 	}
 }

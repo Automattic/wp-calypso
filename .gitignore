@@ -18,6 +18,11 @@ node_modules
 .eslintcache
 test-results*.xml
 /stats.json
+/chart.json
+/style.json
+/client/stats.json
+/client/chart.json
+/client/style.json
 spec-xunit-reporter-0.0.1.tgz
 *xunit_*.xml
 lerna-debug.log
@@ -40,6 +45,10 @@ lerna-debug.log
 /server/devdocs/components-usage-stats.json
 /server/devdocs/proptypes-index.json
 /server/bundler/assets*.json
+/client/server/devdocs/search-index.js
+/client/server/devdocs/components-usage-stats.json
+/client/server/devdocs/proptypes-index.json
+/client/server/bundler/assets*.json
 
 *.rdb
 *.db

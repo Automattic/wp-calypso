@@ -19,7 +19,7 @@ const outputDirCommon = path.join( dir, 'dist', 'cjs' );
 const testIgnorePattern = path.join( dir, '**/test/**' );
 
 console.log( 'Building %s', dir );
-const baseCommand = `npx babel --presets="${ babelPresetFile }" --ignore "${ testIgnorePattern }" --extensions='.js,.jsx,.ts,.tsx'`;
+const baseCommand = `npx --no-install babel --presets="${ babelPresetFile }" --ignore "${ testIgnorePattern }" --extensions='.js,.jsx,.ts,.tsx'`;
 
 execSync( `${ baseCommand } -d "${ outputDirEsm }" "${ inputDir }"`, {
 	env: Object.assign( {}, process.env, { BROWSERSLIST_ENV: 'defaults' } ),
