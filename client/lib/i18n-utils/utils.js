@@ -85,7 +85,7 @@ export function canBeTranslated( locale ) {
  */
 export function translationExists() {
 	const localeSlug = typeof getLocaleSlug === 'function' ? getLocaleSlug() : 'en';
-	return isDefaultLocale( localeSlug ) || i18n.hasTranslation.apply( null, arguments );
+	return isDefaultLocale( localeSlug ) || i18n.hasTranslation( ...arguments );
 }
 
 /**
