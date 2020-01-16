@@ -257,12 +257,12 @@ class RemovePurchase extends Component {
 	renderDialog() {
 		const { purchase } = this.props;
 
-		if ( this.props.isAtomicSite ) {
-			return this.renderAtomicDialog( purchase );
-		}
-
 		if ( isDomainRegistration( purchase ) ) {
 			return this.renderDomainDialog();
+		}
+
+		if ( this.props.isAtomicSite ) {
+			return this.renderAtomicDialog( purchase );
 		}
 
 		if ( isGoogleApps( purchase ) ) {

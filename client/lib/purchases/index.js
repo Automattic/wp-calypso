@@ -137,7 +137,7 @@ function isCancelable( purchase ) {
 		return false;
 	}
 
-	if ( isRefundable( purchase ) ) {
+	if ( hasAmountAvailableToRefund( purchase ) ) {
 		return true;
 	}
 
@@ -260,13 +260,25 @@ function isRefundable( purchase ) {
 }
 
 /**
+ * Checks if a purchase is refundable, and that the amount available to
+ * refund is greater than zero.
+ *
+ * @param {object} purchase - the purchase with which we are concerned
+ * @returns {boolean} if the purchase is refundable with an amount greater than zero
+ * @see isRefundable
+ */
+function hasAmountAvailableToRefund( purchase ) {
+	return isRefundable( purchase ) && purchase.refundAmount > 0;
+}
+
+/**
  * Checks whether the specified purchase can be removed from a user account.
  *
  * @param {object} purchase - the purchase with which we are concerned
  * @returns {boolean} true if the purchase can be removed, false otherwise
  */
 function isRemovable( purchase ) {
-	if ( isRefundable( purchase ) ) {
+	if ( hasAmountAvailableToRefund( purchase ) ) {
 		return false;
 	}
 
@@ -453,6 +465,7 @@ export {
 	getRenewalPrice,
 	getSubscriptionEndDate,
 	handleRenewNowClick,
+	hasAmountAvailableToRefund,
 	hasIncludedDomain,
 	isCancelable,
 	isPaidWithCreditCard,
