@@ -10,21 +10,6 @@ import { combineReducers } from '@wordpress/data';
 import { ActionType, CurrentUser, NewUser } from './types';
 import * as Actions from './actions';
 
-function parseNewUserState(
-	state: NewUser | undefined,
-	action: ReturnType< typeof Actions[ 'receiveNewUser' ] >
-): NewUser | undefined {
-	const { newUser } = action;
-	if ( newUser ) {
-		return {
-			username: newUser.signup_sandbox_username || newUser.username,
-			userId: newUser.signup_sandbox_user_id || newUser.user_id,
-			bearerToken: newUser.bearer_token,
-		};
-	}
-	return state;
-}
-
 const currentUser: Reducer<
 	CurrentUser | undefined,
 	| ReturnType< typeof Actions[ 'receiveCurrentUser' ] >
@@ -44,7 +29,12 @@ const newUser: Reducer< NewUser | undefined, ReturnType< typeof Actions[ 'receiv
 	action
 ) => {
 	if ( action.type === ActionType.RECEIVE_NEW_USER ) {
-		return parseNewUserState( state, action );
+		const { response } = action;
+		return {
+			username: response.signup_sandbox_username || response.username,
+			userId: response.signup_sandbox_user_id || response.user_id,
+			bearerToken: response.bearer_token,
+		};
 	}
 	return state;
 };

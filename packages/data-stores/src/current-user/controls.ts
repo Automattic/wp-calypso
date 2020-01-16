@@ -4,16 +4,16 @@
 import { wpcomRequest } from '../utils';
 import { CreateAccountAction } from './types';
 
+// @TODO: pass in locale, and remove magic strings for client_id and client_secret
 export default {
 	CREATE_ACCOUNT: async ( action: CreateAccountAction ) => {
 		try {
-			const { params } = action;
 			const request = {
 				path: '/users/new',
 				apiVersion: '1.1',
 				method: 'post',
 				body: {
-					email: params?.email,
+					email: action.params?.email,
 					is_passwordless: true,
 					signup_flow_name: 'gutenboarding',
 					validate: false,

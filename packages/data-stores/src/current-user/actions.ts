@@ -12,10 +12,10 @@ export const receiveCurrentUserFailed = () => ( {
 	type: ActionType.RECEIVE_CURRENT_USER_FAILED as const,
 } );
 
-export const receiveNewUser = ( newUser: NewUserResponse ) => {
+export const receiveNewUser = ( response: NewUserResponse ) => {
 	return {
 		type: ActionType.RECEIVE_NEW_USER as const,
-		newUser,
+		response,
 	};
 };
 
