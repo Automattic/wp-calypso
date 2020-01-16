@@ -1,21 +1,25 @@
 /**
+ * External Dependencies
+ */
+import { get } from 'lodash';
+
+/**
  * Internal Dependencies
  */
 import { AppState } from 'types';
 
 export function getVariationForUser( state: AppState, experiment: string ) {
-	return experiment;
+	return get( state, [ 'experiments', 'Abtests', experiment ], null );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const isLoading = ( state: AppState, experimentName: string ) => {
-	return true;
+export const isLoading = ( state: AppState ) => {
+	return get( state, [ 'experiments', 'Abtests' ], null ) === null;
 };
 
 export const getAnonId = ( state: AppState ) => {
-	return state.experiments.anonId;
+	return get( state, [ 'experiments', 'anonId' ], null );
 };
 
 export const nextRefresh = ( state: AppState ) => {
-	return state.experiments.nextRefresh;
+	return get( state, [ 'experiments', 'nextRefresh' ], Date.now() );
 };

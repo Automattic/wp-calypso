@@ -24,8 +24,7 @@ const QueryExperiments: FunctionComponent< QueryProps > = ( {
 	anonId,
 } ) => {
 	useEffect( () => {
-		// todo: wait until after `updateAfter` to call the function
-		doFetchExperiments( anonId );
+		if ( updateAfter < Date.now() ) doFetchExperiments( anonId );
 	}, [ updateAfter, doFetchExperiments, anonId ] );
 
 	return null;
