@@ -198,14 +198,16 @@ export default function CompositeCheckout( {
 		applyDomainContactValidationResults
 	) => {
 		return (
-			<WPCheckoutErrorBoundary componentTitle="ContactDetailsFormFields">
+			<WPCheckoutErrorBoundary>
 				<ContactDetailsFormFields
 					contactDetails={ contactDetails }
 					onContactDetailsChange={ updateContactDetails }
 					onValidate={ ( values, onComplete ) => {
-						validateDomainContact( values, domainNames, ( validationErrors, data ) => {
-							applyDomainContactValidationResults( validationErrors );
-							onComplete( validationErrors, data );
+						// TODO: Should probably handle errors here
+						validateDomainContact( values, domainNames, ( httpErrors, data ) => {
+							debug( 'Domain contact info validation errors:', data.messages );
+							applyDomainContactValidationResults( { ...data.messages } );
+							onComplete( httpErrors, data );
 						} );
 					} }
 				/>

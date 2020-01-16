@@ -11,13 +11,14 @@ import {
 	initialWpcomStoreState,
 	DomainContactDetails,
 	ManagedContactDetails,
+	ManagedContactDetailsErrors,
 	managedContactDetailsUpdaters as updaters,
 } from '../types';
 
 type WpcomStoreAction =
 	| {
 			type: 'APPLY_DOMAIN_CONTACT_VALIDATION_RESULTS';
-			payload: any;
+			payload: ManagedContactDetailsErrors;
 	  }
 	| { type: 'UPDATE_CONTACT_DETAILS'; payload: DomainContactDetails }
 	| { type: 'SET_SITE_ID'; payload: string }
@@ -50,8 +51,7 @@ export function useWpcomStore( registerStore, onEvent ) {
 			case 'UPDATE_COUNTRY_CODE':
 				return updaters.updateCountryCode( state, action.payload );
 			case 'APPLY_DOMAIN_CONTACT_VALIDATION_RESULTS':
-				console.log( 'DOMAIN VALIDATION', action.payload );
-				return state;
+				return updaters.setErrorMessages( state, action.payload );
 			default:
 				return state;
 		}

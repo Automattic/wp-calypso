@@ -14,7 +14,7 @@ import { useHasDomainsInCart } from '../hooks/has-domains';
 import Field from './field';
 import { SummaryLine, SummaryDetails, SummarySpacerLine } from './summary-details';
 import { LeftColumn, RightColumn } from './ie-fallback';
-import { prepareDomainContactDetails } from '../types';
+import { prepareDomainContactDetails, isValid } from '../types';
 
 const contactDetailsFormat = ( { hasDomainsInCart } ) => {
 	if ( hasDomainsInCart ) {
@@ -461,7 +461,7 @@ function TaxFields( { section, taxInfo, setters, CountrySelectMenu, countriesLis
 					value={ postalCode.value }
 					onChange={ updatePostalCode }
 					autoComplete={ section + ' postal-code' }
-					isError={ postalCode.isTouched && ! postalCode.isValid }
+					isError={ postalCode.isTouched && ! isValid( postalCode ) }
 					errorMessage={ translate( 'This field is required.' ) }
 				/>
 			</LeftColumn>
@@ -559,8 +559,8 @@ function ContactFormSummary() {
 						<SummarySpacerLine>{ contactInfo.email.value }</SummarySpacerLine>
 					) }
 
-					{ contactInfo.address.value.length > 0 && (
-						<SummaryLine>{ contactInfo.address.value } </SummaryLine>
+					{ contactInfo.address1.value.length > 0 && (
+						<SummaryLine>{ contactInfo.address1.value } </SummaryLine>
 					) }
 
 					{ cityAndState && <SummaryLine>{ cityAndState }</SummaryLine> }
@@ -568,9 +568,9 @@ function ContactFormSummary() {
 					{ postalAndCountry && <SummaryLine>{ postalAndCountry }</SummaryLine> }
 				</SummaryDetails>
 
-				{ ( contactInfo.phoneNumber.value.length > 0 || contactInfo.vatId.value.length > 0 ) && (
+				{ ( contactInfo.phone.value.length > 0 || contactInfo.vatId.value.length > 0 ) && (
 					<SummaryDetails>
-						<SummaryLine>{ contactInfo.phoneNumber.value }</SummaryLine>
+						<SummaryLine>{ contactInfo.phone.value }</SummaryLine>
 						{ contactInfo.vatId.value.length > 0 && (
 							<SummaryLine>
 								{ translate( 'VAT indentification number:' ) }

@@ -31,9 +31,12 @@ import {
 	initialWpcomStoreState,
 	ManagedContactDetails,
 	defaultManagedContactDetails,
+	isCompleteAndValid,
+	ManagedContactDetailsErrors,
 	managedContactDetailsUpdaters,
 	DomainContactDetails,
 	prepareDomainContactDetails,
+	isValid,
 } from './types/wpcom-store-state';
 
 export {
@@ -60,7 +63,10 @@ export {
 	initialWpcomStoreState,
 	ManagedContactDetails,
 	defaultManagedContactDetails,
+	isCompleteAndValid,
+	ManagedContactDetailsErrors,
 	managedContactDetailsUpdaters,
 	DomainContactDetails,
 	prepareDomainContactDetails,
+	isValid,
 };

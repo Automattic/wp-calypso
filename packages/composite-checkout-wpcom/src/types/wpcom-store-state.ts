@@ -5,25 +5,33 @@
  * data on each field: specifically whether it has been edited by the user
  * or passed validation. We wrap this extra data into an object type.
  */
-export interface ManagedValue< T > {
+interface ManagedValue< T > {
 	value: T;
 	isTouched: boolean; // Has value been edited by the user?
-	isValid: boolean; // Has value passed validation?
+	errors: string[]; // Has value passed validation?
 }
 
-export function initialManagedValue< T >( x: T ): ManagedValue< T > {
+export function isValid< T >( arg: ManagedValue< T > ): boolean {
+	return arg.errors?.length <= 0;
+}
+
+function initialManagedValue< T >( value: T ): ManagedValue< T > {
 	return {
 		value: value,
 		isTouched: false,
-		isValid: false,
+		errors: [ '' ],
 	};
 }
 
-export function touchIfDifferent< T >(
-	newValue: T,
+function touchIfDifferent< T >( newValue: T, oldData: ManagedValue< T > ): ManagedValue< T > {
+	return newValue === oldData.value ? oldData : { ...oldData, value: newValue, isTouched: true };
+}
+
+function setErrors< T >(
+	errors: string[] | undefined,
 	oldData: ManagedValue< T >
 ): ManagedValue< T > {
-	return newValue === oldData.value ? oldData : { ...oldData, value: newValue, isTouched: true };
+	return undefined === errors ? { ...oldData, errors: [] } : { ...oldData, errors };
 }
 
 /*
@@ -66,6 +74,53 @@ export const defaultManagedContactDetails: ManagedContactDetails = {
 	fax: initialManagedValue( '' ),
 	vatId: initialManagedValue( '' ),
 };
+
+export function isCompleteAndValid( details: ManagedContactDetails ): boolean {
+	const values = Object.keys( details ).map( key => details[ key ] );
+	return values.every( isValid ) && values.length > 0;
+}
+
+/*
+ * List of error messages for each field.
+ */
+export type ManagedContactDetailsErrors = {
+	firstName?: string[];
+	lastName?: string[];
+	organization?: string[];
+	email?: string[];
+	alternateEmail?: string[];
+	phone?: string[];
+	address1?: string[];
+	address2?: string[];
+	city?: string[];
+	state?: string[];
+	postalCode?: string[];
+	countryCode?: string[];
+	fax?: string[];
+	vatId?: string[];
+};
+
+function setManagedContactDetailsErrors(
+	errors: ManagedContactDetailsErrors,
+	details: ManagedContactDetails
+): ManagedContactDetails {
+	return {
+		firstName: setErrors( errors.firstName, details.firstName ),
+		lastName: setErrors( errors.firstName, details.lastName ),
+		organization: setErrors( errors.organization, details.organization ),
+		email: setErrors( errors.email, details.email ),
+		alternateEmail: setErrors( errors.alternateEmail, details.alternateEmail ),
+		phone: setErrors( errors.phone, details.phone ),
+		address1: setErrors( errors.address1, details.address1 ),
+		address2: setErrors( errors.address2, details.address2 ),
+		city: setErrors( errors.city, details.city ),
+		state: setErrors( errors.state, details.state ),
+		postalCode: setErrors( errors.postalCode, details.postalCode ),
+		countryCode: setErrors( errors.countryCode, details.countryCode ),
+		fax: setErrors( errors.fax, details.fax ),
+		vatId: setErrors( errors.vatId, details.vatId ),
+	};
+}
 
 /*
  * The data model used in the ContactDetailsFormFields component.
@@ -124,6 +179,7 @@ export type ManagedContactDetailsUpdaters = {
 	updatePostalCode: ( ManagedContactDetails, string ) => ManagedContactDetails;
 	updateCountryCode: ( ManagedContactDetails, string ) => ManagedContactDetails;
 	updateVatId: ( ManagedContactDetails, string ) => ManagedContactDetails;
+	setErrorMessages: ( ManagedContactDetails, ManagedContactDetailsErrors ) => ManagedContactDetails;
 };
 
 export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
@@ -181,6 +237,13 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 			...oldDetails,
 			vatId: touchIfDifferent( newVatId, oldDetails.vatId ),
 		};
+	},
+
+	setErrorMessages: (
+		oldDetails: ManagedContactDetails,
+		errors: ManagedContactDetailsErrors
+	): ManagedContactDetails => {
+		return setManagedContactDetailsErrors( errors, oldDetails );
 	},
 };
 
