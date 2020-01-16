@@ -6,8 +6,8 @@ import { ReactNode } from 'react';
 /**
  * The expected props for the loading component
  */
-export default interface LoadingProps {
+export type LoadingProps = {
 	children?: ReactNode;
 	variation?: string;
 	isLoading?: boolean;
-}
+};
