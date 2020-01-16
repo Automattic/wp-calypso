@@ -105,7 +105,7 @@ export async function createStripePaymentMethod( stripe, paymentDetails ) {
  * @param {string} paymentIntentClientSecret The client secret of the PaymentIntent
  * @returns {Promise} Promise that will be resolved or rejected
  */
-export async function confirmStripePaymentIntent( stripeConfiguration, paymentIntentClientSecret ) {
+async function confirmStripePaymentIntent( stripeConfiguration, paymentIntentClientSecret ) {
 	// Setup a stripe instance that is disconnected from our Elements
 	// Otherwise, we'll create another paymentMethod, which we don't want
 	const standAloneStripe = window.Stripe( stripeConfiguration.public_key );
