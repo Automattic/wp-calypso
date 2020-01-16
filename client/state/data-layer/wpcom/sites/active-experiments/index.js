@@ -10,20 +10,23 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 import { assignToExperiments } from 'state/experiments/actions';
 
 const transformApiRequest = data => {
-	return data.experiments;
+	return {
+		Abtests: data.variations,
+		nextRefresh: data.ttl,
+	};
 };
 
 export const fetchExperiments = action =>
 	http(
 		{
-			apiNamespace: 'rest',
+			apiNamespace: 'wpcom',
 			method: 'GET',
 			path: '/v2/experiments/calypso',
 			query: {
 				anonId: action.anonId,
 			},
 		},
-		action
+		{ ...action }
 	);
 
 export const experimentUpdate = ( action, experiments ) => dispatch => {
@@ -31,9 +34,11 @@ export const experimentUpdate = ( action, experiments ) => dispatch => {
 };
 
 registerHandlers( 'state/data-layer/wpcom/sites/active-experiments/index.js', {
-	[ EXPERIMENT_FETCH ]: dispatchRequest( {
-		fetch: fetchExperiments,
-		onSuccess: experimentUpdate,
-		fromApi: makeJsonSchemaParser( schema, transformApiRequest ),
-	} ),
+	[ EXPERIMENT_FETCH ]: [
+		dispatchRequest( {
+			fetch: fetchExperiments,
+			onSuccess: experimentUpdate,
+			fromApi: makeJsonSchemaParser( schema, transformApiRequest ),
+		} ),
+	],
 } );

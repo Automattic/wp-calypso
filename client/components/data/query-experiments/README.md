@@ -4,7 +4,7 @@
 
 ## Usage
 
-```jsx harmony
+```jsx
 import QueryExperiment from 'components/data/query-experiments'
 
 export default function listExperiments() {

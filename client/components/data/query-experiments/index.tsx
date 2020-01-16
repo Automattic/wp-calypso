@@ -2,33 +2,38 @@
  * External Dependencies
  */
 
-import { useEffect } from 'react';
+import { useEffect, FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal Dependencies
  */
 import { fetchExperiments } from 'state/experiments/actions';
-import { nextRefresh } from 'state/experiments/selectors';
+import { getAnonId, nextRefresh } from 'state/experiments/selectors';
 import { AppState } from 'types';
 
-function QueryExperiments( {
-	doFetchExperiments,
-	updateAfter,
-}: {
+type QueryProps = {
 	doFetchExperiments: typeof fetchExperiments;
 	updateAfter: number;
-} ) {
+	anonId: string;
+};
+
+const QueryExperiments: FunctionComponent< QueryProps > = ( {
+	updateAfter,
+	doFetchExperiments,
+	anonId,
+} ) => {
 	useEffect( () => {
 		// todo: wait until after `updateAfter` to call the function
-		doFetchExperiments();
-	}, [ updateAfter, doFetchExperiments ] );
+		doFetchExperiments( anonId );
+	}, [ updateAfter, doFetchExperiments, anonId ] );
 
 	return null;
-}
+};
 
 const mapStateToProps = ( state: AppState ) => ( {
 	updateAfter: nextRefresh( state ),
+	anonId: getAnonId( state ),
 } );
 
 export default connect( mapStateToProps, { doFetchExperiments: fetchExperiments } )(

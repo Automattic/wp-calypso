@@ -11,6 +11,7 @@ export const assignToExperiments = ( experiments: Experiment[] ) => ( {
 } );
 
 // todo: handle TTL
-export const fetchExperiments = () => ( {
+export const fetchExperiments = ( anonId: string ) => ( {
 	type: EXPERIMENT_FETCH,
+	anonId,
 } );

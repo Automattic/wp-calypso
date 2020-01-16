@@ -1,22 +1,10 @@
 {
 	"$schema": "http://json-schema.org/draft-04/schema#",
 	"type": "object",
-	"required": [ "experiments", "ttl" ],
+	"required": [ "variations", "ttl" ],
 	"properties": {
-		"experiments": {
-			"type": "array",
-			"items": {
-				"type": "object",
-				"required": [ "name", "variation" ],
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"variation": {
-						"type": "string"
-					}
-				}
-			}
+		"variations": {
+			"type": "object"
 		},
 		"ttl": {
 			"type": "integer"
