@@ -77,7 +77,7 @@ const DesignSelector: FunctionComponent = () => {
 	} );
 
 	const descriptionContainerSpring = useSpring( {
-		transform: `translate3d( 0, ${ hasSelectedDesign ? '0' : '100vh' }, 0)`,
+		transform: `translate3d( 0, ${ hasSelectedDesign ? '0' : '100vh' }, 0 )`,
 		visibility: hasSelectedDesign ? 'visible' : 'hidden',
 	} );
 
