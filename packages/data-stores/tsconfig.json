@@ -17,7 +17,6 @@
 		"strict": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
-		"noImplicitAny": false,
 		"noImplicitReturns": true,
 		"noFallthroughCasesInSwitch": true,
 
@@ -32,6 +31,6 @@
 		"noEmitHelpers": true,
 		"importHelpers": true
 	},
-	"files": [ "./src/index.ts" ],
+	"files": [ "./src/index.ts", "./global.d.ts" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]
 }

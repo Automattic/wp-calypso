@@ -7,8 +7,23 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { ActionType, CurrentUser } from './types';
+import { ActionType, CurrentUser, NewUser } from './types';
 import * as Actions from './actions';
+
+function parseNewUserState(
+	state: NewUser | undefined,
+	action: ReturnType< typeof Actions[ 'receiveNewUser' ] >
+) {
+	const { newUser } = action;
+	if ( newUser ) {
+		return {
+			username: newUser.signup_sandbox_username || newUser.username,
+			userId: newUser.signup_sandbox_user_id || newUser.user_id,
+			bearerToken: newUser.bearer_token,
+		};
+	}
+	return state;
+}
 
 const currentUser: Reducer<
 	CurrentUser | undefined,
@@ -24,7 +39,17 @@ const currentUser: Reducer<
 	return state;
 };
 
-const reducer = combineReducers( { currentUser } );
+const newUser: Reducer< NewUser | undefined, ReturnType< typeof Actions[ 'receiveNewUser' ] > > = (
+	state = undefined,
+	action
+) => {
+	if ( action.type === ActionType.RECEIVE_NEW_USER ) {
+		return parseNewUserState( state, action );
+	}
+	return state;
+};
+
+const reducer = combineReducers( { currentUser, newUser } );
 
 export type State = ReturnType< typeof reducer >;
 

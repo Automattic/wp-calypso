@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { controls } from '@wordpress/data-controls';
 import { registerStore } from '@wordpress/data';
 import wpcomProxyRequest from 'wpcom-proxy-request';
 import debugFactory from 'debug';
@@ -14,6 +13,7 @@ import reducer, { State } from './reducer';
 import * as actions from './actions';
 import * as resolvers from './resolvers';
 import * as selectors from './selectors';
+import controls from './controls';
 import { DispatchFromMap, SelectFromMap } from '../mapped-types';
 
 export * from './types';
