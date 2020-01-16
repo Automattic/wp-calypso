@@ -62,9 +62,6 @@ export function createStripeMethod( {
 		changeCardholderName( payload ) {
 			return { type: 'CARDHOLDER_NAME_SET', payload };
 		},
-		setStripeError( payload ) {
-			return { type: 'STRIPE_TRANSACTION_ERROR', payload };
-		},
 		setStripeComplete( payload ) {
 			debug( 'stripe transaction is successful' );
 			return { type: 'STRIPE_TRANSACTION_END', payload };
