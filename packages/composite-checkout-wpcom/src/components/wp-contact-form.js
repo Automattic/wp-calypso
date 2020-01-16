@@ -257,21 +257,23 @@ function AddressFields( { section, contactInfo, setters, StateSelect } ) {
 				</LeftColumn>
 
 				<RightColumn>
-					<StateSelect
-						countryCode={ country.value || 'US' }
-						label={
-							isStateorProvince() === 'state' ? translate( 'State' ) : translate( 'Province' )
-						}
-						name={ section + '-state' }
-						onChange={ event =>
-							setContactField( 'state', {
-								value: event.target.value,
-								isTouched: true,
-								isValid: !! event.target.value,
-							} )
-						}
-						value={ state.value }
-					/>
+					<StateSelectWrapper>
+						<StateSelect
+							countryCode={ country.value || 'US' }
+							label={
+								isStateorProvince() === 'state' ? translate( 'State' ) : translate( 'Province' )
+							}
+							name={ section + '-state' }
+							onChange={ event =>
+								setContactField( 'state', {
+									value: event.target.value,
+									isTouched: true,
+									isValid: !! event.target.value,
+								} )
+							}
+							value={ state.value }
+						/>
+					</StateSelectWrapper>
 				</RightColumn>
 			</FieldRow>
 		</React.Fragment>
@@ -527,3 +529,9 @@ function ContactFormSummary() {
 function joinNonEmptyValues( joinString, ...values ) {
 	return values.filter( value => value.length > 0 ).join( joinString );
 }
+
+const StateSelectWrapper = styled.div`
+	& select {
+		width: 100%;
+	}
+`;
