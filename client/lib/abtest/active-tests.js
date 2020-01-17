@@ -147,4 +147,13 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	redirectToCustomerHome: {
+		datestamp: '20200117',
+		variations: {
+			variant: 10,
+			control: 90,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: false,
+	},
 };
