@@ -15,6 +15,7 @@ import {
 	FormFieldAnnotation,
 } from '@automattic/composite-checkout-wpcom';
 import { CheckoutProvider, createRegistry } from '@automattic/composite-checkout';
+import { Card } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -162,30 +163,33 @@ export default function CompositeCheckout( {
 	);
 
 	return (
-		<CheckoutProvider
-			locale={ 'en-us' }
-			items={ itemsForCheckout }
-			total={ total }
-			onPaymentComplete={ onPaymentComplete }
-			showErrorMessage={ showErrorMessage }
-			showInfoMessage={ showInfoMessage }
-			showSuccessMessage={ showSuccessMessage }
-			onEvent={ handleCheckoutEvent }
-			paymentMethods={ paymentMethods }
-			registry={ registry }
-			isLoading={ isLoading || isLoadingStoredCards }
-		>
-			<WPCheckout
-				removeItem={ removeItem }
-				changePlanLength={ changePlanLength }
-				siteId={ siteId }
-				siteUrl={ siteSlug }
-				CountrySelectMenu={ CountrySelectMenu }
-				countriesList={ countriesList }
-				PhoneInput={ PhoneInput }
-				StateSelect={ StateSelect }
-			/>
-		</CheckoutProvider>
+		<React.Fragment>
+			<TestingBanner />
+			<CheckoutProvider
+				locale={ 'en-us' }
+				items={ itemsForCheckout }
+				total={ total }
+				onPaymentComplete={ onPaymentComplete }
+				showErrorMessage={ showErrorMessage }
+				showInfoMessage={ showInfoMessage }
+				showSuccessMessage={ showSuccessMessage }
+				onEvent={ handleCheckoutEvent }
+				paymentMethods={ paymentMethods }
+				registry={ registry }
+				isLoading={ isLoading || isLoadingStoredCards }
+			>
+				<WPCheckout
+					removeItem={ removeItem }
+					changePlanLength={ changePlanLength }
+					siteId={ siteId }
+					siteUrl={ siteSlug }
+					CountrySelectMenu={ CountrySelectMenu }
+					countriesList={ countriesList }
+					PhoneInput={ PhoneInput }
+					StateSelect={ StateSelect }
+				/>
+			</CheckoutProvider>
+		</React.Fragment>
 	);
 }
 
@@ -313,5 +317,14 @@ function CountrySelectMenu( {
 				aria-describedby={ countrySelectorDescriptionId }
 			/>
 		</FormFieldAnnotation>
+	);
+}
+
+function TestingBanner() {
+	return (
+		<Card highlight="warning" href="https://github.com/Automattic/wp-calypso/issues/new">
+			Warning! This checkout form is a new feature, still in testing. If you encounter issues,
+			please click here to report them and select "Checkout Redesign" in the project sidebar.
+		</Card>
 	);
 }
