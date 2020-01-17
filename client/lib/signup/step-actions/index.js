@@ -4,6 +4,7 @@
 import debugFactory from 'debug';
 import { assign, defer, difference, get, isEmpty, isNull, omitBy, pick, startsWith } from 'lodash';
 import { parse as parseURL } from 'url';
+import moment from 'moment-timezone';
 
 /**
  * Internal dependencies
@@ -56,7 +57,6 @@ import { fetchSitesAndUser } from 'lib/signup/step-actions/fetch-sites-and-user'
  */
 const user = userFactory();
 const debug = debugFactory( 'calypso:signup:step-actions' );
-const gmt_offset = -new Date().getTimezoneOffset() / 60;
 
 export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const { siteId, siteSlug } = data;
@@ -179,6 +179,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 				title: siteTitle,
 			},
 			site_creation_flow: flowToCheck,
+			timezone_string: moment.tz.guess(),
 		},
 		public: getNewSitePublicSetting( state ),
 		validate: false,
@@ -186,10 +187,6 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 
 	if ( config.isEnabled( 'coming-soon' ) ) {
 		newSiteParams.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
-	}
-
-	if ( gmt_offset ) {
-		newSiteParams.options.gmt_offset = gmt_offset;
 	}
 
 	const shouldSkipDomainStep = ! siteUrl && isDomainStepSkippable( flowToCheck );
@@ -510,16 +507,12 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 		blog_name: site,
 		blog_title: '',
 		public: getNewSitePublicSetting( state ),
-		options: { theme: themeSlugWithRepo },
+		options: { theme: themeSlugWithRepo, timezone_string: moment.tz.guess() },
 		validate: false,
 	};
 
 	if ( config.isEnabled( 'coming-soon' ) ) {
 		data.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
-	}
-
-	if ( gmt_offset ) {
-		data.options.gmt_offset = gmt_offset;
 	}
 
 	wpcom.undocumented().sitesNew( data, function( errors, response ) {
