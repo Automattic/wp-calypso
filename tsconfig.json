@@ -6,24 +6,26 @@
 		"isolatedModules": true,
 
 		"paths": {
-			"*": [ "*", "client/*", "server/*" ]
+			"*": [ "*", "client/*", "client/server/*" ]
 		},
-		"baseUrl": "."
+		"baseUrl": ".",
+		"incremental": true,
+		"tsBuildInfoFile": ".tsc-cache/client"
 	},
-	"include": [ "client", "server" ],
+	"include": [ "client" ],
 	"exclude": [
-		"**/build-module/*",
-		"**/build-style/*",
-		"**/build/*",
-		"**/dist/*",
-		"**/node_modules/*",
+		"**/build",
+		"**/build-module",
+		"**/build-style",
+		"**/dist",
+		"**/node_modules",
 		"apps",
 		"build",
 		"cached-results.json",
+		"client/server/bundler/assets*.json",
+		"client/server/devdocs/search-index.js",
 		"packages",
 		"public",
-		"server/bundler/assets*.json",
-		"server/devdocs/search-index.js",
 		"stats.json"
 	]
 }

@@ -10,6 +10,7 @@
 *.code-workspace
 *.iml
 *.iws
+/.tsc-cache/
 /tags
 node_modules
 /npm-debug.log*

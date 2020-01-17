@@ -30,7 +30,10 @@
 		"types": [],
 
 		"noEmitHelpers": true,
-		"importHelpers": true
+		"importHelpers": true,
+
+		"incremental": true,
+		"tsBuildInfoFile": "../../.tsc-cache/data-stores"
 	},
 	"files": [ "./src/index.ts", "./global.d.ts" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]
