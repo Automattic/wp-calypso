@@ -33,6 +33,7 @@ export const sendLoginEmail = action => {
 	const noticeAction = showGlobalNotices
 		? infoNotice( translate( 'Sending email' ), { duration: 4000 } )
 		: null;
+	const mobileLogin = ! ( loginFormFlow || requestLoginEmailFormFlow );
 	return [
 		...( showGlobalNotices ? [ noticeAction ] : [] ),
 		...( loginFormFlow || requestLoginEmailFormFlow
@@ -52,8 +53,8 @@ export const sendLoginEmail = action => {
 				body: {
 					client_id: config( 'wpcom_signup_id' ),
 					client_secret: config( 'wpcom_signup_key' ),
-					infer: true,
-					scheme: 'wordpress',
+					...( mobileLogin && { infer: true } ),
+					...( mobileLogin && { scheme: 'wordpress' } ),
 					locale,
 					lang_id: lang_id,
 					email: email,
