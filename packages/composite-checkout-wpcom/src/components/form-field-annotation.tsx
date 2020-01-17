@@ -64,7 +64,7 @@ const FormFieldAnnotation: FunctionComponent< FormFieldAnnotationProps > = ( {
 
 type LabelProps = {
 	isDisabled: boolean;
-	theme?: any;
+	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 
 const Label = styled.label< LabelProps >`
@@ -81,7 +81,7 @@ const Label = styled.label< LabelProps >`
 
 type FormFieldWrapperProps = {
 	isError: boolean;
-	theme?: any;
+	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 
 const FormFieldWrapper = styled.div< FormFieldWrapperProps >`
@@ -103,7 +103,7 @@ function RenderedDescription( { descriptionText, descriptionId, isError, errorMe
 
 type DescriptionProps = {
 	isError: boolean;
-	theme?: any;
+	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 
 const Description = styled.p< DescriptionProps >`
