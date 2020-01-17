@@ -18,15 +18,6 @@ export function createApplePayMethod( { registerStore, fetchStripeConfiguration 
 		setStripeError( payload ) {
 			return { type: 'STRIPE_TRANSACTION_ERROR', payload };
 		},
-		*getConfiguration( payload ) {
-			let configuration;
-			try {
-				configuration = yield { type: 'STRIPE_CONFIGURATION_FETCH', payload };
-			} catch ( error ) {
-				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
-			}
-			return { type: 'STRIPE_CONFIGURATION_SET', payload: configuration };
-		},
 	};
 
 	registerStore( 'apple-pay', {
@@ -38,26 +29,16 @@ export function createApplePayMethod( { registerStore, fetchStripeConfiguration 
 						transactionStatus: 'error',
 						transactionError: action.payload,
 					};
-				case 'STRIPE_CONFIGURATION_SET':
-					return { ...state, stripeConfiguration: action.payload };
 			}
 			return state;
 		},
 		actions,
 		selectors: {
-			getStripeConfiguration( state ) {
-				return state.stripeConfiguration;
-			},
 			getTransactionError( state ) {
 				return state.transactionError;
 			},
 			getTransactionStatus( state ) {
 				return state.transactionStatus;
-			},
-		},
-		controls: {
-			STRIPE_CONFIGURATION_FETCH( action ) {
-				return fetchStripeConfiguration( action.payload );
 			},
 		},
 	} );
@@ -66,7 +47,11 @@ export function createApplePayMethod( { registerStore, fetchStripeConfiguration 
 		label: <ApplePayLabel />,
 		submitButton: <ApplePaySubmitButton />,
 		inactiveContent: <ApplePaySummary />,
-		CheckoutWrapper: StripeHookProvider,
+		checkoutWrapper: children => (
+			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+				{ children }
+			</StripeHookProvider>
+		),
 		getAriaLabel: localize => localize( 'Apple Pay' ),
 	};
 }

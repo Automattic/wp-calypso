@@ -22,14 +22,13 @@ export default function WPCheckoutOrderReview( { className, removeItem } ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
 
-	//TODO: tie the coupon field visibility based on whether there is a coupon in the cart
 	return (
 		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
 			<WPOrderReviewSection>
 				<WPOrderReviewLineItems items={ items } removeItem={ removeItem } />
 			</WPOrderReviewSection>
 
-			<CouponField id="order-review-coupon" isCouponFieldVisible={ formStatus === 'ready' } />
+			<CouponField id="order-review-coupon" disabled={ formStatus !== 'ready' } />
 
 			<WPOrderReviewSection>
 				<WPOrderReviewTotal total={ total } />

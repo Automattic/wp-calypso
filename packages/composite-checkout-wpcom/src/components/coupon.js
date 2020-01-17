@@ -15,7 +15,7 @@ import joinClasses from './join-classes';
 import Field from './field';
 import Button from './button';
 
-export default function Coupon( { id, couponAdded, className, isCouponFieldVisible } ) {
+export default function Coupon( { id, couponAdded, className, disabled } ) {
 	const translate = useTranslate();
 	const onEvent = useEvents();
 	const [ isApplyButtonActive, setIsApplyButtonActive ] = useState( false );
@@ -23,7 +23,8 @@ export default function Coupon( { id, couponAdded, className, isCouponFieldVisib
 	const [ hasCouponError, setHasCouponError ] = useState( false );
 	const [ isCouponApplied, setIsCouponApplied ] = useState( false );
 
-	if ( ! isCouponFieldVisible || isCouponApplied ) {
+	//TODO: tie the coupon field visibility based on whether there is a coupon in the cart
+	if ( isCouponApplied ) {
 		return null;
 	}
 
@@ -43,6 +44,7 @@ export default function Coupon( { id, couponAdded, className, isCouponFieldVisib
 		>
 			<Field
 				id={ id }
+				disabled={ disabled }
 				placeholder={ translate( 'Enter your coupon code' ) }
 				isError={ hasCouponError }
 				errorMessage={
@@ -65,7 +67,7 @@ export default function Coupon( { id, couponAdded, className, isCouponFieldVisib
 Coupon.propTypes = {
 	id: PropTypes.string.isRequired,
 	couponAdded: PropTypes.func,
-	isCouponFieldVisible: PropTypes.bool,
+	disabled: PropTypes.bool,
 };
 
 const animateIn = keyframes`

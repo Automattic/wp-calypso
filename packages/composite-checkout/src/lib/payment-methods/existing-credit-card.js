@@ -20,6 +20,7 @@ import { sprintf, useLocalize } from '../localize';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import { useFormStatus } from '../form-status';
 import PaymentLogo from './payment-logo.js';
+import { useStripe, showStripeModalAuth } from '../stripe';
 
 const debug = debugFactory( 'composite-checkout:existing-card-payment-method' );
 
@@ -73,6 +74,14 @@ export function createExistingCardMethod( {
 			debug( 'existing card transaction requires is successful' );
 			return { type: 'EXISTING_CARD_TRANSACTION_END', payload: response };
 		},
+		setTransactionComplete( payload ) {
+			debug( 'transaction is successful' );
+			return { type: 'EXISTING_CARD_TRANSACTION_END', payload };
+		},
+		resetTransaction() {
+			debug( 'resetting transaction' );
+			return { type: 'EXISTING_CARD_TRANSACTION_RESET' };
+		},
 	};
 
 	const selectors = {
@@ -84,6 +93,9 @@ export function createExistingCardMethod( {
 		},
 		getTransactionAuthData( state ) {
 			return state.transactionAuthData;
+		},
+		getRedirectUrl( state ) {
+			return state.redirectUrl;
 		},
 	};
 
@@ -97,6 +109,11 @@ export function createExistingCardMethod( {
 			action
 		) {
 			switch ( action.type ) {
+				case 'EXISTING_CARD_TRANSACTION_RESET':
+					return {
+						...state,
+						transactionStatus: null,
+					};
 				case 'EXISTING_CARD_TRANSACTION_END':
 					return {
 						...state,
@@ -118,6 +135,7 @@ export function createExistingCardMethod( {
 					return {
 						...state,
 						transactionStatus: 'redirect',
+						redirectUrl: action.payload.redirect_url,
 					};
 			}
 			return state;
@@ -188,7 +206,7 @@ const CardHolderName = styled.span`
 function ExistingCardPayButton( { disabled, id } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
-	const { showErrorMessage } = useMessages();
+	const { showErrorMessage, showInfoMessage } = useMessages();
 	const transactionStatus = useSelect( select =>
 		select( `existing-card-${ id }` ).getTransactionStatus()
 	);
@@ -198,8 +216,12 @@ function ExistingCardPayButton( { disabled, id } ) {
 	const transactionAuthData = useSelect( select =>
 		select( `existing-card-${ id }` ).getTransactionAuthData()
 	);
-	const { beginCardTransaction } = useDispatch( `existing-card-${ id }` );
+	const redirectUrl = useSelect( select => select( `existing-card-${ id }` ).getRedirectUrl() );
+	const { beginCardTransaction, setTransactionComplete, resetTransaction } = useDispatch(
+		`existing-card-${ id }`
+	);
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
+	const { stripeConfiguration } = useStripe();
 
 	useEffect( () => {
 		if ( transactionStatus === 'error' ) {
@@ -213,15 +235,55 @@ function ExistingCardPayButton( { disabled, id } ) {
 			setFormComplete();
 		}
 		if ( transactionStatus === 'redirect' ) {
-			// TODO: notify user that we are going to redirect
+			debug( 'redirecting' );
+			showInfoMessage( localize( 'Redirecting...' ) );
+			window.location = redirectUrl;
 		}
 	}, [
+		redirectUrl,
 		setFormReady,
 		setFormComplete,
 		showErrorMessage,
+		showInfoMessage,
 		transactionStatus,
 		transactionError,
 		transactionAuthData,
+		localize,
+	] );
+
+	useEffect( () => {
+		let isSubscribed = true;
+
+		if ( transactionStatus === 'auth' ) {
+			debug( 'showing auth' );
+			showStripeModalAuth( {
+				stripeConfiguration,
+				response: transactionAuthData,
+			} )
+				.then( authenticationResponse => {
+					debug( 'auth is complete', authenticationResponse );
+					isSubscribed && setTransactionComplete( authenticationResponse );
+				} )
+				.catch( error => {
+					debug( 'showing error for auth', error );
+					showErrorMessage(
+						localize( 'Authorization failed for that card. Please try a different payment method.' )
+					);
+					isSubscribed && resetTransaction();
+					isSubscribed && setFormReady();
+				} );
+		}
+
+		return () => ( isSubscribed = false );
+	}, [
+		resetTransaction,
+		setTransactionComplete,
+		setFormReady,
+		showInfoMessage,
+		showErrorMessage,
+		transactionStatus,
+		transactionAuthData,
+		stripeConfiguration,
 		localize,
 	] );
 
@@ -240,6 +302,7 @@ function ExistingCardPayButton( { disabled, id } ) {
 					showErrorMessage,
 					beginCardTransaction,
 					setFormSubmitting,
+					resetTransaction,
 				} )
 			}
 			buttonState={ disabled ? 'disabled' : 'primary' }
@@ -277,6 +340,7 @@ async function submitExistingCardPayment( {
 	beginCardTransaction,
 	setFormSubmitting,
 	setFormReady,
+	resetTransaction,
 } ) {
 	debug( 'submitting existing card payment with the id', id );
 	try {
@@ -286,6 +350,7 @@ async function submitExistingCardPayment( {
 			total,
 		} );
 	} catch ( error ) {
+		resetTransaction();
 		setFormReady();
 		showErrorMessage( error );
 		return;

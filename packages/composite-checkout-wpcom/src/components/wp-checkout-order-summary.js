@@ -54,13 +54,15 @@ export default function WPCheckoutOrderSummary( { siteUrl } ) {
 				) }
 			</SummaryContent>
 
-			<CouponField
-				id="order-summary-coupon"
-				isCouponFieldVisible={ isCouponFieldVisible && formStatus === 'ready' }
-				couponAdded={ () => {
-					handleCouponAdded( setIsCouponFieldVisible, setHasCouponBeenApplied );
-				} }
-			/>
+			{ isCouponFieldVisible && (
+				<CouponField
+					id="order-summary-coupon"
+					disabled={ formStatus !== 'ready' }
+					couponAdded={ () => {
+						handleCouponAdded( setIsCouponFieldVisible, setHasCouponBeenApplied );
+					} }
+				/>
+			) }
 		</React.Fragment>
 	);
 }
