@@ -1,24 +1,21 @@
 /**
  * External dependencies
  */
-
 const express = require( 'express' );
 
 /**
  * Internal dependencies
  */
-const version = require( '../../package.json' ).version,
-	config = require( 'config' ),
-	oauth = require( './oauth' ),
-	signInWithApple = require( './sign-in-with-apple' );
+const { version } = require( '../../package.json' );
+const config = require( 'config' );
+const oauth = require( './oauth' );
+const signInWithApple = require( './sign-in-with-apple' );
 
 module.exports = function() {
 	const app = express();
 
 	app.get( '/version', function( request, response ) {
-		response.json( {
-			version: version,
-		} );
+		response.json( { version } );
 	} );
 
 	if ( config.isEnabled( 'oauth' ) ) {
