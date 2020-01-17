@@ -207,7 +207,7 @@ export class LanguagePickerModal extends PureComponent {
 		const wrapperChildWidth =
 			wrapper.children.length > 0 ? wrapper.children[ 0 ].getBoundingClientRect().width : 0;
 
-		if ( wrapperWidth === 0 ) {
+		if ( wrapperChildWidth === 0 ) {
 			return 0;
 		}
 
