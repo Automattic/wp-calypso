@@ -199,7 +199,7 @@ export function ApplePaySubmitButton( { disabled } ) {
 	return (
 		<PaymentRequestButton
 			disabled={ disabled }
-			disabledReason={ disabled && localize( 'The form is not complete' ) }
+			disabledReason={ localize( 'Pay' ) }
 			paymentRequest={ paymentRequest }
 			paymentType="apple-pay"
 		/>
