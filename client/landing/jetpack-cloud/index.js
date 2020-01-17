@@ -7,39 +7,18 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import detectHistoryNavigation from 'lib/detect-history-navigation';
-import initialReducer from './reducer';
 import initJetpackCloudRoutes from './routes';
-import userFactory from 'lib/user';
-import { configureReduxStore, setupBasicMiddlewares, utils } from 'boot/common';
-import { createReduxStore } from 'state';
-import { getInitialState, persistOnChange } from 'state/initial-state';
-import { setupLocale } from 'boot/locale';
 
 /**
  * Style dependencies
  */
 import 'assets/stylesheets/jetpack-cloud.scss';
 
-const boot = currentUser => {
-	utils();
-	getInitialState( initialReducer ).then( initialState => {
-		const reduxStore = createReduxStore( initialState, initialReducer );
-		persistOnChange( reduxStore );
-		setupLocale( currentUser.get(), reduxStore );
-		configureReduxStore( currentUser, reduxStore );
-		setupBasicMiddlewares( currentUser, reduxStore );
-		detectHistoryNavigation.start();
-		initJetpackCloudRoutes( '/jetpack-cloud' );
-		page.start( { decodeURLComponents: false } );
-	} );
-};
-
 window.AppBoot = () => {
 	if ( ! config.isEnabled( 'jetpack-cloud' ) ) {
 		window.location.href = '/';
 	} else {
-		const user = userFactory();
-		user.initialize().then( () => boot( user ) );
+		initJetpackCloudRoutes( '/jetpack-cloud' );
+		page.start( { decodeURLComponents: false } );
 	}
 };
