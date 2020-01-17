@@ -2,13 +2,13 @@
  * **** WARNING: No ES6 modules here. Not transpiled! ****
  */
 
+/* eslint import/no-extraneous-dependencies: [ "error", { packageDir: __dirname/.. } ] */
 /* eslint-disable import/no-nodejs-modules */
 
 /**
  * External dependencies
  */
 const path = require( 'path' );
-// eslint-disable-next-line import/no-extraneous-dependencies
 const webpack = require( 'webpack' );
 
 /**
