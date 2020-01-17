@@ -7,7 +7,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { useLineItems, useDispatch, useMessages } from '../../public-api';
+import { useLineItems, useDispatch, useMessages, useSelect } from '../../public-api';
 import { useLocalize } from '../../lib/localize';
 import PaymentRequestButton from '../../components/payment-request-button';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
@@ -64,7 +64,7 @@ export function createApplePayMethod( {
 		},
 	};
 
-	registerStore( 'stripe', {
+	registerStore( 'apple-pay', {
 		reducer( state = {}, action ) {
 			switch ( action.type ) {
 				case 'STRIPE_TRANSACTION_END':
@@ -127,8 +127,10 @@ export function ApplePaySubmitButton( { disabled } ) {
 	const paymentRequestOptions = usePaymentRequestOptions();
 	const [ items, total ] = useLineItems();
 	const { stripe, stripeConfiguration } = useStripe();
-	const { setFormSubmitting } = useFormStatus();
+	const { setFormSubmitting, setFormReady, setFormComplete } = useFormStatus();
 	const { showErrorMessage } = useMessages();
+	const transactionStatus = useSelect( select => select( 'apple-pay' ).getTransactionStatus() );
+	const transactionError = useSelect( select => select( 'apple-pay' ).getTransactionError() );
 	const { beginStripeTransaction, resetTransaction } = useDispatch( 'apple-pay' );
 	const onSubmit = useCallback(
 		( { name, paymentMethodToken } ) =>
@@ -159,6 +161,29 @@ export function ApplePaySubmitButton( { disabled } ) {
 		paymentRequestOptions,
 		onSubmit,
 	} );
+
+	useEffect( () => {
+		if ( transactionStatus === 'error' ) {
+			debug( 'showing error', transactionError );
+			showErrorMessage(
+				transactionError || localize( 'An error occurred during the transaction' )
+			);
+			resetTransaction();
+			setFormReady();
+		}
+		if ( transactionStatus === 'complete' ) {
+			debug( 'marking complete' );
+			setFormComplete();
+		}
+	}, [
+		resetTransaction,
+		setFormReady,
+		setFormComplete,
+		showErrorMessage,
+		transactionStatus,
+		transactionError,
+		localize,
+	] );
 
 	if ( ! canMakePayment ) {
 		return (
