@@ -207,7 +207,7 @@ async function submitExistingCardPayment( transactionData, wpcom ) {
 }
 
 async function submitApplePayPayment( transactionData, wpcom ) {
-	debug( 'formatting existing card transaction', transactionData );
+	debug( 'formatting apple-pay transaction', transactionData );
 	const formattedTransactionData = formatDataForTransactionsEndpoint( {
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
