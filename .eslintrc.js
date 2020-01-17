@@ -24,7 +24,6 @@ module.exports = {
 			files: [ 'test/e2e/**/*' ],
 			rules: {
 				'import/no-nodejs-modules': 'off',
-				'import/no-extraneous-dependencies': 'off',
 				'no-console': 'off',
 				'jest/valid-describe': 'off',
 				'jest/no-test-prefixes': 'off',
@@ -171,9 +170,5 @@ module.exports = {
 		// - events because we use it for some event emitters
 		// - path because we use it quite a bit
 		'import/no-nodejs-modules': [ 'error', { allow: [ 'url', 'events', 'path', 'config' ] } ],
-
-		// Disallow importing or requiring packages that are not listed in package.json
-		// This prevents us from depending on transitive dependencies, which could break in unexpected ways.
-		'import/no-extraneous-dependencies': 'error',
 	},
 };
