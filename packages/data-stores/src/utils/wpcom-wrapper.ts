@@ -6,6 +6,11 @@ import debugFactory from 'debug';
 
 const debug = debugFactory( 'data-stores:utils:wpcom-wrapper' );
 
+export interface WpcomClientCredentials {
+	client_id: string;
+	client_secret: string;
+}
+
 export interface WpcomRequestParams {
 	path: string;
 	method?: string;
