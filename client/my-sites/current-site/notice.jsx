@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import config from 'config';
 import { get, reject, transform } from 'lodash';
-import { abtest } from 'lib/abtest';
 
 /**
  * Internal dependencies
@@ -40,6 +39,7 @@ import { getSectionName } from 'state/ui/selectors';
 import { getTopJITM } from 'state/jitm/selectors';
 import AsyncLoad from 'components/async-load';
 import UpsellNudge from 'blocks/upsell-nudge';
+import { abtest } from 'lib/abtest';
 
 const DOMAIN_UPSELL_NUDGE_DISMISS_KEY = 'domain_upsell_nudge_dismiss';
 
