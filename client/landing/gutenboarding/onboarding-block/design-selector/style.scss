@@ -75,15 +75,23 @@ $design-selector-selection-space: 285px;
 .page-layout-selector__grid {
 	display: grid;
 	grid-gap: 1.25em;
-	@include breakpoint( '>660px' ) {
-		grid-template-columns: 1fr 1fr 1fr;
-	}
+	grid-template-columns: repeat( auto-fill, minmax( 280px, 1fr ) );
 }
 
 .page-layout-selector__item {
 	position: relative;
 	overflow: hidden;
 	padding: 2px;
+
+	&::before {
+		content: '';
+		display: inline-block;
+		width: 1px;
+		height: 0;
+		padding-bottom: calc(
+			100% * 7 / 8
+		); // This gives us a 7:8 aspect ratio for individual grid items.
+	}
 
 	&.is-selected {
 		.page-layout-selector__selected-indicator {
@@ -117,7 +125,6 @@ $design-selector-selection-space: 285px;
 .page-layout-selector__selected-indicator {
 	$size: 24px; // should match icon size
 	$full-size: floor( $size * 1.66 );
-
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -174,6 +181,21 @@ $design-selector-selection-space: 285px;
 	display: block;
 	margin-left: -2px;
 	margin-right: -2px;
+}
+
+// Necessary for grid layout
+.page-layout-selector__card-footer {
+	background: $white;
+	bottom: 0;
+	position: absolute;
+	width: 100%;
+}
+
+// Necessary for grid layout
+.page-layout-selector__card-media {
+	position: absolute;
+	top: 0;
+	width: 100%;
 }
 
 .design-selector__description-container {

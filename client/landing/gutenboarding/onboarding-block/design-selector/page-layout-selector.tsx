@@ -45,9 +45,6 @@ const PageLayoutSelector: FunctionComponent< Props > = ( { templates } ) => {
 							onClick={ () => togglePageLayout( template ) }
 							key={ template.slug }
 						>
-							<span className="page-layout-selector__selected-indicator">
-								<Icon icon="yes" size={ 24 } />
-							</span>
 							<CardMedia className="page-layout-selector__card-media" as="span">
 								<img
 									alt={ template.description }
@@ -57,6 +54,9 @@ const PageLayoutSelector: FunctionComponent< Props > = ( { templates } ) => {
 							<CardFooter className="page-layout-selector__card-footer" as="span">
 								{ template.title }
 							</CardFooter>
+							<span className="page-layout-selector__selected-indicator">
+								<Icon icon="yes" size={ 24 } />
+							</span>
 						</Card>
 					) ) }
 				</div>
