@@ -78,9 +78,9 @@ function idbGet< T >( key: string ): Promise< T | undefined > {
 type EventTargetWithCursorResult = EventTarget & { result: IDBCursorWithValue | null };
 
 function idbGetAll( pattern?: RegExp ): Promise< StoredItems > {
-	return new Promise( ( resolve, reject ) => {
-		getDB()
-			.then( db => {
+	return getDB().then(
+		db =>
+			new Promise( ( resolve, reject ) => {
 				const results: StoredItems = {};
 				const transaction = db.transaction( STORE_NAME, 'readonly' );
 				const getAll = transaction.objectStore( STORE_NAME ).openCursor();
@@ -109,8 +109,7 @@ function idbGetAll( pattern?: RegExp ): Promise< StoredItems > {
 				transaction.onabort = error;
 				transaction.onerror = error;
 			} )
-			.catch( err => reject( err ) );
-	} );
+	);
 }
 
 function idbSet< T >( key: string, value: T ): Promise< void > {
