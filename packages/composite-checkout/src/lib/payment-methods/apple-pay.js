@@ -157,10 +157,11 @@ export function ApplePaySubmitButton( { disabled } ) {
 			resetTransaction,
 		]
 	);
-	const { paymentRequest, canMakePayment } = useStripePaymentRequest( {
+	const { paymentRequest, canMakePayment, isLoading } = useStripePaymentRequest( {
 		paymentRequestOptions,
 		onSubmit,
 	} );
+	debug( 'apple-pay button isLoading', isLoading );
 
 	useEffect( () => {
 		if ( transactionStatus === 'error' ) {
@@ -185,7 +186,7 @@ export function ApplePaySubmitButton( { disabled } ) {
 		localize,
 	] );
 
-	if ( ! canMakePayment ) {
+	if ( ! isLoading && ! canMakePayment ) {
 		return (
 			<PaymentRequestButton
 				paymentRequest={ paymentRequest }
@@ -198,8 +199,7 @@ export function ApplePaySubmitButton( { disabled } ) {
 
 	return (
 		<PaymentRequestButton
-			disabled={ disabled }
-			disabledReason={ localize( 'Pay' ) }
+			disabled={ isLoading ? true : disabled }
 			paymentRequest={ paymentRequest }
 			paymentType="apple-pay"
 		/>
@@ -276,7 +276,7 @@ function usePaymentRequestOptions() {
 
 function useStripePaymentRequest( { paymentRequestOptions, onSubmit } ) {
 	const { stripe } = useStripe();
-	const [ canMakePayment, setCanMakePayment ] = useState( false );
+	const [ canMakePayment, setCanMakePayment ] = useState( 'loading' );
 	const [ paymentRequest, setPaymentRequest ] = useState();
 
 	// We have to memoize this to prevent re-creating the paymentRequest
@@ -295,17 +295,21 @@ function useStripePaymentRequest( { paymentRequestOptions, onSubmit } ) {
 		if ( ! stripe ) {
 			return;
 		}
-		setCanMakePayment( false );
 		const request = stripe.paymentRequest( paymentRequestOptions );
 		request.canMakePayment().then( result => {
-			isSubscribed && setCanMakePayment( !! result );
+			debug( 'canMakePayment updating to', result );
+			isSubscribed && setCanMakePayment( !! result?.applePay );
 		} );
 		request.on( 'paymentmethod', callback );
 		setPaymentRequest( request );
 		return () => ( isSubscribed = false );
 	}, [ stripe, paymentRequestOptions, callback ] );
 
-	return { paymentRequest, canMakePayment };
+	return {
+		paymentRequest,
+		canMakePayment: canMakePayment === 'loading' ? false : canMakePayment,
+		isLoading: canMakePayment === 'loading',
+	};
 }
 
 function getDisplayItemsForLineItems( items ) {
