@@ -209,9 +209,12 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			case 'Buttons':
 			case 'Click to Tweet':
 			case 'Hero':
-			case 'Logos & Badges':
 			case 'Pricing Table':
 				prefix = 'coblocks-';
+				break;
+			case 'Logos & Badges':
+				prefix = 'coblocks-';
+				blockClass = 'logos';
 				break;
 			case 'Dynamic HR':
 				prefix = 'coblocks-';
