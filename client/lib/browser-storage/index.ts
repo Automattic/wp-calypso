@@ -198,16 +198,16 @@ export async function getAllStoredItems( pattern?: RegExp ): Promise< StoredItem
 
 	const idbSupported = await supportsIDB();
 	if ( ! idbSupported ) {
-		const results: StoredItems = {};
-		for ( let i = 0; i < window.localStorage.length; i++ ) {
-			const key = window.localStorage.key( i );
-			if ( ! key || ( pattern && ! pattern?.test( key ) ) ) {
-				continue;
-			}
-			const valueString = window.localStorage.getItem( key ) ?? undefined;
-			results[ key ] = valueString !== undefined ? JSON.parse( valueString ) : undefined;
+		const entries = Object.entries( window.localStorage ).map( ( [ key, value ] ) => [
+			key,
+			value !== undefined ? JSON.parse( value ) : undefined,
+		] );
+
+		if ( ! pattern ) {
+			return Object.fromEntries( entries );
 		}
-		return results;
+
+		return Object.fromEntries( entries.filter( ( [ key ] ) => pattern.test( key ) ) );
 	}
 
 	return await idbGetAll( pattern );
