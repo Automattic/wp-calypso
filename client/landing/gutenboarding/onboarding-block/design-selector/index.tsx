@@ -3,13 +3,13 @@
  */
 import { __ as NO__ } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
-import React, { useLayoutEffect, useRef, useState, FunctionComponent, MouseEvent } from 'react';
+import React, { useLayoutEffect, useRef, FunctionComponent } from 'react';
 import classnames from 'classnames';
-import { CSSTransition } from 'react-transition-group';
 import PageLayoutSelector from './page-layout-selector';
 import { partition } from 'lodash';
 import { Portal } from 'reakit/Portal';
-import { Dialog, DialogBackdrop } from 'reakit/Dialog';
+import { useDialogState, Dialog, DialogBackdrop } from 'reakit/Dialog';
+import { useSpring, animated } from 'react-spring';
 
 /**
  * Internal dependencies
@@ -51,10 +51,7 @@ const DesignSelector: FunctionComponent = () => {
 		setSelectedDesign( undefined );
 	};
 
-	const transitionTiming = 250;
 	const hasSelectedDesign = !! selectedDesign;
-	const [ isDialogVisible, setIsDialogVisible ] = useState( hasSelectedDesign );
-	const [ cp, setCp ] = useState< number >();
 
 	const headingContainer = useRef< HTMLDivElement >( null );
 	const selectionTransitionShift = useRef< number >( 0 );
@@ -67,20 +64,35 @@ const DesignSelector: FunctionComponent = () => {
 	}, [ selectedDesign ] );
 
 	const dialogId = 'page-selector-modal';
+	const dialog = useDialogState( { visible: false, baseId: dialogId } );
 
 	const descriptionOnRight: boolean =
 		!! selectedDesign &&
 		designs.findIndex( ( { slug } ) => slug === selectedDesign.slug ) % 2 === 0;
 
+	const designSelectorSpring = useSpring( {
+		transform: `translate3d( 0, ${
+			hasSelectedDesign ? -selectionTransitionShift.current : 0
+		}px, 0 )`,
+	} );
+
+	const descriptionContainerSpring = useSpring( {
+		transform: `translate3d( 0, ${ hasSelectedDesign ? '0' : '100vh' }, 0 )`,
+		visibility: hasSelectedDesign ? 'visible' : 'hidden',
+	} );
+
+	const pageSelectorSpring = useSpring( {
+		transform: `translate3d( 0, ${ hasSelectedDesign ? '0' : '100vh' }, 0 )`,
+		onStart: () => {
+			hasSelectedDesign && dialog.show();
+		},
+		onRest: () => {
+			! hasSelectedDesign && dialog.hide();
+		},
+	} );
+
 	return (
-		<div
-			className="design-selector"
-			style={
-				selectedDesign && {
-					transform: `translate3d( 0,  -${ selectionTransitionShift.current }px, 0 )`,
-				}
-			}
-		>
+		<animated.div style={ designSelectorSpring }>
 			<div
 				className="design-selector__header-container"
 				aria-hidden={ hasSelectedDesign ? 'true' : undefined }
@@ -93,49 +105,50 @@ const DesignSelector: FunctionComponent = () => {
 					{ NO__( "You'll be able to customize your new site in hundreds of ways." ) }
 				</h2>
 			</div>
-
-			<CSSTransition in={ ! hasSelectedDesign } timeout={ transitionTiming }>
-				<div className="design-selector__grid-container">
-					<div className="design-selector__grid">
-						{ designs.map( design => (
-							<DesignCard
-								key={ design.slug }
-								dialogId={ dialogId }
-								design={ design }
-								isSelected={ design.slug === selectedDesign?.slug }
-								style={
-									selectedDesign?.slug === design.slug
-										? {
-												transform: `translate3d( 0, calc( -100vh + ${ -( cp ?? 0 ) + 10 }px ), 0 )`,
-										  }
-										: undefined
-								}
-								onClick={ ( e: MouseEvent< HTMLDivElement > ) => {
-									window.scrollTo( 0, 0 );
-									setCp( e.currentTarget.offsetTop );
-									setSelectedDesign( selectedDesign?.slug === design.slug ? undefined : design );
-								} }
-							/>
-						) ) }
-					</div>
+			<div
+				className={ classnames( 'design-selector__grid-container', {
+					'has-selected-design': hasSelectedDesign,
+				} ) }
+			>
+				<div className="design-selector__grid">
+					{ designs.map( design => (
+						<DesignCard
+							key={ design.slug }
+							dialogId={ dialogId }
+							design={ design }
+							style={
+								selectedDesign?.slug === design.slug
+									? {
+											gridRow: 1,
+											gridColumn: descriptionOnRight ? 1 : 2,
+									  }
+									: {
+											visibility: hasSelectedDesign ? 'hidden' : undefined,
+									  }
+							}
+							onClick={ () => {
+								window.scrollTo( 0, 0 );
+								setSelectedDesign( design );
+							} }
+						/>
+					) ) }
 				</div>
-			</CSSTransition>
+			</div>
 
-			<CSSTransition in={ hasSelectedDesign } timeout={ transitionTiming }>
-				<div
-					className={ classnames( 'design-selector__description-container', {
-						'on-right-side': descriptionOnRight,
-					} ) }
-				>
-					<div className="design-selector__description-title">{ selectedDesign?.title }</div>
-					<div className="design-selector__description-description">
-						{ /* @TODO: Real description? */ }
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-						incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-						exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-					</div>
+			<animated.div
+				className={ classnames( 'design-selector__description-container', {
+					'on-right-side': descriptionOnRight,
+				} ) }
+				style={ descriptionContainerSpring }
+			>
+				<div className="design-selector__description-title">{ selectedDesign?.title }</div>
+				<div className="design-selector__description-description">
+					{ /* @TODO: Real description? */ }
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+					ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+					ullamco laboris nisi ut aliquip ex ea commodo consequat.
 				</div>
-			</CSSTransition>
+			</animated.div>
 
 			<Portal>
 				<DialogBackdrop
@@ -145,25 +158,20 @@ const DesignSelector: FunctionComponent = () => {
 			</Portal>
 
 			<Dialog
-				visible={ isDialogVisible }
-				baseId={ dialogId }
+				{ ...dialog }
 				hide={ resetState }
 				aria-labelledby="page-layout-selector__title"
 				hideOnClickOutside
 				hideOnEsc
 			>
-				<CSSTransition
-					in={ hasSelectedDesign }
-					onEnter={ () => setIsDialogVisible( true ) }
-					onExited={ () => setIsDialogVisible( false ) }
-					timeout={ transitionTiming }
+				<animated.div
+					className="design-selector__page-layout-container"
+					style={ pageSelectorSpring }
 				>
-					<div className="design-selector__page-layout-container">
-						<PageLayoutSelector templates={ otherTemplates } />
-					</div>
-				</CSSTransition>
+					<PageLayoutSelector templates={ otherTemplates } />
+				</animated.div>
 			</Dialog>
-		</div>
+		</animated.div>
 	);
 };
 
