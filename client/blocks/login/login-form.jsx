@@ -51,13 +51,13 @@ import Notice from 'components/notice';
 import SocialLoginForm from './social';
 import { localizeUrl } from 'lib/i18n-utils';
 import TextControl from 'extensions/woocommerce/components/text-control';
-import { sendMobileEmailLogin } from 'state/mobile-apps/actions';
+import { sendEmailLogin } from 'state/auth/actions';
 
 export class LoginForm extends Component {
 	static propTypes = {
 		accountType: PropTypes.string,
 		disableAutoFocus: PropTypes.bool,
-		sendMobileEmailLogin: PropTypes.func.isRequired,
+		sendEmailLogin: PropTypes.func.isRequired,
 		formUpdate: PropTypes.func.isRequired,
 		getAuthAccountType: PropTypes.func.isRequired,
 		hasAccountTypeLoaded: PropTypes.bool.isRequired,
@@ -131,7 +131,7 @@ export class LoginForm extends Component {
 		}
 
 		if ( ! this.props.hasAccountTypeLoaded && isPasswordlessAccount( nextProps.accountType ) ) {
-			this.props.sendMobileEmailLogin( this.state.usernameOrEmail, {
+			this.props.sendEmailLogin( this.state.usernameOrEmail, {
 				redirectTo: nextProps.redirectTo,
 				loginFormFlow: true,
 			} );
@@ -629,7 +629,7 @@ export default connect(
 		};
 	},
 	{
-		sendMobileEmailLogin,
+		sendEmailLogin,
 		formUpdate,
 		getAuthAccountType,
 		loginUser,

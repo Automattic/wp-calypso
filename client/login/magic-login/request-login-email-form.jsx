@@ -28,7 +28,7 @@ import LoggedOutForm from 'components/logged-out-form';
 import Notice from 'components/notice';
 import { localize } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { sendMobileEmailLogin } from 'state/mobile-apps/actions';
+import { sendEmailLogin } from 'state/auth/actions';
 
 class RequestLoginEmailForm extends React.Component {
 	static propTypes = {
@@ -42,7 +42,7 @@ class RequestLoginEmailForm extends React.Component {
 		userEmail: PropTypes.string,
 
 		// mapped to dispatch
-		sendMobileEmailLogin: PropTypes.func.isRequired,
+		sendEmailLogin: PropTypes.func.isRequired,
 		hideMagicLoginRequestNotice: PropTypes.func.isRequired,
 	};
 
@@ -83,7 +83,7 @@ class RequestLoginEmailForm extends React.Component {
 			return;
 		}
 
-		this.props.sendMobileEmailLogin( usernameOrEmail, {
+		this.props.sendEmailLogin( usernameOrEmail, {
 			redirectTo: this.props.redirectTo,
 			requestLoginEmailFormFlow: true,
 		} );
@@ -189,7 +189,7 @@ const mapState = state => {
 };
 
 const mapDispatch = {
-	sendMobileEmailLogin,
+	sendEmailLogin,
 	hideMagicLoginRequestNotice,
 	recordTracksEvent,
 };

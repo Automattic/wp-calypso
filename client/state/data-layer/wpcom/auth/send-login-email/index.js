@@ -8,7 +8,7 @@ import { translate } from 'i18n-calypso';
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
-	MOBILE_APPS_LOGIN_EMAIL_SEND,
+	LOGIN_EMAIL_SEND,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
 	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
@@ -29,11 +29,11 @@ export const sendLoginEmail = action => {
 		showGlobalNotices,
 		loginFormFlow,
 		requestLoginEmailFormFlow,
+		isMobileAppLogin,
 	} = action;
 	const noticeAction = showGlobalNotices
 		? infoNotice( translate( 'Sending email' ), { duration: 4000 } )
 		: null;
-	const mobileLogin = ! ( loginFormFlow || requestLoginEmailFormFlow );
 	return [
 		...( showGlobalNotices ? [ noticeAction ] : [] ),
 		...( loginFormFlow || requestLoginEmailFormFlow
@@ -53,8 +53,8 @@ export const sendLoginEmail = action => {
 				body: {
 					client_id: config( 'wpcom_signup_id' ),
 					client_secret: config( 'wpcom_signup_key' ),
-					...( mobileLogin && { infer: true } ),
-					...( mobileLogin && { scheme: 'wordpress' } ),
+					...( isMobileAppLogin && { infer: true } ),
+					...( isMobileAppLogin && { scheme: 'wordpress' } ),
 					locale,
 					lang_id: lang_id,
 					email: email,
@@ -131,7 +131,7 @@ export const onError = (
 ];
 
 registerHandlers( 'state/data-layer/wpcom/auth/send-login-email/index.js', {
-	[ MOBILE_APPS_LOGIN_EMAIL_SEND ]: [
+	[ LOGIN_EMAIL_SEND ]: [
 		dispatchRequest( {
 			fetch: sendLoginEmail,
 			onSuccess,

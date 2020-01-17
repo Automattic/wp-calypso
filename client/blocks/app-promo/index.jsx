@@ -17,7 +17,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { Dialog } from '@automattic/components';
 import { fetchUserSettings } from 'state/user-settings/actions';
 import getUserSettings from 'state/selectors/get-user-settings';
-import { sendMobileEmailLogin } from 'state/mobile-apps/actions';
+import { sendEmailLogin } from 'state/auth/actions';
 
 /**
  * Image dependencies
@@ -111,7 +111,7 @@ export class AppPromo extends React.Component {
 	sendMagicLink = () => {
 		this.recordClickEvent();
 		const email = this.props.userSettings.user_email;
-		this.props.sendMobileEmailLogin( email, { showGlobalNotices: false } );
+		this.props.sendEmailLogin( email, { showGlobalNotices: false, isMobileAppLogin: true } );
 		this.onShowDialog();
 		return false;
 	};
@@ -223,5 +223,5 @@ export default connect(
 	state => ( {
 		userSettings: getUserSettings( state ),
 	} ),
-	{ fetchUserSettings, recordTracksEvent, sendMobileEmailLogin }
+	{ fetchUserSettings, recordTracksEvent, sendEmailLogin }
 )( localize( AppPromo ) );

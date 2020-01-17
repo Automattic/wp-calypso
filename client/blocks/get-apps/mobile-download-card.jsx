@@ -30,7 +30,7 @@ import phoneValidation from 'lib/phone-validation';
 import userAgent from 'lib/user-agent';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { sendMobileEmailLogin } from 'state/mobile-apps/actions';
+import { sendEmailLogin } from 'state/auth/actions';
 
 function sendSMS( phone ) {
 	function onSuccess( dispatch ) {
@@ -300,7 +300,7 @@ class MobileDownloadCard extends React.Component {
 const sendMagicLink = email =>
 	withAnalytics(
 		recordTracksEvent( 'calypso_get_apps_magic_link_button_click' ),
-		sendMobileEmailLogin( email, { showGlobalNotices: true } )
+		sendEmailLogin( email, { showGlobalNotices: true, isMobileAppLogin: true } )
 	);
 
 export default connect(
