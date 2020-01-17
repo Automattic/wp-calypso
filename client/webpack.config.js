@@ -2,7 +2,7 @@
  **** WARNING: No ES6 modules here. Not transpiled! ****
  */
 
-/* eslint-disable import/no-extraneous-dependencies */
+/* eslint import/no-extraneous-dependencies: [ "error", { packageDir: __dirname/.. } ] */
 /* eslint-disable import/no-nodejs-modules */
 
 /**
