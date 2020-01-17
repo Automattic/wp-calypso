@@ -2,46 +2,181 @@
  * External dependencies
  */
 import React, { useState, useEffect, useMemo } from 'react';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import { StripeHookProvider, useStripe } from '../../lib/stripe';
 import { useLineItems } from '../../public-api';
 import { useLocalize } from '../../lib/localize';
 import PaymentRequestButton from '../../components/payment-request-button';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 import { useFormStatus } from '../form-status';
+import { useStripe, createStripePaymentMethod, StripeHookProvider } from '../stripe';
 
-export function createApplePayMethod( { registerStore, fetchStripeConfiguration } ) {
+const debug = debugFactory( 'composite-checkout:apple-pay-payment-method' );
+
+export function createApplePayMethod( {
+	registerStore,
+	fetchStripeConfiguration,
+	submitTransaction,
+	getCountry,
+	getPostalCode,
+	getPhoneNumber,
+} ) {
 	const actions = {
-		setStripeError( payload ) {
-			return { type: 'STRIPE_TRANSACTION_ERROR', payload };
+		changeBrand( payload ) {
+			return { type: 'BRAND_SET', payload };
+		},
+		setCardDataError( type, message ) {
+			return { type: 'CARD_DATA_ERROR_SET', payload: { type, message } };
+		},
+		setCardDataComplete( type, complete ) {
+			return { type: 'CARD_DATA_COMPLETE_SET', payload: { type, complete } };
+		},
+		changeCardholderName( payload ) {
+			return { type: 'CARDHOLDER_NAME_SET', payload };
+		},
+		setStripeComplete( payload ) {
+			debug( 'stripe transaction is successful' );
+			return { type: 'STRIPE_TRANSACTION_END', payload };
+		},
+		resetTransaction() {
+			debug( 'resetting transaction' );
+			return { type: 'STRIPE_TRANSACTION_RESET' };
+		},
+		*beginStripeTransaction( payload ) {
+			let stripeResponse;
+			try {
+				const paymentMethodToken = yield {
+					type: 'STRIPE_CREATE_PAYMENT_METHOD_TOKEN',
+					payload: {
+						...payload,
+						country: getCountry(),
+						postalCode: getPostalCode(),
+						phoneNumber: getPhoneNumber(),
+					},
+				};
+				debug( 'stripe payment token created' );
+				stripeResponse = yield {
+					type: 'STRIPE_TRANSACTION_BEGIN',
+					payload: {
+						...payload,
+						country: getCountry(),
+						postalCode: getPostalCode(),
+						paymentMethodToken,
+					},
+				};
+				debug( 'stripe transaction complete', stripeResponse );
+			} catch ( error ) {
+				debug( 'stripe transaction had an error', error );
+				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
+			}
+			debug( 'stripe transaction is successful' );
+			return { type: 'STRIPE_TRANSACTION_END', payload: stripeResponse };
 		},
 	};
 
-	registerStore( 'apple-pay', {
-		reducer( state = {}, action ) {
+	const selectors = {
+		getBrand( state ) {
+			return state.brand || '';
+		},
+		getCardholderName( state ) {
+			return state.cardholderName || '';
+		},
+		getTransactionError( state ) {
+			return state.transactionError;
+		},
+		getTransactionStatus( state ) {
+			return state.transactionStatus;
+		},
+		getCardDataErrors( state ) {
+			return state.cardDataErrors;
+		},
+		areAllFieldsComplete( state ) {
+			return Object.keys( state.cardDataComplete ).every( key => state.cardDataComplete[ key ] );
+		},
+	};
+
+	function cardDataCompleteReducer(
+		state = {
+			cardNumber: false,
+			cardCvc: false,
+			cardExpiry: false,
+		},
+		action
+	) {
+		switch ( action?.type ) {
+			case 'CARD_DATA_COMPLETE_SET':
+				return { ...state, [ action.payload.type ]: action.payload.complete };
+			default:
+				return state;
+		}
+	}
+
+	function cardDataErrorsReducer( state = {}, action ) {
+		switch ( action?.type ) {
+			case 'CARD_DATA_ERROR_SET':
+				return { ...state, [ action.payload.type ]: action.payload.message };
+			default:
+				return state;
+		}
+	}
+
+	registerStore( 'stripe', {
+		reducer(
+			state = {
+				cardDataErrors: cardDataErrorsReducer(),
+				cardDataComplete: cardDataCompleteReducer(),
+			},
+			action
+		) {
 			switch ( action.type ) {
+				case 'STRIPE_TRANSACTION_END':
+					return {
+						...state,
+						transactionStatus: 'complete',
+					};
 				case 'STRIPE_TRANSACTION_ERROR':
 					return {
 						...state,
 						transactionStatus: 'error',
 						transactionError: action.payload,
 					};
+				case 'STRIPE_TRANSACTION_RESET':
+					return {
+						...state,
+						transactionStatus: null,
+					};
+				case 'CARDHOLDER_NAME_SET':
+					return { ...state, cardholderName: action.payload };
+				case 'BRAND_SET':
+					return { ...state, brand: action.payload };
+				case 'CARD_DATA_COMPLETE_SET':
+					return {
+						...state,
+						cardDataComplete: cardDataCompleteReducer( state.cardDataComplete, action ),
+					};
+				case 'CARD_DATA_ERROR_SET':
+					return {
+						...state,
+						cardDataErrors: cardDataErrorsReducer( state.cardDataErrors, action ),
+					};
 			}
 			return state;
 		},
 		actions,
-		selectors: {
-			getTransactionError( state ) {
-				return state.transactionError;
+		selectors,
+		controls: {
+			STRIPE_CREATE_PAYMENT_METHOD_TOKEN( action ) {
+				return createStripePaymentMethodToken( action.payload );
 			},
-			getTransactionStatus( state ) {
-				return state.transactionStatus;
+			STRIPE_TRANSACTION_BEGIN( action ) {
+				return submitTransaction( action.payload );
 			},
 		},
 	} );
+
 	return {
 		id: 'apple-pay',
 		label: <ApplePayLabel />,
@@ -222,4 +357,15 @@ function completePaymentMethodTransaction( { onSubmit, complete } ) {
 
 function getProcessorCountryFromStripeConfiguration( stripeConfiguration ) {
 	return stripeConfiguration && stripeConfiguration.processor_id === 'stripe_ie' ? 'IE' : 'US';
+}
+
+function createStripePaymentMethodToken( { stripe, name, country, postalCode, phoneNumber } ) {
+	return createStripePaymentMethod( stripe, {
+		name,
+		address: {
+			country,
+			postal_code: postalCode,
+		},
+		...( phoneNumber ? { phone: phoneNumber } : {} ),
+	} );
 }
