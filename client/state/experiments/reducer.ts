@@ -28,7 +28,7 @@ function getAnonIdFromCookie(): string | null {
 		const anonIdCookie = rawCookies[ anonCookieIndex ];
 		const anonIdTuple = anonIdCookie.split( '=' );
 
-		if ( anonIdTuple.length === 2 ) return anonIdTuple[ 1 ];
+		if ( anonIdTuple.length === 2 ) return anonIdTuple[ 1 ] === '' ? null : anonIdTuple[ 1 ];
 		if ( anonIdTuple.length > 2 ) return tail( anonIdTuple ).join( '=' );
 	}
 	return null;
