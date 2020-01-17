@@ -150,11 +150,7 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 	}
 
 	const search = new URLSearchParams( window.location.search );
-	// TODO: replace with Object.fromEntries when available (core-js@3).
-	const params = {};
-	for ( const [ key, value ] of search.entries() ) {
-		params[ key ] = value;
-	}
+	const params = Object.fromEntries( search.entries() );
 
 	const {
 		'load-user-translations': username,
