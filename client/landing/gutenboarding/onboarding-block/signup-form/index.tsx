@@ -55,7 +55,7 @@ const SignupForm = () => {
 						disabled={ status === UsePasswordlessSignUpStatus.Authenticating }
 						isPrimary
 					>
-						Sign up
+						Create your account
 					</Button>
 				</div>
 			</form>
