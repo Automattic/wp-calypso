@@ -8,7 +8,12 @@ import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import debugFactory from 'debug';
 import { useSelector, useDispatch } from 'react-redux';
-import { WPCheckout, useWpcomStore, useShoppingCart } from '@automattic/composite-checkout-wpcom';
+import {
+	WPCheckout,
+	useWpcomStore,
+	useShoppingCart,
+	FormFieldAnnotation,
+} from '@automattic/composite-checkout-wpcom';
 import { CheckoutProvider, createRegistry } from '@automattic/composite-checkout';
 
 /**
@@ -28,6 +33,11 @@ import notices from 'notices';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import { isJetpackSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import { FormCountrySelect } from 'components/forms/form-country-select';
+import getCountries from 'state/selectors/get-countries';
+import { fetchPaymentCountries } from 'state/countries/actions';
+import PhoneInput from 'components/phone-input/index.jsx';
+import { StateSelect } from 'my-sites/domains/components/form';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -84,6 +94,16 @@ export default function CompositeCheckout( {
 		debug( 'success', message );
 		notices.success( message );
 	}, [] );
+
+	const dispatch = useDispatch();
+	const countriesList = useSelector( state => getCountries( state, 'payments' ) );
+
+	useEffect( () => {
+		if ( countriesList?.length <= 0 ) {
+			debug( 'countries list is empty; dispatching request for data' );
+			dispatch( fetchPaymentCountries() );
+		}
+	}, [ countriesList, dispatch ] );
 
 	const {
 		items,
@@ -160,6 +180,10 @@ export default function CompositeCheckout( {
 				changePlanLength={ changePlanLength }
 				siteId={ siteId }
 				siteUrl={ siteSlug }
+				CountrySelectMenu={ CountrySelectMenu }
+				countriesList={ countriesList }
+				PhoneInput={ PhoneInput }
+				StateSelect={ StateSelect }
 			/>
 		</CheckoutProvider>
 	);
@@ -248,5 +272,46 @@ function useRedirectIfCartEmpty( items, redirectUrl ) {
 			debug( 'cart has become empty; redirecting...' );
 			window.location = redirectUrl;
 		}
-	}, [ items, prevItemsLength ] );
+	}, [ redirectUrl, items, prevItemsLength ] );
+}
+
+function CountrySelectMenu( {
+	translate,
+	onChange,
+	isDisabled,
+	isError,
+	errorMessage,
+	currentValue,
+	countriesList,
+} ) {
+	const countrySelectorId = 'country-selector';
+	const countrySelectorLabelId = 'country-selector-label';
+	const countrySelectorDescriptionId = 'country-selector-description';
+
+	return (
+		<FormFieldAnnotation
+			labelText={ translate( 'Country' ) }
+			isError={ isError }
+			isDisabled={ isDisabled }
+			formFieldId={ countrySelectorId }
+			labelId={ countrySelectorLabelId }
+			descriptionId={ countrySelectorDescriptionId }
+			errorDescription={ errorMessage }
+		>
+			<FormCountrySelect
+				id={ countrySelectorId }
+				countriesList={ [
+					{ code: '', name: translate( 'Select Country' ) },
+					{ code: null, name: '' },
+					...countriesList,
+				] }
+				translate={ translate }
+				onChange={ onChange }
+				disabled={ isDisabled }
+				value={ currentValue }
+				aria-labelledby={ countrySelectorLabelId }
+				aria-describedby={ countrySelectorDescriptionId }
+			/>
+		</FormFieldAnnotation>
+	);
 }

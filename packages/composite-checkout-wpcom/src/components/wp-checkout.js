@@ -42,7 +42,16 @@ const OrderReviewTitle = () => {
 	return translate( 'Review your order' );
 };
 
-export default function WPCheckout( { removeItem, changePlanLength, siteId, siteUrl } ) {
+export default function WPCheckout( {
+	removeItem,
+	changePlanLength,
+	siteId,
+	siteUrl,
+	CountrySelectMenu,
+	countriesList,
+	PhoneInput,
+	StateSelect,
+} ) {
 	const translate = useTranslate();
 	const [ itemsWithTax ] = useLineItems();
 
@@ -77,7 +86,16 @@ export default function WPCheckout( { removeItem, changePlanLength, siteId, site
 			className: 'checkout__billing-details-step',
 			hasStepNumber: true,
 			titleContent: <ContactFormTitle />,
-			activeStepContent: <WPContactForm isComplete={ false } isActive={ true } />,
+			activeStepContent: (
+				<WPContactForm
+					isComplete={ false }
+					isActive={ true }
+					CountrySelectMenu={ CountrySelectMenu }
+					countriesList={ countriesList }
+					PhoneInput={ PhoneInput }
+					StateSelect={ StateSelect }
+				/>
+			),
 			completeStepContent: <WPContactForm summary isComplete={ true } isActive={ false } />,
 			isCompleteCallback: () => isFormComplete( contactInfo, itemsWithTax ),
 			isEditableCallback: () => isFormEditable( contactInfo, itemsWithTax ),

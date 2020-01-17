@@ -16,6 +16,7 @@ export function useWpcomStore( registerStore, onEvent ) {
 		lastName: { value: '', isTouched: false, isValid: false },
 		email: { value: '', isTouched: false, isValid: false },
 		phoneNumber: { value: '', isTouched: false, isValid: true },
+		phoneNumberCountry: { value: '', isTouched: false, isValid: true },
 		address: { value: '', isTouched: false, isValid: false },
 		city: { value: '', isTouched: false, isValid: false },
 		state: { value: '', isTouched: false, isValid: false },
@@ -89,6 +90,7 @@ export function useWpcomStore( registerStore, onEvent ) {
 					country: state.contact.country,
 					postalCode: state.contact.postalCode,
 					phoneNumber: state.contact.phoneNumber,
+					phoneNumberCountry: state.contact.phoneNumberCountry,
 					vatId: state.contact.vatId,
 				};
 			},
