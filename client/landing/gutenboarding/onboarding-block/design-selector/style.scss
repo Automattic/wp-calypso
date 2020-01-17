@@ -159,6 +159,7 @@ $design-selector-selection-space: 285px;
 		justify-content: center;
 		opacity: 0;
 		transition: 400ms;
+		cursor: pointer;
 
 		.design-selector__option-overlay-text {
 			font-size: 24px;
@@ -196,6 +197,7 @@ $design-selector-selection-space: 285px;
 	position: absolute;
 	top: 0;
 	width: 100%;
+	cursor: pointer;
 }
 
 .design-selector__description-container {
