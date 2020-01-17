@@ -21,14 +21,14 @@ const memoryStore = new Map();
 export async function getAllStoredItems( pattern?: RegExp ): Promise< StoredItems > {
 	debug( 'browser-storage bypass', 'getAllStoredItems' );
 
-	// TODO: Replace below with Object.fromEntries when it's available (needs core-js@3).
-	const results: StoredItems = {};
-	for ( const [ key, value ] of memoryStore.entries() ) {
-		if ( ! pattern || pattern?.test( key ) ) {
-			results[ key ] = value;
-		}
+	// Return everything.
+	if ( ! pattern ) {
+		return Object.fromEntries( memoryStore.entries() );
 	}
-	return results;
+
+	// Return only the entries that match the pattern.
+	const entries = Array.from( memoryStore.entries() );
+	return Object.fromEntries( entries.filter( ( [ key ] ) => pattern.test( key ) ) );
 }
 
 export async function getStoredItem< T >( key: string ): Promise< T | undefined > {
