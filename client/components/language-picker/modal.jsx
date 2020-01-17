@@ -172,16 +172,14 @@ export class LanguagePickerModal extends PureComponent {
 	}
 
 	getSuggestedLanguages() {
-		// eslint-disable-next-line no-undef
-		if ( ! ( typeof navigator === 'object' && 'languages' in navigator ) ) {
+		if ( ! ( typeof window.navigator === 'object' && 'languages' in window.navigator ) ) {
 			return null;
 		}
 
 		const { languages, currentUserLocale } = this.props;
 		const suggestedLanguages = [];
 
-		// eslint-disable-next-line no-undef
-		for ( const langSlug of navigator.languages ) {
+		for ( const langSlug of window.navigator.languages ) {
 			// Find the language first by its full code (e.g. en-US), and when it fails
 			// try only the base code (en). Don't add duplicates.
 			const lcLangSlug = langSlug.toLowerCase();
