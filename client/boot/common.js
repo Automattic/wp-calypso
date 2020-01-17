@@ -124,10 +124,16 @@ const loggedInMiddleware = currentUser => {
 	}
 
 	page( '/', context => {
-		let redirectPath = 'variant' === abtest( 'redirectToCustomerHome' ) ? '/home' : '/read';
+		const { primarySiteSlug } = currentUser.get();
+		let redirectPath =
+			primarySiteSlug && 'variant' === abtest( 'redirectToCustomerHome' )
+				? `/home/${ primarySiteSlug }`
+				: '/read';
+
 		if ( context.querystring ) {
 			redirectPath += `?${ context.querystring }`;
 		}
+
 		page.redirect( redirectPath );
 	} );
 };

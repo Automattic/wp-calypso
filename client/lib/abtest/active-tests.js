@@ -148,7 +148,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	redirectToCustomerHome: {
-		datestamp: '20191220',
+		datestamp: '20200117',
 		variations: {
 			variant: 10,
 			control: 90,
