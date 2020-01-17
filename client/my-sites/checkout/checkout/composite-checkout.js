@@ -322,7 +322,11 @@ function CountrySelectMenu( {
 
 function TestingBanner() {
 	return (
-		<Card highlight="warning" href="https://github.com/Automattic/wp-calypso/issues/new">
+		<Card
+			className="composite-checkout__testing-banner"
+			highlight="warning"
+			href="https://github.com/Automattic/wp-calypso/issues/new"
+		>
 			Warning! This checkout form is a new feature, still in testing. If you encounter issues,
 			please click here to report them and select "Checkout Redesign" in the project sidebar.
 		</Card>
