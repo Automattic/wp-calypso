@@ -225,7 +225,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				.toLowerCase() }`
 		);
 		const insertedBlockSelector = By.css(
-			`.block-editor-block-list__block.is-selected[aria-label*='Block: ${ name }']`
+			`.block-editor-block-list__block.is-selected[aria-label*='${ name } Block']`
 		);
 
 		await this.openBlockInserterAndSearch( name );
