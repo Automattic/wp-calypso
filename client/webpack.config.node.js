@@ -3,12 +3,12 @@
  */
 
 /* eslint-disable import/no-nodejs-modules */
+/* eslint-disable import/no-extraneous-dependencies */
 
 /**
  * External dependencies
  */
 const path = require( 'path' );
-// eslint-disable-next-line import/no-extraneous-dependencies
 const webpack = require( 'webpack' );
 
 /**
