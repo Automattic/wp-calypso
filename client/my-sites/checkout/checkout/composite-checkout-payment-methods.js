@@ -109,8 +109,20 @@ export function createPaymentMethods( {
 	const applePayMethod =
 		isMethodEnabled( 'apple-pay', allowedPaymentMethods ) && isApplePayAvailable()
 			? createApplePayMethod( {
+					getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.country?.value,
+					getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+					getPhoneNumber: () => select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
 					registerStore,
 					fetchStripeConfiguration: args => fetchStripeConfiguration( args, wpcom ),
+					submitTransaction: submitData =>
+						sendStripeTransaction(
+							{
+								...submitData,
+								siteId: select( 'wpcom' )?.getSiteId?.(),
+								domainDetails: getDomainDetails( select ),
+							},
+							wpcom
+						),
 			  } )
 			: null;
 
