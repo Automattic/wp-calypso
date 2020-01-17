@@ -6,6 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import config from 'config';
 import titlecase from 'to-title-case';
 import Gridicon from 'components/gridicon';
 import { head, split } from 'lodash';
@@ -15,6 +16,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import AsyncLoad from 'components/async-load';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
@@ -331,6 +333,9 @@ class ThemeSheet extends React.Component {
 
 		return (
 			<div className="theme__sheet-content">
+				{ config.isEnabled( 'jitms' ) && this.props.siteSlug && (
+					<AsyncLoad require="blocks/jitm" messagePath={ 'calypso:theme:admin_notices' } />
+				) }
 				{ this.renderSectionNav( section ) }
 				{ activeSection }
 				<div className="theme__sheet-footer-line">
