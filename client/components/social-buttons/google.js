@@ -88,6 +88,8 @@ class GoogleLoginButton extends Component {
 			ux_mode: this.props.uxMode,
 			redirect_uri: this.props.redirectUri,
 		} );
+
+		// eslint-disable-next-line require-atomic-updates
 		auth2InitDone = true;
 	}
 
