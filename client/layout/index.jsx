@@ -44,6 +44,7 @@ import KeyboardShortcutsMenu from 'lib/keyboard-shortcuts/menu';
 import SupportUser from 'support/support-user';
 import { isCommunityTranslatorEnabled } from 'components/community-translator/utils';
 import { isE2ETest } from 'lib/e2e';
+import { getMessagePathForJITM } from 'lib/route';
 import BodySectionCssClass from './body-section-css-class';
 import { retrieveMobileRedirect } from 'jetpack-connect/persistence-utils';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
@@ -147,7 +148,7 @@ class Layout extends Component {
 					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
 						<AsyncLoad
 							require="blocks/jitm"
-							messagePath={ `calypso:${ this.props.sectionName }:admin_notices` }
+							messagePath={ `calypso:${ this.props.sectionJitmPath }:admin_notices` }
 							sectionName={ this.props.sectionName }
 						/>
 					) }
@@ -193,6 +194,7 @@ export default connect( state => {
 	const sectionName = getSectionName( state );
 	const currentRoute = getCurrentRoute( state );
 	const siteId = getSelectedSiteId( state );
+	const sectionJitmPath = getMessagePathForJITM( currentRoute );
 	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
 	const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
 	const noMasterbarForRoute = isJetpackLogin || currentRoute === '/me/account/closed';
@@ -218,6 +220,7 @@ export default connect( state => {
 		isSupportSession: isSupportSession( state ),
 		sectionGroup,
 		sectionName,
+		sectionJitmPath,
 		hasSidebar: hasSidebar( state ),
 		isOffline: isOffline( state ),
 		currentLayoutFocus: getCurrentLayoutFocus( state ),

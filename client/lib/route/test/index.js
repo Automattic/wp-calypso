@@ -5,6 +5,7 @@
 /**
  * External dependencies
  */
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { expect } from 'chai';
 
 /**
@@ -460,6 +461,16 @@ describe( 'route', function() {
 					'/domains/manage'
 				);
 			} );
+		} );
+	} );
+
+	describe( 'getMessagePathForJITM', function() {
+		test( 'strips starting and ending slash from path', function() {
+			expect( route.getMessagePathForJITM( '/test/' ) ).to.equal( 'test' );
+		} );
+
+		test( 'converts internal slashes to dashes', function() {
+			expect( route.getMessagePathForJITM( 'test/path/to/site' ) ).to.equal( 'test-path-to-site' );
 		} );
 	} );
 } );
