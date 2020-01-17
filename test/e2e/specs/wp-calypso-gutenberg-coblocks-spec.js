@@ -211,7 +211,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 
 		step( 'Can insert the Pricing Table block', async function() {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			await gEditorComponent.addBlock( 'Pricing Table Item' );
+			await gEditorComponent.addBlock( 'Pricing Table' );
 			return await driverHelper.waitTillPresentAndDisplayed(
 				driver,
 				By.css( '.wp-block-coblocks-pricing-table' )
