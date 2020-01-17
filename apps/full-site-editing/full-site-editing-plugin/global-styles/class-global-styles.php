@@ -107,7 +107,7 @@ class Global_Styles {
 		'Fira Sans',
 		'Fredoka One',
 		'Inconsolata',
-		'Josefin',
+		'Josefin Sans',
 		'Kalam',
 		'Karla',
 		'Kavivanar',
