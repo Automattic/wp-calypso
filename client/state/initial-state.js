@@ -189,8 +189,10 @@ async function persistentStoreState( reduxStateKey, storageKey, state, _timestam
 		reduxStateKey += ':' + storageKey;
 	}
 
-	stateCache[ reduxStateKey ] = { ...state, _timestamp };
-	return await setStoredItem( reduxStateKey, stateCache[ reduxStateKey ] );
+	const newState = { ...state, _timestamp };
+	const result = await setStoredItem( reduxStateKey, newState );
+	stateCache[ reduxStateKey ] = newState;
+	return result;
 }
 
 export function persistOnChange( reduxStore ) {
