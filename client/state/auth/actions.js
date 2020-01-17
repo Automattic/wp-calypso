@@ -5,6 +5,19 @@ import { LOGIN_EMAIL_SEND } from 'state/action-types';
 import { getLanguage, getLocaleSlug } from 'lib/i18n-utils';
 import 'state/data-layer/wpcom/auth/send-login-email';
 
+/**
+ * Sends an email with a link that allows a user to login WordPress.com or the native apps
+ *
+ * @param {string}  email - email to send to
+ * @param {object}  options object:
+ * {string} redirectTo - url to redirect to after login
+ * {boolean} loginFormFlow - if true, dispatches actions associated with passwordless login
+ * {boolean} requestLoginEmailFormFlow - if true, dispatches actions associated with email me login
+ * {boolean} isMobileAppLogin - if true, will send an email that allows login to the native apps
+ * {boolean} showGlobalNotices - if true, displays global notices to user about the email
+ *
+ * @returns {object} action object
+ */
 export const sendEmailLogin = (
 	email,
 	{
