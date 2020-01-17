@@ -6,6 +6,7 @@
  * Internal Dependencies
  */
 import reducer from '../reducer';
+import { CURRENT_USER_RECEIVE, EXPERIMENT_ASSIGN, EXPERIMENT_FETCH } from 'state/action-types';
 
 describe( 'Experiment Reducer', () => {
 	describe( 'Init Action', () => {
@@ -61,6 +62,55 @@ describe( 'Experiment Reducer', () => {
 			} );
 			const state = reducer( undefined, { type: '@@INIT' } );
 			expect( state ).toHaveProperty( 'anonId', null );
+		} );
+	} );
+
+	describe( 'Assignment Action', () => {
+		const exampleState = () => ( {
+			anonId: null,
+			isLoading: true,
+			nextRefresh: 123,
+			tests: null,
+		} );
+
+		const action = ( tests, nextRefresh ) => ( {
+			type: EXPERIMENT_ASSIGN,
+			tests,
+			nextRefresh,
+		} );
+
+		test( 'It should assign the experiments', () => {
+			const state = reducer( exampleState(), action( { abc: '123' }, 456 ) );
+			expect( state ).toEqual( {
+				...exampleState(),
+				isLoading: false,
+				nextRefresh: 456,
+				tests: { abc: '123' },
+			} );
+		} );
+	} );
+
+	describe( 'Fetch Action', () => {
+		test( 'It should flip the loading state', () => {
+			const state = reducer( { isLoading: false }, { type: EXPERIMENT_FETCH } );
+			expect( state ).toHaveProperty( 'isLoading', true );
+		} );
+	} );
+
+	describe( 'User recieve action', () => {
+		test( 'It should reset the assignments, except for the anonId', () => {
+			const initialState = {
+				anonId: 'hello world',
+				isLoading: false,
+				nextRefresh: 123,
+				tests: {
+					example: 'abc',
+				},
+			};
+			const state = reducer( initialState, { type: CURRENT_USER_RECEIVE } );
+			expect( state ).toHaveProperty( 'anonId', initialState.anonId );
+			expect( state ).toHaveProperty( 'tests', null );
+			expect( state ).toHaveProperty( 'isLoading', true );
 		} );
 	} );
 } );

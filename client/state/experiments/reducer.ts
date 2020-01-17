@@ -56,10 +56,12 @@ export default function reducer( state: ExperimentState = resetState( null ), ac
 		 * Store the user's assignment from the API
 		 */
 		case EXPERIMENT_ASSIGN:
-			( action as ExperimentAssign ).nextRefresh =
-				Date.now() + ( action as ExperimentAssign ).nextRefresh;
-			state.isLoading = false;
-			state = { ...state, ...( action as ExperimentAssign ) };
+			state = {
+				...state,
+				isLoading: false,
+				tests: ( action as ExperimentAssign ).tests,
+				nextRefresh: ( action as ExperimentAssign ).nextRefresh,
+			};
 			break;
 
 		/**
