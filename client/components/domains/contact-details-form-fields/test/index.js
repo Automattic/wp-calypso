@@ -14,6 +14,7 @@ import { noop, omit } from 'lodash';
  * Internal dependencies
  */
 import { ContactDetailsFormFields } from '../';
+import FormButton from '../../../../components/forms/form-button';
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,
@@ -67,6 +68,14 @@ describe( 'ContactDetailsFormFields', () => {
 			expect( wrapper.find( '[name="first-name"]' ) ).toHaveLength( 1 );
 			expect( wrapper.find( '[name="last-name"]' ) ).toHaveLength( 1 );
 			expect( wrapper.find( '[name="phone"]' ) ).toHaveLength( 1 );
+		} );
+	} );
+
+	describe( 'onSubmit prop is undefined', () => {
+		test( 'should not render Submit button', () => {
+			const newProps = { ...defaultProps, onSubmit: undefined };
+			const wrapper = shallow( <ContactDetailsFormFields { ...newProps } /> );
+			expect( wrapper.find( FormButton ) ).toHaveLength( 0 );
 		} );
 	} );
 

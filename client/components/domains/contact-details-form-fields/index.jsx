@@ -80,7 +80,7 @@ export class ContactDetailsFormFields extends Component {
 		needsFax: PropTypes.bool,
 		getIsFieldDisabled: PropTypes.func,
 		onContactDetailsChange: PropTypes.func,
-		onSubmit: PropTypes.func.isRequired,
+		onSubmit: PropTypes.func,
 		onValidate: PropTypes.func,
 		onSanitize: PropTypes.func,
 		labelTexts: PropTypes.object,
@@ -493,13 +493,15 @@ export class ContactDetailsFormFields extends Component {
 				<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
 
 				<FormFooter>
-					<FormButton
-						className="contact-details-form-fields__submit-button"
-						disabled={ ! countryCode || disableSubmitButton }
-						onClick={ this.handleSubmitButtonClick }
-					>
-						{ labelTexts.submitButton || translate( 'Submit' ) }
-					</FormButton>
+					{ this.props.onSubmit && (
+						<FormButton
+							className="contact-details-form-fields__submit-button"
+							disabled={ ! countryCode || disableSubmitButton }
+							onClick={ this.handleSubmitButtonClick }
+						>
+							{ labelTexts.submitButton || translate( 'Submit' ) }
+						</FormButton>
+					) }
 					{ onCancel && (
 						<FormButton
 							className="contact-details-form-fields__cancel-button"
