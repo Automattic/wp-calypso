@@ -1,3 +1,7 @@
+# next
+
+- Upgrade [mini-css-extract-plugin-with-rtl](https://github.com/Automattic/mini-css-extract-plugin-with-rtl) to 0.8.0, use an npm-published version instead of GitHub branch reference
+
 # 6.0.0
 
 - Breaking Change: Replace `copy-styles` with a generic `copy-assets` script to handle both styles and images.
