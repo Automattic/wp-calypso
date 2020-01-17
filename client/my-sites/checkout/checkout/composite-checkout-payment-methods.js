@@ -115,7 +115,7 @@ export function createPaymentMethods( {
 					registerStore,
 					fetchStripeConfiguration: args => fetchStripeConfiguration( args, wpcom ),
 					submitTransaction: submitData =>
-						sendStripeTransaction(
+						submitApplePayPayment(
 							{
 								...submitData,
 								siteId: select( 'wpcom' )?.getSiteId?.(),
@@ -203,6 +203,17 @@ async function submitExistingCardPayment( transactionData, wpcom ) {
 		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
 	} );
 	debug( 'submitting existing card transaction', formattedTransactionData );
+	return wpcom.transactions( formattedTransactionData );
+}
+
+async function submitApplePayPayment( transactionData, wpcom ) {
+	debug( 'formatting existing card transaction', transactionData );
+	const formattedTransactionData = formatDataForTransactionsEndpoint( {
+		...transactionData,
+		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
+		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
+	} );
+	debug( 'submitting apple-pay transaction', formattedTransactionData );
 	return wpcom.transactions( formattedTransactionData );
 }
 
