@@ -35,6 +35,7 @@ import { isJetpackSite, isCurrentPlanPaid } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { preventWidows } from 'lib/formatting';
 import scrollTo from 'lib/scroll-to';
+import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import isVipSite from 'state/selectors/is-vip-site';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
@@ -284,9 +285,14 @@ export class SiteSettingsFormGeneral extends Component {
 			handleRadio,
 			isRequestingSettings,
 			eventTracker,
+			siteIsAtomic,
 			siteIsJetpack,
 			translate,
 		} = this.props;
+
+		const showPrivateSiteOption =
+			! siteIsJetpack ||
+			( siteIsAtomic && config.isEnabled( 'private-site/force-option-on-atomic' ) );
 
 		return (
 			<FormFieldset>
@@ -324,7 +330,7 @@ export class SiteSettingsFormGeneral extends Component {
 					) }
 				</FormSettingExplanation>
 
-				{ ! siteIsJetpack && (
+				{ showPrivateSiteOption && (
 					<div>
 						<FormLabel>
 							<FormRadio
@@ -575,6 +581,7 @@ const connectComponent = connect(
 		return {
 			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
 			needsVerification: ! isCurrentUserEmailVerified( state ),
+			siteIsAtomic: isSiteWpcomAtomic( state, siteId ),
 			siteIsJetpack,
 			siteIsVip: isVipSite( state, siteId ),
 			siteSlug: getSelectedSiteSlug( state ),
