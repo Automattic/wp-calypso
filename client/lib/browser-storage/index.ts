@@ -4,10 +4,12 @@
 import { once } from 'lib/memoize-last';
 import {
 	getStoredItem as bypassGet,
+	getAllStoredItems as bypassGetAll,
 	setStoredItem as bypassSet,
 	clearStorage as bypassClear,
 	activate as activateBypass,
 } from './bypass';
+import { StoredItems } from './types';
 
 let shouldBypass = false;
 
@@ -18,7 +20,7 @@ const STORE_NAME = 'calypso_store';
 const SANITY_TEST_KEY = 'browser-storage-sanity-test';
 
 const getDB = once( () => {
-	const request = indexedDB.open( DB_NAME, DB_VERSION );
+	const request = window.indexedDB.open( DB_NAME, DB_VERSION );
 	return new Promise< IDBDatabase >( ( resolve, reject ) => {
 		try {
 			if ( request ) {
@@ -39,7 +41,7 @@ const getDB = once( () => {
 	} );
 } );
 
-const supportsIDB = once( async () => {
+export const supportsIDB = once( async () => {
 	if ( typeof window === 'undefined' || ! window.indexedDB ) {
 		return false;
 	}
@@ -71,6 +73,43 @@ function idbGet< T >( key: string ): Promise< T | undefined > {
 			} )
 			.catch( err => reject( err ) );
 	} );
+}
+
+type EventTargetWithCursorResult = EventTarget & { result: IDBCursorWithValue | null };
+
+function idbGetAll( pattern?: RegExp ): Promise< StoredItems > {
+	return getDB().then(
+		db =>
+			new Promise( ( resolve, reject ) => {
+				const results: StoredItems = {};
+				const transaction = db.transaction( STORE_NAME, 'readonly' );
+				const getAll = transaction.objectStore( STORE_NAME ).openCursor();
+
+				const success = ( event: Event ) => {
+					const cursor = ( event.target as EventTargetWithCursorResult ).result;
+					if ( cursor ) {
+						const { primaryKey: key, value } = cursor;
+						if (
+							key &&
+							typeof key === 'string' &&
+							key !== SANITY_TEST_KEY &&
+							( ! pattern || pattern.test( key ) )
+						) {
+							results[ key ] = value;
+						}
+						cursor.continue();
+					} else {
+						// No more results.
+						resolve( results );
+					}
+				};
+				const error = () => reject( transaction.error );
+
+				getAll.onsuccess = success;
+				transaction.onabort = error;
+				transaction.onerror = error;
+			} )
+	);
 }
 
 function idbSet< T >( key: string, value: T ): Promise< void > {
@@ -135,7 +174,7 @@ export async function getStoredItem< T >( key: string ): Promise< T | undefined 
 
 	const idbSupported = await supportsIDB();
 	if ( ! idbSupported ) {
-		const valueString = localStorage.getItem( key );
+		const valueString = window.localStorage.getItem( key );
 		if ( valueString === undefined || valueString === null ) {
 			return undefined;
 		}
@@ -144,6 +183,34 @@ export async function getStoredItem< T >( key: string ): Promise< T | undefined 
 	}
 
 	return await idbGet( key );
+}
+
+/**
+ * Get all stored items.
+ *
+ * @param pattern The pattern to match on returned item keys.
+ * @returns A promise with the stored key/value pairs as an object. Empty if none.
+ */
+export async function getAllStoredItems( pattern?: RegExp ): Promise< StoredItems > {
+	if ( shouldBypass ) {
+		return await bypassGetAll( pattern );
+	}
+
+	const idbSupported = await supportsIDB();
+	if ( ! idbSupported ) {
+		const entries = Object.entries( window.localStorage ).map( ( [ key, value ] ) => [
+			key,
+			value !== undefined ? JSON.parse( value ) : undefined,
+		] );
+
+		if ( ! pattern ) {
+			return Object.fromEntries( entries );
+		}
+
+		return Object.fromEntries( entries.filter( ( [ key ] ) => pattern.test( key ) ) );
+	}
+
+	return await idbGetAll( pattern );
 }
 
 /**
@@ -160,7 +227,7 @@ export async function setStoredItem< T >( key: string, value: T ): Promise< void
 
 	const idbSupported = await supportsIDB();
 	if ( ! idbSupported ) {
-		localStorage.setItem( key, JSON.stringify( value ) );
+		window.localStorage.setItem( key, JSON.stringify( value ) );
 		return;
 	}
 
@@ -179,7 +246,7 @@ export async function clearStorage(): Promise< void > {
 
 	const idbSupported = await supportsIDB();
 	if ( ! idbSupported ) {
-		localStorage.clear();
+		window.localStorage.clear();
 		return;
 	}
 

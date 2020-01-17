@@ -194,6 +194,7 @@
 		"eslint-plugin-react": "7.17.0",
 		"eslint-plugin-wpcalypso": "file:./packages/eslint-plugin-wpcalypso",
 		"exports-loader": "0.7.0",
+		"fake-indexeddb": "3.0.0",
 		"glob": "7.1.6",
 		"globby": "10.0.1",
 		"gzip-size": "5.1.1",
