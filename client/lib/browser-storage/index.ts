@@ -86,14 +86,14 @@ function idbGetAll( pattern?: RegExp ): Promise< StoredItems > {
 				const getAll = transaction.objectStore( STORE_NAME ).openCursor();
 
 				const success = ( event: Event ) => {
-					const cursor = ( event?.target as EventTargetWithCursorResult )?.result;
+					const cursor = ( event.target as EventTargetWithCursorResult ).result;
 					if ( cursor ) {
 						const { primaryKey: key, value } = cursor;
 						if (
 							key &&
 							typeof key === 'string' &&
 							key !== SANITY_TEST_KEY &&
-							( ! pattern || pattern?.test( key ) )
+							( ! pattern || pattern.test( key ) )
 						) {
 							results[ key ] = value;
 						}
