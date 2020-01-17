@@ -42,6 +42,8 @@ import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { getGSuiteSupportedDomains } from 'lib/gsuite';
 import { localizeUrl } from 'lib/i18n-utils';
+import userAgent from 'lib/user-agent';
+import { isDesktop, isMobile } from 'lib/viewport';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actions';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
@@ -324,6 +326,42 @@ class Home extends Component {
 		);
 	}
 
+	renderGoMobile = () => {
+		const { translate } = this.props;
+		const { isiPad, isiPod, isiPhone, isAndroid } = userAgent;
+		const isIos = isiPad || isiPod || isiPhone;
+		const showIosBadge = isDesktop() || isIos || ! isAndroid;
+		const showAndroidBadge = isDesktop() || isAndroid || ! isIos;
+		return (
+			<Card className="customer-home__go-mobile">
+				<CardHeading>{ translate( 'Go Mobile' ) }</CardHeading>
+				<h6 className="customer-home__card-subheader">{ translate( 'Make updates on the go' ) }</h6>
+				<div className="customer-home__card-button-pair customer-home__card-mobile">
+					{ showIosBadge && (
+						<AppsBadge
+							storeLink="https://apps.apple.com/app/apple-store/id335703880?pt=299112&ct=calypso-customer-home&mt=8"
+							storeName={ 'ios' }
+							titleText={ translate( 'Download the WordPress iOS mobile app.' ) }
+							altText={ translate( 'Apple App Store download badge' ) }
+						>
+							<img src={ appleStoreLogo } alt="" />
+						</AppsBadge>
+					) }
+					{ showAndroidBadge && (
+						<AppsBadge
+							storeLink="https://play.google.com/store/apps/details?id=org.wordpress.android&referrer=utm_source%3Dcalypso-customer-home%26utm_medium%3Dweb%26utm_campaign%3Dmobile-download-promo-pages"
+							storeName={ 'android' }
+							titleText={ translate( 'Download the WordPress Android mobile app.' ) }
+							altText={ translate( 'Google Play Store download badge' ) }
+						>
+							<img src={ googlePlayLogo } alt="" />
+						</AppsBadge>
+					) }
+				</div>
+			</Card>
+		);
+	};
+
 	renderCustomerHome = () => {
 		const {
 			displayChecklist,
@@ -357,6 +395,9 @@ class Home extends Component {
 		return (
 			<div className="customer-home__layout">
 				<div className="customer-home__layout-col customer-home__layout-col-left">
+					{ // "Go Mobile" has the highest priority placement when viewed in smaller viewports, so folks
+					// can see it on their phone without needing to scroll.
+					isMobile() && this.renderGoMobile() }
 					{ displayChecklist ? (
 						<>
 							<Card className="customer-home__card-checklist-heading">
@@ -561,30 +602,8 @@ class Home extends Component {
 							</VerticalNav>
 						</div>
 					</Card>
-					<Card className="customer-home__go-mobile">
-						<CardHeading>{ translate( 'Go Mobile' ) }</CardHeading>
-						<h6 className="customer-home__card-subheader">
-							{ translate( 'Make updates on the go' ) }
-						</h6>
-						<div className="customer-home__card-button-pair customer-home__card-mobile">
-							<AppsBadge
-								storeLink="https://apps.apple.com/app/apple-store/id335703880?pt=299112&ct=calypso-customer-home&mt=8"
-								storeName={ 'ios' }
-								titleText={ translate( 'Download the WordPress iOS mobile app.' ) }
-								altText={ translate( 'Apple App Store download badge' ) }
-							>
-								<img src={ appleStoreLogo } alt="" />
-							</AppsBadge>
-							<AppsBadge
-								storeLink="https://play.google.com/store/apps/details?id=org.wordpress.android&referrer=utm_source%3Dcalypso-customer-home%26utm_medium%3Dweb%26utm_campaign%3Dmobile-download-promo-pages"
-								storeName={ 'android' }
-								titleText={ translate( 'Download the WordPress Android mobile app.' ) }
-								altText={ translate( 'Google Play Store download badge' ) }
-							>
-								<img src={ googlePlayLogo } alt="" />
-							</AppsBadge>
-						</div>
-					</Card>
+					{ // "Go Mobile" has the lowest priority placement when viewed in bigger viewports.
+					isDesktop() && this.renderGoMobile() }
 				</div>
 			</div>
 		);
