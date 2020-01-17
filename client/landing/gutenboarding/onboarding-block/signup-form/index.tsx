@@ -13,6 +13,7 @@ import {
 	Client,
 } from '@automattic/authentication';
 import { Button, TextControl, Modal } from '@wordpress/components';
+import FormLabel from 'components/forms/form-label';
 
 import './style.scss';
 
@@ -36,7 +37,7 @@ const SignupForm = () => {
 	return (
 		<Modal className="signup-form" title="Sign up to save your changes" onRequestClose={ () => {} }>
 			<form onSubmit={ handleSignUp }>
-				<label htmlFor="email">Your Email Address</label>
+				<FormLabel htmlFor="email">Your Email Address</FormLabel>
 				<TextControl
 					id="email"
 					value={ emailVal }
