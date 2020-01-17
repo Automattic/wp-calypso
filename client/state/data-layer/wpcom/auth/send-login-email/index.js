@@ -7,20 +7,43 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { MOBILE_APPS_LOGIN_EMAIL_SEND } from 'state/action-types';
+import {
+	MOBILE_APPS_LOGIN_EMAIL_SEND,
+	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH,
+	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
+	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
+	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR,
+} from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import { infoNotice, errorNotice, successNotice, removeNotice } from 'state/notices/actions';
+import { recordTracksEventWithClientId } from 'state/analytics/actions';
 import config from 'config';
 
 export const sendLoginEmail = action => {
-	const { email, lang_id, locale, redirect_to, showGlobalNotices, actionsOnAPIFetch = [] } = action;
+	const {
+		email,
+		lang_id,
+		locale,
+		redirect_to,
+		showGlobalNotices,
+		loginFormFlow,
+		requestLoginEmailFormFlow,
+	} = action;
 	const noticeAction = showGlobalNotices
 		? infoNotice( translate( 'Sending email' ), { duration: 4000 } )
 		: null;
 	return [
 		...( showGlobalNotices ? [ noticeAction ] : [] ),
-		...actionsOnAPIFetch,
+		...( loginFormFlow || requestLoginEmailFormFlow
+			? [ { type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH } ]
+			: [] ),
+		...( requestLoginEmailFormFlow
+			? [ recordTracksEventWithClientId( 'calypso_login_email_link_submit' ) ]
+			: [] ),
+		...( loginFormFlow
+			? [ recordTracksEventWithClientId( 'calypso_login_block_login_form_send_magic_link' ) ]
+			: [] ),
 		http(
 			{
 				path: `/auth/send-login-email`,
@@ -43,11 +66,24 @@ export const sendLoginEmail = action => {
 };
 
 export const onSuccess = ( {
+	email,
 	showGlobalNotices,
 	infoNoticeId = null,
-	actionsOnAPISuccess = [],
+	loginFormFlow,
+	requestLoginEmailFormFlow,
 } ) => [
-	...actionsOnAPISuccess,
+	...( loginFormFlow || requestLoginEmailFormFlow
+		? [
+				{ type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS },
+				{ type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE, email },
+		  ]
+		: [] ),
+	...( requestLoginEmailFormFlow
+		? [ recordTracksEventWithClientId( 'calypso_login_email_link_success' ) ]
+		: [] ),
+	...( loginFormFlow
+		? [ recordTracksEventWithClientId( 'calypso_login_block_login_form_send_magic_link_success' ) ]
+		: [] ),
 	// Default Global Notice Handling
 	...( showGlobalNotices
 		? [
@@ -60,36 +96,38 @@ export const onSuccess = ( {
 ];
 
 export const onError = (
-	{ showGlobalNotices, infoNoticeId = null, actionsOnAPIError = [] },
+	{ showGlobalNotices, infoNoticeId = null, loginFormFlow, requestLoginEmailFormFlow },
 	error
-) => {
-	const decoratedActions = actionsOnAPIError.map( action => {
-		if ( action.type === 'MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR' ) {
-			return {
-				...action,
-				error: error.message,
-			};
-		}
-
-		return {
-			...action,
-			error_code: error.error,
-			error_message: error.message,
-		};
-	} );
-	return [
-		...decoratedActions,
-		// Default Global Notice Handling
-		...( showGlobalNotices
-			? [
-					removeNotice( infoNoticeId ),
-					errorNotice( translate( 'Sorry, we couldn’t send the email.' ), {
-						duration: 4000,
-					} ),
-			  ]
-			: [] ),
-	];
-};
+) => [
+	...( loginFormFlow || requestLoginEmailFormFlow
+		? [ { type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR, error: error.message } ]
+		: [] ),
+	...( requestLoginEmailFormFlow
+		? [
+				recordTracksEventWithClientId( 'calypso_login_email_link_failure', {
+					error_code: error.error,
+					error_message: error.message,
+				} ),
+		  ]
+		: [] ),
+	...( loginFormFlow
+		? [
+				recordTracksEventWithClientId( 'calypso_login_block_login_form_send_magic_link_failure', {
+					error_code: error.error,
+					error_message: error.message,
+				} ),
+		  ]
+		: [] ),
+	// Default Global Notice Handling
+	...( showGlobalNotices
+		? [
+				removeNotice( infoNoticeId ),
+				errorNotice( translate( 'Sorry, we couldn’t send the email.' ), {
+					duration: 4000,
+				} ),
+		  ]
+		: [] ),
+];
 
 registerHandlers( 'state/data-layer/wpcom/auth/send-login-email/index.js', {
 	[ MOBILE_APPS_LOGIN_EMAIL_SEND ]: [

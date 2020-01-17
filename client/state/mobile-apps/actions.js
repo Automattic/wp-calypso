@@ -10,9 +10,8 @@ export const sendMobileEmailLogin = (
 	{
 		redirectTo,
 		showGlobalNotices = false,
-		actionsOnAPIFetch = [],
-		actionsOnAPISuccess = [],
-		actionsOnAPIError = [],
+		loginFormFlow = false,
+		requestLoginEmailFormFlow = false,
 	}
 ) => {
 	//Kind of weird usage, but this is a straight port from undocumented.js for now.
@@ -27,8 +26,7 @@ export const sendMobileEmailLogin = (
 		lang_id,
 		redirect_to: redirectTo,
 		showGlobalNotices,
-		actionsOnAPIFetch,
-		actionsOnAPISuccess,
-		actionsOnAPIError,
+		loginFormFlow,
+		requestLoginEmailFormFlow,
 	};
 };

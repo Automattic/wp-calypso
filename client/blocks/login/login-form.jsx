@@ -52,12 +52,6 @@ import SocialLoginForm from './social';
 import { localizeUrl } from 'lib/i18n-utils';
 import TextControl from 'extensions/woocommerce/components/text-control';
 import { sendMobileEmailLogin } from 'state/mobile-apps/actions';
-import {
-	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR,
-	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH,
-	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
-	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
-} from 'state/action-types';
 
 export class LoginForm extends Component {
 	static propTypes = {
@@ -139,23 +133,7 @@ export class LoginForm extends Component {
 		if ( ! this.props.hasAccountTypeLoaded && isPasswordlessAccount( nextProps.accountType ) ) {
 			this.props.sendMobileEmailLogin( this.state.usernameOrEmail, {
 				redirectTo: nextProps.redirectTo,
-				actionsOnAPIFetch: [
-					{ type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH },
-					recordTracksEvent( 'calypso_login_block_login_form_send_magic_link' ),
-				],
-				actionsOnAPISuccess: [
-					{ type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS },
-					{
-						type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
-						email: this.state.usernameOrEmail,
-					},
-					recordTracksEvent( 'calypso_login_block_login_form_send_magic_link_success' ),
-				],
-				//these are decorated with error info in client/state/data-layer/wpcom/auth/send-login-email/index.js
-				actionsOnAPIError: [
-					{ type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR },
-					recordTracksEvent( 'calypso_login_block_login_form_send_magic_link_failure' ),
-				],
+				loginFormFlow: true,
 			} );
 
 			page( login( { isNative: true, twoFactorAuthType: 'link' } ) );

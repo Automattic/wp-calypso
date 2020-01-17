@@ -29,12 +29,6 @@ import Notice from 'components/notice';
 import { localize } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { sendMobileEmailLogin } from 'state/mobile-apps/actions';
-import {
-	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR,
-	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH,
-	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
-	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
-} from 'state/action-types';
 
 class RequestLoginEmailForm extends React.Component {
 	static propTypes = {
@@ -89,24 +83,9 @@ class RequestLoginEmailForm extends React.Component {
 			return;
 		}
 
-		this.props.recordTracksEvent( 'calypso_login_email_link_submit' );
-
 		this.props.sendMobileEmailLogin( usernameOrEmail, {
 			redirectTo: this.props.redirectTo,
-			actionsOnAPIFetch: [ { type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH } ],
-			actionsOnAPISuccess: [
-				{ type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS },
-				{
-					type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
-					email: usernameOrEmail,
-				},
-				recordTracksEvent( 'calypso_login_email_link_success' ),
-			],
-			//these are decorated with error info in client/state/data-layer/wpcom/auth/send-login-email/index.js
-			actionsOnAPIError: [
-				{ type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR },
-				recordTracksEvent( 'calypso_login_email_link_failure' ),
-			],
+			requestLoginEmailFormFlow: true,
 		} );
 	};
 
