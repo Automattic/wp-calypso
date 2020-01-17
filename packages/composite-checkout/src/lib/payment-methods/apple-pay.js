@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import { useLineItems } from '../../public-api';
+import { useLineItems, useDispatch, useMessages } from '../../public-api';
 import { useLocalize } from '../../lib/localize';
 import PaymentRequestButton from '../../components/payment-request-button';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
@@ -36,24 +36,13 @@ export function createApplePayMethod( {
 		*beginStripeTransaction( payload ) {
 			let stripeResponse;
 			try {
-				// TODO: this comes from the paymentRequest
-				const paymentMethodToken = yield {
-					type: 'STRIPE_CREATE_PAYMENT_METHOD_TOKEN',
-					payload: {
-						...payload,
-						country: getCountry(),
-						postalCode: getPostalCode(),
-						phoneNumber: getPhoneNumber(),
-					},
-				};
-				debug( 'stripe payment token created' );
 				stripeResponse = yield {
 					type: 'STRIPE_TRANSACTION_BEGIN',
 					payload: {
 						...payload,
 						country: getCountry(),
 						postalCode: getPostalCode(),
-						paymentMethodToken,
+						phoneNumber: getPhoneNumber(),
 					},
 				};
 				debug( 'stripe transaction complete', stripeResponse );
@@ -136,10 +125,39 @@ export function ApplePayLabel() {
 export function ApplePaySubmitButton( { disabled } ) {
 	const localize = useLocalize();
 	const paymentRequestOptions = usePaymentRequestOptions();
-	const { setFormComplete } = useFormStatus();
+	const [ items, total ] = useLineItems();
+	const { stripe, stripeConfiguration } = useStripe();
+	const { setFormSubmitting } = useFormStatus();
+	const { showErrorMessage } = useMessages();
+	const { beginStripeTransaction, resetTransaction } = useDispatch( 'apple-pay' );
+	const onSubmit = useCallback(
+		( { name, paymentMethodToken } ) =>
+			submitStripePayment( {
+				name,
+				paymentMethodToken,
+				items,
+				total,
+				stripe,
+				stripeConfiguration,
+				showErrorMessage,
+				beginStripeTransaction,
+				setFormSubmitting,
+				resetTransaction,
+			} ),
+		[
+			beginStripeTransaction,
+			items,
+			total,
+			stripe,
+			stripeConfiguration,
+			showErrorMessage,
+			setFormSubmitting,
+			resetTransaction,
+		]
+	);
 	const { paymentRequest, canMakePayment } = useStripePaymentRequest( {
 		paymentRequestOptions,
-		onSubmit: setFormComplete, // TODO: change this to submit data to transactions endpoint
+		onSubmit,
 	} );
 
 	if ( ! canMakePayment ) {
@@ -237,8 +255,8 @@ function useStripePaymentRequest( { paymentRequestOptions, onSubmit } ) {
 	const [ paymentRequest, setPaymentRequest ] = useState();
 
 	// We have to memoize this to prevent re-creating the paymentRequest
-	const callback = useMemo(
-		() => paymentMethodResponse => {
+	const callback = useCallback(
+		paymentMethodResponse => {
 			completePaymentMethodTransaction( {
 				onSubmit,
 				...paymentMethodResponse,
@@ -279,11 +297,44 @@ function getPaymentRequestTotalFromTotal( total ) {
 	};
 }
 
-function completePaymentMethodTransaction( { onSubmit, complete } ) {
-	onSubmit();
+function completePaymentMethodTransaction( { onSubmit, complete, paymentMethod, payerName } ) {
+	onSubmit( { paymentMethodToken: paymentMethod.id, name: payerName } );
 	complete( 'success' );
 }
 
 function getProcessorCountryFromStripeConfiguration( stripeConfiguration ) {
 	return stripeConfiguration && stripeConfiguration.processor_id === 'stripe_ie' ? 'IE' : 'US';
+}
+
+async function submitStripePayment( {
+	name,
+	paymentMethodToken,
+	items,
+	total,
+	stripe,
+	stripeConfiguration,
+	showErrorMessage,
+	beginStripeTransaction,
+	setFormSubmitting,
+	setFormReady,
+	resetTransaction,
+} ) {
+	debug( 'submitting stripe payment with key', paymentMethodToken );
+	try {
+		setFormSubmitting();
+		beginStripeTransaction( {
+			stripe,
+			paymentMethodToken,
+			name,
+			items,
+			total,
+			stripeConfiguration,
+		} );
+	} catch ( error ) {
+		resetTransaction();
+		setFormReady();
+		debug( 'showing error for submit', error );
+		showErrorMessage( error );
+		return;
+	}
 }
