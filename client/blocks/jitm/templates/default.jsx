@@ -15,11 +15,14 @@ export default function DefaultTemplate( {
 	message,
 	description,
 	featureClass,
+	icon,
 	tracks,
 	trackImpression,
 	onClick,
 	onDismiss,
 } ) {
+	const isJetpack = icon && icon.indexOf( 'jetpack' ) !== -1;
+
 	return (
 		<>
 			{ trackImpression && trackImpression() }
@@ -34,6 +37,8 @@ export default function DefaultTemplate( {
 				onClick={ onClick }
 				event={ get( tracks, [ 'click', 'name' ] ) || `jitm_nudge_click_${ id }` }
 				href={ CTA.link }
+				jetpack={ isJetpack }
+				horizontal={ isJetpack }
 				target={ '_blank' }
 			/>
 		</>

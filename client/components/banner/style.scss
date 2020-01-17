@@ -58,6 +58,10 @@
 		}
 	}
 
+	&.is-jetpack {
+		@include banner-color( var( --color-jetpack ) );
+	}
+
 	.card__link-indicator {
 		align-items: center;
 		color: var( --color-neutral );
@@ -251,9 +255,19 @@
 			margin-right: 0;
 		}
 
+		.is-horizontal & {
+			flex-shrink: 0;
+			margin-right: 0;
+		}
+
 		.is-dismissible.is-compact & {
 			margin-top: 0;
 			margin-right: 32px;
+		}
+
+		.is-dismissible.is-horizontal & {
+			margin-top: 0;
+			margin-right: 40px;
 		}
 
 		.banner__prices {
@@ -268,4 +282,9 @@
 	height: 16px;
 	top: 50%;
 	margin-top: -8px;
+}
+
+.is-horizontal .dismissible-card__close-icon {
+	top: 50%;
+	margin-top: -12px;
 }
