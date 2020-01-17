@@ -272,7 +272,7 @@ function useRedirectIfCartEmpty( items, redirectUrl ) {
 			debug( 'cart has become empty; redirecting...' );
 			window.location = redirectUrl;
 		}
-	}, [ items, prevItemsLength ] );
+	}, [ redirectUrl, items, prevItemsLength ] );
 }
 
 function CountrySelectMenu( {
