@@ -17,6 +17,11 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
  */
 import './style.scss';
 
+/**
+ * Image dependencies
+ */
+import supportIllustration from 'assets/images/illustrations/happiness-support.svg';
+
 export class ConciergeQuickstartSession extends PureComponent {
 	render() {
 		const { receiptId, translate, siteSlug, isLoggedIn } = this.props;
@@ -225,8 +230,8 @@ export class ConciergeQuickstartSession extends PureComponent {
 					<div className="concierge-quickstart-session__column-doodle">
 						<img
 							className="concierge-quickstart-session__doodle"
-							alt="Website expert offering a support session"
-							src="/calypso/images/illustrations/support.svg"
+							alt={ translate( 'Website expert offering a support session' ) }
+							src={ supportIllustration }
 						/>
 					</div>
 				</div>
