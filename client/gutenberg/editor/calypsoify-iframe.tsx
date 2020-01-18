@@ -33,7 +33,7 @@ import getEditorCloseConfig from 'state/selectors/get-editor-close-config';
 import wpcom from 'lib/wp';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
-import { startEditingPost } from 'state/ui/editor/actions';
+import { editorLoaded, startEditingPost } from 'state/ui/editor/actions';
 import { Placeholder } from './placeholder';
 import WebPreview from 'components/web-preview';
 import { trashPost } from 'state/posts/actions';
@@ -42,6 +42,7 @@ import { protectForm, ProtectedFormProps } from 'lib/protect-form';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ConvertToBlocksDialog from 'components/convert-to-blocks';
 import config from 'config';
+import Dispatcher from 'dispatcher';
 
 /**
  * Types
@@ -158,6 +159,10 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 			// Check if we're generating a post via Press This
 			this.pressThis();
+
+			// Notify any external listeners that the iframe has loaded
+			Dispatcher.handleViewAction( this.props.editorLoaded() );
+
 			return;
 		}
 
@@ -661,6 +666,7 @@ const mapDispatchToProps = {
 	setRoute,
 	navigate,
 	openPostRevisionsDialog,
+	editorLoaded,
 	startEditingPost,
 	trashPost,
 	updateSiteFrontPage,

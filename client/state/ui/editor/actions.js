@@ -13,6 +13,7 @@ import {
 	EDITOR_AUTOSAVE_RESET,
 	EDITOR_AUTOSAVE_SUCCESS,
 	EDITOR_AUTOSAVE_FAILURE,
+	EDITOR_LOADED,
 	EDITOR_LOADING_ERROR_RESET,
 	EDITOR_PASTE_EVENT,
 	EDITOR_RESET,
@@ -82,7 +83,7 @@ export function startEditingNewPost( siteId, post ) {
  */
 export function stopEditingPost( siteId, postId ) {
 	return dispatch => {
-		dispatch( editorReset() );
+		dispatch( editorReset( { isLoaded: false } ) );
 		dispatch( { type: EDITOR_STOP, siteId, postId } );
 	};
 }
@@ -153,6 +154,11 @@ export function saveConfirmationSidebarPreference( siteId, isEnabled = true ) {
 		dispatch( bumpStat( 'calypso_publish_confirmation', isEnabled ? 'enabled' : 'disabled' ) );
 	};
 }
+
+export const editorLoaded = () => ( {
+	type: EDITOR_LOADED,
+	isLoaded: true,
+} );
 
 export const editorAutosaveReset = () => ( {
 	type: EDITOR_AUTOSAVE_RESET,
@@ -225,6 +231,7 @@ export function editorReset( options ) {
 	return {
 		type: EDITOR_RESET,
 		isLoading: get( options, 'isLoading', false ),
+		isLoaded: get( options, 'isLoaded', false ),
 		loadingError: get( options, 'loadingError', null ),
 	};
 }

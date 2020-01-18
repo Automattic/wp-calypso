@@ -17,6 +17,7 @@ import userUtilities from 'lib/user/utils';
 import { getStatsPathForTab } from 'lib/route';
 import { getReduxStore } from 'lib/redux-bridge';
 import hasUnseenNotifications from 'state/selectors/has-unseen-notifications';
+import isEditorLoaded from 'state/selectors/is-editor-loaded';
 import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import { toggleNotificationsPanel, navigate } from 'state/ui/actions';
 
@@ -41,6 +42,8 @@ const Desktop = {
 		ipc.on( 'page-help', this.onShowHelp.bind( this ) );
 
 		this.store = await getReduxStore();
+
+		this.editorLoadedStatus();
 
 		// Send some events immediatley - this sets the app state
 		this.notificationStatus();
@@ -137,6 +140,25 @@ const Desktop = {
 		debug( 'Showing help' );
 
 		this.navigate( '/help' );
+	},
+
+	editorLoadedStatus: function() {
+		let previousLoaded = isEditorLoaded( this.store.getState() );
+
+		this.store.subscribe( () => {
+			const loaded = isEditorLoaded( this.store.getState() );
+
+			if ( loaded !== previousLoaded ) {
+				if ( loaded ) {
+					debug( 'Gutenberg iframe loaded' );
+
+					const evt = new Event( 'editor-loaded' );
+					window.dispatchEvent( evt );
+				}
+
+				previousLoaded = loaded;
+			}
+		} );
 	},
 
 	print: function( title, html ) {

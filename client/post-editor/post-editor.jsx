@@ -46,6 +46,7 @@ import {
 	isEditorSaveBlocked,
 	getEditorPostPreviewUrl,
 	getEditorLoadingError,
+	isEditorLoaded,
 } from 'state/ui/editor/selectors';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import {
@@ -1178,6 +1179,7 @@ const enhance = flow(
 				previewUrl: getEditorPostPreviewUrl( state ),
 				isAutosaving: isEditorAutosaving( state ),
 				isLoading: isEditorLoading( state ),
+				isLoaded: isEditorLoaded( state ),
 				loadingError: getEditorLoadingError( state ),
 			};
 		},

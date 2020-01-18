@@ -15,6 +15,7 @@ describe( 'reducer', () => {
 			'postId',
 			'loadingError',
 			'isLoading',
+			'isLoaded',
 			'isAutosaving',
 			'autosavePreviewUrl',
 			'lastDraft',

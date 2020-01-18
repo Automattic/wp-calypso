@@ -25,6 +25,7 @@ The following events are sent from Calypso to Electron via IPC:
 
 - `render( context )` - Sent when the `page` is changed (context is the [`page` context](https://visionmedia.github.io/page.js/#context))
 - `unread-notices-count( count )` - Sent whenever the unread notification count changes and contains the latest unread count
+- `editor-loaded` - Sent when the Gutenberg editor iframe is loaded
 
 These events are sent once at startup:
 - `user-login-status( loggedIn )` - A boolean indicating whether the user is logged in
