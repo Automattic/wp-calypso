@@ -22,7 +22,7 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/calypso-codemods#readme",
 	"dependencies": {
 		"5to6-codemod": "^1.8.0",
-		"jscodeshift": "^0.6.4",
+		"jscodeshift": "^0.7.0",
 		"lodash": "^4.17.10",
 		"react-codemod": "^5.0.5"
 	}
