@@ -6,7 +6,7 @@
  */
 export function flagUrl( countryCode ) {
 	try {
-		return require( `flag-icon-css/flags/4x3/${ countryCode }.svg` );
+		return require( `flag-icon-css/flags/4x3/${ countryCode }.svg` ).default;
 	} catch ( e ) {
 		// As a fallback, return a 'globe' SVG.
 		// Unfortunately, we're not shipping SVGs with the `gridicons` npm --
