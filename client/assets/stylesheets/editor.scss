@@ -1,6 +1,6 @@
-@import 'shared/utils';
-@import '~@automattic/calypso-color-schemes/src/calypso-color-schemes';
+@use 'shared/utils';
+@use '~@automattic/calypso-color-schemes/src/calypso-color-schemes';
 
-@import 'components/tinymce/iframe';
-@import 'components/tinymce/plugins/media/style';
-@import 'components/tinymce/plugins/wpcom-view/views/simple-payments/style';
+@use 'components/tinymce/iframe';
+@use 'components/tinymce/plugins/media/style';
+@use 'components/tinymce/plugins/wpcom-view/views/simple-payments/style' as style2;

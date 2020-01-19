@@ -1,6 +1,6 @@
-@import '../shared/functions/functions'; // sass functions for z-index, etc.
-@import '../shared/typography'; // all the typographic rules, variables, etc.
-@import '../shared/variables'; // other variables
-@import '../shared/mixins/mixins'; // sass mixins for gradients, bordius radii, etc.
-@import '../shared/extends'; // sass extends for commonly used styles
-@import '../shared/extends-forms'; // sass extends for form styles
+@use '../shared/functions/functions'; // sass functions for z-index, etc.
+@use '../shared/typography'; // all the typographic rules, variables, etc.
+@use '../shared/variables'; // other variables
+@use '../shared/mixins/mixins'; // sass mixins for gradients, bordius radii, etc.
+@use '../shared/extends'; // sass extends for commonly used styles
+@use '../shared/extends-forms'; // sass extends for form styles

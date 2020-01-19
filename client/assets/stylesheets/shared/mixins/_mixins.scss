@@ -1,17 +1,17 @@
 
-@import 'banner';
-@import 'breakpoints';
-@import 'calc';
-@import 'clear-fix';
-@import 'clear-text';
-@import 'dropdown-menu';
-@import 'elevation';
-@import 'heading';
-@import 'hide-content-accessibly';
-@import 'long-content-fade';
-@import 'no-select';
-@import 'placeholder';
-@import 'stats-fade-text';
+@use 'banner';
+@use 'breakpoints';
+@use 'calc';
+@use 'clear-fix';
+@use 'clear-text';
+@use 'dropdown-menu';
+@use 'elevation';
+@use 'heading';
+@use 'hide-content-accessibly';
+@use 'long-content-fade';
+@use 'no-select';
+@use 'placeholder';
+@use 'stats-fade-text';
 
 //======================================================
 // Copied _extends rules that are used in @media

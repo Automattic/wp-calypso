@@ -32,11 +32,12 @@
 //
 // QUIT AND RESTART YOUR BROWSER NORMALLY WHEN YOU'RE DONE MAKING LOCAL CSS CHANGES.
 
-@import 'shared/utils';
-@import 'shared/forms';
+@use 'shared/utils';
+@use 'shared/forms';
+@use 'shared/typography';
 
 * {
-	font-family: $sans;
+	font-family: typography.$sans;
 }
 
 body {
@@ -48,7 +49,7 @@ html,
 input,
 select,
 textarea {
-	font-family: $sans;
+	font-family: typography.$sans;
 }
 
 // Main button

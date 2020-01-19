@@ -1,3 +1,5 @@
+@use "sass:color";
+@use "sass:math";
 
 // ==========================================================================
 // Returns the individual RGB values of a given hexadecimal color value
@@ -7,5 +9,5 @@
 // ==========================================================================
 
 @function hex-to-rgb( $color ) {
-	@return round( red( $color ) ), round( green( $color ) ), round( blue( $color ) );
+	@return math.round( color.red( $color ) ), math.round( color.green( $color ) ), math.round( color.blue( $color ) );
 }

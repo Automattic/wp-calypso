@@ -1,21 +1,24 @@
 // Color Schemes
 // Currently used only by Calypso dev badge shown in development mode
-@import '~@automattic/calypso-color-schemes/src/calypso-color-schemes';
+@use '~@automattic/calypso-color-schemes/src/calypso-color-schemes';
 
 // Shared
-@import 'shared/reset'; // css reset before the rest of the styles are defined
-@import './shared/loading';
-@import './gutenberg-base-styles';
+@use 'shared/reset'; // css reset before the rest of the styles are defined
+@use './shared/loading';
+@use './gutenberg-base-styles';
+@use "~@wordpress/base-styles/colors";
+@use "~@wordpress/base-styles/mixins";
+@use "~@wordpress/base-styles/variables";
 
 // Gutenberg resets
 // Not an actual "CSS reset", but an opiniated base style for HTML elements in Gutenberg views.
 :root {
-	@include reset;
+	@include mixins.reset;
 }
 
 // Change loading logo's color while Calypso boots
 .wpcom-site__logo {
-	fill: $light-gray-500;
+	fill: colors.$light-gray-500;
 }
 
 // Hide Calypso header while Calypso boots
@@ -26,6 +29,6 @@
 // Gutenberg default typography
 html,
 body {
-	font-family: $default-font;
-	font-size: $default-font-size;
+	font-family: variables.$default-font;
+	font-size: variables.$default-font-size;
 }

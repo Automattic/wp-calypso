@@ -1,3 +1,5 @@
+@use "../functions/overflow-gradient";
+
 
 // ==========================================================================
 // Long content fade mixin
@@ -36,7 +38,7 @@
 	}
 
 	@if $direction == 'bottom' {
-		background: overflow-gradient( $color, 90%, to top );
+		background: overflow-gradient.overflow-gradient( $color, 90%, to top );
 		left: $edge;
 		right: $edge;
 		top: $edge;
@@ -45,7 +47,7 @@
 	}
 
 	@if $direction == 'top' {
-		background: overflow-gradient( $color, 90%, to bottom );
+		background: overflow-gradient.overflow-gradient( $color, 90%, to bottom );
 		top: calc( 100% - $size );
 		left: $edge;
 		right: $edge;
@@ -54,7 +56,7 @@
 	}
 
 	@if $direction == 'left' {
-		background: overflow-gradient( $color, 90%, to left );
+		background: overflow-gradient.overflow-gradient( $color, 90%, to left );
 		top: $edge;
 		left: $edge;
 		bottom: $edge;
@@ -64,7 +66,7 @@
 	}
 
 	@if $direction == 'right' {
-		background: overflow-gradient( $color );
+		background: overflow-gradient.overflow-gradient( $color );
 		top: $edge;
 		bottom: $edge;
 		right: $edge;

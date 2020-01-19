@@ -1,3 +1,4 @@
+@use "sass:map";
 // ==========================================================================
 // A nested map of all of our z-index values.
 //
@@ -308,11 +309,11 @@ $z-layers: (
 // allows us to do a nested fetch
 @function map-deep-get( $map, $keys... ) {
 	@each $key in $keys {
-		@if not map-has-key( $map, $key) {
+		@if not map.has-key( $map, $key) {
 			@warn 'No layer found for `#{$key}` of `[#{ $keys }]` in $z-layers map. Property omitted.';
-			@return map-get( $map, $key );
+			@return map.get( $map, $key );
 		}
-		$map: map-get( $map, $key );
+		$map: map.get( $map, $key );
 	}
 	@return $map;
 }

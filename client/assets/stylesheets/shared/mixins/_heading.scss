@@ -1,10 +1,12 @@
+@use "../typography";
+
 // ==========================================================================
 // Heading mixin
 // ==========================================================================
 
 @mixin heading {
 	color: var( --color-neutral-50 );
-	font-size: rem( 20px );
+	font-size: typography.rem( 20px );
 	font-weight: 300;
 	margin: 1em 0;
 }

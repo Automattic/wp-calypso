@@ -1,3 +1,5 @@
+@use 'functions/z-index';
+
 
 %placeholder {
 	.stats-module.is-loading & * {
@@ -20,7 +22,7 @@
 		bottom: 35%;
 		left: 0;
 		right: 0;
-		z-index: z-index( 'root', '.stats-module.is-loading .module-header-title::after' );
+		z-index: z-index.z-index( 'root', '.stats-module.is-loading .module-header-title::after' );
 	}
 }
 
