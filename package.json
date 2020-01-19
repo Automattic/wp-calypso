@@ -230,6 +230,7 @@
 		"readline-sync": "1.4.10",
 		"replace": "1.1.1",
 		"rimraf": "3.0.0",
+		"sass": "1.25.0",
 		"sinon": "7.5.0",
 		"sinon-chai": "3.3.0",
 		"socket.io": "2.3.0",
