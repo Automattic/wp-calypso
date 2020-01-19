@@ -7,14 +7,12 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { ActionType, CurrentUser, NewUser, NewUserErrorResponse } from './types';
-import * as Actions from './actions';
+import { ActionType, CurrentUser, NewUser, NewUserErrorResponse, UserAction } from './types';
 
-const currentUser: Reducer<
-	CurrentUser | null | undefined,
-	| ReturnType< typeof Actions[ 'receiveCurrentUser' ] >
-	| ReturnType< typeof Actions[ 'receiveCurrentUserFailed' ] >
-> = ( state = undefined, action ) => {
+const currentUser: Reducer< CurrentUser | null | undefined, UserAction > = (
+	state = undefined,
+	action
+) => {
 	switch ( action.type ) {
 		case ActionType.RECEIVE_CURRENT_USER:
 			return action.currentUser;
@@ -24,11 +22,7 @@ const currentUser: Reducer<
 	return state;
 };
 
-const newUserData: Reducer<
-	NewUser | undefined,
-	| ReturnType< typeof Actions[ 'receiveNewUser' ] >
-	| ReturnType< typeof Actions[ 'receiveNewUserFailed' ] >
-> = ( state = undefined, action ) => {
+const newUserData: Reducer< NewUser | undefined, UserAction > = ( state = undefined, action ) => {
 	if ( action.type === ActionType.RECEIVE_NEW_USER ) {
 		const { response } = action;
 		return {
@@ -42,12 +36,10 @@ const newUserData: Reducer<
 	return state;
 };
 
-const newUserError: Reducer<
-	NewUserErrorResponse | undefined,
-	| ReturnType< typeof Actions[ 'fetchNewUser' ] >
-	| ReturnType< typeof Actions[ 'receiveNewUser' ] >
-	| ReturnType< typeof Actions[ 'receiveNewUserFailed' ] >
-> = ( state = undefined, action ) => {
+const newUserError: Reducer< NewUserErrorResponse | undefined, UserAction > = (
+	state = undefined,
+	action
+) => {
 	switch ( action.type ) {
 		case ActionType.FETCH_NEW_USER:
 			return undefined;
@@ -65,12 +57,7 @@ const newUserError: Reducer<
 	return state;
 };
 
-const isFetchingNewUser: Reducer<
-	boolean | undefined,
-	| ReturnType< typeof Actions[ 'fetchNewUser' ] >
-	| ReturnType< typeof Actions[ 'receiveNewUser' ] >
-	| ReturnType< typeof Actions[ 'receiveNewUserFailed' ] >
-> = ( state = false, action ) => {
+const isFetchingNewUser: Reducer< boolean | undefined, UserAction > = ( state = false, action ) => {
 	switch ( action.type ) {
 		case ActionType.FETCH_NEW_USER:
 			return true;

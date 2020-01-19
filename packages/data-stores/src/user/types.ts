@@ -1,8 +1,13 @@
 /**
  * External dependencies
  */
-
 import { Action } from 'redux';
+
+/**
+ * Internal dependencies
+ */
+import * as ActionCreators from './actions';
+import { ActionsDefinedInModule } from '../mapped-types';
 
 export const enum ActionType {
 	CREATE_ACCOUNT = 'CREATE_ACCOUNT',
@@ -14,6 +19,8 @@ export const enum ActionType {
 	RECEIVE_NEW_USER_FAILED = 'RECEIVE_NEW_USER_FAILED',
 	FETCH_NEW_USER = 'FETCH_NEW_USER',
 }
+
+export type UserAction = ActionsDefinedInModule< typeof ActionCreators >;
 
 export interface CurrentUser {
 	ID: number;

@@ -1,3 +1,13 @@
+/**
+ * External dependencies
+ */
+import { ActionsDefinedInModule } from '@automattic/data-stores';
+
+/**
+ * Internal dependencies
+ */
+import * as Actions from './actions';
+
 enum ActionType {
 	RESET_SITE_TYPE = 'RESET_SITE_TYPE',
 	SET_DOMAIN = 'SET_DOMAIN',
@@ -9,6 +19,8 @@ enum ActionType {
 	TOGGLE_PAGE_LAYOUT = 'TOGGLE_PAGE_LAYOUT',
 }
 export { ActionType };
+
+export type OnboardAction = ActionsDefinedInModule< typeof Actions >;
 
 export interface SiteVertical {
 	/**

@@ -1,6 +1,14 @@
+/**
+ * Internal dependencies
+ */
+import * as Actions from './actions';
+import { ActionsDefinedInModule } from '../mapped-types';
+
 export const enum ActionType {
 	RECEIVE_TEMPLATES = 'RECEIVE_TEMPLATES',
 }
+
+export type VerticalsTemplatesAction = ActionsDefinedInModule< typeof Actions >;
 
 export interface Template {
 	/**

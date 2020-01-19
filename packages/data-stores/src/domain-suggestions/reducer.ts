@@ -7,13 +7,12 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { ActionType, DomainSuggestion } from './types';
-import * as Actions from './actions';
+import { ActionType, DomainSuggestion, DomainSuggestionsAction } from './types';
 import { stringifyDomainQueryObject } from './utils';
 
 const domainSuggestions: Reducer<
 	Record< string, DomainSuggestion[] | undefined >,
-	ReturnType< typeof Actions[ 'receiveDomainSuggestions' ] >
+	DomainSuggestionsAction
 > = ( state = {}, action ) => {
 	if ( action.type === ActionType.RECEIVE_DOMAIN_SUGGESTIONS ) {
 		return {

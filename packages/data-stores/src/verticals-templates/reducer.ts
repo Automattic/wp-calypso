@@ -7,13 +7,12 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { ActionType, Template } from './types';
-import * as Actions from './actions';
+import { ActionType, Template, VerticalsTemplatesAction } from './types';
 
-const templates: Reducer<
-	Record< string, Template[] | undefined >,
-	ReturnType< typeof Actions[ 'receiveTemplates' ] >
-> = ( state = {}, action ) => {
+const templates: Reducer< Record< string, Template[] | undefined >, VerticalsTemplatesAction > = (
+	state = {},
+	action
+) => {
 	if ( action.type === ActionType.RECEIVE_TEMPLATES ) {
 		return {
 			...state,
