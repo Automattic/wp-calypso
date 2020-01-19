@@ -1,82 +1,110 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
-import SignupSiteTitle from 'components/signup-site-title';
-import SiteTitleExample from 'components/site-title-example';
+import { Button } from '@automattic/components';
+import FormTextInput from 'components/forms/form-text-input';
+import FormFieldset from 'components/forms/form-fieldset';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { setSiteTitle } from 'state/signup/steps/site-title/actions';
+import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
+import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 
-import { translate } from 'i18n-calypso';
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
-class SiteTitleStep extends React.Component {
+class SiteTitleStep extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
 		setSiteTitle: PropTypes.func.isRequired,
-		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
+		translate: PropTypes.func.isRequired,
+		siteTitle: PropTypes.string,
+		siteVerticalName: PropTypes.string,
+		shouldFetchVerticalData: PropTypes.bool,
+		siteType: PropTypes.string,
 	};
 
-	submitSiteTitleStep = siteTitle => {
+	componentDidMount() {
+		this.props.saveSignupStep( { stepName: this.props.stepName } );
+	}
+
+	handleInputChange = ( { currentTarget: { value = '' } } ) => this.props.setSiteTitle( value );
+
+	handleSubmit = event => {
+		event.preventDefault();
+
+		const { flowName, siteTitle, stepName } = this.props;
+
 		this.props.setSiteTitle( siteTitle );
-
-		SignupActions.submitSignupStep(
-			{
-				processingMessage: translate( 'Setting up your site' ),
-				stepName: this.props.stepName,
-				siteTitle,
-			},
-			[],
-			{ siteTitle }
-		);
-
+		this.props.submitSignupStep( { stepName, flowName }, { siteTitle } );
+		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_title', {
+			value: siteTitle,
+		} );
 		this.props.goToNextStep();
 	};
 
-	skipStep = () => {
-		this.submitSiteTitleStep( '' );
-	};
-
 	renderSiteTitleStep = () => {
+		const { siteTitle, siteType } = this.props;
+		const fieldLabel = getSiteTypePropertyValue( 'slug', siteType, 'siteTitleLabel' ) || '';
+		const fieldPlaceholder =
+			getSiteTypePropertyValue( 'slug', siteType, 'siteTitlePlaceholder' ) || '';
 		return (
-			<div>
-				<SignupSiteTitle onSubmit={ this.submitSiteTitleStep } />
-				<SiteTitleExample />
+			<div className="site-title__wrapper">
+				<form>
+					<div className="site-title__field-control site-title__title">
+						<FormFieldset>
+							<FormTextInput
+								id="title"
+								name="title"
+								placeholder={ fieldPlaceholder }
+								onChange={ this.handleInputChange }
+								value={ siteTitle }
+								maxLength={ 100 }
+								autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+								aria-label={ fieldLabel }
+							/>
+							<Button primary type="submit" onClick={ this.handleSubmit }>
+								{ this.props.translate( 'Continue' ) }
+							</Button>{ ' ' }
+						</FormFieldset>
+					</div>
+				</form>
 			</div>
 		);
 	};
 
 	render() {
-		const headerText = translate( 'Give your new site a name.' );
-		const subHeaderText = translate(
-			'Enter a Site Title that will be displayed for visitors. You can always change this later.'
-		);
+		const { flowName, positionInFlow, showSiteMockups, siteType, stepName } = this.props;
+		const headerText = getSiteTypePropertyValue( 'slug', siteType, 'siteTitleLabel' );
+		const subHeaderText = getSiteTypePropertyValue( 'slug', siteType, 'siteTitleSubheader' );
 
 		return (
 			<div>
 				<StepWrapper
-					flowName={ this.props.flowName }
-					stepName={ this.props.stepName }
-					positionInFlow={ this.props.positionInFlow }
+					flowName={ flowName }
+					stepName={ stepName }
+					positionInFlow={ positionInFlow }
 					headerText={ headerText }
 					fallbackHeaderText={ headerText }
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ subHeaderText }
-					signupProgress={ this.props.signupProgress }
 					stepContent={ this.renderSiteTitleStep() }
-					goToNextStep={ this.skipStep }
+					showSiteMockups={ showSiteMockups }
 				/>
 			</div>
 		);
@@ -84,6 +112,14 @@ class SiteTitleStep extends React.Component {
 }
 
 export default connect(
-	null,
-	{ setSiteTitle }
-)( SiteTitleStep );
+	state => ( {
+		siteTitle: getSiteTitle( state ),
+		siteType: getSiteType( state ),
+	} ),
+	{
+		recordTracksEvent,
+		setSiteTitle,
+		saveSignupStep,
+		submitSignupStep,
+	}
+)( localize( SiteTitleStep ) );

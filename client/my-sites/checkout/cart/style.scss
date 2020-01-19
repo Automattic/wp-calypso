@@ -1,5 +1,9 @@
+.is-section-checkout .layout__secondary {
+	border-color: var( --color-border-subtle );
+}
+
 .cart__header {
-	border-top: 1px solid var( --color-neutral-0 );
+	border-top: 1px solid var( --color-border-subtle );
 
 	&.is-compact {
 		padding: 11px 15px;
@@ -17,7 +21,7 @@
 	.cart-item {
 		list-style: none;
 		display: block;
-		border-bottom: 1px solid var( --color-neutral-0 );
+		border-bottom: 1px solid var( --color-border-subtle );
 		padding-bottom: 15px;
 		margin-bottom: 15px;
 		position: relative;
@@ -27,13 +31,14 @@
 		}
 
 		.product-name {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 			display: block;
 			font-size: 14px;
 			padding-right: 30px;
 		}
 
-		.product-domain {
+		.product-domain,
+		.product-domain-renewal-date {
 			color: var( --color-text-subtle );
 			display: block;
 			font-size: 12px;
@@ -64,6 +69,21 @@
 			padding-left: 0;
 		}
 
+		.cart__gsuite-discount {
+			.cart__gsuite-discount-regular-price {
+				text-decoration: line-through;
+			}
+
+			.cart__gsuite-discount-discounted-price {
+				padding-left: 4px;
+			}
+
+			.cart__gsuite-discount-text {
+				color: var( --color-success );
+				padding-left: 8px;
+			}
+		}
+
 		.product-monthly-price {
 			color: var( --color-text-subtle );
 			display: block;
@@ -74,7 +94,7 @@
 		.cart__remove-item {
 			box-shadow: none;
 			cursor: pointer;
-			color: $gray;
+			color: var( --color-neutral-light );
 			border: 0;
 			background: transparent;
 			padding: 0;
@@ -100,7 +120,7 @@
 
 	.cart-item__loading-placeholder {
 		.cart__remove-item {
-			@include placeholder( 23% );
+			@include placeholder( --color-neutral-10 );
 			border-radius: 0;
 			width: 25px;
 		}
@@ -108,31 +128,43 @@
 
 	.cart__total {
 		color: var( --color-text-subtle );
-		font-size: 14px;
+		display: table;
+		font-size: 20px;
+
+		.cart__total-row.grand-total {
+			display: table-footer-group;
+		}
+
+		.cart__total-row {
+			display: table-row;
+		}
 
 		.cart__total-label {
-			display: inline-block;
-			width: 70%;
+			display: table-cell;
+			width: 100%;
 		}
 
 		.cart__total-amount {
-			display: inline-block;
+			display: table-cell;
 			text-align: right;
-			width: 30%;
+			width: auto;
 		}
 
-		.grand-total {
-			font-weight: 600;
+		.cart__total-amount.last-cell {
+			padding-bottom: 5px;
+			border-bottom: 1px solid var( --color-border-subtle );
+		}
+
+		.cart__total-amount.grand-total {
+			color: var( --color-text );
 		}
 	}
 
 	.cart__total-divider {
-		border-top: 1px solid var( --color-neutral-0 );
+		border-top: 1px solid var( --color-border-subtle );
 		height: 0;
 		width: 30%;
 		margin-left: 70%;
-		padding-top: 5px;
-		margin-top: 5px;
 	}
 
 	.cart__coupon {
@@ -149,8 +181,8 @@
 
 		form {
 			display: block;
-			border-top: 1px solid var( --color-neutral-0 );
-			margin: 15px -15px 0 -15px;
+			border-top: 1px solid var( --color-border-subtle );
+			margin: 15px -15px 0;
 			padding: 15px 15px 0;
 
 			input[type='text'] {
@@ -176,22 +208,27 @@
 }
 
 .cart-empty {
-	background: $white;
 	padding: 30px;
 	text-align: center;
 	font-size: 14px;
 }
 
 .cart__cart-ad {
-	background: lighten( $gray, 34% );
+	background: var( --color-neutral-0 );
 	border: 1px solid var( --color-neutral-0 );
 	border-radius: 4px;
+	color: var( --color-text );
 	font-size: 12px;
 	margin: 15px 15px 0;
 	padding: 10px;
 
 	@include breakpoint( '<660px' ) {
 		display: none;
+	}
+
+	.button.is-borderless {
+		color: var( --color-link );
+		font-weight: initial;
 	}
 }
 
@@ -210,28 +247,17 @@
 	}
 }
 
-.cart-toggle-button {
-	// Hide the text
-	display: flex;
+.popover-cart {
 	position: relative;
-	height: 48px;
-	width: 48px;
-	white-space: nowrap;
-	cursor: pointer; // Needed for Safari
+	display: inline-block;
 
-	.gridicon {
-		color: var( --color-neutral-700 );
-		cursor: pointer;
-		position: absolute;
-		top: 12px;
-		right: 12px;
-	}
+	button {
+		box-sizing: border-box;
+		min-width: auto;
+		padding: 0 15px 0 10px;
 
-	&:focus {
-		outline: none;
-
-		.accessible-focus & {
-			box-shadow: inset 0 0 0 2px var( --color-primary-light );
+		@include breakpoint( '>480px' ) {
+			padding: 14px 20px 12px;
 		}
 	}
 }
@@ -248,9 +274,14 @@
 
 .cart__count-badge .count {
 	position: absolute;
-	top: 5px;
-	right: 5px;
+	top: 2px;
+	right: 2px;
 	animation: pulsing-badge 2s infinite;
+
+	@include breakpoint( '>480px' ) {
+		top: 5px;
+		right: 5px;
+	}
 }
 
 .cart__count-badge:hover .count {
@@ -298,11 +329,11 @@ div.popover-cart__popover {
 
 	.cart__total,
 	.cart-buttons {
-		background: lighten( $gray, 34% );
+		background: var( --color-neutral-0 );
 	}
 
 	.cart__total {
-		border-top: 1px solid var( --color-neutral-0 );
+		border-top: 1px solid var( --color-border-subtle );
 		font-size: 16px;
 		padding: 15px;
 	}
@@ -318,8 +349,8 @@ div.popover-cart__popover {
 }
 
 .popover-cart__mobile-cart {
-	background-color: $white;
-	border: 1px solid var( --color-neutral-100 );
+	background-color: var( --color-surface );
+	border: 1px solid var( --color-neutral-10 );
 	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ), 0 0 56px rgba( 0, 0, 0, 0.075 );
 	margin: -1px;
 	position: relative;
@@ -342,11 +373,11 @@ div.popover-cart__popover {
 
 	.cart__total,
 	.cart-buttons {
-		background: lighten( $gray, 34% );
+		background: var( --color-neutral-0 );
 	}
 
 	.cart__total {
-		border-top: 1px solid var( --color-neutral-0 );
+		border-top: 1px solid var( --color-border-subtle );
 		font-size: 16px;
 		padding: 15px;
 	}
@@ -389,10 +420,11 @@ div.popover-cart__popover {
 }
 
 .secondary-cart {
-	background: $white;
+	background: var( --color-surface );
 
 	@include breakpoint( '<660px' ) {
 		left: 0;
+		margin-left: 0;
 		margin-top: 10px;
 		// Create space for the inline help button
 		margin-bottom: 65px;
@@ -402,7 +434,7 @@ div.popover-cart__popover {
 	}
 
 	.jetpack-logo {
-		margin-top: 32px;
+		margin: 32px 0;
 	}
 }
 
@@ -414,7 +446,7 @@ div.popover-cart__popover {
 
 .cart-item__loading-placeholder {
 	span {
-		@include placeholder( 23% );
+		@include placeholder( --color-neutral-10 );
 		margin-bottom: 1px;
 	}
 
@@ -422,7 +454,8 @@ div.popover-cart__popover {
 		width: 55%;
 	}
 
-	.product-domain {
+	.product-domain,
+	.product-domain-renewal-date {
 		width: 40%;
 	}
 

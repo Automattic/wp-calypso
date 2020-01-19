@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -7,10 +5,10 @@ import {
 	GROUP_JETPACK,
 	GROUP_WPCOM,
 	TYPE_FREE,
+	TYPE_BLOGGER,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 } from 'lib/plans/constants';
-import { translate } from 'i18n-calypso';
 
 /**
  * No translate() used on some of these since we're launching those promotions just for the EN audience
@@ -56,57 +54,45 @@ export default [
 			'Improve your SEO, branding, credibility, and even word-of-mouth marketing with a custom domain. All plan upgrades include a free domain name of your choice for one year.',
 	},
 	{
-		name: 'october25',
-		startsAt: new Date( 2018, 9, 18, 0, 0, 0 ),
-		endsAt: new Date( 2018, 9, 25, 0, 0, 0 ),
-		nudgeText: '20% Off All Plans',
-		ctaText: translate( 'Upgrade' ),
-		plansPageNoticeText: translate(
-			'Enter coupon code “%(coupon)s” during checkout to claim your %(discount)d%% discount.',
-			{
-				args: {
-					coupon: 'OCTOBER20',
-					discount: 20,
-				},
-			}
-		),
-		targetPlans: [ { type: TYPE_FREE }, { type: TYPE_PERSONAL }, { type: TYPE_PREMIUM } ],
+		name: 'sale_wpsave20',
+		startsAt: new Date( 2019, 1, 1, 0, 0, 0 ),
+		endsAt: new Date( 2099, 1, 1, 0, 0, 0 ), //evergreen
+		plansPageNoticeText: 'Enter coupon code “WPSAVE20” at checkout to claim your 20% discount',
+		targetPlans: [
+			{ type: TYPE_FREE, group: GROUP_WPCOM },
+			{ type: TYPE_BLOGGER, group: GROUP_WPCOM },
+			{ type: TYPE_PERSONAL, group: GROUP_WPCOM },
+			{ type: TYPE_PREMIUM, group: GROUP_WPCOM },
+		],
 	},
 	{
-		name: 'october25',
-		startsAt: new Date( 2018, 9, 25, 0, 0, 1 ),
-		endsAt: new Date( 2018, 9, 26, 0, 0, 0 ),
-		nudgeText: 'Last chance: 20% Off',
-		ctaText: translate( 'Upgrade' ),
-		plansPageNoticeText: translate(
-			'Sale ends today! Enter coupon code “%(coupon)s” during checkout to claim your %(discount)d%% discount.',
-			{
-				args: {
-					coupon: 'OCTOBER20',
-					discount: 20,
-				},
-			}
-		),
-		targetPlans: [ { type: TYPE_FREE }, { type: TYPE_PERSONAL }, { type: TYPE_PREMIUM } ],
+		name: 'sale_wpsave20_jp',
+		startsAt: new Date( 2019, 1, 1, 0, 0, 0 ),
+		endsAt: new Date( 2099, 1, 1, 0, 0, 0 ), //evergreen
+		plansPageNoticeText: 'Enter coupon code “JPSALE20” at checkout to claim your 20% discount',
+		targetPlans: [
+			{ type: TYPE_FREE, group: GROUP_JETPACK },
+			{ type: TYPE_PERSONAL, group: GROUP_JETPACK },
+			{ type: TYPE_PREMIUM, group: GROUP_JETPACK },
+		],
 	},
 	{
-		name: 'blackfriday30',
-		startsAt: new Date( 2018, 10, 21, 0, 0, 0 ),
-		endsAt: new Date( 2018, 10, 24, 0, 0, 0 ),
-		nudgeText: 'Black Friday 30% Off Plans!',
-		ctaText: translate( 'Upgrade' ),
-		plansPageNoticeText: 'Black Friday 30% Off! Enter “BLACKFRIDAY30” At Checkout',
-		targetPlans: [ { type: TYPE_FREE }, { type: TYPE_PERSONAL }, { type: TYPE_PREMIUM } ],
-	},
-	{
-		name: 'cyber30',
-		startsAt: new Date( 2018, 10, 26, 0, 0, 0 ),
-		endsAt: new Date( 2018, 10, 27, 0, 0, 0 ),
-		nudgeText: 'Last Chance – 30% Off Plans',
-		ctaText: translate( 'Upgrade' ),
+		name: 'sale_julybusiness40',
+		startsAt: new Date( '2019-07-22 00:00:00' ),
+		endsAt: new Date( '2019-07-25 23:59:59' ),
 		plansPageNoticeText:
-			'Hurry! Cyber Monday 30% Off Sale Is Almost Over. Enter CYBER30 At Checkout',
-		targetPlans: [ { type: TYPE_FREE }, { type: TYPE_PERSONAL }, { type: TYPE_PREMIUM } ],
+			'Enter coupon code "JULYBUSINESS40" at checkout to save 40% on a Business plan site upgrade',
+		targetPlans: [
+			{ type: TYPE_FREE, group: GROUP_WPCOM },
+			{ type: TYPE_BLOGGER, group: GROUP_WPCOM },
+			{ type: TYPE_PERSONAL, group: GROUP_WPCOM },
+			{ type: TYPE_PREMIUM, group: GROUP_WPCOM },
+		],
+	},
+	{
+		name: 'plans_no_tabs',
+		startsAt: new Date( 2018, 2, 7, 0, 0, 0 ),
+		endsAt: new Date( 2120, 9, 26, 0, 0, 0 ),
 	},
 	// NOTE: These two (new_plans and default_plans_tab_business) should remain at the bottom.
 	// It's a temporary hack and will be removed shortly.

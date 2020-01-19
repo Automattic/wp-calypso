@@ -6,7 +6,7 @@
 	font-size: 9px;
 	padding: 4px 6px;
 	background: var( --color-success );
-	color: $white;
+	color: var( --color-text-inverted );
 	text-transform: uppercase;
 	letter-spacing: 1px;
 	border-radius: 3px;
@@ -15,7 +15,8 @@
 	line-height: 11px;
 
 	&.is-warning {
-		background: var( --color-warning );
+		background: var( --color-warning-20 );
+		color: var( --color-warning-80 );
 	}
 
 	&.is-error {

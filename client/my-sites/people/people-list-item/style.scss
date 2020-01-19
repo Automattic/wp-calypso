@@ -3,62 +3,24 @@
 	box-shadow: none;
 	display: flex;
 	overflow: hidden;
-	padding-left: 0;
-	padding-right: 0;
 	position: relative;
 
 	@include breakpoint( '>480px' ) {
-		padding-top: 24px;
-		padding-bottom: 24px;
-	}
-
-	&:nth-of-type( 1 ) {
-		margin-top: -16px;
-
-		@include breakpoint( '>480px' ) {
-			margin-top: -24px;
-		}
+		padding: 24px;
 	}
 
 	&:last-of-type {
 		border-bottom: none;
-		margin-bottom: -16px;
-
-		@include breakpoint( '>480px' ) {
-			margin-bottom: -24px;
-		}
 	}
 
 	.bulk-editing & {
 		padding-left: 40px;
 	}
-}
 
-.people-list-item__checkbox[type=checkbox] {
-	margin-top: 0;
-	position: absolute;
-	top: 48px;
-	left: 2px;
-
-	&::after { // Making tap area larger
-		content: '';
-		position: absolute;
-		top: -20px;
-		left: -19px;
-		width: 56px;
-		height: 55px;
+	&:focus {
+		outline: 2px solid var( --color-primary-light );
+		z-index: z-index( 'root', '.people-list-item.card.is-compact:focus' );
 	}
-}
-
-.people-list-item__label {
-	display: block;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	z-index: z-index( 'root', '.people-list-item__label' );
-	cursor: pointer;
 }
 
 .people-list-item__profile-container {
@@ -75,7 +37,6 @@
 }
 
 .people-list-item .card__link-indicator {
-	right: 0;
 	z-index: z-index( 'root', '.people-list-item .card__link-indicator' );
 }
 
@@ -116,7 +77,7 @@
 		}
 	}
 
-	color: $green-text-min;
+	color: var( --color-success );
 
 	&.is-pending {
 		color: var( --color-text-subtle );
@@ -138,7 +99,7 @@
 	&.is-success {
 		background-color: var( --color-neutral-0 );
 		border: 0;
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		cursor: default;
 	}
 }

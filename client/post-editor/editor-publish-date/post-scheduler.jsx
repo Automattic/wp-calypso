@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,6 +5,7 @@ import React, { Fragment, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
+import moment from 'moment-timezone';
 
 /**
  * Internal dependencies
@@ -13,7 +13,7 @@ import { get } from 'lodash';
 import PostSchedule from 'components/post-schedule';
 import QueryPosts from 'components/data/query-posts';
 import * as postUtils from 'state/posts/utils';
-import { timezone } from 'lib/site/utils';
+import { timezone, gmtOffset } from 'lib/site/utils';
 import { getPostsForQueryIgnoringPage } from 'state/posts/selectors';
 
 const PostScheduleWithOtherPostsIndicated = connect( ( state, { site, query } ) => ( {
@@ -27,6 +27,8 @@ const PostScheduleWithOtherPostsIndicated = connect( ( state, { site, query } ) 
 			onMonthChange={ onMonthChange }
 			posts={ posts }
 			site={ site }
+			timezone={ timezone( site ) }
+			gmtOffset={ gmtOffset( site ) }
 		/>
 	);
 } );
@@ -39,36 +41,30 @@ export default class PostScheduler extends PureComponent {
 		site: PropTypes.object,
 	};
 
-	state = {
-		firstDayOfTheMonth: this.getFirstDayOfTheMonth( this.props.initialDate ),
-		lastDayOfTheMonth: this.getLastDayOfTheMonth( this.props.initialDate ),
-	};
+	state = this.getFirstAndLastDayOfTheMonth( this.props.initialDate );
 
-	getFirstDayOfTheMonth( date ) {
+	// Calculates the start and end of the period shown by a monthly calendar UI
+	// for the specified `date`:
+	// - first day of the week containing the first day of the month
+	// - last day of the week containing the last day of the month
+	getFirstAndLastDayOfTheMonth( date ) {
 		const tz = timezone( this.props.site );
+		const tzDate = tz ? moment.tz( date, tz ) : moment( date );
 
-		return postUtils.getOffsetDate( date, tz ).set( {
-			year: date.year(),
-			month: date.month(),
-			date: 1,
-			hours: 0,
-			minutes: 0,
-			seconds: 0,
-			milliseconds: 0,
-		} );
-	}
-
-	getLastDayOfTheMonth( date ) {
-		return this.getFirstDayOfTheMonth( date )
-			.add( 1, 'month' )
-			.second( -1 );
+		return {
+			firstDayOfTheMonth: tzDate
+				.clone()
+				.startOf( 'month' )
+				.startOf( 'week' ),
+			lastDayOfTheMonth: tzDate
+				.clone()
+				.endOf( 'month' )
+				.endOf( 'week' ),
+		};
 	}
 
 	setCurrentMonth = date => {
-		this.setState( {
-			firstDayOfTheMonth: this.getFirstDayOfTheMonth( date ),
-			lastDayOfTheMonth: this.getLastDayOfTheMonth( date ),
-		} );
+		this.setState( this.getFirstAndLastDayOfTheMonth( date ) );
 	};
 
 	render() {

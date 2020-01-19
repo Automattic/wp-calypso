@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -28,6 +26,11 @@ import analytics from 'lib/analytics';
 import QueryPosts from 'components/data/query-posts';
 import SiteIcon from 'blocks/site-icon';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ResumeEditing extends React.Component {
 	static propTypes = {
 		siteId: PropTypes.number,
@@ -39,7 +42,7 @@ class ResumeEditing extends React.Component {
 		translate: PropTypes.func,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// Once we start tracking a draft, monitor received changes for that
 		// post to ensure we stop tracking if it's published or trashed.
 		if ( get( nextProps.draft, 'status', 'draft' ) !== 'draft' ) {

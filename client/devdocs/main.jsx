@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,9 +12,14 @@ import { isFunction } from 'lodash';
  */
 import DocService from './service';
 import DocumentHead from 'components/data/document-head';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import Main from 'components/main';
 import SearchCard from 'components/search-card';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * Constants
@@ -180,7 +183,7 @@ export default class Devdocs extends React.Component {
 				<DocumentHead title="Calypso Docs" />
 
 				<SearchCard
-					autoFocus
+					autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 					placeholder="Search documentation…"
 					analyticsGroup="Docs"
 					initialValue={ this.state.term }

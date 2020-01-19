@@ -1,9 +1,9 @@
 .reader-visit-link__icon {
-	fill: $gray;
+	fill: var( --color-neutral-light );
 }
 
 .reader-visit-link__label {
-	color: $gray;
+	color: var( --color-text-subtle );
 }
 
 .reader-visit-link:hover,

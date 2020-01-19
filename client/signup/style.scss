@@ -1,8 +1,6 @@
 body.is-section-signup {
-	// Use the primary color for our background. I wonder how we
-	// should deal with different color schemes?
-	background: var( --color-primary );
-
+	// Use WordPress.com’s brand color for the signup background
+	background: var( --color-wordpress-com );
 
 	// Adjust the padding as we no longer
 	// show the masterbar.
@@ -14,11 +12,28 @@ body.is-section-signup {
 	.masterbar {
 		display: none;
 	}
+
+	// Force the masterbar for Crowdsignal OAuth pages
+	.crowdsignal {
+		.masterbar__crowdsignal {
+			display: block;
+		}
+
+		.layout__content {
+			padding: 140px 0 0;
+		}
+	}
+
+	.layout__secondary {
+		background: var( --color-primary );
+		border: 0;
+	}
 }
 
 // Notice the :not(.dops) selector. I've added this to try and
 // avoid stepping on the toes of our oauth users, like Crowdsignal.
-body.is-section-signup .layout:not(.dops) {
+body.is-section-signup .layout:not( .dops ),
+body.is-section-signup .layout.gravatar {
 
 	// Update the logo that appears when loading Calypso
 	// to match the homepage, using primary-dark with opacity.
@@ -31,32 +46,15 @@ body.is-section-signup .layout:not(.dops) {
 	// on the primary colored background.
 	.empty-content {
 		.empty-content__illustration {
-			background: var( --color-white );
+			background: var( --color-surface );
 			padding-bottom: 16px;
 			margin-bottom: 24px;
 			border-radius: 6px;
-			box-shadow: 0 5px 5px -3px rgba( 0, 0, 0, 0.2),
-						0 8px 10px 1px rgba( 0, 0, 0, 0.14),
-						0 3px 14px 2px rgba( 0, 0, 0, 0.12);
+			@include elevation ( 3dp );
 		}
 
 		.empty-content__title {
-			color: var( --color-white );
-		}
-	}
-
-	// With the dark background, the border on cards looks a
-	// a little strange. Lets try a shadow instead. -shaun
-	.signup-form > .card,
-	.is-about .card,
-	.is-site-type .card,
-	.is-site-information .card {
-		box-shadow: 0 5px 5px -3px rgba( 0, 0, 0, 0.2),
-					0 8px 10px 1px rgba( 0, 0, 0, 0.14),
-					0 3px 14px 2px rgba( 0, 0, 0, 0.12);
-
-		.dops & {
-			box-shadow: none;
+			color: var( --color-text-inverted );
 		}
 	}
 
@@ -79,9 +77,9 @@ body.is-section-signup .layout:not(.dops) {
 		top: 42px;
 		left: 0;
 		right: 0;
-		max-height: 300px;
+		max-height: 350px;
 		overflow: auto;
-		box-shadow: 0 2px 8px rgba( 0, 0, 0, 0.2 );
+		@include elevation ( 2dp );
 	}
 
 	@include breakpoint( '<660px' ) {
@@ -102,21 +100,9 @@ body.is-section-signup .layout:not(.dops) {
 
 // The container wrapped around every
 // step in signup
-body.is-section-signup .layout:not(.dops) .step-wrapper {
+body.is-section-signup .layout:not( .dops ) .step-wrapper {
 	max-width: 960px;
 	margin: 0 auto;
-
-	// This fixes a bug with .about__pressable-wrapper
-	// that causes a horizontal scrollbar. -shaun
-	.signup__step.is-about & {
-		overflow: hidden;
-	}
-
-	// The "fix" above causes its own issue with card
-	// border (which are really box-shadows) being
-	// cut off on the bottom. 4px to account for
-	// input:focus states. -shaun
-	padding: 1px;
 
 	// Some steps (like plans) need a larger
 	// width column.
@@ -140,28 +126,171 @@ body.is-section-signup .layout:not(.dops) .step-wrapper {
 }
 
 // Signup headings
-body.is-section-signup .layout:not(.dops) .formatted-header {
-	margin: 0 0 16px 0;
+body.is-section-signup .layout:not( .dops ):not( .is-wccom-oauth-flow ) .formatted-header,
+body.is-section-signup .layout.gravatar .formatted-header {
+	margin: 0 0 16px;
 
 	.formatted-header__title {
 		margin: 0;
 		font-weight: 400;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 
 	.formatted-header__subtitle {
 		margin: 0;
 		font-size: 15px;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
+	}
+
+	a {
+		color: var( --color-neutral-0 );
+		text-decoration: underline;
+
+		&:hover {
+			color: var( --color-text-inverted );
+		}
 	}
 }
 
 // Skip button
 .step-wrapper__buttons {
 	text-align: center;
+	margin-bottom: 20px;
 }
 
 .is-section-signup .layout__content,
 .is-section-signup .layout__primary {
 	overflow: visible;
+}
+
+.layout.is-wccom-oauth-flow {
+	@import 'jetpack-connect/colors.scss';
+	@include woocommerce-colors();
+	background-color: var( --color-woocommerce-onboarding-background );
+	height: 100%;
+
+	.woocommerce-muriel-text-control,
+	.muriel-input-text {
+		border-color: var( --color-neutral-20 );
+
+		.text-control__label,
+		.components-base-control__label {
+			color: var( --color-neutral-50 );
+			font-size: 12px;
+			font-weight: normal;
+		}
+
+		&.active {
+			box-shadow: 0 0 0 2px var( --studio-woocommerce-purple-60 );
+			border-color: transparent;
+		}
+	}
+
+	.layout__content {
+		padding-top: 48px;
+	}
+
+	.masterbar {
+		display: none;
+	}
+
+	.signup-form__woocommerce-wrapper {
+		text-align: center;
+		border-bottom: 1px solid var( --color-neutral-50 );
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 56px;
+
+		svg > g {
+			transform: translateX( 50% );
+		}
+	}
+
+	.signup-form__woocommerce-logo {
+		margin: 0;
+		text-align: center;
+		margin-right: auto;
+		margin-left: auto;
+		padding-left: 0;
+		display: block;
+		height: 56px;
+		border-bottom: 1px solid var( --color-woocommerce-header-border );
+		background: var( --color-text-inverted );
+
+		svg {
+			margin-top: 15px;
+		}
+	}
+
+	.signup-form__woocommerce-heading {
+		margin-top: 32px;
+	}
+
+	.formatted-header {
+		max-width: 476px;
+		margin-right: auto;
+		margin-left: auto;
+
+		.formatted-header__subtitle {
+			color: var( --color-primary-10 );
+			margin-top: 1em;
+			font-size: 16px;
+			line-height: 24px;
+			font-weight: 400;
+		}
+	}
+
+	.logged-out-form {
+		max-width: 476px;
+	}
+
+	.logged-out-form__link-item {
+		text-align: center;
+		text-decoration: underline;
+		color: var( --studio-gray-60 );
+		font-size: 14px;
+	}
+
+	.signup-form__terms-of-service-link {
+		text-align: left;
+		color: var( --studio-gray-60 );
+	}
+
+	.signup-form__terms-of-service-link a,
+	.signup-form__social-buttons-tos a {
+		color: var( --studio-gray-60 );
+		text-decoration: underline;
+	}
+
+	.signup-form__social {
+		padding-bottom: 0;
+		margin-top: 16px;
+		p {
+			font-size: 12px;
+			color: var( --studio-gray-60 );
+		}
+
+		.social-buttons__button {
+			border: 1px solid var( --studio-pink-50 );
+			color: var( --studio-pink-50 );
+			box-shadow: none;
+			max-width: 250px;
+			height: 48px;
+		}
+	}
+
+
+	.logged-out-form__footer {
+		text-align: center;
+		.button.is-primary {
+			border: 0;
+			box-shadow: none;
+			max-width: 310px;
+			margin-right: auto;
+			margin-left: auto;
+			height: 48px;
+		}
+	}
 }

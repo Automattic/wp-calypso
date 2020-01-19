@@ -1,5 +1,4 @@
-/** @format */
-
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
@@ -7,11 +6,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { entries } from 'lodash';
+import { CURRENCIES } from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
@@ -40,7 +40,6 @@ import FormToggle from 'components/forms/form-toggle';
 import getCountries from 'state/selectors/get-countries';
 import PhoneInput from 'components/phone-input';
 import QuerySmsCountries from 'components/data/query-countries/sms';
-import { CURRENCIES } from 'lib/format-currency/currencies';
 
 const currencyList = entries( CURRENCIES ).map( ( [ code ] ) => ( { code } ) );
 const visualCurrencyList = entries( CURRENCIES ).map( ( [ code, { symbol } ] ) => ( {

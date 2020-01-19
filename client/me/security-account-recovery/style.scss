@@ -77,7 +77,7 @@
 	display: block;
 	font-size: 1em;
 	font-style: italic;
-	color: $gray;
+	color: var( --color-text-subtle );
 }
 
 .security-account-recovery-contact__detail {
@@ -85,13 +85,13 @@
 }
 
 .security-account-recovery-contact__remove {
-	color: $gray;
+	color: var( --color-text-subtle );
 	float: left;
 	cursor: pointer;
 	padding: 9px 0;
 
 	&:hover {
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 	}
 
 	.gridicon {

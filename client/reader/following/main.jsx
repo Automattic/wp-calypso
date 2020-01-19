@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,17 +10,23 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import BlankSuggestions from 'reader/components/reader-blank-suggestions';
 import Stream from 'reader/stream';
-import CompactCard from 'components/card/compact';
+import { CompactCard, Button } from '@automattic/components';
 import SearchInput from 'components/search';
 import { recordTrack } from 'reader/stats';
 import Suggestion from 'reader/search-stream/suggestion';
 import SuggestionProvider from 'reader/search-stream/suggestion-provider';
 import FollowingIntro from './intro';
-import config from 'config';
 import { getSearchPlaceholderText } from 'reader/search/utils';
 import Banner from 'components/banner';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
+import SectionHeader from 'components/section-header';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 function handleSearch( query ) {
 	recordTrack( 'calypso_reader_search_from_following', {
@@ -47,13 +52,12 @@ const FollowingStream = props => {
 	const placeholderText = getSearchPlaceholderText();
 	const now = new Date();
 	const showRegistrationMsg = props.userInUSA && now < lastDayForVoteBanner;
+	const { translate } = props;
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Stream { ...props }>
-			{ config.isEnabled( 'reader/following-intro' ) && ! showRegistrationMsg && (
-				<FollowingIntro />
-			) }
+			{ ! showRegistrationMsg && <FollowingIntro /> }
 			{ showRegistrationMsg && (
 				<Banner
 					className="following__reader-vote"
@@ -74,15 +78,12 @@ const FollowingStream = props => {
 					placeholder={ placeholderText }
 				/>
 			</CompactCard>
-			<div className="search-stream__blank-suggestions">
-				{ suggestionList &&
-					props.translate( 'Suggestions: {{suggestions /}}.', {
-						components: {
-							suggestions: suggestionList,
-						},
-					} ) }
-				&nbsp;
-			</div>
+			<BlankSuggestions suggestions={ suggestionList } />
+			<SectionHeader label={ translate( 'Followed Sites' ) }>
+				<Button primary compact className="following__manage" href="/following/manage">
+					{ translate( 'Manage' ) }
+				</Button>
+			</SectionHeader>
 		</Stream>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */

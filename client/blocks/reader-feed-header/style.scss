@@ -15,7 +15,7 @@
 }
 
 .reader-feed-header .reader-feed-header__site-badge {
-	color: $gray;
+	color: var( --color-text-subtle );
 	padding-right: 4px;
 	line-height: 0;
 	position: relative;
@@ -35,7 +35,7 @@
 
 	.reader-feed-header__site-title-link,
 	.reader-feed-header__site-title-link:visited {
-		color: var( --color-neutral-700 );
+		color: var( --color-primary );
 	}
 
 	&::after {
@@ -86,7 +86,7 @@
 	}
 
 	.reader-feed-header__follow-count {
-		color: $gray;
+		color: var( --color-text-subtle );
 		font-size: 14px;
 		margin-right: 15px;
 

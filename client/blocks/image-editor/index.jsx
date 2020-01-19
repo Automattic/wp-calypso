@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -38,6 +36,11 @@ import QuerySites from 'components/data/query-sites';
 import { AspectRatios, AspectRatiosValues } from 'state/ui/editor/image-editor/constants';
 import { getDefaultAspectRatio } from './utils';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ImageEditor extends React.Component {
 	static propTypes = {
 		// Component props
@@ -75,7 +78,9 @@ class ImageEditor extends React.Component {
 		noticeStatus: 'is-info',
 	};
 
-	componentWillReceiveProps( newProps ) {
+	editCanvasRef = React.createRef();
+
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { media: currentMedia } = this.props;
 
 		if ( newProps.media && ! isEqual( newProps.media, currentMedia ) ) {
@@ -164,9 +169,7 @@ class ImageEditor extends React.Component {
 			return;
 		}
 
-		const canvasComponent = this.refs.editCanvas.getWrappedInstance();
-
-		canvasComponent.toBlob( this.convertBlobToImage );
+		this.editCanvasRef.current.toBlob( this.convertBlobToImage );
 	};
 
 	onCancel = () => {
@@ -250,14 +253,12 @@ class ImageEditor extends React.Component {
 
 		return (
 			<div className={ classes }>
-				{ noticeText && this.renderNotice() }
-
 				<CloseOnEscape onEscape={ this.onCancel } />
 				<QuerySites siteId={ siteId } />
 
 				<figure>
 					<div className="image-editor__content">
-						<ImageEditorCanvas ref="editCanvas" onLoadError={ this.onLoadCanvasError } />
+						<ImageEditorCanvas ref={ this.editCanvasRef } onLoadError={ this.onLoadCanvasError } />
 						<ImageEditorToolbar
 							onShowNotice={ this.showNotice }
 							allowedAspectRatios={ allowedAspectRatios }
@@ -270,6 +271,8 @@ class ImageEditor extends React.Component {
 						/>
 					</div>
 				</figure>
+
+				{ noticeText && this.renderNotice() }
 			</div>
 		);
 	}

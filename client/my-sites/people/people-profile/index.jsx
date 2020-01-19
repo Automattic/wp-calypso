@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import React from 'react';
+import { connect } from 'react-redux';
+import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get } from 'lodash';
@@ -16,10 +14,15 @@ import { decodeEntities } from 'lib/formatting';
  * Internal dependencies
  */
 import Gravatar from 'components/gravatar';
+import InfoPopover from 'components/info-popover';
+import { withLocalizedMoment } from 'components/localized-moment';
+import { requestExternalContributors } from 'state/data-getters';
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
-class PeopleProfile extends React.PureComponent {
-	static displayName = 'PeopleProfile';
-
+class PeopleProfile extends Component {
 	getRole = () => {
 		const { invite, user } = this.props;
 
@@ -176,9 +179,11 @@ class PeopleProfile extends React.PureComponent {
 	};
 
 	renderRole = () => {
-		let superAdminBadge, roleBadge;
+		const { isExternalContributor, translate, user } = this.props;
 
-		if ( this.props.user && this.props.user.is_super_admin ) {
+		let contractorBadge, superAdminBadge, roleBadge;
+
+		if ( user && user.is_super_admin ) {
 			superAdminBadge = (
 				<div className="people-profile__role-badge role-super-admin">
 					{ this.getRoleBadgeText( 'super admin' ) }
@@ -194,7 +199,24 @@ class PeopleProfile extends React.PureComponent {
 			);
 		}
 
-		if ( ! roleBadge && ! superAdminBadge ) {
+		if ( isExternalContributor ) {
+			contractorBadge = (
+				<Fragment>
+					<div className="people-profile__role-badge role-contractor">
+						{ translate( 'Contractor', {
+							context: 'Noun: A user role',
+						} ) }
+					</div>
+					<div className="people-profile__role-badge-info">
+						<InfoPopover position="top right">
+							{ translate( 'This user is a freelancer, consultant, or agency.' ) }
+						</InfoPopover>
+					</div>
+				</Fragment>
+			);
+		}
+
+		if ( ! roleBadge && ! superAdminBadge && ! contractorBadge ) {
 			return;
 		}
 
@@ -202,6 +224,7 @@ class PeopleProfile extends React.PureComponent {
 			<div className="people-profile__badges">
 				{ superAdminBadge }
 				{ roleBadge }
+				{ contractorBadge }
 			</div>
 		);
 	};
@@ -249,4 +272,13 @@ class PeopleProfile extends React.PureComponent {
 	}
 }
 
-export default localize( PeopleProfile );
+export default connect( ( _state, { siteId, user } ) => {
+	const userId = user && user.ID;
+	const linkedUserId = user && user.linked_user_ID;
+	const externalContributors = ( siteId && requestExternalContributors( siteId ).data ) || [];
+	return {
+		isExternalContributor: externalContributors.includes(
+			undefined !== linkedUserId ? linkedUserId : userId
+		),
+	};
+} )( localize( withLocalizedMoment( PeopleProfile ) ) );

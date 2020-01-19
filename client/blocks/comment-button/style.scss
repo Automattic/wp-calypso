@@ -1,7 +1,7 @@
 .comment-button {
 	align-items: center;
 	box-sizing: border-box;
-	color: $gray;
+	color: var( --color-text-subtle );
 	cursor: pointer;
 	display: inline-flex;
 	list-style-type: none;

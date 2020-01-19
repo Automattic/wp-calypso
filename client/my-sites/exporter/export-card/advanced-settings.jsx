@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { connect } from 'react-redux';
  */
 import PostTypeOptions from './post-type-options';
 import SpinnerButton from 'components/spinner-button';
-import { isDateRangeValid as isExportDateRangeValid } from 'state/site-settings/exporter/selectors';
+import { isDateRangeValid as isExportDateRangeValid } from 'state/exporter/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
@@ -64,7 +62,7 @@ class AdvancedSettings extends React.Component {
 					className="export-card__export-button"
 					disabled={ ! this.props.isValid }
 					loading={ this.props.shouldShowProgress }
-					isPrimary={ true }
+					isPrimary={ false }
 					onClick={ this.props.onClickExport }
 					text={ this.props.translate( 'Export Selected Content' ) }
 					loadingText={ this.props.translate( 'Exporting…' ) }

@@ -1,7 +1,6 @@
 /**
  * Extrenal dependencies
  *
- * @format
  */
 
 import React, { PureComponent } from 'react';
@@ -14,6 +13,11 @@ import config from 'config';
 import ca from './ca-form';
 import fr from './fr-form';
 import uk from './uk-form';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const tldSpecificForms = {
 	ca,

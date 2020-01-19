@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,9 +10,9 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import config from 'config';
+import CreditCard from 'components/credit-card';
 import CreditCardDelete from './credit-card-delete';
 import {
 	getStoredCards,
@@ -24,6 +22,11 @@ import {
 import QueryStoredCards from 'components/data/query-stored-cards';
 import { addCreditCard } from 'me/purchases/paths';
 import SectionHeader from 'components/section-header';
+
+/**
+ * Style dependencies
+ */
+import './credit-cards.scss';
 
 class CreditCards extends Component {
 	renderCards() {
@@ -39,13 +42,13 @@ class CreditCards extends Component {
 			);
 		}
 
-		return this.props.cards.map( function( card ) {
+		return this.props.cards.map( card => {
 			return (
-				<div className="credit-cards__single-card" key={ card.stored_details_id }>
+				<CreditCard key={ card.stored_details_id }>
 					<CreditCardDelete card={ card } />
-				</div>
+				</CreditCard>
 			);
-		}, this );
+		} );
 	}
 
 	goToAddCreditCard() {

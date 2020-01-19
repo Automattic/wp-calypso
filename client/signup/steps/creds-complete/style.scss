@@ -11,7 +11,7 @@
 	font-size: rem( 25px );
 	font-weight: 300;
 	letter-spacing: rem( 1.5px );
-	color: $gray-text;
+	color: var( --color-text );
 }
 
 .creds-complete__image {

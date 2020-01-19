@@ -1,11 +1,9 @@
-
 $accordion-subtitle-height: 16px;
-$accordion-background-collapsed: $white; // same as body
-$accordion-background-hover: lighten( $gray, 35% );
-$accordion-background-expanded: $white;
+$accordion-background-collapsed: var( --color-surface ); // same as body
+$accordion-background-expanded: var( --color-surface );
 
 .accordion {
-	box-shadow: 0 -1px 0 lighten( $gray, 26% ), 0 1px 0 lighten( $gray, 26% );
+	box-shadow: 0 -1px 0 var( --color-neutral-5 ), 0 1px 0 var( --color-neutral-5 );
 	margin-top: 1px;
 	position: relative;
 }
@@ -21,13 +19,13 @@ $accordion-background-expanded: $white;
 	margin: 0;
 	padding: $accordion-padding;
 	padding-right: ( $accordion-padding + 22px );
-	color: var( --color-neutral-700 );
-	background-color: $accordion-background-collapsed;
+	color: var( --color-neutral-70 );
+	background-color: var( --color-surface );
 	text-align: left;
 	transition: all 150ms ease-in;
 
 	&:hover {
-		background-color: $accordion-background-hover;
+		background-color: var( --color-neutral-0 );
 
 		.accordion__title {
 			color: var( --color-accent );
@@ -43,7 +41,7 @@ $accordion-background-expanded: $white;
 		top: 50%;
 		right: ( $accordion-padding - 4px );
 		transform: translateY( -50% );
-		color: var( --color-neutral-400 );
+		color: var( --color-neutral-40 );
 		height: 24px;
 		.gridicon {
 			transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ), color 0.2s ease-in;
@@ -58,7 +56,7 @@ $accordion-background-expanded: $white;
 
 .accordion.is-expanded {
 	.accordion__toggle {
-		background-color: $accordion-background-expanded;
+		background-color: var( --color-surface );
 
 		.accordion__arrow {
 			.gridicon {
@@ -114,26 +112,26 @@ $accordion-background-expanded: $white;
 
 .accordion:not( .is-expanded ) .accordion__toggle .accordion__subtitle {
 	&::after {
-		@include long-content-fade( $color: hex-to-rgb( $accordion-background-collapsed ) );
+		@include long-content-fade( $color: var( --color-surface-rgb ) );
 	}
 }
 
 .accordion:not( .is-expanded ) .accordion__toggle:hover .accordion__subtitle {
 	&::after {
-		@include long-content-fade( $color: hex-to-rgb( $accordion-background-hover ) );
+		@include long-content-fade( $color: var( --color-neutral-0-rgb ) );
 	}
 }
 
 .accordion.is-expanded .accordion__subtitle {
 	&::after {
-		@include long-content-fade( $color: hex-to-rgb( $accordion-background-expanded ) );
+		@include long-content-fade( $color: var( --color-surface-rgb ) );
 	}
 }
 
 .accordion__content {
 	overflow: hidden;
 	height: 0;
-	background-color: $accordion-background-expanded;
+	background-color: var( --color-surface );
 }
 
 .accordion.is-expanded .accordion__content {
@@ -166,7 +164,7 @@ $accordion-background-expanded: $white;
 		left: 4px;
 		width: 14px;
 		height: 14px;
-		background-color: $white;
+		background-color: var( --color-surface );
 		border-radius: 50%;
 	}
 
@@ -179,14 +177,14 @@ $accordion-background-expanded: $white;
 	}
 
 	&.is-warning {
-		color: var( --color-warning );
+		color: var( --color-warning-40 );
 	}
 
 	&.is-error {
-		color: var( --color-error );
+		color: var( --color-error-40 );
 	}
 
 	&.is-info {
-		color: var( --color-primary );
+		color: var( --color-neutral-40 );
 	}
 }

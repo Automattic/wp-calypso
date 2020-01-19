@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,7 +19,6 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import FormTextValidation from 'components/forms/form-input-validation';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import SelectDropdown from 'components/select-dropdown';
-import DropdownItem from 'components/select-dropdown/item';
 import TokenField from 'components/token-field';
 import FieldRemoveButton from './field-remove-button';
 import FieldEditButton from './field-edit-button';
@@ -51,7 +48,7 @@ class ContactFormDialogField extends React.PureComponent {
 		}
 
 		let { options } = this.props;
-		options = !! options ? options.split( ',' ) : [];
+		options = options ? options.split( ',' ) : [];
 
 		const optionsValidationError = ! options || options.length === 0;
 
@@ -119,13 +116,13 @@ class ContactFormDialogField extends React.PureComponent {
 					<FormLabel>{ this.props.translate( 'Field Type' ) }</FormLabel>
 					<SelectDropdown selectedText={ getLabel( this.props.type ) }>
 						{ fieldTypes.map( fieldType => (
-							<DropdownItem
+							<SelectDropdown.Item
 								key={ 'field-type-' + fieldType }
 								selected={ this.props.type === fieldType }
 								onClick={ () => this.props.onUpdate( { type: fieldType } ) }
 							>
 								{ getLabel( fieldType ) }
-							</DropdownItem>
+							</SelectDropdown.Item>
 						) ) }
 					</SelectDropdown>
 				</FormFieldset>

@@ -58,6 +58,8 @@
 }
 
 .reader-landing__feature-image {
+	border: 2px solid var( --color-neutral-10 );
+	border-radius: 5px;
 	width: 100%;
 
 	@include breakpoint( '>660px' ) {
@@ -81,7 +83,7 @@
 }
 
 .reader-landing__feature-description {
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	font-size: 1em;
 	margin-top: 4px;
 

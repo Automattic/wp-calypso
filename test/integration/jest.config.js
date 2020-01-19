@@ -1,5 +1,3 @@
-/** @format */
-
 module.exports = {
 	modulePaths: [
 		'<rootDir>/test/',
@@ -10,10 +8,11 @@ module.exports = {
 	rootDir: './../../',
 	testEnvironment: 'node',
 	testMatch: [
-		'<rootDir>/bin/**/integration/*.js',
-		'<rootDir>/client/**/integration/*.js',
-		'<rootDir>/server/**/integration/*.js',
-		'<rootDir>/test/test/helpers/**/integration/*.js',
+		'<rootDir>/bin/**/integration/*.[jt]s',
+		'<rootDir>/client/**/integration/*.[jt]s',
+		'<rootDir>/server/**/integration/*.[jt]s',
+		'<rootDir>/test/test/helpers/**/integration/*.[jt]s',
+		'!**/.eslintrc.*',
 	],
 	verbose: false,
 };

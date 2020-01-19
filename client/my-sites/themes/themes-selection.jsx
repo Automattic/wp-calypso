@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,9 +15,8 @@ import QueryThemes from 'components/data/query-themes';
 import ThemesList from 'components/themes-list';
 import ThemesSelectionHeader from './themes-selection-header';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { isJetpackSite } from 'state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
 import {
 	getPremiumThemePrice,
 	getThemesForQueryIgnoringPage,
@@ -33,6 +30,11 @@ import { setThemePreviewOptions } from 'state/themes/actions';
 import config from 'config';
 import prependThemeFilterKeys from 'state/selectors/prepend-theme-filter-keys';
 
+/**
+ * Style dependencies
+ */
+import './themes-selection.scss';
+
 class ThemesSelection extends Component {
 	static propTypes = {
 		emptyContent: PropTypes.element,
@@ -45,6 +47,7 @@ class ThemesSelection extends Component {
 		// connected props
 		source: PropTypes.oneOfType( [ PropTypes.number, PropTypes.oneOf( [ 'wpcom', 'wporg' ] ) ] ),
 		themes: PropTypes.array,
+		recommendedThemes: PropTypes.array,
 		themesCount: PropTypes.number,
 		isRequesting: PropTypes.bool,
 		isLastPage: PropTypes.bool,
@@ -52,6 +55,10 @@ class ThemesSelection extends Component {
 		getPremiumThemePrice: PropTypes.func,
 		isInstallingTheme: PropTypes.func,
 		placeholderCount: PropTypes.number,
+		bookmarkRef: PropTypes.oneOfType( [
+			PropTypes.func,
+			PropTypes.shape( { current: PropTypes.any } ),
+		] ),
 	};
 
 	static defaultProps = {
@@ -59,10 +66,21 @@ class ThemesSelection extends Component {
 		showUploadButton: true,
 	};
 
+	componentDidMount() {
+		// Create "buffer zone" to prevent overscrolling too early bugging pagination requests.
+		const { query, recommendedThemes } = this.props;
+		if ( ! recommendedThemes && ! query.search && ! query.filter && ! query.tier ) {
+			this.props.incrementPage();
+		}
+	}
+
 	recordSearchResultsClick = ( themeId, resultsRank, action ) => {
-		const { query, themes, filterString } = this.props;
+		// TODO do we need different query if from RecommendedThemes?
+		const { query, filterString } = this.props;
+		const themes = this.props.recommendedThemes || this.props.themes;
 		const search_taxonomies = filterString;
 		const search_term = search_taxonomies + ( query.search || '' );
+
 		this.props.recordTracksEvent( 'calypso_themeshowcase_theme_click', {
 			search_term: search_term || null,
 			search_taxonomies,
@@ -102,7 +120,9 @@ class ThemesSelection extends Component {
 			this.trackScrollPage();
 		}
 
-		this.props.incrementPage();
+		if ( ! this.props.recommendedThemes ) {
+			this.props.incrementPage();
+		}
 	};
 
 	//intercept preview and add primary and secondary
@@ -142,11 +162,15 @@ class ThemesSelection extends Component {
 
 		return (
 			<div className="themes__selection">
-				<QueryThemes query={ query } siteId={ source } />
-				<ThemesSelectionHeader label={ listLabel } count={ themesCount } />
+				{ ! this.props.recommendedThemes && (
+					<>
+						<QueryThemes query={ query } siteId={ source } />
+						<ThemesSelectionHeader label={ listLabel } count={ themesCount } />
+					</>
+				) }
 				<ThemesList
 					upsellUrl={ upsellUrl }
-					themes={ this.props.themes }
+					themes={ this.props.recommendedThemes || this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
 					onMoreButtonClick={ this.recordSearchResultsClick }
 					getButtonOptions={ this.getOptions }
@@ -159,13 +183,28 @@ class ThemesSelection extends Component {
 					loading={ this.props.isRequesting }
 					emptyContent={ this.props.emptyContent }
 					placeholderCount={ this.props.placeholderCount }
+					bookmarkRef={ this.props.bookmarkRef }
 				/>
 			</div>
 		);
 	}
 }
 
-const ConnectedThemesSelection = connect(
+function bindIsThemeActive( state, siteId ) {
+	return themeId => isThemeActive( state, themeId, siteId );
+}
+
+function bindIsInstallingTheme( state, siteId ) {
+	return themeId => isInstallingTheme( state, themeId, siteId );
+}
+
+function bindGetPremiumThemePrice( state, siteId ) {
+	themeId => getPremiumThemePrice( state, themeId, siteId );
+}
+
+// Exporting this for use in recommended-themes.jsx
+// We do not want pagination triggered in that use of the component.
+export const ConnectedThemesSelection = connect(
 	( state, { filter, page, search, tier, vertical, siteId, source } ) => {
 		const isJetpack = isJetpackSite( state, siteId );
 		let sourceSiteId;
@@ -197,14 +236,14 @@ const ConnectedThemesSelection = connect(
 			isRequesting: isRequestingThemesForQuery( state, sourceSiteId, query ),
 			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),
 			isLoggedIn: !! getCurrentUserId( state ),
-			isThemeActive: themeId => isThemeActive( state, themeId, siteId ),
-			isInstallingTheme: themeId => isInstallingTheme( state, themeId, siteId ),
+			isThemeActive: bindIsThemeActive( state, siteId ),
+			isInstallingTheme: bindIsInstallingTheme( state, siteId ),
 			// Note: This component assumes that purchase and plans data is already present in the state tree
 			// (used by the `isPremiumThemeAvailable` selector). That data is provided by the `<QuerySitePurchases />`
 			// and `<QuerySitePlans />` components, respectively. At the time of implementation, neither of them
 			// provides caching, and both are already being rendered by a parent component. So to avoid
 			// redundant AJAX requests, we're not rendering these query components locally.
-			getPremiumThemePrice: themeId => getPremiumThemePrice( state, themeId, siteId ),
+			getPremiumThemePrice: bindGetPremiumThemePrice( state, siteId ),
 			filterString: prependThemeFilterKeys( state, query.filter ),
 		};
 	},
@@ -221,7 +260,7 @@ class ThemesSelectionWithPage extends React.Component {
 		page: 1,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			nextProps.search !== this.props.search ||
 			nextProps.tier !== this.props.tier ||

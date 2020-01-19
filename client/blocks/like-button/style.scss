@@ -1,10 +1,8 @@
-/** @format */
-
 .like-button {
 	align-items: center;
 	display: inline-flex;
 	padding: 4px;
-	color: $gray;
+	color: var( --color-text-subtle );
 	position: relative;
 	box-sizing: border-box;
 
@@ -68,11 +66,6 @@
 			display: none;
 		}
 	}
-}
-
-.like-button__like-icons {
-	height: 24px;
-	width: 24px;
 }
 
 .like-button__label {

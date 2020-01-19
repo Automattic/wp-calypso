@@ -1,9 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
 import closest from 'component-closest';
-import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { defer, startsWith, identity } from 'lodash';
 import page from 'page';
@@ -17,11 +15,13 @@ import ReaderSidebarHelper from './helper';
 import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarTags from './reader-sidebar-tags';
 import ReaderSidebarTeams from './reader-sidebar-teams';
+import ReaderSidebarNudges from './reader-sidebar-nudges';
 import QueryReaderLists from 'components/data/query-reader-lists';
 import QueryReaderTeams from 'components/data/query-reader-teams';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarHeading from 'layout/sidebar/heading';
+import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
 import { isDiscoverEnabled } from 'reader/discover/helper';
@@ -33,6 +33,24 @@ import getReaderTeams from 'state/selectors/get-reader-teams';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
 import ReaderSidebarPromo from './promo';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+const A8CConversationsIcon = () => (
+	<svg
+		className="sidebar__menu-icon"
+		width="24"
+		height="24"
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 24 24"
+	>
+		<path d="M12.2 7.1c.5.3.6 1 .3 1.4L10 12.4c-.3.5-1 .7-1.4.3-.6-.3-.8-1-.4-1.5l2.5-3.9c.3-.4 1-.5 1.5-.2zM17.3 21.2h2.8c1 0 1.9-.8 1.9-1.9v-4.7c0-1-.8-1.9-1.9-1.9h-7.6c-1 .1-1.7.9-1.7 1.9v4.7c0 1 .8 1.8 1.7 1.9h2V24l2.8-2.8z" />
+		<path d="M8.8 15.2c-2.7-.7-4.1-2.9-4.1-5.2 0-5.8 5.8-5.7 5.8-5.7 5.8 0 5.8 5.7 5.8 5.7 0 .3 0 .6-.1.8H19v-.7C19 1.6 10.4 2 10.4 2c-8.6 0-8.5 8.1-8.5 8.1 0 3.5 2.7 6.8 6.9 7.5v-2.4z" />
+	</svg>
+);
 
 export class ReaderSidebar extends React.Component {
 	state = {};
@@ -92,12 +110,6 @@ export class ReaderSidebar extends React.Component {
 		recordTrack( 'calypso_reader_sidebar_followed_sites_clicked' );
 	}
 
-	handleReaderSidebarFollowManageClicked() {
-		recordAction( 'clicked_reader_sidebar_follow_manage' );
-		recordGaEvent( 'Clicked Reader Sidebar Follow Manage' );
-		recordTrack( 'calypso_reader_sidebar_follow_manage_clicked' );
-	}
-
 	handleReaderSidebarConversationsClicked() {
 		recordAction( 'clicked_reader_sidebar_conversations' );
 		recordGaEvent( 'Clicked Reader Sidebar Conversations' );
@@ -129,135 +141,98 @@ export class ReaderSidebar extends React.Component {
 	}
 
 	render() {
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		const { path, teams, translate } = this.props;
+
 		return (
 			<Sidebar onClick={ this.handleClick }>
 				<SidebarRegion>
+					<ReaderSidebarNudges />
 					<SidebarMenu>
-						<SidebarHeading>{ this.props.translate( 'Streams' ) }</SidebarHeading>
+						<SidebarHeading>{ translate( 'Streams' ) }</SidebarHeading>
 						<ul>
-							<li
-								className={ ReaderSidebarHelper.itemLinkClass( '/', this.props.path, {
+							<SidebarItem
+								className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
 									'sidebar-streams__following': true,
 								} ) }
-							>
-								<a href="/" onClick={ this.handleReaderSidebarFollowedSitesClicked }>
-									<Gridicon icon="checkmark-circle" size={ 24 } />
-									<span className="menu-link-text">
-										{ this.props.translate( 'Followed Sites' ) }
-									</span>
-								</a>
-								<a
-									href="/following/manage"
-									onClick={ this.handleReaderSidebarFollowManageClicked }
-									className="sidebar__button"
-								>
-									{ this.props.translate( 'Manage' ) }
-								</a>
-							</li>
-							<li
-								className={ ReaderSidebarHelper.itemLinkClass(
-									'/read/conversations',
-									this.props.path,
-									{
+								label={ translate( 'Followed Sites' ) }
+								onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
+								materialIcon="check_circle"
+								link="/read"
+							/>
+
+							<SidebarItem
+								className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations', path, {
+									'sidebar-streams__conversations': true,
+								} ) }
+								label={ translate( 'Conversations' ) }
+								onNavigate={ this.handleReaderSidebarConversationsClicked }
+								materialIcon="question_answer"
+								link="/read/conversations"
+							/>
+
+							<ReaderSidebarTeams teams={ teams } path={ path } />
+
+							{ isAutomatticTeamMember( teams ) && (
+								<SidebarItem
+									className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations/a8c', path, {
 										'sidebar-streams__conversations': true,
-									}
-								) }
-							>
-								<a
-									href="/read/conversations"
-									onClick={ this.handleReaderSidebarConversationsClicked }
-								>
-									<Gridicon icon="chat" size={ 24 } />
-									<span className="menu-link-text">
-										{ this.props.translate( 'Conversations' ) }
-									</span>
-								</a>
-							</li>
-							<ReaderSidebarTeams teams={ this.props.teams } path={ this.props.path } />
-							{ isAutomatticTeamMember( this.props.teams ) && (
-								<li
-									className={ ReaderSidebarHelper.itemLinkClass(
-										'/read/conversations/a8c',
-										this.props.path,
-										{
-											'sidebar-streams__conversations': true,
-										}
-									) }
-								>
-									<a
-										href="/read/conversations/a8c"
-										onClick={ this.handleReaderSidebarA8cConversationsClicked }
-									>
-										<svg
-											className={ 'gridicon gridicon-automattic-conversations' }
-											width="24"
-											height="24"
-											xmlns="http://www.w3.org/2000/svg"
-											viewBox="0 0 24 24"
-										>
-											<path d="M12.2 7.1c.5.3.6 1 .3 1.4L10 12.4c-.3.5-1 .7-1.4.3-.6-.3-.8-1-.4-1.5l2.5-3.9c.3-.4 1-.5 1.5-.2zM17.3 21.2h2.8c1 0 1.9-.8 1.9-1.9v-4.7c0-1-.8-1.9-1.9-1.9h-7.6c-1 .1-1.7.9-1.7 1.9v4.7c0 1 .8 1.8 1.7 1.9h2V24l2.8-2.8z" />
-											<path d="M8.8 15.2c-2.7-.7-4.1-2.9-4.1-5.2 0-5.8 5.8-5.7 5.8-5.7 5.8 0 5.8 5.7 5.8 5.7 0 .3 0 .6-.1.8H19v-.7C19 1.6 10.4 2 10.4 2c-8.6 0-8.5 8.1-8.5 8.1 0 3.5 2.7 6.8 6.9 7.5v-2.4z" />
-										</svg>
-										<span className="menu-link-text">A8C Conversations</span>
-									</a>
-								</li>
+									} ) }
+									label="A8C Conversations"
+									onNavigate={ this.handleReaderSidebarA8cConversationsClicked }
+									link="/read/conversations/a8c"
+									customIcon={ <A8CConversationsIcon /> }
+								/>
 							) }
 
-							{ isDiscoverEnabled() ? (
-								<li
-									className={ ReaderSidebarHelper.itemLinkClass( '/discover', this.props.path, {
+							{ isDiscoverEnabled() && (
+								<SidebarItem
+									className={ ReaderSidebarHelper.itemLinkClass( '/discover', path, {
 										'sidebar-streams__discover': true,
 									} ) }
-								>
-									<a href="/discover" onClick={ this.handleReaderSidebarDiscoverClicked }>
-										<Gridicon icon="my-sites" />
-										<span className="menu-link-text">{ this.props.translate( 'Discover' ) }</span>
-									</a>
-								</li>
-							) : null }
+									label={ translate( 'Discover' ) }
+									onNavigate={ this.handleReaderSidebarDiscoverClicked }
+									icon="my-sites"
+									link="/discover"
+								/>
+							) }
 
-							<li
-								className={ ReaderSidebarHelper.itemLinkClass( '/read/search', this.props.path, {
+							<SidebarItem
+								label={ translate( 'Search' ) }
+								onNavigate={ this.handleReaderSidebarSearchClicked }
+								materialIcon="search"
+								link="/read/search"
+								className={ ReaderSidebarHelper.itemLinkClass( '/read/search', path, {
 									'sidebar-streams__search': true,
 								} ) }
-							>
-								<a href="/read/search" onClick={ this.handleReaderSidebarSearchClicked }>
-									<Gridicon icon="search" size={ 24 } />
-									<span className="menu-link-text">{ this.props.translate( 'Search' ) }</span>
-								</a>
-							</li>
+							/>
 
-							<li
-								className={ ReaderSidebarHelper.itemLinkClass(
-									'/activities/likes',
-									this.props.path,
-									{ 'sidebar-activity__likes': true }
-								) }
-							>
-								<a href="/activities/likes" onClick={ this.handleReaderSidebarLikeActivityClicked }>
-									<Gridicon icon="star" size={ 24 } />
-									<span className="menu-link-text">{ this.props.translate( 'My Likes' ) }</span>
-								</a>
-							</li>
+							<SidebarItem
+								label={ translate( 'My Likes' ) }
+								onNavigate={ this.handleReaderSidebarLikeActivityClicked }
+								materialIcon="star_border"
+								link="/activities/likes"
+								className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
+									'sidebar-activity__likes': true,
+								} ) }
+							/>
 						</ul>
 					</SidebarMenu>
 
 					<QueryReaderLists />
 					<QueryReaderTeams />
-					{ this.props.subscribedLists && this.props.subscribedLists.length ? (
+					{ this.props.subscribedLists && this.props.subscribedLists.length > 0 && (
 						<ReaderSidebarLists
 							lists={ this.props.subscribedLists }
-							path={ this.props.path }
+							path={ path }
 							isOpen={ this.props.isListsOpen }
 							onClick={ this.props.toggleListsVisibility }
 							currentListOwner={ this.state.currentListOwner }
 							currentListSlug={ this.state.currentListSlug }
 						/>
-					) : null }
+					) }
 					<ReaderSidebarTags
 						tags={ this.props.followedTags }
-						path={ this.props.path }
+						path={ path }
 						isOpen={ this.props.isTagsOpen }
 						onClick={ this.props.toggleTagsVisibility }
 						onFollowTag={ this.highlightNewTag }
@@ -270,7 +245,6 @@ export class ReaderSidebar extends React.Component {
 				<SidebarFooter />
 			</Sidebar>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

@@ -10,7 +10,7 @@
 	display: flex;
 	align-items: center;
 	background: white;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
 	transition: all 0.15s ease-in-out;
 
 	&.has-highlight {
@@ -20,14 +20,11 @@
 	.search {
 		flex: 0 1 auto;
 		margin: 0;
+		height: 58px;
 
-		&.has-focus {
+		&.has-focus, &.has-focus:hover {
 			box-shadow: none;
 		}
-	}
-
-	.search.is-expanded-to-container {
-		height: 58px;
 	}
 
 	.section-nav {
@@ -35,7 +32,7 @@
 	}
 
 	.search .search-open__icon {
-		color: var( --color-neutral-200 );
+		color: var( --color-neutral-20 );
 	}
 
 	.themes-magic-search-card__icon {
@@ -51,7 +48,7 @@
 
 		.themes-magic-search-card__icon-close {
 			flex: 0 0 auto;
-			color: var( --color-neutral-600 );
+			color: var( --color-neutral-60 );
 			align-items: center;
 		}
 	}
@@ -143,22 +140,22 @@
  * Suggestions: Welcome Card
  */
 .themes-magic-search-card__welcome {
-	color: $gray;
-	background-color: $white;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	color: var( --color-neutral-light );
+	background-color: var( --color-surface );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
 	display: flex;
 	flex-direction: column;
 }
 
 .themes-magic-search-card__welcome-header {
 	background-color: var( --color-neutral-0 );
-	border-bottom: 1px solid darken( $gray-light, 10% );
+	border-bottom: 1px solid var( --color-neutral-5 );
 	border-top: 0;
 	padding: 4px 8px;
 	font-size: 13px;
 
 	text-transform: uppercase;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }
 
 .themes-magic-search-card__welcome-taxonomies {
@@ -180,9 +177,8 @@
 	margin: 0;
 	font-size: 13px;
 	line-height: 16px;
-	text-transform: capitalize;
 	cursor: pointer;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	transition: all 200ms ease-in;
 
 	@include breakpoint( '>660px' ) {
@@ -190,7 +186,7 @@
 	}
 
 	.gridicon {
-		fill: var( --color-neutral-700 );
+		fill: var( --color-neutral-70 );
 		margin: 0 auto;
 		transition: fill 200ms ease-in;
 	}
@@ -204,7 +200,7 @@
 		}
 
 		@include breakpoint( '>660px' ) {
-			background: lighten( $gray, 35% );
+			background: var( --color-neutral-0 );
 			box-shadow: inset 0 -3px 0 0 var( --color-accent );
 		}
 	}

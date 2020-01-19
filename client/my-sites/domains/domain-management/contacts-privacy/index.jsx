@@ -1,9 +1,9 @@
-/** @format */
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 
@@ -20,18 +20,21 @@ import VerticalNavItem from 'components/vertical-nav/item';
 import {
 	domainManagementEdit,
 	domainManagementEditContactInfo,
-	domainManagementPrivacyProtection,
 	domainManagementManageConsent,
 } from 'my-sites/domains/paths';
 import { getSelectedDomain } from 'lib/domains';
-import { findRegistrantWhois, findPrivacyServiceWhois } from 'lib/domains/whois/utils';
+import isRequestingWhois from 'state/selectors/is-requesting-whois';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ContactsPrivacy extends React.PureComponent {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
-		whois: PropTypes.object.isRequired,
 	};
 
 	render() {
@@ -39,30 +42,34 @@ class ContactsPrivacy extends React.PureComponent {
 			return <DomainMainPlaceholder goBack={ this.goToEdit } />;
 		}
 
-		const { translate, whois } = this.props;
+		const { translate } = this.props;
 		const domain = getSelectedDomain( this.props );
-		const { hasPrivacyProtection, privateDomain, privacyAvailable, currentUserCanManage } = domain;
+		const {
+			privateDomain,
+			privacyAvailable,
+			contactInfoDisclosed,
+			contactInfoDisclosureAvailable,
+			isPendingIcannVerification,
+		} = domain;
+
 		const canManageConsent =
 			config.isEnabled( 'domains/gdpr-consent-page' ) && domain.supportsGdprConsentManagement;
-		const contactInformation = privateDomain
-			? findPrivacyServiceWhois( whois.data )
-			: findRegistrantWhois( whois.data );
 
 		return (
 			<Main className="contacts-privacy">
 				<Header onClick={ this.goToEdit } selectedDomainName={ this.props.selectedDomainName }>
-					{ privacyAvailable ? translate( 'Contacts and Privacy' ) : translate( 'Contacts' ) }
+					{ translate( 'Contacts and Privacy' ) }
 				</Header>
 
 				<VerticalNav>
 					<ContactsPrivacyCard
-						contactInformation={ contactInformation }
 						selectedDomainName={ this.props.selectedDomainName }
 						selectedSite={ this.props.selectedSite }
-						hasPrivacyProtection={ hasPrivacyProtection }
 						privateDomain={ privateDomain }
 						privacyAvailable={ privacyAvailable }
-						currentUserCanManage={ currentUserCanManage }
+						contactInfoDisclosed={ contactInfoDisclosed }
+						contactInfoDisclosureAvailable={ contactInfoDisclosureAvailable }
+						isPendingIcannVerification={ isPendingIcannVerification }
 					/>
 
 					<VerticalNavItem
@@ -84,24 +91,13 @@ class ContactsPrivacy extends React.PureComponent {
 							{ translate( 'Manage Consent for Personal Data Use' ) }
 						</VerticalNavItem>
 					) }
-
-					{ ! hasPrivacyProtection && privacyAvailable && (
-						<VerticalNavItem
-							path={ domainManagementPrivacyProtection(
-								this.props.selectedSite.slug,
-								this.props.selectedDomainName
-							) }
-						>
-							{ translate( 'Privacy Protection' ) }
-						</VerticalNavItem>
-					) }
 				</VerticalNav>
 			</Main>
 		);
 	}
 
 	isDataLoading() {
-		return ! getSelectedDomain( this.props ) || ! this.props.whois.hasLoadedFromServer;
+		return ! getSelectedDomain( this.props ) || this.props.isRequestingWhois;
 	}
 
 	goToEdit = () => {
@@ -109,4 +105,8 @@ class ContactsPrivacy extends React.PureComponent {
 	};
 }
 
-export default localize( ContactsPrivacy );
+export default connect( ( state, ownProps ) => {
+	return {
+		isRequestingWhois: isRequestingWhois( state, ownProps.selectedDomainName ),
+	};
+} )( localize( ContactsPrivacy ) );

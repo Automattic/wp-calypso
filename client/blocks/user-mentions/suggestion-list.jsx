@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,6 +12,11 @@ import { bind } from 'lodash';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import UserMentionsSuggestion from 'blocks/user-mentions/suggestion';
+
+/**
+ * Style dependencies
+ */
+import './suggestion-list.scss';
 
 const UserMentionsSuggestionList = ( {
 	onClick,

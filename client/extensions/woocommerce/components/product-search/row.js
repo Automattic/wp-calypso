@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,14 +7,14 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { filter, find, get, intersection, noop, reduce, uniqBy, values } from 'lodash';
 import { localize } from 'i18n-calypso';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import Count from 'components/count';
 import { fetchProductVariations } from 'woocommerce/state/sites/product-variations/actions';
-import formatCurrency from 'lib/format-currency';
 import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
@@ -59,7 +58,7 @@ class ProductSearchRow extends Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		// Short out if we know the new product doesn't need variations
 		if ( ! newProps.product || 'variable' !== newProps.product.type ) {
 			return;

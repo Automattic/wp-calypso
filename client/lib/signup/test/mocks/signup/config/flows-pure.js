@@ -1,5 +1,3 @@
-/** @format */
-
 const flows = {
 	simple_flow: {
 		steps: [ 'stepA', 'stepB' ],
@@ -28,6 +26,26 @@ const flows = {
 	flowWithProvidedDependencies: {
 		steps: [ 'stepRequiringSiteSlug' ],
 		providesDependenciesInQuery: [ 'siteSlug' ],
+	},
+
+	flowWithSiteTopic: {
+		steps: [ 'stepA', 'stepB', 'site-topic' ],
+	},
+
+	flowWithSiteTopicAndTitle: {
+		steps: [ 'stepA', 'stepB', 'site-topic-and-title' ],
+	},
+
+	flowWithSiteTopicAndSurvey: {
+		steps: [ 'stepA', 'stepB', 'site-topic', 'survey' ],
+	},
+
+	flowWithSiteTopicWithOptionalTheme: {
+		steps: [ 'stepA', 'stepB', 'site-topic-with-optional-theme' ],
+	},
+
+	flowWithSiteTopicWithOptionalSurveyQuestion: {
+		steps: [ 'stepA', 'stepB', 'site-topic-with-optional-survey-question' ],
 	},
 };
 export default flows;

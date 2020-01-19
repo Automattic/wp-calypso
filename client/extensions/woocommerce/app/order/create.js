@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +12,7 @@ import page from 'page';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import {
 	areSettingsGeneralLoaded,
 	getPaymentCurrencySettings,
@@ -49,7 +48,7 @@ class Order extends Component {
 		this.possiblyFetchDefaultCurrency( this.props );
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		if ( this.props.siteId !== newProps.siteId ) {
 			this.props.editOrder( newProps.siteId, {} );
 		}
@@ -130,7 +129,7 @@ class Order extends Component {
 
 		const breadcrumbs = [
 			<a href={ getLink( '/store/orders/:site/', site ) }>{ translate( 'Orders' ) }</a>,
-			<span>{ translate( 'New Order' ) }</span>,
+			<span>{ translate( 'New order' ) }</span>,
 		];
 
 		return (
@@ -143,7 +142,7 @@ class Order extends Component {
 						busy={ isSaving }
 						disabled={ ! hasOrderEdits || isSaving }
 					>
-						{ translate( 'Save Order' ) }
+						{ translate( 'Save order' ) }
 					</Button>
 				</ActionHeader>
 

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,6 +10,11 @@ import classNames from 'classnames';
  */
 import CompactToggle from 'components/forms/form-toggle/compact';
 import InfoPopover from 'components/info-popover';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class PluginAction extends React.Component {
 	handleAction = event => {

@@ -14,16 +14,7 @@
 	margin: 0 auto;
 	padding-bottom: 25%;
 	line-height: 0.5;
-	color: var( --color-neutral-400 );
-}
-
-.media-library__list-item-icon .gridicon {
-	position: absolute;
-	top: 0;
-	left: 0;
-	display: block;
-	width: 100%;
-	height: auto;
+	color: var( --color-neutral-40 );
 }
 
 .media-library__list-item-file-name {
@@ -32,19 +23,19 @@
 	max-width: 80%;
 	margin: 0 auto;
 	white-space: nowrap;
-	color: var( --color-neutral-600 );
+	color: var( --color-neutral-60 );
 
 	&::after {
-		@include long-content-fade( $color: hex-to-rgb( $gray-lighten-20 ) );
+		@include long-content-fade( $color: var( --color-neutral-10-rgb ) );
 	}
 }
 
 .media-library__list-item-details-separator {
 	width: 20%;
 	margin: 3% auto;
-	background-color: var( --color-neutral-100 );
+	background-color: var( --color-neutral-10 );
 }
 
 .media-library__list-item-file-extension {
-	color: $gray;
+	color: var( --color-neutral-light );
 }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,7 +5,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { noop } from 'lodash';
 
 /**
@@ -15,6 +13,12 @@ import { noop } from 'lodash';
  */
 import PurchaseButton from './purchase-button';
 import TipInfo from './tip-info';
+import { preventWidows } from 'lib/formatting';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default class PurchaseDetail extends PureComponent {
 	static propTypes = {
@@ -113,7 +117,7 @@ export default class PurchaseDetail extends PureComponent {
 					<div className="purchase-detail__image">{ this.renderIcon() }</div>
 					<div className="purchase-detail__text">
 						<h3 className="purchase-detail__title">{ title }</h3>
-						<div className="purchase-detail__description">{ description }</div>
+						<div className="purchase-detail__description">{ preventWidows( description ) }</div>
 						{ this.renderBody() }
 					</div>
 				</div>

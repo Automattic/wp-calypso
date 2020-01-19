@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,9 +7,14 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import HelpResult from './item';
 import SectionHeader from 'components/section-header';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default class extends React.PureComponent {
 	static displayName = 'HelpResults';

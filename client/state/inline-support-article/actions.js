@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Internal dependencies
  */
@@ -10,7 +9,7 @@ import { SUPPORT_ARTICLE_DIALOG_OPEN, SUPPORT_ARTICLE_DIALOG_CLOSE } from 'state
  * @param  {number} postId 	The id of the support article
  * @param  {string} postUrl	The URL of the support article
  *
- * @return {Function}		Action thunk
+ * @returns {Function}		Action thunk
  */
 export function openSupportArticleDialog( { postId, postUrl = null } ) {
 	return dispatch => {
@@ -25,7 +24,7 @@ export function openSupportArticleDialog( { postId, postUrl = null } ) {
 /**
  * Closes/hides the support article dialog
  *
- * @return {Function}		Action thunk
+ * @returns {Function}		Action thunk
  */
 export function closeSupportArticleDialog() {
 	return dispatch => dispatch( { type: SUPPORT_ARTICLE_DIALOG_CLOSE } );

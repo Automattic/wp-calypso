@@ -1,14 +1,12 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -17,11 +15,14 @@ import getRawSite from 'state/selectors/get-raw-site';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { getPlan } from 'lib/plans';
-import formatCurrency from 'lib/format-currency';
+import { getPlan, getPlanClass } from 'lib/plans';
 import ThankYouCard from 'components/thank-you-card';
 import PlanIcon from 'components/plans/plan-icon';
-import { getPlanClass } from 'lib/plans/constants';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class PlanThankYouCard extends Component {
 	getPlanClass() {
@@ -109,6 +110,8 @@ class PlanThankYouCard extends Component {
 
 	render() {
 		const { siteId } = this.props;
+		const description = this.renderDescription();
+
 		return (
 			<div className={ classnames( 'plan-thank-you-card', this.getPlanClass() ) }>
 				<QuerySites siteId={ siteId } />
@@ -118,7 +121,8 @@ class PlanThankYouCard extends Component {
 					name={ this.renderPlanName() }
 					price={ this.renderPlanPrice() }
 					heading={ this.renderHeading() }
-					description={ this.renderDescription() }
+					description={ 'string' === typeof description ? description : null }
+					descriptionWithHTML={ 'object' === typeof description ? description : null }
 					buttonUrl={ this.getButtonUrl() }
 					buttonText={ this.renderButtonText() }
 					icon={ this.renderPlanIcon() }
@@ -133,7 +137,11 @@ PlanThankYouCard.propTypes = {
 	action: PropTypes.node,
 	buttonText: PropTypes.string,
 	buttonUrl: PropTypes.string,
-	description: PropTypes.string,
+	/**
+	 * Description can be either a string or object to allow either a bare
+	 * string or a description that contains HTML and other components.
+	 **/
+	description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 	heading: PropTypes.string,
 	plan: PropTypes.object,
 	siteId: PropTypes.number.isRequired,

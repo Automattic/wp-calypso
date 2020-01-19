@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,8 +6,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import classnames from 'classnames';
+
+/**
+ * Style dependencies
+ */
+import './comment-approve-action.scss';
 
 const CommentApproveAction = ( { translate, status, approveComment, unapproveComment } ) => {
 	const isApproved = status === 'approved';

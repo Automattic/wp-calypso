@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,10 +10,9 @@ import { flowRight, get, isEmpty, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button, Card } from '@automattic/components';
 import CacheStats from './cache-stats';
 import QueryStats from '../data/query-stats';
-import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -48,7 +45,7 @@ class ContentsTab extends Component {
 		isDeletingExpired: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.isDeleting && ! nextProps.isDeleting ) {
 			this.setState( {
 				isDeleting: false,
@@ -246,7 +243,4 @@ const getFormSettings = settings => {
 	return pick( settings, [ 'cache_max_time' ] );
 };
 
-export default flowRight(
-	connectComponent,
-	WrapSettingsForm( getFormSettings )
-)( ContentsTab );
+export default flowRight( connectComponent, WrapSettingsForm( getFormSettings ) )( ContentsTab );

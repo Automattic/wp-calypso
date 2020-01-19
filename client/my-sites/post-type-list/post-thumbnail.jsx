@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -29,7 +27,7 @@ function PostTypeListPostThumbnail( { onClick, thumbnail, postLink } ) {
 		<div className={ classes }>
 			{ thumbnail && (
 				<a href={ postLink } className="post-type-list__post-thumbnail-link">
-					<img
+					<img //eslint-disable-line
 						src={ resizeImageUrl( safeImageUrl( thumbnail ), { h: 80 } ) }
 						className="post-type-list__post-thumbnail"
 						onClick={ onClick }
@@ -60,9 +58,11 @@ export default connect( ( state, ownProps ) => {
 	const postUrl = canCurrentUserEditPost( state, ownProps.globalId )
 		? getEditorPath( state, siteId, postId )
 		: get( post, 'URL' );
+	const isTrashed = post && 'trash' === post.status;
 
 	// Null if the item is a placeholder or bulk edit mode is active.
-	const postLink = ! ownProps.globalId || isMultiSelectEnabled( state ) ? null : postUrl;
+	const postLink =
+		! ownProps.globalId || isMultiSelectEnabled( state ) || isTrashed ? null : postUrl;
 
 	return { thumbnail, postLink };
 } )( PostTypeListPostThumbnail );

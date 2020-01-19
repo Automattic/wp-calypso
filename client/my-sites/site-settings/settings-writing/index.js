@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,18 +7,18 @@ import page from 'page';
  * Internal dependencies
  */
 import config from 'config';
-import controller from './controller';
-import settingsController from 'my-sites/site-settings/settings-controller';
-import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { makeLayout, render as clientRender } from 'controller';
+import { navigation, siteSelection, sites } from 'my-sites/controller';
+import { podcasting, taxonomies, writing } from './controller';
+import { setScroll, siteSettings } from 'my-sites/site-settings/settings-controller';
 
 export default function() {
 	page(
 		'/settings/writing/:site_id',
 		siteSelection,
 		navigation,
-		settingsController.siteSettings,
-		controller.writing,
+		siteSettings,
+		writing,
 		makeLayout,
 		clientRender
 	);
@@ -31,8 +30,8 @@ export default function() {
 			'/settings/taxonomies/:taxonomy/:site_id',
 			siteSelection,
 			navigation,
-			settingsController.setScroll,
-			controller.taxonomies,
+			setScroll,
+			taxonomies,
 			makeLayout,
 			clientRender
 		);
@@ -44,8 +43,8 @@ export default function() {
 		'/settings/podcasting/:site_id',
 		siteSelection,
 		navigation,
-		settingsController.setScroll,
-		controller.podcasting,
+		setScroll,
+		podcasting,
 		makeLayout,
 		clientRender
 	);

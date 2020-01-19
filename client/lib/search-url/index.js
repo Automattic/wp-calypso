@@ -1,15 +1,12 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-import buildUrl from 'lib/build-url';
+import { buildRelativeSearchUrl } from 'lib/build-url';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:search-url' );
@@ -20,7 +17,7 @@ export default function searchUrl( keywords, initialSearch, onSearch ) {
 		return;
 	}
 
-	const searchURL = buildUrl( window.location.href, keywords );
+	const searchURL = buildRelativeSearchUrl( window.location.href, keywords );
 
 	debug( 'search posts for:', keywords );
 	if ( initialSearch && keywords ) {

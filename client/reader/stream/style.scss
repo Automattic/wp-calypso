@@ -1,0 +1,561 @@
+// Reader-specific tweaks to components
+
+// Overrides default 720px width
+.is-reader-page .following.main {
+	max-width: 800px;
+}
+
+.is-reader-page .reader__card.card.is-placeholder {
+	border-bottom: 1px solid var( --color-neutral-10 );
+	box-shadow: none;
+	margin-bottom: 0;
+	padding: 6px 0 30px;
+
+	@include breakpoint( '<660px' ) {
+		margin: 0 15px;
+	}
+
+	.reader__post-footer {
+		margin-left: 0;
+	}
+}
+
+.following {
+
+	@include breakpoint( '<660px' ) {
+		-webkit-perspective: none;
+		perspective: none;
+	}
+}
+
+.reader__content .reader-excerpt,
+.reader__content .reader-post-card__title,
+.reader__content .reader-combined-card__post-title {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.reader__card.card {
+	padding: 16px;
+	transition: all 0.1s ease-in-out;
+	margin-bottom: 15px;
+
+	&.is-selected,
+	&.is-x-post.is-selected,
+	&.tag-afk.is-selected {
+
+		&::before {
+			background: var( --color-primary );
+			content: '';
+			position: absolute;
+				bottom: 0;
+				left: -8px;
+				top: 0;
+			width: 2px;
+		}
+	}
+
+	@include breakpoint( '>480px' ) {
+		padding: 16px 24px 24px;
+		margin-bottom: 24px;
+	}
+
+	.site {
+		margin-right: 96px;
+	}
+
+	.site__content {
+		padding: 0;
+	}
+
+	.follow-button {
+		position: absolute;
+			top: -3px;
+			right: 0;
+
+		@include breakpoint( '>660px' ) {
+			z-index: z-index( 'reader-card-follow-button-parent', '.reader__card.card .follow-button' );
+		}
+	}
+
+	.reader-post-byline {
+		margin: 8px 0;
+		padding: 0;
+		font-size: 14px;
+		color: var( --color-neutral-20 );
+
+		.gravatar {
+			height: 16px;
+			width: 16px;
+			top: 4px;
+		}
+	}
+
+	// Loading Placeholders
+	&.is-placeholder {
+		pointer-events: none;
+		user-select: none;
+
+		.reader__placeholder-text,
+		.site-icon {
+			color: transparent;
+			background-color: var( --color-neutral-0 );
+			animation: loading-fade 1.6s ease-in-out infinite;
+		}
+
+		.site-icon {
+			display: inline-block;
+			margin-right: 6px;
+			height: 16px;
+			width: 16px;
+		}
+
+		.reader__post-time-placeholder {
+			position: relative;
+			font-size: 14px;
+
+			@include breakpoint( '<480px' ) {
+				font-size: 13px;
+			}
+		}
+	}
+
+	&.is-headerless {
+
+		@include breakpoint( '>480px' ) {
+			padding-top: 25px;
+		}
+
+		.reader__post-title {
+			margin-top: 0;
+		}
+
+		&.has-featured-image {
+			padding-top: 0;
+		}
+	}
+
+	.post-excerpt-only {
+
+		p {
+			margin-bottom: 1em;
+		}
+	}
+
+	&.hide-xpost .po-xpost {
+		display: none;
+	}
+
+	&.is-x-post {
+		background: transparent;
+		box-shadow: none;
+		padding: 16px 24px;
+		display: flex;
+
+		.reader__post-title {
+			font-size: 16px;
+			line-height: normal;
+			margin: 0;
+			cursor: pointer;
+		}
+	}
+
+	&.tag-afk {
+		background: transparent;
+		box-shadow: none;
+		padding: 16px 24px;
+
+		&:hover {
+			cursor: pointer;
+		}
+
+		.reader-full-post__story-content,
+		.reader-post-byline__tag,
+		.reader-post-byline__date,
+		.reader__post-featured-image,
+		.reader__post-footer,
+		.post-excerpt,
+		.site__info {
+			display: none;
+		}
+
+		.site {
+			pointer-events: none;
+		}
+
+		.reader__post-header {
+			margin-bottom: 0;
+		}
+
+		.reader__post-title {
+			display: block;
+			font-size: 16px;
+			margin: 0;
+			position: absolute;
+				top: 14px;
+				left: 66px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			max-width: calc( 100% - 90px );
+		}
+
+		.reader-post-byline {
+			margin: 0;
+			font-size: 13px;
+			position: absolute;
+				top: 34px;
+				left: 44px;
+		}
+
+		.follow-button {
+			display: none;
+		}
+
+		&.is-headerless {
+
+			padding: 16px 24px 54px;
+
+			.reader__post-title,
+			.reader-post-byline {
+				position: absolute;
+					left: 25px;
+			}
+		}
+	}
+}
+
+// X-Posts
+.is-reader-page {
+
+	.reader__card.card.is-x-post {
+		border-bottom: 1px solid var( --color-neutral-10 );
+		margin: 0 15px;
+		padding: 20px;
+
+		@include breakpoint( '>660px' ) {
+			margin: 0;
+			padding: 20px 42px;
+		}
+
+		.reader__post-title-link,
+		.reader__post-title-link:visited {
+			color: var( --color-neutral-50 );
+		}
+
+		.reader__post-title-link:hover {
+			color: var( --color-neutral-70 );
+		}
+
+		.reader-avatar {
+			margin: 0 12px 0 0;
+			width: auto;
+
+			&:hover {
+				cursor: pointer;
+			}
+		}
+
+		.site-icon {
+			margin: 1px;
+		}
+
+		.gravatar {
+			border: 1px solid var( --color-border-inverted );
+		}
+	}
+}
+
+// Featured Image/Video
+.reader__post-featured-image,
+.reader__post-featured-video {
+	cursor: pointer;
+	overflow: hidden;
+	width: calc( 100% + 32px );
+	position: relative;
+		top: 0;
+		left: -16px;
+	margin-bottom: 16px;
+	border-bottom: 1px solid var( --color-neutral-10 );
+	box-shadow: inset 0 0 2px 2px rgba( var( --color-neutral-20-rgb ), 0.1 );
+	background: rgba( var( --color-neutral-0-rgb ), 0.3 );
+
+	@include breakpoint( '>480px' ) {
+		left: -24px;
+		width: calc( 100% + 48px );
+		margin-bottom: 24px;
+	}
+
+	img {
+		display: block;
+		width: auto !important; // Dirrty, I know. But it overrides the inline styles applied to the image. -shaun
+		margin: 0 auto;
+		max-height: 70vh;
+	}
+
+	&.is-shorter-abtest {
+		img {
+			object-fit: cover;
+			max-height: none;
+		}
+	}
+
+	// This helps avoid some random whitespace below YourTube embeds.
+	iframe {
+		display: block;
+	}
+}
+
+
+// Handling the different types of Reader cards
+.reader__card {
+	// Featured image/video should "bleed" to the edge of the card.
+	&.has-featured-image {
+		//padding-top: 0;
+	}
+
+	// Inline Post Content
+	// Shorter posts display the full post content directly in the stream.
+	.reader-full-post__story-content {
+		@extend %content-font;
+		margin: 0 -24px;
+		padding: 0 24px;
+		background: transparent;
+		border: none;
+
+		color: var( --color-neutral-60 );
+		line-height: 1.8;
+		overflow-wrap: break-word;
+		word-wrap: break-word;
+
+		blockquote {
+			margin-left: 0;
+			margin-right: 0;
+			font-size: 16px;
+		}
+
+		p {
+			line-height: 1.8;
+		}
+
+		// Inline Reblog Tweaks
+		p.reblog-from {
+			@include breakpoint( '>480px' ) {
+				margin-left: -24px;
+				margin-right: -24px;
+				padding-left: 24px;
+				padding-right: 24px;
+			}
+			@include breakpoint( '<480px' ) {
+				margin-left: -16px;
+				margin-right: -16px;
+				padding-left: 16px;
+				padding-right: 16px;
+			}
+		}
+
+		p.reblog-source {
+			margin-bottom: 16px;
+			padding-bottom: 8px;
+			border-bottom: 1px solid var( --color-neutral-0 );
+		}
+	}
+}
+
+// P2 cross-posts (x-posts), which is Automattic-only.
+.reader__x-post-author {
+	font-weight: 600;
+}
+
+.reader__x-post,
+.reader__x-post-to {
+	font-size: 13px;
+	font-family: $sans;
+	color: var( --color-text-subtle );
+	position: relative;
+}
+
+.reader__x-post-to {
+	margin-top: 16px;
+	padding-left: 26px;
+
+	.gridicon {
+		height: 12px;
+		width: 12px;
+		display: inline-block;
+		fill: var( --color-text-inverted );
+		background: var( --color-neutral-light );
+		padding: 4px;
+		border-radius: 100%;
+		position: absolute;
+			top: 0;
+			left: 0;
+	}
+}
+
+.reader__post-header {
+	margin: 0 0 16px;
+	padding: 0;
+	position: relative;
+	line-height: 16px;
+	@include clear-fix;
+}
+
+.reader__post-byline {
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: baseline;
+	color: var( --color-neutral-20 );
+	font-size: 12px;
+	line-height: 1;
+}
+
+// In-stream Recommendations
+.reader-stream__recommended-posts {
+	border-bottom: 1px solid var( --color-neutral-10 );
+	padding-bottom: 12px;
+
+	@include breakpoint( '<660px' ) {
+		margin: 0 15px;
+	}
+}
+
+.reader-stream__recommended-posts-header {
+	color: var( --color-neutral-20 );
+	font-size: 14px;
+	font-weight: 600;
+	letter-spacing: 0.01em;
+	margin: 13px 0 17px;
+	position: relative;
+	text-transform: uppercase;
+
+	.gridicon {
+		fill: var( --color-neutral-20 );
+		margin-right: -2px;
+		position: relative;
+			left: -2px;
+			top: 2px;
+	}
+}
+
+.reader-stream__recommended-posts-list {
+	display: flex;
+	flex-direction: row;
+	margin: 0;
+	padding: 0;
+
+	@include breakpoint( '<480px' ) {
+		flex-direction: column;
+	}
+}
+
+.reader-stream__recommended-posts-list-item {
+	display: flex;
+	flex-direction: row;
+	list-style-type: none;
+	width: 100%;
+
+	@include breakpoint( '>960px' ) {
+		flex-direction: column;
+		margin-top: -40px;
+		width: 50%;
+	}
+
+	.reader-stream__recommended-post-dismiss {
+		height: 30px;
+
+		@include breakpoint( '<960px' ) {
+			margin-right: 15px;
+		}
+
+		.button {
+			float: right;
+		}
+
+		.gridicon {
+			fill: var( --color-neutral-20 );
+			width: 14px;
+			height: 14px;
+			top: -3px;
+		}
+	}
+
+	.card.reader-related-card {
+		margin: 0;
+		padding-top: 6px;
+
+		.reader-related-card__meta .gravatar {
+			margin: 3px 8px 0 0;
+		}
+
+		&.has-thumbnail {
+
+			.reader-related-card__meta {
+				margin-bottom: 17px;
+			}
+
+			.reader-related-card__meta .follow-button {
+				margin-top: -9px;
+			}
+
+			.reader-related-card__post {
+				margin-top: 0;
+				max-height: 108px;
+
+				@include breakpoint( '<480px' ) {
+					max-height: 125px;
+				}
+			}
+		}
+	}
+
+	&:first-child {
+		margin-right: 10px;
+
+		@include breakpoint( '>660px' ) {
+			margin-right: 15px;
+		}
+	}
+
+	&:last-child {
+		margin-left: 10px;
+
+		@include breakpoint( '>660px' ) {
+			margin-left: 15px;
+		}
+	}
+
+	&:first-child,
+	&:last-child {
+
+		@include breakpoint( '<480px' ) {
+			margin: 0 0 20px;
+		}
+	}
+
+	&:only-child {
+		margin: 0;
+	}
+
+	.reader-related-card__meta .follow-button {
+		margin-top: -8px;
+	}
+
+	.reader-related-card__post {
+		margin-top: -2px;
+		max-height: 208px;
+
+		@include breakpoint( '<660px' ) {
+			max-height: 207px;
+		}
+
+		.reader-related-card__excerpt {
+			-webkit-line-clamp: initial;
+		}
+	}
+
+	.reader-related-card__featured-image {
+		border: 1px solid var( --color-neutral-0 );
+		margin: 0 0 14px;
+	}
+}

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { debounce, noop, uniqueId } from 'lodash';
 import i18n from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -18,6 +16,11 @@ import analytics from 'lib/analytics';
 import Spinner from 'components/spinner';
 import { isMobile } from 'lib/viewport';
 import TranslatableString from 'components/translatable/proptype';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * Internal variables
@@ -113,7 +116,7 @@ class Search extends Component {
 
 	setOverlayRef = overlay => ( this.overlay = overlay );
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			nextProps.onSearch !== this.props.onSearch ||
 			nextProps.delaySearch !== this.props.delaySearch
@@ -123,7 +126,7 @@ class Search extends Component {
 				: this.props.onSearch;
 		}
 
-		if ( nextProps.isOpen ) {
+		if ( this.props.isOpen !== nextProps.isOpen ) {
 			this.setState( { isOpen: nextProps.isOpen } );
 		}
 
@@ -333,6 +336,7 @@ class Search extends Component {
 			<div dir={ this.props.dir || null } className={ searchClass } role="search">
 				<Spinner />
 				<div
+					role="button"
 					className="search__icon-navigation"
 					ref={ this.setOpenIconRef }
 					onClick={ enableOpenIcon ? this.openSearch : this.focus }
@@ -353,7 +357,7 @@ class Search extends Component {
 						aria-hidden={ ! isOpenUnpinnedOrQueried }
 						className={ inputClass }
 						placeholder={ placeholder }
-						role="search"
+						role="searchbox"
 						value={ searchValue }
 						ref={ this.setSearchInputRef }
 						onChange={ this.onChange }
@@ -376,18 +380,19 @@ class Search extends Component {
 		);
 	}
 
-	renderStylingDiv = () => {
+	renderStylingDiv() {
 		return (
 			<div className="search__text-overlay" ref={ this.setOverlayRef }>
 				{ this.props.overlayStyling( this.state.keyword ) }
 			</div>
 		);
-	};
+	}
 
-	closeButton = () => {
+	closeButton() {
 		if ( ! this.props.hideClose && ( this.state.keyword || this.state.isOpen ) ) {
 			return (
 				<div
+					role="button"
 					className="search__icon-navigation"
 					onClick={ this.closeSearch }
 					tabIndex="0"
@@ -401,7 +406,7 @@ class Search extends Component {
 		}
 
 		return null;
-	};
+	}
 }
 
 export default Search;

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FoldableCard from 'components/foldable-card';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -25,6 +24,8 @@ import SettingsSectionHeader from 'my-sites/site-settings/settings-section-heade
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSiteRoles } from 'state/site-roles/selectors';
 import { getStatsPathForTab } from 'lib/route';
+import { recordTracksEvent } from 'state/analytics/actions';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
@@ -42,11 +43,19 @@ class JetpackSiteStats extends Component {
 		isSavingSettings: PropTypes.bool,
 		isRequestingSettings: PropTypes.bool,
 		fields: PropTypes.object,
+		path: PropTypes.string,
 	};
 
 	onChangeToggleGroup = ( groupName, fieldName ) => {
 		return () => {
-			const { setFieldValue } = this.props;
+			const { setFieldValue, path } = this.props;
+
+			this.props.recordTracksEvent( 'calypso_site_stats_toggle_group_changed', {
+				path,
+				group: groupName,
+				field: fieldName,
+			} );
+
 			let groupFields = this.getCurrentGroupFields( groupName );
 
 			if ( includes( groupFields, fieldName ) ) {
@@ -179,20 +188,27 @@ class JetpackSiteStats extends Component {
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
-	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, siteId );
-	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
-		state,
-		siteId,
-		'stats'
-	);
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, siteId );
+		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
+			state,
+			siteId,
+			'stats'
+		);
+		const path = getCurrentRouteParameterized( state, siteId );
 
-	return {
-		siteId,
-		siteSlug: getSelectedSiteSlug( state, siteId ),
-		statsModuleActive: isJetpackModuleActive( state, siteId, 'stats' ),
-		moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
-		siteRoles: getSiteRoles( state, siteId ),
-	};
-} )( localize( JetpackSiteStats ) );
+		return {
+			siteId,
+			siteSlug: getSelectedSiteSlug( state, siteId ),
+			statsModuleActive: isJetpackModuleActive( state, siteId, 'stats' ),
+			moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
+			siteRoles: getSiteRoles( state, siteId ),
+			path,
+		};
+	},
+	{
+		recordTracksEvent,
+	}
+)( localize( JetpackSiteStats ) );

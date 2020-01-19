@@ -7,7 +7,7 @@
 
 	thead .table-heading,
 	thead .table-item {
-		border-bottom: 1px solid var( --color-neutral-100 );
+		border-bottom: 1px solid var( --color-neutral-10 );
 	}
 
 	tbody .table-heading,
@@ -44,11 +44,11 @@
 			&:hover {
 				background: var( --color-neutral-0 );
 
-				.table-item__cell-title:after {
+				.table-item__cell-title::after {
 					background-image: linear-gradient(
 						to right,
 						rgba( 255, 255, 255, 0 ) 0%,
-						$gray-light 90%
+						var( --color-neutral-0 ) 90%
 					);
 				}
 			}
@@ -87,7 +87,7 @@
 			overflow: hidden;
 
 			&::after {
-				background-image: linear-gradient( to right, rgba( 255, 255, 255, 0 ) 0%, $white 90% );
+				background-image: linear-gradient( to right, rgba( var( --color-surface-rgb ), 0 ) 0%, var( --color-surface ) 90% );
 				position: absolute;
 				z-index: 1;
 				right: 0;
@@ -114,9 +114,9 @@
 				top: 0;
 				background: radial-gradient(
 					ellipse at center,
-					rgba( $gray-dark, 0.125 ) 0%,
-					rgba( $white, 0 ) 75%,
-					rgba( $white, 0 ) 90%
+					rgba( var( --color-neutral-70-rgb ), 0.125 ) 0%,
+					rgba( var( --color-surface-rgb ), 0 ) 75%,
+					rgba( var( --color-surface-rgb ), 0 ) 90%
 				);
 			}
 
@@ -150,7 +150,7 @@
 	}
 
 	&.is-header {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		font-weight: 600;
 	}
 

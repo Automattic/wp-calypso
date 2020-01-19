@@ -1,10 +1,13 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const OfflineStatus = () => (
 	<span className="offline-status">

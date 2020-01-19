@@ -1,7 +1,0 @@
-.dialog.card.editor-gutenberg-convert-blocks-dialog {
-	max-width: 600px;
-
-	@include breakpoint( '<660px' ) {
-		max-width: 90%;
-	}
-}

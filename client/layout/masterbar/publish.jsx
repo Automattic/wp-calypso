@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import MasterbarItem from './item';
 import SitesPopover from 'components/sites-popover';
 import { isMobile } from 'lib/viewport';
@@ -18,11 +17,12 @@ import { preload } from 'sections-helper';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUserVisibleSiteCount } from 'state/current-user/selectors';
 import MasterbarDrafts from './drafts';
-import isRtlSelector from 'state/selectors/is-rtl';
 import TranslatableString from 'components/translatable/proptype';
 import { getEditorUrl } from 'state/selectors/get-editor-url';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import getSectionGroup from 'state/ui/selectors/get-section-group';
 import { reduxGetState } from 'lib/redux-bridge';
+import { navigate } from 'state/ui/actions';
 
 class MasterbarItemNew extends React.Component {
 	static propTypes = {
@@ -30,8 +30,8 @@ class MasterbarItemNew extends React.Component {
 		className: PropTypes.string,
 		tooltip: TranslatableString,
 		// connected props
-		hasMoreThanOneVisibleSite: PropTypes.bool,
-		isRtl: PropTypes.bool,
+		shouldOpenSiteSelector: PropTypes.bool,
+		editorUrl: PropTypes.string,
 	};
 
 	state = {
@@ -51,41 +51,23 @@ class MasterbarItemNew extends React.Component {
 	};
 
 	onClick = event => {
-		// if the user has multiple sites, show site selector
-		if ( this.props.hasMoreThanOneVisibleSite ) {
+		// if the user has multiple sites and none is selected, show site selector
+		if ( this.props.shouldOpenSiteSelector ) {
 			this.toggleSitesPopover();
 			event.preventDefault();
-			return;
 		}
 	};
 
 	preloadPostEditor = () => preload( 'post-editor' );
 
 	getPopoverPosition() {
-		const { isRtl } = this.props;
-
-		if ( isMobile() ) {
-			return 'bottom';
-		}
-
-		if ( isRtl ) {
-			return 'bottom right';
-		}
-
-		return 'bottom left';
+		return isMobile() ? 'bottom' : 'bottom left';
 	}
 
 	onSiteSelect = siteId => {
-		this.props.recordTracksEvent( 'calypso_masterbar_write_button_clicked' );
-		//To avoid binding in connect, please remove me later.
-		const redirectURL = getEditorUrl( reduxGetState(), siteId, null, 'post' );
-		if ( typeof window !== 'undefined' ) {
-			setTimeout( () => {
-				window.location = redirectURL;
-			}, 0 );
-			return true; // handledByHost = true, don't let the component nav
-		}
-		return false; //otherwise fallback to normal handling
+		const redirectUrl = getEditorUrl( reduxGetState(), siteId, null, 'post' );
+		this.props.openEditor( redirectUrl );
+		return true; // handledByHost = true, don't let the component nav
 	};
 
 	renderPopover() {
@@ -123,27 +105,37 @@ class MasterbarItemNew extends React.Component {
 					preloadSection={ this.preloadPostEditor }
 				>
 					{ this.props.children }
-					{ this.renderPopover() }
 				</MasterbarItem>
 				<MasterbarDrafts />
+				{ this.renderPopover() }
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state ) || getPrimarySiteId( state );
-
-	return {
-		hasMoreThanOneVisibleSite: getCurrentUserVisibleSiteCount( state ) > 1,
-		isRtl: isRtlSelector( state ),
-		editorUrl: getEditorUrl( state, siteId, null, 'post' ),
-	};
-};
-
-const mapDispatchToProps = { recordTracksEvent };
+const openEditor = editorUrl =>
+	withAnalytics(
+		recordTracksEvent( 'calypso_masterbar_write_button_clicked' ),
+		navigate( editorUrl )
+	);
 
 export default connect(
-	mapStateToProps,
-	mapDispatchToProps
+	state => {
+		const selectedSiteId = getSelectedSiteId( state );
+		const isSitesGroup = getSectionGroup( state ) === 'sites';
+		const hasMoreThanOneVisibleSite = getCurrentUserVisibleSiteCount( state ) > 1;
+
+		// the selector is shown only if it's not 100% clear which site we are on.
+		// I.e, when user has more than one site, is outside the My Sites group,
+		// or has one of the All Sites views selected.
+		const shouldOpenSiteSelector =
+			! ( selectedSiteId && isSitesGroup ) && hasMoreThanOneVisibleSite;
+
+		// otherwise start posting to the selected or primary site right away
+		const siteId = selectedSiteId || getPrimarySiteId( state );
+		const editorUrl = getEditorUrl( state, siteId, null, 'post' );
+
+		return { shouldOpenSiteSelector, editorUrl };
+	},
+	{ openEditor }
 )( MasterbarItemNew );

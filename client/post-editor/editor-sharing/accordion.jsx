@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -119,7 +117,7 @@ class EditorSharingAccordion extends React.Component {
 				text: this.props.translate( 'A broken connection requires repair', {
 					comment: 'Publicize connection deauthorized, needs user action to fix',
 				} ),
-				url: `/sharing/${ this.props.siteSlug }`,
+				url: `/marketing/connections/${ this.props.siteSlug }`,
 				position: isMobile() ? 'top left' : 'top',
 				onClick: this.props.onStatusClick,
 			};

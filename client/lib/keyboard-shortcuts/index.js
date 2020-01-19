@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -26,7 +24,7 @@ function ignoreDefaultAndContentEditableFilter( event ) {
 	return defaultFilter( event ) && ! event.target.isContentEditable;
 }
 
-/**
+/*
  * KeyboardShortcuts accepts an array of objects representing key-bindings and creates an EventEmitter
  * which emits an event when a keyboard shortcut is triggered.
  *
@@ -62,11 +60,9 @@ function KeyboardShortcuts( keyBindings ) {
 }
 
 KeyboardShortcuts.prototype.bindShortcuts = function( keyBindings ) {
-	const self = this;
-
 	// bind keys from the key bindings to their named events
-	keyBindings.forEach( function( keyBinding ) {
-		self.bindShortcut(
+	keyBindings.forEach( keyBinding => {
+		this.bindShortcut(
 			keyBinding.eventName,
 			keyBinding.keys,
 			keyBinding.type,
@@ -79,8 +75,7 @@ KeyboardShortcuts.prototype.bindShortcuts = function( keyBindings ) {
 };
 
 KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, checkKeys ) {
-	let self = this,
-		keyCombinations = [],
+	let keyCombinations = [],
 		matches;
 
 	if ( typeof keys[ 0 ] === 'string' ) {
@@ -91,32 +86,29 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
 		keyCombinations = keys;
 	}
 
-	keyCombinations.forEach( function( keys ) {
+	keyCombinations.forEach( combo => {
 		if ( 'sequence' === type ) {
-			keymaster( keys[ 1 ], function( event, handler ) {
+			keymaster( combo[ 1 ], ( event, handler ) => {
 				// if the notifications panel is open, do not handle any sequences
-				if ( self.isNotificationsOpen ) {
+				if ( this.isNotificationsOpen ) {
 					return;
 				}
 
-				if ( self.lastKey === keys[ 0 ] && self.lastKeyTime > Date.now() - self.timeLimit ) {
-					self.emitEvent( eventName, event, handler );
+				if ( this.lastKey === combo[ 0 ] && this.lastKeyTime > Date.now() - this.timeLimit ) {
+					this.emitEvent( eventName, event, handler );
 
-					self.lastKey = keys[ 1 ];
-					self.lastKeyTime = Date.now();
+					this.lastKey = combo[ 1 ];
+					this.lastKeyTime = Date.now();
 
 					// return false at the end of a sequence to prevent other shortcuts from firing
 					return false;
 				}
 			} );
 		} else {
-			keys = keys.join( '+' );
-			keymaster( keys, function( event, handler ) {
+			combo = combo.join( '+' );
+			keymaster( combo, ( event, handler ) => {
 				// if the notifications panel is open, do not handle any presses besides `n` to toggle the panel
-				if (
-					self.isNotificationsOpen &&
-					( self._getKey( event ) !== 'n' && event.keyCode !== 27 )
-				) {
+				if ( this.isNotificationsOpen && this._getKey( event ) !== 'n' && event.keyCode !== 27 ) {
 					return;
 				}
 
@@ -129,16 +121,16 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
 				// due to this webkit bug:
 				// https://bugs.webkit.org/show_bug.cgi?id=19906
 				if ( checkKeys && checkKeys.length > 0 ) {
-					keyValue = self._getKey( event );
+					keyValue = this._getKey( event );
 					// TODO: Could this be replaced by Array#some ?
 					matches = checkKeys.filter( function( key ) {
 						return key === keyValue;
 					} );
 					if ( matches.length === 1 ) {
-						self.emitEvent( eventName, event, handler );
+						this.emitEvent( eventName, event, handler );
 					}
 				} else {
-					self.emitEvent( eventName, event, handler );
+					this.emitEvent( eventName, event, handler );
 				}
 			} );
 		}
@@ -156,7 +148,7 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
  */
 KeyboardShortcuts.prototype._getKey = function( event ) {
 	let key;
-	if ( !! event.key ) {
+	if ( event.key ) {
 		return event.key;
 	}
 	key = event.keyIdentifier; //U+00XX

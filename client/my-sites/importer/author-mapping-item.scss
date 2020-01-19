@@ -1,0 +1,53 @@
+.importer__author-mapping {
+	padding: 0.5em 0 0.75em;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+
+	& > span:last-of-type {
+		width: 50%;
+
+		@include breakpoint( '<480px' ) {
+			width: 65%;
+		}
+	}
+
+	.author-selector__author-toggle {
+		padding-top: 4px;
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+		width: 100%;
+
+		@include breakpoint( '<480px' ) {
+			font-size: 12px;
+		}
+	}
+}
+
+.importer__source-author {
+	width: 45%;
+	padding-top: 0.5em;
+	display: inline-block;
+	color: var( --color-neutral-70 );
+	text-align: left;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	font-size: 14px;
+	font-weight: 600;
+
+	@include breakpoint( '<480px' ) {
+		width: 35%;
+	}
+}
+
+.importer__mapping-relation {
+	float: left;
+	color: var( --color-neutral-20 );
+
+	@include breakpoint( '<480px') {
+		display: none;
+	}
+}

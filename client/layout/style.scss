@@ -1,7 +1,7 @@
 /**
  * /*
  * 	Layout Elements
- * 	.layout__loading - Displays when loading Claypso
+ * 	.layout__loading - Displays when loading Calypso
  * 	.layout__content - Contains primary and secondary elements
  * 		.layout__primary - Where the main content lives
  * 		.layout__secondary - Contains the site selector and sidebar elements
@@ -18,31 +18,6 @@
 	transition: transform 0.15s ease-in-out, opacity 0.15s ease-out;
 }
 
-// If things take a bit to load...
-.layout__loader {
-	background: transparent;
-	border-bottom: 1px solid transparent;
-	height: 46px;
-	margin-left: -10%;
-	position: absolute;
-	left: 50%;
-	top: 0;
-	width: 20%;
-	z-index: z-index( 'root', '.layout__loader' );
-
-	// The transition-delay avoids showing the loader
-	// too often on faster connections.
-	display: none;
-	opacity: 0;
-	transition: opacity 0.1s linear;
-	transition-delay: 0.8s;
-
-	&.is-active {
-		display: block;
-		opacity: 1;
-	}
-}
-
 // Setup the content element to adapt to the sidebar,
 // lack of sidebar, or the WebPreview component.
 .layout__content {
@@ -52,11 +27,6 @@
 	padding: 79px 32px 32px ( $sidebar-width-max + 32px + 1px );
 	box-sizing: border-box;
 	overflow: hidden;
-
-	// I guess we dont want links to look like links.
-	a {
-		text-decoration: none;
-	}
 
 	// Various screens dont use a sidebar.
 	.has-no-sidebar & {
@@ -119,9 +89,9 @@
 	top: 47px;
 	left: 0;
 	bottom: 0;
-	color: var( --color-text );
-	background: var( --sidebar-background );
-	border-right: 1px solid darken( $sidebar-bg-color, 5% );
+	color: var( --color-sidebar-text );
+	background: var( --color-sidebar-background );
+	border-right: 1px solid var( --color-sidebar-border );
 	width: $sidebar-width-max;
 	overflow: hidden;
 
@@ -160,7 +130,7 @@
 		.site__title,
 		.site__domain {
 			&::after {
-				@include long-content-fade( $color: var( --sidebar-background ) );
+				@include long-content-fade( $color: var( --color-sidebar-background ) );
 			}
 		}
 	}
@@ -168,6 +138,70 @@
 	@include breakpoint( '<660px' ) {
 		-webkit-overflow-scrolling: touch;
 		transform: translateX( -100% );
+	}
+}
+
+// Secondary Layout overrides
+.layout__secondary {
+	.site__title {
+		color: var( --color-sidebar-text );
+	}
+
+	.site__domain {
+		color: var( --color-sidebar-text-alternative );
+	}
+
+	.site__title::after,
+	.site__domain::after {
+		@include long-content-fade( $color: var( --color-sidebar-background-rgb ) );
+	}
+
+	.site-selector {
+		&.is-large .site-selector__sites {
+			border-color: var( --color-sidebar-border );
+		}
+
+		&__sites {
+			background: var( --color-sidebar-background );
+		}
+
+		&__add-new-site {
+			border-color: var( --color-sidebar-border );
+
+			.button {
+				color: var( --color-sidebar-text-alternative );
+				&:hover {
+					color: var( --color-sidebar-text );
+				}
+			}
+		}
+
+		&__recent {
+			border-color: var( --color-sidebar-border );
+		}
+
+		&__no-results {
+			color: var( --color-sidebar-text-alternative );
+		}
+
+		&__hidden-sites-message,
+		&__manage-hidden-sites {
+			color: var( --color-sidebar-text );
+		}
+
+		.all-sites {
+			border-color: var( --color-sidebar-border );
+		}
+	}
+
+	.all-sites .count {
+		color: var( --color-sidebar-text );
+		border-color: var( --color-sidebar-text );
+	}
+
+	.app-promo .app-promo__link {
+		box-shadow: 0 0 0 1px var( --color-sidebar-border ),
+			0 1px 2px var( --color-sidebar-border );
 	}
 }
 
@@ -241,7 +275,7 @@
 
 // Display sidebar as a panel under a main payment component in mobile checkout
 .layout.is-section-checkout {
-	@media ( max-width: 660px ) {
+	@include breakpoint( '<660px' ) {
 		.layout__content {
 			display: flex;
 			flex-flow: column;

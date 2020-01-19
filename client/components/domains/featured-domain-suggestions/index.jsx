@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,8 +10,13 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import FeaturedDomainSuggestionsPlaceholder from 'components/domains/featured-domain-suggestions/placeholder';
+import FeaturedDomainSuggestionsPlaceholder from './placeholder';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class FeaturedDomainSuggestions extends Component {
 	static propTypes = {
@@ -24,6 +27,8 @@ export class FeaturedDomainSuggestions extends Component {
 		railcarId: PropTypes.string,
 		secondarySuggestion: PropTypes.object,
 		showPlaceholders: PropTypes.bool,
+		pendingCheckSuggestion: PropTypes.object,
+		unavailableDomains: PropTypes.array,
 	};
 
 	getChildProps() {
@@ -35,6 +40,8 @@ export class FeaturedDomainSuggestions extends Component {
 			'onButtonClick',
 			'query',
 			'selectedSite',
+			'pendingCheckSuggestion',
+			'unavailableDomains',
 		];
 		return pick( this.props, childKeys );
 	}
@@ -114,6 +121,7 @@ export class FeaturedDomainSuggestions extends Component {
 						fetchAlgo={ this.getFetchAlgorithm( primarySuggestion ) }
 						buttonStyles={ { primary: true } }
 						{ ...childProps }
+						showTestCopy={ this.props.showTestCopy }
 					/>
 				) }
 				{ secondarySuggestion && (
@@ -125,6 +133,7 @@ export class FeaturedDomainSuggestions extends Component {
 						uiPosition={ 1 }
 						fetchAlgo={ this.getFetchAlgorithm( secondarySuggestion ) }
 						{ ...childProps }
+						showTestCopy={ this.props.showTestCopy }
 					/>
 				) }
 			</div>

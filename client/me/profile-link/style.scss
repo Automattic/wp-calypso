@@ -48,7 +48,7 @@
 }
 
 .profile-link__title {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	float: left;
 	font-size: 13px;
 	font-weight: 400;
@@ -66,7 +66,7 @@
 .profile-link__url {
 	font-size: 11px;
 	line-height: 1.4;
-	color: $gray;
+	color: var( --color-neutral-light );
 	float: left;
 	clear: left;
 }

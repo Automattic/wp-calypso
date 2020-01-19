@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,8 +11,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import config from 'config';
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormLegend from 'components/forms/form-legend';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -89,7 +86,9 @@ class PublishingTools extends Component {
 
 		return (
 			<div className="publishing-tools__module-settings site-settings__child-settings">
-				<FormLabel className={ labelClassName }>{ translate( 'Email Address' ) }</FormLabel>
+				<FormLabel className={ labelClassName }>
+					{ translate( 'Send your new posts to this email address:' ) }
+				</FormLabel>
 				<ClipboardButtonInput
 					className="publishing-tools__email-address"
 					disabled={

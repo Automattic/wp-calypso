@@ -1,17 +1,12 @@
-/** @format */
-
-/* @TODO resolve linting issues */
-/* eslint-disable react/no-string-refs, wpcalypso/jsx-classname-namespace */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { throttle, map, uniq } from 'lodash';
 import { connect } from 'react-redux';
+import { loadScript } from '@automattic/load-script';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -19,12 +14,16 @@ import { localize } from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import config from 'config';
-import { loadScript } from 'lib/load-script';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class StatsGeochart extends Component {
 	static propTypes = {
@@ -36,6 +35,7 @@ class StatsGeochart extends Component {
 
 	visualizationsLoaded = false;
 	visualization = null;
+	chartRef = React.createRef();
 
 	componentDidMount() {
 		if ( ! window.google || ! window.google.charts ) {
@@ -76,9 +76,9 @@ class StatsGeochart extends Component {
 	};
 
 	drawRegionsMap = () => {
-		if ( this.refs && this.refs.chart ) {
+		if ( this.chartRef.current ) {
 			this.visualizationsLoaded = true;
-			this.visualization = new window.google.visualization.GeoChart( this.refs.chart );
+			this.visualization = new window.google.visualization.GeoChart( this.chartRef.current );
 			window.google.visualization.events.addListener(
 				this.visualization,
 				'regionClick',
@@ -116,7 +116,7 @@ class StatsGeochart extends Component {
 		chartData.addColumn( 'string', translate( 'Country' ).toString() );
 		chartData.addColumn( 'number', translate( 'Views' ).toString() );
 		chartData.addRows( mapData );
-		const node = this.refs.chart;
+		const node = this.chartRef.current;
 		const width = node.clientWidth;
 
 		// Note that using raw hex values here is an exception due to
@@ -126,7 +126,7 @@ class StatsGeochart extends Component {
 		// defaults as raw hex values here.
 		const chartColorLight =
 			getComputedStyle( document.body )
-				.getPropertyValue( '--color-accent-50' )
+				.getPropertyValue( '--color-accent-5' )
 				.trim() || '#ffdff3';
 		const chartColorDark =
 			getComputedStyle( document.body )
@@ -180,8 +180,9 @@ class StatsGeochart extends Component {
 
 		return (
 			<div>
-				<div ref="chart" className={ classes } />
+				<div ref={ this.chartRef } className={ classes } />
 				{ siteId && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
+				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<StatsModulePlaceholder className="is-block" isLoading={ isLoading } />
 			</div>
 		);

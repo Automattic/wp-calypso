@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -13,8 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AppPasswordItem from 'me/application-password-item';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -31,6 +28,10 @@ import getApplicationPasswords from 'state/selectors/get-application-passwords';
 import getNewApplicationPassword from 'state/selectors/get-new-application-password';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
 class ApplicationPasswords extends Component {
 	static initialState = Object.freeze( {
 		applicationName: '',
@@ -40,7 +41,7 @@ class ApplicationPasswords extends Component {
 
 	state = this.constructor.initialState;
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.state.submittingForm && ! this.props.newAppPassword && !! nextProps.newAppPassword ) {
 			this.setState( { submittingForm: false } );
 		}
@@ -211,7 +212,7 @@ class ApplicationPasswords extends Component {
 				<Card>
 					{ newAppPassword ? this.renderNewAppPassword() : this.renderNewAppPasswordForm() }
 
-					<p>
+					<p className="application-passwords__nobot">
 						{ translate(
 							'With Two-Step Authentication active, you can generate a custom password for ' +
 								'each third-party application you authorize to use your WordPress.com account. ' +

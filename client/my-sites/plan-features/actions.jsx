@@ -1,12 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
+import { get, noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
@@ -14,18 +12,18 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPlanClass, isMonthly } from 'lib/plans/constants';
-import { planLevelsMatch } from 'lib/plans/index';
+import { isMonthly } from 'lib/plans/constants';
+import { getPlanClass, planLevelsMatch } from 'lib/plans';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 const PlanFeaturesActions = ( {
 	availableForPurchase = true,
 	canPurchase,
 	className,
-	currentSitePlan,
+	currentSitePlanSlug,
 	current = false,
 	forceDisplayButton = false,
 	freePlan = false,
@@ -34,6 +32,7 @@ const PlanFeaturesActions = ( {
 	isPlaceholder = false,
 	isPopular,
 	isInSignup,
+	isLaunchPage,
 	onUpgradeClick = noop,
 	planName,
 	planType,
@@ -69,28 +68,44 @@ const PlanFeaturesActions = ( {
 		if ( isLandingPage ) {
 			buttonText = translate( 'Select', { context: 'button' } );
 		}
-		if ( isInSignup ) {
+		if ( isLaunchPage ) {
+			if ( freePlan ) {
+				buttonText = translate( 'Keep this plan', {
+					comment:
+						'A selection to keep the current plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
+				} );
+			} else {
+				buttonText = translate( 'Select %(plan)s', {
+					args: {
+						plan: planName,
+					},
+					context: 'Button to select a paid plan by plan name, e.g., "Select Personal"',
+					comment:
+						'A button to select a new paid plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
+				} );
+			}
+		} else if ( isInSignup ) {
 			buttonText = translate( 'Start with %(plan)s', {
 				args: {
 					plan: planName,
 				},
 			} );
 		}
-		const isCurrentPlanMonthly = currentSitePlan && isMonthly( currentSitePlan.productSlug );
+
 		if (
-			isCurrentPlanMonthly &&
-			getPlanClass( planType ) === getPlanClass( currentSitePlan.productSlug )
+			isMonthly( currentSitePlanSlug ) &&
+			getPlanClass( planType ) === getPlanClass( currentSitePlanSlug )
 		) {
 			buttonText = translate( 'Upgrade to Yearly' );
 		}
 
 		const handleUpgradeButtonClick = () => {
 			if ( isPlaceholder ) {
-				return noop();
+				return;
 			}
 
 			trackTracksEvent( 'calypso_plan_features_upgrade_click', {
-				current_plan: currentSitePlan && currentSitePlan.productSlug,
+				current_plan: currentSitePlanSlug,
 				upgrading_to: planType,
 			} );
 
@@ -123,10 +138,12 @@ PlanFeaturesActions.propTypes = {
 	canPurchase: PropTypes.bool.isRequired,
 	className: PropTypes.string,
 	current: PropTypes.bool,
+	currentSitePlanSlug: PropTypes.string,
 	forceDisplayButton: PropTypes.bool,
 	freePlan: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
+	isLaunchPage: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	planType: PropTypes.string,
 	primaryUpgrade: PropTypes.bool,
@@ -134,15 +151,15 @@ PlanFeaturesActions.propTypes = {
 };
 
 export default connect(
-	( state, ownProps ) => {
-		const { isInSignup } = ownProps;
-		const selectedSiteId = isInSignup ? null : getSelectedSiteId( state );
+	( state, { isInSignup } ) => {
+		if ( isInSignup ) {
+			return { currentSitePlanSlug: null };
+		}
+
+		const selectedSiteId = getSelectedSiteId( state );
 		const currentSitePlan = getCurrentPlan( state, selectedSiteId );
-		return {
-			currentSitePlan,
-		};
+		const currentSitePlanSlug = get( currentSitePlan, 'productSlug', null );
+		return { currentSitePlanSlug };
 	},
-	{
-		recordTracksEvent,
-	}
+	{ recordTracksEvent }
 )( localize( PlanFeaturesActions ) );

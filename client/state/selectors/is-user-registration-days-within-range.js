@@ -1,30 +1,28 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import { getCurrentUserDate } from 'state/current-user/selectors';
+
+const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
 /**
  * Returns true if the number of days the current user has been registered for falls within the specied range of values.
  *
- * @param {Object} state Global state tree
- * @param {Object} moment Current moment for determination of elapsed days since registration
- * @param {Number} from Lower bound on days
- * @param {Number} to Upper bound on days
- * @return {?Boolean} True if the number of days falls withing the specified range
+ * @param {object} state Global state tree
+ * @param {Date} refDate Date for determination of elapsed days since registration
+ * @param {number} from Lower bound on days
+ * @param {number} to Upper bound on days
+ * @returns {?boolean} True if the number of days falls withing the specified range
  */
-const isUserRegistrationDaysWithinRange = ( state, moment, from, to ) => {
+export default function isUserRegistrationDaysWithinRange( state, refDate, from, to ) {
 	const date = getCurrentUserDate( state );
 
 	if ( ! date ) {
 		return null;
 	}
 
-	const days = moment.diff( date, 'days', true );
+	refDate = refDate || Date.now();
+	const days = ( refDate - new Date( date ) ) / DAY_IN_MS;
 
 	return days >= from && days <= to;
-};
-
-export default isUserRegistrationDaysWithinRange;
+}

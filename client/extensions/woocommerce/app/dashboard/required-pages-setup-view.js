@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import ProgressBar from 'components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import SetupHeader from './setup/header';
 import { setUpStorePages } from 'woocommerce/state/sites/setup-choices/actions';
 
@@ -66,7 +64,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( RequiredPagesSetupView ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( RequiredPagesSetupView ) );

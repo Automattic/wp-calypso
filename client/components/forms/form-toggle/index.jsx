@@ -1,4 +1,5 @@
-/** @format */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /**
  * External dependencies
@@ -8,6 +9,11 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { noop } from 'lodash';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default class FormToggle extends PureComponent {
 	static propTypes = {
@@ -31,7 +37,7 @@ export default class FormToggle extends PureComponent {
 
 	static idNum = 0;
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.id = this.constructor.idNum++;
 	}
 
@@ -99,9 +105,13 @@ export default class FormToggle extends PureComponent {
 						aria-label={ this.props[ 'aria-label' ] }
 						tabIndex={ this.props.disabled ? -1 : 0 }
 					/>
-					<span className="form-toggle__label-content" onClick={ this.onLabelClick }>
-						{ this.props.children }
-					</span>
+					{ this.props.children && (
+						/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
+						<span className="form-toggle__label-content" onClick={ this.onLabelClick }>
+							{ this.props.children }
+						</span>
+						/* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
+					) }
 				</label>
 			</span>
 		);

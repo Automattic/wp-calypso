@@ -44,12 +44,12 @@
 		fill: var( --color-primary );
 	}
 	20% {
-		fill: $blue-light;
+		fill: var( --color-primary-light );
 	}
 	50% {
-		fill: $white;
+		fill: var( --color-text-inverted );
 	}
 	100% {
-		fill: $white;
+		fill: var( --color-text-inverted );
 	}
 }

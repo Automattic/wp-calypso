@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,15 +10,13 @@ import { PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
 import { getSitePlan } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-import { isDesktop } from 'lib/viewport';
-
 // NOTE: selector moved here because tour is no longer active and serves as example only
 // to use in a tour, move back to 'state/ui/guided-tours/contexts' (see commented out import above)
 /**
  * Returns true if the selected site is on the Premium or Business plan
  *
- * @param {Object} state Global state tree
- * @return {Boolean} True if selected site is on the Premium or Business plan, false otherwise.
+ * @param {object} state Global state tree
+ * @returns {boolean} True if selected site is on the Premium or Business plan, false otherwise.
  */
 
 export const hasSelectedSitePremiumOrBusinessPlan = state => {

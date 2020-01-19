@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,13 +6,18 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class SidebarBanner extends Component {
 	static defaultProps = {
@@ -68,7 +71,4 @@ export class SidebarBanner extends Component {
 const mapStateToProps = null;
 const mapDispatchToProps = { track: recordTracksEvent };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( SidebarBanner ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SidebarBanner ) );

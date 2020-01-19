@@ -23,7 +23,7 @@
 
 	.plugin-action__label {
 		@include breakpoint( '<480px' ) {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 	}
 }
@@ -54,7 +54,7 @@
 	cursor: pointer;
 
 	.is-disabled & {
-		color: var( --color-neutral-200 );
+		color: var( --color-neutral-20 );
 		cursor: default;
 	}
 
@@ -75,7 +75,8 @@
 		display: block;
 	}
 
-	.gridicons-info-outline g {
+	.gridicons-info-outline > use:first-child,
+	.gridicons-info-outline > g:first-child {
 		// revert the translate(1px,1px) done by needs-offset
 		transform: none;
 	}

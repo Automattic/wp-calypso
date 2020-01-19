@@ -1,19 +1,17 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import { isNumber, head, isNull } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
@@ -56,7 +54,7 @@ class ProductCategoryForm extends Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.category.image !== this.props.category.image ) {
 			const image = ( nextProps.category && nextProps.category.image ) || {};
 			this.setState( {
@@ -271,7 +269,7 @@ class ProductCategoryForm extends Component {
 										{ translate( 'Top level category', {
 											context:
 												'Categories: New category being created is top level i.e. has no parent',
-										} ) }{' '}
+										} ) }{ ' ' }
 									</span>
 								</FormLabel>
 

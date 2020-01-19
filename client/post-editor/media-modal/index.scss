@@ -1,6 +1,3 @@
-@import 'my-sites/media/style';
-@import 'my-sites/media-library/style';
-
 .editor-media-modal__gallery-help {
 	position: absolute;
 		bottom: 8px;
@@ -26,7 +23,7 @@
 	margin: 4px 12px 12px 0;
 	border-radius: 50%;
 	background-color: var( --color-neutral-0 );
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }
 
 .editor-media-modal__gallery-help-icon .gridicon {
@@ -68,7 +65,7 @@
 		top: 50%;
 		left: 50%;
 	transform: translate( -50%, -50% );
-	fill: var( --color-neutral-700 );
+	fill: var( --color-neutral-70 );
 
 	&:hover {
 		fill: var( --color-primary-light );
@@ -102,13 +99,13 @@
 	color: var( --color-error );
 
 	&:hover {
-		color: lighten( $alert-red, 10% );
+		color: var( --color-error-30 );
 	}
 
 	&:disabled {
 		cursor: default;
 		cursor: not-allowed;
-		color: lighten( $alert-red, 25% );
+		color: var( --color-error-10 );
 	}
 }
 

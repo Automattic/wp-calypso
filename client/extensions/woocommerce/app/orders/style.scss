@@ -9,14 +9,14 @@
 
 	.table-row {
 		&:hover {
-			background: lighten( $gray, 35% );
+			background: var( --color-neutral-0 );
 		}
 
 		&.orders__status-processing {
-			background: lighten( $blue-light, 25% );
+			background: var( --color-primary-0 );
 
 			&:hover {
-				background: lighten( $blue-light, 24% );
+				background: var( --color-primary-0 );
 			}
 		}
 	}

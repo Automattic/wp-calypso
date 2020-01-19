@@ -7,7 +7,7 @@ exports[`HelpSearch should render  1`] = `
   <Connect(QueryHelpLinks)
     query=""
   />
-  <SearchCard
+  <ForwardRef(SearchCard)
     analyticsGroup="Help"
     delaySearch={true}
     initialValue=""

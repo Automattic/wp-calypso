@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TemplateSelectorPreview Basic rendering renders the preview when blocks are provided 1`] = `
+<div>
+  <div
+    class="template-selector-preview"
+  >
+    <div
+      class="components-disabled"
+    >
+      <div
+        class="edit-post-visual-editor"
+      >
+        <div
+          class="editor-styles-wrapper"
+        >
+          <div
+            class="editor-writing-flow"
+          >
+            <div
+              class="editor-post-title"
+              style="transform: scale(1);"
+            >
+              <div
+                class="wp-block editor-post-title__block"
+              >
+                <textarea
+                  class="editor-post-title__input"
+                />
+              </div>
+            </div>
+            <div
+              class="template-selector-preview__offset-correction"
+              style="top: 120px;"
+            >
+              <div
+                data-testid="block-template-preview"
+              >
+                MockedBlockPreview
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

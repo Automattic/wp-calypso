@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,13 @@ import React from 'react';
 import { deleteStoredCard } from 'state/stored-cards/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { isDeletingStoredCard } from 'state/stored-cards/selectors';
-import StoredCard from 'my-sites/checkout/checkout/stored-card';
+import { Button } from '@automattic/components';
+import StoredCard from 'components/credit-card/stored-card';
+
+/**
+ * Style dependencies
+ */
+import './credit-card-delete.scss';
 
 class CreditCardDelete extends React.Component {
 	handleClick = () => {
@@ -28,27 +32,31 @@ class CreditCardDelete extends React.Component {
 			} );
 	};
 
-	renderDeleteButton = () => {
-		const text = this.props.isDeleting
-			? this.props.translate( 'Deleting' )
-			: this.props.translate( 'Delete' );
+	renderDeleteButton() {
+		const { isDeleting, translate } = this.props;
+		const text = isDeleting ? translate( 'Deleting…' ) : translate( 'Delete' );
 
 		return (
-			<button
-				className="button credit-card-delete__button"
-				disabled={ this.props.isDeleting }
+			<Button
+				className="credit-cards__delete-button"
+				disabled={ isDeleting }
 				onClick={ this.handleClick }
 			>
 				{ text }
-			</button>
+			</Button>
 		);
-	};
+	}
 
 	render() {
+		const { card } = this.props;
 		return (
-			<div className="credit-card-delete" key={ this.props.card.stored_details_id }>
-				<StoredCard card={ this.props.card } />
-
+			<div className="credit-cards__credit-card-delete">
+				<StoredCard
+					lastDigits={ card.card }
+					cardType={ card.card_type }
+					name={ card.name }
+					expiry={ card.expiry }
+				/>
 				{ this.renderDeleteButton() }
 			</div>
 		);
@@ -56,11 +64,9 @@ class CreditCardDelete extends React.Component {
 }
 
 export default connect(
-	( state, props ) => {
-		return {
-			isDeleting: isDeletingStoredCard( state, props.card.stored_details_id ),
-		};
-	},
+	( state, props ) => ( {
+		isDeleting: isDeletingStoredCard( state, props.card.stored_details_id ),
+	} ),
 	{
 		deleteStoredCard,
 		errorNotice,

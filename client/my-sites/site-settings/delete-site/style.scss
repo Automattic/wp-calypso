@@ -14,7 +14,7 @@
 
 .delete-site__content-list {
 	margin: 0 0 20px;
-	border: solid 1px var( --color-neutral-100 );
+	border: solid 1px var( --color-neutral-10 );
 	border-radius: 4px;
 	list-style: none;
 	text-align: left;
@@ -24,10 +24,10 @@
 	box-sizing: border-box;
 	width: 100%;
 	padding: 12px 16px;
-	border-top: solid 1px var( --color-neutral-100 );
+	border-top: solid 1px var( --color-neutral-10 );
 	font-size: 14px;
 	line-height: 18px;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 
 	&:first-child {
 		border-top: none;
@@ -46,7 +46,7 @@ h1.delete-site__confirm-header {
 	font-size: 21px;
 	font-weight: 300;
 	line-height: 24px;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }
 
 .delete-site__confirm-label {

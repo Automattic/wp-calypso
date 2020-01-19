@@ -3,11 +3,11 @@
 	max-width: 24px;
 	max-height: 18px;
 	align-self: center;
-	box-shadow: 0 0 1px var( --color-neutral-100 );
+	box-shadow: 0 0 1px var( --color-neutral-10 );
 }
 
 .phone-input__flag-selector-icon {
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 	margin-left: 3px;
 	align-self: center;
 }
@@ -27,13 +27,13 @@
 	cursor: pointer;
 
 	&:hover .phone-input__flag-selector-icon {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 }
 
 .phone-input__select-inner-container {
 	margin-top: 4px;
-	border-right: 1px solid var( --color-neutral-100 );
+	border-right: 1px solid var( --color-neutral-10 );
 	height: 32px;
 	display: flex;
 }

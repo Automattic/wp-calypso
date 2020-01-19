@@ -1,11 +1,12 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 import config from 'config';
 import { NPS_SURVEY_DIALOG_IS_SHOWING } from 'state/action-types';
-import { setNpsSurveyEligibility } from 'state/nps-survey/actions';
+import {
+	setNpsSurveyEligibility,
+	setNpsConciergeSessionAvailaibility,
+} from 'state/nps-survey/actions';
 
 export function setNpsSurveyDialogShowing( isShowing ) {
 	return {
@@ -17,8 +18,9 @@ export function setNpsSurveyDialogShowing( isShowing ) {
 export function setupNpsSurveyDevTrigger() {
 	return dispatch => {
 		if ( config.isEnabled( 'nps-survey/dev-trigger' ) ) {
-			window.npsSurvey = function() {
+			window.npsSurvey = function( isAvailableForSupportSession = false ) {
 				dispatch( setNpsSurveyEligibility( true ) );
+				dispatch( setNpsConciergeSessionAvailaibility( isAvailableForSupportSession ) );
 			};
 		}
 	};

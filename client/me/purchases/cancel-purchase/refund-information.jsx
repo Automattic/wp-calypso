@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,6 +6,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
 import i18n from 'i18n-calypso';
+import { getCurrencyDefaults } from '@automattic/format-currency';
 
 /**
  * Internal Dependencies
@@ -25,7 +24,6 @@ import { CALYPSO_CONTACT, UPDATE_NAMESERVERS } from 'lib/url/support';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';
-import { getCurrencyDefaults } from 'lib/format-currency';
 
 const CancelPurchaseRefundInformation = ( {
 	purchase,
@@ -110,13 +108,15 @@ const CancelPurchaseRefundInformation = ( {
 				const { precision } = getCurrencyDefaults( purchase.currencyCode );
 				const planCostText =
 					purchase.currencySymbol +
-					parseFloat( purchase.refundAmount + includedDomainPurchase.amount ).toFixed( precision );
+					parseFloat( purchase.refundAmount + includedDomainPurchase.costToUnbundle ).toFixed(
+						precision
+					);
 				if ( isRefundable( includedDomainPurchase ) ) {
 					text.push(
 						i18n.translate(
 							'Your plan included the custom domain %(domain)s. You can cancel your domain as well as the plan, but keep ' +
 								'in mind that when you cancel a domain you risk losing it forever, and visitors to your site may ' +
-								'experience difficulties acessing it.',
+								'experience difficulties accessing it.',
 							{
 								args: {
 									domain: includedDomainPurchase.meta,
@@ -145,7 +145,7 @@ const CancelPurchaseRefundInformation = ( {
 									{
 										args: {
 											productName: getName( purchase ),
-											domainCost: includedDomainPurchase.priceText,
+											domainCost: includedDomainPurchase.costToUnbundleText,
 											refundAmount: purchase.refundText,
 										},
 									}

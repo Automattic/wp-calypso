@@ -35,16 +35,32 @@
 	margin-right: 15px;
 }
 
-.rewind-credentials-form__delete-button.button.is-borderless {
-	color: var( --color-error );
+.button.is-borderless.rewind-credentials-form__delete-button {
 	float: left;
 }
 
-.rewind-credentials-form__advanced-button.button.button {
+.button.is-borderless.rewind-credentials-form__advanced-button {
 	float: none;
 	margin-top: -8px;
+
+	.gridicon {
+		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ), color 0.2s ease-in;
+	}
+
+	&.is-expanded .gridicon {
+		transform: rotate( 180deg );
+	}
 }
 
 .rewind-credentials-form__advanced-settings {
 	margin-top: 24px;
+}
+
+.rewind-credentials-form__instructions {
+	margin-bottom: 12px;
+}
+
+.rewind-credentials-form__tos {
+	font-style: italic;
+	margin-bottom: 10px;
 }

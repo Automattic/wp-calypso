@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,12 +5,12 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
 import Button from 'components/forms/form-button';
 import {
@@ -25,18 +23,17 @@ import { getProductDisplayCost } from 'state/products-list/selectors';
 import InfoPopover from 'components/info-popover';
 import { GUIDED_TRANSFER } from 'lib/url/support';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const Feature = ( { children } ) => (
 	<li className="guided-transfer-card__feature-list-item">
 		<Gridicon className="guided-transfer-card__feature-icon" size={ 18 } icon="checkmark" />
 		<span className="guided-transfer-card__feature-text">{ children }</span>
 	</li>
 );
-
-const PurchaseButton = localize( ( { siteSlug, translate, disabled } ) => (
-	<Button href={ `/settings/export/guided/${ siteSlug }` } isPrimary={ true } disabled={ disabled }>
-		{ translate( 'Purchase a Guided Transfer' ) }
-	</Button>
-) );
 
 const UnavailableInfo = localize( ( { translate } ) => (
 	<div className="guided-transfer-card__unavailable-notice">
@@ -58,7 +55,7 @@ const UnavailableInfo = localize( ( { translate } ) => (
 
 class GuidedTransferCard extends Component {
 	render() {
-		const { translate, isAvailable, isRequestingStatus, siteId, cost } = this.props;
+		const { translate, isAvailable, isRequestingStatus, siteId, siteSlug, cost } = this.props;
 
 		return (
 			<div>
@@ -77,7 +74,13 @@ class GuidedTransferCard extends Component {
 						</div>
 						<div className="guided-transfer-card__options-header-button-container">
 							{ isAvailable || isRequestingStatus ? (
-								<PurchaseButton siteSlug={ this.props.siteSlug } disabled={ isRequestingStatus } />
+								<Button
+									href={ `/export/guided/${ siteSlug }` }
+									isPrimary={ false }
+									disabled={ isRequestingStatus }
+								>
+									{ translate( 'Purchase a Guided Transfer' ) }
+								</Button>
 							) : (
 								<UnavailableInfo />
 							) }

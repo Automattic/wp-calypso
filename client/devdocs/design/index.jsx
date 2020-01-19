@@ -1,23 +1,17 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import page from 'page';
 import classnames from 'classnames';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { slugToCamelCase } from 'devdocs/docs-example/util';
 import { trim } from 'lodash';
-import Gridicons from 'gridicons/example';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
 import DocumentHead from 'components/data/document-head';
-import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import ReadmeViewer from 'components/readme-viewer';
@@ -35,9 +29,9 @@ import Badge from 'components/badge/docs/example';
 import Banner from 'components/banner/docs/example';
 import BulkSelect from 'components/bulk-select/docs/example';
 import ButtonGroups from 'components/button-group/docs/example';
-import Buttons from 'components/button/docs/example';
+import Buttons from '@automattic/components/src/button/docs/example';
 import CardHeading from 'components/card-heading/docs/example';
-import Cards from 'components/card/docs/example';
+import Cards from '@automattic/components/src/card/docs/example';
 import Chart from 'components/chart/docs/example';
 import Checklist from 'components/checklist/docs/example';
 import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
@@ -68,6 +62,8 @@ import Gauge from 'components/gauge/docs/example';
 import GlobalNotices from 'components/global-notices/docs/example';
 import Gravatar from 'components/gravatar/docs/example';
 import GravatarCaterpillar from 'components/gravatar-caterpillar/docs/example';
+import Gridicon from 'components/gridicon/docs/example';
+import GSuiteExamples from 'components/gsuite/docs/example';
 import HeaderButton from 'components/header-button/docs/example';
 import Headers from 'components/header-cake/docs/example';
 import ImagePreloader from 'components/image-preloader/docs/example';
@@ -81,6 +77,7 @@ import LanguagePicker from 'components/language-picker/docs/example';
 import LineChart from 'components/line-chart/docs/example';
 import ListEnd from 'components/list-end/docs/example';
 import MarkedLinesExample from 'components/marked-lines/docs/example';
+import MultipleChoiceQuestionExample from 'components/multiple-choice-question/docs/example';
 import Notices from 'components/notice/docs/example';
 import PaginationExample from 'components/pagination/docs/example';
 import PaymentLogo from 'components/payment-logo/docs/example';
@@ -88,11 +85,16 @@ import PieChart from 'components/pie-chart/docs/example';
 import PlansSkipButton from 'components/plans/plans-skip-button/docs/example';
 import PodcastIndicator from 'components/podcast-indicator/docs/example';
 import Popovers from 'components/popover/docs/example';
-import ProgressBar from 'components/progress-bar/docs/example';
+import ProductCard from 'components/product-card/docs/example';
+import ProductExpiration from 'components/product-expiration/docs/example';
+import ProductIcon from '@automattic/components/src/product-icon/docs/example';
+import ProgressBar from '@automattic/components/src/progress-bar/docs/example';
+import PromoSection from 'components/promo-section/docs/example';
+import PromoCard from 'components/promo-section/promo-card/docs/example';
 import Ranges from 'components/forms/range/docs/example';
 import Rating from 'components/rating/docs/example';
-import Ribbon from 'components/ribbon/docs/example';
-import ScreenReaderTextExample from 'components/screen-reader-text/docs/example';
+import Ribbon from '@automattic/components/src/ribbon/docs/example';
+import ScreenReaderTextExample from '@automattic/components/src/screen-reader-text/docs/example';
 import SearchDemo from 'components/search/docs/example';
 import SectionHeader from 'components/section-header/docs/example';
 import SectionNav from 'components/section-nav/docs/example';
@@ -100,17 +102,18 @@ import SegmentedControl from 'components/segmented-control/docs/example';
 import SelectDropdown from 'components/select-dropdown/docs/example';
 import ShareButton from 'components/share-button/docs/example';
 import SiteTitleControl from 'components/site-title/docs/example';
-import SocialLogos from 'social-logos/example';
+import SocialLogos from 'components/social-logo/docs/example';
 import Spinner from 'components/spinner/docs/example';
 import SpinnerButton from 'components/spinner-button/docs/example';
 import SpinnerLine from 'components/spinner-line/docs/example';
 import SplitButton from 'components/split-button/docs/example';
-import Suggestions from 'components/suggestions/docs/example';
+import Suggestions from '@automattic/components/src/suggestions/docs/example';
 import SuggestionSearchExample from 'components/suggestion-search/docs/example';
 import SupportInfoExample from 'components/support-info/docs/example';
 import TextareaAutosize from 'components/textarea-autosize/docs/example';
 import TextDiff from 'components/text-diff/docs/example';
 import TileGrid from 'components/tile-grid/docs/example';
+import Timeline from 'components/timeline/docs/example';
 import TimeSince from 'components/time-since/docs/example';
 import Timezone from 'components/timezone/docs/example';
 import TokenFields from 'components/token-field/docs/example';
@@ -121,17 +124,11 @@ import VerticalMenu from 'components/vertical-menu/docs/example';
 import VerticalNav from 'components/vertical-nav/docs/example';
 import Wizard from 'components/wizard/docs/example';
 import WizardProgressBar from 'components/wizard-progress-bar/docs/example';
+import WpcomColophon from 'components/wpcom-colophon/docs/example';
 
-class DesignAssets extends React.Component {
+export default class DesignAssets extends React.Component {
 	static displayName = 'DesignAssets';
 	state = { filter: '' };
-
-	UNSAFE_componentWillMount() {
-		if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
-			const { dispatchFetchComponentsUsageStats } = this.props;
-			dispatchFetchComponentsUsageStats();
-		}
-	}
 
 	onSearch = term => {
 		this.setState( { filter: trim( term || '' ).toLowerCase() } );
@@ -142,7 +139,7 @@ class DesignAssets extends React.Component {
 	};
 
 	render() {
-		const { componentsUsageStats = {}, component } = this.props;
+		const { component } = this.props;
 		const { filter } = this.state;
 
 		const className = classnames( 'devdocs', 'devdocs__components', {
@@ -182,19 +179,16 @@ class DesignAssets extends React.Component {
 					) }
 					<ActionCard readmeFilePath="action-card" />
 					<ActionPanel readmeFilePath="action-panel" />
-					<Accordions
-						componentUsageStats={ componentsUsageStats.accordion }
-						readmeFilePath="accordion"
-					/>
+					<Accordions readmeFilePath="accordion" />
 					<Animate readmeFilePath="animate" />
 					<BackButton readmeFilePath="back-button" />
 					<Badge readmeFilePath="badge" />
 					<Banner readmeFilePath="banner" />
 					<BulkSelect readmeFilePath="bulk-select" />
 					<ButtonGroups readmeFilePath="button-group" />
-					<Buttons componentUsageStats={ componentsUsageStats.button } readmeFilePath="button" />
+					<Buttons readmeFilePath="/packages/components/src/button" />
 					<SplitButton readmeFilePath="split-button" />
-					<Cards readmeFilePath="card" />
+					<Cards readmeFilePath="/packages/components/src/card" />
 					<CardHeading readmeFilePath="card-heading" />
 					<Chart readmeFilePath="chart" />
 					<Checklist readmeFilePath="checklist" />
@@ -224,7 +218,8 @@ class DesignAssets extends React.Component {
 					<GlobalNotices readmeFilePath="global-notices" />
 					<Gravatar readmeFilePath="gravatar" />
 					<GravatarCaterpillar readmeFilePath="gravatar-caterpillar" />
-					<Gridicons />
+					<Gridicon />
+					<GSuiteExamples readmeFilePath="gsuite" />
 					<HeaderButton readmeFilePath="header-button" />
 					<Headers readmeFilePath="header-cake" />
 					<ImagePreloader readmeFilePath="image-preloader" />
@@ -238,6 +233,7 @@ class DesignAssets extends React.Component {
 					<LineChart readmeFilePath="line-chart" />
 					<ListEnd readmeFilePath="list-end" />
 					<MarkedLinesExample readmeFilePath="marked-lines" />
+					<MultipleChoiceQuestionExample readmeFilePath="multiple-choice-question" />
 					<Notices readmeFilePath="notice" />
 					<PaginationExample readmeFilePath="pagination" />
 					<PaymentLogo readmeFilePath="payment-logo" />
@@ -245,28 +241,34 @@ class DesignAssets extends React.Component {
 					<PlansSkipButton readmeFilePath="plans/plans-skip-button" />
 					<PodcastIndicator readmeFilePath="podcast-indicator" />
 					<Popovers readmeFilePath="popover" />
-					<ProgressBar readmeFilePath="progress-bar" />
+					<ProductExpiration readmeFilePath="product-expiration" />
+					<ProgressBar readmeFilePath="/packages/components/src/progress-bar" />
+					<PromoSection readmeFilePath="promo-section" />
+					<PromoCard readmeFilePath="promo-section/promo-card" />
 					<Ranges readmeFilePath="forms/range" />
 					<Rating readmeFilePath="rating" />
-					<Ribbon readmeFilePath="ribbon" />
-					<ScreenReaderTextExample readmeFilePath="screen-reader-text" />
+					<Ribbon readmeFilePath="/packages/components/src/ribbon" />
+					<ScreenReaderTextExample readmeFilePath="/packages/components/src/screen-reader-text" />
 					<SearchDemo readmeFilePath="search" />
 					<SectionHeader readmeFilePath="section-header" />
 					<SectionNav readmeFilePath="section-nav" />
 					<SegmentedControl readmeFilePath="segmented-control" />
 					<SelectDropdown searchKeywords="menu" readmeFilePath="select-dropdown" />
 					<ShareButton readmeFilePath="share-button" />
+					<ProductCard readmeFilePath="product-card" />
+					<ProductIcon readmeFilePath="/packages/components/src/product-icon" />
 					<SiteTitleControl readmeFilePath="site-title" />
 					<SocialLogos />
 					<Spinner searchKeywords="loading" readmeFilePath="spinner" />
 					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="spinner-button" />
 					<SpinnerLine searchKeywords="loading" readmeFilePath="spinner-line" />
-					<Suggestions readmeFilePath="suggestions" />
+					<Suggestions readmeFilePath="/packages/components/src/suggestions" />
 					<SuggestionSearchExample />
 					<SupportInfoExample />
 					<TextareaAutosize readmeFilePath="textarea-autosize" />
 					<TextDiff readmeFilePath="text-diff" />
 					<TileGrid readmeFilePath="tile-grid" />
+					<Timeline readmeFilePath="timeline" />
 					<TimeSince readmeFilePath="time-since" />
 					<Timezone readmeFilePath="timezone" />
 					<TokenFields readmeFilePath="token-field" />
@@ -277,38 +279,9 @@ class DesignAssets extends React.Component {
 					<Version readmeFilePath="version" />
 					<Wizard readmeFilePath="wizard" />
 					<WizardProgressBar readmeFilePath="wizard-progress-bar" />
+					<WpcomColophon readmeFilePath="wpcom-colophon" />
 				</Collection>
 			</Main>
 		);
 	}
 }
-
-if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
-	const mapStateToProps = state => {
-		const { componentsUsageStats } = state;
-
-		return componentsUsageStats;
-	};
-
-	const mapDispatchToProps = dispatch => {
-		return bindActionCreators(
-			{
-				dispatchFetchComponentsUsageStats: fetchComponentsUsageStats,
-			},
-			dispatch
-		);
-	};
-
-	DesignAssets.propTypes = {
-		componentsUsageStats: PropTypes.object,
-		isFetching: PropTypes.bool,
-		dispatchFetchComponentsUsageStats: PropTypes.func,
-	};
-
-	DesignAssets = connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( DesignAssets );
-}
-
-export default DesignAssets;

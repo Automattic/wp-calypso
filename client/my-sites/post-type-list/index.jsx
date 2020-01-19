@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { isEqual, range, throttle, difference, isEmpty } from 'lodash';
+import { isEqual, range, throttle, difference, isEmpty, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -19,17 +17,22 @@ import QueryPosts from 'components/data/query-posts';
 import QueryRecentPostViews from 'components/data/query-stats-recent-post-views';
 import { DEFAULT_POST_QUERY } from 'lib/query-manager/post/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import isVipSite from 'state/selectors/is-vip-site';
 import {
 	isRequestingPostsForQueryIgnoringPage,
 	getPostsForQueryIgnoringPage,
 	getPostsFoundForQuery,
 	getPostsLastPageForQuery,
 } from 'state/posts/selectors';
+import { getPostType } from 'state/post-types/selectors';
+import { getEditorUrl } from 'state/selectors/get-editor-url';
 import ListEnd from 'components/list-end';
 import PostItem from 'blocks/post-item';
 import PostTypeListEmptyContent from './empty-content';
 import PostTypeListMaxPagesNotice from './max-pages-notice';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
+import SectionHeader from 'components/section-header';
+import { Button } from '@automattic/components';
+import UpgradeNudge from 'blocks/upgrade-nudge';
 import { FEATURE_NO_ADS } from 'lib/plans/constants';
 
 /**
@@ -43,6 +46,7 @@ class PostTypeList extends Component {
 	static propTypes = {
 		// Props
 		query: PropTypes.object,
+		showPublishedStatus: PropTypes.bool,
 		scrollContainer: PropTypes.object,
 
 		// Connected props
@@ -52,6 +56,7 @@ class PostTypeList extends Component {
 		totalPostCount: PropTypes.number,
 		totalPageCount: PropTypes.number,
 		lastPageToRequest: PropTypes.number,
+		isVip: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -169,6 +174,7 @@ class PostTypeList extends Component {
 		const scrollTop = this.getScrollTop();
 		const { scrollHeight, clientHeight } = scrollContainer;
 		const pixelsBelowViewport = scrollHeight - scrollTop - clientHeight;
+
 		// When the currently loaded list has this many pixels or less
 		// remaining below the viewport, begin loading the next page of items.
 		const thresholdPixels = Math.max( clientHeight, 400 );
@@ -182,6 +188,22 @@ class PostTypeList extends Component {
 		}
 
 		this.setState( { maxRequestedPage: maxRequestedPage + 1 } );
+	}
+
+	renderSectionHeader() {
+		const { editorUrl, postLabels } = this.props;
+
+		if ( ! postLabels ) {
+			return null;
+		}
+
+		return (
+			<SectionHeader label={ postLabels.name }>
+				<Button primary compact className="post-type-list__add-post" href={ editorUrl }>
+					{ postLabels.add_new_item }
+				</Button>
+			</SectionHeader>
+		);
 	}
 
 	renderListEnd() {
@@ -211,21 +233,23 @@ class PostTypeList extends Component {
 
 	renderPost( post ) {
 		const globalId = post.global_ID;
-		const { query } = this.props;
+		const { query, showPublishedStatus } = this.props;
 
 		return (
 			<PostItem
 				key={ globalId }
 				globalId={ globalId }
 				singleUserQuery={ query && !! query.author }
+				showPublishedStatus={ showPublishedStatus }
 			/>
 		);
 	}
 
 	render() {
-		const { query, siteId, isRequestingPosts, translate } = this.props;
+		const { query, siteId, isRequestingPosts, translate, isVip } = this.props;
 		const { maxRequestedPage, recentViewIds } = this.state;
 		const posts = this.props.posts || [];
+		const postStatuses = query.status.split( ',' );
 		const isLoadedAndEmpty = query && ! posts.length && ! isRequestingPosts;
 		const classes = classnames( 'post-type-list', {
 			'is-empty': isLoadedAndEmpty,
@@ -233,12 +257,14 @@ class PostTypeList extends Component {
 		const showUpgradeNudge =
 			siteId &&
 			posts.length > 10 &&
+			! isVip &&
 			query &&
 			( query.type === 'post' || ! query.type ) &&
-			query.status === 'publish,private';
+			( postStatuses.includes( 'publish' ) || postStatuses.includes( 'private' ) );
 
 		return (
 			<div className={ classes }>
+				{ this.renderSectionHeader() }
 				{ query &&
 					range( 1, maxRequestedPage + 1 ).map( page => (
 						<QueryPosts key={ `query-${ page }` } siteId={ siteId } query={ { ...query, page } } />
@@ -277,9 +303,12 @@ export default connect( ( state, ownProps ) => {
 	return {
 		siteId,
 		posts: getPostsForQueryIgnoringPage( state, siteId, ownProps.query ),
+		isVip: isVipSite( state, siteId ),
 		isRequestingPosts: isRequestingPostsForQueryIgnoringPage( state, siteId, ownProps.query ),
 		totalPostCount: getPostsFoundForQuery( state, siteId, ownProps.query ),
 		totalPageCount,
 		lastPageToRequest,
+		editorUrl: getEditorUrl( state, siteId, null, ownProps.query.type ),
+		postLabels: get( getPostType( state, siteId, ownProps.query.type ), 'labels' ),
 	};
 } )( localize( PostTypeList ) );

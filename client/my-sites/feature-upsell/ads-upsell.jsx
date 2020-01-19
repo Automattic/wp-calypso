@@ -1,15 +1,13 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
+import { getCurrencyObject } from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -29,7 +27,6 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import QueryActivePromotions from 'components/data/query-active-promotions';
 import RefundAsterisk from 'my-sites/feature-upsell/refund-asterisk';
 import { isRequestingPlans } from 'state/plans/selectors';
-import { getCurrencyObject } from 'lib/format-currency';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { isRequestingActivePromotions } from 'state/active-promotions/selectors';
 import { getUpsellPlanPrice, redirectUnlessCanUpgradeSite } from './utils';
@@ -296,10 +293,7 @@ const mapDispatchToProps = dispatch => ( {
 } );
 
 export default flowRight(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	),
+	connect( mapStateToProps, mapDispatchToProps ),
 	localize,
 	redirectUnlessCanUpgradeSite,
 	redirectIf( state => canCurrentUserUseAds( state ), '/ads/settings' )

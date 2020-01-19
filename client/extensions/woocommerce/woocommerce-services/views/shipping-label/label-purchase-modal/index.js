@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import AddressStep from './address-step';
 import PackagesStep from './packages-step';
 import CustomsStep from './customs-step';
@@ -108,7 +106,4 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { exitPrintingFlow }, dispatch );
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( PurchaseDialog ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PurchaseDialog ) );

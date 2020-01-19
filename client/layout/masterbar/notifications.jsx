@@ -1,12 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import ReactDom from 'react-dom';
+import React, { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { partial } from 'lodash';
@@ -32,17 +29,18 @@ class MasterbarItemNotifications extends Component {
 		isNotificationsOpen: PropTypes.bool,
 	};
 
+	notificationLink = createRef();
 	state = {
 		animationState: 0,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.setState( {
 			newNote: this.props.hasUnseenNotifications,
 		} );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { isNotificationsOpen: isOpen, recordOpening } = nextProps;
 
 		if ( ! this.props.isNotificationsOpen && isOpen ) {
@@ -54,14 +52,14 @@ class MasterbarItemNotifications extends Component {
 
 		// focus on main window if we just closed the notes panel
 		if ( this.props.isNotificationsOpen && ! isOpen ) {
-			this.getNotificationLinkDomNode().blur();
+			this.notificationLink.current.blur();
 			window.focus();
 		}
 	}
 
 	checkToggleNotes = ( event, forceToggle ) => {
 		const target = event ? event.target : false;
-		const notificationNode = this.getNotificationLinkDomNode();
+		const notificationNode = this.notificationLink.current;
 
 		if ( target && notificationNode.contains( target ) ) {
 			return;
@@ -81,17 +79,13 @@ class MasterbarItemNotifications extends Component {
 		this.props.toggleNotificationsPanel();
 	};
 
-	getNotificationLinkDomNode = () => {
-		return ReactDom.findDOMNode( this.refs.notificationLink );
-	};
-
 	/**
 	 * Uses the passed number of unseen notifications
 	 * and the locally-stored cache of that value to
 	 * determine what state the notifications indicator
 	 * should be in: on, off, or animate-to-on
 	 *
-	 * @param {Number} currentUnseenCount Number of reported unseen notifications
+	 * @param {number} currentUnseenCount Number of reported unseen notifications
 	 */
 	setNotesIndicator = currentUnseenCount => {
 		const existingUnseenCount = store.get( 'wpnotes_unseen_count' );
@@ -122,7 +116,7 @@ class MasterbarItemNotifications extends Component {
 		} );
 
 		return (
-			<div className="masterbar__notifications" ref="notificationLink">
+			<div className="masterbar__notifications" ref={ this.notificationLink }>
 				<MasterbarItem
 					url="/notifications"
 					icon="bell"
@@ -140,7 +134,7 @@ class MasterbarItemNotifications extends Component {
 					/>
 				</MasterbarItem>
 				<AsyncLoad
-					require="notifications"
+					require="../../../apps/notifications/index.jsx"
 					isShowing={ this.props.isNotificationsOpen }
 					checkToggle={ this.checkToggleNotes }
 					setIndicator={ this.setNotesIndicator }
@@ -162,7 +156,4 @@ const mapDispatchToProps = {
 	recordOpening: partial( recordTracksEvent, 'calypso_notification_open' ),
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( MasterbarItemNotifications );
+export default connect( mapStateToProps, mapDispatchToProps )( MasterbarItemNotifications );

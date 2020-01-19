@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,6 +11,11 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { preventWidows } from 'lib/formatting';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const validTypeSizes = [ 54, 47, 36, 32, 24, 21, 16, 14, 11 ];
 

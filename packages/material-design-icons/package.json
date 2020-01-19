@@ -1,0 +1,31 @@
+{
+	"name": "@automattic/material-design-icons",
+	"version": "1.0.0",
+	"description": "Material icons in SVG format.",
+	"main": "src/index.js",
+	"module": "src/index.js",
+	"sideEffects": false,
+	"keywords": [
+		"wordpress"
+	],
+	"author": "Automattic Inc.",
+	"contributors": [],
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "Apache-2.0",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/material-design-icons"
+	},
+	"private": true,
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"files": [
+		"src",
+		"svg-sprite"
+	],
+	"scripts": {
+		"build": "svgstore -o svg-sprite/material-icons.svg -p 'icon-' src/**/*.svg"
+	}
+}

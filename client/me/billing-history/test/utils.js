@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,7 +19,7 @@ describe( 'utils', () => {
 			expect( result ).to.eql( items );
 		} );
 
-		test( 'should return a domain item with a groupCount and hasPrivateRegistration added if there is only one', () => {
+		test( 'should return a domain item with a groupCount', () => {
 			const items = deepFreeze( [
 				{ foo: 'bar', product_slug: 'foobar' },
 				{ product_slug: 'wp-domains', domain: 'foo.com', variation_slug: 'none' },
@@ -33,24 +31,10 @@ describe( 'utils', () => {
 					variation_slug: 'none',
 					domain: 'foo.com',
 					groupCount: 1,
-					hasPrivateRegistration: 0,
 				},
 			];
 			const result = groupDomainProducts( items, ident );
 			expect( result ).to.eql( expected );
-		} );
-
-		test( 'should return a domain item with hasPrivateRegistration true if the variation_slug has a private slug', () => {
-			const items = deepFreeze( [
-				{ foo: 'bar', product_slug: 'foobar' },
-				{
-					product_slug: 'wp-domains',
-					domain: 'foo.com',
-					variation_slug: 'wp-private-registration',
-				},
-			] );
-			const result = groupDomainProducts( items, ident );
-			expect( result[ 1 ].hasPrivateRegistration ).to.eql( 1 );
 		} );
 
 		test( 'should not group domain items with different domains', () => {
@@ -77,7 +61,6 @@ describe( 'utils', () => {
 					variation_slug: 'wp-private-registration',
 					domain: 'foo.com',
 					groupCount: 1,
-					hasPrivateRegistration: 1,
 				},
 				{
 					id: '3',
@@ -85,7 +68,6 @@ describe( 'utils', () => {
 					variation_slug: 'wp-private-registration',
 					domain: 'bar.com',
 					groupCount: 1,
-					hasPrivateRegistration: 1,
 				},
 			];
 			const result = groupDomainProducts( items, ident );
@@ -131,26 +113,6 @@ describe( 'utils', () => {
 			] );
 			const result = groupDomainProducts( items, ident );
 			expect( result[ 1 ].groupCount ).to.eql( 2 );
-		} );
-
-		test( 'should set hasPrivateRegistration to a union of multiple items with the same domain', () => {
-			const items = deepFreeze( [
-				{ foo: 'bar', product_slug: 'foobar' },
-				{
-					id: '2',
-					product_slug: 'wp-domains',
-					domain: 'foo.com',
-					variation_slug: 'none',
-				},
-				{
-					id: '3',
-					product_slug: 'wp-domains',
-					domain: 'foo.com',
-					variation_slug: 'wp-private-registration',
-				},
-			] );
-			const result = groupDomainProducts( items, ident );
-			expect( result[ 1 ].hasPrivateRegistration ).to.eql( 1 );
 		} );
 
 		test( 'should sum the raw_amount for multiple items with the same domain', () => {

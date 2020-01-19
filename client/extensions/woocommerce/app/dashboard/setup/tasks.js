@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,8 +16,7 @@ import {
 	getTriedCustomizerDuringInitialSetup,
 	getCheckedTaxSetup,
 } from 'woocommerce/state/sites/setup-choices/selectors';
-import Checklist from 'components/checklist';
-import Task from 'components/checklist/task';
+import { Checklist, Task } from 'components/checklist';
 import { getTotalProducts, areProductsLoaded } from 'woocommerce/state/sites/products/selectors';
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
@@ -50,7 +47,7 @@ class SetupTasks extends Component {
 		}
 	};
 
-	componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = newProps => {
 		const { site, productsLoaded } = this.props;
 
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
@@ -90,7 +87,10 @@ class SetupTasks extends Component {
 		return (
 			<div className="setup__checklist">
 				<QuerySettingsGeneral siteId={ this.props.site.ID } />
-				<Checklist isPlaceholder={ this.props.loading || ! this.props.productsLoaded }>
+				<Checklist
+					showChecklistHeader={ true }
+					isPlaceholder={ this.props.loading || ! this.props.productsLoaded }
+				>
 					<Task
 						onClick={ this.getClickHandler(
 							'add-product',
@@ -98,9 +98,8 @@ class SetupTasks extends Component {
 						) }
 						title={ translate( 'Add a product' ) }
 						buttonText={ translate( 'Add a product' ) }
-						buttonPrimary
 						completedTitle={ translate( 'You have added a product' ) }
-						completedButtonText={ translate( 'View products' ) }
+						completedButtonText={ translate( 'Add another product' ) }
 						description={ translate( 'Start by adding the first product to your\u00a0store.' ) }
 						duration={ translate( '%d minute', '%d minutes', { count: 3, args: [ 3 ] } ) }
 						completed={ hasProducts }
@@ -112,7 +111,6 @@ class SetupTasks extends Component {
 						) }
 						title={ translate( 'Review shipping' ) }
 						buttonText={ translate( 'Review shipping' ) }
-						buttonPrimary
 						completedTitle={ translate( 'Shipping is set up' ) }
 						completedButtonText={ translate( 'View shipping' ) }
 						description={ translate( "We've set up shipping based on your store location." ) }
@@ -126,7 +124,6 @@ class SetupTasks extends Component {
 						) }
 						title={ translate( 'Review payments' ) }
 						buttonText={ translate( 'Review payments' ) }
-						buttonPrimary
 						completedTitle={ translate( 'Payments are set up' ) }
 						completedButtonText={ translate( 'Review payments' ) }
 						description={ translate( 'Choose how you would like your customers to pay you.' ) }
@@ -140,7 +137,6 @@ class SetupTasks extends Component {
 						) }
 						title={ translate( 'Review taxes' ) }
 						buttonText={ translate( 'Review taxes' ) }
-						buttonPrimary
 						completedTitle={ translate( 'Taxes are setup' ) }
 						completedButtonText={ translate( 'Review taxes' ) }
 						description={ translate( "We've set up automatic tax calculations for you." ) }
@@ -157,7 +153,6 @@ class SetupTasks extends Component {
 						) }
 						title={ translate( 'View and customize' ) }
 						buttonText={ translate( 'Customize' ) }
-						buttonPrimary
 						completedTitle={ translate( 'View and customize' ) }
 						completedButtonText={ translate( 'View and customize' ) }
 						description={ translate(
@@ -195,7 +190,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( SetupTasks ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SetupTasks ) );

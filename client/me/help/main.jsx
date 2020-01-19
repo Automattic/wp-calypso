@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,8 +11,7 @@ import { some } from 'lodash';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
+import { Button, CompactCard } from '@automattic/components';
 import HappinessEngineers from 'me/help/help-happiness-engineers';
 import HelpResult from './help-results/item';
 import HelpSearch from './help-search';
@@ -30,6 +27,13 @@ import { localizeUrl } from 'lib/i18n-utils';
 import { getUserPurchases, isFetchingUserPurchases } from 'state/purchases/selectors';
 import { planHasFeature } from 'lib/plans';
 import { FEATURE_BUSINESS_ONBOARDING } from 'lib/plans/constants';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 /**
  * Module variables

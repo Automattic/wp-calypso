@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,6 +8,11 @@ import React from 'react';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
+
+/**
+ * Style dependencies
+ */
+import './comment-count.scss';
 
 const CommentCount = ( { count, translate } ) => {
 	let countPhrase;

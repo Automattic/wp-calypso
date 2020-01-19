@@ -81,7 +81,7 @@
 			margin-right: 8px;
 			margin-left: -27px;
 			vertical-align: bottom;
-			color: $alert-green;
+			color: var( --color-success );
 		}
 	}
 }
@@ -105,8 +105,8 @@
 		border-bottom: 1px solid var( --color-neutral-0 );
 		display: flex;
 		align-items: center;
-		background: lighten( $gray-light, 1% );
-		
+		background: var( --color-neutral-0 );
+
 		.progress-bar,
 		.progress-bar__progress {
 			border-radius: 0;
@@ -172,12 +172,12 @@
 .mailchimp__getting-started-loading-placeholder {
 	@include placeholder();
 	pointer-events: none;
-	background: $white;
+	background: var( --color-surface );
 
 	p {
 		height: 14px;
 		animation: loading-fade 1.6s ease-in-out infinite;
-		background-color: lighten( $gray, 25% );
+		background-color: var( --color-neutral-5 );
 	}
 }
 
@@ -192,7 +192,7 @@
 &.is-busy {
 	animation: button__busy-animation 3000ms infinite linear;
 	background-size: 120px 100%;
-	background-image: linear-gradient( -45deg, $gray-lighten-30 28%, $white 28%, $white 72%, $gray-lighten-30 72% );
+	background-image: linear-gradient( -45deg, var( --color-neutral-0 ) 28%, var( --color-surface ) 28%, var( --color-surface ) 72%, var( --color-neutral-0 ) 72% );
 }
 
 .mailchimp__dashboard {
@@ -217,7 +217,7 @@
 }
 
 .mailchimp__dashboard-title-and-slogan {
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
 		0 1px 2px var( --color-neutral-0 );
 	flex-grow: 1;
 	padding: 16px;
@@ -231,12 +231,12 @@
 }
 
 .mailchimp__dashboard-sync-status {
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
 		0 1px 2px var( --color-neutral-0 );
 	flex-grow: 0;
 	width: 255px;
 	font-size: 12px;
-	background: $white;
+	background: var( --color-surface );
 
 	@include breakpoint( '<960px' ) {
 		width: auto;
@@ -282,8 +282,8 @@
 .mailchimp__sync-notice-syncing {
 	animation: button__busy-animation 3000ms infinite linear;
 	background-size: 120px 100%;
-	background-image: linear-gradient( -45deg, $blue-medium 28%, darken( $blue-medium, 5% ) 28%, darken( $blue-medium, 5% ) 72%, $blue-medium 72% );
-	border-color: darken( $blue-medium, 8% );
+	background-image: linear-gradient( -45deg, var( --color-primary ) 28%, var( --color-primary-dark ) 28%, var( --color-primary-dark ) 72%, var( --color-primary ) 72% );
+	border-color: var( --color-primary-20 );
 }
 
 .mailchimp__header-description {
@@ -382,11 +382,11 @@
 }
 
 .mailchimp__dashboard-settings-preview-view {
-	border: 1px solid var( --color-neutral-100 );
+	border: 1px solid var( --color-neutral-10 );
 	padding: 12px;
 	margin-top: 4px;
 	font-size: 13px;
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 
 	.form-label {
 		margin: 0;

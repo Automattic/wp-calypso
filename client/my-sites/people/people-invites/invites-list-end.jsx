@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,6 +12,11 @@ import { localize } from 'i18n-calypso';
 import ListEnd from 'components/list-end';
 import { bumpStat } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class InvitesListEnd extends React.PureComponent {
 	static propTypes = {
 		shown: PropTypes.number,
@@ -25,7 +28,7 @@ class InvitesListEnd extends React.PureComponent {
 		this.bumpedStat = false;
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.found > nextProps.shown && ! this.bumpedStat ) {
 			this.props.bumpStat( 'calypso_people_invite_list', 'displayed_max' );
 			this.bumpedStat = true;
@@ -54,7 +57,4 @@ class InvitesListEnd extends React.PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{ bumpStat }
-)( localize( InvitesListEnd ) );
+export default connect( null, { bumpStat } )( localize( InvitesListEnd ) );

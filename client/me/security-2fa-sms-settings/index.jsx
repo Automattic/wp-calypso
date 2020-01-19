@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -25,6 +23,11 @@ import observe from 'lib/mixins/data-observe';
 import { protectForm } from 'lib/protect-form';
 import getCountries from 'state/selectors/get-countries';
 import QuerySmsCountries from 'components/data/query-countries/sms';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const debug = debugFactory( 'calypso:me:security:2fa-sms-settings' );
 

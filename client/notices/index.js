@@ -1,13 +1,14 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 
-const debug = debugFactory( 'calypso:notices' );
+/**
+ * Internal dependencies
+ */
 import Emitter from 'lib/mixins/emitter';
+
+const debug = debugFactory( 'calypso:notices' );
 
 debug( 'initializing notices' );
 
@@ -18,9 +19,14 @@ let delayedNotices = [];
 const notices = {
 	/**
 	 * Creates a new notice
+	 *
 	 * @private
 	 *
-	 * @return {object} notice
+	 * @param {string} text The text of the notices
+	 * @param {object} options Options for the notice
+	 * @param {string} status The status
+	 *
+	 * @returns {object} notice
 	 */
 	new: function( text, options, status ) {
 		// Set container
@@ -32,7 +38,7 @@ const notices = {
 		debug( 'creating notice', text, options, status );
 
 		list[ container ] = [];
-		var noticeObject = {
+		const noticeObject = {
 			type: options.type || 'message',
 			status: status,
 			text: text,
@@ -67,9 +73,13 @@ const notices = {
 
 	/**
 	 * Helper function for creating a new "Success" notice
+	 *
 	 * @public
 	 *
-	 * @return {object} notice
+	 * @param {string} text The text of the notices
+	 * @param {object} options Options for the notice
+	 *
+	 * @returns {object} notice
 	 */
 	success: function( text, options ) {
 		options = options || {};
@@ -78,9 +88,13 @@ const notices = {
 
 	/**
 	 * Helper function for creating a new "Error" notice
+	 *
 	 * @public
 	 *
-	 * @return {object} notice
+	 * @param {string} text The text of the notices
+	 * @param {object} options Options for the notice
+	 *
+	 * @returns {object} notice
 	 */
 	error: function( text, options ) {
 		options = options || {};
@@ -89,9 +103,13 @@ const notices = {
 
 	/**
 	 * Helper function for creating a new general "Info" notice
+	 *
 	 * @public
 	 *
-	 * @return {object} notice
+	 * @param {string} text The text of the notices
+	 * @param {object} options Options for the notice
+	 *
+	 * @returns {object} notice
 	 */
 	info: function( text, options ) {
 		options = options || {};
@@ -100,9 +118,13 @@ const notices = {
 
 	/**
 	 * Helper function for creating a new general "Info" notice
+	 *
 	 * @public
 	 *
-	 * @return {object} notice
+	 * @param {string} text The text of the notices
+	 * @param {object} options Options for the notice
+	 *
+	 * @returns {object} notice
 	 */
 	warning: function( text, options ) {
 		options = options || {};
@@ -116,13 +138,14 @@ const notices = {
 
 	/**
 	 * Removes a specific notice when you click its `X` button
+	 *
 	 * @param  {object} notice The data that was originally used to create the notice
 	 */
 	removeNotice: function( notice ) {
 		if ( ! notice.container ) {
 			return;
 		}
-		let containerList = list[ notice.container ],
+		const containerList = list[ notice.container ],
 			index = containerList.indexOf( notice );
 
 		if ( -1 === index ) {
@@ -134,19 +157,20 @@ const notices = {
 
 	/**
 	 * Callback handler to clear notices when a user leaves current page
+	 *
 	 * @public
+	 * @param {object} context The page context
+	 * @param {Function} next The continuation
 	 */
 	clearNoticesOnNavigation: function( context, next ) {
 		debug( 'clearNoticesOnNavigation' );
-		let length,
-			container,
-			changed = false,
-			isNoticePersistent = function( notice ) {
-				return notice.persistent;
-			};
+		let changed = false;
+		const isNoticePersistent = function( notice ) {
+			return notice.persistent;
+		};
 
-		for ( container in list.containerNames ) {
-			length = list[ container ].length;
+		for ( const container in list.containerNames ) {
+			const { length } = list[ container ];
 			list[ container ] = list[ container ].filter( isNoticePersistent );
 			if ( length !== list[ container ].length ) {
 				changed = true;
@@ -160,6 +184,7 @@ const notices = {
 				list[ noticeObject.container ].push( noticeObject );
 			} );
 			delayedNotices = [];
+			changed = true;
 		}
 
 		if ( changed ) {
@@ -170,6 +195,7 @@ const notices = {
 
 	/**
 	 * Clear all notices at once for a given container
+	 *
 	 * @public
 	 *
 	 * @param  {string} container DOM ID of notices container to clear

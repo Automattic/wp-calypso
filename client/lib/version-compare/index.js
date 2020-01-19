@@ -1,7 +1,6 @@
 /**
  * /*eslint-disable
  *
- * @format
  */
 
 /**

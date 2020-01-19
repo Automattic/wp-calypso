@@ -1,0 +1,130 @@
+.wpnc__note-actions {
+	.wpnc__note-actions__buttons {
+		padding-bottom: 16px;
+	}
+
+	.wpnc__reply-box {
+		font-family: $sans;
+		display: block;
+		position: relative;
+		padding: $wpnc__padding-medium;
+		background-color: var( --color-neutral-0 );
+
+		textarea {
+			@extend %wpnc-form-field;
+			@extend %wpnc-textarea;
+			box-sizing: border-box;
+			padding-right: 52px;
+			min-height: 37px;
+			width: 100%;
+			font-size: 14px;
+			font-family: inherit;
+			transition: border 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+			resize: vertical;
+		}
+
+		textarea:focus + button {
+			display: block;
+		}
+
+		button {
+			font-family: $sans;
+			color: var( --color-neutral-light );
+			display: none;
+			position: absolute;
+			top: 26px;
+			right: 25px;
+			text-transform: uppercase;
+			font-weight: 600;
+			font-size: 12px;
+		}
+		button.active {
+			display: block;
+			color: var( --color-primary );
+		}
+		button.inactive {
+			cursor: default;
+		}
+
+		.wpnc__spinner {
+			display: block;
+			position: absolute;
+			right: 32px;
+			left: initial;
+			top: 24px;
+		}
+	}
+}
+
+.wpnc__main .wpnc__action-link {
+	background-color: transparent;
+	border: none;
+	box-sizing: border-box;
+	cursor: pointer;
+	display: inline-block;
+	font-size: 12px;
+	max-width: 25%;
+	padding: 0 18px;
+	text-align: center;
+	vertical-align: top;
+
+	&.active-action {
+		color: var( --color-primary );
+
+		&:hover {
+			color: var( --color-text-subtle );
+
+			.gridicon {
+				fill: var( --color-neutral-light );
+			}
+		}
+
+		.gridicon {
+			fill: var( --color-primary );
+		}
+	}
+
+	&.inactive-action {
+		color: var( --color-text-subtle );
+
+		&:hover {
+			color: var( --color-primary );
+
+			.gridicon {
+				fill: var( --color-primary );
+			}
+		}
+
+		.gridicon {
+			fill: var( --color-neutral-light );
+		}
+	}
+
+	@media screen and ( max-width: 370px ) {
+		padding: 0 12px;
+	}
+
+	&:focus {
+		outline: none;
+	}
+
+	&:first-child {
+		padding-left: 0;
+	}
+
+	&:last-child {
+		padding-right: 0;
+	}
+
+	&:only-child {
+		padding: 0 18px;
+	}
+
+	.wpnc__gridicon {
+		font-size: 24px;
+	}
+
+	p {
+		overflow: hidden;
+	}
+}

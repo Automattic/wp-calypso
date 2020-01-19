@@ -1,57 +1,65 @@
-/** @format */
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withoutPersistence } from 'state/utils';
 import {
-	IMPORT_IS_SITE_IMPORTABLE_ERROR,
-	IMPORT_IS_SITE_IMPORTABLE_RECEIVE,
+	IMPORTER_NUX_SITE_DETAILS_SET,
 	IMPORTS_IMPORT_CANCEL,
+	IMPORTER_NUX_FROM_SIGNUP_CLEAR,
+	IMPORTER_NUX_FROM_SIGNUP_SET,
 	IMPORTER_NUX_URL_INPUT_SET,
-	IMPORT_IS_SITE_IMPORTABLE_START_FETCH,
-	SIGNUP_PROGRESS_SAVE_STEP,
 } from 'state/action-types';
 
 import { registerActionForward } from 'lib/redux-bridge';
 
 registerActionForward( IMPORTS_IMPORT_CANCEL );
 
-export const urlInputValue = createReducer( '', {
-	[ IMPORTER_NUX_URL_INPUT_SET ]: ( state, { value = '' } ) => value,
-	[ 'FLUX_IMPORTS_IMPORT_CANCEL' ]: () => '',
+export const urlInputValue = withoutPersistence( ( state = '', action ) => {
+	switch ( action.type ) {
+		case IMPORTER_NUX_URL_INPUT_SET: {
+			const { value = '' } = action;
+			return value;
+		}
+		case 'FLUX_IMPORTS_IMPORT_CANCEL':
+			return '';
+	}
+
+	return state;
 } );
 
-export const isUrlInputDisabled = createReducer( false, {
-	[ IMPORT_IS_SITE_IMPORTABLE_START_FETCH ]: () => true,
-	[ SIGNUP_PROGRESS_SAVE_STEP ]: () => false,
-	[ IMPORT_IS_SITE_IMPORTABLE_ERROR ]: () => false,
-	[ 'FLUX_IMPORTS_IMPORT_CANCEL' ]: () => false,
+export const isFromSignupFlow = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case IMPORTER_NUX_FROM_SIGNUP_SET:
+			return true;
+		case IMPORTER_NUX_FROM_SIGNUP_CLEAR:
+			return false;
+	}
+
+	return state;
 } );
 
-export const siteDetails = createReducer( null, {
-	[ IMPORT_IS_SITE_IMPORTABLE_RECEIVE ]: ( state, { engine, favicon, siteTitle, siteUrl } ) =>
-		engine && siteUrl
-			? {
-					engine,
-					favicon,
-					siteTitle,
-					siteUrl,
-			  }
-			: null,
-	[ IMPORT_IS_SITE_IMPORTABLE_ERROR ]: () => null,
-	[ 'FLUX_IMPORTS_IMPORT_CANCEL' ]: () => null,
-} );
+export const siteDetails = withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case IMPORTER_NUX_SITE_DETAILS_SET: {
+			const { siteEngine, siteFavicon, siteTitle, siteUrl, importerTypes } = action;
 
-export const error = createReducer( null, {
-	[ IMPORT_IS_SITE_IMPORTABLE_START_FETCH ]: () => null,
-	[ IMPORT_IS_SITE_IMPORTABLE_RECEIVE ]: () => null,
-	[ IMPORT_IS_SITE_IMPORTABLE_ERROR ]: ( state, action ) => action.error,
-	[ 'FLUX_IMPORTS_IMPORT_CANCEL' ]: () => null,
+			return {
+				siteEngine,
+				siteFavicon,
+				siteTitle,
+				siteUrl,
+				importerTypes,
+			};
+		}
+		case 'FLUX_IMPORTS_IMPORT_CANCEL':
+			return null;
+	}
+
+	return state;
 } );
 
 export default combineReducers( {
-	error,
-	isUrlInputDisabled,
+	isFromSignupFlow,
 	siteDetails,
 	urlInputValue,
 } );

@@ -1,0 +1,30 @@
+.domain-skip-suggestion {
+	display: flex;
+	align-items: center;
+
+	& .button.domain-suggestion__action.is-borderless {
+	    flex: 1 0 auto;
+	}
+}
+
+.domain-skip-suggestion__domain-description {
+	padding-right: 1em;
+
+	@include breakpoint( '>660px' ) {
+		width: 75%;
+	}
+
+	h3 {
+		word-break: break-all;
+	}
+
+	p {
+		color: var( --color-neutral-70 );
+		font-size: 12px;
+		margin-bottom: 0;
+
+		@include breakpoint( '>960px' ) {
+			margin-bottom: 8px;
+		}
+	}
+}

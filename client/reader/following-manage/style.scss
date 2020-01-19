@@ -1,10 +1,6 @@
 .following-manage__header {
-	font-weight: 600;
-	margin: 14px 0 14px 14px;
-
-	@include breakpoint( '>660px' ) {
-		margin: 36px 0 20px;
-	}
+	max-width: 720px;
+	margin: auto;
 }
 
 .following-manage .search {
@@ -16,7 +12,7 @@
 }
 
 .following-manage__input-card.card.is-compact {
-	box-shadow: 0 0 0 2px var( --color-neutral-100 ), 0 1px 2px var( --color-neutral-100 );
+	box-shadow: 0 0 0 2px var( --color-neutral-10 ), 0 1px 2px var( --color-neutral-10 );
 }
 
 .following-manage__subscriptions {
@@ -26,7 +22,7 @@
 
 // Load more results
 .following-manage__show-more {
-	border-top: 1px solid var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-10 );
 	display: flex;
 	justify-content: center;
 	margin-top: 10px;
@@ -36,7 +32,7 @@
 	border-top: 0;
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
-	color: $gray;
+	color: var( --color-text-subtle );
 	font-size: 11px;
 	padding: 2px 9px 6px 11px;
 	position: relative;
@@ -50,7 +46,7 @@
 	}
 
 	&:hover {
-		color: var( --color-neutral-400 );
+		color: var( --color-neutral-40 );
 		cursor: pointer;
 	}
 }
@@ -103,7 +99,7 @@
 	}
 
 	.following-manage__subscriptions-sort .following-manage__sort-controls {
-		color: $gray;
+		color: var( --color-text-subtle );
 		font-size: 12px;
 		font-weight: normal;
 		padding-top: 8px;
@@ -123,7 +119,7 @@
 	}
 
 	.following-manage__subscriptions-search .search-card {
-		box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.3 );
+		box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.3 );
 
 		.following-manage__search-followed-input.is-compact {
 			height: 32px;
@@ -147,7 +143,7 @@
 		}
 
 		.gridicon.gridicons-ellipsis {
-			fill: var( --color-neutral-200 );
+			fill: var( --color-neutral-20 );
 			top: 0;
 		}
 	}
@@ -163,18 +159,18 @@
 	&:focus {
 		.reader-import-button__icon,
 		.reader-export-button__icon {
-			fill: $white;
+			fill: var( --color-text-inverted );
 		}
 
 		.reader-import-button__label,
 		.reader-export-button__label {
-			color: $white;
+			color: var( --color-text-inverted );
 		}
 	}
 }
 
 .following-manage .reader-recommended-sites {
-	border-bottom: 1px solid var( --color-neutral-100 );
+	border-bottom: 1px solid var( --color-neutral-10 );
 }
 
 .following-manage__search-followed {
@@ -198,7 +194,7 @@
 
 .following-manage__search-results.is-empty,
 .following-manage__subscriptions-list.is-empty {
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 }
 
 .following-manage__search-results .reader-subscription-list-item__options {
@@ -238,7 +234,7 @@
 .following-manage__url-follow-no-search-results-message {
 	margin-top: -5px;
 	padding-bottom: 15px;
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 }
 
 .following-manage__url-follow {

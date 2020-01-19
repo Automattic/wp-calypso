@@ -1,4 +1,4 @@
-/** @format */
+
 
 .edit-gravatar__image-container {
 	cursor: pointer;
@@ -10,7 +10,7 @@
 		position: absolute;
 		top: 0;
 		left: 0;
-		background-color: rgba( $gray-dark, 0.5 );
+		background-color: rgba( var( --color-neutral-70-rgb ), 0.5 );
 		border-radius: 50%;
 		height: 150px;
 		width: 150px;
@@ -65,7 +65,7 @@
 	width: 150px;
 	height: 150px;
 	border-radius: 50%;
-	background: rgba( $gray-dark, 0.5 );
+	background: rgba( var( --color-neutral-70-rgb ), 0.5 );
 	color: #fff;
 	text-align: center;
 
@@ -82,7 +82,7 @@
 }
 
 .edit-gravatar .spinner__border {
-	fill: rgba( $gray-dark, 0.5 );
+	fill: rgba( var( --color-neutral-70-rgb ), 0.5 );
 }
 
 .edit-gravatar__explanation {

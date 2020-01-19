@@ -42,12 +42,12 @@
 }
 
 .annual-site-stats__stat-title {
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-size: 11px;
 	text-transform: uppercase;
 
 	@include breakpoint( '<480px' ) {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		font-size: 14px;
 		text-transform: capitalize;
 		width: 50%;

@@ -15,9 +15,9 @@ onChange( { vertical_name, vertical_slug, vertical_id } ) {
 render() {
 	return (
 		<SiteVerticalsSuggestionSearch
-			onChange={ this.onChange }
-			initialValue={ this.state.initialValue }
-			charsToTriggerSearch={ 3 }
+			autoFocus={ true }
+			onChange={ onChange }
+			searchValue={ stateValue }
 		/>
 	);
 }
@@ -26,19 +26,16 @@ render() {
 
 ## Props
 
-### _(String)_ `initialValue`
-An _optional_ initial value of the search input field. Default is `''`;
+### _(String)_ `searchValue`
+The value with which we conduct a vertical API search, and also the initial search field value to display when the component loads.
 
 ### _(String)_ `placeholder`
-_Optional_ placeholder text for the search input field.
-
-### _(Integer)_ `charsToTriggerSearch`
-_Optional_ number of characters before an API search is triggered.
+_Optional_ placeholder text for the search input field. Default: `''`
 
 ### _(Function)_ `onChange` 
-The callback function for receiving updated value. 
+The callback function for receiving updated value.
 
-Returns _{Object}_:
+Returns _{object}_:
 
 ```json
 {
@@ -55,4 +52,9 @@ Returns _{Object}_:
 
 ```
 
+### _(Boolean)_ `showPopular` 
+_Optional_ Informs the component whether to show a list of popular vertical topics when the input field is empty. Default: `false`
+
+### _(Boolean)_ `autoFocus` 
+_Optional_ When set to `true` gives immediate focus to the search input field. Default: `false`
 

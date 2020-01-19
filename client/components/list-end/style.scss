@@ -8,23 +8,13 @@
 	width: 100%;
 	margin-top: 32px;
 	text-align: center;
-	border-top: solid 1px var( --color-neutral-100 );
+	border-top: solid 1px var( --color-neutral-10 );
 
 	.gridicon {
-		fill: $gray;
+		fill: var( --color-neutral-light );
 		position: relative;
 		top: -13px;
-		background: var( --color-neutral-0 );
+		background: var( --color-surface-backdrop );
 		padding: 0 8px;
-	}
-
-	// Reader is special since is has a white background, and has lots
-	// of random horizontal lines already.
-	.is-reader-page & {
-		border-top: none;
-
-		.gridicon {
-			background: $white;
-		}
 	}
 }

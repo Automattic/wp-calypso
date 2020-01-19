@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 import { LOADING } from 'woocommerce/state/constants';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_DELETED,
@@ -32,147 +30,155 @@ const processZoneData = zoneData => {
 	return { ...zoneData, name: translate( 'Locations not covered by your other zones' ) };
 };
 
-export default createReducer( null, {
-	[ WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST ]: ( state, { zoneId } ) => {
-		if ( ! isArray( state ) ) {
-			return state;
+export default withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST: {
+			const { zoneId } = action;
+			if ( ! isArray( state ) ) {
+				return state;
+			}
+			const zoneIndex = findIndex( state, { id: zoneId } );
+			if ( -1 === zoneIndex ) {
+				return state;
+			}
+
+			const zone = {
+				...state[ zoneIndex ],
+				methodIds: LOADING,
+			};
+			return [ ...state.slice( 0, zoneIndex ), zone, ...state.slice( zoneIndex + 1 ) ];
 		}
-		const zoneIndex = findIndex( state, { id: zoneId } );
-		if ( -1 === zoneIndex ) {
-			return state;
+		case WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS: {
+			const { zoneId, data } = action;
+			if ( ! isArray( state ) ) {
+				return state;
+			}
+			const zoneIndex = findIndex( state, { id: zoneId } );
+			if ( -1 === zoneIndex ) {
+				return state;
+			}
+
+			const zone = {
+				...state[ zoneIndex ],
+				methodIds: data.map( method => method.id ),
+			};
+
+			return [ ...state.slice( 0, zoneIndex ), zone, ...state.slice( zoneIndex + 1 ) ];
 		}
+		case WOOCOMMERCE_SHIPPING_ZONE_UPDATED: {
+			let { data } = action;
+			const {
+				originatingAction: { zone },
+			} = action;
+			data = processZoneData( data );
+			if ( ! isArray( state ) ) {
+				return state;
+			}
 
-		const zone = {
-			...state[ zoneIndex ],
-			methodIds: LOADING,
-		};
-		return [ ...state.slice( 0, zoneIndex ), zone, ...state.slice( zoneIndex + 1 ) ];
-	},
+			if ( 'number' !== typeof zone.id ) {
+				return [
+					...state,
+					{
+						...data,
+						methodIds: [],
+					},
+				];
+			}
 
-	[ WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS ]: ( state, { zoneId, data } ) => {
-		if ( ! isArray( state ) ) {
-			return state;
-		}
-		const zoneIndex = findIndex( state, { id: zoneId } );
-		if ( -1 === zoneIndex ) {
-			return state;
-		}
+			const zoneIndex = findIndex( state, { id: zone.id } );
+			if ( -1 === zoneIndex ) {
+				return state;
+			}
 
-		const zone = {
-			...state[ zoneIndex ],
-			methodIds: data.map( method => method.id ),
-		};
-
-		return [ ...state.slice( 0, zoneIndex ), zone, ...state.slice( zoneIndex + 1 ) ];
-	},
-
-	[ WOOCOMMERCE_SHIPPING_ZONE_UPDATED ]: ( state, { data, originatingAction: { zone } } ) => {
-		data = processZoneData( data );
-		if ( ! isArray( state ) ) {
-			return state;
-		}
-
-		if ( 'number' !== typeof zone.id ) {
 			return [
-				...state,
+				...state.slice( 0, zoneIndex ),
 				{
 					...data,
-					methodIds: [],
+					methodIds: state[ zoneIndex ].methodIds,
 				},
+				...state.slice( zoneIndex + 1 ),
 			];
 		}
+		case WOOCOMMERCE_SHIPPING_ZONE_DELETED: {
+			const {
+				originatingAction: { zone },
+			} = action;
+			if ( ! isArray( state ) ) {
+				return state;
+			}
 
-		const zoneIndex = findIndex( state, { id: zone.id } );
-		if ( -1 === zoneIndex ) {
-			return state;
+			const zoneIndex = findIndex( state, { id: zone.id } );
+			if ( -1 === zoneIndex ) {
+				return state;
+			}
+
+			return [ ...state.slice( 0, zoneIndex ), ...state.slice( zoneIndex + 1 ) ];
 		}
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED: {
+			const {
+				data,
+				originatingAction: { zoneId },
+			} = action;
+			if ( ! isArray( state ) ) {
+				return state;
+			}
 
-		return [
-			...state.slice( 0, zoneIndex ),
-			{
-				...data,
-				methodIds: state[ zoneIndex ].methodIds,
-			},
-			...state.slice( zoneIndex + 1 ),
-		];
-	},
+			const zoneIndex = findIndex( state, { id: zoneId } );
+			if ( -1 === zoneIndex ) {
+				return state;
+			}
 
-	[ WOOCOMMERCE_SHIPPING_ZONE_DELETED ]: ( state, { originatingAction: { zone } } ) => {
-		if ( ! isArray( state ) ) {
-			return state;
+			if ( -1 !== state[ zoneIndex ].methodIds.indexOf( data.id ) ) {
+				return state;
+			}
+
+			return [
+				...state.slice( 0, zoneIndex ),
+				{
+					...state[ zoneIndex ],
+					methodIds: [ ...state[ zoneIndex ].methodIds, data.id ],
+				},
+				...state.slice( zoneIndex + 1 ),
+			];
 		}
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_DELETED: {
+			const {
+				originatingAction: { zoneId, methodId },
+			} = action;
+			if ( ! isArray( state ) ) {
+				return state;
+			}
 
-		const zoneIndex = findIndex( state, { id: zone.id } );
-		if ( -1 === zoneIndex ) {
-			return state;
+			const zoneIndex = findIndex( state, { id: zoneId } );
+			if ( -1 === zoneIndex ) {
+				return state;
+			}
+
+			const methodIndex = state[ zoneIndex ].methodIds.indexOf( methodId );
+			if ( -1 === methodIndex ) {
+				return state;
+			}
+
+			return [
+				...state.slice( 0, zoneIndex ),
+				{
+					...state[ zoneIndex ],
+					methodIds: [
+						...state[ zoneIndex ].methodIds.slice( 0, methodIndex ),
+						...state[ zoneIndex ].methodIds.slice( methodIndex + 1 ),
+					],
+				},
+				...state.slice( zoneIndex + 1 ),
+			];
 		}
-
-		return [ ...state.slice( 0, zoneIndex ), ...state.slice( zoneIndex + 1 ) ];
-	},
-
-	[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED ]: (
-		state,
-		{ data, originatingAction: { zoneId } }
-	) => {
-		if ( ! isArray( state ) ) {
-			return state;
+		case WOOCOMMERCE_SHIPPING_ZONES_REQUEST: {
+			return LOADING;
 		}
-
-		const zoneIndex = findIndex( state, { id: zoneId } );
-		if ( -1 === zoneIndex ) {
-			return state;
+		case WOOCOMMERCE_SHIPPING_ZONES_REQUEST_SUCCESS: {
+			const { data } = action;
+			return data.map( processZoneData );
 		}
+	}
 
-		if ( -1 !== state[ zoneIndex ].methodIds.indexOf( data.id ) ) {
-			return state;
-		}
-
-		return [
-			...state.slice( 0, zoneIndex ),
-			{
-				...state[ zoneIndex ],
-				methodIds: [ ...state[ zoneIndex ].methodIds, data.id ],
-			},
-			...state.slice( zoneIndex + 1 ),
-		];
-	},
-
-	[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_DELETED ]: (
-		state,
-		{ originatingAction: { zoneId, methodId } }
-	) => {
-		if ( ! isArray( state ) ) {
-			return state;
-		}
-
-		const zoneIndex = findIndex( state, { id: zoneId } );
-		if ( -1 === zoneIndex ) {
-			return state;
-		}
-
-		const methodIndex = state[ zoneIndex ].methodIds.indexOf( methodId );
-		if ( -1 === methodIndex ) {
-			return state;
-		}
-
-		return [
-			...state.slice( 0, zoneIndex ),
-			{
-				...state[ zoneIndex ],
-				methodIds: [
-					...state[ zoneIndex ].methodIds.slice( 0, methodIndex ),
-					...state[ zoneIndex ].methodIds.slice( methodIndex + 1 ),
-				],
-			},
-			...state.slice( zoneIndex + 1 ),
-		];
-	},
-
-	[ WOOCOMMERCE_SHIPPING_ZONES_REQUEST ]: () => {
-		return LOADING;
-	},
-
-	[ WOOCOMMERCE_SHIPPING_ZONES_REQUEST_SUCCESS ]: ( state, { data } ) => {
-		return data.map( processZoneData );
-	},
+	return state;
 } );

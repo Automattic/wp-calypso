@@ -1,15 +1,14 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
-import formatCurrency from 'lib/format-currency';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getOrderLineItemTax } from 'woocommerce/lib/order-values';
 import { getOrderItemCost } from 'woocommerce/lib/order-values/totals';

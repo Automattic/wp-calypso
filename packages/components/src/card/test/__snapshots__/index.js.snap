@@ -1,0 +1,76 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Card should be linkable 1`] = `
+<a
+  className="card is-card-link"
+  href="/test"
+>
+  <t
+    className="card__link-indicator"
+    icon="chevron-right"
+    size={24}
+  />
+  This is a linked card
+</a>
+`;
+
+exports[`Card should have \`card\` class 1`] = `
+<div
+  className="card"
+/>
+`;
+
+exports[`Card should have custom class of \`test__ace\` 1`] = `
+<div
+  className="card test__ace"
+/>
+`;
+
+exports[`Card should render as a clickable button which looks like a link 1`] = `
+<button
+  className="card is-card-link is-clickable"
+  onClick="test"
+>
+  <t
+    className="card__link-indicator"
+    icon="chevron-right"
+    size={24}
+  />
+  This is a button which looks like a link
+</button>
+`;
+
+exports[`Card should render children 1`] = `
+<div
+  className="card"
+>
+  This is a card
+</div>
+`;
+
+exports[`CompactCard should have \`compact\` prop 1`] = `
+<Card
+  compact={true}
+/>
+`;
+
+exports[`CompactCard should have custom class of \`test__ace\` 1`] = `
+<Card
+  className="test__ace"
+  compact={true}
+/>
+`;
+
+exports[`CompactCard should render children 1`] = `
+<Card
+  compact={true}
+>
+  This is a compact card
+</Card>
+`;
+
+exports[`CompactCard should use the card component 1`] = `
+<Card
+  compact={true}
+/>
+`;

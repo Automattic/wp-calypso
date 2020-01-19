@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ActivityIcon from '../activity-log-item/activity-icon';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import PopoverMenuItem from 'components/popover/menu-item';
 import SplitButton from 'components/split-button';
 
@@ -76,7 +75,6 @@ class ActivityLogTaskUpdate extends Component {
 				<span className="activity-log-tasklist__update-action">
 					<SplitButton
 						compact
-						primary
 						label={ translate( 'Update' ) }
 						onClick={ this.handleEnqueue }
 						disabled={ disable }

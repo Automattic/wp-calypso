@@ -1,11 +1,11 @@
-
 .section-header.card {
+	align-items: flex-start;
 	display: flex;
-	align-items: center;
+	flex-flow: row wrap;
+	line-height: 28px;
 	padding-top: 11px;
 	padding-bottom: 11px;
 	position: relative;
-	line-height: 28px;
 
 	&::after {
 		content: '';
@@ -23,12 +23,19 @@
 	position: relative;
 	overflow: hidden;
 
-	&::before {
-		@include long-content-fade();
+	@include breakpoint( '<480px' ) {
+		line-height: 1.4;
+		margin: 4px 0;
 	}
 
-	.count {
+	.count,
+	.support-info {
 		margin-left: 8px;
+	}
+	
+	.support-info {
+		position: relative;
+		top: 3px;
 	}
 }
 
@@ -40,7 +47,7 @@
 }
 
 .section-header__label {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 14px;
 }
 
@@ -52,5 +59,11 @@
 
 	& > .button:last-child {
 		margin-right: 0;
+	}
+}
+
+.is-placeholder {
+	.section-header__label {
+		@include placeholder();
 	}
 }

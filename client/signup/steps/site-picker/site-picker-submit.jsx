@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { connect } from 'react-redux';
  */
 import { isFreePlan } from 'lib/plans';
 import { getSite } from 'state/sites/selectors';
-import SignupActions from 'lib/signup/actions';
+import { submitSignupStep } from 'state/signup/progress/actions';
 
 export const siteHasPaidPlan = selectedSite =>
 	selectedSite && selectedSite.plan && ! isFreePlan( selectedSite.plan.product_slug );
@@ -23,25 +21,23 @@ export class SitePickerSubmit extends React.Component {
 			hasPaidPlan = siteHasPaidPlan( selectedSite ),
 			{ ID: siteId, slug: siteSlug } = selectedSite;
 
-		SignupActions.submitSignupStep(
-			{
-				stepName,
-				stepSectionName,
-				siteId,
-				siteSlug,
-			},
-			[],
-			{}
-		);
-
-		SignupActions.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], {
-			themeSlugWithRepo: 'pub/twentysixteen',
+		this.props.submitSignupStep( {
+			stepName,
+			stepSectionName,
+			siteId,
+			siteSlug,
 		} );
 
+		this.props.submitSignupStep(
+			{ stepName: 'themes', wasSkipped: true },
+			{ themeSlugWithRepo: 'pub/twentysixteen' }
+		);
+
 		if ( hasPaidPlan ) {
-			SignupActions.submitSignupStep( { stepName: 'plans-site-selected', wasSkipped: true }, [], {
-				cartItem: null,
-			} );
+			this.props.submitSignupStep(
+				{ stepName: 'plans-site-selected', wasSkipped: true },
+				{ cartItem: null }
+			);
 
 			goToStep( 'user' );
 		} else {
@@ -54,8 +50,9 @@ export class SitePickerSubmit extends React.Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	return {
+export default connect(
+	( state, ownProps ) => ( {
 		selectedSite: getSite( state, ownProps.siteSlug ),
-	};
-} )( SitePickerSubmit );
+	} ),
+	{ submitSignupStep }
+)( SitePickerSubmit );

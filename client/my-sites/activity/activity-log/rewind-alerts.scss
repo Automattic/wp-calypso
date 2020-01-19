@@ -1,0 +1,18 @@
+.card.activity-log__threats {
+	padding-bottom: 4px;
+	font-size: 13px;
+
+	@include breakpoint( '>480px' ) {
+		font-size: 14px;
+	}
+}
+
+.activity-log__threats-heading {
+	margin-bottom: 16px;
+	font-weight: 600;
+	color: var( --color-error );
+
+	@include breakpoint( '>480px' ) {
+		margin-bottom: 24px;
+	}
+}

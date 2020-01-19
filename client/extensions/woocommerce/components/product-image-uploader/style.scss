@@ -4,7 +4,7 @@
 	width: 100%;
 	position: relative;
 	margin-bottom: 16px;
-	border: 1px dashed $gray;
+	border: 1px dashed var( --color-neutral-light );
 	border-radius: 5px;
 
 	@include breakpoint( '>960px' ) {
@@ -45,7 +45,7 @@
 		}
 
 		.gridicon {
-			color: var( --color-neutral-400 );
+			color: var( --color-neutral-40 );
 		}
 
 		p {
@@ -54,7 +54,7 @@
 
 		&:hover {
 			.gridicon {
-				color: var( --color-neutral-600 );
+				color: var( --color-neutral-60 );
 			}
 		}
 	}
@@ -66,7 +66,7 @@
 	margin-left: 8px;
 	margin-right: 8px;
 	background: var( --color-neutral-0 );
-	border: 1px dashed $gray;
+	border: 1px dashed var( --color-neutral-light );
 	width: 70px;
 	height: 70px;
 	border-radius: 5px;
@@ -112,13 +112,13 @@
 			top: 50%;
 			left: 50%;
 			transform: translate( -50%, -50% );
-			color: var( --color-neutral-400 );
+			color: var( --color-neutral-40 );
 		}
 	}
 
 	&:hover {
 		.gridicon {
-			color: var( --color-neutral-600 );
+			color: var( --color-neutral-60 );
 		}
 	}
 }

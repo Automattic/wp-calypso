@@ -21,7 +21,7 @@
 
 .card.activity-log-tasklist__task {
 	align-items: center;
-	box-shadow: 0 -1px 0 transparentize( $gray-lighten-20, 0.5 );
+	box-shadow: 0 -1px 0 rgba( var( --color-neutral-10-rgb ), 0.5 );
 	display: flex;
 	justify-content: flex-end;
 	padding: 16px 0;
@@ -53,7 +53,7 @@
 
 .activity-log-tasklist__update-bullet,
 .activity-log-tasklist__update-type {
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .activity-log-tasklist__update-bullet {
@@ -78,7 +78,7 @@
 .activity-log-tasklist__footer {
 	display: flex;
 	justify-content: space-between;
-	box-shadow: 0 -1px 0 transparentize( $gray-lighten-20, 0.5 );
+	box-shadow: 0 -1px 0 rgba( var( --color-neutral-10-rgb ), 0.5 );
 	padding: 16px 0;
 	color: var( --color-text-subtle );
 

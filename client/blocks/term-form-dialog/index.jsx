@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,14 +11,13 @@ import { get, find, noop, assign } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import TermTreeSelectorTerms from 'blocks/term-tree-selector/terms';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormToggle from 'components/forms/form-toggle';
-import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormFieldset from 'components/forms/form-fieldset';
 import { isMobile } from 'lib/viewport';
@@ -29,6 +26,11 @@ import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import { getTerms } from 'state/terms/selectors';
 import { addTerm, updateTerm } from 'state/terms/actions';
 import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class TermFormDialog extends Component {
 	static initialState = {
@@ -182,7 +184,7 @@ class TermFormDialog extends Component {
 		);
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		if (
 			this.props.term !== newProps.term ||
 			( this.props.showDialog !== newProps.showDialog && newProps.showDialog )
@@ -268,8 +270,7 @@ class TermFormDialog extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLabel>
-					<FormToggle checked={ isTopLevel } onChange={ this.onTopLevelChange } />
+				<FormToggle checked={ isTopLevel } onChange={ this.onTopLevelChange }>
 					<span>
 						{ translate( 'Top level %(term)s', {
 							args: { term: labels.singular_name },
@@ -287,7 +288,7 @@ class TermFormDialog extends Component {
 							} ) }
 						</span>
 					) }
-				</FormLabel>
+				</FormToggle>
 				{ ! isTopLevel && (
 					<div className="term-form-dialog__parent-tree-selector">
 						<FormLegend>
@@ -344,7 +345,6 @@ class TermFormDialog extends Component {
 
 		return (
 			<Dialog
-				autoFocus={ false }
 				isVisible={ showDialog }
 				buttons={ buttons }
 				onClose={ this.closeDialog }
@@ -353,9 +353,9 @@ class TermFormDialog extends Component {
 				<FormSectionHeading>{ isNew ? labels.add_new_item : labels.edit_item }</FormSectionHeading>
 				<FormFieldset>
 					<FormTextInput
+						// eslint-disable-next-line jsx-a11y/no-autofocus
 						autoFocus={ showDialog && ! isMobile() }
 						placeholder={ labels.new_item_name }
-						ref="termName"
 						isError={ isError }
 						onKeyUp={ this.validateInput }
 						value={ name }
@@ -372,7 +372,6 @@ class TermFormDialog extends Component {
 							} ) }
 						</FormLegend>
 						<FormTextarea
-							ref="termDescription"
 							onKeyUp={ this.validateInput }
 							value={ description }
 							onChange={ this.onDescriptionChange }

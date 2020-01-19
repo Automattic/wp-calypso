@@ -1,6 +1,6 @@
 .plugins-browser-list {
 	margin-bottom: 16px;
-	background: $white;
+	background: var( --color-surface );
 	box-shadow: 0 1px 2px var( --color-neutral-0 );
 
 	.feature-example & {
@@ -18,7 +18,7 @@
 .plugins-browser-list__title {
 	display: inline-block;
 	padding: 5px 0;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 12px;
 	line-height: 1.5;
 

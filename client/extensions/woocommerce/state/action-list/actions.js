@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -15,8 +13,8 @@ import {
 /**
  * Action Creator: Start next action list step.
  *
- * @param {Object} actionList The current action list.
- * @return {Object} action
+ * @param {object} actionList The current action list.
+ * @returns {object} action
  */
 export function actionListStepNext( actionList ) {
 	return {
@@ -27,7 +25,7 @@ export function actionListStepNext( actionList ) {
 
 /**
  * Action Creator: Clear the current Action List.
- * @return {Object} action
+ * @returns {object} action
  */
 export function actionListClear() {
 	return {
@@ -37,8 +35,8 @@ export function actionListClear() {
 
 /**
  * Action Creator: Annotate the current representation of the action list to state.
- * @param {Object} actionList The current actionList
- * @return {Object} action
+ * @param {object} actionList The current actionList
+ * @returns {object} action
  */
 export function actionListAnnotate( actionList ) {
 	return {
@@ -50,8 +48,8 @@ export function actionListAnnotate( actionList ) {
 /**
  * Action Creator: Mark current step as successful.
  *
- * @param {Object} actionList The current action list.
- * @return {Object} action
+ * @param {object} actionList The current action list.
+ * @returns {object} action
  */
 export function actionListStepSuccess( actionList ) {
 	return {
@@ -63,9 +61,9 @@ export function actionListStepSuccess( actionList ) {
 /**
  * Action Creator: Mark current step as failed.
  *
- * @param {Object} actionList The current action list.
- * @param {Object} error The error from the failure.
- * @return {Object} action
+ * @param {object} actionList The current action list.
+ * @param {object} error The error from the failure.
+ * @returns {object} action
  */
 export function actionListStepFailure( actionList, error ) {
 	return {

@@ -3,9 +3,9 @@ $autobar-height: 20px;
 
 // The WordPress.com Masterbar
 .masterbar {
-	background: var( --color-primary );
-	border-bottom: 1px solid var( --masterbar-border-color );
-	color: var( --masterbar-color );
+	background: var( --color-masterbar-background );
+	border-bottom: 1px solid var( --color-masterbar-border );
+	color: var( --color-masterbar-text );
 	font-size: 16px;
 	display: flex;
 	height: $masterbar-height;
@@ -18,15 +18,10 @@ $autobar-height: 20px;
 	-webkit-font-smoothing: subpixel-antialiased;
 	transition: transform 0.2s ease-out;
 
-	.is-support-user & {
-		// DO NOT style these with theme colors. We want them to override whatever theme colors the user has picked.
-		background: $orange-jazzy;
-		border-bottom: 1px solid darken( $orange-jazzy, 4% );
-	}
-
-	.is-section-theme &,
-	.is-section-themes.has-no-sidebar & {
-		border: none;
+	.is-support-session & {
+		// Use generic colors so that they override whatever theme colors the user has picked.
+		background: var( --studio-orange );
+		border-bottom: 1px solid var( --studio-orange-60 );
 	}
 }
 
@@ -51,11 +46,11 @@ $autobar-height: 20px;
 	> .masterbar__notifications,
 	> .masterbar__login-links a {
 		&:not( .is-active ) {
-			background: rgba( $blue-wordpress, 0.85 );
+			background: rgba( var( --color-primary-rgb ), 0.85 );
 		}
 
 		&:hover {
-			background: lighten( $masterbar-color, 5% );
+			background: var( --color-primary );
 		}
 
 		&:focus {
@@ -73,7 +68,7 @@ $autobar-height: 20px;
 	display: flex;
 	align-items: center;
 	position: relative;
-	color: var( --masterbar-color );
+	color: var( --color-masterbar-text );
 	font-size: 14px;
 	height: $masterbar-height;
 	line-height: $masterbar-height;
@@ -83,7 +78,7 @@ $autobar-height: 20px;
 	transition: all 0.2s ease-in-out;
 
 	&:visited {
-		color: var( --masterbar-color );
+		color: var( --color-masterbar-text );
 	}
 
 	&[href] {
@@ -91,11 +86,11 @@ $autobar-height: 20px;
 	}
 
 	.masterbar__item-content {
-		color: var( --masterbar-color );
+		color: var( --color-masterbar-text );
 	}
 
 	.gridicon {
-		fill: var( --masterbar-color ); // only because safari gets currentColor wrong
+		fill: var( --color-masterbar-text ); // only because safari gets currentColor wrong
 	}
 
 	.gridicon + .masterbar__item-content {
@@ -103,8 +98,8 @@ $autobar-height: 20px;
 	}
 
 	&:hover {
-		background: var( --color-primary-400 );
-		color: var( --masterbar-color );
+		background: var( --color-masterbar-item-hover-background );
+		color: var( --color-masterbar-text );
 	}
 
 	&:focus {
@@ -112,16 +107,16 @@ $autobar-height: 20px;
 
 		.accessible-focus & {
 			box-shadow: inset 0 0 0 2px var( --color-primary-light );
-			color: var( --masterbar-color );
+			color: var( --color-masterbar-text );
 		}
 	}
 
 	&.is-active {
-		background: var( --color-primary-dark );
+		background: var( --color-masterbar-item-active-background );
 	}
 
-	.is-support-user &.is-active {
-		background: darken( $orange-jazzy, 10% );
+	.is-support-session &.is-active {
+		background: var( --studio-orange-70 );
 	}
 
 	@include breakpoint( '<480px' ) {
@@ -169,7 +164,7 @@ $autobar-height: 20px;
 			height: 24px;
 			width: 24px;
 			margin-left: 5px;
-			fill: $white;
+			fill: var( --color-text-inverted );
 		}
 
 		.masterbar__wpcom-wordmark {
@@ -203,7 +198,7 @@ $autobar-height: 20px;
 }
 
 .masterbar__item-new {
-	background: $white;
+	background: var( --color-surface );
 	border-radius: 3px;
 	color: var( --color-primary );
 	height: 36px;
@@ -215,7 +210,7 @@ $autobar-height: 20px;
 	}
 
 	&.is-active {
-		color: $white;
+		color: var( --color-text-inverted );
 	}
 
 	&:hover {
@@ -227,7 +222,7 @@ $autobar-height: 20px;
 		outline: none;
 
 		.accessible-focus & {
-			background: $white;
+			background: var( --color-surface );
 			color: var( --color-primary );
 			box-shadow: 0 0 0 2px var( --color-primary-light );
 			z-index: 1;
@@ -248,30 +243,30 @@ $autobar-height: 20px;
 		}
 	}
 
-	.is-support-user &,
-	.is-support-user &:focus,
-	.is-support-user &:hover,
-	.is-support-user &:visited {
-		color: $orange-jazzy;
+	.is-support-session &,
+	.is-support-session &:focus,
+	.is-support-session &:hover,
+	.is-support-session &:visited {
+		color: var( --studio-orange );
 	}
 
-	.is-support-user &.is-active {
-		color: $white;
+	.is-support-session &.is-active {
+		color: var( --color-text-inverted );
 	}
 
 	// active state when editing
 	.is-group-editor & {
-		background: var( --masterbar-item-new-editor-background );
-		color: $white;
+		background: var( --color-masterbar-item-new-editor-background );
+		color: var( --color-text-inverted );
 	}
 
 	.is-group-editor &:visited,
 	.is-group-editor & .masterbar__item-content {
-		color: $white;
+		color: var( --color-text-inverted );
 	}
 
 	.is-group-editor &:hover {
-		background: var( --masterbar-item-new-editor-hover-background );
+		background: var( --color-masterbar-item-new-editor-hover-background );
 	}
 }
 
@@ -283,7 +278,7 @@ $autobar-height: 20px;
 		width: 18px;
 		height: 18px;
 
-		border: 2px solid $white;
+		border: 2px solid var( --color-border-inverted );
 	}
 
 	.gridicon + .masterbar__item-content {
@@ -303,7 +298,7 @@ $autobar-height: 20px;
 	}
 
 	.gridicon {
-		fill: $white;
+		fill: var( --color-text-inverted );
 	}
 
 	.gridicon + .masterbar__item-content {
@@ -319,7 +314,7 @@ $autobar-height: 20px;
 	}
 
 	.masterbar__notifications-bubble {
-		border: solid 2px var( --color-primary );
+		border: solid 2px var( --color-masterbar-background );
 		border-radius: 50%;
 		display: none;
 		font-size: 8px;
@@ -335,22 +330,21 @@ $autobar-height: 20px;
 		z-index: z-index( '.masterbar', '.masterbar__notifications-bubble' );
 
 		// Animation
-		transform: translateZ( 0 );
 		animation: bubble-unread-indication 0.5s linear both;
 		transition: all 150ms ease-in;
 	}
 
 	&:hover .masterbar__notifications-bubble {
-		border-color: var( --color-primary-light );
+		border-color: var( --color-masterbar-item-hover-background );
 	}
 
 	&.is-active .masterbar__notifications-bubble {
-		border-color: var( --color-primary-dark );
+		border-color: var( --color-masterbar-item-active-background );
 	}
 
 	&.has-unread .masterbar__notifications-bubble {
 		display: block;
-		background: var( --color-accent-300 );
+		background: var( --color-masterbar-unread-dot-background );
 	}
 
 	&.is-initial-load .masterbar__notifications-bubble {
@@ -360,13 +354,13 @@ $autobar-height: 20px;
 
 @keyframes bubble-unread-indication {
 	30% {
-		transform: scale( 1.5 );
+		transform: scale3d( 1.5, 1.5, 1.5 );
 	}
 	60% {
-		transform: scale( 0.85 );
+		transform: scale3d( 0.85, 0.85, 0.85 );
 	}
 	80% {
-		transform: scale( 1.1 );
+		transform: scale3d( 1.15, 1.15, 1.15 );
 	}
 }
 
@@ -399,7 +393,7 @@ $autobar-height: 20px;
 }
 
 .masterbar__toggle-drafts.button.is-borderless {
-	background: $white;
+	background: var( --color-surface );
 	height: 36px;
 	margin: 5px 8px 5px -10px;
 	padding: 0 8px;
@@ -408,6 +402,8 @@ $autobar-height: 20px;
 	transition: all 0.2s ease-out;
 
 	&:hover {
+		background-color: var( --color-neutral-0 );
+		
 		.count {
 			border-color: var( --color-primary );
 			color: var( --color-primary );
@@ -446,8 +442,8 @@ $autobar-height: 20px;
 	left: 0;
 	height: 46px;
 	line-height: 45px;
-	border-bottom: 1px solid var( --color-neutral-100 );
-	box-shadow: 0 1px 1px rgba( $gray, 0.1 );
+	border-bottom: 1px solid var( --color-neutral-10 );
+	box-shadow: 0 1px 1px rgba( var( --color-neutral-light-rgb ), 0.1 );
 }
 
 .masterbar__recent-drafts-add-new {
@@ -459,7 +455,7 @@ $autobar-height: 20px;
 .masterbar__recent-drafts-see-all.button.is-compact {
 	display: block;
 	padding: 8px 16px;
-	border-top: 1px solid var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-10 );
 	background: var( --color-neutral-0 );
 	text-align: center;
 	position: absolute;
@@ -475,11 +471,11 @@ $autobar-height: 20px;
 	}
 
 	&:hover {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 
 		.count {
-			color: var( --color-neutral-700 );
-			border-color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
+			border-color: var( --color-neutral-70 );
 		}
 	}
 }
@@ -498,7 +494,7 @@ $autobar-height: 20px;
 	}
 }
 
-.masterbar__quick-language-switcher a {
+a.masterbar__quick-language-switcher {
 	cursor: pointer;
 }
 
@@ -522,4 +518,20 @@ $autobar-height: 20px;
 .has-no-masterbar .masterbar {
 	opacity: 0;
 	pointer-events: none;
+}
+
+.masterbar__secure-checkout {
+	display: flex;
+	align-items: center;
+	padding-left: 10px;
+
+	.masterbar__wpcom-wordmark {
+		margin-right: 5px;
+	}
+
+	.masterbar__secure-checkout-text {
+		font-weight: 300;
+		color: var( --color-primary-5 );
+		transform: translateY( 1px );
+	}
 }

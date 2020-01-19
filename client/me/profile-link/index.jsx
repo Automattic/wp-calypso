@@ -1,21 +1,24 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import safeProtocolUrl from 'lib/safe-protocol-url';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { withoutHttp } from 'lib/url';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ProfileLink extends React.Component {
 	static defaultProps = {
@@ -98,9 +101,6 @@ class ProfileLink extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-	}
-)( ProfileLink );
+export default connect( null, {
+	recordGoogleEvent,
+} )( ProfileLink );

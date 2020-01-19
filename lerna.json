@@ -1,10 +1,5 @@
 {
-	"packages": [ "packages/*", "." ],
+	"packages": [ "client", "packages/*", "apps/*" ],
 	"version": "independent",
-	"ignoreChanges": [
-		"**/*.md",
-		"**/.eslintrc.{js,json,yaml,yml}",
-		"**/package-lock.json",
-		"packages/i18n-calypso"
-	]
+	"ignoreChanges": [ "**/*.md", "**/.eslintrc.{js,json,yaml,yml}", "**/package-lock.json" ]
 }

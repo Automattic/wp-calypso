@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,6 +13,11 @@ import PeopleLog from 'lib/people/log-store';
 import PeopleActions from 'lib/people/actions';
 import Notice from 'components/notice';
 import { getSelectedSite } from 'state/ui/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const isSameSite = ( siteId, log ) => siteId && log.siteId && log.siteId === siteId;
 

@@ -1,18 +1,16 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React, { Component } from 'react';
-import i18n from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { trim, isNumber } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import CompactTinyMCE from 'woocommerce/components/compact-tinymce';
 import FormClickToEditInput from 'woocommerce/components/form-click-to-edit-input';
 import FormFieldSet from 'components/forms/form-fieldset';
@@ -21,7 +19,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import ProductFormImages from './product-form-images';
 import ProductReviewsWidget from 'woocommerce/components/product-reviews-widget';
 
-export default class ProductFormDetailsCard extends Component {
+class ProductFormDetailsCard extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		product: PropTypes.shape( {
@@ -112,7 +110,7 @@ export default class ProductFormDetailsCard extends Component {
 	};
 
 	render() {
-		const { product } = this.props;
+		const { product, translate } = this.props;
 
 		let productReviewsWidget = null;
 
@@ -121,7 +119,6 @@ export default class ProductFormDetailsCard extends Component {
 		}
 
 		const images = product.images || [];
-		const __ = i18n.translate;
 
 		return (
 			<Card className="products__product-form-details">
@@ -135,23 +132,23 @@ export default class ProductFormDetailsCard extends Component {
 					/>
 					<div className="products__product-form-details-basic">
 						<FormFieldSet className="products__product-form-details-basic-name">
-							<FormLabel htmlFor="name">{ __( 'Product name' ) }</FormLabel>
+							<FormLabel htmlFor="name">{ translate( 'Product name' ) }</FormLabel>
 							<FormTextInput id="name" value={ product.name || '' } onChange={ this.setName } />
 						</FormFieldSet>
 						<FormFieldSet className="products__product-form-details-basic-sku">
-							<FormLabel htmlFor="sku">{ __( 'SKU:' ) }</FormLabel>
+							<FormLabel htmlFor="sku">{ translate( 'SKU:' ) }</FormLabel>
 							<FormClickToEditInput
 								id="sku"
 								value={ product.sku || '' }
 								placeholder="-"
-								updateAriaLabel={ __( 'Update SKU' ) }
-								editAriaLabel={ __( 'Edit SKU' ) }
+								updateAriaLabel={ translate( 'Update SKU' ) }
+								editAriaLabel={ translate( 'Edit SKU' ) }
 								onChange={ this.setSku }
 								disabled={ product.name || product.sku ? false : true }
 							/>
 						</FormFieldSet>
 						<FormFieldSet className="products__product-form-details-basic-description">
-							<FormLabel htmlFor="description">{ __( 'Description' ) }</FormLabel>
+							<FormLabel htmlFor="description">{ translate( 'Description' ) }</FormLabel>
 							{ this.renderTinyMCE() }
 						</FormFieldSet>
 						{ productReviewsWidget }
@@ -161,3 +158,5 @@ export default class ProductFormDetailsCard extends Component {
 		);
 	}
 }
+
+export default localize( ProductFormDetailsCard );

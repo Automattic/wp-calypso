@@ -10,7 +10,7 @@
 		position: relative;
 
 		&::before {
-			background-color: var( --color-neutral-100 );
+			background-color: var( --color-neutral-10 );
 			content: ' ';
 			display: block;
 			height: 1px;
@@ -38,7 +38,7 @@
 
 				.gridicon {
 					background: var( --color-primary );
-					color: $white;
+					color: var( --color-text-inverted );
 					border-color: var( --color-primary );
 				}
 
@@ -61,20 +61,20 @@
 				}
 
 				.gridicon {
-					background: var( --color-neutral-100 );
-					color: $gray;
+					background: var( --color-neutral-10 );
+					color: var( --color-neutral-light );
 				}
 
 				label {
-					color: $gray;
+					color: var( --color-neutral-light );
 				}
 			}
 
 			.gridicon {
-				background: $white;
-				border: 1px var( --color-neutral-100 ) solid;
+				background: var( --color-surface );
+				border: 1px var( --color-neutral-10 ) solid;
 				border-radius: 50%;
-				color: var( --color-neutral-100 );
+				color: var( --color-neutral-10 );
 				display: block;
 				margin: 0 auto;
 				position: relative;
@@ -88,7 +88,7 @@
 			}
 
 			label {
-				color: var( --color-neutral-100 );
+				color: var( --color-neutral-10 );
 				display: inline-block;
 				font-size: 14px;
 				line-height: 1;

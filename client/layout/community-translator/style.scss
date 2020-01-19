@@ -16,14 +16,14 @@
 
 .community-translator__button {
 	align-items: center;
-	color: $white;
+	color: var( --color-text-inverted );
 	text-decoration: none;
 	outline: 0;
 	display: flex;
 	cursor: pointer;
 
 	&:hover {
-		color: $white;
+		color: var( --color-text-inverted );
 
 		.community-translator__text {
 			transition: all 0.15s ease-in-out;
@@ -46,11 +46,11 @@ body {
 		border-radius: 2px;
 		padding: 0;
 		text-align: inherit;
-		border-color: var( --color-neutral-100 );
+		border-color: var( --color-neutral-10 );
 		z-index: z-index( 'root', 'body .webui-popover' ); // Appear above dialog
 
 		.webui-popover-title {
-			background-color: var( --color-neutral-100 );
+			background-color: var( --color-neutral-10 );
 			border-color: var( --color-neutral-0 );
 			border-radius: 1px 1px 0 0;
 		}
@@ -59,7 +59,7 @@ body {
 		&.top-right,
 		&.top-left {
 			.arrow {
-				border-top-color: var( --color-neutral-100 );
+				border-top-color: var( --color-neutral-10 );
 			}
 		}
 
@@ -67,7 +67,7 @@ body {
 		&.right-top,
 		&.right-bottom {
 			.arrow {
-				border-right-color: var( --color-neutral-100 );
+				border-right-color: var( --color-neutral-10 );
 			}
 		}
 
@@ -75,7 +75,7 @@ body {
 		&.left-top,
 		&.left-bottom {
 			.arrow {
-				border-left-color: var( --color-neutral-100 );
+				border-left-color: var( --color-neutral-10 );
 			}
 		}
 
@@ -83,9 +83,9 @@ body {
 		&.bottom-right,
 		&.bottom-left {
 			.arrow {
-				border-bottom-color: var( --color-neutral-100 );
+				border-bottom-color: var( --color-neutral-10 );
 				&::after {
-					border-bottom-color: var( --color-neutral-100 );
+					border-bottom-color: var( --color-neutral-10 );
 				}
 			}
 		}

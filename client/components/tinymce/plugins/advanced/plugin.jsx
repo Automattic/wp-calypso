@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,6 @@ import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import tinymce from 'tinymce/tinymce';
 import { translate } from 'i18n-calypso';
-import GridiconEllipsis from 'gridicons/dist/ellipsis';
 
 /**
  * Internal dependencies
@@ -16,6 +13,7 @@ import GridiconEllipsis from 'gridicons/dist/ellipsis';
 import { isWithinBreakpoint } from 'lib/viewport';
 import { savePreference, fetchPreferences } from 'state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
+import Gridicon from 'components/gridicon';
 
 function advanced( editor ) {
 	const store = editor.getParam( 'redux_store' );
@@ -72,9 +70,10 @@ function advanced( editor ) {
 
 			this.innerHtml(
 				ReactDomServer.renderToStaticMarkup(
+					// eslint-disable-next-line jsx-a11y/no-interactive-element-to-noninteractive-role
 					<button type="button" role="presentation" tabIndex="-1">
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-						<GridiconEllipsis size={ 28 } />
+						<Gridicon icon="ellipsis" size={ 28 } />
 						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 					</button>
 				)

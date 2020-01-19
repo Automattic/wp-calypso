@@ -13,7 +13,7 @@
 }
 
 .is-reader-page .search-stream__fixed-area {
-	background-color: $white;
+	background-color: var( --color-surface );
 	position: fixed;
 	top: 0;
 	margin-top: 47px; // masterbar is exactly 47px
@@ -35,7 +35,7 @@
 }
 
 .search-stream .search-stream__input-card.card {
-	box-shadow: 0 0 0 2px var( --color-neutral-100 ), 0 1px 2px var( --color-neutral-100 );
+	box-shadow: 0 0 0 2px var( --color-neutral-10 ), 0 1px 2px var( --color-neutral-10 );
 	margin-bottom: 0;
 }
 
@@ -49,28 +49,6 @@
 .main.search-stream {
 	@include breakpoint( '<660px' ) {
 		perspective: none; // Fix search bar pushed up behind the masterbar in Safari
-	}
-}
-
-// Search term suggestions
-.search-stream__blank-suggestions {
-	border-bottom: 1px solid var( --color-neutral-100 );
-	font-size: 13px;
-	color: $gray;
-	padding: 16px 0;
-	text-align: left;
-
-	a,
-	a:visited {
-		color: var( --color-primary );
-	}
-
-	a:hover {
-		color: var( --color-primary-light );
-	}
-
-	@include breakpoint( '<660px' ) {
-		padding: 16px;
 	}
 }
 
@@ -107,7 +85,7 @@
 
 .is-reader-page .search-stream__recommendation-list-item {
 	box-sizing: border-box;
-	border-bottom: 1px solid var( --color-neutral-100 );
+	border-bottom: 1px solid var( --color-neutral-10 );
 	display: flex;
 	flex-basis: calc( 50% - 15px );
 	margin: 0 0 0 15px;
@@ -205,10 +183,9 @@
 
 // Post and Sites static headers
 .search-stream__headers {
-	color: $gray;
+	color: var( --color-text-subtle );
 	display: flex;
 	font-size: 14px;
-	display: flex;
 	font-weight: 600;
 	list-style-type: none;
 	margin: 17px 0 0;
@@ -217,7 +194,7 @@
 
 .search-stream__post-header,
 .search-stream__site-header {
-	border-bottom: 1px solid var( --color-neutral-100 );
+	border-bottom: 1px solid var( --color-neutral-10 );
 	padding-bottom: 15px;
 }
 
@@ -242,7 +219,7 @@
 
 .search-stream__header .section-nav {
 	background: inherit;
-	border-bottom: 1px solid var( --color-neutral-100 );
+	border-bottom: 1px solid var( --color-neutral-10 );
 	box-shadow: none;
 	height: 53px;
 	margin-bottom: 0;
@@ -264,11 +241,11 @@
 	display: flex;
 
 	.section-nav-tab.is-selected {
-		border-bottom: 2px solid var( --color-neutral-700 );
+		border-bottom: 2px solid var( --color-neutral-70 );
 	}
 
 	.is-selected .section-nav-tab__link {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	.section-nav-tab__link {

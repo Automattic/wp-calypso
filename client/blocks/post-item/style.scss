@@ -1,12 +1,9 @@
-/** @format */
 
-$post-item-background-color: $white;
 
-$post-item-border-color: darken( $sidebar-bg-color, 5% );
-$expanded-post-item-outline-color: $sidebar-selected-color;
-
+$post-item-background-color: var( --color-surface );
+$post-item-border-color: var( --color-neutral-5 );
 $post-item-border: solid 1px $post-item-border-color;
-$expanded-post-item-border: 1px solid $expanded-post-item-outline-color;
+$expanded-post-item-border: 1px solid var( --color-neutral );
 $expanded-post-item-outline: 4px solid $post-item-border-color;
 
 .post-item {
@@ -47,7 +44,7 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 	cursor: pointer;
 
 	&:hover .form-checkbox {
-		border-color: var( --color-neutral-200 );
+		border-color: var( --color-neutral-20 );
 	}
 
 	padding: 16px 16px 0;
@@ -88,22 +85,22 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 
 a.post-item__title-link,
 a.post-item__title-link:visited {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	display: block;
 	padding-bottom: 2px;
 	padding-right: 8px;
 
 	&:hover {
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 	}
 
 	.post-item__panel.is-untitled & {
-		color: $gray;
+		color: var( --color-text-subtle );
 		font-style: italic;
 	}
 
 	.post-item__panel.is-placeholder & {
-		@include placeholder;
+		@include placeholder();
 		display: inline-block;
 	}
 }
@@ -159,7 +156,7 @@ a.post-item__title-link:visited {
 	}
 
 	.post-item__card.is-placeholder & {
-		@include placeholder;
+		@include placeholder();
 	}
 }
 

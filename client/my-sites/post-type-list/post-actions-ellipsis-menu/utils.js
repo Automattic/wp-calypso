@@ -1,5 +1,3 @@
-/** @format */
-
 export function bumpStatGenerator( type, name, bumpStat, recordTracksEvent = null ) {
 	return () => {
 		let group;

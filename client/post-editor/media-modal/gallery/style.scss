@@ -5,7 +5,7 @@
 	flex: 2 0 0%;
 	margin: 80px 0 0;
 	background-color: var( --color-neutral-0 );
-	border: 1px solid var( --color-neutral-100 );
+	border: 1px solid var( --color-neutral-10 );
 
 	@include breakpoint( '>660px' ) {
 		display: block;
@@ -15,9 +15,9 @@
 
 .editor-media-modal-gallery__preview .notice {
 	position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
+	top: 0;
+	left: 0;
+	right: 0;
 	margin: 0;
 	overflow: hidden;
 }
@@ -30,8 +30,8 @@
 
 .editor-media-modal-gallery__preview-toggle {
 	position: absolute;
-		top: -28px;
-		right: 15px;
+	top: -28px;
+	right: 15px;
 	z-index: z-index( '.dialog__backdrop', '.editor-media-modal-gallery__preview-toggle' );
 	width: 200px;
 
@@ -40,7 +40,7 @@
 	}
 
 	.segmented-control__item .segmented-control__link {
-		border-color: var( --color-neutral-100 );
+		border-color: var( --color-neutral-10 );
 	}
 
 	.segmented-control__item:first-of-type .segmented-control__link {
@@ -49,7 +49,7 @@
 
 	.segmented-control__item:last-of-type .segmented-control__link {
 		border-bottom-right-radius: 0;
-		border-left-color: var( --color-neutral-100 );
+		border-left-color: var( --color-neutral-10 );
 	}
 
 	.segmented-control__item.is-selected .segmented-control__link {
@@ -77,24 +77,24 @@
 
 .editor-media-modal-gallery__remove {
 	position: absolute;
-		top: 0;
-		/*rtl:ignore*/
-		right: 0;
+	top: 0;
+	/*!rtl:ignore*/
+	right: 0;
 	width: 28px;
 	height: 28px;
-	/*rtl:ignore*/
+	/*!rtl:ignore*/
 	transform: translate( 25%, -25% );
-	border: 1px solid var( --color-neutral-200 );
+	border: 1px solid var( --color-neutral-20 );
 	border-radius: 50%;
 	background-color: var( --color-neutral-0 );
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 	cursor: pointer;
 }
 
 .editor-media-modal-gallery__remove .gridicon {
 	position: absolute;
-		top: 50%;
-		left: 50%;
+	top: 50%;
+	left: 50%;
 	transform: translate( -50%, -50% );
 }
 
@@ -108,13 +108,13 @@
 
 .editor-media-modal-gallery .sortable-list__navigation {
 	position: absolute;
-		top: 16px;
-		left: 16px;
+	top: 16px;
+	left: 16px;
 	margin: 0;
 }
 
 .editor-media-modal-gallery .sortable-list__navigation-button {
-	background-color: $white;
+	background-color: var( --color-surface );
 
 	&:disabled {
 		opacity: 0.9;
@@ -147,10 +147,10 @@ input.editor-media-modal-gallery__caption[type='text'] {
 
 .editor-media-modal-gallery__preview-wrapper {
 	position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 	box-sizing: border-box;
 	overflow-y: auto;
 	padding: 16px;
@@ -172,7 +172,7 @@ input.editor-media-modal-gallery__caption[type='text'] {
 	&::after {
 		content: '';
 		position: absolute;
-			left: 50%;
+		left: 50%;
 		display: block;
 		width: 90%;
 		margin-left: -45%;
@@ -190,18 +190,18 @@ input.editor-media-modal-gallery__caption[type='text'] {
 		height: 130px;
 		background: linear-gradient(
 			to right,
-			lighten( $gray, 25% ),
-			lighten( $gray, 25% ) 40%,
+			var( --color-neutral-5 ),
+			var( --color-neutral-5 ) 40%,
 			transparent 40%,
 			transparent 42%,
-			$gray-lighten-20 42%
+			var( --color-neutral-10 ) 42%
 		);
 	}
 
 	&::after {
 		top: calc( 146px + 2% );
 		height: 240px;
-		background: var( --color-neutral-200 );
+		background: var( --color-neutral-20 );
 	}
 
 	&.is-loading::before,
@@ -212,9 +212,9 @@ input.editor-media-modal-gallery__caption[type='text'] {
 
 .editor-media-modal-gallery__fields .for-setting-type {
 	position: absolute;
-		top: 0;
-		left: 16px;
-		right: 16px;
+	top: 0;
+	left: 16px;
+	right: 16px;
 
 	@include breakpoint( '>660px' ) {
 		position: static;
@@ -291,7 +291,7 @@ input[type].editor-media-modal-gallery__input-width-auto {
 
 .editor-media-modal-gallery__preview-individual .wp-caption-dd {
 	background: var( --color-neutral-0 );
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	font-size: 14px;
 	line-height: 1.7;
 	padding: 16px;

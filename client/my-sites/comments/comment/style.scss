@@ -13,7 +13,7 @@
 	&.is-pending {
 		background: var( --color-surface );
 		box-shadow: inset 4px 0 0 0 var( --color-warning ),
-			0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px var( --color-neutral-0 );
+			0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
 	}
 
 	@include breakpoint( '>660px' ) {
@@ -63,9 +63,9 @@
 	width: 32px;
 
 	.gridicon {
-		background-color: $gray;
+		background-color: var( --color-neutral-light );
 		border-radius: 50%;
-		fill: $white;
+		fill: var( --color-text-inverted );
 		padding: 4px;
 	}
 }
@@ -98,7 +98,7 @@
 		display: inline;
 
 		.gridicon {
-			color: $gray;
+			color: var( --color-neutral-light );
 			margin-bottom: -4px;
 		}
 	}
@@ -109,7 +109,7 @@
 	}
 
 	.comment__author-url-separator {
-		color: $gray;
+		color: var( --color-neutral-light );
 		margin: 0 4px;
 	}
 }
@@ -199,11 +199,11 @@
 		padding: 0 10px;
 
 		&.is-pending {
-			background: lighten( $alert-yellow, 18% );
+			background: var( --color-warning-20 );
 		}
 		&.is-spam,
 		&.is-trash {
-			background: lighten( $alert-red, 18% );
+			background: var( --color-error-20 );
 		}
 	}
 
@@ -217,7 +217,7 @@
 		white-space: nowrap;
 
 		.gridicon {
-			fill: $gray-text-min;
+			fill: var( --color-text-subtle );
 			margin-bottom: -4px;
 		}
 
@@ -251,7 +251,7 @@
 	position: relative;
 
 	&::after {
-		background: linear-gradient( to right, rgba( $white, 0 ), rgba( $white, 1 ) 50% );
+		background: linear-gradient( to right, rgba( var( --color-surface-rgb ), 0 ), rgba( var( --color-surface-rgb ), 1 ) 50% );
 		content: '';
 		height: 20px;
 		position: absolute;
@@ -263,8 +263,8 @@
 .comment.is-pending .comment__content-preview::after {
 	background: linear-gradient(
 		to right,
-		rgba( mix( $alert-yellow, $white, 8.5% ), 0 ),
-		rgba( mix( $alert-yellow, $white, 8.5% ), 1 ) 50%
+		rgba( var( --color-warning-0-rgb ), 0 ),
+		rgba( var( --color-warning-0-rgb ), 1 ) 50%
 	);
 }
 
@@ -418,7 +418,7 @@
 }
 
 .comment__reply-submit.button.is-compact.is-borderless {
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-weight: 600;
 	padding: 4px;
 	position: absolute;
@@ -531,7 +531,7 @@
 .comment-html-editor__toolbar .button {
 	border-right: 1px solid var( --color-neutral-0 );
 	border-radius: 0;
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	margin-bottom: 8px;
 	min-width: 30px;
 	padding: 4px 8px;
@@ -539,7 +539,7 @@
 	text-transform: lowercase;
 
 	&:hover {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	&:last-child {
@@ -610,12 +610,12 @@
 	margin: 0 auto;
 
 	&:hover {
-		box-shadow: 0 0 0 1px $gray, 0 2px 4px var( --color-neutral-100 );
+		box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-10 );
 		z-index: z-index( 'root', '.card.comment.is-bulk-mode:hover' );
 	}
 	&.is-pending:hover {
-		box-shadow: inset 4px 0 0 0 var( --color-warning ), 0 0 0 1px $gray,
-			0 2px 4px var( --color-neutral-100 );
+		box-shadow: inset 4px 0 0 0 var( --color-warning ), 0 0 0 1px var( --color-neutral-light ),
+			0 2px 4px var( --color-neutral-10 );
 	}
 
 	a {
@@ -652,7 +652,7 @@
 .card.comment.is-placeholder {
 	@include placeholder();
 
-	background-color: $white;
+	background-color: var( --color-surface );
 
 	.comment__bulk-select {
 		display: none;
@@ -707,6 +707,6 @@
 .card.comment {
 	&.is-at-max-depth {
 		margin-bottom: 0;
-		box-shadow: 0 -1px transparentize( $gray-lighten-20, 0.5 );
+		box-shadow: 0 -1px rgba( var( --color-neutral-10-rgb ), 0.5 );
 	}
 }

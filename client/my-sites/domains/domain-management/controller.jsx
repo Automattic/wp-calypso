@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,19 +8,17 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import DomainManagement from './domain-management';
+import DomainManagement from '.';
 import DomainManagementData from 'components/data/domain-management';
 import {
+	domainManagementChangeSiteAddress,
 	domainManagementContactsPrivacy,
 	domainManagementDns,
 	domainManagementEdit,
 	domainManagementEditContactInfo,
-	domainManagementEmail,
-	domainManagementEmailForwarding,
 	domainManagementList,
 	domainManagementNameServers,
 	domainManagementPrimaryDomain,
-	domainManagementPrivacyProtection,
 	domainManagementRedirectSettings,
 	domainManagementTransfer,
 	domainManagementTransferIn,
@@ -32,9 +28,12 @@ import {
 	domainManagementManageConsent,
 	domainManagementDomainConnectMapping,
 } from 'my-sites/domains/paths';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import GSuiteAddUsers from './gsuite/gsuite-add-users';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import {
+	emailManagement,
+	emailManagementAddGSuiteUsers,
+	emailManagementForwarding,
+} from 'my-sites/email/paths';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { decodeURIComponentIfValid } from 'lib/url';
 
 export default {
@@ -52,6 +51,11 @@ export default {
 				needsProductsList
 			/>
 		);
+		next();
+	},
+
+	domainManagementListAllSites( pageContext, next ) {
+		pageContext.primary = <DomainManagement.ListAll />;
 		next();
 	},
 
@@ -102,11 +106,10 @@ export default {
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementContactsPrivacy( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Contacts and Privacy"
+				analyticsTitle="Domain Management > Contacts"
 				component={ DomainManagement.ContactsPrivacy }
 				context={ pageContext }
 				needsDomains
-				needsWhois
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
@@ -139,46 +142,20 @@ export default {
 				component={ DomainManagement.EditContactInfo }
 				context={ pageContext }
 				needsDomains
-				needsWhois
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
 		next();
 	},
 
-	domainManagementEmail( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementEmail(
-					':site',
-					pageContext.params.domain ? ':domain' : undefined
-				) }
-				analyticsTitle="Domain Management > Email"
-				component={ DomainManagement.Email }
-				context={ pageContext }
-				needsCart
-				needsDomains
-				needsGoogleApps
-				needsPlans
-				needsProductsList
-				selectedDomainName={ pageContext.params.domain }
-			/>
-		);
-		next();
+	domainManagementEmailRedirect( pageContext ) {
+		page.redirect( emailManagement( pageContext.params.site, pageContext.params.domain ) );
 	},
 
-	domainManagementEmailForwarding( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementEmailForwarding( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Email Forwarding"
-				component={ DomainManagement.EmailForwarding }
-				context={ pageContext }
-				needsEmailForwarding
-				selectedDomainName={ pageContext.params.domain }
-			/>
+	domainManagementEmailForwardingRedirect( pageContext ) {
+		page.redirect(
+			emailManagementForwarding( pageContext.params.site, pageContext.params.domain )
 		);
-		next();
 	},
 
 	domainManagementDns( pageContext, next ) {
@@ -188,8 +165,6 @@ export default {
 				analyticsTitle="Domain Management > Name Servers and DNS > DNS Records"
 				component={ DomainManagement.Dns }
 				context={ pageContext }
-				needsDns
-				needsDomains
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
@@ -225,24 +200,10 @@ export default {
 		next();
 	},
 
-	domainManagementPrivacyProtection( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementPrivacyProtection( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Contacts and Privacy > Privacy Protection"
-				component={ DomainManagement.PrivacyProtection }
-				context={ pageContext }
-				needsDomains
-				needsWhois
-				selectedDomainName={ pageContext.params.domain }
-			/>
+	domainManagementAddGSuiteUsersRedirect( pageContext ) {
+		page.redirect(
+			emailManagementAddGSuiteUsers( pageContext.params.site, pageContext.params.domain )
 		);
-		next();
-	},
-
-	domainManagementAddGSuiteUsers( pageContext, next ) {
-		pageContext.primary = <GSuiteAddUsers selectedDomainName={ pageContext.params.domain } />;
-		next();
 	},
 
 	domainManagementRedirectSettings( pageContext, next ) {
@@ -252,7 +213,6 @@ export default {
 				analyticsTitle="Domain Management > Redirect Settings"
 				component={ DomainManagement.SiteRedirect }
 				context={ pageContext }
-				needsSiteRedirect
 				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
 			/>
 		);
@@ -299,15 +259,6 @@ export default {
 	},
 
 	domainManagementTransferToOtherUser( pageContext, next ) {
-		const state = pageContext.store.getState();
-		const siteId = getSelectedSiteId( state );
-		const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
-		if ( isAutomatedTransfer ) {
-			const siteSlug = getSelectedSiteSlug( state );
-			page.redirect( `/domains/manage/${ siteSlug }` );
-			return;
-		}
-
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementTransferToAnotherUser( ':site', ':domain' ) }
@@ -333,6 +284,20 @@ export default {
 				needsDomains
 				needsDomainInfo
 				needsUsers
+				selectedDomainName={ pageContext.params.domain }
+			/>
+		);
+		next();
+	},
+
+	domainManagementChangeSiteAddress( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementChangeSiteAddress( ':site', ':domain' ) }
+				analyticsTitle="Domain Management > Change Site Address"
+				component={ DomainManagement.ChangeSiteAddress }
+				context={ pageContext }
+				needsDomains
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);

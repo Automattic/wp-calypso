@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +9,12 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
+
+/**
+ * Style dependencies
+ */
+import './dialog.scss';
 
 class AcceptDialog extends Component {
 	static displayName = 'AcceptDialog';
@@ -63,7 +67,7 @@ class AcceptDialog extends Component {
 			<Dialog
 				buttons={ this.getActionButtons() }
 				onClose={ this.onClose }
-				className="accept-dialog"
+				className="accept__dialog"
 				isVisible
 			>
 				{ this.props.message }

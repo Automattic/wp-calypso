@@ -2,13 +2,18 @@
 	margin: 0;
 	font-size: 28px;
 	line-height: 1.5;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 
 	&.is-placeholder {
-		@include placeholder( 23% );
+		@include placeholder( --color-neutral-10 );
 		width: 60px;
 		margin: 10px 0;
 		height: 21px;
+	}
+
+	.badge {
+		margin-left: 8px;
+		vertical-align: super;
 	}
 
 	@include breakpoint( '<960px' ) {
@@ -17,7 +22,7 @@
 }
 
 .plan-price.is-original {
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .plan-price.is-discounted {
@@ -37,13 +42,14 @@
 	left: 0;
 	top: 50%;
 	right: 0;
-	border-top: 2px solid var( --color-primary );
+	border-top: 2px solid var( --color-accent );
 	transform: rotate( -16deg );
 	opacity: 0.9;
 }
 
 .plan-price__currency-symbol,
-.plan-price__fraction {
+.plan-price__fraction,
+.plan-price__tax-amount {
 	vertical-align: super;
 	font-size: 12px;
 }
@@ -52,8 +58,13 @@
 	color: var( --color-success );
 }
 
-.plan-price__currency-symbol {
-	color: $gray;
+.plan-price__tax-amount {
+	margin-left: 4px;
+}
+
+.plan-price__currency-symbol,
+.plan-price__tax-amount {
+	color: var( --color-text-subtle );
 }
 
 .plan-price__integer {

@@ -6,3 +6,10 @@
 .jetpack-header > svg {
 	max-width: 100%;
 }
+
+.is-section-jetpack-connect,
+.is-jetpack-login {
+	.jetpack-header__partner-logo-plus .gridicon {
+		color: var( --color-neutral );
+	}
+}

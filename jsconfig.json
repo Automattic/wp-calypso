@@ -5,18 +5,21 @@
 		"target": "ES6",
 		"baseUrl": ".",
 		"paths": {
-			"*": [
-				"test/*",
-				"server/*",
-				"client/*"
-			]
+			"*": [ "test/*", "server/*", "client/*" ]
 		}
 	},
 	"exclude": [
+		"public",
 		"node_modules",
 		"**/node_modules/*",
-		"public",
-		"build"
+		"build",
+		"**/build/*",
+		"**/build-module/*",
+		"**/build-style/*",
+		"**/dist/*",
+		"cached-results.json",
+		"stats.json",
+		"server/bundlers/assets-*.json",
+		"server/devdocs/search-index.js"
 	]
 }
-

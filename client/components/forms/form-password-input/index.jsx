@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import classNames from 'classnames';
 import { omit } from 'lodash';
 
@@ -15,12 +13,19 @@ import { omit } from 'lodash';
 import FormTextInput from 'components/forms/form-text-input';
 import { isMobile } from 'lib/viewport';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class extends React.Component {
 	static displayName = 'FormPasswordInput';
 
 	state = {
 		hidePassword: true,
 	};
+
+	textFieldRef = React.createRef();
 
 	componentDidMount() {
 		if ( isMobile() ) {
@@ -43,7 +48,7 @@ export default class extends React.Component {
 	}
 
 	focus = () => {
-		this.refs.textField.focus();
+		this.textFieldRef.current.focus();
 	};
 
 	render() {
@@ -52,12 +57,13 @@ export default class extends React.Component {
 			'form-password-input__toggle-visibility': ! this.props.hideToggle,
 		} );
 
+		/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
 		return (
 			<div className="form-password-input">
 				<FormTextInput
 					{ ...omit( this.props, 'hideToggle', 'submitting' ) }
 					autoComplete="off"
-					ref="textField"
+					ref={ this.textFieldRef }
 					type={ this.hidden() ? 'password' : 'text' }
 				/>
 

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -36,17 +35,17 @@ describe( 'HappinessSupport', () => {
 	} );
 
 	test( 'should render translated help content', () => {
-		const content = wrapper.find( 'p.happiness-support__text' );
+		const content = wrapper.find( 'p.happiness-support__description' );
 		expect( content ).to.have.length( 1 );
 		expect( content.props().children ).to.equal(
-			'Translated: {{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your account.'
+			'Translated: {{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your\xA0account.'
 		);
 	} );
 
 	test( 'should render a translated support button', () => {
-		expect( wrapper.find( 'Button.happiness-support__support-button' ).props().children ).to.equal(
-			'Translated: Support documentation'
-		);
+		expect(
+			wrapper.find( 'Button.happiness-support__support-button>span' ).props().children
+		).to.equal( 'Translated: Support documentation' );
 	} );
 
 	test( 'should render a support button with link to SUPPORT_ROOT if it is not for JetPack', () => {

@@ -15,7 +15,7 @@
 	border: 6px solid var( --color-primary-dark );
 	border-radius: 6px;
 
-	background-color: rgba( $blue-wordpress, 0.8 );
+	background-color: rgba( var( --color-primary-rgb ), 0.8 );
 
 	&.is-active {
 		opacity: 1;
@@ -24,7 +24,7 @@
 	}
 
 	&.is-dragging-over-element {
-		background-color: rgba( $blue-medium, 0.8 );
+		background-color: rgba( var( --color-primary-rgb ), 0.8 );
 	}
 
 	&.is-full-screen {
@@ -43,7 +43,7 @@
 	font-size: 14px;
 	font-weight: bold;
 	text-align: center;
-	color: $white;
+	color: var( --color-text-inverted );
 	transition: transform 0.3s ease-in-out;
 }
 
@@ -74,10 +74,15 @@
 	border: 6px solid var( --color-accent-dark );
 
 	&.is-dragging-over-element {
-		background-color: var( --color-accent-light );
+		background-color: var( --color-accent-dark );
+		border-color: var( --color-accent-80 );
 	}
 
-	.drop-zone__content {
-		color: var( --color-text );
+	.drop-zone__content-icon svg g {
+		fill: var( --color-text-inverted );
+	}
+
+	.drop-zone__content-text {
+		color: var( --color-text-inverted );
 	}
 }

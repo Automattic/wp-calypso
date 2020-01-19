@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -40,11 +39,13 @@ describe( 'index', () => {
 
 	describe( '#publicizeConnections()', () => {
 		test( 'should return the root sharing path if no site specified', () => {
-			expect( publicizeConnections() ).to.equal( '/sharing' );
+			expect( publicizeConnections() ).to.equal( '/marketing/connections' );
 		} );
 
 		test( 'should return a Calypso site-suffixed sharing path if site specified', () => {
-			expect( publicizeConnections( DUMMY_SITE ) ).to.equal( '/sharing/' + DUMMY_SITE.slug );
+			expect( publicizeConnections( DUMMY_SITE ) ).to.equal(
+				'/marketing/connections/' + DUMMY_SITE.slug
+			);
 		} );
 	} );
 } );

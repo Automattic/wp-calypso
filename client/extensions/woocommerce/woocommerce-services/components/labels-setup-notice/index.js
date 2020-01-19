@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import QueryLabelSettings from 'woocommerce/woocommerce-services/components/query-label-settings';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
@@ -46,7 +45,7 @@ const LabelsSetupNotice = ( {
 		return (
 			<Card className="labels-setup-notice is-warning">
 				{ translate(
-					'To begin fulfilling orders by printing your own label, add a payment method in {{a}}Shipping Settings{{/a}}',
+					'To begin fulfilling orders by printing your own label, add a payment method in {{a}}shipping settings{{/a}}',
 					{ components: { a: <a href={ getLink( '/store/settings/shipping/:site/', site ) } /> } }
 				) }
 			</Card>

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -24,9 +22,9 @@ import {
  * dispatched. The state reflects a mapping of query (page number) to a
  * boolean reflecting whether a request for that page is in progress.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function isLoading( state = {}, action ) {
 	switch ( action.type ) {
@@ -46,9 +44,9 @@ export function isLoading( state = {}, action ) {
  * dispatched. This reflects a mapping of order ID to a boolean,
  * indicating whether there is a save in progress.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function isSaving( state = {}, action ) {
 	switch ( action.type ) {
@@ -66,9 +64,9 @@ export function isSaving( state = {}, action ) {
 /**
  * Tracks all known order objects, indexed by post ID.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function items( state = {}, action ) {
 	switch ( action.type ) {
@@ -87,9 +85,9 @@ export function items( state = {}, action ) {
  * Tracks which notes belong to an order, as a list of IDs
  * referencing items in `notes.items`.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function orders( state = {}, action ) {
 	switch ( action.type ) {

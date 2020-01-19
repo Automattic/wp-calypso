@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,12 +11,20 @@ import { some, times } from 'lodash';
 /**
  * Internal dependencies
  */
+import AsyncLoad from 'components/async-load';
 import { getSite, isRequestingSite } from 'state/sites/selectors';
 import { isJetpackPlan } from 'lib/products-values';
+import { JETPACK_PLANS } from 'lib/plans/constants';
+import { JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
 import QuerySites from 'components/data/query-sites';
 import PurchaseItem from '../purchase-item';
 import PurchaseSiteHeader from './header';
 import PurchaseReconnectNotice from './reconnect-notice';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const PurchasesSite = ( {
 	hasLoadedSite,
@@ -51,6 +57,7 @@ const PurchasesSite = ( {
 	return (
 		<div className={ classNames( 'purchases-site', { 'is-placeholder': isPlaceholder } ) }>
 			<QuerySites siteId={ siteId } />
+
 			<PurchaseSiteHeader
 				siteId={ siteId }
 				name={ name }
@@ -59,6 +66,14 @@ const PurchasesSite = ( {
 			/>
 
 			{ items }
+
+			<AsyncLoad
+				require="blocks/product-plan-overlap-notices"
+				placeholder={ null }
+				plans={ JETPACK_PLANS }
+				products={ JETPACK_BACKUP_PRODUCTS }
+				siteId={ siteId }
+			/>
 
 			{ ! isPlaceholder && hasLoadedSite && ! site && (
 				<PurchaseReconnectNotice isJetpack={ isJetpack } name={ name } />

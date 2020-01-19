@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,14 +6,14 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import { first, includes, indexOf, intersection, isEqual, last, map } from 'lodash';
+import { first, includes, indexOf, intersection, isEqual, last, map, merge } from 'lodash';
+import emailValidator from 'email-validator';
 
 /**
  * Internal dependencies
  */
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryTldValidationSchemas from 'components/data/query-tld-validation-schemas';
-import PrivacyProtection from './privacy-protection';
 import PaymentBox from './payment-box';
 import FormButton from 'components/forms/form-button';
 import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder.jsx';
@@ -24,16 +23,25 @@ import ContactDetailsFormFields from 'components/domains/contact-details-form-fi
 import ExtraInfoForm, {
 	tldsWithAdditionalDetailsForms,
 } from 'components/domains/registrant-extra-info';
+import { setDomainDetails } from 'lib/transaction/actions';
+import { addGoogleAppsRegistrationData } from 'lib/cart/actions';
 import {
-	addPrivacyToAllDomains,
-	removePrivacyFromAllDomains,
-	setDomainDetails,
-	addGoogleAppsRegistrationData,
-} from 'lib/upgrades/actions';
-import { cartItems } from 'lib/cart-values';
+	getDomainRegistrations,
+	getDomainTransfers,
+	hasGoogleApps,
+	hasDomainRegistration,
+	hasInvalidAlternateEmailDomain,
+	needsExplicitAlternateEmailForGSuite,
+	hasTransferProduct,
+	getTlds,
+	hasTld,
+	hasSomeDomainProductsWithPrivacySupport,
+	hasAllDomainProductsWithPrivacySupport,
+} from 'lib/cart-values/cart-items';
 import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { PUBLIC_VS_PRIVATE } from 'lib/url/support';
 
 const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
 const wpcom = wp.undocumented();
@@ -73,6 +81,23 @@ export class DomainDetailsForm extends PureComponent {
 		this.setState( newState );
 	}
 
+	addAlternateEmailToValidationHandler = ( fieldValues, validationHandler ) => ( error, data ) => {
+		if ( this.needsAlternateEmailForGSuite() ) {
+			let message = null;
+			if ( ! emailValidator.validate( fieldValues.alternateEmail ) ) {
+				message = this.props.translate( 'Please provide a valid email address.' );
+			} else if ( hasInvalidAlternateEmailDomain( this.props.cart, this.props.contactDetails ) ) {
+				message = this.props.translate(
+					'Please provide an email address that does not use the same domain than the G Suite account being purchased.'
+				);
+			}
+			if ( null !== message ) {
+				data = merge( data, { success: false, messages: { alternateEmail: [ message ] } } );
+			}
+		}
+		validationHandler( error, data );
+	};
+
 	validate = ( fieldValues, onComplete ) => {
 		const validationHandler = ( error, data ) => {
 			const messages = ( data && data.messages ) || {};
@@ -80,7 +105,10 @@ export class DomainDetailsForm extends PureComponent {
 		};
 
 		if ( this.needsOnlyGoogleAppsDetails() ) {
-			wpcom.validateGoogleAppsContactInformation( fieldValues, validationHandler );
+			wpcom.validateGoogleAppsContactInformation(
+				fieldValues,
+				this.addAlternateEmailToValidationHandler( fieldValues, validationHandler )
+			);
 			return;
 		}
 
@@ -99,23 +127,27 @@ export class DomainDetailsForm extends PureComponent {
 
 	getDomainNames = () =>
 		map(
-			[
-				...cartItems.getDomainRegistrations( this.props.cart ),
-				...cartItems.getDomainTransfers( this.props.cart ),
-			],
+			[ ...getDomainRegistrations( this.props.cart ), ...getDomainTransfers( this.props.cart ) ],
 			'meta'
 		);
 
+	needsAlternateEmailForGSuite() {
+		return (
+			this.needsOnlyGoogleAppsDetails() &&
+			needsExplicitAlternateEmailForGSuite( this.props.cart, this.props.contactDetails )
+		);
+	}
+
 	needsOnlyGoogleAppsDetails() {
 		return (
-			cartItems.hasGoogleApps( this.props.cart ) &&
-			! cartItems.hasDomainRegistration( this.props.cart ) &&
-			! cartItems.hasTransferProduct( this.props.cart )
+			hasGoogleApps( this.props.cart ) &&
+			! hasDomainRegistration( this.props.cart ) &&
+			! hasTransferProduct( this.props.cart )
 		);
 	}
 
 	getNumberOfDomainRegistrations() {
-		return cartItems.getDomainRegistrations( this.props.cart ).length;
+		return getDomainRegistrations( this.props.cart ).length;
 	}
 
 	getTldsWithAdditionalForm() {
@@ -123,30 +155,11 @@ export class DomainDetailsForm extends PureComponent {
 			// All we need to do to disable everything is not show the .FR form
 			return [];
 		}
-		return intersection( cartItems.getTlds( this.props.cart ), tldsWithAdditionalDetailsForms );
+		return intersection( getTlds( this.props.cart ), tldsWithAdditionalDetailsForms );
 	}
 
 	needsFax() {
-		return (
-			this.props.contactDetails.countryCode === 'NL' && cartItems.hasTld( this.props.cart, 'nl' )
-		);
-	}
-
-	allDomainProductsSupportPrivacy() {
-		return cartItems.hasOnlyDomainProductsWithPrivacySupport( this.props.cart );
-	}
-
-	allDomainItemsHavePrivacy() {
-		return (
-			cartItems.getDomainRegistrationsWithoutPrivacy( this.props.cart ).length === 0 &&
-			cartItems.getDomainTransfersWithoutPrivacy( this.props.cart ).length === 0
-		);
-	}
-
-	getSubmitButtonText() {
-		return this.hasAnotherStep()
-			? this.props.translate( 'Continue' )
-			: this.props.translate( 'Continue to Checkout' );
+		return this.props.contactDetails.countryCode === 'NL' && hasTld( this.props.cart, 'nl' );
 	}
 
 	renderSubmitButton() {
@@ -155,19 +168,8 @@ export class DomainDetailsForm extends PureComponent {
 				className="checkout__domain-details-form-submit-button"
 				onClick={ this.handleSubmitButtonClick }
 			>
-				{ this.getSubmitButtonText() }
+				{ this.props.translate( 'Continue' ) }
 			</FormButton>
-		);
-	}
-
-	renderPrivacySection() {
-		return (
-			<PrivacyProtection
-				checkPrivacyRadio={ this.allDomainItemsHavePrivacy() }
-				cart={ this.props.cart }
-				onRadioSelect={ this.handleRadioChange }
-				productsList={ this.props.productsList }
-			/>
 		);
 	}
 
@@ -178,7 +180,7 @@ export class DomainDetailsForm extends PureComponent {
 	renderDomainContactDetailsFields() {
 		const { contactDetails, translate, userCountryCode } = this.props;
 		const labelTexts = {
-			submitButton: this.getSubmitButtonText(),
+			submitButton: translate( 'Continue' ),
 			organization: translate(
 				'Registering this domain for a company? + Add Organization Name',
 				'Registering these domains for a company? + Add Organization Name',
@@ -193,6 +195,7 @@ export class DomainDetailsForm extends PureComponent {
 				contactDetails={ contactDetails }
 				needsFax={ this.needsFax() }
 				needsOnlyGoogleAppsDetails={ this.needsOnlyGoogleAppsDetails() }
+				needsAlternateEmailForGSuite={ this.needsAlternateEmailForGSuite() }
 				onContactDetailsChange={ this.handleContactDetailsChange }
 				onSubmit={ this.handleSubmitButtonClick }
 				eventFormName="Checkout Form"
@@ -214,10 +217,6 @@ export class DomainDetailsForm extends PureComponent {
 		);
 	}
 
-	handleRadioChange = enable => {
-		this.setPrivacyProtectionSubscriptions( enable );
-	};
-
 	handleSubmitButtonClick = event => {
 		if ( event && event.preventDefault ) {
 			event.preventDefault();
@@ -235,14 +234,6 @@ export class DomainDetailsForm extends PureComponent {
 		addGoogleAppsRegistrationData( allFieldValues );
 	}
 
-	setPrivacyProtectionSubscriptions( enable ) {
-		if ( enable ) {
-			addPrivacyToAllDomains();
-		} else {
-			removePrivacyFromAllDomains();
-		}
-	}
-
 	renderCurrentForm() {
 		const { currentStep } = this.state;
 		return includes( tldsWithAdditionalDetailsForms, currentStep )
@@ -256,6 +247,13 @@ export class DomainDetailsForm extends PureComponent {
 			selected: true,
 		} );
 
+		const hasDomainProduct =
+			hasDomainRegistration( this.props.cart ) || hasTransferProduct( this.props.cart );
+		const hasSomeDomainsWithPrivacy =
+			hasDomainProduct && hasSomeDomainProductsWithPrivacySupport( this.props.cart );
+		const hasAllDomainsWithPrivacy =
+			hasDomainProduct && hasAllDomainProductsWithPrivacySupport( this.props.cart );
+
 		let title;
 		let message;
 		// TODO: gather up tld specific stuff
@@ -265,21 +263,41 @@ export class DomainDetailsForm extends PureComponent {
 			title = this.props.translate( 'G Suite Account Information' );
 		} else {
 			title = this.props.translate( 'Domain Contact Information' );
-			message = this.props.translate(
-				'For your convenience, we have pre-filled your WordPress.com contact information. Please ' +
-					"review this to be sure it's the correct information you want to use for this domain."
-			);
+			if ( hasDomainProduct ) {
+				if ( hasSomeDomainsWithPrivacy ) {
+					if ( hasAllDomainsWithPrivacy ) {
+						message = this.props.translate(
+							'We have pre-filled the required contact information from your WordPress.com account. Privacy ' +
+								'Protection is included to help protect your personal information. {{a}}Learn more{{/a}}',
+							{
+								components: {
+									a: <a href={ PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer" />,
+								},
+							}
+						);
+					} else {
+						message = this.props.translate(
+							'We have pre-filled the required contact information from your WordPress.com account. Privacy ' +
+								'Protection is included for all eligible domains to help protect your personal information. {{a}}Learn more{{/a}}',
+							{
+								components: {
+									a: <a href={ PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer" />,
+								},
+							}
+						);
+					}
+				} else {
+					message = this.props.translate(
+						'We have pre-filled the required contact information from your WordPress.com account. Privacy ' +
+							'Protection is unavailable for domains in your cart.'
+					);
+				}
+			}
 		}
-
-		const renderPrivacy =
-			( cartItems.hasDomainRegistration( this.props.cart ) ||
-				cartItems.hasTransferProduct( this.props.cart ) ) &&
-			this.allDomainProductsSupportPrivacy();
 
 		return (
 			<div>
 				<QueryTldValidationSchemas tlds={ this.getTldsWithAdditionalForm() } />
-				{ renderPrivacy && this.renderPrivacySection() }
 				<PaymentBox currentPage={ this.state.currentStep } classSet={ classSet } title={ title }>
 					{ message && <p>{ message }</p> }
 					{ this.renderCurrentForm() }
@@ -304,10 +322,7 @@ export class DomainDetailsFormContainer extends PureComponent {
 	}
 }
 
-export default connect(
-	state => ( { contactDetails: getContactDetailsCache( state ) } ),
-	{
-		recordTracksEvent,
-		updateContactDetailsCache,
-	}
-)( localize( DomainDetailsFormContainer ) );
+export default connect( state => ( { contactDetails: getContactDetailsCache( state ) } ), {
+	recordTracksEvent,
+	updateContactDetailsCache,
+} )( localize( DomainDetailsFormContainer ) );

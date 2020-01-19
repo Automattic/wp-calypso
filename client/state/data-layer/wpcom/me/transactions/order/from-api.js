@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -11,6 +9,8 @@ export const convertProcessingStatus = responseStatus => {
 	switch ( responseStatus ) {
 		case 'processing':
 			return ORDER_TRANSACTION_STATUS.PROCESSING;
+		case 'async-pending':
+			return ORDER_TRANSACTION_STATUS.ASYNC_PENDING;
 		case 'success':
 			return ORDER_TRANSACTION_STATUS.SUCCESS;
 		case 'payment-failure':

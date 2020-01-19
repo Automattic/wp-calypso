@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Internal dependencies
  */
@@ -17,11 +16,13 @@ export {
 	getLocaleFromPath,
 	isDefaultLocale,
 	isLocaleVariant,
+	isLocaleRtl,
 	localizeUrl,
 	canBeTranslated,
 	removeLocaleFromPath,
 	getPathParts,
 	filterLanguageRevisions,
+	translationExists,
 } from './utils';
 
 export const getLocaleSlug = () => config( 'i18n_default_locale_slug' );

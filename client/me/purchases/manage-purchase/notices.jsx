@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -22,14 +19,19 @@ import {
 	isExpiring,
 	isIncludedWithPlan,
 	isOneTimePurchase,
+	isPartnerPurchase,
 	isRenewable,
+	isRechargeable,
+	hasPaymentMethod,
 	showCreditCardExpiringWarning,
 	isPaidWithCredits,
 	subscribedWithinPastWeek,
+	shouldAddPaymentSourceInsteadOfRenewingNow,
 } from 'lib/purchases';
 import { isDomainTransfer, isConciergeSession } from 'lib/products-values';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { isMonthly } from 'lib/plans/constants';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
@@ -52,6 +54,32 @@ class PurchaseNotice extends Component {
 				return translate(
 					'You purchased %(purchaseName)s with credits. Please add a credit card before your ' +
 						"plan expires %(expiry)s so that you don't lose out on your paid features!",
+					{
+						args: {
+							purchaseName: getName( purchase ),
+							expiry: moment( purchase.expiryMoment ).fromNow(),
+						},
+					}
+				);
+			}
+
+			if ( hasPaymentMethod( purchase ) ) {
+				if ( isRechargeable( purchase ) ) {
+					return translate(
+						'%(purchaseName)s will expire and be removed from your site %(expiry)s. ' +
+							"Please enable auto-renewal so you don't lose out on your paid features!",
+						{
+							args: {
+								purchaseName: getName( purchase ),
+								expiry: moment( purchase.expiryMoment ).fromNow(),
+							},
+						}
+					);
+				}
+
+				return translate(
+					'%(purchaseName)s will expire and be removed from your site %(expiry)s. ' +
+						"Please renew before expiry so you don't lose out on your paid features!",
 					{
 						args: {
 							purchaseName: getName( purchase ),
@@ -102,15 +130,21 @@ class PurchaseNotice extends Component {
 			return null;
 		}
 
-		if ( ! canExplicitRenew( purchase ) ) {
+		if (
+			! hasPaymentMethod( purchase ) &&
+			( ! canExplicitRenew( purchase ) ||
+				shouldAddPaymentSourceInsteadOfRenewingNow( purchase.expiryMoment ) )
+		) {
 			return (
-				<NoticeAction href={ editCardDetailsPath }>
-					{ translate( 'Enable Auto Renew' ) }
-				</NoticeAction>
+				<NoticeAction href={ editCardDetailsPath }>{ translate( 'Add Credit Card' ) }</NoticeAction>
 			);
 		}
 
-		return <NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>;
+		return (
+			! isRechargeable( purchase ) && (
+				<NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>
+			)
+		);
 	}
 
 	trackImpression( warning ) {
@@ -271,7 +305,7 @@ class PurchaseNotice extends Component {
 			return null;
 		}
 
-		if ( isDomainTransfer( this.props.purchase ) ) {
+		if ( isDomainTransfer( this.props.purchase ) || isPartnerPurchase( this.props.purchase ) ) {
 			return null;
 		}
 
@@ -299,7 +333,6 @@ class PurchaseNotice extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( localize( PurchaseNotice ) );
+export default connect( null, { recordTracksEvent } )(
+	localize( withLocalizedMoment( PurchaseNotice ) )
+);

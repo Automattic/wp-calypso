@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import classNames from 'classnames';
 
 /**
@@ -20,6 +18,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import notices from 'notices';
 import debugFactory from 'debug';
 import { MAX_UPLOAD_ZIP_SIZE } from 'lib/automated-transfer/constants';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const debug = debugFactory( 'calypso:upload-drop-zone' );
 
@@ -53,7 +56,7 @@ class UploadDropZone extends Component {
 
 	render() {
 		const { translate, disabled } = this.props;
-		const dropText = translate( 'Drop files or click here to upload' );
+		const dropText = translate( 'Drop files or click here to install' );
 		const uploadInstructionsText = translate( 'Only single .zip files are accepted.' );
 
 		const className = classNames( 'upload-drop-zone', {

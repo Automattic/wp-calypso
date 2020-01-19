@@ -2,3 +2,15 @@
 	margin: 4px 0 0 24px;
 	width: calc( 100% - 24px );
 }
+
+.cancel-purchase-form__dialog {
+	max-width: 472px;
+}
+
+.cancel-purchase-form__question {
+	margin-bottom: 1.5em;
+	&:last-child {
+		margin-bottom: 0;
+	}
+}
+

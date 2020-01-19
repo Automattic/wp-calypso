@@ -1,18 +1,15 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { invoke, noop, includes } from 'lodash';
-import classNames from 'classnames';
+import { noop, includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
 import formState from 'lib/form-state';
 import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
@@ -28,23 +25,25 @@ import { setSurvey } from 'state/signup/steps/survey/actions';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { isValidLandingPageVertical } from 'lib/signup/verticals';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
-import PressableStoreStep from '../design-type-with-store/pressable-store';
-import { abtest } from 'lib/abtest';
 import { isUserLoggedIn } from 'state/current-user/selectors';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import {
+	getSiteVerticalId,
+	getSiteVerticalParentId,
+} from 'state/signup/steps/site-vertical/selectors';
+import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
+import hasInitializedSites from 'state/selectors/has-initialized-sites';
+import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 
 //Form components
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button, ScreenReaderText } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
 import InfoPopover from 'components/info-popover';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInputCheckbox from 'components/forms/form-checkbox';
-import ScreenReaderText from 'components/screen-reader-text';
 import SegmentedControl from 'components/segmented-control';
-import ControlItem from 'components/segmented-control/item';
 import SiteVerticalsSuggestionSearch from 'components/site-verticals-suggestion-search';
 
 /**
@@ -59,10 +58,12 @@ class AboutStep extends Component {
 		const hasPrepopulatedVertical =
 			isValidLandingPageVertical( props.siteTopic ) &&
 			props.queryObject.vertical === props.siteTopic;
+
 		this.state = {
-			siteTopicValue: this.props.siteTopic,
-			userExperience: this.props.userExperience,
-			showStore: false,
+			verticalId: props.verticalId,
+			verticalParentId: props.verticalParentId,
+			siteTopicValue: props.siteTopic,
+			userExperience: props.userExperience,
 			pendingStoreClick: false,
 			hasPrepopulatedVertical,
 		};
@@ -89,9 +90,7 @@ class AboutStep extends Component {
 		} );
 		this.setFormState( this.formStateController.getInitialState() );
 
-		SignupActions.saveSignupStep( {
-			stepName: this.props.stepName,
-		} );
+		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
 	componentWillUnmount() {
@@ -100,18 +99,22 @@ class AboutStep extends Component {
 
 	setFormState = state => this._isMounted && this.setState( { form: state } );
 
-	setPressableStore = ref => ( this.pressableStore = ref );
-
-	onSiteTopicChange = ( { vertical_name, vertical_slug } ) => {
+	onSiteTopicChange = ( { parent, verticalId, verticalName, verticalSlug } ) => {
+		const verticalParentId = parent || verticalId;
 		this.setState( {
-			siteTopicValue: vertical_name,
-			siteTopicSlug: vertical_slug,
+			verticalId: verticalId,
+			siteTopicValue: verticalName,
+			siteTopicSlug: verticalSlug,
+			verticalParentId,
 		} );
 
-		this.props.recordTracksEvent( 'calypso_signup_actions_select_site_topic', { vertical_name } );
+		this.props.recordTracksEvent( 'calypso_signup_actions_select_site_topic', {
+			vertical_name: verticalName,
+			parent_id: verticalParentId,
+		} );
 		this.formStateController.handleFieldChange( {
 			name: 'siteTopic',
-			value: vertical_name,
+			value: verticalName,
 		} );
 	};
 
@@ -163,8 +166,6 @@ class AboutStep extends Component {
 		}.bind( this );
 	}
 
-	handleStoreBackClick = () => this.setState( { showStore: false }, this.scrollUp );
-
 	handleSubmit = event => {
 		event.preventDefault();
 		const {
@@ -174,7 +175,6 @@ class AboutStep extends Component {
 			shouldHideSiteTitle,
 			shouldHideSiteGoals,
 			previousFlowName,
-			translate,
 			siteType,
 		} = this.props;
 
@@ -212,6 +212,16 @@ class AboutStep extends Component {
 			vertical: eventAttributes.site_topic,
 			otherText: '',
 			siteType: designType,
+		} );
+
+		// Update the vertical state tree used for onboarding flows
+		// to maintain consistency
+		this.props.setSiteVertical( {
+			id: this.state.verticalId,
+			name: this.state.siteTopicValue,
+			slug: this.state.siteTopicSlug,
+			isUserInput: ! this.state.verticalId,
+			parentId: this.state.verticalParentId,
 		} );
 
 		//Site Goals
@@ -266,33 +276,13 @@ class AboutStep extends Component {
 
 		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', eventAttributes );
 
-		//Pressable
-		if (
-			designType === DESIGN_TYPE_STORE &&
-			abtest( 'signupAtomicStoreVsPressable' ) === 'pressable'
-		) {
-			this.scrollUp();
-
-			this.setState( {
-				showStore: true,
-			} );
-
-			invoke( this, 'pressableStore.focus' );
-
-			return;
-		}
-
 		//Create site
-		SignupActions.submitSignupStep(
-			{
-				processingMessage: translate( 'Collecting your information' ),
-				stepName: stepName,
-			},
-			[],
+		this.props.submitSignupStep(
+			{ stepName },
 			{
 				themeSlugWithRepo: themeRepo,
 				siteTitle: siteTitleValue,
-				designType: designType,
+				designType,
 				surveyQuestion: siteTopicInput,
 			}
 		);
@@ -388,7 +378,7 @@ class AboutStep extends Component {
 					</span>
 
 					<SegmentedControl className="is-primary about__segmented-control">
-						<ControlItem
+						<SegmentedControl.Item
 							selected={ this.state.userExperience === 1 }
 							onClick={ this.handleSegmentClick( 1 ) }
 						>
@@ -396,35 +386,35 @@ class AboutStep extends Component {
 								{ translate( 'How comfortable are you with creating a website?' ) }
 							</ScreenReaderText>
 							1<ScreenReaderText>{ translate( 'Beginner' ) }</ScreenReaderText>
-						</ControlItem>
+						</SegmentedControl.Item>
 
-						<ControlItem
+						<SegmentedControl.Item
 							selected={ this.state.userExperience === 2 }
 							onClick={ this.handleSegmentClick( 2 ) }
 						>
 							2
-						</ControlItem>
+						</SegmentedControl.Item>
 
-						<ControlItem
+						<SegmentedControl.Item
 							selected={ this.state.userExperience === 3 }
 							onClick={ this.handleSegmentClick( 3 ) }
 						>
 							3
-						</ControlItem>
+						</SegmentedControl.Item>
 
-						<ControlItem
+						<SegmentedControl.Item
 							selected={ this.state.userExperience === 4 }
 							onClick={ this.handleSegmentClick( 4 ) }
 						>
 							4
-						</ControlItem>
+						</SegmentedControl.Item>
 
-						<ControlItem
+						<SegmentedControl.Item
 							selected={ this.state.userExperience === 5 }
 							onClick={ this.handleSegmentClick( 5 ) }
 						>
 							5<ScreenReaderText>{ translate( 'Expert' ) }</ScreenReaderText>
-						</ControlItem>
+						</SegmentedControl.Item>
 					</SegmentedControl>
 					<span
 						className="about__segment-label about__max-label"
@@ -454,34 +444,13 @@ class AboutStep extends Component {
 	}
 
 	renderContent() {
-		const {
-			translate,
-			siteTitle,
-			shouldHideSiteTitle,
-			shouldHideSiteGoals,
-			siteTopic,
-		} = this.props;
+		const { translate, siteTitle, shouldHideSiteTitle, shouldHideSiteGoals } = this.props;
 
-		const pressableWrapperClassName = classNames( 'about__pressable-wrapper', {
-			'about__wrapper-is-hidden': ! this.state.showStore,
-		} );
-
-		const aboutFormClassName = classNames( 'about__form-wrapper', {
-			'about__wrapper-is-hidden': this.state.showStore,
-		} );
+		const { siteTopicValue } = this.state;
 
 		return (
 			<div className="about__wrapper">
-				<div className={ pressableWrapperClassName }>
-					<PressableStoreStep
-						{ ...this.props }
-						onBackClick={ this.handleStoreBackClick }
-						setRef={ this.setPressableStore }
-						isVisible={ this.state.showStore }
-					/>
-				</div>
-
-				<div className={ aboutFormClassName }>
+				<div className="about__form-wrapper">
 					<form onSubmit={ this.handleSubmit }>
 						<Card>
 							{ ! shouldHideSiteTitle && (
@@ -517,7 +486,7 @@ class AboutStep extends Component {
 									</FormLabel>
 									<SiteVerticalsSuggestionSearch
 										onChange={ this.onSiteTopicChange }
-										initialValue={ siteTopic }
+										searchValue={ siteTopicValue }
 									/>
 								</FormFieldset>
 							) }
@@ -546,7 +515,13 @@ class AboutStep extends Component {
 	}
 
 	render() {
-		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
+		const {
+			flowName,
+			positionInFlow,
+			stepName,
+			translate,
+			hasInitializedSitesBackUrl,
+		} = this.props;
 		const headerText = translate( 'Let’s create a site.' );
 		const subHeaderText = translate(
 			'Please answer these questions so we can help you make the site you need.'
@@ -561,8 +536,10 @@ class AboutStep extends Component {
 				fallbackHeaderText={ headerText }
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
-				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
+				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
+				backUrl={ hasInitializedSitesBackUrl }
+				backLabelText={ hasInitializedSitesBackUrl ? translate( 'Back to My Sites' ) : null }
 			/>
 		);
 	}
@@ -576,14 +553,17 @@ export default connect(
 		userExperience: getUserExperience( state ),
 		siteType: getSiteType( state ),
 		isLoggedIn: isUserLoggedIn( state ),
+		verticalId: getSiteVerticalId( state ),
+		verticalParentId: getSiteVerticalParentId( state ),
 		shouldHideSiteGoals:
 			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-type' ),
 		shouldHideSiteTitle:
-			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-information' ),
+			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-title' ),
 		shouldSkipAboutStep:
 			includes( ownProps.steps, 'site-type' ) &&
 			includes( ownProps.steps, 'site-topic' ) &&
-			includes( ownProps.steps, 'site-information' ),
+			includes( ownProps.steps, 'site-title' ),
+		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 	} ),
 	{
 		setSiteTitle,
@@ -592,5 +572,8 @@ export default connect(
 		setSurvey,
 		setUserExperience,
 		recordTracksEvent,
+		setSiteVertical,
+		saveSignupStep,
+		submitSignupStep,
 	}
 )( localize( AboutStep ) );

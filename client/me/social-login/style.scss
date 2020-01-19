@@ -10,8 +10,20 @@
 	align-items: center;
 	flex: 2 1;
 	margin-right: 5px;
+
 	h3 {
 		text-transform: capitalize;
+		margin-right: 3px;
+	}
+
+	p {
+		margin-bottom: 0;
+	}
+
+	@include breakpoint( '<960px' ) {
+		p {
+			display: none;
+		}
 	}
 }
 .social-login__header-icon {
@@ -19,6 +31,11 @@
 	width: 30px;
 	margin-left: 0;
 	margin-right: 12px;
+
+	svg {
+		width: 100%;
+		height: 100%;
+	}
 }
 .social-login__header-action {
 	display: flex;

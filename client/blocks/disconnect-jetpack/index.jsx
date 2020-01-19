@@ -1,12 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
@@ -14,8 +12,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import HappychatButton from 'components/happychat/button';
 import QueryRewindState from 'components/data/query-rewind-state';
 import {
@@ -26,9 +23,14 @@ import {
 import { disconnect } from 'state/jetpack/connection/actions';
 import { setAllSitesSelected, navigate } from 'state/ui/actions';
 import { successNotice, errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
-import { getPlanClass } from 'lib/plans/constants';
+import { getPlanClass } from 'lib/plans';
 import { getSiteSlug, getSiteTitle, getSitePlanSlug } from 'state/sites/selectors';
 import getRewindState from 'state/selectors/get-rewind-state';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class DisconnectJetpack extends PureComponent {
 	static propTypes = {
@@ -276,10 +278,10 @@ class DisconnectJetpack extends PureComponent {
 					className="disconnect-jetpack__try-rewind disconnect-jetpack__block"
 				>
 					<p className="disconnect-jetpack__highlight">
-						{ translate( 'Experiencing connection issues? Try to go back and rewind your site.' ) }
+						{ translate( 'Experiencing connection issues? Try to go back and restore your site.' ) }
 					</p>
 					<div className="disconnect-jetpack__try-rewind-button-wrap">
-						<Button onClick={ this.handleTryRewind }>{ translate( 'Rewind site' ) }</Button>
+						<Button onClick={ this.handleTryRewind }>{ translate( 'Restore site' ) }</Button>
 						<HappychatButton borderless={ false } onClick={ this.props.trackTryRewindHelp } primary>
 							<Gridicon icon="chat" size={ 18 } />
 							{ translate( 'Get help' ) }

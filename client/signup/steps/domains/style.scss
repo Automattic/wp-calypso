@@ -3,14 +3,40 @@
 	max-width: 720px;
 }
 
-.domains__step-content-enter {
-	opacity: 0.01;
-	transform: translate3d( 0, 32px, 0 );
+.is-section-signup .domains__step-content {
+	margin-bottom: 50px;
 
-	&.domains__step-content-enter-active {
-		opacity: 1;
-		pointer-events: none;
-		transition: all 0.2s ease-in-out;
-		transform: translate3d( 0, 0, 0 );
+	&.domains__step-content-domain-step-test {
+		margin-bottom: 20px;
+	}
+
+	.search .search__icon-navigation {
+		background: none;
+	}
+
+	.register-domain-step__search-card {
+		border-radius: 3px;
+		@include elevation( 2dp );
+	}
+
+	.search.is-open.has-focus {
+		border: none;
+		border-radius: 3px;
+		box-shadow: 0 0 0 3px var( --color-accent-light );
+	}
+
+	.search-filters__dropdown-filters {
+		border-radius: 0 3px 3px 0;
+	}
+
+	.search-filters__dropdown-filters.search-filters__dropdown-filters--is-open {
+		box-shadow: 0 0 0 3px var( --color-accent-light );
+	}
+
+	@include breakpoint( '<660px' ) {
+		.register-domain-step__search-card,
+		.search.is-open.has-focus {
+			border-radius: 0;
+		}
 	}
 }

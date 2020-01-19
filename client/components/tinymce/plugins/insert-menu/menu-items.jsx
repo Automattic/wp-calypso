@@ -1,21 +1,24 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
 import i18n from 'i18n-calypso';
-import GridiconImage from 'gridicons/dist/image';
-import GridiconShutter from 'gridicons/dist/shutter';
-import GridiconMoney from 'gridicons/dist/money';
-import GridiconImageMultiple from 'gridicons/dist/image-multiple';
-import GridiconMention from 'gridicons/dist/mention';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
+import Gridicon from 'components/gridicon';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+
+const canUserUploadFiles = editor => {
+	const store = editor.getParam( 'redux_store' );
+	const state = store ? store.getState() : null;
+	const siteId = state ? getSelectedSiteId( state ) : null;
+	return state && siteId ? canCurrentUser( state, siteId, 'upload_files' ) : false;
+};
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const GridiconButton = ( { icon, label, e2e } ) => (
@@ -32,7 +35,11 @@ export const menuItems = [
 	{
 		name: 'insert_media_item',
 		item: (
-			<GridiconButton icon={ <GridiconImage /> } label={ i18n.translate( 'Media' ) } e2e="media" />
+			<GridiconButton
+				icon={ <Gridicon icon="image" /> }
+				label={ i18n.translate( 'Media' ) }
+				e2e="media"
+			/>
 		),
 		cmd: 'wpcomAddMedia',
 	},
@@ -44,12 +51,13 @@ if ( config.isEnabled( 'external-media' ) ) {
 			name: 'insert_from_google',
 			item: (
 				<GridiconButton
-					icon={ <GridiconShutter /> }
-					label={ i18n.translate( 'Media from Google' ) }
+					icon={ <Gridicon icon="shutter" /> }
+					label={ i18n.translate( 'Google Photos library' ) }
 					e2e="google-media"
 				/>
 			),
 			cmd: 'googleAddMedia',
+			condition: canUserUploadFiles,
 		} );
 	}
 	if ( config.isEnabled( 'external-media/free-photo-library' ) ) {
@@ -57,12 +65,13 @@ if ( config.isEnabled( 'external-media' ) ) {
 			name: 'insert_from_pexels',
 			item: (
 				<GridiconButton
-					icon={ <GridiconImageMultiple /> }
+					icon={ <Gridicon icon="image-multiple" /> }
 					label={ i18n.translate( 'Free photo library' ) }
 					e2e="stock-media-pexels"
 				/>
 			),
 			cmd: 'pexelsAddMedia',
+			condition: canUserUploadFiles,
 		} );
 	}
 }
@@ -71,7 +80,7 @@ menuItems.push( {
 	name: 'insert_contact_form',
 	item: (
 		<GridiconButton
-			icon={ <GridiconMention /> }
+			icon={ <Gridicon icon="mention" /> }
 			label={ i18n.translate( 'Contact form' ) }
 			e2e="contact-form"
 		/>
@@ -83,24 +92,10 @@ menuItems.push( {
 	name: 'insert_payment_button',
 	item: (
 		<GridiconButton
-			icon={ <GridiconMoney /> }
+			icon={ <Gridicon icon="money" /> }
 			label={ i18n.translate( 'Payment button' ) }
 			e2e="payment-button"
 		/>
 	),
 	cmd: 'simplePaymentsButton',
 } );
-
-if ( config.isEnabled( 'memberships' ) ) {
-	menuItems.push( {
-		name: 'insert_memberships_button',
-		item: (
-			<GridiconButton
-				icon={ <GridiconMoney /> }
-				label={ i18n.translate( 'Recurring Payment' ) }
-				e2e="memberships"
-			/>
-		),
-		cmd: 'membershipsButton',
-	} );
-}

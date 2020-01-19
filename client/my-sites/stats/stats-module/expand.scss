@@ -13,7 +13,7 @@
 
 	a {
 		@extend %mobile-link-element;
-		border-top: 1px solid var( --color-neutral-0 );
+		border-top: 1px solid var( --color-border-subtle );
 		display: block;
 		font-size: 14px;
 		padding: 0 24px;
@@ -23,14 +23,14 @@
 		@include breakpoint( '>480px' ) {
 			&:hover {
 				background: var( --color-neutral-0 );
-				border-top-color: $white;
+				border-top-color: var( --color-border-inverted );
 			}
 		}
 
 		// Focus state
 		&:focus {
 			background: var( --color-neutral-0 );
-			border-top-color: $white;
+			border-top-color: var( --color-border-inverted );
 		}
 
 		@include breakpoint( '>960px' ) {
@@ -42,7 +42,7 @@
 }
 
 .stats-module__expand-right {
-	color: $gray;
+	color: var( --color-neutral-light );
 	position: absolute;
 		right: 24px;
 		top: 0;

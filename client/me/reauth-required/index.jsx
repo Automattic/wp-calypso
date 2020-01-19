@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ const debug = debugFactory( 'calypso:me:reauth-required' );
 /**
  * Internal Dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormCheckbox from 'components/forms/form-checkbox';
@@ -28,6 +26,11 @@ import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
 import { recordGoogleEvent } from 'state/analytics/actions';
 import userUtilities from 'lib/user/utils';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 // autofocus is used for tracking purposes, not an a11y issue
 /* eslint-disable jsx-a11y/no-autofocus */
@@ -263,7 +266,4 @@ const ReauthRequired = createReactClass( {
 } );
 /* eslint-enable jsx-a11y/no-autofocus */
 
-export default connect(
-	null,
-	{ recordGoogleEvent }
-)( localize( ReauthRequired ) );
+export default connect( null, { recordGoogleEvent } )( localize( ReauthRequired ) );

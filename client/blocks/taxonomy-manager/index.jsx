@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,13 +11,18 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import SearchCard from 'components/search-card';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import TermsList from './list';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import QueryTaxonomies from 'components/data/query-taxonomies';
 import TermFormDialog from 'blocks/term-form-dialog';
 import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class TaxonomyManager extends Component {
 	static propTypes = {

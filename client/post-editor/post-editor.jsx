@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -24,7 +23,6 @@ import EditorTitle from 'post-editor/editor-title';
 import EditorPageSlug from 'post-editor/editor-page-slug';
 import TinyMCE from 'components/tinymce';
 import SegmentedControl from 'components/segmented-control';
-import SegmentedControlItem from 'components/segmented-control/item';
 import InvalidURLDialog from 'post-editor/invalid-url-dialog';
 import RestorePostDialog from 'post-editor/restore-post-dialog';
 import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
@@ -59,6 +57,7 @@ import {
 import { getCurrentUserId } from 'state/current-user/selectors';
 import editedPostHasContent from 'state/selectors/edited-post-has-content';
 import hasBrokenSiteUserConnection from 'state/selectors/has-broken-site-user-connection';
+import isVipSite from 'state/selectors/is-vip-site';
 import EditorConfirmationSidebar from 'post-editor/editor-confirmation-sidebar';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
@@ -89,6 +88,27 @@ import EditorGutenbergBlocksWarningDialog from './editor-gutenberg-blocks-warnin
  * Style dependencies
  */
 import './style.scss';
+
+/*
+ * Throttle and debounce and callback. Used for autosave.
+ * - run the callback at most every `throttleMs` milliseconds (don't autosave too often)
+ * - wait for at least `debounceMs` before first call (don't autosave while still typing)
+ */
+function throttleAndDebounce( fn, throttleMs, debounceMs ) {
+	const throttled = throttle( fn, throttleMs );
+	const debounced = debounce( throttled, debounceMs );
+
+	const throttledAndDebounced = function() {
+		return debounced.apply( this, arguments );
+	};
+
+	throttledAndDebounced.cancel = () => {
+		throttled.cancel();
+		debounced.cancel();
+	};
+
+	return throttledAndDebounced;
+}
 
 export class PostEditor extends React.Component {
 	static propTypes = {
@@ -132,8 +152,7 @@ export class PostEditor extends React.Component {
 
 	UNSAFE_componentWillMount() {
 		this.debouncedSaveRawContent = debounce( this.saveRawContent, 200 );
-		this.throttledAutosave = throttle( this.autosave, 20000 );
-		this.debouncedAutosave = debounce( this.throttledAutosave, 3000 );
+		this.debouncedAutosave = throttleAndDebounce( this.doAutosave, 20000, 3000 );
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
 		this.debouncedCopySelectedText = debounce( this.copySelectedText, 200 );
@@ -145,15 +164,8 @@ export class PostEditor extends React.Component {
 		} );
 	}
 
-	UNSAFE_componentWillUpdate( nextProps, nextState ) {
-		// Cancel pending changes or autosave when user initiates a save. These
-		// will have been reflected in the save payload.
-		if ( nextState.isSaving && ! this.state.isSaving ) {
-			this.debouncedAutosave.cancel();
-			this.throttledAutosave.cancel();
-		}
-
-		if ( nextProps.isDirty ) {
+	componentDidUpdate() {
+		if ( this.props.isDirty ) {
 			this.props.markChanged();
 		} else {
 			this.props.markSaved();
@@ -174,7 +186,6 @@ export class PostEditor extends React.Component {
 
 	componentWillUnmount() {
 		this.debouncedAutosave.cancel();
-		this.throttledAutosave.cancel();
 		this.debouncedSaveRawContent.cancel();
 		this.debouncedCopySelectedText.cancel();
 		this._previewWindow = null;
@@ -335,20 +346,20 @@ export class PostEditor extends React.Component {
 									<EditorTitle onChange={ this.onEditorTitleChange } />
 									<EditorPageSlug />
 									<SegmentedControl className="post-editor__switch-mode" compact={ true }>
-										<SegmentedControlItem
+										<SegmentedControl.Item
 											selected={ mode === 'tinymce' }
 											onClick={ this.switchEditorVisualMode }
 											title={ this.props.translate( 'Edit with a visual editor' ) }
 										>
 											{ this.props.translate( 'Visual', { context: 'Editor writing mode' } ) }
-										</SegmentedControlItem>
-										<SegmentedControlItem
+										</SegmentedControl.Item>
+										<SegmentedControl.Item
 											selected={ mode === 'html' }
 											onClick={ this.switchEditorHtmlMode }
 											title={ this.props.translate( 'Edit the raw HTML code' ) }
 										>
 											HTML
-										</SegmentedControlItem>
+										</SegmentedControl.Item>
 									</SegmentedControl>
 								</div>
 								<hr className="post-editor__header-divider" />
@@ -356,6 +367,7 @@ export class PostEditor extends React.Component {
 									ref={ this.storeEditor }
 									mode={ mode }
 									isNew={ this.props.isNew }
+									isVipSite={ this.props.isVipSite }
 									onSetContent={ this.debouncedSaveRawContent }
 									onInit={ this.onEditorInitialized }
 									onChange={ this.onEditorContentChange }
@@ -523,11 +535,7 @@ export class PostEditor extends React.Component {
 		}
 	}
 
-	autosave = async () => {
-		// If debounced / throttled autosave was pending, consider it flushed
-		this.throttledAutosave.cancel();
-		this.debouncedAutosave.cancel();
-
+	async doAutosave() {
 		if ( this.state.isSaving === true || this.isSaveBlocked() ) {
 			return;
 		}
@@ -552,7 +560,13 @@ export class PostEditor extends React.Component {
 				this.onSaveDraftFailure( error );
 			}
 		}
-	};
+	}
+
+	autosave() {
+		// If debounced autosave was pending, consider it done
+		this.debouncedAutosave.cancel();
+		return this.doAutosave();
+	}
 
 	onClose = () => {
 		// go back if we can, if not, hit all posts
@@ -618,6 +632,10 @@ export class PostEditor extends React.Component {
 			return;
 		}
 
+		// Cancel pending autosave when user initiates a save.
+		// The changes will be reflected in the save payload.
+		this.debouncedAutosave.cancel();
+
 		this.setState( { isSaving: true } );
 
 		if ( status ) {
@@ -681,7 +699,7 @@ export class PostEditor extends React.Component {
 
 	iframePreview = async () => {
 		if ( this.props.isDirty ) {
-			this.autosave();
+			await this.autosave();
 		}
 
 		this.setState( { showPreview: true } );
@@ -750,6 +768,10 @@ export class PostEditor extends React.Component {
 				this.setConfirmationSidebar( { status: 'publishing' } );
 			}
 		}
+
+		// Cancel pending autosave when user initiates a save.
+		// The changes will be reflected in the save payload.
+		this.debouncedAutosave.cancel();
 
 		this.setState( {
 			isSaving: true,
@@ -976,8 +998,8 @@ export class PostEditor extends React.Component {
 	 *
 	 * It uses some black magic raw JS trickery. Not for the faint-hearted.
 	 *
-	 * @param {Object} editor The editor where we must find the selection
-	 * @returns {null | Object} The selection range position in the editor
+	 * @param {object} editor The editor where we must find the selection
+	 * @returns {null | object} The selection range position in the editor
 	 */
 	findBookmarkedPosition = editor => {
 		// Get the TinyMCE `window` reference, since we need to access the raw selection.
@@ -1150,6 +1172,7 @@ const enhance = flow(
 				layoutFocus: getCurrentLayoutFocus( state ),
 				hasBrokenPublicizeConnection: hasBrokenSiteUserConnection( state, siteId, userId ),
 				isSitePreviewable: isSitePreviewable( state, siteId ),
+				isVipSite: isVipSite( state, siteId ),
 				isConfirmationSidebarEnabled: isConfirmationSidebarEnabled( state, siteId ),
 				isSaveBlocked: isEditorSaveBlocked( state ),
 				previewUrl: getEditorPostPreviewUrl( state ),

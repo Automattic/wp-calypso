@@ -1,4 +1,3 @@
-/** @format */
 export const billingTransactionsSchema = {
 	type: 'object',
 	additionalProperties: false,
@@ -11,6 +10,7 @@ export const billingTransactionsSchema = {
 					id: { type: 'string' },
 					service: { type: 'string' },
 					amount: { type: 'string' },
+					tax_amount: { type: 'string' },
 					icon: { type: 'string' },
 					date: { type: 'string' },
 					desc: { type: 'string' },
@@ -42,6 +42,7 @@ export const billingTransactionsSchema = {
 					blog_id: { type: 'string' },
 					plan: { type: 'string' },
 					amount: { type: 'string' },
+					tax_amount: { type: 'string' },
 					date: { type: 'string' },
 					product: { type: 'string' },
 					interval: { type: 'string' },

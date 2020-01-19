@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -54,6 +53,16 @@ export default function() {
 
 	page(
 		'/people/new/:site_id',
+		peopleController.enforceSiteEnding,
+		siteSelection,
+		navigation,
+		peopleController.invitePeople,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/people/new/:site_id/sent',
 		peopleController.enforceSiteEnding,
 		siteSelection,
 		navigation,

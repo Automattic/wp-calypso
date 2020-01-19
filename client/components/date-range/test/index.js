@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -9,7 +8,8 @@
 import { shallow } from 'enzyme';
 import React from 'react';
 import MockDate from 'mockdate';
-import { moment, translate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -155,8 +155,8 @@ describe( 'DateRange', () => {
 			const expectedStartDate = '2018-04-01';
 			const expectedEndDate = '2018-04-29';
 
-			const newStartDate = moment.utc( expectedStartDate );
-			const newEndDate = moment.utc( expectedEndDate );
+			const newStartDate = moment( expectedStartDate );
+			const newEndDate = moment( expectedEndDate );
 
 			// Select dates using API
 			// note: not usually recommended to access component API directly
@@ -201,6 +201,38 @@ describe( 'DateRange', () => {
 			popover = wrapper.find( Popover );
 
 			expect( popover.props().isVisible ).toBe( false );
+		} );
+
+		test( 'should reset Dates on trigger clear btn click', () => {
+			const endDate = moment( '2018-05-30' );
+			const startDate = moment( '2018-04-30' );
+
+			const wrapper = shallow(
+				<DateRange
+					selectedStartDate={ startDate }
+					selectedEndDate={ endDate }
+					translate={ translate }
+					moment={ moment }
+				/>
+			);
+
+			const trigger = wrapper.find( DateRangeTrigger );
+
+			trigger.props().onClearClick();
+
+			wrapper.update();
+
+			// Should have completed reset the Dates
+			expect( wrapper.state() ).toEqual(
+				expect.objectContaining( {
+					startDate: null,
+					endDate: null,
+					staleStartDate: null,
+					staleEndDate: null,
+					textInputStartDate: '',
+					textInputEndDate: '',
+				} )
+			);
 		} );
 	} );
 
@@ -791,12 +823,16 @@ describe( 'DateRange', () => {
 
 			expect( propKeys ).toEqual(
 				[
+					'startDate',
+					'endDate',
 					'startDateText',
 					'endDateText',
 					'isCompact',
 					'buttonRef',
 					'onTriggerClick',
+					'onClearClick',
 					'triggerText',
+					'showClearBtn',
 				].sort()
 			);
 		} );

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -13,6 +12,11 @@ import { localize } from 'i18n-calypso';
  */
 import { fillGap } from 'state/reader/streams/actions';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class Gap extends React.Component {
 	static propTypes = {
@@ -57,9 +61,4 @@ class Gap extends React.Component {
 	}
 }
 
-export default localize(
-	connect(
-		null,
-		{ fillGap }
-	)( Gap )
-);
+export default localize( connect( null, { fillGap } )( Gap ) );

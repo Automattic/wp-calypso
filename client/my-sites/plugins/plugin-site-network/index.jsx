@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import React from 'react';
  * Internal dependencies
  */
 import FoldableCard from 'components/foldable-card';
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import AllSites from 'blocks/all-sites';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
@@ -22,6 +20,11 @@ import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
 import PluginSiteDisabledManage from 'my-sites/plugins/plugin-site-disabled-manage';
 import Site from 'blocks/site';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class PluginSiteNetwork extends React.Component {
 	static displayName = 'PluginSiteNetwork';

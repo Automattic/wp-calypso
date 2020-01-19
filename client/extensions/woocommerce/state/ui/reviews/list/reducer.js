@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,9 +8,9 @@ import { WOOCOMMERCE_UI_REVIEWS_SET_QUERY } from 'woocommerce/state/action-types
 /**
  * Tracks the current page of reviews displayed for the current site.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function currentPage( state = 1, action ) {
 	const { type, query } = action;
@@ -25,9 +23,9 @@ export function currentPage( state = 1, action ) {
 /**
  * Tracks the current product, if filtering reviews by a specific product.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function currentProduct( state = null, action ) {
 	const { type, query } = action;
@@ -40,9 +38,9 @@ export function currentProduct( state = null, action ) {
 /**
  * Tracks the current search term being displayed for the current site.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function currentSearch( state = '', action ) {
 	const { type, query } = action;

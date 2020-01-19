@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,7 +18,10 @@ describe( 'actions', () => {
 	const siteId = 1234;
 	const zoneId = 5678;
 
-	const posts = [ { ID: 1, title: 'A test post' }, { ID: 2, title: 'Another test post' } ];
+	const posts = [
+		{ ID: 1, title: 'A test post' },
+		{ ID: 2, title: 'Another test post' },
+	];
 
 	describe( 'requestFeed()', () => {
 		test( 'should return an action object', () => {

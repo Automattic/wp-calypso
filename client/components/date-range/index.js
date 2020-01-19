@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,18 +6,25 @@ import { noop, isNil, isNull, has } from 'lodash';
 import { DateUtils } from 'react-day-picker';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
-import { localize, moment } from 'i18n-calypso';
+import Gridicon from 'components/gridicon';
+import { localize } from 'i18n-calypso';
+import { withLocalizedMoment } from 'components/localized-moment';
+import moment from 'moment';
 
 /**
  * Internal dependencies
  */
 import DatePicker from 'components/date-picker';
 import Popover from 'components/popover';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import DateRangeInputs from './inputs';
 import DateRangeHeader from './header';
 import DateRangeTrigger from './trigger';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * Module variables
@@ -48,6 +53,7 @@ export class DateRange extends Component {
 		] ),
 		triggerText: PropTypes.func,
 		isCompact: PropTypes.bool,
+		showTriggerClear: PropTypes.bool,
 		renderTrigger: PropTypes.func,
 		renderHeader: PropTypes.func,
 		renderInputs: PropTypes.func,
@@ -58,6 +64,7 @@ export class DateRange extends Component {
 		onDateCommit: noop,
 		isCompact: false,
 		focusedMonth: null,
+		showTriggerClear: true,
 		renderTrigger: props => <DateRangeTrigger { ...props } />,
 		renderHeader: props => <DateRangeHeader { ...props } />,
 		renderInputs: props => <DateRangeInputs { ...props } />,
@@ -133,10 +140,6 @@ export class DateRange extends Component {
 		this.setState( {
 			popoverVisible: false,
 		} );
-
-		// As no dates have been explicity accepted ("Apply" not clicked)
-		// we need to revert back to the original cached dates
-		this.revertDates();
 	};
 
 	/**
@@ -149,6 +152,16 @@ export class DateRange extends Component {
 		} else {
 			this.openPopover();
 		}
+	};
+
+	closePopoverAndRevert = () => {
+		this.closePopover();
+		this.revertDates();
+	};
+
+	closePopoverAndCommit = () => {
+		this.closePopover();
+		this.commitDates();
 	};
 
 	/**
@@ -168,7 +181,7 @@ export class DateRange extends Component {
 	 * and special configuration component config props
 	 *
 	 * @param  {moment}  date MomentJS date object
-	 * @return {Boolean}      whether date is considered valid or not
+	 * @returns {boolean}      whether date is considered valid or not
 	 */
 	isValidDate( date ) {
 		const { firstSelectableDate, lastSelectableDate } = this.props;
@@ -264,7 +277,7 @@ export class DateRange extends Component {
 	 * as required by Day Picker DateUtils
 	 * @param  {MomentJSDate} startDate the start date for the range
 	 * @param  {MomentJSDate} endDate   the end date for the range
-	 * @return {Object}           the date range object
+	 * @returns {object}           the date range object
 	 */
 	toDateRange( startDate, endDate ) {
 		return {
@@ -379,7 +392,15 @@ export class DateRange extends Component {
 		} );
 	};
 
-	resetDateRange = () => {
+	/**
+	 * Resets any currently selected (not commmited!) dates
+	 * but leaves stale dates untouched. This makes it possible
+	 * for the user to revert back to the previous dates should
+	 * they so choose. Required for scenario where user selects dates
+	 * then wants to clear that selection entirely but then clicks away
+	 * without selecting any dates
+	 */
+	resetDates = () => {
 		this.setState( previousState => {
 			const startDate = previousState.initialStartDate;
 			const endDate = previousState.initialEndDate;
@@ -397,9 +418,30 @@ export class DateRange extends Component {
 	};
 
 	/**
+	 * Fully clears all dates to empty values
+	 * affectively saying "get rid of all dates"
+	 */
+	clearDates = () => {
+		this.setState(
+			{
+				startDate: null,
+				endDate: null,
+				staleStartDate: null,
+				staleEndDate: null,
+				textInputStartDate: '',
+				textInputEndDate: '',
+			},
+			() => {
+				// Fired to ensure date change is propagated upwards
+				this.props.onDateCommit( this.state.startDate, this.state.endDate );
+			}
+		);
+	};
+
+	/**
 	 * Converts a moment date to a native JS Date object
 	 * @param  {MomentJSDate} momentDate a momentjs date object to convert
-	 * @return {DATE}            the converted JS Date object
+	 * @returns {DATE}            the converted JS Date object
 	 */
 	momentDateToJsDate( momentDate ) {
 		return this.props.moment.isMoment( momentDate ) ? momentDate.toDate() : momentDate;
@@ -408,7 +450,7 @@ export class DateRange extends Component {
 	/**
 	 * Converts a native JS Date object to a MomentJS Date object
 	 * @param  {Date} nativeDate date to be converted
-	 * @return {MomentJSDate}            the converted Date
+	 * @returns {MomentJSDate}            the converted Date
 	 */
 	nativeDateToMoment( nativeDate ) {
 		return this.props.moment( nativeDate );
@@ -418,7 +460,7 @@ export class DateRange extends Component {
 	 * Formats a given date to the appropriate format for the
 	 * current locale
 	 * @param  {Date|MomentJSDate} date the date to be converted
-	 * @return {String}      the date as a formatted locale string
+	 * @returns {string}      the date as a formatted locale string
 	 */
 	formatDateToLocale( date ) {
 		return this.props.moment( date ).format( 'L' );
@@ -426,7 +468,7 @@ export class DateRange extends Component {
 
 	/**
 	 * 	Gets the locale appropriate date format (eg: "MM/DD/YYYY")
-	 * @return {String} date format as a string
+	 * @returns {string} date format as a string
 	 */
 	getLocaleDateFormat() {
 		return this.props.moment.localeData().longDateFormat( 'L' );
@@ -438,7 +480,7 @@ export class DateRange extends Component {
 	 * @param  {Moment} date             momentJS instance
 	 * @param  {Moment|Date} options.dateFrom the start of the date range
 	 * @param  {Moment|Date} options.dateTo   the end of the date range
-	 * @return {Moment}                  the date clamped to be within the range
+	 * @returns {Moment}                  the date clamped to be within the range
 	 */
 	clampDateToRange( date, { dateFrom, dateTo } ) {
 		// Ensure endDate is within bounds of firstSelectableDate
@@ -458,7 +500,7 @@ export class DateRange extends Component {
 	 * for display in a text input. Also converts
 	 * to locale appropriate format.
 	 * @param  {Date|Moment} date the date for conversion
-	 * @return {string}      the date expressed as a locale appropriate string or if null
+	 * @returns {string}      the date expressed as a locale appropriate string or if null
 	 *                       then returns the locale format (eg: MM/DD/YYYY)
 	 */
 	toDateString( date ) {
@@ -478,7 +520,7 @@ export class DateRange extends Component {
 	 * http://react-day-picker.js.org/api/DayPicker/#disabledDays
 	 * http://react-day-picker.js.org/docs/matching-days
 	 *
-	 * @return {array} configuration to be passed to DatePicker as disabledDays prop
+	 * @returns {Array} configuration to be passed to DatePicker as disabledDays prop
 	 */
 	getDisabledDaysConfig() {
 		const { firstSelectableDate, lastSelectableDate } = this.props;
@@ -510,7 +552,7 @@ export class DateRange extends Component {
 					! endDate &&
 					this.props.translate( '{{icon/}} Please select the {{em}}first{{/em}} day.', {
 						components: {
-							icon: <Gridicon icon="info" />,
+							icon: <Gridicon aria-hidden="true" icon="info" />,
 							em: <em />,
 						},
 					} ) }
@@ -518,19 +560,14 @@ export class DateRange extends Component {
 					! endDate &&
 					this.props.translate( '{{icon/}} Please select the {{em}}last{{/em}} day.', {
 						components: {
-							icon: <Gridicon icon="info" />,
+							icon: <Gridicon aria-hidden="true" icon="info" />,
 							em: <em />,
 						},
 					} ) }
 				{ startDate && endDate && (
-					<Button
-						className="date-range__info-btn"
-						borderless
-						compact
-						onClick={ this.resetDateRange }
-					>
-						{ this.props.translate( '{{icon/}} clear selected dates', {
-							components: { icon: <Gridicon icon="cross-small" /> },
+					<Button className="date-range__info-btn" borderless compact onClick={ this.resetDates }>
+						{ this.props.translate( '{{icon/}} reset selected dates', {
+							components: { icon: <Gridicon aria-hidden="true" icon="cross-small" /> },
 						} ) }
 					</Button>
 				) }
@@ -540,12 +577,12 @@ export class DateRange extends Component {
 
 	/**
 	 * Renders the Popover component
-	 * @return {ReactComponent} the Popover component
+	 * @returns {ReactComponent} the Popover component
 	 */
 	renderPopover() {
 		const headerProps = {
 			onApplyClick: this.commitDates,
-			onCancelClick: this.closePopover,
+			onCancelClick: this.closePopoverAndRevert,
 		};
 
 		const inputsProps = {
@@ -562,7 +599,7 @@ export class DateRange extends Component {
 				isVisible={ this.state.popoverVisible }
 				context={ this.triggerButtonRef.current }
 				position="bottom"
-				onClose={ this.closePopover }
+				onClose={ this.closePopoverAndCommit }
 			>
 				<div className="date-range__popover-inner">
 					<div className="date-range__controls">
@@ -578,7 +615,7 @@ export class DateRange extends Component {
 
 	/**
 	 * Renders the DatePicker component
-	 * @return {ReactComponent} the DatePicker component
+	 * @returns {ReactComponent} the DatePicker component
 	 */
 	renderDatePicker() {
 		const fromDate = this.momentDateToJsDate( this.state.startDate );
@@ -629,7 +666,7 @@ export class DateRange extends Component {
 
 	/**
 	 * Renders the component
-	 * @return {ReactComponent} the DateRange component
+	 * @returns {ReactComponent} the DateRange component
 	 */
 	render() {
 		const rootClassNames = classNames( {
@@ -638,12 +675,16 @@ export class DateRange extends Component {
 		} );
 
 		const triggerProps = {
+			startDate: this.state.startDate,
+			endDate: this.state.endDate,
 			startDateText: this.toDateString( this.state.startDate ),
 			endDateText: this.toDateString( this.state.endDate ),
 			buttonRef: this.triggerButtonRef,
 			onTriggerClick: this.togglePopover,
+			onClearClick: this.clearDates,
 			triggerText: this.props.triggerText,
 			isCompact: this.props.isCompact,
+			showClearBtn: this.props.showTriggerClear,
 		};
 
 		return (
@@ -655,4 +696,4 @@ export class DateRange extends Component {
 	}
 }
 
-export default localize( DateRange );
+export default localize( withLocalizedMoment( DateRange ) );

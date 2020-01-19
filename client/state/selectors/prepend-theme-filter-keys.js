@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -11,9 +9,9 @@ import getThemeFilterStringFromTerm from 'state/selectors/get-theme-filter-strin
  * "taxonomy:term taxonomy:term " search-box format, with
  * a trailing space.
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @param {string} terms Space or + separated list of filter terms
- * @return {string} Complete taxonomy:term filter string, or empty string if term is not valid
+ * @returns {string} Complete taxonomy:term filter string, or empty string if term is not valid
  */
 export default function prependThemeFilterKeys( state, terms = '' ) {
 	const result = terms

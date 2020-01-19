@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,12 +6,13 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { getRewindRestoreProgress } from 'state/activity-log/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { requestRewindState } from 'state/rewind/actions';
+import { requestRewindState } from 'state/rewind/state/actions';
 import { REWIND_RESTORE, REWIND_CLONE } from 'state/action-types';
 import { SchemaError } from 'lib/make-json-schema-parser';
 
@@ -34,7 +34,9 @@ const requestRewind = ( action, payload ) =>
 			apiVersion: '1',
 			method: 'POST',
 			path: `/activity-log/${ action.siteId }/rewind/to/${ action.timestamp }`,
-			body: payload,
+			body: Object.assign( payload, {
+				calypso_env: config( 'env_id' ),
+			} ),
 		},
 		action
 	);

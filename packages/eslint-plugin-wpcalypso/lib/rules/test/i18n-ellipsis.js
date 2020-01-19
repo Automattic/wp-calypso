@@ -1,6 +1,5 @@
-/** @format */
 /**
- * @fileoverview Disallow using three dots in translate strings
+ * @file Disallow using three dots in translate strings
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -44,6 +43,14 @@ new RuleTester( config ).run( 'i18n-ellipsis', rule, {
 		{
 			code: "( 0, translate )( 'Hello World…' );",
 		},
+		{
+			code: "translate( 'Hello World…' );",
+		},
+		{ code: "__( '…' );" },
+		{ code: "__( '…', 'dots-in-locale-fine...' );" },
+		{ code: "_x( '…', 'Dots in the context are fine...' );" },
+		{ code: "_n( '…', '…s', 1 );" },
+		{ code: "_nx( '…', '…s', 2, 'ellipses' );" },
 	],
 
 	invalid: [
@@ -163,6 +170,30 @@ new RuleTester( config ).run( 'i18n-ellipsis', rule, {
 				},
 			],
 			output: "( 0, translate )( 'Hello World…' );",
+		},
+		{
+			code: "__( '...' );",
+			errors: [ { message: rule.ERROR_MESSAGE } ],
+			output: "__( '…' );",
+		},
+		{
+			code: '__( `Template ${ aString }...` );',
+			errors: [ { message: rule.ERROR_MESSAGE } ],
+			output: '__( `Template ${ aString }…` );',
+		},
+		{
+			code: "_x( '...', 'ellipsis' );",
+			errors: [ { message: rule.ERROR_MESSAGE } ],
+		},
+		{
+			code: "_n( '...', '...s', 1 );",
+			errors: [ { message: rule.ERROR_MESSAGE }, { message: rule.ERROR_MESSAGE } ],
+			output: "_n( '…', '…s', 1 );",
+		},
+		{
+			code: "_nx( '...', '...s', 2, 'ellipses' );",
+			errors: [ { message: rule.ERROR_MESSAGE }, { message: rule.ERROR_MESSAGE } ],
+			output: "_nx( '…', '…s', 2, 'ellipses' );",
 		},
 	],
 } );

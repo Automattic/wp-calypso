@@ -1,9 +1,13 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ReadingTime extends React.PureComponent {
 	render() {
@@ -14,7 +18,7 @@ class ReadingTime extends React.PureComponent {
 		if ( timeInMinutes > 1 ) {
 			approxTime = (
 				<span className="reading-time__approx">
-					({' '}
+					({ ' ' }
 					{ this.props.translate( '~%d min', {
 						args: [ timeInMinutes ],
 						context: 'An approximate time to read something, in minutes',

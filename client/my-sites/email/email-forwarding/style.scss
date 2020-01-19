@@ -1,0 +1,91 @@
+.email-forwarding__explanation {
+	display: block;
+	margin-top: 5px;
+	font-style: italic;
+	color: var( --color-text-subtle );
+}
+
+.email-forwarding__card {
+	form label + input[type='text'] {
+		margin-bottom: 10px;
+	}
+
+	&.fetching input[type='text'] {
+		animation: pulse-light 0.8s ease-in-out infinite;
+		background: var( --color-neutral-10 );
+	}
+}
+
+.email-forwarding__add-new {
+	.email-forwarding__limit,
+	.email-forwarding__form-content {
+		border-top: 1px solid var( --color-neutral-0 );
+		overflow: visible;
+		padding-top: 20px;
+	}
+
+	.is-hidden {
+		display: none;
+	}
+}
+
+.email-forwarding__form {
+	margin-top: 0;
+
+	@include breakpoint( '>480px' ) {
+		margin-top: 15px;
+	}
+}
+
+ul.email-forwarding__list {
+	list-style: none;
+	margin: 15px 0 0;
+	padding: 0;
+
+	li {
+		border-top: 1px solid var( --color-neutral-0 );
+		overflow: auto;
+		padding: 10px 0;
+		position: relative;
+
+		span {
+			font-size: 14px;
+			line-height: 40px;
+
+			@include breakpoint( '<660px' ) {
+				font-size: 12px;
+				line-height: 150%;
+			}
+
+			strong {
+				color: var( --color-text-subtle );
+				font-weight: normal;
+
+				&:first-child {
+					@include breakpoint( '<660px' ) {
+						display: block;
+					}
+				}
+
+				@include breakpoint( '>660px' ) {
+					font-weight: 600;
+				}
+			}
+
+			em {
+				color: var( --color-neutral-light );
+			}
+		}
+
+		.button {
+			float: right;
+			margin-top: -3px;
+		}
+	}
+}
+
+.email-forwarding__limit {
+	color: var( --color-neutral-light );
+	line-height: 3em;
+	margin-bottom: 15px;
+}

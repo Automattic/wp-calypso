@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -34,7 +32,6 @@ export class SubscriptionLengthOption extends React.Component {
 		onCheck: PropTypes.func,
 		translate: PropTypes.func.isRequired,
 		shouldShowTax: PropTypes.bool,
-		taxDisplay: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 	};
 
 	static defaultProps = {
@@ -43,7 +40,6 @@ export class SubscriptionLengthOption extends React.Component {
 		savePercent: 0,
 		onCheck: () => null,
 		shouldShowTax: false,
-		taxDisplay: '',
 	};
 
 	constructor( props ) {
@@ -76,7 +72,8 @@ export class SubscriptionLengthOption extends React.Component {
 	}
 
 	renderNewSaleContent() {
-		const { checked, price, savePercent, shouldShowTax, term, translate, taxDisplay } = this.props;
+		const { checked, price, savePercent, term, translate } = this.props;
+
 		return (
 			<React.Fragment>
 				<div className="subscription-length-picker__option-header">
@@ -97,9 +94,7 @@ export class SubscriptionLengthOption extends React.Component {
 				</div>
 				<div className="subscription-length-picker__option-description">
 					<div className="subscription-length-picker__option-price">{ price }</div>
-					{ shouldShowTax && (
-						<sup className="subscription-length-picker__option-tax">{ taxDisplay }</sup>
-					) }
+					{ this.renderPlusTax() }
 					<div className="subscription-length-picker__option-side-note">
 						{ term !== TERM_MONTHLY ? this.renderPricePerMonth() : false }
 					</div>
@@ -109,7 +104,7 @@ export class SubscriptionLengthOption extends React.Component {
 	}
 
 	renderUpgradeContent() {
-		const { price, priceBeforeDiscount, shouldShowTax, taxDisplay, translate } = this.props;
+		const { price, priceBeforeDiscount, translate } = this.props;
 		const hasDiscount = priceBeforeDiscount && priceBeforeDiscount !== price;
 		return (
 			<React.Fragment>
@@ -122,10 +117,10 @@ export class SubscriptionLengthOption extends React.Component {
 							{ priceBeforeDiscount }
 						</div>
 					) }
-					<div className="subscription-length-picker__option-price">{ price }</div>
-					{ shouldShowTax && (
-						<sup className="subscription-length-picker__option-tax">{ taxDisplay }</sup>
-					) }
+					<div className="subscription-length-picker__option-price">
+						{ price }
+						{ this.renderPlusTax() }
+					</div>
 					{ hasDiscount && (
 						<div className="subscription-length-picker__option-credit-info">
 							{ translate( 'Credit applied' ) }
@@ -140,13 +135,25 @@ export class SubscriptionLengthOption extends React.Component {
 		const { term, translate } = this.props;
 		switch ( term ) {
 			case TERM_BIENNIALLY:
-				return translate( '%s year', '%s years', { count: 2, args: '2' } );
+				return translate( '%s year', '%s years', {
+					count: 2,
+					args: '2',
+					context: 'subscription length',
+				} );
 
 			case TERM_ANNUALLY:
-				return translate( '%s year', '%s years', { count: 1, args: '1' } );
+				return translate( '%s year', '%s years', {
+					count: 1,
+					args: '1',
+					context: 'subscription length',
+				} );
 
 			case TERM_MONTHLY:
-				return translate( '%s month', '%s months', { count: 1, args: '1' } );
+				return translate( '%s month', '%s months', {
+					count: 1,
+					args: '1',
+					context: 'subscription length',
+				} );
 		}
 	}
 
@@ -157,6 +164,23 @@ export class SubscriptionLengthOption extends React.Component {
 		return savePercent
 			? translate( 'only %(price)s / month', args )
 			: translate( '%(price)s / month', args );
+	}
+
+	renderPlusTax() {
+		const { shouldShowTax, translate } = this.props;
+
+		if ( ! shouldShowTax ) {
+			return null;
+		}
+
+		return (
+			<sup className="subscription-length-picker__option-tax">
+				{ translate( '+tax', {
+					comment:
+						'This string is displayed immediately next to a localized price with a currency symbol, and is indicating that there may be an additional charge on top of the displayed price.',
+				} ) }
+			</sup>
+		);
 	}
 
 	handleChange = e => {

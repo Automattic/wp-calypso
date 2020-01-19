@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -8,17 +7,12 @@
  */
 import React from 'react';
 import { shallow } from 'enzyme';
+import { identity, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import SignupActions from 'lib/signup/actions';
 import { SiteStyleStep } from '../';
-
-jest.mock( 'lib/signup/actions', () => ( {
-	submitSignupStep: jest.fn(),
-	saveSignupStep: jest.fn(),
-} ) );
 
 describe( '<SiteStyleStep />', () => {
 	const defaultProps = {
@@ -36,16 +30,14 @@ describe( '<SiteStyleStep />', () => {
 		],
 		siteStyle: 'default',
 		siteType: 'professional',
-		setSiteStyle: jest.fn(),
-		submitSiteStyle: jest.fn(),
-		translate: x => x,
-		goToNextStep: () => {},
+		setSiteStyle: noop,
+		submitSiteStyle: noop,
+		submitSignupStep: noop,
+		saveSignupStep: noop,
+		goToNextStep: noop,
+		recordTracksEvent: noop,
+		translate: identity,
 	};
-
-	afterEach( () => {
-		SignupActions.submitSignupStep.mockReset();
-		SignupActions.saveSignupStep.mockReset();
-	} );
 
 	test( 'should render', () => {
 		const wrapper = shallow( <SiteStyleStep { ...defaultProps } /> );
@@ -63,23 +55,17 @@ describe( '<SiteStyleStep />', () => {
 	} );
 
 	test( 'should call `setSiteStyle()` from `handleStyleOptionChange()`', () => {
-		const wrapper = shallow( <SiteStyleStep { ...defaultProps } /> );
-		wrapper.instance().handleStyleOptionChange( {
-			currentTarget: { value: 'default' },
-		} );
-		expect( defaultProps.setSiteStyle ).toHaveBeenCalledWith( 'default' );
+		const setSiteStyle = jest.fn();
+		const wrapper = shallow( <SiteStyleStep { ...defaultProps } setSiteStyle={ setSiteStyle } /> );
+		wrapper.instance().handleStyleOptionChange( { currentTarget: { value: 'default' } } );
+		expect( setSiteStyle ).toHaveBeenCalledWith( 'default' );
 	} );
 
 	test( 'should call `submitSiteStyle()` from `handleSubmit()`', () => {
 		const wrapper = shallow( <SiteStyleStep { ...defaultProps } siteStyle="eyesore" /> );
-		wrapper.instance().handleSubmit( {
-			preventDefault: () => {},
-		} );
-		expect( defaultProps.submitSiteStyle ).toHaveBeenCalledWith(
-			'eyesore',
-			'pub/hipster',
-			'nicer'
-		);
+		const submitSiteStyle = jest.spyOn( wrapper.instance(), 'submitSiteStyle' );
+		wrapper.instance().handleSubmit( { preventDefault: noop } );
+		expect( submitSiteStyle ).toHaveBeenCalledWith( 'eyesore', 'pub/hipster', 'nicer' );
 	} );
 
 	test( 'should select and submit the first item from the options array if no site style yet saved in state', () => {
@@ -91,11 +77,10 @@ describe( '<SiteStyleStep />', () => {
 		// check that it's been selected
 		expect( firstInputField.props.checked ).toBe( true );
 
-		wrapper.instance().handleSubmit( {
-			preventDefault: () => {},
-		} );
+		const submitSiteStyle = jest.spyOn( wrapper.instance(), 'submitSiteStyle' );
+		wrapper.instance().handleSubmit( { preventDefault: noop } );
 		// check that we pass the default site option onSubmit
-		expect( defaultProps.submitSiteStyle ).toHaveBeenCalledWith(
+		expect( submitSiteStyle ).toHaveBeenCalledWith(
 			defaultProps.styleOptions[ 0 ].id,
 			defaultProps.styleOptions[ 0 ].theme,
 			defaultProps.styleOptions[ 0 ].label

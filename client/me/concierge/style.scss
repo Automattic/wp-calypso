@@ -7,7 +7,7 @@
 }
 
 .shared__available-time-card.is-expanded {
-	background: lighten( $gray, 36% );
+	background: var( --color-neutral-0 );
 }
 
 .shared__available-time-card-header {
@@ -16,8 +16,8 @@
 }
 
 .shared__available-time-card-header-icon {
-	color: $gray;
-	border: 1px solid var( --color-neutral-100 );
+	color: var( --color-neutral-light );
+	border: 1px solid var( --color-neutral-10 );
 	border-radius: 100%;
 	padding: 6px;
 	margin-right: 12px;
@@ -53,6 +53,22 @@
 
 .cancel__reschedule-button {
 	margin-right: 10px;
+}
+
+.book__info-step-phone-input {
+	display: flex;
+	& fieldset {
+		flex: 1;
+		margin-bottom: 0;
+	}
+}
+
+.shared__appointment-info-start-session {
+	display: flex;
+
+	& input {
+		flex: 1;
+	}
 }
 
 .book__schedule-button,

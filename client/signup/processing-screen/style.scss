@@ -55,7 +55,7 @@
 	}
 
 	.gridicon {
-		fill: var( --color-white );
+		fill: var( --color-text-inverted );
 		position: absolute;
 		height: auto;
 		width: auto;
@@ -256,13 +256,13 @@
 	}
 }
 
-.signup-processing__content {
+.signup-processing-screen__content {
 	position: relative;
 	z-index: 1;
 	max-width: 500px;
 	margin: 0 auto;
 	padding-bottom: 30px;
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 }
 
 /* Title */
@@ -277,163 +277,10 @@
 	}
 }
 
-.signup-process-screen__title {
+.signup-processing-screen__title {
 	margin: 360px 0 0;
 	padding: 0 16px;
 	text-align: center;
 	animation: fade-in 0.8s 1 cubic-bezier( 0.075, 0.82, 0.165, 1 );
 	animation-fill-mode: forwards;
-}
-
-/* Continue Button */
-@keyframes pulse {
-	0%,
-	100% {
-		opacity: 1;
-	}
-	60% {
-		opacity: 0.4;
-	}
-}
-
-.processing-screen__continue-button {
-	display: block;
-	padding: 10px 24px;
-	margin: 24px auto 48px;
-}
-
-.processing-screen__continue-button:disabled {
-	animation: pulse 1s infinite linear;
-}
-
-// Not entirely sure what this stuff is all about... -shaun
-
-.signup-processing-screen__loader {
-	animation: load8 1.1s infinite linear;
-	border-top: 1.1em solid rgba( 255, 255, 255, 0.2 );
-	border-right: 1.1em solid rgba( 255, 255, 255, 0.2 );
-	border-bottom: 1.1em solid rgba( 255, 255, 255, 0.2 );
-	border-left: 1.1em solid #ffffff;
-	font-size: 5px;
-	margin: 20px auto;
-	position: relative;
-	transform: translateZ( 0 );
-	@include hide-content-accessibly;
-}
-
-.signup-processing-screen__loader,
-.signup-processing-screen__loader:after {
-	border-radius: 50%;
-	height: 10em;
-	width: 10em;
-}
-@keyframes load8 {
-	0% {
-		transform: rotate( 0deg );
-	}
-	100% {
-		transform: rotate( 360deg );
-	}
-}
-
-.signup-process-screen__confetti {
-	display: block;
-	width: 284px;
-	height: 99px;
-	margin: 2em auto;
-}
-.signup-process-screen__title-test {
-	font-size: 1.35em;
-	font-weight: 300;
-}
-.signup-processing__upgrade-nudge {
-	background: $white;
-	text-align: center;
-	outline: 30px solid $white;
-	margin-bottom: 30px;
-}
-.signup-processing__title-subdomain {
-	text-transform: uppercase;
-	color: var( --color-neutral-500 );
-	font-size: 0.7em;
-	margin: 3px;
-	text-align: left;
-
-	@include breakpoint( '<480px' ) {
-		text-align: inherit;
-	}
-}
-.signup-processing__address-bar {
-	display: flex;
-	background: var( --color-neutral-400 );
-	border-radius: 8px;
-	flex-direction: row;
-	padding: 10px;
-	text-align: left;
-
-	@include breakpoint( '<480px' ) {
-		border-radius: 0;
-	}
-}
-.signup-processing__address-bar .gridicon {
-	fill: var( --color-neutral-700 );
-	margin-right: 10px;
-	align-self: center;
-	flex: 0 0 24px;
-}
-.signup-processing__address-field {
-	flex: 1;
-	background: $white;
-	margin: 0 0 0 5px;
-	padding: 8px;
-	box-sizing: border-box;
-	width: 100%;
-	overflow: auto;
-}
-.signup-processing__address-field.is-placeholder::after {
-	content: 'placeholder.wordpress.com';
-	color: transparent;
-	background-color: var( --color-neutral-0 );
-	animation: loading-fade 1.6s ease-in-out infinite;
-}
-.signup-processing__bubble {
-	position: relative;
-	background: #c2f4ff url( '/calypso/images/signup/seo-guy.svg' ) no-repeat 28px 50%;
-	background-size: 121px auto;
-	border-radius: 28px;
-	color: var( --color-neutral-700 );
-	width: 400px;
-	max-width: 96%;
-	padding: 28px;
-	margin: 50px auto 20px;
-	box-sizing: border-box;
-
-	p {
-		text-align: left;
-		padding-left: 140px;
-		margin: 0;
-	}
-
-	@include breakpoint( '<480px' ) {
-		background-size: 90px auto;
-
-		p {
-			padding-left: 115px;
-		}
-	}
-}
-.signup-processing__bubble-tail {
-	position: absolute;
-	fill: #c2f4ff;
-	width: 47px;
-	height: 31px;
-	top: -30px;
-	left: 30%;
-}
-.signup-processing__nudge-message {
-	width: 400px;
-	max-width: 96%;
-	color: var( --color-neutral-400 );
-	margin: 1.5em auto;
-	box-sizing: border-box;
 }

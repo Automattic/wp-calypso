@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -24,11 +22,6 @@ class CnameRecord extends React.Component {
 		onChange: PropTypes.func.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		show: PropTypes.bool.isRequired,
-	};
-
-	static initialFields = {
-		name: '',
-		data: '',
 	};
 
 	render() {

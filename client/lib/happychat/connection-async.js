@@ -1,5 +1,3 @@
-/** @format */
-
 /*
  * This function creates a stub `Connection` object that dynamically loads the chunk
  * with the `happychat/connection` library only after the first method call.

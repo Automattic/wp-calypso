@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,6 +15,11 @@ import ZonesDashboard from './components/settings/zones-dashboard';
 import installActionHandlers from './state/data-layer';
 import { makeLayout, render as clientRender } from 'controller';
 import reducer from './state/reducer';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default async function( _, addReducer ) {
 	await addReducer( [ 'extensions', 'zoninator' ], reducer );

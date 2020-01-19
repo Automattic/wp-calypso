@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import React from 'react';
  */
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 class SecurityAccountRecoveryManageContactButtons extends React.Component {
 	static displayName = 'SecurityAccountRecoveryManageContactButtons';

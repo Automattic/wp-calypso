@@ -1,3 +1,5 @@
+/* stylelint-disable selector-max-id */
+
 @import 'plugins/wplink/style';
 @import 'plugins/calypso-alert/style';
 @import 'plugins/insert-menu/style';
@@ -79,8 +81,8 @@
 .post-editor,
 .mce-inline-toolbar-grp {
 	div.mce-toolbar-grp {
-		background-color: rgba( $white, 0.92 );
-		border-color: lighten( $gray, 25% );
+		background-color: rgba( var( --color-surface-rgb ), 0.92 );
+		border-color: var( --color-neutral-5 );
 		border-style: solid;
 		border-left-width: 1px;
 		border-right-width: 1px;
@@ -102,15 +104,15 @@
 	}
 
 	.mce-toolbar .mce-ico {
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 	}
 
 	.mce-toolbar .mce-btn .gridicon {
-		fill: var( --color-neutral-500 );
+		fill: var( --color-neutral-50 );
 	}
 
 	.mce-colorbutton .mce-preview {
-		background-color: var( --color-neutral-700 );
+		background-color: var( --color-neutral-70 );
 	}
 
 	.mce-toolbar .mce-btn-group .mce-btn.mce-listbox {
@@ -122,8 +124,8 @@
 		height: 36px;
 
 		@include breakpoint( '<660px' ) {
-			border-right-color: $white;
-			border-left-color: $white;
+			border-right-color: var( --color-border-inverted );
+			border-left-color: var( --color-border-inverted );
 			padding: 2px 0;
 		}
 	}
@@ -138,12 +140,12 @@
 
 	.mce-toolbar .mce-btn-group .mce-btn:hover .mce-ico,
 	.mce-toolbar .mce-btn-group .mce-btn:focus .mce-ico {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	.mce-toolbar .mce-btn-group .mce-btn:hover .gridicon,
 	.mce-toolbar .mce-btn-group .mce-btn:focus .gridicon {
-		fill: var( --color-neutral-700 );
+		fill: var( --color-neutral-70 );
 	}
 }
 
@@ -154,7 +156,7 @@
 	top: -6px;
 	bottom: -6px;
 	width: 1px;
-	background-color: var( --color-neutral-100 );
+	background-color: var( --color-neutral-10 );
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-hidden {
@@ -211,14 +213,14 @@
 
 .mce-tooltip-inner {
 	box-shadow: none !important;
-	background: var( --color-neutral-700 ) !important;
-	color: $white !important;
+	background: var( --color-neutral-70 ) !important;
+	color: var( --color-text-inverted ) !important;
 	font-family: $sans !important;
 	padding: 4px 8px 5px !important;
 }
 
 .mce-tooltip-arrow {
-	border-bottom-color: var( --color-neutral-700 ) !important;
+	border-bottom-color: var( --color-neutral-70 ) !important;
 }
 
 .mce-toolbar .mce-btn {
@@ -232,7 +234,7 @@
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-wpcom-icon-button button {
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	height: 38px;
 	padding: 0 8px;
 	margin-top: 0;
@@ -242,10 +244,10 @@
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-wpcom-icon-button .gridicon {
-	fill: var( --color-neutral-500 );
+	fill: var( --color-neutral-50 );
 
 	&:hover {
-		fill: var( --color-neutral-700 );
+		fill: var( --color-neutral-70 );
 	}
 }
 
@@ -365,8 +367,8 @@
 .mce-container.mce-menu,
 .mce-container .mce-floatpanel.mce-popover {
 	z-index: auto !important;
-	background-color: $white;
-	border: 1px solid var( --color-neutral-100 );
+	background-color: var( --color-surface );
+	border: 1px solid var( --color-neutral-10 );
 	border-radius: 0 0 4px 4px;
 	box-shadow: none;
 	padding: 0;
@@ -403,10 +405,10 @@ div.mce-panel {
 }
 
 .mce-container .mce-panel.mce-menu {
-	border: 1px solid var( --color-neutral-100 );
+	border: 1px solid var( --color-neutral-10 );
 }
 .mce-container .mce-menu-item .mce-text {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }
 
 div.mce-tab {
@@ -425,8 +427,8 @@ div.mce-toolbar-grp {
 }
 
 div.mce-inline-toolbar-grp {
-	background-color: $white;
-	border: 1px solid var( --color-neutral-100 );
+	background-color: var( --color-surface );
+	border: 1px solid var( --color-neutral-10 );
 	border-radius: 4px;
 	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ), 0 0 56px rgba( 0, 0, 0, 0.075 );
 	box-sizing: border-box;
@@ -471,28 +473,28 @@ div.mce-inline-toolbar-grp::after {
 
 div.mce-inline-toolbar-grp.mce-arrow-up::before {
 	top: -18px;
-	border-bottom-color: var( --color-neutral-100 );
+	border-bottom-color: var( --color-neutral-10 );
 	border-width: 9px;
 	margin-left: -9px;
 }
 
 div.mce-inline-toolbar-grp.mce-arrow-down::before {
 	bottom: -18px;
-	border-top-color: var( --color-neutral-100 );
+	border-top-color: var( --color-neutral-10 );
 	border-width: 9px;
 	margin-left: -9px;
 }
 
 div.mce-inline-toolbar-grp.mce-arrow-up::after {
 	top: -16px;
-	border-bottom-color: $white;
+	border-bottom-color: var( --color-border-inverted );
 	border-width: 8px;
 	margin-left: -8px;
 }
 
 div.mce-inline-toolbar-grp.mce-arrow-down::after {
 	bottom: -16px;
-	border-top-color: $white;
+	border-top-color: var( --color-border-inverted );
 	border-width: 8px;
 	margin-left: -8px;
 }
@@ -565,7 +567,7 @@ div.mce-inline-toolbar-grp.mce-arrow-full > div {
 }
 
 div.mce-statusbar {
-	border-top: 1px solid var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-10 );
 }
 
 div.mce-path {
@@ -574,7 +576,7 @@ div.mce-path {
 }
 
 .post-editor .mce-path-item {
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	font-family: $sans;
 }
 
@@ -620,7 +622,7 @@ div.mce-path {
 .qt-dfw:focus {
 	background: transparent;
 	border-color: transparent;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	box-shadow: none;
 	outline: none;
 }
@@ -630,38 +632,38 @@ div.mce-path {
 .mce-toolbar .mce-btn-group .mce-btn:active,
 #wp-fullscreen-buttons .mce-btn:active,
 .qt-dfw.active {
-	color: var( --color-neutral-700 );
-	border-color: var( --color-neutral-100 );
-	background: $white;
+	color: var( --color-neutral-70 );
+	border-color: var( --color-neutral-10 );
+	background: var( --color-surface );
 	box-shadow: none;
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-active:hover {
-	border-color: var( --color-neutral-100 );
-	color: var( --color-neutral-700 );
+	border-color: var( --color-neutral-10 );
+	color: var( --color-neutral-70 );
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-active i.mce-ico,
 .mce-toolbar .mce-btn-group .mce-btn.mce-active:hover i.mce-ico {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-disabled i.mce-ico {
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-disabled:hover,
 #wp-fullscreen-buttons .mce-btn.mce-disabled:hover,
 .mce-toolbar .mce-btn-group .mce-btn.mce-disabled:focus,
 #wp-fullscreen-buttons .mce-btn.mce-disabled:focus {
-	color: $gray;
+	color: var( --color-neutral-light );
 	background: none;
-	border-color: $white;
+	border-color: var( --color-border-inverted );
 	text-shadow: none;
 	box-shadow: none;
 
 	i.mce-ico {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 }
 
@@ -714,7 +716,7 @@ div.mce-path {
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-listbox.mce-active {
-	border-color: $white;
+	border-color: var( --color-border-inverted );
 	border-right: 1px solid var( --color-neutral-0 );
 }
 
@@ -733,13 +735,13 @@ div.mce-path {
 .mce-toolbar .mce-btn-group .mce-btn.mce-listbox button .mce-txt {
 	width: auto;
 	padding: 0;
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	font-family: $sans;
 	font-size: 13px;
 	text-overflow: initial;
 
 	&:hover {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 }
 
@@ -749,12 +751,12 @@ div.mce-path {
 	border-right-color: var( --color-neutral-0 );
 
 	@include breakpoint( '<660px' ) {
-		border-right-color: $white;
-		border-left-color: $white;
+		border-right-color: var( --color-border-inverted );
+		border-left-color: var( --color-border-inverted );
 	}
 
 	i.mce-caret {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 }
 
@@ -763,7 +765,7 @@ div.mce-path {
 	right: 18px;
 	margin: 2px 0 0 -13px #{'/*rtl:ignore*/'};
 	border: none;
-	color: $gray;
+	color: var( --color-neutral-light );
 
 	// Displaying the icon by using an svg file is a temporary solution to remove Noticons.
 	&::before {
@@ -813,18 +815,18 @@ div.mce-path {
 
 .mce-menu .mce-menu-item-normal.mce-active {
 	background-color: var( --color-accent );
-	color: $white;
+	color: var( --color-text-inverted );
 	filter: none;
 }
 .mce-menu .mce-menu-item-normal.mce-active .mce-text {
-	color: $white;
+	color: var( --color-text-inverted );
 }
 
 .mce-container.mce-menu .mce-menu-item:hover,
 .mce-container.mce-menu .mce-menu-item.mce-selected,
 .mce-container.mce-menu .mce-menu-item:focus {
 	color: var( --color-accent );
-	background-color: $white;
+	background-color: var( --color-surface );
 	background-image: none;
 	filter: none;
 }
@@ -843,7 +845,7 @@ div.mce-path {
 }
 
 .mce-container.mce-menu .mce-menu-item.mce-active:hover .mce-text {
-	color: $white;
+	color: var( --color-text-inverted );
 }
 
 /* Menubar */
@@ -1923,7 +1925,7 @@ div.wp-link-preview a {
 	&:hover,
 	&:focus,
 	&:active {
-		color: $link-highlight;
+		color: var( --color-link-dark );
 	}
 }
 
@@ -1934,7 +1936,7 @@ div.wp-link-preview a {
 	font-family: Tahoma, sans-serif;
 }
 
-/*rtl:ignore*/
+/*!rtl:ignore*/
 .mce-rtl .mce-flow-layout .mce-flow-layout-item > div {
 	direction: rtl;
 }
@@ -1950,6 +1952,7 @@ html:lang( he-il ) .rtl .quicktags-toolbar input {
 }
 
 /* HiDPI */
+// stylelint-disable-next-line unit-whitelist
 @media print, ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
 	.wp-media-buttons .add_media span.wp-media-buttons-icon,
 	#wp-fullscreen-buttons #wp_fs_image span.mce_image {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,6 +5,11 @@
 import React from 'react';
 import { number } from 'prop-types';
 import classnames from 'classnames';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class PulsingDot extends React.Component {
 	timeout = null;

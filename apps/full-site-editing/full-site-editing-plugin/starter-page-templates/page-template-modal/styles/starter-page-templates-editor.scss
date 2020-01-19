@@ -1,0 +1,500 @@
+@mixin screen-reader-text() {
+	border: 0;
+	clip: rect( 1px, 1px, 1px, 1px );
+	clip-path: inset( 50% );
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	width: 1px;
+	word-wrap: normal !important;
+}
+
+$template-modal-background-color: #eeeeee;
+$template-selector-border-color: #e2e4e7;
+$template-selector-border-color-selected: #555d66;
+$template-selector-border-color-active: #00a0d2;
+$template-selector-border-color-hover: #c9c9ca;
+$template-selector-empty-background: #fff;
+$template-selector-modal-offset-bottom: 25px;
+$template-selector-modal-offset-right: 32px;
+$template-selector-blank-template-mobile-height: 70px;
+$template-large-preview-title-height: 120px;
+
+// Preview positioning
+$preview-right-margin: 24px;
+
+// Breakpoints
+$breakpoint-mobile: 660px;
+$breakpoint-tablet: 783px;
+$breakpoint-desktop: 961px;
+$breakpoint-huge: 1648px;
+
+// WP.org sidebar and admin bar sizes
+$wp-org-sidebar-full: 160px;
+$wp-org-sidebar-collapsed: 36px;
+$wp-org-admin-bar-full: 32px;
+$wp-org-admin-bar-mobile: 46px;
+
+// Modal Overlay
+.page-template-modal-screen-overlay {
+	animation: none;
+	background-color: transparent; // hide the overlay visually
+	z-index: 99; // Right below the wp-admin admin bar and sidebar.
+}
+
+// When not in fullscreen mode allow space for WP.org sidebar
+body:not( .is-fullscreen-mode ) {
+	.page-template-modal-screen-overlay {
+		@media screen and ( min-width: $breakpoint-tablet ) {
+			left: $wp-org-sidebar-collapsed;
+		}
+
+		@media screen and ( min-width: $breakpoint-desktop ) {
+			left: $wp-org-sidebar-full;
+		}
+	}
+	@media screen and ( min-width: $breakpoint-tablet ) {
+		&.folded .page-template-modal-screen-overlay {
+			left: $wp-org-sidebar-collapsed;
+		}
+		&:not( .folded ):not( .auto-fold ) .page-template-modal-screen-overlay {
+			left: $wp-org-sidebar-full;
+		}
+	}
+}
+
+// Allow space for admin bar if present and not in full screen mode
+body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
+	top: $wp-org-admin-bar-mobile;
+
+	@media screen and ( min-width: $breakpoint-tablet ) {
+		top: $wp-org-admin-bar-full;
+	}
+}
+
+// Full screen modal
+.page-template-modal {
+	width: 100%;
+	height: 100vh;
+	animation: none;
+	box-shadow: none; // cancel "modal" appearance
+	border: none; // cancel "modal" appearance
+	top: 0; // overlay the Block Editor toolbar
+	left: 0;
+	right: 0;
+	bottom: 0;
+	transform: none;
+	max-width: none;
+	max-height: none;
+	background-color: $template-modal-background-color;
+}
+
+.page-template-modal .components-modal__header-heading-container {
+	@include screen-reader-text();
+}
+
+// Show close button in all modes.
+.page-template-modal__close-button {
+	display: block;
+	position: absolute;
+	z-index: 20;
+	top: 9px;
+	width: 36px;
+	height: 36px;
+	left: 10px;
+}
+
+.page-template-modal .components-modal__header::after {
+	display: block;
+	position: absolute;
+	content: ' ';
+	border-right: 1px solid $template-selector-border-color;
+	height: 100%;
+	left: 56px;
+}
+
+.page-template-modal .components-modal__content {
+	overflow-y: scroll;
+	-webkit-overflow-scrolling: touch;
+}
+.page-template-modal__inner {
+	position: relative;
+	margin: 0 auto;
+	padding: 0 20px 40px;
+}
+
+.page-template-modal__list {
+	margin-bottom: 20px;
+
+	.components-base-control__label {
+		@include screen-reader-text();
+	}
+}
+
+.template-selector-control__options {
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-gap: 1.75em;
+
+	@media screen and ( min-width: $breakpoint-mobile ) {
+		margin-top: 0;
+		grid-template-columns: repeat(
+			auto-fit,
+			minmax( 110px, 1fr )
+		); // allow grid to take over number of cols on large screens
+	}
+}
+
+.template-selector-item__label {
+	display: block;
+	width: 100%;
+	font-size: 14px;
+	text-align: center;
+	border: solid 2px $template-selector-border-color;
+	border-radius: 6px;
+	cursor: pointer;
+	appearance: none;
+	padding: 0;
+	overflow: hidden;
+	background-color: $template-selector-empty-background;
+	position: relative;
+	transform: translateZ( 0 ); // Fix for Safari rounded border overflow (1/2).
+
+	.template-selector-item__template-title {
+		width: 100%;
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		height: 40px;
+		line-height: 40px;
+		background-color: $template-selector-empty-background;
+	}
+
+	&:focus {
+		box-shadow: 0 0 0 1px $template-selector-empty-background,
+			0 0 0 3px $template-selector-border-color-active;
+		// Windows High Contrast mode will show this outline, but not the box-shadow.
+		outline: 2px solid transparent;
+	}
+
+	&:hover {
+		border: solid 2px $template-selector-border-color-hover;
+	}
+
+	&.is-selected {
+		border: solid 2px $template-selector-border-color-selected;
+		// Windows High Contrast mode will show this outline, but not the box-shadow.
+		outline: 2px solid transparent;
+		outline-offset: -2px;
+
+		&:focus {
+			box-shadow: 0 0 0 1px $template-selector-empty-background,
+				0 0 0 3px $template-selector-border-color-active;
+			border: solid 2px $template-selector-border-color-selected;
+
+			// Windows High Contrast mode will show this outline, but not the box-shadow.
+			outline: 4px solid transparent;
+			outline-offset: -4px;
+		}
+	}
+}
+
+.template-selector-item__preview-wrap {
+	width: 100%;
+	display: block;
+	margin: 0 auto;
+	background: $template-selector-empty-background;
+	border-radius: 0;
+	overflow: hidden;
+	height: 0;
+	padding-top: 120%;
+	box-sizing: content-box;
+	position: relative;
+	pointer-events: none;
+	opacity: 1;
+	transform: translateZ( 0 ); // Fix for Safari rounded border overflow (2/2).
+
+	@media screen and ( min-width: $breakpoint-mobile ) {
+		padding-top: 100%; // Aspect radio boxes. It will take the 100% of width.
+	}
+
+	&.is-rendering {
+		opacity: 0.5;
+	}
+
+	.block-editor-block-list__layout,
+	.block-editor-block-list__block {
+		padding: inherit;
+	}
+}
+
+.template-selector-item__media {
+	width: 100%;
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+// Blank template
+@media screen and ( max-width: ( $breakpoint-mobile - 1px ) ) {
+	.template-selector-control__template:first-child {
+		.template-selector-item__preview-wrap {
+			padding-top: 0%;
+			height: $template-selector-blank-template-mobile-height;
+		}
+		.template-selector-item__template-title {
+			height: $template-selector-blank-template-mobile-height;
+			line-height: $template-selector-blank-template-mobile-height;
+		}
+	}
+}
+
+.page-template-modal__form {
+	@media screen and ( min-width: $breakpoint-mobile ) {
+		max-width: 20%;
+	}
+
+	@media screen and ( min-width: $breakpoint-tablet ) {
+		max-width: 30%;
+	}
+}
+
+.page-template-modal__form-title {
+	font-weight: bold;
+	margin-bottom: 1em;
+	text-align: center;
+	@media screen and ( min-width: $breakpoint-mobile ) {
+		text-align: left;
+	}
+}
+
+.page-template-modal__buttons {
+	position: absolute;
+	right: 0;
+	top: 0;
+	z-index: 10;
+	height: 56px;
+	display: flex;
+	align-items: center;
+	padding-right: 24px;
+
+	@media screen and ( min-width: $breakpoint-mobile ) {
+		display: flex;
+	}
+
+	&.is-visually-hidden {
+		@include screen-reader-text();
+	}
+
+	.components-button {
+		height: 33px; // match to Gutenberg toolbar styles
+		line-height: 32px; // match to Gutenberg toolbar styles
+	}
+}
+
+// Template Selector Preview
+.template-selector-preview {
+	display: none;
+	position: fixed;
+	top: 111px + $wp-org-admin-bar-mobile;
+	bottom: 24px;
+	left: calc( 20% + #{$preview-right-margin * 2} );
+	right: $preview-right-margin;
+	background: $template-selector-empty-background;
+	border-radius: 2px;
+	overflow-x: hidden;
+	overflow-y: auto;
+	box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ), 0 3px 1px -2px rgba( 0, 0, 0, 0.12 ),
+		0 1px 5px 0 rgba( 0, 0, 0, 0.2 );
+
+	@media screen and ( min-width: $breakpoint-mobile ) {
+		display: block;
+		&.is-blank-preview {
+			align-items: center;
+			display: flex;
+			justify-content: center;
+		}
+	}
+
+	@media screen and ( min-width: $breakpoint-tablet ) {
+		top: 111px + $wp-org-admin-bar-full;
+		left: calc( 30% + #{$preview-right-margin * 1.5 + $wp-org-sidebar-collapsed} );
+		body:not( .auto-fold ):not( .folded ) & {
+			left: calc( 30% + #{$preview-right-margin / 2 + $wp-org-sidebar-full} );
+		}
+	}
+	@media screen and ( min-width: $breakpoint-desktop ) {
+		left: calc( 30% + #{$preview-right-margin / 2 + $wp-org-sidebar-full} );
+		body.folded & {
+			left: calc( 30% + #{$preview-right-margin * 1.5 + $wp-org-sidebar-collapsed} );
+		}
+	}
+
+	body.is-fullscreen-mode & {
+		top: 111px;
+		@media screen and ( min-width: $breakpoint-tablet ) {
+			left: calc( 30% + #{$preview-right-margin * 2} ) !important;
+		}
+	}
+
+	.edit-post-visual-editor {
+		margin: 0;
+		padding: 0;
+	}
+
+	.editor-styles-wrapper {
+		.template-selector-preview__offset-correction {
+			position: relative;
+			top: $template-large-preview-title-height;
+		}
+
+		.editor-post-title {
+			transform-origin: top center;
+			width: 100%;
+			display: block;
+			position: absolute;
+			top: 0;
+		}
+
+		.editor-post-title,
+		.editor-post-title__block,
+		.editor-post-title__input {
+			padding-top: 0;
+			padding-bottom: 0;
+			margin-top: 0;
+			margin-bottom: 0;
+			.editor-post-title__input {
+				margin: 0;
+				padding: 0;
+				height: $template-large-preview-title-height;
+				line-height: $template-large-preview-title-height;
+				overflow: hidden;
+				resize: none;
+			}
+		}
+	}
+}
+
+.template-selector-preview__placeholder {
+	color: var( --color-text-subtle );
+	font-size: 15px;
+	font-weight: 400;
+}
+
+// Preview adjustments.
+// Tweak styles which are inside of the preview container.
+.block-editor-block-preview__container {
+	.editor-styles-wrapper {
+		.wp-block {
+			width: 100%;
+		}
+
+		// `core/cover`
+		.wp-block[data-type='core/cover'][data-align='full'] {
+			margin: 0;
+			.wp-block-cover {
+				padding: 0;
+			}
+		}
+
+		// `core/columns`
+		/* stylelint-disable selector-combinator-space-before */
+		.wp-block-columns
+			> .editor-inner-blocks
+			> .editor-block-list__layout
+			> [data-type='core/column']
+			> .editor-block-list__block-edit
+			> div
+			> .block-core-columns
+			> .editor-inner-blocks {
+			/* stylelint-enable */
+			margin-top: 0;
+			margin-bottom: 0;
+		}
+
+		.block-editor-block-list__block {
+			&[data-align='full'] {
+				margin: 0;
+			}
+
+			.block-editor-block-list__block-edit {
+				@media screen and ( min-width: 600px ) {
+					margin: 0;
+				}
+			}
+		}
+
+		// Fix upstream: https://github.com/WordPress/gutenberg/pull/17202.
+		.block-editor-block-list__layout,
+		.block-editor-block-list__block {
+			padding: inherit;
+		}
+	}
+}
+
+// Set full height to preview container to inherits styles defined for themes.
+.template-selector-preview .components-disabled,
+.template-selector-preview .edit-post-visual-editor,
+.template-selector-item__preview-wrap .components-disabled,
+.template-selector-item__preview-wrap .edit-post-visual-editor {
+	height: 100%;
+
+	.editor-styles-wrapper {
+		height: 100%;
+	}
+}
+
+.page-template-modal__loading {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate( -50%, -50% );
+	display: flex;
+	align-items: flex-end;
+
+	.components-spinner {
+		float: none;
+	}
+}
+
+// Sidebar modal opener goo.
+.sidebar-modal-opener {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+
+	.template-selector-item__label {
+		max-width: 300px;
+	}
+
+	.template-selector-item__template-title {
+		font-size: 1.2rem;
+	}
+}
+
+.sidebar-modal-opener__button {
+	margin-top: 20px;
+}
+
+.sidebar-modal-opener__warning-modal {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.sidebar-modal-opener__warning-text {
+	max-width: 300px;
+	font-size: 1rem;
+	line-height: 1.5rem;
+}
+
+.sidebar-modal-opener__warning-options {
+	display: flex;
+	justify-content: space-around;
+	margin-top: 20px;
+}

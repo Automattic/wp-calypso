@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -82,7 +81,7 @@ class TokenField extends PureComponent {
 
 	state = this.constructor.initialState;
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.disabled && this.state.isActive ) {
 			this.setState( {
 				isActive: false,

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -110,11 +108,8 @@ export const EditorMediaModalDetail = localize( EditorMediaModalDetailBase );
 // component state there to conditionally display the image/video editor.
 // (This is also the reason why we're `localize()`ing the named export.)
 // TODO: Fix this mess, rely on Redux state everywhere.
-export default connect(
-	null,
-	{
-		onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
-		onEditImageItem: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
-		onEditVideoItem: partial( setEditorMediaModalView, ModalViews.VIDEO_EDITOR ),
-	}
-)( EditorMediaModalDetail );
+export default connect( null, {
+	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
+	onEditImageItem: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
+	onEditVideoItem: partial( setEditorMediaModalView, ModalViews.VIDEO_EDITOR ),
+} )( EditorMediaModalDetail );

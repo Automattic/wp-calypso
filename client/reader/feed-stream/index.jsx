@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -64,7 +63,12 @@ class FeedStream extends React.Component {
 				showSiteNameOnCards={ false }
 				shouldCombineCards={ false }
 			>
-				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
+				<DocumentHead
+					title={ this.props.translate( '%s ‹ Reader', {
+						args: title,
+						comment: '%s is the section name. For example: "My Likes"',
+					} ) }
+				/>
 				<ReaderFeedHeader feed={ feed } site={ site } showBack={ this.props.showBack } />
 				{ ! feed && <QueryReaderFeed feedId={ this.props.feedId } /> }
 				{ siteId && <QueryReaderSite siteId={ siteId } /> }

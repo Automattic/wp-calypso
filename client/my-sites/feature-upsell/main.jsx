@@ -1,17 +1,11 @@
-/** @format */
-
-/**
- * External dependencies
- */
-
 /**
  * Internal dependencies
  */
-export PluginsUpsellComponent from './plugins-upsell';
-export StoreUpsellComponent from './store-upsell';
-export ThemesUpsellComponent from './themes-upsell';
-export WordAdsUpsellComponent from './ads-upsell';
-export FeaturesComponent from './features';
+export { default as PluginsUpsellComponent } from './plugins-upsell';
+export { default as StoreUpsellComponent } from './store-upsell';
+export { default as ThemesUpsellComponent } from './themes-upsell';
+export { default as WordAdsUpsellComponent } from './ads-upsell';
+export { default as FeaturesComponent } from './features';
 
 /**
  * Style dependencies

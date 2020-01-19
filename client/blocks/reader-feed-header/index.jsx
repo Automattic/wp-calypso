@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -11,9 +10,9 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import ReaderFollowButton from 'reader/follow-button';
-import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
+import { isAuthorNameBlocked } from 'reader/lib/author-name-blocklist';
 import HeaderBack from 'reader/header-back';
 import { getSiteDescription, getSiteName, getSiteUrl } from 'reader/get-helpers';
 import SiteIcon from 'blocks/site-icon';
@@ -23,6 +22,11 @@ import ReaderSiteNotificationSettings from 'blocks/reader-site-notification-sett
 import getUserSetting from 'state/selectors/get-user-setting';
 import isFollowing from 'state/selectors/is-following';
 import QueryUserSettings from 'components/data/query-user-settings';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class FeedHeader extends Component {
 	static propTypes = {
@@ -65,10 +69,11 @@ class FeedHeader extends Component {
 					<div className="reader-feed-header__follow">
 						{ followerCount && (
 							<span className="reader-feed-header__follow-count">
-								{' '}
+								{ ' ' }
 								{ translate( '%s follower', '%s followers', {
 									count: followerCount,
 									args: [ this.props.numberFormat( followerCount ) ],
+									comment: '%s is the number of followers. For example: "12,000,000"',
 								} ) }
 							</span>
 						) }
@@ -103,7 +108,7 @@ class FeedHeader extends Component {
 					</div>
 					<div className="reader-feed-header__details">
 						<span className="reader-feed-header__description">{ description }</span>
-						{ ownerDisplayName && ! isAuthorNameBlacklisted( ownerDisplayName ) && (
+						{ ownerDisplayName && ! isAuthorNameBlocked( ownerDisplayName ) && (
 							<span className="reader-feed-header__byline">
 								{ translate( 'by %(author)s', {
 									args: {

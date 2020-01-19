@@ -1,0 +1,1122 @@
+.foldable-card.sharing-service {
+	.sharing-service__logo {
+		float: left;
+		margin-right: 8px;
+	}
+
+	&.facebook {
+		h2,
+		.sharing-service__logo {
+			color: var( --color-facebook );
+		}
+	}
+
+	&.twitter {
+		h2,
+		.sharing-service__logo {
+			color: var( --color-twitter );
+		}
+	}
+
+	&.google_plus {
+		h2,
+		.sharing-service__logo {
+			color: var( --color-google-plus );
+		}
+	}
+
+	&.linkedin {
+		h2,
+		.sharing-service__logo {
+			color: var( --color-linkedin );
+		}
+	}
+
+	&.tumblr {
+		h2,
+		.sharing-service__logo {
+			color: var( --color-tumblr );
+		}
+	}
+
+	&.eventbrite {
+		h2,
+		.sharing-service__logo {
+			color: var( --color-eventbrite );
+		}
+	}
+
+	&.instagram {
+		h2,
+		.sharing-service__logo {
+			color: var( --color-instagram );
+		}
+	}
+
+	.sharing-service__name {
+		float: left;
+	}
+
+	@include breakpoint( '<480px' ) {
+		.sharing-service__name {
+			margin-top: 12px;
+		}
+	}
+
+	.sharing-service__notice {
+		margin-left: 56px;
+		width: 100%;
+
+		@include breakpoint( '<800px' ) {
+			margin-left: 0;
+		}
+
+		@include breakpoint( '<660px' ) {
+			margin-left: 6px;
+		}
+	}
+}
+
+.buttons__sharing-settings,
+.connections__sharing-settings {
+	// labels, checkboxes, radio
+
+	label label {
+		margin: 0;
+	}
+
+	select {
+		font-size: 18px;
+	}
+
+	input[type='number'] {
+		width: 50px;
+		height: 20px;
+		padding: 0 0 1px 2px;
+	}
+
+	h4 {
+		font-size: 18px;
+		margin-bottom: 0.5em;
+	}
+
+	@include breakpoint( '<480px' ) {
+		padding: 0 0.25em;
+	}
+}
+
+.connections__sharing-settings.connections__sharing-connections {
+	@include breakpoint( '<480px' ) {
+		padding: 16px 0;
+	}
+
+	.sharing-service-example {
+		display: inline-block;
+		vertical-align: top;
+		width: 48%;
+
+		@include breakpoint( '<660px' ) {
+			display: block;
+			width: 100%;
+			margin: 20px 0;
+			padding: 0;
+		}
+
+		&:first-child {
+			padding-right: 4%;
+
+			@include breakpoint( '<660px' ) {
+				border-bottom: 1px solid var( --color-neutral-0 );
+				padding-bottom: 10px;
+			}
+
+			@include breakpoint( '<480px' ) {
+				margin-bottom: 16px;
+				padding: 0 0 16px;
+			}
+		}
+
+		&.is-single {
+			width: 100%;
+		}
+	}
+
+	.sharing-service-example-screenshot {
+		border: 1px solid var( --color-neutral-0 );
+
+		img {
+			vertical-align: top;
+		}
+	}
+
+	.sharing-service-example-screenshot-label {
+		margin-top: 10px;
+	}
+
+	.sharing-service-tip {
+		margin-top: 16px;
+		font-size: 14px;
+		color: var( --color-neutral-40 );
+
+		.gridicons-info {
+			margin-right: 3px;
+			vertical-align: text-bottom;
+		}
+	}
+
+	.sharing-service-tip:empty {
+		display: none;
+	}
+
+	.sharing-service {
+		position: relative;
+		overflow: hidden;
+		background: var( --color-surface );
+
+		&.not-connected .sharing-service-examples {
+			display: block;
+		}
+
+		&.not-connected .sharing-service-accounts-detail,
+		&.not-connected .sharing-service-tip {
+			display: none;
+		}
+	}
+
+	.sharing-service-examples {
+		display: none;
+	}
+
+	.sharing-service-accounts-detail {
+		h2 {
+			font-size: 1.2em;
+		}
+
+		.new-account {
+			padding-bottom: 0.48em;
+			background: var( --color-surface );
+			// stylelint-disable-next-line selector-max-id
+			#content & {
+				font-size: 0.9em;
+			}
+		}
+	}
+
+	.sharing-service-connected-accounts {
+		margin-left: 0;
+		margin-bottom: 8px;
+	}
+}
+
+.sharing-service__content {
+	position: relative;
+
+	h3 {
+		font-size: 18px;
+		margin-bottom: 10px;
+	}
+
+	&.is-placeholder {
+		height: 180px;
+	}
+
+	&.is-placeholder::before {
+		content: '';
+		position: absolute;
+		top: 16px;
+		right: 16px;
+		bottom: 16px;
+		left: 16px;
+		background-color: var( --color-neutral-10 );
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}
+}
+
+.sharing-service.is-open .sharing-service__content {
+	display: block;
+}
+
+.sharing-service__overview {
+	padding: 16px;
+	cursor: pointer;
+	user-select: none;
+}
+
+.sharing-service__overview:hover .sharing-service__content-toggle {
+	color: var( --color-accent );
+}
+
+.sharing-service__icon {
+	float: left;
+	height: 42px;
+	padding-top: 10px;
+	margin: 0 15px 0 0;
+	text-align: center;
+	width: 50px;
+	border-radius: 4px;
+
+	@include breakpoint( '<660px' ) {
+		height: 21px;
+		padding-top: 5px;
+		margin: 2px 8px 0 32px;
+		width: 25px;
+	}
+}
+
+@mixin sharing-service( $name, $color ) {
+	.sharing-service.#{ $name } .sharing-service__icon {
+		background: $color;
+	}
+
+	.sharing-service.#{ $name } .sharing-service__name {
+		color: $color;
+	}
+
+	.sharing-connection__account-avatar.is-fallback.#{ $name } {
+		background-color: $color;
+	}
+}
+
+@include sharing-service( 'facebook', var( --color-facebook ));
+@include sharing-service( 'twitter', var( --color-twitter ));
+@include sharing-service( 'google_plus', var( --color-google-plus ));
+@include sharing-service( 'tumblr', var( --color-tumblr ));
+@include sharing-service( 'linkedin', var( --color-linkedin ));
+@include sharing-service( 'instagram', var( --color-instagram ));
+@include sharing-service( 'eventbrite', var( --color-eventbrite ));
+
+.sharing-service__name {
+	clear: none;
+}
+
+.sharing-service__description {
+	margin: 0;
+	color: var( --color-neutral-50 );
+	font-size: 14px;
+
+	@include breakpoint( '<480px' ) {
+		display: none;
+	}
+}
+
+.sharing-service.connected .sharing-service__description {
+	font-style: italic;
+}
+
+.sharing-service.reconnect .sharing-service__description,
+.sharing-service.must-disconnect .sharing-service__description {
+	font-weight: bold;
+}
+
+.sharing-service__content-toggle {
+	position: absolute;
+	right: 16px;
+	top: 30px;
+	font-size: 22px;
+	color: #aeb8be;
+
+	@include breakpoint( '<480px' ) {
+		left: 14px;
+		top: 20px;
+	}
+}
+
+.sharing-service.is-placeholder .gridicons-share,
+.sharing-service.is-placeholder .sharing-service__name,
+.sharing-service.is-placeholder .sharing-service__description {
+	background-color: var( --color-neutral-0 );
+	color: var( --color-neutral-0 );
+	animation: loading-fade 1.6s ease-in-out infinite;
+}
+
+.sharing-service.is-placeholder .sharing-service__name {
+	margin-top: 4px;
+	margin-bottom: 4px;
+	height: 22px;
+	width: 20%;
+	position: absolute;
+	left: 80px;
+
+	@include breakpoint( '<660px' ) {
+		width: 30%;
+	}
+}
+
+.sharing-service.is-placeholder .sharing-service__description {
+	margin-top: 8px;
+	margin-bottom: 2px;
+	height: 16px;
+	width: 150%;
+	position: absolute;
+	left: 0;
+	top: 16px;
+}
+
+.sharing-connection {
+	position: relative;
+	background: transparent;
+	box-shadow: none;
+	list-style-type: none;
+	margin-bottom: 0;
+	padding: 8px 0;
+
+	&.disabled {
+		opacity: 0.4;
+	}
+}
+
+.sharing-connection__account-avatar {
+	position: absolute;
+	left: 5px;
+	top: 8px;
+	height: 36px;
+	width: 36px;
+	border: 1px solid var( --color-neutral-0 );
+	text-align: center;
+}
+
+.sharing-connection__account-status {
+	padding: 10px 90px 10px 56px;
+
+	&.is-shareable {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+
+	@include breakpoint( '<480px' ) {
+		padding-right: 0;
+	}
+}
+
+.sharing-service.reconnect .sharing-connection__account-status {
+	padding-right: 200px;
+
+	@include breakpoint( '<480px' ) {
+		padding-right: 0;
+	}
+}
+
+.sharing-connection__account-name {
+	font-weight: 600;
+}
+
+.sharing-connection__keyring-user {
+	display: inline-block;
+	margin-left: 8px;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	color: var( --color-neutral-light );
+}
+
+.sharing-connection__account-sitewide-connection {
+	display: block;
+}
+
+.sharing-connection__account-sitewide-connection input[type='checkbox'] {
+	margin-top: 3px;
+}
+
+.sharing-connection.disabled .sharing-connection__account-action {
+	cursor: default;
+	cursor: progress;
+}
+
+.sharing-connection__account-actions {
+	position: absolute;
+	right: -10px;
+	top: 50%;
+	margin-top: -16px;
+
+	@include breakpoint( '<480px' ) {
+		position: static;
+		margin-top: 4px;
+		text-align: right;
+	}
+}
+
+.sharing-connection__account-action {
+	display: inline-block;
+	padding: 8px 10px;
+	cursor: pointer;
+	line-height: 16px;
+}
+
+.sharing-connection__account-action.reconnect,
+.sharing-connection__account-action.must-disconnect {
+	color: var( --color-warning );
+
+	.gridicon {
+		margin-right: 4px;
+		position: relative;
+		top: 3px;
+	}
+}
+
+.sharing-connection.disabled .sharing-connection__account-action {
+	cursor: default;
+	cursor: progress;
+}
+
+// Sharing Buttons Section
+
+.buttons__sharing-settings.buttons__sharing-buttons {
+	.sharing-button-styles {
+		box-shadow: 0 -2px 0 var( --color-neutral-0 ) inset;
+		padding-bottom: 0.5em;
+	}
+
+	// Preview (sourced from Sharing plugin)
+
+	.official-preview {
+		vertical-align: top;
+	}
+
+	.add-new-service,
+	.sharing-buttons-add,
+	.sharing-buttons-add-save,
+	.sharing-buttons-add-cancel {
+		cursor: pointer;
+	}
+
+	.sharing-buttons-add {
+		float: right;
+
+		&.inactive {
+			opacity: 0.3;
+		}
+	}
+}
+
+.sharing-buttons__submit {
+	float: right;
+}
+
+.sharing-buttons-tray__buttons {
+	@include clear-fix;
+	@include breakpoint( '<480px' ) {
+		margin-right: -16px;
+	}
+}
+
+.sharing-buttons-preview-buttons__more {
+	position: absolute;
+	z-index: z-index( 'root', '.sharing-buttons-preview-buttons__more' );
+	max-width: 400px;
+	margin-top: -4px;
+	padding-top: 12px;
+	transform: scaleY( 0 );
+	transform-origin: 50% 6px;
+	transition: transform 0.2s ease-out;
+
+	&.is-visible {
+		transition-timing-function: ease-in;
+		transform: scaleY( 1 );
+	}
+}
+
+.sharing-buttons-preview-buttons__more-inner {
+	min-width: 68px;
+	min-height: 34px;
+	padding: 10px 0 2px 8px;
+	border: 1px solid #ccc;
+	border-radius: 2px;
+	background-color: var( --color-surface );
+	box-shadow: 0 5px 20px rgba( 0, 0, 0, 0.2 );
+}
+
+.sharing-buttons-preview-buttons__more-inner .sharing-buttons-preview-button,
+.sharing-buttons-preview-buttons__more-inner .sharing-buttons-preview-button.style-icon {
+	margin-top: 0;
+	margin-bottom: 8px;
+}
+
+.sharing-buttons-preview-buttons__more::before {
+	content: '';
+	position: absolute;
+	top: 8px;
+	left: 20px #{'/*rtl:ignore*/'};
+	display: block;
+	width: 8px;
+	height: 8px;
+	transform: rotate( 45deg );
+	background-color: var( --color-surface );
+	border-top: 1px solid #ccc;
+	border-left: 1px solid #ccc #{'/*rtl:ignore*/'};
+}
+
+.sharing-buttons__panel {
+	@include clear-fix;
+	position: relative;
+	margin-bottom: 20px;
+	padding: 20px 24px;
+	background: var( --color-surface );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+}
+
+.sharing-buttons__fieldset-group {
+	@include clear-fix;
+	margin: 0 -3%;
+
+	@include breakpoint( '<660px' ) {
+		margin: 0;
+	}
+}
+
+.sharing-buttons__fieldset {
+	float: left;
+	display: block;
+	width: 50%;
+	padding: 0 3%;
+	margin-bottom: 20px;
+
+	@include breakpoint( '<660px' ) {
+		width: 100%;
+		padding: 0;
+	}
+}
+
+.sharing-buttons__fieldset input[type='radio'],
+.sharing-buttons__fieldset input[type='checkbox'] {
+	margin-right: 8px;
+}
+
+.sharing-buttons__fieldset input[type='radio'] + span,
+.sharing-buttons__fieldset input[type='checkbox'] + span {
+	margin-left: 0;
+}
+
+.sharing-buttons__fieldset label {
+	display: flex;
+	cursor: pointer;
+}
+
+.sharing-buttons__fieldset .support-info {
+	float: none;
+	margin-left: 6px;
+	margin-top: 2px;
+}
+
+.sharing-buttons__fieldset-heading {
+	margin-bottom: 5px;
+	font-weight: 600;
+}
+
+.sharing-buttons__fieldset-detail {
+	display: block;
+	margin: 5px 0;
+	font-size: 13px;
+	font-style: italic;
+	color: var( --color-neutral-light );
+}
+
+.sharing-buttons-preview {
+	position: relative;
+	margin: 20px 0;
+}
+
+.sharing-buttons-preview__reblog-like {
+	margin: 14px 0;
+}
+
+.sharing-buttons-preview__reblog-like .sharing-buttons-preview-button {
+	margin: 0 1em 3px 0;
+}
+
+.sharing-buttons-preview__reblog,
+.sharing-buttons-preview__like {
+	padding: 1px 8px 0 5px;
+	line-height: 25px;
+
+	&::before {
+		display: none;
+	}
+
+	&:hover {
+		color: #777;
+	}
+}
+
+.sharing-buttons-preview__reblog .gridicon,
+.sharing-buttons-preview__like .gridicon {
+	vertical-align: top;
+	margin: 3px 4px 0 0;
+	fill: var( --color-accent );
+}
+
+.sharing-buttons-preview__fake-user {
+	border: 1px solid var( --color-neutral-10 );
+	display: inline-block;
+	height: 24px;
+	width: 24px;
+	line-height: 1;
+	vertical-align: top;
+}
+
+.sharing-buttons-preview__fake-like {
+	color: var( --color-neutral-40 );
+	font-size: 11px;
+	font-weight: 300;
+}
+
+.sharing-buttons-preview .sortable-list__navigation {
+	margin-right: 16px;
+}
+
+.sharing-buttons-preview-action {
+	position: relative;
+	overflow: visible;
+	display: none;
+	align-items: center;
+	padding: 8px;
+	cursor: pointer;
+	border: 1px solid var( --color-neutral-10 );
+	border-radius: 4px;
+	box-shadow: 0 0 8px rgba( var( --color-neutral-70-rgb ), 0.04 );
+	background-color: var( --color-surface );
+	color: var( --color-primary );
+
+	@include breakpoint( '<480px' ) {
+		padding-right: 0;
+	}
+
+	&:hover {
+		color: var( --color-accent );
+	}
+
+	&.is-active {
+		display: inline-flex;
+	}
+
+	&:disabled {
+		cursor: default;
+		border-color: var( --color-neutral-0 );
+		color: var( --color-neutral-0 );
+	}
+
+	&.is-top::after,
+	&.is-bottom::after {
+		content: '';
+		position: absolute;
+		display: block;
+		width: 12px;
+		height: 12px;
+		border: 1px solid var( --color-neutral-10 );
+		background-color: var( --color-surface );
+		transform: rotate( 45deg );
+	}
+
+	&:disabled.is-top::after,
+	&:disabled.is-bottom::after {
+		border-color: var( --color-neutral-0 );
+	}
+
+	&.is-top {
+		margin-bottom: 14px;
+	}
+
+	&.is-bottom {
+		margin-top: 14px;
+		@include breakpoint( '<480px' ) {
+			margin: 14px 1% 0;
+		}
+	}
+
+	&.is-top::after {
+		bottom: -7px;
+		border-top-width: 0;
+		border-left-width: 0;
+	}
+
+	&.is-bottom::after {
+		top: -7px;
+		border-right-width: 0;
+		border-bottom-width: 0;
+	}
+
+	&.is-left::after {
+		left: 30px;
+	}
+
+	&.is-right::after {
+		right: 15px;
+	}
+}
+
+.sharing-buttons-preview-action .gridicon {
+	margin-right: 5px;
+}
+
+.sharing-buttons-preview__button-tray-actions {
+	@include breakpoint( '<480px' ) {
+		margin: 0 -6%;
+	}
+}
+
+.sharing-buttons-preview-action + .sharing-buttons-preview-action {
+	margin-left: 8px;
+
+	@include breakpoint( '<480px' ) {
+		margin-left: 1%;
+	}
+}
+
+.sharing-buttons-preview-action:last-child {
+	@include breakpoint( '<480px' ) {
+		width: 46%;
+	}
+}
+
+.sharing-buttons-preview-action {
+	@include breakpoint( '<480px' ) {
+		width: 50%;
+	}
+
+	&::before {
+		@include breakpoint( '<480px' ) {
+			float: left;
+			margin: 6px 6px 0 0;
+		}
+	}
+}
+
+.sharing-buttons-preview__display {
+	padding: 10px 20px;
+	border: 1px solid var( --color-neutral-0 );
+	box-shadow: 0 3px 6px -3px rgba( 0, 0, 0, 0.05 );
+}
+
+.sharing-buttons-preview__heading {
+	margin: 0;
+	padding: 8px 0;
+	background-color: var( --color-neutral-0 );
+	border: 1px solid var( --color-neutral-0 );
+	border-bottom: 0;
+	font-size: 11px;
+	line-height: 1;
+	font-weight: bold;
+	text-transform: uppercase;
+	text-align: center;
+	color: var( --color-neutral-light );
+}
+
+.sharing-buttons-preview.is-placeholder .sharing-buttons-preview__label,
+.sharing-buttons-preview.is-placeholder .sharing-buttons-preview__buttons {
+	display: block;
+	background-color: var( --color-neutral-0 );
+	animation: loading-fade 1.6s ease-in-out infinite;
+}
+
+.sharing-buttons-preview__label {
+	display: block;
+	margin: 8px 0;
+	font-size: 11px;
+	font-weight: bold;
+	line-height: 1.2;
+	text-transform: uppercase;
+	color: #767676;
+}
+
+.sharing-buttons-preview.is-placeholder .sharing-buttons-preview__label {
+	height: 13px;
+	width: 80px;
+}
+
+.sharing-buttons-preview__buttons {
+	margin-top: 0.25em;
+}
+
+.sharing-buttons-preview.is-placeholder .sharing-buttons-preview__buttons {
+	height: 26px;
+	width: 75%;
+	margin-bottom: 16px;
+}
+
+.sharing-buttons-preview-button {
+	display: inline-block;
+	margin: 8px 8px 0 0;
+	cursor: default;
+	font-size: 12px;
+	border-radius: 3px;
+	color: #777;
+	background: #f8f8f8;
+	border: 1px solid #ccc;
+	box-shadow: 0 1px 0 rgba( 0, 0, 0, 0.08 );
+	line-height: 23px;
+	padding: 1px 8px 0 5px;
+
+	&.style-icon {
+		border-radius: 50%;
+		border: 0;
+		box-shadow: none;
+		padding: 7px;
+		position: relative;
+		top: -2px;
+		line-height: 1;
+		width: auto;
+		height: auto;
+		margin-bottom: 0;
+	}
+
+	&.style-icon.is-custom {
+		padding: 8px;
+		top: 2px;
+	}
+}
+
+.sharing-buttons-preview__display .sharing-buttons-preview-button {
+	display: none;
+
+	&.is-enabled {
+		display: inline-block;
+	}
+}
+
+.style-text .social-logo,
+.style-text .sharing-buttons-preview-button__custom-icon,
+.style-icon .sharing-buttons-preview-button__service {
+	display: none;
+}
+
+.sharing-buttons-preview-button__service {
+	line-height: 23px;
+	margin-left: 3px;
+}
+
+.sharing-buttons-preview-button.style-icon .sharing-buttons-preview-button__service {
+	line-height: 1;
+}
+
+.sharing-buttons-preview-button .social-logo {
+	vertical-align: top;
+	position: relative;
+	top: 2px;
+	text-align: center;
+}
+
+.sharing-buttons-preview-button.style-icon .social-logo {
+	top: 0;
+	color: var( --color-text-inverted );
+}
+
+.sharing-buttons-preview-button.style-icon.share-email .social-logo,
+.sharing-buttons-preview-button.style-icon.share-print .social-logo {
+	color: #777;
+}
+
+.sharing-buttons-preview-button__custom-icon {
+	display: inline-block;
+	vertical-align: text-bottom;
+	width: 16px;
+	height: 16px;
+	background-position: left center;
+	background-repeat: no-repeat;
+	background-size: 100%;
+}
+
+@mixin sharing-button-service( $name, $color ) {
+	.sharing-buttons-preview-button.style-icon.share-#{ $name } {
+		background: $color;
+
+		&:hover {
+			background: $color;
+		}
+	}
+}
+
+@include sharing-button-service( 'facebook', var( --color-facebook ));
+@include sharing-button-service( 'twitter', var( --color-twitter ));
+@include sharing-button-service( 'press-this', var( --color-wordpress-com ));
+@include sharing-button-service( 'google-plus-1', var( --color-google-plus ));
+@include sharing-button-service( 'instagram', var( --color-instagram ));
+@include sharing-button-service( 'eventbrite', var( --color-eventbrite ));
+@include sharing-button-service( 'linkedin', var( --color-linkedin ));
+@include sharing-button-service( 'stumbleupon', var( --color-stumbleupon ));
+@include sharing-button-service( 'tumblr', var( --color-tumblr ));
+@include sharing-button-service( 'reddit', var( --color-reddit ));
+@include sharing-button-service( 'pinterest', var( --color-pinterest ));
+@include sharing-button-service( 'pocket', var( --color-pocket ));
+@include sharing-button-service( 'email', var( --color-email ));
+@include sharing-button-service( 'print', var( --color-print ));
+@include sharing-button-service( 'skype', var( --color-skype ));
+@include sharing-button-service( 'telegram', var( --color-telegram ));
+@include sharing-button-service( 'jetpack-whatsapp', var( --color-whatsapp ));
+
+.sharing-buttons-preview__panel {
+	position: relative;
+	display: none;
+	background: var( --color-surface );
+	border: 1px solid var( --color-neutral-10 );
+	border-radius: 4px;
+	box-shadow: 0 0 8px rgba( var( --color-neutral-70-rgb ), 0.04 );
+
+	&::before {
+		content: '';
+		position: absolute;
+		border: 1px solid var( --color-neutral-10 );
+		border-right-width: 0 #{'/*rtl:ignore*/'};
+		border-bottom-width: 0;
+		background: var( --color-surface );
+		display: block;
+		width: 12px;
+		height: 12px;
+		transform: rotate( 45deg );
+	}
+
+	&.is-top {
+		margin: 0 0 14px;
+	}
+
+	&.is-top::before {
+		bottom: -7px;
+		left: 30px;
+		border-width: 0 1px 1px 0 #{'/*rtl:ignore*/'};
+	}
+
+	&.is-bottom {
+		margin: 14px 0 0;
+
+		.sharing-buttons-preview-button {
+			border-width: 1px 1px 2px;
+			font-weight: 500;
+			box-shadow: none;
+			box-sizing: border-box;
+			line-height: 1;
+			border-radius: 4px;
+			padding: 7px;
+			float: left;
+			color: var( --color-neutral-5 );
+			background-color: var( --color-surface );
+			border-color: var( --color-neutral-5 );
+			&:hover {
+				border-color: var( --color-neutral-10 );
+				color: var( --color-neutral-10 );
+			}
+			&:active {
+				border-width: 2px 1px 1px;
+			}
+
+			&.is-enabled {
+				color: var( --color-text-subtle );
+				background-color: var( --color-surface );
+				border-color: var( --color-neutral-10 );
+				&:hover {
+					border-color: var( --color-neutral-20 );
+					color: var( --color-neutral-70 );
+				}
+			}
+
+			.sharing-buttons-preview-button__service {
+				line-height: inherit;
+				margin: 0;
+			}
+		}
+
+		@include breakpoint( '<480px' ) {
+			margin: 15px -8px 0;
+		}
+	}
+
+	&.is-bottom::before {
+		top: -7px;
+		left: 30px;
+	}
+
+	&.is-active {
+		display: block;
+	}
+
+	&.buttons-hidden::before {
+		left: 208px;
+	}
+}
+
+.sharing-buttons-preview__panel-content {
+	padding: 16px;
+}
+
+.sharing-buttons-preview__panel-heading {
+	font-size: 20px;
+	font-weight: normal;
+	color: var( --color-neutral-70 );
+}
+
+.sharing-buttons-preview__panel-instructions,
+.sharing-buttons-preview__panel-notice {
+	display: block;
+	color: var( --color-neutral-light );
+	margin: 8px 0;
+}
+
+.sharing-buttons-preview__panel-instruction-text {
+	.touch &.is-notouch-context,
+	&.is-touch-reorder-context,
+	&.is-notouch-reorder-context,
+	&.is-touch-context {
+		display: none;
+	}
+
+	.touch &.is-touch-context {
+		display: inline;
+	}
+}
+
+.sharing-buttons-preview__panel.is-reordering .sharing-buttons-preview__panel-instruction-text {
+	&.is-notouch-reorder-context,
+	.touch &.is-touch-reorder-context {
+		display: inline;
+	}
+
+	&.is-notouch-context,
+	&.is-touch-reorder-context,
+	.touch &.is-touch-context,
+	.touch &.is-notouch-reorder-context {
+		display: none;
+	}
+}
+
+.sharing-buttons-preview__panel-content .sharing-buttons-preview-button {
+	margin-top: 8px;
+	cursor: pointer;
+	@include breakpoint( '<480px' ) {
+		margin: 18px 18px 0 0;
+	}
+}
+
+.sharing-buttons-preview__panel.is-reordering
+	.sortable-list__item.is-draggable.is-active
+	.sharing-buttons-preview-button {
+	margin: 0;
+}
+
+.sharing-buttons-preview__panel-actions {
+	padding: 10px 16px;
+	text-align: right;
+	border-top: 1px solid var( --color-neutral-0 );
+}
+
+.sharing-buttons-preview__panel-action {
+	margin-left: 10px;
+
+	&.is-left {
+		float: left;
+		margin-left: 0;
+		margin-right: 10px;
+	}
+}
+
+.sharing-buttons-label-editor__input {
+	max-width: 300px;
+}
+
+.connections__sharing-connections__mailchimp-gutenberg_explanation {
+	margin-top: 1.5em;
+}
+
+.connections__signup {
+	margin-right: 8px;
+}
+
+.sharing-buttons__banner {
+	margin-top: -20px;
+}

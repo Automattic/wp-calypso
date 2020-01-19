@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`JetpackSignup should render 1`] = `
-<Connect(Localized(JetpackConnectMainWrapper))>
+<Connect(Localized(JetpackConnectMainWrapper))
+  isWoo={false}
+>
   <div
     className="jetpack-connect__authorize-form"
   >
@@ -26,6 +28,7 @@ exports[`JetpackSignup should render 1`] = `
           "userEmail": "email@an.example.site",
         }
       }
+      isWoo={false}
     />
     <Connect(Localized(SignupForm))
       disabled={false}
@@ -37,7 +40,7 @@ exports[`JetpackSignup should render 1`] = `
           >
             Already have an account? Sign in
           </LoggedOutFormLinkItem>
-          <Connect(Localized(JetpackConnectHelpButton)) />
+          <JetpackConnectHelpButton />
         </LoggedOutFormLinks>
       }
       handleSocialResponse={[Function]}
@@ -53,7 +56,9 @@ exports[`JetpackSignup should render 1`] = `
 `;
 
 exports[`JetpackSignup should render with locale suggestions 1`] = `
-<Connect(Localized(JetpackConnectMainWrapper))>
+<Connect(Localized(JetpackConnectMainWrapper))
+  isWoo={false}
+>
   <div
     className="jetpack-connect__authorize-form"
   >
@@ -82,6 +87,7 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
           "userEmail": "email@an.example.site",
         }
       }
+      isWoo={false}
     />
     <Connect(Localized(SignupForm))
       disabled={false}
@@ -93,7 +99,7 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
           >
             Already have an account? Sign in
           </LoggedOutFormLinkItem>
-          <Connect(Localized(JetpackConnectHelpButton)) />
+          <JetpackConnectHelpButton />
         </LoggedOutFormLinks>
       }
       handleSocialResponse={[Function]}

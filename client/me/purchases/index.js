@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,20 +12,16 @@ import * as pendingController from 'me/pending-payments/controller';
 import * as membershipsController from 'me/memberships/controller';
 import * as controller from './controller';
 import * as paths from './paths';
-import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'controller';
 import { sidebar } from 'me/controller';
 import { siteSelection } from 'my-sites/controller';
+import reducer from 'state/concierge/reducer';
 
-export default function( router ) {
+export default async ( router, addReducer ) => {
+	await addReducer( [ 'concierge' ], reducer );
+
 	if ( config.isEnabled( 'manage/payment-methods' ) ) {
-		router(
-			paths.addCreditCard,
-			redirectLoggedOut,
-			sidebar,
-			controller.addCreditCard,
-			makeLayout,
-			clientRender
-		);
+		router( paths.addCreditCard, sidebar, controller.addCreditCard, makeLayout, clientRender );
 
 		// redirect legacy urls
 		router( '/payment-methods/add-credit-card', () => page.redirect( paths.addCreditCard ) );
@@ -35,9 +29,16 @@ export default function( router ) {
 
 	router(
 		paths.billingHistory,
-		redirectLoggedOut,
 		sidebar,
 		billingController.billingHistory,
+		makeLayout,
+		clientRender
+	);
+
+	router(
+		paths.upcomingCharges,
+		sidebar,
+		billingController.upcomingCharges,
 		makeLayout,
 		clientRender
 	);
@@ -45,7 +46,6 @@ export default function( router ) {
 	if ( config.isEnabled( 'async-payments' ) ) {
 		router(
 			paths.purchasesRoot + '/pending',
-			redirectLoggedOut,
 			sidebar,
 			pendingController.pendingPayments,
 			makeLayout,
@@ -53,42 +53,40 @@ export default function( router ) {
 		);
 	}
 
-	if ( config.isEnabled( 'memberships' ) ) {
-		router(
-			paths.purchasesRoot + '/memberships',
-			redirectLoggedOut,
-			sidebar,
-			membershipsController.myMemberships,
-			makeLayout,
-			clientRender
-		);
-		router(
-			paths.purchasesRoot + '/memberships/:subscriptionId',
-			redirectLoggedOut,
-			sidebar,
-			membershipsController.subscription,
-			makeLayout,
-			clientRender
-		);
-	}
+	router(
+		paths.purchasesRoot + '/other',
+		sidebar,
+		membershipsController.myMemberships,
+		makeLayout,
+		clientRender
+	);
+	router(
+		paths.purchasesRoot + '/other/:subscriptionId',
+		sidebar,
+		membershipsController.subscription,
+		makeLayout,
+		clientRender
+	);
+	// Legacy:
+	router(
+		paths.purchasesRoot + '/memberships/:subscriptionId',
+		( { params: { subscriptionId } } ) => {
+			page.redirect( paths.purchasesRoot + '/other/' + subscriptionId );
+		}
+	);
+	router( paths.purchasesRoot + '/memberships', () =>
+		page.redirect( paths.purchasesRoot + '/other' )
+	);
 
 	router(
 		paths.billingHistoryReceipt( ':receiptId' ),
-		redirectLoggedOut,
 		sidebar,
 		billingController.transaction,
 		makeLayout,
 		clientRender
 	);
 
-	router(
-		paths.purchasesRoot,
-		redirectLoggedOut,
-		sidebar,
-		controller.list,
-		makeLayout,
-		clientRender
-	);
+	router( paths.purchasesRoot, sidebar, controller.list, makeLayout, clientRender );
 
 	/**
 	 * The siteSelection middleware has been removed from this route.
@@ -96,7 +94,6 @@ export default function( router ) {
 	 */
 	router(
 		paths.managePurchase( ':site', ':purchaseId' ),
-		redirectLoggedOut,
 		sidebar,
 		controller.managePurchase,
 		makeLayout,
@@ -105,7 +102,6 @@ export default function( router ) {
 
 	router(
 		paths.cancelPurchase( ':site', ':purchaseId' ),
-		redirectLoggedOut,
 		sidebar,
 		siteSelection,
 		controller.cancelPurchase,
@@ -114,18 +110,7 @@ export default function( router ) {
 	);
 
 	router(
-		paths.cancelPrivacyProtection( ':site', ':purchaseId' ),
-		redirectLoggedOut,
-		sidebar,
-		siteSelection,
-		controller.cancelPrivacyProtection,
-		makeLayout,
-		clientRender
-	);
-
-	router(
 		paths.confirmCancelDomain( ':site', ':purchaseId' ),
-		redirectLoggedOut,
 		sidebar,
 		siteSelection,
 		controller.confirmCancelDomain,
@@ -135,7 +120,6 @@ export default function( router ) {
 
 	router(
 		paths.addCardDetails( ':site', ':purchaseId' ),
-		redirectLoggedOut,
 		sidebar,
 		siteSelection,
 		controller.addCardDetails,
@@ -145,7 +129,6 @@ export default function( router ) {
 
 	router(
 		paths.editCardDetails( ':site', ':purchaseId', ':cardId' ),
-		redirectLoggedOut,
 		sidebar,
 		siteSelection,
 		controller.editCardDetails,
@@ -160,11 +143,6 @@ export default function( router ) {
 	);
 	router( '/purchases/:siteName/:purchaseId/cancel', ( { params: { siteName, purchaseId } } ) =>
 		page.redirect( paths.cancelPurchase( siteName, purchaseId ) )
-	);
-	router(
-		'/purchases/:siteName/:purchaseId/cancel-private-registration',
-		( { params: { siteName, purchaseId } } ) =>
-			page.redirect( paths.cancelPrivacyProtection( siteName, purchaseId ) )
 	);
 	router(
 		'/purchases/:siteName/:purchaseId/confirm-cancel-domain',
@@ -185,4 +163,4 @@ export default function( router ) {
 	router( '/me/billing/:receiptId', ( { params: { receiptId } } ) =>
 		page.redirect( paths.billingHistoryReceipt( receiptId ) )
 	);
-}
+};

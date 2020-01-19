@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,54 +12,52 @@ import page from 'page';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import GoogleAppsDialog from 'components/upgrades/gsuite/gsuite-dialog';
+import { GSUITE_BASIC_SLUG } from 'lib/gsuite/constants';
+import GSuiteUpsellCard from 'components/upgrades/gsuite/gsuite-upsell-card';
 import Main from 'components/main';
 import QuerySites from 'components/data/query-sites';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { getReceiptById } from 'state/receipts/selectors';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
-import { addItem, removeItem } from 'lib/upgrades/actions';
-import { cartItems } from 'lib/cart-values';
+import { addItems, removeItem } from 'lib/cart/actions';
+import { getAllCartItems } from 'lib/cart-values/cart-items';
 import { isDotComPlan } from 'lib/products-values';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
-export class GsuiteNudge extends React.Component {
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+export class GSuiteNudge extends React.Component {
 	static propTypes = {
 		domain: PropTypes.string.isRequired,
 		receiptId: PropTypes.number.isRequired,
 		selectedSiteId: PropTypes.number.isRequired,
 	};
 
-	handleClickSkip = () => {
-		const { siteSlug, receiptId, isEligibleForChecklist } = this.props;
-
-		page(
-			isEligibleForChecklist
-				? `/view/${ siteSlug }`
-				: `/checkout/thank-you/${ siteSlug }/${ receiptId }`
-		);
+	handleSkipClick = () => {
+		this.props.handleCheckoutCompleteRedirect();
 	};
 
-	handleAddGoogleApps = googleAppsCartItem => {
+	handleAddEmailClick = cartItems => {
 		const { siteSlug, receiptId } = this.props;
-
-		googleAppsCartItem.extra = {
-			...googleAppsCartItem.extra,
-			receipt_for_domain: receiptId,
-		};
-
 		this.removePlanFromCart();
 
-		addItem( googleAppsCartItem );
+		addItems(
+			// add `receipt_for_domain` to cartItem extras
+			cartItems.map( item => ( {
+				...item,
+				extra: { ...item.extra, receipt_for_domain: receiptId },
+			} ) )
+		);
 
 		page( `/checkout/${ siteSlug }` );
 	};
 
 	removePlanFromCart() {
-		const items = cartItems.getAll( this.props.cart );
-		items.filter( isDotComPlan ).forEach( function( item ) {
-			removeItem( item, false );
-		} );
+		const items = getAllCartItems( this.props.cart );
+		items.filter( isDotComPlan ).forEach( item => removeItem( item, false ) );
 	}
 
 	render() {
@@ -84,10 +80,11 @@ export class GsuiteNudge extends React.Component {
 					} ) }
 				/>
 				<QuerySites siteId={ selectedSiteId } />
-				<GoogleAppsDialog
+				<GSuiteUpsellCard
 					domain={ this.props.domain }
-					onClickSkip={ this.handleClickSkip }
-					onAddGoogleApps={ this.handleAddGoogleApps }
+					productSlug={ GSUITE_BASIC_SLUG }
+					onSkipClick={ this.handleSkipClick }
+					onAddEmailClick={ this.handleAddEmailClick }
 				/>
 			</Main>
 		);
@@ -105,4 +102,4 @@ export default connect( ( state, props ) => {
 		siteTitle: getSiteTitle( state, props.selectedSiteId ),
 		isEligibleForChecklist,
 	};
-} )( localize( GsuiteNudge ) );
+} )( localize( GSuiteNudge ) );

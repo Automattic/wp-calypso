@@ -20,7 +20,7 @@
 .blogs-settings__header,
 .notification-settings-blog-settings-placeholder__header {
 	display: flex;
-	color: $gray;
+	color: var( --color-text-subtle );
 
 	@include breakpoint( '>480px' ) {
 		cursor: pointer;
@@ -37,13 +37,11 @@
 }
 
 .blogs-settings__header-expand {
-	@extend %notification-settings-blog-settings-flexbox;
-	display: none;
-	color: var( --color-neutral-0 );
+	position: relative;
+		top: 4px;
 
-	@include breakpoint( '>480px' ) {
-		display: flex;
-	}
+	@extend %notification-settings-blog-settings-flexbox;
+	color: var( --color-neutral-0 );
 }
 
 .notification-settings-blog-settings-placeholder__blog {
@@ -69,7 +67,7 @@
 	animation: loading-fade 1.6s ease-in-out infinite;
 	background-color: var( --color-neutral-0 );
 	position: relative;
-	background: var( --color-neutral-100 );
+	background: var( --color-neutral-10 );
 	border: 1px solid white;
 	height: 32px;
 	width: 32px;

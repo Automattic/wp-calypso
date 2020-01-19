@@ -1,60 +1,65 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
-import i18n, { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
+import 'moment-timezone'; // monkey patches the existing moment.js
 
 /**
  * Internal dependencies
  */
 import FoldableCard from 'components/foldable-card';
 import FormSectionHeading from 'components/forms/form-section-heading';
+import { useLocalizedMoment } from 'components/localized-moment';
 
-const DATE_FORMAT = 'MMMM D h:mma z';
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
-const LiveChatClosureNotice = ( {
-	closesAt,
-	compact,
-	displayAt,
-	holidayName,
-	reopensAt,
-	translate,
-} ) => {
-	const currentDate = i18n.moment();
-	const guessedTimezone = i18n.moment.tz.guess();
+const DATE_FORMAT = 'LLL';
 
-	if ( ! currentDate.isBetween( i18n.moment( displayAt ), i18n.moment( reopensAt ) ) ) {
+const LiveChatClosureNotice = ( { closesAt, compact, displayAt, holidayName, reopensAt } ) => {
+	const translate = useTranslate();
+	const moment = useLocalizedMoment();
+
+	const currentDate = moment();
+	const guessedTimezone = moment.tz.guess();
+
+	if ( ! currentDate.isBetween( displayAt, reopensAt ) ) {
 		return null;
 	}
 
-	const heading = translate( 'Live chat closed for %(holidayName)s', {
-		args: { holidayName },
-	} );
-
-	let message;
+	let heading, message;
 
 	if ( currentDate.isBefore( closesAt ) ) {
+		heading = translate( 'Live chat will be closed for %(holidayName)s', {
+			args: { holidayName },
+		} );
+
 		message = translate(
 			'Live chat will be closed for %(holidayName)s from %(closesAt)s until %(reopensAt)s. ' +
 				'You’ll be able to reach us by email and we’ll get back to you as fast as we can. Thank you!',
 			{
 				args: {
-					closesAt: i18n.moment.tz( closesAt, guessedTimezone ).format( DATE_FORMAT ),
-					reopensAt: i18n.moment.tz( reopensAt, guessedTimezone ).format( DATE_FORMAT ),
+					closesAt: moment.tz( closesAt, guessedTimezone ).format( DATE_FORMAT ),
+					reopensAt: moment.tz( reopensAt, guessedTimezone ).format( DATE_FORMAT ),
 					holidayName,
 				},
 			}
 		);
 	} else {
+		heading = translate( 'Live chat closed for %(holidayName)s', {
+			args: { holidayName },
+		} );
+
 		message = translate(
 			'Live chat is closed for %(holidayName)s and will reopen %(reopensAt)s. ' +
 				'You can reach us by email below and we’ll get back to you as fast as we can. Thank you!',
 			{
 				args: {
-					reopensAt: i18n.moment.tz( reopensAt, guessedTimezone ).format( DATE_FORMAT ),
+					reopensAt: moment.tz( reopensAt, guessedTimezone ).format( DATE_FORMAT ),
 					holidayName,
 				},
 			}
@@ -85,4 +90,4 @@ const LiveChatClosureNotice = ( {
 	);
 };
 
-export default localize( LiveChatClosureNotice );
+export default LiveChatClosureNotice;

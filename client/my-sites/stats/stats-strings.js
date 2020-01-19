@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -86,14 +84,14 @@ export default function() {
 		} ),
 	};
 
-	statsStrings.podcastdownloads = {
-		title: translate( 'Podcasts', { context: 'Stats: title of module' } ),
-		item: translate( 'Episodes', { context: 'Stats: module row header for podcast.' } ),
+	statsStrings.filedownloads = {
+		title: translate( 'File Downloads', { context: 'Stats: title of module' } ),
+		item: translate( 'Files', { context: 'Stats: module row header for file downloads.' } ),
 		value: translate( 'Downloads', {
-			context: 'Stats: module row header for number of downloads per podcast episode.',
+			context: 'Stats: module row header for number of downloads per file.',
 		} ),
-		empty: translate( 'No episodes downloaded', {
-			context: 'Stats: Info box label when the Podcasts module is empty',
+		empty: translate( 'No files downloaded', {
+			context: 'Stats: Info box label when the file downloads module is empty',
 		} ),
 	};
 

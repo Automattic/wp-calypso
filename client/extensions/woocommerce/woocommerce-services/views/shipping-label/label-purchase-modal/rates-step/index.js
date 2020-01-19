@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,13 +7,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 import { find, get, isEmpty, mapValues, some } from 'lodash';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
 import ShippingRates from './list';
 import StepContainer from '../step-container';
-import formatCurrency from 'lib/format-currency';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import {
 	toggleStep,
@@ -134,9 +132,7 @@ const showCheckoutShippingInfo = props => {
 
 		return (
 			<div className="rates-step__shipping-info">
-				<Notice status="is-info" showDismiss={ false }>
-					{ shippingInfo }
-				</Notice>
+				<Notice showDismiss={ false }>{ shippingInfo }</Notice>
 			</div>
 		);
 	}
@@ -215,7 +211,4 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { toggleStep, updateRate }, dispatch );
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( RatesStep ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( RatesStep ) );

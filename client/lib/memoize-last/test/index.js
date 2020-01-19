@@ -1,12 +1,11 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
 /**
  * Internal dependencies
  */
-import memoizeLast from '../';
+import memoizeLast, { once } from '../';
 
 describe( 'memoizeLast', () => {
 	let mockFunction;
@@ -43,5 +42,36 @@ describe( 'memoizeLast', () => {
 		expect( result1 ).toEqual( { result: 6 } );
 		expect( result2 ).toEqual( { result: 6 } );
 		expect( result2 ).not.toBe( result1 );
+	} );
+} );
+
+describe( 'once', () => {
+	let mockFunction;
+	let memoizedFunction;
+
+	beforeEach( () => {
+		mockFunction = jest.fn( () => ( { foo: 'bar' } ) );
+		memoizedFunction = once( mockFunction );
+	} );
+
+	test( 'it should throw an exception if called with a function with arguments', () => {
+		expect( () => {
+			once( ( a, b, c ) => a + b + c );
+		} ).toThrow();
+	} );
+
+	test( 'it should call the function if it has not been called yet', () => {
+		const result = memoizedFunction();
+		expect( mockFunction ).toHaveBeenCalledTimes( 1 );
+		expect( mockFunction ).toHaveBeenCalledWith();
+		expect( result ).toEqual( { foo: 'bar' } );
+	} );
+
+	test( 'it should not call the function if it was already called ', () => {
+		const result1 = memoizedFunction();
+		const result2 = memoizedFunction();
+		expect( mockFunction ).toHaveBeenCalledTimes( 1 );
+		expect( mockFunction ).toHaveBeenCalledWith();
+		expect( result2 ).toBe( result1 );
 	} );
 } );

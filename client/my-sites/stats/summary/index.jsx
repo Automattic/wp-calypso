@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,7 +19,6 @@ import StatsVideoSummary from '../stats-video-summary';
 import VideoPlayDetails from '../stats-video-details';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import StatsFirstView from '../stats-first-view';
 import titlecase from 'to-title-case';
 import QueryMedia from 'components/data/query-media';
 import JetpackColophon from 'components/jetpack-colophon';
@@ -159,16 +156,16 @@ class StatsSummary extends Component {
 				);
 				break;
 
-			case 'podcastdownloads':
-				title = translate( 'Podcasts' );
+			case 'filedownloads':
+				title = translate( 'File Downloads' );
 				summaryView = (
 					<StatsModule
-						key="podcastdownloads-summary"
-						path="podcastdownloads"
-						moduleStrings={ StatsStrings.podcastdownloads }
+						key="filedownloads-summary"
+						path="filedownloads"
+						moduleStrings={ StatsStrings.filedownloads }
 						period={ this.props.period }
 						query={ query }
-						statType="statsPodcastDownloads"
+						statType="statsFileDownloads"
 						summary
 					/>
 				);
@@ -231,7 +228,6 @@ class StatsSummary extends Component {
 					path={ `/stats/${ period }/${ module }/:site` }
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
 				/>
-				<StatsFirstView />
 				<div id="my-stats-content">
 					<HeaderCake onClick={ this.goBack }>{ title }</HeaderCake>
 					{ summaryViews }

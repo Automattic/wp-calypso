@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,8 +17,8 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 /**
  * Dispatches a request to delete an application password for the current user
  *
- * @param   {Object} action Redux action
- * @returns {Object} Dispatched http action
+ * @param   {object} action Redux action
+ * @returns {object} Dispatched http action
  */
 export const removeApplicationPassword = action =>
 	http(
@@ -35,8 +33,8 @@ export const removeApplicationPassword = action =>
 /**
  * Dispatches a user application password removal success action when the request succeeded.
  *
- * @param   {Object} action Redux action
- * @returns {Object} Dispatched user application passwords add action
+ * @param   {object} action Redux action
+ * @returns {object} Dispatched user application passwords add action
  */
 export const handleRemoveSuccess = ( { appPasswordId } ) =>
 	deleteApplicationPasswordSuccess( appPasswordId );
@@ -44,7 +42,7 @@ export const handleRemoveSuccess = ( { appPasswordId } ) =>
 /**
  * Dispatches an error notice when the request failed.
  *
- * @returns {Object} Dispatched error notice action
+ * @returns {object} Dispatched error notice action
  */
 export const handleRemoveError = () =>
 	errorNotice(

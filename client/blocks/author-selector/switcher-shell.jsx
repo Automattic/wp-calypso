@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,7 +5,7 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import debugModule from 'debug';
 
 /**
@@ -43,12 +42,12 @@ class AuthorSwitcherShell extends React.Component {
 		showAuthorMenu: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.instance = instance;
 		instance++;
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			! nextProps.fetchOptions.siteId ||
 			nextProps.fetchOptions.siteId !== this.props.fetchOptions.siteId

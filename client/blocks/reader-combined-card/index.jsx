@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -11,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import { getStreamUrl } from 'reader/route';
 import ReaderAvatar from 'blocks/reader-avatar';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
@@ -25,6 +24,11 @@ import FollowButton from 'reader/follow-button';
 import { getPostsByKeys } from 'state/reader/posts/selectors';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
 import PostBlocked from 'blocks/reader-post-card/blocked';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ReaderCombinedCardComponent extends React.Component {
 	static propTypes = {

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Handle log in and sign up as part of the Jetpack Connect flow
  *
@@ -14,7 +13,7 @@ import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { get, noop } from 'lodash';
+import { flowRight, get, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -68,7 +67,7 @@ export class JetpackSignup extends Component {
 		this.setState( this.constructor.initialState );
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { from, clientId } = this.props.authQuery;
 		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view', {
 			from,
@@ -84,10 +83,16 @@ export class JetpackSignup extends Component {
 		} );
 	}
 
+	isWoo() {
+		const { authQuery } = this.props;
+		return 'woocommerce-onboarding' === authQuery.from;
+	}
+
 	getLoginRoute() {
 		const emailAddress = this.props.authQuery.userEmail;
 		return login( {
 			emailAddress,
+			isWoo: this.isWoo(),
 			isJetpack: true,
 			isNative: isEnabled( 'login/native-login-links' ),
 			locale: this.props.locale,
@@ -99,7 +104,7 @@ export class JetpackSignup extends Component {
 		debug( 'submitting new account', userData );
 		this.setState( { isCreatingAccount: true }, () =>
 			this.props
-				.createAccount( userData )
+				.createAccount( { ...userData, extra: { ...userData.extra, jpc: true } } )
 				.then( this.handleUserCreationSuccess, this.handleUserCreationError )
 				.finally( afterSubmit )
 		);
@@ -127,7 +132,7 @@ export class JetpackSignup extends Component {
 	/**
 	 * Handle user creation result
 	 *
-	 * @param {Object} _             …
+	 * @param {object} _             …
 	 * @param {string} _.username    Username
 	 * @param {string} _.bearerToken Bearer token
 	 */
@@ -142,7 +147,7 @@ export class JetpackSignup extends Component {
 	/**
 	 * Handle error on user creation
 	 *
-	 * @param {?Object} error Error result
+	 * @param {?object} error Error result
 	 */
 	handleUserCreationError = error => {
 		const { errorNotice, translate, warningNotice } = this.props;
@@ -209,10 +214,10 @@ export class JetpackSignup extends Component {
 	render() {
 		const { isCreatingAccount } = this.state;
 		return (
-			<MainWrapper>
+			<MainWrapper isWoo={ this.isWoo() }>
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderLocaleSuggestions() }
-					<AuthFormHeader authQuery={ this.props.authQuery } />
+					<AuthFormHeader authQuery={ this.props.authQuery } isWoo={ this.isWoo() } />
 					<SignupForm
 						disabled={ isCreatingAccount }
 						email={ this.props.authQuery.userEmail }
@@ -235,13 +240,13 @@ export class JetpackSignup extends Component {
 		);
 	}
 }
-export default connect(
-	null,
-	{
-		createAccount: createAccountAction,
-		createSocialAccount: createSocialAccountAction,
-		errorNotice: errorNoticeAction,
-		warningNotice: warningNoticeAction,
-		recordTracksEvent: recordTracksEventAction,
-	}
-)( localize( JetpackSignup ) );
+
+const connectComponent = connect( null, {
+	createAccount: createAccountAction,
+	createSocialAccount: createSocialAccountAction,
+	errorNotice: errorNoticeAction,
+	recordTracksEvent: recordTracksEventAction,
+	warningNotice: warningNoticeAction,
+} );
+
+export default flowRight( connectComponent, localize )( JetpackSignup );

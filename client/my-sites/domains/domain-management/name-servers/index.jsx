@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -17,17 +16,22 @@ import Main from 'components/main';
 import Header from 'my-sites/domains/domain-management/components/header';
 import CustomNameserversForm from './custom-nameservers-form';
 import WpcomNameserversToggle from './wpcom-nameservers-toggle';
-import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification/icann-verification-card';
+import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification';
 import DnsTemplates from './dns-templates';
 import { domainManagementEdit, domainManagementDns } from 'my-sites/domains/paths';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-import { updateNameservers } from 'lib/upgrades/actions';
+import { updateNameservers } from 'lib/domains/nameservers/actions';
 import { WPCOM_DEFAULTS, isWpcomDefaults } from 'lib/domains/nameservers';
 import { getSelectedDomain } from 'lib/domains';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import FetchError from './fetch-error';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class NameServers extends React.Component {
 	static propTypes = {
@@ -251,10 +255,7 @@ class NameServers extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		errorNotice,
-		successNotice,
-	}
-)( localize( NameServers ) );
+export default connect( null, {
+	errorNotice,
+	successNotice,
+} )( localize( NameServers ) );

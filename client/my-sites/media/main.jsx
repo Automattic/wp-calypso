@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,9 +11,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import DocumentHead from 'components/data/document-head';
 import MediaLibrary from 'my-sites/media-library';
 import QueryMedia from 'components/data/query-media';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import EditorMediaModalDialog from 'post-editor/media-modal/dialog';
 import { EditorMediaModalDetail } from 'post-editor/media-modal/detail';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
@@ -30,6 +30,11 @@ import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import accept from 'lib/accept';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import searchUrl from 'lib/search-url';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class Media extends Component {
 	static propTypes = {
@@ -48,9 +53,14 @@ class Media extends Component {
 		source: '',
 	};
 
+	containerRef = React.createRef();
+
 	componentDidMount() {
+		/* We need to rerender the inner `<MediaLibrary>` with the `containerWidth` that's
+		 * available only after the container gets actually rendered. */
+		/* eslint-disable-next-line react/no-did-mount-set-state */
 		this.setState( {
-			containerWidth: this.refs.container.clientWidth,
+			containerWidth: this.containerRef.current.clientWidth,
 		} );
 	}
 
@@ -162,7 +172,7 @@ class Media extends Component {
 		return [
 			{
 				action: 'delete',
-				additionalClassNames: 'media__modal-delete-item-button is-link',
+				additionalClassNames: 'is-borderless is-scary',
 				label: translate( 'Delete' ),
 				isPrimary: false,
 				disabled: false,
@@ -268,6 +278,11 @@ class Media extends Component {
 			searchUrl( '', this.props.search );
 		}
 
+		if ( this.props.filter ) {
+			// Reset the filter so we don't switch to a source that doesn't support the filter
+			this.onFilterChange( '' );
+		}
+
 		MediaActions.sourceChanged( this.props.selectedSite.ID );
 		this.setState( { source }, cb );
 	};
@@ -350,10 +365,16 @@ class Media extends Component {
 	render() {
 		const { selectedSite: site, mediaId, previousRoute, translate } = this.props;
 		return (
-			<div ref="container" className="main main-column media" role="main">
+			<div ref={ this.containerRef } className="main main-column media" role="main">
 				{ mediaId && site && site.ID && <QueryMedia siteId={ site.ID } mediaId={ mediaId } /> }
 				<PageViewTracker path={ this.getAnalyticsPath() } title="Media" />
+				<DocumentHead title={ translate( 'Media' ) } />
 				<SidebarNavigation />
+				<FormattedHeader
+					className="media__page-heading"
+					headerText={ translate( 'Media' ) }
+					align="left"
+				/>
 				{ this.showDialog() && (
 					<EditorMediaModalDialog
 						isVisible

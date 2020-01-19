@@ -1,9 +1,9 @@
 .post-edit-button {
+	display: inline-flex;
 	align-items: center;
 	box-sizing: border-box;
-	color: $gray;
+	color: var( --color-text-subtle );
 	cursor: pointer;
-	display: inline-flex;
 	list-style-type: none;
 	padding: 4px;
 	position: relative;
@@ -22,12 +22,12 @@
 	}
 
 	.gridicon {
-		fill: $gray;
+		fill: var( --color-neutral-light );
 		top: -1px;
 	}
 
 	.post-edit-button__label {
-		color: $gray;
+		color: var( --color-text-subtle );
 
 		@include breakpoint( '<480px' ) {
 			display: none;

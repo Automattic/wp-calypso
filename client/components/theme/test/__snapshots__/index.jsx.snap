@@ -4,8 +4,7 @@ exports[`Theme rendering with default display buttonContents should match snapsh
 <Card
   className="theme is-actionable"
   data-e2e-theme="twenty-seventeen"
-  highlight={false}
-  tagName="div"
+  onClick={[Function]}
 >
   <div
     className="theme__content"

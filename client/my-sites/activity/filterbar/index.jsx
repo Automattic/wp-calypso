@@ -1,9 +1,8 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
@@ -11,13 +10,18 @@ import page from 'page';
  * Internal dependencies
  */
 import BackButton from 'components/back-button';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import DateRangeSelector from './date-range-selector';
 import ActionTypeSelector from './action-type-selector';
 import { updateFilter } from 'state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { isWithinBreakpoint } from 'lib/viewport';
 import getPreviousRoute from 'state/selectors/get-previous-route';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class Filterbar extends Component {
 	state = {
@@ -151,16 +155,13 @@ const mapStateToProps = state => ( {
 } );
 
 const mapDispatchToProps = dispatch => ( {
-	resetFilters: sideId =>
+	resetFilters: siteId =>
 		dispatch(
 			withAnalytics(
 				recordTracksEvent( 'calypso_activitylog_filterbar_reset' ),
-				updateFilter( sideId, { group: null, after: null, before: null, on: null, page: 1 } )
+				updateFilter( siteId, { group: null, after: null, before: null, on: null, page: 1 } )
 			)
 		),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( Filterbar ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Filterbar ) );

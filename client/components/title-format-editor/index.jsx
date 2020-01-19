@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,15 +11,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import {
-	CompositeDecorator,
-	Editor,
-	EditorState,
-	Entity,
-	Modifier,
-	SelectionState,
-} from 'draft-js';
-// Parser also requires draft-js. Lets load it after the polyfills are created too.
+import { CompositeDecorator, Editor, EditorState, Modifier, SelectionState } from 'draft-js';
 import { fromEditor, mapTokenTitleForEditor, toEditor } from './parser';
 import Token from './token';
 import { buildSeoTitle } from 'state/sites/selectors';
@@ -30,6 +21,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Style dependencies
  */
+import 'draft-js/dist/Draft.css';
 import './style.scss';
 
 const Chip = onClick => props => <Token { ...props } onClick={ onClick } />;
@@ -66,7 +58,7 @@ export class TitleFormatEditor extends Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.disabled && ! nextProps.disabled ) {
 			this.setState( {
 				editorState: EditorState.moveSelectionToEnd( this.editorStateFrom( nextProps ) ),
@@ -165,8 +157,10 @@ export class TitleFormatEditor extends Component {
 		return () => {
 			const { editorState } = this.state;
 			const currentSelection = editorState.getSelection();
+			const currentContent = editorState.getCurrentContent();
 
-			const tokenEntity = Entity.create( 'TOKEN', 'IMMUTABLE', { name } );
+			currentContent.createEntity( 'TOKEN', 'IMMUTABLE', { name } );
+			const tokenEntity = currentContent.getLastCreatedEntityKey();
 
 			const contentState = Modifier.replaceText(
 				editorState.getCurrentContent(),
@@ -214,15 +208,14 @@ export class TitleFormatEditor extends Component {
 		};
 	}
 
-	renderTokens( contentBlock, callback ) {
+	renderTokens( contentBlock, callback, contentState ) {
 		contentBlock.findEntityRanges( character => {
 			const entity = character.getEntity();
 
 			if ( null === entity ) {
 				return false;
 			}
-
-			return 'TOKEN' === Entity.get( entity ).getType();
+			return 'TOKEN' === contentState.getEntity( entity ).getType();
 		}, callback );
 	}
 
@@ -250,6 +243,7 @@ export class TitleFormatEditor extends Component {
 				<div className="title-format-editor__header">
 					<span className="title-format-editor__title">{ type.label }</span>
 					{ map( tokens, ( title, name ) => (
+						/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 						<span
 							key={ name }
 							className="title-format-editor__button"
@@ -257,6 +251,7 @@ export class TitleFormatEditor extends Component {
 						>
 							{ title }
 						</span>
+						/* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 					) ) }
 				</div>
 				<div className="title-format-editor__editor-wrapper">

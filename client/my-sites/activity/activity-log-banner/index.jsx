@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,9 +10,13 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import ScreenReaderText from 'components/screen-reader-text';
-import Gridicon from 'gridicons';
+import { Card, ScreenReaderText } from '@automattic/components';
+import Gridicon from 'components/gridicon';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ActivityLogBanner extends Component {
 	static propTypes = {

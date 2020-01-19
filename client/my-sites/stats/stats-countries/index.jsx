@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,6 +12,11 @@ import { localize } from 'i18n-calypso';
 import statsStrings from '../stats-strings';
 import Geochart from '../geochart';
 import StatsModule from '../stats-module';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class StatCountries extends Component {
 	static propTypes = {

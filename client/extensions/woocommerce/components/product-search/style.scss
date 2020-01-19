@@ -1,7 +1,7 @@
 .product-search {
 	.search {
 		margin-bottom: 0;
-		border: 1px solid var( --color-neutral-100 );
+		border: 1px solid var( --color-neutral-10 );
 		box-sizing: border-box;
 		z-index: 9;
 	}
@@ -16,13 +16,13 @@
 
 	.product-search__list {
 		position: relative;
-		border: 1px solid var( --color-neutral-100 );
+		border: 1px solid var( --color-neutral-10 );
 		border-top: 0;
 		overflow-y: auto;
 		max-height: 350px;
 
 		.product-search__row {
-			background-color: $white;
+			background-color: var( --color-surface );
 			cursor: pointer;
 			border-bottom: 1px solid var( --color-neutral-0 );
 
@@ -80,7 +80,7 @@
 	}
 
 	.product-search__variation-selections-and-form {
-		background: lighten( $gray, 35% );
+		background: var( --color-neutral-0 );
 		border-top: 1px solid var( --color-neutral-0 );
 
 		label.form-label {

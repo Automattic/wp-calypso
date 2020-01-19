@@ -1,0 +1,32 @@
+{
+	"name": "@automattic/o2-blocks",
+	"version": "1.0.0",
+	"description": "Gutenberg extensions for o2 theme.",
+	"main": "dist/editor.js",
+	"sideEffects": true,
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/o2-blocks"
+	},
+	"private": true,
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"prebuild": "npm run clean",
+		"build": "calypso-build editor='./src/editor.js' --env.WP"
+	},
+	"dependencies": {
+		"@wordpress/blocks": "6.9.0",
+		"@wordpress/components": "8.5.0",
+		"@wordpress/editor": "9.9.0",
+		"@wordpress/element": "2.10.0",
+		"@wordpress/i18n": "3.7.0",
+		"classnames": "2.2.6"
+	}
+}

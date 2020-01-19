@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +7,7 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-import { MySitesSidebar } from '../sidebar';
+import { MySitesSidebar } from '..';
 import config from 'config';
 import { abtest } from 'lib/abtest';
 
@@ -21,7 +20,6 @@ jest.mock( 'lib/abtest', () => ( {
 	} ),
 } ) );
 jest.mock( 'lib/cart/store/index', () => null );
-jest.mock( 'my-sites/sidebar/manage-menu', () => null );
 jest.mock( 'lib/analytics/track-component-view', () => 'TrackComponentView' );
 jest.mock( 'my-sites/sidebar/utils', () => ( {
 	itemLinkMatches: jest.fn( () => true ),
@@ -134,66 +132,6 @@ describe( 'MySitesSidebar', () => {
 			const Store = () => Sidebar.store();
 
 			const wrapper = shallow( <Store /> );
-			expect( wrapper.html() ).toEqual( null );
-		} );
-	} );
-
-	describe( 'MySitesSidebar.ads()', () => {
-		const defaultProps = {
-			site: {},
-			siteSuffix: '/mysite.com',
-			translate: x => x,
-		};
-
-		beforeEach( () => {
-			config.isEnabled.mockImplementation( () => true );
-			abtest.mockImplementation( () => 'sidebarUpsells' );
-		} );
-
-		test( 'Should return ads menu item if user can use ads on this site', () => {
-			const Sidebar = new MySitesSidebar( {
-				canUserUseAds: true,
-				...defaultProps,
-			} );
-			const Ads = () => Sidebar.ads();
-
-			const wrapper = shallow( <Ads /> );
-			expect( wrapper.props().link ).toEqual( '/ads/earnings/mysite.com' );
-		} );
-
-		test( "Should return null if user can't use ads on this site and nudge-a-palooza is disabled", () => {
-			config.isEnabled.mockImplementation( feature => feature !== 'upsell/nudge-a-palooza' );
-			const Sidebar = new MySitesSidebar( {
-				canUserUseAds: false,
-				...defaultProps,
-			} );
-			const Ads = () => Sidebar.ads();
-
-			const wrapper = shallow( <Ads /> );
-			expect( wrapper.html() ).toEqual( null );
-		} );
-
-		test( "Should return null if user can't use ads on this site and user is in control A/B test group", () => {
-			abtest.mockImplementation( () => 'control' );
-			const Sidebar = new MySitesSidebar( {
-				canUserUseAds: false,
-				...defaultProps,
-			} );
-			const Ads = () => Sidebar.ads();
-
-			const wrapper = shallow( <Ads /> );
-			expect( wrapper.html() ).toEqual( null );
-		} );
-
-		test( "Should return null if user can't use ads on this site upgrade site", () => {
-			const Sidebar = new MySitesSidebar( {
-				canUserUseAds: false,
-				canUserUpgradeSite: false,
-				...defaultProps,
-			} );
-			const Ads = () => Sidebar.ads();
-
-			const wrapper = shallow( <Ads /> );
 			expect( wrapper.html() ).toEqual( null );
 		} );
 	} );

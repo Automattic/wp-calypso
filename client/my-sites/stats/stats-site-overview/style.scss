@@ -9,7 +9,7 @@
 		@include breakpoint( '<480px' ) {
 
 			&:focus {
-				color: $link-highlight;
+				color: var( --color-link-dark );
 			}
 		}
 	}
@@ -22,12 +22,12 @@
 	.module-header__right-icon {
 		position: relative;
 		float: right;
-		background: $white;
+		background: var( --color-surface );
 		padding-right: 15px;
 
 		// Fade out value if text is very long
 		&::before {
-			@include stats-fade-text( $white );
+			@include stats-fade-text( rgba( var( --color-surface-rgb ), 0 ), var( --color-surface) );
 		}
 
 		.gridicon {
@@ -42,8 +42,8 @@
 
 }
 
+//TODO see if this is used anywhere
 .stats__latest-post-summary {
-
 		.value {
 			font-size: 32px;
 		}

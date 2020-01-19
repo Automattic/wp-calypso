@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -31,6 +30,11 @@ import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 import ConversationFollowButton from 'blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
 import { READER_POST_OPTIONS_MENU } from 'reader/follow-sources';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ReaderPostOptionsMenu extends React.Component {
 	static propTypes = {

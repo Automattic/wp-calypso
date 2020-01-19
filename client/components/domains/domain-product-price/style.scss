@@ -1,77 +1,88 @@
-
 .domain-product-price {
-	color: var( --color-neutral-600 );
-	font-weight: 600;
+	color: var( --color-text );
+	font-weight: 400;
+	font-size: 14px;
 	line-height: 1;
-
+	display: flex;
+	flex-direction: column;
+	text-align: right;
+	
 	@include breakpoint( '>660px' ) {
-		align-items: center;
-		display: flex;
-		flex: 0 2 360px;
-		font-size: 17px;
-		justify-content: flex-end;
-		padding-right: 2em;
+		align-items: flex-end;
+		font-size: 16px;
+
+		.featured-domain-suggestions & {
+			align-items: flex-start;
+		}
+
+		&.domain-product-price__domain-step-copy-updates {
+			align-items: flex-start;
+		}
+	}
+		
+
+	.is-section-signup &:not( .domain-product-price__domain-step-copy-updates ) {
+		@include breakpoint( '>660px' ) {
+			padding-left: 1em;
+			padding-right: 2em;
+		}
+	}
+
+	.is-section-domains & {
+		@include breakpoint( '>800px' ) {
+			padding-left: 1em;
+			padding-right: 2em;
+		}
 	}
 
 	@include breakpoint( '<660px' ) {
 		display: inline-block;
 		font-size: 14px;
-	}
-
-	.map-domain-step & {
-		@include breakpoint( '<660px' ) {
-			padding-bottom: 5px;
-		}
+		text-align: left;
 	}
 
 	small {
-		font-weight: 400;
-		opacity: 0.6;
-	}
-
-	&.domain-product-price__is-with-plans-only {
-		font-weight: 400;
-		font-size: 0.9em;
+		color: var( --color-text-subtle );
 	}
 
 	.domain-product-price__premium-text {
 		cursor: pointer;
 	}
 
-	.domain-product-price__free-text {
-		color: var( --color-neutral-600 );
+	.domain-product-price__free-text,
+	.domain-product-price__sale-price {
+		color: var( --color-neutral-60 );
 		display: block;
-		font-size: 14px;
-		font-weight: 400;
-
-		@include breakpoint( '>660px' ) {
-			margin-left: 14px;
-		}
 	}
 
-	&.no-price .domain-product-price__free-text {
+	&.no-price .domain-product-price__free-text,
+	&.no-price .domain-product-price__sale-price {
 		@include breakpoint( '>660px' ) {
 			margin-left: 0;
 		}
 	}
 
-	&.is-free-domain {
-		font-size: 13px;
+	.domain-product-price__free-price {
+		color: var( --color-success );
+	}
+
+	.domain-product-price__price,
+	.domain-product-price__renewal-price {
+		margin: auto 0;
+	}
+
+	&.is-free-domain,
+	&.is-sale-domain {
 		line-height: 1.7;
 		margin-top: 2px;
 
-		small {
-			font-size: 100%;
-			opacity: 1;
-		}
-
-		.domain-product-price__price {
-			opacity: 0.6;
-			text-decoration: line-through;
+		.domain-product-price__price,
+		.domain-product-price__renewal-price {
+			font-size: 80%;
+			color: var( --color-text-subtle );
 		}
 
 		@include breakpoint( '>660px' ) {
-			font-size: 16px;
 			line-height: 1.5;
 			margin-top: 0;
 		}

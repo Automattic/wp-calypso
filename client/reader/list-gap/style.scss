@@ -1,0 +1,56 @@
+.reader-list-gap {
+	border-bottom: 1px solid var( --color-neutral-10 );
+	cursor: pointer;
+	margin-bottom: 16px;
+	padding: 30px 0;
+	position: relative;
+	text-align: center;
+
+	@include breakpoint( '<660px' ) {
+		margin: 0 15px;
+	}
+
+	&.is-selected {
+		box-shadow: 0 0 0 1px var( --color-neutral-light ),
+					0 2px 4px var( --color-neutral-10 );
+	}
+
+	&::before,
+	&::after {
+		content: '';
+		display: block;
+		position: absolute;
+			left: 0;
+  			right: 0;
+	}
+
+	&::before {
+		background: linear-gradient( -135deg, var( --color-neutral-0 ) 8px, rgba( var( --color-neutral-0-rgb ), 0 ) 0 ) 0 8px, linear-gradient( 135deg, var( --color-neutral-0 ) 8px, rgba( var( --color-neutral-0-rgb ), 0 ) 0 ) 0 8px;
+		background-position: top left;
+		background-repeat: repeat-x;
+		background-size: 16px 16px;
+		height: 16px;
+		top: 46%;
+	}
+
+	&::after {
+		background: linear-gradient( -135deg, var( --color-surface ) 8px, rgba( var( --color-surface-rgb ), 0 ) 0 ) 0 8px, linear-gradient( 135deg, var( --color-surface ) 8px, rgba( var( --color-surface-rgb ), 0 ) 0 ) 0 8px;
+		background-position: top left;
+		background-repeat: repeat-x;
+		background-size: 16px 16px;
+		height: 16px;
+		top: 44%;
+	}
+}
+
+.reader-list-gap__button {
+	border: none;
+	background: var( --color-neutral-light );
+	color: var( --color-text-inverted );
+	position: relative;
+	z-index: z-index( 'root', '.reader-list-gap__button' );
+
+	&:hover {
+		color: rgba( var( --color-surface-rgb ), 0.8 );
+	}
+}

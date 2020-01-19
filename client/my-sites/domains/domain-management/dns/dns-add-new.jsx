@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -23,8 +22,8 @@ import TxtRecord from './txt-record';
 import SrvRecord from './srv-record';
 import formState from 'lib/form-state';
 import { errorNotice, successNotice } from 'state/notices/actions';
-import { addDns } from 'lib/upgrades/actions';
-import { validateAllFields, getNormalizedData } from 'lib/domains/dns';
+import { addDns } from 'state/domains/dns/actions';
+import { validateAllFields, getNormalizedData } from 'state/domains/dns/utils';
 
 class DnsAddNew extends React.Component {
 	static propTypes = {
@@ -37,28 +36,64 @@ class DnsAddNew extends React.Component {
 		type: 'A',
 	};
 
-	recordTypes = [
-		[ ARecord, [ 'A', 'AAAA' ] ],
-		[ CnameRecord, [ 'CNAME' ] ],
-		[ MxRecord, [ 'MX' ] ],
-		[ TxtRecord, [ 'TXT' ] ],
-		[ SrvRecord, [ 'SRV' ] ],
+	dnsRecords = [
+		{
+			component: ARecord,
+			types: [ 'A', 'AAAA' ],
+			initialFields: {
+				name: '',
+				data: '',
+			},
+		},
+		{
+			component: CnameRecord,
+			types: [ 'CNAME' ],
+			initialFields: {
+				name: '',
+				data: '',
+			},
+		},
+		{
+			component: MxRecord,
+			types: [ 'MX' ],
+			initialFields: {
+				name: '',
+				data: '',
+				aux: 10,
+			},
+		},
+		{
+			component: TxtRecord,
+			types: [ 'TXT' ],
+			initialFields: {
+				name: '',
+				data: '',
+			},
+		},
+		{
+			component: SrvRecord,
+			types: [ 'SRV' ],
+			initialFields: {
+				name: '',
+				service: '',
+				aux: 10,
+				weight: 10,
+				target: '',
+				port: '',
+				protocol: 'tcp',
+			},
+		},
 	];
 
 	getFieldsForType( type ) {
-		/* eslint-disable no-unused-vars, no-shadow */
-		// _ is not used anywhere, it is only a positional arg to have more readable code
-		const [ Component, _ ] = find( this.recordTypes, ( [ _, types ] ) => {
-			/* eslint-enable no-unused-vars, no-shadow */
-			return includes( types, type );
+		const dnsRecord = find( this.dnsRecords, record => {
+			return includes( record.types, type );
 		} );
 
-		return assign( {}, Component.initialFields || Component._composedComponent.initialFields, {
-			type,
-		} );
+		return assign( {}, dnsRecord.initialFields, { type } );
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.formStateController = formState.Controller( {
 			initialFields: this.getFieldsForType( this.state.type ),
 			onNewState: this.setFormState,
@@ -89,17 +124,16 @@ class DnsAddNew extends React.Component {
 			);
 			this.formStateController.resetFields( this.getFieldsForType( this.state.type ) );
 
-			addDns( this.props.selectedDomainName, normalizedData, error => {
-				if ( error ) {
-					this.props.errorNotice(
-						error.message || translate( 'The DNS record has not been added.' )
-					);
-				} else {
+			this.props.addDns( this.props.selectedDomainName, normalizedData ).then(
+				() =>
 					this.props.successNotice( translate( 'The DNS record has been added.' ), {
 						duration: 5000,
-					} );
-				}
-			} );
+					} ),
+				error =>
+					this.props.errorNotice(
+						error.message || translate( 'The DNS record has not been added.' )
+					)
+			);
 		} );
 	};
 
@@ -130,7 +164,9 @@ class DnsAddNew extends React.Component {
 	};
 
 	recordFields() {
-		return this.recordTypes.map( ( [ Component, showTypes ] ) => {
+		return this.dnsRecords.map( dnsRecord => {
+			const { component: Component, types: showTypes } = dnsRecord;
+
 			return (
 				<Component
 					key={ showTypes.join( ',' ) }
@@ -146,7 +182,7 @@ class DnsAddNew extends React.Component {
 
 	render() {
 		const { translate } = this.props;
-		const dnsRecordTypes = flatMap( this.recordTypes, record => record[ 1 ] );
+		const dnsRecordTypes = flatMap( this.dnsRecords, dnsRecord => dnsRecord.types );
 		const options = dnsRecordTypes.map( type => <option key={ type }>{ type }</option> );
 		const isSubmitDisabled =
 			formState.isSubmitButtonDisabled( this.state.fields ) ||
@@ -154,19 +190,18 @@ class DnsAddNew extends React.Component {
 			formState.hasErrors( this.state.fields );
 
 		return (
-			<form className="dns__add-new">
-				<div className="dns__form-content">
-					<FormFieldset>
-						<FormLabel>{ translate( 'Type', { context: 'DNS Record' } ) }</FormLabel>
-
-						<FormSelect onChange={ this.changeType } value={ this.state.fields.type.value }>
-							{ options }
-						</FormSelect>
-					</FormFieldset>
-
-					{ this.recordFields() }
-				</div>
-
+			<form className="dns__form">
+				<FormFieldset>
+					<FormLabel>{ translate( 'Type', { context: 'DNS Record' } ) }</FormLabel>
+					<FormSelect
+						className="dns__add-new-select-type"
+						onChange={ this.changeType }
+						value={ this.state.fields.type.value }
+					>
+						{ options }
+					</FormSelect>
+				</FormFieldset>
+				{ this.recordFields() }
 				<FormFooter>
 					<FormButton disabled={ isSubmitDisabled } onClick={ this.onAddDnsRecord }>
 						{ translate( 'Add New DNS Record' ) }
@@ -177,10 +212,8 @@ class DnsAddNew extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		errorNotice,
-		successNotice,
-	}
-)( localize( DnsAddNew ) );
+export default connect( null, {
+	addDns,
+	errorNotice,
+	successNotice,
+} )( localize( DnsAddNew ) );

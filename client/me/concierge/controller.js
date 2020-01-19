@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,6 +18,11 @@ import RescheduleSkeleton from './reschedule/skeleton';
 import i18n from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const book = ( context, next ) => {
 	context.primary = (
 		<ConciergeMain
@@ -28,6 +31,7 @@ const book = ( context, next ) => {
 			skeleton={ BookSkeleton }
 			siteSlug={ context.params.siteSlug }
 			steps={ [ BookInfoStep, BookCalendarStep, BookConfirmationStep ] }
+			rescheduling={ false }
 		/>
 	);
 	next();
@@ -54,6 +58,7 @@ const reschedule = ( context, next ) => {
 			skeleton={ RescheduleSkeleton }
 			siteSlug={ context.params.siteSlug }
 			steps={ [ RescheduleCalendarStep, RescheduleConfirmationStep ] }
+			rescheduling={ true }
 		/>
 	);
 	next();
@@ -63,7 +68,7 @@ const siteSelector = ( context, next ) => {
 	context.store.dispatch( recordTracksEvent( 'calypso_concierge_site_selection_step' ) );
 
 	context.getSiteSelectionHeaderText = () =>
-		i18n.translate( 'Please select a site for your {{strong}}Support Session{{/strong}}', {
+		i18n.translate( 'Select a site for your {{strong}}Quick Start Session{{/strong}}', {
 			components: { strong: <strong /> },
 		} );
 	next();

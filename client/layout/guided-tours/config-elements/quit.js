@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { targetForSlug } from '../positioning';
 import { contextTypes } from '../context-types';
 
@@ -37,7 +35,7 @@ export default class Quit extends Component {
 		this.removeTargetListener();
 	}
 
-	componentWillUpdate() {
+	UNSAFE_componentWillUpdate() {
 		this.removeTargetListener();
 	}
 

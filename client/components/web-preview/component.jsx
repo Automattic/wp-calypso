@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,9 +14,14 @@ import { noop } from 'lodash';
 import { hasTouch } from 'lib/touch-detect';
 import { isMobile } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
-import RootChild from 'components/root-child';
+import { RootChild } from '@automattic/components';
 import { setPreviewShowing } from 'state/ui/actions';
 import WebPreviewContent from './content';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class WebPreviewModal extends Component {
 	static propTypes = {
@@ -97,7 +100,7 @@ export class WebPreviewModal extends Component {
 		this.setDeviceViewport = this.setDeviceViewport.bind( this );
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		// Cache touch and mobile detection for the entire lifecycle of the component
 		this._hasTouch = hasTouch();
 		this._isMobile = isMobile();
@@ -158,7 +161,9 @@ export class WebPreviewModal extends Component {
 		return (
 			<RootChild>
 				<div className={ className }>
+					{ /* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */ }
 					<div className="web-preview__backdrop" onClick={ this.props.onClose } />
+					{ /* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */ }
 					<div className="web-preview__content">
 						<WebPreviewContent
 							{ ...this.props }
@@ -173,10 +178,9 @@ export class WebPreviewModal extends Component {
 	}
 }
 
-const ConnectedWebPreviewModal = connect(
-	null,
-	{ setPreviewShowing }
-)( localize( WebPreviewModal ) );
+const ConnectedWebPreviewModal = connect( null, { setPreviewShowing } )(
+	localize( WebPreviewModal )
+);
 
 const WebPreviewInner = ( { isContentOnly, ...restProps } ) => {
 	const WebPreviewComponent = isContentOnly ? WebPreviewContent : ConnectedWebPreviewModal;

@@ -38,17 +38,15 @@
 	.upgrade-nudge-expanded__title-plan {
 		width: 56px;
 		height: 56px;
-		border: solid 2px $border-ultra-light-gray;
+		border: solid 2px var( --color-border-subtle );
 		border-radius: 50%;
 		align-self: center;
 		flex-shrink: 0;
 	}
 
 	.upgrade-nudge-expanded__title-plan-icon {
-		width: 55px;
-		height: 55px;
-		margin: 1px;
-		background-repeat: no-repeat;
+		width: 56px;
+		height: 56px;
 	}
 
 	.upgrade-nudge-expanded__title-message {

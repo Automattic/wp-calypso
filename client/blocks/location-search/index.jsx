@@ -1,30 +1,49 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { loadScript } from 'lib/load-script';
+import { loadScript } from '@automattic/load-script';
 import config from 'config';
 import { getLocaleSlug } from 'i18n-calypso';
+import { identity, isEmpty, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { CompactCard } from '@automattic/components';
 import SearchCard from 'components/search-card';
+import Search from 'components/search';
 import Prediction from './prediction';
+import { Input } from 'my-sites/domains/components/form';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 let autocompleteService = null;
+let sessionToken = null;
 
 class LocationSearch extends Component {
 	static propTypes = {
 		onPredictionClick: PropTypes.func,
+		onSearch: PropTypes.func,
 		predictionsTransformation: PropTypes.func,
+		types: PropTypes.arrayOf( PropTypes.string ),
+		hidePredictionsOnClick: PropTypes.bool,
+		inputType: PropTypes.string,
+		inputProps: PropTypes.object,
 	};
 
 	static defaultProps = {
-		predictionsTransformation: predictions => predictions,
+		onSearch: noop,
+		predictionsTransformation: identity,
+		types: [ 'establishment' ],
+		hidePredictionsOnClick: false,
+		inputType: 'search-card',
+		inputProps: {},
+		placeholder: 'Search for your address by street or city',
 	};
 
 	state = {
@@ -60,14 +79,20 @@ class LocationSearch extends Component {
 
 	handleSearch = query => {
 		query = query.trim();
+		this.props.onSearch( query );
 
 		this.setState( { loading: true, query }, () => {
 			if ( query ) {
+				if ( ! sessionToken ) {
+					// eslint-disable-next-line no-undef
+					sessionToken = new google.maps.places.AutocompleteSessionToken();
+				}
 				autocompleteService.getPlacePredictions(
 					{
 						input: query,
-						types: [ 'establishment' ],
+						types: this.props.types,
 						language: getLocaleSlug(),
+						sessionToken,
 					},
 					this.updatePredictions
 				);
@@ -77,33 +102,89 @@ class LocationSearch extends Component {
 		} );
 	};
 
-	renderPrediction = prediction => {
-		const { onPredictionClick } = this.props;
+	handleInputChange( onInputChange ) {
+		return event => {
+			onInputChange( event );
 
+			const { value } = event.target;
+			this.handleSearch( value );
+		};
+	}
+
+	handlePredictionClick = prediction => {
+		if ( this.props.hidePredictionsOnClick ) {
+			this.setState( { predictions: [] } );
+		}
+
+		this.props.onPredictionClick( prediction, sessionToken, this.state.query );
+		sessionToken = null;
+	};
+
+	renderPrediction = prediction => {
 		return (
 			<Prediction
 				key={ prediction.place_id }
-				onPredictionClick={ onPredictionClick }
+				onPredictionClick={ this.handlePredictionClick }
 				prediction={ prediction }
 			/>
 		);
 	};
 
-	render() {
-		const { predictions, loading } = this.state;
+	renderInput() {
+		const searchProps = {
+			onSearch: this.handleSearch,
+			delaySearch: true,
+			delayTimeout: 500,
+			disableAutocorrect: true,
+			searching: this.props.loading,
+			placeholder: this.props.placeholder,
+		};
+		const onInputChange = this.props.inputProps.onChange ? this.props.inputProps.onChange : noop;
+
+		switch ( this.props.inputType ) {
+			case 'card':
+				return <Search { ...searchProps } />;
+
+			case 'input':
+				return (
+					<Input
+						{ ...this.props.inputProps }
+						onChange={ this.handleInputChange( onInputChange ) }
+						placeholder={ this.props.placeholder }
+					/>
+				);
+
+			case 'search-card':
+			default:
+				return (
+					<SearchCard { ...searchProps } className="location-search__search-card is-compact" />
+				);
+		}
+	}
+
+	renderPredictions() {
+		const { predictions } = this.state;
 
 		return (
 			<Fragment>
-				<SearchCard
-					onSearch={ this.handleSearch }
-					delaySearch={ true }
-					delayTimeout={ 500 }
-					disableAutocorrect={ true }
-					searching={ loading }
-					className="location-search__search-card is-compact"
-				/>
+				{ predictions.map( this.renderPrediction ) }
+				<CompactCard className="location-search__attribution">
+					<img
+						src="https://s1.wp.com/i/powered-by-google-on-white-hdpi.png"
+						alt="Powered by Google"
+					/>
+				</CompactCard>
+			</Fragment>
+		);
+	}
 
-				{ predictions && predictions.map( this.renderPrediction ) }
+	render() {
+		return (
+			<Fragment>
+				{ this.renderInput() }
+				<div className="location-search__predictions">
+					{ ! isEmpty( this.state.predictions ) && this.renderPredictions() }
+				</div>
 			</Fragment>
 		);
 	}

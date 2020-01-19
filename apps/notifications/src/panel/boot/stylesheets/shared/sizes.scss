@@ -1,0 +1,18 @@
+$wpnc__icon-size: 48px;
+$wpnc__icon-size-detail: 32px;
+$wpnc__font-size: 14px;
+$wpnc__line-height: 21px;
+$wpnc__capital-font-size: 12px;
+
+// Padding
+$wpnc__padding-small: 11px;
+$wpnc__padding-medium: 14px;
+$wpnc__padding-large: 16px;
+$wpnc__user-margin-adjustment: 4px;
+
+// title bar height used as constant in:
+// - apps/notifications/src/panel/templates/note-list.jsx
+// - apps/notifications/src/panel/templates/empty-message.jsx
+$wpnc__title-bar-height: 38px;
+$wpnc__header-height: 34px;
+$wpnc__filter-height: 38px;

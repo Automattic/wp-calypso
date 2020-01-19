@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -23,6 +22,11 @@ import {
 } from 'state/reader/lists/selectors';
 import QueryReaderList from 'components/data/query-reader-list';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ListStream extends React.Component {
 	constructor( props ) {
@@ -80,7 +84,12 @@ class ListStream extends React.Component {
 				emptyContent={ emptyContent }
 				showFollowInHeader={ shouldShowFollow }
 			>
-				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: this.title } ) } />
+				<DocumentHead
+					title={ this.props.translate( '%s ‹ Reader', {
+						args: this.title,
+						comment: '%s is the section name. For example: "My Likes"',
+					} ) }
+				/>
 				<QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />
 				<ListStreamHeader
 					isPlaceholder={ ! list }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,9 +11,14 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
 import { getJetpackSiteRemoteManagementUrl } from 'state/sites/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const PluginSiteDisabledManage = ( {
 	isNetwork,

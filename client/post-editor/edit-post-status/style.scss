@@ -13,7 +13,7 @@
 }
 
 .edit-post-status__label-text {
-	color: $gray-text;
+	color: var( --color-text );
 	font-size: 13px;
 	line-height: 1.7;
 
@@ -40,7 +40,7 @@
 }
 
 .edit-post-status__full-date {
-	color: $gray-text;
+	color: var( --color-text );
 	font-size: 13px;
 	display: flex;
 	margin-bottom: 4px;
@@ -48,7 +48,7 @@
 	cursor: pointer;
 
 	.gridicon {
-		color: $gray-text;
+		color: var( --color-text );
 		margin-left: -2px;
 		margin-right: 6px;
 		vertical-align: top;
@@ -58,7 +58,7 @@
 .edit-post-status__future-label {
 	background: var( --color-accent );
 	border-radius: 2px;
-	color: $white;
+	color: var( --color-text-inverted );
 	display: inline-block;
 	font-size: 10px;
 	margin-right: 4px;
@@ -80,8 +80,4 @@
 		margin: 16px 0;
 		width: auto;
 	}
-}
-
-.edit-post-status .form-toggle__label .form-toggle__label-content {
-	margin: 0;
 }

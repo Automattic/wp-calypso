@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,6 +17,11 @@ import {
 	getHappinessEngineers,
 	hasReceivedHappinessEngineers,
 } from 'state/happiness-engineers/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 function HelpHappinessEngineers( { translate, happinessEngineers, hasReceived } ) {
 	return (

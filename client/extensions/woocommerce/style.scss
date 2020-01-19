@@ -1,6 +1,3 @@
-// Core CSS Dependencies
-@import 'assets/stylesheets/shared/utils'; // utilities that are used by all CSS but don't produce any code
-
 .woocommerce {
 	@import 'app/dashboard/style';
 	@import 'app/dashboard/widgets/inventory-widget/style';
@@ -67,18 +64,18 @@
 	@import 'woocommerce-services/style';
 
 	.main {
-		padding-top: 35px;
+		padding-top: 72px;
 
-		@include breakpoint( '<660px' ) {
-			padding-top: 72px;
+		@include breakpoint( '>660px' ) {
+			padding-top: 35px;
 		}
 	}
 
 	.woocommerce__placeholder {
-		padding-top: 32px;
+		padding-top: 16px;
 
-		@include breakpoint( '<660px' ) {
-			padding-top: 16px;
+		@include breakpoint( '>660px' ) {
+			padding-top: 32px;
 		}
 	}
 
@@ -110,7 +107,7 @@
 		margin: 35px 200px 0 0;
 		max-width: initial;
 
-		@media( max-width: 660px ) {
+		@include breakpoint( '<660px' ) {
 			margin: 0;
 		}
 	}
@@ -119,9 +116,13 @@
 .store-sidebar__sidebar {
 	display: block;
 
+	a {
+		font-weight: 600;
+	}
+
 	.store-sidebar__ground-control {
 		align-items: center;
-		background-color: $white;
+		background-color: var( --color-surface );
 		display: flex;
 		width: 100%;
 	}
@@ -158,8 +159,8 @@
 			left: 0;
 			min-height: 46px;
 			z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
-			background: $white;
-			border-bottom: 1px solid var( --color-neutral-100 );
+			background: var( --color-surface );
+			border-bottom: 1px solid var( --color-neutral-10 );
 		}
 	}
 
@@ -176,7 +177,7 @@
 		margin-top: 0;
 
 		@include breakpoint( '<660px' ) {
-			border-top: 1px solid darken( $sidebar-bg-color, 10% );
+			border-top: 1px solid var( --color-sidebar-border );
 		}
 
 		@include breakpoint( '>660px' ) {
@@ -192,25 +193,24 @@
 
 	.sidebar__menu li {
 		.count {
-			margin: 13px 8px;
 			line-height: 18px;
 			border: 0;
 			background-color: var( --color-primary );
-			color: $white;
+			color: var( --color-text-inverted );
 			min-width: 20px;
 		}
 
 		&.selected {
 			.count,
 			&:hover .count {
-				color: var( --color-neutral-700 );
-				background-color: $white;
+				color: var( --color-neutral-70 );
+				background-color: var( --color-surface );
 			}
 		}
 
 		&:hover .count {
 			background-color: var( --color-primary );
-			color: $white;
+			color: var( --color-text-inverted );
 		}
 	}
 }

@@ -1,7 +1,6 @@
 /**
  * External
  *
- * @format
  */
 
 import { get } from 'lodash';
@@ -17,9 +16,9 @@ import { getSiteSettings } from 'state/site-settings/selectors';
  * Returns the default post format of a site.
  * Returns null if the site is unknown and settings have not been fetched.
  *
- * @param  {Object}    state   Global state tree
- * @param  {Number}    siteId  The ID of the site we're querying
- * @return {?String}           The default post format of that site
+ * @param  {object}    state   Global state tree
+ * @param  {number}    siteId  The ID of the site we're querying
+ * @returns {?string}           The default post format of that site
  */
 export default function getSiteDefaultPostFormat( state, siteId ) {
 	const siteSettings = getSiteSettings( state, siteId );

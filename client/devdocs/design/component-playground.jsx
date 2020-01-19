@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,12 +5,12 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import ClipboardButton from 'components/forms/clipboard-button';
 import DocsExampleWrapper from 'devdocs/docs-example/wrapper';
 
@@ -41,15 +39,7 @@ class ComponentPlayground extends Component {
 			'design__component-playground-code': true,
 			'show-code': toggleCode ? this.state.showCode : true,
 		} );
-		const { section } = this.props;
-		let scope = null;
-		switch ( section ) {
-			case 'gutenberg-blocks':
-				scope = require( 'gutenberg-blocks' );
-				break;
-			default:
-				scope = require( 'devdocs/design/playground-scope' );
-		}
+		const scope = require( 'devdocs/design/playground-scope' );
 
 		return (
 			<LiveProvider

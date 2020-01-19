@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -115,13 +113,13 @@ export function handleProductActionListCreate( store, action ) {
  *
  * For internal and testing use only.
  * @private
- * @param {Object} rootState The root calypso state.
- * @param {Number} [siteId=selected site] The siteId for the Action List (TODO: Remove this when edits have siteIds.)
- * @param {Object} [productEdits=all edits] The product edits to be included in the Action List
- * @param {Object} [variationEdits=all edits] The variation edits to be included in the Action List
- * @param {Object} [onSuccess] Action to be dispatched upon successful action list completion.
- * @param {Object} [onFailure] Action to be dispatched upon failure of action list execution.
- * @return {Object} An Action List object.
+ * @param {object} rootState The root calypso state.
+ * @param {number} [siteId=selected site] The siteId for the Action List (TODO: Remove this when edits have siteIds.)
+ * @param {object} [productEdits=all edits] The product edits to be included in the Action List
+ * @param {object} [variationEdits=all edits] The variation edits to be included in the Action List
+ * @param {object} [onSuccess] Action to be dispatched upon successful action list completion.
+ * @param {object} [onFailure] Action to be dispatched upon failure of action list execution.
+ * @returns {object} An Action List object.
  */
 export function makeProductActionList(
 	rootState,

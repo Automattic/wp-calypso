@@ -1,4 +1,4 @@
-/** @format */
+
 
 .author-compact-profile {
 	font-size: 14px;
@@ -88,7 +88,7 @@
 }
 
 .author-compact-profile__follow-count {
-	color: $gray;
+	color: var( --color-text-subtle );
 	padding: 5px;
 }
 

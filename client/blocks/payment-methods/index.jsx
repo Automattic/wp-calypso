@@ -1,61 +1,73 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import React, { Component } from 'react';
+import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
+import { intersection } from 'lodash';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
-import PaymentLogo from 'components/payment-logo';
+import PaymentLogo, { POSSIBLE_TYPES } from 'components/payment-logo';
 import { getEnabledPaymentMethods } from 'lib/cart-values';
 
-class PaymentMethods extends Component {
-	renderPaymentMethods = methods => {
-		const methodsLogos = methods.map( method => {
-			if ( method === 'credit-card' ) {
-				return (
-					<div key={ method } className="payment-methods__cc-logos">
-						<PaymentLogo type="mastercard" altText="Mastercard" />
-						<PaymentLogo type="visa" altText="Visa" />
-						<PaymentLogo type="amex" altText="Amex" />
-						<PaymentLogo type="discover" altText="Discover" />
-					</div>
-				);
-			}
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
-			return <PaymentLogo type={ method } key={ method } altText={ method } />;
-		} );
-
-		return <div className="payment-methods__methods">{ methodsLogos }</div>;
-	};
-
-	render() {
-		const { translate } = this.props;
-		if ( ! this.props.cart.hasLoadedFromServer ) {
-			return false;
-		}
-
-		return (
-			<div className="payment-methods">
-				<Gridicon
-					icon="lock"
-					size={ 18 }
-					aria-label={ translate( 'Lock icon' ) }
-					className="payment-methods__icon"
-				/>
-				{ translate( 'Secure payment using:', {
-					comment: 'Followed by a graphical list of payment methods available to the user',
-				} ) }
-
-				{ this.renderPaymentMethods( getEnabledPaymentMethods( this.props.cart ) ) }
-			</div>
-		);
+function PaymentMethods( { translate, cart } ) {
+	if ( ! cart.hasLoadedFromServer ) {
+		return false;
 	}
+
+	let methods = getEnabledPaymentMethods( cart );
+
+	if ( methods.includes( 'credit-card' ) ) {
+		methods.splice( methods.indexOf( 'credit-card' ), 1, 'mastercard', 'visa', 'amex', 'discover' );
+	}
+
+	// The web-payment method technically supports multiple digital wallets,
+	// but only Apple Pay is used for now. To enable other wallets, we'd need
+	// to split web-payment up into multiple methods anyway (so that each
+	// wallet is a separate payment choice for the user), so it's fine to just
+	// hardcode this to Apple Pay in the meantime.
+	if ( methods.includes( 'web-payment' ) ) {
+		methods.splice( methods.indexOf( 'web-payment' ), 1, 'apple-pay' );
+	}
+
+	methods = intersection( methods, POSSIBLE_TYPES );
+
+	if ( methods.length === 0 ) {
+		return null;
+	}
+
+	return (
+		<div className="payment-methods">
+			<Gridicon
+				icon="lock"
+				size={ 18 }
+				aria-label={ translate( 'Lock icon' ) }
+				className="payment-methods__icon"
+			/>
+			{ translate( 'Secure payment using:', {
+				comment: 'Followed by a graphical list of payment methods available to the user',
+			} ) }
+
+			<div className="payment-methods__methods">
+				{ methods.map( method => (
+					<PaymentLogo type={ method } key={ method } />
+				) ) }
+			</div>
+		</div>
+	);
 }
+
+PaymentMethods.propTypes = {
+	translate: PropTypes.func.isRequired,
+	cart: PropTypes.object,
+};
 
 export default localize( PaymentMethods );

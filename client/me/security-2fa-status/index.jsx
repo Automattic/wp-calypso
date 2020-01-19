@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,6 +5,12 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const debug = debugFactory( 'calypso:me:security:2fa-status' );
 
 class Security2faStatus extends React.Component {

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 import { noop } from 'lodash';
 
@@ -22,9 +21,9 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 export const request = action =>
 	http(
 		{
-			apiVersion: '1.1',
+			apiNamespace: 'wpcom/v2',
 			method: 'POST',
-			path: `/activity-log/${ action.siteId }/delete-credentials`,
+			path: `/sites/${ action.siteId }/rewind/credentials/delete`,
 			body: { role: action.role },
 		},
 		{ ...action }
@@ -56,7 +55,7 @@ export const success = ( { siteId }, { rewind_state } ) => {
 	}
 };
 
-registerHandlers( 'state/data-layer/wpcom/activity-log/delete-credentials/index.js', {
+registerHandlers( 'state/data-layer/wpcom/sites/rewind/credentials/delete', {
 	[ JETPACK_CREDENTIALS_DELETE ]: [
 		dispatchRequest( {
 			fetch: request,

@@ -1,7 +1,7 @@
 .vertical-nav-item {
 	.gridicon {
 		box-sizing: border-box;
-		color: var( --color-neutral-200 );
+		color: var( --color-neutral-20 );
 		display: block;
 		height: 100%;
 		position: absolute;
@@ -12,7 +12,7 @@
 
 .vertical-nav-item.is-placeholder {
 	span {
-		@include placeholder( 23% );
+		@include placeholder( --color-neutral-10 );
 
 		display: inline-block;
 

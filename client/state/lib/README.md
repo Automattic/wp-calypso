@@ -92,20 +92,3 @@ To unsubscribe from selected site changes dispatch the following action:
 ```
 
 Where listener is an exact reference to the same function used when subscribing.
-
-### Sites once changed
-
-In case there is a need to execute a function once (and only once) sites data arrives (SITES_RECEIVE action is dispatched), and no other option exists, we can do that by dispatching the following action:
-```jsx
-{ type: SITES_ONCE_CHANGED,	listener }
-```
-
-Where listener is a function that receives no parameters.
-e.g.
-```jsx
-function sitesReceived() {
-	this.hasJetpackSites = hasJetpackSites( this.store.getState() );
-}
-```
-
-As soon as sites are received the function is called. There is no need to do an unsubscribe operation because the listener function is called just one time.

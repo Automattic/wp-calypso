@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,13 +5,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import isGoogleMyBusinessStatsNudgeDismissed from 'state/selectors/is-google-my-business-stats-nudge-dismissed';
 import QueryPreferences from 'components/data/query-preferences';
 import SectionHeader from 'components/section-header';
@@ -21,6 +18,11 @@ import { dismissNudge } from './actions';
 import { enhanceWithDismissCount } from 'my-sites/google-my-business/utils';
 import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
 import { withEnhancers } from 'state/utils';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class GoogleMyBusinessStatsNudge extends Component {
 	static propTypes = {
@@ -108,7 +110,7 @@ class GoogleMyBusinessStatsNudge extends Component {
 						<div className="google-my-business-stats-nudge__button-row">
 							<Button
 								href={ `/google-my-business/${ this.props.siteSlug }` }
-								primary
+								primary={ this.props.primaryButton }
 								onClick={ this.onStartNowClick }
 							>
 								{ this.props.translate( 'Start Now' ) }

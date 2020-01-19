@@ -3,11 +3,6 @@
 }
 
 .conversation-caterpillar__count {
-	display: flex;
-	flex-shrink: 0;
-}
-
-.conversation-caterpillar__count {
 	cursor: pointer;
 	color: var( --color-primary );
 	display: flex;
@@ -34,8 +29,4 @@
 		padding: 0;
 		text-align: left;
 	}
-}
-
-.conversations__stream .conversation-caterpillar {
-	margin-top: 20px;
 }

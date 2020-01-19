@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,6 +12,11 @@ import * as controller from './controller';
 import { login } from 'lib/paths';
 import { siteSelection } from 'my-sites/controller';
 import { makeLayout, render as clientRender } from 'controller';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default function() {
 	const user = userFactory();
@@ -59,7 +63,6 @@ export default function() {
 	if ( isLoggedOut ) {
 		page(
 			'/jetpack/connect/authorize/:locale?',
-			controller.maybeOnboard,
 			controller.setMasterbar,
 			controller.signupForm,
 			makeLayout,
@@ -68,7 +71,6 @@ export default function() {
 	} else {
 		page(
 			'/jetpack/connect/authorize/:locale?',
-			controller.maybeOnboard,
 			controller.redirectWithoutLocaleIfLoggedIn,
 			controller.setMasterbar,
 			controller.authorizeForm,
@@ -109,6 +111,30 @@ export default function() {
 		'/jetpack/connect/plans/:interval(yearly|monthly)?/:site',
 		siteSelection,
 		controller.plansSelection,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/jetpack/connect/user-type/:site?',
+		siteSelection,
+		controller.userType,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/jetpack/connect/site-type/:site?',
+		siteSelection,
+		controller.siteType,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/jetpack/connect/site-topic/:site?',
+		siteSelection,
+		controller.siteTopic,
 		makeLayout,
 		clientRender
 	);

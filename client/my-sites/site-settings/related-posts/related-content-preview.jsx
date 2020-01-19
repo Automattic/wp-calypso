@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,14 +9,11 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FormLabel from 'components/forms/form-label';
-import imgCatBlog from 'assets/images/related-posts/cat-blog.png';
-import imgDevices from 'assets/images/related-posts/devices.jpg';
-import imgWedding from 'assets/images/related-posts/mobile-wedding.jpg';
 
 const RelatedContentPreview = ( { showHeadline, showThumbnails, translate } ) => {
 	const posts = [
 		{
-			image: imgCatBlog,
+			image: '/calypso/images/related-posts/cat-blog.png',
 			title: translate( 'Big iPhone/iPad Update Now Available', {
 				textOnly: true,
 				context: 'Demo content for related posts',
@@ -28,7 +23,7 @@ const RelatedContentPreview = ( { showHeadline, showThumbnails, translate } ) =>
 			} ),
 		},
 		{
-			image: imgDevices,
+			image: '/calypso/images/related-posts/devices.jpg',
 			title: translate( 'The WordPress for Android App Gets a Big Facelift', {
 				textOnly: true,
 				context: 'Demo content for related posts',
@@ -38,7 +33,7 @@ const RelatedContentPreview = ( { showHeadline, showThumbnails, translate } ) =>
 			} ),
 		},
 		{
-			image: imgWedding,
+			image: '/calypso/images/related-posts/mobile-wedding.jpg',
 			title: translate( 'Upgrade Focus: VideoPress For Weddings', {
 				textOnly: true,
 				context: 'Demo content for related posts',

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +13,7 @@ import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import Navigation from '../navigation';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import SettingsForm from 'me/notification-settings/settings-form';
 import QueryUserDevices from 'components/data/query-user-devices';
@@ -24,6 +23,11 @@ import {
 	getNotificationSettings,
 	hasUnsavedNotificationSettingsChanges,
 } from 'state/notification-settings/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class NotificationCommentsSettings extends Component {
 	componentDidMount() {
@@ -44,7 +48,7 @@ class NotificationCommentsSettings extends Component {
 			);
 		}
 
-		return <p className="notification-settings-comment-settings__placeholder">&nbsp;</p>;
+		return <p className="comment-settings__notification-settings-placeholder">&nbsp;</p>;
 	};
 
 	render() {
@@ -63,9 +67,7 @@ class NotificationCommentsSettings extends Component {
 				<Navigation path={ path } />
 
 				<Card>
-					<FormSectionHeading className="is-primary">
-						{ translate( 'Comments on other sites' ) }
-					</FormSectionHeading>
+					<FormSectionHeading>{ translate( 'Comments on other sites' ) }</FormSectionHeading>
 					<p>
 						{ translate( 'Control your notification settings when you comment on other blogs.' ) }
 					</p>

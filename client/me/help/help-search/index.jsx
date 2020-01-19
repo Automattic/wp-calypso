@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import getHelpLinks from 'state/selectors/get-help-links';
 import HelpResults from 'me/help/help-results';
 import NoResults from 'my-sites/no-results';
@@ -19,6 +17,11 @@ import QueryHelpLinks from 'components/data/query-help-links';
 import SearchCard from 'components/search-card';
 import { localizeUrl } from 'lib/i18n-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class HelpSearch extends React.PureComponent {
 	state = {
@@ -41,6 +44,7 @@ export class HelpSearch extends React.PureComponent {
 		}
 
 		if ( isEmpty( helpLinks ) ) {
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
 				<div className="help-results__placeholder">
 					<HelpResults

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import { languages } from 'languages';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
@@ -57,7 +55,7 @@ const StoreInfo = ( { storeData = {}, onChange, validateFields } ) => {
 		<div className="setup-steps__store-info-field">
 			<p>
 				{ translate(
-					'MailChimp needs to know some basic information about your store ' +
+					'Mailchimp needs to know some basic information about your store ' +
 						'to provide you with the best experience. Note that every field is required.'
 				) }
 			</p>
@@ -87,7 +85,7 @@ const StoreInfo = ( { storeData = {}, onChange, validateFields } ) => {
 				<FormLabel>
 					{ translate( 'Locale' ) }
 					<LanguagePicker
-						languages={ config( 'languages' ) }
+						languages={ languages }
 						valueKey="langSlug"
 						value={ storeData.store_locale }
 						onChange={ selectLanguage }

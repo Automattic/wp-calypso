@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { find, map, sum } from 'lodash';
 import { localize } from 'i18n-calypso';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -16,10 +16,8 @@ import {
 	arePaymentMethodsLoaded,
 	getPaymentMethod,
 } from 'woocommerce/state/sites/payment-methods/selectors';
-import Button from 'components/button';
-import Dialog from 'components/dialog';
+import { Button, Dialog } from '@automattic/components';
 import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
-import formatCurrency from 'lib/format-currency';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
@@ -70,7 +68,7 @@ class RefundDialog extends Component {
 		}
 	};
 
-	componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = newProps => {
 		const newSiteId = newProps.siteId;
 		const oldSiteId = this.props.siteId;
 

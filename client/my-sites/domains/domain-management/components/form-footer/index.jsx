@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,14 +9,13 @@ import React from 'react';
  */
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 
-class DomainManagementFormFooter extends React.Component {
-	render() {
-		return (
-			<FormButtonsBar className="domain-management-form-footer">
-				{ this.props.children }
-			</FormButtonsBar>
-		);
-	}
-}
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
-export default DomainManagementFormFooter;
+export default function DomainManagementFormFooter( { children } ) {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	return <FormButtonsBar className="domain-management-form-footer">{ children }</FormButtonsBar>;
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
+}

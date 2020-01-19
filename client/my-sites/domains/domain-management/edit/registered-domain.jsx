@@ -1,38 +1,35 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
+import { flowRight as compose } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import analyticsMixin from 'lib/mixins/analytics';
-import Card from 'components/card/compact';
+import { CompactCard as Card } from '@automattic/components';
 import Notice from 'components/notice';
+import { withLocalizedMoment } from 'components/localized-moment';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import Header from './card/header';
 import {
 	domainManagementContactsPrivacy,
-	domainManagementEmail,
 	domainManagementNameServers,
 	domainManagementTransfer,
-	domainManagementTransferOut,
 } from 'my-sites/domains/paths';
+import { emailManagement } from 'my-sites/email/paths';
 import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification/icann-verification-card';
+import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification';
+import { recordPaymentSettingsClick } from './payment-settings-analytics';
 
-const RegisteredDomain = createReactClass( {
-	displayName: 'RegisteredDomain',
-	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
-
+class RegisteredDomain extends React.Component {
 	getAutoRenewalOrExpirationDate() {
-		const { domain, translate } = this.props;
+		const { domain, translate, moment } = this.props;
 
 		if ( domain.isAutoRenewing ) {
 			return (
@@ -43,7 +40,7 @@ const RegisteredDomain = createReactClass( {
 							'the date is not included within the translated string',
 					} ) }
 				>
-					{ domain.autoRenewalMoment.format( 'LL' ) }
+					{ moment( domain.autoRenewalDate ).format( 'LL' ) }
 				</Property>
 			);
 		}
@@ -56,10 +53,10 @@ const RegisteredDomain = createReactClass( {
 						'the date is not included within the translated string',
 				} ) }
 			>
-				{ domain.expirationMoment.format( 'LL' ) }
+				{ moment( domain.expiry ).format( 'LL' ) }
 			</Property>
 		);
-	},
+	}
 
 	getLabel( { status, icon, message, href } ) {
 		return (
@@ -69,71 +66,11 @@ const RegisteredDomain = createReactClass( {
 				</Notice>
 			</a>
 		);
-	},
+	}
 
-	getPrivacyProtection() {
-		const {
-				hasPrivacyProtection,
-				privateDomain,
-				privacyAvailable,
-				name,
-				pendingTransfer,
-			} = this.props.domain,
-			{ slug } = this.props.selectedSite,
-			{ translate } = this.props,
-			privacyPath = domainManagementContactsPrivacy( slug, name ),
-			transferPath = domainManagementTransferOut( slug, name );
-		let label;
-
-		if ( ! privacyAvailable ) {
-			return false;
-		}
-
-		if ( pendingTransfer ) {
-			label = this.getLabel( {
-				status: 'is-warning',
-				icon: 'notice',
-				message: translate( 'Pending Transfer', {
-					context: 'An icon label when domain is pending transfer.',
-				} ),
-			} );
-		} else if ( hasPrivacyProtection ) {
-			if ( privateDomain ) {
-				label = this.getLabel( {
-					status: 'is-success',
-					icon: 'lock',
-					href: privacyPath,
-					message: translate( 'On', {
-						context: 'An icon label when Privacy Protection is enabled.',
-					} ),
-				} );
-			} else {
-				label = this.getLabel( {
-					status: 'is-warning',
-					icon: 'notice',
-					href: transferPath,
-					message: translate( 'Disabled for Transfer', {
-						context: 'An icon label when Privacy Protection is temporarily disabled for transfer.',
-					} ),
-				} );
-			}
-		} else {
-			label = this.getLabel( {
-				status: 'is-warning',
-				icon: 'notice',
-				href: privacyPath,
-				message: translate( 'None', {
-					context: 'An icon label when Privacy Protection is not purchased by the user.',
-				} ),
-			} );
-		}
-
-		return <Property label={ translate( 'Privacy Protection' ) }>{ label }</Property>;
-	},
-
-	handlePaymentSettingsClick() {
-		this.recordEvent( 'paymentSettingsClick', this.props.domain );
-	},
+	handlePaymentSettingsClick = () => {
+		this.props.recordPaymentSettingsClick( this.props.domain );
+	};
 
 	domainWarnings() {
 		return (
@@ -146,7 +83,7 @@ const RegisteredDomain = createReactClass( {
 					'expiringDomainsCanManage',
 					'newDomainsWithPrimary',
 					'newDomains',
-					'pendingGappsTosAcceptanceDomains',
+					'pendingGSuiteTosAcceptanceDomains',
 					'expiredDomainsCannotManage',
 					'expiringDomainsCannotManage',
 					'pendingTransfer',
@@ -155,12 +92,13 @@ const RegisteredDomain = createReactClass( {
 				] }
 			/>
 		);
-	},
+	}
 
 	getVerticalNav() {
-		const { expirationMoment, expired, pendingTransfer } = this.props.domain;
+		const { expiry, expired, pendingTransfer } = this.props.domain;
+		const { moment } = this.props;
 		const inNormalState = ! pendingTransfer && ! expired;
-		const inGracePeriod = this.props.moment().subtract( 18, 'days' ) <= expirationMoment;
+		const inGracePeriod = moment().subtract( 18, 'days' ) <= moment( expiry );
 
 		return (
 			<VerticalNav>
@@ -170,13 +108,13 @@ const RegisteredDomain = createReactClass( {
 				{ ( ! expired || inGracePeriod ) && this.transferNavItem() }
 			</VerticalNav>
 		);
-	},
+	}
 
 	emailNavItem() {
-		const path = domainManagementEmail( this.props.selectedSite.slug, this.props.domain.name );
+		const path = emailManagement( this.props.selectedSite.slug, this.props.domain.name );
 
 		return <VerticalNavItem path={ path }>{ this.props.translate( 'Email' ) }</VerticalNavItem>;
-	},
+	}
 
 	nameServersNavItem() {
 		const path = domainManagementNameServers(
@@ -189,22 +127,17 @@ const RegisteredDomain = createReactClass( {
 				{ this.props.translate( 'Name Servers and DNS' ) }
 			</VerticalNavItem>
 		);
-	},
+	}
 
 	contactsPrivacyNavItem() {
-		const { privacyAvailable } = this.props.domain;
 		const { translate } = this.props;
 		const path = domainManagementContactsPrivacy(
 			this.props.selectedSite.slug,
 			this.props.domain.name
 		);
 
-		return (
-			<VerticalNavItem path={ path }>
-				{ privacyAvailable ? translate( 'Contacts and Privacy' ) : translate( 'Contacts' ) }
-			</VerticalNavItem>
-		);
-	},
+		return <VerticalNavItem path={ path }>{ translate( 'Contacts and Privacy' ) }</VerticalNavItem>;
+	}
 
 	transferNavItem() {
 		const path = domainManagementTransfer( this.props.selectedSite.slug, this.props.domain.name );
@@ -212,11 +145,12 @@ const RegisteredDomain = createReactClass( {
 		return (
 			<VerticalNavItem path={ path }>{ this.props.translate( 'Transfer Domain' ) }</VerticalNavItem>
 		);
-	},
+	}
 
 	render() {
-		const { domain, translate } = this.props;
+		const { domain, translate, moment } = this.props;
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
 				{ this.domainWarnings() }
@@ -242,12 +176,10 @@ const RegisteredDomain = createReactClass( {
 									'the date is not included within the translated string',
 							} ) }
 						>
-							{ domain.registrationMoment.format( 'LL' ) }
+							{ moment( domain.registrationDate ).format( 'LL' ) }
 						</Property>
 
 						{ this.getAutoRenewalOrExpirationDate() }
-
-						{ this.getPrivacyProtection() }
 
 						<SubscriptionSettings
 							type={ domain.type }
@@ -261,7 +193,12 @@ const RegisteredDomain = createReactClass( {
 				{ this.getVerticalNav() }
 			</div>
 		);
-	},
-} );
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
+	}
+}
 
-export default localize( RegisteredDomain );
+export default compose(
+	connect( null, { recordPaymentSettingsClick } ),
+	localize,
+	withLocalizedMoment
+)( RegisteredDomain );

@@ -31,7 +31,7 @@
 		}
 	}
 
-	border-top: 1px solid $transparent;
+	border-top: 1px solid rgba( var( --color-surface-rgb ), 0 );
 
 	// Increase touch targets on mobile
 	@include breakpoint( '<480px' ) {
@@ -39,7 +39,7 @@
 		border-top: 1px solid var( --color-neutral-0 );
 
 		&:first-child {
-			border-top-color: $transparent;
+			border-top-color: rgba( var( --color-surface-rgb ), 0 );
 		}
 
 		// Darken color for sublists
@@ -49,8 +49,8 @@
 	}
 
 	&.disabled {
-		.module-content-list-item-label,
-		.module-content-list-item-value {
+		.stats-list__module-content-list-item-label,
+		.stats-list__module-content-list-item-value {
 			opacity: 0.15;
 			transition: opacity 0.3s ease 0.15s;
 		}
@@ -74,9 +74,10 @@
 // Module Content List Item Wrapper
 // (wrapper element, what's actually hovered for each list item)
 
+.stats-list__module-content-list-item-wrapper,
 .module-content-list-item-wrapper {
 	@extend %mobile-interface-element;
-	background: $white; // Default non-active color
+	background: var( --color-surface ); // Default non-active color
 	display: block;
 	line-height: inherit;
 	clear: both; // To make sure no rows overlap no matter the circumstances
@@ -110,15 +111,19 @@
 // Module Content List Item Hover
 
 @include breakpoint( '>480px' ) {
-	.module-content-list .module-content-list-item-wrapper:hover,
-	.module-content-list-item-link .module-content-list-item-wrapper:hover {
+	.module-content-list .stats-list__module-content-list-item-wrapper:hover,
+	.module-content-list-item-link .stats-list__module-content-list-item-wrapper:hover {
 		&,
 		.module-content-list-item-right {
 			background-color: var( --color-neutral-0 );
 		}
 
+		.module-content-list-item-action .module-content-list-item-action-wrapper {
+			opacity: 1;
+		}
+
 		.module-content-list-item-right::before {
-			background-image: linear-gradient( to right, $transparent 0%, $gray-light 90% );
+			background-image: linear-gradient( to right, rgba( var( --color-neutral-0-rgb ), 0 ) 0%, var( --color-neutral-0 ) 90% );
 		}
 
 		// Display hidden actions
@@ -126,10 +131,13 @@
 			display: inline-block;
 		}
 	}
+	.module-content-list-item-link .module-content-list-item-action-wrapper:focus {
+		opacity: 1;
+	}
 
 	// Don't show hover on legend row
 	.module-content-list.module-content-list-legend {
-		.module-content-list-item-wrapper:hover {
+		.stats-list__module-content-list-item-wrapper:hover {
 			&,
 			.module-content-list-item-right,
 			.module-content-list-item-right::before {
@@ -142,14 +150,14 @@
 // Module Content List Item Focus
 // Active on non-links as well so you can easily go to them and digest information
 
-.module-content-list-item .module-content-list-item-wrapper:focus {
+.module-content-list-item .stats-list__module-content-list-item-wrapper:focus {
 	&,
 	.module-content-list-item-right {
 		background-color: var( --color-neutral-0 );
 	}
 
 	.module-content-list-item-right::before {
-		background-image: linear-gradient( to right, $transparent 0%, $gray-light 90% );
+		background-image: linear-gradient( to right, rgba( var( --color-neutral-0-rgb ), 0 ) 0%, var( --color-neutral-0 ) 90% );
 	}
 
 	// Display hidden actions
@@ -161,26 +169,22 @@
 // Highlight toggle icon if item has a sublist
 
 @include breakpoint( '>480px' ) {
-	.module-content-list
-		> .module-content-list-item-toggle
-		> .module-content-list-item-wrapper:hover
-		.module-content-list-item-label::before {
-		color: $link-highlight;
+	.module-content-list > .module-content-list-item-toggle > .stats-list__module-content-list-item-wrapper:hover
+		.stats-list__module-content-list-item-label::before {
+		color: var( --color-link-dark );
 	}
 }
 
-.module-content-list
-	> .module-content-list-item-toggle
-	> .module-content-list-item-wrapper:focus
-	.module-content-list-item-label::before {
-	color: $link-highlight;
+.module-content-list > .module-content-list-item-toggle > .stats-list__module-content-list-item-wrapper:focus
+	.stats-list__module-content-list-item-label::before {
+	color: var( --color-link-dark );
 }
 
 // Module Content List Item Label
 // 1: To create the illusion that text is fading out (break up even long chunks of text)
 // 2: ### always has to be the line-height -- could we sync up with a variable?
 
-.module-content-list-item-label {
+.stats-list__module-content-list-item-label {
 	display: block;
 	overflow: hidden;
 	word-break: break-all; // 1
@@ -198,7 +202,7 @@
 	}
 
 	// Icons
-	.icon,
+	.stats-list__icon,
 	.gridicon {
 		margin-right: 8px;
 	}
@@ -215,7 +219,7 @@
 		margin-right: 8px;
 	}
 
-	.icon {
+	.stats-list__icon {
 		position: relative;
 		display: inline-block;
 		width: 24px;
@@ -227,7 +231,7 @@
 
 		img {
 			display: block;
-			background: $white;
+			background: var( --color-surface );
 			position: relative;
 			width: 20px;
 			height: 20px;
@@ -251,7 +255,7 @@
 
 	// Icons smaller on 2col
 	@include breakpoint( '>960px' ) {
-		.stats__module-list & .icon {
+		.stats__module-list & .stats-list__icon {
 			font-size: 20px;
 			line-height: 1.3;
 		}
@@ -298,7 +302,7 @@
 .module-content-list-item-right {
 	position: relative;
 	float: right;
-	background: $white;
+	background: var( --color-surface );
 	margin-left: -48px; // ### keep? experimental: to force labels to go longer than they normally would to make sure the fade out shows
 
 	@include breakpoint( '>960px' ) {
@@ -313,13 +317,13 @@
 
 	// Fade out value if long
 	&::before {
-		@include stats-fade-text( $white );
+		@include stats-fade-text( rgba( var( --color-surface-rgb ), 0 ), var( --color-surface ) );
 	}
 }
 
 // Module Content List Item Value
 // 1: Makes secondary actions aligned up to values of '99,999' or a string like '99 hours'
-.module-content-list-item-value {
+.stats-list__module-content-list-item-value {
 	display: inline-block;
 	text-align: right;
 	min-width: 44px; // 1
@@ -367,10 +371,10 @@ ul.module-content-list-item-actions {
 
 		// If displayed in a sublist or otherwise expanded item, swap background color
 		.module-content-list-item-toggle.is-expanded & {
-			background-color: $white;
+			background-color: var( --color-surface );
 
 			&::after {
-				border-bottom-color: $white;
+				border-bottom-color: var( --color-border-inverted );
 			}
 		}
 	}
@@ -404,10 +408,10 @@ ul.module-content-list-item-actions {
 
 		// If displayed in a sublist or otherwise expanded item, swap background color
 		.module-content-list-item-toggle.is-expanded & {
-			background-color: $white;
+			background-color: var( --color-surface );
 
 			&::after {
-				border-bottom-color: $white;
+				border-bottom-color: var( --color-border-inverted );
 			}
 		}
 	}
@@ -418,6 +422,7 @@ ul.module-content-list-item-actions {
 // 1: ### Showing/hiding should not be handled by CSS
 
 .module-content-list-item-actions-toggle {
+	cursor: pointer;
 	display: none;
 	min-width: 24px;
 	padding: 0 12px;
@@ -497,13 +502,14 @@ ul.module-content-list-item-action-submenu {
 	// Action wrapper, what's actually selected
 	.module-content-list-item-action-wrapper {
 		@extend %mobile-interface-element;
-		display: inline-block;
 		text-align: center;
 		margin: 0;
+		opacity: 0;
 		line-height: inherit;
 
 		@include breakpoint( '<480px' ) {
 			min-width: 24px;
+			opacity: 1;
 			padding: 0 12px;
 
 			&.toggle {
@@ -533,7 +539,7 @@ ul.module-content-list-item-action-submenu {
 	.module-content-list-item-action-wrapper.following:hover {
 		.module-content-list-item-action-label {
 			display: none;
-			color: $link-highlight;
+			color: var( --color-link-dark );
 		}
 
 		.module-content-list-item-action-label.unfollow {
@@ -560,13 +566,13 @@ ul.module-content-list-item-action-submenu {
 		// Hover state
 		@include breakpoint( '>480px' ) {
 			&:hover {
-				color: tint( $alert-red, 30% );
+				color: var( --color-error-30 );
 			}
 		}
 
 		// Focus state
 		&:focus {
-			color: tint( $alert-red, 30% );
+			color: var( --color-error-30 );
 		}
 	}
 }
@@ -583,7 +589,7 @@ ul.module-content-list-legend {
 .module-content-list-legend .module-content-list-item .module-content-list-item-label {
 	@extend %placeholder;
 
-	color: $gray;
+	color: var( --color-text-subtle );
 	font-weight: bold;
 
 	// Limit width when loading for placeholders to take less visual space
@@ -609,9 +615,9 @@ ul.module-content-list-legend {
 .module-content-list > .module-content-list-item-disabled {
 	cursor: default;
 
-	.module-content-list-item-value,
-	.module-content-list-item-label {
-		color: $gray;
+	.stats-list__module-content-list-item-value,
+	.stats-list__module-content-list-item-label {
+		color: var( --color-neutral-light );
 	}
 }
 
@@ -628,7 +634,7 @@ ul.module-content-list-legend {
 		}
 	}
 
-	> .module-content-list-item-wrapper .module-content-list-item-label {
+	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label {
 		height: 48px;
 		@include breakpoint( '>960px' ) {
 			.stats__module-list & {
@@ -637,12 +643,12 @@ ul.module-content-list-legend {
 		}
 	}
 
-	> .module-content-list-item-wrapper .module-content-list-item-label .avatar {
+	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label .avatar {
 		font-size: 32px;
 		margin-right: 10px;
 	}
 
-	> .module-content-list-item-wrapper .module-content-list-item-label .icon {
+	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label .stats-list__icon {
 		font-size: 32px;
 		line-height: 32px;
 		width: 32px;
@@ -657,14 +663,14 @@ ul.module-content-list-legend {
 
 	@include breakpoint( '>960px' ) {
 		.stats__module-list
-			& > .module-content-list-item-wrapper
-			.module-content-list-item-label
-			.icon {
+			& > .stats-list__module-content-list-item-wrapper
+			.stats-list__module-content-list-item-label
+			.stats-list__icon {
 			margin-top: -2px; // Really couldn't figure out a better way to correctly position the avatar
 		}
 	}
 
-	> .module-content-list-item-wrapper .module-content-list-item-label .avatar {
+	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label .avatar {
 		width: 32px;
 		height: 32px;
 		@include breakpoint( '>960px' ) {
@@ -675,7 +681,7 @@ ul.module-content-list-legend {
 		}
 	}
 
-	> .module-content-list-item-wrapper .module-content-list-item-label .avatar-user {
+	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label .avatar-user {
 		border-radius: 16px;
 	}
 }
@@ -691,20 +697,20 @@ ul.module-content-list-legend {
 	}
 
 	// Change colors to highlight label when row is highlighted
-	.module-content-list-item-label {
+	.stats-list__module-content-list-item-label {
 		color: var( --color-primary );
 	}
 
 	// Highlight main action (usually what's indicated in the label)
 
 	@include breakpoint( '>480px' ) {
-		.module-content-list-item-wrapper:hover .module-content-list-item-label {
-			color: $link-highlight;
+		.stats-list__module-content-list-item-wrapper:hover .stats-list__module-content-list-item-label {
+			color: var( --color-link-dark );
 		}
 	}
 
-	.module-content-list-item-wrapper:focus .module-content-list-item-label {
-		color: $link-highlight;
+	.stats-list__module-content-list-item-wrapper:focus .stats-list__module-content-list-item-label {
+		color: var( --color-link-dark );
 	}
 }
 
@@ -715,7 +721,7 @@ ul.module-content-list-legend {
 	position: relative;
 
 	// Toggle icon
-	> .module-content-list-item-wrapper .module-content-list-item-label .gridicons-chevron-down {
+	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label .gridicons-chevron-down {
 		vertical-align: middle;
 		transition: 0.2s transform ease-out;
 		transform: translate3d( 0, 0, 0 );
@@ -732,40 +738,40 @@ ul.module-content-list-legend {
 
 	// Lock in hover states to show that the list item is now selected (active)
 	&,
-	> .module-content-list-item-wrapper,
-	> .module-content-list-item-wrapper .module-content-list-item-right {
+	> .stats-list__module-content-list-item-wrapper,
+	> .stats-list__module-content-list-item-wrapper .module-content-list-item-right {
 		background: var( --color-neutral-0 );
 	}
 
-	> .module-content-list-item-wrapper .module-content-list-item-value {
-		color: $gray;
+	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-value {
+		color: var( --color-neutral-light );
 	}
 
-	> .module-content-list-item-wrapper .module-content-list-item-right::before {
-		background-image: linear-gradient( to right, $transparent 0%, $gray-light 90% );
+	> .stats-list__module-content-list-item-wrapper .module-content-list-item-right::before {
+		background-image: linear-gradient( to right, rgba( var( --color-neutral-0-rgb ), 0 ) 0%, var( --color-neutral-0 ) 90% );
 	}
 
 	// Rotate toggle icon
-	> .module-content-list-item-wrapper .module-content-list-item-label .gridicons-chevron-down {
+	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label .gridicons-chevron-down {
 		transform: rotate( 180deg );
 	}
 
 	// Hide the top border of an active sub-list
 	> .module-content-list-item {
-		border-top-color: $transparent;
+		border-top-color: rgba( var( --color-surface-rgb ), 0 );
 	}
 
 	// Hover changes
 	@include breakpoint( '>480px' ) {
-		> .module-content-list-item-wrapper:hover {
+		> .stats-list__module-content-list-item-wrapper:hover {
 			// Change background and gradient color
 			&,
 			.module-content-list-item-right {
-				background-color: $white;
+				background-color: var( --color-surface );
 			}
 
 			span.module-content-list-item-right::before {
-				background-image: linear-gradient( to right, $transparent 0%, $white 90% );
+				background-image: linear-gradient( to right, rgba( var( --color-surface-rgb ), 0 ) 0%, var( --color-surface ) 90% );
 			}
 		}
 	}
@@ -779,34 +785,34 @@ ul.module-content-list-legend {
 	padding: 4px 0;
 
 	// Add more padding for third level nested lists
-	.module-content-list-sublist .module-content-list-item-wrapper {
+	.module-content-list-sublist .stats-list__module-content-list-item-wrapper {
 		padding-left: 56px;
 	}
 }
 
 .module-content-list-sublist .module-content-list-item {
 	// Change background and gradient color
-	> .module-content-list-item-wrapper .module-content-list-item-right,
-	> .module-content-list-item-wrapper {
+	> .stats-list__module-content-list-item-wrapper .module-content-list-item-right,
+	> .stats-list__module-content-list-item-wrapper {
 		background: var( --color-neutral-0 ); // Default non-active color
 	}
 
 	.module-content-list-item-right::before {
-		background-image: linear-gradient( to right, $transparent 0%, $gray-light 90% );
+		background-image: linear-gradient( to right, rgba( var( --color-neutral-rgb ), 0 ) 0%, var( --color-neutral-0 ) 90% );
 	}
 
 	// Hover changes
 	@include breakpoint( '>480px' ) {
-		&-link .module-content-list-item-wrapper:hover,
-		&-normal .module-content-list-item-wrapper:hover {
+		&-link .stats-list__module-content-list-item-wrapper:hover,
+		&-normal .stats-list__module-content-list-item-wrapper:hover {
 			// Change background and gradient color
 			&,
 			.module-content-list-item-right {
-				background-color: $white;
+				background-color: var( --color-surface );
 			}
 
 			span.module-content-list-item-right::before {
-				background-image: linear-gradient( to right, $transparent 0%, $white 90% );
+				background-image: linear-gradient( to right, rgba( var( --color-surface-rgb ), 0 ) 0%, var( --color-surface ) 90% );
 			}
 		}
 	}

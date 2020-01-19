@@ -1,18 +1,14 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import { drop, isEmpty, join, find, split, startsWith, values } from 'lodash';
+import { drop, join, get, split, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { type as domainTypes, transferStatus, gdprConsentStatus } from './constants';
-import { cartItems } from 'lib/cart-values';
-import { isDomainRegistration } from 'lib/products-values';
 
-function getDomainType( domainFromApi ) {
+export function getDomainType( domainFromApi ) {
 	if ( domainFromApi.type === 'redirect' ) {
 		return domainTypes.SITE_REDIRECT;
 	}
@@ -32,7 +28,7 @@ function getDomainType( domainFromApi ) {
 	return domainTypes.MAPPED;
 }
 
-function getTransferStatus( domainFromApi ) {
+export function getTransferStatus( domainFromApi ) {
 	if ( domainFromApi.transfer_status === 'pending_owner' ) {
 		return transferStatus.PENDING_OWNER;
 	}
@@ -56,7 +52,7 @@ function getTransferStatus( domainFromApi ) {
 	return null;
 }
 
-function getGdprConsentStatus( domainFromApi ) {
+export function getGdprConsentStatus( domainFromApi ) {
 	switch ( domainFromApi.gdpr_consent_status ) {
 		case 'NONE':
 			return gdprConsentStatus.NONE;
@@ -77,38 +73,15 @@ function getGdprConsentStatus( domainFromApi ) {
 	}
 }
 
-/**
- * Depending on the current step in checkout, the user's domain can be found in
- * either the cart or the receipt.
- *
- * @param {?Object} receipt - The receipt for the transaction
- * @param {?Object} cart - The cart for the transaction
- *
- * @return {?String} the name of the first domain for the transaction.
- */
-function getDomainNameFromReceiptOrCart( receipt, cart ) {
-	let domainRegistration;
-
-	if ( receipt && ! isEmpty( receipt.purchases ) ) {
-		domainRegistration = find( values( receipt.purchases ), isDomainRegistration );
-	}
-
-	if ( cartItems.hasDomainRegistration( cart ) ) {
-		domainRegistration = cartItems.getDomainRegistrations( cart )[ 0 ];
-	}
-
-	if ( domainRegistration ) {
-		return domainRegistration.meta;
-	}
-
-	return null;
+export function getDomainRegistrationAgreementUrl( domainFromApi ) {
+	return get( domainFromApi, 'domain_registration_agreement_url', null );
 }
 
-function isDomainConnectAuthorizePath( path ) {
+export function isDomainConnectAuthorizePath( path ) {
 	return startsWith( path, '/domain-connect/authorize/' );
 }
 
-function parseDomainAgainstTldList( domainFragment, tldList ) {
+export function parseDomainAgainstTldList( domainFragment, tldList ) {
 	if ( ! domainFragment ) {
 		return '';
 	}
@@ -122,12 +95,3 @@ function parseDomainAgainstTldList( domainFragment, tldList ) {
 
 	return parseDomainAgainstTldList( suffix, tldList );
 }
-
-export {
-	getDomainNameFromReceiptOrCart,
-	getDomainType,
-	getGdprConsentStatus,
-	getTransferStatus,
-	isDomainConnectAuthorizePath,
-	parseDomainAgainstTldList,
-};

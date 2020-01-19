@@ -1,0 +1,58 @@
+/*
+ * CSS values in this file are specific and
+ * designed to match the CSS on external sites,
+ * such as Google and Facebook. Therefore there
+ * will be exceptions to our CSS guidelines here
+ * but please do not "update" this file to
+ * conform.
+ *
+ * @blame: dmsnell
+*/
+
+.search-preview__header {
+	margin: 0;
+	padding: 8px 0;
+	background-color: var( --color-neutral-0 );
+	border: 1px solid var( --color-neutral-0 );
+	border-bottom: 0;
+	font-size: 11px;
+	line-height: 1;
+	font-weight: bold;
+	text-transform: uppercase;
+	text-align: center;
+	color: var( --color-neutral-40 );
+}
+
+.search-preview__display {
+	border: 1px solid var( --color-neutral-0 );
+	font-family: arial, sans-serif;
+	padding: 10px 20px;
+	word-wrap: break-word;
+}
+
+.search-preview__title {
+	color: #1a0dab; // matching Google results
+	font-size: 18px;
+	line-height: 1.2;
+	max-width: 616px;
+
+	&:hover {
+		cursor: pointer;
+		text-decoration: underline;
+	}
+}
+
+.search-preview__url {
+	color: #006621; // matching Google results
+	font-size: 14px;
+	height: 17px;
+	line-height: 16px;
+	max-width: 616px;
+}
+
+.search-preview__snippet {
+	color: #545454; // matching Google results
+	font-size: 13px;
+	line-height: 1.4;
+	max-width: 616px;
+}

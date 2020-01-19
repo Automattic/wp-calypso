@@ -17,7 +17,7 @@
 		width: 16px;
 
 		&.is-disabled {
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 	}
 }

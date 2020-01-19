@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,13 +12,11 @@ import {
 	PURCHASES_USER_FETCH,
 	PURCHASES_SITE_FETCH_COMPLETED,
 	PURCHASES_USER_FETCH_COMPLETED,
-	PRIVACY_PROTECTION_CANCEL_COMPLETED,
-	PRIVACY_PROTECTION_CANCEL_FAILED,
 } from 'state/action-types';
 
 describe( 'reducer', () => {
-	const userId = '1337',
-		siteId = '2701';
+	const userId = '1337';
+	const siteId = '2701';
 
 	test( 'should return an object with the initial state', () => {
 		expect( reducer( undefined, { type: 'UNRELATED' } ) ).to.be.eql( {
@@ -140,96 +136,6 @@ describe( 'reducer', () => {
 
 		expect( state ).to.be.eql( {
 			data: [ { ID: '2', blog_id: siteId, user_id: userId } ],
-			error: null,
-			isFetchingSitePurchases: false,
-			isFetchingUserPurchases: false,
-			hasLoadedSitePurchasesFromServer: true,
-			hasLoadedUserPurchasesFromServer: true,
-		} );
-	} );
-
-	test( 'should return an object with original purchase and error message when cancelation of privacy protection failed', () => {
-		let state = {
-			data: [
-				{ ID: '2', blog_id: siteId, user_id: userId },
-				{ ID: '4', blog_id: 2702, user_id: userId },
-			],
-			error: null,
-			isFetchingSitePurchases: false,
-			isFetchingUserPurchases: false,
-			hasLoadedSitePurchasesFromServer: true,
-			hasLoadedUserPurchasesFromServer: true,
-		};
-
-		state = reducer( state, {
-			type: PRIVACY_PROTECTION_CANCEL_FAILED,
-			error: 'Unable to fetch stored cards',
-			purchaseId: '2',
-		} );
-
-		expect( state ).to.be.eql( {
-			data: [
-				{
-					ID: '2',
-					blog_id: siteId,
-					user_id: userId,
-					error: 'Unable to fetch stored cards',
-				},
-				{
-					ID: '4',
-					blog_id: 2702,
-					user_id: userId,
-				},
-			],
-			error: null,
-			isFetchingSitePurchases: false,
-			isFetchingUserPurchases: false,
-			hasLoadedSitePurchasesFromServer: true,
-			hasLoadedUserPurchasesFromServer: true,
-		} );
-	} );
-
-	test( 'should return an object with updated purchase when cancelation of privacy protection completed', () => {
-		let state = {
-			data: [
-				{ ID: '2', blog_id: siteId, user_id: userId },
-				{ ID: '4', blog_id: 2702, user_id: userId },
-			],
-			error: null,
-			isFetchingSitePurchases: false,
-			isFetchingUserPurchases: false,
-			hasLoadedSitePurchasesFromServer: true,
-			hasLoadedUserPurchasesFromServer: true,
-		};
-
-		state = reducer( state, {
-			type: PRIVACY_PROTECTION_CANCEL_COMPLETED,
-			purchase: {
-				ID: '2',
-				blog_id: siteId,
-				user_id: userId,
-				amount: 2200,
-				error: null,
-				has_private_registration: false,
-			},
-		} );
-
-		expect( state ).to.be.eql( {
-			data: [
-				{
-					ID: '2',
-					blog_id: siteId,
-					user_id: userId,
-					amount: 2200,
-					error: null,
-					has_private_registration: false,
-				},
-				{
-					ID: '4',
-					blog_id: 2702,
-					user_id: userId,
-				},
-			],
 			error: null,
 			isFetchingSitePurchases: false,
 			isFetchingUserPurchases: false,

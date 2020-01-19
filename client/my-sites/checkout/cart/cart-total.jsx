@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,15 +9,15 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
-import config from 'config';
+import { shouldShowTax } from 'lib/cart-values';
+import { hasOnlyFreeTrial } from 'lib/cart-values/cart-items';
 
 class CartTotal extends React.Component {
 	static propTypes = {
 		cart: PropTypes.shape( {
 			tax: PropTypes.shape( {
 				location: PropTypes.object.isRequired,
-				display_tax: PropTypes.bool.isRequired,
+				display_taxes: PropTypes.bool.isRequired,
 			} ).isRequired,
 			sub_total: PropTypes.number.isRequired,
 			sub_total_display: PropTypes.string.isRequired,
@@ -45,20 +43,25 @@ class CartTotal extends React.Component {
 			return <div className="cart__total" />;
 		}
 
-		const showTax = cart.tax.display_tax && config.isEnabled( 'show-tax' );
+		const showTax = shouldShowTax( cart );
 		return (
 			<div className="cart__total">
+				<div className="cart__total-row grand-total">
+					<div className="cart__total-label grand-total">{ this.totalLabel() }</div>
+					<div className="cart__total-amount grand-total">{ cart.total_cost_display }</div>
+				</div>
 				{ showTax && (
 					<Fragment>
-						<span className="cart__total-label">Subtotal:</span>
-						<span className="cart__total-amount">{ cart.sub_total_display }</span>
-						<span className="cart__total-label">Tax:</span>
-						<span className="cart__total-amount">{ cart.total_tax_display }</span>
-						<div className="cart__total-divider" />
+						<div className="cart__total-row">
+							<div className="cart__total-label">Subtotal:</div>
+							<div className="cart__total-amount">{ cart.sub_total_display }</div>
+						</div>
+						<div className="cart__total-row">
+							<div className="cart__total-label">Tax:</div>
+							<div className="cart__total-amount last-cell">{ cart.total_tax_display }</div>
+						</div>
 					</Fragment>
 				) }
-				<span className="cart__total-label grand-total">{ this.totalLabel() }</span>
-				<span className="cart__total-amount grand-total">{ cart.total_cost_display }</span>
 			</div>
 		);
 	}
@@ -66,7 +69,7 @@ class CartTotal extends React.Component {
 	totalLabel = () => {
 		const cart = this.props.cart;
 
-		if ( cartItems.hasOnlyFreeTrial( cart ) ) {
+		if ( hasOnlyFreeTrial( cart ) ) {
 			return this.props.translate( 'Total Due Now:', {
 				context: 'Upgrades: Total cart cost in checkout when buying a free trial',
 			} );

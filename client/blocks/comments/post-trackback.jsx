@@ -1,18 +1,21 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { get } from 'lodash';
 
-/***
+/**
  * Internal dependencies
  */
 import TimeSince from 'components/time-since';
+
+/**
+ * Style dependencies
+ */
+import './post-comment.scss'; // yes, this is intentional. they share styles.
 
 function unescape( str ) {
 	return str.replace( /&#(\d+);/g, ( match, entity ) => String.fromCharCode( entity ) );

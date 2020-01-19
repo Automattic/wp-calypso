@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,7 +5,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const PluginIcon = ( { className, image, isPlaceholder } ) => {
 	const classes = classNames(

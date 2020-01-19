@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="56px" height="56px" viewBox="0 0 56 56" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>Mystery Person</title>
-    <g id="mystery-person" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <circle class="mystery-person__background" fill="#D2DDE5" cx="28" cy="28" r="28"></circle>
-        <path d="M34.9683678,36 C40.578307,38.1003887 44.9930836,42.6481336 46.9130616,48.3435985 L46.9130647,48.3435956 C41.9260388,52.9335135 35.2686044,55.7363571 27.9565308,55.7363571 C20.6444572,55.7363571 13.9870228,52.9335135 9,48.3435985 C10.9199779,42.6481336 15.3347545,38.1003887 20.9446937,36 C23.0372513,37.1085292 25.4235725,37.7363571 27.9565308,37.7363571 C30.489489,37.7363571 32.8758102,37.1085292 34.9683678,36 Z" class="mystery-person__body" fill="#87A6BC"></path>
-        <circle class="mystery-person__head" fill="#87A6BC" cx="28" cy="23" r="12"></circle>
-    </g>
-</svg>

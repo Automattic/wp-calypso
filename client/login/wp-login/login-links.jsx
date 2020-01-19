@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -11,13 +8,16 @@ import { connect } from 'react-redux';
 import { get, includes, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { parse as parseUrl } from 'url';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
  */
 import config, { isEnabled } from 'config';
 import ExternalLink from 'components/external-link';
+import Gridicon from 'components/gridicon';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
+import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import { addQueryArgs } from 'lib/url';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
@@ -34,7 +34,7 @@ export class LoginLinks extends React.Component {
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
 		privateSite: PropTypes.bool,
-		query: PropTypes.object,
+		query: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		recordTracksEvent: PropTypes.func.isRequired,
 		resetMagicLoginRequestForm: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -66,7 +66,7 @@ export class LoginLinks extends React.Component {
 		const loginParameters = {
 			isNative: true,
 			locale: this.props.locale,
-			twoFactorAuthType: 'link',
+			twoFactorAuthType: this.props.currentRoute === '/log-in/jetpack' ? 'jetpack/link' : 'link',
 		};
 		const emailAddress = get( this.props, [ 'query', 'email_address' ] );
 		if ( emailAddress ) {
@@ -168,6 +168,21 @@ export class LoginLinks extends React.Component {
 			return null;
 		}
 
+		// @todo Implement a muriel version of the email login links for the WooCommerce onboarding flows
+		if (
+			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+			isWooOAuth2Client( this.props.oauth2Client ) &&
+			this.props.wccomFrom
+		) {
+			return null;
+		}
+		if (
+			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
+			this.props.isJetpackWooCommerceFlow
+		) {
+			return null;
+		}
+
 		// The email address from the URL (if present) is added to the login
 		// parameters in this.handleMagicLoginLinkClick(). But it's left out
 		// here deliberately, to ensure that if someone copies this link to
@@ -175,7 +190,7 @@ export class LoginLinks extends React.Component {
 		const loginParameters = {
 			isNative: true,
 			locale: this.props.locale,
-			twoFactorAuthType: 'link',
+			twoFactorAuthType: this.props.currentRoute === '/log-in/jetpack' ? 'jetpack/link' : 'link',
 		};
 
 		return (
@@ -209,7 +224,7 @@ export class LoginLinks extends React.Component {
 
 	renderSignUpLink() {
 		// Taken from client/layout/masterbar/logged-out.jsx
-		const { currentQuery, currentRoute, pathname, translate } = this.props;
+		const { currentQuery, currentRoute, oauth2Client, pathname, translate, wccomFrom } = this.props;
 
 		let signupUrl = config( 'signup_url' );
 		const signupFlow = get( currentQuery, 'signup_flow' );
@@ -237,6 +252,33 @@ export class LoginLinks extends React.Component {
 			signupUrl += '/' + signupFlow;
 		}
 
+		if ( config.isEnabled( 'signup/wpcc' ) && isCrowdsignalOAuth2Client( oauth2Client ) ) {
+			const oauth2Flow = 'crowdsignal';
+			const redirectTo = get( currentQuery, 'redirect_to', '' );
+			const oauth2Params = {
+				oauth2_client_id: oauth2Client.id,
+				oauth2_redirect: redirectTo,
+			};
+
+			signupUrl = `${ signupUrl }/${ oauth2Flow }?${ stringify( oauth2Params ) }`;
+		}
+
+		if (
+			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+			oauth2Client &&
+			isWooOAuth2Client( oauth2Client ) &&
+			wccomFrom
+		) {
+			const redirectTo = get( currentQuery, 'redirect_to', '' );
+			const oauth2Params = {
+				oauth2_client_id: oauth2Client.id,
+				'wccom-from': wccomFrom,
+				oauth2_redirect: redirectTo,
+			};
+
+			signupUrl = `${ signupUrl }/wpcc?${ stringify( oauth2Params ) }`;
+		}
+
 		return (
 			<a
 				href={ signupUrl }
@@ -257,7 +299,7 @@ export class LoginLinks extends React.Component {
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
 				{ this.renderResetPasswordLink() }
-				{ this.renderBackLink() }
+				{ ! isCrowdsignalOAuth2Client( this.props.oauth2Client ) && this.renderBackLink() }
 			</div>
 		);
 	}
@@ -270,6 +312,9 @@ export default connect(
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
 		oauth2Client: getCurrentOAuth2Client( state ),
 		query: getCurrentQueryArguments( state ),
+		isJetpackWooCommerceFlow:
+			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
+		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 	} ),
 	{
 		recordTracksEvent,

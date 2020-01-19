@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -37,7 +35,7 @@ export default class extends React.Component {
 
 	state = getStateData( this.props.siteId );
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		MediaActions.setQuery( this.props.siteId, this.getQuery() );
 		MediaListStore.on( 'change', this.updateStateData );
 		this.updateStateData();
@@ -47,7 +45,7 @@ export default class extends React.Component {
 		MediaListStore.off( 'change', this.updateStateData );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const nextQuery = this.getQuery( nextProps );
 
 		if ( this.props.siteId !== nextProps.siteId || ! isEqual( nextQuery, this.getQuery() ) ) {
@@ -78,6 +76,11 @@ export default class extends React.Component {
 		if ( props.source ) {
 			query.source = props.source;
 			query.path = 'recent';
+
+			if ( props.source === 'google_photos' ) {
+				// Add any query params specific to Google Photos
+				return utils.getGoogleQuery( query, props );
+			}
 		}
 
 		return query;

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -104,7 +103,7 @@ export class WebPreviewContent extends Component {
 				this.props.onClose();
 				return;
 			case 'partially-loaded':
-				this.setLoaded();
+				this.setLoaded( 'iframe-message' );
 				return;
 			case 'location-change':
 				this.handleLocationChange( data.payload );
@@ -207,7 +206,7 @@ export class WebPreviewContent extends Component {
 		this.setDeviceViewport( 'seo' );
 	};
 
-	setLoaded = () => {
+	setLoaded = caller => {
 		if ( this.state.loaded && ! this.state.isLoadingSubpage ) {
 			debug( 'already loaded' );
 			return;
@@ -222,13 +221,32 @@ export class WebPreviewContent extends Component {
 		} else {
 			debug( 'preview loaded for url:', this.state.iframeUrl );
 		}
-		this.setState( { loaded: true, isLoadingSubpage: false } );
-
+		if ( this.checkForIframeLoadFailure( caller ) ) {
+			if ( this.props.showClose ) {
+				window.open( this.state.iframeUrl, '_blank' );
+				this.props.onClose();
+			} else {
+				window.location.replace( this.state.iframeUrl );
+			}
+		} else {
+			this.setState( { loaded: true, isLoadingSubpage: false } );
+		}
 		// Sometimes we force inline help open in the preview. In this case we don't want to hide it when the iframe loads
 		if ( ! this.props.isInlineHelpPopoverVisible ) {
 			this.focusIfNeeded();
 		}
 	};
+
+	// In cases where loading of the iframe content is blocked by the browser for cross-origin reasons the
+	// iframe onload event is still fired, so we need to validate that the actual content was loaded by seeing
+	// if state.loaded was set to true by the receipt of a postMessage from the iframe. The check for
+	// 'about:blank' prevents the check for failing in the context of previews in the block editor  - in this
+	// context a postMessage is not received from the iframe.
+	checkForIframeLoadFailure( caller ) {
+		return (
+			caller === 'iframe-onload' && ! this.state.loaded && this.state.iframeUrl !== 'about:blank'
+		);
+	}
 
 	render() {
 		const { translate } = this.props;
@@ -279,7 +297,7 @@ export class WebPreviewContent extends Component {
 							ref={ this.setIframeInstance }
 							className="web-preview__frame"
 							src="about:blank"
-							onLoad={ this.setLoaded }
+							onLoad={ () => this.setLoaded( 'iframe-onload' ) }
 							title={ this.props.iframeTitle || translate( 'Preview' ) }
 						/>
 					</div>
@@ -375,7 +393,4 @@ const mapState = state => ( {
 	isInlineHelpPopoverVisible: isInlineHelpPopoverVisible( state ),
 } );
 
-export default connect(
-	mapState,
-	{ recordTracksEvent }
-)( localize( WebPreviewContent ) );
+export default connect( mapState, { recordTracksEvent } )( localize( WebPreviewContent ) );

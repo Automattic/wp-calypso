@@ -1,8 +1,9 @@
-/** @format */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 /**
  * External dependencies
  */
-import deterministicStringify from 'json-stable-stringify';
+import deterministicStringify from 'fast-json-stable-stringify';
 import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import React from 'react';
@@ -12,7 +13,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
+import classNames from 'classnames';
 import PeopleListItem from 'my-sites/people/people-list-item';
 import { fetchUsers } from 'lib/users/actions';
 import InfiniteList from 'components/infinite-list';
@@ -26,6 +28,12 @@ const debug = debugFactory( 'calypso:my-sites:people:team-list' );
 class Team extends React.Component {
 	static displayName = 'Team';
 
+	constructor() {
+		super();
+
+		this.infiniteList = React.createRef();
+	}
+
 	state = {
 		bulkEditing: false,
 	};
@@ -34,10 +42,26 @@ class Team extends React.Component {
 		this.props.totalUsers <= this.props.users.length + this.props.excludedUsers.length;
 
 	render() {
-		const key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) );
-		const listClass = this.state.bulkEditing ? 'bulk-editing' : null;
-		let headerText = this.props.translate( 'Team', { context: 'A navigation label.' } );
+		const key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) ),
+			listClass = classNames( {
+				'bulk-editing': this.state.bulkEditing,
+				'people-invites__invites-list': true,
+			} );
 		let people;
+		let headerText;
+		if ( this.props.totalUsers ) {
+			headerText = this.props.translate(
+				'There is %(numberPeople)d person in your team',
+				'There are %(numberPeople)d people in your team',
+				{
+					args: {
+						numberPeople: this.props.totalUsers,
+					},
+					count: this.props.totalUsers,
+					context: 'A navigation label.',
+				}
+			);
+		}
 
 		if (
 			this.props.fetchInitialized &&
@@ -78,8 +102,8 @@ class Team extends React.Component {
 				<InfiniteList
 					key={ key }
 					items={ this.props.users }
-					className="people-selector__infinite-list"
-					ref="infiniteList"
+					className="team-list__infinite is-people"
+					ref={ this.infiniteList }
 					fetchingNextPage={ this.props.fetchingUsers }
 					lastPage={ this.isLastPage() }
 					fetchNextPage={ this.fetchNextPage }
@@ -98,11 +122,7 @@ class Team extends React.Component {
 				<PeopleListSectionHeader
 					label={ headerText }
 					site={ this.props.site }
-					count={
-						this.props.fetchingUsers || this.props.fetchOptions.search
-							? null
-							: this.props.totalUsers
-					}
+					isPlaceholder={ this.props.fetchingUsers || this.props.fetchOptions.search }
 				/>
 				<Card className={ listClass }>{ people }</Card>
 				{ this.isLastPage() && <ListEnd /> }
@@ -140,7 +160,4 @@ class Team extends React.Component {
 	renderLoadingPeople = () => <PeopleListItem key="people-list-item-placeholder" />;
 }
 
-export default connect(
-	null,
-	{ recordGoogleEvent }
-)( localize( Team ) );
+export default connect( null, { recordGoogleEvent } )( localize( Team ) );

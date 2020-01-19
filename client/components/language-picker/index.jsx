@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -18,6 +16,11 @@ import LanguagePickerModal from './modal';
 import QueryLanguageNames from 'components/data/query-language-names';
 import { requestGeoLocation } from 'state/data-getters';
 import { getLanguageCodeLabels } from './utils';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class LanguagePicker extends PureComponent {
 	static propTypes = {
@@ -45,7 +48,7 @@ export class LanguagePicker extends PureComponent {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.value !== this.props.value || nextProps.valueKey !== this.props.valueKey ) {
 			this.setState( {
 				selectedLanguage: this.findLanguage( nextProps.valueKey, nextProps.value ),
@@ -98,14 +101,6 @@ export class LanguagePicker extends PureComponent {
 		}
 	};
 
-	handleKeyPress = event => {
-		if ( event.key === 'Enter' || event.key === ' ' ) {
-			event.preventDefault();
-			this.props.onClick( event );
-			this.toggleOpen();
-		}
-	};
-
 	handleClose = () => this.setState( { open: false } );
 
 	renderPlaceholder() {
@@ -151,30 +146,30 @@ export class LanguagePicker extends PureComponent {
 		const { langCode, langSubcode } = getLanguageCodeLabels( language.langSlug );
 
 		return (
-			<div
-				tabIndex="0"
-				role="button"
-				className="language-picker"
-				onKeyPress={ this.handleKeyPress }
-				onClick={ this.handleClick }
-				disabled={ disabled }
-			>
-				<div className="language-picker__icon">
-					<div className="language-picker__icon-inner">
-						{ langCode }
-						{ langSubcode && <br /> }
-						{ langSubcode }
-					</div>
-				</div>
-				<div className="language-picker__name">
-					<div className="language-picker__name-inner">
-						<div className="language-picker__name-label">{ langName }</div>
-						<div className="language-picker__name-change">{ translate( 'Change' ) }</div>
-					</div>
-				</div>
-				{ this.renderModal( language.langSlug ) }
+			<Fragment>
 				<QueryLanguageNames />
-			</div>
+				<button
+					type="button"
+					className="language-picker"
+					onClick={ this.handleClick }
+					disabled={ disabled }
+				>
+					<div className="language-picker__icon">
+						<div className="language-picker__icon-inner">
+							{ langCode }
+							{ langSubcode && <br /> }
+							{ langSubcode }
+						</div>
+					</div>
+					<div className="language-picker__name">
+						<div className="language-picker__name-inner">
+							<div className="language-picker__name-label">{ langName }</div>
+							<div className="language-picker__name-change">{ translate( 'Change' ) }</div>
+						</div>
+					</div>
+				</button>
+				{ this.renderModal( language.langSlug ) }
+			</Fragment>
 		);
 	}
 }

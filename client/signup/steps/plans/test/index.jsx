@@ -1,50 +1,12 @@
-/** @format */
-
-jest.mock( 'lib/analytics', () => ( {
-	tracks: {
-		recordEvent: jest.fn(),
-	},
-} ) );
-
-jest.mock( 'lib/signup/actions', () => ( {
-	submitSignupStep: jest.fn(),
-	saveSignupStep: jest.fn(),
-} ) );
-
-jest.mock( 'lib/cart-values', () => ( {
-	cartItems: {
-		domainPrivacyProtection: jest.fn( () => {
-			return 43;
-		} ),
-	},
-} ) );
-
 jest.mock( 'signup/step-wrapper', () => 'step-wrapper' );
 jest.mock( 'my-sites/plan-features', () => 'plan-features' );
-
-jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
-		<Comp
-			{ ...props }
-			translate={ function( x ) {
-				return x;
-			} }
-		/>
-	),
-	numberFormat: x => x,
-	translate: x => x,
-} ) );
-
-import analytics from 'lib/analytics';
-import SignupActions from 'lib/signup/actions';
-
-const translate = x => x;
 
 /**
  * External dependencies
  */
 import { shallow } from 'enzyme';
 import React from 'react';
+import { identity, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -72,14 +34,15 @@ import {
 } from 'lib/plans/constants';
 
 const props = {
-	translate,
 	siteGoals: '',
 	stepName: 'Step name',
 	stepSectionName: 'Step section name',
-	signupDependencies: {
-		domainItem: null,
-	},
-	goToNextStep: function() {},
+	signupDependencies: { domainItem: null },
+	saveSignupStep: noop,
+	submitSignupStep: noop,
+	goToNextStep: noop,
+	recordTracksEvent: noop,
+	translate: identity,
 };
 
 describe( 'Plans basic tests', () => {
@@ -92,9 +55,6 @@ describe( 'Plans basic tests', () => {
 describe( 'Plans.onSelectPlan', () => {
 	const tplProps = {
 		...props,
-		signupDependencies: {
-			...props.signupDependencies,
-		},
 		flowName: 'ecommerce',
 		designType: 'store',
 	};
@@ -106,20 +66,19 @@ describe( 'Plans.onSelectPlan', () => {
 		};
 		const comp = new PlansStep( myProps );
 		comp.onSelectPlan( { product_slug: PLAN_FREE } );
-		expect( myProps.goToNextStep ).toBeCalled();
+		expect( myProps.goToNextStep ).toHaveBeenCalled();
 	} );
 
 	test( 'Should call submitSignupStep with step details', () => {
-		SignupActions.submitSignupStep.mockReset();
+		const submitSignupStep = jest.fn();
 
-		const comp = new PlansStep( tplProps );
+		const comp = new PlansStep( { ...tplProps, submitSignupStep } );
 		const cartItem = { product_slug: PLAN_FREE };
 		comp.onSelectPlan( cartItem );
-		expect( SignupActions.submitSignupStep ).toBeCalled();
+		expect( submitSignupStep ).toHaveBeenCalled();
 
-		const calls = SignupActions.submitSignupStep.mock.calls;
+		const calls = submitSignupStep.mock.calls;
 		const args = calls[ calls.length - 1 ];
-		expect( typeof args[ 0 ].processingMessage ).toEqual( 'string' );
 		expect( args[ 0 ].stepName ).toEqual( 'Step name' );
 		expect( args[ 0 ].stepSectionName ).toEqual( 'Step section name' );
 		expect( args[ 0 ].cartItem ).toBe( cartItem );
@@ -127,47 +86,44 @@ describe( 'Plans.onSelectPlan', () => {
 	} );
 
 	test( 'Should call submitSignupStep with additionalStepData if specified', () => {
+		const submitSignupStep = jest.fn();
 		const myProps = {
 			...tplProps,
-			additionalStepData: {
-				test: 23,
-			},
+			additionalStepData: { test: 23 },
+			submitSignupStep,
 		};
-		SignupActions.submitSignupStep.mockReset();
 
 		const comp = new PlansStep( myProps );
 		const cartItem = { product_slug: PLAN_FREE };
 		comp.onSelectPlan( cartItem );
-		expect( SignupActions.submitSignupStep ).toBeCalled();
+		expect( submitSignupStep ).toHaveBeenCalled();
 
-		const calls = SignupActions.submitSignupStep.mock.calls;
+		const calls = submitSignupStep.mock.calls;
 		const args = calls[ calls.length - 1 ];
 		expect( args[ 0 ].test ).toEqual( 23 );
 	} );
 
 	test( 'Should call submitSignupStep with correct providedDependencies', () => {
-		SignupActions.submitSignupStep.mockReset();
-
-		const comp = new PlansStep( tplProps );
+		const submitSignupStep = jest.fn();
+		const comp = new PlansStep( { ...tplProps, submitSignupStep } );
 		const cartItem = { product_slug: PLAN_FREE };
 		comp.onSelectPlan( cartItem );
-		expect( SignupActions.submitSignupStep ).toBeCalled();
+		expect( submitSignupStep ).toHaveBeenCalled();
 
-		const calls = SignupActions.submitSignupStep.mock.calls;
+		const calls = submitSignupStep.mock.calls;
 		const args = calls[ calls.length - 1 ];
-		expect( args[ 2 ].cartItem ).toBe( cartItem );
+		expect( args[ 1 ].cartItem ).toBe( cartItem );
 	} );
 
 	test( 'Should call recordEvent when cartItem is specified', () => {
-		analytics.tracks.recordEvent.mockReset();
-
-		const comp = new PlansStep( tplProps );
+		const recordTracksEvent = jest.fn();
+		const comp = new PlansStep( { ...tplProps, recordTracksEvent } );
 		const cartItem = { product_slug: PLAN_FREE, free_trial: false };
 		comp.onSelectPlan( cartItem );
 
-		expect( analytics.tracks.recordEvent ).toBeCalled();
+		expect( recordTracksEvent ).toHaveBeenCalled();
 
-		const calls = analytics.tracks.recordEvent.mock.calls;
+		const calls = recordTracksEvent.mock.calls;
 		const args = calls[ calls.length - 1 ];
 		expect( args[ 0 ] ).toEqual( 'calypso_signup_plan_select' );
 		expect( args[ 1 ] ).toEqual( {
@@ -192,7 +148,7 @@ describe( 'Plans.onSelectPlan', () => {
 			const cartItem = { product_slug: plan };
 			const comp = new PlansStep( myProps );
 			comp.onSelectPlan( cartItem );
-			expect( myProps.goToNextStep ).toBeCalled();
+			expect( myProps.goToNextStep ).toHaveBeenCalled();
 			expect( cartItem.extra ).toEqual( {
 				is_store_signup: true,
 			} );
@@ -215,7 +171,7 @@ describe( 'Plans.onSelectPlan', () => {
 			const cartItem = { product_slug: plan };
 			const comp = new PlansStep( myProps );
 			comp.onSelectPlan( cartItem );
-			expect( myProps.goToNextStep ).toBeCalled();
+			expect( myProps.goToNextStep ).toHaveBeenCalled();
 			expect( cartItem.extra ).toEqual( undefined );
 		} );
 	} );

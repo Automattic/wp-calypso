@@ -4,7 +4,7 @@
 .chart {
 	position: relative;
 	box-sizing: border-box;
-	background-color: var( --color-white );
+	background-color: var( --color-surface );
 	padding: 8px 0 8px 20px;
 }
 
@@ -61,7 +61,7 @@ $y-axis-padding: 0 20px 0 10px;
 	height: 200px;
 	padding: $y-axis-padding;
 	font-size: 11px;
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 	margin-bottom: 30px;
 }
 
@@ -74,7 +74,7 @@ $y-axis-padding: 0 20px 0 10px;
 
 // For forcing the width of y-axis to the width of the label
 .chart__y-axis-width-fix {
-	color: $transparent;
+	color: rgba( var( --color-surface-rgb ), 0 );
 }
 
 // X-axis
@@ -85,7 +85,7 @@ $y-axis-padding: 0 20px 0 10px;
 	font-size: 0; // 1
 	padding: 5px 0;
 	min-height: 18px;
-	color: var( --color-neutral-600 );
+	color: var( --color-neutral-60 );
 }
 
 .chart__x-axis-label {
@@ -108,11 +108,11 @@ $y-axis-padding: 0 20px 0 10px;
 	margin-left: -0.5px;
 	width: 1px;
 	height: 5px;
-	background: var( --color-neutral-600 );
+	background: var( --color-neutral-60 );
 }
 
 .chart__x-axis-width-spacer {
-	color: $transparent;
+	color: rgba( var( --color-surface-rgb ), 0 );
 	padding: $y-axis-padding;
 	right: 0;
 
@@ -170,7 +170,7 @@ $y-axis-padding: 0 20px 0 10px;
 
 .chart__bar-section {
 	display: inline-block;
-	background-color: var( --color-primary-400 );
+	background-color: var( --color-primary-40 );
 	position: absolute;
 	top: 0; // 2
 	right: 16%; // 1
@@ -183,12 +183,12 @@ $y-axis-padding: 0 20px 0 10px;
 	}
 
 	.chart__bar.is-selected &.is-bar {
-		background-color: var( --color-accent-400 );
+		background-color: var( --color-accent-40 );
 	}
 
 	&.is-spacer {
 		z-index: z-index( 'root', '.chart__bar-section.is-spacer' );
-		background-color: $transparent;
+		background-color: rgba( var( --color-surface-rgb ), 0 );
 	}
 
 	&.is-ghost::after {
@@ -203,7 +203,7 @@ $y-axis-padding: 0 20px 0 10px;
 		height: 40px;
 		background-image: linear-gradient(
 			to bottom,
-			$transparent,
+			rgba( var( --color-surface-rgb ), 0 ),
 			rgba( var( --color-neutral-0-rgb ), 0.5 )
 		); // TODO: needs to use default color for gradient
 
@@ -274,7 +274,7 @@ $y-axis-padding: 0 20px 0 10px;
 
 		&:focus,
 		&:hover {
-			color: $link-highlight;
+			color: var( --color-link-dark );
 		}
 	}
 
@@ -362,7 +362,7 @@ $y-axis-padding: 0 20px 0 10px;
 					text-align: right;
 					float: right;
 					min-width: 22px;
-					color: var( --color-neutral-100 );
+					color: var( --color-neutral-10 );
 				}
 
 				.label {
@@ -414,7 +414,7 @@ $y-axis-padding: 0 20px 0 10px;
 		margin-bottom: 2px;
 		text-transform: uppercase;
 		font-weight: bold;
-		border-bottom: 1px solid var( --color-neutral-600 );
+		border-bottom: 1px solid var( --color-neutral-60 );
 		padding-bottom: 2px;
 	}
 
@@ -423,7 +423,7 @@ $y-axis-padding: 0 20px 0 10px;
 
 		.label {
 			text-transform: none;
-			color: var( --color-neutral-100 );
+			color: var( --color-neutral-10 );
 			overflow: hidden;
 			letter-spacing: 0;
 			height: 19px;
@@ -434,18 +434,11 @@ $y-axis-padding: 0 20px 0 10px;
 			min-width: 0;
 
 			&::before {
-				content: '';
+				@include long-content-fade( $color: var( --color-neutral-60-rgb ) );
 				position: relative;
-				background-image: linear-gradient(
-					to right,
-					rgba( 61, 89, 109, 0 ) 0%,
-					rgba( 61, 89, 109, 0.5 ),
-					rgba( 61, 89, 109, 1 )
-				);
 				left: -30px;
 				width: 30px;
 				height: 24px;
-				display: block;
 			}
 		}
 	}

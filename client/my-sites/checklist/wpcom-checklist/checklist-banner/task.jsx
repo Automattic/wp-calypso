@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 class ChecklistBannerTask extends PureComponent {
 	static propTypes = {
@@ -21,7 +20,16 @@ class ChecklistBannerTask extends PureComponent {
 		siteSlug: PropTypes.string,
 		title: PropTypes.node.isRequired,
 		translate: PropTypes.func.isRequired,
+		trackTaskDisplay: PropTypes.func,
 	};
+
+	static defaultProps = {
+		trackTaskDisplay: () => {},
+	};
+
+	componentDidMount() {
+		this.props.trackTaskDisplay( this.props.id, this.props.completed, 'banner' );
+	}
 
 	render() {
 		// Banners never render completed Tasks

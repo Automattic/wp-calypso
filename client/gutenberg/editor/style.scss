@@ -1,31 +1,5 @@
-/** @format */
 
-// Block library
-@import '~@wordpress/block-library/build-style/style';
-
-// Components
-@import '~@wordpress/components/build-style/style';
-
-// Editor package styles
-@import '~@wordpress/editor/build-style/style';
-
-// Block library theme & editor
-@import '~@wordpress/block-library/build-style/theme';
-@import '~@wordpress/block-library/build-style/editor';
-
-// Edit-post component styles
 @import '~@wordpress/edit-post/build-style/style';
-
-// Format library styles
-@import '~@wordpress/format-library/build-style/style';
-
-$gutenberg-breakpoint-sm: 782px;
-
-@mixin gutenberg-sm() {
-	@media ( max-width: $gutenberg-breakpoint-sm ) {
-		@content;
-	}
-}
 
 .is-group-gutenberg.layout {
 	background-color: var( --color-surface );
@@ -38,354 +12,16 @@ $gutenberg-breakpoint-sm: 782px;
 	right: 0;
 	bottom: 0;
 	left: 0;
-	background-color: $white;
+	background-color: var( --color-surface );
 	pointer-events: none;
 	z-index: z-index( 'root', '.is-group-gutenberg::before' );
 }
 
-.gutenberg {
-	background: none;
-}
-
-//history dialog
-@import 'post-editor/editor-revisions/style';
-@import 'post-editor/editor-diff-viewer/style';
-@import 'post-editor/editor-revisions-list/style';
-
-// OVERRIDES
-
-//======================================================
-//static post css values: theme(primary), theme(toggle)
-//https://github.com/WordPress/gutenberg/pull/6739
-//We don't need to worry about wp-admin skins, so let's use a static value here.
-//when updating `edit-post`, search for theme( and replace with static values
-$gutenberg-theme-primary: #0085ba;
-$gutenberg-theme-toggle: #11a0d2;
-//end static post css values
-//========================================================
-
-//Remove this if https://github.com/Automattic/wp-calypso/issues/28776 is resolved
-.editor-post-permalink__change {
-	display: none;
-}
-
-.layout.is-section-gutenberg-editor {
-	box-sizing: border-box !important;
-
-	*,
-	*::before,
-	*::after {
-		box-sizing: inherit !important;
-	}
-
-	.layout__content {
-		padding: 0;
-	}
-
-	.edit-post-header {
-		padding: 0 10px 0 0;
-		left: 0;
-		top: 0;
-	}
-
-	@media ( min-width: 600px ) {
-		.edit-post-sidebar {
-			top: 56px;
-		}
-	}
-
-	.edit-post-layout {
-		.edit-post-layout__content {
-			// Overrides https://github.com/WordPress/gutenberg/blob/a2f81faa58afbbcb28d68ef879a5354c257b2d85/packages/edit-post/src/components/layout/style.scss#L88-L95
-			overscroll-behavior-y: auto;
-		}
-
-		.editor-post-publish-panel {
-			top: 0;
-		}
-
-		.components-notice-list {
-			@media ( max-width: 600px ) {
-				top: auto;
-			}
-
-			left: 0;
-		}
-	}
-
-	.edit-post-visual-editor .editor-post-title__block > div {
-		margin-left: 0;
-		margin-right: 0;
-
-		@media ( min-width: 600px ) {
-			margin-left: -2px;
-			margin-right: -2px;
-		}
-	}
-
-	.wp-block-heading {
-		h1,
-		h2,
-		h3,
-		h4,
-		h5,
-		h6 {
-			font-weight: 600;
-		}
-	}
-
-	.editor-block-list__block {
-		ul ul,
-		ol ol {
-			list-style-type: circle;
-		}
-	}
-
-	//needed for oembed iframes to appear
-	.wp-block-embed__wrapper > iframe {
-		width: 100%;
-	}
-
-	// @see https://make.wordpress.org/accessibility/handbook/markup/the-css-class-screen-reader-text/
-	.screen-reader-text {
-		border: 0;
-		clip: rect( 1px, 1px, 1px, 1px );
-		clip-path: inset( 50% );
-		height: 1px;
-		margin: -1px;
-		overflow: hidden;
-		padding: 0;
-		position: absolute !important;
-		width: 1px;
-		word-wrap: normal !important;
-		&:focus {
-			background-color: #eee;
-			clip: auto !important;
-			clip-path: none;
-			color: #444;
-			display: block;
-			font-size: 1em;
-			height: auto;
-			left: 5px;
-			line-height: normal;
-			padding: 15px 23px 14px;
-			text-decoration: none;
-			top: 5px;
-			width: auto;
-			z-index: 100000; // Above WP toolbar.
-		}
-	}
-
-	.edit-post-header-toolbar__back {
-		border-right: 1px solid lighten( $gray, 25% );
-		border-radius: 0;
-		padding: 10px;
-		.rtl & {
-			button {
-				transform: scaleX( -1 );
-			}
-		}
-	}
-
-	.edit-post-header-toolbar .site {
-		border-right: 1px solid lighten( $gray, 25% );
-		.site__info {
-			width: auto;
-		}
-		.site__title {
-			max-width: 200px;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-			&::after {
-				width: 0;
-			}
-		}
-		&.is-compact .site__title {
-			line-height: 56px;
-		}
-		@include breakpoint( '<960px' ) {
-			display: none;
-		}
-	}
-
-	.edit-post-header-toolbar > .components-button {
-		display: none;
-		@include breakpoint( '>660px' ) {
-			display: inline-flex;
-		}
-	}
-	.edit-post-header-toolbar .editor-block-navigation,
-	.edit-post-header-toolbar .table-of-contents {
-		display: none;
-		@include breakpoint( '>660px' ) {
-			display: flex;
-		}
-	}
-
-	.edit-post-header-toolbar__block-toolbar {
-		background: $white;
-		border-bottom: 1px solid #e2e4e7;
-		left: 0;
-		min-height: 37px;
-		padding-left: 0;
-		position: absolute;
-		right: 0;
-		top: 56px;
-		.editor-block-toolbar {
-			margin: 0;
-			.components-toolbar {
-				padding: 0;
-			}
-		}
-		@include breakpoint( '>1280px' ) {
-			background: none;
-			border-bottom: none;
-			left: auto;
-			min-height: auto;
-			padding-left: 8px;
-			position: static;
-			right: auto;
-			.editor-block-toolbar {
-				margin: -9px 0;
-				.components-toolbar {
-					padding: 10px 4px 9px;
-				}
-			}
-		}
-	}
-
-	.editor-inserter {
-		margin-left: 10px;
-	}
-
-	.editor-post-switch-to-draft {
-		white-space: nowrap;
-	}
-
-	.edit-post-post-visibility__dialog .editor-post-visibility__dialog-info {
-		@include gutenberg-sm() {
-			margin-left: 36px;
-		}
-	}
-
-	// Remove resize styling from post title
-	textarea {
-		resize: none;
-	}
-
-	.edit-post-visual-editor {
-		&,
-		& p {
-			font-family: 'Noto Serif', serif;
-			font-size: 16px;
-			line-height: 1.8;
-		}
-	}
-
-	.edit-post-sidebar-header ul {
-		list-style: none;
-		margin: 0;
-	}
-
-	.editor-block-navigation__list {
-		list-style: none;
-	}
-}
-
-.layout.is-section-gutenberg-editor,
-.edit-post-options-modal {
-	// UNSET CALYPSO DEFAULT STYLES
-
-	input[type='text'],
-	input[type='search'] {
-		width: auto;
-
-		&.components-text-control__input {
-			width: 100%;
-		}
-	}
-
-	input[type='number'].components-range-control__number {
-		width: 50px;
-	}
-
-	input[type='checkbox'],
-	input[type='radio'] {
-		float: none;
-
-		& + span {
-			margin-left: 0;
-		}
-	}
-
-	select {
-		background-image: none;
-		appearance: menulist-button;
-	}
-	// END Unset Calypso default styles
-
-	// MISSING CORE STYLES (TODO: Remove them once Gutenberg include the Core styles)
-	font-size: 13px;
-	line-height: 1.4em;
-
-	input[type='checkbox'],
-	input[type='radio'] {
-		padding: 0 !important;
-
-		@include gutenberg-sm() {
-			height: 25px;
-			width: 25px;
-		}
-	}
-
-	input[type='checkbox']:checked::before {
-		content: '';
-		background-image: url( 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Crect%20x%3D%220%22%20fill%3D%22none%22%20width%3D%2224%22%20height%3D%2224%22%2F%3E%3Cg%3E%3Cpath%20d%3D%22M9%2019.414l-6.707-6.707%201.414-1.414L9%2016.586%2020.293%205.293l1.414%201.414%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E' );
-		background-size: 100%;
-		display: inline-block;
-		width: 12px;
-		height: 12px;
-		margin: 0;
-
-		@include gutenberg-sm() {
-			width: 20px;
-			height: 20px;
-		}
-	}
-
-	input[type='radio']:checked::before {
-		height: 6px;
-		width: 6px;
-
-		@include gutenberg-sm() {
-			width: 11px;
-			height: 11px;
-			margin: 5px;
-		}
-	}
-
-	label {
-		vertical-align: middle;
-		cursor: pointer;
-	}
-	// END Missing Core styles
-	.components-placeholder__fieldset {
-		color: #191e23; // $dark-gray-900;
-		p {
-			font-family: $sans;
-			font-size: 13px;
-		}
-	}
-
-	.components-placeholder__label svg {
-		margin-right: 1ch;
-	}
-}
+// Placeholder styles
 
 .editor__placeholder {
 	.placeholder {
-		@include placeholder;
+		@include placeholder();
 		height: 16px;
 		border-radius: 8px;
 	}
@@ -406,6 +42,81 @@ $gutenberg-theme-toggle: #11a0d2;
 	}
 }
 
-.editor-post-publish-button[aria-disabled='true'] {
-	pointer-events: none;
+.layout.is-section-gutenberg-editor {
+
+	.edit-post-layout {
+		.edit-post-layout__content {
+			//fixes a notice display issue in Safari
+			margin-left: 0;
+			@media ( min-width: 600px ) {
+				top: 56px;
+			}
+		}
+
+		.editor-post-publish-panel {
+			top: 0;
+		}
+
+		.components-notice-list {
+			@media ( max-width: 600px ) {
+				top: auto;
+			}
+
+			left: 0;
+		}
+	}
+
+	.edit-post-header {
+		padding: 0 10px 0 0;
+		left: 0;
+		top: 0;
+	}
+
+}
+
+// End Placeholder styles
+
+// Gutenframe
+
+html.is-iframe {
+	overflow: hidden;
+}
+
+.main.calypsoify.is-iframe {
+	background-color: var( --color-neutral-0 );
+	margin: 0;
+	padding: 0;
+	z-index: z-index( 'root', '.main.calypsoify.is-iframe' );
+	-webkit-overflow-scrolling: touch;
+	min-height: 0;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	top: 0;
+	width: auto;
+
+	@supports (-webkit-overflow-scrolling: touch) {
+		/* iOS devices only */
+		-webkit-overflow-scrolling: touch;
+		overflow: auto;
+	}
+
+	iframe {
+		position: absolute;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		display: none;
+
+		&.is-iframe-loaded {
+			display: block;
+		}
+	}
+}
+
+.main {
+	&.calypsoify {
+		max-width: 100%;
+	}
 }

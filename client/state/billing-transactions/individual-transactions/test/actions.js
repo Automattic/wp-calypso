@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Internal dependencies
  */
@@ -21,6 +20,8 @@ describe( 'actions', () => {
 				id: '18689989',
 				service: 'Store Services',
 				amount: '$6.45',
+				tax: '$0.44',
+				subtotal: '$6.01',
 				icon: 'https://developer.files.wordpress.com/2018/02/wpcom-logo-420.png',
 				date: '2017-09-26T14:50:12+0000',
 				desc: '',
@@ -41,7 +42,11 @@ describe( 'actions', () => {
 						type_localized: 'New Purchase',
 						domain: '',
 						amount: '$6.45',
+						tax: '$0.44',
+						subtotal: '$6.01',
 						raw_amount: 6.45,
+						raw_tax: 0.44,
+						raw_subtotal: 6.01,
 						currency: 'USD',
 						product: 'connect-label',
 						product_slug: 'connect-label',

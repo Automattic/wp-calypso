@@ -22,13 +22,13 @@
 
 .product-purchase-features-list__item .purchase-detail,
 .product-purchase-features-list__item .happiness-support {
-	background-color: $white;
+	background-color: var( --color-surface );
 	border-radius: 0;
 	margin: 0;
 }
 
 .product-purchase-features-list__item .happiness-support {
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
 	box-sizing: border-box;
 	color: var( --color-text-subtle );
 	padding: 32px;

@@ -85,7 +85,7 @@ import { helloWorld } from './controller';
 
 export default () => {
 	page(
-		'/hello-world/:domain?',
+		'/hello-world/:site?',
 		siteSelection,
 		navigation,
 		helloWorld,
@@ -96,7 +96,7 @@ export default () => {
 ```
 
 * `page()` will set up the route `/hello-world` and run some functions when it's matched.
-* The `:domain?` is because we want to support site specific pages for our hello-world route.
+* The `:site?` is because we want to support site specific pages for our hello-world route.
 * Each function is invoked with `context` and `next` arguments.
 * We are passing the `siteSelection` function from the main "My Sites" controller, which handles the site selection process.
 * Next, we are passing the `navigation` function, also from the main "My Sites" controller, which inserts the sidebar navigation into `context.secondary`.
@@ -121,6 +121,14 @@ if ( config.isEnabled( 'hello-world' ) ) {
 ```
 
 This checks for our feature in the current environment to figure out whether it needs to register a new section. The section is defined by a name, an array with the relevant paths, and the main module.
+
+You also need to `require` the `config` module at the top of the `client/sections.js` file (in case the `require` statement is not already there):
+```js
+const config = require( 'config' );
+```
+The `sections.js` module needs to be a CommonJS module that uses `require` calls, because it's run by Node.js. ESM imports won't work there at this moment.
+
+Through the use of the `config` module, we are conditionally loading our section only in development environment. All existing sections in `client/sections.js` will load in all environments.
 
 ### Run the server!
 
@@ -219,10 +227,13 @@ export default class HelloWorld extends React.Component {
 }
 ```
 
-We need to do one more step to include the component's style file in the main application style file. It's done by importing `style.scss` in `assets/stylesheets/_components.scss`, add following line at the end of `_components.scss`:
+We need to do one more step to import the component's style file in the component's JavaScript source file. It's done by adding an import statement block to the `main.jsx` file:
 
-```scss
-@import 'my-sites/hello-world/style';
+```jsx
+/**
+ * Style dependencies
+ */
+import './style.scss';
 ```
 
 That's it. Please check out the [CSS/Sass Coding Guidelines](../coding-guidelines/css.md) to learn more about working with stylesheets in the project.

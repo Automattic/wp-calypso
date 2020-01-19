@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -14,21 +13,22 @@ import PostLikesPopover from 'blocks/post-likes/popover';
 import { markPostSeen } from 'state/reader/posts/actions';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import { getPostByKey } from 'state/reader/posts/selectors';
-import { isEnabled } from 'config';
 import QueryPostLikes from 'components/data/query-post-likes';
 import getPostLikeCount from 'state/selectors/get-post-like-count';
 import isLikedPost from 'state/selectors/is-liked-post';
 
-class ReaderLikeButton extends React.Component {
-	constructor( props ) {
-		super( props );
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
-		this.hidePopoverTimeout = null;
-		this.state = {
-			showLikesPopover: false,
-			likesPopoverContext: null,
-		};
-	}
+class ReaderLikeButton extends React.Component {
+	state = {
+		showLikesPopover: false,
+	};
+
+	hidePopoverTimeout = null;
+	likeButtonRef = React.createRef();
 
 	componentWillUnmount() {
 		clearTimeout( this.hidePopoverTimeout );
@@ -54,22 +54,12 @@ class ReaderLikeButton extends React.Component {
 		}
 	};
 
-	setLikesPopoverContext = element => {
-		this.setState( { likesPopoverContext: element } );
-	};
-
-	maybeShowLikesPopover = () => {
-		if ( ! isEnabled( 'reader/likes-hover' ) ) {
-			return;
-		}
+	showLikesPopover = () => {
 		clearTimeout( this.hidePopoverTimeout );
 		this.setState( { showLikesPopover: true } );
 	};
 
-	maybeHideLikesPopover = () => {
-		if ( ! isEnabled( 'reader/likes-hover' ) ) {
-			return;
-		}
+	hideLikesPopover = () => {
 		this.hidePopoverTimeout = setTimeout( () => {
 			this.setState( { showLikesPopover: false } );
 		}, 200 );
@@ -77,7 +67,7 @@ class ReaderLikeButton extends React.Component {
 
 	render() {
 		const { siteId, postId, likeCount, iLike } = this.props;
-		const { showLikesPopover, likesPopoverContext } = this.state;
+		const { showLikesPopover } = this.state;
 		const hasEnoughLikes = ( likeCount > 0 && ! iLike ) || ( likeCount > 1 && iLike );
 
 		return (
@@ -85,21 +75,21 @@ class ReaderLikeButton extends React.Component {
 				<QueryPostLikes siteId={ siteId } postId={ postId } />
 				<LikeButtonContainer
 					{ ...this.props }
-					ref={ this.setLikesPopoverContext }
-					onMouseEnter={ this.maybeShowLikesPopover }
-					onMouseLeave={ this.maybeHideLikesPopover }
+					ref={ this.likeButtonRef }
+					onMouseEnter={ this.showLikesPopover }
+					onMouseLeave={ this.hideLikesPopover }
 					onLikeToggle={ this.recordLikeToggle }
 					likeSource="reader"
 				/>
 				{ showLikesPopover && siteId && postId && hasEnoughLikes && (
 					<PostLikesPopover
-						className="reader-likes-popover" // eslint-disable-line
-						onMouseEnter={ this.maybeShowLikesPopover }
-						onMouseLeave={ this.maybeHideLikesPopover }
+						className="reader-likes-popover ignore-click" // eslint-disable-line wpcalypso/jsx-classname-namespace
+						onMouseEnter={ this.showLikesPopover }
+						onMouseLeave={ this.hideLikesPopover }
 						siteId={ siteId }
 						postId={ postId }
 						showDisplayNames={ true }
-						context={ likesPopoverContext }
+						context={ this.likeButtonRef.current }
 					/>
 				) }
 			</Fragment>

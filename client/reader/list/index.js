@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,16 +8,8 @@ import page from 'page';
  */
 import { listListing } from './controller';
 import { sidebar, updateLastRoute } from 'reader/controller';
-import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
-	page(
-		'/read/list/:user/:list',
-		redirectLoggedOut,
-		updateLastRoute,
-		sidebar,
-		listListing,
-		makeLayout,
-		clientRender
-	);
+	page( '/read/list/:user/:list', updateLastRoute, sidebar, listListing, makeLayout, clientRender );
 }

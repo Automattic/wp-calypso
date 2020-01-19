@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
+import Gridicon from 'components/gridicon';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import {
 	CALYPSO_CONTACT,
@@ -24,6 +23,17 @@ import {
 import HappychatButton from 'components/happychat/button';
 import HappychatConnection from 'components/happychat/connection-connected';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { preventWidows } from 'lib/formatting';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
+ * Image dependencies
+ */
+import supportImage from 'assets/images/illustrations/dotcom-support.svg';
 
 export class HappinessSupport extends Component {
 	static propTypes = {
@@ -58,15 +68,17 @@ export class HappinessSupport extends Component {
 		const components = {
 			strong: <strong />,
 		};
-		return isJetpackFreePlan
-			? translate(
-					'{{strong}}Need help?{{/strong}} Search our support site to find out about your site, your account, and how to make the most of WordPress.',
-					{ components }
-			  )
-			: translate(
-					'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your account.',
-					{ components }
-			  );
+		return preventWidows(
+			isJetpackFreePlan
+				? translate(
+						'{{strong}}Need help?{{/strong}} Search our support site to find out about your site, your account, and how to make the most of WordPress.',
+						{ components }
+				  )
+				: translate(
+						'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your account.',
+						{ components }
+				  )
+		);
 	}
 
 	getSupportButtons() {
@@ -122,8 +134,10 @@ export class HappinessSupport extends Component {
 
 	renderIllustration() {
 		return (
-			<div className="happiness-support__illustration">
-				<img alt="" src="/calypso/images/illustrations/jetpack-support.svg" />
+			<div className="happiness-support__image">
+				<div className="happiness-support__icon">
+					<img alt="" src={ supportImage } />
+				</div>
 			</div>
 		);
 	}
@@ -137,12 +151,14 @@ export class HappinessSupport extends Component {
 
 		return (
 			<Button
+				borderless
 				href={ url }
 				target="_blank"
 				rel="noopener noreferrer"
 				className="happiness-support__support-button"
 			>
-				{ this.props.translate( 'Support documentation' ) }
+				<Gridicon icon="external" />
+				<span>{ this.props.translate( 'Support documentation' ) }</span>
 			</Button>
 		);
 	}
@@ -156,11 +172,11 @@ export class HappinessSupport extends Component {
 			<div className={ classNames( 'happiness-support', classes ) }>
 				{ this.renderIllustration() }
 
-				<h3 className="happiness-support__heading">{ this.getHeadingText() }</h3>
-
-				<p className="happiness-support__text">{ this.getSupportText() }</p>
-
-				{ this.getSupportButtons() }
+				<div className="happiness-support__text">
+					<h3 className="happiness-support__heading">{ this.getHeadingText() }</h3>
+					<p className="happiness-support__description">{ this.getSupportText() }</p>
+					{ this.getSupportButtons() }
+				</div>
 			</div>
 		);
 	}

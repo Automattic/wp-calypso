@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,6 @@ import i18n from 'i18n-calypso';
 import React, { createElement } from 'react';
 import { unmountComponentAtNode } from 'react-dom';
 import { renderToStaticMarkup } from 'react-dom/server';
-import GridiconMention from 'gridicons/dist/mention';
 
 /**
  * Internal Dependencies
@@ -25,8 +22,9 @@ import {
 } from 'state/ui/editor/contact-form/actions';
 import { serialize, deserialize } from './shortcode-utils';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import Gridicon from 'components/gridicon';
 
-const wpcomContactForm = editor => {
+function wpcomContactForm( editor ) {
 	let node;
 	const store = editor.getParam( 'redux_store' );
 
@@ -100,14 +98,15 @@ const wpcomContactForm = editor => {
 		onPostRender() {
 			this.innerHtml(
 				renderToStaticMarkup(
+					// eslint-disable-next-line jsx-a11y/no-interactive-element-to-noninteractive-role
 					<button type="button" role="presentation">
-						<GridiconMention />
+						<Gridicon icon="mention" />
 					</button>
 				)
 			);
 		},
 	} );
-};
+}
 
 export default () => {
 	tinymce.PluginManager.add( 'wpcom/contactform', wpcomContactForm );

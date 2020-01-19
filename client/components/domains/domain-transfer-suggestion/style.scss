@@ -3,7 +3,22 @@
 	align-items: center;
 
 	& .button.domain-suggestion__action.is-borderless {
-	    flex: 1 0 auto;
+	  flex: 1 0 auto;
+	  font-size: 14px;
+	  text-align: left;
+	  width: 100%;
+
+	  .is-section-signup & {
+		  @include breakpoint( '>480px' ) {
+		  	width: auto;
+		  }
+		}
+
+		.is-section-domains & {
+			@include breakpoint( '>800px' ) {
+		  	width: auto;
+		  }
+		}
 	}
 }
 
@@ -14,12 +29,14 @@
 		width: 75%;
 	}
 
+	h3 {
+		font-size: 16px;
+	}
+
 	> p {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		font-size: 12px;
-		font-weight: 600;
 		margin-bottom: 0;
-		opacity: 0.7;
 
 		@include breakpoint( '>960px' ) {
 			margin-bottom: 8px;

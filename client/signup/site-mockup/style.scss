@@ -1,5 +1,5 @@
-// Mockup wrap
-.site-mockup__wrap {
+// The wrapper around the devices
+.site-mockup__devices {
 	margin: auto;
 	padding: 16px;
 	transition: max-width 200ms ease-in-out;
@@ -10,85 +10,43 @@
 		max-width: 1200px;
 		display: flex;
 		align-items: flex-start;
-
-		.site-mockup__viewport.is-desktop {
-			margin-right: 16px;
-
-			// Forces the desktop preview to take up
-			// all available horizontal space.
-			flex-grow: 1;
-		}
-
-		.site-mockup__viewport.is-mobile {
-			min-width: 280px;
-
-			.site-mockup__body {
-				height: 440px;
-			}
-		}
 	}
 
-	// Grouped layout shows a fixed-height mobile mockup
-	// overlaid on top of the desktop mockup.
-	@include breakpoint( '660px-960px' ) {
-		position: relative;
-
-		.site-mockup__viewport.is-mobile {
-			position: absolute;
-			top: 40px;
-			right: 8px;
-			z-index: 2;
-			box-shadow: 0 0 6px 0 rgba( 0, 0, 0, 0.5 ),
-						0 6px 50px 0 rgba( 0, 0, 0, 0.3 );
-
-			.site-mockup__body {
-				height: 440px;
-			}
-		}
-	}
-
-	// Only show the mobile view at small
-	// breakpoints.
 	@include breakpoint( '<660px' ) {
 		padding-right: 1px;
 		padding-left: 1px;
 		padding-bottom: 0;
+	}
 
-		.site-mockup__viewport.is-desktop {
-			display: none;
-		}
-
-		.site-mockup__viewport.is-mobile {
-			width: 100%;
-			max-width: 480px;
-			border-radius: 12px 12px 0 0;
-		}
+	@include breakpoint( '660px-960px' ) {
+		position: relative;
 	}
 }
 
-// The mockups themselves, both mobile
-// and desktop variants.
-.site-mockup__viewport {
-	margin: 0 auto;
-	background: $white;
-	position: relative;
-	transition: all 200ms cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
+// Some microcopy to help people understand the mockups.
+.site-mockup__help-tip {
+	color: var( --color-primary-5 );
+	text-align: center;
+	font-size: 13px;
+	font-weight: 300;
+	margin: 24px 16px -8px;
+	transition: all 300ms cubic-bezier( 0.08, 0.74, 0.44, 1.07 );
+	transition-delay: 200ms;
 
-	// Hide the mockups until we have vertical
-	// data to show.
+	&:last-child {
+		margin-bottom: 24px;
+	}
+	
+	p {
+		margin: 0 auto;
+		max-width: 420px;
+		line-height: 1.4;
+	}
+
+
+	// Hide the tip until a vertical is selected.
 	.is-empty & {
 		opacity: 0;
-		transform: translateY( 200px );
-	}
-
-	&.is-desktop {
-		border-radius: 4px;
-		height: 100%;
-	}
-
-	&.is-mobile {
-		border-radius: 12px;
-		width: 280px;
-		transition-delay: 200ms;
+		transform: translateY( 80px );
 	}
 }

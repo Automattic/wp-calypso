@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { omit, merge, get, includes, reduce, isEqual, stubFalse, stubTrue } from 'lodash';
 
 /**
@@ -38,23 +35,30 @@ import {
 	THEME_ACTIVATE_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	SITE_PLUGIN_UPDATED,
+	SITE_FRONT_PAGE_UPDATE,
+	SITE_MIGRATION_STATUS_UPDATE,
 } from 'state/action-types';
 import { sitesSchema, hasAllSitesListSchema } from './schema';
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+import {
+	combineReducers,
+	keyedReducer,
+	withSchemaValidation,
+	withoutPersistence,
+} from 'state/utils';
 
 /**
  * Tracks all known site objects, indexed by site ID.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
-export function items( state = null, action ) {
+export const items = withSchemaValidation( sitesSchema, ( state = null, action ) => {
 	if ( state === null && action.type !== SITE_RECEIVE && action.type !== SITES_RECEIVE ) {
 		return null;
 	}
 	switch ( action.type ) {
-		case WORDADS_SITE_APPROVE_REQUEST_SUCCESS:
+		case WORDADS_SITE_APPROVE_REQUEST_SUCCESS: {
 			const prevSite = state[ action.siteId ];
 			if ( prevSite ) {
 				return Object.assign( {}, state, {
@@ -62,14 +66,17 @@ export function items( state = null, action ) {
 				} );
 			}
 			return state;
+		}
 
 		case SITE_RECEIVE:
-		case SITES_RECEIVE:
+		case SITES_RECEIVE: {
 			// Normalize incoming site(s) to array
+
 			const sites = action.site ? [ action.site ] : action.sites;
 
 			// SITES_RECEIVE occurs when we receive the entire set of user
 			// sites (replace existing state). Otherwise merge into state.
+
 			const initialNextState = SITES_RECEIVE === action.type ? {} : state;
 
 			return reduce(
@@ -90,6 +97,7 @@ export function items( state = null, action ) {
 				},
 				initialNextState || {}
 			);
+		}
 
 		case SITE_DELETE_RECEIVE:
 		case JETPACK_DISCONNECT_RECEIVE:
@@ -133,7 +141,7 @@ export function items( state = null, action ) {
 					}
 
 					switch ( key ) {
-						case 'blog_public':
+						case 'blog_public': {
 							const isPrivate = parseInt( settings.blog_public, 10 ) === -1;
 
 							if ( site.is_private === isPrivate ) {
@@ -145,7 +153,8 @@ export function items( state = null, action ) {
 								is_private: isPrivate,
 							};
 							break;
-						case 'site_icon':
+						}
+						case 'site_icon': {
 							const mediaId = settings.site_icon;
 							// Return unchanged if next icon matches current value,
 							// accounting for the fact that a non-existent icon property is
@@ -171,6 +180,7 @@ export function items( state = null, action ) {
 								};
 							}
 							break;
+						}
 					}
 
 					if ( memo === state ) {
@@ -216,83 +226,134 @@ export function items( state = null, action ) {
 				},
 			};
 		}
+
+		case SITE_FRONT_PAGE_UPDATE: {
+			const { siteId, frontPageOptions } = action;
+			const site = state[ siteId ];
+			if ( ! site ) {
+				break;
+			}
+
+			return {
+				...state,
+				[ siteId ]: merge( {}, site, {
+					options: {
+						...frontPageOptions,
+					},
+				} ),
+			};
+		}
+
+		case SITE_MIGRATION_STATUS_UPDATE: {
+			const { siteId, migrationStatus } = action;
+			const site = state[ siteId ];
+			if ( ! site ) {
+				return state;
+			}
+
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					migration_status: migrationStatus,
+				},
+			};
+		}
 	}
 
 	return state;
-}
-items.schema = sitesSchema;
+} );
 
 /**
  * Returns the updated requesting state after an action has been dispatched.
  * Requesting state tracks whether a network request is in progress for all
  * sites.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action object
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action object
+ * @returns {object}        Updated state
  */
-export const requestingAll = createReducer( false, {
-	[ SITES_REQUEST ]: () => true,
-	[ SITES_REQUEST_FAILURE ]: () => false,
-	[ SITES_REQUEST_SUCCESS ]: () => false,
+export const requestingAll = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case SITES_REQUEST:
+			return true;
+		case SITES_REQUEST_FAILURE:
+			return false;
+		case SITES_REQUEST_SUCCESS:
+			return false;
+	}
+
+	return state;
 } );
 
 /**
  * Returns the updated requesting state after an action has been dispatched.
  * Requesting state tracks whether a network request is in progress for a site.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action object
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action object
+ * @returns {object}        Updated state
  */
-export const requesting = createReducer(
-	{},
-	{
-		[ SITE_REQUEST ]: ( state, { siteId } ) => {
+export const requesting = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case SITE_REQUEST: {
+			const { siteId } = action;
 			return { ...state, [ siteId ]: true };
-		},
-		[ SITE_REQUEST_FAILURE ]: ( state, { siteId } ) => {
+		}
+		case SITE_REQUEST_FAILURE: {
+			const { siteId } = action;
 			return { ...state, [ siteId ]: false };
-		},
-		[ SITE_REQUEST_SUCCESS ]: ( state, { siteId } ) => {
+		}
+		case SITE_REQUEST_SUCCESS: {
+			const { siteId } = action;
 			return { ...state, [ siteId ]: false };
-		},
+		}
 	}
-);
+
+	return state;
+} );
 
 /**
  * Returns the updated deleting state after an action has been dispatched.
  * Deleting state tracks whether a network request is in progress for a site.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action object
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action object
+ * @returns {object}        Updated state
  */
 export const deleting = keyedReducer(
 	'siteId',
-	createReducer(
-		{},
-		{
-			[ SITE_DELETE ]: stubTrue,
-			[ SITE_DELETE_FAILURE ]: stubFalse,
-			[ SITE_DELETE_SUCCESS ]: stubFalse,
+	withoutPersistence( ( state = {}, action ) => {
+		switch ( action.type ) {
+			case SITE_DELETE:
+				return stubTrue( state, action );
+			case SITE_DELETE_FAILURE:
+				return stubFalse( state, action );
+			case SITE_DELETE_SUCCESS:
+				return stubFalse( state, action );
 		}
-	)
+
+		return state;
+	} )
 );
 
 /**
  * Tracks whether all sites have been fetched.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action object
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action object
+ * @returns {object}        Updated state
  */
-export const hasAllSitesList = createReducer(
-	false,
-	{
-		[ SITES_RECEIVE ]: () => true,
-	},
-	hasAllSitesListSchema
+export const hasAllSitesList = withSchemaValidation(
+	hasAllSitesListSchema,
+	( state = false, action ) => {
+		switch ( action.type ) {
+			case SITES_RECEIVE:
+				return true;
+		}
+
+		return state;
+	}
 );
 
 export default combineReducers( {

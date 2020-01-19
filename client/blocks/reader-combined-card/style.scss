@@ -36,7 +36,7 @@
 }
 
 .reader-combined-card__header-post-count {
-	color: $gray;
+	color: var( --color-text-subtle );
 	margin-bottom: 0;
 	line-height: 1em;
 	margin-top: 4px;
@@ -53,27 +53,20 @@
 	display: block;
 	font-size: 17px;
 	font-weight: 700;
-	line-height: 1.2;
-	max-height: 16px * 1.6;
+	line-height: 1.4;
+	margin-top: -4px;
 	padding-left: 1px;
 	position: relative;
-	white-space: nowrap;
-	word-wrap: break-word;
 }
 
 .reader-combined-card__post-title-link,
 .reader-combined-card__post-title-link:visited {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	cursor: pointer;
 
 	&:hover,
 	&:focus {
-		color: var( --color-neutral-700 );
-	}
-
-	&::after {
-		@include long-content-fade( $size: 35px );
-		height: 16px * 1.4;
+		color: var( --color-neutral-70 );
 	}
 }
 
@@ -173,7 +166,7 @@
 
 .reader-combined-card__post-author-and-time {
 	font-size: 13px;
-	color: $gray;
+	color: var( --color-text-subtle );
 	font-family: $sans;
 	overflow: hidden;
 	max-height: 13px * 1.4 * 1;
@@ -194,13 +187,13 @@
 .reader-combined-card .reader-visit-link,
 .reader-combined-card .reader-author-link,
 .reader-combined-card__timestamp-link {
-	color: $gray;
+	color: var( --color-text-subtle );
 	cursor: pointer;
 
 	&:focus,
 	&:link,
 	&:visited {
-		color: $gray;
+		color: var( --color-text-subtle );
 	}
 
 	&:hover,
@@ -239,7 +232,7 @@
 
 // Override standard .card styles in stream
 .reader-combined-card.card {
-	border-bottom: 1px solid var( --color-neutral-100 );
+	border-bottom: 1px solid var( --color-neutral-10 );
 	box-shadow: none;
 	margin: 0 15px;
 	padding: 18px 0 0;

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,18 +9,17 @@ import { get, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
+import { domainRegistration } from 'lib/cart-values/cart-items';
 import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
-import SiteOrDomainChoice from './choice';
+import { submitSignupStep } from 'state/signup/progress/actions';
 import { getCurrentUserId } from 'state/current-user/selectors';
-// TODO: `design-type-with-store`, `design-type`, and this component could be refactored to reduce redundancy
-import DomainImage from 'signup/steps/design-type-with-store/domain-image';
-import NewSiteImage from 'signup/steps/design-type-with-store/new-site-image';
-import ExistingSite from 'signup/steps/design-type-with-store/existing-site';
 import QueryProductsList from 'components/data/query-products-list';
 import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getDomainProductSlug } from 'lib/domains';
+import SiteOrDomainChoice from './choice';
+import DomainImage from './domain-image';
+import NewSiteImage from './new-site-image';
+import ExistingSiteImage from './existing-site-image';
 
 /**
  * Style dependencies
@@ -63,7 +60,7 @@ class SiteOrDomain extends Component {
 			choices.push( {
 				type: 'existing-site',
 				label: translate( 'Existing WordPress.com site' ),
-				image: <ExistingSite />,
+				image: <ExistingSiteImage />,
 				description: translate(
 					'Use with a site you already started. A free domain for one year is included with all plans.'
 				),
@@ -109,10 +106,10 @@ class SiteOrDomain extends Component {
 
 		const domain = this.getDomainName();
 		const productSlug = getDomainProductSlug( domain );
-		const domainItem = cartItems.domainRegistration( { productSlug, domain } );
+		const domainItem = domainRegistration( { productSlug, domain } );
 		const siteUrl = domain;
 
-		SignupActions.submitSignupStep(
+		this.props.submitSignupStep(
 			{
 				stepName,
 				domainItem,
@@ -121,7 +118,6 @@ class SiteOrDomain extends Component {
 				siteUrl,
 				isPurchasingItem: true,
 			},
-			[],
 			{ designType, domainItem, siteUrl }
 		);
 	}
@@ -131,13 +127,15 @@ class SiteOrDomain extends Component {
 
 		// we can skip the next two steps in the `domain-first` flow if the
 		// user is only purchasing a domain
-		SignupActions.submitSignupStep( { stepName: 'site-picker', wasSkipped: true }, [], {} );
-		SignupActions.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], {
-			themeSlugWithRepo: 'pub/twentysixteen',
-		} );
-		SignupActions.submitSignupStep( { stepName: 'plans-site-selected', wasSkipped: true }, [], {
-			cartItem: null,
-		} );
+		this.props.submitSignupStep( { stepName: 'site-picker', wasSkipped: true } );
+		this.props.submitSignupStep(
+			{ stepName: 'themes', wasSkipped: true },
+			{ themeSlugWithRepo: 'pub/twentysixteen' }
+		);
+		this.props.submitSignupStep(
+			{ stepName: 'plans-site-selected', wasSkipped: true },
+			{ cartItem: null }
+		);
 		goToStep( 'user' );
 	}
 
@@ -151,7 +149,7 @@ class SiteOrDomain extends Component {
 		} else if ( designType === 'existing-site' ) {
 			goToNextStep();
 		} else {
-			SignupActions.submitSignupStep( { stepName: 'site-picker', wasSkipped: true }, [], {} );
+			this.props.submitSignupStep( { stepName: 'site-picker', wasSkipped: true } );
 			goToStep( 'themes' );
 		}
 	};
@@ -177,7 +175,6 @@ class SiteOrDomain extends Component {
 					positionInFlow={ this.props.positionInFlow }
 					fallbackHeaderText={ headerText }
 					fallbackSubHeaderText={ subHeaderText }
-					signupProgress={ this.props.signupProgress }
 				/>
 			);
 		}
@@ -191,20 +188,22 @@ class SiteOrDomain extends Component {
 				subHeaderText={ this.props.subHeaderText }
 				fallbackHeaderText={ this.props.headerText }
 				fallbackSubHeaderText={ this.props.subHeaderText }
-				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderScreen() }
 			/>
 		);
 	}
 }
 
-export default connect( state => {
-	const productsList = getAvailableProductsList( state );
-	const productsLoaded = ! isEmpty( productsList );
+export default connect(
+	state => {
+		const productsList = getAvailableProductsList( state );
+		const productsLoaded = ! isEmpty( productsList );
 
-	return {
-		isLoggedIn: !! getCurrentUserId( state ),
-		productsList,
-		productsLoaded,
-	};
-} )( localize( SiteOrDomain ) );
+		return {
+			isLoggedIn: !! getCurrentUserId( state ),
+			productsList,
+			productsLoaded,
+		};
+	},
+	{ submitSignupStep }
+)( localize( SiteOrDomain ) );

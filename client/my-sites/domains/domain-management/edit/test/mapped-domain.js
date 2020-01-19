@@ -1,8 +1,7 @@
-/** @format */
+/** @jest-environment jsdom */
 /**
  * External dependencies
  */
-import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
 import { identity } from 'lodash';
 import React from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
@@ -29,31 +28,32 @@ describe( 'mapped-domain', () => {
 			},
 			domain: {
 				name: 'neverexpires.com',
-				expirationMoment: null,
+				expiry: null,
 			},
 			translate: identity,
 		};
 	} );
 
-	test( 'should render when props.domain.expirationMoment is null', () => {
+	test( 'should render when props.domain.expiry is null', () => {
 		const renderer = new ShallowRenderer();
 		renderer.render( <MappedDomain { ...props } /> );
 		const out = renderer.getRenderOutput();
 
-		assert( out );
+		expect( out ).toBeTruthy();
 	} );
 
 	test( 'should use selectedSite.slug for URLs', () => {
-		const paths = require( 'my-sites/domains/paths' );
-		const dnsStub = sinon.stub( paths, 'domainManagementDns' );
-		const emailStub = sinon.stub( paths, 'domainManagementEmail' );
+		const domainPaths = require( 'my-sites/domains/paths' );
+		const dnsStub = sinon.stub( domainPaths, 'domainManagementDns' );
+		const emailPaths = require( 'my-sites/email/paths' );
+		const emailStub = sinon.stub( emailPaths, 'emailManagement' );
 
 		const renderer = new ShallowRenderer();
 		renderer.render( <MappedDomain { ...props } /> );
 		renderer.getRenderOutput();
 
-		assert( dnsStub.calledWith( 'neverexpires.wordpress.com', 'neverexpires.com' ) );
-		assert( emailStub.calledWith( 'neverexpires.wordpress.com', 'neverexpires.com' ) );
+		expect( dnsStub.calledWith( 'neverexpires.wordpress.com', 'neverexpires.com' ) ).toBeTruthy();
+		expect( emailStub.calledWith( 'neverexpires.wordpress.com', 'neverexpires.com' ) ).toBeTruthy();
 
 		dnsStub.restore();
 		emailStub.restore();

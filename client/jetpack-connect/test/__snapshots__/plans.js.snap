@@ -13,7 +13,7 @@ exports[`Plans should render plans 1`] = `
     title="Plans"
   />
   <Connect(QueryPlans) />
-  <Connect(QuerySitePlans)
+  <QuerySitePlans
     siteId={1234567}
   />
   <Connect(Localized(JetpackPlansGrid))
@@ -51,7 +51,6 @@ exports[`Plans should render plans 1`] = `
         },
         "domain": "an.example.site",
         "hasConflict": false,
-        "hasMinimumJetpackVersion": true,
         "isMainNetworkSite": true,
         "isSecondaryNetworkSite": false,
         "isSiteUpgradeable": true,
@@ -64,7 +63,6 @@ exports[`Plans should render plans 1`] = `
         "name": "Test Site",
         "options": Object {
           "active_modules": Array [
-            "after-the-deadline",
             "contact-form",
             "custom-content-types",
             "custom-css",
@@ -150,15 +148,12 @@ exports[`Plans should render plans 1`] = `
       }
     }
   >
-    <Localized(PlansExtendedInfo)
-      recordTracks={[Function]}
-    />
     <LoggedOutFormLinks>
       <Connect(Localized(JetpackConnectHappychatButton))
         eventName="calypso_jpc_plans_chat_initiated"
         label="Need help?"
       >
-        <Connect(Localized(JetpackConnectHelpButton))
+        <JetpackConnectHelpButton
           label="Need help?"
         />
       </Connect(Localized(JetpackConnectHappychatButton))>

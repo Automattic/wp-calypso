@@ -1,4 +1,3 @@
-/** @format */
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 /**
@@ -9,6 +8,7 @@ import { reduxForm, Field, Fields, getFormValues, isValid, isDirty } from 'redux
 import { localize } from 'i18n-calypso';
 import emailValidator from 'email-validator';
 import { flowRight as compose, omit, padEnd, trimEnd } from 'lodash';
+import { getCurrencyDefaults } from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -20,7 +20,6 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import ReduxFormFieldset, { FieldsetRenderer } from 'components/redux-forms/redux-form-fieldset';
-import { getCurrencyDefaults } from 'lib/format-currency';
 import ProductImagePicker from './product-image-picker';
 import { SUPPORTED_CURRENCY_LIST } from 'lib/simple-payments/constants';
 

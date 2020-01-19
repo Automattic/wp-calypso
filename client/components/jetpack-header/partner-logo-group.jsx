@@ -1,12 +1,10 @@
-/** @format */
-
 /**
  * External Dependencies
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal Dependencies
@@ -36,8 +34,8 @@ class PartnerLogoGroup extends PureComponent {
 				</title>
 				<g fill="none" fillRule="evenodd">
 					<g>
-						<g id="Jetpack-+-Partner">
-							<g transform="translate(219 35.082353)">
+						<g>
+							<g transform="translate(219 35.082353)" className="jetpack-header__partner-logo-plus">
 								<Gridicon icon="plus-small" size={ 72 } />
 							</g>
 							{ this.props.children }

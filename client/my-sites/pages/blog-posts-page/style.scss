@@ -10,7 +10,9 @@
 
 .blog-posts-page__front-page-icon,
 .blog-posts-page__not-used-icon {
+	margin-top: -1px;
 	margin-right: 6px;
+	vertical-align: middle;
 }
 
 .blog-posts-page__details {
@@ -19,7 +21,7 @@
 
 .blog-posts-page__title {
 	@extend %content-font;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-weight: 700;
 	font-size: 18px;
 	line-height: 1.2;
@@ -28,7 +30,7 @@
 	margin-bottom: 2px;
 
 	&.is-disabled {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 }
 
@@ -38,6 +40,10 @@
 	margin: 0 33px 0 0;
 
 	&.is-disabled {
-		color: var( --color-neutral-200 );
+		color: var( --color-neutral-20 );
+	}
+
+	.blog-posts-page__info-icon {
+		margin: 0 4px -4px 0;
 	}
 }

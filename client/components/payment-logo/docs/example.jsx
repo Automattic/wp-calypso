@@ -1,15 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
-import concat from 'lodash/fp/concat';
-import filter from 'lodash/fp/filter';
-import flow from 'lodash/fp/flow';
-import map from 'lodash/fp/map';
-import sortBy from 'lodash/fp/sortBy';
+import { concat, filter, flow, map, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,11 +12,11 @@ import PaymentLogo, { POSSIBLE_TYPES } from '../index';
 
 const genVendors = flow(
 	// 'placeholder' is a special case that needs to be demonstrated separately
-	filter( type => type !== 'placeholder' ),
+	arr => filter( arr, type => type !== 'placeholder' ),
 
-	map( type => ( { type, isCompact: false } ) ),
-	concat( [ { type: 'paypal', isCompact: true } ] ),
-	sortBy( [ 'type', 'isCompact' ] )
+	arr => map( arr, type => ( { type, isCompact: false } ) ),
+	arr => concat( arr, [ { type: 'paypal', isCompact: true } ] ),
+	arr => sortBy( arr, [ 'type', 'isCompact' ] )
 );
 
 const VENDORS = genVendors( POSSIBLE_TYPES );
@@ -31,6 +25,7 @@ class PaymentLogoExamples extends React.PureComponent {
 	static displayName = 'PaymentLogo';
 
 	render() {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="payment-logo-example">
 				<p>Empty Placeholder</p>

@@ -1,5 +1,3 @@
-/** @format */
-
 export const SITE_REQUEST_FIELDS = [
 	'ID',
 	'URL',
@@ -7,6 +5,7 @@ export const SITE_REQUEST_FIELDS = [
 	'icon',
 	'is_multisite',
 	'is_private',
+	'is_coming_soon',
 	'is_vip',
 	'jetpack',
 	'jetpack_modules',
@@ -17,6 +16,9 @@ export const SITE_REQUEST_FIELDS = [
 	'visible',
 	'lang',
 	'launch_status',
+	'migration_status',
+	'is_fse_active',
+	'is_fse_eligible',
 ].join();
 
 export const SITE_REQUEST_OPTIONS = [
@@ -38,8 +40,10 @@ export const SITE_REQUEST_OPTIONS = [
 	'is_domain_only',
 	'is_mapped_domain',
 	'is_redirect',
+	'is_wpcom_atomic',
 	'is_wpcom_store',
 	'woocommerce_is_active',
+	'jetpack_frame_nonce',
 	'jetpack_version',
 	'main_network_site',
 	'permalink_structure',
@@ -51,7 +55,9 @@ export const SITE_REQUEST_OPTIONS = [
 	'show_on_front',
 	'signup_is_store',
 	'site_goals',
+	'site_segment',
 	'software_version',
+	'timezone',
 	'upgraded_filetypes_enabled',
 	'unmapped_url',
 	'verification_services_codes',

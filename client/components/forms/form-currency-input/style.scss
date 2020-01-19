@@ -8,7 +8,7 @@
 }
 
 .form-currency-input__select-icon {
-	color: $gray;
+	color: var( --color-neutral-light );
 	margin-left: 6px;
 	align-self: center;
 }
@@ -16,7 +16,7 @@
 .form-text-input-with-affixes__prefix,
 .form-text-input-with-affixes__suffix {
 	&:hover .form-currency-input__select-icon {
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 	}
 }
 

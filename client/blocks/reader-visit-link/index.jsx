@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,6 +9,11 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import ExternalLink from 'components/external-link';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ReaderVisitLink extends React.Component {
 	static propTypes = {

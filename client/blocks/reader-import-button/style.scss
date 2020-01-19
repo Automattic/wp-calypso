@@ -13,12 +13,12 @@
 }
 
 .reader-import-button__icon {
-	fill: $gray;
+	fill: var( --color-neutral-light );
 	vertical-align: middle;
 }
 
 .reader-import-button__label {
 	font-size: 14px;
-	color: $gray;
+	color: var( --color-text-subtle );
 	padding-left: 4px;
 }

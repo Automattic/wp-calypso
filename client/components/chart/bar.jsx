@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,7 +16,6 @@ export default class ChartBar extends React.PureComponent {
 		clickHandler: PropTypes.func,
 		count: PropTypes.number,
 		data: PropTypes.object.isRequired,
-		isRtl: PropTypes.bool,
 		isTouch: PropTypes.bool,
 		max: PropTypes.number,
 		tooltipPosition: PropTypes.string,
@@ -37,18 +34,13 @@ export default class ChartBar extends React.PureComponent {
 	};
 
 	computeTooltipPosition() {
-		const { chartWidth, index, count, isRtl } = this.props;
+		const { chartWidth, index, count } = this.props;
 
 		const barWidth = chartWidth / count;
 		const barOffset = barWidth * ( index + 1 );
+		const shouldFlip = barOffset > chartWidth - 230 && barOffset + barWidth > 230;
 
-		let tooltipPosition = isRtl ? 'bottom left' : 'bottom right';
-
-		if ( barOffset + 230 > chartWidth && barOffset + barWidth - 230 > 0 ) {
-			tooltipPosition = isRtl ? 'bottom right' : 'bottom left';
-		}
-
-		return tooltipPosition;
+		return shouldFlip ? 'bottom left' : 'bottom right';
 	}
 
 	mouseEnter = () => {

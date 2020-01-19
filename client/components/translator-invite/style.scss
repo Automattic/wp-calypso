@@ -1,10 +1,20 @@
 .translator-invite__content {
-	margin: 15px;
+	margin: 15px auto;
 	font-size: 12px;
 	font-style: italic;
+	max-width: 75%;
+	text-align: center;
+}
+
+.is-section-signup .translator-invite__content,
+.is-section-signup .translator-invite__content a {
+	color: var( --color-text-inverted );
+}
+
+.is-section-signup .translator-invite__content a {
+	text-decoration: underline;
 }
 
 .translator-invite__gridicon {
-	margin: 0 2px 0 0;
-	float: left;
+	margin: 0 2px -4px 0;
 }

@@ -1,7 +1,7 @@
 .reader-share__button {
 	align-items: center;
 	box-sizing: border-box;
-	color: $gray;
+	color: var( --color-text-subtle );
 	display: inline-flex;
 	padding: 4px;
 	position: relative;
@@ -60,7 +60,7 @@
 		top: 8px;
 		left: 18px;
 		padding: 0;
-		fill: $gray;
+		fill: var( --color-neutral-light );
 
 		@include breakpoint( '>480px' ) {
 			left: 11px;
@@ -83,7 +83,7 @@
 	&:focus {
 		.gridicon,
 		.social-logo {
-			fill: $white;
+			fill: var( --color-text-inverted );
 		}
 	}
 }
@@ -93,7 +93,7 @@
 }
 
 .reader-share__site-selector.site-selector {
-	border-top: 1px solid var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-10 );
 }
 
 .reader-share__site-selector .site-selector__sites {
@@ -109,7 +109,7 @@
 .reader-share__site-selector .site__title,
 .reader-share__site-selector .site__domain {
 	&::after {
-		background: linear-gradient( to right, rgba( 255, 255, 255, 0 ), $gray-light 90% );
+		@include long-content-fade( $color: var( --color-surface-rgb ) );
 		border-radius: 50%;
 	}
 }

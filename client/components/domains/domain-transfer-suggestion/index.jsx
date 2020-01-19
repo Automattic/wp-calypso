@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,6 +9,11 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import DomainSuggestion from 'components/domains/domain-suggestion';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class DomainTransferSuggestion extends React.Component {
 	static propTypes = {

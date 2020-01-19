@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,7 +10,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { unblockSite } from 'state/reader/site-blocks/actions';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import { recordTrack as recordReaderTrack } from 'reader/stats';
 import { bumpStat, recordGoogleEvent } from 'state/analytics/actions';
 
@@ -49,11 +48,8 @@ class PostBlocked extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-		bumpStat,
-		unblockSite,
-	}
-)( localize( PostBlocked ) );
+export default connect( null, {
+	recordGoogleEvent,
+	bumpStat,
+	unblockSite,
+} )( localize( PostBlocked ) );

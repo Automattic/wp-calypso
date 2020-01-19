@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -40,42 +38,45 @@ const adjacent = {
 	right: 'bottom',
 };
 
-//let viewport;
+let _viewport = null;
+let _windowEventsRefCount = 0;
 
-let viewport = updateViewport();
-
-function onViewportChange() {
-	viewport = updateViewport();
-}
-
-let windowEventsBound = false;
-
-const bindWindowListeners = () => {
-	if ( windowEventsBound ) {
-		return debug( 'window events already bound' );
+function getViewport() {
+	if ( ! _viewport ) {
+		// initialize on first use
+		_viewport = updateViewport();
 	}
 
-	windowEventsBound = true;
+	return _viewport;
+}
+
+function onViewportChange() {
+	_viewport = updateViewport();
+}
+
+export function bindWindowListeners() {
+	if ( _windowEventsRefCount++ > 0 ) {
+		return;
+	}
 
 	debug( 'bind handlers to `resize` and `scroll` events' );
 	// don't debounce these because they don't so any work that requires layout
 	window.addEventListener( 'resize', onViewportChange, true );
 	window.addEventListener( 'scroll', onViewportChange, true );
-};
+}
 
-const unbindWindowListeners = () => {
-	if ( ! windowEventsBound ) {
-		return debug( 'window events are not bound' );
+export function unbindWindowListeners() {
+	if ( --_windowEventsRefCount > 0 ) {
+		return;
 	}
-
-	windowEventsBound = false;
 
 	debug( 'unbind handlers to `resize` and `scroll` events' );
 	window.removeEventListener( 'resize', onViewportChange, true );
 	window.removeEventListener( 'scroll', onViewportChange, true );
-};
+}
 
-const suggested = ( pos, el, target ) => {
+export function suggested( pos, el, target ) {
+	const viewport = getViewport();
 	const targetPosition = getBoundingClientRect( target );
 	const h = el.clientHeight;
 	const w = el.clientWidth;
@@ -99,7 +100,7 @@ const suggested = ( pos, el, target ) => {
 	}
 
 	return chooseSecondary( primary, pos1, el, target, w, h ) || pos;
-};
+}
 
 function choosePrimary( prefered, room ) {
 	// top, bottom, left, right in order of preference
@@ -131,6 +132,7 @@ function choosePrimary( prefered, room ) {
 }
 
 function chooseSecondary( primary, prefered, el, target, w, h ) {
+	const viewport = getViewport();
 	// top, top left, top right in order of preference
 	const isVertical = primary === 'top' || primary === 'bottom';
 
@@ -187,7 +189,7 @@ function chooseSecondary( primary, prefered, el, target, w, h ) {
 	return bestPos;
 }
 
-function offset( pos, el, target, relativePosition ) {
+export function offset( pos, el, target, relativePosition ) {
 	const pad = 15;
 	const tipRect = getBoundingClientRect( el );
 
@@ -315,12 +317,11 @@ function offset( pos, el, target, relativePosition ) {
  * Extracted from `timoxley/offset`, but directly using a
  * TextRectangle instead of getting another version.
  *
- * @param {TextRectangle} box - result from a `getBoundingClientRect()` call
- * @param {Document} doc - Document instance to use
- * @return {Object} an object with `top` and `left` Number properties
- * @api private
+ * @param {window.TextRectangle} box - result from a `getBoundingClientRect()` call
+ * @param {window.Document} doc - Document instance to use
+ * @returns {object} an object with `top` and `left` Number properties
+ * @private
  */
-
 function _offset( box, doc ) {
 	const body = doc.body || doc.getElementsByTagName( 'body' )[ 0 ];
 	const docEl = doc.documentElement || body.parentNode;
@@ -335,17 +336,17 @@ function _offset( box, doc ) {
 	};
 }
 
-/*
+/**
  * Constrain a left to keep the element in the window
- * @param  {Object} pl proposed left
- * @param  {Number} ew tip element width
- * @return {Number}    the best width
+ *
+ * @param {object} off Proposed offset before constraining
+ * @param {window.Element} el Element to be constained to viewport
+ * @returns {number}    the best width
  */
-const constrainLeft = function( off, el ) {
+export function constrainLeft( off, el ) {
+	const viewport = getViewport();
 	const ew = getBoundingClientRect( el ).width;
 	off.left = Math.max( 0, Math.min( off.left, viewport.width - ew ) );
 
 	return off;
-};
-
-export { constrainLeft, bindWindowListeners, unbindWindowListeners, suggested, offset };
+}

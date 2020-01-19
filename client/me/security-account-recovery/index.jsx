@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
@@ -48,6 +46,11 @@ import {
 import { getCurrentUserEmail } from 'state/current-user/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const SecurityAccountRecovery = props => (
 	<Main className="security-account-recovery">
 		<PageViewTracker path="/me/security/account-recovery" title="Me > Account Recovery" />
@@ -79,7 +82,7 @@ const SecurityAccountRecovery = props => (
 				deleteEmail={ props.deleteAccountRecoveryEmail }
 				isLoading={ props.accountRecoveryEmailActionInProgress }
 			/>
-			{ props.shouldPromptEmailValidationNotice && (
+			{ props.shouldPromptEmailValidationNotice && ! props.hasSentEmailValidation && (
 				<RecoveryEmailValidationNotice
 					onResend={ props.resendAccountRecoveryEmailValidation }
 					hasSent={ props.hasSentEmailValidation }

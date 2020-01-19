@@ -3,30 +3,30 @@
  */
 import React, { Fragment, PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Button from 'components/button';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { Card, Button } from '@automattic/components';
+
+/**
+ * Image dependencies
+ */
+import conversationsImage from 'assets/images/reader/reader-conversations.png';
+import discoverImage from 'assets/images/reader/reader-discover.png';
+import mobileImage from 'assets/images/reader/reader-mobile.png';
+import notificationsImage from 'assets/images/reader/reader-notifications.png';
 
 class ReaderLandingStepContent extends PureComponent {
-	handleButtonClick = () => {
-		this.props.recordTracksEvent( 'calypso_signup_reader_landing_cta' );
-		this.props.onButtonClick();
-	};
-
 	render() {
 		const { translate } = this.props;
 		return (
 			<Fragment>
 				<div className="reader-landing__button-wrapper">
 					<Button
-						primary={ true }
+						primary
 						type="submit"
-						onClick={ this.handleButtonClick }
+						onClick={ this.props.onButtonClick }
 						className="reader-landing__button"
 					>
 						{ translate( 'Start using the Reader' ) }
@@ -37,7 +37,7 @@ class ReaderLandingStepContent extends PureComponent {
 					<section className="reader-landing__features">
 						<div className="reader-landing__feature">
 							<img
-								src="/calypso/images/reader/reader-discover.png"
+								src={ discoverImage }
 								alt={ translate( 'Screenshot of Reader Discover' ) }
 								className="reader-landing__feature-image"
 							/>
@@ -55,7 +55,7 @@ class ReaderLandingStepContent extends PureComponent {
 
 						<div className="reader-landing__feature is-even">
 							<img
-								src="/calypso/images/reader/reader-notifications.png"
+								src={ notificationsImage }
 								alt={ translate( 'Screenshot of Reader notifications' ) }
 								className="reader-landing__feature-image"
 							/>
@@ -73,7 +73,7 @@ class ReaderLandingStepContent extends PureComponent {
 
 						<div className="reader-landing__feature">
 							<img
-								src="/calypso/images/reader/reader-mobile.png"
+								src={ mobileImage }
 								alt={ translate( 'Person holding a tablet and using Reader' ) }
 								className="reader-landing__feature-image"
 							/>
@@ -91,7 +91,7 @@ class ReaderLandingStepContent extends PureComponent {
 
 						<div className="reader-landing__feature is-even">
 							<img
-								src="/calypso/images/reader/reader-conversations.png"
+								src={ conversationsImage }
 								alt={ translate( 'Screenshot of Reader Conversations' ) }
 								className="reader-landing__feature-image"
 							/>
@@ -110,9 +110,9 @@ class ReaderLandingStepContent extends PureComponent {
 
 					<div className="reader-landing__button-wrapper">
 						<Button
-							primary={ true }
+							primary
 							type="submit"
-							onClick={ this.handleButtonClick }
+							onClick={ this.props.onButtonClick }
 							className="reader-landing__button"
 						>
 							{ translate( 'Start using the Reader' ) }
@@ -123,7 +123,5 @@ class ReaderLandingStepContent extends PureComponent {
 		);
 	}
 }
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( localize( ReaderLandingStepContent ) );
+
+export default localize( ReaderLandingStepContent );

@@ -1,8 +1,8 @@
-module.exports = {
+module.exports = () => ( {
 	plugins: {
 		'postcss-custom-properties': {
-			importFrom: 'public/custom-properties.css',
+			importFrom: [ require.resolve( '@automattic/calypso-color-schemes' ) ],
 		},
 		autoprefixer: {},
 	},
-};
+} );

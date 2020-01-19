@@ -1,11 +1,10 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { flowRight as compose, includes } from 'lodash';
 
 /**
@@ -13,11 +12,16 @@ import { flowRight as compose, includes } from 'lodash';
  */
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import PluginsStore from 'lib/plugins/store';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import Rating from 'components/rating';
 import analytics from 'lib/analytics';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const PREINSTALLED_PLUGINS = [ 'Jetpack by WordPress.com', 'Akismet', 'VaultPress' ];
 
@@ -49,6 +53,7 @@ class PluginsBrowserListElement extends Component {
 		analytics.tracks.recordEvent( 'calypso_plugin_browser_item_click', {
 			site: this.props.site,
 			plugin: this.props.plugin.slug,
+			list_name: this.props.listName,
 		} );
 	};
 
@@ -91,6 +96,7 @@ class PluginsBrowserListElement extends Component {
 	}
 
 	renderPlaceholder() {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<li className="plugins-browser-item is-placeholder">
 				<span className="plugins-browser-item__link">
@@ -103,6 +109,7 @@ class PluginsBrowserListElement extends Component {
 				</span>
 			</li>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	render() {

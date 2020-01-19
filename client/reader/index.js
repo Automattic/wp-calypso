@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -22,7 +21,12 @@ import {
 	updateLastRoute,
 } from './controller';
 import config from 'config';
-import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'controller';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 function forceTeamA8C( context, next ) {
 	context.params.team = 'a8c';
@@ -32,7 +36,7 @@ function forceTeamA8C( context, next ) {
 export default function() {
 	if ( config.isEnabled( 'reader' ) ) {
 		page(
-			'/',
+			'/read',
 			preloadReaderBundle,
 			initAbTests,
 			updateLastRoute,
@@ -43,13 +47,12 @@ export default function() {
 		);
 
 		// Old and incomplete paths that should be redirected to /
-		page( '/read/following', '/' );
-		page( '/read', '/' );
-		page( '/read/blogs', '/' );
-		page( '/read/feeds', '/' );
-		page( '/read/blog', '/' );
-		page( '/read/post', '/' );
-		page( '/read/feed', '/' );
+		page( '/read/following', '/read' );
+		page( '/read/blogs', '/read' );
+		page( '/read/feeds', '/read' );
+		page( '/read/blog', '/read' );
+		page( '/read/post', '/read' );
+		page( '/read/feed', '/read' );
 
 		// Feed stream
 		page( '/read/*', preloadReaderBundle, initAbTests );
@@ -57,7 +60,6 @@ export default function() {
 		page( '/read/feeds/:feed_id/posts', incompleteUrlRedirects );
 		page(
 			'/read/feeds/:feed_id',
-			redirectLoggedOut,
 			updateLastRoute,
 			prettyRedirects,
 			sidebar,
@@ -72,7 +74,6 @@ export default function() {
 		page( '/read/blogs/:blog_id/posts', incompleteUrlRedirects );
 		page(
 			'/read/blogs/:blog_id',
-			redirectLoggedOut,
 			updateLastRoute,
 			prettyRedirects,
 			sidebar,
@@ -90,14 +91,5 @@ export default function() {
 	}
 
 	// Automattic Employee Posts
-	page(
-		'/read/a8c',
-		redirectLoggedOut,
-		updateLastRoute,
-		sidebar,
-		forceTeamA8C,
-		readA8C,
-		makeLayout,
-		clientRender
-	);
+	page( '/read/a8c', updateLastRoute, sidebar, forceTeamA8C, readA8C, makeLayout, clientRender );
 }

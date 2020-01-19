@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,15 +5,20 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 import { connect } from 'react-redux';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog, Button } from '@automattic/components';
 import FormLabel from 'components/forms/form-label';
-import Button from 'components/button';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { closeAccount } from 'state/account/actions';
+
+/**
+ * Style dependencies
+ */
+import './confirm-dialog.scss';
 
 class AccountCloseConfirmDialog extends React.Component {
 	state = {
@@ -47,7 +50,7 @@ class AccountCloseConfirmDialog extends React.Component {
 
 	handleConfirm = () => {
 		this.props.closeAccount();
-		this.props.closeConfirmDialog();
+		page( '/me/account/closed' );
 	};
 
 	render() {

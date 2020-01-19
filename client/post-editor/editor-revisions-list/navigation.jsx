@@ -1,16 +1,14 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import ButtonGroup from 'components/button-group';
 
 const EditorRevisionsListNavigation = ( {

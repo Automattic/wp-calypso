@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,6 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { omit } from 'lodash';
 import { localize } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -25,6 +24,11 @@ import SelectIpsTag from './select-ips-tag.jsx';
 import TransferProhibited from './transfer-prohibited.jsx';
 import TransferLock from './transfer-lock.jsx';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class Transfer extends React.Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
@@ -39,7 +43,7 @@ class Transfer extends React.Component {
 		const {
 			currentUserCanManage,
 			isPendingIcannVerification,
-			transferAwayEligibleAtMoment,
+			transferAwayEligibleAt,
 		} = getSelectedDomain( this.props );
 		let section = null;
 
@@ -47,7 +51,7 @@ class Transfer extends React.Component {
 			section = NonOwnerCard;
 		} else if ( transferProhibited ) {
 			section = TransferProhibited;
-		} else if ( transferAwayEligibleAtMoment && transferAwayEligibleAtMoment.isAfter() ) {
+		} else if ( transferAwayEligibleAt && moment( transferAwayEligibleAt ).isAfter() ) {
 			section = TransferLock;
 		} else if ( 'uk' === topLevelOfTld ) {
 			section = SelectIpsTag;
@@ -68,7 +72,7 @@ class Transfer extends React.Component {
 		}
 
 		return (
-			<Main className="domain-management-transfer">
+			<Main>
 				<Header onClick={ this.goToEdit } selectedDomainName={ this.props.selectedDomainName }>
 					{ this.props.translate( 'Transfer Domain' ) }
 				</Header>

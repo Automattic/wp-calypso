@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import React from 'react';
 import { debounce, isEqual, find, isEmpty, isArray } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -19,15 +17,12 @@ import { preventWidows } from 'lib/formatting';
 import config from 'config';
 import FormLabel from 'components/forms/form-label';
 import SegmentedControl from 'components/segmented-control';
-import ControlItem from 'components/segmented-control/item';
 import SelectDropdown from 'components/select-dropdown';
-import DropdownItem from 'components/select-dropdown/item';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import SitesDropdown from 'components/sites-dropdown';
 import InlineHelpCompactResults from 'blocks/inline-help/inline-help-compact-results';
-import ChatBusinessConciergeNotice from '../chat-business-concierge-notice';
 import { selectSiteId } from 'state/help/actions';
 import { getHelpSelectedSite, getHelpSelectedSiteId } from 'state/help/selectors';
 import wpcomLib from 'lib/wp';
@@ -36,7 +31,13 @@ import { bumpStat, recordTracksEvent, composeAnalytics } from 'state/analytics/a
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import { isShowingQandAInlineHelpContactForm } from 'state/inline-help/selectors';
 import { showQandAOnInlineHelpContactForm } from 'state/inline-help/actions';
+import { getNpsSurveyFeedback } from 'state/nps-survey/selectors';
 import { generateSubjectFromMessage } from './utils';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * Module variables
@@ -74,6 +75,7 @@ export class HelpContactForm extends React.PureComponent {
 			value: PropTypes.any,
 			requestChange: PropTypes.func.isRequired,
 		} ),
+		npsSurveyFeedback: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -90,11 +92,12 @@ export class HelpContactForm extends React.PureComponent {
 		},
 		showingQandAStep: false,
 		showQandAOnInlineHelpContactForm: () => {},
+		npsSurveyFeedback: '',
 	};
 
 	/**
 	 * Setup our initial state
-	 * @return {Object} An object representing our initial state
+	 * @returns {object} An object representing our initial state
 	 */
 	state = this.props.valueLink.value || {
 		howCanWeHelp: 'gettingStarted',
@@ -105,11 +108,22 @@ export class HelpContactForm extends React.PureComponent {
 		qanda: [],
 	};
 
+	UNSAFE_componentWillMount() {
+		const { npsSurveyFeedback, translate } = this.props;
+
+		if ( npsSurveyFeedback ) {
+			this.state.message =
+				'\n' +
+				translate( 'The comment below is copied from your survey response:' ) +
+				`\n--------------------\n${ npsSurveyFeedback }`;
+		}
+	}
+
 	componentDidMount() {
 		this.debouncedQandA = debounce( this.doQandASearch, 500 );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.valueLink.value || isEqual( nextProps.valueLink.value, this.state ) ) {
 			return;
 		}
@@ -183,7 +197,7 @@ export class HelpContactForm extends React.PureComponent {
 	 * @param  {object} selectionOptions An array of objects consisting of a value and a label. It can also have a property called subtext
 	 *                                   value is used when setting state, label is used for display in the selection component, and subtext
 	 *                                   is used for the second line of text displayed in the SegmentedControl
-	 * @return {object}                  A JSX object containing both the SegmentedControl and the SelectDropdown.
+	 * @returns {object}                  A JSX object containing both the SegmentedControl and the SelectDropdown.
 	 */
 	renderFormSelection = ( selectionName, selectionOptions ) => {
 		const { translate } = this.props;
@@ -209,17 +223,17 @@ export class HelpContactForm extends React.PureComponent {
 			<div className="help-contact-form__selection">
 				<SegmentedControl primary>
 					{ options.map( option => (
-						<ControlItem { ...option.props }>
+						<SegmentedControl.Item { ...option.props }>
 							{ option.label }
 							{ option.subtext }
-						</ControlItem>
+						</SegmentedControl.Item>
 					) ) }
 				</SegmentedControl>
 				<SelectDropdown
 					selectedText={ selectedItem ? selectedItem.label : translate( 'Select an option' ) }
 				>
 					{ options.map( option => (
-						<DropdownItem { ...option.props }>{ option.label }</DropdownItem>
+						<SelectDropdown.Item { ...option.props }>{ option.label }</SelectDropdown.Item>
 					) ) }
 				</SelectDropdown>
 			</div>
@@ -228,7 +242,7 @@ export class HelpContactForm extends React.PureComponent {
 
 	/**
 	 * Determine if this form is ready to submit
-	 * @return {bool}	Return true if this form can be submitted
+	 * @returns {bool}	Return true if this form can be submitted
 	 */
 	canSubmitForm = () => {
 		const { disabled, showSubjectField } = this.props;
@@ -299,7 +313,7 @@ export class HelpContactForm extends React.PureComponent {
 
 	/**
 	 * Render the contact form
-	 * @return {object} ReactJS JSX object
+	 * @returns {object} ReactJS JSX object
 	 */
 	render() {
 		const {
@@ -364,12 +378,6 @@ export class HelpContactForm extends React.PureComponent {
 		return (
 			<div className="help-contact-form">
 				{ formDescription && <p>{ formDescription }</p> }
-
-				<ChatBusinessConciergeNotice
-					from="2017-07-19T00:00:00Z"
-					to="2017-07-21T00:00:00Z"
-					selectedSite={ this.props.helpSite }
-				/>
 
 				{ showHowCanWeHelpField && (
 					<div>
@@ -467,6 +475,7 @@ const mapStateToProps = state => ( {
 	helpSite: getHelpSelectedSite( state ),
 	helpSiteId: getHelpSelectedSiteId( state ),
 	showingQandAStep: isShowingQandAInlineHelpContactForm( state ),
+	npsSurveyFeedback: getNpsSurveyFeedback( state ),
 } );
 
 const mapDispatchToProps = {
@@ -477,7 +486,4 @@ const mapDispatchToProps = {
 	showQandAOnInlineHelpContactForm,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( HelpContactForm ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( HelpContactForm ) );

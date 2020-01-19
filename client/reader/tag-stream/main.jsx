@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -22,6 +21,11 @@ import getReaderTags from 'state/selectors/get-reader-tags';
 import { requestFollowTag, requestUnfollowTag } from 'state/reader/tags/items/actions';
 import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
 import QueryReaderTag from 'components/data/query-reader-tag';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class TagStream extends React.Component {
 	static propTypes = {
@@ -134,7 +138,12 @@ class TagStream extends React.Component {
 			>
 				<QueryReaderFollowedTags />
 				<QueryReaderTag tag={ this.props.decodedTagSlug } />
-				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
+				<DocumentHead
+					title={ this.props.translate( '%s ‹ Reader', {
+						args: title,
+						comment: '%s is the section name. For example: "My Likes"',
+					} ) }
+				/>
 				{ this.props.showBack && <HeaderBack /> }
 				<TagStreamHeader
 					title={ title }

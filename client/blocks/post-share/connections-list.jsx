@@ -1,19 +1,13 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Connection from './connection';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
 
 class ConnectionsList extends PureComponent {
 	static propTypes = {
@@ -21,11 +15,6 @@ class ConnectionsList extends PureComponent {
 		onToggle: PropTypes.func,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
-
-		// connects and helpers
-		moment: PropTypes.func,
-		numberFormat: PropTypes.func,
-		translater: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -69,14 +58,4 @@ class ConnectionsList extends PureComponent {
 	}
 }
 
-export const NoConnectionsNotice = ( { siteSlug, translate } ) => (
-	<Notice
-		status="is-warning"
-		showDismiss={ false }
-		text={ translate( 'Connect an account to get started.' ) }
-	>
-		<NoticeAction href={ `/sharing/${ siteSlug }` }>{ translate( 'Settings' ) }</NoticeAction>
-	</Notice>
-);
-
-export default localize( ConnectionsList );
+export default ConnectionsList;

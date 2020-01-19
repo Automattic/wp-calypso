@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,15 +10,7 @@ import React from 'react';
  * Internal dependencies
  */
 import FileImporter from './file-importer';
-import InlineSupportLink from 'components/inline-support-link';
-
-/**
- * Module variables
- */
-const importerData = {
-	title: 'WordPress',
-	icon: 'wordpress',
-};
+import importerConfig from 'lib/importer/importer-config';
 
 class ImporterWordPress extends React.PureComponent {
 	static displayName = 'ImporterWordPress';
@@ -38,31 +28,9 @@ class ImporterWordPress extends React.PureComponent {
 	};
 
 	render() {
-		importerData.description = this.props.translate(
-			'Import posts, pages, and media ' + 'from a WordPress export\u00A0file.'
-		);
-
-		importerData.uploadDescription = this.props.translate(
-			'Upload a {{b}}WordPress export file{{/b}} to start ' +
-				'importing into {{b2}}%(title)s{{/b2}}. Check out our ' +
-				'{{inlineSupportLink/}} if you need ' +
-				'help exporting the file.',
-			{
-				args: { title: this.props.site.title },
-				components: {
-					b: <strong />,
-					b2: <strong />,
-					inlineSupportLink: (
-						<InlineSupportLink
-							supportPostId={ 2087 }
-							supportLink={ 'https://en.support.wordpress.com/export/' }
-							text={ this.props.translate( 'WordPress export guide' ) }
-							showIcon={ false }
-						/>
-					),
-				},
-			}
-		);
+		const importerData = importerConfig( {
+			siteTitle: this.props.siteTitle,
+		} ).wordpress;
 
 		return <FileImporter importerData={ importerData } { ...this.props } />;
 	}

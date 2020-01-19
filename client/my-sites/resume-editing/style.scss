@@ -30,7 +30,7 @@
 }
 
 .resume-editing__label {
-	color: $white;
+	color: var( --color-text-inverted );
 	font-size: 10px;
 	font-weight: 500;
 	opacity: 0.7;
@@ -40,7 +40,7 @@
 .resume-editing__post-title {
 	position: relative;
 	overflow: hidden;
-	color: $white;
+	color: var( --color-text-inverted );
 	display: block;
 	max-width: 25vw;
 	white-space: nowrap;
@@ -49,7 +49,7 @@
 	line-height: 1.1;
 
 	&::after {
-		@include long-content-fade( $size: 24px, $color: $blue-wordpress );
+		@include long-content-fade( $size: 24px, $color: var( --color-primary-rgb ) );
 		left: 25vw;
 		right: auto;
 		margin-left: -24px;

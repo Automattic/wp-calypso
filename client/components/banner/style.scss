@@ -1,5 +1,6 @@
 .banner.card {
 	border-left: 3px solid;
+	cursor: default;
 	display: flex;
 	padding: 12px 6px 12px 12px;
 	line-height: 29px;
@@ -8,58 +9,73 @@
 		padding-right: 48px;
 	}
 
-	@include banner-color( var( --color-primary ) );
+	&.is-compact {
+		border-left-width: 4px;
+		font-size: 12px;
+		margin-bottom: 8px;
+		padding: 8px 12px 8px 8px;
+	}
+
+	&[href] {
+		cursor: pointer;
+	}
+
+	@include banner-color( var( --color-primary-40 ) );
 
 	&.is-wpcom-plan {
 		&.is-upgrade-blogger {
-			@include banner-color( $muriel-celadon-500 );
+			@include banner-color( var( --color-plan-blogger ) );
 		}
 
 		&.is-upgrade-personal {
-			@include banner-color( $muriel-hot-blue-500 );
+			@include banner-color( var( --color-plan-personal ) );
 		}
 
 		&.is-upgrade-premium {
-			@include banner-color( $muriel-yellow-500 );
+			@include banner-color( var( --color-plan-premium ) );
 		}
 
 		&.is-upgrade-business {
-			@include banner-color( $muriel-orange-500 );
+			@include banner-color( var( --color-plan-business ) );
 		}
 
 		&.is-upgrade-ecommerce {
-			@include banner-color( $muriel-hot-purple-500 );
+			@include banner-color( var( --color-plan-ecommerce ) );
 		}
 	}
 
 	&.is-jetpack-plan {
 		&.is-upgrade-personal {
-			@include banner-color( $muriel-yellow-500 );
+			@include banner-color( var( --color-jetpack-plan-personal ) );
 		}
 
 		&.is-upgrade-premium {
-			@include banner-color( $muriel-green-500 );
+			@include banner-color( var( --color-jetpack-plan-premium ) );
 		}
 
 		&.is-upgrade-business {
-			@include banner-color( $alert-purple );
+			@include banner-color( var( --color-jetpack-plan-professional ) );
 		}
 	}
 
 	.card__link-indicator {
 		align-items: center;
-		color: var( --color-primary );
+		color: var( --color-neutral );
 		display: flex;
+	}
+
+	&.is-compact .card__link-indicator {
+		right: 8px;
 	}
 
 	&:hover {
 		transition: all 100ms ease-in-out;
 
 		&.is-card-link {
-			box-shadow: 0 0 0 1px var( --color-neutral ), 0 2px 4px var( --color-neutral-100 );
+			box-shadow: 0 0 0 1px var( --color-neutral ), 0 2px 4px var( --color-neutral-10 );
 		}
 		.card__link-indicator {
-			color: var( --color-primary-dark );
+			color: var( --color-neutral-dark );
 		}
 	}
 
@@ -69,6 +85,14 @@
 		&.is-dismissible {
 			padding-right: 16px;
 		}
+
+		&.is-compact.is-dismissible {
+			padding-right: 8px;
+		}
+	}
+
+	&.is-card-link {
+		padding-right: 48px;
 	}
 }
 
@@ -88,7 +112,7 @@
 
 	.banner__icon {
 		align-self: center;
-		color: $white;
+		color: var( --color-text-inverted );
 		display: flex;
 	}
 
@@ -113,6 +137,7 @@
 .banner__icon-plan {
 	display: flex;
 	margin-right: 16px;
+	flex-shrink: 0;
 
 	.plan-icon {
 		height: 32px;
@@ -135,6 +160,10 @@
 	}
 }
 
+.is-compact .banner__content {
+	padding: 5px;
+}
+
 .banner__info {
 	flex-grow: 1;
 	line-height: 1.4;
@@ -143,7 +172,7 @@
 	.banner__title,
 	.banner__description,
 	.banner__list {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	.banner__title {
@@ -180,6 +209,10 @@
 	}
 }
 
+.is-compact .banner__title {
+	font-size: 12px;
+}
+
 .banner__action {
 	align-self: center;
 	font-size: 12px;
@@ -197,7 +230,7 @@
 
 		.plan-price.is-discounted,
 		.plan-price.is-discounted .plan-price__currency-symbol {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 
 		.has-call-to-action & .plan-price {
@@ -214,9 +247,25 @@
 			margin-top: 40px;
 		}
 
+		.is-compact & {
+			margin-right: 0;
+		}
+
+		.is-dismissible.is-compact & {
+			margin-top: 0;
+			margin-right: 32px;
+		}
+
 		.banner__prices {
 			justify-content: flex-end;
 			text-align: right;
 		}
 	}
+}
+
+.is-compact .dismissible-card__close-icon {
+	width: 16px;
+	height: 16px;
+	top: 50%;
+	margin-top: -8px;
 }

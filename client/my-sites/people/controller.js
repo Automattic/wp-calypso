@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,7 +10,6 @@ import i18n from 'i18n-calypso';
  */
 import PeopleList from './main';
 import EditTeamMember from './edit-team-member-form';
-import PeopleLogStore from 'lib/people/log-store';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import InvitePeople from './invite-people';
 import PeopleInvites from './people-invites';
@@ -71,7 +69,6 @@ function renderPeopleList( context, next ) {
 	context.store.dispatch( setTitle( i18n.translate( 'People', { textOnly: true } ) ) );
 
 	context.primary = React.createElement( PeopleList, {
-		peopleLog: PeopleLogStore,
 		filter: filter,
 		search: context.query.s,
 	} );

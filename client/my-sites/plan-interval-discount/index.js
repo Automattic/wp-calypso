@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,11 +5,16 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { plansLink } from 'lib/plans';
+import { getCurrencyObject } from '@automattic/format-currency';
 
 /**
  * Internal Dependencies
  **/
-import { getCurrencyObject } from 'lib/format-currency';
+
+/**
+ * Style Dependencies
+ */
+import './style.scss';
 
 class PlanIntervalDiscount extends Component {
 	static propTypes = {
@@ -32,7 +36,7 @@ class PlanIntervalDiscount extends Component {
 	}
 
 	renderYearlyViewDiscountInfo() {
-		const { currencyCode, discountPrice, originalPrice } = this.props;
+		const { basePlansPath, currencyCode, discountPrice, originalPrice } = this.props;
 
 		// Ensure we have required props.
 		if ( ! currencyCode || ! discountPrice || ! originalPrice ) {
@@ -40,11 +44,17 @@ class PlanIntervalDiscount extends Component {
 		}
 
 		const price = this.getDiscountPriceObject();
-		const { translate } = this.props;
-		return translate( 'Save {{b}}%(symbol)s%(integer)s%(fraction)s{{/b}} over monthly.', {
-			args: price,
-			components: { b: <b /> },
-		} );
+		const { siteSlug, translate } = this.props;
+		return translate(
+			'Save {{b}}%(symbol)s%(integer)s%(fraction)s{{/b}} over {{Link}}monthly{{/Link}}.',
+			{
+				args: price,
+				components: {
+					b: <b />,
+					Link: <a href={ plansLink( basePlansPath, siteSlug, 'monthly', true ) } />,
+				},
+			}
+		);
 	}
 
 	renderMonthlyViewDiscountInfo() {
@@ -62,7 +72,7 @@ class PlanIntervalDiscount extends Component {
 			{
 				args: price,
 				components: {
-					Link: <a href={ plansLink( basePlansPath, siteSlug, 'yearly' ) } />,
+					Link: <a href={ plansLink( basePlansPath, siteSlug, 'yearly', true ) } />,
 					b: <b />,
 				},
 			}

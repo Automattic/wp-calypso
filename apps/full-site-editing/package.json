@@ -1,0 +1,49 @@
+{
+	"name": "@automattic/full-site-editing",
+	"version": "0.18.2",
+	"description": "Plugin for full site editing with the block editor.",
+	"sideEffects": true,
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/Automattic/wp-calypso.git",
+		"directory": "apps/full-site-editing"
+	},
+	"private": true,
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"scripts": {
+		"full-site-editing": "calypso-build --source='full-site-editing'",
+		"dev:full-site-editing": "npm run full-site-editing",
+		"build:full-site-editing": "NODE_ENV=production npm run full-site-editing",
+		"posts-list-block": "calypso-build --source='posts-list-block'",
+		"dev:posts-list-block": "npm run posts-list-block",
+		"build:posts-list-block": "NODE_ENV=production npm run posts-list-block",
+		"blog-posts-block-editor": "calypso-build --source='blog-posts-block/editor'",
+		"blog-posts-block-view": "calypso-build --source='blog-posts-block/view'",
+		"blog-posts-block": "npm-run-all --parallel blog-posts-block-*",
+		"dev:blog-posts-block": "npm run blog-posts-block",
+		"build:blog-posts-block": "NODE_ENV=production npm run blog-posts-block",
+		"starter-page-templates": "calypso-build --source='starter-page-templates'",
+		"dev:starter-page-templates": "npm run starter-page-templates",
+		"build:starter-page-templates": "NODE_ENV=production npm run starter-page-templates",
+		"global-styles": "calypso-build --source='global-styles'",
+		"build:global-styles": "NODE_ENV=production npm run global-styles",
+		"dev:global-styles": "npm run global-styles",
+		"dev": "npm-run-all --parallel dev:*",
+		"build": "npm-run-all --parallel build:*",
+		"test:unit": "npx wp-scripts test-unit-js --config='jest.config.js'",
+		"test:unit:help": "npx wp-scripts test-unit-js --config='jest.config.js' --help",
+		"test:unit:watch": "npx wp-scripts test-unit-js --config='jest.config.js' --watch",
+		"clean": "npx rimraf dist full-site-editing-plugin/*/dist",
+		"prebuild": "npm run clean",
+		"predev": "npm run clean",
+		"sync:blog-posts-block": "./bin/sync-blog-posts-block.sh"
+	},
+	"dependencies": {
+		"classnames": "2.2.6"
+	}
+}

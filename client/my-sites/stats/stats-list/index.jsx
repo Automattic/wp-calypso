@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ const debug = debugFactory( 'calypso:stats:list' );
 import StatsListItem from './stats-list-item';
 
 /**
- * Style Dependencies
+ * Style dependencies
  */
 import './style.scss';
 
@@ -71,6 +69,7 @@ export default class extends React.Component {
 						key={ groupKey }
 						itemClickHandler={ clickHandler }
 						followList={ this.props.followList }
+						useShortLabel={ this.props.useShortLabel }
 					/>
 				);
 			}, this );

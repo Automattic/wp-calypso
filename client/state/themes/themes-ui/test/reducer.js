@@ -1,15 +1,23 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import reducer, { backPath, themesBannerVisible, themesUpworkBannerVisible } from '../reducer';
-import { SERIALIZE, DESERIALIZE } from 'state/action-types';
+import reducer, {
+	backPath,
+	themesBannerVisible,
+	themesShowcaseOpen,
+	themesBookmark,
+} from '../reducer';
+import {
+	SERIALIZE,
+	DESERIALIZE,
+	THEMES_SHOWCASE_OPEN,
+	THEMES_BOOKMARK_SET,
+} from 'state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
 		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
-			expect.arrayContaining( [ 'backPath', 'themesBannerVisible', 'themesUpworkBannerVisible' ] )
+			expect.arrayContaining( [ 'backPath', 'themesBannerVisible' ] )
 		);
 	} );
 } );
@@ -71,51 +79,42 @@ describe( '#themesBannerVisible', () => {
 	} );
 } );
 
-describe( '#themesUpworkBannerVisible', () => {
-	test( 'should default to a themesUpworkBannerVisible of true', () => {
-		const state = themesUpworkBannerVisible( undefined, {} );
-
-		expect( state ).toBe( true );
-	} );
-
-	test( 'persists visible state', () => {
-		const state = themesUpworkBannerVisible( true, {
-			type: SERIALIZE,
-		} );
-
-		expect( state ).toBe( true );
-	} );
-
-	test( 'persists invisible state', () => {
-		const state = themesUpworkBannerVisible( false, {
-			type: SERIALIZE,
-		} );
-
+describe( '#themesShowcaseOpen', () => {
+	test( 'initializes to false', () => {
+		const state = themesShowcaseOpen( undefined, {} );
 		expect( state ).toBe( false );
 	} );
 
-	test( 'loads persisted visible state', () => {
-		const state = themesUpworkBannerVisible( true, {
-			type: DESERIALIZE,
-		} );
-
+	test( 'action type THEMES_SHOWCASE_OPEN sets value to true', () => {
+		const state = themesShowcaseOpen( false, { type: THEMES_SHOWCASE_OPEN } );
 		expect( state ).toBe( true );
 	} );
 
-	test( 'loads persisted invisible state', () => {
-		const state = themesUpworkBannerVisible( false, {
-			type: DESERIALIZE,
-		} );
-
+	test( 'fubar action does not alter state', () => {
+		const state = themesShowcaseOpen( false, { type: 'FUBAR_ACTION' } );
 		expect( state ).toBe( false );
 	} );
+} );
 
-	test( "doesn't load invalid persisted state", () => {
-		jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
-		const state = themesUpworkBannerVisible( 'wtf', {
-			type: DESERIALIZE,
+describe( '#themesBookmark', () => {
+	test( 'initializes state as empty string', () => {
+		const state = themesBookmark( undefined, {} );
+		expect( state ).toEqual( '' );
+	} );
+
+	test( 'sets given value on THEMES_BOOKMARK_SET', () => {
+		const state = themesBookmark( undefined, {
+			type: THEMES_BOOKMARK_SET,
+			payload: 'fubarId',
 		} );
+		expect( state ).toEqual( 'fubarId' );
+	} );
 
-		expect( state ).toBe( true ); // Falls back to `initialState`, which is `true`.
+	test( 'fubar action does not alter state', () => {
+		const state = themesBookmark( undefined, {
+			type: 'FUBAR_ACTION',
+			payload: 'fubarId',
+		} );
+		expect( state ).toEqual( '' );
 	} );
 } );

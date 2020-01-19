@@ -1,16 +1,16 @@
-/** @format */
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FormattedHeader from 'components/formatted-header';
 import HelpButton from './help-button';
 import JetpackInstallStep from './install-step';
@@ -113,7 +113,7 @@ class InstallInstructions extends Component {
 	}
 }
 
-export default connect(
+const connectComponent = connect(
 	state => {
 		const remoteSite = getConnectingSite( state );
 		const remoteSiteData = remoteSite.data || {};
@@ -136,4 +136,6 @@ export default connect(
 		confirmJetpackInstallStatus,
 		recordTracksEvent,
 	}
-)( localize( InstallInstructions ) );
+);
+
+export default flowRight( connectComponent, localize )( InstallInstructions );

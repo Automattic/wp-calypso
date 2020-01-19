@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { flowRight, isEqual, size, without } from 'lodash';
 
 /**
@@ -33,6 +31,9 @@ import {
 } from 'state/posts/selectors';
 import { getSite } from 'state/sites/selectors';
 import getEditorUrl from 'state/selectors/get-editor-url';
+import SectionHeader from 'components/section-header';
+import { Button } from '@automattic/components';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 function preloadEditor() {
 	preload( 'post-editor' );
@@ -76,7 +77,6 @@ export default class PageList extends Component {
 			search,
 			status: mapStatus( status ),
 			type: 'page',
-			context: 'edit',
 		};
 
 		return (
@@ -138,11 +138,11 @@ class Pages extends Component {
 	};
 
 	_insertTimeMarkers( pages ) {
-		const markedPages = [],
-			now = this.props.moment();
+		const markedPages = [];
+		const now = this.props.moment();
 		let lastMarker;
 
-		const buildMarker = function( pageDate ) {
+		const buildMarker = pageDate => {
 			pageDate = this.props.moment( pageDate );
 			const days = now.diff( pageDate, 'days' );
 			if ( days <= 0 ) {
@@ -152,11 +152,11 @@ class Pages extends Component {
 				return this.props.translate( 'Yesterday' );
 			}
 			return pageDate.from( now );
-		}.bind( this );
+		};
 
-		pages.forEach( function( page ) {
-			const date = this.props.moment( page.date ),
-				marker = buildMarker( date );
+		pages.forEach( page => {
+			const date = this.props.moment( page.date );
+			const marker = buildMarker( date );
 			if ( lastMarker !== marker ) {
 				markedPages.push(
 					<div key={ 'marker-' + date.unix() } className="pages__page-list-header">
@@ -166,7 +166,7 @@ class Pages extends Component {
 			}
 			lastMarker = marker;
 			markedPages.push( page );
-		}, this );
+		} );
 
 		return markedPages;
 	}
@@ -293,6 +293,18 @@ class Pages extends Component {
 		return this.props.lastPage && ! this.props.loading ? <ListEnd /> : null;
 	}
 
+	renderSectionHeader() {
+		const { newPageLink, translate } = this.props;
+
+		return (
+			<SectionHeader label={ translate( 'Pages' ) }>
+				<Button primary compact className="pages__add-page" href={ newPageLink }>
+					{ translate( 'Add New Page' ) }
+				</Button>
+			</SectionHeader>
+		);
+	}
+
 	renderPagesList( { pages } ) {
 		const { site, lastPage, query } = this.props;
 
@@ -330,6 +342,7 @@ class Pages extends Component {
 		return (
 			<div id="pages" className="pages__page-list">
 				<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
+				{ this.renderSectionHeader() }
 				{ rows }
 				{ this.renderListEnd() }
 			</div>
@@ -343,7 +356,7 @@ class Pages extends Component {
 			// we're listing in reverse chrono. use the markers.
 			pages = this._insertTimeMarkers( pages );
 		}
-		const rows = pages.map( function( page ) {
+		const rows = pages.map( page => {
 			if ( ! ( 'site_ID' in page ) ) {
 				return page;
 			}
@@ -358,7 +371,7 @@ class Pages extends Component {
 					multisite={ this.props.siteId === null }
 				/>
 			);
-		}, this );
+		} );
 
 		if ( this.props.loading ) {
 			this.addLoadingRows( rows, 1 );
@@ -371,6 +384,7 @@ class Pages extends Component {
 				{ showBlogPostsPage && (
 					<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
 				) }
+				{ this.renderSectionHeader() }
 				{ rows }
 				<InfiniteScroll nextPageMethod={ this.fetchPages } />
 				{ this.renderListEnd() }
@@ -411,7 +425,4 @@ const mapState = ( state, { query, siteId } ) => ( {
 	newPageLink: getEditorUrl( state, siteId, null, 'page' ),
 } );
 
-const ConnectedPages = flowRight(
-	connect( mapState ),
-	localize
-)( Pages );
+const ConnectedPages = flowRight( connect( mapState ), localize, withLocalizedMoment )( Pages );

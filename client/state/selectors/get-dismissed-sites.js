@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,8 +7,8 @@ import createSelector from 'lib/create-selector';
 /**
  * Returns a list of site IDs dismissed by the user
  *
- * @param  {Object}  state  Global state tree
- * @return {Array}        Dimissed site IDs
+ * @param  {object}  state  Global state tree
+ * @returns {Array}        Dimissed site IDs
  */
 export default createSelector(
 	state => map( Object.keys( pickBy( state.reader.siteDismissals.items ) ), Number ),

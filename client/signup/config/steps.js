@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,7 +14,14 @@ import {
 	createSiteOrDomain,
 	createSiteWithCart,
 	setThemeOnSite,
+	addDomainToCart,
+	launchSiteApi,
+	isPlanFulfilled,
+	isDomainFulfilled,
+	isSiteTypeFulfilled,
+	isSiteTopicFulfilled,
 } from 'lib/signup/step-actions';
+import { abtest } from 'lib/abtest';
 import { generateSteps } from './steps-pure';
 
 export default generateSteps( {
@@ -27,4 +32,17 @@ export default generateSteps( {
 	createSiteWithCart,
 	currentPage,
 	setThemeOnSite,
+	addDomainToCart,
+	launchSiteApi,
+	isPlanFulfilled,
+	isDomainFulfilled,
+	isSiteTypeFulfilled,
+	isSiteTopicFulfilled,
 } );
+
+export function isDomainStepSkippable( flowName ) {
+	return (
+		flowName === 'test-fse' ||
+		( flowName === 'onboarding' && abtest( 'skippableDomainStep' ) === 'skippable' )
+	);
+}

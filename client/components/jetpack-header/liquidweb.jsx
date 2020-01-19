@@ -1,18 +1,23 @@
-/** @format */
-
 /**
  * External Dependencies
  */
 import React from 'react';
 
-function JetpackLiquidWebLogo() {
+function JetpackLiquidWebLogo( { darkColorScheme } ) {
+	const color1 = darkColorScheme ? '#fff' : '#58595b';
+	const color2 = darkColorScheme ? '#fff' : '#e6e7e8';
+	const color3 = darkColorScheme ? '#fff' : '#414042';
 	return (
 		<svg id="jetpack-header__liquidweb-logo" viewBox="120 200 326.592 198.288">
 			<defs>
 				<style>
-					{
-						'.jetpack-header__liquidweb-logo-cls-1{fill:none}.jetpack-header__liquidweb-logo-cls-2{fill:#fff}.jetpack-header__liquidweb-logo-cls-3{fill:#e6e7e8}.jetpack-header__liquidweb-logo-cls-14{fill:#58595b}.jetpack-header__liquidweb-logo-cls-15{fill:#414042}'
-					}
+					{ '.jetpack-header__liquidweb-logo-cls-1{fill:none}.jetpack-header__liquidweb-logo-cls-2{fill:#fff}.jetpack-header__liquidweb-logo-cls-3{fill:' +
+						color2 +
+						'}.jetpack-header__liquidweb-logo-cls-14{fill:' +
+						color1 +
+						'}.jetpack-header__liquidweb-logo-cls-15{fill:' +
+						color3 +
+						'}' }
 				</style>
 				<clipPath id="jetpack-header__liquidweb-logo-clip-path">
 					<path

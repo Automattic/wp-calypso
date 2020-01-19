@@ -1,4 +1,4 @@
-/** @format */
+
 
 // Main
 .action-panel {
@@ -11,7 +11,7 @@
 	font-size: 21px;
 	font-weight: 300;
 	line-height: 24px;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	clear: none;
 }
 
@@ -19,7 +19,7 @@
 .action-panel__body {
 	font-size: 14px;
 	line-height: 20px;
-	color: var( --color-neutral-400 );
+	color: var( --color-text-subtle );
 	overflow: hidden;
 
 	p {
@@ -48,7 +48,13 @@ a.action-panel__body-text-link {
 		margin: 0 0 20px 24px;
 
 		&.is-inline-body-text {
-			margin: 40px 0 20px 24px;
+			margin-top: 40px;
+		}
+
+		&.align-left {
+			float: left;
+			margin-left: 0;
+			margin-right: 24px;
 		}
 	}
 }
@@ -64,7 +70,7 @@ a.action-panel__body-text-link {
 
 .action-panel__figure-list {
 	margin: 0 0 20px;
-	border: solid 1px var( --color-neutral-100 );
+	border: solid 1px var( --color-neutral-10 );
 	border-radius: 4px;
 	list-style: none;
 	text-align: left;
@@ -74,10 +80,10 @@ a.action-panel__body-text-link {
 	box-sizing: border-box;
 	width: 100%;
 	padding: 12px 16px;
-	border-top: solid 1px var( --color-neutral-100 );
+	border-top: solid 1px var( --color-neutral-10 );
 	font-size: 14px;
 	line-height: 18px;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 
 	&:first-child {
 		border-top: none;
@@ -85,9 +91,12 @@ a.action-panel__body-text-link {
 }
 
 // Footer
+.action-panel__cta {
+	padding-top: 17px;
+}
+
 .action-panel__footer {
 	position: relative;
-	padding-top: 17px;
 
 	&::before {
 		content: '';
@@ -103,7 +112,9 @@ a.action-panel__body-text-link {
 			right: -24px;
 		}
 	}
+
 }
+
 
 .action-panel__export-button .gridicon,
 .action-panel__support-button .gridicon {

@@ -1,6 +1,6 @@
 .is-group-reader .card.list-stream__header {
 	box-shadow: none;
-	border-bottom: 1px solid var( --color-neutral-100 );
+	border-bottom: 1px solid var( --color-neutral-10 );
 	display: flex;
 	flex-direction: row;
 	min-height: 48px;
@@ -25,11 +25,11 @@
 .list-stream__header-icon {
 	height: 48px;
 	width: 48px;
-	background: var( --color-neutral-100 );
+	background: var( --color-neutral-10 );
 	text-align: center;
 
 	.gridicon {
-		fill: $white;
+		fill: var( --color-text-inverted );
 		height: 24px;
 		position: relative;
 		top: 12px;
@@ -50,13 +50,13 @@
 }
 
 .list-stream__header-title {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 16px;
 }
 
 .list-stream__header-description {
 	margin: 0;
-	color: $gray;
+	color: var( --color-text-subtle );
 }
 
 .list-stream__header-title,
@@ -129,7 +129,7 @@
 	}
 
 	.list-stream__header-action-icon .gridicon {
-		fill: $gray;
+		fill: var( --color-neutral-light );
 		margin: auto;
 		position: relative;
 		bottom: 0;

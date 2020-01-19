@@ -1,0 +1,21 @@
+.support-card {
+
+	&__avatars {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-wrap: wrap;
+		height: 42px;
+		overflow: hidden;
+		margin-bottom: 16px;
+		margin-right: -8px;
+
+		.gravatar {
+			margin-right: 8px;
+		}
+	}
+
+	p {
+		margin-bottom: 16px;
+	}
+}

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,9 +10,13 @@ import photon from 'photon';
  * Internal dependencies
  */
 import ListItemFileDetails from './list-item-file-details';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
+import { MEDIA_IMAGE_THUMBNAIL } from 'lib/media/constants';
 
-import { MEDIA_IMAGE_THUMBNAIL, MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
+/**
+ * Style dependencies
+ */
+import './list-item-video.scss';
 
 export default class extends React.Component {
 	static displayName = 'MediaLibraryListItemVideo';
@@ -27,7 +29,6 @@ export default class extends React.Component {
 
 	static defaultProps = {
 		maxImageWidth: 450,
-		thumbnailType: MEDIA_IMAGE_PHOTON,
 	};
 
 	getHighestQualityThumbnail = () => {

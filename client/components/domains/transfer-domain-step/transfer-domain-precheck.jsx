@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,25 +6,30 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import Notice from 'components/notice';
 import { recordTracksEvent } from 'state/analytics/actions';
 import FormattedHeader from 'components/formatted-header';
 import {
 	CALYPSO_CONTACT,
+	INCOMING_DOMAIN_TRANSFER_AUTH_CODE_INVALID,
 	INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE,
 	INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK,
 } from 'lib/url/support';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
-import { isSupportUserSession } from 'lib/user/support-user-interop';
+import { isSupportSession as hasEnteredSupportSession } from 'state/support/selectors';
+
+/**
+ * Image dependencies
+ */
+import migratingHostImage from 'assets/images/illustrations/migrating-host-diy.svg';
 
 class TransferDomainPrecheck extends React.Component {
 	static propTypes = {
@@ -49,11 +52,11 @@ class TransferDomainPrecheck extends React.Component {
 		unlockCheckClicked: false,
 	};
 
-	componentWillMount() {
-		this.componentWillReceiveProps( this.props );
+	UNSAFE_componentWillMount() {
+		this.UNSAFE_componentWillReceiveProps( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// Reset steps if domain became locked again
 		if ( false === nextProps.unlocked ) {
 			this.resetSteps();
@@ -293,7 +296,24 @@ class TransferDomainPrecheck extends React.Component {
 						isError={ authCodeInvalid }
 					/>
 					{ authCodeInvalid && (
-						<FormInputValidation text={ translate( 'Auth Code invalid' ) } isError />
+						<FormInputValidation
+							text={ translate(
+								'The auth code you entered is invalid. Please verify you’re entering the correct code, ' +
+									'or see {{a}}this support document{{/a}} for more troubleshooting steps.',
+								{
+									components: {
+										a: (
+											<a
+												href={ INCOMING_DOMAIN_TRANSFER_AUTH_CODE_INVALID }
+												rel="noopener noreferrer"
+												target="_blank"
+											/>
+										),
+									},
+								}
+							) }
+							isError
+						/>
 					) }
 				</div>
 			</div>
@@ -328,20 +348,17 @@ class TransferDomainPrecheck extends React.Component {
 						'Log into your current domain provider to complete a few preliminary steps.'
 					) }
 				/>
-				<img
-					className="transfer-domain-step__illustration"
-					src={ '/calypso/images/illustrations/migrating-host-diy.svg' }
-				/>
+				<img className="transfer-domain-step__illustration" src={ migratingHostImage } alt="" />
 			</Card>
 		);
 	}
 
 	render() {
-		const { authCodeValid, translate, unlocked } = this.props;
+		const { authCodeValid, translate, unlocked, isSupportSession } = this.props;
 		const { currentStep } = this.state;
 		// We disallow HEs to submit the transfer
 		const disableButton =
-			false === unlocked || ! authCodeValid || currentStep < 3 || isSupportUserSession();
+			false === unlocked || ! authCodeValid || currentStep < 3 || isSupportSession;
 
 		return (
 			<div className="transfer-domain-step__precheck">
@@ -372,7 +389,7 @@ class TransferDomainPrecheck extends React.Component {
 	}
 
 	supportUserNotice() {
-		if ( isSupportUserSession() ) {
+		if ( this.props.isSupportSession ) {
 			return (
 				<Notice
 					text={ this.props.translate(
@@ -414,7 +431,9 @@ const recordContinueButtonClick = ( domain_name, losing_registrar, losing_regist
 	} );
 
 export default connect(
-	null,
+	state => ( {
+		isSupportSession: hasEnteredSupportSession( state ),
+	} ),
 	{
 		recordNextStep,
 		recordUnlockedCheckButtonClick,

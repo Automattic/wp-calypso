@@ -15,10 +15,10 @@
 		border-radius: 100%;
 		background: var( --color-primary );
 		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
-		border: 1px solid darken( $blue-wordpress, 5 );
+		border: 1px solid var( --color-primary );
 
 		.gridicon {
-			fill: $white;
+			fill: var( --color-text-inverted );
 			margin: 2px;
 			top: 0;
 			height: 24px;
@@ -27,13 +27,19 @@
 
 		&.is-active {
 			background: var( --color-primary );
-			border-color: darken( $blue-medium, 5 );
+			border-color: var( --color-primary-40 );
 		}
 	}
 
 	.button.inline-help__happychat-button.has-unread {
 		background-color: var( --color-accent );
 		border-color: var( --color-accent );
+	}
+
+	@include breakpoint( '<660px' ) {
+		.button.is-borderless.inline-help__button {
+			padding: 1px;
+		}
 	}
 }
 
@@ -51,7 +57,7 @@
 	padding: 1px;
 	border-radius: 100%;
 	background-color: var( --color-primary );
-	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
+	@include elevation( 4dp );
 	border: 1px solid var( --color-primary-dark );
 	transition: all 0.2s ease-in-out;
 	overflow: visible;
@@ -62,32 +68,33 @@
 	}
 
 	.gridicon {
-		fill: $white;
+		fill: var( --color-text-inverted );
 		margin: 0;
 		top: 0;
 		height: 36px;
 		width: 36px;
 
-		g {
+		> use:first-child,
+		> g:first-child {
 			transform: none;
 		}
 	}
 
 	&:hover:not( .is-active ) {
-		animation: wiggle 0.8s 0.5s ease-in-out infinite;
-		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.3 );
+		@include elevation( 6dp );
 		background: var( --color-primary );
+		transform: scale( 1.15 );
 	}
 
 	&.is-active {
 		background: var( --color-primary );
-		border-color: darken( $blue-medium, 5 );
+		border-color: var( --color-primary-40 );
 	}
 
 	&.has-notification::before {
 		display: block;
-		background-color: var( --color-accent-300 );
-		border: 2px solid $white;
+		background-color: var( --color-accent-30 );
+		border: 2px solid var( --color-border-inverted );
 		content: '';
 		border-radius: 50%;
 		width: 10px;
@@ -98,27 +105,6 @@
 	}
 }
 
-//border-box in the gutenberg section makes the dot too small, update width/height to compensate
-.is-section-gutenberg-editor .button.is-borderless.inline-help__button.has-notification::before {
-	width: 14px;
-	height: 14px;
-}
-
-@keyframes wiggle {
-	0% {
-		transform: rotate( 0 );
-	}
-	40% {
-		transform: rotate( 15deg );
-	}
-	50% {
-		transform: rotate( -15deg );
-	}
-	100% {
-		transform: rotate( 0 );
-	}
-}
-
 .inline-help__popover.popover {
 	@include breakpoint( '<660px' ) {
 		top: 0 !important;
@@ -126,7 +112,7 @@
 		bottom: 0 !important;
 		left: 0 !important;
 		position: fixed;
-		background: rgba( $gray-light, 0.8 );
+		background: rgba( var( --color-neutral-0-rgb ), 0.8 );
 
 		.popover__arrow {
 			display: none;
@@ -197,7 +183,7 @@
 			.search__input {
 				font-size: 18px;
 				padding: 12px 0;
-				color: $gray-text;
+				color: var( --color-text );
 
 				@include breakpoint( '>660px' ) {
 					font-size: 15px;
@@ -258,29 +244,6 @@
 	}
 }
 
-.inline-help__richresult__dialog.dialog.card {
-	width: 80vw;
-	max-width: 850px;
-}
-
-.inline-help__richresult__dialog__video {
-	position: relative;
-	padding-bottom: 56.25%;
-	padding-top: 30px;
-	height: 0;
-	overflow: hidden;
-
-	iframe,
-	object,
-	embed {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-	}
-}
-
 .inline-help__forum-view {
 	text-align: left;
 }
@@ -327,14 +290,18 @@
 
 .inline-help__footer {
 	background: var( --color-neutral-0 );
-	border-top: 1px solid var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-10 );
 	border-radius: 0 0 4px 4px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	flex-wrap: wrap;
 
 	.button.is-borderless.inline-help__more-button,
 	.button.is-borderless.inline-help__contact-button,
+	.button.is-borderless.inline-help__back-to-help-button,
 	.button.is-borderless.inline-help__cancel-button {
 		text-align: left;
-		width: 50%;
 		position: relative;
 		padding: 12px 8px 12px 46px;
 
@@ -362,11 +329,12 @@
 	}
 
 	.button.is-borderless.inline-help__contact-button {
-		padding-right: 24px;
+		padding-right: 40px;
 	}
 
 	// Hide/Show buttons as needed
-	.inline-help__cancel-button {
+	.inline-help__cancel-button,
+	.inline-help__back-to-help-button {
 		display: none;
 	}
 
@@ -378,6 +346,17 @@
 
 		.inline-help__cancel-button {
 			display: block;
+		}
+	}
+
+	.is-onboarding-welcome-active & {
+		.inline-help__cancel-button,
+		.inline-help__more-button {
+			display: none;
+		}
+		.inline-help__contact-button,
+		.inline-help__back-to-help-button {
+			display: inline-block;
 		}
 	}
 }
@@ -413,17 +392,17 @@
 		&:hover {
 			cursor: pointer;
 			//color: var( --color-primary );
-			background: lighten( $gray, 35% );
+			background: var( --color-neutral-0 );
 		}
 	}
 
 	&.is-selected {
 		background: var( --color-primary );
 		cursor: pointer;
-		color: $white;
+		color: var( --color-text-inverted );
 
 		a {
-			color: $white;
+			color: var( --color-text-inverted );
 			&:hover {
 				background: none;
 			}
@@ -445,7 +424,7 @@
 	padding: 16px 0 0;
 	margin: 0;
 	font-size: 14px;
-	color: $gray;
+	color: var( --color-text-subtle );
 	font-style: italic;
 
 	@include breakpoint( '>660px' ) {
@@ -463,7 +442,7 @@
 	height: 16px;
 	margin: 16px 0;
 	border-radius: 16px;
-	background-color: lighten( $gray, 28 );
+	background-color: var( --color-neutral-0 );
 	color: transparent;
 	animation: inline-help__results-placeholder-loading 2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 )
 		infinite;

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import EditGravatar from 'blocks/edit-gravatar';
 import formBase from 'me/form-base';
 import FormButton from 'components/forms/form-button';
@@ -31,6 +29,11 @@ import twoStepAuthorization from 'lib/two-step-authorization';
 import { protectForm } from 'lib/protect-form';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const debug = debugFactory( 'calypso:me:profile' );
 
@@ -166,13 +169,6 @@ const Profile = createReactClass( {
 	},
 } );
 
-const connectComponent = connect(
-	null,
-	{ recordGoogleEvent }
-);
+const connectComponent = connect( null, { recordGoogleEvent } );
 
-export default flowRight(
-	connectComponent,
-	protectForm,
-	localize
-)( Profile );
+export default flowRight( connectComponent, protectForm, localize )( Profile );

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,17 +6,18 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { getCurrencyDefaults } from '@automattic/format-currency';
 
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
+import { Card, CompactCard } from '@automattic/components';
 import CancelPurchaseButton from './button';
 import CancelPurchaseLoadingPlaceholder from 'me/purchases/cancel-purchase/loading-placeholder';
 import CancelPurchaseRefundInformation from './refund-information';
-import CompactCard from 'components/card/compact';
 import {
 	getName,
+	hasAmountAvailableToRefund,
 	isCancelable,
 	isOneTimePurchase,
 	isRefundable,
@@ -36,11 +36,16 @@ import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
+import { withLocalizedMoment } from 'components/localized-moment';
 import ProductLink from 'me/purchases/product-link';
 import titles from 'me/purchases/titles';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getCurrencyDefaults } from 'lib/format-currency';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class CancelPurchase extends React.Component {
 	static propTypes = {
@@ -108,14 +113,14 @@ class CancelPurchase extends React.Component {
 
 	renderFooterText = () => {
 		const { purchase } = this.props;
-		const { refundText, renewDate, refundAmount, currencySymbol, currency } = purchase;
+		const { refundText, expiryDate, refundAmount, currencySymbol, currency } = purchase;
 
-		if ( isRefundable( purchase ) ) {
+		if ( hasAmountAvailableToRefund( purchase ) ) {
 			if ( this.state.cancelBundledDomain && this.props.includedDomainPurchase ) {
 				const { precision } = getCurrencyDefaults( currency );
 				const fullRefundText =
 					currencySymbol +
-					parseFloat( refundAmount + this.props.includedDomainPurchase.amount ).toFixed(
+					parseFloat( refundAmount + this.props.includedDomainPurchase.costToUnbundle ).toFixed(
 						precision
 					);
 				return this.props.translate( '%(refundText)s to be refunded', {
@@ -129,21 +134,21 @@ class CancelPurchase extends React.Component {
 			} );
 		}
 
-		const renewalDate = this.props.moment( renewDate ).format( 'LL' );
+		const expirationDate = this.props.moment( expiryDate ).format( 'LL' );
 
 		if ( isDomainRegistration( purchase ) ) {
 			return this.props.translate(
-				'After you confirm this change, the domain will be removed on %(renewalDate)s',
+				'After you confirm this change, the domain will be removed on %(expirationDate)s',
 				{
-					args: { renewalDate },
+					args: { expirationDate },
 				}
 			);
 		}
 
 		return this.props.translate(
-			'After you confirm this change, the subscription will be removed on %(renewalDate)s',
+			'After you confirm this change, the subscription will be removed on %(expirationDate)s',
 			{
-				args: { renewalDate },
+				args: { expirationDate },
 			}
 		);
 	};
@@ -237,4 +242,4 @@ export default connect( ( state, props ) => {
 		selectedSite: getSelectedSite( state ),
 		userId: getCurrentUserId( state ),
 	};
-} )( localize( CancelPurchase ) );
+} )( localize( withLocalizedMoment( CancelPurchase ) ) );

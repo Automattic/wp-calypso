@@ -1,8 +1,8 @@
-.help__support-links {
-	&.is-placeholder {
-		@include placeholder();
-		height: 250px;
-		margin-bottom: 15px;
+.help .upwork-banner {
+	margin: 10px 10px 20px;
+
+	@include breakpoint( '>660px' ) {
+		margin: 0 0 24px;
 	}
 }
 
@@ -10,7 +10,7 @@
 	display: flex;
 
 	&:hover {
-		background-color: var( --color-themes-active-text );
+		background-color: var( --color-primary-0 );
 
 		.help__support-link-title {
 			color: var( --color-primary-dark );
@@ -54,54 +54,26 @@
 .help__support-link-content {
 	margin-bottom: 0;
 	font-size: 14px;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }
 
-.help__help-teaser-button {
-	&.is-placeholder {
-		@include placeholder();
-		height: 64px;
-		margin-bottom: 15px;
-	}
+.help__support-links.is-placeholder {
+	@include placeholder();
+	height: 250px;
+	margin-bottom: 15px;
 }
 
-.help__help-teaser-button .card {
-	border-left: 3px solid var( --color-primary );
-	display: flex;
-	margin: 16px 0;
-	padding: 12px;
-
-	.button {
-		margin-left: auto;
-	}
-
-	&.is-no-margin {
-		margin: 0;
-	}
+.help__help-teaser-button.is-placeholder {
+	@include placeholder();
+	height: 64px;
+	margin-bottom: 15px;
 }
 
-.help__help-teaser-text {
-	padding-right: 10px;
+.help-results.is-placeholder {
+	@include placeholder();
+	height: 380px;
+	margin-bottom: 15px;
 }
 
-.help__help-teaser-button-icon {
-	color: var( --color-primary );
-	border-radius: 50%;
-	margin-right: 16px;
-	background-color: $white;
-	align-self: center;
-}
 
-.help__help-teaser-button-title {
-	color: var( --color-neutral-700 );
-	font-size: 14px;
-	font-weight: 500;
-	padding-right: 15px;
-}
 
-.help__help-teaser-button-description {
-	color: $gray;
-	font-size: 12px;
-	display: block;
-	padding-right: 15px;
-}

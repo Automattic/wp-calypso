@@ -1,8 +1,8 @@
 .reading-widget__container {
 	box-sizing: border-box;
-	background: $white;
+	background: var( --color-surface );
 	padding-bottom: 0;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
 		0 1px 2px var( --color-neutral-0 );
 
 	.reading-widget__heading {
@@ -36,7 +36,7 @@
 			}
 
 			span {
-				color: var( --color-neutral-700 );
+				color: var( --color-neutral-70 );
 				font-size: 12px;
 			}
 		}

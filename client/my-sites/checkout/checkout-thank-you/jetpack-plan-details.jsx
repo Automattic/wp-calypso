@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -91,13 +90,6 @@ const getTracksDataForAutoconfigHalt = selectedSite => {
 		};
 	}
 
-	if ( ! selectedSite.hasMinimumJetpackVersion ) {
-		return {
-			name: 'calypso_plans_autoconfig_halt_jpversion',
-			properties: { jetpack_version: selectedSite.options.jetpack_version },
-		};
-	}
-
 	if ( selectedSite.is_multisite && ! selectedSite.isMainNetworkSite ) {
 		return { name: 'calypso_plans_autoconfig_halt_multisite' };
 	}
@@ -131,10 +123,7 @@ const mapDispatchToProps = ( dispatch, { selectedSite } ) => ( {
 } );
 
 const JetpackPlanDetails = config.isEnabled( 'manage/plugins/setup' )
-	? connect(
-			null,
-			mapDispatchToProps
-	  )( EnhancedDetails )
+	? connect( null, mapDispatchToProps )( EnhancedDetails )
 	: BasicDetails;
 
 export default localize( JetpackPlanDetails );

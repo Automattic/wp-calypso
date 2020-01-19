@@ -1,5 +1,5 @@
 .reader-author-link {
-	color: $gray;
+	color: var( --color-primary );
 }
 
 .reader-author-link:hover,
@@ -8,5 +8,5 @@
 }
 
 .reader-author-link:focus {
-	color: $gray;
+	color: var( --color-text-subtle );
 }

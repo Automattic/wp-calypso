@@ -1,20 +1,17 @@
-/** @format */
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
-import { isEmpty, filter } from 'lodash';
+import { filter } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import getSiteId from 'state/selectors/get-site-id';
-import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -22,6 +19,8 @@ import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { isEnabled } from 'config';
 import PlanFeatures from 'my-sites/plan-features';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
+import { submitSignupStep } from 'state/signup/progress/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 import { planHasFeature } from 'lib/plans';
 import {
@@ -49,25 +48,11 @@ export class PlansAtomicStoreStep extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.onSelectPlan = this.onSelectPlan.bind( this );
-		this.plansFeaturesSelection = this.plansFeaturesSelection.bind( this );
-	}
-
-	onSelectPlan( cartItem ) {
-		const {
-			additionalStepData,
-			stepSectionName,
-			stepName,
-			goToNextStep,
-			translate,
-			designType,
-		} = this.props;
+	onSelectPlan = cartItem => {
+		const { additionalStepData, stepSectionName, stepName, goToNextStep, designType } = this.props;
 
 		if ( cartItem ) {
-			analytics.tracks.recordEvent( 'calypso_signup_plan_select', {
+			this.props.recordTracksEvent( 'calypso_signup_plan_select', {
 				product_slug: cartItem.product_slug,
 				free_trial: cartItem.free_trial,
 				from_section: stepSectionName ? stepSectionName : 'default',
@@ -85,15 +70,12 @@ export class PlansAtomicStoreStep extends Component {
 				} );
 			}
 		} else {
-			analytics.tracks.recordEvent( 'calypso_signup_free_plan_select', {
+			this.props.recordTracksEvent( 'calypso_signup_free_plan_select', {
 				from_section: stepSectionName ? stepSectionName : 'default',
 			} );
 		}
 
 		const step = {
-			processingMessage: isEmpty( cartItem )
-				? translate( 'Free plan selected' )
-				: translate( 'Adding your plan' ),
 			stepName,
 			stepSectionName,
 			cartItem,
@@ -102,10 +84,10 @@ export class PlansAtomicStoreStep extends Component {
 
 		const providedDependencies = { cartItem };
 
-		SignupActions.submitSignupStep( step, [], providedDependencies );
+		this.props.submitSignupStep( step, providedDependencies );
 
 		goToNextStep();
-	}
+	};
 
 	getDomainName() {
 		return (
@@ -151,14 +133,7 @@ export class PlansAtomicStoreStep extends Component {
 	}
 
 	plansFeaturesSelection() {
-		const {
-			flowName,
-			stepName,
-			positionInFlow,
-			signupProgress,
-			translate,
-			designType,
-		} = this.props;
+		const { flowName, stepName, positionInFlow, translate, designType } = this.props;
 
 		let headerText = translate( "Pick a plan that's right for you." );
 
@@ -173,7 +148,6 @@ export class PlansAtomicStoreStep extends Component {
 				positionInFlow={ positionInFlow }
 				headerText={ headerText }
 				fallbackHeaderText={ headerText }
-				signupProgress={ signupProgress }
 				isWideLayout={ true }
 				stepContent={ this.plansFeaturesList() }
 			/>
@@ -193,7 +167,10 @@ export class PlansAtomicStoreStep extends Component {
 	}
 }
 
-export default connect( ( state, { signupDependencies: { siteSlug } } ) => ( {
-	siteId: getSiteId( state, siteSlug ),
-	designType: getDesignType( state ),
-} ) )( localize( PlansAtomicStoreStep ) );
+export default connect(
+	( state, { signupDependencies: { siteSlug } } ) => ( {
+		siteId: getSiteId( state, siteSlug ),
+		designType: getDesignType( state ),
+	} ),
+	{ recordTracksEvent, submitSignupStep }
+)( localize( PlansAtomicStoreStep ) );

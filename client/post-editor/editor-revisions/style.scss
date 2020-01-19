@@ -36,7 +36,7 @@
 }
 
 .editor-revisions__wpadmin-link {
-	color: $gray-text;
+	color: var( --color-text );
 	cursor: pointer;
 	display: block;
 	font-size: 13px;
@@ -46,7 +46,7 @@
 	width: calc( 100% + 32px );
 
 	.gridicon {
-		color: $gray-text;
+		color: var( --color-text );
 		margin-left: -2px;
 		margin-right: 8px;
 		vertical-align: bottom;

@@ -1,16 +1,14 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 
 export default class Prediction extends Component {
 	static propTypes = {
@@ -31,11 +29,22 @@ export default class Prediction extends Component {
 		}
 	};
 
+	handlePredictionKeyDown = event => {
+		if ( event.key === 'Enter' ) {
+			this.handlePredictionClick();
+		}
+	};
+
 	render() {
 		const { prediction } = this.props;
 
 		return (
-			<CompactCard className="location-search__prediction" onClick={ this.handlePredictionClick }>
+			<CompactCard
+				tabIndex="0"
+				className="location-search__prediction"
+				onClick={ this.handlePredictionClick }
+				onKeyDown={ this.handlePredictionKeyDown }
+			>
 				<strong>{ prediction.structured_formatting.main_text }</strong>
 				<br />
 				{ prediction.structured_formatting.secondary_text }

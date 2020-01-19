@@ -1,0 +1,37 @@
+.site-credit__block {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	// @TODO: Pull these styles from the theme.
+	font-size: 14px;
+	color: gray;
+
+	// Justify all elements based on text alignment.
+	&.has-text-align-center {
+		justify-content: center;
+	}
+	&.has-text-align-left {
+		justify-content: flex-start;
+	}
+	&.has-text-align-right {
+		justify-content: flex-end;
+	}
+
+	.site-name {
+		font-weight: bold;
+	}
+
+	.site-credit__selection {
+		margin-left: 5px;
+
+		// Also align items vertically center in the selection area.
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+
+		.components-base-control .components-base-control__field {
+			// Reset extra margin added by @wordpress/components in the select field.
+			margin-bottom: 0;
+		}
+	}
+}

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,12 +7,12 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import Count from 'components/count';
 import StatsModuleContent from '../stats-module/content-text';
 import QueryPostLikes from 'components/data/query-post-likes';
@@ -22,6 +20,11 @@ import StatsModulePlaceholder from '../stats-module/placeholder';
 import toggleInfo from '../toggle-info';
 import countPostLikes from 'state/selectors/count-post-likes';
 import PostLikes from 'blocks/post-likes';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export const StatsPostLikes = props => {
 	const { countLikes, opened, postId, postType, siteId, toggle, translate } = props;
@@ -42,6 +45,7 @@ export const StatsPostLikes = props => {
 		likesListLabel = translate( 'This panel shows the list of people who like your post.' );
 	}
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace, jsx-a11y/anchor-is-valid */
 	return (
 		<Card className={ classNames( 'stats-module', 'stats-post-likes', 'is-expanded', classes ) }>
 			<QueryPostLikes siteId={ siteId } postId={ postId } />
@@ -92,8 +96,4 @@ const connectComponent = connect( ( state, { siteId, postId } ) => {
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	toggleInfo,
-	localize
-)( StatsPostLikes );
+export default flowRight( connectComponent, toggleInfo, localize )( StatsPostLikes );

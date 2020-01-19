@@ -1,0 +1,363 @@
+.is-group-reader .async-load {
+	margin: 30px auto;
+	width: 50%;
+}
+
+.is-reader-page .reader__content,
+.is-reader-page .reader-start {
+	margin-top: 0;
+}
+
+.is-reader-page .recommended-for-you.main,
+.is-reader-page .following.main {
+
+	@include breakpoint( '>660px' ) {
+		margin: 30px auto;
+	}
+}
+
+.is-reader-page .reader-full-post__story-content {
+	margin-top: 0;
+}
+
+.reader__content {
+	sup, sub {
+		position: relative;
+		font-size: 0.83em;
+	}
+
+	sup {
+		top: -0.5em;
+	}
+
+	sub {
+		bottom: -0.5em;
+	}
+}
+
+.reader__site-name {
+	clear: none;
+	color: var( --color-neutral-50 );
+	font-size: 14px;
+	line-height: 1.3;
+	display: inline-block;
+	white-space: nowrap;
+	overflow: hidden;
+	max-width: 340px;
+	margin-right: 8px;
+
+	&.is-long {
+		position: relative;
+
+		&::after {
+			@include long-content-fade();
+		}
+	}
+
+	@include breakpoint( '<480px' ) {
+		font-size: 13px;
+		max-width: 180px;
+	}
+}
+
+.reader__post-title {
+	clear: none;
+	font-family: $serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	font-weight: 700;
+	font-size: 28px;
+	line-height: 1.416;
+	color: var( --color-neutral-70 );
+	margin: 24px 0 8px;
+	max-width: 750px;
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+
+	@include breakpoint( '<480px' ) {
+		font-size: 18px;
+		line-height: 1.3;
+	}
+
+	.reader__post-title-link, .reader__post-title-link:hover {
+		color: var( --color-neutral-70 );
+	}
+}
+
+// Back button in Reader FeedHeader
+.is-reader-page .is-site-stream .reader-feed-header.has-back-button .reader-feed-header__follow {
+
+	@include breakpoint( '<660px' ) {
+		right: 0;
+	}
+
+	// Drops Follow count in FeedHeader if Back button exists
+	.reader-feed-header__follow-count {
+
+		@include breakpoint( '<960px' ) {
+			display: none;
+		}
+	}
+}
+
+.is-reader-page .is-site-stream .reader-feed-header__back-and-follow {
+
+	.card.header-cake {
+		background: none;
+		box-shadow: none;
+		flex: 1;
+		margin-right: 100px;
+		position: relative;
+			top: 4px;
+		z-index: z-index( '.reader-feed-header__back-and-follow', '.card.header-cake' );
+
+		@include breakpoint( '<960px' ) {
+			margin-top: 0;
+		}
+
+		@include breakpoint( '<660px' ) {
+			left: 0;
+		}
+	}
+
+	.button.header-cake__back {
+		overflow: visible;
+		padding: 0;
+		position: relative;
+	}
+}
+
+// WPcom Reblogs
+.wpcom-reblog-snapshot {
+	.reblogger-headline {
+		display: none;
+	}
+
+	.reblogger-note-content {
+		blockquote {
+			padding: 0;
+			margin: 0 0 24px;
+			border: none;
+			background: none;
+			color: inherit;
+		}
+	}
+
+	p.reblog-from {
+		position: relative;
+		margin: 0 -32px;
+		padding: 16px 32px 8px;
+		font-family: $sans;
+		font-size: 15px;
+		font-weight: bold;
+		line-height: 1.6;
+		border-top: 1px solid var( --color-neutral-10 );
+		background: linear-gradient( to bottom,
+						rgba( var( --color-neutral-0-rgb ), 1 ) 0%,
+						rgba( var( --color-neutral-0-rgb ), 0 ) 100% );
+
+		.avatar {
+			display: none;
+		}
+	}
+
+	p.reblog-source {
+		position: relative;
+			top: 16px;
+		font-family: $sans;
+		font-size: 15px;
+		padding-top: 5px;
+		border-top: 1px solid var( --color-neutral-10 );
+
+		a {
+			padding: 5px 10px;
+			display: block;
+			text-align: center;
+		}
+
+		span {
+			display: none;
+		}
+	}
+}
+
+// Post Card Footer
+// Where things like reading time, embed counts,
+// tags, likes, and comments live.
+.reader__post-footer {
+	clear: both;
+	padding: 0;
+	margin: 16px 0 0 -4px;
+	list-style: none;
+	font-size: 14px;
+	color: var( --color-text-subtle );
+	display: flex;
+	align-items: center;
+
+	li {
+		margin-right: 8px;
+
+		@include breakpoint( '>480px' ) {
+			margin-right: 16px;
+		}
+
+		&:last-child {
+			margin-right: 0;
+		}
+	}
+
+	a {
+		text-decoration: none;
+	}
+}
+
+// Custom breakpoints that drop action labels text
+// to prevent Likes text from breaking onto a new line
+.is-group-reader .post-edit-button__label,
+.is-group-reader .reader-share__button-label,
+.is-group-reader .comment-button__label-status,
+.is-group-reader .like-button__label-status {
+	@media( max-width: 530px ) {
+		display: none;
+	}
+
+	@media( min-width: 661px ) and ( max-width: 790px ) {
+		display: none;
+	}
+}
+
+.reader__post-embed-count {
+	padding: 4px 6px;
+	border-radius: 4px;
+	background: var( --color-neutral-0 );
+}
+
+/* Tiled Gallery Default Styles
+ * Mostly copied from Atlas -Shaun
+-------------------------------------------------------------- */
+
+.tiled-gallery {
+	clear: both;
+	overflow: hidden;
+	margin: 0 auto 20px;
+	max-width: 100%;
+}
+.tiled-gallery img {
+	margin: 2px !important; /* Ensure that this value isn't overridden by themes that give content images blanket margins */
+}
+.tiled-gallery .gallery-group {
+	float: left;
+	position: relative;
+}
+.tiled-gallery .tiled-gallery-item {
+	float: left;
+	margin: 0;
+	position: relative;
+	width: inherit; /* prevents ie8 bug with inline width styles */
+}
+.tiled-gallery .gallery-row {
+	overflow: hidden;
+}
+.tiled-gallery .tiled-gallery-item a { /* Needs to reset some properties for theme compatibility */
+	background: transparent;
+	border: none;
+	margin: 0;
+	padding: 0;
+	text-decoration: none;
+	width: auto;
+}
+.tiled-gallery .tiled-gallery-item img,
+.tiled-gallery .tiled-gallery-item img:hover { /* Needs to reset some properties for theme compatibility */
+	background: none;
+	border: none;
+	box-shadow: none;
+	max-width: 100%;
+	padding: 0;
+	vertical-align: middle;
+}
+
+.tiled-gallery-caption { /* Captions */
+	box-sizing: border-box; /* to make width: 100% work */
+	background: #222;
+	background: rgba( 0, 0, 0, 0.3 );
+	background: linear-gradient( to bottom, transparent, rgba( 0, 0, 0, 0.2 ) 73%, rgba( 0, 0, 0, 0.5 ) 100% );
+	color: var( --color-text-inverted );
+	font-family: $sans;
+	font-size: 14px;
+	text-shadow: 0 1px rgba( 0, 0, 0, 0.3 );
+	font-weight: 400;
+	overflow: hidden;
+	padding: 10px 20px;
+	position: absolute;
+		bottom: 2px;
+		left: 2px;
+		right: 2px;
+}
+
+.tiled-gallery .tiled-gallery-item-small .tiled-gallery-caption { /* Smaller captions */
+	font-size: 11px;
+}
+
+/* Hide galleries in widgets until they've been resized to fit.
+ * Gallery widgets are almost guaranteed to need resizing, and
+ * the jump is a little more obvious than galleries in content. */
+.widget-gallery .tiled-gallery-unresized {
+	visibility: hidden;
+	height: 0;
+	overflow: hidden;
+}
+
+
+/* =Greyscale
+-------------------------------------------------------------- */
+
+.tiled-gallery .tiled-gallery-item img.grayscale {
+	position: absolute;
+		left: 0;
+		top: 0;
+}
+.tiled-gallery .tiled-gallery-item img.grayscale:hover {
+	opacity: 0;
+}
+
+
+/* =Circles Layout
+-------------------------------------------------------------- */
+
+.tiled-gallery.type-circle .tiled-gallery-item img {
+	border-radius: 50%;
+}
+.tiled-gallery.type-circle .tiled-gallery-caption {
+	display: none;
+	opacity: 0;
+}
+
+.is-group-reader .main .empty-content:not( .conversations__empty-content ),
+.is-reader-page .main .empty-content:not( .conversations__empty-content ) {
+
+	padding-top: 0;
+
+	.empty-content__title {
+		margin-top: -10px;
+	}
+
+	&.stream__empty {
+		margin-top: 25px;
+	}
+}
+
+.is-group-reader .empty-content__action,
+.is-reader-page .empty-content__action {
+	@include breakpoint( '<480px' ) {
+		margin-bottom: 10px;
+	}
+}
+
+// No Results in new Search
+.is-reader-page .search-stream .empty-content {
+	margin-top: 135px;
+}
+
+.is-reader-page .search-stream__single-column-results .empty-content {
+	margin-top: 0;
+}

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,10 +8,10 @@ import page from 'page';
  */
 import { followingManage } from './controller';
 import { initAbTests, updateLastRoute, sidebar } from 'reader/controller';
-import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
-	page( '/following/*', redirectLoggedOut, initAbTests );
+	page( '/following/*', initAbTests );
 	page( '/following/manage', updateLastRoute, sidebar, followingManage, makeLayout, clientRender );
-	page.redirect( '/following/edit*', '/following/manage' );
+	page( '/following/edit*', '/following/manage' );
 }

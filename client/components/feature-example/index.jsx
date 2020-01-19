@@ -1,10 +1,13 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default class extends React.Component {
 	static displayName = 'FeatureExample';

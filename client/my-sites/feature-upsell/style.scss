@@ -13,12 +13,12 @@ $feature-upsell-break-at: '1040px';
 .feature-upsell__main {
 	max-width: 960px;
 	margin-top: 48px;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }
 
 .feature-upsell__placeholder {
 	animation: pulse-light 800ms ease-in-out infinite;
-	background: var( --color-neutral-100 );
+	background: var( --color-neutral-10 );
 
 	&.is-cta {
 		width: 350px;
@@ -118,7 +118,7 @@ $feature-upsell-break-at: '1040px';
 	&-guarantee {
 		display: block;
 		opacity: 0.8;
-		color: $green-jetpack;
+		color: var( --studio-jetpack-green-30 );
 		font-size: 15px;
 		line-height: 31px;
 		font-weight: 300;
@@ -220,7 +220,7 @@ $feature-upsell-break-at: '1040px';
 
 	&-header.is-title {
 		font-size: 24px;
-		color: var( --color-neutral-600 );
+		color: var( --color-neutral-60 );
 		margin-bottom: 20px;
 		@include breakpoint( '<1280px' ) {
 			font-size: 20px;
@@ -230,7 +230,7 @@ $feature-upsell-break-at: '1040px';
 	&-header.is-sub {
 		font-size: 21px;
 		font-weight: 300;
-		color: var( --color-neutral-600 );
+		color: var( --color-neutral-60 );
 		margin-bottom: 20px;
 		@include breakpoint( '<1280px' ) {
 			font-size: 18px;
@@ -346,7 +346,7 @@ $feature-upsell-break-at: '1040px';
 	&-name {
 		font-size: 24px;
 		font-weight: 600;
-		color: var( --color-neutral-600 );
+		color: var( --color-neutral-60 );
 		@include breakpoint( '<1280px' ) {
 			font-size: 20px;
 		}
@@ -426,7 +426,7 @@ $feature-upsell-break-at: '1040px';
 	padding-left: 20px;
 	font-size: 13px;
 	line-height: 1.2;
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 
 	&::before {
 		position: absolute;
@@ -496,7 +496,7 @@ $feature-upsell-break-at: '1040px';
 		font-weight: 600;
 		font-size: 21px;
 		line-height: 1.5;
-		color: var( --color-neutral-600 );
+		color: var( --color-neutral-60 );
 		clear: none;
 		margin-top: 10px;
 	}
@@ -518,7 +518,7 @@ $feature-upsell-break-at: '1040px';
 		margin: 0;
 		padding: 11px 14px;
 		border-radius: 100px;
-		background: var( --color-neutral-600 );
+		background: var( --color-neutral-60 );
 		color: #fff;
 	}
 

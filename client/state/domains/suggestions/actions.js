@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -17,8 +15,8 @@ import {
  * has been received.
  *
  * @param   {Array}    suggestions              domain suggestions
- * @param   {Object}   queryObject              domain suggestions queryObject
- * @returns {Object}   Action object
+ * @param   {object}   queryObject              domain suggestions queryObject
+ * @returns {object}   Action object
  */
 export function receiveDomainsSuggestions( suggestions, queryObject ) {
 	return {
@@ -30,11 +28,11 @@ export function receiveDomainsSuggestions( suggestions, queryObject ) {
 
 /**
  * Triggers a network request to find domain suggestions
- * @param   {Object}   queryObject                          domain suggestions queryObject
- * @param   {String}   queryObject.query                    domainQuery
- * @param   {Number}   queryObject.quantity                 max results
- * @param   {String}   queryObject.vendor                   vendor
- * @param   {?Boolean} queryObject.include_wordpressdotcom  adds wordpress subdomain suggestions when true
+ * @param   {object}   queryObject                          domain suggestions queryObject
+ * @param   {string}   queryObject.query                    domainQuery
+ * @param   {number}   queryObject.quantity                 max results
+ * @param   {string}   queryObject.vendor                   vendor
+ * @param   {?boolean} queryObject.include_wordpressdotcom  adds wordpress subdomain suggestions when true
  * @returns {Function}                                      Action thunk
  */
 export function requestDomainsSuggestions( queryObject ) {

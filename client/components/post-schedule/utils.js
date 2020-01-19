@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
-import { moment } from 'i18n-calypso';
+import moment from 'moment-timezone';
 
 /**
  * Checks whether the passed time  format is of a 12-hour format.
@@ -16,8 +14,8 @@ import { moment } from 'i18n-calypso';
  *
  * @see https://wikipedia.org/wiki/12-hour_clock
  *
- * @param  {String}  timeFormat Time format.
- * @return {Boolean}            Whether it's a 12-hour time format.
+ * @param  {string}  timeFormat Time format.
+ * @returns {boolean}            Whether it's a 12-hour time format.
  */
 export const is12hr = timeFormat => timeFormat && /[gh]|[aA]$/.test( timeFormat );
 
@@ -26,7 +24,7 @@ export const is12hr = timeFormat => timeFormat && /[gh]|[aA]$/.test( timeFormat 
  * Basically it should be a number.
  *
  * @param  {*}  gmtOffset - gmt offset
- * @return {Boolean} is it a valid gtm offset?
+ * @returns {boolean} is it a valid gtm offset?
  */
 export const isValidGMTOffset = gmtOffset => 'number' === typeof gmtOffset;
 
@@ -35,9 +33,9 @@ export const isValidGMTOffset = gmtOffset => 'number' === typeof gmtOffset;
  * parameters.
  *
  * @param {Moment} date - date instance
- * @param {String} tz - timezone
- * @param {Number} gmt - gmt offset in minutes
- * @return {Moment} localized date
+ * @param {string} tz - timezone
+ * @param {number} gmt - gmt offset in minutes
+ * @returns {Moment} localized date
  */
 export const getLocalizedDate = ( date, tz, gmt ) => {
 	date = moment( date );
@@ -83,8 +81,8 @@ export const convertDateToGivenOffset = ( date, tz, gmt ) => {
  * adding a `+` when the number is greater than zero,
  * not adding `:00` case (zero minutes).
  *
- * @param  {Number} minutes - a number of minutes
- * @return {String} `hh:mm` format
+ * @param  {number} minutes - a number of minutes
+ * @returns {string} `hh:mm` format
  */
 export const convertMinutesToHHMM = minutes => {
 	const hours = Math.trunc( minutes / 60 );
@@ -107,8 +105,8 @@ export const convertHoursToHHMM = hours => convertMinutesToHHMM( hours * 60 );
  * This function has been thought to get the data entered
  * by the used through of an input element.
  *
- * @param {String} value - time value to check
- * @return {Number|Boolean} valid number or `false`
+ * @param {string} value - time value to check
+ * @returns {number|boolean} valid number or `false`
  */
 export const parseAndValidateNumber = value => {
 	value = String( value );

@@ -9,7 +9,7 @@
 
 	.gridicons-chevron-down {
 		align-self: center;
-		color: var( --color-neutral-200 );
+		color: var( --color-neutral-20 );
 		flex-grow: 0;
 		flex-shrink: 0;
 		margin-right: 16px;
@@ -18,8 +18,8 @@
 }
 
 .sites-dropdown__wrapper {
-	background: var( --sidebar-secondary-background );
-	border: 1px solid var( --color-neutral-100 );
+	background: var( --color-surface );
+	border: 1px solid var( --color-neutral-10 );
 	border-width: 1px;
 	border-radius: 4px;
 	margin: 0;
@@ -34,8 +34,8 @@
 	}
 
 	.has-multiple-sites &:hover {
-		border-color: var( --color-neutral-200 );
-		box-shadow: 0 1px var( --color-neutral-200 );
+		border-color: var( --color-neutral-20 );
+		box-shadow: 0 1px var( --color-neutral-20 );
 	}
 }
 
@@ -59,7 +59,7 @@
 	&:hover {
 		.gridicons-chevron-down,
 		.gridicons-chevron-up {
-			color: var( --color-neutral-500 );
+			color: var( --color-neutral-50 );
 		}
 	}
 }
@@ -88,7 +88,7 @@
 
 .sites-dropdown .site-selector .search input {
 	margin: 0;
-	background-color: $white;
+	background-color: var( --color-surface );
 }
 
 .sites-dropdown .site-selector .site {

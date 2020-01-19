@@ -1,20 +1,3 @@
-.editor-contact-form-modal {
-	padding: 0;
-
-	/* override color of the expanded icon on the foldable card */
-	.editor-contact-form-modal-fields
-		.foldable-card.is-expanded
-		.foldable-card__action.foldable-card__expand
-		.gridicon {
-		fill: var( --color-accent );
-	}
-
-	/* removes the transform on the icon when opening the foldable card */
-	button.foldable-card__action.foldable-card__expand .gridicon.gridicons-pencil {
-		transform: none;
-	}
-}
-
 .editor-contact-form-modal.dialog.card {
 	position: absolute;
 	top: 0;
@@ -34,7 +17,7 @@
 
 .editor-contact-form-modal .dialog__content {
 	position: static;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }
 
 .editor-contact-form-modal .section-nav {
@@ -73,9 +56,10 @@
 }
 
 .editor-contact-form-modal-fields {
-	.card {
+	.foldable-card.card {
 		border-radius: 4px;
 	}
+
 	.foldable-card__main {
 		min-width: 0;
 		word-wrap: break-word;
@@ -98,7 +82,7 @@
 }
 
 .editor-contact-form-modal-field__remove {
-	color: var( --color-neutral-100 );
+	color: var( --color-neutral-10 );
 	cursor: pointer;
 	transition: color 200ms;
 
@@ -107,21 +91,20 @@
 	}
 }
 
-.editor-contact-form-modal-field__edit-wrapper {
+.editor-contact-form-modal-field__edit-wrapper.foldable-card__expand {
 	height: 100%;
+
+	.editor-contact-form-modal-field__edit {
+		width: 100%;
+		padding-bottom: 6px;
+
+		&.is-expanded {
+			transform: rotate( 0 );
+		}
+	}
 }
 
 .editor-contact-form-modal-field__edit-wrapper-button {
 	width: 100%;
 	height: 100%;
-}
-
-.editor-contact-form-modal-field__edit-wrapper.foldable-card__expand
-	.editor-contact-form-modal-field__edit {
-	width: 100%;
-	padding-bottom: 6px;
-
-	&.is-expanded {
-		transform: rotate( 0 );
-	}
 }

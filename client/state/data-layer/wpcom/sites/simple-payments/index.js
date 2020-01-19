@@ -1,22 +1,22 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { get, noop, toPairs } from 'lodash';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
-import formatCurrency from 'lib/format-currency';
 import { decodeEntities } from 'lib/formatting';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { getFeaturedImageId } from 'state/posts/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { isValidSimplePaymentsProduct } from 'lib/simple-payments/utils';
 import { metaKeyToSchemaKeyMap, metadataSchema } from 'state/simple-payments/product-list/schema';
-import { SIMPLE_PAYMENTS_PRODUCT_POST_TYPE } from 'lib/simple-payments/constants';
+import {
+	SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
+	NUMBER_OF_POSTS_BY_REQUEST,
+} from 'lib/simple-payments/constants';
 import { TransformerError } from 'lib/make-json-schema-parser';
 import {
 	SIMPLE_PAYMENTS_PRODUCT_GET,
@@ -84,8 +84,8 @@ export function customPostToProduct( customPost ) {
 /**
  * Extract custom posts array from `responseData`, filter out invalid items and convert the
  * valid custom posts to products.
- * @param {Object} responseData JSON data with shape `{ posts }`
- * @return {Array} validated and converted product list
+ * @param {object} responseData JSON data with shape `{ posts }`
+ * @returns {Array} validated and converted product list
  */
 export function customPostsToProducts( responseData ) {
 	const posts = get( responseData, 'posts', [] );
@@ -170,6 +170,7 @@ export const handleProductList = dispatchRequest( {
 				query: {
 					type: SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
 					status: 'publish',
+					number: NUMBER_OF_POSTS_BY_REQUEST,
 				},
 			},
 			action

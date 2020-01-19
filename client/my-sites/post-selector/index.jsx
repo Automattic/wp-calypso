@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,6 +10,11 @@ import { reduce, snakeCase } from 'lodash';
  * Internal dependencies
  */
 import PostSelectorPosts from './selector';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default class extends React.PureComponent {
 	static displayName = 'PostSelector';

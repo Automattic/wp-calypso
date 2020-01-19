@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -35,7 +33,7 @@ describe( 'assembler', () => {
 				payment_details: 7890,
 				payment_expiry: '11/16',
 				payment_type: 'credit_card',
-				payment_card_processor: 'WPCOM_Billing_MoneyPress_Paygate',
+				payment_card_processor: 'WPCOM_Billing_Stripe_Payment_Method',
 				payment_name: 'My VISA',
 				payment_country_code: 'US',
 				payment_country_name: 'United States',
@@ -48,7 +46,7 @@ describe( 'assembler', () => {
 		expect( creditCard.id ).to.equal( 1234 );
 		expect( creditCard.number ).to.equal( 7890 );
 		expect( creditCard.type ).to.equal( 'visa' );
-		expect( creditCard.processor ).to.equal( 'WPCOM_Billing_MoneyPress_Paygate' );
+		expect( creditCard.processor ).to.equal( 'WPCOM_Billing_Stripe_Payment_Method' );
 		expect( payment.type ).to.equal( 'credit_card' );
 		expect( payment.countryCode ).to.equal( 'US' );
 		expect( payment.countryName ).to.equal( 'United States' );

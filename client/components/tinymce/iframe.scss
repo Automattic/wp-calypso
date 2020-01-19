@@ -107,7 +107,7 @@ a img {
 
 .wp-caption-dd {
 	background: var( --color-neutral-0 );
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	font-size: 14px;
 	line-height: 1.7;
 	padding: 16px;
@@ -135,8 +135,8 @@ a img {
 blockquote {
 	padding: 16px;
 	margin: 8px 0 24px;
-	border-left: 2px solid $gray;
-	color: var( --color-neutral-500 );
+	border-left: 2px solid var( --color-neutral-light );
+	color: var( --color-neutral-50 );
 	background: var( --color-neutral-0 );
 }
 
@@ -149,7 +149,7 @@ td {
 table,
 th,
 td {
-	border: 1px solid var( --color-neutral-100 );
+	border: 1px solid var( --color-neutral-10 );
 }
 table {
 	border-collapse: separate;
@@ -181,14 +181,14 @@ td {
 .mce-item-table td,
 .mce-item-table th,
 .mce-item-table caption {
-	border: 1px solid var( --color-neutral-100 );
+	border: 1px solid var( --color-neutral-10 );
 }
 
 hr {
 	border: 0;
 	height: 1px;
 	margin: 8px 0;
-	background: var( --color-neutral-100 );
+	background: var( --color-neutral-10 );
 }
 
 /* Styles for formatting the boundaries of anchors and code elements */
@@ -196,8 +196,8 @@ hr {
 	padding: 0 2px;
 	margin: 0 -2px;
 	border-radius: 2px;
-	box-shadow: 0 0 0 1px rgba( $blue-medium, 0.2 );
-	background: rgba( $blue-medium, 0.2 );
+	box-shadow: 0 0 0 1px rgba( var( --color-primary-rgb ), 0.2 );
+	background: rgba( var( --color-primary-rgb ), 0.2 );
 	color: var( --color-primary-dark );
 }
 
@@ -205,10 +205,10 @@ hr {
 	padding: 2px 4px;
 	margin: 0;
 	border-radius: 2px;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	background: var( --color-neutral-0 );
 }
 
 .mce-content-body code[data-mce-selected] {
-	background: var( --color-neutral-100 );
+	background: var( --color-neutral-10 );
 }

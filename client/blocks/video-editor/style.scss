@@ -4,7 +4,7 @@
 	height: 100%;
 }
 
-.editor-media-modal .video-editor .notice {
+.editor-media-modal .video-editor .notice.video-editor__notice {
 	@include breakpoint( '>660px' ) {
 		margin-top: 0;
 	}
@@ -18,13 +18,13 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
-	background: darken( $gray, 52% );
+	background: var( --color-neutral-90 );
 }
 
 .video-editor__preview-wrapper {
 	flex: 2 0 0%;
 	position: relative;
-	border-bottom: 1px solid var( --color-neutral-100 );
+	border-bottom: 1px solid var( --color-neutral-10 );
 
 	@include breakpoint( '>660px' ) {
 		margin: 16px 24px;
@@ -51,13 +51,13 @@
 }
 
 .video-editor__text {
-	color: $white;
+	color: var( --color-text-inverted );
 	text-align: center;
 	margin: 16px 0;
 }
 
 .video-editor__controls {
-	border-top: 1px solid var( --color-neutral-700 );
+	border-top: 1px solid var( --color-neutral-70 );
 	padding: 16px;
 	text-align: right;
 }

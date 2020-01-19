@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,8 +11,9 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import { cartItems } from 'lib/cart-values';
+import { getRenewalItemFromProduct } from 'lib/cart-values/cart-items';
 import {
+	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
 	isJetpackPlan,
@@ -22,7 +21,8 @@ import {
 	isTheme,
 	isConciergeSession,
 } from 'lib/products-values';
-import { addItems } from 'lib/upgrades/actions';
+import { addItems } from 'lib/cart/actions';
+import { JETPACK_PRODUCT_DISPLAY_NAMES } from 'lib/products-values/constants';
 
 function getIncludedDomain( purchase ) {
 	return purchase.includedDomain;
@@ -31,9 +31,9 @@ function getIncludedDomain( purchase ) {
 /**
  * Returns an array of sites objects, each of which contains an array of purchases.
  *
- * @param {array} purchases An array of purchase objects.
- * @param {array} sites An array of site objects
- * @return {array} An array of sites with purchases attached.
+ * @param {Array} purchases An array of purchase objects.
+ * @param {Array} sites An array of site objects
+ * @returns {Array} An array of sites with purchases attached.
  */
 function getPurchasesBySite( purchases, sites ) {
 	return purchases
@@ -71,6 +71,20 @@ function getName( purchase ) {
 	return purchase.productName;
 }
 
+function getDisplayName( purchase ) {
+	if ( JETPACK_PRODUCT_DISPLAY_NAMES[ purchase.productSlug ] ) {
+		return JETPACK_PRODUCT_DISPLAY_NAMES[ purchase.productSlug ];
+	}
+	return getName( purchase );
+}
+
+function getPartnerName( purchase ) {
+	if ( isPartnerPurchase( purchase ) ) {
+		return purchase.partnerName;
+	}
+	return null;
+}
+
 function getSubscriptionEndDate( purchase ) {
 	return purchase.expiryMoment.format( 'LL' );
 }
@@ -78,11 +92,11 @@ function getSubscriptionEndDate( purchase ) {
 /**
  * Adds a purchase renewal to the cart and redirects to checkout.
  *
- * @param {Object} purchase - the purchase to be renewed
+ * @param {object} purchase - the purchase to be renewed
  * @param {string} siteSlug - the site slug to renew the purchase for
  */
 function handleRenewNowClick( purchase, siteSlug ) {
-	const renewItem = cartItems.getRenewalItemFromProduct( purchase, {
+	const renewItem = getRenewalItemFromProduct( purchase, {
 		domain: purchase.meta,
 	} );
 	const renewItems = [ renewItem ];
@@ -91,20 +105,6 @@ function handleRenewNowClick( purchase, siteSlug ) {
 	analytics.tracks.recordEvent( 'calypso_purchases_renew_now_click', {
 		product_slug: purchase.productSlug,
 	} );
-
-	if ( hasPrivacyProtection( purchase ) ) {
-		const privacyItem = cartItems.getRenewalItemFromCartItem(
-			cartItems.domainPrivacyProtection( {
-				domain: purchase.meta,
-			} ),
-			{
-				id: purchase.id,
-				domain: purchase.domain,
-			}
-		);
-
-		renewItems.push( privacyItem );
-	}
 
 	addItems( renewItems );
 
@@ -115,18 +115,14 @@ function hasIncludedDomain( purchase ) {
 	return Boolean( purchase.includedDomain );
 }
 
-function hasPrivacyProtection( purchase ) {
-	return purchase.hasPrivacyProtection;
-}
-
 /**
  * Checks if a purchase can be cancelled.
  * Returns true for purchases that aren't expired
  * Also returns true for purchases whether or not they are after the refund period.
  * Purchases included with a plan can't be cancelled.
  *
- * @param {Object} purchase - the purchase with which we are concerned
- * @return {boolean} whether the purchase is cancelable
+ * @param {object} purchase - the purchase with which we are concerned
+ * @returns {boolean} whether the purchase is cancelable
  */
 function isCancelable( purchase ) {
 	if ( isIncludedWithPlan( purchase ) ) {
@@ -141,7 +137,7 @@ function isCancelable( purchase ) {
 		return false;
 	}
 
-	if ( isRefundable( purchase ) ) {
+	if ( hasAmountAvailableToRefund( purchase ) ) {
 		return true;
 	}
 
@@ -153,10 +149,7 @@ function isExpired( purchase ) {
 }
 
 function isExpiring( purchase ) {
-	return includes(
-		[ 'cardExpired', 'cardExpiring', 'manualRenew', 'expiring' ],
-		purchase.expiryStatus
-	);
+	return includes( [ 'manualRenew', 'expiring' ], purchase.expiryStatus );
 }
 
 function isIncludedWithPlan( purchase ) {
@@ -175,6 +168,10 @@ function isPaidWithCredits( purchase ) {
 	return 'undefined' !== typeof purchase.payment && 'credits' === purchase.payment.type;
 }
 
+function hasPaymentMethod( purchase ) {
+	return 'undefined' !== typeof purchase.payment && null != purchase.payment.type;
+}
+
 function isPendingTransfer( purchase ) {
 	return purchase.pendingTransfer;
 }
@@ -184,8 +181,8 @@ function isPendingTransfer( purchase ) {
  * Payments done via CC & Paygate can have their CC updated, but this
  * is not currently true for other providers such as EBANX.
  *
- * @param {Object} purchase - the purchase with which we are concerned
- * @return {boolean} if the purchase card can be updated
+ * @param {object} purchase - the purchase with which we are concerned
+ * @returns {boolean} if the purchase card can be updated
  */
 function cardProcessorSupportsUpdates( purchase ) {
 	return (
@@ -209,6 +206,10 @@ function cardProcessorSupportsUpdates( purchase ) {
  * or deny a refund to a user. Instead, for example, use it to decide whether
  * to display or highlight general help text about the refund policy to users
  * who are likely to be eligible for one.
+ *
+ * @param {object} purchase - the purchase with which we are concerned
+ *
+ * @returns {boolean} Whether in refund period.
  */
 function maybeWithinRefundPeriod( purchase ) {
 	if ( isRefundable( purchase ) ) {
@@ -231,31 +232,60 @@ function maybeWithinRefundPeriod( purchase ) {
 }
 
 /**
+ * Checks if a purchase have a bound payment method that we can recharge.
+ * This ties to the auto-renewal. At the moment, the only eligble methods are credit cards and Paypal.
+ *
+ * @param {object} purchase - the purchase with which we are concerned
+ * @returns {boolean} if the purchase can be recharged by us through the bound payment method.
+ */
+function isRechargeable( purchase ) {
+	return purchase.isRechargeable;
+}
+
+/**
  * Checks if a purchase can be canceled and refunded via the WordPress.com API.
  * Purchases usually can be refunded up to 30 days after purchase.
- * Domains and domain mappings can be refunded up to 48 hours.
+ * Domains and domain mappings can be refunded up to 96 hours.
  * Purchases included with plan can't be refunded.
  *
  * If this function returns false but you want to see if the subscription may
  * still be within its refund period (and therefore refundable if the user
  * contacts a Happiness Engineer), use maybeWithinRefundPeriod().
  *
- * @param {Object} purchase - the purchase with which we are concerned
- * @return {boolean} if the purchase is refundable
+ * @param {object} purchase - the purchase with which we are concerned
+ * @returns {boolean} if the purchase is refundable
  */
 function isRefundable( purchase ) {
 	return purchase.isRefundable;
 }
 
 /**
- * Checks whether the specified purchase can be removed from a user account.
- * Purchases included with a plan can't be removed.
+ * Checks if a purchase is refundable, and that the amount available to
+ * refund is greater than zero.
  *
- * @param {Object} purchase - the purchase with which we are concerned
- * @return {boolean} true if the purchase can be removed, false otherwise
+ * @param {object} purchase - the purchase with which we are concerned
+ * @returns {boolean} if the purchase is refundable with an amount greater than zero
+ * @see isRefundable
+ */
+function hasAmountAvailableToRefund( purchase ) {
+	return isRefundable( purchase ) && purchase.refundAmount > 0;
+}
+
+/**
+ * Checks whether the specified purchase can be removed from a user account.
+ *
+ * @param {object} purchase - the purchase with which we are concerned
+ * @returns {boolean} true if the purchase can be removed, false otherwise
  */
 function isRemovable( purchase ) {
+	if ( hasAmountAvailableToRefund( purchase ) ) {
+		return false;
+	}
+
 	if ( isIncludedWithPlan( purchase ) ) {
+		if ( isDomainMapping( purchase ) ) {
+			return true;
+		}
 		return false;
 	}
 
@@ -267,18 +297,20 @@ function isRemovable( purchase ) {
 		isJetpackPlan( purchase ) ||
 		isExpiring( purchase ) ||
 		isExpired( purchase ) ||
-		( isDomainTransfer( purchase ) &&
-			! isRefundable( purchase ) &&
-			isPurchaseCancelable( purchase ) )
+		( isDomainTransfer( purchase ) && isPurchaseCancelable( purchase ) )
 	);
+}
+
+function isPartnerPurchase( purchase ) {
+	return !! purchase.partnerName;
 }
 
 /**
  * Returns the purchase cancelable flag, as opposed to the super weird isCancelable function which
  * manually checks all kinds of stuff
  *
- * @param {Object} purchase - the purchase with which we are concerned
- * @return {boolean} true if the purchase has cancelable flag, false otherwise
+ * @param {object} purchase - the purchase with which we are concerned
+ * @returns {boolean} true if the purchase has cancelable flag, false otherwise
  */
 function isPurchaseCancelable( purchase ) {
 	return purchase.isCancelable;
@@ -289,8 +321,8 @@ function isPurchaseCancelable( purchase ) {
  * business logic like "have we captured an auth?", "are we within 90 days of expiry?",
  * "is this part of a bundle?", etc.
  *
- * @param {Object} purchase - the purchase with which we are concerned
- * @return {boolean} true if the purchase is renewable per business logic, false otherwise
+ * @param {object} purchase - the purchase with which we are concerned
+ * @returns {boolean} true if the purchase is renewable per business logic, false otherwise
  */
 function isRenewable( purchase ) {
 	return purchase.isRenewable;
@@ -322,13 +354,17 @@ function hasCreditCardData( purchase ) {
 	return Boolean( purchase.payment.creditCard.expiryMoment );
 }
 
+function shouldAddPaymentSourceInsteadOfRenewingNow( expiryMoment ) {
+	return expiryMoment > moment().add( 3, 'months' );
+}
+
 /**
  * Checks whether the purchase is capable of being renewed by intentional
  * action (eg, a button press by user). Some purchases (eg, .fr domains)
  * are only renewable via auto-renew.
  *
- * @param {Object} purchase - the purchase with which we are concerned
- * @return {boolean} true if the purchase is capable of explicit renew
+ * @param {object} purchase - the purchase with which we are concerned
+ * @returns {boolean} true if the purchase is capable of explicit renew
  */
 function canExplicitRenew( purchase ) {
 	return purchase.canExplicitRenew;
@@ -357,8 +393,8 @@ function subscribedWithinPastWeek( purchase ) {
 /**
  * Returns the payment logo to display based on the payment method
  *
- * @param {Object} purchase - the purchase with which we are concerned
- * @return {string|null} the payment logo type, or null if no payment type is set.
+ * @param {object} purchase - the purchase with which we are concerned
+ * @returns {string|null} the payment logo type, or null if no payment type is set.
  */
 function paymentLogoType( purchase ) {
 	if ( isPaidWithCreditCard( purchase ) ) {
@@ -381,6 +417,10 @@ function purchaseType( purchase ) {
 		return i18n.translate( 'One-on-one Support' );
 	}
 
+	if ( isPartnerPurchase( purchase ) ) {
+		return i18n.translate( 'Host Managed Plan' );
+	}
+
 	if ( isPlan( purchase ) ) {
 		return i18n.translate( 'Site Plan' );
 	}
@@ -396,6 +436,10 @@ function purchaseType( purchase ) {
 	return null;
 }
 
+function getRenewalPrice( purchase ) {
+	return purchase.saleAmount || purchase.amount;
+}
+
 function showCreditCardExpiringWarning( purchase ) {
 	return (
 		! isIncludedWithPlan( purchase ) &&
@@ -405,25 +449,36 @@ function showCreditCardExpiringWarning( purchase ) {
 	);
 }
 
+function getDomainRegistrationAgreementUrl( purchase ) {
+	return purchase.domainRegistrationAgreementUrl;
+}
+
 export {
 	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
+	getDomainRegistrationAgreementUrl,
 	getIncludedDomain,
 	getName,
+	getDisplayName,
+	getPartnerName,
 	getPurchasesBySite,
+	getRenewalPrice,
 	getSubscriptionEndDate,
 	handleRenewNowClick,
+	hasAmountAvailableToRefund,
 	hasIncludedDomain,
-	hasPrivacyProtection,
 	isCancelable,
 	isPaidWithCreditCard,
 	isPaidWithPayPalDirect,
 	isPaidWithPaypal,
 	isPaidWithCredits,
+	isPartnerPurchase,
+	hasPaymentMethod,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
 	isOneTimePurchase,
+	isRechargeable,
 	isRefundable,
 	isRemovable,
 	isRenewable,
@@ -436,4 +491,5 @@ export {
 	cardProcessorSupportsUpdates,
 	showCreditCardExpiringWarning,
 	subscribedWithinPastWeek,
+	shouldAddPaymentSourceInsteadOfRenewingNow,
 };

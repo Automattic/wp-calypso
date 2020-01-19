@@ -1,4 +1,4 @@
-/** @format */
+
 
 .checklist-prompt {
 	text-align: left;
@@ -16,17 +16,22 @@
 }
 
 .checklist-prompt__duration {
-	color: $gray-darken-20;
+	color: var( --color-neutral-50 );
 	font-style: italic;
 	font-size: 11px;
 	margin: 0 0 1em;
 }
 
+.checklist-prompt__actions {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: space-between;
+}
+
 .inline-help__secondary-view .checklist-prompt__button {
-	width: 49%;
-	margin-right: 2%;
+	flex: 1 49%;
 }
 
 .inline-help__secondary-view .checklist-prompt__button:last-of-type {
-	margin-right: 0;
+	margin-left: 2%;
 }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import { sameXPost } from 'reader/stream/utils';
  *
  * @param {object} postKey1 First post key
  * @param {object} postKey2 Second (duplicate) post key
- * @return {object} Post key
+ * @returns {object} Post key
  */
 export const addDuplicateXPostToPostKey = ( postKey1, postKey2 ) => {
 	return {
@@ -30,8 +28,8 @@ export const addDuplicateXPostToPostKey = ( postKey1, postKey2 ) => {
 /**
  * Combine adjacent x-posts that refer to the same original post
  *
- * @param {array} postKeys Array of post key objects
- * @return {array} Array of post key objects
+ * @param {Array} postKeys Array of post key objects
+ * @returns {Array} Array of post key objects
  */
 export const combineXPosts = postKeys =>
 	postKeys.reduce( ( accumulator, postKey ) => {

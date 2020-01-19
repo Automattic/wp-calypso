@@ -1,10 +1,13 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
 import classNames from 'classnames';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default function ExampleDomainBrowser( { className } ) {
 	return (
@@ -14,12 +17,12 @@ export default function ExampleDomainBrowser( { className } ) {
 				<g fill="none" fillRule="evenodd">
 					<path fill="#D8D8D8" d="M10 0h285v50H0V10C0 4.477 4.477 0 10 0z" />
 					<path fill="#FFF" d="M0 50h295v50H0zM94 9h201v30H94a4 4 0 0 1-4-4V13a4 4 0 0 1 4-4z" />
-					<text fill="#D8D8D8" fontFamily="SFUIText-Regular, SF UI Text" fontSize="14">
+					<text className="example-domain-browser__protocol">
 						<tspan x="99" y="29">
 							https://
 						</tspan>
 					</text>
-					<text fill="#424242" fontFamily="SFUIText-Regular, SF UI Text" fontSize="14">
+					<text className="example-domain-browser__domain">
 						<tspan x="148" y="29">
 							example.com
 						</tspan>

@@ -1,0 +1,29 @@
+{
+	"compilerOptions": {
+		"allowJs": true,
+		"jsx": "react",
+		"target": "ES5",
+		"lib": [ "DOM", "ES2015", "ScriptHost" ],
+		"module": "esnext",
+		"declaration": true,
+		"declarationDir": "types",
+		"outDir": "./dist/esm",
+
+		"strict": true,
+		"noImplicitAny": false,
+
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		"strictNullChecks": true,
+
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+
+		"typeRoots": [ "../../node_modules/@types" ],
+		"types": []
+	},
+	"include": [ "src/**/*" ],
+	"exclude": [ "**/test/**/*", "**/docs/**/*" ]
+}

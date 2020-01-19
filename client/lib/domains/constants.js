@@ -1,5 +1,3 @@
-/** @format */
-
 export const type = {
 	MAPPED: 'MAPPED',
 	REGISTERED: 'REGISTERED',
@@ -25,6 +23,7 @@ export const registrar = {
 
 export const domainAvailability = {
 	AVAILABLE: 'available',
+	AVAILABLE_PREMIUM: 'available_premium',
 	AVAILABILITY_CHECK_ERROR: 'availability_check_error',
 	BLACKLISTED: 'blacklisted_domain',
 	DOMAIN_SUGGESTIONS_THROTTLED: 'domain_suggestions_throttled',
@@ -33,6 +32,7 @@ export const domainAvailability = {
 	EMPTY_RESULTS: 'empty_results',
 	FORBIDDEN: 'forbidden_domain',
 	FORBIDDEN_SUBDOMAIN: 'forbidden_subdomain',
+	IN_REDEMPTION: 'in_redemption',
 	INVALID: 'invalid_domain',
 	INVALID_QUERY: 'invalid_query',
 	INVALID_TLD: 'invalid_tld',
@@ -52,10 +52,12 @@ export const domainAvailability = {
 	REGISTERED_SAME_SITE: 'registered_on_same_site',
 	RESTRICTED: 'restricted_domain',
 	TLD_NOT_SUPPORTED: 'tld_not_supported',
+	TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE: 'tld_not_supported_and_domain_not_available',
 	TLD_NOT_SUPPORTED_TEMPORARILY: 'tld_not_supported_temporarily',
 	TRANSFER_PENDING: 'transfer_pending',
 	TRANSFER_PENDING_SAME_USER: 'transfer_pending_same_user',
 	TRANSFERRABLE: 'transferrable',
+	TRANSFERRABLE_PREMIUM: 'transferrable_premium',
 	UNKNOWN: 'unknown',
 	UNKOWN_ACTIVE: 'unknown_active_domain_with_wpcom',
 	WPCOM_STAGING_DOMAIN: 'wpcom_staging_domain',
@@ -78,7 +80,6 @@ export const dnsTemplates = {
 
 export const domainProductSlugs = {
 	TRANSFER_IN: 'domain_transfer',
-	TRANSFER_IN_PRIVACY: 'domain_transfer_privacy',
 };
 
 export const gdprConsentStatus = {

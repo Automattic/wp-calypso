@@ -1,4 +1,3 @@
-
 .checklist-banner {
 	display: flex;
 	flex-direction: row;
@@ -13,9 +12,12 @@
 .checklist-banner__gauge {
 	position: relative;
 
-	.gauge__metric {
-		text-transform: none;
-		letter-spacing: 0;
+	.gauge__label {
+		/* this has to nest under .gauge__label to override the specificity for the stock styles */
+		.gauge__metric {
+			text-transform: none;
+			letter-spacing: 0;
+		}
 	}
 
 	@include breakpoint( '<660px' ) {
@@ -31,7 +33,7 @@
 	text-align: center;
 	font-size: 10px;
 	font-weight: bold;
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 }
 
 .checklist-banner__progress {

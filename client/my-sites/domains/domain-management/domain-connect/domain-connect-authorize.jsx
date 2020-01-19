@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import Main from 'components/main';
 import Notice from 'components/notice';
 import DomainConnectAuthorizeDescription from './domain-connect-authorize-description';
@@ -19,6 +17,11 @@ import DomainConnectAuthorizeRecords from './domain-connect-authorize-records';
 import DomainConnectAuthorizeFooter from './domain-connect-authorize-footer';
 import { actionType, noticeType } from './constants';
 import wp from 'lib/wp';
+
+/**
+ * Style dependencies
+ */
+import './domain-connect-authorize.scss';
 
 const wpcom = wp.undocumented();
 

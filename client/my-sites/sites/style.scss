@@ -1,16 +1,26 @@
+.main.sites {
+	max-width: 320px;
+}
+
+.sites__select-header {
+	text-align: center;
+
+	.visit-site {
+		margin: -12px 0 24px;
+	}
+}
+
 .sites__select-heading {
-	clear: both;
-	color: var( --color-neutral-600 );
-	display: block;
-	font-family: $sans;
-	font-size: 20px;
-	margin: 24px 0;
+	font-size: 22px;
+	margin-top: 16px;
+	margin-bottom: 24px;
+
 	strong {
 		text-transform: capitalize;
 	}
 }
 
-.sites__selector-wrapper.card {
+.sites__select-wrapper.card {
 	padding: 0;
 
 	.site-selector {

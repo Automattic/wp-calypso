@@ -1,10 +1,14 @@
-/** @format */
 /**
  * External dependencies
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class Focusable extends Component {
 	static propTypes = {
@@ -23,8 +27,8 @@ class Focusable extends Component {
 		}
 	};
 
-	render = () => {
-		const { children, className, ...passProps } = this.props;
+	render() {
+		const { className, ...passProps } = this.props;
 		return (
 			<div
 				{ ...passProps }
@@ -32,11 +36,9 @@ class Focusable extends Component {
 				role="button"
 				tabIndex="0"
 				onKeyDown={ this.onKeyDown }
-			>
-				{ children }
-			</div>
+			/>
 		);
-	};
+	}
 }
 
 export default Focusable;

@@ -9,7 +9,7 @@
 }
 
 .marked-lines__marked-line {
-	background-color: rgba( $alert-red, 0.2 );
+	background-color: rgba( var( --color-error-rgb ), 0.2 );
 }
 
 .marked-lines__line-numbers {
@@ -20,11 +20,11 @@
 
 .marked-lines__line-number {
 	padding: 0 4px;
-	background-color: var( --color-neutral-100 );
+	background-color: var( --color-neutral-10 );
 	color: var( --color-text-subtle );
 
 	&.marked-lines__marked-line {
-		background-color: rgba( $alert-red, 0.15 );
+		background-color: rgba( var( --color-error-rgb ), 0.15 );
 	}
 }
 
@@ -41,7 +41,7 @@
 
 .marked-lines__mark {
 	background-color: var( --color-error );
-	color: white;
+	color: var( --color-text-inverted );
 	border-radius: 4px;
 	padding: 2px 4px;
 }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,6 +10,7 @@ import { endsWith } from 'lodash';
 /**
  * Internal dependencies
  */
+import DnsRecordsListItem from '../dns-records/item';
 
 class DomainConnectDnsRecord extends Component {
 	static propTypes = {
@@ -100,19 +99,13 @@ class DomainConnectDnsRecord extends Component {
 
 	render() {
 		const record = this.props.dnsRecord;
-		const name = this.getName( record );
-		const data = this.handledBy( record );
 
 		return (
-			<li>
-				<div className="domain-connect__dns-list-type">
-					<span>{ record.type }</span>
-				</div>
-				<div className="domain-connect__dns-list-info">
-					<strong>{ name }</strong>
-					<em>{ data }</em>
-				</div>
-			</li>
+			<DnsRecordsListItem
+				type={ record.type }
+				name={ this.getName( record ) }
+				content={ this.handledBy( record ) }
+			/>
 		);
 	}
 }

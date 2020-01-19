@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,9 +16,9 @@ import getThemeFilterTermsTable from 'state/selectors/get-theme-filter-terms-tab
  * Supplied terms that belong to more than one taxonomy must be
  * prefixed taxonomy:term
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @param {string} term The term slug
- * @return {string} Complete taxonomy:term filter, or empty string if term is not valid
+ * @returns {string} Complete taxonomy:term filter, or empty string if term is not valid
  */
 export default function getThemeFilterStringFromTerm( state, term ) {
 	const terms = getThemeFilterTermsTable( state );

@@ -1,12 +1,14 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
+
+/**
+ * Style dependencies
+ */
+import './icons.scss';
 
 const LikeIcons = ( { size } ) => (
 	<span className="like-button__like-icons">

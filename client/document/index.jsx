@@ -1,31 +1,25 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import React, { Fragment } from 'react';
 import classNames from 'classnames';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import Head from '../components/head';
+import Head from 'components/head';
 import EnvironmentBadge, {
 	TestHelper,
 	Branch,
 	DevDocsLink,
 	PreferencesHelper,
-} from '../components/environment-badge';
-import getStylesheet from './utils/stylesheet';
+} from 'components/environment-badge';
+import { chunkCssLinks } from './utils';
 import WordPressLogo from 'components/wordpress-logo';
-import { jsonStringifyForHtml } from '../../server/sanitize';
-
-const cssChunkLink = asset => (
-	<link key={ asset } rel="stylesheet" type="text/css" data-webpack={ true } href={ asset } />
-);
+import { jsonStringifyForHtml } from 'server/sanitize';
 
 class Document extends React.Component {
 	render() {
@@ -45,15 +39,12 @@ class Document extends React.Component {
 			languageRevisions,
 			renderedLayout,
 			user,
-			urls,
 			hasSecondary,
 			sectionGroup,
 			sectionName,
 			clientData,
 			isFluidWidth,
-			sectionCss,
 			env,
-			isDebug,
 			badge,
 			abTestHelper,
 			preferencesHelper,
@@ -63,14 +54,17 @@ class Document extends React.Component {
 			devDocsURL,
 			feedbackURL,
 			inlineScriptNonce,
+			isSupportSession,
+			isWCComConnect,
+			addEvergreenCheck,
+			requestFrom,
 		} = this.props;
-
-		const csskey = isRTL ? 'css.rtl' : 'css.ltr';
 
 		const inlineScript =
 			`var COMMIT_SHA = ${ jsonStringifyForHtml( commitSha ) };\n` +
 			`var BUILD_TIMESTAMP = ${ jsonStringifyForHtml( buildTimestamp ) };\n` +
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
+			( isSupportSession ? 'var isSupportSession = true;\n' : '' ) +
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
 			( initialReduxState
 				? `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };\n`
@@ -80,11 +74,19 @@ class Document extends React.Component {
 				? `var languageRevisions = ${ jsonStringifyForHtml( languageRevisions ) };\n`
 				: '' );
 
+		const isJetpackWooCommerceFlow =
+			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
+			'jetpack-connect' === sectionName &&
+			'woocommerce-onboarding' === requestFrom;
+
 		return (
 			<html
 				lang={ lang }
 				dir={ isRTL ? 'rtl' : 'ltr' }
-				className={ classNames( { 'is-fluid-width': isFluidWidth } ) }
+				className={ classNames( {
+					'is-fluid-width': isFluidWidth,
+					'is-iframe': sectionName === 'gutenberg-editor',
+				} ) }
 			>
 				<Head
 					title={ head.title }
@@ -99,25 +101,8 @@ class Document extends React.Component {
 					{ head.links.map( ( props, index ) => (
 						<link { ...props } key={ index } />
 					) ) }
-
-					<link
-						rel="stylesheet"
-						id="main-css"
-						href={
-							urls[ getStylesheet( { rtl: !! isRTL, debug: isDebug || env === 'development' } ) ]
-						}
-						type="text/css"
-					/>
-					{ entrypoint[ csskey ].map( cssChunkLink ) }
-					{ chunkFiles[ csskey ].map( cssChunkLink ) }
-					{ sectionCss && (
-						<link
-							rel="stylesheet"
-							id={ 'section-css-' + sectionCss.id }
-							href={ get( sectionCss, 'urls.' + ( isRTL ? 'rtl' : 'ltr' ) ) }
-							type="text/css"
-						/>
-					) }
+					{ chunkCssLinks( entrypoint, isRTL ) }
+					{ chunkCssLinks( chunkFiles, isRTL ) }
 				</Head>
 				<body
 					className={ classNames( {
@@ -142,6 +127,8 @@ class Document extends React.Component {
 								className={ classNames( 'layout', {
 									[ 'is-group-' + sectionGroup ]: sectionGroup,
 									[ 'is-section-' + sectionName ]: sectionName,
+									'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
+									'is-wccom-oauth-flow': isWCComConnect,
 								} ) }
 							>
 								<div className="masterbar" />
@@ -181,13 +168,37 @@ class Document extends React.Component {
 						} }
 					/>
 
+					{ // Use <script nomodule> to redirect browsers with no ES module
+					// support to the fallback build. ES module support is a convenient
+					// test to determine that a browser is modern enough to handle
+					// the evergreen bundle.
+					addEvergreenCheck && (
+						<script
+							nonce={ inlineScriptNonce }
+							noModule
+							dangerouslySetInnerHTML={ {
+								__html: `
+							(function() {
+								var url = window.location.href;
+
+								if ( url.indexOf( 'forceFallback=1' ) === -1 ) {
+									url += ( url.indexOf( '?' ) !== -1 ? '&' : '?' );
+									url += 'forceFallback=1';
+									window.location.href = url;
+								}
+							})();
+							`,
+							} }
+						/>
+					) }
+
 					{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
 					{ /*
 					 * inline manifest in production, but reference by url for development.
 					 * this lets us have the performance benefit in prod, without breaking HMR in dev
 					 * since the manifest needs to be updated on each save
 					 */ }
-					{ env === 'development' && <script src="/calypso/manifest.js" /> }
+					{ env === 'development' && <script src="/calypso/evergreen/manifest.js" /> }
 					{ env !== 'development' && (
 						<script
 							nonce={ inlineScriptNonce }
@@ -226,11 +237,12 @@ class Document extends React.Component {
 					/>
 					<script
 						nonce={ inlineScriptNonce }
-						type="text/javascript"
 						dangerouslySetInnerHTML={ {
 							__html: `
-							if ( 'serviceWorker' in navigator ) {
-								navigator.serviceWorker.register( '/service-worker.js' );
+							if ('serviceWorker' in navigator) {
+								window.addEventListener('load', function() {
+									navigator.serviceWorker.register('/service-worker.js');
+								});
 							}
 						 `,
 						} }

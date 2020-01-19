@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -141,7 +140,6 @@ export const SELECTED_SITE = deepFreeze( {
 		jetpack_version: '5.4',
 		main_network_site: `http://${ SITE_SLUG }`,
 		active_modules: [
-			'after-the-deadline',
 			'contact-form',
 			'custom-content-types',
 			'custom-css',
@@ -199,7 +197,6 @@ export const SELECTED_SITE = deepFreeze( {
 	is_previewable: false,
 	slug: SITE_SLUG,
 	title: 'Test Site',
-	hasMinimumJetpackVersion: true,
 	canAutoupdateFiles: true,
 	canUpdateFiles: true,
 	canManage: true,
@@ -221,11 +218,7 @@ export const CART = deepFreeze( {
 	total_cost_display: '€0',
 	temporary: false,
 	credits: 0,
-	allowed_payment_methods: [
-		'WPCOM_Billing_PayPal_Express',
-		'WPCOM_Billing_MoneyPress_Paygate',
-		'WPCOM_Billing_Stripe_Source_Ideal',
-	],
+	allowed_payment_methods: [ 'WPCOM_Billing_PayPal_Express', 'WPCOM_Billing_Stripe_Source_Ideal' ],
 	create_new_blog: false,
 	messages: { errors: [], success: [] },
 	client_metadata: { last_server_response_date: '2017-10-19T11:45:21.862Z' },

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,14 +13,18 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card, Button } from '@automattic/components';
 import Gravatar from 'components/gravatar';
-import Button from 'components/button';
 import InviteFormHeader from 'my-sites/invites/invite-form-header';
 import { acceptInvite } from 'lib/invites/actions';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import analytics from 'lib/analytics';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class InviteAcceptLoggedIn extends React.Component {
 	state = { submitting: false };
@@ -152,7 +154,6 @@ class InviteAcceptLoggedIn extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { acceptInvite }, dispatch )
-)( localize( InviteAcceptLoggedIn ) );
+export default connect( null, dispatch => bindActionCreators( { acceptInvite }, dispatch ) )(
+	localize( InviteAcceptLoggedIn )
+);

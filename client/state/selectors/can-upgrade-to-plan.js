@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,14 +11,15 @@ import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlan, isWpComBusinessPlan, isWpComEcommercePlan, isFreePlan } from 'lib/plans';
 import { isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
 
 /**
  * Whether a given site can be upgraded to a specific plan.
  *
- * @param  {Object}   state      Global state tree
- * @param  {Number}   siteId     The site we're interested in upgrading
- * @param  {String}   planKey    The plan we want to upgrade to
- * @return {Boolean}             True if the site can be upgraded
+ * @param  {object}   state      Global state tree
+ * @param  {number}   siteId     The site we're interested in upgrading
+ * @param  {string}   planKey    The plan we want to upgrade to
+ * @returns {boolean}             True if the site can be upgraded
  */
 export default function( state, siteId, planKey ) {
 	// Which "free plan" should we use to test
@@ -35,6 +34,13 @@ export default function( state, siteId, planKey ) {
 	const currentPlanSlug = get( plan, [ 'expired' ], false )
 		? freePlan
 		: get( plan, [ 'productSlug' ], freePlan );
+
+	// Exception for upgrading Atomic v1 sites to eCommerce
+	const isAtomicV1 =
+		isSiteAutomatedTransfer( state, siteId ) && ! isSiteWpcomAtomic( state, siteId );
+	if ( isWpComEcommercePlan( planKey ) && isAtomicV1 ) {
+		return false;
+	}
 
 	// Exception for AutomatedTransfer on a free plan (expired subscription) to wpcom business plan
 	if (

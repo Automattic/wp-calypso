@@ -1,8 +1,6 @@
-/** @format */
 /**
  * External dependencies
  */
-import urlLib from 'url';
 import path from 'path';
 import photon from 'photon';
 import { includes, omitBy, startsWith, get } from 'lodash';
@@ -23,6 +21,7 @@ import {
 import { stringify } from 'lib/shortcode';
 import impureLodash from 'lib/impure-lodash';
 import versionCompare from 'lib/version-compare';
+import { getUrlParts } from 'lib/url';
 
 const { uniqueId } = impureLodash;
 
@@ -35,10 +34,10 @@ const REGEXP_VIDEOPRESS_GUID = /^[a-z\d]+$/i;
  * Given a media object, returns a URL string to that media. Accepts
  * optional options to specify photon usage or a maximum image width.
  *
- * @param  {Object} media   Media object
- * @param  {Object} options Optional options, accepting a `photon` boolean,
- *                          `maxWidth` pixel value, or `size`.
- * @return {string}         URL to the media
+ * @param  {object} media   Media object
+ * @param  {object} options Optional options, accepting a `photon` boolean,
+ *                          `maxWidth` pixel value, `resize` string, or `size`.
+ * @returns {string}         URL to the media
  */
 export function url( media, options ) {
 	if ( ! media ) {
@@ -61,6 +60,9 @@ export function url( media, options ) {
 		if ( options.maxWidth ) {
 			return photon( media.URL, { width: options.maxWidth } );
 		}
+		if ( options.resize ) {
+			return photon( media.URL, { resize: options.resize } );
+		}
 
 		return photon( media.URL );
 	}
@@ -72,6 +74,12 @@ export function url( media, options ) {
 	if ( options.maxWidth ) {
 		return resize( media.URL, {
 			w: options.maxWidth,
+		} );
+	}
+
+	if ( options.resize ) {
+		return resize( media.URL, {
+			resize: options.resize,
 		} );
 	}
 
@@ -87,8 +95,8 @@ export function url( media, options ) {
  * getFileExtension( new window.File( [''], 'example.gif' ) );
  * // All examples return 'gif'
  *
- * @param  {(string|File|Object)} media Media object or string
- * @return {string}                     File extension
+ * @param  {(string|window.File|object)} media Media object or string
+ * @returns {string}                     File extension
  */
 export function getFileExtension( media ) {
 	let extension;
@@ -103,7 +111,7 @@ export function getFileExtension( media ) {
 	if ( isString ) {
 		let filePath;
 		if ( isUri( media ) ) {
-			filePath = urlLib.parse( media ).pathname;
+			filePath = getUrlParts( media ).pathname;
 		} else {
 			filePath = media;
 		}
@@ -114,7 +122,7 @@ export function getFileExtension( media ) {
 	} else if ( media.extension ) {
 		extension = media.extension;
 	} else {
-		const pathname = urlLib.parse( media.URL || media.file || media.guid || '' ).pathname || '';
+		const pathname = getUrlParts( media.URL || media.file || media.guid || '' ).pathname || '';
 		extension = path.extname( pathname ).slice( 1 );
 	}
 
@@ -130,8 +138,8 @@ export function getFileExtension( media ) {
  * getMimeType( { mime_type: 'image/gif' } );
  * // All examples return 'image'
  *
- * @param  {string} media Media object or mime type string
- * @return {string}       The MIME type prefix
+ * @param  {(string|window.File|object)} media Media object or mime type string
+ * @returns {string}       The MIME type prefix
  */
 export function getMimePrefix( media ) {
 	const mimeType = getMimeType( media );
@@ -140,7 +148,7 @@ export function getMimePrefix( media ) {
 		return;
 	}
 
-	const mimePrefixMatch = mimeType.match( /^([^\/]+)\// );
+	const mimePrefixMatch = mimeType.match( /^([^/]+)\// );
 
 	if ( mimePrefixMatch ) {
 		return mimePrefixMatch[ 1 ];
@@ -157,8 +165,8 @@ export function getMimePrefix( media ) {
  * getMimeType( { mime_type: 'image/gif' } );
  * // All examples return 'image/gif'
  *
- * @param  {(string|File|Object)} media Media object or string
- * @return {string}                     Mime type of the media, if known
+ * @param  {(string|window.File|object)} media Media object or string
+ * @returns {string}                     Mime type of the media, if known
  */
 export function getMimeType( media ) {
 	if ( ! media ) {
@@ -189,7 +197,7 @@ export function getMimeType( media ) {
  *
  * @param  {Array}  items      Array of media objects
  * @param  {string} mimePrefix A mime prefix, e.g. "image"
- * @return {Array}             Filtered array of matching media objects
+ * @returns {Array}             Filtered array of matching media objects
  */
 export function filterItemsByMimePrefix( items, mimePrefix ) {
 	return items.filter( function( item ) {
@@ -201,7 +209,7 @@ export function filterItemsByMimePrefix( items, mimePrefix ) {
  * Given an array of media objects, returns a copy sorted by media date.
  *
  * @param  {Array} items Array of media objects
- * @return {Array}       Sorted array of media objects
+ * @returns {Array}       Sorted array of media objects
  */
 export function sortItemsByDate( items ) {
 	return items.slice( 0 ).sort( function( a, b ) {
@@ -227,8 +235,8 @@ export function sortItemsByDate( items ) {
  * Jetpack currently does not sync the allowed file types
  * option, so we must assume that all file types are supported.
  *
- * @param  {Object}  site Site object
- * @return {Boolean}      Site allowed file types are accurate
+ * @param  {object}  site Site object
+ * @returns {boolean}      Site allowed file types are accurate
  */
 export function isSiteAllowedFileTypesToBeTrusted( site ) {
 	return ! site || ! site.jetpack;
@@ -237,8 +245,8 @@ export function isSiteAllowedFileTypesToBeTrusted( site ) {
 /**
  * Returns an array of supported file extensions for the specified site.
  *
- * @param  {Object} site Site object
- * @return {Array}      Supported file extensions
+ * @param  {object} site Site object
+ * @returns {Array}      Supported file extensions
  */
 export function getAllowedFileTypesForSite( site ) {
 	if ( ! site ) {
@@ -252,9 +260,9 @@ export function getAllowedFileTypesForSite( site ) {
  * Returns true if the specified item is a valid file in a Premium plan,
  * or false otherwise.
  *
- * @param  {Object}  item Media object
- * @param  {Object}  site Site object
- * @return {Boolean}      Whether the Premium plan supports the item
+ * @param  {object}  item Media object
+ * @param  {object}  site Site object
+ * @returns {boolean}      Whether the Premium plan supports the item
  */
 export function isSupportedFileTypeInPremium( item, site ) {
 	if ( ! site || ! item ) {
@@ -275,9 +283,9 @@ export function isSupportedFileTypeInPremium( item, site ) {
  * or false otherwise. A file is valid if the sites allowable file types
  * contains the item's type.
  *
- * @param  {Object}  item Media object
- * @param  {Object}  site Site object
- * @return {Boolean}      Whether the site supports the item
+ * @param  {object}  item Media object
+ * @param  {object}  site Site object
+ * @returns {boolean}      Whether the site supports the item
  */
 export function isSupportedFileTypeForSite( item, site ) {
 	if ( ! site || ! item ) {
@@ -299,9 +307,9 @@ export function isSupportedFileTypeForSite( item, site ) {
  * size for the site is unknown or a video is being uploaded for a Jetpack
  * site with VideoPress enabled. Otherwise, returns true.
  *
- * @param  {Object}   item  Media object
- * @param  {Object}   site  Site object
- * @return {?Boolean}       Whether the size exceeds the site maximum
+ * @param  {object}   item  Media object
+ * @param  {object}   site  Site object
+ * @returns {?boolean}       Whether the size exceeds the site maximum
  */
 export function isExceedingSiteMaxUploadSize( item, site ) {
 	const bytes = item.size;
@@ -329,8 +337,8 @@ export function isExceedingSiteMaxUploadSize( item, site ) {
 /**
  * Returns true if the provided media object is a VideoPress video item.
  *
- * @param  {Object}  item Media object
- * @return {Boolean}      Whether the media is a VideoPress video item
+ * @param  {object}  item Media object
+ * @returns {boolean}      Whether the media is a VideoPress video item
  */
 export function isVideoPressItem( item ) {
 	if ( ! item || ! item.videopress_guid ) {
@@ -348,7 +356,7 @@ export function isVideoPressItem( item ) {
  * playtime( 7 ); // -> "0:07"
  *
  * @param  {number} duration Duration in seconds
- * @return {string}          Human-readable duration
+ * @returns {string}          Human-readable duration
  */
 export function playtime( duration ) {
 	if ( isNaN( duration ) ) {
@@ -383,9 +391,9 @@ export function playtime( duration ) {
  * the thumbnail size, optionally for a given site. If the size cannot be
  * determined or a site is not passed, a fallback default value is used.
  *
- * @param  {String} size Thumbnail size
- * @param  {Object} site Site object
- * @return {Object}      Width and height dimensions
+ * @param  {string} size Thumbnail size
+ * @param  {object} site Site object
+ * @returns {object}      Width and height dimensions
  */
 export function getThumbnailSizeDimensions( size, site ) {
 	let width, height;
@@ -407,8 +415,8 @@ export function getThumbnailSizeDimensions( size, site ) {
  * Given an array of media items, returns a gallery shortcode using an
  * optional set of parameters.
  *
- * @param  {Object} settings Gallery settings
- * @return {String}          Gallery shortcode
+ * @param  {object} settings Gallery settings
+ * @returns {string}          Gallery shortcode
  */
 export function generateGalleryShortcode( settings ) {
 	let attrs;
@@ -457,10 +465,10 @@ export function generateGalleryShortcode( settings ) {
  * Returns true if the specified user is capable of deleting the media
  * item, or false otherwise.
  *
- * @param  {Object}  item Media item
- * @param  {Object}  user User object
- * @param  {Object}  site Site object
- * @return {Boolean}      Whether user can delete item
+ * @param  {object}  item Media item
+ * @param  {object}  user User object
+ * @param  {object}  site Site object
+ * @returns {boolean}      Whether user can delete item
  */
 export function canUserDeleteItem( item, user, site ) {
 	if ( user.ID === item.author_ID ) {
@@ -474,12 +482,14 @@ export function canUserDeleteItem( item, user, site ) {
  * Wrapper method for the HTML canvas toBlob() function. Polyfills if the
  * function does not exist
  *
- * @param {Object} canvas the canvas element
+ * @param {object} canvas the canvas element
  * @param {Function} callback function to process the blob after it is extracted
- * @param {String} type image type to be extracted
- * @param {Number} quality extracted image quality
+ * @param {string} type image type to be extracted
+ * @param {number} quality extracted image quality
  */
 export function canvasToBlob( canvas, callback, type, quality ) {
+	const { HTMLCanvasElement, Blob, atob } = window;
+
 	if ( ! HTMLCanvasElement.prototype.toBlob ) {
 		Object.defineProperty( HTMLCanvasElement.prototype, 'toBlob', {
 			value: function( polyfillCallback, polyfillType, polyfillQuality ) {
@@ -506,8 +516,8 @@ export function canvasToBlob( canvas, callback, type, quality ) {
 /**
  * Returns true if specified item is currently being uploaded (i.e. is transient).
  *
- * @param  {Object}  item Media item
- * @return {Boolean}      Whether item is being uploaded
+ * @param  {object}  item Media item
+ * @returns {boolean}      Whether item is being uploaded
  */
 export function isItemBeingUploaded( item ) {
 	if ( ! item ) {
@@ -525,8 +535,8 @@ export function isTransientPreviewable( item ) {
  * Returns an object describing a transient media item which can be used in
  * optimistic rendering prior to media persistence to server.
  *
- * @param  {(String|Object|Blob|File)} file URL or File object
- * @return {Object}                         Transient media object
+ * @param  {(string|object|window.Blob|window.File)} file URL or File object
+ * @returns {object}                         Transient media object
  */
 export function createTransientMedia( file ) {
 	const transientMedia = {

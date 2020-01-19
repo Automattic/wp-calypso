@@ -1,8 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -12,11 +11,11 @@ import { get, includes } from 'lodash';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import Card from 'components/card';
-import SignupActions from 'lib/signup/actions';
+import { Card } from '@automattic/components';
+import FormattedHeader from 'components/formatted-header';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
 import getRewindState from 'state/selectors/get-rewind-state';
-import SetupFooter from 'my-sites/site-settings/jetpack-credentials/credentials-setup-flow/setup-footer';
+import { submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -28,7 +27,6 @@ class RewindFormCreds extends Component {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
-		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 
 		// Connected props
@@ -41,16 +39,9 @@ class RewindFormCreds extends Component {
 	 *
 	 * @param {object} nextProps Props received by component for next update.
 	 */
-	componentWillUpdate( nextProps ) {
+	UNSAFE_componentWillUpdate( nextProps ) {
 		if ( nextProps.rewindIsNowActive ) {
-			SignupActions.submitSignupStep(
-				{
-					processingMessage: this.props.translate( 'Migrating your credentials' ),
-					stepName: this.props.stepName,
-				},
-				undefined,
-				{ rewindconfig: true }
-			);
+			this.props.submitSignupStep( { stepName: this.props.stepName }, { rewindconfig: true } );
 			this.props.goToNextStep();
 		}
 	}
@@ -65,32 +56,27 @@ class RewindFormCreds extends Component {
 		return this.props.rewindIsNowActive !== nextProps.rewindIsNowActive;
 	}
 
-	stepContent = () => {
+	stepContent() {
 		const { translate, siteId } = this.props;
 
-		return [
-			<div key="rewind-form-creds__header" className="rewind-form-creds__header">
-				<h3 className="rewind-form-creds__title rewind-switch__heading">
-					{ translate( 'Site credentials' ) }
-				</h3>
-				<p className="rewind-form-creds__description rewind-switch__description">
-					{ translate(
+		return (
+			<Fragment>
+				<FormattedHeader
+					headerText={ translate( 'Site credentials' ) }
+					subHeaderText={ translate(
 						"We'll guide you through the process of finding and entering your site's credentials."
 					) }
-				</p>
-			</div>,
-			<Card
-				key="rewind-form-creds__card"
-				className="rewind-form-creds__card rewind-switch__card rewind-switch__content"
-			>
-				<Card compact className="rewind-form-creds__legend">
-					{ translate( 'Enter your credentials' ) }
+				/>
+				<Card className="rewind-form-creds__card rewind-switch__card rewind-switch__content">
+					<Card compact className="rewind-form-creds__legend">
+						{ translate( 'Enter your credentials' ) }
+					</Card>
+					<RewindCredentialsForm role="main" siteId={ siteId } allowCancel={ false } />
 				</Card>
-				<RewindCredentialsForm role="main" siteId={ siteId } allowCancel={ false } />
-				<SetupFooter />
-			</Card>,
-		];
-	};
+				,
+			</Fragment>
+		);
+	}
 
 	render() {
 		return (
@@ -98,7 +84,6 @@ class RewindFormCreds extends Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
-				signupProgress={ this.props.signupProgress }
 				stepContent={ this.stepContent() }
 				hideFormattedHeader={ true }
 				hideSkip={ true }
@@ -117,5 +102,5 @@ export default connect(
 			rewindIsNowActive: includes( [ 'active', 'provisioning' ], rewindState.state ),
 		};
 	},
-	null
+	{ submitSignupStep }
 )( localize( RewindFormCreds ) );

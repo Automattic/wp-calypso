@@ -4,7 +4,7 @@
 
 	&.disabled {
 		.title-format-editor__editor-wrapper {
-			border: 1px solid var( --color-neutral-100 );
+			border: 1px solid var( --color-neutral-10 );
 			background-color: var( --color-neutral-0 );
 		}
 
@@ -14,7 +14,7 @@
 		}
 
 		.title-format-editor__token {
-			background-color: $gray;
+			background-color: var( --color-neutral-light );
 		}
 	}
 }
@@ -36,9 +36,9 @@
 
 .title-format-editor__button {
 	border-radius: 3px;
-	background-color: $white;
-	color: var( --color-neutral-600 );
-	border: 1px solid var( --color-neutral-100 );
+	background-color: var( --color-surface );
+	color: var( --color-neutral-60 );
+	border: 1px solid var( --color-neutral-10 );
 	padding: 3px 8px;
 	margin-left: 10px;
 	margin-top: 3px;
@@ -58,15 +58,15 @@
 }
 
 .title-format-editor__editor-wrapper {
-	border: 1px solid var( --color-neutral-200 );
+	border: 1px solid var( --color-neutral-20 );
 	padding: 7px 14px;
 	line-height: 24px;
 }
 
 .title-format-editor__token {
 	display: inline-block;
-	background-color: var( --color-neutral-500 );
-	color: $white;
+	background-color: var( --color-neutral-50 );
+	color: var( --color-text-inverted );
 	border-radius: 4px;
 	cursor: pointer;
 	transition: all 0.3s ease;
@@ -78,12 +78,12 @@
 
 .title-format-editor__token-close {
 	margin-left: 10px;
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 	font-size: 10px;
 }
 
 .title-format-editor__preview {
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-style: italic;
 	margin-top: 5px;
 	font-size: 13px;

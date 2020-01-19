@@ -1,16 +1,12 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
-import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
@@ -19,15 +15,29 @@ import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormInputValidation from 'components/forms/form-input-validation';
 import { getCountryStates } from 'state/country-states/selectors';
-import Input from './input';
 import QueryCountryStates from 'components/data/query-country-states';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
+import Input from './input';
 
 class StateSelect extends Component {
 	static instances = 0;
 
-	componentWillMount() {
+	inputRef = element => {
+		this.inputElement = element;
+
+		if ( ! this.props.inputRef ) {
+			return;
+		}
+
+		if ( typeof inputRef === 'function' ) {
+			this.props.inputRef( element );
+		} else {
+			this.props.inputRef.current = element;
+		}
+	};
+
+	UNSAFE_componentWillMount() {
 		this.instance = ++this.constructor.instances;
 	}
 
@@ -40,12 +50,13 @@ class StateSelect extends Component {
 	};
 
 	focus() {
-		const node = ReactDom.findDOMNode( this.refs.input );
+		const node = this.inputElement;
 		if ( node ) {
 			node.focus();
-			scrollIntoViewport( node );
-		} else {
-			this.refs.state.focus();
+			scrollIntoViewport( node, {
+				behavior: 'smooth',
+				scrollMode: 'if-needed',
+			} );
 		}
 	}
 
@@ -61,7 +72,6 @@ class StateSelect extends Component {
 			onBlur,
 			onChange,
 			isError,
-			inputRef,
 			selectText,
 		} = this.props;
 		const validationId = `validation-field-${ this.props.name }`;
@@ -70,7 +80,7 @@ class StateSelect extends Component {
 			<div>
 				{ countryCode && <QueryCountryStates countryCode={ countryCode } /> }
 				{ isEmpty( countryStates ) ? (
-					<Input ref="input" { ...this.props } />
+					<Input inputRef={ this.inputRef } { ...this.props } />
 				) : (
 					<div className={ classes }>
 						<FormLabel htmlFor={ `${ this.constructor.name }-${ this.instance }` }>
@@ -79,7 +89,6 @@ class StateSelect extends Component {
 						<FormSelect
 							aria-invalid={ isError }
 							aria-describedby={ validationId }
-							ref="input"
 							id={ `${ this.constructor.name }-${ this.instance }` }
 							name={ name }
 							value={ value }
@@ -88,7 +97,7 @@ class StateSelect extends Component {
 							onChange={ onChange }
 							onClick={ this.recordStateSelectClick }
 							isError={ isError }
-							inputRef={ inputRef }
+							inputRef={ this.inputRef }
 						>
 							<option key="--" value="" disabled="disabled">
 								{ selectText || this.props.translate( 'Select State' ) }

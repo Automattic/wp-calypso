@@ -82,7 +82,7 @@
 		align-items: center;
 
 		.reviews__action-collapse .gridicon {
-			fill: $gray;
+			fill: var( --color-neutral-light );
 			transform: rotate( 180deg );
 			transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ), color 0.2s ease-in;
 		}
@@ -147,7 +147,6 @@
 	}
 
 	.reviews__author-gravatar {
-		display: flex;
 		align-items: center;
 		margin-left: 16px;
 		margin-right: 0;
@@ -175,7 +174,7 @@
 		}
 
 		.gridicon {
-			color: $alert-green;
+			color: var( --color-success );
 		}
 	}
 
@@ -225,7 +224,7 @@
 	}
 
 	.reviews__verified-label {
-		color: $alert-green;
+		color: var( --color-success );
 		display: inline-block;
 		margin-left: 6px;
 		font-weight: normal;
@@ -252,7 +251,7 @@
 }
 
 .reviews__actions {
-	color: $gray;
+	color: var( --color-neutral-light );
 	padding-left: 4px;
 	user-select: none;
 
@@ -270,7 +269,7 @@
 		&.reviews__action-approve {
 			&:focus,
 			&:hover {
-				color: $alert-green;
+				color: var( --color-success );
 			}
 		}
 
@@ -279,18 +278,18 @@
 		&.reviews__action-delete {
 			&:focus,
 			&:hover {
-				color: $alert-red;
+				color: var( --color-error );
 			}
 		}
 
 		&.is-approved {
-			color: $alert-green;
+			color: var( --color-success );
 		}
 		&.is-spam {
-			color: $alert-red;
+			color: var( --color-error );
 		}
 		&.is-trash {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 	}
 }
@@ -305,7 +304,7 @@
 	border-left: 4px solid var( --color-neutral-0 );
 	margin-left: 16px;
 	padding-bottom: 16px;
-	background: lighten( $gray, 35% );
+	background: var( --color-neutral-0 );
 
 	.reviews__reply-content {
 		padding: 0 16px;
@@ -331,7 +330,7 @@
 		min-height: 68px;
 
 		&:not( :focus ) {
-			border-color: $white;
+			border-color: var( --color-border-inverted );
 			padding-left: 48px;
 			padding-right: 16px;
 			resize: none;
@@ -363,7 +362,7 @@
 	}
 
 	.reviews__reply-submit {
-		color: $gray;
+		color: var( --color-neutral-light );
 		font-size: 12px;
 		font-weight: 600;
 		position: absolute;
@@ -387,7 +386,7 @@
 
 		.accessible-focus &:focus {
 			border-color: var( --color-primary );
-			box-shadow: 0 0 0 2px $blue-light;
+			box-shadow: 0 0 0 2px var( --color-primary-10 );
 		}
 	}
 }

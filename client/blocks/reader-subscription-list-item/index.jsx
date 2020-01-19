@@ -1,12 +1,10 @@
-/** @format */
 /**
  * External Dependencies
  */
 import React from 'react';
 import classnames from 'classnames';
-import { isEmpty, get } from 'lodash';
+import { flowRight as compose, isEmpty, get } from 'lodash';
 import { localize } from 'i18n-calypso';
-import moment from 'moment';
 
 /**
  * Internal Dependencies
@@ -26,23 +24,30 @@ import { untrailingslashit } from 'lib/route';
 import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
 import { recordTrack, recordTrackWithRailcar } from 'reader/stats';
 import ExternalLink from 'components/external-link';
+import { withLocalizedMoment } from 'components/localized-moment';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * Takes in a string and removes the starting https, www., and removes a trailing slash
  *
- * @param {String} url - the url to format
- * @returns {String} - the formatted url.  e.g. "https://www.wordpress.com/" --> "wordpress.com"
+ * @param {string} url - the url to format
+ * @returns {string} - the formatted url.  e.g. "https://www.wordpress.com/" --> "wordpress.com"
  */
 const formatUrlForDisplay = url => untrailingslashit( url.replace( /^https?:\/\/(www\.)?/, '' ) );
 
 function ReaderSubscriptionListItem( {
+	moment,
+	translate,
 	url,
 	feedId,
 	feed,
 	siteId,
 	site,
 	className = '',
-	translate,
 	followSource,
 	showNotificationSettings,
 	showLastUpdatedDate,
@@ -60,7 +65,6 @@ function ReaderSubscriptionListItem( {
 	const siteUrl = getSiteUrl( { feed, site } );
 	const isMultiAuthor = get( site, 'is_multi_author', false );
 	const preferGravatar = ! isMultiAuthor;
-	const lastUpdatedDate = showLastUpdatedDate && moment( get( feed, 'last_update' ) ).fromNow();
 
 	if ( ! site && ! feed ) {
 		return <ReaderSubscriptionListItemPlaceholder />;
@@ -139,9 +143,9 @@ function ReaderSubscriptionListItem( {
 						>
 							{ formatUrlForDisplay( siteUrl ) }
 						</ExternalLink>
-						{ showLastUpdatedDate && (
+						{ showLastUpdatedDate && feed && feed.last_update && (
 							<span className="reader-subscription-list-item__timestamp">
-								{ feed && feed.last_update && translate( 'updated %s', { args: lastUpdatedDate } ) }
+								{ translate( 'updated %s', { args: moment( feed.last_update ).fromNow() } ) }
 							</span>
 						) }
 					</div>
@@ -163,4 +167,4 @@ function ReaderSubscriptionListItem( {
 	);
 }
 
-export default localize( ReaderSubscriptionListItem );
+export default compose( localize, withLocalizedMoment )( ReaderSubscriptionListItem );

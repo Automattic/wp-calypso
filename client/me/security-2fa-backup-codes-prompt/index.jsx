@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,6 +19,11 @@ import FormLabel from 'components/forms/form-label';
 import FormVerificationCodeInput from 'components/forms/form-verification-code-input';
 import Notice from 'components/notice';
 import twoStepAuthorization from 'lib/two-step-authorization';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class Security2faBackupCodesPrompt extends React.Component {
 	static displayName = 'Security2faBackupCodesPrompt';

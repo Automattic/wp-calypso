@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,7 +16,7 @@ const debug = debugFactory( 'calypso:stats:action-follow' );
 import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
 import analytics from 'lib/analytics';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 const StatsActionFollow = createReactClass( {
 	displayName: 'StatsActionFollow',

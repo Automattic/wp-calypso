@@ -4,27 +4,23 @@
 	overflow: hidden;
 	transition: background 0.05s ease-in-out;
 	text-decoration: none;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 
 	.card__link-indicator {
 		display: none;
 	}
 
 	&:hover {
-		background: lighten( $gray, 35 );
+		background: var( --color-neutral-0 );
 
 		.draft__title {
-			color: var( --color-neutral-500 );
+			color: var( --color-neutral-50 );
 		}
 	}
 
 	&.has-image {
 		.draft__title {
 			margin-right: 88px;
-		}
-
-		.draft__excerpt {
-			right: 88px;
 		}
 	}
 
@@ -57,29 +53,10 @@
 	color: var( --color-text-subtle );
 }
 
-.draft__excerpt {
-	display: block;
-	font-family: $serif;
-	font-size: 14px;
-	position: absolute;
-		top: 8px;
-		right: 16px;
-		left: 16px;
-	user-select: none;
-	opacity: 0;
-	transform: translateY( 60px );
-	transition: all 0.1s ease-in-out;
-}
-
 .draft__empty-text {
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	font-weight: 400;
 	font-style: italic;
-}
-
-// Not ready for primetime
-.draft__actions {
-	display: none;
 }
 
 // Images
@@ -106,7 +83,7 @@
 	}
 
 	.draft__title {
-		background: var( --color-neutral-100 );
+		background: var( --color-neutral-10 );
 		color: transparent;
 		height: 16px;
 		width: 30%;

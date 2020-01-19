@@ -1,7 +1,6 @@
-
 .diff-viewer__filename {
 	padding: 2px 4px;
-	background-color: var( --color-neutral-100 );
+	background-color: var( --color-neutral-10 );
 	font-weight: 500;
 }
 
@@ -14,18 +13,12 @@
 	white-space: pre;
 }
 
-.diff-viewer__path-prefix {
-}
-
-.diff-viewer__path {
-}
-
 .diff-viewer__line-numbers {
 	padding: 0 8px;
 	display: flex;
 	flex-direction: column;
 	text-align: right;
-	background-color: var( --color-neutral-100 );
+	background-color: var( --color-neutral-10 );
 	color: var( --color-text-subtle );
 }
 
@@ -42,11 +35,13 @@
 	}
 
 	& del {
-		background-color: lighten( $alert-red, 20% );
+		background-color: var( --color-error-10 );
+		color: var( --color-error-80 );
 		text-decoration: none;
 	}
 
 	& ins {
-		background-color: lighten( $alert-green, 20% );
+		background-color: var( --color-success-10 );
+		color: var( --color-success-80 );
 	}
 }

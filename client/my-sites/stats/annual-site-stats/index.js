@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -13,7 +10,7 @@ import { find, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
@@ -21,6 +18,12 @@ import { getSiteSlug } from 'state/sites/selectors';
 import StatsModulePlaceholder from 'my-sites/stats/stats-module/placeholder';
 import ErrorPanel from 'my-sites/stats/stats-error';
 import QuerySiteStats from 'components/data/query-site-stats';
+import { withLocalizedMoment } from 'components/localized-moment';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class AnnualSiteStats extends Component {
 	static propTypes = {
@@ -183,7 +186,7 @@ class AnnualSiteStats extends Component {
 					{ isWidget && currentYearData && this.renderWidgetContent( currentYearData, strings ) }
 					{ isWidget && previousYearData && this.renderWidgetContent( previousYearData, strings ) }
 					{ ! isWidget && years && this.renderTable( years, strings ) }
-					{ isWidget && years && years.length && (
+					{ isWidget && years && years.length !== 0 && (
 						<div className="module-expand">
 							<a href={ viewAllLink }>
 								{ translate( 'View All', { context: 'Stats: Button label to expand a panel' } ) }
@@ -209,4 +212,4 @@ export default connect( state => {
 		siteId,
 		siteSlug,
 	};
-} )( localize( AnnualSiteStats ) );
+} )( localize( withLocalizedMoment( AnnualSiteStats ) ) );

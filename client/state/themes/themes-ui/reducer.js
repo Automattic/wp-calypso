@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -7,7 +5,8 @@
 import {
 	THEME_BACK_PATH_SET,
 	THEMES_BANNER_HIDE,
-	THEMES_UPWORK_BANNER_HIDE,
+	THEMES_SHOWCASE_OPEN,
+	THEMES_BOOKMARK_SET,
 } from 'state/action-types';
 import { themesBannerVisibleSchema } from '../schema';
 import { combineReducers, withSchemaValidation } from 'state/utils';
@@ -29,22 +28,29 @@ export function themesBannerVisibleReducer( state = true, { type } ) {
 	return state;
 }
 
-// Themes banner visible state
-export function themesUpworkBannerVisibleReducer( state = true, { type } ) {
-	if ( THEMES_UPWORK_BANNER_HIDE === type ) {
-		return false;
-	}
-	return state;
-}
-
 export const themesBannerVisible = withSchemaValidation(
 	themesBannerVisibleSchema,
 	themesBannerVisibleReducer
 );
 
-export const themesUpworkBannerVisible = withSchemaValidation(
-	themesBannerVisibleSchema,
-	themesUpworkBannerVisibleReducer
-);
+// "More Themes" button state.
+export function themesShowcaseOpen( state = false, action ) {
+	if ( THEMES_SHOWCASE_OPEN === action.type ) {
+		return true;
+	}
+	return state;
+}
 
-export default combineReducers( { backPath, themesBannerVisible, themesUpworkBannerVisible } );
+export function themesBookmark( state = '', action ) {
+	if ( THEMES_BOOKMARK_SET === action.type ) {
+		return action.payload;
+	}
+	return state;
+}
+
+export default combineReducers( {
+	backPath,
+	themesBannerVisible,
+	themesShowcaseOpen,
+	themesBookmark,
+} );

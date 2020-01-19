@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,6 +10,11 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { recordPermalinkClick } from 'reader/stats';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class PostExcerptLink extends React.Component {
 	static propTypes = {

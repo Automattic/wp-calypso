@@ -92,7 +92,7 @@
 	}
 
 	.highlight {
-		background-color: lighten( $blue-light, 15 );
+		background-color: var( --color-primary-0 );
 	}
 }
 

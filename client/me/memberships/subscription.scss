@@ -1,0 +1,125 @@
+.memberships__subscription-meta {
+	padding: 0;
+	font-size: 13px;
+}
+
+.memberships__subscription-inner-meta {
+	display: flex;
+	margin: 0;
+	list-style: none;
+	overflow: auto;
+	padding: 0 24px;
+	border-top: 1px solid var( --color-neutral-0 );
+
+	@include breakpoint( '<660px' ) {
+		flex-direction: column;
+		padding: 0 16px 16px;
+	}
+
+	li {
+		color: var( --color-neutral-60 );
+		font-size: 13px;
+
+		@include breakpoint( '<660px' ) {
+			clear: both;
+			overflow: auto;
+			margin-top: 15px;
+		}
+
+		@include breakpoint( '>660px' ) {
+			box-sizing: border-box;
+			flex: 1 1 auto;
+			font-size: 14px;
+			text-align: center;
+			padding: 15px 8px 12px;
+
+			&:first-child {
+				padding-left: 0;
+			}
+			&:last-child {
+				padding-right: 0;
+			}
+		}
+
+		+ li {
+			@include breakpoint( '>660px' ) {
+				border-left: 1px solid var( --color-neutral-0 );
+			}
+		}
+
+		> a {
+			color: var( --color-neutral-60 );
+			display: block;
+			text-decoration: none;
+		}
+	}
+}
+
+.memberships__subscription-inner-detail-label {
+	font-style: normal;
+	font-weight: 600;
+
+	@include breakpoint( '<660px' ) {
+		flex-direction: row;
+		float: left;
+	}
+
+	@include breakpoint( '>660px' ) {
+		color: var( --color-text-subtle );
+		display: block;
+		font-family: $sans;
+		font-size: 12px;
+		font-weight: 400;
+		margin: 0 0 12px;
+	}
+}
+
+.memberships__subscription-inner-detail {
+	@include breakpoint( '<660px' ) {
+		display: block;
+		float: right;
+		text-align: right;
+	}
+
+	.payment-logo {
+		margin-right: 5px;
+	}
+
+	a {
+		display: block;
+		cursor: pointer;
+	}
+}
+
+.memberships__subscription-title {
+	color: var( --color-primary );
+	display: block;
+	font-size: 18px;
+	line-height: 1.2em;
+	padding: 20px;
+	white-space: nowrap;
+	text-align: center;
+}
+
+.memberships__subscription-remove {
+	color: var( --color-error );
+	text-align: left;
+	width: 100%;
+	cursor: hand;
+
+	&:active,
+	&:focus,
+	&:hover {
+		color: var( --color-error-60 );
+	}
+
+	.accessible-focus &:focus {
+		box-shadow: 0 0 0 2px var( --color-error-light );
+	}
+
+	.gridicon {
+		margin-top: -2px;
+		margin-right: 4px;
+		vertical-align: middle;
+	}
+}

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,9 +13,9 @@ import isRequestingBillingTransactions from 'state/selectors/is-requesting-billi
  * Returns true if we are currently making a request to bulk fetch past billing
  * transactions or fetching an individual transaction. False otherwise.
  *
- * @param  {Object}   state         Global state tree
- * @param  {Number}   transactionId ID of the requested transaction
- * @return {Boolean}                Whether a billing transaction is being requested
+ * @param  {object}   state         Global state tree
+ * @param  {number}   transactionId ID of the requested transaction
+ * @returns {boolean}                Whether a billing transaction is being requested
  */
 export default ( state, transactionId ) =>
 	isRequestingBillingTransactions( state ) ||

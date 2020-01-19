@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -35,9 +33,16 @@ import PostShare from 'blocks/post-share';
 import PostTypeListPostThumbnail from 'my-sites/post-type-list/post-thumbnail';
 import PostActionCounts from 'my-sites/post-type-list/post-action-counts';
 import PostActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellipsis-menu';
+import PostActionsEllipsisMenuEdit from 'my-sites/post-type-list/post-actions-ellipsis-menu/edit';
+import PostActionsEllipsisMenuTrash from 'my-sites/post-type-list/post-actions-ellipsis-menu/trash';
 import PostTypeSiteInfo from 'my-sites/post-type-list/post-type-site-info';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 import { preload } from 'sections-helper';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 function preloadEditor() {
 	preload( 'post-editor' );
@@ -135,12 +140,15 @@ class PostItem extends React.Component {
 			isAllSitesModeSelected,
 			translate,
 			multiSelectEnabled,
+			showPublishedStatus,
 			hasExpandedContent,
+			isTypeWpBlock,
 		} = this.props;
 
 		const title = post ? post.title : null;
 		const isPlaceholder = ! globalId;
-		const enabledPostLink = isPlaceholder || multiSelectEnabled ? null : postUrl;
+		const isTrashed = post && 'trash' === post.status;
+		const enabledPostLink = isPlaceholder || multiSelectEnabled || isTrashed ? null : postUrl;
 
 		const panelClasses = classnames( 'post-item__panel', className, {
 			'is-untitled': ! title,
@@ -199,7 +207,7 @@ class PostItem extends React.Component {
 							<span className="post-item__meta-time-status">
 								<a href={ enabledPostLink } className="post-item__time-status-link">
 									<PostTime globalId={ globalId } />
-									<PostStatus globalId={ globalId } />
+									<PostStatus globalId={ globalId } showAll={ showPublishedStatus } />
 								</a>
 							</span>
 							<PostActionCounts globalId={ globalId } />
@@ -209,7 +217,15 @@ class PostItem extends React.Component {
 						globalId={ globalId }
 						onClick={ this.clickHandler( 'image' ) }
 					/>
-					{ ! multiSelectEnabled && <PostActionsEllipsisMenu globalId={ globalId } /> }
+					{ ! multiSelectEnabled && ! isTypeWpBlock && (
+						<PostActionsEllipsisMenu globalId={ globalId } />
+					) }
+					{ ! multiSelectEnabled && isTypeWpBlock && (
+						<PostActionsEllipsisMenu globalId={ globalId } includeDefaultActions={ false }>
+							<PostActionsEllipsisMenuEdit key="edit" />
+							<PostActionsEllipsisMenuTrash key="trash" />
+						</PostActionsEllipsisMenu>
+					) }
 				</div>
 				{ hasExpandedContent && this.renderExpandedContent() }
 			</div>
@@ -229,8 +245,10 @@ PostItem.propTypes = {
 	singleUserQuery: PropTypes.bool,
 	className: PropTypes.string,
 	compact: PropTypes.bool,
+	showPublishedStatus: PropTypes.bool,
 	hideActiveSharePanel: PropTypes.func,
 	hasExpandedContent: PropTypes.bool,
+	isTypeWpBlock: PropTypes.bool,
 };
 
 export default connect(
@@ -258,6 +276,7 @@ export default connect(
 			hasExpandedContent,
 			isCurrentPostSelected: isPostSelected( state, globalId ),
 			multiSelectEnabled: isMultiSelectEnabled( state ),
+			isTypeWpBlock: 'wp_block' === post.type,
 		};
 	},
 	{

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,17 +6,27 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { numberFormat, localize } from 'i18n-calypso';
-import { get, has, omit } from 'lodash';
+import { defer, get, has, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { mapAuthor, startImporting } from 'lib/importer/actions';
 import { appStates } from 'state/imports/constants';
-import ProgressBar from 'components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import AuthorMappingPane from './author-mapping-pane';
 import Spinner from 'components/spinner';
 import { loadTrackingTool } from 'state/analytics/actions';
+
+import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
+import ImporterDoneButton from 'my-sites/importer/importer-action-buttons/done-button';
+import BusyImportingButton from 'my-sites/importer/importer-action-buttons/busy-importing-button';
+import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
+
+/**
+ * Style dependencies
+ */
+import './importing-pane.scss';
 
 const sum = ( a, b ) => a + b;
 
@@ -82,7 +90,7 @@ const hasProgressInfo = progress => {
 };
 
 class ImportingPane extends React.PureComponent {
-	static displayName = 'SiteSettingsImportingPane';
+	static displayName = 'ImportingPane';
 
 	static propTypes = {
 		importerStatus: PropTypes.shape( {
@@ -115,8 +123,7 @@ class ImportingPane extends React.PureComponent {
 
 	getHeadingText = () => {
 		return this.props.translate(
-			'Importing may take a while if your site has a lot of media, but ' +
-				"you can safely navigate away from this page if you need to: we'll send you a notification when it's done."
+			"You can safely navigate away from this page if you need to; we'll send you a notification when it's done."
 		);
 	};
 
@@ -125,52 +132,17 @@ class ImportingPane extends React.PureComponent {
 	};
 
 	getSuccessText = () => {
-		const {
-				site: { slug },
-				progress: { page, post },
-			} = this.props.importerStatus,
-			pageLink = <a href={ '/pages/' + slug } />,
-			pageText = this.props.translate( 'Pages', { context: 'noun' } ),
-			postLink = <a href={ '/posts/' + slug } />,
-			postText = this.props.translate( 'Posts', { context: 'noun' } );
-
-		const pageCount = page.total;
-		const postCount = post.total;
-
-		if ( pageCount && postCount ) {
-			return this.props.translate(
-				'All done! Check out {{a}}Posts{{/a}} and ' +
-					'{{b}}Pages{{/b}} to see your imported content.',
-				{
-					components: {
-						a: postLink,
-						b: pageLink,
-					},
-				}
-			);
-		}
-
-		if ( pageCount || postCount ) {
-			return this.props.translate(
-				'All done! Check out {{a}}%(articles)s{{/a}} ' + 'to see your imported content.',
-				{
-					components: { a: pageCount ? pageLink : postLink },
-					args: { articles: pageCount ? pageText : postText },
-				}
-			);
-		}
-
-		return this.props.translate( 'Import complete!' );
+		return this.props.translate( 'Success! Your content has been imported.' );
 	};
 
 	getImportMessage = numResources => {
 		if ( 0 === numResources ) {
-			return this.props.translate( 'Finishing up the import' );
+			return this.props.translate( 'Finishing up the import.' );
 		}
 
 		return this.props.translate(
-			'Waiting on %(numResources)s resource to import',
-			'Waiting on %(numResources)s resources to import',
+			'%(numResources)s post, page, or media file left to import',
+			'%(numResources)s posts, pages, and media files left to import',
 			{
 				count: numResources,
 				args: { numResources: numberFormat( numResources ) },
@@ -221,15 +193,41 @@ class ImportingPane extends React.PureComponent {
 	}
 
 	handleOnMap = ( source, target ) =>
-		mapAuthor( get( this.props, 'importerStatus.importerId' ), source, target );
+		defer( () => mapAuthor( get( this.props, 'importerStatus.importerId' ), source, target ) );
+
+	renderActionButtons = () => {
+		if ( this.isProcessing() || this.isMapping() ) {
+			// We either don't want to show buttons while processing
+			// or, in the case of `isMapping`, we let another component (author-mapping-pane)
+			// take care of rendering the buttons.
+			return null;
+		}
+
+		const { importerStatus, site } = this.props;
+		const isFinished = this.isFinished();
+		const isImporting = this.isImporting();
+		const isError = this.isError();
+		const showFallbackButton = isError || ( ! isImporting && ! isFinished );
+
+		return (
+			<ImporterActionButtonContainer>
+				{ isImporting && <BusyImportingButton /> }
+				{ isFinished && <ImporterDoneButton importerStatus={ importerStatus } site={ site } /> }
+				{ showFallbackButton && (
+					<ImporterCloseButton importerStatus={ importerStatus } site={ site } isEnabled />
+				) }
+			</ImporterActionButtonContainer>
+		);
+	};
 
 	render() {
 		const {
-			importerStatus: { customData },
+			importerStatus,
 			site: { ID: siteId, name: siteName, single_user_site: hasSingleAuthor },
 			sourceType,
+			site,
 		} = this.props;
-
+		const { customData } = importerStatus;
 		const progressClasses = classNames( 'importer__import-progress', {
 			'is-complete': this.isFinished(),
 		} );
@@ -271,6 +269,8 @@ class ImportingPane extends React.PureComponent {
 						sourceAuthors={ customData.sourceAuthors }
 						sourceTitle={ customData.siteTitle || this.props.translate( 'Original Site' ) }
 						targetTitle={ siteName }
+						importerStatus={ importerStatus }
+						site={ site }
 					/>
 				) }
 				{ ( this.isImporting() || this.isProcessing() ) &&
@@ -282,16 +282,16 @@ class ImportingPane extends React.PureComponent {
 							<br />
 						</div>
 					) ) }
-				{ blockingMessage && <div>{ blockingMessage }</div> }
+				{ blockingMessage && (
+					<div className="importer__import-progress-message">{ blockingMessage }</div>
+				) }
 				<div>
 					<p className="importer__status-message">{ statusMessage }</p>
 				</div>
+				{ this.renderActionButtons() }
 			</div>
 		);
 	}
 }
 
-export default connect(
-	null,
-	{ loadTrackingTool }
-)( localize( ImportingPane ) );
+export default connect( null, { loadTrackingTool } )( localize( ImportingPane ) );

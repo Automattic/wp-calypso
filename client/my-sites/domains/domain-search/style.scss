@@ -12,74 +12,11 @@
 }
 
 .domain-search-page-wrapper h3 {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 15px;
 	word-wrap: break-word;
 
 	@include breakpoint( '>660px' ) {
 		font-size: 17px;
-	}
-}
-
-// site redirect step
-
-.site-redirect-step {
-	padding: 0;
-
-	fieldset {
-		clear: left;
-	}
-
-	form.map-domain-step__form {
-		padding: 20px;
-		margin-bottom: 9px;
-	}
-
-	p {
-		color: var( --color-neutral-700 );
-		font-size: 13px;
-		font-weight: 600;
-		margin-bottom: 0;
-		opacity: 0.7;
-	}
-
-	.domain-product-price {
-		float: left;
-		margin-bottom: 20px;
-		min-width: 0;
-
-		@include breakpoint( '>960px' ) {
-			float: right;
-			margin-top: -5px;
-			margin-bottom: 0;
-		}
-	}
-}
-
-.site-redirect-step__domain-description {
-	word-break: break-word;
-
-	@include breakpoint( '>960px' ) {
-		max-width: 75%;
-		float: left;
-		margin-bottom: 20px;
-	}
-}
-
-input.site-redirect-step__external-domain {
-	@include breakpoint( '>660px' ) {
-		float: left;
-		width: calc( 100% - 90px );
-	}
-}
-
-.site-redirect-step__go {
-	margin: 10px 0 0;
-	width: 100%;
-
-	@include breakpoint( '>660px' ) {
-		float: right;
-		margin: 0;
-		width: 80px;
 	}
 }

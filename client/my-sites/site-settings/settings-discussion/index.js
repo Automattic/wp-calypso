@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,18 +6,18 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import controller from './controller';
-import settingsController from 'my-sites/site-settings/settings-controller';
-import { navigation, siteSelection } from 'my-sites/controller';
+import { discussion } from './controller';
 import { makeLayout, render as clientRender } from 'controller';
+import { navigation, siteSelection } from 'my-sites/controller';
+import { siteSettings } from 'my-sites/site-settings/settings-controller';
 
 export default function() {
 	page(
 		'/settings/discussion/:site_id',
 		siteSelection,
 		navigation,
-		settingsController.siteSettings,
-		controller.discussion,
+		siteSettings,
+		discussion,
 		makeLayout,
 		clientRender
 	);

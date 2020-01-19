@@ -1,6 +1,6 @@
 .help-courses__course-list {
 	&.is-placeholder {
-		@include placeholder( 23% );
+		@include placeholder( --color-neutral-10 );
 		height: 300px;
 	}
 }
@@ -9,7 +9,7 @@
 	margin-top: 16px;
 
 	&.is-placeholder {
-		@include placeholder( 23% );
+		@include placeholder( --color-neutral-10 );
 	}
 
 	.help__help-teaser-button-icon {
@@ -24,13 +24,13 @@
 .help-courses__course-videos-label,
 .help-courses__header-cake .header-cake__title,
 .help-courses__course-label {
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .help-courses__course-video-title,
 .help-courses__course-title {
 	@extend %content-font;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-weight: 700;
 	font-size: 21px;
 	line-height: 1.3;
@@ -59,7 +59,7 @@
 }
 
 .help-courses__course-schedule-item {
-	color: $gray;
+	color: var( --color-neutral-light );
 	display: flex;
 	align-items: center;
 }
@@ -87,7 +87,7 @@
 }
 
 .help-courses__course-schedule-item-businessplan-button {
-	background-color: var( --color-neutral-700 );
+	background-color: var( --color-neutral-70 );
 	border-radius: 3px;
 	color: var( --color-neutral-0 );
 	padding: 5px 12px;
@@ -101,7 +101,7 @@
 }
 
 .help-courses__course-video-date {
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-size: 13px;
 }
 

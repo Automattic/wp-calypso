@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,14 +10,14 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import ExternalLink from 'components/external-link';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle';
 import Main from 'components/main';
-import observe from 'lib/mixins/data-observe';
+import observe from 'lib/mixins/data-observe'; //eslint-disable-line no-restricted-imports
 import { protectForm } from 'lib/protect-form';
 import { localizeUrl } from 'lib/i18n-utils';
 import twoStepAuthorization from 'lib/two-step-authorization';
@@ -29,8 +27,14 @@ import formBase from 'me/form-base';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const TRACKS_OPT_OUT_USER_SETTINGS_KEY = 'tracks_opt_out';
 
+/* eslint-disable react/prefer-es6-class */
 const Privacy = createReactClass( {
 	/**
 	 * `formBase` is used for `getDisabledState` and `submitForm`
@@ -74,9 +78,33 @@ const Privacy = createReactClass( {
 				<SectionHeader label={ translate( 'Usage Information' ) } />
 				<Card className="privacy__settings">
 					<form onChange={ markChanged } onSubmit={ this.submitForm }>
-						<p>{ translate( 'We are committed to your privacy and security.' ) }</p>
-
 						<FormFieldset>
+							<p>{ translate( 'We are committed to your privacy and security.' ) }</p>
+							<p>
+								{ translate(
+									'The information you choose to share helps us improve our products, make marketing to you more ' +
+										'relevant, personalize your WordPress.com experience, and more as detailed in ' +
+										'our {{privacyPolicyLink}}privacy policy{{/privacyPolicyLink}}.',
+									{
+										components: {
+											privacyPolicyLink,
+										},
+									}
+								) }
+							</p>
+							<p>
+								{ translate(
+									'In addition to our analytics tool, we use other tracking tools, including some from third parties. ' +
+										'{{cookiePolicyLink}}Read about these{{/cookiePolicyLink}} and how to ' +
+										'control them.',
+									{
+										components: {
+											cookiePolicyLink,
+										},
+									}
+								) }
+							</p>
+							<hr />
 							<p>
 								<FormToggle
 									id="tracks_opt_out"
@@ -95,32 +123,6 @@ const Privacy = createReactClass( {
 									) }
 								</FormToggle>
 							</p>
-
-							<p>
-								{ translate(
-									'This information helps us improve our products, make marketing to you more ' +
-										'relevant, personalize your WordPress.com experience, and more as detailed in ' +
-										'our {{privacyPolicyLink}}privacy policy{{/privacyPolicyLink}}.',
-									{
-										components: {
-											privacyPolicyLink,
-										},
-									}
-								) }
-							</p>
-
-							<p>
-								{ translate(
-									'We use other tracking tools, including some from third parties. ' +
-										'{{cookiePolicyLink}}Read about these{{/cookiePolicyLink}} and how to ' +
-										'control them.',
-									{
-										components: {
-											cookiePolicyLink,
-										},
-									}
-								) }
-							</p>
 						</FormFieldset>
 
 						<FormButton
@@ -138,7 +140,4 @@ const Privacy = createReactClass( {
 	},
 } );
 
-export default compose(
-	localize,
-	protectForm
-)( Privacy );
+export default compose( localize, protectForm )( Privacy );

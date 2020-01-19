@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,8 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AddressView from 'woocommerce/components/address-view';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import CustomerAddressDialog from './dialog';
 import {
 	areLocationsLoaded,
@@ -130,12 +128,12 @@ class OrderCustomerInfo extends Component {
 
 		return (
 			<div className="order-customer">
-				<SectionHeader label={ translate( 'Customer Information' ) } />
+				<SectionHeader label={ translate( 'Customer information' ) } />
 				<Card>
 					<div className="order-customer__container">
 						<div className="order-customer__billing">
 							<h3 className="order-customer__billing-details">
-								{ translate( 'Billing Details' ) }
+								{ translate( 'Billing details' ) }
 								{ isEditable ? (
 									<Button
 										compact
@@ -162,7 +160,7 @@ class OrderCustomerInfo extends Component {
 
 						<div className="order-customer__shipping">
 							<h3 className="order-customer__shipping-details">
-								{ translate( 'Shipping Details' ) }
+								{ translate( 'Shipping details' ) }
 								{ isEditable ? (
 									<Button
 										compact

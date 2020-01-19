@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { map, zipObject, fill, size, filter, get, compact, partition, min, noop } from 'lodash';
 
-/***
+/**
  * Internal dependencies
  */
 import getActiveReplyCommentId from 'state/selectors/get-active-reply-comment-id';
@@ -27,6 +26,11 @@ import PostCommentFormRoot from 'blocks/comments/form-root';
 import { requestPostComments, requestComment, setActiveReply } from 'state/comments/actions';
 import { getErrorKey } from 'state/comments/utils';
 import { getCurrentUserId } from 'state/current-user/selectors';
+
+/**
+ * Style dependencies
+ */
+import './list.scss';
 
 /**
  * ConversationsCommentList is the component that represents all of the comments for a conversations-stream
@@ -111,7 +115,7 @@ export class ConversationCommentList extends React.Component {
 		this.reqMoreComments();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { hiddenComments, commentsTree, siteId, commentErrors } = nextProps;
 
 		// if we are running low on comments to expand then fetch more

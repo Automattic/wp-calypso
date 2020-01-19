@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,16 +6,13 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import debugFactory from 'debug';
 import titlecase from 'to-title-case';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import config from 'config';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import DocumentHead from 'components/data/document-head';
-import notices from 'notices';
 import urlSearch from 'lib/url-search';
 import Main from 'components/main';
 import NavItem from 'components/section-nav/item';
@@ -27,8 +22,13 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 
-const debug = debugFactory( 'calypso:my-sites:pages:pages' );
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const statuses = [ 'published', 'drafts', 'scheduled', 'trashed' ];
 
 class PagesMain extends React.Component {
@@ -42,18 +42,6 @@ class PagesMain extends React.Component {
 	static defaultProps = {
 		perPage: 20,
 	};
-
-	componentWillMount() {
-		this._setWarning( this.props.site );
-	}
-
-	componentDidMount() {
-		debug( 'Pages React component mounted.' );
-	}
-
-	componentWillUpdate() {
-		this._setWarning( this.props.site );
-	}
 
 	getAnalyticsPath() {
 		const { status, siteId } = this.props;
@@ -85,8 +73,7 @@ class PagesMain extends React.Component {
 	}
 
 	render() {
-		const { doSearch, search, translate } = this.props;
-		const status = this.props.status || 'published';
+		const { doSearch, siteId, search, status = 'published', translate } = this.props;
 
 		const filterStrings = {
 			published: translate( 'Published', { context: 'Filter label for pages list' } ),
@@ -113,10 +100,15 @@ class PagesMain extends React.Component {
 			} ),
 		};
 		return (
-			<Main classname="pages">
+			<Main wideLayout classname="pages">
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
-				<DocumentHead title={ translate( 'Site Pages' ) } />
+				<DocumentHead title={ translate( 'Pages' ) } />
 				<SidebarNavigation />
+				<FormattedHeader
+					className="pages__page-heading"
+					headerText={ translate( 'Pages' ) }
+					align="left"
+				/>
 				<SectionNav selectedText={ filterStrings[ status ] }>
 					<NavTabs label={ translate( 'Status', { context: 'Filter page group label for tabs' } ) }>
 						{ this.getNavItems( filterStrings, status ) }
@@ -131,7 +123,7 @@ class PagesMain extends React.Component {
 						delaySearch={ true }
 					/>
 				</SectionNav>
-				<PageList { ...this.props } />
+				<PageList siteId={ siteId } status={ status } search={ search } />
 			</Main>
 		);
 	}
@@ -157,28 +149,9 @@ class PagesMain extends React.Component {
 			);
 		} );
 	}
-
-	_setWarning( selectedSite ) {
-		const { translate } = this.props;
-		if ( selectedSite && selectedSite.jetpack && ! selectedSite.hasMinimumJetpackVersion ) {
-			notices.warning(
-				translate(
-					'Jetpack %(version)s is required to take full advantage of all page editing features.',
-					{
-						args: { version: config( 'jetpack_min_version' ) },
-					}
-				),
-				{
-					button: translate( 'Update now' ),
-					href: selectedSite.options.admin_url + 'plugins.php?plugin_status=upgrade',
-				}
-			);
-		}
-	}
 }
 
 const mapState = state => ( {
-	site: getSelectedSite( state ),
 	siteId: getSelectedSiteId( state ),
 } );
 

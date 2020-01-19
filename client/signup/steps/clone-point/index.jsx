@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,17 +10,19 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import { applySiteOffset } from 'lib/site/timezone';
+import { Card } from '@automattic/components';
 import ActivityLogItem from 'my-sites/activity/activity-log-item';
 import Pagination from 'components/pagination';
 import QuerySites from 'components/data/query-sites';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
 import Tile from 'components/tile-grid/tile';
 import TileGrid from 'components/tile-grid';
-import { adjustMoment } from 'my-sites/activity/activity-log/utils';
 import { requestActivityLogs } from 'state/data-getters';
-import withLocalizedMoment from 'components/with-localized-moment';
+import { getSiteOption } from 'state/sites/selectors';
+import { withLocalizedMoment } from 'components/localized-moment';
+import { submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -35,7 +36,6 @@ class ClonePointStep extends Component {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
-		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 		signupDependencies: PropTypes.object,
 	};
@@ -46,18 +46,12 @@ class ClonePointStep extends Component {
 	};
 
 	selectCurrent = () => {
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
-			clonePoint: 0,
-		} );
-
+		this.props.submitSignupStep( { stepName: this.props.stepName }, { clonePoint: 0 } );
 		this.props.goToNextStep();
 	};
 
 	selectedPoint = activityTs => {
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
-			clonePoint: activityTs,
-		} );
-
+		this.props.submitSignupStep( { stepName: this.props.stepName }, { clonePoint: activityTs } );
 		this.props.goToNextStep();
 	};
 
@@ -65,17 +59,17 @@ class ClonePointStep extends Component {
 		this.setState( { showLog: true } );
 	};
 
-	applySiteOffset = moment => {
+	applySiteOffset( date ) {
 		const { timezone, gmtOffset } = this.props;
-		return adjustMoment( { timezone, gmtOffset, moment } );
-	};
+		return applySiteOffset( date, { timezone, gmtOffset } );
+	}
 
 	changePage = pageNumber => {
 		this.setState( { currentPage: pageNumber } );
 		window.scrollTo( 0, 0 );
 	};
 
-	renderActivityLog = () => {
+	renderActivityLog() {
 		const { siteId, logs, moment, translate } = this.props;
 
 		const actualPage = Math.max(
@@ -86,11 +80,11 @@ class ClonePointStep extends Component {
 		const theseLogs = logs.slice( ( actualPage - 1 ) * PAGE_SIZE, actualPage * PAGE_SIZE );
 
 		const timePeriod = ( () => {
-			const today = this.applySiteOffset( moment.utc( Date.now() ) );
+			const today = this.applySiteOffset( moment() );
 			let last = null;
 
 			return ( { rewindId } ) => {
-				const ts = this.applySiteOffset( moment.utc( rewindId * 1000 ) );
+				const ts = this.applySiteOffset( moment( rewindId * 1000 ) );
 
 				if ( null === last || ! ts.isSame( last, 'day' ) ) {
 					last = ts;
@@ -109,40 +103,41 @@ class ClonePointStep extends Component {
 
 		return (
 			<div>
-				<QuerySites siteId={ siteId } />
-				<QuerySiteSettings siteId={ siteId } />
-				<section className="clone-point__wrapper">
-					{ theseLogs.map( log => (
-						<Fragment key={ log.activityId }>
-							{ timePeriod( log ) }
-							<ActivityLogItem
-								key={ log.activityId }
-								siteId={ siteId }
-								activity={ log }
-								cloneOnClick={ this.selectedPoint }
-								disableRestore
-								disableBackup
-								hideRestore
-								enableClone
-							/>
-						</Fragment>
-					) ) }
-				</section>
-				<Pagination
-					className="clone-point__pagination"
-					key="clone-point-pagination"
-					nextLabel={ translate( 'Older' ) }
-					page={ this.state.currentPage }
-					pageClick={ this.changePage }
-					perPage={ PAGE_SIZE }
-					prevLabel={ translate( 'Newer' ) }
-					total={ logs.length }
-				/>
+				<Card className="clone-point__card">
+					<QuerySites siteId={ siteId } />
+					<QuerySiteSettings siteId={ siteId } />
+					<section className="clone-point__wrapper">
+						{ theseLogs.map( log => (
+							<Fragment key={ log.activityId }>
+								{ timePeriod( log ) }
+								<ActivityLogItem
+									key={ log.activityId }
+									siteId={ siteId }
+									activity={ log }
+									cloneOnClick={ this.selectedPoint }
+									disableRestore
+									disableBackup
+									enableClone
+								/>
+							</Fragment>
+						) ) }
+					</section>
+					<Pagination
+						className="clone-point__pagination"
+						key="clone-point-pagination"
+						nextLabel={ translate( 'Older' ) }
+						page={ this.state.currentPage }
+						pageClick={ this.changePage }
+						perPage={ PAGE_SIZE }
+						prevLabel={ translate( 'Newer' ) }
+						total={ logs.length }
+					/>
+				</Card>
 			</div>
 		);
-	};
+	}
 
-	renderSelector = () => {
+	renderSelector() {
 		const { translate } = this.props;
 
 		return (
@@ -165,18 +160,18 @@ class ClonePointStep extends Component {
 				/>
 			</TileGrid>
 		);
-	};
+	}
 
-	renderStepContent = () => {
+	renderStepContent() {
 		return (
 			<div className="clone-point__wrap">
 				{ this.state.showLog ? this.renderActivityLog() : this.renderSelector() }
 			</div>
 		);
-	};
+	}
 
 	render() {
-		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
+		const { flowName, stepName, positionInFlow, translate } = this.props;
 
 		const headerText = translate( 'Clone point' );
 		const subHeaderText = translate(
@@ -192,19 +187,23 @@ class ClonePointStep extends Component {
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
 				positionInFlow={ positionInFlow }
-				signupProgress={ signupProgress }
 				stepContent={ this.renderStepContent() }
 			/>
 		);
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const siteId = get( ownProps, [ 'signupDependencies', 'originBlogId' ] );
-	const logs = siteId && requestActivityLogs( siteId, {} );
+export default connect(
+	( state, ownProps ) => {
+		const siteId = get( ownProps, [ 'signupDependencies', 'originBlogId' ] );
+		const logs = siteId && requestActivityLogs( siteId, {} );
 
-	return {
-		siteId,
-		logs: ( siteId && logs.data ) || [],
-	};
-} )( localize( withLocalizedMoment( ClonePointStep ) ) );
+		return {
+			siteId,
+			logs: ( siteId && logs.data ) || [],
+			timezone: getSiteOption( state, siteId, 'timezone' ),
+			gmtOffset: getSiteOption( state, siteId, 'gmt_offset' ),
+		};
+	},
+	{ submitSignupStep }
+)( localize( withLocalizedMoment( ClonePointStep ) ) );

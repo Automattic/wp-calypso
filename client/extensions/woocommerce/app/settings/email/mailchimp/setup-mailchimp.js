@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog, ProgressBar } from '@automattic/components';
 import { getSiteTitle } from 'state/sites/selectors';
 import { getStoreLocation } from 'woocommerce/state/sites/settings/general/selectors';
 import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
@@ -27,7 +25,6 @@ import {
 import KeyInputStep from './setup-steps/key-input.js';
 import LogIntoMailchimp from './setup-steps/log-into-mailchimp.js';
 import NewsletterSettings from './setup-steps/newsletter-settings.js';
-import ProgressBar from 'components/progress-bar';
 import ProgressIndicator from 'components/wizard/progress-indicator';
 import RequiredPluginsInstallView from 'woocommerce/app/dashboard/required-plugins-install-view';
 import StoreInfoStep from './setup-steps/store-info.js';
@@ -93,7 +90,7 @@ class MailChimpSetup extends React.Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// No state changes while doing request.
 		if ( nextProps.isBusy ) {
 			return;

@@ -11,8 +11,8 @@
 	right: auto #{'/*rtl:ignore*/'};
 
 	.popover__inner {
-		background-color: $white;
-		border: 1px solid var( --color-neutral-100 );
+		background-color: var( --color-surface );
+		border: 1px solid var( --color-neutral-10 );
 		border-radius: 4px;
 		box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ), 0 0 56px rgba( 0, 0, 0, 0.075 );
 		text-align: center;
@@ -20,7 +20,7 @@
 	}
 
 	.popover__arrow {
-		border: 10px dashed var( --color-neutral-100 );
+		border: 10px dashed var( --color-neutral-10 );
 		height: 0;
 		line-height: 0;
 		position: absolute;
@@ -67,7 +67,7 @@
 
 			&::before {
 				#{$opposite-side}: 2px #{'/*rtl:ignore*/'};
-				border: 10px solid $white;
+				border: 10px solid var( --color-border-inverted );
 				content: ' ';
 				position: absolute;
 				#{$cross-side}: 50% #{'/*rtl:ignore*/'};
@@ -162,7 +162,7 @@
 
 	&,
 	&:visited {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	&.is-selected,
@@ -174,12 +174,12 @@
 		color: white;
 
 		.gridicon {
-			color: $white;
+			color: var( --color-text-inverted );
 		}
 	}
 
 	&[disabled] {
-		color: var( --color-neutral-0 );
+		color: var( --color-neutral-20 );
 		.gridicon {
 			color: var( --color-neutral-0 );
 		}
@@ -201,7 +201,7 @@
 
 	// with gridicons
 	.gridicon {
-		color: var( --color-neutral-200 );
+		color: var( --color-text-subtle );
 		vertical-align: bottom;
 		margin-right: 8px;
 	}
@@ -214,8 +214,7 @@
 	}
 }
 
-.popover__menu-separator,
-.popover__hr {
+.popover__menu-separator {
 	margin: 4px 0;
 	background: var( --color-neutral-0 );
 }

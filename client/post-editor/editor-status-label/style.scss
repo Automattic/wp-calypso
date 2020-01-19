@@ -1,5 +1,5 @@
 .editor-status-label {
-	color: $gray;
+	color: var( --color-neutral-light );
 	cursor: pointer;
 	display: block;
 	font-size: 11px;
@@ -10,13 +10,13 @@
 
 	.gridicon {
 		display: inline-block;
-		fill: var( --color-neutral-200 );
+		fill: var( --color-neutral-20 );
 		position: absolute;
 		left: 14px;
 	}
 
 	strong {
-		color: var( --color-neutral-400 );
+		color: var( --color-neutral-40 );
 	}
 
 	&.is-publish strong {

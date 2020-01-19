@@ -1,0 +1,28 @@
+.free-domain-explainer__title {
+
+    color: var( --color-text );
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 1.3;
+    margin: 0;
+    margin-bottom: 0.7em;
+}
+
+.free-domain-explainer__subtitle {
+    color: var( --color-text );
+    font-weight: 400;
+    font-size: 15px;
+    margin: 0;
+    margin-bottom: 0.3em;
+
+    & .button,
+    & .button:hover,
+    & .button:focus {
+        color: var( --color-link );
+        display: inline;
+        font-size: 15px;
+        margin-left: 0.3em;
+        text-decoration: underline;
+        vertical-align: baseline;
+    }
+}

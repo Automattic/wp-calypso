@@ -1,25 +1,22 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { localize, moment } from 'i18n-calypso';
-import Gridicon from 'gridicons';
-import { isEmpty } from 'lodash';
+import { localize } from 'i18n-calypso';
+import Gridicon from 'components/gridicon';
+import { isEmpty, flowRight as compose } from 'lodash';
 import { DateUtils } from 'react-day-picker';
+
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import DatePicker from 'components/date-picker';
-import Popover from 'components/popover';
+import { Button } from '@automattic/components';
 import { updateFilter } from 'state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import MobileSelectPortal from './mobile-select-portal';
-import { isWithinBreakpoint } from 'lib/viewport';
+import DateRangePicker from 'components/date-range';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
@@ -36,7 +33,7 @@ export class DateRangeSelector extends Component {
 	}
 
 	handleClose = () => {
-		const { siteId, filter, onClose, selectDateRange } = this.props;
+		const { moment, siteId, filter, onClose, selectDateRange } = this.props;
 		const fromDate = this.getFromDate( filter );
 		const toDate = this.getToDate( filter );
 
@@ -63,6 +60,18 @@ export class DateRangeSelector extends Component {
 		}
 
 		onClose();
+	};
+
+	handleDateRangeCommit = ( startDate, endDate ) => {
+		const { moment, selectDateRange } = this.props;
+		const formattedStartDate = startDate ? moment( startDate ).format( DATE_FORMAT ) : null;
+		const formattedEndDate = endDate
+			? moment( endDate )
+					.endOf( 'day' )
+					.format( DATE_FORMAT )
+			: null;
+
+		selectDateRange( this.props.siteId, formattedStartDate, formattedEndDate ); // enough?
 	};
 
 	isSelectingFirstDay = ( from, to, day ) => {
@@ -170,7 +179,7 @@ export class DateRangeSelector extends Component {
 	};
 
 	getFormattedDate = ( from, to ) => {
-		const { translate } = this.props;
+		const { moment, translate } = this.props;
 		const fromMoment = from ? moment( from ) : null;
 		const toMoment = to ? moment( to ) : null;
 		const fromFormated = this.getFormattedFromDate( fromMoment, toMoment );
@@ -192,7 +201,7 @@ export class DateRangeSelector extends Component {
 	};
 
 	getFromDate = () => {
-		const { filter } = this.props;
+		const { moment, filter } = this.props;
 		const { fromDate } = this.state;
 		if ( fromDate ) {
 			return fromDate;
@@ -204,7 +213,7 @@ export class DateRangeSelector extends Component {
 	};
 
 	getToDate = () => {
-		const { filter } = this.props;
+		const { moment, filter } = this.props;
 		const { toDate } = this.state;
 		if ( toDate ) {
 			return toDate;
@@ -220,62 +229,6 @@ export class DateRangeSelector extends Component {
 		return this.getToDate( filter );
 	};
 
-	renderDateRangeSelection = () => {
-		const { translate } = this.props;
-		const from = this.getFromDate();
-		const to = this.getToDate();
-		const enteredTo = this.getEnteredToDate();
-		const modifiers = { start: from, end: enteredTo };
-		const disabledDays = [ { after: new Date() } ];
-		const selectedDays = [ from, { from, to: enteredTo } ];
-
-		return (
-			<div className="filterbar__date-range-wrap">
-				<DatePicker
-					fromMonth={ this.getFromDate() }
-					selectedDays={ selectedDays }
-					disabledDays={ disabledDays }
-					modifiers={ modifiers }
-					onSelectDay={ this.handleDayClick }
-					onDayMouseEnter={ this.handleDayMouseEnter }
-					onDayTouchStart={ this.handleDayClick }
-					onDayTouchEnd={ this.handleDayClick }
-					onDayTouchMove={ this.handleDayMouseEnter }
-				/>
-				<div className="filterbar__date-range-selection-info">
-					<div className="filterbar__date-range-info">
-						{ ! from &&
-							! to &&
-							translate( '{{icon/}} Please select the first day.', {
-								components: { icon: <Gridicon icon="info" /> },
-							} ) }
-						{ from &&
-							! to &&
-							translate( '{{icon/}} Please select the last day.', {
-								components: { icon: <Gridicon icon="info" /> },
-							} ) }
-						{ from && to && (
-							<Button borderless compact onClick={ this.handleResetSelection }>
-								{ translate( '{{icon/}} clear', {
-									components: { icon: <Gridicon icon="cross-small" /> },
-								} ) }
-							</Button>
-						) }
-					</div>
-					<Button
-						className="filterbar__date-range-apply"
-						primary
-						compact
-						onClick={ this.handleClose }
-						disabled={ ! from }
-					>
-						{ translate( 'Apply' ) }
-					</Button>
-				</div>
-			</div>
-		);
-	};
-
 	handleButtonClick = () => {
 		const { isVisible, onButtonClick } = this.props;
 		if ( isVisible ) {
@@ -288,51 +241,43 @@ export class DateRangeSelector extends Component {
 		const { isVisible } = this.props;
 		const from = this.getFromDate();
 		const to = this.getToDate();
+		const now = new Date();
 
-		const buttonClass = classnames( {
-			filterbar__selection: true,
-			'is-selected': !! from,
+		const buttonClass = classnames( 'filterbar__selection', {
+			'is-selected': from,
 			'is-active': isVisible && ! from,
 		} );
+
 		return (
-			<Fragment>
-				<Button
-					className={ buttonClass }
-					compact
-					borderless
-					onClick={ this.handleButtonClick }
-					ref={ this.dateRangeButton }
-				>
-					{ this.getFormattedDate( from, to ) }
-				</Button>
-				{ ( from || to ) && (
-					<Button
-						className="filterbar__selection-close"
-						compact
-						borderless
-						onClick={ this.handleResetSelection }
-					>
-						<Gridicon icon="cross-small" />
-					</Button>
+			<DateRangePicker
+				selectedStartDate={ from }
+				selectedEndDate={ to }
+				lastSelectableDate={ now }
+				onDateCommit={ this.handleDateRangeCommit }
+				renderTrigger={ props => (
+					<Fragment>
+						<Button
+							className={ buttonClass }
+							compact
+							borderless
+							onClick={ props.onTriggerClick }
+							ref={ props.buttonRef }
+						>
+							{ this.getFormattedDate( from, to ) }
+						</Button>
+						{ ( from || to ) && (
+							<Button
+								className="filterbar__selection-close"
+								compact
+								borderless
+								onClick={ this.handleResetSelection }
+							>
+								<Gridicon icon="cross-small" />
+							</Button>
+						) }
+					</Fragment>
 				) }
-				{ isWithinBreakpoint( '>660px' ) && (
-					<Popover
-						id="filterbar__date-range"
-						isVisible={ isVisible }
-						onClose={ this.handleClose }
-						position="bottom"
-						relativePosition={ { left: -125 } }
-						context={ this.dateRangeButton.current }
-					>
-						{ this.renderDateRangeSelection() }
-					</Popover>
-				) }
-				{ ! isWithinBreakpoint( '>660px' ) && (
-					<MobileSelectPortal isVisible={ isVisible }>
-						<Card>{ this.renderDateRangeSelection() }</Card>
-					</MobileSelectPortal>
-				) }
-			</Fragment>
+			/>
 		);
 	}
 }
@@ -374,7 +319,8 @@ const mapDispatchToProps = dispatch => ( {
 	},
 } );
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( localize( DateRangeSelector ) );
+export default compose(
+	connect( null, mapDispatchToProps ),
+	localize,
+	withLocalizedMoment
+)( DateRangeSelector );

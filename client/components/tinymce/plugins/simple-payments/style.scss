@@ -78,6 +78,10 @@
 		flex-shrink: 0;
 		text-align: left;
 	}
+	
+	.empty-content__line {
+		margin: 8px;
+	}
 
 	.empty-content__action {
 		margin-top: 16px;
@@ -115,7 +119,7 @@
 		justify-content: center;
 		flex-direction: column;
 		background-color: var( --color-neutral-0 );
-		box-shadow: inset 0 0 0 1px lighten( $gray, 25% );
+		box-shadow: inset 0 0 0 1px var( --color-neutral-5 );
 		font-size: 14px;
 		overflow: hidden;
 
@@ -173,14 +177,6 @@
 
 	@include breakpoint( '>660px' ) {
 		display: flex;
-
-		.upload-image {
-			margin-right: 25px;
-		}
-	}
-
-	.upload-image {
-		margin-bottom: 20px;
 	}
 
 	.dialog__editor-simple-payments-modal-image {
@@ -197,7 +193,7 @@
 	justify-content: center;
 	margin-bottom: 24px;
 	background-color: var( --color-neutral-0 );
-	box-shadow: inset 0 0 0 1px lighten( $gray, 25% );
+	box-shadow: inset 0 0 0 1px var( --color-neutral-5 );
 
 	@include breakpoint( '>660px' ) {
 		flex: none;

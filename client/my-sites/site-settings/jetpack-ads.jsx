@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,8 +11,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Banner from 'components/banner';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
+import { Card, CompactCard } from '@automattic/components';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -143,7 +140,7 @@ class JetpackAds extends Component {
 				</Card>
 
 				{ wordadsModuleActive && (
-					<CompactCard href={ `/ads/earnings/${ selectedSiteSlug }` }>
+					<CompactCard href={ `/earn/ads-earnings/${ selectedSiteSlug }` }>
 						{ translate( 'View your earnings' ) }
 					</CompactCard>
 				) }

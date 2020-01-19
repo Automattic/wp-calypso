@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -15,7 +14,7 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import ReaderAvatar from 'blocks/reader-avatar';
 import { getSite } from 'state/reader/sites/selectors';
 import { getFeed } from 'state/reader/feeds/selectors';
@@ -149,11 +148,11 @@ class CrossPost extends PureComponent {
 					{ index + 2 < array.length && <span>, </span> }
 					{ index + 2 === array.length && (
 						<span>
-							{' '}
+							{ ' ' }
 							{ translate( 'and', {
 								comment:
 									'last conjunction in a list of blognames: (blog1, blog2,) blog3 _and_ blog4',
-							} ) }{' '}
+							} ) }{ ' ' }
 						</span>
 					) }
 				</span>
@@ -205,7 +204,7 @@ class CrossPost extends PureComponent {
 							</a>
 						</h1>
 					) }
-					<Emojify>{ this.getDescription( post.author.first_name ) }</Emojify>
+					{ post.author && <Emojify>{ this.getDescription( post.author.first_name ) }</Emojify> }
 				</div>
 				{ feedId && <QueryReaderFeed feedId={ +feedId } includeMeta={ false } /> }
 				{ siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }

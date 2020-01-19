@@ -1,11 +1,11 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
 /**
  * External dependencies
  */
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { expect } from 'chai';
 
 /**
@@ -203,14 +203,6 @@ describe( 'route', function() {
 					'example.wordpress.com'
 				);
 				expect( route.getSiteFragment( '/me/purchases/2916284/cancel' ) ).to.equal( 2916284 );
-				expect(
-					route.getSiteFragment(
-						'/me/purchases/example.wordpress.com/12345678/cancel-privacy-protection'
-					)
-				).to.equal( 'example.wordpress.com' );
-				expect(
-					route.getSiteFragment( '/me/purchases/2916284/12345678/cancel-privacy-protection' )
-				).to.equal( 2916284 );
 				expect(
 					route.getSiteFragment(
 						'/me/purchases/example.wordpress.com/12345678/payment/edit/87654321'
@@ -469,6 +461,16 @@ describe( 'route', function() {
 					'/domains/manage'
 				);
 			} );
+		} );
+	} );
+
+	describe( 'getMessagePathForJITM', function() {
+		test( 'strips starting and ending slash from path', function() {
+			expect( route.getMessagePathForJITM( '/test/' ) ).to.equal( 'test' );
+		} );
+
+		test( 'converts internal slashes to dashes', function() {
+			expect( route.getMessagePathForJITM( 'test/path/to/site' ) ).to.equal( 'test-path-to-site' );
 		} );
 	} );
 } );

@@ -2,7 +2,7 @@ $devdocs-max-width: 720px;
 
 // Sidebar Title
 .devdocs__title {
-	color: var( --color-neutral-600 );
+	color: var( --color-sidebar-text-alternative );
 	font-weight: 300;
 	font-size: 24px;
 	padding: 24px;
@@ -31,11 +31,11 @@ $devdocs-max-width: 720px;
 
 	.devdocs__result-snippet {
 		font-size: 15px;
-		color: $gray-text;
+		color: var( --color-text );
 		margin-top: 4px;
 
 		mark {
-			background: rgba( $blue-light, 0.4 );
+			background: rgba( var( --color-primary-light-rgb ), 0.4 );
 			padding: 2px;
 			border-radius: 3px;
 		}
@@ -48,9 +48,7 @@ $devdocs-max-width: 720px;
 
 // Block and Component examples
 .main.devdocs.devdocs__blocks,
-.main.devdocs.devdocs__components,
-.main.devdocs.devdocs__gutenberg-blocks,
-.main.devdocs.devdocs__gutenberg-components {
+.main.devdocs.devdocs__components {
 	// Make way for showing big components and multiple columns
 	max-width: 100%;
 }
@@ -87,21 +85,21 @@ $devdocs-max-width: 720px;
 
 .design__instance-link {
 	display: inline-block;
-	background: $white;
+	background: var( --color-surface );
 	text-decoration: underline;
 	border-radius: 3px;
 	padding: 3px 6px;
 	margin: 0 6px 4px 0;
 	font-family: $code;
-	box-shadow: 0 1px 2px rgba( $gray-dark, 0.05 );
+	box-shadow: 0 1px 2px rgba( var( --color-neutral-70-rgb ), 0.05 );
 }
 
 // The wrapper containing the actual examples
 .docs-example__wrapper {
 	box-sizing: border-box;
-	background: $white;
+	background: var( --color-surface );
 	box-shadow: 0 1px 2px var( --color-neutral-0 );
-	border: 1px solid rgba( $gray-lighten-20, 0.65 );
+	border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.65 );
 	margin: 0 auto 24px;
 	position: relative;
 
@@ -110,7 +108,7 @@ $devdocs-max-width: 720px;
 		font-size: 18px;
 		font-weight: 300;
 		letter-spacing: 1px;
-		border-bottom: 1px solid rgba( $gray-lighten-20, 0.65 );
+		border-bottom: 1px solid rgba( var( --color-neutral-10-rgb ), 0.65 );
 
 		a,
 		a:visited {
@@ -125,7 +123,7 @@ $devdocs-max-width: 720px;
 	.docs-example__wrapper-content {
 		background: var( --color-surface-backdrop );
 		padding: 16px;
-		--docs-example-grid: #{hex-to-rgb( $gray-dark )};
+		--docs-example-grid: var( --color-neutral-70-rgb );
 		box-shadow: inset 0 2px 1px rgba( var( --docs-example-grid ), 0.075 );
 
 		// Grid background
@@ -152,10 +150,6 @@ $devdocs-max-width: 720px;
 		// looks strange.
 		.card:last-child {
 			margin-bottom: 0;
-		}
-
-		.is-laser-black & {
-			--docs-example-grid: 255, 255, 255;
 		}
 	}
 
@@ -204,7 +198,7 @@ $devdocs-max-width: 720px;
 			}
 
 			&:hover {
-				border-color: $blue-light;
+				border-color: var( --color-primary-light );
 
 				.docs-example__wrapper-content {
 					opacity: 0.7;
@@ -284,7 +278,7 @@ $devdocs-max-width: 720px;
 
 		.docs-selectors__result-arguments,
 		.docs-selectors__result-return {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 			background: var( --color-neutral-0 );
 			border-radius: 4px;
 			padding: 16px 24px;
@@ -300,7 +294,7 @@ $devdocs-max-width: 720px;
 			display: flex;
 			padding-top: 16px;
 			margin-bottom: 24px;
-			border-top: 1px solid var( --color-neutral-100 );
+			border-top: 1px solid var( --color-neutral-10 );
 
 			.docs-selectors__result-arguments-name {
 				width: 30%;
@@ -313,12 +307,12 @@ $devdocs-max-width: 720px;
 		.docs-selectors__result-arguments-name strong,
 		.docs-selectors__param-type {
 			font-family: $code;
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 
 		.docs-selectors__result-arguments-name strong {
-			color: var( --color-neutral-700 );
-			background: $white;
+			color: var( --color-neutral-70 );
+			background: var( --color-surface );
 			border-radius: 3px;
 			display: inline-block;
 			padding: 2px 8px;
@@ -348,9 +342,13 @@ $devdocs-max-width: 720px;
 // Documentation — Copy-heavy things like Contributing and Typography
 .devdocs__doc-content {
 	max-width: $devdocs-max-width;
-	margin: 32px auto;
+	margin: 32px 20px;
 	font-size: 16px;
 	font-family: $serif;
+
+	@include breakpoint( '>660px' ) {
+		margin: 32px auto;
+	}
 
 	a {
 		text-decoration: underline;
@@ -366,11 +364,11 @@ $devdocs-max-width: 720px;
 		line-height: 1.2;
 		margin: 32px 0 16px;
 		font-size: 21px;
-		color: var( --color-neutral-600 );
+		color: var( --color-neutral-60 );
 	}
 
 	h1 {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		font-size: 54px;
 		line-height: 1.4;
 		margin-top: 0;
@@ -378,7 +376,7 @@ $devdocs-max-width: 720px;
 
 	h2 {
 		font-size: 32px;
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	h3 {
@@ -401,22 +399,22 @@ $devdocs-max-width: 720px;
 
 	pre {
 		padding: 8px;
-		background: $white;
-		background-color: $white;
-		color: $blue-dark;
+		background: var( --color-surface );
+		background-color: var( --color-surface );
+		color: var( --color-primary-dark );
 	}
 
 	code {
-		background-color: $white;
+		background-color: var( --color-surface );
 		border-radius: 3px;
-		color: $blue-dark;
+		color: var( --color-primary-dark );
 		font-size: 15px;
 		padding: 2px 6px;
 		max-width: 100px;
 	}
 
 	pre > code {
-		background-color: $transparent;
+		background-color: rgba( var( --color-surface-rgb ), 0 );
 		padding: 2px 0;
 	}
 
@@ -425,15 +423,13 @@ $devdocs-max-width: 720px;
 	}
 
 	.label {
-		$invert: $white;
 		font-weight: bold;
 		font-size: 15px;
 		padding: 1px 5px 2px;
 		border-radius: 3px;
 
-		&.status-awaiting-fixes {
+		&.status-needs-author-reply {
 			background: #ea652d;
-			color: $invert;
 		}
 
 		&.status-needs-review {
@@ -446,7 +442,7 @@ $devdocs-max-width: 720px;
 
 		&.status-in-progress {
 			background: #2880e2;
-			color: $invert;
+			color: var( --color-text-inverted );
 		}
 	}
 
@@ -481,10 +477,13 @@ $devdocs-max-width: 720px;
 	max-width: 150px;
 }
 
-// At the end of documentation and reademe's
+// At the top of documentation and readme's
 a.devdocs__doc-edit-link {
 	text-align: center;
 	text-decoration: underline;
 	float: right;
-	position: relative;
+
+	@include breakpoint( '<660px' ) {
+		margin-right: 12px;
+	}
 }

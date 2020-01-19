@@ -14,7 +14,7 @@
 
 	.products__list-placeholder {
 		@include placeholder();
-		background: $white;
+		background: var( --color-surface );
 		height: 525px;
 		margin-bottom: 16px;
 		margin-top: -15px;
@@ -71,7 +71,7 @@
 	}
 
 	.table-row:hover {
-		background: lighten( $gray, 35% );
+		background: var( --color-neutral-0 );
 	}
 
 	.products__list-name {

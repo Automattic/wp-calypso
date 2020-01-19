@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,14 +9,14 @@ import page from 'page';
 import { makeLayout, render as clientRender } from 'controller';
 import { navigation, siteSelection } from 'my-sites/controller';
 import { performance } from './controller';
-import settingsController from 'my-sites/site-settings/settings-controller';
+import { siteSettings } from 'my-sites/site-settings/settings-controller';
 
 export default function() {
 	page(
 		'/settings/performance/:site_id',
 		siteSelection,
 		navigation,
-		settingsController.siteSettings,
+		siteSettings,
 		performance,
 		makeLayout,
 		clientRender

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,15 +6,14 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import ActionCard from 'components/action-card';
-import Button from 'components/button';
+import { Button, Card } from '@automattic/components';
 import canCurrentUser from 'state/selectors/can-current-user';
-import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 import DocumentHead from 'components/data/document-head';
 import ExternalLink from 'components/external-link';
@@ -52,7 +49,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	};
 
 	goBack = () => {
-		page.back( `/stats/day/${ this.props.siteSlug }` );
+		page.back( `/marketing/tools/${ this.props.siteSlug }` );
 	};
 
 	handleConnect = keyringConnection => {
@@ -120,7 +117,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 				>
 					{ translate( 'Create Listing', {
 						comment: 'Call to Action to add a business listing to Google My Business',
-					} ) }{' '}
+					} ) }{ ' ' }
 					<Gridicon icon="external" />
 				</Button>
 			);
@@ -167,6 +164,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	render() {
 		const { siteId, translate } = this.props;
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Main className="gmb-select-business-type" wideLayout>
 				<PageViewTracker

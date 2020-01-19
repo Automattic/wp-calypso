@@ -1,10 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { noop, uniq } from 'lodash';
@@ -18,6 +14,11 @@ import analytics from 'lib/analytics';
 import MediaActions from 'lib/media/actions';
 import { getAllowedFileTypesForSite, isSiteAllowedFileTypesToBeTrusted } from 'lib/media/utils';
 import { VideoPressFileTypes } from 'lib/media/constants';
+
+/**
+ * Style dependencies
+ */
+import './upload-button.scss';
 
 export default class extends React.Component {
 	static displayName = 'MediaLibraryUploadButton';
@@ -34,6 +35,8 @@ export default class extends React.Component {
 		href: null,
 	};
 
+	formRef = React.createRef();
+
 	onClick = () => {
 		if ( this.props.onClick ) {
 			this.props.onClick();
@@ -49,7 +52,7 @@ export default class extends React.Component {
 			MediaActions.add( this.props.site, event.target.files );
 		}
 
-		ReactDom.findDOMNode( this.refs.form ).reset();
+		this.formRef.current.reset();
 		this.props.onAddMedia();
 		analytics.mc.bumpStat( 'editor_upload_via', 'add_button' );
 	};
@@ -61,7 +64,7 @@ export default class extends React.Component {
 	 * but is supported in Internet Explorer and Chrome browsers. Further input
 	 * validation will occur when attempting to upload the file.
 	 *
-	 * @return {string} Supported file extensions, as comma-separated string
+	 * @returns {string} Supported file extensions, as comma-separated string
 	 */
 	getInputAccept = () => {
 		if ( ! isSiteAllowedFileTypesToBeTrusted( this.props.site ) ) {
@@ -78,7 +81,7 @@ export default class extends React.Component {
 		const classes = classNames( 'media-library__upload-button', 'button', this.props.className );
 
 		return (
-			<form ref="form" className={ classes }>
+			<form ref={ this.formRef } className={ classes }>
 				{ this.props.children }
 				<input
 					type="file"

@@ -1,13 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
-import debugModule from 'debug';
 import { connect } from 'react-redux';
 
 /**
@@ -18,82 +14,47 @@ import FollowersList from './followers-list';
 import ViewersList from './viewers-list';
 import TeamList from 'my-sites/people/team-list';
 import EmptyContent from 'components/empty-content';
-import observe from 'lib/mixins/data-observe';
 import PeopleNotices from 'my-sites/people/people-notices';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PeopleSectionNav from 'my-sites/people/people-section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isPrivateSite from 'state/selectors/is-private-site';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import titlecase from 'to-title-case';
 
-/**
- * Module variables
- */
-const debug = debugModule( 'calypso:my-sites:people:main' );
+class People extends React.Component {
+	renderPeopleList() {
+		const { site, search, filter, translate } = this.props;
 
-// TODO: port to es6 once we remove the last observe
-export const People = createReactClass( {
-	// eslint-disable-line react/prefer-es6-class
-
-	displayName: 'People',
-
-	mixins: [ observe( 'peopleLog' ) ],
-
-	componentDidMount: function() {
-		debug( 'PeopleList React component mounted.' );
-	},
-
-	renderPeopleList: function( site ) {
-		switch ( this.props.filter ) {
+		switch ( filter ) {
 			case 'team':
-				return <TeamList site={ site } search={ this.props.search } />;
+				return <TeamList site={ site } search={ search } />;
 			case 'followers':
-				return <FollowersList site={ site } label={ this.props.translate( 'Followers' ) } />;
+				return <FollowersList site={ site } />;
 			case 'email-followers':
-				return (
-					<FollowersList
-						site={ site }
-						search={ this.props.search }
-						label={ this.props.translate( 'Email Followers' ) }
-						type="email"
-					/>
-				);
+				return <FollowersList site={ site } search={ search } type="email" />;
 			case 'viewers':
-				return <ViewersList site={ site } label={ this.props.translate( 'Viewers' ) } />;
+				return <ViewersList site={ site } label={ translate( 'Viewers' ) } />;
 			default:
 				return null;
 		}
-	},
+	}
 
-	render: function() {
+	render() {
 		const {
 			isJetpack,
-			jetpackPeopleSupported,
 			canViewPeople,
 			siteId,
 			site,
 			search,
 			filter,
 			isPrivate,
+			translate,
 		} = this.props;
 
-		// Jetpack 3.7 is necessary to manage people
-		if ( isJetpack && ! jetpackPeopleSupported ) {
-			return (
-				<Main>
-					<PageViewTracker
-						path={ `/people/${ filter }/:site` }
-						title={ `People > ${ titlecase( filter ) }` }
-					/>
-					<SidebarNavigation />
-					<JetpackManageErrorPage template="updateJetpack" siteId={ siteId } version="3.7" />
-				</Main>
-			);
-		}
 		if ( siteId && ! canViewPeople ) {
 			return (
 				<Main>
@@ -103,7 +64,7 @@ export const People = createReactClass( {
 					/>
 					<SidebarNavigation />
 					<EmptyContent
-						title={ this.props.translate( 'You are not authorized to view this page' ) }
+						title={ translate( 'You are not authorized to view this page' ) }
 						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
 					/>
 				</Main>
@@ -116,12 +77,16 @@ export const People = createReactClass( {
 					title={ `People > ${ titlecase( filter ) }` }
 				/>
 				<SidebarNavigation />
+				<FormattedHeader
+					className="people__page-heading"
+					headerText={ translate( 'People' ) }
+					align="left"
+				/>
 				<div>
 					{
 						<PeopleSectionNav
 							isJetpack={ isJetpack }
 							isPrivate={ isPrivate }
-							jetpackPeopleSupported={ jetpackPeopleSupported }
 							canViewPeople={ canViewPeople }
 							search={ search }
 							filter={ filter }
@@ -129,12 +94,12 @@ export const People = createReactClass( {
 						/>
 					}
 					<PeopleNotices />
-					{ this.renderPeopleList( site ) }
+					{ this.renderPeopleList() }
 				</div>
 			</Main>
 		);
-	},
-} );
+	}
+}
 
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
@@ -144,6 +109,5 @@ export default connect( state => {
 		isJetpack: isJetpackSite( state, siteId ),
 		isPrivate: isPrivateSite( state, siteId ),
 		canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
-		jetpackPeopleSupported: isJetpackMinimumVersion( state, siteId, '3.7.0-beta' ),
 	};
 } )( localize( People ) );

@@ -3,16 +3,24 @@
 	input {
 		padding-left: 42px;
 	}
-	.gridicon {
+	.gridicon,
+	.spinner {
 		position: absolute;
 		top: 10px;
 		left: 10px;
-		fill: $gray-darken-30;
+		fill: var( --color-text-subtle );
 
 		// On smaller screens the input gets bigger,
 		// so this icon needs to move down a bit.
 		@include breakpoint( '<660px' ) {
 			top: 16px;
+		}
+	}
+
+	.spinner {
+		top: 12px;
+		@include breakpoint( '<660px' ) {
+			top: 17px;
 		}
 	}
 }

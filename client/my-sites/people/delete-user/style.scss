@@ -1,9 +1,18 @@
+.delete-user__author-selector {
+	display: inline-block;
+	margin: 0.5em 0 0.5em 16px;
+}
+
 .delete-user__select-placeholder {
-	border-bottom: 1px solid $gray;
+	font-weight: 400;
+
+	& .user {
+		display: inline-block;
+	}
 }
 
 .delete-user__explanation {
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .delete-user__single-site .author-selector__author-toggle .gravatar {
@@ -12,14 +21,24 @@
 }
 
 .delete-user__reassign-user-name {
+	font-weight: 400;
 	margin: 0 3px 0 8px;
-}
-
-.delete-user__remove-user .gridicon {
-	margin: -2px 4px 0 0;
 	vertical-align: middle;
 }
 
-.delete-user__remove-user {
-	cursor: pointer;
+.delete-user__remove-user.button.is-borderless {
+	color: var( --color-primary );
+			font-weight: 400;
+		
+			&:active,
+			&:focus,
+			&:hover {
+				color: var( --color-link-dark );
+			}
+		
+			.gridicon {
+				top: 0;
+				margin: -2px 4px 0 0;
+				vertical-align: middle;
+			}
 }

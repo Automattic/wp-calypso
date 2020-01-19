@@ -34,13 +34,13 @@
 		right: 0;
 		bottom: 0;
 	display: block;
-	background: rgba( $gray-light, 0.8 );
+	background: rgba( var( --color-neutral-0-rgb ), 0.8 );
 }
 
 .web-preview__content {
 	display: flex;
 	flex-direction: column;
-	box-shadow: 0 0 0 1px rgba( $gray, 0.5 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-light-rgb ), 0.5 );
 	background: var( --color-neutral-0 );
 	border-radius: 4px 4px 0 0;
 	position: absolute;
@@ -64,14 +64,14 @@
 
 .web-preview__toolbar {
 	height: 46px;
-	background: $white;
-	border-bottom: 1px solid var( --color-neutral-100 );
+	background: var( --color-surface );
+	border-bottom: 1px solid var( --color-neutral-10 );
 	border-radius: 4px 4px 0 0;
 	display: flex;
 }
 
 .web-preview__close.button {
-	border-right: 1px solid lighten( $gray, 25% );
+	border-right: 1px solid var( --color-neutral-5 );
 	padding: 6px 16px;
 	min-width: 80px;
 	color: var( --color-primary );
@@ -131,7 +131,7 @@ a.web-preview__external.button {
 	}
 
 	&:hover .form-text-input:not( :focus ) {
-		border-color: var( --color-neutral-100 );
+		border-color: var( --color-neutral-10 );
 	}
 
 	.clipboard-button {
@@ -149,7 +149,7 @@ a.web-preview__external.button {
 	padding-right: 8px;
 
 	&.is-active {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	@include breakpoint( '<660px' ) {
@@ -163,11 +163,11 @@ a.web-preview__external.button {
 	height: 100%;
 
 	&.is-active {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	&.is-showing-device-switcher {
-		border-left: 1px solid var( --color-neutral-100 );
+		border-left: 1px solid var( --color-neutral-10 );
 		margin-left: 8px;
 	}
 }

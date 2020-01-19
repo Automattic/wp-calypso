@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,15 +9,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
+import TextareaAutosize from 'components/textarea-autosize';
 import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
+import { withLocalizedMoment } from 'components/localized-moment';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { billingHistory } from 'me/purchases/paths';
 import QueryBillingTransaction from 'components/data/query-billing-transaction';
-import { groupDomainProducts } from './utils';
+import { groupDomainProducts, renderTransactionAmount } from './utils';
 import getPastBillingTransaction from 'state/selectors/get-past-billing-transaction';
 import isPastBillingTransactionError from 'state/selectors/is-past-billing-transaction-error';
 import {
@@ -26,6 +26,7 @@ import {
 	requestBillingTransaction,
 } from 'state/billing-transactions/individual-transactions/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { getPlanTermLabel } from 'lib/plans';
 
 class BillingReceipt extends React.Component {
 	componentDidMount() {
@@ -38,10 +39,6 @@ class BillingReceipt extends React.Component {
 
 	recordClickEvent = action => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
-	};
-
-	handleSupportLinkClick = () => {
-		this.recordClickEvent( 'Contact {appName} Support in Billing History Receipt' );
 	};
 
 	handlePrintLinkClick = () => {
@@ -122,28 +119,55 @@ class BillingReceipt extends React.Component {
 		);
 	}
 
+	renderBillingDetailsLabels() {
+		const { translate } = this.props;
+		return (
+			<div>
+				<label htmlFor="billing-history__billing-details-textarea">
+					<strong>{ translate( 'Billing Details' ) }</strong>
+				</label>
+				<div
+					className="billing-history__billing-details-description"
+					id="billing-history__billing-details-description"
+				>
+					{ translate(
+						'Use this field to add your billing information (eg. VAT number, business address) before printing.'
+					) }
+				</div>
+			</div>
+		);
+	}
+
 	renderBillingDetails() {
-		const { transaction, translate } = this.props;
+		const { transaction } = this.props;
 		if ( ! transaction.cc_name && ! transaction.cc_email ) {
 			return null;
 		}
 
 		return (
 			<li className="billing-history__billing-details">
-				<strong>{ translate( 'Billing Details' ) }</strong>
-				<div contentEditable="true">{ transaction.cc_name }</div>
-				<div contentEditable="true">{ transaction.cc_email }</div>
+				{ this.renderBillingDetailsLabels() }
+				<TextareaAutosize
+					className="billing-history__billing-details-editable"
+					aria-labelledby="billing-history__billing-details-description"
+					id="billing-history__billing-details-textarea"
+					rows="1"
+					defaultValue={ transaction.cc_name + '\n' + transaction.cc_email }
+				/>
 			</li>
 		);
 	}
 
 	renderEmptyBillingDetails() {
-		const { translate } = this.props;
-
 		return (
 			<li className="billing-history__billing-details">
-				<strong>{ translate( 'Billing Details' ) }</strong>
-				<div contentEditable="true" />
+				{ this.renderBillingDetailsLabels() }
+				<TextareaAutosize
+					className="billing-history__billing-details-editable"
+					aria-labelledby="billing-history__billing-details-description"
+					id="billing-history__billing-details-textarea"
+					rows="1"
+				/>
 			</li>
 		);
 	}
@@ -153,11 +177,13 @@ class BillingReceipt extends React.Component {
 		const groupedTransactionItems = groupDomainProducts( transaction.items, translate );
 
 		const items = groupedTransactionItems.map( item => {
+			const termLabel = getPlanTermLabel( item.wpcom_product_slug, translate );
 			return (
 				<tr key={ item.id }>
 					<td className="billing-history__receipt-item-name">
 						<span>{ item.variation }</span>
 						<small>({ item.type_localized })</small>
+						{ termLabel ? <em>{ termLabel }</em> : null }
 						<br />
 						<em>{ item.domain }</em>
 					</td>
@@ -192,7 +218,7 @@ class BillingReceipt extends React.Component {
 									transaction.credit
 								}
 							>
-								{ transaction.amount }
+								{ renderTransactionAmount( transaction, { translate } ) }
 							</td>
 						</tr>
 					</tfoot>
@@ -217,7 +243,7 @@ class BillingReceipt extends React.Component {
 							alt={ transaction.service }
 						/>
 						<h2>
-							{' '}
+							{ ' ' }
 							{ translate( '{{link}}%(service)s{{/link}} {{small}}by %(organization)s{{/small}}', {
 								components: {
 									link: serviceLink,
@@ -252,15 +278,9 @@ class BillingReceipt extends React.Component {
 				</Card>
 
 				<Card compact className="billing-history__receipt-links">
-					<Button href={ transaction.support } primary onClick={ this.handleSupportLinkClick }>
-						{ translate( 'Contact %(transactionService)s Support', {
-							args: {
-								transactionService: transaction.service,
-							},
-							context: 'transactionService is a website, such as WordPress.com.',
-						} ) }
+					<Button primary onClick={ this.handlePrintLinkClick }>
+						{ translate( 'Print Receipt' ) }
 					</Button>
-					<Button onClick={ this.handlePrintLinkClick }>{ translate( 'Print Receipt' ) }</Button>
 				</Card>
 			</div>
 		);
@@ -296,4 +316,4 @@ export default connect(
 		recordGoogleEvent,
 		requestBillingTransaction,
 	}
-)( localize( BillingReceipt ) );
+)( localize( withLocalizedMoment( BillingReceipt ) ) );

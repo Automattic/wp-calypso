@@ -1,5 +1,12 @@
-
 body.is-reader-page,
 .is-reader-page .layout {
 	background-color: var( --color-surface );
+}
+
+.is-reader-page .list-end {
+	border-top: none;
+	
+	.gridicon {
+	  background: var( --color-surface );
+	}
 }

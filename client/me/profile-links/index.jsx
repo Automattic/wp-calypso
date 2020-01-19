@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
@@ -15,17 +13,23 @@ import ProfileLink from 'me/profile-link';
 import QueryProfileLinks from 'components/data/query-profile-links';
 import AddProfileLinksButtons from 'me/profile-links/add-buttons';
 import SectionHeader from 'components/section-header';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import Notice from 'components/notice';
 import ProfileLinksAddWordPress from 'me/profile-links-add-wordpress';
 import ProfileLinksAddOther from 'me/profile-links-add-other';
 import { deleteUserProfileLink, resetUserProfileLinkErrors } from 'state/profile-links/actions';
 import getProfileLinks from 'state/selectors/get-profile-links';
 import getProfileLinksErrorType from 'state/selectors/get-profile-links-error-type';
+import ListEnd from 'components/list-end';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ProfileLinks extends React.Component {
 	state = {
-		showingForm: false,
+		showingForm: null,
 		showPopoverMenu: false,
 	};
 
@@ -57,7 +61,7 @@ class ProfileLinks extends React.Component {
 
 	hideForms = () => {
 		this.setState( {
-			showingForm: false,
+			showingForm: null,
 		} );
 	};
 
@@ -168,11 +172,11 @@ class ProfileLinks extends React.Component {
 
 	render() {
 		return (
-			<div>
+			<Fragment>
 				<QueryProfileLinks />
 				<SectionHeader label={ this.props.translate( 'Profile Links' ) }>
 					<AddProfileLinksButtons
-						showingForm={ !! this.state.showingForm }
+						showingForm={ this.state.showingForm }
 						onShowAddOther={ this.showAddOther }
 						showPopoverMenu={ this.state.showPopoverMenu }
 						onShowAddWordPress={ this.showAddWordPress }
@@ -180,8 +184,9 @@ class ProfileLinks extends React.Component {
 						onClosePopoverMenu={ this.closePopoverMenu }
 					/>
 				</SectionHeader>
-				<Card>{ !! this.state.showingForm ? this.renderForm() : this.renderProfileLinks() }</Card>
-			</div>
+				<Card>{ this.state.showingForm ? this.renderForm() : this.renderProfileLinks() }</Card>
+				<ListEnd />
+			</Fragment>
 		);
 	}
 }

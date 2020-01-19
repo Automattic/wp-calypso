@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -19,8 +17,8 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 /**
  * Dispatches a request to add profile links for the current user
  *
- * @param   {Object} action Redux action
- * @returns {Object} Dispatched http action
+ * @param   {object} action Redux action
+ * @returns {object} Dispatched http action
  */
 export const addUserProfileLinks = action =>
 	http(
@@ -41,9 +39,9 @@ export const addUserProfileLinks = action =>
  * - duplicate links
  * - malformed links
  *
- * @param   {Object} action Redux action
+ * @param   {object} action Redux action
  * @param   {Array}  data   Response from the endpoint
- * @returns {Object} Dispatched user profile links add action
+ * @returns {object} Dispatched user profile links add action
  */
 export const handleAddSuccess = ( action, data ) => {
 	const actions = [ addUserProfileLinksSuccess( action.profileLinks ) ];
@@ -62,9 +60,9 @@ export const handleAddSuccess = ( action, data ) => {
 /**
  * Dispatches a user profile links add error action when the request failed.
  *
- * @param   {Object} action Redux action
- * @param   {Object} error  Error returned
- * @returns {Object} Dispatched user profile links add error action
+ * @param   {object} action Redux action
+ * @param   {object} error  Error returned
+ * @returns {object} Dispatched user profile links add error action
  */
 export const handleAddError = ( { profileLinks }, error ) =>
 	addUserProfileLinksError( profileLinks, error );

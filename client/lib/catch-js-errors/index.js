@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import debug from 'debug';
  * Interval for error reports so we don't flood te endpoint. More frequent
  * reports get throttled.
  *
- * @type {Number}
+ * @type {number}
  */
 const REPORT_INTERVAL = 60000;
 

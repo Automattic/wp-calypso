@@ -1,0 +1,31 @@
+{
+	"name": "@automattic/webpack-extensive-lodash-replacement-plugin",
+	"private": true,
+	"version": "0.0.2",
+	"author": "Automattic Inc.",
+	"description": "Webpack plugin to replace lodash, lodash/foo and lodash.foo imports with lodash-es",
+	"keywords": [
+		"Webpack",
+		"lodash"
+	],
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/webpack-extensive-lodash-replacement-plugin",
+	"license": "GPL-2.0-or-later",
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/webpack-extensive-lodash-replacement-plugin"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"scripts": {},
+	"peerDependencies": {
+		"webpack": "^4.29.6"
+	},
+	"dependencies": {
+		"semver": "^6.1.1"
+	}
+}

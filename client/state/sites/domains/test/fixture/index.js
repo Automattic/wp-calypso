@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -26,9 +24,12 @@ export const DOMAIN_PRIMARY = {
 	adminEmail: null,
 	blogId: SITE_ID_FIRST,
 	canSetAsPrimary: true,
+	contactInfoDisclosed: false,
+	contactInfoDisclosureAvailable: false,
 	currentUserCanManage: true,
 	domain: 'retronevergiveup.me',
 	domainLockingAvailable: true,
+	domainRegistrationAgreementUrl: null,
 	pointsToWpcom: true,
 	expired: false,
 	expiry: '2017-03-09T00:00:00+00:00',
@@ -37,15 +38,18 @@ export const DOMAIN_PRIMARY = {
 	googleAppsSubscription: {
 		status: 'no_subscription',
 	},
-	hasPrivacyProtection: false,
 	privacyAvailable: false,
 	hasRegistration: false,
 	hasWpcomNameservers: true,
 	hasZone: true,
+	isEligibleForInboundTransfer: true,
 	isAutoRenewing: true,
 	isPendingIcannVerification: false,
 	isPendingWhoisUpdate: false,
+	isSubdomain: false,
+	isWpcomStagingDomain: false,
 	manualTransferRequired: false,
+	mustRemovePrivacyBeforeContactUpdate: false,
 	newRegistration: false,
 	name: 'retronevergiveup.me',
 	owner: 'John Doe',
@@ -55,7 +59,6 @@ export const DOMAIN_PRIMARY = {
 	pendingTransfer: false,
 	privateDomain: false,
 	isPrimary: true,
-	isPrivate: false,
 	registrar: '',
 	registrationDate: '2016-03-09T00:00:00+00:00',
 	subscriptionId: SUBSCRIPTION_ID_FIRST,
@@ -66,6 +69,7 @@ export const DOMAIN_PRIMARY = {
 	transferAwayEligibleAt: null,
 	transferStatus: null,
 	transferStartDate: null,
+	transferEndDate: null,
 	transferLockOnWhoisUpdateOptional: true,
 	whoisUpdateUnmodifiableFields: [],
 	isWPCOMDomain: false,
@@ -78,9 +82,12 @@ export const DOMAIN_NOT_PRIMARY = {
 	adminEmail: null,
 	blogId: SITE_ID_SECOND,
 	canSetAsPrimary: true,
+	contactInfoDisclosed: false,
+	contactInfoDisclosureAvailable: false,
 	currentUserCanManage: true,
 	domain: 'retronevergiveup.wordpress.me',
 	domainLockingAvailable: true,
+	domainRegistrationAgreementUrl: null,
 	pointsToWpcom: true,
 	expired: false,
 	expiry: null,
@@ -89,15 +96,18 @@ export const DOMAIN_NOT_PRIMARY = {
 	googleAppsSubscription: {
 		status: 'no_subscription',
 	},
-	hasPrivacyProtection: false,
 	privacyAvailable: false,
 	hasRegistration: false,
 	hasWpcomNameservers: true,
 	hasZone: false,
+	isEligibleForInboundTransfer: false,
 	isAutoRenewing: false,
 	isPendingIcannVerification: false,
 	isPendingWhoisUpdate: false,
+	isSubdomain: true,
+	isWpcomStagingDomain: false,
 	manualTransferRequired: false,
+	mustRemovePrivacyBeforeContactUpdate: false,
 	newRegistration: false,
 	name: 'retronevergiveup.wordpress.me',
 	owner: typeof undefined,
@@ -107,7 +117,6 @@ export const DOMAIN_NOT_PRIMARY = {
 	pendingTransfer: false,
 	privateDomain: false,
 	isPrimary: false,
-	isPrivate: false,
 	registrar: '',
 	registrationDate: '',
 	subscriptionId: SUBSCRIPTION_ID_SECOND,
@@ -118,6 +127,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	transferAwayEligibleAt: null,
 	transferStatus: null,
 	transferStartDate: null,
+	transferEndDate: null,
 	transferLockOnWhoisUpdateOptional: false,
 	whoisUpdateUnmodifiableFields: [ 'first_name', 'last_name' ],
 	isWPCOMDomain: true,
@@ -135,6 +145,7 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	can_set_as_primary: true,
 	domain: 'retronevergiveup.me',
 	domain_locking_available: true,
+	domainRegistrationAgreementUrl: null,
 	points_to_wpcom: true,
 	expired: false,
 	expiry: '2017-03-09T00:00:00+00:00',
@@ -149,7 +160,10 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	has_wpcom_nameservers: true,
 	has_zone: true,
 	current_user_can_manage: true,
+	is_eligible_for_inbound_transfer: true,
 	is_pending_icann_verification: false,
+	is_subdomain: false,
+	is_wpcom_staging_domain: false,
 	manual_transfer_required: false,
 	manual_whois: false,
 	new_registration: false,
@@ -181,6 +195,7 @@ export const REST_API_SITE_DOMAIN_SECOND = {
 	can_set_as_primary: true,
 	domain: 'retronevergiveup.wordpress.me',
 	domain_locking_available: true,
+	domainRegistrationAgreementUrl: null,
 	points_to_wpcom: true,
 	expired: false,
 	expiry: false,
@@ -195,7 +210,10 @@ export const REST_API_SITE_DOMAIN_SECOND = {
 	has_wpcom_nameservers: true,
 	has_zone: false,
 	current_user_can_manage: true,
+	is_eligible_for_inbound_transfer: false,
 	is_pending_icann_verification: false,
+	is_subdomain: true,
+	is_wpcom_staging_domain: false,
 	manual_transfer_required: false,
 	manual_whois: false,
 	new_registration: false,
@@ -263,7 +281,8 @@ export const ACTION_SITE_DOMAIN_REQUEST_FAILURE = {
 
 /**
  * Return a whole state with domains data structure
- * @return {Object} an state instance
+ *
+ * @returns {object} an state instance
  *
  * - first site-domians is not requesting
  * - second site-domians is requesting

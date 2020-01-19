@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,10 +10,9 @@ import { find, get } from 'lodash';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import ReaderPopover from 'reader/components/reader-popover';
 import SegmentedControl from 'components/segmented-control';
-import ControlItem from 'components/segmented-control/item';
 import FormToggle from 'components/forms/form-toggle';
 import getReaderFollows from 'state/selectors/get-reader-follows';
 import {
@@ -30,6 +28,11 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import QueryUserSettings from 'components/data/query-user-settings';
 import getUserSetting from 'state/selectors/get-user-setting';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ReaderSiteNotificationSettings extends Component {
 	static displayName = 'ReaderSiteNotificationSettings';
 	static propTypes = {
@@ -40,6 +43,9 @@ class ReaderSiteNotificationSettings extends Component {
 		showPopover: false,
 		selected: this.props.emailDeliveryFrequency,
 	};
+
+	iconRef = React.createRef();
+	spanRef = React.createRef();
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.emailDeliveryFrequency !== this.props.emailDeliveryFrequency ) {
@@ -54,9 +60,6 @@ class ReaderSiteNotificationSettings extends Component {
 	closePopover = () => {
 		this.setState( { showPopover: false } );
 	};
-
-	saveIconRef = ref => ( this.iconRef = ref );
-	saveSpanRef = ref => ( this.spanRef = ref );
 
 	setSelected = text => () => {
 		const { siteId } = this.props;
@@ -131,9 +134,9 @@ class ReaderSiteNotificationSettings extends Component {
 				<button
 					className="reader-site-notification-settings__button"
 					onClick={ this.togglePopoverVisibility }
-					ref={ this.saveSpanRef }
+					ref={ this.spanRef }
 				>
-					<Gridicon icon="cog" size={ 24 } ref={ this.saveIconRef } />
+					<Gridicon icon="cog" size={ 24 } ref={ this.iconRef } />
 					<span
 						className="reader-site-notification-settings__button-label"
 						title={ translate( 'Notification settings' ) }
@@ -145,8 +148,8 @@ class ReaderSiteNotificationSettings extends Component {
 				<ReaderPopover
 					onClose={ this.closePopover }
 					isVisible={ this.state.showPopover }
-					context={ this.iconRef }
-					ignoreContext={ this.spanRef }
+					context={ this.iconRef.current }
+					ignoreContext={ this.spanRef.current }
 					position={ 'bottom left' }
 					className="reader-site-notification-settings__popout"
 				>
@@ -189,24 +192,24 @@ class ReaderSiteNotificationSettings extends Component {
 
 					{ ! isEmailBlocked && sendNewPostsByEmail && (
 						<SegmentedControl>
-							<ControlItem
+							<SegmentedControl.Item
 								selected={ this.state.selected === 'instantly' }
 								onClick={ this.setSelected( 'instantly' ) }
 							>
 								{ translate( 'Instantly' ) }
-							</ControlItem>
-							<ControlItem
+							</SegmentedControl.Item>
+							<SegmentedControl.Item
 								selected={ this.state.selected === 'daily' }
 								onClick={ this.setSelected( 'daily' ) }
 							>
 								{ translate( 'Daily' ) }
-							</ControlItem>
-							<ControlItem
+							</SegmentedControl.Item>
+							<SegmentedControl.Item
 								selected={ this.state.selected === 'weekly' }
 								onClick={ this.setSelected( 'weekly' ) }
 							>
 								{ translate( 'Weekly' ) }
-							</ControlItem>
+							</SegmentedControl.Item>
 						</SegmentedControl>
 					) }
 					{ ! isEmailBlocked && (
@@ -245,16 +248,13 @@ const mapStateToProps = ( state, ownProps ) => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{
-		subscribeToNewPostEmail,
-		unsubscribeToNewPostEmail,
-		updateNewPostEmailSubscription,
-		subscribeToNewCommentEmail,
-		unsubscribeToNewCommentEmail,
-		subscribeToNewPostNotifications,
-		unsubscribeToNewPostNotifications,
-		recordTracksEvent,
-	}
-)( localize( ReaderSiteNotificationSettings ) );
+export default connect( mapStateToProps, {
+	subscribeToNewPostEmail,
+	unsubscribeToNewPostEmail,
+	updateNewPostEmailSubscription,
+	subscribeToNewCommentEmail,
+	unsubscribeToNewCommentEmail,
+	subscribeToNewPostNotifications,
+	unsubscribeToNewPostNotifications,
+	recordTracksEvent,
+} )( localize( ReaderSiteNotificationSettings ) );

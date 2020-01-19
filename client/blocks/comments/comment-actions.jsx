@@ -1,11 +1,10 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import classnames from 'classnames';
 import { noop } from 'lodash';
 
@@ -18,6 +17,11 @@ import CommentApproveAction from './comment-approve-action';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import PopoverMenuSeparator from 'components/popover/menu-separator';
+
+/**
+ * Style dependencies
+ */
+import './comment-actions.scss';
 
 const CommentActions = ( {
 	post,
@@ -144,7 +148,4 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 	};
 };
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( localize( CommentActions ) );
+export default connect( null, mapDispatchToProps )( localize( CommentActions ) );

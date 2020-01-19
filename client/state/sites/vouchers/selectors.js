@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -10,9 +8,9 @@ import { GOOGLE_CREDITS } from './service-types';
  * Return site vouchers getting from state object and
  * the given siteId
  *
- * @param {Object} state - current state object
- * @param {Number} siteId - site identificator
- * @return {Array} site vouchers
+ * @param {object} state - current state object
+ * @param {number} siteId - site identificator
+ * @returns {Array} site vouchers
  */
 export const getVouchersBySiteId = ( state, siteId ) => {
 	if ( ! siteId ) {
@@ -26,9 +24,9 @@ export const getVouchersBySiteId = ( state, siteId ) => {
  * Return site vouchers getting from state object and
  * the given site object
  *
- * @param {Object} state - current state object
- * @param {Object} site - site object
- * @return {Array} site vouchers
+ * @param {object} state - current state object
+ * @param {object} site - site object
+ * @returns {Array} site vouchers
  */
 export const getVouchersBySite = ( state, site ) => {
 	if ( ! site ) {
@@ -44,9 +42,9 @@ export const getVouchersBySiteIdAndServiceType = ( state, siteId, serviceType ) 
 /**
  * Return google-credits vouchers
  *
- * @param {Object} state - current state object
- * @param {Object} site - site object
- * @return {Array} site vouchers
+ * @param {object} state - current state object
+ * @param {object} site - site object
+ * @returns {Array} site vouchers
  */
 
 export const getGoogleAdCredits = ( state, site ) => {
@@ -57,9 +55,9 @@ export const getGoogleAdCredits = ( state, site ) => {
 /**
  * Return requesting state for the given site
  *
- * @param {Object} state - current state object
- * @param {Number} siteId - site identifier
- * @return {Boolean} is site-vouchers requesting?
+ * @param {object} state - current state object
+ * @param {number} siteId - site identifier
+ * @returns {boolean} is site-vouchers requesting?
  */
 export const isRequestingSiteVouchers = ( state, siteId ) => {
 	return state.sites.vouchers.requesting[ siteId ] || false;
@@ -69,10 +67,10 @@ export const isRequestingSiteVouchers = ( state, siteId ) => {
  * Return assign requesting state for the given site
  * and serviceType
  *
- * @param {Object} state - current state object
- * @param {Number} siteId - site identifier
- * @param {String} serviceType - service type
- * @return {Boolean} true if a voucher is being assigned
+ * @param {object} state - current state object
+ * @param {number} siteId - site identifier
+ * @param {string} serviceType - service type
+ * @returns {boolean} true if a voucher is being assigned
  */
 export const isAssigningSiteVoucher = ( state, siteId, serviceType ) => {
 	const requesting = state.sites.vouchers.requesting[ siteId ];

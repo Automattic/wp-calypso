@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,21 +11,20 @@ import PropTypes from 'prop-types';
  */
 import AllSites from 'blocks/all-sites';
 import AsyncLoad from 'components/async-load';
-import analytics from 'lib/analytics';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import Site from 'blocks/site';
-import Gridicon from 'gridicons';
-import SiteNotice from './notice';
-import CartStore from 'lib/cart/store';
+import Gridicon from 'components/gridicon';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getSectionName, getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import getSelectedOrAllSites from 'state/selectors/get-selected-or-all-sites';
-import getVisibleSites from 'state/selectors/get-visible-sites';
-import { infoNotice, removeNotice } from 'state/notices/actions';
-import { getNoticeLastTimeShown } from 'state/notices/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { getCurrentUserSiteCount } from 'state/current-user/selectors';
+import { recordGoogleEvent } from 'state/analytics/actions';
 import { hasAllSitesList } from 'state/sites/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class CurrentSite extends Component {
 	static propTypes = {
@@ -38,63 +35,18 @@ class CurrentSite extends Component {
 		anySiteSelected: PropTypes.array,
 	};
 
-	componentWillMount() {
-		CartStore.on( 'change', this.showStaleCartItemsNotice );
-	}
-
-	componentWillUnmount() {
-		CartStore.off( 'change', this.showStaleCartItemsNotice );
-	}
-
-	showStaleCartItemsNotice = () => {
-		const { selectedSite } = this.props,
-			cartItems = require( 'lib/cart-values' ).cartItems,
-			staleCartItemNoticeId = 'stale-cart-item-notice';
-
-		// Remove any existing stale cart notice
-		this.props.removeNotice( staleCartItemNoticeId );
-
-		// Don't show on the checkout page?
-		if ( this.props.sectionName === 'upgrades' ) {
-			return null;
-		}
-
-		// Show a notice if there are stale items in the cart and it hasn't been shown in the last 10 minutes (cart abandonment)
-		if (
-			selectedSite &&
-			cartItems.hasStaleItem( CartStore.get() ) &&
-			this.props.staleCartItemNoticeLastTimeShown < Date.now() - 10 * 60 * 1000
-		) {
-			this.props.recordTracksEvent( 'calypso_cart_abandonment_notice_view' );
-
-			this.props.infoNotice( this.props.translate( 'Your cart is awaiting payment.' ), {
-				id: staleCartItemNoticeId,
-				isPersistent: false,
-				duration: 10000,
-				button: this.props.translate( 'Complete your purchase' ),
-				href: '/checkout/' + selectedSite.slug,
-				onClick: this.clickStaleCartItemsNotice,
-			} );
-		}
-	};
-
-	clickStaleCartItemsNotice = () => {
-		this.props.recordTracksEvent( 'calypso_cart_abandonment_notice_click' );
-	};
-
 	switchSites = event => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.setLayoutFocus( 'sites' );
-
-		analytics.ga.recordEvent( 'Sidebar', 'Clicked Switch Site' );
+		this.props.recordGoogleEvent( 'Sidebar', 'Clicked Switch Site' );
 	};
 
 	render() {
 		const { selectedSite, translate, anySiteSelected } = this.props;
 
 		if ( ! anySiteSelected.length || ( ! selectedSite && ! this.props.hasAllSitesList ) ) {
-			/* eslint-disable wpcalypso/jsx-classname-namespace */
+			/* eslint-disable wpcalypso/jsx-classname-namespace, jsx-a11y/anchor-is-valid */
 			return (
 				<Card className="current-site is-loading">
 					<div className="site">
@@ -107,7 +59,7 @@ class CurrentSite extends Component {
 					</div>
 				</Card>
 			);
-			/* eslint-enable wpcalypso/jsx-classname-namespace */
+			/* eslint-enable wpcalypso/jsx-classname-namespace, jsx-a11y/anchor-is-valid */
 		}
 
 		return (
@@ -125,14 +77,18 @@ class CurrentSite extends Component {
 
 				{ selectedSite ? (
 					<div>
-						<Site site={ selectedSite } />
+						<Site site={ selectedSite } homeLink={ true } />
 					</div>
 				) : (
 					<AllSites />
 				) }
-
-				<SiteNotice site={ selectedSite } />
+				<AsyncLoad
+					require="my-sites/current-site/notice"
+					placeholder={ null }
+					site={ selectedSite }
+				/>
 				<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
+				<AsyncLoad require="my-sites/current-site/stale-cart-items-notice" placeholder={ null } />
 			</Card>
 		);
 	}
@@ -142,10 +98,8 @@ export default connect(
 	state => ( {
 		selectedSite: getSelectedSite( state ),
 		anySiteSelected: getSelectedOrAllSites( state ),
-		siteCount: getVisibleSites( state ).length,
-		staleCartItemNoticeLastTimeShown: getNoticeLastTimeShown( state, 'stale-cart-item-notice' ),
-		sectionName: getSectionName( state ),
+		siteCount: getCurrentUserSiteCount( state ),
 		hasAllSitesList: hasAllSitesList( state ),
 	} ),
-	{ setLayoutFocus, infoNotice, removeNotice, recordTracksEvent }
+	{ recordGoogleEvent, setLayoutFocus }
 )( localize( CurrentSite ) );

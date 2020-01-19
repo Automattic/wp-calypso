@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -36,7 +34,7 @@ const ERROR_GLOBAL_ITEM_ID = 0;
  *     }
  * }
  *
- * @type {Object}
+ * @type {object}
  * @private
  */
 
@@ -50,7 +48,8 @@ function ensureErrorsObjectForSite( siteId ) {
 	MediaValidationStore._errors[ siteId ] = {};
 }
 
-const isExternalError = message => message.error && message.error === 'servicefail';
+const isExternalError = message =>
+	message.error && ( message.error === 'servicefail' || message.error === 'keyring_token_error' );
 const isMediaError = action => action.error && ( action.id || isExternalError( action.error ) );
 
 MediaValidationStore.validateItem = function( site, item ) {
@@ -94,7 +93,7 @@ MediaValidationStore.clearValidationErrors = function( siteId, itemId ) {
  * Update the errors object for a site by picking only items where errors still
  * exist after excluding all errors for that item matching the specified type.
  *
- * @param {Number}               siteId    The site ID
+ * @param {number}               siteId    The site ID
  * @param {MediaValidationError} errorType The error type to remove
  */
 MediaValidationStore.clearValidationErrorsByType = function( siteId, errorType ) {
@@ -123,6 +122,8 @@ function receiveServerError( siteId, itemId, errors ) {
 					return MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT;
 				}
 				return MediaValidationErrors.SERVER_ERROR;
+			case 'keyring_token_error':
+				return MediaValidationErrors.SERVICE_AUTH_FAILED;
 			case 'servicefail':
 				return MediaValidationErrors.SERVICE_FAILED;
 			default:
@@ -152,9 +153,8 @@ MediaValidationStore.hasErrors = function( siteId, itemId ) {
 };
 
 MediaValidationStore.dispatchToken = Dispatcher.register( function( payload ) {
-	let action = payload.action,
-		items,
-		errors;
+	const action = payload.action;
+	let items, errors;
 
 	switch ( action.type ) {
 		case 'CREATE_MEDIA_ITEM':
@@ -164,11 +164,9 @@ MediaValidationStore.dispatchToken = Dispatcher.register( function( payload ) {
 
 			items = Array.isArray( action.data.media ) ? action.data.media : [ action.data ];
 			errors = items.reduce( function( memo, item ) {
-				let itemErrors;
-
 				MediaValidationStore.validateItem( action.site, item );
 
-				itemErrors = MediaValidationStore.getErrors( action.siteId, item.ID );
+				const itemErrors = MediaValidationStore.getErrors( action.siteId, item.ID );
 				if ( itemErrors.length ) {
 					memo[ item.ID ] = itemErrors;
 				}

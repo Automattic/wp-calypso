@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import SimplePaymentsDialog from './dialog';
 import { serialize, deserialize } from './shortcode-utils';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
-const simplePayments = editor => {
+function simplePayments( editor ) {
 	let node;
 	const store = editor.getParam( 'redux_store' );
 
@@ -57,7 +55,7 @@ const simplePayments = editor => {
 
 		renderModal();
 	} );
-};
+}
 
 export default () => {
 	tinymce.PluginManager.add( 'wpcom/simplepayments', simplePayments );

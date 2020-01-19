@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,12 +13,14 @@ import { bindActionCreators } from 'redux';
  */
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import QueryPreferences from 'components/data/query-preferences';
 import { isFetchingPreferences } from 'state/preferences/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isConfirmationSidebarEnabled } from 'state/ui/editor/selectors';
 import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
+import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
 
 class PublishConfirmation extends Component {
 	constructor( props ) {
@@ -29,7 +29,7 @@ class PublishConfirmation extends Component {
 		this.handleToggle = this.handleToggle.bind( this );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.publishConfirmationEnabled !== this.state.isToggleOn ) {
 			this.setState( { isToggleOn: nextProps.publishConfirmationEnabled } );
 		}
@@ -43,7 +43,22 @@ class PublishConfirmation extends Component {
 	}
 
 	render() {
-		const { fetchingPreferences, translate } = this.props;
+		const { fetchingPreferences, translate, showPublishFlow } = this.props;
+
+		if ( showPublishFlow ) {
+			return (
+				<FormFieldset>
+					<FormLabel>{ translate( 'Show Publish Confirmation' ) }</FormLabel>
+					<FormSettingExplanation isIndented>
+						{ translate(
+							'The Block Editor handles the Publish confirmation setting. ' +
+								'To enable it, go to Options under the Ellipses menu in the Editor ' +
+								'and check "Enable Pre-publish checks."'
+						) }
+					</FormSettingExplanation>
+				</FormFieldset>
+			);
+		}
 
 		return (
 			<FormFieldset className="composing__publish-confirmation has-divider is-bottom-only">
@@ -87,6 +102,7 @@ export default connect(
 			siteId,
 			fetchingPreferences: isFetchingPreferences( state ),
 			publishConfirmationEnabled: isConfirmationSidebarEnabled( state, siteId ),
+			showPublishFlow: shouldLoadGutenberg( state, siteId ),
 		};
 	},
 	dispatch => {

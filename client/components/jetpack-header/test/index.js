@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -7,7 +6,7 @@
  * External dependencies
  */
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 
 /**
  * Internal dependencies
@@ -37,18 +36,18 @@ describe( 'JetpackHeader', () => {
 	} );
 
 	test( 'should render a co-branded logo when passed a known partner slug', () => {
-		const wrapper = shallow( <JetpackHeader partnerSlug="dreamhost" /> );
+		const wrapper = mount( <JetpackHeader partnerSlug="dreamhost" /> );
 		expect( wrapper.find( 'Localized(JetpackPartnerLogoGroup)' ) ).toHaveLength( 1 );
-		expect( wrapper.find( 'JetpackDreamhostLogo' ) ).toHaveLength( 1 );
+		expect( wrapper.find( 'AsyncLoad' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should override width on JetpackLogo when width provided but no partner slug', () => {
-		const wrapper = shallow( <JetpackHeader width={ 60 } /> );
+		const wrapper = mount( <JetpackHeader width={ 60 } /> );
 		expect( wrapper.find( 'JetpackLogo' ).props().size ).toEqual( 60 );
 	} );
 
 	test( 'should override width on logo group when width and known partner slug provided', () => {
-		const wrapper = shallow( <JetpackHeader width={ 60 } partnerSlug="dreamhost" /> );
+		const wrapper = mount( <JetpackHeader width={ 60 } partnerSlug="dreamhost" /> );
 		expect( wrapper.find( 'Localized(JetpackPartnerLogoGroup)' ).props().width ).toEqual( 60 );
 	} );
 } );

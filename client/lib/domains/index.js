@@ -1,24 +1,17 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import inherits from 'inherits';
-import { includes, find, get, replace, some } from 'lodash';
+import { includes, find, get, replace } from 'lodash';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
-import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
 import { type as domainTypes, domainAvailability } from './constants';
 import { parseDomainAgainstTldList } from './utils';
 import wpcomMultiLevelTlds from './tlds/wpcom-multi-level-tlds.json';
-import formatCurrency from 'lib/format-currency';
-
-const GOOGLE_APPS_INVALID_TLDS = [ 'in' ];
-const GOOGLE_APPS_BANNED_PHRASES = [ 'google' ];
-const user = userFactory();
 
 function ValidationError( code ) {
 	this.code = code;
@@ -26,23 +19,6 @@ function ValidationError( code ) {
 }
 
 inherits( ValidationError, Error );
-
-function canAddGoogleApps( domainName ) {
-	const tld = domainName.split( '.' )[ 1 ],
-		includesBannedPhrase = some( GOOGLE_APPS_BANNED_PHRASES, function( phrase ) {
-			return includes( domainName, phrase );
-		} );
-
-	return ! (
-		includes( GOOGLE_APPS_INVALID_TLDS, tld ) ||
-		includesBannedPhrase ||
-		isGsuiteRestricted()
-	);
-}
-
-function isGsuiteRestricted() {
-	return ! get( user.get(), 'is_valid_google_apps_country', false );
-}
 
 function checkAuthCode( domainName, authCode, onComplete ) {
 	if ( ! domainName || ! authCode ) {
@@ -62,19 +38,22 @@ function checkAuthCode( domainName, authCode, onComplete ) {
 
 function checkDomainAvailability( params, onComplete ) {
 	const { domainName, blogId } = params;
+	const isCartPreCheck = get( params, 'isCartPreCheck', false );
 	if ( ! domainName ) {
 		onComplete( null, { status: domainAvailability.EMPTY_QUERY } );
 		return;
 	}
 
-	wpcom.undocumented().isDomainAvailable( domainName, blogId, function( serverError, result ) {
-		if ( serverError ) {
-			onComplete( serverError.error );
-			return;
-		}
+	wpcom
+		.undocumented()
+		.isDomainAvailable( domainName, blogId, isCartPreCheck, function( serverError, result ) {
+			if ( serverError ) {
+				onComplete( serverError.error );
+				return;
+			}
 
-		onComplete( null, result );
-	} );
+			onComplete( null, result );
+		} );
 }
 
 function checkInboundTransferStatus( domainName, onComplete ) {
@@ -84,22 +63,6 @@ function checkInboundTransferStatus( domainName, onComplete ) {
 	}
 
 	wpcom.undocumented().getInboundTransferStatus( domainName, function( serverError, result ) {
-		if ( serverError ) {
-			onComplete( serverError.error );
-			return;
-		}
-
-		onComplete( null, result );
-	} );
-}
-
-function restartInboundTransfer( siteId, domainName, onComplete ) {
-	if ( ! domainName || ! siteId ) {
-		onComplete( null );
-		return;
-	}
-
-	wpcom.undocumented().restartInboundTransfer( siteId, domainName, function( serverError, result ) {
 		if ( serverError ) {
 			onComplete( serverError.error );
 			return;
@@ -177,9 +140,8 @@ function getFixedDomainSearch( domainName ) {
 	return domainName
 		.trim()
 		.toLowerCase()
-		.replace( /^(https?:\/\/)?(www\.)?/, '' )
-		.replace( /^https?/, '' )
-		.replace( /^www/, '' )
+		.replace( /^(https?:\/\/)?(www[0-9]?\.)?/, '' )
+		.replace( /^www[0-9]?\./, '' )
 		.replace( /\/$/, '' )
 		.replace( /_/g, '-' );
 }
@@ -188,30 +150,24 @@ function isSubdomain( domainName ) {
 	return domainName.match( /\..+\.[a-z]{2,3}\.[a-z]{2}$|\..+\.[a-z]{3,}$|\..{4,}\.[a-z]{2}$/ );
 }
 
-function hasGoogleApps( domain ) {
-	return 'no_subscription' !== get( domain, 'googleAppsSubscription.status', '' );
+function isHstsRequired( productSlug, productsList ) {
+	const product = find( productsList, [ 'product_slug', productSlug ] ) || {};
+
+	return get( product, 'is_hsts_required', false );
 }
 
 function isMappedDomain( domain ) {
 	return domain.type === domainTypes.MAPPED;
 }
 
-function getGoogleAppsSupportedDomains( domains ) {
-	return domains.filter( function( domain ) {
-		return (
-			includes( [ domainTypes.REGISTERED, domainTypes.MAPPED ], domain.type ) &&
-			canAddGoogleApps( domain.name ) &&
-			domain.hasWpcomNameservers
-		);
-	} );
-}
-
-function hasGoogleAppsSupportedDomain( domains ) {
-	return getGoogleAppsSupportedDomains( domains ).length > 0;
-}
-
-function hasPendingGoogleAppsUsers( domain ) {
-	return get( domain, 'googleAppsSubscription.pendingUsers.length', 0 ) !== 0;
+/**
+ * Checks if the supplied domain is a mapped domain and has WordPress.com name servers.
+ *
+ * @param {object} domain - domain object
+ * @returns {boolean} - true if the domain is mapped and has WordPress.com name servers, false otherwise
+ */
+function isMappedDomainWithWpcomNameservers( domain ) {
+	return isMappedDomain( domain ) && get( domain, 'hasWpcomNameservers', false );
 }
 
 function getSelectedDomain( { domains, selectedDomainName, isTransfer } ) {
@@ -253,7 +209,7 @@ function hasMappedDomain( domains ) {
  * for our purposes, the approach should be "good enough" for a long time.
  *
  * @param {string}     domainName     The domain name parse the tld from
- * @return {string}                   The TLD or an empty string
+ * @returns {string}                   The TLD or an empty string
  */
 function getTld( domainName ) {
 	const lastIndexOfDot = domainName.lastIndexOf( '.' );
@@ -286,14 +242,64 @@ function getDomainProductSlug( domain ) {
 	return `dot${ tldSlug }_domain`;
 }
 
-function getDomainPrice( slug, productsList, currencyCode ) {
+function getUnformattedDomainPrice( slug, productsList ) {
 	let price = get( productsList, [ slug, 'cost' ], null );
+
 	if ( price ) {
 		price += get( productsList, [ 'domain_map', 'cost' ], 0 );
-		price = formatCurrency( price, currencyCode );
 	}
 
 	return price;
+}
+
+function getDomainPrice( slug, productsList, currencyCode, stripZeros = false ) {
+	let price = getUnformattedDomainPrice( slug, productsList );
+
+	if ( price ) {
+		price = formatCurrency( price, currencyCode, { stripZeros } );
+	}
+
+	return price;
+}
+
+function getUnformattedDomainSalePrice( slug, productsList ) {
+	const saleCost = get( productsList, [ slug, 'sale_cost' ], null );
+	const couponValidForNewDomainPurchase = get(
+		productsList,
+		[ slug, 'sale_coupon', 'allowed_for_new_purchases' ],
+		null
+	);
+
+	if ( ! saleCost || ! couponValidForNewDomainPurchase ) {
+		return null;
+	}
+
+	return saleCost;
+}
+
+function getDomainSalePrice( slug, productsList, currencyCode, stripZeros = false ) {
+	let saleCost = getUnformattedDomainSalePrice( slug, productsList );
+
+	if ( saleCost ) {
+		saleCost = formatCurrency( saleCost, currencyCode, { stripZeros } );
+	}
+
+	return saleCost;
+}
+
+function getDomainTransferSalePrice( slug, productsList, currencyCode ) {
+	const saleCost = get( productsList, [ slug, 'sale_cost' ], null );
+	const couponValidForDomainTransfer = get(
+		productsList,
+		[ slug, 'sale_coupon', 'allowed_for_domain_transfers' ],
+		null
+	);
+
+	if ( ! saleCost || ! couponValidForDomainTransfer ) {
+		return null;
+	}
+
+	return formatCurrency( saleCost, currencyCode );
 }
 
 function getAvailableTlds( query = {} ) {
@@ -322,33 +328,68 @@ function getDomainTypeText( domain = {} ) {
 	}
 }
 
+/*
+ * Given a search string, strip anything we don't want to query for domain suggestions
+ *
+ * @param {string} search Original search string
+ * @param {integer} minLength Minimum search string length
+ * @returns {string} Cleaned search string
+ */
+function getDomainSuggestionSearch( search, minLength = 2 ) {
+	const cleanedSearch = getFixedDomainSearch( search );
+
+	// Ignore any searches that are too short
+	if ( cleanedSearch.length < minLength ) {
+		return '';
+	}
+
+	// Ignore any searches for generic URL prefixes
+	// getFixedDomainSearch will already have stripped http(s):// and www.
+	const ignoreList = [ 'www', 'http', 'https' ];
+	if ( includes( ignoreList, cleanedSearch ) ) {
+		return '';
+	}
+
+	return cleanedSearch;
+}
+
+function resendIcannVerification( domainName, onComplete ) {
+	return wpcom.undocumented().resendIcannVerification( domainName, onComplete );
+}
+
+function requestGdprConsentManagementLink( domainName, onComplete ) {
+	return wpcom.undocumented().requestGdprConsentManagementLink( domainName, onComplete );
+}
+
 export {
-	canAddGoogleApps,
 	canRedirect,
 	checkAuthCode,
 	checkDomainAvailability,
 	checkInboundTransferStatus,
 	getDomainPrice,
 	getDomainProductSlug,
+	getDomainSalePrice,
+	getDomainTransferSalePrice,
 	getDomainTypeText,
 	getFixedDomainSearch,
-	getGoogleAppsSupportedDomains,
 	getMappedDomains,
 	getPrimaryDomain,
 	getRegisteredDomains,
 	getSelectedDomain,
 	getTld,
 	getTopLevelOfTld,
-	hasGoogleApps,
-	hasGoogleAppsSupportedDomain,
+	getUnformattedDomainPrice,
+	getUnformattedDomainSalePrice,
 	hasMappedDomain,
-	hasPendingGoogleAppsUsers,
-	isGsuiteRestricted,
+	isHstsRequired,
 	isMappedDomain,
+	isMappedDomainWithWpcomNameservers,
 	isRegisteredDomain,
 	isSubdomain,
 	resendInboundTransferEmail,
-	restartInboundTransfer,
 	startInboundTransfer,
 	getAvailableTlds,
+	getDomainSuggestionSearch,
+	resendIcannVerification,
+	requestGdprConsentManagementLink,
 };

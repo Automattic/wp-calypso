@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,11 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, identity } from 'lodash';
-import SocialLogo from 'social-logos';
+
+/**
+ * Internal dependencies
+ */
+import SocialLogo from 'components/social-logo';
 
 /**
  * Style dependencies
@@ -34,14 +36,16 @@ export const SocialItem = props => {
 		'is-selected': isSelected,
 	} );
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<div className={ classes } onClick={ () => onClick( service ) }>
+		<div className={ classes } onClick={ () => onClick( service ) } role="presentation">
 			<div className="vertical-menu__items__social-icon">
 				<SocialLogo icon={ icon } size={ 24 } />
 			</div>
 			<span className="vertical-menu__items__social-label">{ label }</span>
 		</div>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 SocialItem.propTypes = {

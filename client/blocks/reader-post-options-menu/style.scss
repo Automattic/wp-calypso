@@ -1,7 +1,7 @@
 .reader-post-options-menu,
 .reader-post-options-menu .ellipsis-menu {
 	.button.is-borderless {
-		color: $gray;
+		color: var( --color-text-subtle );
 
 		&:hover,
 		&:active {
@@ -44,7 +44,7 @@
 			padding-right: 0;
 
 			&:hover {
-				fill: $white;
+				fill: var( --color-text-inverted );
 			}
 		}
 
@@ -54,12 +54,12 @@
 			color: white;
 
 			.gridicon {
-				fill: $white;
+				fill: var( --color-text-inverted );
 			}
 
 			.follow-button__label,
 			.conversation-follow-button__label {
-				color: $white;
+				color: var( --color-text-inverted );
 			}
 		}
 
@@ -89,11 +89,11 @@
 
 		&:hover,
 		&:focus {
-			color: $white;
+			color: var( --color-text-inverted );
 			background: var( --color-error );
 
 			.gridicon {
-				fill: $white;
+				fill: var( --color-text-inverted );
 			}
 		}
 	}

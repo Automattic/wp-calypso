@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -22,6 +21,11 @@ import { isCommentableDiscoverPost } from 'blocks/comments/helper';
 import { ProtectFormGuard } from 'lib/protect-form';
 import PostCommentFormTextarea from './form-textarea';
 
+/**
+ * Style dependencies
+ */
+import './form.scss';
+
 class PostCommentForm extends React.Component {
 	constructor( props ) {
 		super();
@@ -38,7 +42,7 @@ class PostCommentForm extends React.Component {
 			.forEach( prop => ( this[ prop ] = this[ prop ].bind( this ) ) );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.setState( {
 			commentText: nextProps.commentText || '',
 		} );

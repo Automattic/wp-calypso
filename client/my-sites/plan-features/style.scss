@@ -4,7 +4,7 @@ $plan-features-sidebar-width: 272px;
 /* Breakpoints 1150px, */
 
 .plan-features__content {
-	margin: -16px -16px 0 -16px;
+	margin: -16px -16px 0;
 	padding-top: $plan-features-header-banner-height;
 }
 
@@ -47,7 +47,7 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.plan-features__item {
-		border-bottom: solid 1px lighten( $gray, 27% );
+		border-bottom: solid 1px var( --color-neutral-5 );
 		font-size: 14px;
 	}
 
@@ -68,10 +68,7 @@ $plan-features-sidebar-width: 272px;
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
-}
-
-.plan-features__table.has-2-cols {
-	max-width: 720px;
+	max-width: 800px;
 }
 
 .plan-features__table.has-1-cols {
@@ -80,8 +77,8 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__mobile-plan {
 	font-size: 14px;
-	border: solid 1px lighten( $gray, 27% );
-	background-color: $white;
+	border: solid 1px var( --color-neutral-5 );
+	background-color: var( --color-surface );
 	margin-bottom: 24px;
 }
 
@@ -106,24 +103,21 @@ $plan-features-sidebar-width: 272px;
 
 	@include breakpoint( '<1040px' ) {
 		border-spacing: 0;
-		margin: 0 15px;
+		margin-left: 15px;
+		margin-right: 15px;
 		width: calc( 100% - 30px );
 	}
 }
 
-.plan-features__row {
-	background: $white;
-}
-
 .plan-features__table-item {
-	border-right: solid 1px lighten( $gray, 27% );
-	border-left: solid 1px lighten( $gray, 27% );
-	background-color: $white;
+	border-right: solid 1px var( --color-neutral-5 );
+	border-left: solid 1px var( --color-neutral-5 );
+	background-color: var( --color-surface );
 	position: relative;
 
 	&.is-highlighted {
 		border: 1px solid var( --color-primary );
-		background-color: rgba( $blue-wordpress, 0.1 );
+		background-color: rgba( var( --color-primary-rgb ), 0.1 );
 		position: relative;
 		top: -1px;
 
@@ -142,13 +136,12 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__table-item.has-partial-border {
-
 	&::after {
 		content: '';
 		display: block;
 		height: 1px;
 		width: calc( 100% - 48px );
-		border-bottom: 1px solid lighten( $gray, 27% );
+		border-bottom: 1px solid var( --color-neutral-5 );
 		position: absolute;
 		bottom: 0;
 		margin: 0 24px;
@@ -161,11 +154,11 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__table-item.has-border-bottom {
-	border-bottom: solid 1px lighten( $gray, 27% );
+	border-bottom: solid 1px var( --color-neutral-5 );
 }
 
 .plan-features__table-item.has-border-top {
-	border-top: solid 1px lighten( $gray, 27% );
+	border-top: solid 1px var( --color-neutral-5 );
 }
 
 .plan-features__table-item.is-placeholder {
@@ -190,8 +183,8 @@ $plan-features-sidebar-width: 272px;
 	display: flex;
 	align-items: flex-start;
 	padding: 12px 24px 0 15px;
-	border-bottom: solid 2px var( --color-neutral-100 );
-	background-color: $white;
+	border-bottom: solid 2px var( --color-neutral-10 );
+	background-color: var( --color-surface );
 
 	@include breakpoint( '<960px' ) {
 		padding: 12px 12px 0;
@@ -199,28 +192,27 @@ $plan-features-sidebar-width: 272px;
 
 	.plans-features-main__group.is-wpcom & {
 		&.is-blogger-plan {
-			border-bottom: solid 2px var( --color-success );
+			border-bottom: solid 2px var( --color-plan-blogger );
 		}
 
 		&.is-personal-plan {
-			border-bottom: solid 2px var( --color-primary );
+			border-bottom: solid 2px var( --color-plan-personal );
 		}
 
 		&.is-premium-plan {
-			border-bottom: solid 2px var( --color-warning );
+			border-bottom: solid 2px var( --color-plan-premium );
 		}
 
 		&.is-business-plan {
-			border-bottom: solid 2px $orange-jazzy;
+			border-bottom: solid 2px var( --color-plan-business );
 		}
 
 		&.is-ecommerce-plan {
-			border-bottom: solid 2px $alert-purple;
+			border-bottom: solid 2px var( --color-plan-ecommerce );
 		}
 	}
 
 	.plans-features-main__group.is-jetpack & {
-
 		&.is-personal-plan {
 			border-bottom: solid 2px var( --color-warning );
 		}
@@ -230,7 +222,7 @@ $plan-features-sidebar-width: 272px;
 		}
 
 		&.is-business-plan {
-			border-bottom: solid 2px $alert-purple;
+			border-bottom: solid 2px var( --color-plan-ecommerce );
 		}
 	}
 }
@@ -244,7 +236,6 @@ $plan-features-sidebar-width: 272px;
 }
 
 .is-section-plans .plan-features__header-figure {
-
 	@include breakpoint( '<1280px' ) {
 		width: 24px;
 		height: 24px;
@@ -255,7 +246,6 @@ $plan-features-sidebar-width: 272px;
 .plan-features__header-figure,
 .plan-features__table.has-1-cols .plan-features__header-figure,
 .plan-features__table.has-2-cols .plan-features__header-figure {
-
 	@include breakpoint( '<1040px' ) {
 		display: none;
 	}
@@ -274,6 +264,11 @@ $plan-features-sidebar-width: 272px;
 	@include breakpoint( '<960px' ) {
 		font-size: 20px;
 	}
+}
+
+.plan-features__audience {
+	display: block;
+	color: var( --color-text-subtle );
 }
 
 .plan-features__header-price-group,
@@ -310,7 +305,7 @@ $plan-features-sidebar-width: 272px;
 	line-height: 20px;
 	height: 20px;
 	border-radius: 10px;
-	color: $white;
+	color: var( --color-text-inverted );
 	background: var( --color-success );
 	font-weight: normal;
 	vertical-align: middle;
@@ -334,8 +329,7 @@ $plan-features-sidebar-width: 272px;
 	line-height: normal;
 
 	&.is-placeholder {
-
-		@include placeholder( 23% );
+		@include placeholder( --color-neutral-10 );
 		width: 140px;
 		height: 12px;
 		margin-bottom: 15px;
@@ -347,69 +341,16 @@ $plan-features-sidebar-width: 272px;
 }
 
 .segmented-control.is-customer-type-toggle {
-	background-color: transparent;
-	margin: 50px auto 20px;
-	max-width: 100%;
-	width: 580px;
+	max-width: 520px;
+	margin: 8px auto 16px;
 
-	.segmented-control__item {
-		background-color: $gray-light;
-		min-width: 50%;
-
-		&:first-of-type {
-			margin-right: 5px;
-
-			@include breakpoint( '<660px' ) {
-				margin: 0 15px 10px;
-			}
-		}
-
-		&:last-of-type {
-			margin-right: 5px;
-
-			@include breakpoint( '<660px' ) {
-				margin: 0 15px;
-			}
-		}
-
-		&.is-selected + .segmented-control__item .segmented-control__link {
-			border-left-color: $gray-lighten-10;
-
-			&:hover {
-				border-left-color: $gray-dark;
-			}
-		}
-	}
-
-	.segmented-control__link {
-		border-radius: 6px;
-		border: 2px solid $gray-lighten-10;
-		color: $gray-dark;
-		font-size: 15px;
-		font-weight: 500;
-		padding: 15px;
-
-		&:hover {
-			background-color: transparent;
-			border: 2px solid $gray-dark;
-		}
-	}
-
-	@include breakpoint( '<660px' ) {
+	@include breakpoint( '<480px' ) {
 		flex-wrap: wrap;
-	}
+		border-radius: 0;
 
-    @include breakpoint( '<480px' ) {
-		flex-wrap: wrap;
-		margin-bottom: 9px;
-
-		.segmented-control__item {
-			width: 100%;
+		.segmented-control__link {
+			border-radius: 0;
 		}
-	}
-
-	&.is-primary .segmented-control__link:hover {
-		background-color: transparent;
 	}
 }
 
@@ -423,10 +364,8 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__price {
-
 	&.is-placeholder {
-
-		@include placeholder( 23% );
+		@include placeholder( --color-neutral-10 );
 			width: 45px;
 			height: 25px;
 			margin-top: 9px;
@@ -434,14 +373,12 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 .plan-features__price-jetpack {
-
 	&.is-placeholder {
-
-		@include placeholder( 23% );
+		@include placeholder( --color-neutral-10 );
+			width: 140px;
 			height: 32px;
 			margin-top: 5px;
 			margin-bottom: 5px;
-			width: 140px;
 
 		@include breakpoint( '<960px' ) {
 			height: 26px;
@@ -469,12 +406,12 @@ $plan-features-sidebar-width: 272px;
 	top: 0;
 	transform: translateY( -21px );
 	padding: 0 8px;
-	background: var( --color-neutral-700 );
+	background: var( --color-neutral-70 );
 	font-size: 10px;
 	line-height: $plan-features-header-banner-height;
 	text-align: center;
 	text-transform: uppercase;
-	color: $white;
+	color: var( --color-text-inverted );
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -496,7 +433,7 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__targeted-description-heading {
 	display: block;
-	color: lighten( $gray-dark, 25% );
+	color: var( --color-text-subtle );
 }
 
 .plan-features__item {
@@ -504,7 +441,7 @@ $plan-features-sidebar-width: 272px;
 	margin: 0 24px;
 	padding: 12px 0;
 	font-size: 14px;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 
 	@include breakpoint( '<960px' ) {
 		font-size: 12px;
@@ -582,7 +519,7 @@ $plan-features-sidebar-width: 272px;
 
 // This is used for the monthly/yearly billing
 // which is currently us in the Jetpack flow.
-.price-toggle {
+.segmented-control.price-toggle {
 	width: 250px;
 	margin: 0 auto 20px;
 
@@ -591,39 +528,61 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
+.plans-features-main__group.is-wpcom {
+	padding-top: 19px;
+}
+
 // This is the customer type buttons that let
 // you toggle the visible plans in signup.
 // The #primary id is included to increase specificity
 // and override some of the segmented-control styles.
 // This UI should really use buttons instead.
+/* stylelint-disable selector-max-id */
 body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
-	.segmented-control__item {
-		background: none;
+	margin: 0 auto 16px;
+	box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.14 ),
+				0 2px 1px -1px rgba( 0, 0, 0, 0.12 ),
+				0 1px 3px 0 rgba( 0, 0, 0, 0.2 );
 
-		&:hover,
-		&:focus {
-			background: none;
+	.segmented-control__item a {
+		text-decoration: underline;
+		border: none;
+	}
+
+	.segmented-control__item.is-selected {
+		position: relative;
+
+		// This adds a little pointer arrow to the bottom
+		// of the selected segment item. It relies on the
+		// relative positioning above.
+		@include breakpoint( '>480px' ) {
+			&::after {
+				display: block;
+				content: '';
+				width: 0;
+				height: 0;
+				border-left: 10px solid transparent;
+				border-right: 10px solid transparent;
+				border-top: 10px solid var( --color-primary-70 );
+				position: absolute;
+				bottom: -10px;
+				left: calc( 50% - 10px );
+			}
 		}
 
 		a,
 		a:hover,
 		a:focus {
-			background: none;
-			border: none;
-			color: var( --color-white );
-			text-decoration: underline;
-		}
-
-		&.is-selected a,
-		&.is-selected a:hover,
-		&.is-selected a:focus {
-			background: var( --color-white );
-			color: var( --color-text );
-			text-decoration: none;
+			@include breakpoint( '<660px' ) {
+				flex-wrap: wrap;
+			}
 			cursor: default;
+			text-decoration: none;
+			background-color: var( --color-primary-70 );
 		}
 	}
 }
+/* stylelint-enable */
 
 .plans-wrapper {
 	margin: 0 auto;
@@ -662,13 +621,13 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		}
 
 		@include breakpoint( '>1040px' ) {
-			border-spacing: 15px 0 !important;
+			border-spacing: 15px 0;
 			padding: 0;
 		}
 	}
 
 	.plan-features__content {
-		margin: -16px 0 0 0;
+		margin: -16px 0 0;
 	}
 
 	.plan-features__header {
@@ -676,12 +635,13 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	.plan-features__header-title {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		margin-bottom: 5px;
 	}
 
 	.plan-features__table-item {
 		text-align: center;
+		transition: opacity 0.05s;
 	}
 
 	.plan-features__table-item.has-border-bottom {
@@ -704,7 +664,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 	.plan-features__pricing,
 	.plan-price.is-discounted {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	.plan-features__pricing {
@@ -744,7 +704,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 		&.disabled,
 		&[disabled] {
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 	}
 
@@ -762,7 +722,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	.plan-features__row:last-of-type .plan-features__table-item {
-		border-bottom: solid 1px lighten( $gray, 27% );
+		border-bottom: solid 1px var( --color-neutral-5 );
 	}
 
 	.jetpack-connect__hide-plan-icons .jetpack-connect__plans & .plan-features__pricing {
@@ -773,5 +733,354 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 	.plan-features__header-price-group-prices {
 		display: inline;
+	}
+}
+
+.plans-features-main__group.is-scrollable {
+	position: relative;
+
+	.is-section-signup & {
+		width: 100vw;
+		margin-left: calc( 50% - 50vw );
+
+		@media ( min-width: 1600px ) {
+			max-width: 1600px;
+			margin-left: -280px;
+		}
+
+		@include breakpoint( '<1040px' ) {
+			padding-top: 12px;
+		}
+	}
+
+	.is-section-plans & {
+		overflow: hidden;
+		width: calc( 100vw - 278px );
+		margin-left: calc( 50% - 50vw + 138px );
+
+		@include breakpoint( '<660px' ) {
+			margin-left: 0;
+			width: 100%;
+		}
+
+		@media ( min-width: 1800px ) {
+			max-width: 1520px;
+			margin-left: -240px;
+		}
+	}
+
+	.signup__steps & .plan-features--signup {
+		max-width: 100%;
+	}
+
+	.plan-features__content {
+		margin-left: 0;
+		margin-right: 0;
+	}
+}
+
+.plan-features__scroller-container {
+	padding: 0 0 30px;
+
+	.is-section-plans & {
+		margin: 0 0 30px;
+	}
+}
+
+.plan-features__scroller-wrapper {
+	overflow: auto;
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+	scroll-snap-type: x mandatory;
+	-webkit-overflow-scrolling: touch;
+
+	&::-webkit-scrollbar {
+		height: 0;
+	}
+}
+
+.plan-features__scroller {
+	position: relative;
+	margin: 0 auto;
+
+	.plan-features__table {
+		display: table;
+		padding: 0;
+		margin: 0 auto;
+		width: 100%;
+		border-spacing: 7px 0;
+
+		.is-section-plans & {
+			border-spacing: 0;
+		}
+	}
+
+	.plan-features__header {
+		display: block;
+		position: relative;
+		text-align: left;
+		box-sizing: border-box;
+		border-top: solid 8px;
+		border-radius: 3px 3px 0 0;
+		padding-bottom: 12px;
+
+		.plans-features-main__group.is-wpcom & {
+			border-bottom: none;
+		}
+
+		&.is-blogger-plan {
+			border-color: var( --color-plan-blogger );
+		}
+
+		&.is-personal-plan {
+			border-color: var( --color-plan-personal );
+		}
+
+		&.is-premium-plan {
+			border-color: var( --color-plan-premium );
+		}
+
+		&.is-business-plan {
+			border-color: var( --color-plan-business );
+		}
+
+		&.is-ecommerce-plan {
+			border-color: var( --color-plan-ecommerce );
+		}
+
+		/* scroll stops */
+		.scroll-snap-enabled & {
+			scroll-snap-align: start;
+		}
+	}
+
+	.plan-features__header-title {
+		color: var( --color-text );
+		font-weight: 700;
+		font-size: 24px;
+		margin-bottom: 6px;
+	}
+
+	.plan-features__header-billing-info {
+		display: block;
+		color: var( --color-text-subtle );
+		align-items: center;
+		text-align: center;
+	}
+
+	.plan-features__pricing {
+		padding: 8px 16px;
+		margin: 0;
+		border-top: solid 1px var( --color-neutral-10 );
+
+		.plan-price {
+			font-weight: bold;
+			margin-right: 10px;
+			font-size: 52px;
+			font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+		}
+
+		.plan-price__currency-symbol {
+			font-size: 50%;
+			font-weight: 400;
+		}
+
+		.plan-price__integer {
+			font-weight: 600;
+		}
+	}
+
+	.plan-features__table-item {
+		border-top: solid 1px var( --color-neutral-5 );
+		vertical-align: middle;
+		padding: 7px 0;
+
+		.is-section-signup & {
+			border-right: none;
+			border-left: none;
+		}
+
+		&:empty {
+			background: transparent;
+			border-top: none;
+		}
+
+		&.has-border-top {
+			vertical-align: top;
+		}
+
+		&.has-border-top, &.is-top-buttons, &.is-description {
+			border-top: none;
+			border-bottom: none;
+			padding-top: 0;
+		}
+
+		&.is-description {
+			vertical-align: top;
+		}
+
+		&.is-last-feature {
+			border-bottom: solid 1px var( --color-neutral-5 );
+		}
+	}
+
+	tr:first-child .plan-features__table-item {
+		border-radius: 5px 5px 0 0;
+	}
+
+	tr:last-child .plan-features__table-item {
+		border-radius: 0 0 5px 5px;
+	}
+
+	.plan-features__actions {
+		padding-bottom: 12px;
+	}
+
+	.plan-features__item {
+		align-items: center;
+		font-size: inherit;
+		font-weight: 500;
+		min-height: 42px;
+		margin: 0;
+		padding: 0 8px 0 16px;
+	}
+
+	.plan-features__item-title {
+		padding: 0;
+	}
+
+	.plan-features__description {
+		text-align: initial;
+		padding: 0 24px;
+	}
+
+	.plan-features__item-tip-info {
+		margin-left: 10px;
+	}
+
+	.plan-features__row:last-child .plan-features__table-item {
+		border-bottom: solid 1px var( --color-neutral-5 );
+	}
+}
+
+.plan-features__scroll-left,
+.plan-features__scroll-right {
+	display: flex;
+	position: absolute;
+	top: 24px;
+	bottom: 40px;
+	width: 12%;
+	cursor: pointer;
+	overflow: hidden;
+	z-index: 1;
+}
+
+.plan-features__scroll-left {
+	left: 0;
+	cursor: w-resize;
+
+	&.disabled {
+		cursor: default;
+	}
+}
+
+.plan-features__scroll-right {
+	right: 0;
+	cursor: e-resize;
+
+	&.disabled {
+		cursor: default;
+	}
+}
+
+button.plan-features__scroll-button {
+	align-self: start;
+	margin: 180px auto 0;
+	width: 30px;
+	height: 30px;
+	padding: 0;
+	background-color: var( --color-neutral );
+	border: 0;
+	border-radius: 15px;
+	color: var( --color-text-inverted );
+	cursor: pointer;
+
+	&:hover, &:active, &:focus {
+		color: var( --color-text-inverted );
+	}
+
+	.gridicon {
+		width: 24px;
+		height: 24px;
+	}
+
+	:root body.is-section-signup .plan-features__scroller-container & {
+		background-color: var( --color-surface );
+		color: var( --color-primary );
+		padding: 0;
+	}
+
+	&:disabled, &[disabled] {
+		background-color: rgba( var( --color-neutral-rgb ), 0.5 );
+		color: var( --color-neutral-5 );
+	}
+
+	:root body.is-section-signup &:disabled, .is-section-signup &[disabled] {
+		background-color: rgba( var( --color-surface-rgb ), 0.5 );
+		color: var( --color-primary );
+	}
+
+	.plan-features__scroll-right & {
+		margin-left: 20px;
+
+		@include breakpoint( '<480px' ) {
+			margin-left: 5px;
+		}
+	}
+
+	.plan-features__scroll-left & {
+		margin-right: 20px;
+
+		@include breakpoint( '<480px' ) {
+			margin-right: 5px;
+		}
+	}
+}
+
+.plan-features__scroll-indicator {
+	position: absolute;
+	width: auto;
+	bottom: 0;
+	left: 50%;
+	transform: translateX( -50% );
+	white-space: nowrap;
+
+	.is-section-plans & {
+		bottom: 20px;
+	}
+}
+
+.plan-features__scroll-indicator-dot {
+	display: inline-block;
+	background: var( --color-neutral-dark );
+	opacity: 0.3;
+	width: 8px;
+	height: 8px;
+	margin: 0 2px;
+	border-radius: 4px;
+
+	.is-section-signup & {
+		background: var( --color-surface );
+		opacity: 0.5;
+	}
+
+	&.is-highlighted {
+		opacity: 1;
+	}
+}
+
+@include breakpoint( '<480px' ) {
+	.plan-features__upgrade-launch-dialog .dialog__content p {
+		padding: 0 20px;
 	}
 }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -59,6 +57,14 @@ export const requestSettingsUpdate = ( siteId, settings, noticeText ) => {
 					type: MAILCHIMP_SETTINGS_UPDATE_FAILURE,
 					siteId,
 					error,
+				} );
+				dispatch( {
+					type: NOTICE_CREATE,
+					notice: {
+						duration: 10000,
+						text: error.message,
+						status: 'is-error',
+					},
 				} );
 			} );
 	};

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,17 +5,23 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import DomainProductPrice from 'components/domains/domain-product-price';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class DomainSuggestion extends React.Component {
 	static propTypes = {
-		buttonContent: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ).isRequired,
+		buttonContent: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] )
+			.isRequired,
 		buttonStyles: PropTypes.object,
 		extraClasses: PropTypes.string,
 		onButtonClick: PropTypes.func.isRequired,
@@ -33,7 +37,17 @@ class DomainSuggestion extends React.Component {
 	};
 
 	render() {
-		const { children, extraClasses, hidePrice, isAdded, price, priceRule } = this.props;
+		const {
+			children,
+			extraClasses,
+			hidePrice,
+			isAdded,
+			price,
+			priceRule,
+			salePrice,
+			showTestCopy,
+			isFeatured,
+		} = this.props;
 		const classes = classNames(
 			'domain-suggestion',
 			'card',
@@ -45,7 +59,12 @@ class DomainSuggestion extends React.Component {
 			extraClasses
 		);
 
-		/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus */
+		const contentClassName = classNames( 'domain-suggestion__content', {
+			'domain-suggestion__content-domain-copy-test': showTestCopy && ! isFeatured,
+		} );
+
+		/* eslint-disable jsx-a11y/click-events-have-key-events */
+		/* eslint-disable jsx-a11y/interactive-supports-focus */
 		return (
 			<div
 				className={ classes }
@@ -54,9 +73,16 @@ class DomainSuggestion extends React.Component {
 				role="button"
 				data-e2e-domain={ this.props.domain }
 			>
-				<div className="domain-suggestion__content">
+				<div className={ contentClassName }>
 					{ children }
-					{ ! hidePrice && <DomainProductPrice price={ price } rule={ priceRule } /> }
+					{ ! hidePrice && (
+						<DomainProductPrice
+							price={ price }
+							salePrice={ salePrice }
+							rule={ priceRule }
+							showTestCopy={ showTestCopy }
+						/>
+					) }
 				</div>
 				<Button className="domain-suggestion__action" { ...this.props.buttonStyles }>
 					{ this.props.buttonContent }
@@ -66,7 +92,8 @@ class DomainSuggestion extends React.Component {
 				) }
 			</div>
 		);
-		/* eslint-enable jsx-a11y/click-events-have-key-events jsx-a11y/interactive-supports-focus */
+		/* eslint-enable jsx-a11y/click-events-have-key-events */
+		/* eslint-enable jsx-a11y/interactive-supports-focus */
 	}
 }
 

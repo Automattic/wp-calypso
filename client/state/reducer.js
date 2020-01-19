@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -18,16 +17,14 @@ import account from './account/reducer';
 import accountRecovery from './account-recovery/reducer';
 import activePromotions from './active-promotions/reducer';
 import activityLog from './activity-log/reducer';
-import analyticsTracking from './analytics/reducer';
 import application from './application/reducer';
 import applicationPasswords from './application-passwords/reducer';
 import automatedTransfer from './automated-transfer/reducer';
+import atomicHosting from './hosting/reducer';
 import atomicTransfer from './atomic-transfer/reducer';
 import billingTransactions from './billing-transactions/reducer';
 import checklist from './checklist/reducer';
 import comments from './comments/reducer';
-import componentsUsageStats from './components-usage-stats/reducer';
-import concierge from './concierge/reducer';
 import connectedApplications from './connected-applications/reducer';
 import countries from './countries/reducer';
 import countryStates from './country-states/reducer';
@@ -35,8 +32,11 @@ import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
 import documentHead from './document-head/reducer';
 import domains from './domains/reducer';
-import googleAppsUsers from './google-apps-users/reducer';
+import emailForwarding from './email-forwarding/reducer';
+import exporter from './exporter/reducers';
 import googleMyBusiness from './google-my-business/reducer';
+import gsuiteUsers from './gsuite-users/reducer';
+import gutenbergOptInOut from './gutenberg-opt-in-out/reducer';
 import happinessEngineers from './happiness-engineers/reducer';
 import happychat from './happychat/reducer';
 import help from './help/reducer';
@@ -49,6 +49,7 @@ import inlineSupportArticle from './inline-support-article/reducer';
 import invites from './invites/reducer';
 import jetpack from './jetpack/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
+import jetpackProductInstall from './jetpack-product-install/reducer';
 import jetpackRemoteInstall from './jetpack-remote-install/reducer';
 import jetpackSync from './jetpack-sync/reducer';
 import jitm from './jitm/reducer';
@@ -56,7 +57,7 @@ import login from './login/reducer';
 import media from './media/reducer';
 import memberships from './memberships/reducer';
 import mailchimp from './mailchimp/reducer';
-import mobileDownloadSMS from './mobile-download-sms/reducer';
+import mySites from './my-sites/reducer';
 import notices from './notices/reducer';
 import notificationSettings from './notification-settings/reducer';
 import { unseenCount as notificationsUnseenCount } from './notifications';
@@ -75,7 +76,7 @@ import purchases from './purchases/reducer';
 import pushNotifications from './push-notifications/reducer';
 import reader from './reader/reducer';
 import receipts from './receipts/reducer';
-import { rewindReducer as rewind } from './rewind';
+import rewind from './rewind/reducer';
 import selectedEditor from './selected-editor/reducer';
 import sharing from './sharing/reducer';
 import shortcodes from './shortcodes/reducer';
@@ -104,16 +105,14 @@ const reducers = {
 	accountRecovery,
 	activePromotions,
 	activityLog,
-	analyticsTracking,
 	application,
 	applicationPasswords,
 	automatedTransfer,
+	atomicHosting,
 	atomicTransfer,
 	billingTransactions,
 	checklist,
 	comments,
-	componentsUsageStats,
-	concierge,
 	connectedApplications,
 	countries,
 	countryStates,
@@ -121,9 +120,12 @@ const reducers = {
 	dataRequests,
 	documentHead,
 	domains,
+	emailForwarding,
+	exporter,
 	form,
-	googleAppsUsers,
 	googleMyBusiness,
+	gsuiteUsers,
+	gutenbergOptInOut,
 	happinessEngineers,
 	happychat,
 	help,
@@ -137,12 +139,14 @@ const reducers = {
 	invites,
 	jetpack,
 	jetpackConnect,
+	jetpackProductInstall,
 	jetpackRemoteInstall,
 	jetpackSync,
 	jitm,
 	login,
 	media,
-	mobileDownloadSMS,
+	memberships,
+	mySites,
 	notices,
 	notificationSettings,
 	notificationsUnseenCount,
@@ -185,10 +189,6 @@ const reducers = {
 	users,
 	wordads,
 };
-
-if ( config.isEnabled( 'memberships' ) ) {
-	reducers.memberships = memberships;
-}
 
 if ( config.isEnabled( 'mailchimp' ) ) {
 	reducers.mailchimp = mailchimp;

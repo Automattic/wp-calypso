@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,13 +8,13 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { find, isBoolean } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -47,11 +45,11 @@ import QueryStoredCards from 'components/data/query-stored-cards';
 import AddCardDialog from 'woocommerce/woocommerce-services/views/label-settings/add-credit-card-modal';
 
 class ShippingLabels extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.setState( { expanded: this.isExpanded( this.props ) } );
 	}
 
-	componentWillReceiveProps( props ) {
+	UNSAFE_componentWillReceiveProps( props ) {
 		if ( props.selectedPaymentMethod !== this.props.selectedPaymentMethod ) {
 			this.setState( { expanded: this.isExpanded( props ) } );
 		}
@@ -324,7 +322,7 @@ class ShippingLabels extends Component {
 		return (
 			<FormFieldSet>
 				<FormLabel className="label-settings__cards-label">
-					{ translate( 'Email Receipts' ) }
+					{ translate( 'Email receipts' ) }
 				</FormLabel>
 				<FormLabel>
 					<FormCheckbox

@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -13,6 +10,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { playtime } from 'lib/media/utils';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 class EditorMediaModalDetailFileInfo extends React.Component {
 	static displayName = 'EditorMediaModalDetailFileInfo';
@@ -116,4 +114,4 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 	}
 }
 
-export default localize( EditorMediaModalDetailFileInfo );
+export default localize( withLocalizedMoment( EditorMediaModalDetailFileInfo ) );

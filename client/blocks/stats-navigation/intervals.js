@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -11,7 +10,11 @@ import classnames from 'classnames';
  */
 import { intervals } from './constants';
 import SegmentedControl from 'components/segmented-control';
-import ControlItem from 'components/segmented-control/item';
+
+/**
+ * Style dependencies
+ */
+import './intervals.scss';
 
 const Intervals = props => {
 	const { selected, pathTemplate, className, standalone } = props;
@@ -23,9 +26,9 @@ const Intervals = props => {
 			{ intervals.map( i => {
 				const path = pathTemplate.replace( /{{ interval }}/g, i.value );
 				return (
-					<ControlItem key={ i.value } path={ path } selected={ i.value === selected }>
+					<SegmentedControl.Item key={ i.value } path={ path } selected={ i.value === selected }>
 						{ i.label }
-					</ControlItem>
+					</SegmentedControl.Item>
 				);
 			} ) }
 		</SegmentedControl>

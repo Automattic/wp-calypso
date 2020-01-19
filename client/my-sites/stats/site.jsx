@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import page from 'page';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize, translate } from 'i18n-calypso';
 import { parse as parseQs, stringify as stringifyQs } from 'qs';
@@ -13,12 +11,12 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import DocumentHead from 'components/data/document-head';
 import StatsPeriodNavigation from './stats-period-navigation';
 import Main from 'components/main';
 import StatsNavigation from 'blocks/stats-navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import DatePicker from './stats-date-picker';
 import Countries from './stats-countries';
 import ChartTabs from './stats-chart-tabs';
@@ -26,20 +24,17 @@ import StatsModule from './stats-module';
 import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import StatsFirstView from './stats-first-view';
+import StatsBanners from './stats-banners';
 import StickyPanel from 'components/sticky-panel';
+import JetpackBackupCredsBanner from 'blocks/jetpack-backup-creds-banner';
 import JetpackColophon from 'components/jetpack-colophon';
-import config from 'config';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite, getSitePlanSlug } from 'state/sites/selectors';
+import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
-import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
-import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
-import UpworkStatsNudge from 'blocks/upwork-stats-nudge';
-import isGoogleMyBusinessStatsNudgeVisibleSelector from 'state/selectors/is-google-my-business-stats-nudge-visible';
 import memoizeLast from 'lib/memoize-last';
 
 function updateQueryString( query = {} ) {
@@ -127,59 +122,27 @@ class StatsSite extends Component {
 		}
 	};
 
-	displayBanner() {
-		const { isGoogleMyBusinessStatsNudgeVisible, siteId, slug } = this.props;
-		return (
-			<Fragment>
-				{ config.isEnabled( 'google-my-business' ) &&
-					abtest( 'builderReferralStatsNudge' ) === 'googleMyBusinessBanner' &&
-					siteId && (
-						<GoogleMyBusinessStatsNudge
-							siteSlug={ slug }
-							siteId={ siteId }
-							visible={ isGoogleMyBusinessStatsNudgeVisible }
-						/>
-					) }
-				{ abtest( 'builderReferralStatsNudge' ) === 'builderReferralBanner' && siteId && (
-					<UpworkStatsNudge siteSlug={ slug } siteId={ siteId } />
-				) }
-			</Fragment>
-		);
-	}
-
 	render() {
-		const { date, hasPodcasts, isJetpack, siteId, slug } = this.props;
+		const { date, isJetpack, siteId, slug, isCustomerHomeEnabled } = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
-		let videoList;
-		let podcastList;
+		let fileDownloadList;
 
 		const query = memoizedQuery( period, endOf );
 
-		// Video plays, and tags and categories are not supported in JetPack Stats
+		// File downloads are not yet supported in Jetpack Stats
 		if ( ! isJetpack ) {
-			videoList = (
+			fileDownloadList = (
 				<StatsModule
-					path="videoplays"
-					moduleStrings={ moduleStrings.videoplays }
+					path="filedownloads"
+					moduleStrings={ moduleStrings.filedownloads }
 					period={ this.props.period }
 					query={ query }
-					statType="statsVideoPlays"
+					statType="statsFileDownloads"
 					showSummaryLink
-				/>
-			);
-		}
-		if ( config.isEnabled( 'manage/stats/podcasts' ) && hasPodcasts ) {
-			podcastList = (
-				<StatsModule
-					path="podcastdownloads"
-					moduleStrings={ moduleStrings.podcastdownloads }
-					period={ this.props.period }
-					query={ query }
-					statType="statsPodcastDownloads"
-					showSummaryLink
+					useShortLabel={ true }
 				/>
 			);
 		}
@@ -188,14 +151,19 @@ class StatsSite extends Component {
 			<Main wideLayout={ true }>
 				<QueryKeyringConnections />
 				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }
-				<DocumentHead title={ translate( 'Stats' ) } />
+				<DocumentHead title={ translate( 'Stats and Insights' ) } />
 				<PageViewTracker
 					path={ `/stats/${ period }/:site` }
 					title={ `Stats > ${ titlecase( period ) }` }
 				/>
 				<PrivacyPolicyBanner />
-				<StatsFirstView />
+				<JetpackBackupCredsBanner event={ 'stats-backup-credentials' } />
 				<SidebarNavigation />
+				<FormattedHeader
+					className="stats__section-header"
+					headerText={ translate( 'Stats and Insights' ) }
+					align="left"
+				/>
 				<StatsNavigation
 					selectedItem={ 'traffic' }
 					interval={ period }
@@ -203,8 +171,9 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				<div id="my-stats-content">
-					{ config.isEnabled( 'onboarding-checklist' ) && <WpcomChecklist viewMode="banner" /> }
-					{ this.displayBanner() }
+					{ ! isCustomerHomeEnabled && (
+						<StatsBanners siteId={ siteId } slug={ slug } primaryButton={ true } />
+					) }
 					<ChartTabs
 						activeTab={ getActiveTab( this.props.chartTab ) }
 						activeLegend={ this.state.activeLegend }
@@ -250,7 +219,7 @@ class StatsSite extends Component {
 								statType="statsSearchTerms"
 								showSummaryLink
 							/>
-							{ videoList }
+							{ fileDownloadList }
 						</div>
 						<div className="stats__module-column">
 							<Countries
@@ -286,7 +255,14 @@ class StatsSite extends Component {
 								className="stats__author-views"
 								showSummaryLink
 							/>
-							{ podcastList }
+							<StatsModule
+								path="videoplays"
+								moduleStrings={ moduleStrings.videoplays }
+								period={ this.props.period }
+								query={ query }
+								statType="statsVideoPlays"
+								showSummaryLink
+							/>
 						</div>
 					</div>
 				</div>
@@ -303,18 +279,10 @@ export default connect(
 
 		return {
 			isJetpack,
-			hasPodcasts:
-				// Podcasting category slug
-				// TODO: remove when settings API is updated for new option
-				!! getSiteOption( state, siteId, 'podcasting_archive' ) ||
-				// Podcasting category ID
-				!! getSiteOption( state, siteId, 'podcasting_category_id' ),
-			isGoogleMyBusinessStatsNudgeVisible: isGoogleMyBusinessStatsNudgeVisibleSelector(
-				state,
-				siteId
-			),
 			siteId,
 			slug: getSelectedSiteSlug( state ),
+			planSlug: getSitePlanSlug( state, siteId ),
+			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 		};
 	},
 	{ recordGoogleEvent }

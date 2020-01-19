@@ -27,7 +27,7 @@
 }
 
 .credentials-configured__info-description {
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-size: rem( 13px );
 }
 
@@ -46,10 +46,10 @@
 	top: -5px;
 
 	&:hover .credentials-configured__revoke-icon {
-		color: darken( $alert-red, 20% );
+		color: var( --color-error-60 );
 	}
 
 	&:disabled .credentials-configured__revoke-icon {
-		color: lighten( $alert-red, 30% );
+		color: var( --color-error-5 );
 	}
 }

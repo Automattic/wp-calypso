@@ -1,6 +1,5 @@
-/** @format */
 /**
- * @fileoverview Disallow using three dots in translate strings
+ * @file Disallow using three dots in translate strings
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -56,11 +55,27 @@ function makeFixerFunction( arg ) {
 const rule = ( module.exports = function( context ) {
 	return {
 		CallExpression: function( node ) {
-			if ( 'translate' !== getCallee( node ).name ) {
-				return;
+			let argsToProcess = [];
+
+			switch ( getCallee( node ).name ) {
+				case 'translate':
+					argsToProcess = node.arguments.slice( 0 );
+					break;
+
+				// We're only iterested in the first argument of these
+				case '__':
+				case '_x':
+					argsToProcess = node.arguments.slice( 0, 1 );
+					break;
+
+				// Plural translate may have 2 translated strings
+				case '_n':
+				case '_nx':
+					argsToProcess = node.arguments.slice( 0, 2 );
+					break;
 			}
 
-			node.arguments.forEach( function( arg ) {
+			argsToProcess.forEach( function( arg ) {
 				const argumentString = getTextContentFromNode( arg );
 				if ( argumentString && containsThreeDots( argumentString ) ) {
 					context.report( {

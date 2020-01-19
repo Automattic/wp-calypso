@@ -1,22 +1,20 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 
 export default () => (
 	<div>
 		<p>
 			{ translate(
-				'To get started, you need a MailChimp account. Please log in or register by clicking the button below.'
+				'To get started, you need a Mailchimp account. Please log in or register by clicking the button below.'
 			) }
 		</p>
 		<Button

@@ -1,18 +1,16 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import page from 'page';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import notices from 'notices';
 import utils from './utils';
 import { preventWidows } from 'lib/formatting';
@@ -103,37 +101,93 @@ class MainComponent extends React.Component {
 	};
 
 	getCategoryName = () => {
-		if ( 'marketing' === this.props.category ) {
+		const category = this.getCategoryFromMessageTypeId();
+		if ( 'marketing' === category ) {
 			return this.props.translate( 'Suggestions' );
-		} else if ( 'research' === this.props.category ) {
+		} else if ( 'research' === category ) {
 			return this.props.translate( 'Research' );
-		} else if ( 'community' === this.props.category ) {
+		} else if ( 'community' === category ) {
 			return this.props.translate( 'Community' );
-		} else if ( 'digest' === this.props.category ) {
+		} else if ( 'digest' === category ) {
 			return this.props.translate( 'Digests' );
+		} else if ( 'news' === category ) {
+			return this.props.translate( 'Newsletter' );
+		} else if ( 'jetpack_marketing' === category ) {
+			return this.props.translate( 'Jetpack Suggestions' );
+		} else if ( 'jetpack_research' === category ) {
+			return this.props.translate( 'Jetpack Research' );
+		} else if ( 'jetpack_promotion' === category ) {
+			return this.props.translate( 'Jetpack Promotions' );
+		} else if ( 'jetpack_news' === category ) {
+			return this.props.translate( 'Jetpack Newsletter' );
 		}
 
-		return this.props.category;
+		return category;
 	};
 
 	getCategoryDescription = () => {
-		if ( 'marketing' === this.props.category ) {
+		const category = this.getCategoryFromMessageTypeId();
+		if ( 'marketing' === category ) {
 			return this.props.translate( 'Tips for getting the most out of WordPress.com.' );
-		} else if ( 'research' === this.props.category ) {
+		} else if ( 'research' === category ) {
 			return this.props.translate(
 				'Opportunities to participate in WordPress.com research and surveys.'
 			);
-		} else if ( 'community' === this.props.category ) {
+		} else if ( 'community' === category ) {
 			return this.props.translate(
 				'Information on WordPress.com courses and events (online and in-person).'
 			);
-		} else if ( 'digest' === this.props.category ) {
+		} else if ( 'digest' === category ) {
 			return this.props.translate(
 				'Popular content from the blogs you follow, and reports on your own site and its performance.'
 			);
+		} else if ( 'news' === category ) {
+			return this.props.translate( 'WordPress.com news, announcements, and product spotlights.' );
+		} else if ( 'jetpack_marketing' === category ) {
+			return this.props.translate( 'Tips for getting the most out of Jetpack.' );
+		} else if ( 'jetpack_research' === category ) {
+			return this.props.translate(
+				'Opportunities to participate in Jetpack research and surveys.'
+			);
+		} else if ( 'jetpack_promotion' === category ) {
+			return this.props.translate( 'Promotions and deals on upgrades.' );
+		} else if ( 'jetpack_news' === category ) {
+			return this.props.translate( 'Jetpack news, announcements, and product spotlights.' );
 		}
 
 		return null;
+	};
+
+	/*
+	 * If category is in the list of those that should be mapped, return the mapped value. Otherwise just return the existing category.
+	 * Some unsubscribe links contain a numeric category.
+	 * These are Iterable message type ids that we need to map to our internal categories.
+	 */
+	getCategoryFromMessageTypeId = () => {
+		switch ( this.props.category ) {
+			case '20659':
+				return 'marketing';
+			case '20784':
+				return 'research';
+			case '20786':
+				return 'community';
+			case '20796':
+				return 'digest';
+			case '20783':
+				return 'promotion';
+			case '20785':
+				return 'news';
+			case '22504':
+				return 'jetpack_marketing';
+			case '22507':
+				return 'jetpack_research';
+			case '22506':
+				return 'jetpack_promotion';
+			case '22505':
+				return 'jetpack_news';
+			default:
+				return this.props.category;
+		}
 	};
 
 	onUnsubscribeClick = () => {
@@ -171,7 +225,7 @@ class MainComponent extends React.Component {
 
 	render() {
 		const translate = this.props.translate;
-		let headingLabel = this.state.isSubscribed
+		const headingLabel = this.state.isSubscribed
 				? translate( "You're subscribed" )
 				: translate( "We've unsubscribed your email." ),
 			messageLabel = this.state.isSubscribed

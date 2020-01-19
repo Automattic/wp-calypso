@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -14,7 +13,12 @@ import { localize } from 'i18n-calypso';
 import EmailVerificationCard from 'my-sites/domains/domain-management/components/email-verification';
 import { resendInboundTransferEmail } from 'lib/domains';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from 'lib/url/support';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class InboundTransferEmailVerificationCard extends React.PureComponent {
 	static propTypes = {

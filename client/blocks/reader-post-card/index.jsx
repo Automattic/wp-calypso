@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -13,7 +12,7 @@ import closest from 'component-closest';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import DisplayTypes from 'state/reader/posts/display-types';
 import * as stats from 'reader/stats';
 import ReaderPostActions from 'blocks/reader-post-actions';
@@ -32,6 +31,11 @@ import {
 import DiscoverFollowButton from 'reader/discover/follow-button';
 import { expandCard as expandCardAction } from 'state/ui/reader/card-expansions/actions';
 import isReaderCardExpanded from 'state/selectors/is-reader-card-expanded';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ReaderPostCard extends React.Component {
 	static propTypes = {

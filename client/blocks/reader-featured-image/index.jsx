@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -13,13 +12,29 @@ import classnames from 'classnames';
 import cssSafeUrl from 'lib/css-safe-url';
 import resizeImageUrl from 'lib/resize-image-url';
 
-const ReaderFeaturedImage = ( { imageUrl, imageWidth, href, children, onClick, className } ) => {
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+const ReaderFeaturedImage = ( {
+	imageUrl,
+	imageWidth,
+	href,
+	children,
+	onClick,
+	className,
+	fetched,
+} ) => {
 	if ( imageUrl === undefined ) {
 		return null;
 	}
 
+	// Don't resize image if it was already fetched.
+	const resizedUrl = fetched ? imageUrl : resizeImageUrl( imageUrl, { w: imageWidth } );
+
 	const featuredImageStyle = {
-		backgroundImage: 'url(' + cssSafeUrl( resizeImageUrl( imageUrl, { w: imageWidth } ) ) + ')',
+		backgroundImage: 'url(' + cssSafeUrl( resizedUrl ) + ')',
 		backgroundSize: 'cover',
 		backgroundRepeat: 'no-repeat',
 		backgroundPosition: 'center center',

@@ -51,6 +51,7 @@
 
 .packages__group-header-checkbox {
 	margin-right: 12px;
+	vertical-align: text-bottom;
 }
 
 .packages__packages-row {
@@ -64,7 +65,7 @@
 	}
 
 	&.packages__packages-header {
-		border-bottom-color: var( --color-neutral-100 );
+		border-bottom-color: var( --color-neutral-10 );
 	}
 
 	&.prefixed {
@@ -97,14 +98,14 @@
 	}
 
 	&.error {
-		color: $alert-red;
+		color: var( --color-error );
 		a {
-			color: $alert-red;
+			color: var( --color-error );
 		}
 		.packages__packages-row-icon .gridicon {
 			background-color: unset;
 			border-radius: unset;
-			fill: $alert-red;
+			fill: var( --color-error );
 			padding: unset;
 			margin-left: -1px;
 		}
@@ -113,7 +114,7 @@
 	&.placeholder {
 		@include placeholder();
 		pointer-events: none;
-		background: $white;
+		background: var( --color-surface );
 
 		.gridicon,
 		span,
@@ -121,7 +122,7 @@
 		a,
 		button {
 			animation: loading-fade 1.6s ease-in-out infinite;
-			background-color: lighten( $gray, 25% );
+			background-color: var( --color-neutral-5 );
 			color: transparent;
 			cursor: default;
 		}
@@ -145,7 +146,7 @@
 	padding: 12px 0;
 	font-size: 14px;
 	border-top: 0;
-	background: lighten( $gray, 35% );
+	background: var( --color-neutral-0 );
 }
 
 .packages__packages-row-icon {
@@ -186,10 +187,18 @@
 	margin-bottom: 0;
 
 	.packages__packages-header {
-		border-top: 1px solid var( --color-neutral-100 );
+		border-top: 1px solid var( --color-neutral-10 );
 	}
 
 	.foldable-card__header {
+		.foldable-card__main {
+			flex-grow: 3;
+		}
+
+		.foldable-card__secondary {
+			flex-grow: 2;
+		}
+
 		.packages__group-header {
 			display: flex;
 			align-items: center;
@@ -213,6 +222,10 @@
 .packages__packages-row-dimensions {
 	width: 30%;
 	font-size: 14px;
+	
+	@include breakpoint( '<660px' ) {
+		font-size: 11px;
+	}
 }
 
 .packages__setting-explanation {

@@ -1,12 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import classnames from 'classnames';
 import { dropRightWhile, negate, identity } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -14,6 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { Card } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
 import CustomNameserversRow from './custom-nameservers-row';
@@ -42,7 +40,7 @@ class CustomNameserversForm extends React.PureComponent {
 				{ translate(
 					'Your domain must use WordPress.com name servers for your ' +
 						'WordPress.com site to load & other features to be available.'
-				) }{' '}
+				) }{ ' ' }
 				<a
 					href={ CHANGE_NAME_SERVERS }
 					target="_blank"
@@ -63,8 +61,8 @@ class CustomNameserversForm extends React.PureComponent {
 		const { translate } = this.props;
 
 		return (
-			<div className="custom-nameservers-form__explanation">
-				{ translate( 'Not sure what name servers to use?' ) }{' '}
+			<div className="name-servers__custom-nameservers-form-explanation">
+				{ translate( 'Not sure what name servers to use?' ) }{ ' ' }
 				<a
 					href={ CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS }
 					target="_blank"
@@ -127,16 +125,13 @@ class CustomNameserversForm extends React.PureComponent {
 
 	render() {
 		const { translate } = this.props;
-		const classes = classnames( 'button is-primary is-full-width', {
-			disabled: this.props.submitDisabled,
-		} );
 
 		if ( ! this.props.nameservers ) {
 			return null;
 		}
 
 		return (
-			<div className="custom-nameservers-form is-compact card">
+			<Card compact className="name-servers__custom-nameservers-form">
 				<span>{ translate( 'Use Custom Name Servers:' ) }</span>
 
 				{ this.warning() }
@@ -147,8 +142,8 @@ class CustomNameserversForm extends React.PureComponent {
 
 					<FormFooter>
 						<FormButton
+							isPrimary
 							onClick={ this.handleSubmit }
-							className={ classes }
 							disabled={ this.props.submitDisabled }
 						>
 							{ translate( 'Save Custom Name Servers' ) }
@@ -159,7 +154,7 @@ class CustomNameserversForm extends React.PureComponent {
 						</FormButton>
 					</FormFooter>
 				</form>
-			</div>
+			</Card>
 		);
 	}
 
@@ -233,12 +228,9 @@ const resetToDefaultsClick = domainName =>
 		} )
 	);
 
-export default connect(
-	null,
-	{
-		customNameServersLearnMoreClick,
-		customNameServersLookUpClick,
-		resetToDefaultsClick,
-		saveCustomNameServersClick,
-	}
-)( localize( CustomNameserversForm ) );
+export default connect( null, {
+	customNameServersLearnMoreClick,
+	customNameServersLookUpClick,
+	resetToDefaultsClick,
+	saveCustomNameServersClick,
+} )( localize( CustomNameserversForm ) );

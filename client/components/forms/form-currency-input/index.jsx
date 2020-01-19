@@ -1,17 +1,21 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 function renderAffix( currencyValue, onCurrencyChange, currencyList ) {
 	// If the currency value is not defined, don't render this affix at all
@@ -42,6 +46,7 @@ function renderAffix( currencyValue, onCurrencyChange, currencyList ) {
 				className="form-currency-input__select"
 				value={ currencyValue }
 				onChange={ onCurrencyChange }
+				onBlur={ onCurrencyChange }
 			>
 				{ currencyList.map( ( { code, label = code } ) => (
 					<option key={ code } value={ code }>

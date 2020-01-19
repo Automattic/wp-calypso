@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -23,7 +22,7 @@ import { setSelectedSiteId, setSection, setAllSitesSelected } from 'state/ui/act
 import { savePreference } from 'state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'state/preferences/selectors';
 import NavigationComponent from 'my-sites/navigation';
-import { getSiteFragment, sectionify } from 'lib/route';
+import { addQueryArgs, getSiteFragment, sectionify } from 'lib/route';
 import notices from 'notices';
 import config from 'config';
 import analytics from 'lib/analytics';
@@ -34,23 +33,26 @@ import getSiteId from 'state/selectors/get-site-id';
 import { getCurrentUser } from 'state/current-user/selectors';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
 import canCurrentUser from 'state/selectors/can-current-user';
 import {
-	domainManagementAddGSuiteUsers,
 	domainManagementContactsPrivacy,
 	domainManagementDns,
 	domainManagementEdit,
 	domainManagementEditContactInfo,
-	domainManagementEmail,
-	domainManagementEmailForwarding,
 	domainManagementList,
 	domainManagementNameServers,
-	domainManagementPrivacyProtection,
 	domainManagementRedirectSettings,
 	domainManagementTransfer,
 	domainManagementTransferOut,
 	domainManagementTransferToOtherSite,
 } from 'my-sites/domains/paths';
+import {
+	emailManagement,
+	emailManagementForwarding,
+	emailManagementAddGSuiteUsers,
+	emailManagementNewGSuiteAccount,
+} from 'my-sites/email/paths';
 import SitesComponent from 'my-sites/sites';
 import { warningNotice } from 'state/notices/actions';
 import { makeLayout, render as clientRender } from 'controller';
@@ -78,8 +80,6 @@ const sitesPageTitleForAnalytics = 'Sites';
  * @returns { object } React element containing the site selector and sidebar
  */
 function createNavigation( context ) {
-	const { getState } = getStore( context );
-	const currentUser = getCurrentUser( getState() );
 	const siteFragment = getSiteFragment( context.pathname );
 	let basePath = context.pathname;
 
@@ -92,18 +92,12 @@ function createNavigation( context ) {
 			path={ context.path }
 			allSitesPath={ basePath }
 			siteBasePath={ basePath }
-			user={ currentUser }
 		/>
 	);
 }
 
 function removeSidebar( context ) {
-	context.store.dispatch(
-		setSection( {
-			group: 'sites',
-			secondary: false,
-		} )
-	);
+	context.store.dispatch( setSection( { group: 'sites', secondary: false } ) );
 }
 
 function renderEmptySites( context ) {
@@ -160,25 +154,31 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 	clientRender( reactContext );
 }
 
-function isPathAllowedForDomainOnlySite( path, slug, primaryDomain ) {
+function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParams ) {
 	const allPaths = [
-		domainManagementAddGSuiteUsers,
 		domainManagementContactsPrivacy,
 		domainManagementDns,
 		domainManagementEdit,
 		domainManagementEditContactInfo,
-		domainManagementEmail,
-		domainManagementEmailForwarding,
 		domainManagementList,
 		domainManagementNameServers,
-		domainManagementPrivacyProtection,
 		domainManagementRedirectSettings,
 		domainManagementTransfer,
 		domainManagementTransferOut,
 		domainManagementTransferToOtherSite,
+		emailManagement,
+		emailManagementAddGSuiteUsers,
+		emailManagementNewGSuiteAccount,
+		emailManagementForwarding,
 	];
 
-	let domainManagementPaths = allPaths.map( pathFactory => pathFactory( slug, slug ) );
+	let domainManagementPaths = allPaths.map( pathFactory => {
+		if ( pathFactory === emailManagementNewGSuiteAccount ) {
+			// `emailManagementNewGSuiteAccount` takes `planType` from `context.params`, otherwise path comparisons won't work well.
+			return emailManagementNewGSuiteAccount( slug, slug, contextParams.planType );
+		}
+		return pathFactory( slug, slug );
+	} );
 
 	if ( primaryDomain && slug !== primaryDomain.name ) {
 		domainManagementPaths = domainManagementPaths.concat(
@@ -203,6 +203,14 @@ function onSelectedSiteAvailable( context, basePath ) {
 	const userCanManagePlugins = canCurrentUser( state, selectedSite.ID, 'manage_options' );
 	const calypsoify = isAtomicSite && config.isEnabled( 'calypsoify/plugins' );
 
+	// If migration is in progress, only /migrate paths should be loaded for the site
+	const isMigrationInProgress = isSiteMigrationInProgress( state, selectedSite.ID );
+
+	if ( isMigrationInProgress && ! startsWith( context.pathname, '/migrate/' ) ) {
+		page.redirect( `/migrate/${ selectedSite.slug }` );
+		return false;
+	}
+
 	if ( userCanManagePlugins && calypsoify && /^\/plugins/.test( basePath ) ) {
 		const plugin = get( context, 'params.plugin' );
 		let pluginString = '';
@@ -216,8 +224,8 @@ function onSelectedSiteAvailable( context, basePath ) {
 			].join( '&' );
 		}
 
-		const pluginIstallURL = 'plugin-install.php?calypsoify=1' + `&${ pluginString }`;
-		const pluginLink = getSiteAdminUrl( state, selectedSite.ID ) + pluginIstallURL;
+		const pluginInstallURL = 'plugin-install.php?calypsoify=1' + `&${ pluginString }`;
+		const pluginLink = getSiteAdminUrl( state, selectedSite.ID ) + pluginInstallURL;
 
 		window.location.replace( pluginLink );
 		return false;
@@ -226,7 +234,12 @@ function onSelectedSiteAvailable( context, basePath ) {
 	const primaryDomain = getPrimaryDomainBySiteId( state, selectedSite.ID );
 	if (
 		isDomainOnlySite( state, selectedSite.ID ) &&
-		! isPathAllowedForDomainOnlySite( context.pathname, selectedSite.slug, primaryDomain )
+		! isPathAllowedForDomainOnlySite(
+			context.pathname,
+			selectedSite.slug,
+			primaryDomain,
+			context.params
+		)
 	) {
 		renderSelectedSiteIsDomainOnly( context, selectedSite );
 		return false;
@@ -257,7 +270,7 @@ function createSitesComponent( context ) {
 	const contextPath = sectionify( context.path );
 
 	// This path sets the URL to be visited once a site is selected
-	const basePath = contextPath === '/sites' ? '/stats' : contextPath;
+	const basePath = contextPath === '/sites' ? '/home' : contextPath;
 
 	analytics.pageView.record( contextPath, sitesPageTitleForAnalytics );
 
@@ -265,6 +278,7 @@ function createSitesComponent( context ) {
 		<SitesComponent
 			siteBasePath={ basePath }
 			getSiteSelectionHeaderText={ context.getSiteSelectionHeaderText }
+			fromSite={ context.query.site }
 		/>
 	);
 }
@@ -309,7 +323,6 @@ export function siteSelection( context, next ) {
 	const basePath = sectionify( context.path, siteFragment );
 	const currentUser = getCurrentUser( getState() );
 	const hasOneSite = currentUser && currentUser.visible_site_count === 1;
-	const allSitesPath = sectionify( context.path, siteFragment );
 
 	// The user doesn't have any sites: render `NoSitesMessage`
 	if ( currentUser && currentUser.site_count === 0 ) {
@@ -327,11 +340,6 @@ export function siteSelection( context, next ) {
 			`${ sitesPageTitleForAnalytics } > All Sites Hidden`,
 			{ base_path: basePath }
 		);
-	}
-
-	// Ignore the user account settings page
-	if ( /^\/settings\/account/.test( context.path ) ) {
-		return next();
 	}
 
 	/*
@@ -402,6 +410,10 @@ export function siteSelection( context, next ) {
 				}
 			} else {
 				// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
+				const allSitesPath = addQueryArgs(
+					{ site: siteFragment },
+					sectionify( context.path, siteFragment )
+				);
 				page.redirect( allSitesPath );
 			}
 		} );
@@ -437,7 +449,7 @@ export function navigation( context, next ) {
  * Middleware that adds the site selector screen to the layout.
  *
  * @param {object} context -- Middleware context
- * @param {function} next -- Call next middleware in chain
+ * @param {Function} next -- Call next middleware in chain
  */
 export function sites( context, next ) {
 	if ( context.query.verified === '1' ) {
@@ -449,13 +461,20 @@ export function sites( context, next ) {
 	}
 
 	context.store.dispatch( setLayoutFocus( 'content' ) );
-	context.store.dispatch(
-		setSection( {
-			group: 'sites',
-			secondary: false,
-		} )
-	);
+	removeSidebar( context );
 
 	context.primary = createSitesComponent( context );
 	next();
+}
+
+export function redirectWithoutSite( redirectPath ) {
+	return ( context, next ) => {
+		const state = context.store.getState();
+		const siteId = getSelectedSiteId( state );
+		if ( ! siteId ) {
+			return page.redirect( redirectPath );
+		}
+
+		return next();
+	};
 }

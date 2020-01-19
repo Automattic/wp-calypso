@@ -1,7 +1,7 @@
 .order-details__table {
 	margin: 0 -24px;
 	box-shadow: none;
-	border-bottom: 1px solid var( --color-neutral-0 );
+	border-bottom: 1px solid var( --color-neutral-5 );
 
 	.order-details__item-sku {
 		display: block;
@@ -53,7 +53,7 @@
 		width: 1.5em;
 
 		.gridicons-trash {
-			color: $alert-red;
+			color: var( --color-error );
 		}
 	}
 }
@@ -80,7 +80,7 @@
 			color: var( --color-primary );
 
 			&:hover {
-				color: $link-highlight;
+				color: var( --color-link-dark );
 			}
 		}
 	}
@@ -95,6 +95,10 @@
 
 	& + .form-setting-explanation {
 		padding-right: 55px;
+
+		@include breakpoint( '<660px' ) {
+			padding-right: 0;
+		}
 	}
 
 	.table-row {
@@ -137,7 +141,7 @@
 	}
 
 	.order-details__total-refund {
-		color: $alert-red;
+		color: var( --color-error );
 
 		.table-item {
 			border-bottom: 1px solid var( --color-neutral-0 );
@@ -184,6 +188,10 @@
 			// Increase width for PriceInput
 			width: 13em;
 			padding-right: 79px;
+
+			@include breakpoint( '<660px' ) {
+				padding-right: 24px;
+			}
 		}
 
 		.form-text-input-with-affixes {

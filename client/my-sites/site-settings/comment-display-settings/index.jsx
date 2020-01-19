@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -48,13 +46,13 @@ class CommentDisplaySettings extends Component {
 					siteId={ selectedSiteId }
 					moduleSlug="comments"
 					label={ translate(
-						'Allow readers to leave comments using their WordPress.com, Twitter, Facebook, or Google+ accounts'
+						'Let visitors use a WordPress.com, Twitter, Facebook, or Google account to comment.'
 					) }
 					disabled={ !! submittingForm }
 				/>
 				<div className="comment-display-settings__module-setting is-indented">
 					<FormLabel htmlFor="highlander_comment_form_prompt">
-						{ translate( 'Comments Label' ) }
+						{ translate( 'Comment form introduction' ) }
 					</FormLabel>
 					<FormTextInput
 						name="highlander_comment_form_prompt"

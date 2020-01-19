@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -14,8 +11,7 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 import StatsModulePlaceholder from '../stats-module/placeholder';
@@ -23,10 +19,16 @@ import Emojify from 'components/emojify';
 import SectionHeader from 'components/section-header';
 import QueryPosts from 'components/data/query-posts';
 import QueryPostStats from 'components/data/query-post-stats';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { isRequestingPostsForQuery, getPostsForQuery } from 'state/posts/selectors';
 import { getPostStat } from 'state/stats/posts/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class StatsPostPerformance extends Component {
 	static propTypes = {
@@ -96,6 +98,7 @@ class StatsPostPerformance extends Component {
 			}
 		}
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
 				{ siteId && <QueryPosts siteId={ siteId } query={ query } /> }
@@ -141,6 +144,7 @@ class StatsPostPerformance extends Component {
 				</Card>
 			</div>
 		);
+		/* eslint-enable */
 	}
 }
 
@@ -165,7 +169,4 @@ const connectComponent = connect(
 	{ recordTracksEvent }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsPostPerformance );
+export default flowRight( connectComponent, localize, withLocalizedMoment )( StatsPostPerformance );

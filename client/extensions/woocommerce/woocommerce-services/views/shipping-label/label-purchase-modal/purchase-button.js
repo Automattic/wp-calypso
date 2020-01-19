@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,13 +5,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import getPDFSupport from 'woocommerce/woocommerce-services/lib/utils/pdf-support';
-import formatCurrency from 'lib/format-currency';
 import {
 	confirmPrintLabel,
 	purchaseLabel,
@@ -89,7 +87,4 @@ const mapDispatchToProps = ( dispatch, { orderId, siteId } ) => ( {
 	purchaseLabel: () => dispatch( purchaseLabel( orderId, siteId ) ),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( PurchaseButton ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PurchaseButton ) );

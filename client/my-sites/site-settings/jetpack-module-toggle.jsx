@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,9 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { activateModule, deactivateModule } from 'state/jetpack/modules/actions';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import getJetpackModule from 'state/selectors/get-jetpack-module';
 import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
 import isDeactivatingJetpackModule from 'state/selectors/is-deactivating-jetpack-module';
@@ -38,14 +38,27 @@ class JetpackModuleToggle extends Component {
 		isJetpackSite: PropTypes.bool,
 		activateModule: PropTypes.func,
 		deactivateModule: PropTypes.func,
+		path: PropTypes.string,
 	};
 
 	handleChange = () => {
 		if ( ! this.props.checked ) {
+			this.recordTracksEvent( 'calypso_jetpack_module_toggle', 'on' );
 			this.props.activateModule( this.props.siteId, this.props.moduleSlug );
 		} else {
+			this.recordTracksEvent( 'calypso_jetpack_module_toggle', 'off' );
 			this.props.deactivateModule( this.props.siteId, this.props.moduleSlug );
 		}
+	};
+
+	recordTracksEvent = ( name, status ) => {
+		const tracksProps = {
+			module: this.props.moduleSlug,
+			path: this.props.path,
+			toggled: status,
+		};
+
+		this.props.recordTracksEvent( name, tracksProps );
 	};
 
 	render() {
@@ -54,6 +67,7 @@ class JetpackModuleToggle extends Component {
 		}
 
 		return (
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<span className="jetpack-module-toggle">
 				<CompactFormToggle
 					id={ `${ this.props.siteId }-${ this.props.moduleSlug }-toggle` }
@@ -86,10 +100,12 @@ export default connect(
 			toggling,
 			toggleDisabled: moduleDetailsNotLoaded || toggling,
 			isJetpackSite: isJetpackSite( state, siteId ),
+			path: getCurrentRouteParameterized( state, siteId ),
 		};
 	},
 	{
 		activateModule,
 		deactivateModule,
+		recordTracksEvent,
 	}
 )( localize( JetpackModuleToggle ) );

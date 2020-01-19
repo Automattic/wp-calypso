@@ -62,17 +62,17 @@
 	}
 
 	.shipping-label__purchase-error {
-		color: $alert-red;
+		color: var( --color-error );
 		cursor: help;
 		text-decoration: underline;
-		text-decoration-color: $alert-red;
+		text-decoration-color: var( --color-error );
 		text-decoration-style: dotted;
 	}
 }
 
 &.dialog.card.label-reprint-modal {
 	.shipping-label__reprint-modal-notice {
-		color: darken( $gray, 10 );
+		color: var( --color-neutral-40 );
 		font-style: italic;
 	}
 }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import Main from 'components/main';
 import CurrentTheme from 'my-sites/themes/current-theme';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import config from 'config';
 import JetpackReferrerMessage from './jetpack-referrer-message';
@@ -86,8 +86,13 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 	}
 
 	return (
-		<div>
+		<Main className="themes">
 			<SidebarNavigation />
+			<FormattedHeader
+				className="themes__page-heading"
+				headerText={ translate( 'Themes' ) }
+				align="left"
+			/>
 			<CurrentTheme siteId={ siteId } />
 			{ ! requestingSitePlans && ! hasUnlimitedPremiumThemes && (
 				<Banner
@@ -142,16 +147,14 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 					</div>
 				) }
 			</ThemeShowcase>
-		</div>
+		</Main>
 	);
 } );
 
 export default connect( ( state, { siteId, tier } ) => {
 	const isMultisite = isJetpackSiteMultiSite( state, siteId );
 	const showWpcomThemesList =
-		config.isEnabled( 'manage/themes/upload' ) &&
-		hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) &&
-		! isMultisite;
+		hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) && ! isMultisite;
 	let emptyContent = null;
 	if ( showWpcomThemesList ) {
 		const siteQuery = getLastThemeQuery( state, siteId );

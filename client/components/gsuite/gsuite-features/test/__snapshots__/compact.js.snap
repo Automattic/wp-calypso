@@ -1,0 +1,365 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures in a list 1`] = `
+<div
+  className="gsuite-features__list"
+>
+  <div
+    className="gsuite-features__compact-feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Gmail Logo"
+        src="/calypso/images/g-suite/logo_gmail_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        A custom @testing123.com email address
+      </h5>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__compact-feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Docs Logo"
+        src="/calypso/images/g-suite/logo_docs_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        Docs, spreadsheets and more
+      </h5>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__compact-feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Drive Logo"
+        src="/calypso/images/g-suite/logo_drive_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        30GB of cloud storage
+      </h5>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__compact-feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Hangouts Logo"
+        src="/calypso/images/g-suite/logo_hangouts_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        Video calls
+      </h5>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures with basic plan 1`] = `
+<div
+  className="gsuite-features__grid"
+>
+  <div
+    className="gsuite-features__compact-feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Gmail Logo"
+        src="/calypso/images/g-suite/logo_gmail_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        A custom @testing123.com email address
+      </h5>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__compact-feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Docs Logo"
+        src="/calypso/images/g-suite/logo_docs_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        Docs, spreadsheets and more
+      </h5>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__compact-feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Drive Logo"
+        src="/calypso/images/g-suite/logo_drive_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        30GB of cloud storage
+      </h5>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__compact-feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Hangouts Logo"
+        src="/calypso/images/g-suite/logo_hangouts_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        Video calls
+      </h5>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures with business plan 1`] = `
+<div
+  className="gsuite-features__grid"
+>
+  <div
+    className="gsuite-features__compact-feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Gmail Logo"
+        src="/calypso/images/g-suite/logo_gmail_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        A custom @testing123.com email address
+      </h5>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__compact-feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Docs Logo"
+        src="/calypso/images/g-suite/logo_docs_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        Docs, spreadsheets and more
+      </h5>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__compact-feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Drive Logo"
+        src="/calypso/images/g-suite/logo_drive_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        Unlimited cloud storage (or 1TB per user if fewer than 5 users)
+      </h5>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__compact-feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Hangouts Logo"
+        src="/calypso/images/g-suite/logo_hangouts_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        Video calls
+      </h5>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures with no productSlug 1`] = `
+<div
+  className="gsuite-features__grid"
+>
+  <div
+    className="gsuite-features__compact-feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Gmail Logo"
+        src="/calypso/images/g-suite/logo_gmail_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        A custom @testing123.com email address
+      </h5>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__compact-feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Docs Logo"
+        src="/calypso/images/g-suite/logo_docs_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        Docs, spreadsheets and more
+      </h5>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__compact-feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Drive Logo"
+        src="/calypso/images/g-suite/logo_drive_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        30GB or unlimited cloud storage
+      </h5>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__compact-feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Hangouts Logo"
+        src="/calypso/images/g-suite/logo_hangouts_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        Video calls
+      </h5>
+    </div>
+  </div>
+</div>
+`;

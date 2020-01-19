@@ -8,7 +8,7 @@
 
 .editor-sharing__shortlink {
 	border-top: 1px solid var( --color-neutral-0 );
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-size: 11px;
 	margin: 16px -16px 0;
 	padding: 8px 16px 0;
@@ -29,7 +29,7 @@
 
 input[type='text'].editor-sharing__shortlink-field {
 	background: var( --color-neutral-0 );
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	flex-grow: 1;
 	font-size: 12px;
 	width: 100%;
@@ -41,6 +41,10 @@ input[type='text'].editor-sharing__shortlink-field {
 	display: block;
 	font-size: 12px;
 	padding: 2px 0;
+
+	label input[disabled] + span {
+		opacity: 0.5;
+	}
 }
 
 .editor-sharing__broken-publicize-connection {

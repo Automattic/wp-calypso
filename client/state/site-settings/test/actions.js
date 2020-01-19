@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -26,6 +25,11 @@ import {
 } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
+
+const getState = () => ( {
+	sites: { items: { 2916284: { options: {} } } },
+	siteSettings: { items: { 2916284: {} } },
+} );
 
 describe( 'actions', () => {
 	let spy;
@@ -75,7 +79,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fetch action when thunk triggered', () => {
-			requestSiteSettings( 2916284 )( spy );
+			requestSiteSettings( 2916284 )( spy, getState );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: SITE_SETTINGS_REQUEST,
@@ -84,28 +88,32 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch receive action when request completes', () => {
-			return requestSiteSettings( 2916284 )( spy ).then( () => {
+			return requestSiteSettings( 2916284 )( spy, getState ).then( () => {
 				expect( spy ).to.have.been.calledWith(
-					receiveSiteSettings( 2916284, {
-						blogname: 'blog name',
-						blogdescription: 'blog description',
-						settingKey: 'cat',
-					} )
+					sinon.match(
+						receiveSiteSettings( 2916284, {
+							blogname: 'blog name',
+							blogdescription: 'blog description',
+							settingKey: 'cat',
+						} )
+					)
 				);
 			} );
 		} );
 
 		test( 'should dispatch request success action when request completes', () => {
-			return requestSiteSettings( 2916284 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: SITE_SETTINGS_REQUEST_SUCCESS,
-					siteId: 2916284,
-				} );
+			return requestSiteSettings( 2916284 )( spy, getState ).then( () => {
+				expect( spy ).to.have.been.calledWith(
+					sinon.match( {
+						type: SITE_SETTINGS_REQUEST_SUCCESS,
+						siteId: 2916284,
+					} )
+				);
 			} );
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			return requestSiteSettings( 2916285 )( spy ).then( () => {
+			return requestSiteSettings( 2916285 )( spy, getState ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_SETTINGS_REQUEST_FAILURE,
 					siteId: 2916285,

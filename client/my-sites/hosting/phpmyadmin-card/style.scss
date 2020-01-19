@@ -1,0 +1,34 @@
+.phpmyadmin-card button {
+	svg {
+		vertical-align: text-bottom;
+		margin-left: 10px;
+	}
+
+	&:disabled svg {
+		opacity: 0.4;
+	}
+}
+
+.phpmyadmin-card__restore-password {
+	margin-top: 16px;
+	color: var( --color-text-subtle );
+	font-size: 13px;
+
+	button.is-compact.is-borderless {
+		text-decoration: underline;
+		color: var( --color-primary );
+		font-style: inherit;
+		font-weight: 400;
+		line-height: inherit;
+		padding: 0;
+		font-size: inherit;
+	}
+}
+
+.phpmyadmin-card__questions {
+	margin-bottom: 1.5em;
+}
+
+.phpmyadmin-card__db-warning {
+	color: var( --color-text-subtle );
+}

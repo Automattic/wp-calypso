@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,12 +7,17 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { getNormalizedPost } from 'state/posts/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export function PostStatus( { translate, post, showAll, showIcon = true } ) {
 	if ( ! post ) {
@@ -73,8 +76,6 @@ PostStatus.propTypes = {
 	showIcon: PropTypes.bool,
 };
 
-export default connect( ( state, { globalId } ) => {
-	return {
-		post: getNormalizedPost( state, globalId ),
-	};
-} )( localize( PostStatus ) );
+export default connect( ( state, { globalId } ) => ( {
+	post: getNormalizedPost( state, globalId ),
+} ) )( localize( PostStatus ) );

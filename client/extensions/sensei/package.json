@@ -3,10 +3,15 @@
 	"author": "Automattic",
 	"description": "Sensei",
 	"version": "0.0.1",
-	"env_id": [ "development", "wpcalypso" ],
+	"env_id": [
+		"development",
+		"wpcalypso"
+	],
 	"section": {
 		"name": "sensei",
-		"paths": [ "/extensions/sensei" ],
+		"paths": [
+			"/extensions/sensei"
+		],
 		"module": "sensei",
 		"group": "sites",
 		"secondary": true

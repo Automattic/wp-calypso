@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withoutPersistence } from 'state/utils';
 import {
 	THEME_UPLOAD_START,
 	THEME_UPLOAD_SUCCESS,
@@ -23,115 +21,224 @@ import {
 	THEME_TRANSFER_STATUS_RECEIVE,
 } from 'state/action-types';
 
-export const uploadedThemeId = createReducer(
-	{},
-	{
-		[ THEME_UPLOAD_SUCCESS ]: ( state, { siteId, themeId } ) => ( {
-			...state,
-			[ siteId ]: themeId,
-		} ),
-		[ THEME_TRANSFER_STATUS_RECEIVE ]: ( state, { siteId, themeId } ) => ( {
-			...state,
-			[ siteId ]: themeId,
-		} ),
-		[ THEME_UPLOAD_CLEAR ]: ( state, { siteId } ) => omit( state, siteId ),
-		[ THEME_UPLOAD_START ]: ( state, { siteId } ) => omit( state, siteId ),
-		[ THEME_TRANSFER_INITIATE_REQUEST ]: ( state, { siteId } ) => omit( state, siteId ),
-	}
-);
+export const uploadedThemeId = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case THEME_UPLOAD_SUCCESS: {
+			const { siteId, themeId } = action;
 
-export const uploadError = createReducer(
-	{},
-	{
-		[ THEME_UPLOAD_FAILURE ]: ( state, { siteId, error } ) => ( {
-			...state,
-			[ siteId ]: error,
-		} ),
-		[ THEME_TRANSFER_STATUS_FAILURE ]: ( state, { siteId, error } ) => ( {
-			...state,
-			[ siteId ]: error,
-		} ),
-		[ THEME_TRANSFER_INITIATE_FAILURE ]: ( state, { siteId, error } ) => ( {
-			...state,
-			[ siteId ]: error,
-		} ),
-		[ THEME_UPLOAD_CLEAR ]: ( state, { siteId } ) => omit( state, siteId ),
-		[ THEME_UPLOAD_START ]: ( state, { siteId } ) => omit( state, siteId ),
-		[ THEME_TRANSFER_INITIATE_REQUEST ]: ( state, { siteId } ) => omit( state, siteId ),
-	}
-);
+			return {
+				...state,
+				[ siteId ]: themeId,
+			};
+		}
+		case THEME_TRANSFER_STATUS_RECEIVE: {
+			const { siteId, themeId } = action;
 
-export const progressLoaded = createReducer(
-	{},
-	{
-		[ THEME_UPLOAD_PROGRESS ]: ( state, { siteId, loaded } ) => ( {
-			...state,
-			[ siteId ]: loaded,
-		} ),
-		[ THEME_TRANSFER_INITIATE_PROGRESS ]: ( state, { siteId, loaded } ) => ( {
-			...state,
-			[ siteId ]: loaded,
-		} ),
-		[ THEME_UPLOAD_CLEAR ]: ( state, { siteId } ) => omit( state, siteId ),
-		[ THEME_UPLOAD_START ]: ( state, { siteId } ) => omit( state, siteId ),
-		[ THEME_TRANSFER_INITIATE_REQUEST ]: ( state, { siteId } ) => omit( state, siteId ),
+			return {
+				...state,
+				[ siteId ]: themeId,
+			};
+		}
+		case THEME_UPLOAD_CLEAR: {
+			const { siteId } = action;
+			return omit( state, siteId );
+		}
+		case THEME_UPLOAD_START: {
+			const { siteId } = action;
+			return omit( state, siteId );
+		}
+		case THEME_TRANSFER_INITIATE_REQUEST: {
+			const { siteId } = action;
+			return omit( state, siteId );
+		}
 	}
-);
 
-export const progressTotal = createReducer(
-	{},
-	{
-		[ THEME_UPLOAD_PROGRESS ]: ( state, { siteId, total } ) => ( {
-			...state,
-			[ siteId ]: total,
-		} ),
-		[ THEME_TRANSFER_INITIATE_PROGRESS ]: ( state, { siteId, total } ) => ( {
-			...state,
-			[ siteId ]: total,
-		} ),
-		[ THEME_UPLOAD_CLEAR ]: ( state, { siteId } ) => omit( state, siteId ),
-		[ THEME_UPLOAD_START ]: ( state, { siteId } ) => omit( state, siteId ),
-		[ THEME_TRANSFER_INITIATE_REQUEST ]: ( state, { siteId } ) => omit( state, siteId ),
-	}
-);
+	return state;
+} );
 
-export const inProgress = createReducer(
-	{},
-	{
-		[ THEME_UPLOAD_START ]: ( state, { siteId } ) => ( {
-			...state,
-			[ siteId ]: true,
-		} ),
-		[ THEME_TRANSFER_INITIATE_REQUEST ]: ( state, { siteId } ) => ( {
-			...state,
-			[ siteId ]: true,
-		} ),
-		[ THEME_UPLOAD_CLEAR ]: ( state, { siteId } ) => ( {
-			...state,
-			[ siteId ]: false,
-		} ),
-		[ THEME_UPLOAD_SUCCESS ]: ( state, { siteId } ) => ( {
-			...state,
-			[ siteId ]: false,
-		} ),
-		[ THEME_UPLOAD_FAILURE ]: ( state, { siteId } ) => ( {
-			...state,
-			[ siteId ]: false,
-		} ),
-		[ THEME_TRANSFER_STATUS_RECEIVE ]: ( state, { siteId, status } ) => ( {
-			...state,
-			[ siteId ]: status !== 'complete',
-		} ),
-		[ THEME_TRANSFER_INITIATE_FAILURE ]: ( state, { siteId } ) => ( {
-			...state,
-			[ siteId ]: false,
-		} ),
-		[ THEME_TRANSFER_STATUS_FAILURE ]: ( state, { siteId } ) => ( {
-			...state,
-			[ siteId ]: false,
-		} ),
+export const uploadError = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case THEME_UPLOAD_FAILURE: {
+			const { siteId, error } = action;
+
+			return {
+				...state,
+				[ siteId ]: error,
+			};
+		}
+		case THEME_TRANSFER_STATUS_FAILURE: {
+			const { siteId, error } = action;
+
+			return {
+				...state,
+				[ siteId ]: error,
+			};
+		}
+		case THEME_TRANSFER_INITIATE_FAILURE: {
+			const { siteId, error } = action;
+
+			return {
+				...state,
+				[ siteId ]: error,
+			};
+		}
+		case THEME_UPLOAD_CLEAR: {
+			const { siteId } = action;
+			return omit( state, siteId );
+		}
+		case THEME_UPLOAD_START: {
+			const { siteId } = action;
+			return omit( state, siteId );
+		}
+		case THEME_TRANSFER_INITIATE_REQUEST: {
+			const { siteId } = action;
+			return omit( state, siteId );
+		}
 	}
-);
+
+	return state;
+} );
+
+export const progressLoaded = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case THEME_UPLOAD_PROGRESS: {
+			const { siteId, loaded } = action;
+
+			return {
+				...state,
+				[ siteId ]: loaded,
+			};
+		}
+		case THEME_TRANSFER_INITIATE_PROGRESS: {
+			const { siteId, loaded } = action;
+
+			return {
+				...state,
+				[ siteId ]: loaded,
+			};
+		}
+		case THEME_UPLOAD_CLEAR: {
+			const { siteId } = action;
+			return omit( state, siteId );
+		}
+		case THEME_UPLOAD_START: {
+			const { siteId } = action;
+			return omit( state, siteId );
+		}
+		case THEME_TRANSFER_INITIATE_REQUEST: {
+			const { siteId } = action;
+			return omit( state, siteId );
+		}
+	}
+
+	return state;
+} );
+
+export const progressTotal = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case THEME_UPLOAD_PROGRESS: {
+			const { siteId, total } = action;
+
+			return {
+				...state,
+				[ siteId ]: total,
+			};
+		}
+		case THEME_TRANSFER_INITIATE_PROGRESS: {
+			const { siteId, total } = action;
+
+			return {
+				...state,
+				[ siteId ]: total,
+			};
+		}
+		case THEME_UPLOAD_CLEAR: {
+			const { siteId } = action;
+			return omit( state, siteId );
+		}
+		case THEME_UPLOAD_START: {
+			const { siteId } = action;
+			return omit( state, siteId );
+		}
+		case THEME_TRANSFER_INITIATE_REQUEST: {
+			const { siteId } = action;
+			return omit( state, siteId );
+		}
+	}
+
+	return state;
+} );
+
+export const inProgress = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case THEME_UPLOAD_START: {
+			const { siteId } = action;
+
+			return {
+				...state,
+				[ siteId ]: true,
+			};
+		}
+		case THEME_TRANSFER_INITIATE_REQUEST: {
+			const { siteId } = action;
+
+			return {
+				...state,
+				[ siteId ]: true,
+			};
+		}
+		case THEME_UPLOAD_CLEAR: {
+			const { siteId } = action;
+
+			return {
+				...state,
+				[ siteId ]: false,
+			};
+		}
+		case THEME_UPLOAD_SUCCESS: {
+			const { siteId } = action;
+
+			return {
+				...state,
+				[ siteId ]: false,
+			};
+		}
+		case THEME_UPLOAD_FAILURE: {
+			const { siteId } = action;
+
+			return {
+				...state,
+				[ siteId ]: false,
+			};
+		}
+		case THEME_TRANSFER_STATUS_RECEIVE: {
+			const { siteId, status } = action;
+
+			return {
+				...state,
+				[ siteId ]: status !== 'complete',
+			};
+		}
+		case THEME_TRANSFER_INITIATE_FAILURE: {
+			const { siteId } = action;
+
+			return {
+				...state,
+				[ siteId ]: false,
+			};
+		}
+		case THEME_TRANSFER_STATUS_FAILURE: {
+			const { siteId } = action;
+
+			return {
+				...state,
+				[ siteId ]: false,
+			};
+		}
+	}
+
+	return state;
+} );
 
 export default combineReducers( {
 	uploadedThemeId,

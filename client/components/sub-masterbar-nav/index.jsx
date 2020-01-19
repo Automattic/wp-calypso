@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,6 +11,11 @@ import { find } from 'lodash';
  */
 import Navbar from './navbar';
 import Dropdown from './dropdown';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const OptionShape = PropTypes.shape( {
 	label: PropTypes.string.isRequired,

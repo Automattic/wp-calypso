@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import { editOrder } from 'woocommerce/state/ui/orders/actions';
 import { isCurrentlyEditingOrder, getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
 import { isOrderEditable } from 'woocommerce/lib/order-status';
@@ -95,7 +94,7 @@ class OrderDetails extends Component {
 		return (
 			<div className="order-details">
 				<SectionHeader
-					label={ translate( 'Order %(orderId)s Details', {
+					label={ translate( 'Order %(orderId)s details', {
 						args: { orderId: isObject( order.id ) ? '' : `#${ order.id }` },
 					} ) }
 				>

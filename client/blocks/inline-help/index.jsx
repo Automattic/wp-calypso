@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +8,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal Dependencies
@@ -17,16 +16,27 @@ import Gridicon from 'gridicons';
 import config from 'config';
 import { recordTracksEvent } from 'state/analytics/actions';
 import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import HappychatButton from 'components/happychat/button';
-import Dialog from 'components/dialog';
-import ResizableIframe from 'components/resizable-iframe';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import AsyncLoad from 'components/async-load';
 import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
-import { showInlineHelpPopover, hideInlineHelpPopover } from 'state/inline-help/actions';
-import { isInlineHelpPopoverVisible } from 'state/inline-help/selectors';
+import {
+	showInlineHelpPopover,
+	hideInlineHelpPopover,
+	hideChecklistPrompt,
+} from 'state/inline-help/actions';
+import {
+	isInlineHelpPopoverVisible,
+	getChecklistPromptTaskId,
+	isInlineHelpChecklistPromptVisible,
+} from 'state/inline-help/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * Module variables
@@ -39,6 +49,10 @@ const debug = debugFactory( 'calypso:inline-help' );
 
 const InlineHelpPopover = props => (
 	<AsyncLoad { ...props } require="blocks/inline-help/popover" placeholder={ null } />
+);
+
+const InlineHelpDialog = props => (
+	<AsyncLoad { ...props } require="blocks/inline-help/dialog" placeholder={ null } />
 );
 
 class InlineHelp extends Component {
@@ -61,6 +75,10 @@ class InlineHelp extends Component {
 		if ( globalKeyboardShortcuts ) {
 			globalKeyboardShortcuts.showInlineHelp = this.showInlineHelp;
 		}
+
+		if ( this.props.isChecklistPromptVisible && this.props.checklistPromptTaskId ) {
+			this.props.showInlineHelpPopover();
+		}
 	}
 
 	componentWillUnmount() {
@@ -69,8 +87,8 @@ class InlineHelp extends Component {
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! this.props.isHappychatOpen && nextProps.isHappychatOpen ) {
+	componentDidUpdate( prevProps ) {
+		if ( ! prevProps.isHappychatOpen && this.props.isHappychatOpen ) {
 			this.closeInlineHelp();
 		}
 	}
@@ -103,6 +121,7 @@ class InlineHelp extends Component {
 		debug( 'hiding inline help.' );
 		this.props.recordTracksEvent( 'calypso_inlinehelp_close' );
 		this.props.hideInlineHelpPopover();
+		this.props.hideChecklistPrompt();
 	};
 
 	handleHelpButtonClicked = () => {
@@ -123,19 +142,6 @@ class InlineHelp extends Component {
 
 	closeDialog = () => this.setState( { showDialog: false } );
 
-	getDialogButtons() {
-		const { translate } = this.props;
-		const { dialogType } = this.state;
-
-		if ( dialogType === 'video' ) {
-			return [
-				<Button onClick={ this.closeDialog }>{ translate( 'Close', { textOnly: true } ) }</Button>,
-			];
-		}
-
-		return [];
-	}
-
 	setNotification = status => {
 		this.setState( { showChecklistNotification: status } );
 	};
@@ -152,13 +158,6 @@ class InlineHelp extends Component {
 			'is-active': isPopoverVisible,
 			'has-notification': showChecklistNotification,
 		};
-
-		/* @TODO: This class is not valid and this tricks the linter
-		 		  fix this class and fix the linter to catch similar instances.
-		 */
-		const iframeClasses = classNames( 'inline-help__richresult__dialog__video' );
-		const dialogClasses = classNames( 'inline-help__richresult__dialog', dialogType );
-		const dialogButtons = this.getDialogButtons();
 
 		return (
 			<div className="inline-help">
@@ -189,27 +188,11 @@ class InlineHelp extends Component {
 					/>
 				) }
 				{ showDialog && (
-					<Dialog
-						additionalClassNames={ dialogClasses }
-						isVisible
-						buttons={ dialogButtons }
-						onCancel={ this.closeDialog }
+					<InlineHelpDialog
+						dialogType={ dialogType }
+						videoLink={ videoLink }
 						onClose={ this.closeDialog }
-					>
-						{ dialogType === 'video' && (
-							<div className={ iframeClasses }>
-								<ResizableIframe
-									src={ videoLink + '?rel=0&amp;showinfo=0&amp;autoplay=1' }
-									frameBorder="0"
-									seamless
-									allowFullScreen
-									autoPlay
-									width="640"
-									height="360"
-								/>
-							</div>
-						) }
-					</Dialog>
+					/>
 				) }
 				{ this.props.isHappychatButtonVisible && config.isEnabled( 'happychat' ) && (
 					<HappychatButton className="inline-help__happychat-button" allowMobileRedirect />
@@ -224,6 +207,8 @@ const mapStateToProps = state => {
 		isHappychatButtonVisible: hasActiveHappychatSession( state ),
 		isHappychatOpen: isHappychatOpen( state ),
 		isPopoverVisible: isInlineHelpPopoverVisible( state ),
+		isChecklistPromptVisible: isInlineHelpChecklistPromptVisible( state ),
+		checklistPromptTaskId: getChecklistPromptTaskId( state ),
 	};
 };
 
@@ -231,9 +216,7 @@ const mapDispatchToProps = {
 	recordTracksEvent,
 	showInlineHelpPopover,
 	hideInlineHelpPopover,
+	hideChecklistPrompt,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( InlineHelp ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelp ) );

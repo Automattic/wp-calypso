@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -82,9 +81,9 @@ describe( 'WechatPaymentBox', () => {
 			'.checkout__payment-box-actions .payment-box__payment-buttons',
 			'.payment-box__payment-buttons .pay-button .button.is-primary.button-pay.pay-button__button',
 			'.payment-box__payment-buttons .checkout__secure-payment .checkout__secure-payment-content [icon="lock"]',
-			'Localized(TermsOfService)',
+			'Localized(CheckoutTerms)',
 			'Localized(SubscriptionText)',
-			'Localized(CartToggle)',
+			'Connect(CartToggle)',
 			'Connect(Localized(CartCoupon))',
 		];
 

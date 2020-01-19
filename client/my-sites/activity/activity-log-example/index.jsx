@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,14 +8,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ActivityLogItem from '../activity-log-item/index';
+import ActivityLogItem from '../activity-log-item';
 import FeatureExample from 'components/feature-example';
 import FormattedHeader from 'components/formatted-header';
 import UpgradeBanner from '../activity-log-banner/upgrade-banner';
+import { getPreference } from 'state/preferences/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ActivityLogExample extends Component {
 	render() {
-		const { translate, siteId, siteIsOnFreePlan } = this.props;
+		const { isIntroDismissed, siteId, siteIsOnFreePlan, translate } = this.props;
 
 		const exampleContents = [
 			{
@@ -60,28 +65,30 @@ class ActivityLogExample extends Component {
 
 		return (
 			<div className="activity-log-example">
-				<FormattedHeader
-					headerText={ translate( 'Welcome to Activity' ) }
-					subHeaderText={ translate( 'All of your site activity will appear here.' ) }
-				/>
+				{ isIntroDismissed && (
+					<FormattedHeader
+						headerText={ translate( 'Welcome to Activity' ) }
+						subHeaderText={ translate( 'All of your site activity will appear here.' ) }
+					/>
+				) }
 				<FeatureExample role="presentation">
 					{ exampleItems.map( log => (
 						<ActivityLogItem
-							key={ `activity-log-example-${ log.activityTs }` }
+							key={ log.activityTs }
 							activity={ log }
 							disableRestore={ true }
 							disableBackup={ true }
-							hideRestore={ true }
 							siteId={ siteId }
 						/>
 					) ) }
 				</FeatureExample>
-				{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
+				{ siteIsOnFreePlan && ! isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
 			</div>
 		);
 	}
 }
 
 export default connect( ( state, { siteId } ) => ( {
-	siteId: siteId,
+	siteId,
+	isIntroDismissed: getPreference( state, 'dismissible-card-activity-introduction-banner' ),
 } ) )( localize( ActivityLogExample ) );

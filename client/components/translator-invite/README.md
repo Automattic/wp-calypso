@@ -17,4 +17,4 @@ If a locale is found, the component fetches the localized name of the language.
 
 #### Props
 
-* `path`: {String} (optional) Current path
+* `path`: {string} (optional) Current path

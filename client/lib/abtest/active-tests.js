@@ -1,14 +1,4 @@
-/** @format */
 export default {
-	improvedOnboarding: {
-		datestamp: '20181023',
-		variations: {
-			main: 90,
-			onboarding: 10,
-		},
-		defaultVariation: 'main',
-		localeTargets: 'any',
-	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
 		variations: {
@@ -27,34 +17,7 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	signupAtomicStoreVsPressable: {
-		datestamp: '20171101',
-		variations: {
-			atomic: 99,
-			pressable: 1,
-		},
-		defaultVariation: 'atomic',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
-	businessPlanDescriptionAT: {
-		datestamp: '20170605',
-		variations: {
-			original: 50,
-			pluginsAndThemes: 50,
-		},
-		defaultVariation: 'original',
-	},
 	ATPromptOnCancel: {
-		datestamp: '20170515',
-		variations: {
-			hide: 20,
-			show: 80,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-	},
-	ATUpgradeOnCancel: {
 		datestamp: '20170515',
 		variations: {
 			hide: 20,
@@ -73,71 +36,124 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	jetpackFreePlanButtonPosition: {
-		datestamp: '20181212',
-		variations: {
-			locationTop: 50,
-			locationBottom: 50,
-		},
-		defaultVariation: 'locationBottom',
-		allowExistingUsers: true,
-	},
-	showConciergeSessionUpsell: {
-		datestamp: '20181214',
-		variations: {
-			skip: 90,
-			show: 10,
-		},
-		defaultVariation: 'skip',
-		allowExistingUsers: true,
-	},
-	showConciergeSessionUpsellNonGSuite: {
-		datestamp: '20181228',
-		variations: {
-			skip: 90,
-			show: 10,
-		},
-		defaultVariation: 'skip',
-		allowExistingUsers: true,
-	},
 	builderReferralStatsNudge: {
 		datestamp: '20181218',
 		variations: {
-			builderReferralBanner: 50,
-			googleMyBusinessBanner: 50,
+			builderReferralBanner: 25,
+			googleMyBusinessBanner: 75,
 		},
 		defaultVariation: 'googleMyBusinessBanner',
-	},
-	privateByDefault: {
-		datestamp: '20181217',
-		variations: {
-			private: 50,
-			public: 50,
-		},
-		defaultVariation: 'public',
 	},
 	builderReferralThemesBanner: {
 		datestamp: '20181218',
 		variations: {
-			builderReferralBanner: 10,
-			original: 90,
+			builderReferralBanner: 25,
+			original: 75,
 		},
 		defaultVariation: 'original',
 	},
-	removeDomainsStepFromOnboarding: {
-		datestamp: '20181221',
+	pageBuilderMVP: {
+		datestamp: '20190419',
 		variations: {
-			keep: 100,
-			remove: 0,
+			control: 100,
+			test: 0,
 		},
-		defaultVariation: 'keep',
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
-	domainSearchButtonStyles: {
-		datestamp: '20190119',
+	conciergeUpsellDial: {
+		//this test is used to dial down the upsell offer
+		datestamp: '20190429',
 		variations: {
-			allPrimary: 50,
-			onePrimary: 50,
+			offer: 100,
+			noOffer: 0,
 		},
-		defaultVariation: 'allPrimary',
+		defaultVariation: 'noOffer',
+		allowExistingUsers: true,
+	},
+	skippableDomainStep: {
+		datestamp: '20290717',
+		variations: {
+			skippable: 0,
+			notSkippable: 100,
+		},
+		defaultVariation: 'notSkippable',
+		allowExistingUsers: true,
+	},
+	passwordlessSignup: {
+		datestamp: '20291029',
+		variations: {
+			passwordless: 0,
+			default: 100,
+		},
+		defaultVariation: 'default',
+	},
+	domainStepCopyUpdates: {
+		datestamp: '20191121',
+		variations: {
+			variantShowUpdates: 90,
+			control: 10,
+		},
+		defaultVariation: 'variantShowUpdates',
+		allowExistingUsers: true,
+	},
+	domainStepMoveParagraph: {
+		datestamp: '20191216',
+		variations: {
+			variantMoveParagraph: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	nonEnglishDomainStepCopyUpdates: {
+		datestamp: '20191219',
+		variations: {
+			variantShowUpdates: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+		localeExceptions: [ 'en' ],
+	},
+	showBusinessPlanPopular: {
+		datestamp: '20200109',
+		variations: {
+			variantShowBizPopular: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+		localeExceptions: [ 'en' ],
+	},
+	readerFreeToPaidPlanNudge: {
+		datestamp: '20200102',
+		variations: {
+			display: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: false,
+		localeTargets: 'any',
+	},
+	showPlanBumpVsGsuite: {
+		datestamp: '20200107',
+		variations: {
+			variantShowPlanBumpOffer: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	redirectToCustomerHome: {
+		datestamp: '20200117',
+		variations: {
+			variant: 10,
+			control: 90,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: false,
 	},
 };

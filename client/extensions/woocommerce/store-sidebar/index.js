@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -34,9 +32,7 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
 import { isLoaded as arePluginsLoaded } from 'state/plugins/installed/selectors';
 import { isStoreManagementSupportedInCalypsoForCountry } from 'woocommerce/lib/countries';
-import { recordTrack } from 'woocommerce/lib/analytics';
 import Sidebar from 'layout/sidebar';
-import SidebarButton from 'layout/sidebar/button';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarSeparator from 'layout/sidebar/separator';
@@ -113,21 +109,12 @@ class StoreSidebar extends Component {
 	products = () => {
 		const { site, siteSuffix, translate } = this.props;
 		const link = '/store/products' + siteSuffix;
-		const addLink = '/store/product' + siteSuffix;
-		const selected = this.isItemLinkSelected( [
-			link,
-			addLink,
-			'/store/products/categories' + siteSuffix,
-		] );
+		const selected = this.isItemLinkSelected( [ link, '/store/products/categories' + siteSuffix ] );
 		const classes = classNames( {
 			products: true,
 			'is-placeholder': ! site,
 			selected,
 		} );
-
-		const recordAddClick = () => {
-			recordTrack( 'calypso_woocommerce_sidebar_add_product_click' );
-		};
 
 		return (
 			<SidebarItem
@@ -135,11 +122,7 @@ class StoreSidebar extends Component {
 				icon="product"
 				label={ translate( 'Products' ) }
 				link={ link }
-			>
-				<SidebarButton disabled={ ! site } href={ addLink } onClick={ recordAddClick }>
-					{ translate( 'Add' ) }
-				</SidebarButton>
-			</SidebarItem>
+			/>
 		);
 	};
 
@@ -191,17 +174,12 @@ class StoreSidebar extends Component {
 
 		const { site, siteSuffix, translate } = this.props;
 		const link = '/store/promotions' + siteSuffix;
-		const addLink = '/store/promotion' + siteSuffix;
-		const selected = this.isItemLinkSelected( [ link, addLink ] );
+		const selected = this.isItemLinkSelected( [ link ] );
 		const classes = classNames( {
 			promotions: true,
 			'is-placeholder': ! site,
 			selected,
 		} );
-
-		const recordPromotionClick = () => {
-			recordTrack( 'calypso_woocommerce_sidebar_add_promotion_click' );
-		};
 
 		return (
 			<SidebarItem
@@ -209,11 +187,7 @@ class StoreSidebar extends Component {
 				icon="gift"
 				label={ translate( 'Promotions' ) }
 				link={ link }
-			>
-				<SidebarButton disabled={ ! site } href={ addLink } onClick={ recordPromotionClick }>
-					{ translate( 'Add' ) }
-				</SidebarButton>
-			</SidebarItem>
+			/>
 		);
 	};
 
@@ -332,7 +306,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( StoreSidebar ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( StoreSidebar ) );

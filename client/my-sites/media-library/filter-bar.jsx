@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,7 +21,7 @@ import DataSource from './data-source';
 // These source supply very large images, and there are instances such as
 // the site icon editor, where we want to disable them because the editor
 // can't handle the large images.
-const largeImageSources = [ 'pexels' ];
+const largeImageSources = [ 'pexels', 'google_photos' ];
 
 export class MediaLibraryFilterBar extends Component {
 	static propTypes = {
@@ -59,9 +57,6 @@ export class MediaLibraryFilterBar extends Component {
 
 	getSearchPlaceholderText() {
 		const { filter, source, translate } = this.props;
-		if ( 'google_photos' === source ) {
-			return translate( 'Search your Google library…' );
-		}
 
 		if ( 'pexels' === source ) {
 			return translate( 'Search for free photos…' );
@@ -111,15 +106,27 @@ export class MediaLibraryFilterBar extends Component {
 		this.props.onFilterChange( filter );
 	};
 
-	renderTabItems() {
-		if ( this.props.source !== '' ) {
-			return null;
+	getFiltersForSource( source ) {
+		if ( source === 'pexels' ) {
+			return [];
 		}
 
-		const tabs = [ '', 'this-post', 'images', 'documents', 'videos', 'audio' ];
+		if ( source === 'google_photos' ) {
+			return [ '', 'images', 'videos' ];
+		}
+
+		return [ '', 'this-post', 'images', 'documents', 'videos', 'audio' ];
+	}
+
+	renderTabItems() {
+		const tabs = this.getFiltersForSource( this.props.source );
 
 		if ( ! this.props.post ) {
 			pull( tabs, 'this-post' );
+		}
+
+		if ( tabs.length === 0 ) {
+			return null;
 		}
 
 		return (
@@ -139,21 +146,27 @@ export class MediaLibraryFilterBar extends Component {
 	}
 
 	renderSearchSection() {
-		if ( this.props.filterRequiresUpgrade || ! this.props.isConnected ) {
+		const { source, onSearch, search, filterRequiresUpgrade, isConnected } = this.props;
+
+		if ( filterRequiresUpgrade || ! isConnected ) {
 			return null;
 		}
 
-		const isPinned = this.props.source === '';
+		if ( source === 'google_photos' ) {
+			return null;
+		}
+
+		const isPinned = source === '';
 
 		// Set the 'key' value so if the source is changed the component is refreshed, forcing it to clear the existing state
 		return (
 			<Search
-				key={ this.props.source }
+				key={ source }
 				analyticsGroup="Media"
 				pinned={ isPinned }
 				fitsContainer
-				onSearch={ this.props.onSearch }
-				initialValue={ this.props.search }
+				onSearch={ onSearch }
+				initialValue={ search }
 				placeholder={ this.getSearchPlaceholderText() }
 				delaySearch={ true }
 			/>

@@ -2,13 +2,13 @@
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: flex-end;
-	background: lighten( $blue-light, 25% );
+	background: var( --color-primary-0 );
 
 	&.is-completed {
 		background: transparent;
 
 		.order-fulfillment__label .gridicon {
-			color: $alert-green;
+			color: var( --color-success );
 		}
 	}
 }

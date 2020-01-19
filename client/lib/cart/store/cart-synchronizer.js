@@ -1,12 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import { assign, flowRight } from 'lodash';
-import i18n from 'i18n-calypso';
+import { assign, flowRight, get } from 'lodash';
 import Dispatcher from 'dispatcher';
-import { TRANSACTION_STEP_SET } from 'lib/upgrades/action-types';
+import { TRANSACTION_STEP_SET } from 'lib/transaction/action-types';
 import debugFactory from 'debug';
 
 /**
@@ -21,25 +18,10 @@ import { preprocessCartForServer } from 'lib/cart-values';
 const debug = debugFactory( 'calypso:cart-data:cart-synchronizer' );
 
 function preprocessCartFromServer( cart ) {
-	// #tax-on-checkout-placeholder
-	const taxOnCheckoutPlaceholder = {
-		tax: {
-			location: {
-				country_code: 'US',
-				postal_code: '90210',
-			},
-			display_tax: true, // **NEW** Whether to show the tax lines to the user or not.
-		},
-		sub_total: cart.total_cost,
-		sub_total_display: cart.total_cost_display,
-		total_tax: cart.total_cost,
-		total_tax_display: cart.total_cost_display,
-	};
-
-	// #tax-on-checkout-placeholder
-	return assign( {}, taxOnCheckoutPlaceholder, cart, {
+	return assign( {}, cart, {
 		client_metadata: createClientMetadata(),
 		products: castProductIDsToNumbers( cart.products ),
+		tax: castTaxObject( cart.tax ), // cast tax.location to object
 	} );
 }
 
@@ -49,7 +31,7 @@ function preprocessCartFromServer( cart ) {
 // NOTE: This object has underscored keys to match the rest of the attributes
 //   in the `CartValue object`.
 function createClientMetadata() {
-	return { last_server_response_date: i18n.moment().toISOString() };
+	return { last_server_response_date: new Date().toISOString() };
 }
 
 // FIXME: Temporary fix to cast string product IDs to numbers. There is a bug
@@ -58,6 +40,16 @@ function castProductIDsToNumbers( cartItems ) {
 	return cartItems.map( function( item ) {
 		return assign( {}, item, { product_id: parseInt( item.product_id, 10 ) } );
 	} );
+}
+
+// The API is returning arrays for location that mess with our
+// immutability-helper functions, so we need to make sure to convert
+// these to objects. We should be able to remove this after that's fixed.
+function castTaxObject( tax ) {
+	return {
+		...tax,
+		location: { ...get( tax, 'location' ) }, // cast location to object
+	};
 }
 
 function CartSynchronizer( cartKey, wpcom ) {
@@ -78,23 +70,16 @@ function CartSynchronizer( cartKey, wpcom ) {
 
 Emitter( CartSynchronizer.prototype );
 
-CartSynchronizer.prototype.handleDispatch = function( payload ) {
-	const { action } = payload;
+CartSynchronizer.prototype.handleDispatch = function( { action } ) {
+	switch ( action.type ) {
+		case TRANSACTION_STEP_SET:
+			if ( action.step.first && ! action.step.last ) {
+				this.pause();
+			}
 
-	if ( action.type !== TRANSACTION_STEP_SET ) {
-		return;
-	}
-
-	const { step } = action;
-
-	if ( step.first && step.last ) {
-		return;
-	}
-
-	if ( step.first ) {
-		this.pause();
-	} else if ( step.last ) {
-		this.resume();
+			if ( action.step.last && ! action.step.first ) {
+				this.resume();
+			}
 	}
 };
 
@@ -133,10 +118,7 @@ CartSynchronizer.prototype.resume = function() {
 
 CartSynchronizer.prototype._enqueueChange = function( changeFunction ) {
 	if ( this._queuedChanges ) {
-		this._queuedChanges = flowRight(
-			changeFunction,
-			this._queuedChanges
-		);
+		this._queuedChanges = flowRight( changeFunction, this._queuedChanges );
 	} else {
 		this._queuedChanges = changeFunction;
 	}

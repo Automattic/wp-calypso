@@ -1,9 +1,12 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
+
+/**
+ * Style dependencies
+ */
+import './placeholder.scss';
 
 export default function FeaturedDomainSuggestionsPlaceholder() {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */

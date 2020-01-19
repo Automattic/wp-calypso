@@ -1,4 +1,3 @@
-/** @format **/
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
@@ -7,7 +6,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -17,7 +17,6 @@ import { deserialize } from 'components/tinymce/plugins/simple-payments/shortcod
 import getMediaItem from 'state/selectors/get-media-item';
 import getSimplePayments from 'state/selectors/get-simple-payments';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import formatCurrency from 'lib/format-currency';
 import QuerySimplePayments from 'components/data/query-simple-payments';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryMedia from 'components/data/query-media';

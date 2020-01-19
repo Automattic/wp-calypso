@@ -1,38 +1,27 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
-import config from 'config';
-import debugFactory from 'debug';
 import page from 'page';
-import { has, set, uniqueId, get } from 'lodash';
-
-/**
- * WordPress dependencies
- */
-import { setLocaleData } from '@wordpress/i18n';
-import { dispatch, select } from '@wordpress/data';
+import { get, has, isInteger, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
-import { asyncLoader } from 'components/async-loader';
+import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
+import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
 import { EDITOR_START } from 'state/action-types';
-import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import CalypsoifyIframe from './calypsoify-iframe';
+import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
+import { addQueryArgs } from 'lib/route';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import { requestSelectedEditor } from 'state/selected-editor/actions';
+import { getSiteUrl, getSiteOption } from 'state/sites/selectors';
+import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
+import { isEnabled } from 'config';
 import { Placeholder } from './placeholder';
-import { JETPACK_DATA_PATH } from 'gutenberg/extensions/presets/jetpack/utils/get-jetpack-data';
-import {
-	requestFromUrl,
-	requestGutenbergBlockAvailability,
-	requestSitePost,
-} from 'state/data-getters';
-import { waitForData } from 'state/data-layer/http-data';
-
-const debug = debugFactory( 'calypso:gutenberg:controller' );
+import { makeLayout, render } from 'controller';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {
@@ -51,151 +40,154 @@ function getPostID( context ) {
 		return null;
 	}
 
+	if ( 'home' === context.params.post ) {
+		const state = context.store.getState();
+		const siteId = getSelectedSiteId( state );
+
+		return parseInt( getSiteOption( state, siteId, 'page_on_front' ), 10 );
+	}
+
 	// both post and site are in the path
 	return parseInt( context.params.post, 10 );
 }
 
-export const loadTranslations = store => {
-	const domainDefault = { name: 'default', url: 'gutenberg' };
-	const domainJetpack = {
-		name: 'jetpack',
-		url: 'jetpack-gutenberg-blocks',
-	};
-	const domains = [ domainDefault, domainJetpack ];
-
-	const state = store.getState();
-	const localeSlug = getCurrentLocaleSlug( state );
-
-	// We don't need to localize English
-	if ( ! localeSlug || localeSlug === config( 'i18n_default_locale_slug' ) ) {
-		return Promise.resolve();
-	}
-
-	const query = domains.reduce( ( currentQuery, domain ) => {
-		const { name, url } = domain;
-		const languageFileUrl = `https://widgets.wp.com/languages/${ url }/${ localeSlug }.json?t=2`;
-		return {
-			...currentQuery,
-			[ name ]: () => requestFromUrl( languageFileUrl ),
-		};
-	}, {} );
-
-	return waitForData( query ).then( responses => {
-		Object.entries( responses ).forEach( ( [ domain, { state: requestState, data } ] ) => {
-			if ( requestState === 'failure' ) {
-				debug(
-					`Encountered an error loading locale file for domain ${ domain } and locale ${ localeSlug }. Falling back to English.`
-				);
-				return Promise.reject();
-			} else if ( data ) {
-				const localeData = {
-					'': {
-						domain,
-						lang: localeSlug,
-					},
-					...data.body,
-				};
-				setLocaleData( localeData, domain );
+function waitForSiteIdAndSelectedEditor( context ) {
+	return new Promise( resolve => {
+		const unsubscribe = context.store.subscribe( () => {
+			const state = context.store.getState();
+			const siteId = getSelectedSiteId( state );
+			if ( ! siteId ) {
+				return;
 			}
+			const selectedEditor = getSelectedEditor( state, siteId );
+			if ( ! selectedEditor ) {
+				return;
+			}
+			unsubscribe();
+			resolve();
 		} );
+		// Trigger a `store.subscribe()` callback
+		context.store.dispatch(
+			requestSelectedEditor( getSelectedSiteId( context.store.getState() ) )
+		);
 	} );
-};
+}
 
-export const loadGutenbergBlockAvailability = store => {
-	const state = store.getState();
-	const siteSlug = getSelectedSiteSlug( state );
+/**
+ * Ensures the user is authenticated in WP Admin so the iframe can be loaded successfully.
+ *
+ * Simple sites users are always authenticated since the iframe is loaded through a *.wordpress.com URL (first-party
+ * cookie).
+ *
+ * Atomic and Jetpack sites will load the iframe through a different domain (third-party cookie). This can prevent the
+ * auth cookies from being stored while embedding WP Admin in Calypso (i.e. if the browser is preventing cross-site
+ * tracking), so we redirect the user to the WP Admin login page in order to store the auth cookie. Users will be
+ * redirected back to Calypso when they are authenticated in WP Admin.
+ *
+ * @param {object} context  Shared context in the route.
+ * @param {Function} next   Next registered callback for the route.
+ * @returns {*}             Whatever the next callback returns.
+ */
+export const authenticate = ( context, next ) => {
+	const state = context.store.getState();
 
-	return waitForData( {
-		blockAvailability: () => requestGutenbergBlockAvailability( siteSlug ),
-	} ).then( ( { blockAvailability } ) => {
-		if ( 'success' === blockAvailability.state && blockAvailability.data ) {
-			set( window, [ JETPACK_DATA_PATH, 'available_blocks' ], blockAvailability.data );
-		}
-	} );
-};
+	const siteId = getSelectedSiteId( state );
+	const storageKey = `gutenframe_${ siteId }_is_authenticated`;
 
-export const resetGutenbergState = ( registry, selectedSiteId ) => {
-	// Always reset core/editor, core/notices, and other UI parts
-	registry.reset( 'core/editor' );
-	registry.reset( 'core/notices' );
-	dispatch( 'core/edit-post' ).closePublishSidebar();
-	dispatch( 'core/edit-post' ).closeModal();
-
-	// Only reset core/data on site change
-	const previousGutenbergSiteId = select( 'gutenberg/calypso' ).getSelectedSiteId();
-
-	if ( !! previousGutenbergSiteId && previousGutenbergSiteId !== selectedSiteId ) {
-		registry.resetCoreResolvers();
+	const isAuthenticated =
+		sessionStorage.getItem( storageKey ) || // Previously authenticated.
+		! isSiteWpcomAtomic( state, siteId ) || // Simple sites users are always authenticated.
+		isEnabled( 'desktop' ) || // The desktop app can store third-party cookies.
+		context.query.authWpAdmin; // Redirect back from the WP Admin login page to Calypso.
+	if ( isAuthenticated ) {
+		sessionStorage.setItem( storageKey, 'true' );
+		return next();
 	}
-	dispatch( 'gutenberg/calypso' ).setSelectedSiteId( selectedSiteId );
+
+	// Shows the editor placeholder while doing the redirection.
+	context.primary = <Placeholder />;
+	makeLayout( context, noop );
+	render( context );
+
+	// We could use `window.location.href` to generate the return URL but there are some potential race conditions that
+	// can cause the browser to not update it before redirecting to WP Admin. To avoid that, we manually generate the
+	// URL from the relevant parts.
+	let origin = `${ window.location.protocol }//${ window.location.hostname }`;
+	if ( window.location.port ) {
+		origin += `:${ window.location.port }`;
+	}
+	const returnUrl = addQueryArgs(
+		{ ...context.query, authWpAdmin: true },
+		`${ origin }${ context.path }`
+	);
+
+	const siteUrl = getSiteUrl( state, siteId );
+	const wpAdminLoginUrl = addQueryArgs( { redirect_to: returnUrl }, `${ siteUrl }/wp-login.php` );
+	window.location.replace( wpAdminLoginUrl );
 };
 
-export const redirect = ( { store: { getState } }, next ) => {
+export const redirect = async ( context, next ) => {
+	const {
+		store: { getState },
+	} = context;
+	const tmpState = getState();
+	const selectedEditor = getSelectedEditor( tmpState, getSelectedSiteId( tmpState ) );
+	if ( ! selectedEditor ) {
+		await waitForSiteIdAndSelectedEditor( context );
+	}
+
 	const state = getState();
 	const siteId = getSelectedSiteId( state );
-	const hasGutenberg = isGutenbergEnabled( state, siteId );
 
-	if ( hasGutenberg ) {
+	if ( shouldRedirectGutenberg( state, siteId ) ) {
+		const postType = determinePostType( context );
+		const postId = getPostID( context );
+		const url = getGutenbergEditorUrl( state, siteId, postId, postType );
+		// pass along parameters, for example press-this
+		return window.location.replace( addQueryArgs( context.query, url ) );
+	}
+
+	if ( shouldLoadGutenberg( state, siteId ) ) {
 		return next();
 	}
 
 	return page.redirect( `/post/${ getSelectedSiteSlug( state ) }` );
 };
 
-export const post = async ( context, next ) => {
-	//see post-editor/controller.js for reference
+function getPressThisData( query ) {
+	const { text, url, title, image, embed } = query;
+	return url ? { text, url, title, image, embed } : null;
+}
 
-	const uniqueDraftKey = uniqueId( 'gutenberg-draft-' );
+export const post = ( context, next ) => {
+	// See post-editor/controller.js for reference.
+
 	const postId = getPostID( context );
 	const postType = determinePostType( context );
-	const isDemoContent = ! postId && has( context.query, 'gutenberg-demo' );
-	const duplicatePostId = get( context, 'query.copy', null );
+	const jetpackCopy = parseInt( get( context, 'query.jetpack-copy', null ) );
 
-	const makeEditor = import( './init' ).then( ( { initGutenberg } ) => {
-		const state = context.store.getState();
-		const siteId = getSelectedSiteId( state );
-		const userId = getCurrentUserId( state );
+	// Check if this value is an integer.
+	const duplicatePostId = isInteger( jetpackCopy ) ? jetpackCopy : null;
 
-		// When copying a post, first invalidate the cache containing the `duplicatePostId` post,
-		// so that following `requestSitePost` will hit a freshly cached version of the post.
-		if ( !! duplicatePostId ) {
-			requestSitePost( siteId, duplicatePostId, postType, 0 );
-		}
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+	const pressThis = getPressThisData( context.query );
+	const fseParentPageId = parseInt( context.query.fse_parent_post, 10 ) || null;
 
-		//set postId on state.ui.editor.postId, so components like editor revisions can read from it
-		context.store.dispatch( { type: EDITOR_START, siteId, postId } );
+	// Set postId on state.ui.editor.postId, so components like editor revisions can read from it.
+	context.store.dispatch( { type: EDITOR_START, siteId, postId } );
 
-		const { Editor, registry } = initGutenberg( userId, context.store );
+	context.primary = (
+		<CalypsoifyIframe
+			key={ postId }
+			postId={ postId }
+			postType={ postType }
+			duplicatePostId={ duplicatePostId }
+			pressThis={ pressThis }
+			fseParentPageId={ fseParentPageId }
+			creatingNewHomepage={ postType === 'page' && has( context, 'query.new-homepage' ) }
+		/>
+	);
 
-		resetGutenbergState( registry, siteId );
-
-		return props => (
-			<Editor
-				{ ...{
-					siteId,
-					postId,
-					postType,
-					uniqueDraftKey,
-					isDemoContent,
-					duplicatePostId,
-					...props,
-				} }
-			/>
-		);
-	} );
-
-	const EditorLoader = asyncLoader( {
-		promises: {
-			Editor: makeEditor,
-			translations: loadTranslations( context.store ),
-			blockAvailability: loadGutenbergBlockAvailability( context.store ),
-		},
-		loading: () => <Placeholder />,
-		success: ( { Editor } ) => <Editor />,
-		failure: () => <div>Couldn't load everything - try hitting reload in your browser…</div>,
-	} );
-
-	context.primary = <EditorLoader />;
-
-	next();
+	return next();
 };

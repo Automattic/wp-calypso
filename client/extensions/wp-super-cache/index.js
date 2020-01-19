@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,6 +13,11 @@ import { settings } from './app/controller';
 import { Tabs } from './app/constants';
 import { makeLayout, render as clientRender } from 'controller';
 import reducer from './state/reducer';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default async function( _, addReducer ) {
 	await addReducer( [ 'extensions', 'wpSuperCache' ], reducer );

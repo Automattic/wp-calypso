@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,6 @@ import React from 'react';
  */
 import AddCardDetails from './payment/add-card-details';
 import AddCreditCard from './add-credit-card';
-import CancelPrivacyProtection from './cancel-privacy-protection';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
 import EditCardDetails from './payment/edit-card-details';
@@ -68,22 +65,6 @@ export function addCardDetails( context, next ) {
 
 export function addCreditCard( context, next ) {
 	context.primary = <AddCreditCard />;
-	next();
-}
-
-export function cancelPrivacyProtection( context, next ) {
-	if ( userHasNoSites() ) {
-		return noSites( context, '/me/purchases/:site/:purchaseId/cancel-privacy-protection' );
-	}
-
-	setTitle( context, titles.cancelPrivacyProtection );
-
-	context.primary = (
-		<CancelPrivacyProtection
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			siteSlug={ context.params.site }
-		/>
-	);
 	next();
 }
 

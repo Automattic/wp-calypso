@@ -1,8 +1,8 @@
-/** @format */
 /**
  * External dependencies
  */
 import { expect } from 'chai';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,9 +19,10 @@ import {
 	setTracksOptOut,
 	loadTrackingTool,
 } from '../actions';
-import { dispatcher as dispatch } from '../middleware.js';
+import { analyticsMiddleware } from '../middleware.js';
 import { spy as mockAnalytics } from 'lib/analytics';
 import { spy as mockAdTracking } from 'lib/analytics/ad-tracking';
+import { addHotJarScript } from 'lib/analytics/hotjar';
 
 jest.mock( 'lib/analytics', () => {
 	const analyticsSpy = require( 'sinon' ).spy();
@@ -32,6 +33,7 @@ jest.mock( 'lib/analytics', () => {
 
 	return mock;
 } );
+
 jest.mock( 'lib/analytics/ad-tracking', () => {
 	const adTrackingSpy = require( 'sinon' ).spy();
 	const { adTrackingMock } = require( './helpers/analytics-mock' );
@@ -41,6 +43,12 @@ jest.mock( 'lib/analytics/ad-tracking', () => {
 
 	return mock;
 } );
+
+jest.mock( 'lib/analytics/hotjar', () => ( {
+	addHotJarScript: require( 'sinon' ).spy(),
+} ) );
+
+const dispatch = analyticsMiddleware()( noop );
 
 describe( 'middleware', () => {
 	describe( 'analytics dispatching', () => {
@@ -125,9 +133,8 @@ describe( 'middleware', () => {
 		} );
 
 		test( 'should call hotjar.addHotJarScript', () => {
-			dispatch( loadTrackingTool( 'HotJar' ), { analyticsTracking: [] } );
-
-			expect( mockAnalytics ).to.have.been.calledWith( 'hotjar.addHotJarScript' );
+			dispatch( loadTrackingTool( 'HotJar' ) );
+			expect( addHotJarScript ).to.have.been.calledOnce;
 		} );
 	} );
 } );

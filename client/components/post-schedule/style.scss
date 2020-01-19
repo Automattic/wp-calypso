@@ -28,22 +28,22 @@
 	}
 }
 
-.post-schedule .input-chrono__container {
+.post-schedule .input-chrono {
 	margin: 0 -16px;
 
-	input.input-chrono {
+	.input-chrono__input {
 		padding-left: 16px;
 		padding-right: 16px;
 		border: 0;
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	::placeholder {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	::-moz-placeholder {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		opacity: 1;
 	}
 }
@@ -71,10 +71,10 @@
 	left: 0;
 	height: 16px;
 	cursor: pointer;
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 
 	&:hover {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 }
 
@@ -116,14 +116,7 @@ input[type='text'].post-schedule__clock-time {
 	display: inline-flex;
 	margin: 0 6px;
 	vertical-align: bottom;
-}
-
-.post-schedule__clock .segmented-control__item {
-	display: inline-table;
-}
-
-.post-schedule__clock .segmented-control__link {
-	display: inline-block;
+	line-height: 0;
 }
 
 .info-popover__tooltip.post-schedule__timezone-info,
@@ -135,7 +128,7 @@ input[type='text'].post-schedule__clock-time {
 	text-align: left;
 	margin-top: 10px;
 	padding: 10px 0 0;
-	border-top: 1px solid lighten( $gray, 25% );
+	border-top: 1px solid var( --color-neutral-5 );
 }
 
 .post-schedule__timezone-info {

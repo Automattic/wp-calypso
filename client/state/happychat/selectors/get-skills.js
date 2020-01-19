@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -13,7 +11,7 @@ import { getCurrentUserLocale } from 'state/current-user/selectors';
  * @param { Object } state Global state tree
  * @param { String } siteId Id of the selected site used to determine the product (wpcom, jetpack)
  *
- * @return { String } Current user geo location
+ * @returns { String } Current user geo location
  */
 export default ( state, siteId ) => {
 	const skills = {

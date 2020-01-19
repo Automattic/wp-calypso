@@ -1,41 +1,59 @@
+.current-plan__dialog.dialog__backdrop {
+	background-color: rgba( var( --color-neutral-dark-rgb ), 0.85 );
+	box-shadow: none;
+	margin: 0;
+	
+	.dialog__backdrop__content {
+		background-color: var( --color-surface );
+	}
+}
+
 .current-plan__header {
 	display: flex;
 	flex-flow: row wrap;
-	justify-content: space-between;
 	margin-bottom: 12px;
 }
 
 .current-plan__header-content {
-	background-color: $white;
-	padding: 32px;
 	width: 100%;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),
+	padding: 14px 32px;
+	background-color: var( --color-surface );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
 		0 1px 2px var( --color-neutral-0 );
-
-	@include breakpoint( '>660px' ) {
-		text-align: left;
+	
+	&-main {
+		display: flex;
 	}
-	flex-direction: column;
-}
 
-.current-plan__header-content-main {
-	flex-direction: row;
+	.is-jetpack-free & {
+		@include breakpoint( '>800px' ) {
+			display: flex;
+			align-items: center;
+			text-align: left;
+		}
+	}
 }
 
 .current-plan__header-icon {
-	width: 80px;
-	height: 80px;
-	float: left;
-	margin-left: 20px;
-	margin-right: 40px;
-	display: flex;
+	display: none;
+
+	@include breakpoint( '>480px' ) {
+		display: flex;
+    	flex-shrink: 0;
+		width: 100px;
+		height: 100px;
+		margin: auto 40px auto 20px;
+	}
 }
 
 .current-plan__header-copy {
 	width: 100%;
+	margin: auto;
 	text-align: left;
-	margin-top: -20px;
-	margin-bottom: 40px;
+
+	.current-plan__header & {
+		margin-bottom: 30px;
+	}
 }
 
 .current-plan__header-heading,
@@ -61,7 +79,7 @@
 
 	.current-plan__header-heading,
 	.current-plan__header-text {
-		@include placeholder( 23% );
+		@include placeholder( --color-neutral-10 );
 
 		display: block;
 
@@ -88,7 +106,7 @@
 }
 
 .current-plan__header-purchase-info-wrapper.card.is-compact {
-	margin: 24px -32px -32px;
+	margin: 24px -32px -14px;
 	display: flex;
 	flex-direction: column;
 }
@@ -114,8 +132,14 @@
 }
 
 .current-plan__compare-plans {
-	margin: 16px 0 0;
-	text-align: center;
+	display: flex;
+	justify-content: center;
+	margin-left: 16px;
+	min-width: 140px;
+	
+	@include breakpoint( '>660px' ) {
+		justify-content: flex-end;
+	}
 }
 
 .current-plan__text {

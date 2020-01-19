@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import DayPicker from 'react-day-picker';
@@ -14,8 +11,14 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import DayItem from 'components/date-picker/day';
-import DatePickerNavBar from 'components/date-picker/nav-bar';
+import { withLocalizedMoment } from 'components/localized-moment';
+import DayItem from './day';
+import DatePickerNavBar from './nav-bar';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class DatePicker extends PureComponent {
 	static propTypes = {
@@ -177,15 +180,7 @@ class DatePicker extends PureComponent {
 	);
 
 	getDateInstance( v ) {
-		if ( this.props.moment.isMoment( v ) ) {
-			return v.toDate();
-		}
-
-		if ( v instanceof Number || typeof v === 'number' ) {
-			return new Date( v );
-		}
-
-		return v;
+		return this.props.moment( v ).toDate();
 	}
 
 	renderDay = ( date, modifiers ) => (
@@ -224,8 +219,9 @@ class DatePicker extends PureComponent {
 		}
 
 		if ( this.props.events && this.props.events.length ) {
-			modifiers.events = map( filter( this.props.events, event => event.date ), event =>
-				this.getDateInstance( event.date )
+			modifiers.events = map(
+				filter( this.props.events, event => event.date ),
+				event => this.getDateInstance( event.date )
 			);
 		}
 
@@ -266,4 +262,4 @@ class DatePicker extends PureComponent {
 	}
 }
 
-export default localize( DatePicker );
+export default localize( withLocalizedMoment( DatePicker ) );

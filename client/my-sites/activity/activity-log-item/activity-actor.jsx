@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +9,7 @@ import PropTypes from 'prop-types';
  */
 import Gravatar from 'components/gravatar';
 import JetpackLogo from 'components/jetpack-logo';
-import SocialLogo from 'social-logos';
+import SocialLogo from 'components/social-logo';
 import { translate } from 'i18n-calypso';
 import ActivityActorIcon from './activity-actor-icon';
 

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,7 +14,7 @@ import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import Navigation from '../navigation';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import ActionButtons from '../settings-form/actions';
 import {
@@ -30,6 +28,12 @@ import {
 } from 'state/notification-settings/selectors';
 import EmailCategory from './email-category';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import hasJetpackSites from 'state/selectors/has-jetpack-sites';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * Module variables
@@ -41,6 +45,10 @@ const options = {
 	promotion: 'promotion',
 	news: 'news',
 	digest: 'digest',
+	jetpack_marketing: 'jetpack_marketing',
+	jetpack_research: 'jetpack_research',
+	jetpack_promotion: 'jetpack_promotion',
+	jetpack_news: 'jetpack_news',
 };
 
 class WPCOMNotifications extends React.Component {
@@ -71,6 +79,10 @@ class WPCOMNotifications extends React.Component {
 							'privacy, and purchase transactions, but you can get some helpful extras, too.'
 					) }
 				</p>
+
+				<FormSectionHeading>
+					{ this.props.translate( 'Email from WordPress.com' ) }
+				</FormSectionHeading>
 
 				<EmailCategory
 					name={ options.marketing }
@@ -107,8 +119,8 @@ class WPCOMNotifications extends React.Component {
 				<EmailCategory
 					name={ options.news }
 					isEnabled={ get( settings, options.news ) }
-					title={ translate( 'News' ) }
-					description={ translate( 'WordPress.com news and announcements.' ) }
+					title={ translate( 'Newsletter' ) }
+					description={ translate( 'WordPress.com news, announcements, and product spotlights.' ) }
 				/>
 
 				<EmailCategory
@@ -121,13 +133,53 @@ class WPCOMNotifications extends React.Component {
 					) }
 				/>
 
+				{ this.props.hasJetpackSites ? (
+					<>
+						<FormSectionHeading>
+							{ this.props.translate( 'Email from Jetpack' ) }
+						</FormSectionHeading>
+
+						<EmailCategory
+							name={ options.jetpack_marketing }
+							isEnabled={ get( settings, options.jetpack_marketing ) }
+							title={ translate( 'Suggestions' ) }
+							description={ translate( 'Tips for getting the most out of Jetpack.' ) }
+						/>
+
+						<EmailCategory
+							name={ options.jetpack_research }
+							isEnabled={ get( settings, options.jetpack_research ) }
+							title={ translate( 'Research' ) }
+							description={ translate(
+								'Opportunities to participate in Jetpack research and surveys.'
+							) }
+						/>
+
+						<EmailCategory
+							name={ options.jetpack_promotion }
+							isEnabled={ get( settings, options.jetpack_promotion ) }
+							title={ translate( 'Promotions' ) }
+							description={ translate( 'Promotions and deals on upgrades.' ) }
+						/>
+
+						<EmailCategory
+							name={ options.jetpack_news }
+							isEnabled={ get( settings, options.jetpack_news ) }
+							title={ translate( 'Newsletter' ) }
+							description={ translate( 'Jetpack news, announcements, and product spotlights.' ) }
+						/>
+					</>
+				) : (
+					''
+				) }
+
 				<ActionButtons onSave={ this.saveSettings } disabled={ ! this.props.hasUnsavedChanges } />
 			</div>
 		);
 	};
 
 	renderPlaceholder = () => {
-		return <p className="notification-settings-wpcom-settings__placeholder">&nbsp;</p>;
+		return <p className="wpcom-settings__notification-settings-placeholder">&nbsp;</p>;
 	};
 
 	render() {
@@ -143,9 +195,6 @@ class WPCOMNotifications extends React.Component {
 				<Navigation path={ this.props.path } />
 
 				<Card>
-					<FormSectionHeading>
-						{ this.props.translate( 'Email from WordPress.com' ) }
-					</FormSectionHeading>
 					{ this.props.settings ? this.renderWpcomPreferences() : this.renderPlaceholder() }
 				</Card>
 			</Main>
@@ -157,6 +206,7 @@ export default connect(
 	state => ( {
 		settings: getNotificationSettings( state, 'wpcom' ),
 		hasUnsavedChanges: hasUnsavedNotificationSettingsChanges( state, 'wpcom' ),
+		hasJetpackSites: hasJetpackSites( state ),
 	} ),
 	{ fetchSettings, toggleWPcomEmailSetting, saveSettings }
 )( localize( WPCOMNotifications ) );

@@ -1,0 +1,11 @@
+.subscription-settings {
+	margin-top: 15px;
+	text-decoration: none;
+	text-align: center;
+	width: 100%;
+
+	@include breakpoint( '>660px' ) {
+		text-align: inherit;
+		width: inherit;
+	}
+}

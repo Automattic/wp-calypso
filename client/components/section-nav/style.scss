@@ -1,9 +1,3 @@
-/**
- * Section Nav
- *
- */
-
-// -------- Main Component --------
 .section-nav {
 	position: relative;
 	width: 100%;
@@ -11,7 +5,8 @@
 	margin: 0 0 17px;
 	background: var( --color-surface );
 	box-sizing: border-box;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
+		0 1px 2px var( --color-neutral-0 );
 
 	&.is-empty .section-nav__panel {
 		visibility: hidden;
@@ -19,7 +14,7 @@
 
 	@include breakpoint( '<480px' ) {
 		&.is-open {
-			box-shadow: 0 0 0 1px $gray, 0 2px 4px var( --color-neutral-100 );
+			box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-10 );
 		}
 	}
 
@@ -40,21 +35,21 @@
 	}
 }
 
-// -------- Mobile Specific Header / Panel --------
 .section-nav__mobile-header {
 	display: flex;
+	width: 100%;
 	padding: 15px;
 	font-size: 14px;
 	line-height: 16px;
 	height: 46px;
 	box-sizing: border-box;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-weight: 600;
 	cursor: pointer;
 
 	.gridicons-chevron-down {
-		fill: var( --color-neutral-500 );
-		flex-shrink: 0;
+		fill: var( --color-neutral-50 );
+		flex: none;
 		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	}
 
@@ -65,7 +60,7 @@
 	}
 
 	.section-nav.has-pinned-items & {
-		padding-right: 50px;
+		padding-right: 85px;
 
 		&::after {
 			margin-left: 8px;
@@ -78,24 +73,18 @@
 }
 
 .section-nav__mobile-header-text {
-	width: 0;
-	margin-right: 4px;
-	flex: 1 0 auto;
+	margin-right: 8px;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
+	text-align: left;
 
 	small {
 		margin-left: 5px;
 		font-size: 11px;
-		color: $gray;
+		color: var( --color-neutral-light );
 		font-weight: 600;
 		text-transform: uppercase;
-	}
-
-	.section-nav.has-pinned-items & {
-		width: auto;
-		flex: 0 1 auto;
 	}
 }
 
@@ -106,8 +95,12 @@
 	@include breakpoint( '<480px' ) {
 		.section-nav.is-open & {
 			padding-bottom: 15px;
-			border-top: solid 1px var( --color-neutral-100 );
-			background: linear-gradient( to bottom, $gray-light 0%, $white 4px );
+			border-top: solid 1px var( --color-neutral-10 );
+			background: linear-gradient(
+				to bottom,
+				var( --color-neutral-0 ) 0%,
+				var( --color-surface ) 4px
+			);
 		}
 	}
 
@@ -126,7 +119,7 @@
 	position: relative;
 	margin-top: 16px;
 	padding-top: 16px;
-	border-top: solid 1px var( --color-neutral-100 );
+	border-top: solid 1px var( --color-neutral-10 );
 
 	&:first-child {
 		padding-top: 0;
@@ -170,7 +163,7 @@
 	margin-bottom: 8px;
 	padding: 0 15px;
 	font-size: 11px;
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-weight: 600;
 	text-transform: uppercase;
 	line-height: 12px;
@@ -186,183 +179,6 @@
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden;
-}
-
-// -------- Nav Items --------
-.section-nav-tab .count {
-	margin-left: 8px;
-}
-
-// -------- Nav Tabs --------
-// which contain items
-.section-nav-tabs {
-	@include breakpoint( '>480px' ) {
-		width: 0;
-		flex: 1 0 auto;
-
-		&.is-dropdown {
-			position: relative;
-			width: auto;
-			flex: 0 1 auto;
-			margin: 8px;
-		}
-	}
-}
-
-// -------- Nav Tabs - inline list --------
-.section-nav-tabs__list {
-	margin: 0;
-	list-style: none;
-
-	@include breakpoint( '>480px' ) {
-		display: flex;
-		width: 100%;
-		overflow: hidden;
-
-		.is-dropdown & {
-			display: none;
-		}
-	}
-}
-
-// -------- Nav Tabs - individual tab --------
-.section-nav-tab {
-	@include breakpoint( '>480px' ) {
-		width: auto;
-		flex: none;
-		border-bottom: 2px solid transparent;
-		border-top: none;
-		text-align: center;
-
-		&.is-selected {
-			border-bottom-color: var( --color-neutral-700 );
-		}
-
-		&:hover:not( .is-selected ) {
-			border-bottom-color: var( --color-section-nav-item-background-hover );
-		}
-	}
-}
-
-.section-nav-tab__link,
-.section-nav-tab__text {
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-
-.section-nav-tab__link {
-	display: flex;
-	align-items: center;
-	box-sizing: border-box;
-	padding: 15px;
-	width: 100%;
-	font-size: 14px;
-	font-weight: 600;
-	line-height: 18px;
-	color: var( --color-neutral-700 );
-	cursor: pointer;
-
-	&:visited {
-		color: var( --color-neutral-700 );
-	}
-
-	&[disabled],
-	.notouch &[disabled]:hover {
-		color: var( --color-neutral-0 );
-		cursor: default;
-	}
-
-	.is-selected & {
-		color: $white;
-		background-color: var( --color-primary );
-
-		@include breakpoint( '<480px' ) {
-			.count {
-				color: $white;
-				border-color: $white;
-			}
-		}
-	}
-
-	&:focus {
-		outline: none;
-
-		.accessible-focus & {
-			box-shadow: inset 0 0 0 2px var( --color-primary-light );
-		}
-	}
-
-	.is-external & {
-		.gridicons-external {
-			vertical-align: text-bottom;
-			margin-left: 3px;
-		}
-	}
-
-	.notouch & {
-		&:hover {
-			background-color: var( --color-section-nav-item-background-hover );
-			color: var( --color-primary );
-		}
-	}
-
-	.notouch .is-selected & {
-		&:hover {
-			color: $white;
-		}
-	}
-
-	@include breakpoint( '>480px' ) {
-		display: block;
-		width: auto;
-		padding: 16px 16px 14px;
-		color: var( --color-primary );
-		font-weight: 400;
-
-		&:visited {
-			color: var( --color-primary );
-		}
-
-		.is-selected & {
-			color: var( --color-neutral-700 );
-			background-color: transparent;
-
-			&::after {
-				display: none;
-			}
-		}
-
-		.notouch .is-selected & {
-			&:hover {
-				color: var( --color-neutral-700 );
-			}
-		}
-	}
-}
-
-.section-nav-tab__text {
-	display: block;
-	flex: 1 0 auto;
-	width: 0;
-	color: inherit;
-
-	@include breakpoint( '>480px' ) {
-		display: inline;
-		flex: none;
-		width: auto;
-	}
-}
-
-.section-nav-tab__title {
-	display: flex;
-	align-items: center;
-	box-sizing: border-box;
-	padding: 15px;
-	width: 100%;
-	font-size: 14px;
-	line-height: 18px;
-	color: var( --color-neutral-700 );
 }
 
 // -------- Nav Tabs - dropdowns --------
@@ -381,24 +197,16 @@
 	}
 }
 
-// -------- Nav Segmented Control --------
-.section-nav__segmented {
-	.segmented-control {
-		margin: 0 15px;
-	}
-
-	.segmented-control__link {
-		padding: 3px 16px 5px;
-	}
-}
-
 // -------- Search --------
 .section-nav {
 	.search {
 		overflow: hidden;
 	}
-	@include breakpoint( '<480px' ) {
-		.search.is-expanded-to-container {
+
+	.search.is-expanded-to-container {
+		height: 50px;
+
+		@include breakpoint( '<480px' ) {
 			height: 46px;
 		}
 	}

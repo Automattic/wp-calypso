@@ -1,17 +1,13 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import url from 'url';
 import { defer } from 'lodash';
 import config from 'config';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import { stringify } from 'qs';
 import page from 'page';
-import SocialLogo from 'social-logos';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -19,11 +15,17 @@ import { localize } from 'i18n-calypso';
  */
 import ReaderPopoverMenu from 'reader/components/reader-popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
+import SocialLogo from 'components/social-logo';
 import * as stats from 'reader/stats';
 import { preload } from 'sections-helper';
 import SiteSelector from 'components/site-selector';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 function preloadEditor() {
 	preload( 'post-editor' );
@@ -34,33 +36,26 @@ function preloadEditor() {
  */
 const actionMap = {
 	twitter( post ) {
-		const twitterUrlProperties = {
-			scheme: 'https',
-			hostname: 'twitter.com',
-			pathname: '/intent/tweet',
-			query: {
-				text: post.title,
-				url: post.URL,
-				via: 'wordpressdotcom',
-			},
-		};
+		const baseUrl = new URL( 'https://twitter.com/intent/tweet' );
+		const params = new URLSearchParams( {
+			text: post.title,
+			url: post.URL,
+		} );
+		baseUrl.search = params.toString();
 
-		const twitterUrl = url.format( twitterUrlProperties );
+		const twitterUrl = baseUrl.href;
 
 		window.open( twitterUrl, 'twitter', 'width=550,height=420,resizeable,scrollbars' );
 	},
 	facebook( post ) {
-		const facebookUrlProperties = {
-			scheme: 'https',
-			hostname: 'www.facebook.com',
-			pathname: '/sharer.php',
-			query: {
-				u: post.URL,
-				app_id: config( 'facebook_api_key' ),
-			},
-		};
+		const baseUrl = new URL( 'https://www.facebook.com/sharer.php' );
+		const params = new URLSearchParams( {
+			u: post.URL,
+			app_id: config( 'facebook_api_key' ),
+		} );
+		baseUrl.search = params.toString();
 
-		const facebookUrl = url.format( facebookUrlProperties );
+		const facebookUrl = baseUrl.href;
 
 		window.open( facebookUrl, 'facebook', 'width=626,height=436,resizeable,scrollbars' );
 	},
@@ -80,7 +75,8 @@ function buildQuerystringForPost( post ) {
 	args.text = post.excerpt;
 	args.url = post.URL;
 
-	return stringify( args );
+	const params = new URLSearchParams( args );
+	return params.toString();
 }
 
 class ReaderShare extends React.Component {

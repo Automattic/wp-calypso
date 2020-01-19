@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -210,9 +209,9 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 					...state.importers,
 					[ action.importerId ]: {
 						importerId: action.importerId,
-						type: action.importerType,
 						importerState: appStates.READY_FOR_UPLOAD,
 						site: { ID: action.siteId },
+						type: action.importerType,
 					},
 				},
 			};

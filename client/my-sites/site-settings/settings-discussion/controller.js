@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,9 +9,7 @@ import React from 'react';
  */
 import DiscussionMain from 'my-sites/site-settings/settings-discussion/main';
 
-export default {
-	discussion( context, next ) {
-		context.primary = React.createElement( DiscussionMain );
-		next();
-	},
-};
+export function discussion( context, next ) {
+	context.primary = React.createElement( DiscussionMain );
+	next();
+}

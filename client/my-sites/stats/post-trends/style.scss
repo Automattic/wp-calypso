@@ -9,7 +9,7 @@
 }
 
 .post-trends__title {
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 	margin-left: 11px;
 	height: 40px;
 	font-weight: 600;
@@ -21,7 +21,7 @@
 	text-align: center;
 	font-size: 16px;
 	font-weight: 300;
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	margin: 20px 0 30px;
 }
 
@@ -48,7 +48,7 @@
 		top: 0;
 	width: 30px;
 	height: 130px;
-	background: linear-gradient( to right, $white, rgba( $white, 0.92 ), $transparent );
+	background: linear-gradient( to right, var( --color-surface ), rgba( var( --color-surface-rgb ), 0.92 ), rgba( var( --color-surface-rgb ), 0 ) );
 	text-align: left;
 	z-index: z-index( 'root', '.post-trends__scroll' );
 
@@ -86,7 +86,7 @@
 }
 
 .post-trends__scroll-right {
-	background: linear-gradient( to left, $white, rgba( $white, 0.92 ), $transparent );
+	background: linear-gradient( to left, var( --color-surface ), rgba( var( --color-surface-rgb ), 0.92 ), rgba( var( --color-surface-rgb ), 0 ) );
 	text-align: right;
 }
 
@@ -115,7 +115,7 @@
 .post-trends__label {
 	text-align: center;
 	font-size: 11px;
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 	margin-top: 10px;
 	text-transform: uppercase;
 	letter-spacing: 0.1em;
@@ -129,8 +129,8 @@
 	display: inline-block;
 	width: 7px;
 	height: 7px;
-	border: 1px solid var( --color-white );
-	background-color: var( --color-neutral-50 );
+	border: 1px solid var( --color-border-inverted );
+	background-color: var( --color-neutral-5 );
 	margin: 0;
 }
 
@@ -138,11 +138,11 @@
 .post-trends__key-day {
 	&.is-outside-month {
 		background-color: transparent;
-		border-color: var( --color-white );
+		border-color: var( --color-border-inverted );
 	}
 
 	&.is-today {
-		background-color: var( --color-neutral-50 );
+		background-color: var( --color-neutral-5 );
 	}
 
 	&.is-after-today {
@@ -150,7 +150,7 @@
 	}
 
 	&.is-level-1 {
-		background-color: var( --color-primary-100 );
+		background-color: var( --color-primary-10 );
 	}
 
 	&.is-level-2 {
@@ -209,7 +209,6 @@
 
 .post-trends__key {
 	margin: 0;
-	padding: 0;
 	list-style-type: none;
 	padding: 2px 9px 0 5px;
 

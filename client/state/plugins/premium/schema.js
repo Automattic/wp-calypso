@@ -1,4 +1,3 @@
-/** @format */
 export const pluginInstructionSchema = {
 	type: 'object',
 	patternProperties: {

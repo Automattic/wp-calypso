@@ -1,37 +1,60 @@
 /**
- * External dependencies
- *
- * @format
- */
-
-import { assign } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
-import { SITE_CHECKLIST_RECEIVE, SITE_CHECKLIST_TASK_UPDATE } from 'state/action-types';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'state/utils';
+import {
+	JETPACK_MODULE_ACTIVATE_SUCCESS,
+	JETPACK_MODULE_DEACTIVATE_SUCCESS,
+	SITE_CHECKLIST_RECEIVE,
+	SITE_CHECKLIST_TASK_UPDATE,
+} from 'state/action-types';
 import { items as itemSchemas } from './schema';
 
-export const items = createReducer(
-	{},
-	{
-		[ SITE_CHECKLIST_RECEIVE ]: ( state, { siteId, checklist } ) => ( {
-			...state,
-			[ siteId ]: checklist,
-		} ),
-		[ SITE_CHECKLIST_TASK_UPDATE ]: ( state, { siteId, taskId } ) => {
-			const siteState = state[ siteId ];
-			const tasks = assign( {}, siteState.tasks, { [ taskId ]: true } );
-			return {
-				...state,
-				[ siteId ]: assign( {}, siteState, { tasks } ),
-			};
-		},
-	},
-	itemSchemas
-);
+const setChecklistTaskCompletion = ( state, taskId, completed ) => ( {
+	...state,
+	tasks: state.tasks.map( task =>
+		task.id === taskId ? { ...task, isCompleted: completed } : task
+	),
+} );
 
-export default combineReducers( {
+const moduleTaskMap = {
+	'lazy-images': 'jetpack_lazy_images',
+	monitor: 'jetpack_monitor',
+	// Both photon and photon-cdn mark the Site Accelerator Task as completed
+	photon: 'jetpack_site_accelerator',
+	'photon-cdn': 'jetpack_site_accelerator',
+	search: 'jetpack_search',
+	videopress: 'jetpack_video_hosting',
+};
+
+const items = withSchemaValidation( itemSchemas, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case SITE_CHECKLIST_RECEIVE:
+			return action.checklist;
+		case SITE_CHECKLIST_TASK_UPDATE:
+			return setChecklistTaskCompletion( state, action.taskId, true );
+		case JETPACK_MODULE_ACTIVATE_SUCCESS:
+			if ( moduleTaskMap.hasOwnProperty( action.moduleSlug ) ) {
+				return setChecklistTaskCompletion( state, moduleTaskMap[ action.moduleSlug ], true );
+			}
+			break;
+		case JETPACK_MODULE_DEACTIVATE_SUCCESS:
+			if ( action.moduleSlug === 'photon' || action.moduleSlug === 'photon-cdn' ) {
+				// We can't know if the other module is still active, so we don't change
+				// Site Accelerator task completion state.
+				return;
+			}
+
+			if ( moduleTaskMap.hasOwnProperty( action.moduleSlug ) ) {
+				return setChecklistTaskCompletion( state, moduleTaskMap[ action.moduleSlug ], false );
+			}
+			break;
+	}
+	return state;
+} );
+
+const reducer = combineReducers( {
 	items,
 } );
+
+export default keyedReducer( 'siteId', reducer );

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -44,19 +43,13 @@ export default function() {
 	page.redirect( '/domains/manage/edit', paths.domainManagementRoot() );
 	page.redirect( '/domains/manage/edit/:site', paths.domainManagementRoot() );
 
-	page( paths.domainManagementEmail(), siteSelection, sites, makeLayout, clientRender );
-
 	registerMultiPage( {
 		paths: [
+			paths.domainManagementEmail(),
 			paths.domainManagementEmail( ':site', ':domain' ),
 			paths.domainManagementEmail( ':site' ),
 		],
-		handlers: [
-			...getCommonHandlers( { noSitePath: paths.domainManagementEmail() } ),
-			domainManagementController.domainManagementEmail,
-			makeLayout,
-			clientRender,
-		],
+		handlers: [ domainManagementController.domainManagementEmailRedirect ],
 	} );
 
 	registerMultiPage( {
@@ -64,18 +57,18 @@ export default function() {
 			paths.domainManagementAddGSuiteUsers( ':site', ':domain' ),
 			paths.domainManagementAddGSuiteUsers( ':site' ),
 		],
-		handlers: [
-			...getCommonHandlers(),
-			domainManagementController.domainManagementAddGSuiteUsers,
-			makeLayout,
-			clientRender,
-		],
+		handlers: [ domainManagementController.domainManagementAddGSuiteUsersRedirect ],
 	} );
 
 	page(
 		paths.domainManagementEmailForwarding( ':site', ':domain' ),
+		domainManagementController.domainManagementEmailForwardingRedirect
+	);
+
+	page(
+		paths.domainManagementChangeSiteAddress( ':site', ':domain' ),
 		...getCommonHandlers(),
-		domainManagementController.domainManagementEmailForwarding,
+		domainManagementController.domainManagementChangeSiteAddress,
 		makeLayout,
 		clientRender
 	);
@@ -168,7 +161,17 @@ export default function() {
 		clientRender
 	);
 
-	page( paths.domainManagementRoot(), siteSelection, sites, makeLayout, clientRender );
+	if ( config.isEnabled( 'manage/all-domains' ) ) {
+		page(
+			paths.domainManagementRoot(),
+			...getCommonHandlers( { noSitePath: false } ),
+			domainManagementController.domainManagementListAllSites,
+			makeLayout,
+			clientRender
+		);
+	} else {
+		page( paths.domainManagementRoot(), siteSelection, sites, makeLayout, clientRender );
+	}
 
 	page(
 		paths.domainManagementList( ':site' ),
@@ -190,14 +193,6 @@ export default function() {
 			clientRender,
 		],
 	} );
-
-	page(
-		paths.domainManagementPrivacyProtection( ':site', ':domain' ),
-		...getCommonHandlers( { warnIfJetpack: false } ),
-		domainManagementController.domainManagementPrivacyProtection,
-		makeLayout,
-		clientRender
-	);
 
 	page(
 		paths.domainManagementPrimaryDomain( ':site', ':domain' ),

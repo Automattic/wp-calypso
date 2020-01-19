@@ -1,0 +1,39 @@
+@import "../../shared/sass/variables";
+
+.type-scale-slider {
+	.dashicon {
+		height: 16px;
+		width: 16px;
+	}
+
+	input + .dashicon {
+		height: 24px;
+		margin-left: 10px;
+		margin-right: 0;
+		width: 24px;
+	}
+}
+
+.wpnbha {
+	.editor-rich-text {
+		width: 100%;
+	}
+
+	/* Article meta */
+	.cat-links {
+		font-size: $font__size-xs;
+	}
+
+	span.avatar {
+		display: inline-block;
+		margin-right: 0.5em;
+		div {
+			display: inline;
+		}
+	}
+
+	/* Article excerpt */
+	.excerpt-contain p {
+		margin: 0.5em 0;
+	}
+}

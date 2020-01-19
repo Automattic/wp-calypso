@@ -1,0 +1,92 @@
+.conversations__stream .card.is-compact {
+	padding: 0;
+}
+
+.conversations__stream .reader-post-card.card.is-compact .reader-post-options-menu {
+	position: absolute;
+		right: -2px;
+		top: -16px;
+}
+
+.conversations__stream .reader-post-card.card.is-compact {
+	.reader-post-card__post-details {
+		margin-top: -2px;
+	}
+
+	.reader-post-card__byline-details {
+		flex-wrap: wrap;
+		max-height: none;
+	}
+
+	.reader-post-card__byline-author-site {
+		font-weight: 500;
+		margin-right: 5px;
+	}
+
+	.reader-post-card__timestamp-and-tag {
+		margin-left: 0;
+	}
+
+	.reader-post-card__title {
+		line-height: 1.25;
+		max-height: 16px * 1.6;
+		margin-top: 2px;
+		overflow: hidden;
+		position: relative;
+		white-space: nowrap;
+
+		&::after {
+			@include long-content-fade( $size: 35px );
+		}
+	}
+
+	.reader-post-card__title-link {
+		font-size: 17px;
+	}
+
+	.reader-excerpt__content {
+		margin-top: 2px;
+		width: 100%;
+
+		&::before {
+			@include long-content-fade( $size: 35px );
+		}
+	}
+
+	.comments__comment-author .gravatar {
+		top: 5px;
+	}
+
+	&:not( :first-child ) {
+		margin-top: 16px;
+	}
+
+	// Hides Follow button and tags in Conversations stream
+	.follow-button,
+	.reader-post-card__tags {
+		display: none;
+	}
+}
+
+.conversations__stream .reader-post-card.card.is-compact .reader-post-card__post-details {
+	min-width: 0;
+	white-space: nowrap;
+}
+
+.conversations__stream .conversation-caterpillar {
+	margin-top: 20px;
+}
+
+.is-group-reader .conversations__stream .like-button__label-status {
+	display: inline;
+}
+
+// Conversations empty state
+.main .conversations__empty-content.empty-content {
+	margin-top: 30px;
+	max-width: 650px;
+
+	@include breakpoint( '>660px' ) {
+		margin-top: 70px;
+	}
+}

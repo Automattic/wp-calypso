@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,14 +8,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import Notice from 'components/notice';
 import SectionHeader from 'components/section-header';
 import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
 import Security2faBackupCodesPrompt from 'me/security-2fa-backup-codes-prompt';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import { recordGoogleEvent } from 'state/analytics/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class Security2faBackupCodes extends React.Component {
 	constructor( props ) {
@@ -158,9 +160,6 @@ class Security2faBackupCodes extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-	}
-)( localize( Security2faBackupCodes ) );
+export default connect( null, {
+	recordGoogleEvent,
+} )( localize( Security2faBackupCodes ) );

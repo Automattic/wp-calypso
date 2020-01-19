@@ -34,7 +34,7 @@
 
 	&:hover {
 		background-color: var( --color-accent );
-		color: $white;
+		color: var( --color-text-inverted );
 	}
 }
 

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -84,7 +82,11 @@ describe( 'getSiteStatsViewSummary()', () => {
 					total: 31,
 					average: 1,
 					daysInMonth: 31,
-					data: [ [ '2014-01-01', 4 ], [ '2014-01-02', 4 ], [ '2014-01-03', 23 ] ],
+					data: [
+						[ '2014-01-01', 4 ],
+						[ '2014-01-02', 4 ],
+						[ '2014-01-03', 23 ],
+					],
 				},
 			},
 			2015: {

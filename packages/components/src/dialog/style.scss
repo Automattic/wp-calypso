@@ -1,0 +1,125 @@
+.dialog__backdrop,
+.dialog__backdrop.card {
+	background-color: rgba( var( --color-neutral-0-rgb ), 0.8 );
+	align-items: center;
+	bottom: 0;
+	left: 0;
+	display: flex;
+	justify-content: center;
+	position: fixed;
+	right: 0;
+	top: 46px;
+	transition: background-color 0.2s ease-in;
+	z-index: z-index(
+		'root',
+		'.dialog__backdrop'
+	); // try to ensure that dialogs are on top of everything else
+
+	// covers the masterbar as well
+	&.is-full-screen {
+		top: 0;
+	}
+}
+
+.dialog__backdrop.is-hidden {
+	background-color: transparent;
+}
+
+.dialog.card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	max-width: 90%;
+	max-height: 90%;
+	margin: auto 0; // IE needs a horizontal margin values to properly center flex item
+	padding: 0;
+	opacity: 1;
+	transition: opacity 0.2s ease-in;
+}
+
+.dialog__content {
+	padding: 16px;
+	overflow-y: auto;
+
+	@include breakpoint( '>480px' ) {
+		padding: 24px;
+	}
+
+	&:last-child {
+		bottom: 0;
+	}
+
+	h1 {
+		color: var( --color-neutral-70 );
+		font-size: 1.375em;
+		font-weight: 600;
+		line-height: 2em;
+		margin-bottom: 0.5em;
+	}
+
+	p:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.dialog__action-buttons {
+	position: relative;
+	border-top: 1px solid var( --color-neutral-0 );
+	padding: 16px;
+	margin: 0;
+	text-align: right;
+	flex-shrink: 0;
+	background-color: rgba( 255, 255, 255, 1 );
+	@include breakpoint( '>480px' ) {
+		padding-left: 24px;
+		padding-right: 24px;
+	}
+
+	@include breakpoint( '<480px' ) {
+		display: flex;
+		flex-direction: column-reverse;
+	}
+
+	&::before {
+		content: '';
+		display: block;
+		position: absolute;
+		bottom: 100%;
+		left: 16px;
+		right: 16px;
+		height: 24px;
+		background: linear-gradient(
+			to bottom,
+			rgba( 255, 255, 255, 0 ) 0%,
+			rgba( 255, 255, 255, 1 ) 100%
+		);
+		margin-bottom: 1px;
+	}
+}
+
+.dialog__action-buttons .button {
+	margin-left: 10px;
+	min-width: 80px;
+	text-align: center;
+
+	.is-left-aligned {
+		margin-left: 0;
+		margin-right: 10px;
+	}
+
+	@include breakpoint( '<480px' ) {
+		margin: 2px 0;
+	}
+}
+
+.dialog__action-buttons .is-left-aligned {
+	float: left;
+}
+
+.ReactModal__Body--open {
+	overflow: hidden;
+}
+
+.ReactModal__Html--open {
+	overflow: visible;
+}

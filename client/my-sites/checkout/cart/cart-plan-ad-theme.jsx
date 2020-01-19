@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,9 +13,9 @@ import page from 'page';
  */
 import CartAd from './cart-ad';
 import { abtest } from 'lib/abtest';
-import { cartItems } from 'lib/cart-values';
+import { premiumPlan, getAllCartItems } from 'lib/cart-values/cart-items';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { addItem } from 'lib/upgrades/actions';
+import { addItem } from 'lib/cart/actions';
 import { PLAN_PREMIUM, FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -29,16 +27,16 @@ const eventName = 'cart_theme_to_plan_upsell';
 class CartPlanAdTheme extends Component {
 	addToCartAndRedirect = event => {
 		event.preventDefault();
-		addItem( cartItems.premiumPlan( PLAN_PREMIUM, {} ) );
 		this.props.recordTracksEvent( 'calypso_banner_cta_click', {
 			cta_name: eventName,
 		} );
+		addItem( premiumPlan( PLAN_PREMIUM, {} ) );
 		page( '/checkout/' + this.props.selectedSite.slug );
 	};
 
 	shouldDisplayAd = () => {
 		const { cart, hasUnlimitedPremiumThemes, selectedSite, isJetpack } = this.props;
-		const items = cartItems.getAll( cart );
+		const items = getAllCartItems( cart );
 		const hasOnlyAPremiumTheme = items.length === 1 && items[ 0 ].product_slug === 'premium_theme';
 
 		return (
@@ -71,7 +69,7 @@ class CartPlanAdTheme extends Component {
 						cta_name: eventName,
 					} }
 				/>
-				Get this theme for FREE when you upgrade to a Premium plan!{' '}
+				Get this theme for FREE when you upgrade to a Premium plan!{ ' ' }
 				<button className={ className } onClick={ this.addToCartAndRedirect }>
 					{ 'Upgrade Now' }
 				</button>
@@ -99,7 +97,4 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{ recordTracksEvent }
-)( localize( CartPlanAdTheme ) );
+export default connect( mapStateToProps, { recordTracksEvent } )( localize( CartPlanAdTheme ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,6 +12,11 @@ import userFactory from 'lib/user';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import notices from 'notices';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const user = userFactory();
 
@@ -73,6 +76,7 @@ class HelpUnverifiedWarning extends Component {
 				} );
 		};
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			RESEND_IDLE === resendState && (
 				<Notice

@@ -1,0 +1,33 @@
+.gsuite-users-card__container {
+	margin-bottom: 10px;
+}
+
+.gsuite-users-card__user-list {
+	&.card {
+		padding: 0;
+		@include clear-fix;
+	}
+}
+
+.gsuite-users-card__user-list-inner {
+	list-style: none;
+	margin: 0;
+
+	li {
+		border-top: 1px solid var( --color-neutral-0 );
+		padding: 20px 24px;
+		@include clear-fix;
+
+		&:first-of-type {
+			border-top: none;
+		}
+
+		&:last-of-type {
+			border-bottom: 1px solid var( --color-neutral-0 );
+		}
+	}
+
+	.notice {
+		margin: 0;
+	}
+}

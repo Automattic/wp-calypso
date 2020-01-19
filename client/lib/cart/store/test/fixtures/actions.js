@@ -1,5 +1,4 @@
 /**
- * @format
  */
 
 /**
@@ -64,7 +63,7 @@ export const payments = {
 		},
 	},
 	creditCard: {
-		paymentMethod: 'WPCOM_Billing_MoneyPress_Paygate',
+		paymentMethod: 'WPCOM_Billing_Stripe_Payment_Method',
 		newCardDetails: {
 			country: 'US1',
 			name: 'Albert A. User',
@@ -87,6 +86,28 @@ export const payments = {
 			cvv: '777',
 			'expiration-date': '11/77',
 			number: '5678901234521234',
+			brand: null,
+		},
+	},
+	newCardNoPostalCode: {
+		paymentMethod: 'WPCOM_Billing_Stripe_Payment_Method',
+		newCardDetails: {
+			country: 'AI',
+			name: 'Albert A. User',
+			cvv: '987',
+			'expiration-date': '12/99',
+			number: '1234567890123452',
+			brand: null,
+		},
+	},
+	newCardNoCountryCode: {
+		paymentMethod: 'WPCOM_Billing_Stripe_Payment_Method',
+		newCardDetails: {
+			name: 'Albert A. User',
+			'postal-code': '90314',
+			cvv: '987',
+			'expiration-date': '12/99',
+			number: '1234567890123452',
 			brand: null,
 		},
 	},

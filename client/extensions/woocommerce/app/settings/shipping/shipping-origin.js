@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import StoreAddress from 'woocommerce/components/store-address';
 import ShippingUnits from './shipping-units';
@@ -19,7 +17,7 @@ const ShippingOrigin = ( { translate, onChange } ) => {
 	return (
 		<div className="shipping__origin">
 			<ExtendedHeader
-				label={ translate( 'Shipping Origin' ) }
+				label={ translate( 'Shipping origin' ) }
 				description={ translate( 'The address of where you will be shipping from.' ) }
 			/>
 			<Card className="shipping__origin-settings">

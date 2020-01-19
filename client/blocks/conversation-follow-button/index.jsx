@@ -1,5 +1,4 @@
 /**
- * @format
  */
 
 /*
@@ -18,6 +17,11 @@ import isFollowingReaderConversation from 'state/selectors/is-following-reader-c
 import { followConversation, muteConversation } from 'state/reader/conversations/actions';
 import { getTracksPropertiesForPost } from 'reader/stats';
 import { recordTracksEvent } from 'state/analytics/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ConversationFollowButtonContainer extends Component {
 	static propTypes = {

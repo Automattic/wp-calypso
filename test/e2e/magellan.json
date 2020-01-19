@@ -1,0 +1,14 @@
+{
+	"mocha_tests": [ "specs" ],
+	"mocha_opts": "test/mocha.opts",
+	"mocha_args": "-R spec-xunit-reporter",
+	"max_test_attempts": 3,
+	"max_workers": 7,
+	"suiteTag": "parallel;signup",
+	"sauce": false,
+	"framework": "testarmada-magellan-mocha-plugin",
+	"reporters": [ "./lib/reporter/magellan-reporter.js" ],
+	"executors": [ "testarmada-magellan-local-executor" ],
+	"local_browser": "chrome",
+	"bail_time": 360000
+}

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card';
+import { CompactCard } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 import SectionHeader from 'components/section-header';
 import PostsList from './posts-list';
@@ -62,7 +60,4 @@ const createReduxForm = reduxForm( {
 	form,
 } );
 
-export default flowRight(
-	localize,
-	createReduxForm
-)( ZoneContentForm );
+export default flowRight( localize, createReduxForm )( ZoneContentForm );

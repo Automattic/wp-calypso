@@ -1,4 +1,4 @@
-.active-tests {
+.test-helper__active-tests {
 	display: none;
 }
 
@@ -19,7 +19,7 @@
 	font-weight: bolder;
 }
 
-.environment.is-tests:hover .active-tests.card {
+.environment.is-tests:hover .test-helper__active-tests.card {
 	display: block;
 	max-height: 80vh;
 	overflow-y: scroll;

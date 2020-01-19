@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -57,7 +56,7 @@ describe( 'index', () => {
 	test( 'should render as a child of its container by default', () => {
 		const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container );
 
-		expect( tree.refs.zone.parentNode.id ).to.equal( 'container' );
+		expect( tree.zoneRef.current.parentNode.id ).to.equal( 'container' );
 	} );
 
 	test( 'should accept a fullScreen prop to be rendered at the root', () => {
@@ -69,8 +68,8 @@ describe( 'index', () => {
 			container
 		);
 
-		expect( tree.refs.zone.parentNode.id ).to.not.equal( 'container' );
-		expect( tree.refs.zone.parentNode.parentNode ).to.eql( document.body );
+		expect( tree.zoneRef.current.parentNode.id ).to.not.equal( 'container' );
+		expect( tree.zoneRef.current.parentNode.parentNode ).to.eql( document.body );
 	} );
 
 	test( 'should render default content if none is provided', () => {

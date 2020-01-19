@@ -9,6 +9,7 @@ $compact-header-height: 35;
 
 .select-dropdown {
 	height: #{$header-height}px;
+	overflow: hidden;
 
 	&.is-open {
 		overflow: visible;
@@ -63,19 +64,19 @@ $compact-header-height: 35;
 	align-items: center;
 
 	border-style: solid;
-	border-color: var( --color-neutral-100 );
+	border-color: var( --color-neutral-10 );
 	border-width: 1px 1px 2px;
 	border-radius: 4px;
-	background-color: $white;
+	background-color: var( --color-surface );
 
 	font-size: 14px;
 	font-weight: 600;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	transition: background-color 0.2s ease;
 	cursor: pointer;
 
 	.gridicons-chevron-down {
-		fill: var( --color-neutral-500 );
+		fill: var( --color-neutral-50 );
 		margin: 0;
 		flex-shrink: 0;
 		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
@@ -100,7 +101,7 @@ $compact-header-height: 35;
 
 	.is-disabled & {
 		color: var( --color-neutral-0 );
-		background: $white;
+		background: var( --color-surface );
 		border-color: var( --color-neutral-0 );
 		cursor: default;
 
@@ -156,25 +157,20 @@ $compact-header-height: 35;
 	box-sizing: border-box;
 	padding: 0;
 	list-style: none;
-	margin: 0;
-	background-color: $white;
-	border: 1px solid var( --color-neutral-100 );
+	margin: -1px 0 0;
+	background-color: var( --color-surface );
+	border: 1px solid var( --color-neutral-10 );
 	border-top: 0;
-	// var( --color-primary ) for outer (with focus shadow), $gray for border with header
 	border-radius: 0 0 4px 4px;
-	height: 0;
-	overflow: hidden;
-	opacity: 0;
+	visibility: hidden;
 
 	.accessible-focus & {
 		border: solid 1px var( --color-primary );
-		border-top-color: var( --color-neutral-100 );
+		border-top-color: var( --color-neutral-10 );
 	}
 
 	.select-dropdown.is-open & {
-		margin-top: -1px;
-		height: auto;
-		opacity: 1;
+		visibility: visible;
 	}
 }
 
@@ -193,7 +189,7 @@ $compact-header-height: 35;
 	line-height: #{$option-height}px;
 	padding: 0 #{$side-margin + 46}px 0 #{$side-margin}px;
 
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 14px;
 	font-weight: 400;
 	white-space: nowrap;
@@ -209,22 +205,22 @@ $compact-header-height: 35;
 	}
 
 	&:visited {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	&.is-selected {
 		background-color: var( --color-accent );
-		color: $white;
+		color: var( --color-text-inverted );
 
 		.count {
-			border-color: $white;
-			color: $white;
+			border-color: var( --color-border-inverted );
+			color: var( --color-text-inverted );
 		}
 	}
 
 	&.is-disabled {
-		background-color: $white;
-		color: $gray;
+		background-color: var( --color-surface );
+		color: var( --color-neutral-light );
 		cursor: default;
 		opacity: 0.5;
 	}
@@ -236,7 +232,7 @@ $compact-header-height: 35;
 		}
 
 		&.is-selected:hover {
-			color: $white;
+			color: var( --color-text-inverted );
 		}
 	}
 
@@ -272,7 +268,7 @@ $compact-header-height: 35;
 }
 
 .select-dropdown__separator {
-	border-top: 1px solid var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-10 );
 	display: block;
 	margin: 8px 0;
 }

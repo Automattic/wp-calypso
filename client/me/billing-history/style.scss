@@ -9,7 +9,7 @@
 }
 
 .billing-history__no-results-cell {
-	color: $gray;
+	color: var( --color-text-subtle );
 	padding: 24px;
 }
 
@@ -39,7 +39,7 @@
 	text-align: left;
 	width: 100px;
 	padding: 3px 9px;
-	background-color: $white;
+	background-color: var( --color-surface );
 	border-radius: 15px;
 	border: 1px solid var( --color-neutral-0 );
 	transition: width 0.25s ease-out;
@@ -57,7 +57,7 @@
 
 // Table Body
 .billing-history__transaction {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 14px;
 	height: 66px;
 	border-bottom: 1px solid var( --color-neutral-0 );
@@ -79,6 +79,12 @@
 	}
 }
 
+.billing-history__transaction-tax-amount {
+	color: var( --color-text-subtle );
+	font-size: 12px;
+	white-space: nowrap;
+}
+
 .billing-history__header-row {
 	height: 59px;
 }
@@ -89,8 +95,9 @@
 }
 
 .billing-history__transactions tbody .billing-history__date {
-	width: 140px;
-	padding: 12px;
+	width: 150px;
+	padding-left: 12px;
+	padding-right: 12px;
 }
 
 .billing-history__transactions tbody .billing-history__trans-app {
@@ -113,10 +120,16 @@
 	}
 
 	small {
-		color: $gray;
+		color: var( --color-text-subtle );
 		display: block;
 		font-size: 12px;
 		font-style: italic;
+
+		@include breakpoint( '660px-800px' ) {
+			max-width: 220px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
 	}
 }
 
@@ -169,7 +182,7 @@
 	}
 
 	.billing-history__transaction-date {
-		color: $gray;
+		color: var( --color-neutral );
 		font-size: 13px;
 		font-style: italic;
 		padding: 5px 0 0;
@@ -186,6 +199,20 @@
 	min-height: 1.2em;
 }
 
+textarea.billing-history__billing-details-editable {
+	min-height: 20px;
+}
+
+.billing-history__billing-details-description {
+	font-style: italic;
+}
+
+.billing-history__billing-details-editable {
+	border: 1px solid var( --color-neutral-20 );
+	margin-top: 5px;
+	font-size: 13px;
+}
+
 .billing-history__receipt-details {
 	background: var( --color-neutral-0 );
 	list-style: none;
@@ -198,7 +225,7 @@
 	}
 
 	li {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		font-size: 13px;
 		margin: 0 0 15px;
 		padding: 0;
@@ -208,17 +235,13 @@
 		}
 
 		strong {
-			color: var( --color-neutral-500 );
+			color: var( --color-neutral-50 );
 			display: block;
 			font-size: 12px;
 			font-weight: 600;
 			margin: 0 5px 0 0;
 			text-transform: uppercase;
 		}
-	}
-
-	.billing-history__billing-details div:hover {
-		border: 2px black dashed;
 	}
 }
 
@@ -239,7 +262,7 @@
 	}
 
 	.billing-history__receipt-loading {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 
 	.billing-history__receipt-line-items {
@@ -248,12 +271,17 @@
 		width: 100%;
 
 		th {
-			border-bottom: 2px solid lighten( $gray, 25% );
-			color: $gray;
+			border-bottom: 2px solid var( --color-border-subtle );
+			color: var( --color-text-subtle );
 			font-size: 12px;
 			font-weight: 400;
 			text-transform: uppercase;
 			width: auto;
+		}
+
+		td,
+		th {
+			padding: 10px 0;
 		}
 
 		.billing-history__receipt-desc {
@@ -263,28 +291,18 @@
 
 		.billing-history__receipt-amount {
 			text-align: right;
-		}
-
-		td,
-		th {
-			padding: 10px 0;
-		}
-
-		.billing-history__receipt-amount {
-			color: $gray;
-			text-align: right;
 			vertical-align: middle;
 		}
 
 		.billing-history__receipt-item-name {
 			small {
-				color: $gray;
+				color: var( --color-text-subtle );
 				font-size: 13px;
 				margin-left: 5px;
 				text-transform: lowercase;
 			}
 			em {
-				color: $gray;
+				color: var( --color-text-subtle );
 				display: block;
 				font-size: 13px;
 			}
@@ -292,7 +310,8 @@
 
 		tbody tr {
 			td {
-				border-bottom: 1px solid var( --color-neutral-0 );
+				color: var( --color-neutral );
+				border-bottom: 1px solid var( --color-border-subtle );
 			}
 
 			&:last-child td {
@@ -306,7 +325,7 @@
 			vertical-align: bottom;
 
 			td {
-				border-top: 2px solid lighten( $gray, 25% );
+				border-top: 2px solid var( --color-border-subtle );
 				padding-bottom: 0;
 			}
 		}
@@ -333,8 +352,22 @@
 	padding: 0;
 }
 
-.billing-history .search-card.card {
+.billing-history .search-card.card,
+.billing-history__upcoming-charges .search-card.card {
 	margin: 0;
+}
+
+.billing-history__receipts.card .card.is-compact:nth-of-type( 2 ) {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.billing-history__receipts.card .pagination__list-item.pagination__arrow.is-left {
+	padding-left: 8px;
+}
+
+.billing-history__receipts.card .pagination__list-item.pagination__arrow.is-right {
+	padding-right: 8px;
 }
 
 .billing-history__receipt-card.is-placeholder {
@@ -377,21 +410,34 @@
 @media print {
 	.is-section-billing,
 	.is-section-purchases {
+		// stylelint-disable-next-line selector-max-id
 		#secondary,
 		.masterbar,
 		.billing-history__receipt-links,
 		.header-cake.card,
-		.inline-help {
+		.inline-help,
+		.billing-history__billing-details-description {
 			display: none;
 		}
 	}
-}
 
-.billing-history__date {
-	width: 170px;
+	.billing-history__billing-details-editable {
+		background: transparent;
+		border: 0;
+		padding: 0;
+		margin: 0;
+	}
+
+	body {
+		font-family: -apple-system, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, sans-serif;
+	}
 }
 
 .billing-history__transactions-header-select-dropdown {
 	padding: 8px 12px;
 	position: absolute;
+
+	&:nth-child( 2 ) {
+		left: 170px;
+	}
 }

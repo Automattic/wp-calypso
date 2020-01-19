@@ -1,9 +1,5 @@
-/** @format */
-
 module.exports = {
-	rootDir: './../../packages',
-	testEnvironment: 'node',
-	testMatch: [ '<rootDir>/**/test/*.js?(x)' ],
-	transform: { '^.+\\.jsx?$': 'babel-jest' },
-	verbose: false,
+	rootDir: './../../',
+	// run tests for all packages that have a Jest config file
+	projects: [ '<rootDir>/packages/*/jest.config.js' ],
 };

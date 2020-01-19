@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,6 +13,11 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
 import { addUserProfileLinks } from 'state/profile-links/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ProfileLinksAddOther extends React.Component {
 	state = {
@@ -139,10 +142,7 @@ class ProfileLinksAddOther extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		addUserProfileLinks,
-		recordGoogleEvent,
-	}
-)( localize( ProfileLinksAddOther ) );
+export default connect( null, {
+	addUserProfileLinks,
+	recordGoogleEvent,
+} )( localize( ProfileLinksAddOther ) );

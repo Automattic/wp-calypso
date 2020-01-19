@@ -1,5 +1,3 @@
-/** @format */
-
 export default box => {
 	let dimensions;
 	if ( box.outer_dimensions ) {

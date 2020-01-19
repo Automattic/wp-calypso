@@ -1,0 +1,138 @@
+# We use codeowners to help keep teams in the loop on changes to code
+# they typically work on. Even though this file is called CODEOWNERS,
+# we don't really want to enforce or imply ownership of code, just interest.
+#
+# Anyone can work on anything.
+#
+# Prefer associating a "team" with a path rather than an individual. That allows individuals to
+# move around without having to continually update this file.
+#
+# See https://help.github.com/en/articles/about-code-owners for details on the format of this file
+
+# Root level files and configuration
+/*.* @Automattic/team-calypso
+
+# Scripts
+/bin @Automattic/team-calypso
+
+# Client initialization
+/client/boot @Automattic/team-calypso
+
+# Client blocks
+/client/blocks/inline-help @Automattic/zelda
+
+# Client state
+/client/state/signup @Automattic/zelda
+
+# Client components
+/client/components/site-verticals-suggestion-search @Automattic/zelda
+
+# Client framework parts
+/client/config @Automattic/team-calypso
+/client/controller @Automattic/team-calypso
+/client/document @Automattic/team-calypso
+/client/layout @Automattic/team-calypso
+
+# Client sites
+/client/my-sites/checklist @Automattic/zelda
+
+# Comments management
+/client/my-sites/comment* @Automattic/serenity
+
+# Developer guides
+/docs/coding-guidelines @Automattic/team-calypso
+/docs/guide @Automattic/team-calypso
+/docs/testing @Automattic/team-calypso
+
+# G Suite
+/client/blocks/gsuite-stats-nudge @Automattic/larimar
+/client/components/data/query-gsuite-users @Automattic/larimar
+/client/components/domains/contact-details-form-fields/index.jsx @Automattic/larimar
+/client/components/gsuite @Automattic/larimar
+/client/components/marketing-survey/gsuite-cancel-purchase-dialog @Automattic/larimar
+/client/components/upgrades/gsuite @Automattic/larimar
+/client/lib/domains/email-forwarding @Automattic/larimar
+/client/lib/domains/google-apps-users @Automattic/larimar
+/client/lib/gsuite @Automattic/larimar
+/client/me/purchases/remove-purchase/index.jsx @Automattic/larimar
+/client/my-sites/checklist/wpcom-checklist/component.jsx @Automattic/larimar
+/client/my-sites/checkout/checkout-thank-you/google-apps-details.jsx @Automattic/larimar
+/client/my-sites/checkout/checkout-thank-you/index.jsx @Automattic/larimar
+/client/my-sites/checkout/checkout/domain-details-form.jsx @Automattic/larimar
+/client/my-sites/checkout/checkout/index.jsx @Automattic/larimar
+/client/my-sites/checkout/controller.jsx @Automattic/larimar
+/client/my-sites/checkout/gsuite-nudge @Automattic/larimar
+/client/my-sites/domains/components/domain-warnings @Automattic/larimar
+/client/my-sites/domains/controller.jsx @Automattic/larimar
+/client/my-sites/email @Automattic/larimar
+/client/my-sites/stats/stats-banners/index.jsx @Automattic/larimar
+/client/state/data-layer/wpcom/gsuite-users @Automattic/larimar
+/client/state/gsuite-users @Automattic/larimar
+
+# Gutenberg editor (Gutenframe)
+/client/gutenberg @Automattic/serenity @Automattic/cylon @Automattic/ajax
+
+# Payments
+/client/blocks/credit-card-form/ @Automattic/payments
+/client/blocks/payment-methods/ @Automattic/payments
+/client/blocks/subscription-length-picker/ @Automattic/payments
+/client/components/credit-card/ @Automattic/payments
+/client/components/credit-card-form-fields/ @Automattic/payments
+/client/components/payment-country-select/ @Automattic/payments
+/client/components/payment-logo/ @Automattic/payments
+/client/lib/cart/ @Automattic/payments
+/client/lib/cart-values/ @Automattic/payments
+/client/lib/checkout/ @Automattic/payments
+/client/lib/siftscience/ @Automattic/payments
+/client/lib/simple-payments/ @Automattic/payments
+/client/lib/store-transactions/ @Automattic/payments
+/client/lib/stripe/ @Automattic/payments
+/client/lib/transaction/ @Automattic/payments
+/client/me/billing-history/ @Automattic/payments
+/client/me/memberships/ @Automattic/payments
+/client/me/pending-payments/ @Automattic/payments
+/client/me/purchases/ @Automattic/payments
+/client/my-sites/checkout/ @Automattic/payments
+/client/state/billing-transactions/ @Automattic/payments
+/client/state/memberships/ @Automattic/payments
+/client/state/order-transactions/ @Automattic/payments
+/client/state/plans/ @Automattic/payments
+/client/state/receipts/ @Automattic/payments
+/client/state/simple-payments/ @Automattic/payments
+/client/state/stored-cards/ @Automattic/payments
+/client/state/sites/plans/ @Automattic/payments
+
+# Reader
+/client/reader @Automattic/reader
+/client/blocks/reader-* @Automattic/reader
+/client/state/reader @Automattic/reader
+
+# Server infrastructure
+/server @Automattic/team-calypso
+
+# Signup
+/client/signup @Automattic/zelda
+
+# Test infrastructure
+/test @Automattic/team-calypso
+
+# Types, TypeScript, and type annotations
+/client/types.ts @Automattic/type-review
+/docs/coding-guidelines/typescript* @Automattic/type-review
+
+# FSE (Full Site Editing)
+/apps/full-site-editing/* @Automattic/cylon @Automattic/ajax
+/apps/full-site-editing/full-site-editing-plugin/* @Automattic/cylon @Automattic/ajax
+/apps/full-site-editing/full-site-editing-plugin/full-site-editing @Automattic/cylon
+/apps/full-site-editing/full-site-editing-plugin/posts-list-block @Automattic/ajax
+/apps/full-site-editing/full-site-editing-plugin/starter-page-templates @Automattic/ajax
+/apps/full-site-editing/full-site-editing-plugin/global-styles @Automattic/cylon @nosolosw
+
+# WPcom Block Editor
+/apps/wpcom-block-editor @Automattic/serenity @Automattic/cylon @Automattic/ajax
+
+# Gutenboarding
+/client/landing/gutenboarding @Automattic/luna
+
+# @automattic/data-stores package
+/packages/data-stores @Automattic/luna

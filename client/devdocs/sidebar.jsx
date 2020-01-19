@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,6 @@ import Sidebar from 'layout/sidebar';
 import SidebarHeading from 'layout/sidebar/heading';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarItem from 'layout/sidebar/item';
-import { isEnabled } from 'config';
 
 export default class DevdocsSidebar extends React.PureComponent {
 	static displayName = 'DevdocsSidebar';
@@ -68,8 +65,8 @@ export default class DevdocsSidebar extends React.PureComponent {
 							className="devdocs__navigation-item"
 							icon="ink"
 							label="Color"
-							link="https://dotcombrand.wordpress.com/color/"
-							selected={ this.isItemSelected( 'https://dotcombrand.wordpress.com/color/' ) }
+							link="/devdocs/docs/color.md"
+							selected={ this.isItemSelected( '/devdocs/docs/color.md' ) }
 						/>
 						<SidebarItem
 							className="devdocs__navigation-item"
@@ -104,24 +101,6 @@ export default class DevdocsSidebar extends React.PureComponent {
 							link="/devdocs/blocks"
 							selected={ this.isItemSelected( '/devdocs/blocks', false ) }
 						/>
-						{ isEnabled( 'devdocs/gutenberg-blocks' ) && (
-							<SidebarItem
-								className="devdocs__navigation-item"
-								icon="layout"
-								label="Gutenberg Components"
-								link="/devdocs/gutenberg-components"
-								selected={ this.isItemSelected( '/devdocs/gutenberg-components', false ) }
-							/>
-						) }
-						{ isEnabled( 'devdocs/gutenberg-blocks' ) && (
-							<SidebarItem
-								className="devdocs__navigation-item"
-								icon="grid"
-								label="Gutenberg Blocks"
-								link="/devdocs/gutenberg-blocks"
-								selected={ this.isItemSelected( '/devdocs/gutenberg-blocks', false ) }
-							/>
-						) }
 						<SidebarItem
 							className="devdocs__navigation-item"
 							icon="code"

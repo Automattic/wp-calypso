@@ -1,21 +1,18 @@
-/** @format */
-
 /**
  * External Dependencies
  */
-
 import React, { Component } from 'react';
 import { Parser } from 'html-to-react';
 import PropTypes from 'prop-types';
-import request from 'superagent';
+
+/**
+ * Style Dependencies
+ */
+import './style.scss';
 
 const htmlToReactParser = new Parser();
 
-/**
- * Internal Dependencies
- */
-
-class ReadmeViewer extends Component {
+export default class ReadmeViewer extends Component {
 	static propTypes = {
 		readmeFilePath: PropTypes.string,
 		showEditLink: PropTypes.bool,
@@ -29,16 +26,28 @@ class ReadmeViewer extends Component {
 		readme: null,
 	};
 
-	componentDidMount() {
+	makeRequest = async () => {
 		const { readmeFilePath } = this.props;
-		request
-			.get( '/devdocs/service/content' )
-			.query( { path: readmeFilePath } )
-			.then( ( { text } ) => {
-				this.setState( {
-					readme: htmlToReactParser.parse( text ),
-				} );
-			} );
+
+		try {
+			const res = await fetch( `/devdocs/service/content?path=${ readmeFilePath }` );
+			if ( res.ok ) {
+				const text = await res.text();
+				this.setState( { readme: htmlToReactParser.parse( text ) } );
+			}
+		} catch ( err ) {
+			// Do nothing.
+		}
+	};
+
+	componentDidMount() {
+		this.makeRequest();
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.readmeFilePath !== this.props.readmeFilePath ) {
+			this.makeRequest();
+		}
 	}
 
 	render() {
@@ -62,5 +71,3 @@ class ReadmeViewer extends Component {
 		) : null;
 	}
 }
-
-export default ReadmeViewer;

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,12 +12,12 @@ import { localize } from 'i18n-calypso';
  */
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import { cartItems } from 'lib/cart-values';
-import { addItem } from 'lib/upgrades/actions';
+import { guidedTransferItem } from 'lib/cart-values/cart-items';
+import { addItem } from 'lib/cart/actions';
 import page from 'page';
 
 const redirectToCart = siteSlug => () => {
-	addItem( cartItems.guidedTransferItem() );
+	addItem( guidedTransferItem() );
 	page( `/checkout/${ siteSlug }` );
 };
 

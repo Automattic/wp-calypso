@@ -1,5 +1,3 @@
-/** @format */
-
 module.exports = {
 	extends: '../index.js',
 	parserOptions: {
@@ -9,7 +7,7 @@ module.exports = {
 		},
 		sourceType: 'module',
 	},
-	plugins: [ 'react', 'wpcalypso' ],
+	plugins: [ 'react', 'react-hooks', 'wpcalypso' ],
 	rules: {
 		'react/jsx-curly-spacing': [ 2, 'always' ],
 		'react/jsx-no-duplicate-props': 2,
@@ -26,5 +24,7 @@ module.exports = {
 		'react/no-string-refs': 2,
 		'react/prefer-es6-class': 2,
 		'react/react-in-jsx-scope': 2,
+		'react-hooks/rules-of-hooks': 2,
+		'react-hooks/exhaustive-deps': 1,
 	},
 };

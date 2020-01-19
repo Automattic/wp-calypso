@@ -1,11 +1,10 @@
-/** @format */
 export const items = {
 	type: 'object',
-	additionalProperties: false,
-	patternProperties: {
-		// Site Id
-		'^\\d+$': {
-			type: 'object',
-		},
+	additionalProperties: true,
+	properties: {
+		designType: { type: 'string' },
+		segment: { type: 'integer' },
+		tasks: { type: 'array' },
+		verticals: { type: 'array' },
 	},
 };

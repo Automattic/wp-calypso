@@ -14,7 +14,7 @@
 .tile-grid__item {
 	transition: all 100ms ease-in-out;
 	position: relative;
-	border: 1px solid var( --color-neutral-100 );
+	border: 1px solid var( --color-neutral-10 );
 	border-bottom: 0;
 	margin: 0 10px;
 
@@ -33,7 +33,7 @@
 		border: 0;
 
 		&:hover {
-			box-shadow: 0 0 0 1px $gray, 0 2px 4px var( --color-neutral-100 );
+			box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-10 );
 		}
 	}
 
@@ -59,7 +59,7 @@
 
 	&:last-child {
 		margin-bottom: 20px;
-		border: 1px solid var( --color-neutral-100 );
+		border: 1px solid var( --color-neutral-10 );
 		border-bottom-right-radius: 6px;
 		border-bottom-left-radius: 6px;
 
@@ -97,10 +97,10 @@
 			top: 50%;
 			right: 15px;
 			margin-top: -6px;
-			border-top: 2px solid var( --color-neutral-100 );
-			border-right: 2px solid var( --color-neutral-100 );
+			border-top: 2px solid var( --color-neutral-10 );
+			border-right: 2px solid var( --color-neutral-10 );
 			transform: rotate( 45deg );
-			color: $white;
+			color: var( --color-text-inverted );
 		}
 	}
 }
@@ -122,7 +122,7 @@
 @include breakpoint( '>480px' ) {
 	.tile-grid__item-copy {
 		padding: 15px;
-		border-top: 1px solid transparentize( $gray-lighten-20, 0.5 );
+		border-top: 1px solid rgba( var( --color-neutral-10-rgb ), 0.5 );
 	}
 }
 
@@ -134,7 +134,7 @@
 
 .tile-grid__item-description {
 	margin: 0;
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-size: 13px;
 	line-height: 1.5;
 

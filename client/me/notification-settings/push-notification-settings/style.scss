@@ -3,7 +3,7 @@
 
 	.is-link {
 		&:focus, &:active {
-			color: var( --color-neutral-200 );
+			color: var( --color-neutral-20 );
 		}
 	}
 }
@@ -25,11 +25,15 @@
 	right: 8px;
 	padding: 0;
 	cursor: pointer;
-	color: $gray;
+	color: var( --color-neutral-light );
 
 	&:hover,
 	&:focus {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
+	}
+
+	.gridicon {
+		display: block;
 	}
 }
 
@@ -102,7 +106,7 @@
 	font-weight: 500;
 	margin-left: 8px;
 	text-transform: uppercase;
-	color: var( --color-neutral-200 );
+	color: var( --color-text-subtle );
 
 	&.is-enabled {
 		color: var( --color-success );
@@ -125,23 +129,5 @@
 		position: absolute;
 	 	bottom: 24px;
 		right: 24px;
-	}
-
-	&.is-enable {
-		background: var( --color-accent );
-		border-color: var( --color-accent-dark );
-		color: $white;
-
-		&:hover,
-		&:focus {
-			border-color: var( --color-accent-dark );
-			color: $white;
-		}
-		&[disabled],
-		&:disabled {
-			background: tint( $blue-light, 50% );
-			border-color: tint( $blue-wordpress, 55% );
-			color: $white;
-		}
 	}
 }

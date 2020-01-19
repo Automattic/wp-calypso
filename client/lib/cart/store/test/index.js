@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -7,7 +6,6 @@
  * Internal dependencies
  */
 import { transactionPaymentSetActions, paymentActionLocations } from './fixtures/actions';
-import CartStore from 'lib/cart/store';
 import { recordUnrecognizedPaymentMethod } from '../cart-analytics';
 import { setTaxLocation } from 'lib/cart-values';
 
@@ -30,6 +28,7 @@ jest.mock( 'lib/cart-values', () => {
 	return {
 		setTaxLocation: jest.fn( () => () => ( {} ) ),
 		fillInAllCartItemAttributes: jest.fn( () => ( {} ) ),
+		removeCoupon: jest.fn( () => i => i ),
 	};
 } );
 jest.mock( 'lib/data-poller', () => ( {
@@ -40,15 +39,19 @@ jest.mock( 'lib/products-list', () => () => ( { get: () => [] } ) );
 jest.mock( 'lib/wp', () => ( {
 	undocumented: () => ( {} ),
 	me: () => ( {
-		get: () => ( {} ),
+		get: async () => ( {} ),
 	} ),
 } ) );
 
 describe( 'Cart Store', () => {
-	let Dispatcher;
+	let CartStore, Dispatcher;
 
 	beforeEach( () => {
-		Dispatcher = require( 'dispatcher' );
+		jest.isolateModules( () => {
+			CartStore = require( 'lib/cart/store' );
+			Dispatcher = require( 'dispatcher' );
+		} );
+
 		CartStore.setSelectedSiteId();
 		jest.clearAllMocks();
 	} );
@@ -63,6 +66,18 @@ describe( 'Cart Store', () => {
 
 	test( 'Store should have method get', () => {
 		expect( typeof CartStore.get ).toBe( 'function' );
+	} );
+
+	test( 'Store should ignore update actions that arrive after disable', () => {
+		let disableCart, removeCoupon;
+		jest.isolateModules( () => {
+			const cartActions = jest.requireActual( 'lib/cart/actions' );
+			disableCart = cartActions.disableCart;
+			removeCoupon = cartActions.removeCoupon;
+		} );
+
+		disableCart();
+		expect( () => removeCoupon() ).not.toThrow();
 	} );
 
 	describe( 'Transaction Payment Set', () => {
@@ -91,6 +106,29 @@ describe( 'Cart Store', () => {
 		test( 'Should not report a known payment method', () => {
 			Dispatcher.handleServerAction( transactionPaymentSetActions.credits );
 			expect( recordUnrecognizedPaymentMethod ).not.toHaveBeenCalled();
+		} );
+
+		test( 'Should not ignore missing country code values', () => {
+			Dispatcher.handleServerAction( transactionPaymentSetActions.creditCard );
+			expect( setTaxLocation ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					postalCode: '90014',
+				} )
+			);
+
+			Dispatcher.handleServerAction( transactionPaymentSetActions.newCardNoPostalCode );
+			expect( setTaxLocation ).toHaveBeenNthCalledWith(
+				2,
+				expect.objectContaining( {
+					countryCode: 'AI',
+				} )
+			);
+			expect( setTaxLocation ).toHaveBeenNthCalledWith(
+				2,
+				expect.not.objectContaining( {
+					postalCode: expect.anything(),
+				} )
+			);
 		} );
 	} );
 } );

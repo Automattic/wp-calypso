@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -29,6 +27,11 @@ import HappychatConnection from 'components/happychat/connection-connected';
 import { Composer } from 'components/happychat/composer';
 import { Notices } from 'components/happychat/notices';
 import { Timeline } from 'components/happychat/timeline';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * React component for rendering a happychat client as a full page
@@ -141,7 +144,4 @@ const mapDispatch = {
 	setFocused: focus,
 };
 
-export default connect(
-	mapState,
-	mapDispatch
-)( localize( HappychatPage ) );
+export default connect( mapState, mapDispatch )( localize( HappychatPage ) );

@@ -11,30 +11,17 @@
 .media__item-dialog .dialog__action-buttons {
 	display: flex;
 	justify-content: space-between;
-}
 
-.media__modal-delete-item-button {
-	border: 0;
-
-	.dialog__button-label {
-		color: var( --color-error );
-	}
-
-	&:hover {
-		color: lighten( $alert-red, 10% );
-	}
-
-	&:disabled {
-		cursor: default;
-		cursor: not-allowed;
-		color: lighten( $alert-red, 25% );
+	// remove the left margin of the left-aligned 'Delete' button
+	.button:first-child {
+		margin-left: 0;
 	}
 }
 
 .media__main-section .media-library__header.media-library__upload-url {
 	padding: 6px 12px;
-	background-color: $white;
+	background-color: var( --color-surface );
 	box-sizing: border-box;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
 		0 1px 2px var( --color-neutral-0 );
 }

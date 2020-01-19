@@ -1,38 +1,28 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { omit } from 'lodash';
 
-export default class extends React.Component {
-	static displayName = 'FormSettingExplanation';
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
-	static propTypes = {
-		noValidate: PropTypes.bool,
-		isIndented: PropTypes.bool,
-		className: PropTypes.string,
-	};
+function FormSettingExplanation( { className, noValidate, isIndented, ...rest } ) {
+	const classes = classNames( 'form-setting-explanation', className, {
+		'no-validate': noValidate,
+		'is-indented': isIndented,
+	} );
 
-	static defaultProps = {
-		noValidate: false,
-		isIndented: false,
-	};
-
-	render() {
-		const classes = classNames( this.props.className, 'form-setting-explanation', {
-			'no-validate': this.props.noValidate,
-			'is-indented': this.props.isIndented,
-		} );
-
-		return (
-			<p { ...omit( this.props, 'className', 'noValidate', 'isIndented' ) } className={ classes }>
-				{ this.props.children }
-			</p>
-		);
-	}
+	return <p { ...rest } className={ classes } />;
 }
+
+FormSettingExplanation.propTypes = {
+	className: PropTypes.string,
+	noValidate: PropTypes.bool,
+	isIndented: PropTypes.bool,
+};
+
+export default FormSettingExplanation;

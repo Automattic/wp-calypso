@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,12 +14,13 @@ import { getPreference } from 'state/preferences/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { isPublished, isBackDatedPublished, isFutureDated, getPreviewURL } from 'state/posts/utils';
 import getEditorUrl from 'state/selectors/get-editor-url';
+import { addQueryArgs } from 'lib/route';
 
 /**
  * Returns the current editor post ID, or `null` if a new post.
  *
- * @param  {Object} state Global state tree
- * @return {?Number}      Current editor post ID
+ * @param  {object} state Global state tree
+ * @returns {?number}      Current editor post ID
  */
 export function getEditorPostId( state ) {
 	return state.ui.editor.postId;
@@ -30,8 +29,8 @@ export function getEditorPostId( state ) {
 /**
  * Returns whether editing a new post in the post editor.
  *
- * @param  {Object}  state Global state tree
- * @return {Boolean}       Whether editing new post in editor
+ * @param  {object}  state Global state tree
+ * @returns {boolean}       Whether editing new post in editor
  */
 export function isEditorNewPost( state ) {
 	return ! getEditorPostId( state );
@@ -40,24 +39,28 @@ export function isEditorNewPost( state ) {
 /**
  * Returns the editor URL for duplicating a given site ID, post ID pair.
  *
- * @param  {Object} state       Global state tree
- * @param  {Number} siteId      Site ID
- * @param  {Number} postId      Post ID
- * @param  {String} type        Post type
- * @return {String}             Editor URL path
+ * @param  {object} state       Global state tree
+ * @param  {number} siteId      Site ID
+ * @param  {number} postId      Post ID
+ * @param  {string} type        Post type
+ * @returns {string}             Editor URL path
  */
 export function getEditorDuplicatePostPath( state, siteId, postId, type = 'post' ) {
-	const editorNewPostPath = getEditorUrl( state, siteId, null, type );
-	return `${ editorNewPostPath }?copy=${ postId }`;
+	return addQueryArgs(
+		{
+			'jetpack-copy': postId,
+		},
+		getEditorUrl( state, siteId, null, type )
+	);
 }
 
 /**
  * Returns the editor new post URL path for the given site ID and type.
  *
- * @param  {Object} state       Global state tree
- * @param  {Number} siteId      Site ID
- * @param  {Number} type        Post type
- * @return {String}             Editor URL path
+ * @param  {object} state       Global state tree
+ * @param  {number} siteId      Site ID
+ * @param  {number} type        Post type
+ * @returns {string}             Editor URL path
  */
 export function getEditorNewPostPath( state, siteId, type = 'post' ) {
 	let path;
@@ -86,11 +89,11 @@ export function getEditorNewPostPath( state, siteId, type = 'post' ) {
 /**
  * Returns the editor URL path for the given site ID, post ID pair.
  *
- * @param  {Object} state       Global state tree
- * @param  {Number} siteId      Site ID
- * @param  {Number} postId      Post ID
- * @param  {String} defaultType Fallback post type if post not found
- * @return {String}             Editor URL path
+ * @param  {object} state       Global state tree
+ * @param  {number} siteId      Site ID
+ * @param  {number} postId      Post ID
+ * @param  {string} defaultType Fallback post type if post not found
+ * @returns {string}             Editor URL path
  */
 export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
 	if ( ! siteId ) {
@@ -110,9 +113,9 @@ export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
 /**
  * Returns whether the confirmation sidebar is enabled for the given siteId
  *
- * @param  {Object}  state     Global state tree
- * @param  {Number}  siteId    Site ID
- * @return {Boolean}           Whether or not the sidebar is enabled
+ * @param  {object}  state     Global state tree
+ * @param  {number}  siteId    Site ID
+ * @returns {boolean}           Whether or not the sidebar is enabled
  */
 export function isConfirmationSidebarEnabled( state, siteId ) {
 	return getPreference( state, 'editorConfirmationDisabledSites' ).indexOf( siteId ) === -1;

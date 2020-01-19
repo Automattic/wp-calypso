@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -47,13 +46,6 @@ describe( 'MediaLibraryListItem video', () => {
 
 			expect( wrapper.props().style.backgroundImage ).to.be.equal( expectedBackground() );
 		} );
-
-		test( 'returns a photon thumbnail for type MEDIA_IMAGE_PHOTON', () => {
-			wrapper = shallow( getItem( 'MEDIA_IMAGE_PHOTON' ) );
-
-			expect( wrapper.props().style.backgroundImage ).to.be.equal( expectedBackground() );
-		} );
-
 		test( 'returns a photon thumbnail for type MEDIA_IMAGE_RESIZER', () => {
 			wrapper = shallow( getItem( 'MEDIA_IMAGE_RESIZER' ) );
 

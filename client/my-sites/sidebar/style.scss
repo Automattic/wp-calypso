@@ -1,14 +1,6 @@
 .sidebar__sparkline {
 	width: 80px;
 	height: 24px;
-	position: absolute;
-	right: 16px;
-	top: 8px;
-
-	@include breakpoint( '<660px' ) {
-		top: 13px;
-		right: 20px;
-	}
 }
 
 .sidebar__menu li.stats.selected .sidebar__sparkline {
@@ -19,26 +11,14 @@
 	}
 }
 
-.sidebar__menu li.stats a::after,
-.notouch .sidebar__menu li.stats:hover:not( .selected ) a:first-child::after {
-	background: none;
-}
-
-.sidebar__menu-link-secondary-text {
-	top: 13px;
-}
-
-.manage_menu__plugins-extra-icon {
-	position: relative;
-	width: 36px;
-	height: 46px;
-	pointer-events: none;
-
-	.gridicon {
-		padding-top: 10px;
-	}
-
-	:hover + & .gridicon {
-		fill: var( --color-primary );
-	}
+/* Because the sparkline is an image, there's an exception here
+ * where specific color schemes are targeted instead of using 
+ * CSS variables. This ensures that the sparkline can still be 
+ * seen (as white) on some of the darker color schemes.
+ */
+.is-classic-blue .sidebar__menu li.stats.selected .sidebar__sparkline,
+.is-powder-snow .sidebar__menu li.stats.selected .sidebar__sparkline,
+.is-nightfall .sidebar__menu li.stats.selected .sidebar__sparkline {
+	filter: brightness( 100 );
+	-webkit-filter: brightness( 100 );
 }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,7 +15,7 @@ import AccordionSection from 'components/accordion/section';
 import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
 import AsyncLoad from 'components/async-load';
 import EditorMoreOptionsSlug from 'post-editor/editor-more-options/slug';
-import { isBusiness, isEnterprise, isJetpackPremium } from 'lib/products-values';
+import { isBusiness, isEnterprise, isJetpackPremium, isEcommerce } from 'lib/products-values';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QueryPostTypes from 'components/data/query-post-types';
 import QuerySiteSettings from 'components/data/query-site-settings';
@@ -49,7 +47,7 @@ import './style.scss';
 /**
  * Constants
  */
-const hasSupportingPlan = overSome( isBusiness, isEnterprise, isJetpackPremium );
+const hasSupportingPlan = overSome( isBusiness, isEnterprise, isJetpackPremium, isEcommerce );
 
 /**
  * A mapping of post type to hard-coded post types support. These values are
@@ -57,7 +55,7 @@ const hasSupportingPlan = overSome( isBusiness, isEnterprise, isJetpackPremium )
  * prevent the post type query component from being rendered.
  *
  * @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/post-types/
- * @type {Object}
+ * @type {object}
  */
 const POST_TYPE_SUPPORTS = {
 	post: {
@@ -163,9 +161,8 @@ class EditorDrawer extends Component {
 						'An excerpt is a short summary you can add to your posts. ' +
 							"Some themes show excerpts alongside post titles on your site's homepage and archive pages."
 					) }
-				>
-					<EditorExcerpt />
-				</EditorDrawerLabel>
+				/>
+				<EditorExcerpt />
 			</AccordionSection>
 		);
 	}

@@ -72,11 +72,7 @@ They run daily on continuous integration (CircleCI), because they can use networ
 
 ### End-to-end tests
 
-They play role of system tests, because they are executed against the entire integrated WordPress.com system.
-
-All those tests can't be found in this repository, but they live in [Automattic/wp-e2e-tests](https://github.com/Automattic/wp-e2e-tests) instead. See also [Introducing our WordPress.com Automated e2e Tests](https://developer.wordpress.com/2016/05/12/automated-e2e-tests/) post to find out more.
-
-They are executed after every deploy. A small subset of acceptance tests is executed as a prerequisite for every deploy.
+All those tests now live in the [test/e2e](https://github.com/Automattic/wp-calypso/blob/master/test/e2e) directory. For details on how to run them, see the [e2e documentation](https://github.com/Automattic/wp-calypso/blob/master/test/e2e/README.md).
 
 ## FAQ
 

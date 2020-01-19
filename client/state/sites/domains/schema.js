@@ -1,4 +1,3 @@
-/** @format */
 export const itemsSchema = {
 	type: 'object',
 	additionalProperties: false,
@@ -19,13 +18,12 @@ export const itemsSchema = {
 					expiry: { type: [ 'null', 'string' ] },
 					expirySoon: { type: 'boolean' },
 					googleAppsSubscription: { type: 'object' },
-					hasPrivacyProtection: { type: 'boolean' },
 					hasRegistration: { type: 'boolean' },
 					hasWpcomNameservers: { type: 'boolean' },
 					hasZone: { type: 'boolean' },
 					isPendingIcannVerification: { type: 'boolean' },
 					isPrimary: { type: 'boolean' },
-					isPrivate: { type: 'boolean' },
+					isSubdomain: { type: 'boolean' },
 					isWPCOMDomain: { type: 'boolean' },
 					manualTransferRequired: { type: 'boolean' },
 					newRegistration: { type: 'boolean' },
@@ -41,6 +39,8 @@ export const itemsSchema = {
 					supportsDomainConnect: { type: 'boolean', optional: true },
 					supportsGdprConsentManagement: { type: 'boolean', optional: true },
 					type: { type: 'string' },
+					transferStartDate: { type: [ 'null', 'string' ] },
+					transferEndDate: { type: [ 'null', 'string' ] },
 				},
 			},
 		},

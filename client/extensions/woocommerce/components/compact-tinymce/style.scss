@@ -1,19 +1,19 @@
 .compact-tinymce {
 	.mce-toolbar .mce-btn-group .mce-btn.mce-listbox:hover {
 		border-left-color: transparent;
-		border-right-color: var( --color-neutral-100 );
+		border-right-color: var( --color-neutral-10 );
 	}
 
 	.mce-edit-area {
-		border: 1px solid var( --color-neutral-100 ) !important;
+		border: 1px solid var( --color-neutral-10 ) !important;
 		margin-bottom: 4px;
 		padding-top: 36px;
 		padding-left: 8px;
 	}
 
 	div.mce-toolbar-grp {
-		background-color: rgba( $white, 0.92 );
-		border-color: var( --color-neutral-100 );
+		background-color: rgba( var( --color-surface-rgb ), 0.92 );
+		border-color: var( --color-neutral-10 );
 		border-style: solid;
 		border-width: 1px;
 		padding: 0;
@@ -25,7 +25,7 @@
 		margin: 0 2px 0 0;
 		padding: 0 8px;
 		vertical-align: top;
-		border-right: 1px solid var( --color-neutral-100 );
+		border-right: 1px solid var( --color-neutral-10 );
 		height: 36px;
 
 		@include breakpoint( '<660px' ) {
@@ -59,20 +59,20 @@
 	}
 
 	.mce-toolbar .mce-btn-group .mce-ico {
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 	}
 
 	.mce-toolbar .mce-btn-group .mce-btn .gridicon {
-		fill: var( --color-neutral-500 );
+		fill: var( --color-neutral-50 );
 	}
 
 	.mce-toolbar .mce-btn-group .mce-btn:hover .mce-ico,
 	.mce-toolbar .mce-btn-group .mce-btn:focus .mce-ico {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	.mce-toolbar .mce-btn-group .mce-btn:hover .gridicon,
 	.mce-toolbar .mce-btn-group .mce-btn:focus .gridicon {
-		fill: var( --color-neutral-700 );
+		fill: var( --color-neutral-70 );
 	}
 }

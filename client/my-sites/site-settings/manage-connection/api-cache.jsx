@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,22 +10,22 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import config from 'config';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 
 const ApiCache = ( {
 	fields,
 	handleAutosavingToggle,
 	isRequestingSettings,
 	isSavingSettings,
-	supportsApiCacheCheckbox,
+	siteIsJetpack,
 	translate,
 } ) => {
-	if ( ! config.isEnabled( 'jetpack/api-cache' ) || ! supportsApiCacheCheckbox ) {
+	if ( ! config.isEnabled( 'jetpack/api-cache' ) || ! siteIsJetpack ) {
 		return null;
 	}
 
@@ -45,14 +43,9 @@ const ApiCache = ( {
 	);
 };
 
-const connectComponent = connect( state => {
-	const siteId = getSelectedSiteId( state );
-	const siteIsJetpack = isJetpackSite( state, siteId );
-
-	return {
-		supportsApiCacheCheckbox: siteIsJetpack && isJetpackMinimumVersion( state, siteId, '4.4.1' ),
-	};
-} );
+const connectComponent = connect( state => ( {
+	siteIsJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
+} ) );
 
 const getFormSettings = settings => {
 	return pick( settings, [ 'api_cache' ] );

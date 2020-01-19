@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,7 +18,7 @@ import SearchPreview from 'components/seo/search-preview';
 import VerticalMenu from 'components/vertical-menu';
 import PostMetadata from 'lib/post-metadata';
 import { formatExcerpt } from 'lib/post-normalizer/rule-create-better-excerpt';
-import { isBusiness, isEnterprise, isJetpackPremium } from 'lib/products-values';
+import { isBusiness, isEnterprise, isJetpackPremium, isEcommerce } from 'lib/products-values';
 import { parseHtml } from 'lib/formatting';
 import { SocialItem } from 'components/vertical-menu/items';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -35,7 +33,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import './style.scss';
 
 const PREVIEW_IMAGE_WIDTH = 512;
-const hasSupportingPlan = overSome( isBusiness, isEnterprise, isJetpackPremium );
+const hasSupportingPlan = overSome( isBusiness, isEnterprise, isJetpackPremium, isEcommerce );
 
 const largeBlavatar = site => {
 	const siteIcon = get( site, 'icon.img' );
@@ -279,7 +277,4 @@ const mapDispatchToProps = dispatch => ( {
 		dispatch( recordTracksEvent( 'calypso_seo_tools_social_preview', { service } ) ),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( SeoPreviewPane ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SeoPreviewPane ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,11 +10,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import Button from 'components/button';
-import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
+import { Button } from '@automattic/components';
 import { showGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
-import { getSelectedSiteId } from 'state/ui/selectors/';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
 
 /**
  * Style dependencies
@@ -54,7 +51,7 @@ class EditorGutenbergOptInSidebar extends PureComponent {
 				onKeyPress={ this.handleKeyPress }
 			>
 				<img src="/calypso/images/illustrations/gutenberg-mini.svg" alt="" />
-				<p>{ translate( 'Try our new editor and level up your layout.' ) }</p>
+				<p>{ translate( 'Try the new block editor and level up your layout.' ) }</p>
 				<Button tabIndex="-1">{ translate( 'Learn more' ) }</Button>
 			</div>
 		);
@@ -62,8 +59,7 @@ class EditorGutenbergOptInSidebar extends PureComponent {
 }
 
 const mapStateToProps = state => ( {
-	optInEnabled:
-		isEnabled( 'gutenberg/opt-in' ) && isGutenbergEnabled( state, getSelectedSiteId( state ) ),
+	optInEnabled: isGutenbergOptInEnabled( state, getSelectedSiteId( state ) ),
 } );
 
 const mapDispatchToProps = { showDialog: showGutenbergOptInDialog };

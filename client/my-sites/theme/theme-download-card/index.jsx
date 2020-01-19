@@ -1,19 +1,21 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ThemeDownloadCard extends React.PureComponent {
 	static propTypes = {

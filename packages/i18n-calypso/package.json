@@ -1,48 +1,39 @@
 {
-  "name": "not-i18n-calypso-itreallyis",
-  "version": "3.0.0",
-  "description": "i18n JavaScript library on top of Jed originally used in Calypso",
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Automattic/i18n-calypso.git"
-  },
-  "author": "@automattic",
-  "license": "GPL-2.0",
-  "bin": {
-    "i18n-calypso": "bin/index.js"
-  },
-  "bugs": {
-    "url": "https://github.com/Automattic/i18n-calypso/issues"
-  },
-  "scripts": {
-    "test": "mocha --recursive"
-  },
-  "homepage": "https://github.com/Automattic/i18n-calypso#readme",
-  "dependencies": {
-    "commander": "^2.9.0",
-    "create-react-class": "^15.6.2",
-    "debug": "^3.1.0",
-    "globby": "^6.1.0",
-    "hash.js": "^1.1.5",
-    "interpolate-components": "1.1.1",
-    "jed": "1.1.1",
-    "jstimezonedetect": "1.0.5",
-    "lodash.assign": "^4.0.8",
-    "lodash.flatten": "^4.4.0",
-    "lru": "^3.1.0",
-    "moment-timezone": "^0.5.16",
-    "react": "0.14.8 || ^15.5.0 || ^16.0.0",
-    "xgettext-js": "^2.0.0"
-  },
-  "devDependencies": {
-    "chai": "^3.5.0",
-    "enzyme": "^3.2.0",
-    "enzyme-adapter-react-16": "^1.1.1",
-    "enzyme-adapter-react-helper": "^1.2.3",
-    "mocha": "^5.2.0",
-    "react-dom": "^16.0.0",
-    "react-test-renderer": "^16.0.0",
-    "rewire": "^2.5.1"
-  }
+	"name": "i18n-calypso",
+	"version": "4.1.0",
+	"description": "i18n JavaScript library on top of Tannin originally used in Calypso",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"types": "types/index.d.ts",
+	"sideEffects": false,
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/i18n-calypso"
+	},
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/i18n-calypso#readme",
+	"dependencies": {
+		"@tannin/sprintf": "^1.1.0",
+		"@wordpress/compose": "^3.7.2",
+		"debug": "^4.0.0",
+		"events": "^3.0.0",
+		"hash.js": "^1.1.5",
+		"interpolate-components": "^1.1.1",
+		"lodash": "^4.17.11",
+		"lru": "^3.1.0",
+		"moment": "^2.24.0",
+		"react": "^16.8.3",
+		"tannin": "^1.1.1",
+		"use-subscription": "^1.2.0"
+	},
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"prepublish": "npm run clean",
+		"prepare": "transpile"
+	}
 }

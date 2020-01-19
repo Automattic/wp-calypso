@@ -1,103 +1,72 @@
-/** @format */
-/**
- * Internal dependencies
- */
-import AboutStepComponent from 'signup/steps/about';
-import CloneStartComponent from 'signup/steps/clone-start';
-import CloneDestinationComponent from 'signup/steps/clone-destination';
-import CloneCredentialsComponent from 'signup/steps/clone-credentials';
-import ClonePointComponent from 'signup/steps/clone-point';
-import CloneJetpackComponent from 'signup/steps/clone-jetpack';
-import CloneReadyComponent from 'signup/steps/clone-ready';
-import CloneCloningComponent from 'signup/steps/clone-cloning';
-import CredsConfirmComponent from 'signup/steps/creds-confirm';
-import CredsCompleteComponent from 'signup/steps/creds-complete';
-import CredsPermissionComponent from 'signup/steps/creds-permission';
-import DesignTypeComponent from 'signup/steps/design-type';
-import DesignTypeWithAtomicStoreComponent from 'signup/steps/design-type-with-atomic-store';
-import DomainsStepComponent from 'signup/steps/domains';
-import ImportURLStepComponent from 'signup/steps/import-url';
-import PlansStepComponent from 'signup/steps/plans';
-import SiteComponent from 'signup/steps/site';
-import RebrandCitiesWelcomeComponent from 'signup/steps/rebrand-cities-welcome';
-import RewindMigrate from 'signup/steps/rewind-migrate';
-import RewindWereBacking from 'signup/steps/rewind-were-backing';
-import RewindAddCreds from 'signup/steps/rewind-add-creds';
-import RewindFormCreds from 'signup/steps/rewind-form-creds';
-import SiteOrDomainComponent from 'signup/steps/site-or-domain';
-import SitePicker from 'signup/steps/site-picker';
-import SiteTitleComponent from 'signup/steps/site-title';
-import SiteStyleComponent from 'signup/steps/site-style';
-import SiteTopicComponent from 'signup/steps/site-topic';
-import SiteTypeComponent from 'signup/steps/site-type';
-import SiteInformationComponent from 'signup/steps/site-information';
-import SurveyStepComponent from 'signup/steps/survey';
-import ThemeSelectionComponent from 'signup/steps/theme-selection';
-import UserSignupComponent from 'signup/steps/user';
-import PlansStepWithoutFreePlan from 'signup/steps/plans-without-free';
-import PlansAtomicStoreComponent from 'signup/steps/plans-atomic-store';
-import ReaderLandingStepComponent from 'signup/steps/reader-landing';
-
-export default {
-	about: AboutStepComponent,
-	'clone-start': CloneStartComponent,
-	'clone-destination': CloneDestinationComponent,
-	'clone-credentials': CloneCredentialsComponent,
-	'clone-point': ClonePointComponent,
-	'clone-jetpack': CloneJetpackComponent,
-	'clone-ready': CloneReadyComponent,
-	'clone-cloning': CloneCloningComponent,
-	'creds-confirm': CredsConfirmComponent,
-	'creds-complete': CredsCompleteComponent,
-	'creds-permission': CredsPermissionComponent,
-	'design-type': DesignTypeComponent,
-	'design-type-with-store-nux': DesignTypeWithAtomicStoreComponent,
-	domains: DomainsStepComponent,
-	'domains-store': DomainsStepComponent,
-	'domain-only': DomainsStepComponent,
-	'domains-theme-preselected': DomainsStepComponent,
-	'from-url': ImportURLStepComponent,
-	plans: PlansStepComponent,
-	'plans-store-nux': PlansAtomicStoreComponent,
-	'plans-site-selected': PlansStepWithoutFreePlan,
-	site: SiteComponent,
-	'rebrand-cities-welcome': RebrandCitiesWelcomeComponent,
-	'rewind-migrate': RewindMigrate,
-	'rewind-were-backing': RewindWereBacking,
-	'rewind-add-creds': RewindAddCreds,
-	'rewind-form-creds': RewindFormCreds,
-	'site-information': SiteInformationComponent,
-	'site-information-without-domains': SiteInformationComponent,
-	'site-information-title': SiteInformationComponent,
-	'site-information-address': SiteInformationComponent,
-	'site-information-phone': SiteInformationComponent,
-	'site-or-domain': SiteOrDomainComponent,
-	'site-picker': SitePicker,
-	'site-style': SiteStyleComponent,
-	'site-title': SiteTitleComponent,
-	'site-topic': SiteTopicComponent,
-	'site-type': SiteTypeComponent,
-	survey: SurveyStepComponent,
-	'survey-user': UserSignupComponent,
-	test:
-		process.env.NODE_ENV === 'development'
-			? require( 'signup/steps/test-step' ).default
-			: undefined,
-	themes: ThemeSelectionComponent,
-	'website-themes': ThemeSelectionComponent,
-	'blog-themes': ThemeSelectionComponent,
-	'themes-site-selected': ThemeSelectionComponent,
-	user: UserSignupComponent,
-	'oauth2-user': UserSignupComponent,
-	'oauth2-name': UserSignupComponent,
-	displayname: UserSignupComponent,
-	'reader-landing': ReaderLandingStepComponent,
+const stepNameToModuleName = {
+	about: 'about',
+	'clone-start': 'clone-start',
+	'clone-destination': 'clone-destination',
+	'clone-credentials': 'clone-credentials',
+	'clone-point': 'clone-point',
+	'clone-jetpack': 'clone-jetpack',
+	'clone-ready': 'clone-ready',
+	'clone-cloning': 'clone-cloning',
+	'creds-confirm': 'creds-confirm',
+	'creds-complete': 'creds-complete',
+	'creds-permission': 'creds-permission',
+	domains: 'domains',
+	'domains-store': 'domains',
+	'domain-only': 'domains',
+	'domains-theme-preselected': 'domains',
+	'domains-launch': 'domains',
+	'from-url': 'import-url',
+	'import-preview': 'import-preview',
+	/* import-url will eventually replace from-url step. Forgive temporary naming. */
+	'import-url': 'import-url-onboarding',
+	launch: 'launch-site',
+	plans: 'plans',
+	'plans-business': 'plans',
+	'plans-ecommerce': 'plans',
+	'plans-import': 'plans',
+	'plans-launch': 'plans',
+	'plans-personal': 'plans',
+	'plans-premium': 'plans',
+	'plans-site-selected': 'plans',
+	'plans-store-nux': 'plans-atomic-store',
+	site: 'site',
+	'rebrand-cities-welcome': 'rebrand-cities-welcome',
+	'rewind-migrate': 'rewind-migrate',
+	'rewind-were-backing': 'rewind-were-backing',
+	'rewind-form-creds': 'rewind-form-creds',
+	'site-or-domain': 'site-or-domain',
+	'site-picker': 'site-picker',
+	'site-style': 'site-style',
+	'site-title': 'site-title',
+	'site-title-without-domains': 'site-title',
+	'site-topic': 'site-topic',
+	'site-topic-with-theme': 'site-topic',
+	'site-type': 'site-type',
+	'site-type-with-theme': 'site-type',
+	survey: 'survey',
+	'survey-user': 'survey-user',
+	test: 'test-step',
+	themes: 'theme-selection',
+	'themes-site-selected': 'theme-selection',
+	'template-first-themes': 'theme-selection',
+	'fse-themes': 'theme-selection',
+	user: 'user',
+	'oauth2-user': 'user',
+	'oauth2-name': 'user',
+	displayname: 'user',
+	'reader-landing': 'reader-landing',
 	// Steps with preview
-	'site-style-with-preview': SiteStyleComponent,
-	'site-topic-with-preview': SiteTopicComponent,
-	'site-information-with-preview': SiteInformationComponent,
-	'site-information-title-with-preview': SiteInformationComponent,
-	'site-information-address-with-preview': SiteInformationComponent,
-	'site-information-phone-with-preview': SiteInformationComponent,
-	'domains-with-preview': DomainsStepComponent,
+	'site-style-with-preview': 'site-style',
+	'site-topic-with-preview': 'site-topic',
+	'domains-with-preview': 'domains',
+	'site-title-with-preview': 'site-title',
+	passwordless: 'passwordless',
 };
+
+export async function getStepComponent( stepName ) {
+	const moduleName = stepNameToModuleName[ stepName ];
+	const module = await import(
+		/* webpackChunkName: "async-load-signup-steps-[request]", webpackInclude: /signup\/steps\/[a-z-]+\/index.jsx$/ */ `signup/steps/${ moduleName }`
+	);
+	return module.default;
+}

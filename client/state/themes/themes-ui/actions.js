@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import { THEMES_BANNER_HIDE, THEMES_UPWORK_BANNER_HIDE } from 'state/action-types';
+import { THEMES_BANNER_HIDE, THEMES_SHOWCASE_OPEN, THEMES_BOOKMARK_SET } from 'state/action-types';
 
 // Hides the theme showcase banner.
 export function hideThemesBanner() {
@@ -12,9 +10,16 @@ export function hideThemesBanner() {
 	};
 }
 
-// Hides the theme showcase banner.
-export function hideThemesUpworkBanner() {
+// Open "More Themes" search area.
+export function openThemesShowcase() {
 	return {
-		type: THEMES_UPWORK_BANNER_HIDE,
+		type: THEMES_SHOWCASE_OPEN,
+	};
+}
+
+export function setThemesBookmark( state ) {
+	return {
+		type: THEMES_BOOKMARK_SET,
+		payload: state,
 	};
 }

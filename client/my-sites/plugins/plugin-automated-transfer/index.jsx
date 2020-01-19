@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -24,6 +22,11 @@ import NoticeAction from 'components/notice/notice-action';
 import WpAdminAutoLogin from 'components/wpadmin-auto-login';
 import { requestSite } from 'state/sites/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class PluginAutomatedTransfer extends Component {
 	static propTypes = {
 		isTransferring: PropTypes.bool,
@@ -44,7 +47,7 @@ class PluginAutomatedTransfer extends Component {
 		transferComplete: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { COMPLETE } = transferStates;
 		const { isTransferring, isFailedTransfer, transferState } = this.props;
 
@@ -59,7 +62,7 @@ class PluginAutomatedTransfer extends Component {
 		clearInterval( this.interval );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { siteId } = this.props;
 		const { COMPLETE } = transferStates;
 		const { transferComplete } = this.state;
@@ -184,9 +187,6 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{
-		requestSite,
-	}
-)( localize( wrapWithClickOutside( PluginAutomatedTransfer ) ) );
+export default connect( mapStateToProps, {
+	requestSite,
+} )( localize( wrapWithClickOutside( PluginAutomatedTransfer ) ) );

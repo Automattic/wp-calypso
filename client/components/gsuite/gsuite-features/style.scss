@@ -1,0 +1,74 @@
+.gsuite-features__grid {
+	box-sizing: border-box;
+	justify-content: space-between;
+	margin: 1em 0;
+
+	@include breakpoint( '>960px' ) {
+		display: flex;
+		flex-flow: row wrap;
+	}
+
+	.gsuite-features__feature-block {
+		p {
+			@include breakpoint( '>960px' ) {
+				max-width: 200px;
+			}
+		}
+	}
+
+	.gsuite-learn-more {
+		text-align: center;
+	}
+}
+.gsuite-features__list {
+	box-sizing: border-box;
+	justify-content: space-between;
+	margin-left: 1.5em;
+	margin-top: 1em;
+
+	.gsuite-features__feature {
+		margin-bottom: 2em;
+	}
+
+	.gsuite-learn-more {
+		margin-top: 2em;
+		text-align: left;
+	}
+}
+
+.gsuite-features__compact-feature,
+.gsuite-features__feature {
+	display: flex;
+	flex-basis: 50%;
+	justify-content: flex-start;
+
+	&:not(:last-of-type) {
+		margin-bottom: 1em;
+	}
+}
+.gsuite-features__feature {
+	.gsuite-features__feature-header {
+		font-size: 17px;
+		font-weight: 600;
+	}
+}
+
+.gsuite-features__compact-feature {
+	.gsuite-features__feature-image {
+		width: 24px;
+	}
+	.gsuite-features__feature-header {
+		font-size: 15px;
+	}
+}
+
+.gsuite-features__feature-image {
+	align-items: flex-start;
+	padding: 0 1em 0 0;
+}
+
+.gsuite-features__feature-block {
+	align-items: flex-start;
+	padding: 0 1em 0 0;
+	flex: 1;
+}

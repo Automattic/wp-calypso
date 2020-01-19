@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -21,6 +20,11 @@ import { userCan } from 'state/posts/utils';
 import * as stats from 'reader/stats';
 import { localize } from 'i18n-calypso';
 import ReaderVisitLink from 'blocks/reader-visit-link';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const ReaderPostActions = props => {
 	const {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal Dependencies
  */
@@ -12,9 +10,9 @@ export const dismissNudge = () => ( dispatch, getState ) => {
 	const preference = getPreference( getState(), 'upwork-dismissible-nudge' ) || {};
 
 	return dispatch(
-		savePreference(
-			'upwork-dismissible-nudge',
-			Object.assign( {}, preference, {
+		savePreference( 'upwork-dismissible-nudge', {
+			...preference,
+			...{
 				[ siteId ]: [
 					...( preference[ siteId ] || [] ),
 					{
@@ -22,7 +20,7 @@ export const dismissNudge = () => ( dispatch, getState ) => {
 						type: 'dismiss',
 					},
 				],
-			} )
-		)
+			},
+		} )
 	);
 };

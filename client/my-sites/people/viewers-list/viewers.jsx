@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +9,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import PeopleListItem from 'my-sites/people/people-list-item';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
 import ViewersActions from 'lib/viewers/actions';
 import ViewersStore from 'lib/viewers/store';
@@ -22,6 +21,12 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 
 class Viewers extends React.PureComponent {
 	static displayName = 'Viewers';
+
+	constructor() {
+		super();
+
+		this.infiniteList = React.createRef();
+	}
 
 	state = {
 		bulkEditing: false,
@@ -123,8 +128,8 @@ class Viewers extends React.PureComponent {
 				<InfiniteList
 					key={ this.props.siteId }
 					items={ this.props.viewers }
-					className="people-selector__infinite-list"
-					ref="infiniteList"
+					className="viewers-list__infinite is-people"
+					ref={ this.infiniteList }
 					fetchingNextPage={ this.props.fetching }
 					lastPage={ this.isLastPage() }
 					fetchNextPage={ this.fetchNextPage }
@@ -152,7 +157,4 @@ class Viewers extends React.PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{ recordGoogleEvent }
-)( localize( Viewers ) );
+export default connect( null, { recordGoogleEvent } )( localize( Viewers ) );

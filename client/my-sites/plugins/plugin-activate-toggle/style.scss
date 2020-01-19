@@ -8,11 +8,11 @@
 
 .plugin-activate-toggle__link:hover,
 .plugin-activate-toggle__link:hover .plugin-activate-toggle__icon {
-	color: $link-highlight;
+	color: var( --color-link-dark );
 }
 
 .plugin-activate-toggle__disabled {
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 }
 
 .plugin-activate-toggle__disabled .plugin-activate-toggle__icon {
@@ -34,7 +34,7 @@
 }
 
 .plugin-activate-toggle__link .plugin-activate-toggle__icon {
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .plugin-activate-toggle__icon {

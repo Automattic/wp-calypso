@@ -1,6 +1,10 @@
 @keyframes spinner-line__animation {
-	0% { background-position: 0 0; }
-	100% { background-position: 600px 0; }
+	0% {
+		background-position: 0 0;
+	}
+	100% {
+		background-position: 600px 0;
+	}
 }
 
 hr.spinner-line {
@@ -9,9 +13,9 @@ hr.spinner-line {
 	margin: 24px 0;
 	background-image: linear-gradient(
 		to right,
-		$gray-lighten-10 0%,
-		$gray-lighten-20 50%,
-		$gray-lighten-10 100%
+		var( --color-neutral-20 ) 0%,
+		var( --color-neutral-10 ) 50%,
+		var( --color-neutral-20 ) 100%
 	);
 	background-size: 300px 100%;
 	animation: spinner-line__animation 1.2s infinite linear;

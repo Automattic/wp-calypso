@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,9 +6,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
-import { debounce, intersection, difference, includes, partial } from 'lodash';
+import { intersection, difference, includes, flowRight as compose } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -20,21 +18,34 @@ import SimplifiedSegmentedControl from 'components/segmented-control/simplified'
 import KeyedSuggestions from 'components/keyed-suggestions';
 import StickyPanel from 'components/sticky-panel';
 import config from 'config';
-import { isMobile } from 'lib/viewport';
+import { withMobileBreakpoint } from 'lib/viewport/react';
 import { localize } from 'i18n-calypso';
 import MagicSearchWelcome from './welcome';
 import getThemeFilters from 'state/selectors/get-theme-filters';
 import getThemeFilterToTermTable from 'state/selectors/get-theme-filter-to-term-table';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 //We want those taxonomies if they are used to be presented in this order
 const preferredOrderOfTaxonomies = [ 'feature', 'layout', 'column', 'subject', 'style' ];
 
 class ThemesMagicSearchCard extends React.Component {
 	static propTypes = {
+		tier: PropTypes.string,
+		select: PropTypes.func.isRequired,
+		siteId: PropTypes.number,
+		onSearch: PropTypes.func.isRequired,
+		search: PropTypes.string,
+		translate: PropTypes.func.isRequired,
 		showTierThemesControl: PropTypes.bool,
+		isBreakpointActive: PropTypes.bool, // comes from withMobileBreakpoint HOC
 	};
 
 	static defaultProps = {
+		tier: 'all',
 		showTierThemesControl: true,
 	};
 
@@ -44,7 +55,6 @@ class ThemesMagicSearchCard extends React.Component {
 		this.suggestionsRefs = {};
 
 		this.state = {
-			isMobile: isMobile(),
 			searchIsOpen: false,
 			editedSearchElement: '',
 			cursorPosition: 0,
@@ -52,24 +62,14 @@ class ThemesMagicSearchCard extends React.Component {
 		};
 	}
 
-	setSuggestionsRefs = ( key, suggestionComponent ) =>
-		( this.suggestionsRefs[ key ] = suggestionComponent );
+	setSuggestionsRefs = key => suggestionComponent => {
+		this.suggestionsRefs[ key ] = suggestionComponent;
+	};
 
 	setSearchInputRef = search => ( this.searchInputRef = search );
 
-	componentWillMount() {
-		this.onResize = debounce( () => {
-			this.setState( { isMobile: isMobile() } );
-		}, 250 );
-	}
-
 	componentDidMount() {
 		this.findTextForSuggestions( this.props.search );
-		window.addEventListener( 'resize', this.onResize );
-	}
-
-	componentWillUnmount() {
-		window.removeEventListener( 'resize', this.onResize );
 	}
 
 	onSearchOpen = () => {
@@ -288,7 +288,7 @@ class ThemesMagicSearchCard extends React.Component {
 				onKeyDown={ this.onKeyDown }
 				onClick={ this.onClick }
 				overlayStyling={ this.searchTokens }
-				fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
+				fitsContainer={ this.props.isBreakpointActive && this.state.searchIsOpen }
 				hideClose={ true }
 			/>
 		);
@@ -309,6 +309,7 @@ class ThemesMagicSearchCard extends React.Component {
 				<StickyPanel>
 					<div
 						className={ themesSearchCardClass }
+						role="presentation"
 						data-tip-target="themes-search-card"
 						onClick={ this.handleClickInside }
 					>
@@ -334,10 +335,10 @@ class ThemesMagicSearchCard extends React.Component {
 						) }
 					</div>
 				</StickyPanel>
-				<div onClick={ this.handleClickInside }>
+				<div role="presentation" onClick={ this.handleClickInside }>
 					{ renderSuggestions && (
 						<KeyedSuggestions
-							ref={ partial( this.setSuggestionsRefs, 'suggestions' ) }
+							ref={ this.setSuggestionsRefs( 'suggestions' ) }
 							terms={ this.props.filters }
 							input={ this.state.editedSearchElement }
 							suggest={ this.suggest }
@@ -345,7 +346,7 @@ class ThemesMagicSearchCard extends React.Component {
 					) }
 					{ ! renderSuggestions && (
 						<MagicSearchWelcome
-							ref={ partial( this.setSuggestionsRefs, 'welcome' ) }
+							ref={ this.setSuggestionsRefs( 'welcome' ) }
 							taxonomies={ filtersKeys }
 							topSearches={ [] }
 							suggestionsCallback={ this.insertTextInInput }
@@ -357,20 +358,12 @@ class ThemesMagicSearchCard extends React.Component {
 	}
 }
 
-ThemesMagicSearchCard.propTypes = {
-	tier: PropTypes.string,
-	select: PropTypes.func.isRequired,
-	siteId: PropTypes.number,
-	onSearch: PropTypes.func.isRequired,
-	search: PropTypes.string,
-	translate: PropTypes.func.isRequired,
-};
-
-ThemesMagicSearchCard.defaultProps = {
-	tier: 'all',
-};
-
-export default connect( state => ( {
-	filters: getThemeFilters( state ),
-	allValidFilters: Object.keys( getThemeFilterToTermTable( state ) ),
-} ) )( localize( wrapWithClickOutside( ThemesMagicSearchCard ) ) );
+export default compose(
+	connect( state => ( {
+		filters: getThemeFilters( state ),
+		allValidFilters: Object.keys( getThemeFilterToTermTable( state ) ),
+	} ) ),
+	localize,
+	wrapWithClickOutside,
+	withMobileBreakpoint
+)( ThemesMagicSearchCard );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -32,12 +30,13 @@ export default class AsyncLoad extends Component {
 		};
 	}
 
-	componentWillMount() {
+	componentDidMount = () => {
+		this.mounted = true;
 		this.require();
-	}
+	};
 
-	componentWillReceiveProps( nextProps ) {
-		if ( this.props.require !== nextProps.require ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
+		if ( this.mounted && this.props.require !== nextProps.require ) {
 			this.setState( { component: null } );
 		}
 	}
@@ -50,11 +49,15 @@ export default class AsyncLoad extends Component {
 		}
 	}
 
+	componentWillUnmount() {
+		this.mounted = false;
+	}
+
 	require() {
 		const requireFunction = this.props.require;
 
 		requireFunction( component => {
-			if ( this.props.require === requireFunction ) {
+			if ( this.mounted && this.props.require === requireFunction ) {
 				this.setState( { component } );
 			}
 		} );

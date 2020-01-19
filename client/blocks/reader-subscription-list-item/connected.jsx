@@ -1,25 +1,22 @@
-/** @format */
 /**
  * External Dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
+import { flowRight as compose, noop } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
  * Internal Dependencies
  */
 import connectSite from 'lib/reader-connect-site';
-import SubscriptionListItem from 'blocks/reader-subscription-list-item';
+import SubscriptionListItem from '.';
 import isFollowingSelector from 'state/selectors/is-following';
 
 class ConnectedSubscriptionListItem extends React.Component {
 	static propTypes = {
 		feed: PropTypes.object,
 		site: PropTypes.object,
-		translate: PropTypes.func,
 		feedId: PropTypes.number,
 		siteId: PropTypes.number,
 		onShouldMeasure: PropTypes.func,
@@ -59,7 +56,6 @@ class ConnectedSubscriptionListItem extends React.Component {
 		const {
 			feed,
 			site,
-			translate,
 			url,
 			feedId,
 			siteId,
@@ -72,7 +68,6 @@ class ConnectedSubscriptionListItem extends React.Component {
 
 		return (
 			<SubscriptionListItem
-				translate={ translate }
 				feedId={ feedId }
 				siteId={ siteId }
 				site={ site }
@@ -88,6 +83,9 @@ class ConnectedSubscriptionListItem extends React.Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => ( {
-	isFollowing: isFollowingSelector( state, { feedId: ownProps.feedId, blogId: ownProps.siteId } ),
-} ) )( localize( connectSite( ConnectedSubscriptionListItem ) ) );
+export default compose(
+	connect( ( state, ownProps ) => ( {
+		isFollowing: isFollowingSelector( state, { feedId: ownProps.feedId, blogId: ownProps.siteId } ),
+	} ) ),
+	connectSite
+)( ConnectedSubscriptionListItem );

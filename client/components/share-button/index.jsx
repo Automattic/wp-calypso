@@ -1,16 +1,15 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import SocialLogo from 'social-logos';
 import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
+import SocialLogo from 'components/social-logo';
 import services from './services';
 
 /**

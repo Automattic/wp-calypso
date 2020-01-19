@@ -18,7 +18,7 @@
 }
 
 .wpview-type-simple-payments__image-figure {
-	border: 1px solid var( --color-neutral-200 );
+	border: 1px solid var( --color-neutral-20 );
 	background-color: var( --color-neutral-0 );
 	margin: 0;
 	min-width: 70px;
@@ -78,7 +78,7 @@
 }
 
 .wpview-type-simple-payments__pay-quantity-input {
-	border: 1px solid var( --color-neutral-200 );
+	border: 1px solid var( --color-neutral-20 );
 	padding: 6px 8px;
 	max-width: 42px;
 }
@@ -141,10 +141,10 @@
 
 .wpview-type-simple-payments__unsupported {
 	align-items: center;
-	background-color: $white;
-	border: 2px solid $white;
+	background-color: var( --color-surface );
+	border: 2px solid var( --color-border-inverted );
 	border-radius: 2px;
-	box-shadow: 0 0 0 1px var( --color-neutral-100 ), 0 1px 2px var( --color-neutral-0 );
+	box-shadow: 0 0 0 1px var( --color-neutral-10 ), 0 1px 2px var( --color-neutral-0 );
 	display: flex;
 	flex-flow: row;
 	flex-wrap: nowrap;

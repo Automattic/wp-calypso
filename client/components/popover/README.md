@@ -79,12 +79,6 @@ This describes the position of the popover relative to the thing it is pointing
 at. If the arrow is supposed to point at something to the top and left of the
 Popover, the correct value for `position` is `bottom right`.
 
-#### `rootClassName { string } - optional`
-
-The `<Popover />` component is mounted into a `<ReactChild />` component at the
-root of the `<body>`. Use this property if you want to add a cuestom css class
-to this root element.
-
 #### `showDelay { number } - default: 0 (false)`
 
 Adds a delay before to show the popover. Its value is defined in `milliseconds`.

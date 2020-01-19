@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -34,6 +32,11 @@ export const EVENT_TYPES = {
 	INTERNAL_NOTE: 'INTERNAL_NOTE',
 
 	/**
+	 * A state in which label purchases are still pending.
+	 */
+	LABEL_PURCHASING: 'LABEL_PURCHASING',
+
+	/**
 	 * "Shipping label purchased" event, which will include tracking number, buttons to refund & reprint, and other info
 	 */
 	LABEL_PURCHASED: 'LABEL_PURCHASED',
@@ -60,10 +63,10 @@ export const EVENT_TYPES = {
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} orderId Order ID to check.
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the activity log for a given order has been successfully loaded from the server.
+ * @param {object} state Whole Redux state tree
+ * @param {number} orderId Order ID to check.
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {boolean} Whether the activity log for a given order has been successfully loaded from the server.
  */
 export const isActivityLogLoaded = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const notesLoaded = areOrderNotesLoaded( state, orderId, siteId );
@@ -82,10 +85,10 @@ export const isActivityLogLoaded = ( state, orderId, siteId = getSelectedSiteId(
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} orderId Order ID to check.
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the activity log for a given order is currently being retrieved from the server.
+ * @param {object} state Whole Redux state tree
+ * @param {number} orderId Order ID to check.
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {boolean} Whether the activity log for a given order is currently being retrieved from the server.
  */
 export const isActivityLogLoading = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const notesLoading = areOrderNotesLoading( state, orderId, siteId );
@@ -104,13 +107,13 @@ export const isActivityLogLoading = ( state, orderId, siteId = getSelectedSiteId
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} orderId Order ID to check.
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object[]} List of events to display. Each event will have at least these properties:
- * - {String} type The type of the event. See the EVENT_TYPES enum.
- * - {Number} key A unique ID for the event. The combination of "type + key" must be unique in the whole list.
- * - {Number} timestamp The time of the event.
+ * @param {object} state Whole Redux state tree
+ * @param {number} orderId Order ID to check.
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {object[]} List of events to display. Each event will have at least these properties:
+ * - {string} type The type of the event. See the EVENT_TYPES enum.
+ * - {number} key A unique ID for the event. The combination of "type + key" must be unique in the whole list.
+ * - {number} timestamp The time of the event.
  */
 export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const order = getOrder( state, orderId, siteId );
@@ -136,8 +139,9 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 		const labels = getLabels( state, orderId, siteId );
 		const renderableLabels = filter(
 			labels,
-			label => 'PURCHASED' === label.status || 'ANONYMIZED' === label.status
+			label => -1 !== [ 'PURCHASED', 'ANONYMIZED', 'PURCHASE_IN_PROGRESS' ].indexOf( label.status )
 		);
+
 		renderableLabels.forEach( ( label, index, allLabels ) => {
 			const labelIndex = allLabels.length - 1 - index;
 			if ( label.refund ) {
@@ -175,6 +179,18 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 						} );
 				}
 			}
+
+			if ( 'PURCHASE_IN_PROGRESS' === label.status ) {
+				return events.push( {
+					key: label.label_id,
+					type: EVENT_TYPES.LABEL_PURCHASING,
+					labelIndex,
+					labelId: label.label_id,
+					serviceName: label.service_name,
+					carrierId: label.carrier_id,
+				} );
+			}
+
 			events.push( {
 				key: label.label_id,
 				type: EVENT_TYPES.LABEL_PURCHASED,

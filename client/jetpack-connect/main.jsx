@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import HelpButton from './help-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import LocaleSuggestions from 'components/locale-suggestions';
@@ -141,6 +140,8 @@ export class JetpackConnectMain extends Component {
 	}
 
 	dismissUrl = () => this.props.dismissUrl( this.state.currentUrl );
+
+	goBack = () => page.back();
 
 	makeSafeRedirectionFunction( func ) {
 		return url => {
@@ -338,7 +339,7 @@ export class JetpackConnectMain extends Component {
 				status ? (
 					<JetpackConnectNotices
 						noticeType={ status }
-						onDismissClick={ this.dismissUrl }
+						onDismissClick={ IS_DOT_COM === status ? this.goBack : this.dismissUrl }
 						url={ this.state.currentUrl }
 						onTerminalError={ this.props.isMobileAppFlow ? this.redirectToMobileApp : null }
 					/>
@@ -414,7 +415,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( JetpackConnectMain );
+export default flowRight( connectComponent, localize )( JetpackConnectMain );

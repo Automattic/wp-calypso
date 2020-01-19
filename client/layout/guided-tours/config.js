@@ -1,54 +1,60 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
+import activityLogJetpackIntroTour from 'layout/guided-tours/tours/activity-log-jetpack-intro-tour/meta';
+import activityLogWpcomIntroTour from 'layout/guided-tours/tours/activity-log-wpcom-intro-tour/meta';
+import main from 'layout/guided-tours/tours/main-tour/meta';
+import tutorialSitePreview from 'layout/guided-tours/tours/tutorial-site-preview-tour/meta';
+import gdocsIntegrationTour from 'layout/guided-tours/tours/gdocs-integration-tour/meta';
+import simplePaymentsTour from 'layout/guided-tours/tours/simple-payments-tour/meta';
+import editorBasicsTour from 'layout/guided-tours/tours/editor-basics-tour/meta';
+import mediaBasicsTour from 'layout/guided-tours/tours/media-basics-tour/meta';
+import checklistAboutPage from 'layout/guided-tours/tours/checklist-about-page-tour/meta';
+import checklistContactPage from 'layout/guided-tours/tours/checklist-contact-page-tour/meta';
+import checklistDomainRegister from 'layout/guided-tours/tours/checklist-domain-register-tour/meta';
+import checklistPublishPost from 'layout/guided-tours/tours/checklist-publish-post-tour/meta';
+import checklistSiteIcon from 'layout/guided-tours/tours/checklist-site-icon-tour/meta';
+import checklistSiteTagline from 'layout/guided-tours/tours/checklist-site-tagline-tour/meta';
+import checklistSiteTitle from 'layout/guided-tours/tours/checklist-site-title-tour/meta';
+import checklistUserAvatar from 'layout/guided-tours/tours/checklist-user-avatar-tour/meta';
+import checklistUserEmail from 'layout/guided-tours/tours/checklist-user-email-tour/meta';
+import jetpackBackupsRewind from 'layout/guided-tours/tours/jetpack-backups-rewind-tour/meta';
+import jetpackChecklist from 'layout/guided-tours/tours/jetpack-checklist-tour/meta';
+import jetpackLazyImages from 'layout/guided-tours/tours/jetpack-lazy-images-tour/meta';
+import jetpackMonitoring from 'layout/guided-tours/tours/jetpack-monitoring-tour/meta';
+import jetpackPluginUpdates from 'layout/guided-tours/tours/jetpack-plugin-updates-tour/meta';
+import jetpackSearch from 'layout/guided-tours/tours/jetpack-search-tour/meta';
+import jetpackSignIn from 'layout/guided-tours/tours/jetpack-sign-in-tour/meta';
+import jetpackSiteAccelerator from 'layout/guided-tours/tours/jetpack-site-accelerator-tour/meta';
+import jetpackVideoHosting from 'layout/guided-tours/tours/jetpack-video-hosting-tour/meta';
+import simplePaymentsEmailTour from 'layout/guided-tours/tours/simple-payments-email-tour/meta';
 
-import { combineTours } from 'layout/guided-tours/config-elements';
-import { ActivityLogJetpackIntroTour } from 'layout/guided-tours/tours/activity-log-jetpack-intro-tour';
-import { ActivityLogWpcomIntroTour } from 'layout/guided-tours/tours/activity-log-wpcom-intro-tour';
-import { MainTour } from 'layout/guided-tours/tours/main-tour';
-import { TutorialSitePreviewTour } from 'layout/guided-tours/tours/tutorial-site-preview-tour';
-import { GDocsIntegrationTour } from 'layout/guided-tours/tours/gdocs-integration-tour';
-import { SimplePaymentsTour } from 'layout/guided-tours/tours/simple-payments-tour';
-import { EditorBasicsTour } from 'layout/guided-tours/tours/editor-basics-tour';
-import { MediaBasicsTour } from 'layout/guided-tours/tours/media-basics-tour';
-import { ChecklistAboutPageTour } from 'layout/guided-tours/tours/checklist-about-page-tour';
-import { ChecklistContactPageTour } from 'layout/guided-tours/tours/checklist-contact-page-tour';
-import { ChecklistDomainRegisterTour } from 'layout/guided-tours/tours/checklist-domain-register-tour';
-import { ChecklistPublishPostTour } from 'layout/guided-tours/tours/checklist-publish-post-tour';
-import { ChecklistSiteIconTour } from 'layout/guided-tours/tours/checklist-site-icon-tour';
-import { ChecklistSiteTaglineTour } from 'layout/guided-tours/tours/checklist-site-tagline-tour';
-import { ChecklistSiteTitleTour } from 'layout/guided-tours/tours/checklist-site-title-tour';
-import { ChecklistUserAvatarTour } from 'layout/guided-tours/tours/checklist-user-avatar-tour';
-import { JetpackBasicTour } from 'layout/guided-tours/tours/jetpack-basic-tour';
-import { JetpackMonitoringTour } from 'layout/guided-tours/tours/jetpack-monitoring-tour';
-import { JetpackPluginUpdatesTour } from 'layout/guided-tours/tours/jetpack-plugin-updates-tour';
-import { JetpackSignInTour } from 'layout/guided-tours/tours/jetpack-sign-in-tour';
-import { SimplePaymentsEmailTour } from 'layout/guided-tours/tours/simple-payments-email-tour';
-import { PluginsBasicTour } from 'layout/guided-tours/tours/plugins-basic-tour';
-
-export default combineTours( {
-	activityLogJetpackIntroTour: ActivityLogJetpackIntroTour,
-	activityLogWpcomIntroTour: ActivityLogWpcomIntroTour,
-	checklistAboutPage: ChecklistAboutPageTour,
-	checklistContactPage: ChecklistContactPageTour,
-	checklistDomainRegister: ChecklistDomainRegisterTour,
-	checklistPublishPost: ChecklistPublishPostTour,
-	checklistSiteIcon: ChecklistSiteIconTour,
-	checklistSiteTagline: ChecklistSiteTaglineTour,
-	checklistSiteTitle: ChecklistSiteTitleTour,
-	checklistUserAvatar: ChecklistUserAvatarTour,
-	jetpack: JetpackBasicTour,
-	jetpackMonitoring: JetpackMonitoringTour,
-	jetpackPluginUpdates: JetpackPluginUpdatesTour,
-	jetpackSignIn: JetpackSignInTour,
-	main: MainTour,
-	editorBasicsTour: EditorBasicsTour,
-	mediaBasicsTour: MediaBasicsTour,
-	tutorialSitePreview: TutorialSitePreviewTour,
-	gdocsIntegrationTour: GDocsIntegrationTour,
-	simplePaymentsTour: SimplePaymentsTour,
-	simplePaymentsEmailTour: SimplePaymentsEmailTour,
-	pluginsBasicTour: PluginsBasicTour,
-} );
+export default {
+	activityLogJetpackIntroTour,
+	activityLogWpcomIntroTour,
+	checklistAboutPage,
+	checklistContactPage,
+	checklistDomainRegister,
+	checklistPublishPost,
+	checklistSiteIcon,
+	checklistSiteTagline,
+	checklistSiteTitle,
+	checklistUserAvatar,
+	checklistUserEmail,
+	jetpackBackupsRewind,
+	jetpackChecklist,
+	jetpackLazyImages,
+	jetpackMonitoring,
+	jetpackPluginUpdates,
+	jetpackSearch,
+	jetpackSignIn,
+	jetpackSiteAccelerator,
+	jetpackVideoHosting,
+	main,
+	editorBasicsTour,
+	mediaBasicsTour,
+	tutorialSitePreview,
+	gdocsIntegrationTour,
+	simplePaymentsTour,
+	simplePaymentsEmailTour,
+};

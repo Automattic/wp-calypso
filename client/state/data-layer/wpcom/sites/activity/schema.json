@@ -93,7 +93,8 @@
 				"target_ts": { "type": "number" },
 				"totalItems": {
 					"min": 0,
-					"type": "integer"},
+					"type": "integer"
+				},
 				"type": { "type": "string" }
 			}
 		}

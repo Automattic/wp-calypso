@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,12 +18,6 @@ import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affi
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 class MxRecord extends React.Component {
-	static initialFields = {
-		name: '',
-		data: '',
-		aux: 10,
-	};
-
 	static propTypes = {
 		fieldValues: PropTypes.object.isRequired,
 		onChange: PropTypes.func.isRequired,

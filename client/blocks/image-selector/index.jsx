@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,6 +20,11 @@ import MediaModal from 'post-editor/media-modal';
 import MediaStore from 'lib/media/store';
 import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class ImageSelector extends Component {
 	static propTypes = {
@@ -109,7 +112,7 @@ export class ImageSelector extends Component {
 					labels={ { confirm: multiple ? translate( 'Set images' ) : translate( 'Set image' ) } }
 					enabledFilters={ [ 'images' ] }
 					galleryViewEnabled={ false }
-					{ ...! multiple && { single: true } }
+					{ ...( ! multiple && { single: true } ) }
 				/>
 			</MediaLibrarySelectedData>
 		);

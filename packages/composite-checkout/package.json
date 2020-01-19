@@ -1,0 +1,49 @@
+{
+	"name": "@automattic/composite-checkout",
+	"version": "1.0.0",
+	"description": "A checkout component for Automattic brands",
+	"main": "dist/cjs/public-api.js",
+	"module": "dist/esm/public-api.js",
+	"sideEffects": false,
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"prepublish": "npm run clean",
+		"prepare": "transpile"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"keywords": [
+		"checkout",
+		"payments",
+		"automattic"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/composite-checkout"
+	},
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/composite-checkout#readme",
+	"dependencies": {
+		"@emotion/core": "10.0.22",
+		"@emotion/styled": "10.0.23",
+		"@wordpress/data": "^4.9.2",
+		"@wordpress/i18n": "3.7.0",
+		"debug": "4.1.1",
+		"emotion-theming": "10.0.19",
+		"interpolate-components": "1.1.1",
+		"prop-types": "^15.7.2",
+		"react": "^16.8.6",
+		"react-stripe-elements": "^5.1.0"
+	},
+	"private": true
+}

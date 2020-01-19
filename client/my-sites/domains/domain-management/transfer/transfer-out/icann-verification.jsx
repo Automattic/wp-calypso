@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,10 +8,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card, Button } from '@automattic/components';
 import SectionHeader from 'components/section-header';
-import { resendIcannVerification } from 'lib/upgrades/actions/domain-management';
-import Button from 'components/button';
+import { resendIcannVerification } from 'lib/domains';
 import notices from 'notices';
 import { TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
 
@@ -52,7 +49,7 @@ class IcannVerification extends React.Component {
 					</Button>
 				</SectionHeader>
 
-				<Card className="transfer-card">
+				<Card className="transfer-out__card">
 					{ translate(
 						'You must verify your email address before you can transfer this domain. ' +
 							'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',

@@ -1,426 +1,195 @@
 .sidebar {
-	display: flex;
-	flex-direction: column;
-	overflow: auto;
+	// Setting the position and clearing some
+	// margins and paddings.
+	margin: 0;
 	padding: 0;
+
 	position: absolute;
 	top: 0;
 	right: 0;
 	bottom: 0;
 	left: 0;
 
+	display: flex;
+	flex-direction: column;
+
+	overflow: auto;
+
+	// Not sure this is needed.
 	@include breakpoint( '<660px' ) {
 		-webkit-overflow-scrolling: touch;
 	}
-}
 
-// Clearing out the sidebar list styles
-.sidebar {
-	margin: 0;
-
+	// Prevent elements from shrinking during
+	// initial load in Safari. Unsure if still required?
 	.current-site,
-	.sidebar__footer {
-		flex-shrink: 0; // prevents items from squishing together under their initial height in Safari
+	.sidebar__footer,
+	ul,
+	li {
+		flex-shrink: 0;
 	}
 
+	// Reset lists to avoid bullets and margins.
 	ul {
-		flex-shrink: 0;
-		list-style: none;
 		margin: 0;
 	}
 
 	li {
-		flex-shrink: 0;
-		position: relative;
+		list-style: none;
 	}
 }
 
-// Sidebar group headings
-.sidebar__heading {
-	color: var( --sidebar-heading-color );
-	font-size: 14px;
-	font-weight: 600;
-	margin: 16px 8px 6px 16px;
-	display: flex;
-}
-
-// Menu Links
-.sidebar__menu {
-	display: block;
-
-	@include breakpoint( '<660px' ) {
-		margin-top: 24px;
-	}
-
-	li {
-		display: flex;
-
-		@include breakpoint( '<660px' ) {
-			background-color: var( --color-neutral-0 );
-			border-bottom: 1px solid lighten( $gray, 25 );
-
-			&:first-child {
-				border-top: 1px solid lighten( $gray, 25 );
-			}
-		}
-	}
-
-	a:first-child {
-		flex: 1 0 auto;
-		width: 0;
-
-		// Fade overlay for longer labels
-		&::after {
-			content: '';
-			text-align: right;
-			position: absolute;
-			top: 0;
-			right: 0;
-			bottom: 0;
-			width: 15%;
-
-			background: overflow-gradient( var( --sidebar-menu-a-first-child-after-background ), 50% );
-
-			@include breakpoint( '<660px' ) {
-				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
-			}
-		}
-	}
-
-	a {
-		font-size: 15px;
-		line-height: 1;
-		position: relative;
-		padding: 11px 16px 11px 20px;
-		color: var( --color-text );
-		box-sizing: border-box;
-		white-space: nowrap;
-		overflow: hidden;
-		display: flex;
-		align-items: center;
-
-		.accessible-focus &:focus {
-			outline: none;
-			box-shadow: inset 0 0 0 2px var( --color-primary-light );
-
-			&::after {
-				top: 2px;
-				right: 2px;
-				bottom: 2px;
-			}
-		}
-
-		-webkit-tap-highlight-color: rgba( $gray-dark, 0.2 );
-
-		.sidebar__menu-link-secondary-text {
-			padding: 3px 8px 4px;
-			margin-right: 8px;
-			align-self: center;
-			font-weight: 600;
-			font-size: 12px;
-			position: absolute;
-			right: 0;
-			z-index: z-index( 'icon-parent', '.sidebar__menu .gridicon.gridicons-external' );
-			color: var( --sidebar-menu-link-secondary-text-color );
-		}
-	}
-
-	.gridicon,
-	.jetpack-logo {
-		fill: var( --sidebar-gridicon-fill );
-		height: 24px;
-		width: 24px;
-		margin-right: 12px;
-		flex-shrink: 0;
-
-		// External indicator for sections that aren't available in Calypso
-		&.gridicons-external {
-			position: absolute;
-			top: 13px;
-			right: 8px;
-			left: auto;
-			z-index: z-index( 'icon-parent', '.sidebar__menu .gridicon.gridicons-external' );
-			height: 18px;
-			margin-right: 0;
-		}
-	}
-}
-
-a.sidebar__button,
-form.sidebar__button {
-	display: flex;
-	position: relative;
-	align-self: center;
-	box-sizing: border-box;
-	overflow: hidden;
-	padding: 2px 8px 3px;
-	height: 24px;
-	margin-right: 8px;
-	line-height: 18px;
-	background-color: var( --color-surface );
-	color: var( --color-text-subtle );
-	font-size: 12px;
-	font-weight: 600;
-	border-radius: 3px;
-	border: 1px solid var( --color-neutral-100 );
-
-	@include breakpoint( '<660px' ) {
-		font-size: 14px;
-		height: 30px;
-		line-height: 23px;
-	}
-}
-
-// Expanding clickable area of mini buttons
-a.sidebar__button::after,
-form.sidebar__button input {
-	content: '';
-	position: absolute;
-	top: -10px;
-	bottom: -10px;
-	right: -10px;
-	left: -10px;
-	width: 100%;
-}
-
-// Selected Menu
-@include breakpoint( '>660px' ) {
-	.sidebar__menu .selected:not( .sidebar__plugins-item ) {
-		background-color: var( --sidebar-menu-selected-background-color );
-
-		a {
-			color: var( --sidebar-menu-selected-a-color );
-
-			.sidebar__menu-link-secondary-text {
-				color: inherit;
-			}
-
-			&:first-child::after {
-				background: overflow-gradient(
-					var( --sidebar-menu-selected-a-first-child-after-background ),
-					50%
-				);
-			}
-		}
-
-		.sidebar__button {
-			color: var( --color-neutral-700 );
-			border: 1px solid var( --color-neutral-600 );
-
-			&:hover {
-				color: var( --color-accent );
-			}
-		}
-
-		.gridicon,
-		.jetpack-logo {
-			fill: var( --sidebar-menu-selected-a-color );
-		}
-
-		&.is-action-button-selected a {
-			&:first-child::after {
-				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
-			}
-		}
-	}
-}
-
-// Menu Hover
-.notouch .sidebar__menu li:hover {
-	&:not( .selected ) {
-		background-color: var( --sidebar-menu-hover-background );
-
-		a,
-		form {
-			&:first-child::after {
-				background: overflow-gradient( var( --sidebar-menu-hover-background-gradient ), 50% );
-			}
-
-			&.sidebar__button {
-				background-color: lighten( $sidebar-bg-color, 10% );
-				color: var( --color-text );
-			}
-		}
-	}
-
-	@include breakpoint( '<660px' ) {
-		background-color: var( --color-neutral-0 );
-
-		a,
-		form {
-			color: var( --color-primary );
-
-			&:first-child::after {
-				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
-			}
-
-			&.sidebar__button {
-				background-color: $white;
-				color: var( --color-neutral-700 );
-			}
-		}
-
-		.gridicon {
-			fill: var( --color-primary );
-		}
-	}
-}
-
-.notouch .sidebar__menu li:not( .selected ) {
-	a,
-	form {
-		&.sidebar__button:hover {
-			color: var( --color-accent );
-			border-color: var( --sidebar-menu-hover-color );
-		}
-	}
-
-	a:hover,
-	form:hover {
-		color: var( --sidebar-menu-hover-color );
-
-		.sidebar__menu-link-secondary-text {
-			color: inherit;
-		}
-
-		.gridicon,
-		.jetpack-logo {
-			fill: var( --sidebar-menu-hover-color );
-		}
-	}
-}
-
-.sidebar .sidebar__separator {
-	border-bottom: 1px solid darken( $sidebar-bg-color, 10% );
-}
-
-.sidebar .sidebar__footer {
-	align-items: center;
-	padding: 0;
-	border-top: 1px solid darken( $sidebar-bg-color, 10% );
-	margin: auto 0 0;
-	display: flex;
-	flex-direction: row;
-	padding-left: 10px;
-	min-height: 42px;
-}
-
-.sidebar .sidebar__footer .button {
-	box-sizing: border-box;
-	display: inline-block;
-	text-transform: uppercase;
-	font-size: 11px;
-	font-weight: 600;
-	padding: 8px;
-	color: var( --sidebar-footer-button-color );
-	line-height: 2.1;
-	margin-right: auto;
-
-	&.is-active {
-		background: var( --color-primary );
-
-		.gridicon {
-			fill: $white;
-		}
-	}
-
-	&:hover {
-		color: var( --color-neutral-700 );
-	}
-
-	@include breakpoint( '<660px' ) {
-		padding: 16px;
-	}
-
-	.gridicon {
-		display: block;
-		float: left;
-		margin-right: 6px;
-		top: auto;
-		margin-top: auto;
-	}
-}
-
-.sidebar__region {
-	flex-shrink: 0;
-	display: flex;
-	flex-direction: column;
-	overflow-y: auto;
-	overflow-x: hidden;
-	flex: 1;
-	-webkit-overflow-scrolling: touch;
-}
-
+// This button is hidden until focused. It allows screen-readers
+// and other assistive technology to skip the sidebar.
 .sidebar__skip-navigation {
 	position: absolute;
 	left: -10000px;
-	top: auto;
-	width: 1px;
-	height: 1px;
-	overflow: hidden;
 	flex-shrink: 0;
 
 	&:focus {
-		position: static;
-		width: auto;
-		height: auto;
-		padding: 11px 16px 11px 18px;
-		outline: none;
-		box-shadow: inset 0 0 0 2px var( --color-primary-light );
-		font-size: 14px;
-		line-height: 1;
-		color: var( --color-text );
-		box-sizing: border-box;
-		white-space: nowrap;
-		overflow: hidden;
-		display: flex;
-		align-items: center;
-
-		&::after {
-			top: 2px;
-			right: 2px;
-			bottom: 2px;
-		}
+		position: relative;
+		left: auto;
 	}
 }
 
-.sidebar__menu {
-	.is-placeholder {
-		cursor: default;
-		pointer-events: none;
+// Sidebar Headings, used for both static headings
+// like in Reader, and for the expandable menus.
+.sidebar__heading {
+	color: var( --color-sidebar-text-alternative );
+	font-size: 15px;
+	font-weight: 600;
+	padding: 16px 8px 6px 16px;
+}
 
-		.gridicon,
-		span,
-		.sidebar__button {
-			animation: loading-fade 1.6s ease-in-out infinite;
-			background-color: lighten( $gray, 25% );
-			color: transparent;
+// Sidebar menu icons for main sections
+.sidebar__menu-icon {
+	fill: var( --color-sidebar-gridicon-fill );
+	margin-right: 11px;
+}
+
+// Menu links: The actual anchor tags that contain links to
+// various sections of Calypso.
+.sidebar__menu-link {
+	font-size: 15px;
+	line-height: 1;
+	position: relative;
+	padding: 10px 16px 10px 20px;
+	box-sizing: border-box;
+	white-space: nowrap;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+
+	&,
+	&:visited {
+		color: var( --color-sidebar-text );
+	}
+
+	// I think this is some voodoo to change the color
+	// of a link when tapped on iOS.
+	-webkit-tap-highlight-color: rgba( var( --color-neutral-700-rgb ), 0.2 );
+
+	&:hover {
+		background-color: var( --color-sidebar-menu-hover-background );
+		color: var( --color-sidebar-menu-hover-text );
+
+		.sidebar__menu-icon {
+			fill: var( --color-sidebar-menu-hover-text );
 		}
+	}
 
-		.gridicon {
-			fill: transparent;
-			stroke: transparent;
+	.badge {
+		margin: -7px 0 -8px;
+	}
+
+	.selected &,
+	.selected &:hover {
+		color: var( --color-sidebar-menu-selected-text );
+		background-color: var( --color-sidebar-menu-selected-background );
+
+		.sidebar__menu-icon {
+			fill: var( --color-sidebar-menu-selected-text );
 		}
+	}
 
-		a {
-			&::after {
-				display: none;
+	// Some links are marked as "external" and show
+	// an icon to visually indicate they will open
+	// a new window/tab.
+	.gridicons-external,
+	&.external-link .gridicons-external {
+		height: 16px;
+		width: 16px;
+		position: absolute;
+		right: 21px;
+		top: auto;
+	}
+}
+
+.sidebar__menu-link-text {
+	flex: auto;
+}
+
+.sidebar__menu-link-secondary-text {
+	margin-right: 8px;
+	align-self: center;
+	font-weight: 600;
+	font-size: 12px;
+	position: absolute;
+	right: 0;
+	z-index: 1;
+	color: var( --color-sidebar-text-alternative );
+	padding: 4px 8px;
+
+	.selected &,
+	.sidebar__menu-link:hover & {
+		color: inherit;
+	}
+}
+
+// Expandables: Some sidebar menus act like accordions where
+// you can hide and show the contained list.
+.sidebar__menu.is-togglable {
+	.sidebar__heading {
+		display: flex;
+		padding: 10px 16px 10px 20px;
+		font-weight: 600;
+		cursor: pointer;
+
+		&:hover {
+			background-color: var( --color-sidebar-menu-hover-background );
+			color: var( --color-sidebar-menu-hover-text );
+
+			.sidebar__menu-icon,
+			.sidebar__expandable-arrow {
+				fill: var( --color-sidebar-menu-hover-text );
 			}
 		}
 	}
+
+	.sidebar__expandable-title {
+		flex: 1 1 0;
+	}
+
+	.sidebar__expandable-arrow {
+		transition: transform 0.1s linear;
+		fill: var( --color-sidebar-gridicon-fill );
+	}
+
+	.sidebar__menu-link {
+		padding-left: 55px;
+	}
+
+	&.is-toggle-open {
+		.sidebar__expandable-arrow {
+			transform: rotate( 180deg );
+		}
+	}
 }
 
-.sidebar__chevron-right {
-	position: relative;
-	width: 36px;
-	height: 46px;
-	pointer-events: none;
-
-	.gridicon {
-		padding-top: 10px;
-	}
-
-	:hover + & .gridicon {
-		fill: var( --color-primary );
-	}
+// Sometimes we show info at the bottom of the sidebar. For
+// example on My Site(s), for users with a single site, we
+// show a button to add a new site.
+.sidebar__wp-admin,
+.sidebar__footer {
+	margin-top: 16px;
 }

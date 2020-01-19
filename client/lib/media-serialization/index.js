@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Internal dependencies
  */
@@ -10,8 +9,8 @@ import Strategies from './strategies';
  * media metadata, and returns an object including all detected values.
  *
  * @param  {*}      node    Media object to parse
- * @param  {Object} _parsed In recursion, the known values
- * @return {Object}         Object of all detected values
+ * @param  {object} _parsed In recursion, the known values
+ * @returns {object}         Object of all detected values
  */
 export function deserialize( node, _parsed ) {
 	const format = detectFormat( node );

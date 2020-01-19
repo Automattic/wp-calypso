@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import { domainManagementEmailForwarding } from 'my-sites/domains/paths';
+import { Dialog } from '@automattic/components';
+import { emailManagementForwarding } from 'my-sites/email/paths';
 
 class DeleteEmailForwardsDialog extends React.Component {
 	static propTypes = {
@@ -47,12 +45,7 @@ class DeleteEmailForwardsDialog extends React.Component {
 		];
 
 		return (
-			<Dialog
-				isVisible={ visible }
-				buttons={ buttons }
-				onClose={ this.close }
-				className="cancel-purchase-button__warning-dialog"
-			>
+			<Dialog isVisible={ visible } buttons={ buttons } onClose={ this.close }>
 				<h1>{ translate( 'Are you sure?' ) }</h1>
 				<p>
 					{ translate( 'Removing this record will delete your current {{a}}Email Forwards{{/a}}.', {
@@ -72,10 +65,7 @@ class DeleteEmailForwardsDialog extends React.Component {
 	}
 
 	getEmailForwardingPath() {
-		return domainManagementEmailForwarding(
-			this.props.selectedSite.slug,
-			this.props.selectedDomainName
-		);
+		return emailManagementForwarding( this.props.selectedSite.slug, this.props.selectedDomainName );
 	}
 }
 

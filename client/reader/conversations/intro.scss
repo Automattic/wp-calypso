@@ -1,0 +1,75 @@
+// Conversations intro
+.conversations__intro {
+	border: 1px solid var( --color-neutral-0 );
+	color: var( --color-primary-dark );
+	display: flex;
+	min-height: 140px;
+
+	@media ( min-width: 661px ) and ( max-width: 773px ) {
+		background-position: 150px 20px;
+	}
+
+	@include breakpoint( '<660px' ) {
+		background-position: 120px 20px;
+	}
+
+	.conversations__intro-header {
+		display: flex;
+		flex-direction: row;
+	}
+
+	.conversations__intro-character {
+		height: 140px;
+		margin-right: -8px; // prevent right crop of illustration
+
+		// Hides the character when main content column gets too narrow
+		@media ( min-width: 661px ) and ( max-width: 840px ) {
+			display: none;
+		}
+
+		@include breakpoint( '<660px' ) {
+			display: none;
+		}
+	}
+
+	.conversations__intro-copy {
+		display: flex;
+		flex: 1 1 auto;
+		flex-direction: column;
+		font-size: 16px;
+		justify-content: center;
+		margin-left: 24px;
+		padding: 10px 0;
+		width: 100%;
+	}
+
+	.conversations__intro-copy-hidden {
+		@include breakpoint( '<660px' ) {
+			display: none;
+			visibility: hidden;
+		}
+	}
+}
+
+// Dismiss button
+.conversations__intro .conversations__intro-close {
+	align-items: flex-start;
+	margin-top: -4px;
+	margin-right: 16px;
+	height: 24px;
+	width: 24px;
+
+	.conversations__intro-close-icon {
+		fill: var( --color-neutral-20 );
+		position: absolute;
+
+		// Fix for 1px (0.5pt) misalignment in Safari under retina. See
+		// https://github.com/Automattic/wp-calypso/pull/11282/#issuecomment-289837131
+		transform: scale( 1 );
+
+		&:hover {
+			cursor: pointer;
+			fill: var( --color-neutral-50 );
+		}
+	}
+}

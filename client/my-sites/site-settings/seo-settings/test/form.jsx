@@ -1,25 +1,12 @@
-/** @format */
+/** @jest-environment jsdom */
 
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 jest.mock( 'components/banner', () => 'Banner' );
 jest.mock( 'components/notice', () => 'Notice' );
 jest.mock( 'components/notice/notice-action', () => 'NoticeAction' );
-
-jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
-		<Comp
-			{ ...props }
-			translate={ function( x ) {
-				return x;
-			} }
-		/>
-	),
-	numberFormat: x => x,
-} ) );
 
 /**
  * External dependencies
@@ -48,6 +35,7 @@ import {
 import { SeoForm } from '../form';
 
 const props = {
+	refreshSiteData: x => x,
 	site: {
 		plan: PLAN_FREE,
 	},
@@ -61,11 +49,6 @@ describe( 'SeoForm basic tests', () => {
 		expect( comp.find( '.seo-settings__seo-form' ) ).toHaveLength( 1 );
 	} );
 
-	test( 'should contain PageViewTracker', () => {
-		const comp = shallow( <SeoForm { ...props } /> );
-		expect( comp.find( 'PageViewTracker' ) ).toHaveLength( 1 );
-	} );
-
 	test( 'should render conflicted SEO notice when conflictedSeoPlugin is set', () => {
 		const comp = shallow( <SeoForm { ...props } conflictedSeoPlugin={ { name: 'test' } } /> );
 		expect( comp.find( 'Notice' ) ).toHaveLength( 1 );
@@ -77,14 +60,6 @@ describe( 'SeoForm basic tests', () => {
 		expect( comp.find( 'Notice' ) ).toHaveLength( 0 );
 	} );
 
-	test( 'should render Jetpack unsupported notice when is jetpack site and does not support seo', () => {
-		const comp = shallow(
-			<SeoForm { ...props } siteIsJetpack={ true } jetpackVersionSupportsSeo={ false } />
-		);
-		expect( comp.find( 'Notice' ) ).toHaveLength( 1 );
-		expect( comp.find( 'Notice' ).props().text ).toContain( 'require a newer version of Jetpack' );
-	} );
-
 	test( 'should not render Jetpack unsupported notice when is not jetpack site or supports seo', () => {
 		const comp = shallow( <SeoForm { ...props } /> );
 		expect( comp.find( 'Notice' ) ).toHaveLength( 0 );
@@ -92,7 +67,12 @@ describe( 'SeoForm basic tests', () => {
 
 	test( 'should render optimize SEO banner when has no SEO features', () => {
 		const comp = shallow(
-			<SeoForm { ...props } hasSeoPreviewFeature={ false } hasAdvancedSEOFeature={ false } />
+			<SeoForm
+				{ ...props }
+				hasSeoPreviewFeature={ false }
+				hasAdvancedSEOFeature={ false }
+				selectedSite={ { plan: { product_slug: 'free' } } }
+			/>
 		);
 		expect( comp.find( 'Banner' ) ).toHaveLength( 1 );
 		expect( comp.find( 'Banner' ).props().event ).toContain( 'calypso_seo_settings_upgrade_nudge' );
@@ -121,7 +101,7 @@ describe( 'SeoForm basic tests', () => {
 		const comp = shallow(
 			<SeoForm
 				{ ...props }
-				site={ { plan: null } }
+				selectedSite={ { plan: null } }
 				hasSeoPreviewFeature={ false }
 				hasAdvancedSEOFeature={ false }
 			/>
@@ -187,7 +167,7 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 	[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( product_slug => {
 		test( `Business 1 year for (${ product_slug })`, () => {
 			const comp = shallow(
-				<SeoForm { ...props } siteIsJetpack={ false } site={ { plan: { product_slug } } } />
+				<SeoForm { ...props } siteIsJetpack={ false } selectedSite={ { plan: { product_slug } } } />
 			);
 			expect( comp.find( 'Banner' ) ).toHaveLength( 1 );
 			expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_BUSINESS );
@@ -197,7 +177,7 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 	[ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ].forEach( product_slug => {
 		test( `Business 2 year for (${ product_slug })`, () => {
 			const comp = shallow(
-				<SeoForm { ...props } siteIsJetpack={ false } site={ { plan: { product_slug } } } />
+				<SeoForm { ...props } siteIsJetpack={ false } selectedSite={ { plan: { product_slug } } } />
 			);
 			expect( comp.find( 'Banner' ) ).toHaveLength( 1 );
 			expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_BUSINESS_2_YEARS );
@@ -208,7 +188,11 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 		product_slug => {
 			test( `Jetpack Premium for (${ product_slug })`, () => {
 				const comp = shallow(
-					<SeoForm { ...props } siteIsJetpack={ true } site={ { plan: { product_slug } } } />
+					<SeoForm
+						{ ...props }
+						siteIsJetpack={ true }
+						selectedSite={ { plan: { product_slug } } }
+					/>
 				);
 				expect( comp.find( 'Banner' ) ).toHaveLength( 1 );
 				expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_JETPACK_PREMIUM );

@@ -1,0 +1,29 @@
+{
+	"name": "@automattic/wpcom-block-editor",
+	"version": "1.0.0-alpha.0",
+	"description": "Utilities for the block editor in WordPress.com integration",
+	"sideEffects": true,
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/Automattic/wp-calypso.git",
+		"directory": "apps/wpcom-block-editor"
+	},
+	"private": true,
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"scripts": {
+		"bundle": "calypso-build --env.WP",
+		"build:dev": "npm run bundle --",
+		"build:prod": "NODE_ENV=production npm run bundle --",
+		"build": "npm-run-all --parallel \"build:* -- {@}\" --",
+		"clean": "npx rimraf dist",
+		"prebuild": "npm run clean"
+	},
+	"dependencies": {
+		"debug": "4.1.1"
+	}
+}

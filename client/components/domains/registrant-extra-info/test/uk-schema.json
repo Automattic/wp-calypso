@@ -21,22 +21,13 @@
 											"minLength": 1
 										}
 									},
-									"required": [
-										"registrationNumber"
-									]
+									"required": [ "registrationNumber" ]
 								},
 								{
 									"not": {
 										"properties": {
 											"registrantType": {
-												"enum": [
-													"IP",
-													"LLP",
-													"LTD",
-													"PLC",
-													"RCHAR",
-													"SCH"
-												]
+												"enum": [ "IP", "LLP", "LTD", "PLC", "RCHAR", "SCH" ]
 											}
 										}
 									}
@@ -54,9 +45,7 @@
 											"minLength": 1
 										}
 									},
-									"required": [
-										"tradingName"
-									]
+									"required": [ "tradingName" ]
 								},
 								{
 									"not": {
@@ -89,14 +78,10 @@
 							}
 						}
 					],
-					"required": [
-						"registrantType"
-					]
+					"required": [ "registrantType" ]
 				}
 			},
-			"required": [
-				"uk"
-			]
+			"required": [ "uk" ]
 		},
 		"organization": {
 			"type": "string",
@@ -129,7 +114,5 @@
 			}
 		}
 	},
-	"required": [
-		"extra"
-	]
+	"required": [ "extra" ]
 }

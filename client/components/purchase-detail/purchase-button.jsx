@@ -1,22 +1,21 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 const PurchaseButton = ( {
-	className = false,
+	className,
 	href,
 	disabled,
-	onClick = () => {},
+	onClick,
 	target,
 	rel,
 	text,
@@ -24,7 +23,7 @@ const PurchaseButton = ( {
 } ) => {
 	return (
 		<Button
-			className={ `${ className ? className + ' ' : '' }purchase-detail__button` }
+			className={ classNames( 'purchase-detail__button', className ) }
 			disabled={ disabled }
 			href={ href }
 			onClick={ onClick }

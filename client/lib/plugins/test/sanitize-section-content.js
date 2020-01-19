@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -11,7 +10,7 @@ import { sanitizeSectionContent as clean } from '../sanitize-section-content';
 /**
  * Attempts to create a DOM node from given HTML
  *
- * @param {String} html expected HTML to create node
+ * @param {string} html expected HTML to create node
  * @returns {Node | null} possible node described by HTML
  */
 const cleanNode = html => {

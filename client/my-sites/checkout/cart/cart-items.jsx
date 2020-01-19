@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import React from 'react';
  * Internal dependencies
  */
 import CartItem from './cart-item';
-import { cartItems } from 'lib/cart-values';
+import { getAllCartItems, getAllCartItemsSorted } from 'lib/cart-values/cart-items';
 import { localize } from 'i18n-calypso';
 
 const COLLAPSED_ITEMS_COUNT = 2;
@@ -42,9 +40,10 @@ export class CartItems extends React.Component {
 	};
 
 	collapseItems( items ) {
-		let collapsedItemsCount = items.length - COLLAPSED_ITEMS_COUNT,
-			collapsedItems = items.slice( 0, COLLAPSED_ITEMS_COUNT );
+		const collapsedItemsCount = items.length - COLLAPSED_ITEMS_COUNT;
+		const collapsedItems = items.slice( 0, COLLAPSED_ITEMS_COUNT );
 
+		/* eslint-disable jsx-a11y/anchor-is-valid */
 		collapsedItems.push(
 			<li key="items-expander">
 				<a className="cart-items__expander" href="#" onClick={ this.handleExpand }>
@@ -55,6 +54,7 @@ export class CartItems extends React.Component {
 				</a>
 			</li>
 		);
+		/* eslint-enable jsx-a11y/anchor-is-valid */
 
 		return collapsedItems;
 	}
@@ -62,17 +62,17 @@ export class CartItems extends React.Component {
 	render() {
 		const { cart } = this.props;
 
-		if ( ! cartItems.getAll( cart ) ) {
+		if ( ! getAllCartItems( cart ) ) {
 			return;
 		}
 
-		let items = cartItems.getAllSorted( cart ).map( cartItem => {
+		let items = getAllCartItemsSorted( cart ).map( ( cartItem, index ) => {
 			return (
 				<CartItem
 					cart={ cart }
 					cartItem={ cartItem }
 					selectedSite={ this.props.selectedSite }
-					key={ cartItem.product_id + '-' + cartItem.meta }
+					key={ `${ cartItem.product_id }-${ cartItem.meta }-${ index }` }
 				/>
 			);
 		} );

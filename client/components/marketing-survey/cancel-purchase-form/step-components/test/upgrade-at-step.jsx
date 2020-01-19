@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -56,7 +54,9 @@ describe( 'UpgradeATStep', () => {
 			<UpgradeATStep recordTracksEvent={ noop } translate={ noop } selectedSite={ selectedSite } />
 		);
 
-		expect( wrapper.find( 'Button' ).props().href ).to.equal( '/checkout/site_slug/business' );
+		expect( wrapper.find( 'Button' ).props().href ).to.equal(
+			'/checkout/site_slug/business?coupon=BIZC25'
+		);
 	} );
 
 	test( 'should fire tracks event when button is clicked', () => {

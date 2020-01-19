@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -11,6 +10,7 @@ import React from 'react';
 import TestUtils from 'react-dom/test-utils';
 import ReactDOM from 'react-dom';
 import sinon from 'sinon';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,8 +18,9 @@ import sinon from 'sinon';
 import { UserStep as User } from '../';
 
 jest.mock( 'blocks/signup-form', () => require( 'components/empty-component' ) );
-jest.mock( 'lib/abtest', () => () => {} );
-jest.mock( 'lib/analytics', () => ( {} ) );
+jest.mock( 'lib/abtest', () => ( {
+	abtest: () => '',
+} ) );
 jest.mock( 'signup/step-wrapper', () => require( 'components/empty-component' ) );
 jest.mock( 'signup/utils', () => ( {
 	getFlowSteps: flow => {
@@ -45,6 +46,7 @@ describe( '#signupStep User', () => {
 		testElement = React.createElement( User, {
 			subHeaderText: 'first subheader message',
 			flowName: 'userAsFirstStepInFlow',
+			saveSignupStep: noop,
 		} );
 		rendered = TestUtils.renderIntoDocument( testElement );
 
@@ -55,6 +57,7 @@ describe( '#signupStep User', () => {
 		testElement = React.createElement( User, {
 			subHeaderText: 'test subheader message',
 			flowName: 'someOtherFlow',
+			saveSignupStep: noop,
 		} );
 		rendered = TestUtils.renderIntoDocument( testElement );
 
@@ -72,6 +75,7 @@ describe( '#signupStep User', () => {
 			const element = React.createElement( User, {
 				subHeaderText: 'test subheader message',
 				flowName: 'someOtherFlow',
+				saveSignupStep: noop,
 			} );
 			component = ReactDOM.render( element, node );
 		} );
@@ -84,6 +88,7 @@ describe( '#signupStep User', () => {
 			const testProps = {
 				subHeaderText: 'My test message',
 				flowName: 'userAsFirstStepInFlow',
+				saveSignupStep: noop,
 			};
 
 			expect( spyComponentProps.calledOnce ).to.equal( false );
@@ -98,6 +103,7 @@ describe( '#signupStep User', () => {
 			const testProps = {
 				subHeaderText: 'My test message',
 				flowName: 'another test message test',
+				saveSignupStep: noop,
 			};
 
 			expect( spyComponentProps.calledOnce ).to.equal( false );

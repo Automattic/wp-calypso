@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,9 +20,9 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
  * However, the transfer process might not start immediately because of the transfer eligibility
  * reasons. That's where this selector comes handy.
  *
- * @param   {Object}  state  App state.
- * @param   {Number}  siteId Site of interest.
- * @returns {Boolean}        Whether there might be a transfer process happening on the backend.
+ * @param   {object}  state  App state.
+ * @param   {number}  siteId Site of interest.
+ * @returns {boolean}        Whether there might be a transfer process happening on the backend.
  */
 export default ( state, siteId ) => {
 	const siteOptions = getSiteOptions( state, siteId );

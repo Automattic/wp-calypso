@@ -1,7 +1,3 @@
-.transfer__remove-privacy-dialog {
-	max-width: 480px;
-}
-
 .transfer-out__section-header {
 	flex-wrap: wrap;
 	button {
@@ -20,25 +16,12 @@
 	}
 }
 
-.transfer-card {
+.transfer-out__card {
 	p {
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 	}
 }
 
-.transfer__ips_tag_set_dialog {
-	@extend .dialog.card;
-	max-width: 50%;
-}
-
-.transfer__ips_tag_set_dialog__backdrop {
-	@extend .dialog__backdrop;
-}
-
-.transfer__ips_tag_set_dialog__content {
-	@extend .dialog__content;
-}
-
-.transfer__ips_tag_set_dialog__action-buttons {
-	@extend .dialog__action-buttons;
+.dialog.card.transfer-out__select-ips-tag-dialog {
+	max-width: 700px;
 }

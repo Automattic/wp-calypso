@@ -1,22 +1,24 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
 import i18n from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { dismissNudge } from 'blocks/gsuite-stats-nudge/actions';
 import { GOOGLE_APPS_LEARNING_CENTER } from 'lib/url/support';
 import PurchaseDetail from 'components/purchase-detail';
 import userFactory from 'lib/user';
 
 const user = userFactory();
 
-const GoogleAppsDetails = () => {
+const GoogleAppsDetails = props => {
+	props.dismissNudge();
+
 	return (
 		<PurchaseDetail
 			icon="mail"
@@ -48,4 +50,6 @@ const GoogleAppsDetails = () => {
 	);
 };
 
-export default GoogleAppsDetails;
+export default connect( null, {
+	dismissNudge,
+} )( GoogleAppsDetails );

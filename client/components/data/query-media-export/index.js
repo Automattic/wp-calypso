@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestMediaExport } from 'state/site-settings/exporter/actions';
+import { requestMediaExport } from 'state/exporter/actions';
 import getMediaExportUrl from 'state/selectors/get-media-export-url';
 
 class QueryMediaExport extends Component {

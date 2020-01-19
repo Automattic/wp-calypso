@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,13 +6,15 @@ import config from 'config';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { dashboardListLimit } from 'woocommerce/app/store-stats/constants';
 import DashboardWidget from 'woocommerce/components/dashboard-widget';
 import { getLink } from 'woocommerce/lib/nav-utils';
@@ -62,9 +63,9 @@ class StatsWidget extends Component {
 	};
 
 	dateForDisplay = () => {
-		const { translate, unit } = this.props;
+		const { translate, unit, moment: localizedMoment } = this.props;
 
-		const localizedDate = moment( moment().format( 'YYYY-MM-DD' ) );
+		const localizedDate = localizedMoment( localizedMoment().format( 'YYYY-MM-DD' ) );
 		let formattedDate;
 		switch ( unit ) {
 			case 'week':
@@ -135,8 +136,8 @@ class StatsWidget extends Component {
 	};
 
 	renderOrders = () => {
-		const { site, translate, unit, orderData, queries } = this.props;
-		const date = getEndPeriod( moment().format( 'YYYY-MM-DD' ), unit );
+		const { site, translate, unit, orderData, queries, moment: localizedMoment } = this.props;
+		const date = getEndPeriod( localizedMoment().format( 'YYYY-MM-DD' ), unit );
 		const delta = getDelta( orderData.deltas, date, 'orders' );
 		return (
 			<Stat
@@ -155,8 +156,8 @@ class StatsWidget extends Component {
 	};
 
 	renderSales = () => {
-		const { site, translate, unit, orderData, queries } = this.props;
-		const date = getEndPeriod( moment().format( 'YYYY-MM-DD' ), unit );
+		const { site, translate, unit, orderData, queries, moment: localizedMoment } = this.props;
+		const date = getEndPeriod( localizedMoment().format( 'YYYY-MM-DD' ), unit );
 		const delta = getDelta( orderData.deltas, date, 'total_sales' );
 		return (
 			<Stat
@@ -175,8 +176,8 @@ class StatsWidget extends Component {
 	};
 
 	renderVisitors = () => {
-		const { site, translate, unit, visitorData, queries } = this.props;
-		const date = getStartPeriod( moment().format( 'YYYY-MM-DD' ), unit );
+		const { site, translate, unit, visitorData, queries, moment: localizedMoment } = this.props;
+		const date = getStartPeriod( localizedMoment().format( 'YYYY-MM-DD' ), unit );
 		const delta = getDeltaFromData( visitorData, date, 'visitors', unit );
 		return (
 			<Stat
@@ -195,8 +196,16 @@ class StatsWidget extends Component {
 	};
 
 	renderConversionRate = () => {
-		const { site, translate, unit, visitorData, orderData, queries } = this.props;
-		const date = getUnitPeriod( moment().format( 'YYYY-MM-DD' ), unit );
+		const {
+			site,
+			translate,
+			unit,
+			visitorData,
+			orderData,
+			queries,
+			moment: localizedMoment,
+		} = this.props;
+		const date = getUnitPeriod( localizedMoment().format( 'YYYY-MM-DD' ), unit );
 		const data = getConversionRateData( visitorData, orderData.data, unit );
 		const delta = getDeltaFromData( data, date, 'conversionRate', unit );
 		return (
@@ -397,4 +406,4 @@ function mapDispatchToProps( dispatch ) {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)( localize( StatsWidget ) );
+)( localize( withLocalizedMoment( StatsWidget ) ) );

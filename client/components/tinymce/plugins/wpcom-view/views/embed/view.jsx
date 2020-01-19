@@ -1,4 +1,4 @@
-/** @format */
+/* eslint-disable react/no-string-refs */
 
 /**
  * External dependencies
@@ -33,6 +33,7 @@ class EmbedView extends Component {
 		//
 		// TODO: Investigate and evaluate whether we need to avoid rendering
 		//       the iframe on the initial render pass
+		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState(
 			{
 				// eslint-disable-line react/no-did-mount-set-state
@@ -115,6 +116,7 @@ class EmbedView extends Component {
 
 	render() {
 		return (
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<div ref="view" className="wpview-content wpview-type-embed">
 				{ this.renderFrame() }
 			</div>
@@ -132,5 +134,20 @@ EmbedView.defaultProps = {
 	onResize: () => {},
 };
 
-const EmbedViewContainer = Container.create( EmbedView, { withProps: true } );
+// Flux does not handle untranspiled ES6 properly (see https://github.com/facebook/flux/issues/351).
+// As such, we need to work around the issue by uglily wrapping the component, to ensure that it
+// works both in the evergreen and fallback builds.
+// The long-term fix is to move this component away from using Flux.
+function wrapComponent( containerClass ) {
+	const Tmp = containerClass;
+	containerClass = function( ...args ) {
+		return new Tmp( ...args );
+	};
+	containerClass.prototype = Tmp.prototype;
+	containerClass.getStores = Tmp.getStores;
+	containerClass.calculateState = Tmp.calculateState;
+	return containerClass;
+}
+
+const EmbedViewContainer = Container.create( wrapComponent( EmbedView ), { withProps: true } );
 export default EmbedViewContainer;

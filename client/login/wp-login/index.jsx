@@ -1,11 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { startCase } from 'lodash';
@@ -13,11 +12,15 @@ import { startCase } from 'lodash';
 /**
  * Internal dependencies
  */
+import AutomatticLogo from 'components/automattic-logo';
 import DocumentHead from 'components/data/document-head';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import getCurrentRoute from 'state/selectors/get-current-route';
 import LocaleSuggestions from 'components/locale-suggestions';
+import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
 import TranslatorInvite from 'components/translator-invite';
 import LoginBlock from 'blocks/login';
+import { isCrowdsignalOAuth2Client } from 'lib/oauth2-clients';
 import LoginLinks from './login-links';
 import Main from 'components/main';
 import PrivateSite from './private-site';
@@ -26,6 +29,7 @@ import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import {
 	recordPageViewWithClientId as recordPageView,
+	recordTracksEventWithClientId as recordTracksEvent,
 	enhanceWithSiteType,
 } from 'state/analytics/actions';
 import { withEnhancers } from 'state/utils';
@@ -59,7 +63,7 @@ export class Login extends React.Component {
 		this.recordPageView( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.twoFactorAuthType !== nextProps.twoFactorAuthType ) {
 			this.recordPageView( nextProps );
 		}
@@ -88,6 +92,10 @@ export class Login extends React.Component {
 		this.props.recordPageView( url, title );
 	}
 
+	recordBackToWpcomLinkClick = () => {
+		this.props.recordTracksEvent( 'calypso_login_back_to_wpcom_link_click' );
+	};
+
 	renderI18nSuggestions() {
 		const { locale, path, isLoginView } = this.props;
 
@@ -99,8 +107,13 @@ export class Login extends React.Component {
 	}
 
 	renderFooter() {
-		const { translate } = this.props;
+		const { currentRoute, translate } = this.props;
 		const isOauthLogin = !! this.props.oauth2Client;
+
+		if ( currentRoute === '/log-in/jetpack' ) {
+			return null;
+		}
+
 		return (
 			<div
 				className={ classNames( 'wp-login__footer', {
@@ -108,6 +121,14 @@ export class Login extends React.Component {
 					'wp-login__footer--jetpack': ! isOauthLogin,
 				} ) }
 			>
+				{ isCrowdsignalOAuth2Client( this.props.oauth2Client ) && (
+					<LoggedOutFormBackLink
+						classes={ { 'logged-out-form__link-item': false } }
+						oauth2Client={ this.props.oauth2Client }
+						recordClick={ this.recordBackToWpcomLinkClick }
+					/>
+				) }
+
 				{ isOauthLogin ? (
 					<div className="wp-login__footer-links">
 						<a
@@ -141,6 +162,21 @@ export class Login extends React.Component {
 						alt="Powered by Jetpack"
 					/>
 				) }
+
+				{ isCrowdsignalOAuth2Client( this.props.oauth2Client ) && (
+					<div className="wp-login__crowdsignal-footer">
+						<p className="wp-login__crowdsignal-footer-text">
+							Powered by
+							<Gridicon icon="my-sites" size={ 18 } />
+							WordPress.com
+						</p>
+						<p className="wp-login__crowdsignal-footer-text">
+							An
+							<AutomatticLogo size={ 18 } />
+							Company
+						</p>
+					</div>
+				) }
 			</div>
 		);
 	}
@@ -157,6 +193,7 @@ export class Login extends React.Component {
 			twoFactorAuthType,
 			socialService,
 			socialServiceResponse,
+			fromSite,
 		} = this.props;
 
 		if ( privateSite && isLoggedIn ) {
@@ -174,6 +211,7 @@ export class Login extends React.Component {
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
+				fromSite={ fromSite }
 			/>
 		);
 	}
@@ -222,6 +260,7 @@ export class Login extends React.Component {
 
 export default connect(
 	( state, props ) => ( {
+		currentRoute: getCurrentRoute( state ),
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
 		locale: getCurrentLocaleSlug( state ),
 		oauth2Client: getCurrentOAuth2Client( state ),
@@ -229,5 +268,6 @@ export default connect(
 	} ),
 	{
 		recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
+		recordTracksEvent,
 	}
 )( localize( Login ) );

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -33,12 +32,16 @@ describe( 'actions', () => {
 						id: '12345678',
 						amount: '$1.23',
 						date: '2016-12-12T11:22:33+0000',
+						tax: '$0.20',
+						subtotal: '$1.03',
 					},
 				],
 				upcoming_charges: [
 					{
 						id: '87654321',
 						amount: '$4.56',
+						tax: '$0.55',
+						subtotal: '$4.01',
 						date: '2016-12-12T11:22:33+0000',
 					},
 				],

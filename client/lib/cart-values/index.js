@@ -1,48 +1,55 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import url from 'url';
-import { extend, isArray, invert } from 'lodash';
-import update from 'immutability-helper';
-import i18n from 'i18n-calypso';
+import { extend, get, isArray, invert } from 'lodash';
+import update, { extend as extendImmutabilityHelper } from 'immutability-helper';
+import { translate } from 'i18n-calypso';
 import config from 'config';
 
 /**
  * Internal dependencies
  */
-import cartItems from './cart-items';
-import productsValues from 'lib/products-values';
+import {
+	hasRenewalItem,
+	hasFreeTrial,
+	hasProduct,
+	hasDomainRegistration,
+	hasPlan,
+} from './cart-items';
+import { isCredits, isDomainRedemption, whitelistAttributes } from 'lib/products-values';
+import { detectWebPaymentMethod } from 'lib/web-payment';
 
-// #tax-on-checout-placeholder
-import { reduxGetState } from 'lib/redux-bridge';
-import getPaymentCountryCode from 'state/selectors/get-payment-country-code';
-import getPaymentPostalCode from 'state/selectors/get-payment-postal-code';
+// Auto-vivification from https://github.com/kolodny/immutability-helper#autovivification
+extendImmutabilityHelper( '$auto', function( value, object ) {
+	return object ? update( object, value ) : update( {}, value );
+} );
 
 const PAYMENT_METHODS = {
 	alipay: 'WPCOM_Billing_Stripe_Source_Alipay',
 	bancontact: 'WPCOM_Billing_Stripe_Source_Bancontact',
 	'credit-card': 'WPCOM_Billing_MoneyPress_Paygate',
 	ebanx: 'WPCOM_Billing_Ebanx',
-	'emergent-paywall': 'WPCOM_Billing_Emergent_Paywall',
 	eps: 'WPCOM_Billing_Stripe_Source_Eps',
 	giropay: 'WPCOM_Billing_Stripe_Source_Giropay',
 	ideal: 'WPCOM_Billing_Stripe_Source_Ideal',
+	netbanking: 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking',
 	paypal: 'WPCOM_Billing_PayPal_Express',
 	p24: 'WPCOM_Billing_Stripe_Source_P24',
 	'brazil-tef': 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef',
 	wechat: 'WPCOM_Billing_Stripe_Source_Wechat',
 	'web-payment': 'WPCOM_Billing_Web_Payment',
+	sofort: 'WPCOM_Billing_Stripe_Source_Sofort',
+	stripe: 'WPCOM_Billing_Stripe_Payment_Method',
 };
 
 /**
  * Preprocesses cart for server.
  *
- * @param {Object} cart Cart object.
- * @returns {Object} A new cart object.
+ * @param {object} cart Cart object.
+ * @returns {object} A new cart object.
  */
-function preprocessCartForServer( {
+export function preprocessCartForServer( {
 	coupon,
 	is_coupon_applied,
 	is_coupon_removed,
@@ -60,31 +67,13 @@ function preprocessCartForServer( {
 	);
 	const urlCoupon = needsUrlCoupon ? url.parse( document.URL, true ).query.coupon : '';
 
-	// #tax-on-checout-placeholder
-	const reduxState = reduxGetState();
-	const placeholderTax =
-		tax ||
-		( reduxState
-			? {
-					location: {
-						country_code: getPaymentCountryCode( reduxState ),
-						postal_code: getPaymentPostalCode( reduxState ),
-					},
-			  }
-			: {
-					location: {
-						country_code: 'US',
-						postal_code: '90210',
-					},
-			  } );
-
 	return Object.assign(
 		{
 			coupon,
 			is_coupon_applied,
 			is_coupon_removed,
 			currency,
-			tax: placeholderTax,
+			tax,
 			temporary,
 			extra,
 			products: products.map(
@@ -114,14 +103,14 @@ function preprocessCartForServer( {
  * `emptyCart( 123456, { temporary: true } )`
  *
  * @param {int} [siteId] The Site Id the cart will be associated with
- * @param {Object} [attributes] Additional attributes for the cart (optional)
+ * @param {object} [attributes] Additional attributes for the cart (optional)
  * @returns {cart} [emptyCart] The new empty cart created
  */
-function emptyCart( siteId, attributes ) {
+export function emptyCart( siteId, attributes ) {
 	return Object.assign( { blog_id: siteId, products: [] }, attributes );
 }
 
-function applyCoupon( coupon ) {
+export function applyCoupon( coupon ) {
 	return function( cart ) {
 		return update( cart, {
 			coupon: { $set: coupon },
@@ -131,7 +120,7 @@ function applyCoupon( coupon ) {
 	};
 }
 
-function removeCoupon() {
+export function removeCoupon() {
 	return function( cart ) {
 		return update( cart, {
 			coupon: { $set: '' },
@@ -141,40 +130,76 @@ function removeCoupon() {
 	};
 }
 
-function setTaxCountryCode( countryCode ) {
+export const getTaxCountryCode = cart => get( cart, [ 'tax', 'location', 'country_code' ] );
+
+export const getTaxPostalCode = cart => get( cart, [ 'tax', 'location', 'postal_code' ] );
+
+export const getTaxLocation = cart => get( cart, [ 'tax', 'location' ], {} );
+
+export function setTaxCountryCode( countryCode ) {
 	return function( cart ) {
 		return update( cart, {
-			tax: { location: { country_code: { $set: countryCode } } },
+			$auto: {
+				tax: {
+					$auto: {
+						location: {
+							$auto: {
+								country_code: {
+									$set: countryCode,
+								},
+							},
+						},
+					},
+				},
+			},
 		} );
 	};
 }
 
-function setTaxPostalCode( postalCode ) {
+export function setTaxPostalCode( postalCode ) {
 	return function( cart ) {
 		return update( cart, {
-			tax: { location: { postal_code: { $set: postalCode } } },
+			$auto: {
+				tax: {
+					$auto: {
+						location: {
+							$auto: {
+								postal_code: {
+									$set: postalCode,
+								},
+							},
+						},
+					},
+				},
+			},
 		} );
 	};
 }
 
-function setTaxLocation( { postalCode, countryCode } ) {
+export function setTaxLocation( { postalCode, countryCode } ) {
 	return function( cart ) {
 		return update( cart, {
-			tax: { location: { $set: { postal_code: postalCode, country_code: countryCode } } },
+			$auto: {
+				tax: {
+					$auto: {
+						location: {
+							$auto: {
+								$set: { postal_code: postalCode, country_code: countryCode },
+							},
+						},
+					},
+				},
+			},
 		} );
 	};
 }
 
-function canRemoveFromCart( cart, cartItem ) {
-	if ( productsValues.isCredits( cartItem ) ) {
+export function canRemoveFromCart( cart, cartItem ) {
+	if ( isCredits( cartItem ) ) {
 		return false;
 	}
 
-	if (
-		cartItems.hasRenewalItem( cart ) &&
-		( productsValues.isPrivacyProtection( cartItem ) ||
-			productsValues.isDomainRedemption( cartItem ) )
-	) {
+	if ( hasRenewalItem( cart ) && isDomainRedemption( cartItem ) ) {
 		return false;
 	}
 
@@ -189,9 +214,9 @@ function canRemoveFromCart( cart, cartItem ) {
  *
  * @param {cartValue} [previousCartValue] - the previously loaded cart
  * @param {cartValue} [nextCartValue] - the new cart value
- * @returns {array} [nextCartMessages] - an array of messages about the state of the cart
+ * @returns {Array} [nextCartMessages] - an array of messages about the state of the cart
  */
-function getNewMessages( previousCartValue, nextCartValue ) {
+export function getNewMessages( previousCartValue, nextCartValue ) {
 	previousCartValue = previousCartValue || {};
 	nextCartValue = nextCartValue || {};
 	const nextCartMessages = nextCartValue.messages || [];
@@ -207,39 +232,42 @@ function getNewMessages( previousCartValue, nextCartValue ) {
 
 	const previousDate = previousCartValue.client_metadata.last_server_response_date;
 	const nextDate = nextCartValue.client_metadata.last_server_response_date;
-	const hasNewServerData = i18n.moment( nextDate ).isAfter( previousDate );
+	const hasNewServerData = new Date( nextDate ) > new Date( previousDate );
 
 	return hasNewServerData ? nextCartMessages : [];
 }
 
-function isPaidForFullyInCredits( cart ) {
+export function isPaidForFullyInCredits( cart ) {
 	return (
-		! cartItems.hasFreeTrial( cart ) &&
-		! cartItems.hasProduct( cart, 'wordpress-com-credits' ) &&
+		! hasFreeTrial( cart ) &&
+		! hasProduct( cart, 'wordpress-com-credits' ) &&
 		cart.total_cost <= cart.credits &&
 		cart.total_cost > 0
 	);
 }
 
-function isFree( cart ) {
-	return cart.total_cost === 0 && ! cartItems.hasFreeTrial( cart );
+export function isFree( cart ) {
+	return cart.total_cost === 0 && ! hasFreeTrial( cart );
 }
 
-function fillInAllCartItemAttributes( cart, products ) {
+export function fillInAllCartItemAttributes( cart, products ) {
 	return update( cart, {
 		products: {
 			$apply: function( items ) {
-				return items.map( function( cartItem ) {
-					return fillInSingleCartItemAttributes( cartItem, products );
-				} );
+				return (
+					items &&
+					items.map( function( cartItem ) {
+						return fillInSingleCartItemAttributes( cartItem, products );
+					} )
+				);
 			},
 		},
 	} );
 }
 
-function fillInSingleCartItemAttributes( cartItem, products ) {
+export function fillInSingleCartItemAttributes( cartItem, products ) {
 	const product = products[ cartItem.product_slug ];
-	const attributes = productsValues.whitelistAttributes( product );
+	const attributes = whitelistAttributes( product );
 
 	return extend( {}, cartItem, attributes );
 }
@@ -251,28 +279,39 @@ function fillInSingleCartItemAttributes( cartItem, products ) {
  *
  * https://en.support.wordpress.com/refunds/
  *
- * @param {Object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `CartValue` object
  * @returns {string} the refund policy type
  */
-function getRefundPolicy( cart ) {
-	if ( cartItems.hasDomainRegistration( cart ) && cartItems.hasPlan( cart ) ) {
+export function getRefundPolicy( cart ) {
+	if ( hasDomainRegistration( cart ) && hasPlan( cart ) ) {
 		return 'planWithDomainRefund';
 	}
 
-	if ( cartItems.hasDomainRegistration( cart ) ) {
+	if ( hasDomainRegistration( cart ) ) {
 		return 'domainRefund';
 	}
 
 	return 'genericRefund';
 }
 
-function getEnabledPaymentMethods( cart ) {
+export function getEnabledPaymentMethods( cart ) {
 	// Clone our allowed payment methods array
 	let allowedPaymentMethods = cart.allowed_payment_methods.slice( 0 );
 
 	// Ebanx is used as part of the credit-card method, does not need to be listed.
 	allowedPaymentMethods = allowedPaymentMethods.filter( function( method ) {
 		return 'WPCOM_Billing_Ebanx' !== method;
+	} );
+
+	// Stripe Elements is used as part of the credit-card method, does not need to be listed.
+	allowedPaymentMethods = allowedPaymentMethods.filter( function( method ) {
+		return 'WPCOM_Billing_Stripe_Payment_Method' !== method;
+	} );
+
+	// Web payment methods such as Apple Pay are enabled based on client-side
+	// capabilities.
+	allowedPaymentMethods = allowedPaymentMethods.filter( function( method ) {
+		return 'WPCOM_Billing_Web_Payment' !== method || null !== detectWebPaymentMethod();
 	} );
 
 	// Invert so we can search by class name.
@@ -286,10 +325,10 @@ function getEnabledPaymentMethods( cart ) {
 /**
  * Return a string that represents the WPCOM class name for a payment method
  *
- * @param {string} method - payment method
+ * @param {string} method -  payment method
  * @returns {string} the wpcom class name
  */
-function paymentMethodClassName( method ) {
+export function paymentMethodClassName( method ) {
 	return PAYMENT_METHODS[ method ] || '';
 }
 
@@ -299,39 +338,47 @@ function paymentMethodClassName( method ) {
  * @param {string} method - payment method
  * @returns {string} the title
  */
-function paymentMethodName( method ) {
+export function paymentMethodName( method ) {
 	const paymentMethodsNames = {
 		alipay: 'Alipay',
 		bancontact: 'Bancontact',
-		'credit-card': i18n.translate( 'Credit or debit card' ),
-		'emergent-paywall': 'Net Banking / Paytm / Debit Card',
+		'credit-card': translate( 'Credit or debit card' ),
 		eps: 'EPS',
 		giropay: 'Giropay',
 		ideal: 'iDEAL',
+		netbanking: 'Net Banking',
 		paypal: 'PayPal',
 		p24: 'Przelewy24',
 		'brazil-tef': 'Transferência bancária',
-		wechat: i18n.translate( 'WeChat Pay', {
+		// The web-payment method technically supports multiple digital
+		// wallets, but only Apple Pay is used for now. To enable other
+		// wallets, we'd need to split web-payment up into multiple methods
+		// anyway (so that each wallet is a separate payment choice for the
+		// user), so it's fine to just hardcode this to "Apple Pay" in the
+		// meantime.
+		'web-payment': 'Apple Pay',
+		wechat: translate( 'WeChat Pay', {
 			comment: 'Name for WeChat Pay - https://pay.weixin.qq.com/',
 		} ),
-		'web-payment': i18n.translate( 'Wallet' ),
+		sofort: 'Sofort',
 	};
 
 	return paymentMethodsNames[ method ] || method;
 }
 
-function isPaymentMethodEnabled( cart, method ) {
+export function isPaymentMethodEnabled( cart, method ) {
 	const redirectPaymentMethods = [
 		'alipay',
 		'bancontact',
 		'eps',
-		'emergent-paywall',
 		'giropay',
 		'ideal',
+		'netbanking',
 		'paypal',
 		'p24',
 		'brazil-tef',
 		'wechat',
+		'sofort',
 	];
 	const methodClassName = paymentMethodClassName( method );
 
@@ -347,13 +394,17 @@ function isPaymentMethodEnabled( cart, method ) {
 		return false;
 	}
 
+	if ( 'web-payment' === method && null === detectWebPaymentMethod() ) {
+		return false;
+	}
+
 	return (
 		isArray( cart.allowed_payment_methods ) &&
 		cart.allowed_payment_methods.indexOf( methodClassName ) >= 0
 	);
 }
 
-function getLocationOrigin( l ) {
+export function getLocationOrigin( l ) {
 	return l.protocol + '//' + l.hostname + ( l.port ? ':' + l.port : '' );
 }
 
@@ -365,34 +416,6 @@ export function hasPendingPayment( cart ) {
 	return false;
 }
 
-export {
-	applyCoupon,
-	removeCoupon,
-	canRemoveFromCart,
-	cartItems,
-	emptyCart,
-	preprocessCartForServer,
-	fillInAllCartItemAttributes,
-	fillInSingleCartItemAttributes,
-	getEnabledPaymentMethods,
-	getNewMessages,
-	getRefundPolicy,
-	isFree,
-	isPaidForFullyInCredits,
-	isPaymentMethodEnabled,
-	paymentMethodClassName,
-	paymentMethodName,
-	getLocationOrigin,
-	setTaxCountryCode,
-	setTaxPostalCode,
-	setTaxLocation,
-};
-
-export default {
-	applyCoupon,
-	removeCoupon,
-	cartItems,
-	emptyCart,
-	isPaymentMethodEnabled,
-	hasPendingPayment,
-};
+export function shouldShowTax( cart ) {
+	return get( cart, [ 'tax', 'display_taxes' ], false );
+}

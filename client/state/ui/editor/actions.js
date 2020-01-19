@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,6 @@ import { defaults, filter, get } from 'lodash';
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import versionCompare from 'lib/version-compare';
 import {
 	EDITOR_AUTOSAVE,
 	EDITOR_AUTOSAVE_RESET,
@@ -31,7 +28,6 @@ import { setMediaModalView } from 'state/ui/media-modal/actions';
 import { withAnalytics, bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
 import { editPost } from 'state/posts/actions';
 
 /**
@@ -49,9 +45,9 @@ export const MODAL_VIEW_STATS = {
  * Returns an action object to be used in signalling that the editor should
  * begin to edit the post with the specified post ID, or `null` as a new post.
  *
- * @param  {Number}  siteId   Site ID
- * @param  {?Number} postId   Post ID
- * @return {Action}           Action object
+ * @param  {number}  siteId   Site ID
+ * @param  {?number} postId   Post ID
+ * @returns {Action}           Action object
  */
 export function startEditingPost( siteId, postId ) {
 	return dispatch => {
@@ -80,9 +76,9 @@ export function startEditingNewPost( siteId, post ) {
  * Returns an action object to be used in signalling that the editor should
  * stop editing.
  *
- * @param  {Number}  siteId Site ID
- * @param  {?Number} postId Post ID
- * @return {Action}         Action object
+ * @param  {number}  siteId Site ID
+ * @param  {?number} postId Post ID
+ * @returns {Action}         Action object
  */
 export function stopEditingPost( siteId, postId ) {
 	return dispatch => {
@@ -95,8 +91,8 @@ export function stopEditingPost( siteId, postId ) {
  * Returns an action object to be used in signalling that the user has pasted
  * some content from source.
  *
- * @param {String} source Identifier of the app the content was pasted from.
- * @return {Object} Action object
+ * @param {string} source Identifier of the app the content was pasted from.
+ * @returns {object} Action object
  */
 export function pasteEvent( source ) {
 	return {
@@ -110,7 +106,7 @@ export function pasteEvent( source ) {
  * view should be updated in the context of the post editor.
  *
  * @param  {ModalViews} view Media view
- * @return {Object}          Action object
+ * @returns {object}          Action object
  */
 export function setEditorMediaModalView( view ) {
 	const action = setMediaModalView( view );
@@ -127,9 +123,9 @@ export function setEditorMediaModalView( view ) {
  * Returns an action object used in signalling that the confirmation sidebar
  * preference has changed.
  *
- * @param  {Number}  siteId    Site ID
+ * @param  {number}  siteId    Site ID
  * @param  {?Bool}   isEnabled Whether or not the sidebar should be shown
- * @return {Object}            Action object
+ * @returns {object}            Action object
  */
 export function saveConfirmationSidebarPreference( siteId, isEnabled = true ) {
 	return ( dispatch, getState ) => {
@@ -172,14 +168,8 @@ export const editorAutosaveFailure = error => ( {
 	error,
 } );
 
-export const editorAutosave = post => ( dispatch, getState ) => {
-	const site = getSelectedSite( getState() );
-
-	if (
-		! post.ID ||
-		! site ||
-		( site.jetpack && versionCompare( site.options.jetpack_version, '3.7.0-dev', '<' ) )
-	) {
+export const editorAutosave = post => dispatch => {
+	if ( ! post.ID ) {
 		return Promise.reject( new Error( 'NO_AUTOSAVE' ) );
 	}
 

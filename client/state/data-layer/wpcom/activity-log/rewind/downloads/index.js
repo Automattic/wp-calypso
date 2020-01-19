@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,11 @@ import { pick } from 'lodash';
  * Internal dependencies
  */
 import { REWIND_BACKUP } from 'state/action-types';
-import { rewindBackupUpdateError, getRewindBackupProgress } from 'state/activity-log/actions';
+import {
+	rewindBackupUpdateError,
+	updateRewindBackupProgress,
+	getRewindBackupProgress,
+} from 'state/activity-log/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
@@ -35,10 +37,15 @@ const fromApi = data => {
 		throw new Error( 'Missing downloadId field in response' );
 	}
 
-	return true;
+	return data;
 };
 
-export const receiveBackupSuccess = ( { siteId } ) => getRewindBackupProgress( siteId );
+export const receiveBackupSuccess = ( { siteId }, data ) => {
+	return [
+		getRewindBackupProgress( siteId ),
+		updateRewindBackupProgress( siteId, data.downloadId, data ),
+	];
+};
 
 export const receiveBackupError = ( { siteId }, error ) =>
 	rewindBackupUpdateError( siteId, pick( error, [ 'error', 'status', 'message' ] ) );

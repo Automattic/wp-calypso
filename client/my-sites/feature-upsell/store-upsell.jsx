@@ -1,15 +1,14 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
+import { getCurrencyObject } from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -30,7 +29,6 @@ import QueryActivePromotions from 'components/data/query-active-promotions';
 import RefundAsterisk from 'my-sites/feature-upsell/refund-asterisk';
 import TipInfo from 'components/purchase-detail/tip-info';
 import { isRequestingPlans } from 'state/plans/selectors';
-import { getCurrencyObject } from 'lib/format-currency';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { isRequestingActivePromotions } from 'state/active-promotions/selectors';
 import { getUpsellPlanPrice, redirectUnlessCanUpgradeSite } from './utils';
@@ -123,7 +121,7 @@ class StoreUpsellComponent extends Component {
 							body={
 								<div className="google-voucher__initial-step">
 									<TipInfo
-										info={ 'Offer valid in US after spending the first $25 on Google Ads.' }
+										info={ 'Offer valid in US and CA after spending the first $25 on Google Ads.' }
 									/>
 								</div>
 							}
@@ -224,10 +222,7 @@ const mapDispatchToProps = dispatch => ( {
 } );
 
 export default flowRight(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	),
+	connect( mapStateToProps, mapDispatchToProps ),
 	localize,
 	redirectUnlessCanUpgradeSite,
 	redirectIf(

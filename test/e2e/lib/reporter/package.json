@@ -1,0 +1,11 @@
+{
+	"name": "spec-xunit-reporter",
+	"version": "0.0.1",
+	"description": "Mocha reporter that combines the default spec output with an xunit.xml file in a dynamically allocated directory",
+	"main": "index.js",
+	"dependencies": {
+		"config": "1.28.0",
+		"mocha": "5.2.0",
+		"fs-extra": "0.22.1"
+	}
+}

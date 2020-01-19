@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -132,14 +130,14 @@ class FormAnalyticsStores extends Component {
 	};
 
 	render = () => {
-		const { disabled, showEnhanced, translate } = this.props;
+		const { disabled, translate } = this.props;
 
 		return (
 			<div>
 				<FormLegend>{ translate( 'Basic store analytics' ) }</FormLegend>
 				{ this.renderBasicSettings( disabled ) }
-				{ showEnhanced && <FormLegend>{ translate( 'Enhanced store analytics' ) }</FormLegend> }
-				{ showEnhanced && this.renderEnhancedSettings( disabled ) }
+				<FormLegend>{ translate( 'Enhanced store analytics' ) }</FormLegend>
+				{ this.renderEnhancedSettings( disabled ) }
 			</div>
 		);
 	};

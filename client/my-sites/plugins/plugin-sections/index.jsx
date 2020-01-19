@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,16 +7,21 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import titleCase from 'to-title-case';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class PluginSections extends React.Component {
 	static displayName = 'PluginSections';

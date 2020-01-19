@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,7 +5,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get, flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -18,10 +17,9 @@ import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import Placeholder from './plans-placeholder';
 import PlansGrid from './plans-grid';
-import PlansExtendedInfo from './plans-extended-info';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { addItem } from 'lib/upgrades/actions';
+import { addItem } from 'lib/cart/actions';
 import { addQueryArgs } from 'lib/route';
 import { clearPlan, isCalypsoStartedConnection, retrievePlan } from './persistence-utils';
 import { completeFlow } from 'state/jetpack-connect/actions';
@@ -37,6 +35,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import canCurrentUser from 'state/selectors/can-current-user';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import { persistSignupDestination } from 'signup/utils';
 
 const CALYPSO_PLANS_PAGE = '/plans/';
 const CALYPSO_MY_PLAN_PAGE = '/plans/my-plan/';
@@ -95,9 +94,7 @@ class Plans extends Component {
 		const { canPurchasePlans, selectedSiteSlug } = this.props;
 
 		if ( selectedSiteSlug && canPurchasePlans ) {
-			// Redirect to "My Plan" page with the "Jetpack Basic Tour" guided tour enabled.
-			// For more details about guided tours, see layout/guided-tours/README.md
-			return this.redirect( CALYPSO_MY_PLAN_PAGE, { tour: 'jetpack' } );
+			return this.redirect( CALYPSO_MY_PLAN_PAGE, { 'thank-you': '' } );
 		}
 
 		return this.redirect( CALYPSO_REDIRECTION_PAGE );
@@ -122,6 +119,13 @@ class Plans extends Component {
 		}
 	}
 
+	getMyPlansDestination() {
+		const redirectTo = CALYPSO_MY_PLAN_PAGE + this.props.selectedSiteSlug;
+		const args = { 'thank-you': '', install: 'all' };
+
+		return addQueryArgs( args, redirectTo );
+	}
+
 	redirect( path, args ) {
 		let redirectTo = path + this.props.selectedSiteSlug;
 
@@ -141,11 +145,7 @@ class Plans extends Component {
 		} );
 		mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_free' );
 
-		if ( this.props.calypsoStartedConnection ) {
-			this.redirectToCalypso();
-		} else {
-			this.redirectToWpAdmin();
-		}
+		this.redirectToCalypso();
 	}
 
 	selectPlan = cartItem => {
@@ -167,6 +167,7 @@ class Plans extends Component {
 
 		addItem( cartItem );
 		this.props.completeFlow();
+		persistSignupDestination( this.getMyPlansDestination() );
 		this.redirect( '/checkout/' );
 	};
 
@@ -214,7 +215,6 @@ class Plans extends Component {
 					interval={ interval }
 					selectedSite={ selectedSite }
 				>
-					<PlansExtendedInfo recordTracks={ this.handleInfoButtonClick } />
 					<LoggedOutFormLinks>
 						<JetpackConnectHappychatButton
 							label={ helpButtonLabel }
@@ -231,7 +231,7 @@ class Plans extends Component {
 
 export { Plans as PlansTestComponent };
 
-export default connect(
+const connectComponent = connect(
 	state => {
 		const user = getCurrentUser( state );
 		const selectedSite = getSelectedSite( state );
@@ -239,7 +239,6 @@ export default connect(
 
 		const selectedPlanSlug = retrievePlan();
 		const selectedPlan = getPlanBySlug( state, selectedPlanSlug );
-
 		return {
 			calypsoStartedConnection: isCalypsoStartedConnection( selectedSiteSlug ),
 			canPurchasePlans: selectedSite
@@ -260,4 +259,6 @@ export default connect(
 		completeFlow,
 		recordTracksEvent,
 	}
-)( localize( Plans ) );
+);
+
+export default flowRight( connectComponent, localize )( Plans );

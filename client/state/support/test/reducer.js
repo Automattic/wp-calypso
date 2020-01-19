@@ -1,24 +1,30 @@
-/** @format */
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
 /**
  * Internal dependencies
  */
-import { isSupportUser } from '../reducer';
-import { SUPPORT_USER_ACTIVATE } from 'state/action-types';
+import reducer, { SESSION_NONE, SESSION_ACTIVE, SESSION_EXPIRED } from '../reducer';
+import { SUPPORT_SESSION_TRANSITION } from 'state/action-types';
 
 describe( 'reducer', () => {
-	describe( '#isSupportUser()', () => {
-		test( 'should set to true after activate', () => {
-			const state = isSupportUser( false, {
-				type: SUPPORT_USER_ACTIVATE,
-			} );
+	describe( '#isSupportSession', () => {
+		test( 'defaults to no session', () => {
+			const state = reducer( undefined, { type: '@@INIT' } );
+			expect( state ).toEqual( SESSION_NONE );
+		} );
 
-			expect( state ).to.equal( true );
+		test( 'activated from no session', () => {
+			const state = reducer( SESSION_NONE, {
+				type: SUPPORT_SESSION_TRANSITION,
+				nextState: SESSION_ACTIVE,
+			} );
+			expect( state ).toEqual( SESSION_ACTIVE );
+		} );
+
+		test( 'expired from active session', () => {
+			const state = reducer( SESSION_ACTIVE, {
+				type: SUPPORT_SESSION_TRANSITION,
+				nextState: SESSION_EXPIRED,
+			} );
+			expect( state ).toEqual( SESSION_EXPIRED );
 		} );
 	} );
 } );

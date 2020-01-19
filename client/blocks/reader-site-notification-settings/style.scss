@@ -1,5 +1,5 @@
 .reader-site-notification-settings__button {
-	color: $gray;
+	color: var( --color-text-subtle );
 
 	&:hover {
 		cursor: pointer;
@@ -15,7 +15,7 @@
 }
 
 .reader-site-notification-settings .gridicons-cog {
-	fill: var( --color-neutral-200 );
+	fill: var( --color-neutral-20 );
 	height: 18px;
 	position: relative;
 		top: 4px;
@@ -33,7 +33,7 @@
 	}
 
 	.segmented-control__link {
-		background: $white;
+		background: var( --color-surface );
 	}
 
 	.reader-site-notification-settings__popout-toggle:nth-child( 2 ),
@@ -46,10 +46,10 @@
 
 .reader-site-notification-settings__popout-toggle,
 .reader-site-notification-settings__popout-instructions {
-	border-top: 1px solid var( --color-neutral-100 );
-	color:var( --color-neutral-700 );
+	border-top: 1px solid var( --color-neutral-10 );
+	color:var( --color-neutral-70 );
 	font-size: 14px;
-	padding: 10px 0 10px 15px;
+	padding: 10px 15px;
 	text-align: left;
 
 	&:first-child {
@@ -57,7 +57,7 @@
 	}
 
 	.gridicon {
-		fill: $gray;
+		fill: var( --color-neutral-light );
 		position: relative;
 			left: 3px;
 			top: 2px;
@@ -70,7 +70,7 @@
 
 .reader-site-notification-settings__popout-hint,
 .reader-site-notification-settings__popout-instructions-hint {
-	color: $gray;
+	color: var( --color-text-subtle );
 	font-size: 12px;
 	margin-bottom: 0;
 }

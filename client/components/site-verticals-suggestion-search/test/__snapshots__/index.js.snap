@@ -1,16 +1,33 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<SiteVerticalsSuggestionSearch /> should render 1`] = `
-<SuggestionSearch
-  id="siteTopic"
-  onChange={[Function]}
-  placeholder="e.g. Fashion, travel, design, plumber"
-  sortResults={[Function]}
-  suggestions={
-    Array [
-      "doo",
-    ]
-  }
-  value="scooby"
-/>
+<Fragment>
+  <QueryVerticals
+    debounceTime={300}
+    searchTerm=""
+    siteType="blog"
+  />
+  <QueryVerticals
+    searchTerm="eeek"
+    siteType="blog"
+  />
+  <SuggestionSearch
+    autoFocus={false}
+    id="siteTopic"
+    isSearching=""
+    onChange={[Function]}
+    onSelect={[Function]}
+    placeholder="Enter a topic."
+    railcar={
+      Object {
+        "action": "site_vertical_selected",
+        "fetch_algo": "/verticals",
+        "id": "fakeuuid-site-vertical-suggestion",
+        "ui_algo": "signup/site-topic/related_1",
+      }
+    }
+    suggestions={Array []}
+    value=""
+  />
+</Fragment>
 `;

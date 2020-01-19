@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -15,13 +12,19 @@ import {
 	negate,
 	isEmpty,
 	take,
+	filter,
+	map,
 	sortBy,
 	partition,
 	includes,
-	mapValues,
 } from 'lodash';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 function SuggestionsButtonAll( props ) {
 	function click() {
@@ -29,9 +32,9 @@ function SuggestionsButtonAll( props ) {
 	}
 
 	return (
-		<span className="keyed-suggestions__category-show-all" onClick={ click }>
+		<button className="keyed-suggestions__category-show-all" onClick={ click }>
 			{ props.label }
-		</span>
+		</button>
 	);
 }
 
@@ -67,11 +70,11 @@ class KeyedSuggestions extends React.Component {
 		} );
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.setInitialState( this.props.input );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.input !== this.props.input ) {
 			this.setInitialState( nextProps.input );
 		}
@@ -109,8 +112,8 @@ class KeyedSuggestions extends React.Component {
 	 * Provides keybord support for suggestings component by managing items highlith position
 	 * and calling suggestion callback when user hits Enter
 	 *
-	 * @param  {Object} event  Keybord event
-	 * @return {Bool}          true indicates suggestion was chosen and send to parent using suggest prop callback
+	 * @param  {object} event  Keybord event
+	 * @returns {boolean}      true indicates suggestion was chosen and send to parent using suggest prop callback
 	 */
 	handleKeyEvent = event => {
 		switch ( event.key ) {
@@ -123,7 +126,7 @@ class KeyedSuggestions extends React.Component {
 				event.preventDefault();
 				break;
 			case 'Enter':
-				if ( !! this.state.currentSuggestion ) {
+				if ( this.state.currentSuggestion ) {
 					this.props.suggest( this.state.currentSuggestion );
 					return true;
 				}
@@ -152,19 +155,19 @@ class KeyedSuggestions extends React.Component {
 	};
 
 	/**
-	 * Returns an object containing lists of fliters keyed by taxnomies.
+	 * Returns an object containing lists of filters keyed by taxnomies.
 	 * This function takes all available taxonomies and removes the ones that
 	 * do not match provided input param. At the end keys that have empty lists are removed.
 	 * showAll parameter if provided sidesteps the matching logic for the key value in showAll
 	 * and passes all filters for that key. For showAll also soome reordering happens - explained in code
 	 *
-	 * @param  {String}  input   text that will be matched against the taxonomies
-	 * @param  {String}  showAll taxonomy for which we want all filters
-	 * @return {Object}          filtered taxonomy:[ terms ] object
+	 * @param  {string}  input   text that will be matched against the taxonomies
+	 * @param  {string}  showAll taxonomy for which we want all filters
+	 * @returns {object}          filtered taxonomy:[ terms ] object
 	 */
 	narrowDownAndSort = ( input, showAll = '' ) => {
-		const termsTable = mapValues( this.props.terms, Object.keys );
-		const [ taxonomy, filter ] = input.toLowerCase().split( ':' );
+		const termsTable = this.props.terms;
+		const [ taxonomy, filterText ] = input.split( ':' );
 		if ( taxonomy === '' ) {
 			// empty string or just ":" or ":filter" -
 			// TODO: just show welcome screen
@@ -175,7 +178,7 @@ class KeyedSuggestions extends React.Component {
 		let terms; //terms that we will use to create suggestions
 		let filterTerm; // part of input that will be used for filtering
 
-		if ( filter !== undefined ) {
+		if ( filterText !== undefined ) {
 			// this means that we have at least taxonomy:
 			// so check if this is a correct taxonomy
 			if ( has( termsTable, taxonomy ) ) {
@@ -188,7 +191,7 @@ class KeyedSuggestions extends React.Component {
 				// TODO tell something to the user
 				return {};
 			}
-			filterTerm = filter;
+			filterTerm = filterText;
 		} else {
 			// we just have one word so treat is as a search terms
 			filterTerm = taxonomy;
@@ -198,11 +201,11 @@ class KeyedSuggestions extends React.Component {
 		const filtered = {};
 
 		//If this is valid full taxonomy:filter we want to show alternatives instead of suggestions
-		if ( filter !== undefined && includes( terms[ taxonomy ], filter ) ) {
+		if ( filterText !== undefined && includes( terms[ taxonomy ], filter ) ) {
 			// remove what is already in input - so we can add it to the beggining of the list
 			const otherSuggestions = without( terms[ taxonomy ], filter );
 			// add back at the beggining of the list so it will showup first.
-			otherSuggestions.unshift( filter );
+			otherSuggestions.unshift( filterText );
 			// limit or show all
 			filtered[ taxonomy ] =
 				showAll === taxonomy ? otherSuggestions : take( otherSuggestions, limit );
@@ -217,22 +220,43 @@ class KeyedSuggestions extends React.Component {
 				continue;
 			}
 
-			//check if we have showAll key match. If we have then don't filter, use all and reorder.
+			// Try a full match first and try substring matches
+			let multiRegex = filterTerm;
+			for ( let i = filterTerm.length; i > 1; i-- ) {
+				multiRegex += '|' + filterTerm.replace( new RegExp( '(.{' + i + '})', 'g' ), '$1.*' );
+			}
+			const regex = new RegExp( multiRegex, 'iu' );
+
+			// Check if we have showAll key match. If we have then don't filter, use all and reorder.
 			if ( showAll === key ) {
-				// split to terms matching an non matching to the input
-				const parts = partition( terms[ key ], term => term.indexOf( filterTerm ) !== -1 );
-				// sort matching so that the best hit is first
-				const matchingSorted = sortBy( parts[ 0 ], term => term.indexOf( filterTerm ) );
-				// concatenate mathing and non matchin - this is full set of filters just reordered.
-				filtered[ key ] = [ ...matchingSorted, ...parts[ 1 ] ];
+				const ourTerms = terms[ key ];
+				const keys = Object.keys( ourTerms );
+				// Split to terms matching an non matching to the input.
+				const [ matching, notMatching ] = partition( keys, term => {
+					return (
+						ourTerms[ term ].name.match( regex ) || ourTerms[ term ].description.match( regex )
+					);
+				} );
+				// Sort matching so that the best hit is first.
+				const sortedMatching = sortBy( matching, match => {
+					const term = ourTerms[ match ];
+					const termString = term.name + ' ' + term.description;
+					const hitIndex = termString.toLowerCase().indexOf( filterTerm.toLowerCase() );
+					return hitIndex >= 0 && hitIndex;
+				} );
+				// Concatenate mathing and non matchin - this is full set of filters just reordered.
+				filtered[ key ] = [ ...sortedMatching, ...notMatching ];
 			} else {
 				filtered[ key ] = take(
-					terms[ key ].filter( term => term.indexOf( filterTerm ) !== -1 ),
+					filter(
+						map( terms[ key ], ( term, k ) =>
+							term.name.match( regex ) || term.description.match( regex ) ? k : null
+						)
+					),
 					limit
 				);
 			}
 		}
-
 		return this.removeEmptySuggestions( filtered );
 	};
 
@@ -285,6 +309,24 @@ class KeyedSuggestions extends React.Component {
 		let noOfSuggestions = 0;
 		const rendered = [];
 
+		const taxonomyTranslations = {
+			feature: i18n.translate( 'Feature', {
+				context: 'Theme Showcase filter name',
+			} ),
+			layout: i18n.translate( 'Layout', {
+				context: 'Theme Showcase filter name',
+			} ),
+			column: i18n.translate( 'Columns', {
+				context: 'Theme Showcase filter name',
+			} ),
+			subject: i18n.translate( 'Subject', {
+				context: 'Theme Showcase filter name',
+			} ),
+			style: i18n.translate( 'Style', {
+				context: 'Theme Showcase filter name',
+			} ),
+		};
+
 		for ( const key in suggestions ) {
 			if ( ! has( suggestions, key ) ) {
 				continue;
@@ -295,7 +337,7 @@ class KeyedSuggestions extends React.Component {
 			//Add header
 			rendered.push(
 				<div className="keyed-suggestions__category" key={ key }>
-					<span className="keyed-suggestions__category-name">{ key }</span>
+					<span className="keyed-suggestions__category-name">{ taxonomyTranslations[ key ] }</span>
 					<span className="keyed-suggestions__category-counter">
 						{ i18n.translate( '%(filtered)s of %(total)s', {
 							args: { filtered, total },
@@ -327,6 +369,7 @@ class KeyedSuggestions extends React.Component {
 						'has-highlight': hasHighlight,
 					} );
 					return (
+						/* eslint-disable jsx-a11y/no-static-element-interactions, jsx-a11y/mouse-events-have-key-events */
 						<span
 							className={ className }
 							onMouseDown={ this.onMouseDown }
@@ -343,6 +386,7 @@ class KeyedSuggestions extends React.Component {
 								</span>
 							) }
 						</span>
+						/* eslint-enable jsx-a11y/no-static-element-interactions, jsx-a11y/mouse-events-have-key-events */
 					);
 				} )
 			);

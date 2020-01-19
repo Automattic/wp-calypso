@@ -14,11 +14,11 @@
 
 		.podcasting-details__link-info {
 			flex-grow: 1;
-			color: $gray-text;
+			color: var( --color-text );
 		}
 
 		.podcasting-details__link-button {
-			color: var( --color-neutral-500 );
+			color: var( --color-neutral-50 );
 			font-weight: 600;
 			flex-shrink: 0;
 			margin-left: 12px;
@@ -57,11 +57,11 @@
 	.gridicons-microphone {
 		flex-shrink: 0;
 		margin-right: 6px;
-		color: $podcasting-purple;
+		color: var( --color-podcasting );
 	}
 
 	a {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		text-decoration: underline;
 	}
 
@@ -71,7 +71,7 @@
 }
 
 .podcasting-details__publish-button {
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	font-weight: 600;
 	flex-shrink: 0;
 	margin-left: 12px;
@@ -135,18 +135,18 @@
 
 	&.is-disabled {
 		background-color: var( --color-neutral-0 );
-		border-color: var( --color-neutral-100 );
+		border-color: var( --color-neutral-10 );
 	}
 
 	&.is-disabled label,
 	&.is-disabled .form-setting-explanation {
-		color: var( --color-neutral-200 );
+		color: var( --color-neutral-20 );
 	}
 
 	&.is-disabled .form-text-input,
 	&.is-disabled .form-textarea {
-		color: var( --color-neutral-200 );
-		border-color: var( --color-neutral-100 );
+		color: var( --color-neutral-20 );
+		border-color: var( --color-neutral-10 );
 	}
 }
 

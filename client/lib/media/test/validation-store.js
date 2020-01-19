@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -202,10 +201,8 @@ describe( 'MediaValidationStore', () => {
 		} );
 
 		test( 'should return an object of errors', () => {
-			let errors;
-
 			dispatchCreateMediaItem();
-			errors = MediaValidationStore.getAllErrors( DUMMY_SITE_ID );
+			const errors = MediaValidationStore.getAllErrors( DUMMY_SITE_ID );
 
 			expect( errors ).to.eql( {
 				[ DUMMY_MEDIA_OBJECT.ID ]: [ MediaValidationErrors.FILE_TYPE_UNSUPPORTED ],
@@ -222,10 +219,8 @@ describe( 'MediaValidationStore', () => {
 		} );
 
 		test( 'should return an array of errors', () => {
-			let errors;
-
 			dispatchCreateMediaItem();
-			errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
+			const errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
 
 			expect( errors ).to.eql( [ MediaValidationErrors.FILE_TYPE_UNSUPPORTED ] );
 		} );
@@ -249,8 +244,6 @@ describe( 'MediaValidationStore', () => {
 		} );
 
 		test( 'should detect a 404 error from received item', () => {
-			let errors;
-
 			dispatchReceiveMediaItem( {
 				error: {
 					statusCode: 400,
@@ -263,14 +256,12 @@ describe( 'MediaValidationStore', () => {
 					],
 				},
 			} );
-			errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
+			const errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
 
 			expect( errors ).to.eql( [ MediaValidationErrors.UPLOAD_VIA_URL_404 ] );
 		} );
 
 		test( 'should detect a not enough space error from received item', () => {
-			let errors;
-
 			dispatchReceiveMediaItem( {
 				error: {
 					statusCode: 400,
@@ -283,14 +274,12 @@ describe( 'MediaValidationStore', () => {
 					],
 				},
 			} );
-			errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
+			const errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
 
 			expect( errors ).to.eql( [ MediaValidationErrors.NOT_ENOUGH_SPACE ] );
 		} );
 
 		test( 'should detect an exceeds plan storage limit error from received item', () => {
-			let errors;
-
 			dispatchReceiveMediaItem( {
 				error: {
 					statusCode: 400,
@@ -303,18 +292,16 @@ describe( 'MediaValidationStore', () => {
 					],
 				},
 			} );
-			errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
+			const errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
 
 			expect( errors ).to.eql( [ MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT ] );
 		} );
 
 		test( 'should detect general server error from received item', () => {
-			let errors;
-
 			dispatchReceiveMediaItem( {
 				error: new Error(),
 			} );
-			errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
+			const errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
 
 			expect( errors ).to.eql( [ MediaValidationErrors.SERVER_ERROR ] );
 		} );
@@ -366,6 +353,14 @@ describe( 'MediaValidationStore', () => {
 			const errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, ERROR_GLOBAL_ITEM_ID );
 
 			expect( errors ).to.eql( [ MediaValidationErrors.SERVICE_FAILED ] );
+		} );
+
+		test( 'should detect an expired auth token and set error on item ERROR_GLOBAL_ITEM_ID', () => {
+			dispatchError( 'keyring_token_error' );
+
+			const errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, ERROR_GLOBAL_ITEM_ID );
+
+			expect( errors ).to.eql( [ MediaValidationErrors.SERVICE_AUTH_FAILED ] );
 		} );
 
 		test( 'should require an action ID for all errors other than external media', () => {

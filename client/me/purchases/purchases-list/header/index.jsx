@@ -1,51 +1,65 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import i18n from 'i18n-calypso';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
-import { billingHistory, purchasesRoot, pendingPayments } from '../../paths.js';
+import {
+	billingHistory,
+	upcomingCharges,
+	pendingPayments,
+	myMemberships,
+	purchasesRoot,
+} from '../../paths.js';
 import SectionNav from 'components/section-nav';
 import config from 'config';
+import getPastBillingTransactions from 'state/selectors/get-past-billing-transactions';
 
-const PurchasesHeader = ( { section } ) => {
-	let text = i18n.translate( 'Billing History' );
+const PurchasesHeader = ( { section, translate } ) => {
+	let text = translate( 'Billing History' );
 
 	if ( section === 'purchases' ) {
-		text = i18n.translate( 'Purchases' );
+		text = translate( 'Purchases' );
+	} else if ( section === 'upcoming' ) {
+		text = translate( 'Upcoming Charges' );
+	} else if ( section === 'pending' ) {
+		text = translate( 'Pending Payments' );
+	} else if ( section === 'memberships' ) {
+		text = translate( 'Other Sites' );
 	}
 
 	return (
 		<SectionNav selectedText={ text }>
 			<NavTabs>
 				<NavItem path={ purchasesRoot } selected={ section === 'purchases' }>
-					{ i18n.translate( 'Purchases' ) }
+					{ translate( 'Purchases' ) }
 				</NavItem>
 
 				<NavItem path={ billingHistory } selected={ section === 'billing' }>
-					{ i18n.translate( 'Billing History' ) }
+					{ translate( 'Billing History' ) }
+				</NavItem>
+
+				<NavItem path={ upcomingCharges } selected={ section === 'upcoming' }>
+					{ translate( 'Upcoming Charges' ) }
 				</NavItem>
 
 				{ config.isEnabled( 'async-payments' ) && (
-					<NavItem path={ purchasesRoot + '/pending' } selected={ section === 'pending' }>
-						{ i18n.translate( 'Pending Payments' ) }
+					<NavItem path={ pendingPayments } selected={ section === 'pending' }>
+						{ translate( 'Pending Payments' ) }
 					</NavItem>
 				) }
 
-				{ config.isEnabled( 'memberships' ) && (
-					<NavItem path={ purchasesRoot + '/memberships' } selected={ section === 'memberships' }>
-						{ i18n.translate( 'My Memberships' ) }
-					</NavItem>
-				) }
+				<NavItem path={ myMemberships } selected={ section === 'memberships' }>
+					{ translate( 'Other Sites' ) }
+				</NavItem>
 			</NavTabs>
 		</SectionNav>
 	);
@@ -55,4 +69,6 @@ PurchasesHeader.propTypes = {
 	section: PropTypes.string.isRequired,
 };
 
-export default PurchasesHeader;
+export default connect( state => ( {
+	pastTransactions: getPastBillingTransactions( state ),
+} ) )( localize( PurchasesHeader ) );

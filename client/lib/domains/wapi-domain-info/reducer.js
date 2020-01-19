@@ -1,9 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import update from 'immutability-helper';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,7 +16,7 @@ import {
 	WAPI_DOMAIN_INFO_FETCH,
 	WAPI_DOMAIN_INFO_FETCH_COMPLETED,
 	WAPI_DOMAIN_INFO_FETCH_FAILED,
-} from 'lib/upgrades/action-types';
+} from './action-types';
 
 const initialDomainState = {
 	hasLoadedFromServer: false,
@@ -66,14 +65,14 @@ function reducer( state, payload ) {
 
 		case PRIVACY_PROTECTION_ENABLE_COMPLETED:
 			return updateDomainState( state, action.domainName, {
-				data: Object.assign( {}, state[ action.domainName ].data, {
+				data: Object.assign( {}, get( state[ action.domainName ], 'data', {} ), {
 					pendingTransfer: false,
 				} ),
 			} );
 
-		case DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED:
-			const { data } = state[ action.domainName ],
-				locked = ! action.unlock && data.locked;
+		case DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED: {
+			const { data } = state[ action.domainName ];
+			const locked = ! action.unlock && data.locked;
 
 			return updateDomainState( state, action.domainName, {
 				data: Object.assign( {}, state[ action.domainName ].data, {
@@ -81,6 +80,7 @@ function reducer( state, payload ) {
 				} ),
 				needsUpdate: true,
 			} );
+		}
 
 		case DOMAIN_TRANSFER_ACCEPT_COMPLETED:
 		case DOMAIN_TRANSFER_DECLINE_COMPLETED:

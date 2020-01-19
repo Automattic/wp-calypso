@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -17,7 +15,7 @@ import Gridicon from 'gridicons';
 import { isMobile } from 'lib/viewport';
 import Popover from 'components/popover';
 import FormCheckbox from 'components/forms/form-checkbox';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { setPreference, savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import { getSectionName } from 'state/ui/selectors';

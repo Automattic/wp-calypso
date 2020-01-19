@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
+import QuerySites from 'components/data/query-sites';
 import NpsSurvey from 'blocks/nps-survey';
 import {
 	setNpsSurveyDialogShowing,
@@ -24,18 +23,43 @@ import {
 	markNpsSurveyShownThisSession,
 } from 'state/nps-survey/actions';
 import {
+	getNpsSurveyScore,
 	hasAnsweredNpsSurvey,
 	hasAnsweredNpsSurveyWithNoScore,
 	isSectionAndSessionEligibleForNpsSurvey,
 	wasNpsSurveyShownThisSession,
 } from 'state/nps-survey/selectors';
+import { isSupportSession } from 'state/support/selectors';
+import getSites from 'state/selectors/get-sites';
+import { isBusinessPlan } from 'lib/plans';
 import analytics from 'lib/analytics';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const SURVEY_NAME = 'calypso-global-notice-radio-buttons-v1';
 
 class NpsSurveyNotice extends Component {
+	state = {
+		currentForm: null,
+	};
+
 	handleDialogClose = () => {
-		if ( ! this.props.hasAnswered && ! this.props.hasAnsweredWithNoScore ) {
+		const { isBusinessUser, hasAnswered, hasAnsweredWithNoScore, npsSurveyScore } = this.props;
+
+		// the dialog won't close by clicking outside if a business user has submitted a rating of 0-6.
+		if (
+			isBusinessUser &&
+			hasAnswered &&
+			npsSurveyScore < 7 &&
+			this.state.currentForm !== 'promotion'
+		) {
+			return;
+		}
+
+		if ( ! hasAnswered && ! hasAnsweredWithNoScore ) {
 			// the dialog was dismised by clicking outside it
 			// and the survey was never answered, so track it
 			this.props.submitNpsSurveyWithNoScore( SURVEY_NAME );
@@ -49,6 +73,10 @@ class NpsSurveyNotice extends Component {
 
 		// slightly delay the showing of the thank you notice
 		setTimeout( afterClose, 500 );
+	};
+
+	handleSurveyFormChange = currentForm => {
+		this.setState( { currentForm } );
 	};
 
 	componentDidMount() {
@@ -71,7 +99,7 @@ class NpsSurveyNotice extends Component {
 	}
 
 	render() {
-		if ( this.props.isSupportUser || ! this.props.isSectionAndSessionEligible ) {
+		if ( this.props.isSupportSession || ! this.props.isSectionAndSessionEligible ) {
 			return null;
 		}
 
@@ -81,30 +109,39 @@ class NpsSurveyNotice extends Component {
 				isVisible={ this.props.isNpsSurveyDialogShowing }
 				onClose={ this.handleDialogClose }
 			>
-				<NpsSurvey name={ SURVEY_NAME } onClose={ this.handleSurveyClose } />
+				<QuerySites allSites />
+				<NpsSurvey
+					name={ SURVEY_NAME }
+					isBusinessUser={ this.props.isBusinessUser }
+					onClose={ this.handleSurveyClose }
+					onChangeForm={ this.handleSurveyFormChange }
+				/>
 			</Dialog>
 		);
 	}
 }
 
+function isOwnBusinessSite( site ) {
+	return isBusinessPlan( get( site, 'plan.product_slug' ) ) && get( site, 'plan.user_is_owner' );
+}
+
 const mapStateToProps = state => {
 	return {
-		isSupportUser: get( state, 'support.isSupportUser', false ),
+		isSupportSession: isSupportSession( state ),
 		isNpsSurveyDialogShowing: isNpsSurveyDialogShowing( state ),
 		hasAnswered: hasAnsweredNpsSurvey( state ),
 		hasAnsweredWithNoScore: hasAnsweredNpsSurveyWithNoScore( state ),
 		isSectionAndSessionEligible: isSectionAndSessionEligibleForNpsSurvey( state ),
 		wasShownThisSession: wasNpsSurveyShownThisSession( state ),
+		npsSurveyScore: getNpsSurveyScore( state ),
+		isBusinessUser: getSites( state ).some( isOwnBusinessSite ),
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{
-		setNpsSurveyDialogShowing,
-		submitNpsSurveyWithNoScore,
-		setupNpsSurveyDevTrigger,
-		setupNpsSurveyEligibility,
-		markNpsSurveyShownThisSession,
-	}
-)( NpsSurveyNotice );
+export default connect( mapStateToProps, {
+	setNpsSurveyDialogShowing,
+	submitNpsSurveyWithNoScore,
+	setupNpsSurveyDevTrigger,
+	setupNpsSurveyEligibility,
+	markNpsSurveyShownThisSession,
+} )( NpsSurveyNotice );

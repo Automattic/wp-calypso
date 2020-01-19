@@ -1,10 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
 import { get, omit } from 'lodash';
+import { stringify } from 'qs';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -32,10 +31,23 @@ const errorFields = {
 	invalid_username: 'usernameOrEmail',
 };
 
+export class HTTPError extends Error {
+	constructor( response, body ) {
+		super();
+		this.name = 'HTTPError';
+		this.status = response.status;
+		try {
+			this.response = { body: JSON.parse( body ) };
+		} catch {
+			this.response = { body };
+		}
+	}
+}
+
 /**
  * Retrieves the first error message from the specified HTTP error.
  *
- * @param {Object} httpError HTTP error
+ * @param {object} httpError HTTP error
  * @returns {{code: string?, message: string, field: string}} an error message and the id of the corresponding field, if not global
  */
 export function getErrorFromHTTPError( httpError ) {
@@ -111,7 +123,7 @@ export function getErrorFromHTTPError( httpError ) {
 /**
  * Transforms WPCOM error to the error object we use for login purposes
  *
- * @param {Object} wpcomError HTTP error
+ * @param {object} wpcomError HTTP error
  * @returns {{message: string, field: string, code: string}} an error message and the id of the corresponding field
  */
 export const getErrorFromWPCOMError = wpcomError => ( {
@@ -124,15 +136,32 @@ export const getErrorFromWPCOMError = wpcomError => ( {
 /**
  * Determines whether the user account uses regular authentication by password.
  *
- * @param {String} authAccountType - authentication account type
- * @return {Boolean} true if the account is regular, false otherwise
+ * @param {string} authAccountType - authentication account type
+ * @returns {boolean} true if the account is regular, false otherwise
  */
 export const isRegularAccount = authAccountType => authAccountType === 'regular';
 
 /**
  * Determines whether the user account uses authentication without password.
  *
- * @param {String} authAccountType - authentication account type
- * @return {Boolean} true if the account is passwordless, false otherwise
+ * @param {string} authAccountType - authentication account type
+ * @returns {boolean} true if the account is passwordless, false otherwise
  */
 export const isPasswordlessAccount = authAccountType => authAccountType === 'passwordless';
+
+export async function postLoginRequest( action, bodyObj ) {
+	const response = await fetch(
+		localizeUrl( `https://wordpress.com/wp-login.php?action=${ action }` ),
+		{
+			method: 'POST',
+			credentials: 'include',
+			headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: stringify( bodyObj ),
+		}
+	);
+
+	if ( response.ok ) {
+		return { body: await response.json() };
+	}
+	throw new HTTPError( response, await response.text() );
+}

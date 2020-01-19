@@ -7,6 +7,7 @@
 .DS_Store
 .idea
 .vscode
+*.code-workspace
 *.iml
 *.iws
 /tags
@@ -17,6 +18,15 @@ node_modules
 .eslintcache
 test-results*.xml
 /stats.json
+/chart.json
+/style.json
+/client/stats.json
+/client/chart.json
+/client/style.json
+spec-xunit-reporter-0.0.1.tgz
+*xunit_*.xml
+lerna-debug.log
+/vendor
 
 # added during build
 /config/secrets.json
@@ -27,22 +37,18 @@ test-results*.xml
 /coverage
 
 /build
+/packages/webpack-inline-constant-exports-plugin/test/build
 
-/public/*.js
-/public/*.js.map
-/public/*.css
-/public/*.css.map
-/public/vendors~*
-/public/sections/*
-/public/sections-rtl/*
-/public/images/*.gif
-/public/images/*.jpg
-/public/images/*.png
-/public/images/*.svg
+/public/
+
 /server/devdocs/search-index.js
 /server/devdocs/components-usage-stats.json
 /server/devdocs/proptypes-index.json
-/server/bundler/assets.json
+/server/bundler/assets*.json
+/client/server/devdocs/search-index.js
+/client/server/devdocs/components-usage-stats.json
+/client/server/devdocs/proptypes-index.json
+/client/server/bundler/assets*.json
 
 *.rdb
 *.db
@@ -53,8 +59,8 @@ cover.html
 
 cached-requests.json
 
-# Gutenberg extensions
-/client/gutenberg/extensions/**/build
-
-# package output
+# Monorepo output
+/apps/*/dist/
+/apps/*/types/
 /packages/*/dist/
+/packages/*/types/

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +7,7 @@ import { connect } from 'react-redux';
 import { map, get, last, uniqBy, size, filter, takeRight, compact } from 'lodash';
 import { localize } from 'i18n-calypso';
 
-/***
+/**
  * Internal dependencies
  */
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
@@ -17,6 +16,11 @@ import { expandComments } from 'state/comments/actions';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import { isAncestor } from 'blocks/comments/utils';
 import GravatarCaterpillar from 'components/gravatar-caterpillar';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const MAX_GRAVATARS_TO_DISPLAY = 10;
 const NUMBER_TO_EXPAND = 10;

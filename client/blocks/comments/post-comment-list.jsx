@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -24,10 +23,14 @@ import PostComment from './post-comment';
 import PostCommentFormRoot from './form-root';
 import CommentCount from './comment-count';
 import SegmentedControl from 'components/segmented-control';
-import SegmentedControlItem from 'components/segmented-control/item';
 import ConversationFollowButton from 'blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
 import { getCurrentUserId } from 'state/current-user/selectors';
+
+/**
+ * Style dependencies
+ */
+import './post-comment-list.scss';
 
 /**
  * PostCommentList displays a list of comments for a post.
@@ -158,7 +161,7 @@ class PostCommentList extends React.Component {
 		}
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.initialFetches();
 		this.scrollWhenDOMReady();
 	}
@@ -167,7 +170,7 @@ class PostCommentList extends React.Component {
 		this.resetActiveReplyComment();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.initialFetches( nextProps );
 		if (
 			this.props.siteId !== nextProps.siteId ||
@@ -297,11 +300,11 @@ class PostCommentList extends React.Component {
 		);
 	};
 
-	/***
+	/**
 	 * Gets comments for display
 	 * @param {Immutable.List<Number>} commentIds The top level commentIds to take from
-	 * @param {Number} numberToTake How many top level comments to take
-	 * @returns {Object} that has the displayed comments + total displayed count including children
+	 * @param {number} numberToTake How many top level comments to take
+	 * @returns {object} that has the displayed comments + total displayed count including children
 	 */
 	getDisplayedComments = ( commentIds, numberToTake ) => {
 		if ( ! commentIds ) {
@@ -361,7 +364,7 @@ class PostCommentList extends React.Component {
 			haveLaterCommentsToFetch,
 		} = this.props.commentsFetchingStatus;
 
-		const amountOfCommentsToTake = !! this.props.startingCommentId
+		const amountOfCommentsToTake = this.props.startingCommentId
 			? Infinity
 			: this.state.amountOfCommentsToTake;
 
@@ -416,36 +419,36 @@ class PostCommentList extends React.Component {
 				) }
 				{ showFilters && (
 					<SegmentedControl compact primary>
-						<SegmentedControlItem
+						<SegmentedControl.Item
 							selected={ commentsFilter === 'all' }
 							onClick={ this.handleFilterClick( 'all' ) }
 						>
 							{ translate( 'All' ) }
-						</SegmentedControlItem>
-						<SegmentedControlItem
+						</SegmentedControl.Item>
+						<SegmentedControl.Item
 							selected={ commentsFilter === 'approved' }
 							onClick={ this.handleFilterClick( 'approved' ) }
 						>
 							{ translate( 'Approved', { context: 'comment status' } ) }
-						</SegmentedControlItem>
-						<SegmentedControlItem
+						</SegmentedControl.Item>
+						<SegmentedControl.Item
 							selected={ commentsFilter === 'unapproved' }
 							onClick={ this.handleFilterClick( 'unapproved' ) }
 						>
 							{ translate( 'Pending', { context: 'comment status' } ) }
-						</SegmentedControlItem>
-						<SegmentedControlItem
+						</SegmentedControl.Item>
+						<SegmentedControl.Item
 							selected={ commentsFilter === 'spam' }
 							onClick={ this.handleFilterClick( 'spam' ) }
 						>
 							{ translate( 'Spam', { context: 'comment status' } ) }
-						</SegmentedControlItem>
-						<SegmentedControlItem
+						</SegmentedControl.Item>
+						<SegmentedControl.Item
 							selected={ commentsFilter === 'trash' }
 							onClick={ this.handleFilterClick( 'trash' ) }
 						>
 							{ translate( 'Trash', { context: 'comment status' } ) }
-						</SegmentedControlItem>
+						</SegmentedControl.Item>
 					</SegmentedControl>
 				) }
 				{ this.renderCommentsList( displayedComments ) }

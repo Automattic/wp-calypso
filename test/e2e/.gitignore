@@ -1,0 +1,11 @@
+.envrc
+
+/image-uploads/
+/image-uploads-store/
+/screenshots/
+/screenshots-i18n/
+/temp/
+/temp-cookies/
+
+# config overrides
+/config/local-*

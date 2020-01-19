@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,6 +9,11 @@ import React from 'react';
  * Internal dependencies
  */
 import constants from 'me/constants';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default class FormVerificationCodeInput extends React.Component {
 	static propTypes = {

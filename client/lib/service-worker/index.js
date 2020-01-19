@@ -1,5 +1,3 @@
-/** @format */
-
 export function registerServerWorker( options = {} ) {
 	const path = options.path || '/service-worker.js';
 	return window.navigator.serviceWorker.register( path );

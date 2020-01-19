@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,6 +9,11 @@ import page from 'page';
  */
 import controller from './controller';
 import { makeLayout, render as clientRender } from 'controller';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default function() {
 	// not putting category or email address in params, since `page`

@@ -1,28 +1,28 @@
-/** @format */
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import { find, findIndex, get } from 'lodash';
-import Gridicon from 'gridicons';
+import { get, findLast, findIndex } from 'lodash';
+import Gridicon from 'components/gridicon';
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import Button from 'components/button';
-import SignupActions from 'lib/signup/actions';
+import { Button } from '@automattic/components';
 import { getStepUrl } from 'signup/utils';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { submitSignupStep } from 'state/signup/progress/actions';
+import { getSignupProgress } from 'state/signup/progress/selectors';
+import { getFilteredSteps } from '../utils';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-const { submitSignupStep } = SignupActions;
 
 export class NavigationLink extends Component {
 	static propTypes = {
@@ -30,9 +30,10 @@ export class NavigationLink extends Component {
 		direction: PropTypes.oneOf( [ 'back', 'forward' ] ),
 		flowName: PropTypes.string.isRequired,
 		labelText: PropTypes.string,
+		cssClass: PropTypes.string,
 		positionInFlow: PropTypes.number,
 		previousPath: PropTypes.string,
-		signupProgress: PropTypes.array,
+		signupProgress: PropTypes.object,
 		stepName: PropTypes.string.isRequired,
 		// Allows to force a back button in the first step for example.
 		allowBackFirstStep: PropTypes.bool,
@@ -47,17 +48,17 @@ export class NavigationLink extends Component {
 	 * Returns the previous step , skipping over steps with the
 	 * `wasSkipped` property.
 	 *
-	 * @return {Object} The previous step object
+	 * @returns {object} The previous step object
 	 */
 	getPreviousStep() {
-		const { stepName, signupProgress } = this.props;
+		const { flowName, signupProgress, stepName } = this.props;
 
-		const currentStepIndex = findIndex( signupProgress, { stepName } );
-
-		const previousStep = find(
-			signupProgress.slice( 0, currentStepIndex ).reverse(),
-			step => ! step.wasSkipped
+		let steps = getFilteredSteps( flowName, signupProgress );
+		steps = steps.slice(
+			0,
+			findIndex( steps, step => step.stepName === stepName )
 		);
+		const previousStep = findLast( steps, step => ! step.wasSkipped );
 
 		return previousStep || { stepName: null };
 	}
@@ -74,8 +75,8 @@ export class NavigationLink extends Component {
 		const previousStep = this.getPreviousStep();
 
 		const stepSectionName = get(
-			find( this.props.signupProgress, { stepName: previousStep.stepName } ),
-			'stepSectionName',
+			this.props.signupProgress,
+			[ previousStep.stepName, 'stepSectionName' ],
 			''
 		);
 
@@ -89,7 +90,10 @@ export class NavigationLink extends Component {
 
 	handleClick = () => {
 		if ( this.props.direction === 'forward' ) {
-			submitSignupStep( { stepName: this.props.stepName }, [], this.props.defaultDependencies );
+			this.props.submitSignupStep(
+				{ stepName: this.props.stepName },
+				this.props.defaultDependencies
+			);
 
 			this.props.goToNextStep();
 		}
@@ -104,11 +108,11 @@ export class NavigationLink extends Component {
 		};
 
 		if ( this.props.direction === 'back' ) {
-			analytics.tracks.recordEvent( 'calypso_signup_previous_step_button_click', tracksProps );
+			this.props.recordTracksEvent( 'calypso_signup_previous_step_button_click', tracksProps );
 		}
 
 		if ( this.props.direction === 'forward' ) {
-			analytics.tracks.recordEvent( 'calypso_signup_skip_step', tracksProps );
+			this.props.recordTracksEvent( 'calypso_signup_skip_step', tracksProps );
 		}
 	}
 
@@ -136,7 +140,11 @@ export class NavigationLink extends Component {
 			text = labelText ? labelText : translate( 'Skip for now' );
 		}
 
-		const buttonClasses = classnames( 'navigation-link', this.props.direction );
+		const buttonClasses = classnames(
+			'navigation-link',
+			this.props.direction,
+			this.props.cssClass
+		);
 
 		return (
 			<Button
@@ -153,4 +161,9 @@ export class NavigationLink extends Component {
 	}
 }
 
-export default localize( NavigationLink );
+export default connect(
+	state => ( {
+		signupProgress: getSignupProgress( state ),
+	} ),
+	{ recordTracksEvent, submitSignupStep }
+)( localize( NavigationLink ) );

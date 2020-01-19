@@ -12,7 +12,7 @@
 	display: flex;
 	flex-direction: column;
 
-	background-color: $white;
+	background-color: var( --color-surface );
 
 	.vertical-menu {
 		flex-direction: row;
@@ -58,7 +58,7 @@
 	@include breakpoint( '>660px' ) {
 		width: 250px;
 		min-width: 250px;
-		border-right: 1px solid var( --color-neutral-100 );
+		border-right: 1px solid var( --color-neutral-10 );
 	}
 }
 
@@ -75,7 +75,7 @@
 
 	.seo-preview-pane__description {
 		font-size: 12px;
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 
 	@include breakpoint( '>660px' ) {
@@ -93,8 +93,8 @@
 	height: auto;
 	margin: 0 10px;
 
-	background-color: $white;
-	border: 1px solid lighten( $gray, 25% );
+	background-color: var( --color-surface );
+	border: 1px solid var( --color-neutral-5 );
 
 	.reader-post-card {
 		padding: 10px;
@@ -106,7 +106,7 @@
 		}
 
 		.reader-post-card__timestamp-and-tag a {
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 
 		.reader-post-actions__item {
@@ -117,7 +117,7 @@
 				pointer-events: none;
 
 				&:hover {
-					color: $gray;
+					color: var( --color-neutral-light );
 				}
 			}
 		}

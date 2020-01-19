@@ -1,362 +1,285 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { camelCase, forOwn, kebabCase, mapKeys, values } from 'lodash';
+import { camelCase, values } from 'lodash';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
+import debugFactory from 'debug';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
-import config from 'config';
+import { Card, CompactCard } from '@automattic/components';
 import CreditCardFormFields from 'components/credit-card-form-fields';
 import FormButton from 'components/forms/form-button';
-import formState from 'lib/form-state';
 import notices from 'notices';
 import { validatePaymentDetails } from 'lib/checkout';
-import { handleRenewNowClick, isRenewable } from 'lib/purchases';
 import ValidationErrorList from 'notices/validation-error-list';
-import wpcomFactory from 'lib/wp';
 import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'lib/url/support';
 import getCountries from 'state/selectors/get-countries';
 import QueryPaymentCountries from 'components/data/query-countries/payments';
 import { localizeUrl } from 'lib/i18n-utils';
+import {
+	createStripeSetupIntent,
+	StripeSetupIntentError,
+	StripeValidationError,
+	useStripe,
+} from 'lib/stripe';
+import {
+	getInitializedFields,
+	camelCaseFormFields,
+	kebabCaseFormFields,
+	assignAllFormFields,
+	areFormFieldsEmpty,
+	useDebounce,
+	saveOrUpdateCreditCard,
+	makeAsyncCreateCardToken,
+} from './helpers';
 
-const wpcom = wpcomFactory.undocumented();
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
-export class CreditCardForm extends Component {
-	static displayName = 'CreditCardForm';
+const debug = debugFactory( 'calypso:credit-card-form' );
 
-	static propTypes = {
-		apiParams: PropTypes.object,
-		createCardToken: PropTypes.func.isRequired,
-		countriesList: PropTypes.array.isRequired,
-		initialValues: PropTypes.object,
-		purchase: PropTypes.object,
-		recordFormSubmitEvent: PropTypes.func.isRequired,
-		saveStoredCard: PropTypes.func,
-		siteSlug: PropTypes.string,
-		successCallback: PropTypes.func.isRequired,
-		showUsedForExistingPurchasesInfo: PropTypes.bool,
-		autoFocus: PropTypes.bool,
-		heading: PropTypes.string,
-		onCancel: PropTypes.func,
+export function CreditCardForm( {
+	apiParams = {},
+	createCardToken,
+	countriesList,
+	initialValues,
+	purchase,
+	recordFormSubmitEvent,
+	saveStoredCard = null,
+	siteSlug,
+	successCallback,
+	showUsedForExistingPurchasesInfo = false,
+	autoFocus = true,
+	heading,
+	onCancel,
+	translate,
+} ) {
+	const { stripe, stripeConfiguration, setStripeError } = useStripe();
+	const [ formSubmitting, setFormSubmitting ] = useState( false );
+	const [ formFieldValues, setFormFieldValues ] = useState( getInitializedFields( initialValues ) );
+	const [ touchedFormFields, setTouchedFormFields ] = useState( {} );
+	const [ formFieldErrors, setFormFieldErrors ] = useState(
+		camelCaseFormFields(
+			validatePaymentDetails(
+				kebabCaseFormFields( formFieldValues ),
+				stripe ? 'stripe' : 'credit-card'
+			).errors
+		)
+	);
+	const [ debouncedFieldErrors, setDebouncedFieldErrors ] = useDebounce( formFieldErrors, 1000 );
+
+	const onFieldChange = rawDetails => {
+		const newValues = { ...formFieldValues, ...camelCaseFormFields( rawDetails ) };
+		setFormFieldValues( newValues );
+		setTouchedFormFields( { ...touchedFormFields, ...camelCaseFormFields( rawDetails ) } );
+		// Clear the errors of updated fields when typing then display them again after debounce
+		const clearedErrors = assignAllFormFields( camelCaseFormFields( rawDetails ), [] );
+		setDebouncedFieldErrors( { ...debouncedFieldErrors, ...clearedErrors } );
+		// Debounce updating validation errors
+		setFormFieldErrors(
+			camelCaseFormFields(
+				validatePaymentDetails(
+					kebabCaseFormFields( newValues ),
+					stripe ? 'stripe' : 'credit-card'
+				).errors
+			)
+		);
 	};
 
-	static defaultProps = {
-		apiParams: {},
-		initialValues: {},
-		saveStoredCard: null,
-		showUsedForExistingPurchasesInfo: false,
-		autoFocus: true,
-	};
-
-	state = {
-		form: null,
-		formSubmitting: false,
-		notice: null,
-	};
-
-	fieldNames = [
-		'name',
-		'number',
-		'cvv',
-		'expirationDate',
-		'country',
-		'postalCode',
-		'streetNumber',
-		'address1',
-		'address2',
-		'phoneNumber',
-		'streetNumber',
-		'city',
-		'state',
-		'document',
-		'brand',
-	];
-
-	componentWillMount() {
-		const fields = this.fieldNames.reduce( ( result, fieldName ) => {
-			return { ...result, [ fieldName ]: '' };
-		}, {} );
-
-		if ( this.props.initialValues ) {
-			fields.name = this.props.initialValues.name;
+	const getErrorMessage = fieldName => {
+		const camelName = camelCase( fieldName );
+		if ( touchedFormFields[ camelName ] ) {
+			return debouncedFieldErrors[ camelName ];
 		}
-
-		this.formStateController = formState.Controller( {
-			initialFields: fields,
-			onNewState: this.setFormState,
-			validatorFunction: this.validate,
-		} );
-
-		this.setState( {
-			form: this.formStateController.getInitialState(),
-		} );
-	}
-
-	storeForm = ref => ( this.formElem = ref );
-
-	validate = ( formValues, onComplete ) =>
-		this.formElem && onComplete( null, this.getValidationErrors() );
-
-	setFormState = form => this.formElem && this.setState( { form } );
-
-	endFormSubmitting = () => this.formElem && this.setState( { formSubmitting: false } );
-
-	onFieldChange = rawDetails => {
-		// Maps params from CreditCardFormFields component to work with formState.
-		forOwn( rawDetails, ( value, name ) => {
-			this.formStateController.handleFieldChange( {
-				name,
-				value,
-			} );
-		} );
+		return formFieldValues[ camelName ] && debouncedFieldErrors[ camelName ];
 	};
 
-	getErrorMessage = fieldName => formState.getFieldErrorMessages( this.state.form, fieldName );
-
-	onSubmit = event => {
+	const onSubmit = async event => {
 		event.preventDefault();
 
-		if ( this.state.formSubmitting ) {
+		if ( formSubmitting ) {
 			return;
 		}
+		setFormSubmitting( true );
 
-		this.setState( { formSubmitting: true } );
-
-		this.formStateController.handleSubmit( hasErrors => {
-			if ( hasErrors ) {
-				this.setState( { formSubmitting: false } );
-				return;
+		try {
+			setTouchedFormFields( formFieldErrors );
+			if ( ! areFormFieldsEmpty( formFieldErrors ) ) {
+				throw new Error( translate( 'Your credit card information is not valid' ) );
 			}
-
-			this.props.recordFormSubmitEvent();
-
-			this.saveCreditCard();
-		} );
+			recordFormSubmitEvent();
+			const createCardTokenAsync = makeAsyncCreateCardToken( createCardToken );
+			const createStripeSetupIntentAsync = async paymentDetails => {
+				const { name, country, 'postal-code': zip } = paymentDetails;
+				const paymentDetailsForStripe = {
+					name,
+					address: {
+						country: country,
+						postal_code: zip,
+					},
+				};
+				return createStripeSetupIntent( stripe, stripeConfiguration, paymentDetailsForStripe );
+			};
+			const parseStripeToken = response => response.payment_method;
+			const parsePaygateToken = response => response.token;
+			await saveOrUpdateCreditCard( {
+				createCardToken: stripe ? createStripeSetupIntentAsync : createCardTokenAsync,
+				saveStoredCard,
+				translate,
+				apiParams,
+				purchase,
+				siteSlug,
+				formFieldValues,
+				stripeConfiguration,
+				parseTokenFromResponse: stripe ? parseStripeToken : parsePaygateToken,
+			} );
+			successCallback();
+		} catch ( error ) {
+			debug( 'Error while submitting', error );
+			setFormSubmitting( false );
+			error && setStripeError && setStripeError( error );
+			error && displayError( { translate, error } );
+		}
 	};
 
-	saveCreditCard() {
-		const {
-			createCardToken,
-			saveStoredCard,
-			translate,
-			successCallback,
-			apiParams,
-			purchase,
-			siteSlug,
-		} = this.props;
-		const cardDetails = this.getCardDetails();
-
-		createCardToken( cardDetails, ( gatewayError, gatewayData ) => {
-			if ( ! this.formElem ) {
-				return;
-			}
-
-			if ( gatewayError ) {
-				this.setState( { formSubmitting: false } );
-				notices.error( gatewayError.message );
-				return;
-			}
-
-			if ( saveStoredCard ) {
-				saveStoredCard( gatewayData )
-					.then( () => {
-						notices.success( translate( 'Card added successfully' ), {
-							persistent: true,
-						} );
-
-						successCallback();
-					} )
-					.catch( ( { message } ) => {
-						this.endFormSubmitting();
-
-						if ( typeof message === 'object' ) {
-							notices.error( <ValidationErrorList messages={ values( message ) } /> );
-						} else {
-							notices.error( message );
-						}
-					} );
-			} else {
-				const updatedCreditCardApiParams = this.getParamsForApi(
-					cardDetails,
-					gatewayData.token,
-					apiParams
-				);
-
-				wpcom.updateCreditCard( updatedCreditCardApiParams, ( apiError, response ) => {
-					if ( apiError ) {
-						this.endFormSubmitting();
-						notices.error( apiError.message );
-						return;
-					}
-
-					if ( response.error ) {
-						this.endFormSubmitting();
-						notices.error( response.error );
-						return;
-					}
-
-					if (
-						purchase &&
-						siteSlug &&
-						isRenewable( purchase ) &&
-						config.isEnabled( 'upgrades/checkout' )
-					) {
-						const noticeMessage = translate(
-							'Your credit card details were successfully updated, but your subscription has not been renewed yet.'
-						);
-						const noticeOptions = {
-							button: translate( 'Renew Now' ),
-							onClick: function( event, closeFunction ) {
-								handleRenewNowClick( purchase, siteSlug );
-								closeFunction();
-							},
-							persistent: true,
-						};
-						notices.info( noticeMessage, noticeOptions );
-					} else {
-						notices.success( response.success, {
-							persistent: true,
-						} );
-					}
-
-					successCallback();
-				} );
-			}
-		} );
-	}
-
-	getParamsForApi( cardDetails, cardToken, extraParams = {} ) {
-		return {
-			...extraParams,
-			country: cardDetails.country,
-			zip: cardDetails[ 'postal-code' ],
-			month: cardDetails[ 'expiration-date' ].split( '/' )[ 0 ],
-			year: cardDetails[ 'expiration-date' ].split( '/' )[ 1 ],
-			name: cardDetails.name,
-			document: cardDetails.document,
-			street_number: cardDetails[ 'street-number' ],
-			address_1: cardDetails[ 'address-1' ],
-			address_2: cardDetails[ 'address-2' ],
-			city: cardDetails.city,
-			state: cardDetails.state,
-			phone_number: cardDetails[ 'phone-number' ],
-			cardToken,
-		};
-	}
-
-	getValidationErrors() {
-		const validationResult = validatePaymentDetails( this.getCardDetails() );
-
-		// Maps keys from credit card validator to work with formState.
-		return mapKeys( validationResult.errors, ( value, key ) => {
-			return camelCase( key );
-		} );
-	}
-
-	getCardDetails() {
-		// Maps keys from formState to work with CreditCardFormFields component and credit card validator.
-		return mapKeys( formState.getAllFieldValues( this.state.form ), ( value, key ) => {
-			return kebabCase( key );
-		} );
-	}
-
-	render() {
-		const { translate, autoFocus, heading, onCancel } = this.props;
-		return (
-			<form onSubmit={ this.onSubmit } ref={ this.storeForm }>
-				<Card className="credit-card-form__content">
-					{ heading && <div className="credit-card-form__heading">{ heading }</div> }
-					<QueryPaymentCountries />
-					<CreditCardFormFields
-						card={ this.getCardDetails() }
-						countriesList={ this.props.countriesList }
-						eventFormName="Edit Card Details Form"
-						onFieldChange={ this.onFieldChange }
-						getErrorMessage={ this.getErrorMessage }
-						// "This prop can reduce usability and accessibility",
-						// but it's already enabled by default and this just
-						// provides a way to disable it, so...
-						// eslint-disable-next-line jsx-a11y/no-autofocus
-						autoFocus={ autoFocus }
-					/>
-					<div className="credit-card-form__card-terms">
-						<Gridicon icon="info-outline" size={ 18 } />
-						<p>
-							{ translate(
-								'By saving a credit card, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, and if ' +
-									'you use it to pay for a subscription or plan, you authorize your credit card to be charged ' +
-									'on a recurring basis until you cancel, which you can do at any time. ' +
-									'You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} ' +
-									'and {{managePurchasesSupportPage}}how to cancel{{/managePurchasesSupportPage}}.',
-								{
-									components: {
-										tosLink: (
-											<a
-												href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
-										),
-										autoRenewalSupportPage: (
-											<a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />
-										),
-										managePurchasesSupportPage: (
-											<a href={ MANAGE_PURCHASES } target="_blank" rel="noopener noreferrer" />
-										),
-									},
-								}
-							) }
-						</p>
-					</div>
-					{ this.renderUsedForExistingPurchases() }
-				</Card>
-				<CompactCard className="credit-card-form__footer">
-					<em>{ translate( 'All fields required' ) }</em>
-					{ onCancel && (
-						<FormButton type="button" isPrimary={ false } onClick={ onCancel }>
-							{ translate( 'Cancel' ) }
-						</FormButton>
-					) }
-					<FormButton disabled={ this.state.formSubmitting } type="submit">
-						{ this.state.formSubmitting
-							? translate( 'Saving Card…', {
-									context: 'Button label',
-									comment: 'Credit card',
-							  } )
-							: translate( 'Save Card', {
-									context: 'Button label',
-									comment: 'Credit card',
-							  } ) }
+	return (
+		<form onSubmit={ onSubmit }>
+			<Card className="credit-card-form__content">
+				{ heading && <div className="credit-card-form__heading">{ heading }</div> }
+				<QueryPaymentCountries />
+				<CreditCardFormFields
+					card={ kebabCaseFormFields( formFieldValues ) }
+					countriesList={ countriesList }
+					eventFormName="Edit Card Details Form"
+					onFieldChange={ onFieldChange }
+					getErrorMessage={ getErrorMessage }
+					autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+				/>
+				<div className="credit-card-form__card-terms">
+					<Gridicon icon="info-outline" size={ 18 } />
+					<p>
+						<TosText translate={ translate } />
+					</p>
+				</div>
+				<UsedForExistingPurchasesInfo
+					translate={ translate }
+					showUsedForExistingPurchasesInfo={ showUsedForExistingPurchasesInfo }
+				/>
+			</Card>
+			<CompactCard className="credit-card-form__footer">
+				<em>{ translate( 'All fields required' ) }</em>
+				{ onCancel && (
+					<FormButton type="button" isPrimary={ false } onClick={ onCancel }>
+						{ translate( 'Cancel' ) }
 					</FormButton>
-				</CompactCard>
-			</form>
-		);
-	}
+				) }
+				<SaveButton translate={ translate } formSubmitting={ formSubmitting } />
+			</CompactCard>
+		</form>
+	);
+}
 
-	renderUsedForExistingPurchases() {
-		const { translate, showUsedForExistingPurchasesInfo } = this.props;
+CreditCardForm.propTypes = {
+	apiParams: PropTypes.object,
+	createCardToken: PropTypes.func.isRequired,
+	countriesList: PropTypes.array.isRequired,
+	initialValues: PropTypes.object,
+	purchase: PropTypes.object,
+	recordFormSubmitEvent: PropTypes.func.isRequired,
+	saveStoredCard: PropTypes.func,
+	siteSlug: PropTypes.string,
+	successCallback: PropTypes.func.isRequired,
+	showUsedForExistingPurchasesInfo: PropTypes.bool,
+	autoFocus: PropTypes.bool,
+	heading: PropTypes.string,
+	onCancel: PropTypes.func,
+	translate: PropTypes.func.isRequired,
+};
 
-		if ( ! showUsedForExistingPurchasesInfo ) {
-			return;
+function SaveButton( { translate, formSubmitting } ) {
+	return (
+		<FormButton disabled={ formSubmitting } type="submit">
+			{ formSubmitting
+				? translate( 'Saving Card…', {
+						context: 'Button label',
+						comment: 'Credit card',
+				  } )
+				: translate( 'Save Card', {
+						context: 'Button label',
+						comment: 'Credit card',
+				  } ) }
+		</FormButton>
+	);
+}
+
+function TosText( { translate } ) {
+	return translate(
+		'By saving a credit card, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, and if ' +
+			'you use it to pay for a subscription or plan, you authorize your credit card to be charged ' +
+			'on a recurring basis until you cancel, which you can do at any time. ' +
+			'You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} ' +
+			'and {{managePurchasesSupportPage}}how to cancel{{/managePurchasesSupportPage}}.',
+		{
+			components: {
+				tosLink: (
+					<a
+						href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+				autoRenewalSupportPage: (
+					<a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />
+				),
+				managePurchasesSupportPage: (
+					<a href={ MANAGE_PURCHASES } target="_blank" rel="noopener noreferrer" />
+				),
+			},
 		}
+	);
+}
 
-		return (
-			<div className="credit-card-form__card-terms">
-				<Gridicon icon="info-outline" size={ 18 } />
-				<p>{ translate( 'This card will be used for future renewals of existing purchases.' ) }</p>
-			</div>
-		);
+function UsedForExistingPurchasesInfo( { translate, showUsedForExistingPurchasesInfo } ) {
+	if ( ! showUsedForExistingPurchasesInfo ) {
+		return null;
 	}
+
+	return (
+		<div className="credit-card-form__card-terms">
+			<Gridicon icon="info-outline" size={ 18 } />
+			<p>{ translate( 'This card will be used for future renewals of existing purchases.' ) }</p>
+		</div>
+	);
+}
+
+function StripeError( { translate } ) {
+	return (
+		<div>
+			{ translate(
+				'There was a problem with your credit card. Please check your information and try again.'
+			) }
+		</div>
+	);
+}
+
+function displayError( { translate, error } ) {
+	if ( error instanceof StripeSetupIntentError || error instanceof StripeValidationError ) {
+		notices.error( <StripeError translate={ translate } /> );
+		return;
+	}
+	if ( typeof error.message === 'object' ) {
+		notices.error( <ValidationErrorList messages={ values( error.message ) } /> );
+		return;
+	}
+	notices.error( error.message );
 }
 
 export default connect( state => ( {

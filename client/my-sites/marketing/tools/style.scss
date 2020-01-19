@@ -1,0 +1,181 @@
+.tools__header-body {
+	display: flex;
+	flex-direction: row;
+	padding: 11px 24px; // standard padding
+
+	@include breakpoint( '>1040px' ) {
+		max-height: 300px;
+	}
+}
+
+.tools__header-info {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.tools__header-title {
+	font-size: 21px;
+	font-weight: 400;
+	margin-bottom: 10px;
+	margin-top: 10px;
+}
+
+.tools__header-description {
+	font-size: 16px;
+	font-weight: 400;
+}
+
+.tools__header-button-row {
+	align-content: center;
+	display: flex;
+	flex-direction: row;
+	margin: 20px 0;
+
+	.button {
+		@include breakpoint( '<480px' ) {
+			width: 100%;
+			text-align: center;
+		}
+	}
+}
+
+.tools__header-image-wrapper {
+	display: none;
+
+	@include breakpoint( '>1040px' ) {
+		display: flex;
+		min-width: 400px;
+	}
+
+	.tools__header-image {
+		position: relative;
+			left: -20px;
+	}
+}
+
+.tools__feature-list {
+	position: relative;
+	left: calc( -0.5em );
+	display: flex;
+	flex-wrap: wrap;
+	// margins of the items will "hang off the side" invisibly
+	width: calc( 100% + 1em );
+}
+
+.tools__feature-list-item {
+	display: flex;
+	flex-direction: column;
+	margin: 0.5em;
+	width: calc( 100% - 1em );
+
+	// Reduce top margin of GMB logo
+	&:nth-child( 3 ) .tools__feature-list-item-body-image {
+		margin-top: 18px;
+	}
+
+	// Reduce top margin of Upwork logo
+	&:nth-child( 5 ) .tools__feature-list-item-body-image {
+		margin-top: 20px;
+	}
+
+	@include breakpoint( '>1040px' ) {
+		width: calc( 50% - 1em );
+	}
+}
+
+.tools__feature-list-item-disclaimer {
+	color: var( --color-text-subtle );
+	font-style: italic;
+}
+
+.tools__feature-list-item-body {
+	align-items: flex-start;
+	display: flex; // grow this, leave buttons on the bottom of the card
+	flex: 1 0 auto;
+}
+
+.tools__feature-list-item-body-text {
+	width: 100%;
+
+	> p {
+		margin-bottom: 0;
+	}
+
+	@include breakpoint( '>1040px' ) {
+		width: 75%;
+	}
+}
+
+.tools__feature-list-item-body-image {
+	margin: 10px 20px 0 0;
+	max-width: 150px;
+	width: 15%;
+
+	@include breakpoint( '>1040px' ) {
+		display: flex;
+	}
+
+	@include breakpoint( '<480px' ) {
+		display: none;
+	}
+}
+
+.tools__upgrade-button {
+	text-transform: capitalize;
+}
+
+.tools__feature-list-item-child-row {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	margin-top: 1em;
+
+	.button {
+		margin: 0;
+		text-align: center;
+		width: auto;
+	}
+
+	.purchase-detail__info {
+		margin-top: 1em;
+	}
+
+	.google-voucher__initial-step .purchase-detail__button {
+		float: right;
+		font-size: 12px;
+		line-height: 1;
+		padding: 7px;
+	}
+
+	.google-voucher__initial-step {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	@include breakpoint( '>480px' ) {
+		flex-direction: row;
+		justify-content: flex-end;
+
+		.google-voucher__initial-step {
+			display: block;
+		}
+
+		.button {
+			margin: 0 1em 0 0;
+			width: auto;
+		}
+	}
+
+	@include breakpoint( '>1040px' ) {
+
+		.button {
+			margin: 0 0 0 1em;
+		}
+
+		.purchase-detail__button {
+			float: right;
+		}
+	}
+}

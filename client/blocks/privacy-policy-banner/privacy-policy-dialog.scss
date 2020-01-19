@@ -1,0 +1,52 @@
+// dialog
+.dialog.card.privacy-policy-banner__dialog {
+	max-width: 700px;
+	font-size: 14px;
+	overflow: hidden;
+
+	ol {
+		list-style-position: inside;
+		margin: 0;
+
+		@include breakpoint( '>660px' ) {
+			list-style-position: outside;
+			margin: 0 3em 1.5em;
+		}
+	}
+}
+
+.privacy-policy-banner__dialog-header {
+	display: flex;
+	align-items: center;
+	margin: -24px -24px 0;
+	padding: 0 24px;
+	background-color: #fbfcfd;
+	height: 80px;
+	box-shadow: 0 1px 0 0 var( --color-neutral-10 ),
+		0 1px 0 var( --color-neutral-0 );
+}
+
+.dialog__content .privacy-policy-banner__dialog-header-text h1 {
+	margin: 0;
+}
+
+.privacy-policy-banner__dialog-header-image {
+	width: (149 / 482) * 100%;
+	margin-right: 20px;
+}
+
+.privacy-policy-banner__dialog-header-text {
+	flex: 1;
+}
+
+.privacy-policy-banner__dialog-body {
+	overflow-y: auto;
+	height: 320px;
+	padding-top: 24px;
+}
+
+.privacy-policy-banner__dialog-body h3,
+.privacy-policy-banner__dialog-body h4 {
+	font-weight: bold;
+	margin: 1.5em 0;
+}

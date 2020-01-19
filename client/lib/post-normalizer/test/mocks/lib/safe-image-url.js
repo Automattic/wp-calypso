@@ -1,7 +1,6 @@
 /**
  * A stub that makes safe-image-url deterministic
  *
- * @format
  */
 
 let returnValue;

@@ -1,39 +1,21 @@
-.section-export {
-	padding-bottom: 100px;
-}
-
-.export-card__title {
-	font-size: 21px;
-	font-weight: 300;
-	color: var( --color-neutral-700 );
-	margin-bottom: 16px;
-	clear: left;
-}
-
+.export-card__title,
 .export-media-card__title {
 	font-size: 21px;
 	font-weight: 300;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	margin-bottom: 16px;
 	clear: left;
 }
 
-.export-card .foldable-card__header {
-	padding: 24px;
-}
-
+.export-card .foldable-card__header,
 .export-media-card .foldable-card__header {
 	padding: 24px;
 }
 
-.export-card__subtitle {
-	font-size: 14px;
-	color: var( --color-neutral-700 );
-}
-
+.export-card__subtitle,
 .export-media-card__subtitle {
 	font-size: 14px;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }
 
 .export-card__spinner-button {
@@ -56,7 +38,7 @@
 .export-card__advanced-settings-title {
 	font-size: 21px;
 	font-weight: 300;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	margin-bottom: 16px;
 }
 
@@ -80,15 +62,9 @@
 	}
 }
 
-// The following specificity is required to override the form-label selector:
-// .form-label input[type="checkbox"] + span { font-weight: normal }
-.export-card__option-fieldset-legend .export-card__option-fieldset-legend-text {
-	font-weight: bold;
-}
-
 .export-card__option-fieldset-description {
 	font-size: 14px;
-	color: $gray;
+	color: var( --color-text-subtle );
 	padding-left: 24px;
 	padding-right: 24px;
 }
@@ -100,127 +76,4 @@
 	select {
 		width: 100%;
 	}
-}
-
-.guided-transfer-card__options {
-	display: flex;
-	font-size: 14px;
-}
-
-.guided-transfer-card__options-header-title-container {
-	flex-grow: 1;
-}
-
-.guided-transfer-card__options-header-button-container {
-	margin: auto;
-}
-
-.guided-transfer-card__title {
-	font-size: 21px;
-	font-weight: 300;
-	color: var( --color-neutral-700 );
-	clear: left;
-}
-
-.guided-transfer-card__subtitle {
-	color: $gray;
-	font-style: italic;
-	font-size: 14px;
-}
-
-.guided-transfer-card__price {
-	font-style: normal;
-	font-size: 18px;
-}
-
-.guided-transfer-card__details {
-	background-color: lighten( $gray-light, 2% );
-	font-size: 14px;
-}
-
-.guided-transfer-card__details-container {
-	display: flex;
-}
-
-.guided-transfer-card__details-title {
-	color: var( --color-neutral-700 );
-	font-weight: 600;
-	margin-bottom: 12px;
-}
-
-.guided-transfer-card__details-text {
-	flex-basis: 60%;
-	color: $gray;
-}
-
-.guided-transfer-card__feature-list {
-	color: var( --color-success );
-	flex-basis: 40%;
-
-	.guided-transfer-card__feature-list-item {
-		list-style-type: none;
-		text-indent: -24px;
-		margin-bottom: 8px;
-	}
-
-	.guided-transfer-card__feature-icon {
-		margin-right: 6px;
-		margin-top: -4px;
-		vertical-align: middle;
-	}
-}
-
-.guided-transfer-card__feature-text {
-	color: $gray;
-}
-
-.guided-transfer-card__in-progress {
-	padding-top: 32px;
-	padding-bottom: 32px;
-	font-size: 16px;
-	text-align: center;
-
-	@include breakpoint( '>660px' ) {
-		padding-left: 128px;
-		text-align: left;
-	}
-}
-
-.guided-transfer-card__in-progress-icon {
-	margin: 16px auto;
-	width: 48px;
-	height: 48px;
-	padding: 14px;
-	border-radius: 50%;
-	background-color: var( --color-neutral-500 );
-	color: var( --color-neutral-0 );
-
-	@include breakpoint( '>660px' ) {
-		position: absolute;
-		margin-left: -96px;
-		margin-top: 16px;
-	}
-}
-
-.guided-transfer-card__in-progress-title {
-	font-size: 24px;
-	font-weight: 300;
-	color: var( --color-neutral-700 );
-}
-
-.guided-transfer-card__unavailable-notice {
-	background-color: var( --color-neutral-700 );
-	border-radius: 3px;
-	color: var( --color-neutral-0 );
-	padding: 5px 12px;
-}
-
-.guided-transfer-card__unavailable-info-icon {
-	vertical-align: middle;
-	padding-left: 5px;
-}
-
-.guided-transfer-card__unavailable-info-icon.info-popover .gridicon:hover,
-.guided-transfer-card__unavailable-info-icon.info-popover.is_active .gridicon {
-	color: var( --color-neutral-0 );
 }

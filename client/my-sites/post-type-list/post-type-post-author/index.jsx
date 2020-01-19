@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,12 +6,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { getPost } from 'state/posts/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 function PostTypePostAuthor( { name } ) {
 	if ( ! name ) {
@@ -32,10 +34,10 @@ PostTypePostAuthor.propTypes = {
 	name: PropTypes.string,
 };
 
-export default connect( ( state, ownProps ) => {
-	const post = getPost( state, ownProps.globalId );
+export default connect( ( state, { globalId } ) => {
+	const post = getPost( state, globalId );
 
 	return {
 		name: get( post, [ 'author', 'name' ] ),
 	};
-} )( localize( PostTypePostAuthor ) );
+} )( PostTypePostAuthor );

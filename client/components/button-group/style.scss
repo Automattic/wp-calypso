@@ -7,27 +7,6 @@
 			// fixes focus styles in stacking context
 			position: relative;
 			z-index: z-index( 'button-group-parent', '.button-group .button:focus' );
-			box-shadow: inset 1px 0 0 var( --color-accent ) 0 0 0 2px var( --color-primary-light );
-		}
-
-		&.is-primary:focus {
-			box-shadow: inset 1px 0 0 var( --color-primary-dark ), 0 0 0 2px var( --color-primary-light );
-		}
-
-		&.is-scary:focus {
-			box-shadow: inset 1px 0 0 var( --color-error ), 0 0 0 2px lighten( $alert-red, 20% );
-		}
-
-		&.is-primary.is-scary:focus {
-			box-shadow: inset 1px 0 0 darken( $alert-red, 30% ), 0 0 0 2px lighten( $alert-red, 20% );
-		}
-
-		&:first-child:focus {
-			box-shadow: 0 0 0 2px var( --color-primary-light );
-		}
-
-		&.is-scary:first-child:focus {
-			box-shadow: 0 0 0 2px lighten( $alert-red, 20% );
 		}
 	}
 
@@ -55,14 +34,20 @@
 	&.is-primary {
 		&.is-busy {
 			background-size: 120px 100%;
-			background-image: linear-gradient( -45deg, $blue-medium 28%, darken( $blue-medium, 5% ) 28%, darken( $blue-medium, 5% ) 72%, $blue-medium 72% );
+			background-image: linear-gradient(
+				-45deg,
+				var( --color-accent ) 28%,
+				var( --color-accent-60 ) 28%,
+				var( --color-accent-60 ) 72%,
+				var( --color-accent ) 72%
+			);
 		}
 	}
 
 	&.is-busy {
 		animation: button__busy-animation 3000ms infinite linear;
 		background-size: 120px 100%;
-		background-image: linear-gradient( -45deg, $gray-lighten-30 28%, $white 28%, $white 72%, $gray-lighten-30 72% );
+		background-image: linear-gradient( -45deg, var( --color-neutral-0 ) 28%, var( --color-surface ) 28%, var( --color-surface ) 72%, var( --color-neutral-0 ) 72% );
 		display: inline-block;
 		border-radius: 4px;
 
@@ -73,7 +58,8 @@
 
 }
 
-
 @keyframes button__busy-animation {
-  0% { background-position: 240px 0; }
+	0% {
+		background-position: 240px 0;
+	}
 }

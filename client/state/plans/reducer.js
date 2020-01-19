@@ -1,16 +1,13 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
 	PLANS_RECEIVE,
 	PLANS_REQUEST,
 	PLANS_REQUEST_SUCCESS,
 	PLANS_REQUEST_FAILURE,
 } from 'state/action-types';
-import { combineReducers } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -18,27 +15,26 @@ import { itemsSchema } from './schema';
  * root state -> state.plans.items =>
  * [ {}, {}, ... {} ]
  *
- * @param {Object} state - current state
- * @param {Object} action - plans action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - plans action
+ * @returns {object} updated state
  */
-export const items = ( state = [], action ) => {
+export const items = withSchemaValidation( itemsSchema, ( state = [], action ) => {
 	switch ( action.type ) {
 		case PLANS_RECEIVE:
 			return action.plans.slice( 0 );
 	}
 
 	return state;
-};
-items.schema = itemsSchema;
+} );
 
 /**
  * `Reducer` function which handles request/response actions
  * to/from WP REST-API
  *
- * @param {Object} state - current state
- * @param {Object} action - plans action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - plans action
+ * @returns {object} updated state
  */
 export const requesting = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -54,9 +50,9 @@ export const requesting = ( state = false, action ) => {
 /**
  * `Reducer` function which handles ERROR REST-API response actions
  *
- * @param {Object} state - current state
- * @param {Object} action - plans action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - plans action
+ * @returns {object} updated state
  */
 export const error = ( state = false, action ) => {
 	switch ( action.type ) {

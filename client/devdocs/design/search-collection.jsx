@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -36,17 +34,22 @@ const shouldShowInstance = ( example, filter, component ) => {
 	return ! filter || searchPattern.toLowerCase().indexOf( filter ) > -1;
 };
 
-const shouldShowEditLink = section => section !== 'gutenberg-components';
-
 const getReadmeFilePath = ( section, example ) => {
-	switch ( section ) {
-		case 'design':
-			return `/client/components/${ example.props.readmeFilePath }/README.md`;
-		case 'gutenberg-components':
-			return `/node_modules/@wordpress/components/src/${ example.props.readmeFilePath }/README.md`;
-		default:
-			return `/client/${ section }/${ example.props.readmeFilePath }/README.md`;
+	let path = example.props.readmeFilePath;
+
+	if ( ! path ) {
+		return null;
 	}
+
+	if ( ! path.startsWith( '/' ) ) {
+		path = `/client/${ section === 'design' ? 'components' : section }/${ path }`;
+	}
+
+	if ( ! path.endsWith( 'README.md' ) ) {
+		path = `${ path }/README.md`;
+	}
+
+	return path;
 };
 
 const Collection = ( {
@@ -69,7 +72,6 @@ const Collection = ( {
 			camelCaseToSlug( exampleName )
 		) }`;
 		const readmeFilePath = getReadmeFilePath( section, example );
-		const showEditLink = shouldShowEditLink( section );
 
 		showCounter++;
 
@@ -93,9 +95,7 @@ const Collection = ( {
 						component={ component }
 						section={ section }
 					/>
-					{ component && (
-						<ReadmeViewer readmeFilePath={ readmeFilePath } showEditLink={ showEditLink } />
-					) }
+					{ component && <ReadmeViewer readmeFilePath={ readmeFilePath } /> }
 				</div>
 			);
 		}
@@ -105,9 +105,7 @@ const Collection = ( {
 				<DocsExampleWrapper name={ exampleName } unique={ !! component } url={ exampleLink }>
 					{ example }
 				</DocsExampleWrapper>
-				{ component && (
-					<ReadmeViewer readmeFilePath={ readmeFilePath } showEditLink={ showEditLink } />
-				) }
+				{ component && <ReadmeViewer readmeFilePath={ readmeFilePath } /> }
 			</div>
 		);
 	} );

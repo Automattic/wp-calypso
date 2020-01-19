@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,11 +6,11 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { noop, snakeCase } from 'lodash';
 import { localize } from 'i18n-calypso';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
-import formatCurrency from 'lib/format-currency';
 import PriceInput from 'woocommerce/components/price-input';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
@@ -59,6 +58,7 @@ class OrderTotalRow extends Component {
 						onChange={ onChange }
 						initialValue={ initialValue }
 						value={ total }
+						noWrap="true"
 					/>
 				</TableItem>
 			</TableRow>

@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 import config from 'config';
-import { loadScript } from 'lib/load-script';
+import { loadScript } from '@automattic/load-script';
 
 /**
  * Module variables

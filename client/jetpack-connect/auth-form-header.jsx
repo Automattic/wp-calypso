@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,7 +10,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
+import config from 'config';
 import FormattedHeader from 'components/formatted-header';
 import safeImageUrl from 'lib/safe-image-url';
 import Site from 'blocks/site';
@@ -25,6 +25,7 @@ import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query
 export class AuthFormHeader extends Component {
 	static propTypes = {
 		authQuery: authQueryPropTypes.isRequired,
+		isWoo: PropTypes.bool,
 
 		// Connected props
 		translate: PropTypes.func.isRequired,
@@ -50,7 +51,7 @@ export class AuthFormHeader extends Component {
 	}
 
 	getHeaderText() {
-		const { translate, partnerSlug } = this.props;
+		const { translate, partnerSlug, isWoo } = this.props;
 
 		let host = '';
 		switch ( partnerSlug ) {
@@ -66,6 +67,9 @@ export class AuthFormHeader extends Component {
 			case 'bluehost':
 				host = 'Bluehost';
 				break;
+			case 'eurodns':
+				host = 'EuroDNS';
+				break;
 		}
 
 		if ( host ) {
@@ -75,7 +79,18 @@ export class AuthFormHeader extends Component {
 			} );
 		}
 
-		switch ( this.getState() ) {
+		const currentState = this.getState();
+
+		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isWoo ) {
+			switch ( currentState ) {
+				case 'logged-out':
+					return translate( 'Create a Jetpack account' );
+				default:
+					return translate( 'Connecting your store' );
+			}
+		}
+
+		switch ( currentState ) {
 			case 'logged-out':
 				return translate( 'Create an account to set up Jetpack' );
 			case 'logged-in-success':
@@ -87,9 +102,21 @@ export class AuthFormHeader extends Component {
 	}
 
 	getSubHeaderText() {
-		const { translate } = this.props;
+		const { translate, isWoo } = this.props;
+		const currentState = this.getState();
 
-		switch ( this.getState() ) {
+		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isWoo ) {
+			switch ( currentState ) {
+				case 'logged-out':
+					return translate(
+						'Your account will enable you to start using the features and benefits offered by Jetpack & WooCommerce Services.'
+					);
+				default:
+					return translate( "Once connected we'll continue setting up your store" );
+			}
+		}
+
+		switch ( currentState ) {
 			case 'logged-out':
 				return translate( 'You are moments away from a better WordPress.' );
 			case 'logged-in-success':

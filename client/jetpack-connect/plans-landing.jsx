@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,6 +5,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
+import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -18,7 +18,6 @@ import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import Placeholder from './plans-placeholder';
 import PlansGrid from './plans-grid';
-import PlansExtendedInfo from './plans-extended-info';
 import QueryPlans from 'components/data/query-plans';
 import { getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
@@ -107,7 +106,6 @@ class PlansLanding extends Component {
 					isLanding={ true }
 					onSelect={ this.storeSelectedPlan }
 				>
-					<PlansExtendedInfo recordTracks={ this.handleInfoButtonClick } />
 					<LoggedOutFormLinks>
 						<JetpackConnectHappychatButton eventName="calypso_jpc_planslanding_chat_initiated">
 							<HelpButton />
@@ -119,7 +117,7 @@ class PlansLanding extends Component {
 	}
 }
 
-export default connect(
+const connectComponent = connect(
 	( state, { url } ) => {
 		const rawSite = url ? getJetpackSiteByUrl( state, url ) : null;
 		const site = rawSite ? getSite( state, rawSite.ID ) : null;
@@ -132,4 +130,6 @@ export default connect(
 	{
 		recordTracksEvent,
 	}
-)( localize( PlansLanding ) );
+);
+
+export default flowRight( connectComponent, localize )( PlansLanding );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -24,7 +22,7 @@ import {
 	openDetailsDialog,
 } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
-class LabelItem extends Component {
+export class LabelItem extends Component {
 	renderRefund = label => {
 		const { orderId, siteId, translate } = this.props;
 
@@ -103,7 +101,7 @@ class LabelItem extends Component {
 		return (
 			<div className="shipping-label__item">
 				<p className="shipping-label__item-detail">
-					{ translate( '%(service)s label (#%(labelIndex)d) printed', {
+					{ translate( '%(service)s label (#%(labelIndex)d)', {
 						args: {
 							service: label.serviceName,
 							labelIndex: label.labelIndex + 1,
@@ -163,7 +161,4 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { openRefundDialog, openReprintDialog, openDetailsDialog }, dispatch );
 };
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( localize( LabelItem ) );
+export default connect( null, mapDispatchToProps )( localize( LabelItem ) );

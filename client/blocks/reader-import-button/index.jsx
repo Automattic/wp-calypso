@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 
 /**
@@ -15,6 +14,11 @@ import { connect } from 'react-redux';
 import wpcom from 'lib/wp';
 import FilePicker from 'components/file-picker';
 import { successNotice, errorNotice } from 'state/notices/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ReaderImportButton extends React.Component {
 	static propTypes = {
@@ -105,7 +109,4 @@ class ReaderImportButton extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{ successNotice, errorNotice }
-)( localize( ReaderImportButton ) );
+export default connect( null, { successNotice, errorNotice } )( localize( ReaderImportButton ) );

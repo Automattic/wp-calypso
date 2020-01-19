@@ -5,46 +5,34 @@
 	}
 }
 
-.about__pressable-wrapper {
-	position: absolute;
-	width: 100%;
-	opacity: 1;
-	filter: blur( 0 );
-	transform: translateZ( 0 ) translateX( 0 );
-	transition: 0.5s ease-in-out opacity, 0.5s ease-in-out filter, 0.5s ease-in-out transform;
-}
-
 .about__form-wrapper {
-	max-width: 500px;
+	max-width: 420px;
 	margin: 0 auto;
-	filter: blur( 0 );
-	transform: translateZ( 0 ) translateX( 0 );
-	transition: 0.5s ease-in-out opacity, 0.5s ease-in-out filter, 0.5s ease-in-out transform;
-}
+	transition: 0.5s ease-in-out opacity;
 
-.about__wrapper-is-hidden {
-	pointer-events: none;
-	transform: translateZ( 0 ) translateX( 25% );
-	opacity: 0;
+	.card {
+		border-radius: 3px;
+		@include elevation ( 2dp );
+	}
 }
 
 .info-popover.about__info-popover {
 	margin-left: 5px;
 
 	.gridicon {
-		color: $gray;
+		color: var( --color-neutral-light );
 		margin-bottom: -3px;
 	}
 }
 
 .about__checkboxes {
-	border: 1px solid var( --color-neutral-100 );
+	border: 1px solid var( --color-neutral-10 );
 	border-radius: 3px;
 }
 
 .about__checkbox-option {
-	border-top: 1px solid var( --color-neutral-100 );
-	color: var( --color-neutral-500 );
+	border-top: 1px solid var( --color-neutral-10 );
+	color: var( --color-neutral-50 );
 	display: block;
 	font-weight: normal;
 	margin: 0;
@@ -80,7 +68,7 @@
 }
 
 .about__segment-label {
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 
 	&:hover {
 		cursor: pointer;

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,12 +8,11 @@ import page from 'page';
  */
 import { likes } from './controller';
 import { preloadReaderBundle, initAbTests, updateLastRoute, sidebar } from 'reader/controller';
-import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
 	page(
 		'/activities/likes',
-		redirectLoggedOut,
 		preloadReaderBundle,
 		initAbTests,
 		updateLastRoute,

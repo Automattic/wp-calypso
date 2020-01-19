@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,14 +5,14 @@ import React from 'react';
 import page from 'page';
 import i18n from 'i18n-calypso';
 import { find, pick, get } from 'lodash';
+import moment from 'moment';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { getSiteFragment, getStatsDefaultSitePage } from 'lib/route';
 import analytics from 'lib/analytics';
 import { recordPlaceholdersTiming } from 'lib/perfmon';
-import { savePreference } from 'state/preferences/actions';
 import { getSite, getSiteOption } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -53,7 +52,7 @@ function rangeOfPeriod( period, date ) {
 
 function getNumPeriodAgo( momentSiteZone, date, period ) {
 	const endOfCurrentPeriod = momentSiteZone.endOf( period );
-	const durationAgo = i18n.moment.duration( endOfCurrentPeriod.diff( date ) );
+	const durationAgo = moment.duration( endOfCurrentPeriod.diff( date ) );
 	let numPeriodAgo;
 
 	switch ( period ) {
@@ -131,14 +130,10 @@ function getSiteFilters( siteId ) {
 
 function getMomentSiteZone( state, siteId ) {
 	const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
-	return i18n.moment().utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 );
+	return moment().utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 );
 }
 
 export default {
-	resetFirstView( context ) {
-		context.store.dispatch( savePreference( 'firstViewHistory', [] ) );
-	},
-
 	redirectToDefaultSitePage: function( context ) {
 		const siteFragment = getSiteFragment( context.path );
 
@@ -250,11 +245,10 @@ export default {
 		}
 
 		const momentSiteZone = getMomentSiteZone( state, siteId );
-		const isValidStartDate =
-			queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid();
+		const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
 
 		const date = isValidStartDate
-			? i18n.moment( queryOptions.startDate ).locale( 'en' )
+			? moment( queryOptions.startDate ).locale( 'en' )
 			: rangeOfPeriod( activeFilter.period, momentSiteZone.locale( 'en' ) ).startOf;
 
 		const parsedPeriod = isValidStartDate
@@ -308,11 +302,11 @@ export default {
 			'authors',
 			'videoplays',
 			'videodetails',
-			'podcastdownloads',
+			'filedownloads',
 			'searchterms',
 			'annualstats',
 		];
-		let momentSiteZone = i18n.moment();
+		let momentSiteZone = moment();
 
 		const site = getSite( context.store.getState(), siteId );
 		siteId = site ? site.ID || 0 : 0;
@@ -335,13 +329,12 @@ export default {
 
 		const gmtOffset = getSiteOption( context.store.getState(), siteId, 'gmt_offset' );
 		if ( Number.isFinite( gmtOffset ) ) {
-			momentSiteZone = i18n.moment().utcOffset( gmtOffset );
+			momentSiteZone = moment().utcOffset( gmtOffset );
 		}
-		const isValidStartDate =
-			queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid();
+		const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
 		const date = isValidStartDate
-			? i18n.moment( queryOptions.startDate )
-			: momentSiteZone.endOf( activeFilter.period );
+			? moment( queryOptions.startDate ).locale( 'en' )
+			: momentSiteZone.endOf( activeFilter.period ).locale( 'en' );
 		const period = rangeOfPeriod( activeFilter.period, date );
 
 		const extraProps =
@@ -438,11 +431,10 @@ export default {
 		}
 
 		const momentSiteZone = getMomentSiteZone( state, siteId );
-		const isValidStartDate =
-			queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid();
+		const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
 
 		const date = isValidStartDate
-			? i18n.moment( queryOptions.startDate ).locale( 'en' )
+			? moment( queryOptions.startDate ).locale( 'en' )
 			: rangeOfPeriod( activeFilter.period, momentSiteZone.locale( 'en' ) ).startOf;
 
 		const parsedPeriod = isValidStartDate

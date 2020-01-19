@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -89,13 +87,12 @@ export class EditorCategoriesTagsAccordion extends Component {
 
 		return (
 			<AccordionSection>
-				<EditorDrawerLabel helpText={ helpText } labelText={ translate( 'Tags' ) }>
-					{ isTermsSupported ? (
-						<TermTokenField taxonomyName="post_tag" />
-					) : (
-						this.renderJetpackNotice()
-					) }
-				</EditorDrawerLabel>
+				<EditorDrawerLabel helpText={ helpText } labelText={ translate( 'Tags' ) } />
+				{ isTermsSupported ? (
+					<TermTokenField taxonomyName="post_tag" />
+				) : (
+					this.renderJetpackNotice()
+				) }
 			</AccordionSection>
 		);
 	}

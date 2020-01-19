@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -91,10 +90,12 @@ export const onBillingReceiptEmailSendSuccess = () =>
 export const onGravatarReceiveImageFailure = action => errorNotice( action.errorMessage );
 
 export const onGravatarUploadRequestFailure = () =>
-	errorNotice( translate( 'Hmm, your new Gravatar was not saved. Please try uploading again.' ) );
+	errorNotice(
+		translate( 'Hmm, your new profile photo was not saved. Please try uploading again.' )
+	);
 
 export const onGravatarUploadRequestSuccess = () =>
-	successNotice( translate( 'You successfully uploaded a new Gravatar — looking sharp!' ) );
+	successNotice( translate( 'You successfully uploaded a new profile photo — looking sharp!' ) );
 
 export const onDeleteInvitesFailure = action => ( dispatch, getState ) => {
 	for ( const inviteId of action.inviteIds ) {

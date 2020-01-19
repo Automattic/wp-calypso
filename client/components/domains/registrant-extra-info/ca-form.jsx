@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -26,7 +24,7 @@ import { disableSubmitButton } from './with-contact-details-validation';
 import wp from 'lib/wp';
 
 const wpcom = wp.undocumented();
-const ciraAgreementUrl = 'https://services.cira.ca/agree/agreement/agreementVersion2.0.jsp';
+const ciraAgreementUrl = 'https://cira.ca/agree';
 const defaultValues = {
 	lang: 'EN',
 	legalType: 'CCT',

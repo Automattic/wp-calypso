@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import React from 'react';
@@ -12,18 +11,9 @@ import classNames from 'classnames';
  */
 import Head from '../components/head';
 import EmptyContent from 'components/empty-content';
-import getStylesheet from './utils/stylesheet';
+import { chunkCssLinks } from './utils';
 
-function Browsehappy( {
-	urls,
-	faviconURL,
-	isRTL,
-	isDebug,
-	env,
-	lang,
-	isFluidWidth,
-	dashboardUrl,
-} ) {
+function Browsehappy( { faviconURL, entrypoint, isRTL, lang, isFluidWidth, dashboardUrl } ) {
 	return (
 		<html
 			lang={ lang }
@@ -35,16 +25,9 @@ function Browsehappy( {
 				faviconURL={ faviconURL }
 				cdn={ '//s1.wp.com' }
 			>
-				<link
-					rel="stylesheet"
-					id="main-css"
-					href={
-						urls[ getStylesheet( { rtl: !! isRTL, debug: isDebug || env === 'development' } ) ]
-					}
-					type="text/css"
-				/>
+				{ chunkCssLinks( entrypoint, isRTL ) }
 			</Head>
-			<body className={ classNames( { rlt: isRTL } ) }>
+			<body className={ classNames( { rtl: isRTL } ) }>
 				{ /* eslint-disable wpcalypso/jsx-classname-namespace*/ }
 				<div id="wpcom" className="wpcom-site">
 					<div className="layout has-no-sidebar">

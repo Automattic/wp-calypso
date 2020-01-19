@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,11 +14,7 @@ import config from 'config';
 import PressThis from './press-this';
 import QueryTaxonomies from 'components/data/query-taxonomies';
 import TaxonomyCard from './taxonomies/taxonomy-card';
-import {
-	isJetpackSite,
-	isJetpackMinimumVersion,
-	siteSupportsJetpackSettingsUi,
-} from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
 import Composing from './composing';
@@ -31,6 +25,7 @@ import PodcastingLink from 'my-sites/site-settings/podcasting-details/link';
 import Masterbar from './masterbar';
 import MediaSettingsWriting from './media-settings-writing';
 import ThemeEnhancements from './theme-enhancements';
+import Widgets from './widgets';
 import PublishingTools from './publishing-tools';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
@@ -54,8 +49,6 @@ class SiteSettingsFormWriting extends Component {
 			isMasterbarSectionVisible,
 			isRequestingSettings,
 			isSavingSettings,
-			jetpackSettingsUISupported,
-			jetpackVersionSupportsLazyImages,
 			onChangeField,
 			setFieldValue,
 			siteId,
@@ -64,24 +57,12 @@ class SiteSettingsFormWriting extends Component {
 			updateFields,
 		} = this.props;
 
-		const jetpackSettingsUI = siteIsJetpack && jetpackSettingsUISupported;
-
 		return (
 			<form
 				id="site-settings"
 				onSubmit={ handleSubmitForm }
-				className="site-settings__general-settings"
+				className="site-settings__writing-settings"
 			>
-				{ isMasterbarSectionVisible && (
-					<div>
-						<SettingsSectionHeader title={ translate( 'WordPress.com toolbar' ) } />
-						<Masterbar
-							isSavingSettings={ isSavingSettings }
-							isRequestingSettings={ isRequestingSettings }
-						/>
-					</div>
-				) }
-
 				{ config.isEnabled( 'manage/site-settings/categories' ) && (
 					<div className="site-settings__taxonomies">
 						<QueryTaxonomies siteId={ siteId } postType="post" />
@@ -110,7 +91,7 @@ class SiteSettingsFormWriting extends Component {
 					updateFields={ updateFields }
 				/>
 
-				{ jetpackSettingsUI && (
+				{ siteIsJetpack && (
 					<div>
 						<SettingsSectionHeader
 							disabled={ isRequestingSettings || isSavingSettings }
@@ -126,7 +107,6 @@ class SiteSettingsFormWriting extends Component {
 							isSavingSettings={ isSavingSettings }
 							isRequestingSettings={ isRequestingSettings }
 							fields={ fields }
-							jetpackVersionSupportsLazyImages={ jetpackVersionSupportsLazyImages }
 						/>
 					</div>
 				) }
@@ -136,7 +116,7 @@ class SiteSettingsFormWriting extends Component {
 					isSaving={ isSavingSettings }
 					onButtonClick={ handleSubmitForm }
 					showButton
-					title={ translate( 'Content types' ) }
+					title={ translate( 'Content Types' ) }
 				/>
 				<CustomContentTypes
 					handleAutosavingToggle={ handleAutosavingToggle }
@@ -157,7 +137,7 @@ class SiteSettingsFormWriting extends Component {
 
 				{ isPodcastingSupported && <PodcastingLink fields={ fields } /> }
 
-				{ jetpackSettingsUI && <QueryJetpackModules siteId={ siteId } /> }
+				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
 				<ThemeEnhancements
 					onSubmitForm={ handleSubmitForm }
@@ -165,11 +145,19 @@ class SiteSettingsFormWriting extends Component {
 					handleAutosavingRadio={ handleAutosavingRadio }
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
-					jetpackSettingsUI={ jetpackSettingsUI }
 					fields={ fields }
 				/>
 
-				{ jetpackSettingsUI && config.isEnabled( 'press-this' ) && (
+				{ siteIsJetpack && (
+					<Widgets
+						onSubmitForm={ handleSubmitForm }
+						isSavingSettings={ isSavingSettings }
+						isRequestingSettings={ isRequestingSettings }
+						fields={ fields }
+					/>
+				) }
+
+				{ siteIsJetpack && config.isEnabled( 'press-this' ) && (
 					<PublishingTools
 						onSubmitForm={ handleSubmitForm }
 						isSavingSettings={ isSavingSettings }
@@ -178,16 +166,24 @@ class SiteSettingsFormWriting extends Component {
 					/>
 				) }
 
-				{ config.isEnabled( 'press-this' ) &&
-					! this.isMobile() &&
-					! ( siteIsJetpack || jetpackSettingsUISupported ) && (
-						<div>
-							<SettingsSectionHeader
-								title={ translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }
-							/>
-							<PressThis />
-						</div>
-					) }
+				{ config.isEnabled( 'press-this' ) && ! this.isMobile() && ! siteIsJetpack && (
+					<div>
+						<SettingsSectionHeader
+							title={ translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }
+						/>
+						<PressThis />
+					</div>
+				) }
+
+				{ isMasterbarSectionVisible && (
+					<div>
+						<SettingsSectionHeader title={ translate( 'WordPress.com toolbar' ) } />
+						<Masterbar
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+						/>
+					</div>
+				) }
 			</form>
 		);
 	}
@@ -201,13 +197,10 @@ const connectComponent = connect(
 		const isPodcastingSupported = ! siteIsJetpack || siteIsAutomatedTransfer;
 
 		return {
-			jetpackSettingsUISupported: siteSupportsJetpackSettingsUi( state, siteId ),
-			jetpackVersionSupportsLazyImages: isJetpackMinimumVersion( state, siteId, '5.8-alpha' ),
 			siteIsJetpack,
 			siteId,
 			isMasterbarSectionVisible:
 				siteIsJetpack &&
-				isJetpackMinimumVersion( state, siteId, '4.8' ) &&
 				// Masterbar can't be turned off on Atomic sites - don't show the toggle in that case
 				! siteIsAutomatedTransfer,
 			isPodcastingSupported,
@@ -237,7 +230,6 @@ const getFormSettings = settings => {
 		'wp_mobile_featured_images',
 		'wp_mobile_app_promos',
 		'post_by_email_address',
-		'after-the-deadline',
 		'onpublish',
 		'onupdate',
 		'guess_lang',
@@ -267,7 +259,7 @@ const getFormSettings = settings => {
 	const timezone_string = get( settings, 'timezone_string' );
 
 	if ( ! timezone_string && typeof gmt_offset === 'string' && gmt_offset.length ) {
-		formSettings.timezone_string = 'UTC' + ( /\-/.test( gmt_offset ) ? '' : '+' ) + gmt_offset;
+		formSettings.timezone_string = 'UTC' + ( /-/.test( gmt_offset ) ? '' : '+' ) + gmt_offset;
 	}
 
 	return formSettings;

@@ -19,7 +19,7 @@
 
 .plugin-ratings__rating-text {
 	font-size: 12px;
-	color: $gray;
+	color: var( --color-neutral-light );
 	margin-bottom: 16px;
 
 	@include breakpoint( '<480px' ) {
@@ -32,7 +32,7 @@
 .plugin-ratings__rating-tier-text,
 .plugin-ratings__downloads {
 	font-size: 12px;
-	color: $gray;
+	color: var( --color-neutral-light );
 	white-space: pre;
 	text-overflow: ellipsis;
 	overflow: hidden;
@@ -65,7 +65,7 @@
 		position: relative;
 		border-radius: 0;
 		height: 8px;
-		background-color: var( --color-neutral-100 );
+		background-color: var( --color-neutral-10 );
 	}
 
 	.progress-bar__progress {

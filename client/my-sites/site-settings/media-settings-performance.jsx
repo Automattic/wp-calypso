@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Banner from 'components/banner';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import filesize from 'filesize';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -28,15 +26,11 @@ import { hasFeature } from 'state/sites/plans/selectors';
 import getMediaStorageLimit from 'state/selectors/get-media-storage-limit';
 import getMediaStorageUsed from 'state/selectors/get-media-storage-used';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
-import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePlanSlug, getSiteSlug } from 'state/sites/selectors';
 import QueryMediaStorage from 'components/data/query-media-storage';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import PlanStorageBar from 'blocks/plan-storage/bar';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import classNames from 'classnames';
 
 class MediaSettingsPerformance extends Component {
 	static propTypes = {
@@ -46,15 +40,12 @@ class MediaSettingsPerformance extends Component {
 		isSavingSettings: PropTypes.bool,
 		onChangeField: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
-		jetpackVersionSupportsLazyImages: PropTypes.bool,
 
 		// Connected props
 		isVideoPressActive: PropTypes.bool,
 		isVideoPressAvailable: PropTypes.bool,
 		mediaStorageLimit: PropTypes.number,
 		mediaStorageUsed: PropTypes.number,
-		photonModuleUnavailable: PropTypes.bool,
-		selectedSiteId: PropTypes.number,
 		sitePlanSlug: PropTypes.string,
 		siteSlug: PropTypes.string,
 	};
@@ -64,19 +55,14 @@ class MediaSettingsPerformance extends Component {
 			isRequestingSettings,
 			isSavingSettings,
 			isVideoPressAvailable,
-			jetpackVersionSupportsLazyImages,
 			siteId,
 			translate,
 		} = this.props;
 		const isRequestingOrSaving = isRequestingSettings || isSavingSettings;
-		const videoFieldsetClasses = classNames( 'site-settings__formfieldset', {
-			'has-divider': ! jetpackVersionSupportsLazyImages,
-			'is-top-only': ! jetpackVersionSupportsLazyImages,
-		} );
 
 		return (
 			isVideoPressAvailable && (
-				<FormFieldset className={ videoFieldsetClasses }>
+				<FormFieldset className="site-settings__formfieldset jetpack-video-hosting-settings">
 					<SupportInfo
 						text={ translate( 'Hosts your video files on the global WordPress.com servers.' ) }
 						link="https://jetpack.com/support/videopress/"
@@ -158,48 +144,11 @@ class MediaSettingsPerformance extends Component {
 	}
 
 	render() {
-		const {
-			isRequestingSettings,
-			isSavingSettings,
-			isVideoPressAvailable,
-			photonModuleUnavailable,
-			selectedSiteId,
-			siteId,
-			translate,
-			jetpackVersionSupportsLazyImages,
-		} = this.props;
-		const isRequestingOrSaving = isRequestingSettings || isSavingSettings;
+		const { isVideoPressAvailable } = this.props;
 
 		return (
 			<div className="site-settings__module-settings site-settings__media-settings">
-				{ ( ! jetpackVersionSupportsLazyImages || isVideoPressAvailable ) && (
-					<Card>
-						<QueryJetpackConnection siteId={ selectedSiteId } />
-						{ /**
-						 * In Jetpack 5.8-alpha, we introduced Lazy Images, created a new "Speed up your site" section,
-						 * and moved the photon setting there. To minimize confusion, if this Jetpack site doesn't have 5.8-alpha,
-						 * let's show the Photon setting here instead of in the "Speed up your site" section.
-						 */ }
-						{ ! jetpackVersionSupportsLazyImages && (
-							<FormFieldset>
-								<SupportInfo
-									text={ translate(
-										'Hosts your image files on the global WordPress.com servers.'
-									) }
-									link="https://jetpack.com/support/photon/"
-								/>
-								<JetpackModuleToggle
-									siteId={ siteId }
-									moduleSlug="photon"
-									label={ translate( 'Speed up images and photos' ) }
-									description={ translate( 'Must be enabled to use tiled galleries.' ) }
-									disabled={ isRequestingOrSaving || photonModuleUnavailable }
-								/>
-							</FormFieldset>
-						) }
-						{ this.renderVideoSettings() }
-					</Card>
-				) }
+				{ isVideoPressAvailable && <Card>{ this.renderVideoSettings() }</Card> }
 				{ this.renderVideoUpgradeNudge() }
 			</div>
 		);
@@ -208,13 +157,7 @@ class MediaSettingsPerformance extends Component {
 
 export default connect( state => {
 	const selectedSiteId = getSelectedSiteId( state );
-	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
 	const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
-	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
-		state,
-		selectedSiteId,
-		'photon'
-	);
 	const isVideoPressAvailable =
 		hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS ) ||
 		hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) ||
@@ -225,8 +168,6 @@ export default connect( state => {
 		isVideoPressAvailable,
 		mediaStorageLimit: getMediaStorageLimit( state, selectedSiteId ),
 		mediaStorageUsed: getMediaStorageUsed( state, selectedSiteId ),
-		photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
-		selectedSiteId,
 		sitePlanSlug,
 		siteSlug: getSiteSlug( state, selectedSiteId ),
 	};

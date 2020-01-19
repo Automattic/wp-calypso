@@ -1,6 +1,5 @@
-/** @format */
 /**
- * @fileoverview Disallow multiple unnamed placeholders
+ * @file Disallow multiple unnamed placeholders
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.

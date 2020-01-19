@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,18 +6,18 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import page from 'page';
 import { translate } from 'i18n-calypso';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import PulsingDot from 'components/pulsing-dot';
 import { trackClick } from './helpers';
 import {
 	getActiveTheme,
 	getCanonicalTheme,
 	getThemeDetailsUrl,
-	getThemeCustomizeUrl,
 	getThemeForumUrl,
 	isActivatingTheme,
 	hasActivatedTheme,
@@ -27,6 +25,15 @@ import {
 } from 'state/themes/selectors';
 import { clearActivated } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { requestSite } from 'state/sites/actions';
+import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edit-front-page-url';
+import shouldCustomizeHomepageWithGutenberg from 'state/selectors/should-customize-homepage-with-gutenberg';
+import getSiteUrl from 'state/selectors/get-site-url';
+
+/**
+ * Style dependencies
+ */
+import './thanks-modal.scss';
 
 class ThanksModal extends Component {
 	static propTypes = {
@@ -34,6 +41,7 @@ class ThanksModal extends Component {
 		source: PropTypes.oneOf( [ 'details', 'list', 'upload' ] ).isRequired,
 		// Connected props
 		clearActivated: PropTypes.func.isRequired,
+		refreshSite: PropTypes.func.isRequired,
 		currentTheme: PropTypes.shape( {
 			author: PropTypes.string,
 			author_uri: PropTypes.string,
@@ -49,6 +57,13 @@ class ThanksModal extends Component {
 		siteId: PropTypes.number,
 	};
 
+	componentDidUpdate( prevProps ) {
+		// re-fetch the site to ensure we have the right cusotmizer link for FSE or not
+		if ( prevProps.hasActivated === false && this.props.hasActivated === true ) {
+			this.props.refreshSite( this.props.siteId );
+		}
+	}
+
 	onCloseModal = () => {
 		this.props.clearActivated( this.props.siteId );
 		this.setState( { show: false } );
@@ -60,7 +75,7 @@ class ThanksModal extends Component {
 
 	visitSite = () => {
 		this.trackClick( 'visit site' );
-		page( this.props.visitSiteUrl );
+		window.open( this.props.siteUrl, '_blank' );
 	};
 
 	goBack = () => {
@@ -93,9 +108,12 @@ class ThanksModal extends Component {
 	};
 
 	goToCustomizer = () => {
+		const { customizeUrl, shouldEditHomepageWithGutenberg } = this.props;
+
 		this.trackClick( 'thanks modal customize' );
 		this.onCloseModal();
-		page( this.props.customizeUrl );
+
+		shouldEditHomepageWithGutenberg ? page( customizeUrl ) : window.open( customizeUrl, '_blank' );
 	};
 
 	renderThemeInfo = () => {
@@ -166,31 +184,72 @@ class ThanksModal extends Component {
 		);
 	};
 
-	render() {
-		const { currentTheme, hasActivated, isActivating } = this.props;
-		const customizeSiteText = hasActivated
-			? translate( 'Customize site' )
-			: translate( 'Activating theme…' );
-		const buttons = [
+	getEditSiteLabel = () => {
+		const { shouldEditHomepageWithGutenberg, hasActivated } = this.props;
+		if ( ! hasActivated ) {
+			return translate( 'Activating theme…' );
+		}
+
+		const gutenbergContent = translate( 'Edit Homepage' );
+		const customizerContent = (
+			<>
+				<Gridicon icon="external" />
+				{ translate( 'Customize site' ) }
+			</>
+		);
+
+		return (
+			<span className="thanks-modal__button-customize">
+				{ shouldEditHomepageWithGutenberg ? gutenbergContent : customizerContent }
+			</span>
+		);
+	};
+
+	getViewSiteLabel = () => (
+		<span className="thanks-modal__button-customize">
+			<Gridicon icon="external" />
+			{ translate( 'View Site' ) }
+		</span>
+	);
+
+	getButtons = () => {
+		const { shouldEditHomepageWithGutenberg, hasActivated } = this.props;
+
+		const firstButton = shouldEditHomepageWithGutenberg
+			? {
+					action: 'view',
+					label: this.getViewSiteLabel(),
+					onClick: this.visitSite,
+			  }
+			: {
+					action: 'learn',
+					label: translate( 'Learn about this theme' ),
+					onClick: this.learnThisTheme,
+			  };
+
+		return [
 			{
-				action: 'learn',
-				label: translate( 'Learn about this theme' ),
-				onClick: this.learnThisTheme,
+				...firstButton,
+				disabled: ! hasActivated,
 			},
 			{
 				action: 'customizeSite',
-				label: customizeSiteText,
+				label: this.getEditSiteLabel(),
 				isPrimary: true,
 				disabled: ! hasActivated,
 				onClick: this.goToCustomizer,
 			},
 		];
+	};
+
+	render() {
+		const { currentTheme, hasActivated, isActivating } = this.props;
 
 		return (
 			<Dialog
 				className="themes__thanks-modal"
 				isVisible={ isActivating || hasActivated }
-				buttons={ buttons }
+				buttons={ this.getButtons() }
 				onClose={ this.onCloseModal }
 			>
 				{ hasActivated && currentTheme ? this.renderContent() : this.renderLoading() }
@@ -202,19 +261,30 @@ class ThanksModal extends Component {
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
+		const siteUrl = getSiteUrl( state, siteId );
 		const currentThemeId = getActiveTheme( state, siteId );
 		const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
 
+		// Note: Gutenberg buttons will only show if the homepage is a page.
+		const shouldEditHomepageWithGutenberg = shouldCustomizeHomepageWithGutenberg( state, siteId );
+
 		return {
 			siteId,
+			siteUrl,
 			currentTheme,
+			shouldEditHomepageWithGutenberg,
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
-			customizeUrl: getThemeCustomizeUrl( state, currentThemeId, siteId ),
+			customizeUrl: getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId ),
 			forumUrl: getThemeForumUrl( state, currentThemeId, siteId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
 			isThemeWpcom: isWpcomTheme( state, currentThemeId ),
 		};
 	},
-	{ clearActivated }
+	dispatch => {
+		return {
+			clearActivated: siteId => dispatch( clearActivated( siteId ) ),
+			refreshSite: siteId => dispatch( requestSite( siteId ) ),
+		};
+	}
 )( ThanksModal );

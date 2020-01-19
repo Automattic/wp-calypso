@@ -2,9 +2,9 @@
 	position: relative;
 
 	.form-text-input {
-		/*rtl:ignore*/
-	    padding-right: 32px;
-		/*rtl:ignore*/
+		/*!rtl:ignore*/
+		padding-right: 32px;
+		/*!rtl:ignore*/
 		direction: ltr;
 	}
 
@@ -16,16 +16,16 @@
 		display: block;
 		cursor: pointer;
 		position: absolute;
-		/*rtl:ignore*/
+		/*!rtl:ignore*/
 		right: 8px;
 		top: 8px;
 		user-select: none;
 
 		.gridicon {
-			fill: var( --color-neutral-200 );
+			fill: var( --color-neutral-20 );
 
 			&:hover {
-				fill: var( --color-neutral-400 );
+				fill: var( --color-neutral-40 );
 			}
 		}
 	}

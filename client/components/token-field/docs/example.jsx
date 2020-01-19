@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import TokenField from 'components/token-field';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 
 /**
  * Module variables

@@ -2,7 +2,7 @@
 	display: flex;
 	height: 48px;
 
-	border-top: 1px solid var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-10 );
 	border-left: 3px solid transparent;
 	color: var( --color-text-subtle );
 	font-size: 13px;
@@ -15,16 +15,16 @@
 
 	&.is-selected {
 		border-left: 3px solid var( --color-primary );
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		font-weight: 400;
 
 		.social-logo {
-			fill: var( --color-neutral-700 );
+			fill: var( --color-neutral-70 );
 		}
 	}
 
 	&:last-child {
-		border-bottom: 1px solid var( --color-neutral-100 );
+		border-bottom: 1px solid var( --color-neutral-10 );
 	}
 
 	&:not( .is-selected ):hover {
@@ -43,5 +43,5 @@
 }
 
 .vertical-menu__items__social-icon .social-logo {
-	fill: $gray;
+	fill: var( --color-neutral-light );
 }

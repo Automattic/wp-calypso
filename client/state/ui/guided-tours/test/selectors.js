@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -13,8 +12,6 @@ import { constant, times } from 'lodash';
  * Internal dependencies
  */
 import { findEligibleTour, getGuidedTourState, hasTourJustBeenVisible } from '../selectors';
-import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
-import { useFakeTimers } from 'test/helpers/use-sinon';
 
 jest.mock( 'layout/guided-tours/config', () => {
 	return require( 'state/ui/guided-tours/test/fixtures/config' );
@@ -22,141 +19,6 @@ jest.mock( 'layout/guided-tours/config', () => {
 jest.mock( 'lib/user', () => () => {} );
 
 describe( 'selectors', () => {
-	let clock;
-
-	useFakeTimers( fakeClock => {
-		clock = fakeClock;
-	} );
-
-	describe( '#isConflictingWithFirstView', () => {
-		const now = 1479741854095;
-
-		const withEligibleFirstView = {
-			currentUser: {
-				id: 73705554,
-			},
-			users: {
-				items: {
-					73705554: { ID: 73705554, login: 'testonesite2016', date: '2016-10-18T17:14:52+00:00' },
-				},
-			},
-			ui: {
-				actionLog: [
-					{
-						type: 'ROUTE_SET',
-						path: '/stats',
-					},
-				],
-				route: {
-					query: {
-						initial: {},
-					},
-				},
-				section: {
-					name: 'stats',
-					paths: [ '/stats' ],
-				},
-			},
-			preferences: {
-				remoteValues: {
-					firstViewHistory: [],
-					'guided-tours-history': [],
-				},
-				lastFetchedTimestamp: now,
-			},
-		};
-
-		const withFirstViewAndTourRequest = {
-			...withEligibleFirstView,
-			ui: {
-				...withEligibleFirstView.ui,
-				route: {
-					query: {
-						initial: {
-							tour: 'main',
-						},
-					},
-				},
-			},
-		};
-
-		const havingJustSeenTour = {
-			...withEligibleFirstView,
-			ui: {
-				...withEligibleFirstView.ui,
-				actionLog: [
-					...withEligibleFirstView.ui.actionLog,
-					{
-						type: 'FIRST_VIEW_HIDE',
-						view: 'stats',
-						timestamp: now - 120000,
-					},
-					{
-						type: 'GUIDED_TOUR_UPDATE',
-						shouldShow: false,
-						timestamp: now - 30000,
-					},
-				],
-			},
-			preferences: {
-				remoteValues: {
-					firstViewHistory: [
-						{
-							view: 'stats',
-							timestamp: now - 30000,
-						},
-					],
-				},
-				lastFetchedTimestamp: now - 10000,
-			},
-		};
-
-		const havingSeenTourEarlier = {
-			...withEligibleFirstView,
-			ui: {
-				...withEligibleFirstView.ui,
-				actionLog: [
-					...withEligibleFirstView.ui.actionLog,
-					{
-						type: 'FIRST_VIEW_HIDE',
-						view: 'stats',
-						timestamp: now - 120000,
-					},
-					{
-						type: 'GUIDED_TOUR_UPDATE',
-						shouldShow: false,
-						timestamp: now - 120000,
-					},
-				],
-			},
-			preferences: {
-				remoteValues: {
-					firstViewHistory: [
-						{
-							view: 'stats',
-							timestamp: now - 120000,
-						},
-					],
-				},
-				lastFetchedTimestamp: now - 10000,
-			},
-		};
-
-		test( 'expects shouldViewBeVisible to work normally', () => {
-			expect( shouldViewBeVisible( withEligibleFirstView ) ).to.be.true;
-		} );
-
-		test( 'should short-circuit findEligibleTour', () => {
-			clock.tick( now );
-			expect( findEligibleTour( withFirstViewAndTourRequest ) ).to.be.undefined;
-			expect( findEligibleTour( havingJustSeenTour ) ).to.be.undefined;
-		} );
-
-		test( 'should reallow tours after a while', () => {
-			expect( findEligibleTour( havingSeenTourEarlier ) ).to.equal( 'stats' );
-		} );
-	} );
-
 	describe( '#hasTourJustBeenVisible', () => {
 		test( 'should return false when no tour has been seen', () => {
 			const state = { ui: { actionLog: [] } };

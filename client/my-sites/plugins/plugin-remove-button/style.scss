@@ -1,5 +1,5 @@
 .plugin-remove-button__remove {
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-size: 11px;
 	line-height: 16px;
 	margin-right: 10px;
@@ -31,7 +31,7 @@
 
 	.gridicons-trash {
 		display: block;
-		color: $gray;
+		color: var( --color-neutral-light );
 		cursor: pointer;
 		&:hover {
 			color: var( --color-error );

@@ -35,7 +35,7 @@
 
 			&.editor-gutenberg-opt-in-dialog__subhead {
 				font-size: 18px;
-				color: var( --color-neutral-500 );
+				color: var( --color-neutral-50 );
 			}
 		}
 	}
@@ -66,12 +66,12 @@
 }
 
 .editor-gutenberg-opt-in-dialog__illustration {
-	background: $gray-light url( '/calypso/images/illustrations/gutenberg.svg' ) no-repeat;
+	background: var( --color-neutral-0 ) url( '/calypso/images/illustrations/gutenberg.svg' ) no-repeat;
 	background-position: 50%;
 	background-size: 320px;
 	height: 180px;
 	width: calc( 100% + 24px + 24px );
-	margin: 0 -24px 24px -24px;
+	margin: 0 -24px 24px;
 	position: relative;
 
 	@include breakpoint( '>660px' ) {
@@ -110,9 +110,9 @@
 	top: 8px;
 	right: 8px;
 	cursor: pointer;
-	color: $gray;
+	color: var( --color-neutral-light );
 
 	&:hover {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 }

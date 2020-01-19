@@ -2,7 +2,15 @@
 .register-domain-step__search {
 	padding-bottom: 12px;
 
-	.card.is-compact {
+	&.register-domain-step__search-domain-step-test:not( .is-sticky ) {
+		padding-bottom: 28px;
+
+		@include breakpoint( '>660px' ) {
+			padding-top: 18px;
+		}
+	}
+
+	.register-domain-step__search-card {
 		padding: 0;
 		display: flex;
 		align-items: center;
@@ -13,7 +21,12 @@
 
 		&.is-refocused {
 			animation: shake 0.5s both;
-			box-shadow: 0 0 0 1px $gray, 0 2px 4px var( --color-neutral-100 );
+			box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-10 );
+		}
+
+		// Add some padding to account for the filter button.
+		body.is-section-signup & {
+			padding-right: 72px;
 		}
 	}
 
@@ -48,8 +61,7 @@
 	}
 }
 
-.register-domain-step__filter-reset-notice,
-.register-domain-step__next-page {
+.register-domain-step__filter-reset-notice {
 	color: var( --color-primary );
 	font-weight: 500;
 	width: 100%;
@@ -60,7 +72,7 @@
 	border-radius: 0;
 
 	// from components/card/style.scss
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
 
 	// from components/domains/domain-suggestion/style
 	// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo
@@ -70,50 +82,13 @@
 		color: var( --color-primary );
 
 		// from components/domains/domain-suggestion/style
-		box-shadow: 0 0 0 1px $gray;
+		box-shadow: 0 0 0 1px var( --color-neutral-light );
 	}
 }
 
 .register-domain-step__next-page {
-	.spinner {
-		margin-left: 0.5em;
-
-		.spinner__outer {
-			border-width: 0.15em;
-			animation-duration: 2s;
-		}
-
-		.spinner__inner {
-			border-color: transparent;
-		}
-	}
-
-	.register-domain-step__next-page-loader,
-	.register-domain-step__next-page-content {
-		transition: 0.1s linear opacity;
-
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.register-domain-step__next-page-loader {
-		position: absolute;
-		left: 50%;
-		top: 50%;
-		transform: translate( -50%, -50% );
-		opacity: 0;
-	}
-
-	&.register-domain-step__next-page--is-loading {
-		.register-domain-step__next-page-loader {
-			opacity: 1;
-		}
-
-		.register-domain-step__next-page-content {
-			opacity: 0.3;
-		}
-	}
+	display: flex;
+	justify-content: center;
 }
 
 .register-domain-step {

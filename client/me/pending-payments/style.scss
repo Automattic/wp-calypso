@@ -1,5 +1,6 @@
-
 .pending-payments__list-item.card {
+	margin-bottom: 20px;
+
 	.pending-payments__list-item-wrapper {
 		display: flex;
 	}
@@ -10,10 +11,11 @@
 	}
 }
 
-.pending-payments__list-item-purchase-cost,
-.pending-payments__list-item-purchase-type {
+.pending-payments__list-item-product,
+.pending-payments__list-item-payment {
+	font-size: 12px;
 	line-height: 14px;
-	margin-top: 2px;
+	margin-bottom: 4px;
 }
 
 .pending-payments__list-item-title {
@@ -36,17 +38,12 @@
 	}
 }
 
-.pending-payments__list-item-purchase-type {
+.pending-payments__list-item-product {
 	color: var( --color-text-subtle );
-	font-size: 12px;
-	margin: 0 0 4px;
-	overflow: hidden;
-	text-overflow: ellipsis;
 }
 
-.pending-payments__list-item-purchase-cost {
-	color: var( --color-neutral-700 );
-	font-size: 12px;
+.pending-payments__list-item-payment {
+	color: var( --color-neutral-70 );
 }
 
 .pending-payments__list-item-actions .button {

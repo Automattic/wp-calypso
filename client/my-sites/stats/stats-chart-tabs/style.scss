@@ -5,7 +5,7 @@ ul.module-tabs {
 	@include clear-fix;
 	border-top: 1px solid var( --color-neutral-0 );
 	list-style: none;
-	background: $white;
+	background: var( --color-surface );
 	margin: 0;
 
 	.module-tab {
@@ -42,7 +42,7 @@ ul.module-tabs {
 		}
 
 		a {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 
 		a,
@@ -51,7 +51,7 @@ ul.module-tabs {
 			@include clear-fix;
 			padding: 5px 0 10px;
 			display: block;
-			background: $white;
+			background: var( --color-surface );
 
 			@include breakpoint( '<480px' ) {
 				line-height: 24px;
@@ -109,7 +109,7 @@ ul.module-tabs {
 			a:hover .value,
 			&.is-low a:hover,
 			&.is-low a:hover .value {
-				color: $link-highlight;
+				color: var( --color-link-dark );
 			}
 
 			a:hover {
@@ -124,7 +124,7 @@ ul.module-tabs {
 		.stats-module &.is-selected a:focus .value,
 		&.is-low a:focus,
 		&.is-low a:focus .value {
-			color: $link-highlight;
+			color: var( --color-link-dark );
 		}
 
 		a:focus {
@@ -133,15 +133,15 @@ ul.module-tabs {
 
 		// Selected state
 		.stats-module &.is-selected a {
-			background: $white;
-			border-top: 1px solid $white;
+			background: var( --color-surface );
+			border-top: 1px solid var( --color-border-inverted );
 			margin-top: -1px;
 			cursor: default;
 		}
 
 		&.is-selected a,
 		&.is-selected.is-low a {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 
 		&.is-selected a .value,
@@ -153,7 +153,7 @@ ul.module-tabs {
 		// Low state ('disabled')
 		.is-low,
 		&.is-low a .value {
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 
 		// Individual tab loading state
@@ -163,10 +163,10 @@ ul.module-tabs {
 		}
 
 		.no-link .value {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 
 			&.is-low {
-				color: $gray;
+				color: var( --color-neutral-light );
 			}
 		}
 
@@ -176,12 +176,12 @@ ul.module-tabs {
 			animation: loading-fade 1.6s ease-in-out infinite;
 			cursor: default;
 			font-size: 110%;
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 
 		&.is-loading.is-selected a .value,
 		&.is-loading.is-selected a:hover .value {
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 	}
 

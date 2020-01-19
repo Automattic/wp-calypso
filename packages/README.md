@@ -1,15 +1,24 @@
 # Packages
 
-This directory exists to hold a variety of projects and libraries that we use in Calypso but also might publish as independent outputs or packages. For now it's empty but we expect a number of separate subdirectories soon.
+This directory exists to hold a variety of projects and libraries that we might publish as [NPM packages](https://docs.npmjs.com/about-packages-and-modules). Typically used also elsewhere in Calypso and build on `npm start`.
+
+For projects that can produce independent, binary-like outputs deployed elsewhere, see [`/apps`](../apps).
 
 ## Adding a new package?
 
-If you want to add a new project or package into this directory then follow these guidelines to help others who might stumble upon it later.
+If you want to add a new project or package into this directory, then add a new directory and follow [monorepo -documentation](../docs/monorepo.md).
 
-1. Create a subdirectory with an appropriate descriptive name for what you are writing; contain all of your code in that subdirectory.
-2. Add a `README.md` file in that subdirectory explaining what the package is, why it exists, how to install it, and how to use it.
-3. Add a terse one-line description and link to the `README.md` file from this page.
+## Building
 
-## Packages
+Packages are built on Calypso's `npm install` so you don't need to build them manually, unless you are working directly on them.
 
- - who will share the first one?
+If you must manually build a single package, run:
+
+```bash
+npx lerna run prepare --scope="@automattic/package-name"
+```
+
+## Validating package.json
+Running `npm run lint:package-json` will lint all `package.json`'s under `./packages/**` based on [`npmpackagejsonlint.config.js`](../npmpackagejsonlint.config.js).
+
+If you need exceptions to linting rules, add them to overrides section in the config file.

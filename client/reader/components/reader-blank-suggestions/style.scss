@@ -1,0 +1,21 @@
+// Search term suggestions
+.reader-blank-suggestions {
+	border-bottom: 1px solid var( --color-neutral-10 );
+	font-size: 13px;
+	color: var( --color-text-subtle );
+	padding: 16px 0;
+	text-align: left;
+
+	a,
+	a:visited {
+		color: var( --color-primary );
+	}
+
+	a:hover {
+		color: var( --color-primary-light );
+	}
+
+	@include breakpoint( '<660px' ) {
+		padding: 16px;
+	}
+}

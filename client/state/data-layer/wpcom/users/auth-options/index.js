@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,7 +21,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 export const getAuthAccountType = action =>
 	http(
 		{
-			path: `/users/${ action.usernameOrEmail }/auth-options`,
+			path: `/users/${ encodeURIComponent( action.usernameOrEmail ) }/auth-options`,
 			method: 'GET',
 			apiVersion: '1.1',
 			retryPolicy: noRetry(),

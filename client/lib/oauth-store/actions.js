@@ -1,11 +1,3 @@
-/** @format */
-
-/**
- * External dependencies
- */
-import { replace } from 'lodash';
-import request from 'superagent';
-
 /**
  * Internal dependencies
  */
@@ -13,27 +5,44 @@ import Dispatcher from 'dispatcher';
 import { actions, errors as errorTypes } from './constants';
 import analytics from 'lib/analytics';
 
-export function login( username, password, auth_code ) {
+async function makeRequest( username, password, authCode = '' ) {
+	try {
+		const response = await fetch( '/oauth', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify( {
+				username,
+				password,
+				auth_code: authCode.replace( /\s/g, '' ),
+			} ),
+		} );
+
+		const json = await response.json();
+		const errorMessage = ( json && json.error_description ) || '';
+
+		return [
+			response.ok ? null : new Error( errorMessage ),
+			{ ok: response.ok, status: response.status, body: json },
+		];
+	} catch ( error ) {
+		return [ error, null ];
+	}
+}
+
+export function login( username, password, authCode ) {
 	Dispatcher.handleViewAction( {
 		type: actions.AUTH_LOGIN,
 	} );
 
-	request
-		.post( '/oauth' )
-		.send( {
-			username,
-			password,
-			auth_code: replace( auth_code, /\s/g, '' ),
-		} )
-		.end( ( error, data ) => {
-			bumpStats( error, data );
+	makeRequest( username, password, authCode ).then( ( [ error, response ] ) => {
+		bumpStats( error, response );
 
-			Dispatcher.handleServerAction( {
-				type: actions.RECEIVE_AUTH_LOGIN,
-				data,
-				error,
-			} );
+		Dispatcher.handleServerAction( {
+			type: actions.RECEIVE_AUTH_LOGIN,
+			data: response,
+			error,
 		} );
+	} );
 }
 
 function bumpStats( error, data ) {

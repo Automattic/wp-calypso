@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * An enum set of possible media validation errors.
  *
- * @type {Object}
+ * @type {object}
  * @typedef MediaValidationError
  */
 export const ValidationErrors = {
@@ -15,6 +13,7 @@ export const ValidationErrors = {
 	EXCEEDS_PLAN_STORAGE_LIMIT: 'EXCEEDS_PLAN_STORAGE_LIMIT',
 	NOT_ENOUGH_SPACE: 'NOT_ENOUGH_SPACE',
 	SERVICE_FAILED: 'SERVICE_FAILED',
+	SERVICE_AUTH_FAILED: 'SERVICE_AUTH_FAILED',
 };
 
 export const ThumbnailSizeDimensions = {
@@ -195,5 +194,12 @@ export const MimeTypes = {
 };
 
 export const MEDIA_IMAGE_THUMBNAIL = 'MEDIA_IMAGE_THUMBNAIL';
-export const MEDIA_IMAGE_PHOTON = 'MEDIA_IMAGE_PHOTON';
 export const MEDIA_IMAGE_RESIZER = 'MEDIA_IMAGE_RESIZER';
+
+/**
+ * Scale choices are 12, 8, 6, 4, and 3 items per row, with some horizontal
+ * padding between items
+ *
+ * @type {Array}
+ */
+export const SCALE_CHOICES = [ 0.077, 0.115, 0.157, 0.24, 0.323 ];

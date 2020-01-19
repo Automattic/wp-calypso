@@ -1,13 +1,20 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import chrono from 'chrono-node';
+
+/**
+ * Internal dependencies
+ */
+import { withLocalizedMoment } from 'components/localized-moment';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * Supported languages
@@ -37,7 +44,7 @@ class InputChrono extends React.Component {
 
 	focused = false;
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! this.focused && this.props.value !== nextProps.value ) {
 			this.setState( { value: nextProps.value } );
 		}
@@ -79,10 +86,10 @@ class InputChrono extends React.Component {
 
 	render() {
 		return (
-			<div className="input-chrono__container">
+			<div className="input-chrono">
 				{ this.isLangSupported( this.props.lang ) ? (
 					<input
-						className="input-chrono"
+						className="input-chrono__input"
 						value={ this.state.value }
 						placeholder={ this.props.placeholder }
 						onKeyDown={ this.onKeyDown }
@@ -91,11 +98,11 @@ class InputChrono extends React.Component {
 						onBlur={ this.handleBlur }
 					/>
 				) : (
-					<div className="text-chrono">{ this.state.value }</div>
+					<div className="input-chrono__text">{ this.state.value }</div>
 				) }
 			</div>
 		);
 	}
 }
 
-export default localize( InputChrono );
+export default localize( withLocalizedMoment( InputChrono ) );

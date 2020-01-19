@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -90,14 +89,20 @@ export class JetpackConnectNotices extends Component {
 				return noticeValues;
 
 			case SITE_BLACKLISTED:
-				noticeValues.text = translate( "This site can't be connected to WordPress.com." );
+				noticeValues.text = translate(
+					"This site can't be connected to WordPress.com because it violates our {{a}}Terms of Service{{/a}}.",
+					{
+						components: {
+							a: <a href="https://wordpress.com/tos" rel="noopener noreferrer" target="_blank" />,
+						},
+					}
+				);
 				return noticeValues;
 
 			case IS_DOT_COM:
-				noticeValues.icon = 'block';
-				noticeValues.text = translate(
-					"That's a WordPress.com site, so you don't need to connect it."
-				);
+				noticeValues.status = 'is-success';
+				noticeValues.icon = 'plugins';
+				noticeValues.text = translate( 'Good news! WordPress.com sites already have Jetpack.' );
 				return noticeValues;
 
 			case NOT_WORDPRESS:

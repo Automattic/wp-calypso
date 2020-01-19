@@ -1,18 +1,14 @@
-/** @format */
+/**
+ * External dependencies
+ */
 import React from 'react';
 
-export const Token = props => {
-	const { onClick } = props;
-
-	// please ignore the formatting below
-	// if we allow spaces it will mess up
-	// the way the component renders in
-	// the draft-js editor
-	return (
-		<span className="title-format-editor__token" onClick={ onClick( props.entityKey ) }>
-			{ props.children }
-		</span>
-	);
-};
+export const Token = props => (
+	/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
+	<span className="title-format-editor__token" onClick={ props.onClick( props.entityKey ) }>
+		{ props.children }
+	</span>
+	/* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
+);
 
 export default Token;

@@ -11,7 +11,7 @@
 		margin-left: 15px;
 	}
 
-	.checkout__ebanx-payment-fields {
+	.checkout__country-payment-fields {
 		margin-left: 0;
 	}
 
@@ -33,6 +33,13 @@
 
 .credit-card-form-fields {
 	margin-bottom: 15px;
+
+	&__explainer {
+		color: var( --color-text-subtle );
+		font-size: rem( 14px );
+		margin-left: 0.35em;
+		font-weight: normal;
+	}
 }
 
 .credit-card-form-fields__field {
@@ -54,8 +61,8 @@
 
 	&.number input {
 		text-align: left;
-		/*rtl:ignore*/
-		direction:ltr;
+		/*!rtl:ignore*/
+		direction: ltr;
 	}
 }
 
@@ -73,4 +80,27 @@
 .credit-card-form-fields__cvv-illustration {
 	flex: 0 0 42px;
 	margin-right: 10px;
+}
+
+// Specific for Stripe Elements while we use it in parallel to existing cc fields
+.credit-card-form-fields__element {
+	padding: 12px 14px 3px;
+	border: 1px solid var( --color-neutral-10 );
+	font-size: 16px;
+	line-height: 1.5;
+	min-height: 1.5em;
+	margin-top: 5px;
+
+	&.has-focus {
+		box-shadow: 0 0 0 2px var( --color-primary-10 );
+		border-color: var( --color-primary );
+
+		&.is-error {
+			box-shadow: 0 0 0 2px var( --color-error-10 );
+		}
+	}
+
+	&.is-error {
+		border-color: var( --color-error );
+	}
 }

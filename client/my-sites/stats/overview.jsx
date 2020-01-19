@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,8 +19,8 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import StatsNavigation from 'blocks/stats-navigation';
 import titlecase from 'to-title-case';
 import Main from 'components/main';
-import StatsFirstView from './stats-first-view';
 import JetpackColophon from 'components/jetpack-colophon';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { getCurrentUser } from 'state/current-user/selectors';
 import getVisibleSites from 'state/selectors/get-visible-sites';
 
@@ -99,7 +97,6 @@ class StatsOverview extends Component {
 					path={ `/stats/${ period }` }
 					title={ `Stats > ${ titlecase( period ) }` }
 				/>
-				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'traffic' } interval={ period } />
 				{ sites.length !== 0 ? sitesList : this.placeholders() }
@@ -114,6 +111,7 @@ class StatsOverview extends Component {
 
 		// TODO: a separate StatsSectionTitle component should be created
 		items.push(
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<h3 key="header-placeholder" className="stats-section-title">
 				&nbsp;
 			</h3>
@@ -132,4 +130,4 @@ export default connect( state => {
 		user: getCurrentUser( state ),
 		sites: getVisibleSites( state ),
 	};
-} )( localize( StatsOverview ) );
+} )( localize( withLocalizedMoment( StatsOverview ) ) );

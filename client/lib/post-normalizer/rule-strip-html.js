@@ -1,11 +1,10 @@
-/** @format */
 /**
  * External dependencies
  */
 import { forEach } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { stripHTML } from 'lib/formatting';
 

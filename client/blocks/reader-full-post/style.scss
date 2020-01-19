@@ -1,4 +1,4 @@
-/** @format */
+
 
 // Styles targeted at story content
 @import './_content.scss';
@@ -45,7 +45,7 @@
 }
 
 .reader-full-post__visit-site-container {
-	background: $white;
+	background: var( --color-surface );
 	border-bottom: 1px solid var( --color-neutral-0 );
 	font-size: 11px;
 	font-weight: 500;
@@ -68,7 +68,7 @@
 	}
 
 	.external-link .gridicons-external {
-		fill: var( --color-neutral-400 );
+		fill: var( --color-neutral-40 );
 		top: 5px;
 
 		@include breakpoint( '>660px' ) {
@@ -77,7 +77,7 @@
 	}
 
 	.external-link {
-		color: var( --color-neutral-400 );
+		color: var( --color-neutral-40 );
 		display: block;
 		padding: 10px 10px 15px 6px;
 
@@ -139,7 +139,7 @@
 }
 
 .reader-full-post__story-content {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 17px;
 	line-height: 28px;
 }
@@ -414,7 +414,7 @@
 
 .reader-full-post__header-title {
 	clear: none;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-family: $serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -444,7 +444,7 @@
 
 	.reader-full-post__header-title-link,
 	.reader-full-post__header-title-link:hover {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 }
 
@@ -469,7 +469,7 @@
 
 .reader-full-post__header-date-link,
 .reader-full-post__header-date-link:visited {
-	color: $gray;
+	color: var( --color-text-subtle );
 
 	&:hover {
 		color: var( --color-primary-light );
@@ -482,7 +482,7 @@
 	width: calc( 100% - 120px );
 
 	.gridicon {
-		fill: $gray;
+		fill: var( --color-neutral-light );
 		margin-right: 5px;
 		position: relative;
 		top: 4px;
@@ -494,7 +494,7 @@
 }
 
 .reader-full-post__header-tag-list {
-	color: $gray;
+	color: var( --color-text-subtle );
 	list-style: none;
 	margin: 0;
 	padding: 0;
@@ -508,7 +508,7 @@
 }
 
 .reader-full-post__header-tag-list-item {
-	color: $gray;
+	color: var( --color-text-subtle );
 	display: inline;
 	margin-right: 5px;
 
@@ -527,7 +527,7 @@
 
 .reader-full-post__header-tag-list-item-link,
 .reader-full-post__header-tag-list-item-link:visited {
-	color: $gray;
+	color: var( --color-text-subtle );
 
 	&:hover {
 		color: var( --color-primary-light );

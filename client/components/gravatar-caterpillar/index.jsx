@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,6 +9,11 @@ import { noop, map, size, takeRight, filter, uniqBy } from 'lodash';
  * Internal dependencies
  */
 import Gravatar from 'components/gravatar';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class GravatarCaterpillar extends React.Component {
 	static propTypes = {

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,6 +6,7 @@ import page from 'page';
 import { connect } from 'react-redux';
 import { capitalize, find, flow, isEmpty, some } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -29,7 +29,6 @@ import PluginsList from './plugins-list';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginsBrowser from './plugins-browser';
-import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
 import canCurrentUser from 'state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
@@ -42,8 +41,13 @@ import {
 	isRequestingSites,
 } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import HeaderButton from 'components/header-button';
+import { Button } from '@automattic/components';
 import { isEnabled } from 'config';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class PluginsMain extends Component {
 	state = this.getPluginsState( this.props );
@@ -56,7 +60,7 @@ export class PluginsMain extends Component {
 		PluginsStore.removeListener( 'change', this.refreshPlugins );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { hasJetpackSites: hasJpSites, selectedSiteIsJetpack, selectedSiteSlug } = nextProps;
 
 		if ( this.props.isRequestingSites && ! nextProps.isRequestingSites ) {
@@ -80,7 +84,10 @@ export class PluginsMain extends Component {
 		const props = nextProps || this.props;
 		let plugins = null;
 		if ( ! props.selectedSiteSlug ) {
-			plugins = PluginsStore.getPlugins( sites.filter( site => site.visible ), props.filter );
+			plugins = PluginsStore.getPlugins(
+				sites.filter( site => site.visible ),
+				props.filter
+			);
 		} else {
 			plugins = PluginsStore.getPlugins( sites, props.filter );
 		}
@@ -417,13 +424,15 @@ export class PluginsMain extends Component {
 		const browserUrl = '/plugins' + ( selectedSiteSlug ? '/' + selectedSiteSlug : '' );
 
 		return (
-			<HeaderButton
-				icon="plus"
-				label={ translate( 'Add Plugin' ) }
-				aria-label={ translate( 'Browse all plugins', { context: 'button label' } ) }
+			<Button
+				className="plugins__button"
+				compact
 				href={ browserUrl }
 				onClick={ this.handleAddPluginButtonClick }
-			/>
+			>
+				<Gridicon icon="plus" />
+				<span className="plugins__button-text">{ translate( 'Add Plugin' ) }</span>
+			</Button>
 		);
 	}
 
@@ -441,13 +450,15 @@ export class PluginsMain extends Component {
 		const uploadUrl = '/plugins/upload' + ( selectedSiteSlug ? '/' + selectedSiteSlug : '' );
 
 		return (
-			<HeaderButton
-				icon="cloud-upload"
-				label={ translate( 'Upload Plugin' ) }
-				aria-label={ translate( 'Upload Plugin' ) }
+			<Button
+				className="plugins__button"
+				compact
 				href={ uploadUrl }
 				onClick={ this.handleUploadPluginButtonClick }
-			/>
+			>
+				<Gridicon icon="cloud-upload" />
+				<span className="plugins__button-text">{ translate( 'Install Plugin' ) }</span>
+			</Button>
 		);
 	}
 
@@ -494,24 +505,25 @@ export class PluginsMain extends Component {
 
 		return (
 			<Main wideLayout>
-				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
 				{ this.renderPageViewTracking() }
 				<SidebarNavigation />
-				<div className="plugins__header">
-					<SectionNav selectedText={ this.getSelectedText() }>
-						<NavTabs>{ navItems }</NavTabs>
-						<Search
-							pinned
-							fitsContainer
-							onSearch={ this.props.doSearch }
-							initialValue={ this.props.search }
-							ref="url-search"
-							analyticsGroup="Plugins"
-							placeholder={ this.getSearchPlaceholder() }
-						/>
-					</SectionNav>
-					<div className="plugins__header-buttons">
+				<div className="plugins__main">
+					<div className="plugins__main-header">
+						<SectionNav selectedText={ this.getSelectedText() }>
+							<NavTabs>{ navItems }</NavTabs>
+							<Search
+								pinned
+								fitsContainer
+								onSearch={ this.props.doSearch }
+								initialValue={ this.props.search }
+								ref={ `url-search` }
+								analyticsGroup="Plugins"
+								placeholder={ this.getSearchPlaceholder() }
+							/>
+						</SectionNav>
+					</div>
+					<div className="plugins__main-buttons">
 						{ this.renderAddPluginButton() }
 						{ this.renderUploadPluginButton() }
 					</div>

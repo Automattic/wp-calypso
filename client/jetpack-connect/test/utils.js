@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -75,6 +74,7 @@ describe( 'parseAuthorizationQuery', () => {
 			_wp_nonce: 'foobar',
 			blogname: 'Just Another WordPress.com Site',
 			client_id: '12345',
+			close_window_after_login: '0',
 			home_url: 'https://yourjetpack.blog',
 			redirect_uri: 'https://yourjetpack.blog/wp-admin/admin.php',
 			scope: 'administrator:34579bf2a3185a47d1b31aab30125d',
@@ -86,6 +86,46 @@ describe( 'parseAuthorizationQuery', () => {
 		const result = parseAuthorizationQuery( data );
 		expect( result ).not.toBeNull();
 		expect( result ).toMatchSnapshot();
+	} );
+
+	test( 'isPopup, closeWindowAfterLogin should be true if string is 1', () => {
+		const data = {
+			_wp_nonce: 'foobar',
+			blogname: 'Just Another WordPress.com Site',
+			client_id: '12345',
+			close_window_after_login: '1',
+			home_url: 'https://yourjetpack.blog',
+			is_popup: '1',
+			redirect_uri: 'https://yourjetpack.blog/wp-admin/admin.php',
+			scope: 'administrator:34579bf2a3185a47d1b31aab30125d',
+			secret: '640fdbd69f96a8ca9e61',
+			site: 'https://yourjetpack.blog',
+			site_url: 'https://yourjetpack.blog',
+			state: '1',
+		};
+		const result = parseAuthorizationQuery( data );
+		expect( result.isPopup ).toBe( true );
+		expect( result.closeWindowAfterLogin ).toBe( true );
+	} );
+
+	test( 'isPopup, closeWindowAfterLogin should be false if string is not 1', () => {
+		const data = {
+			_wp_nonce: 'foobar',
+			blogname: 'Just Another WordPress.com Site',
+			client_id: '12345',
+			close_window_after_login: '0',
+			home_url: 'https://yourjetpack.blog',
+			is_popup: 'FALSE',
+			redirect_uri: 'https://yourjetpack.blog/wp-admin/admin.php',
+			scope: 'administrator:34579bf2a3185a47d1b31aab30125d',
+			secret: '640fdbd69f96a8ca9e61',
+			site: 'https://yourjetpack.blog',
+			site_url: 'https://yourjetpack.blog',
+			state: '1',
+		};
+		const result = parseAuthorizationQuery( data );
+		expect( result.isPopup ).toBe( false );
+		expect( result.closeWindowAfterLogin ).toBe( false );
 	} );
 
 	test( 'should return null data on valid input', () => {

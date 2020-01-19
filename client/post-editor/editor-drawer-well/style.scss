@@ -17,16 +17,13 @@
 	cursor: pointer;
 
 	&:hover {
-		border-color: var( --color-neutral-200 );
-		color: var( --color-neutral-700 );
+		border-color: var( --color-neutral-20 );
+		color: var( --color-neutral-70 );
 	}
 }
 
-.editor-drawer-well__placeholder[disabled] .editor-drawer-well__button {
-}
-
 .editor-drawer-well__placeholder .gridicon {
-	color: $gray;
+	color: var( --color-neutral-light );
 	display: block;
 	width: 48px;
 	height: 48px;

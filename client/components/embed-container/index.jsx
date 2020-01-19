@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,8 @@ import { assign, filter, forEach, forOwn, noop } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { loadScript, loadjQueryDependentScript } from 'lib/load-script';
+import { loadScript } from '@automattic/load-script';
+import { loadjQueryDependentScriptDesktopWrapper } from 'lib/load-jquery-dependent-script-desktop-wrapper';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:components:embed-container' );
@@ -194,7 +193,7 @@ function embedSlideshow( domNode ) {
 		} );
 	} else {
 		// Neither exist
-		loadjQueryDependentScript( SLIDESHOW_URLS.CYCLE_JS, () => {
+		loadjQueryDependentScriptDesktopWrapper( SLIDESHOW_URLS.CYCLE_JS, () => {
 			createSlideshow();
 		} );
 	}

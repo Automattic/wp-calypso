@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,13 +7,14 @@ import page from 'page';
  * Internal dependencies
  */
 import config from 'config';
-import { makeLayout, redirectLoggedOut } from 'controller';
+import { makeLayout } from 'controller';
 import { navigation, sites, siteSelection } from 'my-sites/controller';
 import { newAccount, selectBusinessType, selectLocation, stats } from './controller';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
 import isGoogleMyBusinessLocationConnected from 'state/selectors/is-google-my-business-location-connected';
 import isSiteGoogleMyBusinessEligible from 'state/selectors/is-site-google-my-business-eligible';
+import { getSiteHomeUrl } from 'state/sites/selectors';
 import { requestKeyringServices } from 'state/sharing/services/actions';
 import { requestSiteKeyrings } from 'state/site-keyrings/actions';
 import { getSiteKeyringsForService } from 'state/site-keyrings/selectors';
@@ -43,7 +42,7 @@ const redirectUnauthorized = ( context, next ) => {
 	const siteIsGMBEligible = isSiteGoogleMyBusinessEligible( state, siteId );
 	const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 	if ( ! siteIsGMBEligible || ! canUserManageOptions ) {
-		page.redirect( `/stats/${ context.params.site }` );
+		page.redirect( getSiteHomeUrl( state, siteId ) );
 	}
 
 	next();
@@ -56,11 +55,10 @@ export default function( router ) {
 
 	router( '/google-my-business', siteSelection, sites, navigation, makeLayout );
 
-	router( '/google-my-business/new', redirectLoggedOut, siteSelection, sites, makeLayout );
+	router( '/google-my-business/new', siteSelection, sites, makeLayout );
 
 	router(
 		'/google-my-business/new/:site',
-		redirectLoggedOut,
 		siteSelection,
 		redirectUnauthorized,
 		newAccount,
@@ -68,17 +66,10 @@ export default function( router ) {
 		makeLayout
 	);
 
-	router(
-		'/google-my-business/select-location',
-		redirectLoggedOut,
-		siteSelection,
-		sites,
-		makeLayout
-	);
+	router( '/google-my-business/select-location', siteSelection, sites, makeLayout );
 
 	router(
 		'/google-my-business/select-location/:site',
-		redirectLoggedOut,
 		siteSelection,
 		redirectUnauthorized,
 		selectLocation,
@@ -86,11 +77,10 @@ export default function( router ) {
 		makeLayout
 	);
 
-	router( '/google-my-business/stats', redirectLoggedOut, siteSelection, sites, makeLayout );
+	router( '/google-my-business/stats', siteSelection, sites, makeLayout );
 
 	router(
 		'/google-my-business/stats/:site',
-		redirectLoggedOut,
 		siteSelection,
 		redirectUnauthorized,
 		loadKeyringsMiddleware,
@@ -106,7 +96,7 @@ export default function( router ) {
 			} else if ( hasLocationsAvailable && siteIsGMBEligible ) {
 				page.redirect( `/google-my-business/select-location/${ context.params.site }` );
 			} else {
-				page.redirect( `/stats/${ context.params.site }` );
+				page.redirect( getSiteHomeUrl( state, siteId ) );
 			}
 		},
 		stats,
@@ -116,7 +106,6 @@ export default function( router ) {
 
 	router(
 		'/google-my-business/select-business-type/:site',
-		redirectLoggedOut,
 		siteSelection,
 		redirectUnauthorized,
 		selectBusinessType,

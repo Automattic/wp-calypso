@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,31 +6,41 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-
-import { SIGNUP_COMPLETE_RESET, SIGNUP_STEPS_SITE_VERTICAL_SET } from 'state/action-types';
-
-import { createReducer } from 'state/utils';
+import {
+	JETPACK_CONNECT_AUTHORIZE,
+	SIGNUP_COMPLETE_RESET,
+	SIGNUP_STEPS_SITE_VERTICAL_SET,
+} from 'state/action-types';
+import { withSchemaValidation } from 'state/utils';
 import { siteVerticalSchema } from './schema';
 
 const initialState = {
+	id: '',
 	isUserInput: true,
 	name: '',
+	parentId: '',
 	slug: '',
 	preview: '',
+	suggestedTheme: '',
 };
 
-export default createReducer(
-	initialState,
-	{
-		[ SIGNUP_STEPS_SITE_VERTICAL_SET ]: ( state, siteVerticalData ) => {
+// TODO:
+// This reducer can be further simplify since the verticals data can be
+// found in `signup.verticals`, so it only needs to store the site vertical name.
+export default withSchemaValidation( siteVerticalSchema, ( state = initialState, action ) => {
+	switch ( action.type ) {
+		case SIGNUP_STEPS_SITE_VERTICAL_SET:
 			return {
 				...state,
-				...omit( siteVerticalData, 'type' ),
+				...omit( action, 'type' ),
 			};
-		},
-		[ SIGNUP_COMPLETE_RESET ]: () => {
+		case SIGNUP_COMPLETE_RESET: {
 			return {};
-		},
-	},
-	siteVerticalSchema
-);
+		}
+		case JETPACK_CONNECT_AUTHORIZE: {
+			return {};
+		}
+	}
+
+	return state;
+} );

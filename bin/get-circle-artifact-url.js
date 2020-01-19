@@ -1,5 +1,3 @@
-/** @format */
-
 const https = require( 'https' );
 
 const baseOptions = {
@@ -11,7 +9,7 @@ const baseOptions = {
 };
 
 const basePath = '/api/v1.1/project/github/Automattic/wp-calypso';
-const maxBuilds = 30;
+const maxBuilds = 100;
 
 async function getCircleArtifactUrl( pathMatchRegex ) {
 	if ( ! pathMatchRegex instanceof RegExp ) {

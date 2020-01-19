@@ -1,0 +1,293 @@
+.site-settings {
+	font-size: 14px;
+
+	fieldset {
+		clear: both;
+		margin-bottom: 24px;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	label {
+		display: block;
+	}
+
+	input {
+		display: inline-block;
+	}
+
+	.short-settings {
+		display: block;
+		min-width: 200px;
+	}
+
+	select + label {
+		margin-top: 24px; // Give labels some margin when they immediately follow a select
+	}
+
+	input[type='number'] {
+		padding: 0;
+		width: 50px;
+		text-align: center;
+	}
+
+	input[type='text'] {
+		-webkit-appearance: none;
+	}
+
+	legend,
+	label {
+		margin-bottom: 5px;
+		font-size: 14px;
+		font-weight: 600;
+	}
+
+	legend + label,
+	label + label,
+	li label,
+	input[type='checkbox'] + label,
+	input[type='radio'] + label,
+	label input[type='checkbox'],
+	label input[type='radio'] {
+		font-weight: normal;
+	}
+
+	label a,
+	p a {
+		text-decoration: underline;
+	}
+
+	p:last-child {
+		margin-bottom: 0;
+	}
+
+	.is-primary {
+		float: right;
+	}
+
+	.empty-content {
+		.is-primary {
+			float: none;
+		}
+	}
+
+	.form-toggle__switch {
+		margin-top: 3px;
+	}
+
+	p.form-setting-explanation {
+		display: block;
+		margin: 5px 0;
+		font-size: 13px;
+		font-style: italic;
+		font-weight: 400;
+		color: var( --color-text-subtle );
+
+		&.is-indented {
+			margin-left: 24px;
+		}
+	}
+
+	.form-toggle__wrapper + p.form-setting-explanation.is-indented,
+	.indented-form-field,
+	.indented-form-field + p.form-setting-explanation.is-indented {
+		margin-left: 36px;
+	}
+
+	p.settings-alert {
+		font-weight: 400;
+		color: var( --color-error );
+	}
+
+	ul li,
+	ol li {
+		margin-bottom: 0;
+	}
+
+	.site-settings__analytics-stores-settings {
+		padding-bottom: 20px;
+
+		.site-settings__analytics-stores-child-settings {
+			margin-top: 10px;
+			margin-left: 20px;
+		}
+	}
+
+	.site-settings__blogaddress-settings {
+		@include breakpoint( '>660px' ) {
+			display: flex;
+		}
+
+		.button {
+			width: 100%;
+			margin-left: 0;
+			margin-top: 5px;
+
+			@include breakpoint( '>660px' ) {
+				width: 45%;
+				margin-left: 16px;
+				margin-top: 0;
+			}
+		}
+	}
+
+	.seo-settings__seo-form .form-text-input-with-affixes__prefix {
+		min-width: 80px;
+		text-align: center;
+	}
+
+	.seo-settings__seo-sitemap {
+		word-wrap: break-word;
+		word-break: break-word;
+	}
+
+	.verification-code-error {
+		color: var( --color-error );
+		font-weight: bold;
+	}
+
+	.seo-settings__seo-form .counted-textarea {
+		&.is-exceeding-acceptable-length {
+			background: var( --color-warning );
+		}
+	}
+
+	.seo-settings__seo-form .seo-settings__preview-button {
+		display: block;
+		float: left;
+		margin-right: 24px;
+	}
+
+	.seo-settings__seo-form .seo-settings__preview-explanation {
+		display: block;
+		float: left;
+		line-height: 40px;
+	}
+
+	.seo-settings__front-page-description {
+		margin-bottom: 1.5em;
+	}
+
+	fieldset.site-icon-setting {
+		padding-bottom: 16px;
+
+		@include breakpoint( '>660px' ) {
+			flex: 0 0 122px;
+			order: 1;
+			margin-bottom: 0;
+			padding-right: 24px;
+			padding-bottom: 24px;
+		}
+	}
+
+	.site-icon-setting__heading {
+		@include breakpoint( '>660px' ) {
+			justify-content: space-between;
+			white-space: nowrap;
+		}
+	}
+
+	.site-icon-setting__icon {
+		@include breakpoint( '<660px' ) {
+			float: left;
+			margin-right: 8px;
+		}
+	}
+
+	.site-icon-setting__button {
+		@include breakpoint( '<660px' ) {
+			display: block;
+			margin-bottom: 8px;
+		}
+	}
+
+	.card {
+		&.is-placeholder div {
+			@include placeholder();
+		}
+	}
+
+	.site.is-compact .site__content {
+		padding: 0;
+	}
+
+	.composing__publish-confirmation .form-toggle__label-content {
+		font-weight: 600;
+	}
+}
+
+.site-settings__child-settings {
+	margin: 16px 36px 0;
+}
+
+.site-settings__card + .site-settings__card,
+.site-settings__foldable-card + .site-settings__card,
+.site-settings__foldable-card + .card.is-compact:last-child,
+.site-settings__card + .card.is-compact:last-child {
+	margin-top: -16px;
+	margin-bottom: 16px;
+}
+
+.site-settings__foldable-card {
+	&.foldable-card,
+	&.foldable-card.is-expanded {
+		margin-bottom: 16px;
+	}
+
+	.foldable-card__header {
+		padding: 24px;
+
+		.gridicons-checkmark,
+		.gridicons-notice-outline {
+			margin-right: 4px;
+			vertical-align: bottom;
+		}
+
+		.gridicons-checkmark {
+			color: var( --color-success );
+		}
+
+		.gridicons-notice-outline {
+			color: var( --color-error );
+		}
+	}
+
+	.foldable-card__expand {
+		width: 64px;
+	}
+
+	&.is-expanded .foldable-card__content {
+		padding: 8px 24px 24px;
+		border-top: 1px var( --color-neutral-10 ) solid;
+	}
+
+	&.is-expanded.is-top-level .foldable-card__content {
+		padding: 24px;
+	}
+
+	.composing__module-settings .support-info,
+	.protect__module-settings .support-info,
+	.spam-filtering__settings .support-info {
+		margin-right: -36px;
+		height: 0;
+	}
+}
+
+.site-settings__traffic-settings,
+.seo-settings__site-verification,
+.seo-settings__help {
+	.form-toggle__label {
+		display: flex;
+		align-items: center;
+	}
+
+	.form-toggle__switch {
+		flex: 1 0 auto;
+	}
+
+	hr {
+		margin: 0 -24px 1.5em;
+	}
+}

@@ -1,4 +1,3 @@
-/** @format */
 export default {
 	/**
 	 * Given a media filter, returns a partial mime type that can be used to
@@ -6,6 +5,7 @@ export default {
 	 * or an unrecognized filter, is provided.
 	 *
 	 * @param {string} filter - The filter to get a mime from
+	 * @returns {string} Mime type
 	 */
 	getMimeBaseTypeFromFilter: function( filter ) {
 		let mime;
@@ -33,5 +33,47 @@ export default {
 		}
 
 		return mime;
+	},
+
+	/**
+	 * Return's a media query suitable for Google Photos.
+	 *
+	 * @param {object} query The existing query object
+	 * @param {object} props Media library request props
+	 * @returns {object} Modified query for Google Photos
+	 */
+	getGoogleQuery: function( query, props ) {
+		const { categoryFilter, filter } = props;
+		const googleFilter = [];
+
+		if ( filter && this.convertMimeFilter( filter ) ) {
+			googleFilter.push( 'mediaType=' + this.convertMimeFilter( filter ) );
+		}
+
+		if ( categoryFilter ) {
+			googleFilter.push( 'categoryInclude=' + categoryFilter );
+		}
+
+		if ( googleFilter.length ) {
+			return { ...query, filter: googleFilter };
+		}
+
+		return query;
+	},
+
+	/**
+	 * Return a file type filter suitable for Google Photos
+	 *
+	 * @param {string} wpMimeFilter Calypso MIME filter
+	 * @returns {string} Converted MIME filter, or null if unsupported type
+	 */
+	convertMimeFilter( wpMimeFilter ) {
+		if ( wpMimeFilter === 'videos' ) {
+			return 'video';
+		} else if ( wpMimeFilter === 'images' ) {
+			return 'photo';
+		}
+
+		return null;
 	},
 };

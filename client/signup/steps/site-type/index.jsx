@@ -1,100 +1,105 @@
-/** @format */
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
+import hasInitializedSites from 'state/selectors/has-initialized-sites';
+import { Button } from '@automattic/components';
+import SiteTypeForm from './form';
 import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
-import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { allSiteTypes, getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { submitSiteType } from 'state/signup/steps/site-type/actions';
+import { saveSignupStep } from 'state/signup/progress/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 
-//Form components
-import Card from 'components/card';
-import Button from 'components/button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-
-/**
- * Style dependencies
- */
-import './style.scss';
+const siteTypeToFlowname = {
+	import: 'import-onboarding',
+	'online-store': 'ecommerce-onboarding',
+};
 
 class SiteType extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = {
-			siteType: props.siteType,
-		};
-	}
-
 	componentDidMount() {
-		SignupActions.saveSignupStep( {
-			stepName: this.props.stepName,
-		} );
+		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
-	handleRadioChange = event => this.setState( { siteType: event.currentTarget.value } );
-
-	handleSubmit = event => {
-		event.preventDefault();
-		// Default siteType is 'blog'
-		const siteTypeInputVal =
-			this.state.siteType || getSiteTypePropertyValue( 'id', 'blog', 'slug' );
-
-		this.props.submitStep( siteTypeInputVal );
+	handleImportFlowClick = () => {
+		this.props.recordTracksEvent( 'calypso_signup_import_cta_click', {
+			flow: this.props.flowName,
+			step: this.props.stepName,
+		} );
+		this.submitStep( 'import' );
 	};
 
-	renderRadioOptions() {
-		return allSiteTypes.map( siteTypeProperties => (
-			<FormLabel
-				className={ classNames( 'site-type__option', {
-					'is-selected': siteTypeProperties.slug === this.state.siteType,
-				} ) }
-				key={ siteTypeProperties.id }
-			>
-				<FormRadio
-					value={ siteTypeProperties.slug }
-					checked={ siteTypeProperties.slug === this.state.siteType }
-					onChange={ this.handleRadioChange }
-				/>
-				<strong className="site-type__option-label">{ siteTypeProperties.label }</strong>
-				<span className="site-type__option-description">{ siteTypeProperties.description }</span>
-			</FormLabel>
-		) );
-	}
+	submitStep = siteTypeValue => {
+		const { stepName } = this.props;
 
-	renderContent() {
-		const { translate } = this.props;
+		this.props.submitSiteType( siteTypeValue, stepName );
+
+		// Modify the flowname if the site type matches an override.
+		let flowName;
+		if ( 'import-onboarding' === this.props.flowName ) {
+			flowName = siteTypeToFlowname[ siteTypeValue ] || 'onboarding';
+		} else if (
+			( 'design-first' === this.props.flowName ||
+				'ecommerce-design-first' === this.props.flowName ) &&
+			'site-type-with-theme' === stepName
+		) {
+			flowName = 'online-store' === siteTypeValue ? 'ecommerce-design-first' : this.props.flowName;
+		} else {
+			flowName = siteTypeToFlowname[ siteTypeValue ] || this.props.flowName;
+		}
+
+		this.props.goToNextStep( flowName );
+	};
+
+	renderImportButton() {
+		if ( ! isEnabled( 'signup/import' ) ) {
+			return null;
+		}
 
 		return (
-			<div className="site-type__wrapper">
-				<form onSubmit={ this.handleSubmit }>
-					<Card>
-						<FormFieldset>{ this.renderRadioOptions() }</FormFieldset>
-						<Button primary={ true } type="submit">
-							{ translate( 'Continue' ) }
-						</Button>
-					</Card>
-				</form>
+			<div className="site-type__import-button">
+				<Button borderless onClick={ this.handleImportFlowClick }>
+					{ this.props.translate( 'Already have a website? Import your content here.' ) }
+				</Button>
 			</div>
 		);
 	}
 
-	render() {
-		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
+	renderStepContent() {
+		const { siteType } = this.props;
 
-		const headerText = translate( 'Start with a site type' );
-		const subHeaderText = '';
+		return (
+			<Fragment>
+				<SiteTypeForm
+					goToNextStep={ this.props.goToNextStep }
+					submitForm={ this.submitStep }
+					siteType={ siteType }
+				/>
+				{ this.renderImportButton() }
+			</Fragment>
+		);
+	}
+
+	render() {
+		const {
+			flowName,
+			positionInFlow,
+			stepName,
+			translate,
+			hasInitializedSitesBackUrl,
+		} = this.props;
+
+		const headerText = translate( 'What kind of site are you building?' );
+		const subHeaderText = translate(
+			'This is just a starting point. You can add or change features later.'
+		);
 
 		return (
 			<StepWrapper
@@ -105,8 +110,10 @@ class SiteType extends Component {
 				fallbackHeaderText={ headerText }
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
-				signupProgress={ signupProgress }
-				stepContent={ this.renderContent() }
+				stepContent={ this.renderStepContent() }
+				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
+				backUrl={ hasInitializedSitesBackUrl }
+				backLabelText={ hasInitializedSitesBackUrl ? translate( 'Back to My Sites' ) : null }
 			/>
 		);
 	}
@@ -114,22 +121,8 @@ class SiteType extends Component {
 
 export default connect(
 	state => ( {
-		siteType: getSiteType( state ),
+		siteType: getSiteType( state ) || 'blog',
+		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 	} ),
-	( dispatch, { goToNextStep, flowName } ) => ( {
-		submitStep: siteTypeValue => {
-			dispatch( submitSiteType( siteTypeValue ) );
-			dispatch(
-				recordTracksEvent( 'calypso_signup_actions_submit_site_type', {
-					value: siteTypeValue,
-				} )
-			);
-
-			if ( siteTypeValue === getSiteTypePropertyValue( 'id', 'store', 'slug' ) ) {
-				flowName = 'ecommerce';
-			}
-
-			goToNextStep( flowName );
-		},
-	} )
+	{ recordTracksEvent, saveSignupStep, submitSiteType }
 )( localize( SiteType ) );

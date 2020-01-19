@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +6,7 @@ import PropTypes from 'prop-types';
 import { get, noop, some, flatMap } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import classnames from 'classnames';
 
 /**
@@ -31,6 +30,11 @@ import Emojify from 'components/emojify';
 import ConversationCaterpillar from 'blocks/conversation-caterpillar';
 import withDimensions from 'lib/with-dimensions';
 import { expandComments } from 'state/comments/actions';
+
+/**
+ * Style dependencies
+ */
+import './post-comment.scss';
 
 /**
  * A PostComment is the visual representation for a comment within a tree of comments.
@@ -277,14 +281,14 @@ class PostComment extends React.PureComponent {
 		const comment = get( this.props.commentsTree, [ commentId, 'data' ], {} );
 		const commentAuthor = get( comment, 'author', {} );
 		const commentAuthorName = decodeEntities( commentAuthor.name );
-		const commentAuthorUrl = !! commentAuthor.site_ID
+		const commentAuthorUrl = commentAuthor.site_ID
 			? getStreamUrl( null, commentAuthor.site_ID )
 			: commentAuthor && commentAuthor.URL;
 		return { comment, commentAuthor, commentAuthorUrl, commentAuthorName };
 	};
 
 	renderAuthorTag = ( { authorName, authorUrl, commentId, className } ) => {
-		return !! authorUrl ? (
+		return authorUrl ? (
 			<a
 				href={ authorUrl }
 				className={ className }

@@ -31,7 +31,7 @@
 	&::after {
 		left: 0;
 		border-radius: 50%;
-		background: $white;
+		background: var( --color-surface );
 		transition: all 0.2s ease;
 	}
 	&::before {
@@ -66,12 +66,12 @@
 	}
 
 	& + .form-toggle__label .form-toggle__switch {
-		background: var( --color-neutral-200 );
+		background: var( --color-neutral-20 );
 	}
 
 	&:not( :disabled ) {
 		+ .form-toggle__label:hover .form-toggle__switch {
-			background: var( --color-neutral-100 );
+			background: var( --color-neutral-10 );
 		}
 	}
 
@@ -106,28 +106,7 @@
 	}
 	&:checked {
 		+ .form-toggle__label .form-toggle__switch {
-			background: var( --color-neutral-100 );
-		}
-	}
-}
-
-.form-toggle.is-compact {
-	+ .form-toggle__label .form-toggle__switch {
-		border-radius: 8px;
-		width: 24px;
-		height: 16px;
-
-		&::before,
-		&::after {
-			width: 12px;
-			height: 12px;
-		}
-	}
-	&:checked {
-		+ .form-toggle__label .form-toggle__switch {
-			&::after {
-				left: 8px;
-			}
+			background: var( --color-neutral-10 );
 		}
 	}
 }

@@ -1,35 +1,37 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { bindActionCreators } from 'redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import QueryPlans from 'components/data/query-plans';
 import PlanCompareCard from 'my-sites/plan-compare-card';
 import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import formatCurrency from 'lib/format-currency';
 import { preventWidows } from 'lib/formatting';
-import { getFeatureTitle, getPlan } from 'lib/plans';
+import { getPlan } from 'lib/plans';
+import { getFeatureTitle } from 'lib/plans/features-list';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { PLAN_PERSONAL } from 'lib/plans/constants';
-import { getSitePlan } from 'state/sites/selectors';
+import { getSitePlan, getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import PlanIcon from 'components/plans/plan-icon';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class UpgradeNudgeExpanded extends Component {
 	constructor( props ) {
@@ -52,18 +54,13 @@ class UpgradeNudgeExpanded extends Component {
 	}
 
 	render() {
-		//Display only if upgrade path available
-		if (
-			! this.props.currentPlan ||
-			( this.props.planConstants.availableFor &&
-				! this.props.planConstants.availableFor( this.props.currentPlan.product_slug ) )
-		) {
+		if ( ! this.props.currentPlan && ! this.props.forceDisplay ) {
 			return null;
 		}
 
 		const price = formatCurrency( this.props.plan.raw_price / 12, this.props.plan.currency_code );
 		const features = this.props.planConstants
-			.getPromotedFeatures()
+			.getPlanCompareFeatures()
 			.filter( feature => feature !== this.props.highlightedFeature )
 			.slice( 0, 6 );
 
@@ -152,6 +149,7 @@ UpgradeNudgeExpanded.propTypes = {
 	eventName: PropTypes.string,
 	event: PropTypes.string,
 	siteSlug: PropTypes.string,
+	forceDisplay: PropTypes.bool,
 	recordTracksEvent: PropTypes.func.isRequired,
 };
 
@@ -164,7 +162,4 @@ const mapStateToProps = ( state, { plan = PLAN_PERSONAL } ) => ( {
 
 const mapDispatchToProps = dispatch => bindActionCreators( { recordTracksEvent }, dispatch );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( UpgradeNudgeExpanded ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( UpgradeNudgeExpanded ) );

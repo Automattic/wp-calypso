@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,9 +11,14 @@ import createReactClass from 'create-react-class';
 /**
  * Internal dependencies
  */
-import ProgressBar from 'components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import Rating from 'components/rating';
 import analytics from 'lib/analytics';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const PluginRatings = createReactClass( {
 	displayName: 'PluginRatings',

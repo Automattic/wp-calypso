@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,13 +5,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import config from 'config';
 import { localize } from 'i18n-calypso';
-import SocialLogo from 'social-logos';
 import url from 'url';
 
 /**
  * Internal dependencies
  */
 import DashboardWidget from 'woocommerce/components/dashboard-widget';
+import SocialLogo from 'components/social-logo';
 
 class ShareWidget extends Component {
 	static propTypes = {
@@ -46,17 +45,6 @@ class ShareWidget extends Component {
 						text: translate( 'Come check out our store!' ),
 						url: urlToShare,
 						via: 'wordpressdotcom',
-					},
-				},
-			},
-			{
-				icon: 'google-plus',
-				urlProperties: {
-					scheme: 'https',
-					hostname: 'plus.google.com',
-					pathname: '/share',
-					query: {
-						url: urlToShare,
 					},
 				},
 			},

@@ -1,0 +1,134 @@
+/*
+ * CSS values in this file are specific and
+ * designed to match the CSS on external sites,
+ * such as Google and Facebook. Therefore there
+ * will be exceptions to our CSS guidelines here
+ * but please do not "update" this file to
+ * conform.
+ *
+ * @blame: dmsnell
+*/
+
+.facebook-preview {
+	border: none;
+	box-shadow: 0 0 0 1px rgba( 0, 0, 0, 0.15 ) inset, 0 1px 4px rgba( 0, 0, 0, 0.1 );
+	display: flex;
+	overflow-x: auto;
+	max-width: 527px;
+	margin: 0 auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.facebook-preview__content {
+	display: flex;
+}
+
+.facebook-preview__body {
+	display: flex;
+	flex-direction: column;
+	margin: 10px 12px;
+}
+
+.facebook-preview__title {
+	color: #1d2129;
+	font-family: Georgia, serif;
+	font-size: 18px;
+	font-weight: 500;
+	line-height: 22px;
+	max-height: 100px;
+	transition: color 0.1s ease-in-out;
+}
+
+.facebook-preview__description {
+	color: #1d2129;
+	flex-grow: 1;
+	font-family: helvetica, arial, sans-serif;
+	font-size: 12px;
+	line-height: 16px;
+	overflow-y: hidden;
+}
+
+.facebook-preview__url {
+	color: #606770;
+	font-family: helvetica, arial, sans-serif;
+	font-size: 12px;
+	line-height: 12px;
+	text-transform: uppercase;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.facebook-preview__article {
+	.facebook-preview__content {
+		flex-direction: column;
+		min-width: 100%;
+	}
+
+	.facebook-preview__image {
+		max-height: 250px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		overflow-y: hidden;
+
+		& img {
+			height: auto;
+			width: 100%;
+			max-width: 527px;
+		}
+	}
+
+	.facebook-preview__body {
+		height: auto;
+		max-height: 100px;
+	}
+
+	.facebook-preview__title {
+		margin-bottom: 5px;
+	}
+
+	.facebook-preview__url {
+		margin-top: 9px;
+	}
+}
+
+.facebook-preview__website {
+	max-height: 158px;
+	overflow: hidden;
+
+	.facebook-preview__image {
+		flex-shrink: 0;
+		height: 158px;
+		width: 158px;
+
+		& img {
+			display: block;
+			font-size: 14px;
+			height: auto;
+			width: 100%;
+		}
+
+		&::after {
+			border: 1px solid;
+			border-color: rgba( 0, 0, 0, 0.098 ) rgba( 0, 0, 0, 0.149 ) rgba( 0, 0, 0, 0.231 );
+			content: '';
+			display: block;
+			height: 100%;
+			width: 100%;
+		}
+	}
+
+	.facebook-preview__body {
+		width: 100%;
+	}
+
+	.facebook-preview__title {
+		margin-bottom: 5px;
+		max-height: 110px;
+	}
+
+	.facebook-preview__url {
+		margin-top: auto;
+		margin-bottom: 5px;
+	}
+}

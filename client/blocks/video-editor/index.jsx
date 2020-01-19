@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import ProgressBar from 'components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import Notice from 'components/notice';
 import DetailPreviewVideo from 'post-editor/media-modal/detail/detail-preview-video';
 import VideoEditorControls from './video-editor-controls';
@@ -22,6 +20,11 @@ import { updatePoster } from 'state/ui/editor/video-editor/actions';
 import getPosterUploadProgress from 'state/selectors/get-poster-upload-progress';
 import getPosterUrl from 'state/selectors/get-poster-url';
 import shouldShowVideoEditorError from 'state/selectors/should-show-video-editor-error';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class VideoEditor extends Component {
 	static propTypes = {
@@ -48,7 +51,7 @@ class VideoEditor extends Component {
 		pauseVideo: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.shouldShowError && ! this.props.shouldShowError ) {
 			this.setState( {
 				error: true,
@@ -144,6 +147,7 @@ class VideoEditor extends Component {
 
 		return (
 			<Notice
+				className="video-editor__notice"
 				status="is-error"
 				showDismiss={ true }
 				text={ translate( 'We are unable to edit this video.' ) }
@@ -161,8 +165,6 @@ class VideoEditor extends Component {
 
 		return (
 			<div className={ classes }>
-				{ error && this.renderError() }
-
 				<figure>
 					<div className="video-editor__content">
 						<div className="video-editor__preview-wrapper">
@@ -196,6 +198,8 @@ class VideoEditor extends Component {
 						/>
 					</div>
 				</figure>
+
+				{ error && this.renderError() }
 			</div>
 		);
 	}

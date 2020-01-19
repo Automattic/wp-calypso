@@ -1,8 +1,8 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
@@ -11,14 +11,13 @@ import { isEmpty } from 'lodash';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import Card from 'components/card';
-import Button from 'components/button';
-import SignupActions from 'lib/signup/actions';
+import { Card, Button } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import FormInputValidation from 'components/forms/form-input-validation';
 import ExternalLink from 'components/external-link';
 import { localizeUrl } from 'lib/i18n-utils';
+import { submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -30,7 +29,6 @@ class CloneDestinationStep extends Component {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
-		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 		signupDependencies: PropTypes.object,
 	};
@@ -68,10 +66,10 @@ class CloneDestinationStep extends Component {
 		);
 
 		if ( isEmpty( errors ) ) {
-			SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
-				destinationSiteName,
-				destinationSiteUrl,
-			} );
+			this.props.submitSignupStep(
+				{ stepName: this.props.stepName },
+				{ destinationSiteName, destinationSiteUrl }
+			);
 
 			this.props.goToNextStep();
 		} else {
@@ -79,7 +77,7 @@ class CloneDestinationStep extends Component {
 		}
 	};
 
-	renderStepContent = () => {
+	renderStepContent() {
 		const { translate } = this.props;
 		const { formErrors } = this.state;
 
@@ -208,10 +206,10 @@ class CloneDestinationStep extends Component {
 				</Button>
 			</Card>
 		);
-	};
+	}
 
 	render() {
-		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
+		const { flowName, stepName, positionInFlow, translate } = this.props;
 
 		const headerText = translate( 'Getting started' );
 		const subHeaderText = translate(
@@ -228,11 +226,10 @@ class CloneDestinationStep extends Component {
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
 				positionInFlow={ positionInFlow }
-				signupProgress={ signupProgress }
 				stepContent={ this.renderStepContent() }
 			/>
 		);
 	}
 }
 
-export default localize( CloneDestinationStep );
+export default connect( null, { submitSignupStep } )( localize( CloneDestinationStep ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import i18n from 'i18n-calypso';
 import config from 'config';
 import { domainManagementEdit } from 'my-sites/domains/paths';
 import { getThemeDetailsUrl } from 'state/themes/selectors';
-import { googleAppsSettingsUrl } from 'lib/google-apps';
+import { getGSuiteSettingsUrl } from 'lib/gsuite';
 import {
 	isDomainProduct,
 	isGoogleApps,
@@ -44,7 +42,7 @@ const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 	}
 
 	if ( isGoogleApps( purchase ) ) {
-		url = googleAppsSettingsUrl( purchase.meta );
+		url = getGSuiteSettingsUrl( purchase.meta );
 		text = i18n.translate( 'G Suite Settings' );
 	}
 

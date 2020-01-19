@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -22,8 +21,7 @@ import {
 	areSettingsGeneralLoaded,
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
-import Button from 'components/button';
-import Dialog from 'components/dialog';
+import { Button, Dialog } from '@automattic/components';
 import { fetchLocations } from 'woocommerce/state/sites/data/locations/actions';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import FormCheckbox from 'components/forms/form-checkbox';
@@ -106,11 +104,11 @@ class CustomerAddressDialog extends Component {
 		this.maybeFetchLocations();
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.fetchData( this.props );
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		if ( newProps.siteId !== this.props.siteId ) {
 			this.fetchData( newProps );
 		}
@@ -224,7 +222,7 @@ class CustomerAddressDialog extends Component {
 				<FormFieldset>
 					<QueryPaymentCountries />
 					<FormPhoneMediaInput
-						label={ translate( 'Phone Number' ) }
+						label={ translate( 'Phone number' ) }
 						onChange={ this.onPhoneChange }
 						countryCode={ this.state.phoneCountry }
 						countriesList={ this.props.countriesList }
@@ -278,11 +276,11 @@ class CustomerAddressDialog extends Component {
 			>
 				<FormFieldset>
 					<FormLegend className="order-customer__billing-details">
-						{ isBilling ? translate( 'Billing Details' ) : translate( 'Shipping Details' ) }
+						{ isBilling ? translate( 'Billing details' ) : translate( 'Shipping details' ) }
 					</FormLegend>
 					<div className="order-customer__fieldset">
 						<div className="order-customer__field">
-							<FormLabel htmlFor="first_name">{ translate( 'First Name' ) }</FormLabel>
+							<FormLabel htmlFor="first_name">{ translate( 'First name' ) }</FormLabel>
 							<FormTextInput
 								id="first_name"
 								name="first_name"
@@ -291,7 +289,7 @@ class CustomerAddressDialog extends Component {
 							/>
 						</div>
 						<div className="order-customer__field">
-							<FormLabel htmlFor="last_name">{ translate( 'Last Name' ) }</FormLabel>
+							<FormLabel htmlFor="last_name">{ translate( 'Last name' ) }</FormLabel>
 							<FormTextInput
 								id="last_name"
 								name="last_name"

@@ -28,7 +28,7 @@
 
 .shipping-zone__locations-container .list-item,
 .shipping-zone__methods-container .list-item {
-	border-top: 1px solid $border-ultra-light-gray;
+	border-top: 1px solid var( --color-border-subtle );
 }
 
 .shipping-zone__locations-container .list-header + .list-item,
@@ -50,7 +50,7 @@
 	}
 
 	.list-header {
-		background: lighten( $gray, 35% );
+		background: var( --color-neutral-0 );
 		font-weight: 600;
 		font-size: 14px;
 
@@ -80,11 +80,11 @@
 	.list-item.is-placeholder {
 		@include placeholder();
 		pointer-events: none;
-		background: $white;
+		background: var( --color-surface );
 
 		.shipping-zone__placeholder-flag, .gridicon, p, a, span, button {
 			animation: loading-fade 1.6s ease-in-out infinite;
-			background-color: lighten( $gray, 25% );
+			background-color: var( --color-neutral-5 );
 			color: transparent;
 			cursor: default;
 		}
@@ -139,7 +139,7 @@
 
 	.shipping-zone__enable-container {
 		width: 30%;
-		color: $gray;
+		color: var( --color-neutral-light );
 		font-size: 11px;
 		font-weight: 400;
 		line-height: 16px;
@@ -231,7 +231,7 @@
 .shipping-zone__method-container {
 	position: relative;
 	padding: 20px;
-	border-bottom: 1px solid var( --color-neutral-100 );
+	border-bottom: 1px solid var( --color-neutral-10 );
 	margin-bottom: 24px;
 
 	.form-text-input-with-affixes {
@@ -254,7 +254,7 @@
 	}
 
 	input:disabled {
-		border-color: var( --color-neutral-100 );
+		border-color: var( --color-neutral-10 );
 	}
 }
 
@@ -291,7 +291,7 @@
 
 	span {
 		margin-left: 6px;
-		color: $gray;
+		color: var( --color-neutral-light );
 		font-size: 11px;
 		line-height: 16px;
 		vertical-align: top;
@@ -313,7 +313,7 @@
 	.form-label,
 	.form-fieldset,
 	.shipping-zone__location-dialog-header {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 }
 

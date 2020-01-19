@@ -7,7 +7,7 @@ With over 10,000 PRs we have merged all sorts of different contributions from wi
 
 ## Reporting Bugs, Asking Questions, Sending Suggestions
 
-Just [file a GitHub issue](https://github.com/Automattic/wp-calypso/issues/), that’s all. If you want to prefix the title with a “Question:”, “Bug:”, or the general area of the application, that would be helpful, but by no means mandatory. If you have write access, add the appropriate labels.
+Just [file a GitHub issue](https://github.com/Automattic/wp-calypso/issues/), that’s all. If you want to prefix the title with a “Question:”, “Bug:”, or the general area of the application, that would be helpful, but it is by no means mandatory. If you have write access, add the appropriate labels.
 
 If you’re filing a bug, specific steps to reproduce are helpful. Please include the URL of the page that has the bug, along with what you expected to see and what happened instead.
 
@@ -58,6 +58,7 @@ Consistent coding style makes the code so much easier to read. Here are ours:
 
 * [All Coding Guidelines](../docs/coding-guidelines.md)
 	- [JavaScript](../docs/coding-guidelines/javascript.md)
+	- [TypeScript](../docs/coding-guidelines/typescript.md)
 	- [CSS/Sass](../docs/coding-guidelines/css.md)
 	- [HTML](../docs/coding-guidelines/html.md)
 	- [React Components](../docs/components.md)
@@ -75,22 +76,23 @@ Once you know what the first small piece of your feature will be, follow this ge
 
 1. [Fork](https://help.github.com/articles/fork-a-repo/) the project and create a new branch, using [the branch naming scheme](../docs/git-workflow.md#branch-naming-scheme), _e.g._ `add/video-preview` or `fix/1337-language-too-geeky`.
 2. Make your first commit: any will do even if empty or trivial, but we need something in order to create the initial pull request. [Create the pull request](https://help.github.com/articles/creating-a-pull-request-from-a-fork/) and prefix the name with the section of the product, _e.g._ _Posts: Prepare store for desktop app_. Don’t worry too much if there’s no obvious prefix.
-  - Write a detailed description of the problem you are solving, the part of Calypso it affects, and how you plan on going about solving it.
-  - If you have write access, add the **<span class="label status-in-progress">[Status] In Progress</span>** label or wait until somebody adds it. This indicates that the pull request isn’t ready for a review and may still be incomplete. On the other hand, it welcomes early feedback and encourages collaboration during the development process.
+    - Write a detailed description of the problem you are solving, the part of Calypso it affects, and how you plan on going about solving it.
+    - If you have write access, add the **<span class="label status-in-progress">[Status] In Progress</span>** label or wait until somebody adds it. This indicates that the pull request isn’t ready for a review and may still be incomplete. On the other hand, it welcomes early feedback and encourages collaboration during the development process.
 3. Start developing and pushing out commits to your new branch.
-  - Push your changes out frequently and try to avoid getting stuck in a long-running branch or a merge nightmare. Smaller changes are much easier to review and to deal with potential conflicts.
-  - Follow the [merge checklist](../docs/merge-checklist.md) before pushing. This ensures that your code follows the style guidelines and doesn’t accidentally introduce any errors or regressions.
-  - Note that you can automate some of these tasks by setting up [githooks](../docs/coding-guidelines/javascript.md#setting-up-githooks) and they will run whenever you `git commit`.
-  - Don’t be afraid to change, [squash](http://gitready.com/advanced/2009/02/10/squashing-commits-with-rebase.html), and rearrange commits or to force push - `git push -f origin fix/something-broken`. Keep in mind, however, that if other people are committing on the same branch then you can mess up their history. You are perfectly safe if you are the only one pushing commits to that branch.
-  - Squash minor commits such as typo fixes or [fixes to previous commits](http://fle.github.io/git-tip-keep-your-branch-clean-with-fixup-and-autosquash.html) in the pull request.
+    - You can use a branch prefix like `add/`, `update/`, `try/` or `fix/` that represents the type of work you're doing. Avoid using the `renovate/` prefix in your branch name (it is used by the [Renovate Bot](https://renovatebot.com/) that automatically updates our NPM dependencies and your `renovate/*` branch will confuse the bot).
+    - Push your changes out frequently and try to avoid getting stuck in a long-running branch or a merge nightmare. Smaller changes are much easier to review and to deal with potential conflicts.
+    - Follow the [merge checklist](../docs/merge-checklist.md) before pushing. This ensures that your code follows the style guidelines and doesn’t accidentally introduce any errors or regressions.
+    - Note that you can automate some of these tasks by setting up [githooks](../docs/coding-guidelines/javascript.md#setting-up-githooks) and they will run whenever you `git commit`.
+    - Don’t be afraid to change, [squash](http://gitready.com/advanced/2009/02/10/squashing-commits-with-rebase.html), and rearrange commits or to force push - `git push -f origin fix/something-broken`. Keep in mind, however, that if other people are committing on the same branch then you can mess up their history. You are perfectly safe if you are the only one pushing commits to that branch.
+    - Squash minor commits such as typo fixes or [fixes to previous commits](http://fle.github.io/git-tip-keep-your-branch-clean-with-fixup-and-autosquash.html) in the pull request.
 4. If you end up needing more than a few commits, consider splitting the pull request into separate components. Discuss in the new pull request and in the comments why the branch was broken apart and any changes that may have taken place that necessitated the split. Our goal is to catch early in the review process those pull requests that attempt to do too much.
 5. When you feel that you are ready for a formal review or for merging into `master` make sure you check this list and our [merge checklist](../docs/merge-checklist.md).
-  - Make sure your branch merges cleanly and consider rebasing against `master` to keep the branch history short and clean.
-  - If there are visual changes, add before and after screenshots in the pull request comments.
-  - Add unit tests, or at a minimum, provide helpful instructions for the reviewer so they can test your changes. This will help speed up the review process.
-  - Ensure that your commit messages are [meaningful](http://robots.thoughtbot.com/5-useful-tips-for-a-better-commit-message).
-6. Mention that the PR is ready for review or if you have write access remove the **<span class="label status-in-progress">[Status] In Progress</span>** label from the pull request and add the **<span class="label status-needs-review">[Status] Needs Review</span>** label - someone will provide feedback on the latest unreviewed changes. The reviewer will also mark the pull request as **<span class="label status-awaiting-fixes">[Status] Awaiting Fixes</span>** if they think you need to change anything.
-7. If you get a <img src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f44d.png" class="emoji" />, <img src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f4a5.png" class="emoji" />, <img src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f6a2.png" class="emoji" />, <img src="https://assets-cdn.github.com/images/icons/emoji/shipit.png" class="emoji" />, or a LGTM and the status has been changed to **<span class="label status-ready-to-merge">[Status] Ready to Merge</span>** – this is great – the pull request is ready to be merged into `master`.
+    - Make sure your branch merges cleanly and consider rebasing against `master` to keep the branch history short and clean.
+    - If there are visual changes, add before and after screenshots in the pull request comments.
+    - Add unit tests, or at a minimum, provide helpful instructions for the reviewer so they can test your changes. This will help speed up the review process.
+    - Ensure that your commit messages are [meaningful](http://robots.thoughtbot.com/5-useful-tips-for-a-better-commit-message).
+6. Mention that the PR is ready for review or if you have write access remove the **<span class="label status-in-progress">[Status] In Progress</span>** label from the pull request and add the **<span class="label status-needs-review">[Status] Needs Review</span>** label - someone will provide feedback on the latest unreviewed changes. The reviewer will also mark the pull request as **<span class="label status-needs-author-reply">[Status] Needs Author Reply</span>** if they think you need to change anything.
+7. If you get a 👍, 💥, 🚢, <img src="https://github.githubassets.com/images/icons/emoji/shipit.png" class="emoji" />, or a LGTM and the status has been changed to **<span class="label status-ready-to-merge">[Status] Ready to Merge</span>** – this is great – the pull request is ready to be merged into `master`.
 
 Whether somebody is reviewing your code or you are reviewing somebody else’s code, [a positive mindset towards code reviews](https://medium.com/medium-eng/the-code-review-mindset-3280a4af0a89) helps a ton. We’re building something together that is greater than the sum of its parts.
 

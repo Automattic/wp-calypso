@@ -1,9 +1,9 @@
-.theme__sheet {
+.main.theme__sheet {
 	max-width: none;
 }
 
 .theme__sheet-bar {
-	background-color: var( --color-primary );
+	background-color: var( --color-masterbar-item-hover-background );
 	color: white;
 	height: 180px;
 	padding: 0;
@@ -22,7 +22,7 @@
 .theme__sheet-bar-tag {
 	max-width: none;
 	display: block;
-	color: $white;
+	color: var( --color-text-inverted );
 	font-size: 16px;
 	font-weight: 200;
 	padding-top: 5px;
@@ -75,17 +75,21 @@
 	}
 }
 
+.theme__sheet-customize-button {
+	.gridicon {
+		margin-right: 4px;
+	}
+}
+
 .theme__sheet-button-placeholder {
 	color: transparent;
 }
 
-.theme__sheet-section-nav {
-	.is-theme-preview {
-		margin-left: auto;
+.theme__sheet-preview-nav-item {
+	margin-left: auto;
 
-		@include breakpoint( '<960px' ) {
-			display: none;
-		}
+	@include breakpoint( '<960px' ) {
+		display: none;
 	}
 }
 
@@ -107,7 +111,7 @@
 	margin-top: -156px;
 	width: 98%;
 	z-index: 1;
-	box-shadow: 0 0 0 1px $transparent, 0 2px 8px 0 transparentize( $gray-dark, 0.5 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-dark-rgb ), 0 ), 0 2px 8px 0 rgba( var( --color-neutral-dark-rgb ), 0.5 );
 	background-color: transparentize( white, 0.5 );
 	transition: all 200ms ease-in-out;
 
@@ -133,9 +137,9 @@
 			height: 30%;
 			background: linear-gradient(
 				to bottom,
-				transparentize( $gray-light, 1 ) 0%,
-				transparentize( $gray-light, 0.5 ) 40%,
-				$gray-light 93%
+				transparent 0,
+				rgba( var( --color-neutral-0-rgb ), 0.5 ) 40%,
+				var( --color-neutral-0 ) 93%
 			);
 		}
 	}
@@ -143,7 +147,8 @@
 	@include breakpoint( '>960px' ) {
 		&.is-active:hover {
 			cursor: pointer;
-			box-shadow: 0 0 0 1px $gray, 0 2px 10px 0 transparentize( $gray-dark, 0.5 );
+			box-shadow: 0 0 0 1px var( --color-neutral-light ),
+				0 2px 10px 0 rgba( var( --color-neutral-dark-rgb ), 0.5 );
 		}
 	}
 }
@@ -186,7 +191,7 @@
 			font-size: 11px;
 			font-weight: 600;
 			border-radius: 3px;
-			border: 1px solid darken( $sidebar-bg-color, 10% );
+			border: 1px solid var( --color-neutral-5 );
 		}
 	}
 }
@@ -199,6 +204,9 @@
 
 	div {
 		width: auto !important; // override inline style in content markup
+	}
+	.banner__icon-circle {
+		width: 24px !important;
 	}
 
 	p:last-child {
@@ -237,13 +245,13 @@
 	}
 
 	.wp-caption-text {
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 		font-size: 12px;
 		padding: 3px 8px 6px;
 	}
 
 	h2 {
-		color: $gray;
+		color: var( --color-neutral-light );
 		font-size: 14px;
 		font-weight: 400;
 
@@ -254,7 +262,7 @@
 		&:nth-child( n + 2 ) {
 			// Everything except the first
 			border-top: 1px solid #dce5eb;
-			margin: 20px -20px 20px;
+			margin: 20px -20px;
 			padding: 15px 20px;
 
 			&::before {
@@ -310,12 +318,12 @@
 	blockquote {
 		padding: 30px;
 		margin: 0 -20px;
-		border-left: 2px solid $gray;
+		border-left: 2px solid var( --color-neutral-light );
 	}
 
 	.notes {
 		background: var( --color-neutral-0 );
-		margin: 40px -20px 40px;
+		margin: 40px -20px;
 		border-top: 1px solid #e9eff3;
 		border-bottom: 1px solid #e9eff3;
 		padding: 20px;
@@ -324,7 +332,7 @@
 		line-height: 21px;
 
 		& > p:first-child {
-			color: $gray;
+			color: var( --color-neutral-light );
 			font-weight: 600;
 			margin: 0 0 14px;
 		}
@@ -366,7 +374,7 @@
 		display: inline-block;
 		position: relative;
 		background: var( --color-neutral-0 );
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		margin: 4px;
 		padding: 2px 12px;
 		border-radius: 3px;
@@ -389,7 +397,7 @@
 		}
 
 		&:hover {
-			color: $white;
+			color: var( --color-text-inverted );
 			background-color: var( --color-primary-dark );
 
 			&::after {
@@ -419,7 +427,7 @@
 	}
 
 	.gridicon {
-		color: var( --color-neutral-100 );
+		color: var( --color-neutral-10 );
 		flex: 0 0 auto;
 	}
 
@@ -440,7 +448,7 @@
 
 	small {
 		display: block;
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 }
 
@@ -454,7 +462,7 @@
 	}
 
 	.gridicon {
-		color: var( --color-neutral-100 );
+		color: var( --color-neutral-10 );
 		flex: 0 0 auto;
 	}
 
@@ -479,8 +487,8 @@
 }
 
 .theme__sheet-footer-line {
-	color: var( --color-neutral-100 );
-	border-top: 1px solid var( --color-neutral-100 );
+	color: var( --color-neutral-10 );
+	border-top: 1px solid var( --color-neutral-10 );
 	margin: 32px 0 20px;
 
 	.gridicon {
@@ -496,7 +504,7 @@
 	display: none;
 }
 
-.banner.is-particular-theme-banner {
+.banner.theme__page-upsell-banner {
 	@include banner-dark();
 
 	width: 50%;
@@ -509,7 +517,7 @@
 	}
 }
 
-.banner.is-theme-preview-banner {
+.banner.theme__preview-upsell-banner {
 	@include banner-dark();
 	width: 100%;
 	margin: 0;

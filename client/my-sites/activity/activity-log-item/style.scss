@@ -21,11 +21,7 @@
 	}
 }
 
-.activity-log-item.activity-log-item__restore-confirm .card {
-	white-space: normal;
-}
-
-.activity-log-item .foldable-card {
+.activity-log-item .foldable-card.card {
 	.foldable-card__expand .gridicon {
 		transform: none;
 	}
@@ -46,7 +42,7 @@
 	}
 
 	// TODO: Remove when foldable cards become "expandable"
-	.is-clickable {
+	&.is-clickable {
 		cursor: default;
 	}
 }
@@ -97,8 +93,8 @@
 
 .activity-log-item__activity-icon {
 	// General notice
-	background: var( --color-neutral-200 );
-	color: var( --color-white );
+	background: var( --color-neutral-20 );
+	color: var( --color-text-inverted );
 	display: flex;
 	border-radius: 50%;
 	padding: 12px;
@@ -137,7 +133,7 @@
 		height: 48px;
 		margin-top: 0;
 		padding: 0;
-		background-color: var( --color-neutral-100 );
+		background-color: var( --color-neutral-10 );
 
 		@include breakpoint( '<480px' ) {
 			width: 32px;
@@ -190,13 +186,11 @@
 
 .activity-log-item__actor {
 	display: flex;
-	flex-shrink: 0;
-	min-width: 180px;
-	max-width: 100%;
 	margin-right: 32px;
 	align-items: center;
 
 	@include breakpoint( '>960px' ) {
+		flex: 0 0 180px;
 		margin-left: -56px;
 	}
 
@@ -207,7 +201,7 @@
 		width: 40px;
 		height: 40px;
 		margin-right: 16px;
-		fill: var( --color-neutral-400 );
+		fill: var( --color-neutral-40 );
 
 		@include breakpoint( '<960px' ) {
 			width: 32px;
@@ -222,26 +216,26 @@
 	}
 
 	.social-logo {
-		fill: var( --color-white );
+		fill: var( --color-text-inverted );
 		background: var( --color-wordpress-org );
 		border-radius: 50%;
 	}
 
 	.jetpack-logo__icon-circle {
-		fill: var( --color-neutral-400 );
+		fill: var( --color-neutral-40 );
 	}
 
 	.gridicon {
 		width: 24px;
 		height: 24px;
-		background: var( --color-neutral-200 );
-		color: var( --color-white );
+		background: var( --color-neutral-20 );
+		color: var( --color-text-inverted );
 		display: flex;
 		padding: 8px;
 		border-radius: 50%;
 		margin-right: 14px;
 		margin-top: 2px;
-		fill: var( --color-white );
+		fill: var( --color-text-inverted );
 
 		@include breakpoint( '<480px' ) {
 			padding: 7px;
@@ -316,6 +310,7 @@
 
 .activity-log-item__action {
 	display: flex;
+	justify-content: flex-end;
 
 	@include breakpoint( '<480px' ) {
 		margin-top: 16px;
@@ -337,8 +332,12 @@
 	}
 }
 
+.activity-log-item__clone-action {
+	flex-shrink: 0;
+}
+
 .activity-log-item__help-action {
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 	font-weight: 400;
 	font-size: 13px;
 	white-space: nowrap;
@@ -364,9 +363,6 @@
 	}
 }
 
-.activity-log-item__quick-action-progress {
-}
-
 .activity-log-item__quick-action-success {
 	color: var( --color-success );
 	animation-name: fade-out-success;
@@ -381,11 +377,11 @@
 
 .activity-log-item__activity-media {
 	margin-right: 16px;
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 }
 
 .activity-log-item__activity-media .gridicon {
-	background-color: var( --color-neutral-100 );
+	background-color: var( --color-neutral-10 );
 }
 .activity-log-item__activity-media .is-thumbnail {
 	width: auto;

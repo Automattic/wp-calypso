@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, identity } from 'lodash';
+import { flowRight as compose, get, identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +18,7 @@ import getCurrentUserRegisterDate from 'state/selectors/get-current-user-registe
 import Banner from 'components/banner';
 import config from 'config';
 import PrivacyPolicyDialog from './privacy-policy-dialog';
-import withMoment from 'components/with-localized-moment';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 const AUTOMATTIC_ENTITY = 'automattic';
 const PRIVACY_POLICY_PREFERENCE = 'privacy_policy';
@@ -80,6 +79,42 @@ class PrivacyPolicyBanner extends Component {
 		this.acceptUpdates();
 	};
 
+	shouldRender() {
+		if ( ! config.isEnabled( 'privacy-policy' ) ) {
+			return false;
+		}
+
+		if ( this.props.fetchingPreferences || ! this.props.privacyPolicy ) {
+			return false;
+		}
+
+		if ( config.isEnabled( 'privacy-policy/test' ) ) {
+			return true;
+		}
+
+		const { moment, privacyPolicy, privacyPolicyPreferenceValue, userRegisterDate } = this.props;
+
+		// check if the user has already accepted/read the privacy policy.
+		if ( get( privacyPolicyPreferenceValue, [ privacyPolicy.id ] ) === true ) {
+			return false;
+		}
+
+		// check if the current policy is under the notification period.
+		const notifyFrom = moment.utc( get( privacyPolicy, 'notification_period.from' ) );
+		const notifyTo = moment.utc( get( privacyPolicy, 'notification_period.to' ) );
+
+		if ( ! moment().isBetween( notifyFrom, notifyTo ) ) {
+			return false;
+		}
+
+		// check if the register date of the user is after the notification period
+		if ( moment( userRegisterDate ).isAfter( notifyFrom ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
 	getDescription( date ) {
 		if ( ! date ) {
 			return null;
@@ -99,39 +134,11 @@ class PrivacyPolicyBanner extends Component {
 	}
 
 	render() {
-		if ( ! config.isEnabled( 'privacy-policy' ) ) {
+		if ( ! this.shouldRender() ) {
 			return null;
 		}
 
-		if ( this.props.fetchingPreferences ) {
-			return null;
-		}
-
-		if ( ! this.props.privacyPolicy ) {
-			return null;
-		}
-
-		const { moment, privacyPolicy, translate } = this.props;
-
-		if ( ! config.isEnabled( 'privacy-policy/test' ) ) {
-			// check if the user has already accepted/read the privacy policy.
-			if ( get( this.props.privacyPolicyPreferenceValue, [ privacyPolicy.id ] ) === true ) {
-				return null;
-			}
-
-			// check if the current policy is under the notification period.
-			const notifyFrom = moment.utc( get( privacyPolicy, 'notification_period.from' ) );
-			const notifyTo = moment.utc( get( privacyPolicy, 'notification_period.to' ) );
-
-			if ( ! moment().isBetween( notifyFrom, notifyTo ) ) {
-				return null;
-			}
-
-			// check if the register date of the user is after the notification period
-			if ( moment( this.props.userRegisterDate ).isAfter( notifyFrom ) ) {
-				return null;
-			}
-		}
+		const { privacyPolicy, translate } = this.props;
 
 		return (
 			<Fragment>
@@ -145,7 +152,6 @@ class PrivacyPolicyBanner extends Component {
 				/>
 				{ this.state.showDialog && (
 					<PrivacyPolicyDialog
-						isVisible
 						content={ privacyPolicy.content }
 						title={ privacyPolicy.title }
 						version={ privacyPolicy.id }
@@ -175,7 +181,8 @@ const mapDispatchToProps = {
 		} ),
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( withMoment( localize( PrivacyPolicyBanner ) ) );
+export default compose(
+	connect( mapStateToProps, mapDispatchToProps ),
+	withLocalizedMoment,
+	localize
+)( PrivacyPolicyBanner );

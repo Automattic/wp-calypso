@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GSuitePurchaseCta it renders GSuitePurchaseCtaSkuInfo with all props 1`] = `
+<div
+  className="gsuite-purchase-cta__sku-info"
+>
+  <div
+    className="gsuite-purchase-cta__sku-info-name-area"
+  >
+    <h3>
+      G Suite Business
+    </h3>
+  </div>
+  <div
+    className="gsuite-purchase-cta__sku-info-storage-area"
+  >
+    <h4>
+      Unlimited Storage
+    </h4>
+    <InfoPopover>
+      Accounts with fewer than 5 users have 1 TB per user
+    </InfoPopover>
+  </div>
+</div>
+`;
+
+exports[`GSuitePurchaseCta it renders GSuitePurchaseCtaSkuInfo with all required props 1`] = `
+<div
+  className="gsuite-purchase-cta__sku-info"
+>
+  <div
+    className="gsuite-purchase-cta__sku-info-name-area"
+  >
+    <h3>
+      G Suite Business
+    </h3>
+  </div>
+  <div
+    className="gsuite-purchase-cta__sku-info-storage-area"
+  >
+    <h4>
+      Unlimited Storage
+    </h4>
+  </div>
+</div>
+`;

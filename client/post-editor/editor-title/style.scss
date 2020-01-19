@@ -9,7 +9,7 @@
 			bottom: 12px;
 			left: 10px;
 		animation: pulse-light 0.8s ease-in-out infinite;
-		background: var( --color-neutral-100 );
+		background: var( --color-neutral-10 );
 	}
 
 	.focus-sidebar & {
@@ -41,7 +41,7 @@
 	border: none;
 	font-family: $serif;
 	font-size: 28px;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-weight: 600;
 	resize: none;
 	-ms-overflow-y: hidden !important;

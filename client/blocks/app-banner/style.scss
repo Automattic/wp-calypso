@@ -3,37 +3,20 @@
 	bottom: 0;
 	width: 100%;
 	background-color: var( --color-primary-light );
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 	/* Needed for banner to appear in front of notifications panel. */
 	z-index: z-index( 'root', '.app-banner' );
-
-	background-repeat: no-repeat;
-	/*
-	 * Needed to match the design as closely as possible,
-	 * we want the background image to be smaller than the containing div.
-	 */
-	background-size: 270px;
-	background-position: right 0 bottom 0;
 }
 
-.card.app-banner.post-editor {
-	background-image: url( '/calypso/images/illustrations/app-banner-editor.svg' );
-}
-
-.card.app-banner.notifications {
-	background-image: url( '/calypso/images/illustrations/app-banner-notifications.svg' );
-}
-
-.card.app-banner.reader {
-	background-image: url( '/calypso/images/illustrations/app-banner-reader.svg' );
-}
-
-.card.app-banner.stats {
-	background-image: url( '/calypso/images/illustrations/app-banner-stats.svg' );
+.app-banner__illustration {
+	height: 140px;
+	position: absolute;
+	right: 0;
+	z-index: z-index( 'root', '.app-banner__illustration' );
 }
 
 .app-banner__text-content {
-	width: calc( 100% - 84px );
+	width: calc( 100% - 124px );
 	min-height: 66px;
 }
 
@@ -59,8 +42,7 @@
 .button.app-banner__no-thanks-button {
 	background: none;
 	border: 0;
-
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 	display: inline-block;
 	margin-top: 8px;
 	padding: 7px 0 9px 14px;

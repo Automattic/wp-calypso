@@ -8,7 +8,7 @@
 }
 
 .editor-slug .gridicon {
-	fill: $gray;
+	fill: var( --color-neutral-light );
 	float: left;
 	top: 8px;
 	margin-right: 8px;
@@ -17,18 +17,18 @@
 
 .editor-slug .form-text-input {
 	border: none;
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 	font-size: 13px;
 	padding: 4px 0;
 	width: 200px;
 	&:focus {
 		box-shadow: none;
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 }
 
 .editor-slug__url-path {
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 	font-size: 13px;
 	margin-right: 0;
 	cursor: pointer;

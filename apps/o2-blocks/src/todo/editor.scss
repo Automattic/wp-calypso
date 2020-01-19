@@ -1,0 +1,162 @@
+// Hugo's new WordPress shades of gray
+// from http://codepen.io/hugobaeta/pen/grJjVp
+$black: #000;
+$dark-gray-900: #191e23;
+$dark-gray-800: #23282d;
+$dark-gray-700: #32373c;
+$dark-gray-600: #40464d;
+$dark-gray-500: #555d66;	// use this most of the time for dark items
+$dark-gray-400: #606a73;
+$dark-gray-300: #6c7781;
+$dark-gray-200: #7e8993;
+$dark-gray-100: #8f98a1;
+$light-gray-900: #a2aab2;
+$light-gray-800: #b5bcc2;
+$light-gray-700: #ccd0d4;
+$light-gray-600: #d7dade;
+$light-gray-500: #e2e4e7;	// good for "grayed" items and borders
+$light-gray-400: #e8eaeb;
+$light-gray-300: #edeff0;
+$light-gray-200: #f3f4f5;
+$light-gray-100: #f8f9f9;
+
+$color-accent-green: #31843f;
+
+.wp-block-a8c-todo {
+	margin-bottom: 20px;
+
+	// This would be ideal but it's being overridden.
+	.wp-block-a8c-todo__list {
+		list-style-type: none;
+		margin-bottom: 20px;
+	}
+
+	// Individual to-do list item.
+	.wp-block-a8c-todo__item {
+		border-bottom: 1px solid $light-gray-500;
+		display: flex;
+		justify-content: space-between;
+		padding: 4px 0;
+	}
+
+	// Status.
+	.item-status {
+		display: inline-block;
+		content: '';
+		border: 1px solid $light-gray-500;
+		border-radius: 50%;
+		margin: 7px 8px 0 0;
+		height: 16px;
+		width: 18px;
+	}
+
+	// Set width of title to 100% so it doesn't end up centered.
+	.item-title {
+		width: 100%;
+	}
+
+	// Completed checklist item.
+	.wp-block-a8c-todo__item--done {
+		color: $color-accent-green;
+
+		.item-status {
+			background: $color-accent-green;
+			border: 0;
+			position: relative;
+		}
+
+		.item-status .dashicon {
+			fill: var( --color-text-inverted );
+			position: absolute;
+			top: -2px;
+			left: -2px;
+		}
+	}
+
+	// Up and down buttons.
+	.move-buttons {
+		width: 78px;
+		text-align: right;
+	}
+
+	.move-buttons .components-button {
+		padding: 0;
+		border: 1px solid transparent;
+		border-radius: 4px;
+		box-shadow: none;
+		background: none;
+		color: $light-gray-500;
+
+		.dashicon {
+			fill: $light-gray-500;
+		}
+
+		&:hover {
+			border-color: $light-gray-200;
+
+			.dashicon {
+				fill: $dark-gray-500;
+			}
+		}
+	}
+
+	// Add new item form
+	.add-new-todo-item-form {
+		align-items: center;
+
+		.components-button {
+			font-size: 13px !important; // yep, I'm a monster.
+			color: $dark-gray-500;
+			border: 1px solid $light-gray-700;
+			background: $light-gray-200;
+			box-shadow: 0 1px 0 $light-gray-700;
+			margin: 0;
+			height: 33px;
+			line-height: 32px;
+			border-radius: 3px;
+			padding: 0 12px 2px;
+			white-space: nowrap;
+
+			.dashicon {
+				fill: $dark-gray-200;
+				vertical-align: middle;
+				display: inline;
+			}
+		}
+
+	}
+
+
+}
+
+// We need to be super-specific here to be sure we're overwriting the default UL styling.
+.edit-post-visual-editor .wp-block-a8c-todo .wp-block-a8c-todo__list {
+	list-style-type: none;
+}
+
+// Same for the "add item" input.
+.editor-block-list__block .wp-block-a8c-todo .add-new-item {
+	width: 100%;
+	margin-right: 6px;
+	padding: 7.5px 8px;
+}
+
+// P2-specific styling.
+body:not( .wp-admin ) .gutenberg {
+	.wp-block-a8c-todo .wp-block-a8c-todo__item {
+		padding: 10px 0 4px;
+	}
+}
+
+
+// Only show the "add new" form when it's strictly needed.
+.wp-block-a8c-todo .add-new-todo-item-form {
+	display: none;
+}
+
+.editor-block-list__block.is-selected,
+.editor-block-list__block.is-typing {
+	.wp-block-a8c-todo .add-new-todo-item-form {
+		display: flex;
+	}
+}

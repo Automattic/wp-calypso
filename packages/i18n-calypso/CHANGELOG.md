@@ -1,3 +1,25 @@
+next
+-----
+
+* Update debug to v4
+* Switch from Jed to Tannin, for smaller size as well as runtime speedups
+
+4.1.0
+-----
+
+* Add `i18n.isRtl()` method to determine current locale's text direction and the `useRtl` and `withRtl` React wrappers
+
+4.0.0
+-----
+
+* Move i18n-calypso into Calypso repository.
+* Refactor i18n-calypso to Calypso standards.
+* Add TypeScript type definitions to package.
+* Add support for extracting strings from TypeScript.
+* Update dependency `lodash` to `^4.17.11`
+* Update `xgettext-js` to `^3.0.0`
+* Moved the CLI tool to separate package `i18n-calypso-cli`
+
 3.0.0
 ------
 

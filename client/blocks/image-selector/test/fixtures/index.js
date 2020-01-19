@@ -1,4 +1,3 @@
-/** @format */
 export const DUMMY_SITE_ID = 1;
 
 export const DUMMY_MEDIA = {

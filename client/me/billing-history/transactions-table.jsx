@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -15,14 +12,16 @@ import { capitalPDangit } from 'lib/formatting';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import Pagination from 'components/pagination';
 import TransactionsHeader from './transactions-header';
-import { groupDomainProducts } from './utils';
+import { groupDomainProducts, renderTransactionAmount } from './utils';
 import SearchCard from 'components/search-card';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { setPage, setQuery } from 'state/ui/billing-transactions/actions';
 import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
 import getFilteredBillingTransactions from 'state/selectors/get-filtered-billing-transactions';
+import { getPlanTermLabel } from 'lib/plans';
 
 class TransactionsTable extends React.Component {
 	static displayName = 'TransactionsTable';
@@ -88,10 +87,12 @@ class TransactionsTable extends React.Component {
 	serviceNameDescription = transaction => {
 		let description;
 		if ( transaction.domain ) {
+			const termLabel = getPlanTermLabel( transaction.wpcom_product_slug, this.props.translate );
 			description = (
 				<div>
 					<strong>{ transaction.plan }</strong>
 					<small>{ transaction.domain }</small>
+					{ termLabel ? <small>{ termLabel }</small> : null }
 				</div>
 			);
 		} else {
@@ -139,7 +140,7 @@ class TransactionsTable extends React.Component {
 	};
 
 	renderRows = () => {
-		const { transactions, date, app, query } = this.props;
+		const { transactions, date, app, query, transactionType, translate } = this.props;
 		if ( ! transactions ) {
 			return this.renderPlaceholder();
 		}
@@ -165,7 +166,7 @@ class TransactionsTable extends React.Component {
 
 			return (
 				<tr key={ transaction.id } className="billing-history__transaction">
-					<td>{ transactionDate }</td>
+					<td className="billing-history__date">{ transactionDate }</td>
 					<td className="billing-history__trans-app">
 						<div className="billing-history__trans-wrap">
 							<div className="billing-history__service-description">
@@ -176,7 +177,12 @@ class TransactionsTable extends React.Component {
 							</div>
 						</div>
 					</td>
-					<td className="billing-history__amount">{ transaction.amount }</td>
+					<td className="billing-history__amount">
+						{ renderTransactionAmount( transaction, {
+							addingTax: transactionType === 'upcoming',
+							translate,
+						} ) }
+					</td>
 				</tr>
 			);
 		}, this );
@@ -219,4 +225,4 @@ export default connect(
 		setPage,
 		setQuery,
 	}
-)( localize( TransactionsTable ) );
+)( localize( withLocalizedMoment( TransactionsTable ) ) );

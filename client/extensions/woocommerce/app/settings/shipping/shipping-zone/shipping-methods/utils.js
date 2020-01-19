@@ -1,15 +1,13 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { startsWith } from 'lodash';
 import { translate } from 'i18n-calypso';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
-import formatCurrency from 'lib/format-currency';
 
 export const getMethodSummary = ( method, currency ) => {
 	if ( startsWith( method.methodType, 'wc_services' ) ) {

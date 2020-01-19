@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,6 +5,11 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default class Spinner extends PureComponent {
 	static propTypes = {

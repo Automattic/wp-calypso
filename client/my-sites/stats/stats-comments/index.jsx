@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { get, flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import CommentTab from './comment-tab';
 import StatsErrorPanel from '../stats-error';
 import StatsModulePlaceholder from '../stats-module/placeholder';
@@ -30,6 +28,13 @@ import {
 	isRequestingSiteStatsForQuery,
 } from 'state/stats/lists/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+/* eslint-disable wpcalypso/jsx-classname-namespace*/
 
 class StatsComments extends Component {
 	static propTypes = {
@@ -81,7 +86,7 @@ class StatsComments extends Component {
 		return (
 			<StatsModuleContent className="module-content-text-stat">
 				<p>
-					{ translate( 'Total posts with comment followers:' ) }{' '}
+					{ translate( 'Total posts with comment followers:' ) }{ ' ' }
 					<a href={ commentFollowURL }>{ numberFormat( commentFollowersTotal ) }</a>
 				</p>
 			</StatsModuleContent>
@@ -97,7 +102,7 @@ class StatsComments extends Component {
 		return (
 			<StatsModuleContent>
 				<p>
-					{ this.props.translate( 'Average comments per month:' ) }{' '}
+					{ this.props.translate( 'Average comments per month:' ) }{ ' ' }
 					{ this.props.numberFormat( data.monthly_comments ) }
 				</p>
 			</StatsModuleContent>
@@ -197,7 +202,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsComments );
+export default flowRight( connectComponent, localize )( StatsComments );

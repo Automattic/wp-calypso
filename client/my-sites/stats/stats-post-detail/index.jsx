@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,7 +20,6 @@ import StatsPlaceholder from '../stats-module/placeholder';
 import HeaderCake from 'components/header-cake';
 import { decodeEntities } from 'lib/formatting';
 import Main from 'components/main';
-import StatsFirstView from '../stats-first-view';
 import titlecase from 'to-title-case';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PostLikes from '../stats-post-likes';
@@ -31,7 +28,7 @@ import QueryPostStats from 'components/data/query-post-stats';
 import EmptyContent from 'components/empty-content';
 import { getPostStat, isRequestingPostStats } from 'state/stats/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'state/sites/selectors';
 import { getSitePost, isRequestingSitePost, getPostPreviewUrl } from 'state/posts/selectors';
 import hasNavigated from 'state/selectors/has-navigated';
@@ -130,8 +127,6 @@ class StatsPostDetail extends Component {
 				{ siteId && <QueryPosts siteId={ siteId } postId={ postId } /> }
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
 
-				<StatsFirstView />
-
 				<HeaderCake
 					onClick={ this.goBack }
 					actionIcon={ showViewLink ? 'visible' : null }
@@ -213,7 +208,4 @@ const connectComponent = connect( ( state, { postId } ) => {
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsPostDetail );
+export default flowRight( connectComponent, localize )( StatsPostDetail );

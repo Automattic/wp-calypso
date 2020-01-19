@@ -1,0 +1,7 @@
+{
+	"calypsoBaseURL": "https://calypso.live",
+	"explicitWaitMS": 40000,
+	"mochaTimeoutMS": 320000,
+	"browser": "chrome",
+	"saveAllScreenshots": true
+}

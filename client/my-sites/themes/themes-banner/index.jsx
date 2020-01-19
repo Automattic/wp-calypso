@@ -1,12 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -14,13 +12,18 @@ import Gridicon from 'gridicons';
 
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import safeImageUrl from 'lib/safe-image-url';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { getActiveTheme, getThemeDetailsUrl } from 'state/themes/selectors';
 import { isThemesBannerVisible } from 'state/themes/themes-ui/selectors';
 import { hideThemesBanner as hideThemesBannerAction } from 'state/themes/themes-ui/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ThemesBanner extends PureComponent {
 	static propTypes = {
@@ -74,33 +77,35 @@ class ThemesBanner extends PureComponent {
 		}
 		const backgroundStyle = backgroundColor ? { backgroundColor } : {};
 		return (
-			<a
-				className="themes-banner"
-				role="button"
-				style={ backgroundStyle }
-				onClick={ this.recordEvent }
-				href={ themeUrl }
-			>
-				<h1 className="themes-banner__title">{ title }</h1>
-				<p className="themes-banner__description">{ description }</p>
-				<Button className="themes-banner__cta" compact primary>
-					{ translate( 'See the theme' ) }
-				</Button>
-				<Button className="themes-banner__close" onClick={ this.handleBannerClose }>
+			<div className="themes-banner" style={ backgroundStyle }>
+				<Button
+					className="themes-banner__close"
+					onClick={ this.handleBannerClose }
+					aria-label={ translate( 'Close', {
+						comment: 'Aria label to close the Theme banner',
+					} ) }
+				>
 					<Gridicon icon="cross-small" size={ 18 } />
 				</Button>
-				{ image && (
-					<img
-						alt={ translate( '%(themeName)s Theme', {
-							args: { themeName },
-						} ) }
-						width={ imageWidth }
-						className="themes-banner__image"
-						src={ safeImageUrl( image ) }
-						style={ { transform: imageTransform } }
-					/>
-				) }
-			</a>
+				<a role="button" onClick={ this.recordEvent } href={ themeUrl }>
+					<h1 className="themes-banner__title">{ title }</h1>
+					<p className="themes-banner__description">{ description }</p>
+					<Button className="themes-banner__cta" compact primary>
+						{ translate( 'See the theme' ) }
+					</Button>
+					{ image && (
+						<img
+							alt={ translate( '%(themeName)s Theme', {
+								args: { themeName },
+							} ) }
+							width={ imageWidth }
+							className="themes-banner__image"
+							src={ safeImageUrl( image ) }
+							style={ { transform: imageTransform } }
+						/>
+					) }
+				</a>
+			</div>
 		);
 	}
 }
@@ -118,10 +123,7 @@ const mapStateToProps = ( state, { themeId } ) => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{
-		recordTracksEvent: recordTracksEventAction,
-		hideThemesBanner: hideThemesBannerAction,
-	}
-)( localize( ThemesBanner ) );
+export default connect( mapStateToProps, {
+	recordTracksEvent: recordTracksEventAction,
+	hideThemesBanner: hideThemesBannerAction,
+} )( localize( ThemesBanner ) );

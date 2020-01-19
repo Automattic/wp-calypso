@@ -1,4 +1,4 @@
-/** @format */
+/* eslint-disable jsx-a11y/anchor-is-valid */
 
 /**
  * External dependencies
@@ -11,15 +11,15 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
-import Gridicon from 'gridicons';
+import { Card, Button, CompactCard } from '@automattic/components';
+import Gridicon from 'components/gridicon';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
+import User from 'components/user';
 import AuthorSelector from 'blocks/author-selector';
 import { deleteUser } from 'lib/users/actions';
 import accept from 'lib/accept';
@@ -27,6 +27,16 @@ import Gravatar from 'components/gravatar';
 import { localize } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import {
+	requestExternalContributors,
+	requestExternalContributorsRemoval,
+} from 'state/data-getters';
+import { httpData } from 'state/data-layer/http-data';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class DeleteUser extends React.Component {
 	static displayName = 'DeleteUser';
@@ -43,6 +53,7 @@ class DeleteUser extends React.Component {
 		showDialog: false,
 		radioOption: false,
 		reassignUser: false,
+		authorSelectorToggled: false,
 	};
 
 	getRemoveText = () => {
@@ -78,8 +89,45 @@ class DeleteUser extends React.Component {
 
 		updateObj[ name ] = value;
 
+		if ( event.currentTarget.value === 'reassign' ) {
+			this.setState( { authorSelectorToggled: true } );
+		} else {
+			this.setState( { authorSelectorToggled: false } );
+		}
+
 		this.setState( updateObj );
 		this.props.recordGoogleEvent( 'People', 'Selected Delete User Assignment', 'Assign', value );
+	};
+
+	getAuthorSelector = () => {
+		return (
+			<AuthorSelector
+				allowSingleUser
+				siteId={ this.props.siteId }
+				onSelect={ this.onSelectAuthor }
+				exclude={ [ this.props.user.ID ] }
+				ignoreContext={ this.reassignLabel }
+			>
+				{ this.state.reassignUser ? (
+					<span>
+						<Gravatar size={ 26 } user={ this.state.reassignUser } />
+						<span className="delete-user__reassign-user-name">
+							{ this.state.reassignUser.name }
+						</span>
+					</span>
+				) : (
+					this.getAuthorSelectPlaceholder()
+				) }
+			</AuthorSelector>
+		);
+	};
+
+	getAuthorSelectPlaceholder = () => {
+		return (
+			<span className="delete-user__select-placeholder">
+				<User size={ 26 } user={ { name: /* Don't translate yet */ 'Choose an author…' } } />
+			</span>
+		);
 	};
 
 	setReassignLabel = label => ( this.reassignLabel = label );
@@ -87,17 +135,17 @@ class DeleteUser extends React.Component {
 	onSelectAuthor = author => this.setState( { reassignUser: author } );
 
 	removeUser = () => {
-		const { translate } = this.props;
+		const { contributorType, siteId, translate, user } = this.props;
 		accept(
 			<div>
 				<p>
-					{ this.props.user && this.props.user.name
+					{ user && user.name
 						? translate(
 								'If you remove %(username)s, that user will no longer be able to access this site, ' +
 									'but any content that was created by %(username)s will remain on the site.',
 								{
 									args: {
-										username: this.props.user.name,
+										username: user.name,
 									},
 								}
 						  )
@@ -114,7 +162,13 @@ class DeleteUser extends React.Component {
 						'People',
 						'Clicked Confirm Remove User on Edit User Network Site'
 					);
-					deleteUser( this.props.siteId, this.props.user.ID );
+					if ( 'external' === contributorType ) {
+						requestExternalContributorsRemoval(
+							siteId,
+							user.linked_user_ID ? user.linked_user_ID : user.ID
+						);
+					}
+					deleteUser( siteId, user.ID );
 				} else {
 					this.props.recordGoogleEvent(
 						'People',
@@ -129,7 +183,8 @@ class DeleteUser extends React.Component {
 
 	deleteUser = event => {
 		event.preventDefault();
-		if ( ! this.props.user.ID ) {
+		const { contributorType, siteId, user } = this.props;
+		if ( ! user.ID ) {
 			return;
 		}
 
@@ -137,52 +192,39 @@ class DeleteUser extends React.Component {
 		if ( this.state.reassignUser && 'reassign' === this.state.radioOption ) {
 			reassignUserId = this.state.reassignUser.ID;
 		}
+		if ( 'external' === contributorType ) {
+			requestExternalContributorsRemoval(
+				siteId,
+				user.linked_user_ID ? user.linked_user_ID : user.ID
+			);
+		}
+		deleteUser( siteId, user.ID, reassignUserId );
 
-		deleteUser( this.props.siteId, this.props.user.ID, reassignUserId );
 		this.props.recordGoogleEvent( 'People', 'Clicked Remove User on Edit User Single Site' );
-	};
-
-	getAuthorSelectPlaceholder = () => {
-		const { translate } = this.props;
-		return (
-			<span className="delete-user__select-placeholder">{ translate( 'select a user' ) }</span>
-		);
 	};
 
 	getTranslatedAssignLabel = () => {
 		const { translate } = this.props;
-		return translate( 'Attribute all content to {{AuthorSelector/}}', {
-			components: {
-				AuthorSelector: (
-					<AuthorSelector
-						allowSingleUser
-						siteId={ this.props.siteId }
-						onSelect={ this.onSelectAuthor }
-						exclude={ [ this.props.user.ID ] }
-						ignoreContext={ this.reassignLabel }
-					>
-						{ this.state.reassignUser ? (
-							<span>
-								<Gravatar size={ 26 } user={ this.state.reassignUser } />
-								<span className="delete-user__reassign-user-name">
-									{ this.state.reassignUser.name }
-								</span>
-							</span>
-						) : (
-							this.getAuthorSelectPlaceholder()
-						) }
-					</AuthorSelector>
-				),
-			},
-		} );
+		return translate( 'Attribute all content to another user' );
 	};
 
 	isDeleteButtonDisabled = () => {
-		if ( 'reassign' === this.state.radioOption ) {
-			return false === this.state.reassignUser || this.state.reassignUser.ID === this.props.user.ID;
+		const {
+			contributorType,
+			user: { ID: userId },
+		} = this.props;
+
+		const { radioOption, reassignUser } = this.state;
+
+		if ( 'pending' === contributorType ) {
+			return true;
 		}
 
-		return false === this.state.radioOption;
+		if ( 'reassign' === radioOption ) {
+			return false === reassignUser || reassignUser.ID === userId;
+		}
+
+		return false === radioOption;
 	};
 
 	renderSingleSite = () => {
@@ -221,6 +263,10 @@ class DeleteUser extends React.Component {
 							<span>{ this.getTranslatedAssignLabel() }</span>
 						</FormLabel>
 
+						{ this.state.authorSelectorToggled ? (
+							<div className="delete-user__author-selector">{ this.getAuthorSelector() }</div>
+						) : null }
+
 						<FormLabel>
 							<FormRadio
 								name="radioOption"
@@ -254,10 +300,10 @@ class DeleteUser extends React.Component {
 	renderMultisite = () => {
 		return (
 			<CompactCard className="delete-user__multisite">
-				<a className="delete-user__remove-user" onClick={ this.removeUser }>
+				<Button borderless className="delete-user__remove-user" onClick={ this.removeUser }>
 					<Gridicon icon="trash" />
-					{ this.getRemoveText() }
-				</a>
+					<span>{ this.getRemoveText() }</span>
+				</Button>
 			</CompactCard>
 		);
 	};
@@ -275,11 +321,27 @@ class DeleteUser extends React.Component {
 	}
 }
 
+const getContributorType = ( externalContributors, userId ) => {
+	if ( externalContributors.data ) {
+		return externalContributors.data.includes( userId ) ? 'external' : 'standard';
+	}
+	return 'pending';
+};
+
 export default localize(
 	connect(
-		state => ( {
-			currentUser: getCurrentUser( state ),
-		} ),
+		( state, { siteId, user } ) => {
+			const userId = user && user.ID;
+			const linkedUserId = user && user.linked_user_ID;
+			const externalContributors = siteId ? requestExternalContributors( siteId ) : httpData.empty;
+			return {
+				currentUser: getCurrentUser( state ),
+				contributorType: getContributorType(
+					externalContributors,
+					undefined !== linkedUserId ? linkedUserId : userId
+				),
+			};
+		},
 		{ recordGoogleEvent }
 	)( DeleteUser )
 );
