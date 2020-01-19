@@ -44,3 +44,20 @@ export type TailParameters< F extends ( head: any, ...tail: any[] ) => any > = F
 ) => any
 	? PS
 	: never;
+
+type ExcludeNonFunctions< T > = T extends ( ...args: any[] ) => any ? T : never;
+type ExcludeNonActions< T > = T extends { type: any } ? T : never;
+
+/**
+ * Defines a type that describes all actions returned by action creators. Can be
+ * used to type the second parameter of a reducer function.
+ *
+ * Usage:
+ *   import * as Actions from './actions';
+ *   type ActionTypes = ActionsDefinedInModule< typeof Actions >;
+ *
+ * @template ActionCreators type of a TypeScript module where action creators are defined
+ */
+export type ActionsDefinedInModule< ActionCreators > = ExcludeNonActions<
+	ReturnType< ExcludeNonFunctions< ActionCreators[ keyof ActionCreators ] > >
+>;
