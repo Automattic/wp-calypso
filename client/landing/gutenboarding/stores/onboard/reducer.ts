@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
 
 /**
@@ -9,34 +8,31 @@ import { combineReducers } from '@wordpress/data';
  */
 import { ActionType, OnboardAction, SiteVertical } from './types';
 
-const domain: Reducer<
-	import('@automattic/data-stores').DomainSuggestions.DomainSuggestion | undefined,
-	OnboardAction
-> = ( state, action ) => {
+type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
+type Template = import('@automattic/data-stores').VerticalsTemplates.Template;
+
+function domain( state: DomainSuggestion | undefined, action: OnboardAction ) {
 	if ( action.type === ActionType.SET_DOMAIN ) {
 		return action.domain;
 	}
 	return state;
-};
+}
 
-const selectedDesign: Reducer<
-	import('@automattic/data-stores').VerticalsTemplates.Template | undefined,
-	OnboardAction
-> = ( state, action ) => {
+function selectedDesign( state: Template | undefined, action: OnboardAction ) {
 	if ( action.type === ActionType.SET_SELECTED_DESIGN ) {
 		return action.selectedDesign;
 	}
 	return state;
-};
+}
 
-const siteTitle: Reducer< string, OnboardAction > = ( state = '', action ) => {
+function siteTitle( state = '', action: OnboardAction ) {
 	if ( action.type === ActionType.SET_SITE_TITLE ) {
 		return action.siteTitle;
 	}
 	return state;
-};
+}
 
-const siteVertical: Reducer< SiteVertical | undefined, OnboardAction > = ( state, action ) => {
+function siteVertical( state: SiteVertical | undefined, action: OnboardAction ) {
 	if ( action.type === ActionType.SET_SITE_VERTICAL ) {
 		return action.siteVertical;
 	}
@@ -44,9 +40,9 @@ const siteVertical: Reducer< SiteVertical | undefined, OnboardAction > = ( state
 		return undefined;
 	}
 	return state;
-};
+}
 
-const pageLayouts: Reducer< string[], OnboardAction > = ( state = [], action ) => {
+function pageLayouts( state: string[] = [], action: OnboardAction ) {
 	if ( action.type === ActionType.TOGGLE_PAGE_LAYOUT ) {
 		const layout = action.pageLayout;
 		if ( state.includes( layout.slug ) ) {
@@ -55,7 +51,7 @@ const pageLayouts: Reducer< string[], OnboardAction > = ( state = [], action ) =
 		return [ ...state, layout.slug ];
 	}
 	return state;
-};
+}
 
 const reducer = combineReducers( { domain, selectedDesign, siteTitle, siteVertical, pageLayouts } );
 

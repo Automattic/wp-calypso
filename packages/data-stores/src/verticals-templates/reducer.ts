@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
 
 /**
@@ -9,10 +8,10 @@ import { combineReducers } from '@wordpress/data';
  */
 import { ActionType, Template, VerticalsTemplatesAction } from './types';
 
-const templates: Reducer< Record< string, Template[] | undefined >, VerticalsTemplatesAction > = (
-	state = {},
-	action
-) => {
+function templates(
+	state: Record< string, Template[] | undefined > = {},
+	action: VerticalsTemplatesAction
+) {
 	if ( action.type === ActionType.RECEIVE_TEMPLATES ) {
 		return {
 			...state,
@@ -20,7 +19,7 @@ const templates: Reducer< Record< string, Template[] | undefined >, VerticalsTem
 		};
 	}
 	return state;
-};
+}
 
 const reducer = combineReducers( { templates } );
 

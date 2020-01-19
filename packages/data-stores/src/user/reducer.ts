@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
 
 /**
@@ -9,7 +8,7 @@ import { combineReducers } from '@wordpress/data';
  */
 import { ActionType, CurrentUser, NewUser, NewUserErrorResponse, UserAction } from './types';
 
-const currentUser: Reducer< CurrentUser | null | undefined, UserAction > = ( state, action ) => {
+function currentUser( state: CurrentUser | null | undefined, action: UserAction ) {
 	switch ( action.type ) {
 		case ActionType.RECEIVE_CURRENT_USER:
 			return action.currentUser;
@@ -17,9 +16,9 @@ const currentUser: Reducer< CurrentUser | null | undefined, UserAction > = ( sta
 			return null;
 	}
 	return state;
-};
+}
 
-const newUserData: Reducer< NewUser | undefined, UserAction > = ( state, action ) => {
+function newUserData( state: NewUser | undefined, action: UserAction ) {
 	if ( action.type === ActionType.RECEIVE_NEW_USER ) {
 		const { response } = action;
 		return {
@@ -31,9 +30,9 @@ const newUserData: Reducer< NewUser | undefined, UserAction > = ( state, action 
 		return undefined;
 	}
 	return state;
-};
+}
 
-const newUserError: Reducer< NewUserErrorResponse | undefined, UserAction > = ( state, action ) => {
+function newUserError( state: NewUserErrorResponse | undefined, action: UserAction ) {
 	switch ( action.type ) {
 		case ActionType.FETCH_NEW_USER:
 			return undefined;
@@ -49,9 +48,9 @@ const newUserError: Reducer< NewUserErrorResponse | undefined, UserAction > = ( 
 			};
 	}
 	return state;
-};
+}
 
-const isFetchingNewUser: Reducer< boolean | undefined, UserAction > = ( state = false, action ) => {
+function isFetchingNewUser( state = false, action: UserAction ) {
 	switch ( action.type ) {
 		case ActionType.FETCH_NEW_USER:
 			return true;
@@ -61,7 +60,7 @@ const isFetchingNewUser: Reducer< boolean | undefined, UserAction > = ( state = 
 			return false;
 	}
 	return state;
-};
+}
 
 const newUser = combineReducers( {
 	data: newUserData,
