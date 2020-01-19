@@ -14,7 +14,8 @@ import {
 } from '@automattic/authentication';
 import { Button, TextControl, Modal } from '@wordpress/components';
 import FormLabel from 'components/forms/form-label';
-
+import { __ as NO__ } from '@wordpress/i18n';
+import config from '../../../../config';
 import './style.scss';
 
 const SignupForm = () => {
@@ -29,24 +30,28 @@ const SignupForm = () => {
 	const renderTosLink = () => {
 		return (
 			<a href="https://wordpress.com/tos/" target="_blank" rel="noopener noreferrer">
-				Terms of Service
+				{ NO__( 'Terms of Service.' ) }
 			</a>
 		);
 	};
 
 	return (
-		<Modal className="signup-form" title="Sign up to save your changes" onRequestClose={ () => {} }>
+		<Modal
+			className="signup-form"
+			title={ NO__( 'Sign up to save your changes' ) }
+			onRequestClose={ () => {} }
+		>
 			<form onSubmit={ handleSignUp }>
-				<FormLabel htmlFor="email">Your Email Address</FormLabel>
+				<FormLabel htmlFor="email">{ NO__( 'Your Email Address' ) }</FormLabel>
 				<TextControl
 					id="email"
 					value={ emailVal }
 					onChange={ setEmailVal }
-					placeholder="yourname@email.com"
+					placeholder={ NO__( 'yourname@email.com' ) }
 				/>
 				<div className="signup-form__footer">
 					<p className="signup-form__terms-of-service-link">
-						By creating an account you agree to our { renderTosLink() }.
+						{ NO__( 'By creating an account you agree to our' ) } { renderTosLink() }
 					</p>
 
 					<Button
@@ -55,7 +60,7 @@ const SignupForm = () => {
 						disabled={ status === UsePasswordlessSignUpStatus.Authenticating }
 						isPrimary
 					>
-						Create your account
+						{ NO__( 'Create your account' ) }
 					</Button>
 				</div>
 			</form>
@@ -67,8 +72,8 @@ const SignupForm = () => {
 
 const WrappedSignupForm = () => {
 	const client = new Client( {
-		clientID: '39911',
-		clientSecret: 'cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8',
+		clientID: config( 'wpcom_signup_id' ),
+		clientSecret: config( 'wpcom_signup_key' ),
 	} );
 	return (
 		<Provider client={ client }>
