@@ -34,7 +34,7 @@ $design-selector-selection-space: 285px;
 	display: grid;
 	grid-gap: $design-selector-grid-gap;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		grid-template-columns: 1fr 1fr;
 	}
 }
@@ -205,7 +205,7 @@ $design-selector-selection-space: 285px;
 	width: calc( 50% - #{$design-selector-grid-gap} );
 	padding-top: 23px;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		&.on-right-side {
 			right: 0;
 		}

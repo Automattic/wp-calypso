@@ -7,7 +7,7 @@
 	.form-fieldset {
 		margin-bottom: 10px;
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			margin: 10px 0 0;
 			float: left;
 		}
@@ -21,7 +21,7 @@
 		float: none;
 	}
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		height: 55px;
 		padding: 15px 0 0;
 	}

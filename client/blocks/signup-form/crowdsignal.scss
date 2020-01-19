@@ -1,5 +1,5 @@
 body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
-	@include a8c-breakpoint( '>1040px' ) {
+	@include breakpoint( '>1040px' ) {
 		margin: 0 auto;
 		max-width: 1100px;
 		padding: 0 40px;
@@ -35,7 +35,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 		font-weight: bold;
 	}
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		margin: 40px 0;
 	}
 }
@@ -45,7 +45,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	flex-direction: column;
 	width: 100%;
 
-	@include a8c-breakpoint( '>1040px' ) {
+	@include breakpoint( '>1040px' ) {
 		flex-direction: row;
 	}
 }
@@ -58,7 +58,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 		display: block;
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		background-color: var( --color-surface );
 	    box-shadow: 0 2px 3px 0 var( --color-neutral-10 );
 		display: block;
@@ -67,7 +67,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 		width: 500px;
 	}
 
-	@include a8c-breakpoint( '>1040px' ) {
+	@include breakpoint( '>1040px' ) {
 		flex: 1;
 		width: initial;
 	}
@@ -129,7 +129,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 			display: block;
 		}
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			margin-bottom: 20px;
 		}
 	}
@@ -150,7 +150,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	margin: 0 0 30px;
 	text-align: center;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		display: block;
 	}
 }
@@ -168,7 +168,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	padding: 20px 0 50px;
 	text-align: center;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		display: block;
 	}
 }
@@ -185,7 +185,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	text-align: center;
 	margin: 20px 0 0;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		display: none;
 	}
 }
@@ -201,7 +201,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	}
 
 	.signup-form__crowdsignal-social & {
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			display: none;
 		}
 	}
@@ -209,7 +209,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	.signup-form__crowdsignal-card:not( .signup-form__crowdsignal-social ) & {
 		display: none;
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			display: block;
 		}
 	}
@@ -228,11 +228,11 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	vertical-align: middle;
 	width: 100%;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		display: flex;
 	}
 
-	@include a8c-breakpoint( '>1040px' ) {
+	@include breakpoint( '>1040px' ) {
 		width: 100px;
 	}
 }
@@ -258,7 +258,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 		display: inline-block;
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		display: inline-block;
 	}
 }
@@ -270,7 +270,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 		display: none;
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		display: none;
 	}
 }
@@ -281,7 +281,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	margin-top: 20px;
 	padding: 0 20px;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		margin-top: 40px;
 	}
 }
@@ -315,7 +315,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 		display: inline;
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		display: inline;
 		text-align: left;
 

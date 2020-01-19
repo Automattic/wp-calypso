@@ -7,7 +7,7 @@ main.gsuite-nudge.main {
 	position: static;
 	width: 100%;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		background: transparent;
 		padding: 14px;
 	}

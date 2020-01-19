@@ -15,13 +15,13 @@
 	}
 
 	.is-section-signup & {
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			flex-direction: row;
 		}
 	}
 
 	.is-section-domains & {
-		@include a8c-breakpoint( '>800px' ) {
+		@include breakpoint( '>800px' ) {
 			flex-direction: row;
 		}
 	}
@@ -82,7 +82,7 @@
 		line-height: 1.2;
 		margin-bottom: 0.25em;
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			font-size: 24px;
 			margin-bottom: 0.125em;
 		}
@@ -139,13 +139,13 @@
 	}
 }
 
-@include a8c-breakpoint( '<660px' ) {
+@include breakpoint( '<660px' ) {
 	.featured-domain-suggestions {
 		flex-flow: wrap;
 	}
 }
 
-@include a8c-breakpoint( '>660px' ) {
+@include breakpoint( '>660px' ) {
 	.domain-registration-suggestion__title {
 		.featured-domain-suggestions--title-in-18em & {
 			font-size: 1.8em;

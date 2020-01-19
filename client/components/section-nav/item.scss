@@ -3,7 +3,7 @@
 }
 
 .section-nav-tab {
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		width: auto;
 		flex: none;
 		border-bottom: 2px solid transparent;
@@ -53,7 +53,7 @@
 		color: var( --color-text-inverted );
 		background-color: var( --color-primary );
 
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			.count {
 				color: var( --color-text-inverted );
 				border-color: var( --color-border-inverted );
@@ -89,7 +89,7 @@
 		}
 	}
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		display: block;
 		width: auto;
 		padding: 16px 16px 14px;
@@ -123,7 +123,7 @@
 	width: 0;
 	color: inherit;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		display: inline;
 		flex: none;
 		width: auto;

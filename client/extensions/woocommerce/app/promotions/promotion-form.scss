@@ -6,11 +6,11 @@
 		width: 720px;
 		margin-bottom: 8px;
 
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			width: 100%;
 		}
 
-		@include a8c-breakpoint( '660px-960px' ) {
+		@include breakpoint( '660px-960px' ) {
 			width: 620px;
 		}
 

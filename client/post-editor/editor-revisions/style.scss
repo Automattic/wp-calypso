@@ -10,13 +10,13 @@
 	height: calc( 90vh - 73px );
 	overflow-y: hidden;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		flex-direction: column-reverse;
 		width: 100vw;
 		height: calc( 100vh - 73px );
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		&::before {
 			content: '';
 			position: absolute;
@@ -58,7 +58,7 @@ body.showing-post-revisions-dialog {
 	overflow-y: hidden;
 
 	.dialog.card {
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			max-width: 100%;
 			max-height: 100%;
 		}

@@ -11,13 +11,13 @@
 	font-size: 15px;
 	margin-bottom: 4px;
 
-	@include a8c-breakpoint('>480px') {
+	@include breakpoint('>480px') {
 		font-size: 18px;
 	}
 }
 
 .get-apps__desktop {
-	@include a8c-breakpoint('>480px') {
+	@include breakpoint('>480px') {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
@@ -32,7 +32,7 @@
 	font-size: 13px;
 	margin-bottom: 4px;
 
-	@include a8c-breakpoint('>480px') {
+	@include breakpoint('>480px') {
 		font-size: 15px;
 	}
 }
@@ -41,20 +41,20 @@
 .get-apps__description:last-child {
 	margin-bottom: 12px;
 
-	@include a8c-breakpoint('>480px') {
+	@include breakpoint('>480px') {
 		margin-bottom: 0;
 	}
 }
 
 .get-apps__mobile {
 
-	@include a8c-breakpoint('>480px') {
+	@include breakpoint('>480px') {
 		order: 2;
 	}
 
 	.get-apps__store-subpanel {
 
-		@include a8c-breakpoint('>800px') {
+		@include breakpoint('>800px') {
 			display: flex;
 			flex-direction: row;
 			align-items: center;
@@ -73,14 +73,14 @@
 
 		.get-apps__link-button-wrapper {
 
-			@include a8c-breakpoint('>480px') {
+			@include breakpoint('>480px') {
 				display: flex;
 				flex-direction: row;
 				justify-content: flex-end;
 				align-items: center;
 			}
 
-			@include a8c-breakpoint('<480px') {
+			@include breakpoint('<480px') {
 
 				.get-apps__magic-link-button {
 					width: 100%;
@@ -97,7 +97,7 @@
 		margin-top: 64px;
 
 		.get-apps__sms-field-wrapper .form-phone-input {
-			@include a8c-breakpoint('>800px') {
+			@include breakpoint('>800px') {
 				display: flex;
 				flex-direction: row;
 				align-items: center;
@@ -115,7 +115,7 @@
 
 		.get-apps__sms-button-wrapper {
 
-			@include a8c-breakpoint('>480px') {
+			@include breakpoint('>480px') {
 				display: flex;
 				flex-direction: row;
 				justify-content: flex-end;
@@ -127,7 +127,7 @@
 				padding-right: 16px;
 			}
 
-			@include a8c-breakpoint('<480px') {
+			@include breakpoint('<480px') {
 
 				p {
 					margin-bottom: 24px;
@@ -152,7 +152,7 @@
 	padding: 16px;
 	text-align: center;
 
-	@include a8c-breakpoint('>480px') {
+	@include breakpoint('>480px') {
 		padding: 24px;
 	}
 }
@@ -162,7 +162,7 @@
 	font-weight: 600;
 	padding: 0 24px;
 
-	@include a8c-breakpoint('>480px') {
+	@include breakpoint('>480px') {
 		font-size: 24px;
 	}
 }
@@ -172,13 +172,13 @@
 	margin-bottom: 0;
 	padding: 0 24px;
 
-	@include a8c-breakpoint('>480px') {
+	@include breakpoint('>480px') {
 		font-size: 14px;
 	}
 }
 
 .get-apps__card-text {
-	@include a8c-breakpoint('>480px') {
+	@include breakpoint('>480px') {
 		flex: 1;
 	}
 }
@@ -190,7 +190,7 @@
 }
 
 .get-apps__desktop-button {
-	@include a8c-breakpoint('>480px') {
+	@include breakpoint('>480px') {
 		margin-left: 24px;
 	}
 }

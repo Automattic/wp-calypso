@@ -121,7 +121,7 @@
 	position: relative;
 }
 
-@include a8c-breakpoint( '>480px' ) {
+@include breakpoint( '>480px' ) {
 	.survey__other {
 		margin: 0 auto 2em;
 		max-width: 500px;

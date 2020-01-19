@@ -11,7 +11,7 @@
 .plugin-ratings__rating-stars {
 	font-size: 24px;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		display: inline-block;
 		margin-right: 8px;
 	}
@@ -22,7 +22,7 @@
 	color: var( --color-neutral-light );
 	margin-bottom: 16px;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		display: inline;
 		line-height: 24px;
 		vertical-align: top;

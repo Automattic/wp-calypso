@@ -27,12 +27,12 @@
 			margin-top: 1px;
 			transition: width 0.2s;
 
-			@include a8c-breakpoint( '<660px' ) {
+			@include breakpoint( '<660px' ) {
 				@include long-content-fade();
 				height: 44px;
 			}
 
-			@include a8c-breakpoint( '660px-960px' ) {
+			@include breakpoint( '660px-960px' ) {
 				@include long-content-fade();
 				right: 1px;
 				height: 36px;
@@ -58,7 +58,7 @@
 
 			.focus-sidebar & {
 				width: calc( 100% - ( #{$sidebar-width-max + 1} ) );
-				@include a8c-breakpoint( '660px-960px' ) {
+				@include breakpoint( '660px-960px' ) {
 					width: calc( 100% - ( #{$sidebar-width-min + 1} ) );
 				}
 				margin: 0;
@@ -123,7 +123,7 @@
 		border-right: 1px solid var( --color-neutral-0 );
 		height: 36px;
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			border-right-color: var( --color-border-inverted );
 			border-left-color: var( --color-border-inverted );
 			padding: 2px 0;
@@ -215,7 +215,7 @@
 	box-shadow: none !important;
 	background: var( --color-neutral-70 ) !important;
 	color: var( --color-text-inverted ) !important;
-	font-family: $a8c-font-family-sans !important;
+	font-family: $sans !important;
 	padding: 4px 8px 5px !important;
 }
 
@@ -252,7 +252,7 @@
 }
 
 .mce-toolbar .mce-btn-group .mce-wpcom-icon-button.mce-media button {
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		font-size: 13px;
 	}
 }
@@ -544,7 +544,7 @@ div.mce-inline-toolbar-grp.mce-arrow-full > div {
 }
 
 .mce-tinymce .mce-stack-layout-item.mce-last {
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		border-top: 1px solid var( --color-neutral-0 );
 	}
 }
@@ -557,7 +557,7 @@ div.mce-inline-toolbar-grp.mce-arrow-full > div {
 	display: inline-block;
 	overflow: hidden;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		display: block;
 	}
 }
@@ -577,7 +577,7 @@ div.mce-path {
 
 .post-editor .mce-path-item {
 	color: var( --color-neutral-50 );
-	font-family: $a8c-font-family-sans;
+	font-family: $sans;
 }
 
 .mce-path .mce-divider {
@@ -609,7 +609,7 @@ div.mce-path {
 	border-radius: 0;
 	filter: none;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		margin: 0;
 	}
 }
@@ -684,7 +684,7 @@ div.mce-path {
 
 .mce-toolbar .mce-btn-group > div {
 	white-space: nowrap;
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		margin-right: 32px;
 		white-space: normal;
 	}
@@ -727,7 +727,7 @@ div.mce-path {
 	min-width: 110px;
 	text-align: left;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		margin-top: 5px;
 	}
 }
@@ -736,7 +736,7 @@ div.mce-path {
 	width: auto;
 	padding: 0;
 	color: var( --color-neutral-50 );
-	font-family: $a8c-font-family-sans;
+	font-family: $sans;
 	font-size: 13px;
 	text-overflow: initial;
 
@@ -750,7 +750,7 @@ div.mce-path {
 	border-left-color: var( --color-neutral-0 );
 	border-right-color: var( --color-neutral-0 );
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		border-right-color: var( --color-border-inverted );
 		border-left-color: var( --color-border-inverted );
 	}
@@ -795,7 +795,7 @@ div.mce-path {
 	margin-top: -3px;
 }
 
-@include a8c-breakpoint( '<660px' ) {
+@include breakpoint( '<660px' ) {
 	.mce-panel .mce-btn.mce-listbox i.mce-caret {
 		top: 6px;
 	}
@@ -1431,12 +1431,12 @@ i.mce-i-wp_code::before {
 	position: absolute;
 	right: 0;
 
-	@include a8c-breakpoint( '<960px' ) {
+	@include breakpoint( '<960px' ) {
 		position: relative;
 		right: inherit;
 	}
 }
-@include a8c-breakpoint( '<660px' ) {
+@include breakpoint( '<660px' ) {
 	.mce-toolbar .mce-btn button,
 	.qt-dfw {
 		padding: 6px;
@@ -1471,7 +1471,7 @@ i.mce-i-wp_code::before {
 	}
 }
 
-@include a8c-breakpoint( '<660px' ) {
+@include breakpoint( '<660px' ) {
 	.wp-core-ui .quicktags-toolbar input.button.button-small {
 		/* .button-small is normaly 11px, but a bit too small for these buttons. */
 		font-size: 12px;
@@ -1824,7 +1824,7 @@ i.mce-i-wp_code::before {
 	height: 30px;
 }
 
-@include a8c-breakpoint( '<660px' ) {
+@include breakpoint( '<660px' ) {
 	#wp-fullscreen-close,
 	#wp-fullscreen-central-toolbar,
 	#wp-fullscreen-mode-bar,
@@ -1906,7 +1906,7 @@ div.wp-link-preview {
 	overflow: hidden;
 	text-overflow: ellipsis;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		margin-top: 14px;
 		margin-bottom: 14px;
 		max-width: 70%;

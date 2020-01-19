@@ -23,7 +23,7 @@
 		flex-basis: 100%;
 	}
 
-	@include a8c-breakpoint( '>1280px' ) {
+	@include breakpoint( '>1280px' ) {
 		&__layout-col:first-child {
 			box-sizing: border-box;
 			flex-basis: 70%;

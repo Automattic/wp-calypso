@@ -34,7 +34,7 @@ main.plan-upgrade-upsell.main {
 		height: 50px;
 		width: 100%;
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			width: 80px;
 			height: 40px;
 		}
@@ -62,7 +62,7 @@ main.plan-upgrade-upsell.main {
 
 	&__column-content {
 		padding-right: 10px;
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			padding-right: 0;
 		}
 	}
@@ -70,7 +70,7 @@ main.plan-upgrade-upsell.main {
 	&__column-doodle {
 		width: 120px;
 		flex-shrink: 0;
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			display: none;
 		}
 	}
@@ -92,7 +92,7 @@ main.plan-upgrade-upsell.main {
 		margin-top: 0.5em;
 		margin-bottom: 0.4em;
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			font-size: 21px;
 		}
 	}
@@ -104,7 +104,7 @@ main.plan-upgrade-upsell.main {
 		margin-top: 5px;
 		margin-bottom: 1.6em;
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			font-size: 18px;
 		}
 	}
@@ -118,7 +118,7 @@ main.plan-upgrade-upsell.main {
 			align-items: flex-start;
 			margin-bottom: 1.2em;
 
-			@include a8c-breakpoint( '<660px' ) {
+			@include breakpoint( '<660px' ) {
 				align-items: flex-start;
 			}
 		}
@@ -137,22 +137,22 @@ main.plan-upgrade-upsell.main {
 	&__footer &__decline-offer-button {
 		color: var( --color-primary );
 
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			width: 100%;
 		}
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			float: left;
 		}
 	}
 
 	&__footer &__accept-offer-button {
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			width: 100%;
 			margin-top: 10px;
 		}
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			float: right;
 		}
 	}

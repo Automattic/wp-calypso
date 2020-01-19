@@ -6,7 +6,7 @@
 	font-size: 12px;
 	color: var( --color-text-subtle );
 
-	@include a8c-clear-fix;
+	@include clear-fix;
 }
 
 .importer__mapping-description {

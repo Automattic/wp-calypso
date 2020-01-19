@@ -5,7 +5,7 @@
 		&.warning {
 			color: var( --color-text-subtle );
 
-			@include a8c-breakpoint( '>660px' ) {
+			@include breakpoint( '>660px' ) {
 				padding: 0;
 				text-align: left;
 			}
@@ -14,7 +14,7 @@
 				font-size: 12px;
 				margin: 0;
 
-				@include a8c-breakpoint( '>660px' ) {
+				@include breakpoint( '>660px' ) {
 					margin-left: 24px;
 				}
 			}
@@ -22,7 +22,7 @@
 			.gridicon {
 				float: left;
 
-				@include a8c-breakpoint( '<660px' ) {
+				@include breakpoint( '<660px' ) {
 					display: none;
 				}
 			}

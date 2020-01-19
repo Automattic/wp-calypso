@@ -69,11 +69,11 @@
 }
 
 .stats-views__key-container {
-	@include a8c-clear-fix;
+	@include clear-fix;
 	padding-top: 10px;
 	float: right;
 
-	@include a8c-breakpoint( '<960px' ) {
+	@include breakpoint( '<960px' ) {
 		float: none;
 		margin: 0 auto;
 		margin-bottom: 25px;

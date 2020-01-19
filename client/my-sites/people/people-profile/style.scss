@@ -1,6 +1,6 @@
 .people-profile {
 	position: relative;
-	@include a8c-clear-fix;
+	@include clear-fix;
 
 	&.is-placeholder {
 		.people-profile__username,
@@ -30,7 +30,7 @@
 	width: 56px !important;
 	height: 56px !important;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		width: 72px !important;
 		height: 72px !important;
 	}
@@ -39,7 +39,7 @@
 .people-profile__detail {
 	margin-left: 80px;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		margin-left: 96px;
 	}
 }
@@ -52,7 +52,7 @@
 	text-overflow: clip;
 	overflow: hidden;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		font-size: 21px;
 	}
 
@@ -65,14 +65,14 @@
 	color: var( --color-text-subtle );
 	font-size: 13px;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		font-size: 15px;
 		margin-top: -3px;
 	}
 }
 
 .people-profile__badges {
-	@include a8c-clear-fix;
+	@include clear-fix;
 	margin-top: 8px;
 }
 

@@ -1,11 +1,11 @@
 .domains-landing.layout__content {
 	padding: 32px;
 
-	@include a8c-breakpoint('<960px') {
+	@include breakpoint('<960px') {
 		padding: 24px;
 	}
 
-	@include a8c-breakpoint('<660px') {
+	@include breakpoint('<660px') {
 		padding: 0;
 	}
 }

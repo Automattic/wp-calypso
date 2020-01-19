@@ -76,7 +76,7 @@
 	font-size: 16px;
 	text-align: center;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		padding-left: 128px;
 		text-align: left;
 	}
@@ -91,7 +91,7 @@
 	background-color: var( --color-neutral-50 );
 	color: var( --color-neutral-0 );
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		position: absolute;
 		margin-left: -96px;
 		margin-top: 16px;

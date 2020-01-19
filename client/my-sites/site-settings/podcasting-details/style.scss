@@ -85,7 +85,7 @@
 	}
 }
 
-@include a8c-breakpoint( '<800px' ) {
+@include breakpoint( '<800px' ) {
 	.podcasting-details__link.is-enabled .podcasting-details__link-action-container,
 	.podcasting-details__publish-wrapper {
 		display: block;
@@ -115,7 +115,7 @@
 }
 
 .podcasting-details__title-subtitle-wrapper {
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		float: left;
 		width: 75%;
 	}
@@ -128,7 +128,7 @@
 	}
 
 	.form-select {
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			width: 100%;
 		}
 	}

@@ -16,14 +16,14 @@
 .tag-stream__header .follow-button {
 	z-index: z-index( '.tag-stream__header-follow', '.follow-button' );
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		margin: 12px 20px 0 15px;
 	}
 }
 
 .tag-stream__header .follow-button__label {
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		display: inline;
 	}
 }
@@ -106,12 +106,12 @@
 		left: -3px;
 		top: 8px;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		left: 13px;
 		top: 20px;
 	}
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		top: 14px;
 	}
 

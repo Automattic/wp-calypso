@@ -14,7 +14,7 @@
 .help-contact-form__selection {
 	margin-bottom: 24px;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		margin-bottom: 32px;
 	}
 }
@@ -30,7 +30,7 @@
 		display: none;
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		.segmented-control {
 			// Show the segmented control when the browser is wider than 960px
 			display: flex;

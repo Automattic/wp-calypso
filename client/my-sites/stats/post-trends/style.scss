@@ -3,7 +3,7 @@
 	user-select: none;
 	position: relative;
 	width: 100%;
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		display: none;
 	}
 }
@@ -52,7 +52,7 @@
 	text-align: left;
 	z-index: z-index( 'root', '.post-trends__scroll' );
 
-	@include a8c-breakpoint( '<960px' ) {
+	@include breakpoint( '<960px' ) {
 		.focus-sidebar & {
 			z-index: 0;
 		}
@@ -174,7 +174,7 @@
 	}
 }
 
-@include a8c-breakpoint( '>1040px' ) {
+@include breakpoint( '>1040px' ) {
 
 	.post-trends__scroll-left,
 	.post-trends__scroll-right {
@@ -183,11 +183,11 @@
 }
 
 .post-trends__key-container {
-	@include a8c-clear-fix;
+	@include clear-fix;
 	padding-top: 10px;
 	float: right;
 
-	@include a8c-breakpoint( '<960px' ) {
+	@include breakpoint( '<960px' ) {
 		float: none;
 		margin: 0 auto;
 		margin-bottom: 25px;

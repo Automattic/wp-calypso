@@ -6,7 +6,7 @@
 	right: 0;
 	max-width: 100%;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		top: 5%;
 		bottom: 5%;
 		left: 50%;
@@ -24,7 +24,7 @@
 	z-index: z-index( '.dialog__backdrop', '.editor-contact-form-modal .section-nav' );
 	padding: 0 16px;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		padding: 0;
 	}
 }

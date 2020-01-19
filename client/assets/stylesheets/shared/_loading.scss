@@ -5,7 +5,7 @@
 	left: 50%;
 	transform: translate( -50%, -50% );
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		width: 100px;
 		height: 100px;
 	}

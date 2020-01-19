@@ -5,7 +5,7 @@
 .gsuite-users-card__user-list {
 	&.card {
 		padding: 0;
-		@include a8c-clear-fix;
+		@include clear-fix;
 	}
 }
 
@@ -16,7 +16,7 @@
 	li {
 		border-top: 1px solid var( --color-neutral-0 );
 		padding: 20px 24px;
-		@include a8c-clear-fix;
+		@include clear-fix;
 
 		&:first-of-type {
 			border-top: none;

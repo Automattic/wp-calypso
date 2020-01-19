@@ -26,13 +26,13 @@
 			color: var( --color-neutral-50 );
 		}
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			display: inline-block;
 			width: auto;
 		}
 	}
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		.edit__transfer-button-fail-margin {
 			margin-left: 15px;
 		}

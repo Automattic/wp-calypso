@@ -3,7 +3,7 @@
 	flex-wrap: wrap;
 	padding: 0;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		padding: 16px 24px 0;
 	}
 }
@@ -13,7 +13,7 @@
 	flex-direction: column;
 	padding-bottom: 16px;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		border-bottom: 1px solid var( --color-neutral-0 );
 		flex-direction: row;
 		flex-basis: 100%;
@@ -27,7 +27,7 @@
 	&:nth-child( 2n + 1 ) {
 		width: 50%;
 
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			width: 45%;
 		}
 	}
@@ -35,7 +35,7 @@
 	&:nth-child( 2n + 0 ) {
 		width: 50%;
 
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			width: 55%;
 		}
 	}
@@ -46,7 +46,7 @@
 	font-size: 11px;
 	text-transform: uppercase;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		color: var( --color-neutral-70 );
 		font-size: 14px;
 		text-transform: capitalize;
@@ -57,7 +57,7 @@
 .annual-site-stats__stat-figure {
 	font-size: 18px;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		font-size: 14px;
 		text-align: right;
 		width: 50%;
@@ -70,7 +70,7 @@
 	&.is-large {
 		font-size: 14px;
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			font-size: 30px;
 		}
 	}

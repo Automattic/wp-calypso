@@ -72,7 +72,7 @@
 .product-categories__form-info-fields {
 	display: flex;
 	flex-direction: column;
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		flex-direction: row;
 	}
 }
@@ -98,23 +98,23 @@
 	margin-bottom: 16px;
 
 	.product-image-uploader__wrapper {
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			width: 175px;
 			height: 175px;
 		}
-		@include a8c-breakpoint( '>1040px' ) {
+		@include breakpoint( '>1040px' ) {
 			width: 225px;
 			height: 225px;
 		}
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		margin-bottom: 0;
 		width: 175px;
 		margin-right: 24px;
 	}
 
-	@include a8c-breakpoint( '>1040px' ) {
+	@include breakpoint( '>1040px' ) {
 		width: 225px;
 	}
 

@@ -4,7 +4,7 @@
 	text-align: center;
 	width: 100%;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		text-align: inherit;
 		width: inherit;
 	}

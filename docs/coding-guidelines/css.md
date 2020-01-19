@@ -98,13 +98,13 @@ Under the hood, we are using webpack and its `sass-loader`, for compiling the st
 
 ## Media Queries
 
-We don't do device specific breakpoints, we use layout-specific breakpoints that communicate the state of the UI. DO NOT define your own media queries. Utilize the mixins [provided in `_breakpoints.scss`](https://github.com/Automattic/wp-calypso/blob/master/packages/components/src/styles/_breakpoints.scss). Furthermore, we are pushing for a mobile-first approach to media queries, meaning your default styles should apply to mobile, and desktop should build on top of that. This means that devices with smaller screens have to process less CSS (which makes sense since they are generally less powerful). You should avoid the use of `<` breakpoints like this:
+We don't do device specific breakpoints, we use layout-specific breakpoints that communicate the state of the UI. DO NOT define your own media queries. Utilize the mixins [provided in `_mixins.scss`](https://github.com/Automattic/wp-calypso/blob/master/assets/stylesheets/shared/mixins/_breakpoints.scss). Furthermore, we are pushing for a mobile-first approach to media queries, meaning your default styles should apply to mobile, and desktop should build on top of that. This means that devices with smaller screens have to process less CSS (which makes sense since they are generally less powerful). You should avoid the use of `<` breakpoints like this:
 
 Bad:
 ```scss
 .class-name {
     margin: 20px; // styles for all devices
-    @include a8c-breakpoint( “<480px” ) {
+    @include breakpoint( “<480px” ) {
         margin: 10px; // styles for mobile
     }
 }
@@ -114,7 +114,7 @@ Good:
 ```scss
 .class-name {
     margin: 10px; // styles for all devices
-    @include a8c-breakpoint( “>480px” ) {
+    @include breakpoint( “>480px” ) {
         margin: 20px; // styles for desktop
     }
 }
@@ -126,7 +126,7 @@ Bad:
 ```scss
 .class-name {
     width: 50%; // styles for all devices
-    @include a8c-breakpoint( “>480px” ) {
+    @include breakpoint( “>480px” ) {
         width: auto; // styles for desktop
     }
 }
@@ -135,7 +135,7 @@ Bad:
 Good:
 ```scss
 .class-name {
-    @include a8c-breakpoint( “<480px” ) {
+    @include breakpoint( “<480px” ) {
         width: 50%; // styles for mobile
     }
 }
@@ -267,7 +267,7 @@ selector {
 - DO use a single space before an opening brace
 
 ```scss
-@include a8c-breakpoint( ">480px" ) {
+@include breakpoint( ">480px" ) {
   color: rgb( 0, 0, 0 );
   transform: translate( -50%, -50% ) scale( 1 );
 }

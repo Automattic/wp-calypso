@@ -47,15 +47,14 @@ export default class Typography extends React.PureComponent {
 					<h3>How to use:</h3>
 
 					<p>
-						The <code>$a8c-font-family-sans</code> Sass variable will output the sans-serif font
-						stack.
+						The <code>$sans</code> Sass variable will output the sans-serif font stack.
 					</p>
 
 					<pre>
 						<code>
 							.design__typography-sans &#123;
 							{ '\n\t' }
-							font-family: $a8c-font-family-sans;
+							font-family: $sans;
 							{ '\n\t' }
 							font-size: 16px;
 							{ '\n\t' }

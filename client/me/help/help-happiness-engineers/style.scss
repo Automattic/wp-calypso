@@ -2,22 +2,22 @@
 	margin: 12px 0 64px;
 	padding: 0 24px;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		margin: 24px 0 64px;
 	}
 }
 
 .help-happiness-engineers .form-section-heading {
-	@include a8c-breakpoint( '<660px' ) {
-		font: 300 16px/21px $a8c-font-family-sans;
+	@include breakpoint( '<660px' ) {
+		font: 300 16px/21px $sans;
 	}
 }
 
 .help-happiness-engineers__description {
 	margin: -16px 0 12px;
-	font: 14px/21px $a8c-font-family-sans;
+	font: 14px/21px $sans;
 	color: var( --color-neutral-40 );
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		margin: -16px 0 20px;
 	}
 }

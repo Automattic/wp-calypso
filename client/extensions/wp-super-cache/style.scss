@@ -158,14 +158,14 @@
 	max-width: 140px;
 	overflow-wrap: break-word;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		max-width: none;
 		overflow-wrap: normal;
 	}
 }
 
 .wp-super-cache__stat-age {
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		width: 100%;
 	}
 }

@@ -22,7 +22,7 @@
 	}
 
 	.plugin-action__label {
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			color: var( --color-neutral-70 );
 		}
 	}

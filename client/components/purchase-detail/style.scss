@@ -9,7 +9,7 @@
 		border-bottom: none;
 	}
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		border-radius: 3px;
 		max-width: 700px;
 		margin: 16px auto;
@@ -43,7 +43,7 @@
 			margin-top: 3px;
 			width: 85%;
 
-			@include a8c-breakpoint( '<660px' ) {
+			@include breakpoint( '<660px' ) {
 				margin: 0 auto;
 			}
 		}
@@ -54,7 +54,7 @@
 	padding: 32px;
 	display: flex;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		flex-wrap: wrap;
 	}
 }
@@ -63,13 +63,13 @@
 	width: 100%;
 	flex-shrink: 0;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		width: 178px;
 	}
 }
 
 .purchase-detail__button {
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		display: block;
 	}
 }
@@ -83,7 +83,7 @@
 	width: 100%;
 	flex-shrink: 0;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		order: 2;
 		width: 178px;
 	}
@@ -96,7 +96,7 @@
 		top: -3px;
 		width: 24px;
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			right: -42px;
 			top: -6px;
 		}
@@ -122,7 +122,7 @@
 		margin-top: 0;
 		padding: 0;
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			width: 150px;
 		}
 	}

@@ -170,7 +170,7 @@
 	.cart__coupon {
 		font-size: 11px;
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			display: none;
 		}
 
@@ -222,7 +222,7 @@
 	margin: 15px 15px 0;
 	padding: 10px;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		display: none;
 	}
 
@@ -256,7 +256,7 @@
 		min-width: auto;
 		padding: 0 15px 0 10px;
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			padding: 14px 20px 12px;
 		}
 	}
@@ -278,7 +278,7 @@
 	right: 2px;
 	animation: pulsing-badge 2s infinite;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		top: 5px;
 		right: 5px;
 	}
@@ -422,7 +422,7 @@ div.popover-cart__popover {
 .secondary-cart {
 	background: var( --color-surface );
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		left: 0;
 		margin-left: 0;
 		margin-top: 10px;
@@ -438,7 +438,7 @@ div.popover-cart__popover {
 	}
 }
 
-@include a8c-breakpoint( '<660px' ) {
+@include breakpoint( '<660px' ) {
 	.secondary-cart__hidden {
 		display: none;
 	}

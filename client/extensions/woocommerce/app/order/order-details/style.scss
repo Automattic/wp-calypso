@@ -96,7 +96,7 @@
 	& + .form-setting-explanation {
 		padding-right: 55px;
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			padding-right: 0;
 		}
 	}
@@ -189,7 +189,7 @@
 			width: 13em;
 			padding-right: 79px;
 
-			@include a8c-breakpoint( '<660px' ) {
+			@include breakpoint( '<660px' ) {
 				padding-right: 24px;
 			}
 		}
@@ -215,7 +215,7 @@
 	text-align: right;
 }
 
-@include a8c-breakpoint( '<660px' ) {
+@include breakpoint( '<660px' ) {
 	.order-details__table,
 	.order-details__totals {
 		table,

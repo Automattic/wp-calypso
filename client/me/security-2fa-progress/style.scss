@@ -1,7 +1,7 @@
 .security-2fa-progress__container {
 	margin: 0 -16px 16px;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		margin: 0 -24px 24px;
 	}
 

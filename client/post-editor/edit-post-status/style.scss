@@ -17,7 +17,7 @@
 	font-size: 13px;
 	line-height: 1.7;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		.info-popover {
 			display: none;
 		}

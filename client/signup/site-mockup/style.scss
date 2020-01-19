@@ -6,19 +6,19 @@
 
 	// Side by side layout uses flexbox to show
 	// both mockups next to each other.
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		max-width: 1200px;
 		display: flex;
 		align-items: flex-start;
 	}
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		padding-right: 1px;
 		padding-left: 1px;
 		padding-bottom: 0;
 	}
 
-	@include a8c-breakpoint( '660px-960px' ) {
+	@include breakpoint( '660px-960px' ) {
 		position: relative;
 	}
 }
@@ -36,7 +36,7 @@
 	&:last-child {
 		margin-bottom: 24px;
 	}
-
+	
 	p {
 		margin: 0 auto;
 		max-width: 420px;

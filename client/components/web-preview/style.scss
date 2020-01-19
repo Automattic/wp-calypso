@@ -21,7 +21,7 @@
 	}
 
 	&.is-with-sidebar {
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			left: 273px;
 		}
 	}
@@ -54,7 +54,7 @@
 	transition: transform 0.2s ease-out,
 		opacity 0.1s ease-in-out;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		top: 24px;
 		left: 24px;
 		right: 24px;
@@ -77,7 +77,7 @@
 	color: var( --color-primary );
 	border-radius: 0;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		padding: 6px 32px;
 	}
 
@@ -103,7 +103,7 @@ a.web-preview__external.button {
 	display: flex;
 	justify-content: flex-end;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		// Matches __device-switcher width + margin
 		// and allows the center area to flex equally
 		min-width: 212px;
@@ -152,7 +152,7 @@ a.web-preview__external.button {
 		color: var( --color-neutral-70 );
 	}
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		display: none;
 	}
 }
@@ -180,7 +180,7 @@ a.web-preview__external.button {
 .web-preview__back-to-preview-button {
 	display: none;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		display: block;
 	}
 }
@@ -189,7 +189,7 @@ a.web-preview__external.button {
 	.button {
 		margin: 4px;
 		&:not( :last-child ) {
-			@include a8c-breakpoint( '<660px' ) {
+			@include breakpoint( '<660px' ) {
 				display: none;
 			}
 		}

@@ -15,7 +15,7 @@
 		margin-right: 8px;
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		padding: 0;
 	}
 
@@ -126,7 +126,7 @@
 .plugin-item .plugin-item__actions {
 	display: none;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		align-self: center;
 		display: flex;
 		flex-direction: column;
@@ -154,19 +154,19 @@
 }
 
 .plugin-item .plugin-action {
-	@include a8c-breakpoint( '>1040px' ) {
+	@include breakpoint( '>1040px' ) {
 		margin-top: 6px;
 	}
 
 	&:first-child {
-		@include a8c-breakpoint( '<1040px' ) {
+		@include breakpoint( '<1040px' ) {
 			margin-top: 0;
 		}
 	}
 }
 
 .plugin-item .plugin-action__label {
-	@include a8c-breakpoint( '>1040px' ) {
+	@include breakpoint( '>1040px' ) {
 		flex-direction: row;
 		margin-right: 0;
 		margin-left: 8px;
@@ -174,13 +174,13 @@
 }
 
 .plugin-item .plugin-action .form-toggle__label {
-	@include a8c-breakpoint( '>1040px' ) {
+	@include breakpoint( '>1040px' ) {
 		flex-direction: row;
 	}
 }
 
 .plugin-item .form-toggle__label .form-toggle__label-content {
-	@include a8c-breakpoint( '>1040px' ) {
+	@include breakpoint( '>1040px' ) {
 		margin-right: 12px;
 		margin-left: 0;
 	}
@@ -188,14 +188,14 @@
 
 .plugin-item .plugin-activate-toggle__link,
 .plugin-item .plugin-activate-toggle__disabled {
-	@include a8c-breakpoint( '>1040px' ) {
+	@include breakpoint( '>1040px' ) {
 		flex-direction: row;
 		margin-right: 12px;
 	}
 }
 
 .plugin-item .plugin-activate-toggle__label {
-	@include a8c-breakpoint( '>1040px' ) {
+	@include breakpoint( '>1040px' ) {
 		margin-left: 8px;
 		margin-right: 0;
 	}

@@ -229,7 +229,7 @@ $y-axis-padding: 0 20px 0 10px;
 // 1: L/R matches padding of y-axis labels in chart
 
 .chart__legend {
-	@include a8c-clear-fix;
+	@include clear-fix;
 	margin-bottom: -8px;
 }
 
@@ -244,7 +244,7 @@ $y-axis-padding: 0 20px 0 10px;
 	text-transform: uppercase;
 	letter-spacing: 0.1em;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		width: 100%;
 	}
 }
@@ -256,7 +256,7 @@ $y-axis-padding: 0 20px 0 10px;
 	text-align: left;
 
 	// Expand labels to create bigger touch targets
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		width: 50%;
 		display: inline-block;
 	}
@@ -278,7 +278,7 @@ $y-axis-padding: 0 20px 0 10px;
 		}
 	}
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		display: block;
 	}
 }
@@ -297,7 +297,7 @@ $y-axis-padding: 0 20px 0 10px;
 	margin: 3px 5px 3px 8px; // 1
 }
 
-@include a8c-breakpoint( '<480px' ) {
+@include breakpoint( '<480px' ) {
 	.chart__legend-option:first-child .chart__legend-color {
 		margin-left: 2px; // 2
 	}
@@ -338,7 +338,7 @@ $y-axis-padding: 0 20px 0 10px;
 		text-align: left;
 
 		ul {
-			@include a8c-clear-fix;
+			@include clear-fix;
 			list-style: none;
 			margin: 0;
 			padding: 0;

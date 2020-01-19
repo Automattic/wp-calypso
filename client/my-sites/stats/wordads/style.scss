@@ -1,4 +1,4 @@
-@include a8c-breakpoint( '>480px' ) {
+@include breakpoint( '>480px' ) {
 	.wordads .stats-tabs .stats-tab {
 		width: 33.33%;
 	}

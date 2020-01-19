@@ -15,7 +15,7 @@
 }
 
 .plugin-information__version-shell {
-	@include a8c-clear-fix;
+	@include clear-fix;
 }
 
 .plugin-information__version-shell .version {
@@ -52,7 +52,7 @@
 	text-transform: uppercase;
 	width: 100%;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		float: left;
 	}
 }
@@ -92,7 +92,7 @@
 .plugin-information .plugin-ratings {
 	flex-grow: 1;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		flex-grow: 0;
 		width: 160px;
 	}
@@ -105,7 +105,7 @@
 .plugin-information__links {
 	clear: left;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		float: left;
 	}
 }
@@ -119,7 +119,7 @@
 
 	.plugin-information__wrapper {
 		@include placeholder();
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			margin-right: 16px;
 		}
 	}

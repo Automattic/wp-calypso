@@ -12,7 +12,7 @@
 	display: flex;
 	margin-bottom: 9px;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		flex-direction: row;
 		margin-bottom: 17px;
 	}
@@ -24,7 +24,7 @@
 	flex: auto;
 	margin: 0;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		border-width: 1px 0;
 	}
 }
@@ -39,7 +39,7 @@
 	margin-bottom: 9px;
 	width: 100%;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		margin-bottom: 17px;
 	}
 
@@ -50,25 +50,25 @@
 		}
 
 		&:last-child {
-			@include a8c-breakpoint( '<660px' ) {
+			@include breakpoint( '<660px' ) {
 				margin-right: 15px;
 			}
 		}
 
 		.gridicon {
 			margin-right: 0;
-			@include a8c-breakpoint( '>480px' ) {
+			@include breakpoint( '>480px' ) {
 				margin-right: 4px;
 			}
 		}
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			flex: none;
 		}
 
 		.plugins__button-text {
 			display: none;
-			@include a8c-breakpoint( '>480px' ) {
+			@include breakpoint( '>480px' ) {
 				display: inline-block;
 			}
 		}
@@ -86,7 +86,7 @@
 	margin: 40px 0 20px;
 	padding: 0 15px;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		padding: 0;
 	}
 }

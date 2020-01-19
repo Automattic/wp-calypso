@@ -90,7 +90,7 @@
 	}
 }
 
-@include a8c-breakpoint( '<960px' ) {
+@include breakpoint( '<960px' ) {
 	// Don't show environment badge on smaller screens. It just gets in the way.
 	.environment-badge {
 		display: none;

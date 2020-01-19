@@ -57,7 +57,7 @@
 		float: left;
 	}
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		.sharing-service__name {
 			margin-top: 12px;
 		}
@@ -67,11 +67,11 @@
 		margin-left: 56px;
 		width: 100%;
 
-		@include a8c-breakpoint( '<800px' ) {
+		@include breakpoint( '<800px' ) {
 			margin-left: 0;
 		}
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			margin-left: 6px;
 		}
 	}
@@ -100,13 +100,13 @@
 		margin-bottom: 0.5em;
 	}
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		padding: 0 0.25em;
 	}
 }
 
 .connections__sharing-settings.connections__sharing-connections {
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		padding: 16px 0;
 	}
 
@@ -115,7 +115,7 @@
 		vertical-align: top;
 		width: 48%;
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			display: block;
 			width: 100%;
 			margin: 20px 0;
@@ -125,12 +125,12 @@
 		&:first-child {
 			padding-right: 4%;
 
-			@include a8c-breakpoint( '<660px' ) {
+			@include breakpoint( '<660px' ) {
 				border-bottom: 1px solid var( --color-neutral-0 );
 				padding-bottom: 10px;
 			}
 
-			@include a8c-breakpoint( '<480px' ) {
+			@include breakpoint( '<480px' ) {
 				margin-bottom: 16px;
 				padding: 0 0 16px;
 			}
@@ -255,7 +255,7 @@
 	width: 50px;
 	border-radius: 4px;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		height: 21px;
 		padding-top: 5px;
 		margin: 2px 8px 0 32px;
@@ -294,7 +294,7 @@
 	color: var( --color-neutral-50 );
 	font-size: 14px;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		display: none;
 	}
 }
@@ -315,7 +315,7 @@
 	font-size: 22px;
 	color: #aeb8be;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		left: 14px;
 		top: 20px;
 	}
@@ -337,7 +337,7 @@
 	position: absolute;
 	left: 80px;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		width: 30%;
 	}
 }
@@ -383,7 +383,7 @@
 		padding-bottom: 0;
 	}
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		padding-right: 0;
 	}
 }
@@ -391,7 +391,7 @@
 .sharing-service.reconnect .sharing-connection__account-status {
 	padding-right: 200px;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		padding-right: 0;
 	}
 }
@@ -428,7 +428,7 @@
 	top: 50%;
 	margin-top: -16px;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		position: static;
 		margin-top: 4px;
 		text-align: right;
@@ -493,8 +493,8 @@
 }
 
 .sharing-buttons-tray__buttons {
-	@include a8c-clear-fix;
-	@include a8c-breakpoint( '<480px' ) {
+	@include clear-fix;
+	@include breakpoint( '<480px' ) {
 		margin-right: -16px;
 	}
 }
@@ -546,7 +546,7 @@
 }
 
 .sharing-buttons__panel {
-	@include a8c-clear-fix;
+	@include clear-fix;
 	position: relative;
 	margin-bottom: 20px;
 	padding: 20px 24px;
@@ -555,10 +555,10 @@
 }
 
 .sharing-buttons__fieldset-group {
-	@include a8c-clear-fix;
+	@include clear-fix;
 	margin: 0 -3%;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		margin: 0;
 	}
 }
@@ -570,7 +570,7 @@
 	padding: 0 3%;
 	margin-bottom: 20px;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		width: 100%;
 		padding: 0;
 	}
@@ -676,7 +676,7 @@
 	background-color: var( --color-surface );
 	color: var( --color-primary );
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		padding-right: 0;
 	}
 
@@ -717,7 +717,7 @@
 
 	&.is-bottom {
 		margin-top: 14px;
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			margin: 14px 1% 0;
 		}
 	}
@@ -748,7 +748,7 @@
 }
 
 .sharing-buttons-preview__button-tray-actions {
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		margin: 0 -6%;
 	}
 }
@@ -756,24 +756,24 @@
 .sharing-buttons-preview-action + .sharing-buttons-preview-action {
 	margin-left: 8px;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		margin-left: 1%;
 	}
 }
 
 .sharing-buttons-preview-action:last-child {
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		width: 46%;
 	}
 }
 
 .sharing-buttons-preview-action {
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		width: 50%;
 	}
 
 	&::before {
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			float: left;
 			margin: 6px 6px 0 0;
 		}
@@ -1012,7 +1012,7 @@
 			}
 		}
 
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			margin: 15px -8px 0;
 		}
 	}
@@ -1078,7 +1078,7 @@
 .sharing-buttons-preview__panel-content .sharing-buttons-preview-button {
 	margin-top: 8px;
 	cursor: pointer;
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		margin: 18px 18px 0 0;
 	}
 }

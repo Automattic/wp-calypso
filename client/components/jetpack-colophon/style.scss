@@ -10,7 +10,7 @@
 	.jetpack-logo__icon-circle {
 		fill: currentColor;
 	}
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		margin-bottom: 24px;
 	}
 }

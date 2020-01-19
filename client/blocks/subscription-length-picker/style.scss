@@ -21,7 +21,7 @@
 			margin-top: 8px;
 		}
 
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			&:first-child:nth-last-child( 2 ),
 			&:first-child:nth-last-child( 2 ) ~ div {
 				flex-basis: calc( 50% - 10px );

@@ -4,13 +4,13 @@
 	}
 
 	.mailchimp__getting-started-content {
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			padding-top: 48px;
 			padding-bottom: 48px;
 		}
 
 		img {
-			@include a8c-breakpoint( '>960px' ) {
+			@include breakpoint( '>960px' ) {
 				width: 390px;
 			}
 		}
@@ -47,7 +47,7 @@
 	display: flex;
 	flex-direction: column;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		flex-direction: row;
 	}
 
@@ -55,7 +55,7 @@
 		width: 200px;
 		margin-bottom: 16px;
 
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			margin-bottom: 0;
 			width: 230px;
 		}
@@ -112,7 +112,7 @@
 			border-radius: 0;
 		}
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			margin: 0 -24px 16px;
 			padding: 16px 24px;
 		}
@@ -184,7 +184,7 @@
 .mailchimp__getting-started-list-header,
 .mailchimp__getting-started-list,
 .mailchimp__getting-started-button {
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		margin-left: 24px;
 	}
 }
@@ -204,7 +204,7 @@
 	display: flex;
 	flex-direction: column;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		flex-direction: row;
 		align-items: stretch;
 	}
@@ -224,7 +224,7 @@
 	display: flex;
 	align-items: center;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		padding-left: 24px;
 		padding-right: 24px;
 	}
@@ -238,18 +238,18 @@
 	font-size: 12px;
 	background: var( --color-surface );
 
-	@include a8c-breakpoint( '<960px' ) {
+	@include breakpoint( '<960px' ) {
 		width: auto;
 	}
 
 	.notice {
 		margin: 2px 8px 4px 16px;
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			margin-left: 24px;
 		}
 
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			margin-left: 12px;
 		}
 	}
@@ -259,7 +259,7 @@
 	display: flex;
 	max-width: 140px;
 
-	@include a8c-breakpoint( '<960px' ) {
+	@include breakpoint( '<960px' ) {
 		width: auto;
 	}
 }
@@ -298,12 +298,12 @@
 	background: var( --color-neutral-0 );
 	border-top: 1px solid var( --color-neutral-0 );
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		padding-left: 24px;
 		padding-right: 24px;
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		padding-left: 12px;
 		padding-right: 12px;
 	}
@@ -324,12 +324,12 @@
 	margin: 8px 16px 0;
 	font-weight: 600;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		margin-left: 24px;
 		margin-right: 24px;
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		margin-left: 12px;
 		margin-right: 12px;
 	}
@@ -350,11 +350,11 @@
 	padding: 16px;
 	flex-direction: column;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		padding: 24px;
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		flex-direction: row;
 	}
 }
@@ -366,7 +366,7 @@
 		margin-bottom: 0;
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		padding-right: 24px;
 	}
 }
@@ -376,7 +376,7 @@
 	width: 250px;
 	flex-grow: 0;
 
-	@include a8c-breakpoint( '<960px' ) {
+	@include breakpoint( '<960px' ) {
 		width: 100%;
 	}
 }

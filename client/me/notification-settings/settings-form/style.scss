@@ -8,7 +8,7 @@
 		margin: 0;
 	}
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		display: none;
 	}
 }
@@ -38,7 +38,7 @@
 .notification-settings-form-header {
 	display: none;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		display: flex;
 		border-top: solid 1px var( --color-neutral-0 );
 		border-bottom: solid 1px var( --color-neutral-0 );
@@ -70,7 +70,7 @@
 		flex-direction: column;
 	}
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		display: flex;
 		flex: 1 0 auto;
 		flex-direction: column;

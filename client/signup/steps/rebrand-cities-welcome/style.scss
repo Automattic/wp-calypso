@@ -13,7 +13,7 @@
 		margin-bottom: 0.2em;
 	}
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		.formatted-header__subtitle {
 			margin: 0 10%;
 		}

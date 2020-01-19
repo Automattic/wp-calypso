@@ -7,7 +7,7 @@
 	margin-bottom: 8px;
 	text-align: center;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		padding-top: 8px;
 	}
 }

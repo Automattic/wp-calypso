@@ -4,11 +4,11 @@
 	padding: 16px 0;
 	border-bottom: solid 2px var( --color-jetpack );
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		margin: -24px -24px 24px;
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		display: flex;
 		flex-flow: row wrap;
 		align-items: baseline;
@@ -20,7 +20,7 @@
 	padding-left: 40px;
 	padding-right: 40px;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		padding-left: 16px;
 		padding-right: 16px;
 	}
@@ -33,7 +33,7 @@
 .product-card__header-primary {
 	display: flex;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		flex-grow: 1;
 	}
 
@@ -45,7 +45,7 @@
 		align-self: center;
 		margin: 0 8px 0 -26px;
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			width: 16px;
 			height: 16px;
 			margin-left: 0;
@@ -57,7 +57,7 @@
 	position: relative;
 
 	.is-purchased & {
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			padding-left: 40px;
 		}
 	}
@@ -67,7 +67,7 @@
 	font-size: 20px;
 	line-height: 24px;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		font-size: 22px;
 	}
 
@@ -81,7 +81,7 @@
 	.product-card:not( .is-purchased ) & {
 		color: var( --color-primary-50 );
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			font-weight: 600;
 		}
 	}
@@ -107,7 +107,7 @@
 
 		&,
 		& * {
-			@include a8c-breakpoint( '>660px' ) {
+			@include breakpoint( '>660px' ) {
 				font-size: 14px;
 				vertical-align: baseline;
 			}
@@ -121,16 +121,16 @@
 	line-height: 13px;
 	color: var( --color-text-subtle );
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		font-style: italic;
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		font-size: 12px;
 	}
 
 	.is-discounted & {
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			color: var( --color-success );
 		}
 	}
@@ -140,7 +140,7 @@
 .product-card__header {
 	.plan-price,
 	.plan-price * {
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			font-weight: 600;
 		}
 	}
@@ -148,7 +148,7 @@
 	.product-card__billing-timeframe {
 		width: 100%;
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			width: auto;
 			font-size: 12px;
 			font-weight: 600;
@@ -164,7 +164,7 @@
 		font-weight: 400;
 		vertical-align: baseline;
 
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			font-size: 14px;
 		}
 	}
@@ -173,7 +173,7 @@
 		color: var( --color-success );
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		.plan-price.is-discounted,
 		.plan-price.is-discounted *,
 		.is-discounted .product-card__billing-timeframe {
@@ -197,7 +197,7 @@
 .product-card__options {
 	padding: 10px 0 0;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		display: flex;
 		flex-flow: row wrap;
 		justify-content: space-around; // IE11 fallback.
@@ -210,7 +210,7 @@
 	text-align: center;
 	color: var( --color-text-subtle );
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		flex: 0 0 100%;
 	}
 }
@@ -222,7 +222,7 @@
 	align-items: center;
 	margin: 24px 0;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		align-items: flex-start;
 		margin-bottom: 8px;
 
@@ -239,7 +239,7 @@
 	flex-grow: 1;
 	margin-left: 8px;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		margin-left: 4px;
 		flex-flow: column nowrap;
 	}
@@ -251,7 +251,7 @@
 	font-size: 16px;
 	font-weight: 700;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		margin-bottom: 2px;
 		flex: 0 0 100%;
 		font-size: 14px;
@@ -340,13 +340,13 @@
 		height: 32px;
 		margin: 0 0 4px;
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			height: 18px;
 		}
 	}
 
 	.product-card__billing-timeframe {
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			display: none;
 		}
 	}
@@ -366,7 +366,7 @@
 		height: 16px;
 		margin: 0;
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			margin: 5px 0 0;
 		}
 	}

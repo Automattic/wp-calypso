@@ -46,7 +46,7 @@
 		transform: translateX( -$sidebar-width-max );
 	}
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		transition: none;
 		border-left: none;
 		pointer-events: auto;
@@ -99,7 +99,7 @@
 	background-color: var( --color-neutral-5 );
 	padding: 12px;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		padding: 24px;
 	}
 

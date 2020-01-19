@@ -18,7 +18,7 @@
 	bottom: 0;
 }
 
-@include a8c-breakpoint( '>1040px' ) {
+@include breakpoint( '>1040px' ) {
 
 	.happychat__page .happychat__timeline-message {
 		max-width: 80%;
@@ -26,7 +26,7 @@
 
 }
 
-@include a8c-breakpoint( '<960px' ) {
+@include breakpoint( '<960px' ) {
 
 	.happychat__page {
 		left: 229px;
@@ -34,7 +34,7 @@
 
 }
 
-@include a8c-breakpoint( '<660px' ) {
+@include breakpoint( '<660px' ) {
 
 	.happychat__page {
 			left: 0;

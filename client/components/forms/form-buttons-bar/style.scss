@@ -1,7 +1,7 @@
 .form-buttons-bar {
-	@include a8c-clear-fix;
+	@include clear-fix;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		align-items: flex-end;
 		display: flex;
 		flex-direction: column-reverse;

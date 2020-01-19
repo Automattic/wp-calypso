@@ -1,6 +1,6 @@
 // My Plan Card
 .my-plan-card.card {
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		display: flex;
 		flex-flow: row nowrap;
 		justify-content: space-between;
@@ -25,7 +25,7 @@
 		min-height: 70px;
 		margin-bottom: 16px;
 
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			height: 100%;
 		}
 	}
@@ -49,7 +49,7 @@
 	line-height: 21px;
 	margin: 0 0 24px;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		margin-bottom: 8px;
 	}
 
@@ -64,7 +64,7 @@
 	height: 64px;
 	margin: 8px 20px 16px 0;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		display: none;
 	}
 
@@ -92,7 +92,7 @@
 	justify-content: space-between;
 	padding: 8px 0 0;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		flex-flow: column nowrap;
 		justify-content: center;
 		align-items: flex-end;
@@ -107,12 +107,12 @@
 		right: -16px;
 		border-top: 1px solid var( --color-border-subtle );
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			left: -24px;
 			right: -24px;
 		}
 
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			content: none;
 		}
 	}
@@ -132,7 +132,7 @@
 	white-space: nowrap;
 	color: var( --color-text-subtle );
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		padding-top: 0;
 	}
 

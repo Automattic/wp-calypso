@@ -44,11 +44,11 @@ $feature-upsell-break-at: '1040px';
 	margin-bottom: 15px;
 	text-align: center;
 
-	@include a8c-breakpoint( '<1280px' ) {
+	@include breakpoint( '<1280px' ) {
 		font-size: 30px;
 	}
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		font-size: 26px;
 	}
 }
@@ -61,11 +61,11 @@ $feature-upsell-break-at: '1040px';
 	margin-bottom: 15px;
 	text-align: center;
 
-	@include a8c-breakpoint( '<1280px' ) {
+	@include breakpoint( '<1280px' ) {
 		font-size: 28px;
 	}
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		font-size: 24px;
 	}
 
@@ -79,13 +79,13 @@ $feature-upsell-break-at: '1040px';
 
 	&.is-h4 {
 		font-size: 20px;
-		@include a8c-breakpoint( '<1280px' ) {
+		@include breakpoint( '<1280px' ) {
 			&.is-h4 {
 				font-size: 18px;
 			}
 		}
 
-		//@include a8c-breakpoint( '<660px' ) {
+		//@include breakpoint( '<660px' ) {
 		//	&.is-h4 {
 		//		font-size: 16px;
 		//	}
@@ -106,11 +106,11 @@ $feature-upsell-break-at: '1040px';
 		padding: 14px 48px;
 		line-height: 1.2;
 
-		@include a8c-breakpoint( '<1280px' ) {
+		@include breakpoint( '<1280px' ) {
 			font-size: 20px;
 		}
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			font-size: 18px;
 		}
 	}
@@ -139,14 +139,14 @@ $feature-upsell-break-at: '1040px';
 		margin-top: 30px;
 		.feature-upsell__cta-button {
 			margin: 20px 0 0;
-			@include a8c-breakpoint( '<1280px' ) {
+			@include breakpoint( '<1280px' ) {
 				margin-left: auto;
 				margin-right: auto;
 			}
 		}
 		.feature-upsell__cta-guarantee {
 			margin-top: 8px;
-			@include a8c-breakpoint( '<1280px' ) {
+			@include breakpoint( '<1280px' ) {
 				text-align: center;
 			}
 		}
@@ -163,7 +163,7 @@ $feature-upsell-break-at: '1040px';
 			font-size: 26px;
 			font-weight: 300;
 			padding-right: 30px;
-			@include a8c-breakpoint( '<1280px' ) {
+			@include breakpoint( '<1280px' ) {
 				font-size: 22px;
 			}
 		}
@@ -179,7 +179,7 @@ $feature-upsell-break-at: '1040px';
 			margin-top: 10px;
 		}
 
-		@include a8c-breakpoint( '<1040px' ) {
+		@include breakpoint( '<1040px' ) {
 			text-align: center;
 
 			.feature-upsell__cta-pitch {
@@ -209,11 +209,11 @@ $feature-upsell-break-at: '1040px';
 		font-weight: 400;
 		margin-bottom: 20px;
 
-		@include a8c-breakpoint( '<1280px' ) {
+		@include breakpoint( '<1280px' ) {
 			font-size: 30px;
 		}
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			font-size: 26px;
 		}
 	}
@@ -222,7 +222,7 @@ $feature-upsell-break-at: '1040px';
 		font-size: 24px;
 		color: var( --color-neutral-60 );
 		margin-bottom: 20px;
-		@include a8c-breakpoint( '<1280px' ) {
+		@include breakpoint( '<1280px' ) {
 			font-size: 20px;
 		}
 	}
@@ -232,7 +232,7 @@ $feature-upsell-break-at: '1040px';
 		font-weight: 300;
 		color: var( --color-neutral-60 );
 		margin-bottom: 20px;
-		@include a8c-breakpoint( '<1280px' ) {
+		@include breakpoint( '<1280px' ) {
 			font-size: 18px;
 		}
 	}
@@ -245,7 +245,7 @@ $feature-upsell-break-at: '1040px';
 		font-size: 16px;
 		line-height: 1.625;
 		margin-top: 20px;
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			margin-top: 15px;
 		}
 
@@ -271,7 +271,7 @@ $feature-upsell-break-at: '1040px';
 		overflow: hidden;
 		padding-top: 27.25%;
 		margin: 0 auto;
-		@include a8c-breakpoint( '<1280px' ) {
+		@include breakpoint( '<1280px' ) {
 			flex-basis: 100%;
 			padding-top: 41%;
 		}
@@ -297,7 +297,7 @@ $feature-upsell-break-at: '1040px';
 		font-size: 16px;
 		line-height: 1.625;
 
-		@include a8c-breakpoint( '<1280px' ) {
+		@include breakpoint( '<1280px' ) {
 			flex-basis: 100%;
 			margin-top: 20px;
 			margin-left: 0;
@@ -317,12 +317,12 @@ $feature-upsell-break-at: '1040px';
 	&-item {
 		@include feature-upsell-card;
 
-		@include a8c-breakpoint( '<#{$feature-upsell-break-at}' ) {
+		@include breakpoint( '<#{$feature-upsell-break-at}' ) {
 			flex-flow: row wrap;
 			margin-bottom: 20px;
 		}
 
-		@include a8c-breakpoint( '>#{$feature-upsell-break-at}' ) {
+		@include breakpoint( '>#{$feature-upsell-break-at}' ) {
 			&.is-enable-wordads {
 				.feature-upsell__benefits-list-image-wrapper {
 					width: 160px;
@@ -338,7 +338,7 @@ $feature-upsell-break-at: '1040px';
 		width: 100%;
 		display: flex;
 		flex-flow: column;
-		@include a8c-breakpoint( '<#{$feature-upsell-break-at}' ) {
+		@include breakpoint( '<#{$feature-upsell-break-at}' ) {
 			flex-basis: 90%;
 		}
 	}
@@ -347,7 +347,7 @@ $feature-upsell-break-at: '1040px';
 		font-size: 24px;
 		font-weight: 600;
 		color: var( --color-neutral-60 );
-		@include a8c-breakpoint( '<1280px' ) {
+		@include breakpoint( '<1280px' ) {
 			font-size: 20px;
 		}
 	}
@@ -356,7 +356,7 @@ $feature-upsell-break-at: '1040px';
 		font-size: 16px;
 		line-height: 1.625;
 		margin-top: 10px;
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			margin-top: 15px;
 		}
 	}
@@ -367,14 +367,14 @@ $feature-upsell-break-at: '1040px';
 		max-width: 40%;
 		margin-left: 45px;
 
-		@include a8c-breakpoint( '<#{$feature-upsell-break-at}' ) {
+		@include breakpoint( '<#{$feature-upsell-break-at}' ) {
 			order: 1;
 			flex-basis: 100%;
 			max-width: 30%;
 			margin: 0 auto 20px 0;
 		}
 
-		//@include a8c-breakpoint( '<660px' ) {
+		//@include breakpoint( '<660px' ) {
 		//	max-width: 90%;
 		//}
 	}
@@ -385,7 +385,7 @@ $feature-upsell-break-at: '1040px';
 }
 
 .feature-upsell__text-content {
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		padding: 0 2em;
 	}
 }
@@ -405,7 +405,7 @@ $feature-upsell-break-at: '1040px';
 		align-items: center;
 		margin-bottom: 8px;
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			align-items: flex-start;
 		}
 	}
@@ -444,7 +444,7 @@ $feature-upsell-break-at: '1040px';
 }
 
 .feature-upsell__features-list {
-	@include a8c-breakpoint( '>1040px' ) {
+	@include breakpoint( '>1040px' ) {
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: space-between;
@@ -463,7 +463,7 @@ $feature-upsell-break-at: '1040px';
 		 */
 		width: 100%;
 
-		@include a8c-breakpoint( '>1040px' ) {
+		@include breakpoint( '>1040px' ) {
 			max-width: calc( 100% / 2 - 10px );
 		}
 	}
@@ -506,7 +506,7 @@ $feature-upsell-break-at: '1040px';
 		line-height: 1.6;
 		margin: 11px 0 0;
 
-		@include a8c-breakpoint( '<1040px' ) {
+		@include breakpoint( '<1040px' ) {
 			font-size: 16px;
 		}
 	}

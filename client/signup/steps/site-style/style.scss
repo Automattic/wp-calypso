@@ -1,6 +1,6 @@
 .site-style__form,
 .site-style__form-wrapper {
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		display: flex;
 	}
 }
@@ -10,7 +10,7 @@
 	max-width: 480px;
 	background-color: var( --color-surface );
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		// On small screens the form
 		// slightly resembles a card
 		box-shadow: 0 5px 5px -3px rgba( 0, 0, 0, 0.2 ),
@@ -18,7 +18,7 @@
 					0 3px 14px 2px rgba( 0, 0, 0, 0.12 );
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		max-width: 100%;
 		padding: 0 4px;
 		border-radius: 5px;
@@ -45,7 +45,7 @@
 	// Transition all the things!
 	transition: all 0.15s ease-in-out;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		width: 50%;
 		padding: 16px 8px;
 		border-bottom: 1px solid var( --color-neutral-20 );
@@ -64,7 +64,7 @@
 		}
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		// Make 'em feel like buttons.
 		cursor: pointer;
 		border: 1px solid var( --color-neutral-20 );
@@ -93,14 +93,14 @@
 		// A nice big border for the bigger
 		// buttons on small screens.
 		box-shadow: inset 0 0 0 6px var( --color-accent-light );
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			// This should prolly go somewhere else
 			svg {
 				transform: scale( 1 );
 			}
 		}
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			// On bigger screens the border
 			// gets smaller.
 			box-shadow: inset 0 0 0 2px var( --color-accent-light );
@@ -161,7 +161,7 @@
 		}
 	}
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		padding: 8px;
 
 		.button {

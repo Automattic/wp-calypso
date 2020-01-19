@@ -16,7 +16,7 @@
 .purchases-site__slug {
 	white-space: nowrap;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		line-height: 15px;
 	}
 }
@@ -25,25 +25,25 @@
 	& .action-card__button-container {
 		text-align: left;
 
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			text-align: center;
 		}
 	}
 
 	& .action-card__illustration {
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			margin: -10px -20px 0;
 		}
 	}
 
 	&.purchase-concierge .action-card__illustration {
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			margin-right: 20px;
 		}
 	}
 
 	&.card {
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			padding: 10px;
 		}
 	}

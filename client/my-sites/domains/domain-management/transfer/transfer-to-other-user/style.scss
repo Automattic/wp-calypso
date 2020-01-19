@@ -1,7 +1,7 @@
 .transfer-to-other-user__select {
 	margin-top: 20px;
 	width: 100%;
-	@include a8c-breakpoint('>480px') {
+	@include breakpoint('>480px') {
 		width: 300px;
 	}
 

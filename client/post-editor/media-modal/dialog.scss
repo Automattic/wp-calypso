@@ -6,7 +6,7 @@
 	left: 0;
 	max-width: none;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		top: 5%;
 		bottom: 5%;
 		left: 5%;
@@ -14,7 +14,7 @@
 		width: 90%;
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		left: 12.5%;
 		right: 12.5%;
 		width: 75%;
@@ -31,20 +31,20 @@
 
 .editor-media-modal .section-nav {
 	z-index: z-index( '.dialog__backdrop', '.editor-media-modal .section-nav' );
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		margin-bottom: 16px;
 	}
 }
 
 .editor-media-modal .header-cake.card {
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		margin-top: 0;
 		justify-content: left;
 	}
 }
 
 .editor-media-modal .header-cake__corner {
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		flex: none;
 	}
 }
@@ -56,7 +56,7 @@
 .editor-media-modal .media-library__header {
 	padding: 0 16px;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		padding: 0 24px;
 	}
 }
@@ -70,7 +70,7 @@
 .editor-media-modal .media-library__scale-range.range {
 	right: 16px;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		right: 24px;
 	}
 }
@@ -91,12 +91,12 @@
 	pointer-events: all;
 	overflow-y: auto;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		bottom: 74px;
 		top: 131px;
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		padding-left: 24px;
 		padding-right: 24px;
 		overflow-y: auto;
@@ -107,7 +107,7 @@
 .editor-media-modal .notice {
 	z-index: z-index( '.dialog__backdrop', '.editor-media-modal .notice' );
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		margin-top: 16px;
 	}
 }
@@ -132,7 +132,7 @@
 		display: none;
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		@media ( max-height: 600px ) {
 			display: none;
 		}

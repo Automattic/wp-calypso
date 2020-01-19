@@ -8,7 +8,7 @@
 			content: none;
 		}
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			flex-direction: row;
 		}
 	}
@@ -16,7 +16,7 @@
 	.stats-tab {
 		float: none;
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			width: 33.3%;
 		}
 
@@ -52,7 +52,7 @@
 				height: 16px;
 			}
 
-			@include a8c-breakpoint( '>480px' ) {
+			@include breakpoint( '>480px' ) {
 				.delta__icon {
 					width: initial;
 					height: initial;

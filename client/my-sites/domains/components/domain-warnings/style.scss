@@ -25,7 +25,7 @@
 	min-width: 400px;
 	max-width: 600px;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		min-width: none;
 		max-width: none;
 	}

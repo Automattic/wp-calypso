@@ -12,7 +12,7 @@
 		left: 33px;
 		width: 2px;
 
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			left: 25px;
 		}
 	}

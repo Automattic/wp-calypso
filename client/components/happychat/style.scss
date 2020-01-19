@@ -114,7 +114,7 @@
 	}
 }
 
-@include a8c-breakpoint( '>960px' ) {
+@include breakpoint( '>960px' ) {
 	@keyframes happychat-minimize {
 		0% {
 			max-height: 100%;
@@ -139,7 +139,7 @@
  * Panel mode
  */
 
-@include a8c-breakpoint( '>480px' ) {
+@include breakpoint( '>480px' ) {
 
 	.layout:not( .is-section-happychat ) {
 		.happychat__container.is-open {
@@ -164,7 +164,7 @@
 
 }
 
-@include a8c-breakpoint( '<480px' ) {
+@include breakpoint( '<480px' ) {
 
 	.layout:not( .is-section-happychat ) {
 		.happychat__container.is-open {
@@ -185,7 +185,7 @@
  * Sidebar mode
  */
 
-@include a8c-breakpoint( '>1040px' ) {
+@include breakpoint( '>1040px' ) {
 
 	// be more specific in scope to override the panel mode
 	.layout.has-chat:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader ):not( .has-no-sidebar ) .happychat__container.is-open {

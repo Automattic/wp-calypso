@@ -42,7 +42,7 @@ a.action-panel__body-text-link {
 	margin: 24px 0;
 	text-align: center;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		float: right;
 		max-width: 208px;
 		margin: 0 0 20px 24px;
@@ -107,7 +107,7 @@ a.action-panel__body-text-link {
 		height: 1px;
 		background-color: var( --color-neutral-0 );
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			left: -24px;
 			right: -24px;
 		}

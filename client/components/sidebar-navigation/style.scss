@@ -5,7 +5,7 @@
 	position: relative;
 	margin: 0 0 8px;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		display: none;
 	}
 
@@ -35,7 +35,7 @@
 	font-weight: 300;
 	margin: 16px;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		margin: 0 0 8px;
 	}
 }

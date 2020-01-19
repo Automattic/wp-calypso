@@ -1,6 +1,6 @@
 
 // Module container
-@include a8c-breakpoint( '>960px' ) {
+@include breakpoint( '>960px' ) {
 	.stats__module-column {
 		float: right;
 		width: calc( 50% - 4px );
@@ -15,7 +15,7 @@
 	}
 }
 
-@include a8c-breakpoint( '>1280px' ) {
+@include breakpoint( '>1280px' ) {
 	.stats__module-column {
 		width: calc( 33% - 3px );
 
@@ -33,7 +33,7 @@
 }
 
 .is-section-stats .followers-count .button {
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		display: none;
 	}
 }
@@ -41,7 +41,7 @@
 .stats-navigation__control {
 	margin-right: 16px;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		margin-right: 0;
 	}
 }

@@ -9,7 +9,7 @@
 		background-position: 150px 20px;
 	}
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		background-position: 120px 20px;
 	}
 
@@ -27,7 +27,7 @@
 			display: none;
 		}
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			display: none;
 		}
 	}
@@ -44,7 +44,7 @@
 	}
 
 	.conversations__intro-copy-hidden {
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			display: none;
 			visibility: hidden;
 		}

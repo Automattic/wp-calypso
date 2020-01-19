@@ -1,7 +1,7 @@
 .precancellation-chat-button__main-button {
 	display: block;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		float: left;
 	}
 }

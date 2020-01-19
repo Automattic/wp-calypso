@@ -10,7 +10,7 @@
 		box-sizing: unset;
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: space-between;
@@ -31,7 +31,7 @@
 		}
 	}
 
-	@include a8c-breakpoint( '>1040px' ) {
+	@include breakpoint( '>1040px' ) {
 		.order-details {
 			order: 1;
 			flex: 2;
@@ -81,7 +81,7 @@
 	flex-wrap: wrap;
 	align-items: center;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		margin: 0 -24px;
 		padding: 24px;
 	}
@@ -142,7 +142,7 @@
 		margin-right: 8px;
 	}
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		.order-payment__label,
 		.order-fulfillment__label,
 		.order-payment__action,

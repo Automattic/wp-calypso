@@ -2,7 +2,7 @@
 	align-items: center;
 	display: flex;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		bottom: 0;
 		left: 0;
 		position: fixed;

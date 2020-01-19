@@ -10,11 +10,11 @@
 	position: relative;
 	transition: opacity 0.15s ease-in-out;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		width: 40px;
 		height: 40px;
 	}
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		margin-right: 24px;
 	}
 

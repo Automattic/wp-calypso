@@ -3,7 +3,7 @@
 	flex-direction: row;
 	max-width: 720px;
 
-	@include a8c-breakpoint( '>800px' ) {
+	@include breakpoint( '>800px' ) {
 		font-size: 16px;
 		padding: 20px 0;
 	}
@@ -11,7 +11,7 @@
 	&__title {
 		font-size: 24px;
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			text-align: center;
 		}
 	}
@@ -21,7 +21,7 @@
 	}
 
 	.progress-bar {
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			max-width: 80%;
 		}
 	}
@@ -30,7 +30,7 @@
 		padding-right: 80px;
 		padding-left: 80px;
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			text-align: center;
 			width: 100%;
 		}
@@ -40,7 +40,7 @@
 .current-plan-thank-you__illustration {
 	margin-right: 32px;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		display: none;
 	}
 }

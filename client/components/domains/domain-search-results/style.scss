@@ -3,7 +3,7 @@
 	flex-direction: column;
 	margin-bottom: 12px;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		align-items: center;
 		flex-direction: row;
 	}
@@ -16,11 +16,11 @@
 		margin-bottom: 0;
 	}
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		padding-right: 10px;
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		font-size: 18px;
 
 		p {
@@ -40,7 +40,7 @@
 		padding: 15px 0 0;
 	}
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		width: auto;
 
 		a {

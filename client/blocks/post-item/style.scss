@@ -50,7 +50,7 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 	padding: 16px 16px 0;
 	margin-left: -16px;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		padding-left: 24px;
 		margin-left: -24px;
 	}

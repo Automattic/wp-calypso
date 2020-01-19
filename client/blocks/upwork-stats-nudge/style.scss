@@ -7,7 +7,7 @@
 	display: flex;
 	padding: 11px 24px; // Standard padding
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		max-height: 300px;
 		padding-bottom: 0; // Allow image to go right to the edge of the card
 	}
@@ -18,7 +18,7 @@
 	flex-direction: column;
 	justify-content: center;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		padding-right: 12px; // The image has about 12 px of whitespace, this helps "balance" the block
 	}
 }
@@ -39,12 +39,12 @@
 	display: flex;
 	margin-bottom: 20px;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		margin-bottom: 30px;
 	}
 
 	.button {
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			width: 100%;
 			text-align: center;
 		}
@@ -54,7 +54,7 @@
 .upwork-stats-nudge__image-wrapper {
 	display: none;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		display: flex;
 		height: 200px;
 		margin-right: 40px;

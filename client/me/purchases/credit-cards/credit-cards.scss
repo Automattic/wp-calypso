@@ -2,7 +2,7 @@
 	display: block;
 	color: var( --color-text-subtle );
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		padding: 8px;
 	}
 }

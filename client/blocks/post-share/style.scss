@@ -42,7 +42,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 	display: flex;
 	flex-direction: column-reverse;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		flex-direction: row;
 	}
 }
@@ -65,7 +65,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 	}
 
 	padding: 16px;
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		padding: 16px;
 	}
 }
@@ -78,7 +78,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 .post-share__form {
 	flex: 3 0 0;
 	margin: 0 16px 16px;
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		margin: 0 16px 16px;
 	}
 
@@ -288,7 +288,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 
 	border-top: $section-border;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		margin-bottom: 1px;
 		padding: 16px;
 	}
@@ -319,7 +319,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 	overflow: hidden;
 	position: relative;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		align-items: center;
 		flex-direction: row;
 
@@ -328,12 +328,12 @@ $section-border: solid 1px var( --color-neutral-5 );
 		}
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		align-items: flex-start;
 		flex-direction: column;
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		align-items: center;
 		flex-direction: row;
 	}
@@ -342,7 +342,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 .post-share__footer-item .social-logo {
 	flex: 0 0 24px;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		position: relative;
 		top: 1px;
 	}
@@ -355,7 +355,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 	top: -1px;
 	left: -1px;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		top: 0;
 	}
 }
@@ -374,29 +374,29 @@ $section-border: solid 1px var( --color-neutral-5 );
 }
 
 .post-share__handle {
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		margin-right: 7px;
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		margin-right: 12px;
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		margin-right: 7px;
 	}
 }
 
 .post-share__timestamp-value {
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		padding-left: 0;
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		padding-left: 4px;
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		padding-left: 0;
 	}
 }
@@ -408,15 +408,15 @@ $section-border: solid 1px var( --color-neutral-5 );
 	font-style: italic;
 	white-space: nowrap;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		display: block;
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		display: none;
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		display: block;
 	}
 }

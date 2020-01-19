@@ -34,7 +34,7 @@
 		background-color: var( --color-squarespace );
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		width: 56px;
 		height: 56px;
 		padding: 4px;

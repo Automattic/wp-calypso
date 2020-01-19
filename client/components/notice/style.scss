@@ -19,7 +19,7 @@
 	border-radius: 3px;
 	line-height: 1.5;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		margin-bottom: 24px;
 	}
 
@@ -155,7 +155,7 @@
 		}
 	}
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		font-size: 14px;
 	}
 }
@@ -177,7 +177,7 @@
 		height: 18px;
 	}
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		padding: 11px;
 
 		.gridicon {
@@ -208,7 +208,7 @@ a.notice__action {
 	display: flex;
 	align-items: center;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 			flex-shrink: 1;
 			flex-grow: 0;
 		align-items: center;

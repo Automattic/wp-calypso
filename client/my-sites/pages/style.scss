@@ -35,7 +35,7 @@
 	.site-icon {
 		display: none;
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			display: block;
 			margin-right: 10px;
 			min-width: 34px;

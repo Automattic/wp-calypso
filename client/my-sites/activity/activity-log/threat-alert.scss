@@ -3,7 +3,7 @@
 	font-size: 13px;
 	box-shadow: 0 -1px 0 rbga( var( --color-neutral-10 ), 0.5 );
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		font-size: 14px;
 	}
 
@@ -18,7 +18,7 @@
 		padding: 7px;
 		width: 24px;
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			padding-left: 8px;
 		}
 	}
@@ -40,7 +40,7 @@
 	.foldable-card__content {
 		padding-left: 48px;
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			padding-left: 56px;
 		}
 
@@ -90,7 +90,7 @@
 	font-size: 13px;
 	font-weight: 500;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		font-size: 14px;
 	}
 }

@@ -2,14 +2,14 @@
 	display: flex;
 	flex-direction: column-reverse;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		flex-direction: row;
 	}
 
 	.upgrade-nudge-expanded__description {
 		margin-bottom: 20px;
 
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			margin-bottom: 0;
 			width: 50%;
 		}
@@ -20,7 +20,7 @@
 			width: 100%;
 		}
 
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			width: 50%;
 
 			.plan-compare-card {

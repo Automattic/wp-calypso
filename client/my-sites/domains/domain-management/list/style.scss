@@ -42,7 +42,7 @@
 	font-family: $serif;
 	text-align: inherit;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		font-size: 18px;
 		font-weight: 700;
 		max-width: none;
@@ -57,7 +57,7 @@
 	text-overflow: ellipsis;
 	overflow: hidden;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		text-transform: uppercase;
 	}
 
@@ -107,7 +107,7 @@ input[type='radio'].domain-management-list-item__radio {
 	overflow: hidden;
 	margin-top: 5px;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		float: right;
 		margin-top: -11px;
 		margin-right: 15px;

@@ -3,12 +3,12 @@
 	padding: 0;
 	max-width: 100%;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		max-height: 100%;
 		height: 100%;
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		padding: 32px 40px 32px ( 260px + 32px );
 		max-width: 800px;
 	}
@@ -16,7 +16,7 @@
 	.dialog__content {
 		padding: 0;
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			padding: 0 24px;
 		}
 
@@ -25,7 +25,7 @@
 			height: auto;
 			line-height: 1.2;
 
-			@include a8c-breakpoint( '>660px' ) {
+			@include breakpoint( '>660px' ) {
 				font-size: 32px;
 			}
 		}
@@ -52,13 +52,13 @@
 		.button {
 			margin: 0 24px 8px;
 
-			@include a8c-breakpoint( '<660px' ) {
+			@include breakpoint( '<660px' ) {
 				display: block;
 				width: calc( 100% - 24px - 24px );
 				padding: 12px;
 			}
 
-			@include a8c-breakpoint( '>660px' ) {
+			@include breakpoint( '>660px' ) {
 				margin: 0 16px 0 0;
 			}
 		}
@@ -74,7 +74,7 @@
 	margin: 0 -24px 24px;
 	position: relative;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		background-position: 40px 43%;
 		background-size: 250px;
 		height: auto;
@@ -95,7 +95,7 @@
 		height: 48px;
 		background: linear-gradient( to bottom, rgba( 0, 0, 0, 0 ) 0%, rgba( 0, 0, 0, 0.1 ) 100% );
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			top: 0;
 			left: auto;
 			height: auto;

@@ -71,7 +71,7 @@
 	input[type='text'] {
 		padding-right: 38px;
 
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			padding-right: 35px;
 		}
 	}
@@ -81,7 +81,7 @@
 		right: 7px;
 		top: 8px;
 
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			right: 4px;
 		}
 	}

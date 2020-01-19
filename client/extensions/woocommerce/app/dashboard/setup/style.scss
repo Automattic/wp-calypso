@@ -31,7 +31,7 @@
 .setup__location {
 	padding: 16px;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		padding: 32px 32px 16px;
 	}
 }
@@ -49,7 +49,7 @@
 	margin-left: -24px;
 	margin-right: -24px;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		margin-left: -32px;
 		margin-right: -32px;
 		padding: 32px 32px 0;

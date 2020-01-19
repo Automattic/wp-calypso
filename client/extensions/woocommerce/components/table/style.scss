@@ -120,7 +120,7 @@
 				);
 			}
 
-			@include a8c-breakpoint( '>660px' ) {
+			@include breakpoint( '>660px' ) {
 				&::after {
 					display: none;
 				}

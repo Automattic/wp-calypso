@@ -15,7 +15,7 @@
 		margin-left: 0;
 	}
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		.cvv,
 		.expiration-date {
 			flex-basis: calc( 50% - 15px );

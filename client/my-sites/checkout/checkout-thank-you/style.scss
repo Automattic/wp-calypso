@@ -4,7 +4,7 @@
 	text-align: center;
 	width: 100%;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		background: transparent;
 		padding: 14px;
 	}
@@ -69,7 +69,7 @@
 	line-height: 32px;
 	margin: 48px 48px 24px;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		box-shadow: none;
 		margin-bottom: 0;
 	}
@@ -86,7 +86,7 @@
 .checkout-thank-you__purchase-details-list {
 	text-align: center;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		margin: 0 24px;
 		padding-bottom: 48px;
 	}
@@ -99,7 +99,7 @@
 	padding: 12px 24px 48px;
 	text-align: center;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		padding-bottom: 72px;
 	}
 }
@@ -181,11 +181,11 @@
 }
 
 .checkout-thank-you__header.is-placeholder {
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		padding-top: 170px;
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		padding-left: 190px;
 	}
 
@@ -200,7 +200,7 @@
 
 		display: block;
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			margin: 0 auto;
 		}
 	}
@@ -216,7 +216,7 @@
 		margin-top: 15px;
 		width: 90%;
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			margin-bottom: 18px;
 			margin-top: 18px;
 		}
@@ -232,7 +232,7 @@
 .checkout-thank-you__footer {
 	padding: 32px 20px;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		font-size: 16px;
 		padding: 60px 24px;
 		text-align: left;
@@ -379,21 +379,21 @@
 	opacity: 0.1;
 	animation: focus 5s infinite ease-in-out;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		left: 0;
 	}
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		transform: scale( 0.8 );
 		left: 130px;
 		top: -120px;
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		transform: scale( 1.2 );
 	}
 
-	@include a8c-breakpoint( '>1040px' ) {
+	@include breakpoint( '>1040px' ) {
 		transform: scale( 1.5 );
 	}
 

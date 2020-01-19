@@ -12,25 +12,25 @@
 		visibility: hidden;
 	}
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		&.is-open {
 			box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-10 );
 		}
 	}
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		&.has-pinned-items {
 			padding-right: 60px;
 		}
 	}
 
-	@include a8c-breakpoint( '480px-660px' ) {
+	@include breakpoint( '480px-660px' ) {
 		&.has-pinned-items {
 			padding-right: 50px;
 		}
 	}
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		margin-bottom: 9px;
 	}
 }
@@ -67,7 +67,7 @@
 		}
 	}
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		display: none;
 	}
 }
@@ -92,7 +92,7 @@
 	box-sizing: border-box;
 	width: 100%;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		.section-nav.is-open & {
 			padding-bottom: 15px;
 			border-top: solid 1px var( --color-neutral-10 );
@@ -104,7 +104,7 @@
 		}
 	}
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		display: flex;
 		align-items: center;
 
@@ -126,7 +126,7 @@
 		border-top: none;
 	}
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		display: none;
 
 		.section-nav.is-open & {
@@ -134,7 +134,7 @@
 		}
 	}
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		margin-top: 0;
 		padding-top: 0;
 		border-top: none;
@@ -168,7 +168,7 @@
 	text-transform: uppercase;
 	line-height: 12px;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		.has-siblings & {
 			display: block;
 		}
@@ -206,7 +206,7 @@
 	.search.is-expanded-to-container {
 		height: 50px;
 
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			height: 46px;
 		}
 	}

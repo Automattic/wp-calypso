@@ -25,7 +25,7 @@
 }
 // Site sections
 .stats__module-list {
-	@include a8c-clear-fix;
+	@include clear-fix;
 }
 
 .stats-insights__nonperiodic {
@@ -34,12 +34,12 @@
 		font-weight: 300;
 
 		p {
-			@include a8c-breakpoint( '<660px' ) {
+			@include breakpoint( '<660px' ) {
 				margin-left: 24px;
 				margin-right: 24px;
 			}
 
-			@include a8c-breakpoint( '<480px' ) {
+			@include breakpoint( '<480px' ) {
 				text-align: center;
 			}
 		}
@@ -56,12 +56,12 @@
 .stats-section-title {
 	@include heading;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		margin-left: 24px;
 		margin-right: 24px;
 	}
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		text-align: center;
 	}
 }
@@ -73,7 +73,7 @@
 	line-height: 40px;
 	display: block;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		line-height: 48px;
 	}
 
@@ -91,7 +91,7 @@
 		position: relative;
 
 		// Hover state
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			&:hover {
 				background: var( --color-neutral-0 );
 				border-top-color: var( --color-border-inverted );
@@ -104,7 +104,7 @@
 			border-top-color: var( --color-border-inverted );
 		}
 
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			.stats__module-list & {
 				font-size: 12px;
 			}
@@ -218,7 +218,7 @@ ul.module-header-actions {
 	}
 
 	// Hover state
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		.stats-module:hover & .module-header-action-link {
 			color: var( --color-primary );
 		}
@@ -274,12 +274,12 @@ ul.module-header-actions {
 	a {
 		display: block;
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			display: inline;
 		}
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		.stats__module-list & {
 			font-size: 12px;
 		}
@@ -341,13 +341,13 @@ ul.module-header-actions {
 			font-size: 14px;
 			line-height: 2em;
 
-			@include a8c-breakpoint( '>960px' ) {
+			@include breakpoint( '>960px' ) {
 				.stats__module-list & {
 					font-size: 12px;
 				}
 			}
 
-			@include a8c-breakpoint( '<480px' ) {
+			@include breakpoint( '<480px' ) {
 				border-bottom: 1px solid var( --color-border-subtle );
 
 				&:last-child {
@@ -363,7 +363,7 @@ ul.module-header-actions {
 			position: relative;
 			padding: 6px 0;
 
-			@include a8c-breakpoint( '<480px' ) {
+			@include breakpoint( '<480px' ) {
 				padding-top: 12px;
 				padding-bottom: 12px;
 			}
@@ -450,7 +450,7 @@ ul.module-header-actions {
 	// Left this modifier as-is because these tables are likely going to change
 	// a lot or otherwise be removed, and at least it's directly dependent on
 	// being associated with a td in this structure
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		.stats-module & td.has-no-data:hover, // 1
 		tbody tr:hover td,
 		tbody tr:hover th {

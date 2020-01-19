@@ -119,7 +119,7 @@ $autobar-height: 20px;
 		background: var( --studio-orange-70 );
 	}
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		flex: 1 1 auto;
 
 		.gridicon {
@@ -147,7 +147,7 @@ $autobar-height: 20px;
 		margin: 0 5px;
 	}
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		& {
 			padding-right: 14px;
 		}
@@ -186,7 +186,7 @@ $autobar-height: 20px;
 	.masterbar__item-content {
 		display: block;
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			margin-top: 3px; /*Align with logo*/
 		}
 	}
@@ -237,7 +237,7 @@ $autobar-height: 20px;
 		color: var( --color-primary );
 		display: none;
 
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			display: block;
 			margin-right: 4px;
 		}
@@ -293,7 +293,7 @@ $autobar-height: 20px;
 .masterbar__item-notifications {
 	margin-right: 12px;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		margin-right: 0;
 	}
 
@@ -304,7 +304,7 @@ $autobar-height: 20px;
 	.gridicon + .masterbar__item-content {
 		padding: 0;
 
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			display: block;
 		}
 	}
@@ -379,7 +379,7 @@ $autobar-height: 20px;
 }
 
 .masterbar__reader {
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		margin-right: auto;
 	}
 }
@@ -403,7 +403,7 @@ $autobar-height: 20px;
 
 	&:hover {
 		background-color: var( --color-neutral-0 );
-
+		
 		.count {
 			border-color: var( --color-primary );
 			color: var( --color-primary );
@@ -489,7 +489,7 @@ $autobar-height: 20px;
 .masterbar__notifications {
 	flex: 1 1 auto;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		flex-grow: 0;
 	}
 }

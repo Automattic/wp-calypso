@@ -30,7 +30,7 @@ body.is-section-jetpack-connect .site-topic__content {
 		// No need for a border here
 		border: none;
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			// On smaller screens the buttons get bigger,
 			// so this input needs to get bigger, too.
 			padding: 15px 100px 15px 42px;
@@ -80,7 +80,7 @@ body.is-section-jetpack-connect .site-topic__content {
 			width: 24px;
 		}
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			padding: 12px;
 		}
 	}

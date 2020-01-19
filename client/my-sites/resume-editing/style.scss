@@ -13,7 +13,7 @@
 		display: none;
 	}
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		display: none;
 	}
 

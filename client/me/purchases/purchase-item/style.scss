@@ -59,7 +59,7 @@
 		background: var( --color-neutral );
 		fill: var( --color-text-inverted );
 	}
-
+	
 	.gridicons-cloud-upload,
 	.gridicons-domains {
 		border-radius: 50%;
@@ -91,7 +91,7 @@
 		@include long-content-fade();
 	}
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		font-size: 18px;
 		max-width: none;
 	}

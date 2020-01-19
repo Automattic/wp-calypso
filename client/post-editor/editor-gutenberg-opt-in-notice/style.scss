@@ -12,7 +12,7 @@
 	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.25 );
 	z-index: z-index( 'root', '.editor-gutenberg-opt-in-notice' );
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		border-radius: 0;
 
 		.notice__icon-wrapper {
@@ -20,7 +20,7 @@
 		}
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		right: 8px;
 		bottom: 8px;
 		left: 8px;
@@ -30,7 +30,7 @@
 		}
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		max-width: 640px;
 		bottom: 16px;
 
@@ -40,7 +40,7 @@
 	}
 }
 
-@include a8c-breakpoint( '<660px' ) {
+@include breakpoint( '<660px' ) {
 	// We hide the notice on small viewports when the sidebar is open
 	.focus-sidebar .editor-gutenberg-opt-in-notice {
 		display: none;

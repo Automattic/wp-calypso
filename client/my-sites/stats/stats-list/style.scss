@@ -24,7 +24,7 @@
 	line-height: 40px;
 
 	// List item height shorter on 2-column modules
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		.stats__module-list & {
 			font-size: 12px;
 			line-height: 28px;
@@ -34,7 +34,7 @@
 	border-top: 1px solid rgba( var( --color-surface-rgb ), 0 );
 
 	// Increase touch targets on mobile
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		line-height: 48px;
 		border-top: 1px solid var( --color-neutral-0 );
 
@@ -89,7 +89,7 @@
 		line-height: inherit;
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		.stats__module-list & {
 			line-height: 28px;
 
@@ -110,7 +110,7 @@
 
 // Module Content List Item Hover
 
-@include a8c-breakpoint( '>480px' ) {
+@include breakpoint( '>480px' ) {
 	.module-content-list .stats-list__module-content-list-item-wrapper:hover,
 	.module-content-list-item-link .stats-list__module-content-list-item-wrapper:hover {
 		&,
@@ -168,7 +168,7 @@
 
 // Highlight toggle icon if item has a sublist
 
-@include a8c-breakpoint( '>480px' ) {
+@include breakpoint( '>480px' ) {
 	.module-content-list > .module-content-list-item-toggle > .stats-list__module-content-list-item-wrapper:hover
 		.stats-list__module-content-list-item-label::before {
 		color: var( --color-link-dark );
@@ -191,13 +191,13 @@
 	height: 40px; // 2
 
 	// List item height shorter on 2-column modules
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		.stats__module-list & {
 			height: 28px;
 		}
 	}
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		height: 48px; // ### see ^
 	}
 
@@ -254,7 +254,7 @@
 	}
 
 	// Icons smaller on 2col
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		.stats__module-list & .stats-list__icon {
 			font-size: 20px;
 			line-height: 1.3;
@@ -305,13 +305,13 @@
 	background: var( --color-surface );
 	margin-left: -48px; // ### keep? experimental: to force labels to go longer than they normally would to make sure the fade out shows
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		.stats__module-list & {
 			height: 28px;
 		}
 	}
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		height: 48px;
 	}
 
@@ -379,7 +379,7 @@ ul.module-content-list-item-actions {
 		}
 	}
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		@include dropdown-menu;
 
 		background: var( --color-neutral-0 );
@@ -429,7 +429,7 @@ ul.module-content-list-item-actions {
 	height: 40px;
 	line-height: inherit;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		.stats__module-list & {
 			height: 28px;
 		}
@@ -439,7 +439,7 @@ ul.module-content-list-item-actions {
 		vertical-align: middle;
 	}
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		display: inline-block;
 		height: 48px;
 	}
@@ -458,7 +458,7 @@ ul.module-content-list-item-action-submenu {
 	list-style: none;
 	margin: 0;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		@include dropdown-menu;
 
 		display: none;
@@ -489,13 +489,13 @@ ul.module-content-list-item-action-submenu {
 	margin: 0 1em 0 0;
 
 	// So that 'View' label is moved more to the right since icon has been dropped
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		.stats__module-list & {
 			margin: 0;
 		}
 	}
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		margin-right: 0;
 	}
 
@@ -507,7 +507,7 @@ ul.module-content-list-item-action-submenu {
 		opacity: 0;
 		line-height: inherit;
 
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			min-width: 24px;
 			opacity: 1;
 			padding: 0 12px;
@@ -522,7 +522,7 @@ ul.module-content-list-item-action-submenu {
 		}
 
 		// Hide 'View' label next to icon on 2-column modules
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			.stats__module-list & span.module-content-list-item-action-label-view {
 				display: none;
 			}
@@ -564,7 +564,7 @@ ul.module-content-list-item-action-submenu {
 		color: var( --color-error );
 
 		// Hover state
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			&:hover {
 				color: var( --color-error-30 );
 			}
@@ -603,7 +603,7 @@ ul.module-content-list-legend {
 	.module-content-list-item
 	.module-content-list-item-action
 	.module-content-list-item-action-label {
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		display: inline;
 	}
 }
@@ -627,7 +627,7 @@ ul.module-content-list-legend {
 .module-content-list > .module-content-list-item-large {
 	> .module-content-list-item-wrapper {
 		line-height: 48px;
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			.stats__module-list & {
 				line-height: 28px;
 			}
@@ -636,7 +636,7 @@ ul.module-content-list-legend {
 
 	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label {
 		height: 48px;
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			.stats__module-list & {
 				height: 28px;
 			}
@@ -653,7 +653,7 @@ ul.module-content-list-legend {
 		line-height: 32px;
 		width: 32px;
 		height: 32px;
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			.stats__module-list & {
 				width: 24px;
 				height: 24px;
@@ -661,7 +661,7 @@ ul.module-content-list-legend {
 		}
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		.stats__module-list
 			& > .stats-list__module-content-list-item-wrapper
 			.stats-list__module-content-list-item-label
@@ -673,7 +673,7 @@ ul.module-content-list-legend {
 	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label .avatar {
 		width: 32px;
 		height: 32px;
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			.stats__module-list & {
 				width: 24px;
 				height: 24px;
@@ -703,7 +703,7 @@ ul.module-content-list-legend {
 
 	// Highlight main action (usually what's indicated in the label)
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		.stats-list__module-content-list-item-wrapper:hover .stats-list__module-content-list-item-label {
 			color: var( --color-link-dark );
 		}
@@ -762,7 +762,7 @@ ul.module-content-list-legend {
 	}
 
 	// Hover changes
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		> .stats-list__module-content-list-item-wrapper:hover {
 			// Change background and gradient color
 			&,
@@ -802,7 +802,7 @@ ul.module-content-list-legend {
 	}
 
 	// Hover changes
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		&-link .stats-list__module-content-list-item-wrapper:hover,
 		&-normal .stats-list__module-content-list-item-wrapper:hover {
 			// Change background and gradient color

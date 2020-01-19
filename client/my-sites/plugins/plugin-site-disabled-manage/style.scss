@@ -14,7 +14,7 @@
 		text-transform: uppercase;
 	}
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		.disconnect-jetpack-button {
 			position: absolute;
 			top: 18px;
@@ -29,12 +29,12 @@
 }
 .plugin-site-disabled-manage__label {
 	margin-right: 8px;
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		display: none;
 	}
 }
 .plugin-site-disabled-manage__link {
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		margin: 18px 0 0;
 		position: relative;
 		right: 0;

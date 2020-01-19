@@ -94,7 +94,7 @@
 		margin: 24px auto !important;
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		.alignleft {
 			max-width: 100%;
 			float: left;
@@ -112,7 +112,7 @@
 		}
 	}
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		.alignleft,
 		.alignright {
 			clear: both;
@@ -152,7 +152,7 @@
 		&.alignleft {
 			max-width: 100%;
 
-			@include a8c-breakpoint( '>660px' ) {
+			@include breakpoint( '>660px' ) {
 				max-width: 50%;
 			}
 
@@ -196,7 +196,7 @@
 		line-height: 1.4285;
 		animation: appear 0.3s ease-in-out;
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			padding: 13px 48px;
 			font-size: inherit;
 		}
@@ -289,7 +289,7 @@
 			padding: 0 16px 16px 0;
 		}
 
-		@include a8c-breakpoint( '>1400px' ) {
+		@include breakpoint( '>1400px' ) {
 			&.right,
 			&.alignright {
 				position: absolute;
@@ -298,7 +298,7 @@
 			}
 		}
 
-		@include a8c-breakpoint( '<1400px' ) {
+		@include breakpoint( '<1400px' ) {
 			&.right,
 			&.alignright,
 			&.left,
@@ -332,21 +332,21 @@
 		width: 175px;
 		position: relative;
 
-		@include a8c-breakpoint( '>1400px' ) {
+		@include breakpoint( '>1400px' ) {
 			position: absolute;
 			left: inherit;
 			right: -( 175px + 32px );
 			margin-left: 0;
 		}
 
-		@include a8c-breakpoint( '<1400px' ) {
+		@include breakpoint( '<1400px' ) {
 			background: var( --color-neutral-0 );
 			margin: 0 0 24px;
 			padding: 16px;
 			width: calc( 100% - 32px );
 		}
 
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			margin: 0 0 24px;
 			background: var( --color-neutral-0 );
 			padding: 16px;
@@ -367,7 +367,7 @@
 	}
 
 	.publisher-intro p:first-child {
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			margin-bottom: 0;
 		}
 	}

@@ -22,7 +22,7 @@
 
 }
 
-@include a8c-breakpoint( '>1040px' ) {
+@include breakpoint( '>1040px' ) {
 
 	.theme-download-card {
 		text-align: inherit;

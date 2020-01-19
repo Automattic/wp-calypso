@@ -1,6 +1,6 @@
 .wpcom-help__dialog {
 	&.dialog.card {
-		@include a8c-breakpoint('>660px') {
+		@include breakpoint('>660px') {
 			flex: 1 0 100%;
 			max-width: 700px;
 		}
@@ -24,7 +24,7 @@
 	border-width: 0 0 1px;
 	text-align: center;
 	font-weight: 700;
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		width: 60px;
 		padding: 4px;
 	}

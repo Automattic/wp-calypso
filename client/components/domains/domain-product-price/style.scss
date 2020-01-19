@@ -6,8 +6,8 @@
 	display: flex;
 	flex-direction: column;
 	text-align: right;
-
-	@include a8c-breakpoint( '>660px' ) {
+	
+	@include breakpoint( '>660px' ) {
 		align-items: flex-end;
 		font-size: 16px;
 
@@ -19,23 +19,23 @@
 			align-items: flex-start;
 		}
 	}
-
+		
 
 	.is-section-signup &:not( .domain-product-price__domain-step-copy-updates ) {
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			padding-left: 1em;
 			padding-right: 2em;
 		}
 	}
 
 	.is-section-domains & {
-		@include a8c-breakpoint( '>800px' ) {
+		@include breakpoint( '>800px' ) {
 			padding-left: 1em;
 			padding-right: 2em;
 		}
 	}
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		display: inline-block;
 		font-size: 14px;
 		text-align: left;
@@ -57,7 +57,7 @@
 
 	&.no-price .domain-product-price__free-text,
 	&.no-price .domain-product-price__sale-price {
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			margin-left: 0;
 		}
 	}
@@ -82,18 +82,18 @@
 			color: var( --color-text-subtle );
 		}
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			line-height: 1.5;
 			margin-top: 0;
 		}
 	}
 
 	.is-placeholder & {
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			display: none;
 		}
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			animation: loading-fade 1.6s ease-in-out infinite;
 			background-color: var( --color-neutral-0 );
 			color: transparent;

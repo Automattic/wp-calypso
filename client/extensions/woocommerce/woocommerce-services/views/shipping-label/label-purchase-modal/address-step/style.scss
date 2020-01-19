@@ -3,7 +3,7 @@
 	display: flex;
 	flex-direction: column;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		flex-direction: row;
 	}
 }
@@ -23,7 +23,7 @@
 .address-step__phone {
 	width: 100%;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		margin-left: 24px;
 	}
 }
@@ -40,7 +40,7 @@
 	margin-top: 24px;
 	flex-direction: column;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		flex-direction: row;
 	}
 }
@@ -55,7 +55,7 @@
 	padding: 16px;
 	flex-grow: 1;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		flex-direction: row;
 		width: 50%;
 

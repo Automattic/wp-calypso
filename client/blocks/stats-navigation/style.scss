@@ -2,35 +2,35 @@
 	.section-nav__panel {
 		padding-right: 0;
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			padding-right: 16px;
 		}
 	}
 	.segmented-control {
 		margin-left: 0;
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			margin-left: 16px;
 		}
 	}
 	.followers-count .button {
 		margin-left: 16px;
 
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			display: none;
 		}
 	}
 	.stats-navigation__intervals.is-standalone.segmented-control {
 		display: flex;
 
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			display: none;
 		}
 	}
 	.stats-navigation__intervals.segmented-control {
 		display: none;
 
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			display: flex;
 		}
 	}

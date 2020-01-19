@@ -2,7 +2,7 @@
 	.formatted-header {
 		margin-top: 35px;
 		margin-bottom: 35px;
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			margin-top: 40px;
 			margin-bottom: 20px;
 		}
@@ -14,7 +14,7 @@
 		padding-right: 1px;
 	}
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		// Don't show more than 2 first items
 		.activity-log-item:nth-child( n+3 ) {
 			display: none;

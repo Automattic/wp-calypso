@@ -7,10 +7,10 @@
 	overflow: hidden;
 	margin: 12px auto 24px;
 	color: var( --color-text-inverted );
-	font-family: $a8c-font-family-sans;
+	font-family: $sans;
 	text-align: center;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		margin-top: 28px;
 	}
 }
@@ -24,7 +24,7 @@
 	overflow: hidden;
 	z-index: z-index( 'root', '.thank-you-card__header' );
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		padding: 32px 0;
 	}
 }
@@ -37,7 +37,7 @@
 .thank-you-card__body {
 	padding: 24px;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		padding: 40px;
 	}
 }
@@ -49,7 +49,7 @@
 	position: relative;
 	z-index: z-index( '.thank-you-card__header', '.thank-you-card__main-icon' );
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		width: 96px;
 		height: 96px;
 	}
@@ -90,7 +90,7 @@
 	font-weight: 600;
 	margin-bottom: 8px;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		font-size: 26px;
 	}
 }
@@ -103,7 +103,7 @@
 	margin: 0 auto 30px;
 	line-height: 20px;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		font-size: 15px;
 	}
 }

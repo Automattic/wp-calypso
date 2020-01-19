@@ -40,7 +40,7 @@
 			right: 30px;
 		user-select: none;
 
-		@include a8c-breakpoint( '<960px' ) {
+		@include breakpoint( '<960px' ) {
 			display: none;
 		}
 	}

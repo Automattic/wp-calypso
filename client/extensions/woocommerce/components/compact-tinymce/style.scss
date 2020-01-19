@@ -28,7 +28,7 @@
 		border-right: 1px solid var( --color-neutral-10 );
 		height: 36px;
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			height: 44px;
 		}
 	}
@@ -40,11 +40,11 @@
 	.mce-container.mce-tinymce {
 		& > .mce-container-body {
 			&::after {
-				@include a8c-breakpoint( '<660px' ) {
+				@include breakpoint( '<660px' ) {
 					@include long-content-fade( $size: 0 );
 				}
 
-				@include a8c-breakpoint( '660px-960px' ) {
+				@include breakpoint( '660px-960px' ) {
 					@include long-content-fade( $size: 0 );
 				}
 			}

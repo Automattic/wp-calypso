@@ -21,7 +21,7 @@
 	padding: 20px 0;
 	color: var( --color-neutral-70 );
 
-	@include a8c-breakpoint( '<960px' ) {
+	@include breakpoint( '<960px' ) {
 		width: 100%;
 
 		&:first-child {
@@ -67,7 +67,7 @@
 	top: 25px;
 	margin-bottom: 24px;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		top: 10px;
 		margin: 0 5px;
 	}

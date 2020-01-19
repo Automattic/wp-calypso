@@ -8,7 +8,7 @@
 	& > span:last-of-type {
 		width: 50%;
 
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			width: 65%;
 		}
 	}
@@ -20,7 +20,7 @@
 		align-items: center;
 		width: 100%;
 
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			font-size: 12px;
 		}
 	}
@@ -38,7 +38,7 @@
 	font-size: 14px;
 	font-weight: 600;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		width: 35%;
 	}
 }
@@ -47,7 +47,7 @@
 	float: left;
 	color: var( --color-neutral-20 );
 
-	@include a8c-breakpoint( '<480px') {
+	@include breakpoint( '<480px') {
 		display: none;
 	}
 }

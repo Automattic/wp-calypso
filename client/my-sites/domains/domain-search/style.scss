@@ -16,7 +16,7 @@
 	font-size: 15px;
 	word-wrap: break-word;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		font-size: 17px;
 	}
 }

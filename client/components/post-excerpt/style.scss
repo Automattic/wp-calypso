@@ -10,7 +10,7 @@
 		line-height: 1.618;
 		max-height: 24px * 3;
 
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			font-size: 15px;
 			line-height: 22px;
 			max-height: 22px * 3;
@@ -35,7 +35,7 @@
 				height: 24px;
 				background: linear-gradient( to right, rgba( 255, 255, 255, 0 ), rgba( 255, 255, 255, 1 ) 50% );
 
-				@include a8c-breakpoint( '<480px' ) {
+				@include breakpoint( '<480px' ) {
 					height: 22px;
 				}
 			}

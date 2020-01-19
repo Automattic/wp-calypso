@@ -12,7 +12,7 @@
 	margin: 40px 24px;
 	padding-left: 40px;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		padding-top: 8px;
 		padding-left: 80px;
 	}
@@ -30,7 +30,7 @@
 		&.gridicons-mail {
 			fill: var( --color-neutral-50 );
 
-			@include a8c-breakpoint( '<480px' ) {
+			@include breakpoint( '<480px' ) {
 				height: 24px;
 				width: 24px;
 			}
@@ -42,7 +42,7 @@
 			border-radius: 100%;
 			box-shadow: 0 0 0 3px var( --color-neutral-0 );
 
-			@include a8c-breakpoint( '<480px' ) {
+			@include breakpoint( '<480px' ) {
 				height: 16px;
 				width: 16px;
 				top: 16px;
@@ -56,7 +56,7 @@
 		line-height: 1.2;
 		color: var( --color-neutral-70 );
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			font-size: 32px;
 		}
 	}
@@ -71,7 +71,7 @@
 	padding: 24px;
 	min-height: 88px;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		padding-right: 154px;
 	}
 
@@ -88,12 +88,12 @@
 	}
 
 	.button {
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			margin-top: 24px;
 			box-sizing: border-box;
 			width: 100%;
 		}
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			position: absolute;
 				top: 24px;
 				right: 24px;

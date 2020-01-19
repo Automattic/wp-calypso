@@ -3,7 +3,7 @@
 	align-items: center;
 	padding: 16px;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		padding: 16px 24px;
 	}
 }

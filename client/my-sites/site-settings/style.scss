@@ -126,7 +126,7 @@
 	}
 
 	.site-settings__blogaddress-settings {
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			display: flex;
 		}
 
@@ -135,7 +135,7 @@
 			margin-left: 0;
 			margin-top: 5px;
 
-			@include a8c-breakpoint( '>660px' ) {
+			@include breakpoint( '>660px' ) {
 				width: 45%;
 				margin-left: 16px;
 				margin-top: 0;
@@ -183,7 +183,7 @@
 	fieldset.site-icon-setting {
 		padding-bottom: 16px;
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			flex: 0 0 122px;
 			order: 1;
 			margin-bottom: 0;
@@ -193,21 +193,21 @@
 	}
 
 	.site-icon-setting__heading {
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			justify-content: space-between;
 			white-space: nowrap;
 		}
 	}
 
 	.site-icon-setting__icon {
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			float: left;
 			margin-right: 8px;
 		}
 	}
 
 	.site-icon-setting__button {
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			display: block;
 			margin-bottom: 8px;
 		}
@@ -299,7 +299,7 @@
 }
 
 .site-settings__site-options {
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		display: flex;
 	}
 
@@ -311,7 +311,7 @@
 }
 
 .site-settings__site-title-tagline {
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		flex: 0 1 100%;
 		order: 2;
 	}
@@ -342,7 +342,7 @@
 
 .writing-settings,
 .general-settings {
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		select {
 			width: 100%;
 		}

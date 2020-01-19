@@ -1,5 +1,5 @@
 .comment-navigation {
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		.section-nav__mobile-header::after {
 			padding-left: 8px;
 		}
@@ -20,7 +20,7 @@
 .comment-navigation.is-bulk-edit {
 	padding-right: 0;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		.section-nav__mobile-header {
 			display: none;
 		}
@@ -100,7 +100,7 @@
 	white-space: nowrap;
 }
 
-@include a8c-breakpoint( '<480px' ) {
+@include breakpoint( '<480px' ) {
 	.comment-list__header .header-cake__back.button.is-borderless.is-compact .gridicons-visible {
 		display: block;
 		margin: 0 auto;

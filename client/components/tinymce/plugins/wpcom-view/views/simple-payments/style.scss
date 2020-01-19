@@ -3,7 +3,7 @@
 	flex-direction: column;
 	padding: 10px;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		flex-direction: row;
 	}
 }
@@ -12,7 +12,7 @@
 	flex: 0 0 30%;
 	margin-bottom: 24px;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		margin-bottom: 0;
 	}
 }
@@ -48,7 +48,7 @@
 }
 
 .wpview-type-simple-payments__image-part + .wpview-type-simple-payments__text-part {
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		flex-basis: 70%;
 		padding-left: 24px;
 	}

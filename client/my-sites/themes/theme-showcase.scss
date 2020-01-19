@@ -8,12 +8,12 @@
 			padding-right: 4px;
 		}
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			margin-top: 24px;
 			margin-right: 15px;
 		}
 
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			font-size: 0;
 			.gridicon {
 				padding: 0;
@@ -26,7 +26,7 @@
 .is-section-themes.has-no-sidebar .themes__content {
 	padding: 0 0 32px;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		padding: 32px;
 	}
 }

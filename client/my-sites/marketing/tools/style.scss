@@ -3,7 +3,7 @@
 	flex-direction: row;
 	padding: 11px 24px; // standard padding
 
-	@include a8c-breakpoint( '>1040px' ) {
+	@include breakpoint( '>1040px' ) {
 		max-height: 300px;
 	}
 }
@@ -33,7 +33,7 @@
 	margin: 20px 0;
 
 	.button {
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			width: 100%;
 			text-align: center;
 		}
@@ -43,7 +43,7 @@
 .tools__header-image-wrapper {
 	display: none;
 
-	@include a8c-breakpoint( '>1040px' ) {
+	@include breakpoint( '>1040px' ) {
 		display: flex;
 		min-width: 400px;
 	}
@@ -79,7 +79,7 @@
 		margin-top: 20px;
 	}
 
-	@include a8c-breakpoint( '>1040px' ) {
+	@include breakpoint( '>1040px' ) {
 		width: calc( 50% - 1em );
 	}
 }
@@ -102,7 +102,7 @@
 		margin-bottom: 0;
 	}
 
-	@include a8c-breakpoint( '>1040px' ) {
+	@include breakpoint( '>1040px' ) {
 		width: 75%;
 	}
 }
@@ -112,11 +112,11 @@
 	max-width: 150px;
 	width: 15%;
 
-	@include a8c-breakpoint( '>1040px' ) {
+	@include breakpoint( '>1040px' ) {
 		display: flex;
 	}
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		display: none;
 	}
 }
@@ -154,7 +154,7 @@
 		justify-content: center;
 	}
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		flex-direction: row;
 		justify-content: flex-end;
 
@@ -168,7 +168,7 @@
 		}
 	}
 
-	@include a8c-breakpoint( '>1040px' ) {
+	@include breakpoint( '>1040px' ) {
 
 		.button {
 			margin: 0 0 0 1em;

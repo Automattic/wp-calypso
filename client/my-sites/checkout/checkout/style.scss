@@ -11,8 +11,8 @@
   	height: 1px;
   	box-sizing: border-box;
   	background: var( --color-border-subtle );
-
-  	@include a8c-breakpoint( '>660px' ) {
+  	
+  	@include breakpoint( '>660px' ) {
   		width: calc( 100% + 60px );
   		left: -30px;
   	}
@@ -45,7 +45,7 @@
 		}
 
 		&:not( .domain-details ) {
-			@include a8c-breakpoint( '<660px' ) {
+			@include breakpoint( '<660px' ) {
 				box-shadow: none;
 			}
 		}
@@ -96,7 +96,7 @@
 				flex: 1 1 auto;
 				margin-bottom: 15px;
 
-				@include a8c-breakpoint( '>480px' ) {
+				@include breakpoint( '>480px' ) {
 					flex: 2 1 auto;
 				}
 			}
@@ -106,7 +106,7 @@
 			}
 
 			.placeholder-inline-pad-only-wide {
-				@include a8c-breakpoint( '>480px' ) {
+				@include breakpoint( '>480px' ) {
 					padding-right: 15px;
 				}
 			}
@@ -116,7 +116,7 @@
 				margin-bottom: 15px;
 				flex: 0 0 100%;
 
-				@include a8c-breakpoint( '>480px' ) {
+				@include breakpoint( '>480px' ) {
 					flex: 6 3 auto;
 				}
 			}
@@ -125,7 +125,7 @@
 				height: 50px;
 				width: 100%;
 
-				@include a8c-breakpoint( '>480px' ) {
+				@include breakpoint( '>480px' ) {
 					width: 80px;
 					height: 40px;
 				}
@@ -134,7 +134,7 @@
 			.placeholder-button-container {
 				margin-top: 55px;
 
-				@include a8c-breakpoint( '>480px' ) {
+				@include breakpoint( '>480px' ) {
 					margin-top: 20px;
 				}
 			}
@@ -145,7 +145,7 @@
 				height: 0;
 				border-bottom: 1px solid var( --color-neutral-0 );
 
-				@include a8c-breakpoint( '<480px' ) {
+				@include breakpoint( '<480px' ) {
 					display: none;
 				}
 			}
@@ -171,14 +171,14 @@
 	.checkout__box-padding {
 		padding: 16px 8px;
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			padding: 10px 30px 20px;
 		}
 	}
 
 	.domain-details {
 		.box-padding {
-			@include a8c-breakpoint( '<660px' ) {
+			@include breakpoint( '<660px' ) {
 				padding: 16px;
 			}
 		}
@@ -187,14 +187,14 @@
 	form {
 		margin-top: 5px;
 
-		@include a8c-breakpoint( '>660px' ) {
-			@include a8c-clear-fix;
+		@include breakpoint( '>660px' ) {
+			@include clear-fix;
 		}
 	}
 
 	button[type='submit'].checkout__pay-button-button,
 	button[type='submit'].button-pay {
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			width: 100%;
 
 			.wpcom-site & {
@@ -202,7 +202,7 @@
 			}
 		}
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			clear: both;
 			float: left;
 		}
@@ -240,7 +240,7 @@
 	.form-button {
 		margin-top: 20px;
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			margin-bottom: 20px;
 		}
 	}
@@ -265,7 +265,7 @@
 		margin: 16px 0;
 		padding: 0;
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			padding: 0;
 			text-align: left;
 		}
@@ -274,7 +274,7 @@
 			font-size: 12px;
 			margin: 0;
 
-			@include a8c-breakpoint( '>660px' ) {
+			@include breakpoint( '>660px' ) {
 				margin-left: 24px;
 			}
 		}
@@ -282,7 +282,7 @@
 		.gridicon {
 			float: left;
 
-			@include a8c-breakpoint( '<660px' ) {
+			@include breakpoint( '<660px' ) {
 				display: none;
 			}
 		}
@@ -296,7 +296,7 @@
 		padding: 10px 0;
 
 		// On larger screens, users can use the coupon functionality present on the sidebar
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			display: block;
 			text-align: center;
 		}
@@ -311,7 +311,7 @@
 	.checkout__payment-box-actions {
 		margin: 20px -30px 0;
 		padding: 20px 30px 0;
-		@include a8c-clear-fix;
+		@include clear-fix;
 	}
 
 	.credit-card-payment-box {
@@ -319,7 +319,7 @@
 			background-color: var( --color-surface );
 			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.075 );
 
-			@include a8c-breakpoint( '>660px' ) {
+			@include breakpoint( '>660px' ) {
 				box-shadow: none;
 			}
 		}
@@ -382,7 +382,7 @@
 		padding: 10px;
 		margin: 0 auto;
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			display: none;
 		}
 	}
@@ -395,7 +395,7 @@
 		padding-bottom: 10px;
 		margin: 15px 0;
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			padding-bottom: 30px;
 			margin-bottom: 20px;
 		}
@@ -408,7 +408,7 @@
 		padding-top: 10px;
 		position: relative;
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			margin-top: 30px;
 			padding-top: 20px;
 		}
@@ -427,7 +427,7 @@
 			background-color: var( --color-surface );
 			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.075 );
 
-			@include a8c-breakpoint( '>660px' ) {
+			@include breakpoint( '>660px' ) {
 				box-shadow: none;
 			}
 		}
@@ -476,7 +476,7 @@
 			.wordpress-logo {
 				fill: var( --color-primary );
 				margin: 0 10px;
-				@include a8c-breakpoint( '>660px' ) {
+				@include breakpoint( '>660px' ) {
 					margin: 0 20px;
 				}
 			}
@@ -506,7 +506,7 @@
 					max-height: 100px;
 				}
 
-				@include a8c-breakpoint( '>960px' ) {
+				@include breakpoint( '>960px' ) {
 					float: right;
 					margin-left: 20px;
 					width: calc( 20% - 20px );
@@ -519,7 +519,7 @@
 			.checkout__free-stand-alone-domain-mapping-illustration + h6 + span {
 				display: block;
 
-				@include a8c-breakpoint( '>960px' ) {
+				@include breakpoint( '>960px' ) {
 					clear: none;
 					float: left;
 					width: calc( 75% - 20px );
@@ -573,9 +573,9 @@
 		list-style: none;
 		margin: 0;
 		padding: 15px 0;
-		@include a8c-clear-fix;
+		@include clear-fix;
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			border-bottom: 1px solid var( --color-neutral-10 );
 			margin: 30px 0;
 		}
@@ -584,13 +584,13 @@
 			color: var( --color-neutral-20 );
 			text-align: center;
 
-			@include a8c-breakpoint( '>660px' ) {
+			@include breakpoint( '>660px' ) {
 				float: left;
 				margin: 0 5%;
 				width: 40%;
 			}
 
-			@include a8c-breakpoint( '<660px' ) {
+			@include breakpoint( '<660px' ) {
 				margin: 0;
 				padding: 15px;
 			}
@@ -623,7 +623,7 @@
 	margin-top: 15px;
 	padding: 10px;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		box-sizing: border-box;
 		padding: 15px;
 		width: 100%;
@@ -651,7 +651,7 @@
 			border-color: #00aadc;
 		}
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			display: flex;
 			flex-direction: column;
 			justify-content: space-between;
@@ -691,7 +691,7 @@
 
 // If there's no sidebar, we don't show the cart on the checkout page.
 
-@include a8c-breakpoint( '>660px' ) {
+@include breakpoint( '>660px' ) {
 	.pay-button,
 	.checkout__pay-button {
 		float: left;
@@ -722,20 +722,20 @@
 		margin-left: 1em;
 	}
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		border-bottom: 1px solid var( --color-neutral-0 );
 		margin: 10px 0 0;
 		text-align: center;
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		float: right;
 		clear: none;
 	}
 }
 
 .credit-card-payment-box__switch-link-left {
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		float: left;
 		padding-left: 20px;
 	}
@@ -743,7 +743,7 @@
 
 .checkout__payment-box-buttons,
 .payment-box__payment-buttons {
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		display: flex;
 		flex-wrap: wrap;
 	}
@@ -752,14 +752,14 @@
 	.pay-button {
 		margin-right: 10px;
 
-		@include a8c-breakpoint( '<960px' ) {
+		@include breakpoint( '<960px' ) {
 			flex: 1 0 50%;
 		}
 	}
 
 	.checkout__pay-button-button,
 	.pay-button__button {
-		@include a8c-breakpoint( '<960px' ) {
+		@include breakpoint( '<960px' ) {
 			width: 100%;
 		}
 	}
@@ -770,7 +770,7 @@
 	flex-grow: 1;
 	margin-top: 10px;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		flex: 1 0 40%;
 	}
 }
@@ -780,7 +780,7 @@
 	align-items: center;
 	justify-content: center;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		justify-content: left;
 	}
 }
@@ -790,13 +790,13 @@
 	color: var( --color-accent );
 	text-align: left;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		text-align: center;
 		margin-top: 5px;
 		width: 100%;
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		justify-content: flex-end;
 	}
 
@@ -815,7 +815,7 @@
 }
 
 .credits-payment-box .checkout__payment-chat-button {
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		float: right;
 	}
 }
@@ -919,7 +919,7 @@
 				color: var( --color-primary );
 				background-color: var( --color-neutral-0 );
 
-				@include a8c-breakpoint( '>480px' ) {
+				@include breakpoint( '>480px' ) {
 					background-color: transparent;
 				}
 			}
@@ -995,7 +995,7 @@
 	.checkout__apple-pay {
 		height: 35px;
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			margin: -5px 0;
 		}
 	}
@@ -1025,7 +1025,7 @@
 		}
 	}
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		.is-open .section-nav__panel {
 			padding-bottom: 0;
 		}
@@ -1056,7 +1056,7 @@
 	.checkout__form-state-field {
 		margin-left: 0;
 	}
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		.address-2,
 		.city {
 			flex-basis: calc( 100% - 15px );
@@ -1105,7 +1105,7 @@
 		// show the masterbar.
 		padding-top: 48px;
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			padding-top: 0;
 		}
 	}
@@ -1177,7 +1177,7 @@
 	width: 100%;
 	display: flex;
 	justify-content: center;
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		display: none;
 	}
 	.checkout__site-created-copy {

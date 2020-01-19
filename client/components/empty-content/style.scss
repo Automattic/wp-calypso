@@ -5,7 +5,7 @@
 	padding-top: 20px;
 	text-align: center;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		padding-top: 10px;
 		margin-left: 15px;
 		margin-right: 15px;
@@ -23,7 +23,7 @@
 	font-size: 34px;
 	font-weight: 300;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		font-size: 24px;
 	}
 }
@@ -34,7 +34,7 @@
 	font-weight: 300;
 	margin-bottom: 40px;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		font-size: 16px;
 	}
 }
@@ -51,7 +51,7 @@
 	.empty-content__illustration {
 		margin-top: -130px;
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			margin-top: -80px;
 		}
 	}
@@ -59,7 +59,7 @@
 	.empty-content__title {
 		font-size: 30px;
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			font-size: 24px;
 		}
 	}

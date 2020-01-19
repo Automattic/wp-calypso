@@ -1,7 +1,7 @@
 .related-posts__module-settings {
 	margin-bottom: 10px;
 }
-
+	
 .related-posts__preview-title {
 	font-weight: 600;
 	margin-top: 16px;
@@ -15,7 +15,7 @@
 	background: var( --color-neutral-0 );
 	box-sizing: border-box;
 
-	@include a8c-clear-fix;
+	@include clear-fix;
 }
 
 .related-posts__preview-headline {
@@ -25,7 +25,7 @@
 	}
 
 .related-posts__preview-items {
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		display: flex;
 		flex-wrap: wrap;
 		.related-posts__preview-post {
@@ -33,7 +33,7 @@
 		}
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		flex-wrap: nowrap;
 	}
 }

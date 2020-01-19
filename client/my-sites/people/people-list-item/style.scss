@@ -5,7 +5,7 @@
 	overflow: hidden;
 	position: relative;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		padding: 24px;
 	}
 
@@ -41,14 +41,14 @@
 }
 
 .people-list-item.is-invite .people-profile__username {
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		font-size: 18px;
 	}
 }
 
 .people-list-item.is-invite-details {
 	// Make extra space for invite status on small screens
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		padding-bottom: 34px;
 	}
 }
@@ -63,14 +63,14 @@
 		margin-right: 30px;
 
 		// Hide on small screens
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			display: none;
 		}
 	}
 
 	&.is-invite-details {
 		// Show below the name and role on small screens
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			position: absolute;
 			bottom: 4px;
 			margin-left: 80px;

@@ -75,14 +75,14 @@
 	min-width: 64px;
 	margin-right: 15px;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		min-width: 100px;
 	}
 }
 
 // Always indent the wrapper at larger breakpoints, asset or no asset
 .reader-combined-card__featured-asset-wrapper {
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		min-width: 100px;
 		margin-right: 15px;
 	}
@@ -115,7 +115,7 @@
 			width: 2px;
 			background: var( --color-primary );
 
-			@include a8c-breakpoint( '>660px' ) {
+			@include breakpoint( '>660px' ) {
 				left: -16px;
 			}
 		}
@@ -167,7 +167,7 @@
 .reader-combined-card__post-author-and-time {
 	font-size: 13px;
 	color: var( --color-text-subtle );
-	font-family: $a8c-font-family-sans;
+	font-family: $sans;
 	overflow: hidden;
 	max-height: 13px * 1.4 * 1;
 	word-wrap: break-word;
@@ -238,7 +238,7 @@
 	padding: 18px 0 0;
 	position: relative;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		margin: 0;
 	}
 }
@@ -290,7 +290,7 @@
 		margin-bottom: 3px;
 
 		.follow-button__label {
-			@include a8c-breakpoint( '<660px' ) {
+			@include breakpoint( '<660px' ) {
 				display: inline;
 			}
 		}

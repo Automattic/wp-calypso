@@ -13,13 +13,13 @@
 		display: flex;
 		flex-direction: column;
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			padding: inherit;
 			overflow-y: scroll;
 		}
 	}
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		&.dialog.card {
 			height: 100%;
 			max-height: 100%;
@@ -33,14 +33,14 @@
 	flex-basis: 100%;
 	padding: 32px;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		flex-basis: 40%;
 		padding: 24px;
 		margin-left: 24px;
 		background: var( --color-neutral-0 );
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		flex-basis: 30%;
 	}
 }
@@ -106,7 +106,7 @@
 		}
 	}
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		.form-section-heading {
 			padding-top: 20px;
 			padding-left: 20px;
@@ -118,7 +118,7 @@
 	display: flex;
 	flex-grow: 1;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		flex-direction: column;
 	}
 }
@@ -126,11 +126,11 @@
 .label-purchase-modal__main-section {
 	flex-basis: 100%;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		flex-basis: 60%;
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		flex-basis: 70%;
 	}
 }

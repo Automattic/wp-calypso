@@ -132,7 +132,7 @@
 	overflow-y: auto;
 	background: var( --color-surface );
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		max-height: calc( 100% - 109px );
 	}
 }
@@ -166,7 +166,7 @@
 		color: var( --color-neutral-70 );
 	}
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		padding: 16px;
 	}
 

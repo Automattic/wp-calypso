@@ -7,7 +7,7 @@
 	margin-bottom: 16px;
 }
 
-@include a8c-breakpoint( '<660px' ) {
+@include breakpoint( '<660px' ) {
 	.editor-more-options__copy-post-select-dialog {
 		width: 90%;
 	}

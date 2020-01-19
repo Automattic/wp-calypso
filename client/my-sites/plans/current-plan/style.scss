@@ -2,7 +2,7 @@
 	background-color: rgba( var( --color-neutral-dark-rgb ), 0.85 );
 	box-shadow: none;
 	margin: 0;
-
+	
 	.dialog__backdrop__content {
 		background-color: var( --color-surface );
 	}
@@ -20,13 +20,13 @@
 	background-color: var( --color-surface );
 	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
 		0 1px 2px var( --color-neutral-0 );
-
+	
 	&-main {
 		display: flex;
 	}
 
 	.is-jetpack-free & {
-		@include a8c-breakpoint( '>800px' ) {
+		@include breakpoint( '>800px' ) {
 			display: flex;
 			align-items: center;
 			text-align: left;
@@ -37,7 +37,7 @@
 .current-plan__header-icon {
 	display: none;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		display: flex;
     	flex-shrink: 0;
 		width: 100px;
@@ -83,7 +83,7 @@
 
 		display: block;
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			margin: 0 auto;
 		}
 	}
@@ -98,7 +98,7 @@
 		margin-top: 15px;
 		width: 90%;
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			margin-bottom: 18px;
 			margin-top: 18px;
 		}
@@ -136,8 +136,8 @@
 	justify-content: center;
 	margin-left: 16px;
 	min-width: 140px;
-
-	@include a8c-breakpoint( '>660px' ) {
+	
+	@include breakpoint( '>660px' ) {
 		justify-content: flex-end;
 	}
 }

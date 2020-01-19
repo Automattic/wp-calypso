@@ -87,7 +87,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			border-color: var( --studio-jetpack-green-50 );
 		}
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			.button {
 				font-size: 16px;
 				padding-top: 12px;
@@ -100,7 +100,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 .jetpack-connect__main-logo {
 	text-align: center;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		margin-top: 20px;
 	}
 }
@@ -207,7 +207,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	flex-direction: column;
 	flex-wrap: wrap;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		flex-direction: row;
 	}
 }
@@ -218,11 +218,11 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	justify-content: space-between;
 	min-width: 320px;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		max-width: 360px;
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		margin: 0 8px 16px;
 	}
 }
@@ -432,7 +432,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 }
 
 .jetpack-connect__sso-log-in-as {
-	font-family: $a8c-font-family-sans;
+	font-family: $sans;
 	font-size: 21px;
 	font-weight: 300;
 	text-align: center;
@@ -485,7 +485,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	margin: 16px -16px -16px;
 	padding: 16px;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		margin: 24px -24px -24px;
 		padding: 24px;
 	}
@@ -539,7 +539,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	padding-bottom: 8px;
 }
 
-@include a8c-breakpoint( '<480px' ) {
+@include breakpoint( '<480px' ) {
 	.jetpack-connect__sso-shared-detail-label,
 	.jetpack-connect__sso-shared-detail-value {
 		display: block;
@@ -746,7 +746,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 .layout.has-chat.is-section-jetpack-connect:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader )
 	.layout__content {
-	@include a8c-breakpoint( '>1040px' ) {
+	@include breakpoint( '>1040px' ) {
 		padding-left: 32px;
 		padding-right: 319px;
 	}
@@ -917,7 +917,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 				transform: translateX( 25% );
 			}
 
-			@include a8c-breakpoint( '<660px' ) {
+			@include breakpoint( '<660px' ) {
 				margin-top: 0;
 			}
 		}
@@ -1125,13 +1125,13 @@ body.is-section-jetpack-connect .layout.is-jetpack-woocommerce-flow {
 	.product-card__header {
 		padding: 12px 0;
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			padding: 16px 0;
 		}
 	}
 
 	.product-card__header-primary {
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			justify-content: center;
 		}
 	}
@@ -1150,7 +1150,7 @@ body.is-section-jetpack-connect .layout.is-jetpack-woocommerce-flow {
 		font-style: normal;
 		vertical-align: baseline;
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			font-weight: 600;
 		}
 	}

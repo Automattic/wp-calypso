@@ -102,7 +102,7 @@ a.comments__comment-username {
 		margin-top: 4px;
 	}
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		top: -4px;
 	}
 }

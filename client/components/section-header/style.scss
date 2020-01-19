@@ -23,7 +23,7 @@
 	position: relative;
 	overflow: hidden;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		line-height: 1.4;
 		margin: 4px 0;
 	}
@@ -32,7 +32,7 @@
 	.support-info {
 		margin-left: 8px;
 	}
-
+	
 	.support-info {
 		position: relative;
 		top: 3px;
@@ -43,7 +43,7 @@
 	flex-grow: 0;
 	position: relative;
 
-	@include a8c-clear-fix;
+	@include clear-fix;
 }
 
 .section-header__label {

@@ -19,7 +19,7 @@
 			margin-bottom: 150px;
 		}
 
-		@include a8c-breakpoint('>800px') {
+		@include breakpoint('>800px') {
 			margin-bottom: 53px;
 
 			body.is-section-signup & {
@@ -60,7 +60,7 @@
 		box-sizing: border-box;
 		overflow: hidden;
 
-		@include a8c-breakpoint('<960px') {
+		@include breakpoint('<960px') {
 			padding: 1px 23px 0 ($sidebar-width-min + 24px);
 		}
 
@@ -74,11 +74,11 @@
 			background: var( --color-surface-backdrop );
 			padding: 0 1px 32px;
 
-			@include a8c-breakpoint('<960px') {
+			@include breakpoint('<960px') {
 				padding: 0 1px 24px;
 			}
 
-			@include a8c-breakpoint('<660px') {
+			@include breakpoint('<660px') {
 				padding: 0 1px;
 			}
 
@@ -86,13 +86,13 @@
 				background: var( --color-primary );
 				padding: 0;
 
-				@include a8c-breakpoint('>800px') {
+				@include breakpoint('>800px') {
 					padding: 0 0 32px;
 				}
 			}
 		}
 
-		@include a8c-breakpoint('<660px') {
+		@include breakpoint('<660px') {
 			margin-left: 0;
 			padding: 0;
 			padding-top: 47px;
@@ -108,7 +108,7 @@
 				width: 100%;
 				margin: 0 0 10px;
 
-				@include a8c-breakpoint('>800px') {
+				@include breakpoint('>800px') {
 					width: auto;
 					margin: 0 0 0 14px;
 				}

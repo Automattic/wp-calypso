@@ -23,7 +23,7 @@
 		padding-right: 24px;
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		display: flex;
 	}
 }
@@ -33,7 +33,7 @@
 	flex-grow: 1;
 	flex-direction: row;
 
-	@include a8c-breakpoint( '<1280px' ) {
+	@include breakpoint( '<1280px' ) {
 		flex-direction: column;
 	}
 
@@ -118,7 +118,7 @@
 	text-align: left;
 	padding-left: 16px;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		padding-left: 24px;
 	}
 
@@ -146,7 +146,7 @@
 	display: flex;
 	flex-direction: column;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		flex-direction: row;
 	}
 }
@@ -161,7 +161,7 @@
 }
 
 .shipping__zones-row-method-description {
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		margin-left: 4px;
 	}
 }
@@ -183,7 +183,7 @@
 	text-align: right;
 	padding-right: 16px;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		padding-right: 24px;
 	}
 }

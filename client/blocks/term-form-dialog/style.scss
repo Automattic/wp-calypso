@@ -7,7 +7,7 @@
 	padding-bottom: 0;
 }
 
-@include a8c-breakpoint( '<660px' ) {
+@include breakpoint( '<660px' ) {
 	.term-form-dialog {
 		width: 90%;
 	}

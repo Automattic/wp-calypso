@@ -6,7 +6,7 @@
 	position: relative;
 	text-align: center;
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		margin: 0 15px;
 	}
 

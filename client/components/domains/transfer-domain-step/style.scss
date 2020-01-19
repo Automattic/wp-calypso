@@ -13,7 +13,7 @@
 		flex-direction: column;
 		margin-bottom: 20px;
 
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			flex-direction: row;
 		}
 	}
@@ -27,7 +27,7 @@
 			font-size: 90%;
 		}
 
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			text-align: right;
 		}
 	}
@@ -73,15 +73,15 @@
 		margin-left: 20px;
 		max-width: 140px;
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			display: block;
 		}
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			display: none;
 		}
 
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			display: block;
 		}
 	}
@@ -96,7 +96,7 @@
 	flex-grow: 1;
 	margin: 10px 0 0;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		min-width: 100px;
 		flex-grow: 0;
 		margin: 0 0 0 10px;
@@ -114,7 +114,7 @@
 	flex-flow: column;
 	width: 100%;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		flex-flow: row;
 	}
 }
@@ -267,7 +267,7 @@ input {
 		width: 100%;
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		flex-direction: row;
 
 		button {

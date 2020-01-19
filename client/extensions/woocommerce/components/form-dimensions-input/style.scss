@@ -12,7 +12,7 @@
 		}
 	}
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		flex-wrap: nowrap;
 
 		.form-text-input-with-affixes {
@@ -24,14 +24,14 @@
 	.form-dimensions-input__length,
 	.form-dimensions-input__width {
 		border-bottom-width: 0;
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			border-bottom-width: 1px;
 		}
 	}
 
 	.form-dimensions-input__width,
 	.form-dimensions-input__height {
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			margin-left: -1px;
 		}
 	}
@@ -39,7 +39,7 @@
 	.form-dimensions-input__length,
 	.form-dimensions-input__width,
 	.form-dimensions-input__height {
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			width: 70px;
 			flex-grow: 0;
 		}
@@ -60,7 +60,7 @@
 	}
 
 	.form-dimensions-input__height {
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			width: 80px;
 		}
 	}

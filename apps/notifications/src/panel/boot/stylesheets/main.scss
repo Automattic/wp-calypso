@@ -6,7 +6,7 @@
 	background-color: var( --color-surface );
 
 	font: {
-		family: $a8c-font-family-sans;
+		family: $sans;
 		size: $wpnc__font-size;
 	}
 	line-height: $wpnc__line-height;
@@ -308,12 +308,12 @@
 		transform: translateY( -50% );
 
 		h2 {
-			font: 300 21px/24px $a8c-font-family-sans;
+			font: 300 21px/24px $sans;
 			margin-bottom: 4px;
 		}
 
 		p {
-			font: 400 16px/24px $a8c-font-family-sans;
+			font: 400 16px/24px $sans;
 		}
 	}
 
@@ -762,7 +762,7 @@
 
 	.wpnc__single-view .wpnc__badge .wpnc__body .wpnc__body-content .wpnc__paragraph {
 		text-align: center;
-		font-family: $a8c-font-family-sans;
+		font-family: $sans;
 	}
 
 	.wpnc__single-view .wpnc__badge img {
@@ -772,7 +772,7 @@
 	}
 
 	.wpnc__body .wpnc__body-content .wpnc__paragraph {
-		font-family: $a8c-font-family-sans;
+		font-family: $sans;
 		padding: 0 $wpnc__padding-large;
 		text-align: left;
 	}

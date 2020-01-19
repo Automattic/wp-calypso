@@ -1,7 +1,7 @@
 .use-your-domain-step__content {
 	display: flex;
 
-	@include a8c-breakpoint( '<800px' ) {
+	@include breakpoint( '<800px' ) {
 		flex-flow: wrap;
 	}
 
@@ -40,7 +40,7 @@
 		margin: 1em 0;
 		max-height: 150px;
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			display: none;
 		}
 	}

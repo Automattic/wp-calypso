@@ -36,7 +36,7 @@
 @import 'shared/forms';
 
 * {
-	font-family: $a8c-font-family-sans;
+	font-family: $sans;
 }
 
 body {
@@ -48,7 +48,7 @@ html,
 input,
 select,
 textarea {
-	font-family: $a8c-font-family-sans;
+	font-family: $sans;
 }
 
 // Main button

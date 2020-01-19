@@ -1,6 +1,6 @@
 
 .product-purchase-features-list {
-	@include a8c-breakpoint( '>1040px' ) {
+	@include breakpoint( '>1040px' ) {
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: space-between;
@@ -15,7 +15,7 @@
 	padding-top: 12px;
 	max-width: 150%;
 
-	@include a8c-breakpoint( '>1040px' ) {
+	@include breakpoint( '>1040px' ) {
 		max-width: 49.5%;
 	}
 }

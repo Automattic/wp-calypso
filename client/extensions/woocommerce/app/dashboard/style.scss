@@ -46,25 +46,25 @@
 		width: calc( 35% - 8px ) !important;
 		margin-bottom: 16px;
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			margin-bottom: 0;
 		}
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			margin-right: auto;
 			margin-left: auto;
 			width: 80% !important;
 		}
 
 		& + .dashboard-widget__children {
-			@include a8c-breakpoint( '>660px' ) {
+			@include breakpoint( '>660px' ) {
 				width: calc( 65% - 34px ) !important;
 			}
 		}
 	}
 
 	.dashboard-widget__row {
-		@include a8c-breakpoint( '<960px' ) {
+		@include breakpoint( '<960px' ) {
 			flex-direction: column;
 		}
 	}
@@ -77,11 +77,11 @@
 			0 1px 2px var( --color-neutral-0 );
 		flex-direction: row;
 
-		@include a8c-breakpoint( '<480px' ) {
+		@include breakpoint( '<480px' ) {
 			flex-direction: column;
 		}
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			margin-bottom: 16px;
 		}
 
@@ -124,7 +124,7 @@
 		width: 100%;
 		text-align: center;
 
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			margin-left: 16px;
 		}
 
@@ -137,7 +137,7 @@
 		}
 
 		.dashboard-widget__children {
-			@include a8c-breakpoint( '<960px' ) {
+			@include breakpoint( '<960px' ) {
 				display: flex;
 				align-items: stretch;
 

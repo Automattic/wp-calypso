@@ -91,7 +91,7 @@
 	background: var( --color-surface );
 	color: var( --studio-gray-100 );
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		background: var( --studio-gray-0 );
 	}
 
@@ -128,7 +128,7 @@
 	&.is-section-login {
 		padding-bottom: 100px;
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			min-height: calc( 100% - 145px );
 			padding-bottom: 145px;
 		}
@@ -155,7 +155,7 @@
 			padding: 10px 16px;
 			text-align: center;
 
-			@include a8c-breakpoint( '>660px' ) {
+			@include breakpoint( '>660px' ) {
 				margin: 0;
 			}
 
@@ -182,7 +182,7 @@
 					display: block;
 				}
 
-				@include a8c-breakpoint( '<660px' ) {
+				@include breakpoint( '<660px' ) {
 					margin-bottom: 20px;
 				}
 			}
@@ -200,7 +200,7 @@
 			box-sizing: border-box;
 			display: block;
 
-			@include a8c-breakpoint( '>660px' ) {
+			@include breakpoint( '>660px' ) {
 				background-color: var( --color-surface );
 				box-shadow: 0 2px 3px 0 var( --color-neutral-10 );
 				margin: 0 auto;
@@ -232,7 +232,7 @@
 			margin-bottom: 80px;
 			margin-top: 0;
 
-			@include a8c-breakpoint( '>480px' ) {
+			@include breakpoint( '>480px' ) {
 				font-size: 32px;
 				margin-bottom: 65px;
 			}
@@ -257,7 +257,7 @@
 		.login__form-subheader {
 			display: none;
 
-			@include a8c-breakpoint( '>660px' ) {
+			@include breakpoint( '>660px' ) {
 				display: block;
 				font-size: 20px;
 				font-weight: 600;
@@ -274,7 +274,7 @@
 			top: 60px;
 			text-align: center;
 
-			@include a8c-breakpoint( '>660px' ) {
+			@include breakpoint( '>660px' ) {
 				position: static;
 				margin-bottom: 30px;
 			}
@@ -323,7 +323,7 @@
 			box-sizing: border-box;
 			display: block;
 
-			@include a8c-breakpoint( '>660px' ) {
+			@include breakpoint( '>660px' ) {
 				background-color: var( --color-surface );
 				box-shadow: 0 2px 3px 0 var( --color-neutral-10 );
 				margin: 0 auto;
@@ -373,7 +373,7 @@
 				display: inline;
 			}
 
-			@include a8c-breakpoint( '>660px' ) {
+			@include breakpoint( '>660px' ) {
 				display: inline;
 				text-align: left;
 
@@ -396,7 +396,7 @@
 			height: auto;
 			padding: 20px 20px 78px;
 
-			@include a8c-breakpoint( '>660px' ) {
+			@include breakpoint( '>660px' ) {
 				flex-direction: row;
 				justify-content: space-between;
 			}
@@ -453,7 +453,7 @@
 		padding-left: 13px;
 		padding-right: 13px;
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			padding-left: 55px;
 			padding-right: 13px;
 		}
@@ -479,7 +479,7 @@
 			text-decoration: none;
 			text-transform: uppercase;
 
-			@include a8c-breakpoint( '>480px' ) {
+			@include breakpoint( '>480px' ) {
 				padding: 32px;
 			}
 		}
@@ -500,7 +500,7 @@
 		text-transform: capitalize;
 		width: auto;
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			width: 100%;
 		}
 
@@ -577,7 +577,7 @@
 			max-width: 90%;
 		}
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			flex-direction: row;
 			flex-wrap: wrap;
 
@@ -616,11 +616,11 @@
 		padding: 20px $woo-form-whitespace;
 		width: 100%;
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			padding: 20px $woo-form-whitespace-480;
 		}
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			padding: 20px $woo-form-whitespace-660;
 		}
 	}
@@ -651,12 +651,12 @@
 		padding-top: 44px;
 		width: calc( 100% + ( #{$woo-form-whitespace} * 2 ) );
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			margin: 0 -24px;
 			width: calc( 100% + ( #{$woo-form-whitespace-480} * 2 ) );
 		}
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			margin: 0 -100px;
 			width: calc( 100% + ( #{$woo-form-whitespace-660} * 2 ) );
 		}
@@ -699,11 +699,11 @@
 
 	.formatted-header__title {
 		font-size: 1.6em;
-		font-family: $a8c-font-family-sans;
+		font-family: $sans;
 		margin: 0 0 8px;
 		padding: 0;
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			font-size: 2em;
 			margin: 2em 0 0;
 		}

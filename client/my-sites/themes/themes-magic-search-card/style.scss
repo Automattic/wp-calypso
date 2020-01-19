@@ -162,7 +162,7 @@
 	display: flex;
 	flex-wrap: wrap;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		flex-wrap: nowrap;
 	}
 }
@@ -181,7 +181,7 @@
 	color: var( --color-neutral-70 );
 	transition: all 200ms ease-in;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		width: auto;
 	}
 
@@ -199,7 +199,7 @@
 			fill: var( --color-accent );
 		}
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			background: var( --color-neutral-0 );
 			box-shadow: inset 0 -3px 0 0 var( --color-accent );
 		}

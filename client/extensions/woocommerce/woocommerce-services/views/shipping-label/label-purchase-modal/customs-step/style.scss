@@ -21,13 +21,13 @@
 	display: flex;
 	flex-wrap: wrap;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		flex-wrap: nowrap;
 	}
 }
 
 .customs-step__contents-type {
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		margin-right: 24px;
 	}
 }
@@ -36,7 +36,7 @@
 .customs-step__restriction-type {
 	width: 100%;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		width: 50%;
 	}
 }
@@ -44,7 +44,7 @@
 .customs-step__item-rows-header {
 	display: none;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		display: flex;
 	}
 
@@ -59,7 +59,7 @@
 	display: flex;
 	flex-direction: column;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		flex-direction: row;
 
 		.form-legend,
@@ -84,7 +84,7 @@
 .customs-step__item-code-column {
 	width: 100%;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		margin-left: 4px;
 	}
 }
@@ -92,7 +92,7 @@
 .customs-step__item-weight-column,
 .customs-step__item-value-column,
 .customs-step__item-code-column {
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		max-width: 130px;
 	}
 }

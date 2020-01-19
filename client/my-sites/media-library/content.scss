@@ -9,7 +9,7 @@
 	width: 12%;
 	margin: 0 28px;
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		width: 20%;
 	}
 }
@@ -38,7 +38,7 @@
 
 // Split attribution to its own line for smaller screens in the main media library.
 // This prevents the "copy to media library" button from overlapping the grid buttons.
-@include a8c-breakpoint( '<960px' ) {
+@include breakpoint( '<960px' ) {
 	.media__main-section .media-library__header.card {
 		flex-wrap: wrap;
 	}
@@ -52,7 +52,7 @@
 }
 
 // Scoot the "copy to media library" over to the right, so it doesn't float awkwardly in the middle.
-@include a8c-breakpoint( '>960px' ) {
+@include breakpoint( '>960px' ) {
 	.media__main-section .media-library__pexels-attribution {
 		order: 2;
 		margin-right: 0;

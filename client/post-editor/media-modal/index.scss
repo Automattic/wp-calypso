@@ -83,7 +83,7 @@
 		display: none;
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		&.is-mobile {
 			display: none;
 		}
@@ -135,7 +135,7 @@
 		display: none;
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		.is-desktop {
 			display: inherit;
 		}
@@ -149,7 +149,7 @@
 .editor-media-modal__plan-storage {
 	display: none;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		display: inline-block;
 	}
 }

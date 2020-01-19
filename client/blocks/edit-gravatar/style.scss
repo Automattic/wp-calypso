@@ -39,7 +39,7 @@
 	bottom: 0;
 	left: 0;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		top: 5%;
 		bottom: 5%;
 		left: 5%;
@@ -47,7 +47,7 @@
 		width: 90%;
 	}
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		left: 12.5%;
 		right: 12.5%;
 		width: 75%;

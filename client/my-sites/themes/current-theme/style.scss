@@ -8,7 +8,7 @@ $current-theme-border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.25 );
 }
 
 .current-theme__current {
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		width: 50%;
 		float: left;
 	}
@@ -16,11 +16,11 @@ $current-theme-border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.25 );
 }
 
 .current-theme__img {
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		border-left: $current-theme-border;
 		float: right;
 	}
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		border-right: $current-theme-border;
 		float: left;
 	}
@@ -28,10 +28,10 @@ $current-theme-border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.25 );
 }
 
 .current-theme__img-placeholder {
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		float: right;
 	}
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		float: left;
 	}
 	width: 75px;
@@ -72,7 +72,7 @@ $current-theme-border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.25 );
 	border-top: $current-theme-border;
 	box-sizing: border-box;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		width: 50%;
 		float: right;
 		border-top: none;
@@ -80,7 +80,7 @@ $current-theme-border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.25 );
 	}
 
 	&.two-buttons {
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			width: 33.3%;
 		}
 

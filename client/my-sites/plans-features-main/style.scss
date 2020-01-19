@@ -9,7 +9,7 @@
 	}
 
 	&.is-narrow {
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			max-width: 520px;
 			margin-left: auto;
 			margin-right: auto;
@@ -55,12 +55,12 @@
 	margin: 0 0 16px;
 	padding: 0 16px;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		margin-bottom: 28px;
 		padding: 0 24px;
 	}
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		margin-left: auto;
 		margin-right: auto;
 		padding: 0;
@@ -75,7 +75,7 @@
 	font-weight: 700;
 	color: var( --color-text );
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		font-size: 24px;
 		font-weight: 400;
 	}

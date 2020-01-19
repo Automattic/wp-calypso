@@ -37,12 +37,12 @@
 		background-position: 150px 20px;
 	}
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		background-position: 120px 20px;
 	}
 
 	.following__intro-copy-hidden {
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			display: none;
 		}
 	}
@@ -77,15 +77,15 @@
 		margin-top: 20px;
 	}
 
-	@include a8c-breakpoint( '<960px' ) {
+	@include breakpoint( '<960px' ) {
 		font-size: 16px;
 	}
 
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		font-size: 18px;
 	}
 
-	@include a8c-breakpoint( '<480px' ) {
+	@include breakpoint( '<480px' ) {
 		font-size: 16px;
 	}
 }
@@ -93,7 +93,7 @@
 .following__search {
 	margin-top: 8px;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		margin-top: 30px;
 	}
 }

@@ -2,7 +2,7 @@
 	max-width: 100%;
 	border-radius: 0;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		max-width: 550px;
 		border-radius: 3px;
 	}

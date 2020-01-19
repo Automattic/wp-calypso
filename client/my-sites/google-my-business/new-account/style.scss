@@ -6,7 +6,7 @@
 	margin-bottom: 10px;
 	max-width: 200px;
 
-	@include a8c-breakpoint( '>960px' ) {
+	@include breakpoint( '>960px' ) {
 		max-width: 300px;
 	}
 }

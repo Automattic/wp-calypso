@@ -20,7 +20,7 @@
 	margin: 0;
 	padding: 0 0 10px;
 
-	@include a8c-breakpoint( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		width: 55%;
 	}
 
@@ -86,7 +86,7 @@
 }
 
 .cancel-purchase__button {
-	@include a8c-breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		width: 100%;
 	}
 }

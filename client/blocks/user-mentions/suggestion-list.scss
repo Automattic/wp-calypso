@@ -5,7 +5,7 @@
 		display: none;
 	}
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		width: 20%;
 		min-width: 29em;
 	}
@@ -23,7 +23,7 @@
 		direction: ltr; // Required to get the '@' on the correct side.
 	}
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		line-height: 24px;
 	}
 }

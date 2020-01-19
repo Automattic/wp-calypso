@@ -10,7 +10,7 @@
 		display: flex;
 		flex-direction: column;
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			top: 5%;
 			bottom: 5%;
 			left: 5%;
@@ -18,7 +18,7 @@
 			width: 90%;
 		}
 
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			left: 12.5%;
 			right: 12.5%;
 			width: 75%;
@@ -44,7 +44,7 @@
 		margin-bottom: 0;
 		z-index: 10;
 
-		@include a8c-breakpoint( '<660px' ) {
+		@include breakpoint( '<660px' ) {
 			.search.has-focus {
 				margin: 0 4px;
 				width: calc( 100% - 8px );
@@ -72,15 +72,15 @@
 	.language-picker__modal-item {
 		width: 100%;
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			width: 50%;
 		}
 
-		@include a8c-breakpoint( '>660px' ) {
+		@include breakpoint( '>660px' ) {
 			width: 33%;
 		}
 
-		@include a8c-breakpoint( '>960px' ) {
+		@include breakpoint( '>960px' ) {
 			width: 25%;
 		}
 	}

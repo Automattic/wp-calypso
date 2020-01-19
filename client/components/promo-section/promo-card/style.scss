@@ -1,14 +1,14 @@
 .promo-card {
 	display: flex;
 	flex-direction: column;
-	@include a8c-breakpoint( '>480px' ) {
+	@include breakpoint( '>480px' ) {
 		flex-direction: row;
 	}
 
 	.action-panel__figure {
 		margin-top: 3px;
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			max-width: 24px;
 			order: 1;
 
@@ -22,14 +22,14 @@
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;
-
+		
 		p {
 			flex-grow: 1;
 		}
 	}
 
 	&.is-primary {
-		@include a8c-breakpoint( '>480px' ) {
+		@include breakpoint( '>480px' ) {
 			.action-panel__figure {
 				max-width: 310px;
 			}
