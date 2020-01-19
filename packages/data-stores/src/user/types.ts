@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { Action } from 'redux';
 
 export const enum ActionType {

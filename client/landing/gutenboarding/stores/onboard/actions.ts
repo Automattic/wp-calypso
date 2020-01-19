@@ -56,3 +56,15 @@ export const setIsCreatingSite = ( isCreatingSite: boolean ) => ( {
 	type: ActionType.IS_CREATING_SITE as const,
 	isCreatingSite,
 } );
+
+export type OnboardAction = ReturnType<
+	| typeof setDomain
+	| typeof setSelectedDesign
+	| typeof setSiteVertical
+	| typeof resetSiteVertical
+	| typeof setSiteTitle
+	| typeof togglePageLayout
+	| typeof setShouldCreate
+	| typeof resetOnboardStore
+	| typeof setIsCreatingSite
+>;

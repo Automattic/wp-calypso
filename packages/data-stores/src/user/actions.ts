@@ -48,3 +48,12 @@ export function* createAccount( params: CreateAccountParams ) {
 		return receiveNewUserFailed( err );
 	}
 }
+
+export type Action = ReturnType<
+	| typeof fetchCurrentUser
+	| typeof receiveCurrentUser
+	| typeof receiveCurrentUserFailed
+	| typeof fetchNewUser
+	| typeof receiveNewUser
+	| typeof receiveNewUserFailed
+>;

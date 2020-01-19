@@ -8,3 +8,5 @@ export const receiveTemplates = ( verticalId: string, templates: Template[] ) =>
 	verticalId,
 	templates,
 } );
+
+export type Action = ReturnType< typeof receiveTemplates >;

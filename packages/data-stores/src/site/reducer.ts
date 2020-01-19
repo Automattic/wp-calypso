@@ -8,13 +8,9 @@ import { combineReducers } from '@wordpress/data';
  * Internal dependencies
  */
 import { ActionType, NewSite, NewSiteErrorResponse } from './types';
-import * as Actions from './actions';
+import { Action } from './actions';
 
-const newSiteData: Reducer<
-	NewSite | {} | undefined,
-	| ReturnType< typeof Actions[ 'receiveNewSite' ] >
-	| ReturnType< typeof Actions[ 'receiveNewSiteFailed' ] >
-> = ( state = undefined, action ) => {
+const newSiteData: Reducer< NewSite | {} | undefined, Action > = ( state = undefined, action ) => {
 	if ( action.type === ActionType.RECEIVE_NEW_SITE ) {
 		const { response } = action;
 		return {
@@ -26,12 +22,10 @@ const newSiteData: Reducer<
 	return state;
 };
 
-const newSiteError: Reducer<
-	NewSiteErrorResponse | undefined,
-	| ReturnType< typeof Actions[ 'fetchNewSite' ] >
-	| ReturnType< typeof Actions[ 'receiveNewSite' ] >
-	| ReturnType< typeof Actions[ 'receiveNewSiteFailed' ] >
-> = ( state = undefined, action ) => {
+const newSiteError: Reducer< NewSiteErrorResponse | undefined, Action > = (
+	state = undefined,
+	action
+) => {
 	switch ( action.type ) {
 		case ActionType.FETCH_NEW_SITE:
 			return undefined;
@@ -49,12 +43,7 @@ const newSiteError: Reducer<
 	return state;
 };
 
-const isFetchingSite: Reducer<
-	boolean | undefined,
-	| ReturnType< typeof Actions[ 'fetchNewSite' ] >
-	| ReturnType< typeof Actions[ 'receiveNewSite' ] >
-	| ReturnType< typeof Actions[ 'receiveNewSiteFailed' ] >
-> = ( state = false, action ) => {
+const isFetchingSite: Reducer< boolean | undefined, Action > = ( state = false, action ) => {
 	switch ( action.type ) {
 		case ActionType.FETCH_NEW_SITE:
 			return true;

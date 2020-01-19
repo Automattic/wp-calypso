@@ -11,3 +11,5 @@ export const receiveDomainSuggestions = (
 	queryObject,
 	suggestions,
 } );
+
+export type Action = ReturnType< typeof receiveDomainSuggestions >;

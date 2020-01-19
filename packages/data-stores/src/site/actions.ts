@@ -34,3 +34,7 @@ export function* createSite( params: CreateSiteParams ) {
 		return receiveNewSiteFailed( err );
 	}
 }
+
+export type Action = ReturnType<
+	typeof fetchNewSite | typeof receiveNewSite | typeof receiveNewSiteFailed
+>;
