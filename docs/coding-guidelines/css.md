@@ -94,7 +94,7 @@ Calypso already provides helpers for many common solutions. Please, use them! We
 
 Currently, all component based Sass files are imported into the respective JavaScript sources (using `import './style.scss'` statements). They are compiled by webpack as part of the bundling process into CSS chunks that are then loaded into the browser at runtime. Remember that all styles, even when loaded at different times, eventually end up on one page as part of a single HTML document. Make sure you namespace your styles for the page you are working on.
 
-Under the hood, we are using webpack and its `sass-loader`, for compiling the styles with `node-sass` (a C++ implementation of the Sass compiler which is working on parity with the reference Ruby implementation) and `mini-css-extract-plugin`, for creating the CSS chunks to be loaded as `<style>` tags into the browser.
+Under the hood, we are using webpack and its `sass-loader` for compiling the styles with `sass`, and `mini-css-extract-plugin`, for creating the CSS chunks to be loaded as `<style>` tags into the browser.
 
 ## Media Queries
 

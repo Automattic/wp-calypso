@@ -1,7 +1,7 @@
 /* eslint-disable import/no-nodejs-modules */
 const { dirname, join } = require( 'path' );
 const { existsSync, mkdirSync, writeFileSync } = require( 'fs' );
-const { renderSync } = require( 'node-sass' );
+const { renderSync } = require( 'sass' );
 
 const INPUT_FILE = join( __dirname, '..', 'src', 'calypso-color-schemes.scss' );
 const OUTPUT_FILE = join( __dirname, '..', 'dist', 'calypso-color-schemes.css' );
