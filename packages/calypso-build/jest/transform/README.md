@@ -7,7 +7,7 @@ i.e. they're not plain JavaScript:
 
 ```jsx
 const MyFlag = ( { countryCode } ) => (
-	<img alt="" src={ require( `flags/${ countryCode }.svg` ) } />
+	<img alt="" src={ require( `flags/${ countryCode }.svg` ).default } />
 );
 ```
 
