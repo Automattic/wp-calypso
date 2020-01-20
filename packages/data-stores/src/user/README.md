@@ -8,7 +8,6 @@ Register the user store, passing in a valid client ID and secret:
 
 ```js
 import { User } from '@automattic/data-stores';
-import { useDispatch, useSelect } from '@wordpress/data';
 
 const USER_STORE = User.register( {
 	client_id: 'MY_CLIENT_ID', // ⚠️Replace with your app's ID
@@ -22,6 +21,7 @@ Check if a current user is logged in:
 
 ```js
 import { useSelect } from '@wordpress/data';
+
 function MyComponent() {
 	const isLoggedIn = useSelect( select => select( USER_STORE ).isCurrentUserLoggedIn() );
 	// …snip
