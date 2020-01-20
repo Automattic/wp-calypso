@@ -135,9 +135,9 @@ describe( 'SiteSettingsFormGeneral ', () => {
 					wpcom_coming_soon: 0,
 				},
 				withComingSoonOption: true,
-				updateFields: fields => {
+				updateFields: jest.fn( fields => {
 					testProps.fields = fields;
-				},
+				} ),
 			};
 		} );
 
@@ -158,7 +158,6 @@ describe( 'SiteSettingsFormGeneral ', () => {
 			[ 'Private', 'Private', 1, { blog_public: -1, wpcom_coming_soon: 0 } ],
 		].forEach( ( [ name, text, initialBlogPublic, updatedFields ] ) => {
 			test( `${ name } option should be selectable`, () => {
-				testProps.updateFields = jest.fn();
 				testProps.fields.blog_public = initialBlogPublic;
 				const { getByLabelText } = render( <SiteSettingsFormGeneral { ...testProps } /> );
 
@@ -170,7 +169,6 @@ describe( 'SiteSettingsFormGeneral ', () => {
 		} );
 
 		test( `Selecting Hidden should switch radio to Public`, () => {
-			testProps.updateFields = jest.fn();
 			testProps.fields.blog_public = -1;
 			const { getByLabelText } = render( <SiteSettingsFormGeneral { ...testProps } /> );
 
