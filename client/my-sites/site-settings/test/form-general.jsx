@@ -147,20 +147,25 @@ describe( 'SiteSettingsFormGeneral ', () => {
 		} );
 
 		[
-			[ 'Coming soon', 'Coming Soon', 1 ],
-			[ 'Public', 'Public', -1 ],
-			[ 'Hidden', 'Do not allow search engines to index my site', -1 ],
-			[ 'Private', 'Private', 1 ],
-		].forEach( ( [ name, text, initialBlogPublic ] ) => {
+			[ 'Coming soon', 'Coming Soon', 1, { blog_public: -1, wpcom_coming_soon: 1 } ],
+			[ 'Public', 'Public', -1, { blog_public: 1, wpcom_coming_soon: 0 } ],
+			[
+				'Hidden',
+				'Do not allow search engines to index my site',
+				-1,
+				{ blog_public: 0, wpcom_coming_soon: 0 },
+			],
+			[ 'Private', 'Private', 1, { blog_public: -1, wpcom_coming_soon: 0 } ],
+		].forEach( ( [ name, text, initialBlogPublic, updatedFields ] ) => {
 			test( `${ name } option should be selectable`, () => {
+				testProps.updateFields = jest.fn();
 				testProps.fields.blog_public = initialBlogPublic;
-				const { getByLabelText, rerender } = render( <SiteSettingsFormGeneral { ...testProps } /> );
+				const { getByLabelText } = render( <SiteSettingsFormGeneral { ...testProps } /> );
 
 				const radioButton = getByLabelText( text );
 				expect( radioButton.checked ).toBe( false );
 				fireEvent.click( radioButton );
-				rerender( <SiteSettingsFormGeneral { ...testProps } /> );
-				expect( radioButton.checked ).toBe( true );
+				expect( testProps.updateFields ).toBeCalledWith( updatedFields );
 			} );
 		} );
 
