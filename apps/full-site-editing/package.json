@@ -33,15 +33,16 @@
 		"global-styles": "calypso-build --source='global-styles'",
 		"build:global-styles": "NODE_ENV=production npm run global-styles",
 		"dev:global-styles": "npm run global-styles",
-		"dev": "npm-run-all --parallel dev:*",
-		"build": "npm-run-all --parallel build:*",
+		"dev": "node bin/npm-run-build.js --dev",
+		"build": "node bin/npm-run-build.js --build",
 		"test:unit": "npx wp-scripts test-unit-js --config='jest.config.js'",
 		"test:unit:help": "npx wp-scripts test-unit-js --config='jest.config.js' --help",
 		"test:unit:watch": "npx wp-scripts test-unit-js --config='jest.config.js' --watch",
 		"clean": "npx rimraf dist full-site-editing-plugin/*/dist",
 		"prebuild": "npm run clean",
 		"predev": "npm run clean",
-		"sync:blog-posts-block": "./bin/sync-blog-posts-block.sh"
+		"sync:blog-posts-block": "./bin/sync-blog-posts-block.sh",
+		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh"
 	},
 	"dependencies": {
 		"classnames": "2.2.6"
