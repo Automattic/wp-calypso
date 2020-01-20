@@ -44,22 +44,22 @@ class StatsActionSpam extends React.Component {
 
 	render() {
 		let label = this.state.spammed
-				? this.props.translate( 'Not Spam' )
-				: this.props.translate( 'Spam', {
+				? this.props.translate( 'Mark as Not Spam' )
+				: this.props.translate( 'Mark as Spam', {
 						context: 'Stats: Action to mark an item as spam',
-						comment: 'Default label (changes into "Not Spam").',
+						comment: 'Default label (changes into "Mark as Not Spam").',
 				  } ),
 			title = this.state.spammed
-				? this.props.translate( 'Not Spam', {
+				? this.props.translate( 'Mark as Not Spam', {
 						textOnly: true,
 						context: 'Stats: Action to undo marking an item as spam',
 						comment:
 							'Secondary label (default label is "Spam"). Recommended to use a very short label.',
 				  } )
-				: this.props.translate( 'Spam', {
+				: this.props.translate( 'Mark as Spam', {
 						textOnly: true,
 						context: 'Stats: Action to mark an item as spam',
-						comment: 'Default label (changes into "Not Spam").',
+						comment: 'Default label (changes into "Mark as Not Spam").',
 				  } ),
 			wrapperClass = classNames( 'module-content-list-item-action-wrapper', {
 				spam: ! this.state.spammed,
