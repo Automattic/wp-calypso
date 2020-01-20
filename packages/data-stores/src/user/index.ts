@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { registerStore } from '@wordpress/data';
+import { registerStore, Action } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -11,7 +11,7 @@ import reducer, { State } from './reducer';
 import * as actions from './actions';
 import * as resolvers from './resolvers';
 import * as selectors from './selectors';
-import createControls from './controls';
+import { createControls } from '../wpcom-request-controls';
 import { DispatchFromMap, SelectFromMap } from '../mapped-types';
 import { WpcomClientCredentials } from '../shared-types';
 
@@ -21,12 +21,13 @@ export { State };
 let isRegistered = false;
 export function register( clientCreds: WpcomClientCredentials ): typeof STORE_KEY {
 	if ( ! isRegistered ) {
-		const controls = createControls( clientCreds );
 		isRegistered = true;
 		registerStore< State >( STORE_KEY, {
 			actions,
-			controls,
-			reducer: reducer as any,
+			controls: ( createControls( clientCreds ) as unknown ) as {
+				[ key: string ]: ( a: Action ) => any;
+			},
+			reducer,
 			resolvers,
 			selectors,
 		} );
