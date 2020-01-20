@@ -90,14 +90,6 @@ const props = {
 };
 
 describe( 'SiteSettingsFormGeneral ', () => {
-	afterAll( () => {
-		global.window = {};
-	} );
-
-	afterAll( () => {
-		delete global.window;
-	} );
-
 	test( 'should not blow up and have proper CSS class', () => {
 		const comp = shallow( <SiteSettingsFormGeneral { ...props } /> );
 		expect( comp.find( '.site-settings__site-options' ).length ).toBe( 1 );
