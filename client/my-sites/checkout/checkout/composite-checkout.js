@@ -278,18 +278,18 @@ function useCountryList( overrideCountryList ) {
 	const globalCountryList = useSelector( state => getCountries( state, 'payments' ) );
 
 	// Has the global list been populated?
-	const listIsFetched = globalCountryList?.length > 0;
+	const isListFetched = globalCountryList?.length > 0;
 
 	useEffect( () => {
 		if ( shouldFetchList ) {
-			if ( listIsFetched ) {
+			if ( isListFetched ) {
 				setCountriesList( globalCountryList );
 			} else {
 				debug( 'countries list is empty; dispatching request for data' );
 				dispatch( fetchPaymentCountries() );
 			}
 		}
-	}, [ shouldFetchList, listIsFetched, globalCountryList, setCountriesList, dispatch ] );
+	}, [ shouldFetchList, isListFetched, globalCountryList, dispatch ] );
 
 	return countriesList;
 }
