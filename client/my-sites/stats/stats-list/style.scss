@@ -549,6 +549,7 @@ ul.module-content-list-item-action-submenu {
 
 	// Icon settings
 	// 1: Optically align a bit better
+	// 2: When a button instead of a link is used
 	.gridicon {
 		vertical-align: middle;
 		margin-right: 4px;
@@ -557,6 +558,10 @@ ul.module-content-list-item-action-submenu {
 		&.gridicons-cross {
 			margin-right: 0;
 		}
+	}
+	
+	.button.module-content-list-item-action-wrapper .gridicon {
+		vertical-align: unset; // 2
 	}
 
 	// Color spam action red
