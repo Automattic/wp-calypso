@@ -349,7 +349,6 @@ export class SiteSettingsFormGeneral extends Component {
 
 	visibilityOptionsComingSoon() {
 		const { fields, isRequestingSettings, eventTracker, siteIsJetpack, translate } = this.props;
-
 		const blogPublic = parseInt( fields.blog_public, 10 );
 		const wpcomComingSoon = parseInt( fields.wpcom_coming_soon, 10 );
 
@@ -386,7 +385,7 @@ export class SiteSettingsFormGeneral extends Component {
 							<FormRadio
 								name="blog_public"
 								value="1"
-								checked={ [ 0, 1 ].indexOf( blogPublic ) !== -1 }
+								checked={ blogPublic !== -1 }
 								onChange={ () =>
 									this.handleVisibilityOptionChange( {
 										blog_public: 1,
