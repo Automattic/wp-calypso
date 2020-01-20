@@ -15,6 +15,7 @@ import {
 	FormFieldAnnotation,
 } from '@automattic/composite-checkout-wpcom';
 import { CheckoutProvider, createRegistry } from '@automattic/composite-checkout';
+import { Card } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -155,30 +156,33 @@ export default function CompositeCheckout( {
 	);
 
 	return (
-		<CheckoutProvider
-			locale={ 'en-us' }
-			items={ itemsForCheckout }
-			total={ total }
-			onPaymentComplete={ onPaymentComplete }
-			showErrorMessage={ showErrorMessage }
-			showInfoMessage={ showInfoMessage }
-			showSuccessMessage={ showSuccessMessage }
-			onEvent={ handleCheckoutEvent }
-			paymentMethods={ paymentMethods }
-			registry={ registry }
-			isLoading={ isLoading || isLoadingStoredCards }
-		>
-			<WPCheckout
-				removeItem={ removeItem }
-				changePlanLength={ changePlanLength }
-				siteId={ siteId }
-				siteUrl={ siteSlug }
-				CountrySelectMenu={ CountrySelectMenu }
-				countriesList={ countriesList }
-				PhoneInput={ PhoneInput }
-				StateSelect={ StateSelect }
-			/>
-		</CheckoutProvider>
+		<React.Fragment>
+			<TestingBanner />
+			<CheckoutProvider
+				locale={ 'en-us' }
+				items={ itemsForCheckout }
+				total={ total }
+				onPaymentComplete={ onPaymentComplete }
+				showErrorMessage={ showErrorMessage }
+				showInfoMessage={ showInfoMessage }
+				showSuccessMessage={ showSuccessMessage }
+				onEvent={ handleCheckoutEvent }
+				paymentMethods={ paymentMethods }
+				registry={ registry }
+				isLoading={ isLoading || isLoadingStoredCards }
+			>
+				<WPCheckout
+					removeItem={ removeItem }
+					changePlanLength={ changePlanLength }
+					siteId={ siteId }
+					siteUrl={ siteSlug }
+					CountrySelectMenu={ CountrySelectMenu }
+					countriesList={ countriesList }
+					PhoneInput={ PhoneInput }
+					StateSelect={ StateSelect }
+				/>
+			</CheckoutProvider>
+		</React.Fragment>
 	);
 }
 
@@ -332,5 +336,18 @@ function CountrySelectMenu( {
 				aria-describedby={ countrySelectorDescriptionId }
 			/>
 		</FormFieldAnnotation>
+	);
+}
+
+function TestingBanner() {
+	return (
+		<Card
+			className="composite-checkout__testing-banner"
+			highlight="warning"
+			href="https://github.com/Automattic/wp-calypso/issues/new?title=New%20checkout&body=%3C!--%20Thanks%20for%20filling%20your%20bug%20report%20for%20our%20New%20checkout!%20Pick%20a%20clear%20title%20(%22New%20checkout%3A%20Continue%20button%20not%20working%22)%20and%20proceed.%20--%3E%0A%0A%23%23%23%23%20Steps%20to%20reproduce%0A1.%20Starting%20at%20URL%3A%0A2.%0A3.%0A4.%0A%0A%23%23%23%23%20What%20I%20expected%0A%0A%0A%23%23%23%23%20What%20happened%20instead%0A%0A%0A%23%23%23%23%20Browser%20%2F%20OS%20version%0A%0A%0A%23%23%23%23%20Screenshot%20%2F%20Video%20(Optional)%0A%0A%40sirbrillig%2C%20%40nbloomf%2C%20%40fditrapani%20%0A"
+		>
+			Warning! This checkout is a new feature still in testing. If you encounter issues, please
+			click here to report them and select "Checkout Redesign" in the project sidebar.
+		</Card>
 	);
 }
