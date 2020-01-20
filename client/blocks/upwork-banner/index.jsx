@@ -25,6 +25,7 @@ import './style.scss';
 
 /**
  * Image dependencies
+ */
 import builderIllustration from 'assets/images/illustrations/builder-referral.svg';
 
 class UpworkBanner extends PureComponent {
