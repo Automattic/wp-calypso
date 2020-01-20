@@ -11,8 +11,8 @@ import { User } from '@automattic/data-stores';
 import { useDispatch, useSelect } from '@wordpress/data';
 
 const USER_STORE = User.register( {
-	client_id: config( 'wpcom_signup_id' ),
-	client_secret: config( 'wpcom_signup_key' ),
+	client_id: 'MY_CLIENT_ID', // ⚠️Replace with your app's ID
+	client_secret: 'MY_CLIENT_SECRET', // ⚠️Replace with your app's secret
 } );
 ```
 
@@ -21,7 +21,11 @@ const USER_STORE = User.register( {
 Check if a current user is logged in:
 
 ```js
-const isLoggedIn = useSelect( select => select( USER_STORE ).isCurrentUserLoggedIn() );
+import { useSelect } from '@wordpress/data';
+function MyComponent() {
+	const isLoggedIn = useSelect( select => select( USER_STORE ).isCurrentUserLoggedIn() );
+	// …snip
+}
 ```
 
 ### Creating a new account
@@ -29,9 +33,13 @@ const isLoggedIn = useSelect( select => select( USER_STORE ).isCurrentUserLogged
 Creating an account defaults to a passwordless account creation. Pass in `is_passwordless: false` and a `password` param to use the default full account creation.
 
 ```js
-const { createAccount } = useDispatch( USER_STORE );
+import { useDispatch } from '@wordpress/data';
 
-createAccount( { email: 'example@example.com' } )
+function MyComponent() {
+	const { createAccount } = useDispatch( USER_STORE );
+	const submitHandler = () => createAccount( { email: 'example@example.com' } );
+	// …snip
+}
 ```
 
 ### Display account creation form, loader and error state
@@ -42,7 +50,9 @@ Put altogether, a minimalist signup form can be created with:
 import { User } from '@automattic/data-stores';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Button, Notice, Spinner, TextControl } from '@wordpress/components';
-import { useState } from 'react';
+import React, { useState } from 'react';
+
+const USER_STORE = User.register(/* app credentials… */);
 
 function SignupComponent() {
 	const [ email, setEmail ] = useState( '' );
@@ -71,7 +81,7 @@ function SignupComponent() {
 		<div>
 			{ newUserError && <Notice status="error"> { newUserError.message } </Notice> }
 			{ isFetchingNewUser ? (
-				<span>Loading...</span>
+				<span>Loading…</span>
 			) : (
 				<form onSubmit={ () => createAccount( { email } ) }>
 					<TextControl
