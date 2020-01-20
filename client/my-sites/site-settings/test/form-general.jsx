@@ -10,38 +10,11 @@ jest.mock( 'store', () => ( {
 	get: () => {},
 	User: () => {},
 } ) );
+
 jest.mock(
 	'components/banner',
 	() =>
 		function Banner() {
-			return <div />;
-		}
-);
-jest.mock(
-	'components/data/query-site-settings',
-	() =>
-		function QuerySiteSettings() {
-			return <div />;
-		}
-);
-jest.mock(
-	'components/language-picker',
-	() =>
-		function LanguagePicker() {
-			return <div />;
-		}
-);
-jest.mock(
-	'components/timezone',
-	() =>
-		function Timezone() {
-			return <div />;
-		}
-);
-jest.mock(
-	'../site-icon-setting',
-	() =>
-		function SiteIconSetting() {
 			return <div />;
 		}
 );
@@ -53,6 +26,8 @@ import { shallow } from 'enzyme';
 import { render, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import React from 'react';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
 import {
 	PLAN_FREE,
 	PLAN_BLOGGER,
@@ -74,6 +49,34 @@ import moment from 'moment';
 moment.tz = {
 	guess: () => moment(),
 };
+
+const initialReduxState = {
+	siteSettings: {},
+	sites: {
+		items: [],
+	},
+	media: {
+		queries: {},
+	},
+	currentUser: {
+		capabilities: {},
+	},
+	ui: {
+		editor: {
+			imageEditor: {},
+		},
+	},
+};
+
+function renderWithRedux( ui ) {
+	const store = createStore( state => state, initialReduxState );
+	const renderResults = render( <Provider store={ store }>{ ui }</Provider> );
+	return {
+		...renderResults,
+		store,
+		rerender: newUi => renderResults.rerender( <Provider store={ store }>{ newUi }</Provider> ),
+	};
+}
 
 const props = {
 	site: {
@@ -143,7 +146,7 @@ describe( 'SiteSettingsFormGeneral ', () => {
 		} );
 
 		test( `Should have 4 visibility options`, () => {
-			const { container } = render( <SiteSettingsFormGeneral { ...testProps } /> );
+			const { container } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 4 );
 		} );
 
@@ -160,7 +163,7 @@ describe( 'SiteSettingsFormGeneral ', () => {
 		].forEach( ( [ name, text, initialBlogPublic, updatedFields ] ) => {
 			test( `${ name } option should be selectable`, () => {
 				testProps.fields.blog_public = initialBlogPublic;
-				const { getByLabelText } = render( <SiteSettingsFormGeneral { ...testProps } /> );
+				const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 
 				const radioButton = getByLabelText( text );
 				expect( radioButton ).not.toBeChecked();
@@ -171,7 +174,7 @@ describe( 'SiteSettingsFormGeneral ', () => {
 
 		test( `Selecting Hidden should switch radio to Public`, () => {
 			testProps.fields.blog_public = -1;
-			const { getByLabelText } = render( <SiteSettingsFormGeneral { ...testProps } /> );
+			const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 
 			const hiddenCheckbox = getByLabelText( 'Do not allow search engines to index my site' );
 			expect( hiddenCheckbox ).not.toBeChecked();
@@ -188,7 +191,9 @@ describe( 'SiteSettingsFormGeneral ', () => {
 
 		test( `Hidden checkbox should be possible to unselect`, () => {
 			testProps.fields.blog_public = -1;
-			const { getByLabelText, rerender } = render( <SiteSettingsFormGeneral { ...testProps } /> );
+			const { getByLabelText, rerender } = renderWithRedux(
+				<SiteSettingsFormGeneral { ...testProps } />
+			);
 
 			const hiddenCheckbox = getByLabelText( 'Do not allow search engines to index my site' );
 			expect( hiddenCheckbox ).not.toBeChecked();
