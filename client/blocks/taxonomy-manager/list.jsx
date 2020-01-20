@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { includes, filter, map, noop, reduce, union } from 'lodash';
-import WindowScroller from 'react-virtualized/WindowScroller';
+import { WindowScroller } from '@automattic/react-virtualized';
 
 /**
  * Internal dependencies

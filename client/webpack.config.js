@@ -183,7 +183,6 @@ const webpackConfig = {
 		modules: [ __dirname, 'node_modules' ],
 		alias: Object.assign(
 			{
-				'react-virtualized': 'react-virtualized/dist/es',
 				debug: path.resolve( __dirname, '../node_modules/debug' ),
 				store: 'store/dist/store.modern',
 				gridicons$: path.resolve( __dirname, 'components/gridicon' ),
