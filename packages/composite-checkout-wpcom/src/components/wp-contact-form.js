@@ -22,7 +22,6 @@ export default function WPContactForm( {
 	isActive,
 	CountrySelectMenu,
 	PhoneInput,
-	StateSelect,
 	countriesList,
 	renderDomainContactFields,
 } ) {
@@ -171,125 +170,6 @@ const DomainRegistrationCheckbox = styled.input`
 		outline: ${props => props.theme.colors.outline} solid 2px;
 	}
 `;
-
-// TODO: Figure out if we still need this
-function AddressFields( { section, contactInfo, setters, StateSelect } ) {
-	const translate = useTranslate();
-	const { firstName, lastName, email, address, city, state, country } = contactInfo;
-	const { setContactField } = setters;
-
-	return (
-		<React.Fragment>
-			<FieldRow>
-				<LeftColumn>
-					<Field
-						id={ section + '-first-name' }
-						type="text"
-						label={ translate( 'First name' ) }
-						value={ firstName.value }
-						onChange={ value =>
-							setContactField( 'firstName', { value, isTouched: true, isValid: !! value } )
-						}
-						autoComplete="given-name"
-						isError={ firstName.isTouched && ! firstName.isValid }
-						errorMessage={ translate( 'This field is required.' ) }
-					/>
-				</LeftColumn>
-
-				<RightColumn>
-					<Field
-						id={ section + '-last-name' }
-						type="text"
-						label={ translate( 'Last name' ) }
-						value={ lastName.value }
-						onChange={ value =>
-							setContactField( 'lastName', { value, isTouched: true, isValid: !! value } )
-						}
-						autoComplete="family-name"
-						isError={ lastName.isTouched && ! lastName.isValid }
-						errorMessage={ translate( 'This field is required.' ) }
-					/>
-				</RightColumn>
-			</FieldRow>
-
-			<FormField
-				id={ section + '-email-address' }
-				type="email"
-				label={ translate( 'Email address' ) }
-				placeholder={ translate( 'name@example.com' ) }
-				value={ email.value }
-				onChange={ value =>
-					setContactField( 'email', { value, isTouched: true, isValid: !! value } )
-				}
-				autoComplete="email"
-				isError={ email.isTouched && ! email.isValid }
-				errorMessage={ translate( 'This field is required.' ) }
-			/>
-
-			<FormField
-				id={ section + '-address' }
-				type="text"
-				label={ translate( 'Address' ) }
-				value={ address.value }
-				onChange={ value =>
-					setContactField( 'address', { value, isTouched: true, isValid: !! value } )
-				}
-				autoComplete={ section + ' street-address' }
-				isError={ address.isTouched && ! address.isValid }
-				errorMessage={ translate( 'This field is required.' ) }
-			/>
-
-			<FieldRow>
-				<LeftColumn>
-					<Field
-						id={ section + '-city' }
-						type="text"
-						label={ translate( 'City' ) }
-						value={ city.value }
-						onChange={ value =>
-							setContactField( 'city', { value, isTouched: true, isValid: !! value } )
-						}
-						autoComplete={ section + ' address-level2' }
-						isError={ city.isTouched && ! city.isValid }
-						errorMessage={ translate( 'This field is required.' ) }
-					/>
-				</LeftColumn>
-
-				<RightColumn>
-					<StateSelectWrapper>
-						<StateSelect
-							countryCode={ country.value || 'US' }
-							label={
-								isStateorProvince() === 'state' ? translate( 'State' ) : translate( 'Province' )
-							}
-							name={ section + '-state' }
-							onChange={ event =>
-								setContactField( 'state', {
-									value: event.target.value,
-									isTouched: true,
-									isValid: !! event.target.value,
-								} )
-							}
-							value={ state.value }
-						/>
-					</StateSelectWrapper>
-				</RightColumn>
-			</FieldRow>
-		</React.Fragment>
-	);
-}
-
-AddressFields.propTypes = {
-	section: PropTypes.string.isRequired,
-	contactInfo: PropTypes.object.isRequired,
-	setters: PropTypes.object.isRequired,
-	StateSelect: PropTypes.elementType.isRequired,
-};
-
-function isStateorProvince() {
-	//TODO: Add location detection to return "state" or "province"
-	return 'state';
-}
 
 function PhoneNumberField( { id, isRequired, contactInfo, countriesList, PhoneInput, setters } ) {
 	const translate = useTranslate();
@@ -488,13 +368,6 @@ function ContactFormSummary() {
 function joinNonEmptyValues( joinString, ...values ) {
 	return values.filter( value => value.length > 0 ).join( joinString );
 }
-
-const StateSelectWrapper = styled.div`
-	& select {
-		width: 100%;
-		min-width: 0;
-	}
-`;
 
 function contactDetailsFormat( { hasDomainsInCart } ) {
 	if ( hasDomainsInCart ) {
