@@ -51,6 +51,7 @@ jest.mock(
  */
 import { shallow } from 'enzyme';
 import { render, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect';
 import React from 'react';
 import {
 	PLAN_FREE,
@@ -162,7 +163,7 @@ describe( 'SiteSettingsFormGeneral ', () => {
 				const { getByLabelText } = render( <SiteSettingsFormGeneral { ...testProps } /> );
 
 				const radioButton = getByLabelText( text );
-				expect( radioButton.checked ).toBe( false );
+				expect( radioButton ).not.toBeChecked();
 				fireEvent.click( radioButton );
 				expect( testProps.updateFields ).toBeCalledWith( updatedFields );
 			} );
@@ -173,10 +174,10 @@ describe( 'SiteSettingsFormGeneral ', () => {
 			const { getByLabelText } = render( <SiteSettingsFormGeneral { ...testProps } /> );
 
 			const hiddenCheckbox = getByLabelText( 'Do not allow search engines to index my site' );
-			expect( hiddenCheckbox.checked ).toBe( false );
+			expect( hiddenCheckbox ).not.toBeChecked();
 
 			const publicRadio = getByLabelText( 'Public' );
-			expect( publicRadio.checked ).toBe( false );
+			expect( publicRadio ).not.toBeChecked();
 
 			fireEvent.click( hiddenCheckbox );
 			expect( testProps.updateFields ).toBeCalledWith( {
@@ -190,18 +191,18 @@ describe( 'SiteSettingsFormGeneral ', () => {
 			const { getByLabelText, rerender } = render( <SiteSettingsFormGeneral { ...testProps } /> );
 
 			const hiddenCheckbox = getByLabelText( 'Do not allow search engines to index my site' );
-			expect( hiddenCheckbox.checked ).toBe( false );
+			expect( hiddenCheckbox ).not.toBeChecked();
 
 			const publicRadio = getByLabelText( 'Public' );
-			expect( publicRadio.checked ).toBe( false );
+			expect( publicRadio ).not.toBeChecked();
 
 			fireEvent.click( hiddenCheckbox );
 			rerender( <SiteSettingsFormGeneral { ...testProps } /> );
 			fireEvent.click( hiddenCheckbox );
 			rerender( <SiteSettingsFormGeneral { ...testProps } /> );
 
-			expect( hiddenCheckbox.checked ).toBe( false );
-			expect( publicRadio.checked ).toBe( true );
+			expect( hiddenCheckbox ).not.toBeChecked();
+			expect( publicRadio ).toBeChecked();
 		} );
 	} );
 } );
