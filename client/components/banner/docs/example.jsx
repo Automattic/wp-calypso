@@ -61,10 +61,10 @@ const BannerExample = () => (
 			callToAction="Get Backups"
 			description="New plugins can lead to unexpected changes. Ensure you can restore your site if something goes wrong."
 			dismissPreferenceName="devdocs-banner-backups-example"
-			dismissTemporary={ true }
-			horizontal={ true }
+			dismissTemporary
+			horizontal
 			href="#"
-			jetpack={ true }
+			jetpack
 			title="Make sure your site is backed up before installing a new plugin."
 		/>
 	</div>
