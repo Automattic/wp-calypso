@@ -1,7 +1,6 @@
 /**
  * External Dependencies
  */
-import { findIndex, tail } from 'lodash';
 import { Action } from 'redux';
 
 /**
@@ -9,29 +8,15 @@ import { Action } from 'redux';
  */
 import { EXPERIMENT_FETCH, EXPERIMENT_ASSIGN, CURRENT_USER_RECEIVE } from 'state/action-types';
 import { ExperimentState, ExperimentAssign } from 'state/experiments/types';
+import { tracksAnonymousUserId } from 'lib/analytics/ad-tracking';
 
 /**
  * Attempt to get the anon id for the user, if set
  */
 function getAnonIdFromCookie(): string | null {
-	if ( document && document.cookie != null ) {
-		const cookieString = document.cookie;
-		const rawCookies = cookieString.split( ';' );
-		const anonCookieIndex = findIndex( rawCookies, c =>
-			c
-				.trim()
-				.toLowerCase()
-				.startsWith( 'tk_ai=' )
-		);
-		if ( anonCookieIndex === -1 ) return null;
+	const id = tracksAnonymousUserId();
 
-		const anonIdCookie = rawCookies[ anonCookieIndex ];
-		const anonIdTuple = anonIdCookie.split( '=' );
-
-		if ( anonIdTuple.length === 2 ) return anonIdTuple[ 1 ] === '' ? null : anonIdTuple[ 1 ];
-		if ( anonIdTuple.length > 2 ) return tail( anonIdTuple ).join( '=' );
-	}
-	return null;
+	return id == null || id === '' ? null : id;
 }
 
 const appStartedAt = Date.now();

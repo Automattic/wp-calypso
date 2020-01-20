@@ -13,7 +13,7 @@ describe( 'Experiment Reducer', () => {
 		test( 'Should reduce init with no cookie', () => {
 			Object.defineProperty( document, 'cookie', {
 				writable: true,
-				value: null,
+				value: '',
 			} );
 			const state = reducer( undefined, { type: '@@INIT' } );
 			expect( state ).toHaveProperty( 'anonId', null );
