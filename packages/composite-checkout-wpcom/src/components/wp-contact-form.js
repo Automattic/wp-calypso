@@ -16,68 +16,6 @@ import { SummaryLine, SummaryDetails, SummarySpacerLine } from './summary-detail
 import { LeftColumn, RightColumn } from './ie-fallback';
 import { prepareDomainContactDetails, isValid } from '../types';
 
-const contactDetailsFormat = ( { hasDomainsInCart } ) => {
-	if ( hasDomainsInCart ) {
-		return 'DOMAINS';
-	}
-	return 'DEFAULT';
-};
-
-const renderContactDetails = ( {
-	translate,
-	domainName,
-	isDomainFieldsVisible,
-	contactInfo,
-	renderDomainContactFields,
-	setters,
-	PhoneInput,
-	CountrySelectMenu,
-	countriesList,
-} ) => {
-	const format = contactDetailsFormat( { isDomainFieldsVisible } );
-	const requiresVatId = isEligibleForVat( contactInfo.countryCode.value );
-	switch ( format ) {
-		case 'DOMAINS':
-			return (
-				<React.Fragment>
-					<DomainContactFieldsDescription>
-						{ translate(
-							'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
-						) }
-					</DomainContactFieldsDescription>
-					{ renderDomainContactFields(
-						[ domainName ],
-						prepareDomainContactDetails( contactInfo ),
-						setters.updateContactDetails,
-						setters.applyDomainContactValidationResults
-					) }
-					{ requiresVatId && <VatIdField /> }
-				</React.Fragment>
-			);
-		default:
-			return (
-				<React.Fragment>
-					<TaxFields
-						section="contact"
-						taxInfo={ contactInfo }
-						setters={ setters }
-						CountrySelectMenu={ CountrySelectMenu }
-						countriesList={ countriesList }
-					/>
-
-					<PhoneNumberField
-						id="contact-phone-number"
-						countriesList={ countriesList }
-						contactInfo={ contactInfo }
-						PhoneInput={ PhoneInput }
-						setters={ setters }
-					/>
-					{ requiresVatId && <VatIdField /> }
-				</React.Fragment>
-			);
-	}
-};
-
 export default function WPContactForm( {
 	summary,
 	isComplete,
@@ -557,3 +495,65 @@ const StateSelectWrapper = styled.div`
 		min-width: 0;
 	}
 `;
+
+function contactDetailsFormat( { hasDomainsInCart } ) {
+	if ( hasDomainsInCart ) {
+		return 'DOMAINS';
+	}
+	return 'DEFAULT';
+}
+
+function renderContactDetails( {
+	translate,
+	domainName,
+	isDomainFieldsVisible,
+	contactInfo,
+	renderDomainContactFields,
+	setters,
+	PhoneInput,
+	CountrySelectMenu,
+	countriesList,
+} ) {
+	const format = contactDetailsFormat( { isDomainFieldsVisible } );
+	const requiresVatId = isEligibleForVat( contactInfo.countryCode.value );
+	switch ( format ) {
+		case 'DOMAINS':
+			return (
+				<React.Fragment>
+					<DomainContactFieldsDescription>
+						{ translate(
+							'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
+						) }
+					</DomainContactFieldsDescription>
+					{ renderDomainContactFields(
+						[ domainName ],
+						prepareDomainContactDetails( contactInfo ),
+						setters.updateContactDetails,
+						setters.applyDomainContactValidationResults
+					) }
+					{ requiresVatId && <VatIdField /> }
+				</React.Fragment>
+			);
+		default:
+			return (
+				<React.Fragment>
+					<TaxFields
+						section="contact"
+						taxInfo={ contactInfo }
+						setters={ setters }
+						CountrySelectMenu={ CountrySelectMenu }
+						countriesList={ countriesList }
+					/>
+
+					<PhoneNumberField
+						id="contact-phone-number"
+						countriesList={ countriesList }
+						contactInfo={ contactInfo }
+						PhoneInput={ PhoneInput }
+						setters={ setters }
+					/>
+					{ requiresVatId && <VatIdField /> }
+				</React.Fragment>
+			);
+	}
+}
