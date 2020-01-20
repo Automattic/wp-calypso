@@ -96,6 +96,18 @@ describe( 'Banner basic tests', () => {
 		expect( comp.find( 'Button' ) ).toHaveLength( 0 );
 	} );
 
+	test( 'should have .is-jetpack class and JetpackLogo if jetpack prop is defined', () => {
+		const { plan, ...propsWithoutPlan } = props;
+		const comp = shallow( <Banner { ...propsWithoutPlan } jetpack /> );
+		expect( comp.find( '.is-jetpack' ) ).toHaveLength( 1 );
+		expect( comp.find( 'JetpackLogo' ) ).toHaveLength( 1 );
+	} );
+
+	test( 'should render have .is-horizontal class if horizontal prop is defined', () => {
+		const comp = shallow( <Banner { ...props } horizontal /> );
+		expect( comp.find( '.is-horizontal' ) ).toHaveLength( 1 );
+	} );
+
 	test( 'should render a <PlanPrice /> when price is specified', () => {
 		const comp = shallow( <Banner { ...props } price={ 100 } /> );
 		expect( comp.find( PlanPrice ) ).toHaveLength( 1 );
