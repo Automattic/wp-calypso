@@ -25,7 +25,7 @@ const resetState: ( anonId: string | null ) => ExperimentState = anonId => ( {
 	anonId,
 	isLoading: true,
 	nextRefresh: appStartedAt,
-	tests: null,
+	variations: null,
 } );
 
 export default function reducer( state: ExperimentState = resetState( null ), action: Action ) {
@@ -44,7 +44,7 @@ export default function reducer( state: ExperimentState = resetState( null ), ac
 			state = {
 				...state,
 				isLoading: false,
-				tests: ( action as ExperimentAssign ).tests,
+				variations: ( action as ExperimentAssign ).variations,
 				nextRefresh: ( action as ExperimentAssign ).nextRefresh,
 			};
 			break;

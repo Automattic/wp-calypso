@@ -1,11 +1,11 @@
 export type ExperimentResponse = {
-	tests: object;
+	variations: object;
 	nextRefresh: number;
 };
 
 export type ExperimentState = {
 	anonId: string | null;
-	tests: object | null;
+	variations: object | null;
 	nextRefresh: number;
 	isLoading: boolean;
 };

@@ -70,12 +70,12 @@ describe( 'Experiment Reducer', () => {
 			anonId: null,
 			isLoading: true,
 			nextRefresh: 123,
-			tests: null,
+			variations: null,
 		} );
 
-		const action = ( tests, nextRefresh ) => ( {
+		const action = ( variations, nextRefresh ) => ( {
 			type: EXPERIMENT_ASSIGN,
-			tests,
+			variations,
 			nextRefresh,
 		} );
 
@@ -85,7 +85,7 @@ describe( 'Experiment Reducer', () => {
 				...exampleState(),
 				isLoading: false,
 				nextRefresh: 456,
-				tests: { abc: '123' },
+				variations: { abc: '123' },
 			} );
 		} );
 	} );
@@ -97,19 +97,19 @@ describe( 'Experiment Reducer', () => {
 		} );
 	} );
 
-	describe( 'User recieve action', () => {
+	describe( 'User receive action', () => {
 		test( 'It should reset the assignments, except for the anonId', () => {
 			const initialState = {
 				anonId: 'hello world',
 				isLoading: false,
 				nextRefresh: 123,
-				tests: {
+				variations: {
 					example: 'abc',
 				},
 			};
 			const state = reducer( initialState, { type: CURRENT_USER_RECEIVE } );
 			expect( state ).toHaveProperty( 'anonId', initialState.anonId );
-			expect( state ).toHaveProperty( 'tests', null );
+			expect( state ).toHaveProperty( 'variations', null );
 			expect( state ).toHaveProperty( 'isLoading', true );
 		} );
 	} );
