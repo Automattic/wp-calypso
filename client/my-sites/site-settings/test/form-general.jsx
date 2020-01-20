@@ -147,16 +147,16 @@ describe( 'SiteSettingsFormGeneral ', () => {
 		} );
 
 		[
-			[ 'Coming soon', '.is-coming-soon [name="blog_public"]', 1 ],
-			[ 'Public', '.is-public [name="blog_public"]', -1 ],
-			[ 'Hidden', '.is-hidden [name="blog_public"]', -1 ],
-			[ 'Private', '.is-private [name="blog_public"]', 1 ],
-		].forEach( ( [ name, selector, initialBlogPublic ] ) => {
+			[ 'Coming soon', 'Coming Soon', 1 ],
+			[ 'Public', 'Public', -1 ],
+			[ 'Hidden', 'Do not allow search engines to index my site', -1 ],
+			[ 'Private', 'Private', 1 ],
+		].forEach( ( [ name, text, initialBlogPublic ] ) => {
 			test( `${ name } option should be selectable`, () => {
 				testProps.fields.blog_public = initialBlogPublic;
-				const { container, rerender } = render( <SiteSettingsFormGeneral { ...testProps } /> );
+				const { getByLabelText, rerender } = render( <SiteSettingsFormGeneral { ...testProps } /> );
 
-				const radioButton = container.querySelector( selector );
+				const radioButton = getByLabelText( text );
 				expect( radioButton.checked ).toBe( false );
 				fireEvent.click( radioButton );
 				rerender( <SiteSettingsFormGeneral { ...testProps } /> );
@@ -166,12 +166,12 @@ describe( 'SiteSettingsFormGeneral ', () => {
 
 		test( `Selecting Hidden should switch radio to Public`, () => {
 			testProps.fields.blog_public = -1;
-			const { container, rerender } = render( <SiteSettingsFormGeneral { ...testProps } /> );
+			const { getByLabelText, rerender } = render( <SiteSettingsFormGeneral { ...testProps } /> );
 
-			const hiddenCheckbox = container.querySelector( '.is-hidden [name="blog_public"]' );
+			const hiddenCheckbox = getByLabelText( 'Do not allow search engines to index my site' );
 			expect( hiddenCheckbox.checked ).toBe( false );
 
-			const publicRadio = container.querySelector( '.is-public [name="blog_public"]' );
+			const publicRadio = getByLabelText( 'Public' );
 			expect( publicRadio.checked ).toBe( false );
 
 			fireEvent.click( hiddenCheckbox );
@@ -184,12 +184,12 @@ describe( 'SiteSettingsFormGeneral ', () => {
 
 		test( `Hidden checkbox should be possible to unselect`, () => {
 			testProps.fields.blog_public = -1;
-			const { container, rerender } = render( <SiteSettingsFormGeneral { ...testProps } /> );
+			const { getByLabelText, rerender } = render( <SiteSettingsFormGeneral { ...testProps } /> );
 
-			const hiddenCheckbox = container.querySelector( '.is-hidden [name="blog_public"]' );
+			const hiddenCheckbox = getByLabelText( 'Do not allow search engines to index my site' );
 			expect( hiddenCheckbox.checked ).toBe( false );
 
-			const publicRadio = container.querySelector( '.is-public [name="blog_public"]' );
+			const publicRadio = getByLabelText( 'Public' );
 			expect( publicRadio.checked ).toBe( false );
 
 			fireEvent.click( hiddenCheckbox );
