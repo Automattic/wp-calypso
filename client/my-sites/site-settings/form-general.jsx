@@ -688,7 +688,7 @@ const connectComponent = connect(
 
 		return {
 			withComingSoonOption:
-				'withComingSoonOption' in ownProps
+				ownProps.hasOwnProperty( 'withComingSoonOption' )
 					? ownProps.withComingSoonOption
 					: config.isEnabled( 'coming-soon' ),
 			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
