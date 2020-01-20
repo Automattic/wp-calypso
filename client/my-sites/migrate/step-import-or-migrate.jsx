@@ -21,6 +21,7 @@ import './section-migrate.scss';
 
 class StepImportOrMigrate extends Component {
 	static propTypes = {
+		onJetpackSelect: PropTypes.func.isRequired,
 		targetSite: PropTypes.object.isRequired,
 		targetSiteSlug: PropTypes.string.isRequired,
 	};
@@ -38,7 +39,7 @@ class StepImportOrMigrate extends Component {
 				</CompactCard>
 				<CompactCard>
 					<CardHeading>What do you want to import?</CardHeading>
-					<Button>Continue</Button>
+					<Button onClick={ this.props.onJetpackSelect }>Continue</Button>
 				</CompactCard>
 			</>
 		);

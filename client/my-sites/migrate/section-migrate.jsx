@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
-import { get, isEmpty, includes } from 'lodash';
+import { get, includes, isEmpty, omit } from 'lodash';
 import moment from 'moment';
 import { Button, Card, CompactCard, ProgressBar } from '@automattic/components';
 
@@ -29,27 +29,28 @@ import StepSourceSelect from './step-source-select';
 import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'state/sites/selectors';
-import { updateSiteMigrationStatus } from 'state/sites/actions';
+import { receiveSite, updateSiteMigrationStatus } from 'state/sites/actions';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { urlToSlug } from 'lib/url';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import wpLib from 'lib/wp';
+import wpcom from 'lib/wp';
 
 /**
  * Style dependencies
  */
 import './section-migrate.scss';
 
-const wpcom = wpLib.undocumented();
-
 class SectionMigrate extends Component {
 	_startedMigrationFromCart = false;
 
 	state = {
+		errorMessage: '',
+		isJetpackConnected: false,
 		migrationStatus: 'unknown',
 		percent: 0,
-		startTime: '',
-		errorMessage: '',
 		siteInfo: null,
+		selectedSiteSlug: null,
+		startTime: '',
 		url: '',
 	};
 
@@ -75,6 +76,10 @@ class SectionMigrate extends Component {
 		return isTargetSiteJetpack ? targetSiteImportAdminUrl : `/import/${ targetSiteSlug }`;
 	};
 
+	handleJetpackSelect = () => {
+		this.props.navigateToSelectedSourceSite( this.state.selectedSiteSlug );
+	};
+
 	jetpackSiteFilter = sourceSite => {
 		const { targetSiteId } = this.props;
 
@@ -84,20 +89,23 @@ class SectionMigrate extends Component {
 	resetMigration = () => {
 		const { targetSiteId, targetSiteSlug } = this.props;
 
-		wpcom.resetMigration( targetSiteId ).finally( () => {
-			page( `/migrate/${ targetSiteSlug }` );
-			/**
-			 * Note this migrationStatus is local, thus the setState vs setMigrationState.
-			 * Call to updateFromAPI will update both local and non-local state.
-			 */
-			this.setState(
-				{
-					migrationStatus: 'inactive',
-					errorMessage: '',
-				},
-				this.updateFromAPI
-			);
-		} );
+		wpcom
+			.undocumented()
+			.resetMigration( targetSiteId )
+			.finally( () => {
+				page( `/migrate/${ targetSiteSlug }` );
+				/**
+				 * Note this migrationStatus is local, thus the setState vs setMigrationState.
+				 * Call to updateFromAPI will update both local and non-local state.
+				 */
+				this.setState(
+					{
+						migrationStatus: 'inactive',
+						errorMessage: '',
+					},
+					this.updateFromAPI
+				);
+			} );
 	};
 
 	setMigrationState = state => {
@@ -126,7 +134,32 @@ class SectionMigrate extends Component {
 		this.setState( state );
 	};
 
-	setSiteInfo = ( siteInfo, callback ) => this.setState( { siteInfo }, callback );
+	setSiteInfo = ( siteInfo, callback ) => {
+		this.setState( { siteInfo }, () => {
+			const selectedSiteSlug = urlToSlug( siteInfo.site_url.replace( /\/$/, '' ) );
+			this.setState( { selectedSiteSlug } );
+			wpcom
+				.site( selectedSiteSlug )
+				.get( {
+					apiVersion: '1.2',
+				} )
+				.then( site => {
+					if ( ! ( site && site.capabilities ) ) {
+						// A site isn't connected if we cannot manage it.
+						return this.setState( { isJetpackConnected: false } );
+					}
+
+					// Update the site in the state tree.
+					this.props.receiveSite( omit( site, '_headers' ) );
+					this.setState( { isJetpackConnected: true } );
+				} )
+				.catch( () => {
+					// @TODO: Do we need to better handle this? It most-likely means the site isn't connected.
+					this.setState( { isJetpackConnected: false } );
+				} )
+				.finally( callback );
+		} );
+	};
 
 	setSourceSiteId = sourceSiteId => {
 		this.props.navigateToSelectedSourceSite( sourceSiteId );
@@ -154,6 +187,7 @@ class SectionMigrate extends Component {
 		this.setMigrationState( { migrationStatus: 'backing-up' } );
 
 		wpcom
+			.undocumented()
 			.startMigration( sourceSiteId, targetSiteId )
 			.then( () => this.updateFromAPI() )
 			.catch( error => {
@@ -183,6 +217,7 @@ class SectionMigrate extends Component {
 	updateFromAPI = () => {
 		const { targetSiteId } = this.props;
 		wpcom
+			.undocumented()
 			.getMigrationStatus( targetSiteId )
 			.then( response => {
 				const {
@@ -498,7 +533,11 @@ class SectionMigrate extends Component {
 					break;
 				}
 				migrationElement = showImportSelector ? (
-					<StepImportOrMigrate targetSite={ targetSite } targetSiteSlug={ targetSiteSlug } />
+					<StepImportOrMigrate
+						onJetpackSelect={ this.handleJetpackSelect }
+						targetSite={ targetSite }
+						targetSiteSlug={ targetSiteSlug }
+					/>
 				) : (
 					<StepSourceSelect
 						onSiteInfoReceived={ this.setSiteInfo }
@@ -562,5 +601,5 @@ export default connect(
 			targetSiteSlug: getSelectedSiteSlug( state ),
 		};
 	},
-	{ navigateToSelectedSourceSite, updateSiteMigrationStatus }
+	{ navigateToSelectedSourceSite, receiveSite, updateSiteMigrationStatus }
 )( localize( SectionMigrate ) );
