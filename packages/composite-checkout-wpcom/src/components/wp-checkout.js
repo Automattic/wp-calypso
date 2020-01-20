@@ -125,12 +125,7 @@ export default function WPCheckout( {
 	return <Checkout steps={ steps } />;
 }
 
-function isElligibleForVat() {
-	//TODO: Detect whether people are in EU or AU and return true if they are
-	return false;
-}
-
-function isFormEditable( contactInfo, items ) {
+function isFormEditable( contactInfo ) {
 	// If any field has been touched, it is editable
 	return Object.values( contactInfo ).some( ( { isTouched } ) => isTouched );
 }

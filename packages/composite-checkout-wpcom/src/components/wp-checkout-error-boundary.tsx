@@ -31,7 +31,7 @@ export default class WpcomCheckoutErrorBoundary extends React.Component {
 
 	render() {
 		if ( this.state.hasError ) {
-			return <h1>{ this.translate( 'Something went wrong in the billing details step.' ) }</h1>;
+			return <h1>{ this.translate( 'Something went wrong in the billing details step.' ) }</h1>; // eslint-disable-line wpcalypso/i18n-no-this-translate
 		}
 
 		return this.props.children;

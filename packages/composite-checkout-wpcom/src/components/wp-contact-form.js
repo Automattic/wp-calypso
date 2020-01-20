@@ -67,7 +67,6 @@ const renderContactDetails = ( {
 
 					<PhoneNumberField
 						id="contact-phone-number"
-						setContactField={ setters.setContactField }
 						countriesList={ countriesList }
 						contactInfo={ contactInfo }
 						PhoneInput={ PhoneInput }
@@ -154,6 +153,7 @@ function isEligibleForVat( country ) {
 	return countriesWithVAT.includes( country );
 }
 
+// TODO: Figure out if we still need this
 function DomainFieldsCheckbox( { toggleVisibility, isDomainContactVisible } ) {
 	const translate = useTranslate();
 	return (
@@ -234,6 +234,7 @@ const DomainRegistrationCheckbox = styled.input`
 	}
 `;
 
+// TODO: Figure out if we still need this
 function AddressFields( { section, contactInfo, setters, StateSelect } ) {
 	const translate = useTranslate();
 	const { firstName, lastName, email, address, city, state, country } = contactInfo;
@@ -352,15 +353,7 @@ function isStateorProvince() {
 	return 'state';
 }
 
-function PhoneNumberField( {
-	id,
-	isRequired,
-	setContactField,
-	contactInfo,
-	countriesList,
-	PhoneInput,
-	setters,
-} ) {
+function PhoneNumberField( { id, isRequired, contactInfo, countriesList, PhoneInput, setters } ) {
 	const translate = useTranslate();
 	const { updatePhone, updatePhoneNumberCountry } = setters;
 
@@ -415,7 +408,6 @@ const Label = styled.label`
 PhoneNumberField.propTypes = {
 	isRequired: PropTypes.bool,
 	id: PropTypes.string.isRequired,
-	setContactField: PropTypes.func.isRequired,
 	contactInfo: PropTypes.shape( {
 		phoneNumber: PropTypes.shape( { value: PropTypes.string } ),
 		phoneNumberCountry: PropTypes.shape( { value: PropTypes.string } ),
@@ -471,7 +463,7 @@ function TaxFields( { section, taxInfo, setters, CountrySelectMenu, countriesLis
 					onChange={ event => {
 						updateCountryCode( event.target.value );
 					} }
-					isError={ countryCode.isTouched && ! isValid( country ) }
+					isError={ countryCode.isTouched && ! isValid( countryCode ) }
 					isDisabled={ false } // TODO
 					errorMessage={ translate( 'This field is required.' ) }
 					currentValue={ countryCode.value }
@@ -492,33 +484,6 @@ function isZipOrPostal() {
 	//TODO: Add location detection to return "zip" or "postal"
 	return 'postal';
 }
-
-function DomainFields( { StateSelect } ) {
-	const translate = useTranslate();
-	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
-	const setters = useDispatch( 'wpcom' );
-
-	return (
-		<DomainContactFields>
-			<DomainContactFieldsDescription>
-				{ translate(
-					'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
-				) }
-			</DomainContactFieldsDescription>
-
-			<AddressFields
-				section="contact"
-				contactInfo={ contactInfo }
-				setters={ setters }
-				StateSelect={ StateSelect }
-			/>
-		</DomainContactFields>
-	);
-}
-
-const DomainContactFields = styled.div`
-	margin: 16px 0 24px;
-`;
 
 const DomainContactFieldsDescription = styled.p`
 	font-size: 14px;

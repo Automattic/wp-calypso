@@ -80,7 +80,7 @@ export function useWpcomStore( registerStore, onEvent ) {
 
 		actions: {
 			applyDomainContactValidationResults(
-				payload: any // TODO figure out what this should be
+				payload: ManagedContactDetailsErrors
 			): WpcomStoreAction {
 				return { type: 'APPLY_DOMAIN_CONTACT_VALIDATION_RESULTS', payload };
 			},
