@@ -194,6 +194,10 @@
 		display: flex;
 		flex-direction: row;
 		align-items: center;
+
+		.get-apps__app-badge {
+			width: 50%;
+		}
 	}
 	&__card-subheader {
 		color: var( --color-text-subtle );
@@ -210,6 +214,10 @@
 		.customer-home__card-subheader,
 		.get-apps__app-badge img {
 			margin: 0;
+		}
+
+		.get-apps__app-badge {
+			width: auto;
 		}
 
 		.customer-home__card-mobile {

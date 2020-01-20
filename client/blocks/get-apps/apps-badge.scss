@@ -1,6 +1,7 @@
 .get-apps__app-badge {
-	display: inline-block;
-	height: 35px;
+	display: flex;
+	max-width: 135px;
+	max-height: 40px;
 	overflow: hidden;
 	margin-left: 0.5rem;
 
@@ -8,12 +9,10 @@
 		margin-left: 0;
 	}
 
-	img {
-		height: 100%;
-	}
-
+	// Crops the Android badge in order to remove the transparent space around it and generate a size-equivalent image
+	// to the iOS badge.
 	&.android-app-badge img {
-		transform: scale( 1.5 ) translateX( -5px );
+		transform: scale( 1.13 ) translate( -7px, -5.1px );
 		transform-origin: left;
 	}
 }
