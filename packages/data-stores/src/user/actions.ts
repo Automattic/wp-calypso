@@ -10,12 +10,6 @@ import {
 
 import { wpcomRequest } from '../wpcom-request-controls';
 
-export const fetchCurrentUser = () =>
-	wpcomRequest( {
-		path: '/me',
-		apiVersion: '1.1',
-	} );
-
 export const receiveCurrentUser = ( currentUser: CurrentUser ) => ( {
 	type: 'RECEIVE_CURRENT_USER' as const,
 	currentUser,
