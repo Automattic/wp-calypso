@@ -70,8 +70,6 @@ import { SiteSettingsFormGeneral } from '../form-general';
 
 import moment from 'moment';
 
-global.window = null;
-
 moment.tz = {
 	guess: () => moment(),
 };
