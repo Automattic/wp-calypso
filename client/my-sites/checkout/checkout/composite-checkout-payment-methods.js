@@ -109,8 +109,20 @@ export function createPaymentMethods( {
 	const applePayMethod =
 		isMethodEnabled( 'apple-pay', allowedPaymentMethods ) && isApplePayAvailable()
 			? createApplePayMethod( {
+					getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.country?.value,
+					getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+					getPhoneNumber: () => select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
 					registerStore,
 					fetchStripeConfiguration: args => fetchStripeConfiguration( args, wpcom ),
+					submitTransaction: submitData =>
+						submitApplePayPayment(
+							{
+								...submitData,
+								siteId: select( 'wpcom' )?.getSiteId?.(),
+								domainDetails: getDomainDetails( select ),
+							},
+							wpcom
+						),
 			  } )
 			: null;
 
@@ -191,6 +203,17 @@ async function submitExistingCardPayment( transactionData, wpcom ) {
 		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
 	} );
 	debug( 'submitting existing card transaction', formattedTransactionData );
+	return wpcom.transactions( formattedTransactionData );
+}
+
+async function submitApplePayPayment( transactionData, wpcom ) {
+	debug( 'formatting apple-pay transaction', transactionData );
+	const formattedTransactionData = formatDataForTransactionsEndpoint( {
+		...transactionData,
+		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
+		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
+	} );
+	debug( 'submitting apple-pay transaction', formattedTransactionData );
 	return wpcom.transactions( formattedTransactionData );
 }
 
