@@ -8,12 +8,10 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import { flowRight } from 'lodash';
 import moment from 'moment';
-import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import AppsBadge from 'blocks/get-apps/apps-badge';
 import Banner from 'components/banner';
 import { Button, Card } from '@automattic/components';
 import CardHeading from 'components/card-heading';
@@ -43,7 +41,6 @@ import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { getGSuiteSupportedDomains } from 'lib/gsuite';
 import { localizeUrl } from 'lib/i18n-utils';
-import userAgent from 'lib/user-agent';
 import { isDesktop, isMobile } from 'lib/viewport';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actions';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
@@ -57,6 +54,7 @@ import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import QueryActiveTheme from 'components/data/query-active-theme';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
+import GoMobileCard from 'my-sites/customer-home/go-mobile-card';
 
 /**
  * Style dependencies
@@ -66,11 +64,9 @@ import './style.scss';
 /**
  * Image dependencies
  */
-import appleStoreLogo from 'assets/images/customer-home/apple-store.png';
 import commentIcon from 'assets/images/customer-home/comment.svg';
 import customDomainIcon from 'assets/images/customer-home/custom-domain.svg';
 import customizeIcon from 'assets/images/customer-home/customize.svg';
-import googlePlayLogo from 'assets/images/customer-home/google-play.png';
 import gSuiteIcon from 'assets/images/customer-home/gsuite.svg';
 import happinessIllustration from 'assets/images/customer-home/happiness.png';
 import imagesIcon from 'assets/images/customer-home/images.svg';
@@ -327,51 +323,6 @@ class Home extends Component {
 		);
 	}
 
-	renderGoMobile = () => {
-		const { translate } = this.props;
-		const { isiPad, isiPod, isiPhone, isAndroid } = userAgent;
-		const isIos = isiPad || isiPod || isiPhone;
-		const showIosBadge = isDesktop() || isIos || ! isAndroid;
-		const showAndroidBadge = isDesktop() || isAndroid || ! isIos;
-		const showOnlyOneBadge = showIosBadge !== showAndroidBadge;
-		return (
-			<Card
-				className={ classnames( 'customer-home__go-mobile', {
-					'is-single-store': showOnlyOneBadge,
-				} ) }
-			>
-				<div>
-					<CardHeading>{ translate( 'Go Mobile' ) }</CardHeading>
-					<h6 className="customer-home__card-subheader">
-						{ translate( 'Make updates on the go' ) }
-					</h6>
-				</div>
-				<div className="customer-home__card-button-pair customer-home__card-mobile">
-					{ showIosBadge && (
-						<AppsBadge
-							storeLink="https://apps.apple.com/app/apple-store/id335703880?pt=299112&ct=calypso-customer-home&mt=8"
-							storeName={ 'ios' }
-							titleText={ translate( 'Download the WordPress iOS mobile app.' ) }
-							altText={ translate( 'Apple App Store download badge' ) }
-						>
-							<img src={ appleStoreLogo } alt="" />
-						</AppsBadge>
-					) }
-					{ showAndroidBadge && (
-						<AppsBadge
-							storeLink="https://play.google.com/store/apps/details?id=org.wordpress.android&referrer=utm_source%3Dcalypso-customer-home%26utm_medium%3Dweb%26utm_campaign%3Dmobile-download-promo-pages"
-							storeName={ 'android' }
-							titleText={ translate( 'Download the WordPress Android mobile app.' ) }
-							altText={ translate( 'Google Play Store download badge' ) }
-						>
-							<img src={ googlePlayLogo } alt="" />
-						</AppsBadge>
-					) }
-				</div>
-			</Card>
-		);
-	};
-
 	renderCustomerHome = () => {
 		const {
 			displayChecklist,
@@ -407,7 +358,7 @@ class Home extends Component {
 				<div className="customer-home__layout-col customer-home__layout-col-left">
 					{ // "Go Mobile" has the highest priority placement when viewed in smaller viewports, so folks
 					// can see it on their phone without needing to scroll.
-					isMobile() && this.renderGoMobile() }
+					isMobile() && <GoMobileCard /> }
 					{ displayChecklist ? (
 						<>
 							<Card className="customer-home__card-checklist-heading">
@@ -613,7 +564,7 @@ class Home extends Component {
 						</div>
 					</Card>
 					{ // "Go Mobile" has the lowest priority placement when viewed in bigger viewports.
-					isDesktop() && this.renderGoMobile() }
+					isDesktop() && <GoMobileCard /> }
 				</div>
 			</div>
 		);

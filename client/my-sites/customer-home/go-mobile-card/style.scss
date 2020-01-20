@@ -1,0 +1,36 @@
+.go-mobile-card.is-single-store {
+	display: flex;
+	padding-bottom: 1rem;
+}
+
+.go-mobile-card.is-single-store .get-apps__app-badge {
+	width: auto;
+}
+
+.go-mobile-card__app-badges {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.go-mobile-card__app-badges .get-apps__app-badge {
+	width: 50%;
+}
+
+.go-mobile-card.is-single-store .go-mobile-card__app-badges {
+	margin-left: auto;
+	align-self: center;
+	flex-shrink: 0;
+	padding-left: 1rem;
+}
+
+.go-mobile-card__subheader {
+	color: var( --color-text-subtle );
+	font-size: 0.85rem;
+	margin: -0.5rem 0 1rem;
+}
+
+.go-mobile-card__subheader,
+.go-mobile-card .get-apps__app-badge img {
+	margin: 0;
+}
