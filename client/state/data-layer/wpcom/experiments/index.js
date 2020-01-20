@@ -47,14 +47,12 @@ export const fetchExperiments = action =>
  * @param experiments The result from 'transformApiRequest'
  * @returns function Dispatches the EXPERIMENT_ASSIGN action
  */
-export const experimentUpdate = ( action, experiments ) => dispatch => {
-	dispatch( assignToExperiments( experiments ) );
-};
+export const experimentUpdate = ( action, experiments ) => assignToExperiments( experiments );
 
 /**
  * If the configuration is enabled, call the API to get assignment from the API
  */
-if ( config.get( 'ive/use-external-assignment' ) ) {
+if ( config.isEnabled( 'ive/use-external-assignment' ) ) {
 	registerHandlers( 'state/data-layer/wpcom/experiments/index.js', {
 		[ EXPERIMENT_FETCH ]: [
 			dispatchRequest( {
