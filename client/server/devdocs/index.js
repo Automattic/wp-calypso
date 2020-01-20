@@ -216,7 +216,7 @@ module.exports = function() {
 
 	app.use(
 		'/devdocs/storybook',
-		express.static( fspath.join( __dirname, '../../public/storybook' ) )
+		express.static( fspath.join( __dirname, '../../../public/storybook' ) )
 	);
 
 	return app;
