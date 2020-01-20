@@ -200,9 +200,24 @@
 		font-size: 0.85rem;
 		margin: -0.5rem 0 1rem;
 	}
-	&__go-mobile,
 	&__grow-earn {
 		padding-bottom: 12px;
+	}
+	&__go-mobile.is-single-store {
+		display: flex;
+		padding-bottom: 1rem;
+
+		.customer-home__card-subheader,
+		.get-apps__app-badge img {
+			margin: 0;
+		}
+
+		.customer-home__card-mobile {
+			margin-left: auto;
+			align-self: center;
+			flex-shrink: 0;
+			padding-left: 1rem;
+		}
 	}
 	&__layout {
 		@include grid-row( 3, 1 );

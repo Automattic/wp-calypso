@@ -1,14 +1,19 @@
 .get-apps__app-badge {
 	display: inline-block;
+	height: 35px;
+	overflow: hidden;
+	margin-left: 0.5rem;
+
+	&:first-child {
+		margin-left: 0;
+	}
 
 	img {
-		max-height: 41px;
-		margin: 9px 0;
-		width: auto;
+		height: 100%;
 	}
 
 	&.android-app-badge img {
-		max-height: 60px;
-		margin-left: 0;
+		transform: scale( 1.5 ) translateX( -5px );
+		transform-origin: left;
 	}
 }
