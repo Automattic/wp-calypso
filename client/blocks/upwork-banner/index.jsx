@@ -17,12 +17,15 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import isUpworkBannerDismissed from 'state/selectors/is-upwork-banner-dismissed';
 import QueryPreferences from 'components/data/query-preferences';
 import { recordTracksEvent } from 'state/analytics/actions';
-import safeImageUrl from 'lib/safe-image-url';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+/**
+ * Image dependencies
+import builderIllustration from 'assets/images/illustrations/builder-referral.svg';
 
 class UpworkBanner extends PureComponent {
 	static propTypes = {
@@ -102,7 +105,7 @@ class UpworkBanner extends PureComponent {
 					alt={ translate( 'Upwork' ) }
 					width={ 390 }
 					className="upwork-banner__image"
-					src={ safeImageUrl( '/calypso/images/themes-banner/illustration-builder-referral.svg' ) }
+					src={ builderIllustration }
 				/>
 			</a>
 		);

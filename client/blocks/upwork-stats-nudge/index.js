@@ -24,6 +24,11 @@ import { withEnhancers } from 'state/utils';
  */
 import './style.scss';
 
+/**
+ * Image dependencies
+ */
+import builderIllustration from 'assets/images/illustrations/builder-referral.svg';
+
 class UpworkStatsNudge extends Component {
 	static propTypes = {
 		isDismissed: PropTypes.bool.isRequired,
@@ -95,7 +100,7 @@ class UpworkStatsNudge extends Component {
 					<div className="upwork-stats-nudge__image-wrapper">
 						<img
 							className="upwork-stats-nudge__image"
-							src="/calypso/images/upwork/illustration-builder-referral.svg"
+							src={ builderIllustration }
 							alt={ translate( 'Build your dream site with Upwork' ) }
 						/>
 					</div>
