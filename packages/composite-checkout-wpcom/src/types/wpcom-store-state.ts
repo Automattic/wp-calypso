@@ -64,7 +64,7 @@ export const defaultManagedContactDetails: ManagedContactDetails = {
 	email: initialManagedValue( '' ),
 	alternateEmail: initialManagedValue( '' ),
 	phone: initialManagedValue( '' ),
-    phoneNumberCountry: initialManagedValue( '' ),
+	phoneNumberCountry: initialManagedValue( '' ),
 	address1: initialManagedValue( '' ),
 	address2: initialManagedValue( '' ),
 	city: initialManagedValue( '' ),
@@ -90,6 +90,7 @@ export type ManagedContactDetailsErrors = {
 	email?: string[];
 	alternateEmail?: string[];
 	phone?: string[];
+	phoneNumberCountry?: string[];
 	address1?: string[];
 	address2?: string[];
 	city?: string[];
@@ -111,6 +112,7 @@ function setManagedContactDetailsErrors(
 		email: setErrors( errors.email, details.email ),
 		alternateEmail: setErrors( errors.alternateEmail, details.alternateEmail ),
 		phone: setErrors( errors.phone, details.phone ),
+		phoneNumberCountry: setErrors( errors.phoneNumberCountry, details.phoneNumberCountry ),
 		address1: setErrors( errors.address1, details.address1 ),
 		address2: setErrors( errors.address2, details.address2 ),
 		city: setErrors( errors.city, details.city ),

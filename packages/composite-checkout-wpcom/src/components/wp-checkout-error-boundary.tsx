@@ -8,17 +8,18 @@ type WPCheckoutErrorBoundaryState = {
 	errorMessage: string;
 };
 
-const initialWPCheckoutErrorBoundaryState = {
+const initialWPCheckoutErrorBoundaryState: WPCheckoutErrorBoundaryState = {
 	errorMessage: '',
 	hasError: false,
 };
 
 export default class WpcomCheckoutErrorBoundary extends React.Component {
 	state = initialWPCheckoutErrorBoundaryState;
+	translate = x => x;
 
-	constructor( props ) {
+	constructor( props: { translate: ( string ) => string } ) {
 		super( props );
-		this.props.translate = props.translate;
+		this.translate = props.translate;
 	}
 
 	static getDerivedStateFromError( error ): WPCheckoutErrorBoundaryState {
@@ -30,9 +31,7 @@ export default class WpcomCheckoutErrorBoundary extends React.Component {
 
 	render() {
 		if ( this.state.hasError ) {
-			return (
-				<h1>{ this.props.translate( 'Something went wrong in the billing details step.' ) }</h1>
-			);
+			return <h1>{ this.translate( 'Something went wrong in the billing details step.' ) }</h1>;
 		}
 
 		return this.props.children;
