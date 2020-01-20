@@ -348,13 +348,22 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	visibilityOptionsComingSoon() {
-		const { fields, isRequestingSettings, eventTracker, siteIsJetpack, translate } = this.props;
+		const {
+			fields,
+			isRequestingSettings,
+			eventTracker,
+			siteIsJetpack,
+			siteIsAtomic,
+			translate,
+		} = this.props;
 		const blogPublic = parseInt( fields.blog_public, 10 );
 		const wpcomComingSoon = parseInt( fields.wpcom_coming_soon, 10 );
 
+		const isNonAtomicJetpackSite = siteIsJetpack && ! siteIsAtomic;
+
 		return (
 			<FormFieldset>
-				{ ! siteIsJetpack && (
+				{ ! isNonAtomicJetpackSite && (
 					<>
 						<FormLabel className="site-settings__visibility-label is-coming-soon">
 							<FormRadio
@@ -377,7 +386,7 @@ export class SiteSettingsFormGeneral extends Component {
 						</FormSettingExplanation>
 					</>
 				) }
-				{ ! siteIsJetpack && (
+				{ ! isNonAtomicJetpackSite && (
 					<>
 						<FormLabel className="site-settings__visibility-label is-public">
 							<FormRadio
@@ -395,13 +404,11 @@ export class SiteSettingsFormGeneral extends Component {
 							/>
 							<span>{ translate( 'Public' ) }</span>
 						</FormLabel>
-						<FormSettingExplanation isIndented>
-							{ translate(
-								'Your site is visible to everyone, and may be indexed by search engines.'
-							) }
-						</FormSettingExplanation>
 					</>
 				) }
+				<FormSettingExplanation isIndented>
+					{ translate( 'Your site is visible to everyone.' ) }
+				</FormSettingExplanation>
 				<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
 					<FormInputCheckbox
 						name="blog_public"
@@ -418,7 +425,7 @@ export class SiteSettingsFormGeneral extends Component {
 					/>
 					<span>{ translate( 'Do not allow search engines to index my site' ) }</span>
 				</FormLabel>
-				{ ! siteIsJetpack && (
+				{ ! isNonAtomicJetpackSite && (
 					<>
 						<FormLabel className="site-settings__visibility-label is-private">
 							<FormRadio
@@ -687,10 +694,9 @@ const connectComponent = connect(
 		const selectedSite = getSelectedSite( state );
 
 		return {
-			withComingSoonOption:
-				ownProps.hasOwnProperty( 'withComingSoonOption' )
-					? ownProps.withComingSoonOption
-					: config.isEnabled( 'coming-soon' ),
+			withComingSoonOption: ownProps.hasOwnProperty( 'withComingSoonOption' )
+				? ownProps.withComingSoonOption
+				: config.isEnabled( 'coming-soon' ),
 			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 			siteIsJetpack,
