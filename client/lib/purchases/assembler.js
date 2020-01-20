@@ -34,6 +34,7 @@ function createPurchaseObject( purchase ) {
 		domain: purchase.domain,
 		domainRegistrationAgreementUrl: purchase.domain_registration_agreement_url || null,
 		error: null,
+		blogCreatedDate: purchase.blog_created_date,
 		expiryDate: purchase.expiry_date,
 		expiryMoment: purchase.expiry_date ? i18n.moment( purchase.expiry_date ) : null,
 		expiryStatus: camelCase( purchase.expiry_status ),
