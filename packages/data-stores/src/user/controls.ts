@@ -20,13 +20,12 @@ export default function createControls( clientCreds: WpcomClientCredentials ) {
 				{ ...action.params },
 				{ validate: false } // Set to false because account validation should be a separate action
 			);
-			const request = {
+			const newUser = await wpcomRequest( {
 				path: '/users/new',
 				apiVersion: '1.1',
 				method: 'post',
 				body: mergedParams,
-			};
-			const newUser = await wpcomRequest( request );
+			} );
 			return newUser;
 		},
 		FETCH_CURRENT_USER: async () => {

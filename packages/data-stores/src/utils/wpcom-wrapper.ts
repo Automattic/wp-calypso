@@ -12,22 +12,27 @@ export interface WpcomClientCredentials {
 }
 
 export interface WpcomRequestParams {
-	path: string;
+	path?: string;
 	method?: string;
 	apiVersion?: string;
-	formData?: object;
+	body?: {
+		[ propName: string ]: string | number | boolean;
+	};
+	metaAPI?: {
+		accessAllUsersBlogs?: boolean;
+	};
 }
 
 export function wpcomRequest< T >( params: WpcomRequestParams ): Promise< T > {
 	return new Promise( ( resolve, reject ) => {
-		wpcomProxyRequest( params, ( err: object, res: T ) => {
+		wpcomProxyRequest( params, ( err: Error, res: T ) => {
 			debug( res );
 			err ? reject( err ) : resolve( res );
 		} );
 	} );
 }
 
-wpcomProxyRequest( { metaAPI: { accessAllUsersBlogs: true } }, ( error: object ) => {
+wpcomProxyRequest( { metaAPI: { accessAllUsersBlogs: true } }, ( error: Error ) => {
 	if ( error ) {
 		throw error;
 	}
