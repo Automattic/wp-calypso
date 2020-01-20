@@ -424,7 +424,7 @@ export class SiteSettingsFormGeneral extends Component {
 							<FormRadio
 								name="blog_public"
 								value="-1"
-								checked={ -1 === blogPublic && ! wpcomComingSoon }
+								checked={ -1 === blogPublic && 0 === wpcomComingSoon }
 								onChange={ () =>
 									this.handleVisibilityOptionChange( {
 										blog_public: -1,
