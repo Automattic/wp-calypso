@@ -60,6 +60,7 @@ export default function CompositeCheckout( {
 	setCart,
 	getStoredCards,
 	allowedPaymentMethods,
+	overrideCountryList,
 	// TODO: handle these also
 	// purchaseId,
 	// couponCode,
@@ -95,15 +96,7 @@ export default function CompositeCheckout( {
 		notices.success( message );
 	}, [] );
 
-	const dispatch = useDispatch();
-	const countriesList = useSelector( state => getCountries( state, 'payments' ) );
-
-	useEffect( () => {
-		if ( countriesList?.length <= 0 ) {
-			debug( 'countries list is empty; dispatching request for data' );
-			dispatch( fetchPaymentCountries() );
-		}
-	}, [ countriesList, dispatch ] );
+	const countriesList = useCountryList( overrideCountryList || [] );
 
 	const {
 		items,
@@ -273,6 +266,32 @@ function useRedirectIfCartEmpty( items, redirectUrl ) {
 			window.location = redirectUrl;
 		}
 	}, [ redirectUrl, items, prevItemsLength ] );
+}
+
+function useCountryList( overrideCountryList ) {
+	// Should we fetch the country list from global state?
+	const shouldFetchList = overrideCountryList?.length <= 0;
+
+	const [ countriesList, setCountriesList ] = useState( overrideCountryList );
+
+	const dispatch = useDispatch();
+	const globalCountryList = useSelector( state => getCountries( state, 'payments' ) );
+
+	// Has the global list been populated?
+	const listIsFetched = globalCountryList?.length > 0;
+
+	useEffect( () => {
+		if ( shouldFetchList ) {
+			if ( listIsFetched ) {
+				setCountriesList( globalCountryList );
+			} else {
+				debug( 'countries list is empty; dispatching request for data' );
+				dispatch( fetchPaymentCountries() );
+			}
+		}
+	}, [ shouldFetchList, listIsFetched, globalCountryList, setCountriesList, dispatch ] );
+
+	return countriesList;
 }
 
 function CountrySelectMenu( {
