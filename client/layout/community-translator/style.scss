@@ -98,7 +98,40 @@ body {
 
 .community-translator__highlight {
 	position: absolute;
+	left: 0;
+	top: 0;
 	z-index: 1000;
-	background: rgba( 32, 80, 129, 0.5 );
+	outline: 1000vw solid rgba( 0, 0, 0, 0.5 );
+	box-shadow: 0 5px 10px 5px rgba( 0, 0, 0, 0.25 );
 	pointer-events: none;
+	transition: all 0.2s;
+}
+
+.community-translator__bar {
+	z-index: 1000;
+	background: var( --studio-orange );
+	border-color: var( --studio-orange-80 );
+
+	&-form {
+		flex: 1 1 auto;
+		display: flex;
+		flex-flow: row nowrap;
+		align-items: center;
+		justify-content: center;
+		padding: 4px 8px;
+
+		.button {
+			flex: 0 0 auto;
+			margin-left: 8px;
+		}
+
+		.form-text-input {
+			max-width: 500px;
+		}
+	}
+
+	&-label {
+		flex: 0 0 auto;
+		margin-right: 8px;
+	}
 }

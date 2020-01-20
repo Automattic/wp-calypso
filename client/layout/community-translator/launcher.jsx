@@ -17,12 +17,15 @@ import { addQueryArgs } from '@wordpress/url';
 import config from 'config';
 import translator, { trackTranslatorStatus } from 'lib/translator-jumpstart';
 import localStorageHelper from 'store';
-import { Dialog } from '@automattic/components';
+import { Button, Dialog } from '@automattic/components';
 import analytics from 'lib/analytics';
 import { TranslationScanner } from 'lib/i18n-utils/translation-scanner';
 import getUserSettings from 'state/selectors/get-user-settings';
 import getOriginalUserSetting from 'state/selectors/get-original-user-setting';
+import { setLocale } from 'state/ui/language/actions';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import QueryUserSettings from 'components/data/query-user-settings';
+import FormTextInput from 'components/forms/form-text-input';
 
 /**
  * Style dependencies
@@ -52,8 +55,10 @@ class TranslatorLauncher extends React.Component {
 		firstActivation: true,
 		isActive: translator.isActivated(),
 		isEnabled: translator.isEnabled(),
-		isDeliverablesHighlightEnabled: false,
-		deliverablesTarget: null,
+		isDeliverableHighlightEnabled: false,
+		deliverableTarget: null,
+		selectedDeliverableTarget: null,
+		deliverableTitle: '',
 		scrollTop: 0,
 	};
 
@@ -68,6 +73,35 @@ class TranslatorLauncher extends React.Component {
 		i18n.off( 'change', this.onI18nChange );
 		window.removeEventListener( 'keydown', this.handleKeyDown );
 	}
+
+	getOriginalIds = () => {
+		const { selectedDeliverableTarget } = this.state;
+
+		return [ selectedDeliverableTarget ]
+			.concat(
+				Array.from( selectedDeliverableTarget.querySelectorAll( '[class*=translator-original-]' ) )
+			)
+			.reduce( ( ids, node ) => {
+				const [ , originalId ] =
+					( node.className && node.className.match( /translator-original-(\d+)/ ) ) || [];
+
+				if ( originalId ) {
+					ids.push( originalId[ 1 ] );
+				}
+
+				return ids;
+			}, [] );
+	};
+
+	getCreateDeliverableUrl = () => {
+		const DELIVERABLES_ENDPOINT = 'https://translate.wordpress.com/deliverables/create';
+		const { deliverableTitle } = this.state;
+
+		return addQueryArgs( DELIVERABLES_ENDPOINT, {
+			original_ids: this.getOriginalIds().join( ',' ),
+			title: deliverableTitle,
+		} );
+	};
 
 	onI18nChange = () => {
 		if ( ! this.state.isActive && translator.isActivated() ) {
@@ -89,11 +123,17 @@ class TranslatorLauncher extends React.Component {
 	};
 
 	handleKeyDown = event => {
-		const { isActive } = this.state;
+		const { isActive, selectedDeliverableTarget } = this.state;
 
-		if ( isActive && event.getModifierState( 'Control' ) && event.key.toLowerCase() === 'd' ) {
-			this.toggleDeliverablesHighlight();
+		if ( ! isActive || ! event.getModifierState( 'Control' ) || event.key.toLowerCase() !== 'd' ) {
+			return;
 		}
+
+		if ( selectedDeliverableTarget ) {
+			this.toggleSelectedDeliverableTarget();
+		}
+
+		this.toggleDeliverableHighlight();
 	};
 
 	handleWindowScroll = () => {
@@ -101,10 +141,10 @@ class TranslatorLauncher extends React.Component {
 	};
 
 	handleHighlightMouseMove = event => {
-		const { deliverablesTarget } = this.state;
+		const { deliverableTarget } = this.state;
 
-		if ( deliverablesTarget !== event.target ) {
-			this.setState( { deliverablesTarget: event.target } );
+		if ( deliverableTarget !== event.target ) {
+			this.setState( { deliverableTarget: event.target } );
 		}
 	};
 
@@ -121,36 +161,47 @@ class TranslatorLauncher extends React.Component {
 		event.preventDefault();
 		event.stopPropagation();
 
-		const { deliverablesTarget } = this.state;
+		// const title = window.prompt( this.props.translate( 'Deliverables title:' ) );
+		// const originalIds = [ deliverableTarget ]
+		// 	.concat(
+		// 		Array.from( deliverableTarget.querySelectorAll( '[class*=translator-original-]' ) )
+		// 	)
+		// 	.reduce( ( ids, node ) => {
+		// 		const match = node.className && node.className.match( /translator-original-(\d+)/ );
 
-		const title = window.prompt( this.props.translate( 'Deliverables title:' ) );
-		const originalIds = [ deliverablesTarget ]
-			.concat(
-				Array.from( deliverablesTarget.querySelectorAll( '[class*=translator-original-]' ) )
-			)
-			.reduce( ( ids, node ) => {
-				const match = node.className && node.className.match( /translator-original-(\d+)/ );
+		// 		if ( match ) {
+		// 			ids.push( match[ 1 ] );
+		// 		}
 
-				if ( match ) {
-					ids.push( match[ 1 ] );
-				}
-
-				return ids;
-			}, [] );
+		// 		return ids;
+		// 	}, [] );
 
 		if ( this.highlightRef.current ) {
 			this.highlightRef.current.style.pointerEvents = '';
 		}
 
-		this.toggleDeliverablesHighlight();
+		this.toggleSelectedDeliverableTarget();
+		this.toggleDeliverableHighlight();
 
-		const DELIVERABLES_ENDPOINT = 'https://translate.wordpress.com/deliverables/create';
-		const deliverablesUrl = addQueryArgs( DELIVERABLES_ENDPOINT, {
-			original_ids: originalIds.join( ',' ),
-			title,
-		} );
+		// const DELIVERABLES_ENDPOINT = 'https://translate.wordpress.com/deliverables/create';
+		// const deliverablesUrl = addQueryArgs( DELIVERABLES_ENDPOINT, {
+		// 	original_ids: originalIds.join( ',' ),
+		// 	title,
+		// } );
 
-		window.open( deliverablesUrl, '_blank' ).focus();
+		// window.open( deliverablesUrl, '_blank' ).focus();
+	};
+
+	handleDeliverableTitleChange = event => {
+		this.setState( { deliverableTitle: event.target.value } );
+	};
+
+	handleDeliverableLinkClick = () => {
+		this.toggleSelectedDeliverableTarget();
+	};
+
+	handleDeliverableCancelClick = () => {
+		this.toggleSelectedDeliverableTarget();
 	};
 
 	toggleInfoCheckbox = event => {
@@ -168,41 +219,112 @@ class TranslatorLauncher extends React.Component {
 		this.setState( { isActive: nextIsActive } );
 	};
 
-	toggleDeliverablesHighlight = () => {
-		const isDeliverablesHighlightEnabled = ! this.state.isDeliverablesHighlightEnabled;
+	toggleDeliverableHighlight = () => {
+		const isDeliverableHighlightEnabled = ! this.state.isDeliverableHighlightEnabled;
 
-		if ( isDeliverablesHighlightEnabled ) {
+		this.setState( { isDeliverableHighlightEnabled, deliverableTarget: null } );
+
+		if ( isDeliverableHighlightEnabled ) {
 			window.addEventListener( 'scroll', this.handleWindowScroll );
 			window.addEventListener( 'mousemove', this.handleHighlightMouseMove );
 			window.addEventListener( 'mousedown', this.handleHighlightMouseDown );
 			window.addEventListener( 'click', this.handleHighlightClick );
 		} else {
-			window.removeEventListener( 'scroll', this.handleWindowScroll );
 			window.removeEventListener( 'mousemove', this.handleHighlightMouseMove );
 			window.removeEventListener( 'mousedown', this.handleHighlightMouseDown );
 			window.removeEventListener( 'click', this.handleHighlightClick );
 		}
-
-		this.setState( { isDeliverablesHighlightEnabled, deliverablesTarget: null } );
 	};
 
-	renderDeliverablesHighlight() {
-		const { isDeliverablesHighlightEnabled, deliverablesTarget, scrollTop } = this.state;
+	toggleSelectedDeliverableTarget = () => {
+		this.setState(
+			( { deliverableTarget, selectedDeliverableTarget } ) => ( {
+				selectedDeliverableTarget: selectedDeliverableTarget ? null : deliverableTarget,
+			} ),
+			() => {
+				const hasSelectedDeliverableTarget = !! this.state.selectedDeliverableTarget;
 
-		if ( ! isDeliverablesHighlightEnabled || ! deliverablesTarget ) {
+				if ( hasSelectedDeliverableTarget ) {
+					window.addEventListener( 'scroll', this.handleWindowScroll );
+
+					this.selectedLanguageSlug = this.props.selectedLanguageSlug;
+
+					const DEFAULT_LANGUAGE = 'en';
+					setLocale( DEFAULT_LANGUAGE );
+				} else {
+					window.removeEventListener( 'scroll', this.handleWindowScroll );
+
+					this.selectedLanguageSlug && this.props.setLocale( this.selectedLanguageSlug );
+				}
+			}
+		);
+	};
+
+	renderDeliverableForm() {
+		const { selectedDeliverableTarget, deliverableTitle } = this.state;
+		const { translate } = this.props;
+
+		if ( ! selectedDeliverableTarget ) {
+			return;
+		}
+
+		const stringIdsCount = this.getOriginalIds().length;
+
+		return (
+			<div className="masterbar community-translator__bar">
+				<form className="community-translator__bar-form">
+					<div className="community-translator__bar-label">
+						{ translate( '%d string found.', '%d strings found.', {
+							count: stringIdsCount,
+							args: [ stringIdsCount ],
+						} ) }{ ' ' }
+						{ translate( 'Enter a title:' ) }
+					</div>
+
+					<FormTextInput
+						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+						value={ deliverableTitle }
+						onChange={ this.handleDeliverableTitleChange }
+					/>
+
+					<Button
+						href={ this.getCreateDeliverableUrl() }
+						onClick={ this.handleDeliverableLinkClick }
+						primary
+					>
+						{ translate( 'Create Deliverable' ) }
+					</Button>
+					<Button onClick={ this.handleDeliverableCancelClick }>{ translate( 'Cancel' ) }</Button>
+				</form>
+			</div>
+		);
+	}
+
+	renderDeliverableHighlight() {
+		const { deliverableTarget, selectedDeliverableTarget, scrollTop } = this.state;
+		const target = deliverableTarget || selectedDeliverableTarget;
+
+		if ( ! target ) {
 			return null;
 		}
 
-		const { left, top, width, height } = deliverablesTarget.getBoundingClientRect();
+		const { left, top, width, height } = target.getBoundingClientRect();
 		const style = {
-			left: `${ left }px`,
-			top: `${ top + scrollTop }px`,
+			transform: `translate(${ left }px, ${ top + scrollTop }px)`,
 			width: `${ width }px`,
 			height: `${ height }px`,
 		};
 
 		return ReactDOM.createPortal(
-			<div ref={ this.highlightRef } className="community-translator__highlight" style={ style } />,
+			<Fragment>
+				<div
+					ref={ this.highlightRef }
+					className="community-translator__highlight"
+					style={ style }
+				/>
+
+				{ this.renderDeliverableForm() }
+			</Fragment>,
 			document.body
 		);
 	}
@@ -261,13 +383,17 @@ class TranslatorLauncher extends React.Component {
 						{ infoDialogVisible && this.renderConfirmationModal() }
 					</Fragment>
 				) }
-				{ this.renderDeliverablesHighlight() }
+				{ this.renderDeliverableHighlight() }
 			</Fragment>
 		);
 	}
 }
 
-export default connect( state => ( {
-	isUserSettingsReady: !! getUserSettings( state ),
-	isTranslatorEnabled: getOriginalUserSetting( state, 'enable_translator' ),
-} ) )( localize( TranslatorLauncher ) );
+export default connect(
+	state => ( {
+		isUserSettingsReady: !! getUserSettings( state ),
+		isTranslatorEnabled: getOriginalUserSetting( state, 'enable_translator' ),
+		selectedLanguageSlug: getCurrentLocaleSlug( state ),
+	} ),
+	{ setLocale }
+)( localize( TranslatorLauncher ) );
