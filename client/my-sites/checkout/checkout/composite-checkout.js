@@ -57,30 +57,6 @@ const wpcomGetStoredCards = ( ...args ) => wpcom.getStoredCards( ...args );
 const wpcomValidateDomainContactInformation = ( ...args ) =>
 	wpcom.validateDomainContactInformation( ...args );
 
-const renderDomainContactFields = (
-	domainNames,
-	contactDetails,
-	updateContactDetails,
-	applyDomainContactValidationResults,
-	validateDomainContactDetails
-) => {
-	return (
-		<WPCheckoutErrorBoundary componentTitle="ContactDetailsFormFields">
-			<ContactDetailsFormFields
-				contactDetails={ contactDetails }
-				onContactDetailsChange={ updateContactDetails }
-				onValidate={ ( values, onComplete ) => {
-					validateDomainContactDetails( values, domainNames, ( errors, data ) => {
-						applyDomainContactValidationResults( errors );
-						onComplete( errors, data );
-					} );
-				} }
-			/>
-			;
-		</WPCheckoutErrorBoundary>
-	);
-};
-
 export default function CompositeCheckout( {
 	siteSlug,
 	siteId,
