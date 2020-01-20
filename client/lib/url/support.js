@@ -70,6 +70,7 @@ export const MAP_EXISTING_DOMAIN = `${ root }/domains/map-existing-domain`;
 export const MAP_EXISTING_DOMAIN_UPDATE_DNS = `${ root }/domains/map-existing-domain#2-ask-your-domain-provider-to-update-your-dns-settings`;
 export const MAP_SUBDOMAIN = `${ root }/domains/map-subdomain`;
 export const MAP_DOMAIN_CHANGE_NAME_SERVERS = `${ root }/domains/map-existing-domain/#change-your-domains-name-servers`;
+export const MOVE_DOMAIN = `${ root }/domains/#move-a-domain-name`;
 export const MEDIA = `${ root }/media`;
 export const PUBLICIZE = `${ root }/publicize`;
 export const PUBLIC_VS_PRIVATE = `${ root }/domains/register-domain/#public-versus-private-registration-and-gdpr`;

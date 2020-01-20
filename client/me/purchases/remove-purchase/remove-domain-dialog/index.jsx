@@ -15,7 +15,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormCheckbox from 'components/forms/form-checkbox';
-import { CALYPSO_CONTACT } from 'lib/url/support';
+import { CALYPSO_CONTACT, MOVE_DOMAIN } from 'lib/url/support';
 import { getName, isRefundable, maybeWithinRefundPeriod } from 'lib/purchases';
 
 class RemoveDomainDialog extends Component {
@@ -34,6 +34,24 @@ class RemoveDomainDialog extends Component {
 		showErrors: false,
 	};
 
+	renderDomainDeletionWarning( productName ) {
+		const { translate } = this.props;
+
+		return (
+			<p>
+				{ translate(
+					'Deleting {{strong}}%(domain)s{{/strong}} is {{strong}}permanent{{/strong}}. ' +
+						'You will no longer own it, and it could be registered ' +
+						'by someone else.',
+					{
+						args: { domain: productName },
+						components: { strong: <strong /> },
+					}
+				) }
+			</p>
+		);
+	}
+
 	renderFirstStep( productName ) {
 		const { translate, purchase } = this.props;
 
@@ -45,17 +63,21 @@ class RemoveDomainDialog extends Component {
 						components: { strong: <strong /> },
 					} ) }
 				</FormSectionHeading>
+
+				{ this.renderDomainDeletionWarning( productName ) }
+
 				<p>
+					{ translate( 'If you want to use this domain with another service, DO NOT delete it.' ) }{ ' ' }
 					{ translate(
-						'Deleting {{strong}}%(domain)s{{/strong}} is {{strong}}permanent{{/strong}}. ' +
-							'You will no longer own it, and it could be registered ' +
-							'by someone else.',
+						'Instead, keep the domain. You can then {{a}}move or point your domain to a different service.{{/a}}',
 						{
-							args: { domain: productName },
-							components: { strong: <strong /> },
+							components: {
+								a: <a target="_blank" rel="noopener noreferrer" href={ MOVE_DOMAIN } />,
+							},
 						}
 					) }
 				</p>
+
 				{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase ) && (
 					<p>
 						<strong>
@@ -140,17 +162,7 @@ class RemoveDomainDialog extends Component {
 					) }
 				</FormFieldset>
 
-				<p>
-					{ translate(
-						'Deleting {{strong}}%(domain)s{{/strong}} is {{strong}}permanent{{/strong}}. ' +
-							'You will no longer own it, and it could be registered ' +
-							'by someone else.',
-						{
-							args: { domain: productName },
-							components: { strong: <strong /> },
-						}
-					) }
-				</p>
+				{ this.renderDomainDeletionWarning( productName ) }
 			</Fragment>
 		);
 	}
@@ -188,12 +200,12 @@ class RemoveDomainDialog extends Component {
 			{
 				action: 'cancel',
 				disabled: this.props.isRemoving,
+				isPrimary: true,
 				label: translate( 'Keep this Domain' ),
 			},
 			{
 				action: 'remove',
-				isPrimary: true,
-				additionalClassNames: this.props.isRemoving ? 'is-busy' : '',
+				additionalClassNames: [ this.props.isRemoving ? 'is-busy' : '', 'is-scary' ],
 				label: translate( 'Delete this Domain' ),
 				onClick: this.nextStep,
 			},
