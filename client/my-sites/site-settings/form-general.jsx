@@ -383,7 +383,7 @@ export class SiteSettingsFormGeneral extends Component {
 							<FormRadio
 								name="blog_public"
 								value="1"
-								checked={ blogPublic !== -1 }
+								checked={ blogPublic === 0 || blogPublic === 1 }
 								onChange={ () =>
 									this.handleVisibilityOptionChange( {
 										blog_public: 1,
