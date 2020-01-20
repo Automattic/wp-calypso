@@ -13,7 +13,7 @@ import {
 	WPCheckoutErrorBoundary,
 	useWpcomStore,
 	useShoppingCart,
-    FormFieldAnnotation,
+	FormFieldAnnotation,
 } from '@automattic/composite-checkout-wpcom';
 import { CheckoutProvider, createRegistry } from '@automattic/composite-checkout';
 import { Card } from '@automattic/components';

@@ -25,14 +25,14 @@ const contactDetailsFormat = ( { hasDomainsInCart } ) => {
 
 const renderContactDetails = ( {
 	translate,
-    domainName,
-    isDomainFieldsVisible,
+	domainName,
+	isDomainFieldsVisible,
 	contactInfo,
 	renderDomainContactFields,
 	setters,
-    PhoneInput,
-    CountrySelectMenu,
-    countriesList,
+	PhoneInput,
+	CountrySelectMenu,
+	countriesList,
 } ) => {
 	const format = contactDetailsFormat( { isDomainFieldsVisible } );
 	const requiresVatId = isEligibleForVat( contactInfo.countryCode.value );
@@ -57,21 +57,22 @@ const renderContactDetails = ( {
 		default:
 			return (
 				<React.Fragment>
-                    <TaxFields
-                        section="contact"
-                        taxInfo={ contactInfo }
-                        setters={ setters }
-                        CountrySelectMenu={ CountrySelectMenu }
-                        countriesList={ countriesList }
-                    />
+					<TaxFields
+						section="contact"
+						taxInfo={ contactInfo }
+						setters={ setters }
+						CountrySelectMenu={ CountrySelectMenu }
+						countriesList={ countriesList }
+					/>
 
-                    <PhoneNumberField
-                        id="contact-phone-number"
-                        setContactField={ setters.setContactField }
-                        countriesList={ countriesList }
-                        contactInfo={ contactInfo }
-                        PhoneInput={ PhoneInput }
-                    />
+					<PhoneNumberField
+						id="contact-phone-number"
+						setContactField={ setters.setContactField }
+						countriesList={ countriesList }
+						contactInfo={ contactInfo }
+						PhoneInput={ PhoneInput }
+						setters={ setters }
+					/>
 					{ requiresVatId && <VatIdField /> }
 				</React.Fragment>
 			);
@@ -86,9 +87,9 @@ export default function WPContactForm( {
 	PhoneInput,
 	StateSelect,
 	countriesList,
-    renderDomainContactFields,
+	renderDomainContactFields,
 } ) {
-    const translate = useTranslate();
+	const translate = useTranslate();
 	const isDomainFieldsVisible = useHasDomainsInCart();
 	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
 	const setters = useDispatch( 'wpcom' );
@@ -105,14 +106,14 @@ export default function WPContactForm( {
 		<BillingFormFields>
 			{ renderContactDetails( {
 				translate,
-                domainName,
-                isDomainFieldsVisible,
+				domainName,
+				isDomainFieldsVisible,
 				contactInfo,
 				renderDomainContactFields,
 				setters,
-                PhoneInput,
-                CountrySelectMenu,
-                countriesList,
+				PhoneInput,
+				CountrySelectMenu,
+				countriesList,
 			} ) }
 		</BillingFormFields>
 	);
@@ -358,10 +359,12 @@ function PhoneNumberField( {
 	contactInfo,
 	countriesList,
 	PhoneInput,
+	setters,
 } ) {
 	const translate = useTranslate();
+	const { updatePhone, updatePhoneNumberCountry } = setters;
 
-	const isError = contactInfo.phoneNumber.isTouched && ! contactInfo.phoneNumber.isValid;
+	const isError = contactInfo.phone.isTouched && ! isValid( contactInfo.phone );
 	return (
 		<PhoneNumberFieldUI>
 			<Label htmlFor={ id }>
@@ -372,19 +375,13 @@ function PhoneNumberField( {
 				isError={ isError }
 				enableStickyCountry={ false }
 				onChange={ ( { value, countryCode } ) => {
-					setContactField( 'phoneNumber', {
-						value,
-						isTouched: true,
-						isValid: isRequired ? !! value : true,
-					} );
-					setContactField( 'phoneNumberCountry', {
-						value: countryCode,
-						isTouched: true,
-						isValid: !! value,
-					} );
+					updatePhone( value );
+					updatePhoneNumberCountry( countryCode );
 				} }
-				value={ contactInfo.phoneNumber.value }
-				countryCode={ contactInfo.phoneNumberCountry.value || contactInfo.country.value || 'US' }
+				value={ contactInfo.phone.value }
+				countryCode={
+					contactInfo.phoneNumberCountry.value || contactInfo.countryCode.value || 'US'
+				}
 				countriesList={ countriesList }
 			/>
 			{ isError && <ErrorMessage>{ translate( 'This field is required.' ) }</ErrorMessage> }
@@ -447,7 +444,7 @@ function VatIdField() {
 
 function TaxFields( { section, taxInfo, setters, CountrySelectMenu, countriesList } ) {
 	const translate = useTranslate();
-	const { postalCode, country } = taxInfo;
+	const { postalCode, countryCode } = taxInfo;
 	const { updatePostalCode, updateCountryCode } = setters;
 
 	const isZip = isZipOrPostal() === 'zip';
@@ -459,7 +456,9 @@ function TaxFields( { section, taxInfo, setters, CountrySelectMenu, countriesLis
 					type="text"
 					label={ isZip ? translate( 'Zip code' ) : translate( 'Postal code' ) }
 					value={ postalCode.value }
-					onChange={ updatePostalCode }
+					onChange={ event => {
+						updatePostalCode( event.target.value );
+					} }
 					autoComplete={ section + ' postal-code' }
 					isError={ postalCode.isTouched && ! isValid( postalCode ) }
 					errorMessage={ translate( 'This field is required.' ) }
@@ -470,13 +469,12 @@ function TaxFields( { section, taxInfo, setters, CountrySelectMenu, countriesLis
 				<CountrySelectMenu
 					translate={ translate }
 					onChange={ event => {
-						const value = event.target.value;
-						setContactField( 'country', { value, isTouched: true, isValid: !! value } );
+						updateCountryCode( event.target.value );
 					} }
-					isError={ country.isTouched && ! country.isValid }
+					isError={ countryCode.isTouched && ! isValid( country ) }
 					isDisabled={ false } // TODO
 					errorMessage={ translate( 'This field is required.' ) }
-					currentValue={ country.value }
+					currentValue={ countryCode.value }
 					countriesList={ countriesList }
 				/>
 			</RightColumn>

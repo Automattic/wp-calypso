@@ -178,6 +178,7 @@ export function prepareDomainContactDetails(
 export type ManagedContactDetailsUpdaters = {
 	updateDomainFields: ( ManagedContactDetails, DomainContactDetails ) => ManagedContactDetails;
 	updatePhone: ( ManagedContactDetails, string ) => ManagedContactDetails;
+	updatePhoneNumberCountry: ( ManagedContactDetails, string ) => ManagedContactDetails;
 	updatePostalCode: ( ManagedContactDetails, string ) => ManagedContactDetails;
 	updateCountryCode: ( ManagedContactDetails, string ) => ManagedContactDetails;
 	updateVatId: ( ManagedContactDetails, string ) => ManagedContactDetails;
@@ -211,6 +212,16 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 		return {
 			...oldDetails,
 			phone: touchIfDifferent( newPhone, oldDetails.phone ),
+		};
+	},
+
+	updatePhoneNumberCountry: (
+		oldDetails: ManagedContactDetails,
+		newPhoneNumberCountry: string
+	): ManagedContactDetails => {
+		return {
+			...oldDetails,
+			phoneNumberCountry: touchIfDifferent( newPhoneNumberCountry, oldDetails.phoneNumberCountry ),
 		};
 	},
 

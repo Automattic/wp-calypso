@@ -24,6 +24,7 @@ type WpcomStoreAction =
 	| { type: 'SET_SITE_ID'; payload: string }
 	| { type: 'UPDATE_VAT_ID'; payload: string }
 	| { type: 'UPDATE_PHONE'; payload: string }
+	| { type: 'UPDATE_PHONE_NUMBER_COUNTRY'; payload: string }
 	| { type: 'UPDATE_POSTAL_CODE'; payload: string }
 	| { type: 'UPDATE_COUNTRY_CODE'; payload: string };
 
@@ -46,6 +47,8 @@ export function useWpcomStore( registerStore, onEvent ) {
 				return updaters.updateVatId( state, action.payload );
 			case 'UPDATE_PHONE':
 				return updaters.updatePhone( state, action.payload );
+			case 'UPDATE_PHONE_NUMBER_COUNTRY':
+				return updaters.updatePhoneNumberCountry( state, action.payload );
 			case 'UPDATE_POSTAL_CODE':
 				return updaters.updatePostalCode( state, action.payload );
 			case 'UPDATE_COUNTRY_CODE':
@@ -67,8 +70,8 @@ export function useWpcomStore( registerStore, onEvent ) {
 	}
 
 	registerStore( 'wpcom', {
-		reducer( state: WpcomStoreState | null, action: WpcomStoreAction ): WpcomStoreState {
-			const checkedState = state === null ? initialWpcomStoreState : state;
+		reducer( state: WpcomStoreState | undefined, action: WpcomStoreAction ): WpcomStoreState {
+			const checkedState = state === undefined ? initialWpcomStoreState : state;
 			return {
 				contactDetails: contactReducer( checkedState.contactDetails, action ),
 				siteId: siteIdReducer( checkedState.siteId, action ),
@@ -92,6 +95,10 @@ export function useWpcomStore( registerStore, onEvent ) {
 
 			updatePhone( payload: string ): WpcomStoreAction {
 				return { type: 'UPDATE_PHONE', payload };
+			},
+
+			updatePhoneNumberCountry( payload: string ): WpcomStoreAction {
+				return { type: 'UPDATE_PHONE_NUMBER_COUNTRY', payload };
 			},
 
 			updatePostalCode( payload: string ): WpcomStoreAction {

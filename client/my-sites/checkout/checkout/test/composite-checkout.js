@@ -78,6 +78,13 @@ describe( 'CompositeCheckout', () => {
 			total_cost_display: 'R$156',
 		};
 
+		const countryList = [
+			{
+				code: 'AU',
+				name: 'Australia',
+			},
+		];
+
 		const store = createStore( () => ( {
 			plans: { items: [] },
 			sites: { items: {} },
@@ -91,6 +98,7 @@ describe( 'CompositeCheckout', () => {
 					getCart={ mockGetCartEndpointWith( initialCart ) }
 					getStoredCards={ async () => [] }
 					allowedPaymentMethods={ [ 'paypal' ] }
+					contactCountriesList={ countryList }
 				/>
 			</ReduxProvider>
 		);
