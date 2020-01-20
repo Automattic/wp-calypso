@@ -46,6 +46,7 @@ const SignupForm = () => {
 				<TextControl
 					id="email"
 					value={ emailVal }
+					disabled={ status === UsePasswordlessSignUpStatus.Authenticating }
 					onChange={ setEmailVal }
 					placeholder={ NO__( 'yourname@email.com' ) }
 				/>
