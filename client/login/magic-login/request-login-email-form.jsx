@@ -10,10 +10,7 @@ import { defer, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	fetchMagicLoginRequestEmail,
-	hideMagicLoginRequestNotice,
-} from 'state/login/magic-login/actions';
+import { hideMagicLoginRequestNotice } from 'state/login/magic-login/actions';
 import getMagicLoginCurrentView from 'state/selectors/get-magic-login-current-view';
 import getMagicLoginRequestedEmailSuccessfully from 'state/selectors/get-magic-login-requested-email-successfully';
 import getMagicLoginRequestEmailError from 'state/selectors/get-magic-login-request-email-error';
@@ -31,6 +28,7 @@ import LoggedOutForm from 'components/logged-out-form';
 import Notice from 'components/notice';
 import { localize } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { sendEmailLogin } from 'state/auth/actions';
 
 class RequestLoginEmailForm extends React.Component {
 	static propTypes = {
@@ -44,7 +42,7 @@ class RequestLoginEmailForm extends React.Component {
 		userEmail: PropTypes.string,
 
 		// mapped to dispatch
-		fetchMagicLoginRequestEmail: PropTypes.func.isRequired,
+		sendEmailLogin: PropTypes.func.isRequired,
 		hideMagicLoginRequestNotice: PropTypes.func.isRequired,
 	};
 
@@ -85,19 +83,10 @@ class RequestLoginEmailForm extends React.Component {
 			return;
 		}
 
-		this.props.recordTracksEvent( 'calypso_login_email_link_submit' );
-
-		this.props
-			.fetchMagicLoginRequestEmail( usernameOrEmail, this.props.redirectTo )
-			.then( () => {
-				this.props.recordTracksEvent( 'calypso_login_email_link_success' );
-			} )
-			.catch( error => {
-				this.props.recordTracksEvent( 'calypso_login_email_link_failure', {
-					error_code: error.error,
-					error_message: error.message,
-				} );
-			} );
+		this.props.sendEmailLogin( usernameOrEmail, {
+			redirectTo: this.props.redirectTo,
+			requestLoginEmailFormFlow: true,
+		} );
 	};
 
 	getUsernameOrEmailFromState() {
@@ -200,7 +189,7 @@ const mapState = state => {
 };
 
 const mapDispatch = {
-	fetchMagicLoginRequestEmail,
+	sendEmailLogin,
 	hideMagicLoginRequestNotice,
 	recordTracksEvent,
 };

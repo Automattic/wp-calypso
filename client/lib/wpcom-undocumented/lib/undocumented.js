@@ -1431,29 +1431,6 @@ Undocumented.prototype.usersEmailVerification = function( query, fn ) {
 };
 
 /**
- * Request a "Magic Login" email be sent to a user so they can use it to log in
- *
- * @param  {object} data - object containing an email address
- * @param  {Function} fn - Function to invoke when request is complete
- * @returns {Promise} promise
- */
-Undocumented.prototype.requestMagicLoginEmail = function( data, fn ) {
-	restrictByOauthKeys( data );
-
-	data.locale = getLocaleSlug();
-	data.lang_id = getLanguage( data.locale ).value;
-
-	return this.wpcom.req.post(
-		'/auth/send-login-email',
-		{
-			apiVersion: '1.2',
-		},
-		data,
-		fn
-	);
-};
-
-/**
  * Create a new site
  *
  * @param {object} query - object containing an site address
@@ -2142,9 +2119,9 @@ Undocumented.prototype.exportReaderFeed = function( fn ) {
  * Imports given XML file into the user's Reader feed.
  * XML file is expected to be in OPML format.
  *
- * @param {File}     file         The File object to upload
+ * @param {globalThis.File}     file         The File object to upload
  * @param {Function} fn           The callback function
- * @returns {XMLHttpRequest} The XHR instance, to attach `progress`
+ * @returns {globalThis.XMLHttpRequest} The XHR instance, to attach `progress`
  *   listeners to, etc.
  */
 Undocumented.prototype.importReaderFeed = function( file, fn ) {
@@ -2168,7 +2145,7 @@ Undocumented.prototype.importReaderFeed = function( file, fn ) {
  * @param {string}     deviceFamily   The device family
  * @param {string}     deviceName     The device name
  * @param {Function}   fn             The callback function
- * @returns {XMLHttpRequest}          The XHR instance
+ * @returns {globalThis.XMLHttpRequest}          The XHR instance
  */
 Undocumented.prototype.registerDevice = function( registration, deviceFamily, deviceName, fn ) {
 	debug( '/devices/new' );
@@ -2189,7 +2166,7 @@ Undocumented.prototype.registerDevice = function( registration, deviceFamily, de
  *
  * @param {number}        deviceId       The device ID for the registration to be removed
  * @param {Function}   fn             The callback function
- * @returns {XMLHttpRequest}          The XHR instance
+ * @returns {globalThis.XMLHttpRequest}          The XHR instance
  */
 Undocumented.prototype.unregisterDevice = function( deviceId, fn ) {
 	debug( '/devices/:device_id/delete' );
@@ -2213,7 +2190,7 @@ Undocumented.prototype.wordAdsApprove = function( siteId ) {
  *
  * @param {number} siteId -- the ID of the site
  * @param {string} [plugin] -- .org plugin slug
- * @param {File} [theme] -- theme zip to upload
+ * @param {globalThis.File} [theme] -- theme zip to upload
  * @param {Function} [onProgress] -- called with upload progress status
  *
  * @returns {Promise} promise for handling result
