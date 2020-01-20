@@ -373,9 +373,7 @@ export class SiteSettingsFormGeneral extends Component {
 							<span>{ translate( 'Coming Soon' ) }</span>
 						</FormLabel>
 						<FormSettingExplanation isIndented>
-							{ translate(
-								"Your site is hidden from your visitors until it's ready for viewing."
-							) }
+							{ translate( "Your site is hidden from visitors until it's ready for viewing." ) }
 						</FormSettingExplanation>
 					</>
 				) }
