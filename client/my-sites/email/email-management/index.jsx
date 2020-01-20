@@ -53,18 +53,18 @@ import customDomainImage from 'assets/images/illustrations/custom-domain.svg';
 
 class EmailManagement extends React.Component {
 	static propTypes = {
+		canManageSite: PropTypes.bool.isRequired,
 		domains: PropTypes.array.isRequired,
 		gsuiteUsers: PropTypes.array,
 		hasGSuiteUsersLoaded: PropTypes.bool.isRequired,
 		hasSiteDomainsLoaded: PropTypes.bool.isRequired,
-		canManageSite: PropTypes.bool.isRequired,
+		selectedDomainName: PropTypes.string,
 		selectedSiteId: PropTypes.number.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
-		selectedDomainName: PropTypes.string,
 	};
 
 	render() {
-		const { selectedSiteId, selectedDomainName, canManageSite } = this.props;
+		const { canManageSite, selectedDomainName, selectedSiteId } = this.props;
 
 		if ( ! canManageSite ) {
 			return (
@@ -265,11 +265,11 @@ class EmailManagement extends React.Component {
 export default connect( state => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
+		canManageSite: canCurrentUser( state, selectedSiteId, 'manage_options' ),
 		domains: getDomainsBySiteId( state, selectedSiteId ),
 		gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
 		hasGSuiteUsersLoaded: hasLoadedGSuiteUsers( state, selectedSiteId ),
 		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, selectedSiteId ),
-		canManageSite: canCurrentUser( state, selectedSiteId, 'manage_options' ),
 		selectedSiteId,
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 	};
