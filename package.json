@@ -64,6 +64,7 @@
 		"build-css:directly": "node-sass --importer node_modules/node-sass-package-importer/dist/cli.js --include-path client client/assets/stylesheets/directly.scss public/directly.css --output-style compressed && npm run -s postcss -- public/directly.css",
 		"build-css:editor": "node-sass --importer node_modules/node-sass-package-importer/dist/cli.js --include-path client client/assets/stylesheets/editor.scss public/editor.css --output-style compressed && npm run -s postcss -- public/editor.css",
 		"build-devdocs:search-index": "node bin/generate-devdocs-search-index.js",
+		"build-devdocs:storybook": "npm run components:storybook:build",
 		"build-docker": "node bin/build-docker.js",
 		"build-static": "npx ncp static public",
 		"prebuild-server": "mkdirp build",
