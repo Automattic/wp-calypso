@@ -207,24 +207,33 @@
 	&__grow-earn {
 		padding-bottom: 12px;
 	}
-	&__go-mobile.is-single-store {
-		display: flex;
-		padding-bottom: 1rem;
+	&__go-mobile {
+		&.is-single-store {
+			display: flex;
+			padding-bottom: 1rem;
 
-		.customer-home__card-subheader,
-		.get-apps__app-badge img {
-			margin: 0;
+			.customer-home__card-subheader,
+			.get-apps__app-badge img {
+				margin: 0;
+			}
+
+			.get-apps__app-badge {
+				width: auto;
+			}
+
+			.customer-home__card-mobile {
+				margin-left: auto;
+				align-self: center;
+				flex-shrink: 0;
+				padding-left: 1rem;
+			}
 		}
 
-		.get-apps__app-badge {
-			width: auto;
-		}
-
-		.customer-home__card-mobile {
-			margin-left: auto;
-			align-self: center;
-			flex-shrink: 0;
-			padding-left: 1rem;
+		.customer-home__mobile-download-sms-email {
+			display: block;
+			border-top: 1px solid var( --color-neutral-5 );
+			padding-top: 12px;
+			margin-top: 1rem;
 		}
 	}
 	&__layout {

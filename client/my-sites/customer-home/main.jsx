@@ -368,6 +368,11 @@ class Home extends Component {
 						</AppsBadge>
 					) }
 				</div>
+				{ isDesktop() && (
+					<a href="/me/get-apps" className="customer-home__mobile-download-sms-email">
+						{ translate( 'Text or email me a link' ) }
+					</a>
+				) }
 			</Card>
 		);
 	};
