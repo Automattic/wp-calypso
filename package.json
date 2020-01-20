@@ -129,6 +129,7 @@
 		"@automattic/webpack-inline-constant-exports-plugin": "file:./packages/webpack-inline-constant-exports-plugin",
 		"@babel/cli": "7.8.3",
 		"@babel/core": "7.8.3",
+		"@emotion/core": "10.0.27",
 		"@storybook/addon-actions": "5.2.8",
 		"@storybook/preset-scss": "1.0.2",
 		"@storybook/preset-typescript": "1.2.0",
