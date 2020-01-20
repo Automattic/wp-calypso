@@ -3,8 +3,9 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import { Card } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -15,25 +16,27 @@ import { isDesktop } from 'lib/viewport';
 import CardHeading from 'components/card-heading';
 import appleStoreLogo from 'assets/images/customer-home/apple-store.png';
 import googlePlayLogo from 'assets/images/customer-home/google-play.png';
+import { sendEmailLogin } from 'state/auth/actions';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { getCurrentUserEmail } from 'state/current-user/selectors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-export const GoMobileCard = ( { translate } ) => {
+export const GoMobileCard = ( { translate, email, sendMobileLoginEmail } ) => {
 	const { isiPad, isiPod, isiPhone, isAndroid } = userAgent;
 	const isIos = isiPad || isiPod || isiPhone;
 	const showIosBadge = isDesktop() || isIos || ! isAndroid;
 	const showAndroidBadge = isDesktop() || isAndroid || ! isIos;
-	const showOnlyOneBadge = showIosBadge !== showAndroidBadge;
+
+	const emailLogin = () => {
+		sendMobileLoginEmail( email );
+	};
 
 	return (
-		<Card
-			className={ classnames( 'go-mobile-card', {
-				'is-single-store': showOnlyOneBadge,
-			} ) }
-		>
+		<Card className={ classnames( 'go-mobile-card' ) }>
 			<div>
 				<CardHeading>{ translate( 'Go Mobile' ) }</CardHeading>
 				<h6 className="go-mobile-card__subheader">{ translate( 'Make updates on the go' ) }</h6>
@@ -60,8 +63,26 @@ export const GoMobileCard = ( { translate } ) => {
 					</AppsBadge>
 				) }
 			</div>
+			<Button className="go-mobile-card__email-link-button" onClick={ emailLogin }>
+				{ translate( 'Email me a log in link' ) }
+			</Button>
 		</Card>
 	);
 };
 
-export default localize( GoMobileCard );
+const sendMobileLoginEmail = email =>
+	withAnalytics(
+		recordTracksEvent( 'calypso_customer_home_request_mobile_email_login' ),
+		sendEmailLogin( email, { showGlobalNotices: true, isMobileAppLogin: true } )
+	);
+
+export default connect(
+	state => {
+		return {
+			email: getCurrentUserEmail( state ),
+		};
+	},
+	{
+		sendMobileLoginEmail,
+	}
+)( localize( GoMobileCard ) );
