@@ -170,8 +170,9 @@ describe( 'SiteSettingsFormGeneral ', () => {
 		} );
 
 		test( `Selecting Hidden should switch radio to Public`, () => {
+			testProps.updateFields = jest.fn();
 			testProps.fields.blog_public = -1;
-			const { getByLabelText, rerender } = render( <SiteSettingsFormGeneral { ...testProps } /> );
+			const { getByLabelText } = render( <SiteSettingsFormGeneral { ...testProps } /> );
 
 			const hiddenCheckbox = getByLabelText( 'Do not allow search engines to index my site' );
 			expect( hiddenCheckbox.checked ).toBe( false );
@@ -180,11 +181,10 @@ describe( 'SiteSettingsFormGeneral ', () => {
 			expect( publicRadio.checked ).toBe( false );
 
 			fireEvent.click( hiddenCheckbox );
-
-			rerender( <SiteSettingsFormGeneral { ...testProps } /> );
-
-			expect( hiddenCheckbox.checked ).toBe( true );
-			expect( publicRadio.checked ).toBe( true );
+			expect( testProps.updateFields ).toBeCalledWith( {
+				blog_public: 0,
+				wpcom_coming_soon: 0,
+			} );
 		} );
 
 		test( `Hidden checkbox should be possible to unselect`, () => {
