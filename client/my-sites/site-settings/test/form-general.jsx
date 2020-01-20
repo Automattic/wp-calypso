@@ -70,12 +70,7 @@ const initialReduxState = {
 
 function renderWithRedux( ui ) {
 	const store = createStore( state => state, initialReduxState );
-	const renderResults = render( <Provider store={ store }>{ ui }</Provider> );
-	return {
-		...renderResults,
-		store,
-		rerender: newUi => renderResults.rerender( <Provider store={ store }>{ newUi }</Provider> ),
-	};
+	return render( <Provider store={ store }>{ ui }</Provider> );
 }
 
 const props = {
@@ -190,24 +185,20 @@ describe( 'SiteSettingsFormGeneral ', () => {
 		} );
 
 		test( `Hidden checkbox should be possible to unselect`, () => {
-			testProps.fields.blog_public = -1;
-			const { getByLabelText, rerender } = renderWithRedux(
-				<SiteSettingsFormGeneral { ...testProps } />
-			);
+			testProps.fields.blog_public = 0;
+			const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 
 			const hiddenCheckbox = getByLabelText( 'Do not allow search engines to index my site' );
-			expect( hiddenCheckbox ).not.toBeChecked();
+			expect( hiddenCheckbox ).toBeChecked();
 
 			const publicRadio = getByLabelText( 'Public' );
-			expect( publicRadio ).not.toBeChecked();
-
-			fireEvent.click( hiddenCheckbox );
-			rerender( <SiteSettingsFormGeneral { ...testProps } /> );
-			fireEvent.click( hiddenCheckbox );
-			rerender( <SiteSettingsFormGeneral { ...testProps } /> );
-
-			expect( hiddenCheckbox ).not.toBeChecked();
 			expect( publicRadio ).toBeChecked();
+
+			fireEvent.click( hiddenCheckbox );
+			expect( testProps.updateFields ).toBeCalledWith( {
+				blog_public: 1,
+				wpcom_coming_soon: 0,
+			} );
 		} );
 	} );
 } );
