@@ -349,9 +349,8 @@ function ContactFormSummary() {
 					{ postalAndCountry && <SummaryLine>{ postalAndCountry }</SummaryLine> }
 				</SummaryDetails>
 
-				{ ( contactInfo.phone.value.length > 0 || contactInfo.vatId.value.length > 0 ) && (
+				{ contactInfo.vatId.value.length > 0 && (
 					<SummaryDetails>
-						<SummaryLine>{ contactInfo.phone.value }</SummaryLine>
 						{ contactInfo.vatId.value.length > 0 && (
 							<SummaryLine>
 								{ translate( 'VAT indentification number:' ) }
@@ -369,8 +368,8 @@ function joinNonEmptyValues( joinString, ...values ) {
 	return values.filter( value => value.length > 0 ).join( joinString );
 }
 
-function contactDetailsFormat( { hasDomainsInCart } ) {
-	if ( hasDomainsInCart ) {
+function contactDetailsFormat( { isDomainFieldsVisible } ) {
+	if ( isDomainFieldsVisible ) {
 		return 'DOMAINS';
 	}
 	return 'DEFAULT';
