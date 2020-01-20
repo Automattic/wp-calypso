@@ -343,7 +343,7 @@ function createCartFromLineItems( {
 		extra: [],
 		products: items.map( item => ( {
 			product_id: item.wpcom_meta?.product_id,
-			meta: item.sublabel,
+			meta: item.wpcom_meta?.meta,
 			currency: item.amount.currency,
 			volume: item.wpcom_meta?.volume ?? 1,
 			extra: item.wpcom_meta?.extra,

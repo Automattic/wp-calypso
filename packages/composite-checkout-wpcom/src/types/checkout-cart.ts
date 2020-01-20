@@ -36,6 +36,7 @@ export interface CheckoutCartTotal {
 export type WPCOMCartItem = CheckoutCartItem & {
 	wpcom_meta: {
 		uuid: string;
+		meta?: string;
 		plan_length?: string;
 		product_id: number;
 		extra: object;

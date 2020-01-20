@@ -278,6 +278,9 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 			it( 'has the expected sublabel (the domain name)', function() {
 				expect( clientCart.items[ 1 ].sublabel ).toBe( 'foo.cash' );
 			} );
+			it( 'has the expected meta (the domain name)', function() {
+				expect( clientCart.items[ 1 ].wpcom_meta?.meta ).toBe( 'foo.cash' );
+			} );
 			it( 'has the expected type', function() {
 				expect( clientCart.items[ 1 ].type ).toBe( 'dotcash_domain' );
 			} );
@@ -509,6 +512,9 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 			} );
 			it( 'has the expected display value', function() {
 				expect( clientCart.items[ 2 ].amount.displayValue ).toBe( '$72' );
+			} );
+			it( 'has the expected meta (the domain name)', function() {
+				expect( clientCart.items[ 2 ].wpcom_meta?.meta ).toBe( 'foo.cash' );
 			} );
 		} );
 

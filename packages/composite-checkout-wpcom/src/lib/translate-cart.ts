@@ -112,6 +112,7 @@ function translateWpcomCartItemToCheckoutCartItem(
 		},
 		wpcom_meta: {
 			uuid: String( index ),
+			meta: typeof meta === 'string' ? meta : undefined,
 			product_id,
 			extra,
 			volume,
