@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState, useEffect } from 'react';
 import classNames from 'classnames';
 
 /**
@@ -26,22 +26,36 @@ const Question: FunctionComponent< Props > = ( {
 	isActive,
 	label,
 	onExpand,
-} ) => (
-	<div className={ classNames( 'onboarding-block__question', className, { selected: isActive } ) }>
-		<span>{ label }</span>
-		<div>
-			{ isActive ? (
-				children
-			) : (
-				<>
-					<button className="onboarding-block__question-answered" onClick={ onExpand }>
-						{ displayValue }
-					</button>
-					<span>.</span>
-				</>
-			) }
+} ) => {
+	// Persist activation of question so animation only happens on initial selection.
+	const [ hasActivated, setHasActivated ] = useState< boolean >( false );
+	useEffect( () => {
+		if ( ! hasActivated && isActive ) {
+			setHasActivated( true );
+		}
+	}, [ isActive, hasActivated ] );
+
+	return (
+		<div
+			className={ classNames( 'onboarding-block__question', className, {
+				selected: hasActivated,
+			} ) }
+		>
+			<span>{ label }</span>
+			<div>
+				{ isActive ? (
+					children
+				) : (
+					<>
+						<button className="onboarding-block__question-answered" onClick={ onExpand }>
+							{ displayValue }
+						</button>
+						<span>.</span>
+					</>
+				) }
+			</div>
 		</div>
-	</div>
-);
+	);
+};
 
 export default Question;
