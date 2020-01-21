@@ -118,12 +118,12 @@
 				display: none;
 			}
 		}
-	}
 
-	.template-block__loading {
-		display: flex;
-		align-items: center;
-		color: #191e23;
+		.template-block__loading {
+			display: flex;
+			align-items: center;
+			color: #191e23;
+		}
 	}
 }
 
@@ -136,5 +136,12 @@
 		.components-placeholder__instructions {
 			display: none;
 		}
+	}
+}
+
+
+.template-block__placeholder {
+	.components-spinner {
+		margin: 0 auto;
 	}
 }
