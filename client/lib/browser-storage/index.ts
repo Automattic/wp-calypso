@@ -10,6 +10,8 @@ import {
 	activate as activateBypass,
 } from './bypass';
 import { StoredItems } from './types';
+import { mc } from 'lib/analytics';
+import { kebabCase } from 'lodash';
 
 let shouldBypass = false;
 
@@ -32,7 +34,15 @@ const getDB = once( () => {
 					}
 					reject( request.error );
 				};
-				request.onsuccess = () => resolve( request.result );
+				request.onsuccess = () => {
+					const db = request.result;
+					db.onerror = function( errorEvent: any ) {
+						if ( errorEvent.target?.error?.name ) {
+							mc.bumpStat( 'calypso-browser-storage', kebabCase( errorEvent.target.error.name ) );
+						}
+					};
+					resolve( db );
+				};
 				request.onupgradeneeded = () => request.result.createObjectStore( STORE_NAME );
 			}
 		} catch ( error ) {
