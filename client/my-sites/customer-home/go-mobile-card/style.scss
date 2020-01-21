@@ -1,21 +1,5 @@
-.go-mobile-card.is-single-store {
-	display: flex;
-	padding-bottom: 1rem;
-}
-
-.go-mobile-card.is-single-store .get-apps__app-badge {
-	width: auto;
-}
-
-.go-mobile-card__app-badges {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	margin-bottom: 1.5em;
-}
-
-.go-mobile-card__app-badges .get-apps__app-badge {
-	width: 50%;
+.go-mobile-card__row {
+	margin-bottom: 1rem;
 }
 
 .go-mobile-card__subheader {
@@ -24,10 +8,31 @@
 	margin: -0.5rem 0 1rem;
 }
 
-.go-mobile-card .get-apps__app-badge img {
-	margin: 0;
+.go-mobile-card__app-badges {
+	display: flex;
+}
+
+.go-mobile-card__app-badges .get-apps__app-badge {
+	width: 50%;
 }
 
 .go-mobile-card__email-link-button {
 	width: 100%;
+}
+
+.go-mobile-card__row.has-2-cols {
+	display: flex;
+}
+
+.go-mobile-card__row.has-2-cols .get-apps__app-badge {
+	width: auto;
+}
+
+.go-mobile-card__row.has-2-cols .go-mobile-card__subheader {
+	margin: 0;
+}
+
+.go-mobile-card__row.has-2-cols .go-mobile-card__app-badges {
+	margin-left: auto;
+	padding-left: 1rem;
 }
