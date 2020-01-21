@@ -6,12 +6,18 @@
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
 	"sideEffects": false,
-	"main": "src/index.js",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/calypso-analytics"
 	},
+	"files": [
+		"dist",
+		"types",
+		"src"
+	],
 	"publishConfig": {
 		"access": "public"
 	},
@@ -24,6 +30,9 @@
 		"prepare": "transpile"
 	},
 	"dependencies": {
-		"hash.js": "1.1.7"
+		"hash.js": "1.1.7",
+		"lodash": "4.17.15",
+		"qs": "6.9.1",
+		"debug": "4.1.1"
 	}
 }
