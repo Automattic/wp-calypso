@@ -293,7 +293,7 @@ function joinNonEmptyValues( joinString, ...values ) {
 	return values.filter( value => value.length > 0 ).join( joinString );
 }
 
-function contactDetailsFormat( { isDomainFieldsVisible } ) {
+function getContactDetailsFormat( isDomainFieldsVisible ) {
 	if ( isDomainFieldsVisible ) {
 		return 'DOMAINS';
 	}
@@ -311,7 +311,7 @@ function renderContactDetails( {
 	CountrySelectMenu,
 	countriesList,
 } ) {
-	const format = contactDetailsFormat( { isDomainFieldsVisible } );
+	const format = getContactDetailsFormat( isDomainFieldsVisible );
 	const requiresVatId = isEligibleForVat( contactInfo.countryCode.value );
 	switch ( format ) {
 		case 'DOMAINS':
