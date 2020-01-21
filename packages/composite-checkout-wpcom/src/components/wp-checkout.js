@@ -55,7 +55,6 @@ export default function WPCheckout( {
 	renderDomainContactFields,
 } ) {
 	const translate = useTranslate();
-	const [ itemsWithTax ] = useLineItems();
 
 	const ReviewContent = () => (
 		<WPCheckoutOrderReview
@@ -105,7 +104,7 @@ export default function WPCheckout( {
 			),
 			completeStepContent: <WPContactForm summary isComplete={ true } isActive={ false } />,
 			isCompleteCallback: () => isCompleteAndValid( contactInfo ),
-			isEditableCallback: () => isFormEditable( contactInfo, itemsWithTax ),
+			isEditableCallback: () => isFormEditable( contactInfo ),
 			getEditButtonAriaLabel: () => translate( 'Edit the billing details' ),
 			getNextStepButtonAriaLabel: () => translate( 'Continue with the entered billing details' ),
 		},
