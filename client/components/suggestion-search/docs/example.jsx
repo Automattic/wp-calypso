@@ -9,7 +9,9 @@ import React, { PureComponent } from 'react';
 import SuggestionSearch from '../';
 
 class SuggestionSearchExample extends PureComponent {
-	onSiteTopicChange = value => this.state( { selected: value } );
+	state = { selected: null };
+
+	onSiteTopicChange = value => this.setState( { selected: value } );
 
 	sortDisplayResults = ( suggestionsArray, queryString ) =>
 		suggestionsArray.sort().map( item => ( item === queryString ? `→ ${ item }` : item ) );
