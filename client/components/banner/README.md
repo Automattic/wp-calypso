@@ -53,7 +53,9 @@ render() {
 | `dismissTemporary` | `bool` | false | When true, clicking on the cross will dismiss the card for the current page load. |
 | `event` | `string` | null | Event to distinguish the nudge in tracks. Used as <code>cta_name</code> event property. |
 | `feature` | `string` | null | Slug of the feature to highlight in the plans compare card. |
+| `horizontal` | `bool` | false | When true, the banner content will be laid out in a single row (similar to `compact` but normal size). |
 | `href` | `string` | null | The component target URL. |
+| `jetpack` | `bool` | false | When true, a Jetpack logo will be rendered and the border color will be set to Jetpack green. |
 | `icon` | `string` | null | The component icon. |
 | `list` | `string` | null | A list of the upgrade features. |
 | `onClick` | `string` | null | A function associated to the click on the whole banner or just the CTA or dismiss button. |

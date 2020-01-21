@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { noop, size } from 'lodash';
 import Gridicon from 'components/gridicon';
+import JetpackLogo from 'components/jetpack-logo';
 
 /**
  * Internal dependencies
@@ -47,8 +48,10 @@ export class Banner extends Component {
 		dismissTemporary: PropTypes.bool,
 		event: PropTypes.string,
 		feature: PropTypes.string,
+		horizontal: PropTypes.bool,
 		href: PropTypes.string,
 		icon: PropTypes.string,
+		jetpack: PropTypes.bool,
 		compact: PropTypes.bool,
 		list: PropTypes.arrayOf( PropTypes.string ),
 		onClick: PropTypes.func,
@@ -73,6 +76,8 @@ export class Banner extends Component {
 		disableHref: false,
 		dismissTemporary: false,
 		compact: false,
+		horizontal: false,
+		jetpack: false,
 		onClick: noop,
 		onDismiss: noop,
 		showIcon: true,
@@ -133,7 +138,7 @@ export class Banner extends Component {
 	};
 
 	getIcon() {
-		const { icon, showIcon, plan } = this.props;
+		const { icon, jetpack, showIcon, plan } = this.props;
 
 		if ( plan && ! icon ) {
 			return (
@@ -145,6 +150,14 @@ export class Banner extends Component {
 
 		if ( ! showIcon ) {
 			return;
+		}
+
+		if ( jetpack ) {
+			return (
+				<div className="banner__icon-plan">
+					<JetpackLogo size={ 32 } />
+				</div>
+			);
 		}
 
 		return (
@@ -244,6 +257,8 @@ export class Banner extends Component {
 			dismissPreferenceName,
 			dismissTemporary,
 			forceHref,
+			horizontal,
+			jetpack,
 			plan,
 		} = this.props;
 
@@ -259,7 +274,9 @@ export class Banner extends Component {
 			{ 'is-jetpack-plan': plan && planMatches( plan, { group: GROUP_JETPACK } ) },
 			{ 'is-wpcom-plan': plan && planMatches( plan, { group: GROUP_WPCOM } ) },
 			{ 'is-compact': compact },
-			{ 'is-dismissible': dismissPreferenceName }
+			{ 'is-dismissible': dismissPreferenceName },
+			{ 'is-horizontal': horizontal },
+			{ 'is-jetpack': jetpack }
 		);
 
 		if ( dismissPreferenceName ) {
