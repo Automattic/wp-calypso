@@ -98,7 +98,7 @@ describe( 'CompositeCheckout', () => {
 					getCart={ mockGetCartEndpointWith( initialCart ) }
 					getStoredCards={ async () => [] }
 					allowedPaymentMethods={ [ 'paypal' ] }
-					contactCountriesList={ countryList }
+					overrideCountryList={ countryList }
 				/>
 			</ReduxProvider>
 		);
