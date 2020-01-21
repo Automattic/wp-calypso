@@ -15,12 +15,16 @@ import { loadScript } from '@automattic/load-script';
 import {
 	isPiiUrl,
 	costToUSD,
-	doNotTrack,
-	getCurrentUser,
 	isAdTrackingAllowed,
 	mayWeTrackCurrentUserGdpr,
 	refreshCountryCodeCookieGdpr,
 } from 'lib/analytics/utils';
+
+import {
+	getTracksAnonymousUserId,
+	getCurrentUser,
+	doNotTrack,
+} from '@automattic/calypso-analytics';
 
 /**
  * Module variables
@@ -1443,7 +1447,7 @@ function floodlightSessionId() {
 function floodlightUserParams() {
 	const params = {};
 	const currentUser = getCurrentUser();
-	const anonymousUserId = tracksAnonymousUserId();
+	const anonymousUserId = getTracksAnonymousUserId();
 
 	if ( currentUser ) {
 		params.u4 = currentUser.hashedPii.ID;

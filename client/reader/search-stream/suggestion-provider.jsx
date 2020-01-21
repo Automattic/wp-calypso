@@ -11,7 +11,7 @@ import { map, sampleSize } from 'lodash';
 import { getLocaleSlug } from 'lib/i18n-utils';
 import { suggestions } from 'reader/search-stream/suggestions';
 import { getReaderFollowedTags } from 'state/reader/tags/selectors';
-import analytics from 'lib/analytics';
+import createRandomId from '@automattic/calypso-analytics';
 
 /**
  * Build suggestions from subscribed tags
@@ -49,7 +49,7 @@ function suggestionWithRailcar( text, ui_algo, position ) {
 	return {
 		text: text,
 		railcar: {
-			railcar: analytics.tracks.createRandomId() + '-' + position,
+			railcar: createRandomId() + '-' + position,
 			ui_algo: ui_algo,
 			ui_position: position,
 			rec_result: text,

@@ -7,7 +7,8 @@ import debug from 'debug';
  * Internal dependencies
  */
 import config from 'config';
-import { mayWeTrackCurrentUserGdpr, doNotTrack, isPiiUrl } from './utils';
+import { mayWeTrackCurrentUserGdpr, isPiiUrl } from './utils';
+import { doNotTrack } from '@automattic/calypso-analytics';
 import { isE2ETest } from 'lib/e2e';
 
 const hotjarDebug = debug( 'calypso:analytics:hotjar' );
