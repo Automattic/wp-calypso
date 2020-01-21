@@ -49,6 +49,40 @@ export const MediaBasicsTour = makeTour(
 						) }
 					</p>
 					<ButtonRow>
+						<Next step="public-warning" />
+						<Quit />
+					</ButtonRow>
+				</Fragment>
+			) }
+		</Step>
+
+		<Step
+			name="public-warning"
+			arrow="top-left"
+			target=".media-library__upload-buttons"
+			placement="below"
+		>
+			{ ( { translate } ) => (
+				<Fragment>
+					<p>
+						{ translate(
+							'When your site is set to public visibility, all ' +
+								'media files can be accessed by anyone, ' +
+								'even if you have not included them in a post.'
+						) }
+					</p>
+					<p>
+						{ translate(
+							'It is therefore recommended that you do {{strong}}not{{/strong}} ' +
+								'upload any personal files.',
+							{
+								components: {
+									strong: <strong />,
+								},
+							}
+						) }
+					</p>
+					<ButtonRow>
 						<Next step="drag-and-drop" />
 						<Quit />
 					</ButtonRow>
