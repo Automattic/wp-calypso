@@ -2,19 +2,23 @@
  * External dependencies
  */
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import GridiconComponent from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Button from '..';
+import ButtonComponent from '..';
 import Card from '../../card';
 import DocsExample from 'devdocs/docs-example';
 
+// Wrapper with `displayName` for proper display in devdocs
+const Button = props => <ButtonComponent { ...props } />;
 Button.displayName = 'Button';
+const Gridicon = props => <GridiconComponent { ...props } />;
+Gridicon.displayName = 'Gridicon';
 
-class Buttons extends React.PureComponent {
-	static displayName = 'Button';
+export default class ButtonExample extends React.PureComponent {
+	static displayName = 'ButtonExample';
 
 	static defaultProps = {
 		exampleCode: (
@@ -176,5 +180,3 @@ class Buttons extends React.PureComponent {
 		return <DocsExample>{ this.props.exampleCode }</DocsExample>;
 	}
 }
-
-export default Buttons;

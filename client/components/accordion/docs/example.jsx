@@ -10,15 +10,19 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Accordion from 'components/accordion';
-import Gridicon from 'components/gridicon';
+import AccordionComponent from 'components/accordion';
+import GridiconComponent from 'components/gridicon';
 
+// Wrapper with `displayName` for proper display in devdocs
+const Accordion = props => <AccordionComponent { ...props } />;
 Accordion.displayName = 'Accordion';
+const Gridicon = props => <GridiconComponent { ...props } />;
 Gridicon.displayName = 'Gridicon';
 
-function AccordionExample( props ) {
+export default function AccordionExample( props ) {
 	return props.exampleCode;
 }
+AccordionExample.displayName = 'AccordionExample';
 
 AccordionExample.defaultProps = {
 	exampleCode: (
@@ -92,5 +96,3 @@ AccordionExample.defaultProps = {
 		</div>
 	),
 };
-
-export default AccordionExample;

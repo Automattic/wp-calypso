@@ -7,10 +7,13 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FeatureExample from '../index';
+import FeatureComponent from '../index';
 import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
 
-export default class extends React.Component {
+const Feature = props => <FeatureComponent { ...props } />;
+Feature.displayName = 'Feature';
+
+export default class FeatureExample extends React.Component {
 	static displayName = 'FeatureExample';
 
 	getContent = () => {
@@ -55,6 +58,6 @@ export default class extends React.Component {
 	};
 
 	render() {
-		return <FeatureExample>{ this.getContent() }</FeatureExample>;
+		return <Feature>{ this.getContent() }</Feature>;
 	}
 }
