@@ -1,4 +1,4 @@
-.plugin-item.card {
+.plugin-item.card.is-compact {
 	padding: 0;
 	margin: 0;
 	box-shadow: none;
@@ -19,12 +19,12 @@
 		padding: 0;
 	}
 
-	.plugins-list &.is-compact:last-child {
+	.plugins-list &:last-child {
 		margin-bottom: 0;
 	}
 }
 
-.plugin-item {
+.plugin-item.card {
 	position: relative;
 	display: flex;
 	overflow: hidden; // lazy clearfix
