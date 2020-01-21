@@ -220,7 +220,7 @@ export default function CompositeCheckout( {
 					countriesList={ countriesList }
 					PhoneInput={ PhoneInput }
 					StateSelect={ StateSelect }
-                    renderDomainContactFields={ renderDomainContactFields }
+					renderDomainContactFields={ renderDomainContactFields }
 				/>
 			</CheckoutProvider>
 		</React.Fragment>
