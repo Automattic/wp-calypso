@@ -4,13 +4,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { useSelect, useDispatch } from '@automattic/composite-checkout';
+import { useSelect, useDispatch, useLineItems } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { useHasDomainsInCart } from '../hooks/has-domains';
+import { useHasDomainsInCart, isLineItemADomain } from '../hooks/has-domains';
 import Field from './field';
 import { SummaryLine, SummaryDetails, SummarySpacerLine } from './summary-details';
 import { LeftColumn, RightColumn } from './ie-fallback';
