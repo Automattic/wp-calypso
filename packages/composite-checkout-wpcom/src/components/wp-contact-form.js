@@ -29,7 +29,10 @@ export default function WPContactForm( {
 	const isDomainFieldsVisible = useHasDomainsInCart();
 	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
 	const setters = useDispatch( 'wpcom' );
-	const domainName = 'example.com'; // TODO: get the actual domain name
+
+	const [ items ] = useLineItems();
+	const firstDomainItem = items.find( isLineItemADomain );
+	const domainName = firstDomainItem ? firstDomainItem.sublabel : siteUrl;
 
 	if ( summary && isComplete ) {
 		return <ContactFormSummary />;
