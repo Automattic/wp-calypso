@@ -1,0 +1,48 @@
+.import-type-choice__wrapper {
+	.import-type-choice__option-wrapper {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		align-items: flex-start;
+
+		padding: 20px;
+
+		cursor: pointer;
+
+		border: 1px solid var( --color-border ); /* TODO fix color */
+		border-radius: 4px;
+
+		margin-bottom: 10px;
+
+		&.disabled {
+			pointer-events: none;
+			border-color: var( --color-border-subtle );
+
+			* {
+				color: var( --color-neutral-10 );
+			}
+		}
+
+		&.selected {
+			pointer-events: none;
+			border-color: blue;
+		}
+
+
+		.import-type-choice__option-data {
+			margin-left: 5px;
+
+			.import-type-choice__option-header {
+				display: flex;
+				flex-direction: row;
+				justify-content: flex-start;
+				align-items: flex-start;
+
+				.import-type-choice__option-title {
+					font-size: 18px;
+					margin: 0 10px 0 0;
+				}
+			}
+		}
+	}
+}

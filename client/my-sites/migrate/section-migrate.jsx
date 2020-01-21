@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { localize, getLocaleSlug } from 'i18n-calypso';
+import { getLocaleSlug, localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
 import { get, includes, isEmpty, omit } from 'lodash';
@@ -12,13 +12,11 @@ import { Button, Card, CompactCard, ProgressBar } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import CardHeading from 'components/card-heading';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
-import MigrateButton from './migrate-button';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import Site from 'blocks/site';
 import Spinner from 'components/spinner';
@@ -52,6 +50,7 @@ class SectionMigrate extends Component {
 		selectedSiteSlug: null,
 		startTime: '',
 		url: '',
+		chosenImportType: '',
 	};
 
 	componentDidMount() {
@@ -279,22 +278,6 @@ class SectionMigrate extends Component {
 		return includes( [ 'done', 'error', 'unknown' ], this.state.migrationStatus );
 	};
 
-	renderCardBusinessFooter() {
-		const { isTargetSiteAtomic } = this.props;
-
-		// If the site is already Atomic, no upgrade footer is required
-		if ( isTargetSiteAtomic ) {
-			return null;
-		}
-
-		return (
-			<CompactCard className="migrate__card-footer">
-				You need a Business Plan to import your theme and plugins. Or you can{ ' ' }
-				<a href={ this.getImportHref() }>import just your content</a> instead.
-			</CompactCard>
-		);
-	}
-
 	renderLoading() {
 		return (
 			<CompactCard>
@@ -329,47 +312,25 @@ class SectionMigrate extends Component {
 		const { sourceSite, targetSite, targetSiteSlug } = this.props;
 
 		const sourceSiteDomain = get( sourceSite, 'domain' );
-		const targetSiteDomain = get( targetSite, 'domain' );
 		const backHref = `/migrate/${ targetSiteSlug }`;
 
 		return (
 			<>
 				<HeaderCake backHref={ backHref }>Import { sourceSiteDomain }</HeaderCake>
-				<CompactCard>
-					<CardHeading>{ `Import everything from ${ sourceSiteDomain } to WordPress.com.` }</CardHeading>
-					<div className="migrate__confirmation">
-						We can move everything from your current site to this WordPress.com site. It will keep
-						working as expected, but your WordPress.com dashboard will be locked during the
-						migration.
-					</div>
-					<div className="migrate__sites">
+				<div className="migrate__sites">
+					<div className="migrate__sites-item">
 						<Site site={ sourceSite } indicator={ false } />
+					</div>
+					<div className="migrate__sites-arrow-wrapper">
 						<Gridicon className="migrate__sites-arrow" icon="arrow-right" />
+					</div>
+					<div className="migrate__sites-item">
 						<Site site={ targetSite } indicator={ false } />
+						<div className="migrate__sites-labels-container">
+							<span className="migrate__token-label">This site</span>
+						</div>
 					</div>
-					<div className="migrate__confirmation">
-						This will overwrite everything on your WordPress.com site.
-						<ul className="migrate__list">
-							<li>
-								<Gridicon icon="checkmark" size="12" className="migrate__checkmark" />
-								All posts, pages, comments, and media
-							</li>
-							<li>
-								<Gridicon icon="checkmark" size="12" className="migrate__checkmark" />
-								All users and roles
-							</li>
-							<li>
-								<Gridicon icon="checkmark" size="12" className="migrate__checkmark" />
-								Theme, plugins, and settings
-							</li>
-						</ul>
-					</div>
-					<MigrateButton onClick={ this.startMigration } targetSiteDomain={ targetSiteDomain } />
-					<Button className="migrate__cancel" href={ backHref }>
-						Cancel
-					</Button>
-				</CompactCard>
-				{ this.renderCardBusinessFooter() }
+				</div>
 			</>
 		);
 	}
@@ -537,6 +498,8 @@ class SectionMigrate extends Component {
 						onJetpackSelect={ this.handleJetpackSelect }
 						targetSite={ targetSite }
 						targetSiteSlug={ targetSiteSlug }
+						sourceHasJetpack={ this.state.isJetpackConnected }
+						isTargetSiteAtomic={ this.props.isTargetSiteAtomic }
 					/>
 				) : (
 					<StepSourceSelect
@@ -595,6 +558,7 @@ export default connect(
 			isTargetSiteJetpack: !! isJetpackSite( state, targetSiteId ),
 			sourceSite: ownProps.sourceSiteId && getSite( state, ownProps.sourceSiteId ),
 			startMigration: !! get( getCurrentQueryArguments( state ), 'start', false ),
+			sourceSiteHasJetpack: false,
 			targetSite: getSelectedSite( state ),
 			targetSiteId,
 			targetSiteImportAdminUrl: getSiteAdminUrl( state, targetSiteId, 'import.php' ),
