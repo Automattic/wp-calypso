@@ -1,0 +1,26 @@
+.stats-card__subheader {
+	color: var( --color-text-subtle );
+	font-size: 0.85rem;
+	margin: -0.5rem 0 1rem;
+}
+
+.stats-card__visits {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 1rem;
+}
+
+.stats-card__count {
+	border-left: 1px solid var( --color-neutral-5 );
+	width: 50%;
+	text-align: center;
+	padding: 1rem;
+
+	&:first-child {
+		border-left: none;
+	}
+}
+
+.stats-card__count-value {
+	font-size: 40px;
+}
