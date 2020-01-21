@@ -473,6 +473,8 @@ export class ContactDetailsFormFields extends Component {
 		const { translate, onCancel, disableSubmitButton, labelTexts } = this.props;
 		const countryCode = this.getCountryCode();
 
+		const isFooterVisible = !! ( this.props.onSubmit || onCancel );
+
 		return (
 			<FormFieldset className="contact-details-form-fields">
 				<div className="contact-details-form-fields__row">
@@ -492,27 +494,29 @@ export class ContactDetailsFormFields extends Component {
 
 				<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
 
-				<FormFooter>
-					{ this.props.onSubmit && (
-						<FormButton
-							className="contact-details-form-fields__submit-button"
-							disabled={ ! countryCode || disableSubmitButton }
-							onClick={ this.handleSubmitButtonClick }
-						>
-							{ labelTexts.submitButton || translate( 'Submit' ) }
-						</FormButton>
-					) }
-					{ onCancel && (
-						<FormButton
-							className="contact-details-form-fields__cancel-button"
-							type="button"
-							isPrimary={ false }
-							onClick={ onCancel }
-						>
-							{ translate( 'Cancel' ) }
-						</FormButton>
-					) }
-				</FormFooter>
+				{ isFooterVisible && (
+					<FormFooter>
+						{ this.props.onSubmit && (
+							<FormButton
+								className="contact-details-form-fields__submit-button"
+								disabled={ ! countryCode || disableSubmitButton }
+								onClick={ this.handleSubmitButtonClick }
+							>
+								{ labelTexts.submitButton || translate( 'Submit' ) }
+							</FormButton>
+						) }
+						{ onCancel && (
+							<FormButton
+								className="contact-details-form-fields__cancel-button"
+								type="button"
+								isPrimary={ false }
+								onClick={ onCancel }
+							>
+								{ translate( 'Cancel' ) }
+							</FormButton>
+						) }
+					</FormFooter>
+				) }
 				<QueryDomainCountries />
 			</FormFieldset>
 		);
