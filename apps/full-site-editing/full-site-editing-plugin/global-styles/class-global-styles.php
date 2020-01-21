@@ -103,7 +103,10 @@ class Global_Styles {
 		'Delius',
 		'Domine',
 		'Eczar',
-		'Exo 2',
+		[
+			'label' => 'Exo 2',
+			'value' => "'Exo 2'"
+		],
 		'Fira Sans',
 		'Fredoka One',
 		'Inconsolata',
@@ -432,7 +435,9 @@ class Global_Styles {
 			foreach ( $font_list as $font ) {
 				// Some fonts lack italic variants,
 				// the API will return only the regular and bold CSS for those.
-				$font_list_str = $font_list_str . $font . ':regular,bold,italic,bolditalic|';
+				// We also remove potential quotes that any font may have,
+				// as Google API requires unquoted font names.
+				$font_list_str = $font_list_str . str_replace( "'", "", $font ) . ':regular,bold,italic,bolditalic|';
 			}
 			$result = $result . "@import url('https://fonts.googleapis.com/css?family=" . $font_list_str . "');";
 		}
