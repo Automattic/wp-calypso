@@ -176,6 +176,7 @@ export default function CompositeCheckout( {
 		return (
 			<WPCheckoutErrorBoundary>
 				<ContactDetailsFormFields
+					countriesList={ countriesList }
 					contactDetails={ contactDetails }
 					onContactDetailsChange={ updateContactDetails }
 					onValidate={ ( values, onComplete ) => {
