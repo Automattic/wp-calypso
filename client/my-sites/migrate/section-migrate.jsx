@@ -499,6 +499,7 @@ class SectionMigrate extends Component {
 						targetSite={ targetSite }
 						targetSiteSlug={ targetSiteSlug }
 						sourceHasJetpack={ this.state.isJetpackConnected }
+						isTargetSiteAtomic={ this.props.isTargetSiteAtomic }
 					/>
 				) : (
 					<StepSourceSelect
