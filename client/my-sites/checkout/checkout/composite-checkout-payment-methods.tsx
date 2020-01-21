@@ -11,6 +11,7 @@ import {
 	createExistingCardMethod,
 	createFullCreditsMethod,
 } from '@automattic/composite-checkout';
+import { prepareDomainContactDetails } from '@automattic/composite-checkout-wpcom';
 import wp from 'lib/wp';
 
 /**
@@ -64,9 +65,9 @@ export function createPaymentMethods( {
 								siteId: select( 'wpcom' )?.getSiteId?.(),
 								domainDetails: getDomainDetails( select ),
 								// this data is intentionally empty so we do not charge taxes
-								country: null,
+								countryCode: null,
 								postalCode: null,
-								phoneNumber: null,
+								phone: null,
 							},
 							wpcomTransaction
 						),
@@ -81,9 +82,9 @@ export function createPaymentMethods( {
 
 	const stripeMethod = isMethodEnabled( 'card', allowedPaymentMethods )
 		? createStripeMethod( {
-				getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.country?.value,
+				getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
 				getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-				getPhoneNumber: () => select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
+				getPhoneNumber: () => select( 'wpcom' )?.getContactInfo?.()?.phone?.value,
 				getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 				registerStore,
 				fetchStripeConfiguration: args => fetchStripeConfiguration( args, wpcom ),
@@ -111,10 +112,10 @@ export function createPaymentMethods( {
 							siteId: select( 'wpcom' )?.getSiteId?.(),
 							domainDetails: getDomainDetails( select ),
 							couponId: null, // TODO: get couponId
-							country: select( 'wpcom' )?.getContactInfo?.()?.country?.value,
+							countryCode: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
 							postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
 							subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-							phoneNumber: select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
+							phone: select( 'wpcom' )?.getContactInfo?.()?.phone?.value,
 						},
 						wpcomPayPalExpress
 					),
@@ -124,9 +125,9 @@ export function createPaymentMethods( {
 	const applePayMethod =
 		isMethodEnabled( 'apple-pay', allowedPaymentMethods ) && isApplePayAvailable()
 			? createApplePayMethod( {
-					getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.country?.value,
+					getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
 					getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-					getPhoneNumber: () => select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
+					getPhoneNumber: () => select( 'wpcom' )?.getContactInfo?.()?.phone?.value,
 					registerStore,
 					fetchStripeConfiguration: args => fetchStripeConfiguration( args, wpcom ),
 					submitTransaction: submitData =>
@@ -162,9 +163,9 @@ export function createPaymentMethods( {
 							wpcomTransaction
 						),
 					registerStore,
-					getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.country?.value,
+					getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
 					getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-					getPhoneNumber: () => select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
+					getPhoneNumber: () => select( 'wpcom' )?.getContactInfo?.()?.phone?.value,
 					getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 				} )
 		  )
@@ -253,19 +254,8 @@ async function makePayPalExpressRequest(
 }
 
 function getDomainDetails( select ) {
-	const { firstName, lastName, email, phoneNumber, address, city, state, country, postalCode } =
-		select( 'wpcom' )?.getContactInfo?.() ?? {};
-	return {
-		firstName: firstName?.value,
-		lastName: lastName?.value,
-		email: email?.value,
-		phone: phoneNumber?.value,
-		address_1: address?.value,
-		city: city?.value,
-		state: state?.value,
-		countryCode: country?.value,
-		postalCode: postalCode?.value,
-	};
+	const managedContactDetails = select( 'wpcom' )?.getContactInfo?.() ?? {};
+	return prepareDomainContactDetails( managedContactDetails );
 }
 
 function isApplePayAvailable(): boolean {
