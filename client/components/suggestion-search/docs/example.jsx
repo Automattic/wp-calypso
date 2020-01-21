@@ -1,32 +1,35 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
 
 /**
  * Internal dependencies
  */
 import SuggestionSearch from '../';
 
-class SuggestionSearchExample extends PureComponent {
-	state = { selected: null };
+const SuggestionSearchExample = () => {
+	const [ state, setState ] = useState();
 
-	onSiteTopicChange = value => this.setState( { selected: value } );
-
-	sortDisplayResults = ( suggestionsArray, queryString ) =>
+	const sortDisplayResults = ( suggestionsArray, queryString ) =>
 		suggestionsArray.sort().map( item => ( item === queryString ? `→ ${ item }` : item ) );
 
-	render() {
-		return (
-			<SuggestionSearch
-				id="siteTopic"
-				placeholder={ 'Try sushi' }
-				onChange={ this.onSiteTopicChange }
-				sortResults={ this.sortDisplayResults }
-				suggestions={ [ 'sushi', 'onigiri sushi', 'sea urchin sushi', 'saury sushi' ] }
-			/>
-		);
-	}
-}
+	return (
+		<SuggestionSearch
+			id="siteTopic"
+			placeholder="Try sushi"
+			onChange={ setState }
+			sortResults={ sortDisplayResults }
+			suggestions={ [
+				{ label: 'sushi' },
+				{ label: 'onigiri sushi' },
+				{ label: 'sea urchin sushi' },
+				{ label: 'saury sushi' },
+			] }
+			value={ state }
+		/>
+	);
+};
+SuggestionSearchExample.displayName = 'SuggestionSearchExample';
 
 export default SuggestionSearchExample;
