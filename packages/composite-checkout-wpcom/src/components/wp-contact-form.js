@@ -154,6 +154,10 @@ PhoneNumberField.propTypes = {
 	} ).isRequired,
 	countriesList: PropTypes.array.isRequired,
 	PhoneInput: PropTypes.elementType.isRequired,
+	setters: PropTypes.shape( {
+		updatePhone: PropTypes.func.isRequired,
+		updatePhoneNumberCountry: PropTypes.func.isRequired,
+	} ).isRequired,
 };
 
 function VatIdField() {
