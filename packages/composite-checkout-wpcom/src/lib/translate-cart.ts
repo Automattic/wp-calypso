@@ -93,6 +93,8 @@ function translateWpcomCartItemToCheckoutCartItem(
 		item_subtotal_display,
 		is_domain_registration,
 		meta,
+		extra,
+		volume,
 	} = serverCartItem;
 
 	// Sublabel is the domain name for registrations
@@ -110,7 +112,10 @@ function translateWpcomCartItemToCheckoutCartItem(
 		},
 		wpcom_meta: {
 			uuid: String( index ),
+			meta: typeof meta === 'string' ? meta : undefined,
 			product_id,
+			extra,
+			volume,
 		},
 	};
 }
