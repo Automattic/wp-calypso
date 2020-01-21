@@ -48,9 +48,9 @@ class StepImportOrMigrate extends Component {
 	};
 
 	getJetpackOrUpgradeMessage = () => {
-		const { sourceSite, sourceSiteHasJetpack, isTargetSiteAtomic } = this.props;
+		const { sourceSite, sourceHasJetpack, isTargetSiteAtomic } = this.props;
 
-		if ( ! sourceSiteHasJetpack ) {
+		if ( ! sourceHasJetpack ) {
 			const sourceSiteDomain = get( sourceSite, 'domain' );
 			return (
 				<p>
