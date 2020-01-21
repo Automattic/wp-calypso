@@ -54,7 +54,6 @@ export default class ImportTypeChoice extends Component {
 	onKeyPressHandler = event => {
 		// TODO implement this to act on enter key
 		event.preventDefault();
-		console.log( event );
 	};
 
 	renderOption = ( item, key ) => {
