@@ -23,11 +23,21 @@ export function migrateSite( context, next ) {
 		const sourceSiteId =
 			context.params.sourceSiteId &&
 			getSiteId( context.store.getState(), context.params.sourceSiteId );
-		context.primary = <SectionMigrate sourceSiteId={ sourceSiteId } />;
+		context.primary = (
+			<SectionMigrate
+				sourceSiteId={ sourceSiteId }
+				showImportSelector={ context.showImportSelector }
+			/>
+		);
 		return next();
 	}
 
 	page.redirect( '/' );
+}
+
+export function setImportSelector( context, next ) {
+	context.showImportSelector = true;
+	next();
 }
 
 export function setSiteSelectionHeader( context, next ) {

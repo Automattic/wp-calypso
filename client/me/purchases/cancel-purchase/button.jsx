@@ -33,7 +33,8 @@ import { getDowngradePlanFromPurchase } from 'state/purchases/selectors';
 class CancelPurchaseButton extends Component {
 	static propTypes = {
 		purchase: PropTypes.object.isRequired,
-		selectedSite: PropTypes.object.isRequired,
+		selectedSite: PropTypes.object,
+		siteSlug: PropTypes.string.isRequired,
 		cancelBundledDomain: PropTypes.bool.isRequired,
 		includedDomainPurchase: PropTypes.object,
 		disabled: PropTypes.bool,
@@ -75,7 +76,7 @@ class CancelPurchaseButton extends Component {
 
 	goToCancelConfirmation = () => {
 		const { id } = this.props.purchase,
-			{ slug } = this.props.selectedSite;
+			slug = this.props.siteSlug;
 
 		page( confirmCancelDomain( slug, id ) );
 	};
@@ -251,7 +252,6 @@ class CancelPurchaseButton extends Component {
 
 	render() {
 		const { purchase, selectedSite, translate } = this.props;
-
 		let text, onClick;
 
 		if ( hasAmountAvailableToRefund( purchase ) ) {

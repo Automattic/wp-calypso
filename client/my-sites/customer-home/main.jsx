@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import { flowRight } from 'lodash';
 import moment from 'moment';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -332,10 +333,19 @@ class Home extends Component {
 		const isIos = isiPad || isiPod || isiPhone;
 		const showIosBadge = isDesktop() || isIos || ! isAndroid;
 		const showAndroidBadge = isDesktop() || isAndroid || ! isIos;
+		const showOnlyOneBadge = showIosBadge !== showAndroidBadge;
 		return (
-			<Card className="customer-home__go-mobile">
-				<CardHeading>{ translate( 'Go Mobile' ) }</CardHeading>
-				<h6 className="customer-home__card-subheader">{ translate( 'Make updates on the go' ) }</h6>
+			<Card
+				className={ classnames( 'customer-home__go-mobile', {
+					'is-single-store': showOnlyOneBadge,
+				} ) }
+			>
+				<div>
+					<CardHeading>{ translate( 'Go Mobile' ) }</CardHeading>
+					<h6 className="customer-home__card-subheader">
+						{ translate( 'Make updates on the go' ) }
+					</h6>
+				</div>
 				<div className="customer-home__card-button-pair customer-home__card-mobile">
 					{ showIosBadge && (
 						<AppsBadge

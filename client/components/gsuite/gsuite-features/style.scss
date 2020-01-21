@@ -42,7 +42,7 @@
 	flex-basis: 50%;
 	justify-content: flex-start;
 
-	&:not(:last-of-type) {
+	&:not( :last-of-type ) {
 		margin-bottom: 1em;
 	}
 }

@@ -24,6 +24,6 @@
 		"typeRoots": [ "../../node_modules/@types" ],
 		"types": []
 	},
-	"files": [ "src/index" ],
+	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]
 }

@@ -8,8 +8,7 @@ import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
 /**
  * Internal dependencies
  */
-import { Card } from '../../components/card';
-import { CardMedia } from '../../components/card/media';
+import { Card, CardMedia } from '@wordpress/components';
 
 const gridWidth = 960;
 const srcSet = ( src: string, widths: number[] ) =>
@@ -17,7 +16,7 @@ const srcSet = ( src: string, widths: number[] ) =>
 
 interface Props {
 	design: import('@automattic/data-stores').VerticalsTemplates.Template;
-	onClick: MouseEventHandler< HTMLDivElement >;
+	onClick: MouseEventHandler< HTMLButtonElement >;
 	style?: CSSProperties;
 	dialogId: string;
 }
