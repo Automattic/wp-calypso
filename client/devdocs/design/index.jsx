@@ -20,7 +20,7 @@ import SearchCard from 'components/search-card';
 /**
  * Docs examples
  */
-import Accordions from 'components/accordion/docs/example';
+import Accordion from 'components/accordion/docs/example';
 import ActionCard from 'components/action-card/docs/example';
 import ActionPanel from 'components/action-panel/docs/example';
 import Animate from 'components/animate/docs/example';
@@ -177,9 +177,9 @@ export default class DesignAssets extends React.Component {
 					{ config.isEnabled( 'devdocs/color-scheme-picker' ) && (
 						<ColorSchemePicker readmeFilePath="color-scheme-picker" />
 					) }
+					<Accordion readmeFilePath="accordion" />
 					<ActionCard readmeFilePath="action-card" />
 					<ActionPanel readmeFilePath="action-panel" />
-					<Accordions readmeFilePath="accordion" />
 					<Animate readmeFilePath="animate" />
 					<BackButton readmeFilePath="back-button" />
 					<Badge readmeFilePath="badge" />
@@ -187,9 +187,8 @@ export default class DesignAssets extends React.Component {
 					<BulkSelect readmeFilePath="bulk-select" />
 					<ButtonGroups readmeFilePath="button-group" />
 					<Buttons readmeFilePath="/packages/components/src/button" />
-					<SplitButton readmeFilePath="split-button" />
-					<Cards readmeFilePath="/packages/components/src/card" />
 					<CardHeading readmeFilePath="card-heading" />
+					<Cards readmeFilePath="/packages/components/src/card" />
 					<Chart readmeFilePath="chart" />
 					<Checklist readmeFilePath="checklist" />
 					<ClipboardButtonInput readmeFilePath="clipboard-button-input" />
@@ -241,10 +240,12 @@ export default class DesignAssets extends React.Component {
 					<PlansSkipButton readmeFilePath="plans/plans-skip-button" />
 					<PodcastIndicator readmeFilePath="podcast-indicator" />
 					<Popovers readmeFilePath="popover" />
+					<ProductCard readmeFilePath="product-card" />
 					<ProductExpiration readmeFilePath="product-expiration" />
+					<ProductIcon readmeFilePath="/packages/components/src/product-icon" />
 					<ProgressBar readmeFilePath="/packages/components/src/progress-bar" />
-					<PromoSection readmeFilePath="promo-section" />
 					<PromoCard readmeFilePath="promo-section/promo-card" />
+					<PromoSection readmeFilePath="promo-section" />
 					<Ranges readmeFilePath="forms/range" />
 					<Rating readmeFilePath="rating" />
 					<Ribbon readmeFilePath="/packages/components/src/ribbon" />
@@ -255,13 +256,12 @@ export default class DesignAssets extends React.Component {
 					<SegmentedControl readmeFilePath="segmented-control" />
 					<SelectDropdown searchKeywords="menu" readmeFilePath="select-dropdown" />
 					<ShareButton readmeFilePath="share-button" />
-					<ProductCard readmeFilePath="product-card" />
-					<ProductIcon readmeFilePath="/packages/components/src/product-icon" />
 					<SiteTitleControl readmeFilePath="site-title" />
 					<SocialLogos />
 					<Spinner searchKeywords="loading" readmeFilePath="spinner" />
 					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="spinner-button" />
 					<SpinnerLine searchKeywords="loading" readmeFilePath="spinner-line" />
+					<SplitButton readmeFilePath="split-button" />
 					<Suggestions readmeFilePath="/packages/components/src/suggestions" />
 					<SuggestionSearchExample />
 					<SupportInfoExample />
@@ -274,9 +274,9 @@ export default class DesignAssets extends React.Component {
 					<TokenFields readmeFilePath="token-field" />
 					<Tooltip readmeFilePath="tooltip" />
 					<UserItem readmeFilePath="user" />
+					<Version readmeFilePath="version" />
 					<VerticalMenu readmeFilePath="vertical-menu" />
 					<VerticalNav readmeFilePath="vertical-nav" />
-					<Version readmeFilePath="version" />
 					<Wizard readmeFilePath="wizard" />
 					<WizardProgressBar readmeFilePath="wizard-progress-bar" />
 					<WpcomColophon readmeFilePath="wpcom-colophon" />
