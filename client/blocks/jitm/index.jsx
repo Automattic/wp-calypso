@@ -29,6 +29,10 @@ function renderTemplate( template, props ) {
 		return <AsyncLoad { ...props } require="blocks/jitm/templates/sidebar-banner" />;
 	}
 
+	if ( template === 'upsell-nudge' ) {
+		return <AsyncLoad { ...props } require="blocks/jitm/templates/upsell-nudge" />;
+	}
+
 	return <AsyncLoad { ...props } require="blocks/jitm/templates/default" />;
 }
 
