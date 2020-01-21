@@ -56,8 +56,8 @@ export function checkout( context, next ) {
 	if ( config.isEnabled( 'composite-checkout-wpcom' ) ) {
 		context.primary = (
 			<CompositeCheckout
-				siteSlug={ selectedSite.slug }
-				siteId={ selectedSite.ID }
+				siteSlug={ selectedSite?.slug }
+				siteId={ selectedSite?.ID }
 				product={ product }
 				purchaseId={ purchaseId }
 				couponCode={ couponCode }
