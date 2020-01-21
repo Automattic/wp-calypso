@@ -17,6 +17,7 @@ import { LeftColumn, RightColumn } from './ie-fallback';
 import { prepareDomainContactDetails, isValid } from '../types';
 
 export default function WPContactForm( {
+	siteUrl,
 	summary,
 	isComplete,
 	isActive,

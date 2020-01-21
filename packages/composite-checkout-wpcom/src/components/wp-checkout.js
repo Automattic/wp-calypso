@@ -93,6 +93,7 @@ export default function WPCheckout( {
 			titleContent: <ContactFormTitle />,
 			activeStepContent: (
 				<WPContactForm
+					siteUrl={ siteUrl }
 					isComplete={ false }
 					isActive={ true }
 					CountrySelectMenu={ CountrySelectMenu }
