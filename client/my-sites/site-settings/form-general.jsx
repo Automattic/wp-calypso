@@ -547,7 +547,7 @@ export class SiteSettingsFormGeneral extends Component {
 									'Remove the footer credit entirely with WordPress.com Business'
 								) }
 								description={ translate(
-									'Upgrade to remove the footer credit, add Google Analytics and more'
+									'Upgrade to remove the footer credit, use advanced SEO tools and more'
 								) }
 							/>
 						) }
