@@ -18,26 +18,28 @@ export default function UpsellNudgeTemplate( {
 	featureClass,
 	message,
 	onClick,
-	onDismiss,
-	tracks,
 	trackImpression,
+	tracks,
 	...props
 } ) {
-	const eventName = get( tracks, [ 'click', 'name' ] ) || `jitm_nudge_click_${ id }`;
+	const clickName = get( tracks, [ 'click', 'name' ] ) || `jitm_nudge_click_${ id }`;
+	const clickProps = get( tracks, [ 'click', 'props' ] );
+	const displayName = get( tracks, [ 'display', 'name' ] ) || `jitm_nudge_impression_${ id }`;
+	const displayProps = get( tracks, [ 'display', 'props' ] );
+	const jitmProps = { id: id, jitm: true };
 	return (
 		<>
-			{ trackImpression && trackImpression() }
 			<UpsellNudge
 				callToAction={ CTA.message }
 				compact
-				dismissPreferenceName={ featureClass }
-				event={ eventName }
+				event={ displayName }
 				href={ CTA.link }
 				onClick={ onClick }
-				onDismissClick={ onDismiss }
 				title={ message }
-				tracksClickName={ eventName }
-				tracksClickProperties={ get( tracks, [ 'click', 'props' ] ) }
+				tracksClickName={ clickName }
+				tracksClickProperties={ { ...jitmProps, ...clickProps } }
+				tracksImpressionName={ displayName }
+				tracksImpressionProperties={ { ...jitmProps, ...displayProps } }
 				{ ...props }
 			/>
 		</>
