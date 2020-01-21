@@ -161,35 +161,12 @@ class TranslatorLauncher extends React.Component {
 		event.preventDefault();
 		event.stopPropagation();
 
-		// const title = window.prompt( this.props.translate( 'Deliverables title:' ) );
-		// const originalIds = [ deliverableTarget ]
-		// 	.concat(
-		// 		Array.from( deliverableTarget.querySelectorAll( '[class*=translator-original-]' ) )
-		// 	)
-		// 	.reduce( ( ids, node ) => {
-		// 		const match = node.className && node.className.match( /translator-original-(\d+)/ );
-
-		// 		if ( match ) {
-		// 			ids.push( match[ 1 ] );
-		// 		}
-
-		// 		return ids;
-		// 	}, [] );
-
 		if ( this.highlightRef.current ) {
 			this.highlightRef.current.style.pointerEvents = '';
 		}
 
 		this.toggleSelectedDeliverableTarget();
 		this.toggleDeliverableHighlight();
-
-		// const DELIVERABLES_ENDPOINT = 'https://translate.wordpress.com/deliverables/create';
-		// const deliverablesUrl = addQueryArgs( DELIVERABLES_ENDPOINT, {
-		// 	original_ids: originalIds.join( ',' ),
-		// 	title,
-		// } );
-
-		// window.open( deliverablesUrl, '_blank' ).focus();
 	};
 
 	handleDeliverableTitleChange = event => {
@@ -201,6 +178,13 @@ class TranslatorLauncher extends React.Component {
 	};
 
 	handleDeliverableCancelClick = () => {
+		this.toggleSelectedDeliverableTarget();
+	};
+
+	handleDeliverableSubmit = event => {
+		event.preventDefault();
+
+		window.open( this.getCreateDeliverableUrl(), '_blank' );
 		this.toggleSelectedDeliverableTarget();
 	};
 
@@ -240,6 +224,7 @@ class TranslatorLauncher extends React.Component {
 		this.setState(
 			( { deliverableTarget, selectedDeliverableTarget } ) => ( {
 				selectedDeliverableTarget: selectedDeliverableTarget ? null : deliverableTarget,
+				deliverableTitle: '',
 			} ),
 			() => {
 				const hasSelectedDeliverableTarget = !! this.state.selectedDeliverableTarget;
@@ -272,7 +257,7 @@ class TranslatorLauncher extends React.Component {
 
 		return (
 			<div className="masterbar community-translator__bar">
-				<form className="community-translator__bar-form">
+				<form className="community-translator__bar-form" onSubmit={ this.handleDeliverableSubmit }>
 					<div className="community-translator__bar-label">
 						{ translate( '%d string found.', '%d strings found.', {
 							count: stringIdsCount,
@@ -289,6 +274,7 @@ class TranslatorLauncher extends React.Component {
 
 					<Button
 						href={ this.getCreateDeliverableUrl() }
+						target="_blank"
 						onClick={ this.handleDeliverableLinkClick }
 						primary
 					>
