@@ -12,13 +12,11 @@ import { Button, Card, CompactCard, ProgressBar } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import CardHeading from 'components/card-heading';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
-import MigrateButton from './migrate-button';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import Site from 'blocks/site';
 import Spinner from 'components/spinner';
@@ -35,13 +33,10 @@ import { urlToSlug } from 'lib/url';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import wpcom from 'lib/wp';
 
-import ImportTypeChoice from './components/import-type-choice';
-
 /**
  * Style dependencies
  */
 import './section-migrate.scss';
-import { redirectTo } from 'my-sites/migrate/helpers';
 
 class SectionMigrate extends Component {
 	_startedMigrationFromCart = false;
@@ -313,48 +308,10 @@ class SectionMigrate extends Component {
 		);
 	}
 
-	chooseImportType = type => {
-		this.setState( { chosenImportType: type } );
-	};
-
-	handleImportRedirect = () => {
-		const { isTargetSiteAtomic, targetSiteSlug } = this.props;
-
-		if ( isTargetSiteAtomic ) {
-			window.location.href = `https://${ targetSiteSlug }/wp-admin/import.php`;
-		} else {
-			redirectTo( `/import/${ targetSiteSlug }/?engine=wordpress` );
-		}
-	};
-
-	getJetpackOrUpgradeMessage = () => {
-		const { sourceSite, sourceSiteHasJetpack, isTargetSiteAtomic } = this.props;
-
-		if ( ! sourceSiteHasJetpack ) {
-			const sourceSiteDomain = get( sourceSite, 'domain' );
-			return (
-				<p>
-					You need to have{ ' ' }
-					<a href={ `https://wordpress.com/jetpack/connect/install?url=${ sourceSiteDomain }` }>
-						Jetpack
-					</a>{ ' ' }
-					installed on your site to be able to import over everything
-				</p>
-			);
-		}
-
-		if ( ! isTargetSiteAtomic ) {
-			return (
-				<p>A Business Plan (i) is required to import everything. Importing only content is free.</p>
-			);
-		}
-	};
-
 	renderMigrationConfirmation() {
-		const { sourceSite, targetSite, targetSiteSlug, sourceSiteHasJetpack } = this.props;
+		const { sourceSite, targetSite, targetSiteSlug } = this.props;
 
 		const sourceSiteDomain = get( sourceSite, 'domain' );
-		const targetSiteDomain = get( targetSite, 'domain' );
 		const backHref = `/migrate/${ targetSiteSlug }`;
 
 		return (
@@ -374,47 +331,6 @@ class SectionMigrate extends Component {
 						</div>
 					</div>
 				</div>
-				<CompactCard>
-					<h3>What do you want to import?</h3>
-
-					{ this.getJetpackOrUpgradeMessage() }
-
-					<ImportTypeChoice
-						onChange={ this.chooseImportType }
-						radioOptions={ {
-							everything: {
-								title: 'Everything',
-								labels: [ 'Upgrade Required', 'Something Else', 'Third bubble' ],
-								description: "All your site's content, themes, plugins, users and settings",
-								enabled: sourceSiteHasJetpack,
-							},
-							'content-only': {
-								key: 'content-only',
-								title: 'Content only',
-								labels: [ 'Free', 'Only content', 'Third bubble' ],
-								description: 'Import posts, pages, comments, and media.',
-								enabled: true,
-							},
-						} }
-					/>
-					<div className="migrate__buttons-wrapper">
-						{ this.state.chosenImportType === 'everything' ? (
-							<MigrateButton
-								onClick={ this.startMigration }
-								targetSiteDomain={ targetSiteDomain }
-							/>
-						) : null }
-						{ this.state.chosenImportType === 'content-only' ? (
-							<Button primary onClick={ this.handleImportRedirect }>
-								Continue
-							</Button>
-						) : null }
-
-						<Button className="migrate__cancel" href={ backHref }>
-							Cancel
-						</Button>
-					</div>
-				</CompactCard>
 			</>
 		);
 	}
@@ -582,6 +498,7 @@ class SectionMigrate extends Component {
 						onJetpackSelect={ this.handleJetpackSelect }
 						targetSite={ targetSite }
 						targetSiteSlug={ targetSiteSlug }
+						sourceHasJetpack={ this.state.isJetpackConnected }
 					/>
 				) : (
 					<StepSourceSelect
