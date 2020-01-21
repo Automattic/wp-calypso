@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/no-undefined-types */
 /**
  * External dependencies
  */
@@ -212,6 +213,7 @@ export function editorEditRawContent( content ) {
 
 /**
  * Unsets the raw TinyMCE content value
+ *
  * @returns {Action} Action object
  */
 export function editorResetRawContent() {

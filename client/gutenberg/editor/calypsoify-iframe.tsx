@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * External dependencies
  */
@@ -147,7 +148,10 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			this.iframeRef.current.contentWindow
 		) {
 			this.successfulIframeLoad = true;
-			const { port1: iframePortObject, port2: transferredPortObject } = new MessageChannel();
+			const {
+				port1: iframePortObject,
+				port2: transferredPortObject,
+			} = new MessageChannel(); /* eslint-disable-line no-undef */
 
 			this.iframePort = iframePortObject;
 			this.iframePort.addEventListener( 'message', this.onIframePortMessage, false );

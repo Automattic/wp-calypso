@@ -1016,6 +1016,7 @@ export class PostEditor extends React.Component {
 		/**
 		 * The ID is used to avoid replacing user generated content, that may coincide with the
 		 * format specified below.
+		 *
 		 * @type {string}
 		 */
 		const selectionID = 'SELRES_' + uuid();
