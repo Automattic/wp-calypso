@@ -193,9 +193,7 @@ function TaxFields( { section, taxInfo, setters, CountrySelectMenu, countriesLis
 					type="text"
 					label={ isZip ? translate( 'Zip code' ) : translate( 'Postal code' ) }
 					value={ postalCode.value }
-					onChange={ event => {
-						updatePostalCode( event.target.value );
-					} }
+					onChange={ updatePostalCode }
 					autoComplete={ section + ' postal-code' }
 					isError={ postalCode.isTouched && ! isValid( postalCode ) }
 					errorMessage={ translate( 'This field is required.' ) }
