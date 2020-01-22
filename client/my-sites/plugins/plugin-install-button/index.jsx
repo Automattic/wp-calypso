@@ -11,6 +11,7 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,6 +24,9 @@ import { getSiteFileModDisableReason, isMainNetworkSite } from 'lib/site/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
 import getSiteConnectionStatus from 'state/selectors/get-site-connection-status';
+import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
+import { localizeUrl } from 'lib/i18n-utils';
+import { IncompatiblePlugins } from '../incompatible-plugins';
 
 /**
  * Style dependencies
@@ -195,6 +199,38 @@ export class PluginInstallButton extends Component {
 		);
 	}
 
+	renderIncompatiblePluginNotice() {
+		const { translate, isEmbed } = this.props;
+		return (
+			<div className={ classNames( { 'plugin-install-button__install': true, embed: isEmbed } ) }>
+				<span
+					onClick={ this.togglePopover }
+					ref="disabledInfoLabel"
+					className="plugin-install-button__warning"
+				>
+					{ translate( 'Incompatible Plugin' ) }
+				</span>
+				<InfoPopover
+					position="bottom left"
+					popoverName={ 'Plugin Action Disabled Install' }
+					gaEventCategory="Plugins"
+					ref="infoPopover"
+					ignoreContext={ this.refs && this.refs.disabledInfoLabel }
+				>
+					<div>
+						<p>{ translate( 'This plugin is not supported on WordPress.com.' ) }</p>
+						<ExternalLink
+							key="external-link"
+							href={ localizeUrl( 'https://en.support.wordpress.com/incompatible-plugins' ) }
+						>
+							{ translate( 'Learn more.' ) }
+						</ExternalLink>
+					</div>
+				</InfoPopover>
+			</div>
+		);
+	}
+
 	renderDisabledNotice() {
 		const { translate, selectedSite, isEmbed } = this.props;
 
@@ -261,10 +297,14 @@ export class PluginInstallButton extends Component {
 	}
 
 	renderNoticeOrButton() {
-		const { selectedSite, siteIsConnected } = this.props;
+		const { isSiteWpcomAtomic, plugin, selectedSite, siteIsConnected } = this.props;
 
 		if ( siteIsConnected === false ) {
 			return this.renderUnreachableNotice();
+		}
+
+		if ( includes( IncompatiblePlugins, plugin.slug ) && isSiteWpcomAtomic ) {
+			return this.renderIncompatiblePluginNotice();
 		}
 
 		if ( ! selectedSite.canUpdateFiles ) {
@@ -293,6 +333,7 @@ PluginInstallButton.propTypes = {
 	isInstalling: PropTypes.bool,
 	isMock: PropTypes.bool,
 	disabled: PropTypes.bool,
+	plugin: PropTypes.object.isRequired,
 };
 
 export default connect(
@@ -302,6 +343,7 @@ export default connect(
 		return {
 			siteId,
 			siteIsConnected: getSiteConnectionStatus( state, siteId ),
+			isSiteWpcomAtomic: isSiteWpcomAtomic( state, siteId ),
 		};
 	},
 	{
