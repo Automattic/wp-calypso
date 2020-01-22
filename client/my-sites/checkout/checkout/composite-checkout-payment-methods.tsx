@@ -22,7 +22,12 @@ import {
 	WPCOMTransactionEndpointResponse,
 	createTransactionEndpointRequestPayloadFromLineItems,
 } from './types/transaction-endpoint';
-import { PayPalExpressEndpoint, PayPalExpressCart, PayPalExpressResponse, createPayPalExpressCartFromLineItems } from './types/paypal-express';
+import {
+	PayPalExpressEndpoint,
+	PayPalExpressCart,
+	PayPalExpressResponse,
+	createPayPalExpressCartFromLineItems,
+} from './types/paypal-express';
 
 const debug = debugFactory( 'calypso:composite-checkout-payment-methods' );
 
@@ -113,7 +118,7 @@ export function createPaymentMethods( {
 							subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 							phoneNumber: select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
 						},
-						wpcom
+						wpcomPayPalExpress
 					),
 		  } )
 		: null;
@@ -209,9 +214,9 @@ function storedCardsReducer( state, action ) {
 }
 
 async function submitExistingCardPayment(
-    transactionData,
-    submit: WPCOMTransactionEndpoint,
-) : Promise< WPCOMTransactionEndpointResponse > {
+	transactionData,
+	submit: WPCOMTransactionEndpoint
+): Promise< WPCOMTransactionEndpointResponse > {
 	debug( 'formatting existing card transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		debug,
@@ -237,13 +242,13 @@ async function submitApplePayPayment(
 	return submit( formattedTransactionData );
 }
 
-async function makePayPalExpressRequest( transactionData, wpcom ) {
+async function makePayPalExpressRequest( transactionData, submit: PayPalExpressEndpoint ) {
 	const formattedTransactionData = createPayPalExpressCartFromLineItems( {
 		debug,
 		...transactionData,
 	} );
 	debug( 'sending paypal transaction', formattedTransactionData );
-	return wpcom.paypalExpressUrl( formattedTransactionData );
+	return submit( formattedTransactionData );
 }
 
 function getDomainDetails( select ) {
@@ -290,9 +295,9 @@ async function fetchStripeConfiguration( requestArgs, wpcom ) {
 }
 
 async function sendStripeTransaction(
-    transactionData,
-    submit: WPCOMTransactionEndpoint,
-) : Promise<WPCOMTransactionEndpointResponse> {
+	transactionData,
+	submit: WPCOMTransactionEndpoint
+): Promise< WPCOMTransactionEndpointResponse > {
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		debug,
 		...transactionData,
@@ -305,8 +310,8 @@ async function sendStripeTransaction(
 }
 
 function submitCreditsTransaction(
-    transactionData,
-    submit: WPCOMTransactionEndpoint,
+	transactionData,
+	submit: WPCOMTransactionEndpoint
 ): Promise< WPCOMTransactionEndpointResponse > {
 	debug( 'formatting full credits transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
@@ -358,7 +363,11 @@ function WordPressLogo() {
 }
 
 async function wpcomTransaction(
-	payload: WPCOMTransactionEndpointRequestPayload,
+	payload: WPCOMTransactionEndpointRequestPayload
 ): Promise< WPCOMTransactionEndpointResponse > {
 	wp.undocumented().transactions( payload );
+}
+
+async function wpcomPayPalExpress( payload: PayPalExpressCart ): Promise< PayPalExpressResponse > {
+	wp.undocumented().paypalExpressUrl( payload );
 }
