@@ -15,15 +15,15 @@ import { Button, Card, CompactCard, ProgressBar } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import Gridicon from 'components/gridicon';
-import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import Site from 'blocks/site';
 import Spinner from 'components/spinner';
 import { FEATURE_UPLOAD_THEMES_PLUGINS } from 'lib/plans/constants';
 import { planHasFeature } from 'lib/plans';
+import StepConfirmMigration from './step-confirm-migration';
 import StepImportOrMigrate from './step-import-or-migrate';
 import StepSourceSelect from './step-source-select';
+import StepUpgrade from './step-upgrade';
 import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'state/sites/selectors';
@@ -308,32 +308,7 @@ class SectionMigrate extends Component {
 		);
 	}
 
-	renderMigrationConfirmation() {
-		const { sourceSite, targetSite, targetSiteSlug } = this.props;
-
-		const sourceSiteDomain = get( sourceSite, 'domain' );
-		const backHref = `/migrate/${ targetSiteSlug }`;
-
-		return (
-			<>
-				<HeaderCake backHref={ backHref }>Import { sourceSiteDomain }</HeaderCake>
-				<div className="migrate__sites">
-					<div className="migrate__sites-item">
-						<Site site={ sourceSite } indicator={ false } />
-					</div>
-					<div className="migrate__sites-arrow-wrapper">
-						<Gridicon className="migrate__sites-arrow" icon="arrow-right" />
-					</div>
-					<div className="migrate__sites-item">
-						<Site site={ targetSite } indicator={ false } />
-						<div className="migrate__sites-labels-container">
-							<span className="migrate__token-label">This site</span>
-						</div>
-					</div>
-				</div>
-			</>
-		);
-	}
+	renderMigrationConfirmation() {}
 
 	renderMigrationError() {
 		return (
@@ -483,33 +458,50 @@ class SectionMigrate extends Component {
 	}
 
 	render() {
-		const { showImportSelector, sourceSiteId, targetSite, targetSiteSlug } = this.props;
+		const { step, sourceSite, targetSite, targetSiteSlug } = this.props;
 
 		let migrationElement;
 
 		switch ( this.state.migrationStatus ) {
 			case 'inactive':
-				if ( sourceSiteId ) {
-					migrationElement = this.renderMigrationConfirmation();
-					break;
+				switch ( step ) {
+					case 'confirm':
+						migrationElement = (
+							<StepConfirmMigration
+								sourceSite={ sourceSite }
+								startMigration={ this.startMigration }
+								targetSite={ targetSite }
+								targetSiteSlug={ targetSiteSlug }
+							/>
+						);
+						break;
+					case 'migrateOrImport':
+						migrationElement = (
+							<StepImportOrMigrate
+								onJetpackSelect={ this.handleJetpackSelect }
+								targetSite={ targetSite }
+								targetSiteSlug={ targetSiteSlug }
+								sourceHasJetpack={ this.state.isJetpackConnected }
+								isTargetSiteAtomic={ this.props.isTargetSiteAtomic }
+							/>
+						);
+						break;
+					case 'upgrade':
+						migrationElement = <StepUpgrade startMigration={ this.startMigration } />;
+						break;
+					case 'input':
+					default:
+						migrationElement = (
+							<StepSourceSelect
+								onSiteInfoReceived={ this.setSiteInfo }
+								onUrlChange={ this.setUrl }
+								targetSite={ targetSite }
+								targetSiteSlug={ targetSiteSlug }
+								url={ this.state.url }
+							/>
+						);
+						break;
 				}
-				migrationElement = showImportSelector ? (
-					<StepImportOrMigrate
-						onJetpackSelect={ this.handleJetpackSelect }
-						targetSite={ targetSite }
-						targetSiteSlug={ targetSiteSlug }
-						sourceHasJetpack={ this.state.isJetpackConnected }
-						isTargetSiteAtomic={ this.props.isTargetSiteAtomic }
-					/>
-				) : (
-					<StepSourceSelect
-						onSiteInfoReceived={ this.setSiteInfo }
-						onUrlChange={ this.setUrl }
-						targetSite={ targetSite }
-						targetSiteSlug={ targetSiteSlug }
-						url={ this.state.url }
-					/>
-				);
 				break;
 
 			case 'new':
