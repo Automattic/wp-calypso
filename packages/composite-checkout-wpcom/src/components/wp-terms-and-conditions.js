@@ -100,6 +100,10 @@ const TermsParagraph = styled.p`
 	font-size: 14px;
 	color: ${props => props.theme.colors.textColor};
 
+	a {
+		text-decoration: underline;
+	}
+
 	a:hover {
 		text-decoration: none;
 	}
