@@ -97,8 +97,9 @@ const analytics = {
 		initializeAnalytics( currentUser, superProps );
 
 		// neccessary because calypso-analytics/initializeAnalytics no longer calls out to ad-tracking
-		if ( getTracksAnonymousUserId() ) {
-			identifyUserDebug( 'recordAliasInFloodlight', getCurrentUser() );
+		const user = getCurrentUser();
+		if ( 'object' === typeof userData && user && getTracksAnonymousUserId() ) {
+			identifyUserDebug( 'recordAliasInFloodlight', user );
 			recordAliasInFloodlight();
 		}
 	},
@@ -434,9 +435,10 @@ const analytics = {
 	identifyUser: function( userData ) {
 		identifyUser( userData );
 
-		// Handle Floodlight alias?
-		if ( getTracksAnonymousUserId() ) {
-			identifyUserDebug( 'recordAliasInFloodlight', getCurrentUser() );
+		// neccessary because calypso-analytics/initializeAnalytics no longer calls out to ad-tracking
+		const user = getCurrentUser();
+		if ( 'object' === typeof userData && user && getTracksAnonymousUserId() ) {
+			identifyUserDebug( 'recordAliasInFloodlight', user );
 			recordAliasInFloodlight();
 		}
 	},
