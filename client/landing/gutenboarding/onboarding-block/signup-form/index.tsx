@@ -11,7 +11,6 @@ import { __ as NO__ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { USER_STORE } from '../../stores/user';
-import FormLabel from 'components/forms/form-label';
 import './style.scss';
 
 const SignupForm = () => {
@@ -42,9 +41,8 @@ const SignupForm = () => {
 			onRequestClose={ noop }
 		>
 			<form onSubmit={ handleSignUp }>
-				<FormLabel htmlFor="email">{ NO__( 'Your Email Address' ) }</FormLabel>
 				<TextControl
-					id="email"
+					label={ NO__( 'Your Email Address' ) }
 					value={ emailVal }
 					disabled={ isFetchingNewUser }
 					onChange={ setEmailVal }
