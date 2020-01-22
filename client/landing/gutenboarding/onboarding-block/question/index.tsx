@@ -30,10 +30,8 @@ const Question: FunctionComponent< Props > = ( {
 	// Persist activation of question so animation only happens on mount.
 	const [ hasActivated, setHasActivated ] = useState< boolean >( false );
 	useEffect( () => {
-		if ( ! hasActivated ) {
-			setHasActivated( true );
-		}
-	}, [ hasActivated ] );
+		setHasActivated( true );
+	}, [] );
 
 	return (
 		<div
