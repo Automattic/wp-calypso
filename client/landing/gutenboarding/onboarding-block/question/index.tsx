@@ -27,7 +27,7 @@ const Question: FunctionComponent< Props > = ( {
 	label,
 	onExpand,
 } ) => {
-	// Persist activation of question so animation only happens on initial selection.
+	// Persist activation of question so animation only happens on mount.
 	const [ hasActivated, setHasActivated ] = useState< boolean >( false );
 	useEffect( () => {
 		if ( ! hasActivated ) {
