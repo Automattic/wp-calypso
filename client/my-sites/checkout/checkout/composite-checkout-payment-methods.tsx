@@ -21,13 +21,11 @@ import {
 	WPCOMTransactionEndpointRequestPayload,
 	WPCOMTransactionEndpointResponse,
 	createTransactionEndpointRequestPayloadFromLineItems,
-} from './types/transaction-endpoint';
-import {
 	PayPalExpressEndpoint,
 	PayPalExpressEndpointRequestPayload,
 	PayPalExpressEndpointResponse,
 	createPayPalExpressEndpointRequestPayloadFromLineItems,
-} from './types/paypal-express';
+} from './types';
 
 const debug = debugFactory( 'calypso:composite-checkout-payment-methods' );
 
