@@ -317,6 +317,15 @@
 	}
 }
 
+.site-settings__visibility-label {
+	&:not( :first-child ) {
+		margin-top: 15px;
+	}
+	&.is-checkbox:not( :only-child ) {
+		margin-left: 25px;
+	}
+}
+
 .site-settings__footer-credit-container {
 	margin-bottom: 16px;
 }
