@@ -82,6 +82,7 @@ $design-selector-selection-space: 285px;
 	position: relative;
 	overflow: hidden;
 	padding: 2px;
+	cursor: pointer;
 
 	&::before {
 		content: '';
@@ -146,6 +147,7 @@ $design-selector-selection-space: 285px;
 
 .design-selector__design-option {
 	position: relative;
+	cursor: pointer;
 
 	.design-selector__option-overlay {
 		background-color: rgba( var( --color-primary-rgb ), 0.8 );
