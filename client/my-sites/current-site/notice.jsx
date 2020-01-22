@@ -34,6 +34,8 @@ import { getUnformattedDomainPrice, getUnformattedDomainSalePrice } from 'lib/do
 import formatCurrency from '@automattic/format-currency/src';
 import { getPreference } from 'state/preferences/selectors';
 import { savePreference } from 'state/preferences/actions';
+import { clickUpgradeNudge } from 'state/marketing/actions';
+import { CTA_FREE_TO_PAID } from './constants';
 import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
 import { getSectionName } from 'state/ui/selectors';
 import { getTopJITM } from 'state/jitm/selectors';
@@ -92,7 +94,10 @@ export class SiteNotice extends React.Component {
 				text={ translate( 'Free domain available' ) }
 			>
 				<NoticeAction
-					onClick={ this.props.clickClaimDomainNotice }
+					onClick={ () => {
+						this.props.clickFreeToPaidPlanNotice( this.props.site.ID );
+						this.props.clickClaimDomainNotice();
+					} }
 					href={ `/domains/add/${ this.props.site.slug }` }
 				>
 					{ translate( 'Claim' ) }
@@ -303,6 +308,8 @@ export default connect(
 					} )
 				);
 			},
+			clickFreeToPaidPlanNotice: siteId =>
+				dispatch( clickUpgradeNudge( siteId, CTA_FREE_TO_PAID ) ),
 		};
 	}
 )( localize( SiteNotice ) );
