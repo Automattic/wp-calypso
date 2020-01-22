@@ -147,6 +147,7 @@ $design-selector-selection-space: 285px;
 
 .design-selector__design-option {
 	position: relative;
+	cursor: pointer;
 
 	.design-selector__option-overlay {
 		background-color: rgba( var( --color-primary-rgb ), 0.8 );
@@ -160,7 +161,6 @@ $design-selector-selection-space: 285px;
 		justify-content: center;
 		opacity: 0;
 		transition: 400ms;
-		cursor: pointer;
 
 		.design-selector__option-overlay-text {
 			font-size: 24px;
