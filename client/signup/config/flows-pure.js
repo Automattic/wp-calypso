@@ -353,6 +353,15 @@ export function generateFlows( {
 		};
 	}
 
+	if ( isEnabled( 'gutenboarding' ) ) {
+		flows.frankenflow = {
+			steps: [ 'user', 'domains', 'plans' ],
+			description: 'Frankenflow testing flow for Gutenboarding',
+			pageTitle: translate( 'Launch your site' ),
+			lastModified: '2020-01-22',
+		};
+	}
+
 	return flows;
 }
 
