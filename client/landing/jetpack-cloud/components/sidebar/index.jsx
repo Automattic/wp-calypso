@@ -111,87 +111,87 @@ class JetpackCloudSidebar extends Component {
 				<SidebarRegion>
 					{ /* @todo: A profile info box needs to be created and added here; similar to <ProfileGravatar /> in client/me/sidebar/index.jsx */ }
 					<SidebarMenu>
+						<SidebarItem
+							link="/jetpack-cloud"
+							label="Dashboard"
+							materialIcon="dashboard"
+							materialIconStyle="filled"
+							selected={ this.isSelected( 'dashboard' ) }
+						/>
+					</SidebarMenu>
+					<ExpandableSidebarMenu
+						onClick={ this.handleExpandableMenuClick( 'backups' ) }
+						expanded={ this.isExpanded( 'backups' ) }
+						title="Backups"
+						materialIcon="backup"
+						materialIconStyle="filled"
+					>
 						<ul>
 							<SidebarItem
-								link="/jetpack-cloud"
-								label="Dashboard"
-								materialIcon="dashboard"
-								materialIconStyle="filled"
-								selected={ this.isSelected( 'dashboard' ) }
+								link="/jetpack-cloud/backups"
+								label="Backups"
+								onNavigate={ this.onNavigate }
+								selected={ this.isSelected( 'backups' ) }
 							/>
-							<ExpandableSidebarMenu
-								onClick={ this.handleExpandableMenuClick( 'backups' ) }
-								expanded={ this.isExpanded( 'backups' ) }
-								title="Backups"
-								materialIcon="backup"
-								materialIconStyle="filled"
-							>
-								<SidebarItem
-									link="/jetpack-cloud/backups"
-									label="Backups"
-									onNavigate={ this.onNavigate }
-									selected={ this.isSelected( 'backups' ) }
-								/>
-								<SidebarItem
-									link="/jetpack-cloud/backups/restore" // @todo: Add jetpack-cloud/backup/restore route
-									label="Restore site"
-									onNavigate={ this.onNavigate }
-									selected={ this.isSelected( 'backups/restore' ) }
-								/>
-								<SidebarItem
-									link="/jetpack-cloud/backups/settings" // @todo: Add jetpack-cloud/backup/settings route
-									label="Settings"
-									onNavigate={ this.onNavigate }
-									selected={ this.isSelected( 'backups/settings' ) }
-								/>
-							</ExpandableSidebarMenu>
-							<ExpandableSidebarMenu
-								onClick={ this.handleExpandableMenuClick( 'scan' ) }
-								expanded={ this.isExpanded( 'scan' ) }
-								title="Scan"
-								materialIcon="security" // @todo: the Scan logo differs from the Material Icon used here
-								materialIconStyle="filled"
-							>
-								<SidebarItem
-									link="/jetpack-cloud/scan"
-									label="Scanner"
-									onNavigate={ this.onNavigate }
-									selected={ this.isSelected( 'scan' ) }
-								/>
-								<SidebarItem
-									link="/jetpack-cloud/scan/history" // @todo: Add jetpack-cloud/scan/history route
-									label="History"
-									onNavigate={ this.onNavigate }
-									selected={ this.isSelected( 'scan/history' ) }
-								/>
-								<SidebarItem
-									link="/jetpack-cloud/scan/settings" // @todo: Add jetpack-cloud/scan/settings route
-									label="Settings"
-									onNavigate={ this.onNavigate }
-									selected={ this.isSelected( 'scan/settings' ) }
-								/>
-							</ExpandableSidebarMenu>
+							<SidebarItem
+								link="/jetpack-cloud/backups/restore" // @todo: Add jetpack-cloud/backup/restore route
+								label="Restore site"
+								onNavigate={ this.onNavigate }
+								selected={ this.isSelected( 'backups/restore' ) }
+							/>
+							<SidebarItem
+								link="/jetpack-cloud/backups/settings" // @todo: Add jetpack-cloud/backup/settings route
+								label="Settings"
+								onNavigate={ this.onNavigate }
+								selected={ this.isSelected( 'backups/settings' ) }
+							/>
 						</ul>
-					</SidebarMenu>
+					</ExpandableSidebarMenu>
+					<ExpandableSidebarMenu
+						onClick={ this.handleExpandableMenuClick( 'scan' ) }
+						expanded={ this.isExpanded( 'scan' ) }
+						title="Scan"
+						materialIcon="security" // @todo: the Scan logo differs from the Material Icon used here
+						materialIconStyle="filled"
+					>
+						<ul>
+							<SidebarItem
+								link="/jetpack-cloud/scan"
+								label="Scanner"
+								onNavigate={ this.onNavigate }
+								selected={ this.isSelected( 'scan' ) }
+							/>
+							<SidebarItem
+								link="/jetpack-cloud/scan/history" // @todo: Add jetpack-cloud/scan/history route
+								label="History"
+								onNavigate={ this.onNavigate }
+								selected={ this.isSelected( 'scan/history' ) }
+							/>
+							<SidebarItem
+								link="/jetpack-cloud/scan/settings" // @todo: Add jetpack-cloud/scan/settings route
+								label="Settings"
+								onNavigate={ this.onNavigate }
+								selected={ this.isSelected( 'scan/settings' ) }
+							/>
+						</ul>
+					</ExpandableSidebarMenu>
 				</SidebarRegion>
 				<SidebarFooter>
 					<SidebarMenu>
-						<ul>
-							<SidebarItem
-								link="/jetpack-cloud/support" // @todo: Add jetpack-cloud/support route or change linkt to other destination
-								label="Support"
-								materialIcon="help"
-								materialIconStyle="filled"
-								onNavigate={ this.onNavigate }
-							/>
-							<SidebarItem
-								link="/"
-								label="Manage site"
-								materialIcon="play_circle_filled" // @todo: The icon has to be mirrored in CSS e.g. with `scaleX( -1 )`
-								materialIconStyle="filled"
-								onNavigate={ this.onNavigate }
-							/>
-						</ul>
+						<SidebarItem
+							link="/jetpack-cloud/support" // @todo: Add jetpack-cloud/support route or change linkt to other destination
+							label="Support"
+							materialIcon="help"
+							materialIconStyle="filled"
+							onNavigate={ this.onNavigate }
+						/>
+						<SidebarItem
+							link="/"
+							label="Manage site"
+							materialIcon="play_circle_filled" // @todo: The icon has to be mirrored in CSS e.g. with `scaleX( -1 )`
+							materialIconStyle="filled"
+							onNavigate={ this.onNavigate }
+						/>
 					</SidebarMenu>
 				</SidebarFooter>
 			</Sidebar>
