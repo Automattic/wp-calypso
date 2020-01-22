@@ -14,7 +14,7 @@ import {
 
 export type PayPalExpressEndpoint = (
 	PayPalExpressEndpointRequestPayload
-) => Promise< PayPalExpressResponse >;
+) => Promise< PayPalExpressEndpointResponse >;
 
 export type PayPalExpressEndpointRequestPayload = {
 	successUrl: string;
@@ -66,4 +66,4 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 	};
 }
 
-export type PayPalExpressResponse = {};
+export type PayPalExpressEndpointResponse = {};

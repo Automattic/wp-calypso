@@ -25,7 +25,7 @@ import {
 import {
 	PayPalExpressEndpoint,
 	PayPalExpressEndpointRequestPayload,
-	PayPalExpressResponse,
+	PayPalExpressEndpointResponse,
 	createPayPalExpressEndpointRequestPayloadFromLineItems,
 } from './types/paypal-express';
 
@@ -373,6 +373,6 @@ async function wpcomTransaction(
 
 async function wpcomPayPalExpress(
 	payload: PayPalExpressEndpointRequestPayload
-): Promise< PayPalExpressResponse > {
+): Promise< PayPalExpressEndpointResponse > {
 	return wp.undocumented().paypalExpressUrl( payload );
 }
