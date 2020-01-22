@@ -70,7 +70,7 @@ export function RecentRenewals( { purchases, siteId, cart } ) {
 				key={ product.id }
 				domain={ domain }
 				productName={ product.productName }
-				expiry={ expiry && expiry.format( 'LL' ) }
+				expiry={ expiry.format( 'LL' ) }
 				translate={ translate }
 			/>
 		);

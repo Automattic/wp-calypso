@@ -96,21 +96,19 @@ class PurchaseItem extends Component {
 			}
 
 			return translate( 'Expires on %s', {
-				args: expiry && expiry.format( 'LL' ),
+				args: expiry.format( 'LL' ),
 			} );
 		}
 
 		if ( isExpired( purchase ) ) {
 			if ( isConciergeSession( purchase ) ) {
 				return translate( 'Session used on %s', {
-					args: expiry && expiry.format( 'LL' ),
+					args: expiry.format( 'LL' ),
 				} );
 			}
 
 			const expiredToday = moment().diff( expiry, 'hours' ) < 24;
-			const expiredText = expiredToday
-				? expiry && expiry.format( '[today]' )
-				: expiry && expiry.fromNow();
+			const expiredText = expiredToday ? expiry.format( '[today]' ) : expiry.fromNow();
 
 			return (
 				<Notice isCompact status="is-error" icon="notice">
