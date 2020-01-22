@@ -5,7 +5,7 @@ import { noop } from 'lodash';
 import React, { useState } from 'react';
 import { Button, TextControl, Modal } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { __ as NO__ } from '@wordpress/i18n';
+import { __ as NO__, _x as NO_x } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -46,7 +46,10 @@ const SignupForm = () => {
 					value={ emailVal }
 					disabled={ isFetchingNewUser }
 					onChange={ setEmailVal }
-					placeholder={ NO__( 'yourname@email.com' ) }
+					placeholder={ NO_x(
+						'E.g., yourname@email.com',
+						"An example of a person's email, use something appropriate for the locale"
+					) }
 				/>
 				<div className="signup-form__footer">
 					<p className="signup-form__terms-of-service-link">
