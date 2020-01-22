@@ -91,7 +91,7 @@ export function createPaymentMethods( {
 							siteId: select( 'wpcom' )?.getSiteId?.(),
 							domainDetails: getDomainDetails( select ),
 						},
-						wpcom
+						wpcomTransaction
 					),
 		  } )
 		: null;
@@ -289,7 +289,10 @@ async function fetchStripeConfiguration( requestArgs, wpcom ) {
 	return wpcom.stripeConfiguration( requestArgs );
 }
 
-async function sendStripeTransaction( transactionData, wpcom ) {
+async function sendStripeTransaction(
+    transactionData,
+    submit: WPCOMTransactionEndpoint,
+) : Promise<WPCOMTransactionEndpointResponse> {
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		debug,
 		...transactionData,
@@ -298,7 +301,7 @@ async function sendStripeTransaction( transactionData, wpcom ) {
 		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
 	} );
 	debug( 'sending stripe transaction', formattedTransactionData );
-	return wpcom.transactions( formattedTransactionData );
+	return submit( formattedTransactionData );
 }
 
 function submitCreditsTransaction( transactionData, wpcom ) {
