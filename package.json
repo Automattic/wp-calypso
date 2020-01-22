@@ -189,7 +189,7 @@
 		"eslint-config-prettier": "6.9.0",
 		"eslint-config-wpcalypso": "file:./packages/eslint-config-wpcalypso",
 		"eslint-plugin-import": "2.20.0",
-		"eslint-plugin-jest": "23.1.1",
+		"eslint-plugin-jest": "23.6.0",
 		"eslint-plugin-jsdoc": "18.4.3",
 		"eslint-plugin-jsx-a11y": "6.2.3",
 		"eslint-plugin-react": "7.17.0",
