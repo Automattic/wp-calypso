@@ -207,7 +207,8 @@ function storedCardsReducer( state, action ) {
 
 async function submitExistingCardPayment( transactionData, wpcom ) {
 	debug( 'formatting existing card transaction', transactionData );
-	const formattedTransactionData = formatDataForTransactionsEndpoint( {
+	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+		debug,
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
 	} );
@@ -217,7 +218,8 @@ async function submitExistingCardPayment( transactionData, wpcom ) {
 
 async function submitApplePayPayment( transactionData, wpcom ) {
 	debug( 'formatting apple-pay transaction', transactionData );
-	const formattedTransactionData = formatDataForTransactionsEndpoint( {
+	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+		debug,
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
 		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
@@ -279,7 +281,8 @@ async function fetchStripeConfiguration( requestArgs, wpcom ) {
 }
 
 async function sendStripeTransaction( transactionData, wpcom ) {
-	const formattedTransactionData = formatDataForTransactionsEndpoint( {
+	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+		debug,
 		...transactionData,
 		paymentMethodToken: transactionData.paymentMethodToken.id,
 		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
@@ -289,83 +292,10 @@ async function sendStripeTransaction( transactionData, wpcom ) {
 	return wpcom.transactions( formattedTransactionData );
 }
 
-function formatDataForTransactionsEndpoint( {
-	siteId,
-	couponId, // TODO: get this
-	country,
-	postalCode,
-	subdivisionCode,
-	domainDetails,
-	paymentMethodToken,
-	name,
-	items,
-	total,
-	paymentMethodType,
-	paymentPartnerProcessorId,
-	storedDetailsId,
-} ) {
-	const payment = {
-		paymentMethod: paymentMethodType,
-		paymentKey: paymentMethodToken,
-		paymentPartner: paymentPartnerProcessorId,
-		storedDetailsId,
-		name,
-		zip: postalCode, // TODO: do we need this in addition to postalCode?
-		postalCode,
-		country,
-	};
-	return {
-		cart: createCartFromLineItems( {
-			siteId,
-			couponId,
-			items: items.filter( item => item.type !== 'tax' ),
-			total,
-			country,
-			postalCode,
-			subdivisionCode,
-		} ),
-		domainDetails,
-		payment,
-	};
-}
-
-// Create cart object as required by the WPCOM transactions endpoint '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
-function createCartFromLineItems( {
-	siteId,
-	couponId,
-	items,
-	country,
-	postalCode,
-	subdivisionCode,
-} ) {
-	const currency = items.reduce( ( firstValue, item ) => firstValue || item.amount.currency, null );
-	debug( 'creating cart from items', items );
-	return {
-		blog_id: siteId,
-		coupon: couponId || '',
-		currency: currency || '',
-		temporary: false,
-		extra: [],
-		products: items.map( item => ( {
-			product_id: item.wpcom_meta?.product_id,
-			meta: item.wpcom_meta?.meta,
-			currency: item.amount.currency,
-			volume: item.wpcom_meta?.volume ?? 1,
-			extra: item.wpcom_meta?.extra,
-		} ) ),
-		tax: {
-			location: {
-				country_code: country,
-				postal_code: postalCode,
-				subdivision_code: subdivisionCode,
-			},
-		},
-	};
-}
-
 function submitCreditsTransaction( transactionData, wpcom ) {
 	debug( 'formatting full credits transaction', transactionData );
-	const formattedTransactionData = formatDataForTransactionsEndpoint( {
+	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+		debug,
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_WPCOM',
 	} );
