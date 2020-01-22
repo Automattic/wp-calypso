@@ -1,3 +1,7 @@
+export type WPCOMTransactionEndpoint = (
+	WPCOMTransactionEndpointRequestPayload
+) => Promise< WPCOMTransactionEndpointResponse >;
+
 // Request payload as expected by the WPCOM transactions endpoint
 // '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
 export type WPCOMTransactionEndpointRequestPayload = {
@@ -176,3 +180,21 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 		},
 	};
 }
+
+export type WPCOMTransactionEndpointResponse = {
+	success: boolean;
+	error_code: string;
+	error_message: string;
+	receipt_id: number;
+	purchases: {
+		product_id: number;
+		product_name: string;
+		product_name_short: string;
+		product_slug: string;
+		free_trial: false;
+		is_domain_registration: boolean;
+		is_email_verified: boolean;
+		registrar_support_url?: string;
+		meta?: string;
+	}[];
+};

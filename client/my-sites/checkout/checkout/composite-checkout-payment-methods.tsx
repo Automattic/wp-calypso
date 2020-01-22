@@ -11,12 +11,15 @@ import {
 	createExistingCardMethod,
 	createFullCreditsMethod,
 } from '@automattic/composite-checkout';
+import wp from 'lib/wp';
 
 /**
  * Internal dependencies
  */
 import {
+    WPCOMTransactionEndpoint,
 	WPCOMTransactionEndpointRequestPayload,
+    WPCOMTransactionEndpointResponse,
 	createTransactionEndpointRequestPayloadFromLineItems,
 } from './types/transaction-endpoint';
 import { PayPalExpressCart, createPayPalExpressCartFromLineItems } from './types/paypal-express';
@@ -340,4 +343,10 @@ function WordPressLogo() {
 			/>
 		</svg>
 	);
+}
+
+async function wpcomTransaction(
+    payload: WPCOMTransactionEndpointRequestPayload
+) : Promise< WPCOMTransactionEndpointResponse > {
+    wp.undocumented().transactions( payload );
 }
