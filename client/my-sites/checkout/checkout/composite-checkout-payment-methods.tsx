@@ -12,6 +12,18 @@ import {
 	createFullCreditsMethod,
 } from '@automattic/composite-checkout';
 
+/**
+ * Internal dependencies
+ */
+import {
+    WPCOMTransactionEndpointRequestPayload,
+    createTransactionEndpointRequestPayloadFromLineItems,
+} from './types/transaction-endpoint';
+import {
+    PayPalExpressCart,
+    createPayPalExpressCartFromLineItems,
+} from './types/paypal-express';
+
 const debug = debugFactory( 'calypso:composite-checkout-payment-methods' );
 
 export function createPaymentMethods( {
