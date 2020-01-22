@@ -95,10 +95,9 @@ if ( typeof window !== 'undefined' ) {
 const analytics = {
 	initialize: function( currentUser, superProps ) {
 		initializeAnalytics( currentUser, superProps );
-
 		// neccessary because calypso-analytics/initializeAnalytics no longer calls out to ad-tracking
 		const user = getCurrentUser();
-		if ( 'object' === typeof userData && user && getTracksAnonymousUserId() ) {
+		if ( 'object' === typeof currentUser && user && getTracksAnonymousUserId() ) {
 			identifyUserDebug( 'recordAliasInFloodlight', user );
 			recordAliasInFloodlight();
 		}
