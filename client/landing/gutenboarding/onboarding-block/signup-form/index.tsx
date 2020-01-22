@@ -45,6 +45,7 @@ const SignupForm = () => {
 					label={ NO__( 'Your Email Address' ) }
 					value={ emailVal }
 					disabled={ isFetchingNewUser }
+					type="email"
 					onChange={ setEmailVal }
 					placeholder={ NO_x(
 						'E.g., yourname@email.com',
