@@ -242,7 +242,10 @@ async function submitApplePayPayment(
 	return submit( formattedTransactionData );
 }
 
-async function makePayPalExpressRequest( transactionData, submit: PayPalExpressEndpoint ) {
+async function makePayPalExpressRequest(
+	transactionData,
+	submit: PayPalExpressEndpoint
+): Promise< WPCOMTransactionEndpointResponse > {
 	const formattedTransactionData = createPayPalExpressCartFromLineItems( {
 		debug,
 		...transactionData,
@@ -267,7 +270,7 @@ function getDomainDetails( select ) {
 	};
 }
 
-function isApplePayAvailable() {
+function isApplePayAvailable(): boolean {
 	// Our Apple Pay implementation uses the Payment Request API, so check that first.
 	if ( ! window.PaymentRequest ) {
 		return false;
@@ -323,7 +326,7 @@ function submitCreditsTransaction(
 	return submit( formattedTransactionData );
 }
 
-function isMethodEnabled( method, allowedPaymentMethods ) {
+function isMethodEnabled( method: string, allowedPaymentMethods: string[] ): boolean {
 	// By default, allow all payment methods
 	if ( ! allowedPaymentMethods?.length ) {
 		return true;
