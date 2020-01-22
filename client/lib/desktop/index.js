@@ -152,7 +152,7 @@ const Desktop = {
 				if ( loaded ) {
 					debug( 'Gutenberg iframe loaded' );
 
-					const evt = new Event( 'editor-loaded' ); /* eslint-disable-line no-undef */
+					const evt = new window.Event( 'editor-loaded' );
 					window.dispatchEvent( evt );
 				}
 
