@@ -65,7 +65,7 @@ export function createPaymentMethods( {
 								postalCode: null,
 								phoneNumber: null,
 							},
-							wpcom
+							wpcomTransaction
 						),
 					creditsDisplayValue: credits.amount.displayValue,
 					label: <WordPressCreditsLabel credits={ credits } />,
@@ -304,7 +304,10 @@ async function sendStripeTransaction(
 	return submit( formattedTransactionData );
 }
 
-function submitCreditsTransaction( transactionData, wpcom ) {
+function submitCreditsTransaction(
+    transactionData,
+    submit: WPCOMTransactionEndpoint,
+): Promise< WPCOMTransactionEndpointResponse > {
 	debug( 'formatting full credits transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		debug,
@@ -312,7 +315,7 @@ function submitCreditsTransaction( transactionData, wpcom ) {
 		paymentMethodType: 'WPCOM_Billing_WPCOM',
 	} );
 	debug( 'submitting full credits transaction', formattedTransactionData );
-	return wpcom.transactions( formattedTransactionData );
+	return submit( formattedTransactionData );
 }
 
 function isMethodEnabled( method, allowedPaymentMethods ) {
