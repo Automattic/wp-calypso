@@ -36,6 +36,9 @@ import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import memoizeLast from 'lib/memoize-last';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import EmptyContent from 'components/empty-content';
 
 function updateQueryString( query = {} ) {
 	return {
@@ -122,8 +125,8 @@ class StatsSite extends Component {
 		}
 	};
 
-	render() {
-		const { date, isJetpack, siteId, slug, isCustomerHomeEnabled } = this.props;
+	renderStats() {
+		const { date, siteId, slug, isCustomerHomeEnabled, isJetpack } = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -148,14 +151,7 @@ class StatsSite extends Component {
 		}
 
 		return (
-			<Main wideLayout={ true }>
-				<QueryKeyringConnections />
-				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }
-				<DocumentHead title={ translate( 'Stats and Insights' ) } />
-				<PageViewTracker
-					path={ `/stats/${ period }/:site` }
-					title={ `Stats > ${ titlecase( period ) }` }
-				/>
+			<>
 				<PrivacyPolicyBanner />
 				<JetpackBackupCredsBanner event={ 'stats-backup-credentials' } />
 				<SidebarNavigation />
@@ -267,6 +263,39 @@ class StatsSite extends Component {
 					</div>
 				</div>
 				<JetpackColophon />
+			</>
+		);
+	}
+
+	renderEnableStatsModule() {
+		const { slug } = this.props;
+		return (
+			<EmptyContent
+				illustration="/calypso/images/illustrations/illustration-404.svg"
+				title={ translate( 'Looking for Stats?' ) }
+				line={ translate( 'Enable Site Stats in Marketing > Traffic' ) }
+				action={ translate( 'Enable Site Stats' ) }
+				actionURL={ `/marketing/traffic/${ slug }` }
+			/>
+		);
+	}
+
+	render() {
+		const { isJetpack, siteId, showEnableStatsModule } = this.props;
+
+		const { period } = this.props.period;
+
+		return (
+			<Main wideLayout={ true }>
+				<QueryKeyringConnections />
+				{ isJetpack && siteId && <QueryJetpackModules siteId={ siteId } /> }
+				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }
+				<DocumentHead title={ translate( 'Stats and Insights' ) } />
+				<PageViewTracker
+					path={ `/stats/${ period }/:site` }
+					title={ `Stats > ${ titlecase( period ) }` }
+				/>
+				{ showEnableStatsModule ? this.renderEnableStatsModule() : this.renderStats() }
 			</Main>
 		);
 	}
@@ -276,13 +305,15 @@ export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
-
+		const isStatsModuleActive = isJetpackModuleActive( state, siteId, 'stats' );
+		const showEnableStatsModule = siteId && isJetpack && isStatsModuleActive === false;
 		return {
 			isJetpack,
 			siteId,
 			slug: getSelectedSiteSlug( state ),
 			planSlug: getSitePlanSlug( state, siteId ),
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
+			showEnableStatsModule,
 		};
 	},
 	{ recordGoogleEvent }
