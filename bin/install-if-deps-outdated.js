@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Performs an `npm install`. Since that's a costly operation,
+ * Installs `node_modules` with `npm ci`. Since that's a costly operation,
  * it will only perform it if needed, that is, if the packages
  * installed at `node_modules` aren't in sync over what
  * `package-lock.json` has. For that, modification times of both
@@ -13,7 +13,7 @@
 
 const fs = require( 'fs' );
 const path = require( 'path' );
-const spawnSync = require( 'child_process' ).spawnSync;
+const { spawnSync } = require( 'child_process' );
 //const debug = require( 'debug' )( 'calypso:install' );
 
 const needsInstall = () => {
@@ -51,15 +51,16 @@ function install() {
 		console.error( 'failed to clean: %o', cleanResult );
 		process.exit( cleanResult.status );
 	}
+
 	const installResult = spawnSync( 'npm', [ 'ci' ], {
 		shell: true,
 		stdio: 'inherit',
-	} ).status;
+	} );
 	if ( installResult.status ) {
 		console.error( 'failed to install: %o', installResult );
 		process.exit( installResult.status );
 	}
-	const touchDate = new Date();
 
+	const touchDate = new Date();
 	fs.utimesSync( 'node_modules', touchDate, touchDate );
 }
