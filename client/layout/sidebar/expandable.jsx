@@ -35,7 +35,7 @@ function containsSelectedSidebarItem( children ) {
 }
 
 export const ExpandableSidebarMenu = props => {
-	const { className, title, count, onClick, icon, materialIcon } = props;
+	const { className, title, count, onClick, icon, materialIcon, materialIconStyle } = props;
 
 	let { expanded } = props;
 
@@ -58,6 +58,7 @@ export const ExpandableSidebarMenu = props => {
 				onClick={ onClick }
 				icon={ icon }
 				materialIcon={ materialIcon }
+				materialIconStyle={ materialIconStyle }
 				expanded={ expanded }
 				menuId={ menuId }
 			/>
@@ -78,6 +79,8 @@ ExpandableSidebarMenu.propTypes = {
 	count: PropTypes.number,
 	onClick: PropTypes.func,
 	icon: PropTypes.string,
+	materialIcon: PropTypes.string,
+	materialIconStyle: PropTypes.string,
 	expanded: PropTypes.bool,
 };
 

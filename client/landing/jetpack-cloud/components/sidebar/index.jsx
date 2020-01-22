@@ -115,12 +115,16 @@ class JetpackCloudSidebar extends Component {
 							<SidebarItem
 								link="/jetpack-cloud"
 								label="Dashboard"
+								materialIcon="dashboard"
+								materialIconStyle="filled"
 								selected={ this.isSelected( 'dashboard' ) }
 							/>
 							<ExpandableSidebarMenu
 								onClick={ this.handleExpandableMenuClick( 'backups' ) }
 								expanded={ this.isExpanded( 'backups' ) }
 								title="Backups"
+								materialIcon="backup"
+								materialIconStyle="filled"
 							>
 								<SidebarItem
 									link="/jetpack-cloud/backups"
@@ -145,6 +149,8 @@ class JetpackCloudSidebar extends Component {
 								onClick={ this.handleExpandableMenuClick( 'scan' ) }
 								expanded={ this.isExpanded( 'scan' ) }
 								title="Scan"
+								materialIcon="security" // @todo: the Scan logo differs from the Material Icon used here
+								materialIconStyle="filled"
 							>
 								<SidebarItem
 									link="/jetpack-cloud/scan"
@@ -174,9 +180,17 @@ class JetpackCloudSidebar extends Component {
 							<SidebarItem
 								link="/jetpack-cloud/support" // @todo: Add jetpack-cloud/support route or change linkt to other destination
 								label="Support"
+								materialIcon="help"
+								materialIconStyle="filled"
 								onNavigate={ this.onNavigate }
 							/>
-							<SidebarItem link="/" label="Manage site" onNavigate={ this.onNavigate } />
+							<SidebarItem
+								link="/"
+								label="Manage site"
+								materialIcon="play_circle_filled" // @todo: The icon has to be mirrored in CSS e.g. with `scaleX( -1 )`
+								materialIconStyle="filled"
+								onNavigate={ this.onNavigate }
+							/>
 						</ul>
 					</SidebarMenu>
 				</SidebarFooter>
