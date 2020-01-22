@@ -20,6 +20,7 @@ import doNotTrack from './utils/do-not-track';
  * Re-export
  */
 export { default as doNotTrack } from './utils/do-not-track';
+export { getCurrentUser, setCurrentUser } from './utils/current-user';
 
 /**
  * Module variables
