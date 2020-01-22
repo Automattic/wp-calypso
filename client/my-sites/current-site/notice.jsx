@@ -300,11 +300,6 @@ export class SiteNotice extends React.Component {
 		const discountOrFreeToPaid = this.activeDiscountNotice();
 		const siteRedirectNotice = this.getSiteRedirectNotice( site );
 		const domainCreditNotice = this.domainCreditNotice();
-		const jitmTemplate =
-			abtest( 'sidebarUpsellNudgeUnification' ) === 'variantShowUnifiedUpsells' &&
-			config.isEnabled( 'upsell/nudge-component' )
-				? 'upsell-nudge'
-				: 'sidebar-banner';
 
 		return (
 			<div className="current-site__notices">
@@ -315,7 +310,7 @@ export class SiteNotice extends React.Component {
 						<AsyncLoad
 							require="blocks/jitm"
 							messagePath={ messagePath }
-							template={ jitmTemplate }
+							template="sidebar-banner"
 						/>
 					) ) }
 				{ siteRedirectNotice }
