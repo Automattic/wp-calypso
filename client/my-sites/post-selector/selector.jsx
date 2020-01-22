@@ -8,8 +8,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import scrollbarSize from 'dom-helpers/scrollbarSize';
-import List from 'react-virtualized/List';
-import AutoSizer from 'react-virtualized/AutoSizer';
+import { AutoSizer, List } from '@automattic/react-virtualized';
 import {
 	debounce,
 	memoize,

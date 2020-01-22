@@ -72,6 +72,7 @@ const nodeModulesToTranspile = [
 	// The trailing slash makes sure we're not matching these as prefixes
 	// In some cases we do want prefix style matching (lodash. for lodash.assign)
 	'@automattic/calypso-polyfills/',
+	'@automattic/react-virtualized/',
 	'@github/webauthn-json/',
 	'acorn-jsx/',
 	'chalk/',
