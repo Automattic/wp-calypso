@@ -30,10 +30,10 @@ const Question: FunctionComponent< Props > = ( {
 	// Persist activation of question so animation only happens on initial selection.
 	const [ hasActivated, setHasActivated ] = useState< boolean >( false );
 	useEffect( () => {
-		if ( ! hasActivated && isActive ) {
+		if ( ! hasActivated ) {
 			setHasActivated( true );
 		}
-	}, [ isActive, hasActivated ] );
+	}, [ hasActivated ] );
 
 	return (
 		<div
