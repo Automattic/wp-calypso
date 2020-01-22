@@ -7,6 +7,8 @@ import {
 	createTransactionEndpointCartFromLineItems,
 } from './transaction-endpoint';
 
+export type PayPalExpressEndpoint = ( PayPalExpressCart ) => Promise< PayPalExpressResponse >;
+
 export type PayPalExpressCart = {
 	successUrl: string;
 	cancelUrl: string;
@@ -68,3 +70,5 @@ export function createPayPalExpressCartFromLineItems( {
 		domainDetails,
 	};
 }
+
+export type PayPalExpressResponse = {};

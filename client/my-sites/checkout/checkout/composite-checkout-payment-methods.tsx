@@ -22,7 +22,7 @@ import {
 	WPCOMTransactionEndpointResponse,
 	createTransactionEndpointRequestPayloadFromLineItems,
 } from './types/transaction-endpoint';
-import { PayPalExpressCart, createPayPalExpressCartFromLineItems } from './types/paypal-express';
+import { PayPalExpressEndpoint, PayPalExpressCart, PayPalExpressResponse, createPayPalExpressCartFromLineItems } from './types/paypal-express';
 
 const debug = debugFactory( 'calypso:composite-checkout-payment-methods' );
 
