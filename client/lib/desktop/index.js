@@ -143,17 +143,25 @@ const Desktop = {
 	},
 
 	editorLoadedStatus: function() {
+		const sendLoadedEvt = () => {
+			debug( 'Gutenberg iframe loaded' );
+
+			const evt = new window.Event( 'editor-loaded' );
+			window.dispatchEvent( evt );
+		};
+
 		let previousLoaded = isEditorLoaded( this.store.getState() );
+
+		if ( previousLoaded ) {
+			sendLoadedEvt();
+		}
 
 		this.store.subscribe( () => {
 			const loaded = isEditorLoaded( this.store.getState() );
 
 			if ( loaded !== previousLoaded ) {
 				if ( loaded ) {
-					debug( 'Gutenberg iframe loaded' );
-
-					const evt = new window.Event( 'editor-loaded' );
-					window.dispatchEvent( evt );
+					sendLoadedEvt();
 				}
 
 				previousLoaded = loaded;
