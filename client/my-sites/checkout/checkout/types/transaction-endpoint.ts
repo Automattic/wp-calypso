@@ -1,3 +1,8 @@
+/**
+ * External dependencies
+ */
+import { WPCOMCartItem } from '@automattic/composite-checkout-wpcom';
+
 export type WPCOMTransactionEndpoint = (
 	WPCOMTransactionEndpointRequestPayload
 ) => Promise< WPCOMTransactionEndpointResponse >;
@@ -72,18 +77,7 @@ export function createTransactionEndpointCartFromLineItems( {
 	country: string;
 	postalCode: string;
 	subdivisionCode?: string;
-	items: {
-		amount: {
-			currency: string;
-		};
-		wpcom_meta: {
-			product_id: string;
-			meta?: string;
-			currency: string;
-			volume?: number;
-			extra?: string[];
-		};
-	}[];
+	items: WPCOMCartItem[];
 } ): WPCOMTransactionEndpointCart {
 	debug( 'creating cart from items', items );
 
@@ -138,19 +132,7 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	postalCode: string;
 	subdivisionCode?: string;
 	domainDetails?: WPCOMTransactionEndpointDomainDetails;
-	items: {
-		type: string;
-		amount: {
-			currency: string;
-		};
-		wpcom_meta: {
-			product_id: string;
-			meta?: string;
-			currency: string;
-			volume?: number;
-			extra?: string[];
-		};
-	}[];
+	items: WPCOMCartItem[];
 	paymentMethodType: string;
 	paymentMethodToken: string;
 	paymentPartnerProcessorId: string;

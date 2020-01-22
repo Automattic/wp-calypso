@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { WPCOMCartItem } from '@automattic/composite-checkout-wpcom';
+
+/**
  * Internal dependencies
  */
 import {
@@ -39,19 +44,7 @@ export function createPayPalExpressCartFromLineItems( {
 	postalCode: string;
 	subdivisionCode: string;
 	domainDetails: WPCOMTransactionEndpointDomainDetails;
-	items: {
-		type: string;
-		amount: {
-			currency: string;
-		};
-		wpcom_meta: {
-			product_id: string;
-			meta?: string;
-			currency: string;
-			volume?: number;
-			extra?: string[];
-		};
-	}[];
+	items: WPCOMCartItem[];
 } ): PayPalExpressCart {
 	return {
 		successUrl,
