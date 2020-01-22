@@ -63,7 +63,7 @@ export function RecentRenewals( { purchases, siteId, cart } ) {
 			? product.meta || product.domain
 			: product.includedDomain || product.domain;
 
-		const expiry = moment( product.expiryDate, product.expiryDateFormat );
+		const expiry = moment( product.expiryDate );
 
 		return (
 			<RecentRenewalListItem

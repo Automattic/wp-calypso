@@ -48,7 +48,7 @@ class PurchaseNotice extends Component {
 
 	getExpiringText( purchase ) {
 		const { translate, moment, selectedSite } = this.props;
-		const expiry = moment( purchase.expiryDate, purchase.expiryDateFormat );
+		const expiry = moment( purchase.expiryDate );
 
 		if ( selectedSite && purchase.expiryStatus === 'manualRenew' ) {
 			if ( isPaidWithCredits( purchase ) ) {
@@ -179,7 +179,7 @@ class PurchaseNotice extends Component {
 		if (
 			! subscribedWithinPastWeek( purchase ) &&
 			purchase.expiryDate &&
-			moment( purchase.expiryDate, purchase.expiryDateFormat ) < moment().add( 90, 'days' )
+			moment( purchase.expiryDate ) < moment().add( 90, 'days' )
 		) {
 			noticeStatus = 'is-error';
 		}
@@ -235,9 +235,7 @@ class PurchaseNotice extends Component {
 							args: {
 								cardType: creditCard.type.toUpperCase(),
 								cardNumber: parseInt( creditCard.number, 10 ),
-								cardExpiry: moment( creditCard.expiryDate, creditCard.expiryDateFormat ).format(
-									'MMMM YYYY'
-								),
+								cardExpiry: moment( creditCard.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
 							},
 							components: {
 								a: linkComponent,

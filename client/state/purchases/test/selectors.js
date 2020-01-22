@@ -87,7 +87,6 @@ describe( 'selectors', () => {
 				domainRegistrationAgreementUrl: null,
 				error: null,
 				expiryDate: undefined,
-				expiryDateFormat: null,
 				expiryStatus: '',
 				includedDomain: undefined,
 				includedDomainPurchaseAmount: undefined,

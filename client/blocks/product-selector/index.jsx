@@ -179,9 +179,7 @@ export class ProductSelector extends Component {
 
 		const subscribedMoment = purchase.subscribedDate ? moment( purchase.subscribedDate ) : null;
 
-		const expiryMoment = purchase.expiryDate
-			? moment( purchase.expiryDate, purchase.expiryDateFormat )
-			: null;
+		const expiryMoment = purchase.expiryDate ? moment( purchase.expiryDate ) : null;
 
 		return (
 			<ProductExpiration

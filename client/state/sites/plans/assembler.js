@@ -12,7 +12,6 @@ export const createSitePlanObject = plan => {
 		discountReason: plan.discount_reason,
 		expiry: plan.expiry,
 		expiryDate: plan.expiry,
-		expiryDateFormat: null,
 		formattedDiscount: plan.formatted_discount,
 		formattedOriginalPrice: plan.formatted_original_price,
 		formattedPrice: plan.formatted_price,

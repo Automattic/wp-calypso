@@ -76,7 +76,7 @@ class PurchaseItem extends Component {
 			} );
 		}
 
-		const expiry = moment( purchase.expiryDate, purchase.expiryDateFormat );
+		const expiry = moment( purchase.expiryDate );
 
 		if ( isExpiring( purchase ) ) {
 			if ( expiry < moment().add( 30, 'days' ) ) {

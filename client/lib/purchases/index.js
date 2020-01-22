@@ -88,7 +88,7 @@ function getPartnerName( purchase ) {
 // TODO: refactor to avoid returning a localized string.
 function getSubscriptionEndDate( purchase ) {
 	const localeSlug = i18n.getLocaleSlug();
-	return moment( purchase.expiryDate, purchase.expiryDateFormat )
+	return moment( purchase.expiryDate )
 		.locale( localeSlug )
 		.format( 'LL' );
 }
@@ -359,9 +359,7 @@ function hasCreditCardData( purchase ) {
 }
 
 function shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) {
-	const expiry = purchase.expiryDate
-		? moment( purchase.expiryDate, purchase.expiryDateFormat )
-		: null;
+	const expiry = purchase.expiryDate ? moment( purchase.expiryDate ) : null;
 	return expiry > moment().add( 3, 'months' );
 }
 
@@ -379,22 +377,19 @@ function canExplicitRenew( purchase ) {
 
 function creditCardExpiresBeforeSubscription( purchase ) {
 	const creditCard = purchase?.payment?.creditCard;
-	const purchaseExpiryDate = moment( purchase.expiryDate, purchase.expiryDateFormat );
+	const purchaseExpiryDate = moment( purchase.expiryDate );
 
 	return (
 		isPaidWithCreditCard( purchase ) &&
 		hasCreditCardData( purchase ) &&
 		creditCard.expiryDate &&
-		moment( creditCard.expiryDate, creditCard.expiryDateFormat ).diff(
-			purchaseExpiryDate,
-			'months'
-		) < 0
+		moment( creditCard.expiryDate, 'MM/YY' ).diff( purchaseExpiryDate, 'months' ) < 0
 	);
 }
 
 function monthsUntilCardExpires( purchase ) {
 	const creditCard = purchase.payment.creditCard;
-	const expiry = moment( creditCard.expiryDate, creditCard.expiryDateFormat );
+	const expiry = moment( creditCard.expiryDate, 'MM/YY' );
 	return expiry.diff( moment(), 'months' );
 }
 

@@ -77,7 +77,7 @@ class PurchasesListing extends Component {
 			return false;
 		}
 
-		return moment( product.expiryDate, product.expiryDateFormat ) < moment().add( 30, 'days' );
+		return moment( product.expiryDate ) < moment().add( 30, 'days' );
 	}
 
 	getJetpackBackupPurchase() {
@@ -134,9 +134,7 @@ class PurchasesListing extends Component {
 			? this.props.moment( purchase.subscribedDate )
 			: null;
 
-		const expiryMoment = purchase.expiryDate
-			? this.props.moment( purchase.expiryDate, purchase.expiryDateFormat )
-			: null;
+		const expiryMoment = purchase.expiryDate ? this.props.moment( purchase.expiryDate ) : null;
 
 		return (
 			<ProductExpiration

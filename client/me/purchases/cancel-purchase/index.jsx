@@ -107,14 +107,7 @@ class CancelPurchase extends React.Component {
 
 	renderFooterText = () => {
 		const { purchase } = this.props;
-		const {
-			refundText,
-			expiryDate,
-			expiryDateFormat,
-			refundAmount,
-			currencySymbol,
-			currency,
-		} = purchase;
+		const { refundText, expiryDate, refundAmount, currencySymbol, currency } = purchase;
 
 		if ( hasAmountAvailableToRefund( purchase ) ) {
 			if ( this.state.cancelBundledDomain && this.props.includedDomainPurchase ) {
@@ -135,7 +128,7 @@ class CancelPurchase extends React.Component {
 			} );
 		}
 
-		const expirationDate = this.props.moment( expiryDate, expiryDateFormat ).format( 'LL' );
+		const expirationDate = this.props.moment( expiryDate ).format( 'LL' );
 
 		if ( isDomainRegistration( purchase ) ) {
 			return this.props.translate(

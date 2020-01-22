@@ -31,7 +31,6 @@ function createPurchaseObject( purchase ) {
 		error: null,
 		blogCreatedDate: purchase.blog_created_date,
 		expiryDate: purchase.expiry_date,
-		expiryDateFormat: null,
 		expiryStatus: camelCase( purchase.expiry_status ),
 		includedDomain: purchase.included_domain,
 		includedDomainPurchaseAmount: purchase.included_domain_purchase_amount,
@@ -81,7 +80,6 @@ function createPurchaseObject( purchase ) {
 				processor: purchase.payment_card_processor,
 				number: purchase.payment_details,
 				expiryDate: purchase.payment_expiry,
-				expiryDateFormat: 'MM/YY',
 			},
 		};
 
@@ -89,7 +87,7 @@ function createPurchaseObject( purchase ) {
 	}
 
 	if ( 'paypal_direct' === purchase.payment_type ) {
-		object.payment.expiryDateFormat = 'MM/YY';
+		object.payment.expiryDate = purchase.payment_expiry;
 	}
 
 	return object;

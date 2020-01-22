@@ -57,7 +57,7 @@ class PlanBillingPeriod extends Component {
 
 		if ( isExpiring( purchase ) && purchase.expiryDate ) {
 			return translate( 'Billed yearly, expires on %s', {
-				args: moment( purchase.expiryDate, purchase.expiryDateFormat ).format( 'LL' ),
+				args: moment( purchase.expiryDate ).format( 'LL' ),
 				comment: '%s is the expiration date in format M DD, Y, for example: June 10, 2019',
 			} );
 		}
@@ -65,7 +65,7 @@ class PlanBillingPeriod extends Component {
 		if ( isExpired( purchase ) && purchase.expiryDate ) {
 			return translate( 'Billed yearly, expired %(timeSinceExpiry)s', {
 				args: {
-					timeSinceExpiry: moment( purchase.expiryDate, purchase.expiryDateFormat ).fromNow(),
+					timeSinceExpiry: moment( purchase.expiryDate ).fromNow(),
 				},
 				comment: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 			} );
