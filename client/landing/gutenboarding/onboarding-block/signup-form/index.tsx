@@ -3,8 +3,9 @@
  */
 import { noop } from 'lodash';
 import React, { useState } from 'react';
-import { Button, TextControl, Modal } from '@wordpress/components';
+import { Button, ExternalLink, TextControl, Modal } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { __ as NO__, _x as NO_x } from '@wordpress/i18n';
 
 /**
@@ -23,14 +24,6 @@ const SignupForm = () => {
 		event.preventDefault();
 
 		createAccount( { email: emailVal, is_passwordless: true, signup_flow_name: 'gutenboarding' } );
-	};
-
-	const renderTosLink = () => {
-		return (
-			<a href="https://wordpress.com/tos/" target="_blank" rel="noopener noreferrer">
-				{ NO__( 'Terms of Service.' ) }
-			</a>
-		);
 	};
 
 	return (
@@ -53,9 +46,7 @@ const SignupForm = () => {
 					) }
 				/>
 				<div className="signup-form__footer">
-					<p className="signup-form__terms-of-service-link">
-						{ NO__( 'By creating an account you agree to our' ) } { renderTosLink() }
-					</p>
+					<p className="signup-form__terms-of-service-link">{ renderTos() }</p>
 
 					<Button
 						type="submit"
@@ -72,5 +63,14 @@ const SignupForm = () => {
 		</Modal>
 	);
 };
+
+function renderTos() {
+	return __experimentalCreateInterpolateElement(
+		NO__( 'By creating an account you agree to our <link_to_tos>Terms of Service</link_to_tos>.' ),
+		{
+			link_to_tos: <ExternalLink href="https://wordpress.com/tos/" />,
+		}
+	);
+}
 
 export default SignupForm;
