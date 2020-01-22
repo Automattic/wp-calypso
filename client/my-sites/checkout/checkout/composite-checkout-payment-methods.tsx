@@ -17,9 +17,9 @@ import wp from 'lib/wp';
  * Internal dependencies
  */
 import {
-    WPCOMTransactionEndpoint,
+	WPCOMTransactionEndpoint,
 	WPCOMTransactionEndpointRequestPayload,
-    WPCOMTransactionEndpointResponse,
+	WPCOMTransactionEndpointResponse,
 	createTransactionEndpointRequestPayloadFromLineItems,
 } from './types/transaction-endpoint';
 import { PayPalExpressCart, createPayPalExpressCartFromLineItems } from './types/paypal-express';
@@ -133,7 +133,7 @@ export function createPaymentMethods( {
 								siteId: select( 'wpcom' )?.getSiteId?.(),
 								domainDetails: getDomainDetails( select ),
 							},
-							wpcom
+							wpcomTransaction
 						),
 			  } )
 			: null;
@@ -219,7 +219,10 @@ async function submitExistingCardPayment( transactionData, wpcom ) {
 	return wpcom.transactions( formattedTransactionData );
 }
 
-async function submitApplePayPayment( transactionData, wpcom ) {
+async function submitApplePayPayment(
+	transactionData,
+	submit: WPCOMTransactionEndpoint
+): Promise< WPCOMTransactionEndpointResponse > {
 	debug( 'formatting apple-pay transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		debug,
@@ -228,7 +231,7 @@ async function submitApplePayPayment( transactionData, wpcom ) {
 		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
 	} );
 	debug( 'submitting apple-pay transaction', formattedTransactionData );
-	return wpcom.transactions( formattedTransactionData );
+	return submit( formattedTransactionData );
 }
 
 async function makePayPalExpressRequest( transactionData, wpcom ) {
@@ -346,7 +349,7 @@ function WordPressLogo() {
 }
 
 async function wpcomTransaction(
-    payload: WPCOMTransactionEndpointRequestPayload
-) : Promise< WPCOMTransactionEndpointResponse > {
-    wp.undocumented().transactions( payload );
+	payload: WPCOMTransactionEndpointRequestPayload
+): Promise< WPCOMTransactionEndpointResponse > {
+	wp.undocumented().transactions( payload );
 }
