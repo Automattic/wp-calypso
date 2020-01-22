@@ -2,29 +2,27 @@
  * External dependencies
  */
 import React, { useState } from 'react';
-
-// /**
-//  * Internal dependencies
-//  */
-import {
-	usePasswordlessSignUp,
-	UsePasswordlessSignUpStatus,
-	Provider,
-	Client,
-} from '@automattic/authentication';
 import { Button, TextControl, Modal } from '@wordpress/components';
-import FormLabel from 'components/forms/form-label';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { __ as NO__ } from '@wordpress/i18n';
-import config from '../../../../config';
+
+/**
+ * Internal dependencies
+ */
+import { USER_STORE } from '../../stores/user';
+import FormLabel from 'components/forms/form-label';
 import './style.scss';
 
 const SignupForm = () => {
 	const [ emailVal, setEmailVal ] = useState( '' );
-	const { signUp, status, error } = usePasswordlessSignUp();
+	const { createAccount } = useDispatch( USER_STORE );
+	const isFetchingNewUser = useSelect( select => select( USER_STORE ).isFetchingNewUser() );
+	const newUserError = useSelect( select => select( USER_STORE ).getNewUserError() );
 
 	const handleSignUp = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
-		signUp( emailVal );
+
+		createAccount( { email: emailVal, is_passwordless: true, signup_flow_name: 'gutenboarding' } );
 	};
 
 	const renderTosLink = () => {
@@ -46,7 +44,7 @@ const SignupForm = () => {
 				<TextControl
 					id="email"
 					value={ emailVal }
-					disabled={ status === UsePasswordlessSignUpStatus.Authenticating }
+					disabled={ isFetchingNewUser }
 					onChange={ setEmailVal }
 					placeholder={ NO__( 'yourname@email.com' ) }
 				/>
@@ -58,29 +56,16 @@ const SignupForm = () => {
 					<Button
 						type="submit"
 						className="signup-form__submit"
-						disabled={ status === UsePasswordlessSignUpStatus.Authenticating }
+						disabled={ isFetchingNewUser }
 						isPrimary
 					>
 						{ NO__( 'Create your account' ) }
 					</Button>
 				</div>
 			</form>
-			{ status && <p>Status: { JSON.stringify( status, null, 2 ) }</p> }
-			{ error && <p>Error: { JSON.stringify( String( error ), null, 2 ) }</p> }
+			{ newUserError && <pre>Error: { JSON.stringify( newUserError, null, 2 ) }</pre> }
 		</Modal>
 	);
 };
 
-const WrappedSignupForm = () => {
-	const client = new Client( {
-		clientID: config( 'wpcom_signup_id' ),
-		clientSecret: config( 'wpcom_signup_key' ),
-	} );
-	return (
-		<Provider client={ client }>
-			<SignupForm />
-		</Provider>
-	);
-};
-
-export default WrappedSignupForm;
+export default SignupForm;
