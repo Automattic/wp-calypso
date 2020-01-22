@@ -48,7 +48,7 @@ function install() {
 		stdio: 'inherit',
 	} );
 	if ( cleanResult.status ) {
-		console.error( 'failed to clean: %o', cleanResult );
+		console.error( 'failed to clean: exited with code %d', cleanResult.status );
 		process.exit( cleanResult.status );
 	}
 
@@ -57,7 +57,7 @@ function install() {
 		stdio: 'inherit',
 	} );
 	if ( installResult.status ) {
-		console.error( 'failed to install: %o', installResult );
+		console.error( 'failed to install: exited with code %d', installResult.status );
 		process.exit( installResult.status );
 	}
 
