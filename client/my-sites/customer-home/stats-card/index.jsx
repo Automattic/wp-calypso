@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
+import { numberFormat, useTranslate } from 'i18n-calypso';
 import { Card } from '@automattic/components';
 
 /**
@@ -61,13 +61,17 @@ export const StatsCard = ( {
 			<div className="stats-card__data">
 				{ ! showInsights && (
 					<div className="stats-card__data-item">
-						<div className="stats-card__data-value">{ trafficData?.views ?? '-' }</div>
+						<div className="stats-card__data-value">
+							{ trafficData?.views ? numberFormat( trafficData.views ) : '-' }
+						</div>
 						<div className="stats-card__data-label">{ translate( 'Views' ) }</div>
 					</div>
 				) }
 				{ ! showInsights && (
 					<div className="stats-card__data-item">
-						<div className="stats-card__data-value">{ trafficData?.visitors ?? '-' }</div>
+						<div className="stats-card__data-value">
+							{ trafficData?.visitors ? numberFormat( trafficData.visitors ) : '-' }
+						</div>
 						<div className="stats-card__data-label">{ translate( 'Visitors' ) }</div>
 					</div>
 				) }
