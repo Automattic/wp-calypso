@@ -10,6 +10,7 @@ import { useLineItems, useFormStatus } from '@automattic/composite-checkout';
  * Internal dependencies
  */
 import joinClasses from './join-classes';
+import { isLineItemADomain } from '../hooks/has-domains';
 import Coupon from './coupon';
 import WPTermsAndConditions from './wp-terms-and-conditions';
 import {
@@ -18,9 +19,11 @@ import {
 	WPOrderReviewSection,
 } from './wp-order-review-line-items';
 
-export default function WPCheckoutOrderReview( { className, removeItem } ) {
+export default function WPCheckoutOrderReview( { className, removeItem, siteUrl } ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
+	const firstDomainItem = items.find( isLineItemADomain );
+	const domainName = firstDomainItem ? firstDomainItem.sublabel : siteUrl;
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
@@ -34,7 +37,7 @@ export default function WPCheckoutOrderReview( { className, removeItem } ) {
 				<WPOrderReviewTotal total={ total } />
 			</WPOrderReviewSection>
 
-			<WPTermsAndConditions />
+			<WPTermsAndConditions domainName={ domainName } />
 		</div>
 	);
 }
@@ -43,6 +46,7 @@ WPCheckoutOrderReview.propTypes = {
 	summary: PropTypes.bool,
 	className: PropTypes.string,
 	removeItem: PropTypes.func.isRequired,
+	siteUrl: PropTypes.string,
 };
 
 const CouponField = styled( Coupon )`
