@@ -358,7 +358,7 @@ function WordPressLogo() {
 }
 
 async function wpcomTransaction(
-	payload: WPCOMTransactionEndpointRequestPayload
+	payload: WPCOMTransactionEndpointRequestPayload,
 ): Promise< WPCOMTransactionEndpointResponse > {
 	wp.undocumented().transactions( payload );
 }
