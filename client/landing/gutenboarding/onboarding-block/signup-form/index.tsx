@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { noop } from 'lodash';
 import React, { useState } from 'react';
 import { Button, TextControl, Modal } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -36,8 +37,9 @@ const SignupForm = () => {
 	return (
 		<Modal
 			className="signup-form"
+			isDismissible={ false }
 			title={ NO__( 'Sign up to save your changes' ) }
-			onRequestClose={ () => {} }
+			onRequestClose={ noop }
 		>
 			<form onSubmit={ handleSignUp }>
 				<FormLabel htmlFor="email">{ NO__( 'Your Email Address' ) }</FormLabel>
