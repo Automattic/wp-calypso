@@ -43,7 +43,7 @@
 	},
 	"scripts": {
 		"preanalyze-bundles": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=true PROGRESS=1 NODE_ARGS=--max_old_space_size=8192 npm run -s build-client-evergreen",
-		"analyze-bundles": "webpack-bundle-analyzer stats.json public/evergreen -h 127.0.0.1 -p 9898 -s gzip",
+		"analyze-bundles": "webpack-bundle-analyzer client/stats.json public/evergreen -h 127.0.0.1 -p 9898 -s gzip",
 		"autoprefixer": "postcss -u autoprefixer -r --no-map --config packages/calypso-build/postcss.config.js",
 		"postcss": "postcss -r --config packages/calypso-build/postcss.config.js",
 		"prebuild": "npm run install-if-deps-outdated",
