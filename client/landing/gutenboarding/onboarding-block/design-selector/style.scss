@@ -107,6 +107,17 @@ $design-selector-selection-space: 285px;
 	&:focus {
 		padding: 0;
 		border: 3px solid $blue-medium-focus;
+
+		// Offset absolute-positioned card content when border state occurs
+		.page-layout-selector__card-media {
+			width: calc( 100% + 4px ); /* This number is the border width * 2, minus the width of the thin static state border */
+			top: -2px; /* This is half of the above number. */
+		}
+
+		.page-layout-selector__card-footer {
+			bottom: -2px;
+			width: calc( 100% + 4px );
+		}
 	}
 
 	&:hover,
