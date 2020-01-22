@@ -31,12 +31,12 @@ class StepConfirmMigration extends Component {
 	};
 
 	handleClick = () => {
-		const { sourceSite, targetSite, targetSiteSlug } = this.props;
+		const { sourceSite, startMigration, targetSite, targetSiteSlug } = this.props;
 		const sourceSiteId = get( sourceSite, 'ID' );
 		const sourceSiteSlug = get( sourceSite, 'slug', sourceSiteId );
 		const planSlug = get( targetSite, 'plan.product_slug' );
 		if ( planSlug && planHasFeature( planSlug, FEATURE_UPLOAD_THEMES_PLUGINS ) ) {
-			return this.startMigration();
+			return startMigration();
 		}
 
 		page( `/migrate/upgrade/from/${ sourceSiteSlug }/to/${ targetSiteSlug }` );
