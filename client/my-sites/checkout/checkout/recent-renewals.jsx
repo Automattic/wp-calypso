@@ -34,7 +34,7 @@ function RecentRenewalListItem( { domain, productName, expiryString, translate }
 RecentRenewalListItem.propTypes = {
 	domain: PropTypes.string.isRequired,
 	productName: PropTypes.string.isRequired,
-	expiry: PropTypes.object.isRequired,
+	expiryString: PropTypes.object.isRequired,
 	translate: PropTypes.func.isRequired,
 };
 
@@ -70,7 +70,7 @@ export function RecentRenewals( { purchases, siteId, cart } ) {
 				key={ product.id }
 				domain={ domain }
 				productName={ product.productName }
-				expiry={ expiry.format( 'LL' ) }
+				expiryString={ expiry.format( 'LL' ) }
 				translate={ translate }
 			/>
 		);
