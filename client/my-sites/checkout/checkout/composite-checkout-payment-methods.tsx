@@ -24,9 +24,9 @@ import {
 } from './types/transaction-endpoint';
 import {
 	PayPalExpressEndpoint,
-	PayPalExpressCart,
+	PayPalExpressEndpointRequestPayload,
 	PayPalExpressResponse,
-	createPayPalExpressCartFromLineItems,
+	createPayPalExpressEndpointRequestPayloadFromLineItems,
 } from './types/paypal-express';
 
 const debug = debugFactory( 'calypso:composite-checkout-payment-methods' );
@@ -246,7 +246,7 @@ async function makePayPalExpressRequest(
 	transactionData,
 	submit: PayPalExpressEndpoint
 ): Promise< WPCOMTransactionEndpointResponse > {
-	const formattedTransactionData = createPayPalExpressCartFromLineItems( {
+	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		debug,
 		...transactionData,
 	} );
@@ -371,6 +371,8 @@ async function wpcomTransaction(
 	return wp.undocumented().transactions( payload );
 }
 
-async function wpcomPayPalExpress( payload: PayPalExpressCart ): Promise< PayPalExpressResponse > {
+async function wpcomPayPalExpress(
+	payload: PayPalExpressEndpointRequestPayload
+): Promise< PayPalExpressResponse > {
 	return wp.undocumented().paypalExpressUrl( payload );
 }

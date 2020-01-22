@@ -12,9 +12,11 @@ import {
 	createTransactionEndpointCartFromLineItems,
 } from './transaction-endpoint';
 
-export type PayPalExpressEndpoint = ( PayPalExpressCart ) => Promise< PayPalExpressResponse >;
+export type PayPalExpressEndpoint = (
+	PayPalExpressEndpointRequestPayload
+) => Promise< PayPalExpressResponse >;
 
-export type PayPalExpressCart = {
+export type PayPalExpressEndpointRequestPayload = {
 	successUrl: string;
 	cancelUrl: string;
 	cart: WPCOMTransactionEndpointCart;
@@ -23,7 +25,7 @@ export type PayPalExpressCart = {
 	postalCode: string;
 };
 
-export function createPayPalExpressCartFromLineItems( {
+export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 	debug,
 	successUrl,
 	cancelUrl,
@@ -45,7 +47,7 @@ export function createPayPalExpressCartFromLineItems( {
 	subdivisionCode: string;
 	domainDetails: WPCOMTransactionEndpointDomainDetails;
 	items: WPCOMCartItem[];
-} ): PayPalExpressCart {
+} ): PayPalExpressEndpointRequestPayload {
 	return {
 		successUrl,
 		cancelUrl,
