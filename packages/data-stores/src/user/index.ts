@@ -26,7 +26,7 @@ export function register( clientCreds: WpcomClientCredentials ): typeof STORE_KE
 		registerStore< State >( STORE_KEY, {
 			actions,
 			controls,
-			reducer,
+			reducer: reducer as any,
 			resolvers,
 			selectors,
 		} );
