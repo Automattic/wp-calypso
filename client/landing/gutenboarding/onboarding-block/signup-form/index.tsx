@@ -59,6 +59,7 @@ const SignupForm = () => {
 						type="submit"
 						className="signup-form__submit"
 						disabled={ isFetchingNewUser }
+						isBusy={ isFetchingNewUser }
 						isPrimary
 					>
 						{ NO__( 'Create your account' ) }
