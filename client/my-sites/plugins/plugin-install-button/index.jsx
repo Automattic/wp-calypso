@@ -297,13 +297,13 @@ export class PluginInstallButton extends Component {
 	}
 
 	renderNoticeOrButton() {
-		const { isSiteWpcomAtomic, plugin, selectedSite, siteIsConnected } = this.props;
+		const { isWpcomAtomicSite, plugin, selectedSite, siteIsConnected } = this.props;
 
 		if ( siteIsConnected === false ) {
 			return this.renderUnreachableNotice();
 		}
 
-		if ( includes( IncompatiblePlugins, plugin.slug ) && isSiteWpcomAtomic ) {
+		if ( includes( IncompatiblePlugins, plugin.slug ) && isWpcomAtomicSite ) {
 			return this.renderIncompatiblePluginNotice();
 		}
 
@@ -333,7 +333,6 @@ PluginInstallButton.propTypes = {
 	isInstalling: PropTypes.bool,
 	isMock: PropTypes.bool,
 	disabled: PropTypes.bool,
-	plugin: PropTypes.object.isRequired,
 };
 
 export default connect(
