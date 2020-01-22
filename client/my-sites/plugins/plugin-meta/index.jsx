@@ -25,6 +25,7 @@ import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
 import safeProtocolUrl from 'lib/safe-protocol-url';
 import config from 'config';
+import { IncompatiblePlugins } from 'my-sites/plugins/incompatible-plugins';
 import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
 import PluginInformation from 'my-sites/plugins/plugin-information';
@@ -228,151 +229,18 @@ export class PluginMeta extends Component {
 		} );
 	}
 
-	isUnsupportedPluginForAT() {
-		const { plugin } = this.props;
-
-		// Pressable prevents installation of some plugins, so we need to disable AT for them.
-		// More info here: https://kb.pressable.com/faq/does-pressable-restrict-any-plugins/
-		const unsupportedPlugins = [
-			// "reset" - break/interfere with provided functionality
-			'advanced-database-cleaner',
-			'advanced-reset-wp',
-			'advanced-wp-reset',
-			'armember-membership',
-			'autoptimize',
-			'backup',
-			'better-wp-security',
-			'cf7-pipedrive-integration',
-			'database-browser',
-			'duplicator',
-			'extended-wp-reset',
-			'file-manager-advanced',
-			'file-manager',
-			'plugins-garbage-collector',
-			'post-type-switcher',
-			'reset-wp',
-			'secure-file-manager',
-			'ultimate-wp-reset',
-			'username-changer',
-			'username-updater',
-			'wd-youtube',
-			'wordpress-database-reset',
-			'wordpress-reset',
-			'wp-automatic',
-			'wp-clone-by-wp-academy',
-			'wp-config-file-editor',
-			'wp-dbmanager',
-			'wp-file-manager',
-			'wp-prefix-changer',
-			'wp-reset',
-			'wp-uninstaller-by-azed',
-			'wpmu-database-reset',
-			'wps-hide-login',
-			'z-inventory-manager',
-
-			// backup
-			'backup-wd',
-			'backupwordpress',
-			'backwpup',
-			'wp-db-backup',
-
-			// caching
-			'cache-enabler',
-			'comet-cache',
-			'hyper-cache',
-			'powered-cache',
-			'jch-optimize',
-			'quick-cache',
-			'sg-cachepress',
-			'w3-total-cache',
-			'wp-cache',
-			'wp-fastest-cache',
-			'wp-rocket',
-			'wp-speed-of-light',
-			'wp-super-cache',
-
-			// sql heavy
-			'another-wordpress-classifieds-plugin',
-			'broken-link-checker',
-			'leads',
-			'native-ads-adnow',
-			'ol_scrapes',
-			'page-visit-counter',
-			'post-views-counter',
-			'tokenad',
-			'top-10',
-			'userpro',
-			'wordpress-popular-posts',
-			'wp-cerber',
-			'wp-inject',
-			'wp-postviews',
-			'wp-rss-aggregator',
-			'wp-rss-feed-to-post',
-			'wp-rss-wordai',
-			'wp-session-manager',
-			'wp-slimstat',
-			'wp-statistics',
-			'wp-ulike',
-			'WPRobot5',
-
-			// security
-			'wordfence',
-			'wp-simple-firewall',
-
-			// spam
-			'e-mail-broadcasting',
-			'mailit',
-			'send-email-from-admin',
-
-			// cloning/staging
-			'wp-staging',
-
-			// misc
-			'adult-mass-photos-downloader',
-			'adult-mass-videos-embedder',
-			'ari-adminer',
-			'automatic-video-posts',
-			'bwp-minify',
-			'clearfy',
-			'cornerstone',
-			'cryptocurrency-pricing-list',
-			'event-espresso-decaf',
-			'facetwp-manipulator',
-			'fast-velocity-minify',
-			'nginx-helper',
-			'p3',
-			'porn-embed',
-			'propellerads-official',
-			'speed-contact-bar',
-			'unplug-jetpack',
-			'really-simple-ssl',
-			'robo-gallery',
-			'under-construction-page',
-			'video-importer',
-			'woozone',
-			'wp-cleanfix',
-			'wp-file-upload',
-			'wp-monero-miner-pro',
-			'wp-monero-miner-using-coin-hive',
-			'wp-optimize-by-xtraffic',
-			'wpematico',
-			'yuzo-related-post',
-			'zapp-proxy-server',
-		];
-
-		return includes( unsupportedPlugins, plugin.slug );
-	}
-
 	isWpcomInstallDisabled() {
-		const { isTransfering } = this.props;
+		const { isTransfering, plugin } = this.props;
 
-		return ! this.hasBusinessPlan() || this.isUnsupportedPluginForAT() || isTransfering;
+		return (
+			! this.hasBusinessPlan() || includes( IncompatiblePlugins, plugin.slug ) || isTransfering
+		);
 	}
 
 	isJetpackInstallDisabled() {
-		const { automatedTransferSite } = this.props;
+		const { automatedTransferSite, plugin } = this.props;
 
-		return automatedTransferSite && this.isUnsupportedPluginForAT();
+		return automatedTransferSite && includes( IncompatiblePlugins, plugin.slug );
 	}
 
 	getInstallButton() {
@@ -393,9 +261,9 @@ export class PluginMeta extends Component {
 	}
 
 	maybeDisplayUnsupportedNotice() {
-		const { selectedSite } = this.props;
+		const { plugin, selectedSite } = this.props;
 
-		if ( selectedSite && this.isUnsupportedPluginForAT() ) {
+		if ( selectedSite && includes( IncompatiblePlugins, plugin.slug ) ) {
 			return (
 				<Notice
 					text={ this.props.translate(
