@@ -41,7 +41,7 @@ import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { getGSuiteSupportedDomains } from 'lib/gsuite';
 import { localizeUrl } from 'lib/i18n-utils';
-import { isDesktop, isMobile } from 'lib/viewport';
+import { isMobile } from 'lib/viewport';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actions';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
@@ -564,7 +564,7 @@ class Home extends Component {
 						</div>
 					</Card>
 					{ // "Go Mobile" has the lowest priority placement when viewed in bigger viewports.
-					isDesktop() && <GoMobileCard /> }
+					! isMobile() && <GoMobileCard /> }
 				</div>
 			</div>
 		);

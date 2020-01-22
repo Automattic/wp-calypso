@@ -26,10 +26,11 @@ import { getCurrentUserEmail } from 'state/current-user/selectors';
 import './style.scss';
 
 export const GoMobileCard = ( { translate, email, sendMobileLoginEmail } ) => {
+	const isDesktopView = isDesktop();
 	const { isiPad, isiPod, isiPhone, isAndroid } = userAgent;
 	const isIos = isiPad || isiPod || isiPhone;
-	const showIosBadge = isDesktop() || isIos || ! isAndroid;
-	const showAndroidBadge = isDesktop() || isAndroid || ! isIos;
+	const showIosBadge = isDesktopView || isIos || ! isAndroid;
+	const showAndroidBadge = isDesktopView || isAndroid || ! isIos;
 	const showOnlyOneBadge = showIosBadge !== showAndroidBadge;
 
 	const emailLogin = () => {
@@ -66,9 +67,11 @@ export const GoMobileCard = ( { translate, email, sendMobileLoginEmail } ) => {
 					) }
 				</div>
 			</div>
-			<Button className="go-mobile-card__email-link-button" onClick={ emailLogin }>
-				{ translate( 'Email me a log in link' ) }
-			</Button>
+			{ isDesktopView && (
+				<Button className="go-mobile-card__email-link-button" onClick={ emailLogin }>
+					{ translate( 'Email download link' ) }
+				</Button>
+			) }
 		</Card>
 	);
 };
