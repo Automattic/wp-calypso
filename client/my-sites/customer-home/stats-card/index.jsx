@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { Card } from '@automattic/components';
@@ -11,9 +11,9 @@ import { Card } from '@automattic/components';
  */
 import CardHeading from 'components/card-heading';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getCountRecords } from 'state/stats/chart-tabs/selectors';
-import { requestChartCounts } from 'state/stats/chart-tabs/actions';
 import { isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
+import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
+import QuerySiteStats from 'components/data/query-site-stats';
 
 /**
  * Style dependencies
@@ -24,15 +24,11 @@ export const StatsCard = ( {
 	areStatsEnabled,
 	siteId,
 	siteSlug,
-	weekViews,
-	weekVisitors,
-	fetchWeekVisits,
+	trafficData,
+	trafficStatsQuery,
+	trafficStatsType,
 } ) => {
 	const translate = useTranslate();
-
-	useEffect( () => {
-		fetchWeekVisits( siteId );
-	}, [ siteId ] );
 
 	if ( ! areStatsEnabled ) {
 		return null;
@@ -40,15 +36,22 @@ export const StatsCard = ( {
 
 	return (
 		<Card className="stats-card">
+			{ siteId && (
+				<QuerySiteStats
+					siteId={ siteId }
+					statType={ trafficStatsType }
+					query={ trafficStatsQuery }
+				/>
+			) }
 			<CardHeading>{ translate( 'Stats at a glance' ) }</CardHeading>
 			<h6 className="stats-card__subheader">{ translate( 'Your site in the last week.' ) }</h6>
 			<div className="stats-card__visits">
 				<div className="stats-card__count">
-					<div className="stats-card__count-value">{ weekViews ?? '-' }</div>
+					<div className="stats-card__count-value">{ trafficData?.views ?? '-' }</div>
 					<div className="stats-card__count-label">{ translate( 'Views' ) }</div>
 				</div>
 				<div className="stats-card__count">
-					<div className="stats-card__count-value">{ weekVisitors ?? '-' }</div>
+					<div className="stats-card__count-value">{ trafficData?.visitors ?? '-' }</div>
 					<div className="stats-card__count-label">{ translate( 'Visitors' ) }</div>
 				</div>
 			</div>
@@ -64,26 +67,28 @@ const mapStateToProps = state => {
 	const isStatsModuleActive = isJetpackModuleActive( state, siteId, 'stats' );
 	const areStatsEnabled = ! isJetpack || isStatsModuleActive;
 
-	const weekVisits = getCountRecords( state, siteId, 'week' );
-	const weekViews = weekVisits.length ? weekVisits[ 0 ].views : null;
-	const weekVisitors = weekVisits.length ? weekVisits[ 0 ].visitors : null;
+	const trafficStatsQuery = {
+		unit: 'week',
+		quantity: 1,
+		stat_fields: 'views,visitors',
+	};
+	const trafficStatsType = 'statsVisits';
+	const trafficStats = getSiteStatsNormalizedData(
+		state,
+		siteId,
+		trafficStatsType,
+		trafficStatsQuery
+	);
+	const trafficData = trafficStats && trafficStats.length ? trafficStats[ 0 ] : null;
+
 	return {
 		areStatsEnabled,
 		siteId,
 		siteSlug,
-		weekViews,
-		weekVisitors,
+		trafficData,
+		trafficStatsQuery,
+		trafficStatsType,
 	};
 };
 
-const mapDispatchToProps = {
-	fetchWeekVisits: siteId =>
-		requestChartCounts( {
-			siteId,
-			period: 'week',
-			quantity: 1,
-			statFields: [ 'views', 'visitors' ],
-		} ),
-};
-
-export default connect( mapStateToProps, mapDispatchToProps )( StatsCard );
+export default connect( mapStateToProps )( StatsCard );
