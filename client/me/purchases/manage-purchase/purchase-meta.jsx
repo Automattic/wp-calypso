@@ -311,7 +311,7 @@ class PurchaseMeta extends Component {
 			const subsBillingText = isAutorenewalEnabled
 				? translate( 'You will be billed on {{dateSpan}}%(renewDate)s{{/dateSpan}}', {
 						args: {
-							renewDate: purchase.renewDateValid && moment( purchase.renewDate ).format( 'LL' ),
+							renewDate: purchase.renewDate && moment( purchase.renewDate ).format( 'LL' ),
 						},
 						components: {
 							dateSpan,

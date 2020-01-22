@@ -113,7 +113,6 @@ describe( 'selectors', () => {
 				refundAmount: NaN,
 				refundText: undefined,
 				renewDate: undefined,
-				renewDateValid: false,
 				siteName: undefined,
 				subscribedDate: undefined,
 				subscriptionStatus: undefined,

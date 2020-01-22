@@ -156,7 +156,7 @@ export class ProductSelector extends Component {
 	}
 
 	getSubtitleByProduct( product ) {
-		const { currentPlanSlug, selectedSiteSlug, translate, moment } = this.props;
+		const { currentPlanSlug, moment, selectedSiteSlug, translate } = this.props;
 		const currentPlan = currentPlanSlug && getPlan( currentPlanSlug );
 		const currentPlanIncludesProduct = !! this.getProductSlugByCurrentPlan();
 

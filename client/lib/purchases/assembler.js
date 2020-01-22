@@ -61,8 +61,6 @@ function createPurchaseObject( purchase ) {
 		refundText: purchase.refund_text,
 		refundPeriodInDays: purchase.refund_period_in_days,
 		renewDate: purchase.renew_date,
-		// only consider valid if `renewDate` is present and positive
-		renewDateValid: Boolean( purchase.renew_date ) && purchase.renew_date > '0',
 		saleAmount: purchase.sale_amount,
 		siteId: Number( purchase.blog_id ),
 		siteName: purchase.blogname,

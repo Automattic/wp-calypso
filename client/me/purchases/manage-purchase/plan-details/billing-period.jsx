@@ -47,7 +47,7 @@ class PlanBillingPeriod extends Component {
 			return translate( 'Billed yearly, credit card expiring soon' );
 		}
 
-		if ( isRenewing( purchase ) && purchase.renewDateValid ) {
+		if ( isRenewing( purchase ) && purchase.renewDate ) {
 			const renewDate = moment( purchase.renewDate );
 			return translate( 'Billed yearly, renews on %s', {
 				args: renewDate.format( 'LL' ),
