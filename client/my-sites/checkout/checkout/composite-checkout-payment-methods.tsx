@@ -16,13 +16,10 @@ import {
  * Internal dependencies
  */
 import {
-    WPCOMTransactionEndpointRequestPayload,
-    createTransactionEndpointRequestPayloadFromLineItems,
+	WPCOMTransactionEndpointRequestPayload,
+	createTransactionEndpointRequestPayloadFromLineItems,
 } from './types/transaction-endpoint';
-import {
-    PayPalExpressCart,
-    createPayPalExpressCartFromLineItems,
-} from './types/paypal-express';
+import { PayPalExpressCart, createPayPalExpressCartFromLineItems } from './types/paypal-express';
 
 const debug = debugFactory( 'calypso:composite-checkout-payment-methods' );
 
@@ -230,7 +227,10 @@ async function submitApplePayPayment( transactionData, wpcom ) {
 }
 
 async function makePayPalExpressRequest( transactionData, wpcom ) {
-	const formattedTransactionData = formatDataForPayPalExpressEndpoint( transactionData );
+	const formattedTransactionData = createPayPalExpressCartFromLineItems( {
+		debug,
+		...transactionData,
+	} );
 	debug( 'sending paypal transaction', formattedTransactionData );
 	return wpcom.paypalExpressUrl( formattedTransactionData );
 }
@@ -326,36 +326,6 @@ function formatDataForTransactionsEndpoint( {
 		} ),
 		domainDetails,
 		payment,
-	};
-}
-
-function formatDataForPayPalExpressEndpoint( {
-	successUrl,
-	cancelUrl,
-	siteId,
-	country,
-	postalCode,
-	subdivisionCode,
-	phoneNumber,
-	couponId,
-	items,
-	domainDetails,
-} ) {
-	return {
-		successUrl,
-		cancelUrl,
-		cart: createCartFromLineItems( {
-			siteId,
-			country,
-			postalCode,
-			subdivisionCode,
-			phoneNumber,
-			couponId,
-			items: items.filter( item => item.type !== 'tax' ),
-		} ),
-		domainDetails,
-		country,
-		postalCode,
 	};
 }
 
