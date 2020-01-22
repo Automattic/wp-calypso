@@ -156,7 +156,7 @@ export function createPaymentMethods( {
 								paymentPartnerProcessorId: storedDetails.payment_partner,
 								domainDetails: getDomainDetails( select ),
 							},
-							wpcom
+							wpcomTransaction
 						),
 					registerStore,
 					getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.country?.value,
@@ -208,7 +208,10 @@ function storedCardsReducer( state, action ) {
 	}
 }
 
-async function submitExistingCardPayment( transactionData, wpcom ) {
+async function submitExistingCardPayment(
+    transactionData,
+    submit: WPCOMTransactionEndpoint,
+) : Promise< WPCOMTransactionEndpointResponse > {
 	debug( 'formatting existing card transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		debug,
@@ -216,7 +219,7 @@ async function submitExistingCardPayment( transactionData, wpcom ) {
 		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
 	} );
 	debug( 'submitting existing card transaction', formattedTransactionData );
-	return wpcom.transactions( formattedTransactionData );
+	return submit( formattedTransactionData );
 }
 
 async function submitApplePayPayment(
