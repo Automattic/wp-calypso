@@ -365,9 +365,9 @@ function WordPressLogo() {
 async function wpcomTransaction(
 	payload: WPCOMTransactionEndpointRequestPayload
 ): Promise< WPCOMTransactionEndpointResponse > {
-	wp.undocumented().transactions( payload );
+	return wp.undocumented().transactions( payload );
 }
 
 async function wpcomPayPalExpress( payload: PayPalExpressCart ): Promise< PayPalExpressResponse > {
-	wp.undocumented().paypalExpressUrl( payload );
+	return wp.undocumented().paypalExpressUrl( payload );
 }
