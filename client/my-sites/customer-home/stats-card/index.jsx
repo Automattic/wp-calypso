@@ -21,7 +21,7 @@ import QuerySiteStats from 'components/data/query-site-stats';
 import './style.scss';
 
 export const StatsCard = ( {
-	areStatsEnabled,
+	hideStats,
 	insightsData,
 	insightsStatsQuery,
 	insightsStatsType,
@@ -34,7 +34,7 @@ export const StatsCard = ( {
 } ) => {
 	const translate = useTranslate();
 
-	if ( ! areStatsEnabled ) {
+	if ( hideStats ) {
 		return null;
 	}
 
@@ -98,7 +98,6 @@ const mapStateToProps = state => {
 	const siteSlug = getSelectedSiteSlug( state );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isStatsModuleActive = isJetpackModuleActive( state, siteId, 'stats' );
-	const areStatsEnabled = ! isJetpack || isStatsModuleActive;
 
 	const trafficStatsType = 'statsVisits';
 	const trafficStatsQuery = {
@@ -125,8 +124,11 @@ const mapStateToProps = state => {
 		insightsStatsQuery
 	);
 
+	const hideStats =
+		( isJetpack && ! isStatsModuleActive ) || ( showInsights && ! insightsData?.percent );
+
 	return {
-		areStatsEnabled,
+		hideStats,
 		insightsData,
 		insightsStatsQuery,
 		insightsStatsType,
