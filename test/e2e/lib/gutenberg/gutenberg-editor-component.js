@@ -193,7 +193,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	// return blockID - top level block id which is looks like `block-b91ce479-fb2d-45b7-ad92-22ae7a58cf04`. Should be used for further interaction with added block.
 	async addBlock( name ) {
 		name = name.charAt( 0 ).toUpperCase() + name.slice( 1 ); // Capitalize block name
-		let blockClass = kebabCase( name );
+		let blockClass = kebabCase( name.toLowerCase() );
 		let hasChildBlocks = false;
 		let prefix = '';
 		switch ( name ) {
