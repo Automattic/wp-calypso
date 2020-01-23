@@ -1,4 +1,4 @@
-const spawnSync = require( 'child_process' ).spawnSync;
+const { spawnSync } = require( 'child_process' );
 const fs = require( 'fs' );
 
 if ( ! fs.existsSync( 'node_modules' ) ) {
@@ -6,10 +6,10 @@ if ( ! fs.existsSync( 'node_modules' ) ) {
 	const installResult = spawnSync( 'npm', [ 'ci' ], {
 		shell: true,
 		stdio: 'inherit',
-		env: Object.assign( { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true' }, process.env ),
-	} ).status;
+		env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true', ...process.env },
+	} );
 	if ( installResult.status ) {
-		console.error( 'Failed install: %o', installResult );
+		console.error( 'failed to install: exited with code %d', installResult.status );
 		process.exit( installResult.status );
 	}
 }
