@@ -342,7 +342,7 @@ export default connect(
 		return {
 			siteId,
 			siteIsConnected: getSiteConnectionStatus( state, siteId ),
-			isSiteWpcomAtomic: isSiteWpcomAtomic( state, siteId ),
+			isWpcomAtomicSite: isSiteWpcomAtomic( state, siteId ),
 		};
 	},
 	{
