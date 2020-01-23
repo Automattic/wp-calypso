@@ -14,6 +14,11 @@ import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class JetpackCloudSidebar extends Component {
 	static propTypes = {
 		context: PropTypes.shape( {
@@ -186,6 +191,7 @@ class JetpackCloudSidebar extends Component {
 							onNavigate={ this.onNavigate }
 						/>
 						<SidebarItem
+							className="sidebar__menu-item-back"
 							link="/"
 							label="Manage site"
 							materialIcon="play_circle_filled" // @todo: The icon has to be mirrored in CSS e.g. with `scaleX( -1 )`
