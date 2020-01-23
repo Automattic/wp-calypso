@@ -92,6 +92,4 @@ const GSuiteNewUserListExample = () => {
 	);
 };
 
-GSuiteNewUserListExample.displayName = 'GSuiteNewUserListExample';
-
 export default GSuiteNewUserListExample;
