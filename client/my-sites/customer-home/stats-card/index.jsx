@@ -60,32 +60,32 @@ export const StatsCard = ( {
 			<h6 className="stats-card__subheader">{ translate( 'Your site in the last week.' ) }</h6>
 			<div className="stats-card__data">
 				{ ! showInsights && (
-					<div className="stats-card__data-item">
-						<div className="stats-card__data-value">
-							{ trafficData?.views ? numberFormat( trafficData.views ) : '-' }
+					<>
+						<div className="stats-card__data-item">
+							<div className="stats-card__data-value">
+								{ trafficData?.views ? numberFormat( trafficData.views ) : '-' }
+							</div>
+							<div className="stats-card__data-label">{ translate( 'Views' ) }</div>
 						</div>
-						<div className="stats-card__data-label">{ translate( 'Views' ) }</div>
-					</div>
-				) }
-				{ ! showInsights && (
-					<div className="stats-card__data-item">
-						<div className="stats-card__data-value">
-							{ trafficData?.visitors ? numberFormat( trafficData.visitors ) : '-' }
+						<div className="stats-card__data-item">
+							<div className="stats-card__data-value">
+								{ trafficData?.visitors ? numberFormat( trafficData.visitors ) : '-' }
+							</div>
+							<div className="stats-card__data-label">{ translate( 'Visitors' ) }</div>
 						</div>
-						<div className="stats-card__data-label">{ translate( 'Visitors' ) }</div>
-					</div>
+					</>
 				) }
 				{ showInsights && (
-					<div className="stats-card__data-item">
-						<div className="stats-card__data-label">{ translate( 'Most popular day' ) }</div>
-						<div className="stats-card__data-value">{ insightsData?.day ?? '-' }</div>
-					</div>
-				) }
-				{ showInsights && (
-					<div className="stats-card__data-item">
-						<div className="stats-card__data-label">{ translate( 'Most popular hour' ) }</div>
-						<div className="stats-card__data-value">{ insightsData?.hour ?? '-' }</div>
-					</div>
+					<>
+						<div className="stats-card__data-item">
+							<div className="stats-card__data-value">{ insightsData?.day ?? '-' }</div>
+							<div className="stats-card__data-label">{ translate( 'Most popular day' ) }</div>
+						</div>
+						<div className="stats-card__data-item">
+							<div className="stats-card__data-value">{ insightsData?.hour ?? '-' }</div>
+							<div className="stats-card__data-label">{ translate( 'Most popular hour' ) }</div>
+						</div>
+					</>
 				) }
 			</div>
 			<a href={ `/stats/day/${ siteSlug }` }>{ translate( 'See all stats' ) }</a>
