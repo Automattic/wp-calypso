@@ -18,6 +18,7 @@ const SignupForm = () => {
 	const [ emailVal, setEmailVal ] = useState( '' );
 	const { createAccount } = useDispatch( USER_STORE );
 	const isFetchingNewUser = useSelect( select => select( USER_STORE ).isFetchingNewUser() );
+	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
 	const newUserError = useSelect( select => select( USER_STORE ).getNewUserError() );
 
 	const handleSignUp = ( event: React.FormEvent< HTMLFormElement > ) => {
@@ -60,6 +61,7 @@ const SignupForm = () => {
 				</div>
 			</form>
 			{ newUserError && <pre>Error: { JSON.stringify( newUserError, null, 2 ) }</pre> }
+			{ newUser && <pre>New user: { JSON.stringify( newUser, null, 2 ) }</pre> }
 		</Modal>
 	);
 };
