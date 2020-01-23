@@ -32,7 +32,7 @@ const EditorTemplateClasses = withSelect( select => {
 } )( ( { templateClasses } ) => {
 	const blockListInception = setInterval( () => {
 		const blockList = document.querySelector(
-			'.block-editor-writing-flow.editor-writing-flow > div'
+			'.block-editor-writing-flow > div'
 		);
 
 		if ( ! blockList ) {
