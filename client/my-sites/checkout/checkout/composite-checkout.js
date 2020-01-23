@@ -75,7 +75,7 @@ export default function CompositeCheckout( {
 	const onPaymentComplete = useCallback( () => {
 		debug( 'payment completed successfully' );
 		// TODO: determine which thank-you page to visit
-		page.redirect( `/checkout/thank-you/${ siteId }/` );
+		page.redirect( `/checkout/thank-you/${ siteId || '' }/` );
 	}, [ siteId ] );
 
 	const showErrorMessage = useCallback(
@@ -123,7 +123,7 @@ export default function CompositeCheckout( {
 	const itemsForCheckout = items.length ? [ ...items, tax ] : [];
 	debug( 'items for checkout', itemsForCheckout );
 
-	useRedirectIfCartEmpty( items, `/plans/${ siteSlug }` );
+	useRedirectIfCartEmpty( items, `/plans/${ siteSlug || '' }` );
 
 	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
 		getStoredCards || wpcomGetStoredCards
