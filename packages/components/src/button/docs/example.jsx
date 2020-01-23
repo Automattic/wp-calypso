@@ -11,10 +11,8 @@ import Button from '..';
 import Card from '../../card';
 import DocsExample from 'devdocs/docs-example';
 
-Button.displayName = 'Button';
-
-class Buttons extends React.PureComponent {
-	static displayName = 'Button';
+export default class ButtonExample extends React.PureComponent {
+	static displayName = 'ButtonExample';
 
 	static defaultProps = {
 		exampleCode: (
@@ -176,5 +174,3 @@ class Buttons extends React.PureComponent {
 		return <DocsExample>{ this.props.exampleCode }</DocsExample>;
 	}
 }
-
-export default Buttons;
