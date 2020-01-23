@@ -6,13 +6,13 @@ import {
 	WPCOMTransactionEndpointRequestPayload,
 	WPCOMTransactionEndpointResponse,
 	createTransactionEndpointRequestPayloadFromLineItems,
-} from './types/transaction-endpoint';
+} from './transaction-endpoint';
 import {
 	PayPalExpressEndpoint,
 	PayPalExpressEndpointRequestPayload,
 	PayPalExpressEndpointResponse,
 	createPayPalExpressEndpointRequestPayloadFromLineItems,
-} from './types/paypal-express';
+} from './paypal-express';
 
 export {
 	WPCOMTransactionEndpoint,
