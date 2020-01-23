@@ -154,7 +154,10 @@ class EditorMediaModalDetailFields extends Component {
 					</TrackInputChanges>
 				</EditorMediaModalFieldset>
 
-				<EditorMediaModalFieldset legend={ translate( 'URL' ) }>
+				<EditorMediaModalFieldset
+					className="editor-media-modal-detail__url-field"
+					legend={ translate( 'URL' ) }
+				>
 					<ClipboardButtonInput value={ url( this.props.item ) } />
 				</EditorMediaModalFieldset>
 			</div>
