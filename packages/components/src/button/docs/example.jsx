@@ -2,20 +2,14 @@
  * External dependencies
  */
 import React from 'react';
-import GridiconComponent from 'components/gridicon';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import ButtonComponent from '..';
+import Button from '..';
 import Card from '../../card';
 import DocsExample from 'devdocs/docs-example';
-
-// Wrapper with `displayName` for proper display in devdocs
-const Button = props => <ButtonComponent { ...props } />;
-Button.displayName = 'Button';
-const Gridicon = props => <GridiconComponent { ...props } />;
-Gridicon.displayName = 'Gridicon';
 
 export default class ButtonExample extends React.PureComponent {
 	static displayName = 'ButtonExample';
