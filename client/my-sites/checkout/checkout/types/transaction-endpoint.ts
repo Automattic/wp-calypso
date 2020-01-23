@@ -28,6 +28,8 @@ export type WPCOMTransactionEndpointPaymentDetails = {
 
 export type WPCOMTransactionEndpointCart = {
 	blog_id: string;
+	cart_key: string;
+	create_new_blog: boolean;
 	coupon: string;
 	currency: string;
 	temporary: false;
@@ -94,7 +96,9 @@ export function createTransactionEndpointCartFromLineItems( {
 	};
 
 	return {
-		blog_id: siteId,
+		blog_id: siteId || '0',
+		cart_key: siteId || 'no-site',
+		create_new_blog: siteId ? false : true,
 		coupon: couponId || '',
 		currency: currency || '',
 		temporary: false,
