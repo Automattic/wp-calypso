@@ -1,7 +1,3 @@
-.go-mobile-card__row {
-	margin-bottom: 1rem;
-}
-
 .go-mobile-card__subheader {
 	color: var( --color-text-subtle );
 	font-size: 0.85rem;
@@ -17,6 +13,7 @@
 }
 
 .go-mobile-card__email-link-button {
+	margin-top: 1rem;
 	width: 100%;
 }
 
