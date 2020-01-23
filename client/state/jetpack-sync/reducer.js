@@ -70,6 +70,14 @@ export function syncStatus( state = {}, action ) {
 			if ( lastSuccessfulStatus || isFullSyncing ) {
 				lastSuccessfulStatus = Date.now();
 			}
+
+			// Check if Sync Completed before seeing a successful status request
+			if ( false !== get( thisState, 'started', false ) ) {
+				if ( get( action, 'data.started' ) < get( action, 'data.finished' ) ) {
+					lastSuccessfulStatus = Date.now();
+				}
+			}
+
 			return Object.assign( {}, state, {
 				[ action.siteId ]: Object.assign(
 					{
