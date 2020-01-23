@@ -72,7 +72,7 @@ export function syncStatus( state = {}, action ) {
 			}
 
 			// Check if Sync Completed before seeing a successful status request
-			if ( false !== get( thisState, 'started', false ) ) {
+			if ( false === lastSuccessfulStatus ) {
 				if ( get( action, 'data.started' ) < get( action, 'data.finished' ) ) {
 					lastSuccessfulStatus = Date.now();
 				}
