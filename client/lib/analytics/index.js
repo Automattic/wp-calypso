@@ -37,6 +37,7 @@ import { updateQueryParamsTracking } from 'lib/analytics/sem';
 import { statsdTimingUrl, statsdCountingUrl } from 'lib/analytics/statsd';
 import { trackAffiliateReferral } from './refer';
 import { getFeatureSlugFromPageUrl } from './feature-slug';
+import { recordSignupComplete } from './signup';
 
 /**
  * Module variables
@@ -341,6 +342,10 @@ const analytics = {
 			} );
 		},
 	},
+
+	// `analytics.recordSignupComplete` needs to be present for `analytics.queue` to call
+	// the method after page navigation.
+	recordSignupComplete,
 
 	recordAddToCart: function( { cartItem } ) {
 		// TODO: move Tracks event here?
