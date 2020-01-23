@@ -403,7 +403,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		// `core/columns`
 		/* stylelint-disable selector-combinator-space-before */
 		.wp-block-columns
-			> .bock-editor-inner-blocks
+			> .block-editor-inner-blocks
 			> .block-editor-block-list__layout
 			> [data-type='core/column']
 			> .block-editor-block-list__block-edit
