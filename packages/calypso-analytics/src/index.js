@@ -206,32 +206,32 @@ export function recordTracksEvent( eventName, eventProperties ) {
 				);
 			}
 		}
-
-		tracksDebug( 'Record event "%s" called with props %o', eventName, eventProperties );
-
-		if ( ! eventName.startsWith( 'calypso_' ) && ! includes( EVENT_NAME_EXCEPTIONS, eventName ) ) {
-			tracksDebug(
-				'- Event name must be prefixed by "calypso_" or added to `EVENT_NAME_EXCEPTIONS`'
-			);
-			return;
-		}
-
-		if ( _superProps ) {
-			const superProperties = _superProps( eventProperties );
-			eventProperties = { ...eventProperties, ...superProperties }; // assign to a new object so we don't modify the argument
-		}
-
-		// Remove properties that have an undefined value
-		// This allows a caller to easily remove properties from the recorded set by setting them to undefined
-		eventProperties = omit( eventProperties, isUndefined );
-
-		tracksDebug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
-
-		if ( 'undefined' !== typeof window ) {
-			window._tkq.push( [ 'recordEvent', eventName, eventProperties ] );
-		}
-		analyticsEvents.emit( 'record-event', eventName, eventProperties );
 	}
+
+	tracksDebug( 'Record event "%s" called with props %o', eventName, eventProperties );
+
+	if ( ! eventName.startsWith( 'calypso_' ) && ! includes( EVENT_NAME_EXCEPTIONS, eventName ) ) {
+		tracksDebug(
+			'- Event name must be prefixed by "calypso_" or added to `EVENT_NAME_EXCEPTIONS`'
+		);
+		return;
+	}
+
+	if ( _superProps ) {
+		const superProperties = _superProps( eventProperties );
+		eventProperties = { ...eventProperties, ...superProperties }; // assign to a new object so we don't modify the argument
+	}
+
+	// Remove properties that have an undefined value
+	// This allows a caller to easily remove properties from the recorded set by setting them to undefined
+	eventProperties = omit( eventProperties, isUndefined );
+
+	tracksDebug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
+
+	if ( 'undefined' !== typeof window ) {
+		window._tkq.push( [ 'recordEvent', eventName, eventProperties ] );
+	}
+	analyticsEvents.emit( 'record-event', eventName, eventProperties );
 }
 
 export function recordTracksPageView( urlPath, params ) {
