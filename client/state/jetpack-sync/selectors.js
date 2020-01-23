@@ -70,7 +70,7 @@ function isPendingSyncStart( state, siteId ) {
  */
 function isImmediateFull( state, siteId ) {
 	const syncStatus = getSyncStatus( state, siteId );
-	return get( syncStatus, 'config' );
+	return ! get( syncStatus, 'queue' ); // Immediate full sync sites will not have a `queue` property.
 }
 
 /**
@@ -81,9 +81,27 @@ function isImmediateFull( state, siteId ) {
  * @returns {number}         The percentage of sync completed, expressed as an integer
  */
 function getImmediateSyncProgressPercentage( state, siteId ) {
-	const syncStatus = getSyncStatus( state, siteId );
-	console.log( 'doing IFS', syncStatus );
-	return 50;
+	const syncStatus = getSyncStatus( state, siteId ),
+		progress = get( syncStatus, 'progress' );
+
+	if ( ! progress ) {
+		return 0;
+	}
+	const totalItems = reduce(
+		Object.values( progress ),
+		( sum, syncItem ) => {
+			return syncItem.total ? ( sum += parseInt( syncItem.total ) ) : sum;
+		},
+		0
+	);
+	const totalSent = reduce(
+		Object.values( progress ),
+		( sum, syncItem ) => {
+			return syncItem.sent ? ( sum += parseInt( syncItem.sent ) ) : sum;
+		},
+		0
+	);
+	return Math.ceil( ( totalSent / totalItems ) * 100 );
 }
 
 /**
@@ -116,6 +134,7 @@ function getSyncProgressPercentage( state, siteId ) {
 	if ( isImmediateFull( state, siteId ) ) {
 		return getImmediateSyncProgressPercentage( state, siteId );
 	}
+
 	const syncStatus = getSyncStatus( state, siteId ),
 		queued = get( syncStatus, 'queue' ),
 		sent = get( syncStatus, 'sent' ),

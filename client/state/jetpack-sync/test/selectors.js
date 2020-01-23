@@ -22,6 +22,7 @@ const syncScheduledSiteID = '123455';
 const oldSyncSiteId = '987654321';
 const syncStartedSiteId = '87654321';
 const syncInProgressSiteId = '7654321';
+const immediateSyncId = '22222222';
 
 const syncStatusSuccessful = {
 	started: 1470085369,
@@ -236,6 +237,38 @@ const syncStatusInProgress = {
 	lastSuccessfulStatus: 1470069406000,
 };
 
+const syncStatusImmediate = {
+	started: 1579811550,
+	config: {
+		constants: true,
+		functions: true,
+		options: true,
+		terms: true,
+		themes: true,
+		users: true,
+		posts: true,
+		comments: true,
+		updates: true,
+		term_relationships: true,
+	},
+	queue_size: 0,
+	queue_lag: 0,
+	is_scheduled: false,
+	lastSuccessfulStatus: 1579811570143,
+	progress: {
+		constants: { total: 20, sent: 20, finished: true },
+		functions: { total: 33, sent: 33, finished: true },
+		options: { total: 142, sent: 0, finished: false },
+		updates: { total: 3, sent: 0, finished: false },
+		themes: { total: 1, sent: 0, finished: false },
+		users: { total: '7', sent: 0, finished: false },
+		terms: { total: '70', sent: 0, finished: false },
+		posts: { total: '203', sent: 0, finished: false },
+		comments: { total: '31', sent: 0, finished: false },
+		term_relationships: { total: '253', sent: 0, finished: false },
+	},
+};
+
 const fullSyncRequested = {
 	isRequesting: true,
 	lastRequested: 1467944517955,
@@ -273,6 +306,7 @@ const testState = {
 			[ oldSyncSiteId ]: syncStatusSuccessful,
 			[ syncStartedSiteId ]: syncStatusStarted,
 			[ syncInProgressSiteId ]: syncStatusInProgress,
+			[ immediateSyncId ]: syncStatusImmediate,
 		},
 		fullSyncRequest: {
 			[ requestedSiteId ]: fullSyncRequested,
@@ -373,6 +407,13 @@ describe( 'selectors', () => {
 		test( 'should return a non-zero integer if site has sent data to be synced', () => {
 			const test = getSyncProgressPercentage( testState, syncInProgressSiteId );
 			expect( test ).to.be.eql( 11 );
+		} );
+	} );
+
+	describe( '#getImmediateSyncProgressPercentage', () => {
+		test( 'should return accurate percent based on progress propety', () => {
+			const test = getSyncProgressPercentage( testState, immediateSyncId );
+			expect( test ).to.be.eql( 7 );
 		} );
 	} );
 } );

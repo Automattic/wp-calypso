@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { without } from 'lodash';
 
 /**
  * Internal dependencies
@@ -219,12 +220,15 @@ describe( 'reducer', () => {
 			expect( state )
 				.to.have.property( successfulSyncStatusRequest.siteId )
 				.to.have.all.keys(
-					getExpectedResponseKeys().concat( [
-						'error',
-						'isRequesting',
-						'lastSuccessfulStatus',
-						'errorCounter',
-					] )
+					without(
+						getExpectedResponseKeys().concat( [
+							'error',
+							'isRequesting',
+							'lastSuccessfulStatus',
+							'errorCounter',
+						] ),
+						'progress'
+					) // legacy sync status will not have `progress` property.
 				);
 		} );
 
