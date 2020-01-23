@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, ComponentType } from 'react';
 import { Button, ExternalLink, TextControl, Modal } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
@@ -12,6 +12,18 @@ import { __ as NO__, _x as NO_x } from '@wordpress/i18n';
  */
 import { USER_STORE } from '../../stores/user';
 import './style.scss';
+
+// TODO: deploy this change to @types/wordpress__element
+declare module '@wordpress/element' {
+	// eslint-disable-next-line no-shadow
+	export function __experimentalCreateInterpolateElement(
+		interpolatedString: string,
+		conversionMap: Record< string, ReactElement >
+	): ReactNode;
+}
+
+// TODO: remove this when the types land upstream https://github.com/DefinitelyTyped/DefinitelyTyped/pull/41800
+const DismissibleModal = Modal as ComponentType< Modal.Props & { isDismissible: boolean } >;
 
 const SignupForm = () => {
 	const [ emailVal, setEmailVal ] = useState( '' );
@@ -27,7 +39,7 @@ const SignupForm = () => {
 	};
 
 	return (
-		<Modal
+		<DismissibleModal
 			className="signup-form"
 			isDismissible={ false }
 			title={ NO__( 'Sign up to save your changes' ) }
@@ -61,7 +73,7 @@ const SignupForm = () => {
 			</form>
 			{ newUserError && <pre>Error: { JSON.stringify( newUserError, null, 2 ) }</pre> }
 			{ newUser && <pre>New user: { JSON.stringify( newUser, null, 2 ) }</pre> }
-		</Modal>
+		</DismissibleModal>
 	);
 };
 
