@@ -679,6 +679,24 @@ function getCloseButtonUrl( calypsoPort ) {
 	};
 }
 
+// TODO - JSDOC this when you know what you are actually needing to do...
+function getLaunchButton( calypsoPort ) {
+	const { port1, port2 } = new MessageChannel();
+	calypsoPort.postMessage(
+		{
+			action: 'getLaunchButton',
+			payload: {},
+		},
+		[ port2 ]
+	);
+	port1.onmessage = ( { data } ) => {
+		const { hasLaunchButtonOverride } = data;
+		calypsoifyGutenberg.hasLaunchButton = hasLaunchButtonOverride;
+
+		window.wp.hooks.doAction( 'updateLaunchButton', data );
+	};
+}
+
 /**
  * Passes uncaught errors in window.onerror to Calypso for logging.
  *
@@ -784,6 +802,8 @@ function initPort( message ) {
 		openTemplatePartLinks( calypsoPort );
 
 		getCloseButtonUrl( calypsoPort );
+
+		getLaunchButton( calypsoPort );
 
 		handleUncaughtErrors( calypsoPort );
 	}

@@ -98,6 +98,7 @@ enum EditorActions {
 	OpenTemplatePart = 'openTemplatePart',
 	GetCloseButtonUrl = 'getCloseButtonUrl',
 	LogError = 'logError',
+	GetLaunchButton = 'getLaunchButton',
 }
 
 class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedFormProps, State > {
@@ -282,6 +283,15 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			ports[ 0 ].postMessage( {
 				closeUrl: `${ window.location.origin }${ closeUrl }`,
 				label: closeLabel,
+			} );
+		}
+
+		if ( EditorActions.GetLaunchButton === action ) {
+			// Some logic to determine if we want the launch button
+			// Gutenboarding context + unpublished site?
+			const hasLaunchButtonOverride = true;
+			ports[ 0 ].postMessage( {
+				hasLaunchButtonOverride,
 			} );
 		}
 
