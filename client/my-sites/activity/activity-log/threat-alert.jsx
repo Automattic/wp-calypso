@@ -44,6 +44,10 @@ export class ThreatAlert extends Component {
 		this.props.ignoreThreat( this.props.siteId, this.props.threat.id );
 	};
 
+	handleGetHelp = () => {
+		window.open( JETPACK_CONTACT_SUPPORT, '_blank' );
+	};
+
 	refreshRewindState = () => this.props.requestRewindState( this.props.siteId );
 
 	getDetailType() {
@@ -351,29 +355,26 @@ export class ThreatAlert extends Component {
 									<SplitButton
 										compact
 										primary
-										label={
-											threat.fixable ? translate( 'Fix threat' ) : translate( 'Ignore threat' )
-										}
-										onClick={ threat.fixable ? this.handleFix : this.handleIgnore }
+										label={ threat.fixable ? translate( 'Fix threat' ) : translate( 'Get help' ) }
+										onClick={ threat.fixable ? this.handleFix : this.handleGetHelp }
 										disabled={ inProgress }
 									>
-										<PopoverMenuItem
-											href={ JETPACK_CONTACT_SUPPORT }
-											className="activity-log__threat-menu-item"
-											icon="chat"
-											target="_blank"
-										>
-											<span>{ translate( 'Get help' ) }</span>
-										</PopoverMenuItem>
 										{ threat.fixable && (
 											<PopoverMenuItem
-												onClick={ this.handleIgnore }
+												onClick={ this.handleGetHelp }
 												className="activity-log__threat-menu-item"
-												icon="trash"
+												icon="chat"
 											>
-												<span>{ translate( 'Ignore threat' ) }</span>
+												<span>{ translate( 'Get help' ) }</span>
 											</PopoverMenuItem>
 										) }
+										<PopoverMenuItem
+											onClick={ this.handleIgnore }
+											className="activity-log__threat-menu-item"
+											icon="trash"
+										>
+											<span>{ translate( 'Ignore threat' ) }</span>
+										</PopoverMenuItem>
 									</SplitButton>
 								</div>
 								<span className="activity-log__threat-alert-type">{ this.renderSubtitle() }</span>
