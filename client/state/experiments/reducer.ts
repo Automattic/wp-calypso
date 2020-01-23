@@ -13,7 +13,7 @@ import { tracksAnonymousUserId } from 'lib/analytics/ad-tracking';
 /**
  * Attempt to get the anon id for the user, if set
  */
-function getAnonIdFromCookie(): string | null {
+export function getAnonIdFromCookie(): string | null {
 	const id = tracksAnonymousUserId();
 
 	return id == null || id === '' ? null : id;

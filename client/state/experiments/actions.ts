@@ -3,6 +3,7 @@
  */
 import { EXPERIMENT_FETCH, EXPERIMENT_ASSIGN } from 'state/action-types';
 import { ExperimentResponse } from 'state/experiments/types';
+import { getAnonIdFromCookie } from './reducer';
 
 /**
  * Assign the user to the specified experiments
@@ -21,5 +22,5 @@ export const assignToExperiments = ( experiments: ExperimentResponse ) => ( {
  */
 export const fetchExperiments = ( anonId: string ) => ( {
 	type: EXPERIMENT_FETCH,
-	anonId,
+	anonId: anonId == null ? getAnonIdFromCookie() : anonId,
 } );
