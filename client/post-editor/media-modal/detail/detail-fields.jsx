@@ -121,7 +121,7 @@ class EditorMediaModalDetailFields extends Component {
 	render() {
 		const { translate } = this.props;
 		return (
-			<div className="editor-media-modal-detail__fields">
+			<div className="detail__fields editor-media-modal-detail__fields">
 				<EditorMediaModalFieldset legend={ translate( 'Title' ) }>
 					<TrackInputChanges onNewValue={ this.bumpTitleStat }>
 						<FormTextInput
@@ -154,10 +154,7 @@ class EditorMediaModalDetailFields extends Component {
 					</TrackInputChanges>
 				</EditorMediaModalFieldset>
 
-				<EditorMediaModalFieldset
-					className="editor-media-modal-detail__url-field"
-					legend={ translate( 'URL' ) }
-				>
+				<EditorMediaModalFieldset className="detail__url-field" legend={ translate( 'URL' ) }>
 					<ClipboardButtonInput value={ url( this.props.item ) } />
 				</EditorMediaModalFieldset>
 			</div>
