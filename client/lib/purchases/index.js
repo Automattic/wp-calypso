@@ -359,8 +359,10 @@ function hasCreditCardData( purchase ) {
 }
 
 function shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) {
-	const expiry = purchase.expiryDate ? moment( purchase.expiryDate ) : null;
-	return expiry > moment().add( 3, 'months' );
+	if ( ! purchase || ! purchase.expiryDate ) {
+		return false;
+	}
+	return moment( purchase.expiryDate ) > moment().add( 3, 'months' );
 }
 
 /**
@@ -377,13 +379,11 @@ function canExplicitRenew( purchase ) {
 
 function creditCardExpiresBeforeSubscription( purchase ) {
 	const creditCard = purchase?.payment?.creditCard;
-	const purchaseExpiryDate = moment( purchase.expiryDate );
 
 	return (
 		isPaidWithCreditCard( purchase ) &&
 		hasCreditCardData( purchase ) &&
-		creditCard.expiryDate &&
-		moment( creditCard.expiryDate, 'MM/YY' ).diff( purchaseExpiryDate, 'months' ) < 0
+		moment( creditCard.expiryDate, 'MM/YY' ).isBefore( purchase.expiryDate, 'months' )
 	);
 }
 
