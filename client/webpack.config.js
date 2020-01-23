@@ -55,6 +55,7 @@ const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-developmen
 const defaultBrowserslistEnv = isCalypsoClient && ! isDesktop ? 'evergreen' : 'defaults';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
+const devdocsExampleNameRegExp = /^[A-Z][a-zA-Z]*Example$/;
 
 if ( ! process.env.BROWSERSLIST_ENV ) {
 	process.env.BROWSERSLIST_ENV = browserslistEnv;
@@ -132,7 +133,16 @@ const webpackConfig = {
 			parallel: workerCount,
 			sourceMap: Boolean( process.env.SOURCEMAP ),
 			terserOptions: {
-				mangle: ! isDesktop,
+				mangle: isDesktop
+					? false
+					: {
+							keep_classnames: devdocsExampleNameRegExp,
+							keep_fnames: devdocsExampleNameRegExp,
+					  },
+				compress: {
+					keep_classnames: devdocsExampleNameRegExp,
+					keep_fnames: devdocsExampleNameRegExp,
+				},
 			},
 		} ),
 	},
