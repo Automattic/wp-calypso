@@ -55,6 +55,7 @@ import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/s
 import QueryActiveTheme from 'components/data/query-active-theme';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import GoMobileCard from 'my-sites/customer-home/go-mobile-card';
+import StatsCard from './stats-card';
 
 /**
  * Style dependencies
@@ -474,6 +475,7 @@ class Home extends Component {
 							</Button>
 						</Card>
 					) }
+					{ ! siteIsUnlaunched && <StatsCard /> }
 					{ ! siteIsUnlaunched && (
 						<Card>
 							<CardHeading>{ translate( 'My Site' ) }</CardHeading>
