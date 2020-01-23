@@ -49,40 +49,6 @@ export const MediaBasicsTour = makeTour(
 						) }
 					</p>
 					<ButtonRow>
-						<Next step="public-warning" />
-						<Quit />
-					</ButtonRow>
-				</Fragment>
-			) }
-		</Step>
-
-		<Step
-			name="public-warning"
-			arrow="top-left"
-			target=".media-library__upload-buttons"
-			placement="below"
-		>
-			{ ( { translate } ) => (
-				<Fragment>
-					<p>
-						{ translate(
-							'When your site is set to public visibility, all ' +
-								'media files can be accessed by anyone, ' +
-								'even if you have not included them in a post.'
-						) }
-					</p>
-					<p>
-						{ translate(
-							'It is therefore recommended that you do {{strong}}not{{/strong}} ' +
-								'upload any personal files.',
-							{
-								components: {
-									strong: <strong />,
-								},
-							}
-						) }
-					</p>
-					<ButtonRow>
 						<Next step="drag-and-drop" />
 						<Quit />
 					</ButtonRow>
@@ -170,14 +136,14 @@ export const MediaBasicsTour = makeTour(
 						) }
 					</p>
 					<ButtonRow>
-						<Next step="done" />
+						<Next step="adjust-image" />
 						<Quit />
 					</ButtonRow>
 				</Fragment>
 			) }
 		</Step>
 
-		<Step name="done" placement="center">
+		<Step name="adjust-image" placement="center">
 			{ ( { translate } ) => (
 				<Fragment>
 					<p>
@@ -190,6 +156,50 @@ export const MediaBasicsTour = makeTour(
 							}
 						) }
 					</p>
+					<ButtonRow>
+						<Next step="personal-files-warning" />
+						<Quit />
+					</ButtonRow>
+				</Fragment>
+			) }
+		</Step>
+
+		<Step
+			name="personal-files-warning"
+			target=".editor-media-modal-detail__url-field"
+			placement="below"
+			arrow="top-left"
+			style={ { marginTop: '-8px' } }
+		>
+			{ ( { translate } ) => (
+				<Fragment>
+					<p>
+						{ translate(
+							'All files you upload to WordPress.com get their own web address. ' +
+								'If your site is public, any file can technically be accessed ' +
+								"by anyone who has its address, even if you haven't included it " +
+								"in a post. It's unlikely, but possible."
+						) }
+					</p>
+					<p>
+						{ translate( "In other words, this probably isn't the place for personal files!" ) }
+					</p>
+					<ButtonRow>
+						<Next step="done" />
+						<Quit />
+					</ButtonRow>
+				</Fragment>
+			) }
+		</Step>
+
+		<Step
+			name="done"
+			target=".dialog__action-buttons .button.is-primary"
+			placement="above"
+			arrow="bottom-right"
+		>
+			{ ( { translate } ) => (
+				<Fragment>
 					<p>
 						{ translate(
 							'Click {{doneButton /}} to go back to your full library. Happy uploading!',
