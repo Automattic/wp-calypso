@@ -72,18 +72,13 @@ function createPurchaseObject( purchase ) {
 	};
 
 	if ( 'credit_card' === purchase.payment_type ) {
-		const payment = {
-			...object.payment,
-			creditCard: {
-				id: Number( purchase.payment_card_id ),
-				type: purchase.payment_card_type,
-				processor: purchase.payment_card_processor,
-				number: purchase.payment_details,
-				expiryDate: purchase.payment_expiry,
-			},
+		object.payment.creditCard = {
+			id: Number( purchase.payment_card_id ),
+			type: purchase.payment_card_type,
+			processor: purchase.payment_card_processor,
+			number: purchase.payment_details,
+			expiryDate: purchase.payment_expiry,
 		};
-
-		return { ...object, payment };
 	}
 
 	if ( 'paypal_direct' === purchase.payment_type ) {
