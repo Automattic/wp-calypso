@@ -166,7 +166,7 @@ export const MediaBasicsTour = makeTour(
 
 		<Step
 			name="personal-files-warning"
-			target=".editor-media-modal-detail__url-field"
+			target=".detail__url-field"
 			placement="below"
 			arrow="top-left"
 			style={ { marginTop: '-8px' } }
