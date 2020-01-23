@@ -31,7 +31,7 @@ import JetpackColophon from 'components/jetpack-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite, getSitePlanSlug } from 'state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
@@ -39,6 +39,8 @@ import memoizeLast from 'lib/memoize-last';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import EmptyContent from 'components/empty-content';
+import { activateModule } from 'state/jetpack/modules/actions';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 
 function updateQueryString( query = {} ) {
 	return {
@@ -268,14 +270,21 @@ class StatsSite extends Component {
 	}
 
 	renderEnableStatsModule() {
-		const { slug } = this.props;
+		const { slug, siteId, path } = this.props;
 		return (
 			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-404.svg"
 				title={ translate( 'Looking for Stats?' ) }
-				line={ translate( 'Enable Site Stats in Marketing > Traffic' ) }
+				line={ translate(
+					'Enable Site Stats below or visit {{a}}Traffic > Site Stats{{/a}} for more options',
+					{
+						components: {
+							a: <a href={ `/marketing/traffic/${ slug }` } />,
+						},
+					}
+				) }
 				action={ translate( 'Enable Site Stats' ) }
-				actionURL={ `/marketing/traffic/${ slug }` }
+				actionCallback={ () => this.props.enableJetpackStatsModule( siteId, path ) }
 			/>
 		);
 	}
@@ -300,6 +309,15 @@ class StatsSite extends Component {
 		);
 	}
 }
+const enableJetpackStatsModule = ( siteId, path ) =>
+	withAnalytics(
+		recordTracksEvent( 'calypso_jetpack_module_toggle', {
+			module: 'stats',
+			path,
+			toggled: 'on',
+		} ),
+		activateModule( siteId, 'stats' )
+	);
 
 export default connect(
 	state => {
@@ -314,7 +332,8 @@ export default connect(
 			planSlug: getSitePlanSlug( state, siteId ),
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			showEnableStatsModule,
+			path: getCurrentRouteParameterized( state, siteId ),
 		};
 	},
-	{ recordGoogleEvent }
+	{ recordGoogleEvent, enableJetpackStatsModule }
 )( localize( StatsSite ) );
