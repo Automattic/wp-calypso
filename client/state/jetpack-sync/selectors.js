@@ -68,7 +68,7 @@ function isPendingSyncStart( state, siteId ) {
  * @param  {number} siteId   Site ID
  * @returns {boolean}        Whether a site is using immediate full sync
  */
-function isImmediateFull( state, siteId ) {
+function isImmediateFullSync( state, siteId ) {
 	const syncStatus = getSyncStatus( state, siteId );
 	return ! get( syncStatus, 'queue' ); // Immediate full sync sites will not have a `queue` property.
 }
@@ -131,7 +131,7 @@ function isFullSyncing( state, siteId ) {
  * @returns {number}          The percentage of sync completed, expressed as an integer
  */
 function getSyncProgressPercentage( state, siteId ) {
-	if ( isImmediateFull( state, siteId ) ) {
+	if ( isImmediateFullSync( state, siteId ) ) {
 		return getImmediateSyncProgressPercentage( state, siteId );
 	}
 
@@ -181,4 +181,5 @@ export default {
 	isPendingSyncStart,
 	isFullSyncing,
 	getSyncProgressPercentage,
+	isImmediateFullSync,
 };

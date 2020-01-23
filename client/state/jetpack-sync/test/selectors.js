@@ -12,6 +12,7 @@ import {
 	isPendingSyncStart,
 	isFullSyncing,
 	getSyncProgressPercentage,
+	isImmediateFullSync,
 } from '../selectors';
 
 const nonExistentId = '111111';
@@ -414,6 +415,18 @@ describe( 'selectors', () => {
 		test( 'should return accurate percent based on progress propety', () => {
 			const test = getSyncProgressPercentage( testState, immediateSyncId );
 			expect( test ).to.be.eql( 7 );
+		} );
+	} );
+
+	describe( '#isImmediateFullSync', () => {
+		test( 'should return false for sites running legacy sync', () => {
+			expect( isImmediateFullSync( testState, successfulSiteId ) ).to.be.false;
+			expect( isImmediateFullSync( testState, syncScheduledSiteID ) ).to.be.false;
+			expect( isImmediateFullSync( testState, syncStartedSiteId ) ).to.be.false;
+			expect( isImmediateFullSync( testState, syncInProgressSiteId ) ).to.be.false;
+		} );
+		test( 'should return true for sites running immediate sync', () => {
+			expect( isImmediateFullSync( testState, immediateSyncId ) ).to.be.true;
 		} );
 	} );
 } );
