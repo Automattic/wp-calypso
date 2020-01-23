@@ -5,6 +5,12 @@ const path = require( 'path' );
 const { defaults } = require( 'jest-config' );
 
 module.exports = {
+	moduleNameMapper: {
+		'mousetrap/plugins/global-bind/mousetrap-global-bind': path.resolve(
+			__dirname,
+			'../../client/__mocks__/mousetrap/plugins/global-bind/mousetrap-global-bind.js'
+		),
+	},
 	setupFilesAfterEnv: [
 		path.join( __dirname, 'jest', 'setup.js' ),
 		require.resolve( 'jest-enzyme' ),
