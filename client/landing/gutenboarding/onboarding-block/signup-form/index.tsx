@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import React, { useState } from 'react';
 import { Button, ExternalLink, TextControl, Modal } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -32,7 +31,7 @@ const SignupForm = () => {
 			className="signup-form"
 			isDismissible={ false }
 			title={ NO__( 'Sign up to save your changes' ) }
-			onRequestClose={ noop }
+			onRequestClose={ () => undefined }
 		>
 			<form onSubmit={ handleSignUp }>
 				<TextControl
