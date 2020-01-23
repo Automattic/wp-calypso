@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 
 /**
@@ -20,7 +19,5 @@ const CalendarButtonExample = () => {
 		/>
 	);
 };
-
-CalendarButtonExample.displayName = 'CalendarButton';
 
 export default CalendarButtonExample;

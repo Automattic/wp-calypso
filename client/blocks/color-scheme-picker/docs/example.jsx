@@ -10,8 +10,6 @@ import { Card } from '@automattic/components';
 import ColorSchemePicker from 'blocks/color-scheme-picker';
 
 class ColorSchemePickerExample extends PureComponent {
-	static displayName = 'ColorSchemePicker';
-
 	state = {
 		selectedColorScheme: null,
 	};

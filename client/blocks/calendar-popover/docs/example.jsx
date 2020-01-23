@@ -39,6 +39,4 @@ class CalendarPopoverExample extends PureComponent {
 	}
 }
 
-CalendarPopoverExample.displayName = 'CalendarPopover';
-
 export default CalendarPopoverExample;
