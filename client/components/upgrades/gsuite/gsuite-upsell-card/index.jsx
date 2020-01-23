@@ -85,7 +85,7 @@ const GSuiteUpsellCard = ( {
 			<CompactCard>
 				<header className="gsuite-upsell-card__header">
 					<h2 className="gsuite-upsell-card__title">
-						{ translate( 'Add Professional email from G Suite by Google Cloud to %(domain)s', {
+						{ translate( 'Add professional email from G Suite by Google Cloud to %(domain)s', {
 							args: {
 								domain,
 							},
