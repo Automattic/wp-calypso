@@ -15,6 +15,7 @@ export function generateFlows( {
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
 	getLaunchDestination = noop,
+	getEditorDestination = noop,
 	getThankYouNoSiteDestination = noop,
 	getChecklistThemeDestination = noop,
 } = {} ) {
@@ -350,6 +351,16 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'User testing Signup flow for Full Site Editing',
 			lastModified: '2019-12-02',
+		};
+	}
+
+	if ( isEnabled( 'gutenboarding' ) ) {
+		flows.frankenflow = {
+			steps: [ 'user', 'domains', 'plans' ],
+			destination: getEditorDestination,
+			description: 'Frankenflow testing flow for Gutenboarding',
+			lastModified: '2020-01-22',
+			pageTitle: translate( 'Launch your site' ),
 		};
 	}
 
