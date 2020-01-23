@@ -133,16 +133,9 @@ const webpackConfig = {
 			parallel: workerCount,
 			sourceMap: Boolean( process.env.SOURCEMAP ),
 			terserOptions: {
-				mangle: isDesktop
-					? false
-					: {
-							keep_classnames: devdocsExampleNameRegExp,
-							keep_fnames: devdocsExampleNameRegExp,
-					  },
-				compress: {
-					keep_classnames: devdocsExampleNameRegExp,
-					keep_fnames: devdocsExampleNameRegExp,
-				},
+				mangle: ! isDesktop,
+				keep_classnames: devdocsExampleNameRegExp,
+				keep_fnames: devdocsExampleNameRegExp,
 			},
 		} ),
 	},
