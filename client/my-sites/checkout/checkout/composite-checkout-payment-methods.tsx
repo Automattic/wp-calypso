@@ -11,6 +11,21 @@ import {
 	createExistingCardMethod,
 	createFullCreditsMethod,
 } from '@automattic/composite-checkout';
+import wp from 'lib/wp';
+
+/**
+ * Internal dependencies
+ */
+import {
+	WPCOMTransactionEndpoint,
+	WPCOMTransactionEndpointRequestPayload,
+	WPCOMTransactionEndpointResponse,
+	createTransactionEndpointRequestPayloadFromLineItems,
+	PayPalExpressEndpoint,
+	PayPalExpressEndpointRequestPayload,
+	PayPalExpressEndpointResponse,
+	createPayPalExpressEndpointRequestPayloadFromLineItems,
+} from './types';
 
 const debug = debugFactory( 'calypso:composite-checkout-payment-methods' );
 
@@ -53,7 +68,7 @@ export function createPaymentMethods( {
 								postalCode: null,
 								phoneNumber: null,
 							},
-							wpcom
+							wpcomTransaction
 						),
 					creditsDisplayValue: credits.amount.displayValue,
 					label: <WordPressCreditsLabel credits={ credits } />,
@@ -79,7 +94,7 @@ export function createPaymentMethods( {
 							siteId: select( 'wpcom' )?.getSiteId?.(),
 							domainDetails: getDomainDetails( select ),
 						},
-						wpcom
+						wpcomTransaction
 					),
 		  } )
 		: null;
@@ -101,7 +116,7 @@ export function createPaymentMethods( {
 							subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 							phoneNumber: select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
 						},
-						wpcom
+						wpcomPayPalExpress
 					),
 		  } )
 		: null;
@@ -121,7 +136,7 @@ export function createPaymentMethods( {
 								siteId: select( 'wpcom' )?.getSiteId?.(),
 								domainDetails: getDomainDetails( select ),
 							},
-							wpcom
+							wpcomTransaction
 						),
 			  } )
 			: null;
@@ -144,7 +159,7 @@ export function createPaymentMethods( {
 								paymentPartnerProcessorId: storedDetails.payment_partner,
 								domainDetails: getDomainDetails( select ),
 							},
-							wpcom
+							wpcomTransaction
 						),
 					registerStore,
 					getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.country?.value,
@@ -196,31 +211,45 @@ function storedCardsReducer( state, action ) {
 	}
 }
 
-async function submitExistingCardPayment( transactionData, wpcom ) {
+async function submitExistingCardPayment(
+	transactionData,
+	submit: WPCOMTransactionEndpoint
+): Promise< WPCOMTransactionEndpointResponse > {
 	debug( 'formatting existing card transaction', transactionData );
-	const formattedTransactionData = formatDataForTransactionsEndpoint( {
+	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+		debug,
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
 	} );
 	debug( 'submitting existing card transaction', formattedTransactionData );
-	return wpcom.transactions( formattedTransactionData );
+	return submit( formattedTransactionData );
 }
 
-async function submitApplePayPayment( transactionData, wpcom ) {
+async function submitApplePayPayment(
+	transactionData,
+	submit: WPCOMTransactionEndpoint
+): Promise< WPCOMTransactionEndpointResponse > {
 	debug( 'formatting apple-pay transaction', transactionData );
-	const formattedTransactionData = formatDataForTransactionsEndpoint( {
+	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+		debug,
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
 		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
 	} );
 	debug( 'submitting apple-pay transaction', formattedTransactionData );
-	return wpcom.transactions( formattedTransactionData );
+	return submit( formattedTransactionData );
 }
 
-async function makePayPalExpressRequest( transactionData, wpcom ) {
-	const formattedTransactionData = formatDataForPayPalExpressEndpoint( transactionData );
+async function makePayPalExpressRequest(
+	transactionData,
+	submit: PayPalExpressEndpoint
+): Promise< WPCOMTransactionEndpointResponse > {
+	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {
+		debug,
+		...transactionData,
+	} );
 	debug( 'sending paypal transaction', formattedTransactionData );
-	return wpcom.paypalExpressUrl( formattedTransactionData );
+	return submit( formattedTransactionData );
 }
 
 function getDomainDetails( select ) {
@@ -239,7 +268,7 @@ function getDomainDetails( select ) {
 	};
 }
 
-function isApplePayAvailable() {
+function isApplePayAvailable(): boolean {
 	// Our Apple Pay implementation uses the Payment Request API, so check that first.
 	if ( ! window.PaymentRequest ) {
 		return false;
@@ -266,132 +295,36 @@ async function fetchStripeConfiguration( requestArgs, wpcom ) {
 	return wpcom.stripeConfiguration( requestArgs );
 }
 
-async function sendStripeTransaction( transactionData, wpcom ) {
-	const formattedTransactionData = formatDataForTransactionsEndpoint( {
+async function sendStripeTransaction(
+	transactionData,
+	submit: WPCOMTransactionEndpoint
+): Promise< WPCOMTransactionEndpointResponse > {
+	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+		debug,
 		...transactionData,
 		paymentMethodToken: transactionData.paymentMethodToken.id,
 		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
 		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
 	} );
 	debug( 'sending stripe transaction', formattedTransactionData );
-	return wpcom.transactions( formattedTransactionData );
+	return submit( formattedTransactionData );
 }
 
-function formatDataForTransactionsEndpoint( {
-	siteId,
-	couponId, // TODO: get this
-	country,
-	postalCode,
-	subdivisionCode,
-	domainDetails,
-	paymentMethodToken,
-	name,
-	items,
-	total,
-	paymentMethodType,
-	paymentPartnerProcessorId,
-	storedDetailsId,
-} ) {
-	const payment = {
-		paymentMethod: paymentMethodType,
-		paymentKey: paymentMethodToken,
-		paymentPartner: paymentPartnerProcessorId,
-		storedDetailsId,
-		name,
-		zip: postalCode, // TODO: do we need this in addition to postalCode?
-		postalCode,
-		country,
-	};
-	return {
-		cart: createCartFromLineItems( {
-			siteId,
-			couponId,
-			items: items.filter( item => item.type !== 'tax' ),
-			total,
-			country,
-			postalCode,
-			subdivisionCode,
-		} ),
-		domainDetails,
-		payment,
-	};
-}
-
-function formatDataForPayPalExpressEndpoint( {
-	successUrl,
-	cancelUrl,
-	siteId,
-	country,
-	postalCode,
-	subdivisionCode,
-	phoneNumber,
-	couponId,
-	items,
-	domainDetails,
-} ) {
-	return {
-		successUrl,
-		cancelUrl,
-		cart: createCartFromLineItems( {
-			siteId,
-			country,
-			postalCode,
-			subdivisionCode,
-			phoneNumber,
-			couponId,
-			items: items.filter( item => item.type !== 'tax' ),
-		} ),
-		domainDetails,
-		country,
-		postalCode,
-	};
-}
-
-// Create cart object as required by the WPCOM transactions endpoint '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
-function createCartFromLineItems( {
-	siteId,
-	couponId,
-	items,
-	country,
-	postalCode,
-	subdivisionCode,
-} ) {
-	const currency = items.reduce( ( firstValue, item ) => firstValue || item.amount.currency, null );
-	debug( 'creating cart from items', items );
-	return {
-		blog_id: siteId,
-		coupon: couponId || '',
-		currency: currency || '',
-		temporary: false,
-		extra: [],
-		products: items.map( item => ( {
-			product_id: item.wpcom_meta?.product_id,
-			meta: item.wpcom_meta?.meta,
-			currency: item.amount.currency,
-			volume: item.wpcom_meta?.volume ?? 1,
-			extra: item.wpcom_meta?.extra,
-		} ) ),
-		tax: {
-			location: {
-				country_code: country,
-				postal_code: postalCode,
-				subdivision_code: subdivisionCode,
-			},
-		},
-	};
-}
-
-function submitCreditsTransaction( transactionData, wpcom ) {
+function submitCreditsTransaction(
+	transactionData,
+	submit: WPCOMTransactionEndpoint
+): Promise< WPCOMTransactionEndpointResponse > {
 	debug( 'formatting full credits transaction', transactionData );
-	const formattedTransactionData = formatDataForTransactionsEndpoint( {
+	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+		debug,
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_WPCOM',
 	} );
 	debug( 'submitting full credits transaction', formattedTransactionData );
-	return wpcom.transactions( formattedTransactionData );
+	return submit( formattedTransactionData );
 }
 
-function isMethodEnabled( method, allowedPaymentMethods ) {
+function isMethodEnabled( method: string, allowedPaymentMethods: string[] ): boolean {
 	// By default, allow all payment methods
 	if ( ! allowedPaymentMethods?.length ) {
 		return true;
@@ -428,4 +361,16 @@ function WordPressLogo() {
 			/>
 		</svg>
 	);
+}
+
+async function wpcomTransaction(
+	payload: WPCOMTransactionEndpointRequestPayload
+): Promise< WPCOMTransactionEndpointResponse > {
+	return wp.undocumented().transactions( payload );
+}
+
+async function wpcomPayPalExpress(
+	payload: PayPalExpressEndpointRequestPayload
+): Promise< PayPalExpressEndpointResponse > {
+	return wp.undocumented().paypalExpressUrl( payload );
 }
