@@ -206,6 +206,11 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		newSiteParams.options.site_segment = 1;
 	}
 
+	// Provide siteTitle from Gutenboarding
+	if ( 'frankenflow' === lastKnownFlow ) {
+		newSiteParams.blog_title = dependencies.siteTitle;
+	}
+
 	if ( isEligibleForPageBuilder( siteSegment, flowToCheck ) && shouldEnterPageBuilder() ) {
 		newSiteParams.options.in_page_builder = true;
 	}
