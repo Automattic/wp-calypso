@@ -50,7 +50,6 @@ export default function WPCheckout( {
 	siteUrl,
 	CountrySelectMenu,
 	countriesList,
-	PhoneInput,
 	StateSelect,
 	renderDomainContactFields,
 } ) {
@@ -98,7 +97,6 @@ export default function WPCheckout( {
 					isActive={ true }
 					CountrySelectMenu={ CountrySelectMenu }
 					countriesList={ countriesList }
-					PhoneInput={ PhoneInput }
 					StateSelect={ StateSelect }
 					renderDomainContactFields={ renderDomainContactFields }
 				/>

@@ -22,7 +22,6 @@ export default function WPContactForm( {
 	isComplete,
 	isActive,
 	CountrySelectMenu,
-	PhoneInput,
 	countriesList,
 	renderDomainContactFields,
 } ) {
@@ -51,7 +50,6 @@ export default function WPContactForm( {
 				contactInfo,
 				renderDomainContactFields,
 				setters,
-				PhoneInput,
 				CountrySelectMenu,
 				countriesList,
 			} ) }
@@ -93,73 +91,6 @@ function isEligibleForVat( country ) {
 	const countriesWithVAT = [ 'AU' ];
 	return countriesWithVAT.includes( country );
 }
-
-function PhoneNumberField( { id, isRequired, contactInfo, countriesList, PhoneInput, setters } ) {
-	const translate = useTranslate();
-	const { updatePhone, updatePhoneNumberCountry } = setters;
-
-	const isError = contactInfo.phone.isTouched && ! isValid( contactInfo.phone );
-	return (
-		<PhoneNumberFieldUI>
-			<Label htmlFor={ id }>
-				{ isRequired ? translate( 'Phone number (Optional)' ) : translate( 'Phone number' ) }
-			</Label>
-			<PhoneInput
-				name={ id }
-				isError={ isError }
-				enableStickyCountry={ false }
-				onChange={ ( { value, countryCode } ) => {
-					updatePhone( value );
-					updatePhoneNumberCountry( countryCode );
-				} }
-				value={ contactInfo.phone.value }
-				countryCode={
-					contactInfo.phoneNumberCountry.value || contactInfo.countryCode.value || 'US'
-				}
-				countriesList={ countriesList }
-			/>
-			{ isError && <ErrorMessage>{ translate( 'This field is required.' ) }</ErrorMessage> }
-		</PhoneNumberFieldUI>
-	);
-}
-
-const ErrorMessage = styled.p`
-	margin: 8px 0 0 0;
-	color: ${props => props.theme.colors.error};
-	font-style: italic;
-	font-size: 14px;
-`;
-
-const PhoneNumberFieldUI = styled.div`
-	margin-top: 16px;
-`;
-
-const Label = styled.label`
-	display: block;
-	color: ${props => props.theme.colors.textColor};
-	font-weight: ${props => props.theme.weights.bold};
-	font-size: 14px;
-	margin-bottom: 8px;
-
-	:hover {
-		cursor: ${props => ( props.isDisabled ? 'default' : 'pointer' )};
-	}
-`;
-
-PhoneNumberField.propTypes = {
-	isRequired: PropTypes.bool,
-	id: PropTypes.string.isRequired,
-	contactInfo: PropTypes.shape( {
-		phoneNumber: PropTypes.shape( { value: PropTypes.string } ),
-		phoneNumberCountry: PropTypes.shape( { value: PropTypes.string } ),
-	} ).isRequired,
-	countriesList: PropTypes.array.isRequired,
-	PhoneInput: PropTypes.elementType.isRequired,
-	setters: PropTypes.shape( {
-		updatePhone: PropTypes.func.isRequired,
-		updatePhoneNumberCountry: PropTypes.func.isRequired,
-	} ).isRequired,
-};
 
 function VatIdField() {
 	const translate = useTranslate();
@@ -307,7 +238,6 @@ function renderContactDetails( {
 	contactInfo,
 	renderDomainContactFields,
 	setters,
-	PhoneInput,
 	CountrySelectMenu,
 	countriesList,
 } ) {
@@ -340,14 +270,6 @@ function renderContactDetails( {
 						setters={ setters }
 						CountrySelectMenu={ CountrySelectMenu }
 						countriesList={ countriesList }
-					/>
-
-					<PhoneNumberField
-						id="contact-phone-number"
-						countriesList={ countriesList }
-						contactInfo={ contactInfo }
-						PhoneInput={ PhoneInput }
-						setters={ setters }
 					/>
 					{ requiresVatId && <VatIdField /> }
 				</React.Fragment>

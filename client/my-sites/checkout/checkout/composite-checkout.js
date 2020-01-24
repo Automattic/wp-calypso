@@ -38,7 +38,6 @@ import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import { FormCountrySelect } from 'components/forms/form-country-select';
 import getCountries from 'state/selectors/get-countries';
 import { fetchPaymentCountries } from 'state/countries/actions';
-import PhoneInput from 'components/phone-input/index.jsx';
 import { StateSelect } from 'my-sites/domains/components/form';
 import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
 
@@ -218,7 +217,6 @@ export default function CompositeCheckout( {
 					siteUrl={ siteSlug }
 					CountrySelectMenu={ CountrySelectMenu }
 					countriesList={ countriesList }
-					PhoneInput={ PhoneInput }
 					StateSelect={ StateSelect }
 					renderDomainContactFields={ renderDomainContactFields }
 				/>
