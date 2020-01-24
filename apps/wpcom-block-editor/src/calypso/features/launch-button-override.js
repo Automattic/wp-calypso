@@ -59,7 +59,7 @@ function updateButtonBar( settingsBar ) {
 		}
 		// 'Launch' button to replace update button
 		const launchButton = document.createElement( 'button' );
-		launchButton.className = 'launch-button-override__button components-button is-primary';
+		launchButton.className = 'launch-button-override__launch-button components-button is-primary';
 		launchButton.innerText = __( 'Launch' );
 		// TODO - Launch goto /frankenflow
 		settingsBar.prepend( launchButton );

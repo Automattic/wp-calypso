@@ -1,3 +1,8 @@
 .launch-button-override__hidden {
-    display: none !important;
+    display: none;
+}
+
+.launch-button-override__launch-button {
+    padding: 0 12px;
+    margin: 0 12px 0 3px;
 }
