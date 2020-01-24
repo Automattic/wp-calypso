@@ -69,12 +69,12 @@ class StepSourceSelect extends Component {
 						case 'rest_invalid_param':
 							return this.setState( {
 								error: "We couldn't reach that site. Please check the URL and try again.",
-								loading: false,
+								isLoading: false,
 							} );
 						default:
 							return this.setState( {
 								error: 'Something went wrong. Please check the URL and try again.',
-								loading: false,
+								isLoading: false,
 							} );
 					}
 				} );
