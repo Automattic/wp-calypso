@@ -6,7 +6,7 @@
  * Internal Dependencies
  */
 import reducer from '../reducer';
-import { CURRENT_USER_RECEIVE, EXPERIMENT_ASSIGN, EXPERIMENT_FETCH } from 'state/action-types';
+import { EXPERIMENT_ASSIGN, EXPERIMENT_FETCH } from 'state/action-types';
 
 describe( 'Experiment Reducer', () => {
 	describe( 'Init Action', () => {
@@ -34,15 +34,6 @@ describe( 'Experiment Reducer', () => {
 				value: 'some=cookie; tk_ai=123; other=cookie;',
 			} );
 			const state = reducer( undefined, { type: '@@INIT' } );
-			expect( state ).toHaveProperty( 'anonId', '123' );
-		} );
-
-		test( 'Should replace anonId in state, if changed', () => {
-			Object.defineProperty( document, 'cookie', {
-				writable: true,
-				value: 'some=cookie; other=cookie; tk_ai=123;',
-			} );
-			const state = reducer( { anonId: 'abc' }, { type: '@@INIT' } );
 			expect( state ).toHaveProperty( 'anonId', '123' );
 		} );
 
@@ -93,23 +84,6 @@ describe( 'Experiment Reducer', () => {
 	describe( 'Fetch Action', () => {
 		test( 'It should flip the loading state', () => {
 			const state = reducer( { isLoading: false }, { type: EXPERIMENT_FETCH } );
-			expect( state ).toHaveProperty( 'isLoading', true );
-		} );
-	} );
-
-	describe( 'User receive action', () => {
-		test( 'It should reset the assignments, except for the anonId', () => {
-			const initialState = {
-				anonId: 'hello world',
-				isLoading: false,
-				nextRefresh: 123,
-				variations: {
-					example: 'abc',
-				},
-			};
-			const state = reducer( initialState, { type: CURRENT_USER_RECEIVE } );
-			expect( state ).toHaveProperty( 'anonId', initialState.anonId );
-			expect( state ).toHaveProperty( 'variations', null );
 			expect( state ).toHaveProperty( 'isLoading', true );
 		} );
 	} );
