@@ -65,9 +65,8 @@ export function createPaymentMethods( {
 								siteId: select( 'wpcom' )?.getSiteId?.(),
 								domainDetails: getDomainDetails( select ),
 								// this data is intentionally empty so we do not charge taxes
-								countryCode: null,
+								country: null,
 								postalCode: null,
-								phone: null,
 							},
 							wpcomTransaction
 						),
