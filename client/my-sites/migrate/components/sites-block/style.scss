@@ -1,0 +1,91 @@
+.sites-block__sites {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+
+	box-shadow: 0 0 0 1px var( --color-border-subtle );
+	background-color: var( --color-surface );
+
+	& > * {
+		flex-grow: 1;
+		flex-shrink: 0;
+	}
+
+	.sites-block__sites-arrow-wrapper {
+		width: 1px;
+		border-left: 1px solid var( --color-border-subtle );
+		overflow: visible;
+		flex-grow:0;
+		flex-shrink: 0;
+		position: relative;
+
+		margin: 0 16px;
+
+		.sites-block__sites-arrow {
+			position: absolute;
+			left: -16px;
+			background: white;
+			padding: 5px;
+			top: calc( 50% - 16px );
+			color: var( --color-text-subtle );
+		}
+	}
+
+	.sites-block__sites-labels-container {
+		margin-left: 40px;
+		width: auto;
+	}
+
+	.sites-block__sites-item {
+		padding: 25px;
+	}
+
+	.site__content {
+		padding: 0; /* Reduce spacing below the site component, so we can put labels under it */
+	}
+
+
+
+	.sites-block__faux-site-selector {
+		box-sizing: border-box;
+		display: flex;
+		flex: 1 0 auto;
+		justify-content: space-between;
+		padding: 0;
+		position: relative;
+	}
+
+	.sites-block__faux-site-selector-content {
+		display: flex;
+		justify-content: space-between;
+		overflow: hidden;
+		padding: 0 16px;
+		position: relative;
+		width: 100%;
+	}
+
+	.sites-block__faux-site-selector-icon {
+		height: 32px;
+		width: 32px;
+		line-height: 32px;
+		border: 1px dashed var( --color-text-subtle );
+		position: relative;
+		overflow: hidden;
+		align-self: flex-start;
+		margin-right: 8px;
+		flex: 0 0 auto;
+	}
+
+	.sites-block__faux-site-selector-info {
+		width: 0;
+		flex: 1 0 auto;
+	}
+
+	.sites-block__faux-site-selector-label {
+		color: var( --color-text );
+		display: block;
+		font-size: 13px;
+		font-weight: 400;
+		line-height: 1.3;
+	}
+}
