@@ -112,7 +112,7 @@ export function createPaymentMethods( {
 							siteId: select( 'wpcom' )?.getSiteId?.(),
 							domainDetails: getDomainDetails( select ),
 							couponId: null, // TODO: get couponId
-							countryCode: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+							country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
 							postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
 							subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 							phone: select( 'wpcom' )?.getContactInfo?.()?.phone?.value,
