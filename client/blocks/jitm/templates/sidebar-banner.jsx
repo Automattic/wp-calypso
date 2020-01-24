@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import Gridicon from 'components/gridicon';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,10 +28,10 @@ export default function SidebarBannerTemplate( {
 	...props
 } ) {
 	if ( abtest( 'sidebarUpsellNudgeUnification' ) === 'variantShowUnifiedUpsells' ) {
-		const clickName = get( tracks, [ 'click', 'name' ] ) || `jitm_nudge_click_${ id }`;
-		const clickProps = get( tracks, [ 'click', 'props' ] );
-		const displayName = get( tracks, [ 'display', 'name' ] ) || `jitm_nudge_impression_${ id }`;
-		const displayProps = get( tracks, [ 'display', 'props' ] );
+		const clickName = tracks?.click?.name ?? `jitm_nudge_click_${ id }`;
+		const clickProps = tracks?.click?.props;
+		const displayName = tracks?.display?.name ?? `jitm_nudge_impression_${ id }`;
+		const displayProps = tracks?.display?.props;
 		const jitmProps = { id: id, jitm: true };
 
 		return (

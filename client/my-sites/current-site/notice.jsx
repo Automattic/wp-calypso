@@ -86,10 +86,7 @@ export class SiteNotice extends React.Component {
 		const eventProperties = { cta_name: 'current_site_domain_notice' };
 		const { translate } = this.props;
 
-		if (
-			abtest( 'sidebarUpsellNudgeUnification' ) === 'variantShowUnifiedUpsells' &&
-			config.isEnabled( 'upsell/nudge-component' )
-		) {
+		if ( abtest( 'sidebarUpsellNudgeUnification' ) === 'variantShowUnifiedUpsells' ) {
 			return (
 				<UpsellNudge
 					callToAction={ translate( 'Claim' ) }
@@ -193,10 +190,7 @@ export class SiteNotice extends React.Component {
 			} );
 		}
 
-		if (
-			abtest( 'sidebarUpsellNudgeUnification' ) === 'variantShowUnifiedUpsells' &&
-			config.isEnabled( 'upsell/nudge-component' )
-		) {
+		if ( abtest( 'sidebarUpsellNudgeUnification' ) === 'variantShowUnifiedUpsells' ) {
 			return (
 				<UpsellNudge
 					callToAction={ translate( 'Add' ) }
@@ -255,10 +249,7 @@ export class SiteNotice extends React.Component {
 			return null;
 		}
 
-		if (
-			abtest( 'sidebarUpsellNudgeUnification' ) === 'variantShowUnifiedUpsells' &&
-			config.isEnabled( 'upsell/nudge-component' )
-		) {
+		if ( abtest( 'sidebarUpsellNudgeUnification' ) === 'variantShowUnifiedUpsells' ) {
 			const eventProperties = { cta_name: 'active-discount-sidebar' };
 			return (
 				<UpsellNudge
