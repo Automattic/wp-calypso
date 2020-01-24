@@ -534,5 +534,6 @@ function joinNonEmptyValues( joinString, ...values ) {
 const StateSelectWrapper = styled.div`
 	& select {
 		width: 100%;
+		min-width: 0;
 	}
 `;
