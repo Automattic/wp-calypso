@@ -83,7 +83,6 @@ export function createPaymentMethods( {
 		? createStripeMethod( {
 				getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
 				getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-				getPhoneNumber: () => select( 'wpcom' )?.getContactInfo?.()?.phone?.value,
 				getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 				registerStore,
 				fetchStripeConfiguration: args => fetchStripeConfiguration( args, wpcom ),
@@ -114,7 +113,6 @@ export function createPaymentMethods( {
 							country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
 							postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
 							subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-							phone: select( 'wpcom' )?.getContactInfo?.()?.phone?.value,
 						},
 						wpcomPayPalExpress
 					),
@@ -126,7 +124,6 @@ export function createPaymentMethods( {
 			? createApplePayMethod( {
 					getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
 					getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-					getPhoneNumber: () => select( 'wpcom' )?.getContactInfo?.()?.phone?.value,
 					registerStore,
 					fetchStripeConfiguration: args => fetchStripeConfiguration( args, wpcom ),
 					submitTransaction: submitData =>
@@ -164,7 +161,6 @@ export function createPaymentMethods( {
 					registerStore,
 					getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
 					getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-					getPhoneNumber: () => select( 'wpcom' )?.getContactInfo?.()?.phone?.value,
 					getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 				} )
 		  )
