@@ -45,6 +45,7 @@ export class ThreatAlert extends Component {
 	};
 
 	handleGetHelp = () => {
+		this.props.trackGetHelp( this.props.threat.id );
 		window.open( JETPACK_CONTACT_SUPPORT, '_blank' );
 	};
 
@@ -404,5 +405,7 @@ export default connect( mapStateToProps, {
 			recordTracksEvent( 'calypso_activitylog_threat_ignore', { threat_id: threatId } ),
 			ignoreThreatAlert( siteId, threatId )
 		),
+	trackGetHelp: threatId =>
+		recordTracksEvent( 'calypso_activitylog_threat_gethelp', { threat_id: threatId } ),
 	requestRewindState,
 } )( localize( ThreatAlert ) );
