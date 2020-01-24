@@ -47,8 +47,8 @@ const reducer: Reducer< ExperimentState, HandledActions > = (
 			return {
 				...state,
 				isLoading: false,
-				variations: ( action as ExperimentAssign ).variations,
-				nextRefresh: ( action as ExperimentAssign ).nextRefresh,
+				variations: action.variations,
+				nextRefresh: action.nextRefresh,
 			};
 
 		/**
