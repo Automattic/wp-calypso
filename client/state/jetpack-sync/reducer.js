@@ -51,17 +51,19 @@ export function fullSyncRequest( state = {}, action ) {
 
 export function syncStatus( state = {}, action ) {
 	switch ( action.type ) {
-		case JETPACK_SYNC_START_REQUEST:
+		case JETPACK_SYNC_START_REQUEST: {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: {},
 			} );
-		case JETPACK_SYNC_STATUS_REQUEST:
+		}
+		case JETPACK_SYNC_STATUS_REQUEST: {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: Object.assign( {}, get( state, [ action.siteId ], {} ), {
 					isRequesting: true,
 				} ),
 			} );
-		case JETPACK_SYNC_STATUS_SUCCESS:
+		}
+		case JETPACK_SYNC_STATUS_SUCCESS: {
 			const thisState = get( state, [ action.siteId ], {} );
 
 			// lastSuccessfulStatus is any status after we have started sycing
@@ -89,7 +91,8 @@ export function syncStatus( state = {}, action ) {
 					pick( action.data, getExpectedResponseKeys() )
 				),
 			} );
-		case JETPACK_SYNC_STATUS_ERROR:
+		}
+		case JETPACK_SYNC_STATUS_ERROR: {
 			const errorCounter = get( state, [ action.siteId, 'errorCounter' ], 0 );
 			return Object.assign( {}, state, {
 				[ action.siteId ]: Object.assign(
@@ -101,6 +104,7 @@ export function syncStatus( state = {}, action ) {
 					pick( action.data, getExpectedResponseKeys() )
 				),
 			} );
+		}
 	}
 	return state;
 }
