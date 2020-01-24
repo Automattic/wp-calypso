@@ -164,7 +164,7 @@
 		"@wordpress/dependency-extraction-webpack-plugin": "2.1.0",
 		"@wordpress/jest-preset-default": "5.3.1",
 		"@wordpress/npm-package-json-lint-config": "2.1.0",
-		"@wordpress/scripts": "6.1.1",
+		"@wordpress/scripts": "6.2.0",
 		"acorn": "6.4.0",
 		"babel-eslint": "10.0.3",
 		"babel-jest": "24.9.0",
