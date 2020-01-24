@@ -33,7 +33,7 @@ export function Gutenboard() {
 	switch ( r?.url ) {
 		case Step.DesignSelection:
 			prev = Step.IntentGathering;
-			next = Step.CreateSite;
+			next = '/start/frankenflow';
 			break;
 	}
 
