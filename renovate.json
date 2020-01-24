@@ -13,8 +13,8 @@
 			"assignees": [
 				"@Automattic/cylon",
 				"@Automattic/ganon",
-				"@Automattic/luna",
-			],
+				"@Automattic/luna"
+			]
 		},
 		{
 			"extends": "monorepo:babel",
