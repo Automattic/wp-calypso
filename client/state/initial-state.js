@@ -278,7 +278,9 @@ function getInitialStoredState( initialReducer ) {
 		}
 	}
 
-	map( storageKeys, loadReducerState );
+	for ( const item of storageKeys ) {
+		loadReducerState( item );
+	}
 
 	return initialStoredState;
 }
