@@ -37,15 +37,6 @@ describe( 'Experiment Reducer', () => {
 			expect( state ).toHaveProperty( 'anonId', '123' );
 		} );
 
-		test( 'Should replace anonId in state, if changed', () => {
-			Object.defineProperty( document, 'cookie', {
-				writable: true,
-				value: 'some=cookie; other=cookie; tk_ai=123;',
-			} );
-			const state = reducer( { anonId: 'abc' }, { type: '@@INIT' } );
-			expect( state ).toHaveProperty( 'anonId', '123' );
-		} );
-
 		test( 'Should reduce anonId with equals in it', () => {
 			Object.defineProperty( document, 'cookie', {
 				writable: true,
