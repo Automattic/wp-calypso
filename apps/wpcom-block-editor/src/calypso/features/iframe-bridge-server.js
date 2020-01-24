@@ -680,7 +680,13 @@ function getCloseButtonUrl( calypsoPort ) {
 	};
 }
 
-// TODO - JSDOC this when you know what you are actually needing to do...
+/**
+ * Ensures gutenboarding status and corresponding data is placed on the calypsoifyGutenberg object.
+ * This is imporant because it allows us to adapt small changes to the editor when
+ * used in the context of Gutenboarding.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
 function getGutenboardingStatus( calypsoPort ) {
 	const { port1, port2 } = new MessageChannel();
 	calypsoPort.postMessage(
