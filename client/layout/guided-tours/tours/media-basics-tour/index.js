@@ -175,7 +175,7 @@ export const MediaBasicsTour = makeTour(
 				<Fragment>
 					<p>
 						{ translate(
-							'{{strong}}Make sure you okay with these files being public:{{/strong}} ' +
+							'{{strong}}Make sure you are okay with these files being public:{{/strong}} ' +
 								'all files you upload to WordPress.com get their own web address. ' +
 								'If your site is public, anyone with this address can access the file, ' +
 								"even if you haven't included it in a post. It's unlikely, but possible.",
