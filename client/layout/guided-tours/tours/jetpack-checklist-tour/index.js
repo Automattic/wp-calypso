@@ -29,7 +29,7 @@ export const JetpackChecklistTour = makeTour(
 						) }
 					</p>
 					<ButtonRow>
-						<Next step="finish">{ translate( 'Got it' ) }</Next>
+						<Next step="return-button">{ translate( 'Got it' ) }</Next>
 					</ButtonRow>
 				</>
 			) }
@@ -37,7 +37,7 @@ export const JetpackChecklistTour = makeTour(
 
 		<Step
 			arrow="bottom-right"
-			name="finish"
+			name="return-button"
 			placement="above"
 			style={ {
 				marginTop: '-25px',
@@ -52,6 +52,25 @@ export const JetpackChecklistTour = makeTour(
 								'admin here or continue using this dashboard.'
 						) }
 					</p>
+					<ButtonRow>
+						<Next step="finish">{ translate( 'Got it' ) }</Next>
+					</ButtonRow>
+				</>
+			) }
+		</Step>
+
+		<Step
+			arrow="bottom-right"
+			name="finish"
+			placement="above"
+			style={ {
+				margin: '-20px 0 0 -2px',
+			} }
+			target=".inline-help"
+		>
+			{ ( { translate } ) => (
+				<>
+					<p>{ translate( "If you run into any issues, we'd be happy to help!" ) }</p>
 					<ButtonRow>
 						<Quit primary>{ translate( 'Got it' ) }</Quit>
 					</ButtonRow>
