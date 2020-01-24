@@ -601,7 +601,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 }
 
 const mapStateToProps = (
-	state,
+	state: T.AppState,
 	{ postId, postType, duplicatePostId, fseParentPageId, creatingNewHomepage }: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
