@@ -175,14 +175,16 @@ export const MediaBasicsTour = makeTour(
 				<Fragment>
 					<p>
 						{ translate(
-							'All files you upload to WordPress.com get their own web address. ' +
-								'If your site is public, any file can technically be accessed ' +
-								"by anyone who has its address, even if you haven't included it " +
-								"in a post. It's unlikely, but possible."
+							'{{strong}}Make sure you okay with these files being public:{{/strong}} ' +
+								'all files you upload to WordPress.com get their own web address. ' +
+								'If your site is public, anyone with this address can access the file, ' +
+								"even if you haven't included it in a post. It's unlikely, but possible.",
+							{
+								components: {
+									strong: <strong />,
+								},
+							}
 						) }
-					</p>
-					<p>
-						{ translate( "In other words, this probably isn't the place for personal files!" ) }
 					</p>
 					<ButtonRow>
 						<Next step="done" />
