@@ -43,7 +43,6 @@ import { protectForm, ProtectedFormProps } from 'lib/protect-form';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ConvertToBlocksDialog from 'components/convert-to-blocks';
 import config from 'config';
-import Dispatcher from 'dispatcher';
 
 /**
  * Types
@@ -161,8 +160,8 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			// Check if we're generating a post via Press This
 			this.pressThis();
 
-			// Notify any external listeners that the iframe has loaded
-			Dispatcher.handleViewAction( this.props.editorLoaded() );
+			// Notify external listeners that the iframe has loaded
+			this.props.editorLoaded();
 
 			return;
 		}
