@@ -10,7 +10,7 @@
 			"extends": "monorepo:wordpress",
 			"separateMajorMinor": false,
 			"prPriority": 2,
-			"assignees": [
+			"reviewers": [
 				"@Automattic/cylon",
 				"@Automattic/ganon",
 				"@Automattic/luna"
