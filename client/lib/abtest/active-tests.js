@@ -148,7 +148,7 @@ export default {
 		allowExistingUsers: false,
 	},
 	sidebarUpsellNudgeUnification: {
-		datestamp: '20200216',
+		datestamp: '20200127',
 		variations: {
 			variantShowUnifiedUpsells: 50,
 			control: 50,
