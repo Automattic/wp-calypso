@@ -28,11 +28,13 @@ const resetState: ( anonId: string | null ) => ExperimentState = anonId => ( {
 	variations: null,
 } );
 
-export default function reducer(
-	state: ExperimentState = resetState( getAnonIdFromCookie() ),
-	action: Action
-) {
+export default function reducer( state: ExperimentState = resetState( null ), action: Action ) {
 	switch ( action.type ) {
+		case '@@INIT':
+			return {
+				...state,
+				anonId: getAnonIdFromCookie(),
+			};
 		/**
 		 * Store the user's assignment from the API
 		 */
