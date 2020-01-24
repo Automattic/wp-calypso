@@ -327,8 +327,8 @@ export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
-		const isStatsModuleActive = isJetpackModuleActive( state, siteId, 'stats' );
-		const showEnableStatsModule = siteId && isJetpack && isStatsModuleActive === false;
+		const showEnableStatsModule =
+			siteId && isJetpack && isJetpackModuleActive( state, siteId, 'stats' ) === false;
 		return {
 			isJetpack,
 			siteId,
