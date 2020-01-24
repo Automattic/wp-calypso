@@ -5,53 +5,64 @@
  */
 /* eslint-disable import/no-extraneous-dependencies */
 import domReady from '@wordpress/dom-ready';
-import ReactDOM from 'react-dom';
 import { __ } from '@wordpress/i18n';
-import { Button } from '@wordpress/components';
-import { useState } from '@wordpress/element';
 /* eslint-disable import/no-extraneous-dependencies */
 
-function LaunchButtonOverride( { defaultLabel, defaultUrl } ) {
-	const [ useLaunchButton, setUseLaunchButton ] = useState(
-		!! calypsoifyGutenberg.hasLaunchButton
-	);
-
-	window.wp.hooks.addAction( 'updateLaunchButton', 'a8c-gutenboarding', data => {
-		// console.log( "Hooked! - launch button data: " + data )
-		setUseLaunchButton( data );
-	} );
-
-	const url = useLaunchButton ? '/start/frankenflow' : defaultUrl;
-	const label = useLaunchButton ? __( 'Launch' ) : defaultLabel;
-
-	return (
-		<a href={ url } aria-label={ label }>
-			<Button className="launch-button-override__button components-button is-primary">
-				<div className="launch-button-override__label">{ label }</div>
-			</Button>
-		</a>
-	);
-}
+/**
+ * Internal dependencies
+ */
+import './launch-button-override.scss';
 
 domReady( () => {
-	// console.log( 'SANITY CHECK - THE DOM IS READY! 200' );
+	// Ensure settings bar is rendered before proceeding.
 	const awaitSettingsBar = setInterval( () => {
 		const settingsBar = document.querySelector( '.edit-post-header__settings' );
-
 		if ( ! settingsBar ) {
 			return;
 		}
 		clearInterval( awaitSettingsBar );
 
-		const buttonWrapper = document.createElement( 'div' );
-		settingsBar.prepend( buttonWrapper );
-
-		const originalButton = settingsBar.querySelector( '.editor-post-publish-button' );
-		const defaultLabel = originalButton.innerText;
-
-		ReactDOM.render(
-			<LaunchButtonOverride defaultLabel={ defaultLabel } defaultUrl={ null } />,
-			buttonWrapper
-		);
+		updateButtonBar( settingsBar );
+		// Hook fallback incase updateLaunchButton data is set after initial dom render.
+		window.wp.hooks.addAction( 'updateLaunchButton', 'a8c-gutenboarding', isGutenboarding => {
+			if ( isGutenboarding ) {
+				updateButtonBar( settingsBar );
+			}
+		} );
 	} );
 } );
+
+function updateButtonBar( settingsBar ) {
+	const hideClass = 'launch-button-override__hidden';
+	if ( calypsoifyGutenberg.hasLaunchButton ) {
+		// Hide 'switch to draft' by '.editor-post-switch-to-draft'.
+		const switchToDraft = settingsBar.querySelector( '.editor-post-switch-to-draft' );
+		switchToDraft && switchToDraft.classList.add( hideClass );
+
+		// Hide 'preview' by '.editor-post-preview'
+		// This is not initially added, we may need to wait for it.
+		const awaitPreview = setInterval( () => {
+			const preview = settingsBar.querySelector( '.editor-post-preview' );
+			if ( ! preview ) {
+				return;
+			}
+			clearInterval( awaitPreview );
+			preview.classList.add( 'launch-button-override__hidden' );
+		} );
+
+		// 'Update'/'Publish' primary button to become 'Save' tertiary button.
+		const publish = settingsBar.querySelector( '.editor-post-publish-button' );
+		if ( publish ) {
+			publish.classList.remove( 'is-primary' );
+			publish.classList.add( 'is-tertiary' );
+			publish.innerText = __( 'Save' );
+		}
+		// 'Launch' button to replace update button
+		const launchButton = document.createElement( 'button' );
+		launchButton.className = 'launch-button-override__button components-button is-primary';
+		launchButton.innerText = __( 'Launch' );
+		// TODO - Launch goto /frankenflow
+		settingsBar.prepend( launchButton );
+		settingsBar.prepend( publish );
+	}
+}
