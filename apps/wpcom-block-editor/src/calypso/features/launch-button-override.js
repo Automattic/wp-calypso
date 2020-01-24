@@ -39,7 +39,7 @@ function updateButtonBar( settingsBar ) {
 		const switchToDraft = settingsBar.querySelector( '.editor-post-switch-to-draft' );
 		switchToDraft && switchToDraft.classList.add( hideClass );
 
-		// Hide 'preview' by '.editor-post-preview'
+		// Hide 'preview' by '.editor-post-preview'.
 		// This is not initially added, we may need to wait for it.
 		const awaitPreview = setInterval( () => {
 			const preview = settingsBar.querySelector( '.editor-post-preview' );
@@ -57,15 +57,15 @@ function updateButtonBar( settingsBar ) {
 			publish.classList.add( 'is-tertiary' );
 			publish.innerText = __( 'Save' );
 		}
-		// 'Launch' button to replace update button
+		// 'Launch' button to replace update button.
 		const launchButton = document.createElement( 'button' );
 		launchButton.className = 'launch-button-override__launch-button components-button is-primary';
 		launchButton.innerText = __( 'Launch' );
-		// Launch goto /start/frankenflow
+		// Launch to lead into frankenflow.
 		const buttonWrapper = document.createElement( 'a' );
 		buttonWrapper.href = calypsoifyGutenberg.frankenflowUrl;
-
 		buttonWrapper.append( launchButton );
+		// Put 'Launch' and 'Save' back on bar in desired order.
 		settingsBar.prepend( buttonWrapper );
 		settingsBar.prepend( publish );
 	}
