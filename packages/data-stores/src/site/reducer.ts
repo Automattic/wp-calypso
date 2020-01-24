@@ -49,7 +49,7 @@ const newSiteError: Reducer<
 	return state;
 };
 
-const isFetchingNewUser: Reducer<
+const isFetchingSite: Reducer<
 	boolean | undefined,
 	| ReturnType< typeof Actions[ 'fetchNewSite' ] >
 	| ReturnType< typeof Actions[ 'receiveNewSite' ] >
@@ -69,7 +69,7 @@ const isFetchingNewUser: Reducer<
 const newSite = combineReducers( {
 	data: newSiteData,
 	error: newSiteError,
-	isFetching: isFetchingNewUser,
+	isFetching: isFetchingSite,
 } );
 
 const reducer = combineReducers( { newSite } );
