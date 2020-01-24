@@ -291,7 +291,6 @@ class StatsSite extends Component {
 
 	render() {
 		const { isJetpack, siteId, showEnableStatsModule } = this.props;
-
 		const { period } = this.props.period;
 
 		return (
