@@ -275,18 +275,12 @@ class StatsSite extends Component {
 	};
 
 	renderEnableStatsModule() {
-		const { slug } = this.props;
 		return (
 			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-404.svg"
 				title={ translate( 'Looking for stats?' ) }
 				line={ translate(
-					'Enable Site Stats below or visit {{a}}Traffic > Site Stats{{/a}} for more options',
-					{
-						components: {
-							a: <a href={ `/marketing/traffic/${ slug }` } />,
-						},
-					}
+					'Enable site stats to see detailed information about your traffic, likes, comments, and subscribers.'
 				) }
 				action={ translate( 'Enable Site Stats' ) }
 				actionCallback={ this.enableStatsModule }
