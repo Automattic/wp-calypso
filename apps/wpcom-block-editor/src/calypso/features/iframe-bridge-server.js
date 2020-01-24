@@ -700,6 +700,7 @@ function getGutenboardingStatus( calypsoPort ) {
 		const { isGutenboarding, frankenflowUrl } = data;
 		calypsoifyGutenberg.isGutenboarding = isGutenboarding;
 		calypsoifyGutenberg.frankenflowUrl = frankenflowUrl;
+		// Hook necessary if message recieved after editor has loaded.
 		window.wp.hooks.doAction( 'updateLaunchButton', isGutenboarding );
 	};
 }
