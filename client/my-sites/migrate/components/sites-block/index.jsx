@@ -10,6 +10,9 @@ import './style.scss';
 import Site from 'blocks/site';
 import Gridicon from 'components/gridicon';
 import FormTextInput from 'components/forms/form-text-input';
+import FormLabel from 'components/forms/form-label';
+import FormInputValidation from 'components/forms/form-input-validation';
+import Badge from 'components/badge';
 import { getUrlParts } from 'lib/url';
 
 export default class SitesBlock extends Component {
@@ -25,9 +28,21 @@ export default class SitesBlock extends Component {
 				<div className="sites-block__faux-site-selector-content">
 					<div className="sites-block__faux-site-selector-icon" />
 					<div className="sites-block__faux-site-selector-info">
-						<div className="sites-block__faux-site-selector-label">Import from...</div>
+						<FormLabel
+							className="sites-block__faux-site-selector-label"
+							htmlFor="sites-block__faux-site-selector-url-input"
+						>
+							Import from...
+						</FormLabel>
 						<div className="sites-block__faux-site-selector-url">
-							<FormTextInput isError={ isError } onChange={ onUrlChange } value={ url } />
+							<FormTextInput
+								isError={ isError }
+								onChange={ onUrlChange }
+								value={ url }
+								placeholder="example.com"
+								id="sites-block__faux-site-selector-url-input"
+								name="sites-block__faux-site-selector-url-input"
+							/>
 						</div>
 					</div>
 				</div>
@@ -70,7 +85,7 @@ export default class SitesBlock extends Component {
 				<div className="sites-block__sites-item">
 					<Site site={ targetSite } indicator={ false } />
 					<div className="sites-block__sites-labels-container">
-						<span className="sites-block__token-label migrate__token-label">This site</span>
+						<Badge type="info">This site</Badge>
 					</div>
 				</div>
 			</div>

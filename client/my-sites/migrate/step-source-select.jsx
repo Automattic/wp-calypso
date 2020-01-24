@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { Button, CompactCard } from '@automattic/components';
+import { Button, CompactCard, Card } from '@automattic/components';
 import page from 'page';
 
 /**
@@ -102,11 +102,11 @@ class StepSourceSelect extends Component {
 					targetSite={ targetSite }
 					onUrlChange={ this.props.onUrlChange }
 				/>
-				<CompactCard>
+				<Card>
 					<Button busy={ this.state.isLoading } onClick={ this.handleContinue } primary={ true }>
 						Continue
 					</Button>
-				</CompactCard>
+				</Card>
 			</>
 		);
 	}
