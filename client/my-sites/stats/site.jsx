@@ -296,7 +296,7 @@ class StatsSite extends Component {
 		return (
 			<Main wideLayout={ true }>
 				<QueryKeyringConnections />
-				{ isJetpack && siteId && <QueryJetpackModules siteId={ siteId } /> }
+				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }
 				<DocumentHead title={ translate( 'Stats and Insights' ) } />
 				<PageViewTracker
