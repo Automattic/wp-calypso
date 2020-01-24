@@ -13,7 +13,7 @@ import {
 } from './transaction-endpoint';
 
 export type PayPalExpressEndpoint = (
-	PayPalExpressEndpointRequestPayload
+	_: PayPalExpressEndpointRequestPayload
 ) => Promise< PayPalExpressEndpointResponse >;
 
 export type PayPalExpressEndpointRequestPayload = {
@@ -37,7 +37,7 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 	domainDetails,
 	items,
 }: {
-	debug: ( string, any ) => void;
+	debug: ( _0: string, _1: any ) => void;
 	successUrl: string;
 	cancelUrl: string;
 	siteId: string;
