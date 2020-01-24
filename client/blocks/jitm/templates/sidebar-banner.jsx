@@ -19,13 +19,14 @@ export default function SidebarBannerTemplate( {
 	icon,
 	CTA,
 	message,
-	onClick,
-	trackImpression,
 	id,
-	event,
-	featureClass,
+	dismissPreferenceName,
+	onClick,
+	onDismissClick,
+	trackImpression,
 	tracks,
-	...props
+	tracksDismissName,
+	tracksDismissProperties,
 } ) {
 	if ( abtest( 'sidebarUpsellNudgeUnification' ) === 'variantShowUnifiedUpsells' ) {
 		const clickName = tracks?.click?.name ?? `jitm_nudge_click_${ id }`;
@@ -39,14 +40,16 @@ export default function SidebarBannerTemplate( {
 				callToAction={ CTA.message }
 				compact
 				event={ displayName }
+				dismissPreferenceName={ dismissPreferenceName }
 				href={ CTA.link }
-				onClick={ onClick }
+				onDismissClick={ onDismissClick }
 				title={ message }
 				tracksClickName={ clickName }
 				tracksClickProperties={ { ...jitmProps, ...clickProps } }
 				tracksImpressionName={ displayName }
 				tracksImpressionProperties={ { ...jitmProps, ...displayProps } }
-				{ ...props }
+				tracksDismissName={ tracksDismissName }
+				tracksDismissProperties={ { ...jitmProps, ...tracksDismissProperties } }
 			/>
 		);
 	}
