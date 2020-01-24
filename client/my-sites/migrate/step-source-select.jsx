@@ -31,7 +31,7 @@ class StepSourceSelect extends Component {
 	};
 
 	state = {
-		error: '',
+		error: null,
 		isLoading: false,
 	};
 
@@ -40,7 +40,7 @@ class StepSourceSelect extends Component {
 			return;
 		}
 
-		this.setState( { error: '', isLoading: true }, () => {
+		this.setState( { error: null, isLoading: true }, () => {
 			wpcom
 				.isSiteImportable( this.props.url )
 				.then( result => {
@@ -99,7 +99,6 @@ class StepSourceSelect extends Component {
 				<SitesBlock
 					sourceSite={ null }
 					loadingSourceSite={ this.state.isLoading }
-					error={ this.state.error }
 					targetSite={ targetSite }
 					onUrlChange={ this.props.onUrlChange }
 				/>

@@ -11,7 +11,6 @@ import Site from 'blocks/site';
 import Gridicon from 'components/gridicon';
 import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
-import FormInputValidation from 'components/forms/form-input-validation';
 import Badge from 'components/badge';
 import { getUrlParts } from 'lib/url';
 
@@ -19,7 +18,8 @@ export default class SitesBlock extends Component {
 	state = {};
 
 	renderFauxSiteSelector() {
-		const { onUrlChange, url, error } = this.props;
+		const { onUrlChange, url } = this.props;
+		const { error } = this.state;
 		const isError = !! error;
 
 		return (
@@ -42,7 +42,6 @@ export default class SitesBlock extends Component {
 								id="sites-block__faux-site-selector-url-input"
 								name="sites-block__faux-site-selector-url-input"
 							/>
-							{ error !== '' && <FormInputValidation isError text={ error } /> }
 						</div>
 					</div>
 				</div>
@@ -97,5 +96,4 @@ SitesBlock.propTypes = {
 	sourceSite: PropTypes.object,
 	loadingSourceSite: PropTypes.bool,
 	targetSite: PropTypes.object.isRequired,
-	error: PropTypes.string,
 };
