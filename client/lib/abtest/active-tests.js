@@ -97,15 +97,6 @@ export default {
 		defaultVariation: 'variantShowUpdates',
 		allowExistingUsers: true,
 	},
-	domainStepMoveParagraph: {
-		datestamp: '20191216',
-		variations: {
-			variantMoveParagraph: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	nonEnglishDomainStepCopyUpdates: {
 		datestamp: '20191219',
 		variations: {

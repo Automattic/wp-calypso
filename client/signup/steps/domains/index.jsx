@@ -130,12 +130,6 @@ class DomainsStep extends React.Component {
 		) {
 			this.showTestCopy = true;
 		}
-
-		this.showTestParagraph = false;
-
-		if ( this.showTestCopy && 'variantMoveParagraph' === abtest( 'domainStepMoveParagraph' ) ) {
-			this.showTestParagraph = true;
-		}
 	}
 
 	static getDerivedStateFromProps( nextProps ) {
@@ -471,7 +465,6 @@ class DomainsStep extends React.Component {
 				isSignupStep
 				showExampleSuggestions={ showExampleSuggestions }
 				showTestCopy={ this.showTestCopy }
-				showTestParagraph={ this.showTestParagraph }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
 				vendor={ getSuggestionsVendor( true ) }
