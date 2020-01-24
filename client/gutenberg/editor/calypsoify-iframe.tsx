@@ -559,7 +559,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
 					{ ( shouldLoadIframe || isIframeLoaded ) && (
-						/* eslint-disable-next-line jsx-a11y/iframe-has-title */
+						/* eslint-disable jsx-a11y/iframe-has-title */
 						<iframe
 							ref={ this.iframeRef }
 							/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
@@ -571,6 +571,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 								this.onIframeLoaded( iframeUrl );
 							} }
 						/>
+						/* eslint-enable jsx-a11y/iframe-has-title */
 					) }
 				</div>
 				<MediaLibrarySelectedData siteId={ siteId }>
