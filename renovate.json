@@ -9,7 +9,12 @@
 		{
 			"extends": "monorepo:wordpress",
 			"separateMajorMinor": false,
-			"prPriority": 2
+			"prPriority": 2,
+			"assignees": [
+				"@Automattic/cylon",
+				"@Automattic/ganon",
+				"@Automattic/luna",
+			],
 		},
 		{
 			"extends": "monorepo:babel",
