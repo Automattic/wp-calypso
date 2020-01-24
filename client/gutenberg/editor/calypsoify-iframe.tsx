@@ -289,7 +289,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		if ( EditorActions.GetGutenboardingStatus === action ) {
 			// Some logic to determine if we want the launch button
 			// Gutenboarding context + unpublished site?
-			const isGutenboarding = true;
+			const isGutenboarding = config.isEnabled( 'gutenboarding' );
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
 				frankenflowUrl: `${ window.location.origin }/start/frankenflow`,
