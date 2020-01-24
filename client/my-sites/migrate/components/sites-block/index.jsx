@@ -19,8 +19,7 @@ export default class SitesBlock extends Component {
 	state = {};
 
 	renderFauxSiteSelector() {
-		const { onUrlChange, url } = this.props;
-		const { error } = this.state;
+		const { onUrlChange, url, error } = this.props;
 		const isError = !! error;
 
 		return (
@@ -43,6 +42,7 @@ export default class SitesBlock extends Component {
 								id="sites-block__faux-site-selector-url-input"
 								name="sites-block__faux-site-selector-url-input"
 							/>
+							{ error !== '' && <FormInputValidation isError text={ error } /> }
 						</div>
 					</div>
 				</div>
@@ -97,4 +97,5 @@ SitesBlock.propTypes = {
 	sourceSite: PropTypes.object,
 	loadingSourceSite: PropTypes.bool,
 	targetSite: PropTypes.object.isRequired,
+	error: PropTypes.string,
 };
