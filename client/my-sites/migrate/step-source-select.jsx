@@ -12,6 +12,8 @@ import page from 'page';
  */
 import CardHeading from 'components/card-heading';
 import FormTextInput from 'components/forms/form-text-input';
+import FormLabel from 'components/forms/form-label';
+import FormInputValidation from 'components/forms/form-input-validation';
 import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
 import Site from 'blocks/site';
@@ -93,9 +95,24 @@ class StepSourceSelect extends Component {
 				<div className="migrate__faux-site-selector-content">
 					<div className="migrate__faux-site-selector-icon"></div>
 					<div className="migrate__faux-site-selector-info">
-						<div className="migrate__faux-site-selector-label">Import from...</div>
+						<FormLabel
+							className="migrate__faux-site-selector-label"
+							htmlFor="source_site_url"
+						>
+							Import from...
+						</FormLabel>
 						<div className="migrate__faux-site-selector-url">
-							<FormTextInput isError={ isError } onChange={ onUrlChange } value={ url } />
+							<FormTextInput
+								isError={ isError }
+								onChange={ onUrlChange }
+								value={ url }
+								placeholder="example.com"
+								id="source_site_url"
+								name="source_site_url"
+							/>
+							{ error && (
+								<FormInputValidation isError text={ error } />
+							) }
 						</div>
 					</div>
 				</div>
