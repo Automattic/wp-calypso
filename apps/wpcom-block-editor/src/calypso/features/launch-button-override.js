@@ -34,7 +34,7 @@ domReady( () => {
 
 function updateButtonBar( settingsBar ) {
 	const hideClass = 'launch-button-override__hidden';
-	if ( calypsoifyGutenberg.hasLaunchButton ) {
+	if ( calypsoifyGutenberg.isGutenboarding ) {
 		// Hide 'switch to draft' by '.editor-post-switch-to-draft'.
 		const switchToDraft = settingsBar.querySelector( '.editor-post-switch-to-draft' );
 		switchToDraft && switchToDraft.classList.add( hideClass );
@@ -61,8 +61,12 @@ function updateButtonBar( settingsBar ) {
 		const launchButton = document.createElement( 'button' );
 		launchButton.className = 'launch-button-override__launch-button components-button is-primary';
 		launchButton.innerText = __( 'Launch' );
-		// TODO - Launch goto /frankenflow
-		settingsBar.prepend( launchButton );
+		// Launch goto /start/frankenflow
+		const buttonWrapper = document.createElement( 'a' );
+		buttonWrapper.href = calypsoifyGutenberg.frankenflowUrl;
+
+		buttonWrapper.append( launchButton );
+		settingsBar.prepend( buttonWrapper );
 		settingsBar.prepend( publish );
 	}
 }

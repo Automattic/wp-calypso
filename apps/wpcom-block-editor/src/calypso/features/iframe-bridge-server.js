@@ -22,6 +22,7 @@ import { inIframe, isEditorReadyWithBlocks, sendMessage } from '../../utils';
 const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
 
 /**
+ *
  * Monitors Gutenberg for when an editor is opened with content originally authored in the classic editor.
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
@@ -680,19 +681,20 @@ function getCloseButtonUrl( calypsoPort ) {
 }
 
 // TODO - JSDOC this when you know what you are actually needing to do...
-function getLaunchButton( calypsoPort ) {
+function getGutenboardingStatus( calypsoPort ) {
 	const { port1, port2 } = new MessageChannel();
 	calypsoPort.postMessage(
 		{
-			action: 'getLaunchButton',
+			action: 'getGutenboardingStatus',
 			payload: {},
 		},
 		[ port2 ]
 	);
 	port1.onmessage = ( { data } ) => {
-		const { hasLaunchButtonOverride } = data;
-		calypsoifyGutenberg.hasLaunchButton = hasLaunchButtonOverride;
-		window.wp.hooks.doAction( 'updateLaunchButton', hasLaunchButtonOverride );
+		const { isGutenboarding, frankenflowUrl } = data;
+		calypsoifyGutenberg.isGutenboarding = isGutenboarding;
+		calypsoifyGutenberg.frankenflowUrl = frankenflowUrl;
+		window.wp.hooks.doAction( 'updateLaunchButton', isGutenboarding );
 	};
 }
 
@@ -802,7 +804,7 @@ function initPort( message ) {
 
 		getCloseButtonUrl( calypsoPort );
 
-		getLaunchButton( calypsoPort );
+		getGutenboardingStatus( calypsoPort );
 
 		handleUncaughtErrors( calypsoPort );
 	}
