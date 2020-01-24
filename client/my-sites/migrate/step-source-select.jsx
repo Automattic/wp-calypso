@@ -73,12 +73,12 @@ class StepSourceSelect extends Component {
 						case 'rest_invalid_param':
 							return this.setState( {
 								error: "We couldn't reach that site. Please check the URL and try again.",
-								loading: false,
+								isLoading: false,
 							} );
 						default:
 							return this.setState( {
 								error: 'Something went wrong. Please check the URL and try again.',
-								loading: false,
+								isLoading: false,
 							} );
 					}
 				} );
@@ -95,10 +95,7 @@ class StepSourceSelect extends Component {
 				<div className="migrate__faux-site-selector-content">
 					<div className="migrate__faux-site-selector-icon"></div>
 					<div className="migrate__faux-site-selector-info">
-						<FormLabel
-							className="migrate__faux-site-selector-label"
-							htmlFor="source_site_url"
-						>
+						<FormLabel className="migrate__faux-site-selector-label" htmlFor="source_site_url">
 							Import from...
 						</FormLabel>
 						<div className="migrate__faux-site-selector-url">
@@ -110,9 +107,7 @@ class StepSourceSelect extends Component {
 								id="source_site_url"
 								name="source_site_url"
 							/>
-							{ error && (
-								<FormInputValidation isError text={ error } />
-							) }
+							{ error && <FormInputValidation isError text={ error } /> }
 						</div>
 					</div>
 				</div>
