@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import wpcomProxyRequest from 'wpcom-proxy-request';
+import wpcomProxyRequest, { reloadProxy } from 'wpcom-proxy-request';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'data-stores:utils:wpcom-wrapper' );
@@ -28,6 +28,14 @@ export function wpcomRequest< T >( params: WpcomRequestParams ): Promise< T > {
 			err ? reject( err ) : resolve( res );
 		} );
 	} );
+}
+/*
+ * Reloading the proxy ensures that the proxy iframe has set the correct API cookie.
+ * This is particularly useful for making authenticated API requests
+ * *after* the user has logged in or signed up without the need for a hard browser refresh.
+ */
+export function reloadWpcomProxy(): void {
+	reloadProxy();
 }
 
 wpcomProxyRequest( { metaAPI: { accessAllUsersBlogs: true } }, ( error: Error ) => {
