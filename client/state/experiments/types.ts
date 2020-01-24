@@ -1,3 +1,8 @@
+/**
+ * Internal Dependencies
+ */
+import { EXPERIMENT_ASSIGN } from 'state/action-types';
+
 export type ExperimentResponse = {
 	variations: object;
 	nextRefresh: number;
@@ -11,5 +16,5 @@ export type ExperimentState = {
 };
 
 export type ExperimentAssign = ExperimentResponse & {
-	type: string;
+	type: typeof EXPERIMENT_ASSIGN;
 };

@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { Action } from 'redux';
+import { Action, Reducer } from 'redux';
 
 /**
  * Internal Dependencies
@@ -19,6 +19,8 @@ export function getAnonIdFromCookie(): string | null {
 	return id == null || id === '' ? null : id;
 }
 
+type HandledActions = Action< 'EXPERIMENT_FETCH' > | Action< '@@INIT' > | ExperimentAssign;
+
 const appStartedAt = Date.now();
 
 const resetState: ( anonId: string | null ) => ExperimentState = anonId => ( {
@@ -28,7 +30,10 @@ const resetState: ( anonId: string | null ) => ExperimentState = anonId => ( {
 	variations: null,
 } );
 
-export default function reducer( state: ExperimentState = resetState( null ), action: Action ) {
+const reducer: Reducer< ExperimentState, HandledActions > = (
+	state: ExperimentState = resetState( null ),
+	action: HandledActions
+): ExperimentState => {
 	switch ( action.type ) {
 		case '@@INIT':
 			return {
@@ -57,4 +62,6 @@ export default function reducer( state: ExperimentState = resetState( null ), ac
 		default:
 			return state;
 	}
-}
+};
+
+export default reducer;
