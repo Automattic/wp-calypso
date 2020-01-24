@@ -1,5 +1,2 @@
-module.exports = {
-	rules: {
-		'import/no-extraneous-dependencies': [ 'error', { packageDir: __dirname } ],
-	},
-};
+const { generateForClient } = require( '../generate-eslintrc-for-packages' );
+module.exports = generateForClient( __dirname );

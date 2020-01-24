@@ -233,6 +233,7 @@
 		"prettier": "npm:wp-prettier@1.19.1",
 		"react-docgen-typescript-loader": "3.6.0",
 		"react-test-renderer": "16.12.0",
+		"react-dom": "16.12.0",
 		"readline-sync": "1.4.10",
 		"replace": "1.1.1",
 		"rimraf": "3.0.0",
