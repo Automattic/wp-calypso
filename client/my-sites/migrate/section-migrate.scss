@@ -25,6 +25,10 @@
 	}
 }
 
+.is-section-migrate .card > .card-heading {
+	margin: 0 0 4px;
+}
+
 .migrate__faux-site-selector {
 	box-sizing: border-box;
 	display: flex;
@@ -37,17 +41,15 @@
 .migrate__faux-site-selector-content {
 	display: flex;
 	justify-content: space-between;
-	overflow: hidden;
-	padding: 0 16px;
 	position: relative;
 	width: 100%;
 }
 
 .migrate__faux-site-selector-icon {
-	height: 32px;
-	width: 32px;
+	height: 40px;
+	width: 40px;
 	line-height: 32px;
-	border: 1px dashed var( --color-text-subtle );
+	border: 1px dashed var( --color-primary-light );
 	position: relative;
 	overflow: hidden;
 	align-self: flex-start;
@@ -86,29 +88,9 @@
 	box-shadow: 0 0 0 1px var( --color-border-subtle );
 	background-color: var( --color-surface );
 
-	& > * {
-		flex-grow: 1;
-		flex-shrink: 0;
-	}
-
 	.migrate__sites-arrow-wrapper {
-		width: 1px;
-		border-left: 1px solid var( --color-border-subtle );
-		overflow: visible;
-		flex-grow:0;
-		flex-shrink: 0;
-		position: relative;
-
 		margin: 0 16px;
-
-		.migrate__sites-arrow {
-			position: absolute;
-			left: -16px;
-			background: white;
-			padding: 5px;
-			top: calc( 50% - 16px );
-			color: var( --color-text-subtle );
-		}
+		padding-top: 8px;
 	}
 
 	.migrate__sites-labels-container {
@@ -122,6 +104,22 @@
 
 	.site__content {
 		padding: 0; /* Reduce spacing below the site component, so we can put labels under it */
+	}
+}
+
+.migrate__sites .site {
+	.site-icon {
+		height: 40px;
+		width: 40px;
+		line-height: 40px;
+	}
+
+	.site__title {
+		font-size: 16px;
+	}
+
+	.site__domain {
+		font-size: 12px;
 	}
 }
 
