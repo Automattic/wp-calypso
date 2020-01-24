@@ -291,7 +291,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			// Gutenboarding context + unpublished site?
 			const hasLaunchButtonOverride = true;
 			ports[ 0 ].postMessage( {
-				hasLaunchButtonOverride,
+				hasLaunchButtonOverride: hasLaunchButtonOverride,
 			} );
 		}
 

@@ -692,8 +692,7 @@ function getLaunchButton( calypsoPort ) {
 	port1.onmessage = ( { data } ) => {
 		const { hasLaunchButtonOverride } = data;
 		calypsoifyGutenberg.hasLaunchButton = hasLaunchButtonOverride;
-
-		window.wp.hooks.doAction( 'updateLaunchButton', data );
+		window.wp.hooks.doAction( 'updateLaunchButton', hasLaunchButtonOverride );
 	};
 }
 

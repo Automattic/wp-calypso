@@ -1,3 +1,5 @@
+/* global calypsoifyGutenberg */
+
 /**
  * External dependencies
  */
@@ -10,9 +12,13 @@ import { useState } from '@wordpress/element';
 /* eslint-disable import/no-extraneous-dependencies */
 
 function LaunchButtonOverride( { defaultLabel, defaultUrl } ) {
-	const [ useLaunchButton, setUseLaunchButton ] = useState( false );
-	window.wp.hooks.addAction( 'updateLaunchButton', 'a8c-gutenboarding' /* ? */, data => {
-		setUseLaunchButton( data.hasLaunchButtonOverride );
+	const [ useLaunchButton, setUseLaunchButton ] = useState(
+		!! calypsoifyGutenberg.hasLaunchButton
+	);
+
+	window.wp.hooks.addAction( 'updateLaunchButton', 'a8c-gutenboarding', data => {
+		// console.log( "Hooked! - launch button data: " + data )
+		setUseLaunchButton( data );
 	} );
 
 	const url = useLaunchButton ? '/start/frankenflow' : defaultUrl;
@@ -28,7 +34,7 @@ function LaunchButtonOverride( { defaultLabel, defaultUrl } ) {
 }
 
 domReady( () => {
-	console.log( 'SANITY CHECK - THE DOM IS READY!' );
+	// console.log( 'SANITY CHECK - THE DOM IS READY! 200' );
 	const awaitSettingsBar = setInterval( () => {
 		const settingsBar = document.querySelector( '.edit-post-header__settings' );
 
