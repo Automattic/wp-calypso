@@ -105,7 +105,7 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 				<div className="gutenboarding__header-group">
 					{ hasSelectedDesign && (
 						<Button
-							href="/start/frankenflow"
+							href={ `/start/frankenflow?theme=${ selectedDesign?.slug }&siteTitle=${ siteTitle }` }
 							className="gutenboarding__header-next-button"
 							isPrimary
 							isLarge
