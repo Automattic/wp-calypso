@@ -22,7 +22,7 @@ export const getVariationForUser = ( state: AppState, experiment: string ) =>
  *
  * @param state The application state
  */
-export const isLoading = ( state: AppState ) => get( state, [ 'experiments', 'isLoading' ], true );
+export const isLoading = ( state: AppState ) => get( state, [ 'experiments', 'isLoading' ], false );
 
 /**
  * Gets the anon id for the user, if set
