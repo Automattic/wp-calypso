@@ -635,6 +635,12 @@ function handleLocaleSubdomains( req, res, next ) {
 	next();
 }
 
+const jetpackCloudEnvs = [
+	'jetpack-cloud-development',
+	'jetpack-cloud-stage',
+	'jetpack-cloud-production',
+];
+
 module.exports = function() {
 	const app = express();
 
@@ -644,6 +650,13 @@ module.exports = function() {
 	app.use( cookieParser() );
 	app.use( setupLoggedInContext );
 	app.use( handleLocaleSubdomains );
+
+	if ( jetpackCloudEnvs.includes( process.env.CALYPSO_ENV ) ) {
+		JETPACK_CLOUD_SECTION_DEFINITION.paths.forEach( sectionPath =>
+			handleSectionPath( JETPACK_CLOUD_SECTION_DEFINITION, sectionPath, 'entry-jetpack-cloud' )
+		);
+		return app;
+	}
 
 	// redirect homepage if the Reader is disabled
 	app.get( '/', function( request, response, next ) {
