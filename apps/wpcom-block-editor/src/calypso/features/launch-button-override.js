@@ -22,51 +22,48 @@ domReady( () => {
 		}
 		clearInterval( awaitSettingsBar );
 
-		updateButtonBar( settingsBar );
+		calypsoifyGutenberg.isGutenboarding && updateButtonBar( settingsBar );
 		// Hook fallback incase updateLaunchButton data is set after initial dom render.
 		window.wp.hooks.addAction( 'updateLaunchButton', 'a8c-gutenboarding', isGutenboarding => {
-			if ( isGutenboarding ) {
-				updateButtonBar( settingsBar );
-			}
+			isGutenboarding && updateButtonBar( settingsBar );
 		} );
 	} );
 } );
 
 function updateButtonBar( settingsBar ) {
 	const hideClass = 'launch-button-override__hidden';
-	if ( calypsoifyGutenberg.isGutenboarding ) {
-		// Hide 'switch to draft' by '.editor-post-switch-to-draft'.
-		const switchToDraft = settingsBar.querySelector( '.editor-post-switch-to-draft' );
-		switchToDraft && switchToDraft.classList.add( hideClass );
 
-		// Hide 'preview' by '.editor-post-preview'.
-		// This is not initially added, we may need to wait for it.
-		const awaitPreview = setInterval( () => {
-			const preview = settingsBar.querySelector( '.editor-post-preview' );
-			if ( ! preview ) {
-				return;
-			}
-			clearInterval( awaitPreview );
-			preview.classList.add( 'launch-button-override__hidden' );
-		} );
+	// Hide 'switch to draft' by '.editor-post-switch-to-draft'.
+	const switchToDraft = settingsBar.querySelector( '.editor-post-switch-to-draft' );
+	switchToDraft && switchToDraft.classList.add( hideClass );
 
-		// 'Update'/'Publish' primary button to become 'Save' tertiary button.
-		const publish = settingsBar.querySelector( '.editor-post-publish-button' );
-		if ( publish ) {
-			publish.classList.remove( 'is-primary' );
-			publish.classList.add( 'is-tertiary' );
-			publish.innerText = __( 'Save' );
+	// Hide 'preview' by '.editor-post-preview'.
+	// This is not initially added, we may need to wait for it.
+	const awaitPreview = setInterval( () => {
+		const preview = settingsBar.querySelector( '.editor-post-preview' );
+		if ( ! preview ) {
+			return;
 		}
-		// 'Launch' button to replace update button.
-		const launchButton = document.createElement( 'button' );
-		launchButton.className = 'launch-button-override__launch-button components-button is-primary';
-		launchButton.innerText = __( 'Launch' );
-		// Launch to lead into frankenflow.
-		const buttonWrapper = document.createElement( 'a' );
-		buttonWrapper.href = calypsoifyGutenberg.frankenflowUrl;
-		buttonWrapper.append( launchButton );
-		// Put 'Launch' and 'Save' back on bar in desired order.
-		settingsBar.prepend( buttonWrapper );
-		settingsBar.prepend( publish );
+		clearInterval( awaitPreview );
+		preview.classList.add( 'launch-button-override__hidden' );
+	} );
+
+	// 'Update'/'Publish' primary button to become 'Save' tertiary button.
+	const publish = settingsBar.querySelector( '.editor-post-publish-button' );
+	if ( publish ) {
+		publish.classList.remove( 'is-primary' );
+		publish.classList.add( 'is-tertiary' );
+		publish.innerText = __( 'Save' );
 	}
+	// 'Launch' button to replace update button.
+	const launchButton = document.createElement( 'button' );
+	launchButton.className = 'launch-button-override__launch-button components-button is-primary';
+	launchButton.innerText = __( 'Launch' );
+	// Launch to lead into frankenflow.
+	const buttonWrapper = document.createElement( 'a' );
+	buttonWrapper.href = calypsoifyGutenberg.frankenflowUrl;
+	buttonWrapper.append( launchButton );
+	// Put 'Launch' and 'Save' back on bar in desired order.
+	settingsBar.prepend( buttonWrapper );
+	settingsBar.prepend( publish );
 }
