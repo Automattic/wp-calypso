@@ -274,7 +274,7 @@ class StatsSite extends Component {
 		return (
 			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-404.svg"
-				title={ translate( 'Looking for Stats?' ) }
+				title={ translate( 'Looking for stats?' ) }
 				line={ translate(
 					'Enable Site Stats below or visit {{a}}Traffic > Site Stats{{/a}} for more options',
 					{
