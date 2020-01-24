@@ -269,8 +269,13 @@ class StatsSite extends Component {
 		);
 	}
 
+	enableStatsModule = () => {
+		const { siteId, path } = this.props;
+		this.props.enableJetpackStatsModule( siteId, path );
+	};
+
 	renderEnableStatsModule() {
-		const { slug, siteId, path } = this.props;
+		const { slug } = this.props;
 		return (
 			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-404.svg"
@@ -284,7 +289,7 @@ class StatsSite extends Component {
 					}
 				) }
 				action={ translate( 'Enable Site Stats' ) }
-				actionCallback={ () => this.props.enableJetpackStatsModule( siteId, path ) }
+				actionCallback={ this.enableStatsModule }
 			/>
 		);
 	}
