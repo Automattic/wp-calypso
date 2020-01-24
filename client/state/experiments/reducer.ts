@@ -6,7 +6,7 @@ import { Action } from 'redux';
 /**
  * Internal Dependencies
  */
-import { EXPERIMENT_FETCH, EXPERIMENT_ASSIGN, CURRENT_USER_RECEIVE } from 'state/action-types';
+import { EXPERIMENT_FETCH, EXPERIMENT_ASSIGN } from 'state/action-types';
 import { ExperimentState, ExperimentAssign } from 'state/experiments/types';
 import { tracksAnonymousUserId } from 'lib/analytics/ad-tracking';
 
@@ -28,41 +28,31 @@ const resetState: ( anonId: string | null ) => ExperimentState = anonId => ( {
 	variations: null,
 } );
 
-export default function reducer( state: ExperimentState = resetState( null ), action: Action ) {
+export default function reducer(
+	state: ExperimentState = resetState( getAnonIdFromCookie() ),
+	action: Action
+) {
 	switch ( action.type ) {
-		/**
-		 * Store the anon id when we first load the application
-		 */
-		case '@@INIT':
-			state.anonId = getAnonIdFromCookie();
-			break;
-
 		/**
 		 * Store the user's assignment from the API
 		 */
 		case EXPERIMENT_ASSIGN:
-			state = {
+			return {
 				...state,
 				isLoading: false,
 				variations: ( action as ExperimentAssign ).variations,
 				nextRefresh: ( action as ExperimentAssign ).nextRefresh,
 			};
-			break;
 
 		/**
 		 * Start retrieving the user's assignment from the API
 		 */
 		case EXPERIMENT_FETCH:
-			state.isLoading = true;
-			break;
-
-		/**
-		 * When the user changes, we need to redetermine assigned variations
-		 */
-		case CURRENT_USER_RECEIVE:
-			state = resetState( state.anonId );
-			break;
+			return {
+				...state,
+				isLoading: true,
+			};
+		default:
+			return state;
 	}
-
-	return state;
 }
