@@ -151,7 +151,10 @@ function TaxFields( { section, taxInfo, setters, CountrySelectMenu, countriesLis
 TaxFields.propTypes = {
 	section: PropTypes.string.isRequired,
 	taxInfo: PropTypes.object.isRequired,
-	setters: PropTypes.object.isRequired,
+	setters: PropTypes.shape( {
+		updatePostalCode: PropTypes.func.isRequired,
+		updateCountryCode: PropTypes.func.isRequired,
+	} ).isRequired,
 };
 
 function isZipOrPostal() {
