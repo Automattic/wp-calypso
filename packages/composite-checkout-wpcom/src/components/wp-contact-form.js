@@ -113,7 +113,7 @@ function VatIdField() {
 function TaxFields( { section, taxInfo, setters, CountrySelectMenu, countriesList } ) {
 	const translate = useTranslate();
 	const { postalCode, countryCode } = taxInfo;
-	const { updatePostalCode, updateCountryCode } = setters;
+	const { updatePostalCode, updateCountryCode, applyDomainContactValidationResults } = setters;
 
 	const isZip = isZipOrPostal() === 'zip';
 	return (
@@ -124,7 +124,10 @@ function TaxFields( { section, taxInfo, setters, CountrySelectMenu, countriesLis
 					type="text"
 					label={ isZip ? translate( 'Zip code' ) : translate( 'Postal code' ) }
 					value={ postalCode.value }
-					onChange={ updatePostalCode }
+					onChange={ value => {
+						updatePostalCode( value );
+						applyDomainContactValidationResults( { postalCode: value.length > 0 ? [] : [ '' ] } );
+					} }
 					autoComplete={ section + ' postal-code' }
 					isError={ postalCode.isTouched && ! isValid( postalCode ) }
 					errorMessage={ translate( 'This field is required.' ) }
@@ -136,6 +139,9 @@ function TaxFields( { section, taxInfo, setters, CountrySelectMenu, countriesLis
 					translate={ translate }
 					onChange={ event => {
 						updateCountryCode( event.target.value );
+						applyDomainContactValidationResults( {
+							countryCode: event.target.value.length > 0 ? [] : [ '' ],
+						} );
 					} }
 					isError={ countryCode.isTouched && ! isValid( countryCode ) }
 					isDisabled={ false } // TODO
