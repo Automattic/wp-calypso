@@ -11,7 +11,7 @@ import {
 	EDITOR_AUTOSAVE_SUCCESS,
 	EDITOR_AUTOSAVE_FAILURE,
 	EDITOR_AUTOSAVE_RESET,
-	EDITOR_LOADED,
+	EDITOR_IFRAME_LOADED,
 	EDITOR_RESET,
 	EDITOR_START,
 	EDITOR_STOP,
@@ -64,10 +64,10 @@ export function isLoading( state = false, action ) {
 	return state;
 }
 
-export function isLoaded( state = false, action ) {
+export function isIframeLoaded( state = false, action ) {
 	switch ( action.type ) {
-		case EDITOR_LOADED:
-			return get( action, 'isLoaded', false );
+		case EDITOR_IFRAME_LOADED:
+			return get( action, 'isIframeLoaded', false );
 	}
 
 	return state;
@@ -103,7 +103,7 @@ export default combineReducers( {
 	postId,
 	loadingError,
 	isLoading,
-	isLoaded,
+	isIframeLoaded,
 	isAutosaving,
 	autosavePreviewUrl,
 	imageEditor,

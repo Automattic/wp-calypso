@@ -151,8 +151,8 @@ export function isEditorLoading( state ) {
 	return state.ui.editor.isLoading;
 }
 
-export function isEditorLoaded( state ) {
-	return state.ui.editor.isLoaded;
+export function isEditorIframeLoaded( state ) {
+	return state.ui.editor.isIframeLoaded;
 }
 
 export function getEditorPublishButtonStatus( state ) {

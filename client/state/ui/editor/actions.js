@@ -14,7 +14,7 @@ import {
 	EDITOR_AUTOSAVE_RESET,
 	EDITOR_AUTOSAVE_SUCCESS,
 	EDITOR_AUTOSAVE_FAILURE,
-	EDITOR_LOADED,
+	EDITOR_IFRAME_LOADED,
 	EDITOR_LOADING_ERROR_RESET,
 	EDITOR_PASTE_EVENT,
 	EDITOR_RESET,
@@ -156,9 +156,9 @@ export function saveConfirmationSidebarPreference( siteId, isEnabled = true ) {
 	};
 }
 
-export const editorLoaded = () => ( {
-	type: EDITOR_LOADED,
-	isLoaded: true,
+export const setEditorIframeLoaded = ( loaded = true ) => ( {
+	type: EDITOR_IFRAME_LOADED,
+	isIframeLoaded: loaded,
 } );
 
 export const editorAutosaveReset = () => ( {
