@@ -17,7 +17,7 @@ import userUtilities from 'lib/user/utils';
 import { getStatsPathForTab } from 'lib/route';
 import { getReduxStore } from 'lib/redux-bridge';
 import hasUnseenNotifications from 'state/selectors/has-unseen-notifications';
-import { isEditorLoaded } from 'state/ui/editor/selectors';
+import { isEditorIframeLoaded } from 'state/ui/editor/selectors';
 import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import { toggleNotificationsPanel, navigate } from 'state/ui/actions';
 
@@ -144,20 +144,21 @@ const Desktop = {
 
 	editorLoadedStatus: function() {
 		const sendLoadedEvt = () => {
-			debug( 'Gutenberg iframe loaded' );
+			debug( 'Editor iframe loaded' );
 
-			const evt = new window.Event( 'editor-loaded' );
+			const evt = new window.Event( 'editor-iframe-loaded' );
 			window.dispatchEvent( evt );
 		};
 
-		let previousLoaded = isEditorLoaded( this.store.getState() );
+		let previousLoaded = isEditorIframeLoaded( this.store.getState() );
 
 		if ( previousLoaded ) {
 			sendLoadedEvt();
 		}
 
 		this.store.subscribe( () => {
-			const loaded = isEditorLoaded( this.store.getState() );
+			const state = this.store.getState();
+			const loaded = isEditorIframeLoaded( state );
 
 			if ( loaded !== previousLoaded ) {
 				if ( loaded ) {

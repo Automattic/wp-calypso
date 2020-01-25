@@ -35,6 +35,7 @@ import {
 	saveConfirmationSidebarPreference,
 	editorEditRawContent,
 	editorResetRawContent,
+	setEditorIframeLoaded,
 } from 'state/ui/editor/actions';
 import { closeEditorSidebar, openEditorSidebar } from 'state/ui/editor/sidebar/actions';
 import {
@@ -46,7 +47,6 @@ import {
 	isEditorSaveBlocked,
 	getEditorPostPreviewUrl,
 	getEditorLoadingError,
-	isEditorLoaded,
 } from 'state/ui/editor/selectors';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import {
@@ -120,6 +120,7 @@ export class PostEditor extends React.Component {
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		editorModePreference: PropTypes.string,
 		editorSidebarPreference: PropTypes.string,
+		setEditorIframeLoaded: PropTypes.func,
 		markChanged: PropTypes.func.isRequired,
 		markSaved: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -190,6 +191,7 @@ export class PostEditor extends React.Component {
 		this.debouncedSaveRawContent.cancel();
 		this.debouncedCopySelectedText.cancel();
 		this._previewWindow = null;
+		this.props.setEditorIframeLoaded( false );
 		clearTimeout( this._switchEditorTimeout );
 	}
 
@@ -474,6 +476,8 @@ export class PostEditor extends React.Component {
 
 	onEditorInitialized = () => {
 		this.setState( { isEditorInitialized: true } );
+		// Notify external listeners that the iframe has loaded
+		this.props.setEditorIframeLoaded();
 	};
 
 	onEditorTitleChange = () => {
@@ -1180,7 +1184,6 @@ const enhance = flow(
 				previewUrl: getEditorPostPreviewUrl( state ),
 				isAutosaving: isEditorAutosaving( state ),
 				isLoading: isEditorLoading( state ),
-				isLoaded: isEditorLoaded( state ),
 				loadingError: getEditorLoadingError( state ),
 			};
 		},
@@ -1200,6 +1203,7 @@ const enhance = flow(
 			openEditorSidebar,
 			editorEditRawContent,
 			editorResetRawContent,
+			setEditorIframeLoaded,
 			pauseGuidedTour,
 		}
 	)

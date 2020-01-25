@@ -34,7 +34,7 @@ import getEditorCloseConfig from 'state/selectors/get-editor-close-config';
 import wpcom from 'lib/wp';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
-import { editorLoaded, startEditingPost } from 'state/ui/editor/actions';
+import { setEditorIframeLoaded, startEditingPost } from 'state/ui/editor/actions';
 import { Placeholder } from './placeholder';
 import WebPreview from 'components/web-preview';
 import { trashPost } from 'state/posts/actions';
@@ -161,7 +161,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			this.pressThis();
 
 			// Notify external listeners that the iframe has loaded
-			this.props.editorLoaded();
+			this.props.setEditorIframeLoaded();
 
 			return;
 		}
@@ -246,6 +246,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 		if ( EditorActions.CloseEditor === action || EditorActions.GoToAllPosts === action ) {
 			const { unsavedChanges = false } = payload;
+			this.props.setEditorIframeLoaded( false );
 			this.navigate( this.props.closeUrl, unsavedChanges );
 		}
 
@@ -666,7 +667,7 @@ const mapDispatchToProps = {
 	setRoute,
 	navigate,
 	openPostRevisionsDialog,
-	editorLoaded,
+	setEditorIframeLoaded,
 	startEditingPost,
 	trashPost,
 	updateSiteFrontPage,
