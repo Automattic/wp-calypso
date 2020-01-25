@@ -3857,30 +3857,6 @@ describe( 'selectors', () => {
 			},
 		} );
 
-		test( 'should return true for a simple site created after 2019-08-06', () => {
-			expect( canCurrentUserUseCustomerHome( createState( { created_at: '2020-01-01' } ) ) ).toBe(
-				true
-			);
-		} );
-
-		test( 'should return false for a simple site created before 2019-08-06', () => {
-			expect( canCurrentUserUseCustomerHome( createState( { created_at: '2019-08-01' } ) ) ).toBe(
-				false
-			);
-		} );
-
-		test( 'should return false for a simple site created on the 2019-08-06', () => {
-			expect( canCurrentUserUseCustomerHome( createState( { created_at: '2019-08-06' } ) ) ).toBe(
-				true
-			);
-		} );
-
-		test( "should return false for site with a zero'd out created_at option", () => {
-			expect(
-				canCurrentUserUseCustomerHome( createState( { created_at: '0000-00-00T00:00:00+00:00' } ) )
-			).toBe( false );
-		} );
-
 		test( "should return false if user can't manage site options", () => {
 			expect(
 				canCurrentUserUseCustomerHome(
