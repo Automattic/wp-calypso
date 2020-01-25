@@ -15,15 +15,20 @@ export function isValid( arg: ManagedValue ): boolean {
 	return arg.errors?.length <= 0;
 }
 
-function initialManagedValue( value: string ): ManagedValue {
+function getInitialManagedValue( initialProperties?: {
+	value?: string;
+	isTouched?: boolean;
+	errors?: Array< string >;
+} ): ManagedValue {
 	return {
-		value,
+		value: '',
 		isTouched: false,
 		// This initial error is to prevent any field from being empty;
 		// validation will change this value when the field is touched. If
 		// the field is valid when it is empty, it should be initialized
 		// with an empty array in `errors` instead.
 		errors: [ '' ],
+		...initialProperties,
 	};
 }
 
@@ -59,21 +64,21 @@ export type ManagedContactDetails = {
 };
 
 export const defaultManagedContactDetails: ManagedContactDetails = {
-	firstName: initialManagedValue( '' ),
-	lastName: initialManagedValue( '' ),
-	organization: initialManagedValue( '' ),
-	email: initialManagedValue( '' ),
-	alternateEmail: initialManagedValue( '' ),
-	phone: initialManagedValue( '' ),
-	phoneNumberCountry: initialManagedValue( '' ),
-	address1: initialManagedValue( '' ),
-	address2: initialManagedValue( '' ),
-	city: initialManagedValue( '' ),
-	state: initialManagedValue( '' ),
-	postalCode: initialManagedValue( '' ),
-	countryCode: initialManagedValue( '' ),
-	fax: initialManagedValue( '' ),
-	vatId: initialManagedValue( '' ),
+	firstName: getInitialManagedValue(),
+	lastName: getInitialManagedValue(),
+	organization: getInitialManagedValue(),
+	email: getInitialManagedValue(),
+	alternateEmail: getInitialManagedValue(),
+	phone: getInitialManagedValue(),
+	phoneNumberCountry: getInitialManagedValue(),
+	address1: getInitialManagedValue(),
+	address2: getInitialManagedValue(),
+	city: getInitialManagedValue(),
+	state: getInitialManagedValue(),
+	postalCode: getInitialManagedValue(),
+	countryCode: getInitialManagedValue(),
+	fax: getInitialManagedValue(),
+	vatId: getInitialManagedValue(),
 };
 
 export function isCompleteAndValid( details: ManagedContactDetails ): boolean {
