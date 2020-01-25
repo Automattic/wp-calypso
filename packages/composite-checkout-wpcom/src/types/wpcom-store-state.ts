@@ -5,32 +5,33 @@
  * data on each field: specifically whether it has been edited by the user
  * or passed validation. We wrap this extra data into an object type.
  */
-interface ManagedValue< T > {
-	value: T;
+interface ManagedValue {
+	value: string;
 	isTouched: boolean; // Has value been edited by the user?
 	errors: string[]; // Has value passed validation?
 }
 
-export function isValid< T >( arg: ManagedValue< T > ): boolean {
+export function isValid( arg: ManagedValue ): boolean {
 	return arg.errors?.length <= 0;
 }
 
-function initialManagedValue< T >( value: T ): ManagedValue< T > {
+function initialManagedValue( value: string ): ManagedValue {
 	return {
-		value: value,
+		value,
 		isTouched: false,
+		// This initial error is to prevent any field from being empty;
+		// validation will change this value when the field is touched. If
+		// the field is valid when it is empty, it should be initialized
+		// with an empty array in `errors` instead.
 		errors: [ '' ],
 	};
 }
 
-function touchIfDifferent< T >( newValue: T, oldData: ManagedValue< T > ): ManagedValue< T > {
+function touchIfDifferent( newValue: string, oldData: ManagedValue ): ManagedValue {
 	return newValue === oldData.value ? oldData : { ...oldData, value: newValue, isTouched: true };
 }
 
-function setErrors< T >(
-	errors: string[] | undefined,
-	oldData: ManagedValue< T >
-): ManagedValue< T > {
+function setErrors( errors: string[] | undefined, oldData: ManagedValue ): ManagedValue {
 	return undefined === errors ? { ...oldData, errors: [] } : { ...oldData, errors };
 }
 
@@ -40,21 +41,21 @@ function setErrors< T >(
  * Each value keeps track of whether it has been edited and validated.
  */
 export type ManagedContactDetails = {
-	firstName: ManagedValue< string >;
-	lastName: ManagedValue< string >;
-	organization: ManagedValue< string >;
-	email: ManagedValue< string >;
-	alternateEmail: ManagedValue< string >;
-	phone: ManagedValue< string >;
-	phoneNumberCountry: ManagedValue< string >;
-	address1: ManagedValue< string >;
-	address2: ManagedValue< string >;
-	city: ManagedValue< string >;
-	state: ManagedValue< string >;
-	postalCode: ManagedValue< string >;
-	countryCode: ManagedValue< string >;
-	fax: ManagedValue< string >;
-	vatId: ManagedValue< string >;
+	firstName: ManagedValue;
+	lastName: ManagedValue;
+	organization: ManagedValue;
+	email: ManagedValue;
+	alternateEmail: ManagedValue;
+	phone: ManagedValue;
+	phoneNumberCountry: ManagedValue;
+	address1: ManagedValue;
+	address2: ManagedValue;
+	city: ManagedValue;
+	state: ManagedValue;
+	postalCode: ManagedValue;
+	countryCode: ManagedValue;
+	fax: ManagedValue;
+	vatId: ManagedValue;
 };
 
 export const defaultManagedContactDetails: ManagedContactDetails = {
@@ -76,8 +77,9 @@ export const defaultManagedContactDetails: ManagedContactDetails = {
 };
 
 export function isCompleteAndValid( details: ManagedContactDetails ): boolean {
-	const values = Object.keys( details ).map( key => details[ key ] );
-	return values.every( isValid ) && values.length > 0;
+	const values = Object.values( details );
+	const result = values.length > 0 && values.every( isValid );
+	return result;
 }
 
 /*
