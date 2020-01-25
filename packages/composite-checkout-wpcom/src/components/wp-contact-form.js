@@ -104,7 +104,7 @@ function VatIdField() {
 			label={ translate( 'VAT identification number' ) }
 			value={ vatId.value }
 			onChange={ updateVatId }
-			isError={ vatId.isTouched && ! vatId.isValid }
+			isError={ vatId.isTouched && ! isValid( vatId ) }
 			errorMessage={ translate( 'This field is required.' ) }
 		/>
 	);
