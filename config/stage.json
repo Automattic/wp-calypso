@@ -38,6 +38,7 @@
 		"happychat": true,
 		"help": true,
 		"help/courses": true,
+		"home/all": false,
 		"ive/me": false,
 		"ive/use-external-defs": false,
 		"ive/use-external-assignment": false,

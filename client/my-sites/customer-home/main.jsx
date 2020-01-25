@@ -57,6 +57,7 @@ import QueryActiveTheme from 'components/data/query-active-theme';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import GoMobileCard from 'my-sites/customer-home/go-mobile-card';
 import StatsCard from './stats-card';
+import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 
 /**
  * Style dependencies
@@ -596,7 +597,7 @@ const connectHome = connect(
 		const createdAt = getSiteOption( state, siteId, 'created_at' );
 
 		return {
-			displayChecklist: !! ( ! isAtomic && hasChecklistData && ! isChecklistComplete ),
+			displayChecklist: isEligibleForDotcomChecklist( state, siteId ),
 			site: getSelectedSite( state ),
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
