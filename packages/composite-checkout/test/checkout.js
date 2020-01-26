@@ -360,12 +360,68 @@ describe( 'Checkout', () => {
 			expect( queryByTextInNode( step, 'Continue' ) ).not.toBeInTheDocument();
 		} );
 
-		it( 'renders the continue button disabled if the step is active and incomplete', () => {
+		it( 'renders the continue button enabled if the step is active and incomplete', () => {
 			const { container } = render(
 				<MyCheckout steps={ [ steps[ 0 ], steps[ 4 ], steps[ 1 ] ] } />
 			);
 			const step = container.querySelector( '.' + steps[ 4 ].className );
-			expect( getByTextInNode( step, 'Continue' ) ).toBeDisabled();
+			expect( getByTextInNode( step, 'Continue' ) ).not.toBeDisabled();
+		} );
+
+		it( 'does not change steps if the continue button is clicked when the step is active and incomplete', () => {
+			const { container, getAllByText } = render(
+				<MyCheckout steps={ [ steps[ 0 ], steps[ 4 ], steps[ 1 ] ] } />
+			);
+			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
+			const firstStep = container.querySelector( '.custom-summary-step-class' );
+			const firstStepContent = firstStep.querySelector( '.checkout-step__content' );
+			expect( firstStepContent ).toHaveStyle( 'display: block' );
+			fireEvent.click( firstStepContinue );
+			expect( firstStepContent ).toHaveStyle( 'display: block' );
+		} );
+
+		it( 'does change steps if the continue button is clicked when the step is active and complete', () => {
+			const { container, getAllByText } = render(
+				<MyCheckout steps={ [ steps[ 0 ], steps[ 4 ], steps[ 1 ] ] } />
+			);
+			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
+			const firstStep = container.querySelector( '.custom-summary-step-class' );
+			const firstStepContent = firstStep.querySelector( '.checkout-step__content' );
+			expect( firstStepContent ).toHaveStyle( 'display: block' );
+			fireEvent.click( firstStepContinue );
+			expect( firstStepContent ).toHaveStyle( 'display: none' );
+		} );
+
+		it.skip( 'does change steps if the continue button is clicked when the step is active and becomes complete after a Promise resolves true', () => {
+			const { container, getAllByText } = render(
+				<MyCheckout steps={ [ steps[ 0 ], steps[ 4 ], steps[ 1 ] ] } />
+			);
+			// TODO: use a step whose isCompleteCallback returns a Promise
+			// that resolves true after a delay
+			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
+			const firstStep = container.querySelector( '.custom-summary-step-class' );
+			const firstStepContent = firstStep.querySelector( '.checkout-step__content' );
+			expect( firstStepContent ).toHaveStyle( 'display: block' );
+			fireEvent.click( firstStepContinue );
+			expect( firstStepContent ).toHaveStyle( 'display: block' );
+			// TODO: wait for Promise
+			expect( firstStepContent ).toHaveStyle( 'display: none' );
+		} );
+
+		it.skip( 'does not change steps if the continue button is clicked when the step is active and becomes complete after a Promise resolves false', () => {
+			const { container, getAllByText } = render(
+				<MyCheckout steps={ [ steps[ 0 ], steps[ 4 ], steps[ 1 ] ] } />
+			);
+			// TODO: use a step whose isCompleteCallback returns a Promise
+			// that resolves true after a delay
+			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
+			const firstStep = container.querySelector( '.custom-summary-step-class' );
+			const firstStepContent = firstStep.querySelector( '.checkout-step__content' );
+			expect( firstStepContent ).toHaveStyle( 'display: block' );
+			fireEvent.click( firstStepContinue );
+			expect( firstStepContent ).toHaveStyle( 'display: block' );
+			// TODO: wait for Promise
+			expect( firstStepContent ).toHaveStyle( 'display: block' );
 		} );
 
 		it( 'renders the continue button enabled if the step is active and complete', () => {
