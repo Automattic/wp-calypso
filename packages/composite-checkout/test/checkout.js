@@ -735,6 +735,7 @@ function createMockSteps() {
 function PossiblyCompleteTitle() {
 	const activeStep = useActiveStep();
 	const isComplete = useIsStepComplete();
+	const isActiveStepComplete = useIsStepComplete( activeStep );
 	return (
 		<div>
 			<span>Custom Step - Possibly Complete Title</span>
@@ -744,7 +745,7 @@ function PossiblyCompleteTitle() {
 			</span>
 			<span>Possibly Complete active step number { activeStep.stepNumber }</span>
 			<span>Possibly Complete active step index { activeStep.stepIndex }</span>
-			<span>Possibly Complete active isComplete { activeStep.isComplete ? 'true' : 'false' }</span>
+			<span>Possibly Complete active isComplete { isActiveStepComplete ? 'true' : 'false' }</span>
 			<span>Possibly Complete isComplete { isComplete ? 'true' : 'false' }</span>
 		</div>
 	);
