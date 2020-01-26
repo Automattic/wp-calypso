@@ -9,10 +9,7 @@ import { combineReducers } from '@wordpress/data';
  */
 import { ActionType, CurrentUser, NewUser, NewUserErrorResponse, UserAction } from './types';
 
-const currentUser: Reducer< CurrentUser | null | undefined, UserAction > = (
-	state = undefined,
-	action
-) => {
+const currentUser: Reducer< CurrentUser | null | undefined, UserAction > = ( state, action ) => {
 	switch ( action.type ) {
 		case ActionType.RECEIVE_CURRENT_USER:
 			return action.currentUser;
@@ -22,7 +19,7 @@ const currentUser: Reducer< CurrentUser | null | undefined, UserAction > = (
 	return state;
 };
 
-const newUserData: Reducer< NewUser | undefined, UserAction > = ( state = undefined, action ) => {
+const newUserData: Reducer< NewUser | undefined, UserAction > = ( state, action ) => {
 	if ( action.type === ActionType.RECEIVE_NEW_USER ) {
 		const { response } = action;
 		return {
@@ -36,10 +33,7 @@ const newUserData: Reducer< NewUser | undefined, UserAction > = ( state = undefi
 	return state;
 };
 
-const newUserError: Reducer< NewUserErrorResponse | undefined, UserAction > = (
-	state = undefined,
-	action
-) => {
+const newUserError: Reducer< NewUserErrorResponse | undefined, UserAction > = ( state, action ) => {
 	switch ( action.type ) {
 		case ActionType.FETCH_NEW_USER:
 			return undefined;
