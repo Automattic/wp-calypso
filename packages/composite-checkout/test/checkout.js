@@ -399,7 +399,11 @@ describe( 'Checkout', () => {
 		} );
 
 		it( 'does change steps if the continue button is clicked when the step is active and becomes complete after a Promise resolves true', () => {
-			const delayPromise = new Promise( () => {} );
+			let res;
+			const delayPromise = new Promise( resolve => {
+				res = resolve;
+			} );
+			delayPromise.resolve = res;
 			const stepWithAsyncIsComplete = {
 				...steps[ 0 ],
 				hasStepNumber: true,
@@ -423,7 +427,11 @@ describe( 'Checkout', () => {
 		} );
 
 		it( 'does not change steps if the continue button is clicked when the step is active and becomes complete after a Promise resolves false', () => {
-			const delayPromise = new Promise( () => {} );
+			let res;
+			const delayPromise = new Promise( resolve => {
+				res = resolve;
+			} );
+			delayPromise.resolve = res;
 			const stepWithAsyncIsComplete = {
 				...steps[ 0 ],
 				hasStepNumber: true,
