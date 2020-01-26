@@ -200,6 +200,14 @@ function CheckoutStepContainer( {
 	const currentStep = useActiveStep();
 	const isActive = currentStep.id === id;
 
+	const onClick = () => {
+		if ( isComplete ) {
+			goToNextStep();
+		}
+
+		// TODO: in onClick, before goToNextStep, check for Promise
+	};
+
 	return (
 		<CheckoutErrorBoundary
 			errorMessage={ sprintf( localize( 'There was a problem with the step "%s".' ), id ) }
@@ -220,10 +228,9 @@ function CheckoutStepContainer( {
 							{ shouldShowNextButton && (
 								<CheckoutNextStepButton
 									value={ localize( 'Continue' ) }
-									onClick={ goToNextStep }
+									onClick={ onClick }
 									ariaLabel={ getNextStepButtonAriaLabel && getNextStepButtonAriaLabel() }
-									buttonState={ ! isComplete ? 'disabled' : 'primary' }
-									disabled={ ! isComplete }
+									buttonState="primary"
 								/>
 							) }
 						</React.Fragment>
