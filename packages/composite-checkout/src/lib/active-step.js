@@ -1,15 +1,31 @@
 /**
  * External dependencies
  */
-import React, { createContext, useContext, useMemo } from 'react';
+import React, { createContext, useCallback, useContext, useMemo } from 'react';
 
 const ActiveStepContext = createContext();
 
-export const ActiveStepProvider = ( { step, steps, children } ) => {
+export const ActiveStepProvider = ( {
+	step,
+	steps,
+	stepCompleteStatus,
+	setStepCompleteStatus,
+	children,
+} ) => {
 	if ( ! step ) {
 		throw new Error( 'ActiveStepProvider requires a step object' );
 	}
-	const value = useMemo( () => ( { step, steps } ), [ step, steps ] );
+	const setStepComplete = useCallback(
+		( id, isComplete ) =>
+			setStepCompleteStatus( stepStatus => ( { ...stepStatus, [ id ]: isComplete } ) ),
+		[ setStepCompleteStatus ]
+	);
+	const value = useMemo( () => ( { step, steps, setStepComplete, stepCompleteStatus } ), [
+		step,
+		steps,
+		setStepComplete,
+		stepCompleteStatus,
+	] );
 	return <ActiveStepContext.Provider value={ value }>{ children }</ActiveStepContext.Provider>;
 };
 
@@ -27,6 +43,19 @@ export const useSteps = () => {
 		throw new Error( 'useSteps can only be used inside an ActiveStepProvider' );
 	}
 	return steps;
+};
+
+export const useStepCompleteStatus = () => {
+	const { stepCompleteStatus } = useContext( ActiveStepContext );
+	return stepCompleteStatus;
+};
+
+export const useSetStepComplete = () => {
+	const { setStepComplete } = useContext( ActiveStepContext );
+	if ( ! setStepComplete ) {
+		throw new Error( 'useSetStepComplete can only be used inside an ActiveStepProvider' );
+	}
+	return setStepComplete;
 };
 
 const RenderedStepContext = createContext();
@@ -55,5 +84,6 @@ const useThisStep = () => {
 
 export const useIsStepComplete = () => {
 	const thisStep = useThisStep();
-	return !! thisStep.isComplete;
+	const stepCompleteStatus = useStepCompleteStatus();
+	return stepCompleteStatus[ thisStep.id ] ?? false;
 };

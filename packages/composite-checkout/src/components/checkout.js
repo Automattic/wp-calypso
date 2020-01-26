@@ -23,7 +23,13 @@ import {
 	useRegistry,
 } from '../lib/registry';
 import CheckoutErrorBoundary from './checkout-error-boundary';
-import { useActiveStep, ActiveStepProvider, RenderedStepProvider } from '../lib/active-step';
+import {
+	useStepCompleteStatus,
+	useSetStepComplete,
+	useActiveStep,
+	ActiveStepProvider,
+	RenderedStepProvider,
+} from '../lib/active-step';
 import { usePaymentMethod } from '../lib/payment-methods';
 import {
 	getDefaultOrderSummaryStep,
@@ -85,11 +91,11 @@ export default function Checkout( { steps, className } ) {
 	useRegisterCheckoutStore();
 	const localize = useLocalize();
 	const [ paymentData ] = usePaymentData();
-	const activePaymentMethod = usePaymentMethod();
 	const { formStatus } = useFormStatus();
+	const [ stepCompleteStatus, setStepCompleteStatus ] = useState( {} );
 
 	// Re-render if any store changes; that way isComplete can rely on any data
-	useRenderOnStoreUpdate();
+	useRenderOnStoreUpdate(); // TODO: remove this
 
 	// stepNumber is the displayed number of the active step, not its index
 	const stepNumber = usePrimarySelect( select => select().getStepNumber() );
@@ -99,10 +105,7 @@ export default function Checkout( { steps, className } ) {
 	validateSteps( steps );
 
 	// Assign step numbers to all steps with numbers
-	const annotatedSteps = getAnnotatedSteps( steps, stepNumber, {
-		paymentData,
-		activePaymentMethod,
-	} );
+	const annotatedSteps = getAnnotatedSteps( steps );
 
 	const activeStep = annotatedSteps.find( step => step.stepNumber === stepNumber );
 	if ( ! activeStep ) {
@@ -116,7 +119,9 @@ export default function Checkout( { steps, className } ) {
 		return index > activeStep.stepIndex && step.hasStepNumber;
 	} );
 	const isThereAnotherNumberedStep = !! nextStep && nextStep.hasStepNumber;
-	const isThereAnIncompleteStep = !! annotatedSteps.find( step => ! step.isComplete );
+	const isThereAnIncompleteStep = !! annotatedSteps.find(
+		step => ! stepCompleteStatus[ step.id ] ?? false
+	);
 
 	if ( formStatus === 'loading' ) {
 		return (
@@ -137,7 +142,12 @@ export default function Checkout( { steps, className } ) {
 				className={ joinClasses( [ className, 'checkout__content' ] ) }
 				isLastStepActive={ isThereAnotherNumberedStep }
 			>
-				<ActiveStepProvider step={ activeStep } steps={ annotatedSteps }>
+				<ActiveStepProvider
+					step={ activeStep }
+					steps={ annotatedSteps }
+					stepCompleteStatus={ stepCompleteStatus }
+					setStepCompleteStatus={ setStepCompleteStatus }
+				>
 					{ annotatedSteps.map( step => (
 						<CheckoutStepContainer
 							{ ...step }
@@ -197,15 +207,34 @@ function CheckoutStepContainer( {
 	isComplete,
 } ) {
 	const localize = useLocalize();
-	const currentStep = useActiveStep();
-	const isActive = currentStep.id === id;
+	const activeStep = useActiveStep();
+	const isActive = activeStep.id === id;
+	const [ paymentData ] = usePaymentData();
+	const activePaymentMethod = usePaymentMethod();
+	const setStepComplete = useSetStepComplete();
 
 	const onClick = () => {
-		if ( isComplete ) {
-			goToNextStep();
-		}
+		const evaluateContinue = result => {
+			if ( result === true ) {
+				debug( 'continuing to next step; step is complete' );
+				// cache isCompleteResult for other functions
+				setStepComplete( id, true );
+				goToNextStep();
+				return;
+			}
+			// cache isCompleteResult for other functions
+			setStepComplete( id, false );
+			debug( 'not continuing to next step; step is not complete' );
+		};
 
-		// TODO: in onClick, before goToNextStep, check for Promise
+		const isCompleteResult =
+			activeStep.isCompleteCallback?.( { paymentData, activePaymentMethod, activeStep } ) ?? false;
+		if ( isCompleteResult.then ) {
+			debug( 'maybe continuing to next step; step is evaluating a Promise' );
+			isCompleteResult.then( evaluateContinue );
+			return;
+		}
+		evaluateContinue( isCompleteResult );
 	};
 
 	return (
@@ -328,13 +357,13 @@ function saveStepNumberToUrl( stepNumber ) {
 	window.history.pushState( null, null, newUrl );
 }
 
-function areAllPreviousStepsComplete( steps, stepNumber ) {
+function areAllPreviousStepsComplete( steps, stepNumber, stepCompleteStatus ) {
 	return steps.reduce( ( allComplete, step ) => {
 		if ( step.stepNumber && step.stepNumber < stepNumber ) {
 			if ( allComplete === false ) {
 				return false;
 			}
-			return step.isComplete;
+			return stepCompleteStatus[ step.id ] ?? false;
 		}
 		return allComplete;
 	}, false );
@@ -342,9 +371,10 @@ function areAllPreviousStepsComplete( steps, stepNumber ) {
 
 function useChangeStepNumberForUrl( steps ) {
 	const { changeStep } = usePrimaryDispatch();
+	const stepCompleteStatus = useStepCompleteStatus();
 	useConstructor( () => {
 		const newStepNumber = getStepNumberFromUrl();
-		if ( areAllPreviousStepsComplete( steps, newStepNumber ) ) {
+		if ( areAllPreviousStepsComplete( steps, newStepNumber, stepCompleteStatus ) ) {
 			debug( 'changing initial step to', newStepNumber );
 			changeStep( newStepNumber );
 			return;
@@ -362,7 +392,7 @@ function useChangeStepNumberForUrl( steps ) {
 	}, [ changeStep ] );
 }
 
-function getAnnotatedSteps( steps, stepNumber, dataForCompleteCallback ) {
+function getAnnotatedSteps( steps ) {
 	// Assign step numbers to all steps with numbers
 	let numberedStepNumber = 0;
 	const annotatedSteps = steps.map( ( step, index ) => {
@@ -376,19 +406,5 @@ function getAnnotatedSteps( steps, stepNumber, dataForCompleteCallback ) {
 	if ( annotatedSteps.length < 1 ) {
 		throw new Error( 'No steps found' );
 	}
-
-	const activeStep = annotatedSteps.find( step => step.stepNumber === stepNumber );
-	if ( ! activeStep ) {
-		throw new Error( 'There is no active step' );
-	}
-
-	// Assign isComplete separately so we can provide the activeStep
-	return annotatedSteps.map( step => {
-		return {
-			...step,
-			isComplete:
-				!! step.isCompleteCallback &&
-				step.isCompleteCallback( { ...dataForCompleteCallback, activeStep } ),
-		};
-	} );
+	return annotatedSteps;
 }
