@@ -24,7 +24,6 @@ import {
 } from '../lib/registry';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import {
-	useStepCompleteStatus,
 	useSetStepComplete,
 	useActiveStep,
 	ActiveStepProvider,
@@ -113,7 +112,7 @@ export default function Checkout( { steps, className } ) {
 	}
 
 	// Change the step if the url changes
-	useChangeStepNumberForUrl( annotatedSteps );
+	useChangeStepNumberForUrl( annotatedSteps, stepCompleteStatus );
 
 	const nextStep = annotatedSteps.find( ( step, index ) => {
 		return index > activeStep.stepIndex && step.hasStepNumber;
@@ -152,6 +151,7 @@ export default function Checkout( { steps, className } ) {
 						<CheckoutStepContainer
 							{ ...step }
 							key={ step.id }
+							isComplete={ stepCompleteStatus[ step.id ] ?? false }
 							stepNumber={ step.stepNumber || null }
 							shouldShowNextButton={
 								step.hasStepNumber && step.id === activeStep.id && isThereAnotherNumberedStep
@@ -369,9 +369,8 @@ function areAllPreviousStepsComplete( steps, stepNumber, stepCompleteStatus ) {
 	}, false );
 }
 
-function useChangeStepNumberForUrl( steps ) {
+function useChangeStepNumberForUrl( steps, stepCompleteStatus ) {
 	const { changeStep } = usePrimaryDispatch();
-	const stepCompleteStatus = useStepCompleteStatus();
 	useConstructor( () => {
 		const newStepNumber = getStepNumberFromUrl();
 		if ( areAllPreviousStepsComplete( steps, newStepNumber, stepCompleteStatus ) ) {

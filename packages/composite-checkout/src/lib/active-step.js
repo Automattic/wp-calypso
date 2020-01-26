@@ -47,6 +47,9 @@ export const useSteps = () => {
 
 export const useStepCompleteStatus = () => {
 	const { stepCompleteStatus } = useContext( ActiveStepContext );
+	if ( ! stepCompleteStatus ) {
+		throw new Error( 'useStepCompleteStatus can only be used inside an ActiveStepProvider' );
+	}
 	return stepCompleteStatus;
 };
 
@@ -82,8 +85,8 @@ const useThisStep = () => {
 	return steps.find( step => step.id === stepId );
 };
 
-export const useIsStepComplete = () => {
+export const useIsStepComplete = step => {
 	const thisStep = useThisStep();
 	const stepCompleteStatus = useStepCompleteStatus();
-	return stepCompleteStatus[ thisStep.id ] ?? false;
+	return stepCompleteStatus[ step ? step.id : thisStep.id ] ?? false;
 };
