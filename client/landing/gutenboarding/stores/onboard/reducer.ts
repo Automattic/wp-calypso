@@ -13,7 +13,7 @@ import { OnboardAction } from './actions';
 const domain: Reducer<
 	import('@automattic/data-stores').DomainSuggestions.DomainSuggestion | undefined,
 	OnboardAction
-> = ( state = undefined, action ) => {
+> = ( state, action ) => {
 	if ( action.type === ActionType.SET_DOMAIN ) {
 		return action.domain;
 	}
@@ -26,7 +26,7 @@ const domain: Reducer<
 const selectedDesign: Reducer<
 	import('@automattic/data-stores').VerticalsTemplates.Template | undefined,
 	OnboardAction
-> = ( state = undefined, action ) => {
+> = ( state, action ) => {
 	if ( action.type === ActionType.SET_SELECTED_DESIGN ) {
 		return action.selectedDesign;
 	}
@@ -46,10 +46,7 @@ const siteTitle: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
-const siteVertical: Reducer< SiteVertical | undefined, OnboardAction > = (
-	state = undefined,
-	action
-) => {
+const siteVertical: Reducer< SiteVertical | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === ActionType.SET_SITE_VERTICAL ) {
 		return action.siteVertical;
 	}

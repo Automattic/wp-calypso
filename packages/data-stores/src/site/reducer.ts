@@ -10,7 +10,7 @@ import { combineReducers } from '@wordpress/data';
 import { ActionType, NewSite, NewSiteErrorResponse } from './types';
 import { Action } from './actions';
 
-const newSiteData: Reducer< NewSite | {} | undefined, Action > = ( state = undefined, action ) => {
+const newSiteData: Reducer< NewSite | {} | undefined, Action > = ( state, action ) => {
 	if ( action.type === ActionType.RECEIVE_NEW_SITE ) {
 		const { response } = action;
 		return {
@@ -22,10 +22,7 @@ const newSiteData: Reducer< NewSite | {} | undefined, Action > = ( state = undef
 	return state;
 };
 
-const newSiteError: Reducer< NewSiteErrorResponse | undefined, Action > = (
-	state = undefined,
-	action
-) => {
+const newSiteError: Reducer< NewSiteErrorResponse | undefined, Action > = ( state, action ) => {
 	switch ( action.type ) {
 		case ActionType.FETCH_NEW_SITE:
 			return undefined;
