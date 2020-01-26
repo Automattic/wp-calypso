@@ -48,19 +48,23 @@ The `Checkout` component accepts an optional `steps` prop which is an array of S
 	id: 'payment-method',
 	className: 'checkout__payment-methods-step',
 	hasStepNumber: true,
-	titleContent: <CheckoutPaymentMethodsTitle />,
-	activeStepContent: <CheckoutPaymentMethods isComplete={ false } />,
+	titleContent: <PaymentMethodsTitle />,
+	activeStepContent: <PaymentMethods />,
 	incompleteStepContent: null,
-	completeStepContent: <CheckoutPaymentMethods summary isComplete={ true } />,
-	isCompleteCallback: ( { paymentData } ) => {
-		const { billing = {} } = paymentData;
-		if ( ! billing.country ) {
+	completeStepContent: <PaymentMethodsSummary />,
+	isCompleteCallback: () => {
+		const { country } = paymentData;
+		if ( ! country ) {
 			return false;
 		}
 		return true;
 	},
-	isEditableCallback: ( { paymentData } ) => {
-		return ( paymentData.billing ) ? true : false;
+	isEditableCallback: () => {
+		const { country } = paymentData;
+		if ( country.length > 0 ) {
+			return true;
+		}
+		return false;
 	},
 	getEditButtonAriaLabel: () => translate( 'Edit the payment method' ),
 	getNextStepButtonAriaLabel: () => translate( 'Continue with the selected payment method' ),
