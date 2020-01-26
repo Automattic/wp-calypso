@@ -80,7 +80,7 @@ All properties except for `id` are optional.
 - `activeStepContent?: React.ReactNode`. Displays as the content of the step when it is active. It is also displayed when the step is inactive but is hidden by CSS.
 - `incompleteStepContent?: React.ReactNode`. Displays as the content of the step when it is inactive and incomplete as defined by the `isCompleteCallback`. It is also displayed when the step is active but is hidden by CSS.
 - `completeStepContent?: React.ReactNode`. Displays as the content of the step when it is inactive and complete as defined by the `isCompleteCallback`. It is also displayed when the step is active but is hidden by CSS.
-- `isCompleteCallback?: ({paymentData: object, activeStep: object}) => boolean`. Used to determine if a step is complete for purposes of validation. Default is a function returning false.
+- `isCompleteCallback?: ({paymentData: object, activeStep: object}) => boolean | Promise<boolean>`. Used to determine if a step is complete for purposes of validation. Default is a function returning false. If the validation requires an async processs, the callback may return a Promise that resolves with either true or false as its value.
 - `isEditableCallback?: ({paymentData: object}) => boolean`. Used to determine if an inactive step should display an "Edit" button. Default is a function returning false.
 - `getEditButtonAriaLabel?: () => string`. Used to fill in the `aria-label` attribute for the "Edit" button if one exists.
 - `getNextStepButtonAriaLabel?: () => string`. Used to fill in the `aria-label` attribute for the "Continue" button if one exists.
@@ -108,7 +108,7 @@ Each payment method is an object with the following properties:
 - `inactiveContent: React.ReactNode`. A component that renders a summary of the selected payment method when the step is inactive.
 - `checkoutWrapper?: (children: React.ReactNode) => React.ReactNode`. A [render prop](https://reactjs.org/docs/render-props.html) that returns a component to wrap the whole of the checkout form. Must render the provided `children` argument. This can be used for custom data providers (eg: `StripeProvider` to support [Stripe Elements](https://github.com/stripe/react-stripe-elements)).
 - `getAriaLabel: (localize: () => string) => string`. A function to return the name of the Payment Method. It will receive the localize function as an argument.
-- `isCompleteCallback?: ({paymentData: object, activeStep: object}) => boolean`. Used to determine if a step is complete for purposes of validation. Default is a function returning true.
+- `isCompleteCallback?: ({paymentData: object, activeStep: object}) => boolean | Promise<boolean>`. When calling the `isCompleteCallback` of the payment method step (see `getDefaultPaymentMethodStep`), it will call the `isCompleteCallback` for the active payment method. Default is a function returning true. If the callback requires an async process, this function may return a Promise that resolves to either a true or false value.
 
 Within the components, the Hook `usePaymentMethod()` will return an object of the above form with the key of the currently selected payment method or null if none is selected. To retrieve all the payment methods and their properties, the Hook `useAllPaymentMethods()` will return an array that contains them all.
 
@@ -298,7 +298,7 @@ A React Hook that will return the currently active [Step object](#steps). Only w
 
 The step object that is returned will include some additional properties:
 
-- `isComplete: boolean`. True if the `isCompleteCallback` function returned true (it's not recommended to call the function yourself because it expects certain arguments that you may not be able to provide).
+- `isComplete: boolean`. True if the most recent call of the step's `isCompleteCallback` function returned true (it's not recommended to call the function yourself because it expects certain arguments that you may not be able to provide).
 - `stepNumber: number | null`. The step's visible number. If the step has no number (because `hasStepNumber` is false), this will be `null`.
 - `stepIndex: number`. The index of the step in the array of steps.
 
@@ -332,7 +332,7 @@ A React Hook that will return true if the current step is the currently active [
 
 ### useIsStepComplete
 
-A React Hook that will return true if the current [Step](#steps) is complete as defined by the `isCompleteCallback` of that step. Only works within a step.
+A React Hook that will return true if the current [Step](#steps) is complete as defined by the most recent call of `isCompleteCallback` of that step. Only works within a step.
 
 ### useLineItems
 
