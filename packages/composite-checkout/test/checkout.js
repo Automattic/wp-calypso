@@ -399,19 +399,10 @@ describe( 'Checkout', () => {
 		} );
 
 		it( 'does change steps if the continue button is clicked when the step is active and becomes complete after a Promise resolves true', () => {
-			let res;
-			const delayPromise = new Promise( resolve => {
-				res = resolve;
-			} );
-			delayPromise.resolve = res;
 			const stepWithAsyncIsComplete = {
 				...steps[ 0 ],
 				hasStepNumber: true,
-				isCompleteCallback: () => {
-					return new Promise( resolve => {
-						delayPromise.then( () => resolve( true ) );
-					} );
-				},
+				isCompleteCallback: () => Promise.resolve( true ),
 			};
 			const { container, getAllByText } = render(
 				<MyCheckout steps={ [ stepWithAsyncIsComplete, steps[ 4 ], steps[ 1 ] ] } />
@@ -421,25 +412,14 @@ describe( 'Checkout', () => {
 			const firstStepContent = firstStep.querySelector( '.checkout-step__content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 			fireEvent.click( firstStepContinue );
-			expect( firstStepContent ).toHaveStyle( 'display: block' );
-			delayPromise.resolve();
 			expect( firstStepContent ).toHaveStyle( 'display: none' );
 		} );
 
 		it( 'does not change steps if the continue button is clicked when the step is active and becomes complete after a Promise resolves false', () => {
-			let res;
-			const delayPromise = new Promise( resolve => {
-				res = resolve;
-			} );
-			delayPromise.resolve = res;
 			const stepWithAsyncIsComplete = {
 				...steps[ 0 ],
 				hasStepNumber: true,
-				isCompleteCallback: () => {
-					return new Promise( resolve => {
-						delayPromise.then( () => resolve( false ) );
-					} );
-				},
+				isCompleteCallback: () => Promise.resolve( false ),
 			};
 			const { container, getAllByText } = render(
 				<MyCheckout steps={ [ stepWithAsyncIsComplete, steps[ 4 ], steps[ 1 ] ] } />
@@ -449,8 +429,6 @@ describe( 'Checkout', () => {
 			const firstStepContent = firstStep.querySelector( '.checkout-step__content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 			fireEvent.click( firstStepContinue );
-			expect( firstStepContent ).toHaveStyle( 'display: block' );
-			delayPromise.resolve();
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 		} );
 
