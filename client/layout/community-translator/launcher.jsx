@@ -86,7 +86,7 @@ class TranslatorLauncher extends React.Component {
 					( node.className && node.className.match( /translator-original-(\d+)/ ) ) || [];
 
 				if ( originalId ) {
-					ids.push( originalId[ 1 ] );
+					ids.push( originalId );
 				}
 
 				return ids;
