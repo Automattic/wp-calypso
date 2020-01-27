@@ -4,6 +4,7 @@
 import { __ as NO__ } from '@wordpress/i18n';
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import React, { FunctionComponent } from 'react';
 import { useDebounce } from 'use-debounce';
 import classnames from 'classnames';
@@ -105,7 +106,10 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 				<div className="gutenboarding__header-group">
 					{ hasSelectedDesign && (
 						<Button
-							href={ `/start/frankenflow?theme=${ selectedDesign?.slug }&siteTitle=${ siteTitle }` }
+							href={ addQueryArgs( '/start/frankenflow', {
+								siteTitle: siteTitle,
+								...( selectedDesign?.slug && { theme: selectedDesign.slug } ),
+							} ) }
 							className="gutenboarding__header-next-button"
 							isPrimary
 							isLarge
