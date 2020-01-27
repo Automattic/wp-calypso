@@ -435,6 +435,25 @@ describe( 'Checkout', () => {
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 		} );
 
+		it( 'provides activeStep as an argument to isCompleteCallback', async () => {
+			const stepWithAsyncIsComplete = {
+				...steps[ 1 ],
+				isCompleteCallback: ( { activeStep } ) =>
+					Promise.resolve( activeStep.id === steps[ 1 ].id ),
+			};
+			const { container, getAllByText } = render(
+				<MyCheckout steps={ [ stepWithAsyncIsComplete, steps[ 4 ], steps[ 2 ] ] } />
+			);
+			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
+			const firstStep = container.querySelector( '.' + steps[ 1 ].className );
+			const firstStepContent = firstStep.querySelector( '.checkout-step__content' );
+			expect( firstStepContent ).toHaveStyle( 'display: block' );
+			await act( async () => {
+				await fireEvent.click( firstStepContinue );
+			} );
+			expect( firstStepContent ).toHaveStyle( 'display: none' );
+		} );
+
 		it( 'renders the continue button enabled if the step is active and complete', () => {
 			const { container, getByLabelText } = render(
 				<MyCheckout steps={ [ steps[ 0 ], steps[ 4 ], steps[ 1 ] ] } />
