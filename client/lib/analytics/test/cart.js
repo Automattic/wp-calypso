@@ -1,16 +1,9 @@
 /**
- */
-
-/**
- * External dependencies
+ * Internal dependencies
  */
 import analytics from 'lib/analytics';
 import { getAllCartItems } from 'lib/cart-values/cart-items';
-
-/**
- * Internal dependencies
- */
-import { recordEvents } from '../cart-analytics';
+import { recordEvents } from 'lib/analytics/cart';
 
 jest.mock( 'lib/analytics', () => ( {
 	__esModule: true,
@@ -22,7 +15,6 @@ jest.mock( 'lib/analytics', () => ( {
 	},
 } ) );
 jest.mock( 'lib/cart-values/cart-items', () => ( { getAllCartItems: jest.fn() } ) );
-// jest.mock( 'lib/analytics/ad-tracking', () => ( { recordAddToCart: jest.fn() } ) );
 
 const previousCart = {};
 const nextCart = {};

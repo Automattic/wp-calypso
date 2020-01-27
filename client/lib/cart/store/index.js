@@ -27,7 +27,7 @@ import {
 import emitter from 'lib/mixins/emitter';
 import cartSynchronizer from './cart-synchronizer';
 import PollerPool from 'lib/data-poller';
-import { recordEvents, recordUnrecognizedPaymentMethod } from './cart-analytics';
+import { recordEvents, recordUnrecognizedPaymentMethod } from 'lib/analytics/cart';
 import productsListFactory from 'lib/products-list';
 const productsList = productsListFactory();
 import Dispatcher from 'dispatcher';

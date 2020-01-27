@@ -13,6 +13,7 @@ import PropTypes from 'prop-types';
 import { getSavedVariations } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
+import { recordPasswordlessRegistration } from 'lib/analytics/signup';
 import { Button } from '@automattic/components';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
@@ -116,7 +117,7 @@ class PasswordlessSignupForm extends Component {
 		const userId =
 			( response && response.signup_sandbox_user_id ) || ( response && response.user_id );
 
-		analytics.recordPasswordlessRegistration( { flow: this.props.flowName } );
+		recordPasswordlessRegistration( this.props.flowName );
 		analytics.identifyUser( { ID: userId, username, email: this.state.email } );
 
 		this.submitStep( {
