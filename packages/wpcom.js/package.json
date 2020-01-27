@@ -4,6 +4,7 @@
   "version": "5.4.2",
   "main": "build/index.js",
   "author": "Automattic, Inc.",
+  "private": true,
   "scripts": {
     "prepublish": "make all"
   },
