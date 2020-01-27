@@ -25,8 +25,9 @@ export function register( clientCreds: WpcomClientCredentials ): typeof STORE_KE
 		isRegistered = true;
 		registerStore< State >( STORE_KEY, {
 			actions,
-			controls,
-			reducer: reducer as any,
+			// @wordpress/data controls type is problematic
+			controls: controls as any,
+			reducer: reducer,
 			resolvers,
 			selectors,
 		} );
