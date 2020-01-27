@@ -1,10 +1,10 @@
-.gutenboarding-editor {
+.gutenboarding-editor-overrides {
     .editor-post-switch-to-draft,
     .editor-post-preview {
         display: none;
     }
-
-    .launch-button-override__launch-button {
+    
+    .gutenboarding-editor-overrides__launch-button {
         padding: 0 12px;
         margin: 0 12px 0 3px;
     }

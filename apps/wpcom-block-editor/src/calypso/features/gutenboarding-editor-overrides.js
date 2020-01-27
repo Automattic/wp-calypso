@@ -11,7 +11,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import './launch-button-override.scss';
+import './gutenboarding-editor-overrides.scss';
 
 domReady( () => {
 	// Ensure settings bar is rendered before proceeding.
@@ -22,18 +22,18 @@ domReady( () => {
 		}
 		clearInterval( awaitSettingsBar );
 
-		calypsoifyGutenberg.isGutenboarding && updateButtonBar( settingsBar );
+		calypsoifyGutenberg.isGutenboarding && updateSettingsBar( settingsBar );
 		// Hook fallback incase updateLaunchButton data is set after initial dom render.
 		window.wp.hooks.addAction( 'updateLaunchButton', 'a8c-gutenboarding', isGutenboarding => {
-			isGutenboarding && updateButtonBar( settingsBar );
+			isGutenboarding && updateSettingsBar( settingsBar );
 		} );
 	} );
 } );
 
-function updateButtonBar( settingsBar ) {
+function updateSettingsBar( settingsBar ) {
 	// Add gutenboarding-editor class to body (so React re-render wont reset the added class).
 	const body = document.querySelector( 'body' );
-	body.classList.add( 'gutenboarding-editor' );
+	body.classList.add( 'gutenboarding-editor-overrides' );
 
 	// 'Update'/'Publish' primary button to become 'Save' tertiary button.
 	const saveButton = settingsBar.querySelector( '.editor-post-publish-button' );
@@ -41,7 +41,7 @@ function updateButtonBar( settingsBar ) {
 
 	// Create a 'Launch' button.
 	const launchButton = document.createElement( 'button' );
-	launchButton.className = 'launch-button-override__launch-button components-button is-primary';
+	launchButton.className = 'gutenboarding-editor-overrides__launch-button components-button is-primary';
 	launchButton.innerText = __( 'Launch' );
 
 	// Wrap 'Launch' button in anchor to frankenflow.
