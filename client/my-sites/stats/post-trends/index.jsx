@@ -193,12 +193,12 @@ class PostTrends extends React.Component {
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 	const query = {
-		startDate: moment
+		startDate: moment()
 			.locale( 'en' )
 			.subtract( 1, 'year' )
 			.startOf( 'month' )
 			.format( 'YYYY-MM-DD' ),
-		endDate: moment
+		endDate: moment()
 			.locale( 'en' )
 			.endOf( 'month' )
 			.format( 'YYYY-MM-DD' ),
