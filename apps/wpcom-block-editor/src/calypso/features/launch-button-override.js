@@ -36,21 +36,20 @@ function updateButtonBar( settingsBar ) {
 	body.classList.add( 'gutenboarding-editor' );
 
 	// 'Update'/'Publish' primary button to become 'Save' tertiary button.
-	const publish = settingsBar.querySelector( '.editor-post-publish-button' );
-	if ( publish ) {
-		publish.classList.remove( 'is-primary' );
-		publish.classList.add( 'is-tertiary' );
-		publish.innerText = __( 'Save' );
-	}
-	// 'Launch' button to replace update button.
+	const saveButton = settingsBar.querySelector( '.editor-post-publish-button' );
+	saveButton && ( saveButton.innerText = __( 'Save' ) );
+
+	// Create a 'Launch' button.
 	const launchButton = document.createElement( 'button' );
 	launchButton.className = 'launch-button-override__launch-button components-button is-primary';
 	launchButton.innerText = __( 'Launch' );
-	// Launch to lead into frankenflow.
-	const buttonWrapper = document.createElement( 'a' );
-	buttonWrapper.href = calypsoifyGutenberg.frankenflowUrl;
-	buttonWrapper.append( launchButton );
+
+	// Wrap 'Launch' button in anchor to frankenflow.
+	const launchButtonWrapper = document.createElement( 'a' );
+	launchButtonWrapper.href = calypsoifyGutenberg.frankenflowUrl;
+	launchButtonWrapper.append( launchButton );
+
 	// Put 'Launch' and 'Save' back on bar in desired order.
-	settingsBar.prepend( buttonWrapper );
-	settingsBar.prepend( publish );
+	settingsBar.prepend( launchButtonWrapper );
+	settingsBar.prepend( saveButton );
 }
