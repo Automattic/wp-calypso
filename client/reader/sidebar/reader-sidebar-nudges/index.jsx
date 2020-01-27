@@ -5,7 +5,6 @@ import React, { Fragment } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import debugFactory from 'debug';
-import config from 'config';
 
 /**
  * Internal dependencies
@@ -26,10 +25,7 @@ import { abtest } from 'lib/abtest';
 const debug = debugFactory( 'calypso:reader:sidebar-nudges' );
 
 function renderFreeToPaidPlanNudge( { siteId, siteSlug, translate }, dispatch ) {
-	if (
-		abtest( 'sidebarUpsellNudgeUnification' ) === 'variantShowUnifiedUpsells' &&
-		config.isEnabled( 'upsell/nudge-component' )
-	) {
+	if ( abtest( 'sidebarUpsellNudgeUnification' ) === 'variantShowUnifiedUpsells' ) {
 		return (
 			<UpsellNudge
 				event={ 'free-to-paid-sidebar-reader' }
