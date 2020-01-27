@@ -84,7 +84,6 @@ function useRegisterCheckoutStore() {
 
 export default function Checkout( { steps: stepProps, className } ) {
 	useRegisterCheckoutStore();
-	const localize = useLocalize();
 	const [ paymentData ] = usePaymentData();
 	const { formStatus } = useFormStatus();
 
@@ -164,17 +163,10 @@ export default function Checkout( { steps: stepProps, className } ) {
 					) ) }
 				</ActiveStepProvider>
 
-				<SubmitButtonWrapper isLastStepActive={ ! isThereAnotherNumberedStep }>
-					<CheckoutErrorBoundary
-						errorMessage={ localize( 'There was a problem with the submit button.' ) }
-					>
-						<CheckoutSubmitButton
-							disabled={
-								isThereAnotherNumberedStep || isThereAnIncompleteStep || formStatus !== 'ready'
-							}
-						/>
-					</CheckoutErrorBoundary>
-				</SubmitButtonWrapper>
+				<SubmitButtonWrapper
+					isThereAnotherNumberedStep={ isThereAnotherNumberedStep }
+					isThereAnIncompleteStep={ isThereAnIncompleteStep }
+				/>
 			</MainContent>
 		</Container>
 	);
@@ -184,6 +176,25 @@ Checkout.propTypes = {
 	className: PropTypes.string,
 	steps: PropTypes.array,
 };
+
+function SubmitButtonWrapper( { isThereAnotherNumberedStep, isThereAnIncompleteStep } ) {
+	const localize = useLocalize();
+	const { formStatus } = useFormStatus();
+
+	return (
+		<SubmitButtonWrapperUI isLastStepActive={ ! isThereAnotherNumberedStep }>
+			<CheckoutErrorBoundary
+				errorMessage={ localize( 'There was a problem with the submit button.' ) }
+			>
+				<CheckoutSubmitButton
+					disabled={
+						isThereAnotherNumberedStep || isThereAnIncompleteStep || formStatus !== 'ready'
+					}
+				/>
+			</CheckoutErrorBoundary>
+		</SubmitButtonWrapperUI>
+	);
+}
 
 function CheckoutStepContainer( {
 	id,
@@ -285,7 +296,7 @@ const MainContent = styled.div`
 	}
 `;
 
-const SubmitButtonWrapper = styled.div`
+const SubmitButtonWrapperUI = styled.div`
 	background: ${props => props.theme.colors.background};
 	padding: 24px;
 	position: ${props => ( props.isLastStepActive ? 'fixed' : 'relative' )};
