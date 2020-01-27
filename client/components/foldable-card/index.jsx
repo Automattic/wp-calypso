@@ -36,6 +36,7 @@ class FoldableCard extends Component {
 		onOpen: PropTypes.func,
 		screenReaderText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		summary: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+		highlight: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -150,7 +151,7 @@ class FoldableCard extends Component {
 		} );
 
 		return (
-			<Container className={ itemSiteClasses }>
+			<Container className={ itemSiteClasses } highlight={ this.props.highlight }>
 				{ this.renderHeader() }
 				{ this.state.expanded && this.renderContent() }
 			</Container>
