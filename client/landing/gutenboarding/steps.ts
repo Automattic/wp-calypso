@@ -6,7 +6,6 @@ import { map } from 'lodash';
 export enum Step {
 	IntentGathering = '/',
 	DesignSelection = '/design',
-	CreateSite = '/create-site',
 	Signup = '/signup',
 }
 
