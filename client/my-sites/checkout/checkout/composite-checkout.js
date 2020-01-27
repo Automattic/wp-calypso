@@ -182,7 +182,7 @@ export default function CompositeCheckout( {
 						// TODO: Should probably handle HTTP errors here
 						validateDomainContact( values, domainNames, ( httpErrors, data ) => {
 							debug(
-								'Domain contact info validation ' + data.messages ? 'errors:' : 'successful',
+								'Domain contact info validation ' + ( data.messages ? 'errors:' : 'successful' ),
 								data.messages
 							);
 							applyDomainContactValidationResults( { ...data.messages } );
