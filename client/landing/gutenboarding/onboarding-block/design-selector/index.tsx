@@ -103,7 +103,7 @@ const DesignSelector: FunctionComponent = () => {
 			</div>
 			<div
 				className={ classnames( 'design-selector__grid-container', {
-					'has-selected-design': isPageSelectorOpen,
+					'is-page-selector-open': isPageSelectorOpen,
 				} ) }
 			>
 				<div className="design-selector__grid">
