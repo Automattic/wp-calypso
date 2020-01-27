@@ -91,8 +91,6 @@ export default function Checkout( { steps: stepProps, className } ) {
 	const localize = useLocalize();
 	const [ paymentData ] = usePaymentData();
 	const { formStatus } = useFormStatus();
-	const activePaymentMethod = usePaymentMethod();
-	const [ stepCompleteStatus, setStepCompleteStatus ] = useState( {} );
 
 	// Re-render if any store changes; that way isComplete can rely on any data
 	useRenderOnStoreUpdate(); // TODO: remove this
@@ -112,29 +110,7 @@ export default function Checkout( { steps: stepProps, className } ) {
 		throw new Error( 'The active step was lost' );
 	}
 
-	useEffect( () => {
-		debug( 'steps changed; re-initializing complete status for new steps' );
-		setStepCompleteStatus( prevStepStatus =>
-			steps.reduce( ( stepStatus, step ) => {
-				if ( prevStepStatus[ step.id ] ) {
-					return { ...stepStatus, [ step.id ]: prevStepStatus[ step.id ] };
-				}
-				const isCompleteResult =
-					step?.isCompleteCallback( { paymentData, activePaymentMethod, activeStep } ) ?? false;
-				if ( isCompleteResult.then ) {
-					// TODO: We may in future want to wait for the callback to resolve,
-					// but in practice steps that have an async isCompleteCallback
-					// probably require user interaction; this will be called again
-					// when the Continue button is pressed.
-					return stepStatus;
-				}
-				return {
-					...stepStatus,
-					[ step.id ]: isCompleteResult,
-				};
-			}, {} )
-		);
-	}, [ steps ] ); // eslint-disable-line react-hooks/exhaustive-deps
+	const [ stepCompleteStatus, setStepCompleteStatus ] = useTrackCompleteSteps( steps, activeStep );
 
 	// Change the step if the url changes
 	useChangeStepNumberForUrl( annotatedSteps, stepCompleteStatus );
@@ -441,4 +417,35 @@ function getAnnotatedSteps( steps ) {
 		throw new Error( 'No steps found' );
 	}
 	return annotatedSteps;
+}
+
+function useTrackCompleteSteps( steps, activeStep ) {
+	const [ paymentData ] = usePaymentData();
+	const activePaymentMethod = usePaymentMethod();
+	const [ stepCompleteStatus, setStepCompleteStatus ] = useState( {} );
+
+	useEffect( () => {
+		debug( 'steps changed; re-initializing complete status for new steps' );
+		setStepCompleteStatus( prevStepStatus =>
+			steps.reduce( ( stepStatus, step ) => {
+				if ( prevStepStatus[ step.id ] ) {
+					return { ...stepStatus, [ step.id ]: prevStepStatus[ step.id ] };
+				}
+				const isCompleteResult =
+					step?.isCompleteCallback( { paymentData, activePaymentMethod, activeStep } ) ?? false;
+				if ( isCompleteResult.then ) {
+					// TODO: We may in future want to wait for the callback to resolve,
+					// but in practice steps that have an async isCompleteCallback
+					// probably require user interaction; this will be called again
+					// when the Continue button is pressed.
+					return stepStatus;
+				}
+				return {
+					...stepStatus,
+					[ step.id ]: isCompleteResult,
+				};
+			}, {} )
+		);
+	}, [ steps ] ); // eslint-disable-line react-hooks/exhaustive-deps
+	return [ stepCompleteStatus, setStepCompleteStatus ];
 }
