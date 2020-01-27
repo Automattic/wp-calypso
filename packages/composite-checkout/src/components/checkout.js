@@ -422,30 +422,27 @@ function getAnnotatedSteps( steps ) {
 function useTrackCompleteSteps( steps, activeStep ) {
 	const [ paymentData ] = usePaymentData();
 	const activePaymentMethod = usePaymentMethod();
-	const [ stepCompleteStatus, setStepCompleteStatus ] = useState( {} );
+	const [ stepCompleteStatus, setStepCompleteStatus ] = useState( getInitialStepCompleteStatus );
 
-	useEffect( () => {
-		debug( 'steps changed; re-initializing complete status for new steps' );
-		setStepCompleteStatus( prevStepStatus =>
-			steps.reduce( ( stepStatus, step ) => {
-				if ( prevStepStatus[ step.id ] ) {
-					return { ...stepStatus, [ step.id ]: prevStepStatus[ step.id ] };
-				}
-				const isCompleteResult =
-					step?.isCompleteCallback( { paymentData, activePaymentMethod, activeStep } ) ?? false;
-				if ( isCompleteResult.then ) {
-					// TODO: We may in future want to wait for the callback to resolve,
-					// but in practice steps that have an async isCompleteCallback
-					// probably require user interaction; this will be called again
-					// when the Continue button is pressed.
-					return stepStatus;
-				}
-				return {
-					...stepStatus,
-					[ step.id ]: isCompleteResult,
-				};
-			}, {} )
-		);
-	}, [ steps ] ); // eslint-disable-line react-hooks/exhaustive-deps
+	function getInitialStepCompleteStatus() {
+		debug( 'initializing complete status for new steps' );
+		return steps.reduce( ( stepStatus, step ) => {
+			const isCompleteResult =
+				step?.isCompleteCallback( { paymentData, activePaymentMethod, activeStep } ) ?? false;
+			if ( isCompleteResult.then ) {
+				// TODO: We may in future want to wait for the callback to resolve, but
+				// in practice steps that have an async isCompleteCallback probably
+				// require user interaction; we treat this as incomplete for now and
+				// the callback will be called again when the Continue button is
+				// pressed.
+				return stepStatus;
+			}
+			return {
+				...stepStatus,
+				[ step.id ]: isCompleteResult,
+			};
+		}, {} );
+	}
+
 	return [ stepCompleteStatus, setStepCompleteStatus ];
 }
