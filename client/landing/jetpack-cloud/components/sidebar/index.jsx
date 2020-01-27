@@ -61,7 +61,6 @@ class JetpackCloudSidebar extends Component {
 	 * Toggle an expandable section.
 	 *
 	 * @param   {string} section Section to be toggled
-	 * @returns {void}
 	 */
 	toggleSection( section ) {
 		if ( this.isExpanded( section ) ) {
