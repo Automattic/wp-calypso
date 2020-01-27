@@ -9,6 +9,7 @@ import { get } from 'lodash';
 import canCurrentUser from 'state/selectors/can-current-user';
 import getSiteOptions from 'state/selectors/get-site-options';
 import { isJetpackSite } from 'state/sites/selectors';
+import isVipSite from 'state/selectors/is-vip-site';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getSite from './get-site';
@@ -23,6 +24,10 @@ import getSite from './get-site';
 export default function canCurrentUserUseCustomerHome( state, siteId = null ) {
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
+	}
+
+	if ( isVipSite( state, siteId ) ) {
+		return false;
 	}
 
 	if ( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) {

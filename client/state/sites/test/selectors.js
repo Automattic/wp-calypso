@@ -3829,7 +3829,13 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'canCurrentUserUseCustomerHome()', () => {
-		const createState = ( { created_at, manage_options = true, jetpack = false } = {} ) => ( {
+		const createState = ( {
+			created_at,
+			manage_options = true,
+			jetpack = false,
+			vip = false,
+			atomic = false,
+		} = {} ) => ( {
 			ui: {
 				selectedSiteId: 1,
 			},
@@ -3844,7 +3850,8 @@ describe( 'selectors', () => {
 				items: {
 					1: {
 						jetpack,
-						options: { is_automated_transfer: false, created_at },
+						...( vip ? { is_vip: true } : {} ),
+						options: { is_automated_transfer: atomic, created_at },
 					},
 				},
 			},
@@ -3886,6 +3893,20 @@ describe( 'selectors', () => {
 			expect(
 				canCurrentUserUseCustomerHome( createState( { created_at: '2020-01-01', jetpack: true } ) )
 			).toBe( false );
+		} );
+
+		test( 'should return false for VIP site', () => {
+			expect(
+				canCurrentUserUseCustomerHome( createState( { created_at: '2020-01-01', vip: true } ) )
+			).toBe( false );
+		} );
+
+		test( 'should return true for Atomic site', () => {
+			expect(
+				canCurrentUserUseCustomerHome(
+					createState( { created_at: '2020-01-01', jetpack: true, atomic: true } )
+				)
+			).toBe( true );
 		} );
 	} );
 } );
