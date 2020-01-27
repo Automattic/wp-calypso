@@ -87,7 +87,7 @@
 		"start": "npm run -s build",
 		"poststart": "run-p -s start-build-if-web start-build-if-desktop build-packages:watch",
 		"reformat-files": "./node_modules/.bin/prettier --ignore-path .eslintignore --write \"**/*.{js,jsx,json,ts,tsx}\"",
-		"start-build-do": "cross-env-shell node ${NODE_ARGS:---max_old_space_size=8192} build/bundle.js",
+		"start-build-do": "node ${NODE_ARGS:---max_old_space_size=8192} build/bundle.js",
 		"start-build-fallback": "cross-env-shell BROWSERSLIST_ENV=defaults npm run start-build-do",
 		"start-build-evergreen": "cross-env-shell BROWSERSLIST_ENV=evergreen npm run start-build-do",
 		"start-build-if-desktop": "node -e \"(process.env.CALYPSO_ENV === 'desktop' || process.env.CALYPSO_ENV === 'desktop-development') && process.exit(1)\" || npm run start-build-fallback",
