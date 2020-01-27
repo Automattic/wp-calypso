@@ -18,6 +18,7 @@ export default class TwitterFeedPage extends AsyncBaseContainer {
 				: '';
 			url = `https://twitter.com/${ publicizeTwitterAccount }`;
 		}
+		driver.sleep( 5000 );
 		super( driver, by.css( '#timeline' ), url );
 	}
 

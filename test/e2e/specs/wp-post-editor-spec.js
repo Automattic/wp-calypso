@@ -284,7 +284,6 @@ describe( `[${ host }] Editor: Posts (${ screenSize })`, function() {
 		} );
 
 		if ( host !== 'CI' && host !== 'JN' ) {
-			console.log( 'THIS MESSAGE SHOULD NOT BE VISIBLE IN CIRCLECI! Host: ' + host );
 			describe( 'Can see post publicized on twitter', function() {
 				step( 'Can see post message', async function() {
 					const twitterFeedPage = await TwitterFeedPage.Visit( driver );
