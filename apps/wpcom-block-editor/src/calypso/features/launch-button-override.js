@@ -31,22 +31,9 @@ domReady( () => {
 } );
 
 function updateButtonBar( settingsBar ) {
-	const hideClass = 'launch-button-override__hidden';
-
-	// Hide 'switch to draft' by '.editor-post-switch-to-draft'.
-	const switchToDraft = settingsBar.querySelector( '.editor-post-switch-to-draft' );
-	switchToDraft && switchToDraft.classList.add( hideClass );
-
-	// Hide 'preview' by '.editor-post-preview'.
-	// This is not initially added, we may need to wait for it.
-	const awaitPreview = setInterval( () => {
-		const preview = settingsBar.querySelector( '.editor-post-preview' );
-		if ( ! preview ) {
-			return;
-		}
-		clearInterval( awaitPreview );
-		preview.classList.add( 'launch-button-override__hidden' );
-	} );
+	// Add gutenboarding-editor class to body (so React re-render wont reset the added class).
+	const body = document.querySelector( 'body' );
+	body.classList.add( 'gutenboarding-editor' );
 
 	// 'Update'/'Publish' primary button to become 'Save' tertiary button.
 	const publish = settingsBar.querySelector( '.editor-post-publish-button' );

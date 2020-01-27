@@ -1,8 +1,11 @@
-.launch-button-override__hidden {
-    display: none;
-}
+.gutenboarding-editor {
+    .editor-post-switch-to-draft,
+    .editor-post-preview {
+        display: none;
+    }
 
-.launch-button-override__launch-button {
-    padding: 0 12px;
-    margin: 0 12px 0 3px;
+    .launch-button-override__launch-button {
+        padding: 0 12px;
+        margin: 0 12px 0 3px;
+    }
 }
