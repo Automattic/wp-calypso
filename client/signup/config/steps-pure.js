@@ -586,6 +586,7 @@ export function generateSteps( {
 				'themeItem',
 				'shouldHideFreePlan',
 			],
+			optionalDependencies: [ 'shouldHideFreePlan' ],
 			props: {
 				isDomainOnly: false,
 			},
