@@ -12,6 +12,9 @@ node_modules/
 # Built packages
 /packages/*/dist/
 
+# Built package types
+/packages/**/*.d.ts
+
 #
 # Eslint won't lint json, but prettier shares this ignore
 # Don't operate on these files
