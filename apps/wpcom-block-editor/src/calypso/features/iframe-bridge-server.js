@@ -701,7 +701,7 @@ function getGutenboardingStatus( calypsoPort ) {
 		calypsoifyGutenberg.isGutenboarding = isGutenboarding;
 		calypsoifyGutenberg.frankenflowUrl = frankenflowUrl;
 		// Hook necessary if message recieved after editor has loaded.
-		window.wp.hooks.doAction( 'updateLaunchButton', isGutenboarding );
+		window.wp.hooks.doAction( 'setGutenboardingStatus', isGutenboarding );
 	};
 }
 

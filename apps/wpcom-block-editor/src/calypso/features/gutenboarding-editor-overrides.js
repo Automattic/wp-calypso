@@ -14,7 +14,21 @@ import { __ } from '@wordpress/i18n';
 import './gutenboarding-editor-overrides.scss';
 
 domReady( () => {
-	// Ensure settings bar is rendered before proceeding.
+	calypsoifyGutenberg.isGutenboarding && updateEditor();
+	// Hook fallback incase setGutenboardingStatus runs after initial dom render.
+	window.wp.hooks.addAction( 'setGutenboardingStatus', 'a8c-gutenboarding', isGutenboarding => {
+		isGutenboarding && updateEditor();
+	} );
+} );
+
+function updateEditor() {
+	const body = document.querySelector( 'body' );
+	body.classList.add( 'gutenboarding-editor-overrides' );
+
+	updateSettingsBar();
+}
+
+function updateSettingsBar() {
 	const awaitSettingsBar = setInterval( () => {
 		const settingsBar = document.querySelector( '.edit-post-header__settings' );
 		if ( ! settingsBar ) {
@@ -22,34 +36,23 @@ domReady( () => {
 		}
 		clearInterval( awaitSettingsBar );
 
-		calypsoifyGutenberg.isGutenboarding && updateSettingsBar( settingsBar );
-		// Hook fallback incase updateLaunchButton data is set after initial dom render.
-		window.wp.hooks.addAction( 'updateLaunchButton', 'a8c-gutenboarding', isGutenboarding => {
-			isGutenboarding && updateSettingsBar( settingsBar );
-		} );
+		// 'Update'/'Publish' primary button to become 'Save' tertiary button.
+		const saveButton = settingsBar.querySelector( '.editor-post-publish-button' );
+		saveButton && ( saveButton.innerText = __( 'Save' ) );
+
+		// Create a 'Launch' button.
+		const launchButton = document.createElement( 'button' );
+		launchButton.className =
+			'gutenboarding-editor-overrides__launch-button components-button is-primary';
+		launchButton.innerText = __( 'Launch' );
+
+		// Wrap 'Launch' button in anchor to frankenflow.
+		const launchButtonWrapper = document.createElement( 'a' );
+		launchButtonWrapper.href = calypsoifyGutenberg.frankenflowUrl;
+		launchButtonWrapper.append( launchButton );
+
+		// Put 'Launch' and 'Save' back on bar in desired order.
+		settingsBar.prepend( launchButtonWrapper );
+		settingsBar.prepend( saveButton );
 	} );
-} );
-
-function updateSettingsBar( settingsBar ) {
-	// Add gutenboarding-editor class to body (so React re-render wont reset the added class).
-	const body = document.querySelector( 'body' );
-	body.classList.add( 'gutenboarding-editor-overrides' );
-
-	// 'Update'/'Publish' primary button to become 'Save' tertiary button.
-	const saveButton = settingsBar.querySelector( '.editor-post-publish-button' );
-	saveButton && ( saveButton.innerText = __( 'Save' ) );
-
-	// Create a 'Launch' button.
-	const launchButton = document.createElement( 'button' );
-	launchButton.className = 'gutenboarding-editor-overrides__launch-button components-button is-primary';
-	launchButton.innerText = __( 'Launch' );
-
-	// Wrap 'Launch' button in anchor to frankenflow.
-	const launchButtonWrapper = document.createElement( 'a' );
-	launchButtonWrapper.href = calypsoifyGutenberg.frankenflowUrl;
-	launchButtonWrapper.append( launchButton );
-
-	// Put 'Launch' and 'Save' back on bar in desired order.
-	settingsBar.prepend( launchButtonWrapper );
-	settingsBar.prepend( saveButton );
 }
