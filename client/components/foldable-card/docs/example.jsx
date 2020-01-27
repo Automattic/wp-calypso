@@ -35,6 +35,15 @@ export default class FoldableCardExample extends PureComponent {
 				</div>
 				<div>
 					<FoldableCard
+						header="This is a highlighted card"
+						highlight="info"
+						screenReaderText="More"
+					>
+						I'm highlighted!
+					</FoldableCard>
+				</div>
+				<div>
+					<FoldableCard
 						header="This is a foldable card with a custom action icon"
 						icon="arrow-down"
 						screenReaderText="More"
