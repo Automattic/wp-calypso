@@ -561,6 +561,7 @@ describe( 'Checkout', () => {
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
 			fireEvent.click( firstStepContinue );
 			fireEvent.change( getByLabelText( 'User Name' ), { target: { value: 'Lyra' } } );
+			fireEvent.click( firstStepContinue ); // isComplete does not update until we press continue
 			expect( getByText( 'Possibly Complete isComplete true' ) ).toBeInTheDocument();
 		} );
 	} );
