@@ -41,6 +41,7 @@ import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { launchSite } from 'state/sites/launch/actions';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import QuerySiteDomains from 'components/data/query-site-domains';
+import FormInputCheckbox from 'components/forms/form-checkbox';
 
 export class SiteSettingsFormGeneral extends Component {
 	componentDidMount() {
@@ -346,6 +347,116 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	visibilityOptionsComingSoon() {
+		const {
+			fields,
+			isRequestingSettings,
+			eventTracker,
+			siteIsJetpack,
+			siteIsAtomic,
+			translate,
+		} = this.props;
+		const blogPublic = parseInt( fields.blog_public, 10 );
+		const wpcomComingSoon = parseInt( fields.wpcom_coming_soon, 10 );
+
+		const isNonAtomicJetpackSite = siteIsJetpack && ! siteIsAtomic;
+
+		return (
+			<FormFieldset>
+				{ ! isNonAtomicJetpackSite && (
+					<>
+						<FormLabel className="site-settings__visibility-label is-coming-soon">
+							<FormRadio
+								name="blog_public"
+								value="-1"
+								checked={ -1 === blogPublic && 1 === wpcomComingSoon }
+								onChange={ () =>
+									this.handleVisibilityOptionChange( {
+										blog_public: -1,
+										wpcom_coming_soon: 1,
+									} )
+								}
+								disabled={ isRequestingSettings }
+								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
+							/>
+							<span>{ translate( 'Coming Soon' ) }</span>
+						</FormLabel>
+						<FormSettingExplanation isIndented>
+							{ translate( "Your site is hidden from visitors until it's ready for viewing." ) }
+						</FormSettingExplanation>
+					</>
+				) }
+				{ ! isNonAtomicJetpackSite && (
+					<FormLabel className="site-settings__visibility-label is-public">
+						<FormRadio
+							name="blog_public"
+							value="1"
+							checked={ blogPublic === 0 || blogPublic === 1 }
+							onChange={ () =>
+								this.handleVisibilityOptionChange( {
+									blog_public: 1,
+									wpcom_coming_soon: 0,
+								} )
+							}
+							disabled={ isRequestingSettings }
+							onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
+						/>
+						<span>{ translate( 'Public' ) }</span>
+					</FormLabel>
+				) }
+				<FormSettingExplanation isIndented>
+					{ translate( 'Your site is visible to everyone.' ) }
+				</FormSettingExplanation>
+				<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
+					<FormInputCheckbox
+						name="blog_public"
+						value="0"
+						checked={ 0 === blogPublic }
+						onChange={ () =>
+							this.handleVisibilityOptionChange( {
+								blog_public: blogPublic === 0 ? 1 : 0,
+								wpcom_coming_soon: 0,
+							} )
+						}
+						disabled={ isRequestingSettings }
+						onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
+					/>
+					<span>{ translate( 'Do not allow search engines to index my site' ) }</span>
+				</FormLabel>
+				{ ! isNonAtomicJetpackSite && (
+					<>
+						<FormLabel className="site-settings__visibility-label is-private">
+							<FormRadio
+								name="blog_public"
+								value="-1"
+								checked={ -1 === blogPublic && 0 === wpcomComingSoon }
+								onChange={ () =>
+									this.handleVisibilityOptionChange( {
+										blog_public: -1,
+										wpcom_coming_soon: 0,
+									} )
+								}
+								disabled={ isRequestingSettings }
+								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
+							/>
+							<span>{ translate( 'Private' ) }</span>
+						</FormLabel>
+						<FormSettingExplanation isIndented>
+							{ translate( 'Your site is only visible to you and logged-in members you approve.' ) }
+						</FormSettingExplanation>
+					</>
+				) }
+			</FormFieldset>
+		);
+	}
+
+	handleVisibilityOptionChange = ( { blog_public, wpcom_coming_soon } ) => {
+		const { trackEvent, updateFields } = this.props;
+		trackEvent( `Set blog_public to ${ blog_public }` );
+		trackEvent( `Set wpcom_coming_soon to ${ wpcom_coming_soon }` );
+		updateFields( { blog_public, wpcom_coming_soon } );
+	};
+
 	Timezone() {
 		const { fields, isRequestingSettings, translate } = this.props;
 		const guessedTimezone = moment.tz.guess();
@@ -428,7 +539,13 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	privacySettings() {
-		const { isRequestingSettings, translate, handleSubmitForm, isSavingSettings } = this.props;
+		const {
+			isRequestingSettings,
+			translate,
+			handleSubmitForm,
+			isSavingSettings,
+			withComingSoonOption,
+		} = this.props;
 
 		return (
 			<>
@@ -441,7 +558,9 @@ export class SiteSettingsFormGeneral extends Component {
 					title={ translate( 'Privacy' ) }
 				/>
 				<Card>
-					<form>{ this.visibilityOptions() }</form>
+					<form>
+						{ withComingSoonOption ? this.visibilityOptionsComingSoon() : this.visibilityOptions() }
+					</form>
 				</Card>
 			</>
 		);
@@ -567,12 +686,15 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 };
 
 const connectComponent = connect(
-	state => {
+	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteIsJetpack = isJetpackSite( state, siteId );
 		const selectedSite = getSelectedSite( state );
 
 		return {
+			withComingSoonOption: ownProps.hasOwnProperty( 'withComingSoonOption' )
+				? ownProps.withComingSoonOption
+				: config.isEnabled( 'coming-soon' ),
 			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 			siteIsJetpack,
@@ -595,6 +717,7 @@ const getFormSettings = settings => {
 		lang_id: '',
 		timezone_string: '',
 		blog_public: '',
+		wpcom_coming_soon: '',
 		admin_url: '',
 	};
 
@@ -608,6 +731,7 @@ const getFormSettings = settings => {
 
 		lang_id: settings.lang_id,
 		blog_public: settings.blog_public,
+		wpcom_coming_soon: settings.wpcom_coming_soon,
 		timezone_string: settings.timezone_string,
 	};
 

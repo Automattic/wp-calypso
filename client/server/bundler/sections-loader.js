@@ -1,4 +1,4 @@
-const config = require( 'server/config' );
+const config = require( '../config' );
 const { getOptions } = require( 'loader-utils' );
 
 /*

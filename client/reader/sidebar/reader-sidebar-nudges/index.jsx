@@ -19,11 +19,27 @@ import getSites from 'state/selectors/get-sites';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import getPrimarySiteSlug from 'state/selectors/get-primary-site-slug';
 import { clickUpgradeNudge } from 'state/marketing/actions';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { abtest } from 'lib/abtest';
 
 const debug = debugFactory( 'calypso:reader:sidebar-nudges' );
 
 function renderFreeToPaidPlanNudge( { siteId, siteSlug, translate }, dispatch ) {
+	if ( abtest( 'sidebarUpsellNudgeUnification' ) === 'variantShowUnifiedUpsells' ) {
+		return (
+			<UpsellNudge
+				event={ 'free-to-paid-sidebar-reader' }
+				callToAction={ translate( 'Upgrade' ) }
+				compact
+				href={ '/plans/' + siteSlug }
+				title={ translate( 'Free domain with a plan' ) }
+				onClick={ () => dispatch( clickUpgradeNudge( siteId ) ) }
+				tracksClickName={ 'calypso_upgrade_nudge_cta_click' }
+				tracksImpressionName={ 'calypso_upgrade_nudge_impression' }
+			/>
+		);
+	}
+
 	return (
 		<SidebarBanner
 			ctaName={ 'free-to-paid-sidebar-reader' }

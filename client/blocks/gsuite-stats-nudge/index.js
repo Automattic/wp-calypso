@@ -101,22 +101,23 @@ class GSuiteStatsNudge extends Component {
 
 					<div className="gsuite-stats-nudge__info">
 						<h1 className="gsuite-stats-nudge__title">
-							{ translate(
-								'Customers can’t reach you at contact@%s – click here to add a mailbox',
-								{ args: domainSlug }
-							) }
+							{ translate( 'Get custom email addresses with %(domain)s', {
+								args: { domain: domainSlug }
+							} ) }
 						</h1>
+
 						{
 							<p>
 								{ translate(
-									"Let customers reach you at {{strong}}contact@%s{{/strong}}. We've partnered with Google to offer you email, storage, docs, calendars, and more integrated with your site.",
+									"An email address like {{strong}}contact@%(domain)s{{/strong}} looks pro and helps customers trust you. We've partnered with Google to offer you email, storage, docs, calendars, and more integrated with your site.",
 									{
-										args: domainSlug,
+										args: { domain: domainSlug },
 										components: { strong: <strong /> },
 									}
 								) }
 							</p>
 						}
+
 						<div className="gsuite-stats-nudge__button-row">
 							<Button
 								href={ url }

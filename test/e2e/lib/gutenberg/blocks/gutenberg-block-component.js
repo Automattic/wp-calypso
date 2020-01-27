@@ -24,7 +24,7 @@ export default class GutenbergBlockComponent extends AsyncBaseContainer {
 
 	async focusBlock() {
 		const selectedBlockSelector = By.css(
-			`${ this.blockID }.editor-block-list__block.is-selected`
+			`${ this.blockID }.block-editor-block-list__block.is-selected`
 		);
 
 		await driverHelper.clickWhenClickable( this.driver, this.expectedElementSelector );

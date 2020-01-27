@@ -31,6 +31,7 @@ import { saveJetpackSettings } from 'state/jetpack/settings/actions';
 import { removeNotice, successNotice, errorNotice } from 'state/notices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 
@@ -302,6 +303,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				jetpackFieldsToUpdate,
 				path,
 				siteIsJetpack: isJetpack,
+				siteIsAtomic: isSiteAutomatedTransfer( state, siteId ),
 				siteSettingsSaveError,
 				settings,
 				settingsFields,

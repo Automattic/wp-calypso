@@ -1,6 +1,7 @@
 next
 -----
 
+* Breaking change: drop support for moment both in `i18n.moment` and `i18n.localize`. It's no longer desirable for moment to be a mandatory dependency of i18n-calypso.
 * Update debug to v4
 * Switch from Jed to Tannin, for smaller size as well as runtime speedups
 

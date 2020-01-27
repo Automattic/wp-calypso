@@ -9,9 +9,7 @@ import { Button, CompactCard } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
-import Site from 'blocks/site';
 
 /**
  * Style dependencies
@@ -21,6 +19,7 @@ import ImportTypeChoice from 'my-sites/migrate/components/import-type-choice';
 import MigrateButton from 'my-sites/migrate/migrate-button';
 import { get } from 'lodash';
 import { redirectTo } from 'my-sites/migrate/helpers';
+import SitesBlock from 'my-sites/migrate/components/sites-block';
 
 class StepImportOrMigrate extends Component {
 	static propTypes = {
@@ -71,7 +70,7 @@ class StepImportOrMigrate extends Component {
 	};
 
 	render() {
-		const { targetSite, targetSiteSlug, sourceHasJetpack } = this.props;
+		const { targetSite, targetSiteSlug, sourceHasJetpack, sourceSite } = this.props;
 		const backHref = `/migrate/${ targetSiteSlug }`;
 
 		const targetSiteDomain = get( targetSite, 'domain' );
@@ -79,10 +78,9 @@ class StepImportOrMigrate extends Component {
 		return (
 			<>
 				<HeaderCake backHref={ backHref }>Import from WordPress</HeaderCake>
-				<CompactCard className="migrate__sites">
-					<Gridicon className="migrate__sites-arrow" icon="arrow-right" />
-					<Site site={ targetSite } indicator={ false } />
-				</CompactCard>
+
+				<SitesBlock sourceSite={ sourceSite } targetSite={ targetSite } />
+
 				<CompactCard>
 					<h3>What do you want to import?</h3>
 

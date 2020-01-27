@@ -15,6 +15,7 @@ import wpcom from 'lib/wp';
 import userFactory from 'lib/user';
 import { getSavedVariations } from 'lib/abtest';
 import analytics from 'lib/analytics';
+import { recordRegistration, recordSocialRegistration } from 'lib/analytics/signup';
 import {
 	updatePrivacyForDomain,
 	supportsPrivacyProtectionPurchase,
@@ -203,6 +204,11 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	// Provide the default business starter content for the FSE user testing flow.
 	if ( 'test-fse' === lastKnownFlow ) {
 		newSiteParams.options.site_segment = 1;
+	}
+
+	// Provide siteTitle from Gutenboarding
+	if ( 'frankenflow' === lastKnownFlow ) {
+		newSiteParams.blog_title = dependencies.siteTitle;
 	}
 
 	if ( isEligibleForPageBuilder( siteSegment, flowToCheck ) && shouldEnterPageBuilder() ) {
@@ -415,7 +421,7 @@ export function createAccount(
 					);
 				}
 
-				analytics.recordSocialRegistration();
+				recordSocialRegistration();
 
 				callback( undefined, pick( response, [ 'username', 'bearer_token' ] ) );
 			}
@@ -478,7 +484,7 @@ export function createAccount(
 					userData.ID;
 
 				// Fire after a new user registers.
-				analytics.recordRegistration( { flow: flowName } );
+				recordRegistration( flowName );
 				analytics.identifyUser( { ID: userId, username, email: userData.email } );
 
 				const providedDependencies = assign( { username }, bearerToken );

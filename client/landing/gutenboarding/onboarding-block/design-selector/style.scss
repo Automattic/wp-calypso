@@ -24,7 +24,7 @@ $design-selector-selection-space: 285px;
 	padding-bottom: 48px;
 	padding-top: 19px;
 
-	&.has-selected-design {
+	&.is-page-selector-open {
 		overflow-y: hidden;
 		height: 100vh;
 	}
@@ -82,6 +82,7 @@ $design-selector-selection-space: 285px;
 	position: relative;
 	overflow: hidden;
 	padding: 2px;
+	cursor: pointer;
 
 	&::before {
 		content: '';
@@ -106,6 +107,17 @@ $design-selector-selection-space: 285px;
 	&:focus {
 		padding: 0;
 		border: 3px solid $blue-medium-focus;
+
+		// Offset absolute-positioned card content when border state occurs
+		.page-layout-selector__card-media {
+			width: calc( 100% + 4px ); /* This number is the border width * 2, minus the width of the thin static state border */
+			top: -2px; /* This is half of the above number. */
+		}
+
+		.page-layout-selector__card-footer {
+			bottom: -2px;
+			width: calc( 100% + 4px );
+		}
 	}
 
 	&:hover,
@@ -146,6 +158,7 @@ $design-selector-selection-space: 285px;
 
 .design-selector__design-option {
 	position: relative;
+	cursor: pointer;
 
 	.design-selector__option-overlay {
 		background-color: rgba( var( --color-primary-rgb ), 0.8 );

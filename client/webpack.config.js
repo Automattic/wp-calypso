@@ -154,6 +154,7 @@ const webpackConfig = {
 			} ),
 			SassConfig.loader( {
 				includePaths: [ __dirname ],
+				postCssConfig: { path: __dirname },
 				prelude: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' ) }';`,
 			} ),
 			{
@@ -183,7 +184,6 @@ const webpackConfig = {
 		modules: [ __dirname, 'node_modules' ],
 		alias: Object.assign(
 			{
-				'react-virtualized': 'react-virtualized/dist/es',
 				debug: path.resolve( __dirname, '../node_modules/debug' ),
 				store: 'store/dist/store.modern',
 				gridicons$: path.resolve( __dirname, 'components/gridicon' ),

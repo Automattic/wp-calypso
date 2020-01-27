@@ -37,6 +37,7 @@
 		"comments/moderation-tools-in-posts": true,
 		"comments/management/threaded-view": false,
 		"composite-checkout-wpcom": false,
+		"coming-soon": true,
 		"desktop-promo": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,

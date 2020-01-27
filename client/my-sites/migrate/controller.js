@@ -24,10 +24,7 @@ export function migrateSite( context, next ) {
 			context.params.sourceSiteId &&
 			getSiteId( context.store.getState(), context.params.sourceSiteId );
 		context.primary = (
-			<SectionMigrate
-				sourceSiteId={ sourceSiteId }
-				showImportSelector={ context.showImportSelector }
-			/>
+			<SectionMigrate sourceSiteId={ sourceSiteId } step={ context.migrationStep } />
 		);
 		return next();
 	}
@@ -35,9 +32,11 @@ export function migrateSite( context, next ) {
 	page.redirect( '/' );
 }
 
-export function setImportSelector( context, next ) {
-	context.showImportSelector = true;
-	next();
+export function setStep( migrationStep ) {
+	return ( context, next ) => {
+		context.migrationStep = migrationStep;
+		next();
+	};
 }
 
 export function setSiteSelectionHeader( context, next ) {

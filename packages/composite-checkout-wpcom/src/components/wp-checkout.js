@@ -56,7 +56,11 @@ export default function WPCheckout( {
 	const [ itemsWithTax ] = useLineItems();
 
 	const ReviewContent = () => (
-		<WPCheckoutOrderReview removeItem={ removeItem } onChangePlanLength={ changePlanLength } />
+		<WPCheckoutOrderReview
+			removeItem={ removeItem }
+			onChangePlanLength={ changePlanLength }
+			siteUrl={ siteUrl }
+		/>
 	);
 
 	const contactInfo = useSelect( sel => sel( 'wpcom' ).getContactInfo() ) || {};

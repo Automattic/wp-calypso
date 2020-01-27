@@ -2,8 +2,9 @@
  * External dependencies
  */
 import { __ as NO__ } from '@wordpress/i18n';
-import { Icon } from '@wordpress/components';
+import { Button, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import React, { FunctionComponent } from 'react';
 import { useDebounce } from 'use-debounce';
 import classnames from 'classnames';
@@ -21,11 +22,10 @@ import Link from '../link';
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
 interface Props {
-	next?: string;
 	prev?: string;
 }
 
-const Header: FunctionComponent< Props > = ( { next, prev } ) => {
+const Header: FunctionComponent< Props > = ( { prev } ) => {
 	const { domain, selectedDesign, siteTitle, siteVertical } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
@@ -104,10 +104,19 @@ const Header: FunctionComponent< Props > = ( { next, prev } ) => {
 			</div>
 			<div className="gutenboarding__header-section">
 				<div className="gutenboarding__header-group">
-					{ next && hasSelectedDesign && (
-						<Link to={ next } className="gutenboarding__header-next-button" isPrimary isLarge>
+					{ hasSelectedDesign && (
+						<Button
+							href={ addQueryArgs( '/start/frankenflow', {
+								siteTitle: siteTitle,
+								...( selectedDesign?.slug && { theme: selectedDesign.slug } ),
+								...( currentDomain?.domain_name && { domainName: currentDomain.domain_name } ),
+							} ) }
+							className="gutenboarding__header-next-button"
+							isPrimary
+							isLarge
+						>
 							{ NO__( 'Create my site' ) }
-						</Link>
+						</Button>
 					) }
 				</div>
 			</div>

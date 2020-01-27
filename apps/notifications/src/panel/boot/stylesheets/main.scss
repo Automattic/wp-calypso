@@ -412,7 +412,8 @@
 				max-height: 3em;
 				-webkit-line-clamp: 2;
 				@extend %ellipsy-box;
-				font-size: 16px;
+				font-size: $wpnc__font-size;
+				line-height: $wpnc__line-height;
 				letter-spacing: 0.15px;
 			}
 
@@ -440,8 +441,9 @@
 				-webkit-line-clamp: 2;
 				@extend %ellipsy-box;
 				color: var( --color-text-subtle );
-				font-size: 14px;
+				font-size: $wpnc__font-size;
 				letter-spacing: 0.25px;
+				padding-top: 2px;
 			}
 		}
 
