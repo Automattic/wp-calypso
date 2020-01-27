@@ -534,9 +534,9 @@ describe( 'Checkout', () => {
 			expect( getByText( 'Pay Please' ) ).toBeDisabled();
 		} );
 
-		it( 'renders the payment method submitButton disabled if any steps are incomplete and the last step is active', () => {
+		it( 'renders the payment method submitButton enabled if any steps are incomplete and the last step is active', () => {
 			const { getByText } = render( <MyCheckout steps={ [ steps[ 0 ], steps[ 3 ] ] } /> );
-			expect( getByText( 'Pay Please' ) ).toBeDisabled();
+			expect( getByText( 'Pay Please' ) ).not.toBeDisabled();
 		} );
 
 		it( 'renders the payment method submitButton disabled if all steps are complete but the last step is not active', () => {

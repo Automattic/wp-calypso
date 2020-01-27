@@ -114,9 +114,6 @@ export default function Checkout( { steps: stepProps, className } ) {
 		return index > activeStep.stepIndex && step.hasStepNumber;
 	} );
 	const isThereAnotherNumberedStep = !! nextStep && nextStep.hasStepNumber;
-	const isThereAnIncompleteStep = !! annotatedSteps.find(
-		step => ! stepCompleteStatus[ step.id ] ?? false
-	);
 
 	if ( formStatus === 'loading' ) {
 		return (
@@ -166,10 +163,7 @@ export default function Checkout( { steps: stepProps, className } ) {
 					) ) }
 				</ActiveStepProvider>
 
-				<SubmitButtonWrapper
-					isThereAnotherNumberedStep={ isThereAnotherNumberedStep }
-					isThereAnIncompleteStep={ isThereAnIncompleteStep }
-				/>
+				<SubmitButtonWrapper isThereAnotherNumberedStep={ isThereAnotherNumberedStep } />
 			</MainContent>
 		</Container>
 	);
@@ -180,7 +174,7 @@ Checkout.propTypes = {
 	steps: PropTypes.array,
 };
 
-function SubmitButtonWrapper( { isThereAnotherNumberedStep, isThereAnIncompleteStep } ) {
+function SubmitButtonWrapper( { isThereAnotherNumberedStep } ) {
 	const localize = useLocalize();
 	const { formStatus } = useFormStatus();
 
@@ -189,11 +183,7 @@ function SubmitButtonWrapper( { isThereAnotherNumberedStep, isThereAnIncompleteS
 			<CheckoutErrorBoundary
 				errorMessage={ localize( 'There was a problem with the submit button.' ) }
 			>
-				<CheckoutSubmitButton
-					disabled={
-						isThereAnotherNumberedStep || isThereAnIncompleteStep || formStatus !== 'ready'
-					}
-				/>
+				<CheckoutSubmitButton disabled={ isThereAnotherNumberedStep || formStatus !== 'ready' } />
 			</CheckoutErrorBoundary>
 		</SubmitButtonWrapperUI>
 	);
