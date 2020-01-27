@@ -18,7 +18,7 @@ export default class TwitterFeedPage extends AsyncBaseContainer {
 				: '';
 			url = `https://twitter.com/${ publicizeTwitterAccount }`;
 		}
-		super( driver, by.css( '#timeline' ), url );
+		super( driver, by.css( '.ProfileTimeline' ), url );
 	}
 
 	async checkLatestTweetsContain( expectedTweetText ) {
