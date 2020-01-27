@@ -32,7 +32,6 @@ import { createFreePaymentMethod } from './lib/payment-methods/free-purchase';
 import { createStripeMethod } from './lib/payment-methods/stripe-credit-card-fields';
 import { createApplePayMethod } from './lib/payment-methods/apple-pay';
 import { createPayPalMethod } from './lib/payment-methods/paypal';
-import { createCreditCardMethod } from './lib/payment-methods/credit-card';
 import { createExistingCardMethod } from './lib/payment-methods/existing-credit-card';
 import { useActiveStep } from './lib/active-step';
 import CheckoutOrderSummary, {
@@ -59,7 +58,6 @@ export {
 	OrderReviewSection,
 	OrderReviewTotal,
 	createApplePayMethod,
-	createCreditCardMethod,
 	createExistingCardMethod,
 	createFreePaymentMethod,
 	createFullCreditsMethod,
