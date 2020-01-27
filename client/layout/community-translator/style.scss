@@ -135,3 +135,8 @@ body {
 		margin-right: 8px;
 	}
 }
+
+// Disable translatable strings highlight when deliverable is highlighted
+.has-deliverable-highlighted .translator-translatable {
+	text-shadow: none !important;
+}

@@ -229,6 +229,11 @@ class TranslatorLauncher extends React.Component {
 			() => {
 				const hasSelectedDeliverableTarget = !! this.state.selectedDeliverableTarget;
 
+				document.body.classList.toggle(
+					'has-deliverable-highlighted',
+					hasSelectedDeliverableTarget
+				);
+
 				if ( hasSelectedDeliverableTarget ) {
 					window.addEventListener( 'scroll', this.handleWindowScroll );
 
