@@ -532,31 +532,27 @@ describe( 'Checkout', () => {
 			expect( getByText( 'Pay Please' ) ).not.toBeDisabled();
 		} );
 
-		it( 'provides the active step through useActiveStep to components in the step', () => {
+		it( 'provides the active step through useActiveStep', () => {
 			const { getByText } = render( <MyCheckout steps={ [ steps[ 1 ], steps[ 4 ] ] } /> );
 			expect( getByText( 'Possibly Complete active id custom-contact-step' ) ).toBeInTheDocument();
 			expect( getByText( 'Possibly Complete active hasStepNumber true' ) ).toBeInTheDocument();
 		} );
 
-		it( 'provides the active step with additional fields through useActiveStep to components in the step', () => {
-			const { getByText } = render( <MyCheckout steps={ [ steps[ 1 ], steps[ 4 ] ] } /> );
+		it( 'provides the active step with additional fields through useActiveStep', () => {
+			const { getByText, getAllByText } = render(
+				<MyCheckout steps={ [ steps[ 1 ], steps[ 4 ] ] } />
+			);
 			expect( getByText( 'Possibly Complete active step number 1' ) ).toBeInTheDocument();
 			expect( getByText( 'Possibly Complete active step index 0' ) ).toBeInTheDocument();
 			expect( getByText( 'Possibly Complete active isComplete true' ) ).toBeInTheDocument();
-		} );
 
-		it( 'provides the active step through useActiveStep with isComplete that changes based on isCompleteCallback', () => {
-			const { getAllByText, getByText } = render(
-				<MyCheckout steps={ [ steps[ 1 ], steps[ 4 ] ] } />
-			);
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
 			fireEvent.click( firstStepContinue );
 			expect( getByText( 'Possibly Complete active step number 2' ) ).toBeInTheDocument();
 			expect( getByText( 'Possibly Complete active step index 1' ) ).toBeInTheDocument();
-			expect( getByText( 'Possibly Complete active isComplete false' ) ).toBeInTheDocument();
 		} );
 
-		it( 'provides the currently rendering step isComplete through useIsStepComplete', () => {
+		it( 'provides useIsStepComplete that changes based on isCompleteCallback', () => {
 			const { getAllByText, getByText, getByLabelText } = render(
 				<MyCheckout steps={ [ steps[ 4 ], steps[ 1 ] ] } />
 			);
