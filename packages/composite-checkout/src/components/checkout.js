@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
@@ -92,7 +92,7 @@ export default function Checkout( { steps, className } ) {
 	const stepNumber = usePrimarySelect( select => select().getStepNumber() );
 	debug( 'current step number is', stepNumber );
 	const { changeStep } = usePrimaryDispatch();
-	steps = steps || makeDefaultSteps( localize );
+	const steps = useDefaultStepsIfNeeded( stepProps );
 	validateSteps( steps );
 
 	// Assign step numbers to all steps with numbers
@@ -270,6 +270,16 @@ const SubmitButtonWrapper = styled.div`
 		border: 0;
 	}
 `;
+
+function useDefaultStepsIfNeeded( steps ) {
+	const localize = useLocalize();
+	return useMemo( () => {
+		if ( steps ) {
+			return steps;
+		}
+		return makeDefaultSteps( localize );
+	}, [ steps, localize ] );
+}
 
 function makeDefaultSteps( localize ) {
 	return [
