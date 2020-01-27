@@ -651,7 +651,7 @@ module.exports = function() {
 	app.use( setupLoggedInContext );
 	app.use( handleLocaleSubdomains );
 
-	if ( jetpackCloudEnvs.includes( process.env.CALYPSO_ENV ) ) {
+	if ( jetpackCloudEnvs.includes( calypsoEnv ) ) {
 		JETPACK_CLOUD_SECTION_DEFINITION.paths.forEach( sectionPath =>
 			handleSectionPath( JETPACK_CLOUD_SECTION_DEFINITION, sectionPath, 'entry-jetpack-cloud' )
 		);
