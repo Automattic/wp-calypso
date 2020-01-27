@@ -20,7 +20,6 @@ import {
 	usePrimaryDispatch,
 	useRegisterPrimaryStore,
 	usePaymentData,
-	useRegistry,
 } from '../lib/registry';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import {
@@ -88,9 +87,6 @@ export default function Checkout( { steps: stepProps, className } ) {
 	const localize = useLocalize();
 	const [ paymentData ] = usePaymentData();
 	const { formStatus } = useFormStatus();
-
-	// Re-render if any store changes; that way isComplete can rely on any data
-	useRenderOnStoreUpdate(); // TODO: remove this
 
 	// stepNumber is the displayed number of the active step, not its index
 	const stepNumber = usePrimarySelect( select => select().getStepNumber() );
@@ -328,16 +324,6 @@ function makeDefaultSteps( localize ) {
 		},
 		getDefaultOrderReviewStep(),
 	];
-}
-
-function useRenderOnStoreUpdate() {
-	const { subscribe } = useRegistry();
-	const [ , setForceReload ] = useState( 0 );
-	useEffect( () => {
-		return subscribe( () => {
-			setForceReload( current => current + 1 );
-		} );
-	}, [ subscribe ] );
 }
 
 function getStepNumberFromUrl() {
