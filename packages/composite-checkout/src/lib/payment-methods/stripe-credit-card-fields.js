@@ -11,6 +11,8 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import { VisaLogo, MastercardLogo, AmexLogo } from '../../components/payment-logos';
+import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 import Field from '../../components/field';
 import GridRow from '../../components/grid-row';
 import Button from '../../components/button';
@@ -30,7 +32,6 @@ import {
 	useEvents,
 } from '../../public-api';
 import { sprintf, useLocalize } from '../localize';
-import { CreditCardLabel } from './credit-card';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import CreditCardFields, { CVVImage } from './credit-card-fields';
 import Spinner from '../../components/spinner';
@@ -679,4 +680,26 @@ function createStripePaymentMethodToken( { stripe, name, country, postalCode } )
 			postal_code: postalCode,
 		},
 	} );
+}
+
+function CreditCardLabel() {
+	const localize = useLocalize();
+	return (
+		<React.Fragment>
+			<span>{ localize( 'Credit or debit card' ) }</span>
+			<CreditCardLogos />
+		</React.Fragment>
+	);
+}
+
+function CreditCardLogos() {
+	//TODO: Determine which logos to show
+
+	return (
+		<PaymentMethodLogos>
+			<VisaLogo />
+			<MastercardLogo />
+			<AmexLogo />
+		</PaymentMethodLogos>
+	);
 }
