@@ -128,7 +128,10 @@ class PostTrends extends React.Component {
 		const months = [];
 
 		for ( let i = 11; i >= 0; i-- ) {
-			const startDate = this.props.moment.subtract( i, 'months' ).startOf( 'month' );
+			const startDate = this.props
+				.moment()
+				.subtract( i, 'months' )
+				.startOf( 'month' );
 			months.push(
 				<Month key={ i } startDate={ startDate } streakData={ streakData } max={ maxPosts } />
 			);
