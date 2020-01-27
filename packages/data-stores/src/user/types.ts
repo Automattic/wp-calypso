@@ -1,27 +1,3 @@
-/**
- * External dependencies
- */
-import { Action } from 'redux';
-
-/**
- * Internal dependencies
- */
-import * as ActionCreators from './actions';
-import { ActionsDefinedInModule } from '../mapped-types';
-
-export const enum ActionType {
-	CREATE_ACCOUNT = 'CREATE_ACCOUNT',
-	RECEIVE_CURRENT_USER = 'RECEIVE_CURRENT_USER',
-	RECEIVE_CURRENT_USER_FAILED = 'RECEIVE_CURRENT_USER_FAILED',
-	FETCH_CURRENT_USER = 'FETCH_CURRENT_USER',
-	RECEIVE_NEW_USER = 'RECEIVE_NEW_USER',
-	RECEIVE_NEW_USER_SUCCESS = 'RECEIVE_NEW_USER',
-	RECEIVE_NEW_USER_FAILED = 'RECEIVE_NEW_USER_FAILED',
-	FETCH_NEW_USER = 'FETCH_NEW_USER',
-}
-
-export type UserAction = ActionsDefinedInModule< typeof ActionCreators >;
-
 export interface CurrentUser {
 	ID: number;
 	display_name: string;
@@ -64,8 +40,4 @@ export interface CreateAccountParams {
 		first_name?: string;
 		last_name?: string;
 	};
-}
-
-export interface CreateAccountAction extends Action {
-	params?: CreateAccountParams;
 }

@@ -6,14 +6,14 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { ActionType, DomainSuggestion, DomainSuggestionsAction } from './types';
+import { DomainSuggestion } from './types';
 import { stringifyDomainQueryObject } from './utils';
 
 function domainSuggestions(
 	state: Record< string, DomainSuggestion[] | undefined > = {},
-	action: DomainSuggestionsAction
+	action: import('./actions').Action
 ) {
-	if ( action.type === ActionType.RECEIVE_DOMAIN_SUGGESTIONS ) {
+	if ( action.type === 'RECEIVE_DOMAIN_SUGGESTIONS' ) {
 		return {
 			...state,
 			[ stringifyDomainQueryObject( action.queryObject ) ]: action.suggestions,

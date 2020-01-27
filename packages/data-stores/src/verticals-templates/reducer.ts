@@ -6,13 +6,13 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { ActionType, Template, VerticalsTemplatesAction } from './types';
+import { Template } from './types';
 
 function templates(
 	state: Record< string, Template[] | undefined > = {},
-	action: VerticalsTemplatesAction
+	action: import('./actions').Action
 ) {
-	if ( action.type === ActionType.RECEIVE_TEMPLATES ) {
+	if ( action.type === 'RECEIVE_TEMPLATES' ) {
 		return {
 			...state,
 			[ action.verticalId ]: action.templates,

@@ -6,10 +6,10 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { ActionType, Vertical, VerticalsActions } from './types';
+import { Vertical } from './types';
 
-function verticals( state: Vertical[] = [], action: VerticalsActions ) {
-	if ( action.type === ActionType.RECEIVE_VERTICALS ) {
+function verticals( state: Vertical[] = [], action: import('./actions').Action ) {
+	if ( action.type === 'RECEIVE_VERTICALS' ) {
 		return action.verticals;
 	}
 	return state;

@@ -1,15 +1,3 @@
-/**
- * Internal dependencies
- */
-import * as Actions from './actions';
-import { ActionsDefinedInModule } from '../mapped-types';
-
-export const enum ActionType {
-	RECEIVE_DOMAIN_SUGGESTIONS = 'RECEIVE_DOMAIN_SUGGESTIONS',
-}
-
-export type DomainSuggestionsAction = ActionsDefinedInModule< typeof Actions >;
-
 export interface DomainSuggestionQuery {
 	/**
 	 * True to include .blog subdomain suggestions

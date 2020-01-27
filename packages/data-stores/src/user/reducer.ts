@@ -6,39 +6,41 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { ActionType, CurrentUser, NewUser, NewUserErrorResponse, UserAction } from './types';
+import { CurrentUser, NewUser, NewUserErrorResponse } from './types';
 
-function currentUser( state: CurrentUser | null | undefined, action: UserAction ) {
+type Action = import('./actions').Action;
+
+function currentUser( state: CurrentUser | null | undefined, action: Action ) {
 	switch ( action.type ) {
-		case ActionType.RECEIVE_CURRENT_USER:
+		case 'RECEIVE_CURRENT_USER':
 			return action.currentUser;
-		case ActionType.RECEIVE_CURRENT_USER_FAILED:
+		case 'RECEIVE_CURRENT_USER_FAILED':
 			return null;
 	}
 	return state;
 }
 
-function newUserData( state: NewUser | undefined, action: UserAction ) {
-	if ( action.type === ActionType.RECEIVE_NEW_USER ) {
+function newUserData( state: NewUser | undefined, action: Action ) {
+	if ( action.type === 'RECEIVE_NEW_USER' ) {
 		const { response } = action;
 		return {
 			username: response.signup_sandbox_username || response.username,
 			userId: response.signup_sandbox_user_id || response.user_id,
 			bearerToken: response.bearer_token,
 		};
-	} else if ( action.type === ActionType.RECEIVE_NEW_USER_FAILED ) {
+	} else if ( action.type === 'RECEIVE_NEW_USER_FAILED' ) {
 		return undefined;
 	}
 	return state;
 }
 
-function newUserError( state: NewUserErrorResponse | undefined, action: UserAction ) {
+function newUserError( state: NewUserErrorResponse | undefined, action: Action ) {
 	switch ( action.type ) {
-		case ActionType.FETCH_NEW_USER:
+		case 'FETCH_NEW_USER':
 			return undefined;
-		case ActionType.RECEIVE_NEW_USER:
+		case 'RECEIVE_NEW_USER':
 			return undefined;
-		case ActionType.RECEIVE_NEW_USER_FAILED:
+		case 'RECEIVE_NEW_USER_FAILED':
 			return {
 				error: action.error.error,
 				status: action.error.status,
@@ -50,13 +52,13 @@ function newUserError( state: NewUserErrorResponse | undefined, action: UserActi
 	return state;
 }
 
-function isFetchingNewUser( state = false, action: UserAction ) {
+function isFetchingNewUser( state = false, action: Action ) {
 	switch ( action.type ) {
-		case ActionType.FETCH_NEW_USER:
+		case 'FETCH_NEW_USER':
 			return true;
-		case ActionType.RECEIVE_NEW_USER:
+		case 'RECEIVE_NEW_USER':
 			return false;
-		case ActionType.RECEIVE_NEW_USER_FAILED:
+		case 'RECEIVE_NEW_USER_FAILED':
 			return false;
 	}
 	return state;
