@@ -109,6 +109,7 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 							href={ addQueryArgs( '/start/frankenflow', {
 								siteTitle: siteTitle,
 								...( selectedDesign?.slug && { theme: selectedDesign.slug } ),
+								...( currentDomain?.domain_name && { domainName: currentDomain.domain_name } ),
 							} ) }
 							className="gutenboarding__header-next-button"
 							isPrimary
