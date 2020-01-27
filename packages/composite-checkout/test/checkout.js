@@ -8,6 +8,7 @@ import {
 	getByText as getByTextInNode,
 	queryByText as queryByTextInNode,
 	fireEvent,
+	act,
 } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
@@ -398,37 +399,39 @@ describe( 'Checkout', () => {
 			expect( firstStepContent ).toHaveStyle( 'display: none' );
 		} );
 
-		it( 'does change steps if the continue button is clicked when the step is active and becomes complete after a Promise resolves true', () => {
+		it( 'does change steps if the continue button is clicked and the step becomes complete after a Promise resolves', async () => {
 			const stepWithAsyncIsComplete = {
-				...steps[ 0 ],
-				hasStepNumber: true,
+				...steps[ 1 ],
 				isCompleteCallback: () => Promise.resolve( true ),
 			};
 			const { container, getAllByText } = render(
-				<MyCheckout steps={ [ stepWithAsyncIsComplete, steps[ 4 ], steps[ 1 ] ] } />
+				<MyCheckout steps={ [ stepWithAsyncIsComplete, steps[ 4 ], steps[ 2 ] ] } />
 			);
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
-			const firstStep = container.querySelector( '.custom-summary-step-class' );
+			const firstStep = container.querySelector( '.' + steps[ 1 ].className );
 			const firstStepContent = firstStep.querySelector( '.checkout-step__content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
-			fireEvent.click( firstStepContinue );
+			await act( async () => {
+				await fireEvent.click( firstStepContinue );
+			} );
 			expect( firstStepContent ).toHaveStyle( 'display: none' );
 		} );
 
-		it( 'does not change steps if the continue button is clicked when the step is active and becomes complete after a Promise resolves false', () => {
+		it( 'does not change steps if the continue button is clicked and the step remains incomplete after a Promise resolves', async () => {
 			const stepWithAsyncIsComplete = {
-				...steps[ 0 ],
-				hasStepNumber: true,
+				...steps[ 1 ],
 				isCompleteCallback: () => Promise.resolve( false ),
 			};
 			const { container, getAllByText } = render(
-				<MyCheckout steps={ [ stepWithAsyncIsComplete, steps[ 4 ], steps[ 1 ] ] } />
+				<MyCheckout steps={ [ stepWithAsyncIsComplete, steps[ 4 ], steps[ 2 ] ] } />
 			);
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
-			const firstStep = container.querySelector( '.custom-summary-step-class' );
+			const firstStep = container.querySelector( '.' + steps[ 1 ].className );
 			const firstStepContent = firstStep.querySelector( '.checkout-step__content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
-			fireEvent.click( firstStepContinue );
+			await act( async () => {
+				await fireEvent.click( firstStepContinue );
+			} );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 		} );
 
