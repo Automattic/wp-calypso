@@ -17,14 +17,19 @@ import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
 const debug = debugFactory( 'composite-checkout:paypal' );
 
-export function createPayPalMethod( { registerStore, submitTransaction, successUrl, cancelUrl } ) {
+export function createPayPalMethod( {
+	registerStore,
+	submitTransaction,
+	getSuccessUrl,
+	getCancelUrl,
+} ) {
 	registerStore( 'paypal', {
 		controls: {
 			PAYPAL_TRANSACTION_SUBMIT( action ) {
 				const { items } = action.payload;
 				return submitTransaction( {
-					successUrl,
-					cancelUrl,
+					successUrl: getSuccessUrl(),
+					cancelUrl: getCancelUrl(),
 					items,
 				} );
 			},

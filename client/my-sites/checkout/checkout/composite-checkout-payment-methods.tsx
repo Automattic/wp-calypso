@@ -108,8 +108,8 @@ export function createPaymentMethods( {
 
 	const paypalMethod = isMethodEnabled( 'paypal', allowedPaymentMethods )
 		? createPayPalMethod( {
-				successUrl: `/checkout/thank-you/${ select( 'wpcom' )?.getSiteId?.() }/`, // TODO: get the correct redirect URL
-				cancelUrl: window.location.href,
+				getSuccessUrl: () => `/checkout/thank-you/${ select( 'wpcom' )?.getSiteId?.() }/`, // TODO: get the correct redirect URL
+				getCancelUrl: () => window.location.href,
 				registerStore: registerStore,
 				submitTransaction: submitData =>
 					makePayPalExpressRequest(
