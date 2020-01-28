@@ -331,7 +331,7 @@ A React Hook that will return true if the current step is the currently active [
 
 ### useIsStepComplete
 
-A React Hook that will return true if the current [Step](#steps) is complete as defined by the most recent call of `isCompleteCallback` of that step. Only works within a step.
+A React Hook that will return true if the current [Step](#steps) is complete as defined by the most recent call of `isCompleteCallback` of that step. Only works within a step. If a [step object](#steps) is passed as an argument, it will return the state of that step rather than the current step.
 
 ### useLineItems
 
