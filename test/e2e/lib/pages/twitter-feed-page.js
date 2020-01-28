@@ -9,6 +9,7 @@ import config from 'config';
  */
 import * as slackNotifier from '../slack-notifier';
 import AsyncBaseContainer from '../async-base-container';
+import { getElementCount } from '../driver-helper';
 
 export default class TwitterFeedPage extends AsyncBaseContainer {
 	constructor( driver, url ) {
@@ -18,16 +19,23 @@ export default class TwitterFeedPage extends AsyncBaseContainer {
 				: '';
 			url = `https://twitter.com/${ publicizeTwitterAccount }`;
 		}
-		super( driver, by.css( 'div[data-testid*=tweet]' ), url );
+		super( driver, by.css( '#timeline, div[data-testid*=tweet]' ), url );
 	}
 
 	async checkLatestTweetsContain( expectedTweetText ) {
 		const driver = this.driver;
 		return await driver
-			.wait( function() {
-				driver.navigate().refresh();
-				return driver.getPageSource().then( function( source ) {
-					return source.indexOf( expectedTweetText ) > -1;
+			.wait( async function() {
+				await driver.navigate().refresh();
+				return await getElementCount(
+					driver,
+					by.css( '.stream-item, div[data-testid*=tweet]' )
+				).then( tweetCount => {
+					if ( tweetCount >= 5 ) {
+						return driver.getPageSource().then( function( source ) {
+							return source.indexOf( expectedTweetText ) > -1;
+						} );
+					}
 				} );
 			}, this.explicitWaitMS )
 			.then(
