@@ -7,71 +7,117 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import { isExternal } from 'lib/url';
+import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
-import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
+const SECTIONS = [
+	{
+		path: '/',
+		label: 'Dashboard', // @todo: Localize
+		materialIcon: 'dashboard',
+	},
+	{
+		path: '/backups',
+		label: 'Backups', // @todo: Localize
+		materialIcon: 'backup',
+		items: [
+			{
+				path: '/backups',
+				label: 'Backups', // @todo: Localize
+			},
+			{
+				path: '/backups/restore',
+				label: 'Restore site', // @todo: Localize
+			},
+			{
+				path: '/backups/settings',
+				label: 'Settings', // @todo: Localize
+			},
+		],
+	},
+	{
+		path: '/scan',
+		label: 'Scan', // @todo: Localize
+		materialIcon: 'security',
+		items: [
+			{
+				path: '/scan',
+				label: 'Scanner', // @todo: Localize
+			},
+			{
+				path: '/scan/history',
+				label: 'History', // @todo: Localize
+			},
+			{
+				path: '/scan/settings',
+				label: 'Settings', // @todo: Localize
+			},
+		],
+	},
+];
+
+const FOOTER = [
+	{
+		path: '/support',
+		label: 'Support', // @todo: Localize
+		materialIcon: 'help',
+	},
+	{
+		path: 'https://wordpress.com', // @todo: Use some constant here
+		label: 'Manage site', // @todo: Localize
+		materialIcon: 'play_circle_filled',
+		className: 'sidebar__menu-item-back',
+	},
+];
+
 class JetpackCloudSidebar extends Component {
 	static propTypes = {
-		context: PropTypes.shape( {
-			path: PropTypes.string,
-		} ),
+		baseRoute: PropTypes.string,
+		path: PropTypes.string.isRequired,
+	};
+
+	static defaultProps = {
+		baseRoute: '',
 	};
 
 	state = {
-		expandedSections: [],
+		expandedSections: [ this.findInitiallyExpandedSection() ],
 	};
 
-	componentDidMount() {
-		const section = this.getSectionFromCurrentPath();
-
-		if ( section ) {
-			this.toggleSection( section );
-		}
-	}
-
 	/**
-	 * Get current section name from path. When there's no section, we're in the dashboard.
+	 * Find initially expanded section base on current path.
 	 *
-	 * @returns {string} Current section
+	 * @returns {string} Expanded section path
 	 */
-	getSectionFromCurrentPath() {
-		// If no section is present in the path, return 'dashboard'
-		return this.props.context.path.split( '/' )[ 2 ] ?? 'dashboard';
-	}
+	findInitiallyExpandedSection() {
+		const sections = [ ...SECTIONS, ...FOOTER ].map( ( { path } ) => path );
+		const expandedSection = sections.find(
+			section => this.props.path === this.getFullPath( section )
+		);
 
-	/**
-	 * Get current subsection name from path.
-	 *
-	 * @returns {string|null} Current subsection or null
-	 */
-	getSubsectionFromCurrentPath() {
-		return this.props.context.path.split( '/' )[ 3 ] ?? null;
+		return expandedSection ?? sections[ 0 ];
 	}
 
 	/**
 	 * Toggle an expandable section.
 	 *
-	 * @param   {string} section Section to be toggled
+	 * @param {string} section Section to be toggled
 	 */
 	toggleSection( section ) {
-		if ( this.isExpanded( section ) ) {
-			this.setState( {
-				expandedSections: this.state.expandedSections.filter( item => item !== section ),
-			} );
-		} else {
-			this.setState( {
-				expandedSections: [ ...this.state.expandedSections, section ],
-			} );
-		}
+		const expandedSections = this.isExpanded( section )
+			? this.state.expandedSections.filter( item => item !== section )
+			: [ ...this.state.expandedSections, section ];
+		this.setState( { expandedSections } );
 	}
 
 	/**
@@ -85,20 +131,24 @@ class JetpackCloudSidebar extends Component {
 	}
 
 	/**
-	 * Check if a menu item is selected based on the current path.
+	 * Construct a full path which includes the base path.
 	 *
-	 * @param   {string}  path Menu item path
-	 * @returns {boolean}      Is the menu item selected
+	 * @param   {string} path Path for which we want a full path
+	 * @returns {string}      Full path
 	 */
-	isSelected( path ) {
-		const section = this.getSectionFromCurrentPath();
-		const subsection = this.getSubsectionFromCurrentPath();
-
-		if ( ! subsection ) {
-			return section === path;
+	getFullPath( path = '' ) {
+		// @todo: Once the URL structure is defined, this method may be redundant.
+		// No special treatment for external links
+		if ( isExternal( path ) ) {
+			return path;
 		}
 
-		return section.concat( '/', subsection ) === path;
+		// Dashboard path
+		if ( path === '/' ) {
+			return this.props.baseRoute;
+		}
+
+		return this.props.baseRoute + path;
 	}
 
 	handleExpandableMenuClick( section ) {
@@ -109,95 +159,54 @@ class JetpackCloudSidebar extends Component {
 		window.scrollTo( 0, 0 );
 	};
 
+	renderMenu( item ) {
+		return <SidebarMenu key={ 'menu' + item.path }>{ this.renderMenuItem( item ) }</SidebarMenu>;
+	}
+
+	renderExpandableMenu( { className, items, label, materialIcon, path } ) {
+		return (
+			<ExpandableSidebarMenu
+				key={ 'expandable' + path }
+				className={ className }
+				onClick={ this.handleExpandableMenuClick( path ) }
+				expanded={ this.isExpanded( path ) }
+				title={ label }
+				materialIcon={ materialIcon }
+				materialIconStyle="filled"
+			>
+				<ul>{ items.map( item => this.renderMenuItem( item ) ) }</ul>
+			</ExpandableSidebarMenu>
+		);
+	}
+
+	renderMenuItem( { className, label, materialIcon, path } ) {
+		return (
+			<SidebarItem
+				key={ 'item' + path }
+				className={ className }
+				link={ this.getFullPath( path ) }
+				label={ label }
+				materialIcon={ materialIcon }
+				materialIconStyle="filled"
+				selected={ this.props.path === this.getFullPath( path ) }
+				forceInternalLink={ true }
+			/>
+		);
+	}
+
 	render() {
 		return (
 			<Sidebar>
 				<SidebarRegion>
 					{ /* @todo: A profile info box needs to be created and added here; similar to <ProfileGravatar /> in client/me/sidebar/index.jsx */ }
-					<SidebarMenu>
-						<SidebarItem
-							link="/jetpack-cloud"
-							label="Dashboard"
-							materialIcon="dashboard"
-							materialIconStyle="filled"
-							selected={ this.isSelected( 'dashboard' ) }
-						/>
-					</SidebarMenu>
-					<ExpandableSidebarMenu
-						onClick={ this.handleExpandableMenuClick( 'backups' ) }
-						expanded={ this.isExpanded( 'backups' ) }
-						title="Backups"
-						materialIcon="backup"
-						materialIconStyle="filled"
-					>
-						<ul>
-							<SidebarItem
-								link="/jetpack-cloud/backups"
-								label="Backups"
-								onNavigate={ this.onNavigate }
-								selected={ this.isSelected( 'backups' ) }
-							/>
-							<SidebarItem
-								link="/jetpack-cloud/backups/restore" // @todo: Add jetpack-cloud/backup/restore route
-								label="Restore site"
-								onNavigate={ this.onNavigate }
-								selected={ this.isSelected( 'backups/restore' ) }
-							/>
-							<SidebarItem
-								link="/jetpack-cloud/backups/settings" // @todo: Add jetpack-cloud/backup/settings route
-								label="Settings"
-								onNavigate={ this.onNavigate }
-								selected={ this.isSelected( 'backups/settings' ) }
-							/>
-						</ul>
-					</ExpandableSidebarMenu>
-					<ExpandableSidebarMenu
-						onClick={ this.handleExpandableMenuClick( 'scan' ) }
-						expanded={ this.isExpanded( 'scan' ) }
-						title="Scan"
-						materialIcon="security" // @todo: the Scan logo differs from the Material Icon used here
-						materialIconStyle="filled"
-					>
-						<ul>
-							<SidebarItem
-								link="/jetpack-cloud/scan"
-								label="Scanner"
-								onNavigate={ this.onNavigate }
-								selected={ this.isSelected( 'scan' ) }
-							/>
-							<SidebarItem
-								link="/jetpack-cloud/scan/history" // @todo: Add jetpack-cloud/scan/history route
-								label="History"
-								onNavigate={ this.onNavigate }
-								selected={ this.isSelected( 'scan/history' ) }
-							/>
-							<SidebarItem
-								link="/jetpack-cloud/scan/settings" // @todo: Add jetpack-cloud/scan/settings route
-								label="Settings"
-								onNavigate={ this.onNavigate }
-								selected={ this.isSelected( 'scan/settings' ) }
-							/>
-						</ul>
-					</ExpandableSidebarMenu>
+					{ SECTIONS.map( section =>
+						section.items ? this.renderExpandableMenu( section ) : this.renderMenu( section )
+					) }
 				</SidebarRegion>
 				<SidebarFooter>
-					<SidebarMenu>
-						<SidebarItem
-							link="/jetpack-cloud/support" // @todo: Add jetpack-cloud/support route or change linkt to other destination
-							label="Support"
-							materialIcon="help"
-							materialIconStyle="filled"
-							onNavigate={ this.onNavigate }
-						/>
-						<SidebarItem
-							className="sidebar__menu-item-back"
-							link="/"
-							label="Manage site"
-							materialIcon="play_circle_filled" // @todo: The icon has to be mirrored in CSS e.g. with `scaleX( -1 )`
-							materialIconStyle="filled"
-							onNavigate={ this.onNavigate }
-						/>
-					</SidebarMenu>
+					{ FOOTER.map( section =>
+						section.items ? this.renderExpandableMenu( section ) : this.renderMenu( section )
+					) }
 				</SidebarFooter>
 			</Sidebar>
 		);
