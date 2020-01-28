@@ -533,7 +533,7 @@ export default connect( ( state, props ) => {
 			: false;
 	return {
 		countryCode,
-		countriesList: getCountries( state, 'domains' ),
+		countriesList: getCountries( state, 'domains' ) ?? [],
 		hasCountryStates,
 	};
 } )( localize( ContactDetailsFormFields ) );
