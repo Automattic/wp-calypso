@@ -4,7 +4,7 @@
 import { WPCOMCartItem } from '@automattic/composite-checkout-wpcom';
 
 export type WPCOMTransactionEndpoint = (
-	WPCOMTransactionEndpointRequestPayload
+	_: WPCOMTransactionEndpointRequestPayload
 ) => Promise< WPCOMTransactionEndpointResponse >;
 
 // Request payload as expected by the WPCOM transactions endpoint
@@ -35,11 +35,11 @@ export type WPCOMTransactionEndpointCart = {
 	temporary: false;
 	extra: string[];
 	products: {
-		product_id: string;
+		product_id: number;
 		meta?: string;
 		currency: string;
 		volume: number;
-		extra?: string[];
+		extra?: object;
 	}[];
 	tax: {
 		location: {
@@ -73,7 +73,7 @@ export function createTransactionEndpointCartFromLineItems( {
 	subdivisionCode,
 	items,
 }: {
-	debug: ( string, any ) => void;
+	debug: ( _0: string, _1: any ) => void;
 	siteId: string;
 	couponId?: string;
 	country: string;
@@ -83,9 +83,12 @@ export function createTransactionEndpointCartFromLineItems( {
 } ): WPCOMTransactionEndpointCart {
 	debug( 'creating cart from items', items );
 
-	const currency = items.reduce( ( firstValue, item ) => firstValue || item.amount.currency, null );
+	const currency: string = items.reduce(
+		( firstValue: string, item ) => firstValue || item.amount.currency,
+		''
+	);
 
-	const convertItem = item => {
+	const convertItem = ( item: WPCOMCartItem ) => {
 		return {
 			product_id: item.wpcom_meta?.product_id,
 			meta: item.wpcom_meta?.meta,
@@ -129,7 +132,7 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	storedDetailsId,
 	name,
 }: {
-	debug: ( string, any ) => void;
+	debug: ( _0: string, _1: any ) => void;
 	siteId: string;
 	couponId?: string;
 	country: string;

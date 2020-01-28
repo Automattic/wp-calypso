@@ -42,7 +42,6 @@ const debug = debugFactory( 'composite-checkout:stripe-payment-method' );
 export function createStripeMethod( {
 	getCountry,
 	getPostalCode,
-	getPhoneNumber,
 	getSubdivisionCode,
 	registerStore,
 	fetchStripeConfiguration,
@@ -79,7 +78,6 @@ export function createStripeMethod( {
 						...payload,
 						country: getCountry(),
 						postalCode: getPostalCode(),
-						phoneNumber: getPhoneNumber(),
 					},
 				};
 				debug( 'stripe payment token created' );
@@ -660,13 +658,12 @@ async function submitStripePayment( {
 	}
 }
 
-function createStripePaymentMethodToken( { stripe, name, country, postalCode, phoneNumber } ) {
+function createStripePaymentMethodToken( { stripe, name, country, postalCode } ) {
 	return createStripePaymentMethod( stripe, {
 		name,
 		address: {
 			country,
 			postal_code: postalCode,
 		},
-		...( phoneNumber ? { phone: phoneNumber } : {} ),
 	} );
 }
