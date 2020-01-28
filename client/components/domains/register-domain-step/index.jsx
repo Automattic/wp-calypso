@@ -113,8 +113,6 @@ const MAX_PAGES = 3;
 const SUGGESTION_QUANTITY = isPaginationEnabled ? PAGE_SIZE * MAX_PAGES : PAGE_SIZE;
 const MIN_QUERY_LENGTH = 2;
 
-const FEATURED_SUGGESTIONS_AT_TOP = [ 'group_7', 'group_8' ];
-
 function getQueryObject( props ) {
 	if ( ! props.selectedSite || ! props.selectedSite.domain ) {
 		return null;
@@ -909,7 +907,7 @@ class RegisterDomainStep extends React.Component {
 			suggestions,
 			this.state.exactMatchDomain,
 			getStrippedDomainBase( domain ),
-			includes( FEATURED_SUGGESTIONS_AT_TOP, this.props.vendor ),
+			true,
 			this.props.deemphasiseTlds
 		);
 
