@@ -1,68 +1,68 @@
 {
-  "name": "wpcom",
-  "description": "Official JavaScript library for the WordPress.com REST API",
-  "version": "5.4.2",
-  "main": "build/index.js",
-  "author": "Automattic, Inc.",
-  "private": true,
-  "scripts": {
-    "prepublish": "make all"
-  },
-  "contributors": [
-    "Damian Suarez <rdsuarez@gmail.com>",
-    "Dennis Snell <dennis.snell@automattic.com>",
-    "Nathan Rajlich <nathan@automattic.com>",
-    "Matt Sherman <matt.sherman@automattic.com>",
-    "Timmy Crawford <timmy.crawford@automattic.com>",
-    "Benoit Person <benoit.person@gmail.com>",
-    "Jake Fried <jake.fried@automattic.com>",
-    "Jarda Snajdr <jsnajdr@gmail.com>"
-  ],
-  "keywords": [
-    "wordpress",
-    "wordpress.com",
-    "browser",
-    "rest",
-    "api",
-    "library"
-  ],
-  "repository": "git@github.com:Automattic/wpcom.js.git",
-  "license": "MIT",
-  "browserslist": {
-    "defaults": [
-      "extends @wordpress/browserslist-config"
-    ],
-    "test": [
-      "current node"
-    ]
-  },
-  "files": [
-    "build",
-    "History.md",
-    "README.md"
-  ],
-  "browser": {
-    "./build/lib/util/fs.js": "./build/lib/util/fs-browser.js"
-  },
-  "dependencies": {
-    "@babel/runtime": "^7.4.3",
-    "core-js": "^2.6.5",
-    "debug": "^3.1.0",
-    "qs": "^6.5.2",
-    "wpcom-xhr-request": "^1.1.3"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.4.3",
-    "@babel/core": "^7.4.3",
-    "@babel/plugin-transform-runtime": "^7.4.3",
-    "@babel/preset-env": "^7.4.3",
-    "@babel/register": "^7.4.0",
-    "@wordpress/browserslist-config": "^2.3.0",
-    "eslint": "^5.16.0",
-    "mocha": "^6.0.2",
-    "webpack": "^4.29.6",
-    "webpack-cli": "^3.3.0",
-    "wpcom-oauth-cors": "^1.0.0",
-    "wpcom-proxy-request": "^5.0.0"
-  }
+	"name": "wpcom",
+	"description": "Official JavaScript library for the WordPress.com REST API",
+	"version": "5.4.2",
+	"main": "build/index.js",
+	"author": "Automattic, Inc.",
+	"private": true,
+	"scripts": {
+		"prepublish": "make all"
+	},
+	"contributors": [
+		"Damian Suarez <rdsuarez@gmail.com>",
+		"Dennis Snell <dennis.snell@automattic.com>",
+		"Nathan Rajlich <nathan@automattic.com>",
+		"Matt Sherman <matt.sherman@automattic.com>",
+		"Timmy Crawford <timmy.crawford@automattic.com>",
+		"Benoit Person <benoit.person@gmail.com>",
+		"Jake Fried <jake.fried@automattic.com>",
+		"Jarda Snajdr <jsnajdr@gmail.com>"
+	],
+	"keywords": [
+		"wordpress",
+		"wordpress.com",
+		"browser",
+		"rest",
+		"api",
+		"library"
+	],
+	"repository": "git@github.com:Automattic/wpcom.js.git",
+	"license": "MIT",
+	"browserslist": {
+		"defaults": [
+			"extends @wordpress/browserslist-config"
+		],
+		"test": [
+			"current node"
+		]
+	},
+	"files": [
+		"build",
+		"History.md",
+		"README.md"
+	],
+	"browser": {
+		"./build/lib/util/fs.js": "./build/lib/util/fs-browser.js"
+	},
+	"dependencies": {
+		"@babel/runtime": "^7.4.3",
+		"core-js": "^2.6.5",
+		"debug": "^3.1.0",
+		"qs": "^6.5.2",
+		"wpcom-xhr-request": "^1.1.3"
+	},
+	"devDependencies": {
+		"@babel/cli": "^7.4.3",
+		"@babel/core": "^7.4.3",
+		"@babel/plugin-transform-runtime": "^7.4.3",
+		"@babel/preset-env": "^7.4.3",
+		"@babel/register": "^7.4.0",
+		"@wordpress/browserslist-config": "^2.3.0",
+		"eslint": "^5.16.0",
+		"mocha": "^6.0.2",
+		"webpack": "^4.29.6",
+		"webpack-cli": "^3.3.0",
+		"wpcom-oauth-cors": "^1.0.0",
+		"wpcom-proxy-request": "^5.0.0"
+	}
 }
