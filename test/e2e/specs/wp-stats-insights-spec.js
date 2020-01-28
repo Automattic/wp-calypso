@@ -43,6 +43,7 @@ describe( 'Stats: (' + screenSize + ') @parallel', function() {
 
 			step( 'Can open the stats page', async function() {
 				statsPage = await StatsPage.Expect( driver );
+				await statsPage.openStats();
 			} );
 
 			step( 'Can open the stats insights page', async function() {
