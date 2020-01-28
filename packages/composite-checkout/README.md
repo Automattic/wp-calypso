@@ -80,7 +80,7 @@ All properties except for `id` are optional.
 - `activeStepContent?: React.ReactNode`. Displays as the content of the step when it is active. It is also displayed when the step is inactive but is hidden by CSS.
 - `incompleteStepContent?: React.ReactNode`. Displays as the content of the step when it is inactive and incomplete as defined by the `isCompleteCallback`. It is also displayed when the step is active but is hidden by CSS.
 - `completeStepContent?: React.ReactNode`. Displays as the content of the step when it is inactive and complete as defined by the `isCompleteCallback`. It is also displayed when the step is active but is hidden by CSS.
-- `isCompleteCallback?: ({paymentData: object, activeStep: object}) => boolean | Promise<boolean>`. Used to determine if a step is complete for purposes of validation. Default is a function returning false. If the validation requires an async processs, the callback may return a Promise that resolves with either true or false as its value.
+- `isCompleteCallback?: ({paymentData: object, activeStep: object}) => boolean | Promise<boolean>`. Used to determine if a step is complete for purposes of validation. Default is a function returning true. If the validation requires an async processs, the callback may return a Promise that resolves with either true or false as its value.
 - `isEditableCallback?: ({paymentData: object}) => boolean`. Used to determine if an inactive step should display an "Edit" button. Default is a function returning false.
 - `getEditButtonAriaLabel?: () => string`. Used to fill in the `aria-label` attribute for the "Edit" button if one exists.
 - `getNextStepButtonAriaLabel?: () => string`. Used to fill in the `aria-label` attribute for the "Continue" button if one exists.

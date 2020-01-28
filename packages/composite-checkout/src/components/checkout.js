@@ -226,7 +226,7 @@ function CheckoutStepContainer( {
 		};
 
 		const isCompleteResult =
-			activeStep.isCompleteCallback?.( { paymentData, activePaymentMethod, activeStep } ) ?? false;
+			activeStep.isCompleteCallback?.( { paymentData, activePaymentMethod, activeStep } ) ?? true;
 		if ( isCompleteResult.then ) {
 			debug( 'maybe continuing to next step; step is evaluating a Promise' );
 			isCompleteResult.then( evaluateContinue );
@@ -415,7 +415,7 @@ function useTrackCompleteSteps( steps, activeStep ) {
 		debug( 'initializing complete status for new steps' );
 		return steps.reduce( ( stepStatus, step ) => {
 			const isCompleteResult =
-				step?.isCompleteCallback( { paymentData, activePaymentMethod, activeStep } ) ?? false;
+				step?.isCompleteCallback( { paymentData, activePaymentMethod, activeStep } ) ?? true;
 			if ( isCompleteResult.then ) {
 				// TODO: We may in future want to wait for the callback to resolve, but
 				// in practice steps that have an async isCompleteCallback probably
