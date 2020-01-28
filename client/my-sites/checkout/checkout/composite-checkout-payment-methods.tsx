@@ -115,12 +115,12 @@ export function createPaymentMethods( {
 					makePayPalExpressRequest(
 						{
 							...submitData,
-							siteId: select( 'wpcom' )?.getSiteId?.(),
+							siteId: select( 'wpcom' )?.getSiteId?.() ?? '',
 							domainDetails: getDomainDetails( select ),
 							couponId: null, // TODO: get couponId
-							country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-							postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-							subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+							country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '',
+							postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '',
+							subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value ?? '',
 						},
 						wpcomPayPalExpress
 					),
