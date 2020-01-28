@@ -399,6 +399,22 @@ describe( 'Checkout', () => {
 			expect( firstStepContent ).toHaveStyle( 'display: none' );
 		} );
 
+		it( 'disables the continue button while isCompleteCallback resolves a Promise', async () => {
+			const stepWithAsyncIsComplete = {
+				...steps[ 1 ],
+				isCompleteCallback: () => new Promise( () => {} ),
+			};
+			const { getAllByText } = render(
+				<MyCheckout steps={ [ stepWithAsyncIsComplete, steps[ 4 ], steps[ 2 ] ] } />
+			);
+			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
+			expect( firstStepContinue ).not.toBeDisabled();
+			await act( async () => {
+				await fireEvent.click( firstStepContinue );
+			} );
+			expect( firstStepContinue ).toBeDisabled();
+		} );
+
 		it( 'does change steps if the continue button is clicked and the step becomes complete after a Promise resolves', async () => {
 			const stepWithAsyncIsComplete = {
 				...steps[ 1 ],
