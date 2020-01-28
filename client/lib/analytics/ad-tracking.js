@@ -23,7 +23,7 @@ import {
 import {
 	getTracksAnonymousUserId,
 	getCurrentUser,
-	doNotTrack,
+	getDoNotTrack,
 } from '@automattic/calypso-analytics';
 
 /**
@@ -1711,7 +1711,7 @@ function setupWpcomFloodlightGtag() {
  * 4. the current user could be in the GDPR zone and hasn't consented to tracking
  * 5. `document.location.href` may contain personally identifiable information
  *
- * Note that doNotTrack() and isPiiUrl() can change at any time which is why we do not cache them.
+ * Note that getDoNotTrack() and isPiiUrl() can change at any time which is why we do not cache them.
  *
  * @returns {boolean} true if GA is allowed.
  */
@@ -1719,7 +1719,7 @@ export function isGoogleAnalyticsAllowed() {
 	return (
 		isGoogleAnalyticsEnabled &&
 		config.isEnabled( 'ad-tracking' ) &&
-		! doNotTrack() &&
+		! getDoNotTrack() &&
 		! isPiiUrl() &&
 		mayWeTrackCurrentUserGdpr()
 	);

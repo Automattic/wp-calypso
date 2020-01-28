@@ -6,7 +6,7 @@ import debug from './debug';
 import isUrlBlacklistedForPerformance from './is-url-blacklisted-for-performance';
 import isPiiUrl from './is-pii-url';
 import mayWeTrackCurrentUserGdpr from './may-we-track-current-user-gdpr';
-import { doNotTrack } from '@automattic/calypso-analytics';
+import { getDoNotTrack } from '@automattic/calypso-analytics';
 /**
  * Returns whether ad tracking is allowed.
  *
@@ -22,7 +22,7 @@ import { doNotTrack } from '@automattic/calypso-analytics';
 export default function isAdTrackingAllowed() {
 	const result =
 		config.isEnabled( 'ad-tracking' ) &&
-		! doNotTrack() &&
+		! getDoNotTrack() &&
 		! isUrlBlacklistedForPerformance() &&
 		! isPiiUrl() &&
 		mayWeTrackCurrentUserGdpr();

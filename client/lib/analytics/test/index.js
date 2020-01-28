@@ -160,7 +160,7 @@ describe( 'Analytics', () => {
 			cookie.parse.mockImplementation( () => ( {} ) );
 			cookie.serialize.mockImplementation( () => {} );
 		} );
-		test( 'if stat.js load fails, should set user identifier ina cookie and load nostat.js', () => {
+		test( 'if stat.js load fails, should load nostat.js', () => {
 			return analytics.initialize().then( () => {
 				expect( loadScript ).toHaveBeenCalledWith( expect.stringMatching( /\/nostats.js/ ) );
 			} );

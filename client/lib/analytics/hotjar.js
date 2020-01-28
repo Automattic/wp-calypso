@@ -8,7 +8,7 @@ import debug from 'debug';
  */
 import config from 'config';
 import { mayWeTrackCurrentUserGdpr, isPiiUrl } from './utils';
-import { doNotTrack } from '@automattic/calypso-analytics';
+import { getDoNotTrack } from '@automattic/calypso-analytics';
 import { isE2ETest } from 'lib/e2e';
 
 const hotjarDebug = debug( 'calypso:analytics:hotjar' );
@@ -20,7 +20,7 @@ export function addHotJarScript() {
 		hotJarScriptLoaded ||
 		! config( 'hotjar_enabled' ) ||
 		isE2ETest() ||
-		doNotTrack() ||
+		getDoNotTrack() ||
 		isPiiUrl() ||
 		! mayWeTrackCurrentUserGdpr()
 	) {
