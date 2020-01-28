@@ -1,3 +1,9 @@
+6.0.0 / 2020-XX-XX
+==================
+
+ * Remove dependency on `core-js`: the package user needs to provide the needed JS environment
+ * Move the published `build/` folder to `dist/` to align with other Calypso packages
+
 5.4.2 / 2018-07-23
 ==================
 
