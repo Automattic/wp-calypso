@@ -19,7 +19,6 @@ import {
 	usePrimarySelect,
 	usePrimaryDispatch,
 	useRegisterPrimaryStore,
-	usePaymentData,
 	useRegistry,
 } from '../lib/registry';
 import CheckoutErrorBoundary from './checkout-error-boundary';
@@ -40,15 +39,10 @@ const debug = debugFactory( 'composite-checkout:checkout' );
 function useRegisterCheckoutStore() {
 	const onEvent = useEvents();
 	useRegisterPrimaryStore( {
-		reducer( state = { stepNumber: 1, paymentData: {} }, action ) {
+		reducer( state = { stepNumber: 1 }, action ) {
 			switch ( action.type ) {
 				case 'STEP_NUMBER_SET':
 					return { ...state, stepNumber: action.payload };
-				case 'PAYMENT_DATA_UPDATE':
-					return {
-						...state,
-						paymentData: { ...state.paymentData, [ action.payload.key ]: action.payload.value },
-					};
 			}
 			return state;
 		},
@@ -56,9 +50,6 @@ function useRegisterCheckoutStore() {
 			*changeStep( payload ) {
 				yield { type: 'STEP_NUMBER_CHANGE_EVENT', payload };
 				return { type: 'STEP_NUMBER_SET', payload };
-			},
-			updatePaymentData( key, value ) {
-				return { type: 'PAYMENT_DATA_UPDATE', payload: { key, value } };
 			},
 		},
 		controls: {
@@ -71,16 +62,12 @@ function useRegisterCheckoutStore() {
 			getStepNumber( state ) {
 				return state.stepNumber;
 			},
-			getPaymentData( state ) {
-				return state.paymentData;
-			},
 		},
 	} );
 }
 
 export default function Checkout( { steps: stepProps, className } ) {
 	useRegisterCheckoutStore();
-	const [ paymentData ] = usePaymentData();
 	const activePaymentMethod = usePaymentMethod();
 	const { formStatus } = useFormStatus();
 
@@ -96,7 +83,6 @@ export default function Checkout( { steps: stepProps, className } ) {
 
 	// Assign step numbers to all steps with numbers
 	const annotatedSteps = getAnnotatedSteps( steps, stepNumber, {
-		paymentData,
 		activePaymentMethod,
 	} );
 
@@ -148,7 +134,7 @@ export default function Checkout( { steps: stepProps, className } ) {
 								step.id !== activeStep.id &&
 								step.hasStepNumber &&
 								step.isEditableCallback &&
-								step.isEditableCallback( { paymentData } )
+								step.isEditableCallback()
 									? () => changeStep( step.stepNumber )
 									: null
 							}
