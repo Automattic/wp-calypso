@@ -22,14 +22,23 @@ import {
 	useFormStatus,
 	createRegistry,
 	useRegisterStore,
-	usePaymentData,
 	useActiveStep,
 	useIsStepComplete,
 } from '../src/public-api';
 
 const noop = () => {};
 
+let contactInfo = {
+	name: '',
+};
+
 describe( 'Checkout', () => {
+	beforeEach( () => {
+		contactInfo = {
+			name: '',
+		};
+	} );
+
 	describe( 'using the default steps', function() {
 		describe( 'using the default registry', function() {
 			let MyCheckout;
@@ -368,6 +377,7 @@ describe( 'Checkout', () => {
 			expect( getByTextInNode( step, 'Continue' ) ).toBeDisabled();
 		} );
 
+
 		it( 'renders the continue button enabled if the step is active and complete', () => {
 			const { container, getByLabelText } = render(
 				<MyCheckout steps={ [ steps[ 0 ], steps[ 4 ], steps[ 1 ] ] } />
@@ -411,16 +421,6 @@ describe( 'Checkout', () => {
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
 			fireEvent.click( firstStepContinue );
 			const step = container.querySelector( '.' + steps[ 1 ].className );
-			expect( getByTextInNode( step, 'Edit' ) ).toBeInTheDocument();
-		} );
-
-		it( 'renders the edit button for inactive steps which start as ineditable but which change', () => {
-			const { container, getByLabelText } = render(
-				<MyCheckout steps={ [ steps[ 0 ], steps[ 1 ], steps[ 4 ] ] } />
-			);
-			const step = container.querySelector( '.' + steps[ 4 ].className );
-			expect( queryByTextInNode( step, 'Edit' ) ).not.toBeInTheDocument();
-			fireEvent.change( getByLabelText( 'User Name' ), { target: { value: 'Lyra' } } );
 			expect( getByTextInNode( step, 'Edit' ) ).toBeInTheDocument();
 		} );
 
@@ -640,14 +640,21 @@ function createMockSteps() {
 			className: 'custom-possibly-complete-step-class',
 			hasStepNumber: true,
 			titleContent: <PossiblyCompleteTitle />,
-			activeStepContent: <StepWithEditableField />,
+			activeStepContent: (
+				<StepWithEditableField
+					name={ contactInfo.name }
+					setName={ value => ( contactInfo.name = value ) }
+				/>
+			),
 			incompleteStepContent: <span>Custom Step - Possibly Complete Incomplete</span>,
 			completeStepContent: <span>Custom Step - Possibly Complete Complete</span>,
-			isCompleteCallback: ( { paymentData } ) => {
-				return paymentData.userName && paymentData.userName.length > 0 ? true : false;
+			isCompleteCallback: () => {
+				const userName = contactInfo.name;
+				return userName.length > 0;
 			},
-			isEditableCallback: ( { paymentData } ) => {
-				return !! paymentData.userName;
+			isEditableCallback: () => {
+				const userName = contactInfo.name;
+				return userName.length > 0;
 			},
 			getEditButtonAriaLabel: () => 'Custom Step - Incomplete edit button label',
 			getNextStepButtonAriaLabel: () => 'Custom Step - Incomplete next button label',
@@ -686,16 +693,12 @@ function PossiblyCompleteTitle() {
 	);
 }
 
-function StepWithEditableField() {
-	const [ paymentData, setPaymentData ] = usePaymentData();
-	const onChange = event => {
-		setPaymentData( 'userName', event.target.value );
-	};
-	const value = paymentData.userName || '';
+function StepWithEditableField( { name, setName } ) {
+	const onChange = event => setName( event.target.value );
 	return (
 		<div>
 			<label htmlFor="username-field">User Name</label>
-			<input id="username-field" type="text" value={ value } onChange={ onChange } />
+			<input id="username-field" type="text" value={ name } onChange={ onChange } />
 		</div>
 	);
 }
