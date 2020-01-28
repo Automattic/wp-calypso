@@ -2,11 +2,14 @@
 	"name": "wpcom",
 	"description": "Official JavaScript library for the WordPress.com REST API",
 	"version": "5.4.2",
-	"main": "build/index.js",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
 	"author": "Automattic, Inc.",
 	"private": true,
 	"scripts": {
-		"prepublish": "make all"
+		"clean": "npx rimraf dist",
+		"prepublish": "npm run clean",
+		"prepare": "transpile"
 	},
 	"keywords": [
 		"wordpress",
@@ -23,12 +26,13 @@
 	},
 	"license": "MIT",
 	"files": [
-		"build",
+		"dist",
 		"History.md",
 		"README.md"
 	],
 	"browser": {
-		"./build/lib/util/fs.js": "./build/lib/util/fs-browser.js"
+		"./dist/cjs/lib/util/fs.js": "./dist/cjs/lib/util/fs-browser.js",
+		"./dist/esm/lib/util/fs.js": "./dist/esm/lib/util/fs-browser.js"
 	},
 	"dependencies": {
 		"@babel/runtime": "^7.8.3",
