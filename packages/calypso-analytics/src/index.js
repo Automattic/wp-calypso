@@ -14,12 +14,12 @@ import { EventEmitter } from 'events';
 
 import { getCurrentUser, setCurrentUser } from './utils/current-user';
 import { loadScript } from '@automattic/load-script';
-import doNotTrack from './utils/do-not-track';
+import getDoNotTrack from './utils/do-not-track';
 
 /**
  * Re-export
  */
-export { default as doNotTrack } from './utils/do-not-track';
+export { default as getDoNotTrack } from './utils/do-not-track';
 export { getCurrentUser, setCurrentUser } from './utils/current-user';
 
 /**
@@ -235,7 +235,7 @@ export function recordTracksEvent( eventName, eventProperties ) {
 export function recordTracksPageView( urlPath, params ) {
 	let eventProperties = {
 		build_timestamp: window.BUILD_TIMESTAMP,
-		do_not_track: doNotTrack() ? 1 : 0,
+		do_not_track: getDoNotTrack() ? 1 : 0,
 		path: urlPath,
 	};
 

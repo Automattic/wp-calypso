@@ -28,7 +28,7 @@ jest.mock( 'config', () => {
 
 jest.mock( 'lib/analytics/utils', () => ( {
 	isGoogleAnalyticsAllowed: () => true,
-	doNotTrack: () => false,
+	getDoNotTrack: () => false,
 	isPiiUrl: () => false,
 	mayWeTrackCurrentUserGdpr: () => true,
 	getCurrentUser: () => undefined,
