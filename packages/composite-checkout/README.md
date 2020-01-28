@@ -320,6 +320,7 @@ A React Hook that will return an object with the following properties:
 - `formStatus: string`. The current status of the form; one of 'loading', 'ready', 'submitting', or 'complete'.
 - `setFormReady: () => void`. Function to change the form status to 'ready'.
 - `setFormLoading: () => void`. Function to change the form status to 'loading'.
+- `setFormValidating: () => void`. Function to change the form status to 'validating'.
 - `setFormSubmitting: () => void`. Function to change the form status to 'submitting'.
 - `setFormComplete: () => void`. Function to change the form status to 'complete'. Note that this will trigger `onPaymentComplete` from [CheckoutProvider](#CheckoutProvider).
 
