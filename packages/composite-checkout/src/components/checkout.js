@@ -210,9 +210,11 @@ function CheckoutStepContainer( {
 	const [ paymentData ] = usePaymentData();
 	const activePaymentMethod = usePaymentMethod();
 	const setStepComplete = useSetStepComplete();
+	const { formStatus, setFormReady, setFormValidating } = useFormStatus();
 
 	const onClick = () => {
 		const evaluateContinue = result => {
+			setFormReady();
 			if ( result === true ) {
 				debug( 'continuing to next step; step is complete' );
 				// cache isCompleteResult for other functions
@@ -229,6 +231,7 @@ function CheckoutStepContainer( {
 			activeStep.isCompleteCallback?.( { paymentData, activePaymentMethod, activeStep } ) ?? true;
 		if ( isCompleteResult.then ) {
 			debug( 'maybe continuing to next step; step is evaluating a Promise' );
+			setFormValidating();
 			isCompleteResult.then( evaluateContinue );
 			return;
 		}
@@ -257,7 +260,8 @@ function CheckoutStepContainer( {
 									value={ localize( 'Continue' ) }
 									onClick={ onClick }
 									ariaLabel={ getNextStepButtonAriaLabel && getNextStepButtonAriaLabel() }
-									buttonState="primary"
+									disabled={ formStatus !== 'ready' }
+									buttonState={ formStatus !== 'ready' ? 'disabled' : 'primary' }
 								/>
 							) }
 						</React.Fragment>
