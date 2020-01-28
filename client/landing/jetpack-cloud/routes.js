@@ -15,12 +15,12 @@ import {
 	setupSidebar,
 } from './controller';
 
-const router = ( baseRoute = '' ) => {
-	page( baseRoute + '/', setupSidebar, jetpackCloud, makeLayout, clientRender );
+const router = () => {
+	page( '/', setupSidebar, jetpackCloud, makeLayout, clientRender );
 
-	page( baseRoute + '/backups', setupSidebar, jetpackBackups, makeLayout, clientRender );
+	page( '/backups', setupSidebar, jetpackBackups, makeLayout, clientRender );
 
-	page( baseRoute + '/scan', setupSidebar, jetpackScan, makeLayout, clientRender );
+	page( '/scan', setupSidebar, jetpackScan, makeLayout, clientRender );
 };
 
 export default router;

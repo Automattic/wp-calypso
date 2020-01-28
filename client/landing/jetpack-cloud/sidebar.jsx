@@ -8,13 +8,13 @@ export default function() {
 		<div>
 			<ul>
 				<li>
-					<a href="/jetpack-cloud">Dashboard</a>
+					<a href="/">Dashboard</a>
 				</li>
 				<li>
-					<a href="/jetpack-cloud/backups">Backups</a>
+					<a href="/backups">Backups</a>
 				</li>
 				<li>
-					<a href="/jetpack-cloud/scan">Scan</a>
+					<a href="/scan">Scan</a>
 				</li>
 			</ul>
 		</div>
