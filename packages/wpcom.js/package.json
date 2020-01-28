@@ -9,7 +9,9 @@
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prepublish": "npm run clean",
-		"prepare": "transpile"
+		"prepare": "run-s build:modules build:bundle",
+		"build:modules": "transpile",
+		"build:bundle": "webpack"
 	},
 	"keywords": [
 		"wordpress",
