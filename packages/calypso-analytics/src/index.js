@@ -81,17 +81,15 @@ function checkForBlockedTracks() {
 	// Proceed only after the tracks script load finished and failed.
 	// Calling this function from `initialize` ensures current user is set.
 	// This detects stats blocking, and identifies by `getCurrentUser()`, URL, or cookie.
-	_loadTracksResult.catch( () => {
+	return _loadTracksResult.catch( () => {
 		let _ut, _ui;
 		const currentUser = getCurrentUser();
-
 		if ( currentUser && currentUser.ID ) {
 			_ut = 'wpcom:user_id';
 			_ui = currentUser.ID;
 		} else {
 			_ut = getUrlParameter( '_ut' ) || 'anon';
 			_ui = getUrlParameter( '_ui' );
-
 			if ( ! _ui ) {
 				const cookies = cookie.parse( document.cookie );
 				if ( cookies.tk_ai ) {
@@ -139,7 +137,7 @@ export function initializeAnalytics( currentUser, superProps ) {
 
 	// Tracks blocked?
 	initializeDebug( 'checkForBlockedTracks' );
-	checkForBlockedTracks();
+	return checkForBlockedTracks();
 }
 
 export function identifyUser( userData ) {
