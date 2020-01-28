@@ -23,7 +23,7 @@ class FoldableCard extends Component {
 	static displayName = 'FoldableCard';
 
 	static propTypes = {
-		actionButton: PropTypes.element,
+		actionButton: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 		actionButtonExpanded: PropTypes.element,
 		cardKey: PropTypes.string,
 		compact: PropTypes.bool,

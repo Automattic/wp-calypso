@@ -16,6 +16,7 @@ import Banner from 'components/banner';
 import { Button, Card } from '@automattic/components';
 import CardHeading from 'components/card-heading';
 import EmptyContent from 'components/empty-content';
+import FoldableCard from 'components/foldable-card';
 import Main from 'components/main';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
@@ -368,8 +369,12 @@ class Home extends Component {
 							<WpcomChecklist displayMode={ checklistMode } />
 						</>
 					) : (
-						<Card className="customer-home__card-boxes">
-							<CardHeading>{ translate( 'Site Tools' ) }</CardHeading>
+						<FoldableCard
+							className="customer-home__card-boxes card-heading-21"
+							header={ translate( 'Site Tools' ) }
+							expanded={ ! isMobile() }
+							actionButton={ isMobile() ? null : ' ' }
+						>
 							<div className="customer-home__boxes">
 								<ActionBox
 									onClick={ () => {
@@ -455,7 +460,7 @@ class Home extends Component {
 									/>
 								) }
 							</div>
-						</Card>
+						</FoldableCard>
 					) }
 				</div>
 				<div className="customer-home__layout-col customer-home__layout-col-right">
