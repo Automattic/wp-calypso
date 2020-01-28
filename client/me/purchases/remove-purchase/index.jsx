@@ -268,7 +268,7 @@ class RemovePurchase extends Component {
 		}
 
 		if ( isDomainMapping( purchase ) ) {
-			return this.this.renderPlanDialog();
+			return this.renderPlanDialog();
 		}
 
 		if ( this.props.isAtomicSite ) {
