@@ -15,12 +15,8 @@ import CheckoutStep from './checkout-step';
 import CheckoutNextStepButton from './checkout-next-step-button';
 import CheckoutSubmitButton from './checkout-submit-button';
 import LoadingContent from './loading-content';
-import {
-	usePrimarySelect,
-	usePrimaryDispatch,
-	useRegisterPrimaryStore,
-	usePaymentData,
-} from '../lib/registry';
+import { usePrimarySelect, usePrimaryDispatch, useRegisterPrimaryStore } from '../lib/registry';
+import { usePaymentMethod } from '../lib/payment-methods';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import {
 	useSetStepComplete,
@@ -28,7 +24,6 @@ import {
 	ActiveStepProvider,
 	RenderedStepProvider,
 } from '../lib/active-step';
-import { usePaymentMethod } from '../lib/payment-methods';
 import {
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
@@ -44,15 +39,10 @@ const debug = debugFactory( 'composite-checkout:checkout' );
 function useRegisterCheckoutStore() {
 	const onEvent = useEvents();
 	useRegisterPrimaryStore( {
-		reducer( state = { stepNumber: 1, paymentData: {} }, action ) {
+		reducer( state = { stepNumber: 1 }, action ) {
 			switch ( action.type ) {
 				case 'STEP_NUMBER_SET':
 					return { ...state, stepNumber: action.payload };
-				case 'PAYMENT_DATA_UPDATE':
-					return {
-						...state,
-						paymentData: { ...state.paymentData, [ action.payload.key ]: action.payload.value },
-					};
 			}
 			return state;
 		},
@@ -60,9 +50,6 @@ function useRegisterCheckoutStore() {
 			*changeStep( payload ) {
 				yield { type: 'STEP_NUMBER_CHANGE_EVENT', payload };
 				return { type: 'STEP_NUMBER_SET', payload };
-			},
-			updatePaymentData( key, value ) {
-				return { type: 'PAYMENT_DATA_UPDATE', payload: { key, value } };
 			},
 		},
 		controls: {
@@ -75,16 +62,12 @@ function useRegisterCheckoutStore() {
 			getStepNumber( state ) {
 				return state.stepNumber;
 			},
-			getPaymentData( state ) {
-				return state.paymentData;
-			},
 		},
 	} );
 }
 
 export default function Checkout( { steps: stepProps, className } ) {
 	useRegisterCheckoutStore();
-	const [ paymentData ] = usePaymentData();
 	const { formStatus } = useFormStatus();
 
 	// stepNumber is the displayed number of the active step, not its index
@@ -102,7 +85,7 @@ export default function Checkout( { steps: stepProps, className } ) {
 		throw new Error( 'The active step was lost' );
 	}
 
-	const [ stepCompleteStatus, setStepCompleteStatus ] = useTrackCompleteSteps( steps, activeStep );
+	const [ stepCompleteStatus, setStepCompleteStatus ] = useTrackCompleteSteps( steps );
 
 	// Change the step if the url changes
 	useChangeStepNumberForUrl( annotatedSteps, stepCompleteStatus );
@@ -152,7 +135,7 @@ export default function Checkout( { steps: stepProps, className } ) {
 								step.id !== activeStep.id &&
 								step.hasStepNumber &&
 								step.isEditableCallback &&
-								step.isEditableCallback( { paymentData } )
+								step.isEditableCallback()
 									? () => changeStep( step.stepNumber )
 									: null
 							}
@@ -204,9 +187,8 @@ function CheckoutStepContainer( {
 	const localize = useLocalize();
 	const activeStep = useActiveStep();
 	const isActive = activeStep.id === id;
-	const [ paymentData ] = usePaymentData();
-	const activePaymentMethod = usePaymentMethod();
 	const setStepComplete = useSetStepComplete();
+	const activePaymentMethod = usePaymentMethod();
 
 	const onClick = () => {
 		const evaluateContinue = result => {
@@ -222,8 +204,7 @@ function CheckoutStepContainer( {
 			debug( 'not continuing to next step; step is not complete' );
 		};
 
-		const isCompleteResult =
-			activeStep.isCompleteCallback?.( { paymentData, activePaymentMethod, activeStep } ) ?? false;
+		const isCompleteResult = activeStep.isCompleteCallback?.( { activePaymentMethod } ) ?? false;
 		if ( isCompleteResult.then ) {
 			debug( 'maybe continuing to next step; step is evaluating a Promise' );
 			isCompleteResult.then( evaluateContinue );
@@ -403,16 +384,14 @@ function getAnnotatedSteps( steps ) {
 	return annotatedSteps;
 }
 
-function useTrackCompleteSteps( steps, activeStep ) {
-	const [ paymentData ] = usePaymentData();
-	const activePaymentMethod = usePaymentMethod();
+function useTrackCompleteSteps( steps ) {
 	const [ stepCompleteStatus, setStepCompleteStatus ] = useState( getInitialStepCompleteStatus );
+	const activePaymentMethod = usePaymentMethod();
 
 	function getInitialStepCompleteStatus() {
 		debug( 'initializing complete status for new steps' );
 		return steps.reduce( ( stepStatus, step ) => {
-			const isCompleteResult =
-				step?.isCompleteCallback( { paymentData, activePaymentMethod, activeStep } ) ?? false;
+			const isCompleteResult = step?.isCompleteCallback( { activePaymentMethod } ) ?? false;
 			if ( isCompleteResult.then ) {
 				// TODO: We may in future want to wait for the callback to resolve, but
 				// in practice steps that have an async isCompleteCallback probably
