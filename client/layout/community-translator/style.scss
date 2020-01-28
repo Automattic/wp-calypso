@@ -101,6 +101,8 @@ body {
 	left: 0;
 	top: 0;
 	z-index: 1000;
+	margin: -10px;
+	padding: 10px;
 	outline: 1000vw solid rgba( 0, 0, 0, 0.5 );
 	box-shadow: 0 5px 10px 5px rgba( 0, 0, 0, 0.25 );
 	pointer-events: none;
