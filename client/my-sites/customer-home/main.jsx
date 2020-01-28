@@ -338,11 +338,7 @@ class Home extends Component {
 			hasCustomDomain,
 		} = this.props;
 
-		if ( displayChecklist ) {
-			return null;
-		}
-
-		return (
+		const siteTools = (
 			<div className="customer-home__boxes">
 				<ActionBox
 					onClick={ () => {
@@ -429,6 +425,27 @@ class Home extends Component {
 				) }
 			</div>
 		);
+		if ( displayChecklist ) {
+			return null;
+		}
+		return (
+			<>
+				{ ! isMobile() ? (
+					<Card className="customer-home__card-boxes">
+						<CardHeading>{ translate( 'Site Tools' ) }</CardHeading>
+						{ siteTools }
+					</Card>
+				) : (
+					<FoldableCard
+						className="customer-home__card-boxes card-heading-21"
+						header={ translate( 'Site Tools' ) }
+						expanded
+					>
+						{ siteTools }
+					</FoldableCard>
+				) }
+			</>
+		);
 	}
 
 	renderCustomerHome = () => {
@@ -471,20 +488,7 @@ class Home extends Component {
 							<WpcomChecklist displayMode={ checklistMode } />
 						</>
 					) }
-					{ ! isMobile() ? (
-						<Card className="customer-home__card-boxes">
-							<CardHeading>{ translate( 'Site Tools' ) }</CardHeading>
-							{ this.renderSiteTools() }
-						</Card>
-					) : (
-						<FoldableCard
-							className="customer-home__card-boxes card-heading-21"
-							header={ translate( 'Site Tools' ) }
-							expanded
-						>
-							{ this.renderSiteTools() }
-						</FoldableCard>
-					) }
+					{ this.renderSiteTools() }
 				</div>
 				<div className="customer-home__layout-col customer-home__layout-col-right">
 					{ siteIsUnlaunched && ! needsEmailVerification && (
