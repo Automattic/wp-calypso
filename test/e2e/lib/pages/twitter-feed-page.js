@@ -9,7 +9,7 @@ import config from 'config';
  */
 import * as slackNotifier from '../slack-notifier';
 import AsyncBaseContainer from '../async-base-container';
-import { getElementCount } from '../driver-helper';
+import { isEventuallyPresentAndDisplayed } from '../driver-helper';
 
 export default class TwitterFeedPage extends AsyncBaseContainer {
 	constructor( driver, url ) {
@@ -19,7 +19,7 @@ export default class TwitterFeedPage extends AsyncBaseContainer {
 				: '';
 			url = `https://twitter.com/${ publicizeTwitterAccount }`;
 		}
-		super( driver, by.css( '.ProfileCanopy, div[data-testid*=tweet]' ), url );
+		super( driver, by.css( '.ProfileCanopy, div[data-testid*=primaryColumn]' ), url );
 	}
 
 	async checkLatestTweetsContain( expectedTweetText ) {
@@ -27,11 +27,11 @@ export default class TwitterFeedPage extends AsyncBaseContainer {
 		return await driver
 			.wait( async function() {
 				await driver.navigate().refresh();
-				return await getElementCount(
+				return await isEventuallyPresentAndDisplayed(
 					driver,
 					by.css( '.stream-item, div[data-testid*=tweet]' )
-				).then( tweetCount => {
-					if ( tweetCount >= 5 ) {
+				).then( tweetsShown => {
+					if ( tweetsShown ) {
 						return driver.getPageSource().then( function( source ) {
 							return source.indexOf( expectedTweetText ) > -1;
 						} );
