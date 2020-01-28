@@ -419,7 +419,7 @@ function useTrackCompleteSteps( steps, activeStep ) {
 		debug( 'initializing complete status for new steps' );
 		return steps.reduce( ( stepStatus, step ) => {
 			const isCompleteResult =
-				step?.isCompleteCallback( { paymentData, activePaymentMethod, activeStep } ) ?? true;
+				step?.isCompleteCallback?.( { paymentData, activePaymentMethod, activeStep } ) ?? true;
 			if ( isCompleteResult.then ) {
 				// TODO: We may in future want to wait for the callback to resolve, but
 				// in practice steps that have an async isCompleteCallback probably
