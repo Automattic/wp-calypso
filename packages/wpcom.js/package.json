@@ -22,14 +22,6 @@
 		"directory": "packages/wpcom.js"
 	},
 	"license": "MIT",
-	"browserslist": {
-		"defaults": [
-			"extends @wordpress/browserslist-config"
-		],
-		"test": [
-			"current node"
-		]
-	},
 	"files": [
 		"build",
 		"History.md",
