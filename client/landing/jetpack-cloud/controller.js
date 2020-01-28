@@ -23,7 +23,7 @@ export const clientRender = context => {
 };
 
 export function setupSidebar( context, next ) {
-	context.secondary = <JetpackCloudSidebar baseRoute="/jetpack-cloud" path={ context.path } />;
+	context.secondary = <JetpackCloudSidebar path={ context.path } />;
 	next();
 }
 
