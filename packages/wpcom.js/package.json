@@ -8,16 +8,6 @@
 	"scripts": {
 		"prepublish": "make all"
 	},
-	"contributors": [
-		"Damian Suarez <rdsuarez@gmail.com>",
-		"Dennis Snell <dennis.snell@automattic.com>",
-		"Nathan Rajlich <nathan@automattic.com>",
-		"Matt Sherman <matt.sherman@automattic.com>",
-		"Timmy Crawford <timmy.crawford@automattic.com>",
-		"Benoit Person <benoit.person@gmail.com>",
-		"Jake Fried <jake.fried@automattic.com>",
-		"Jarda Snajdr <jsnajdr@gmail.com>"
-	],
 	"keywords": [
 		"wordpress",
 		"wordpress.com",
