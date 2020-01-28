@@ -310,6 +310,18 @@ body.is-section-signup.is-frankenflow {
 	.signup-processing-screen__floaties .gridicon {
 		fill: var( --color-text );
 	}
+
+	.button.is-borderless.navigation-link {
+		color: var( --color-text );
+
+		svg {
+			fill: var( --color-text );
+		}
+	}
+
+	.flow-progress-indicator.flow-progress-indicator__frankenflow {
+		color: var( --color-text );
+	}
 }
 
 // Text and heading color override for new flow
