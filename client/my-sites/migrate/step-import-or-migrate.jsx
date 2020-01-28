@@ -10,6 +10,7 @@ import { Button, CompactCard } from '@automattic/components';
  * Internal dependencies
  */
 import HeaderCake from 'components/header-cake';
+import CardHeading from 'components/card-heading';
 
 /**
  * Style dependencies
@@ -57,15 +58,13 @@ class StepImportOrMigrate extends Component {
 					<a href={ `https://wordpress.com/jetpack/connect/install?url=${ sourceSiteDomain }` }>
 						Jetpack
 					</a>{ ' ' }
-					installed on your site to be able to import over everything
+					installed on your site to be able to import everything.
 				</p>
 			);
 		}
 
 		if ( ! isTargetSiteAtomic ) {
-			return (
-				<p>A Business Plan (i) is required to import everything. Importing only content is free.</p>
-			);
+			return <p>Import your entire site with the Business Plan.</p>;
 		}
 	};
 
@@ -82,7 +81,7 @@ class StepImportOrMigrate extends Component {
 				<SitesBlock sourceSite={ sourceSite } targetSite={ targetSite } />
 
 				<CompactCard>
-					<h3>What do you want to import?</h3>
+					<CardHeading>What do you want to import?</CardHeading>
 
 					{ this.getJetpackOrUpgradeMessage() }
 					<ImportTypeChoice
@@ -90,14 +89,13 @@ class StepImportOrMigrate extends Component {
 						radioOptions={ {
 							everything: {
 								title: 'Everything',
-								labels: [ 'Upgrade Required', 'Something Else', 'Third bubble' ],
+								labels: [ 'Upgrade' ],
 								description: "All your site's content, themes, plugins, users and settings",
 								enabled: sourceHasJetpack,
 							},
 							'content-only': {
 								key: 'content-only',
 								title: 'Content only',
-								labels: [ 'Free', 'Only content', 'Third bubble' ],
 								description: 'Import posts, pages, comments, and media.',
 								enabled: true,
 							},

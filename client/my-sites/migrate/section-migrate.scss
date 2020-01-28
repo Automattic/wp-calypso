@@ -13,6 +13,10 @@
 	text-align: center;
 }
 
+.is-section-migrate .card > .card-heading {
+	margin-bottom: 4px;
+}
+
 .migrate__card {
 	.site__content, .site-selector__hidden-sites-message {
 		border-bottom: 1px solid var( --color-neutral-10 );
@@ -143,5 +147,5 @@
 }
 
 .migrate__buttons-wrapper {
-	margin-top: 20px;
+	margin: 24px 0 8px;
 }
