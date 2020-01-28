@@ -21,7 +21,6 @@ import {
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
 	useIsStepActive,
-	usePaymentData,
 } from '../src/public-api';
 import { StripeHookProvider, useStripe } from '../src/lib/stripe';
 
@@ -87,7 +86,26 @@ async function makePayPalExpressRequest( data ) {
 }
 
 const registry = createRegistry();
-const { registerStore, select, subscribe } = registry;
+const { registerStore, select, dispatch, subscribe } = registry;
+
+registerStore( 'demo', {
+	actions: {
+		setCountry( payload ) {
+			return { type: 'set_country', payload };
+		},
+	},
+	selectors: {
+		getCountry( state ) {
+			return state.country;
+		},
+	},
+	reducer( state = {}, action ) {
+		if ( action.type === 'set_country' ) {
+			return { ...state, country: action.payload };
+		}
+		return state;
+	},
+} );
 
 export function useIsApplePayAvailable( stripe, stripeConfiguration, items ) {
 	const [ canMakePayment, setCanMakePayment ] = useState( 'loading' );
@@ -186,7 +204,7 @@ const hostTranslate = text => text;
 const ContactFormTitle = () => {
 	const localize = useLocalize();
 	const isActive = useIsStepActive();
-	return isActive ? localize( 'Enter your billing details' ) : localize( 'Billing details' );
+	return isActive ? localize( 'Enter your contact details' ) : localize( 'Contact details' );
 };
 
 const Label = styled.label`
@@ -221,14 +239,8 @@ const Form = styled.div`
 `;
 
 function ContactForm( { summary } ) {
-	const [ paymentData, changePaymentData ] = usePaymentData();
-	const { billing = {} } = paymentData;
-	const { country = '' } = billing;
-	const onChangeCountry = event =>
-		changePaymentData( 'billing', { ...billing, country: event.target.value } );
-	const showAdditionalFields = shouldShowAdditionalFields( paymentData );
-	const toggleAdditionalFields = () =>
-		changePaymentData( 'billing', { ...billing, showAdditionalFields: ! showAdditionalFields } );
+	const country = select( 'demo' ).getCountry();
+	const onChangeCountry = event => dispatch( 'demo' ).setCountry( event.target.value );
 
 	if ( summary ) {
 		return (
@@ -243,36 +255,6 @@ function ContactForm( { summary } ) {
 		<Form>
 			<Label htmlFor="country">Country</Label>
 			<Input id="country" type="text" value={ country } onChange={ onChangeCountry } />
-			<input
-				id="show-additional-fields"
-				type="checkbox"
-				defaultChecked={ showAdditionalFields }
-				onChange={ toggleAdditionalFields }
-			/>
-			<label htmlFor="show-additional-fields">Show additional fields?</label>
-			{ showAdditionalFields && <AdditionalFields /> }
-		</Form>
-	);
-}
-
-function shouldShowAdditionalFields( paymentData ) {
-	return paymentData.billing && paymentData.billing.showAdditionalFields;
-}
-
-function AdditionalFields() {
-	const [ paymentData, changePaymentData ] = usePaymentData();
-	const { domain = {} } = paymentData;
-	const { name = '', address = '' } = domain;
-	const onChangeName = event =>
-		changePaymentData( 'domain', { ...domain, name: event.target.value } );
-	const onChangeAddress = event =>
-		changePaymentData( 'domain', { ...domain, address: event.target.value } );
-	return (
-		<Form>
-			<Label htmlFor="name">Name</Label>
-			<Input id="name" type="text" value={ name } onChange={ onChangeName } />
-			<Label htmlFor="address">Address</Label>
-			<Input id="address" type="text" value={ address } onChange={ onChangeAddress } />
 		</Form>
 	);
 }
@@ -290,35 +272,24 @@ const steps = [
 	},
 	{
 		id: 'contact-form',
-		className: 'checkout__billing-details-step',
+		className: 'checkout__contact-details-step',
 		hasStepNumber: true,
 		titleContent: <ContactFormTitle />,
 		activeStepContent: <ContactForm />,
 		completeStepContent: <ContactForm summary />,
-		isCompleteCallback: isContactFormComplete,
-		isEditableCallback: ( { paymentData } ) => {
-			if ( paymentData.billing ) {
-				return true;
-			}
-			return false;
+		isCompleteCallback: () => {
+			const country = select( 'demo' ).getCountry();
+			return country?.length > 0;
 		},
-		getEditButtonAriaLabel: () => hostTranslate( 'Edit the billing details' ),
-		getNextStepButtonAriaLabel: () => hostTranslate( 'Continue with the entered billing details' ),
+		isEditableCallback: () => {
+			const country = select( 'demo' ).getCountry();
+			return country?.length > 0;
+		},
+		getEditButtonAriaLabel: () => hostTranslate( 'Edit the contact details' ),
+		getNextStepButtonAriaLabel: () => hostTranslate( 'Continue with the entered contact details' ),
 	},
 	getDefaultOrderReviewStep(),
 ];
-
-function isContactFormComplete( { paymentData } ) {
-	const { billing = {}, domain = {} } = paymentData;
-	const allFields = [ billing.country ].concat(
-		shouldShowAdditionalFields( paymentData ) ? [ domain.name, domain.address ] : []
-	);
-	const emptyFields = allFields.filter( value => ! value );
-	if ( emptyFields.length > 0 ) {
-		return false;
-	}
-	return true;
-}
 
 function HostPage() {
 	return (
@@ -365,7 +336,7 @@ function MyCheckout() {
 			return null;
 		}
 		return createStripeMethod( {
-			getCountry: () => select( 'checkout' ).getPaymentData().billing.country,
+			getCountry: () => select( 'demo' ).getCountry(),
 			getPostalCode: () => 90210,
 			getSubdivisionCode: () => 'CA',
 			registerStore,
@@ -387,7 +358,7 @@ function MyCheckout() {
 			return null;
 		}
 		return createApplePayMethod( {
-			getCountry: () => select( 'checkout' ).getPaymentData().billing.country,
+			getCountry: () => select( 'demo' ).getCountry(),
 			getPostalCode: () => 90210,
 			registerStore,
 			submitTransaction: sendStripeTransaction,
