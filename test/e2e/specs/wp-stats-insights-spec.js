@@ -30,7 +30,7 @@ describe( 'Stats: (' + screenSize + ') @parallel', function() {
 	describe( 'Log in as user', function() {
 		step( 'Can log in as user', async function() {
 			this.loginFlow = new LoginFlow( driver );
-			return await this.loginFlow.login( { useFreshLogin: true } );
+			return await this.loginFlow.login();
 		} );
 
 		step( 'Can open the sidebar', async function() {
