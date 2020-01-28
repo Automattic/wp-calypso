@@ -80,6 +80,7 @@
 		"jetpack/happychat": true,
 		"jitms": true,
 		"keyboard-shortcuts": true,
+		"legal-updates-banner": true,
 		"login/magic-login": true,
 		"login/native-login-links": true,
 		"login/wp-login": true,

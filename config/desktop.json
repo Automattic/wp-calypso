@@ -44,6 +44,7 @@
 		"jetpack/personalPlan": true,
 		"jetpack/connect/site-questions": false,
 		"jitms": false,
+		"legal-updates-banner": false,
 		"login/magic-login": false,
 		"login/native-login-links": false,
 		"login/wp-login": false,

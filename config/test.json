@@ -45,6 +45,7 @@
 		"jetpack/connect/site-questions": false,
 		"jetpack/happychat": true,
 		"jitms": true,
+		"legal-updates-banner": true,
 		"login/native-login-links": true,
 		"login/wp-login": true,
 		"keyboard-shortcuts": true,

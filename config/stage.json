@@ -52,6 +52,7 @@
 		"jetpack/connect/woocommerce": true,
 		"jetpack/happychat": true,
 		"jitms": true,
+		"legal-updates-banner": false,
 		"login/magic-login": true,
 		"login/native-login-links": true,
 		"login/wp-login": true,
