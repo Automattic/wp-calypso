@@ -21,6 +21,6 @@ window.AppBoot = () => {
 		window.location.href = '/';
 	} else {
 		initJetpackCloudRoutes();
-		bootApp( 'Jetpack ☁️' );
+		bootApp( 'Jetpack Cloud' );
 	}
 };
