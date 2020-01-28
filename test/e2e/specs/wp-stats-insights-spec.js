@@ -9,6 +9,7 @@ import config from 'config';
 import LoginFlow from '../lib/flows/login-flow.js';
 
 import NavBarComponent from '../lib/components/nav-bar-component.js';
+import SidebarComponent from '../lib/components/sidebar-component.js';
 
 import StatsPage from '../lib/pages/stats-page.js';
 
@@ -42,8 +43,9 @@ describe( 'Stats: (' + screenSize + ') @parallel', function() {
 			let statsPage;
 
 			step( 'Can open the stats page', async function() {
+				const sidebarComponent = await SidebarComponent.Expect( driver );
+				await sidebarComponent.selectStats();
 				statsPage = await StatsPage.Expect( driver );
-				await statsPage.openStats();
 			} );
 
 			step( 'Can open the stats insights page', async function() {

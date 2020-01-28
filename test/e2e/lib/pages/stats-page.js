@@ -16,10 +16,6 @@ export default class StatsPage extends AsyncBaseContainer {
 		super( driver, By.css( '.stats-module' ) );
 	}
 
-	async openStats() {
-		return await driverHelper.clickWhenClickable( this.driver, By.css( '.sidebar__menu .stats' ) );
-	}
-
 	async openInsights() {
 		await this._expandNavIfMobile();
 		await driverHelper.clickWhenClickable( this.driver, By.css( '.stats-navigation__insights' ) );
