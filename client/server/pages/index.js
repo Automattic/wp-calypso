@@ -22,7 +22,8 @@ import {
 	split,
 } from 'lodash';
 import bodyParser from 'body-parser';
-import superagent from 'superagent';
+// eslint-disable-next-line no-restricted-imports
+import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import { matchesUA } from 'browserslist-useragent';
 
 /**
@@ -87,6 +88,7 @@ function getInitialServerState( serializedServerState ) {
 
 /**
  * Checks whether a user agent is included in the browser list for an environment.
+ *
  * @param {string} userAgentString The user agent string.
  * @param {string} environment The `browserslist` environment.
  *
@@ -604,7 +606,7 @@ function renderServerError( err, req, res, next ) {
  * @param {object} req Express request object
  * @param {object} res Express response object
  * @param {Function} next a callback to call when done
- * @returns {Function|Undefined} res.redirect if not logged in
+ * @returns {Function|undefined} res.redirect if not logged in
  */
 function handleLocaleSubdomains( req, res, next ) {
 	const langSlug = endsWith( req.hostname, config( 'hostname' ) )
