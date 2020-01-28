@@ -169,7 +169,7 @@ export function checkUrl( url, isUrlOnSites ) {
 	};
 }
 
-export function retryAuth( url, attemptNumber, fromParam ) {
+export function retryAuth( url, attemptNumber, fromParam, redirectAfterAuth ) {
 	return dispatch => {
 		debug( 'retrying auth', url, attemptNumber );
 		dispatch( {
@@ -184,6 +184,8 @@ export function retryAuth( url, attemptNumber, fromParam ) {
 			} )
 		);
 		debug( 'retryAuth', url );
+		// If redirectAfterAuth use that as the destination url, otherwise default to url arg
+		const destinationUrl = redirectAfterAuth || url + REMOTE_PATH_AUTH;
 		externalRedirect(
 			addQueryArgs(
 				{
@@ -192,7 +194,7 @@ export function retryAuth( url, attemptNumber, fromParam ) {
 					auth_type: 'jetpack',
 					from: fromParam,
 				},
-				url + REMOTE_PATH_AUTH
+				destinationUrl
 			)
 		);
 	};
