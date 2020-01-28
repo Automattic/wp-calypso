@@ -26,7 +26,11 @@
 		"api",
 		"library"
 	],
-	"repository": "git@github.com:Automattic/wpcom.js.git",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/wpcom.js"
+	},
 	"license": "MIT",
 	"browserslist": {
 		"defaults": [
