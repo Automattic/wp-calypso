@@ -136,12 +136,12 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 .template-selector-control__options {
 	display: grid;
 	grid-template-columns: 1fr;
-	grid-gap: 1.75em;
+	grid-gap: 0.75em;
 
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		margin-top: 0;
 		grid-template-columns: repeat(
-			auto-fit,
+			auto-fill,
 			minmax( 110px, 1fr )
 		); // allow grid to take over number of cols on large screens
 	}
