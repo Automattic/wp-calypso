@@ -170,8 +170,7 @@ $design-selector-selection-space: 285px;
 		}
 	}
 
-	&:hover,
-	&:focus {
+	&:hover {
 		.design-selector__option-overlay {
 			opacity: 1;
 		}
@@ -225,4 +224,41 @@ $design-selector-selection-space: 285px;
 	color: $dark-gray-800;
 	font-size: 1.3em;
 	line-height: 1.3;
+}
+
+.accessible-focus {
+	.page-layout-selector__item {
+		&:focus {
+			padding: 0;
+			border: 3px solid $blue-medium-focus;
+	
+			// Offset absolute-positioned card content when border state occurs
+			.page-layout-selector__card-media {
+				width: calc( 100% + 4px ); /* This number is the border width * 2, minus the width of the thin static state border */
+				top: -2px; /* This is half of the above number. */
+			}
+	
+			.page-layout-selector__card-footer {
+				bottom: -2px;
+				width: calc( 100% + 4px );
+			}
+
+			border-color: var( --color-neutral-dark );
+
+			.page-layout-selector__selected-indicator {
+				background: linear-gradient(
+					to bottom left,
+					var( --color-neutral-dark ),
+					var( --color-neutral-dark ) 50%,
+					transparent 51% /* 1% difference helps prevent a rough edge */
+				);
+			}
+		}
+	}
+
+	.design-selector__design-option {
+		.design-selector__option-overlay {
+			opacity: 1;
+		}
+	}
 }
