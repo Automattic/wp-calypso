@@ -16,7 +16,6 @@ import { useTranslate } from 'i18n-calypso';
  */
 import joinClasses from './join-classes';
 import Button from './button';
-import RadioButton from './radio-button';
 import { useHasDomainsInCart } from '../hooks/has-domains';
 
 export function WPOrderReviewSection( { children, className } ) {
@@ -121,11 +120,6 @@ const ProductTitle = styled.span`
 	flex: 1;
 `;
 
-const Discount = styled.span`
-	color: ${props => props.theme.colors.discount};
-	margin-right: 8px;
-`;
-
 const DeleteButton = styled( Button )`
 	position: absolute;
 	padding: 10px;
@@ -134,22 +128,6 @@ const DeleteButton = styled( Button )`
 
 	:hover rect {
 		fill: ${props => props.theme.colors.error};
-	}
-`;
-
-const TermOptions = styled.ul`
-	flex-basis: 100%;
-	margin: 12px 0 0;
-	padding: 0;
-`;
-
-const TermOptionsItem = styled.li`
-	margin: 8px 0 0;
-	padding: 0;
-	list-style: none;
-
-	:first-of-type {
-		margin-top: 0;
 	}
 `;
 
@@ -261,55 +239,6 @@ const WPOrderReviewListItems = styled.li`
 		top: -3px;
 	}
 `;
-
-function PlanTermOptions() {
-	const translate = useTranslate();
-	const [ termDuration, setTermDuration ] = useState( 'one-year' );
-	//TODO: Make these options dynamic and update the cart when a choice is selected.
-	return (
-		<TermOptions>
-			<TermOptionsItem>
-				<RadioButton
-					name="term"
-					id="one-year"
-					value="$60"
-					checked={ termDuration === 'one-year' }
-					onChange={ () => {
-						setTermDuration( 'one-year' );
-					} }
-					ariaLabel={ translate( 'One year term' ) }
-					label={
-						<React.Fragment>
-							<ProductTitle>{ translate( 'One year' ) }</ProductTitle>
-							<span>$60</span>
-						</React.Fragment>
-					}
-				/>
-			</TermOptionsItem>
-			<TermOptionsItem>
-				<RadioButton
-					name="term"
-					id="two-year"
-					value="$60"
-					checked={ termDuration === 'two-year' }
-					onChange={ () => {
-						setTermDuration( 'two-year' );
-					} }
-					ariaLabel={ translate( 'Two year term' ) }
-					label={
-						<React.Fragment>
-							<ProductTitle>{ translate( 'Two years' ) }</ProductTitle>
-							<Discount>Save 10%</Discount>
-							<span>
-								<s>$120</s> $108
-							</span>
-						</React.Fragment>
-					}
-				/>
-			</TermOptionsItem>
-		</TermOptions>
-	);
-}
 
 function returnModalCopy( product, translate, hasDomainsInCart ) {
 	const modalCopy = {};
