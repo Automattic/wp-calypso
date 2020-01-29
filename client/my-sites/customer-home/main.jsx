@@ -624,7 +624,8 @@ const connectHome = connect(
 		const createdAt = getSiteOption( state, siteId, 'created_at' );
 
 		return {
-			displayChecklist: isEligibleForDotcomChecklist( state, siteId ),
+			displayChecklist:
+				isEligibleForDotcomChecklist( state, siteId ) && hasChecklistData && ! isChecklistComplete,
 			site: getSelectedSite( state ),
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
