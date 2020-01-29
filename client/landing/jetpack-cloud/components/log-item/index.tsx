@@ -14,7 +14,7 @@ import './style.scss';
 interface Props {
 	children?: ReactNode;
 	header: string;
-	subheader: string;
+	subheader?: string;
 	highlight?: 'info' | 'success' | 'warning' | 'error';
 	tag?: string;
 }
@@ -29,7 +29,7 @@ class LogItem extends React.PureComponent< Props > {
 				<CardHeading tagName="h2" size={ 18 }>
 					{ header }
 				</CardHeading>
-				<p className="log-item__subheader">{ subheader }</p>
+				{ subheader && <p className="log-item__subheader">{ subheader }</p> }
 			</div>
 		);
 	}
