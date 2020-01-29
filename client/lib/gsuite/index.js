@@ -2,7 +2,7 @@
  * External dependencies
  */
 import formatCurrency from '@automattic/format-currency';
-import { endsWith, get, includes, isNumber, isString, some, sortBy } from 'lodash';
+import { get, isNumber, isString, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,14 +36,16 @@ function applyPrecision( cost, precision ) {
 function canDomainAddGSuite( domainName ) {
 	const GOOGLE_APPS_INVALID_SUFFIXES = [ '.in', '.wpcomstaging.com' ];
 	const GOOGLE_APPS_BANNED_PHRASES = [ 'google' ];
-	const includesBannedPhrase = some( GOOGLE_APPS_BANNED_PHRASES, bannedPhrase =>
-		includes( domainName, bannedPhrase )
+	const includesBannedPhrase = GOOGLE_APPS_BANNED_PHRASES.some( bannedPhrase =>
+		domainName.includes( bannedPhrase )
 	);
-	const hasInvalidSuffix = some( GOOGLE_APPS_INVALID_SUFFIXES, invalidSuffix =>
-		endsWith( domainName, invalidSuffix )
+	const hasInvalidSuffix = GOOGLE_APPS_INVALID_SUFFIXES.some( invalidSuffix =>
+		domainName.endsWith( invalidSuffix )
 	);
-
-	return ! ( hasInvalidSuffix || includesBannedPhrase || isGSuiteRestricted() );
+	if ( includesBannedPhrase || hasInvalidSuffix || isGSuiteRestricted() ) {
+		return false;
+	}
+	return true;
 }
 
 /**
