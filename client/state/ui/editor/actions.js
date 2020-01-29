@@ -156,9 +156,9 @@ export function saveConfirmationSidebarPreference( siteId, isEnabled = true ) {
 	};
 }
 
-export const setEditorIframeLoaded = ( loaded = true ) => ( {
+export const setEditorIframeLoaded = ( isIframeLoaded = true ) => ( {
 	type: EDITOR_IFRAME_LOADED,
-	isIframeLoaded: loaded,
+	isIframeLoaded,
 } );
 
 export const editorAutosaveReset = () => ( {
