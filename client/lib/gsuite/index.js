@@ -136,13 +136,14 @@ function getGSuiteSupportedDomains( domains ) {
  * @returns {string} - ToS url redirect
  */
 function getLoginUrlWithTOSRedirect( email, domain ) {
+	const continueUrl = encodeURIComponent(
+		`https://admin.google.com/${ domain }/AcceptTermsOfService?continue=https://mail.google.com/mail/u/${ email }`
+	);
 	return (
 		'https://accounts.google.com/AccountChooser?' +
 		`Email=${ encodeURIComponent( email ) }` +
 		`&service=CPanel` +
-		`&continue=${ encodeURIComponent(
-			`https://admin.google.com/${ domain }/AcceptTermsOfService?continue=https://mail.google.com/mail/u/${ email }`
-		) }`
+		`&continue=${ continueUrl }`
 	);
 }
 
