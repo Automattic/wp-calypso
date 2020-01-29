@@ -19,7 +19,7 @@ interface CreateSite {
 
 export function createSite( { siteTitle, siteUrl, theme, siteVertical }: CreateSite ) {
 	const newSiteParams = {
-		blog_name: siteUrl,
+		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
 		blog_title: siteTitle,
 		options: {
 			theme: `pub/${ theme }`,
