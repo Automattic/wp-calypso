@@ -346,7 +346,9 @@ export class PlanFeatures extends Component {
 		}
 		return ReactDOM.createPortal(
 			<Notice className="plan-features__notice" showDismiss={ false } status="is-info">
-				{ translate( 'You need to be the plan owner to manage this site.' ) }
+				{ translate(
+					"This plan was purchased by a different WordPress.com account. Please log into that account, or contact that account's owner to manage this plan."
+				) }
 			</Notice>,
 			bannerContainer
 		);
