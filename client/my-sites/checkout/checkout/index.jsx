@@ -109,6 +109,10 @@ export class Checkout extends React.Component {
 		isJetpackNotAtomic: PropTypes.bool,
 		selectedFeature: PropTypes.string,
 		loadTrackingTool: PropTypes.func.isRequired,
+		setHeaderText: PropTypes.func.isRequired,
+		clearPurchases: PropTypes.func.isRequired,
+		fetchReceiptCompleted: PropTypes.func.isRequired,
+		previousRoute: PropTypes.string.isRequired,
 	};
 
 	state = {
