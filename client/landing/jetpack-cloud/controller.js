@@ -8,7 +8,7 @@ import ReactDom from 'react-dom';
  * Internal Dependencies
  */
 import JetpackCloudLayout from './layout';
-import JetpackCloudSidebar from './sidebar';
+import JetpackCloudSidebar from './components/sidebar';
 
 export const makeLayout = ( context, next ) => {
 	const { primary, secondary } = context;
@@ -23,7 +23,7 @@ export const clientRender = context => {
 };
 
 export function setupSidebar( context, next ) {
-	context.secondary = <JetpackCloudSidebar />;
+	context.secondary = <JetpackCloudSidebar path={ context.path } />;
 	next();
 }
 

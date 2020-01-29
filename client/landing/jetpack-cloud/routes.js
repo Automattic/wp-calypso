@@ -14,8 +14,11 @@ import {
 	makeLayout,
 	setupSidebar,
 } from './controller';
+import { normalize } from 'lib/route';
 
 const router = () => {
+	page( '*', normalize );
+
 	page( '/', setupSidebar, jetpackCloud, makeLayout, clientRender );
 
 	page( '/backups', setupSidebar, jetpackBackups, makeLayout, clientRender );
