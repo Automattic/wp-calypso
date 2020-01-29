@@ -15,6 +15,7 @@ import { DomainName } from '@automattic/data-stores/types/domain-suggestions';
  * ⚠️😱 Calypso dependencies 😱⚠️
  */
 import wpcom from '../../lib/wp';
+import { untrailingslashit } from '../../lib/route';
 import { urlToSlug } from '../../lib/url';
 
 interface CreateSite {
@@ -50,7 +51,7 @@ export function createSite( { siteTitle, siteUrl, theme, siteVertical }: CreateS
 			throw new Error( 'No url in response!' );
 		}
 
-		const siteSlug = urlToSlug( url );
+		const siteSlug = urlToSlug( untrailingslashit( url ) );
 		window.location.href = `/block-editor/page/${ siteSlug }/home?is-gutenboarding`;
 	} );
 }
