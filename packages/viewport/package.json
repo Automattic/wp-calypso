@@ -18,7 +18,7 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/viewport#readme",
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "npm run clean",
+		"prepublish": "yarn run clean",
 		"prepare": "transpile"
 	},
 	"publishConfig": {
