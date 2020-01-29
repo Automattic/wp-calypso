@@ -150,11 +150,10 @@ class JetpackCloudSidebar extends Component {
 							selected={ this.isSelected( '/support' ) }
 						/>
 						<SidebarItem
-							className="sidebar__menu-item-back"
 							forceInternalLink={ true }
 							label="Manage site" // @todo: Localize
 							link="https://wordpress.com/stats" // @todo: Confirm a correct link is used here
-							materialIcon="play_circle_filled"
+							materialIcon="arrow_back"
 							materialIconStyle="filled"
 						/>
 					</SidebarMenu>

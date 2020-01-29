@@ -10,11 +10,6 @@
 	}
 }
 
-// Special case for the "Manage site" menu item icon
-.sidebar__menu-item-back .material-icon {
-	transform: scaleX( -1 );
-}
-
 // Expandables
 .sidebar__menu.is-togglable {
 	.sidebar__heading {
@@ -31,7 +26,6 @@
 
 .sidebar__expandable-content {
 	.sidebar__menu-link {
-		margin: 2px 8px;
 		padding-top: 10px;
 		padding-bottom: 10px;
 		font-weight: 400;
