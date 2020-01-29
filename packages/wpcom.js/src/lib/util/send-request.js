@@ -37,9 +37,8 @@ export default function sendRequest( params, query, body, fn ) {
 		body = null;
 	}
 
-	// query could be `null`. the object is copied so we are not mutating
-	// original arguments in code below
-	query = query ? { ...query } : {};
+	// query could be `null`
+	query = query || {};
 
 	// Handle special query parameters
 	// - `apiVersion`
@@ -92,4 +91,4 @@ export default function sendRequest( params, query, body, fn ) {
 			err ? reject( err ) : resolve( res );
 		} );
 	} );
-};
+}
