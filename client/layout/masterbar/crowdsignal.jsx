@@ -20,12 +20,19 @@ class CrowdsignalOauthMasterbar extends Component {
 		// Crowdsignal's OAuth2 pages should load and use the 'Recoleta' font to match the style of the app
 		// By loading it here we're not affecting any other pages inside Calypso that don't need the font
 
+		if ( 'undefined' === typeof FontFace ) {
+			// Probably IE or older Edge browser
+			return;
+		}
+
+		/* eslint-disable no-undef */
 		const crowdsignalFonts = [
 			new FontFace( 'Recoleta', 'url(https://s1.wp.com/i/fonts/recoleta/400.woff2)' ),
 			new FontFace( 'Recoleta', 'url(https://s1.wp.com/i/fonts/recoleta/700.woff2)', {
 				weight: 700,
 			} ),
 		];
+		/* eslint-enable no-undef */
 
 		if ( ! document.fonts.check( '12px Recoleta' ) ) {
 			map( crowdsignalFonts, font => {
