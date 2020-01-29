@@ -18,11 +18,11 @@
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prebuild": "npm run clean",
+		"prebuild": "yarn run clean",
 		"build": "calypso-build --config='./webpack.config.js'"
 	},
 	"dependencies": {
-		"@automattic/calypso-color-schemes": "file:../../packages/calypso-color-schemes",
-		"@automattic/calypso-polyfills": "file:../../packages/calypso-polyfills"
+		"@automattic/calypso-color-schemes": "^2.1.0",
+		"@automattic/calypso-polyfills": "^1.0.0"
 	}
 }

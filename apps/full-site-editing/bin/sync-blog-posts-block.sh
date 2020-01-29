@@ -25,7 +25,7 @@ fi
 # print usage is no mode matched
 if [ -z "$MODE" ]
 then
-    echo "Usage: npm run sync:blog-posts-block [arguments]"
+    echo "Usage: yarn run sync:blog-posts-block [arguments]"
     echo
     echo Possible arguments:
     echo --branch=master

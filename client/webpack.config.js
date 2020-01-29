@@ -113,7 +113,7 @@ const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
 const fileLoader = FileConfig.loader(
 	// The server bundler express middleware server assets from the hard-coded publicPath `/calypso/evergreen/`.
-	// This is required so that running calypso via `npm start` doesn't break.
+	// This is required so that running calypso via `yarn start` doesn't break.
 	isDevelopment
 		? {
 				outputPath: 'images',

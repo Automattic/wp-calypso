@@ -38,8 +38,8 @@ if [ ! -d "./gutenberg" ] ; then
 		git clone $gutenberg_url
 		cd gutenberg
 		nvm use
-		npm ci
-		npm run build
+		npm install --frozen-lockfile
+		yarn run build
 		cd ../
 		echo -e "\nGutenberg has been cloned to $parent_dr/gutenberg.\n"
 	fi

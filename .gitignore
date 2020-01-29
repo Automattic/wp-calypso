@@ -28,6 +28,7 @@ spec-xunit-reporter-0.0.1.tgz
 *xunit_*.xml
 lerna-debug.log
 /vendor
+yarn-error.log
 
 # added during build
 /config/secrets.json

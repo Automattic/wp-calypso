@@ -8,7 +8,7 @@
 	"private": true,
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "npm run clean",
+		"prepublish": "yarn run clean",
 		"prepare": "run-s build:modules build:bundle",
 		"build:modules": "transpile",
 		"build:bundle": "webpack --display errors-only"

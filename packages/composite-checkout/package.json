@@ -7,7 +7,7 @@
 	"sideEffects": false,
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "npm run clean",
+		"prepublish": "yarn run clean",
 		"prepare": "transpile"
 	},
 	"files": [

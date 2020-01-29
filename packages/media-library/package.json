@@ -26,7 +26,7 @@
 	"dependencies": {},
 	"scripts": {
 		"clean": "npx rimraf dist types",
-		"prepublish": "npm run clean",
+		"prepublish": "yarn run clean",
 		"prepare": "transpile && tsc && copy-assets"
 	}
 }

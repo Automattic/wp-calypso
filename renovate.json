@@ -50,6 +50,7 @@
 			"prPriority": 1
 		}
 	],
+	"postUpdateOptions": [ "yarnDedupeFewer" ],
 	"statusCheckVerify": true,
 	"ignoreDeps": [ "jquery" ],
 	"labels": [ "Framework", "[Type] Task" ],

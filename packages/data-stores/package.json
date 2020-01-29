@@ -28,7 +28,7 @@
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
-		"prepublish": "npm run clean",
+		"prepublish": "yarn run clean",
 		"watch": "tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
