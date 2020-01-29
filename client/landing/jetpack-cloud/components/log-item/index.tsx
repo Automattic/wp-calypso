@@ -15,7 +15,7 @@ interface Props {
 	children?: ReactNode;
 	header: string;
 	subheader: string;
-	highlight?: string;
+	highlight?: 'info' | 'success' | 'warning' | 'error';
 	tag?: string;
 }
 
