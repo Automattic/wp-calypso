@@ -21,8 +21,8 @@ npm install --save wpcom
 
 ```js
 // Edit a post on a site
-var reqHandler = require( 'wpcom-xhr-request' );
-var wpcom = require( 'wpcom' )( '<your-token>', reqHandler );
+var wpcomXhrRequest = require( 'wpcom-xhr-request' );
+var wpcom = require( 'wpcom' )( '<your-token>', wpcomXhrRequest );
 
 wpcom
 	.site( 'your-blog.wordpress.com' )
@@ -46,7 +46,7 @@ npm install --save wpcom
 import wpcomXhrRequest from 'wpcom-xhr-request';
 import wpcomFactory from 'wpcom';
 
-const wpcom = wpcomFactory( '<your-token>', reqHandler );
+const wpcom = wpcomFactory( '<your-token>', wpcomXhrRequest );
 
 wpcom
 	.site( 'your-blog.wordpress.com' )
@@ -88,7 +88,7 @@ If you do need a token, here are some links that will help you generate one:
 import wpcomXhrRequest from 'wpcom-xhr-request';
 import wpcomFactory from 'wpcom';
 
-const wpcom = wpcomFactory( '<your-token>', reqHandler );
+const wpcom = wpcomFactory( '<your-token>', wpcomXhrRequest );
 const blog = wpcom.site( 'your-blog.wordpress.com' );
 blog.post( { slug: 'a-post-slug' } ).update( data )
 	.then( res => { ... } )
@@ -102,7 +102,7 @@ You can omit the API token for operations that don't require permissions:
 import wpcomXhrRequest from 'wpcom-xhr-request';
 import wpcomFactory from 'wpcom';
 
-const wpcom = wpcomFactory( undefined, reqHandler );
+const wpcom = wpcomFactory( undefined, wpcomXhrRequest );
 const blog = wpcom.site( 'your-blog.wordpress.com' );
 blog.postsList( { number: 8 } )
 	.then( list => { ... } )
