@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
 import shouldNewSiteBePrivateByDefault from './should-new-site-be-private-by-default';
 
 /**
