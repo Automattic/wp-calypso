@@ -30,6 +30,7 @@ import {
 	PayPalExpressEndpointResponse,
 	createPayPalExpressEndpointRequestPayloadFromLineItems,
 } from './types';
+import { getThankYouPageUrl } from './composite-checkout-thank-you';
 
 const debug = debugFactory( 'calypso:composite-checkout-payment-methods' );
 
@@ -108,7 +109,7 @@ export function createPaymentMethods( {
 
 	const paypalMethod = isMethodEnabled( 'paypal', allowedPaymentMethods )
 		? createPayPalMethod( {
-				getSuccessUrl: () => `/checkout/thank-you/${ select( 'wpcom' )?.getSiteId?.() }/`, // TODO: get the correct redirect URL
+				getSuccessUrl: () => getThankYouPageUrl( { siteId: select( 'wpcom' )?.getSiteId?.() } ),
 				getCancelUrl: () => window.location.href,
 				registerStore: registerStore,
 				submitTransaction: submitData =>
