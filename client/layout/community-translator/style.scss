@@ -138,7 +138,17 @@ body {
 	}
 }
 
-// Disable translatable strings highlight when deliverable is highlighted
-.has-deliverable-highlighted .translator-translatable {
-	text-shadow: none !important;
+.has-deliverable-highlighted {
+	// Disable translatable strings highlight when deliverable is highlighted
+	.translator-translatable {
+		text-shadow: none !important;
+	}
+
+	/* stylelint-disable selector-max-id */
+	#notices,
+	.environment-badge,
+	.community-translator,
+	.inline-help {
+		display: none !important;
+	}
 }
