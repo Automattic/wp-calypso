@@ -651,7 +651,7 @@ module.exports = function() {
 	app.use( setupLoggedInContext );
 	app.use( handleLocaleSubdomains );
 
-	// Temporaryly redirect cloud.jetpack.com to jetpack.com in the production enviroment
+	// Temporarily redirect cloud.jetpack.com to jetpack.com in the production enviroment
 	app.use( function( req, res, next ) {
 		if ( 'jetpack-cloud-production' === calypsoEnv ) {
 			res.redirect( 'https://jetpack.com/' );
