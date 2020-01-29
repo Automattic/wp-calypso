@@ -84,7 +84,7 @@ export function startEditingNewPost( siteId, post ) {
  */
 export function stopEditingPost( siteId, postId ) {
 	return dispatch => {
-		dispatch( editorReset( { isLoaded: false } ) );
+		dispatch( editorReset() );
 		dispatch( { type: EDITOR_STOP, siteId, postId } );
 	};
 }
@@ -233,7 +233,6 @@ export function editorReset( options ) {
 	return {
 		type: EDITOR_RESET,
 		isLoading: get( options, 'isLoading', false ),
-		isLoaded: get( options, 'isLoaded', false ),
 		loadingError: get( options, 'loadingError', null ),
 	};
 }
