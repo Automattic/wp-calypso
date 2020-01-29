@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { flatten, filter, find, get, includes, isEmpty, isEqual, reduce, startsWith } from 'lodash';
+import { flatten, find, get, includes, isEmpty, isEqual, reduce, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -761,23 +761,23 @@ export default connect(
 
 function getEligibleDomainFromCart( cart ) {
 	const domainRegistrations = getDomainRegistrations( cart );
-	const domainsInSignupContext = filter( domainRegistrations, { extra: { context: 'signup' } } );
-	const domainsForGSuite = filter( domainsInSignupContext, ( { meta } ) =>
-		canDomainAddGSuite( meta )
+	const domainsInSignupContext = domainRegistrations.filter(
+		domain => domain.extra?.context === 'signup'
 	);
-	return domainsForGSuite;
+	const domainsForGSuite = domainsInSignupContext.filter( domain =>
+		canDomainAddGSuite( domain.meta )
+	);
+	return domainsForGSuite.length > 0 ? domainsForGSuite[ 0 ] : null;
 }
 
 function shouldRedirectToGSuiteNudge( { stepResult, isNewlyCreatedSite, cart } ) {
 	if ( isNewlyCreatedSite && stepResult && isEmpty( stepResult.failed_purchases ) ) {
-		const hasGoogleAppsInCart = hasGoogleApps( cart );
-
-		// Maybe show either the G Suite or plan upgrade upsell pages
-		if ( ! hasGoogleAppsInCart && ! hasConciergeSession( cart ) && hasDomainRegistration( cart ) ) {
-			const domainsForGSuite = getEligibleDomainFromCart( cart );
-			if ( domainsForGSuite.length ) {
-				return true;
-			}
+		if (
+			! hasGoogleApps( cart ) &&
+			! hasConciergeSession( cart ) &&
+			hasDomainRegistration( cart )
+		) {
+			return true;
 		}
 	}
 	return false;
@@ -799,9 +799,9 @@ function getRedirectUrlForGSuiteNudge( {
 	) {
 		return null;
 	}
-	const domainsForGSuite = getEligibleDomainFromCart( cart );
-	if ( domainsForGSuite.length ) {
-		return `/checkout/${ selectedSiteSlug }/with-gsuite/${ domainsForGSuite[ 0 ].meta }/${ pendingOrReceiptId }`;
+	const domainForGSuite = getEligibleDomainFromCart( cart );
+	if ( domainForGSuite ) {
+		return `/checkout/${ selectedSiteSlug }/with-gsuite/${ domainForGSuite.meta }/${ pendingOrReceiptId }`;
 	}
 }
 
