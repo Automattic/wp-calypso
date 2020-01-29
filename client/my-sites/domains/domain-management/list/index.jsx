@@ -125,10 +125,11 @@ export class List extends React.Component {
 
 		return (
 			<Notice
-				status="is-info"
+				status="is-success"
 				showDismiss={ false }
 				text={ translate( 'Free domain available' ) }
-				icon="globe"
+				icon="info-outline"
+				className="domain-management__claim-free-domain"
 			>
 				<NoticeAction
 					onClick={ this.props.clickClaimDomainNotice }
