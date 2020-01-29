@@ -12,7 +12,6 @@ import debugFactory from 'debug';
  */
 import { Card, Dialog, Suggestions } from '@automattic/components';
 import SearchCard from 'components/search-card';
-import SectionHeader from 'components/section-header';
 import FormButton from 'components/forms/form-button';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -219,7 +218,6 @@ class SelectIpsTag extends Component {
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Transfer Domain To Another Registrar' ) } />
 				<Card>
 					<p>
 						{ translate(
