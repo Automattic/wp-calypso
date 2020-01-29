@@ -2,18 +2,7 @@
 /**
  * External dependencies
  */
-import {
-	find,
-	isEmpty,
-	reduce,
-	get,
-	keyBy,
-	mapValues,
-	memoize,
-	filter,
-	reject,
-	sortBy,
-} from 'lodash';
+import { find, isEmpty, reduce, get, keyBy, mapValues, memoize, filter, sortBy } from 'lodash';
 import classnames from 'classnames';
 import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
