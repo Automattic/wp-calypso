@@ -39,7 +39,6 @@
 	"dependencies": {
 		"@babel/runtime": "^7.8.3",
 		"debug": "^4.1.1",
-		"qs": "^6.5.2",
-		"wpcom-xhr-request": "^1.1.2"
+		"qs": "^6.5.2"
 	}
 }
