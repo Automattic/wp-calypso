@@ -87,7 +87,7 @@ const TemplateEdit = compose(
 	} ) => {
 		if ( ! template ) {
 			return (
-				<Placeholder>
+				<Placeholder className="template-block__placeholder">
 					<Spinner />
 				</Placeholder>
 			);
