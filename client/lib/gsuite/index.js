@@ -244,8 +244,11 @@ function isGSuiteOrExtraLicenseProductSlug( productSlug ) {
  */
 function isGSuiteRestricted() {
 	const user = userFactory();
-
-	return ! get( user.get(), 'is_valid_google_apps_country', false );
+	const userData = user.get();
+	if ( userData?.is_valid_google_apps_country ) {
+		return false; // not restricted
+	}
+	return true;
 }
 
 export {
