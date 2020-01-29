@@ -1,84 +1,61 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import page from 'page';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import { addItems } from 'lib/cart/actions';
 import { hasDomainInCart } from 'lib/cart-values/cart-items';
-import GoogleAppsDialog from './gsuite-dialog';
+import { GSUITE_BASIC_SLUG } from 'lib/gsuite/constants';
+import GSuiteUpsellCard from './gsuite-upsell-card';
 import HeaderCake from 'components/header-cake';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 
-class GoogleApps extends Component {
-	static propTypes = {
-		cart: PropTypes.object,
-		domain: PropTypes.string.isRequired,
-		onGoBack: PropTypes.func.isRequired,
-		productsList: PropTypes.object.isRequired,
-		onAddGoogleApps: PropTypes.func.isRequired,
-		onClickSkip: PropTypes.func.isRequired,
-		onSave: PropTypes.func,
-		initialState: PropTypes.object,
-		analyticsSection: PropTypes.string,
-		initialGoogleAppsCartItem: PropTypes.object,
+const GSuiteUpgrade = ( { cart, domain, selectedSiteSlug } ) => {
+	const handleAddEmailClick = cartItems => {
+		addItems( cartItems );
+
+		page( `/checkout/${ selectedSiteSlug }` );
 	};
 
-	static defaultProps = {
-		analyticsSection: 'domains',
+	const handleGoBack = () => {
+		page( `/domains/add/${ selectedSiteSlug }` );
 	};
 
-	componentDidMount() {
-		this.checkDomainInCart();
-	}
+	const handleSkipClick = () => {
+		page( `/checkout/${ selectedSiteSlug }` );
+	};
 
-	componentDidUpdate() {
-		this.checkDomainInCart();
-	}
-
-	checkDomainInCart() {
-		if ( ! this.props.cart || ! this.props.cart.hasLoadedFromServer ) {
-			return;
-		}
-
-		if ( ! hasDomainInCart( this.props.cart, this.props.domain ) ) {
+	useEffect( () => {
+		if ( cart && cart.hasLoadedFromServer && ! hasDomainInCart( cart, domain ) ) {
 			// Should we handle this more gracefully?
-			this.props.onGoBack();
+			page( `/domains/add/${ selectedSiteSlug }` );
 		}
-	}
+	}, [ cart, domain, selectedSiteSlug ] );
 
-	render() {
-		return (
-			<div>
-				<HeaderCake onClick={ this.props.onGoBack }>
-					{ this.props.translate( 'Register %(domain)s', { args: { domain: this.props.domain } } ) }
-				</HeaderCake>
+	const translate = useTranslate();
 
-				<GoogleAppsDialog
-					domain={ this.props.domain }
-					productsList={ this.props.productsList }
-					onClickSkip={ this.props.onClickSkip }
-					onAddGoogleApps={ this.props.onAddGoogleApps }
-					selectedSite={ this.props.selectedSite }
-					analyticsSection={ this.props.analyticsSection }
-					onSave={ this.props.onSave }
-					initialState={ this.props.initialState }
-					initialGoogleAppsCartItem={ this.props.initialGoogleAppsCartItem }
-				/>
-			</div>
-		);
-	}
-}
+	return (
+		<div>
+			<HeaderCake onClick={ handleGoBack }>
+				{ translate( 'Register %(domain)s', { args: { domain } } ) }
+			</HeaderCake>
 
-export default connect( state => {
-	return {
-		selectedSite: getSelectedSite( state ),
-	};
-} )( localize( GoogleApps ) );
+			<GSuiteUpsellCard
+				domain={ domain }
+				productSlug={ GSUITE_BASIC_SLUG }
+				onSkipClick={ handleSkipClick }
+				onAddEmailClick={ handleAddEmailClick }
+			/>
+		</div>
+	);
+};
+
+export default connect( state => ( {
+	selectedSiteSlug: getSelectedSiteSlug( state ),
+} ) )( GSuiteUpgrade );

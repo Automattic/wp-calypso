@@ -15,12 +15,12 @@ const FileConfig = require( './webpack/file-loader' );
 const Minify = require( './webpack/minify' );
 const SassConfig = require( './webpack/sass' );
 const TranspileConfig = require( './webpack/transpile' );
-const WordPressExternalDependenciesPlugin = require( '@automattic/wordpress-external-dependencies-plugin' );
+const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 
 /**
  * Internal dependencies
  */
-const { cssNameFromFilename } = require( './webpack/util' );
+const { cssNameFromFilename, shouldTranspileDependency } = require( './webpack/util' );
 // const { workerCount } = require( './webpack.common' ); // todo: shard...
 
 /**
@@ -43,16 +43,16 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  * @param  {string}  argv.'output-path'            Output path
  * @param  {string}  argv.'output-filename'        Output filename pattern
  * @param  {string}  argv.'output-library-target'  Output library target
- * @return {object}                                webpack config
+ * @returns {object}                                webpack config
  */
 function getWebpackConfig(
-	env = {}, // eslint-disable-line no-unused-vars
+	env = {},
 	{
 		entry,
 		'output-chunk-filename': outputChunkFilename,
 		'output-path': outputPath = path.join( process.cwd(), 'dist' ),
 		'output-filename': outputFilename = '[name].js',
-		'output-libary-target': outputLibraryTarget = 'window',
+		'output-library-target': outputLibraryTarget = 'window',
 	}
 ) {
 	const workerCount = 1;
@@ -69,6 +69,12 @@ function getWebpackConfig(
 			env.WP && path.join( __dirname, 'babel', 'wordpress-element' ),
 		].filter( Boolean );
 		babelConfig = undefined;
+	}
+
+	let postCssConfigPath = process.cwd();
+	if ( ! fs.existsSync( path.join( postCssConfigPath, 'postcss.config.js' ) ) ) {
+		// Default to this package's PostCSS config
+		postCssConfigPath = __dirname;
 	}
 
 	const webpackConfig = {
@@ -106,10 +112,13 @@ function getWebpackConfig(
 					presets,
 					workerCount,
 				} ),
-				SassConfig.loader( {
-					preserveCssCustomProperties: false,
-					prelude: '@import "~@automattic/calypso-color-schemes/src/shared/colors";',
+				TranspileConfig.loader( {
+					cacheDirectory: true,
+					include: shouldTranspileDependency,
+					presets: [ path.join( __dirname, 'babel', 'dependencies' ) ],
+					workerCount,
 				} ),
+				SassConfig.loader( { postCssConfig: { path: postCssConfigPath } } ),
 				FileConfig.loader(),
 			],
 		},
@@ -121,6 +130,9 @@ function getWebpackConfig(
 		plugins: [
 			new webpack.DefinePlugin( {
 				'process.env.NODE_ENV': JSON.stringify( process.env.NODE_ENV ),
+				'process.env.FORCE_REDUCED_MOTION': JSON.stringify(
+					!! process.env.FORCE_REDUCED_MOTION || false
+				),
 				global: 'window',
 			} ),
 			new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
@@ -130,7 +142,7 @@ function getWebpackConfig(
 				minify: ! isDevelopment,
 			} ),
 			new DuplicatePackageCheckerPlugin(),
-			...( env.WP ? [ new WordPressExternalDependenciesPlugin() ] : [] ),
+			...( env.WP ? [ new DependencyExtractionWebpackPlugin( { injectPolyfill: true } ) ] : [] ),
 		],
 	};
 

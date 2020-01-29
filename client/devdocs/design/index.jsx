@@ -1,13 +1,9 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import page from 'page';
 import classnames from 'classnames';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { slugToCamelCase } from 'devdocs/docs-example/util';
 import { trim } from 'lodash';
 
@@ -16,7 +12,6 @@ import { trim } from 'lodash';
  */
 import config from 'config';
 import DocumentHead from 'components/data/document-head';
-import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import ReadmeViewer from 'components/readme-viewer';
@@ -25,7 +20,7 @@ import SearchCard from 'components/search-card';
 /**
  * Docs examples
  */
-import Accordions from 'components/accordion/docs/example';
+import Accordion from 'components/accordion/docs/example';
 import ActionCard from 'components/action-card/docs/example';
 import ActionPanel from 'components/action-panel/docs/example';
 import Animate from 'components/animate/docs/example';
@@ -34,9 +29,9 @@ import Badge from 'components/badge/docs/example';
 import Banner from 'components/banner/docs/example';
 import BulkSelect from 'components/bulk-select/docs/example';
 import ButtonGroups from 'components/button-group/docs/example';
-import Buttons from 'components/button/docs/example';
+import Buttons from '@automattic/components/src/button/docs/example';
 import CardHeading from 'components/card-heading/docs/example';
-import Cards from 'components/card/docs/example';
+import Cards from '@automattic/components/src/card/docs/example';
 import Chart from 'components/chart/docs/example';
 import Checklist from 'components/checklist/docs/example';
 import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
@@ -90,11 +85,16 @@ import PieChart from 'components/pie-chart/docs/example';
 import PlansSkipButton from 'components/plans/plans-skip-button/docs/example';
 import PodcastIndicator from 'components/podcast-indicator/docs/example';
 import Popovers from 'components/popover/docs/example';
-import ProgressBar from 'components/progress-bar/docs/example';
+import ProductCard from 'components/product-card/docs/example';
+import ProductExpiration from 'components/product-expiration/docs/example';
+import ProductIcon from '@automattic/components/src/product-icon/docs/example';
+import ProgressBar from '@automattic/components/src/progress-bar/docs/example';
+import PromoSection from 'components/promo-section/docs/example';
+import PromoCard from 'components/promo-section/promo-card/docs/example';
 import Ranges from 'components/forms/range/docs/example';
 import Rating from 'components/rating/docs/example';
-import Ribbon from 'components/ribbon/docs/example';
-import ScreenReaderTextExample from 'components/screen-reader-text/docs/example';
+import Ribbon from '@automattic/components/src/ribbon/docs/example';
+import ScreenReaderTextExample from '@automattic/components/src/screen-reader-text/docs/example';
 import SearchDemo from 'components/search/docs/example';
 import SectionHeader from 'components/section-header/docs/example';
 import SectionNav from 'components/section-nav/docs/example';
@@ -107,12 +107,13 @@ import Spinner from 'components/spinner/docs/example';
 import SpinnerButton from 'components/spinner-button/docs/example';
 import SpinnerLine from 'components/spinner-line/docs/example';
 import SplitButton from 'components/split-button/docs/example';
-import Suggestions from 'components/suggestions/docs/example';
+import Suggestions from '@automattic/components/src/suggestions/docs/example';
 import SuggestionSearchExample from 'components/suggestion-search/docs/example';
 import SupportInfoExample from 'components/support-info/docs/example';
 import TextareaAutosize from 'components/textarea-autosize/docs/example';
 import TextDiff from 'components/text-diff/docs/example';
 import TileGrid from 'components/tile-grid/docs/example';
+import Timeline from 'components/timeline/docs/example';
 import TimeSince from 'components/time-since/docs/example';
 import Timezone from 'components/timezone/docs/example';
 import TokenFields from 'components/token-field/docs/example';
@@ -125,16 +126,9 @@ import Wizard from 'components/wizard/docs/example';
 import WizardProgressBar from 'components/wizard-progress-bar/docs/example';
 import WpcomColophon from 'components/wpcom-colophon/docs/example';
 
-class DesignAssets extends React.Component {
+export default class DesignAssets extends React.Component {
 	static displayName = 'DesignAssets';
 	state = { filter: '' };
-
-	UNSAFE_componentWillMount() {
-		if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
-			const { dispatchFetchComponentsUsageStats } = this.props;
-			dispatchFetchComponentsUsageStats();
-		}
-	}
 
 	onSearch = term => {
 		this.setState( { filter: trim( term || '' ).toLowerCase() } );
@@ -145,7 +139,7 @@ class DesignAssets extends React.Component {
 	};
 
 	render() {
-		const { componentsUsageStats = {}, component } = this.props;
+		const { component } = this.props;
 		const { filter } = this.state;
 
 		const className = classnames( 'devdocs', 'devdocs__components', {
@@ -183,22 +177,18 @@ class DesignAssets extends React.Component {
 					{ config.isEnabled( 'devdocs/color-scheme-picker' ) && (
 						<ColorSchemePicker readmeFilePath="color-scheme-picker" />
 					) }
+					<Accordion readmeFilePath="accordion" />
 					<ActionCard readmeFilePath="action-card" />
 					<ActionPanel readmeFilePath="action-panel" />
-					<Accordions
-						componentUsageStats={ componentsUsageStats.accordion }
-						readmeFilePath="accordion"
-					/>
 					<Animate readmeFilePath="animate" />
 					<BackButton readmeFilePath="back-button" />
 					<Badge readmeFilePath="badge" />
 					<Banner readmeFilePath="banner" />
 					<BulkSelect readmeFilePath="bulk-select" />
 					<ButtonGroups readmeFilePath="button-group" />
-					<Buttons componentUsageStats={ componentsUsageStats.button } readmeFilePath="button" />
-					<SplitButton readmeFilePath="split-button" />
-					<Cards readmeFilePath="card" />
+					<Buttons readmeFilePath="/packages/components/src/button" />
 					<CardHeading readmeFilePath="card-heading" />
+					<Cards readmeFilePath="/packages/components/src/card" />
 					<Chart readmeFilePath="chart" />
 					<Checklist readmeFilePath="checklist" />
 					<ClipboardButtonInput readmeFilePath="clipboard-button-input" />
@@ -250,11 +240,16 @@ class DesignAssets extends React.Component {
 					<PlansSkipButton readmeFilePath="plans/plans-skip-button" />
 					<PodcastIndicator readmeFilePath="podcast-indicator" />
 					<Popovers readmeFilePath="popover" />
-					<ProgressBar readmeFilePath="progress-bar" />
+					<ProductCard readmeFilePath="product-card" />
+					<ProductExpiration readmeFilePath="product-expiration" />
+					<ProductIcon readmeFilePath="/packages/components/src/product-icon" />
+					<ProgressBar readmeFilePath="/packages/components/src/progress-bar" />
+					<PromoCard readmeFilePath="promo-section/promo-card" />
+					<PromoSection readmeFilePath="promo-section" />
 					<Ranges readmeFilePath="forms/range" />
 					<Rating readmeFilePath="rating" />
-					<Ribbon readmeFilePath="ribbon" />
-					<ScreenReaderTextExample readmeFilePath="screen-reader-text" />
+					<Ribbon readmeFilePath="/packages/components/src/ribbon" />
+					<ScreenReaderTextExample readmeFilePath="/packages/components/src/screen-reader-text" />
 					<SearchDemo readmeFilePath="search" />
 					<SectionHeader readmeFilePath="section-header" />
 					<SectionNav readmeFilePath="section-nav" />
@@ -266,20 +261,22 @@ class DesignAssets extends React.Component {
 					<Spinner searchKeywords="loading" readmeFilePath="spinner" />
 					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="spinner-button" />
 					<SpinnerLine searchKeywords="loading" readmeFilePath="spinner-line" />
-					<Suggestions readmeFilePath="suggestions" />
+					<SplitButton readmeFilePath="split-button" />
+					<Suggestions readmeFilePath="/packages/components/src/suggestions" />
 					<SuggestionSearchExample />
 					<SupportInfoExample />
 					<TextareaAutosize readmeFilePath="textarea-autosize" />
 					<TextDiff readmeFilePath="text-diff" />
 					<TileGrid readmeFilePath="tile-grid" />
+					<Timeline readmeFilePath="timeline" />
 					<TimeSince readmeFilePath="time-since" />
 					<Timezone readmeFilePath="timezone" />
 					<TokenFields readmeFilePath="token-field" />
 					<Tooltip readmeFilePath="tooltip" />
 					<UserItem readmeFilePath="user" />
+					<Version readmeFilePath="version" />
 					<VerticalMenu readmeFilePath="vertical-menu" />
 					<VerticalNav readmeFilePath="vertical-nav" />
-					<Version readmeFilePath="version" />
 					<Wizard readmeFilePath="wizard" />
 					<WizardProgressBar readmeFilePath="wizard-progress-bar" />
 					<WpcomColophon readmeFilePath="wpcom-colophon" />
@@ -288,35 +285,3 @@ class DesignAssets extends React.Component {
 		);
 	}
 }
-
-let DesignAssetsExport = DesignAssets;
-
-if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
-	const mapStateToProps = state => {
-		const { componentsUsageStats } = state;
-
-		return componentsUsageStats;
-	};
-
-	const mapDispatchToProps = dispatch => {
-		return bindActionCreators(
-			{
-				dispatchFetchComponentsUsageStats: fetchComponentsUsageStats,
-			},
-			dispatch
-		);
-	};
-
-	DesignAssets.propTypes = {
-		componentsUsageStats: PropTypes.object,
-		isFetching: PropTypes.bool,
-		dispatchFetchComponentsUsageStats: PropTypes.func,
-	};
-
-	DesignAssetsExport = connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( DesignAssets );
-}
-
-export default DesignAssetsExport;

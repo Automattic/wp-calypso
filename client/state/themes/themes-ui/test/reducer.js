@@ -1,10 +1,18 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import reducer, { backPath, themesBannerVisible } from '../reducer';
-import { SERIALIZE, DESERIALIZE } from 'state/action-types';
+import reducer, {
+	backPath,
+	themesBannerVisible,
+	themesShowcaseOpen,
+	themesBookmark,
+} from '../reducer';
+import {
+	SERIALIZE,
+	DESERIALIZE,
+	THEMES_SHOWCASE_OPEN,
+	THEMES_BOOKMARK_SET,
+} from 'state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
@@ -68,5 +76,45 @@ describe( '#themesBannerVisible', () => {
 		} );
 
 		expect( state ).toBe( true ); // Falls back to `initialState`, which is `true`.
+	} );
+} );
+
+describe( '#themesShowcaseOpen', () => {
+	test( 'initializes to false', () => {
+		const state = themesShowcaseOpen( undefined, {} );
+		expect( state ).toBe( false );
+	} );
+
+	test( 'action type THEMES_SHOWCASE_OPEN sets value to true', () => {
+		const state = themesShowcaseOpen( false, { type: THEMES_SHOWCASE_OPEN } );
+		expect( state ).toBe( true );
+	} );
+
+	test( 'fubar action does not alter state', () => {
+		const state = themesShowcaseOpen( false, { type: 'FUBAR_ACTION' } );
+		expect( state ).toBe( false );
+	} );
+} );
+
+describe( '#themesBookmark', () => {
+	test( 'initializes state as empty string', () => {
+		const state = themesBookmark( undefined, {} );
+		expect( state ).toEqual( '' );
+	} );
+
+	test( 'sets given value on THEMES_BOOKMARK_SET', () => {
+		const state = themesBookmark( undefined, {
+			type: THEMES_BOOKMARK_SET,
+			payload: 'fubarId',
+		} );
+		expect( state ).toEqual( 'fubarId' );
+	} );
+
+	test( 'fubar action does not alter state', () => {
+		const state = themesBookmark( undefined, {
+			type: 'FUBAR_ACTION',
+			payload: 'fubarId',
+		} );
+		expect( state ).toEqual( '' );
 	} );
 } );

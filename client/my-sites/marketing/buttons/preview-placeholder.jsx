@@ -1,12 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies

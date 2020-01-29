@@ -17,7 +17,7 @@
 	}
 
 	li {
-		color: var( --color-neutral-600 );
+		color: var( --color-neutral-60 );
 		font-size: 13px;
 
 		@include breakpoint( '<660px' ) {
@@ -48,7 +48,7 @@
 		}
 
 		> a {
-			color: var( --color-neutral-600 );
+			color: var( --color-neutral-60 );
 			display: block;
 			text-decoration: none;
 		}
@@ -110,7 +110,7 @@
 	&:active,
 	&:focus,
 	&:hover {
-		color: var( --color-error-600 );
+		color: var( --color-error-60 );
 	}
 
 	.accessible-focus &:focus {

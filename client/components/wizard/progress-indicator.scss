@@ -1,0 +1,13 @@
+.wizard__progress-indicator {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var( --color-text-subtle );
+	font-size: 12px;
+	margin-bottom: 8px;
+	text-align: center;
+
+	@include breakpoint( '<660px' ) {
+		padding-top: 8px;
+	}
+}

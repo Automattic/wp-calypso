@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,6 +11,7 @@ import {
 	isRemovable,
 	isCancelable,
 	isPaidWithCredits,
+	hasPaymentMethod,
 	maybeWithinRefundPeriod,
 	subscribedWithinPastWeek,
 } from '../index';
@@ -90,6 +89,27 @@ describe( 'index', () => {
 		} );
 		test( 'should be false when payment not set on purchase', () => {
 			expect( isPaidWithCredits( {} ) ).to.be.false;
+		} );
+	} );
+	describe( '#hasPaymentMethod', () => {
+		test( 'should be false if no payment data at all', () => {
+			expect( hasPaymentMethod( {} ) ).to.be.false;
+		} );
+		test( 'should be false if no payment type', () => {
+			expect(
+				hasPaymentMethod( {
+					payment: {},
+				} )
+			).to.be.false;
+		} );
+		test( 'should be true if a payment type is available', () => {
+			expect(
+				hasPaymentMethod( {
+					payment: {
+						type: 'paypal',
+					},
+				} )
+			).to.be.true;
 		} );
 	} );
 	describe( '#maybeWithinRefundPeriod', () => {

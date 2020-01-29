@@ -1,16 +1,14 @@
-/** @format */
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { localize } from 'i18n-calypso';
 

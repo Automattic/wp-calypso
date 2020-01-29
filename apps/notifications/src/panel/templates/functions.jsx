@@ -20,8 +20,8 @@ import { pickBy, get } from 'lodash';
  * sufficiently but it should not be looked upon
  * as good example code!
  *
- * @param {String} text input list of blocks as HTML string
- * @returns {String} marked-up text
+ * @param {string} text input list of blocks as HTML string
+ * @returns {string} marked-up text
  */
 const toBlocks = text =>
 	text.split( '\n' ).reduce(

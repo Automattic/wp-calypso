@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,11 +12,11 @@ import PaymentLogo, { POSSIBLE_TYPES } from '../index';
 
 const genVendors = flow(
 	// 'placeholder' is a special case that needs to be demonstrated separately
-	filter( type => type !== 'placeholder' ),
+	arr => filter( arr, type => type !== 'placeholder' ),
 
-	map( type => ( { type, isCompact: false } ) ),
-	concat( [ { type: 'paypal', isCompact: true } ] ),
-	sortBy( [ 'type', 'isCompact' ] )
+	arr => map( arr, type => ( { type, isCompact: false } ) ),
+	arr => concat( arr, [ { type: 'paypal', isCompact: true } ] ),
+	arr => sortBy( arr, [ 'type', 'isCompact' ] )
 );
 
 const VENDORS = genVendors( POSSIBLE_TYPES );

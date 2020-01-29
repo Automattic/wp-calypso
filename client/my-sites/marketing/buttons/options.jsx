@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -207,16 +205,17 @@ class SharingButtonsOptions extends Component {
 						onChange={ this.handleChange }
 						disabled={ ! initialized }
 					/>
-          			<SupportInfo
+					<span>
+						{ translate( 'On for all posts', { context: 'Sharing options: Comment Likes' } ) }
+					</span>
+					<SupportInfo
 						text={ translate(
 							"Encourage your community by giving readers the ability to show appreciation for one another's comments."
 						) }
 						link="https://support.wordpress.com/comment-likes/"
 						privacyLink={ false }
+						position={ 'bottom left' }
 					/>
-					<span>
-						{ translate( 'On for all posts', { context: 'Sharing options: Comment Likes' } ) }
-					</span>
 				</label>
 			</fieldset>
 		);
@@ -318,7 +317,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent, recordTracksEvent }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( SharingButtonsOptions );
+export default flowRight( connectComponent, localize )( SharingButtonsOptions );

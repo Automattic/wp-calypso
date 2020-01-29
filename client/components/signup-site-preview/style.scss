@@ -3,7 +3,7 @@
 	height: 800px;
 	max-width: 1200px;
 	margin: 0 auto;
-	background: var( --color-white );
+	background: var( --color-surface );
 	position: relative;
 	transition: all 200ms cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 
@@ -39,7 +39,7 @@
 		transition-delay: 200ms;
 		height: 468px;
 		padding: 0 0 24px;
-		@include elevation ( 4dp );
+		@include elevation( 4dp );
 
 		@include breakpoint( '>960px' ) {
 			min-width: 280px;
@@ -51,8 +51,7 @@
 			top: 48px;
 			right: 8px;
 			z-index: 2;
-			box-shadow: 0 0 6px 0 rgba( 0, 0, 0, 0.5 ),
-			0 6px 50px 0 rgba( 0, 0, 0, 0.3 );
+			box-shadow: 0 0 6px 0 rgba( 0, 0, 0, 0.5 ), 0 6px 50px 0 rgba( 0, 0, 0, 0.3 );
 		}
 
 		// Only show one iframe at small
@@ -73,14 +72,14 @@
 
 	.is-desktop & {
 		border-radius: 4px;
-		@include elevation ( 3dp );
+		@include elevation( 3dp );
 		@include breakpoint( '<660px' ) {
 			border-radius: 12px 12px 0 0;
 		}
 	}
 
 	.is-phone & {
-		border-bottom: 1px solid var( --color-neutral-100 );
+		border-bottom: 1px solid var( --color-neutral-10 );
 		border-radius: 12px 12px 0 0;
 	}
 
@@ -104,7 +103,7 @@
 .signup-site-preview__chrome-desktop,
 .signup-site-preview__chrome-mobile {
 	height: 28px;
-	border-bottom: 1px solid var( --color-neutral-100 );
+	border-bottom: 1px solid var( --color-neutral-10 );
 }
 
 .signup-site-preview__chrome-desktop {
@@ -130,11 +129,12 @@
 		text-align: center;
 		text-transform: uppercase;
 		font-weight: 600;
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 		display: block;
 		width: 70%;
 		background: var( --color-neutral-0 );
 		border-radius: 3px;
+		cursor: default;
 
 		// At small screen sizes "hide" the label
 		// text as its mostly redundant.
@@ -155,10 +155,24 @@
 		text-align: center;
 		text-transform: uppercase;
 		font-weight: 600;
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 		display: block;
-		width: 60px;
+		width: 65%;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 		background: var( --color-neutral-0 );
 		border-radius: 16px;
+		cursor: default;
+		padding: 0 6px;
 	}
+}
+
+.signup-site-preview__scrolling-screenshot {
+	height: 100%;
+	overflow-y: scroll;
+}
+
+.signup-site-preview__screenshot-spinner {
+	margin: 40px;
 }

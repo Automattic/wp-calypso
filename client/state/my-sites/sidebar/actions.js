@@ -1,36 +1,22 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
 import {
-	MY_SITES_SIDEBAR_SITE_TOGGLE,
-	MY_SITES_SIDEBAR_DESIGN_TOGGLE,
-	MY_SITES_SIDEBAR_TOOLS_TOGGLE,
-	MY_SITES_SIDEBAR_MANAGE_TOGGLE,
+	MY_SITES_SIDEBAR_SECTION_TOGGLE,
+	MY_SITES_SIDEBAR_SECTION_EXPAND,
+	MY_SITES_SIDEBAR_SECTION_COLLAPSE,
 } from 'state/action-types';
 
-export function toggleMySitesSidebarSiteMenu() {
-	return {
-		type: MY_SITES_SIDEBAR_SITE_TOGGLE,
-	};
-}
+const createSidebarAction = type => sidebarSection => ( {
+	type,
+	sidebarSection,
+} );
 
-export function toggleMySitesSidebarDesignMenu() {
-	return {
-		type: MY_SITES_SIDEBAR_DESIGN_TOGGLE,
-	};
-}
+export const toggleMySitesSidebarSection = createSidebarAction( MY_SITES_SIDEBAR_SECTION_TOGGLE );
 
-export function toggleMySitesSidebarToolsMenu() {
-	return {
-		type: MY_SITES_SIDEBAR_TOOLS_TOGGLE,
-	};
-}
+export const expandMySitesSidebarSection = createSidebarAction( MY_SITES_SIDEBAR_SECTION_EXPAND );
 
-export function toggleMySitesSidebarManageMenu() {
-	return {
-		type: MY_SITES_SIDEBAR_MANAGE_TOGGLE,
-	};
-}
+export const collapseMySitesSidebarSection = createSidebarAction(
+	MY_SITES_SIDEBAR_SECTION_COLLAPSE
+);

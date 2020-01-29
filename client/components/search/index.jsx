@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { debounce, noop, uniqueId } from 'lodash';
 import i18n from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -116,7 +116,7 @@ class Search extends Component {
 
 	setOverlayRef = overlay => ( this.overlay = overlay );
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			nextProps.onSearch !== this.props.onSearch ||
 			nextProps.delaySearch !== this.props.delaySearch
@@ -126,7 +126,7 @@ class Search extends Component {
 				: this.props.onSearch;
 		}
 
-		if ( nextProps.isOpen ) {
+		if ( this.props.isOpen !== nextProps.isOpen ) {
 			this.setState( { isOpen: nextProps.isOpen } );
 		}
 

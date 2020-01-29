@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -362,7 +360,7 @@ export default {
 				}
 				break;
 			case 'PLUGIN_UPLOAD':
-				return i18n.translate( "You've successfully uploaded the %(plugin)s plugin.", {
+				return i18n.translate( "You've successfully installed the %(plugin)s plugin.", {
 					args: translateArg,
 				} );
 		}

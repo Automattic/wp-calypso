@@ -1,18 +1,16 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import Spinner from 'components/spinner';

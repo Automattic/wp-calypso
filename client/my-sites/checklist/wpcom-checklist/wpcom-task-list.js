@@ -1,103 +1,10 @@
-/** @format */
 /**
  * External dependencies
  */
-import { get, isBoolean, memoize, omit, pick, size } from 'lodash';
-import debugModule from 'debug';
-import config from 'config';
-
-/**
- * Internal dependencies
- */
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
-import { getVerticalTaskList } from './vertical-task-list';
-
-const debug = debugModule( 'calypso:wpcom-task-list' );
-
-function getTasks( {
-	designType,
-	isSiteUnlaunched,
-	phase2,
-	siteSegment,
-	siteVerticals,
-	taskStatuses,
-} ) {
-	// The getTasks function can be removed when we make a full switch to "phase 2"
-	if ( phase2 && size( taskStatuses ) ) {
-		// Use the server response, Luke
-		return taskStatuses;
-	}
-
-	const tasks = [];
-	const segmentSlug = getSiteTypePropertyValue( 'id', siteSegment, 'slug' );
-
-	const getTask = taskId => get( taskStatuses, taskId );
-	const hasTask = taskId => getTask( taskId ) !== undefined;
-	const isCompleted = taskId => get( getTask( taskId ), 'completed', false );
-	const addTask = ( taskId, completed ) => {
-		const task = Object.assign( omit( getTask( taskId ), [ 'completed' ] ), {
-			id: taskId,
-			isCompleted: isBoolean( completed ) ? completed : isCompleted( taskId ),
-		} );
-
-		tasks.push( task );
-	};
-
-	addTask( 'email_verified' );
-	addTask( 'site_created', true );
-
-	if ( 'business' === segmentSlug ) {
-		addTask( 'about_text_updated' );
-		addTask( 'homepage_photo_updated' );
-		addTask( 'business_hours_added' );
-
-		getVerticalTaskList( siteVerticals ).forEach( addTask );
-	} else {
-		addTask( 'blogname_set' );
-		addTask( 'blogdescription_set' );
-
-		if ( designType === 'blog' ) {
-			addTask( 'avatar_uploaded' );
-		}
-
-		addTask( 'contact_page_updated' );
-
-		if ( designType === 'blog' ) {
-			addTask( 'post_published' );
-		}
-
-		addTask( 'site_icon_set' );
-	}
-
-	addTask( 'custom_domain_registered' );
-	addTask( 'mobile_app_installed' );
-
-	if ( get( taskStatuses, 'email_verified.completed' ) && isSiteUnlaunched ) {
-		addTask( 'site_launched' );
-	}
-
-	if ( config.isEnabled( 'onboarding-checklist/email-setup' ) ) {
-		if ( hasTask( 'email_setup' ) ) {
-			addTask( 'email_setup' );
-		}
-
-		if ( hasTask( 'email_forwarding_upgraded_to_gsuite' ) ) {
-			addTask( 'email_forwarding_upgraded_to_gsuite' );
-		}
-
-		if ( hasTask( 'gsuite_tos_accepted' ) ) {
-			addTask( 'gsuite_tos_accepted' );
-		}
-	}
-
-	debug( 'Site info: ', { designType, segmentSlug, siteVerticals } );
-	debug( 'Task list: ', tasks );
-
-	return tasks;
-}
+import { memoize, pick } from 'lodash';
 
 class WpcomTaskList {
-	constructor( tasks ) {
+	constructor( tasks = [] ) {
 		this.tasks = tasks;
 	}
 
@@ -107,6 +14,15 @@ class WpcomTaskList {
 
 	get( taskId ) {
 		return this.tasks.find( task => task.id === taskId );
+	}
+
+	getIds() {
+		return this.getAll().map( ( { id } ) => id );
+	}
+
+	isCompleted( taskId ) {
+		const task = this.get( taskId );
+		return task ? task.isCompleted : false;
 	}
 
 	has( taskId ) {
@@ -120,6 +36,12 @@ class WpcomTaskList {
 		}
 		this.tasks = this.tasks.filter( task => task.id !== taskId );
 		return found;
+	}
+
+	removeTasksWithoutUrls( taskUrls ) {
+		const hasUrl = task => ! ( task.id in taskUrls ) || taskUrls[ task.id ];
+
+		this.tasks = this.tasks.filter( hasUrl );
 	}
 
 	getFirstIncompleteTask() {
@@ -139,12 +61,12 @@ class WpcomTaskList {
 }
 
 export const getTaskList = memoize(
-	params => new WpcomTaskList( getTasks( params ) ),
+	params => new WpcomTaskList( params?.taskStatuses ),
 	params => {
 		const key = pick( params, [
 			'taskStatuses',
 			'designType',
-			'isSiteUnlaunched',
+			'siteIsUnlaunched',
 			'siteSegment',
 			'siteVerticals',
 		] );

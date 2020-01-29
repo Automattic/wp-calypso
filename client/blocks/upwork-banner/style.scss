@@ -9,7 +9,7 @@
 	h1,
 	p,
 	.button.upwork-banner__cta {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		position: relative;
 		z-index: z-index( '.upwork-banner', '.button.upwork-banner__cta' );
 	}
@@ -46,7 +46,6 @@
 	}
 
 	.button.upwork-banner__cta {
-		color: white;
 		margin-top: 1em;
 	}
 

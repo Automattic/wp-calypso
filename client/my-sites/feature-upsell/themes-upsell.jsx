@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { getCurrencyObject } from '@automattic/format-currency';
 
 /**
@@ -292,10 +290,7 @@ const mapDispatchToProps = dispatch => ( {
 } );
 
 export default flowRight(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	),
+	connect( mapStateToProps, mapDispatchToProps ),
 	localize,
 	redirectUnlessCanUpgradeSite,
 	redirectIf( ( state, siteId ) => hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ), '/themes' )

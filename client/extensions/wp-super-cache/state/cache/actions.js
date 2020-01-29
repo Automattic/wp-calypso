@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -27,9 +25,9 @@ import { getSiteTitle } from 'state/sites/selectors';
 /*
  * Tests the cache for a site.
  *
- * @param  {Number} siteId Site ID
- * @param  {String} siteTitle Site title
- * @param  {Boolean} httpOnly Whether to send a non-secure request for the homepage
+ * @param  {number} siteId Site ID
+ * @param  {string} siteTitle Site title
+ * @param  {boolean} httpOnly Whether to send a non-secure request for the homepage
  * @returns {Function} Action thunk that tests the cache for a given site
  */
 export const testCache = ( siteId, siteTitle, httpOnly ) => {
@@ -71,9 +69,9 @@ export const testCache = ( siteId, siteTitle, httpOnly ) => {
 /*
  * Deletes the cache for a site.
  *
- * @param  {Number} siteId Site ID
- * @param  {Number} deleteAll Whether all caches should be deleted
- * @param  {Number} deleteExpired Whether the expired files should be deleted
+ * @param  {number} siteId Site ID
+ * @param  {number} deleteAll Whether all caches should be deleted
+ * @param  {number} deleteExpired Whether the expired files should be deleted
  * @returns {Function} Action thunk that deletes the cache for a given site
  */
 export const deleteCache = ( siteId, deleteAll, deleteExpired ) => {
@@ -111,7 +109,7 @@ export const deleteCache = ( siteId, deleteAll, deleteExpired ) => {
 /*
  * Preloads the cache for a site.
  *
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @returns {Function} Action thunk that preloads the cache for a given site
  */
 export const preloadCache = siteId => {
@@ -149,7 +147,7 @@ export const preloadCache = siteId => {
 /*
  * Cancels preloading the cache for a site.
  *
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @returns {Function} Action thunk that cancels preloading the cache for a given site
  */
 export const cancelPreloadCache = siteId => {

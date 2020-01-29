@@ -1,3 +1,11 @@
+.jetpack-checklist__top {
+	margin-top: 40px;
+}
+
+.jetpack-checklist {
+	margin-bottom: 80px;
+}
+
 .jetpack-checklist__header {
 	display: flex;
 }
@@ -30,6 +38,8 @@
 }
 
 .jetpack-checklist__footer {
+	order: 2;
+	margin: 0;
 	align-items: center;
 	display: flex;
 	flex-direction: column;

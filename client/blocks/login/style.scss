@@ -1,22 +1,45 @@
-.layout:not( .is-jetpack-woocommerce-flow ) {
-	.login {
-		&.is-jetpack {
-			.button.is-primary {
-				background-color: var( --color-jetpack );
-				border-color: var( --color-jetpack-dark );
+.layout:not( .is-jetpack-woocommerce-flow ):not( .is-wccom-oauth-flow ) {
+	.login.is-jetpack {
+		.button.is-primary {
+			background-color: var( --studio-jetpack-green-50 );
+			border-color: var( --studio-jetpack-green-70 );
+
+			&:hover,
+			&:focus {
+				background-color: var( --studio-jetpack-green-60 );
+			}
+
+			.accessible-focus &:focus {
+				box-shadow: 0 0 0 2px var( --studio-jetpack-green-30 );
 			}
 		}
 	}
 }
 
-.layout.is-jetpack-woocommerce-flow {
-	.login__jetpack-logo {
+.layout.is-wccom-oauth-flow {
+	.layout__content {
+		padding-top: 48px;
+	}
+
+	.masterbar {
+		display: none;
+	}
+
+	.wp-login__footer-links {
+		display: none;
+	}
+}
+
+.layout.is-jetpack-woocommerce-flow,
+.layout.is-wccom-oauth-flow {
+	.login__jetpack-logo,
+	.login__woocommerce-logo {
 		text-align: center;
-		border-bottom: 1px solid var( --color-gray-50 );
+		border-bottom: 1px solid var( --color-neutral-5 );
 		position: absolute;
-		width: 100%;
 		left: 0;
 		top: 0;
+		width: 100%;
 		height: 56px;
 
 		svg > g {
@@ -24,14 +47,27 @@
 		}
 	}
 
-	.jetpack-header {
+	.login__woocommerce-wrapper {
+		svg > g {
+			transform: translateX( 50% );
+		}
+	}
+
+	.jetpack-header,
+	.login__woocommerce-logo {
 		margin: 0;
 		text-align: center;
 		margin-right: auto;
 		margin-left: auto;
 		padding-left: 0;
-		margin-top: 15px;
 		display: block;
+		height: 56px;
+		border-bottom: 1px solid var( --color-woocommerce-header-border );
+		background: #fff;
+
+		svg {
+			margin-top: 15px;
+		}
 	}
 
 	.login__form-header {
@@ -39,7 +75,7 @@
 	}
 
 	.login__header-subtitle {
-		color: var( --color-primary-100 );
+		color: var( --color-primary-10 );
 		margin-top: 1em;
 		font-size: 16px;
 		line-height: 24px;
@@ -47,11 +83,11 @@
 	}
 
 	.jetpack-logo__icon-circle {
-		fill: var( --color-gray-800 );
+		fill: var( --color-neutral-80 );
 	}
 
 	.jetpack-logo__icon-triangle {
-		fill: var( --color-gray-0 );
+		fill: var( --color-neutral-0 );
 	}
 
 	.login__form-action .form-button {
@@ -59,23 +95,27 @@
 		box-shadow: none;
 	}
 
+	.login__social-tos a {
+		color: var( --studio-gray-60 );
+		text-decoration: underline;
+	}
+
 	.jetpack-header__partner-logo-plus svg {
-		stroke: var( --color-gray-800 );
+		stroke: var( --color-neutral-80 );
 	}
 
 	.jetpack-header__partner-logo-plus .gridicon {
-		color: var( --color-gray-800 );
+		color: var( --color-neutral-80 );
 	}
 }
 
-.card.login__form,
-.login__form-social .card {
+.card.login__form {
 	margin-bottom: 0;
 }
 
 .login__form .login__form-userdata {
 	label {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		display: block;
 		font-size: 14px;
 		line-height: 1.5;
@@ -96,9 +136,21 @@
 	}
 }
 
-.login__form-change-username .gridicon {
-	margin-right: 3px;
-	vertical-align: sub;
+.login__form-change-username {
+	color: var( --color-link );
+	font-weight: inherit;
+	cursor: pointer;
+
+	&:hover,
+	&:focus,
+	&:active {
+		color: var( --color-link-dark );
+	}
+
+	.gridicon {
+		margin-right: 3px;
+		vertical-align: text-bottom;
+	}
 }
 
 .login__form .form-input-validation {
@@ -106,7 +158,6 @@
 }
 
 .login__form-action {
-
 	button {
 		width: 100%;
 	}
@@ -118,6 +169,10 @@
 	.gridicon {
 		color: var( --color-primary );
 	}
+
+	.visit-site, .continue-as-user {
+		margin: -12px 0 24px;
+	}
 }
 
 .login__form-header {
@@ -127,7 +182,7 @@
 	text-align: center;
 
 	body.is-section-signup & {
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 }
 
@@ -142,147 +197,28 @@
 }
 
 .login__form-signup-link {
+	clear: both;
 	font-size: 13px;
-	margin-top: 20px;
+	padding-top: 20px;
 
 	&.disabled {
 		a,
 		a:hover {
 			pointer-events: none;
-		color: var( --color-text-subtle );
+			color: var( --color-text-subtle );
 		}
 	}
-}
-
-.login__social-buttons {
-	button {
-		width: 100%;
-	}
-
-	svg {
-		margin-top: -2px;
-
-		&.disabled {
-			display: none;
-		}
-	}
-}
-
-.login-buttons__button:disabled {
-	svg.enabled {
-		display: none;
-	}
-
-	svg.disabled {
-		display: inline;
-	}
-}
-
-.login-buttons__service-error {
-	color: var( --color-error );
-	font-size: 11px;
-	margin: 0 10px 10px;
-}
-
-.wp-login__links {
-	a,
-	button {
-		font-size: 14px;
-
-		&:hover {
-			color: var( --color-accent );
-		}
-	}
-	.gridicon {
-		vertical-align: text-bottom;
-	}
-}
-
-.wp-login__site-return-link {
-	overflow: hidden;
-	position: relative;
-	white-space: nowrap;
-	&::after {
-		@include long-content-fade( $color: var( --color-neutral-0-rgb ) );
-	}
-}
-
-.two-factor-authentication__auth-code-preview {
-	width: 100%;
-	display: block;
-	margin-bottom: 16px;
-}
-
-.two-factor-authentication__form-button {
-	width: 100%;
-}
-
-.card.two-factor-authentication__form-action {
-	background: var( --color-white );
-
-	button {
-		color: var( --color-link-dark );
-		cursor: pointer;
-
-		&:hover {
-			color: var( --color-accent );
-		}
-	}
-}
-
-.two-factor-authentication__small-print {
-	clear: both;
-	font-size: 11px;
-	padding: 1em 0;
-}
-
-.login__form-social-divider {
-	margin-bottom: -11px;
-	margin-top: -11px;
-	position: relative;
-	text-align: center;
-	text-transform: uppercase;
-
-	span {
-		background: var( --color-white );
-		color: var( --color-text-subtle );
-		font-size: 14px;
-		padding-left: 8px;
-		padding-right: 8px;
-		position: relative;
-		z-index: 2;
-	}
-}
-
-.login__social-connect-prompt-logos {
-	align-items: center;
-	display: flex;
-	justify-content: center;
-}
-
-.login__social-connect-prompt-logo {
-	height: 72px;
-	width: 72px;
-}
-
-.login__social-connect-prompt-dots {
-	margin: 0 5px;
-}
-
-.login__social-connect-prompt-logo.wordpress {
-	color: var( --color-primary );
-}
-
-.login__social-connect-prompt-message {
-	margin: 20px 0;
-}
-
-.login__social-connect-prompt-action .button {
-	width: 100%;
 }
 
 .login__form-password.is-hidden {
-	display: none;
+	// hide the password field in a way that still makes it "visible" for password managers.
+	// 1Password doesn't fill the field if it has display:none or visibility:hidden.
+	position: fixed;
+	bottom: 0;
+	height: 0;
+	width: 0;
+	overflow: hidden;
+	opacity: 0;
 }
 
 .login__jetpack-logo {

@@ -1,16 +1,15 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class SiteSelectorAddSite extends Component {
@@ -34,7 +33,4 @@ class SiteSelectorAddSite extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( localize( SiteSelectorAddSite ) );
+export default connect( null, { recordTracksEvent } )( localize( SiteSelectorAddSite ) );

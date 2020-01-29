@@ -1,26 +1,26 @@
 .info-tooltip {
 	cursor: help;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }
 
 &.tooltip.popover.info-tooltip__container {
 	z-index: z-index( 'root', '.popover.info-tooltip__container' );
 
 	.popover__inner {
-		background: var( --color-neutral-700 );
+		background: var( --color-neutral-70 );
 	}
 
 	.popover__arrow {
-		border-top-color: var( --color-neutral-700 );
+		border-top-color: var( --color-neutral-70 );
 	}
 
 	.info-tooltip__contents {
 		padding: 4px;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 
 		h1, h2, h3 {
 			margin: 0 0 8px;
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 			font-weight: 600;
 			font-size: 1.3em;
 		}

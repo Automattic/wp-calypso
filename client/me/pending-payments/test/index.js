@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -40,7 +38,7 @@ describe( 'PendingPayments', () => {
 		const wrapper = shallow( <PendingPayments { ...defaultProps } /> );
 
 		const rules = [
-			'Main.pending-payments Localized(MeSidebarNavigation)',
+			'Main.pending-payments Connect(MeSidebarNavigation)',
 			'Main.pending-payments Connect(Localized(PurchasesHeader))[section="pending"]',
 			'Connect(PurchasesSite)[isPlaceholder=true]',
 		];
@@ -58,7 +56,7 @@ describe( 'PendingPayments', () => {
 		);
 
 		const rules = [
-			'Main.pending-payments Localized(MeSidebarNavigation)',
+			'Main.pending-payments Connect(MeSidebarNavigation)',
 			'Main.pending-payments Connect(Localized(PurchasesHeader))[section="pending"]',
 			'.pending-payments .pending-payments__no-content EmptyContent',
 		];
@@ -83,9 +81,9 @@ describe( 'PendingPayments', () => {
 		);
 
 		const rules = [
-			'Main.pending-payments Localized(MeSidebarNavigation)',
+			'Main.pending-payments Connect(MeSidebarNavigation)',
 			'Main.pending-payments Connect(Localized(PurchasesHeader))[section="pending"]',
-			'Main.pending-payments Connect(Localized(PendingListItem))',
+			'Main.pending-payments Connect(PendingListItem)',
 		];
 
 		rules.forEach( rule => {

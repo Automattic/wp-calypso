@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -40,7 +38,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import TransferDomainPrecheck from './transfer-domain-precheck';
 import { INCOMING_DOMAIN_TRANSFER } from 'lib/url/support';
 import HeaderCake from 'components/header-cake';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import TransferRestrictionMessage from 'components/domains/transfer-domain-step/transfer-restriction-message';
 import { fetchSiteDomains } from 'state/sites/domains/actions';
 import { domainManagementTransferIn } from 'my-sites/domains/paths';
@@ -84,16 +82,18 @@ class TransferDomainStep extends React.Component {
 	state = this.getDefaultState();
 
 	getDefaultState() {
+		const forcePrecheck = get( this.props, 'forcePrecheck', false );
 		return {
 			authCodeValid: null,
 			domain: null,
 			domainsWithPlansOnly: false,
 			inboundTransferStatus: {},
-			precheck: get( this.props, 'forcePrecheck', false ),
+			isTransferable: forcePrecheck,
+			precheck: forcePrecheck,
 			searchQuery: this.props.initialQuery || '',
 			submittingAuthCodeCheck: false,
 			submittingAvailability: false,
-			submittingWhois: get( this.props, 'forcePrecheck', false ),
+			submittingWhois: forcePrecheck,
 			supportsPrivacy: false,
 		};
 	}
@@ -379,7 +379,10 @@ class TransferDomainStep extends React.Component {
 			this.setState( {
 				domain: null,
 				inboundTransferStatus: {},
+				isTransferable: false,
 				precheck: false,
+				notice: null,
+				searchQuery: '',
 				supportsPrivacy: false,
 			} );
 		} else {
@@ -476,18 +479,36 @@ class TransferDomainStep extends React.Component {
 
 		this.props.recordFormSubmitInTransferDomain( searchQuery );
 
-		this.setState( { notice: null, suggestion: null, submittingAvailability: true } );
+		this.setState( {
+			isTransferable: false,
+			notice: null,
+			suggestion: null,
+			submittingAvailability: true,
+		} );
 
 		this.props.recordGoButtonClickInTransferDomain( searchQuery, analyticsSection );
 
 		Promise.all( [ this.getInboundTransferStatus(), this.getAvailability() ] ).then( () => {
 			this.setState( prevState => {
-				const { submittingAvailability, submittingWhois } = prevState;
+				const { isTransferable, submittingAvailability, submittingWhois, suggestion } = prevState;
 
-				return { precheck: prevState.domain && ! submittingAvailability && ! submittingWhois };
+				return {
+					domain,
+					precheck:
+						prevState.domain !== null &&
+						isTransferable &&
+						! suggestion &&
+						! submittingAvailability &&
+						! submittingWhois,
+				};
 			} );
 
-			if ( this.props.isSignupStep && this.state.domain && ! this.transferIsRestricted() ) {
+			if (
+				this.props.isSignupStep &&
+				this.state.domain &&
+				! this.transferIsRestricted() &&
+				this.state.isTransferable
+			) {
 				this.props.onTransferDomain( domain );
 			}
 		} );
@@ -509,12 +530,32 @@ class TransferDomainStep extends React.Component {
 						case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
 							this.setState( {
 								domain,
+								isTransferable: true,
 								supportsPrivacy: get( result, 'supports_privacy', false ),
 							} );
 							break;
+						case domainAvailability.TLD_NOT_SUPPORTED: {
+							const tld = getTld( domain );
+
+							this.setState( {
+								notice: this.props.translate(
+									"This domain is available to be registered, but we don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}. " +
+										'If you register it elsewhere, you can {{a}}map it{{/a}} instead.',
+									{
+										args: { tld },
+										components: {
+											strong: <strong />,
+											a: <a href="#" onClick={ this.goToMapDomainStep } />, // eslint-disable-line jsx-a11y/anchor-is-valid
+										},
+									}
+								),
+								noticeSeverity: 'info',
+							} );
+							break;
+						}
 						case domainAvailability.MAPPABLE:
-						case domainAvailability.TLD_NOT_SUPPORTED:
-						case domainAvailability.TLD_NOT_SUPPORTED_TEMPORARILY: {
+						case domainAvailability.TLD_NOT_SUPPORTED_TEMPORARILY:
+						case domainAvailability.TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE: {
 							const tld = getTld( domain );
 
 							this.setState( {

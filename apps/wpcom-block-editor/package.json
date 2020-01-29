@@ -9,7 +9,7 @@
 		"directory": "apps/wpcom-block-editor"
 	},
 	"private": true,
-	"author": "Automattic, Inc.",
+	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
@@ -19,25 +19,11 @@
 		"bundle": "calypso-build --env.WP",
 		"build:dev": "npm run bundle --",
 		"build:prod": "NODE_ENV=production npm run bundle --",
-		"build": "npm-run-all --parallel \"build:* -- {@}\" --"
+		"build": "npm-run-all --parallel \"build:* -- {@}\" --",
+		"clean": "npx rimraf dist",
+		"prebuild": "npm run clean"
 	},
 	"dependencies": {
-		"@wordpress/data": "4.4.0",
-		"@wordpress/blocks": "6.0.7",
-		"@wordpress/compose": "3.2.0",
-		"@wordpress/editor": "9.2.2",
-		"@wordpress/hooks": "2.0.5",
-		"@wordpress/rich-text": "3.2.2",
-		"@wordpress/nux": "3.3.0",
-		"@wordpress/plugins": "^2.3.0",
-		"@wordpress/url": "2.3.3",
-		"debug": "^3.2.6",
-		"jquery": "^1.12",
-		"lodash": "4.17.11",
-		"react": "16.8.6",
-		"tinymce": "4.8.5"
-	},
-	"devDependencies": {
-		"@automattic/calypso-build": "file:../../packages/calypso-build"
+		"debug": "4.1.1"
 	}
 }

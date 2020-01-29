@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,14 +6,13 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
+import { Button, CompactCard } from '@automattic/components';
 import PeopleProfile from 'my-sites/people/people-profile';
 import config from 'config';
 import {
@@ -127,7 +124,16 @@ class PeopleListItem extends React.PureComponent {
 	};
 
 	render() {
-		const { className, invite, onRemove, translate, type, user, inviteWasDeleted } = this.props;
+		const {
+			className,
+			invite,
+			onRemove,
+			siteId,
+			translate,
+			type,
+			user,
+			inviteWasDeleted,
+		} = this.props;
 
 		const isInvite = invite && ( 'invite' === type || 'invite-details' === type );
 
@@ -158,7 +164,7 @@ class PeopleListItem extends React.PureComponent {
 				onClick={ canLinkToProfile && this.navigateToUser }
 			>
 				<div className="people-list-item__profile-container">
-					<PeopleProfile invite={ invite } type={ type } user={ user } />
+					<PeopleProfile invite={ invite } siteId={ siteId } type={ type } user={ user } />
 				</div>
 
 				{ isInvite && this.renderInviteStatus() }

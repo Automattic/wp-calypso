@@ -289,7 +289,7 @@
 			color: var( --color-error );
 		}
 		&.is-trash {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 	}
 }
@@ -330,7 +330,7 @@
 		min-height: 68px;
 
 		&:not( :focus ) {
-			border-color: var( --color-white );
+			border-color: var( --color-border-inverted );
 			padding-left: 48px;
 			padding-right: 16px;
 			resize: none;
@@ -386,7 +386,7 @@
 
 		.accessible-focus &:focus {
 			border-color: var( --color-primary );
-			box-shadow: 0 0 0 2px var( --color-primary-100 );
+			box-shadow: 0 0 0 2px var( --color-primary-10 );
 		}
 	}
 }

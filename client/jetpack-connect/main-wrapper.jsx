@@ -14,6 +14,7 @@ import config from 'config';
 import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
 import JetpackHeader from 'components/jetpack-header';
 import Main from 'components/main';
+import DocumentHead from 'components/data/document-head';
 import { retrieveMobileRedirect } from './persistence-utils';
 
 export class JetpackConnectMainWrapper extends PureComponent {
@@ -30,7 +31,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 	};
 
 	render() {
-		const { isWide, className, children, partnerSlug } = this.props;
+		const { isWide, className, children, partnerSlug, translate } = this.props;
 
 		const isWoo = config.isEnabled( 'jetpack/connect/woocommerce' ) && this.props.isWoo;
 
@@ -45,6 +46,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 
 		return (
 			<Main className={ classNames( className, wrapperClassName ) }>
+				<DocumentHead title={ translate( 'Jetpack Connect' ) } />
 				<div className="jetpack-connect__main-logo">
 					<JetpackHeader
 						partnerSlug={ partnerSlug }

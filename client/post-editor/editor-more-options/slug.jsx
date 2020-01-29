@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -48,12 +46,8 @@ class EditorMoreOptionsSlug extends PureComponent {
 
 		return (
 			<AccordionSection className="editor-more-options__slug">
-				<EditorDrawerLabel labelText={ translate( 'Slug' ) } helpText={ this.getPopoverLabel() }>
-					<Slug
-						instanceName={ postType + '-sidebar' }
-						className="editor-more-options__slug-field"
-					/>
-				</EditorDrawerLabel>
+				<EditorDrawerLabel labelText={ translate( 'Slug' ) } helpText={ this.getPopoverLabel() } />
+				<Slug instanceName={ postType + '-sidebar' } className="editor-more-options__slug-field" />
 			</AccordionSection>
 		);
 	}

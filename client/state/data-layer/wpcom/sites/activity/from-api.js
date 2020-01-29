@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -21,7 +20,7 @@ export const DEFAULT_GRIDICON = 'info-outline';
  * Transforms API response into array of activities
  *
  * @param  {object} apiResponse API response body
- * @return {object}             Object with an entry for proccessed item objects and another for oldest item timestamp
+ * @returns {object}             Object with an entry for proccessed item objects and another for oldest item timestamp
  */
 export function transformer( apiResponse ) {
 	return get( apiResponse, [ 'current', 'orderedItems' ], [] ).map( processItem );
@@ -31,7 +30,7 @@ export function transformer( apiResponse ) {
  * Takes an Activity item in the API format and returns a processed Activity item for use in UI
  *
  * @param  {object}  item Validated Activity item
- * @return {object}       Processed Activity item ready for use in UI
+ * @returns {object}       Processed Activity item ready for use in UI
  */
 export function processItem( item ) {
 	const { actor, object, published, first_published } = item;

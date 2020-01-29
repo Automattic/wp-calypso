@@ -81,7 +81,7 @@ export const protectForm = < P extends ProtectedFormProps >(
 				<WrappedComponent
 					markChanged={ this.markChanged }
 					markSaved={ this.markSaved }
-					{ ...this.props as P }
+					{ ...( this.props as P ) }
 				/>
 			);
 		}
@@ -106,7 +106,7 @@ export class ProtectFormGuard extends Component< ProtectFormGuardProps > {
 		markSaved( this );
 	}
 
-	componentWillReceiveProps( nextProps: ProtectFormGuardProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps: ProtectFormGuardProps ) {
 		if ( nextProps.isChanged !== this.props.isChanged ) {
 			nextProps.isChanged ? markChanged( this ) : markSaved( this );
 		}

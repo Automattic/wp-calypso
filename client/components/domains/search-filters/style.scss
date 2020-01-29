@@ -1,6 +1,6 @@
 .search-filters__dropdown-filters {
 	align-items: center;
-	border-left: 1px solid var( --color-neutral-100 );
+	border-left: 1px solid var( --color-neutral-10 );
 	height: 51px; // same as .search
 	z-index: z-index( 'root', '.search' );
 
@@ -14,6 +14,7 @@
 
 	.button {
 		align-items: center;
+		border-radius: 0 3px 3px 0;
 		display: flex;
 		flex-direction: column;
 		font-weight: normal;
@@ -22,6 +23,14 @@
 		padding: 0 1em;
 		transition: 0.1s all linear;
 		width: 100%;
+
+		&.is-borderless {
+			&:hover,
+			&:focus {
+				border-color: transparent;
+				box-shadow: 0 0 0 3px var( --color-accent-light ), -1px 0 0 3px var( --color-accent-light );
+			}
+		}
 
 		.gridicon {
 			top: 0;
@@ -82,14 +91,15 @@
 
 .search-filters__buttons {
 	display: flex;
-	flex-flow: row wrap;
+	flex-flow: row;
 	justify-content: space-between;
+	overflow: hidden;
 
 	.button {
 		flex: 1 0 auto;
-		margin-right: 1em;
-		&:last-child {
-			margin-right: 0;
+		margin-left: 1em;
+		&:first-child {
+			margin-left: 0;
 		}
 
 		&.search-filters__button--is-placeholder {
@@ -108,11 +118,6 @@
 			padding-top: 0.5em;
 			padding-bottom: 0.5em;
 		}
-	}
-
-	&.search-filters__tld-filter-bar--is-domain-management
-		.search-filters__tld-button:nth-child( n + 6 ) {
-		display: none;
 	}
 
 	@include breakpoint( '<960px' ) {
@@ -172,9 +177,9 @@
 	}
 	.token-field__token-text,
 	.token-field__remove-token {
-		background: var( --color-white );
-		color: var( --color-neutral-500 );
-		border: 1px solid var( --color-neutral-100 );
+		background: var( --color-surface );
+		color: var( --color-neutral-50 );
+		border: 1px solid var( --color-neutral-10 );
 	}
 	.token-field__token-text {
 		border-right: none;
@@ -183,8 +188,8 @@
 		border-left: none;
 
 		&:hover {
-			background: var( --color-neutral-100 );
-			color: var( --color-neutral-500 );
+			background: var( --color-neutral-10 );
+			color: var( --color-neutral-50 );
 		}
 	}
 
@@ -207,6 +212,10 @@
 	}
 
 	.token-field__suggestion {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
+		&.is-selected span {
+			color: var( --color-text-inverted );
+		}
 	}
 }
+

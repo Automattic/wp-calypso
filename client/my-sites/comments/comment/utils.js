@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,8 +6,8 @@ import { get } from 'lodash';
 /**
  * Create a stripped down comment object containing only the bare minimum fields needed by CommentList's actions.
  *
- * @param {Object} comment A comment object.
- * @returns {Object} A stripped down comment object.
+ * @param {object} comment A comment object.
+ * @returns {object} A stripped down comment object.
  */
 export const getMinimumComment = comment => ( {
 	commentId: get( comment, 'ID' ),

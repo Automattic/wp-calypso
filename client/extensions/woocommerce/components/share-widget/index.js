@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -46,17 +45,6 @@ class ShareWidget extends Component {
 						text: translate( 'Come check out our store!' ),
 						url: urlToShare,
 						via: 'wordpressdotcom',
-					},
-				},
-			},
-			{
-				icon: 'google-plus',
-				urlProperties: {
-					scheme: 'https',
-					hostname: 'plus.google.com',
-					pathname: '/share',
-					query: {
-						url: urlToShare,
 					},
 				},
 			},

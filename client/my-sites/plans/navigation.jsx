@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -64,11 +63,13 @@ class PlansNavigation extends React.Component {
 		const sectionTitle = this.getSectionTitle( path );
 		const userCanManageOptions = get( site, 'capabilities.manage_options', false );
 		const canManageDomain = userCanManageOptions && ( isATEnabled( site ) || ! isJetpack );
+		const cartToggleButton = this.cartToggleButton();
+		const hasPinnedItems = isMobile() && cartToggleButton != null;
 
 		return (
 			site && (
 				<SectionNav
-					hasPinnedItems={ isMobile() }
+					hasPinnedItems={ hasPinnedItems }
 					selectedText={ sectionTitle }
 					onMobileNavPanelOpen={ this.onMobileNavPanelOpen }
 				>
@@ -103,17 +104,13 @@ class PlansNavigation extends React.Component {
 							</NavItem>
 						) }
 					</NavTabs>
-					{ this.cartToggleButton() }
+					{ cartToggleButton }
 				</SectionNav>
 			)
 		);
 	}
 
-	toggleCartVisibility = event => {
-		if ( event ) {
-			event.preventDefault();
-		}
-
+	toggleCartVisibility = () => {
 		this.setState( { cartVisible: ! this.state.cartVisible } );
 	};
 

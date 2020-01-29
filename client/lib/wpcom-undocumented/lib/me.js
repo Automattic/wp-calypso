@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
-import { Me } from 'wpcom';
+import WPCOM from 'wpcom';
 import inherits from 'inherits';
 import debugFactory from 'debug';
 
@@ -24,7 +22,6 @@ import config from 'config';
  * Create an UndocumentedMe instance
  *
  * @param {WPCOM} wpcom - WPCOMUndocumented instance
- * @return {NUll} null
  */
 function UndocumentedMe( wpcom ) {
 	debug( 'UndocumentedMe' );
@@ -37,7 +34,7 @@ function UndocumentedMe( wpcom ) {
 /**
  * Inherits from Me class
  */
-inherits( UndocumentedMe, Me );
+inherits( UndocumentedMe, WPCOM.Me );
 
 UndocumentedMe.prototype.billingHistoryEmailReceipt = function( receiptId, callback ) {
 	const args = {
@@ -135,13 +132,12 @@ UndocumentedMe.prototype.changeUsername = function( username, action, callback )
  * Get a list of the user's stored cards
  *
  * @param {object} [cardToken] Payment key
- * @param {Function} [callback] The callback function
+ * @param {object} [additionalData] Any additional data to send in the request
  *
- * @return {Promise} A promise for the request
- * @api public
+ * @returns {Promise} A promise for the request
  */
-UndocumentedMe.prototype.storedCardAdd = function( cardToken, callback ) {
-	debug( '/me/stored-cards' );
+UndocumentedMe.prototype.storedCardAdd = function( cardToken, additionalData = {} ) {
+	debug( '/me/stored-cards', cardToken, additionalData );
 
 	return this.wpcom.req.post(
 		{
@@ -150,8 +146,8 @@ UndocumentedMe.prototype.storedCardAdd = function( cardToken, callback ) {
 		{
 			payment_key: cardToken,
 			use_for_existing: true,
-		},
-		callback
+			...additionalData,
+		}
 	);
 };
 
@@ -300,19 +296,23 @@ UndocumentedMe.prototype.deletePurchase = function( purchaseId, fn ) {
  *	{string} service - Social service associated with token, e.g. google.
  *  {string} access_token - OAuth2 Token returned from service.
  *  {string} id_token - (Optional) OpenID Connect Token returned from service.
+ *  {string} user_name - (Optional) The user name associated with this connection, in case it's not part of id_token.
+ *  {string} user_email - (Optional) The user name associated with this connection, in case it's not part of id_token.
  *  {string} redirect_to - The URL to redirect to after connecting.
- * @param {function} fn - The callback for the request.
+ * @param {Function} fn - The callback for the request.
  *
- * @return {Promise} A promise for the request
+ * @returns {Promise} A promise for the request
  */
 UndocumentedMe.prototype.socialConnect = function(
-	{ service, access_token, id_token, redirect_to },
+	{ service, access_token, id_token, user_name, user_email, redirect_to },
 	fn
 ) {
 	const body = {
 		service,
 		access_token,
 		id_token,
+		user_name,
+		user_email,
 		redirect_to,
 
 		// This API call is restricted to these OAuth keys
@@ -344,7 +344,7 @@ UndocumentedMe.prototype.socialConnect = function(
  * @param {string} service - Social service associated with token, e.g. google.
  * @param {Function} fn - callback
  *
- * @return {Promise} A promise for the request
+ * @returns {Promise} A promise for the request
  */
 UndocumentedMe.prototype.socialDisconnect = function( service, fn ) {
 	const body = {

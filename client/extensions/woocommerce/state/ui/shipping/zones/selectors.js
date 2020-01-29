@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -60,9 +58,9 @@ const orderShippingZones = zones => {
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} The list of shipping zones that the UI should show. That will be the list of zones returned by
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {Array} The list of shipping zones that the UI should show. That will be the list of zones returned by
  * the wc-api with the edits "overlayed" on top of them.
  */
 export const getShippingZones = createSelector(
@@ -101,9 +99,9 @@ export const getShippingZones = createSelector(
 );
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object|null} The shipping zone that's currently being edited, with all the edits
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {object|null} The shipping zone that's currently being edited, with all the edits
  * (including the non-committed changes). If no zone is being edited, this will return null.
  */
 export const getCurrentlyEditingShippingZone = createSelector(
@@ -133,7 +131,7 @@ export const getCurrentlyEditingShippingZone = createSelector(
 
 /**
  * @param {Array} locations List of locations for the zone.
- * @return {String} The auto-generated name for the zone.
+ * @returns {string} The auto-generated name for the zone.
  */
 const generateZoneNameFromLocations = locations => {
 	if ( ! locations || ! locations.length ) {
@@ -164,10 +162,10 @@ const generateZoneNameFromLocations = locations => {
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} zoneId ID of the shipping zone.
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {String} The auto-generated name for the zone, based in its locations. It doesn't include local edits.
+ * @param {object} state Whole Redux state tree
+ * @param {number} zoneId ID of the shipping zone.
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {string} The auto-generated name for the zone, based in its locations. It doesn't include local edits.
  */
 export const generateZoneName = ( state, zoneId, siteId = getSelectedSiteId( state ) ) => {
 	const locations = getShippingZoneLocationsList( state, zoneId, 20, siteId );
@@ -175,9 +173,9 @@ export const generateZoneName = ( state, zoneId, siteId = getSelectedSiteId( sta
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {String} The auto-generated name for the zone currently being edited, based in its locations. It includes local edits.
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {string} The auto-generated name for the zone currently being edited, based in its locations. It includes local edits.
  */
 export const generateCurrentlyEditingZoneName = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const locations = getCurrentlyEditingShippingZoneLocationsList( state, 20, siteId );
@@ -185,9 +183,9 @@ export const generateCurrentlyEditingZoneName = ( state, siteId = getSelectedSit
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Boolean} Whether the user is currently editing a shipping zone.
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {boolean} Whether the user is currently editing a shipping zone.
  */
 export const isCurrentlyEditingShippingZone = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return Boolean( getCurrentlyEditingShippingZone( state, siteId ) );
@@ -200,26 +198,26 @@ export const areAnyShippingMethodsEnabled = ( state, siteId = getSelectedSiteId(
 };
 
 /**
- * @param {Number|Object} zoneId Zone ID (can be a temporal ID)
- * @return {Boolean} Whether this zone is considered "editable". As a rule, every zone is editable,
+ * @param {number|object} zoneId Zone ID (can be a temporal ID)
+ * @returns {boolean} Whether this zone is considered "editable". As a rule, every zone is editable,
  * except the "Locations not covered by your other zones" zone, which always has id = 0.
  */
 const isEditableShippingZone = zoneId => ! isNumber( zoneId ) || 0 !== zoneId;
 
 /**
- * @param {Number|Object} zoneId Zone ID (can be a temporal ID)
- * @return {Boolean} Whether the name of this shipping zone can be changed by the user
+ * @param {number|object} zoneId Zone ID (can be a temporal ID)
+ * @returns {boolean} Whether the name of this shipping zone can be changed by the user
  */
 export const canChangeShippingZoneTitle = isEditableShippingZone;
 
 /**
- * @param {Number|Object} zoneId Zone ID (can be a temporal ID)
- * @return {Boolean} Whether this shipping zone can be deleted
+ * @param {number|object} zoneId Zone ID (can be a temporal ID)
+ * @returns {boolean} Whether this shipping zone can be deleted
  */
 export const canRemoveShippingZone = isEditableShippingZone;
 
 /**
- * @param {Number|Object} zoneId Zone ID (can be a temporal ID)
- * @return {Boolean} Whether the locations this zone represents can be altered.
+ * @param {number|object} zoneId Zone ID (can be a temporal ID)
+ * @returns {boolean} Whether the locations this zone represents can be altered.
  */
 export const canEditShippingZoneLocations = isEditableShippingZone;

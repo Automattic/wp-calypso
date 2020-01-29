@@ -1,19 +1,17 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { isObject, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getLink } from 'woocommerce/lib/nav-utils';
 
 function renderTrashButton( onTrash, isBusy, label ) {
@@ -45,13 +43,13 @@ function renderSaveButton( onSave, isBusy, label ) {
 const PromotionHeader = ( { promotion, onSave, onTrash, isBusy, translate, site } ) => {
 	const existing = promotion && ! isObject( promotion.id );
 	const trashButton = renderTrashButton( onTrash, isBusy, translate( 'Delete' ) );
-	const saveLabel = existing ? translate( 'Update' ) : translate( 'Save & Publish' );
+	const saveLabel = existing ? translate( 'Update' ) : translate( 'Save & publish' );
 	const saveButton = renderSaveButton( onSave, isBusy, saveLabel );
 
 	const currentCrumb = existing ? (
-		<span>{ translate( 'Edit Promotion' ) }</span>
+		<span>{ translate( 'Edit promotion' ) }</span>
 	) : (
-		<span>{ translate( 'Add Promotion' ) }</span>
+		<span>{ translate( 'Add promotion' ) }</span>
 	);
 
 	const breadcrumbs = [

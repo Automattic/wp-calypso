@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -101,9 +99,8 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function() {
 			return await findADomainComponent.declineGoogleApps();
 		} );
 
-		step( 'Can see checkout page, choose privacy and enter registrar details', async function() {
+		step( 'Can see checkout page and enter registrar details', async function() {
 			const checkOutPage = await CheckOutPage.Expect( driver );
-			await checkOutPage.selectAddPrivacyProtectionCheckbox();
 			await checkOutPage.enterRegistarDetails( testDomainRegistarDetails );
 			return await checkOutPage.submitForm();
 		} );
@@ -126,7 +123,7 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function() {
 	} );
 
 	describe( 'Map a domain to an existing site @parallel', function() {
-		const blogName = 'go.com';
+		const blogName = 'nature.com';
 
 		before( async function() {
 			if ( process.env.SKIP_DOMAIN_TESTS === 'true' ) {
@@ -208,7 +205,7 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function() {
 		} );
 	} );
 
-	describe( 'Transfer a domain to an existing site (partial) @parallel', function() {
+	describe.skip( 'Transfer a domain to an existing site (partial) @parallel', function() {
 		const domain = 'automattic.com';
 
 		before( async function() {

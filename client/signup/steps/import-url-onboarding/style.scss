@@ -1,0 +1,64 @@
+.import-url-onboarding__url-card {
+	border-radius: 3px;
+	max-width: 380px;
+	padding: rem( 24px );
+}
+
+.import-url-onboarding__secondary-button {
+	text-align: center;
+	margin-top: 20px;
+
+	.button.is-borderless {
+		padding: 0;
+		color: var( --color-text-inverted );
+		font-size: 14px;
+		font-weight: 500;
+		text-decoration: underline;
+	}
+}
+
+.import-url-onboarding__submit-button {
+	&.form-button {
+		float: none;
+	}
+
+	display: block;
+	min-width: rem( 200px );
+	margin: rem( 16px ) auto 0;
+
+	@include breakpoint( '<480px' ) {
+		min-width: rem( 160px );
+	}
+}
+
+.import-url-onboarding__fallback {
+	margin: 0 auto;
+	max-width: 420px;
+}
+
+.import-url-onboarding__engine {
+	&:first-child {
+		border-radius: 3px 3px 0 0;
+	}
+
+	&:last-child {
+		border-radius: 0 0 3px 3px;
+		border-bottom: none;
+	}
+}
+
+.import-url-onboarding__service-info {
+	margin-bottom: auto;
+	line-height: 48px;
+
+	@include breakpoint( '<960px' ) {
+		line-height: 38px;
+	}
+}
+
+.import-url-onboarding__service-title {
+	font-size: 21px;
+	font-weight: 300;
+	color: var( --color-text-subtle );
+	clear: none;
+}

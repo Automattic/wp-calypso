@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -39,7 +38,7 @@ describe( 'HappinessSupport', () => {
 		const content = wrapper.find( 'p.happiness-support__description' );
 		expect( content ).to.have.length( 1 );
 		expect( content.props().children ).to.equal(
-			'Translated: {{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your account.'
+			'Translated: {{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your\xA0account.'
 		);
 	} );
 

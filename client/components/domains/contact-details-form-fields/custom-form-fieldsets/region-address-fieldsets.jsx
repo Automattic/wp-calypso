@@ -1,7 +1,6 @@
 /**
  * External	dependencies
  *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -68,7 +67,7 @@ export class RegionAddressFieldsets extends Component {
 						ref={ shouldAutoFocusAddressField ? this.inputRefCallback : noop }
 						label={ translate( 'Address' ) }
 						maxLength={ 40 }
-						{ ...getFieldProps( 'address-1', true ) }
+						{ ...getFieldProps( 'address-1' ) }
 					/>
 
 					<HiddenInput

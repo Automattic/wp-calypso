@@ -1,9 +1,9 @@
-.theme__sheet {
+.main.theme__sheet {
 	max-width: none;
 }
 
 .theme__sheet-bar {
-	background-color: var( --color-primary );
+	background-color: var( --color-masterbar-item-hover-background );
 	color: white;
 	height: 180px;
 	padding: 0;
@@ -22,7 +22,7 @@
 .theme__sheet-bar-tag {
 	max-width: none;
 	display: block;
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 	font-size: 16px;
 	font-weight: 200;
 	padding-top: 5px;
@@ -111,7 +111,7 @@
 	margin-top: -156px;
 	width: 98%;
 	z-index: 1;
-	box-shadow: 0 0 0 1px $transparent, 0 2px 8px 0 rgba( var( --color-neutral-dark-rgb ), 0.5 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-dark-rgb ), 0 ), 0 2px 8px 0 rgba( var( --color-neutral-dark-rgb ), 0.5 );
 	background-color: transparentize( white, 0.5 );
 	transition: all 200ms ease-in-out;
 
@@ -137,7 +137,7 @@
 			height: 30%;
 			background: linear-gradient(
 				to bottom,
-				rgba( var( --color-neutral-0-rgb ), 1 ) 0%,
+				transparent 0,
 				rgba( var( --color-neutral-0-rgb ), 0.5 ) 40%,
 				var( --color-neutral-0 ) 93%
 			);
@@ -191,7 +191,7 @@
 			font-size: 11px;
 			font-weight: 600;
 			border-radius: 3px;
-			border: 1px solid darken( $sidebar-bg-color, 10% );
+			border: 1px solid var( --color-neutral-5 );
 		}
 	}
 }
@@ -204,6 +204,9 @@
 
 	div {
 		width: auto !important; // override inline style in content markup
+	}
+	.banner__icon-circle {
+		width: 24px !important;
 	}
 
 	p:last-child {
@@ -242,7 +245,7 @@
 	}
 
 	.wp-caption-text {
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 		font-size: 12px;
 		padding: 3px 8px 6px;
 	}
@@ -371,7 +374,7 @@
 		display: inline-block;
 		position: relative;
 		background: var( --color-neutral-0 );
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		margin: 4px;
 		padding: 2px 12px;
 		border-radius: 3px;
@@ -394,7 +397,7 @@
 		}
 
 		&:hover {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 			background-color: var( --color-primary-dark );
 
 			&::after {
@@ -424,7 +427,7 @@
 	}
 
 	.gridicon {
-		color: var( --color-neutral-100 );
+		color: var( --color-neutral-10 );
 		flex: 0 0 auto;
 	}
 
@@ -459,7 +462,7 @@
 	}
 
 	.gridicon {
-		color: var( --color-neutral-100 );
+		color: var( --color-neutral-10 );
 		flex: 0 0 auto;
 	}
 
@@ -484,8 +487,8 @@
 }
 
 .theme__sheet-footer-line {
-	color: var( --color-neutral-100 );
-	border-top: 1px solid var( --color-neutral-100 );
+	color: var( --color-neutral-10 );
+	border-top: 1px solid var( --color-neutral-10 );
 	margin: 32px 0 20px;
 
 	.gridicon {

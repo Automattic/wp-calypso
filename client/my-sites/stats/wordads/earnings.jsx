@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,8 +12,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PropTypes from 'prop-types';
-import Card from 'components/card';
-import Gridicon from 'gridicons';
+import { Card } from '@automattic/components';
+import Gridicon from 'components/gridicon';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getWordAdsEarnings } from 'state/wordads/earnings/selectors';
 import QueryWordadsEarnings from 'components/data/query-wordads-earnings';
@@ -129,6 +127,7 @@ class WordAdsEarnings extends Component {
 		);
 	}
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	payoutNotice() {
 		const { earnings, numberFormat, translate } = this.props;
 		const owed =
@@ -144,7 +143,7 @@ class WordAdsEarnings extends Component {
 				}
 			),
 			payout = translate(
-				'Outstanding amount of $%(amountOwed)s will be paid by the last business day of the month.',
+				'Outstanding amount of $%(amountOwed)s will be paid approximately 45 days following the end of the month in which it was earned.',
 				{
 					comment: 'Payout will proceed.',
 					args: { amountOwed: owed },
@@ -267,7 +266,7 @@ class WordAdsEarnings extends Component {
 					<h1 className="ads__module-header-title module-header-title">{ header_text }</h1>
 					<ul className="ads__module-header-actions module-header-actions">
 						<li className="ads__module-header-action module-header-action toggle-info">
-							{ /* eslint-disable */ }
+							{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
 							<a
 								href="#"
 								className="ads__module-header-action-link module-header-action-link"
@@ -275,7 +274,6 @@ class WordAdsEarnings extends Component {
 								title={ translate( 'Show or hide panel information' ) }
 								onClick={ this.handleInfoToggle( type ) }
 							>
-								{ /* eslint-enable */ }
 								<Gridicon icon={ infoIcon } />
 							</a>
 						</li>
@@ -317,7 +315,7 @@ class WordAdsEarnings extends Component {
 						</h1>
 						<ul className="ads__module-header-actions module-header-actions">
 							<li className="ads__module-header-action module-header-action toggle-info">
-								{ /* eslint-disable */ }
+								{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
 								<a
 									href="#"
 									className="ads__module-header-action-link module-header-action-link"
@@ -325,7 +323,6 @@ class WordAdsEarnings extends Component {
 									title={ translate( 'Show or hide panel information' ) }
 									onClick={ this.handleEarningsNoticeToggle }
 								>
-									{ /* eslint-disable */ }
 									<Gridicon icon={ infoIcon } />
 								</a>
 							</li>
@@ -355,6 +352,7 @@ class WordAdsEarnings extends Component {
 					: null }
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

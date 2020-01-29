@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -10,7 +8,7 @@ import getPartnerIdFromQuery from 'state/selectors/get-partner-id-from-query';
  * value maps to a known host.
  *
  * @param {object}   state Global state tree
- * @return {?string}       The partner slug or null
+ * @returns {?string}       The partner slug or null
  */
 export const getPartnerSlugFromQuery = function( state ) {
 	switch ( getPartnerIdFromQuery( state ) ) {
@@ -49,6 +47,9 @@ export const getPartnerSlugFromQuery = function( state ) {
 		case 60178:
 		case 60179:
 			return 'liquidweb';
+		case 65773:
+		case 65774:
+			return 'eurodns';
 		default:
 			return null;
 	}

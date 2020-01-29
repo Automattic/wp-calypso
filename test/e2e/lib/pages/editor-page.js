@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -90,7 +88,10 @@ export default class EditorPage extends AsyncBaseContainer {
 		);
 		const fileNameInput = await driver.findElement( fileNameInputSelector );
 		await fileNameInput.sendKeys( file );
-		await driverHelper.elementIsNotPresent( driver, '.media-library__list-item.is-transient' );
+		await driverHelper.elementIsNotPresent(
+			driver,
+			by.css( '.media-library__list-item.is-transient' )
+		);
 		const errorShown = await this.isErrorDisplayed();
 		if ( errorShown ) {
 			throw new Error( 'There is an error shown on the editor page!' );
@@ -171,10 +172,11 @@ export default class EditorPage extends AsyncBaseContainer {
 			this.driver,
 			by.css( 'span[data-e2e-insert-type="payment-button"]' )
 		);
-		await driverHelper.clickIfPresent(
+		await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( '.editor-simple-payments-modal button svg.gridicons-plus-small' ),
-			2
+			by.css(
+				'.editor-simple-payments-modal__navigation .section-header__actions .gridicons-plus-small'
+			)
 		);
 		await driverHelper.setWhenSettable(
 			this.driver,

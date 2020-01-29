@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -24,7 +22,7 @@ export class TransformerError extends Error {
 /**
  * @typedef {Function} Parser
  * @param   {*}        data   Input data
- * @return {*}                Transformed data
+ * @returns {*}                Transformed data
  * @throws {SchemaError}      Error describing failed schema validation
  * @throws {TransformerError} Error ocurred during transformation
  */
@@ -32,11 +30,11 @@ export class TransformerError extends Error {
 /**
  * Create a parser to validate and transform data
  *
- * @param {Object}   schema               JSON schema
+ * @param {object}   schema               JSON schema
  * @param {Function} transformer=identity Transformer function
- * @param {Object}   schemaOptions={}     Options to pass to schema validator
+ * @param {object}   schemaOptions={}     Options to pass to schema validator
  *
- * @return {Parser}                       Function to validate and transform data
+ * @returns {Parser}                       Function to validate and transform data
  */
 export function makeJsonSchemaParser( schema, transformer = identity, schemaOptions = {} ) {
 	let transform;

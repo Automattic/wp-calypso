@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,8 +13,8 @@ import { calculateMonthlyPriceForPlan } from 'lib/plans';
 /**
  * Return WordPress plans getting from state object
  *
- * @param {Object} state - current state object
- * @return {Array} WordPress plans
+ * @param {object} state - current state object
+ * @returns {Array} WordPress plans
  */
 export const getPlans = state => {
 	return state.plans.items;
@@ -25,8 +23,8 @@ export const getPlans = state => {
 /**
  * Return requesting state
  *
- * @param {Object} state - current state object
- * @return {Boolean} is plans requesting?
+ * @param {object} state - current state object
+ * @returns {boolean} is plans requesting?
  */
 export const isRequestingPlans = state => {
 	return state.plans.requesting;
@@ -34,9 +32,9 @@ export const isRequestingPlans = state => {
 
 /**
  * Returns a plan
- * @param  {Object} state      global state
- * @param  {Number} productId  the plan productId
- * @return {Object} the matching plan
+ * @param  {object} state      global state
+ * @param  {number} productId  the plan productId
+ * @returns {object} the matching plan
  */
 export const getPlan = createSelector(
 	( state, productId ) => find( getPlans( state ), { product_id: productId } ),
@@ -45,9 +43,9 @@ export const getPlan = createSelector(
 
 /**
  * Returns a plan searched by its slug
- * @param  {Object} state      global state
- * @param  {String} planSlug the plan slug
- * @return {Object} the matching plan
+ * @param  {object} state      global state
+ * @param  {string} planSlug the plan slug
+ * @returns {object} the matching plan
  */
 export const getPlanBySlug = createSelector(
 	( state, planSlug ) => find( getPlans( state ), { product_slug: planSlug } ),
@@ -56,10 +54,10 @@ export const getPlanBySlug = createSelector(
 
 /**
  * Returns a plan price
- * @param  {Object}  state     global state
- * @param  {Number}  productId the plan productId
- * @param  {Boolean} isMonthly if true, returns monthly price
- * @return {Number}  plan price
+ * @param  {object}  state     global state
+ * @param  {number}  productId the plan productId
+ * @param  {boolean} isMonthly if true, returns monthly price
+ * @returns {number}  plan price
  */
 export function getPlanRawPrice( state, productId, isMonthly = false ) {
 	const plan = getPlan( state, productId );
@@ -75,9 +73,9 @@ export function getPlanRawPrice( state, productId, isMonthly = false ) {
 /**
  * Returns a plan product_slug. Useful for getting a cartItem for a plan.
  *
- * @param  {Object}  state     global state
- * @param  {Number}  productId the plan productId
- * @return {String}  plan product_slug
+ * @param  {object}  state     global state
+ * @param  {number}  productId the plan productId
+ * @returns {string}  plan product_slug
  */
 export function getPlanSlug( state, productId ) {
 	const plan = getPlan( state, productId );

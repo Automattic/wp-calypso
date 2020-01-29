@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -66,8 +64,8 @@ export function sharePost( siteId, postId, skippedConnections, message ) {
  * Triggers a network request to fetch Publicize connections for the specified
  * site ID.
  *
- * @param  {Number}   siteId Site ID
- * @return {Function}        Action thunk
+ * @param  {number}   siteId Site ID
+ * @returns {Function}        Action thunk
  */
 export function fetchConnections( siteId ) {
 	return dispatch => {
@@ -100,9 +98,9 @@ export function fetchConnections( siteId ) {
  * Triggers a network request to request a Publicize connection for the
  * specified site ID.
  *
- * @param  {Number} siteId       Site ID
- * @param  {Number} connectionId ID of the connection to be fetched.
- * @return {Function}            Action thunk
+ * @param  {number} siteId       Site ID
+ * @param  {number} connectionId ID of the connection to be fetched.
+ * @returns {Function}            Action thunk
  */
 export function fetchConnection( siteId, connectionId ) {
 	return dispatch => {
@@ -143,10 +141,10 @@ export function fetchConnection( siteId, connectionId ) {
  * Given a service and optional site, establishes a new connection to the
  * service for the current user.
  *
- * @param {Number} siteId              Site ID
- * @param {Number} keyringConnectionId Keyring connection ID
- * @param {Number} externalUserId      An optional external user ID to create a connection to an external user account.
- * @return {Function}                  Action thunk
+ * @param {number} siteId              Site ID
+ * @param {number} keyringConnectionId Keyring connection ID
+ * @param {number} externalUserId      An optional external user ID to create a connection to an external user account.
+ * @returns {Function}                  Action thunk
  */
 export function createSiteConnection( siteId, keyringConnectionId, externalUserId ) {
 	return dispatch =>
@@ -165,12 +163,12 @@ export function createSiteConnection( siteId, keyringConnectionId, externalUserI
 /**
  * Triggers a network request to update a Publicize connection for a specific site.
  *
- * @param  {Object} connection         Connection to be updated.
- * @param  {Number} connection.site_ID Site ID for which the connection is updated.
- * @param  {Number} connection.ID      ID of the connection to be updated.
- * @param  {String} connection.label   Name of the connected service.
- * @param  {Object} attributes         The update request body.
- * @return {Function}                  Action thunk
+ * @param  {object} connection         Connection to be updated.
+ * @param  {number} connection.site_ID Site ID for which the connection is updated.
+ * @param  {number} connection.ID      ID of the connection to be updated.
+ * @param  {string} connection.label   Name of the connected service.
+ * @param  {object} attributes         The update request body.
+ * @returns {Function}                  Action thunk
  */
 export function updateSiteConnection( connection, attributes ) {
 	return dispatch =>
@@ -194,11 +192,11 @@ export function updateSiteConnection( connection, attributes ) {
 /**
  * Triggers a network request to delete a Publicize connection for a specific site.
  *
- * @param  {Object} connection         Connection to be deleted.
- * @param  {Number} connection.site_ID Site ID for which the connection is deleted.
- * @param  {Number} connection.ID      ID of the connection to be deleted.
- * @param  {String} connection.label   Name of the service that was connected.
- * @return {Function}                  Action thunk
+ * @param  {object} connection         Connection to be deleted.
+ * @param  {number} connection.site_ID Site ID for which the connection is deleted.
+ * @param  {number} connection.ID      ID of the connection to be deleted.
+ * @param  {string} connection.label   Name of the service that was connected.
+ * @returns {Function}                  Action thunk
  */
 export function deleteSiteConnection( connection ) {
 	return dispatch =>
@@ -224,8 +222,8 @@ export function deleteSiteConnection( connection ) {
  * Returns an action object to be used in signalling that creating a Publicize
  * connection has failed.
  *
- * @param  {Object} error Error object
- * @return {Object}       Action object
+ * @param  {object} error Error object
+ * @returns {object}       Action object
  */
 export function failCreateConnection( error ) {
 	return {
@@ -238,8 +236,8 @@ export function failCreateConnection( error ) {
  * Returns an action object to be used in signalling that a network request for
  * removing a Publicize connection has been received.
  *
- * @param  {Object} connection Connection to be deleted.
- * @return {Object}            Action object
+ * @param  {object} connection Connection to be deleted.
+ * @returns {object}            Action object
  */
 export function deleteConnection( connection ) {
 	return {
@@ -252,9 +250,9 @@ export function deleteConnection( connection ) {
  * Returns an action object to be used in signalling that a network request for
  * Publicize connections has been received.
  *
- * @param  {Number} siteId Site ID
- * @param  {Object} data   API response
- * @return {Object}        Action object
+ * @param  {number} siteId Site ID
+ * @param  {object} data   API response
+ * @returns {object}        Action object
  */
 export function receiveConnections( siteId, data ) {
 	return {

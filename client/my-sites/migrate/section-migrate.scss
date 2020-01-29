@@ -1,0 +1,151 @@
+.migrate__placeholder {
+	color: transparent;
+	background-color: var( --studio-gray-10 );
+	animation: loading-fade 1.6s ease-in-out infinite;
+}
+
+.migrate__source-site, .migrate__confirmation, .migrate__explain {
+	margin-bottom: 16px;
+}
+
+.migrate__status {
+	margin-bottom: 16px;
+	text-align: center;
+}
+
+.is-section-migrate .card > .card-heading {
+	margin-bottom: 4px;
+}
+
+.migrate__card {
+	.site__content, .site-selector__hidden-sites-message {
+		border-bottom: 1px solid var( --color-neutral-10 );
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	.site-selector .search {
+		margin: 0;
+	}
+}
+
+.migrate__card-footer {
+	color: var( --color-text-subtle );
+	font-size: 13px;
+
+	a {
+		color: var( --color-text-subtle );
+		text-decoration: underline;
+	}
+}
+
+.migrate__list {
+	margin: 16px 0 32px;
+	li {
+		list-style-type: none;
+		line-height: 30px;
+		font-size: 14px;
+	}
+}
+
+.migrate__checkmark {
+	color: var( --color-success );
+	margin-right: 16px;
+}
+
+.migrate__cancel {
+	margin-left: 16px;
+}
+
+.migrate__pane {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background: inherit;
+	box-shadow: none;
+}
+
+.migrate__illustration {
+	display: block;
+	margin: auto;
+	width: 260px;
+	height: 200px;
+}
+
+.migrate__section-header {
+	.formatted-header__title {
+		font-size: 24px;
+		@include breakpoint('>660px') {
+			font-size: 32px;
+		}
+	}
+
+	.formatted-header__subtitle {
+		margin-bottom: 0;
+		font-size: 16px;
+	}
+}
+
+.migrate__domain {
+	white-space: nowrap;
+}
+
+.migrate__progress {
+	max-width: 350px;
+	margin-bottom: 2rem;
+}
+
+.migrate__start-time {
+	height: 1.5rem;
+	margin-bottom: 8px;
+	color: var( --color-text-subtle );
+	font-size: 14px;
+}
+
+.migrate__progress-item {
+	position: relative;
+	list-style-type: none;
+	margin-left: 8px;
+	margin-bottom: 8px;
+	font-size: 14px;
+	line-height: 24px;
+	display: flex;
+}
+
+.migrate__progress-item-icon {
+	display: flex;
+	width: 24px;
+	margin-right: 6px;
+	justify-content: center;
+}
+
+.migrate__progress-item-icon-success {
+	width: 22px;
+	color: var( --color-success );
+}
+
+.migrate__progress-item-icon-todo {
+	width: 20px;
+}
+
+.migrate__progress-item-icon-spinner {
+	width: 20px;
+	height: 20px;
+}
+
+.migrate__progress-item-text {
+	display: flex;
+}
+
+.migrate__token-label {
+	background-color: lightgrey;
+	border-radius: 10px;
+	padding: 2px 5px;
+	font-size: 10px;
+	color: darkgray;
+	margin: 5px 3px 5px 0;
+}
+
+.migrate__buttons-wrapper {
+	margin: 24px 0 8px;
+}

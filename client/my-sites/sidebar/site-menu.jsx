@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -27,11 +25,14 @@ import {
 	isJetpackSite,
 	isSingleUserSite,
 } from 'state/sites/selectors';
+import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
 import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
 import { canCurrentUser as canCurrentUserStateSelector } from 'state/selectors/can-current-user';
 import { itemLinkMatches } from './utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import isVipSite from 'state/selectors/is-vip-site';
+import { SIDEBAR_SECTION_SITE } from 'my-sites/sidebar/constants';
+import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
 
 class SiteMenu extends PureComponent {
 	static propTypes = {
@@ -42,6 +43,7 @@ class SiteMenu extends PureComponent {
 		allSingleSites: PropTypes.bool,
 		canCurrentUser: PropTypes.func,
 		isJetpack: PropTypes.bool,
+		isSiteAtomic: PropTypes.bool,
 		isSingleUser: PropTypes.bool,
 		postTypes: PropTypes.object,
 		siteAdminUrl: PropTypes.string,
@@ -94,7 +96,7 @@ class SiteMenu extends PureComponent {
 			{
 				name: 'media',
 				label: translate( 'Media' ),
-				capability: 'upload_files',
+				capability: 'edit_posts',
 				queryable: true,
 				link: '/media',
 				wpAdminLink: 'upload.php',
@@ -124,6 +126,8 @@ class SiteMenu extends PureComponent {
 		this.props.onNavigate();
 	};
 
+	expandSiteSection = () => this.props.expandSection( SIDEBAR_SECTION_SITE );
+
 	renderMenuItem( menuItem ) {
 		const { canCurrentUser, siteId, siteAdminUrl } = this.props;
 
@@ -133,6 +137,11 @@ class SiteMenu extends PureComponent {
 
 		// Hide the sidebar link for media
 		if ( 'attachment' === menuItem.name ) {
+			return null;
+		}
+
+		// Hide Full Site Editing templates CPT. This shouldn't be editable directly.
+		if ( 'wp_template_part' === menuItem.name ) {
 			return null;
 		}
 
@@ -151,42 +160,14 @@ class SiteMenu extends PureComponent {
 		}
 
 		let preload;
-		if ( includes( [ 'post', 'page' ], menuItem.name ) ) {
-			preload = 'posts-pages';
+		if ( 'post' === menuItem.name ) {
+			preload = 'posts';
+		} else if ( 'page' === menuItem.name ) {
+			preload = 'pages';
 		} else if ( 'comments' === menuItem.name ) {
 			preload = 'comments';
 		} else {
 			preload = 'posts-custom';
-		}
-
-		let icon;
-		switch ( menuItem.name ) {
-			case 'post':
-				icon = 'posts';
-				break;
-			case 'page':
-				icon = 'pages';
-				break;
-			case 'import':
-				icon = 'cloud-upload';
-				break;
-			case 'jetpack-portfolio':
-				icon = 'folder';
-				break;
-			case 'jetpack-testimonial':
-				icon = 'quote';
-				break;
-			case 'media':
-				icon = 'image';
-				break;
-			case 'comments':
-				icon = 'chat';
-				break;
-			case 'plugins':
-				icon = 'plugins';
-				break;
-			default:
-				icon = 'custom-post-type';
 		}
 
 		return (
@@ -196,17 +177,17 @@ class SiteMenu extends PureComponent {
 				selected={ itemLinkMatches( menuItem.paths || menuItem.link, this.props.path ) }
 				link={ link }
 				onNavigate={ this.onNavigate( menuItem.name ) }
-				icon={ icon }
 				preloadSectionName={ preload }
 				postType={ menuItem.name === 'plugins' ? null : menuItem.name }
 				tipTarget={ `side-menu-${ menuItem.name }` }
 				forceInternalLink={ menuItem.forceInternalLink }
+				expandSection={ this.expandSiteSection }
 			/>
 		);
 	}
 
 	getCustomMenuItems() {
-		const { isVip } = this.props;
+		const { isVip, isJetpack, isSiteAtomic } = this.props;
 		//reusable blocks are not shown in the sidebar on wp-admin either
 		const customPostTypes = omit( this.props.postTypes, [ 'post', 'page', 'wp_block' ] );
 		return reduce(
@@ -235,10 +216,11 @@ class SiteMenu extends PureComponent {
 						// Required to build the menu item class name. Must be discernible from other
 						// items' paths in the same section for item highlighting to work properly.
 						link: '/types/' + postType.name,
-						// don't calypsoify for VIP
-						wpAdminLink: isVip
-							? 'edit.php?post_type=feedback'
-							: 'edit.php?post_type=feedback&calypsoify=1',
+						// don't calypsoify for VIP or Jetpack
+						wpAdminLink:
+							isVip || ( isJetpack && ! isSiteAtomic )
+								? 'edit.php?post_type=feedback&calypsoify=0'
+								: 'edit.php?post_type=feedback&calypsoify=1',
 						showOnAllMySites: false,
 					} );
 				}
@@ -282,6 +264,7 @@ export default connect(
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 		canCurrentUser: partial( canCurrentUserStateSelector, state, siteId ),
 		isJetpack: isJetpackSite( state, siteId ),
+		isSiteAtomic: isSiteWpcomAtomic( state, siteId ),
 		isSingleUser: isSingleUserSite( state, siteId ),
 		postTypes: getPostTypes( state, siteId ),
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
@@ -289,7 +272,7 @@ export default connect(
 		siteSlug: getSiteSlug( state, siteId ),
 		isVip: isVipSite( state, siteId ),
 	} ),
-	{ recordTracksEvent },
+	{ expandSection, recordTracksEvent },
 	null,
 	{ areStatePropsEqual: compareProps( { ignore: [ 'canCurrentUser' ] } ) }
 )( localize( SiteMenu ) );

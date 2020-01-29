@@ -45,10 +45,10 @@
 
 	.site-icon {
 		margin-right: 6px;
-		background: var( --color-neutral-100 );
+		background: var( --color-neutral-10 );
 
 		.gridicon {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 		}
 	}
 
@@ -59,7 +59,7 @@
 	.follow-button {
 		background: transparent;
 		border: 0;
-		color: var( --color-neutral-200 );
+		color: var( --color-neutral-20 );
 		float: none;
 		font-size: 13px;
 		padding: 0;

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Fragment } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -33,7 +33,12 @@ export const JetpackLazyImagesTour = makeTour(
 		>
 			{ ( { translate } ) => (
 				<Fragment>
-					<p>{ translate( "Let's boost load times for your site by lazy-loading images." ) }</p>
+					<p>
+						{ translate(
+							"Let's speed up your page load times with lazy-loading images — " +
+								'images that only load when a visitor scrolls down to see them.'
+						) }
+					</p>
 					<ButtonRow>
 						<Continue
 							target=".jetpack-lazy-images-settings .form-toggle__switch"
@@ -60,14 +65,15 @@ export const JetpackLazyImagesTour = makeTour(
 					</h1>
 					<p>
 						{ translate(
-							'Lazy image loading has been enabled. Would you like to continue setting up performance features for your site?'
+							'Lazy-loading images are active on your site. ' +
+								'Ready to set up some more performance-improving features?'
 						) }
 					</p>
 					<ButtonRow>
 						<SiteLink isButton href="/plans/my-plan/:site">
 							{ translate( "Yes, let's do it." ) }
 						</SiteLink>
-						<Quit>{ translate( 'No thanks.' ) }</Quit>
+						<Quit>{ translate( 'No, thanks.' ) }</Quit>
 					</ButtonRow>
 				</Fragment>
 			) }

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,13 +5,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
 import Popover from 'components/popover';
@@ -254,7 +253,4 @@ const mapDispatchToProps = dispatch => ( {
 		),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( CommentAuthorMoreInfo ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentAuthorMoreInfo ) );

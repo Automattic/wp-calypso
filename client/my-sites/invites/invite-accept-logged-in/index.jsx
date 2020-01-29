@@ -13,9 +13,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card, Button } from '@automattic/components';
 import Gravatar from 'components/gravatar';
-import Button from 'components/button';
 import InviteFormHeader from 'my-sites/invites/invite-form-header';
 import { acceptInvite } from 'lib/invites/actions';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
@@ -155,7 +154,6 @@ class InviteAcceptLoggedIn extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { acceptInvite }, dispatch )
-)( localize( InviteAcceptLoggedIn ) );
+export default connect( null, dispatch => bindActionCreators( { acceptInvite }, dispatch ) )(
+	localize( InviteAcceptLoggedIn )
+);

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,8 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import Gridicon from 'gridicons';
+import { CompactCard } from '@automattic/components';
+import Gridicon from 'components/gridicon';
 
 /**
  * Style dependencies

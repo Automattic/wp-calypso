@@ -1,12 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import url from 'url';
 import { extend, get, isArray, invert } from 'lodash';
 import update, { extend as extendImmutabilityHelper } from 'immutability-helper';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import config from 'config';
 
 /**
@@ -42,13 +40,14 @@ const PAYMENT_METHODS = {
 	wechat: 'WPCOM_Billing_Stripe_Source_Wechat',
 	'web-payment': 'WPCOM_Billing_Web_Payment',
 	sofort: 'WPCOM_Billing_Stripe_Source_Sofort',
+	stripe: 'WPCOM_Billing_Stripe_Payment_Method',
 };
 
 /**
  * Preprocesses cart for server.
  *
- * @param {Object} cart Cart object.
- * @returns {Object} A new cart object.
+ * @param {object} cart Cart object.
+ * @returns {object} A new cart object.
  */
 export function preprocessCartForServer( {
 	coupon,
@@ -104,7 +103,7 @@ export function preprocessCartForServer( {
  * `emptyCart( 123456, { temporary: true } )`
  *
  * @param {int} [siteId] The Site Id the cart will be associated with
- * @param {Object} [attributes] Additional attributes for the cart (optional)
+ * @param {object} [attributes] Additional attributes for the cart (optional)
  * @returns {cart} [emptyCart] The new empty cart created
  */
 export function emptyCart( siteId, attributes ) {
@@ -215,7 +214,7 @@ export function canRemoveFromCart( cart, cartItem ) {
  *
  * @param {cartValue} [previousCartValue] - the previously loaded cart
  * @param {cartValue} [nextCartValue] - the new cart value
- * @returns {array} [nextCartMessages] - an array of messages about the state of the cart
+ * @returns {Array} [nextCartMessages] - an array of messages about the state of the cart
  */
 export function getNewMessages( previousCartValue, nextCartValue ) {
 	previousCartValue = previousCartValue || {};
@@ -233,7 +232,7 @@ export function getNewMessages( previousCartValue, nextCartValue ) {
 
 	const previousDate = previousCartValue.client_metadata.last_server_response_date;
 	const nextDate = nextCartValue.client_metadata.last_server_response_date;
-	const hasNewServerData = i18n.moment( nextDate ).isAfter( previousDate );
+	const hasNewServerData = new Date( nextDate ) > new Date( previousDate );
 
 	return hasNewServerData ? nextCartMessages : [];
 }
@@ -280,7 +279,7 @@ export function fillInSingleCartItemAttributes( cartItem, products ) {
  *
  * https://en.support.wordpress.com/refunds/
  *
- * @param {Object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `CartValue` object
  * @returns {string} the refund policy type
  */
 export function getRefundPolicy( cart ) {
@@ -304,6 +303,11 @@ export function getEnabledPaymentMethods( cart ) {
 		return 'WPCOM_Billing_Ebanx' !== method;
 	} );
 
+	// Stripe Elements is used as part of the credit-card method, does not need to be listed.
+	allowedPaymentMethods = allowedPaymentMethods.filter( function( method ) {
+		return 'WPCOM_Billing_Stripe_Payment_Method' !== method;
+	} );
+
 	// Web payment methods such as Apple Pay are enabled based on client-side
 	// capabilities.
 	allowedPaymentMethods = allowedPaymentMethods.filter( function( method ) {
@@ -321,7 +325,7 @@ export function getEnabledPaymentMethods( cart ) {
 /**
  * Return a string that represents the WPCOM class name for a payment method
  *
- * @param {string} method - payment method
+ * @param {string} method -  payment method
  * @returns {string} the wpcom class name
  */
 export function paymentMethodClassName( method ) {
@@ -338,7 +342,7 @@ export function paymentMethodName( method ) {
 	const paymentMethodsNames = {
 		alipay: 'Alipay',
 		bancontact: 'Bancontact',
-		'credit-card': i18n.translate( 'Credit or debit card' ),
+		'credit-card': translate( 'Credit or debit card' ),
 		eps: 'EPS',
 		giropay: 'Giropay',
 		ideal: 'iDEAL',
@@ -353,7 +357,7 @@ export function paymentMethodName( method ) {
 		// user), so it's fine to just hardcode this to "Apple Pay" in the
 		// meantime.
 		'web-payment': 'Apple Pay',
-		wechat: i18n.translate( 'WeChat Pay', {
+		wechat: translate( 'WeChat Pay', {
 			comment: 'Name for WeChat Pay - https://pay.weixin.qq.com/',
 		} ),
 		sofort: 'Sofort',

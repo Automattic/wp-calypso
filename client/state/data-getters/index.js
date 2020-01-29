@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -25,7 +23,7 @@ import fromActivityTypeApi from 'state/data-layer/wpcom/sites/activity-types/fro
  * } );
  *
  * @param {string} url location from which to GET data
- * @return {object} HTTP data wrapped value
+ * @returns {object} HTTP data wrapped value
  */
 export const requestFromUrl = url =>
 	requestHttpData( `get-at-url-${ url }`, rawHttp( { method: 'GET', url } ), {
@@ -87,6 +85,55 @@ export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000
 			fromApi: () => data => {
 				return [ [ id, fromActivityLogApi( data ) ] ];
 			},
+		}
+	);
+};
+
+const requestExternalContributorsId = siteId => `site-external-contributors-${ siteId }`;
+
+export const requestExternalContributors = siteId =>
+	requestHttpData(
+		requestExternalContributorsId( siteId ),
+		http( {
+			method: 'GET',
+			path: `/sites/${ siteId }/external-contributors`,
+			apiNamespace: 'wpcom/v2',
+		} ),
+		{
+			fromApi: () => data => [ [ requestExternalContributorsId( siteId ), data ] ],
+		}
+	);
+
+export const requestExternalContributorsAddition = ( siteId, userId ) => {
+	const requestId = requestExternalContributorsId( siteId );
+	const id = `${ requestId }-addition-${ userId }`;
+	return requestHttpData(
+		id,
+		http( {
+			method: 'POST',
+			path: `/sites/${ siteId }/external-contributors/add`,
+			apiNamespace: 'wpcom/v2',
+			body: { user_id: userId },
+		} ),
+		{
+			fromApi: () => data => [ [ requestId, data ] ],
+		}
+	);
+};
+
+export const requestExternalContributorsRemoval = ( siteId, userId ) => {
+	const requestId = requestExternalContributorsId( siteId );
+	const id = `${ requestId }-removal-${ userId }`;
+	return requestHttpData(
+		id,
+		http( {
+			method: 'POST',
+			path: `/sites/${ siteId }/external-contributors/remove`,
+			apiNamespace: 'wpcom/v2',
+			body: { user_id: userId },
+		} ),
+		{
+			fromApi: () => data => [ [ requestId, data ] ],
 		}
 	);
 };

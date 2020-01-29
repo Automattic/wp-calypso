@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -29,7 +27,7 @@ import {
 
 const wrapSettingsForm = getFormSettings => SettingsForm => {
 	class WrappedSettingsForm extends Component {
-		componentWillMount() {
+		UNSAFE_componentWillMount() {
 			if ( getFormSettings ) {
 				this.props.replaceFields( getFormSettings( this.props.settings ) );
 			}
@@ -234,12 +232,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		}
 	);
 
-	return flowRight(
-		connectComponent,
-		localize,
-		trackForm,
-		protectForm
-	)( WrappedSettingsForm );
+	return flowRight( connectComponent, localize, trackForm, protectForm )( WrappedSettingsForm );
 };
 
 export default wrapSettingsForm;

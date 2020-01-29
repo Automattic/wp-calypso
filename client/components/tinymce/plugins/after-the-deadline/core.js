@@ -6,7 +6,6 @@
  * Project     : http:
  * Contact     : raffi@automattic.com, andrew.duthie@automattic.com
  *
- * @format
  */
 
 /**
@@ -407,7 +406,7 @@ AtDCore.prototype.markMyWords = function( container_nodes, errors ) {
 	 * We have to leave the text to the left and right of the match alone
 	 * in order to prevent XSS
 	 *
-	 * @return array
+	 * @returns array
 	 */
 
 	function splitTextNode( textnode, regexp, replacement ) {

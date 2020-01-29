@@ -1,21 +1,19 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
-import deterministicStringify from 'json-stable-stringify';
+import deterministicStringify from 'fast-json-stable-stringify';
 import { omit } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import PeopleListItem from 'my-sites/people/people-list-item';
-import Card from 'components/card';
+import { Card, Button } from '@automattic/components';
 import classNames from 'classnames';
 import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
 import FollowersActions from 'lib/followers/actions';
@@ -29,14 +27,12 @@ import FollowersStore from 'lib/followers/store';
 import EmailFollowersStore from 'lib/email-followers/store';
 import accept from 'lib/accept';
 import analytics from 'lib/analytics';
-import Button from 'components/button';
 import ListEnd from 'components/list-end';
 import { preventWidows } from 'lib/formatting';
 
 /**
  * Stylesheet dependencies
  */
-
 import './style.scss';
 
 const maxFollowers = 1000;
@@ -144,6 +140,17 @@ const Followers = localize(
 			return ! this.props.followers.length && ! this.props.fetching;
 		}
 
+		renderInviteFollowersAction( isPrimary = true ) {
+			const { site, translate } = this.props;
+
+			return (
+				<Button primary={ isPrimary } href={ `/people/new/${ site.domain }` }>
+					<Gridicon icon="user-add" />
+					<span>{ translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }</span>
+				</Button>
+			);
+		}
+
 		isLastPage() {
 			return (
 				this.props.totalFollowers <= this.props.followers.length ||
@@ -172,32 +179,14 @@ const Followers = localize(
 
 			let emptyTitle;
 			if ( this.siteHasNoFollowers() ) {
-				const inviteLink = '/people/new/' + this.props.site.domain;
-
 				if ( this.props.fetchOptions && 'email' === this.props.fetchOptions.type ) {
 					emptyTitle = preventWidows(
-						this.props.translate(
-							'No one is following you by email yet, but you can {{a}}invite up to 10 at a time{{/a}}.',
-							{
-								components: {
-									a: <a href={ inviteLink } />,
-								},
-							}
-						)
+						this.props.translate( 'No one is following you by email yet.' )
 					);
 				} else {
-					emptyTitle = preventWidows(
-						this.props.translate(
-							'No WordPress.com followers yet, but you can {{a}}invite up to 10 at a time{{/a}}.',
-							{
-								components: {
-									a: <a href={ inviteLink } />,
-								},
-							}
-						)
-					);
+					emptyTitle = preventWidows( this.props.translate( 'No WordPress.com followers yet.' ) );
 				}
-				return <EmptyContent title={ emptyTitle } />;
+				return <EmptyContent title={ emptyTitle } action={ this.renderInviteFollowersAction() } />;
 			}
 
 			let headerText;

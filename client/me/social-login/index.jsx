@@ -1,91 +1,49 @@
 /**
  * External dependencies
  */
-
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import debugFactory from 'debug';
-import { find, get } from 'lodash';
 import { localize } from 'i18n-calypso';
-const debug = debugFactory( 'calypso:me:security:social-login' );
 
 /**
  * Internal dependencies
  */
+import AppleIcon from 'components/social-icons/apple';
+import { CompactCard } from '@automattic/components';
 import config from 'config';
-import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
-import FormButton from 'components/forms/form-button';
+import { getRequestError } from 'state/login/selectors';
+import GoogleIcon from 'components/social-icons/google';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
+import Notice from 'components/notice';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ReauthRequired from 'me/reauth-required';
 import SecuritySectionNav from 'me/security-section-nav';
 import twoStepAuthorization from 'lib/two-step-authorization';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { connectSocialUser, disconnectSocialUser } from 'state/login/actions';
-import { isRequesting, getRequestError } from 'state/login/selectors';
-import GoogleIcon from 'components/social-icons/google';
-import GoogleLoginButton from 'components/social-buttons/google';
-import userFactory from 'lib/user';
-import Notice from 'components/notice';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import SocialLoginService from './service';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const user = userFactory();
-
 class SocialLogin extends Component {
 	static displayName = 'SocialLogin';
 
 	static propTypes = {
-		moment: PropTypes.func,
+		errorUpdatingSocialConnection: PropTypes.object,
 		path: PropTypes.string,
+		socialService: PropTypes.string,
+		socialServiceResponse: PropTypes.object,
 		translate: PropTypes.func.isRequired,
-		userSettings: PropTypes.object,
-	};
-
-	state = {
-		fetchingUser: false,
-	};
-
-	componentDidMount() {
-		debug( this.constructor.displayName + ' React component has mounted.' );
-	}
-
-	componentWillUnmount() {
-		debug( this.constructor.displayName + ' React component is unmounting.' );
-	}
-
-	refreshUser() {
-		user.fetch();
-		this.setState( { fetchingUser: true } );
-		user.once( 'change', () => this.setState( { fetchingUser: false } ) );
-	}
-
-	disconnectFromGoogle = () => {
-		this.props.disconnectSocialUser( 'google' ).then( () => this.refreshUser() );
-	};
-
-	handleGoogleLoginResponse = response => {
-		if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
-			return;
-		}
-
-		const socialInfo = {
-			service: 'google',
-			access_token: response.Zi.access_token,
-			id_token: response.Zi.id_token,
-		};
-
-		return this.props.connectSocialUser( socialInfo ).then( () => this.refreshUser() );
 	};
 
 	renderContent() {
-		const { translate, errorUpdatingSocialConnection } = this.props;
+		const { translate, errorUpdatingSocialConnection, path } = this.props;
+
+		const redirectUri = typeof window !== 'undefined' ? window.location.origin + path : null;
 
 		return (
 			<div>
@@ -94,65 +52,27 @@ class SocialLogin extends Component {
 						{ errorUpdatingSocialConnection.message }
 					</Notice>
 				) }
+
 				<CompactCard>
 					{ translate(
-						'You’ll be able to log in faster by linking your WordPress.com account with your ' +
-							'social networks. We’ll never post without your permission.'
+						'You’ll be able to log in faster by linking your WordPress.com account with the following ' +
+							'third-party services. We’ll never post without your permission.'
 					) }
 				</CompactCard>
-				{ this.renderGoogleConnection() }
+
+				<SocialLoginService service="google" icon={ <GoogleIcon /> } />
+
+				{ config.isEnabled( 'sign-in-with-apple' ) && (
+					<SocialLoginService
+						service="apple"
+						icon={ <AppleIcon /> }
+						redirectUri={ redirectUri }
+						socialServiceResponse={
+							this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
+						}
+					/>
+				) }
 			</div>
-		);
-	}
-
-	renderActionButton( onClickAction = null ) {
-		const { isUserConnectedToGoogle, isUpdatingSocialConnection, translate } = this.props;
-		const buttonLabel = isUserConnectedToGoogle
-			? translate( 'Disconnect' )
-			: translate( 'Connect' );
-		const disableButton = isUpdatingSocialConnection || this.state.fetchingUser;
-
-		return (
-			<FormButton
-				className="social-login__button button"
-				disabled={ disableButton }
-				compact={ true }
-				isPrimary={ ! isUserConnectedToGoogle }
-				onClick={ onClickAction }
-			>
-				{ buttonLabel }
-			</FormButton>
-		);
-	}
-
-	renderGoogleConnection() {
-		const { isUserConnectedToGoogle, socialConnectionEmail } = this.props;
-
-		return (
-			<CompactCard>
-				<div className="social-login__header">
-					<div className="social-login__header-info">
-						<div className="social-login__header-icon">
-							<GoogleIcon width="30" height="30" />
-						</div>
-						<h3>Google</h3>
-						{ socialConnectionEmail && <p>{ ' - ' + socialConnectionEmail }</p> }
-					</div>
-
-					<div className="social-login__header-action">
-						{ isUserConnectedToGoogle ? (
-							this.renderActionButton( this.disconnectFromGoogle )
-						) : (
-							<GoogleLoginButton
-								clientId={ config( 'google_oauth_client_id' ) }
-								responseHandler={ this.handleGoogleLoginResponse }
-							>
-								{ this.renderActionButton() }
-							</GoogleLoginButton>
-						) }
-					</div>
-				</div>
-			</CompactCard>
 		);
 	}
 
@@ -175,20 +95,6 @@ class SocialLogin extends Component {
 	}
 }
 
-export default connect(
-	state => {
-		const currentUser = getCurrentUser( state );
-		const connections = currentUser.social_login_connections || [];
-		const googleConnection = find( connections, { service: 'google' } );
-		return {
-			socialConnectionEmail: get( googleConnection, 'service_user_email', '' ),
-			isUserConnectedToGoogle: googleConnection,
-			isUpdatingSocialConnection: isRequesting( state ),
-			errorUpdatingSocialConnection: getRequestError( state ),
-		};
-	},
-	{
-		connectSocialUser,
-		disconnectSocialUser,
-	}
-)( localize( SocialLogin ) );
+export default connect( state => ( {
+	errorUpdatingSocialConnection: getRequestError( state ),
+} ) )( localize( SocialLogin ) );

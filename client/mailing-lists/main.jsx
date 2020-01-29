@@ -1,18 +1,16 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import page from 'page';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import notices from 'notices';
 import utils from './utils';
 import { preventWidows } from 'lib/formatting';
@@ -112,6 +110,8 @@ class MainComponent extends React.Component {
 			return this.props.translate( 'Community' );
 		} else if ( 'digest' === category ) {
 			return this.props.translate( 'Digests' );
+		} else if ( 'news' === category ) {
+			return this.props.translate( 'Newsletter' );
 		} else if ( 'jetpack_marketing' === category ) {
 			return this.props.translate( 'Jetpack Suggestions' );
 		} else if ( 'jetpack_research' === category ) {
@@ -119,7 +119,7 @@ class MainComponent extends React.Component {
 		} else if ( 'jetpack_promotion' === category ) {
 			return this.props.translate( 'Jetpack Promotions' );
 		} else if ( 'jetpack_news' === category ) {
-			return this.props.translate( 'Jetpack News' );
+			return this.props.translate( 'Jetpack Newsletter' );
 		}
 
 		return category;
@@ -141,6 +141,8 @@ class MainComponent extends React.Component {
 			return this.props.translate(
 				'Popular content from the blogs you follow, and reports on your own site and its performance.'
 			);
+		} else if ( 'news' === category ) {
+			return this.props.translate( 'WordPress.com news, announcements, and product spotlights.' );
 		} else if ( 'jetpack_marketing' === category ) {
 			return this.props.translate( 'Tips for getting the most out of Jetpack.' );
 		} else if ( 'jetpack_research' === category ) {
@@ -150,7 +152,7 @@ class MainComponent extends React.Component {
 		} else if ( 'jetpack_promotion' === category ) {
 			return this.props.translate( 'Promotions and deals on upgrades.' );
 		} else if ( 'jetpack_news' === category ) {
-			return this.props.translate( 'Jetpack news and announcements.' );
+			return this.props.translate( 'Jetpack news, announcements, and product spotlights.' );
 		}
 
 		return null;

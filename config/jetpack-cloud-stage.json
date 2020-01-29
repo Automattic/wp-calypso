@@ -1,0 +1,14 @@
+{
+	"env": "production",
+	"env_id": "jetpack-cloud-stage",
+	"favicon_url": "/calypso/images/favicons/favicon-staging.ico",
+	"client_slug": "browser",
+	"hostname": "cloud.jetpack.com",
+	"i18n_default_locale_slug": "en",
+	"rtl": false,
+	"login_url": "https://wordpress.com/wp-login.php",
+	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
+	"features": {
+		"jetpack-cloud": true
+	}
+}

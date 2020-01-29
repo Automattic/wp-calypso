@@ -23,29 +23,5 @@ dispatch( fetchSitePlansCompleted( 555555555, { 1: { ... }, 1003: { ... }, 1008:
 ```
 
 ## Reducer
-Data from the aforementioned actions is added to the global state tree, under `sites.plans`, with the following structure:
-
-```js
-state.sites.plans = {
-	555555555: [
-		{
-			currentPlan: Boolean,
-			expiry: String,
-			expiryMoment: Moment,
-			formattedDiscount: String,
-			formattedPrice: String,
-			freeTrial: Boolean,
-			id: Number( plan.id ),
-			productName: String,
-			productSlug: String,
-			rawDiscount: Number,
-			rawPrice: Number,
-			subscribedDate: String,
-			subscribedDayMoment: Moment,
-			userFacingExpiry: String,
-			userFacingExpiryMoment: Moment
-		},
-		{ ... }
-	]
-}
-```
+Data from the aforementioned actions is added to the global state tree, under `sites.plans`.
+Consult `assembler.js` for the details.

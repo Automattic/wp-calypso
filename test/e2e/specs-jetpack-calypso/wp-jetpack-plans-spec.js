@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -30,6 +28,7 @@ import ProfilePage from '../lib/pages/profile-page.js';
 import PurchasesPage from '../lib/pages/purchases-page.js';
 import ManagePurchasePage from '../lib/pages/manage-purchase-page.js';
 import WPAdminLogonPage from '../lib/pages/wp-admin/wp-admin-logon-page';
+import JetpackComSearchLandingPage from '../lib/pages/external/jetpackcom-search-landing-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -73,6 +72,11 @@ describe( `[${ host }] Jetpack Plans: (${ screenSize }) @jetpack`, function() {
 			return await jetpackDashboard.clickUpgradeNudge();
 		} );
 
+		step( 'Can click upgrade on Jetpack landing page', async function() {
+			const searchLandingPage = await JetpackComSearchLandingPage.Expect( driver );
+			return await searchLandingPage.upgrade();
+		} );
+
 		step( 'Can then see secure payment component', async function() {
 			return await SecurePaymentComponent.Expect( driver );
 		} );
@@ -95,7 +99,8 @@ describe( `[${ host }] Jetpack Plans: (${ screenSize }) @jetpack`, function() {
 		} );
 	} );
 
-	describe( 'Renew Premium Plan:', function() {
+	// NOTE: Disabled, since now Pressable plans are not managed through Calypso.
+	xdescribe( 'Renew Premium Plan:', function() {
 		before( async function() {
 			return await driverManager.clearCookiesAndDeleteLocalStorage( driver );
 		} );

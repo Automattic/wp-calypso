@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,8 +15,8 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 /**
  * Dispatches a request to fetch help links that match a certain search query
  *
- * @param   {Object} action Redux action
- * @returns {Object} Dispatched http action
+ * @param   {object} action Redux action
+ * @returns {object} Dispatched http action
  */
 export const requestHelpLinks = action =>
 	http(
@@ -37,9 +35,9 @@ export const requestHelpLinks = action =>
 /**
  * Dispatches a help links receive action when the request succeeded.
  *
- * @param   {Object} action    Redux action
- * @param   {Object} helpLinks Help links
- * @returns {Object} Dispatched help links receive action
+ * @param   {object} action    Redux action
+ * @param   {object} helpLinks Help links
+ * @returns {object} Dispatched help links receive action
  */
 export const handleRequestSuccess = ( action, helpLinks ) => receiveHelpLinks( helpLinks );
 

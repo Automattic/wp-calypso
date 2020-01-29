@@ -1,11 +1,10 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 export default class ActivityIcon extends PureComponent {
 	static propTypes = {

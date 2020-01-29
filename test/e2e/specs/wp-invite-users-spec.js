@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -329,7 +327,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 		} );
 	} );
 
-	xdescribe( 'Inviting New User as an Contributor, then change them to Author: @parallel @jetpack', function() {
+	describe.skip( 'Inviting New User as an Contributor, then change them to Author: @parallel @jetpack', function() {
 		const newUserName = 'e2eflowtestingcontributor' + new Date().getTime().toString();
 		const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId );
 		const reviewPostTitle = dataHelper.randomPhrase();
@@ -469,7 +467,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 	} );
 
 	// Disabled pending wp-calypso issue 26178
-	xdescribe( 'Inviting New User as a Follower: @parallel @jetpack', function() {
+	describe.skip( 'Inviting New User as a Follower: @parallel @jetpack', function() {
 		const newUserName = 'e2eflowtestingfollower' + new Date().getTime().toString();
 		const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId );
 		let acceptInviteURL = '';

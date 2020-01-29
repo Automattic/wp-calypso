@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -45,18 +43,19 @@ class JetpackModuleToggle extends Component {
 
 	handleChange = () => {
 		if ( ! this.props.checked ) {
-			this.recordTracksEvent( 'calypso_jetpack_module_toggle_activated' );
+			this.recordTracksEvent( 'calypso_jetpack_module_toggle', 'on' );
 			this.props.activateModule( this.props.siteId, this.props.moduleSlug );
 		} else {
-			this.recordTracksEvent( 'calypso_jetpack_module_toggle_deactivated' );
+			this.recordTracksEvent( 'calypso_jetpack_module_toggle', 'off' );
 			this.props.deactivateModule( this.props.siteId, this.props.moduleSlug );
 		}
 	};
 
-	recordTracksEvent = name => {
+	recordTracksEvent = ( name, status ) => {
 		const tracksProps = {
 			module: this.props.moduleSlug,
 			path: this.props.path,
+			toggled: status,
 		};
 
 		this.props.recordTracksEvent( name, tracksProps );

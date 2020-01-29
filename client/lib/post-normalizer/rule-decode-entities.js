@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,6 +19,9 @@ export default function decodeEntities( post, fields = DEFAULT_FIELDS ) {
 			post[ prop ] = decode( post[ prop ] );
 		}
 	} );
+
+	// Sometimes titles are double-encoded, so run again to be sure
+	post.title = decode( post.title );
 
 	if ( post.parent && post.parent.title ) {
 		post.parent.title = decode( post.parent.title );

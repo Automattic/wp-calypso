@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import page from 'page';
 import { identity, noop } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import classnames from 'classnames';
 
 /**
@@ -24,7 +22,7 @@ import isHappychatAvailable from 'state/happychat/selectors/is-happychat-availab
 import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-happychat-connection-uninitialized';
 import { initConnection } from 'state/happychat/connection/actions';
 import { openChat } from 'state/happychat/ui/actions';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 export class HappychatButton extends Component {
 	static propTypes = {

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,13 +6,12 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { concat, without, isEmpty, find } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import Popover from 'components/popover';
@@ -280,7 +278,4 @@ const mapDispatchToProps = dispatch => ( {
 	},
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ActionTypeSelector ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ActionTypeSelector ) );

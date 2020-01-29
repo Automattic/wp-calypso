@@ -1,0 +1,45 @@
+{
+	"name": "@automattic/components",
+	"version": "1.0.0-alpha.1",
+	"description": "Automattic Components",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/components"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"files": [
+		"dist",
+		"types",
+		"src"
+	],
+	"types": "types",
+	"dependencies": {
+		"classnames": "^2.2.6",
+		"gridicons": "^3.3.1",
+		"lodash": "^4.17.15",
+		"prop-types": "^15.7.2",
+		"react": "^16.8.3",
+		"react-dom": "^16.8.3",
+		"react-modal": "^3.8.1"
+	},
+	"scripts": {
+		"clean": "npx rimraf dist types",
+		"prepublish": "npm run clean",
+		"prepare": "transpile && tsc && copy-assets"
+	}
+}

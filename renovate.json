@@ -3,25 +3,68 @@
 	"packageRules": [
 		{
 			"paths": [ "packages/**" ],
-			"packagePatterns": ["*"],
-			"groupName": "calypso-packages",
+			"packagePatterns": [ "*" ],
 			"rangeStrategy": "replace"
 		},
 		{
-			"packagePatterns": [ "^@wordpress" ],
-			"groupName": "wordpress-monorepo",
-			"separateMajorMinor": false
+			"extends": "monorepo:wordpress",
+			"separateMajorMinor": false,
+			"prPriority": 2,
+			"reviewers": [
+				"@Automattic/cylon",
+				"@Automattic/ganon",
+				"@Automattic/luna"
+			]
+		},
+		{
+			"extends": "monorepo:babel",
+			"prPriority": 1
+		},
+		{
+			"extends": "monorepo:lodash",
+			"prPriority": 1
+		},
+		{
+			"extends": "monorepo:react",
+			"prPriority": 1
+		},
+		{
+			"packagePatterns": [ "^redux$", "^react-redux$" ],
+			"prPriority": 1
+		},
+		{
+			"packageName": "typescript",
+			"prPriority": 1
+		},
+		{
+			"groupName": "Type definitions",
+			"packagePatterns": [ "^@types/" ],
+			"prPriority": 1
+		},
+		{
+			"packagePatterns": [ "^webpack" ],
+			"prPriority": 1
+		},
+		{
+			"packageName": "tinymce",
+			"allowedVersions": "^4"
+		},
+		{
+			"extends": "monorepo:storybook",
+			"prPriority": 1
 		}
 	],
 	"statusCheckVerify": true,
 	"ignoreDeps": [ "jquery" ],
-	"labels": [ "Framework", "[Type] Task", "[Status] Needs Review" ],
+	"labels": [ "Framework", "[Type] Task" ],
 	"lockFileMaintenance": {
 		"enabled": true,
 		"schedule": "every weekday"
 	},
-	"prConcurrentLimit": 0,
-	"prHourlyLimit": 50,
+	"prConcurrentLimit": 10,
+	"prHourlyLimit": 6,
 	"semanticCommits": true,
-	"semanticCommitType": "chore"
+	"semanticCommitType": "chore",
+	"masterIssue": true,
+	"masterIssueTitle": "Renovate Dependency Updates"
 }

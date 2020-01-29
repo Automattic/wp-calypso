@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AppsBadge should render 1`] = `
+<figure
+  className="get-apps__app-badge ios-app-badge"
+>
+  <a
+    href="https://wordpress.com"
+    onClick={[Function]}
+    rel="noopener noreferrer"
+    target="_blank"
+  >
+    <img
+      alt="titleText"
+      src="/calypso/images/me/get-apps-ios-store.svg"
+      title="titleText"
+    />
+  </a>
+</figure>
+`;

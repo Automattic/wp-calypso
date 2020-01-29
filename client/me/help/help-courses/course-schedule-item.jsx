@@ -1,19 +1,16 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card, Button } from '@automattic/components';
 import analytics from 'lib/analytics';
-import Button from 'components/button';
 
 export default localize( props => {
 	const { date, registrationUrl, isBusinessPlanUser, translate } = props;

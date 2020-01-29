@@ -1,67 +1,64 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
-import { curry } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import { closeAddCardDialog } from 'woocommerce/woocommerce-services/state/label-settings/actions';
 import { getLabelSettingsForm } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 import CreditCardForm from 'blocks/credit-card-form';
 import { addStoredCard } from 'state/stored-cards/actions';
 import { createCardToken } from 'lib/store-transactions';
 import analytics from 'lib/analytics';
+import { StripeHookProvider } from 'lib/stripe';
 
-class AddCardDialog extends Component {
-	static propTypes = {
-		siteId: PropTypes.number.isRequired,
-		isVisible: PropTypes.bool,
-		addStoredCard: PropTypes.func.isRequired,
-		closeAddCardDialog: PropTypes.func.isRequired,
-	};
-
-	constructor( props ) {
-		super( props );
-		this.createCardToken = curry( createCardToken )( 'card_add' );
-	}
-
-	recordFormSubmitEvent() {
+function AddCardDialog( {
+	siteId,
+	isVisible,
+	translate,
+	closeAddCardDialog: closeDialog,
+	addStoredCard: saveStoredCard,
+} ) {
+	const createCardAddToken = ( ...args ) => createCardToken( 'card_add', ...args );
+	const recordFormSubmitEvent = () =>
 		analytics.tracks.recordEvent( 'calypso_add_credit_card_form_submit' );
-	}
+	const onClose = () => closeDialog( siteId );
 
-	render() {
-		const { siteId, isVisible, translate } = this.props;
-
-		const onClose = () => this.props.closeAddCardDialog( siteId );
-
-		return (
-			<Dialog
-				additionalClassNames="add-credit-card-modal woocommerce wcc-root"
-				isVisible={ isVisible }
-				onClose={ onClose }
-			>
+	return (
+		<Dialog
+			additionalClassNames="add-credit-card-modal woocommerce wcc-root"
+			isVisible={ isVisible }
+			onClose={ onClose }
+		>
+			<StripeHookProvider configurationArgs={ { needs_intent: true } }>
 				<CreditCardForm
-					createCardToken={ this.createCardToken }
-					recordFormSubmitEvent={ this.recordFormSubmitEvent }
-					saveStoredCard={ this.props.addStoredCard }
+					createCardToken={ createCardAddToken }
+					recordFormSubmitEvent={ recordFormSubmitEvent }
+					saveStoredCard={ saveStoredCard }
 					successCallback={ onClose }
 					showUsedForExistingPurchasesInfo={ true }
 					heading={ translate( 'Add credit card' ) }
 					onCancel={ onClose }
 				/>
-			</Dialog>
-		);
-	}
+			</StripeHookProvider>
+		</Dialog>
+	);
 }
+
+AddCardDialog.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	isVisible: PropTypes.bool,
+	translate: PropTypes.func.isRequired,
+	addStoredCard: PropTypes.func.isRequired,
+	closeAddCardDialog: PropTypes.func.isRequired,
+};
 
 const mapStateToProps = ( state, { siteId } ) => {
 	const form = getLabelSettingsForm( state, siteId );
@@ -74,7 +71,4 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { closeAddCardDialog, addStoredCard }, dispatch );
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( AddCardDialog ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( AddCardDialog ) );

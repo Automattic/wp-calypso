@@ -24,10 +24,7 @@ export default trackingTool => EnhancedComponent => {
 		}
 	}
 
-	return connect(
-		null,
-		{
-			loadTrackingTool,
-		}
-	)( WithTrackingTool );
+	return connect( null, {
+		loadTrackingTool,
+	} )( WithTrackingTool );
 };

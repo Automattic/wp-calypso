@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { omit, trim } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -134,7 +132,7 @@ const EditPackage = props => {
 			</FormFieldset>
 			<FormFieldset>
 				<FormLabel>
-					{ translate( 'Inner Dimensions (L x W x H) %(dimensionUnit)s', {
+					{ translate( 'Inner dimensions (L x W x H) %(dimensionUnit)s', {
 						args: { dimensionUnit },
 					} ) }
 				</FormLabel>
@@ -152,7 +150,7 @@ const EditPackage = props => {
 			{ isOuterDimensionsVisible ? (
 				<FormFieldset>
 					<FormLabel>
-						{ translate( 'Outer Dimensions (L x W x H) %(dimensionUnit)s', {
+						{ translate( 'Outer dimensions (L x W x H) %(dimensionUnit)s', {
 							args: { dimensionUnit },
 						} ) }
 					</FormLabel>

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,8 +7,8 @@ import { size, filter } from 'lodash';
 /*
  * Get the count of follows a user has
  *
- * @param  {Object}  state  Global state tree
- * @return {Integer} Follow count
+ * @param  {object}  state  Global state tree
+ * @returns {Integer} Follow count
  */
 const getReaderFollowsCount = state =>
 	Math.max(

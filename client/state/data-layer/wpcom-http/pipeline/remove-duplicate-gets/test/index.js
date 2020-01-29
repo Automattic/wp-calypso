@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -47,8 +45,8 @@ const postLike = {
 /**
  * Make a quick clone of an object for testing
  *
- * @param {Object} o object to shallow-clone
- * @returns {Object} cloned object
+ * @param {object} o object to shallow-clone
+ * @returns {object} cloned object
  */
 const cp = o => ( { ...o } );
 
@@ -62,7 +60,10 @@ describe( '#buildKey', () => {
 			[ { path: '/' }, { path: '/', query: undefined } ],
 			[ { path: '/' }, { path: '/', query: {} } ],
 			[ { path: '/' }, { path: '/', apiNamespace: undefined } ],
-			[ { path: '/', onSuccess: succeeder }, { path: '/', onSuccess: filler } ],
+			[
+				{ path: '/', onSuccess: succeeder },
+				{ path: '/', onSuccess: filler },
+			],
 		];
 
 		duplicates.forEach( ( [ a, b ] ) => expect( buildKey( a ) ).to.equal( buildKey( b ) ) );
@@ -70,10 +71,19 @@ describe( '#buildKey', () => {
 
 	test( 'should differentiate "unique" requests', () => {
 		const uniques = [
-			[ { path: '/', apiNamespace: 'wp/v1' }, { path: '/', apiNamespace: 'wpcom/v1' } ],
-			[ { path: '/', apiNamespace: 'wp/v1' }, { path: '/', apiVersion: 'wp/v1' } ],
+			[
+				{ path: '/', apiNamespace: 'wp/v1' },
+				{ path: '/', apiNamespace: 'wpcom/v1' },
+			],
+			[
+				{ path: '/', apiNamespace: 'wp/v1' },
+				{ path: '/', apiVersion: 'wp/v1' },
+			],
 			[ { path: '/' }, { path: '/a' } ],
-			[ { path: '/', query: { id: 1 } }, { path: '/', query: { id: 2 } } ],
+			[
+				{ path: '/', query: { id: 1 } },
+				{ path: '/', query: { id: 2 } },
+			],
 		];
 
 		uniques.forEach( ( [ a, b ] ) => expect( buildKey( a ) ).to.not.equal( buildKey( b ) ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -77,9 +75,6 @@ GSuiteCancellationSurvey.propTypes = {
 	surveyAnswerText: PropTypes.string,
 };
 
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-)( localize( GSuiteCancellationSurvey ) );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( GSuiteCancellationSurvey ) );

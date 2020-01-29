@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,13 +6,13 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { EDITOR_TYPE_RECEIVE } from 'state/action-types';
+import { EDITOR_TYPE_SET } from 'state/action-types';
 import selectedEditor from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should add a new given site ID key and its value', () => {
 		const state = selectedEditor( deepFreeze( {} ), {
-			type: EDITOR_TYPE_RECEIVE,
+			type: EDITOR_TYPE_SET,
 			siteId: 2916284,
 			editor: 'gutenberg',
 		} );
@@ -29,7 +27,7 @@ describe( 'reducer', () => {
 			2916284: 'classic',
 		} );
 		const state = selectedEditor( original, {
-			type: EDITOR_TYPE_RECEIVE,
+			type: EDITOR_TYPE_SET,
 			siteId: 2916284,
 			editor: 'gutenberg',
 		} );

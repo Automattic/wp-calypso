@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -13,4 +11,5 @@ export default {
 	},
 
 	excludeStep: jest.fn(),
+	resetExcludedSteps: jest.fn(),
 };

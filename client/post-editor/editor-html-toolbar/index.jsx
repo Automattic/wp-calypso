@@ -1,16 +1,13 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get, map, reduce, throttle } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { Env } from 'tinymce/tinymce';
 
 /**
@@ -24,7 +21,8 @@ import { getMimePrefix } from 'lib/media/utils';
 import MediaValidationStore from 'lib/media/validation-store';
 import { isWithinBreakpoint } from 'lib/viewport';
 import markup from 'post-editor/media-modal/markup';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import {
 	fieldAdd,
 	fieldRemove,
@@ -34,13 +32,14 @@ import {
 import { blockSave } from 'state/ui/editor/save-blockers/actions';
 import AddImageDialog from './add-image-dialog';
 import AddLinkDialog from './add-link-dialog';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import ContactFormDialog from 'components/tinymce/plugins/contact-form/dialog';
 import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
 import EditorMediaModal from 'post-editor/editor-media-modal';
 import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
 import config from 'config';
 import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dialog';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -506,7 +505,7 @@ export class EditorHtmlToolbar extends Component {
 	isTagOpen = tag => -1 !== this.state.openTags.indexOf( tag );
 
 	renderAddEverythingDropdown = () => {
-		const { translate } = this.props;
+		const { translate, canUserUploadFiles } = this.props;
 
 		const insertContentClasses = classNames( 'editor-html-toolbar__insert-content-dropdown', {
 			'is-visible': this.state.showInsertContentMenu,
@@ -522,7 +521,7 @@ export class EditorHtmlToolbar extends Component {
 					<span data-e2e-insert-type="media">{ translate( 'Media' ) }</span>
 				</button>
 
-				{ config.isEnabled( 'external-media/google-photos' ) && (
+				{ config.isEnabled( 'external-media/google-photos' ) && canUserUploadFiles && (
 					<button
 						className="editor-html-toolbar__insert-content-dropdown-item"
 						onClick={ this.openGoogleModal }
@@ -534,7 +533,7 @@ export class EditorHtmlToolbar extends Component {
 					</button>
 				) }
 
-				{ config.isEnabled( 'external-media/free-photo-library' ) && (
+				{ config.isEnabled( 'external-media/free-photo-library' ) && canUserUploadFiles && (
 					<button
 						className="editor-html-toolbar__insert-content-dropdown-item"
 						onClick={ this.openPexelsModal }
@@ -712,6 +711,7 @@ const mapStateToProps = state => ( {
 	contactForm: get( state, 'ui.editor.contactForm', {} ),
 	isDropZoneVisible: isDropZoneVisible( state ),
 	site: getSelectedSite( state ),
+	canUserUploadFiles: canCurrentUser( state, getSelectedSiteId( state ), 'upload_files' ),
 } );
 
 const mapDispatchToProps = {
@@ -725,4 +725,4 @@ const mapDispatchToProps = {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)( localize( EditorHtmlToolbar ) );
+)( localize( withLocalizedMoment( EditorHtmlToolbar ) ) );

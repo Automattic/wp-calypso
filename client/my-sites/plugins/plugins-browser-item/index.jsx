@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { flowRight as compose, includes } from 'lodash';
 
 /**
@@ -12,7 +12,7 @@ import { flowRight as compose, includes } from 'lodash';
  */
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import PluginsStore from 'lib/plugins/store';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import Rating from 'components/rating';
 import analytics from 'lib/analytics';
 import { getSelectedSiteId } from 'state/ui/selectors';

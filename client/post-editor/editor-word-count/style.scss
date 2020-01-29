@@ -3,11 +3,11 @@
 		right: 0;
 		bottom: 0;
 	padding: 6px 8px 8px;
-	background-color: rgba( var( --color-white-rgb ), 0.92 );
+	background-color: rgba( var( --color-surface-rgb ), 0.92 );
 	text-transform: uppercase;
 	font-size: 11px;
 	line-height: 1;
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 	pointer-events: none;
 	z-index: z-index( 'root', '.editor-word-count' );
 
@@ -17,9 +17,9 @@
 }
 
 .editor-word-count__is-selected-text {
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 }
 
 .editor-word-count__separator {
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 }

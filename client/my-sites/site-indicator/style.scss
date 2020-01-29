@@ -48,22 +48,17 @@
 
 	.is-update & {
 		background: var( --color-warning );
-		color: var( --color-white );
-	}
-
-	.is-warning & {
-		background: var( --color-warning );
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 
 	.is-error & {
 		background: var( --color-error );
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 
 	.is-expanded & {
 		.accessible-focus &:focus {
-			border: 1px dotted var( --color-white );
+			border: 1px dotted var( --color-surface );
 			&::before {
 				top: 6px;
 				left: 6px;
@@ -84,7 +79,7 @@
 
 // Displayed on top of a Site element once the user clicks on the button
 .site-indicator__message {
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 	font-size: 12px;
 	line-height: 1.4;
 	padding: 5px 16px;
@@ -96,7 +91,6 @@
 	display: flex;
 	justify-content: space-between;
 
-	.is-warning &,
 	.is-update & {
 		background: var( --color-warning );
 	}
@@ -110,19 +104,27 @@
 	vertical-align: middle;
 
 	// Links within the action message
-	a,
+	a:link,
+	a.is-borderless.button:hover,
 	a:visited,
 	.button.is-borderless.is-scary,
 	.site-indicator__action-button {
-		border-bottom: 1px solid rgba( 255, 255, 255, 0.6 );
-		border-radius: 0;
-		color: var( --color-white );
-		text-decoration: none;
+		color: var( --color-text-inverted );
+		text-decoration: underline;
 	}
 
 	a > .gridicons-external {
 		// TODO: improve the styles of ExternalLink to use the relative em units
 		margin-left: 0.5em;
 		position: static;
+	}
+
+	> span {
+		display: flex;
+		flex-direction: column;
+
+		.button.is-borderless.is-scary {
+			align-self: baseline;
+		}
 	}
 }

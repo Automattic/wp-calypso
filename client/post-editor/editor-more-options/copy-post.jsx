@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -19,8 +17,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import AccordionSection from 'components/accordion/section';
-import Button from 'components/button';
-import Dialog from 'components/dialog';
+import { Button, Dialog } from '@automattic/components';
 import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import PostSelector from 'my-sites/post-selector';
@@ -45,8 +42,7 @@ class EditorMoreOptionsCopyPost extends Component {
 
 	isPost = () => 'post' === this.props.type;
 
-	openDialog = event => {
-		event.preventDefault();
+	openDialog = () => {
 		this.setState( {
 			showDialog: true,
 		} );
@@ -100,14 +96,13 @@ class EditorMoreOptionsCopyPost extends Component {
 							? translate( "Pick a post and we'll copy the title, content, tags and categories." )
 							: translate( "Pick a page and we'll copy the title and content." )
 					}
-				>
-					<Button borderless compact onClick={ this.openDialog }>
-						<Gridicon icon="clipboard" />
-						{ this.isPost()
-							? translate( 'Select a post to copy' )
-							: translate( 'Select a page to copy' ) }
-					</Button>
-				</EditorDrawerLabel>
+				/>
+				<Button borderless compact onClick={ this.openDialog }>
+					<Gridicon icon="clipboard" />
+					{ this.isPost()
+						? translate( 'Select a post to copy' )
+						: translate( 'Select a page to copy' ) }
+				</Button>
 				<Dialog
 					isVisible={ showDialog }
 					buttons={ buttons }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,13 +7,18 @@ import { has, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { EDITOR_TYPE_FETCH, EDITOR_TYPE_RECEIVE, EDITOR_TYPE_UPDATE } from 'state/action-types';
+import {
+	EDITOR_TYPE_REQUEST,
+	EDITOR_TYPE_SET,
+	EDITOR_TYPE_UPDATE,
+	GUTENBERG_OPT_IN_OUT_SET,
+} from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import { replaceHistory } from 'state/ui/actions';
 
-const fetchSelectedEditor = action =>
+const fetchGutenbergOptInData = action =>
 	http(
 		{
 			method: 'GET',
@@ -25,13 +28,17 @@ const fetchSelectedEditor = action =>
 		action
 	);
 
-const setSelectedEditor = ( { siteId }, { editor_web: editor } ) => dispatch => {
-	dispatch( { type: EDITOR_TYPE_RECEIVE, siteId, editor } );
+const setGutenbergOptInData = (
+	{ siteId },
+	{ editor_web: editor, opt_in: optIn, opt_out: optOut }
+) => dispatch => {
+	dispatch( { type: EDITOR_TYPE_SET, siteId, editor } );
+	dispatch( { type: GUTENBERG_OPT_IN_OUT_SET, siteId, optIn, optOut } );
 };
 
-const dispatchFetchSelectedEditor = dispatchRequest( {
-	fetch: fetchSelectedEditor,
-	onSuccess: setSelectedEditor,
+const dispatchFetchGutenbergOptInData = dispatchRequest( {
+	fetch: fetchGutenbergOptInData,
+	onSuccess: setGutenbergOptInData,
 	onError: noop,
 } );
 
@@ -54,7 +61,7 @@ const setSelectedEditorAndRedirect = (
 	{ siteId, redirectUrl },
 	{ editor_web: editor }
 ) => dispatch => {
-	dispatch( { type: EDITOR_TYPE_RECEIVE, siteId, editor } );
+	dispatch( { type: EDITOR_TYPE_SET, siteId, editor } );
 
 	if ( ! redirectUrl ) {
 		return;
@@ -72,6 +79,6 @@ const dispatchUpdateSelectedEditor = dispatchRequest( {
 } );
 
 registerHandlers( 'state/data-layer/wpcom/sites/gutenberg/index.js', {
-	[ EDITOR_TYPE_FETCH ]: [ dispatchFetchSelectedEditor ],
+	[ EDITOR_TYPE_REQUEST ]: [ dispatchFetchGutenbergOptInData ],
 	[ EDITOR_TYPE_UPDATE ]: [ dispatchUpdateSelectedEditor ],
 } );

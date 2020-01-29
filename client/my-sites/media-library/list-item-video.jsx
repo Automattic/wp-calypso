@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import photon from 'photon';
  * Internal dependencies
  */
 import ListItemFileDetails from './list-item-file-details';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { MEDIA_IMAGE_THUMBNAIL } from 'lib/media/constants';
 
 /**

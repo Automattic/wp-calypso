@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import {
@@ -25,11 +23,17 @@ import {
 import HappychatButton from 'components/happychat/button';
 import HappychatConnection from 'components/happychat/connection-connected';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { preventWidows } from 'lib/formatting';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+/**
+ * Image dependencies
+ */
+import supportImage from 'assets/images/illustrations/dotcom-support.svg';
 
 export class HappinessSupport extends Component {
 	static propTypes = {
@@ -64,15 +68,17 @@ export class HappinessSupport extends Component {
 		const components = {
 			strong: <strong />,
 		};
-		return isJetpackFreePlan
-			? translate(
-					'{{strong}}Need help?{{/strong}} Search our support site to find out about your site, your account, and how to make the most of WordPress.',
-					{ components }
-			  )
-			: translate(
-					'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your account.',
-					{ components }
-			  );
+		return preventWidows(
+			isJetpackFreePlan
+				? translate(
+						'{{strong}}Need help?{{/strong}} Search our support site to find out about your site, your account, and how to make the most of WordPress.',
+						{ components }
+				  )
+				: translate(
+						'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your account.',
+						{ components }
+				  )
+		);
 	}
 
 	getSupportButtons() {
@@ -130,7 +136,7 @@ export class HappinessSupport extends Component {
 		return (
 			<div className="happiness-support__image">
 				<div className="happiness-support__icon">
-					<img alt="" src="/calypso/images/illustrations/dotcom-support.svg" />
+					<img alt="" src={ supportImage } />
 				</div>
 			</div>
 		);

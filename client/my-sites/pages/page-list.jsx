@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { flowRight, isEqual, size, without } from 'lodash';
 
 /**
@@ -34,7 +32,7 @@ import {
 import { getSite } from 'state/sites/selectors';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { withLocalizedMoment } from 'components/localized-moment';
 
 function preloadEditor() {
@@ -427,8 +425,4 @@ const mapState = ( state, { query, siteId } ) => ( {
 	newPageLink: getEditorUrl( state, siteId, null, 'page' ),
 } );
 
-const ConnectedPages = flowRight(
-	connect( mapState ),
-	localize,
-	withLocalizedMoment
-)( Pages );
+const ConnectedPages = flowRight( connect( mapState ), localize, withLocalizedMoment )( Pages );

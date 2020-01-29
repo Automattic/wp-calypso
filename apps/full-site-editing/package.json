@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/full-site-editing",
-	"version": "1.0.0-alpha.0",
-	"description": "Plugin and theme enabling full site editing with the block editor.",
+	"version": "0.18.2",
+	"description": "Plugin for full site editing with the block editor.",
 	"sideEffects": true,
 	"repository": {
 		"type": "git",
@@ -9,7 +9,7 @@
 		"directory": "apps/full-site-editing"
 	},
 	"private": true,
-	"author": "Automattic, Inc.",
+	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
@@ -22,28 +22,29 @@
 		"posts-list-block": "calypso-build --source='posts-list-block'",
 		"dev:posts-list-block": "npm run posts-list-block",
 		"build:posts-list-block": "NODE_ENV=production npm run posts-list-block",
+		"blog-posts-block-editor": "calypso-build --source='blog-posts-block/editor'",
+		"blog-posts-block-view": "calypso-build --source='blog-posts-block/view'",
+		"blog-posts-block": "npm-run-all --parallel blog-posts-block-*",
+		"dev:blog-posts-block": "npm run blog-posts-block",
+		"build:blog-posts-block": "NODE_ENV=production npm run blog-posts-block",
 		"starter-page-templates": "calypso-build --source='starter-page-templates'",
 		"dev:starter-page-templates": "npm run starter-page-templates",
 		"build:starter-page-templates": "NODE_ENV=production npm run starter-page-templates",
-		"theme": "calypso-build --source='theme'",
-		"dev:theme": "npm run theme",
-		"build:theme": "NODE_ENV=production npm run theme",
-		"dev": "rimraf dist && npm-run-all --parallel dev:*",
-		"build": "rimraf dist && npm-run-all --parallel build:*"
+		"global-styles": "calypso-build --source='global-styles'",
+		"build:global-styles": "NODE_ENV=production npm run global-styles",
+		"dev:global-styles": "npm run global-styles",
+		"dev": "node bin/npm-run-build.js --dev",
+		"build": "node bin/npm-run-build.js --build",
+		"test:unit": "npx wp-scripts test-unit-js --config='jest.config.js'",
+		"test:unit:help": "npx wp-scripts test-unit-js --config='jest.config.js' --help",
+		"test:unit:watch": "npx wp-scripts test-unit-js --config='jest.config.js' --watch",
+		"clean": "npx rimraf dist full-site-editing-plugin/*/dist",
+		"prebuild": "npm run clean",
+		"predev": "npm run clean",
+		"sync:blog-posts-block": "./bin/sync-blog-posts-block.sh",
+		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh"
 	},
 	"dependencies": {
-		"@wordpress/api-fetch": "^3.1.2",
-		"@wordpress/blocks": "^6.2.3",
-		"@wordpress/components": "^7.3.0",
-		"@wordpress/compose": "^3.2.0",
-		"@wordpress/data": "^4.4.0",
-		"@wordpress/edit-post": "^3.3.4",
-		"@wordpress/editor": "^9.2.4",
-		"@wordpress/element": "^2.3.0",
-		"@wordpress/i18n": "^3.3.0",
-		"@wordpress/plugins": "^2.2.0",
-		"@wordpress/url": "^2.5.0",
-		"classnames": "^2.2.6",
-		"lodash": "^4.17.11"
+		"classnames": "2.2.6"
 	}
 }

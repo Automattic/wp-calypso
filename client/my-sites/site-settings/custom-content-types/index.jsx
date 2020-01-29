@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
@@ -127,7 +125,7 @@ class CustomContentTypes extends Component {
 
 	renderBlogPostSettings() {
 		const { translate } = this.props;
-		const fieldLabel = translate( 'Blog posts' );
+		const fieldLabel = translate( 'Blog Posts' );
 		const fieldDescription = translate( 'On blog pages, the number of posts to show per page.' );
 
 		return (

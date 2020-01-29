@@ -1,4 +1,4 @@
-/** @format */
+
 
 .card.nps-survey {
 	margin: 0;
@@ -39,6 +39,10 @@
 	transition: opacity 0.2s ease-in;
 }
 
+.button.nps-survey__finish-button:last-child {
+	margin-bottom: 9px;
+}
+
 .nps-survey.is-recommendation-selected {
 	.nps-survey__buttons {
 		//height: 75px;
@@ -54,8 +58,8 @@
 
 .nps-survey__recommendation-select-wrapper {
 	background-color: var( --color-neutral-0 );
-	border-top: 1px solid var( --color-neutral-100 );
-	border-bottom: 1px solid var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-10 );
+	border-bottom: 1px solid var( --color-neutral-10 );
 	padding: 16px 0;
 	text-align: center;
 
@@ -93,7 +97,7 @@
 }
 
 .nps-survey__recommendation-option.is-selected {
-	color: var( --color-primary-400 );
+	color: var( --color-primary-40 );
 	font-weight: bold;
 }
 
@@ -114,4 +118,16 @@
 }
 .nps-survey__close-button.button.is-borderless {
 	color: var( --color-text-subtle );
+}
+
+.nps-survey__promotion {
+	padding: 24px 48px 8px 24px;
+
+	p {
+		margin: 10px 0 0;
+	}
+
+	p:first-child {
+		margin-top: 0;
+	}
 }

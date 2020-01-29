@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,7 +10,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
@@ -127,13 +126,13 @@ class PaymentMethodBACS extends Component {
 					/>
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>{ translate( 'Account Details' ) }</FormLabel>
+					<FormLabel>{ translate( 'Account details' ) }</FormLabel>
 					{ translate(
 						"These are the details of the bank account you'd like your customers to pay in to."
 					) }
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>{ translate( 'Account Name' ) }</FormLabel>
+					<FormLabel>{ translate( 'Account name' ) }</FormLabel>
 					<FormTextInput
 						name="account_name"
 						onChange={ this.onEditAccountHandler }
@@ -144,7 +143,7 @@ class PaymentMethodBACS extends Component {
 					</FormSettingExplanation>
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>{ translate( 'Bank Name' ) }</FormLabel>
+					<FormLabel>{ translate( 'Bank name' ) }</FormLabel>
 					<FormTextInput
 						name="bank_name"
 						onChange={ this.onEditAccountHandler }
@@ -152,7 +151,7 @@ class PaymentMethodBACS extends Component {
 					/>
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>{ translate( 'Routing Number' ) }</FormLabel>
+					<FormLabel>{ translate( 'Routing number' ) }</FormLabel>
 					<FormPasswordInput
 						name="sort_code"
 						onChange={ this.onEditAccountHandler }
@@ -160,7 +159,7 @@ class PaymentMethodBACS extends Component {
 					/>
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>{ translate( 'Account Number' ) }</FormLabel>
+					<FormLabel>{ translate( 'Account number' ) }</FormLabel>
 					<FormPasswordInput
 						name="account_number"
 						onChange={ this.onEditAccountHandler }

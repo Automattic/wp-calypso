@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -6,8 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import escapeRegexp from 'escape-string-regexp';
-import { reverse, sortBy, trimStart, isEmpty } from 'lodash';
+import { escapeRegExp, reverse, sortBy, trimStart, isEmpty } from 'lodash';
 import page from 'page';
 import classnames from 'classnames';
 
@@ -47,7 +45,7 @@ class FollowingManageSubscriptions extends Component {
 			return follows;
 		}
 
-		const phraseRe = new RegExp( escapeRegexp( query ), 'i' );
+		const phraseRe = new RegExp( escapeRegExp( query ), 'i' );
 
 		return follows.filter( follow => {
 			const feed = follow.feed;
@@ -148,6 +146,7 @@ class FollowingManageSubscriptions extends Component {
 								? translate( 'Sorry, no followed sites match {{italic}}%s.{{/italic}}', {
 										components: { italic: <i /> },
 										args: query,
+										comment: '%s is the user-entered search string. For example: "bananas"',
 								  } )
 								: translate( 'Sorry, no followed sites found.' ) }
 						</span>

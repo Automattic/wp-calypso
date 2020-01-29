@@ -1,13 +1,12 @@
 /**
  * External depedencies
  *
- * @format
  */
 
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
@@ -15,7 +14,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import accept from 'lib/accept';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { decodeEntities, removep } from 'lib/formatting';
 import {
 	deleteReviewReply,
@@ -159,18 +158,15 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	( state, props ) => {
-		const reply = getReviewReply( state, props.reviewId, props.replyId );
-		const isEditing = props.replyId === getCurrentlyEditingReviewReplyId( state );
-		const replyEdits = getReviewReplyEdits( state );
-		const editContent = replyEdits.content || '';
-		return {
-			reply,
-			isEditing,
-			replyEdits,
-			editContent,
-		};
-	},
-	mapDispatchToProps
-)( localize( ReviewReply ) );
+export default connect( ( state, props ) => {
+	const reply = getReviewReply( state, props.reviewId, props.replyId );
+	const isEditing = props.replyId === getCurrentlyEditingReviewReplyId( state );
+	const replyEdits = getReviewReplyEdits( state );
+	const editContent = replyEdits.content || '';
+	return {
+		reply,
+		isEditing,
+		replyEdits,
+		editContent,
+	};
+}, mapDispatchToProps )( localize( ReviewReply ) );

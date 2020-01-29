@@ -1,0 +1,8 @@
+# Diagram representing the different cart types floating around
+# checkout and the relationships among them.
+digraph {
+    void -> ResponseCart [label="  GET"]
+    ResponseCart:w -> RequestCart:nw [xlabel="prepare  "]
+    RequestCart:ne -> ResponseCart:s [xlabel="POST "]
+    ResponseCart -> WPCOMCart [label="  translate"]
+}

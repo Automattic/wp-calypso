@@ -1,4 +1,3 @@
-/** @format */
 export const dummyData = {
 	email: 'dummytest@example.com',
 	email_validated: false,

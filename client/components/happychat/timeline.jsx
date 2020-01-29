@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,6 +15,11 @@ import autoscroll from './autoscroll';
 import Emojify from 'components/emojify';
 import scrollbleed from './scrollbleed';
 import { addSchemeIfMissing, setUrlScheme } from './url';
+
+/**
+ * Style dependencies
+ */
+import './timeline.scss';
 
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:happychat:timeline' );

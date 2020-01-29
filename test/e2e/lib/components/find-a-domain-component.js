@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,10 +10,12 @@ import AsyncBaseContainer from '../async-base-container';
 import * as slackNotifier from '../slack-notifier';
 import * as driverHelper from '../driver-helper.js';
 
+const searchInputSelector = By.className( 'search__input' );
+
 export default class FindADomainComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.register-domain-step' ) );
-		this.declineGoogleAppsLinkSelector = By.className( 'gsuite-dialog__checkout-button' );
+		this.declineGoogleAppsLinkSelector = By.className( 'gsuite-upsell-card__skip-button' );
 	}
 
 	async waitForResults() {
@@ -43,8 +43,11 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 		);
 	}
 
+	async getSearchInputValue() {
+		return await this.driver.findElement( searchInputSelector ).getAttribute( 'value' );
+	}
+
 	async searchForBlogNameAndWaitForResults( blogName ) {
-		const searchInputSelector = By.className( 'search__input' );
 		await driverHelper.setWhenSettable( this.driver, searchInputSelector, blogName );
 		return await this.waitForResults();
 	}
@@ -110,27 +113,6 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 			//Sometimes the first click doesn't work. Clicking again
 			await driverHelper.clickWhenClickable( this.driver, this.declineGoogleAppsLinkSelector );
 		}
-	}
-
-	selectAddEmailForGoogleApps() {
-		const googleAppsFieldsSelector = By.css( 'fieldset.gsuite-dialog__user-fields' );
-		this.waitForGoogleApps();
-		driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '.gsuite-dialog__continue-button' ),
-			this.explicitWaitMS
-		);
-		this.driver.wait(
-			until.elementLocated( googleAppsFieldsSelector ),
-			this.explicitWaitMS,
-			'Could not locate the google apps information fieldset'
-		);
-		const googleAppsFieldsElement = this.driver.findElement( googleAppsFieldsSelector );
-		return this.driver.wait(
-			until.elementIsVisible( googleAppsFieldsElement ),
-			this.explicitWaitMS,
-			'Could not see the google apps information fieldset displayed, check it is visible'
-		);
 	}
 
 	selectPreviousStep() {

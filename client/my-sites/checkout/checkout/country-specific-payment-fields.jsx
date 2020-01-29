@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -14,6 +13,8 @@ import { find, isEmpty, includes, get } from 'lodash';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 import { StateSelect, Input, HiddenInput } from 'my-sites/domains/components/form';
 import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'lib/checkout/constants';
+import InfoPopover from 'components/info-popover';
+import { paymentMethodName } from 'lib/cart-values';
 
 export class CountrySpecificPaymentFields extends Component {
 	static propTypes = {
@@ -81,6 +82,21 @@ export class CountrySpecificPaymentFields extends Component {
 		this.setState( { userSelectedPhoneCountryCode: countryCode } );
 	};
 
+	getPanNumberPopover = () => {
+		const { translate } = this.props;
+		const popoverText = translate( 'Paying with %(indiaPaymentMethods)s requires a PAN number.', {
+			comment: 'indiaPaymentMethods are local payment methods in India.',
+			args: {
+				indiaPaymentMethods: paymentMethodName( 'netbanking' ),
+			},
+		} );
+		return (
+			<InfoPopover position="right" className="checkout__pan-number-popover">
+				{ popoverText }
+			</InfoPopover>
+		);
+	};
+
 	onFieldChange = event => this.props.handleFieldChange( event.target.name, event.target.value );
 
 	render() {
@@ -113,8 +129,12 @@ export class CountrySpecificPaymentFields extends Component {
 				} ) }
 
 				{ this.createField( 'pan', Input, {
-					label: translate( 'PAN Number', {
+					placeholder: ' ',
+					label: translate( 'PAN Number {{panNumberPopover/}}', {
 						comment: 'India PAN number ',
+						components: {
+							panNumberPopover: this.getPanNumberPopover(),
+						},
 					} ),
 				} ) }
 

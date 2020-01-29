@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -60,9 +58,9 @@ export function selectedAdvancedSettings( state = {}, action ) {
 
 /**
  * Tracks the state of the exporter for each site ID
- * @param  {Object} state  The current state
- * @param  {Object} action Action object
- * @return {Object}        Updated state
+ * @param  {object} state  The current state
+ * @param  {object} action Action object
+ * @returns {object}        Updated state
  */
 export function exportingState( state = {}, { type, siteId } ) {
 	switch ( type ) {
@@ -92,9 +90,9 @@ export function exportingState( state = {}, { type, siteId } ) {
 
 /**
  * Tracks whether the advanced settings for a site are currently being fetched
- * @param  {Object} state  Current global state tree
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current global state tree
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function fetchingAdvancedSettings( state = {}, action ) {
 	switch ( action.type ) {
@@ -113,9 +111,9 @@ export function fetchingAdvancedSettings( state = {}, action ) {
 
 /**
  * Tracks available advanced settings for sites.
- * @param  {Object} state  Current global state tree
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current global state tree
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function advancedSettings( state = {}, action ) {
 	switch ( action.type ) {

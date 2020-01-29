@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -68,13 +66,13 @@ export class CartItems extends React.Component {
 			return;
 		}
 
-		let items = getAllCartItemsSorted( cart ).map( cartItem => {
+		let items = getAllCartItemsSorted( cart ).map( ( cartItem, index ) => {
 			return (
 				<CartItem
 					cart={ cart }
 					cartItem={ cartItem }
 					selectedSite={ this.props.selectedSite }
-					key={ cartItem.product_id + '-' + cartItem.meta }
+					key={ `${ cartItem.product_id }-${ cartItem.meta }-${ index }` }
 				/>
 			);
 		} );

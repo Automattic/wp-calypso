@@ -1,7 +1,7 @@
 .activity-log__threat-alert {
 	padding: 8px 0;
 	font-size: 13px;
-	box-shadow: 0 -1px 0 rbga( var( --color-neutral-100 ), 0.5 );
+	box-shadow: 0 -1px 0 rbga( var( --color-neutral-10 ), 0.5 );
 
 	@include breakpoint( '>480px' ) {
 		font-size: 14px;
@@ -16,6 +16,7 @@
 	.activity-log-item__activity-icon {
 		margin-right: 16px;
 		padding: 7px;
+		width: 24px;
 
 		@include breakpoint( '>480px' ) {
 			padding-left: 8px;
@@ -50,7 +51,7 @@
 }
 
 .activity-log__threat-alert-header {
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 	width: 100%;
 }
 
@@ -67,7 +68,7 @@
 .activity-log__threat-alert-title {
 	padding-right: 16px;
 	font-weight: 500;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 
 	.activity-log__threat-alert-filename {
 		padding: 0 2px;
@@ -97,11 +98,47 @@
 .activity-log__threat-alert-time-since {
 	margin-left: 2px;
 	padding-left: 4px;
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 	font-weight: 400;
 
 	&::before {
 		// cdot three-per-em-space
 		content: '\00b7\2004';
 	}
+}
+
+.threat-alert__database-row {
+	box-shadow: none;
+	border-bottom: 1px solid #e1e2e2;
+	padding: 1rem 0 1rem 3rem;
+	margin-bottom: 0;
+}
+
+.threat-alert__database-row-icon {
+	display: inline-block;
+	float: left;
+}
+
+.threat-alert__database-row-content {
+	display: inline-block;
+}
+
+.threat-alert__database-row-action {
+	display: inline-block;
+	float: right;
+}
+
+.threat-alert__database-row-list {
+	margin: 1rem 0 0 1rem;
+}
+
+.threat-alert__database-row-info {
+	display: inline-block;
+	position: relative;
+	left: 0.3rem;
+	top: 0.15rem;
+}
+
+.activity-log__threat-alert-database .foldable-card__content {
+	padding: 0 !important;
 }

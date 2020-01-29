@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,7 +14,7 @@ import { isEnabled } from 'config';
  */
 import PluginSiteList from 'my-sites/plugins/plugin-site-list';
 import HeaderCake from 'components/header-cake';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import PluginMeta from 'my-sites/plugins/plugin-meta';
 import PluginsStore from 'lib/plugins/store';
 import PluginsLog from 'lib/plugins/log-store';
@@ -37,7 +35,6 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
 import getSelectedOrAllSitesWithPlugins from 'state/selectors/get-selected-or-all-sites-with-plugins';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
 import getToursHistory from 'state/ui/guided-tours/selectors/get-tours-history';
 import hasNavigated from 'state/selectors/has-navigated';
@@ -53,7 +50,7 @@ const SinglePlugin = createReactClass( {
 	_DEFAULT_PLUGINS_BASE_PATH: 'http://wordpress.org/plugins/',
 	mixins: [ PluginNotices ],
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( ! this.isFetched() ) {
 			this.props.wporgFetchPluginData( this.props.pluginSlug );
 		}
@@ -78,7 +75,7 @@ const SinglePlugin = createReactClass( {
 		}
 	},
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.refreshSitesAndPlugins( nextProps );
 	},
 
@@ -386,7 +383,6 @@ const SinglePlugin = createReactClass( {
 
 		return (
 			<MainComponent>
-				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
 				{ this.renderPageViewTracker() }
 				<SidebarNavigation />

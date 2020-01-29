@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -30,8 +28,8 @@ import { getPaymentMethodsEdits } from 'woocommerce/state/ui/payments/methods/se
 
 /**
  * Creates a list of actions required to save the currency settings.
- * @param {Object} state - Redux state
- * @param {Number} siteId - site ID
+ * @param {object} state - Redux state
+ * @param {number} siteId - site ID
  * @returns {Array} - actions required to save the currency, or an empty array
  */
 const getSaveCurrencySteps = ( state, siteId ) => {
@@ -68,8 +66,8 @@ const getSaveCurrencySteps = ( state, siteId ) => {
 
 /**
  * Creates a list of actions required to save each payment method. Checks if the methods have changed before saving them
- * @param {Object} state - Redux state
- * @param {Number} siteId - site ID
+ * @param {object} state - Redux state
+ * @param {number} siteId - site ID
  * @returns {Array} - actions required to save each payment method, or an empty array
  */
 const getSavePaymentMethodsSteps = ( state, siteId ) => {
@@ -112,7 +110,7 @@ const getSavePaymentMethodsSteps = ( state, siteId ) => {
 
 /**
  * Creates a list of all actions required to save the payment settings
- * @param {Object} state - Redux state
+ * @param {object} state - Redux state
  * @returns {Array} - action list steps
  */
 const getSaveSettingsActionListSteps = state => {
@@ -128,8 +126,8 @@ export default {
 	[ WOOCOMMERCE_PAYMENT_ACTION_LIST_CREATE ]: [
 		/**
 		 * Creates and executes a payments settings action list
-		 * @param {Object} store -
-		 * @param {Object} action - an action containing successAction and failureAction
+		 * @param {object} store -
+		 * @param {object} action - an action containing successAction and failureAction
 		 */
 		( store, action ) => {
 			const { successAction, failureAction } = action;

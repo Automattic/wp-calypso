@@ -2,7 +2,7 @@
 .promotions__form {
 	&.is-placeholder div {
 		@include placeholder();
-		background: var( --color-white );
+		background: var( --color-surface );
 		width: 720px;
 		margin-bottom: 8px;
 

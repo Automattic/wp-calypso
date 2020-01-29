@@ -1,40 +1,29 @@
 {
+	"extends": "@automattic/calypso-build/tsconfig",
 	"compilerOptions": {
-		// Target latest version of ECMAScript.
-		"target": "esnext",
-		// Search under node_modules for non-relative imports.
-		"moduleResolution": "node",
-		// Process & infer types from .js files.
-		"allowJs": true,
-		"jsx": "react",
-		// Don't emit; allow Babel to transform files.
-		"noEmit": true,
-		// Enable strictest settings like strictNullChecks & noImplicitAny.
-		"strict": true,
 		// Disallow features that require cross-file information for emit.
+		// Must be used with babel typescript
 		"isolatedModules": true,
-		// Import non-ES modules as default imports.
-		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"module": "es2015",
-		"baseUrl": ".",
+
 		"paths": {
 			"*": [ "*", "client/*", "server/*" ]
-		}
+		},
+		"baseUrl": "."
 	},
 	"include": [ "client", "server" ],
 	"exclude": [
-		"public",
-		"node_modules",
-		"**/node_modules/*",
-		"build",
-		"**/build/*",
 		"**/build-module/*",
 		"**/build-style/*",
+		"**/build/*",
 		"**/dist/*",
+		"**/node_modules/*",
+		"apps",
+		"build",
 		"cached-results.json",
-		"stats.json",
-		"server/bundlers/assets-*.json",
-		"server/devdocs/search-index.js"
+		"packages",
+		"public",
+		"server/bundler/assets*.json",
+		"server/devdocs/search-index.js",
+		"stats.json"
 	]
 }

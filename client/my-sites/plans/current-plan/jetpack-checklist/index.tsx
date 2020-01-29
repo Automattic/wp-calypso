@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import React, { Fragment, PureComponent, ReactNode } from 'react';
+import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, get, includes } from 'lodash';
-import { localize } from 'i18n-calypso';
+import { get, includes } from 'lodash';
+import { localize, LocalizeProps } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,7 +14,6 @@ import getJetpackProductInstallStatus from 'state/selectors/get-jetpack-product-
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import getRewindState from 'state/selectors/get-rewind-state';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
-import JetpackChecklistFooter from './footer';
 import JetpackChecklistHeader from './header';
 import QueryJetpackProductInstallStatus from 'components/data/query-jetpack-product-install-status';
 import QueryRewindState from 'components/data/query-rewind-state';
@@ -23,44 +22,35 @@ import { format as formatUrl, parse as parseUrl } from 'url';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getCustomizerUrl } from 'state/sites/selectors';
 import { isDesktop } from 'lib/viewport';
-import {
-	getJetpackChecklistTaskDuration,
-	JETPACK_SECURITY_CHECKLIST_TASKS,
-	JETPACK_PERFORMANCE_CHECKLIST_TASKS,
-	JETPACK_CHECKLIST_TASK_AKISMET,
-	JETPACK_CHECKLIST_TASK_BACKUPS_REWIND,
-	JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS,
-	JETPACK_CHECKLIST_TASK_PROTECT,
-	ChecklistTasksetUi,
-} from './constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
-import { isEnabled } from 'config';
 import { URL } from 'types';
 import { getSitePlanSlug } from 'state/sites/plans/selectors';
 import { isBusinessPlan, isPremiumPlan } from 'lib/plans';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
+import { Button, Card } from '@automattic/components';
+import JetpackProductInstall from 'my-sites/plans/current-plan/jetpack-product-install';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-interface ChecklistTaskState {
-	[taskId: string]: {
-		completed: null | boolean;
-	};
-}
+import { getTaskList } from 'my-sites/checklist/wpcom-checklist/wpcom-task-list';
 
 interface Props {
 	isPremium: boolean;
 	isProfessional: boolean;
 	isPaidPlan: boolean;
-	taskStatuses: ChecklistTaskState | undefined;
+	taskStatuses:
+		| {
+				id: string;
+				isCompleted: boolean;
+		  }[]
+		| undefined;
 	widgetCustomizerPaneUrl: URL | null;
 }
 
-class JetpackChecklist extends PureComponent< Props > {
+class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 	componentDidMount() {
 		if ( typeof window !== 'undefined' && typeof window.hj === 'function' ) {
 			window.hj( 'trigger', 'plans_myplan_jetpack-checklist' );
@@ -68,7 +58,17 @@ class JetpackChecklist extends PureComponent< Props > {
 	}
 
 	isComplete( taskId: string ): boolean {
-		return get( this.props.taskStatuses, [ taskId, 'completed' ], false );
+		return getTaskList( this.props ).isCompleted( taskId );
+	}
+
+	/**
+	 * Returns the localized duration of a task in given minutes.
+	 *
+	 * @param  minutes Number of minutes.
+	 * @returns Localized duration.
+	 */
+	getDuration( minutes: number ) {
+		return this.props.translate( '%d minute', '%d minutes', { count: minutes, args: [ minutes ] } );
 	}
 
 	handleTaskStart = ( { taskId, tourId }: { taskId: string; tourId?: string } ) => () => {
@@ -92,40 +92,29 @@ class JetpackChecklist extends PureComponent< Props > {
 		} );
 	};
 
-	renderTaskSet( checklistTasks: ChecklistTasksetUi ): ReactNode {
-		if ( ! this.props.taskStatuses ) {
-			return null;
-		}
-		const taskIds =
-			checklistTasks === JETPACK_PERFORMANCE_CHECKLIST_TASKS
-				? // Force render all the tasks from this development-only list
-				  // @todo Remove this branch when API returns performance task statuses
-				  Object.keys( JETPACK_PERFORMANCE_CHECKLIST_TASKS )
-				: Object.keys( this.props.taskStatuses ).filter( taskId => taskId in checklistTasks );
-
-		return taskIds.map( taskId => {
-			const task = checklistTasks[ taskId ];
-
-			const isComplete = this.isComplete( taskId );
-
-			return (
-				<Task
-					completed={ isComplete }
-					completedButtonText={ task.completedButtonText }
-					completedTitle={ task.completedTitle }
-					description={ task.description }
-					duration={ task.duration }
-					href={ task.getUrl( this.props.siteSlug, isComplete ) }
-					onClick={ this.handleTaskStart( {
-						taskId,
-						tourId: get( task, [ 'tourId' ] ),
-					} ) }
-					title={ task.title }
-					key={ taskId }
-				/>
-			);
+	trackExpandTask = ( { id }: { id: string } ) =>
+		void this.props.recordTracksEvent( 'calypso_checklist_task_expand', {
+			step_name: id,
+			product: 'Jetpack',
 		} );
-	}
+
+	renderJetpackFooter = () => {
+		const translate = this.props.translate;
+
+		return (
+			<Card compact className="jetpack-checklist__footer">
+				<p>{ translate( 'Return to your self-hosted WordPress dashboard.' ) }</p>
+				<Button
+					compact
+					data-tip-target="jetpack-checklist-wpadmin-link"
+					href={ this.props.wpAdminUrl }
+					onClick={ this.handleWpAdminLink }
+				>
+					{ translate( 'Return to WP Admin' ) }
+				</Button>
+			</Card>
+		);
+	};
 
 	render() {
 		const {
@@ -140,7 +129,6 @@ class JetpackChecklist extends PureComponent< Props > {
 			taskStatuses,
 			translate,
 			vaultpressFinished,
-			wpAdminUrl,
 		} = this.props;
 
 		const isRewindActive = rewindState === 'active' || rewindState === 'provisioning';
@@ -152,55 +140,173 @@ class JetpackChecklist extends PureComponent< Props > {
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				{ isPaidPlan && <QueryJetpackProductInstallStatus siteId={ siteId } /> }
 				{ isPaidPlan && <QueryRewindState siteId={ siteId } /> }
+				<JetpackProductInstall />
 
 				<JetpackChecklistHeader isPaidPlan={ isPaidPlan } />
 
 				<Checklist
 					className="jetpack-checklist"
 					isPlaceholder={ ! taskStatuses }
-					progressText={ translate( 'Your Jetpack setup progress' ) }
+					onExpandTask={ this.trackExpandTask }
+					checklistFooter={ this.renderJetpackFooter() }
 				>
 					<Task
-						{ ...JETPACK_CHECKLIST_TASK_PROTECT }
+						id="jetpack_task_protect"
+						title={ translate(
+							"We're automatically protecting you from brute force login attacks."
+						) }
+						completedTitle={ translate(
+							"We've automatically protected you from brute force login attacks."
+						) }
+						completedButtonText={ translate( 'Configure' ) }
 						completed
-						href={ JETPACK_CHECKLIST_TASK_PROTECT.getUrl( siteSlug ) }
+						href={ `/settings/security/${ siteSlug }` }
 						onClick={ this.handleTaskStart( { taskId: 'jetpack_protect' } ) }
 					/>
+
 					{ isPaidPlan && isRewindAvailable && (
 						<Task
-							{ ...JETPACK_CHECKLIST_TASK_BACKUPS_REWIND }
+							id="jetpack_rewind"
+							title={ translate( 'Backup and Scan' ) }
+							description={ translate(
+								"Connect your site's server to Jetpack to perform backups, restores, and security scans."
+							) }
+							completedButtonText={ translate( 'Change', { context: 'verb' } ) }
+							completedTitle={ translate( 'You turned on Backup and Scan.' ) }
+							duration={ this.getDuration( 3 ) }
 							completed={ isRewindActive }
-							href={ JETPACK_CHECKLIST_TASK_BACKUPS_REWIND.getUrl( siteSlug ) }
+							href={ `/settings/security/${ siteSlug }` }
 							onClick={ this.handleTaskStart( {
 								taskId: 'jetpack_backups',
 								tourId: isRewindActive ? undefined : 'jetpackBackupsRewind',
 							} ) }
 						/>
 					) }
+
 					{ isPaidPlan && isRewindUnavailable && productInstallStatus && (
 						<Task
-							{ ...JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS }
+							id="jetpack_vaultpress"
+							title={ translate( "We're automatically turning on Backup and Scan." ) }
+							completedTitle={ translate( "We've automatically turned on Backup and Scan." ) }
+							completedButtonText={ translate( 'View security dashboard' ) }
 							completed={ vaultpressFinished }
-							href={ JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS.getUrl( siteSlug ) }
+							href="https://dashboard.vaultpress.com"
 							inProgress={ ! vaultpressFinished }
 							onClick={ this.handleTaskStart( { taskId: 'jetpack_backups' } ) }
 						/>
 					) }
+
 					{ isPaidPlan && productInstallStatus && (
 						<Task
-							{ ...JETPACK_CHECKLIST_TASK_AKISMET }
+							id="jetpack_akismet"
+							title={ translate( "We're automatically turning on Anti-spam." ) }
+							completedButtonText={ translate( 'View spam stats' ) }
+							completedTitle={ translate( "We've automatically turned on Anti-spam." ) }
 							completed={ akismetFinished }
-							href={ JETPACK_CHECKLIST_TASK_AKISMET.getUrl( siteSlug ) }
+							href={ `//${ siteSlug.replace(
+								'::',
+								'/'
+							) }/wp-admin/admin.php?page=akismet-key-config` }
 							inProgress={ ! akismetFinished }
 							onClick={ this.handleTaskStart( { taskId: 'jetpack_spam_filtering' } ) }
 							target="_blank"
 						/>
 					) }
-					{ this.renderTaskSet( JETPACK_SECURITY_CHECKLIST_TASKS ) }
-					{ isEnabled( 'jetpack/checklist/performance' ) &&
-						this.renderTaskSet( JETPACK_PERFORMANCE_CHECKLIST_TASKS ) }
-					{ isEnabled( 'jetpack/checklist/performance' ) && ( isPremium || isProfessional ) && (
+
+					<Task
+						id="jetpack_monitor"
+						completed={ this.isComplete( 'jetpack_monitor' ) }
+						completedButtonText={ translate( 'Change', { context: 'verb' } ) }
+						completedTitle={ translate( 'You turned on Downtime Monitoring.' ) }
+						description={ translate(
+							"Monitor your site's uptime and alert you the moment downtime is detected with instant notifications."
+						) }
+						duration={ this.getDuration( 3 ) }
+						href={ `/settings/security/${ siteSlug }` }
+						onClick={ this.handleTaskStart( {
+							taskId: 'jetpack_monitor',
+							tourId: 'jetpackMonitoring',
+						} ) }
+						title={ translate( 'Downtime Monitoring' ) }
+					/>
+
+					<Task
+						id="jetpack_plugin_updates"
+						completed={ this.isComplete( 'jetpack_plugin_updates' ) }
+						completedButtonText={ translate( 'Change', { context: 'verb' } ) }
+						completedTitle={ translate( 'You turned on automatic plugin updates.' ) }
+						description={ translate(
+							'Choose which WordPress plugins you want to keep automatically updated.'
+						) }
+						duration={ this.getDuration( 3 ) }
+						href={ `/plugins/manage/${ siteSlug }` }
+						onClick={ this.handleTaskStart( {
+							taskId: 'jetpack_plugin_updates',
+							tourId: 'jetpackPluginUpdates',
+						} ) }
+						title={ translate( 'Automatic Plugin Updates' ) }
+					/>
+
+					<Task
+						id="jetpack_sign_in"
+						completed={ this.isComplete( 'jetpack_sign_in' ) }
+						completedButtonText={ translate( 'Change', { context: 'verb' } ) }
+						completedTitle={ translate( 'You completed your sign in preferences.' ) }
+						description={ translate(
+							'Manage your log in preferences and two-factor authentication settings.'
+						) }
+						duration={ this.getDuration( 3 ) }
+						href={ `/settings/security/${ siteSlug }` }
+						onClick={ this.handleTaskStart( {
+							taskId: 'jetpack_sign_in',
+							tourId: 'jetpackSignIn',
+						} ) }
+						title={ translate( 'WordPress.com sign in' ) }
+					/>
+
+					<Task
+						id="jetpack_site_accelerator"
+						completed={ this.isComplete( 'jetpack_site_accelerator' ) }
+						completedButtonText={ translate( 'Configure' ) }
+						completedTitle={ translate(
+							'Site accelerator is serving your images and static files through our global CDN.'
+						) }
+						description={ translate(
+							'Serve your images and static files through our global CDN and watch your page load time drop.'
+						) }
+						duration={ this.getDuration( 1 ) }
+						href={ `/settings/performance/${ siteSlug }` }
+						onClick={ this.handleTaskStart( {
+							taskId: 'jetpack_site_accelerator',
+							tourId: 'jetpackSiteAccelerator',
+						} ) }
+						title={ translate( 'Site Accelerator' ) }
+					/>
+
+					<Task
+						id="jetpack_lazy_images"
+						completed={ this.isComplete( 'jetpack_lazy_images' ) }
+						completedButtonText={ translate( 'Upload images' ) }
+						completedTitle={ translate( 'Lazy load images is improving your site speed.' ) }
+						description={ translate(
+							"Improve your site's speed by only loading images when visible on the screen."
+						) }
+						duration={ this.getDuration( 1 ) }
+						href={
+							this.isComplete( 'jetpack_lazy_images' )
+								? `/media/${ siteSlug }`
+								: `/settings/performance/${ siteSlug }`
+						}
+						onClick={ this.handleTaskStart( {
+							taskId: 'jetpack_lazy_images',
+							tourId: 'jetpackLazyImages',
+						} ) }
+						title={ translate( 'Lazy Load Images' ) }
+					/>
+
+					{ ( isPremium || isProfessional ) && (
 						<Task
+							id="jetpack_video_hosting"
 							title={ translate( 'Video Hosting' ) }
 							description={ translate(
 								'Enable fast, high-definition, ad-free video hosting through our global CDN network.'
@@ -210,10 +316,10 @@ class JetpackChecklist extends PureComponent< Props > {
 							completedTitle={ translate(
 								'High-speed, high-definition, and ad-free video hosting is enabled.'
 							) }
-							duration={ getJetpackChecklistTaskDuration( 3 ) }
+							duration={ this.getDuration( 3 ) }
 							href={
 								this.isComplete( 'jetpack_video_hosting' )
-									? `/media/${ siteSlug }`
+									? `/media/videos/${ siteSlug }`
 									: `/settings/performance/${ siteSlug }`
 							}
 							onClick={ this.handleTaskStart( {
@@ -222,8 +328,10 @@ class JetpackChecklist extends PureComponent< Props > {
 							} ) }
 						/>
 					) }
-					{ isEnabled( 'jetpack/checklist/performance' ) && isProfessional && (
+
+					{ isProfessional && (
 						<Task
+							id="jetpack_search"
 							title={ translate( 'Enhanced Search' ) }
 							description={ translate(
 								'Activate an enhanced, customizable search to replace the default WordPress search feature.'
@@ -232,7 +340,7 @@ class JetpackChecklist extends PureComponent< Props > {
 							completedTitle={ translate(
 								'The default WordPress search has been replaced by Enhanced Search.'
 							) }
-							duration={ getJetpackChecklistTaskDuration( 1 ) }
+							duration={ this.getDuration( 1 ) }
 							completed={ this.isComplete( 'jetpack_search' ) }
 							href={
 								this.isComplete( 'jetpack_search' )
@@ -246,13 +354,6 @@ class JetpackChecklist extends PureComponent< Props > {
 						/>
 					) }
 				</Checklist>
-
-				{ wpAdminUrl && (
-					<JetpackChecklistFooter
-						wpAdminUrl={ wpAdminUrl }
-						handleWpAdminLink={ this.handleWpAdminLink }
-					/>
-				) }
 			</Fragment>
 		);
 	}
@@ -293,7 +394,7 @@ const connectComponent = connect(
 			productInstallStatus,
 			siteId,
 			siteSlug: getSiteSlug( state, siteId ),
-			taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
+			taskStatuses: get( getSiteChecklist( state, siteId ), 'tasks' ),
 			wpAdminUrl,
 		};
 	},
@@ -303,8 +404,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( JetpackChecklist );
+export default connectComponent( localize( withTrackingTool( 'HotJar' )( JetpackChecklist ) ) );

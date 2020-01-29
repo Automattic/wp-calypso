@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -24,11 +22,11 @@ class QueryReaderRecommendedSites extends Component {
 		offset: 0,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.props.requestRecommendedSites( { seed: this.props.seed, offset: this.props.offset } );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.props.requestRecommendedSites( { seed: nextProps.seed, offset: nextProps.offset } );
 	}
 
@@ -37,7 +35,4 @@ class QueryReaderRecommendedSites extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestRecommendedSites }
-)( QueryReaderRecommendedSites );
+export default connect( null, { requestRecommendedSites } )( QueryReaderRecommendedSites );

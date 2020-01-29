@@ -1,37 +1,30 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
-	MY_SITES_SIDEBAR_SITE_TOGGLE,
-	MY_SITES_SIDEBAR_DESIGN_TOGGLE,
-	MY_SITES_SIDEBAR_TOOLS_TOGGLE,
-	MY_SITES_SIDEBAR_MANAGE_TOGGLE,
+	MY_SITES_SIDEBAR_SECTION_TOGGLE,
+	MY_SITES_SIDEBAR_SECTION_EXPAND,
+	MY_SITES_SIDEBAR_SECTION_COLLAPSE,
 } from 'state/action-types';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'state/utils';
 
-import { combineReducers } from 'state/utils';
+const schema = {
+	type: 'boolean',
+};
 
-function createToggleReducer( type ) {
-	const reducer = function( state = null, action ) {
-		if ( type === action.type ) {
+const expansionReducer = withSchemaValidation( schema, ( state = false, action ) => {
+	switch ( action.type ) {
+		case MY_SITES_SIDEBAR_SECTION_TOGGLE:
 			return ! state;
-		}
-
-		return state;
-	};
-
-	reducer.schema = {
-		type: 'boolean',
-	};
-
-	return reducer;
-}
-
-export default combineReducers( {
-	isSiteOpen: createToggleReducer( MY_SITES_SIDEBAR_SITE_TOGGLE ),
-	isDesignOpen: createToggleReducer( MY_SITES_SIDEBAR_DESIGN_TOGGLE ),
-	isToolsOpen: createToggleReducer( MY_SITES_SIDEBAR_TOOLS_TOGGLE ),
-	isManageOpen: createToggleReducer( MY_SITES_SIDEBAR_MANAGE_TOGGLE ),
+		case MY_SITES_SIDEBAR_SECTION_EXPAND:
+			return true;
+		case MY_SITES_SIDEBAR_SECTION_COLLAPSE:
+			return false;
+		default:
+			return state;
+	}
 } );
+
+const sectionReducer = combineReducers( { isOpen: expansionReducer } );
+
+export default keyedReducer( 'sidebarSection', sectionReducer );

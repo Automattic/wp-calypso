@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -112,6 +110,8 @@ class PlanThankYouCard extends Component {
 
 	render() {
 		const { siteId } = this.props;
+		const description = this.renderDescription();
+
 		return (
 			<div className={ classnames( 'plan-thank-you-card', this.getPlanClass() ) }>
 				<QuerySites siteId={ siteId } />
@@ -121,7 +121,8 @@ class PlanThankYouCard extends Component {
 					name={ this.renderPlanName() }
 					price={ this.renderPlanPrice() }
 					heading={ this.renderHeading() }
-					description={ this.renderDescription() }
+					description={ 'string' === typeof description ? description : null }
+					descriptionWithHTML={ 'object' === typeof description ? description : null }
 					buttonUrl={ this.getButtonUrl() }
 					buttonText={ this.renderButtonText() }
 					icon={ this.renderPlanIcon() }
@@ -136,7 +137,11 @@ PlanThankYouCard.propTypes = {
 	action: PropTypes.node,
 	buttonText: PropTypes.string,
 	buttonUrl: PropTypes.string,
-	description: PropTypes.string,
+	/**
+	 * Description can be either a string or object to allow either a bare
+	 * string or a description that contains HTML and other components.
+	 **/
+	description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 	heading: PropTypes.string,
 	plan: PropTypes.object,
 	siteId: PropTypes.number.isRequired,

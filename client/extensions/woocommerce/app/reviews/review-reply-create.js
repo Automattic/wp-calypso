@@ -1,7 +1,6 @@
 /**
  * External depedencies
  *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -168,7 +167,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ReviewReplyCreate ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ReviewReplyCreate ) );

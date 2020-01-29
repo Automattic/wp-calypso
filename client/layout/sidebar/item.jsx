@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,7 +5,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
+import { isFunction } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,8 +23,11 @@ export default class SidebarItem extends React.Component {
 		link: PropTypes.string.isRequired,
 		onNavigate: PropTypes.func,
 		icon: PropTypes.string,
+		customIcon: PropTypes.object,
 		materialIcon: PropTypes.string,
+		materialIconStyle: PropTypes.string,
 		selected: PropTypes.bool,
+		expandSection: PropTypes.func,
 		preloadSectionName: PropTypes.string,
 		forceInternalLink: PropTypes.bool,
 		testTarget: PropTypes.string,
@@ -41,11 +43,19 @@ export default class SidebarItem extends React.Component {
 		}
 	};
 
+	componentDidMount() {
+		const { expandSection, selected } = this.props;
+
+		if ( isFunction( expandSection ) && selected ) {
+			expandSection();
+		}
+	}
+
 	render() {
 		const isExternalLink = isExternal( this.props.link );
 		const showAsExternal = isExternalLink && ! this.props.forceInternalLink;
 		const classes = classnames( this.props.className, { selected: this.props.selected } );
-		const { materialIcon, icon } = this.props;
+		const { materialIcon, materialIconStyle, icon, customIcon } = this.props;
 
 		return (
 			<li
@@ -54,14 +64,25 @@ export default class SidebarItem extends React.Component {
 				data-post-type={ this.props.postType }
 			>
 				<a
+					className="sidebar__menu-link"
 					onClick={ this.props.onNavigate }
 					href={ this.props.link }
 					target={ showAsExternal ? '_blank' : null }
 					rel={ isExternalLink ? 'noopener noreferrer' : null }
 					onMouseEnter={ this.preload }
 				>
-					{ icon && ! materialIcon ? <Gridicon icon={ icon } size={ 24 } /> : null }
-					{ materialIcon ? <MaterialIcon icon={ materialIcon } /> : null }
+					{ icon && <Gridicon className={ 'sidebar__menu-icon' } icon={ icon } size={ 24 } /> }
+
+					{ materialIcon && (
+						<MaterialIcon
+							className={ 'sidebar__menu-icon' }
+							icon={ materialIcon }
+							style={ materialIconStyle }
+						/>
+					) }
+
+					{ customIcon && customIcon }
+
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 					<span
 						className="sidebar__menu-link-text menu-link-text"
@@ -70,8 +91,8 @@ export default class SidebarItem extends React.Component {
 						{ this.props.label }
 					</span>
 					{ showAsExternal && <Gridicon icon="external" size={ 24 } /> }
+					{ this.props.children }
 				</a>
-				{ this.props.children }
 			</li>
 		);
 	}

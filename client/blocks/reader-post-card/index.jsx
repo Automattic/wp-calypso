@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -13,7 +12,7 @@ import closest from 'component-closest';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import DisplayTypes from 'state/reader/posts/display-types';
 import * as stats from 'reader/stats';
 import ReaderPostActions from 'blocks/reader-post-actions';

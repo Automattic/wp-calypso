@@ -52,7 +52,7 @@
 	align-items: center;
 	text-transform: uppercase;
 	justify-content: center;
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 	font-size: 11px;
 	padding: 10px;
 
@@ -101,38 +101,4 @@
 			height: 12px;
 		}
 	}
-}
-
-.notification-settings-form-actions {
-	display: block;
-	border-top: solid 1px var( --color-neutral-0 );
-	padding: 15px 0;
-	text-align: right;
-
-	.form-fieldset {
-		margin-bottom: 10px;
-
-		@include breakpoint( '>480px' ) {
-			margin: 10px 0 0;
-			float: left;
-		}
-	}
-
-	.form-label {
-		text-align: left;
-	}
-
-	.form-button {
-		float: none;
-	}
-
-	@include breakpoint( '>480px' ) {
-		height: 55px;
-		padding: 15px 0 0;
-	}
-}
-
-.notification-settings-form-actions__save-to-all {
-	background: transparent;
-	color: var( --color-neutral-500 );
 }

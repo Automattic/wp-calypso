@@ -1,17 +1,39 @@
 Notifications
 =============
 
-This module handles loading the notifications view. Currently we load this as an iframe from https://widgets.wp.com/notes/. Future versions may include the notifications module directly.
-This module also mediates communication between us and the iframe notifications client using `postMessage()`.
+The _**notifications panel**_ (also known as "masterbar notifications" and "the bell notifications") is a cross-environment app that runs directly inside of Calypso and in an `iframe` on WordPress.com sites which aren't Calypso.
+
+This module is where the code for the notifications panel lives. Calypso views are imported as normal `node` imports while the `iframe` version is served from `https://widgets.wp.com/notes`.
+
+## Building and developing
+
+Most work on the notifications panel should happen in Calypso the same way other Calypso changes are developed.
+That is, you can work in these files and rely on the normal Calypso dev server.
+**However** things are often different inside the `iframe` in unexpected ways and so we need to verify that any changes apply properly in both environments.
+
+CircleCI generates notifications panel build artifacts on every commit that it processes.
+Alternatively you can manually build the app with `lerna` and copy the built files to your sandbox.
+
+```bash
+# Builds files and places them in `apps/notifications/dist`
+npx lerna run build --scope="@automattic/notifications"
+```
+
+You will need to follow the directions in the Field Guide to deploy these artifacts.
+
+## iframe communication
+
+When running in an iframe communication with the parent frame occurs through a `postMessage()` exchange.
 
 Messages we handle from the notifications iframe have the form:
 
-    {
-    "type" : "notesIframeMessage",
-    "action" : < varies >,
-    ... other properties depending on action ...
-    }
-
+```js
+{
+	type: "notesIframeMessage",
+	action: < varies >,
+	//... other properties depending on action ...
+}
+```
 
 - `togglePanel`: This is a message from the client that the panel open state
   should be toggled. For example, the user may have pressed the ESC key, which

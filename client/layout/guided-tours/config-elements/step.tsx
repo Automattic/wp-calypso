@@ -3,14 +3,14 @@
  */
 import React, { Component, CSSProperties, FunctionComponent } from 'react';
 import classNames from 'classnames';
-import { defer, get, isFunction } from 'lodash';
+import { defer, isFunction } from 'lodash';
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import pathToSection from 'lib/path-to-section';
 import { ROUTE_SET } from 'state/action-types';
 import {
@@ -96,7 +96,7 @@ export default class Step extends Component< Props, State > {
 	 */
 	isUpdatingPosition: boolean = false;
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.wait( this.props, this.context ).then( () => {
 			this.start();
 			this.setStepSection( this.context, { init: true } );
@@ -119,7 +119,7 @@ export default class Step extends Component< Props, State > {
 		}
 	}
 
-	componentWillReceiveProps( nextProps: Props, nextContext ) {
+	UNSAFE_componentWillReceiveProps( nextProps: Props, nextContext ) {
 		const shouldScrollTo = nextProps.shouldScrollTo && this.props.name !== nextProps.name;
 		this.wait( nextProps, nextContext ).then( () => {
 			this.setStepSection( nextContext );
@@ -160,15 +160,10 @@ export default class Step extends Component< Props, State > {
 		start( { step, tour, tourVersion } );
 	}
 
-	wait( props: Props, context ) {
+	async wait( props: Props, context ) {
 		if ( isFunction( props.wait ) ) {
-			const ret = props.wait( { reduxStore: context.store } );
-			if ( isFunction( get( ret, 'then' ) ) ) {
-				return ret;
-			}
+			await context.dispatch( props.wait() );
 		}
-
-		return Promise.resolve();
 	}
 
 	safeSetState( state: State ) {

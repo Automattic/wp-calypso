@@ -1,5 +1,4 @@
 /**
- * @format
  */
 
 /**
@@ -11,9 +10,9 @@ import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from './constants';
 /**
  * Returns territory slug from constant: LANGUAGE_GROUPS
  *
- * @param {String} id territory id
+ * @param {string} id territory id
  * @param {Array} languageGroups collection of territory data
- * @returns {String} territory slug
+ * @returns {string} territory slug
  */
 export function getLanguageGroupById( id, languageGroups = LANGUAGE_GROUPS ) {
 	return find( languageGroups, l => l.id === id );
@@ -22,10 +21,10 @@ export function getLanguageGroupById( id, languageGroups = LANGUAGE_GROUPS ) {
 /**
  * Returns language group id from constant LANGUAGE_GROUPS by territoryId
  *
- * @param {String} territoryId territory id
+ * @param {string} territoryId territory id
  * @param {Array} languageGroups collection of territory data
- * @param {String} defaultLanguageGroup default language group if no other found
- * @returns {String} language group id
+ * @param {string} defaultLanguageGroup default language group if no other found
+ * @returns {string} language group id
  */
 export function getLanguageGroupFromTerritoryId(
 	territoryId,
@@ -39,10 +38,10 @@ export function getLanguageGroupFromTerritoryId(
 /**
  * Returns language group id using langSlug to get territoryId
  *
- * @param {String} langSlug  language slug
+ * @param {string} langSlug  language slug
  * @param {Array} languages collection of language data in config
- * @param {Boolean} openInPopular  if langSlug is popular return popular language group id
- * @returns {String} language group id
+ * @param {boolean} openInPopular  if langSlug is popular return popular language group id
+ * @returns {string} language group id
  */
 export function getLanguageGroupByLangSlug( langSlug, languages, openInPopular = false ) {
 	const language = find( languages, l => l.langSlug === langSlug );
@@ -56,10 +55,10 @@ export function getLanguageGroupByLangSlug( langSlug, languages, openInPopular =
 /**
  * Returns language group id from constant: LANGUAGE_GROUPS
  *
- * @param {String} countryCode country code id
+ * @param {string} countryCode country code id
  * @param {Array} languageGroups collection of territory data
- * @param {String} defaultLanguageGroup default territory slug if none found
- * @returns {String} language group id
+ * @param {string} defaultLanguageGroup default territory slug if none found
+ * @returns {string} language group id
  */
 export function getLanguageGroupByCountryCode(
 	countryCode,
@@ -74,8 +73,8 @@ export function getLanguageGroupByCountryCode(
  * Splits and returns language code labels based on langSlug
  * Assumes the following langSlug formats: xx, xx-yy, xx-yy_variant, xx_variant
  *
- * @param {String} langSlug value of config.language[ langSlug ].langSlug
- * @returns {Object} { langCode: 'xx', langSubcode: 'xx' } | {}
+ * @param {string} langSlug value of config.language[ langSlug ].langSlug
+ * @returns {object} { langCode: 'xx', langSubcode: 'xx' } | {}
  */
 export function getLanguageCodeLabels( langSlug ) {
 	const languageCodeLabels = {};

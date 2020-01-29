@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -37,7 +36,11 @@ describe( 'MediaLibraryDataSource', () => {
 			const store = createReduxStore();
 			const wrapper = mount(
 				<ReduxProvider store={ store }>
-					<MediaLibraryDataSource source={ '' } onSourceChange={ noop } />
+					<MediaLibraryDataSource
+						source={ '' }
+						onSourceChange={ noop }
+						ignorePermissions={ true }
+					/>
 				</ReduxProvider>
 			);
 			expect( wrapper.find( 'button[data-source="google_photos"]' ) ).to.have.length( 1 );
@@ -52,6 +55,7 @@ describe( 'MediaLibraryDataSource', () => {
 						source={ '' }
 						onSourceChange={ noop }
 						disabledSources={ [ 'pexels' ] }
+						ignorePermissions={ true }
 					/>
 				</ReduxProvider>
 			);

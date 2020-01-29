@@ -1,8 +1,6 @@
-/** @format */
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -10,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Interval, { EVERY_SECOND } from 'lib/interval';
+import { Interval, EVERY_SECOND } from 'lib/interval';
 import { getRewindBackupProgress } from 'state/activity-log/actions';
 
 class QueryRewindBackupStatus extends Component {
@@ -19,7 +17,7 @@ class QueryRewindBackupStatus extends Component {
 		siteId: PropTypes.number.isRequired,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		// We want to run this only once: when the page is loaded. In such case, there is not known download Id.
 		// If there's a download Id here it means this was mounted during an action requesting progress for a
 		// specific download Id, so we will do nothing here,since it will be handled by the <Interval /> below.
@@ -45,7 +43,4 @@ class QueryRewindBackupStatus extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ getRewindBackupProgress }
-)( QueryRewindBackupStatus );
+export default connect( null, { getRewindBackupProgress } )( QueryRewindBackupStatus );

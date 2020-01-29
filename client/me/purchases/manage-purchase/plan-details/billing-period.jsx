@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,14 +11,15 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { isMonthly } from 'lib/plans/constants';
 import { getYearlyPlanByMonthly } from 'lib/plans';
 import { planItem } from 'lib/cart-values/cart-items';
-import { addItem } from 'lib/upgrades/actions';
+import { addItem } from 'lib/cart/actions';
 import { isExpired, isExpiring, isRenewing, showCreditCardExpiringWarning } from 'lib/purchases';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -33,39 +32,40 @@ class PlanBillingPeriod extends Component {
 		const { purchase } = this.props;
 		const yearlyPlanSlug = getYearlyPlanByMonthly( purchase.productSlug );
 
-		addItem( planItem( yearlyPlanSlug ) );
 		this.props.recordTracksEvent( 'calypso_purchase_details_plan_upgrade_click', {
 			current_plan: purchase.productSlug,
 			upgrading_to: yearlyPlanSlug,
 		} );
+		addItem( planItem( yearlyPlanSlug ) );
 		page( '/checkout/' + purchase.domain );
 	};
 
 	renderYearlyBillingInformation() {
-		const { purchase, translate } = this.props;
+		const { purchase, translate, moment } = this.props;
 
 		if ( showCreditCardExpiringWarning( purchase ) ) {
 			return translate( 'Billed yearly, credit card expiring soon' );
 		}
 
-		if ( isRenewing( purchase ) && purchase.renewMoment ) {
+		if ( isRenewing( purchase ) && purchase.renewDate ) {
+			const renewDate = moment( purchase.renewDate );
 			return translate( 'Billed yearly, renews on %s', {
-				args: purchase.renewMoment.format( 'LL' ),
+				args: renewDate.format( 'LL' ),
 				comment: '%s is the renewal date in format M DD, Y, for example: June 10, 2019',
 			} );
 		}
 
-		if ( isExpiring( purchase ) && purchase.expiryMoment ) {
+		if ( isExpiring( purchase ) && purchase.expiryDate ) {
 			return translate( 'Billed yearly, expires on %s', {
-				args: purchase.expiryMoment.format( 'LL' ),
+				args: moment( purchase.expiryDate ).format( 'LL' ),
 				comment: '%s is the expiration date in format M DD, Y, for example: June 10, 2019',
 			} );
 		}
 
-		if ( isExpired( purchase ) && purchase.expiryMoment ) {
+		if ( isExpired( purchase ) && purchase.expiryDate ) {
 			return translate( 'Billed yearly, expired %(timeSinceExpiry)s', {
 				args: {
-					timeSinceExpiry: purchase.expiryMoment.fromNow(),
+					timeSinceExpiry: moment( purchase.expiryDate ).fromNow(),
 				},
 				comment: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 			} );
@@ -114,9 +114,6 @@ class PlanBillingPeriod extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-)( localize( PlanBillingPeriod ) );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( withLocalizedMoment( PlanBillingPeriod ) ) );

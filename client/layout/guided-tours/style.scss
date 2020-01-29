@@ -3,9 +3,9 @@
 	width: calc( 100% - 10px );
 	max-width: 410px;
 	z-index: z-index( 'root', '.guided-tours__step' );
-	background: var( --color-neutral-800 );
+	background: var( --color-neutral-90 );
 	box-shadow: 0 0 0 1px rgbs( 255, 255, 255, 0.6 ),
-		0 2px 24px 0 rgba( var( --color-neutral-800-rgb ), 0.5 );
+		0 2px 24px 0 rgba( var( --color-neutral-80-rgb ), 0.5 );
 	border-radius: 4px;
 	padding-top: 19px;
 	margin-left: 5px;
@@ -16,7 +16,7 @@
 	animation-timing-function: ease-in-out;
 
 	a {
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 		text-decoration: underline;
 
 		&:hover {
@@ -29,7 +29,7 @@
 		margin-bottom: 16px;
 
 		strong {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 		}
 
 		&:last-child {
@@ -52,7 +52,7 @@
 	    font-weight: 300;
 	    display: flex;
 	    align-items: center;
-	    color: var( --color-white );
+	    color: var( --color-text-inverted );
 	    margin-bottom: 10px;
 	}
 
@@ -126,32 +126,43 @@
 	}
 	.guided-tours__quit-button,
 	a.button {
-		color: var( --color-neutral-100 );
+		color: var( --color-neutral-10 );
 		background: none;
-		border: 1px rgba( var( --color-white-rgb ), 0.2 ) solid;
+		border: 1px rgba( var( --color-surface-rgb ), 0.2 ) solid;
 	}
 
 	a.button {
+		border-bottom-width: 2px;
 		text-decoration: none;
+
+		&:hover,
+		&:focus {
+			border-color: rgba( var( --color-surface-rgb ), 0.3 );
+		}
+
+		.gridicon {
+			margin-top: -2px;
+			vertical-align: inherit;
+		}
 	}
 }
 
 a.config-elements__text-link,
 .config-elements__text-link {
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 
 	&:hover {
 		text-decoration: none;
 	}
 
 	&:visited {
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 }
 
 .guided-tours__external-link,
 .guided-tours__actionstep-instructions {
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 	margin-bottom: 0;
 	font-style: italic;
 	line-height: 1.3em;
@@ -159,8 +170,8 @@ a.config-elements__text-link,
 
 	.external-link {
 		font-style: normal;
-		color: var( --color-white );
-		border-top: 1px solid var( --color-neutral-700 );
+		color: var( --color-text-inverted );
+		border-top: 1px solid var( --color-neutral-70 );
 		display: block;
 		padding-top: 12px;
 		margin-top: 16px;
@@ -179,10 +190,10 @@ a.config-elements__text-link,
 // arrow if we have a target
 .guided-tours__step-pointing::before {
 	position: absolute;
-	border: var( --color-neutral-800 );
+	border: var( --color-neutral-90 );
 	content: ' ';
 	pointer-events: none;
-	background: var( --color-neutral-800 );
+	background: var( --color-neutral-90 );
 	width: 12px;
 	height: 12px;
 }

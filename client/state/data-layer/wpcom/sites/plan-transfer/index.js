@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -24,8 +22,8 @@ const noticeOptions = siteId => ( {
 /**
  * Dispatches a request to transfer a site's plan to another user.
  *
- * @param   {Object} action Redux action
- * @returns {Object} Dispatched http action
+ * @param   {object} action Redux action
+ * @returns {object} Dispatched http action
  */
 export const requestPlanOwnershipTransfer = action =>
 	http(
@@ -43,8 +41,8 @@ export const requestPlanOwnershipTransfer = action =>
 /**
  * Dispatches a success notice when the request succeeded.
  *
- * @param   {Object} action Redux action
- * @returns {Object} Success notice action
+ * @param   {object} action Redux action
+ * @returns {object} Success notice action
  */
 export const handleTransferSuccess = ( { siteId } ) => [
 	successNotice(
@@ -57,9 +55,9 @@ export const handleTransferSuccess = ( { siteId } ) => [
 /**
  * Dispatches an error notice when the request failed.
  *
- * @param   {Object} action Redux action
- * @param   {Object} error  Error object
- * @returns {Object} Error notice action
+ * @param   {object} action Redux action
+ * @param   {object} error  Error object
+ * @returns {object} Error notice action
  */
 export const handleTransferError = ( { siteId }, { message } ) =>
 	errorNotice( message, noticeOptions( siteId ) );

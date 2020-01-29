@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +12,8 @@ import { delay, each, get, map, reduce, reject } from 'lodash';
  */
 import AddImageDialog from 'my-sites/comments/comment/comment-html-editor/add-image-dialog';
 import AddLinkDialog from 'my-sites/comments/comment/comment-html-editor/add-link-dialog';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 export class CommentHtmlEditor extends Component {
 	static propTypes = {
@@ -243,4 +243,4 @@ export class CommentHtmlEditor extends Component {
 	}
 }
 
-export default localize( CommentHtmlEditor );
+export default localize( withLocalizedMoment( CommentHtmlEditor ) );

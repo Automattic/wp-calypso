@@ -1,12 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -18,13 +15,13 @@ import { requestRelatedPosts } from 'state/reader/related-posts/actions';
 import { SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER } from 'state/reader/related-posts/utils';
 
 class QueryReaderRelatedPosts extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( this.props.shouldFetch ) {
 			this.props.requestRelatedPosts( this.props.siteId, this.props.postId, this.props.scope );
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			! nextProps.shouldFetch ||
 			( this.props.siteId === nextProps.siteId &&

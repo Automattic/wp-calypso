@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import HelpButton from './help-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import LocaleSuggestions from 'components/locale-suggestions';
@@ -24,7 +23,6 @@ import MainWrapper from './main-wrapper';
 import page from 'page';
 import SiteUrlInput from './site-url-input';
 import versionCompare from 'lib/version-compare';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { addCalypsoEnvQueryArg, cleanUrl } from './utils';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import { checkUrl, dismissUrl } from 'state/jetpack-connect/actions';
@@ -417,8 +415,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( JetpackConnectMain );
+export default flowRight( connectComponent, localize )( JetpackConnectMain );

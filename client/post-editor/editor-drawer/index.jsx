@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -57,7 +55,7 @@ const hasSupportingPlan = overSome( isBusiness, isEnterprise, isJetpackPremium, 
  * prevent the post type query component from being rendered.
  *
  * @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/post-types/
- * @type {Object}
+ * @type {object}
  */
 const POST_TYPE_SUPPORTS = {
 	post: {
@@ -163,9 +161,8 @@ class EditorDrawer extends Component {
 						'An excerpt is a short summary you can add to your posts. ' +
 							"Some themes show excerpts alongside post titles on your site's homepage and archive pages."
 					) }
-				>
-					<EditorExcerpt />
-				</EditorDrawerLabel>
+				/>
+				<EditorExcerpt />
 			</AccordionSection>
 		);
 	}

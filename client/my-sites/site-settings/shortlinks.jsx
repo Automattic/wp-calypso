@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -61,7 +59,7 @@ class Shortlinks extends Component {
 						<JetpackModuleToggle
 							siteId={ selectedSiteId }
 							moduleSlug="shortlinks"
-							label={ translate( 'Create short and simple links for all posts and pages' ) }
+							label={ translate( 'Generate shortened URLs for simpler sharing.' ) }
 							disabled={ formPending }
 						/>
 					</FormFieldset>

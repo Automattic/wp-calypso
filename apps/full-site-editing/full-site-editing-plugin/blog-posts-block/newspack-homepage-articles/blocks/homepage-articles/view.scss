@@ -1,0 +1,582 @@
+@import "../../shared/sass/variables";
+@import "../../shared/sass/mixins";
+
+.wpnbha {
+	margin-bottom: 1em;
+
+	article {
+		margin-bottom: 1.5em;
+		word-break: break-word;
+		overflow-wrap: break-word;
+		position: relative;
+
+		&:last-of-type {
+			margin-bottom: 0;
+		}
+	}
+
+	/* Section header */
+	.article-section-title {
+		font-size: $font__size-sm;
+		margin-bottom: 0.5em;
+		width: 100%; // make sure this isn't caught up in the flex styles.
+	}
+
+	/* Column styles */
+	&.is-grid > div {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		padding: 0;
+		list-style: none;
+	}
+
+	&.is-grid {
+		article {
+			flex-basis: 100%;
+
+			@include media(tablet) {
+				&:last-child,
+				& {
+					margin-bottom: 1em;
+				}
+			}
+		}
+	}
+
+	@include media(mobile) {
+		&.columns-3 article,
+		&.columns-6 article {
+			flex-basis: calc( 33.333% - 16px );
+		}
+
+		&.columns-2 article,
+		&.columns-4 article,
+		&.columns-5 article {
+			flex-basis: calc( 50% - 16px);
+		}
+
+		&.columns-5 article:last-of-type:nth-child(odd) {
+			flex-grow: 1;
+		}
+	}
+
+	@include media(tablet) {
+		@for $i from 2 through 6 {
+			&.columns-#{ $i } article {
+				flex-basis: calc( ( 100% / #{$i} ) - 16px );
+			}
+		}
+	}
+
+	/* Image styles */
+
+	.post-thumbnail {
+		margin: 0;
+
+		img {
+			height: auto;
+			width: 100%;
+		}
+	}
+
+	figcaption {
+		font-size: $font__size-xxs;
+	}
+
+	.post-thumbnail {
+		margin-bottom: 0.25em;
+
+		figcaption {
+			margin-bottom: 0.5em;
+		}
+	}
+
+	&.image-alignleft,
+	&.image-alignright {
+		.post-has-image {
+			display: flex;
+
+			.post-thumbnail {
+				flex-basis: 33%;
+			}
+			.entry-wrapper {
+				flex-basis: 67%;
+			}
+		}
+
+		&.mobile-stack .post-has-image {
+			display: block;
+		}
+
+		@include media(mobile) {
+			&.mobile-stack .post-has-image {
+				display: flex;
+			}
+		}
+
+		// Image scale
+		@include media(mobile) {
+			&.is-4 {
+				.post-thumbnail {
+					flex-basis: 75%;
+				}
+				.entry-wrapper {
+					flex-basis: 25%;
+				}
+			}
+
+			&.is-3 {
+				.post-thumbnail,
+				.entry-wrapper {
+					flex-basis: 50%;
+				}
+			}
+
+			// is-2 matches the mobile default above
+		}
+
+		&.is-1 {
+			.post-thumbnail {
+				flex-basis: 25%;
+			}
+			.entry-wrapper {
+				flex-basis: 75%;
+			}
+		}
+	}
+
+	&.image-alignleft .post-thumbnail {
+		margin-right: 1em;
+	}
+
+	&.image-alignright {
+		.post-thumbnail {
+			margin-left: 1em;
+		}
+
+		.entry-wrapper {
+			order: -1;
+		}
+	}
+
+	&.mobile-stack {
+		&.image-alignleft,
+		&.image-alignright {
+			.post-thumbnail {
+				margin-left: 0;
+				margin-right: 0;
+			}
+		}
+	}
+
+	@include media( mobile ) {
+		&.mobile-stack.image-alignleft .post-thumbnail {
+			margin-right: 1em;
+		}
+
+		&.mobile-stack.image-alignright .post-thumbnail {
+			margin-left: 1em;
+		}
+	}
+
+	/* Headings */
+	.entry-title {
+		margin: 0 0 0.25em;
+		a {
+			color: inherit;
+			text-decoration: none;
+		}
+	}
+
+	/* Article meta */
+	.cat-links {
+		font-size: $font__size-xxs;
+		font-weight: bold;
+		margin: 0 0 0.5em;
+
+		a {
+			text-decoration: none;
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	.entry-meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		margin-top: 0.5em;
+
+		.byline:not(:last-child) {
+			margin-right: 1.5em;
+		}
+
+		.updated:not(.published) {
+			display: none;
+		}
+	}
+
+	.avatar {
+		border-radius: 100%;
+		display: block;
+		margin-right: 0.5em;
+	}
+
+	p {
+		margin: 0.5em 0;
+	}
+
+	&.has-text-color {
+		.article-section-title,
+		.entry-title,
+		.entry-title a,
+		.entry-title a:visited,
+		.entry-meta,
+		.entry-meta a,
+		.entry-meta .byline a,
+		.entry-meta .byline a:visited,
+		.cat-links,
+		.cat-links a,
+		.cat-links a:visited,
+		figcaption {
+			color: inherit;
+		}
+	}
+
+	&.has-text-color {
+		.entry-meta span:not(.avatar) {
+			opacity: 0.8;
+		}
+	}
+
+	&.image-alignbehind {
+		.post-has-image {
+			display: flex;
+			align-items: flex-end;
+			position: relative;
+
+			.post-thumbnail {
+				bottom: 0;
+				left: 0;
+				margin: 0;
+				overflow: hidden;
+				position: absolute;
+				right: 0;
+				top: 0;
+
+				img {
+					height: 100%;
+					object-fit: cover;
+					max-width: 1000%;
+					width: 100%;
+				}
+
+				figcaption {
+					bottom: 1em;
+					/* autoprefixer: ignore next */
+					-webkit-box-orient: vertical;
+					color: rgba(white, 0.9);
+					display: -webkit-box;
+					font-style: italic;
+					left: 0;
+					-webkit-line-clamp: 1;
+					margin: 0;
+					max-height: 1.6em;
+					overflow: hidden;
+					padding: 0 1em;
+					position: absolute;
+					right: 0;
+					text-align: right;
+					text-overflow: ellipsis;
+					z-index: 2;
+				}
+
+				&:after {
+					background: rgba( 0, 0, 0, 0.5 );
+					bottom: 0;
+					content: '';
+					left: 0;
+					position: absolute;
+					right: 0;
+					top: 0;
+					z-index: 1;
+				}
+			}
+
+			.entry-wrapper {
+				padding: 2em;
+				position: relative;
+				z-index: 2;
+			}
+
+			.entry-wrapper,
+			.entry-title a,
+			.entry-meta,
+			.entry-meta .byline a,
+			.cat-links a {
+				color: #fff;
+			}
+
+		}
+	}
+}
+
+/* Some really rough font sizing */
+.wpnbha {
+	/* 'Normal' size */
+	article {
+		.entry-title {
+			font-size: 1.2em;
+		}
+		.entry-meta {
+			font-size: 0.8em;
+		}
+
+		.avatar {
+			height: 25px;
+			width: 25px;
+		}
+
+		@include media(tablet) {
+			.entry-title {
+				font-size: 1.6em;
+			}
+
+			.avatar {
+				height: 40px;
+				width: 40px;
+			}
+		}
+	}
+
+	&.ts-10,
+	&.ts-9,
+	&.ts-8 {
+		.entry-title {
+			line-height: 1.1em;
+		}
+		@include media(tablet) {
+			article .avatar {
+				height: 2.4em;
+				width: 2.4em;
+			}
+		}
+
+	}
+
+	&.ts-10 article {
+		.entry-title {
+			font-size: 2.6em;
+		}
+		@include media(tablet) {
+			.entry-title {
+				font-size: 3.6em;
+			}
+		}
+		@include media(desktop) {
+			.entry-title {
+				font-size: 4.8em;
+			}
+		}
+	}
+
+	&.ts-9 article {
+		.entry-title {
+			font-size: 2.4em;
+		}
+		@include media(tablet) {
+			.entry-title {
+				font-size: 3.4em;
+			}
+		}
+		@include media(desktop) {
+			.entry-title {
+				font-size: 4.2em;
+			}
+		}
+	}
+
+	&.ts-8 article {
+		.entry-title {
+			font-size: 2.2em;
+		}
+		@include media(tablet) {
+			.entry-title {
+				font-size: 3.0em;
+			}
+		}
+		@include media(desktop) {
+			.entry-title {
+				font-size: 3.6em;
+			}
+		}
+	}
+
+	&.ts-7 article {
+		.entry-title {
+			font-size: 2em;
+		}
+		@include media( tablet) {
+			.entry-title {
+				font-size: 2.4em;
+			}
+			.avatar {
+				height: 48px;
+				width: 48px;
+			}
+		}
+		@include media(desktop) {
+			.entry-title {
+				font-size: 3em;
+			}
+		}
+	}
+
+	&.ts-6 article {
+		.entry-title {
+			font-size: 1.7em;
+		}
+		@include media(tablet) {
+			.entry-title {
+				font-size: 2.0em;
+			}
+			.avatar {
+				height: 44px;
+				width: 44px;
+			}
+		}
+		@include media(desktop) {
+			.entry-title {
+				font-size: 2.4em;
+			}
+		}
+	}
+
+	&.ts-5 article {
+		.entry-title {
+			font-size: 1.4em;
+		}
+		@include media(tablet) {
+			.entry-title {
+				font-size: 1.8em;
+			}
+			.avatar {
+				height: 40px;
+				width: 40px;
+			}
+		}
+		@include media(desktop) {
+			.entry-title {
+				font-size: 2.0em;
+			}
+		}
+	}
+
+	/* Type Scale 4: default */
+
+	&.ts-3 article {
+		.entry-title {
+			font-size: 1.0em;
+		}
+		.entry-wrapper p {
+			font-size: 0.8em;
+		}
+		.entry-meta {
+			font-size: 0.7em;
+		}
+		@include media( tablet ) {
+			.entry-title {
+				font-size: 1.2em
+			}
+
+			.avatar {
+				height: 32px;
+				width: 32px;
+			}
+		}
+	}
+
+	&.ts-2 article {
+		.entry-title {
+			font-size: 0.8em;
+		}
+		.entry-wrapper p,
+		.entry-meta {
+			font-size: 0.7em;
+		}
+
+		@include media( tablet ) {
+			.entry-title {
+				font-size: 0.9em;
+			}
+
+			.avatar {
+				height: 28px;
+				width: 28px;
+			}
+		}
+	}
+
+	&.ts-1 article {
+		.entry-title,
+		.entry-wrapper p {
+			font-size: 0.7em;
+		}
+		.entry-meta {
+			font-size: 0.6em;
+		}
+		@include media( tablet ) {
+			.avatar {
+				height: 24px;
+				width: 24px;
+			}
+		}
+	}
+}
+
+/* Block styles */
+
+.wpnbha.is-style-borders {
+	article {
+		border: solid rgba(0, 0, 0, 0.2);
+		border-width: 0 0 1px;
+		margin-bottom: 1em;
+		padding-bottom: 1em;
+
+		&:last-of-type {
+			margin-bottom: 0;
+
+			&:not(:first-of-type) {
+				border-bottom: 0;
+			}
+		}
+	}
+
+	@include media(tablet) {
+
+		@for $i from 2 through 6 {
+			&.columns-#{ $i } article {
+				padding-right: calc( ( 16px * #{$i} ) / ( #{$i} - 1 ) );
+			}
+		}
+
+		&.is-grid {
+			article {
+				border-width: 0 1px 0 0;
+			}
+		}
+
+		&.is-grid article:last-of-type,
+		&.columns-1 article,
+		&.columns-2 article:nth-of-type(2n),
+		&.columns-3 article:nth-of-type(3n),
+		&.columns-4 article:nth-of-type(4n),
+		&.columns-5 article:nth-of-type(5n),
+		&.columns-6 article:nth-of-type(6n) {
+			border: 0;
+		}
+	}
+}

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,8 +20,8 @@ export const apiTransformer = data => data.application_passwords;
 /**
  * Dispatches a request to fetch application passwords of the current user
  *
- * @param   {Object} action Redux action
- * @returns {Object} Dispatched http action
+ * @param   {object} action Redux action
+ * @returns {object} Dispatched http action
  */
 export const requestApplicationPasswords = action =>
 	http(
@@ -38,9 +36,9 @@ export const requestApplicationPasswords = action =>
 /**
  * Dispatches a user application passwords receive action when the request succeeded.
  *
- * @param   {Object} action       Redux action
- * @param   {Object} appPasswords Application passwords
- * @returns {Object} Dispatched user application passwords receive action
+ * @param   {object} action       Redux action
+ * @param   {object} appPasswords Application passwords
+ * @returns {object} Dispatched user application passwords receive action
  */
 export const handleRequestSuccess = ( action, appPasswords ) =>
 	receiveApplicationPasswords( appPasswords );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -10,7 +8,6 @@ const root = localizeUrl( 'https://en.support.wordpress.com/' ).replace( /\/$/, 
 export const ACCOUNT_RECOVERY = `${ root }/account-recovery`;
 export const ADDING_GOOGLE_APPS_TO_YOUR_SITE = `${ root }/adding-g-suite-to-your-site`;
 export const ADDING_USERS = `${ root }/adding-users`;
-export const ALL_ABOUT_DOMAINS = `${ root }/all-about-domains`;
 export const AUTO_RENEWAL = `${ root }/auto-renewal`;
 export const BANDPAGE_WIDGET = `${ root }/widgets/bandpage-widget`;
 export const CATEGORIES_VS_TAGS = `${ root }/posts/categories-vs-tags`;
@@ -72,10 +69,12 @@ export const MANAGE_PURCHASES_FAQ_CANCELLING = `${ root }/manage-purchases/#FAQ-
 export const MAP_EXISTING_DOMAIN = `${ root }/domains/map-existing-domain`;
 export const MAP_EXISTING_DOMAIN_UPDATE_DNS = `${ root }/domains/map-existing-domain#2-ask-your-domain-provider-to-update-your-dns-settings`;
 export const MAP_SUBDOMAIN = `${ root }/domains/map-subdomain`;
+export const MAP_DOMAIN_CHANGE_NAME_SERVERS = `${ root }/domains/map-existing-domain/#change-your-domains-name-servers`;
+export const MOVE_DOMAIN = `${ root }/domains/#move-a-domain-name`;
 export const MEDIA = `${ root }/media`;
 export const PUBLICIZE = `${ root }/publicize`;
 export const PUBLIC_VS_PRIVATE = `${ root }/domains/register-domain/#public-versus-private-registration-and-gdpr`;
-export const REFUNDS = `${ root }/refunds`;
+export const REFUNDS = `${ root }/manage-purchases/#refund-policy`;
 export const REGISTER_DOMAIN = `${ root }/domains/register-domain/`;
 export const SEO_TAGS = `${ root }/getting-more-views-and-traffic/#use-appropriate-tags`;
 export const SETTING_PRIMARY_DOMAIN = `${ root }/domains/#setting-the-primary-domain`;
@@ -91,6 +90,7 @@ export const STATS_TOP_POSTS_PAGES = `${ root }/stats/#top-posts-pages`;
 export const STATS_VIEWS_BY_COUNTRY = `${ root }/stats/#views-by-country`;
 export const SUPPORT_ROOT = `${ root }/`;
 export const TRANSFER_DOMAIN_REGISTRATION = `${ root }/transfer-domain-registration`;
+export const TRANSFER_DOMAIN_REGISTRATION_WITH_NEW_REGISTRAR = `${ root }/transfer-domain-registration#starting-the-transfer-with-your-new-registrar`;
 export const TWITTER_TIMELINE_WIDGET = `${ root }/widgets/twitter-timeline-widget`;
 export const UPDATE_CONTACT_INFORMATION = `${ root }/update-contact-information/`;
 export const UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES = `${ root }/update-contact-information/#email-or-name-changes`;

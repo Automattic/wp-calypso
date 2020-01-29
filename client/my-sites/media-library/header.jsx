@@ -5,11 +5,11 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'components/gridicon';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import MediaLibraryScale from './scale';
@@ -17,10 +17,8 @@ import UploadButton from './upload-button';
 import MediaLibraryUploadUrl from './upload-url';
 import { userCan } from 'lib/site/utils';
 import MediaModalSecondaryActions from 'post-editor/media-modal/secondary-actions';
-import Card from 'components/card';
+import { Card, Button, ScreenReaderText } from '@automattic/components';
 import ButtonGroup from 'components/button-group';
-import Button from 'components/button';
-import ScreenReaderText from 'components/screen-reader-text';
 import StickyPanel from 'components/sticky-panel';
 import { getSectionName } from 'state/ui/selectors';
 

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,14 +10,13 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button, ScreenReaderText } from '@automattic/components';
 import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import FormSelect from 'components/forms/form-select';
 import { isOrderNoteSaving } from 'woocommerce/state/sites/orders/notes/selectors';
-import ScreenReaderText from 'components/screen-reader-text';
 
 class CreateOrderNote extends Component {
 	static propTypes = {
@@ -74,11 +72,11 @@ class CreateOrderNote extends Component {
 				</FormFieldSet>
 				<div className="order-activity-log__new-note-type">
 					<FormSelect onChange={ this.setType } value={ this.state.type }>
-						<option value={ 'internal' }>{ translate( 'Private Note' ) }</option>
-						<option value={ 'email' }>{ translate( 'Send to Customer' ) }</option>
+						<option value={ 'internal' }>{ translate( 'Private note' ) }</option>
+						<option value={ 'email' }>{ translate( 'Send to customer' ) }</option>
 					</FormSelect>
 					<Button primary onClick={ this.saveNote } busy={ isNoteSaving } disabled={ isNoteSaving }>
-						{ translate( 'Add Note' ) }
+						{ translate( 'Add note' ) }
 					</Button>
 				</div>
 			</div>

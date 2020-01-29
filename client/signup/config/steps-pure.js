@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,16 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import { PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
+import {
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	TYPE_FREE,
+	TYPE_PERSONAL,
+	TYPE_PREMIUM,
+	TYPE_BUSINESS,
+	TYPE_ECOMMERCE,
+} from 'lib/plans/constants';
 
 export function generateSteps( {
 	addPlanToCart = noop,
@@ -32,9 +39,7 @@ export function generateSteps( {
 			stepName: 'survey',
 			props: {
 				surveySiteType:
-					currentPage && currentPage.toString().match( /\/start\/(blog|delta-blog)/ )
-						? 'blog'
-						: 'site',
+					currentPage && currentPage.toString().match( /\/start\/blog/ ) ? 'blog' : 'site',
 			},
 			providesDependencies: [ 'surveySiteType', 'surveyQuestion' ],
 		},
@@ -42,25 +47,8 @@ export function generateSteps( {
 		themes: {
 			stepName: 'themes',
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'themeSlugWithRepo' ],
-		},
-
-		'blog-themes': {
-			stepName: 'blog-themes',
-			props: {
-				designType: 'blog',
-			},
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'themeSlugWithRepo' ],
-		},
-
-		'website-themes': {
-			stepName: 'website-themes',
-			props: {
-				designType: 'page',
-			},
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'themeSlugWithRepo' ],
+			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
+			optionalDependencies: [ 'useThemeHeadstart' ],
 		},
 
 		'portfolio-themes': {
@@ -72,13 +60,33 @@ export function generateSteps( {
 			providesDependencies: [ 'themeSlugWithRepo' ],
 		},
 
+		'template-first-themes': {
+			stepName: 'template-first-themes',
+			props: {
+				designType: 'template-first',
+				quantity: 18,
+			},
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
+		},
+
+		'fse-themes': {
+			stepName: 'fse-themes',
+			props: {
+				designType: 'fse-compatible',
+				quantity: 6,
+			},
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
+		},
+
 		// `themes` does not update the theme for an existing site as we normally
 		// do this when the site is created. In flows where a site is merely being
 		// updated, we need to use a different API request function.
 		'themes-site-selected': {
 			stepName: 'themes-site-selected',
 			dependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
-			providesDependencies: [ 'themeSlugWithRepo' ],
+			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
 			apiRequestFunction: setThemeOnSite,
 			props: {
 				headerText: i18n.translate( 'Choose a theme for your new site.' ),
@@ -93,6 +101,7 @@ export function generateSteps( {
 			props: {
 				isDomainOnly: false,
 				showExampleSuggestions: false,
+				shouldShowDomainTestCopy: false,
 				includeWordPressDotCom: false,
 				showSkipButton: true,
 				headerText: i18n.translate( 'Getting ready to launch, pick a domain' ),
@@ -156,6 +165,29 @@ export function generateSteps( {
 			fulfilledStepCallback: isPlanFulfilled,
 		},
 
+		'plans-ecommerce': {
+			stepName: 'plans-ecommerce',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			fulfilledStepCallback: isPlanFulfilled,
+			props: {
+				hideFreePlan: true,
+				planTypes: [ TYPE_BUSINESS, TYPE_ECOMMERCE ],
+			},
+		},
+
+		'plans-import': {
+			stepName: 'plans-import',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			fulfilledStepCallback: isPlanFulfilled,
+			props: {
+				planTypes: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ],
+			},
+		},
+
 		'plans-personal': {
 			stepName: 'plans-personal',
 			apiRequestFunction: addPlanToCart,
@@ -197,8 +229,10 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 			props: {
 				headerText: i18n.translate( 'Getting ready to launch your website' ),
-				subHeaderText: i18n.translate( "Pick a plan that's right for you." ),
-				fallbackHeaderText: i18n.translate( "Almost there, pick a plan that's right for you." ),
+				subHeaderText: i18n.translate( "Pick a plan that's right for you. Upgrade as you grow." ),
+				fallbackHeaderText: i18n.translate(
+					"Almost there, pick a plan that's right for you. Upgrade as you grow."
+				),
 				isLaunchPage: true,
 			},
 		},
@@ -213,11 +247,17 @@ export function generateSteps( {
 		domains: {
 			stepName: 'domains',
 			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+				'shouldHideFreePlan',
+			],
+			optionalDependencies: [ 'shouldHideFreePlan' ],
 			props: {
 				isDomainOnly: false,
 			},
-			dependencies: [ 'themeSlugWithRepo' ],
 			delayApiRequestUntilComplete: true,
 		},
 
@@ -226,6 +266,7 @@ export function generateSteps( {
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
 			props: {
 				isDomainOnly: true,
+				shouldShowDomainTestCopy: false,
 			},
 		},
 
@@ -243,7 +284,14 @@ export function generateSteps( {
 		'domains-theme-preselected': {
 			stepName: 'domains-theme-preselected',
 			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+				'shouldHideFreePlan',
+			],
+			optionalDependencies: [ 'shouldHideFreePlan' ],
 			props: {
 				isDomainOnly: false,
 			},
@@ -351,11 +399,6 @@ export function generateSteps( {
 			providesDependencies: [],
 		},
 
-		'rewind-add-creds': {
-			stepName: 'rewind-add-creds',
-			providesDependencies: [],
-		},
-
 		'rewind-form-creds': {
 			stepName: 'rewind-form-creds',
 			providesDependencies: [ 'rewindconfig' ],
@@ -400,13 +443,31 @@ export function generateSteps( {
 		'from-url': {
 			stepName: 'from-url',
 			providesDependencies: [
-				'importEngine',
-				'importFavicon',
+				'importSiteEngine',
+				'importSiteFavicon',
 				'importSiteUrl',
-				'sitePreviewImageBlob',
 				'siteTitle',
+				'suggestedDomain',
 				'themeSlugWithRepo',
 			],
+		},
+
+		/* Import onboarding */
+		'import-url': {
+			stepName: 'import-url',
+			providesDependencies: [
+				'importSiteEngine',
+				'importSiteFavicon',
+				'importSiteUrl',
+				'siteTitle',
+				'suggestedDomain',
+				'themeSlugWithRepo',
+			],
+		},
+
+		'import-preview': {
+			stepName: 'import-preview',
+			dependencies: [ 'importSiteEngine', 'importSiteFavicon', 'importSiteUrl', 'siteTitle' ],
 		},
 
 		'reader-landing': {
@@ -421,7 +482,20 @@ export function generateSteps( {
 			fulfilledStepCallback: isSiteTypeFulfilled,
 		},
 
+		'site-type-with-theme': {
+			stepName: 'site-type',
+			providesDependencies: [ 'siteType' ],
+			fulfilledStepCallback: isSiteTypeFulfilled,
+		},
+
 		'site-topic': {
+			stepName: 'site-topic',
+			providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
+			optionalDependencies: [ 'themeSlugWithRepo' ],
+			fulfilledStepCallback: isSiteTopicFulfilled,
+		},
+
+		'site-topic-with-theme': {
 			stepName: 'site-topic',
 			providesDependencies: [ 'siteTopic' ],
 			fulfilledStepCallback: isSiteTopicFulfilled,
@@ -447,7 +521,8 @@ export function generateSteps( {
 		// These can be removed once we make the preview the default
 		'site-topic-with-preview': {
 			stepName: 'site-topic-with-preview',
-			providesDependencies: [ 'siteTopic' ],
+			providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
+			optionalDependencies: [ 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isSiteTopicFulfilled,
 			props: {
 				showSiteMockups: true,
@@ -465,7 +540,14 @@ export function generateSteps( {
 		'domains-with-preview': {
 			stepName: 'domains-with-preview',
 			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+				'shouldHideFreePlan',
+			],
+			optionalDependencies: [ 'shouldHideFreePlan' ],
 			props: {
 				showSiteMockups: true,
 				isDomainOnly: false,

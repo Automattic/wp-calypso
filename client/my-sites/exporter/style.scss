@@ -1,23 +1,8 @@
-.exporter__section-header {
-	&.formatted-header {
-		margin: 0 auto;
-		max-width: 500px;
-	}
-
-	.formatted-header__title {
-		text-transform: capitalize;
-	}
-
-	.formatted-header__subtitle {
-		color: var( --color-neutral-dark );
-	}
-}
-
 .export-card__title,
 .export-media-card__title {
 	font-size: 21px;
 	font-weight: 300;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	margin-bottom: 16px;
 	clear: left;
 }
@@ -30,7 +15,7 @@
 .export-card__subtitle,
 .export-media-card__subtitle {
 	font-size: 14px;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }
 
 .export-card__spinner-button {
@@ -53,7 +38,7 @@
 .export-card__advanced-settings-title {
 	font-size: 21px;
 	font-weight: 300;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	margin-bottom: 16px;
 }
 

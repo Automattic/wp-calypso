@@ -18,7 +18,7 @@
 		border: 1px solid var( --color-primary );
 
 		.gridicon {
-			fill: var( --color-white );
+			fill: var( --color-text-inverted );
 			margin: 2px;
 			top: 0;
 			height: 24px;
@@ -27,7 +27,7 @@
 
 		&.is-active {
 			background: var( --color-primary );
-			border-color: var( --color-primary-400 );
+			border-color: var( --color-primary-40 );
 		}
 	}
 
@@ -68,7 +68,7 @@
 	}
 
 	.gridicon {
-		fill: var( --color-white );
+		fill: var( --color-text-inverted );
 		margin: 0;
 		top: 0;
 		height: 36px;
@@ -88,13 +88,13 @@
 
 	&.is-active {
 		background: var( --color-primary );
-		border-color: var( --color-primary-400 );
+		border-color: var( --color-primary-40 );
 	}
 
 	&.has-notification::before {
 		display: block;
-		background-color: var( --color-accent-300 );
-		border: 2px solid var( --color-white );
+		background-color: var( --color-accent-30 );
+		border: 2px solid var( --color-border-inverted );
 		content: '';
 		border-radius: 50%;
 		width: 10px;
@@ -290,15 +290,18 @@
 
 .inline-help__footer {
 	background: var( --color-neutral-0 );
-	border-top: 1px solid var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-10 );
 	border-radius: 0 0 4px 4px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	flex-wrap: wrap;
 
 	.button.is-borderless.inline-help__more-button,
 	.button.is-borderless.inline-help__contact-button,
 	.button.is-borderless.inline-help__back-to-help-button,
 	.button.is-borderless.inline-help__cancel-button {
 		text-align: left;
-		width: 50%;
 		position: relative;
 		padding: 12px 8px 12px 46px;
 
@@ -326,7 +329,7 @@
 	}
 
 	.button.is-borderless.inline-help__contact-button {
-		padding-right: 24px;
+		padding-right: 40px;
 	}
 
 	// Hide/Show buttons as needed
@@ -396,10 +399,10 @@
 	&.is-selected {
 		background: var( --color-primary );
 		cursor: pointer;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 
 		a {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 			&:hover {
 				background: none;
 			}
@@ -482,17 +485,5 @@
 	100% {
 		opacity: 0.3;
 		width: 65%;
-	}
-}
-
-// Upwork AB Test Link
-.inline-help__upwork {
-	border-bottom: 1px solid var( --color-neutral-100 );
-	padding: 12px 16px;
-	text-align: left;
-
-	p {
-		font-size: 12px;
-		margin-bottom: 0;
 	}
 }

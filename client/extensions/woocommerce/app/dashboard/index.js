@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -243,9 +241,10 @@ class Dashboard extends Component {
 
 	render() {
 		const { className, finishedInstallOfRequiredPlugins, isSetupComplete, siteId } = this.props;
+		const useWideLayout = isSetupComplete ? true : false;
 
 		return (
-			<Main className={ classNames( 'dashboard', className ) } wideLayout>
+			<Main className={ classNames( 'dashboard', className ) } wideLayout={ useWideLayout }>
 				<ActionHeader breadcrumbs={ this.getBreadcrumb() } />
 				{ isSetupComplete ? this.renderDashboardContent() : this.renderDashboardSetupContent() }
 				{ finishedInstallOfRequiredPlugins && <QuerySettingsGeneral siteId={ siteId } /> }
@@ -295,7 +294,4 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect(
-	mapStateToProps,
-	{ fetchCounts }
-)( localize( Dashboard ) );
+export default connect( mapStateToProps, { fetchCounts } )( localize( Dashboard ) );

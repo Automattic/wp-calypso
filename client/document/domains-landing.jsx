@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import React from 'react';
@@ -11,19 +10,14 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import Head from 'components/head';
-import getStylesheet from './utils/stylesheet';
-import { jsonStringifyForHtml } from '../../server/sanitize';
-
-const cssChunkLink = asset => (
-	<link key={ asset } rel="stylesheet" type="text/css" data-webpack={ true } href={ asset } />
-);
+import { chunkCssLinks } from './utils';
+import { jsonStringifyForHtml } from 'server/sanitize';
 
 function DomainsLanding( {
 	branchName,
 	clientData,
 	domainsLandingData,
 	inlineScriptNonce,
-	isDebug,
 	env,
 	entrypoint,
 	head,
@@ -31,12 +25,9 @@ function DomainsLanding( {
 	isRTL,
 	lang,
 	manifest,
-	urls,
 	faviconURL,
 	addEvergreenCheck,
 } ) {
-	const csskey = isRTL ? 'css.rtl' : 'css.ltr';
-
 	return (
 		<html lang={ lang } dir={ isRTL ? 'rtl' : 'ltr' }>
 			<Head
@@ -52,16 +43,7 @@ function DomainsLanding( {
 				{ head.links.map( ( props, index ) => (
 					<link { ...props } key={ index } />
 				) ) }
-
-				<link
-					rel="stylesheet"
-					id="main-css"
-					href={
-						urls[ getStylesheet( { rtl: !! isRTL, debug: isDebug || env === 'development' } ) ]
-					}
-					type="text/css"
-				/>
-				{ entrypoint[ csskey ].map( cssChunkLink ) }
+				{ chunkCssLinks( entrypoint, isRTL ) }
 			</Head>
 			<body
 				className={ classnames( {

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,8 +8,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Gridicon from 'gridicons';
+import { Button } from '@automattic/components';
+import Gridicon from 'components/gridicon';
 
 /**
  * Style dependencies

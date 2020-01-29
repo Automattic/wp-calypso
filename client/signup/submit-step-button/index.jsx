@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { submitSignupStep } from 'state/signup/progress/actions';
 
 export class SubmitStepButton extends Component {
@@ -27,7 +25,4 @@ export class SubmitStepButton extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ submitSignupStep }
-)( SubmitStepButton );
+export default connect( null, { submitSignupStep } )( SubmitStepButton );

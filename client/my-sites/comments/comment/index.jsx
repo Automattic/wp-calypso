@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +12,7 @@ import { debounce, get, isEqual, isUndefined } from 'lodash';
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import CommentActions from 'my-sites/comments/comment/comment-actions';
 import CommentContent from 'my-sites/comments/comment/comment-content';
 import CommentEdit from 'my-sites/comments/comment/comment-edit';
@@ -59,11 +58,11 @@ export class Comment extends Component {
 		};
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.debounceScrollToOffset = debounce( this.scrollToOffset, 100 );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { isBulkMode: wasBulkMode, isPostView: wasPostView } = this.props;
 		const { isBulkMode, isPostView } = nextProps;
 

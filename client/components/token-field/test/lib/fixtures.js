@@ -1,4 +1,3 @@
-/** @format */
 export default {
 	specialTokens: {
 		textEscaped: [ 'a   b', 'i &lt;3 tags', '1&amp;2&amp;3&amp;4' ],
@@ -26,7 +25,10 @@ export default {
 			[ 'Tags ', '&', ' Stuff' ],
 			[ 'Tags ', '&', ' Stuff 2' ],
 		],
-		matchAmpersandSequence: [ [ 'Tag', 's &', ' Stuff' ], [ 'Tag', 's &', ' Stuff 2' ] ],
+		matchAmpersandSequence: [
+			[ 'Tag', 's &', ' Stuff' ],
+			[ 'Tag', 's &', ' Stuff 2' ],
+		],
 		matchAmpersandEscaped: [],
 	},
 	matchingSuggestions: {

@@ -1,4 +1,5 @@
-/** @format */
+/* eslint jest/expect-expect: [ "error", { "assertFunctionNames": [ "expect", "chaiExpect" ] } ] */
+
 /**
  * External dependencies
  */
@@ -37,6 +38,7 @@ import {
 	getSiteFrontPageType,
 	hasStaticFrontPage,
 	canCurrentUserUseAds,
+	canCurrentUserUseCustomerHome,
 	canCurrentUserUseStore,
 	canJetpackSiteManage,
 	canJetpackSiteUpdateFiles,
@@ -50,7 +52,6 @@ import {
 	getJetpackSiteRemoteManagementUrl,
 	hasJetpackSiteCustomDomain,
 	getJetpackSiteUpdateFilesDisabledReasons,
-	siteHasMinimumJetpackVersion,
 	isJetpackSiteMainNetworkSite,
 	getSiteAdminUrl,
 	getCustomizerUrl,
@@ -93,7 +94,6 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return a normalized site with computed attributes', () => {
-			const jetpackMinVersion = config( 'jetpack_min_version' );
 			const state = {
 				...userState,
 				sites: {
@@ -104,7 +104,7 @@ describe( 'selectors', () => {
 							URL: 'https://example.com',
 							jetpack: true,
 							options: {
-								jetpack_version: jetpackMinVersion,
+								jetpack_version: '8.0',
 								unmapped_url: 'https://example.wordpress.com',
 							},
 						},
@@ -126,7 +126,6 @@ describe( 'selectors', () => {
 				is_customizable: false,
 				is_previewable: true,
 				jetpack: true,
-				hasMinimumJetpackVersion: true,
 				canAutoupdateFiles: true,
 				canUpdateFiles: true,
 				canManage: true,
@@ -134,7 +133,7 @@ describe( 'selectors', () => {
 				isSecondaryNetworkSite: false,
 				isSiteUpgradeable: null,
 				options: {
-					jetpack_version: jetpackMinVersion,
+					jetpack_version: '8.0',
 					unmapped_url: 'https://example.wordpress.com',
 				},
 			};
@@ -2189,8 +2188,6 @@ describe( 'selectors', () => {
 					sites: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
 								options: {
 									show_on_front: 'posts',
 									page_on_front: 0,
@@ -2224,8 +2221,6 @@ describe( 'selectors', () => {
 					sites: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
 								options: {
 									show_on_front: 'page',
 									page_on_front: 1,
@@ -2248,8 +2243,6 @@ describe( 'selectors', () => {
 					sites: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
 								options: {
 									show_on_front: 'posts',
 									page_on_front: 0,
@@ -2270,8 +2263,6 @@ describe( 'selectors', () => {
 					sites: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
 								options: {
 									show_on_front: 'posts',
 								},
@@ -2304,8 +2295,6 @@ describe( 'selectors', () => {
 					sites: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
 								options: {
 									show_on_front: 'page',
 									page_on_front: 42,
@@ -2328,8 +2317,6 @@ describe( 'selectors', () => {
 					sites: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
 								options: {
 									show_on_front: 'posts',
 									page_on_front: 0,
@@ -2364,8 +2351,6 @@ describe( 'selectors', () => {
 					sites: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
 								options: {
 									show_on_front: 'page',
 									page_on_front: 1,
@@ -2402,8 +2387,6 @@ describe( 'selectors', () => {
 					sites: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
 								options: {
 									show_on_front: 'page',
 									page_on_front: 1,
@@ -2522,22 +2505,6 @@ describe( 'selectors', () => {
 
 			const canUpdateFiles = canJetpackSiteUpdateFiles( state, siteId );
 			chaiExpect( canUpdateFiles ).to.equal( null );
-		} );
-
-		test( 'it should return `false` if jetpack version is smaller than minimum version', () => {
-			const smallerVersion = '3.2';
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					jetpack: true,
-					options: {
-						jetpack_version: smallerVersion,
-					},
-				},
-			} );
-
-			const canUpdateFiles = canJetpackSiteUpdateFiles( state, siteId );
-			chaiExpect( canUpdateFiles ).to.equal( false );
 		} );
 
 		test( 'it should return `false` if is a multi-network site', () => {
@@ -2714,73 +2681,6 @@ describe( 'selectors', () => {
 
 			const canAutoUpdateCore = canJetpackSiteAutoUpdateCore( state, siteId );
 			chaiExpect( canAutoUpdateCore ).to.equal( false );
-		} );
-	} );
-
-	describe( '#siteHasMinimumJetpackVersion()', () => {
-		test( 'it should return `null` for a non-existing site', () => {
-			const hasMinimumVersion = siteHasMinimumJetpackVersion( stateWithNoItems, nonExistingSiteId );
-			chaiExpect( hasMinimumVersion ).to.equal( null );
-		} );
-
-		test( 'it should return `null` for a non jetpack site', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					jetpack: false,
-				},
-			} );
-
-			const hasMinimumVersion = siteHasMinimumJetpackVersion( state, siteId );
-			chaiExpect( hasMinimumVersion ).to.equal( null );
-		} );
-
-		test( 'it should return `true` if jetpack version is greater that minimum version', () => {
-			const greaterVersion = '3.5';
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					jetpack: true,
-					options: {
-						jetpack_version: greaterVersion,
-					},
-				},
-			} );
-
-			const hasMinimumVersion = siteHasMinimumJetpackVersion( state, siteId );
-			chaiExpect( hasMinimumVersion ).to.equal( true );
-		} );
-
-		test( 'it should return `true` if jetpack version is equal to minimum version', () => {
-			const equalVersion = config( 'jetpack_min_version' );
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					jetpack: true,
-					options: {
-						jetpack_version: equalVersion,
-					},
-				},
-			} );
-
-			const hasMinimumVersion = siteHasMinimumJetpackVersion( state, siteId );
-			chaiExpect( hasMinimumVersion ).to.equal( true );
-		} );
-
-		test( 'it should return `false` if jetpack version is smaller than minimum version', () => {
-			const smallerVersion = '3.2';
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					jetpack: true,
-					options: {
-						jetpack_version: smallerVersion,
-					},
-				},
-			} );
-
-			const hasMinimumVersion = siteHasMinimumJetpackVersion( state, siteId );
-			chaiExpect( hasMinimumVersion ).to.equal( false );
 		} );
 	} );
 
@@ -3700,7 +3600,6 @@ describe( 'selectors', () => {
 			};
 
 			const noNewAttributes = getJetpackComputedAttributes( state, 77203074 );
-			chaiExpect( noNewAttributes.hasMinimumJetpackVersion ).to.equal( undefined );
 			chaiExpect( noNewAttributes.canAutoupdateFiles ).to.equal( undefined );
 			chaiExpect( noNewAttributes.canUpdateFiles ).to.equal( undefined );
 			chaiExpect( noNewAttributes.canManage ).to.equal( undefined );
@@ -3729,7 +3628,6 @@ describe( 'selectors', () => {
 				},
 			};
 			const noNewAttributes = getJetpackComputedAttributes( state, 77203074 );
-			chaiExpect( noNewAttributes.hasMinimumJetpackVersion ).to.have.property;
 			chaiExpect( noNewAttributes.canAutoupdateFiles ).to.have.property;
 			chaiExpect( noNewAttributes.canUpdateFiles ).to.have.property;
 			chaiExpect( noNewAttributes.canManage ).to.have.property;
@@ -3927,6 +3825,64 @@ describe( 'selectors', () => {
 
 		test( "should return false if site doesn't have WordAds and user can not manage it", () => {
 			expect( canCurrentUserUseAds( createState( false, false, 'free_plan' ) ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'canCurrentUserUseCustomerHome()', () => {
+		const createState = ( {
+			created_at,
+			manage_options = true,
+			jetpack = false,
+			vip = false,
+			atomic = false,
+		} = {} ) => ( {
+			ui: {
+				selectedSiteId: 1,
+			},
+			currentUser: {
+				capabilities: {
+					1: {
+						manage_options,
+					},
+				},
+			},
+			sites: {
+				items: {
+					1: {
+						jetpack,
+						...( vip ? { is_vip: true } : {} ),
+						options: { is_automated_transfer: atomic, created_at },
+					},
+				},
+			},
+		} );
+
+		test( "should return false if user can't manage site options", () => {
+			expect(
+				canCurrentUserUseCustomerHome(
+					createState( { created_at: '2020-01-01', manage_options: false } )
+				)
+			).toBe( false );
+		} );
+
+		test( 'should return false for Jetpack site', () => {
+			expect(
+				canCurrentUserUseCustomerHome( createState( { created_at: '2020-01-01', jetpack: true } ) )
+			).toBe( false );
+		} );
+
+		test( 'should return false for VIP site', () => {
+			expect(
+				canCurrentUserUseCustomerHome( createState( { created_at: '2020-01-01', vip: true } ) )
+			).toBe( false );
+		} );
+
+		test( 'should return true for Atomic site', () => {
+			expect(
+				canCurrentUserUseCustomerHome(
+					createState( { created_at: '2020-01-01', jetpack: true, atomic: true } )
+				)
+			).toBe( true );
 		} );
 	} );
 } );

@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -13,7 +11,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 
 /**
  * Style dependencies
@@ -73,7 +71,7 @@ function GoogleMyBusinessLocation( { children, isCompact, location, translate } 
 								className="gmb-location__verified-icon"
 								icon="checkmark-circle"
 								size={ 18 }
-							/>{' '}
+							/>{ ' ' }
 							{ translate( 'Verified' ) }
 						</div>
 					) }

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,8 +9,8 @@ import { unescape } from 'lodash';
  * If the response object has a data property, it has data from
  * the site. Otherwise it has an error message from the remote site.
  *
- * @param  {Object} response Response from an API call
- * @return {Object}          Verified response
+ * @param  {object} response Response from an API call
+ * @returns {object}          Verified response
  */
 export function verifyResponseHasData( response ) {
 	if ( ! response.data ) {
@@ -24,7 +23,7 @@ export function verifyResponseHasData( response ) {
  * Check that all categories in a given list are valid category objects.
  *
  * @param  {Array} categories List of categories from the remote site API
- * @return {Boolean}          True if the categories are valid.
+ * @returns {boolean}          True if the categories are valid.
  */
 function isValidCategoriesArray( categories ) {
 	for ( let i = 0; i < categories.length; i++ ) {
@@ -39,8 +38,8 @@ function isValidCategoriesArray( categories ) {
 /**
  * Check if the given category has the expected properties
  *
- * @param  {Object} category A single category from the remote site API
- * @return {Boolean}         True if the category is valid.
+ * @param  {object} category A single category from the remote site API
+ * @returns {boolean}         True if the category is valid.
  */
 function isValidProductCategory( category ) {
 	return (
@@ -60,8 +59,8 @@ function isValidProductCategory( category ) {
  * If the response object has a data property, it has data from
  * the site. Otherwise it has an error message from the remote site.
  *
- * @param  {Object} response Response from an API call
- * @return {Object}          Verified response
+ * @param  {object} response Response from an API call
+ * @returns {object}          Verified response
  */
 export function verifyResponseHasValidCategories( response ) {
 	if ( ! response.data ) {

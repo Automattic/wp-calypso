@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import { By, promise } from 'selenium-webdriver';
+import { By, promise, until } from 'selenium-webdriver';
 import config from 'config';
 
 /**
@@ -42,6 +40,20 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		);
 	}
 
+	async setInElementsIframe( iframeSelector, what, value ) {
+		await this.driver.wait(
+			until.ableToSwitchToFrame( By.css( iframeSelector ) ),
+			this.explicitWaitMS,
+			'Could not locate the ElementInput iFrame.'
+		);
+
+		await driverHelper.setWhenSettable( this.driver, By.name( what ), value, {
+			pauseBetweenKeysMS: 50,
+		} );
+
+		return await this.driver.switchTo().defaultContent();
+	}
+
 	async enterTestCreditCardDetails( {
 		cardHolder,
 		cardNumber,
@@ -57,15 +69,19 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		await driverHelper.setWhenSettable( this.driver, By.id( 'name' ), cardHolder, {
 			pauseBetweenKeysMS: pauseBetweenKeysMS,
 		} );
-		await driverHelper.setWhenSettable( this.driver, By.id( 'number' ), cardNumber, {
-			pauseBetweenKeysMS: pauseBetweenKeysMS,
-		} );
-		await driverHelper.setWhenSettable( this.driver, By.id( 'expiration-date' ), cardExpiry, {
-			pauseBetweenKeysMS: pauseBetweenKeysMS,
-		} );
-		await driverHelper.setWhenSettable( this.driver, By.id( 'cvv' ), cardCVV, {
-			pauseBetweenKeysMS: pauseBetweenKeysMS,
-		} );
+
+		await this.setInElementsIframe(
+			'.credit-card-form-fields .number iframe',
+			'cardnumber',
+			cardNumber
+		);
+		await this.setInElementsIframe( '.credit-card-form-fields .cvv iframe', 'cvc', cardCVV );
+		await this.setInElementsIframe(
+			'.credit-card-form-fields .expiration-date iframe',
+			'exp-date',
+			cardExpiry
+		);
+
 		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( `div.country select option[value="${ cardCountryCode }"]` )

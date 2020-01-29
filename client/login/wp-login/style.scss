@@ -1,4 +1,5 @@
 @import 'jetpack-connect/colors.scss';
+@import 'woocommerce/components/text-control/style.scss';
 
 $image-height: 47px;
 
@@ -30,47 +31,62 @@ $image-height: 47px;
 }
 
 .wp-login__header {
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 	font-size: 16px;
 	margin-bottom: 16px;
 	text-align: center;
 
 	body.is-section-signup & {
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 }
 
 .wp-login__links,
 .wp-login__footer {
-	a, button {
-		color: var( --color-neutral-500 );
-		text-decoration: none;
+	a,
+	a:visited,
+	button {
+		color: var( --color-neutral-50 );
 
 		body.is-section-signup & {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 		}
 	}
 }
 
 .wp-login__links {
-	a, button {
-		border-bottom: 1px solid var( --color-neutral-100 );
+	a,
+	button {
+		border-bottom: 1px solid var( --color-neutral-10 );
 		box-sizing: border-box;
 		cursor: pointer;
 		display: block;
+		font-size: 14px;
 		font-weight: 500;
 		line-height: 4em;
 		padding: 0 24px;
 		text-align: center;
 		width: 100%;
 
-		body.is-section-signup & {
-			color: var( --color-white );
+		&:hover,
+		&:active {
+			color: var( --color-accent );
+		}
+
+		&:last-child {
+			border-bottom: none;
 		}
 	}
 
-	a:last-of-type {
-		border-bottom: none;
+	.gridicon {
+		margin-right: 3px;
+		vertical-align: text-bottom;
+
+		&.gridicons-external {
+			top: 0;
+			margin-right: 0;
+			margin-left: 3px;
+		}
 	}
 }
 
@@ -84,8 +100,8 @@ $image-height: 47px;
 }
 
 .wp-login__footer--jetpack {
-	background: var( --color-white );
-	border-top: solid 1px var( --color-neutral-50 );
+	background: var( --color-surface );
+	border-top: solid 1px var( --color-neutral-5 );
 	text-align: center;
 
 	img {
@@ -116,24 +132,37 @@ $image-height: 47px;
 .wp-login__private-site-header {
 	font-weight: bold;
 	margin-bottom: 10px;
+	text-align: center;
 }
 
 .wp-login__private-site-button {
 	width: 100%;
 }
 
-.layout.is-jetpack-login:not( .is-jetpack-woocommerce-flow ) {
+.wp-login__site-return-link {
+	overflow: hidden;
+	position: relative;
+	white-space: nowrap;
+
+	&::after {
+		@include long-content-fade( $color: var( --color-neutral-0-rgb ) );
+	}
+}
+
+.layout.is-jetpack-login:not( .is-jetpack-woocommerce-flow ):not( .is-wccom-oauth-flow ) {
 	@include jetpack-connect-colors();
 }
 
-.layout.is-jetpack-woocommerce-flow {
+.layout.is-jetpack-woocommerce-flow,
+.layout.is-wccom-oauth-flow {
 	@include woocommerce-colors();
 }
 
 .layout.is-jetpack-login {
 	background-color: var( --color-jetpack-onboarding-background );
 
-	.login__form-header {
+	.login__form-header,
+	.magic-login__form-header {
 		color: var( --color-jetpack-onboarding-text );
 	}
 
@@ -148,7 +177,9 @@ $image-height: 47px;
 	}
 
 	.login__form-terms a,
-	.form-input-validation a {
+	.login__social-tos a,
+	.form-input-validation a,
+	.login__form-change-username {
 		color: var( --color-accent-dark );
 
 		&:hover,
@@ -158,15 +189,17 @@ $image-height: 47px;
 	}
 
 	.wp-login__links a,
+	.wp-login__links button,
 	.logged-out-form__links a,
 	.logged-out-form__link-item,
-	.translator-invite__content a {
-		color: var( --color-neutral-200 );
-		border-bottom-color: var( --color-neutral-700 );
+	.translator-invite__content a,
+	.magic-login__footer a {
+		color: var( --color-neutral-20 );
+		border-bottom-color: var( --color-neutral-70 );
 
 		&:hover,
 		&:focus {
-			color: var( --color-primary-200 );
+			color: var( --color-primary-20 );
 		}
 	}
 
@@ -175,15 +208,20 @@ $image-height: 47px;
 	}
 
 	.translator-invite__content {
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 	}
 
 	.wp-login__site-return-link::after {
-		background: linear-gradient( to right, rgba( var( --color-jetpack-onboarding-background ), 0 ), rgba( var( --color-jetpack-onboarding-background ), 1 ) 90% );
+		background: linear-gradient(
+			to right,
+			rgba( var( --color-jetpack-onboarding-background-rgb ), 0 ),
+			var( --color-jetpack-onboarding-background ) 90%
+		);
 	}
 }
 
-.layout.is-jetpack-woocommerce-flow {
+.layout.is-jetpack-woocommerce-flow,
+.layout.is-wccom-oauth-flow {
 	background-color: var( --color-woocommerce-onboarding-background );
 
 	.wp-login__links {
@@ -193,9 +231,103 @@ $image-height: 47px;
 	.wp-login__links a {
 		border-bottom: none;
 		line-height: 3.4em;
+		color: var( --color-neutral-60 );
+		font-size: 14px;
+		text-decoration: underline;
+		font-weight: normal;
 	}
 
 	.login__form-header {
-		color: var( --color-gray-800 );
+		color: var( --color-neutral-80 );
+	}
+
+	.wp-login__main.main {
+		max-width: 476px;
+	}
+
+	.login__form {
+		@include elevation( 2dp );
+		padding-bottom: 0;
+		padding-top: 8px;
+	}
+
+	.login__form input:focus,
+	.logged-out-form input:focus {
+		border: 0;
+		box-shadow: none;
+	}
+
+	.login__form-change-username {
+		color: var( --color-neutral-60 );
+	}
+
+	.login__form-terms,
+	.login__form-terms a,
+	.login__form-terms a:hover {
+		text-align: left;
+		color: var( --color-neutral-60 );
+		font-size: 12px;
+	}
+
+	.login__form-social-divider {
+		text-align: center;
+		margin-top: 12px;
+		margin-bottom: 12px;
+		font-size: 12px;
+		position: initial;
+		text-transform: initial;
+	}
+
+	.login__social {
+		box-shadow: none;
+		padding-top: 0;
+		margin-right: auto;
+		margin-left: auto;
+		width: 300px;
+	}
+
+	.login__social-buttons {
+		.social-buttons__button {
+			border: 1px solid var( --studio-pink-50 );
+			color: var( --studio-pink-50 );
+			box-shadow: none;
+		}
+	}
+
+	.login__social-tos a {
+		color: var( --studio-gray-60 );
+	}
+
+	.wp-login__site-return-link::after {
+		background: none;
+	}
+
+	.woocommerce-muriel-text-control,
+	.muriel-input-text {
+		border-color: var( --color-neutral-20 );
+
+		.text-control__label,
+		.components-base-control__label {
+			color: var( --color-neutral-50 );
+			font-size: 12px;
+			font-weight: normal;
+		}
+
+		&.active {
+			box-shadow: 0 0 0 2px var( --studio-woocommerce-purple-60 );
+			border-color: transparent;
+		}
+	}
+
+	.login__form-footer {
+		text-align: center;
+		.button {
+			max-width: 310px;
+			height: 48px;
+
+			&.is-primary {
+				border: 0;
+			}
+		}
 	}
 }

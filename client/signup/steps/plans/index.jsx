@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,12 +14,9 @@ import { parse as parseQs } from 'qs';
  * Internal dependencies
  */
 import { getTld, isSubdomain } from 'lib/domains';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { getSiteBySlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import StepWrapper from 'signup/step-wrapper';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
-import PlansSkipButton from 'components/plans/plans-skip-button';
 import QueryPlans from 'components/data/query-plans';
 import { FEATURE_UPLOAD_THEMES_PLUGINS } from '../../../lib/plans/constants';
 import { planHasFeature } from '../../../lib/plans';
@@ -38,37 +33,6 @@ import './style.scss';
 
 export class PlansStep extends Component {
 	componentDidMount() {
-		if (
-			typeof window !== 'undefined' &&
-			window.location &&
-			typeof document !== 'undefined' &&
-			document.createElement &&
-			document.body
-		) {
-			if ( window.location.search ) {
-				// save this so that we can enter debug mode in the widget
-				window.salesteam_initial_search_string = window.location.search;
-			}
-
-			const salesTeamStyles = document.createElement( 'link' );
-			salesTeamStyles.setAttribute(
-				'href',
-				'//s0.wp.com/wp-content/a8c-plugins/wpcom-salesteam/css/wpcom-salesteam.css?ver=1'
-			);
-			salesTeamStyles.setAttribute( 'rel', 'stylesheet' );
-			salesTeamStyles.setAttribute( 'type', 'text/css' );
-			salesTeamStyles.setAttribute( 'media', 'all' );
-			document.head.appendChild( salesTeamStyles );
-
-			const salesTeamScript = document.createElement( 'script' );
-			salesTeamScript.setAttribute(
-				'src',
-				'//s0.wp.com/wp-content/a8c-plugins/wpcom-salesteam/js/wpcom-salesteam.js?ver=20190418'
-			);
-			salesTeamScript.setAttribute( 'defer', true );
-			document.head.appendChild( salesTeamScript );
-		}
-
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
@@ -142,9 +106,10 @@ export class PlansStep extends Component {
 		const {
 			disableBloggerPlanWithNonBlogDomain,
 			hideFreePlan,
-			isDomainOnly,
 			isLaunchPage,
 			selectedSite,
+			planTypes,
+			flowName,
 		} = this.props;
 
 		return (
@@ -163,38 +128,22 @@ export class PlansStep extends Component {
 					customerType={ this.getCustomerType() }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					plansWithScroll={ true }
+					planTypes={ planTypes }
+					flowName={ flowName }
 				/>
-				{ /* The `hideFreePlan` means that we want to hide the Free Plan Info Column.
-				 * In most cases, we want to show the 'Start with Free' PlansSkipButton instead --
-				 * unless we've already selected an option that implies a paid plan.
-				 * This is in particular true for domain names. */
-				hideFreePlan && ! isDomainOnly && ! this.getDomainName() && (
-					<PlansSkipButton onClick={ this.handleFreePlanButtonClick } />
-				) }
 			</div>
 		);
 	}
 
 	plansFeaturesSelection() {
-		const {
-			flowName,
-			stepName,
-			positionInFlow,
-			signupProgress,
-			translate,
-			selectedSite,
-			siteSlug,
-		} = this.props;
+		const { flowName, stepName, positionInFlow, translate, selectedSite, siteSlug } = this.props;
 
-		let headerText = this.props.headerText || translate( "Pick a plan that's right for you." );
-
-		//Temporary header for onboarding-dev flow
-		if ( 'onboarding-dev' === flowName ) {
-			headerText = translate( 'Pick your plan' );
-		}
-
+		const headerText = this.props.headerText || translate( "Pick a plan that's right for you." );
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
-		const subHeaderText = this.props.subHeaderText;
+		const subHeaderText =
+			this.props.subHeaderText || translate( 'Choose a plan. Upgrade as you grow.' );
+		const fallbackSubHeaderText = this.props.fallbackSubHeaderText || subHeaderText;
+
 		let backUrl, backLabelText;
 
 		if ( 0 === positionInFlow && selectedSite ) {
@@ -210,7 +159,7 @@ export class PlansStep extends Component {
 				headerText={ headerText }
 				fallbackHeaderText={ fallbackHeaderText }
 				subHeaderText={ subHeaderText }
-				signupProgress={ signupProgress }
+				fallbackSubHeaderText={ fallbackSubHeaderText }
 				isWideLayout={ true }
 				stepContent={ this.plansFeaturesList() }
 				allowBackFirstStep={ !! selectedSite }
@@ -240,14 +189,15 @@ PlansStep.propTypes = {
 	stepSectionName: PropTypes.string,
 	customerType: PropTypes.string,
 	translate: PropTypes.func.isRequired,
+	planTypes: PropTypes.array,
 };
 
 /**
  * Checks if the domainItem picked in the domain step is a top level .blog domain -
  * we only want to make Blogger plan available if it is.
  *
- * @param {Object} domainItem domainItem object stored in the "choose domain" step
- * @return {bool} is .blog domain registration
+ * @param {object} domainItem domainItem object stored in the "choose domain" step
+ * @returns {boolean} is .blog domain registration
  */
 export const isDotBlogDomainRegistration = domainItem => {
 	if ( ! domainItem ) {
@@ -266,7 +216,6 @@ export default connect(
 		// This step could be used to set up an existing site, in which case
 		// some descendants of this component may display discounted prices if
 		// they apply to the given site.
-		isDomainOnly: isDomainOnlySite( state, getSelectedSiteId( state ) ),
 		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
 		customerType: parseQs( path.split( '?' ).pop() ).customerType,
 		siteGoals: getSiteGoals( state ) || '',

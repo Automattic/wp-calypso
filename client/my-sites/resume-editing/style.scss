@@ -30,7 +30,7 @@
 }
 
 .resume-editing__label {
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 	font-size: 10px;
 	font-weight: 500;
 	opacity: 0.7;
@@ -40,7 +40,7 @@
 .resume-editing__post-title {
 	position: relative;
 	overflow: hidden;
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 	display: block;
 	max-width: 25vw;
 	white-space: nowrap;

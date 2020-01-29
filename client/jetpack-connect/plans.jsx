@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -18,10 +17,9 @@ import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import Placeholder from './plans-placeholder';
 import PlansGrid from './plans-grid';
-import PlansExtendedInfo from './plans-extended-info';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { addItem } from 'lib/upgrades/actions';
+import { addItem } from 'lib/cart/actions';
 import { addQueryArgs } from 'lib/route';
 import { clearPlan, isCalypsoStartedConnection, retrievePlan } from './persistence-utils';
 import { completeFlow } from 'state/jetpack-connect/actions';
@@ -37,7 +35,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import canCurrentUser from 'state/selectors/can-current-user';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
+import { persistSignupDestination } from 'signup/utils';
 
 const CALYPSO_PLANS_PAGE = '/plans/';
 const CALYPSO_MY_PLAN_PAGE = '/plans/my-plan/';
@@ -121,6 +119,13 @@ class Plans extends Component {
 		}
 	}
 
+	getMyPlansDestination() {
+		const redirectTo = CALYPSO_MY_PLAN_PAGE + this.props.selectedSiteSlug;
+		const args = { 'thank-you': '', install: 'all' };
+
+		return addQueryArgs( args, redirectTo );
+	}
+
 	redirect( path, args ) {
 		let redirectTo = path + this.props.selectedSiteSlug;
 
@@ -162,6 +167,7 @@ class Plans extends Component {
 
 		addItem( cartItem );
 		this.props.completeFlow();
+		persistSignupDestination( this.getMyPlansDestination() );
 		this.redirect( '/checkout/' );
 	};
 
@@ -209,7 +215,6 @@ class Plans extends Component {
 					interval={ interval }
 					selectedSite={ selectedSite }
 				>
-					<PlansExtendedInfo recordTracks={ this.handleInfoButtonClick } />
 					<LoggedOutFormLinks>
 						<JetpackConnectHappychatButton
 							label={ helpButtonLabel }
@@ -256,8 +261,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( Plans );
+export default flowRight( connectComponent, localize )( Plans );

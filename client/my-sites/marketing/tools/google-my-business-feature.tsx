@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { FEATURE_GOOGLE_MY_BUSINESS, PLAN_BUSINESS } from 'lib/plans/constants';
 import getGoogleMyBusinessConnectedLocation from 'state/selectors/get-google-my-business-connected-location';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
@@ -41,7 +41,7 @@ const MarketingToolsGoogleMyBusinessFeature: FunctionComponent< Props > = ( {
 	const handleConnectToGoogleMyBusinessClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_connect_to_google_my_business_button_click' );
 
-		page( `/google-my-business/new/${ selectedSiteSlug || '' }` );
+		page( `/google-my-business/${ selectedSiteSlug || '' }` );
 	};
 
 	const handleGoToGoogleMyBusinessClick = () => {

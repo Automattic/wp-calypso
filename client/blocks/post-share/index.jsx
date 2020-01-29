@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +8,7 @@ import classNames from 'classnames';
 import { get, includes, map, concat } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { current as currentPage } from 'page';
 
 /**
@@ -18,9 +17,10 @@ import { current as currentPage } from 'page';
 import QueryPostTypes from 'components/data/query-post-types';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import QuerySitePlans from 'components/data/query-site-plans';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import ButtonGroup from 'components/button-group';
 import NoticeAction from 'components/notice/notice-action';
+import { withLocalizedMoment } from 'components/localized-moment';
 import getPostSharePublishedActions from 'state/selectors/get-post-share-published-actions';
 import getPostShareScheduledActions from 'state/selectors/get-post-share-scheduled-actions';
 import getScheduledPublicizeShareActionTime from 'state/selectors/get-scheduled-publicize-share-action-time';
@@ -404,7 +404,7 @@ class PostShare extends Component {
 	}
 
 	renderRequestSharingNotice() {
-		const { failure, requesting, success, translate } = this.props;
+		const { failure, requesting, success, translate, moment } = this.props;
 
 		if ( this.props.scheduling ) {
 			return (
@@ -417,7 +417,7 @@ class PostShare extends Component {
 			return (
 				<Notice status="is-success" onDismissClick={ this.dismiss }>
 					{ translate( "We'll share your post on %s.", {
-						args: this.props.scheduledAt.format( 'LLLL' ),
+						args: moment.unix( this.props.scheduledAt ).format( 'LLLL' ),
 					} ) }
 				</Notice>
 			);
@@ -632,4 +632,4 @@ export default connect(
 		};
 	},
 	{ requestConnections, sharePost, dismissShareConfirmation, schedulePostShareAction }
-)( localize( PostShare ) );
+)( localize( withLocalizedMoment( PostShare ) ) );

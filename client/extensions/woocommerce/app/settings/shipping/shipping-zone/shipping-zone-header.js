@@ -1,12 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { isNumber } from 'lodash';
@@ -15,7 +13,7 @@ import { isNumber } from 'lodash';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getCurrentlyEditingShippingZone } from 'woocommerce/state/ui/shipping/zones/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -32,16 +30,16 @@ const ShippingZoneHeader = ( {
 } ) => {
 	const currentCrumb =
 		zone && isNumber( zone.id ) ? (
-			<span>{ translate( 'Edit Shipping Zone' ) }</span>
+			<span>{ translate( 'Edit shipping zone' ) }</span>
 		) : (
-			<span>{ translate( 'Add new Shipping Zone' ) }</span>
+			<span>{ translate( 'Add new shipping zone' ) }</span>
 		);
 
 	const breadcrumbs = [
 		<a href={ getLink( '/store/settings/:site/', site ) }> { translate( 'Settings' ) } </a>,
 		<a href={ getLink( '/store/settings/shipping/:site/', site ) }>
-			{' '}
-			{ translate( 'Shipping' ) }{' '}
+			{ ' ' }
+			{ translate( 'Shipping' ) }{ ' ' }
 		</a>,
 		currentCrumb,
 	];

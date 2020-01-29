@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,6 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import DomainSuggestion from 'components/domains/domain-suggestion';
+import './style.scss';
 
 class DomainSkipSuggestion extends React.Component {
 	static propTypes = {
@@ -34,7 +33,7 @@ class DomainSkipSuggestion extends React.Component {
 				<div className="domain-skip-suggestion__domain-description">
 					<h3>{ this.props.selectedSiteSlug }</h3>
 					<p>
-						{ translate( 'This is your current free site address', {
+						{ translate( 'This is your current free site address.', {
 							comment:
 								"Explains that the domain name shown above this sentence is this site's currently active domain, and it is free of cost.",
 						} ) }

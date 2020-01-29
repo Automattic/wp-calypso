@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -118,7 +116,7 @@ const CancelPurchaseRefundInformation = ( {
 						i18n.translate(
 							'Your plan included the custom domain %(domain)s. You can cancel your domain as well as the plan, but keep ' +
 								'in mind that when you cancel a domain you risk losing it forever, and visitors to your site may ' +
-								'experience difficulties acessing it.',
+								'experience difficulties accessing it.',
 							{
 								args: {
 									domain: includedDomainPurchase.meta,

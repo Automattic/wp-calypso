@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -22,14 +19,19 @@ import {
 	isExpiring,
 	isIncludedWithPlan,
 	isOneTimePurchase,
+	isPartnerPurchase,
 	isRenewable,
+	isRechargeable,
+	hasPaymentMethod,
 	showCreditCardExpiringWarning,
 	isPaidWithCredits,
 	subscribedWithinPastWeek,
+	shouldAddPaymentSourceInsteadOfRenewingNow,
 } from 'lib/purchases';
 import { isDomainTransfer, isConciergeSession } from 'lib/products-values';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { isMonthly } from 'lib/plans/constants';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
@@ -46,6 +48,7 @@ class PurchaseNotice extends Component {
 
 	getExpiringText( purchase ) {
 		const { translate, moment, selectedSite } = this.props;
+		const expiry = moment( purchase.expiryDate );
 
 		if ( selectedSite && purchase.expiryStatus === 'manualRenew' ) {
 			if ( isPaidWithCredits( purchase ) ) {
@@ -55,7 +58,33 @@ class PurchaseNotice extends Component {
 					{
 						args: {
 							purchaseName: getName( purchase ),
-							expiry: moment( purchase.expiryMoment ).fromNow(),
+							expiry: expiry.fromNow(),
+						},
+					}
+				);
+			}
+
+			if ( hasPaymentMethod( purchase ) ) {
+				if ( isRechargeable( purchase ) ) {
+					return translate(
+						'%(purchaseName)s will expire and be removed from your site %(expiry)s. ' +
+							"Please enable auto-renewal so you don't lose out on your paid features!",
+						{
+							args: {
+								purchaseName: getName( purchase ),
+								expiry: expiry.fromNow(),
+							},
+						}
+					);
+				}
+
+				return translate(
+					'%(purchaseName)s will expire and be removed from your site %(expiry)s. ' +
+						"Please renew before expiry so you don't lose out on your paid features!",
+					{
+						args: {
+							purchaseName: getName( purchase ),
+							expiry: expiry.fromNow(),
 						},
 					}
 				);
@@ -67,14 +96,13 @@ class PurchaseNotice extends Component {
 				{
 					args: {
 						purchaseName: getName( purchase ),
-						expiry: moment( purchase.expiryMoment ).fromNow(),
+						expiry: expiry.fromNow(),
 					},
 				}
 			);
 		}
 		if ( isMonthly( purchase.productSlug ) ) {
-			const expiryMoment = moment( purchase.expiryMoment );
-			const daysToExpiry = moment( expiryMoment.diff( moment() ) ).format( 'D' );
+			const daysToExpiry = moment( expiry.diff( moment() ) ).format( 'D' );
 
 			return translate(
 				'%(purchaseName)s will expire and be removed from your site %(expiry)s days. ',
@@ -90,7 +118,7 @@ class PurchaseNotice extends Component {
 		return translate( '%(purchaseName)s will expire and be removed from your site %(expiry)s.', {
 			args: {
 				purchaseName: getName( purchase ),
-				expiry: moment( purchase.expiryMoment ).fromNow(),
+				expiry: expiry.fromNow(),
 			},
 		} );
 	}
@@ -102,15 +130,20 @@ class PurchaseNotice extends Component {
 			return null;
 		}
 
-		if ( ! canExplicitRenew( purchase ) ) {
+		if (
+			! hasPaymentMethod( purchase ) &&
+			( ! canExplicitRenew( purchase ) || shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) )
+		) {
 			return (
-				<NoticeAction href={ editCardDetailsPath }>
-					{ translate( 'Enable Auto Renew' ) }
-				</NoticeAction>
+				<NoticeAction href={ editCardDetailsPath }>{ translate( 'Add Credit Card' ) }</NoticeAction>
 			);
 		}
 
-		return <NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>;
+		return (
+			! isRechargeable( purchase ) && (
+				<NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>
+			)
+		);
 	}
 
 	trackImpression( warning ) {
@@ -145,7 +178,8 @@ class PurchaseNotice extends Component {
 
 		if (
 			! subscribedWithinPastWeek( purchase ) &&
-			purchase.expiryMoment < moment().add( 90, 'days' )
+			purchase.expiryDate &&
+			moment( purchase.expiryDate ) < moment().add( 90, 'days' )
 		) {
 			noticeStatus = 'is-error';
 		}
@@ -168,7 +202,7 @@ class PurchaseNotice extends Component {
 	};
 
 	renderCreditCardExpiringNotice() {
-		const { editCardDetailsPath, purchase, translate } = this.props;
+		const { editCardDetailsPath, purchase, translate, moment } = this.props;
 		const {
 			payment: { creditCard },
 		} = purchase;
@@ -201,7 +235,7 @@ class PurchaseNotice extends Component {
 							args: {
 								cardType: creditCard.type.toUpperCase(),
 								cardNumber: parseInt( creditCard.number, 10 ),
-								cardExpiry: creditCard.expiryMoment.format( 'MMMM YYYY' ),
+								cardExpiry: moment( creditCard.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
 							},
 							components: {
 								a: linkComponent,
@@ -271,7 +305,7 @@ class PurchaseNotice extends Component {
 			return null;
 		}
 
-		if ( isDomainTransfer( this.props.purchase ) ) {
+		if ( isDomainTransfer( this.props.purchase ) || isPartnerPurchase( this.props.purchase ) ) {
 			return null;
 		}
 
@@ -299,7 +333,6 @@ class PurchaseNotice extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( localize( PurchaseNotice ) );
+export default connect( null, { recordTracksEvent } )(
+	localize( withLocalizedMoment( PurchaseNotice ) )
+);

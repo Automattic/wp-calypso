@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -42,7 +40,11 @@ export default class NavBarComponent extends AsyncBaseContainer {
 	}
 	async clickMySites() {
 		const mySitesSelector = by.css( 'header.masterbar a.masterbar__item' );
-		return await driverHelper.clickWhenClickable( this.driver, mySitesSelector );
+		await driverHelper.clickWhenClickable( this.driver, mySitesSelector );
+		return await driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			by.css( '.sidebar__menu-wrapper' )
+		);
 	}
 	hasUnreadNotifications() {
 		return this.driver

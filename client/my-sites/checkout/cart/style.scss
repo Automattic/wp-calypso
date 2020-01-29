@@ -31,13 +31,14 @@
 		}
 
 		.product-name {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 			display: block;
 			font-size: 14px;
 			padding-right: 30px;
 		}
 
-		.product-domain {
+		.product-domain,
+		.product-domain-renewal-date {
 			color: var( --color-text-subtle );
 			display: block;
 			font-size: 12px;
@@ -66,6 +67,21 @@
 
 		.cart__free-text:first-child {
 			padding-left: 0;
+		}
+
+		.cart__gsuite-discount {
+			.cart__gsuite-discount-regular-price {
+				text-decoration: line-through;
+			}
+
+			.cart__gsuite-discount-discounted-price {
+				padding-left: 4px;
+			}
+
+			.cart__gsuite-discount-text {
+				color: var( --color-success );
+				padding-left: 8px;
+			}
 		}
 
 		.product-monthly-price {
@@ -104,7 +120,7 @@
 
 	.cart-item__loading-placeholder {
 		.cart__remove-item {
-			@include placeholder( 23% );
+			@include placeholder( --color-neutral-10 );
 			border-radius: 0;
 			width: 25px;
 		}
@@ -192,7 +208,6 @@
 }
 
 .cart-empty {
-	background: var( --color-white );
 	padding: 30px;
 	text-align: center;
 	font-size: 14px;
@@ -232,32 +247,17 @@
 	}
 }
 
-.cart-toggle-button {
-	// Hide the text
-	display: flex;
+.popover-cart {
 	position: relative;
-	height: 48px;
-	width: 48px;
-	white-space: nowrap;
-	cursor: pointer; // Needed for Safari
+	display: inline-block;
 
-	.gridicon {
-		color: var( --color-neutral-700 );
-		cursor: pointer;
-		position: absolute;
-		top: 12px;
-		right: 12px;
+	button {
+		box-sizing: border-box;
+		min-width: auto;
+		padding: 0 15px 0 10px;
 
-		&:hover {
-			color: var( --color-primary );
-		}
-	}
-
-	&:focus {
-		outline: none;
-
-		.accessible-focus & {
-			box-shadow: inset 0 0 0 2px var( --color-primary-light );
+		@include breakpoint( '>480px' ) {
+			padding: 14px 20px 12px;
 		}
 	}
 }
@@ -274,9 +274,14 @@
 
 .cart__count-badge .count {
 	position: absolute;
-	top: 5px;
-	right: 5px;
+	top: 2px;
+	right: 2px;
 	animation: pulsing-badge 2s infinite;
+
+	@include breakpoint( '>480px' ) {
+		top: 5px;
+		right: 5px;
+	}
 }
 
 .cart__count-badge:hover .count {
@@ -344,8 +349,8 @@ div.popover-cart__popover {
 }
 
 .popover-cart__mobile-cart {
-	background-color: var( --color-white );
-	border: 1px solid var( --color-neutral-100 );
+	background-color: var( --color-surface );
+	border: 1px solid var( --color-neutral-10 );
 	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ), 0 0 56px rgba( 0, 0, 0, 0.075 );
 	margin: -1px;
 	position: relative;
@@ -415,10 +420,11 @@ div.popover-cart__popover {
 }
 
 .secondary-cart {
-	background: var( --color-white );
+	background: var( --color-surface );
 
 	@include breakpoint( '<660px' ) {
 		left: 0;
+		margin-left: 0;
 		margin-top: 10px;
 		// Create space for the inline help button
 		margin-bottom: 65px;
@@ -440,7 +446,7 @@ div.popover-cart__popover {
 
 .cart-item__loading-placeholder {
 	span {
-		@include placeholder( 23% );
+		@include placeholder( --color-neutral-10 );
 		margin-bottom: 1px;
 	}
 
@@ -448,7 +454,8 @@ div.popover-cart__popover {
 		width: 55%;
 	}
 
-	.product-domain {
+	.product-domain,
+	.product-domain-renewal-date {
 		width: 40%;
 	}
 

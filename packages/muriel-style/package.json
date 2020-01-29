@@ -11,7 +11,7 @@
 		"typography",
 		"sass"
 	],
-	"author": "@automattic",
+	"author": "Automattic Inc.",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
@@ -21,5 +21,6 @@
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/muriel-style#readme",
-	"private": true
+	"private": true,
+	"license": "GPL-2.0-or-later"
 }

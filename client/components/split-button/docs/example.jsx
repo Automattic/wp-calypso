@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { map } from 'lodash';
 import SplitButton from '../';
 import PopoverMenuItem from 'components/popover/menu-item';
 import PopoverMenuSeparator from 'components/popover/menu-separator';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 
 const popoverItems = [
 	<PopoverMenuItem key="sbe-oa" icon="add">

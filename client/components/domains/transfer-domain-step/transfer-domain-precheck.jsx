@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,14 +6,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import Notice from 'components/notice';
 import { recordTracksEvent } from 'state/analytics/actions';
 import FormattedHeader from 'components/formatted-header';
@@ -28,6 +25,11 @@ import {
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
 import { isSupportSession as hasEnteredSupportSession } from 'state/support/selectors';
+
+/**
+ * Image dependencies
+ */
+import migratingHostImage from 'assets/images/illustrations/migrating-host-diy.svg';
 
 class TransferDomainPrecheck extends React.Component {
 	static propTypes = {
@@ -50,11 +52,11 @@ class TransferDomainPrecheck extends React.Component {
 		unlockCheckClicked: false,
 	};
 
-	componentWillMount() {
-		this.componentWillReceiveProps( this.props );
+	UNSAFE_componentWillMount() {
+		this.UNSAFE_componentWillReceiveProps( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// Reset steps if domain became locked again
 		if ( false === nextProps.unlocked ) {
 			this.resetSteps();
@@ -346,11 +348,7 @@ class TransferDomainPrecheck extends React.Component {
 						'Log into your current domain provider to complete a few preliminary steps.'
 					) }
 				/>
-				<img
-					className="transfer-domain-step__illustration"
-					src={ '/calypso/images/illustrations/migrating-host-diy.svg' }
-					alt=""
-				/>
+				<img className="transfer-domain-step__illustration" src={ migratingHostImage } alt="" />
 			</Card>
 		);
 	}

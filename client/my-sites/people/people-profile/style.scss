@@ -45,7 +45,7 @@
 }
 
 .people-profile__username {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 16px;
 	font-weight: 600;
 	white-space: pre;
@@ -84,7 +84,7 @@
 
 .people-profile__role-badge {
 	float: left;
-	background: var( --color-white );
+	background: var( --color-surface );
 	border: 1px solid var( --color-neutral-light );
 	border-radius: 2px;
 	color: var( --color-text-subtle );
@@ -100,26 +100,37 @@
 	&.role-super-admin {
 		background: var( --color-error );
 		border: none;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 
 	&.role-administrator,
 	&.role-admin-owner {
-		background: var( --color-neutral-700 );
+		background: var( --color-neutral-70 );
 		border: none;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 
 	&.role-editor {
 		background: var( --color-primary-dark );
 		border: none;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 
 	&.role-author,
 	&.role-contributor {
 		background: var( --color-primary );
 		border: none;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
+
+	&.role-contractor {
+		background: var( --color-neutral-10 );
+		border: none;
+		color: var( --color-neutral-70 );
+	}
+}
+
+.people-profile__role-badge-info {
+	float: left;
+	margin-left: 4px;
 }

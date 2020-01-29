@@ -1,4 +1,3 @@
-/** @format */
 export const SITE_ID_0 = 2916284;
 export const SITE_ID_1 = 77203074;
 export const USER_ID = 73705554;
@@ -61,7 +60,7 @@ export const REST_API_ERROR_RESPONSE = {
 
 /**
  * Return a whole state with vouchers data structure
- * @return {Object} an state instance
+ * @returns {object} an state instance
  *
  * - first site-domians is not requesting
  * - second site-domians is requesting

@@ -1,8 +1,11 @@
-/** @format */
-// External dependencies
+/**
+ * External dependencies
+ */
 import i18n from 'i18n-calypso';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 import {
 	STORED_CARDS_ADD_COMPLETED,
 	STORED_CARDS_DELETE,
@@ -15,18 +18,16 @@ import {
 import wp from 'lib/wp';
 
 export const addStoredCard = cardData => dispatch => {
-	return new Promise( ( resolve, reject ) => {
-		wp.undocumented()
-			.me()
-			.storedCardAdd( cardData.token, ( error, data ) => {
-				error ? reject( error ) : resolve( data );
+	return wp
+		.undocumented()
+		.me()
+		.storedCardAdd( cardData.token, cardData.additionalData )
+		.then( item => {
+			dispatch( {
+				type: STORED_CARDS_ADD_COMPLETED,
+				item,
 			} );
-	} ).then( item => {
-		dispatch( {
-			type: STORED_CARDS_ADD_COMPLETED,
-			item,
 		} );
-	} );
 };
 
 export const fetchStoredCards = () => dispatch => {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,11 +10,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import Button from 'components/button';
-import isVipSite from 'state/selectors/is-vip-site';
+import { Button } from '@automattic/components';
 import { showGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
 
 /**
  * Style dependencies
@@ -62,7 +59,7 @@ class EditorGutenbergOptInSidebar extends PureComponent {
 }
 
 const mapStateToProps = state => ( {
-	optInEnabled: isEnabled( 'gutenberg/opt-in' ) && ! isVipSite( state, getSelectedSiteId( state ) ),
+	optInEnabled: isGutenbergOptInEnabled( state, getSelectedSiteId( state ) ),
 } );
 
 const mapDispatchToProps = { showDialog: showGutenbergOptInDialog };

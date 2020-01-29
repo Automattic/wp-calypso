@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,7 +10,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card, CompactCard } from '@automattic/components';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import PurchasesHeader from '../purchases/purchases-list/header';
 import Main from 'components/main';
@@ -20,10 +19,10 @@ import QueryMembershipsSubscriptions from 'components/data/query-memberships-sub
 import HeaderCake from 'components/header-cake';
 import { purchasesRoot } from '../purchases/paths';
 import Site from 'blocks/site';
-import Gridicon from 'gridicons';
-import CompactCard from 'components/card/compact';
+import Gridicon from 'components/gridicon';
 import { requestSubscriptionStop } from 'state/memberships/subscriptions/actions';
 import Notice from 'components/notice';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -138,4 +137,4 @@ export default connect(
 	{
 		requestSubscriptionStop,
 	}
-)( localize( Subscription ) );
+)( localize( withLocalizedMoment( Subscription ) ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -46,7 +44,7 @@ class SharingButtonsTray extends React.Component {
 		isReordering: false,
 	};
 
-	componentWillUpdate( nextProps ) {
+	UNSAFE_componentWillUpdate( nextProps ) {
 		if ( this.props.visibility !== nextProps.visibility ) {
 			this.setState( { isReordering: false } );
 		}
@@ -176,12 +174,7 @@ class SharingButtonsTray extends React.Component {
 		if ( this.state.isReordering ) {
 			const buttons = this.getButtonsOfCurrentVisibility().map( function( button ) {
 				return (
-					<ButtonsPreviewButton
-						key={ button.ID }
-						button={ button }
-						enabled={ true }
-						style={ this.props.style }
-					/>
+					<ButtonsPreviewButton key={ button.ID } button={ button } enabled={ true } style="text" />
 				);
 			}, this );
 
@@ -191,7 +184,7 @@ class SharingButtonsTray extends React.Component {
 			<ButtonsPreviewButtons
 				buttons={ this.props.buttons }
 				visibility={ this.props.visibility }
-				style={ this.props.style }
+				style="text"
 				showMore={ false }
 				onButtonClick={ this.onButtonClick }
 			/>

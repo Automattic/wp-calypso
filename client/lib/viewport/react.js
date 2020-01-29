@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -18,9 +17,9 @@ import {
 /**
  * React hook for getting the status for a breakpoint and keeping it updated.
  *
- * @param {String} breakpoint The breakpoint to consider.
+ * @param {string} breakpoint The breakpoint to consider.
  *
- * @returns {Boolean} The current status for the breakpoint.
+ * @returns {boolean} The current status for the breakpoint.
  */
 export function useBreakpoint( breakpoint ) {
 	const [ state, setState ] = useState( () => ( {
@@ -51,7 +50,7 @@ export function useBreakpoint( breakpoint ) {
  * React hook for getting the status for the mobile breakpoint and keeping it
  * updated.
  *
- * @returns {Boolean} The current status for the breakpoint.
+ * @returns {boolean} The current status for the breakpoint.
  */
 export function useMobileBreakpoint() {
 	return useBreakpoint( MOBILE_BREAKPOINT );
@@ -61,7 +60,7 @@ export function useMobileBreakpoint() {
  * React hook for getting the status for the desktop breakpoint and keeping it
  * updated.
  *
- * @returns {Boolean} The current status for the breakpoint.
+ * @returns {boolean} The current status for the breakpoint.
  */
 export function useDesktopBreakpoint() {
 	return useBreakpoint( DESKTOP_BREAKPOINT );
@@ -71,7 +70,7 @@ export function useDesktopBreakpoint() {
  * React higher order component for getting the status for a breakpoint and
  * keeping it updated.
  *
- * @param {String} breakpoint The breakpoint to consider.
+ * @param {string} breakpoint The breakpoint to consider.
  *
  * @returns {Function} A function that given a component returns the
  * wrapped component.

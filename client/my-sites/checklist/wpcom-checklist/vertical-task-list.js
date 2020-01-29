@@ -34,7 +34,7 @@ const verticalTaskList = {
 	Photography: [ 'service_list_added' ],
 	'Real Estate & Housing': [],
 	Religion: [],
-	Restaurants: [],
+	Restaurant: [],
 	'Shopping & Retail': [],
 	Sports: [ 'service_list_added' ],
 	'Transportation & Logistics': [ 'service_list_added' ],

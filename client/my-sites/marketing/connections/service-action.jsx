@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { getRemovableConnections } from 'state/sharing/publicize/selectors';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
@@ -79,6 +77,16 @@ const SharingServiceAction = ( {
 		label = translate( 'Unavailable', {
 			context: 'Sharing: Publicize connect unavailable button label',
 		} );
+		return (
+			<Button compact disabled={ true }>
+				{ label }
+			</Button>
+		);
+	}
+
+	// No new connections allowed due to Eventbrite shutting down an endpoint needed
+	// for our integration. See: https://groups.google.com/forum/#!topic/eventbrite-api/FT2MsDswdrA
+	if ( 'eventbrite' === service.ID && status === 'not-connected' ) {
 		return (
 			<Button compact disabled={ true }>
 				{ label }

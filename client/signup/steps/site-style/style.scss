@@ -8,7 +8,7 @@
 .site-style__form {
 	margin: auto;
 	max-width: 480px;
-	background-color: var( --color-white );
+	background-color: var( --color-surface );
 
 	@include breakpoint( '<660px' ) {
 		// On small screens the form
@@ -23,10 +23,10 @@
 		padding: 0 4px;
 		border-radius: 5px;
 	}
-}
 
-.site-style__fieldset {
-	margin: 0;
+	.site-style__fieldset {
+		margin: 0;
+	}
 }
 
 .site-style__option-label {
@@ -36,12 +36,11 @@
 		display: inline-block;
 		margin-bottom: 0;
 	}
-	margin: 0;
 	text-align: center;
 
 	// Default to a white background, but
 	// some styles override it below.
-	background: var( --color-white );
+	background: var( --color-surface );
 
 	// Transition all the things!
 	transition: all 0.15s ease-in-out;
@@ -49,11 +48,13 @@
 	@include breakpoint( '<660px' ) {
 		width: 50%;
 		padding: 16px 8px;
-		border-bottom: 1px solid var( --color-neutral-200 );
+		border-bottom: 1px solid var( --color-neutral-20 );
 
 		// This fixes an annoyance with using
 		// display: inline-block above.
-		margin-bottom: -5px;
+		&.form-label {
+			margin-bottom: -5px;
+		}
 
 		// Make the SVGs a little bigger since
 		// we've got the room.
@@ -66,7 +67,7 @@
 	@include breakpoint( '>660px' ) {
 		// Make 'em feel like buttons.
 		cursor: pointer;
-		border: 1px solid var( --color-neutral-200 );
+		border: 1px solid var( --color-neutral-20 );
 		border-radius: 3px;
 
 		// Shorter names can be too small, so

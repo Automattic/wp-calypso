@@ -21,7 +21,7 @@
 	}
 
 	&.is-large .site-selector__sites {
-		border-top: 1px solid var( --color-neutral-100 );
+		border-top: 1px solid var( --color-neutral-10 );
 	}
 
 	.site.is-loading {
@@ -40,29 +40,25 @@
 
 	// Highlight selected site
 	&.is-selected {
-		background-color: var( --sidebar-menu-selected-background-color );
-
-		.site__badge {
-			color: var( --sidebar-menu-selected-a-color );
-		}
+		background-color: var( --color-sidebar-menu-selected-background );
 
 		.site__title,
 		.site__domain {
-			color: var( --sidebar-menu-selected-a-color );
+			color: var( --color-sidebar-menu-selected-text );
 			&::after {
 				@include long-content-fade(
-					$color: var( --sidebar-menu-selected-background-color-gradient )
+					$color: var( --color-sidebar-menu-selected-background-rgb )
 				);
 			}
 		}
 
 		.count {
-			border-color: var( --sidebar-menu-selected-a-color );
-			color: var( --sidebar-menu-selected-a-color );
+			border-color: var( --color-sidebar-menu-selected-text );
+			color: var( --color-sidebar-menu-selected-text );
 		}
 
 		&.is-private .site__title::before {
-			color: var( --sidebar-menu-selected-a-color );
+			color: var( --color-sidebar-menu-selected-text );
 		}
 	}
 }
@@ -72,35 +68,35 @@
 .site-selector .all-sites.is-highlighted,
 .notouch .site-selector.is-hover-enabled .site:hover,
 .notouch .site-selector.is-hover-enabled .all-sites:hover {
-	background: var( --sidebar-menu-hover-background );
+	background: var( --color-sidebar-menu-hover-background );
 	cursor: pointer;
 
 	.site__badge {
-		color: var( --sidebar-menu-hover-color );
+		color: var( --color-sidebar-text );
 	}
 
 	.site__title,
 	.site__domain {
-		color: var( --sidebar-menu-hover-color );
+		color: var( --color-sidebar-menu-hover-text );
 		&::after {
-			@include long-content-fade( $color: var( --sidebar-menu-hover-background-gradient ) );
+			@include long-content-fade( $color: var( --color-sidebar-menu-hover-background-rgb ) );
 		}
 	}
 
 	.site__title::before {
-		color: var( --sidebar-menu-hover-color );
+		color: var( --color-sidebar-menu-hover-text );
 	}
 
 	.count {
-		border-color: var( --sidebar-menu-hover-color );
-		color: var( --sidebar-menu-hover-color );
+		border-color: var( --color-sidebar-menu-hover-text );
+		color: var( --color-sidebar-menu-hover-text );
 	}
 }
 
 .site-selector .search {
 	margin: 8px;
 	height: 33px;
-	border: 1px solid var( --color-neutral-100 );
+	border: 1px solid var( --color-neutral-10 );
 	display: block;
 	opacity: 0;
 	position: absolute;
@@ -111,10 +107,10 @@
 	}
 
 	&.has-focus {
-		box-shadow: 0 0 0 2px var( --color-primary-100 );
+		box-shadow: 0 0 0 2px var( --color-primary-10 );
 
 		&:hover {
-			box-shadow: 0 0 0 2px var( --color-primary-200 );
+			box-shadow: 0 0 0 2px var( --color-primary-20 );
 		}
 	}
 
@@ -134,7 +130,7 @@
 .site-selector__sites {
 	max-height: calc( 100% - 93px );
 	overflow-y: auto;
-	background: var( --sidebar-secondary-background );
+	background: var( --color-surface );
 
 	@include breakpoint( '<660px' ) {
 		max-height: calc( 100% - 109px );
@@ -149,7 +145,7 @@
 
 .site-selector__add-new-site {
 	padding: 0;
-	border-top: 1px solid darken( $sidebar-bg-color, 10% );
+	border-top: 1px solid var( --color-neutral-5 );
 	margin: auto 0 0;
 	display: flex;
 	flex-direction: row;
@@ -163,11 +159,11 @@
 	font-size: 11px;
 	font-weight: 600;
 	padding: 8px;
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 	line-height: 2.1;
 
 	&:hover {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	@include breakpoint( '<660px' ) {
@@ -189,7 +185,7 @@
 }
 
 .site-selector .all-sites {
-	border-bottom: 1px solid var( --color-neutral-100 );
+	border-bottom: 1px solid var( --color-neutral-10 );
 }
 
 .site-selector__recent {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,6 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import canCurrentUser from 'state/selectors/can-current-user';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
+import isVipSite from 'state/selectors/is-vip-site';
 import DocumentHead from 'components/data/document-head';
 import { getSiteSlug, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -23,6 +22,7 @@ import NavTabs from 'components/section-nav/tabs';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import UpgradeNudge from 'blocks/upgrade-nudge';
 import { FEATURE_NO_ADS } from 'lib/plans/constants';
 
@@ -38,6 +38,7 @@ export const Sharing = ( {
 	showConnections,
 	showTraffic,
 	siteId,
+	isVip,
 	siteSlug,
 	translate,
 } ) => {
@@ -85,9 +86,14 @@ export const Sharing = ( {
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="sharing">
-			<DocumentHead title={ translate( 'Sharing' ) } />
+			<DocumentHead title={ translate( 'Marketing and Integrations' ) } />
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 			<SidebarNavigation />
+			<FormattedHeader
+				className="marketing__page-heading"
+				headerText={ translate( 'Marketing and Integrations' ) }
+				align="left"
+			/>
 			{ filters.length > 0 && (
 				<SectionNav selectedText={ get( selected, 'title', '' ) }>
 					<NavTabs>
@@ -99,12 +105,14 @@ export const Sharing = ( {
 					</NavTabs>
 				</SectionNav>
 			) }
-			<UpgradeNudge
-				event="sharing_no_ads"
-				feature={ FEATURE_NO_ADS }
-				message={ translate( 'Prevent ads from showing on your site.' ) }
-				title={ translate( 'No Ads with WordPress.com Premium' ) }
-			/>
+			{ ! isVip && (
+				<UpgradeNudge
+					event="sharing_no_ads"
+					feature={ FEATURE_NO_ADS }
+					message={ translate( 'Prevent ads from showing on your site.' ) }
+					title={ translate( 'No Ads with WordPress.com Premium' ) }
+				/>
+			) }
 			{ contentComponent }
 		</Main>
 	);
@@ -112,6 +120,7 @@ export const Sharing = ( {
 
 Sharing.propTypes = {
 	canManageOptions: PropTypes.bool,
+	isVipSite: PropTypes.bool,
 	contentComponent: PropTypes.node,
 	path: PropTypes.string,
 	showButtons: PropTypes.bool,
@@ -131,8 +140,9 @@ export default connect( state => {
 
 	return {
 		showButtons: siteId && canManageOptions && ( ! isJetpack || hasSharedaddy ),
-		showConnections: ! siteId || ! isJetpack || isJetpackModuleActive( state, siteId, 'publicize' ),
-		showTraffic: !! siteId,
+		showConnections: !! siteId,
+		showTraffic: canManageOptions && !! siteId,
+		isVip: isVipSite( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 	};

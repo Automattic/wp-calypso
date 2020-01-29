@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,10 +14,11 @@ import debugFactory from 'debug';
  */
 import config from 'config';
 import Main from 'components/main';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import Notice from 'components/notice';
 import HelpContactForm from 'me/help/help-contact-form';
 import LiveChatClosureNotice from 'me/help/live-chat-closure-notice';
+import GMClosureNotice from 'me/help/gm-closure-notice';
 import HelpContactConfirmation from 'me/help/help-contact-confirmation';
 import HeaderCake from 'components/header-cake';
 import wpcomLib from 'lib/wp';
@@ -435,7 +434,7 @@ class HelpContact extends React.Component {
 	 * Before determining which variation to assign, certain async data needs to be in place.
 	 * This function helps assess whether we're ready to say which variation the user should see.
 	 *
-	 * @returns {Boolean} Whether all the data is present to determine the variation to show
+	 * @returns {boolean} Whether all the data is present to determine the variation to show
 	 */
 	hasDataToDetermineVariation = () => {
 		const ticketReadyOrError =
@@ -470,7 +469,8 @@ class HelpContact extends React.Component {
 
 	/**
 	 * Get the view for the contact page.
-	 * @return {object} A JSX object that should be rendered
+	 *
+	 * @returns {object} A JSX object that should be rendered
 	 */
 	getView = () => {
 		const { confirmation } = this.state;
@@ -528,18 +528,37 @@ class HelpContact extends React.Component {
 		const isUserAffectedByLiveChatClosure =
 			supportVariation !== SUPPORT_DIRECTLY && supportVariation !== SUPPORT_FORUM;
 
+		const xmasHolidayName = translate( 'Christmas', {
+			context: 'Holiday name',
+		} );
+
 		return (
 			<div>
 				{ isUserAffectedByLiveChatClosure && (
-					<Fragment>
+					<>
 						<LiveChatClosureNotice
-							holidayName="Easter"
+							holidayName={ xmasHolidayName }
 							compact={ compact }
-							displayAt="2019-04-18 00:00Z"
-							closesAt="2019-04-21 06:00Z"
-							reopensAt="2019-04-22 06:00Z"
+							displayAt="2019-12-17 00:00Z"
+							closesAt="2019-12-24 00:00Z"
+							reopensAt="2019-12-26 07:00Z"
 						/>
-					</Fragment>
+						<LiveChatClosureNotice
+							holidayName={ translate( "New Year's Day" ) }
+							compact={ compact }
+							displayAt="2019-12-26 07:00Z"
+							closesAt="2019-12-31 00:00Z"
+							reopensAt="2020-01-02 07:00Z"
+						/>
+						<GMClosureNotice
+							compact={ compact }
+							displayAt="2019-08-31 00:00Z"
+							basicChatClosesAt="2019-09-07 00:00Z"
+							basicChatReopensAt="2019-09-23 04:00Z"
+							priorityChatClosesAt="2019-09-10 00:00Z"
+							priorityChatReopensAt="2019-09-19 04:00Z"
+						/>
+					</>
 				) }
 				{ this.shouldShowTicketRequestErrorNotice( supportVariation ) && (
 					<Notice

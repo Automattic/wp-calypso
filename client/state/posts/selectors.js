@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { filter, find, has, get, includes, isEqual, omit, some } from 'lodash';
 import createSelector from 'lib/create-selector';
-import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -34,9 +31,9 @@ import { getFeaturedImageId } from 'state/posts/utils';
  * Returns the PostsQueryManager from the state tree for a given site ID (or
  * for queries related to all sites at once).
  *
- * @param  {Object}  state  Global state tree
- * @param  {?Number} siteId Site ID, or `null` for all-sites queries
- * @return {Object}         Posts query manager
+ * @param   {object}  state  Global state tree
+ * @param   {?number} siteId Site ID, or `null` for all-sites queries
+ * @returns {object}         Posts query manager
  */
 function getQueryManager( state, siteId ) {
 	if ( ! siteId ) {
@@ -48,9 +45,9 @@ function getQueryManager( state, siteId ) {
 /**
  * Returns a post object by its global ID.
  *
- * @param  {Object} state    Global state tree
- * @param  {String} globalId Post global ID
- * @return {Object}          Post object
+ * @param   {object} state    Global state tree
+ * @param   {string} globalId Post global ID
+ * @returns {object}          Post object
  */
 export function getPost( state, globalId ) {
 	const path = state.posts.items[ globalId ];
@@ -72,9 +69,9 @@ export function getPost( state, globalId ) {
  * not exist. A normalized post includes common transformations to prepare the
  * post for display.
  *
- * @param  {Object}  state    Global state tree
- * @param  {String}  globalId Post global ID
- * @return {?Object}          Post object
+ * @param   {object}  state    Global state tree
+ * @param   {string}  globalId Post global ID
+ * @returns {?object}          Post object
  */
 export const getNormalizedPost = createSelector(
 	( state, globalId ) => normalizePostForDisplay( getPost( state, globalId ) ),
@@ -84,9 +81,9 @@ export const getNormalizedPost = createSelector(
 /**
  * Returns an array of post objects by site ID.
  *
- * @param  {Object} state  Global state tree
- * @param  {Number} siteId Site ID
- * @return {Array}         Site posts
+ * @param   {object} state  Global state tree
+ * @param   {number} siteId Site ID
+ * @returns {Array}         Site posts
  */
 export const getSitePosts = createSelector(
 	( state, siteId ) => {
@@ -107,10 +104,10 @@ export const getSitePosts = createSelector(
 /**
  * Returns a post object by site ID, post ID pair.
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @param  {String}  postId Post ID
- * @return {?Object}        Post object
+ * @param   {object}  state  Global state tree
+ * @param   {number}  siteId Site ID
+ * @param   {string}  postId Post ID
+ * @returns {?object}        Post object
  */
 export const getSitePost = createSelector(
 	( state, siteId, postId ) => {
@@ -132,10 +129,10 @@ export const getSitePost = createSelector(
  * Returns an array of normalized posts for the posts query, or null if no
  * posts have been received.
  *
- * @param  {Object}  state  Global state tree
- * @param  {?Number} siteId Site ID, or `null` for all-sites queries
- * @param  {Object}  query  Post query object
- * @return {?Array}         Posts for the post query
+ * @param   {object}  state  Global state tree
+ * @param   {?number} siteId Site ID, or `null` for all-sites queries
+ * @param   {object}  query  Post query object
+ * @returns {?Array}         Posts for the post query
  */
 export const getPostsForQuery = createSelector(
 	( state, siteId, query ) => {
@@ -173,10 +170,10 @@ export const getPostsForQuery = createSelector(
  * Returns true if currently requesting posts for the posts query, or false
  * otherwise.
  *
- * @param  {Object}  state  Global state tree
- * @param  {?Number} siteId Site ID, or `null` for all-sites queries
- * @param  {Object}  query  Post query object
- * @return {Boolean}        Whether posts are being requested
+ * @param   {object}  state  Global state tree
+ * @param   {?number} siteId Site ID, or `null` for all-sites queries
+ * @param   {object}  query  Post query object
+ * @returns {boolean}        Whether posts are being requested
  */
 export function isRequestingPostsForQuery( state, siteId, query ) {
 	const serializedQuery = getSerializedPostsQuery( query, siteId );
@@ -187,10 +184,10 @@ export function isRequestingPostsForQuery( state, siteId, query ) {
  * Returns the total number of items reported to be found for the given query,
  * or null if the total number of queryable posts is unknown.
  *
- * @param  {Object}  state  Global state tree
- * @param  {?Number} siteId Site ID, or `null` for all-sites queries
- * @param  {Object}  query  Post query object
- * @return {?Number}        Total number of found items
+ * @param   {object}  state  Global state tree
+ * @param   {?number} siteId Site ID, or `null` for all-sites queries
+ * @param   {object}  query  Post query object
+ * @returns {?number}        Total number of found items
  */
 export function getPostsFoundForQuery( state, siteId, query ) {
 	const manager = getQueryManager( state, siteId );
@@ -205,10 +202,10 @@ export function getPostsFoundForQuery( state, siteId, query ) {
  * Returns the last queryable page of posts for the given query, or null if the
  * total number of queryable posts if unknown.
  *
- * @param  {Object}  state  Global state tree
- * @param  {?Number} siteId Site ID, or `null` for all-sites queries
- * @param  {Object}  query  Post query object
- * @return {?Number}        Last posts page
+ * @param   {object}  state  Global state tree
+ * @param   {?number} siteId Site ID, or `null` for all-sites queries
+ * @param   {object}  query  Post query object
+ * @returns {?number}        Last posts page
  */
 export function getPostsLastPageForQuery( state, siteId, query ) {
 	const manager = getQueryManager( state, siteId );
@@ -228,10 +225,10 @@ export function getPostsLastPageForQuery( state, siteId, query ) {
  * Returns true if the query has reached the last page of queryable pages, or
  * null if the total number of queryable posts if unknown.
  *
- * @param  {Object}   state  Global state tree
- * @param  {?Number}  siteId Site ID, or `null` for all-sites queries
- * @param  {Object}   query  Post query object
- * @return {?Boolean}        Whether last posts page has been reached
+ * @param   {object}   state  Global state tree
+ * @param   {?number}  siteId Site ID, or `null` for all-sites queries
+ * @param   {object}   query  Post query object
+ * @returns {?boolean}        Whether last posts page has been reached
  */
 export function isPostsLastPageForQuery( state, siteId, query = {} ) {
 	const lastPage = getPostsLastPageForQuery( state, siteId, query );
@@ -246,10 +243,10 @@ export function isPostsLastPageForQuery( state, siteId, query = {} ) {
  * Returns an array of normalized posts for the posts query, including all
  * known queried pages, or null if the posts for the query are not known.
  *
- * @param  {Object}  state  Global state tree
- * @param  {?Number} siteId Site ID, or `null` for all-sites queries
- * @param  {Object}  query  Post query object
- * @return {?Array}         Posts for the post query
+ * @param   {object}  state  Global state tree
+ * @param   {?number} siteId Site ID, or `null` for all-sites queries
+ * @param   {object}  query  Post query object
+ * @returns {?Array}         Posts for the post query
  */
 export const getPostsForQueryIgnoringPage = createSelector(
 	( state, siteId, query ) => {
@@ -273,10 +270,10 @@ export const getPostsForQueryIgnoringPage = createSelector(
  * Returns true if currently requesting posts for the posts query, regardless
  * of page, or false otherwise.
  *
- * @param  {Object}  state  Global state tree
- * @param  {?Number} siteId Site ID, or `null` for all-sites queries
- * @param  {Object}  query  Post query object
- * @return {Boolean}        Whether posts are being requested
+ * @param   {object}  state  Global state tree
+ * @param   {?number} siteId Site ID, or `null` for all-sites queries
+ * @param   {object}  query  Post query object
+ * @returns {boolean}        Whether posts are being requested
  */
 export const isRequestingPostsForQueryIgnoringPage = createSelector(
 	( state, siteId, query ) => {
@@ -307,10 +304,10 @@ export const isRequestingPostsForQueryIgnoringPage = createSelector(
  * Returns true if a request is in progress for the specified site post, or
  * false otherwise.
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @param  {Number}  postId Post ID
- * @return {Boolean}        Whether request is in progress
+ * @param   {object}  state  Global state tree
+ * @param   {number}  siteId Site ID
+ * @param   {number}  postId Post ID
+ * @returns {boolean}        Whether request is in progress
  */
 export function isRequestingSitePost( state, siteId, postId ) {
 	if ( ! siteId ) {
@@ -327,10 +324,10 @@ export function isRequestingSitePost( state, siteId, postId ) {
 /**
  * Returns an object of edited post attributes for the site ID post ID pairing.
  *
- * @param  {Object} state  Global state tree
- * @param  {Number} siteId Site ID
- * @param  {Number} postId Post ID
- * @return {Object}        Post revisions
+ * @param   {object} state  Global state tree
+ * @param   {number} siteId Site ID
+ * @param   {number} postId Post ID
+ * @returns {object}        Post revisions
  */
 export const getPostEdits = createSelector(
 	( state, siteId, postId ) => {
@@ -347,10 +344,10 @@ export const getPostEdits = createSelector(
 /**
  * Returns a post object by site ID post ID pairing, with editor revisions.
  *
- * @param  {Object} state  Global state tree
- * @param  {Number} siteId Site ID
- * @param  {Number} postId Post ID
- * @return {Object}        Post object with revisions
+ * @param   {object} state  Global state tree
+ * @param   {number} siteId Site ID
+ * @param   {number} postId Post ID
+ * @returns {object}        Post object with revisions
  */
 export const getEditedPost = createSelector(
 	( state, siteId, postId ) => {
@@ -368,11 +365,11 @@ export const getEditedPost = createSelector(
 /**
  * Returns the assigned value for the edited post by field key.
  *
- * @param  {Object} state  Global state tree
- * @param  {Number} siteId Site ID
- * @param  {Number} postId Post ID
- * @param  {String} field  Field value to retrieve
- * @return {*}             Field value
+ * @param   {object} state  Global state tree
+ * @param   {number} siteId Site ID
+ * @param   {number} postId Post ID
+ * @param   {string} field  Field value to retrieve
+ * @returns {*}             Field value
  */
 export function getEditedPostValue( state, siteId, postId, field ) {
 	return get( getEditedPost( state, siteId, postId ), field );
@@ -381,10 +378,10 @@ export function getEditedPostValue( state, siteId, postId, field ) {
 /**
  * Returns true if the edited post is password protected.
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @param  {Number}  postId Post ID
- * @return {Boolean}        Result of the check
+ * @param   {object}  state  Global state tree
+ * @param   {number}  siteId Site ID
+ * @param   {number}  postId Post ID
+ * @returns {boolean}        Result of the check
  */
 export function isEditedPostPasswordProtected( state, siteId, postId ) {
 	const password = getEditedPostValue( state, siteId, postId, 'password' );
@@ -394,10 +391,10 @@ export function isEditedPostPasswordProtected( state, siteId, postId ) {
 /**
  * Returns true if the edited post is password protected and has a valid password set
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @param  {Number}  postId Post ID
- * @return {Boolean}        Result of the check
+ * @param   {object}  state  Global state tree
+ * @param   {number}  siteId Site ID
+ * @param   {number}  postId Post ID
+ * @returns {boolean}        Result of the check
  */
 export function isEditedPostPasswordProtectedWithValidPassword( state, siteId, postId ) {
 	const password = getEditedPostValue( state, siteId, postId, 'password' );
@@ -408,10 +405,10 @@ export function isEditedPostPasswordProtectedWithValidPassword( state, siteId, p
  * Returns true if there are "dirty" edited fields to be saved for the post
  * corresponding with the site ID post ID pair, or false otherwise.
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @param  {Number}  postId Post ID
- * @return {Boolean}        Whether dirty fields exist
+ * @param   {object}  state  Global state tree
+ * @param   {number}  siteId Site ID
+ * @param   {number}  postId Post ID
+ * @returns {boolean}        Whether dirty fields exist
  */
 export const isEditedPostDirty = createSelector(
 	( state, siteId, postId ) => {
@@ -447,9 +444,7 @@ export const isEditedPostDirty = createSelector(
 				return post[ key ] !== value;
 			}
 
-			return (
-				! DEFAULT_NEW_POST_VALUES.hasOwnProperty( key ) || value !== DEFAULT_NEW_POST_VALUES[ key ]
-			);
+			return ! ( key in DEFAULT_NEW_POST_VALUES ) || value !== DEFAULT_NEW_POST_VALUES[ key ];
 		} );
 
 		const { initial, current } = state.ui.editor.rawContent;
@@ -463,10 +458,10 @@ export const isEditedPostDirty = createSelector(
  * Returns true if the post status is publish, private, or future
  * and the date is in the past
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @param  {Number}  postId Post ID
- * @return {Boolean}        Whether post is published
+ * @param   {object}  state  Global state tree
+ * @param   {number}  siteId Site ID
+ * @param   {number}  postId Post ID
+ * @returns {boolean}        Whether post is published
  */
 export const isPostPublished = createSelector(
 	( state, siteId, postId ) => {
@@ -478,7 +473,7 @@ export const isPostPublished = createSelector(
 
 		return (
 			includes( [ 'publish', 'private' ], post.status ) ||
-			( post.status === 'future' && moment( post.date ).isBefore( moment() ) )
+			( post.status === 'future' && new Date( post.date ) < new Date() )
 		);
 	},
 	state => state.posts.queries
@@ -487,10 +482,10 @@ export const isPostPublished = createSelector(
 /**
  * Returns the slug, or suggested_slug, for the edited post
  *
- * @param  {Object} state  Global state tree
- * @param  {Number} siteId Site ID
- * @param  {Number} postId Post ID
- * @return {String}             Slug value
+ * @param   {object} state  Global state tree
+ * @param   {number} siteId Site ID
+ * @param   {number} postId Post ID
+ * @returns {string}             Slug value
  */
 export function getEditedPostSlug( state, siteId, postId ) {
 	// if local edits exists, return them regardless of post status
@@ -520,11 +515,11 @@ export function getEditedPostSlug( state, siteId, postId ) {
  * Returns the most reliable preview URL for the post by site ID, post ID pair,
  * or null if a preview URL cannot be determined.
  *
- * @param  {Object}  state     Global state tree
- * @param  {Number}  siteId    Site ID
- * @param  {Number}  postId    Post ID
- * @param  {Object}  [options] Special options. See wp-calypso#14456
- * @return {?String}           Post preview URL
+ * @param   {object}  state     Global state tree
+ * @param   {number}  siteId    Site ID
+ * @param   {number}  postId    Post ID
+ * @param   {object}  [options] Special options. See wp-calypso#14456
+ * @returns {?string}           Post preview URL
  */
 export function getPostPreviewUrl( state, siteId, postId, options = false ) {
 	const rawPost = options.__forceUseRawPost;

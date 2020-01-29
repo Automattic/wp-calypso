@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { noop, size } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
+import JetpackLogo from 'components/jetpack-logo';
 
 /**
  * Internal dependencies
@@ -25,9 +24,9 @@ import {
 import { GROUP_JETPACK, GROUP_WPCOM } from 'lib/plans/constants';
 import { addQueryArgs } from 'lib/url';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import Button from 'components/button';
-import Card from 'components/card';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import { Button, Card } from '@automattic/components';
 import DismissibleCard from 'blocks/dismissible-card';
 import PlanIcon from 'components/plans/plan-icon';
 import PlanPrice from 'my-sites/plan-price';
@@ -49,30 +48,51 @@ export class Banner extends Component {
 		dismissTemporary: PropTypes.bool,
 		event: PropTypes.string,
 		feature: PropTypes.string,
+		horizontal: PropTypes.bool,
 		href: PropTypes.string,
 		icon: PropTypes.string,
+		jetpack: PropTypes.bool,
+		compact: PropTypes.bool,
 		list: PropTypes.arrayOf( PropTypes.string ),
 		onClick: PropTypes.func,
 		onDismiss: PropTypes.func,
 		plan: PropTypes.string,
 		price: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
+		showIcon: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		target: PropTypes.string,
 		title: PropTypes.string.isRequired,
+		tracksImpressionName: PropTypes.string,
+		tracksClickName: PropTypes.string,
+		tracksDismissName: PropTypes.string,
+		tracksImpressionProperties: PropTypes.object,
+		tracksClickProperties: PropTypes.object,
+		tracksDismissProperties: PropTypes.object,
+		customerType: PropTypes.string,
 	};
 
 	static defaultProps = {
 		forceHref: false,
 		disableHref: false,
 		dismissTemporary: false,
+		compact: false,
+		horizontal: false,
+		jetpack: false,
 		onClick: noop,
 		onDismiss: noop,
+		showIcon: true,
+		tracksImpressionName: 'calypso_banner_cta_impression',
+		tracksClickName: 'calypso_banner_cta_click',
+		tracksDismissName: 'calypso_banner_dismiss',
 	};
 
 	getHref() {
-		const { feature, href, plan, siteSlug } = this.props;
+		const { canUserUpgrade, feature, href, plan, siteSlug, customerType } = this.props;
 
-		if ( ! href && siteSlug ) {
+		if ( ! href && siteSlug && canUserUpgrade ) {
+			if ( customerType ) {
+				return `/plans/${ siteSlug }?customerType=${ customerType }`;
+			}
 			const baseUrl = `/plans/${ siteSlug }`;
 			if ( feature || plan ) {
 				return addQueryArgs(
@@ -89,13 +109,14 @@ export class Banner extends Component {
 	}
 
 	handleClick = e => {
-		const { event, feature, onClick } = this.props;
+		const { event, feature, compact, onClick, tracksClickName, tracksClickProperties } = this.props;
 
-		if ( event ) {
-			this.props.recordTracksEvent( 'calypso_banner_cta_click', {
+		if ( event && tracksClickName ) {
+			this.props.recordTracksEvent( tracksClickName, {
 				cta_name: event,
 				cta_feature: feature,
-				cta_size: 'regular',
+				cta_size: compact ? 'compact' : 'regular',
+				...tracksClickProperties,
 			} );
 		}
 
@@ -103,12 +124,13 @@ export class Banner extends Component {
 	};
 
 	handleDismiss = e => {
-		const { event, feature, onDismiss } = this.props;
+		const { event, feature, onDismiss, tracksDismissName, tracksDismissProperties } = this.props;
 
-		if ( event ) {
-			this.props.recordTracksEvent( 'calypso_banner_dismiss', {
+		if ( event && tracksDismissName ) {
+			this.props.recordTracksEvent( tracksDismissName, {
 				cta_name: event,
 				cta_feature: feature,
+				...tracksDismissProperties,
 			} );
 		}
 
@@ -116,12 +138,24 @@ export class Banner extends Component {
 	};
 
 	getIcon() {
-		const { icon, plan } = this.props;
+		const { icon, jetpack, showIcon, plan } = this.props;
 
 		if ( plan && ! icon ) {
 			return (
 				<div className="banner__icon-plan">
 					<PlanIcon plan={ plan } />
+				</div>
+			);
+		}
+
+		if ( ! showIcon ) {
+			return;
+		}
+
+		if ( jetpack ) {
+			return (
+				<div className="banner__icon-plan">
+					<JetpackLogo size={ 32 } />
 				</div>
 			);
 		}
@@ -145,23 +179,27 @@ export class Banner extends Component {
 			description,
 			event,
 			feature,
+			compact,
 			list,
 			price,
 			title,
 			target,
+			tracksImpressionName,
+			tracksImpressionProperties,
 		} = this.props;
 
 		const prices = Array.isArray( price ) ? price : [ price ];
 
 		return (
 			<div className="banner__content">
-				{ event && (
+				{ tracksImpressionName && event && (
 					<TrackComponentView
-						eventName={ 'calypso_banner_cta_impression' }
+						eventName={ tracksImpressionName }
 						eventProperties={ {
 							cta_name: event,
 							cta_feature: feature,
-							cta_size: 'regular',
+							cta_size: compact ? 'compact' : 'regular',
+							...tracksImpressionProperties,
 						} }
 					/>
 				) }
@@ -214,10 +252,13 @@ export class Banner extends Component {
 		const {
 			callToAction,
 			className,
-			forceHref,
+			compact,
 			disableHref,
 			dismissPreferenceName,
 			dismissTemporary,
+			forceHref,
+			horizontal,
+			jetpack,
 			plan,
 		} = this.props;
 
@@ -232,7 +273,10 @@ export class Banner extends Component {
 			{ 'is-upgrade-ecommerce': plan && isEcommercePlan( plan ) },
 			{ 'is-jetpack-plan': plan && planMatches( plan, { group: GROUP_JETPACK } ) },
 			{ 'is-wpcom-plan': plan && planMatches( plan, { group: GROUP_WPCOM } ) },
-			{ 'is-dismissible': dismissPreferenceName }
+			{ 'is-compact': compact },
+			{ 'is-dismissible': dismissPreferenceName },
+			{ 'is-horizontal': horizontal },
+			{ 'is-jetpack': jetpack }
 		);
 
 		if ( dismissPreferenceName ) {
@@ -264,9 +308,7 @@ export class Banner extends Component {
 
 const mapStateToProps = ( state, ownProps ) => ( {
 	siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
+	canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 } );
 
-export default connect(
-	mapStateToProps,
-	{ recordTracksEvent }
-)( Banner );
+export default connect( mapStateToProps, { recordTracksEvent } )( Banner );

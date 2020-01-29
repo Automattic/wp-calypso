@@ -1,53 +1,38 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Fragment } from 'react';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
+import PushNotificationIllustration from './push-notification-illustration';
 import TwoFactorActions from './two-factor-actions';
+import Divider from '../divider';
 
-class WaitingTwoFactorNotificationApproval extends Component {
-	static propTypes = {
-		translate: PropTypes.func.isRequired,
-	};
+/**
+ * Style dependencies
+ */
+import './waiting-notification-approval.scss';
 
-	render() {
-		const { translate } = this.props;
+export default function WaitingTwoFactorNotificationApproval( { isJetpack } ) {
+	const translate = useTranslate();
 
-		return (
-			<form>
-				<Card className="two-factor-authentication__push-notification-screen is-compact">
-					<p>
-						{ translate(
-							'We sent a push notification to your {{strong}}WordPress mobile app{{/strong}}. ' +
-								'Once you get it and swipe or tap to confirm, this page will update.',
-							{
-								components: {
-									strong: <strong />,
-								},
-							}
-						) }
-					</p>
-					<div>
-						<img
-							className="two-factor-authentication__auth-code-preview"
-							src="/calypso/images/login/pushauth.svg"
-						/>
-					</div>
-				</Card>
-
-				<TwoFactorActions twoFactorAuthType="push" />
-			</form>
-		);
-	}
+	return (
+		<Fragment>
+			<Card compact>
+				<p className="two-factor-authentication__info">
+					{ translate(
+						'Notification sent! Confirm in your {{strong}}WordPress\u00A0mobile\u00A0app{{/strong}} to\u00A0continue.',
+						{ components: { strong: <strong /> } }
+					) }
+				</p>
+				<PushNotificationIllustration />
+			</Card>
+			<Divider>{ translate( 'or' ) }</Divider>
+			<TwoFactorActions twoFactorAuthType="push" isJetpack={ isJetpack } />
+		</Fragment>
+	);
 }
-
-export default localize( WaitingTwoFactorNotificationApproval );

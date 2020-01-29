@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Follow status constants
  */

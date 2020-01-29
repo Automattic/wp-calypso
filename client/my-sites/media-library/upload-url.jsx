@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { noop } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -16,7 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import FormTextInput from 'components/forms/form-text-input';
-import ScreenReaderText from 'components/screen-reader-text';
+import { ScreenReaderText } from '@automattic/components';
 import MediaActions from 'lib/media/actions';
 
 /**

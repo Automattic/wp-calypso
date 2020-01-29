@@ -47,7 +47,7 @@ class PluginAutomatedTransfer extends Component {
 		transferComplete: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { COMPLETE } = transferStates;
 		const { isTransferring, isFailedTransfer, transferState } = this.props;
 
@@ -62,7 +62,7 @@ class PluginAutomatedTransfer extends Component {
 		clearInterval( this.interval );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { siteId } = this.props;
 		const { COMPLETE } = transferStates;
 		const { transferComplete } = this.state;
@@ -187,9 +187,6 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{
-		requestSite,
-	}
-)( localize( wrapWithClickOutside( PluginAutomatedTransfer ) ) );
+export default connect( mapStateToProps, {
+	requestSite,
+} )( localize( wrapWithClickOutside( PluginAutomatedTransfer ) ) );

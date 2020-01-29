@@ -1,35 +1,53 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { shuffle } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { getCurrencyDefaults } from '@automattic/format-currency';
 
 /**
  * Internal Dependencies
  */
+import config from 'config';
+import { submitSurvey } from 'lib/purchases/actions';
+import { Dialog, Button } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { recordTracksEvent } from 'state/analytics/actions';
-import Button from 'components/button';
+import getSiteImportEngine from 'state/selectors/get-site-import-engine';
+import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
+import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
+import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precancellation-chat-available';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import HappychatButton from 'components/happychat/button';
 import * as steps from './steps';
+import initialSurveyState from './initial-survey-state';
 import BusinessATStep from './step-components/business-at-step';
 import UpgradeATStep from './step-components/upgrade-at-step';
-import { getName } from 'lib/purchases';
+import PrecancellationChatButton from './precancellation-chat-button';
+import DowngradeStep from './step-components/downgrade-step';
+import { getName, isRefundable } from 'lib/purchases';
+import { isGoogleApps } from 'lib/products-values';
 import { radioOption } from './radio-option';
 import {
 	cancellationOptionsForPurchase,
 	nextAdventureOptionsForPurchase,
 } from './options-for-product';
+import nextStep from './next-step';
+import previousStep from './previous-step';
+import isSurveyFilledIn from './is-survey-filled-in';
+import stepsForProductAndSurvey from './steps-for-product-and-survey';
+import enrichedSurveyData from './enriched-survey-data';
+import { CANCEL_FLOW_TYPE } from './constants';
+import { getDowngradePlanRawPrice } from 'state/purchases/selectors';
+import QueryPlans from 'components/data/query-plans';
+import QuerySitePlans from 'components/data/query-site-plans';
 
 /**
  * Style dependencies
@@ -38,15 +56,53 @@ import './style.scss';
 
 class CancelPurchaseForm extends React.Component {
 	static propTypes = {
-		chatInitiated: PropTypes.func.isRequired,
 		defaultContent: PropTypes.node.isRequired,
-		onInputChange: PropTypes.func.isRequired,
+		disableButtons: PropTypes.bool,
 		purchase: PropTypes.object.isRequired,
 		selectedSite: PropTypes.shape( { slug: PropTypes.string.isRequired } ),
+		isVisible: PropTypes.bool,
+		onInputChange: PropTypes.func.isRequired,
+		onClose: PropTypes.func.isRequired,
+		onClickFinalConfirm: PropTypes.func.isRequired,
+		flowType: PropTypes.string.isRequired,
 		showSurvey: PropTypes.bool.isRequired,
-		surveyStep: PropTypes.string.isRequired,
 		translate: PropTypes.func,
 	};
+
+	static defaultProps = {
+		defaultContent: '',
+		onInputChange: () => {},
+		showSurvey: true,
+		isVisible: false,
+	};
+
+	getAllSurveySteps = () => {
+		const {
+			purchase,
+			isChatAvailable,
+			isChatActive,
+			precancellationChatAvailable,
+			downgradeClick,
+		} = this.props;
+		const downgradePossible = !! downgradeClick;
+
+		return stepsForProductAndSurvey(
+			this.state,
+			purchase,
+			isChatAvailable || isChatActive,
+			precancellationChatAvailable,
+			downgradePossible
+		);
+	};
+
+	initSurveyState() {
+		const [ firstStep ] = this.getAllSurveySteps();
+
+		this.setState( {
+			surveyStep: firstStep,
+			...initialSurveyState(),
+		} );
+	}
 
 	constructor( props ) {
 		super( props );
@@ -62,18 +118,38 @@ class CancelPurchaseForm extends React.Component {
 		}
 
 		this.state = {
-			questionOneRadio: null,
 			questionOneText: '',
 			questionOneOrder: questionOneOrder,
-			questionTwoRadio: null,
 			questionTwoText: '',
 			questionTwoOrder: questionTwoOrder,
 			questionThreeText: '',
+			importQuestionText: '',
+
+			isSubmitting: false,
 		};
 	}
 
+	recordEvent = ( name, properties = {} ) => {
+		const { purchase, flowType, isAtomicSite } = this.props;
+
+		this.props.recordTracksEvent( name, {
+			cancellation_flow: flowType,
+			product_slug: purchase.productSlug,
+			is_atomic: isAtomicSite,
+
+			...properties,
+		} );
+	};
+
+	recordClickRadioEvent = ( option, value ) =>
+		this.props.recordTracksEvent( 'calypso_purchases_cancel_form_select_radio_option', {
+			option,
+			value,
+		} );
+
 	onRadioOneChange = event => {
-		this.props.clickRadio( 'radio_1', event.currentTarget.value );
+		this.recordClickRadioEvent( 'radio_1', event.currentTarget.value );
+
 		const newState = {
 			...this.state,
 			questionOneRadio: event.currentTarget.value,
@@ -93,7 +169,8 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	onRadioTwoChange = event => {
-		this.props.clickRadio( 'radio_2', event.currentTarget.value );
+		this.recordClickRadioEvent( 'radio_2', event.currentTarget.value );
+
 		const newState = {
 			...this.state,
 			questionTwoRadio: event.currentTarget.value,
@@ -119,6 +196,91 @@ class CancelPurchaseForm extends React.Component {
 		};
 		this.setState( newState );
 		this.props.onInputChange( newState );
+	};
+
+	onImportRadioChange = event => {
+		this.recordClickRadioEvent( 'import_radio', event.currentTarget.value );
+
+		const newState = {
+			...this.state,
+			importQuestionRadio: event.currentTarget.value,
+			importQuestionText: '',
+		};
+		this.setState( newState );
+		this.props.onInputChange( newState );
+	};
+
+	onImportTextChange = event => {
+		const newState = {
+			...this.state,
+			importQuestionText: event.currentTarget.value,
+		};
+		this.setState( newState );
+		this.props.onInputChange( newState );
+	};
+
+	// Because of the legacy reason, we can't just use `flowType` here.
+	// Instead we have to map it to the data keys defined way before `flowType` is introduced.
+	getSurveyDataType = () => {
+		switch ( this.props.flowType ) {
+			case CANCEL_FLOW_TYPE.REMOVE:
+				return 'remove';
+			case CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND:
+				return 'refund';
+			case CANCEL_FLOW_TYPE.CANCEL_AUTORENEW:
+				return 'cancel-autorenew';
+			default:
+				// Although we shouldn't allow it to reach here, we still include this default in case we forgot to add proper mappings.
+				return 'general';
+		}
+	};
+
+	onSubmit = () => {
+		const { purchase } = this.props;
+
+		if ( ! isGoogleApps( purchase ) ) {
+			this.setState( {
+				isSubmitting: true,
+			} );
+
+			const surveyData = {
+				'why-cancel': {
+					response: this.state.questionOneRadio,
+					text: this.state.questionOneText,
+				},
+				'next-adventure': {
+					response: this.state.questionTwoRadio,
+					text: this.state.questionTwoText,
+				},
+				'what-better': { text: this.state.questionThreeText },
+				'import-satisfaction': { response: this.state.importQuestionRadio },
+				type: this.getSurveyDataType(),
+			};
+
+			submitSurvey(
+				'calypso-remove-purchase',
+				purchase.siteId,
+				enrichedSurveyData( surveyData, purchase )
+			).then( () => {
+				this.setState( {
+					isSubmitting: false,
+				} );
+			} );
+		}
+
+		this.props.onClickFinalConfirm();
+
+		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
+	};
+
+	downgradeClick = () => {
+		if ( ! this.state.isSubmitting ) {
+			this.props.downgradeClick();
+			this.recordEvent( 'calypso_purchases_downgrade_form_submit' );
+			this.setState( {
+				isSubmitting: true,
+			} );
+		}
 	};
 
 	renderQuestionOne = () => {
@@ -185,7 +347,7 @@ class CancelPurchaseForm extends React.Component {
 		appendRadioOption( 'anotherReasonOne', translate( 'Another reason…' ), ' ' );
 
 		return (
-			<div>
+			<div className="cancel-purchase-form__question">
 				<FormLegend>{ translate( 'Please tell us why you are canceling:' ) }</FormLegend>
 				{ questionOneOrder.map( question => reasons[ question ] ) }
 			</div>
@@ -247,9 +409,53 @@ class CancelPurchaseForm extends React.Component {
 		appendRadioOption( 'anotherReasonTwo', translate( 'Another reason…' ), ' ' );
 
 		return (
-			<div>
+			<div className="cancel-purchase-form__question">
 				<FormLegend>{ translate( 'Where is your next adventure taking you?' ) }</FormLegend>
 				{ questionTwoOrder.map( question => reasons[ question ] ) }
+			</div>
+		);
+	};
+
+	renderImportQuestion = () => {
+		const reasons = [];
+		const { translate } = this.props;
+		const { importQuestionRadio, importQuestionText } = this.state;
+
+		const appendRadioOption = ( key, radioPrompt, textPlaceholder ) =>
+			reasons.push(
+				radioOption(
+					key,
+					importQuestionRadio,
+					importQuestionText,
+					this.onImportRadioChange,
+					this.onImportTextChange,
+					radioPrompt,
+					textPlaceholder
+				)
+			);
+
+		appendRadioOption( 'happy', translate( 'I was happy.' ) );
+
+		appendRadioOption(
+			'look',
+			translate(
+				'Most of my content was imported, but it was too hard to get things looking right.'
+			)
+		);
+
+		appendRadioOption( 'content', translate( 'Not enough of my content was imported.' ) );
+
+		appendRadioOption(
+			'functionality',
+			translate( "I didn't have the functionality I have on my existing site." )
+		);
+
+		return (
+			<div className="cancel-purchase-form__question">
+				<FormLegend>
+					{ translate( 'You imported from another site. How did the import go?' ) }
+				</FormLegend>
+				{ reasons }
 			</div>
 		);
 	};
@@ -271,11 +477,15 @@ class CancelPurchaseForm extends React.Component {
 		);
 	};
 
+	recordClickConciergeEvent = () =>
+		this.props.recordTracksEvent( 'calypso_purchases_cancel_form_concierge_click' );
+
 	openConcierge = () => {
 		if ( ! this.props.selectedSite ) {
 			return;
 		}
-		this.props.clickConcierge();
+		this.recordClickConciergeEvent();
+
 		return window.open( `/me/concierge/${ this.props.selectedSite.slug }/book` );
 	};
 
@@ -298,8 +508,13 @@ class CancelPurchaseForm extends React.Component {
 		);
 	};
 
+	onChatInitiated = () => {
+		this.recordEvent( 'calypso_purchases_cancel_form_chat_initiated' );
+		this.closeDialog();
+	};
+
 	renderLiveChat = () => {
-		const { chatInitiated, purchase, translate } = this.props;
+		const { purchase, translate } = this.props;
 		const productName = getName( purchase );
 		return (
 			<FormFieldset>
@@ -313,15 +528,29 @@ class CancelPurchaseForm extends React.Component {
 						}
 					) }
 				</p>
-				<HappychatButton primary borderless={ false } onClick={ chatInitiated }>
+				<HappychatButton primary borderless={ false } onClick={ this.onChatInitiated }>
 					{ translate( 'Start a Live chat' ) }
 				</HappychatButton>
 			</FormFieldset>
 		);
 	};
 
-	render() {
-		const { translate, showSurvey, surveyStep } = this.props;
+	getRefundAmount = () => {
+		const { purchase } = this.props;
+		const { refundOptions, currencyCode } = purchase;
+		const { precision } = getCurrencyDefaults( currencyCode );
+		const refundAmount =
+			isRefundable( purchase ) && refundOptions[ 0 ] && refundOptions[ 0 ].refund_amount
+				? refundOptions[ 0 ].refund_amount
+				: 0;
+
+		return parseFloat( refundAmount ).toFixed( precision );
+	};
+
+	surveyContent() {
+		const { translate, isImport, showSurvey, purchase } = this.props;
+		const { surveyStep } = this.state;
+
 		if ( showSurvey ) {
 			if ( surveyStep === steps.INITIAL_STEP ) {
 				return (
@@ -333,6 +562,7 @@ class CancelPurchaseForm extends React.Component {
 							) }
 						</p>
 						{ this.renderQuestionOne() }
+						{ isImport && this.renderImportQuestion() }
 						{ this.renderQuestionTwo() }
 					</div>
 				);
@@ -366,6 +596,18 @@ class CancelPurchaseForm extends React.Component {
 				return <UpgradeATStep />;
 			}
 
+			if ( surveyStep === steps.DOWNGRADE_STEP ) {
+				const { precision } = getCurrencyDefaults( purchase.currencyCode );
+				const planCost = parseFloat( this.props.downgradePlanPrice ).toFixed( precision );
+				return (
+					<DowngradeStep
+						currencySymbol={ purchase.currencySymbol }
+						planCost={ planCost }
+						refundAmount={ this.getRefundAmount() }
+					/>
+				);
+			}
+
 			return (
 				<div>
 					<FormSectionHeading>
@@ -380,19 +622,156 @@ class CancelPurchaseForm extends React.Component {
 		// just return the default if we don't want to show the survey
 		return <div>{ this.props.defaultContent }</div>;
 	}
+
+	closeDialog = () => {
+		this.props.onClose();
+		this.initSurveyState();
+
+		this.recordEvent( 'calypso_purchases_cancel_form_close' );
+	};
+
+	changeSurveyStep = stepFunction => {
+		const allSteps = this.getAllSurveySteps();
+		const newStep = stepFunction( this.state.surveyStep, allSteps );
+
+		this.setState( { surveyStep: newStep } );
+
+		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
+	};
+
+	clickNext = () => {
+		const { isImport } = this.props;
+		if ( this.state.isRemoving || ! isSurveyFilledIn( this.state, isImport ) ) {
+			return;
+		}
+		this.changeSurveyStep( nextStep );
+	};
+
+	clickPrevious = () => {
+		if ( this.state.isRemoving ) {
+			return;
+		}
+		this.changeSurveyStep( previousStep );
+	};
+
+	getStepButtons = () => {
+		const { flowType, translate, disableButtons, purchase, isImport } = this.props;
+		const { surveyStep } = this.state;
+		const disabled = disableButtons || this.state.isSubmitting;
+
+		const close = {
+				action: 'close',
+				disabled,
+				label: translate( "I'll Keep It" ),
+			},
+			chat = (
+				<PrecancellationChatButton
+					purchase={ purchase }
+					onClick={ this.closeDialog }
+					surveyStep={ surveyStep }
+				/>
+			),
+			next = {
+				action: 'next',
+				disabled: disabled || ! isSurveyFilledIn( this.state, isImport ),
+				label: translate( 'Next Step' ),
+				onClick: this.clickNext,
+			},
+			prev = {
+				action: 'prev',
+				disabled,
+				label: translate( 'Previous Step' ),
+				onClick: this.clickPrevious,
+			},
+			cancel = {
+				action: 'cancel',
+				disabled,
+				label: translate( 'Cancel Now' ),
+				onClick: this.onSubmit,
+				isPrimary: true,
+			},
+			downgrade = {
+				action: 'downgrade',
+				disabled: this.state.isSubmitting,
+				label: translate( 'Switch to Personal' ),
+				onClick: this.downgradeClick,
+				isPrimary: true,
+			},
+			remove = {
+				action: 'remove',
+				disabled,
+				label: translate( 'Remove Now' ),
+				onClick: this.onSubmit,
+				isPrimary: true,
+			};
+
+		const firstButtons =
+			config.isEnabled( 'upgrades/precancellation-chat' ) && surveyStep !== 'happychat_step'
+				? [ chat, close ]
+				: [ close ];
+
+		if ( surveyStep === steps.FINAL_STEP ) {
+			const stepsCount = this.getAllSurveySteps().length;
+			const prevButton = stepsCount > 1 ? [ prev ] : [];
+
+			switch ( flowType ) {
+				case CANCEL_FLOW_TYPE.REMOVE:
+					return firstButtons.concat( [ ...prevButton, remove ] );
+				default:
+					return firstButtons.concat( [ ...prevButton, cancel ] );
+			}
+		}
+
+		if ( this.state.surveyStep === steps.DOWNGRADE_STEP ) {
+			return firstButtons.concat( [ prev, downgrade, next ] );
+		}
+
+		return firstButtons.concat(
+			this.state.surveyStep === steps.INITIAL_STEP ? [ next ] : [ prev, next ]
+		);
+	};
+
+	componentDidUpdate( prevProps ) {
+		if (
+			! prevProps.isVisible &&
+			this.props.isVisible &&
+			this.state.surveyStep === steps.INITIAL_STEP
+		) {
+			this.recordEvent( 'calypso_purchases_cancel_form_start' );
+		}
+	}
+
+	componentDidMount() {
+		this.initSurveyState();
+	}
+
+	render() {
+		const { selectedSite } = this.props;
+		return (
+			<Dialog
+				isVisible={ this.props.isVisible }
+				onClose={ this.closeDialog }
+				buttons={ this.getStepButtons() }
+				className="cancel-purchase-form__dialog"
+			>
+				{ this.surveyContent() }
+				<QueryPlans />
+				{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
+			</Dialog>
+		);
+	}
 }
 
 export default connect(
-	null,
-	dispatch => ( {
-		clickRadio: ( option, value ) =>
-			dispatch(
-				recordTracksEvent( 'calypso_purchases_cancel_form_select_radio_option', {
-					option: option,
-					value: value,
-				} )
-			),
-		clickConcierge: () =>
-			dispatch( recordTracksEvent( 'calypso_purchases_cancel_form_concierge_click' ) ),
-	} )
+	( state, { purchase } ) => ( {
+		isChatAvailable: isHappychatAvailable( state ),
+		isChatActive: hasActiveHappychatSession( state ),
+		isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
+		isImport: !! getSiteImportEngine( state, purchase.siteId ),
+		precancellationChatAvailable: isPrecancellationChatAvailable( state ),
+		downgradePlanPrice: getDowngradePlanRawPrice( state, purchase ),
+	} ),
+	{
+		recordTracksEvent,
+	}
 )( localize( CancelPurchaseForm ) );

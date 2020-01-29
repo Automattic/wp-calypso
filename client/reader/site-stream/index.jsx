@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -71,7 +70,12 @@ class SiteStream extends React.Component {
 				isDiscoverStream={ this.props.isDiscoverStream }
 				shouldCombineCards={ false }
 			>
-				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
+				<DocumentHead
+					title={ this.props.translate( '%s ‹ Reader', {
+						args: title,
+						comment: '%s is the section name. For example: "My Likes"',
+					} ) }
+				/>
 				<ReaderFeedHeader site={ site } feed={ feed } showBack={ this.props.showBack } />
 				{ ! site && <QueryReaderSite siteId={ this.props.siteId } /> }
 				{ ! feed && site && site.feed_ID && <QueryReaderFeed feedId={ site.feed_ID } /> }

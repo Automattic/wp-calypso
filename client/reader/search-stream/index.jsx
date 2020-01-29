@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -14,9 +13,8 @@ import classnames from 'classnames';
  * Internal Dependencies
  */
 import BlankSuggestions from 'reader/components/reader-blank-suggestions';
-import ControlItem from 'components/segmented-control/item';
 import SegmentedControl from 'components/segmented-control';
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import SearchInput from 'components/search';
 import { recordAction, recordTrack } from 'reader/stats';
@@ -121,6 +119,7 @@ class SearchStream extends React.Component {
 
 		const documentTitle = translate( '%s ‹ Reader', {
 			args: this.getTitle(),
+			comment: '%s is the section name. For example: "My Likes"',
 		} );
 
 		const TEXT_RELEVANCE_SORT = translate( 'Relevance', {
@@ -175,12 +174,18 @@ class SearchStream extends React.Component {
 						/>
 						{ query && (
 							<SegmentedControl compact className="search-stream__sort-picker">
-								<ControlItem selected={ sortOrder !== 'date' } onClick={ this.useRelevanceSort }>
+								<SegmentedControl.Item
+									selected={ sortOrder !== 'date' }
+									onClick={ this.useRelevanceSort }
+								>
 									{ TEXT_RELEVANCE_SORT }
-								</ControlItem>
-								<ControlItem selected={ sortOrder === 'date' } onClick={ this.useDateSort }>
+								</SegmentedControl.Item>
+								<SegmentedControl.Item
+									selected={ sortOrder === 'date' }
+									onClick={ this.useDateSort }
+								>
 									{ TEXT_DATE_SORT }
-								</ControlItem>
+								</SegmentedControl.Item>
 							</SegmentedControl>
 						) }
 					</CompactCard>
@@ -189,9 +194,11 @@ class SearchStream extends React.Component {
 							<FollowButton
 								followLabel={ translate( 'Follow %s', {
 									args: queryWithoutProtocol,
+									comment: '%s is the name of the site being followed. For example: "Discover"',
 								} ) }
 								followingLabel={ translate( 'Following %s', {
 									args: queryWithoutProtocol,
+									comment: '%s is the name of the site being followed. For example: "Discover"',
 								} ) }
 								siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
 								followSource={ SEARCH_RESULTS_URL_INPUT }

@@ -30,7 +30,7 @@
 
 .stats-insights__nonperiodic {
 	&.has-no-recent {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		font-weight: 300;
 
 		p {
@@ -84,7 +84,7 @@
 
 	a {
 		@extend %mobile-link-element;
-		border-top: 1px solid var( --color-neutral-0 );
+		border-top: 1px solid var( --color-border-subtle );
 		display: block;
 		font-size: 14px;
 		padding: 0 24px;
@@ -94,14 +94,14 @@
 		@include breakpoint( '>480px' ) {
 			&:hover {
 				background: var( --color-neutral-0 );
-				border-top-color: var( --color-white );
+				border-top-color: var( --color-border-inverted );
 			}
 		}
 
 		// Focus state
 		&:focus {
 			background: var( --color-neutral-0 );
-			border-top-color: var( --color-white );
+			border-top-color: var( --color-border-inverted );
 		}
 
 		@include breakpoint( '>960px' ) {
@@ -122,7 +122,7 @@
 // Module Header
 
 .module-header {
-	background: var( --color-white );
+	background: var( --color-surface );
 	height: 40px;
 	line-height: 40px;
 	padding-left: 24px;
@@ -145,7 +145,7 @@
 	@extend %mobile-interface-element;
 	@extend %placeholder;
 
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-weight: 600;
 	height: 40px; // 1
 	overflow: hidden; // 1
@@ -157,7 +157,7 @@
 // 2: So the focus outline isn't covered by the fading pseudo-element
 
 ul.module-header-actions {
-	background: var( --color-white );
+	background: var( --color-surface );
 	height: 40px;
 	list-style: none;
 	margin: 0;
@@ -167,7 +167,7 @@ ul.module-header-actions {
 
 	// Fade really long module titles
 	&::before {
-		@include stats-fade-text( var( --color-white ) );
+		@include stats-fade-text( rgba( var( --color-surface-rgb ), 0 ), var( --color-surface ) );
 	}
 
 	.module-header-action {
@@ -264,7 +264,7 @@ ul.module-header-actions {
 
 .module-content-text {
 	box-sizing: border-box;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 13px;
 	padding: 16px 16px 0;
 	min-height: 1em;
@@ -295,7 +295,7 @@ ul.module-header-actions {
 	&-info {
 		background: var( --color-neutral-0 );
 		box-shadow: inset 0 1px 0 var( --color-neutral-0 );
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		display: none;
 		position: relative;
 
@@ -348,7 +348,7 @@ ul.module-header-actions {
 			}
 
 			@include breakpoint( '<480px' ) {
-				border-bottom: 1px solid var( --color-neutral-0 );
+				border-bottom: 1px solid var( --color-border-subtle );
 
 				&:last-child {
 					border: 0;
@@ -398,8 +398,8 @@ ul.module-header-actions {
 	// 2: Make right padding much greater to accommodate for increased gradient
 	td,
 	th {
-		border-bottom: 1px solid var( --color-neutral-0 );
-		border-right: 1px solid var( --color-neutral-0 );
+		border-bottom: 1px solid var( --color-border-subtle );
+		border-right: 1px solid var( --color-border-subtle );
 		font-size: 12px;
 		padding: 8px 12px;
 		white-space: nowrap; // 1
@@ -420,7 +420,7 @@ ul.module-header-actions {
 	}
 
 	tbody th:first-child {
-		background: var( --color-white );
+		background: var( --color-surface );
 		position: absolute;
 		z-index: z-index( 'root', '.module-content-table tbody th:first-child' );
 	}
@@ -432,7 +432,7 @@ ul.module-header-actions {
 		th:first-child {
 			width: 34px; // 24 (margin-left) + 12 (margin-right) + 1 (border) + 34 = 70
 			transform: translateX( -70px );
-			background: var( --color-white );
+			background: var( --color-surface );
 			position: fixed;
 			z-index: z-index( 'root', '.module-content-table tbody th:first-child' );
 		}
@@ -460,7 +460,7 @@ ul.module-header-actions {
 		.stats-module & td.highest-count:hover,
 		tbody tr td:hover {
 			background: var( --color-neutral-0 );
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 	}
 
@@ -553,12 +553,12 @@ ul.module-header-actions {
 	justify-content: center;
 	align-items: center;
 
-	.button.download-csv {
+	.button.stats-download-csv {
 		color: var( --color-text-subtle );
 
 		&[disabled],
 		&.disabled {
-			color: var( --color-neutral-200 );
+			color: var( --color-neutral-20 );
 		}
 
 		&:hover:not( [disabled] ) {
@@ -569,4 +569,24 @@ ul.module-header-actions {
 
 .stats-module__header.is-refreshing {
 	animation: loading-fade 1.6s ease-in-out infinite;
+}
+
+.stats-module__availability-warning {
+	padding: 12px 20px 0;
+	display: flex;
+
+	.gridicon {
+		fill: var( --color-text-subtle );
+	}
+}
+
+.stats-module__availability-warning-message {
+	font-size: 14px;
+	margin-left: 8px;
+	margin-bottom: 0;
+	color: var( --color-text-subtle );
+}
+
+.stats__module-list .stats-module__availability-warning-message {
+	font-size: 12px;
 }

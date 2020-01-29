@@ -1,9 +1,18 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import sidebar from './sidebar/reducer';
 
-export default sidebar;
+const schema = {
+	type: 'object',
+	patternProperties: {
+		// Sidebar section key, e.g. `site`.
+		'^\\w+$': {
+			type: 'object',
+		},
+	},
+	additionalProperties: false,
+};
+
+export default combineReducers( { sidebarSections: withSchemaValidation( schema, sidebar ) } );

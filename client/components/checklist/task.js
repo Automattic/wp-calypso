@@ -1,9 +1,8 @@
-/** @format */
 /**
  * External dependencies
  */
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import PropTypes from 'prop-types';
 import React, { Fragment, PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
@@ -11,34 +10,35 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
-import Focusable from 'components/focusable';
-import ScreenReaderText from 'components/screen-reader-text';
+import { Button, CompactCard, ScreenReaderText } from '@automattic/components';
+import Notice from 'components/notice';
 import Spinner from 'components/spinner';
 
 class Task extends PureComponent {
 	static propTypes = {
-		buttonPrimary: PropTypes.bool,
+		action: PropTypes.string,
 		buttonText: PropTypes.node,
+		collapsed: PropTypes.bool, // derived from ui state
 		completed: PropTypes.bool,
 		completedButtonText: PropTypes.node,
-		completedDescription: PropTypes.node,
 		completedTitle: PropTypes.node,
 		description: PropTypes.node,
 		disableIcon: PropTypes.bool,
 		duration: PropTypes.string,
+		forceCollapsed: PropTypes.bool, // derived from API state
 		href: PropTypes.string,
 		inProgress: PropTypes.bool,
+		isButtonDisabled: PropTypes.bool,
 		isWarning: PropTypes.bool,
+		noticeText: PropTypes.string,
 		onClick: PropTypes.func,
-		onCollapsedClick: PropTypes.func,
+		onTaskClick: PropTypes.func,
 		onDismiss: PropTypes.func,
-		selectedTaskId: PropTypes.string,
 		target: PropTypes.string,
 		title: PropTypes.node.isRequired,
 		translate: PropTypes.func.isRequired,
 		trackTaskDisplay: PropTypes.func,
+		showSkip: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -72,16 +72,12 @@ class Task extends PureComponent {
 
 		if ( onDismiss ) {
 			return (
-				<Focusable
-					className="checklist__task-icon"
-					onClick={ onDismiss }
-					aria-pressed={ completed ? 'true' : 'false' }
-				>
+				<div className="checklist__task-icon">
 					<ScreenReaderText>
 						{ completed ? translate( 'Mark as uncompleted' ) : translate( 'Mark as completed' ) }
 					</ScreenReaderText>
 					{ this.renderGridicon() }
-				</Focusable>
+				</div>
 			);
 		}
 
@@ -106,26 +102,6 @@ class Task extends PureComponent {
 		return null;
 	}
 
-	onTaskClick = event => {
-		const { completed, id, onClick, onCollapsedClick } = this.props;
-
-		// We presuppose expandability based on the presence of `onCollapsedClick`
-		if ( ! completed && this.isTaskCollapsed() && onCollapsedClick ) {
-			event.preventDefault();
-			onCollapsedClick( id );
-		} else {
-			// The task-related action
-			onClick();
-		}
-	};
-
-	isTaskCollapsed = () =>
-		this.props.selectedTaskId
-			? // If any task is selected, we only check if this task matches the selected ID...
-			  this.props.selectedTaskId !== this.props.id
-			: // If no task is selected, fall back to checking if this task is the first in line
-			  this.props.firstIncomplete && this.props.firstIncomplete.id !== this.props.id;
-
 	renderGridicon() {
 		if ( this.props.inProgress ) {
 			return <Spinner size={ 20 } />;
@@ -145,26 +121,41 @@ class Task extends PureComponent {
 
 	render() {
 		const {
-			buttonPrimary,
+			action,
 			buttonText,
+			collapsed,
 			completed,
-			completedButtonText,
 			completedDescription,
+			completedButtonText,
 			completedTitle,
 			description,
 			duration,
+			forceCollapsed,
 			href,
+			isButtonDisabled,
 			inProgress,
 			isWarning,
+			noticeText,
 			onClick,
 			target,
 			title,
 			translate,
+			onDismiss,
+			showSkip,
 		} = this.props;
-		const hasActionlink = completed && completedButtonText;
-		const taskActionButtonText = hasActionlink
+
+		const _collapsed = forceCollapsed || collapsed;
+
+		// A task that's being automatically completed ("in progress") cannot be expanded.
+		// An uncompleted task by definition has a call-to-action, which can only be accessed by
+		// expanding it, so an uncompleted task is always expandable.
+		// A completed task may or may not have a call-to-action, which can be best inferred from
+		// the `completedButtonText` prop.
+		const isExpandable =
+			! forceCollapsed || ( ! inProgress && ( ! completed || completedButtonText ) );
+		const taskActionButtonText = completed
 			? completedButtonText
-			: buttonText || translate( 'Do it!' );
+			: buttonText || translate( 'Try it' );
 
 		return (
 			<CompactCard
@@ -172,50 +163,66 @@ class Task extends PureComponent {
 					warning: isWarning,
 					'is-completed': completed,
 					'is-in-progress': inProgress,
-					'has-actionlink': hasActionlink,
-					'is-collapsed': this.isTaskCollapsed(),
+					'is-unexpandable': ! isExpandable,
+					'is-collapsed': _collapsed,
 				} ) }
 			>
-				<div className="checklist__task-primary">
+				<div className="checklist__task-wrapper">
 					<h3 className="checklist__task-title">
-						{ completed ? (
-							completedTitle || title
-						) : (
+						{ isExpandable ? (
 							<Button
 								borderless
-								className="checklist__task-title-link"
-								href={ href }
-								onClick={ this.onTaskClick }
-								target={ target }
+								className="checklist__task-title-button"
+								onClick={ this.props.onTaskClick }
 							>
-								{ title }
+								{ completed ? completedTitle : title }
+								<Gridicon icon="chevron-up" className="checklist__toggle-icon" />
 							</Button>
+						) : (
+							completedTitle
 						) }
 					</h3>
-					<p className="checklist__task-description">{ description }</p>
-					{ completedDescription && (
-						<p className="checklist__task-completed-description">{ completedDescription }</p>
-					) }
-					{ duration && (
-						<small className="checklist__task-duration">
-							{ translate( 'Estimated time:' ) } { duration }
-						</small>
-					) }
-				</div>
-				<div className="checklist__task-secondary">
-					<Button
-						className="checklist__task-action"
-						href={ href }
-						onClick={ onClick }
-						primary={ buttonPrimary }
-						target={ target }
-					>
-						{ taskActionButtonText }
-					</Button>
-					{ duration && (
-						<small className="checklist__task-duration">
-							{ translate( 'Estimated time:' ) } { duration }
-						</small>
+
+					{ ! _collapsed && (
+						<div className="checklist__task-content">
+							<p className="checklist__task-description">
+								{ completed && completedDescription ? completedDescription : description }
+							</p>
+
+							<div className="checklist__task-action-duration-wrapper">
+								{ ! completed && duration && (
+									<small className="checklist__task-duration">
+										{ translate( 'Estimated time:' ) } { duration }
+									</small>
+								) }
+
+								<div className="checklist__task-action-wrapper">
+									{ !! taskActionButtonText && (
+										<Button
+											className="checklist__task-action"
+											disabled={ isButtonDisabled }
+											href={ href }
+											onClick={ onClick }
+											primary={ ! _collapsed }
+											target={ target }
+											data-e2e-action={ action }
+										>
+											{ taskActionButtonText }
+										</Button>
+									) }
+									{ ! completed && showSkip && (
+										<Button className="checklist__task-skip" onClick={ onDismiss }>
+											{ translate( 'Skip' ) }
+										</Button>
+									) }
+									{ !! noticeText && (
+										<Notice className="checklist__task-notice" showDismiss={ false }>
+											{ noticeText }
+										</Notice>
+									) }
+								</div>
+							</div>
+						</div>
 					) }
 				</div>
 

@@ -1,4 +1,3 @@
-/** @format */
 export default {
 	ID: 1,
 	avatar_URL: 'https://1.gravatar.com/avatar',

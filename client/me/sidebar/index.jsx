@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import config from 'config';
 import ProfileGravatar from 'me/profile-gravatar';
 import {
@@ -30,7 +29,7 @@ import SidebarRegion from 'layout/sidebar/region';
 import userFactory from 'lib/user';
 import userUtilities from 'lib/user/utils';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { logoutUser } from 'state/login/actions';
+import { logoutUser } from 'state/logout/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 
@@ -50,8 +49,8 @@ class MeSidebar extends React.Component {
 		window.scrollTo( 0, 0 );
 	};
 
-	onSignOut = () => {
-		const currentUser = this.props.currentUser;
+	onSignOut = async () => {
+		const { currentUser } = this.props;
 
 		// If user is using en locale, redirect to app promo page on sign out
 		const isEnLocale = currentUser && currentUser.localeSlug === 'en';
@@ -63,12 +62,15 @@ class MeSidebar extends React.Component {
 		}
 
 		if ( config.isEnabled( 'login/wp-login' ) ) {
-			this.props.logoutUser( redirectTo ).then(
-				( { redirect_to } ) => user.clear( () => ( location.href = redirect_to || '/' ) ),
+			try {
+				const { redirect_to } = await this.props.logoutUser( redirectTo );
+				await user.clear();
+				window.location.href = redirect_to || '/';
+			} catch {
 				// The logout endpoint might fail if the nonce has expired.
 				// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
-				() => userUtilities.logout( redirectTo )
-			);
+				userUtilities.logout( redirectTo );
+			}
 		} else {
 			userUtilities.logout( redirectTo );
 		}
@@ -116,7 +118,7 @@ class MeSidebar extends React.Component {
 		return (
 			<Sidebar>
 				<SidebarRegion>
-					<ProfileGravatar user={ this.props.currentUser } />
+					<ProfileGravatar inSidebar user={ this.props.currentUser } />
 
 					<div className="sidebar__me-signout">
 						<Button

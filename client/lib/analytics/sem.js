@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -104,9 +102,9 @@ export function updateQueryParamsTracking() {
 		}
 	} );
 
-	// Cross domain tracking for Tracks
-	if ( query.client_id ) {
-		window._tkq.push( [ 'identifyAnonUser', query.client_id ] );
+	// Cross domain tracking for AMP.
+	if ( query.amp_client_id ) {
+		window._tkq.push( [ 'identifyAnonUser', query.amp_client_id ] );
 	}
 
 	// Drop SEM cookie update if either of these is missing

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,9 +7,8 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import getScrollbarSize from 'dom-helpers/util/scrollbarSize';
-import List from 'react-virtualized/List';
-import AutoSizer from 'react-virtualized/AutoSizer';
+import scrollbarSize from 'dom-helpers/scrollbarSize';
+import { AutoSizer, List } from '@automattic/react-virtualized';
 import {
 	debounce,
 	memoize,
@@ -86,7 +83,7 @@ class PostSelectorPosts extends React.Component {
 		requestedPages: [ 1 ],
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.itemHeights = {};
 		this.hasPerformedSearch = false;
 
@@ -98,7 +95,7 @@ class PostSelectorPosts extends React.Component {
 		}, SEARCH_DEBOUNCE_TIME_MS );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			! isEqual( this.props.queryWithVersion, nextProps.queryWithVersion ) ||
 			this.props.siteId !== nextProps.siteId
@@ -168,14 +165,12 @@ class PostSelectorPosts extends React.Component {
 
 	hasNoSearchResults = () => {
 		return (
-			! this.props.loading &&
-			( this.props.posts && ! this.props.posts.length ) &&
-			this.state.searchTerm
+			! this.props.loading && this.props.posts && ! this.props.posts.length && this.state.searchTerm
 		);
 	};
 
 	hasNoPosts = () => {
-		return ! this.props.loading && ( this.props.posts && ! this.props.posts.length );
+		return ! this.props.loading && this.props.posts && ! this.props.posts.length;
 	};
 
 	getItem = index => {
@@ -332,7 +327,7 @@ class PostSelectorPosts extends React.Component {
 							<span
 								className="post-selector__label-type"
 								style={ {
-									paddingRight: this.isCompact() ? 0 : getScrollbarSize(),
+									paddingRight: this.isCompact() ? 0 : scrollbarSize(),
 								} }
 							>
 								{ decodeEntities(

@@ -1,26 +1,22 @@
 /**
  *
- * @format
  */
 
 /**
  * External dependencies
  */
 import React from 'react';
-import Gridicon from 'gridicons';
-
-Gridicon.displayName = 'Gridicon';
 
 /**
  * Internal dependencies
  */
 import Accordion from 'components/accordion';
+import Gridicon from 'components/gridicon';
 
-Accordion.displayName = 'Accordion';
-
-function AccordionExample( props ) {
+export default function AccordionExample( props ) {
 	return props.exampleCode;
 }
+AccordionExample.displayName = 'AccordionExample';
 
 AccordionExample.defaultProps = {
 	exampleCode: (
@@ -65,14 +61,32 @@ AccordionExample.defaultProps = {
 			<Accordion
 				title="Section Six"
 				subtitle="With Subtitle and Status"
-				status={ { type: 'warning', text: 'Warning!', url: '/devdocs/design' } }
+				status={ { type: 'info', text: 'Info', url: '/devdocs/design' } }
 			>
 				Suspendisse pellentesque diam in nisi pulvinar maximus. Integer feugiat feugiat justo ac
 				vehicula. Curabitur iaculis, risus suscipit sodales auctor, nisl urna elementum sem, non
 				vestibulum mauris ante et purus. Duis iaculis nisl neque, eget rutrum erat imperdiet non.
 			</Accordion>
+
+			<Accordion
+				title="Section Seven"
+				subtitle="With Subtitle and Status"
+				status={ { type: 'warning', text: 'Warning', url: '/devdocs/design' } }
+			>
+				Drumstick ham tongue flank doner pork chop picanha. Cow short ribs tail kevin capicola ball
+				tip. Leberkas shankle landjaeger tenderloin, chuck cupim pastrami cow frankfurter. Kielbasa
+				bacon capicola shoulder porchetta, frankfurter rump short loin pig cupim.
+			</Accordion>
+
+			<Accordion
+				title="Section Eight"
+				subtitle="With Subtitle and Status"
+				status={ { type: 'error', text: 'error', url: '/devdocs/design' } }
+			>
+				Etiam dictum odio elit, id faucibus urna elementum ac. Mauris in est nec tortor luctus
+				auctor ut a velit. Suspendisse vulputate lectus arcu, sed condimentum risus rutrum vitae.
+				Nullam sagittis ultricies nisl. Duis accumsan libero vel arcu sodales venenatis.
+			</Accordion>
 		</div>
 	),
 };
-
-export default AccordionExample;

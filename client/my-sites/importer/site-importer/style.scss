@@ -1,0 +1,13 @@
+.importer__site-importer-card {
+	padding-top: 16px;
+
+	&.card {
+		padding-bottom: 0;
+	}
+
+	&.is-disabled {
+		opacity: 0.2;
+	}
+}
+
+

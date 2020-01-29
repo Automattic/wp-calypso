@@ -1,10 +1,16 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
+import moment from 'moment';
 
+/**
+ * Internal dependencies
+ */
 import getIsNoteApproved from '../state/selectors/get-is-note-approved';
 import { linkProps } from './functions';
-
 import FollowLink from './follow-link';
 
 function getDisplayURL( url ) {
@@ -39,7 +45,8 @@ export class UserBlock extends React.Component {
 			return '';
 		}
 
-		momentTime = this.props.moment( timestamp );
+		const localeSlug = getLocaleSlug();
+		momentTime = moment( timestamp ).locale( localeSlug );
 
 		if ( Date.now() - parsedTime > 1000 * DAY_IN_SECONDS * 5 ) {
 			// 30 Apr 2015
@@ -87,7 +94,12 @@ export class UserBlock extends React.Component {
 
 			timeIndicator = (
 				<span className="wpnc__user__timeIndicator">
-					<a href={ this.props.note.url } target="_blank" { ...linkProps( this.props.note ) }>
+					<a
+						href={ this.props.note.url }
+						target="_blank"
+						rel="noopener noreferrer"
+						{ ...linkProps( this.props.note ) }
+					>
 						{ this.getTimeString( this.props.note.timestamp ) }
 					</a>
 					<span className="wpnc__user__bullet" />
@@ -107,6 +119,7 @@ export class UserBlock extends React.Component {
 						className="wpnc__user__site"
 						href={ home_url }
 						target="_blank"
+						rel="noopener noreferrer"
 						{ ...linkProps( this.props.note, this.props.block ) }
 					>
 						{ home_title }

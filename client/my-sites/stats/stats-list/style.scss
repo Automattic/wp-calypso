@@ -31,7 +31,7 @@
 		}
 	}
 
-	border-top: 1px solid $transparent;
+	border-top: 1px solid rgba( var( --color-surface-rgb ), 0 );
 
 	// Increase touch targets on mobile
 	@include breakpoint( '<480px' ) {
@@ -39,7 +39,7 @@
 		border-top: 1px solid var( --color-neutral-0 );
 
 		&:first-child {
-			border-top-color: $transparent;
+			border-top-color: rgba( var( --color-surface-rgb ), 0 );
 		}
 
 		// Darken color for sublists
@@ -77,7 +77,7 @@
 .stats-list__module-content-list-item-wrapper,
 .module-content-list-item-wrapper {
 	@extend %mobile-interface-element;
-	background: var( --color-white ); // Default non-active color
+	background: var( --color-surface ); // Default non-active color
 	display: block;
 	line-height: inherit;
 	clear: both; // To make sure no rows overlap no matter the circumstances
@@ -123,7 +123,7 @@
 		}
 
 		.module-content-list-item-right::before {
-			background-image: linear-gradient( to right, $transparent 0%, var( --color-neutral-0 ) 90% );
+			background-image: linear-gradient( to right, rgba( var( --color-neutral-0-rgb ), 0 ) 0%, var( --color-neutral-0 ) 90% );
 		}
 
 		// Display hidden actions
@@ -157,7 +157,7 @@
 	}
 
 	.module-content-list-item-right::before {
-		background-image: linear-gradient( to right, $transparent 0%, var( --color-neutral-0 ) 90% );
+		background-image: linear-gradient( to right, rgba( var( --color-neutral-0-rgb ), 0 ) 0%, var( --color-neutral-0 ) 90% );
 	}
 
 	// Display hidden actions
@@ -231,7 +231,7 @@
 
 		img {
 			display: block;
-			background: var( --color-white );
+			background: var( --color-surface );
 			position: relative;
 			width: 20px;
 			height: 20px;
@@ -302,7 +302,7 @@
 .module-content-list-item-right {
 	position: relative;
 	float: right;
-	background: var( --color-white );
+	background: var( --color-surface );
 	margin-left: -48px; // ### keep? experimental: to force labels to go longer than they normally would to make sure the fade out shows
 
 	@include breakpoint( '>960px' ) {
@@ -317,7 +317,7 @@
 
 	// Fade out value if long
 	&::before {
-		@include stats-fade-text( var( --color-white ) );
+		@include stats-fade-text( rgba( var( --color-surface-rgb ), 0 ), var( --color-surface ) );
 	}
 }
 
@@ -366,15 +366,16 @@ ul.module-content-list-item-actions {
 		.module-content-list-item-action-wrapper,
 		ul.module-content-list-item-action-submenu {
 			display: block;
+			opacity: 1;
 			text-align: left;
 		}
 
 		// If displayed in a sublist or otherwise expanded item, swap background color
 		.module-content-list-item-toggle.is-expanded & {
-			background-color: var( --color-white );
+			background-color: var( --color-surface );
 
 			&::after {
-				border-bottom-color: var( --color-white );
+				border-bottom-color: var( --color-border-inverted );
 			}
 		}
 	}
@@ -408,10 +409,10 @@ ul.module-content-list-item-actions {
 
 		// If displayed in a sublist or otherwise expanded item, swap background color
 		.module-content-list-item-toggle.is-expanded & {
-			background-color: var( --color-white );
+			background-color: var( --color-surface );
 
 			&::after {
-				border-bottom-color: var( --color-white );
+				border-bottom-color: var( --color-border-inverted );
 			}
 		}
 	}
@@ -502,13 +503,14 @@ ul.module-content-list-item-action-submenu {
 	// Action wrapper, what's actually selected
 	.module-content-list-item-action-wrapper {
 		@extend %mobile-interface-element;
-		opacity: 0;
 		text-align: center;
 		margin: 0;
+		opacity: 0;
 		line-height: inherit;
 
 		@include breakpoint( '<480px' ) {
 			min-width: 24px;
+			opacity: 1;
 			padding: 0 12px;
 
 			&.toggle {
@@ -546,16 +548,20 @@ ul.module-content-list-item-action-submenu {
 		}
 	}
 
-	// Icon settings
-	// 1: Optically align a bit better
+	// Optically align a bit better
 	.gridicon {
 		vertical-align: middle;
 		margin-right: 4px;
-		margin-top: -2px; // 1
+		margin-top: -2px;
 
 		&.gridicons-cross {
 			margin-right: 0;
 		}
+	}
+	
+	// When a button instead of a link is used
+	.button.module-content-list-item-action-wrapper .gridicon {
+		vertical-align: unset;
 	}
 
 	// Color spam action red
@@ -565,13 +571,13 @@ ul.module-content-list-item-action-submenu {
 		// Hover state
 		@include breakpoint( '>480px' ) {
 			&:hover {
-				color: var( --color-error-300 );
+				color: var( --color-error-30 );
 			}
 		}
 
 		// Focus state
 		&:focus {
-			color: var( --color-error-300 );
+			color: var( --color-error-30 );
 		}
 	}
 }
@@ -588,7 +594,7 @@ ul.module-content-list-legend {
 .module-content-list-legend .module-content-list-item .module-content-list-item-label {
 	@extend %placeholder;
 
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 	font-weight: bold;
 
 	// Limit width when loading for placeholders to take less visual space
@@ -747,7 +753,7 @@ ul.module-content-list-legend {
 	}
 
 	> .stats-list__module-content-list-item-wrapper .module-content-list-item-right::before {
-		background-image: linear-gradient( to right, $transparent 0%, var( --color-neutral-0 ) 90% );
+		background-image: linear-gradient( to right, rgba( var( --color-neutral-0-rgb ), 0 ) 0%, var( --color-neutral-0 ) 90% );
 	}
 
 	// Rotate toggle icon
@@ -757,7 +763,7 @@ ul.module-content-list-legend {
 
 	// Hide the top border of an active sub-list
 	> .module-content-list-item {
-		border-top-color: $transparent;
+		border-top-color: rgba( var( --color-surface-rgb ), 0 );
 	}
 
 	// Hover changes
@@ -766,11 +772,11 @@ ul.module-content-list-legend {
 			// Change background and gradient color
 			&,
 			.module-content-list-item-right {
-				background-color: var( --color-white );
+				background-color: var( --color-surface );
 			}
 
 			span.module-content-list-item-right::before {
-				background-image: linear-gradient( to right, $transparent 0%, var( --color-white ) 90% );
+				background-image: linear-gradient( to right, rgba( var( --color-surface-rgb ), 0 ) 0%, var( --color-surface ) 90% );
 			}
 		}
 	}
@@ -797,7 +803,7 @@ ul.module-content-list-legend {
 	}
 
 	.module-content-list-item-right::before {
-		background-image: linear-gradient( to right, $transparent 0%, var( --color-neutral-0 ) 90% );
+		background-image: linear-gradient( to right, rgba( var( --color-neutral-rgb ), 0 ) 0%, var( --color-neutral-0 ) 90% );
 	}
 
 	// Hover changes
@@ -807,11 +813,11 @@ ul.module-content-list-legend {
 			// Change background and gradient color
 			&,
 			.module-content-list-item-right {
-				background-color: var( --color-white );
+				background-color: var( --color-surface );
 			}
 
 			span.module-content-list-item-right::before {
-				background-image: linear-gradient( to right, $transparent 0%, var( --color-white ) 90% );
+				background-image: linear-gradient( to right, rgba( var( --color-surface-rgb ), 0 ) 0%, var( --color-surface ) 90% );
 			}
 		}
 	}

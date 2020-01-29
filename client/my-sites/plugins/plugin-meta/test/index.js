@@ -1,12 +1,9 @@
-/** @format */
-
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
 jest.mock( 'lib/analytics/index', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'lib/translator-jumpstart', () => ( {} ) );
 jest.mock( 'lib/plugins/wporg-data/actions', () => ( {} ) );
 jest.mock( 'lib/plugins/wporg-data/list-store', () => ( {
@@ -19,11 +16,8 @@ jest.mock( 'state/ui/guided-tours/selectors', () => ( {} ) );
 jest.mock( 'my-sites/plugins/utils', () => ( {
 	getExtensionSettingsPath: () => '',
 } ) );
-jest.mock( 'components/main', () => 'MainComponent' );
-jest.mock( 'components/popover', () => 'Popover' );
 jest.mock( 'layout/guided-tours/positioning', () => 'Positioning' );
 jest.mock( 'layout/guided-tours/tours/main-tour', () => 'MainTour' );
-jest.mock( 'layout/guided-tours/tours/jetpack-basic-tour', () => 'JetpackBasicTour' );
 jest.mock( 'layout/masterbar/logged-in', () => 'LoggedIn' );
 jest.mock( 'layout/community-translator/launcher', () => 'Launcher' );
 jest.mock( 'components/banner', () => 'Banner' );
@@ -40,6 +34,7 @@ jest.mock( 'i18n-calypso', () => ( {
 		/>
 	),
 	numberFormat: x => x,
+	translate: x => x,
 } ) );
 
 /**

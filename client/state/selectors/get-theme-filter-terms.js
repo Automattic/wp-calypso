@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,9 +12,9 @@ import getThemeFilters from 'state/selectors/get-theme-filters';
 /**
  * Returns the list of available terms for a given theme filter.
  *
- * @param  {Object}  state  Global state tree
- * @param  {String}  filter The filter slug
- * @return {Object}         A list of filter terms, keyed by term slug
+ * @param  {object}  state  Global state tree
+ * @param  {string}  filter The filter slug
+ * @returns {object}         A list of filter terms, keyed by term slug
  */
 export default function getThemeFilterTerms( state, filter ) {
 	return get( getThemeFilters( state ), filter );

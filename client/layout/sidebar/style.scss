@@ -1,729 +1,195 @@
 .sidebar {
-	display: flex;
-	flex-direction: column;
-	overflow: auto;
+	// Setting the position and clearing some
+	// margins and paddings.
+	margin: 0;
 	padding: 0;
+
 	position: absolute;
 	top: 0;
 	right: 0;
 	bottom: 0;
 	left: 0;
 
+	display: flex;
+	flex-direction: column;
+
+	overflow: auto;
+
+	// Not sure this is needed.
 	@include breakpoint( '<660px' ) {
 		-webkit-overflow-scrolling: touch;
 	}
-}
 
-// Clearing out the sidebar list styles
-.sidebar {
-	margin: 0;
-
+	// Prevent elements from shrinking during
+	// initial load in Safari. Unsure if still required?
 	.current-site,
-	.sidebar__footer {
-		flex-shrink: 0; // prevents items from squishing together under their initial height in Safari
+	.sidebar__footer,
+	ul,
+	li {
+		flex-shrink: 0;
 	}
 
+	// Reset lists to avoid bullets and margins.
 	ul {
-		flex-shrink: 0;
-		list-style: none;
 		margin: 0;
 	}
 
 	li {
-		flex-shrink: 0;
-		position: relative;
+		list-style: none;
 	}
 }
 
-@include breakpoint( '<660px' ) {
-	li.sidebar__menu {
-		border-bottom: 1px solid var( --sidebar-border-color );
-
-		&:first-child {
-			border-top: 1px solid var( --sidebar-border-color );
-		}
-	}
-}
-
-// Sidebar group headings
-.sidebar__heading {
-	color: var( --sidebar-heading-color );
-	font-size: 14px;
-	font-weight: 600;
-	margin: 16px 8px 6px 16px;
-	display: flex;
-}
-
-// Menu Links
-.sidebar__menu {
-	display: block;
-
-	li {
-		display: flex;
-
-		@include breakpoint( '<660px' ) {
-			background-color: var( --sidebar-background );
-
-			&.selected {
-				background-color: var( --sidebar-menu-selected-background-color );
-			}
-
-			&.stats {
-				border-bottom: 1px solid var( --sidebar-border-color );
-			}
-		}
-	}
-
-	a:first-child {
-		flex: 1 0 auto;
-		width: 0;
-
-		// Fade overlay for longer labels
-		&::after {
-			content: '';
-			text-align: right;
-			position: absolute;
-			top: 0;
-			right: 0;
-			bottom: 0;
-			width: 15%;
-
-			background: overflow-gradient( var( --sidebar-menu-a-first-child-after-background ), 50% );
-
-			@include breakpoint( '<660px' ) {
-				background: none;
-			}
-		}
-	}
-
-	a {
-		font-size: 15px;
-		line-height: 1;
-		position: relative;
-		padding: 11px 16px 11px 20px;
-		color: var( --sidebar-text-color );
-		box-sizing: border-box;
-		white-space: nowrap;
-		overflow: hidden;
-		display: flex;
-		align-items: center;
-
-		.accessible-focus &:focus {
-			outline: none;
-			box-shadow: inset 0 0 0 2px var( --color-primary-light );
-
-			&::after {
-				top: 2px;
-				right: 2px;
-				bottom: 2px;
-			}
-		}
-
-		-webkit-tap-highlight-color: rgba( var( --color-neutral-700-rgb ), 0.2 );
-
-		.sidebar__menu-link-secondary-text {
-			padding: 3px 8px 4px;
-			margin-right: 8px;
-			align-self: center;
-			font-weight: 600;
-			font-size: 12px;
-			position: absolute;
-			right: 0;
-			z-index: z-index( 'icon-parent', '.sidebar__menu .gridicon.gridicons-external' );
-			color: var( --sidebar-menu-link-secondary-text-color );
-		}
-	}
-
-	.gridicon,
-	svg {
-		fill: var( --sidebar-gridicon-fill );
-		height: 24px;
-		width: 24px;
-		margin-right: 11px;
-		flex-shrink: 0;
-
-		// External indicator for sections that aren't available in Calypso
-		&.gridicons-external {
-			height: 18px;
-			left: auto;
-			margin: 0;
-			position: absolute;
-			right: 15px;
-			top: auto;
-			z-index: z-index( 'icon-parent', '.sidebar__menu .gridicon.gridicons-external' );
-		}
-	}
-
-	.gridicon,
-	.jetpack-logo {
-		display: inline;
-	}
-
-	&.is-togglable {
-		@include breakpoint( '<660px' ) {
-			margin-top: 0;
-		}
-
-		.sidebar__heading {
-			color: var( --sidebar-text-color );
-			cursor: pointer;
-			font-weight: normal;
-			margin: 0;
-			padding: 10px 16px 10px 20px;
-			transition: background-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-
-			.gridicon {
-				fill: var( --sidebar-gridicon-fill );
-				position: relative;
-				top: 2px;
-				height: 18px; // Smaller than recommended for gridicon, but works here
-				transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
-			}
-
-			.count {
-				color: var( --sidebar-text-color );
-				border-color: var( --sidebar-text-color );
-				font-size: 13px;
-				padding: 2px 7px 2px 6px;
-				margin-left: 8px;
-			}
-
-			.accessible-focus &:focus {
-				outline: none;
-				box-shadow: inset 0 0 0 2px var( --color-primary-light );
-
-				&::after {
-					top: 2px;
-					right: 2px;
-					bottom: 2px;
-				}
-			}
-		}
-
-		&.is-togglable:not( .is-toggle-open ) {
-			.sidebar__heading:hover {
-				color: var( --sidebar-menu-hover-color );
-				background-color: var( --sidebar-menu-hover-background );
-
-				.gridicon,
-				.material-icon {
-					fill: var( --sidebar-menu-hover-color );
-				}
-			}
-		}
-
-		.sidebar__menu-list,
-		.sidebar__menu-empty {
-			height: 0;
-			overflow: hidden;
-		}
-
-		.sidebar__menu-list svg {
-			display: none;
-		}
-
-		.sidebar__menu-list .gridicons-external {
-			display: inline;
-		}
-
-		.sidebar__menu-item {
-			opacity: 0;
-			transition: transform 0.15s cubic-bezier( 0.23, 1, 0.32, 1 ), opacity 0.15s ease-in-out;
-			transition-delay: 0.05s;
-			transform: translateY( -100px );
-		}
-
-		&.is-toggle-open {
-			.sidebar__heading {
-				background-color: var( --sidebar-menu-hover-background );
-
-				.gridicon {
-					transform: rotate( 180deg );
-				}
-			}
-
-			.sidebar__menu-add-button {
-				color: var( --color-text-subtle );
-				opacity: 1;
-				pointer-events: auto;
-				transform: translateX( 0 );
-
-				&:hover {
-					border-color: var( --sidebar-menu-hover-color );
-					color: var( --color-accent );
-				}
-			}
-
-			.sidebar__menu-list,
-			.sidebar__menu-empty {
-				height: auto;
-				padding-top: 8px;
-				padding-bottom: 8px;
-			}
-
-			.sidebar__menu-item {
-				opacity: 1;
-				transform: translateY( 0 );
-
-				.add-new {
-					background: var( --color-white );
-					border: 1px solid var( --color-neutral-100 );
-					border-radius: 3px;
-					font-size: 11px;
-					padding: 6px 7px;
-					position: absolute;
-					top: 2px;
-					right: 8px;
-					text-transform: none;
-				}
-			}
-
-			.sidebar__menu-list .sidebar__menu-item,
-			.sidebar__menu-list .sidebar-dynamic-menu__tag {
-				li {
-					&:first-child {
-						@include breakpoint( '<660px' ) {
-							margin-top: -5px;
-						}
-					}
-
-					&:last-child {
-						@include breakpoint( '<660px' ) {
-							border-bottom: 1px solid rgba( 200, 215, 225, 0.5 );
-						}
-					}
-				}
-			}
-		}
-
-		.is-add-open .sidebar__menu-add {
-			opacity: 1;
-			pointer-events: auto;
-			transform: translateX( 0 );
-		}
-
-		.selected .sidebar__menu-item-label {
-			@include breakpoint( '<660px' ) {
-				color: var( --color-primary );
-			}
-		}
-	}
-}
-
-a.sidebar__button,
-form.sidebar__button {
-	display: flex;
-	position: relative;
-	align-self: center;
-	box-sizing: border-box;
-	overflow: hidden;
-	padding: 2px 8px 3px;
-	height: 24px;
-	margin-right: 8px;
-	line-height: 18px;
-	background-color: var( --sidebar-background-color );
-	color: var( --sidebar-text-color );
-	font-size: 12px;
-	font-weight: 600;
-	border-radius: 3px;
-	border: 1px solid var( --sidebar-border-color );
-
-	&:hover {
-		border-color: var( --sidebar-text-color );
-		color: var( --sidebar-text-color );
-	}
-
-	@include breakpoint( '<660px' ) {
-		font-size: 14px;
-		height: 30px;
-		line-height: 23px;
-	}
-}
-
-// Expanding clickable area of mini buttons
-a.sidebar__button::after,
-form.sidebar__button input {
-	content: '';
-	position: absolute;
-	top: -10px;
-	bottom: -10px;
-	right: -10px;
-	left: -10px;
-	width: 100%;
-}
-
-// Selected Menu
-.sidebar__menu .selected {
-	background-color: var( --sidebar-menu-selected-background-color );
-
-	a {
-		color: var( --sidebar-menu-selected-a-color );
-
-		.sidebar__menu-link-secondary-text {
-			color: inherit;
-		}
-
-		&:first-child::after {
-			background: overflow-gradient(
-				var( --sidebar-menu-selected-a-first-child-after-background ),
-				50%
-			);
-		}
-	}
-
-	.sidebar__button {
-		color: var( --sidebar-menu-selected-a-color );
-		border-color: var( --sidebar-menu-selected-a-color );
-
-		&:hover {
-			color: var( --sidebar-menu-selected-a-color );
-			border-color: var( --sidebar-menu-selected-a-color );
-		}
-	}
-
-	.gridicon,
-	.jetpack-logo,
-	.material-icon {
-		fill: var( --sidebar-menu-selected-a-color );
-	}
-
-	&.is-action-button-selected a {
-		&:first-child::after {
-			background: linear-gradient(
-				to right,
-				rgba( var( --sidebar-menu-selected-a-first-child-after-background ), 0 ),
-				rgba( var( --sidebar-menu-selected-a-first-child-after-background ), 1 ) 50%
-			);
-		}
-	}
-}
-
-// Menu Hover
-.notouch .sidebar__menu li:hover {
-	&:not( .selected ) {
-		background-color: var( --sidebar-menu-hover-background );
-
-		a,
-		form {
-			&:first-child::after {
-				background: overflow-gradient( var( --sidebar-menu-hover-background-gradient ), 50% );
-			}
-
-			&.sidebar__button {
-				border-color: var( --sidebar-text-color );
-				background-color: var( --sidebar-background-color );
-				color: var( --sidebar-text-color );
-
-				&:hover {
-					border-color: var( --sidebar-text-color );
-					color: var( --sidebar-text-color );
-				}
-			}
-		}
-
-		& > a {
-			color: var( --sidebar-menu-hover-color );
-
-			& > .gridicon,
-			& > .jetpack-logo {
-				fill: var( --sidebar-menu-hover-color );
-			}
-		}
-	}
-
-	@include breakpoint( '<660px' ) {
-		background-color: var( --sidebar-menu-hover-background );
-
-		a,
-		form {
-			color: var( --sidebar-text-color );
-
-			&:first-child::after {
-				background: linear-gradient(
-					to right,
-					rgba( var( --sidebar-menu-hover-background-gradient ), 0 ),
-					rgba( var( --sidebar-menu-hover-background-gradient ), 1 ) 50%
-				);
-			}
-
-			&.sidebar__button {
-				background-color: var( --sidebar-background-color );
-				color: var( --sidebar-text-color );
-
-				&:hover {
-					border-color: var( --sidebar-text-color );
-					color: var( --sidebar-text-color );
-				}
-			}
-		}
-
-		.gridicon {
-			fill: var( --sidebar-gridicon-fill );
-		}
-	}
-}
-
-.is-group-sites .notouch li.sidebar__menu:hover {
-	&:not( .selected ) {
-		& > h2 {
-			color: var( --sidebar-menu-hover-color );
-
-			& > .material-icon {
-				fill: var( --sidebar-menu-hover-color );
-			}
-		}
-	}
-}
-
-.notouch .sidebar__menu li:not( .selected ) {
-	a,
-	form {
-		&.sidebar__button:hover {
-			color: var( --sidebar-text-color );
-			border-color: var( --sidebar-text-color );
-		}
-	}
-
-	a:hover,
-	form:hover {
-		color: var( --sidebar-menu-hover-color );
-
-		.sidebar__menu-link-secondary-text {
-			color: inherit;
-		}
-
-		.gridicon,
-		.jetpack-logo,
-		.material-icon {
-			fill: var( --sidebar-menu-hover-color );
-		}
-	}
-}
-
-.sidebar .sidebar__separator {
-	border-bottom: 1px solid var( --sidebar-border-color );
-}
-
-.sidebar .sidebar__footer {
-	align-items: center;
-	padding: 0;
-	border-top: 1px solid var( --sidebar-border-color );
-	margin: auto 0 0;
-	display: flex;
-	flex-direction: row;
-	padding-left: 10px;
-	min-height: 42px;
-}
-
-.sidebar .sidebar__footer .button {
-	box-sizing: border-box;
-	display: inline-block;
-	text-transform: uppercase;
-	font-size: 11px;
-	font-weight: 600;
-	padding: 8px;
-	color: var( --sidebar-footer-button-color );
-	line-height: 2.1;
-	margin-right: auto;
-
-	&.is-active {
-		background: var( --color-primary );
-
-		.gridicon {
-			fill: var( --color-white );
-		}
-	}
-
-	&:hover {
-		color: var( --color-neutral-700 );
-	}
-
-	@include breakpoint( '<660px' ) {
-		padding: 16px;
-	}
-
-	.gridicon {
-		display: block;
-		float: left;
-		margin-right: 6px;
-		top: auto;
-		margin-top: auto;
-	}
-}
-
-.sidebar__region {
-	flex-shrink: 0;
-	display: flex;
-	flex-direction: column;
-	overflow-y: auto;
-	overflow-x: hidden;
-	flex: 1;
-	-webkit-overflow-scrolling: touch;
-}
-
+// This button is hidden until focused. It allows screen-readers
+// and other assistive technology to skip the sidebar.
 .sidebar__skip-navigation {
 	position: absolute;
 	left: -10000px;
-	top: auto;
-	width: 1px;
-	height: 1px;
-	overflow: hidden;
 	flex-shrink: 0;
 
 	&:focus {
-		position: static;
-		width: auto;
-		height: auto;
-		padding: 11px 16px 11px 18px;
-		outline: none;
-		box-shadow: inset 0 0 0 2px var( --color-primary-light );
-		font-size: 14px;
-		line-height: 1;
-		color: var( --color-text );
-		box-sizing: border-box;
-		white-space: nowrap;
-		overflow: hidden;
-		display: flex;
-		align-items: center;
+		position: relative;
+		left: auto;
+	}
+}
 
-		&::after {
-			top: 2px;
-			right: 2px;
-			bottom: 2px;
+// Sidebar Headings, used for both static headings
+// like in Reader, and for the expandable menus.
+.sidebar__heading {
+	color: var( --color-sidebar-text-alternative );
+	font-size: 15px;
+	font-weight: 600;
+	padding: 16px 8px 6px 16px;
+}
+
+// Sidebar menu icons for main sections
+.sidebar__menu-icon {
+	fill: var( --color-sidebar-gridicon-fill );
+	margin-right: 11px;
+}
+
+// Menu links: The actual anchor tags that contain links to
+// various sections of Calypso.
+.sidebar__menu-link {
+	font-size: 15px;
+	line-height: 1;
+	position: relative;
+	padding: 10px 16px 10px 20px;
+	box-sizing: border-box;
+	white-space: nowrap;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+
+	&,
+	&:visited {
+		color: var( --color-sidebar-text );
+	}
+
+	// I think this is some voodoo to change the color
+	// of a link when tapped on iOS.
+	-webkit-tap-highlight-color: rgba( var( --color-neutral-700-rgb ), 0.2 );
+
+	&:hover {
+		background-color: var( --color-sidebar-menu-hover-background );
+		color: var( --color-sidebar-menu-hover-text );
+
+		.sidebar__menu-icon {
+			fill: var( --color-sidebar-menu-hover-text );
+		}
+	}
+
+	.badge {
+		margin: -7px 0 -8px;
+	}
+
+	.selected &,
+	.selected &:hover {
+		color: var( --color-sidebar-menu-selected-text );
+		background-color: var( --color-sidebar-menu-selected-background );
+
+		.sidebar__menu-icon {
+			fill: var( --color-sidebar-menu-selected-text );
+		}
+	}
+
+	// Some links are marked as "external" and show
+	// an icon to visually indicate they will open
+	// a new window/tab.
+	.gridicons-external,
+	&.external-link .gridicons-external {
+		height: 16px;
+		width: 16px;
+		position: absolute;
+		right: 21px;
+		top: auto;
+	}
+}
+
+.sidebar__menu-link-text {
+	flex: auto;
+}
+
+.sidebar__menu-link-secondary-text {
+	margin-right: 8px;
+	align-self: center;
+	font-weight: 600;
+	font-size: 12px;
+	position: absolute;
+	right: 0;
+	z-index: 1;
+	color: var( --color-sidebar-text-alternative );
+	padding: 4px 8px;
+
+	.selected &,
+	.sidebar__menu-link:hover & {
+		color: inherit;
+	}
+}
+
+// Expandables: Some sidebar menus act like accordions where
+// you can hide and show the contained list.
+.sidebar__menu.is-togglable {
+	.sidebar__heading {
+		display: flex;
+		padding: 10px 16px 10px 20px;
+		font-weight: 600;
+		cursor: pointer;
+
+		&:hover {
+			background-color: var( --color-sidebar-menu-hover-background );
+			color: var( --color-sidebar-menu-hover-text );
+
+			.sidebar__menu-icon,
+			.sidebar__expandable-arrow {
+				fill: var( --color-sidebar-menu-hover-text );
+			}
+		}
+	}
+
+	.sidebar__expandable-title {
+		flex: 1 1 0;
+	}
+
+	.sidebar__expandable-arrow {
+		transition: transform 0.1s linear;
+		fill: var( --color-sidebar-gridicon-fill );
+	}
+
+	.sidebar__menu-link {
+		padding-left: 55px;
+	}
+
+	&.is-toggle-open {
+		.sidebar__expandable-arrow {
+			transform: rotate( 180deg );
 		}
 	}
 }
 
-.sidebar__menu {
-	.is-placeholder {
-		cursor: default;
-		pointer-events: none;
-
-		.gridicon,
-		span,
-		.sidebar__button {
-			animation: loading-fade 1.6s ease-in-out infinite;
-			background-color: var( --color-neutral-50 );
-			color: transparent;
-		}
-
-		.gridicon {
-			fill: transparent;
-			stroke: transparent;
-		}
-
-		a {
-			&::after {
-				display: none;
-			}
-		}
-	}
-}
-
-.sidebar__streamlined-nav-drawer {
-	.sidebar__menu-wrapper {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-
-		> li:last-child {
-			margin-bottom: 20px;
-		}
-	}
-
-	.sidebar__menu {
-		.gridicon {
-			display: none;
-		}
-
-		svg,
-		.gridicons-my-sites,
-		.gridicons-chevron-down,
-		.gridicons-external {
-			display: inline-block;
-		}
-
-		.selected svg {
-			fill: var( --sidebar-menu-selected-a-color );
-		}
-
-		&.is-togglable {
-			.sidebar__menu-list {
-				padding-bottom: 0;
-				padding-top: 0;
-			}
-		}
-
-		&.is-toggle-open {
-			.sidebar__heading {
-				background-color: transparent;
-			}
-		}
-	}
-
-	.sidebar__button {
-		display: none;
-	}
-
-	.sidebar__menu-list a {
-		padding: 10px 16px 10px 55px;
-	}
-
-	.is-togglable .sidebar__heading {
-		font-weight: 600;
-		justify-content: flex-start;
-	}
-
-	.is-togglable .sidebar__heading span {
-		flex: 0 1 100%;
-	}
-
-	.sidebar__menu.is-togglable .sidebar__heading,
-	.sidebar__menu a {
-		font-size: 15px;
-		font-weight: 600;
-	}
-
-	.sidebar__menu-list .sidebar__menu-link-text {
-		font-weight: normal;
-	}
-
-	.is-togglable .sidebar__heading .gridicons-chevron-down,
-	.sidebar .is-togglable .sidebar__heading .material-icon-exit_to_app {
-		margin-right: 0;
-		top: 0;
-	}
-
-	.sidebar__menu.wp-admin .sidebar__heading .gridicon {
-		order: 0;
-	}
-
-	.sidebar__heading .gridicons-chevron-down {
-		align-self: flex-end;
-		order: 99;
-	}
-
-	.is-togglable.is-toggle-open .sidebar__heading .gridicon:not( .gridicons-chevron-down ) {
-		transform: rotate( 0deg );
-	}
-
-	/* WP Admin Link */
-
-	.sidebar__menu.sidebar__wp-admin {
-		width: 100%;
-		margin-top: auto;
-
-		@include breakpoint( '<660px' ) {
-			border: none;
-		}
-	}
-
-	.sidebar__menu.sidebar__wp-admin .wp-admin {
-		border-top: 1px solid var( --sidebar-border-color );
-		justify-content: flex-start;
-
-		@include breakpoint( '<660px' ) {
-			border-top: none;
-		}
-	}
+// Sometimes we show info at the bottom of the sidebar. For
+// example on My Site(s), for users with a single site, we
+// show a button to add a new site.
+.sidebar__wp-admin,
+.sidebar__footer {
+	margin-top: 16px;
 }

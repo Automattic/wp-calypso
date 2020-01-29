@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { addQueryArgs } from 'lib/url';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import GoogleVoucherDetails from 'my-sites/checkout/checkout-thank-you/google-voucher';
@@ -30,7 +30,7 @@ interface ConnectedProps {
 	isAtomic: boolean;
 	isJetpack: boolean;
 	isPremiumOrHigher: boolean;
-	recordTracksEvent: () => void;
+	recordTracksEvent: typeof recordTracksEventAction;
 	showCard: boolean;
 	siteId: number | null;
 	siteSlug: string | null;

@@ -1,5 +1,3 @@
-/** @format */
-
 jest.mock( 'signup/step-wrapper', () => 'step-wrapper' );
 jest.mock( 'my-sites/plan-features', () => 'plan-features' );
 

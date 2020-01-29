@@ -1,15 +1,13 @@
-/** @format */
-
+/* eslint-disable no-case-declarations */
 /**
  * External dependencies
  */
-
 import { merge, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
 import { getSerializedStatsQuery } from './utils';
 import { itemSchema } from './schema';
 import {
@@ -22,14 +20,14 @@ import {
  * Returns the updated requests state after an action has been dispatched. The
  * state maps site ID, post ID and stat keys to the request stats.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
-export const requests = createReducer(
-	{},
-	{
-		[ SITE_STATS_REQUEST ]: ( state, { siteId, statType, query } ) => {
+export const requests = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case SITE_STATS_REQUEST: {
+			const { siteId, statType, query } = action;
 			const queryKey = getSerializedStatsQuery( query );
 			return merge( {}, state, {
 				[ siteId ]: {
@@ -38,8 +36,9 @@ export const requests = createReducer(
 					},
 				},
 			} );
-		},
-		[ SITE_STATS_RECEIVE ]: ( state, { siteId, statType, query, date } ) => {
+		}
+		case SITE_STATS_RECEIVE: {
+			const { siteId, statType, query, date } = action;
 			const queryKey = getSerializedStatsQuery( query );
 			return merge( {}, state, {
 				[ siteId ]: {
@@ -48,8 +47,9 @@ export const requests = createReducer(
 					},
 				},
 			} );
-		},
-		[ SITE_STATS_REQUEST_FAILURE ]: ( state, { siteId, statType, query } ) => {
+		}
+		case SITE_STATS_REQUEST_FAILURE: {
+			const { siteId, statType, query } = action;
 			const queryKey = getSerializedStatsQuery( query );
 			return merge( {}, state, {
 				[ siteId ]: {
@@ -58,19 +58,21 @@ export const requests = createReducer(
 					},
 				},
 			} );
-		},
+		}
 	}
-);
+
+	return state;
+} );
 
 /**
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID, statType and and serialized query key to the stat payload.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
-export function items( state = {}, action ) {
+export const items = withSchemaValidation( itemSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_STATS_RECEIVE:
 			const { siteId, statType, query, data } = action;
@@ -91,8 +93,7 @@ export function items( state = {}, action ) {
 	}
 
 	return state;
-}
-items.schema = itemSchema;
+} );
 
 export default combineReducers( {
 	requests,

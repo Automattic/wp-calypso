@@ -1,6 +1,6 @@
-.following-manage__header .card {
-		box-shadow: none;
-		margin: 0;
+.following-manage__header {
+	max-width: 720px;
+	margin: auto;
 }
 
 .following-manage .search {
@@ -12,7 +12,7 @@
 }
 
 .following-manage__input-card.card.is-compact {
-	box-shadow: 0 0 0 2px var( --color-neutral-100 ), 0 1px 2px var( --color-neutral-100 );
+	box-shadow: 0 0 0 2px var( --color-neutral-10 ), 0 1px 2px var( --color-neutral-10 );
 }
 
 .following-manage__subscriptions {
@@ -22,7 +22,7 @@
 
 // Load more results
 .following-manage__show-more {
-	border-top: 1px solid var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-10 );
 	display: flex;
 	justify-content: center;
 	margin-top: 10px;
@@ -46,7 +46,7 @@
 	}
 
 	&:hover {
-		color: var( --color-neutral-400 );
+		color: var( --color-neutral-40 );
 		cursor: pointer;
 	}
 }
@@ -119,7 +119,7 @@
 	}
 
 	.following-manage__subscriptions-search .search-card {
-		box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.3 );
+		box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.3 );
 
 		.following-manage__search-followed-input.is-compact {
 			height: 32px;
@@ -143,7 +143,7 @@
 		}
 
 		.gridicon.gridicons-ellipsis {
-			fill: var( --color-neutral-200 );
+			fill: var( --color-neutral-20 );
 			top: 0;
 		}
 	}
@@ -159,18 +159,18 @@
 	&:focus {
 		.reader-import-button__icon,
 		.reader-export-button__icon {
-			fill: var( --color-white );
+			fill: var( --color-text-inverted );
 		}
 
 		.reader-import-button__label,
 		.reader-export-button__label {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 		}
 	}
 }
 
 .following-manage .reader-recommended-sites {
-	border-bottom: 1px solid var( --color-neutral-100 );
+	border-bottom: 1px solid var( --color-neutral-10 );
 }
 
 .following-manage__search-followed {
@@ -194,7 +194,7 @@
 
 .following-manage__search-results.is-empty,
 .following-manage__subscriptions-list.is-empty {
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 }
 
 .following-manage__search-results .reader-subscription-list-item__options {
@@ -234,7 +234,7 @@
 .following-manage__url-follow-no-search-results-message {
 	margin-top: -5px;
 	padding-bottom: 15px;
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 }
 
 .following-manage__url-follow {

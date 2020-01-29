@@ -20,7 +20,7 @@
 .help-result {
 	&:hover {
 		.help-result__wrapper {
-			background-color: var( ---color-themes-active-text );
+			background-color: var( ---color-primary-0 );
 		}
 
 		.help-result__title {
@@ -46,7 +46,7 @@
 }
 
 .help-result__description {
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	font: 14px/20px $sans;
 	margin: 2px 0 0 32px;
 }

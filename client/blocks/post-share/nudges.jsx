@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,12 +11,13 @@ import formatCurrency from '@automattic/format-currency';
 import Banner from 'components/banner';
 import { TYPE_PREMIUM, TERM_ANNUALLY } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { getSitePlan } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePlanRawPrice, getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
 
 export const UpgradeToPremiumNudgePure = props => {
-	const { price, planSlug, translate, userCurrency, isJetpack } = props;
+	const { price, planSlug, translate, userCurrency, canUserUpgrade, isJetpack } = props;
 
 	let featureList;
 	if ( isJetpack ) {
@@ -36,6 +35,10 @@ export const UpgradeToPremiumNudgePure = props => {
 			translate( 'Easy monetization options' ),
 			translate( 'Unlimited premium themes.' ),
 		];
+	}
+
+	if ( ! canUserUpgrade ) {
+		return null;
 	}
 
 	return (
@@ -67,5 +70,6 @@ export const UpgradeToPremiumNudge = connect( ( state, ownProps ) => {
 	return {
 		planSlug: proposedPlan,
 		price: getDiscountedOrRegularPrice( state, siteId, proposedPlan ),
+		canUserUpgrade: canCurrentUser( state, siteId, 'manage_options' ),
 	};
 } )( UpgradeToPremiumNudgePure );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ const debug = debugFactory( 'calypso:stats:action-page' );
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 class StatsActionPage extends React.Component {
 	static displayName = 'StatsActionPage';

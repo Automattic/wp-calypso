@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import PluginsActions from 'lib/plugins/actions';
 
 /**

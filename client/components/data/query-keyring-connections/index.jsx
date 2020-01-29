@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -25,7 +23,7 @@ class QueryKeyringConnections extends Component {
 		forceRefresh: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( ! this.props.isRequesting ) {
 			this.props.requestKeyringConnections( this.props.forceRefresh );
 		}

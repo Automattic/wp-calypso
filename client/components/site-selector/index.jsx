@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +9,6 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
 import { filter, find, flow, get, includes, isEmpty, noop } from 'lodash';
-import scrollIntoView from 'dom-scroll-into-view';
 import debugFactory from 'debug';
 
 /**
@@ -30,6 +28,12 @@ import SitePlaceholder from 'blocks/site/placeholder';
 import Search from 'components/search';
 import SiteSelectorAddSite from './add-site';
 import searchSites from 'components/search-sites';
+import scrollIntoViewport from 'lib/scroll-into-viewport';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const ALL_SITES = 'ALL_SITES';
 
@@ -117,8 +121,9 @@ class SiteSelector extends Component {
 			return;
 		}
 
-		scrollIntoView( highlightedSiteElem, selectorElement, {
-			onlyScrollIfNeeded: true,
+		scrollIntoViewport( highlightedSiteElem, {
+			block: 'nearest',
+			scrollMode: 'if-needed',
 		} );
 	}
 
@@ -135,7 +140,7 @@ class SiteSelector extends Component {
 			highlightedSiteId = this.props.highlightedSiteId || this.lastMouseHover;
 			highlightedIndex = this.visibleSites.indexOf( highlightedSiteId );
 		} else {
-			debug( 'reseting highlight as mouse left site selector' );
+			debug( 'resetting highlight as mouse left site selector' );
 			highlightedSiteId = null;
 			highlightedIndex = -1;
 		}
@@ -409,8 +414,6 @@ class SiteSelector extends Component {
 				onMouseLeave={ this.onMouseLeave }
 			>
 				<Search
-					// eslint-disable-next-line react/no-string-refs
-					ref="siteSearch"
 					onSearch={ this.onSearch }
 					delaySearch={ true }
 					// eslint-disable-next-line jsx-a11y/no-autofocus
@@ -533,8 +536,5 @@ const mapState = state => {
 export default flow(
 	localize,
 	searchSites,
-	connect(
-		mapState,
-		{ navigateToSite }
-	)
+	connect( mapState, { navigateToSite } )
 )( SiteSelector );

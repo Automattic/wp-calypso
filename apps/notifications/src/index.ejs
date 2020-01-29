@@ -10,7 +10,7 @@
 	<meta name="node-platform" content="<%= htmlWebpackPlugin.options.nodeVersion %>">
 	<meta name="node-version" content="<%= htmlWebpackPlugin.options.nodePlatform %>">
 	<meta name="git-describe" content="<%= htmlWebpackPlugin.options.gitDescribe %>">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap">
     <% htmlWebpackPlugin.files.css.forEach( function( style ) { if ( style.includes( 'rtl' ) && htmlWebpackPlugin.options.isRTL ) { %><link rel="stylesheet" href="<%= style %>"><% } else if ( ! ( style.includes( 'rtl' ) || htmlWebpackPlugin.options.isRTL ) ) { %><link rel="stylesheet" href="<%= style %>"><% } } ) %>
 </head>
 

@@ -1,26 +1,53 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+
 /**
  * External dependencies
  */
 import classNames from 'classnames';
-import { get } from 'lodash';
 
 /**
  * WordPress dependencies
  */
-import { IconButton, Placeholder, Toolbar } from '@wordpress/components';
 import { compose, withState } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
-import { BlockControls } from '@wordpress/editor';
-import { Fragment, RawHTML } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { PostTitle } from '@wordpress/editor';
+import { InnerBlocks } from '@wordpress/block-editor';
+import { Component, Fragment } from '@wordpress/element';
 
-/**
- * Internal dependencies
- */
-import PostAutocomplete from '../../components/post-autocomplete';
+class PostContentEdit extends Component {
+	toggleEditing() {
+		const { isEditing, setState } = this.props;
+		setState( { isEditing: ! isEditing } );
+	}
 
-const PostContentEdit = compose(
+	onSelectPost( { id, type } ) {
+		this.props.setState( {
+			isEditing: false,
+			selectedPostId: id,
+			selectedPostType: type,
+		} );
+	}
+
+	render() {
+		const { attributes } = this.props;
+		const { align } = attributes;
+
+		return (
+			<Fragment>
+				<div
+					className={ classNames( 'post-content-block', {
+						[ `align${ align }` ]: align,
+					} ) }
+				>
+					<PostTitle />
+					<InnerBlocks templateLock={ false } />
+				</div>
+			</Fragment>
+		);
+	}
+}
+
+export default compose( [
 	withState( {
 		isEditing: false,
 		selectedPostId: undefined,
@@ -31,74 +58,5 @@ const PostContentEdit = compose(
 		return {
 			selectedPost: getEntityRecord( 'postType', selectedPostType, selectedPostId ),
 		};
-	} )
-)( ( { attributes, isEditing, selectedPost, setState } ) => {
-	const { align } = attributes;
-
-	const toggleEditing = () => setState( { isEditing: ! isEditing } );
-
-	const onSelectPost = ( { id, type } ) => {
-		setState( {
-			isEditing: false,
-			selectedPostId: id,
-			selectedPostType: type,
-		} );
-	};
-
-	const showToggleButton = ! isEditing || !! selectedPost;
-	const showPlaceholder = isEditing || ! selectedPost;
-	const showPreview = ! isEditing && !! selectedPost;
-
-	return (
-		<Fragment>
-			{ showToggleButton && (
-				<BlockControls>
-					<Toolbar>
-						<IconButton
-							className={ classNames( 'components-icon-button components-toolbar__control', {
-								'is-active': isEditing,
-							} ) }
-							label={ __( 'Change Preview' ) }
-							onClick={ toggleEditing }
-							icon="edit"
-						/>
-					</Toolbar>
-				</BlockControls>
-			) }
-			<div
-				className={ classNames( 'post-content-block', {
-					[ `align${ align }` ]: align,
-				} ) }
-			>
-				{ showPlaceholder && (
-					<Placeholder
-						icon="layout"
-						label={ __( 'Content Slot' ) }
-						instructions={ __( 'Placeholder for a post or a page.' ) }
-					>
-						<div className="post-content-block__selector">
-							<div>{ __( 'Select something to preview:' ) }</div>
-							<PostAutocomplete
-								initialValue={ get( selectedPost, [ 'title', 'rendered' ] ) }
-								onSelectPost={ onSelectPost }
-								postType={ [ 'page', 'post' ] }
-							/>
-							{ !! selectedPost && (
-								<a href={ `?post=${ selectedPost.id }&action=edit` }>
-									{ sprintf( __( 'Edit "%s"' ), get( selectedPost, [ 'title', 'rendered' ], '' ) ) }
-								</a>
-							) }
-						</div>
-					</Placeholder>
-				) }
-				{ showPreview && (
-					<RawHTML className="post-content-block__preview">
-						{ get( selectedPost, [ 'content', 'rendered' ] ) }
-					</RawHTML>
-				) }
-			</div>
-		</Fragment>
-	);
-} );
-
-export default PostContentEdit;
+	} ),
+] )( PostContentEdit );

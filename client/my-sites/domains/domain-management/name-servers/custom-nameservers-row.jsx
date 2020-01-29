@@ -1,18 +1,16 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 class CustomNameserversRow extends React.PureComponent {
@@ -98,10 +96,7 @@ const removeNameserversClick = domainName =>
 		} )
 	);
 
-export default connect(
-	null,
-	{
-		customNameserverInputFocus,
-		removeNameserversClick,
-	}
-)( CustomNameserversRow );
+export default connect( null, {
+	customNameserverInputFocus,
+	removeNameserversClick,
+} )( CustomNameserversRow );

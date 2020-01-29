@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,16 +5,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { partial } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import SelectDropdown from 'components/select-dropdown';
-import DropdownItem from 'components/select-dropdown/item';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -121,7 +118,7 @@ class PreviewToolbar extends Component {
 						ref={ this.setDropdown }
 					>
 						{ devicesToShow.map( device => (
-							<DropdownItem
+							<SelectDropdown.Item
 								key={ device }
 								selected={ device === currentDevice }
 								onClick={ partial( setDeviceViewport, device ) }
@@ -129,7 +126,7 @@ class PreviewToolbar extends Component {
 								e2eTitle={ device }
 							>
 								{ this.devices[ device ].title }
-							</DropdownItem>
+							</SelectDropdown.Item>
 						) ) }
 					</SelectDropdown>
 				) }
@@ -159,7 +156,7 @@ class PreviewToolbar extends Component {
 							rel="noopener noreferrer"
 							onClick={ this.handleEditorWebPreviewExternalClick }
 						>
-							{ translate( 'Visit Site' ) }
+							{ translate( 'Visit site' ) }
 						</Button>
 					) }
 					<div className="web-preview__toolbar-tray">{ this.props.children }</div>
@@ -169,9 +166,6 @@ class PreviewToolbar extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-)( localize( PreviewToolbar ) );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( PreviewToolbar ) );

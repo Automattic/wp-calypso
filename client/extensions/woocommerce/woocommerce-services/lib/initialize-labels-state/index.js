@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,8 +5,8 @@ import { forEach, isEmpty, mapValues } from 'lodash';
 
 /**
  * Checks the address object for the required fields
- * @param {Object} address the address object
- * @returns {Boolean} true if all required fields are not empty
+ * @param {object} address the address object
+ * @returns {boolean} true if all required fields are not empty
  */
 const addressFilled = address =>
 	Boolean(
@@ -22,8 +20,8 @@ const addressFilled = address =>
 
 /**
  * Parses the data passed from the backed into a Redux state to be used in the label purchase flow
- * @param {Object} data data to initialize the labels state from
- * @returns {Object} labels Redux state
+ * @param {object} data data to initialize the labels state from
+ * @returns {object} labels Redux state
  */
 export default data => {
 	if ( ! data ) {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -14,9 +12,9 @@ import {
 /**
  * Returns an action object to indicate that a request has been made to fetch the feed.
  *
- * @param  {Number} siteId Site ID
- * @param  {Number} zoneId Zone ID
- * @return {Action}        Action object
+ * @param  {number} siteId Site ID
+ * @param  {number} zoneId Zone ID
+ * @returns {Action}        Action object
  */
 export const requestFeed = ( siteId, zoneId ) => ( {
 	type: ZONINATOR_REQUEST_FEED,
@@ -27,9 +25,9 @@ export const requestFeed = ( siteId, zoneId ) => ( {
 /**
  * Returns an action object to indicate that an error was received when fetching a feed.
  *
- * @param  {Number} siteId Site ID
- * @param  {Number} zoneId Zone ID
- * @return {Action}        Action object
+ * @param  {number} siteId Site ID
+ * @param  {number} zoneId Zone ID
+ * @returns {Action}        Action object
  */
 export const requestFeedError = ( siteId, zoneId ) => ( {
 	type: ZONINATOR_REQUEST_FEED_ERROR,
@@ -40,11 +38,11 @@ export const requestFeedError = ( siteId, zoneId ) => ( {
 /**
  * Returns an action object to indicate that the feed should be saved.
  *
- * @param  {Number} siteId  Site ID
- * @param  {Number} zoneId  Zone ID
- * @param  {String} form    Form name
+ * @param  {number} siteId  Site ID
+ * @param  {number} zoneId  Zone ID
+ * @param  {string} form    Form name
  * @param  {Array}  posts   Feed posts
- * @return {Object}         Action object
+ * @returns {object}         Action object
  */
 export const saveFeed = ( siteId, zoneId, form, posts ) => ( {
 	type: ZONINATOR_SAVE_FEED,
@@ -57,10 +55,10 @@ export const saveFeed = ( siteId, zoneId, form, posts ) => ( {
 /**
  * Returns an action object to indicate that a feed should be updated.
  *
- * @param  {Number} siteId  Site ID
- * @param  {Number} zoneId  Zone ID
+ * @param  {number} siteId  Site ID
+ * @param  {number} zoneId  Zone ID
  * @param  {Array}  posts   Feed posts
- * @return {Object}         Action object
+ * @returns {object}         Action object
  */
 export const updateFeed = ( siteId, zoneId, posts ) => ( {
 	type: ZONINATOR_UPDATE_FEED,

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,11 +7,11 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 
 class Example extends Component {

@@ -1,17 +1,17 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { flowRight as compose } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card/compact';
+import { CompactCard as Card } from '@automattic/components';
 import Notice from 'components/notice';
-import FormToggle from 'components/forms/form-toggle';
+import { withLocalizedMoment } from 'components/localized-moment';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import Header from './card/header';
 import {
@@ -20,23 +20,16 @@ import {
 	domainManagementTransfer,
 } from 'my-sites/domains/paths';
 import { emailManagement } from 'my-sites/email/paths';
-import { disablePrivacyProtection, enablePrivacyProtection } from 'lib/upgrades/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import { togglePrivacy } from 'state/sites/domains/actions';
 import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { recordPaymentSettingsClick } from './payment-settings-analytics';
 
 class RegisteredDomain extends React.Component {
-	state = {
-		submitting: false,
-	};
-
 	getAutoRenewalOrExpirationDate() {
-		const { domain, translate } = this.props;
+		const { domain, translate, moment } = this.props;
 
 		if ( domain.isAutoRenewing ) {
 			return (
@@ -47,7 +40,7 @@ class RegisteredDomain extends React.Component {
 							'the date is not included within the translated string',
 					} ) }
 				>
-					{ domain.autoRenewalMoment.format( 'LL' ) }
+					{ moment( domain.autoRenewalDate ).format( 'LL' ) }
 				</Property>
 			);
 		}
@@ -60,7 +53,7 @@ class RegisteredDomain extends React.Component {
 						'the date is not included within the translated string',
 				} ) }
 			>
-				{ domain.expirationMoment.format( 'LL' ) }
+				{ moment( domain.expiry ).format( 'LL' ) }
 			</Property>
 		);
 	}
@@ -75,63 +68,8 @@ class RegisteredDomain extends React.Component {
 		);
 	}
 
-	togglePrivacy = () => {
-		const { selectedSite, translate } = this.props;
-		const { privateDomain, name } = this.props.domain;
-
-		this.setState( { submitting: true } );
-
-		const callback = error => {
-			if ( error ) {
-				this.props.errorNotice( error.message );
-			} else {
-				this.props.togglePrivacy( selectedSite.ID, name );
-
-				const notice = privateDomain
-					? translate( 'Privacy has been successfully disabled!' )
-					: translate( 'Yay, privacy has been successfully enabled!' );
-
-				this.props.successNotice( notice, {
-					duration: 5000,
-				} );
-			}
-
-			this.setState( { submitting: false } );
-		};
-
-		if ( privateDomain ) {
-			disablePrivacyProtection( name, callback );
-		} else {
-			enablePrivacyProtection( name, callback );
-		}
-	};
-
-	getPrivacyProtection() {
-		const { privateDomain, privacyAvailable } = this.props.domain;
-		const { translate } = this.props;
-		const { submitting } = this.state;
-
-		if ( ! privacyAvailable ) {
-			return false;
-		}
-
-		return (
-			<Property label={ translate( 'Privacy Protection' ) }>
-				{
-					<FormToggle
-						wrapperClassName="edit__privacy-protection-toggle"
-						checked={ privateDomain }
-						toggling={ submitting }
-						disabled={ submitting }
-						onChange={ this.togglePrivacy }
-					/>
-				}
-			</Property>
-		);
-	}
-
 	handlePaymentSettingsClick = () => {
-		this.props.paymentSettingsClick( this.props.domain );
+		this.props.recordPaymentSettingsClick( this.props.domain );
 	};
 
 	domainWarnings() {
@@ -157,9 +95,10 @@ class RegisteredDomain extends React.Component {
 	}
 
 	getVerticalNav() {
-		const { expirationMoment, expired, pendingTransfer } = this.props.domain;
+		const { expiry, expired, pendingTransfer } = this.props.domain;
+		const { moment } = this.props;
 		const inNormalState = ! pendingTransfer && ! expired;
-		const inGracePeriod = this.props.moment().subtract( 18, 'days' ) <= expirationMoment;
+		const inGracePeriod = moment().subtract( 18, 'days' ) <= moment( expiry );
 
 		return (
 			<VerticalNav>
@@ -197,7 +136,7 @@ class RegisteredDomain extends React.Component {
 			this.props.domain.name
 		);
 
-		return <VerticalNavItem path={ path }>{ translate( 'Contacts' ) }</VerticalNavItem>;
+		return <VerticalNavItem path={ path }>{ translate( 'Contacts and Privacy' ) }</VerticalNavItem>;
 	}
 
 	transferNavItem() {
@@ -209,7 +148,7 @@ class RegisteredDomain extends React.Component {
 	}
 
 	render() {
-		const { domain, translate } = this.props;
+		const { domain, translate, moment } = this.props;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
@@ -237,12 +176,10 @@ class RegisteredDomain extends React.Component {
 									'the date is not included within the translated string',
 							} ) }
 						>
-							{ domain.registrationMoment.format( 'LL' ) }
+							{ moment( domain.registrationDate ).format( 'LL' ) }
 						</Property>
 
 						{ this.getAutoRenewalOrExpirationDate() }
-
-						{ this.getPrivacyProtection() }
 
 						<SubscriptionSettings
 							type={ domain.type }
@@ -260,25 +197,8 @@ class RegisteredDomain extends React.Component {
 	}
 }
 
-const paymentSettingsClick = domain =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Management',
-			`Clicked "Payment Settings" Button on a ${ domain.type } in Edit`,
-			'Domain Name',
-			domain.name
-		),
-		recordTracksEvent( 'calypso_domain_management_edit_payment_settings_click', {
-			section: domain.type,
-		} )
-	);
-
-export default connect(
-	null,
-	{
-		errorNotice,
-		paymentSettingsClick,
-		successNotice,
-		togglePrivacy,
-	}
-)( localize( RegisteredDomain ) );
+export default compose(
+	connect( null, { recordPaymentSettingsClick } ),
+	localize,
+	withLocalizedMoment
+)( RegisteredDomain );

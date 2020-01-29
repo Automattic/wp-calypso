@@ -10,7 +10,7 @@
 	display: flex;
 
 	&:hover {
-		background-color: var( --color-themes-active-text );
+		background-color: var( --color-primary-0 );
 
 		.help__support-link-title {
 			color: var( --color-primary-dark );
@@ -54,7 +54,7 @@
 .help__support-link-content {
 	margin-bottom: 0;
 	font-size: 14px;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }
 
 .help__support-links.is-placeholder {

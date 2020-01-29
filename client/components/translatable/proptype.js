@@ -1,5 +1,3 @@
-/** @format */
-
 function translatableStringChecker( props, propName, componentName ) {
 	componentName = componentName || 'ANONYMOUS';
 
@@ -18,7 +16,9 @@ function translatableStringChecker( props, propName, componentName ) {
 		if (
 			'object' === typeof value &&
 			'function' === typeof value.type &&
-			'Translatable' === value.type.name
+			( 'Translatable' === value.type.name ||
+				// Accept HOC wrappings (e.g. `localize( Translatable )`)
+				String( value.type.displayName ).match( /\(Translatable\)/ ) )
 		) {
 			return null;
 		}

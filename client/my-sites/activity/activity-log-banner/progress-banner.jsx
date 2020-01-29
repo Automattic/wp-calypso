@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import ActivityLogBanner from './index';
-import ProgressBar from 'components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 import { useLocalizedMoment } from 'components/localized-moment';
@@ -26,8 +25,8 @@ import { useLocalizedMoment } from 'components/localized-moment';
  * WordPress so no backups should already
  * exist prior to that date 😉
  *
- * @param {Number} ts timestamp in 's' or 'ms'
- * @returns {Number} timestamp in 'ms'
+ * @param {number} ts timestamp in 's' or 'ms'
+ * @returns {number} timestamp in 'ms'
  */
 const ms = ts =>
 	ts < 946702800000 // Jan 1, 2001 @ 00:00:00
@@ -67,15 +66,15 @@ function ProgressBanner( {
 						? translate( 'The cloning process will start in a moment.' )
 						: translate( 'Away we go! Your site is being cloned.' );
 			} else {
-				title = translate( 'Currently rewinding your site' );
+				title = translate( 'Currently restoring your site' );
 				description = translate(
-					"We're rewinding your site back to %(dateTime)s. You'll be notified once it's complete.",
+					"We're restoring your site back to %(dateTime)s. You'll be notified once it's complete.",
 					{ args: { dateTime } }
 				);
 				statusMessage =
 					'queued' === status
-						? translate( 'Your rewind will start in a moment.' )
-						: translate( 'Away we go! Your site is being rewound.' );
+						? translate( 'Your restore will start in a moment.' )
+						: translate( 'Away we go! Your site is being restored.' );
 			}
 			break;
 

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { partial } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import DismissibleCard from '../';
 import { savePreference } from 'state/preferences/actions';
 
@@ -33,12 +31,9 @@ function DismissibleCardExample( { clearPreference } ) {
 	);
 }
 
-const ConnectedDismissibleCardExample = connect(
-	null,
-	{
-		clearPreference: partial( savePreference, 'dismissible-card-example', null ),
-	}
-)( DismissibleCardExample );
+const ConnectedDismissibleCardExample = connect( null, {
+	clearPreference: partial( savePreference, 'dismissible-card-example', null ),
+} )( DismissibleCardExample );
 
 ConnectedDismissibleCardExample.displayName = 'DismissibleCard';
 

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -10,7 +8,7 @@ import 'state/data-layer/wpcom/signup/segments';
 /**
  * Action creator: Request segments data.
  *
- * @return {Object} The action object.
+ * @returns {object} The action object.
  */
 export const requestSegments = () => ( {
 	type: SIGNUP_SEGMENTS_REQUEST,
@@ -21,7 +19,7 @@ export const requestSegments = () => ( {
  *
  * @param {Array} segments Collection of site segment objects
  *
- * @return {Object} The action object.
+ * @returns {object} The action object.
  */
 export const setSegments = segments => ( {
 	type: SIGNUP_SEGMENTS_SET,

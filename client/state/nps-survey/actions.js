@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,6 +11,7 @@ import wpcom from 'lib/wp';
 import analytics from 'lib/analytics';
 import {
 	NPS_SURVEY_SET_ELIGIBILITY,
+	NPS_SURVEY_SET_CONCIERGE_SESSION_AVAILABILITY,
 	NPS_SURVEY_MARK_SHOWN_THIS_SESSION,
 	NPS_SURVEY_SUBMIT_REQUESTING,
 	NPS_SURVEY_SUBMIT_REQUEST_FAILURE,
@@ -34,6 +33,13 @@ export function setNpsSurveyEligibility( isEligible ) {
 	};
 }
 
+export function setNpsConciergeSessionAvailaibility( isAvailableForConciergeSession ) {
+	return {
+		type: NPS_SURVEY_SET_CONCIERGE_SESSION_AVAILABILITY,
+		isAvailableForConciergeSession,
+	};
+}
+
 export function setupNpsSurveyEligibility() {
 	return dispatch => {
 		debug( 'Checking NPS eligibility...' );
@@ -44,10 +50,12 @@ export function setupNpsSurveyEligibility() {
 			.then( data => {
 				debug( '...Eligibility returned from endpoint.', data );
 				dispatch( setNpsSurveyEligibility( data.display_survey ) );
+				dispatch( setNpsConciergeSessionAvailaibility( data.has_available_concierge_sessions ) );
 			} )
 			.catch( err => {
 				debug( '...Error querying NPS survey eligibility.', err );
 				dispatch( setNpsSurveyEligibility( false ) );
+				dispatch( setNpsConciergeSessionAvailaibility( false ) );
 			} );
 	};
 }

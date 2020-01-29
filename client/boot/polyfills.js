@@ -1,21 +1,13 @@
-/** @format */
 /**
  * External dependencies
  */
-import '@babel/polyfill';
-import svg4everybody from 'svg4everybody';
-import 'isomorphic-fetch';
+import '@automattic/calypso-polyfills';
 
 /**
  * Internal dependencies
  */
-
 import localStoragePolyfill from 'lib/local-storage-polyfill';
 
+// Only used in Calypso proper, so no need to turn into a package
+// and add to calypso-polyfills for now.
 localStoragePolyfill();
-
-const isBrowser = typeof window !== 'undefined';
-if ( isBrowser ) {
-	// Polyfill SVG external content support. Noop in the evergreen build.
-	svg4everybody();
-}

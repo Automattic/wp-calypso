@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Fragment, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 /**
  * Internal dependencies

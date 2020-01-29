@@ -1,4 +1,3 @@
-/** @format */
 export const order = {
 	id: 40,
 	status: 'completed',

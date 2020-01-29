@@ -14,7 +14,7 @@ import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import Navigation from '../navigation';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import ActionButtons from '../settings-form/actions';
 import {
@@ -119,8 +119,8 @@ class WPCOMNotifications extends React.Component {
 				<EmailCategory
 					name={ options.news }
 					isEnabled={ get( settings, options.news ) }
-					title={ translate( 'News' ) }
-					description={ translate( 'WordPress.com news and announcements.' ) }
+					title={ translate( 'Newsletter' ) }
+					description={ translate( 'WordPress.com news, announcements, and product spotlights.' ) }
 				/>
 
 				<EmailCategory
@@ -165,8 +165,8 @@ class WPCOMNotifications extends React.Component {
 						<EmailCategory
 							name={ options.jetpack_news }
 							isEnabled={ get( settings, options.jetpack_news ) }
-							title={ translate( 'News' ) }
-							description={ translate( 'Jetpack news and announcements.' ) }
+							title={ translate( 'Newsletter' ) }
+							description={ translate( 'Jetpack news, announcements, and product spotlights.' ) }
 						/>
 					</>
 				) : (

@@ -2,8 +2,10 @@
 /**
  * Posts list block file.
  *
- * @package full-site-editing
+ * @package A8C\FSE
  */
+
+namespace A8C\FSE;
 
 /**
  * Class Post_List_Block
@@ -13,9 +15,16 @@ class Posts_List_Block {
 	/**
 	 * Class instance.
 	 *
-	 * @var Posts_List_Block
+	 * @var \A8C\FSE\Posts_List_Block
 	 */
 	private static $instance = null;
+
+	/**
+	 * Whether we are in the process of rendering the block.
+	 *
+	 * @var bool
+	 */
+	private $rendering_block = false;
 
 	/**
 	 * A8C_Post_List constructor.
@@ -29,7 +38,7 @@ class Posts_List_Block {
 	/**
 	 * Creates instance.
 	 *
-	 * @return \Posts_List_Block
+	 * @return \A8C\FSE\Posts_List_Block
 	 */
 	public static function get_instance() {
 		if ( null === self::$instance ) {
@@ -43,13 +52,8 @@ class Posts_List_Block {
 	 * Enqueue block editor scripts.
 	 */
 	public function enqueue_scripts() {
-		// phpcs:ignore WordPress
-		$script_dependencies = json_decode(
-			file_get_contents(
-				plugin_dir_path( __FILE__ ) . 'dist/posts-list-block.deps.json'
-			),
-			true
-		);
+		$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/posts-list-block.asset.php';
+		$script_dependencies = $asset_file['dependencies'];
 		wp_enqueue_script(
 			'a8c-posts-list-script',
 			plugins_url( 'dist/posts-list-block.js', __FILE__ ),
@@ -57,6 +61,7 @@ class Posts_List_Block {
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/posts-list-block.js' ),
 			true
 		);
+
 		wp_set_script_translations( 'a8c-posts-list-script', 'full-site-editing' );
 	}
 
@@ -101,7 +106,8 @@ class Posts_List_Block {
 	 * @return string
 	 */
 	public function render_a8c_post_list_block( $attributes, $content ) {
-		$posts_list = new WP_Query(
+
+		$posts_list = new \WP_Query(
 			array(
 				'post_type'        => 'post',
 				'posts_per_page'   => $attributes['postsPerPage'],
@@ -112,12 +118,19 @@ class Posts_List_Block {
 
 		add_filter( 'excerpt_more', array( $this, 'custom_excerpt_read_more' ) );
 
-		$content = a8c_pl_render_template(
-			'posts-list',
-			array(
-				'posts_list' => $posts_list,
-			)
-		);
+		// Prevent situations when the block attempts rendering another a8c/posts-list block.
+		if ( $this->rendering_block !== true ) {
+			$this->rendering_block = true;
+
+			$content = render_template(
+				'posts-list',
+				array(
+					'posts_list' => $posts_list,
+				)
+			);
+
+			$this->rendering_block = false;
+		}
 
 		remove_filter( 'excerpt_more', array( $this, 'custom_excerpt_read_more' ) );
 

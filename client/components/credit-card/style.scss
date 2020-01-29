@@ -1,12 +1,11 @@
-div.credit-card {
-	background-color: var( --color-white );
+.credit-card {
+	background: var( --color-surface );
 	border: 1px solid var( --color-neutral-0 );
-	border-top: none;
 	padding-left: 2px;
 	min-height: 50px;
 
-	&:first-of-type {
-		border-top: 1px solid var( --color-neutral-0 );
+	& + & {
+		border-top: none;
 	}
 
 	&.is-selectable:not( .is-selected ) {
@@ -15,8 +14,22 @@ div.credit-card {
 
 	&.is-selected {
 		cursor: default;
-		border-left: 3px solid var( --color-success );
-		background-color: #fafdf6;
+		position: relative;
+		border-color: var( --color-primary-5 );
+		border-left: 3px solid var( --color-primary-10 );
+		background: var( --color-primary-0 );
+		padding-top: 0;
 		padding-left: 0;
+	}
+
+	// Add a faux top border that covers the previous item’s bottom border
+	& + &.is-selected::before {
+		content: '';
+		position: absolute;
+		top: -1px;
+		right: 0;
+		left: -3px;
+		height: 1px;
+		background: var( --color-primary-5 );
 	}
 }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,9 +6,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 
-const ActionPanelFigure = ( { inlineBodyText, children } ) => {
+const ActionPanelFigure = ( { inlineBodyText, align, children } ) => {
 	const figureClasses = classNames( {
 		'action-panel__figure': true,
+		[ `align-${ 'left' === align ? 'left' : 'right' }` ]: true,
 		'is-inline-body-text': inlineBodyText,
 	} );
 

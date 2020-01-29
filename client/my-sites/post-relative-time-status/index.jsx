@@ -8,7 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { withLocalizedMoment } from 'components/localized-moment';
 
 /**

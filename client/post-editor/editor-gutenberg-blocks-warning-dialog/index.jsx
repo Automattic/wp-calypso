@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,14 +11,12 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getEditorRawContent, getEditorPostId } from 'state/ui/editor/selectors';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
-import { isEnabled } from 'config';
-import isVipSite from 'state/selectors/is-vip-site';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -28,6 +24,7 @@ import {
 	withAnalytics,
 	bumpStat,
 } from 'state/analytics/actions';
+import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
 
 /**
  * Style dependencies
@@ -182,21 +179,18 @@ const mapDispatchToProps = dispatch => ( {
 	openPostRevisionsDialog: () => dispatch( openPostRevisionsDialog() ),
 } );
 
-export default connect(
-	state => {
-		const postContent = getEditorRawContent( state );
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
-		const postType = getEditedPostValue( state, siteId, postId, 'type' );
-		const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
-		const optInEnabled = isEnabled( 'gutenberg/opt-in' ) && ! isVipSite( state, siteId );
+export default connect( state => {
+	const postContent = getEditorRawContent( state );
+	const siteId = getSelectedSiteId( state );
+	const postId = getEditorPostId( state );
+	const postType = getEditedPostValue( state, siteId, postId, 'type' );
+	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
+	const optInEnabled = isGutenbergOptInEnabled( state, siteId );
 
-		return {
-			postContent,
-			siteId,
-			gutenbergUrl,
-			optInEnabled,
-		};
-	},
-	mapDispatchToProps
-)( localize( EditorGutenbergBlocksWarningDialog ) );
+	return {
+		postContent,
+		siteId,
+		gutenbergUrl,
+		optInEnabled,
+	};
+}, mapDispatchToProps )( localize( EditorGutenbergBlocksWarningDialog ) );

@@ -1,4 +1,4 @@
-FROM node:10.15.2
+FROM node:12.14.0
 LABEL maintainer="Automattic"
 
 WORKDIR    /calypso
@@ -6,6 +6,7 @@ WORKDIR    /calypso
 
 ENV        CONTAINER 'docker'
 ENV        NODE_PATH=/calypso/server:/calypso/client
+ENV        PROGRESS=true
 
 # Build a "base" layer
 #
@@ -24,8 +25,9 @@ RUN        bash /tmp/env-config.sh
 #
 # This layer is populated with up-to-date files from
 # Calypso development.
-COPY       . /calypso/
-RUN        npm ci
+COPY . /calypso/
+RUN npm ci
+
 
 # Build the final layer
 #

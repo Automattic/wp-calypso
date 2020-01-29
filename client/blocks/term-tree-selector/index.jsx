@@ -1,12 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -14,9 +11,7 @@ import classNames from 'classnames';
 import TermTreeSelectorTerms from './terms';
 import TermSelectorAddTerm from './add-term';
 
-export default class extends React.Component {
-	static displayName = 'TermTreeSelector';
-
+export default class TermTreeSelector extends React.Component {
 	static propTypes = {
 		multiple: PropTypes.bool,
 		className: PropTypes.string,
@@ -56,7 +51,7 @@ export default class extends React.Component {
 		}
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.taxonomy !== this.props.taxonomy ) {
 			this.setState( { search: '' } );
 		}
@@ -64,7 +59,6 @@ export default class extends React.Component {
 
 	render() {
 		const {
-			className,
 			taxonomy,
 			onChange,
 			selected,
@@ -78,7 +72,6 @@ export default class extends React.Component {
 			podcastingCategoryId,
 		} = this.props;
 
-		const classes = classNames( className );
 		const { search } = this.state;
 		const query = {};
 		if ( search && search.length ) {
@@ -86,7 +79,7 @@ export default class extends React.Component {
 		}
 
 		return (
-			<div className={ classes } ref="wrapper">
+			<div>
 				<TermTreeSelectorTerms
 					taxonomy={ taxonomy }
 					onSearch={ this.onSearch }

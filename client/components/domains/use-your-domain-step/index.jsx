@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { endsWith, get, isEmpty, noop } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import page from 'page';
 import { stringify } from 'qs';
 import formatCurrency from '@automattic/format-currency';
@@ -22,12 +20,11 @@ import {
 	getCurrentUser,
 	getCurrentUserCurrencyCode,
 } from 'state/current-user/selectors';
-import Card from 'components/card';
+import { Card, Button } from '@automattic/components';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import { CALYPSO_CONTACT, INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from 'lib/url/support';
 import HeaderCake from 'components/header-cake';
-import Button from 'components/button';
 import { errorNotice } from 'state/notices/actions';
 import QueryProducts from 'components/data/query-products-list';
 import { getDomainPrice, getDomainProductSlug, getDomainTransferSalePrice } from 'lib/domains';
@@ -43,6 +40,12 @@ import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
  * Style dependencies
  */
 import './style.scss';
+
+/**
+ * Image dependencies
+ */
+import themesImage from 'assets/images/illustrations/themes.svg';
+import migratingHostImage from 'assets/images/illustrations/migrating-host-diy.svg';
 
 class UseYourDomainStep extends React.Component {
 	static propTypes = {
@@ -127,7 +130,10 @@ class UseYourDomainStep extends React.Component {
 		buildTransferDomainUrl = `${ basePathForTransfer }/transfer`;
 
 		if ( selectedSite ) {
-			const query = stringify( { initialQuery: this.state.searchQuery.trim() } );
+			const query = stringify( {
+				initialQuery: this.state.searchQuery.trim(),
+				useStandardBack: true,
+			} );
 			buildTransferDomainUrl += `/${ selectedSite.slug }?${ query }`;
 		}
 
@@ -335,7 +341,7 @@ class UseYourDomainStep extends React.Component {
 	renderSelectTransfer = () => {
 		const { translate } = this.props;
 
-		const image = '/calypso/images/illustrations/migrating-host-diy.svg';
+		const image = migratingHostImage;
 		const title = translate( 'Transfer your domain away from your current registrar.' );
 		const reasons = [
 			translate(
@@ -367,7 +373,7 @@ class UseYourDomainStep extends React.Component {
 
 	renderSelectMapping = () => {
 		const { translate } = this.props;
-		const image = '/calypso/images/illustrations/themes.svg';
+		const image = themesImage;
 		const title = translate( 'Map your domain without moving it from your current registrar.' );
 		const reasons = [
 			translate( 'Domain registration and billing will remain at your current provider' ),

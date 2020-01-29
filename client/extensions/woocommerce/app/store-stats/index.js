@@ -1,11 +1,10 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { moment } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -63,9 +62,7 @@ class StoreStats extends Component {
 				{ siteId && (
 					<QuerySiteStats statType="statsOrders" siteId={ siteId } query={ orderQuery } />
 				) }
-				<div className="store-stats__sidebar-nav">
-					<SidebarNavigation />
-				</div>
+				<SidebarNavigation />
 				<StatsNavigation
 					selectedItem={ 'store' }
 					siteId={ siteId }

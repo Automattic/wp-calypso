@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,28 +19,18 @@ describe( 'HAPPYCHAT_IO_SEND_MESSAGE_USERINFO action', () => {
 		},
 	};
 
-	const previousWindow = global.window;
-	const previousScreen = global.screen;
-	const previousNavigator = global.navigator;
-
 	beforeAll( () => {
 		global.window = {
 			innerWidth: 'windowInnerWidth',
 			innerHeight: 'windowInnerHeight',
+			screen: {
+				width: 'screenWidth',
+				height: 'screenHeight',
+			},
+			navigator: {
+				userAgent: 'navigatorUserAgent',
+			},
 		};
-		global.screen = {
-			width: 'screenWidth',
-			height: 'screenHeight',
-		};
-		global.navigator = {
-			userAgent: 'navigatorUserAgent',
-		};
-	} );
-
-	afterAll( () => {
-		global.window = previousWindow;
-		global.screen = previousScreen;
-		global.navigator = previousNavigator;
 	} );
 
 	test( 'should send relevant browser information to the connection', () => {

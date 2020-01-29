@@ -1,9 +1,10 @@
 /**
  * Return a Webpack loader configuration object for files / images.
  *
- * @return {Object} Webpack loader object
+ * @param  {object} options File loader options
+ * @returns {object}         Webpack loader object
  */
-module.exports.loader = () => ( {
+module.exports.loader = options => ( {
 	test: /\.(?:gif|jpg|jpeg|png|svg)$/i,
 	use: [
 		{
@@ -11,6 +12,7 @@ module.exports.loader = () => ( {
 			options: {
 				name: '[name]-[hash].[ext]',
 				outputPath: 'images/',
+				...options,
 			},
 		},
 	],

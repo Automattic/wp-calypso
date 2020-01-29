@@ -1,7 +1,6 @@
 /**
  * Stub i18n
  *
- * @format
  */
 
 function I18n() {}

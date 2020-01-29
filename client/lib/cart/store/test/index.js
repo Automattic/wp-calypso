@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -7,10 +6,10 @@
  * Internal dependencies
  */
 import { transactionPaymentSetActions, paymentActionLocations } from './fixtures/actions';
-import { recordUnrecognizedPaymentMethod } from '../cart-analytics';
+import { recordUnrecognizedPaymentMethod } from 'lib/analytics/cart';
 import { setTaxLocation } from 'lib/cart-values';
 
-jest.mock( '../cart-analytics', () => ( {
+jest.mock( 'lib/analytics/cart', () => ( {
 	recordEvents: () => ( {} ),
 	recordUnrecognizedPaymentMethod: jest.fn(),
 } ) );
@@ -40,7 +39,7 @@ jest.mock( 'lib/products-list', () => () => ( { get: () => [] } ) );
 jest.mock( 'lib/wp', () => ( {
 	undocumented: () => ( {} ),
 	me: () => ( {
-		get: () => ( {} ),
+		get: async () => ( {} ),
 	} ),
 } ) );
 
@@ -72,7 +71,7 @@ describe( 'Cart Store', () => {
 	test( 'Store should ignore update actions that arrive after disable', () => {
 		let disableCart, removeCoupon;
 		jest.isolateModules( () => {
-			const cartActions = jest.requireActual( 'lib/upgrades/actions/cart' );
+			const cartActions = jest.requireActual( 'lib/cart/actions' );
 			disableCart = cartActions.disableCart;
 			removeCoupon = cartActions.removeCoupon;
 		} );

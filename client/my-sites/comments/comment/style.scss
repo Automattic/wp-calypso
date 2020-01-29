@@ -13,7 +13,7 @@
 	&.is-pending {
 		background: var( --color-surface );
 		box-shadow: inset 4px 0 0 0 var( --color-warning ),
-			0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+			0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
 	}
 
 	@include breakpoint( '>660px' ) {
@@ -65,7 +65,7 @@
 	.gridicon {
 		background-color: var( --color-neutral-light );
 		border-radius: 50%;
-		fill: var( --color-white );
+		fill: var( --color-text-inverted );
 		padding: 4px;
 	}
 }
@@ -199,11 +199,11 @@
 		padding: 0 10px;
 
 		&.is-pending {
-			background: var( --color-warning-200 );
+			background: var( --color-warning-20 );
 		}
 		&.is-spam,
 		&.is-trash {
-			background: var( --color-error-200 );
+			background: var( --color-error-20 );
 		}
 	}
 
@@ -251,7 +251,7 @@
 	position: relative;
 
 	&::after {
-		background: linear-gradient( to right, rgba( var( --color-white-rgb ), 0 ), rgba( var( --color-white-rgb ), 1 ) 50% );
+		background: linear-gradient( to right, rgba( var( --color-surface-rgb ), 0 ), rgba( var( --color-surface-rgb ), 1 ) 50% );
 		content: '';
 		height: 20px;
 		position: absolute;
@@ -531,7 +531,7 @@
 .comment-html-editor__toolbar .button {
 	border-right: 1px solid var( --color-neutral-0 );
 	border-radius: 0;
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	margin-bottom: 8px;
 	min-width: 30px;
 	padding: 4px 8px;
@@ -539,7 +539,7 @@
 	text-transform: lowercase;
 
 	&:hover {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	&:last-child {
@@ -610,12 +610,12 @@
 	margin: 0 auto;
 
 	&:hover {
-		box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-100 );
+		box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-10 );
 		z-index: z-index( 'root', '.card.comment.is-bulk-mode:hover' );
 	}
 	&.is-pending:hover {
 		box-shadow: inset 4px 0 0 0 var( --color-warning ), 0 0 0 1px var( --color-neutral-light ),
-			0 2px 4px var( --color-neutral-100 );
+			0 2px 4px var( --color-neutral-10 );
 	}
 
 	a {
@@ -652,7 +652,7 @@
 .card.comment.is-placeholder {
 	@include placeholder();
 
-	background-color: var( --color-white );
+	background-color: var( --color-surface );
 
 	.comment__bulk-select {
 		display: none;
@@ -707,6 +707,6 @@
 .card.comment {
 	&.is-at-max-depth {
 		margin-bottom: 0;
-		box-shadow: 0 -1px rgba( var( --color-neutral-100-rgb ), 0.5 );
+		box-shadow: 0 -1px rgba( var( --color-neutral-10-rgb ), 0.5 );
 	}
 }

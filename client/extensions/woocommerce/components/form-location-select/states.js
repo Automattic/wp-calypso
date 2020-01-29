@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -41,11 +39,11 @@ class FormStateSelectFromApi extends Component {
 		value: PropTypes.string,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.fetchData( this.props );
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		if ( newProps.siteId !== this.props.siteId ) {
 			this.fetchData( newProps );
 		}

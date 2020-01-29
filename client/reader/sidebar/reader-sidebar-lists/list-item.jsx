@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -69,7 +68,7 @@ export class ReaderSidebarListsListItem extends Component {
 		return (
 			<li className={ classes } key={ list.ID }>
 				<a
-					className="sidebar__menu-item-label"
+					className="sidebar__menu-link"
 					href={ listRelativeUrl }
 					onClick={ this.handleListSidebarClick }
 					title={ translate( "View list '%(currentListName)s'", {

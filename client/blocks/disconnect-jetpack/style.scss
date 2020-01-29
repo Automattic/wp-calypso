@@ -1,10 +1,10 @@
 .disconnect-jetpack__block {
 	text-align: center;
 	max-width: 400px;
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 
 	.disconnect-jetpack__header {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		font-size: 24px;
 		font-weight: 300;
 		height: 2em;
@@ -15,7 +15,7 @@
 }
 
 .disconnect-jetpack__highlight {
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 	margin-bottom: 1.5em;
 	font-size: 16px;
 }
@@ -24,10 +24,10 @@
 	padding: 14px 24px 14px 44px;
 	text-align: left;
 	font-size: 13px;
-	border-bottom: 1px solid var( --color-neutral-50 );
+	border-bottom: 1px solid var( --color-neutral-5 );
 
 	&:first-of-type {
-		border-top: 1px solid var( --color-neutral-50 );
+		border-top: 1px solid var( --color-neutral-5 );
 	}
 
 	.gridicon {

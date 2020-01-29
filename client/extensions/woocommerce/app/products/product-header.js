@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,14 +5,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { isObject } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getLink } from 'woocommerce/lib/nav-utils';
 
 function renderViewButton( product, label ) {
@@ -67,14 +65,14 @@ const ProductHeader = ( { viewEnabled, onTrash, onSave, isBusy, translate, site,
 	const existing = product && ! isObject( product.id );
 	const viewButton = viewEnabled && renderViewButton( product, translate( 'View' ) );
 	const trashButton = renderTrashButton( onTrash, isBusy, translate( 'Delete' ) );
-	const saveLabel = existing ? translate( 'Update' ) : translate( 'Save & Publish' );
+	const saveLabel = existing ? translate( 'Update' ) : translate( 'Save & publish' );
 	const saveButton = renderSaveButton( onSave, isBusy, saveLabel );
 
 	const currentCrumb =
 		product && existing ? (
-			<span>{ translate( 'Edit Product' ) }</span>
+			<span>{ translate( 'Edit product' ) }</span>
 		) : (
-			<span>{ translate( 'Add New' ) }</span>
+			<span>{ translate( 'Add new' ) }</span>
 		);
 
 	const breadcrumbs = [

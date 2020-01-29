@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -65,10 +63,9 @@ class PostActionsEllipsisMenuView extends Component {
 			<PopoverMenuItem
 				href={ previewUrl }
 				onClick={ this.previewPost }
-				icon="visible"
+				icon={ ! isPreviewable ? 'external' : 'visible' }
 				target="_blank"
 				rel="noopener noreferrer"
-				isExternalLink={ ! isPreviewable }
 			>
 				{ includes( [ 'publish', 'private' ], status )
 					? translate( 'View', { context: 'verb' } )

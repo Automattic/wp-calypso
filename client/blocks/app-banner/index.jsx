@@ -1,21 +1,18 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { get, identity, includes, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import { getSectionName, getSelectedSiteId } from 'state/ui/selectors';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
@@ -28,8 +25,6 @@ import {
 } from 'state/analytics/actions';
 import { savePreference } from 'state/preferences/actions';
 import TrackComponentView from 'lib/analytics/track-component-view';
-
-import { get, identity, includes, noop } from 'lodash';
 import {
 	ALLOWED_SECTIONS,
 	EDITOR,
@@ -49,6 +44,14 @@ import { isWpMobileApp } from 'lib/mobile-app';
  * Style dependencies
  */
 import './style.scss';
+
+/**
+ * Image dependencies
+ */
+import editorBannerImage from 'assets/images/illustrations/app-banner-editor.svg';
+import notificationsBannerImage from 'assets/images/illustrations/app-banner-notifications.svg';
+import readerBannerImage from 'assets/images/illustrations/app-banner-reader.svg';
+import statsBannerImage from 'assets/images/illustrations/app-banner-stats.svg';
 
 const IOS_REGEX = /iPad|iPod|iPhone/i;
 const ANDROID_REGEX = /Android (\d+(\.\d+)?(\.\d+)?)/i;
@@ -121,6 +124,19 @@ export class AppBanner extends Component {
 		this.props.recordAppBannerOpen( this.props.currentSection );
 	};
 
+	getBannerImage() {
+		switch ( this.props.currentSection ) {
+			case EDITOR:
+				return editorBannerImage;
+			case NOTES:
+				return notificationsBannerImage;
+			case READER:
+				return readerBannerImage;
+			case STATS:
+				return statsBannerImage;
+		}
+	}
+
 	getDeepLink() {
 		const { currentRoute, currentSection } = this.props;
 
@@ -175,6 +191,7 @@ export class AppBanner extends Component {
 					statGroup="calypso_mobile_app_banner"
 					statName="impression"
 				/>
+				<img className="app-banner__illustration" src={ this.getBannerImage() } alt="" />
 				<div className="app-banner__text-content">
 					<div className="app-banner__title">
 						<span> { title } </span>
@@ -265,7 +282,4 @@ const mapDispatchToProps = {
 		),
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( AppBanner ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( AppBanner ) );

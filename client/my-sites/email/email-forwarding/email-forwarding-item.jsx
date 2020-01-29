@@ -1,9 +1,8 @@
-/** @format */
 /**
  * External dependencies
  */
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -11,7 +10,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -136,10 +135,7 @@ const resendVerificationEmailWithAnalytics = ( domainName, mailbox, destination 
 		resendVerificationEmail( domainName, mailbox, destination )
 	);
 
-export default connect(
-	null,
-	{
-		removeEmailForwardWithAnalytics,
-		resendVerificationEmailWithAnalytics,
-	}
-)( localize( EmailForwardingItem ) );
+export default connect( null, {
+	removeEmailForwardWithAnalytics,
+	resendVerificationEmailWithAnalytics,
+} )( localize( EmailForwardingItem ) );

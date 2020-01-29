@@ -1,6 +1,6 @@
 <?php
 /**
- * Template part for displaying a message that posts cannot be found.
+ * Template for displaying a message that posts cannot be found.
  *
  * @package full-site-editing
  * @link https://developer.wordpress.org/themes/basics/template-hierarchy/

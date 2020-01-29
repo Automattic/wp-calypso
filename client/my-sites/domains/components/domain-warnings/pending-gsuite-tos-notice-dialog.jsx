@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import PropTypes from 'prop-types';
 import React, { Fragment, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
@@ -10,10 +10,11 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
+import { Button, Dialog } from '@automattic/components';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 import ClipboardButton from 'components/forms/clipboard-button';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import Dialog from 'components/dialog';
+import { errorNotice } from 'state/notices/actions';
 import { getLoginUrlWithTOSRedirect } from 'lib/gsuite';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
@@ -41,6 +42,7 @@ function PendingGSuiteTosNoticeDialog( props ) {
 			`Opened G Suite "ToS Dialog" via ${ props.section }`,
 			'calypso_domain_management_gsuite_pending_account_open_dialog'
 		);
+
 		setOpenTracked( true );
 	}
 
@@ -49,25 +51,50 @@ function PendingGSuiteTosNoticeDialog( props ) {
 			`Clicked "Close ToS Dialog" link in G Suite pending ToS dialog via ${ props.section }`,
 			'calypso_domain_management_gsuite_pending_account_close_dialog_click'
 		);
+
 		setOpenTracked( false );
 		props.onClose();
 	};
 
 	const onCopyAction = () => {
 		setIsCopied( true );
+
 		trackEvent(
 			`Clicked "Copy Password" link in G Suite pending ToS dialog via ${ props.section }`,
 			'calypso_domain_management_gsuite_pending_account_copy_password_click'
 		);
 	};
 
-	const onPasswordClick = e => {
-		e.preventDefault();
+	const onPasswordClick = event => {
+		event.preventDefault();
+
 		const wpcom = wp.undocumented();
 		const mailbox = props.user.split( '@' )[ 0 ];
-		wpcom.resetPasswordForMailbox( props.domainName, mailbox ).then( data => {
-			setPassword( data.password );
-		} );
+
+		wpcom.resetPasswordForMailbox( props.domainName, mailbox ).then(
+			data => {
+				setPassword( data.password );
+			},
+			() => {
+				props.errorNotice(
+					translate(
+						'There was a problem resetting the password for %(gsuiteEmail)s. Please {{link}}contact support{{/link}}.',
+						{
+							args: {
+								gsuiteEmail: props.user,
+							},
+							components: {
+								link: <a href={ CALYPSO_CONTACT } />,
+							},
+						}
+					)
+				);
+
+				setOpenTracked( false );
+				props.onClose();
+			}
+		);
+
 		trackEvent(
 			`Clicked "Get Password" link in G Suite pending ToS dialog via ${ props.section }`,
 			'calypso_domain_management_gsuite_pending_account_get_password_click'
@@ -115,6 +142,7 @@ function PendingGSuiteTosNoticeDialog( props ) {
 			</header>
 
 			<p>{ password ? renderPasswordResetCopy() : renderEntryCopy() }</p>
+
 			{ password && (
 				<Fragment>
 					<p>
@@ -129,6 +157,7 @@ function PendingGSuiteTosNoticeDialog( props ) {
 							{ isCopied ? translate( 'Copied!' ) : translate( 'Copy' ) }
 						</ClipboardButton>
 					</p>
+
 					<Button
 						href={ getLoginUrlWithTOSRedirect( props.user, props.domainName ) }
 						onClick={ onResetPasswordLogInClick }
@@ -140,6 +169,7 @@ function PendingGSuiteTosNoticeDialog( props ) {
 					</Button>
 				</Fragment>
 			) }
+
 			{ ! password && (
 				<VerticalNav>
 					<VerticalNavItem onClick={ onPasswordClick } key="0" path={ '#' }>
@@ -147,6 +177,7 @@ function PendingGSuiteTosNoticeDialog( props ) {
 							components: { strong: <strong /> },
 						} ) }
 					</VerticalNavItem>
+
 					<VerticalNavItem
 						onClick={ onLogInClick }
 						path={ getLoginUrlWithTOSRedirect( props.user, props.domainName ) }
@@ -163,6 +194,7 @@ function PendingGSuiteTosNoticeDialog( props ) {
 
 PendingGSuiteTosNoticeDialog.propTypes = {
 	domainName: PropTypes.string.isRequired,
+	errorNotice: PropTypes.func.isRequired,
 	onClose: PropTypes.func.isRequired,
 	section: PropTypes.string.isRequired,
 	siteSlug: PropTypes.string.isRequired,
@@ -181,9 +213,7 @@ const trackEvent = ( { domainName, message, section, siteSlug, tracksEvent, user
 		} )
 	);
 
-export default connect(
-	null,
-	{
-		trackEvent,
-	}
-)( PendingGSuiteTosNoticeDialog );
+export default connect( null, {
+	errorNotice,
+	trackEvent,
+} )( PendingGSuiteTosNoticeDialog );

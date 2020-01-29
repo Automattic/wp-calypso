@@ -1,9 +1,13 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+
 /**
  * External dependencies
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -82,12 +86,6 @@ class PluginRemoveButton extends React.Component {
 		if ( ! this.props.site ) {
 			// we don't have enough info
 			return null;
-		}
-
-		if ( ! this.props.site.hasMinimumJetpackVersion ) {
-			return this.props.translate( '%(site)s is not running an up to date version of Jetpack', {
-				args: { site: this.props.site.title },
-			} );
 		}
 
 		if ( this.props.site.options.is_multi_network ) {

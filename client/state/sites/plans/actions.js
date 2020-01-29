@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -31,8 +29,8 @@ import 'state/data-layer/wpcom/sites/plan-transfer';
 /**
  * Cancels the specified plan trial for the given site.
  *
- * @param {Number} siteId identifier of the site
- * @param {Number} planId identifier of the plan
+ * @param {number} siteId identifier of the site
+ * @param {number} planId identifier of the plan
  * @returns {Function} a promise that will resolve once updating is completed
  */
 export function cancelSitePlanTrial( siteId, planId ) {
@@ -77,8 +75,8 @@ export function cancelSitePlanTrial( siteId, planId ) {
 /**
  * Returns an action object to be used in signalling that plans for the given site has been cleared.
  *
- * @param {Number} siteId identifier of the site
- * @returns {Object} the corresponding action object
+ * @param {number} siteId identifier of the site
+ * @returns {object} the corresponding action object
  */
 export function clearSitePlans( siteId ) {
 	return {
@@ -90,7 +88,7 @@ export function clearSitePlans( siteId ) {
 /**
  * Fetches plans for the given site.
  *
- * @param {Number} siteId identifier of the site
+ * @param {number} siteId identifier of the site
  * @returns {Function} a promise that will resolve once fetching is completed
  */
 export function fetchSitePlans( siteId ) {
@@ -130,9 +128,9 @@ export function fetchSitePlans( siteId ) {
  * Returns an action object to be used in signalling that an object containing
  * the plans for a given site have been received.
  *
- * @param {Number} siteId - identifier of the site
- * @param {Object} plans - list of plans received from the API
- * @returns {Object} the corresponding action object
+ * @param {number} siteId - identifier of the site
+ * @param {object} plans - list of plans received from the API
+ * @returns {object} the corresponding action object
  */
 export function fetchSitePlansCompleted( siteId, plans ) {
 	return {
@@ -145,7 +143,7 @@ export function fetchSitePlansCompleted( siteId, plans ) {
 /**
  * Clears plans and fetches them for the given site.
  *
- * @param {Number} siteId identifier of the site
+ * @param {number} siteId identifier of the site
  * @returns {Function} the corresponding action thunk
  */
 export function refreshSitePlans( siteId ) {
@@ -159,9 +157,9 @@ export function refreshSitePlans( siteId ) {
  * Returns an action object to be used in signalling that site plan ownership
  * change to another user has started.
  *
- * @param {Number} siteId - ID of the site
- * @param {Number} newOwnerUserId - ID of the new owner user
- * @returns {Object} the corresponding action object
+ * @param {number} siteId - ID of the site
+ * @param {number} newOwnerUserId - ID of the new owner user
+ * @returns {object} the corresponding action object
  */
 export const transferPlanOwnership = ( siteId, newOwnerUserId ) => ( {
 	type: SITE_PLAN_OWNERSHIP_TRANSFER,

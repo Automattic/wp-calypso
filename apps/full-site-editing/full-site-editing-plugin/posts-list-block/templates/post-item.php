@@ -31,9 +31,11 @@
 		<span class="a8c-posts-list-item__author"><?php echo esc_html_x( 'by', 'designating the post author (eg: by John Doe', 'full-site-editing' ); ?>
 			<?php the_author_posts_link(); ?>
 		</span>
-		<span class="a8c-posts-list-item__edit-link">
-			<a href="<?php echo esc_attr( get_edit_post_link() ); ?>"><?php esc_html_e( 'Edit', 'full-site-editing' ); ?></a>
-		</span>
+		<?php if ( current_user_can( 'edit_posts' ) ) : ?>	
+			<span class="a8c-posts-list-item__edit-link">
+				<a href="<?php echo esc_attr( get_edit_post_link() ); ?>"><?php esc_html_e( 'Edit', 'full-site-editing' ); ?></a>
+			</span>
+		<?php endif ?>
 	</div>
 
 	<div class="a8c-posts-list-item__excerpt">

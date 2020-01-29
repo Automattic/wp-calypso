@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 import { get } from 'lodash';
 
 /**
@@ -16,9 +14,15 @@ import {
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export default createReducer( null, {
-	[ WOOCOMMERCE_PRODUCTS_REQUEST ]: productsRequest,
-	[ WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS ]: productsRequestSuccess,
+export default withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case WOOCOMMERCE_PRODUCTS_REQUEST:
+			return productsRequest( state, action );
+		case WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS:
+			return productsRequestSuccess( state, action );
+	}
+
+	return state;
 } );
 
 export function productsRequestSuccess( state = {}, action ) {

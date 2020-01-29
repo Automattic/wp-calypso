@@ -1,7 +1,8 @@
 # Upgrade Nudge Expanded
 
 UpgradeNudgeExpanded displays a huge upgrade nudge, containing PlanCompare card, reasons to upgrade, highlighted feature and benefits of it.
-It's meant to comprehensivly describe a plan and give enough reasons to upgrade. It uses `plans/constants` information to figure out what features to present and how to direct to checkout.
+
+It's meant to comprehensively describe a plan and give enough reasons to upgrade. It uses `plans/constants` information to figure out what features to present and how to direct to checkout.
 
 ## Props
 
@@ -13,6 +14,7 @@ It's meant to comprehensivly describe a plan and give enough reasons to upgrade.
 - *benefits* - array of strings explaining the benefits of the feature and upgradidng to the plan
 - *upgrade* - upgrade function. If not provided, default will be used.
 - *eventName* - event to record when nudge is shown. Default is `calypso_upgrade_nudge_impression` with properties cta_name: props.event, cta_size: expanded and cta_feature: props.highlightedFeature
+- *forceDisplay* - Used to display the update nudge in devdocs.
 
 
 ## Example - minimal

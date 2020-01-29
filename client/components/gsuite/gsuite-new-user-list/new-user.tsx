@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import React, { ChangeEvent, Fragment, FunctionComponent, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import GSuiteDomainsSelect from './domains-select';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
@@ -20,6 +20,7 @@ interface Props {
 	domains: any[];
 	onUserRemove: () => void;
 	onUserValueChange: ( field: string, value: string ) => void;
+	onReturnKeyPress: ( event: Event ) => void;
 	user: NewUser;
 }
 
@@ -27,6 +28,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	domains,
 	onUserRemove,
 	onUserValueChange,
+	onReturnKeyPress,
 	user: {
 		firstName: { value: firstName, error: firstNameError },
 		lastName: { value: lastName, error: lastNameError },
@@ -35,10 +37,6 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	},
 } ) => {
 	const translate = useTranslate();
-	const contactText = translate( 'contact', {
-		context: 'part of e-mail address',
-		comment: 'As it would be part of an e-mail address contact@example.com',
-	} );
 
 	// use this to control setting the "touched" states below. That way the user will not see a bunch of
 	// "This field is required" errors pop at once
@@ -54,10 +52,15 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	const hasFirstNameError = firstNameFieldTouched && null !== firstNameError;
 	const hasLastNameError = lastNameFieldTouched && null !== lastNameError;
 
+	const emailAddressPlaceholder = translate( 'e.g. contact', {
+		comment:
+			'An example of the local-part of an email address: "contact" in "contact@example.com".',
+	} );
+
 	const renderSingleDomain = () => {
 		return (
 			<FormTextInputWithAffixes
-				placeholder={ translate( 'e.g. %(example)s', { args: { example: contactText } } ) }
+				placeholder={ emailAddressPlaceholder }
 				value={ mailBox }
 				isError={ hasMailBoxError }
 				onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
@@ -66,6 +69,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 				onBlur={ () => {
 					setMailBoxFieldTouched( wasValidated );
 				} }
+				onKeyUp={ onReturnKeyPress }
 				suffix={ `@${ domain }` }
 			/>
 		);
@@ -75,7 +79,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 		return (
 			<Fragment>
 				<FormTextInput
-					placeholder={ translate( 'e.g. %(example)s', { args: { example: contactText } } ) }
+					placeholder={ emailAddressPlaceholder }
 					value={ mailBox }
 					isError={ hasMailBoxError }
 					onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
@@ -84,6 +88,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 					onBlur={ () => {
 						setMailBoxFieldTouched( wasValidated );
 					} }
+					onKeyUp={ onReturnKeyPress }
 				/>
 				<GSuiteDomainsSelect
 					domains={ domains }
@@ -119,6 +124,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 							onBlur={ () => {
 								setFirstNameFieldTouched( wasValidated );
 							} }
+							onKeyUp={ onReturnKeyPress }
 						/>
 						{ hasFirstNameError && <FormInputValidation text={ firstNameError } isError /> }
 					</div>
@@ -134,6 +140,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 							onBlur={ () => {
 								setLastNameFieldTouched( wasValidated );
 							} }
+							onKeyUp={ onReturnKeyPress }
 						/>
 						{ hasLastNameError && <FormInputValidation text={ lastNameError } isError /> }
 					</div>

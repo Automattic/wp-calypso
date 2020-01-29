@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
 import CustomNameserversRow from './custom-nameservers-row';
@@ -42,7 +40,7 @@ class CustomNameserversForm extends React.PureComponent {
 				{ translate(
 					'Your domain must use WordPress.com name servers for your ' +
 						'WordPress.com site to load & other features to be available.'
-				) }{' '}
+				) }{ ' ' }
 				<a
 					href={ CHANGE_NAME_SERVERS }
 					target="_blank"
@@ -64,7 +62,7 @@ class CustomNameserversForm extends React.PureComponent {
 
 		return (
 			<div className="name-servers__custom-nameservers-form-explanation">
-				{ translate( 'Not sure what name servers to use?' ) }{' '}
+				{ translate( 'Not sure what name servers to use?' ) }{ ' ' }
 				<a
 					href={ CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS }
 					target="_blank"
@@ -230,12 +228,9 @@ const resetToDefaultsClick = domainName =>
 		} )
 	);
 
-export default connect(
-	null,
-	{
-		customNameServersLearnMoreClick,
-		customNameServersLookUpClick,
-		resetToDefaultsClick,
-		saveCustomNameServersClick,
-	}
-)( localize( CustomNameserversForm ) );
+export default connect( null, {
+	customNameServersLearnMoreClick,
+	customNameServersLookUpClick,
+	resetToDefaultsClick,
+	saveCustomNameServersClick,
+} )( localize( CustomNameserversForm ) );

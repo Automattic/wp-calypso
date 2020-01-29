@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,8 +11,7 @@ import { isEmpty } from 'lodash';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import FormInputValidation from 'components/forms/form-input-validation';
@@ -31,7 +29,6 @@ class CloneDestinationStep extends Component {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
-		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 		signupDependencies: PropTypes.object,
 	};
@@ -212,7 +209,7 @@ class CloneDestinationStep extends Component {
 	}
 
 	render() {
-		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
+		const { flowName, stepName, positionInFlow, translate } = this.props;
 
 		const headerText = translate( 'Getting started' );
 		const subHeaderText = translate(
@@ -229,14 +226,10 @@ class CloneDestinationStep extends Component {
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
 				positionInFlow={ positionInFlow }
-				signupProgress={ signupProgress }
 				stepContent={ this.renderStepContent() }
 			/>
 		);
 	}
 }
 
-export default connect(
-	null,
-	{ submitSignupStep }
-)( localize( CloneDestinationStep ) );
+export default connect( null, { submitSignupStep } )( localize( CloneDestinationStep ) );

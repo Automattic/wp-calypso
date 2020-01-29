@@ -8,15 +8,18 @@
 .profile-gravatar__user-secondary-info {
 	margin-bottom: 30px;
 	text-align: center;
-	color: var( --profile-gravatar-user-secondary-info-color );
 	font-size: 14px;
+
+	.profile-gravatar.is-in-sidebar & {
+		color: var( --color-sidebar-text-alternative );
+	}
 }
 
 .profile-gravatar__user-display-name {
-	font-size: 24px;
+	font-size: 20px;
 	font-weight: 600;
-	line-height: 32px;
-	margin: 16px 0 0;
+	line-height: 1.1;
+	margin: 16px 16px 4px;
 	text-align: center;
 	word-break: break-word;
 	word-wrap: break-word;

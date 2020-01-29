@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,12 +6,12 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
-import GridIcon from 'gridicons';
+import GridIcon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FoldableCard from 'components/foldable-card';
 
 class SharingServicePlaceholder extends Component {

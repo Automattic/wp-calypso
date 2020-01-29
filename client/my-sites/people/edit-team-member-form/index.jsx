@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { connect } from 'react-redux';
  */
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import PeopleProfile from 'my-sites/people/people-profile';
 import UsersStore from 'lib/users/store';
 import { fetchUser } from 'lib/users/actions';
@@ -62,7 +60,7 @@ export class EditTeamMemberForm extends Component {
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId || nextProps.userLogin !== this.props.userLogin ) {
 			this.refreshUser( nextProps );
 		}
@@ -159,7 +157,7 @@ export class EditTeamMemberForm extends Component {
 				<HeaderCake onClick={ this.goBack } isCompact />
 				{ this.renderNotices() }
 				<Card className="edit-team-member-form__user-profile">
-					<PeopleProfile user={ this.state.user } />
+					<PeopleProfile siteId={ this.props.siteId } user={ this.state.user } />
 					<EditUserForm
 						{ ...this.state.user }
 						disabled={ this.state.removingUser }

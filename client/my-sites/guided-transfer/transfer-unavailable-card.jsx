@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,13 +5,13 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { getGuidedTransferIssue } from 'state/sites/guided-transfer/selectors';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import Notice from 'components/notice';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 

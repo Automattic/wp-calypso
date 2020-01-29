@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,8 +17,8 @@ const sortByNameAndUrl = list => sortBy( list, [ 'name', 'URL' ] );
 /**
  * Get all sites
  *
- * @param {Object} state  Global state tree
- * @return {Array}        Sites objects
+ * @param {object} state  Global state tree
+ * @returns {Array}        Sites objects
  */
 export default createSelector(
 	state => {

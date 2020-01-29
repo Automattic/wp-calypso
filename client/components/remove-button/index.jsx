@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -12,8 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import ScreenReaderText from 'components/screen-reader-text';
+import { Button, ScreenReaderText } from '@automattic/components';
 
 /**
  * Style dependences

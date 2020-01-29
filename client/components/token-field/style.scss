@@ -5,14 +5,14 @@
 	width: 100%;
 	margin: 0;
 	padding: 0;
-	background-color: var( --color-white );
-	border: 1px solid var( --color-neutral-100 );
-	color: var( --color-neutral-700 );
+	background-color: var( --color-surface );
+	border: 1px solid var( --color-neutral-10 );
+	color: var( --color-neutral-70 );
 	cursor: text;
 	transition: all 0.15s ease-in-out;
 
 	&:hover {
-		border-color: var( --color-neutral-200 );
+		border-color: var( --color-neutral-20 );
 	}
 
 	&.is-disabled {
@@ -36,6 +36,7 @@
 // Token input
 input[type='text'].token-field__input {
 	display: inline-block;
+	flex-grow: 1;
 	width: auto;
 	max-width: 100%;
 	margin: 2px 0 2px 8px;
@@ -46,7 +47,7 @@ input[type='text'].token-field__input {
 	outline: none;
 	font-family: inherit;
 	font-size: 14px;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 
 	&:focus {
 		box-shadow: none;
@@ -58,7 +59,7 @@ input[type='text'].token-field__input {
 	font-size: 14px;
 	display: flex;
 	margin: 2px 0 2px 8px;
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 	overflow: hidden;
 
 	&.is-success {
@@ -115,7 +116,7 @@ input[type='text'].token-field__input {
 
 		&.is-validating {
 			.token-field__token-text {
-				color: var( --color-neutral-700 );
+				color: var( --color-neutral-70 );
 			}
 		}
 	}
@@ -131,7 +132,7 @@ input[type='text'].token-field__input {
 .token-field__remove-token {
 	display: inline-block;
 	line-height: 24px;
-	background: var( --color-neutral-500 );
+	background: var( --color-neutral-50 );
 	transition: all 0.2s cubic-bezier( 0.4, 1, 0.4, 1 );
 }
 
@@ -146,17 +147,17 @@ input[type='text'].token-field__input {
 .token-field__remove-token {
 	cursor: pointer;
 	border-radius: 0 4px 4px 0;
-	color: var( --color-neutral-100 );
+	color: var( --color-neutral-10 );
 
 	&:hover {
 		color: white;
-		background: var( --color-neutral-400 );
+		background: var( --color-neutral-40 );
 	}
 }
 
 // Suggestion list
 .token-field__suggestions-list {
-	background: var( --color-white );
+	background: var( --color-surface );
 	max-height: 0;
 	overflow-y: scroll;
 	transition: all 0.15s ease-in-out;
@@ -164,8 +165,8 @@ input[type='text'].token-field__input {
 	margin: 0;
 
 	&.is-expanded {
-		background: var( --color-white );
-		border-top: 1px solid var( --color-neutral-100 );
+		background: var( --color-surface );
+		border-top: 1px solid var( --color-neutral-10 );
 		max-height: 9em;
 		padding-top: 3px;
 	}
@@ -180,10 +181,10 @@ input[type='text'].token-field__input {
 
 	&.is-selected {
 		background: var( --color-accent );
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 }
 
 .token-field__suggestion-match {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }

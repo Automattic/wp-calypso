@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,11 +10,16 @@ import { localize } from 'i18n-calypso';
  */
 import PurchaseDetail from 'components/purchase-detail';
 
+/**
+ * Image dependencies
+ */
+import marketingImage from 'assets/images/illustrations/marketing.svg';
+
 export default localize( ( { selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/illustrations/marketing.svg" /> }
+				icon={ <img alt="" src={ marketingImage } /> }
 				title={ translate( 'Marketing Automation' ) }
 				description={ translate(
 					'Schedule unlimited tweets, Facebook posts, and other social posts in advance.'

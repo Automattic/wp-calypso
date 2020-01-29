@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -13,7 +12,7 @@ import { stringify } from 'qs';
 /**
  * Internal Dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import SearchInput from 'components/search';
 import HeaderCake from 'components/header-cake';
@@ -68,10 +67,6 @@ class FollowingManage extends Component {
 	state = {
 		width: 800,
 	};
-
-	componentWillUnmount() {
-		recommendationsSeed = random( 0, 1000 );
-	}
 
 	// TODO make this common between our different search pages?
 	updateQuery = newValue => {
@@ -134,6 +129,7 @@ class FollowingManage extends Component {
 	}
 
 	componentWillUnmount() {
+		recommendationsSeed = random( 0, 1000 );
 		window.removeEventListener( 'resize', this.resizeListener );
 		clearInterval( this.windowScrollerRef );
 	}
@@ -208,8 +204,8 @@ class FollowingManage extends Component {
 		return (
 			<Fragment>
 				<div className="following-manage__header">
-					<HeaderCake backHref={ '/' }>
-						<h1>{ translate( 'Follow Something New' ) }</h1>
+					<HeaderCake backHref={ '/read' }>
+						<h1>{ translate( 'Manage Followed Sites' ) }</h1>
 					</HeaderCake>
 				</div>
 				<ReaderMain className="following-manage">
@@ -246,9 +242,11 @@ class FollowingManage extends Component {
 								<FollowButton
 									followLabel={ translate( 'Follow %s', {
 										args: sitesQueryWithoutProtocol,
+										comment: '%s is the name of the site being followed. For example: "Discover"',
 									} ) }
 									followingLabel={ translate( 'Following %s', {
 										args: sitesQueryWithoutProtocol,
+										comment: '%s is the name of the site being followed. For example: "Discover"',
 									} ) }
 									siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
 									followSource={ READER_FOLLOWING_MANAGE_URL_INPUT }

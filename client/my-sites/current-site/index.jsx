@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,14 +11,13 @@ import PropTypes from 'prop-types';
  */
 import AllSites from 'blocks/all-sites';
 import AsyncLoad from 'components/async-load';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import Site from 'blocks/site';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import getSelectedOrAllSites from 'state/selectors/get-selected-or-all-sites';
-import getVisibleSites from 'state/selectors/get-visible-sites';
+import { getCurrentUserSiteCount } from 'state/current-user/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { hasAllSitesList } from 'state/sites/selectors';
 
@@ -101,7 +98,7 @@ export default connect(
 	state => ( {
 		selectedSite: getSelectedSite( state ),
 		anySiteSelected: getSelectedOrAllSites( state ),
-		siteCount: getVisibleSites( state ).length,
+		siteCount: getCurrentUserSiteCount( state ),
 		hasAllSitesList: hasAllSitesList( state ),
 	} ),
 	{ recordGoogleEvent, setLayoutFocus }

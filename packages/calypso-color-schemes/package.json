@@ -1,8 +1,8 @@
 {
 	"name": "@automattic/calypso-color-schemes",
-	"version": "1.0.0",
+	"version": "2.1.0",
 	"description": "Calypso Shared Style Bits",
-	"author": "Automattic",
+	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
 	"keywords": [
 		"calypso",
@@ -25,7 +25,6 @@
 	},
 	"scripts": {
 		"clean": "npx rimraf dist src/__color-studio",
-		"prepublish": "npm run clean",
 		"prepare": "node bin/prepare-sass-assets.js && node bin/build-css.js"
 	}
 }

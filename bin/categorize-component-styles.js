@@ -24,8 +24,8 @@ function hasImports( f ) {
 
 /**
  *
- * @param {String} f
- * @param {String} name
+ * @param {string} f
+ * @param {string} name
  */
 function hasNonCompliantToplevelSelectors( f, name ) {
 	let topLevelSelectors;
@@ -67,11 +67,14 @@ function overridenByOthers( f, name, componentPath ) {
 		],
 		{ encoding: 'utf8', shell: true }
 	);
-	const matchCount = results.stdout.split( '\n' ).length - 1;
+	const r = results.stdout.split( '\n' );
+	const componentsFullPath = components.map( c => 'client/' + c + '.scss' );
+	const matches = r.filter( p => componentsFullPath.includes( p ) );
+	const matchCount = matches.length;
 	if ( matchCount > 0 ) {
 		return {
 			score: matchCount,
-			name: `styles overriden by ${ matchCount } consumers`,
+			name: `styles overriden by ${ matchCount } consumers:\n\t${ matches.join( '\n\t' ) }`,
 		};
 	}
 	return zero;

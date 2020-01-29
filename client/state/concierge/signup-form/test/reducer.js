@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,6 +12,8 @@ import signupForm, {
 	timezone,
 	message,
 	phoneNumber,
+	countryCode,
+	phoneNumberWithoutCountryCode,
 	status,
 	isRebrandCitiesSite,
 } from '../reducer';
@@ -25,7 +25,9 @@ describe( 'concierge/signupForm/reducer', () => {
 		lastname: 'Bar',
 		timezone: 'UTC',
 		message: 'hello',
-		phoneNumber: '0123456789',
+		phoneNumber: '+910123456789',
+		countryCode: 'IN',
+		phoneNumberWithoutCountryCode: '987654321',
 		status: 'booking',
 		isRebrandCitiesSite: true,
 	};
@@ -91,6 +93,28 @@ describe( 'concierge/signupForm/reducer', () => {
 		} );
 	} );
 
+	describe( 'countryCode', () => {
+		test( 'should be defaulted as empty string.', () => {
+			expect( countryCode( undefined, {} ) ).toEqual( '' );
+		} );
+
+		test( 'should return the country code of the update action', () => {
+			expect( countryCode( {}, updateForm ) ).toEqual( mockSignupForm.countryCode );
+		} );
+	} );
+
+	describe( 'phoneNumberWithoutCountryCode', () => {
+		test( 'should be defaulted as empty string.', () => {
+			expect( phoneNumberWithoutCountryCode( undefined, {} ) ).toEqual( '' );
+		} );
+
+		test( 'should return the phone number without country code of the update action', () => {
+			expect( phoneNumberWithoutCountryCode( {}, updateForm ) ).toEqual(
+				mockSignupForm.phoneNumberWithoutCountryCode
+			);
+		} );
+	} );
+
 	describe( 'status', () => {
 		test( 'should be defaulted as null', () => {
 			expect( status( undefined, {} ) ).toBeNull();
@@ -121,6 +145,8 @@ describe( 'concierge/signupForm/reducer', () => {
 				timezone: moment.tz.guess(),
 				message: '',
 				phoneNumber: '',
+				countryCode: '',
+				phoneNumberWithoutCountryCode: '',
 				status: null,
 				isRebrandCitiesSite: false,
 			} );

@@ -1,21 +1,116 @@
-.template-block.alignfull {
-	padding: 0 12px;
+.template-block {
+	min-height: 200px;
+	// Prevent blur bleeding
+	overflow: hidden;
+	position: relative;
+	margin-top: 20px;
 }
 
-.template-block__selector {
-	width: 300px;
-	a {
-		font-family: sans-serif;
-		font-size: 13px;
-		padding-left: 8px;
+// Override some very specific theme styles.
+.post-type-page .editor-styles-wrapper .template-block .fse-template-part {
+	padding: 0;
+}
+
+.template__block-container {
+	&:hover {
+		cursor: pointer;
+	}
+
+	.block-editor-block-list__block-edit [data-block] {
+		margin: 0;
+	}
+
+	&:hover,
+	&.is-selected,
+	.is-navigating-to-template {
+		.components-disabled {
+			filter: blur( 2px );
+			transition: filter 0.2s linear;
+		}
+		.template-block__overlay {
+			opacity: 1;
+			transition: opacity 0.2s linear;
+			.components-button {
+				opacity: 1;
+				transition: opacity 0.2s linear;
+			}
+		}
+	}
+
+	.components-disabled {
+		filter: blur( 0 );
+		transition: filter 0.2s linear 0s;
+	}
+
+	// Hide the block toolbar and border
+	.block-editor-block-contextual-toolbar,
+	.block-editor-block-list__block-mobile-toolbar,
+	.block-editor-block-list__insertion-point,
+	.block-editor-block-list__breadcrumb,
+	.block-editor-block-list__block-edit::before {
+		display: none;
+	}
+
+	.template-block__overlay {
+		background: rgba( #ffffff, 0.8 );
+		border: 0 solid rgba( #7b86a2, 0.3 ); // Gutenberg $dark-opacity-light-600
+		bottom: 0;
+		left: 0;
+		margin: 0;
+		opacity: 0;
+		padding: 0;
+		position: absolute;
+		right: 0;
+		transition: opacity 0.2s linear 0s;
+		top: 0;
+		z-index: 2;
+	
+		.is-selected & {
+			border-color: rgba( #425863, 0.4 ); // Gutenberg $dark-opacity-light-800
+		}
+	
+		.block-editor-block-list__block:first-child & {
+			border-bottom-width: 1px;
+		}
+		
+		.block-editor-block-list__block:last-child & {
+			border-top-width: 1px;
+		}
+	
+		@media only screen and ( min-width: 768px ) {
+			border-width: 1px;
+		}
+	
+		.components-button {
+			opacity: 0;
+			transition: opacity 0.2s linear 0s;
+			margin: 0 auto;
+			&.hidden {
+				display: none;
+			}
+		}
+
+		.template-block__loading {
+			display: flex;
+			align-items: center;
+			color: #191e23;
+		}
 	}
 }
 
-.template-block__content {
-	pointer-events: none;
-	&::after {
-		content: '';
-		clear: both;
-		display: table;
+// Hide the site logo description and buttons when not editing the Template
+.block-editor-page:not( .post-type-wp_template_part ) {
+	.fse-site-logo {
+		.components-placeholder__fieldset,
+		.components-placeholder__instructions {
+			display: none;
+		}
+	}
+}
+
+// Center initial loading spinner in placeholder block.
+.template-block__placeholder {
+	.components-spinner {
+		margin: 0 auto;
 	}
 }

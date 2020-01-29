@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import React, { Fragment, FunctionComponent, ReactNode } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import GSuiteNewUser from './new-user';
-import { newUser, GSuiteNewUser as NewUser, validateUser } from 'lib/gsuite/new-users';
+import { newUser, GSuiteNewUser as NewUser, validateUsers } from 'lib/gsuite/new-users';
 
 /**
  * Style dependencies
@@ -23,6 +23,7 @@ interface Props {
 	extraValidation: ( user: NewUser ) => NewUser;
 	selectedDomainName: string;
 	onUsersChange: ( users: NewUser[] ) => void;
+	onReturnKeyPress: ( event: Event ) => void;
 	users: NewUser[];
 }
 
@@ -33,17 +34,15 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 	selectedDomainName,
 	onUsersChange,
 	users,
+	onReturnKeyPress,
 } ) => {
 	const translate = useTranslate();
 
 	const onUserValueChange = ( index: number ) => ( field: string, value: string ) => {
-		const modifiedUser = extraValidation(
-			validateUser( { ...users[ index ], [ field ]: { value, error: null } } )
-		);
+		const modifiedUserList = users;
+		modifiedUserList[ index ] = { ...users[ index ], [ field ]: { value, error: null } };
 
-		onUsersChange(
-			users.map( ( user, userIndex ) => ( userIndex === index ? modifiedUser : user ) )
-		);
+		onUsersChange( validateUsers( modifiedUserList, extraValidation ) );
 	};
 
 	const onUserAdd = () => {
@@ -64,6 +63,7 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 						user={ user }
 						onUserValueChange={ onUserValueChange( index ) }
 						onUserRemove={ onUserRemove( index ) }
+						onReturnKeyPress={ onReturnKeyPress }
 					/>
 					<hr className="gsuite-new-user-list__user-divider" />
 				</Fragment>

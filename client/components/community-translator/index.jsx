@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,8 +9,7 @@ import { find, isEmpty } from 'lodash';
  * Internal dependencies
  */
 import Translatable from './translatable';
-import config from 'config';
-import User from 'lib/user';
+import { languages } from 'languages';
 import userSettings from 'lib/user-settings';
 import { isCommunityTranslatorEnabled } from 'components/community-translator/utils';
 
@@ -24,8 +22,6 @@ import './style.scss';
  * Local variables
  */
 const debug = debugModule( 'calypso:community-translator' );
-const languages = config( 'languages' );
-const user = new User();
 
 class CommunityTranslator extends Component {
 	languageJson = null;
@@ -44,18 +40,20 @@ class CommunityTranslator extends Component {
 		// the callback is overwritten by the translator on load/unload, so we're returning it within an anonymous function.
 		i18n.registerComponentUpdateHook( () => {} );
 		i18n.on( 'change', this.refresh );
-		user.on( 'change', this.refresh );
 		userSettings.on( 'change', this.refresh );
 	}
 
 	componentWillUnmount() {
 		i18n.off( 'change', this.refresh );
-		user.removeListener( 'change', this.refresh );
 		userSettings.removeListener( 'change', this.refresh );
 	}
 
 	setLanguage() {
 		this.languageJson = i18n.getLocale() || { '': {} };
+		// The '' here is a Jed convention used for storing configuration data
+		// alongside translations in the same dictionary (because '' will never
+		// be a legitimately translatable string)
+		// See https://messageformat.github.io/Jed/
 		const { localeSlug, localeVariant } = this.languageJson[ '' ];
 		this.localeCode = localeVariant || localeSlug;
 		this.currentLocale = find( languages, lang => lang.langSlug === this.localeCode );
@@ -92,7 +90,7 @@ class CommunityTranslator extends Component {
 	 * @param { String } originalFromPage - original string
 	 * @param { String } displayedTranslationFromPage - translated string
 	 * @param  { Object } optionsFromPage - i18n.translate options
-	 * @returns {Object} DOM object
+	 * @returns {object} DOM object
 	 */
 	wrapTranslation( originalFromPage, displayedTranslationFromPage, optionsFromPage ) {
 		if ( ! isCommunityTranslatorEnabled() ) {

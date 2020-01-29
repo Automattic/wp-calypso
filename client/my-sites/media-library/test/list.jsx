@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -10,6 +9,7 @@ import { expect } from 'chai';
 import { mount } from 'enzyme';
 import { toArray } from 'lodash';
 import React from 'react';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -69,6 +69,7 @@ describe( 'MediaLibraryList item selection', () => {
 						site={ { ID: DUMMY_SITE_ID } }
 						media={ fixtures.media }
 						mediaScale={ 0.24 }
+						moment={ moment }
 					/>
 				</MediaLibrarySelectedData>
 			);
@@ -156,6 +157,7 @@ describe( 'MediaLibraryList item selection', () => {
 						site={ { ID: DUMMY_SITE_ID } }
 						media={ fixtures.media }
 						mediaScale={ 0.24 }
+						moment={ moment }
 						single
 					/>
 				</MediaLibrarySelectedData>
@@ -196,6 +198,7 @@ describe( 'MediaLibraryList item selection', () => {
 					site={ { ID: DUMMY_SITE_ID } }
 					media={ media }
 					mediaScale={ 0.24 }
+					moment={ moment }
 					source={ source }
 					single
 				/>

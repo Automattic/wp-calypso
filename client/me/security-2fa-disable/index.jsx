@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,6 +16,7 @@ import Security2faStatus from 'me/security-2fa-status';
 import Security2faCodePrompt from 'me/security-2fa-code-prompt';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { successNotice } from 'state/notices/actions';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -112,7 +111,9 @@ class Security2faDisable extends Component {
 							components: {
 								changephonelink: (
 									<a
-										href="https://en.support.wordpress.com/security/two-step-authentication/#moving-to-a-new-device"
+										href={ localizeUrl(
+											'https://en.support.wordpress.com/security/two-step-authentication/#moving-to-a-new-device'
+										) }
 										target="_blank"
 										rel="noopener noreferrer"
 									/>

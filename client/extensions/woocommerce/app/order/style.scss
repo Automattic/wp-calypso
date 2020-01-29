@@ -76,7 +76,7 @@
 .order-fulfillment {
 	margin: 0 -16px;
 	padding: 16px;
-	border-top: 1px solid var( --color-neutral-0 );
+	border-top: 1px solid var( --color-neutral-5 );
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
@@ -148,6 +148,7 @@
 		.order-payment__action,
 		.order-fulfillment__action {
 			width: 100%;
+			justify-content: left;
 		}
 		.order-payment__label + .order-payment__action {
 			margin-top: 8px;

@@ -1,15 +1,4 @@
-/** @format */
 export default {
-	improvedOnboarding: {
-		datestamp: '20190314',
-		variations: {
-			main: 0,
-			onboarding: 100,
-		},
-		defaultVariation: 'main',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
 		variations: {
@@ -29,15 +18,6 @@ export default {
 		allowExistingUsers: true,
 	},
 	ATPromptOnCancel: {
-		datestamp: '20170515',
-		variations: {
-			hide: 20,
-			show: 80,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-	},
-	ATUpgradeOnCancel: {
 		datestamp: '20170515',
 		variations: {
 			hide: 20,
@@ -72,46 +52,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	removeDomainsStepFromOnboarding: {
-		datestamp: '20190412',
-		variations: {
-			keep: 100,
-			remove: 0,
-		},
-		defaultVariation: 'keep',
-	},
-	pluginFeaturedTitle: {
-		datestamp: '20190220',
-		variations: {
-			featured: 50,
-			recommended: 50,
-		},
-		defaultVariation: 'featured',
-	},
-	builderReferralHelpPopover: {
-		datestamp: '20190227',
-		variations: {
-			builderReferralLink: 10,
-			original: 90,
-		},
-		defaultVariation: 'original',
-	},
-	gSuiteContinueButtonCopy: {
-		datestamp: '20190307',
-		variations: {
-			purchase: 50,
-			original: 50,
-		},
-		defaultVariation: 'original',
-	},
-	builderReferralHelpBanner: {
-		datestamp: '20190304',
-		variations: {
-			builderReferralBanner: 25,
-			original: 75,
-		},
-		defaultVariation: 'original',
-	},
 	pageBuilderMVP: {
 		datestamp: '20190419',
 		variations: {
@@ -131,14 +71,89 @@ export default {
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
 	},
-	showApplePay: {
-		datestamp: '20190529',
+	skippableDomainStep: {
+		datestamp: '20290717',
 		variations: {
-			hide: 50,
-			show: 50,
+			skippable: 0,
+			notSkippable: 100,
 		},
-		defaultVariation: 'hide',
+		defaultVariation: 'notSkippable',
+		allowExistingUsers: true,
+	},
+	passwordlessSignup: {
+		datestamp: '20291029',
+		variations: {
+			passwordless: 0,
+			default: 100,
+		},
+		defaultVariation: 'default',
+	},
+	domainStepCopyUpdates: {
+		datestamp: '20191121',
+		variations: {
+			variantShowUpdates: 90,
+			control: 10,
+		},
+		defaultVariation: 'variantShowUpdates',
+		allowExistingUsers: true,
+	},
+	nonEnglishDomainStepCopyUpdates: {
+		datestamp: '20191219',
+		variations: {
+			variantShowUpdates: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
 		allowExistingUsers: true,
 		localeTargets: 'any',
+		localeExceptions: [ 'en' ],
+	},
+	showBusinessPlanPopular: {
+		datestamp: '20200109',
+		variations: {
+			variantShowBizPopular: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+		localeExceptions: [ 'en' ],
+	},
+	readerFreeToPaidPlanNudge: {
+		datestamp: '20200102',
+		variations: {
+			display: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: false,
+		localeTargets: 'any',
+	},
+	showPlanBumpVsGsuite: {
+		datestamp: '20200107',
+		variations: {
+			variantShowPlanBumpOffer: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	redirectToCustomerHome: {
+		datestamp: '20200117',
+		variations: {
+			variant: 10,
+			control: 90,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: false,
+	},
+	sidebarUpsellNudgeUnification: {
+		datestamp: '20200127',
+		variations: {
+			variantShowUnifiedUpsells: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
 };

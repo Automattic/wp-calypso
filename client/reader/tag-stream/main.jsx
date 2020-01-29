@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -139,7 +138,12 @@ class TagStream extends React.Component {
 			>
 				<QueryReaderFollowedTags />
 				<QueryReaderTag tag={ this.props.decodedTagSlug } />
-				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
+				<DocumentHead
+					title={ this.props.translate( '%s ‹ Reader', {
+						args: title,
+						comment: '%s is the section name. For example: "My Likes"',
+					} ) }
+				/>
 				{ this.props.showBack && <HeaderBack /> }
 				<TagStreamHeader
 					title={ title }

@@ -1,12 +1,13 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+
+/**
+ * Internal dependencies
+ */
+import Gridicon from 'components/gridicon';
 
 /**
  * Style dependencies
@@ -53,14 +54,11 @@ export class SignupProcessingScreen extends Component {
 	}
 
 	getTitle() {
-		return this.props.translate(
-			'{{strong}}Awesome!{{/strong}} Give us one minute and {{br/}}we’ll move right along.',
-			{
-				components: { strong: <strong />, br: <br /> },
-				comment:
-					'The second line after the breaking tag {{br/}} should fit unbroken in 384px and greater and have a max of 30 characters.',
-			}
-		);
+		return this.props.translate( '{{strong}}Hooray!{{/strong}} Your site will be ready shortly.', {
+			components: { strong: <strong />, br: <br /> },
+			comment:
+				'The second line after the breaking tag {{br/}} should fit unbroken in 384px and greater and have a max of 30 characters.',
+		} );
 	}
 
 	render() {

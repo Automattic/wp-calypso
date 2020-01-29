@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import config from 'config';
 import FormattedHeader from 'components/formatted-header';
 import safeImageUrl from 'lib/safe-image-url';
@@ -67,6 +66,9 @@ export class AuthFormHeader extends Component {
 				break;
 			case 'bluehost':
 				host = 'Bluehost';
+				break;
+			case 'eurodns':
+				host = 'EuroDNS';
 				break;
 		}
 

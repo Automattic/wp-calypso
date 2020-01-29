@@ -1,11 +1,9 @@
-/** @format */
 /**
  * Component which handle remote credentials for installing Jetpack
  */
 import classnames from 'classnames';
 import React, { Component, Fragment } from 'react';
 import config from 'config';
-import Gridicon from 'gridicons';
 import page from 'page';
 import { connect } from 'react-redux';
 import { flowRight, includes } from 'lodash';
@@ -13,14 +11,14 @@ import { localize } from 'i18n-calypso';
 /**
  * External dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormattedHeader from 'components/formatted-header';
 import FormPasswordInput from 'components/forms/form-password-input';
+import Gridicon from 'components/gridicon';
 import HelpButton from './help-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import JetpackRemoteInstallNotices from './jetpack-remote-install-notices';
@@ -28,7 +26,6 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import MainWrapper from './main-wrapper';
 import Spinner from 'components/spinner';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { addCalypsoEnvQueryArg } from './utils';
 import { addQueryArgs } from 'lib/route';
 import {
@@ -72,7 +69,7 @@ export class OrgCredentialsForm extends Component {
 		this.props.jetpackRemoteInstall( siteToConnect, this.state.username, this.state.password );
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { installError } = nextProps;
 
 		if ( installError ) {
@@ -80,7 +77,7 @@ export class OrgCredentialsForm extends Component {
 		}
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { siteToConnect } = this.props;
 
 		if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
@@ -146,11 +143,7 @@ export class OrgCredentialsForm extends Component {
 				'for this site. Your credentials will not be stored and are used for the purpose ' +
 				'of installing Jetpack securely. You can also skip this step entirely and install Jetpack manually.'
 		);
-		return (
-			<span className="jetpack-connect__install-step jetpack-connect__creds-form">
-				{ subheader }
-			</span>
-		);
+		return <span>{ subheader }</span>;
 	}
 
 	getError( installError ) {
@@ -309,7 +302,6 @@ export class OrgCredentialsForm extends Component {
 		return (
 			<LoggedOutFormLinks>
 				{ ( this.isInvalidCreds() || ! installError ) && (
-					// eslint-disable-next-line react/no-jsx-bind
 					<LoggedOutFormLinkItem href={ manualInstallUrl } onClick={ manualInstallClick }>
 						{ translate( 'Install Jetpack manually' ) }
 					</LoggedOutFormLinkItem>
@@ -350,7 +342,7 @@ export class OrgCredentialsForm extends Component {
 					</div>
 				) }
 				{ ( this.isInvalidCreds() || ! installError ) && (
-					<div>
+					<div className="jetpack-connect__site-url-entry-container">
 						{ this.renderHeadersText() }
 						<Card className="jetpack-connect__site-url-input-container">
 							{ this.isInvalidCreds() && (
@@ -389,8 +381,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( OrgCredentialsForm );
+export default flowRight( connectComponent, localize )( OrgCredentialsForm );

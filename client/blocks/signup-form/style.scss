@@ -1,3 +1,5 @@
+@import 'woocommerce/components/text-control/style.scss';
+
 .signup-form .signup-form__input {
 	margin-bottom: 20px;
 	transition: none;
@@ -14,7 +16,7 @@
 }
 
 .signup-form__terms-of-service-link {
-	font-size: 11px;
+	font-size: 12px;
 	margin: 0 0 20px;
 	text-align: center;
 
@@ -27,13 +29,13 @@
 
 .signup-form__social {
 	max-width: 400px;
-	margin: 0 auto 16px;
+	margin: 0 auto;
 	padding: 16px;
 	box-sizing: border-box;
 
 	p {
 		font-size: 13px;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 		margin: 0 0 12px;
 		text-align: center;
 
@@ -46,13 +48,27 @@
 .signup-form__social-buttons {
 	button {
 		display: block;
-		margin: 0 auto;
-		box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.14 ),
-					0 2px 1px -1px rgba( 0, 0, 0, 0.12 ),
-					0 1px 3px 0 rgba( 0, 0, 0, 0.2 );
+		margin: 0 auto 15px;
+		box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.14 ), 0 2px 1px -1px rgba( 0, 0, 0, 0.12 ),
+			0 1px 3px 0 rgba( 0, 0, 0, 0.2 );
 	}
 }
 
-.social-buttons__button-container + .social-buttons__button-container {
-	margin-top: 10px;
+.signup-form__social-buttons-tos a {
+	color: var( --color-text-inverted );
+	text-decoration: underline;
+}
+
+.signup-form__passwordless-form-wrapper {
+	.signup-form__terms-of-service-link {
+		margin: 4px 0;
+	}
+
+	.logged-out-form__footer {
+		margin-top: 0;
+	}
+
+	.validation-fieldset__validation-message {
+		min-height: auto;
+	}
 }

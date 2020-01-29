@@ -1,4 +1,3 @@
-/** @format */
 export default {
 	/**
 	 * Given a media filter, returns a partial mime type that can be used to

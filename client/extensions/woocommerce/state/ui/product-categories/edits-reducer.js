@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import { compact, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 import {
 	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
 	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATE,
@@ -19,10 +17,17 @@ import {
 } from 'woocommerce/state/action-types';
 import { getBucket } from '../helpers';
 
-export default createReducer( null, {
-	[ WOOCOMMERCE_PRODUCT_CATEGORY_EDIT ]: editProductCategoryAction,
-	[ WOOCOMMERCE_PRODUCT_CATEGORY_EDIT_CLEAR ]: clearEditsAction,
-	[ WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED ]: productCategoryUpdatedAction,
+export default withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case WOOCOMMERCE_PRODUCT_CATEGORY_EDIT:
+			return editProductCategoryAction( state, action );
+		case WOOCOMMERCE_PRODUCT_CATEGORY_EDIT_CLEAR:
+			return clearEditsAction( state, action );
+		case WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED:
+			return productCategoryUpdatedAction( state, action );
+	}
+
+	return state;
 } );
 
 function productCategoryUpdatedAction( edits, action ) {

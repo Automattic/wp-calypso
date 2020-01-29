@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -48,7 +46,4 @@ export class QueryComment extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestComment }
-)( QueryComment );
+export default connect( null, { requestComment } )( QueryComment );

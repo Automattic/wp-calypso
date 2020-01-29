@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -21,7 +20,7 @@ import EmailForwardingCustomMxList from './email-forwarding-custom-mx-list';
 import EmailForwardingGSuiteDetails from './email-forwarding-gsuite-details';
 import EmailForwardingGSuiteDetailsAnotherProvider from './email-forwarding-gsuite-details-another-provider';
 import { emailManagement } from 'my-sites/email/paths';
-import Card from 'components/card/compact';
+import { CompactCard as Card } from '@automattic/components';
 import getEmailForwardingLimit from 'state/selectors/get-email-forwarding-limit';
 import getEmailForwardingType from 'state/selectors/get-email-forwarding-type';
 import { getEmailForwards } from 'state/selectors/get-email-forwards';

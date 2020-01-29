@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { get, isEqual, reduce, keys, first } from 'lodash';
 
 /**
@@ -17,7 +14,7 @@ import {
 	PLANS_RECEIVE,
 	PRODUCTS_LIST_RECEIVE,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import { idSchema, capabilitiesSchema, currencyCodeSchema, flagsSchema } from './schema';
 import gravatarStatus from './gravatar-status/reducer';
 import emailVerification from './email-verification/reducer';
@@ -31,65 +28,66 @@ import emailVerification from './email-verification/reducer';
  *
  * This is likely caused by a server-side error or stored state corruption/auth token expiry.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
-export const id = createReducer(
-	null,
-	{
-		[ CURRENT_USER_RECEIVE ]: ( state, action ) => action.user.ID,
-	},
-	idSchema
-);
+export const id = withSchemaValidation( idSchema, ( state = null, action ) => {
+	switch ( action.type ) {
+		case CURRENT_USER_RECEIVE:
+			return action.user.ID;
+	}
 
-export const flags = createReducer(
-	[],
-	{
-		[ CURRENT_USER_RECEIVE ]: ( state, action ) =>
-			get( action.user, 'meta.data.flags.active_flags', [] ),
-	},
-	flagsSchema
-);
+	return state;
+} );
+
+export const flags = withSchemaValidation( flagsSchema, ( state = [], action ) => {
+	switch ( action.type ) {
+		case CURRENT_USER_RECEIVE:
+			return get( action.user, 'meta.data.flags.active_flags', [] );
+	}
+
+	return state;
+} );
 
 /**
  * Tracks the currency code of the current user
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  *
  */
-export const currencyCode = createReducer(
-	null,
-	{
-		[ PRODUCTS_LIST_RECEIVE ]: ( state, action ) => {
+export const currencyCode = withSchemaValidation( currencyCodeSchema, ( state = null, action ) => {
+	switch ( action.type ) {
+		case PRODUCTS_LIST_RECEIVE: {
 			return get(
 				action.productsList,
 				[ first( keys( action.productsList ) ), 'currency_code' ],
 				state
 			);
-		},
-		[ PLANS_RECEIVE ]: ( state, action ) => {
+		}
+		case PLANS_RECEIVE: {
 			return get( action.plans, [ 0, 'currency_code' ], state );
-		},
-		[ SITE_PLANS_FETCH_COMPLETED ]: ( state, action ) => {
+		}
+		case SITE_PLANS_FETCH_COMPLETED: {
 			return get( action.plans, [ 0, 'currencyCode' ], state );
-		},
-	},
-	currencyCodeSchema
-);
+		}
+	}
+
+	return state;
+} );
 
 /**
  * Returns the updated capabilities state after an action has been dispatched.
  * The state maps site ID keys to an object of current user capabilities for
  * that site.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
-export function capabilities( state = {}, action ) {
+export const capabilities = withSchemaValidation( capabilitiesSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_RECEIVE:
 		case SITES_RECEIVE: {
@@ -114,8 +112,7 @@ export function capabilities( state = {}, action ) {
 	}
 
 	return state;
-}
-capabilities.schema = capabilitiesSchema;
+} );
 
 export default combineReducers( {
 	id,

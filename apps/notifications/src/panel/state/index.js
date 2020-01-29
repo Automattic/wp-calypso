@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { applyMiddleware, combineReducers, compose, createStore } from 'redux'; //eslint-disable-line wpcalypso/import-no-redux-combine-reducers
+import { applyMiddleware, combineReducers, compose, createStore } from 'redux'; //eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies

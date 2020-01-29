@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -18,9 +16,9 @@ import 'state/data-layer/wpcom/sites/posts/likes';
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve post likes for a post.
  *
- * @param  {Number}   siteId Site ID
- * @param  {Number}   postId Post ID
- * @return {Object}        Action
+ * @param  {number}   siteId Site ID
+ * @param  {number}   postId Post ID
+ * @returns {object}        Action
  */
 export function requestPostLikes( siteId, postId ) {
 	return {
@@ -33,9 +31,9 @@ export function requestPostLikes( siteId, postId ) {
 /**
  * Create a like action for a given site and post
  *
- * @param {Number} siteId Site ID
- * @param {Number} postId Post ID
- * @returns {Object} The like action
+ * @param {number} siteId Site ID
+ * @param {number} postId Post ID
+ * @returns {object} The like action
  */
 export const like = ( siteId, postId, { source } = {} ) => ( {
 	type: POST_LIKE,
@@ -47,9 +45,9 @@ export const like = ( siteId, postId, { source } = {} ) => ( {
 /**
  * Create an unlike action for a given site and post
  *
- * @param {Number} siteId Site ID
- * @param {Number} postId Post ID
- * @returns {Object} The unlike action
+ * @param {number} siteId Site ID
+ * @param {number} postId Post ID
+ * @returns {object} The unlike action
  */
 export const unlike = ( siteId, postId, { source } = {} ) => ( {
 	type: POST_UNLIKE,

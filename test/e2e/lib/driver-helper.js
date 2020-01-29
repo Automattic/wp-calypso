@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import webdriver from 'selenium-webdriver';
+import webdriver, { until } from 'selenium-webdriver';
 import config from 'config';
 import { forEach } from 'lodash';
 
@@ -16,13 +14,23 @@ import * as dataHelper from './data-helper';
 const explicitWaitMS = config.get( 'explicitWaitMS' );
 const by = webdriver.By;
 
+export async function highlightElement( driver, element ) {
+	if ( process.env.HIGHLIGHT_ELEMENT === 'true' ) {
+		return await driver.executeScript(
+			"arguments[0].setAttribute('style', 'background: gold; border: 2px solid red;');",
+			element
+		);
+	}
+}
+
 export function clickWhenClickable( driver, selector, waitOverride ) {
 	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
 
 	return driver.wait(
 		function() {
 			return driver.findElement( selector ).then(
-				function( element ) {
+				async function( element ) {
+					await highlightElement( driver, element );
 					return element.click().then(
 						function() {
 							return true;
@@ -46,9 +54,7 @@ export function clickWhenClickable( driver, selector, waitOverride ) {
 			);
 		},
 		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${
-			selector.value
-		}' to be clickable`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be clickable`
 	);
 }
 
@@ -132,9 +138,7 @@ export function waitTillPresentAndDisplayed( driver, selector, waitOverride ) {
 			);
 		},
 		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${
-			selector.value
-		}' to be present and displayed`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be present and displayed`
 	);
 }
 
@@ -201,7 +205,8 @@ export function clickIfPresent( driver, selector, attempts ) {
 	}
 	for ( let x = 0; x < attempts; x++ ) {
 		driver.findElement( selector ).then(
-			function( element ) {
+			async function( element ) {
+				await highlightElement( driver, element );
 				element.click().then(
 					function() {
 						return true;
@@ -218,13 +223,18 @@ export function clickIfPresent( driver, selector, attempts ) {
 	}
 }
 
+export async function getElementCount( driver, selector ) {
+	const elements = await driver.findElements( selector );
+	return elements.length || 0;
+}
+
 export async function isElementPresent( driver, selector ) {
 	const elements = await driver.findElements( selector );
 	return !! elements.length;
 }
 
-export function elementIsNotPresent( driver, cssSelector ) {
-	return this.isElementPresent( driver, by.css( cssSelector ) ).then( function( isPresent ) {
+export function elementIsNotPresent( driver, selector ) {
+	return this.isElementPresent( driver, selector ).then( function( isPresent ) {
 		return ! isPresent;
 	} );
 }
@@ -251,9 +261,7 @@ export function waitForFieldClearable( driver, selector ) {
 			);
 		},
 		explicitWaitMS,
-		`Timed out waiting for element with ${ selector.using } of '${
-			selector.value
-		}' to be clearable`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be clearable`
 	);
 }
 
@@ -265,13 +273,12 @@ export function setWhenSettable(
 ) {
 	const self = this;
 	const logValue = secureValue === true ? '*********' : value;
-	if ( global.browserName === 'chrome' && pauseBetweenKeysMS === 0 ) {
-		pauseBetweenKeysMS = 1;
-	}
+
 	return driver.wait(
 		async function() {
 			await self.waitForFieldClearable( driver, selector );
 			const element = await driver.findElement( selector );
+			await highlightElement( driver, element );
 			if ( pauseBetweenKeysMS === 0 ) {
 				await element.sendKeys( value );
 			} else {
@@ -285,9 +292,7 @@ export function setWhenSettable(
 			return actualValue === value;
 		},
 		explicitWaitMS,
-		`Timed out waiting for element with ${ selector.using } of '${
-			selector.value
-		}' to be settable to: '${ logValue }'`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be settable to: '${ logValue }'`
 	);
 }
 
@@ -322,16 +327,15 @@ export function waitTillNotPresent( driver, selector, waitOverride ) {
 			} );
 		},
 		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${
-			selector.value
-		}' to NOT be present`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to NOT be present`
 	);
 }
 
 /**
  * Check whether an image is actually visible - that is rendered to the screen - not just having a reference in the DOM
- * @param {webdriver} driver - Browser context in which to search
- * @param {WebElement} webElement - Element to search for
+ *
+ * @param {object} driver - Browser context in which to search
+ * @param {object} webElement - Element to search for
  * @returns {Promise} - Resolved when the script is done executing
  */
 export function imageVisible( driver, webElement ) {
@@ -487,9 +491,9 @@ export async function refreshIfJNError( driver, timeout = 2000 ) {
  * @description
  * Scroll element on a page to desired position
  *
- * @param {Object} driver WebDriver
- * @param {Object} selector A element's selector
- * @param {String} position An element's position. Can be 'start', 'end' and 'center'
+ * @param {object} driver WebDriver
+ * @param {object} selector A element's selector
+ * @param {string} position An element's position. Can be 'start', 'end' and 'center'
  * @returns {Promise<void>} Promise
  */
 export async function scrollIntoView( driver, selector, position = 'center' ) {
@@ -556,4 +560,8 @@ export async function acceptAlertIfPresent( driver ) {
 	} catch ( error ) {
 		return false;
 	}
+}
+
+export async function waitForAlertPresent( driver ) {
+	return await driver.wait( until.alertIsPresent(), this.explicitWaitMS, 'Alert is not present.' );
 }

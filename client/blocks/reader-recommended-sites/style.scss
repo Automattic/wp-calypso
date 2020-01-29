@@ -7,19 +7,19 @@
 .reader-recommended-sites__header {
 	color: var( --color-text-subtle );
 	font-size: 14px;
-	font-weight: 600;
 	letter-spacing: 0.01em;
-	margin: 13px 0 10px;
+	font-weight: 600;
+	margin: 8px 0;
 	position: relative;
-	text-transform: uppercase;
 
 	@include breakpoint( '>660px' ) {
-		margin: 13px 0 17px;
+		margin: 16px 0;
 	}
 
 	.gridicon {
-		fill: var( --color-neutral-200 );
+		fill: var( --color-text-subtle );
 		margin-right: 5px;
+		vertical-align: top;
 	}
 }
 
@@ -44,28 +44,33 @@
 	@include breakpoint( '>960px' ) {
 		align-items: flex-end;
 		flex-direction: column;
-		margin-top: -40px;
 	}
 
 	> :last-child {
 		width: 100%;
+		height: 100%;
 	}
 
 	.reader-recommended-sites__recommended-site-dismiss {
-		width: 30px;
+		justify-content: flex-end;
+		position: absolute;
+		top: 16px;
+		right: 16px;
 
 		@include breakpoint( '>960px' ) {
-			display: flex;
-			justify-content: flex-end;
+    		top: 0;
+    		right: 0;
 		}
 
 		.button {
 			padding: 0;
+			width: 35px;
+    		height: 35px;
 
 			&.is-borderless .gridicon {
-				fill: var( --color-neutral-200 );
-				width: 14px;
-				height: 14px;
+				fill: var( --color-text-subtle );
+				width: 16px;
+				height: 16px;
 				top: 0;
 			}
 		}
@@ -73,23 +78,18 @@
 		z-index: z-index( 'root', '.reader-recommended-sites__recommended-site-dismiss' );
 	}
 
-	.reader-subscription-list-item {
+	.reader-list-item {
 		margin: 0;
+		padding: 0;
 
 		@include breakpoint( '<960px' ) {
 			padding: 0 0 20px;
 		}
 
 		.follow-button .follow-button__label {
-			@include breakpoint( '<960px' ) {
-				display: none;
+			@include breakpoint( '<660px' ) {
+				display: inline;
 			}
-		}
-	}
-
-	&:first-child {
-		@include breakpoint( '>960px' ) {
-			margin-right: 20px;
 		}
 	}
 
@@ -104,12 +104,12 @@
 		margin-right: 0;
 	}
 
-	.reader-subscription-list-item__site-title {
+	.reader-list-item__site-title {
 		color: var( --color-accent );
 	}
 
-	.reader-subscription-list-item__by-text,
-	.reader-subscription-list-item__site-url {
+	.reader-list-item__by-text,
+	.reader-list-item__site-url {
 		display: block;
 		max-height: 16px * 1.4;
 		overflow: hidden;
@@ -125,8 +125,8 @@
 		}
 	}
 
-	.reader-subscription-list-item.reader-subscription-list-item__placeholder
-		.reader-subscription-list-item__site-url.is-placeholder {
+	.reader-list-item.reader-list-item__placeholder
+		.reader-list-item__site-url.is-placeholder {
 		margin-top: 2px;
 	}
 }

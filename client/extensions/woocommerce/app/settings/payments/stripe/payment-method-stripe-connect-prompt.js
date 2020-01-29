@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ControlItem from 'components/segmented-control/item';
-import SegmentedControl from 'components/segmented-control';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormRadio from 'components/forms/form-radio';
 
 class StripeConnectPrompt extends Component {
 	static propTypes = {
@@ -21,28 +20,39 @@ class StripeConnectPrompt extends Component {
 		onSelectConnect: PropTypes.func.isRequired,
 	};
 
-	render = () => {
+	render() {
 		const { isCreateSelected, onSelectCreate, onSelectConnect, translate } = this.props;
 
 		return (
 			<div className="stripe__connect-prompt">
-				<SegmentedControl primary>
-					<ControlItem selected={ isCreateSelected } onClick={ onSelectCreate }>
-						{ translate( 'New Stripe account' ) }
-					</ControlItem>
-					<ControlItem selected={ ! isCreateSelected } onClick={ onSelectConnect }>
-						{ translate( 'I already have a Stripe account' ) }
-					</ControlItem>
-				</SegmentedControl>
 				<p>
 					{ translate(
 						'To start accepting payments with Stripe, you need to connect ' +
 							'your WordPress.com account to a Stripe account.'
 					) }
 				</p>
+				<FormFieldset>
+					<FormLabel>
+						<FormRadio
+							value={ isCreateSelected }
+							checked={ isCreateSelected }
+							onChange={ onSelectCreate }
+						/>
+						<span>{ translate( 'Create a new Stripe account' ) }</span>
+					</FormLabel>
+
+					<FormLabel>
+						<FormRadio
+							value={ ! isCreateSelected }
+							checked={ ! isCreateSelected }
+							onChange={ onSelectConnect }
+						/>
+						<span>{ translate( 'I already have a Stripe account' ) }</span>
+					</FormLabel>
+				</FormFieldset>
 			</div>
 		);
-	};
+	}
 }
 
 export default localize( StripeConnectPrompt );

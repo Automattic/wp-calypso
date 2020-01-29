@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -34,10 +32,10 @@ before( async function() {
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Plans: (${ screenSize }) @parallel @jetpack`, function() {
+describe( `[${ host }] Plans: (${ screenSize })`, function() {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Comparing Plans:', function() {
+	describe( 'Comparing Plans:  @parallel @jetpack', function() {
 		step( 'Login and Select My Site', async function() {
 			const loginFlow = new LoginFlow( driver );
 			return await loginFlow.loginAndSelectMySite();
@@ -63,6 +61,14 @@ describe( `[${ host }] Plans: (${ screenSize }) @parallel @jetpack`, function() 
 				const present = await plansPage.confirmCurrentPlan( planName );
 				return assert( present, `Failed to detect correct plan (${ planName })` );
 			} );
+
+			step( 'Can See Exactly One Primary CTA Button', async function() {
+				const plansPage = await PlansPage.Expect( driver );
+				return assert(
+					await plansPage.onePrimaryButtonShown(),
+					'Incorrect number of primary buttons'
+				);
+			} );
 		} else {
 			step( 'Can Verify Current Plan', async function() {
 				// Jetpack
@@ -73,7 +79,7 @@ describe( `[${ host }] Plans: (${ screenSize }) @parallel @jetpack`, function() 
 		}
 	} );
 
-	describe( 'Viewing a specific plan with coupon:', function() {
+	describe( 'Viewing a specific plan with coupon:  @parallel @jetpack', function() {
 		let originalCartAmount, loginFlow;
 
 		before( async function() {
@@ -141,7 +147,7 @@ describe( `[${ host }] Plans: (${ screenSize }) @parallel @jetpack`, function() 
 		} );
 	} );
 
-	describe( 'Renew a plan:', function() {
+	describe( 'Renew a plan:  @parallel', function() {
 		before( async function() {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
@@ -174,7 +180,7 @@ describe( `[${ host }] Plans: (${ screenSize }) @parallel @jetpack`, function() 
 		} );
 	} );
 
-	describe( 'Upgrade a plan:', function() {
+	describe( 'Upgrade a plan:  @parallel @jetpack', function() {
 		before( async function() {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );

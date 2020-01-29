@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,9 +9,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
@@ -73,12 +72,12 @@ class SpeedUpSiteSettings extends Component {
 							) }
 							link="http://jetpack.com/support/site-accelerator/"
 						/>
-						<p className="site-settings__feature-description form-setting-explanation">
+						<FormSettingExplanation className="site-settings__feature-description">
 							{ translate(
 								'Load pages faster by allowing Jetpack to optimize your images and serve your images ' +
 									'and static files (like CSS and JavaScript) from our global network of servers.'
 							) }
-						</p>
+						</FormSettingExplanation>
 						<CompactFormToggle
 							checked={ siteAcceleratorStatus }
 							disabled={ isRequestingOrSaving || photonModuleUnavailable }

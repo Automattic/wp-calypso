@@ -35,7 +35,7 @@ _Optional_ placeholder text for the search input field. Default: `''`
 ### _(Function)_ `onChange` 
 The callback function for receiving updated value.
 
-Returns _{Object}_:
+Returns _{object}_:
 
 ```json
 {

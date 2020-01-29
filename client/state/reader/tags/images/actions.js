@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -23,9 +22,9 @@ const debug = debugModule( 'calypso:redux:reader-tags-images' );
 /**
  * Returns an action object to signal that image objects have been received.
  *
- * @param {String} tag The tag slug the images are for
+ * @param {string} tag The tag slug the images are for
  * @param  {Array}  images Images received
- * @return {Object} Action object
+ * @returns {object} Action object
  */
 export function receiveTagImages( tag, images ) {
 	return {
@@ -40,7 +39,7 @@ export function receiveTagImages( tag, images ) {
  *
  * @param  {Integer} tag Tag name
  * @param  {Integer} limit Maximum number of results to return
- * @return {Function} Action thunk
+ * @returns {Function} Action thunk
  */
 export function requestTagImages( tag, limit = 5 ) {
 	return dispatch => {

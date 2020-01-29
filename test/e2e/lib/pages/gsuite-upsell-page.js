@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,13 +11,13 @@ import AsyncBaseContainer from '../async-base-container';
 
 export default class GSuiteUpsellPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, By.css( '.gsuite-dialog__checkout-button' ) );
+		super( driver, By.css( '.gsuite-upsell-card__skip-button' ) );
 	}
 
 	async declineEmail() {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.gsuite-dialog__checkout-button' )
+			By.css( '.gsuite-upsell-card__skip-button' )
 		);
 	}
 }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -26,6 +24,16 @@ describe( 'Badge', () => {
 	test( 'should have proper type class (success)', () => {
 		const badge = shallow( <Badge type="success" /> );
 		assert.lengthOf( badge.find( '.badge.badge--success' ), 1 );
+	} );
+
+	test( 'should have proper type class (info)', () => {
+		const badge = shallow( <Badge type="info" /> );
+		assert.lengthOf( badge.find( '.badge.badge--info' ), 1 );
+	} );
+
+	test( 'should have proper type class (info-blue)', () => {
+		const badge = shallow( <Badge type="info-blue" /> );
+		assert.lengthOf( badge.find( '.badge.badge--info-blue' ), 1 );
 	} );
 
 	test( 'should have proper type class (default)', () => {

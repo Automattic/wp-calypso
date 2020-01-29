@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import { includes } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -189,7 +187,7 @@ export class EditorSharingPublicizeConnection extends React.Component {
 					'Your LinkedIn connection needs to be reauthenticated to continue working – head to Sharing to take care of it.'
 				) }
 				<NoticeAction href={ addSiteFragment( '/sharing', siteSlug ) }>
-					{ this.props.translate( 'Go to Sharing settings' ) }{' '}
+					{ this.props.translate( 'Go to Sharing settings' ) }{ ' ' }
 					<Gridicon icon="external" size={ 18 } />
 				</NoticeAction>
 			</Notice>

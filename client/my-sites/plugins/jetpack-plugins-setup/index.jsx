@@ -12,10 +12,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
+import { Card, CompactCard, Button } from '@automattic/components';
 import FeatureExample from 'components/feature-example';
-import Button from 'components/button';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import Spinner from 'components/spinner';
@@ -67,9 +65,12 @@ class PlansSetup extends React.Component {
 	static displayName = 'PlanSetup';
 	sentTracks = false;
 
-	trackConfigFinished = ( eventName, options = null ) => {
+	trackConfigFinished = ( eventName, options = {} ) => {
 		if ( ! this.sentTracks ) {
-			analytics.tracks.recordEvent( eventName, options );
+			analytics.tracks.recordEvent( eventName, {
+				location: 'jetpackPluginSetup',
+				...options,
+			} );
 		}
 		this.sentTracks = true;
 	};
@@ -112,7 +113,6 @@ class PlansSetup extends React.Component {
 				return next();
 			}
 			if ( window.confirm( confirmText ) ) {
-				// eslint-disable-line no-aler
 				next();
 			} else {
 				// save off the current path just in case context changes after this call
@@ -188,7 +188,9 @@ class PlansSetup extends React.Component {
 	};
 
 	renderNoJetpackSiteSelected = () => {
-		this.trackConfigFinished( 'calypso_plans_autoconfig_error_wordpresscom' );
+		this.trackConfigFinished( 'calypso_plans_autoconfig_error', {
+			error: 'wordpresscom',
+		} );
 		return (
 			<JetpackManageErrorPage
 				siteId={ this.props.siteId }
@@ -208,18 +210,20 @@ class PlansSetup extends React.Component {
 
 		if ( reasons && reasons.length > 0 ) {
 			reason = reasons[ 0 ];
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error_filemod', { error: reason } );
-		} else if ( ! site.hasMinimumJetpackVersion ) {
-			reason = translate( 'You need to update your version of Jetpack.' );
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error_jpversion', {
-				jetpack_version: site.options.jetpack_version,
+			this.trackConfigFinished( 'calypso_plans_autoconfig_error', {
+				error: 'cannot_update_files',
+				reason,
 			} );
 		} else if ( ! site.isMainNetworkSite ) {
 			reason = translate( "We can't install plugins on multisite sites." );
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error_multisite' );
+			this.trackConfigFinished( 'calypso_plans_autoconfig_error', {
+				error: 'secondary_network_site',
+			} );
 		} else if ( site.options.is_multi_network ) {
 			reason = translate( "We can't install plugins on multi-network sites." );
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error_multinetwork' );
+			this.trackConfigFinished( 'calypso_plans_autoconfig_error', {
+				error: 'multinetwork',
+			} );
 		}
 
 		return (
@@ -245,7 +249,7 @@ class PlansSetup extends React.Component {
 	};
 
 	renderPluginsPlaceholders = () => {
-		const placeholderCount = !! this.props.whitelist ? 1 : 2;
+		const placeholderCount = this.props.whitelist ? 1 : 2;
 		return range( placeholderCount ).map( i => <PluginItem key={ 'placeholder-' + i } /> );
 	};
 
@@ -293,6 +297,7 @@ class PlansSetup extends React.Component {
 		}
 
 		if ( 'done' === plugin.status ) {
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			return <div className="plugin-item__finished">{ this.getStatusText( plugin ) }</div>;
 		}
 
@@ -356,6 +361,8 @@ class PlansSetup extends React.Component {
 			</NoticeAction>
 		);
 
+		const errorMessage = get( plugin, 'error.message', '' );
+
 		switch ( plugin.status ) {
 			case 'install':
 				return (
@@ -385,9 +392,15 @@ class PlansSetup extends React.Component {
 					/>
 				);
 			default:
-				const errorMessage = get( plugin, 'error.message', '' ).replace( /<.[^<>]*?>/g, '' );
 				return (
-					<Notice { ...statusProps } text={ errorMessage || translate( 'An error occured.' ) } />
+					<Notice
+						{ ...statusProps }
+						text={
+							errorMessage
+								? errorMessage.replace( /<.[^<>]*?>/g, '' )
+								: translate( 'An error occured.' )
+						}
+					/>
 				);
 		}
 	};
@@ -398,11 +411,13 @@ class PlansSetup extends React.Component {
 		} else if ( plugin.error !== null ) {
 			return null;
 		} else if ( plugin.status !== 'done' ) {
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
 				<div className="plugin-item__actions">
 					<Spinner />
 				</div>
 			);
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 
 		return null;
@@ -418,7 +433,10 @@ class PlansSetup extends React.Component {
 			tracksData[ item.slug ] = item.error.name + ': ' + item.error.message;
 		} );
 
-		this.trackConfigFinished( 'calypso_plans_autoconfig_error_plugin', tracksData );
+		this.trackConfigFinished( 'calypso_plans_autoconfig_error', {
+			...tracksData,
+			error: 'plugin',
+		} );
 
 		if ( pluginsWithErrors.length === 1 ) {
 			noticeText = translate(

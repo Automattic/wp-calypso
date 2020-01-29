@@ -4,8 +4,8 @@
 	z-index: z-index( 'root', '.editor-html-toolbar' );
 
 	.editor-html-toolbar__wrapper {
-		background-color: rgba( var( --color-white-rgb ), 0.92 );
-		border-color: var( --color-neutral-100 );
+		background-color: rgba( var( --color-surface-rgb ), 0.92 );
+		border-color: var( --color-neutral-10 );
 		border-style: solid;
 		border-left-width: 1px;
 		border-right-width: 1px;
@@ -102,7 +102,7 @@
 
 	.button {
 		border-right: 1px solid var( --color-neutral-0 );
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 		height: 26px;
 		margin: 6px 0;
 		padding: 4px 12px;
@@ -121,7 +121,7 @@
 		}
 
 		&:hover {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 
 		&:last-child {
@@ -167,8 +167,8 @@
 }
 
 .editor-html-toolbar__insert-content-dropdown {
-	background-color: var( --color-white );
-	border: 1px solid var( --color-neutral-100 );
+	background-color: var( --color-surface );
+	border: 1px solid var( --color-neutral-10 );
 	border-radius: 0 0 4px 4px;
 	display: none;
 	left: 0;

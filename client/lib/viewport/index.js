@@ -1,4 +1,3 @@
-/** @format */
 // Determine whether a user is viewing calypso from a device within a
 // particular mobile-first responsive breakpoint, matching our existing media
 // queries. [1]
@@ -104,9 +103,9 @@ function getMediaQueryList( breakpoint ) {
 
 /**
  * Returns whether the current window width matches a breakpoint.
- * @param {String} breakpoint The breakpoint to consider.
+ * @param {string} breakpoint The breakpoint to consider.
  *
- * @returns {Boolean} Whether the provided breakpoint is matched.
+ * @returns {boolean} Whether the provided breakpoint is matched.
  */
 export function isWithinBreakpoint( breakpoint ) {
 	const mediaQueryList = getMediaQueryList( breakpoint );
@@ -115,7 +114,7 @@ export function isWithinBreakpoint( breakpoint ) {
 
 /**
  * Registers a listener to be notified of changes to breakpoint matching status.
- * @param {String} breakpoint The breakpoint to consider.
+ * @param {string} breakpoint The breakpoint to consider.
  * @param {Function} listener The listener to be called on change.
  *
  * @returns {Function} The function to be called when unsubscribing.
@@ -140,7 +139,7 @@ export function subscribeIsWithinBreakpoint( breakpoint, listener ) {
 /**
  * Returns whether the current window width matches the mobile breakpoint.
  *
- * @returns {Boolean} Whether the mobile breakpoint is matched.
+ * @returns {boolean} Whether the mobile breakpoint is matched.
  */
 export function isMobile() {
 	return isWithinBreakpoint( MOBILE_BREAKPOINT );
@@ -159,7 +158,7 @@ export function subscribeIsMobile( listener ) {
 /**
  * Returns whether the current window width matches the desktop breakpoint.
  *
- * @returns {Boolean} Whether the desktop breakpoint is matched.
+ * @returns {boolean} Whether the desktop breakpoint is matched.
  */
 export function isDesktop() {
 	return isWithinBreakpoint( DESKTOP_BREAKPOINT );
@@ -178,7 +177,7 @@ export function subscribeIsDesktop( listener ) {
 /**
  * Returns the current window width.
  * Avoid using this method, as it triggers a layout recalc.
- * @returns {Number} The current window width, in pixels.
+ * @returns {number} The current window width, in pixels.
  */
 export function getWindowInnerWidth() {
 	return isServer ? SERVER_WIDTH : window.innerWidth;

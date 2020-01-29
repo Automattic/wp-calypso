@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import { decodeEntities } from 'lib/formatting';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import FormLabel from 'components/forms/form-label';
@@ -46,7 +44,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 		}
 	};
 
-	componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = newProps => {
 		const { site } = this.props;
 
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
@@ -89,7 +87,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 				<Card className="payments__address-currency-container">
 					<StoreAddress showLabel={ false } />
 					<div className="payments__currency-container">
-						<FormLabel>{ translate( 'Store Currency' ) }</FormLabel>
+						<FormLabel>{ translate( 'Store currency' ) }</FormLabel>
 						<FormSelect
 							className="payments__currency-select"
 							onChange={ this.onChange }
@@ -131,8 +129,5 @@ function mapDispatchToProps( dispatch ) {
 }
 
 export default localize(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( SettingsPaymentsLocationCurrency )
+	connect( mapStateToProps, mapDispatchToProps )( SettingsPaymentsLocationCurrency )
 );

@@ -13,9 +13,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import { getAllTests } from 'lib/abtest';
-import { ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
+import { Card } from '@automattic/components';
+import { getAllTests, saveABTestVariation } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -79,10 +78,8 @@ export default function injectTestHelper( element ) {
 		React.createElement( TestList, {
 			tests: getAllTests(),
 			onChangeVariant: function( test, variation ) {
-				const testSettings = JSON.parse( localStorage.getItem( ABTEST_LOCALSTORAGE_KEY ) ) || {};
-				testSettings[ test.experimentId ] = variation;
 				debug( 'Switching test variant', test.experimentId, variation );
-				localStorage.setItem( ABTEST_LOCALSTORAGE_KEY, JSON.stringify( testSettings ) );
+				saveABTestVariation( test.name, variation );
 				window.location.reload();
 			},
 		} ),

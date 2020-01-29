@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
@@ -12,7 +10,7 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { dismissBanner } from './actions';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -94,7 +92,7 @@ class UpworkBanner extends PureComponent {
 						"We've partnered with Upwork, a network of freelancers with a huge pool of WordPress experts. They know their stuff and they're waiting to help you build your dream site."
 					) }
 				</p>
-				<Button className="upwork-banner__cta" compact primary>
+				<Button className="upwork-banner__cta" compact primary={ this.props.primaryButton }>
 					{ translate( 'Find your expert' ) }
 				</Button>
 				<Button className="upwork-banner__close" onClick={ this.onDismissClick }>
@@ -123,10 +121,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{
-		dismissBanner,
-		recordTracksEvent,
-	}
-)( localize( UpworkBanner ) );
+export default connect( mapStateToProps, {
+	dismissBanner,
+	recordTracksEvent,
+} )( localize( UpworkBanner ) );

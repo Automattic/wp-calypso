@@ -1,5 +1,3 @@
-/** @format */
-
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
@@ -26,14 +24,14 @@ describe( 'SubscriptionLengthPicker basic tests', () => {
 			planSlug: PLAN_BUSINESS,
 			plan: getPlan( PLAN_BUSINESS ),
 			priceFull: 1200,
-			priceMinusCredits: 1200,
+			priceFinal: 1200,
 			priceMonthly: 100,
 		},
 		{
 			planSlug: PLAN_BUSINESS_2_YEARS,
 			plan: getPlan( PLAN_BUSINESS_2_YEARS ),
 			priceFull: 1800,
-			priceMinusCredits: 1800,
+			priceFinal: 1800,
 			priceMonthly: 150,
 		},
 	];

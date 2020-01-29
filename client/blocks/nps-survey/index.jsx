@@ -1,53 +1,78 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
-import Gridicon from 'gridicons';
+import React, { PureComponent, Fragment } from 'react';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
-import { noop, trim } from 'lodash';
+import { localize, getLocaleSlug } from 'i18n-calypso';
+import { isNumber, noop, trim } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card, ScreenReaderText } from '@automattic/components';
 import FormTextArea from 'components/forms/form-textarea';
-import ScreenReaderText from 'components/screen-reader-text';
-import RecommendationSelect from './recommendation-select';
 import {
 	submitNpsSurvey,
 	submitNpsSurveyWithNoScore,
 	sendNpsSurveyFeedback,
 } from 'state/nps-survey/actions';
 import { successNotice } from 'state/notices/actions';
-import { hasAnsweredNpsSurvey } from 'state/nps-survey/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { hasAnsweredNpsSurvey, isAvailableForConciergeSession } from 'state/nps-survey/selectors';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 import analytics from 'lib/analytics';
+import RecommendationSelect from './recommendation-select';
 
-class NpsSurvey extends Component {
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+export class NpsSurvey extends PureComponent {
 	static propTypes = {
+		onChangeForm: PropTypes.func,
 		onClose: PropTypes.func,
 		name: PropTypes.string,
+		hasAnswered: PropTypes.bool,
+		isBusinessUser: PropTypes.bool,
+		hasAvailableConciergeSession: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		hasAnswered: false,
+		isBusinessUser: false,
+		hasAvailableConciergeSession: false,
 	};
 
 	state = {
 		score: null,
 		feedback: '',
-		showFeedbackForm: false,
+		currentForm: 'score', // score, feedback or promotion
 	};
+
+	componentDidUpdate( _, prevState ) {
+		const { hasAvailableConciergeSession, onChangeForm } = this.props;
+
+		if ( prevState.currentForm !== this.state.currentForm ) {
+			onChangeForm && onChangeForm( this.state.currentForm );
+			this.props.recordTracksEvent( 'calypso_nps_survey_page_displayed', {
+				name: this.state.currentForm,
+				has_available_concierge_sessions: hasAvailableConciergeSession,
+			} );
+		}
+	}
 
 	handleRecommendationSelectChange = score => {
 		this.setState( { score } );
 	};
 
-	handleFinishClick = () => {
+	handleSubmitScore = () => {
 		this.props.submitNpsSurvey( this.props.name, this.state.score );
-		this.setState( { showFeedbackForm: true } );
+		this.setState( { currentForm: 'feedback' } );
 	};
 
 	handleDismissClick = () => {
@@ -63,11 +88,31 @@ class NpsSurvey extends Component {
 
 	handleSendFeedbackClick = () => {
 		this.props.sendNpsSurveyFeedback( this.props.name, this.state.feedback );
-		this.onClose( this.showThanksNotice );
+		if ( this.shouldShowPromotion() ) {
+			this.setState( { currentForm: 'promotion' } );
+		} else {
+			this.onClose( this.showThanksNotice );
+		}
 	};
 
 	handleFeedbackFormClose = () => {
-		this.onClose( this.showThanksNotice );
+		if ( this.shouldShowPromotion() ) {
+			this.setState( { currentForm: 'promotion' } );
+		} else {
+			this.onClose( this.showThanksNotice );
+		}
+	};
+
+	handlePromotionClose = () => {
+		this.onClose( noop );
+	};
+
+	handleLinkClick = event => {
+		this.props.recordTracksEvent( 'calypso_nps_survey_link_clicked', {
+			url: event.target.href,
+			type: event.target.dataset.type,
+		} );
+		this.onClose( noop );
 	};
 
 	showThanksNotice = () => {
@@ -83,9 +128,18 @@ class NpsSurvey extends Component {
 		}, 0 );
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		analytics.mc.bumpStat( 'calypso_nps_survey', 'survey_displayed' );
 		analytics.tracks.recordEvent( 'calypso_nps_survey_displayed' );
+	}
+
+	shouldShowPromotion() {
+		return (
+			[ 'en', 'en-gb' ].indexOf( getLocaleSlug() ) >= 0 &&
+			this.props.isBusinessUser &&
+			isNumber( this.state.score ) &&
+			this.state.score < 7
+		);
 	}
 
 	renderScoreForm() {
@@ -110,7 +164,7 @@ class NpsSurvey extends Component {
 						primary
 						className="nps-survey__finish-button"
 						disabled={ this.props.hasAnswered }
-						onClick={ this.handleFinishClick }
+						onClick={ this.handleSubmitScore }
 					>
 						{ translate( 'Submit' ) }
 					</Button>
@@ -150,15 +204,86 @@ class NpsSurvey extends Component {
 					>
 						{ translate( 'Submit' ) }
 					</Button>
+					{ ! this.shouldShowPromotion() && (
+						<Button
+							borderless
+							className="nps-survey__not-answer-button"
+							onClick={ this.handleFeedbackFormClose }
+						>
+							{ translate( 'Close' ) }
+						</Button>
+					) }
+				</div>
+			</Fragment>
+		);
+	}
+
+	renderPromotion() {
+		const { hasAvailableConciergeSession, translate } = this.props;
+
+		return (
+			<div className="nps-survey__promotion">
+				<p>{ translate( 'Thank you for your feedback!' ) }</p>
+				{ hasAvailableConciergeSession && (
+					<Fragment>
+						<p>
+							{ translate(
+								'You have a free, 30-minute one-on-one call with a website expert as part of your WordPress.com Business plan benefits.'
+							) }
+						</p>
+						<p>
+							{ translate(
+								'{{booking}}Reserve a 1:1 Quick Start Session{{/booking}} now or connect with a Happiness Engineer {{contact}}over live chat or email{{/contact}}.',
+								{
+									components: {
+										booking: (
+											<a
+												href="/me/concierge"
+												onClick={ this.handleLinkClick }
+												data-type="booking"
+											/>
+										),
+										contact: (
+											<a
+												href={ CALYPSO_CONTACT }
+												onClick={ this.handleLinkClick }
+												data-type="contact"
+											/>
+										),
+									},
+								}
+							) }
+						</p>
+					</Fragment>
+				) }
+				{ ! hasAvailableConciergeSession && (
+					<p>
+						{ translate(
+							'If you would like help with your site, our WordPress.com Happiness Engineers are ready {{contact}}over live chat or email{{/contact}} now.',
+							{
+								components: {
+									contact: (
+										<a
+											href={ CALYPSO_CONTACT }
+											onClick={ this.handleLinkClick }
+											data-type="contact"
+										/>
+									),
+								},
+							}
+						) }
+					</p>
+				) }
+				<div className="nps-survey__buttons">
 					<Button
-						borderless
-						className="nps-survey__not-answer-button"
-						onClick={ this.handleFeedbackFormClose }
+						primary
+						className="nps-survey__finish-button"
+						onClick={ this.handlePromotionClose }
 					>
 						{ translate( 'Close' ) }
 					</Button>
 				</div>
-			</Fragment>
+			</div>
 		);
 	}
 
@@ -175,14 +300,18 @@ class NpsSurvey extends Component {
 					borderless
 					className="nps-survey__close-button"
 					onClick={
-						this.state.showFeedbackForm ? this.handleFeedbackFormClose : this.handleDismissClick
+						this.state.currentForm === 'feedback'
+							? this.handleFeedbackFormClose
+							: this.handleDismissClick
 					}
 				>
 					<Gridicon icon="cross" />
 					<ScreenReaderText>{ translate( 'Close' ) }</ScreenReaderText>
 				</Button>
 				<div className="nps-survey__question-screen">
-					{ this.state.showFeedbackForm ? this.renderFeedbackForm() : this.renderScoreForm() }
+					{ this.state.currentForm === 'score' && this.renderScoreForm() }
+					{ this.state.currentForm === 'feedback' && this.renderFeedbackForm() }
+					{ this.state.currentForm === 'promotion' && this.renderPromotion() }
 				</div>
 			</Card>
 		);
@@ -192,15 +321,14 @@ class NpsSurvey extends Component {
 const mapStateToProps = state => {
 	return {
 		hasAnswered: hasAnsweredNpsSurvey( state ),
+		hasAvailableConciergeSession: isAvailableForConciergeSession( state ),
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{
-		submitNpsSurvey,
-		submitNpsSurveyWithNoScore,
-		sendNpsSurveyFeedback,
-		successNotice,
-	}
-)( localize( NpsSurvey ) );
+export default connect( mapStateToProps, {
+	submitNpsSurvey,
+	submitNpsSurveyWithNoScore,
+	sendNpsSurveyFeedback,
+	successNotice,
+	recordTracksEvent,
+} )( localize( NpsSurvey ) );

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`GSuitePurchaseCta it renders GSuitePurchaseCta 1`] = `
+exports[`GSuitePurchaseCta renders correctly 1`] = `
 <EmailVerificationGate
   noticeStatus="is-info"
   noticeText="You must verify your email to purchase G Suite."
@@ -40,19 +40,17 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta 1`] = `
           className="gsuite-price"
         >
           <h4
-            className="gsuite-price__price-per-user"
+            className="gsuite-price__monthly-price"
           >
-            <span>
-              <strong>
-                $6
-              </strong>
-               per user / month
-            </span>
+            <strong>
+              €6,40
+            </strong>
+             per user/month
           </h4>
           <h5
             className="gsuite-price__annual-price"
           >
-            $72 billed yearly
+            €76 billed annually
           </h5>
         </div>
         <button
@@ -171,7 +169,7 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta 1`] = `
             Connect with your team
           </h5>
           <p>
-            Use text chats, voice calls, or video calls, with built in screen sharing.
+            Use text chats or video calls, with built in screen sharing.
           </p>
         </div>
       </div>

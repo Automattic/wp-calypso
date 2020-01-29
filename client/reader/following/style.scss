@@ -4,13 +4,12 @@
 
 .following__search.card.is-compact {
 	padding: 0;
-	box-shadow: 0 0 0 2px var( --color-neutral-100 ), 0 1px 2px var( --color-neutral-100 );
+	box-shadow: 0 0 0 2px var( --color-neutral-10 ), 0 1px 2px var( --color-neutral-10 );
 	z-index: z-index( 'root', '.reader-following-search' );
 }
 
 // Following intro
 .following__intro {
-	background: url( '/calypso/images/reader/reader-intro-background.svg' ) var( --color-white ) no-repeat 100% 20px;
 	border: 1px solid var( --color-neutral-0 );
 
 	.following__intro-copy {
@@ -26,13 +25,11 @@
 			}
 		}
 	}
-
-	.following__intro-character {
-		background: url( '/calypso/images/reader/reader-intro-character.svg' ) no-repeat 8px bottom;
-	}
 }
 
 .following__intro {
+	background-position: 100% 20px;
+	background-repeat: no-repeat;
 	background-size: 450px;
 	min-height: 140px;
 
@@ -47,23 +44,16 @@
 	.following__intro-copy-hidden {
 		@include breakpoint( '<660px' ) {
 			display: none;
-			visibility: hidden;
 		}
 	}
 
 	.following__intro-character {
-		background-size: 106px;
-		flex: 0 0 110px;
-		min-height: 140px;
+		height: 140px;
 		margin-right: -2px; // prevent right cropping of illustration
 
 		// Hides the character when main content column gets too narrow
 		@media ( min-width: 661px ) and ( max-width: 773px ) {
 			display: none;
-		}
-
-		@include breakpoint( '<660px' ) {
-			background-size: 106px;
 		}
 	}
 }
@@ -119,7 +109,7 @@
 	.following__intro-close-icon {
 		position: absolute;
 		z-index: z-index( 'root', '.following__intro-close-icon' );
-		fill: var( --color-white );
+		fill: var( --color-text-inverted );
 
 		// Fix for 1px (0.5pt) misalignment in Safari under retina. See
 		// https://github.com/Automattic/wp-calypso/pull/11282/#issuecomment-289837131
@@ -151,11 +141,11 @@
 
 .following__intro .following__intro-close {
 	.following__intro-close-icon {
-		fill: var( --color-neutral-200 );
+		fill: var( --color-neutral-20 );
 	}
 
 	.following__intro-close-icon-bg {
-		background-color: var( --color-white );
+		background-color: var( --color-surface );
 	}
 }
 

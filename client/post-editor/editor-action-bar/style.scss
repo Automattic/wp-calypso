@@ -17,11 +17,11 @@
 			left: 8px;
 		padding: 8px;
 		margin-right: 2px;
-		background-color: rgba( var( --color-white-rgb ), 0.92 );
+		background-color: rgba( var( --color-surface-rgb ), 0.92 );
 		text-transform: uppercase;
 		font-size: 11px;
 		line-height: 1;
-		color: var( --color-neutral-200 );
+		color: var( --color-neutral-20 );
 		pointer-events: none;
 		z-index: z-index( 'root', '.editor-action-bar .editor-status-label' );
 
@@ -68,7 +68,7 @@
 }
 
 .editor-action-bar .button {
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 	background: transparent;
 	margin-left: 18px;
 	transition: color 200ms;
@@ -76,11 +76,11 @@
 
 	&:hover,
 	&:focus {
-		color: var( --color-neutral-400 );
+		color: var( --color-neutral-40 );
 	}
 
 	@include breakpoint( '>660px' ) {
-		color: var( --color-neutral-100 );
+		color: var( --color-neutral-10 );
 	}
 
 	.gridicon {

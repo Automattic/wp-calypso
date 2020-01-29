@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -80,7 +78,7 @@ class MediaSettingsWriting extends Component {
 								{ translate( 'Show photo metadata in carousel, when available' ) }
 							</CompactFormToggle>
 							<FormLabel className={ labelClassName } htmlFor="carousel_background_color">
-								{ translate( 'Background color' ) }
+								{ translate( 'Background Color' ) }
 							</FormLabel>
 							<FormSelect
 								name="carousel_background_color"

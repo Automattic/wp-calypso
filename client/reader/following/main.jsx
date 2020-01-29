@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,18 +12,16 @@ import { connect } from 'react-redux';
  */
 import BlankSuggestions from 'reader/components/reader-blank-suggestions';
 import Stream from 'reader/stream';
-import CompactCard from 'components/card/compact';
+import { CompactCard, Button } from '@automattic/components';
 import SearchInput from 'components/search';
 import { recordTrack } from 'reader/stats';
 import Suggestion from 'reader/search-stream/suggestion';
 import SuggestionProvider from 'reader/search-stream/suggestion-provider';
 import FollowingIntro from './intro';
-import config from 'config';
 import { getSearchPlaceholderText } from 'reader/search/utils';
 import Banner from 'components/banner';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
 
 /**
  * Style dependencies
@@ -60,9 +57,7 @@ const FollowingStream = props => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Stream { ...props }>
-			{ config.isEnabled( 'reader/following-intro' ) && ! showRegistrationMsg && (
-				<FollowingIntro />
-			) }
+			{ ! showRegistrationMsg && <FollowingIntro /> }
 			{ showRegistrationMsg && (
 				<Banner
 					className="following__reader-vote"

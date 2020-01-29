@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -42,6 +41,12 @@ const defaultProps = {
 			name: 'Español de México de los Gringos',
 			wpLocale: 'es_MX_gringos',
 		},
+		{
+			value: 111,
+			langSlug: 'ko',
+			name: '한국어',
+			wpLocale: 'ko_KR',
+		},
 	],
 	translate: identity,
 	valueKey: 'langSlug',
@@ -70,5 +75,10 @@ describe( 'LanguagePicker', () => {
 		expect( wrapper.find( '.language-picker__name-label' ).text() ).toBe(
 			'Español de México de los Gringos'
 		);
+	} );
+	test( 'ensure non utf language names display in localized character sets', () => {
+		const newProps = { ...defaultProps, value: 'ko' };
+		const wrapper = shallow( <LanguagePicker { ...newProps } /> );
+		expect( wrapper.find( '.language-picker__name-label' ).text() ).toBe( '한국어' );
 	} );
 } );

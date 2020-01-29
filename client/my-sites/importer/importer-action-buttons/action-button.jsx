@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +7,12 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
+
+/**
+ * Style dependencies
+ */
+import './action-button.scss';
 
 const ImporterActionButton = ( { className, ...props } ) => (
 	<Button

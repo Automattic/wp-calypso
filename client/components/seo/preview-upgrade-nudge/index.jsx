@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -17,6 +15,8 @@ import QueryPlans from 'components/data/query-plans';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { preventWidows } from 'lib/formatting';
 import { isJetpackSite } from 'state/sites/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import FeatureExample from 'components/feature-example';
 import Banner from 'components/banner';
 import { findFirstSimilarPlanKey } from 'lib/plans';
@@ -28,7 +28,12 @@ import { TERM_ANNUALLY, TYPE_BUSINESS } from 'lib/plans/constants';
 import './style.scss';
 import upgradeNudgeImage from './preview-upgrade-nudge.png';
 
-export const SeoPreviewNudge = ( { translate, site, isJetpack = false } ) => {
+export const SeoPreviewNudge = ( {
+	canCurrentUserUpgrade,
+	translate,
+	site,
+	isJetpack = false,
+} ) => {
 	return (
 		<div className="preview-upgrade-nudge">
 			<QueryPlans />
@@ -42,7 +47,13 @@ export const SeoPreviewNudge = ( { translate, site, isJetpack = false } ) => {
 						...( isJetpack ? { term: TERM_ANNUALLY } : {} ),
 					} )
 				}
-				title={ translate( 'Upgrade to a Business Plan to unlock the power of our SEO tools!' ) }
+				title={
+					canCurrentUserUpgrade
+						? translate( 'Upgrade to a Business plan to unlock the power of our SEO tools!' )
+						: translate(
+								"Unlock powerful SEO tools! Contact your site's administrator to upgrade to a Business plan."
+						  )
+				}
 				event="site_preview_seo_plan_upgrade"
 				className="preview-upgrade-nudge__banner"
 			/>
@@ -103,6 +114,7 @@ const mapStateToProps = ( state, ownProps ) => {
 
 	return {
 		isJetpack,
+		canCurrentUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 	};
 };
 

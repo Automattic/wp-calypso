@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -27,11 +25,21 @@ describe( 'data-layer/wpcom/signup/verticals', () => {
 						site_type: mockAction.siteTypeId,
 						limit: mockAction.limit,
 						include_preview: true,
+						allow_synonyms: true,
 					},
 				},
 				mockAction
 			)
 		);
+	} );
+
+	test( 'requestVerticals() with missing siteTypeId', () => {
+		const mockAction = {
+			search: 'Foo',
+			limit: 7,
+		};
+
+		expect( requestVerticals( mockAction ) ).not.toHaveProperty( 'query.site_type' );
 	} );
 
 	test( 'storeVerticals()', () => {

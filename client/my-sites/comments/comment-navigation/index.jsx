@@ -1,21 +1,18 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import { each, get, includes, isEqual, isUndefined, map } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import ButtonGroup from 'components/button-group';
-import ControlItem from 'components/segmented-control/item';
 import Count from 'components/count';
 import CommentNavigationTab from './comment-navigation-tab';
 import FormCheckbox from 'components/forms/form-checkbox';
@@ -112,7 +109,7 @@ export class CommentNavigation extends Component {
 	getStatusPath = status => {
 		const { postId } = this.props;
 
-		const appendPostId = !! postId ? `/${ postId }` : '';
+		const appendPostId = postId ? `/${ postId }` : '';
 
 		return 'unapproved' !== status
 			? `/comments/${ status }/${ this.props.siteFragment }${ appendPostId }`
@@ -147,7 +144,7 @@ export class CommentNavigation extends Component {
 			newStatus,
 			selectedComments.length,
 			queryStatus,
-			!! isPostView ? 'post' : 'site'
+			isPostView ? 'post' : 'site'
 		);
 		this.showBulkNotice( newStatus );
 		toggleBulkMode();
@@ -299,16 +296,22 @@ export class CommentNavigation extends Component {
 				<CommentNavigationTab className="comment-navigation__actions comment-navigation__open-bulk">
 					{ isCommentsTreeSupported && hasComments && (
 						<SegmentedControl compact className="comment-navigation__sort-buttons">
-							<ControlItem onClick={ setOrder( NEWEST_FIRST ) } selected={ order === NEWEST_FIRST }>
+							<SegmentedControl.Item
+								onClick={ setOrder( NEWEST_FIRST ) }
+								selected={ order === NEWEST_FIRST }
+							>
 								{ translate( 'Newest', {
 									comment: 'Chronological order for sorting the comments list.',
 								} ) }
-							</ControlItem>
-							<ControlItem onClick={ setOrder( OLDEST_FIRST ) } selected={ order === OLDEST_FIRST }>
+							</SegmentedControl.Item>
+							<SegmentedControl.Item
+								onClick={ setOrder( OLDEST_FIRST ) }
+								selected={ order === OLDEST_FIRST }
+							>
 								{ translate( 'Oldest', {
 									comment: 'Chronological order for sorting the comments list.',
 								} ) }
-							</ControlItem>
+							</SegmentedControl.Item>
 						</SegmentedControl>
 					) }
 

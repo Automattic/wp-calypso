@@ -1,5 +1,24 @@
 @import 'jetpack-connect/colors.scss';
 
+@mixin section-border ( $position ) {
+  &::before {
+  	display: block;
+  	content: '';
+  	position: absolute;
+  	#{ $position }: 0;
+  	left: -8px;
+  	width: calc( 100% + 16px );
+  	height: 1px;
+  	box-sizing: border-box;
+  	background: var( --color-border-subtle );
+  	
+  	@include breakpoint( '>660px' ) {
+  		width: calc( 100% + 60px );
+  		left: -30px;
+  	}
+  }
+}
+
 .checkout {
 	position: relative;
 
@@ -39,13 +58,13 @@
 				display: flex;
 				flex-flow: row wrap;
 				justify-content: space-around;
-				background-color: var( --color-white );
+				background-color: var( --color-surface );
 				padding: 10px;
 			}
 
 			.placeholder {
 				animation: pulse-light 800ms ease-in-out infinite;
-				background: var( --color-neutral-100 );
+				background: var( --color-neutral-10 );
 				width: 100%;
 				height: 100%;
 			}
@@ -142,7 +161,7 @@
 	}
 
 	h5 {
-		color: var( --color-neutral-400 );
+		color: var( --color-neutral-40 );
 		font-size: 15px;
 		font-weight: 600;
 		opacity: 0.7;
@@ -239,6 +258,7 @@
 
 	.checkout__terms,
 	.checkout__domain-refund-policy,
+	.checkout__concierge-refund-policy,
 	.checkout__domain-registration-agreement-link,
 	.checkout__domain-registration-hsts {
 		color: var( --color-text-subtle );
@@ -296,7 +316,7 @@
 
 	.credit-card-payment-box {
 		.payment-box-sections {
-			background-color: var( --color-white );
+			background-color: var( --color-surface );
 			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.075 );
 
 			@include breakpoint( '>660px' ) {
@@ -305,7 +325,7 @@
 		}
 
 		.checkout__payment-box-section.is-selected.no-stored-cards {
-			border-left: 1px solid var( --color-neutral-0 );
+			border: 1px solid var( --color-neutral-5 );
 		}
 
 		.checkout__payment-box-section.is-selected:not( .no-stored-cards ) .checkout__new-card-fields {
@@ -324,7 +344,7 @@
 		}
 
 		.checkout__payment-box-section .checkout__new-card-fields {
-			background-color: var( --color-white );
+			background-color: var( --color-surface );
 			max-height: 0;
 			overflow: hidden;
 			padding: 0 15px 0 12px;
@@ -351,12 +371,16 @@
 		}
 	}
 
+	.checkout__payment-box-section {
+		border: 1px solid var( --color-neutral-5 );
+	}
+
 	.checkout__summary-toggle {
 		cursor: pointer;
 		display: block;
 		font-size: 14px;
 		padding: 10px;
-		text-align: center;
+		margin: 0 auto;
 
 		@include breakpoint( '>660px' ) {
 			display: none;
@@ -367,24 +391,29 @@
 	// -----------------------------------
 
 	.subscription-length-picker {
-		margin-top: 15px;
-	}
-
-	&__subscription-length-picker-separator {
-		display: none;
 		position: relative;
-		// Parent overflow is hidden, so 80px here is an arbitrary number
-		// to make sure this element will cover entire width of the parent.
-		// If it's wider, it's okay too.
-		width: calc( 100% + 80px * 2 );
-		left: -80px;
-		margin-top: 1.7em;
-		margin-bottom: 1.7em;
-		background: var( --color-neutral-0 );
+		padding-bottom: 10px;
+		margin: 15px 0;
+
+		@include breakpoint( '>660px' ) {
+			padding-bottom: 30px;
+			margin-bottom: 20px;
+		}
+
+		@include section-border( bottom );
 	}
 
-	.subscription-length-picker + &__subscription-length-picker-separator {
-		display: block;
+	.subscription-length-picker__header {
+		margin-bottom: 8px;
+		padding-top: 10px;
+		position: relative;
+
+		@include breakpoint( '>660px' ) {
+			margin-top: 30px;
+			padding-top: 20px;
+		}
+
+		@include section-border( top );
 	}
 
 	// PayPal Payment Box
@@ -393,13 +422,12 @@
 	.paypal-payment-box,
 	.credits-payment-box,
 	.web-payment-box {
-		.payment-box-section,
+		.payment-box-section:not( .checkout__free-cart-payment-box ),
 		.checkout__payment-box-section {
-			background-color: var( --color-white );
+			background-color: var( --color-surface );
 			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.075 );
 
 			@include breakpoint( '>660px' ) {
-				border: 1px solid var( --color-neutral-0 );
 				box-shadow: none;
 			}
 		}
@@ -454,6 +482,7 @@
 			}
 
 			.checkout__payment-box-section-content {
+
 				> h6 {
 					color: var( --color-primary );
 					font-size: 18px;
@@ -465,27 +494,30 @@
 				}
 			}
 
-			.checkout__free-domain-credit-illustration {
+			.checkout__free-domain-credit-illustration,
+			.checkout__free-stand-alone-domain-mapping-illustration {
 				max-width: 100%;
 				max-height: 150px;
-				margin: -10px auto 10px;
+				margin: 0 auto 10px;
+				display: block;
 
 				img {
 					max-width: 100%;
-					max-height: 150px;
+					max-height: 100px;
 				}
 
 				@include breakpoint( '>960px' ) {
-					float: left;
+					float: right;
 					margin-left: 20px;
-					width: calc( 25% - 20px );
+					width: calc( 20% - 20px );
 				}
 			}
 
 			.checkout__free-domain-credit-illustration + h6,
-			.checkout__free-domain-credit-illustration + h6 + span {
+			.checkout__free-domain-credit-illustration + h6 + span,
+			.checkout__free-stand-alone-domain-mapping-illustration + h6,
+			.checkout__free-stand-alone-domain-mapping-illustration + h6 + span {
 				display: block;
-				padding-left: 20px;
 
 				@include breakpoint( '>960px' ) {
 					clear: none;
@@ -519,25 +551,24 @@
 
 	// Web Payment Box
 	// -----------------------------------
-	.web-payment-box {
-		.web-payment-box__apple-pay-button {
-			-webkit-appearance: -apple-pay-button;
-			-apple-pay-button-type: buy;
-			-apple-pay-button-style: black;
-			vertical-align: middle;
-			cursor: pointer;
+	.payment-request-button {
+		-webkit-appearance: -apple-pay-button;
+		-apple-pay-button-type: buy;
+		-apple-pay-button-style: black;
+		vertical-align: middle;
+		cursor: pointer;
+		width: 100%;
+		height: 40px;
 
-			&[disabled] {
-				opacity: 0.4;
-				cursor: not-allowed;
-			}
+		&[disabled] {
+			cursor: not-allowed;
 		}
 	}
 
 	// Supporting Text / Fine Print
 	// -----------------------------------
 	.supporting-text {
-		border-top: 1px solid var( --color-neutral-100 );
+		border-top: 1px solid var( --color-neutral-10 );
 		font-size: 13px;
 		list-style: none;
 		margin: 0;
@@ -545,12 +576,12 @@
 		@include clear-fix;
 
 		@include breakpoint( '>660px' ) {
-			border-bottom: 1px solid var( --color-neutral-100 );
+			border-bottom: 1px solid var( --color-neutral-10 );
 			margin: 30px 0;
 		}
 
 		li {
-			color: var( --color-neutral-200 );
+			color: var( --color-neutral-20 );
 			text-align: center;
 
 			@include breakpoint( '>660px' ) {
@@ -565,7 +596,7 @@
 			}
 
 			h6 {
-				color: var( --color-neutral-500 );
+				color: var( --color-neutral-50 );
 				font-size: 14px;
 				font-weight: 600;
 			}
@@ -580,7 +611,7 @@
 
 	.credit-card-supporting-text__refund-link {
 		white-space: nowrap;
-		color: var( --color-neutral-200 );
+		color: var( --color-neutral-20 );
 		text-decoration: underline;
 	}
 }
@@ -608,8 +639,8 @@
 	}
 
 	label {
-		background-color: var( --color-white );
-		border: 3px solid var( --color-white );
+		background-color: var( --color-surface );
+		border: 3px solid var( --color-border-inverted );
 		border-radius: 3px;
 		display: block;
 		margin-top: 10px;
@@ -735,7 +766,7 @@
 }
 
 .checkout__secure-payment {
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 	flex-grow: 1;
 	margin-top: 10px;
 
@@ -753,6 +784,7 @@
 		justify-content: left;
 	}
 }
+
 
 .checkout__payment-chat-button.is-borderless {
 	color: var( --color-accent );
@@ -843,7 +875,7 @@
 }
 
 .checkout__privacy-protection-radio-text-description {
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 }
 
 .checkout__privacy-protection-radio-price-text {
@@ -855,6 +887,7 @@
 .checkout__alternative-payment-methods {
 	float: right;
 }
+
 .checkout__payment-box-container {
 	.select-dropdown__option {
 		&:first-child {
@@ -862,7 +895,7 @@
 		}
 		.is-selected {
 			background-color: var( --color-neutral-0 );
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 	}
 
@@ -912,6 +945,10 @@
 
 	.checkout__paypal {
 		width: 80px;
+	}
+
+	.checkout__stripe {
+		width: 51px;
 	}
 
 	.checkout__giropay {
@@ -1055,7 +1092,7 @@
 
 .checkout__form-info-text {
 	margin-left: 15px;
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 	display: block;
 	font-size: 12px;
 	font-style: italic;
@@ -1089,7 +1126,7 @@
 	@include jetpack-connect-colors();
 
 	.payment-box-section {
-		--color-primary: var( --color-primary-500 );
+		--color-primary: var( --color-primary-50 );
 	}
 }
 
@@ -1099,6 +1136,10 @@
 
 	.formatted-header {
 		color: var( --color-jetpack-onboarding-text );
+	}
+
+	.formatted-header__subtitle {
+		color: var( --color-primary-10 );
 	}
 
 	.card {
@@ -1126,4 +1167,30 @@
 	.checkout-thank-you__jetpack .plan-thank-you-card .thank-you-card {
 		box-shadow: none;
 	}
+}
+
+.checkout__site-created-notice-wrapper {
+	overflow: hidden;
+	float: none;
+	clear: both;
+	margin: 0 auto 20px;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	@include breakpoint( '<660px' ) {
+		display: none;
+	}
+	.checkout__site-created-copy {
+		margin: 0 20px;
+	}
+	.checkout__site-created-image {
+		height: 40px;
+	}
+}
+
+.composite-checkout__testing-banner {
+  @media( min-width: 700px ) {
+    margin: auto;
+    max-width: 556px;
+  }
 }

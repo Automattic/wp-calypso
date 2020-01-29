@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -17,7 +15,7 @@ import {
 	IMAGE_EDITOR_STATE_RESET_ALL,
 	IMAGE_EDITOR_IMAGE_HAS_LOADED,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withoutPersistence } from 'state/utils';
 import { AspectRatios } from './constants';
 
 export const defaultTransform = {
@@ -67,11 +65,17 @@ export function hasChanges( state = false, action ) {
 	return state;
 }
 
-export const originalAspectRatio = createReducer( null, {
-	[ IMAGE_EDITOR_IMAGE_HAS_LOADED ]: ( state, { width, height } ) => {
-		return { width, height };
-	},
-	[ IMAGE_EDITOR_STATE_RESET_ALL ]: () => null,
+export const originalAspectRatio = withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case IMAGE_EDITOR_IMAGE_HAS_LOADED: {
+			const { width, height } = action;
+			return { width, height };
+		}
+		case IMAGE_EDITOR_STATE_RESET_ALL:
+			return null;
+	}
+
+	return state;
 } );
 
 export function imageIsLoading( state = true, action ) {
@@ -88,10 +92,10 @@ export function imageIsLoading( state = true, action ) {
 
 export function fileInfo( state = defaultFileInfo, action ) {
 	switch ( action.type ) {
-		case IMAGE_EDITOR_SET_FILE_INFO:
+		case IMAGE_EDITOR_SET_FILE_INFO: {
 			const { src, fileName, mimeType, title } = action;
 			return { ...state, src, fileName, mimeType, title };
-
+		}
 		case IMAGE_EDITOR_STATE_RESET_ALL:
 			return {
 				...state,
@@ -165,7 +169,7 @@ export function aspectRatio( state = AspectRatios.FREE, action ) {
 		case IMAGE_EDITOR_SET_DEFAULT_ASPECT_RATIO:
 			return action.ratio;
 		case IMAGE_EDITOR_STATE_RESET:
-		case IMAGE_EDITOR_STATE_RESET_ALL:
+		case IMAGE_EDITOR_STATE_RESET_ALL: {
 			const { additionalData = {} } = action;
 			const { aspectRatio: payloadAspectRatio } = additionalData;
 
@@ -174,6 +178,7 @@ export function aspectRatio( state = AspectRatios.FREE, action ) {
 			}
 
 			return AspectRatios.FREE;
+		}
 	}
 
 	return state;

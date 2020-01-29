@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -17,9 +16,9 @@ import { getCurrentPlan } from 'state/sites/plans/selectors';
  * means of retrieving full purchase information based on a site and its plan information.
  * Caution! It _does not_ retrieve the ID from a purchase.
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @return {?Number}        Purchase ID if known
+ * @param  {object}  state  Global state tree
+ * @param  {number}  siteId Site ID
+ * @returns {?number}        Purchase ID if known
  */
 export default function getCurrentPlanPurchaseId( state, siteId ) {
 	const result = get( getCurrentPlan( state, siteId ), 'id', null );

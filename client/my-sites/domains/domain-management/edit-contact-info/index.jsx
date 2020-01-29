@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,6 +5,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import { connect } from 'react-redux';
 import page from 'page';
 
 /**
@@ -21,13 +20,12 @@ import Header from 'my-sites/domains/domain-management/components/header';
 import Main from 'components/main';
 import { domainManagementContactsPrivacy } from 'my-sites/domains/paths';
 import { getSelectedDomain } from 'lib/domains';
-import { findRegistrantWhois } from 'lib/domains/whois/utils';
 import SectionHeader from 'components/section-header';
+import isRequestingWhois from 'state/selectors/is-requesting-whois';
 
 class EditContactInfo extends React.Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
-		whois: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
@@ -51,7 +49,7 @@ class EditContactInfo extends React.Component {
 	}
 
 	isDataLoading = () => {
-		return ! getSelectedDomain( this.props ) || ! this.props.whois.hasLoadedFromServer;
+		return ! getSelectedDomain( this.props ) || this.props.isRequestingWhois;
 	};
 
 	getCard = () => {
@@ -78,7 +76,6 @@ class EditContactInfo extends React.Component {
 			<div>
 				<SectionHeader label={ this.props.translate( 'Edit Contact Info' ) } />
 				<EditContactInfoFormCard
-					contactInformation={ findRegistrantWhois( this.props.whois.data ) }
 					domainRegistrationAgreementUrl={ domain.domainRegistrationAgreementUrl }
 					selectedDomain={ getSelectedDomain( this.props ) }
 					selectedSite={ this.props.selectedSite }
@@ -94,4 +91,8 @@ class EditContactInfo extends React.Component {
 	};
 }
 
-export default localize( EditContactInfo );
+export default connect( ( state, ownProps ) => {
+	return {
+		isRequestingWhois: isRequestingWhois( state, ownProps.selectedDomainName ),
+	};
+} )( localize( EditContactInfo ) );

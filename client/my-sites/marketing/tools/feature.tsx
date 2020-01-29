@@ -6,16 +6,16 @@ import React, { ReactNode, FunctionComponent } from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import CardHeading from 'components/card-heading';
 
 interface Props {
 	children: ReactNode;
-	description: string;
-	disclaimer?: string;
+	description: ReactNode;
+	disclaimer?: ReactNode;
 	imageAlt?: string;
 	imagePath?: string;
-	title: string;
+	title: ReactNode;
 }
 
 const MarketingToolsFeature: FunctionComponent< Props > = ( {

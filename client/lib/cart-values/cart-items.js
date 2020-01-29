@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,10 +19,12 @@ import {
 	toLower,
 	uniq,
 } from 'lodash';
+import emailValidator from 'email-validator';
 
 /**
  * Internal dependencies
  */
+import { GSUITE_BASIC_SLUG, GSUITE_EXTRA_LICENSE_SLUG } from 'lib/gsuite/constants';
 import {
 	formatProduct,
 	getDomain,
@@ -41,6 +41,7 @@ import {
 	isFreeWordPressComDomain,
 	isGoogleApps,
 	isJetpackPlan,
+	isJetpackProduct,
 	isNoAds,
 	isPlan,
 	isBlogger,
@@ -70,7 +71,7 @@ import { getTermDuration } from 'lib/plans/constants';
 /**
  * Adds the specified item to a shopping cart.
  *
- * @param {Object} newCartItem - new item as `CartItemValue` object
+ * @param {object} newCartItem - new item as `CartItemValue` object
  * @returns {Function} the function that adds the item to a shopping cart
  */
 export function addCartItem( newCartItem ) {
@@ -102,7 +103,7 @@ export function clearCart() {
 /**
  * Adds the specified item to a shopping cart without replacing the cart
  *
- * @param {Object} newCartItem - new item as `CartItemValue` object
+ * @param {object} newCartItem - new item as `CartItemValue` object
  * @returns {Function} the function that adds the item to a shopping cart
  */
 export function addCartItemWithoutReplace( newCartItem ) {
@@ -127,9 +128,9 @@ export function addCartItemWithoutReplace( newCartItem ) {
  * - will result in mixed renewals/non-renewals or multiple renewals (excluding privacy protection).
  * - is a free trial plan
  *
- * @param {Object} cartItem - `CartItemValue` object
- * @param {Object} cart - the existing shopping cart
- * @returns {Boolean} whether or not the item should replace the cart
+ * @param {object} cartItem - `CartItemValue` object
+ * @param {object} cart - the existing shopping cart
+ * @returns {boolean} whether or not the item should replace the cart
  */
 export function cartItemShouldReplaceCart( cartItem, cart ) {
 	if ( isRenewal( cartItem ) && ! isDomainRedemption( cartItem ) ) {
@@ -153,13 +154,18 @@ export function cartItemShouldReplaceCart( cartItem, cart ) {
 		return true;
 	}
 
+	if ( isJetpackProduct( cartItem ) ) {
+		// adding a Jetpack product should replace the cart
+		return true;
+	}
+
 	return false;
 }
 
 /**
  * Removes the specified item from a shopping cart.
  *
- * @param {Object} cartItemToRemove - item as `CartItemValue` object
+ * @param {object} cartItemToRemove - item as `CartItemValue` object
  * @returns {Function} the function that removes the item from a shopping cart
  */
 export function remove( cartItemToRemove ) {
@@ -194,9 +200,9 @@ export function remove( cartItemToRemove ) {
 /**
  * Removes the specified item and its dependency items from a shopping cart.
  *
- * @param {Object} cartItemToRemove - item as `CartItemValue` object
- * @param {Object} cart - cart as `CartValue` object
- * @param {bool} domainsWithPlansOnly - Whether we should consider domains as dependents of products
+ * @param {object} cartItemToRemove - item as `CartItemValue` object
+ * @param {object} cart - cart as `CartValue` object
+ * @param {boolean} domainsWithPlansOnly - Whether we should consider domains as dependents of products
  * @returns {Function} the function that removes the items from a shopping cart
  */
 export function removeItemAndDependencies( cartItemToRemove, cart, domainsWithPlansOnly ) {
@@ -209,8 +215,8 @@ export function removeItemAndDependencies( cartItemToRemove, cart, domainsWithPl
 /**
  * Removes the specified item and its dependency items from a shopping cart.
  *
- * @param {Object} oldItem - item as `CartItemValue` object
- * @param {Object} newItem - item as `CartItemValue` object
+ * @param {object} oldItem - item as `CartItemValue` object
+ * @param {object} newItem - item as `CartItemValue` object
  * @returns {Function} the function that removes the items from a shopping cart
  */
 export function replaceItem( oldItem, newItem ) {
@@ -222,10 +228,10 @@ export function replaceItem( oldItem, newItem ) {
 /**
  * Retrieves the dependency items from the shopping cart for the given cart item.
  *
- * @param {Object} cartItem - item as `CartItemValue` object
- * @param {Object} cart - cart as `CartValue` object
- * @param {bool} domainsWithPlansOnly - Whether we should consider domains as dependents of products
- * @returns {Object[]} the list of dependency items in the shopping cart
+ * @param {object} cartItem - item as `CartItemValue` object
+ * @param {object} cart - cart as `CartValue` object
+ * @param {boolean} domainsWithPlansOnly - Whether we should consider domains as dependents of products
+ * @returns {object[]} the list of dependency items in the shopping cart
  */
 export function getDependentProducts( cartItem, cart, domainsWithPlansOnly ) {
 	const dependentProducts = getAllCartItems( cart ).filter( function( existingCartItem ) {
@@ -244,8 +250,8 @@ export function getDependentProducts( cartItem, cart, domainsWithPlansOnly ) {
 /**
  * Retrieves all the items in the specified shopping cart.
  *
- * @param {Object} cart - cart as `CartValue` object
- * @returns {Object[]} the list of items in the shopping cart as `CartItemValue` objects
+ * @param {object} cart - cart as `CartValue` object
+ * @returns {object[]} the list of items in the shopping cart as `CartItemValue` objects
  */
 export function getAllCartItems( cart ) {
 	return ( cart && cart.products ) || [];
@@ -254,9 +260,9 @@ export function getAllCartItems( cart ) {
 /**
  * Retrieves all the items in the shopping cart sorted
  *
- * @param {Object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `CartValue` object
  *
- * @returns {Object[]} the sorted list of items in the shopping cart
+ * @returns {object[]} the sorted list of items in the shopping cart
  */
 export function getAllCartItemsSorted( cart ) {
 	return sortProducts( getAllCartItems( cart ) );
@@ -265,7 +271,7 @@ export function getAllCartItemsSorted( cart ) {
 /**
  * Gets the renewal items from the specified shopping cart.
  *
- * @param {Object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `CartValue` object
  * @returns {Array} an array of renewal items
  */
 export function getRenewalItems( cart ) {
@@ -275,7 +281,7 @@ export function getRenewalItems( cart ) {
 /**
  * Determines whether there is at least one item with free trial in the specified shopping cart.
  *
- * @param {Object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `CartValue` object
  * @returns {boolean} true if there is at least one item with free trial, false otherwise
  */
 export function hasFreeTrial( cart ) {
@@ -285,7 +291,7 @@ export function hasFreeTrial( cart ) {
 /**
  * Determines whether there is any kind of plan (e.g. Premium or Business) in the shopping cart.
  *
- * @param {Object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `CartValue` object
  * @returns {boolean} true if there is at least one plan, false otherwise
  */
 export function hasPlan( cart ) {
@@ -295,7 +301,7 @@ export function hasPlan( cart ) {
 /**
  * Determines whether there is a Jetpack plan in the shopping cart.
  *
- * @param {Object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `CartValue` object
  * @returns {boolean} true if there is at least one Jetpack plan, false otherwise
  */
 export function hasJetpackPlan( cart ) {
@@ -305,7 +311,7 @@ export function hasJetpackPlan( cart ) {
 /**
  * Determines whether there is an ecommerce plan in the shopping cart.
  *
- * @param {Object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `CartValue` object
  * @returns {boolean} true if there is at least one plan, false otherwise
  */
 export function hasEcommercePlan( cart ) {
@@ -315,8 +321,8 @@ export function hasEcommercePlan( cart ) {
 /**
  * Does the cart contain only bundled domains and transfers
  *
- * @param {Object} cart - cart as `CartValue` object
- * @return {Boolean} true if there are only bundled domains and transfers
+ * @param {object} cart - cart as `CartValue` object
+ * @returns {boolean} true if there are only bundled domains and transfers
  */
 export function hasOnlyBundledDomainProducts( cart ) {
 	return (
@@ -343,10 +349,10 @@ export function hasDomainCredit( cart ) {
 /**
  * Whether the cart has a registration with a specific TLD
  *
- * @param {Object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `CartValue` object
  * @param {string} tld - TLD to look for, no leading dot
  *
- * @returns {Boolean} - Whether or not the cart contains a domain with that TLD
+ * @returns {boolean} - Whether or not the cart contains a domain with that TLD
  */
 export function hasTld( cart, tld ) {
 	const domains = concat( getDomainRegistrations( cart ), getDomainTransfers( cart ) );
@@ -363,7 +369,7 @@ export function getTlds( cart ) {
 /**
  * Determines whether all items in the specified shopping are free trial or free domains
  *
- * @param {Object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `CartValue` object
  * @returns {boolean} true if all items have free trial, false otherwise
  * @todo This will fail when a domain is purchased with a plan, as the domain will be included in the free trial
  */
@@ -374,8 +380,8 @@ export function hasOnlyFreeTrial( cart ) {
 /**
  * Determines whether there is at least one item of a given product in the specified shopping cart.
  *
- * @param {Object} cart - cart as `CartValue` object
- * @param {Object} productSlug - the unique string that identifies the product
+ * @param {object} cart - cart as `CartValue` object
+ * @param {object} productSlug - the unique string that identifies the product
  * @returns {boolean} true if there is at least one item of the specified product type, false otherwise
  */
 export function hasProduct( cart, productSlug ) {
@@ -388,8 +394,8 @@ export function hasProduct( cart, productSlug ) {
  * Determines whether every product in the specified shopping cart is of the same productSlug.
  * Will return false if the cart is empty.
  *
- * @param {Object} cart - cart as `CartValue` object
- * @param {Object} productSlug - the unique string that identifies the product
+ * @param {object} cart - cart as `CartValue` object
+ * @param {object} productSlug - the unique string that identifies the product
  * @returns {boolean} true if all the products in the cart are of the productSlug type
  */
 export function hasOnlyProductsOf( cart, productSlug ) {
@@ -399,15 +405,22 @@ export function hasOnlyProductsOf( cart, productSlug ) {
 /**
  * Determines whether there is at least one domain registration item in the specified shopping cart.
  *
- * @param {Object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `CartValue` object
  * @returns {boolean} true if there is at least one domain registration item, false otherwise
  */
 export function hasDomainRegistration( cart ) {
 	return some( getAllCartItems( cart ), isDomainRegistration );
 }
 
-export function hasOnlyDomainProductsWithPrivacySupport( cart ) {
+export function hasAllDomainProductsWithPrivacySupport( cart ) {
 	return every(
+		concat( getDomainTransfers( cart ), getDomainRegistrations( cart ) ),
+		privacyAvailable
+	);
+}
+
+export function hasSomeDomainProductsWithPrivacySupport( cart ) {
+	return some(
 		concat( getDomainTransfers( cart ), getDomainRegistrations( cart ) ),
 		privacyAvailable
 	);
@@ -426,7 +439,7 @@ export function hasDomainBeingUsedForPlan( cart ) {
 /**
  * Determines whether there is at least one renewal item in the specified shopping cart.
  *
- * @param {Object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `CartValue` object
  * @returns {boolean} true if there is at least one renewal item, false otherwise
  */
 export function hasRenewalItem( cart ) {
@@ -436,7 +449,7 @@ export function hasRenewalItem( cart ) {
 /**
  * Determines whether there is at least one domain transfer item in the specified shopping cart.
  *
- * @param {Object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `CartValue` object
  * @returns {boolean} true if there is at least one domain transfer item, false otherwise
  */
 export function hasTransferProduct( cart ) {
@@ -446,8 +459,8 @@ export function hasTransferProduct( cart ) {
 /**
  * Retrieves all the domain transfer items in the specified shopping cart.
  *
- * @param {Object} cart - cart as `CartValue` object
- * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
+ * @param {object} cart - cart as `CartValue` object
+ * @returns {object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
 export function getDomainTransfers( cart ) {
 	return filter( getAllCartItems( cart ), { product_slug: domainProductSlugs.TRANSFER_IN } );
@@ -456,7 +469,7 @@ export function getDomainTransfers( cart ) {
 /**
  * Determines whether all items are renewal items in the specified shopping cart.
  *
- * @param {Object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `CartValue` object
  * @returns {boolean} true if there are only renewal items, false otherwise
  */
 export function hasOnlyRenewalItems( cart ) {
@@ -466,7 +479,7 @@ export function hasOnlyRenewalItems( cart ) {
 /**
  * Determines whether there is at least one concierge session item in the specified shopping cart.
  *
- * @param {Object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `CartValue` object
  * @returns {boolean} true if there is at least one concierge session item, false otherwise
  */
 export function hasConciergeSession( cart ) {
@@ -476,8 +489,8 @@ export function hasConciergeSession( cart ) {
 /**
  * Returns a bill period of given cartItem
  *
- * @param {Object} cartItem - cartItem
- * @returns {Number|null} bill period of given cartItem
+ * @param {object} cartItem - cartItem
+ * @returns {number|null} bill period of given cartItem
  */
 export function getCartItemBillPeriod( cartItem ) {
 	let billPeriod = cartItem.bill_period;
@@ -494,7 +507,7 @@ export function getCartItemBillPeriod( cartItem ) {
  * Determines whether any product in the specified shopping cart is a renewable subscription.
  * Will return false if the cart is empty.
  *
- * @param {Object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `CartValue` object
  * @returns {boolean} true if any product in the cart renews
  */
 export function hasRenewableSubscription( cart ) {
@@ -507,9 +520,9 @@ export function hasRenewableSubscription( cart ) {
 /**
  * Creates a new shopping cart item for a plan.
  *
- * @param {Object} productSlug - the unique string that identifies the product
- * @param {Object} properties - list of properties
- * @returns {Object} the new item as `CartItemValue` object
+ * @param {object} productSlug - the unique string that identifies the product
+ * @param {object} properties - list of properties
+ * @returns {object} the new item as `CartItemValue` object
  */
 export function planItem( productSlug, properties ) {
 	// Free plan doesn't have shopping cart.
@@ -530,8 +543,8 @@ export function planItem( productSlug, properties ) {
  * Creates a new shopping cart item for a Personal plan.
  *
  * @param {string} slug - e.g. value_bundle, jetpack_premium
- * @param {Object} properties - list of properties
- * @returns {Object} the new item as `CartItemValue` object
+ * @param {object} properties - list of properties
+ * @returns {object} the new item as `CartItemValue` object
  */
 export function personalPlan( slug, properties ) {
 	return planItem( slug, properties );
@@ -541,8 +554,8 @@ export function personalPlan( slug, properties ) {
  * Creates a new shopping cart item for a Premium plan.
  *
  * @param {string} slug - e.g. value_bundle, jetpack_premium
- * @param {Object} properties - list of properties
- * @returns {Object} the new item as `CartItemValue` object
+ * @param {object} properties - list of properties
+ * @returns {object} the new item as `CartItemValue` object
  */
 export function premiumPlan( slug, properties ) {
 	return planItem( slug, properties );
@@ -552,8 +565,8 @@ export function premiumPlan( slug, properties ) {
  * Creates a new shopping cart item for a Business plan.
  *
  * @param {string} slug - e.g. business-bundle, jetpack_business
- * @param {Object} properties - list of properties
- * @returns {Object} the new item as `CartItemValue` object
+ * @param {object} properties - list of properties
+ * @returns {object} the new item as `CartItemValue` object
  */
 export function businessPlan( slug, properties ) {
 	return planItem( slug, properties );
@@ -561,9 +574,10 @@ export function businessPlan( slug, properties ) {
 
 /**
  * Determines whether a domain Item supports purchasing a privacy subscription
+ *
  * @param {string} productSlug - e.g. domain_reg, dotblog_domain
- * @param {array} productsList - The list of products retrieved using getProductsList from state/products-list/selectors
- * @return {boolean} true if the domainItem supports privacy protection purchase
+ * @param {Array} productsList - The list of products retrieved using getProductsList from state/products-list/selectors
+ * @returns {boolean} true if the domainItem supports privacy protection purchase
  */
 export function supportsPrivacyProtectionPurchase( productSlug, productsList ) {
 	const product = find( productsList, [ 'product_slug', productSlug ] ) || {};
@@ -573,10 +587,10 @@ export function supportsPrivacyProtectionPurchase( productSlug, productsList ) {
 /**
  * Creates a new shopping cart item for a domain.
  *
- * @param {Object} productSlug - the unique string that identifies the product
+ * @param {object} productSlug - the unique string that identifies the product
  * @param {string} domain - domain name
  * @param {string} source - optional source for the domain item, e.g. `getdotblog`.
- * @returns {Object} the new item as `CartItemValue` object
+ * @returns {object} the new item as `CartItemValue` object
  */
 export function domainItem( productSlug, domain, source ) {
 	const extra = source ? { extra: { source: source } } : undefined;
@@ -603,8 +617,8 @@ export function themeItem( themeSlug, source ) {
 /**
  * Creates a new shopping cart item for a domain registration.
  *
- * @param {Object} properties - list of properties
- * @returns {Object} the new item as `CartItemValue` object
+ * @param {object} properties - list of properties
+ * @returns {object} the new item as `CartItemValue` object
  */
 export function domainRegistration( properties ) {
 	return assign( domainItem( properties.productSlug, properties.domain, properties.source ), {
@@ -616,8 +630,8 @@ export function domainRegistration( properties ) {
 /**
  * Creates a new shopping cart item for a domain mapping.
  *
- * @param {Object} properties - list of properties
- * @returns {Object} the new item as `CartItemValue` object
+ * @param {object} properties - list of properties
+ * @returns {object} the new item as `CartItemValue` object
  */
 export function domainMapping( properties ) {
 	return domainItem( 'domain_map', properties.domain, properties.source );
@@ -626,8 +640,8 @@ export function domainMapping( properties ) {
 /**
  * Creates a new shopping cart item for Site Redirect.
  *
- * @param {Object} properties - list of properties
- * @returns {Object} the new item as `CartItemValue` object
+ * @param {object} properties - list of properties
+ * @returns {object} the new item as `CartItemValue` object
  */
 export function siteRedirect( properties ) {
 	return domainItem( 'offsite_redirect', properties.domain, properties.source );
@@ -636,8 +650,8 @@ export function siteRedirect( properties ) {
 /**
  * Creates a new shopping cart item for an incoming domain transfer.
  *
- * @param {Object} properties - list of properties
- * @returns {Object} the new item as `CartItemValue` object
+ * @param {object} properties - list of properties
+ * @returns {object} the new item as `CartItemValue` object
  */
 export function domainTransfer( properties ) {
 	return assign(
@@ -652,22 +666,22 @@ export function domainTransfer( properties ) {
  * Retrieves all the G Suite items in the specified shopping cart.
  * Out-dated name Google Apps is still used here for consistency in naming.
  *
- * @param {Object} cart - cart as `CartValue` object
- * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
+ * @param {object} cart - cart as `CartValue` object
+ * @returns {object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
 export function getGoogleApps( cart ) {
 	return filter( getAllCartItems( cart ), isGoogleApps );
 }
 
 export function googleApps( properties ) {
-	const productSlug = properties.product_slug || 'gapps',
+	const productSlug = properties.product_slug || GSUITE_BASIC_SLUG,
 		item = domainItem( productSlug, properties.meta ? properties.meta : properties.domain );
 
 	return assign( item, { extra: { google_apps_users: properties.users } } );
 }
 
 export function googleAppsExtraLicenses( properties ) {
-	const item = domainItem( 'gapps_extra_license', properties.domain, properties.source );
+	const item = domainItem( GSUITE_EXTRA_LICENSE_SLUG, properties.domain, properties.source );
 
 	return assign( item, { extra: { google_apps_users: properties.users } } );
 }
@@ -680,6 +694,48 @@ export function fillGoogleAppsRegistrationData( cart, registrationData ) {
 			item.extra = assign( item.extra, { google_apps_registration_data: registrationData } );
 			return addCartItem( item );
 		} )
+	);
+}
+
+/**
+ * Returns the domain part of an email address.
+ *
+ * @param {string} emailAddress - a valid email address
+ * @returns {string} the domain
+ */
+const getDomainPartFromEmail = emailAddress =>
+	// Domain is any string after `@` character
+	'string' === typeof emailAddress || 0 < emailAddress.indexOf( '@' )
+		? emailAddress.replace( /.*@([^@>]+)>?$/, '$1' )
+		: null;
+
+/**
+ * Returns a predicate that determines if a domain matches a product meta.
+ *
+ * @param {string} domain domain to compare.
+ * @returns {Function(*=): (boolean)} true if the domain matches.
+ */
+const isSameDomainAsProductMeta = domain => product =>
+	product &&
+	product.meta &&
+	'string' === typeof domain &&
+	'string' === typeof product.meta &&
+	product.meta.trim().toUpperCase() === domain.trim().toUpperCase();
+
+export function needsExplicitAlternateEmailForGSuite( cart, contactDetails ) {
+	return (
+		! emailValidator.validate( contactDetails.email ) ||
+		some(
+			cart.products,
+			isSameDomainAsProductMeta( getDomainPartFromEmail( contactDetails.email ) )
+		)
+	);
+}
+
+export function hasInvalidAlternateEmailDomain( cart, contactDetails ) {
+	return some(
+		cart.products,
+		isSameDomainAsProductMeta( getDomainPartFromEmail( contactDetails.alternateEmail ) )
 	);
 }
 
@@ -735,12 +791,18 @@ export function conciergeSessionItem() {
 	};
 }
 
+export function jetpackProductItem( slug ) {
+	return {
+		product_slug: slug,
+	};
+}
+
 /**
  * Creates a new shopping cart item for the specified plan.
  *
- * @param {Object} plan - plan provided by the `PlansList` object
- * @param {Object} properties - list of properties
- * @returns {Object} the new item as `CartItemValue` object
+ * @param {object} plan - plan provided by the `PlansList` object
+ * @param {object} properties - list of properties
+ * @returns {object} the new item as `CartItemValue` object
  */
 export function getItemForPlan( plan, properties ) {
 	properties = properties || {};
@@ -763,8 +825,8 @@ export function getItemForPlan( plan, properties ) {
 /**
  * Retrieves the first item with free trial in the specified shopping cart.
  *
- * @param {Object} cart - cart as `CartValue` object
- * @returns {Object} the corresponding item in the shopping cart as `CartItemValue` object
+ * @param {object} cart - cart as `CartValue` object
+ * @returns {object} the corresponding item in the shopping cart as `CartItemValue` object
  */
 export function findFreeTrial( cart ) {
 	return find( getAllCartItems( cart ), { free_trial: true } );
@@ -773,8 +835,8 @@ export function findFreeTrial( cart ) {
 /**
  * Retrieves all the domain registration items in the specified shopping cart.
  *
- * @param {Object} cart - cart as `CartValue` object
- * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
+ * @param {object} cart - cart as `CartValue` object
+ * @returns {object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
 export function getDomainRegistrations( cart ) {
 	return filter( getAllCartItems( cart ), { is_domain_registration: true } );
@@ -783,8 +845,8 @@ export function getDomainRegistrations( cart ) {
 /**
  * Retrieves all the domain mapping items in the specified shopping cart.
  *
- * @param {Object} cart - cart as `CartValue` object
- * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
+ * @param {object} cart - cart as `CartValue` object
+ * @returns {object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
 export function getDomainMappings( cart ) {
 	return filter( getAllCartItems( cart ), { product_slug: 'domain_map' } );
@@ -793,9 +855,9 @@ export function getDomainMappings( cart ) {
 /**
  * Returns a renewal CartItem object with the given properties and product slug.
  *
- * @param {String} product - the product object
- * @param {Object} [properties] - properties to be included in the new CartItem object
- * @returns {Object} a CartItem object
+ * @param {string} product - the product object
+ * @param {object} [properties] - properties to be included in the new CartItem object
+ * @returns {object} a CartItem object
  */
 export function getRenewalItemFromProduct( product, properties ) {
 	product = formatProduct( product );
@@ -852,9 +914,9 @@ export function getRenewalItemFromProduct( product, properties ) {
 /**
  * Returns a renewal CartItem object from the given cartItem and properties.
  *
- * @param {Object} cartItem - item as `CartItemValue` object
- * @param {Object} properties - properties to be included in the new CartItem object
- * @returns {Object} a CartItem object
+ * @param {object} cartItem - item as `CartItemValue` object
+ * @param {object} properties - properties to be included in the new CartItem object
+ * @returns {object} a CartItem object
  */
 export function getRenewalItemFromCartItem( cartItem, properties ) {
 	return merge( {}, cartItem, {
@@ -870,8 +932,8 @@ export function getRenewalItemFromCartItem( cartItem, properties ) {
 /**
  * Retrieves all the site redirect items in the specified shopping cart.
  *
- * @param {Object} cart - cart as `CartValue` object
- * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
+ * @param {object} cart - cart as `CartValue` object
+ * @returns {object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
 export function getSiteRedirects( cart ) {
 	return filter( getAllCartItems( cart ), { product_slug: 'offsite_redirect' } );
@@ -885,8 +947,8 @@ export function hasDomainInCart( cart, domain ) {
  * Retrieves the domain registration items in the specified shopping cart that do not have corresponding
  * private whois items.
  *
- * @param {Object} cart - cart as `CartValue` object
- * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
+ * @param {object} cart - cart as `CartValue` object
+ * @returns {object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
 export function getDomainRegistrationsWithoutPrivacy( cart ) {
 	return getDomainRegistrations( cart ).filter( function( cartItem ) {
@@ -901,8 +963,8 @@ export function getDomainRegistrationsWithoutPrivacy( cart ) {
  * Retrieves the domain incoming transfer items in the specified shopping cart that do not have corresponding
  * private incoming transfer item.
  *
- * @param {Object} cart - cart as `CartValue` object
- * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
+ * @param {object} cart - cart as `CartValue` object
+ * @returns {object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
 export function getDomainTransfersWithoutPrivacy( cart ) {
 	return getDomainTransfers( cart ).filter( function( cartItem ) {
@@ -916,10 +978,10 @@ export function getDomainTransfersWithoutPrivacy( cart ) {
 /**
  * Changes presence of a privacy protection for the given domain cart items.
  *
- * @param {Object} cart - cart as `CartValue` object
- * @param {Object[]} domainItems - the list of `CartItemValue` objects for domain registrations
+ * @param {object} cart - cart as `CartValue` object
+ * @param {object[]} domainItems - the list of `CartItemValue` objects for domain registrations
  * @param {Function} changeFunction - the function that adds/removes the privacy protection to a shopping cart
- * @param {Boolean} value - whether privacy is on or off
+ * @param {boolean} value - whether privacy is on or off
  *
  * @returns {Function} the function that adds/removes privacy protections from the shopping cart
  */
@@ -935,10 +997,10 @@ export function changePrivacyForDomains( cart, domainItems, changeFunction, valu
 /**
  * Changes presence of a privacy protection for the given domain cart item.
  *
- * @param {Object} item - the `CartItemValue` object for domain registrations
- * @param {Boolean} value - whether privacy is on or off
+ * @param {object} item - the `CartItemValue` object for domain registrations
+ * @param {boolean} value - whether privacy is on or off
  *
- * @returns {Object} the new `CartItemValue` with added/removed privacy
+ * @returns {object} the new `CartItemValue` with added/removed privacy
  */
 export function updatePrivacyForDomain( item, value ) {
 	return merge( {}, item, {
@@ -972,7 +1034,7 @@ export function removePrivacyFromAllDomains( cart ) {
 /**
  * Determines whether a cart item is a renewal
  *
- * @param {Object} cartItem - `CartItemValue` object
+ * @param {object} cartItem - `CartItemValue` object
  * @returns {boolean} true if item is a renewal
  */
 export function isRenewal( cartItem ) {
@@ -982,7 +1044,7 @@ export function isRenewal( cartItem ) {
 /**
  * Determines whether a cart item supports privacy
  *
- * @param {Object} cartItem - `CartItemValue` object
+ * @param {object} cartItem - `CartItemValue` object
  * @returns {boolean} true if item supports privacy
  */
 export function privacyAvailable( cartItem ) {
@@ -992,7 +1054,7 @@ export function privacyAvailable( cartItem ) {
 /**
  * Get the included domain for a cart item
  *
- * @param {Object} cartItem - `CartItemValue` object
+ * @param {object} cartItem - `CartItemValue` object
  * @returns {string} the included domain
  */
 export function getIncludedDomain( cartItem ) {
@@ -1004,7 +1066,7 @@ export function getIncludedDomain( cartItem ) {
  *
  * @param {object} cart Cart
  * @param {string} domain Domain
- * @return {boolean} See description
+ * @returns {boolean} See description
  */
 export function isNextDomainFree( cart, domain = '' ) {
 	if ( ! cart || ! cart.next_domain_is_free ) {
@@ -1031,7 +1093,7 @@ export function isDomainBundledWithPlan( cart, domain ) {
  *
  * @param {object} cart Cart
  * @param {string} domain Domain
- * @return {boolean} see description
+ * @returns {boolean} see description
  */
 export function isDomainBeingUsedForPlan( cart, domain ) {
 	if ( ! cart || ! domain ) {
@@ -1086,7 +1148,7 @@ export function shouldBundleDomainWithPlan(
  * @param {object} selectedSite Site
  * @param {object} cart Cart
  * @param {string} domain Domain name
- * @return {boolean} See description
+ * @returns {boolean} See description
  */
 export function hasToUpgradeToPayForADomain( selectedSite, cart, domain ) {
 	if ( ! domain || ! getTld( domain ) ) {
@@ -1158,7 +1220,7 @@ export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestio
 /**
  * Determines whether any items in the cart were added more than X time ago (10 minutes)
  *
- * @param {Object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `CartValue` object
  * @returns {boolean} true if there is at least one cart item added more than X time ago, false otherwise
  */
 export function hasStaleItem( cart ) {

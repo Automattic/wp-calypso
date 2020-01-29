@@ -1,18 +1,16 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import TipInfo from 'components/purchase-detail/tip-info';
 
 export default class Feature extends PureComponent {

@@ -1,4 +1,3 @@
-/** @format */
 export default {
 	found: 4,
 	viewers: [

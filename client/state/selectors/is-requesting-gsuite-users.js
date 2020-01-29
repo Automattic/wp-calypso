@@ -1,16 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { get } from 'lodash';
 
 /**
+ * Determines whether the list of G Suite users is being requested.
  *
- * @param  {Object} state  Global state tree
- * @param  {String} siteId the siteId to get domains for
- * @return {Boolean} If the request is in progress
+ * @param {object} state - global state tree
+ * @param {number} siteId - identifier of the site
+ * @returns {?boolean} true if the list of G Suite users is being requested, false otherwise
  */
 export default function isRequestingGSuiteUsers( state, siteId ) {
-	return get( state.gsuiteUsers, [ siteId, 'requesting' ], false );
+	return get( state, [ 'gsuiteUsers', siteId, 'requesting' ], false );
 }

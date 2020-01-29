@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -30,7 +28,6 @@ import {
 	find,
 	reject,
 } from 'lodash';
-import moment from 'moment';
 import url from 'url';
 
 /**
@@ -68,8 +65,8 @@ const normalizeDisplayFlow = flow( [
  * Returns a normalized posts query, excluding any values which match the
  * default post query.
  *
- * @param  {Object} query Posts query
- * @return {Object}       Normalized posts query
+ * @param  {object} query Posts query
+ * @returns {object}       Normalized posts query
  */
 export function getNormalizedPostsQuery( query ) {
 	return omitBy( query, ( value, key ) => DEFAULT_POST_QUERY[ key ] === value );
@@ -78,9 +75,9 @@ export function getNormalizedPostsQuery( query ) {
 /**
  * Returns a serialized posts query
  *
- * @param  {Object} query  Posts query
- * @param  {Number} siteId Optional site ID
- * @return {String}        Serialized posts query
+ * @param  {object} query  Posts query
+ * @param  {number} siteId Optional site ID
+ * @returns {string}        Serialized posts query
  */
 export function getSerializedPostsQuery( query = {}, siteId ) {
 	const normalizedQuery = getNormalizedPostsQuery( query );
@@ -97,8 +94,8 @@ export function getSerializedPostsQuery( query = {}, siteId ) {
  * Returns an object with details related to the specified serialized query.
  * The object will include siteId and/or query object, if can be parsed.
  *
- * @param  {String} serializedQuery Serialized posts query
- * @return {Object}                 Deserialized posts query details
+ * @param  {string} serializedQuery Serialized posts query
+ * @returns {object}                 Deserialized posts query details
  */
 export function getDeserializedPostsQueryDetails( serializedQuery ) {
 	let siteId, query;
@@ -117,9 +114,9 @@ export function getDeserializedPostsQueryDetails( serializedQuery ) {
 /**
  * Returns a serialized posts query, excluding any page parameter
  *
- * @param  {Object} query  Posts query
- * @param  {Number} siteId Optional site ID
- * @return {String}        Serialized posts query
+ * @param  {object} query  Posts query
+ * @param  {number} siteId Optional site ID
+ * @returns {string}        Serialized posts query
  */
 export function getSerializedPostsQueryWithoutPage( query, siteId ) {
 	return getSerializedPostsQuery( omit( query, 'page' ), siteId );
@@ -162,9 +159,9 @@ function applyMetadataEdits( metadata, edits ) {
  * except that arrays are treated as atomic values and overwritten rather than merged.
  * That's important especially for term removals.
  *
- * @param  {Object} post  Destination post for merge
- * @param  {Object} edits Objects with edits
- * @return {Object}       Merged post with applied edits
+ * @param  {object} post  Destination post for merge
+ * @param  {object} edits Objects with edits
+ * @returns {object}       Merged post with applied edits
  */
 export function applyPostEdits( post, edits ) {
 	return mergeWith( cloneDeep( post ), edits, ( objValue, srcValue, key, obj, src, stack ) => {
@@ -195,7 +192,7 @@ function mergeMetadataEdits( edits, nextEdits ) {
  * - metadata edits, which are also arrays, are merged with a special algorithm.
  *
  * @param  {Array<Object>} postEditsLog Edits objects to be merged
- * @return {Object?}                    Merged edits object with changes from all sources
+ * @returns {object?}                    Merged edits object with changes from all sources
  */
 export const mergePostEdits = ( ...postEditsLog ) =>
 	reduce(
@@ -237,8 +234,8 @@ export const mergePostEdits = ( ...postEditsLog ) =>
  * at the end. This helps to keep the edits log as compact as possible.
  *
  * @param {Array<Object>?} postEditsLog Existing edits log to be appended to
- * @param {Object} newPostEdits New edits to be appended to the log
- * @return {Array<Object>} Merged edits log
+ * @param {object} newPostEdits New edits to be appended to the log
+ * @returns {Array<Object>} Merged edits log
  */
 export const appendToPostEditsLog = ( postEditsLog, newPostEdits ) => {
 	if ( isEmpty( postEditsLog ) ) {
@@ -266,8 +263,8 @@ const normalizePostCache = new WeakMap();
  * Returns a normalized post object given its raw form. A normalized post
  * includes common transformations to prepare the post for display.
  *
- * @param  {Object} post Raw post object
- * @return {Object}      Normalized post object
+ * @param  {object} post Raw post object
+ * @returns {object}      Normalized post object
  */
 export function normalizePostForDisplay( post ) {
 	if ( ! post ) {
@@ -287,7 +284,7 @@ export function normalizePostForDisplay( post ) {
  * Given a post object, returns a normalized post object
  *
  * @param  {Ojbect} post Raw edited post object
- * @return {Object}      Normalized post object
+ * @returns {object}      Normalized post object
  */
 export function normalizePostForEditing( post ) {
 	if ( ! post ) {
@@ -301,8 +298,8 @@ export function normalizePostForEditing( post ) {
  * Given a post object, returns a normalized post object prepared for storing
  * in the global state object.
  *
- * @param  {Object} post Raw post object
- * @return {Object}      Normalized post object
+ * @param  {object} post Raw post object
+ * @returns {object}      Normalized post object
  */
 export function normalizePostForState( post ) {
 	const normalizedPost = cloneDeep( post );
@@ -330,8 +327,8 @@ export function normalizePostForState( post ) {
 /**
  * Takes existing term post edits and updates the `terms_by_id` attribute
  *
- * @param  {Object}    post  object of post edits
- * @return {Object}          normalized post edits
+ * @param  {object}    post  object of post edits
+ * @returns {object}          normalized post edits
  */
 export function getTermIdsFromEdits( post ) {
 	if ( ! post || ! post.terms ) {
@@ -374,8 +371,8 @@ export function getTermIdsFromEdits( post ) {
 /**
  * Returns a normalized post terms object for sending to the API
  *
- * @param  {Object} post Raw post object
- * @return {Object}      Normalized post object
+ * @param  {object} post Raw post object
+ * @returns {object}      Normalized post object
  */
 export function normalizeTermsForApi( post ) {
 	if ( ! post || ! post.terms ) {
@@ -393,9 +390,9 @@ export function normalizeTermsForApi( post ) {
 /**
  * Returns truthy if local terms object is the same as the API response
  *
- * @param  {Object}  localTermEdits local state of term edits
- * @param  {Object}  savedTerms     term object returned from API POST
- * @return {Boolean}                are there differences in local edits vs saved terms
+ * @param  {object}  localTermEdits local state of term edits
+ * @param  {object}  savedTerms     term object returned from API POST
+ * @returns {boolean}                are there differences in local edits vs saved terms
  */
 export function isTermsEqual( localTermEdits, savedTerms ) {
 	return every( localTermEdits, ( terms, taxonomy ) => {
@@ -412,9 +409,9 @@ export function isTermsEqual( localTermEdits, savedTerms ) {
  * Returns true if the modified properties in the local edit of the `discussion` object (the edited
  * properties are a subset of the full object) are equal to the values in the saved post.
  *
- * @param  {Object}  localDiscussionEdits local state of discussion edits
- * @param  {Object}  savedDiscussion      discussion property returned from API POST
- * @return {Boolean}                      are there differences in local edits vs saved values?
+ * @param  {object}  localDiscussionEdits local state of discussion edits
+ * @param  {object}  savedDiscussion      discussion property returned from API POST
+ * @returns {boolean}                      are there differences in local edits vs saved values?
  */
 export function isDiscussionEqual( localDiscussionEdits, savedDiscussion ) {
 	return every( localDiscussionEdits, ( value, key ) => get( savedDiscussion, [ key ] ) === value );
@@ -424,9 +421,9 @@ export function isDiscussionEqual( localDiscussionEdits, savedDiscussion ) {
  * Returns true if the locally edited author ID is equal to the saved post author's ID. Other
  * properties of the `author` object are irrelevant.
  *
- * @param  {Object}  localAuthorEdit locally edited author object
- * @param  {Object}  savedAuthor     author property returned from API POST
- * @return {Boolean}                 are the locally edited and saved values equal?
+ * @param  {object}  localAuthorEdit locally edited author object
+ * @param  {object}  savedAuthor     author property returned from API POST
+ * @returns {boolean}                 are the locally edited and saved values equal?
  */
 export function isAuthorEqual( localAuthorEdit, savedAuthor ) {
 	return get( localAuthorEdit, 'ID' ) === get( savedAuthor, 'ID' );
@@ -440,7 +437,7 @@ export function isDateEqual( localDateEdit, savedDate ) {
 		return true;
 	}
 
-	return localDateEdit && moment( localDateEdit ).isSame( savedDate );
+	return localDateEdit && new Date( localDateEdit ).getTime() === new Date( savedDate ).getTime();
 }
 
 export function isStatusEqual( localStatusEdit, savedStatus ) {
@@ -493,8 +490,8 @@ export function areAllMetadataEditsApplied( edits, savedMetadata ) {
 /**
  * Returns a normalized post object for sending to the API
  *
- * @param  {Object} post Raw post object
- * @return {Object}      Normalized post object
+ * @param  {object} post Raw post object
+ * @returns {object}      Normalized post object
  */
 export function normalizePostForApi( post ) {
 	if ( ! post ) {
@@ -593,7 +590,7 @@ export const isBackDatedPublished = function( post, status ) {
 
 	const effectiveStatus = status || post.status;
 
-	return effectiveStatus === 'future' && moment( post.date ).isBefore( moment() );
+	return effectiveStatus === 'future' && new Date( post.date ) < Date.now();
 };
 
 // Return published status of a post. Optionally, the `status` can be overridden
@@ -663,7 +660,7 @@ export const isBackDated = function( post ) {
 		return false;
 	}
 
-	return moment( post.date ).isBefore( moment( post.modified ) );
+	return new Date( post.date ) < new Date( post.modified );
 };
 
 export const isPage = function( post ) {
@@ -734,7 +731,7 @@ export const getPagePath = function( post ) {
  * retrieving a post, the thumbnail ID is assigned in `post_thumbnail`, but
  * in creating a post, the thumbnail ID is assigned to `featured_image`.
  *
- * @param  {Object} post Post object
+ * @param  {object} post Post object
  * @returns {*} featured image id or undefined
  */
 export const getFeaturedImageId = function( post ) {

@@ -5,7 +5,7 @@ ul.module-tabs {
 	@include clear-fix;
 	border-top: 1px solid var( --color-neutral-0 );
 	list-style: none;
-	background: var( --color-white );
+	background: var( --color-surface );
 	margin: 0;
 
 	.module-tab {
@@ -42,7 +42,7 @@ ul.module-tabs {
 		}
 
 		a {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 
 		a,
@@ -51,7 +51,7 @@ ul.module-tabs {
 			@include clear-fix;
 			padding: 5px 0 10px;
 			display: block;
-			background: var( --color-white );
+			background: var( --color-surface );
 
 			@include breakpoint( '<480px' ) {
 				line-height: 24px;
@@ -133,15 +133,15 @@ ul.module-tabs {
 
 		// Selected state
 		.stats-module &.is-selected a {
-			background: var( --color-white );
-			border-top: 1px solid var( --color-white );
+			background: var( --color-surface );
+			border-top: 1px solid var( --color-border-inverted );
 			margin-top: -1px;
 			cursor: default;
 		}
 
 		&.is-selected a,
 		&.is-selected.is-low a {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 
 		&.is-selected a .value,
@@ -163,7 +163,7 @@ ul.module-tabs {
 		}
 
 		.no-link .value {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 
 			&.is-low {
 				color: var( --color-neutral-light );

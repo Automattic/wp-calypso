@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 
 const postId = 143180;
@@ -29,12 +28,9 @@ class SupportArticleDialogExample extends Component {
 	}
 }
 
-const ConnectedExample = connect(
-	null,
-	{
-		openSupportArticleDialog,
-	}
-)( SupportArticleDialogExample );
+const ConnectedExample = connect( null, {
+	openSupportArticleDialog,
+} )( SupportArticleDialogExample );
 
 ConnectedExample.displayName = 'SupportArticleDialog';
 

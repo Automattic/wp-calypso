@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -16,11 +13,12 @@ import { includes } from 'lodash';
  */
 import ErrorPanel from '../stats-error';
 import StatsModuleExpand from './expand';
+import StatsModuleAvailabilityWarning from './availability-warning';
 import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
 import DatePicker from '../stats-date-picker';
 import DownloadCsv from '../stats-download-csv';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import StatsModulePlaceholder from './placeholder';
 import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
@@ -32,7 +30,7 @@ import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'state/stats/lists/selectors';
-import { FEATURE_GOOGLE_ANALYTICS } from 'lib/plans/constants';
+import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from 'lib/plans/constants';
 
 /**
  * Style dependencies
@@ -52,7 +50,6 @@ class StatsModule extends Component {
 		statType: PropTypes.string,
 		showSummaryLink: PropTypes.bool,
 		translate: PropTypes.func,
-		moment: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -64,7 +61,7 @@ class StatsModule extends Component {
 		loaded: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.requesting && this.props.requesting ) {
 			this.setState( { loaded: true } );
 		}
@@ -135,6 +132,7 @@ class StatsModule extends Component {
 			query,
 			period,
 			translate,
+			useShortLabel,
 		} = this.props;
 
 		const noData = data && this.state.loaded && ! data.length;
@@ -179,24 +177,29 @@ class StatsModule extends Component {
 					</SectionHeader>
 				) }
 				<Card compact className={ cardClasses }>
+					{ statType === 'statsFileDownloads' && (
+						<StatsModuleAvailabilityWarning
+							statType={ statType }
+							startOfPeriod={ period && period.startOf }
+						/>
+					) }
 					{ isAllTime && <AllTimeNav path={ path } query={ query } period={ period } /> }
 					{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
 					{ hasError && <ErrorPanel /> }
 					{ this.props.children }
 					<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
 					<StatsModulePlaceholder isLoading={ isLoading } />
-					<StatsList moduleName={ path } data={ data } />
+					<StatsList moduleName={ path } data={ data } useShortLabel={ useShortLabel } />
 					{ this.props.showSummaryLink && displaySummaryLink && (
 						<StatsModuleExpand href={ summaryLink } />
 					) }
 					{ summary && 'countryviews' === path && (
 						<UpgradeNudge
 							title={ translate( 'Add Google Analytics' ) }
-							message={ translate(
-								'Upgrade to a Business Plan for Google Analytics integration.'
-							) }
+							message={ translate( 'Upgrade to a Premium Plan for Google Analytics integration.' ) }
 							event="googleAnalytics-stats-countries"
 							feature={ FEATURE_GOOGLE_ANALYTICS }
+							plan={ PLAN_PREMIUM }
 						/>
 					) }
 				</Card>

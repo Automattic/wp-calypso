@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -14,6 +13,11 @@ import WixLogo from './logos/wix';
 import MediumLogo from './logos/medium';
 import SocialLogo from 'components/social-logo';
 
+/**
+ * Style dependencies
+ */
+import './importer-logo.scss';
+
 const ImporterLogo = ( { icon } ) => {
 	if ( includes( [ 'wordpress', 'blogger-alt', 'squarespace' ], icon ) ) {
 		return <SocialLogo className="importer__service-icon" icon={ icon } size={ 48 } />;
@@ -24,7 +28,7 @@ const ImporterLogo = ( { icon } ) => {
 	}
 
 	if ( 'godaddy-gocentral' === icon ) {
-		return <GoDaddyGoCentralLogo size={ 48 } />;
+		return <GoDaddyGoCentralLogo />;
 	}
 
 	if ( 'medium' === icon ) {

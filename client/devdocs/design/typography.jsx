@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 
@@ -62,7 +60,7 @@ export default class Typography extends React.PureComponent {
 							{ '\n\t' }
 							font-weight: 400;
 							{ '\n\t' }
-							color: var( --color-neutral-700 );
+							color: var( --color-neutral-70 );
 							{ '\n' }
 							&#125;
 						</code>

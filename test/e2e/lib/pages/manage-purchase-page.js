@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,6 @@ import { By as by } from 'selenium-webdriver';
  */
 import * as driverHelper from '../driver-helper.js';
 import AsyncBaseContainer from '../async-base-container';
-import NoticesComponent from '../components/notices-component';
 
 export default class ManagePurchasePage extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -33,7 +30,9 @@ export default class ManagePurchasePage extends AsyncBaseContainer {
 	}
 
 	async chooseRenewNow() {
-		const noticesComponent = await NoticesComponent.Expect( this.driver );
-		return await noticesComponent.isNoticeDisplayed( true );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			by.css( '.manage-purchase button.is-card-link' )
+		);
 	}
 }

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,8 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import MetaTitleEditor from 'components/seo/meta-title-editor';
 import Notice from 'components/notice';
@@ -65,6 +63,11 @@ import { getFirstConflictingPlugin } from 'lib/seo';
  */
 import './style.scss';
 
+/**
+ * Image dependencies
+ */
+import pageTitleImage from 'assets/images/illustrations/seo-page-title.svg';
+
 // Basic matching for HTML tags
 // Not perfect but meets the needs of this component well
 const anyHtmlTag = /<\/?[a-z][a-z0-9]*\b[^>]*>/i;
@@ -106,7 +109,7 @@ export class SeoForm extends React.Component {
 		this.refreshCustomTitles();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { selectedSite: prevSite, isFetchingSite, translate } = this.props;
 		const { selectedSite: nextSite } = nextProps;
 		const { dirtyFields } = this.state;
@@ -307,8 +310,12 @@ export class SeoForm extends React.Component {
 		const generalTabUrl = getGeneralTabUrl( slug );
 
 		const nudgeTitle = siteIsJetpack
-			? translate( 'Enable SEO Tools by upgrading to Jetpack Premium' )
-			: translate( 'Enable SEO Tools by upgrading to the Business plan' );
+			? translate(
+					'Boost your search engine ranking with the powerful SEO tools in Jetpack Premium'
+			  )
+			: translate(
+					'Boost your search engine ranking with the powerful SEO tools in the Business plan'
+			  );
 		return (
 			<div>
 				<QuerySiteSettings siteId={ siteId } />
@@ -375,7 +382,7 @@ export class SeoForm extends React.Component {
 							<Card compact className="seo-settings__page-title-header">
 								<img
 									className="seo-settings__page-title-header-image"
-									src="/calypso/images/seo/page-title.svg"
+									src={ pageTitleImage }
 									alt=""
 								/>
 								<p className="seo-settings__page-title-header-text">

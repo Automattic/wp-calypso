@@ -1,13 +1,11 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { get, filter } from 'lodash';
 
 /**
- * @param {Object} state Global state tree
- * @return {Boolean} true if we are fetching site blocks
+ * @param {object} state Global state tree
+ * @returns {boolean} true if we are fetching site blocks
  */
 export default function isFetchingSiteBlocks( state ) {
 	const inflightPages = get( state, [ 'reader', 'siteBlocks', 'inflightPages' ] );

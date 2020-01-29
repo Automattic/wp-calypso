@@ -1,36 +1,32 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import React, { Fragment } from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
-import Head from '../components/head';
-import getStylesheet from './utils/stylesheet';
+import EnvironmentBadge, { Branch, DevDocsLink, TestHelper } from 'components/environment-badge';
+import Head from 'components/head';
+import { chunkCssLinks } from './utils';
 import WordPressLogo from 'components/wordpress-logo';
-import { jsonStringifyForHtml } from '../../server/sanitize';
+import { jsonStringifyForHtml } from 'server/sanitize';
 
 class Desktop extends React.Component {
 	render() {
 		const {
 			app,
+			entrypoint,
 			faviconURL,
 			i18nLocaleScript,
 			isRTL,
 			lang,
-			urls,
 			hasSecondary,
 			clientData,
 			isFluidWidth,
-			env,
-			isDebug,
 			badge,
 			abTestHelper,
 			branchName,
@@ -39,6 +35,7 @@ class Desktop extends React.Component {
 			devDocsURL,
 			feedbackURL,
 		} = this.props;
+
 		return (
 			<html
 				lang={ lang }
@@ -46,20 +43,7 @@ class Desktop extends React.Component {
 				className={ classNames( 'is-desktop', { 'is-fluid-width': isFluidWidth } ) }
 			>
 				<Head title="WordPress.com" faviconURL={ faviconURL } cdn={ '//s1.wp.com' }>
-					<link
-						rel="stylesheet"
-						id="main-css"
-						href={
-							urls[ getStylesheet( { rtl: !! isRTL, debug: isDebug || env === 'development' } ) ]
-						}
-						type="text/css"
-					/>
-					<link
-						rel="stylesheet"
-						type="text/css"
-						data-webpack={ true }
-						href={ `/calypso/fallback/build.${ isRTL ? 'rtl.css' : 'css' }` }
-					/>
+					{ chunkCssLinks( entrypoint, isRTL ) }
 					<link rel="stylesheet" id="desktop-css" href="/desktop/wordpress-desktop.css" />
 				</Head>
 				<body className={ classNames( { rtl: isRTL } ) }>
@@ -79,30 +63,13 @@ class Desktop extends React.Component {
 						</div>
 					</div>
 					{ badge && (
-						<div className="environment-badge">
-							{ abTestHelper && <div className="environment is-tests" /> }
-							{ branchName && branchName !== 'master' && (
-								<span className="environment branch-name" title={ 'Commit ' + commitChecksum }>
-									{ branchName }
-								</span>
+						<EnvironmentBadge badge={ badge } feedbackURL={ feedbackURL }>
+							{ abTestHelper && <TestHelper /> }
+							{ branchName && (
+								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
 							) }
-							{ devDocs && (
-								<span className="environment is-docs">
-									<a href={ devDocsURL } title="DevDocs">
-										docs
-									</a>
-								</span>
-							) }
-							<span className={ `environment is-${ badge } is-env` }>{ badge }</span>
-							<ExternalLink
-								className="bug-report"
-								href={ feedbackURL }
-								target="_blank"
-								title="Report an issue"
-							>
-								<Gridicon icon="bug" size={ 18 } />
-							</ExternalLink>
-						</div>
+							{ devDocs && <DevDocsLink url={ devDocsURL } /> }
+						</EnvironmentBadge>
 					) }
 
 					{ app && (
@@ -122,7 +89,9 @@ class Desktop extends React.Component {
 						/>
 					) }
 
-					<script src="/calypso/fallback/build.js" />
+					{ entrypoint.js.map( asset => (
+						<script key={ asset } src={ asset } />
+					) ) }
 					<script src="/desktop/desktop-app.js" />
 					{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
 					<script type="text/javascript">startApp();</script>

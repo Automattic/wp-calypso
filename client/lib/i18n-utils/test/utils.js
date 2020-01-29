@@ -1,8 +1,6 @@
-/** @format */
 /**
  * External dependencies
  */
-import { getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,6 +16,7 @@ import {
 	canBeTranslated,
 	getPathParts,
 	filterLanguageRevisions,
+	translationExists,
 } from 'lib/i18n-utils';
 
 jest.mock( 'config', () => key => {
@@ -75,75 +74,18 @@ jest.mock( 'config', () => key => {
 			'zh-tw',
 		];
 	}
-
-	if ( 'languages' === key ) {
-		return [
-			{ value: 420, langSlug: 'ast', name: 'Asturianu', wpLocale: 'ast', territories: [ '039' ] },
-			{
-				value: 1,
-				langSlug: 'en',
-				name: 'English',
-				wpLocale: 'en_US',
-				popular: 1,
-				territories: [ '019' ],
-			},
-			{
-				value: 19,
-				langSlug: 'es',
-				name: 'Español',
-				wpLocale: 'es_ES',
-				popular: 2,
-				territories: [ '019', '039' ],
-			},
-			{
-				value: 24,
-				langSlug: 'fr',
-				name: 'Français',
-				wpLocale: 'fr_FR',
-				popular: 5,
-				territories: [ '155' ],
-			},
-			{
-				value: 36,
-				langSlug: 'ja',
-				name: '日本語',
-				wpLocale: 'ja',
-				popular: 7,
-				territories: [ '030' ],
-			},
-			{
-				value: 438,
-				langSlug: 'pt-br',
-				name: 'Português do Brasil',
-				wpLocale: 'pt_BR',
-				popular: 3,
-				territories: [ '019' ],
-			},
-			{
-				value: 15,
-				langSlug: 'de',
-				name: 'Deutsch',
-				wpLocale: 'de_DE',
-				popular: 4,
-				territories: [ '155' ],
-			},
-			{
-				value: 900,
-				langSlug: 'de_formal',
-				name: 'Deutsch',
-				wpLocale: 'de_DE_formal',
-				parentLangSlug: 'de',
-				popular: 4,
-				territories: [ '155' ],
-			},
-			{ value: 58, langSlug: 'pl', name: 'Polski', wpLocale: 'pl_PL', territories: [ '151' ] },
-		];
-	}
 } );
 
-jest.mock( 'i18n-calypso', () => ( {
-	getLocaleSlug: jest.fn( () => 'en' ),
-} ) );
+// Mock only the getLocaleSlug function from i18n-calypso, and use
+// original references for all the other functions
+function mockFunctions() {
+	const original = jest.requireActual( 'i18n-calypso' ).default;
+	return Object.assign( Object.create( Object.getPrototypeOf( original ) ), original, {
+		getLocaleSlug: jest.fn( () => 'en' ),
+	} );
+}
+jest.mock( 'i18n-calypso', () => mockFunctions() );
+const { getLocaleSlug } = jest.requireMock( 'i18n-calypso' );
 
 describe( 'utils', () => {
 	describe( '#isDefaultLocale', () => {
@@ -574,6 +516,33 @@ describe( 'utils', () => {
 			};
 
 			expect( filterLanguageRevisions( invalid ) ).toEqual( valid );
+		} );
+	} );
+
+	describe( 'translationExists()', function() {
+		it( 'should return true for a simple translation', function() {
+			expect( translationExists( 'test1' ) ).toBe( true );
+		} );
+
+		it( 'should return false for a string without translation', function() {
+			getLocaleSlug.mockImplementationOnce( () => 'fr' );
+			expect(
+				translationExists(
+					'It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness…'
+				)
+			).toBe( false );
+		} );
+
+		it( 'should return true for a simple translation when using default locale', function() {
+			expect( translationExists( 'test1' ) ).toBe( true );
+		} );
+
+		it( 'should return true for a string without translation when using default locale', function() {
+			expect(
+				translationExists(
+					'It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness…'
+				)
+			).toBe( true );
 		} );
 	} );
 } );

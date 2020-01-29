@@ -39,7 +39,7 @@
 	text-align: left;
 	width: 100px;
 	padding: 3px 9px;
-	background-color: var( --color-white );
+	background-color: var( --color-surface );
 	border-radius: 15px;
 	border: 1px solid var( --color-neutral-0 );
 	transition: width 0.25s ease-out;
@@ -57,7 +57,7 @@
 
 // Table Body
 .billing-history__transaction {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 14px;
 	height: 66px;
 	border-bottom: 1px solid var( --color-neutral-0 );
@@ -95,8 +95,9 @@
 }
 
 .billing-history__transactions tbody .billing-history__date {
-	width: 140px;
-	padding: 12px;
+	width: 150px;
+	padding-left: 12px;
+	padding-right: 12px;
 }
 
 .billing-history__transactions tbody .billing-history__trans-app {
@@ -123,6 +124,12 @@
 		display: block;
 		font-size: 12px;
 		font-style: italic;
+
+		@include breakpoint( '660px-800px' ) {
+			max-width: 220px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
 	}
 }
 
@@ -201,7 +208,7 @@ textarea.billing-history__billing-details-editable {
 }
 
 .billing-history__billing-details-editable {
-	border: 1px solid var( --color-neutral-200 );
+	border: 1px solid var( --color-neutral-20 );
 	margin-top: 5px;
 	font-size: 13px;
 }
@@ -218,7 +225,7 @@ textarea.billing-history__billing-details-editable {
 	}
 
 	li {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		font-size: 13px;
 		margin: 0 0 15px;
 		padding: 0;
@@ -228,7 +235,7 @@ textarea.billing-history__billing-details-editable {
 		}
 
 		strong {
-			color: var( --color-neutral-500 );
+			color: var( --color-neutral-50 );
 			display: block;
 			font-size: 12px;
 			font-weight: 600;
@@ -350,6 +357,19 @@ textarea.billing-history__billing-details-editable {
 	margin: 0;
 }
 
+.billing-history__receipts.card .card.is-compact:nth-of-type( 2 ) {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.billing-history__receipts.card .pagination__list-item.pagination__arrow.is-left {
+	padding-left: 8px;
+}
+
+.billing-history__receipts.card .pagination__list-item.pagination__arrow.is-right {
+	padding-right: 8px;
+}
+
 .billing-history__receipt-card.is-placeholder {
 	.billing-history__app-overview {
 		display: flex;
@@ -407,13 +427,17 @@ textarea.billing-history__billing-details-editable {
 		padding: 0;
 		margin: 0;
 	}
-}
 
-.billing-history__date {
-	width: 170px;
+	body {
+		font-family: -apple-system, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, sans-serif;
+	}
 }
 
 .billing-history__transactions-header-select-dropdown {
 	padding: 8px 12px;
 	position: absolute;
+
+	&:nth-child( 2 ) {
+		left: 170px;
+	}
 }

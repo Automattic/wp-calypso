@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,7 +15,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormFieldset from 'components/forms/form-fieldset';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 export class UpgradeATStep extends Component {
 	static propTypes = {
@@ -36,7 +34,7 @@ export class UpgradeATStep extends Component {
 
 	render() {
 		const { translate, selectedSite } = this.props;
-		const href = `/checkout/${ selectedSite.slug }/business`;
+		const href = `/checkout/${ selectedSite.slug }/business?coupon=BIZC25`;
 
 		return (
 			<div>
@@ -69,7 +67,4 @@ const mapStateToProps = state => ( {
 } );
 const mapDispatchToProps = { recordTracksEvent };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( UpgradeATStep ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( UpgradeATStep ) );

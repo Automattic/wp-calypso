@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -8,7 +7,7 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { noop, filter, get, flatMap } from 'lodash';
 import classnames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -47,6 +46,7 @@ class UpdateNotice extends React.PureComponent {
 				{ translate( '%s new post', '%s new posts', {
 					args: [ cappedUnreadCount ],
 					count,
+					comment: '%s is the number of new posts. For example: "1" or "40+"',
 				} ) }
 			</button>
 		);

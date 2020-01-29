@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,8 +12,7 @@ import page from 'page';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
 import { autoConfigCredentials } from 'state/jetpack/credentials/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
@@ -30,7 +28,6 @@ class CredsConfirmStep extends Component {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
-		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 
 		// Connected props
@@ -93,7 +90,6 @@ class CredsConfirmStep extends Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
-				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderStepContent() }
 				goToNextStep={ this.skipStep }
 				hideFormattedHeader={ true }

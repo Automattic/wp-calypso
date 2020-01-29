@@ -1,21 +1,37 @@
+.crowdsignal {
+	// Crowdsignal color palette
+
+	--color-crowdsignal: var( --studio-wordpress-blue-90 );
+
+	--color-primary: var( --studio-wordpress-blue-90 );
+	--color-primary-dark: var( --studio-wordpress-blue-100 );
+	--color-accent: var( --studio-pink-50 );
+	--color-accent-dark: var( --studio-pink-70 );
+
+	--color-border: var( --studio-gray-5 );
+	--color-surface: var( --studio-white );
+
+	--color-text: var( --studio-gray-100 );
+	--color-text-subtle: var( --studio-gray-50 );
+	--color-text-inverted: var( --studio-white );
+	--color-link: inherit;
+}
+
 .masterbar.masterbar__crowdsignal {
-	background-color: #fff;
+	background-color: var( --color-crowdsignal );
 	border: 0;
 	box-sizing: border-box;
-	font-family: 'Muli', $sans;
-	height: 90px;
-	padding: 20px;
+	color: var( --color-text-inverted );
+	height: 64px;
+	padding: 8px 20px;
 	position: absolute;
 		left: 0;
 		right: 0;
 		top: 0;
 
 	@include breakpoint( '>480px' ) {
-		padding: 20px 35px;
-	}
-
-	@include breakpoint( '>660px' ) {
-		padding: 20px 60px;
+		height: 88px;
+		padding: 20px 25px;
 	}
 }
 
@@ -45,7 +61,6 @@
 }
 
 .masterbar__crowdsignal-text {
-	color: #969ca1;
 	display: flex;
 	flex-direction: column;
 	font-size: 10px;
@@ -76,5 +91,5 @@
 }
 
 .masterbar__crowdsignal-wordpress-logo {
-	fill: #3d4145;
+	fill: var( --color-text-inverted );
 }

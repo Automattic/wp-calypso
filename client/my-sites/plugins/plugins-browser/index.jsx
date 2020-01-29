@@ -6,12 +6,13 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { concat, find, flow, get, flatMap, includes } from 'lodash';
 import PropTypes from 'prop-types';
-import page from 'page';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import DocumentHead from 'components/data/document-head';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
@@ -38,16 +39,15 @@ import {
 	isRequestingSites,
 	canJetpackSiteManage,
 } from 'state/sites/selectors';
-import NonSupportedJetpackVersionNotice from 'my-sites/plugins/not-supported-jetpack-version';
+import isVipSite from 'state/selectors/is-vip-site';
 import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
-import HeaderButton from 'components/header-button';
+import { Button } from '@automattic/components';
 import { isBusiness, isEcommerce, isEnterprise, isPremium } from 'lib/products-values';
-import { TYPE_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
+import { TYPE_BUSINESS } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import Banner from 'components/banner';
 import { isEnabled } from 'config';
 import wpcomFeaturesAsPlugins from './wpcom-features-as-plugins';
-import { abtest } from 'lib/abtest';
 import QuerySiteRecommendedPlugins from 'components/data/query-site-recommended-plugins';
 
 /**
@@ -194,10 +194,6 @@ export class PluginsBrowser extends Component {
 					context: 'Category description for the plugin browser.',
 				} );
 			case 'featured':
-				if ( abtest( 'pluginFeaturedTitle' ) === 'recommended' ) {
-					return recommendedText;
-				}
-
 				return translate( 'Featured', {
 					context: 'Category description for the plugin browser.',
 				} );
@@ -416,18 +412,6 @@ export class PluginsBrowser extends Component {
 		this.props.doSearch( term );
 	};
 
-	handleUpgradeNudgeClick = () => {
-		const { siteSlug } = this.props;
-		let href = `/plans/${ siteSlug }?feature=${ FEATURE_UPLOAD_PLUGINS }`;
-		if (
-			isEnabled( 'upsell/nudge-a-palooza' ) &&
-			abtest( 'pluginsUpsellLandingPage' ) === 'test'
-		) {
-			href = '/feature/plugins/' + siteSlug;
-		}
-		page.redirect( href );
-	};
-
 	getSearchBar() {
 		const suggestedSearches = [
 			this.props.translate( 'Engagement', { context: 'Plugins suggested search term' } ),
@@ -466,13 +450,14 @@ export class PluginsBrowser extends Component {
 			return null;
 		}
 
-		const site = this.props.siteSlug ? '/' + this.props.siteSlug : '';
+		const { siteSlug, translate } = this.props;
+		const site = siteSlug ? '/' + siteSlug : '';
+
 		return (
-			<HeaderButton
-				icon="cog"
-				label={ this.props.translate( 'Manage Plugins' ) }
-				href={ '/plugins/manage' + site }
-			/>
+			<Button className="plugins-browser__button" compact href={ '/plugins/manage' + site }>
+				<Gridicon icon="cog" />
+				<span className="plugins-browser__button-text">{ translate( 'Manage Plugins' ) }</span>
+			</Button>
 		);
 	}
 
@@ -490,13 +475,15 @@ export class PluginsBrowser extends Component {
 		const uploadUrl = '/plugins/upload' + ( siteSlug ? '/' + siteSlug : '' );
 
 		return (
-			<HeaderButton
-				icon="cloud-upload"
-				label={ translate( 'Upload Plugin' ) }
-				aria-label={ translate( 'Upload Plugin' ) }
-				href={ uploadUrl }
+			<Button
+				className="plugins-browser__button"
+				compact
 				onClick={ this.handleUploadPluginButtonClick }
-			/>
+				href={ uploadUrl }
+			>
+				<Gridicon icon="cloud-upload" />
+				<span className="plugins-browser__button-text">{ translate( 'Install Plugin' ) }</span>
+			</Button>
 		);
 	}
 
@@ -509,9 +496,11 @@ export class PluginsBrowser extends Component {
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<div className="plugins-browser__main-header">
-				{ navigation }
-				<div className="plugins__header-buttons">
+			<div className="plugins-browser__main">
+				<div className="plugins-browser__main-header">
+					<div className="plugins__header-navigation">{ navigation }</div>
+				</div>
+				<div className="plugins-browser__main-buttons">
 					{ this.renderManageButton() }
 					{ this.renderUploadPluginButton() }
 				</div>
@@ -558,13 +547,15 @@ export class PluginsBrowser extends Component {
 		if (
 			! this.props.selectedSiteId ||
 			! this.props.sitePlan ||
+			this.props.isVipSite ||
 			this.props.isJetpackSite ||
 			this.props.hasBusinessPlan
 		) {
 			return null;
 		}
 
-		const { translate } = this.props;
+		const { translate, siteSlug } = this.props;
+		const bannerURL = `/checkout/${ siteSlug }/business`;
 		const plan = findFirstSimilarPlanKey( this.props.sitePlan.product_slug, {
 			type: TYPE_BUSINESS,
 		} );
@@ -573,8 +564,7 @@ export class PluginsBrowser extends Component {
 		return (
 			<Banner
 				event="calypso_plugins_browser_upgrade_nudge"
-				disableHref={ true }
-				onClick={ this.handleUpgradeNudgeClick }
+				href={ bannerURL }
 				plan={ plan }
 				title={ title }
 			/>
@@ -617,9 +607,13 @@ export class PluginsBrowser extends Component {
 					<QuerySiteRecommendedPlugins siteId={ this.props.selectedSiteId } />
 				) }
 				{ this.renderPageViewTracker() }
-				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
 				<SidebarNavigation />
+				<FormattedHeader
+					className="plugins-browser__page-heading"
+					headerText={ this.props.translate( 'Plugin Browser' ) }
+					align="left"
+				/>
 				{ this.renderUpgradeNudge() }
 				{ this.getPageHeaderView() }
 				{ this.getPluginBrowserContent() }
@@ -649,6 +643,7 @@ export default flow(
 				hasPremiumPlan,
 				hasBusinessPlan,
 				isJetpackSite: isJetpackSite( state, selectedSiteId ),
+				isVipSite: isVipSite( state, selectedSiteId ),
 				hasJetpackSites: hasJetpackSites( state ),
 				jetpackManageError:
 					!! isJetpackSite( state, selectedSiteId ) &&

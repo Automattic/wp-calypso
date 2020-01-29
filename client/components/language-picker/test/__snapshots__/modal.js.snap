@@ -3,6 +3,8 @@
 exports[`LanguagePickerModal should render 1`] = `
 <Dialog
   additionalClassNames="language-picker__modal"
+  autoFocus={true}
+  baseClassName="dialog"
   buttons={
     Array [
       Object {
@@ -17,10 +19,12 @@ exports[`LanguagePickerModal should render 1`] = `
       },
     ]
   }
+  isBackdropVisible={true}
+  isFullScreen={true}
   isVisible={true}
+  label=""
   leaveTimeout={200}
   onClose={[Function]}
-  onClosed={[Function]}
 >
   <SectionNav
     allowDropdown={true}
@@ -94,6 +98,7 @@ exports[`LanguagePickerModal should render 1`] = `
       pinned={true}
       placeholder="Search languages…"
       searching={false}
+      value=""
     />
   </SectionNav>
   <div

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,7 @@ import { get, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import EmbedDialog from '../dialog';
 import { getCurrentUser } from 'state/current-user/selectors';
 

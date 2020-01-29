@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -22,13 +21,13 @@ class QueryJetpackPlugins extends Component {
 		fetchPlugins: PropTypes.func,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( this.props.siteIds && ! this.props.isRequestingForSites ) {
 			this.props.fetchPlugins( this.props.siteIds );
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( isEqual( nextProps.siteIds, this.props.siteIds ) ) {
 			return;
 		}

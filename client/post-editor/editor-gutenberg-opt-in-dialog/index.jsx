@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -17,8 +15,7 @@ import { hideGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actio
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import { localize } from 'i18n-calypso';
-import Button from 'components/button';
-import Dialog from 'components/dialog';
+import { Button, Dialog } from '@automattic/components';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -136,20 +133,17 @@ const mapDispatchToProps = dispatch => ( {
 	hideDialog: () => dispatch( hideGutenbergOptInDialog() ),
 } );
 
-export default connect(
-	state => {
-		const isDialogVisible = isGutenbergOptInDialogShowing( state );
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
-		const postType = getEditedPostValue( state, siteId, postId, 'type' );
+export default connect( state => {
+	const isDialogVisible = isGutenbergOptInDialogShowing( state );
+	const siteId = getSelectedSiteId( state );
+	const postId = getEditorPostId( state );
+	const postType = getEditedPostValue( state, siteId, postId, 'type' );
 
-		const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
+	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
 
-		return {
-			gutenbergUrl,
-			isDialogVisible,
-			siteId,
-		};
-	},
-	mapDispatchToProps
-)( localize( EditorGutenbergOptInDialog ) );
+	return {
+		gutenbergUrl,
+		isDialogVisible,
+		siteId,
+	};
+}, mapDispatchToProps )( localize( EditorGutenbergOptInDialog ) );

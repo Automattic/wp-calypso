@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import Notice from 'components/notice';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 class ImporterError extends React.PureComponent {
 	static displayName = 'ImporterError';
@@ -36,7 +34,7 @@ class ImporterError extends React.PureComponent {
 
 	getImportError = () => {
 		return this.props.translate(
-			'%(errorDescription)s{{br/}}{{a}}Try again{{/a}} or {{cs}}contact support{{/cs}}.',
+			'%(errorDescription)s{{br/}}{{a}}Try again{{/a}} or {{cs}}get help{{/cs}}.',
 			{
 				args: {
 					errorDescription: this.props.description,
@@ -51,11 +49,13 @@ class ImporterError extends React.PureComponent {
 	};
 
 	getUploadError = () => {
-		const defaultError = this.props.translate( 'Unexpected error during the upload' );
+		const defaultError = this.props.translate(
+			'Oops! We ran into an unexpected error while uploading your file.'
+		);
 		const { description = '' } = this.props;
 
 		return this.props.translate(
-			'%(errorDescription)s{{br/}}Try another file or {{cs}}contact support{{/cs}}.',
+			'%(errorDescription)s{{br/}}Make sure you are using a valid WordPress export file in XML or ZIP format. {{cs}}Still need help{{/cs}}?',
 			{
 				args: {
 					errorDescription: description.length ? description : defaultError,

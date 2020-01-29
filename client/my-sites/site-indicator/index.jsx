@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,22 +6,20 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import config from 'config';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import Animate from 'components/animate';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import ExternalLink from 'components/external-link';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
 import { getUpdatesBySiteId, isJetpackSite } from 'state/sites/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import getSiteConnectionStatus from 'state/selectors/get-site-connection-status';
-import isRequestingSiteConnectionStatus from 'state/selectors/is-requesting-site-connection-status';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
 /**
@@ -41,7 +37,6 @@ class SiteIndicator extends Component {
 		siteIsJetpack: PropTypes.bool,
 		siteUpdates: PropTypes.object,
 		siteIsConnected: PropTypes.bool,
-		requestingConnectionStatus: PropTypes.bool,
 		recordGoogleEvent: PropTypes.func,
 		recordTracksEvent: PropTypes.func,
 	};
@@ -57,20 +52,6 @@ class SiteIndicator extends Component {
 		return this.props.siteIsConnected === false;
 	}
 
-	hasWarning() {
-		const { requestingConnectionStatus, site, siteIsConnected, siteIsJetpack } = this.props;
-
-		if ( siteIsJetpack && ! site.hasMinimumJetpackVersion ) {
-			if ( requestingConnectionStatus ) {
-				return false;
-			}
-
-			return siteIsConnected;
-		}
-
-		return false;
-	}
-
 	showIndicator() {
 		const { siteIsAutomatedTransfer, siteIsJetpack, userCanManage } = this.props;
 
@@ -79,7 +60,7 @@ class SiteIndicator extends Component {
 			userCanManage &&
 			siteIsJetpack &&
 			! siteIsAutomatedTransfer &&
-			( this.hasUpdate() || this.hasError() || this.hasWarning() )
+			( this.hasUpdate() || this.hasError() )
 		);
 	}
 
@@ -218,31 +199,6 @@ class SiteIndicator extends Component {
 		);
 	};
 
-	handleJetpackUpdate = () => {
-		this.props.recordGoogleEvent( 'Site-Indicator', 'Clicked Update Jetpack Now Link' );
-	};
-
-	unsupportedJetpackVersion() {
-		const { translate } = this.props;
-		return (
-			<span>
-				{ translate( 'Jetpack %(version)s is required. {{link}}Update now{{/link}}', {
-					args: {
-						version: config( 'jetpack_min_version' ),
-					},
-					components: {
-						link: (
-							<WPAdminLink
-								onClick={ this.handleJetpackUpdate }
-								href={ this.props.site.options.admin_url + 'plugins.php?plugin_status=upgrade' }
-							/>
-						),
-					},
-				} ) }
-			</span>
-		);
-	}
-
 	errorAccessing() {
 		const { site, translate } = this.props;
 		let accessFailedMessage;
@@ -271,10 +227,6 @@ class SiteIndicator extends Component {
 	}
 
 	getText() {
-		if ( this.hasWarning() ) {
-			return this.unsupportedJetpackVersion();
-		}
-
 		if ( this.hasUpdate() ) {
 			return this.updatesAvailable();
 		}
@@ -287,10 +239,6 @@ class SiteIndicator extends Component {
 	}
 
 	getIcon() {
-		if ( this.hasWarning() ) {
-			return 'notice';
-		}
-
 		if ( this.hasUpdate() ) {
 			return 'sync';
 		}
@@ -304,7 +252,6 @@ class SiteIndicator extends Component {
 		const indicatorClass = classNames( {
 			'is-expanded': this.state.expand,
 			'is-update': this.hasUpdate(),
-			'is-warning': this.hasWarning(),
 			'is-error': this.hasError(),
 			'is-action': true,
 			'site-indicator__main': true,
@@ -353,7 +300,6 @@ class SiteIndicator extends Component {
 export default connect(
 	( state, { site } ) => {
 		return {
-			requestingConnectionStatus: site && isRequestingSiteConnectionStatus( state, site.ID ),
 			siteIsConnected: site && getSiteConnectionStatus( state, site.ID ),
 			siteIsJetpack: site && isJetpackSite( state, site.ID ),
 			siteIsAutomatedTransfer: site && isSiteAutomatedTransfer( state, site.ID ),

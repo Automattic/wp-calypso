@@ -49,7 +49,7 @@
 		padding: 0 24px 0 32px;
 		margin: 16px 0 32px;
 		border-left: 3px solid var( --color-neutral-0 );
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 		font-weight: normal;
 		background: transparent;
 	}
@@ -80,7 +80,8 @@
 		}
 	}
 
-	audio, video {
+	audio,
+	video {
 		display: block;
 		width: 100%;
 		margin: 24px auto;
@@ -180,7 +181,7 @@
 		margin: 0;
 		font-size: 13px;
 		text-align: center;
-		color: var( --color-neutral-400 );
+		color: var( --color-neutral-40 );
 	}
 
 	// placeholder for videopress videos
@@ -231,11 +232,17 @@
 		margin-bottom: 1em;
 	}
 
-	ul.wp-block-gallery {
-		list-style-type: none;
+	.wp-block-gallery {
 		margin-left: 0;
 		margin-bottom: 1em;
 	}
+
+	.blocks-gallery-caption {
+		margin: auto;
+	}
+
+	// Import Gutenberg gallery styles
+	@import 'gutenberg-gallery.scss';
 
 	.wp-block-embed .embed-vimeo {
 		padding-top: 0;
@@ -244,6 +251,11 @@
 
 	.wp-block-cover-image {
 		display: none;
+	}
+
+	// iCloud embeds - force a min height because they're a bit slender by default
+	.wp-block-embed__wrapper iframe[src*='icloud.com'] {
+		min-height: 300px;
 	}
 }
 
@@ -256,17 +268,10 @@
 
 		&:first-child::first-letter {
 			float: left;
-			margin: 18px 12px 0 0;
+			margin: 10px 12px 0 0;
 			font-size: 66px;
 			font-weight: 400;
-			line-height: 0.5;
-		}
-
-		// Firefox-only position fix
-		@-moz-document url-prefix('') {
-			&:first-child::first-letter {
-				margin-top: 9px;
-			}
+			line-height: 0.7;
 		}
 	}
 

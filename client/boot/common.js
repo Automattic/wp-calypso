@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,9 +6,10 @@ import debugFactory from 'debug';
 import page from 'page';
 import { parse } from 'qs';
 import url from 'url';
-import { get, startsWith } from 'lodash';
+import { startsWith } from 'lodash';
 import React from 'react';
 import ReactDom from 'react-dom';
+import Modal from 'react-modal';
 import store from 'store';
 
 /**
@@ -19,9 +18,9 @@ import store from 'store';
 import config from 'config';
 import { ReduxWrappedLayout } from 'controller';
 import notices from 'notices';
-import authController from 'auth/controller';
+import { getToken } from 'lib/oauth-token';
 import emailVerification from 'components/email-verification';
-import { getSavedVariations } from 'lib/abtest'; // used by error logger
+import { abtest, getSavedVariations } from 'lib/abtest'; // used by error logger
 import accessibleFocus from 'lib/accessible-focus';
 import Logger from 'lib/catch-js-errors';
 import { bindState as bindWpLocaleState } from 'lib/wp/localization';
@@ -33,7 +32,7 @@ import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
 import { init as pushNotificationsInit } from 'state/push-notifications/actions';
 import { setSupportSessionReduxStore } from 'lib/user/support-user-interop';
 import analytics from 'lib/analytics';
-import superProps from 'lib/analytics/super-props';
+import getSuperProps from 'lib/analytics/super-props';
 import { getSiteFragment, normalize } from 'lib/route';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
 import { setCurrentUser } from 'state/current-user/actions';
@@ -43,20 +42,10 @@ import { getHappychatAuth } from 'state/happychat/utils';
 import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
 import { setRoute as setRouteAction } from 'state/ui/actions';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
-import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import setupGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
-import { loadUserUndeployedTranslations } from 'lib/i18n-utils/switch-locale';
 
 const debug = debugFactory( 'calypso' );
-
-const switchUserLocale = ( currentUser, reduxStore ) => {
-	const { localeSlug, localeVariant } = currentUser.get();
-
-	if ( localeSlug ) {
-		reduxStore.dispatch( setLocale( localeSlug, localeVariant ) );
-	}
-};
 
 const setupContextMiddleware = reduxStore => {
 	page( '*', ( context, next ) => {
@@ -129,10 +118,50 @@ const loggedOutMiddleware = currentUser => {
 	}
 };
 
+const loggedInMiddleware = currentUser => {
+	if ( ! currentUser.get() ) {
+		return;
+	}
+
+	page( '/', context => {
+		const { primarySiteSlug } = currentUser.get();
+		let redirectPath =
+			primarySiteSlug && 'variant' === abtest( 'redirectToCustomerHome' )
+				? `/home/${ primarySiteSlug }`
+				: '/read';
+
+		if ( context.querystring ) {
+			redirectPath += `?${ context.querystring }`;
+		}
+
+		page.redirect( redirectPath );
+	} );
+};
+
 const oauthTokenMiddleware = () => {
 	if ( config.isEnabled( 'oauth' ) ) {
+		const loggedOutRoutes = [
+			'/oauth-login',
+			'/oauth',
+			'/start',
+			'/authorize',
+			'/api/oauth/token',
+		];
+
 		// Forces OAuth users to the /login page if no token is present
-		page( '*', authController.checkToken );
+		page( '*', function( context, next ) {
+			const isValidSection = loggedOutRoutes.some( route => startsWith( context.path, route ) );
+
+			// Check we have an OAuth token, otherwise redirect to auth/login page
+			if ( getToken() === false && ! isValidSection ) {
+				const isDesktop = [ 'desktop', 'desktop-development' ].includes( config( 'env_id' ) );
+				const redirectPath = isDesktop ? config( 'login_url' ) : '/authorize';
+				page( redirectPath );
+				return;
+			}
+
+			next();
+		} );
 	}
 };
 
@@ -154,35 +183,8 @@ const unsavedFormsMiddleware = () => {
 	page.exit( '*', checkFormHandler );
 };
 
-export const locales = ( currentUser, reduxStore ) => {
-	debug( 'Executing Calypso locales.' );
-
-	if ( window.i18nLocaleStrings ) {
-		const i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
-		reduxStore.dispatch( setLocaleRawData( i18nLocaleStringsObject ) );
-		const languageSlug = get( i18nLocaleStringsObject, [ '', 'localeSlug' ] );
-		if ( languageSlug ) {
-			debug( 'Checking for load-user-translations parameter' );
-			loadUserUndeployedTranslations( languageSlug );
-		}
-	}
-
-	// Use current user's locale if it was not bootstrapped (non-ssr pages)
-	if (
-		! window.i18nLocaleStrings &&
-		! config.isEnabled( 'wpcom-user-bootstrap' ) &&
-		currentUser.get()
-	) {
-		switchUserLocale( currentUser, reduxStore );
-	}
-};
-
 export const utils = () => {
 	debug( 'Executing Calypso utils.' );
-
-	if ( process.env.NODE_ENV === 'development' ) {
-		require( './dev-modules' ).default();
-	}
 
 	// Infer touch screen by checking if device supports touch events
 	// See touch-detect/README.md
@@ -194,6 +196,9 @@ export const utils = () => {
 
 	// Add accessible-focus listener
 	accessibleFocus();
+
+	// Configure app element that React Modal will aria-hide when modal is open
+	Modal.setAppElement( document.getElementById( 'wpcom' ) );
 };
 
 export const configureReduxStore = ( currentUser, reduxStore ) => {
@@ -232,21 +237,15 @@ export const setupMiddlewares = ( currentUser, reduxStore ) => {
 	installPerfmonPageHandlers();
 	setupContextMiddleware( reduxStore );
 	oauthTokenMiddleware();
-	loadSectionsMiddleware();
 	loggedOutMiddleware( currentUser );
+	loggedInMiddleware( currentUser );
+	loadSectionsMiddleware();
 	setRouteMiddleware();
 	clearNoticesMiddleware();
 	unsavedFormsMiddleware();
 
-	analytics.setDispatch( reduxStore.dispatch );
-
-	if ( currentUser.get() ) {
-		// When logged in the analytics module requires user and superProps objects
-		// Inject these here
-		analytics.initialize( currentUser, superProps );
-	} else {
-		analytics.setSuperProps( superProps );
-	}
+	// The analytics module requires user (when logged in) and superProps objects. Inject these here.
+	analytics.initialize( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
 
 	// Render Layout only for non-isomorphic sections.
 	// Isomorphic sections will take care of rendering their Layout last themselves.

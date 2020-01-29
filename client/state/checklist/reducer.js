@@ -1,12 +1,7 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer } from 'state/utils';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'state/utils';
 import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
@@ -17,10 +12,9 @@ import { items as itemSchemas } from './schema';
 
 const setChecklistTaskCompletion = ( state, taskId, completed ) => ( {
 	...state,
-	tasks: {
-		...state.tasks,
-		[ taskId ]: { ...get( state.tasks, [ taskId ] ), completed },
-	},
+	tasks: state.tasks.map( task =>
+		task.id === taskId ? { ...task, isCompleted: completed } : task
+	),
 } );
 
 const moduleTaskMap = {
@@ -33,7 +27,7 @@ const moduleTaskMap = {
 	videopress: 'jetpack_video_hosting',
 };
 
-function items( state = {}, action ) {
+const items = withSchemaValidation( itemSchemas, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_CHECKLIST_RECEIVE:
 			return action.checklist;
@@ -57,8 +51,7 @@ function items( state = {}, action ) {
 			break;
 	}
 	return state;
-}
-items.schema = itemSchemas;
+} );
 
 const reducer = combineReducers( {
 	items,

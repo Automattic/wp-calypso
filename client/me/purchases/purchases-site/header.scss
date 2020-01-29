@@ -7,7 +7,7 @@
 		.site-icon,
 		.site__title,
 		.site__domain {
-			@include placeholder( 23% );
+			@include placeholder( --color-neutral-10 );
 		}
 	}
 
