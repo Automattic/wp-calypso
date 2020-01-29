@@ -1,11 +1,11 @@
 /**
- * Module dependencies.
+ * External dependencies
  */
 import requestHandler from 'wpcom-xhr-request';
 import debugModule from 'debug';
 
 /**
- * Local module dependencies.
+ * Internal dependencies
  */
 import Batch from './lib/batch';
 import Domain from './lib/domain';
@@ -166,19 +166,18 @@ WPCOM.prototype.freshlyPressed = function( query, fn ) {
 	return this.req.get( '/freshly-pressed', query, fn );
 };
 
-/**
- * Expose send-request
- *
- * @TODO: use `this.req` instead of this method
- */
+// Expose send-request
+// TODO: use `this.req` instead of this method
 WPCOM.prototype.sendRequest = function( params, query, body, fn ) {
-	var msg = 'WARN! Don use `sendRequest() anymore. Use `this.req` method.';
+	const msg = 'WARN! Don use `sendRequest() anymore. Use `this.req` method.';
 
+	/* eslint-disable no-console */
 	if ( console && console.warn ) {
 		console.warn( msg );
 	} else {
 		console.log( msg );
 	}
+	/* eslint-enable no-console */
 
 	return sendRequest.call( this, params, query, body, fn );
 };
@@ -209,15 +208,15 @@ if ( ! Promise.prototype.timeout ) {
 	 * @returns {Promise} promise
 	 */
 	Promise.prototype.timeout = function( delay = DEFAULT_ASYNC_TIMEOUT ) {
-		let cancelTimeout, timer, timeout;
+		let timer;
 
-		timeout = new Promise( ( resolve, reject ) => {
+		const timeout = new Promise( ( resolve, reject ) => {
 			timer = setTimeout( () => {
 				reject( new Error( 'Action timed out while waiting for response.' ) );
 			}, delay );
 		} );
 
-		cancelTimeout = () => {
+		const cancelTimeout = () => {
 			clearTimeout( timer );
 			return this;
 		};
