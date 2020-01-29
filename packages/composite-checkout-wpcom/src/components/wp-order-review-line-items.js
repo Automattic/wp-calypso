@@ -35,7 +35,14 @@ const OrderReviewSectionArea = styled.div`
 	margin-bottom: 16px;
 `;
 
-function WPLineItem( { item, className, hasDeleteButton, removeItem } ) {
+function WPLineItem( {
+	item,
+	className,
+	hasDeleteButton,
+	removeItem,
+	getItemVariants,
+	onChangePlanLength,
+} ) {
 	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
 	const { formStatus } = useFormStatus();
@@ -92,6 +99,8 @@ WPLineItem.propTypes = {
 			displayValue: PropTypes.string,
 		} ),
 	} ),
+	getItemVariants: PropTypes.func,
+    onChangePlanLength: PropTypes.func,
 };
 
 const LineItemUI = styled( WPLineItem )`
@@ -191,7 +200,14 @@ export function WPOrderReviewTotal( { total, className } ) {
 	);
 }
 
-export function WPOrderReviewLineItems( { items, className, isSummaryVisible, removeItem } ) {
+export function WPOrderReviewLineItems( {
+	items,
+	className,
+	isSummaryVisible,
+	removeItem,
+	getItemVariants,
+	onChangePlanLength,
+} ) {
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ items.map( item => (
@@ -201,6 +217,8 @@ export function WPOrderReviewLineItems( { items, className, isSummaryVisible, re
 						item={ item }
 						hasDeleteButton={ canItemBeDeleted( item ) }
 						removeItem={ removeItem }
+						getItemVariants={ getItemVariants }
+						onChangePlanLength={ onChangePlanLength }
 					/>
 				</WPOrderReviewListItems>
 			) ) }
@@ -220,6 +238,8 @@ WPOrderReviewLineItems.propTypes = {
 			} ),
 		} )
 	),
+	getItemVariants: PropTypes.func,
+	onChangePlanLength: PropTypes.func,
 };
 
 const WPOrderReviewList = styled.ul`
