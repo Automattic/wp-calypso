@@ -1,8 +1,8 @@
 module.exports = {
 	mode: 'production',
-	entry: __dirname + '/build/index.js',
+	entry: __dirname + '/dist/esm/index.js',
 	output: {
-		path: __dirname + '/build',
+		path: __dirname + '/dist',
 		filename: 'wpcom.js',
 		libraryTarget: 'var',
 		library: 'WPCOM',
