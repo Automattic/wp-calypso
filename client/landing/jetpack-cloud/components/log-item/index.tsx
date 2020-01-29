@@ -20,17 +20,12 @@ interface Props {
 }
 
 class LogItem extends React.PureComponent< Props > {
-	static defaultProps = {
-		highlight: 'info',
-		tag: 'new',
-	};
-
 	renderHeader() {
 		const { header, subheader, tag } = this.props;
 
 		return (
 			<div className="log-item__header-wrapper">
-				<span className="log-item__tag">{ tag }</span>
+				{ tag && <span className="log-item__tag">{ tag }</span> }
 				<CardHeading tagName="h2" size={ 18 }>
 					{ header }
 				</CardHeading>
