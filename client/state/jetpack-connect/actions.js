@@ -184,8 +184,6 @@ export function retryAuth( url, attemptNumber, fromParam, redirectAfterAuth ) {
 			} )
 		);
 		debug( 'retryAuth', url );
-		// If redirectAfterAuth use that as the destination url, otherwise default to url arg
-		const destinationUrl = redirectAfterAuth || url + REMOTE_PATH_AUTH;
 		externalRedirect(
 			addQueryArgs(
 				{
@@ -193,8 +191,9 @@ export function retryAuth( url, attemptNumber, fromParam, redirectAfterAuth ) {
 					calypso_env: calypsoEnv,
 					auth_type: 'jetpack',
 					from: fromParam,
+					redirect_after_auth: redirectAfterAuth,
 				},
-				destinationUrl
+				url + REMOTE_PATH_AUTH
 			)
 		);
 	};
