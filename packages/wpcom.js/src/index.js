@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import requestHandler from 'wpcom-xhr-request';
 import debugModule from 'debug';
 
 /**
@@ -55,21 +54,11 @@ export default function WPCOM( token, reqHandler ) {
 
 	// Set default request handler
 	if ( ! reqHandler ) {
-		debug( 'No request handler. Adding default XHR request handler' );
-
-		this.request = function( params, fn ) {
-			params = params || {};
-
-			// token is optional
-			if ( token ) {
-				params.authToken = token;
-			}
-
-			return requestHandler( params, fn );
-		};
-	} else {
-		this.request = reqHandler;
+		debug( 'No request handler. Failing.' );
+		throw new Error( 'No request handler provided' );
 	}
+
+	this.request = reqHandler;
 
 	// Add Req instance
 	this.req = new Request( this );

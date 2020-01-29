@@ -21,7 +21,8 @@ npm install --save wpcom
 
 ```js
 // Edit a post on a site
-var wpcom = require( 'wpcom' )( '<your-token>' );
+var reqHandler = require( 'wpcom-xhr-request' );
+var wpcom = require( 'wpcom' )( '<your-token>', reqHandler );
 
 wpcom
 	.site( 'your-blog.wordpress.com' )
@@ -30,19 +31,28 @@ wpcom
 		.catch( error => { ... } );
 ```
 
-### Browser
+### Client-side code (with a build process)
 
-Include `dist/wpcom.js`.
+Introduce the `wpcom` dependency into your `package.json` ...
 
-```html
-<script src="wpcom.js"></script>
-<script>
-	var wpcom = WPCOM( '<your-token>' );
-	var blog = wpcom.site( 'your-blog.wordpress.com' );
-	blog.postsList( { number: 8 } )
+```cli
+npm install --save wpcom
+```
+
+... and then initialize it with your API token ([optional](#authentication)).
+
+```js
+// Edit a post on a site
+import wpcomXhrRequest from 'wpcom-xhr-request';
+import wpcomFactory from 'wpcom';
+
+const wpcom = wpcomFactory( '<your-token>', reqHandler );
+
+wpcom
+	.site( 'your-blog.wordpress.com' )
+	.postsList( { number: 8 } )
 		.then( list => { ... } )
 		.catch( error => { ... } );
-</script>
 ```
 
 ### Authentication
@@ -75,8 +85,11 @@ If you do need a token, here are some links that will help you generate one:
 
 ```js
 // Edit a post on a site
-var wpcom = require( 'wpcom' )( '<your-token>' );
-var blog = wpcom.site( 'your-blog.wordpress.com' );
+import wpcomXhrRequest from 'wpcom-xhr-request';
+import wpcomFactory from 'wpcom';
+
+const wpcom = wpcomFactory( '<your-token>', reqHandler );
+const blog = wpcom.site( 'your-blog.wordpress.com' );
 blog.post( { slug: 'a-post-slug' } ).update( data )
 	.then( res => { ... } )
 	.catch( err => { ... } );
@@ -86,8 +99,11 @@ You can omit the API token for operations that don't require permissions:
 
 ```js
 // List the last 8 posts on a site
-var wpcom = require( 'wpcom' )();
-var blog = wpcom.site( 'your-blog.wordpress.com' );
+import wpcomXhrRequest from 'wpcom-xhr-request';
+import wpcomFactory from 'wpcom';
+
+const wpcom = wpcomFactory( undefined, reqHandler );
+const blog = wpcom.site( 'your-blog.wordpress.com' );
 blog.postsList( { number: 8 } )
 	.then( list => { ... } )
 	.catch( error => { ... } );
