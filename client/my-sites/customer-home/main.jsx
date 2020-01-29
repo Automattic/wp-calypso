@@ -509,7 +509,7 @@ class Home extends Component {
 						</Card>
 					) }
 					{ ! siteIsUnlaunched && <StatsCard /> }
-					{ ! siteIsUnlaunched && (
+					{ ! siteIsUnlaunched && isChecklistComplete && (
 						<Card>
 							<CardHeading>{ translate( 'My Site' ) }</CardHeading>
 							<h6 className="customer-home__card-subheader">
@@ -545,7 +545,7 @@ class Home extends Component {
 							</div>
 						</Card>
 					) }
-					{ ! siteIsUnlaunched && (
+					{ ! siteIsUnlaunched && isChecklistComplete && (
 						<Card className="customer-home__grow-earn">
 							<CardHeading>{ translate( 'Grow & Earn' ) }</CardHeading>
 							<h6 className="customer-home__card-subheader">
