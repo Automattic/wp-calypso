@@ -651,6 +651,14 @@ module.exports = function() {
 	app.use( setupLoggedInContext );
 	app.use( handleLocaleSubdomains );
 
+	// Temporarily redirect cloud.jetpack.com to jetpack.com in the production enviroment
+	app.use( function( req, res, next ) {
+		if ( 'jetpack-cloud-production' === calypsoEnv ) {
+			res.redirect( 'https://jetpack.com/' );
+		}
+		next();
+	} );
+
 	if ( jetpackCloudEnvs.includes( calypsoEnv ) ) {
 		JETPACK_CLOUD_SECTION_DEFINITION.paths.forEach( sectionPath =>
 			handleSectionPath( JETPACK_CLOUD_SECTION_DEFINITION, sectionPath, 'entry-jetpack-cloud' )
