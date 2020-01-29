@@ -10,6 +10,7 @@ import { parse as parseURL } from 'url';
  */
 
 // Libraries
+import config from 'config';
 import wpcom from 'lib/wp';
 /* eslint-enable no-restricted-imports */
 import userFactory from 'lib/user';
@@ -173,11 +174,14 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 				title: siteTitle,
 			},
 			site_creation_flow: flowToCheck,
-			wpcom_coming_soon: getNewSiteComingSoonSetting( state ),
 		},
 		public: getNewSitePublicSetting( state ),
 		validate: false,
 	};
+
+	if ( config.isEnabled( 'coming-soon' ) ) {
+		newSiteParams.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
+	}
 
 	const shouldSkipDomainStep = ! siteUrl && isDomainStepSkippable( flowToCheck );
 	const shouldHideFreePlan = get( signupDependencies, 'shouldHideFreePlan', false );
@@ -513,9 +517,13 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 		blog_name: site,
 		blog_title: '',
 		public: getNewSitePublicSetting( state ),
-		options: { theme: themeSlugWithRepo, wpcom_coming_soon: getNewSiteComingSoonSetting( state ) },
+		options: { theme: themeSlugWithRepo },
 		validate: false,
 	};
+
+	if ( config.isEnabled( 'coming-soon' ) ) {
+		data.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
+	}
 
 	wpcom.undocumented().sitesNew( data, function( errors, response ) {
 		let providedDependencies, siteSlug;
