@@ -17,6 +17,7 @@ import { useTranslate } from 'i18n-calypso';
 import joinClasses from './join-classes';
 import Button from './button';
 import { useHasDomainsInCart } from '../hooks/has-domains';
+import { ItemVariationPicker } from './item-variation-picker';
 
 export function WPOrderReviewSection( { children, className } ) {
 	return (
@@ -81,7 +82,13 @@ function WPLineItem( {
 				</React.Fragment>
 			) }
 
-			{ item.type === 'plan' && <PlanTermOptions /> }
+			{ item.wpcom_meta && (
+				<ItemVariationPicker
+					selectedItem={ item }
+					getItemVariants={ getItemVariants }
+					onChangeItemVariant={ onChangePlanLength }
+				/>
+			) }
 		</div>
 	);
 }
@@ -99,7 +106,7 @@ WPLineItem.propTypes = {
 		} ),
 	} ),
 	getItemVariants: PropTypes.func,
-    onChangePlanLength: PropTypes.func,
+	onChangePlanLength: PropTypes.func,
 };
 
 const LineItemUI = styled( WPLineItem )`
