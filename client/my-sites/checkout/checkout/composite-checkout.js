@@ -218,6 +218,7 @@ export default function CompositeCheckout( {
 		updateLocation,
 		couponStatus,
 		changePlanLength,
+		changeItemVariant,
 		errors,
 		subtotal,
 		isLoading,
@@ -471,7 +472,7 @@ export default function CompositeCheckout( {
 					updateLocation={ updateLocation }
 					submitCoupon={ submitCoupon }
 					couponStatus={ couponStatus }
-					changePlanLength={ changePlanLength }
+					changePlanLength={ changeItemVariant }
 					siteId={ siteId }
 					siteUrl={ siteSlug }
 					CountrySelectMenu={ CountrySelectMenu }

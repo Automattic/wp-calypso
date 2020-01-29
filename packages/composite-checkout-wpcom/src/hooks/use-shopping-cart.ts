@@ -401,10 +401,23 @@ export function useShoppingCart(
 		hookDispatch( { type: 'REMOVE_CART_ITEM', uuidToRemove } );
 	}, [] );
 
-	const changePlanLength = ( planItem, planLength ) => {
-		// TODO: change plan length
-		debug( 'changing plan length in cart', planItem, planLength );
-	};
+	const changeItemVariant: ( WPCOMCartItem, WPCOMProductSlug, number ) => void = useCallback(
+		( itemToChange, newProductSlug, newProductId ) => {
+			debug( 'changing item variant in cart to', newProductSlug, itemToChange );
+			setResponseCart( currentResponseCart => ( {
+				...currentResponseCart,
+				products: currentResponseCart.products.map( ( item, index ) => {
+					if ( index.toString() === itemToChange.wpcom_meta.uuid ) {
+						item.product_slug = newProductSlug;
+						item.product_id = newProductId;
+					}
+					return item;
+				} ),
+			} ) );
+			setCacheStatus( 'invalid' );
+		},
+		[]
+	);
 
 	const updateLocation: ( CartLocation ) => void = useCallback( location => {
 		debug( 'updating location for cart to', location );
@@ -427,8 +440,8 @@ export function useShoppingCart(
 		allowedPaymentMethods: cart.allowedPaymentMethods,
 		addItem,
 		removeItem,
-		changePlanLength,
 		updateLocation,
+		changeItemVariant,
 		submitCoupon,
 		couponStatus,
 		couponCode: cart.couponCode,
