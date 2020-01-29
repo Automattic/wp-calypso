@@ -10,7 +10,7 @@ import {
 	keyBy,
 	mapValues,
 	memoize,
-	partition,
+	filter,
 	reject,
 	sortBy,
 } from 'lodash';
@@ -223,26 +223,17 @@ class PageTemplateModal extends Component {
 	}
 
 	getTemplateGroups = () => {
-		const [ homepageTemplates, defaultTemplates ] = partition( this.props.templates, {
-			category: 'home',
-		} );
-
-		const currentThemeTemplate =
-			find( this.props.templates, { slug: this.props.theme } ) ||
-			find( this.props.templates, { slug: DEFAULT_HOMEPAGE_TEMPLATE } );
-
-		if ( ! this.props.isFrontPage || ! currentThemeTemplate ) {
-			return { homepageTemplates: sortBy( homepageTemplates, 'title' ), defaultTemplates };
-		}
-
-		const otherHomepageTemplates = reject( homepageTemplates, { slug: currentThemeTemplate.slug } );
-
-		const sortedHomepageTemplates = [
-			currentThemeTemplate,
-			...sortBy( otherHomepageTemplates, 'title' ),
-		];
-
-		return { homepageTemplates: sortedHomepageTemplates, defaultTemplates };
+		return {
+			blankTemplate: filter( this.props.templates, { slug: 'blank' } ),
+			aboutTemplates: filter( this.props.templates, { category: 'about' } ),
+			blogTemplates: filter( this.props.templates, { category: 'blog' } ),
+			contactTemplates: filter( this.props.templates, { category: 'contact' } ),
+			menuTemplates: filter( this.props.templates, { category: 'menu' } ),
+			portfolioTemplates: filter( this.props.templates, { category: 'portfolio' } ),
+			servicesTemplates: filter( this.props.templates, { category: 'services' } ),
+			teamTemplates: filter( this.props.templates, { category: 'team' } ),
+			homepageTemplates: sortBy( filter( this.props.templates, { category: 'home' } ), 'title' ),
+		};
 	};
 
 	renderTemplatesList = ( templatesList, legendLabel ) => (
@@ -268,7 +259,17 @@ class PageTemplateModal extends Component {
 			return null;
 		}
 
-		const { homepageTemplates, defaultTemplates } = this.getTemplateGroups();
+		const {
+			blankTemplate,
+			aboutTemplates,
+			blogTemplates,
+			contactTemplates,
+			menuTemplates,
+			portfolioTemplates,
+			servicesTemplates,
+			teamTemplates,
+			homepageTemplates,
+		} = this.getTemplateGroups();
 
 		return (
 			<Modal
@@ -305,28 +306,53 @@ class PageTemplateModal extends Component {
 					) : (
 						<>
 							<form className="page-template-modal__form">
-								{ this.props.isFrontPage ? (
-									<>
-										{ this.renderTemplatesList(
-											homepageTemplates,
-											__( 'Recommended Layouts', 'full-site-editing' )
-										) }
-										{ this.renderTemplatesList(
-											defaultTemplates,
-											__( 'Other Page Layouts', 'full-site-editing' )
-										) }
-									</>
-								) : (
-									<>
-										{ this.renderTemplatesList(
-											defaultTemplates,
-											__( 'Recommended Layouts', 'full-site-editing' )
-										) }
-										{ this.renderTemplatesList(
-											homepageTemplates,
-											__( 'Homepage Layouts', 'full-site-editing' )
-										) }
-									</>
+								{ this.props.isFrontPage &&
+									this.renderTemplatesList(
+										homepageTemplates,
+										__( 'Home Pages', 'full-site-editing' )
+									) }
+
+								{ this.renderTemplatesList( blankTemplate, __( 'Blank', 'full-site-editing' ) ) }
+
+								{ this.renderTemplatesList(
+									aboutTemplates,
+									__( 'About Pages', 'full-site-editing' )
+								) }
+
+								{ this.renderTemplatesList(
+									blogTemplates,
+									__( 'Blog Pages', 'full-site-editing' )
+								) }
+
+								{ this.renderTemplatesList(
+									contactTemplates,
+									__( 'Contact Pages', 'full-site-editing' )
+								) }
+
+								{ ! this.props.isFrontPage &&
+									this.renderTemplatesList(
+										homepageTemplates,
+										__( 'Home Pages', 'full-site-editing' )
+									) }
+
+								{ this.renderTemplatesList(
+									menuTemplates,
+									__( 'Menu Pages', 'full-site-editing' )
+								) }
+
+								{ this.renderTemplatesList(
+									portfolioTemplates,
+									__( 'Portfolio Pages', 'full-site-editing' )
+								) }
+
+								{ this.renderTemplatesList(
+									servicesTemplates,
+									__( 'Services Pages', 'full-site-editing' )
+								) }
+
+								{ this.renderTemplatesList(
+									teamTemplates,
+									__( 'Team Pages', 'full-site-editing' )
 								) }
 							</form>
 							<TemplateSelectorPreview
