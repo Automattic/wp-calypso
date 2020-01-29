@@ -19,6 +19,7 @@ import EnvironmentBadge, {
 } from 'components/environment-badge';
 import { chunkCssLinks } from './utils';
 import WordPressLogo from 'components/wordpress-logo';
+import JetpackLogo from 'components/jetpack-logo';
 import { jsonStringifyForHtml } from 'server/sanitize';
 
 class Document extends React.Component {
@@ -58,6 +59,7 @@ class Document extends React.Component {
 			isWCComConnect,
 			addEvergreenCheck,
 			requestFrom,
+			isJetpackCloud,
 		} = this.props;
 
 		const inlineScript =
@@ -66,6 +68,7 @@ class Document extends React.Component {
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
 			( isSupportSession ? 'var isSupportSession = true;\n' : '' ) +
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
+			( isJetpackCloud ? `var isJetpackCloud = true; \n` : `var isJetpackCloud = false; \n` ) +
 			( initialReduxState
 				? `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };\n`
 				: '' ) +
@@ -107,6 +110,7 @@ class Document extends React.Component {
 				<body
 					className={ classNames( {
 						rtl: isRTL,
+						[ 'is-jetpack-cloud' ]: isJetpackCloud,
 						'color-scheme': config.isEnabled( 'me/account/color-scheme-picker' ),
 						[ 'is-group-' + sectionGroup ]: sectionGroup,
 						[ 'is-section-' + sectionName ]: sectionName,
@@ -133,7 +137,8 @@ class Document extends React.Component {
 							>
 								<div className="masterbar" />
 								<div className="layout__content">
-									<WordPressLogo size={ 72 } className="wpcom-site__logo" />
+									{ isJetpackCloud && <JetpackLogo size={ 72 } className="wpcom-site__logo" /> }
+									{ ! isJetpackCloud && <WordPressLogo size={ 72 } className="wpcom-site__logo" /> }
 									{ hasSecondary && (
 										<Fragment>
 											<div className="layout__secondary" />

@@ -313,6 +313,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		bodyClasses,
 		addEvergreenCheck: target === 'evergreen' && calypsoEnv !== 'development',
 		target: target || 'fallback',
+		isJetpackCloud: !! request.isJetpackCloud,
 	} );
 
 	context.app = {
@@ -641,10 +642,24 @@ const jetpackCloudEnvs = [
 	'jetpack-cloud-production',
 ];
 
-module.exports = function() {
+function isJetpackCloud( hostname ) {
+	if ( jetpackCloudEnvs.includes( calypsoEnv ) ) {
+		return true;
+	}
+	// This makes it possible to access the jetpack.cloud.localhost
+	// without having to restart the app.
+	return 'jetpack.cloud.localhost' === hostname;
+}
+
+module.exports = function( req, response, next ) {
 	const app = express();
 
 	app.set( 'views', __dirname );
+
+	app.use( function( req, res, next ) {
+		req.isJetpackCloud = isJetpackCloud( req.hostname );
+		next();
+	} );
 
 	app.use( logSectionResponse );
 	app.use( cookieParser() );
@@ -772,12 +787,34 @@ module.exports = function() {
 		res.send( pageHtml );
 	} );
 
+	function getEntrypoint( entrypoint, request ) {
+		if ( request.isJetpackCloud ) {
+			return 'entry-jetpack-cloud';
+		}
+		return entrypoint;
+	}
+
 	function handleSectionPath( section, sectionPath, entrypoint ) {
 		const pathRegex = pathToRegExp( sectionPath );
 
 		app.get( pathRegex, function( req, res, next ) {
+			// Do not allow calypso only sections into the jetpack cloud
+			if (
+				req.isJetpackCloud &&
+				( ( section.app && ! section.app.includes( 'jetpack' ) ) || ! section.app )
+			) {
+				render404( req, res );
+				next();
+			}
+			// Do not allow non jetpack cloud sections into calypso
+			if ( ! req.isJetpackCloud && section.app && ! section.app.includes( 'calypso' ) ) {
+				render404( req, res );
+				next();
+			}
+
+			const appEntrypoint = getEntrypoint( entrypoint, req );
 			req.context = {
-				...getDefaultContext( req, entrypoint ),
+				...getDefaultContext( req, appEntrypoint ),
 				sectionName: section.name,
 			};
 
@@ -824,7 +861,7 @@ module.exports = function() {
 
 	handleSectionPath( GUTENBOARDING_SECTION_DEFINITION, '/gutenboarding', 'entry-gutenboarding' );
 
-	handleSectionPath( JETPACK_CLOUD_SECTION_DEFINITION, '/jetpack-cloud', 'entry-jetpack-cloud' );
+	// handleSectionPath( JETPACK_CLOUD_SECTION_DEFINITION, '/jetpack-cloud', 'entry-jetpack-cloud' );
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post(

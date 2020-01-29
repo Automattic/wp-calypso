@@ -16,6 +16,9 @@ export default function() {
 				<li>
 					<a href="/scan">Scan</a>
 				</li>
+				<li>
+					<a href="/plugins">Plugins</a>
+				</li>
 			</ul>
 		</div>
 	);

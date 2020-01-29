@@ -109,6 +109,7 @@ const sections = [
 		module: 'my-sites/plugins',
 		secondary: true,
 		group: 'sites',
+		app: [ 'jetpack', 'calypso' ],
 	},
 	{
 		name: 'pages',
@@ -463,6 +464,14 @@ const sections = [
 		module: 'my-sites/hosting',
 		secondary: true,
 		group: 'sites',
+	},
+	{
+		name: 'scan',
+		paths: [ '/scan' ],
+		module: 'landing/jetpack-cloud/sections/scan',
+		secondary: true,
+		group: 'jetpack',
+		app: [ 'jetpack' ],
 	},
 ];
 

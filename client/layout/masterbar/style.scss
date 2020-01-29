@@ -25,6 +25,10 @@ $autobar-height: 20px;
 	}
 }
 
+.is-jetpack-cloud.masterbar {
+	background: #333;
+}
+
 .pride .masterbar {
 	background: linear-gradient(
 		to bottom,
@@ -403,7 +407,7 @@ $autobar-height: 20px;
 
 	&:hover {
 		background-color: var( --color-neutral-0 );
-		
+
 		.count {
 			border-color: var( --color-primary );
 			color: var( --color-primary );
