@@ -25,6 +25,7 @@ window.AppBoot = () => {
 	} else {
 		setupWpDataDebug();
 
+		// Add accessible-focus listener.
 		accessibleFocus();
 
 		ReactDom.render(
