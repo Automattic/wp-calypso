@@ -6,8 +6,8 @@ import React, { ReactNode } from 'react';
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
 import CardHeading from 'components/card-heading';
+import FoldableCard from 'components/foldable-card';
 
 import './style.scss';
 
