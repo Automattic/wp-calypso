@@ -21,6 +21,10 @@ const STORE_NAME = 'calypso_store';
 
 const SANITY_TEST_KEY = 'browser-storage-sanity-test';
 
+function isAffectedSafari() {
+	return true;
+}
+
 const getDB = once( () => {
 	const request = window.indexedDB.open( DB_NAME, DB_VERSION );
 	return new Promise< IDBDatabase >( ( resolve, reject ) => {
@@ -125,10 +129,22 @@ function idbGetAll( pattern?: RegExp ): Promise< StoredItems > {
 	);
 }
 
+let idbWriteCount = 0;
+let idbWriteBlock: Promise< void > | null = null;
 function idbSet< T >( key: string, value: T ): Promise< void > {
 	return new Promise( ( resolve, reject ) => {
 		getDB()
-			.then( db => {
+			.then( async db => {
+				// if there's a write lock, wait on it
+				if ( idbWriteBlock ) {
+					await idbWriteBlock;
+				}
+				// if we're on safari 13, we need to clear out the object store every
+				// so many writes to make sure we don't chew up the transaction log
+				if ( isAffectedSafari() && ++idbWriteCount % 20 === 0 ) {
+					await idbSafariReset();
+				}
+
 				const transaction = db.transaction( STORE_NAME, 'readwrite' );
 				transaction.objectStore( STORE_NAME ).put( value, key );
 
@@ -158,6 +174,41 @@ function idbClear(): Promise< void > {
 				transaction.onerror = error;
 			} )
 			.catch( err => reject( err ) );
+	} );
+}
+
+async function idbSafariReset() {
+	if ( idbWriteBlock ) {
+		return idbWriteBlock;
+	}
+	idbWriteBlock = _idbSafariReset();
+	idbWriteBlock.finally( () => {
+		idbWriteBlock = null;
+	} );
+	return idbWriteBlock;
+}
+
+async function _idbSafariReset(): Promise< void > {
+	const items = await idbGetAll();
+	await idbClear();
+
+	return new Promise( ( resolve, reject ) => {
+		getDB().then(
+			db => {
+				const transaction = db.transaction( STORE_NAME, 'readwrite' );
+				// eslint-disable-next-line prefer-const
+				for ( let [ key, value ] of Object.entries( items ) ) {
+					transaction.objectStore( STORE_NAME ).put( value, key );
+				}
+				const success = () => resolve();
+				const error = () => reject( transaction.error );
+
+				transaction.oncomplete = success;
+				transaction.onabort = error;
+				transaction.onerror = error;
+			},
+			err => reject( err )
+		);
 	} );
 }
 
