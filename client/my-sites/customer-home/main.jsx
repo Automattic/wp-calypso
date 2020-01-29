@@ -326,6 +326,129 @@ class Home extends Component {
 		);
 	}
 
+	renderSiteTools() {
+		const {
+			displayChecklist,
+			translate,
+			customizeUrl,
+			menusUrl,
+			siteSlug,
+			trackAction,
+			isStaticHomePage,
+			showCustomizer,
+			hasCustomDomain,
+		} = this.props;
+
+		const siteTools = (
+			<div className="customer-home__boxes">
+				<ActionBox
+					onClick={ () => {
+						trackAction( 'my_site', 'add_page' );
+						page( `/page/${ siteSlug }` );
+					} }
+					label={ translate( 'Add a page' ) }
+					iconSrc={ pageIcon }
+				/>
+				{ isStaticHomePage ? (
+					<ActionBox
+						onClick={ () => {
+							trackAction( 'my_site', 'write_post' );
+							page( `/post/${ siteSlug }` );
+						} }
+						label={ translate( 'Write blog post' ) }
+						iconSrc={ postIcon }
+					/>
+				) : (
+					<ActionBox
+						onClick={ () => {
+							trackAction( 'my_site', 'manage_comments' );
+							page( `/comments/${ siteSlug }` );
+						} }
+						label={ translate( 'Manage comments' ) }
+						iconSrc={ commentIcon }
+					/>
+				) }
+				{ showCustomizer && (
+					<ActionBox
+						href={ customizeUrl }
+						onClick={ () => trackAction( 'my_site', 'customize_theme' ) }
+						label={ translate( 'Customize theme' ) }
+						iconSrc={ customizeIcon }
+					/>
+				) }
+				<ActionBox
+					onClick={ () => {
+						trackAction( 'my_site', 'change_theme' );
+						page( `/themes/${ siteSlug }` );
+					} }
+					label={ translate( 'Change theme' ) }
+					iconSrc={ themeIcon }
+				/>
+				{ showCustomizer && (
+					<ActionBox
+						href={ menusUrl }
+						onClick={ () => trackAction( 'my_site', 'edit_menus' ) }
+						label={ translate( 'Edit menus' ) }
+						iconSrc={ menuIcon }
+					/>
+				) }
+				<ActionBox
+					href={ `/media/${ siteSlug }` }
+					onClick={ () => trackAction( 'my_site', 'change_images' ) }
+					label={ translate( 'Change images' ) }
+					iconSrc={ imagesIcon }
+				/>
+				<ActionBox
+					href="https://wp.me/logo-maker"
+					onClick={ () => trackAction( 'my_site', 'design_logo' ) }
+					target="_blank"
+					label={ translate( 'Design a logo' ) }
+					iconSrc={ logoIcon }
+				/>
+				{ hasCustomDomain ? (
+					<ActionBox
+						onClick={ () => {
+							trackAction( 'my_site', 'add_email' );
+							page( `/email/${ siteSlug }` );
+						} }
+						label={ translate( 'Add email' ) }
+						iconSrc={ gSuiteIcon }
+					/>
+				) : (
+					<ActionBox
+						onClick={ () => {
+							trackAction( 'my_site', 'add_domain' );
+							page( `/domains/add/${ siteSlug }` );
+						} }
+						label={ translate( 'Add a domain' ) }
+						iconSrc={ customDomainIcon }
+					/>
+				) }
+			</div>
+		);
+		if ( displayChecklist ) {
+			return null;
+		}
+		return (
+			<>
+				{ ! isMobile() ? (
+					<Card className="customer-home__card-boxes">
+						<CardHeading>{ translate( 'Site Tools' ) }</CardHeading>
+						{ siteTools }
+					</Card>
+				) : (
+					<FoldableCard
+						className="customer-home__card-boxes card-heading-21"
+						header={ translate( 'Site Tools' ) }
+						expanded
+					>
+						{ siteTools }
+					</FoldableCard>
+				) }
+			</>
+		);
+	}
+
 	renderCustomerHome = () => {
 		const {
 			displayChecklist,
@@ -333,17 +456,13 @@ class Home extends Component {
 			isChecklistComplete,
 			needsEmailVerification,
 			translate,
-			customizeUrl,
 			checklistMode,
-			menusUrl,
 			site,
 			siteSlug,
 			trackAction,
 			expandToolsAndTrack,
 			isStaticHomePage,
 			staticHomePageId,
-			showCustomizer,
-			hasCustomDomain,
 			hasChecklistData,
 			siteIsUnlaunched,
 		} = this.props;
@@ -362,107 +481,15 @@ class Home extends Component {
 					{ // "Go Mobile" has the highest priority placement when viewed in smaller viewports, so folks
 					// can see it on their phone without needing to scroll.
 					isMobile() && <GoMobileCard /> }
-					{ displayChecklist ? (
+					{ displayChecklist && (
 						<>
 							<Card className="customer-home__card-checklist-heading">
 								<CardHeading>{ translate( 'Site Setup List' ) }</CardHeading>
 							</Card>
 							<WpcomChecklist displayMode={ checklistMode } />
 						</>
-					) : (
-						<FoldableCard
-							className="customer-home__card-boxes card-heading-21"
-							header={ translate( 'Site Tools' ) }
-							expanded={ ! isMobile() }
-							actionButton={ isMobile() ? null : ' ' }
-						>
-							<div className="customer-home__boxes">
-								<ActionBox
-									onClick={ () => {
-										trackAction( 'my_site', 'add_page' );
-										page( `/page/${ siteSlug }` );
-									} }
-									label={ translate( 'Add a page' ) }
-									iconSrc={ pageIcon }
-								/>
-								{ isStaticHomePage ? (
-									<ActionBox
-										onClick={ () => {
-											trackAction( 'my_site', 'write_post' );
-											page( `/post/${ siteSlug }` );
-										} }
-										label={ translate( 'Write blog post' ) }
-										iconSrc={ postIcon }
-									/>
-								) : (
-									<ActionBox
-										onClick={ () => {
-											trackAction( 'my_site', 'manage_comments' );
-											page( `/comments/${ siteSlug }` );
-										} }
-										label={ translate( 'Manage comments' ) }
-										iconSrc={ commentIcon }
-									/>
-								) }
-								{ showCustomizer && (
-									<ActionBox
-										href={ customizeUrl }
-										onClick={ () => trackAction( 'my_site', 'customize_theme' ) }
-										label={ translate( 'Customize theme' ) }
-										iconSrc={ customizeIcon }
-									/>
-								) }
-								<ActionBox
-									onClick={ () => {
-										trackAction( 'my_site', 'change_theme' );
-										page( `/themes/${ siteSlug }` );
-									} }
-									label={ translate( 'Change theme' ) }
-									iconSrc={ themeIcon }
-								/>
-								{ showCustomizer && (
-									<ActionBox
-										href={ menusUrl }
-										onClick={ () => trackAction( 'my_site', 'edit_menus' ) }
-										label={ translate( 'Edit menus' ) }
-										iconSrc={ menuIcon }
-									/>
-								) }
-								<ActionBox
-									href={ `/media/${ siteSlug }` }
-									onClick={ () => trackAction( 'my_site', 'change_images' ) }
-									label={ translate( 'Change images' ) }
-									iconSrc={ imagesIcon }
-								/>
-								<ActionBox
-									href="https://wp.me/logo-maker"
-									onClick={ () => trackAction( 'my_site', 'design_logo' ) }
-									target="_blank"
-									label={ translate( 'Design a logo' ) }
-									iconSrc={ logoIcon }
-								/>
-								{ hasCustomDomain ? (
-									<ActionBox
-										onClick={ () => {
-											trackAction( 'my_site', 'add_email' );
-											page( `/email/${ siteSlug }` );
-										} }
-										label={ translate( 'Add email' ) }
-										iconSrc={ gSuiteIcon }
-									/>
-								) : (
-									<ActionBox
-										onClick={ () => {
-											trackAction( 'my_site', 'add_domain' );
-											page( `/domains/add/${ siteSlug }` );
-										} }
-										label={ translate( 'Add a domain' ) }
-										iconSrc={ customDomainIcon }
-									/>
-								) }
-							</div>
-						</FoldableCard>
 					) }
+					{ this.renderSiteTools() }
 				</div>
 				<div className="customer-home__layout-col customer-home__layout-col-right">
 					{ siteIsUnlaunched && ! needsEmailVerification && (
