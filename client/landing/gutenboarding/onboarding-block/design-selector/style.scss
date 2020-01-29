@@ -105,9 +105,35 @@ $design-selector-selection-space: 285px;
 	&.is-selected,
 	&:hover,
 	&:focus {
-		padding: 0;
-		border: 3px solid $blue-medium-focus;
+		// padding: 0;
+		// box-sizing: border-box;
+		// border: 3px solid $blue-medium-focus;
 
+		// Offset absolute-positioned card content when border state occurs
+		// .page-layout-selector__card-media {
+		// 	width: calc( 100% + 2px ); /* This number is the border width * 2, minus the width of the thin static state border */
+		// 	top: -1px; /* This is half of the above number. */
+		// }
+
+		// .page-layout-selector__card-footer {
+		// 	bottom: -1px;
+		// 	width: calc( 100% + 2px );
+		// }
+
+		// box-shadow: 0 0 0 1px $white, 0 0 0 3px $blue-medium-500;
+		// Windows High Contrast mode will show this outline, but not the box-shadow.
+		// outline: 2px solid transparent;
+	}
+
+	&:focus {
+		box-shadow: 0 0 0 1px $white, 0 0 0 3px $blue-medium-500;
+		// Windows High Contrast mode will show this outline, but not the box-shadow.
+		outline: 2px solid transparent;
+	}
+
+	&:hover {
+		border: 3px solid var( --color-neutral-dark );
+		padding: 0;
 		// Offset absolute-positioned card content when border state occurs
 		.page-layout-selector__card-media {
 			width: calc( 100% + 4px ); /* This number is the border width * 2, minus the width of the thin static state border */
@@ -117,19 +143,6 @@ $design-selector-selection-space: 285px;
 		.page-layout-selector__card-footer {
 			bottom: -2px;
 			width: calc( 100% + 4px );
-		}
-	}
-
-	&:hover,
-	&:focus {
-		border-color: var( --color-neutral-dark );
-		.page-layout-selector__selected-indicator {
-			background: linear-gradient(
-				to bottom left,
-				var( --color-neutral-dark ),
-				var( --color-neutral-dark ) 50%,
-				transparent 51% /* 1% difference helps prevent a rough edge */
-			);
 		}
 	}
 }
