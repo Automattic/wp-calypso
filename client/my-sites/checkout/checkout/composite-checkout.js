@@ -40,6 +40,7 @@ import getCountries from 'state/selectors/get-countries';
 import { fetchPaymentCountries } from 'state/countries/actions';
 import { StateSelect } from 'my-sites/domains/components/form';
 import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
+import { getThankYouPageUrl } from './composite-checkout-thank-you';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -78,8 +79,7 @@ export default function CompositeCheckout( {
 
 	const onPaymentComplete = useCallback( () => {
 		debug( 'payment completed successfully' );
-		// TODO: determine which thank-you page to visit
-		page.redirect( `/checkout/thank-you/${ siteId || '' }/` );
+		page.redirect( getThankYouPageUrl( { siteId } ) );
 	}, [ siteId ] );
 
 	const showErrorMessage = useCallback(
