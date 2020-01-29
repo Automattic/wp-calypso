@@ -238,20 +238,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	left: 0;
 }
 
-// Blank template
-@media screen and ( max-width: ( $breakpoint-mobile - 1px ) ) {
-	.template-selector-control__template:first-child {
-		.template-selector-item__preview-wrap {
-			padding-top: 0%;
-			height: $template-selector-blank-template-mobile-height;
-		}
-		.template-selector-item__template-title {
-			height: $template-selector-blank-template-mobile-height;
-			line-height: $template-selector-blank-template-mobile-height;
-		}
-	}
-}
-
 .page-template-modal__form {
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		max-width: 20%;
