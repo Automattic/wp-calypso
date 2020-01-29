@@ -7,11 +7,11 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import React, { FunctionComponent, useEffect } from 'react';
 import { useDebounce } from 'use-debounce';
 import classnames from 'classnames';
+import { DomainSuggestions } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
  */
-import { DomainSuggestions } from '@automattic/data-stores';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { USER_STORE } from '../../stores/user';
 import './style.scss';
@@ -75,11 +75,12 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		</span>
 	);
 
+	const siteUrl = currentDomain?.domain_name || siteTitle || currentUser?.username;
 	const siteCreationData = {
 		siteTitle,
-		siteUrl: currentDomain?.domain_name || siteTitle || currentUser?.username,
-		theme: selectedDesign?.slug,
 		siteVertical,
+		...( siteUrl && { siteUrl } ),
+		...( selectedDesign?.slug && { theme: selectedDesign?.slug } ),
 	};
 
 	return (

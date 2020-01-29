@@ -18,9 +18,9 @@ import wpcom from '../../lib/wp';
 import { urlToSlug } from '../../lib/url';
 
 interface CreateSite {
-	siteTitle: string | undefined;
-	siteUrl: DomainName | undefined;
-	theme: string | undefined;
+	siteTitle?: string;
+	siteUrl?: DomainName;
+	theme?: string;
 	siteVertical: SiteVertical | undefined;
 }
 
