@@ -25,7 +25,7 @@ class JetpackCloudSidebar extends Component {
 	};
 
 	state = {
-		expandedSections: this.props.path.match( /^(\/?[^/]*)/gi ), // Get the first segment, e.g. `/backups`
+		expandedSections: this.props.path.match( /^(\/?[^/]*)/gi ), // @todo: Restore the sections state after page refresh
 	};
 
 	/**
@@ -98,13 +98,13 @@ class JetpackCloudSidebar extends Component {
 							/>
 							<SidebarItem
 								label="Restore site" // @todo: Localize
-								link="/backups/restore" // @todo: Add /backup/restore route
+								link="#" // @todo: Add /backup/restore route
 								onNavigate={ this.onNavigate }
 								selected={ this.isSelected( '/backups/restore' ) }
 							/>
 							<SidebarItem
 								label="Settings" // @todo: Localize
-								link="/backups/settings" // @todo: Add backup/settings route
+								link="#" // @todo: Add backup/settings route
 								onNavigate={ this.onNavigate }
 								selected={ this.isSelected( '/backups/settings' ) }
 							/>
@@ -113,7 +113,7 @@ class JetpackCloudSidebar extends Component {
 					<ExpandableSidebarMenu
 						expanded={ this.isExpanded( '/scan' ) }
 						onClick={ this.handleExpandableMenuClick( '/scan' ) }
-						materialIcon="security" // @todo: the Scan logo differs from the Material Icon used here
+						materialIcon="security" // @todo: The Scan logo differs from the Material Icon used here
 						materialIconStyle="filled"
 						title="Scan" // @todo: Localize
 					>
@@ -126,13 +126,13 @@ class JetpackCloudSidebar extends Component {
 							/>
 							<SidebarItem
 								label="History" // @todo: Localize
-								link="/scan/history" // @todo: Add /scan/history route
+								link="#" // @todo: Add /scan/history route
 								onNavigate={ this.onNavigate }
 								selected={ this.isSelected( '/scan/history' ) }
 							/>
 							<SidebarItem
 								label="Settings" // @todo: Localize
-								link="/scan/settings" // @todo: Add /scan/settings route
+								link="#" // @todo: Add /scan/settings route
 								onNavigate={ this.onNavigate }
 								selected={ this.isSelected( '/scan/settings' ) }
 							/>
@@ -143,7 +143,7 @@ class JetpackCloudSidebar extends Component {
 					<SidebarMenu>
 						<SidebarItem
 							label="Support" // @todo: Localize
-							link="/support" // @todo: Add /support route or change link to other destination
+							link="#" // @todo: Add /support route or change link to other destination
 							materialIcon="help"
 							materialIconStyle="filled"
 							onNavigate={ this.onNavigate }
