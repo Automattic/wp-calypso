@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, ComponentType } from 'react';
+import React, { useState } from 'react';
 import { Button, ExternalLink, TextControl, Modal } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
@@ -22,9 +22,6 @@ declare module '@wordpress/element' {
 	): ReactNode;
 }
 
-// TODO: remove this when the types land upstream https://github.com/DefinitelyTyped/DefinitelyTyped/pull/41800
-const DismissibleModal = Modal as ComponentType< Modal.Props & { isDismissible: boolean } >;
-
 const SignupForm = () => {
 	const [ emailVal, setEmailVal ] = useState( '' );
 	const { createAccount } = useDispatch( USER_STORE );
@@ -39,7 +36,7 @@ const SignupForm = () => {
 	};
 
 	return (
-		<DismissibleModal
+		<Modal
 			className="signup-form"
 			isDismissible={ false }
 			title={ NO__( 'Sign up to save your changes' ) }
@@ -73,7 +70,7 @@ const SignupForm = () => {
 			</form>
 			{ newUserError && <pre>Error: { JSON.stringify( newUserError, null, 2 ) }</pre> }
 			{ newUser && <pre>New user: { JSON.stringify( newUser, null, 2 ) }</pre> }
-		</DismissibleModal>
+		</Modal>
 	);
 };
 
