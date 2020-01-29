@@ -67,6 +67,10 @@ import { getThankYouPageUrl } from './composite-checkout-thank-you';
 import { getSelectedSite } from 'state/ui/selectors';
 import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-signup-destination';
 import getPreviousPath from 'state/selectors/get-previous-path.js';
+import { getPlan, findPlansKeys } from 'lib/plans';
+import { GROUP_WPCOM, TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
+import { computeProductsWithPrices } from 'state/products-list/selectors';
+import { requestProductsList } from 'state/products-list/actions';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -666,4 +670,127 @@ function TestingBanner() {
 			click here to report them.
 		</Card>
 	);
+}
+
+function getTermText( term, translate ) {
+	switch ( term ) {
+		case TERM_BIENNIALLY:
+			return translate( 'Two years' );
+
+		case TERM_ANNUALLY:
+			return translate( 'One year' );
+
+		case TERM_MONTHLY:
+			return translate( 'One month' );
+	}
+}
+
+function getTaxText( translate ) {
+	return (
+		<sup>
+			{ translate( '+tax', {
+				comment:
+					'This string is displayed immediately next to a localized price with a currency symbol, and is indicating that there may be an additional charge on top of the displayed price.',
+			} ) }
+		</sup>
+	);
+}
+
+function useWpcomProductVariants( { siteId, productSlug, credits, couponDiscounts } ) {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const availableVariants = useVariantWpcomPlanProductSlugs( productSlug );
+
+	const productsWithPrices = useSelector( state => {
+		return computeProductsWithPrices(
+			state,
+			siteId,
+			availableVariants, // : WPCOMProductSlug[]
+			credits || 0, // : number
+			couponDiscounts || {} // object of product ID / absolute amount pairs
+		);
+	} );
+
+	const [ haveFetchedProducts, setHaveFetchedProducts ] = useState( false );
+	const shouldFetchProducts = ! productsWithPrices;
+
+	useEffect( () => {
+		// Trigger at most one HTTP request
+		debug( 'deciding whether to request product variant data' );
+		if ( shouldFetchProducts && ! haveFetchedProducts ) {
+			debug( 'dispatching request for product variant data' );
+			dispatch( requestPlans() );
+			dispatch( requestProductsList() );
+			setHaveFetchedProducts( true );
+		}
+	}, [ shouldFetchProducts, haveFetchedProducts ] );
+
+	return anyProductSlug => {
+		if ( anyProductSlug !== productSlug ) {
+			return [];
+		}
+
+		return productsWithPrices.map( variant => {
+			const label = getTermText( variant.plan.term, translate );
+			const price = (
+				<React.Fragment>
+					{ variant.product.cost_display }
+					{ getTaxText( translate ) }
+				</React.Fragment>
+			);
+
+			return {
+				variantLabel: label,
+				variantDetails: price,
+				productSlug: variant.planSlug,
+				productId: variant.product.product_id,
+			};
+		} );
+	};
+}
+
+function useVariantWpcomPlanProductSlugs( productSlug ) {
+	const dispatch = useDispatch();
+
+	const chosenPlan = getPlan( productSlug );
+
+	const [ haveFetchedPlans, setHaveFetchedPlans ] = useState( false );
+	const shouldFetchPlans = ! chosenPlan;
+
+	useEffect( () => {
+		// Trigger at most one HTTP request
+		debug( 'deciding whether to request plan variant data for', productSlug );
+		if ( shouldFetchPlans && ! haveFetchedPlans ) {
+			debug( 'dispatching request for plan variant data' );
+			dispatch( requestPlans() );
+			dispatch( requestProductsList() );
+			setHaveFetchedPlans( true );
+		}
+	}, [ haveFetchedPlans, shouldFetchPlans ] );
+
+	if ( ! chosenPlan ) {
+		return [];
+	}
+
+	// Only construct variants for WP.com plans
+	if ( chosenPlan.group !== GROUP_WPCOM ) {
+		return [];
+	}
+
+	// : WPCOMProductSlug[]
+	return findPlansKeys( {
+		group: chosenPlan.group,
+		type: chosenPlan.type,
+	} );
+}
+
+function getPlanProductSlugs(
+	items // : WPCOMCart
+) /* : WPCOMCartItem[] */ {
+	return items
+		.filter( item => {
+			return item.type !== 'tax' && getPlan( item.wpcom_meta.product_slug );
+		} )
+		.map( item => item.wpcom_meta.product_slug );
 }
