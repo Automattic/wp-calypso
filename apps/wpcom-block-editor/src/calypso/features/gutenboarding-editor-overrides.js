@@ -49,6 +49,7 @@ function updateSettingsBar() {
 		// Wrap 'Launch' button in anchor to frankenflow.
 		const launchButtonWrapper = document.createElement( 'a' );
 		launchButtonWrapper.href = calypsoifyGutenberg.frankenflowUrl;
+		launchButtonWrapper.target = '_top';
 		launchButtonWrapper.append( launchButton );
 
 		// Put 'Launch' and 'Save' back on bar in desired order.
