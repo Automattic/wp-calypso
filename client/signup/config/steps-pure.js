@@ -576,23 +576,6 @@ export function generateSteps( {
 			providesDependencies: [ 'bearer_token', 'email', 'username' ],
 			unstorableDependencies: [ 'bearer_token' ],
 		},
-		'prelaunch-domains': {
-			stepName: 'prelaunch-domains',
-			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [
-				'siteId',
-				'siteSlug',
-				'domainItem',
-				'themeItem',
-				'shouldHideFreePlan',
-			],
-			optionalDependencies: [ 'shouldHideFreePlan' ],
-			props: {
-				isDomainOnly: false,
-			},
-			delayApiRequestUntilComplete: true,
-			dependencies: [ 'theme', 'siteTitle' ],
-		},
 	};
 }
 

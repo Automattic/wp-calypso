@@ -61,7 +61,6 @@ const stepNameToModuleName = {
 	'domains-with-preview': 'domains',
 	'site-title-with-preview': 'site-title',
 	passwordless: 'passwordless',
-	'prelaunch-domains': 'domains',
 };
 
 export async function getStepComponent( stepName ) {

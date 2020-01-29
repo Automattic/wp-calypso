@@ -11,7 +11,7 @@ import { ActionType, SiteVertical } from './types';
 type Template = VerticalsTemplates.Template;
 
 export const setDomain = (
-	domain: import('@automattic/data-stores').DomainSuggestions.DomainSuggestion
+	domain: import('@automattic/data-stores').DomainSuggestions.DomainSuggestion | undefined
 ) => ( {
 	type: ActionType.SET_DOMAIN as const,
 	domain,
