@@ -9,7 +9,6 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { Card, Button } from '@automattic/components';
-import SectionHeader from 'components/section-header';
 import { getSelectedDomain } from 'lib/domains';
 import {
 	cancelTransferRequest,
@@ -147,9 +146,9 @@ class Unlocked extends React.Component {
 
 		return (
 			<Button
+				className="transfer-out__action-button"
 				onClick={ this.handleCancelTransferClick }
 				disabled={ this.state.submitting || ! this.state.sent }
-				compact
 			>
 				{ this.props.translate( 'Cancel Transfer' ) }
 			</Button>
@@ -166,9 +165,9 @@ class Unlocked extends React.Component {
 
 		return (
 			<Button
+				className="transfer-out__action-button"
 				onClick={ this.handleSendConfirmationCodeClick }
 				disabled={ this.state.submitting }
-				compact
 				primary
 			>
 				{ this.state.sent
@@ -279,14 +278,6 @@ class Unlocked extends React.Component {
 
 		return (
 			<div>
-				<SectionHeader
-					label={ translate( 'Transfer Domain' ) }
-					className="transfer-out__section-header"
-				>
-					{ this.renderCancelButton( domain ) }
-					{ this.renderSendButton( domain ) }
-				</SectionHeader>
-
 				<Card className="transfer-out__card">
 					<div>
 						{ submitting && <p>{ translate( 'Sending request…' ) }</p> }
@@ -296,6 +287,8 @@ class Unlocked extends React.Component {
 							{ translate( 'Learn More.' ) }
 						</a>
 					</div>
+					{ this.renderSendButton( domain ) }
+					{ this.renderCancelButton( domain ) }
 				</Card>
 			</div>
 		);
