@@ -66,8 +66,10 @@ export function isLoading( state = false, action ) {
 
 export function isIframeLoaded( state = false, action ) {
 	switch ( action.type ) {
-		case EDITOR_IFRAME_LOADED:
-			return get( action, 'isIframeLoaded', false );
+		case EDITOR_IFRAME_LOADED: {
+			const loaded = action.isIframeLoaded;
+			return loaded !== undefined ? loaded : state;
+		}
 	}
 
 	return state;
