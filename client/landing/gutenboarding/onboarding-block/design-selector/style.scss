@@ -257,8 +257,10 @@ $design-selector-selection-space: 285px;
 	}
 
 	.design-selector__design-option {
-		.design-selector__option-overlay {
-			opacity: 1;
+		&:focus {
+			.design-selector__option-overlay {
+				opacity: 1;
+			}
 		}
 	}
 }
