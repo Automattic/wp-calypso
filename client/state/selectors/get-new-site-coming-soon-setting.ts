@@ -11,5 +11,5 @@ import shouldNewSiteBePrivateByDefault from './should-new-site-be-private-by-def
  * @returns `-1` for private by default & `1` for public
  */
 export default function getNewSiteComingSoonSetting( state: object ): number {
-	return shouldNewSiteBePrivateByDefault( state ) && config.isEnabled( 'coming-soon' ) ? 1 : 0;
+	return shouldNewSiteBePrivateByDefault( state ) ? 1 : 0;
 }
