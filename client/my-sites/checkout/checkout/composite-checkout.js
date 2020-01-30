@@ -4,6 +4,7 @@
 import page from 'page';
 import wp from 'lib/wp';
 import React, { useMemo, useEffect, useState, useCallback } from 'react';
+import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import debugFactory from 'debug';
@@ -801,3 +802,8 @@ function getPlanProductSlugs(
 		} )
 		.map( item => item.wpcom_meta.product_slug );
 }
+
+const Discount = styled.span`
+	color: ${props => props.theme.colors.discount};
+	margin-right: 8px;
+`;

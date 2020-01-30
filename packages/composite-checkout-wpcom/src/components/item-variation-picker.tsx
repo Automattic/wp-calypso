@@ -99,10 +99,3 @@ const TermOptionsItem = styled.li`
 const VariantLabel = styled.span`
 	flex: 1;
 `;
-
-/*
-const Discount = styled.span`
-	color: ${props => props.theme.colors.discount};
-	margin-right: 8px;
-`;
-*/
