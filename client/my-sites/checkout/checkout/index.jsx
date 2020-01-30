@@ -115,11 +115,13 @@ export class Checkout extends React.Component {
 		previousRoute: PropTypes.string.isRequired,
 		performRedirectTo: PropTypes.func,
 		performRedirectAndReplaceUrlTo: PropTypes.func,
+		getUrlFromCookie: PropTypes.func,
 	};
 
 	static defaultProps = {
 		performRedirectTo: url => page( url ),
 		performRedirectAndReplaceUrlTo: url => page.redirect( url ),
+		getUrlFromCookie: () => retrieveSignupDestination(),
 	};
 
 	state = {
@@ -445,7 +447,7 @@ export class Checkout extends React.Component {
 		if ( hasEcommercePlan( cart ) ) {
 			persistSignupDestination( this.getFallbackDestination( pendingOrReceiptId ) );
 		} else {
-			const signupDestination = retrieveSignupDestination();
+			const signupDestination = this.props.getUrlFromCookie();
 
 			if ( ! signupDestination ) {
 				return;
@@ -576,7 +578,7 @@ export class Checkout extends React.Component {
 		this.setDestinationIfEcommPlan( pendingOrReceiptId );
 
 		const signupDestination =
-			retrieveSignupDestination() || this.getFallbackDestination( pendingOrReceiptId );
+			this.props.getUrlFromCookie() || this.getFallbackDestination( pendingOrReceiptId );
 
 		if ( hasRenewalItem( cart ) ) {
 			renewalItem = getRenewalItems( cart )[ 0 ];
@@ -652,7 +654,7 @@ export class Checkout extends React.Component {
 		} = this.props;
 
 		const redirectPath = this.getCheckoutCompleteRedirectPath();
-		const destinationFromCookie = retrieveSignupDestination();
+		const destinationFromCookie = this.props.getUrlFromCookie();
 
 		this.props.clearPurchases();
 
