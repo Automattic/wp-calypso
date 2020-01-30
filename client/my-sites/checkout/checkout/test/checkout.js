@@ -216,7 +216,7 @@ describe( 'Checkout', () => {
 			expect( performRedirectTo ).toHaveBeenCalledWith( '/checkout/thank-you/foo.bar/1234abcd' );
 		} );
 
-		it( 'redirects to the thank-you page with a order id when a site and transaction orderId is set', () => {
+		it( 'redirects to the thank-you pending page with a order id when a site and transaction orderId is set', () => {
 			const performRedirectTo = jest.fn();
 			const transaction = {
 				step: { data: { orderId: '1234abcd', purchases: {}, failed_purchases: {} } },
@@ -295,7 +295,7 @@ describe( 'Checkout', () => {
 			);
 		} );
 
-		it( 'redirects to the thank-you page with a feature when a site, an order id, and a valid feature is set', () => {
+		it( 'redirects to the thank-you pending page with a feature when a site, an order id, and a valid feature is set', () => {
 			const performRedirectTo = jest.fn();
 			const transaction = {
 				step: { data: { orderId: '1234abcd', purchases: {}, failed_purchases: {} } },
@@ -604,7 +604,7 @@ describe( 'Checkout', () => {
 			expect( performRedirectTo ).toHaveBeenCalledWith( '/cookie/1234abcd' );
 		} );
 
-		it( 'redirects to url from cookie followed by order id if create_new_blog is set', () => {
+		it( 'redirects to url from cookie followed by the pending order id if create_new_blog is set', () => {
 			const performRedirectTo = jest.fn();
 			const getUrlFromCookie = jest.fn( () => '/cookie' );
 			const cart = {
