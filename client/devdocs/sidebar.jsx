@@ -108,6 +108,13 @@ export default class DevdocsSidebar extends React.PureComponent {
 							link="/devdocs/playground"
 							selected={ this.isItemSelected( '/devdocs/playground', false ) }
 						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
+							icon="code"
+							label="Components Storybook"
+							link="/devdocs/storybook/"
+							selected={ this.isItemSelected( '/devdocs/storybook/', false ) }
+						/>
 					</ul>
 
 					<SidebarHeading>Developer Tools</SidebarHeading>
