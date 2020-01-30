@@ -29,17 +29,17 @@ class Unlocked extends React.Component {
 		this.setStateIfMounted = noop;
 	}
 
-	/**
-	 * Wrap setState calls that might occur after unmounting.
-	 *
-	 * When we cancel a transfer, that might update locking or privacy,
-	 * but errors mean we can't know in time - the store gets the information
-	 * before we do.
-	 *
-	 * The recommended solution is cancellable promises, but we don't want to
-	 * cancel these requests if we navigate away, so that won't work for us here.
-	 */
 	setStateIfMounted( ...args ) {
+		/**
+		 * Wrap setState calls that might occur after unmounting.
+		 *
+		 * When we cancel a transfer, that might update locking or privacy,
+		 * but errors mean we can't know in time - the store gets the information
+		 * before we do.
+		 *
+		 * The recommended solution is cancellable promises, but we don't want to
+		 * cancel these requests if we navigate away, so that won't work for us here.
+		 */
 		this.setState( ...args );
 	}
 

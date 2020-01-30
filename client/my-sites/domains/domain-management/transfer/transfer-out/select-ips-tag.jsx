@@ -33,6 +33,7 @@ class SelectIpsTag extends Component {
 	};
 
 	componentDidMount() {
+		// eslint-disable-next-line no-undef
 		fetch( SelectIpsTag.ipsTagListUrl )
 			.then( async response => {
 				this.receiveIpsTagList( await response.json() );
