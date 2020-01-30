@@ -6,11 +6,12 @@ import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import ExternalLink from 'components/external-link';
 import FormButton from 'components/forms/form-button';
@@ -26,6 +27,9 @@ import SectionHeader from 'components/section-header';
 import formBase from 'me/form-base';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { requestHttpData, getHttpData } from 'state/data-layer/http-data';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { successNotice, errorNotice } from 'state/notices/actions';
 
 /**
  * Style dependencies
@@ -51,6 +55,29 @@ const Privacy = createReactClass( {
 			TRACKS_OPT_OUT_USER_SETTINGS_KEY,
 			! isSendingTracksEvents
 		);
+	},
+
+	componentDidUpdate( oldProps ) {
+		const { dpaRequest, translate } = this.props;
+		const { dpaRequest: oldDpaRequest } = oldProps;
+
+		if ( dpaRequest.status === 'success' && dpaRequest.status !== oldDpaRequest.status ) {
+			this.props.successNotice(
+				translate( 'Request successful! We are sending you our DPA via email', {
+					comment:
+						'A Data Processing Addendum (DPA) is a document to assure customers, vendors, and partners that their data handling complies with the law.',
+				} )
+			);
+		} else if ( dpaRequest.status === 'failure' && dpaRequest.error && ! oldDpaRequest.error ) {
+			this.props.errorNotice(
+				dpaRequest.error.error === 'too_many_requests'
+					? dpaRequest.error.message
+					: translate( 'There was an error requesting a DPA', {
+							comment:
+								'A Data Processing Addendum (DPA) is a document to assure customers, vendors, and partners that their data handling complies with the law.',
+					  } )
+			);
+		}
 	},
 
 	render() {
@@ -135,9 +162,90 @@ const Privacy = createReactClass( {
 						</FormButton>
 					</form>
 				</Card>
+				<SectionHeader
+					label={ translate( 'Data Processing Addendum', {
+						comment:
+							'A Data Processing Addendum (DPA) is a document to assure customers, vendors, and partners that their data handling complies with the law.',
+					} ) }
+				/>
+				<Card>
+					<p>
+						{ translate(
+							'A Data Processing Addendum (DPA) allows web sites and companies to assure customers, vendors, ' +
+								'and partners that their data handling complies with the law.'
+						) }
+					</p>
+
+					<p>
+						{ translate( 'Note: most free site owners or hobbyists do not need a DPA.', {
+							comment:
+								'A Data Processing Addendum (DPA) is a document to assure customers, vendors, and partners that their data handling complies with the law.',
+						} ) }
+					</p>
+
+					<p>
+						<strong>
+							{ translate(
+								'Having a DPA does not change any of our privacy and security practices for site visitors. ' +
+									'Everyone using our service gets the same high standards of privacy and security.',
+								{
+									comment:
+										'A Data Processing Addendum (DPA) is a document to assure customers, vendors, and partners that their data handling complies with the law.',
+								}
+							) }
+						</strong>
+					</p>
+					<Button primary className="privacy__dpa-request-button" onClick={ this.props.requestDpa }>
+						{ translate( 'Request a DPA', {
+							comment:
+								'A Data Processing Addendum (DPA) is a document to assure customers, vendors, and partners that their data handling complies with the law.',
+						} ) }
+					</Button>
+				</Card>
 			</Main>
 		);
 	},
 } );
 
-export default compose( localize, protectForm )( Privacy );
+const dpaRequestId = 'dpa-request';
+function requestDpa() {
+	requestHttpData(
+		dpaRequestId,
+		http( {
+			apiNamespace: 'wpcom/v2',
+			method: 'POST',
+			path: '/me/request-dpa',
+		} ),
+		{
+			freshness: -Infinity, // we want to allow the user to re-request
+			fromApi: () => () => [ [ dpaRequestId, true ] ],
+		}
+	);
+}
+const dpaRequestState = request => {
+	switch ( request.state ) {
+		case 'pending':
+			return { status: 'pending' };
+		case 'success':
+			return { status: 'success' };
+		case 'failure':
+			return { status: 'failure', error: request.error };
+		default:
+			return { status: 'unsent' };
+	}
+};
+
+export default compose(
+	localize,
+	protectForm,
+	connect(
+		() => ( {
+			dpaRequest: dpaRequestState( getHttpData( dpaRequestId ) ),
+		} ),
+		dispatch => ( {
+			requestDpa,
+			successNotice: message => dispatch( successNotice( message ) ),
+			errorNotice: message => dispatch( errorNotice( message ) ),
+		} )
+	)
+)( Privacy );
