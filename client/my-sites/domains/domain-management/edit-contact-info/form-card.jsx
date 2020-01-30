@@ -249,14 +249,6 @@ class EditContactInfoFormCard extends React.Component {
 
 	onTransferLockOptOutChange = event => this.setState( { transferLock: ! event.target.checked } );
 
-	goToContactsPrivacy = () =>
-		page(
-			domainManagementContactsPrivacy(
-				this.props.selectedSite.slug,
-				this.props.selectedDomain.name
-			)
-		);
-
 	showNonDaConfirmationDialog = () => this.setState( { showNonDaConfirmationDialog: true } );
 
 	handleContactDetailsChange = newContactDetails => {
@@ -303,7 +295,7 @@ class EditContactInfoFormCard extends React.Component {
 		} );
 
 		if ( ! this.state.requiresConfirmation ) {
-			this.props.successNotice(
+			this.showNoticeAndGoBack(
 				this.props.translate(
 					'The contact info has been updated. ' +
 						'There may be a short delay before the changes show up in the public records.'
@@ -337,7 +329,17 @@ class EditContactInfoFormCard extends React.Component {
 			);
 		}
 
+		this.showNoticeAndGoBack( message );
+	};
+
+	showNoticeAndGoBack = message => {
 		this.props.successNotice( message );
+		page(
+			domainManagementContactsPrivacy(
+				this.props.selectedSite.slug,
+				this.props.selectedDomain.name
+			)
+		);
 	};
 
 	onWhoisUpdateError = () => {
@@ -404,7 +406,6 @@ class EditContactInfoFormCard extends React.Component {
 						onSubmit={ this.handleSubmitButtonClick }
 						onValidate={ this.validate }
 						labelTexts={ { submitButton: translate( 'Save Contact Info' ) } }
-						onCancel={ this.goToContactsPrivacy }
 						disableSubmitButton={ this.shouldDisableSubmitButton() }
 						isSubmitting={ this.state.formSubmitting }
 					>
