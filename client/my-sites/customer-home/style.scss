@@ -163,7 +163,7 @@
 				width: auto;
 			}
 		}
-		@include breakpoint( '>1280px' ) {
+		@include breakpoint( '>1400px' ) {
 			@include card-col-two-col;
 		}
 		@include breakpoint( '800px-1040px' ) {
@@ -182,7 +182,7 @@
 				margin-right: 6px;
 			}
 		}
-		@include breakpoint( '>1280px' ) {
+		@include breakpoint( '>1400px' ) {
 			@include card-col-left-two-col;
 		}
 		@include breakpoint( '800px-1040px' ) {
@@ -199,7 +199,7 @@
 				margin-left: 6px;
 			}
 		}
-		@include breakpoint( '>1280px' ) {
+		@include breakpoint( '>1400px' ) {
 			@include card-col-right-two-col;
 		}
 		@include breakpoint( '800px-1040px' ) {
