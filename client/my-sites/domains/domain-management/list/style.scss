@@ -117,3 +117,9 @@ input[type='radio'].domain-management-list-item__radio {
 .list-all__container .list-all__site {
 	margin-bottom: 10px;
 }
+
+.domain-management__claim-free-domain {
+	@include breakpoint( '>660px' ) {
+		display: none;
+	}
+}

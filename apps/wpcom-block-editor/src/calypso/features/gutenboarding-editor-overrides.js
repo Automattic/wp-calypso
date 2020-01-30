@@ -40,20 +40,17 @@ function updateSettingsBar() {
 		const saveButton = settingsBar.querySelector( '.editor-post-publish-button' );
 		saveButton && ( saveButton.innerText = __( 'Save' ) );
 
-		// Create a 'Launch' button.
-		const launchButton = document.createElement( 'button' );
-		launchButton.className =
+		// Wrap 'Launch' button link to frankenflow.
+		const launchLink = document.createElement( 'a' );
+		launchLink.href = calypsoifyGutenberg.frankenflowUrl;
+		launchLink.target = '_top';
+		launchLink.className =
 			'gutenboarding-editor-overrides__launch-button components-button is-primary';
-		launchButton.innerText = __( 'Launch' );
-
-		// Wrap 'Launch' button in anchor to frankenflow.
-		const launchButtonWrapper = document.createElement( 'a' );
-		launchButtonWrapper.href = calypsoifyGutenberg.frankenflowUrl;
-		launchButtonWrapper.target = '_top';
-		launchButtonWrapper.append( launchButton );
+		const textContent = document.createTextNode( __( 'Launch' ) );
+		launchLink.appendChild( textContent );
 
 		// Put 'Launch' and 'Save' back on bar in desired order.
-		settingsBar.prepend( launchButtonWrapper );
+		settingsBar.prepend( launchLink );
 		settingsBar.prepend( saveButton );
 	} );
 }
