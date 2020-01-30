@@ -100,6 +100,14 @@ $design-selector-selection-space: 285px;
 			right: -2px;
 			transform: translate3d( 0, 0, 0 );
 		}
+
+		// Offset for the 2px of added border when hovered.
+		&:hover {
+			.page-layout-selector__selected-indicator {
+				top: -4px;
+				right: -4px;
+			}
+		}
 	}
 
 	&:hover {
