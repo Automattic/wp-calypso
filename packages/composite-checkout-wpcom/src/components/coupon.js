@@ -39,7 +39,7 @@ export default function Coupon( { id, couponAdded, className, disabled, submitCo
 					couponAdded,
 					setIsCouponApplied,
 					onEvent,
-                    submitCoupon
+					submitCoupon
 				);
 			} }
 		>
@@ -117,12 +117,12 @@ function handleFormSubmit(
 	couponAdded,
 	setIsCouponApplied,
 	onEvent,
-    submitCoupon
+	submitCoupon
 ) {
 	event.preventDefault();
 
 	//TODO: Validate coupon field and replace condition in the following if statement
-	if ( couponFieldValue === 'Add' ) {
+	if ( isCouponValid( couponFieldValue ) ) {
 		setIsCouponApplied( true );
 		onEvent( {
 			type: 'a8c_checkout_add_coupon',
@@ -143,4 +143,9 @@ function handleFormSubmit(
 		payload: { type: 'Invalid code' },
 	} );
 	setHasCouponError( true );
+}
+
+function isCouponValid( coupon ) {
+	// TODO: figure out some basic validation here
+	return coupon.match( /^[a-zA-Z0-9_-]+$/ );
 }
