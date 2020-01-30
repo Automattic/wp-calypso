@@ -1003,10 +1003,9 @@ function getCheckoutCompleteRedirectPath( {
 	// Display mode is used to show purchase specific messaging, for e.g. the Schedule Session button
 	// when purchasing a concierge session.
 	const displayModeParam = getDisplayModeParamFromCart( cart );
-	if ( isEligibleForSignupDestinationRedirect ) {
-		return getUrlWithQueryParam( signupDestination || fallbackUrl, displayModeParam );
+	if ( isEligibleForSignupDestinationRedirect && signupDestination ) {
+		return getUrlWithQueryParam( signupDestination, displayModeParam );
 	}
-
 	return getUrlWithQueryParam( fallbackUrl, displayModeParam );
 }
 
