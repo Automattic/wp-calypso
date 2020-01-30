@@ -85,8 +85,12 @@ function getPartnerName( purchase ) {
 	return null;
 }
 
+// TODO: refactor to avoid returning a localized string.
 function getSubscriptionEndDate( purchase ) {
-	return purchase.expiryMoment.format( 'LL' );
+	const localeSlug = i18n.getLocaleSlug();
+	return moment( purchase.expiryDate )
+		.locale( localeSlug )
+		.format( 'LL' );
 }
 
 /**
@@ -347,15 +351,18 @@ function isPaidWithCreditCard( purchase ) {
 }
 
 function isPaidWithPayPalDirect( purchase ) {
-	return 'paypal_direct' === purchase.payment.type && purchase.payment.expiryMoment;
+	return 'paypal_direct' === purchase.payment.type && purchase.payment.expiryDate;
 }
 
 function hasCreditCardData( purchase ) {
-	return Boolean( purchase.payment.creditCard.expiryMoment );
+	return Boolean( purchase.payment.creditCard.expiryDate );
 }
 
-function shouldAddPaymentSourceInsteadOfRenewingNow( expiryMoment ) {
-	return expiryMoment > moment().add( 3, 'months' );
+function shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) {
+	if ( ! purchase || ! purchase.expiryDate ) {
+		return false;
+	}
+	return moment( purchase.expiryDate ) > moment().add( 3, 'months' );
 }
 
 /**
@@ -371,15 +378,19 @@ function canExplicitRenew( purchase ) {
 }
 
 function creditCardExpiresBeforeSubscription( purchase ) {
+	const creditCard = purchase?.payment?.creditCard;
+
 	return (
 		isPaidWithCreditCard( purchase ) &&
 		hasCreditCardData( purchase ) &&
-		purchase.payment.creditCard.expiryMoment.diff( purchase.expiryMoment, 'months' ) < 0
+		moment( creditCard.expiryDate, 'MM/YY' ).isBefore( purchase.expiryDate, 'months' )
 	);
 }
 
 function monthsUntilCardExpires( purchase ) {
-	return purchase.payment.creditCard.expiryMoment.diff( moment(), 'months' );
+	const creditCard = purchase.payment.creditCard;
+	const expiry = moment( creditCard.expiryDate, 'MM/YY' );
+	return expiry.diff( moment(), 'months' );
 }
 
 function subscribedWithinPastWeek( purchase ) {

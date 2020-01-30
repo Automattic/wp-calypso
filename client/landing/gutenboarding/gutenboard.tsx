@@ -28,12 +28,10 @@ export function Gutenboard() {
 	// for the 'Back' and 'Next' buttons in the header. If we remove those (and move navigation
 	// entirely into the block), we'll be able to remove this code.
 	const r = useRouteMatch( routes );
-	let next: undefined | string;
 	let prev: undefined | string;
 	switch ( r?.url ) {
 		case Step.DesignSelection:
 			prev = Step.IntentGathering;
-			next = Step.CreateSite;
 			break;
 	}
 
@@ -47,7 +45,7 @@ export function Gutenboard() {
 		<div className="block-editor__container">
 			<DropZoneProvider>
 				<div className="edit-post-layout">
-					<Header prev={ prev } next={ next } />
+					<Header prev={ prev } />
 					<BlockEditorProvider
 						useSubRegistry={ false }
 						value={ [ onboardingBlock.current ] }

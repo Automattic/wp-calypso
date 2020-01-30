@@ -276,6 +276,7 @@ export class WebPreviewContent extends Component {
 					{ ...this.props }
 					showExternal={ this.props.previewUrl ? this.props.showExternal : false }
 					showDeviceSwitcher={ this.props.showDeviceSwitcher && isWithinBreakpoint( '>660px' ) }
+					showUrl={ this.props.showUrl && isWithinBreakpoint( '>960px' ) }
 					selectSeoPreview={ this.selectSEO }
 					isLoading={ this.state.isLoadingSubpage }
 				/>

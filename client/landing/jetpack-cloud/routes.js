@@ -14,13 +14,16 @@ import {
 	makeLayout,
 	setupSidebar,
 } from './controller';
+import { normalize } from 'lib/route';
 
-const router = ( baseRoute = '' ) => {
-	page( baseRoute + '/', setupSidebar, jetpackCloud, makeLayout, clientRender );
+const router = () => {
+	page( '*', normalize );
 
-	page( baseRoute + '/backups', setupSidebar, jetpackBackups, makeLayout, clientRender );
+	page( '/', setupSidebar, jetpackCloud, makeLayout, clientRender );
 
-	page( baseRoute + '/scan', setupSidebar, jetpackScan, makeLayout, clientRender );
+	page( '/backups', setupSidebar, jetpackBackups, makeLayout, clientRender );
+
+	page( '/scan', setupSidebar, jetpackScan, makeLayout, clientRender );
 };
 
 export default router;

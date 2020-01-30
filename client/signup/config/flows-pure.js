@@ -15,7 +15,6 @@ export function generateFlows( {
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
 	getLaunchDestination = noop,
-	getEditorDestination = noop,
 	getThankYouNoSiteDestination = noop,
 	getChecklistThemeDestination = noop,
 } = {} ) {
@@ -356,11 +355,12 @@ export function generateFlows( {
 
 	if ( isEnabled( 'gutenboarding' ) ) {
 		flows.frankenflow = {
-			steps: [ 'user', 'domains', 'plans' ],
-			destination: getEditorDestination,
-			description: 'Frankenflow testing flow for Gutenboarding',
+			steps: [ 'domains-launch', 'plans-launch', 'launch' ],
+			destination: getLaunchDestination,
+			description: 'Frankenflow launch for a site created from Gutenboarding',
 			lastModified: '2020-01-22',
 			pageTitle: translate( 'Launch your site' ),
+			providesDependenciesInQuery: [ 'siteSlug' ],
 		};
 	}
 

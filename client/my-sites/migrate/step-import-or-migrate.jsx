@@ -9,9 +9,8 @@ import { Button, CompactCard } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
-import Site from 'blocks/site';
+import CardHeading from 'components/card-heading';
 
 /**
  * Style dependencies
@@ -21,6 +20,7 @@ import ImportTypeChoice from 'my-sites/migrate/components/import-type-choice';
 import MigrateButton from 'my-sites/migrate/migrate-button';
 import { get } from 'lodash';
 import { redirectTo } from 'my-sites/migrate/helpers';
+import SitesBlock from 'my-sites/migrate/components/sites-block';
 
 class StepImportOrMigrate extends Component {
 	static propTypes = {
@@ -58,20 +58,18 @@ class StepImportOrMigrate extends Component {
 					<a href={ `https://wordpress.com/jetpack/connect/install?url=${ sourceSiteDomain }` }>
 						Jetpack
 					</a>{ ' ' }
-					installed on your site to be able to import over everything
+					installed on your site to be able to import everything.
 				</p>
 			);
 		}
 
 		if ( ! isTargetSiteAtomic ) {
-			return (
-				<p>A Business Plan (i) is required to import everything. Importing only content is free.</p>
-			);
+			return <p>Import your entire site with the Business Plan.</p>;
 		}
 	};
 
 	render() {
-		const { targetSite, targetSiteSlug, sourceHasJetpack } = this.props;
+		const { targetSite, targetSiteSlug, sourceHasJetpack, sourceSite } = this.props;
 		const backHref = `/migrate/${ targetSiteSlug }`;
 
 		const targetSiteDomain = get( targetSite, 'domain' );
@@ -79,12 +77,11 @@ class StepImportOrMigrate extends Component {
 		return (
 			<>
 				<HeaderCake backHref={ backHref }>Import from WordPress</HeaderCake>
-				<CompactCard className="migrate__sites">
-					<Gridicon className="migrate__sites-arrow" icon="arrow-right" />
-					<Site site={ targetSite } indicator={ false } />
-				</CompactCard>
+
+				<SitesBlock sourceSite={ sourceSite } targetSite={ targetSite } />
+
 				<CompactCard>
-					<h3>What do you want to import?</h3>
+					<CardHeading>What do you want to import?</CardHeading>
 
 					{ this.getJetpackOrUpgradeMessage() }
 					<ImportTypeChoice
@@ -92,14 +89,13 @@ class StepImportOrMigrate extends Component {
 						radioOptions={ {
 							everything: {
 								title: 'Everything',
-								labels: [ 'Upgrade Required', 'Something Else', 'Third bubble' ],
+								labels: [ 'Upgrade' ],
 								description: "All your site's content, themes, plugins, users and settings",
 								enabled: sourceHasJetpack,
 							},
 							'content-only': {
 								key: 'content-only',
 								title: 'Content only',
-								labels: [ 'Free', 'Only content', 'Third bubble' ],
 								description: 'Import posts, pages, comments, and media.',
 								enabled: true,
 							},

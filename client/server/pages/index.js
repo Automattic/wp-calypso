@@ -22,7 +22,8 @@ import {
 	split,
 } from 'lodash';
 import bodyParser from 'body-parser';
-import superagent from 'superagent';
+// eslint-disable-next-line no-restricted-imports
+import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import { matchesUA } from 'browserslist-useragent';
 
 /**
@@ -87,6 +88,7 @@ function getInitialServerState( serializedServerState ) {
 
 /**
  * Checks whether a user agent is included in the browser list for an environment.
+ *
  * @param {string} userAgentString The user agent string.
  * @param {string} environment The `browserslist` environment.
  *
@@ -484,6 +486,7 @@ function setUpLoggedInRoute( req, res, next ) {
 
 /**
  * Sets up a Content Security Policy header
+ *
  * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
  * @param {object} req Express request object
  * @param {object} res Express response object
@@ -569,21 +572,21 @@ function setUpRoute( req, res, next ) {
 	);
 }
 
-function render404( req, res ) {
+const render404 = ( entrypoint = 'entry-main' ) => ( req, res ) => {
 	const ctx = {
 		faviconURL: config( 'favicon_url' ),
 		isRTL: config( 'rtl' ),
-		entrypoint: getFilesForEntrypoint( getBuildTargetFromRequest( req ), 'entry-main' ),
+		entrypoint: getFilesForEntrypoint( getBuildTargetFromRequest( req ), entrypoint ),
 	};
 
 	res.status( 404 ).send( renderJsx( '404', ctx ) );
-}
+};
 
 /* We don't use `next` but need to add it for express.js to
    recognize this function as an error handler, hence the
 	 eslint-disable. */
 // eslint-disable-next-line no-unused-vars
-function renderServerError( err, req, res, next ) {
+const renderServerError = ( entrypoint = 'entry-main' ) => ( err, req, res, next ) => {
 	if ( process.env.NODE_ENV !== 'production' ) {
 		console.error( err );
 	}
@@ -591,11 +594,11 @@ function renderServerError( err, req, res, next ) {
 	const ctx = {
 		faviconURL: config( 'favicon_url' ),
 		isRTL: config( 'rtl' ),
-		entrypoint: getFilesForEntrypoint( getBuildTargetFromRequest( req ), 'entry-main' ),
+		entrypoint: getFilesForEntrypoint( getBuildTargetFromRequest( req ), entrypoint ),
 	};
 
 	res.status( err.status || 500 ).send( renderJsx( '500', ctx ) );
-}
+};
 
 /**
  * Sets language properties to context if
@@ -604,7 +607,7 @@ function renderServerError( err, req, res, next ) {
  * @param {object} req Express request object
  * @param {object} res Express response object
  * @param {Function} next a callback to call when done
- * @returns {Function|Undefined} res.redirect if not logged in
+ * @returns {Function|undefined} res.redirect if not logged in
  */
 function handleLocaleSubdomains( req, res, next ) {
 	const langSlug = endsWith( req.hostname, config( 'hostname' ) )
@@ -635,6 +638,12 @@ function handleLocaleSubdomains( req, res, next ) {
 	next();
 }
 
+const jetpackCloudEnvs = [
+	'jetpack-cloud-development',
+	'jetpack-cloud-stage',
+	'jetpack-cloud-production',
+];
+
 module.exports = function() {
 	const app = express();
 
@@ -644,6 +653,28 @@ module.exports = function() {
 	app.use( cookieParser() );
 	app.use( setupLoggedInContext );
 	app.use( handleLocaleSubdomains );
+
+	// Temporarily redirect cloud.jetpack.com to jetpack.com in the production enviroment
+	app.use( function( req, res, next ) {
+		if ( 'jetpack-cloud-production' === calypsoEnv ) {
+			res.redirect( 'https://jetpack.com/' );
+		}
+		next();
+	} );
+
+	if ( jetpackCloudEnvs.includes( calypsoEnv ) ) {
+		JETPACK_CLOUD_SECTION_DEFINITION.paths.forEach( sectionPath =>
+			handleSectionPath( JETPACK_CLOUD_SECTION_DEFINITION, sectionPath, 'entry-jetpack-cloud' )
+		);
+
+		// catchall to render 404 for all routes not whitelisted in client/sections
+		app.use( render404( 'entry-jetpack-cloud' ) );
+
+		// Error handling middleware for displaying the server error 500 page must be the very last middleware defined
+		app.use( renderServerError( 'entry-jetpack-cloud' ) );
+
+		return app;
+	}
 
 	// redirect homepage if the Reader is disabled
 	app.get( '/', function( request, response, next ) {
@@ -908,10 +939,10 @@ module.exports = function() {
 	} );
 
 	// catchall to render 404 for all routes not whitelisted in client/sections
-	app.use( render404 );
+	app.use( render404() );
 
 	// Error handling middleware for displaying the server error 500 page must be the very last middleware defined
-	app.use( renderServerError );
+	app.use( renderServerError() );
 
 	return app;
 };

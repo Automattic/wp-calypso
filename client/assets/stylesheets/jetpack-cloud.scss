@@ -1,6 +1,10 @@
 // Color Schemes
-// Currently used only by Calypso dev badge shown in development mode
+// We're using the default base color scheme that gets altered by Jetpack Cloud custom scheme
 @import '~@automattic/calypso-color-schemes/src/calypso-color-schemes';
+@import './calypso-color-scheme-jetpack-cloud';
 
 // Shared
 @import 'shared/reset'; // css reset before the rest of the styles are defined
+
+// Global layout
+@import 'main';

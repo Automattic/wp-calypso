@@ -5,18 +5,19 @@ import React from 'react';
 
 /**
  * Localize a React component
- * @param {I18N} i18n I18N instance to use for localization
+ *
+ * @param {object} i18n I18N instance to use for localization
  * @returns {Function} Component localization function
  */
 export default function( i18n ) {
 	const i18nProps = {
-		moment: i18n.moment,
 		numberFormat: i18n.numberFormat.bind( i18n ),
 		translate: i18n.translate.bind( i18n ),
 	};
 
 	/**
 	 * Localize a React component
+	 *
 	 * @param  {React.Component} ComposedComponent React component to localize
 	 * @returns {React.Component}                   The localized component
 	 */

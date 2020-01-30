@@ -61,6 +61,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishHeaderSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishSelector );
+		await this.driver.sleep( 1000 );
 		await driverHelper.clickWhenClickable( this.driver, this.publishSelector );
 		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
 		await this.closePublishedPanel();
@@ -192,6 +193,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async addBlock( name ) {
 		name = name.charAt( 0 ).toUpperCase() + name.slice( 1 ); // Capitalize block name
 		let blockClass = name;
+		let selectedBlockConfirmClass = 'is-selected';
 		let prefix = '';
 		switch ( name ) {
 			case 'Instagram':
@@ -202,16 +204,25 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			case 'Form':
 				prefix = 'jetpack-contact-';
 				break;
-			case 'Simple Payments':
+			case 'Simple Payments button':
+				prefix = 'jetpack-';
+				blockClass = 'simple-payments';
+				break;
 			case 'Markdown':
 				prefix = 'jetpack-';
 				break;
 			case 'Buttons':
 			case 'Click to Tweet':
 			case 'Hero':
-			case 'Logos':
+				prefix = 'coblocks-';
+				break;
 			case 'Pricing Table':
 				prefix = 'coblocks-';
+				selectedBlockConfirmClass = 'has-child-selected';
+				break;
+			case 'Logos & Badges':
+				prefix = 'coblocks-';
+				blockClass = 'logos';
 				break;
 			case 'Dynamic HR':
 				prefix = 'coblocks-';
@@ -225,7 +236,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				.toLowerCase() }`
 		);
 		const insertedBlockSelector = By.css(
-			`.block-editor-block-list__block.is-selected[aria-label*='Block: ${ name }']`
+			`.block-editor-block-list__block.${ selectedBlockConfirmClass }[aria-label*='Block: ${ name }']`
 		);
 
 		await this.openBlockInserterAndSearch( name );

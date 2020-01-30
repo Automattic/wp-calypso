@@ -81,7 +81,7 @@ type CacheStatus = 'fresh' | 'valid' | 'invalid' | 'pending' | 'error';
  *       not changed.
  *
  * @param cartKey
- *     The cart key
+ *     The cart key. Will use 'no-site' if no key is set.
  * @param setCart
  *     An asynchronous wrapper around the wpcom shopping cart POST
  *     endpoint. We pass this in to make testing easier.
@@ -93,10 +93,11 @@ type CacheStatus = 'fresh' | 'valid' | 'invalid' | 'pending' | 'error';
  * @returns ShoppingCartManager
  */
 export function useShoppingCart(
-	cartKey: string,
+	cartKey: string | null,
 	setCart: ( string, RequestCart ) => Promise< ResponseCart >,
 	getCart: ( string ) => Promise< ResponseCart >
 ): ShoppingCartManager {
+	cartKey = cartKey || 'no-site';
 	const setServerCart = useCallback( cartParam => setCart( cartKey, cartParam ), [
 		cartKey,
 		setCart,

@@ -119,6 +119,8 @@ references:
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-npm-modules-{{ checksum ".nvmrc" }}
 
   npm-install: &npm-install
+    environment:
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
     name: Install npm dependencies
     command: npm ci
 

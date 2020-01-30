@@ -10,6 +10,8 @@ import {
 	activate as activateBypass,
 } from './bypass';
 import { StoredItems } from './types';
+import { mc } from 'lib/analytics';
+import { kebabCase } from 'lodash';
 
 let shouldBypass = false;
 
@@ -32,7 +34,18 @@ const getDB = once( () => {
 					}
 					reject( request.error );
 				};
-				request.onsuccess = () => resolve( request.result );
+				request.onsuccess = () => {
+					const db = request.result;
+					// Add a general error handler for any future requests made against this db handle.
+					// See https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB#Handling_Errors for
+					// more information on how error events bubble with IndexedDB
+					db.onerror = function( errorEvent: any ) {
+						if ( errorEvent.target?.error?.name ) {
+							mc.bumpStat( 'calypso-browser-storage', kebabCase( errorEvent.target.error.name ) );
+						}
+					};
+					resolve( db );
+				};
 				request.onupgradeneeded = () => request.result.createObjectStore( STORE_NAME );
 			}
 		} catch ( error ) {

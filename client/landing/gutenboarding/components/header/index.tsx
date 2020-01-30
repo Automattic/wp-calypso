@@ -2,41 +2,39 @@
  * External dependencies
  */
 import { __ as NO__ } from '@wordpress/i18n';
-import { Icon } from '@wordpress/components';
+import { Button, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect } from 'react';
 import { useDebounce } from 'use-debounce';
 import classnames from 'classnames';
+import { DomainSuggestions } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
  */
-import { DomainSuggestions } from '@automattic/data-stores';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { USER_STORE } from '../../stores/user';
 import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
 import { selectorDebounce } from '../../constants';
 import Link from '../link';
+import { createSite } from '../../utils';
 
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
 interface Props {
-	next?: string;
 	prev?: string;
 }
 
-const Header: FunctionComponent< Props > = ( { next, prev } ) => {
+const Header: FunctionComponent< Props > = ( { prev } ) => {
+	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
 	const { domain, selectedDesign, siteTitle, siteVertical } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
 	const hasSelectedDesign = !! selectedDesign;
 	const { setDomain } = useDispatch( ONBOARD_STORE );
 
-	const [ domainSearch ] = useDebounce(
-		// If we know a domain, do not search.
-		! domain && siteTitle,
-		selectorDebounce
-	);
+	const [ domainSearch ] = useDebounce( siteTitle, selectorDebounce );
 	const freeDomainSuggestion = useSelect(
 		select => {
 			if ( ! domainSearch ) {
@@ -51,6 +49,12 @@ const Header: FunctionComponent< Props > = ( { next, prev } ) => {
 		},
 		[ domainSearch, siteVertical ]
 	);
+
+	useEffect( () => {
+		if ( ! siteTitle ) {
+			setDomain( undefined );
+		}
+	}, [ siteTitle, setDomain ] );
 
 	const currentDomain = domain ?? freeDomainSuggestion;
 
@@ -70,6 +74,14 @@ const Header: FunctionComponent< Props > = ( { next, prev } ) => {
 			{ currentDomain ? currentDomain.domain_name : 'example.wordpress.com' }
 		</span>
 	);
+
+	const siteUrl = currentDomain?.domain_name || siteTitle || currentUser?.username;
+	const siteCreationData = {
+		siteTitle,
+		siteVertical,
+		...( siteUrl && { siteUrl } ),
+		...( selectedDesign?.slug && { theme: selectedDesign?.slug } ),
+	};
 
 	return (
 		<div
@@ -104,10 +116,15 @@ const Header: FunctionComponent< Props > = ( { next, prev } ) => {
 			</div>
 			<div className="gutenboarding__header-section">
 				<div className="gutenboarding__header-group">
-					{ next && hasSelectedDesign && (
-						<Link to={ next } className="gutenboarding__header-next-button" isPrimary isLarge>
+					{ hasSelectedDesign && (
+						<Button
+							className="gutenboarding__header-next-button"
+							isPrimary
+							isLarge
+							onClick={ () => createSite( siteCreationData ) }
+						>
 							{ NO__( 'Create my site' ) }
-						</Link>
+						</Button>
 					) }
 				</div>
 			</div>

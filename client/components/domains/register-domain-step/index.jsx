@@ -144,7 +144,6 @@ class RegisterDomainStep extends React.Component {
 		includeDotBlogSubdomain: PropTypes.bool,
 		showExampleSuggestions: PropTypes.bool,
 		showTestCopy: PropTypes.bool,
-		showTestParagraph: PropTypes.bool,
 		onSave: PropTypes.func,
 		onAddMapping: PropTypes.func,
 		onAddDomain: PropTypes.func,
@@ -582,10 +581,6 @@ class RegisterDomainStep extends React.Component {
 		}
 
 		if ( this.props.showExampleSuggestions ) {
-			if ( this.props.showTestParagraph ) {
-				return this.renderFreeDomainExplainer();
-			}
-
 			return this.renderExampleSuggestions();
 		}
 
@@ -1245,10 +1240,7 @@ class RegisterDomainStep extends React.Component {
 				unavailableDomains={ this.state.unavailableDomains }
 				showTestCopy={ this.props.showTestCopy }
 			>
-				{ this.props.showTestCopy &&
-					hasResults &&
-					! this.props.showTestParagraph &&
-					this.renderFreeDomainExplainer() }
+				{ this.props.showTestCopy && hasResults && this.renderFreeDomainExplainer() }
 
 				{ showTldFilterBar && (
 					<TldFilterBar

@@ -5,6 +5,11 @@ import React, { Component } from 'react';
 import { findKey, map } from 'lodash';
 import classNames from 'classnames';
 
+/**
+ * Internal dependencies
+ */
+import Badge from 'components/badge';
+
 import './style.scss';
 import PropTypes from 'prop-types';
 
@@ -77,11 +82,12 @@ export default class ImportTypeChoice extends Component {
 					<div className="import-type-choice__option-header">
 						<p className="import-type-choice__option-title">{ item.title }</p>
 
-						{ item.labels.map( ( label, idx ) => (
-							<div className="migrate__token-label" key={ idx }>
-								{ label }
-							</div>
-						) ) }
+						{ item.labels &&
+							item.labels.map( ( label, idx ) => (
+								<Badge type="info" key={ idx }>
+									{ label }
+								</Badge>
+							) ) }
 					</div>
 					<div className="import-type-choice__option-description">{ item.description }</div>
 				</div>

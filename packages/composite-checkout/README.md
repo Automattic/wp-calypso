@@ -208,7 +208,6 @@ Creates a [Payment Method](#payment-methods) object. Requires passing an object 
 - `submitTransaction: async object => object`. An async function that sends the request to the endpoint.
 - `getCountry: () => string`. A function that returns the country to use for the transaction.
 - `getPostalCode: () => string`. A function that returns the postal code for the transaction.
-- `getPhoneNumber: () => string`. A function that returns the phone number for the transaction.
 
 ### createRegistry
 
@@ -258,7 +257,6 @@ Creates a [Payment Method](#payment-methods) object. Requires passing an object 
 - `getCountry: () => string`. A function that returns the country to use for the transaction.
 - `getPostalCode: () => string`. A function that returns the postal code for the transaction.
 - `getSubdivisionCode: () => string`. A function that returns the subdivision code for the transaction.
-- `getPhoneNumber: () => string`. A function that returns the phone number for the transaction.
 
 ### getDefaultOrderReviewStep
 

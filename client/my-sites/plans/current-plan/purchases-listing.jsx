@@ -73,11 +73,11 @@ class PurchasesListing extends Component {
 	isProductExpiring( product ) {
 		const { moment } = this.props;
 
-		if ( ! product.expiryMoment ) {
+		if ( ! product.expiryDate ) {
 			return false;
 		}
 
-		return product.expiryMoment < moment().add( 30, 'days' );
+		return moment( product.expiryDate ) < moment().add( 30, 'days' );
 	}
 
 	getJetpackBackupPurchase() {
@@ -130,10 +130,16 @@ class PurchasesListing extends Component {
 			return null;
 		}
 
+		const subscribedMoment = purchase.subscribedDate
+			? this.props.moment( purchase.subscribedDate )
+			: null;
+
+		const expiryMoment = purchase.expiryDate ? this.props.moment( purchase.expiryDate ) : null;
+
 		return (
 			<ProductExpiration
-				expiryDateMoment={ purchase.expiryMoment }
-				purchaseDateMoment={ purchase.subscribedMoment }
+				expiryDateMoment={ expiryMoment }
+				purchaseDateMoment={ subscribedMoment }
 				isRefundable={ purchase.isRefundable }
 			/>
 		);
@@ -170,10 +176,7 @@ class PurchasesListing extends Component {
 			label = translate( 'Manage Product' );
 		}
 
-		if (
-			purchase.autoRenew &&
-			! shouldAddPaymentSourceInsteadOfRenewingNow( purchase.expiryMoment )
-		) {
+		if ( purchase.autoRenew && ! shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) ) {
 			label = translate( 'Renew Now' );
 		}
 
