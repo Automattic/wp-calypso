@@ -22,6 +22,7 @@ import { isDataLoading } from '../utils';
 import {
 	isDomainMapping,
 	isDomainRegistration,
+	isDomainTransfer,
 	isGoogleApps,
 	isJetpackPlan,
 	isPlan,
@@ -267,7 +268,7 @@ class RemovePurchase extends Component {
 			return this.renderDomainDialog();
 		}
 
-		if ( isDomainMapping( purchase ) ) {
+		if ( isDomainMapping( purchase ) || isDomainTransfer( purchase ) ) {
 			return this.renderPlanDialog();
 		}
 
