@@ -4,6 +4,10 @@
 import { filter, startsWith } from 'lodash';
 import { stringify } from 'qs';
 
+export function domainAddNew( siteName ) {
+	return '/domains/add/' + siteName;
+}
+
 export function domainManagementRoot() {
 	return '/domains/manage';
 }
