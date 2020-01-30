@@ -739,10 +739,22 @@ function useWpcomProductVariants( { siteId, productSlug, credits, couponDiscount
 			return [];
 		}
 
+		const highestMonthlyPrice = Math.max(
+			...productsWithPrices.map( variant => {
+				return variant.priceMonthly;
+			} )
+		);
+
+		const percentSavings = monthlyPrice => {
+			const savings = Math.round( 100 * ( 1 - monthlyPrice / highestMonthlyPrice ) );
+			return savings > 0 ? <Discount>-{ savings.toString() }%</Discount> : null;
+		};
+
 		return productsWithPrices.map( variant => {
 			const label = getTermText( variant.plan.term, translate );
 			const price = (
 				<React.Fragment>
+					{ percentSavings( variant.priceMonthly ) }
 					{ variant.product.cost_display }
 					{ getTaxText( translate ) }
 				</React.Fragment>
