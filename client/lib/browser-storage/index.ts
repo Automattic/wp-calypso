@@ -23,6 +23,7 @@ const SANITY_TEST_KEY = 'browser-storage-sanity-test';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isAffectedSafari =
+	typeof window !== 'undefined' &&
 	!! window.IDBKeyRange?.lowerBound( 0 ).includes &&
 	!! ( window as any ).webkitAudioContext &&
 	!! window.PointerEvent;
