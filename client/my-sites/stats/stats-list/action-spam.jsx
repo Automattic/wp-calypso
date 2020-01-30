@@ -13,7 +13,6 @@ const debug = debugFactory( 'calypso:stats:action-spam' );
  */
 import wpcom from 'lib/wp';
 import analytics from 'lib/analytics';
-import { Button } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 
 class StatsActionSpam extends React.Component {
@@ -24,8 +23,9 @@ class StatsActionSpam extends React.Component {
 	};
 
 	clickHandler = event => {
-		const spamType = this.state.spammed ? 'statsReferrersSpamDelete' : 'statsReferrersSpamNew';
-		const gaEvent = this.state.spammed ? 'Undid Referrer Spam' : 'Marked Referrer as Spam';
+		let spamType = this.state.spammed ? 'statsReferrersSpamDelete' : 'statsReferrersSpamNew',
+			gaEvent = this.state.spammed ? 'Undid Referrer Spam' : 'Marked Referrer as Spam',
+			wpcomSite;
 		event.stopPropagation();
 		event.preventDefault();
 		debug( this.state );
@@ -37,36 +37,38 @@ class StatsActionSpam extends React.Component {
 			this.props.afterChange( ! this.state.spammed );
 		}
 
-		const wpcomSite = wpcom.site( this.props.data.siteID );
+		wpcomSite = wpcom.site( this.props.data.siteID );
 		wpcomSite[ spamType ].call( wpcomSite, this.props.data.domain, function() {} );
 		analytics.ga.recordEvent( 'Stats', gaEvent + ' in ' + this.props.moduleName + ' List' );
 	};
 
 	render() {
-		const label = this.state.spammed
-			? this.props.translate( 'Mark as Not Spam' )
-			: this.props.translate( 'Mark as Spam', {
-					context: 'Stats: Action to mark an item as spam',
-					comment: 'Default label (changes into "Mark as Not Spam").',
-			  } );
-		const title = this.state.spammed
-			? this.props.translate( 'Mark as Not Spam', {
-					textOnly: true,
-					context: 'Stats: Action to undo marking an item as spam',
-			  } )
-			: this.props.translate( 'Mark as Spam', {
-					textOnly: true,
-					context: 'Stats: Action to mark an item as spam',
-			  } );
-
-		const wrapperClass = classNames( 'module-content-list-item-action-wrapper', 'is-link', {
-			spam: ! this.state.spammed,
-			unspam: this.state.spammed,
-		} );
+		let label = this.state.spammed
+				? this.props.translate( 'Not Spam' )
+				: this.props.translate( 'Spam', {
+						context: 'Stats: Action to mark an item as spam',
+						comment: 'Default label (changes into "Not Spam").',
+				  } ),
+			title = this.state.spammed
+				? this.props.translate( 'Not Spam', {
+						textOnly: true,
+						context: 'Stats: Action to undo marking an item as spam',
+						comment:
+							'Secondary label (default label is "Spam"). Recommended to use a very short label.',
+				  } )
+				: this.props.translate( 'Spam', {
+						textOnly: true,
+						context: 'Stats: Action to mark an item as spam',
+						comment: 'Default label (changes into "Not Spam").',
+				  } ),
+			wrapperClass = classNames( 'module-content-list-item-action-wrapper', {
+				spam: ! this.state.spammed,
+				unspam: this.state.spammed,
+			} );
 
 		return (
-			<li className="stats-list__spam-action module-content-list-item-action">
-				<Button
+			<li className="module-content-list-item-action">
+				<a
 					href="#"
 					onClick={ this.clickHandler }
 					className={ wrapperClass }
@@ -74,10 +76,8 @@ class StatsActionSpam extends React.Component {
 					aria-label={ title }
 				>
 					<Gridicon icon="spam" size={ 18 } />
-					<span className="stats-list__spam-label module-content-list-item-action-label">
-						{ label }
-					</span>
-				</Button>
+					<span className="module-content-list-item-action-label">{ label }</span>
+				</a>
 			</li>
 		);
 	}

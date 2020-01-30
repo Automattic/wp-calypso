@@ -9,8 +9,7 @@
 		{
 			"extends": "monorepo:wordpress",
 			"separateMajorMinor": false,
-			"prPriority": 2,
-			"reviewers": [ "@Automattic/cylon", "@Automattic/ganon", "@Automattic/luna" ]
+			"prPriority": 2
 		},
 		{
 			"extends": "monorepo:babel",

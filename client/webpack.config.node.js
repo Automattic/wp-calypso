@@ -56,18 +56,10 @@ function getExternals() {
 				fileLoader.test,
 			],
 		} ),
-		// Some imports should be resolved to runtime `require()` calls, with paths relative
-		// to the path of the `build/bundle.js` bundle.
-		{
-			// Don't bundle webpack.config, as it depends on absolute paths (__dirname)
-			'webpack.config': {
-				commonjs: '../client/webpack.config.js',
-			},
-			// Exclude the devdocs search-index, as it's huge.
-			'server/devdocs/search-index': {
-				commonjs: '../client/server/devdocs/search-index.js',
-			},
-		},
+		// Don't bundle webpack.config, as it depends on absolute paths (__dirname)
+		'webpack.config',
+		// Exclude the devdocs search-index, as it's huge.
+		'server/devdocs/search-index',
 	];
 }
 
@@ -97,7 +89,7 @@ const webpackConfig = {
 				configFile: path.resolve( 'babel.config.js' ),
 				cacheDirectory: path.join( buildDir, '.babel-server-cache' ),
 				cacheIdentifier,
-				exclude: /node_modules\//,
+				exclude: /(node_modules|devdocs[/\\]search-index)/,
 			} ),
 			fileLoader,
 			{

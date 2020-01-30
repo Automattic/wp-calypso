@@ -151,10 +151,6 @@ export function isEditorLoading( state ) {
 	return state.ui.editor.isLoading;
 }
 
-export function isEditorIframeLoaded( state ) {
-	return state.ui.editor.isIframeLoaded;
-}
-
 export function getEditorPublishButtonStatus( state ) {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );

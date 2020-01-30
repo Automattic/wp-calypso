@@ -19,7 +19,7 @@ export default () => {
 	app.use(
 		'/service-worker.js',
 		express.static(
-			path.resolve( __dirname, '..', '..', 'lib', 'service-worker', 'service-worker.js' )
+			path.resolve( __dirname, '..', '..', 'client', 'lib', 'service-worker', 'service-worker.js' )
 		)
 	);
 

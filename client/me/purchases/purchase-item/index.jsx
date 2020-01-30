@@ -69,23 +69,20 @@ class PurchaseItem extends Component {
 			);
 		}
 
-		if ( isRenewing( purchase ) && purchase.renewDate ) {
-			const renewDate = moment( purchase.renewDate );
+		if ( isRenewing( purchase ) && purchase.renewMoment ) {
 			return translate( 'Renews on %s', {
-				args: renewDate.format( 'LL' ),
+				args: purchase.renewMoment.format( 'LL' ),
 			} );
 		}
 
-		const expiry = moment( purchase.expiryDate );
-
 		if ( isExpiring( purchase ) ) {
-			if ( expiry < moment().add( 30, 'days' ) ) {
+			if ( purchase.expiryMoment < moment().add( 30, 'days' ) ) {
 				const status = subscribedWithinPastWeek( purchase ) ? 'is-info' : 'is-error';
 				return (
 					<Notice isCompact status={ status } icon="notice">
 						{ translate( 'Expires %(timeUntilExpiry)s', {
 							args: {
-								timeUntilExpiry: expiry.fromNow(),
+								timeUntilExpiry: purchase.expiryMoment.fromNow(),
 							},
 							context:
 								'timeUntilExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
@@ -96,19 +93,21 @@ class PurchaseItem extends Component {
 			}
 
 			return translate( 'Expires on %s', {
-				args: expiry.format( 'LL' ),
+				args: purchase.expiryMoment.format( 'LL' ),
 			} );
 		}
 
 		if ( isExpired( purchase ) ) {
 			if ( isConciergeSession( purchase ) ) {
 				return translate( 'Session used on %s', {
-					args: expiry.format( 'LL' ),
+					args: purchase.expiryMoment.format( 'LL' ),
 				} );
 			}
 
-			const expiredToday = moment().diff( expiry, 'hours' ) < 24;
-			const expiredText = expiredToday ? expiry.format( '[today]' ) : expiry.fromNow();
+			const expiredToday = moment().diff( purchase.expiryMoment, 'hours' ) < 24;
+			const expiredText = expiredToday
+				? purchase.expiryMoment.format( '[today]' )
+				: purchase.expiryMoment.fromNow();
 
 			return (
 				<Notice isCompact status="is-error" icon="notice">

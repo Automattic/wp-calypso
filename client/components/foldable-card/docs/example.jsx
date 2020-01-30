@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /**
  * External dependencies
  */
@@ -35,15 +34,6 @@ export default class FoldableCardExample extends PureComponent {
 				</div>
 				<div>
 					<FoldableCard
-						header="This is a highlighted card"
-						highlight="info"
-						screenReaderText="More"
-					>
-						I'm highlighted!
-					</FoldableCard>
-				</div>
-				<div>
-					<FoldableCard
 						header="This is a foldable card with a custom action icon"
 						icon="arrow-down"
 						screenReaderText="More"
@@ -71,9 +61,7 @@ export default class FoldableCardExample extends PureComponent {
 								</div>
 							</div>
 						}
-						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 						summary={ <button className="button">Update</button> }
-						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 						expandedSummary={ <button className="button">Update</button> }
 						screenReaderText="More"
 					>

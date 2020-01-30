@@ -1,9 +1,7 @@
 .upsell-nudge {
 	&.banner.card {
 		border-left-color: var( --color-accent );
-		border-left-width: 6px;
 		background-color: var( --color-neutral-80 );
-		box-shadow: none;
 		color: var( --color-text-inverted );
 		display: flex;
 		align-items: center;
@@ -15,7 +13,6 @@
 		}
 
 		&.is-compact {
-			border-left-width: 4px;
 			margin-bottom: 0;
 
 			.banner__icon-circle,
@@ -29,10 +26,6 @@
 			.banner__content {
 				padding: 0 0 0 8px;
 			}
-		}
-
-		&:hover {
-			box-shadow: none;
 		}
 	}
 
@@ -55,14 +48,13 @@
 		color: var( --color-text-inverted );
 	}
 
-	.banner__info .banner__title {
+	.banner__title {
 		color: var( --color-text-inverted );
 		font-weight: normal;
-		margin-right: 8px;
 	}
 
 	.banner__description {
-		color: var( --color-neutral-5 );
+		color: var( --color-text-inverted );
 	}
 
 	.banner__action {

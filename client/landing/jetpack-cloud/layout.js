@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import JetpackCloudMasterbar from './masterbar';
-import EmptyContent from 'components/empty-content';
 
 class JetpackCloudLayout extends Component {
 	static propTypes = {
@@ -26,7 +25,7 @@ class JetpackCloudLayout extends Component {
 						{ this.props.secondary }
 					</div>
 					<div id="primary" className="layout__primary">
-						{ this.props.primary || <EmptyContent /> }
+						{ this.props.primary }
 					</div>
 				</div>
 			</div>

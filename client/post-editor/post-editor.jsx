@@ -35,7 +35,6 @@ import {
 	saveConfirmationSidebarPreference,
 	editorEditRawContent,
 	editorResetRawContent,
-	setEditorIframeLoaded,
 } from 'state/ui/editor/actions';
 import { closeEditorSidebar, openEditorSidebar } from 'state/ui/editor/sidebar/actions';
 import {
@@ -120,7 +119,6 @@ export class PostEditor extends React.Component {
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		editorModePreference: PropTypes.string,
 		editorSidebarPreference: PropTypes.string,
-		setEditorIframeLoaded: PropTypes.func,
 		markChanged: PropTypes.func.isRequired,
 		markSaved: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -191,7 +189,6 @@ export class PostEditor extends React.Component {
 		this.debouncedSaveRawContent.cancel();
 		this.debouncedCopySelectedText.cancel();
 		this._previewWindow = null;
-		this.props.setEditorIframeLoaded( false );
 		clearTimeout( this._switchEditorTimeout );
 	}
 
@@ -476,8 +473,6 @@ export class PostEditor extends React.Component {
 
 	onEditorInitialized = () => {
 		this.setState( { isEditorInitialized: true } );
-		// Notify external listeners that the iframe has loaded
-		this.props.setEditorIframeLoaded();
 	};
 
 	onEditorTitleChange = () => {
@@ -1020,7 +1015,6 @@ export class PostEditor extends React.Component {
 		/**
 		 * The ID is used to avoid replacing user generated content, that may coincide with the
 		 * format specified below.
-		 *
 		 * @type {string}
 		 */
 		const selectionID = 'SELRES_' + uuid();
@@ -1203,7 +1197,6 @@ const enhance = flow(
 			openEditorSidebar,
 			editorEditRawContent,
 			editorResetRawContent,
-			setEditorIframeLoaded,
 			pauseGuidedTour,
 		}
 	)

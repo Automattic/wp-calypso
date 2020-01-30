@@ -54,7 +54,6 @@ export const getCurrentPlan = ( state, siteId ) => {
 
 /**
  * Returns a site specific plan
- *
  * @param  {object} state        global state
  * @param  {number} siteId       the site id
  * @param  {string} productSlug  the plan product slug
@@ -171,12 +170,7 @@ export function isRequestingSitePlans( state, siteId ) {
 
 export function isCurrentPlanExpiring( state, siteId ) {
 	const currentPlan = getCurrentPlan( state, siteId );
-
-	if ( ! currentPlan || ! currentPlan.expiryDate ) {
-		return true;
-	}
-
-	const expiration = moment( currentPlan.expiryDate ).startOf( 'day' );
+	const expiration = get( currentPlan, 'expiryMoment', null );
 	return expiration < moment().add( 30, 'days' );
 }
 
@@ -210,7 +204,6 @@ export function getSitePlanSlug( state, siteId ) {
  * DO NOT USE THIS FOR FEATURE GATES, this is only to be used for deciding
  * if nudge should be shown.
  * If you want a feature gate, you should make it backend-side.
- *
  * @param  {object}  state   Global State tree
  * @param  {number}  siteId  Site ID
  * @param  {string}  feature The feature we're looking for

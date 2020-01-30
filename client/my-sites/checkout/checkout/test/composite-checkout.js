@@ -8,9 +8,9 @@ import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { createStore } from 'redux';
 import { Provider as ReduxProvider } from 'react-redux';
-import '@testing-library/jest-dom/extend-expect'; // eslint-disable-line import/no-extraneous-dependencies
+import '@testing-library/jest-dom/extend-expect';
 import { mockSetCartEndpoint, mockGetCartEndpointWith } from '@automattic/composite-checkout-wpcom';
-import { render } from '@testing-library/react'; // eslint-disable-line import/no-extraneous-dependencies
+import { render } from '@testing-library/react';
 
 /**
  * Internal dependencies
@@ -78,13 +78,6 @@ describe( 'CompositeCheckout', () => {
 			total_cost_display: 'R$156',
 		};
 
-		const countryList = [
-			{
-				code: 'AU',
-				name: 'Australia',
-			},
-		];
-
 		const store = createStore( () => ( {
 			plans: { items: [] },
 			sites: { items: {} },
@@ -98,7 +91,6 @@ describe( 'CompositeCheckout', () => {
 					getCart={ mockGetCartEndpointWith( initialCart ) }
 					getStoredCards={ async () => [] }
 					allowedPaymentMethods={ [ 'paypal' ] }
-					overrideCountryList={ countryList }
 				/>
 			</ReduxProvider>
 		);

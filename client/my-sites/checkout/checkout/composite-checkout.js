@@ -10,7 +10,6 @@ import debugFactory from 'debug';
 import { useSelector, useDispatch } from 'react-redux';
 import {
 	WPCheckout,
-	WPCheckoutErrorBoundary,
 	useWpcomStore,
 	useShoppingCart,
 	FormFieldAnnotation,
@@ -38,8 +37,8 @@ import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import { FormCountrySelect } from 'components/forms/form-country-select';
 import getCountries from 'state/selectors/get-countries';
 import { fetchPaymentCountries } from 'state/countries/actions';
+import PhoneInput from 'components/phone-input/index.jsx';
 import { StateSelect } from 'my-sites/domains/components/form';
-import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -53,8 +52,6 @@ const wpcom = wp.undocumented();
 const wpcomGetCart = ( ...args ) => wpcom.getCart( ...args );
 const wpcomSetCart = ( ...args ) => wpcom.setCart( ...args );
 const wpcomGetStoredCards = ( ...args ) => wpcom.getStoredCards( ...args );
-const wpcomValidateDomainContactInformation = ( ...args ) =>
-	wpcom.validateDomainContactInformation( ...args );
 
 export default function CompositeCheckout( {
 	siteSlug,
@@ -63,7 +60,6 @@ export default function CompositeCheckout( {
 	getCart,
 	setCart,
 	getStoredCards,
-	validateDomainContactDetails,
 	allowedPaymentMethods,
 	overrideCountryList,
 	// TODO: handle these also
@@ -79,7 +75,7 @@ export default function CompositeCheckout( {
 	const onPaymentComplete = useCallback( () => {
 		debug( 'payment completed successfully' );
 		// TODO: determine which thank-you page to visit
-		page.redirect( `/checkout/thank-you/${ siteId || '' }/` );
+		page.redirect( `/checkout/thank-you/${ siteId }/` );
 	}, [ siteId ] );
 
 	const showErrorMessage = useCallback(
@@ -117,11 +113,7 @@ export default function CompositeCheckout( {
 	} = useShoppingCart( siteSlug, setCart || wpcomSetCart, getCart || wpcomGetCart );
 
 	const { registerStore } = registry;
-	useWpcomStore(
-		registerStore,
-		handleCheckoutEvent,
-		validateDomainContactDetails || wpcomValidateDomainContactInformation
-	);
+	useWpcomStore( registerStore, handleCheckoutEvent );
 
 	const errorMessages = useMemo( () => errors.map( error => error.message ), [ errors ] );
 	useDisplayErrors( errorMessages, showErrorMessage );
@@ -131,7 +123,7 @@ export default function CompositeCheckout( {
 	const itemsForCheckout = items.length ? [ ...items, tax ] : [];
 	debug( 'items for checkout', itemsForCheckout );
 
-	useRedirectIfCartEmpty( items, `/plans/${ siteSlug || '' }` );
+	useRedirectIfCartEmpty( items, `/plans/${ siteSlug }` );
 
 	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
 		getStoredCards || wpcomGetStoredCards
@@ -163,37 +155,6 @@ export default function CompositeCheckout( {
 		]
 	);
 
-	const validateDomainContact =
-		validateDomainContactDetails || wpcomValidateDomainContactInformation;
-
-	const renderDomainContactFields = (
-		domainNames,
-		contactDetails,
-		updateContactDetails,
-		applyDomainContactValidationResults
-	) => {
-		return (
-			<WPCheckoutErrorBoundary>
-				<ContactDetailsFormFields
-					countriesList={ countriesList }
-					contactDetails={ contactDetails }
-					onContactDetailsChange={ updateContactDetails }
-					onValidate={ ( values, onComplete ) => {
-						// TODO: Should probably handle HTTP errors here
-						validateDomainContact( values, domainNames, ( httpErrors, data ) => {
-							debug(
-								'Domain contact info validation ' + ( data.messages ? 'errors:' : 'successful' ),
-								data.messages
-							);
-							applyDomainContactValidationResults( { ...data.messages } );
-							onComplete( httpErrors, data );
-						} );
-					} }
-				/>
-			</WPCheckoutErrorBoundary>
-		);
-	};
-
 	return (
 		<React.Fragment>
 			<TestingBanner />
@@ -217,8 +178,8 @@ export default function CompositeCheckout( {
 					siteUrl={ siteSlug }
 					CountrySelectMenu={ CountrySelectMenu }
 					countriesList={ countriesList }
+					PhoneInput={ PhoneInput }
 					StateSelect={ StateSelect }
-					renderDomainContactFields={ renderDomainContactFields }
 				/>
 			</CheckoutProvider>
 		</React.Fragment>

@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
+import { MomentProvider } from 'components/localized-moment/context';
 
 /**
  * Internal dependencies
@@ -33,7 +34,9 @@ export const LOGIN_SECTION_DEFINITION = {
 const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => {
 	return (
 		<ReduxProvider store={ store }>
-			<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+			<MomentProvider>
+				<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+			</MomentProvider>
 		</ReduxProvider>
 	);
 };

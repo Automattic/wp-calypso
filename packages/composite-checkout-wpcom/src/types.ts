@@ -23,18 +23,6 @@ import {
 	CheckoutCartItemAmount,
 	CheckoutCartTotal,
 } from './types/checkout-cart';
-import {
-	WpcomStoreState,
-	initialWpcomStoreState,
-	ManagedContactDetails,
-	defaultManagedContactDetails,
-	isCompleteAndValid,
-	ManagedContactDetailsErrors,
-	managedContactDetailsUpdaters,
-	DomainContactDetails,
-	prepareDomainContactDetails,
-	isValid,
-} from './types/wpcom-store-state';
 
 export {
 	CheckoutPaymentMethodSlug,
@@ -53,14 +41,4 @@ export {
 	CheckoutCartItem,
 	CheckoutCartItemAmount,
 	CheckoutCartTotal,
-	WpcomStoreState,
-	initialWpcomStoreState,
-	ManagedContactDetails,
-	defaultManagedContactDetails,
-	isCompleteAndValid,
-	ManagedContactDetailsErrors,
-	managedContactDetailsUpdaters,
-	DomainContactDetails,
-	prepareDomainContactDetails,
-	isValid,
 };

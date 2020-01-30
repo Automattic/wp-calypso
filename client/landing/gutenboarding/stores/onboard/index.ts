@@ -20,7 +20,7 @@ use( plugins.persistence, {} );
 registerStore< State >( STORE_KEY, {
 	actions,
 	controls,
-	reducer: reducer as any,
+	reducer,
 	selectors,
 	persist: [ 'domain', 'siteTitle', 'siteVertical', 'pageLayouts' ],
 } );

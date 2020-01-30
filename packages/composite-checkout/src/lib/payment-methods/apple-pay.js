@@ -22,6 +22,7 @@ export function createApplePayMethod( {
 	submitTransaction,
 	getCountry,
 	getPostalCode,
+	getPhoneNumber,
 } ) {
 	const actions = {
 		setStripeComplete( payload ) {
@@ -41,6 +42,7 @@ export function createApplePayMethod( {
 						...payload,
 						country: getCountry(),
 						postalCode: getPostalCode(),
+						phoneNumber: getPhoneNumber(),
 					},
 				};
 				debug( 'stripe transaction complete', stripeResponse );

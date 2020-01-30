@@ -5,6 +5,7 @@ import debugFactory from 'debug';
 import interpolateComponents from 'interpolate-components';
 import Tannin from 'tannin';
 import LRU from 'lru';
+import moment from 'moment';
 import sha1 from 'hash.js/lib/hash/sha/1';
 import { EventEmitter } from 'events';
 import sprintf from '@tannin/sprintf';
@@ -163,6 +164,7 @@ function I18N() {
 }
 
 I18N.throwErrors = false;
+I18N.prototype.moment = moment;
 
 I18N.prototype.on = function( ...args ) {
 	this.stateObserver.on( ...args );
@@ -279,6 +281,8 @@ I18N.prototype.setLocale = function( localeData ) {
 		this.state.locale[ '' ]?.momentjs_locale?.textDirection;
 
 	this.state.tannin = new Tannin( { [ domain_key ]: this.state.locale } );
+
+	moment.locale( this.state.localeSlug );
 
 	// Updates numberFormat preferences with settings from translations
 	this.state.numberFormatSettings.decimal_point = getTranslationFromTannin(

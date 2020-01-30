@@ -6,7 +6,7 @@ import { map } from 'lodash';
 export enum Step {
 	IntentGathering = '/',
 	DesignSelection = '/design',
-	Signup = '/signup',
+	CreateSite = '/create-site',
 }
 
 export const routes = `(${ map( Step, ( route: string ) => route ).join( '|' ) })`;

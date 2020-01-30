@@ -113,7 +113,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Advanced customization' ),
 		getDescription: () =>
 			i18n.translate(
-				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
+				'Customize your selected theme template with extended color schemes, background designs, and complete control over website CSS.'
 			),
 	},
 
@@ -132,8 +132,8 @@ export const FEATURES_LIST = {
 		getDescription: () =>
 			i18n.translate(
 				'Get a free domain for one year. ' +
-					'Doesn’t apply to plan upgrades, renewals, or to premium domains. ' +
-					'After one year, domain renews at its {{a}}regular price{{/a}}.',
+					'Premium domains not included. ' +
+					'Your domain will renew at its {{a}}regular price{{/a}}.',
 				{
 					components: {
 						a: (
@@ -153,7 +153,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Unlimited premium themes' ),
 		getDescription: () =>
 			i18n.translate(
-				'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses.'
+				'Unlimited access to all of our advanced premium theme templates, including templates specifically tailored for businesses.'
 			),
 	},
 
@@ -200,7 +200,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Dozens of Free Themes' ),
 		getDescription: () =>
 			i18n.translate(
-				"Access to a wide range of professional themes so you can find a design that's just right for your site."
+				"Access to a wide range of professional theme templates for your website so you can find the exact design you're looking for."
 			),
 	},
 
@@ -217,7 +217,9 @@ export const FEATURES_LIST = {
 		getSlug: () => constants.FEATURE_UNLIMITED_STORAGE_SIGNUP,
 		getTitle: () => i18n.translate( '200 GB storage' ),
 		getDescription: () =>
-			i18n.translate( 'Upload more images, videos, audio, and documents to your website.' ),
+			i18n.translate(
+				"With increased storage space you'll be able to upload more images, videos, audio, and documents to your website."
+			),
 	},
 
 	[ constants.FEATURE_ADVANCED_SEO_TOOLS ]: {
@@ -225,7 +227,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Advanced SEO tools' ),
 		getDescription: () =>
 			i18n.translate(
-				'Boost traffic to your site with tools that make your content more findable on search engines and social media.'
+				"Adds tools to enhance your site's content for better results on search engines and social media."
 			),
 	},
 
@@ -267,8 +269,8 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Google Analytics Integration' ),
 		getDescription: () =>
 			i18n.translate(
-				"Track your site's stats with Google Analytics for a " +
-					'deeper understanding of your visitors and customers.'
+				'Track website statistics with Google Analytics for a ' +
+					'deeper understanding of your website visitors and customers.'
 			),
 	},
 
@@ -291,7 +293,10 @@ export const FEATURES_LIST = {
 				},
 			} ),
 		getDescription: () =>
-			i18n.translate( 'Upload more images, videos, audio, and documents to your website.' ),
+			i18n.translate(
+				"With increased storage space you'll be able to upload " +
+					'more images, videos, audio, and documents to your website.'
+			),
 		getStoreSlug: () => 'unlimited_space',
 	},
 
@@ -329,8 +334,8 @@ export const FEATURES_LIST = {
 
 			return i18n.translate(
 				'Get a free domain for one year. ' +
-					'Doesn’t apply to plan upgrades, renewals, or to premium domains. ' +
-					'After one year, domain renews at its {{a}}regular price{{/a}}.',
+					'Premium domains not included. ' +
+					'Your domain will renew at its {{a}}regular price{{/a}}.',
 				{
 					components: {
 						a: (
@@ -351,7 +356,9 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Jetpack Essential Features' ),
 		getDescription: () =>
 			i18n.translate(
-				'Optimize your site for better SEO, faster-loading pages, and protection from spam.'
+				'Speed up your site’s performance and protect it from spammers. ' +
+					'Access detailed records of all activity on your site. ' +
+					'While you’re at it, improve your SEO and automate social media sharing.'
 			),
 	},
 
@@ -377,8 +384,8 @@ export const FEATURES_LIST = {
 			} ),
 		getDescription: () =>
 			i18n.translate(
-				'Unlimited access to all of our advanced premium themes, ' +
-					'including designs specifically tailored for businesses.'
+				'Unlimited access to all of our advanced premium theme templates, ' +
+					'including templates specifically tailored for businesses.'
 			),
 		getStoreSlug: () => 'unlimited_themes',
 	},
@@ -436,7 +443,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Basic Design Customization' ),
 		getDescription: () =>
 			i18n.translate(
-				'Customize your selected theme with pre-set color schemes, ' +
+				'Customize your selected theme template with pre-set color schemes, ' +
 					'background designs, and font styles.'
 			),
 		getStoreSlug: () => constants.FEATURE_ADVANCED_DESIGN,
@@ -452,7 +459,8 @@ export const FEATURES_LIST = {
 			} ),
 		getDescription: () =>
 			i18n.translate(
-				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
+				'Customize your selected theme template with extended color schemes, ' +
+					'background designs, and complete control over website CSS.'
 			),
 		getStoreSlug: () => constants.FEATURE_ADVANCED_DESIGN,
 	},
@@ -495,7 +503,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Get Personalized Help' ),
 		getDescription: () =>
 			i18n.translate(
-				"Meet one-on-one with a WordPress.com expert who'll help you set up your site exactly as you need it."
+				'Schedule a one-on-one orientation with a Happiness Engineer to set up your site and learn more about WordPress.com.'
 			),
 	},
 
@@ -504,28 +512,20 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'SEO Tools' ),
 		getDescription: () =>
 			i18n.translate(
-				'Boost traffic to your site with tools that make your content more findable on search engines and social media.'
+				"Adds tools to enhance your site's content for better results on search engines and social media."
 			),
 	},
 
 	[ constants.FEATURE_UPLOAD_PLUGINS ]: {
 		getSlug: () => constants.FEATURE_UPLOAD_PLUGINS,
 		getTitle: () => i18n.translate( 'Install Plugins' ),
-		getDescription: () =>
-			i18n.translate(
-				'Plugins extend the functionality of your site and ' +
-					'open up endless possibilities for presenting your content and interacting with visitors.'
-			),
+		getDescription: () => i18n.translate( 'Install custom plugins on your site.' ),
 	},
 
 	[ constants.FEATURE_UPLOAD_THEMES ]: {
 		getSlug: () => constants.FEATURE_UPLOAD_THEMES,
 		getTitle: () => i18n.translate( 'Install Themes' ),
-		getDescription: () =>
-			i18n.translate(
-				'With the option to upload themes, you can give your site a professional polish ' +
-					'that will help it stand out among the rest.'
-			),
+		getDescription: () => i18n.translate( 'Upload custom themes on your site.' ),
 	},
 
 	[ constants.FEATURE_WORDADS_INSTANT ]: {
@@ -533,7 +533,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Site Monetization' ),
 		getDescription: () =>
 			i18n.translate(
-				'Earn money on your site by displaying ads and collecting recurring payments or donations.'
+				'Put your site to work and earn through ad revenue, easy-to-add PayPal buttons, and more.'
 			),
 	},
 
@@ -551,8 +551,8 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Dozens of Free Themes' ),
 		getDescription: () =>
 			i18n.translate(
-				'Access to a wide range of professional themes ' +
-					"so you can find a design that's just right for your site."
+				'Access to a wide range of professional theme templates ' +
+					"for your website so you can find the exact design you're looking for."
 			),
 	},
 
@@ -572,7 +572,10 @@ export const FEATURES_LIST = {
 				},
 			} ),
 		getDescription: () =>
-			i18n.translate( 'Upload more images, audio, and documents to your website.' ),
+			i18n.translate(
+				"With increased storage space you'll be able to upload " +
+					'more images, audio, and documents to your website.'
+			),
 	},
 
 	[ constants.FEATURE_13GB_STORAGE ]: {
@@ -584,7 +587,10 @@ export const FEATURES_LIST = {
 				},
 			} ),
 		getDescription: () =>
-			i18n.translate( 'Upload more images, videos, audio, and documents to your website.' ),
+			i18n.translate(
+				"With increased storage space you'll be able to upload " +
+					'more images, videos, audio, and documents to your website.'
+			),
 	},
 
 	[ constants.FEATURE_COMMUNITY_SUPPORT ]: {
@@ -607,26 +613,6 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Email & Live Chat Support' ),
 		getDescription: () =>
 			i18n.translate( 'Live chat support to help you get started with your site.' ),
-	},
-
-	[ constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS ]: {
-		getSlug: () => constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-		getTitle: () => i18n.translate( 'Email & Live Chat Support' ),
-		getDescription: () =>
-			i18n.translate(
-				'Live chat is available 24 hours a day from Monday through Friday. ' +
-					'You can also email us any day of the week for personalized support.'
-			),
-	},
-
-	[ constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS ]: {
-		getSlug: () => constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-		getTitle: () => i18n.translate( 'Email & Live Chat Support' ),
-		getDescription: () =>
-			i18n.translate(
-				'Live chat is available 24/7. ' +
-					'You can also email us any day of the week for personalized support.'
-			),
 	},
 
 	[ constants.FEATURE_PREMIUM_SUPPORT ]: {

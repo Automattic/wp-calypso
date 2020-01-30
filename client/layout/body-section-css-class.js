@@ -33,10 +33,9 @@ const addBodyClass = toClass => value => () => {
 const addGroupClass = addBodyClass( g => `is-group-${ g }` );
 const addSectionClass = addBodyClass( s => `is-section-${ s }` );
 
-export default function BodySectionCssClass( { group, section, bodyClass } ) {
+export default function BodySectionCssClass( { group, section } ) {
 	React.useEffect( addGroupClass( group ), [ group ] );
 	React.useEffect( addSectionClass( section ), [ section ] );
-	React.useEffect( () => bodyClass && document.body.classList.add( bodyClass ) );
 
 	return null;
 }

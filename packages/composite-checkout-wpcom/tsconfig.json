@@ -3,7 +3,7 @@
 		"allowJs": true,
 		"jsx": "react",
 		"target": "ES5",
-		"lib": [ "DOM", "ES2015", "ES2017", "ScriptHost" ],
+		"lib": [ "DOM", "ES2015", "ScriptHost" ],
 		"module": "esnext",
 		"declaration": true,
 		"declarationDir": "types",

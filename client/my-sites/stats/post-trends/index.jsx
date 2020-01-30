@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { max, throttle, values } from 'lodash';
-import { localize } from 'i18n-calypso';
-import moment from 'moment';
+import i18n, { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -128,7 +128,7 @@ class PostTrends extends React.Component {
 		const months = [];
 
 		for ( let i = 11; i >= 0; i-- ) {
-			const startDate = this.props
+			const startDate = i18n
 				.moment()
 				.subtract( i, 'months' )
 				.startOf( 'month' );
@@ -196,12 +196,14 @@ class PostTrends extends React.Component {
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 	const query = {
-		startDate: moment()
+		startDate: i18n
+			.moment()
 			.locale( 'en' )
 			.subtract( 1, 'year' )
 			.startOf( 'month' )
 			.format( 'YYYY-MM-DD' ),
-		endDate: moment()
+		endDate: i18n
+			.moment()
 			.locale( 'en' )
 			.endOf( 'month' )
 			.format( 'YYYY-MM-DD' ),

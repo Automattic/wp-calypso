@@ -25,6 +25,10 @@ import {
 	getGoogleAnalyticsDefaultConfig,
 	retarget as retargetAdTrackers,
 	recordAliasInFloodlight,
+	recordSignupCompletionInFloodlight,
+	recordSignupStart,
+	recordRegistration,
+	recordSignup,
 	recordAddToCart,
 	recordOrder,
 	setupGoogleAnalyticsGtag,
@@ -37,7 +41,6 @@ import { updateQueryParamsTracking } from 'lib/analytics/sem';
 import { statsdTimingUrl, statsdCountingUrl } from 'lib/analytics/statsd';
 import { trackAffiliateReferral } from './refer';
 import { getFeatureSlugFromPageUrl } from './feature-slug';
-import { recordSignupComplete } from './signup';
 
 /**
  * Module variables
@@ -343,9 +346,90 @@ const analytics = {
 		},
 	},
 
-	// `analytics.recordSignupComplete` needs to be present for `analytics.queue` to call
-	// the method after page navigation.
-	recordSignupComplete,
+	recordSignupStart: function( { flow, ref } ) {
+		// Tracks
+		analytics.tracks.recordEvent( 'calypso_signup_start', { flow, ref } );
+		// Google Analytics
+		analytics.ga.recordEvent( 'Signup', 'calypso_signup_start' );
+		// Marketing
+		recordSignupStart( { flow } );
+	},
+
+	recordRegistration: function( { flow } ) {
+		// Tracks
+		analytics.tracks.recordEvent( 'calypso_user_registration_complete', { flow } );
+		// Google Analytics
+		analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
+		// Marketing
+		recordRegistration();
+	},
+
+	recordPasswordlessRegistration: function( { flow } ) {
+		// Tracks
+		analytics.tracks.recordEvent( 'calypso_user_registration_passwordless_complete', { flow } );
+		// Google Analytics
+		analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_passwordless_complete' );
+		// Marketing
+		recordRegistration();
+	},
+
+	recordSocialRegistration: function() {
+		// Tracks
+		analytics.tracks.recordEvent( 'calypso_user_registration_social_complete' );
+		// Google Analytics
+		analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_social_complete' );
+		// Marketing
+		recordRegistration();
+	},
+
+	recordSignupComplete: function(
+		{ isNewUser, isNewSite, hasCartItems, flow, isNew7DUserSite },
+		now
+	) {
+		if ( ! now ) {
+			// Delay using the analytics localStorage queue.
+			return analytics.queue.add(
+				'recordSignupComplete',
+				{ isNewUser, isNewSite, hasCartItems, flow, isNew7DUserSite },
+				true
+			);
+		}
+
+		// Tracks
+		analytics.tracks.recordEvent( 'calypso_signup_complete', {
+			flow: flow,
+			is_new_user: isNewUser,
+			is_new_site: isNewSite,
+			has_cart_items: hasCartItems,
+		} );
+
+		// Google Analytics
+		const flags = [
+			isNewUser && 'is_new_user',
+			isNewSite && 'is_new_site',
+			hasCartItems && 'has_cart_items',
+		].filter( flag => false !== flag );
+
+		analytics.ga.recordEvent( 'Signup', 'calypso_signup_complete:' + flags.join( ',' ) );
+
+		if ( isNew7DUserSite ) {
+			// Tracks
+			analytics.tracks.recordEvent( 'calypso_new_user_site_creation', {
+				flow: flow,
+			} );
+
+			// Google Analytics
+			analytics.ga.recordEvent( 'Signup', 'calypso_new_user_site_creation' );
+		}
+
+		// Ad Tracking: Deprecated Floodlight pixels.
+		recordSignupCompletionInFloodlight(); // Every signup.
+
+		// Ad Tracking: New user, site creations.
+		if ( isNewUser && isNewSite ) {
+			recordSignup( 'new-user-site' );
+		}
+	},
 
 	recordAddToCart: function( { cartItem } ) {
 		// TODO: move Tracks event here?

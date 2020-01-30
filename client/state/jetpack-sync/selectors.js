@@ -6,7 +6,6 @@ import { get, reduce } from 'lodash';
 
 /**
  * Returns a sync status object by site ID.
- *
  * @param  {object} state    Global state tree
  * @param  {number} siteId   Site ID
  * @returns {object}          Sync status object
@@ -17,7 +16,6 @@ function getSyncStatus( state, siteId ) {
 
 /**
  * Returns a full sync request object by site ID.
- *
  * @param  {object} state    Global state tree
  * @param  {number} siteId   Site ID
  * @returns {object}          Full sync request object
@@ -28,7 +26,6 @@ function getFullSyncRequest( state, siteId ) {
 
 /**
  * Returns a boolean for whether a full sync is pending start.
- *
  * @param  {object} state    Global state tree
  * @param  {number} siteId   Site ID
  * @returns {boolean}         Whether a sync is pending start for site
@@ -62,51 +59,7 @@ function isPendingSyncStart( state, siteId ) {
 }
 
 /**
- * Sites on Jetpack 8.2 may be using an immediate full sync.
- *
- * @param  {object} state    Global state tree
- * @param  {number} siteId   Site ID
- * @returns {boolean}        Whether a site is using immediate full sync
- */
-function isImmediateFullSync( state, siteId ) {
-	const syncStatus = getSyncStatus( state, siteId );
-	return ! get( syncStatus, 'queue' ); // Immediate full sync sites will not have a `queue` property.
-}
-
-/**
- * Returns a rounded up percentage the amount of sync completed for sites using immediate full sync.
- *
- * @param  {object} state    Global state tree
- * @param  {number} siteId   Site ID
- * @returns {number}         The percentage of sync completed, expressed as an integer
- */
-function getImmediateSyncProgressPercentage( state, siteId ) {
-	const syncStatus = getSyncStatus( state, siteId ),
-		progress = get( syncStatus, 'progress' );
-
-	if ( ! progress ) {
-		return 0;
-	}
-	const totalItems = reduce(
-		Object.values( progress ),
-		( sum, syncItem ) => {
-			return syncItem.total ? ( sum += parseInt( syncItem.total ) ) : sum;
-		},
-		0
-	);
-	const totalSent = reduce(
-		Object.values( progress ),
-		( sum, syncItem ) => {
-			return syncItem.sent ? ( sum += parseInt( syncItem.sent ) ) : sum;
-		},
-		0
-	);
-	return Math.ceil( ( totalSent / totalItems ) * 100 );
-}
-
-/**
  * Returns a boolean for whether a site is in the process of a full sync.
- *
  * @param  {object} state    Global state tree
  * @param  {number} siteId   Site ID
  * @returns {boolean}         Whether a sync is in the process of syncing
@@ -124,17 +77,12 @@ function isFullSyncing( state, siteId ) {
 }
 
 /**
- * Returns a rounded up percentage the amount of sync completed for sites using legacy full sync.
- *
+ * Returns a rounded up percentage the amount of sync completed.
  * @param  {object} state    Global state tree
  * @param  {number} siteId   Site ID
  * @returns {number}          The percentage of sync completed, expressed as an integer
  */
 function getSyncProgressPercentage( state, siteId ) {
-	if ( isImmediateFullSync( state, siteId ) ) {
-		return getImmediateSyncProgressPercentage( state, siteId );
-	}
-
 	const syncStatus = getSyncStatus( state, siteId ),
 		queued = get( syncStatus, 'queue' ),
 		sent = get( syncStatus, 'sent' ),
@@ -172,6 +120,7 @@ function getSyncProgressPercentage( state, siteId ) {
 
 	const percentQueued = ( countQueued / countTotal ) * queuedMultiplier * 100;
 	const percentSent = ( countSent / countTotal ) * sentMultiplier * 100;
+
 	return Math.ceil( percentQueued + percentSent );
 }
 
@@ -181,5 +130,4 @@ export default {
 	isPendingSyncStart,
 	isFullSyncing,
 	getSyncProgressPercentage,
-	isImmediateFullSync,
 };

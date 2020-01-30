@@ -38,8 +38,6 @@ import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-prog
 import { getSectionName } from 'state/ui/selectors';
 import { getTopJITM } from 'state/jitm/selectors';
 import AsyncLoad from 'components/async-load';
-import UpsellNudge from 'blocks/upsell-nudge';
-import { abtest } from 'lib/abtest';
 
 const DOMAIN_UPSELL_NUDGE_DISMISS_KEY = 'domain_upsell_nudge_dismiss';
 
@@ -85,22 +83,6 @@ export class SiteNotice extends React.Component {
 		const eventName = 'calypso_domain_credit_reminder_impression';
 		const eventProperties = { cta_name: 'current_site_domain_notice' };
 		const { translate } = this.props;
-
-		if ( abtest( 'sidebarUpsellNudgeUnification' ) === 'variantShowUnifiedUpsells' ) {
-			return (
-				<UpsellNudge
-					callToAction={ translate( 'Claim' ) }
-					compact
-					event={ eventName }
-					href={ `/domains/add/${ this.props.site.slug }` }
-					title={ translate( 'Free domain available' ) }
-					tracksClickName="calypso_domain_credit_reminder_click"
-					tracksClickProperties={ eventProperties }
-					tracksImpressionName={ eventName }
-					tracksImpressionProperties={ eventProperties }
-				/>
-			);
-		}
 
 		return (
 			<Notice
@@ -190,26 +172,6 @@ export class SiteNotice extends React.Component {
 			} );
 		}
 
-		if ( abtest( 'sidebarUpsellNudgeUnification' ) === 'variantShowUnifiedUpsells' ) {
-			return (
-				<UpsellNudge
-					callToAction={ translate( 'Add' ) }
-					compact
-					href={ `/domains/add/${ site.slug }` }
-					onDismissClick={ this.props.clickDomainUpsellDismiss }
-					dismissPreferenceName="calypso_upgrade_nudge_cta_click"
-					event="calypso_upgrade_nudge_impression"
-					title={ noticeText }
-					tracksClickName="calypso_upgrade_nudge_cta_click"
-					tracksClickProperties={ { cta_name: 'domain-upsell-nudge' } }
-					tracksImpressionName="calypso_upgrade_nudge_impression"
-					tracksImpressionProperties={ { cta_name: 'domain-upsell-nudge' } }
-					tracksDismissName="calypso_upgrade_nudge_cta_click"
-					tracksDismissProperties={ { cta_name: 'domain-upsell-nudge-dismiss' } }
-				/>
-			);
-		}
-
 		return (
 			<Notice
 				isCompact
@@ -247,22 +209,6 @@ export class SiteNotice extends React.Component {
 
 		if ( ! bannerText ) {
 			return null;
-		}
-
-		if ( abtest( 'sidebarUpsellNudgeUnification' ) === 'variantShowUnifiedUpsells' ) {
-			const eventProperties = { cta_name: 'active-discount-sidebar' };
-			return (
-				<UpsellNudge
-					event="calypso_upgrade_nudge_impression"
-					tracksClickName="calypso_upgrade_nudge_cta_click"
-					tracksClickProperties={ eventProperties }
-					tracksImpressionName="calypso_upgrade_nudge_impression"
-					tracksImpressionProperties={ eventProperties }
-					callToAction={ ctaText || 'Upgrade' }
-					href={ `/plans/${ site.slug }?discount=${ name }` }
-					title={ bannerText }
-				/>
-			);
 		}
 
 		return (
@@ -351,14 +297,11 @@ export default connect(
 				),
 			clickDomainUpsellDismiss: () => {
 				dispatch( savePreference( DOMAIN_UPSELL_NUDGE_DISMISS_KEY, new Date().toISOString() ) );
-
-				if ( abtest( 'sidebarUpsellNudgeUnification' ) !== 'variantShowUnifiedUpsells' ) {
-					dispatch(
-						recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
-							cta_name: 'domain-upsell-nudge-dismiss',
-						} )
-					);
-				}
+				dispatch(
+					recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
+						cta_name: 'domain-upsell-nudge-dismiss',
+					} )
+				);
 			},
 		};
 	}

@@ -48,7 +48,6 @@ class PurchaseNotice extends Component {
 
 	getExpiringText( purchase ) {
 		const { translate, moment, selectedSite } = this.props;
-		const expiry = moment( purchase.expiryDate );
 
 		if ( selectedSite && purchase.expiryStatus === 'manualRenew' ) {
 			if ( isPaidWithCredits( purchase ) ) {
@@ -58,7 +57,7 @@ class PurchaseNotice extends Component {
 					{
 						args: {
 							purchaseName: getName( purchase ),
-							expiry: expiry.fromNow(),
+							expiry: moment( purchase.expiryMoment ).fromNow(),
 						},
 					}
 				);
@@ -72,7 +71,7 @@ class PurchaseNotice extends Component {
 						{
 							args: {
 								purchaseName: getName( purchase ),
-								expiry: expiry.fromNow(),
+								expiry: moment( purchase.expiryMoment ).fromNow(),
 							},
 						}
 					);
@@ -84,7 +83,7 @@ class PurchaseNotice extends Component {
 					{
 						args: {
 							purchaseName: getName( purchase ),
-							expiry: expiry.fromNow(),
+							expiry: moment( purchase.expiryMoment ).fromNow(),
 						},
 					}
 				);
@@ -96,13 +95,14 @@ class PurchaseNotice extends Component {
 				{
 					args: {
 						purchaseName: getName( purchase ),
-						expiry: expiry.fromNow(),
+						expiry: moment( purchase.expiryMoment ).fromNow(),
 					},
 				}
 			);
 		}
 		if ( isMonthly( purchase.productSlug ) ) {
-			const daysToExpiry = moment( expiry.diff( moment() ) ).format( 'D' );
+			const expiryMoment = moment( purchase.expiryMoment );
+			const daysToExpiry = moment( expiryMoment.diff( moment() ) ).format( 'D' );
 
 			return translate(
 				'%(purchaseName)s will expire and be removed from your site %(expiry)s days. ',
@@ -118,7 +118,7 @@ class PurchaseNotice extends Component {
 		return translate( '%(purchaseName)s will expire and be removed from your site %(expiry)s.', {
 			args: {
 				purchaseName: getName( purchase ),
-				expiry: expiry.fromNow(),
+				expiry: moment( purchase.expiryMoment ).fromNow(),
 			},
 		} );
 	}
@@ -132,7 +132,8 @@ class PurchaseNotice extends Component {
 
 		if (
 			! hasPaymentMethod( purchase ) &&
-			( ! canExplicitRenew( purchase ) || shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) )
+			( ! canExplicitRenew( purchase ) ||
+				shouldAddPaymentSourceInsteadOfRenewingNow( purchase.expiryMoment ) )
 		) {
 			return (
 				<NoticeAction href={ editCardDetailsPath }>{ translate( 'Add Credit Card' ) }</NoticeAction>
@@ -178,8 +179,7 @@ class PurchaseNotice extends Component {
 
 		if (
 			! subscribedWithinPastWeek( purchase ) &&
-			purchase.expiryDate &&
-			moment( purchase.expiryDate ) < moment().add( 90, 'days' )
+			purchase.expiryMoment < moment().add( 90, 'days' )
 		) {
 			noticeStatus = 'is-error';
 		}
@@ -202,7 +202,7 @@ class PurchaseNotice extends Component {
 	};
 
 	renderCreditCardExpiringNotice() {
-		const { editCardDetailsPath, purchase, translate, moment } = this.props;
+		const { editCardDetailsPath, purchase, translate } = this.props;
 		const {
 			payment: { creditCard },
 		} = purchase;
@@ -235,7 +235,7 @@ class PurchaseNotice extends Component {
 							args: {
 								cardType: creditCard.type.toUpperCase(),
 								cardNumber: parseInt( creditCard.number, 10 ),
-								cardExpiry: moment( creditCard.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
+								cardExpiry: creditCard.expiryMoment.format( 'MMMM YYYY' ),
 							},
 							components: {
 								a: linkComponent,

@@ -4,21 +4,23 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { Button, CompactCard, Card } from '@automattic/components';
+import { Button, CompactCard } from '@automattic/components';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
 import CardHeading from 'components/card-heading';
+import FormTextInput from 'components/forms/form-text-input';
+import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
+import Site from 'blocks/site';
 import wpLib from 'lib/wp';
 
 /**
  * Style dependencies
  */
 import './section-migrate.scss';
-import SitesBlock from 'my-sites/migrate/components/sites-block';
 
 const wpcom = wpLib.undocumented();
 
@@ -69,17 +71,37 @@ class StepSourceSelect extends Component {
 						case 'rest_invalid_param':
 							return this.setState( {
 								error: "We couldn't reach that site. Please check the URL and try again.",
-								isLoading: false,
+								loading: false,
 							} );
 						default:
 							return this.setState( {
 								error: 'Something went wrong. Please check the URL and try again.',
-								isLoading: false,
+								loading: false,
 							} );
 					}
 				} );
 		} );
 	};
+
+	renderFauxSiteSelector() {
+		const { onUrlChange, url } = this.props;
+		const { error } = this.state;
+		const isError = !! error;
+
+		return (
+			<div className="migrate__faux-site-selector">
+				<div className="migrate__faux-site-selector-content">
+					<div className="migrate__faux-site-selector-icon"></div>
+					<div className="migrate__faux-site-selector-info">
+						<div className="migrate__faux-site-selector-label">Import from...</div>
+						<div className="migrate__faux-site-selector-url">
+							<FormTextInput isError={ isError } onChange={ onUrlChange } value={ url } />
+						</div>
+					</div>
+				</div>
+			</div>
+		);
+	}
 
 	render() {
 		const { targetSite, targetSiteSlug } = this.props;
@@ -96,17 +118,16 @@ class StepSourceSelect extends Component {
 						backup file, you can <a href={ uploadHref }>upload it to import content</a>.
 					</div>
 				</CompactCard>
-				<SitesBlock
-					sourceSite={ null }
-					loadingSourceSite={ this.state.isLoading }
-					targetSite={ targetSite }
-					onUrlChange={ this.props.onUrlChange }
-				/>
-				<Card>
+				<CompactCard className="migrate__sites">
+					{ this.renderFauxSiteSelector() }
+					<Gridicon className="migrate__sites-arrow" icon="arrow-right" />
+					<Site site={ targetSite } indicator={ false } />
+				</CompactCard>
+				<CompactCard>
 					<Button busy={ this.state.isLoading } onClick={ this.handleContinue } primary={ true }>
 						Continue
 					</Button>
-				</Card>
+				</CompactCard>
 			</>
 		);
 	}

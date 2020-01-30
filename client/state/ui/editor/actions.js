@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/no-undefined-types */
 /**
  * External dependencies
  */
@@ -14,7 +13,6 @@ import {
 	EDITOR_AUTOSAVE_RESET,
 	EDITOR_AUTOSAVE_SUCCESS,
 	EDITOR_AUTOSAVE_FAILURE,
-	EDITOR_IFRAME_LOADED,
 	EDITOR_LOADING_ERROR_RESET,
 	EDITOR_PASTE_EVENT,
 	EDITOR_RESET,
@@ -156,11 +154,6 @@ export function saveConfirmationSidebarPreference( siteId, isEnabled = true ) {
 	};
 }
 
-export const setEditorIframeLoaded = ( isIframeLoaded = true ) => ( {
-	type: EDITOR_IFRAME_LOADED,
-	isIframeLoaded,
-} );
-
 export const editorAutosaveReset = () => ( {
 	type: EDITOR_AUTOSAVE_RESET,
 } );
@@ -213,7 +206,6 @@ export function editorEditRawContent( content ) {
 
 /**
  * Unsets the raw TinyMCE content value
- *
  * @returns {Action} Action object
  */
 export function editorResetRawContent() {

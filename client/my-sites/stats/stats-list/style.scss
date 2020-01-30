@@ -366,7 +366,6 @@ ul.module-content-list-item-actions {
 		.module-content-list-item-action-wrapper,
 		ul.module-content-list-item-action-submenu {
 			display: block;
-			opacity: 1;
 			text-align: left;
 		}
 
@@ -548,20 +547,16 @@ ul.module-content-list-item-action-submenu {
 		}
 	}
 
-	// Optically align a bit better
+	// Icon settings
+	// 1: Optically align a bit better
 	.gridicon {
 		vertical-align: middle;
 		margin-right: 4px;
-		margin-top: -2px;
+		margin-top: -2px; // 1
 
 		&.gridicons-cross {
 			margin-right: 0;
 		}
-	}
-	
-	// When a button instead of a link is used
-	.button.module-content-list-item-action-wrapper .gridicon {
-		vertical-align: unset;
 	}
 
 	// Color spam action red

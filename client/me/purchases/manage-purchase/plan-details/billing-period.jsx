@@ -15,7 +15,6 @@ import { Button } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { withLocalizedMoment } from 'components/localized-moment';
 import { isMonthly } from 'lib/plans/constants';
 import { getYearlyPlanByMonthly } from 'lib/plans';
 import { planItem } from 'lib/cart-values/cart-items';
@@ -41,31 +40,30 @@ class PlanBillingPeriod extends Component {
 	};
 
 	renderYearlyBillingInformation() {
-		const { purchase, translate, moment } = this.props;
+		const { purchase, translate } = this.props;
 
 		if ( showCreditCardExpiringWarning( purchase ) ) {
 			return translate( 'Billed yearly, credit card expiring soon' );
 		}
 
-		if ( isRenewing( purchase ) && purchase.renewDate ) {
-			const renewDate = moment( purchase.renewDate );
+		if ( isRenewing( purchase ) && purchase.renewMoment ) {
 			return translate( 'Billed yearly, renews on %s', {
-				args: renewDate.format( 'LL' ),
+				args: purchase.renewMoment.format( 'LL' ),
 				comment: '%s is the renewal date in format M DD, Y, for example: June 10, 2019',
 			} );
 		}
 
-		if ( isExpiring( purchase ) && purchase.expiryDate ) {
+		if ( isExpiring( purchase ) && purchase.expiryMoment ) {
 			return translate( 'Billed yearly, expires on %s', {
-				args: moment( purchase.expiryDate ).format( 'LL' ),
+				args: purchase.expiryMoment.format( 'LL' ),
 				comment: '%s is the expiration date in format M DD, Y, for example: June 10, 2019',
 			} );
 		}
 
-		if ( isExpired( purchase ) && purchase.expiryDate ) {
+		if ( isExpired( purchase ) && purchase.expiryMoment ) {
 			return translate( 'Billed yearly, expired %(timeSinceExpiry)s', {
 				args: {
-					timeSinceExpiry: moment( purchase.expiryDate ).fromNow(),
+					timeSinceExpiry: purchase.expiryMoment.fromNow(),
 				},
 				comment: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 			} );
@@ -116,4 +114,4 @@ class PlanBillingPeriod extends Component {
 
 export default connect( null, {
 	recordTracksEvent,
-} )( localize( withLocalizedMoment( PlanBillingPeriod ) ) );
+} )( localize( PlanBillingPeriod ) );

@@ -18,7 +18,7 @@ import {
 } from 'lib/domains/wapi-domain-info/actions';
 import notices from 'notices';
 import { displayRequestTransferCodeResponseNotice } from './shared';
-import { CALYPSO_CONTACT, TRANSFER_DOMAIN_REGISTRATION_WITH_NEW_REGISTRAR } from 'lib/url/support';
+import { CALYPSO_CONTACT, TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
 
 class Unlocked extends React.Component {
 	state = {
@@ -30,17 +30,17 @@ class Unlocked extends React.Component {
 		this.setStateIfMounted = noop;
 	}
 
+	/**
+	 * Wrap setState calls that might occur after unmounting.
+	 *
+	 * When we cancel a transfer, that might update locking or privacy,
+	 * but errors mean we can't know in time - the store gets the information
+	 * before we do.
+	 *
+	 * The recommended solution is cancellable promises, but we don't want to
+	 * cancel these requests if we navigate away, so that won't work for us here.
+	 */
 	setStateIfMounted( ...args ) {
-		/**
-		 * Wrap setState calls that might occur after unmounting.
-		 *
-		 * When we cancel a transfer, that might update locking or privacy,
-		 * but errors mean we can't know in time - the store gets the information
-		 * before we do.
-		 *
-		 * The recommended solution is cancellable promises, but we don't want to
-		 * cancel these requests if we navigate away, so that won't work for us here.
-		 */
 		this.setState( ...args );
 	}
 
@@ -292,11 +292,7 @@ class Unlocked extends React.Component {
 						{ submitting && <p>{ translate( 'Sending request…' ) }</p> }
 						{ domainStateMessage && <p>{ domainStateMessage }</p> }
 						{ this.renderBody( domain ) }
-						<a
-							href={ TRANSFER_DOMAIN_REGISTRATION_WITH_NEW_REGISTRAR }
-							target="_blank"
-							rel="noopener noreferrer"
-						>
+						<a href={ TRANSFER_DOMAIN_REGISTRATION } target="_blank" rel="noopener noreferrer">
 							{ translate( 'Learn More.' ) }
 						</a>
 					</div>

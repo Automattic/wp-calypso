@@ -5,17 +5,20 @@
 /**
  * External dependencies
  */
+import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import Gridicon from 'components/gridicon';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import AccordionStatus from '../status';
-import Tooltip from 'components/tooltip';
+import sinon from 'sinon';
 
 describe( 'AccordionStatus', () => {
+	let AccordionStatus, Tooltip;
+
+	beforeAll( () => {
+		AccordionStatus = require( '../status' );
+		Tooltip = require( 'components/tooltip' );
+	} );
+
 	test( 'should render with explicit props', () => {
 		const status = {
 			type: 'error',
@@ -25,40 +28,55 @@ describe( 'AccordionStatus', () => {
 		};
 		const wrapper = shallow( <AccordionStatus { ...status } /> );
 
-		expect( wrapper.find( 'a' ) ).toHaveProp( 'href', 'https://wordpress.com' );
-		expect( wrapper.find( 'a' ) ).toHaveClassName( 'is-error' );
-		expect( wrapper.find( Gridicon ) ).toHaveProp( 'icon', 'notice' );
-		expect( wrapper.find( Tooltip ) ).toHaveProp( 'children', 'Warning!' );
-		expect( wrapper.find( Tooltip ) ).toHaveProp( 'position', 'top left' );
+		expect( wrapper.find( 'a' ) )
+			.to.have.prop( 'href' )
+			.equal( 'https://wordpress.com' );
+		expect( wrapper.find( 'a' ) ).to.have.className( 'is-error' );
+		expect( wrapper.find( Gridicon ) )
+			.to.have.prop( 'icon' )
+			.equal( 'notice' );
+		expect( wrapper.find( Tooltip ) )
+			.to.have.prop( 'children' )
+			.equal( 'Warning!' );
+		expect( wrapper.find( Tooltip ) )
+			.to.have.prop( 'position' )
+			.equal( 'top left' );
 	} );
 
 	test( 'should render with default props', () => {
 		const wrapper = shallow( <AccordionStatus /> );
 
-		expect( wrapper.find( 'a' ) ).toHaveProp( 'href', undefined );
-		expect( wrapper.find( 'a' ) ).toHaveClassName( 'is-info' );
-		expect( wrapper.find( Gridicon ) ).toHaveProp( 'icon', 'info' );
-		expect( wrapper ).not.toContainMatchingElement( Tooltip );
+		expect( wrapper.find( 'a' ) ).to.not.have.prop( 'href' );
+		expect( wrapper.find( 'a' ) ).to.have.className( 'is-info' );
+		expect( wrapper.find( Gridicon ) )
+			.to.have.prop( 'icon' )
+			.equal( 'info' );
+		expect( wrapper ).to.not.have.descendants( Tooltip );
 	} );
 
 	test( 'should show tooltip on hover', () => {
 		const wrapper = shallow( <AccordionStatus text="Warning!" /> );
 
-		expect( wrapper.find( Tooltip ) ).toHaveProp( 'isVisible', false );
-		expect( wrapper.find( Tooltip ) ).toHaveProp( 'position', 'top' );
+		expect( wrapper.find( Tooltip ) ).to.have.prop( 'isVisible' ).be.false;
+		expect( wrapper.find( Tooltip ) )
+			.to.have.prop( 'position' )
+			.equal( 'top' );
 
 		wrapper.find( 'a' ).simulate( 'mouseEnter' );
-		expect( wrapper.find( Tooltip ) ).toHaveProp( 'isVisible', true );
+
+		expect( wrapper.find( Tooltip ) ).to.have.prop( 'isVisible' ).be.true;
 
 		wrapper.find( 'a' ).simulate( 'mouseLeave' );
-		expect( wrapper.find( Tooltip ) ).toHaveProp( 'isVisible', false );
+
+		expect( wrapper.find( Tooltip ) ).to.have.prop( 'isVisible' ).be.false;
 	} );
 
 	test( 'should call onClick callback', () => {
-		const spy = jest.fn();
+		const spy = sinon.spy();
 		const wrapper = shallow( <AccordionStatus onClick={ spy } /> );
 
 		wrapper.find( 'a' ).simulate( 'click' );
-		expect( spy ).toHaveBeenCalledTimes( 1 );
+
+		expect( spy ).to.have.been.calledOnce;
 	} );
 } );

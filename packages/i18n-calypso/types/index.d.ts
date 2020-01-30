@@ -5,6 +5,7 @@
  * External dependencies
  */
 import * as React from 'react';
+import moment from 'moment';
 
 declare namespace i18nCalypso {
 	type NormalizedTranslateArgs =
@@ -80,6 +81,7 @@ declare namespace i18nCalypso {
 		locale: string;
 		translate: typeof translate;
 		numberFormat: typeof numberFormat;
+		moment: typeof moment;
 	}
 
 	// Infers prop type from component C

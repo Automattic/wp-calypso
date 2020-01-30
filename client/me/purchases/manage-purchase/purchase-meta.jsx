@@ -182,8 +182,7 @@ class PurchaseMeta extends Component {
 	}
 
 	renderPaymentInfo() {
-		const { purchase, translate, moment } = this.props;
-		const payment = purchase?.payment;
+		const { purchase, translate } = this.props;
 
 		if ( isIncludedWithPlan( purchase ) ) {
 			return translate( 'Included with plan' );
@@ -197,11 +196,11 @@ class PurchaseMeta extends Component {
 			}
 
 			if ( isPaidWithCreditCard( purchase ) ) {
-				paymentInfo = payment.creditCard.number;
+				paymentInfo = purchase.payment.creditCard.number;
 			} else if ( isPaidWithPayPalDirect( purchase ) ) {
 				paymentInfo = translate( 'expiring %(cardExpiry)s', {
 					args: {
-						cardExpiry: moment( payment.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
+						cardExpiry: purchase.payment.expiryMoment.format( 'MMMM YYYY' ),
 					},
 				} );
 			}
@@ -291,7 +290,7 @@ class PurchaseMeta extends Component {
 	}
 
 	renderExpiration() {
-		const { purchase, site, translate, moment, isAutorenewalEnabled } = this.props;
+		const { purchase, site, translate, isAutorenewalEnabled } = this.props;
 
 		if ( isDomainTransfer( purchase ) ) {
 			return null;
@@ -309,7 +308,7 @@ class PurchaseMeta extends Component {
 			const subsBillingText = isAutorenewalEnabled
 				? translate( 'You will be billed on {{dateSpan}}%(renewDate)s{{/dateSpan}}', {
 						args: {
-							renewDate: purchase.renewDate && moment( purchase.renewDate ).format( 'LL' ),
+							renewDate: purchase.renewMoment.format( 'LL' ),
 						},
 						components: {
 							dateSpan,
@@ -317,7 +316,7 @@ class PurchaseMeta extends Component {
 				  } )
 				: translate( 'Expires on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
 						args: {
-							expireDate: moment( purchase.expiryDate ).format( 'LL' ),
+							expireDate: purchase.expiryMoment.format( 'LL' ),
 						},
 						components: {
 							dateSpan,

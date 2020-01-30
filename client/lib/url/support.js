@@ -90,7 +90,6 @@ export const STATS_TOP_POSTS_PAGES = `${ root }/stats/#top-posts-pages`;
 export const STATS_VIEWS_BY_COUNTRY = `${ root }/stats/#views-by-country`;
 export const SUPPORT_ROOT = `${ root }/`;
 export const TRANSFER_DOMAIN_REGISTRATION = `${ root }/transfer-domain-registration`;
-export const TRANSFER_DOMAIN_REGISTRATION_WITH_NEW_REGISTRAR = `${ root }/transfer-domain-registration#starting-the-transfer-with-your-new-registrar`;
 export const TWITTER_TIMELINE_WIDGET = `${ root }/widgets/twitter-timeline-widget`;
 export const UPDATE_CONTACT_INFORMATION = `${ root }/update-contact-information/`;
 export const UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES = `${ root }/update-contact-information/#email-or-name-changes`;

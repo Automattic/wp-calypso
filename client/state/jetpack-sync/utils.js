@@ -17,7 +17,6 @@ export function getExpectedResponseKeys() {
 		'is_scheduled',
 		'total',
 		'config',
-		'progress',
 		'queue_size',
 		'queue_lag',
 		'full_queue_size',

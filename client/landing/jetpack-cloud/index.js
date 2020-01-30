@@ -20,7 +20,7 @@ window.AppBoot = () => {
 	if ( ! config.isEnabled( 'jetpack-cloud' ) ) {
 		window.location.href = '/';
 	} else {
-		initJetpackCloudRoutes();
+		initJetpackCloudRoutes( '/jetpack-cloud' );
 		page.start( { decodeURLComponents: false } );
 	}
 };

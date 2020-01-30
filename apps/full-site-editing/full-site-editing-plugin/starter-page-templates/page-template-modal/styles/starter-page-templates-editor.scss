@@ -386,43 +386,51 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 // Preview adjustments.
 // Tweak styles which are inside of the preview container.
-.block-editor-block-preview__container.editor-styles-wrapper {
-	.wp-block {
-		width: 100%;
-	}
-
-	// `core/cover`
-	.wp-block[data-type='core/cover'][data-align='full'] {
-		margin: 0;
-		.wp-block-cover {
-			padding: 0;
+.block-editor-block-preview__container {
+	.editor-styles-wrapper {
+		.wp-block {
+			width: 100%;
 		}
-	}
 
-	// `core/columns`
-	/* stylelint-disable selector-combinator-space-before */
-	.wp-block-columns
-		> .block-editor-inner-blocks
-		> .block-editor-block-list__layout
-		> [data-type='core/column']
-		> .block-editor-block-list__block-edit
-		> div
-		> .block-core-columns
-		> .block-editor-inner-blocks {
-		/* stylelint-enable */
-		margin-top: 0;
-		margin-bottom: 0;
-	}
-
-	.block-editor-block-list__block {
-		&[data-align='full'] {
+		// `core/cover`
+		.wp-block[data-type='core/cover'][data-align='full'] {
 			margin: 0;
+			.wp-block-cover {
+				padding: 0;
+			}
 		}
 
-		.block-editor-block-list__block-edit {
-			@media screen and ( min-width: 600px ) {
+		// `core/columns`
+		/* stylelint-disable selector-combinator-space-before */
+		.wp-block-columns
+			> .block-editor-inner-blocks
+			> .block-editor-block-list__layout
+			> [data-type='core/column']
+			> .block-editor-block-list__block-edit
+			> div
+			> .block-core-columns
+			> .block-editor-inner-blocks {
+			/* stylelint-enable */
+			margin-top: 0;
+			margin-bottom: 0;
+		}
+
+		.block-editor-block-list__block {
+			&[data-align='full'] {
 				margin: 0;
 			}
+
+			.block-editor-block-list__block-edit {
+				@media screen and ( min-width: 600px ) {
+					margin: 0;
+				}
+			}
+		}
+
+		// Fix upstream: https://github.com/WordPress/gutenberg/pull/17202.
+		.block-editor-block-list__layout,
+		.block-editor-block-list__block {
+			padding: inherit;
 		}
 	}
 }

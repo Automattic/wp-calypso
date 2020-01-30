@@ -125,23 +125,9 @@ class Layout extends Component {
 			}
 		);
 
-		const optionalBodyProps = () => {
-			const optionalProps = {};
-
-			if ( this.props.isFrankenflow ) {
-				optionalProps.bodyClass = 'is-frankenflow';
-			}
-
-			return optionalProps;
-		};
-
 		return (
 			<div className={ sectionClass }>
-				<BodySectionCssClass
-					group={ this.props.sectionGroup }
-					section={ this.props.sectionName }
-					{ ...optionalBodyProps() }
-				/>
+				<BodySectionCssClass group={ this.props.sectionGroup } section={ this.props.sectionName } />
 				<HtmlIsIframeClassname />
 				<DocumentHead />
 				<QuerySites primaryAndRecent />
@@ -220,7 +206,6 @@ export default connect( state => {
 	const oauth2Client = getCurrentOAuth2Client( state );
 	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
 	const isEligibleForJITM = [ 'stats', 'plans', 'themes', 'plugins' ].indexOf( sectionName ) >= 0;
-	const isFrankenflow = startsWith( currentRoute, '/start/frankenflow' );
 
 	return {
 		masterbarIsHidden:
@@ -249,6 +234,5 @@ export default connect( state => {
 		authorization, it would remove the newly connected site that has been fetched separately.
 		See https://github.com/Automattic/wp-calypso/pull/31277 for more details. */
 		shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
-		isFrankenflow,
 	};
 } )( Layout );

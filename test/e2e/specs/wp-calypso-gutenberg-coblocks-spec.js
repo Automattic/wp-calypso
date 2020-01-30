@@ -164,7 +164,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 
 		step( 'Can insert the Logos & Badges block', async function() {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			await gEditorComponent.addBlock( 'Logos & Badges' );
+			await gEditorComponent.addBlock( 'Logos' );
 			return await driverHelper.waitTillPresentAndDisplayed(
 				driver,
 				By.css( '.wp-block-coblocks-logos' )

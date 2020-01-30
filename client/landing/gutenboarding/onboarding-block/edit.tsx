@@ -14,7 +14,6 @@ import { STORE_KEY } from '../stores/onboard';
 import DesignSelector from './design-selector';
 import StepperWizard from './stepper-wizard';
 import VerticalSelect from './vertical-select';
-import SignupForm from './signup-form';
 import SiteTitle from './site-title';
 import { Attributes } from './types';
 import { Step } from '../steps';
@@ -57,9 +56,6 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 				</Route>
 				<Route exact path={ Step.DesignSelection }>
 					{ ! siteVertical ? <Redirect to={ Step.IntentGathering } /> : <DesignSelector /> }
-				</Route>
-				<Route exact path={ Step.Signup }>
-					<SignupForm />
 				</Route>
 			</Switch>
 		</>

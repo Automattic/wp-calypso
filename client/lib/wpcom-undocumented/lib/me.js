@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import WPCOM from 'wpcom';
+import { Me } from 'wpcom';
 import inherits from 'inherits';
 import debugFactory from 'debug';
 
@@ -22,6 +22,7 @@ import config from 'config';
  * Create an UndocumentedMe instance
  *
  * @param {WPCOM} wpcom - WPCOMUndocumented instance
+ * @returns {NUll} null
  */
 function UndocumentedMe( wpcom ) {
 	debug( 'UndocumentedMe' );
@@ -34,7 +35,7 @@ function UndocumentedMe( wpcom ) {
 /**
  * Inherits from Me class
  */
-inherits( UndocumentedMe, WPCOM.Me );
+inherits( UndocumentedMe, Me );
 
 UndocumentedMe.prototype.billingHistoryEmailReceipt = function( receiptId, callback ) {
 	const args = {
@@ -135,6 +136,7 @@ UndocumentedMe.prototype.changeUsername = function( username, action, callback )
  * @param {object} [additionalData] Any additional data to send in the request
  *
  * @returns {Promise} A promise for the request
+ * @api public
  */
 UndocumentedMe.prototype.storedCardAdd = function( cardToken, additionalData = {} ) {
 	debug( '/me/stored-cards', cardToken, additionalData );

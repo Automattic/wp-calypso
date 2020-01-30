@@ -20,7 +20,6 @@ import { areDomainsInLineItems } from '../hooks/has-domains';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary, { WPCheckoutOrderSummaryTitle } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
-import { isCompleteAndValid } from '../types';
 
 const ContactFormTitle = () => {
 	const translate = useTranslate();
@@ -50,10 +49,11 @@ export default function WPCheckout( {
 	siteUrl,
 	CountrySelectMenu,
 	countriesList,
+	PhoneInput,
 	StateSelect,
-	renderDomainContactFields,
 } ) {
 	const translate = useTranslate();
+	const [ itemsWithTax ] = useLineItems();
 
 	const ReviewContent = () => (
 		<WPCheckoutOrderReview
@@ -92,18 +92,17 @@ export default function WPCheckout( {
 			titleContent: <ContactFormTitle />,
 			activeStepContent: (
 				<WPContactForm
-					siteUrl={ siteUrl }
 					isComplete={ false }
 					isActive={ true }
 					CountrySelectMenu={ CountrySelectMenu }
 					countriesList={ countriesList }
+					PhoneInput={ PhoneInput }
 					StateSelect={ StateSelect }
-					renderDomainContactFields={ renderDomainContactFields }
 				/>
 			),
 			completeStepContent: <WPContactForm summary isComplete={ true } isActive={ false } />,
-			isCompleteCallback: () => isCompleteAndValid( contactInfo ),
-			isEditableCallback: () => isFormEditable( contactInfo ),
+			isCompleteCallback: () => isFormComplete( contactInfo, itemsWithTax ),
+			isEditableCallback: () => isFormEditable( contactInfo, itemsWithTax ),
 			getEditButtonAriaLabel: () => translate( 'Edit the billing details' ),
 			getNextStepButtonAriaLabel: () => translate( 'Continue with the entered billing details' ),
 		},
@@ -123,7 +122,55 @@ export default function WPCheckout( {
 	return <Checkout steps={ steps } />;
 }
 
-function isFormEditable( contactInfo ) {
+function isElligibleForVat() {
+	//TODO: Detect whether people are in EU or AU and return true if they are
+	return false;
+}
+
+function isFormComplete( contactInfo, items ) {
+	const taxFields = [ contactInfo.country, contactInfo.postalCode ];
+	const contactFields = [
+		contactInfo.firstName,
+		contactInfo.lastName,
+		contactInfo.email,
+		contactInfo.address,
+		contactInfo.city,
+		contactInfo.state,
+		...( isElligibleForVat() ? [ contactInfo.vatId ] : [] ),
+	];
+	let allFields = taxFields;
+	if ( areDomainsInLineItems( items ) ) {
+		allFields = allFields.concat( contactFields );
+	}
+
+	if ( ! allFields.every( field => field ) ) {
+		return false;
+	}
+
+	// Make sure all required fields are filled
+	return allFields.every( ( { isValid } ) => isValid );
+}
+
+function isFormEditable( contactInfo, items ) {
+	const taxFields = [ contactInfo.country, contactInfo.postalCode ];
+	const contactFields = [
+		contactInfo.firstName,
+		contactInfo.lastName,
+		contactInfo.email,
+		contactInfo.address,
+		contactInfo.city,
+		contactInfo.state,
+		...( isElligibleForVat() ? [ contactInfo.vatId ] : [] ),
+	];
+	let allFields = taxFields;
+	if ( areDomainsInLineItems( items ) ) {
+		allFields = allFields.concat( contactFields );
+	}
+
+	if ( ! allFields.every( field => field ) ) {
+		return false;
+	}
+
 	// If any field has been touched, it is editable
-	return Object.values( contactInfo ).some( ( { isTouched } ) => isTouched );
+	return allFields.some( ( { isTouched } ) => isTouched );
 }

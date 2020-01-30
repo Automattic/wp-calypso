@@ -99,7 +99,7 @@ const getPlanPersonalDetails = () => ( {
 		// pay attention to ordering, shared features should align on /plan page
 		constants.FEATURE_CUSTOM_DOMAIN,
 		constants.FEATURE_JETPACK_ESSENTIAL,
-		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 		constants.FEATURE_FREE_THEMES,
 		constants.FEATURE_BASIC_DESIGN,
 		constants.FEATURE_6GB_STORAGE,
@@ -162,7 +162,7 @@ const getPlanEcommerceDetails = () => ( {
 			// pay attention to ordering, shared features should align on /plan page
 			constants.FEATURE_CUSTOM_DOMAIN,
 			constants.FEATURE_JETPACK_ADVANCED,
-			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
+			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 			constants.FEATURE_ADVANCED_DESIGN,
 			constants.FEATURE_UNLIMITED_STORAGE,
@@ -249,7 +249,7 @@ const getPlanPremiumDetails = () => ( {
 			// pay attention to ordering, shared features should align on /plan page
 			constants.FEATURE_CUSTOM_DOMAIN,
 			constants.FEATURE_JETPACK_ESSENTIAL,
-			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 			constants.FEATURE_ADVANCED_DESIGN,
 			constants.FEATURE_13GB_STORAGE,
@@ -322,7 +322,7 @@ const getPlanBusinessDetails = () => ( {
 			// pay attention to ordering, shared features should align on /plan page
 			constants.FEATURE_CUSTOM_DOMAIN,
 			constants.FEATURE_JETPACK_ADVANCED,
-			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
+			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 			constants.FEATURE_ADVANCED_DESIGN,
 			constants.FEATURE_UNLIMITED_STORAGE,

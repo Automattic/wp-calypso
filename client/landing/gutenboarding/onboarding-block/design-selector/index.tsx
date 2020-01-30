@@ -3,7 +3,7 @@
  */
 import { __ as NO__ } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
-import React, { useState, useLayoutEffect, useRef, FunctionComponent } from 'react';
+import React, { useLayoutEffect, useRef, FunctionComponent } from 'react';
 import classnames from 'classnames';
 import PageLayoutSelector from './page-layout-selector';
 import { partition } from 'lodash';
@@ -30,8 +30,6 @@ const DesignSelector: FunctionComponent = () => {
 	);
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
-	const [ isPageSelectorOpen, setIsPageSelectorOpen ] = useState( false );
-
 	// @FIXME: If we don't have an ID (because we're dealing with a user-supplied vertical that
 	// WordPress.com doesn't know about), fall back to the 'm1' (Business) vertical. This is the
 	// vertical that the endpoint would fall back to anyway if an unknown ID is passed.
@@ -48,6 +46,12 @@ const DesignSelector: FunctionComponent = () => {
 		templates,
 		( { category } ) => category === 'home'
 	);
+
+	const resetState = () => {
+		setSelectedDesign( undefined );
+	};
+
+	const hasSelectedDesign = !! selectedDesign;
 
 	const headingContainer = useRef< HTMLDivElement >( null );
 	const selectionTransitionShift = useRef< number >( 0 );
@@ -68,22 +72,22 @@ const DesignSelector: FunctionComponent = () => {
 
 	const designSelectorSpring = useSpring( {
 		transform: `translate3d( 0, ${
-			isPageSelectorOpen ? -selectionTransitionShift.current : 0
+			hasSelectedDesign ? -selectionTransitionShift.current : 0
 		}px, 0 )`,
 	} );
 
 	const descriptionContainerSpring = useSpring( {
-		transform: `translate3d( 0, ${ isPageSelectorOpen ? '0' : '100vh' }, 0 )`,
-		visibility: isPageSelectorOpen ? 'visible' : 'hidden',
+		transform: `translate3d( 0, ${ hasSelectedDesign ? '0' : '100vh' }, 0 )`,
+		visibility: hasSelectedDesign ? 'visible' : 'hidden',
 	} );
 
 	const pageSelectorSpring = useSpring( {
-		transform: `translate3d( 0, ${ isPageSelectorOpen ? '0' : '100vh' }, 0 )`,
+		transform: `translate3d( 0, ${ hasSelectedDesign ? '0' : '100vh' }, 0 )`,
 		onStart: () => {
-			isPageSelectorOpen && dialog.show();
+			hasSelectedDesign && dialog.show();
 		},
 		onRest: () => {
-			! isPageSelectorOpen && dialog.hide();
+			! hasSelectedDesign && dialog.hide();
 		},
 	} );
 
@@ -91,7 +95,7 @@ const DesignSelector: FunctionComponent = () => {
 		<animated.div style={ designSelectorSpring }>
 			<div
 				className="design-selector__header-container"
-				aria-hidden={ isPageSelectorOpen ? 'true' : undefined }
+				aria-hidden={ hasSelectedDesign ? 'true' : undefined }
 				ref={ headingContainer }
 			>
 				<h1 className="design-selector__title">
@@ -103,7 +107,7 @@ const DesignSelector: FunctionComponent = () => {
 			</div>
 			<div
 				className={ classnames( 'design-selector__grid-container', {
-					'is-page-selector-open': isPageSelectorOpen,
+					'has-selected-design': hasSelectedDesign,
 				} ) }
 			>
 				<div className="design-selector__grid">
@@ -119,13 +123,12 @@ const DesignSelector: FunctionComponent = () => {
 											gridColumn: descriptionOnRight ? 1 : 2,
 									  }
 									: {
-											visibility: isPageSelectorOpen ? 'hidden' : undefined,
+											visibility: hasSelectedDesign ? 'hidden' : undefined,
 									  }
 							}
 							onClick={ () => {
 								window.scrollTo( 0, 0 );
 								setSelectedDesign( design );
-								setIsPageSelectorOpen( true );
 							} }
 						/>
 					) ) }
@@ -149,14 +152,14 @@ const DesignSelector: FunctionComponent = () => {
 
 			<Portal>
 				<DialogBackdrop
-					visible={ isPageSelectorOpen }
+					visible={ hasSelectedDesign }
 					className="design-selector__page-layout-backdrop"
 				/>
 			</Portal>
 
 			<Dialog
 				{ ...dialog }
-				hide={ () => setIsPageSelectorOpen( false ) }
+				hide={ resetState }
 				aria-labelledby="page-layout-selector__title"
 				hideOnClickOutside
 				hideOnEsc

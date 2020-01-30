@@ -1,10 +1,8 @@
-
-## 1.0.0-alpha.1
+# next
 
 - Add ProductIcon
-- Fixed SCSS errors due to missing variables and mixins
 
-## 1.0.0-alpha.0
+# @automattic/components 1.0.0
 
 - Rename package from `@automattic/calypso-ui` to `@automattic/components`, keep version at 1.0.0
 - Add Button
@@ -14,7 +12,7 @@
 - Add RootChild
 - Add Suggestions
 
-## 1.0.0
+# 1.0.0
 
 - Add ProgressBar
 - Add ScreenReaderText

@@ -43,7 +43,7 @@ export async function trackAffiliateReferral( { affiliateId, campaignId, subId, 
 	referDebug( 'Fetching Refer platform response.' );
 
 	try {
-		const response = await window.fetch( 'https://refer.wordpress.com/clicks/67402', {
+		const response = await fetch( 'https://refer.wordpress.com/clicks/67402', {
 			withCredentials: true, // Needed to check and set the 'wp-affiliate-tracker' cookie.
 			method: 'POST',
 			headers,

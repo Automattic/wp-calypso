@@ -51,11 +51,6 @@ class Sites extends Component {
 			return true;
 		}
 
-		// Supported on Simple and Atomic Sites
-		if ( /^\/home/.test( path ) ) {
-			return ! site.is_vip && ! ( site.jetpack && ! site.options.is_automated_transfer );
-		}
-
 		return site;
 	};
 

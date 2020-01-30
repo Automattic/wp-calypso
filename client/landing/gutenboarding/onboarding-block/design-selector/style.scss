@@ -24,7 +24,7 @@ $design-selector-selection-space: 285px;
 	padding-bottom: 48px;
 	padding-top: 19px;
 
-	&.is-page-selector-open {
+	&.has-selected-design {
 		overflow-y: hidden;
 		height: 100vh;
 	}

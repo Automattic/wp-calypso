@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * External dependencies
  */
@@ -34,7 +33,7 @@ import getEditorCloseConfig from 'state/selectors/get-editor-close-config';
 import wpcom from 'lib/wp';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
-import { setEditorIframeLoaded, startEditingPost } from 'state/ui/editor/actions';
+import { startEditingPost } from 'state/ui/editor/actions';
 import { Placeholder } from './placeholder';
 import WebPreview from 'components/web-preview';
 import { trashPost } from 'state/posts/actions';
@@ -147,7 +146,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			this.iframeRef.current.contentWindow
 		) {
 			this.successfulIframeLoad = true;
-			const { port1: iframePortObject, port2: transferredPortObject } = new window.MessageChannel();
+			const { port1: iframePortObject, port2: transferredPortObject } = new MessageChannel();
 
 			this.iframePort = iframePortObject;
 			this.iframePort.addEventListener( 'message', this.onIframePortMessage, false );
@@ -159,10 +158,6 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 			// Check if we're generating a post via Press This
 			this.pressThis();
-
-			// Notify external listeners that the iframe has loaded
-			this.props.setEditorIframeLoaded();
-
 			return;
 		}
 
@@ -246,7 +241,6 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 		if ( EditorActions.CloseEditor === action || EditorActions.GoToAllPosts === action ) {
 			const { unsavedChanges = false } = payload;
-			this.props.setEditorIframeLoaded( false );
 			this.navigate( this.props.closeUrl, unsavedChanges );
 		}
 
@@ -667,7 +661,6 @@ const mapDispatchToProps = {
 	setRoute,
 	navigate,
 	openPostRevisionsDialog,
-	setEditorIframeLoaded,
 	startEditingPost,
 	trashPost,
 	updateSiteFrontPage,

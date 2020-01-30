@@ -103,7 +103,7 @@ class SiteTools extends Component {
 						description={ changeAddressText }
 					/>
 				) }
-				{ showClone && (
+				{ showClone && config.isEnabled( 'rewind/clone-site' ) && (
 					<SiteToolsLink href={ cloneUrl } title={ cloneTitle } description={ cloneText } />
 				) }
 				{ showThemeSetup && (
