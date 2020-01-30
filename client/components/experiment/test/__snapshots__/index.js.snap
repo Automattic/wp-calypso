@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Experiment Component assumes variation will not change if already set and reloading variations 1`] = `
+<div>
+  Variation B
+</div>
+`;
+
+exports[`Experiment Component renders a default variation by name if loaded 1`] = `
+<div>
+  Default
+</div>
+`;
+
+exports[`Experiment Component renders a default variation if variation is not set and not loading 1`] = `
+<div>
+  Default
+</div>
+`;
+
+exports[`Experiment Component renders a variation by name if loaded 1`] = `
+<div>
+  Variation B
+</div>
+`;
+
+exports[`Experiment Component renders something while loading if the variation is not defined 1`] = `
+<div>
+  Is Loading
+</div>
+`;
