@@ -4,18 +4,17 @@
 	"description": "A checkout component for WordPress.com",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
-	"types": "types/types.d.ts",
+	"types": "dist/types",
 	"sideEffects": false,
 	"scripts": {
-		"clean": "npx rimraf dist types",
+		"clean": "npx rimraf dist",
 		"prepublish": "npm run clean",
 		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
 		"typecheck": "tsc --project ./tsconfig.json --noEmit"
 	},
 	"files": [
 		"dist",
-		"src",
-		"types"
+		"src"
 	],
 	"keywords": [
 		"checkout",

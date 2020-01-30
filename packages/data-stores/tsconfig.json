@@ -12,8 +12,8 @@
 		"allowJs": false,
 		"jsx": "react",
 		"declaration": true,
-		"declarationDir": "./types",
-		"outDir": "./dist/esm",
+		"declarationDir": "dist/types",
+		"outDir": "dist/esm",
 
 		"strict": true,
 		"noUnusedLocals": true,
