@@ -6,7 +6,7 @@ import React, { FunctionComponent } from 'react';
 /**
  * Internal Dependencies
  */
-import { LoadingProps } from './loadingProps';
+import { LoadingProps } from './loading-props';
 
 /**
  * This component displays when the variation is unknown and an API call needs to be made

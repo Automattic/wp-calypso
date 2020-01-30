@@ -7,7 +7,7 @@ import { includes } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { VariationProps } from './variationProps';
+import { VariationProps } from './variation-props';
 
 /**
  * Behavior for variations
