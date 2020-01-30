@@ -225,20 +225,26 @@ class PageTemplateModal extends Component {
 		};
 	};
 
-	renderTemplatesList = ( templatesList, legendLabel ) => (
-		<fieldset className="page-template-modal__list">
-			<legend className="page-template-modal__form-title">{ legendLabel }</legend>
-			<TemplateSelectorControl
-				label={ __( 'Layout', 'full-site-editing' ) }
-				templates={ templatesList }
-				blocksByTemplates={ this.getBlocksByTemplateSlugs( this.props.templates ) }
-				onTemplateSelect={ this.previewTemplate }
-				useDynamicPreview={ false }
-				siteInformation={ this.props.siteInformation }
-				selectedTemplate={ this.state.previewedTemplate }
-			/>
-		</fieldset>
-	);
+	renderTemplatesList = ( templatesList, legendLabel ) => {
+		if ( 0 === templatesList.length ) {
+			return null;
+		}
+
+		return (
+			<fieldset className="page-template-modal__list">
+				<legend className="page-template-modal__form-title">{ legendLabel }</legend>
+				<TemplateSelectorControl
+					label={ __( 'Layout', 'full-site-editing' ) }
+					templates={ templatesList }
+					blocksByTemplates={ this.getBlocksByTemplateSlugs( this.props.templates ) }
+					onTemplateSelect={ this.previewTemplate }
+					useDynamicPreview={ false }
+					siteInformation={ this.props.siteInformation }
+					selectedTemplate={ this.state.previewedTemplate }
+				/>
+			</fieldset>
+		);
+	};
 
 	render() {
 		const { previewedTemplate, isOpen, isLoading } = this.state;
