@@ -45,6 +45,7 @@ export interface ShoppingCartManager {
 	credits: CheckoutCartItem;
 	addItem: ( WPCOMCartItem ) => void;
 	removeItem: ( WPCOMCartItem ) => void;
+	submitCoupon: ( string ) => void;
 }
 
 /**
@@ -203,6 +204,16 @@ export function useShoppingCart(
 		debug( 'updating prices for address in cart', address );
 	};
 
+	const submitCoupon: ( string ) => void = useCallback( newCoupon => {
+	    debug( 'submitting coupon', newCoupon );
+	    setResponseCart( currentResponseCart => ( {
+            ...currentResponseCart,
+            coupon: newCoupon,
+            is_coupon_applied: false,
+        } ) );
+	    setCacheStatus( 'invalid' );
+    }, [] );
+
 	return {
 		isLoading: cacheStatus === 'fresh',
 		items: cart.items,
@@ -216,5 +227,6 @@ export function useShoppingCart(
 		removeItem,
 		changePlanLength,
 		updatePricesForAddress,
+        submitCoupon,
 	} as ShoppingCartManager;
 }
