@@ -11,7 +11,7 @@ import LogItem from '../';
 import CardHeading from 'components/card-heading';
 
 export default class LogItemExample extends PureComponent {
-	static displayName = 'LogItemExample';
+	static displayName = 'LogItem';
 
 	render(): ReactNode {
 		return (
