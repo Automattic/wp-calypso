@@ -238,6 +238,8 @@ function CheckoutStepContainer( {
 		evaluateContinue( isCompleteResult );
 	};
 
+	const shouldShowStepCompleteIcon = ! stepNumber || activeStep.stepNumber > stepNumber;
+
 	return (
 		<CheckoutErrorBoundary
 			errorMessage={ sprintf( localize( 'There was a problem with the step "%s".' ), id ) }
@@ -247,7 +249,7 @@ function CheckoutStepContainer( {
 					id={ id }
 					className={ className }
 					isActive={ isActive }
-					isComplete={ isComplete }
+					isComplete={ shouldShowStepCompleteIcon }
 					stepNumber={ stepNumber }
 					title={ titleContent || '' }
 					onEdit={ onEdit }
