@@ -417,6 +417,7 @@ function renderLayout( reduxStore ) {
 const boot = currentUser => {
 	utils();
 	loadAllState().then( () => {
+		const initialState = getInitialState( initialReducer );
 		const reduxStore = createReduxStore( initialState, initialReducer );
 		persistOnChange( reduxStore );
 		setupLocale( currentUser.get(), reduxStore );
