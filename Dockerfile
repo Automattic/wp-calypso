@@ -5,7 +5,6 @@ WORKDIR    /calypso
 
 
 ENV        CONTAINER 'docker'
-ENV        NODE_PATH=/calypso/server:/calypso/client
 ENV        PROGRESS=true
 
 # Build a "base" layer
