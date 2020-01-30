@@ -15,6 +15,7 @@ import store from 'store';
 /**
  * Internal dependencies
  */
+import { setupLocale } from './locale';
 import config from 'config';
 import { ReduxWrappedLayout } from 'controller';
 import notices from 'notices';
@@ -44,6 +45,11 @@ import { setRoute as setRouteAction } from 'state/ui/actions';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import setupGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
+import { createReduxStore } from 'state';
+import initialReducer from 'state/reducer';
+import { getInitialState, persistOnChange, loadAllState } from 'state/initial-state';
+import detectHistoryNavigation from 'lib/detect-history-navigation';
+import userFactory from 'lib/user';
 
 const debug = debugFactory( 'calypso' );
 
@@ -183,7 +189,7 @@ const unsavedFormsMiddleware = () => {
 	page.exit( '*', checkFormHandler );
 };
 
-export const utils = () => {
+const utils = () => {
 	debug( 'Executing Calypso utils.' );
 
 	// Infer touch screen by checking if device supports touch events
@@ -201,7 +207,7 @@ export const utils = () => {
 	Modal.setAppElement( document.getElementById( 'wpcom' ) );
 };
 
-export const configureReduxStore = ( currentUser, reduxStore ) => {
+const configureReduxStore = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso configure Redux store.' );
 
 	bindWpLocaleState( reduxStore );
@@ -231,7 +237,7 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 };
 
-export const setupMiddlewares = ( currentUser, reduxStore ) => {
+const setupMiddlewares = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso setup middlewares.' );
 
 	installPerfmonPageHandlers();
@@ -407,3 +413,25 @@ function renderLayout( reduxStore ) {
 
 	debug( 'Main layout rendered.' );
 }
+
+const boot = currentUser => {
+	utils();
+	loadAllState().then( () => {
+		const initialState = getInitialState( initialReducer );
+		const reduxStore = createReduxStore( initialState, initialReducer );
+		persistOnChange( reduxStore );
+		setupLocale( currentUser.get(), reduxStore );
+		configureReduxStore( currentUser, reduxStore );
+		setupMiddlewares( currentUser, reduxStore );
+		detectHistoryNavigation.start();
+		page.start( { decodeURLComponents: false } );
+	} );
+};
+
+export const bootApp = appName => {
+	const user = userFactory();
+	user.initialize().then( () => {
+		debug( `Starting ${ appName }. Let's do this.` );
+		boot( user );
+	} );
+};
