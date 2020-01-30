@@ -74,7 +74,7 @@
 			@include env-bug-style( 'blue' );
 		}
 		&.is-jetpack-cloud-dev,
-		&.is-jetpack-cloud-stage {
+		&.is-jetpack-cloud-staging {
 			@include env-bug-style( 'jetpack-green' );
 		}
 
