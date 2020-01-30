@@ -25,7 +25,7 @@ module.exports = {
 	generateForServer: function( dirname ) {
 		return {
 			parserOptions: {
-				sourceType: 'script', // force the cli to use require instead of import, which it should be to node compatible
+				sourceType: 'script', // force CommonJS `require` instead of ESM `import` for Node compatibility.
 			},
 			rules: {
 				'import/no-extraneous-dependencies': [ 'error', { packageDir: dirname } ],
