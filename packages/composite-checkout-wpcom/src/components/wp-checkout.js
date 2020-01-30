@@ -45,6 +45,7 @@ const OrderReviewTitle = () => {
 
 export default function WPCheckout( {
 	removeItem,
+	submitCoupon,
 	changePlanLength,
 	siteId,
 	siteUrl,
@@ -58,6 +59,7 @@ export default function WPCheckout( {
 	const ReviewContent = () => (
 		<WPCheckoutOrderReview
 			removeItem={ removeItem }
+			submitCoupon={ submitCoupon }
 			onChangePlanLength={ changePlanLength }
 			siteUrl={ siteUrl }
 		/>

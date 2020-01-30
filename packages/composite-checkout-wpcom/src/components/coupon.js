@@ -15,7 +15,7 @@ import joinClasses from './join-classes';
 import Field from './field';
 import Button from './button';
 
-export default function Coupon( { id, couponAdded, className, disabled } ) {
+export default function Coupon( { id, couponAdded, className, disabled, submitCoupon } ) {
 	const translate = useTranslate();
 	const onEvent = useEvents();
 	const [ isApplyButtonActive, setIsApplyButtonActive ] = useState( false );
@@ -38,7 +38,8 @@ export default function Coupon( { id, couponAdded, className, disabled } ) {
 					setHasCouponError,
 					couponAdded,
 					setIsCouponApplied,
-					onEvent
+					onEvent,
+                    submitCoupon
 				);
 			} }
 		>
@@ -115,7 +116,8 @@ function handleFormSubmit(
 	setHasCouponError,
 	couponAdded,
 	setIsCouponApplied,
-	onEvent
+	onEvent,
+    submitCoupon
 ) {
 	event.preventDefault();
 
@@ -126,6 +128,8 @@ function handleFormSubmit(
 			type: 'a8c_checkout_add_coupon',
 			payload: { coupon: couponFieldValue },
 		} );
+
+		submitCoupon( couponFieldValue );
 
 		if ( couponAdded ) {
 			couponAdded();
