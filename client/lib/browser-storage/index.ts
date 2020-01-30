@@ -21,9 +21,11 @@ const STORE_NAME = 'calypso_store';
 
 const SANITY_TEST_KEY = 'browser-storage-sanity-test';
 
-function isAffectedSafari() {
-	return true;
-}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isAffectedSafari =
+	!! window.IDBKeyRange?.lowerBound( 0 ).includes &&
+	!! ( window as any ).webkitAudioContext &&
+	!! window.PointerEvent;
 
 const getDB = once( () => {
 	const request = window.indexedDB.open( DB_NAME, DB_VERSION );
@@ -141,7 +143,7 @@ function idbSet< T >( key: string, value: T ): Promise< void > {
 				}
 				// if we're on safari 13, we need to clear out the object store every
 				// so many writes to make sure we don't chew up the transaction log
-				if ( isAffectedSafari() && ++idbWriteCount % 20 === 0 ) {
+				if ( isAffectedSafari && ++idbWriteCount % 20 === 0 ) {
 					await idbSafariReset();
 				}
 
