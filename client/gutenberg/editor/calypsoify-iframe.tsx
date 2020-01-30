@@ -54,6 +54,7 @@ import * as T from 'types';
  */
 import './style.scss';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 interface Props {
 	duplicatePostId: T.PostId;
 	postId: T.PostId;
@@ -77,6 +78,7 @@ interface State {
 	postUrl?: T.URL;
 	previewUrl: T.URL;
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 enum WindowActions {
 	Loaded = 'loaded',
@@ -98,6 +100,7 @@ enum EditorActions {
 	OpenTemplatePart = 'openTemplatePart',
 	GetCloseButtonUrl = 'getCloseButtonUrl',
 	LogError = 'logError',
+	GetGutenboardingStatus = 'getGutenboardingStatus',
 }
 
 class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedFormProps, State > {
@@ -282,6 +285,17 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			ports[ 0 ].postMessage( {
 				closeUrl: `${ window.location.origin }${ closeUrl }`,
 				label: closeLabel,
+			} );
+		}
+
+		if ( EditorActions.GetGutenboardingStatus === action ) {
+			// TODO - In future iterations, replace window param with gutenboarding site info.
+			const urlParams = new URLSearchParams( window.location.search );
+			const isGutenboarding =
+				config.isEnabled( 'gutenboarding' ) && urlParams.has( 'is-gutenboarding' );
+			ports[ 0 ].postMessage( {
+				isGutenboarding,
+				frankenflowUrl: `${ window.location.origin }/start/frankenflow?siteSlug=${ this.props.siteId }`,
 			} );
 		}
 
@@ -557,7 +571,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
 					{ ( shouldLoadIframe || isIframeLoaded ) && (
-						/* eslint-disable-next-line jsx-a11y/iframe-has-title */
+						/* eslint-disable jsx-a11y/iframe-has-title */
 						<iframe
 							ref={ this.iframeRef }
 							/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
@@ -569,6 +583,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 								this.onIframeLoaded( iframeUrl );
 							} }
 						/>
+						/* eslint-enable jsx-a11y/iframe-has-title */
 					) }
 				</div>
 				<MediaLibrarySelectedData siteId={ siteId }>
@@ -598,7 +613,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 }
 
 const mapStateToProps = (
-	state,
+	state: T.AppState,
 	{ postId, postType, duplicatePostId, fseParentPageId, creatingNewHomepage }: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
