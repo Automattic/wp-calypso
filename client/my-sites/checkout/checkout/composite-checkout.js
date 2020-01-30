@@ -101,6 +101,14 @@ export default function CompositeCheckout( {
 		notices.success( message );
 	}, [] );
 
+	const showAddCouponSuccessMessage = couponCode => {
+		showSuccessMessage(
+			translate( "The '%(couponCode)s' coupon was successfully applied to your shopping cart.", {
+				args: { couponCode },
+			} )
+		);
+	};
+
 	const countriesList = useCountryList( overrideCountryList || [] );
 
 	const {
@@ -110,13 +118,18 @@ export default function CompositeCheckout( {
 		credits,
 		removeItem,
 		addItem,
-        submitCoupon,
+		submitCoupon,
 		changePlanLength,
 		errors,
 		subtotal,
 		isLoading,
 		allowedPaymentMethods: serverAllowedPaymentMethods,
-	} = useShoppingCart( siteSlug, setCart || wpcomSetCart, getCart || wpcomGetCart );
+	} = useShoppingCart(
+		siteSlug,
+		setCart || wpcomSetCart,
+		getCart || wpcomGetCart,
+		showAddCouponSuccessMessage
+	);
 
 	const { registerStore } = registry;
 	useWpcomStore(
@@ -216,7 +229,7 @@ export default function CompositeCheckout( {
 			>
 				<WPCheckout
 					removeItem={ removeItem }
-                    submitCoupon={ submitCoupon }
+					submitCoupon={ submitCoupon }
 					changePlanLength={ changePlanLength }
 					siteId={ siteId }
 					siteUrl={ siteSlug }

@@ -91,12 +91,16 @@ type CacheStatus = 'fresh' | 'valid' | 'invalid' | 'pending' | 'error';
  *     An asynchronous wrapper around the wpcom shopping cart GET
  *     endpoint. We pass this in to make testing easier.
  *     @see WPCOM_JSON_API_Me_Shopping_Cart_Endpoint
+ * @param showAddCouponSuccessMessage
+ *     Takes a coupon code and displays a translated notice that
+ *     the coupon was successfully applied.
  * @returns ShoppingCartManager
  */
 export function useShoppingCart(
 	cartKey: string | null,
 	setCart: ( string, RequestCart ) => Promise< ResponseCart >,
-	getCart: ( string ) => Promise< ResponseCart >
+	getCart: ( string ) => Promise< ResponseCart >,
+	showAddCouponSuccessMessage: ( string ) => void
 ): ShoppingCartManager {
 	cartKey = cartKey || 'no-site';
 	const setServerCart = useCallback( cartParam => setCart( cartKey, cartParam ), [
@@ -115,6 +119,12 @@ export function useShoppingCart(
 	// the backend. We can't use responseCart directly to decide this
 	// in e.g. useEffect because this causes an infinite loop.
 	const [ cacheStatus, setCacheStatus ] = useState< CacheStatus >( 'fresh' );
+
+	// Used to ensure we display the 'coupon applied' notice at most
+	// once after the coupon is applied on the backend.
+	const [ didShowCouponSuccessMessage, setDidShowCouponSuccessMessage ] = useState< boolean >(
+		false
+	);
 
 	// Asynchronously initialize the cart. This should happen exactly once.
 	useEffect( () => {
@@ -143,6 +153,12 @@ export function useShoppingCart(
 			const response = await setServerCart( prepareRequestCart( responseCart ) );
 			debug( 'cart sent; new responseCart is', response );
 			setResponseCart( response );
+
+			if ( response.is_coupon_applied && ! didShowCouponSuccessMessage ) {
+				showAddCouponSuccessMessage( response.coupon );
+				setDidShowCouponSuccessMessage( true );
+			}
+
 			setCacheStatus( 'valid' );
 		};
 
@@ -156,7 +172,7 @@ export function useShoppingCart(
 				debug( 'error while fetching cart', error );
 			} );
 		}
-	}, [ setServerCart, cacheStatus, responseCart ] );
+	}, [ setServerCart, cacheStatus, responseCart, didShowCouponSuccessMessage ] );
 
 	// Keep a separate cache of the displayed cart which we regenerate only when
 	// the cart has been downloaded
@@ -205,14 +221,14 @@ export function useShoppingCart(
 	};
 
 	const submitCoupon: ( string ) => void = useCallback( newCoupon => {
-	    debug( 'submitting coupon', newCoupon );
-	    setResponseCart( currentResponseCart => ( {
-            ...currentResponseCart,
-            coupon: newCoupon,
-            is_coupon_applied: false,
-        } ) );
-	    setCacheStatus( 'invalid' );
-    }, [] );
+		debug( 'submitting coupon', newCoupon );
+		setResponseCart( currentResponseCart => ( {
+			...currentResponseCart,
+			coupon: newCoupon,
+			is_coupon_applied: false,
+		} ) );
+		setCacheStatus( 'invalid' );
+	}, [] );
 
 	return {
 		isLoading: cacheStatus === 'fresh',
@@ -227,6 +243,6 @@ export function useShoppingCart(
 		removeItem,
 		changePlanLength,
 		updatePricesForAddress,
-        submitCoupon,
+		submitCoupon,
 	} as ShoppingCartManager;
 }
