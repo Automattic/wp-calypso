@@ -54,6 +54,7 @@ import * as T from 'types';
  */
 import './style.scss';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 interface Props {
 	duplicatePostId: T.PostId;
 	postId: T.PostId;
@@ -77,6 +78,7 @@ interface State {
 	postUrl?: T.URL;
 	previewUrl: T.URL;
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 enum WindowActions {
 	Loaded = 'loaded',
@@ -569,7 +571,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
 					{ ( shouldLoadIframe || isIframeLoaded ) && (
-						/* eslint-disable-next-line jsx-a11y/iframe-has-title */
+						/* eslint-disable jsx-a11y/iframe-has-title */
 						<iframe
 							ref={ this.iframeRef }
 							/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
@@ -581,6 +583,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 								this.onIframeLoaded( iframeUrl );
 							} }
 						/>
+						/* eslint-enable jsx-a11y/iframe-has-title */
 					) }
 				</div>
 				<MediaLibrarySelectedData siteId={ siteId }>
@@ -610,7 +613,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 }
 
 const mapStateToProps = (
-	state,
+	state: T.AppState,
 	{ postId, postType, duplicatePostId, fseParentPageId, creatingNewHomepage }: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
