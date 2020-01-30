@@ -18,6 +18,7 @@ import EnvironmentBadge, {
 	PreferencesHelper,
 } from 'components/environment-badge';
 import { chunkCssLinks } from './utils';
+import JetpackLogo from 'components/jetpack-logo';
 import WordPressLogo from 'components/wordpress-logo';
 import { jsonStringifyForHtml } from 'server/sanitize';
 
@@ -79,6 +80,9 @@ class Document extends React.Component {
 			'jetpack-connect' === sectionName &&
 			'woocommerce-onboarding' === requestFrom;
 
+		const isJetpackCloudFlow =
+			config.isEnabled( 'jetpack-cloud' ) && 'jetpack-cloud' === sectionName;
+
 		return (
 			<html
 				lang={ lang }
@@ -133,7 +137,11 @@ class Document extends React.Component {
 							>
 								<div className="masterbar" />
 								<div className="layout__content">
-									<WordPressLogo size={ 72 } className="wpcom-site__logo" />
+									{ isJetpackCloudFlow ? (
+										<JetpackLogo size={ 72 } className="wpcom-site__logo" />
+									) : (
+										<WordPressLogo size={ 72 } className="wpcom-site__logo" />
+									) }
 									{ hasSecondary && (
 										<Fragment>
 											<div className="layout__secondary" />

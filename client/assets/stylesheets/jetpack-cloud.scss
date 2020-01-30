@@ -5,6 +5,19 @@
 
 // Shared
 @import 'shared/reset'; // css reset before the rest of the styles are defined
+@import 'shared/animation';
 
 // Global layout
 @import 'main';
+
+.is-section-jetpack-cloud .wpcom-site__logo {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate( -50%, -50% );
+	animation: loading-fade 1.6s ease-in-out infinite;
+
+	path {
+		fill: var( --color-text-subtle );
+	}
+}
