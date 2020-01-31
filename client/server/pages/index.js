@@ -355,7 +355,9 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	if ( calypsoEnv === 'jetpack-cloud-stage' ) {
 		context.badge = 'jetpack-cloud-staging';
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-	} else if ( calypsoEnv === 'jetpack-cloud-development' ) {
+	}
+
+	if ( calypsoEnv === 'jetpack-cloud-development' ) {
 		context.badge = 'jetpack-cloud-dev';
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.branchName = getCurrentBranchName();
