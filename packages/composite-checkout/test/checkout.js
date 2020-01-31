@@ -319,11 +319,11 @@ describe( 'Checkout', () => {
 			expect( content ).toHaveStyle( 'display: none' );
 		} );
 
-		it( 'renders the step completeStepContent always for complete steps', () => {
+		it( 'renders the step completeStepContent immediately for complete steps which have no step number', () => {
 			const { getByText, queryByText } = render( <MyCheckout /> );
 			expect( getByText( 'Custom Step - Summary Complete' ) ).toBeInTheDocument();
-			expect( getByText( 'Custom Step - Contact Complete' ) ).toBeInTheDocument();
-			expect( getByText( 'Custom Step - Review Complete' ) ).toBeInTheDocument();
+			expect( queryByText( 'Custom Step - Contact Complete' ) ).not.toBeInTheDocument();
+			expect( queryByText( 'Custom Step - Review Complete' ) ).not.toBeInTheDocument();
 			expect( queryByText( 'Custom Step - Incomplete Complete' ) ).not.toBeInTheDocument();
 		} );
 
@@ -559,7 +559,7 @@ describe( 'Checkout', () => {
 			);
 			expect( getByText( 'Possibly Complete active step number 1' ) ).toBeInTheDocument();
 			expect( getByText( 'Possibly Complete active step index 0' ) ).toBeInTheDocument();
-			expect( getByText( 'Possibly Complete active isComplete true' ) ).toBeInTheDocument();
+			expect( getByText( 'Possibly Complete active isComplete false' ) ).toBeInTheDocument();
 
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
 			fireEvent.click( firstStepContinue );
