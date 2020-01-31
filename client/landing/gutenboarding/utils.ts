@@ -35,11 +35,13 @@ export function createSite( { siteTitle, siteUrl, theme, siteVertical }: CreateS
 			site_information: {
 				title: siteTitle,
 			},
+			site_creation_flow: 'gutenboarding',
 		},
 		public: -1,
 		validate: false,
 		find_available_url: true,
 	};
+
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	wpcom.undocumented().sitesNew( newSiteParams, function( error: any, response: any ) {
 		if ( error ) {
