@@ -333,7 +333,11 @@ class EditContactInfoFormCard extends React.Component {
 	};
 
 	showNoticeAndGoBack = message => {
-		this.props.successNotice( message );
+		this.props.successNotice( message, {
+			showDismiss: true,
+			isPersistent: true,
+			duration: 5000,
+		} );
 		page(
 			domainManagementContactsPrivacy(
 				this.props.selectedSite.slug,
