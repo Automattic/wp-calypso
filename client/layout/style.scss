@@ -82,6 +82,16 @@
 	}
 }
 
+// Add extra bottom padding for smaller screens to prevent
+// floating inline help from overlapping content.
+.layout__primary .main {
+	padding-bottom: 60px;
+
+	@include breakpoint( '>1400px' ) {
+		padding-bottom: 0;
+	}
+}
+
 // Setup the secondary element, which contains the sidebar and
 // the site-selector elements.
 .layout__secondary {
