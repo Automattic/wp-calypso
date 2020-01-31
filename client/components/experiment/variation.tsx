@@ -26,10 +26,8 @@ export default class Variation extends Component< VariationProps, {} > {
 		// if it's loading and there's a variation to display, maybe display the variation.
 		// if it's loading and there's not a variation, don't show the variation
 		// if there's a variation, maybe show the variation
-		if ( ( loading && variation ) || variation || ( ! loading && variation == null ) ) {
-			if ( includes( this.acceptedVariation, variation ) ) {
-				return <>{ children }</>;
-			}
+		if ( ( ! loading || variation ) && includes( this.acceptedVariation, variation ) ) {
+			return <>{ children }</>;
 		}
 		return null;
 	}
