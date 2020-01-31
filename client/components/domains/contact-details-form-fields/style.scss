@@ -1,4 +1,4 @@
-.contact-details-form-fields {
+fieldset.contact-details-form-fields {
 	margin-bottom: 0;
 	display: flex;
 	flex-direction: column;
@@ -72,7 +72,6 @@
 
 	.domain-management-form-footer {
 		justify-content: flex-end;
-		padding-bottom: 0;
 	}
 
 	.form__hidden-input a {
