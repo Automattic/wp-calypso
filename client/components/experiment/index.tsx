@@ -34,17 +34,16 @@ export const Experiment: FunctionComponent< ExperimentProps > = props => {
 };
 
 function mapStateToProps( state: AppState, ownProps?: ExperimentProps ): ExperimentProps {
-	if ( ! process.env.NODE_ENV || process.env.NODE_ENV === 'development' ) {
-		if ( ownProps == null || ownProps.name == null ) {
+	if ( ownProps == null || ownProps.name == null ) {
+		if ( ! process.env.NODE_ENV || process.env.NODE_ENV === 'development' ) {
 			throw 'Experiment name is not defined!';
 		}
-	}
-	if ( ownProps == null || ownProps.name == null )
 		return {
-			name: 'unknown_experiment',
+			name: '__unknown_experiment__',
 			children: null,
 			isLoading: false,
 		};
+	}
 	const { name: experimentName } = ownProps;
 	return {
 		isLoading: isLoading( state ),
