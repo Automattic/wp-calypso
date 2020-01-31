@@ -161,6 +161,7 @@ export function createStripeMethod( {
 			state = {
 				cardDataErrors: cardDataErrorsReducer(),
 				cardDataComplete: cardDataCompleteReducer(),
+				cardholderName: { value: '', isTouched: false },
 			},
 			action
 		) {
@@ -194,7 +195,7 @@ export function createStripeMethod( {
 						transactionStatus: null,
 					};
 				case 'CARDHOLDER_NAME_SET':
-					return { ...state, cardholderName: action.payload };
+					return { ...state, cardholderName: { value: action.payload, isTouched: true } };
 				case 'BRAND_SET':
 					return { ...state, brand: action.payload };
 				case 'CARD_DATA_COMPLETE_SET':
@@ -236,7 +237,12 @@ export function createStripeMethod( {
 			const errors = selectors.getCardDataErrors( store.getState() );
 			const isCardDataComplete = selectors.areAllFieldsComplete( store.getState() );
 			const areThereErrors = Object.keys( errors ).some( errorKey => errors[ errorKey ] );
-			if ( ! cardholderName?.length || areThereErrors || ! isCardDataComplete ) {
+			if ( ! cardholderName?.value.length ) {
+				store.dispatch( actions.changeCardholderName( '' ) ); // Touch the field so it displays a validation error
+				return false;
+			}
+			if ( areThereErrors || ! isCardDataComplete ) {
+				// TODO: show errors or "this field is required" if not complete
 				return false;
 			}
 			return true;
@@ -361,8 +367,10 @@ function StripeCreditCardFields() {
 					type="Text"
 					label={ localize( 'Cardholder name' ) }
 					description={ localize( "Enter your name as it's written on the card" ) }
-					value={ cardholderName }
+					value={ cardholderName?.value ?? '' }
 					onChange={ changeCardholderName }
+					isError={ cardholderName?.isTouched && cardholderName?.value.length === 0 }
+					errorMessage={ localize( 'This field is required' ) }
 				/>
 			</CreditCardFieldsWrapper>
 		</StripeFields>
@@ -586,7 +594,7 @@ function StripeSummary() {
 
 	return (
 		<SummaryDetails>
-			<SummaryLine>{ cardholderName }</SummaryLine>
+			<SummaryLine>{ cardholderName?.value }</SummaryLine>
 			<SummaryLine>
 				{ brand !== 'unknown' && '****' } <PaymentLogo brand={ brand } isSummary={ true } />
 			</SummaryLine>
