@@ -85,7 +85,7 @@
 // Add extra bottom padding for smaller screens to prevent
 // floating inline help from overlapping content.
 .layout__primary .main {
-	padding-bottom: 60px;
+	padding-bottom: 88px;
 
 	@include breakpoint( '>1400px' ) {
 		padding-bottom: 0;
