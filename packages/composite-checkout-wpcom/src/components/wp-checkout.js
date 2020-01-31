@@ -130,6 +130,7 @@ export default function WPCheckout( {
 					postalCode: contactInfo.postalCode.value,
 					subdivisionCode: contactInfo.state.value,
 				} );
+				// TODO: run validation on the form data
 				return isCompleteAndValid( contactInfo );
 			},
 			isEditableCallback: () => isFormEditable( contactInfo ),
