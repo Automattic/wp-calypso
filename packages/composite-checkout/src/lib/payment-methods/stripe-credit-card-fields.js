@@ -131,8 +131,8 @@ export function createStripeMethod( {
 		getCardDataErrors( state ) {
 			return state.cardDataErrors;
 		},
-		areAllFieldsComplete( state ) {
-			return Object.keys( state.cardDataComplete ).every( key => state.cardDataComplete[ key ] );
+		getIncompleteFieldKeys( state ) {
+			return Object.keys( state.cardDataComplete ).filter( key => ! state.cardDataComplete[ key ] );
 		},
 	};
 
@@ -243,14 +243,19 @@ export function createStripeMethod( {
 		isCompleteCallback: () => {
 			const cardholderName = selectors.getCardholderName( store.getState() );
 			const errors = selectors.getCardDataErrors( store.getState() );
-			const isCardDataComplete = selectors.areAllFieldsComplete( store.getState() );
+			const incompleteFieldKeys = selectors.getIncompleteFieldKeys( store.getState() );
 			const areThereErrors = Object.keys( errors ).some( errorKey => errors[ errorKey ] );
 			if ( ! cardholderName?.value.length ) {
-				store.dispatch( actions.changeCardholderName( '' ) ); // Touch the field so it displays a validation error
-				return false;
+				// Touch the field so it displays a validation error
+				store.dispatch( actions.changeCardholderName( '' ) );
 			}
-			if ( areThereErrors || ! isCardDataComplete ) {
-				// TODO: show errors or "this field is required" if not complete
+			if ( incompleteFieldKeys.length > 0 ) {
+				// Show "this field is required" for each incomplete field
+				incompleteFieldKeys.map( key =>
+					store.dispatch( actions.setCardDataError( key, 'This field is required' ) )
+				); // TODO: localize this message
+			}
+			if ( areThereErrors || ! cardholderName?.value.length || incompleteFieldKeys.length > 0 ) {
 				return false;
 			}
 			return true;
