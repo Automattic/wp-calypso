@@ -20,7 +20,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		this.editorType = editorType;
 
 		this.publishSelector = By.css(
-			'.editor-post-publish-panel__header-publish-button button[aria-disabled=false]'
+			'.editor-post-publish-panel__header-publish-button button.editor-post-publish-button'
 		);
 		this.publishingSpinnerSelector = By.css(
 			'.editor-post-publish-panel__content .components-spinner'
@@ -63,14 +63,16 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishHeaderSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishSelector );
 		await this.driver.sleep( 1000 );
-		await driverHelper.clickWhenClickable( this.driver, this.publishSelector );
+		const button = await this.driver.findElement( this.publishSelector );
+		await this.driver.executeScript( 'arguments[0].click();', button );
 		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
 		await this.closePublishedPanel();
 		await this.waitForSuccessViewPostNotice();
 		const url = await this.driver.findElement( snackBarNoticeLinkSelector ).getAttribute( 'href' );
 
 		if ( visit ) {
-			await driverHelper.clickWhenClickable( this.driver, snackBarNoticeLinkSelector );
+			const snackbar = await this.driver.findElement( snackBarNoticeLinkSelector );
+			await this.driver.executeScript( 'arguments[0].click();', snackbar );
 		}
 
 		await driverHelper.acceptAlertIfPresent( this.driver );
@@ -310,10 +312,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async closePublishedPanel() {
-		return await driverHelper.clickWhenClickable(
-			this.driver,
+		const closeButton = await this.driver.findElement(
 			By.css( '.editor-post-publish-panel__header button[aria-label="Close panel"]' )
 		);
+		return await this.driver.executeScript( 'arguments[0].click();', closeButton );
 	}
 
 	async ensureSaved() {
