@@ -117,7 +117,8 @@
 		"prewhybundled": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=withreasons npm run -s build-client-evergreen",
 		"whybundled": "whybundled client/stats.json",
 		"composite-checkout-demo": "webpack-dev-server --config ./packages/composite-checkout/webpack.config.demo.js --mode development",
-		"components:storybook:start": "start-storybook -c packages/components/.storybook"
+		"components:storybook:start": "start-storybook -c packages/components/.storybook",
+		"media-library:storybook:start": "start-storybook -c packages/media-library/.storybook -h calypso.localhost -p 3001"
 	},
 	"devDependencies": {
 		"@automattic/babel-plugin-i18n-calypso": "file:./packages/babel-plugin-i18n-calypso",
