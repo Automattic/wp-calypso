@@ -42,3 +42,12 @@ export const togglePageLayout = ( pageLayout: Template ) => ( {
 	type: ActionType.TOGGLE_PAGE_LAYOUT as const,
 	pageLayout,
 } );
+
+export const setShouldCreate = ( shouldCreate: boolean ) => ( {
+	type: ActionType.SET_SHOULD_CREATE as const,
+	shouldCreate,
+} );
+
+export const resetOnboardStore = () => ( {
+	type: ActionType.RESET_ONBOARD_STORE as const,
+} );

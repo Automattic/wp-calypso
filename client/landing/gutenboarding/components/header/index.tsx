@@ -19,6 +19,8 @@ import DomainPickerButton from '../domain-picker-button';
 import { selectorDebounce } from '../../constants';
 import Link from '../link';
 import { createSite } from '../../utils';
+import { Step } from '../../steps';
+import { useHistory } from 'react-router-dom';
 
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
@@ -28,11 +30,11 @@ interface Props {
 
 const Header: FunctionComponent< Props > = ( { prev } ) => {
 	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
-	const { domain, selectedDesign, siteTitle, siteVertical } = useSelect( select =>
+	const { domain, selectedDesign, siteTitle, siteVertical, shouldCreate } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
 	const hasSelectedDesign = !! selectedDesign;
-	const { setDomain } = useDispatch( ONBOARD_STORE );
+	const { setDomain, resetOnboardStore, setShouldCreate } = useDispatch( ONBOARD_STORE );
 
 	const [ domainSearch ] = useDebounce( siteTitle, selectorDebounce );
 	const freeDomainSuggestion = useSelect(
@@ -55,6 +57,8 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 			setDomain( undefined );
 		}
 	}, [ siteTitle, setDomain ] );
+
+	const history = useHistory();
 
 	const currentDomain = domain ?? freeDomainSuggestion;
 
@@ -81,6 +85,21 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		siteVertical,
 		...( siteUrl && { siteUrl } ),
 		...( selectedDesign?.slug && { theme: selectedDesign?.slug } ),
+	};
+
+	if ( shouldCreate && currentUser ) {
+		createSite( siteCreationData );
+		resetOnboardStore();
+	}
+
+	const handleCreateSite = () => {
+		if ( currentUser ) {
+			createSite( siteCreationData );
+			resetOnboardStore();
+		} else {
+			setShouldCreate( true );
+			history.push( Step.Signup );
+		}
 	};
 
 	return (
@@ -121,7 +140,7 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 							className="gutenboarding__header-next-button"
 							isPrimary
 							isLarge
-							onClick={ () => createSite( siteCreationData ) }
+							onClick={ handleCreateSite }
 						>
 							{ NO__( 'Create my site' ) }
 						</Button>

@@ -11,6 +11,7 @@ import { __ as NO__, _x as NO_x } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { USER_STORE } from '../../stores/user';
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import './style.scss';
 
 // TODO: deploy this change to @types/wordpress__element
@@ -28,12 +29,17 @@ const SignupForm = () => {
 	const isFetchingNewUser = useSelect( select => select( USER_STORE ).isFetchingNewUser() );
 	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
 	const newUserError = useSelect( select => select( USER_STORE ).getNewUserError() );
+	const { shouldCreate } = useSelect( select => select( ONBOARD_STORE ) ).getState();
 
 	const handleSignUp = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 
 		createAccount( { email: emailVal, is_passwordless: true, signup_flow_name: 'gutenboarding' } );
 	};
+
+	if ( newUser && shouldCreate ) {
+		window.location.href = window.location.href.replace( '/signup', '/design' ); //TODO: redirect to some 'creating your website' screen
+	}
 
 	return (
 		<Modal
