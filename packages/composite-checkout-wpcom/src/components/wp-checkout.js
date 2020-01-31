@@ -46,6 +46,7 @@ const OrderReviewTitle = () => {
 export default function WPCheckout( {
 	removeItem,
 	submitCoupon,
+	couponStatus,
 	changePlanLength,
 	siteId,
 	siteUrl,
@@ -60,6 +61,7 @@ export default function WPCheckout( {
 		<WPCheckoutOrderReview
 			removeItem={ removeItem }
 			submitCoupon={ submitCoupon }
+			couponStatus={ couponStatus }
 			onChangePlanLength={ changePlanLength }
 			siteUrl={ siteUrl }
 		/>
@@ -79,7 +81,13 @@ export default function WPCheckout( {
 			className: 'checkout__order-summary-step',
 			hasStepNumber: false,
 			titleContent: <WPCheckoutOrderSummaryTitle />,
-			completeStepContent: <WPCheckoutOrderSummary siteUrl={ siteUrl } />,
+			completeStepContent: (
+				<WPCheckoutOrderSummary
+					siteUrl={ siteUrl }
+					submitCoupon={ submitCoupon }
+					couponStatus={ couponStatus }
+				/>
+			),
 			isCompleteCallback: () => true,
 		},
 		{
