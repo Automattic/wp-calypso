@@ -73,6 +73,10 @@
 		&.is-feedback {
 			@include env-bug-style( 'blue' );
 		}
+		&.is-jetpack-cloud-dev,
+		&.is-jetpack-cloud-staging {
+			@include env-bug-style( 'jetpack-green' );
+		}
 
 		&.branch-name {
 			text-transform: inherit;
