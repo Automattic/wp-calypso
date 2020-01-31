@@ -324,12 +324,6 @@ class PageTemplateModal extends Component {
 									__( 'Contact Pages', 'full-site-editing' )
 								) }
 
-								{ ! this.props.isFrontPage &&
-									this.renderTemplatesList(
-										homepageTemplates,
-										__( 'Home Pages', 'full-site-editing' )
-									) }
-
 								{ this.renderTemplatesList(
 									menuTemplates,
 									__( 'Menu Pages', 'full-site-editing' )
@@ -349,6 +343,12 @@ class PageTemplateModal extends Component {
 									teamTemplates,
 									__( 'Team Pages', 'full-site-editing' )
 								) }
+
+								{ ! this.props.isFrontPage &&
+									this.renderTemplatesList(
+										homepageTemplates,
+										__( 'Home Pages', 'full-site-editing' )
+									) }
 							</form>
 							<TemplateSelectorPreview
 								blocks={ this.getBlocksByTemplateSlug( previewedTemplate ) }
