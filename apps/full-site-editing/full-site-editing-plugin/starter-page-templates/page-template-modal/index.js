@@ -217,8 +217,10 @@ class PageTemplateModal extends Component {
 			aboutTemplates: filter( this.props.templates, { category: 'about' } ),
 			blogTemplates: filter( this.props.templates, { category: 'blog' } ),
 			contactTemplates: filter( this.props.templates, { category: 'contact' } ),
+			eventTemplates: filter( this.props.templates, { category: 'event' } ),
 			menuTemplates: filter( this.props.templates, { category: 'menu' } ),
 			portfolioTemplates: filter( this.props.templates, { category: 'portfolio' } ),
+			productTemplates: filter( this.props.templates, { category: 'product' } ),
 			servicesTemplates: filter( this.props.templates, { category: 'services' } ),
 			teamTemplates: filter( this.props.templates, { category: 'team' } ),
 			homepageTemplates: sortBy( filter( this.props.templates, { category: 'home' } ), 'title' ),
@@ -259,8 +261,10 @@ class PageTemplateModal extends Component {
 			aboutTemplates,
 			blogTemplates,
 			contactTemplates,
+			eventTemplates,
 			menuTemplates,
 			portfolioTemplates,
+			productTemplates,
 			servicesTemplates,
 			teamTemplates,
 			homepageTemplates,
@@ -325,6 +329,11 @@ class PageTemplateModal extends Component {
 								) }
 
 								{ this.renderTemplatesList(
+									eventTemplates,
+									__( 'Event Pages', 'full-site-editing' )
+								) }
+
+								{ this.renderTemplatesList(
 									menuTemplates,
 									__( 'Menu Pages', 'full-site-editing' )
 								) }
@@ -332,6 +341,11 @@ class PageTemplateModal extends Component {
 								{ this.renderTemplatesList(
 									portfolioTemplates,
 									__( 'Portfolio Pages', 'full-site-editing' )
+								) }
+
+								{ this.renderTemplatesList(
+									productTemplates,
+									__( 'Product Pages', 'full-site-editing' )
 								) }
 
 								{ this.renderTemplatesList(
