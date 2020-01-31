@@ -199,23 +199,21 @@ export function generateFlows( {
 		},
 	};
 
-	if ( isEnabled( 'rewind/clone-site' ) ) {
-		flows[ 'clone-site' ] = {
-			steps: [
-				'clone-start',
-				'clone-destination',
-				'clone-credentials',
-				'clone-point',
-				'clone-ready',
-				'clone-cloning',
-			],
-			destination: '/activity-log',
-			description: 'Allow Jetpack users to clone a site via Rewind (alternate restore)',
-			lastModified: '2018-05-28',
-			disallowResume: true,
-			allowContinue: false,
-		};
-	}
+	flows[ 'clone-site' ] = {
+		steps: [
+			'clone-start',
+			'clone-destination',
+			'clone-credentials',
+			'clone-point',
+			'clone-ready',
+			'clone-cloning',
+		],
+		destination: '/activity-log',
+		description: 'Allow Jetpack users to clone a site via Rewind (alternate restore)',
+		lastModified: '2018-05-28',
+		disallowResume: true,
+		allowContinue: false,
+	};
 
 	if ( isEnabled( 'signup/atomic-store-flow' ) ) {
 		// Important: For any changes done to the ecommerce flow,
