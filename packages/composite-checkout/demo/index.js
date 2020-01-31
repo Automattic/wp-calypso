@@ -84,27 +84,29 @@ async function makePayPalExpressRequest( data ) {
 const registry = createRegistry();
 const { registerStore, select, dispatch, subscribe } = registry;
 
-registerStore( 'demo', {
-	actions: {
-		setCountry( payload ) {
-			return { type: 'set_country', payload };
-		},
+const actions = {
+	setCountry( payload ) {
+		return { type: 'set_country', payload };
 	},
+};
+
+registerStore( 'demo', {
+	actions,
 	selectors: {
 		getCountry( state ) {
 			return state.country;
 		},
 	},
-	reducer( state = {}, action ) {
+	reducer( state = { country: { value: '', isTouched: false } }, action ) {
 		if ( action.type === 'set_country' ) {
-			return { ...state, country: action.payload };
+			return { ...state, country: { value: action.payload, isTouched: true } };
 		}
 		return state;
 	},
 } );
 
 const stripeMethod = createStripeMethod( {
-	getCountry: () => select( 'demo' ).getCountry(),
+	getCountry: () => select( 'demo' ).getCountry().value,
 	getPostalCode: () => 90210,
 	getPhoneNumber: () => 5555555555,
 	getSubdivisionCode: () => 'CA',
@@ -115,7 +117,7 @@ const stripeMethod = createStripeMethod( {
 
 const applePayMethod = isApplePayAvailable()
 	? createApplePayMethod( {
-			getCountry: () => select( 'demo' ).getCountry(),
+			getCountry: () => select( 'demo' ).getCountry().value,
 			getPostalCode: () => 90210,
 			getPhoneNumber: () => 5555555555,
 			registerStore,
@@ -217,7 +219,19 @@ const Form = styled.div`
 	margin-bottom: 0.5em;
 `;
 
+const ErrorMessage = styled.div`
+	color: red;
+`;
+
+function useRenderWhenStoreChanges() {
+	const [ , forceRender ] = useState( false );
+	useEffect( () => {
+		subscribe( () => forceRender( lastForce => ! lastForce ) );
+	}, [] );
+}
+
 function ContactForm( { summary } ) {
+	useRenderWhenStoreChanges( 'demo' );
 	const country = select( 'demo' ).getCountry();
 	const onChangeCountry = event => dispatch( 'demo' ).setCountry( event.target.value );
 
@@ -225,7 +239,7 @@ function ContactForm( { summary } ) {
 		return (
 			<div>
 				<div>Country</div>
-				<span>{ country }</span>
+				<span>{ country.value }</span>
 			</div>
 		);
 	}
@@ -233,7 +247,16 @@ function ContactForm( { summary } ) {
 	return (
 		<Form>
 			<Label htmlFor="country">Country</Label>
-			<Input id="country" type="text" value={ country } onChange={ onChangeCountry } />
+			<Input
+				id="country"
+				type="text"
+				value={ country.value }
+				onChange={ onChangeCountry }
+				isError={ country.isTouched && country.value.length === 0 }
+			/>
+			{ country.isTouched && country.value.length === 0 && (
+				<ErrorMessage>This field is required</ErrorMessage>
+			) }
 		</Form>
 	);
 }
@@ -254,11 +277,16 @@ const steps = [
 		completeStepContent: <ContactForm summary />,
 		isCompleteCallback: () => {
 			const country = select( 'demo' ).getCountry();
-			return country?.length > 0;
+			if ( country.value.length === 0 ) {
+				// Force error to be displayed by touching field
+				dispatch( 'demo' ).setCountry( '' );
+				return false;
+			}
+			return true;
 		},
 		isEditableCallback: () => {
 			const country = select( 'demo' ).getCountry();
-			return country?.length > 0;
+			return country.value.length > 0;
 		},
 		getEditButtonAriaLabel: () => hostTranslate( 'Edit the contact details' ),
 		getNextStepButtonAriaLabel: () => hostTranslate( 'Continue with the entered contact details' ),
