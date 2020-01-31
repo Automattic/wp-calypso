@@ -136,7 +136,16 @@ class PageTemplateModal extends Component {
 		// Only overwrite the page title if the template is not one of the Homepage Layouts
 		const title = isHomepageTemplate ? null : this.getTitleByTemplateSlug( slug );
 
-		// Skip inserting if there's nothing to insert.
+		// Check to see if this is a blank template selection
+		// and reset the template if so.
+		if ( 'blank' === slug ) {
+			this.props.insertTemplate( '', [] );
+			this.setState( { isOpen: false } );
+			return;
+		}
+
+		// Skip inserting if this is not a blank template
+		// and there's nothing to insert.
 		if ( ! blocks || ! blocks.length ) {
 			this.setState( { isOpen: false } );
 			return;
