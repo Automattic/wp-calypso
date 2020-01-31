@@ -5,6 +5,7 @@
 
 import React, { Fragment } from 'react';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -59,6 +60,7 @@ class Document extends React.Component {
 			isWCComConnect,
 			addEvergreenCheck,
 			requestFrom,
+			translate,
 		} = this.props;
 
 		const inlineScript =
@@ -79,9 +81,6 @@ class Document extends React.Component {
 			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
 			'jetpack-connect' === sectionName &&
 			'woocommerce-onboarding' === requestFrom;
-
-		const isJetpackCloudFlow =
-			config.isEnabled( 'jetpack-cloud' ) && 'jetpack-cloud' === sectionName;
 
 		return (
 			<html
@@ -137,8 +136,11 @@ class Document extends React.Component {
 							>
 								<div className="masterbar" />
 								<div className="layout__content">
-									{ isJetpackCloudFlow ? (
-										<JetpackLogo size={ 72 } className="wpcom-site__logo" />
+									{ 'jetpack-cloud' === sectionName ? (
+										<div className="wpcom-site__loader">
+											<JetpackLogo size={ 72 } className="wpcom-site__logo" />
+											{ translate( 'Loading' ) }
+										</div>
 									) : (
 										<WordPressLogo size={ 72 } className="wpcom-site__logo" />
 									) }
@@ -265,4 +267,4 @@ class Document extends React.Component {
 	}
 }
 
-export default Document;
+export default localize( Document );

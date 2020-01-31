@@ -10,14 +10,23 @@
 // Global layout
 @import 'main';
 
-.is-section-jetpack-cloud .wpcom-site__logo {
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate( -50%, -50% );
-	animation: loading-fade 1.6s ease-in-out infinite;
+.is-section-jetpack-cloud {
+	.wpcom-site__loader {
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate( -50%, -50% );
+		color: var( --color-text-subtle );
+		text-align: center;
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}
 
-	path {
-		fill: var( --color-text-subtle );
+	.wpcom-site__logo {
+		display: block;
+		margin-bottom: 10px;
+
+		path {
+			fill: var( --color-text-subtle );
+		}
 	}
 }
