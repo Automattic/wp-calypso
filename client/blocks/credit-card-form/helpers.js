@@ -3,6 +3,7 @@
  */
 import { useState, useEffect, useRef } from 'react';
 import { camelCase, kebabCase, debounce } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -98,17 +99,27 @@ async function updateCreditCard( {
 	}
 
 	if ( purchase && siteSlug && isRenewable( purchase ) ) {
-		const noticeMessage = translate(
-			'Your credit card details were successfully updated, but your subscription has not been renewed yet.'
-		);
-		const noticeOptions = {
-			button: translate( 'Renew Now' ),
-			onClick: function( event, closeFunction ) {
-				handleRenewNowClick( purchase, siteSlug );
-				closeFunction();
-			},
-			persistent: true,
-		};
+		const daysAwayFromRenewal = moment( purchase.renewDate ).diff( moment(), 'days' );
+		let noticeMessage = '';
+		let noticeOptions = {};
+		if ( daysAwayFromRenewal > 30 ) {
+			noticeMessage = translate( 'Your credit card details were successfully updated.' );
+			noticeOptions = {
+				persistent: true,
+			};
+		} else {
+			noticeMessage = translate(
+				'Your credit card details were successfully updated, but your subscription has not been renewed yet.'
+			);
+			noticeOptions = {
+				button: translate( 'Renew Now' ),
+				onClick: function( event, closeFunction ) {
+					handleRenewNowClick( purchase, siteSlug );
+					closeFunction();
+				},
+				persistent: true,
+			};
+		}
 		notices.info( noticeMessage, noticeOptions );
 		return;
 	}
