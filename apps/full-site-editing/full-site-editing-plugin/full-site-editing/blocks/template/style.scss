@@ -16,6 +16,10 @@
 }
 
 .template__block-container {
+	&::before {
+		display: none;
+	}
+
 	&:hover {
 		cursor: pointer;
 	}
