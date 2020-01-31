@@ -31,6 +31,7 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 		allowed_payment_methods,
 		sub_total_integer,
 		sub_total_display,
+		coupon,
 	} = serverCart;
 
 	const taxLineItem: CheckoutCartItem = {
@@ -84,6 +85,7 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 			.map( readWPCOMPaymentMethodClass )
 			.map( translateWpcomPaymentMethodToCheckoutPaymentMethod )
 			.filter( Boolean ),
+		couponCode: coupon,
 	};
 }
 

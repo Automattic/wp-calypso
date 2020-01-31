@@ -56,6 +56,7 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 				'WPCOM_Billing_Ebanx',
 				'WPCOM_Billing_Web_Payment',
 			],
+			coupon: 'fakecoupon',
 		};
 
 		const clientCart = translateWpcomCartToCheckoutCart( serverResponse );
@@ -85,6 +86,9 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 			expect( clientCart.credits.amount.value ).toBe( 10000 );
 			expect( clientCart.credits.amount.currency ).toBe( 'BRL' );
 			expect( clientCart.credits.amount.displayValue ).toBe( 'R$100' );
+		} );
+		it( 'has the expected coupon', function() {
+			expect( clientCart.couponCode ).toBe( 'fakecoupon' );
 		} );
 
 		describe( 'first cart item (plan)', function() {

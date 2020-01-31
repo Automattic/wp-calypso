@@ -46,6 +46,7 @@ export interface WPCOMCart {
 	subtotal: CheckoutCartItem;
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
 	credits: CheckoutCartItem;
+	couponCode: string | null;
 }
 
 export const emptyWPCOMCart = {
@@ -83,4 +84,5 @@ export const emptyWPCOMCart = {
 		type: 'credits',
 		amount: { value: 0, currency: 'USD', displayValue: '0' },
 	},
+	couponCode: null,
 } as WPCOMCart;
