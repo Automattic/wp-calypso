@@ -27,7 +27,7 @@ It's also possible to build an entirely custom form using the other components e
 
 Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the functions [createStripeMethod](#createstripemethod), [createApplePayMethod](#createapplepaymethod), [createPayPalMethod](#createpaypalmethod), [createFullCreditsMethod](#createFullCreditsMethod), and [createExistingCardMethod](#createExistingCardMethod).
 
-Any component which is a child of `CheckoutProvider` gets access to the custom hooks [useAllPaymentMethods](#useAllPaymentMethods), [useEvents](#useEvents), [useFormStatus](#useFormStatus), [useMessages](#useMessages), [useDispatch](#useDispatch), [useLineItems](#useLineItems), [usePaymentData](#usePaymentData), [usePaymentMethod](#usePaymentMethodId), [usePaymentMethodId](#usePaymentMethodId), [useRegisterStore](#useRegisterStore), [useRegistry](#useRegistry), [useSelect](#useSelect), and [useTotal](#useTotal).
+Any component which is a child of `CheckoutProvider` gets access to the custom hooks [useAllPaymentMethods](#useAllPaymentMethods), [useEvents](#useEvents), [useFormStatus](#useFormStatus), [useMessages](#useMessages), [useDispatch](#useDispatch), [useLineItems](#useLineItems), [usePaymentMethod](#usePaymentMethodId), [usePaymentMethodId](#usePaymentMethodId), [useRegisterStore](#useRegisterStore), [useRegistry](#useRegistry), [useSelect](#useSelect), and [useTotal](#useTotal).
 
 The [Checkout](#checkout) component creates the form itself. That component displays a series of steps which are passed in as [Step objects](#steps). While you can create these objects manually, the package provides three pre-defined steps that can be created by using the functions [getDefaultOrderSummaryStep](#getDefaultOrderSummaryStep), [getDefaultPaymentMethodStep](#getDefaultPaymentMethodStep), and [getDefaultOrderReviewStep](#getDefaultOrderReviewStep).
 
@@ -46,25 +46,19 @@ The `Checkout` component accepts an optional `steps` prop which is an array of S
 ```js
 {
 	id: 'payment-method',
-	className: 'checkout__payment-methods-step',
+	className: 'checkout__contact-step',
 	hasStepNumber: true,
-	titleContent: <PaymentMethodsTitle />,
-	activeStepContent: <PaymentMethods />,
+	titleContent: <ContactFormTitle />,
+	activeStepContent: <ContactStep />,
 	incompleteStepContent: null,
-	completeStepContent: <PaymentMethodsSummary />,
+	completeStepContent: <ContactStepSummary />,
 	isCompleteCallback: () => {
-		const { country } = paymentData;
-		if ( ! country ) {
-			return false;
-		}
-		return true;
+		const country = dataStore.getCountry();
+		return country.length > 0;
 	},
 	isEditableCallback: () => {
-		const { country } = paymentData;
-		if ( country.length > 0 ) {
-			return true;
-		}
-		return false;
+		const country = dataStore.getCountry();
+		return country.length > 0;
 	},
 	getEditButtonAriaLabel: () => translate( 'Edit the payment method' ),
 	getNextStepButtonAriaLabel: () => translate( 'Continue with the selected payment method' ),
@@ -80,8 +74,8 @@ All properties except for `id` are optional.
 - `activeStepContent?: React.ReactNode`. Displays as the content of the step when it is active. It is also displayed when the step is inactive but is hidden by CSS.
 - `incompleteStepContent?: React.ReactNode`. Displays as the content of the step when it is inactive and incomplete as defined by the `isCompleteCallback`. It is also displayed when the step is active but is hidden by CSS.
 - `completeStepContent?: React.ReactNode`. Displays as the content of the step when it is inactive and complete as defined by the `isCompleteCallback`. It is also displayed when the step is active but is hidden by CSS.
-- `isCompleteCallback?: ({paymentData: object, activeStep: object}) => boolean | Promise<boolean>`. Used to determine if a step is complete for purposes of validation. Default is a function returning true. If the validation requires an async processs, the callback may return a Promise that resolves with either true or false as its value.
-- `isEditableCallback?: ({paymentData: object}) => boolean`. Used to determine if an inactive step should display an "Edit" button. Default is a function returning false.
+- `isCompleteCallback?: () => boolean | Promise<boolean>`. Used to determine if a step is complete for purposes of validation. Default is a function returning true. If the validation requires an async processs, the callback may return a Promise that resolves with either true or false as its value.
+- `isEditableCallback?: () => boolean`. Used to determine if an inactive step should display an "Edit" button. Default is a function returning false.
 - `getEditButtonAriaLabel?: () => string`. Used to fill in the `aria-label` attribute for the "Edit" button if one exists.
 - `getNextStepButtonAriaLabel?: () => string`. Used to fill in the `aria-label` attribute for the "Continue" button if one exists.
 
@@ -108,7 +102,7 @@ Each payment method is an object with the following properties:
 - `inactiveContent: React.ReactNode`. A component that renders a summary of the selected payment method when the step is inactive.
 - `checkoutWrapper?: (children: React.ReactNode) => React.ReactNode`. A [render prop](https://reactjs.org/docs/render-props.html) that returns a component to wrap the whole of the checkout form. Must render the provided `children` argument. This can be used for custom data providers (eg: `StripeProvider` to support [Stripe Elements](https://github.com/stripe/react-stripe-elements)).
 - `getAriaLabel: (localize: () => string) => string`. A function to return the name of the Payment Method. It will receive the localize function as an argument.
-- `isCompleteCallback?: ({paymentData: object, activeStep: object}) => boolean | Promise<boolean>`. When calling the `isCompleteCallback` of the payment method step (see `getDefaultPaymentMethodStep`), it will call the `isCompleteCallback` for the active payment method. Default is a function returning true. If the callback requires an async process, this function may return a Promise that resolves to either a true or false value.
+- `isCompleteCallback?: () => boolean | Promise<boolean>`. When calling the `isCompleteCallback` of the payment method step (see `getDefaultPaymentMethodStep`), it will call the `isCompleteCallback` for the active payment method. Default is a function returning true. If the callback requires an async process, this function may return a Promise that resolves to either a true or false value.
 
 Within the components, the Hook `usePaymentMethod()` will return an object of the above form with the key of the currently selected payment method or null if none is selected. To retrieve all the payment methods and their properties, the Hook `useAllPaymentMethods()` will return an array that contains them all.
 
@@ -341,18 +335,6 @@ A React Hook that will return a two element array where the first element is the
 ### useMessages
 
 A React Hook that will return an object containing the `showErrorMessage`, `showInfoMessage`, and `showSuccessMessage` callbacks as passed to `CheckoutProvider`. Only works within [CheckoutProvider](#CheckoutProvider).
-
-### usePaymentData
-
-The [Checkout](#Checkout) component registers a [Data store](#data-stores) called 'checkout'. Rather than creating a custom store, any component can use this default store to keep arbitrary data with this React Hook. It returns a two element array, where the first element is the current payment data object (the state of the 'checkout' store) and the second argument is a function which will update the payment data object. The update function takes two arguments: a string which will be used as the property name for the modified data, and arbitrary data to be stored in that property.
-
-For example,
-
-```js
-const [ paymentData, updatePaymentData ] = usePaymentData();
-const onClick = () => updatePaymentData( 'color', 'green' );
-// On next render, paymentData.color === 'green'
-```
 
 ### usePaymentMethod
 
