@@ -50,11 +50,12 @@
 		"test:js:update-snapshots": "npx wp-scripts test-unit-js -u --config='bin/js-unit-config.js' --colors",
 		"test:e2e": "npx wp-scripts test-e2e --wordpress-base-url='http://localhost:4013' --colors",
 		"test:e2e:watch": "npm run test-e2e -- --watch",
-		"clean": "npx rimraf dist full-site-editing-plugin/*/dist",
+		"clean": "npx rimraf dist full-site-editing-plugin/*/dist full-site-editing-plugin/blog-posts-block/newspack-homepage-articles",
 		"prebuild": "npm run clean",
 		"predev": "npm run clean",
 		"sync:blog-posts-block": "./bin/sync-blog-posts-block.sh",
-		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh"
+		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh",
+		"prepare": "npm run sync:blog-posts-block --path=../../node_modules/newspack-blocks"
 	},
 	"dependencies": {
 		"@wordpress/api-fetch": "*",
@@ -76,6 +77,7 @@
 		"@wordpress/url": "*",
 		"classnames": "2.2.6",
 		"lodash": "*",
-		"moment": "*"
+		"moment": "*",
+		"newspack-blocks": "github:Automattic/newspack-blocks#1.0.0-alpha.26"
 	}
 }
