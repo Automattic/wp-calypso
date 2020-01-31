@@ -88,7 +88,7 @@ export default function Checkout( { steps: stepProps, className } ) {
 		throw new Error( 'The active step was lost' );
 	}
 
-	const [ stepCompleteStatus, setStepCompleteStatus ] = useTrackCompleteSteps();
+	const [ stepCompleteStatus, setStepCompleteStatus ] = useTrackCompleteSteps( steps );
 
 	// Change the step if the url changes
 	useChangeStepNumberForUrl( annotatedSteps, stepCompleteStatus );
@@ -393,7 +393,11 @@ function getAnnotatedSteps( steps ) {
 	return annotatedSteps;
 }
 
-function useTrackCompleteSteps() {
-	const [ stepCompleteStatus, setStepCompleteStatus ] = useState( {} );
+function useTrackCompleteSteps( steps ) {
+	const [ stepCompleteStatus, setStepCompleteStatus ] = useState( () => {
+		return steps.reduce( ( completeSteps, step ) => {
+			return { ...completeSteps, [ step.id ]: step.hasStepNumber ? false : true };
+		}, {} );
+	} );
 	return [ stepCompleteStatus, setStepCompleteStatus ];
 }
