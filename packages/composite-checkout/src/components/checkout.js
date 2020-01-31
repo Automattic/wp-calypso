@@ -105,7 +105,7 @@ export default function Checkout( { steps: stepProps, className } ) {
 		throw new Error( 'The active step was lost' );
 	}
 
-	const [ stepCompleteStatus, setStepCompleteStatus ] = useTrackCompleteSteps( steps, activeStep );
+	const [ stepCompleteStatus, setStepCompleteStatus ] = useTrackCompleteSteps();
 
 	// Change the step if the url changes
 	useChangeStepNumberForUrl( annotatedSteps, stepCompleteStatus );
@@ -412,30 +412,7 @@ function getAnnotatedSteps( steps ) {
 	return annotatedSteps;
 }
 
-function useTrackCompleteSteps( steps, activeStep ) {
-	const [ paymentData ] = usePaymentData();
-	const activePaymentMethod = usePaymentMethod();
-	const [ stepCompleteStatus, setStepCompleteStatus ] = useState( getInitialStepCompleteStatus );
-
-	function getInitialStepCompleteStatus() {
-		debug( 'initializing complete status for new steps' );
-		return steps.reduce( ( stepStatus, step ) => {
-			const isCompleteResult =
-				step?.isCompleteCallback?.( { paymentData, activePaymentMethod, activeStep } ) ?? true;
-			if ( isCompleteResult.then ) {
-				// TODO: We may in future want to wait for the callback to resolve, but
-				// in practice steps that have an async isCompleteCallback probably
-				// require user interaction; we treat this as incomplete for now and
-				// the callback will be called again when the Continue button is
-				// pressed.
-				return stepStatus;
-			}
-			return {
-				...stepStatus,
-				[ step.id ]: isCompleteResult,
-			};
-		}, {} );
-	}
-
+function useTrackCompleteSteps() {
+	const [ stepCompleteStatus, setStepCompleteStatus ] = useState( {} );
 	return [ stepCompleteStatus, setStepCompleteStatus ];
 }
