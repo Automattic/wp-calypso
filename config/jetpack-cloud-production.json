@@ -1,7 +1,7 @@
 {
 	"env": "production",
 	"env_id": "jetpack-cloud-production",
-	"favicon_url": "//s1.wp.com/i/favicon.ico",
+	"favicon_url": "/calypso/images/favicons/favicon-jetpack-cloud-production.ico",
 	"client_slug": "browser",
 	"hostname": "cloud.jetpack.com",
 	"i18n_default_locale_slug": "en",
