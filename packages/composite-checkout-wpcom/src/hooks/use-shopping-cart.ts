@@ -144,6 +144,13 @@ export function useShoppingCart(
 			const response = await getServerCart();
 			debug( 'initialized cart is', response );
 			setResponseCart( response );
+
+			if ( couponStatus === 'fresh' ) {
+				if ( response.is_coupon_applied ) {
+					setCouponStatus( 'applied' );
+				}
+			}
+
 			setCacheStatus( 'valid' );
 		};
 
