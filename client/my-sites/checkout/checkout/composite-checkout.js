@@ -114,6 +114,7 @@ export default function CompositeCheckout( {
 	const {
 		items,
 		tax,
+		couponItem,
 		total,
 		credits,
 		removeItem,
@@ -144,7 +145,7 @@ export default function CompositeCheckout( {
 
 	useAddProductToCart( planSlug, isJetpackNotAtomic, addItem );
 
-	const itemsForCheckout = items.length ? [ ...items, tax ] : [];
+	const itemsForCheckout = ( items.length ? [ ...items, tax, couponItem ] : [] ).filter( Boolean );
 	debug( 'items for checkout', itemsForCheckout );
 
 	useRedirectIfCartEmpty( items, `/plans/${ siteSlug || '' }` );
