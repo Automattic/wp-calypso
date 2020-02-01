@@ -46,7 +46,7 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 			displayValue: total_tax_display,
 		},
 	};
-    
+	
 	const couponValueRaw = products
 		.map( product => coupon_discounts[ product.product_id ] )
 		.filter( Boolean )

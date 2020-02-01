@@ -42,6 +42,7 @@ export interface ShoppingCartManager {
 	tax: CheckoutCartItem;
 	total: CheckoutCartItem;
 	subtotal: CheckoutCartItem;
+	couponItem: CheckoutCartItem;
 	credits: CheckoutCartItem;
 	addItem: ( WPCOMCartItem ) => void;
 	removeItem: ( WPCOMCartItem ) => void;
@@ -260,6 +261,7 @@ export function useShoppingCart(
 		isLoading: cacheStatus === 'fresh',
 		items: cart.items,
 		tax: cart.tax,
+		couponItem: cart.coupon,
 		total: cart.total,
 		subtotal: cart.subtotal,
 		credits: cart.credits,
