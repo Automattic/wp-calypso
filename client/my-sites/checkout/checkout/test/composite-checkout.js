@@ -76,6 +76,7 @@ describe( 'CompositeCheckout', () => {
 			total_tax_display: 'R$7',
 			total_cost_integer: 15600,
 			total_cost_display: 'R$156',
+			coupon_discounts: [],
 		};
 
 		const countryList = [
