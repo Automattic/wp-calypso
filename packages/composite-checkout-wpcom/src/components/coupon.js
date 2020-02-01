@@ -28,6 +28,7 @@ export default function Coupon( { id, className, disabled, submitCoupon, couponS
 	const hasCouponError = couponStatus === 'invalid' || couponStatus === 'rejected';
 	const isPending = couponStatus === 'pending';
 
+    // eslint-disable-next-line no-nested-ternary
 	const errorMessage = ( couponStatus === 'invalid')
         ? translate( "We couldn't find your coupon. Please check your code and try again." )
         : ( couponStatus === 'rejected' )
