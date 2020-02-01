@@ -21,33 +21,26 @@ export default function Coupon( { id, className, disabled, submitCoupon, couponS
 	const [ isApplyButtonActive, setIsApplyButtonActive ] = useState( false );
 	const [ couponFieldValue, setCouponFieldValue ] = useState( '' );
 
-    if ( couponStatus === 'applied' ) {
-        return null;
-    }
+	if ( couponStatus === 'applied' ) {
+		return null;
+	}
 
 	const hasCouponError = couponStatus === 'invalid' || couponStatus === 'rejected';
 	const isPending = couponStatus === 'pending';
 
-    // eslint-disable-next-line no-nested-ternary
-	const errorMessage = ( couponStatus === 'invalid')
-        ? translate( "We couldn't find your coupon. Please check your code and try again." )
-        : ( couponStatus === 'rejected' )
-            ? translate( "This coupon does not apply to any items in the cart." )
-            : null;
+	const errorMessage =
+		// eslint-disable-next-line no-nested-ternary
+		couponStatus === 'invalid'
+			? translate( "We couldn't find your coupon. Please check your code and try again." )
+			: couponStatus === 'rejected'
+			? translate( 'This coupon does not apply to any items in the cart.' )
+			: null;
 
 	return (
 		<CouponWrapper
 			className={ joinClasses( [ className, 'coupon' ] ) }
 			onSubmit={ event => {
-				handleFormSubmit(
-					event,
-					couponFieldValue,
-					setHasCouponError,
-					couponAdded,
-					setIsCouponApplied,
-					onEvent,
-					submitCoupon
-				);
+				handleFormSubmit( event, couponFieldValue, onEvent, submitCoupon );
 			} }
 		>
 			<Field
@@ -57,19 +50,14 @@ export default function Coupon( { id, className, disabled, submitCoupon, couponS
 				isError={ hasCouponError }
 				errorMessage={ errorMessage }
 				onChange={ input => {
-					handleFieldInput( input, setCouponFieldValue, setIsApplyButtonActive, setHasCouponError );
+					handleFieldInput( input, setCouponFieldValue, setIsApplyButtonActive );
 				} }
 			/>
 
 			{ isApplyButtonActive && (
-				<ApplyButton
-                    buttonState={ isPending ? 'disabled' : 'secondary' }
-                >
-                    { isPending
-                        ? translate( 'Processing…' )
-                        : translate( 'Apply' )
-                    }
-                </ApplyButton>
+				<ApplyButton buttonState={ isPending ? 'disabled' : 'secondary' }>
+					{ isPending ? translate( 'Processing…' ) : translate( 'Apply' ) }
+				</ApplyButton>
 			) }
 		</CouponWrapper>
 	);
@@ -109,41 +97,25 @@ const ApplyButton = styled( Button )`
 	margin: 0;
 `;
 
-function handleFieldInput( input, setCouponFieldValue, setIsApplyButtonActive, setHasCouponError ) {
+function handleFieldInput( input, setCouponFieldValue, setIsApplyButtonActive ) {
 	if ( input.length > 0 ) {
 		setCouponFieldValue( input );
 		setIsApplyButtonActive( true );
-		setHasCouponError( false );
 		return;
 	}
 
 	setIsApplyButtonActive( false );
 }
 
-function handleFormSubmit(
-	event,
-	couponFieldValue,
-	setHasCouponError,
-	couponAdded,
-	setIsCouponApplied,
-	onEvent,
-	submitCoupon
-) {
+function handleFormSubmit( event, couponFieldValue, onEvent, submitCoupon ) {
 	event.preventDefault();
-
-	//TODO: Validate coupon field and replace condition in the following if statement
 	if ( isCouponValid( couponFieldValue ) ) {
-		setIsCouponApplied( true );
 		onEvent( {
 			type: 'a8c_checkout_add_coupon',
 			payload: { coupon: couponFieldValue },
 		} );
 
 		submitCoupon( couponFieldValue );
-
-		if ( couponAdded ) {
-			couponAdded();
-		}
 
 		return;
 	}
@@ -152,7 +124,6 @@ function handleFormSubmit(
 		type: 'a8c_checkout_add_coupon_error',
 		payload: { type: 'Invalid code' },
 	} );
-	setHasCouponError( true );
 }
 
 function isCouponValid( coupon ) {
