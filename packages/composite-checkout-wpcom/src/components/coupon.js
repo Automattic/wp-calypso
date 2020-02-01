@@ -15,18 +15,24 @@ import joinClasses from './join-classes';
 import Field from './field';
 import Button from './button';
 
-export default function Coupon( { id, couponAdded, className, disabled, submitCoupon } ) {
+export default function Coupon( { id, className, disabled, submitCoupon, couponStatus } ) {
 	const translate = useTranslate();
 	const onEvent = useEvents();
 	const [ isApplyButtonActive, setIsApplyButtonActive ] = useState( false );
 	const [ couponFieldValue, setCouponFieldValue ] = useState( '' );
-	const [ hasCouponError, setHasCouponError ] = useState( false );
-	const [ isCouponApplied, setIsCouponApplied ] = useState( false );
 
-	//TODO: tie the coupon field visibility based on whether there is a coupon in the cart
-	if ( isCouponApplied ) {
-		return null;
-	}
+    if ( couponStatus === 'applied' ) {
+        return null;
+    }
+
+	const hasCouponError = couponStatus === 'invalid' || couponStatus === 'rejected';
+	const isPending = couponStatus === 'pending';
+
+	const errorMessage = ( couponStatus === 'invalid')
+        ? translate( "We couldn't find your coupon. Please check your code and try again." )
+        : ( couponStatus === 'rejected' )
+            ? translate( "This coupon does not apply to any items in the cart." )
+            : null;
 
 	return (
 		<CouponWrapper
@@ -45,21 +51,24 @@ export default function Coupon( { id, couponAdded, className, disabled, submitCo
 		>
 			<Field
 				id={ id }
-				disabled={ disabled }
+				disabled={ disabled || isPending }
 				placeholder={ translate( 'Enter your coupon code' ) }
 				isError={ hasCouponError }
-				errorMessage={
-					hasCouponError
-						? translate( "We couldn't find your coupon. Please check your code and try again." )
-						: null
-				}
+				errorMessage={ errorMessage }
 				onChange={ input => {
 					handleFieldInput( input, setCouponFieldValue, setIsApplyButtonActive, setHasCouponError );
 				} }
 			/>
 
 			{ isApplyButtonActive && (
-				<ApplyButton buttonState="secondary">{ translate( 'Apply' ) }</ApplyButton>
+				<ApplyButton
+                    buttonState={ isPending ? 'disabled' : 'secondary' }
+                >
+                    { isPending
+                        ? translate( 'Processing…' )
+                        : translate( 'Apply' )
+                    }
+                </ApplyButton>
 			) }
 		</CouponWrapper>
 	);
