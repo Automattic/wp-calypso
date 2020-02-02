@@ -28,11 +28,15 @@ jest.mock( 'config', () => {
 
 jest.mock( 'lib/analytics/utils', () => ( {
 	isGoogleAnalyticsAllowed: () => true,
-	getDoNotTrack: () => false,
 	isPiiUrl: () => false,
 	mayWeTrackCurrentUserGdpr: () => true,
+} ) );
+
+jest.mock( '@automattic/calypso-analytics', () => ( {
+	getDoNotTrack: () => false,
 	getCurrentUser: () => undefined,
 } ) );
+
 jest.mock( '@automattic/load-script', () => require( './mocks/lib/load-script' ) );
 
 describe( 'analytics.ga', () => {
