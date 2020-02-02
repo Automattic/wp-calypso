@@ -1,1 +1,2 @@
-Moved to
+
+Moved to the [calypso-analytics package](../../../../packages/calypso-analytics/README.md)
