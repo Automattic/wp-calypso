@@ -132,7 +132,7 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 			let nextSite = site;
 
 			return reduce(
-				[ 'blog_public', 'site_icon' ],
+				[ 'blog_public', 'wpcom_coming_soon', 'site_icon' ],
 				( memo, key ) => {
 					// A site settings update may or may not include the icon or blog_public property.
 					// If not, we should simply return state unchanged.
@@ -151,6 +151,19 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 							nextSite = {
 								...nextSite,
 								is_private: isPrivate,
+							};
+							break;
+						}
+						case 'wpcom_coming_soon': {
+							const isComingSoon = parseInt( settings.wpcom_coming_soon, 10 ) === 1;
+
+							if ( site.is_coming_soon === isComingSoon ) {
+								return memo;
+							}
+
+							nextSite = {
+								...nextSite,
+								is_coming_soon: isComingSoon,
 							};
 							break;
 						}
