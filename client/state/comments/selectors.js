@@ -36,7 +36,7 @@ import 'state/comments/init';
  * @returns {Array} comment items
  */
 export const getPostCommentItems = ( state, siteId, postId ) =>
-	get( state.comments.items, `${ siteId }-${ postId }` );
+	state.comments.items?.[ `${ siteId }-${ postId }` ];
 
 export const getDateSortedPostComments = treeSelect(
 	( state, siteId, postId ) => [ getPostCommentItems( state, siteId, postId ) ],
@@ -72,7 +72,7 @@ export const getCommentErrors = state => {
  * @returns {number} total comments count on the server. if not found, assume infinity
  */
 export const getPostTotalCommentsCount = ( state, siteId, postId ) =>
-	get( state.comments.totalCommentsCount, `${ siteId }-${ postId }` );
+	state.comments.totalCommentsCount?.[ `${ siteId }-${ postId }` ];
 
 /**
  * Get total number of comments in state at a given date and time

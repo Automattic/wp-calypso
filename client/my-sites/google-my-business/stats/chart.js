@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { flatten, get, partialRight, sumBy } from 'lodash';
+import { flatten, partialRight, sumBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -57,8 +57,8 @@ function transformData( props ) {
 	if ( aggregation === 'total' ) {
 		return data.metricValues.map( metric => ( {
 			value: metric.totalValue.value,
-			description: get( props.dataSeriesInfo, `${ metric.metric }.description`, '' ),
-			name: get( props.dataSeriesInfo, `${ metric.metric }.name`, metric.metric ),
+			description: props.dataSeriesInfo?.[ metric.metric ]?.description ?? '',
+			name: props.dataSeriesInfo?.[ metric.metric ]?.name ?? metric.metric,
 		} ) );
 	}
 
@@ -86,8 +86,8 @@ function createLegendInfo( props ) {
 	}
 
 	return data.metricValues.map( metric => ( {
-		description: get( props.dataSeriesInfo, `${ metric.metric }.description`, '' ),
-		name: get( props.dataSeriesInfo, `${ metric.metric }.name`, metric.metric ),
+		description: props.dataSeriesInfo?.[ metric.metric ]?.description ?? '',
+		name: props.dataSeriesInfo?.[ metric.metric ]?.name ?? metric.metric,
 	} ) );
 }
 
