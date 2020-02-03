@@ -14,7 +14,7 @@ import Header from './card/header';
 import Property from './card/property';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-import { domainManagementChangeSiteAddress } from 'my-sites/domains/paths';
+import { domainManagementChangeSiteAddress, domainAddNew } from 'my-sites/domains/paths';
 import { getDomainTypeText } from 'lib/domains';
 import { type as domainTypes } from 'lib/domains/constants';
 
@@ -55,7 +55,43 @@ class WpcomDomain extends React.Component {
 		} );
 	};
 
-	getEditSiteAddressBlock() {
+	handlePickCustomDomainClick = () => {
+		const { domain } = this.props;
+		const domainType = getDomainTypeText( domain );
+
+		this.props.recordGoogleEvent(
+			'Domain Management',
+			`Clicked "Pick a custom domain" navigation link on a ${ domainType } in Edit`,
+			'Domain Name',
+			domain.name
+		);
+
+		this.props.recordTracksEvent( 'calypso_domain_management_wpcom_domain_add_domain', {
+			action: 'change_site_address',
+			section: domain.type,
+		} );
+	};
+
+	getPickCustomDomain() {
+		const { domain } = this.props;
+
+		const isWpcomDomain = get( domain, 'type' ) === domainTypes.WPCOM;
+
+		if ( ! isWpcomDomain ) {
+			return;
+		}
+
+		return (
+			<VerticalNavItem
+				path={ domainAddNew( this.props.selectedSite.slug ) }
+				onClick={ this.handlePickCustomDomainClick }
+			>
+				{ this.props.translate( 'Pick a custom domain' ) }
+			</VerticalNavItem>
+		);
+	}
+
+	getSiteAddressChange() {
 		const { domain } = this.props;
 
 		if ( domain.isWpcomStagingDomain ) {
@@ -66,22 +102,29 @@ class WpcomDomain extends React.Component {
 		const path = domainManagementChangeSiteAddress( this.props.selectedSite.slug, domain.name );
 
 		return (
+			<VerticalNavItem
+				path={
+					isWpcomDomain
+						? path
+						: `https://${ this.props.domain.name }/wp-admin/index.php?page=my-blogs#blog_row_${ this.props.selectedSite.ID }`
+				}
+				external={ ! isWpcomDomain }
+				onClick={
+					isWpcomDomain ? this.handleChangeSiteAddressClick : this.handleEditSiteAddressClick
+				}
+			>
+				{ isWpcomDomain
+					? this.props.translate( 'Change Site Address' )
+					: this.props.translate( 'Edit Site Address' ) }
+			</VerticalNavItem>
+		);
+	}
+
+	getVerticalNavigation() {
+		return (
 			<VerticalNav>
-				<VerticalNavItem
-					path={
-						isWpcomDomain
-							? path
-							: `https://${ this.props.domain.name }/wp-admin/index.php?page=my-blogs#blog_row_${ this.props.selectedSite.ID }`
-					}
-					external={ isWpcomDomain ? false : true }
-					onClick={
-						isWpcomDomain ? this.handleChangeSiteAddressClick : this.handleEditSiteAddressClick
-					}
-				>
-					{ isWpcomDomain
-						? this.props.translate( 'Change Site Address' )
-						: this.props.translate( 'Edit Site Address' ) }
-				</VerticalNavItem>
+				{ this.getSiteAddressChange() }
+				{ this.getPickCustomDomain() }
 			</VerticalNav>
 		);
 	}
@@ -108,7 +151,7 @@ class WpcomDomain extends React.Component {
 						</Property>
 					</Card>
 				</div>
-				{ this.getEditSiteAddressBlock() }
+				{ this.getVerticalNavigation() }
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
