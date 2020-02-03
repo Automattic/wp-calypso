@@ -100,12 +100,14 @@ $design-selector-selection-space: 285px;
 			right: -2px;
 			transform: translate3d( 0, 0, 0 );
 		}
-	}
 
-	&:focus {
-		box-shadow: 0 0 0 1px $white, 0 0 0 3px $blue-medium-500;
-		// Windows High Contrast mode will show this outline, but not the box-shadow.
-		outline: 2px solid transparent;
+		// Offset for the 2px of added border when hovered.
+		&:hover {
+			.page-layout-selector__selected-indicator {
+				top: -4px;
+				right: -4px;
+			}
+		}
 	}
 
 	&:hover {
@@ -170,8 +172,7 @@ $design-selector-selection-space: 285px;
 		}
 	}
 
-	&:hover,
-	&:focus {
+	&:hover {
 		.design-selector__option-overlay {
 			opacity: 1;
 		}
@@ -225,4 +226,22 @@ $design-selector-selection-space: 285px;
 	color: $dark-gray-800;
 	font-size: 1.3em;
 	line-height: 1.3;
+}
+
+.accessible-focus {
+	.page-layout-selector__item {
+		&:focus {
+			box-shadow: 0 0 0 1px $white, 0 0 0 3px $blue-medium-500;
+			// Windows High Contrast mode will show this outline, but not the box-shadow.
+			outline: 2px solid transparent;
+		}
+	}
+
+	.design-selector__design-option {
+		&:focus {
+			.design-selector__option-overlay {
+				opacity: 1;
+			}
+		}
+	}
 }

@@ -12,7 +12,7 @@ import config from '../../config';
  */
 import { Gutenboard } from './gutenboard';
 import { setupWpDataDebug } from './devtools';
-
+import accessibleFocus from 'lib/accessible-focus';
 /**
  * Style dependencies
  */
@@ -24,6 +24,9 @@ window.AppBoot = () => {
 		window.location.href = '/';
 	} else {
 		setupWpDataDebug();
+
+		// Add accessible-focus listener.
+		accessibleFocus();
 
 		ReactDom.render(
 			<BrowserRouter basename="gutenboarding">
