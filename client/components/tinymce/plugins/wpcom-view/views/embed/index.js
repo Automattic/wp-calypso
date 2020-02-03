@@ -21,17 +21,17 @@ export default class EmbedViewManager extends EventEmitter {
 				this.createListener( store, getSelectedSiteId, this.onChange.bind( this ) )
 			);
 			store.subscribe(
-				this.createListener(
-					store,
-					state => getSiteEmbeds( state, getSelectedSiteId( state ) ),
-					this.onChange.bind( this )
-				)
+				this.createListener( store, this.getCurrentSiteEmbeds, this.onChange.bind( this ) )
 			);
 		} );
 	}
 
 	onChange() {
 		this.emit( 'change' );
+	}
+
+	getCurrentSiteEmbeds( state ) {
+		return getSiteEmbeds( state, getSelectedSiteId( state ) );
 	}
 
 	createListener( store, selector, callback ) {
