@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { kebabCase } from 'lodash';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -18,6 +19,8 @@ import { StoredItems } from './types';
 import { mc } from 'lib/analytics';
 import config from 'config';
 
+const debug = debugFactory( 'calypso:browser-storage' );
+
 let shouldBypass = false;
 
 const DB_NAME = 'calypso';
@@ -33,6 +36,8 @@ const isAffectedSafari =
 	!! window.IDBKeyRange?.lowerBound( 0 ).includes &&
 	!! ( window as any ).webkitAudioContext &&
 	!! window.PointerEvent;
+
+debug( 'Safari IDB mitigation active: %s', isAffectedSafari );
 
 const getDB = once( () => {
 	const request = window.indexedDB.open( DB_NAME, DB_VERSION );
@@ -190,9 +195,11 @@ async function idbSafariReset() {
 	if ( idbWriteBlock ) {
 		return idbWriteBlock;
 	}
+	debug( 'performing safari idb mitigation' );
 	idbWriteBlock = _idbSafariReset();
 	idbWriteBlock.finally( () => {
 		idbWriteBlock = null;
+		debug( 'idb mitigation complete' );
 	} );
 	return idbWriteBlock;
 }
