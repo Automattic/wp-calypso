@@ -25,6 +25,6 @@
 		// "types": [],
 		"lib": [ "ESNext", "DOM" ]
 	},
-	"include": [ "src" ],
+	"include": [ "src", "typings/**/*.d.ts" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]
 }

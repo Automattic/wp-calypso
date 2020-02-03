@@ -24,7 +24,9 @@
 		"src"
 	],
 	"types": "types",
-	"dependencies": {},
+	"dependencies": {
+		"wpcom-proxy-request": "^5.0.2"
+	},
 	"scripts": {
 		"clean": "npx rimraf dist types",
 		"prepublish": "npm run clean",
