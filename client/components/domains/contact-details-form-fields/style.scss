@@ -1,8 +1,12 @@
-fieldset.contact-details-form-fields {
+.form-fieldset.contact-details-form-fields {
 	margin-bottom: 0;
 	display: flex;
 	flex-direction: column;
 	width: 100%;
+
+	.contact-details-form-fields__field.first-name {
+		margin-top: 0;
+	}
 
 	.contact-details-form-fields__row,
 	.custom-form-fieldsets__address-fields {
@@ -96,7 +100,6 @@ fieldset.contact-details-form-fields {
 	margin-top: 15px;
 }
 
-.contact-details-form-fields__field.first-name,
 .form__hidden-input .form__hidden-input {
 	margin-top: 0;
 }
