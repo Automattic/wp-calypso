@@ -61,7 +61,7 @@ class WpcomDomain extends React.Component {
 
 		this.props.recordGoogleEvent(
 			'Domain Management',
-			`Clicked "Pick a Custom Domain" navigation link on a ${ domainType } in Edit`,
+			`Clicked "Pick a custom domain" navigation link on a ${ domainType } in Edit`,
 			'Domain Name',
 			domain.name
 		);
@@ -86,7 +86,7 @@ class WpcomDomain extends React.Component {
 				path={ domainAddNew( this.props.selectedSite.slug ) }
 				onClick={ this.handlePickCustomDomainClick }
 			>
-				{ this.props.translate( 'Pick a Custom Domain' ) }
+				{ this.props.translate( 'Pick a custom domain' ) }
 			</VerticalNavItem>
 		);
 	}
