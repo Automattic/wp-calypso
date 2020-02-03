@@ -25,6 +25,7 @@ import {
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
+import QueryLanguageNames from 'components/data/query-language-names';
 import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
@@ -473,6 +474,7 @@ export class LanguagePickerModal extends PureComponent {
 				onClose={ this.handleClose }
 				additionalClassNames="language-picker__modal"
 			>
+				<QueryLanguageNames />
 				<SectionNav selectedText={ this.getFilterLabel( filter ) }>
 					<SectionNavTabs>{ this.renderTabItems() }</SectionNavTabs>
 					<Search
