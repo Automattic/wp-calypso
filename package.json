@@ -196,7 +196,7 @@
 		"check-node-version": "4.0.2",
 		"chokidar-cli": "2.1.0",
 		"circular-dependency-plugin": "5.2.0",
-		"concurrently": "5.0.1",
+		"concurrently": "5.1.0",
 		"cross-env": "6.0.3",
 		"duplicate-package-checker-webpack-plugin": "3.0.0",
 		"enzyme": "3.11.0",
