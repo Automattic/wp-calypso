@@ -51,7 +51,7 @@ export function getCountNewOrders( state, siteId = getSelectedSiteId( state ) ) 
 	const statuses = [ ...statusWaitingPayment, ...statusWaitingFulfillment ].map(
 		( s ) => `wc-${ s }`
 	);
-	return statuses.reduce( ( total, s ) => total + items?.orders?.[ s ] ?? 0, 0 );
+	return statuses.reduce( ( total, s ) => total + ( items?.orders?.[ s ] ?? 0 ), 0 );
 }
 
 /**
