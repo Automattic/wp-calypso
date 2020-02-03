@@ -5,7 +5,7 @@ import EmbedView from './view';
 import getSiteEmbeds from 'state/selectors/get-site-embeds';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
-import { requestEmbed, requestEmbeds } from 'state/embeds/actions';
+import { requestEmbeds } from 'state/embeds/actions';
 
 const EmbedViewManager = {};
 
@@ -32,8 +32,6 @@ EmbedViewManager.match = content => {
 		if ( ! isMatchingPattern ) {
 			continue;
 		}
-
-		reduxDispatch( requestEmbed( siteId, url ) );
 
 		return {
 			index: currentMatch.index + currentMatch[ 1 ].length,

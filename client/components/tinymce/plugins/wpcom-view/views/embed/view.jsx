@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import QueryEmbed from 'components/data/query-embed';
 import ResizableIframe from 'components/resizable-iframe';
 import getEmbed from 'state/selectors/get-embed';
 import generateEmbedFrameMarkup from 'lib/embed-frame-markup';
@@ -113,9 +114,13 @@ class EmbedView extends Component {
 	}
 
 	render() {
+		const { content, siteId } = this.props;
+
 		return (
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<div ref="view" className="wpview-content wpview-type-embed">
+				<QueryEmbed siteId={ siteId } url={ content } />
+
 				{ this.renderFrame() }
 			</div>
 		);
