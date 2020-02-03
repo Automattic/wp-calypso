@@ -388,13 +388,13 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	// `core/columns`
 	/* stylelint-disable selector-combinator-space-before */
 	.wp-block-columns
-		> .editor-inner-blocks
-		> .editor-block-list__layout
+		> .block-editor-inner-blocks
+		> .block-editor-block-list__layout
 		> [data-type='core/column']
-		> .editor-block-list__block-edit
+		> .block-editor-block-list__block-edit
 		> div
 		> .block-core-columns
-		> .editor-inner-blocks {
+		> .block-editor-inner-blocks {
 		/* stylelint-enable */
 		margin-top: 0;
 		margin-bottom: 0;

@@ -31,16 +31,17 @@ const EditorTemplateClasses = withSelect( select => {
 	return { templateClasses };
 } )( ( { templateClasses } ) => {
 	const blockListInception = setInterval( () => {
-		const blockList = document.querySelector(
-			'.block-editor-writing-flow.editor-writing-flow > div'
-		);
+		const blockListParent = document.querySelector( '.block-editor__typewriter > div' );
 
-		if ( ! blockList ) {
+		if ( ! blockListParent ) {
 			return;
 		}
 		clearInterval( blockListInception );
 
-		blockList.className = classNames( 'a8c-template-editor fse-template-part', ...templateClasses );
+		blockListParent.className = classNames(
+			'a8c-template-editor fse-template-part',
+			...templateClasses
+		);
 	} );
 
 	return null;

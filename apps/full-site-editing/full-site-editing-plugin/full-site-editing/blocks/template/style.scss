@@ -11,7 +11,15 @@
 	padding: 0;
 }
 
+.components-popover.block-editor-block-list__block-popover .components-popover__content .block-editor-block-contextual-toolbar[data-type='a8c/template'] {
+	display: none;
+}
+
 .template__block-container {
+	&::before {
+		display: none;
+	}
+
 	&:hover {
 		cursor: pointer;
 	}
