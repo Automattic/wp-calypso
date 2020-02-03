@@ -2,18 +2,7 @@
 /**
  * External dependencies
  */
-import {
-	find,
-	isEmpty,
-	reduce,
-	get,
-	keyBy,
-	mapValues,
-	memoize,
-	partition,
-	reject,
-	sortBy,
-} from 'lodash';
+import { find, isEmpty, reduce, get, keyBy, mapValues, memoize, filter, sortBy } from 'lodash';
 import classnames from 'classnames';
 import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
@@ -223,42 +212,41 @@ class PageTemplateModal extends Component {
 	}
 
 	getTemplateGroups = () => {
-		const [ homepageTemplates, defaultTemplates ] = partition( this.props.templates, {
-			category: 'home',
-		} );
-
-		const currentThemeTemplate =
-			find( this.props.templates, { slug: this.props.theme } ) ||
-			find( this.props.templates, { slug: DEFAULT_HOMEPAGE_TEMPLATE } );
-
-		if ( ! this.props.isFrontPage || ! currentThemeTemplate ) {
-			return { homepageTemplates: sortBy( homepageTemplates, 'title' ), defaultTemplates };
-		}
-
-		const otherHomepageTemplates = reject( homepageTemplates, { slug: currentThemeTemplate.slug } );
-
-		const sortedHomepageTemplates = [
-			currentThemeTemplate,
-			...sortBy( otherHomepageTemplates, 'title' ),
-		];
-
-		return { homepageTemplates: sortedHomepageTemplates, defaultTemplates };
+		return {
+			blankTemplate: filter( this.props.templates, { slug: 'blank' } ),
+			aboutTemplates: filter( this.props.templates, { category: 'about' } ),
+			blogTemplates: filter( this.props.templates, { category: 'blog' } ),
+			contactTemplates: filter( this.props.templates, { category: 'contact' } ),
+			eventTemplates: filter( this.props.templates, { category: 'event' } ),
+			menuTemplates: filter( this.props.templates, { category: 'menu' } ),
+			portfolioTemplates: filter( this.props.templates, { category: 'portfolio' } ),
+			productTemplates: filter( this.props.templates, { category: 'product' } ),
+			servicesTemplates: filter( this.props.templates, { category: 'services' } ),
+			teamTemplates: filter( this.props.templates, { category: 'team' } ),
+			homepageTemplates: sortBy( filter( this.props.templates, { category: 'home' } ), 'title' ),
+		};
 	};
 
-	renderTemplatesList = ( templatesList, legendLabel ) => (
-		<fieldset className="page-template-modal__list">
-			<legend className="page-template-modal__form-title">{ legendLabel }</legend>
-			<TemplateSelectorControl
-				label={ __( 'Layout', 'full-site-editing' ) }
-				templates={ templatesList }
-				blocksByTemplates={ this.getBlocksByTemplateSlugs( this.props.templates ) }
-				onTemplateSelect={ this.previewTemplate }
-				useDynamicPreview={ false }
-				siteInformation={ this.props.siteInformation }
-				selectedTemplate={ this.state.previewedTemplate }
-			/>
-		</fieldset>
-	);
+	renderTemplatesList = ( templatesList, legendLabel ) => {
+		if ( 0 === templatesList.length ) {
+			return null;
+		}
+
+		return (
+			<fieldset className="page-template-modal__list">
+				<legend className="page-template-modal__form-title">{ legendLabel }</legend>
+				<TemplateSelectorControl
+					label={ __( 'Layout', 'full-site-editing' ) }
+					templates={ templatesList }
+					blocksByTemplates={ this.getBlocksByTemplateSlugs( this.props.templates ) }
+					onTemplateSelect={ this.previewTemplate }
+					useDynamicPreview={ false }
+					siteInformation={ this.props.siteInformation }
+					selectedTemplate={ this.state.previewedTemplate }
+				/>
+			</fieldset>
+		);
+	};
 
 	render() {
 		const { previewedTemplate, isOpen, isLoading } = this.state;
@@ -268,7 +256,19 @@ class PageTemplateModal extends Component {
 			return null;
 		}
 
-		const { homepageTemplates, defaultTemplates } = this.getTemplateGroups();
+		const {
+			blankTemplate,
+			aboutTemplates,
+			blogTemplates,
+			contactTemplates,
+			eventTemplates,
+			menuTemplates,
+			portfolioTemplates,
+			productTemplates,
+			servicesTemplates,
+			teamTemplates,
+			homepageTemplates,
+		} = this.getTemplateGroups();
 
 		return (
 			<Modal
@@ -305,29 +305,64 @@ class PageTemplateModal extends Component {
 					) : (
 						<>
 							<form className="page-template-modal__form">
-								{ this.props.isFrontPage ? (
-									<>
-										{ this.renderTemplatesList(
-											homepageTemplates,
-											__( 'Recommended Layouts', 'full-site-editing' )
-										) }
-										{ this.renderTemplatesList(
-											defaultTemplates,
-											__( 'Other Page Layouts', 'full-site-editing' )
-										) }
-									</>
-								) : (
-									<>
-										{ this.renderTemplatesList(
-											defaultTemplates,
-											__( 'Recommended Layouts', 'full-site-editing' )
-										) }
-										{ this.renderTemplatesList(
-											homepageTemplates,
-											__( 'Homepage Layouts', 'full-site-editing' )
-										) }
-									</>
+								{ this.props.isFrontPage &&
+									this.renderTemplatesList(
+										homepageTemplates,
+										__( 'Home Pages', 'full-site-editing' )
+									) }
+
+								{ this.renderTemplatesList( blankTemplate, __( 'Blank', 'full-site-editing' ) ) }
+
+								{ this.renderTemplatesList(
+									aboutTemplates,
+									__( 'About Pages', 'full-site-editing' )
 								) }
+
+								{ this.renderTemplatesList(
+									blogTemplates,
+									__( 'Blog Pages', 'full-site-editing' )
+								) }
+
+								{ this.renderTemplatesList(
+									contactTemplates,
+									__( 'Contact Pages', 'full-site-editing' )
+								) }
+
+								{ this.renderTemplatesList(
+									eventTemplates,
+									__( 'Event Pages', 'full-site-editing' )
+								) }
+
+								{ this.renderTemplatesList(
+									menuTemplates,
+									__( 'Menu Pages', 'full-site-editing' )
+								) }
+
+								{ this.renderTemplatesList(
+									portfolioTemplates,
+									__( 'Portfolio Pages', 'full-site-editing' )
+								) }
+
+								{ this.renderTemplatesList(
+									productTemplates,
+									__( 'Product Pages', 'full-site-editing' )
+								) }
+
+								{ this.renderTemplatesList(
+									servicesTemplates,
+									__( 'Services Pages', 'full-site-editing' )
+								) }
+
+								{ this.renderTemplatesList(
+									teamTemplates,
+									__( 'Team Pages', 'full-site-editing' )
+								) }
+
+								{ ! this.props.isFrontPage &&
+									this.renderTemplatesList(
+										homepageTemplates,
+										__( 'Home Pages', 'full-site-editing' )
+									) }
 							</form>
 							<TemplateSelectorPreview
 								blocks={ this.getBlocksByTemplateSlug( previewedTemplate ) }

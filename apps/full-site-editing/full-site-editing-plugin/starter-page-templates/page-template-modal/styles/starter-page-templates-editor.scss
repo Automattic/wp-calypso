@@ -136,12 +136,12 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 .template-selector-control__options {
 	display: grid;
 	grid-template-columns: 1fr;
-	grid-gap: 1.75em;
+	grid-gap: 0.75em;
 
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		margin-top: 0;
 		grid-template-columns: repeat(
-			auto-fit,
+			auto-fill,
 			minmax( 110px, 1fr )
 		); // allow grid to take over number of cols on large screens
 	}
@@ -236,20 +236,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	position: absolute;
 	top: 0;
 	left: 0;
-}
-
-// Blank template
-@media screen and ( max-width: ( $breakpoint-mobile - 1px ) ) {
-	.template-selector-control__template:first-child {
-		.template-selector-item__preview-wrap {
-			padding-top: 0%;
-			height: $template-selector-blank-template-mobile-height;
-		}
-		.template-selector-item__template-title {
-			height: $template-selector-blank-template-mobile-height;
-			line-height: $template-selector-blank-template-mobile-height;
-		}
-	}
 }
 
 .page-template-modal__form {
