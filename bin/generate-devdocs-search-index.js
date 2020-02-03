@@ -27,6 +27,8 @@ function main() {
 	].map( dir => dir + '/**/*.md' );
 	// ... and the current directory
 	dirList.push( '*.md' );
+	// don't descend into node_modules
+	dirList.push( '!**/node_modules/**' );
 
 	const documents = globby
 		.sync( dirList )
