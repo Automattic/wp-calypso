@@ -15,10 +15,9 @@ EmbedViewManager.match = content => {
 		return;
 	}
 
-	reduxDispatch( requestEmbeds( siteId ) );
-
 	const embeds = getSiteEmbeds( reduxGetState(), siteId );
 	if ( ! embeds ) {
+		reduxDispatch( requestEmbeds( siteId ) );
 		return;
 	}
 
