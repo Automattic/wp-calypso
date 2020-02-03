@@ -44,6 +44,8 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 = 0.19 =
 * Starter Page Templates: Added more than twenty new block editor page templates.
+* Starter Page Templates: Fix issues with full width blocks in the preview
+* General: Fix style compatibility with the latest versions of the block editor.
 
 = 0.18.2 =
 * Address core/nux package deprecation.
