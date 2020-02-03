@@ -33,9 +33,22 @@
 		]
 	},
 	"dependencies": {
+		"@automattic/calypso-polyfills": "file:packages/calypso-polyfills",
+		"@automattic/components": "file:packages/components",
+		"@automattic/composite-checkout": "file:packages/composite-checkout",
+		"@automattic/composite-checkout-wpcom": "file:packages/composite-checkout-wpcom",
+		"@automattic/data-stores": "file:packages/data-stores",
+		"@automattic/format-currency": "file:packages/format-currency",
 		"@automattic/full-site-editing": "file:apps/full-site-editing",
+		"@automattic/load-script": "file:packages/load-script",
+		"@automattic/material-design-icons": "file:packages/material-design-icons",
+		"@automattic/muriel-style": "file:packages/muriel-style",
+		"@automattic/tree-select": "file:packages/tree-select",
 		"@automattic/wpcom-block-editor": "file:apps/wpcom-block-editor",
-		"wp-calypso": "file:client"
+		"i18n-calypso": "file:packages/i18n-calypso",
+		"photon": "file:packages/photon",
+		"wp-calypso": "file:client",
+		"wpcom": "file:packages/wpcom.js"
 	},
 	"engines": {
 		"node": "^12.13.1",
