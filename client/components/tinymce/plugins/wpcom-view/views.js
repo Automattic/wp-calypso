@@ -19,7 +19,7 @@ import SimplePaymentsView from './views/simple-payments';
  */
 const views = {
 	gallery: GalleryView,
-	embed: EmbedViewManager,
+	embed: new EmbedViewManager(),
 	contactForm: ContactFormView,
 	video: VideoView,
 	simplePayments: SimplePaymentsView,

@@ -1,48 +1,90 @@
 /**
+ * External dependencies
+ */
+import EventEmitter from 'events';
+
+/**
  * Internal dependencies
  */
 import EmbedView from './view';
 import getSiteEmbeds from 'state/selectors/get-site-embeds';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
+import { getReduxStore, reduxDispatch, reduxGetState } from 'lib/redux-bridge';
 import { requestEmbeds } from 'state/embeds/actions';
 
-const EmbedViewManager = {};
+export default class EmbedViewManager extends EventEmitter {
+	constructor() {
+		super();
 
-EmbedViewManager.match = content => {
-	const siteId = getSelectedSiteId( reduxGetState() );
-	if ( ! siteId ) {
-		return;
+		getReduxStore().then( store => {
+			store.subscribe(
+				this.createListener( store, getSelectedSiteId, this.onChange.bind( this ) )
+			);
+			store.subscribe(
+				this.createListener(
+					store,
+					state => getSiteEmbeds( state, getSelectedSiteId( state ) ),
+					this.onChange.bind( this )
+				)
+			);
+		} );
 	}
 
-	const embeds = getSiteEmbeds( reduxGetState(), siteId );
-	if ( ! embeds ) {
-		reduxDispatch( requestEmbeds( siteId ) );
-		return;
+	onChange() {
+		this.emit( 'change' );
 	}
 
-	const rxLink = /(^|<p>)(https?:\/\/[^\s"]+?)(<\/p>\s*|$)/gi;
-	let currentMatch;
-	while ( ( currentMatch = rxLink.exec( content ) ) ) {
-		const url = currentMatch[ 2 ];
+	createListener( store, selector, callback ) {
+		let prevValue = selector( store.getState() );
+		return () => {
+			const nextValue = selector( store.getState() );
 
-		// Disregard URL if it's not a supported embed pattern for the site
-		const isMatchingPattern = embeds.some( pattern => pattern.test( url ) );
-		if ( ! isMatchingPattern ) {
-			continue;
-		}
-
-		return {
-			index: currentMatch.index + currentMatch[ 1 ].length,
-			content: url,
+			if ( nextValue !== prevValue ) {
+				prevValue = nextValue;
+				callback( nextValue );
+			}
 		};
 	}
-};
 
-EmbedViewManager.serialize = content => encodeURIComponent( content );
+	match( content ) {
+		const siteId = getSelectedSiteId( reduxGetState() );
+		if ( ! siteId ) {
+			return;
+		}
 
-EmbedViewManager.getComponent = () => EmbedView;
+		const embeds = getSiteEmbeds( reduxGetState(), siteId );
+		if ( ! embeds ) {
+			reduxDispatch( requestEmbeds( siteId ) );
+			return;
+		}
 
-EmbedViewManager.edit = ( editor, content ) => editor.execCommand( 'embedDialog', content );
+		const rxLink = /(^|<p>)(https?:\/\/[^\s"]+?)(<\/p>\s*|$)/gi;
+		let currentMatch;
+		while ( ( currentMatch = rxLink.exec( content ) ) ) {
+			const url = currentMatch[ 2 ];
 
-export default EmbedViewManager;
+			// Disregard URL if it's not a supported embed pattern for the site
+			const isMatchingPattern = embeds.some( pattern => pattern.test( url ) );
+			if ( ! isMatchingPattern ) {
+				continue;
+			}
+
+			return {
+				index: currentMatch.index + currentMatch[ 1 ].length,
+				content: url,
+			};
+		}
+	}
+
+	serialize( content ) {
+		return encodeURIComponent( content );
+	}
+
+	getComponent() {
+		return EmbedView;
+	}
+
+	edit( editor, content ) {
+		editor.execCommand( 'embedDialog', content );
+	}
+}
