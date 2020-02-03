@@ -18,6 +18,10 @@ import getEmbed from 'state/selectors/get-embed';
 import generateEmbedFrameMarkup from 'lib/embed-frame-markup';
 
 class EmbedView extends Component {
+	state = {
+		wrapper: null,
+	};
+
 	componentDidMount() {
 		// Rendering the frame follows a specific set of steps, whereby an
 		// initial rendering pass is made, at which time the frame is rendered
@@ -93,7 +97,7 @@ class EmbedView extends Component {
 	}
 
 	renderFrame() {
-		if ( ! this.state?.wrapper || ! this.props.embed ) {
+		if ( ! this.state.wrapper || ! this.props.embed ) {
 			return;
 		}
 
