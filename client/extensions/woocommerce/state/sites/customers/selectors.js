@@ -4,7 +4,7 @@
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 function inFlight( state, siteId, searchTerm ) {
-	return state?.extensions?.woocommerce?.sites?.[ siteId ]?.customers?.isSearching?.[ searchTerm ];
+	return state?.extensions?.woocommerce?.sites?.[ siteId ]?.customers.isSearching[ searchTerm ];
 }
 
 /**
@@ -40,9 +40,9 @@ export function getCustomerSearchResults( state, searchTerm, siteId = getSelecte
 		return [];
 	}
 
-	const customers = state?.extensions?.woocommerce?.sites?.[ siteId ]?.customers?.items ?? {};
+	const customers = state?.extensions?.woocommerce?.sites?.[ siteId ]?.customers.items ?? {};
 	const customerIdsForTerm =
-		state?.extensions?.woocommerce?.sites?.[ siteId ]?.customers?.queries?.[ searchTerm ] ?? [];
+		state?.extensions?.woocommerce?.sites?.[ siteId ]?.customers.queries[ searchTerm ] ?? [];
 	return customerIdsForTerm
 		.map( ( id ) => customers[ id ] || false )
 		.filter( ( customer ) => !! customer );
@@ -55,7 +55,6 @@ export function getCustomerSearchResults( state, searchTerm, siteId = getSelecte
  * @returns {object|boolean} a customer object as stored in the API, false if not found
  */
 export function getCustomer( state, customerId, siteId = getSelectedSiteId( state ) ) {
-	const customer =
-		state?.extensions?.woocommerce?.sites?.[ siteId ]?.customers?.items?.[ customerId ];
+	const customer = state?.extensions?.woocommerce?.sites?.[ siteId ]?.customers.items[ customerId ];
 	return customer !== undefined ? customer : false;
 }

@@ -10,11 +10,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSerializedProductsQuery } from './utils';
 
 function getRawProducts( state, siteId ) {
-	return state?.extensions?.woocommerce?.sites?.[ siteId ]?.products?.products;
+	return state?.extensions?.woocommerce?.sites?.[ siteId ]?.products.products;
 }
 
 function getQuery( state, siteId, key ) {
-	return state?.extensions?.woocommerce?.sites?.[ siteId ]?.products?.queries?.[ key ];
+	return state?.extensions?.woocommerce?.sites?.[ siteId ]?.products.queries?.[ key ];
 }
 
 export function getProduct( state, productId, siteId = getSelectedSiteId( state ) ) {
