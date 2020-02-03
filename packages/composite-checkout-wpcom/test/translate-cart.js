@@ -57,7 +57,7 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 				'WPCOM_Billing_Web_Payment',
 			],
 			coupon: 'fakecoupon',
-			coupon_discounts: [],
+			coupon_discounts_int: [],
 		};
 
 		const clientCart = translateWpcomCartToCheckoutCart( serverResponse );
@@ -226,7 +226,7 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 				'WPCOM_Billing_Ebanx',
 				'WPCOM_Billing_Web_Payment',
 			],
-			coupon_discounts: [],
+			coupon_discounts_int: [],
 		};
 
 		const clientCart = translateWpcomCartToCheckoutCart( serverResponse );
@@ -456,7 +456,7 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 				'WPCOM_Billing_Ebanx',
 				'WPCOM_Billing_Web_Payment',
 			],
-			coupon_discounts: [],
+			coupon_discounts_int: [],
 		};
 
 		const clientCart = translateWpcomCartToCheckoutCart( serverResponse );
@@ -610,7 +610,7 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 				'WPCOM_Billing_Web_Payment',
 			],
 			coupon: 'fakecoupon',
-			coupon_discounts: { 1009: 17 },
+			coupon_discounts_int: { 1009: 17 },
 			is_coupon_applied: true,
 		};
 

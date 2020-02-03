@@ -32,7 +32,7 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 		sub_total_integer,
 		sub_total_display,
 		coupon,
-		coupon_discounts,
+		coupon_discounts_int,
 		is_coupon_applied,
 	} = serverCart;
 
@@ -49,11 +49,11 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 
 	// TODO: watch out for minimal currency units while localizing this
 	const couponValueRaw = products
-		.map( product => coupon_discounts[ product.product_id ] )
+		.map( product => coupon_discounts_int[ product.product_id ] )
 		.filter( Boolean )
 		.reduce( ( accum, current ) => accum + current, 0 );
-	const couponValue = Math.round( 100 * couponValueRaw );
-	const couponDisplayValue = `-$${ couponValue / 100 }`;
+	const couponValue = Math.round( couponValueRaw );
+	const couponDisplayValue = `-$${ couponValueRaw / 100 }`;
 
 	const couponLineItem: CheckoutCartItem = {
 		id: 'coupon-line-item',
