@@ -12,4 +12,8 @@ subscribe( () => {
 		dispatch( 'core/nux' ).disableTips();
 		dispatch( 'automattic/nux' ).setWpcomNuxStatus( { isNuxEnabled: true } );
 	}
+	if ( select( 'core/edit-post' ).isFeatureActive( 'welcomeGuide' ) ) {
+		dispatch( 'core/edit-post' ).toggleFeature( 'welcomeGuide' );
+		dispatch( 'automattic/nux' ).setWpcomNuxStatus( { isNuxEnabled: true } );
+	}
 } );
