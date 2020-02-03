@@ -11,7 +11,7 @@ import { LOADING } from 'woocommerce/state/constants';
  * if the currencies are currently being fetched, or a "falsy" value if that haven't been fetched at all.
  */
 function getRawCurrencies( state, siteId = getSelectedSiteId( state ) ) {
-	return state?.extensions?.woocommerce?.sites[ siteId ]?.data?.currencies;
+	return state?.extensions?.woocommerce?.sites?.[ siteId ]?.data?.currencies;
 }
 
 /**
