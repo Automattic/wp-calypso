@@ -10,6 +10,8 @@ import { partition } from 'lodash';
 import { Portal } from 'reakit/Portal';
 import { useDialogState, Dialog, DialogBackdrop } from 'reakit/Dialog';
 import { useSpring, animated } from 'react-spring';
+import { useHistory } from 'react-router-dom';
+import { Step } from '../../steps';
 
 /**
  * Internal dependencies
@@ -24,13 +26,14 @@ type Template = VerticalsTemplates.Template;
 
 const VERTICALS_TEMPLATES_STORE = VerticalsTemplates.register();
 
-const DesignSelector: FunctionComponent = () => {
+const DesignSelector: FunctionComponent = ( { showPageSelector } ) => {
 	const { selectedDesign, siteVertical } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
-	const [ isPageSelectorOpen, setIsPageSelectorOpen ] = useState( false );
+	// TODO: It was suggested to move this to a prop? or a
+	const [ isPageSelectorOpen, setIsPageSelectorOpen ] = useState( showPageSelector );
 
 	// @FIXME: If we don't have an ID (because we're dealing with a user-supplied vertical that
 	// WordPress.com doesn't know about), fall back to the 'm1' (Business) vertical. This is the
@@ -87,6 +90,8 @@ const DesignSelector: FunctionComponent = () => {
 		},
 	} );
 
+	const history = useHistory();
+
 	return (
 		<animated.div style={ designSelectorSpring }>
 			<div
@@ -126,6 +131,7 @@ const DesignSelector: FunctionComponent = () => {
 								window.scrollTo( 0, 0 );
 								setSelectedDesign( design );
 								setIsPageSelectorOpen( true );
+								history.push( Step.PageSelection );
 							} }
 						/>
 					) ) }
@@ -156,7 +162,10 @@ const DesignSelector: FunctionComponent = () => {
 
 			<Dialog
 				{ ...dialog }
-				hide={ () => setIsPageSelectorOpen( false ) }
+				hide={ () => {
+					setIsPageSelectorOpen( false );
+					history.push( Step.DesignSelection );
+				} }
 				aria-labelledby="page-layout-selector__title"
 				hideOnClickOutside
 				hideOnEsc
