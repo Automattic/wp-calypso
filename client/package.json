@@ -21,7 +21,6 @@
 		"@automattic/format-currency": "file:../packages/format-currency",
 		"@automattic/load-script": "file:../packages/load-script",
 		"@automattic/material-design-icons": "file:../packages/material-design-icons",
-		"@automattic/muriel-style": "file:../packages/muriel-style",
 		"@automattic/react-virtualized": "9.21.2",
 		"@automattic/tree-select": "file:../packages/tree-select",
 		"@babel/runtime": "7.8.3",
