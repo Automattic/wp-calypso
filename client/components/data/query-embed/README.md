@@ -11,19 +11,17 @@ Render the component, passing `siteId` and `url`. It does not accept any childre
 import React from 'react';
 import QueryEmbed from 'components/data/query-embed';
 
-export default function MyListOfEmbeds( { embeds } ) {
+export default function MyEmbed( { embed } ) {
 	return (
 		<div>
 			<QueryEmbed
 				siteId={ 3584907 }
-				taxonomy="category" />
-			{ embeds.map( ( embed ) => {
-				return (
-					<div key={ embed.embed_url }>
-						{ embed.result }
-					</div>
-				);
-			} }
+				url="https://www.facebook.com/20531316728/posts/10154009990506729/"
+			/>
+			
+			<div key={ embed.embed_url }>
+				{ embed.result }
+			</div>
 		</div>
 	);
 }
