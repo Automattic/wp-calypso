@@ -19,6 +19,7 @@ import wpLib from 'lib/wp';
  */
 import './section-migrate.scss';
 import SitesBlock from 'my-sites/migrate/components/sites-block';
+import { redirectTo } from 'my-sites/migrate/helpers';
 
 const wpcom = wpLib.undocumented();
 
@@ -52,16 +53,7 @@ class StepSourceSelect extends Component {
 								page( `/migrate/choose/${ this.props.targetSiteSlug }` );
 							} );
 						default:
-							if ( window && window.history && window.history.pushState ) {
-								/**
-								 * Because query parameters aren't processed by `page.show`, we're forced to use `page.redirect`.
-								 * Unfortunately, `page.redirect` breaks the back button behavior.
-								 * This is a Work-around to push importUrl to history to fix the back button.
-								 * See https://github.com/visionmedia/page.js#readme
-								 */
-								window.history.pushState( null, null, importUrl );
-							}
-							return page.redirect( importUrl );
+							return redirectTo( importUrl );
 					}
 				} )
 				.catch( error => {
