@@ -26,6 +26,7 @@ exports[`LanguagePickerModal should render 1`] = `
   leaveTimeout={200}
   onClose={[Function]}
 >
+  <QueryLanguageNames />
   <SectionNav
     allowDropdown={true}
     onMobileNavPanelOpen={[Function]}
