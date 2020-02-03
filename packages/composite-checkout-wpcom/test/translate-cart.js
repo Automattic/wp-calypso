@@ -557,7 +557,7 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 		} );
 	} );
 
-	describe( 'Cart with one plan only plus a coupon (BRL)', function() {
+	describe( 'Cart with one plan only plus a coupon (USD)', function() {
 		const serverResponse = {
 			blog_id: 123,
 			products: [
@@ -566,9 +566,9 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 					product_name: 'WordPress.com Personal',
 					product_name_en: 'WordPress.com Personal',
 					product_slug: 'personal-bundle',
-					product_cost: 144,
+					product_cost: 127,
 					meta: '',
-					cost: 144,
+					cost: 127,
 					currency: 'USD',
 					volume: 1,
 					free_trial: false,
@@ -582,24 +582,24 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 					is_domain_registration: false,
 					time_added_to_cart: 1572551402,
 					is_bundled: false,
-					item_subtotal: 144,
-					item_subtotal_integer: 14400,
-					item_subtotal_display: '$144',
+					item_subtotal: 127,
+					item_subtotal_integer: 12700,
+					item_subtotal_display: '$127',
 					item_tax: 0,
-					item_total: 144,
+					item_total: 127,
 					subscription_id: 0,
 				},
 			],
 			tax: [],
-			sub_total: '144',
-			sub_total_display: '$144',
-			sub_total_integer: 14400,
+			sub_total: '127',
+			sub_total_display: '$127',
+			sub_total_integer: 12700,
 			total_tax: '5',
 			total_tax_display: '$5',
 			total_tax_integer: 500,
-			total_cost: 149,
-			total_cost_display: '$149',
-			total_cost_integer: 14900,
+			total_cost: 132,
+			total_cost_display: '$132',
+			total_cost_integer: 13200,
 			currency: 'USD',
 			credits: 100,
 			credits_integer: 10000,
@@ -610,7 +610,7 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 				'WPCOM_Billing_Web_Payment',
 			],
 			coupon: 'fakecoupon',
-			coupon_discounts_int: { 1009: 17 },
+			coupon_discounts_int: { 1009: 1700 },
 			is_coupon_applied: true,
 		};
 
@@ -620,13 +620,13 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 			expect( clientCart.total.amount ).toBeDefined();
 		} );
 		it( 'has the expected total value', function() {
-			expect( clientCart.total.amount.value ).toBe( 14900 );
+			expect( clientCart.total.amount.value ).toBe( 13200 );
 		} );
 		it( 'has the expected currency', function() {
 			expect( clientCart.total.amount.currency ).toBe( 'USD' );
 		} );
 		it( 'has the expected total display value', function() {
-			expect( clientCart.total.amount.displayValue ).toBe( '$149' );
+			expect( clientCart.total.amount.displayValue ).toBe( '$132' );
 		} );
 		it( 'has an array of items', function() {
 			expect( clientCart.items ).toBeDefined();

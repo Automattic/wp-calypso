@@ -88,8 +88,26 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 		},
 	};
 
+	// TODO: inject a real currency localization function
+	function localizeCurrency( currencyCode: string, amount: number ): string {
+		switch ( currencyCode ) {
+			case 'USD':
+				return '$' + amount / 100;
+			case 'BRL':
+				return 'R$' + amount / 100;
+		}
+
+		throw new Error( 'Currency not supported: ' + currency );
+	}
+
 	return {
-		items: products.map( translateWpcomCartItemToCheckoutCartItem ),
+		items: products.map(
+			translateWpcomCartItemToCheckoutCartItem(
+				is_coupon_applied,
+				coupon_discounts_int,
+				localizeCurrency
+			)
+		),
 		tax: taxLineItem,
 		coupon: is_coupon_applied ? couponLineItem : null,
 		total: totalItem,
@@ -111,50 +129,51 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 	};
 }
 
-/**
- * Convert a backend cart item to a checkout cart item
- *
- * @param serverCartItem Cart item object as provided by the backend
- * @param index Index into an array of products; used as a uuid
- * @returns Cart item suitable for passing to the checkout component,
- *     with extra WPCOM specific data attached
- */
+// Convert a backend cart item to a checkout cart item
 function translateWpcomCartItemToCheckoutCartItem(
-	serverCartItem: ResponseCartProduct,
-	index: number
-): WPCOMCartItem {
-	const {
-		product_id,
-		product_name,
-		product_slug,
-		currency,
-		item_subtotal_integer,
-		item_subtotal_display,
-		is_domain_registration,
-		meta,
-		extra,
-		volume,
-	} = serverCartItem;
-
-	// Sublabel is the domain name for registrations
-	const sublabel = is_domain_registration ? meta : undefined;
-
-	return {
-		id: String( index ),
-		label: product_name,
-		sublabel: sublabel,
-		type: product_slug,
-		amount: {
-			currency,
-			value: item_subtotal_integer,
-			displayValue: item_subtotal_display,
-		},
-		wpcom_meta: {
-			uuid: String( index ),
-			meta: typeof meta === 'string' ? meta : undefined,
+	is_coupon_applied: boolean,
+	coupon_discounts_int: number[],
+	localizeCurrency: ( string, number ) => string
+): ( ResponseCartProduct, number ) => WPCOMCartItem {
+	return ( serverCartItem: ResponseCartProduct, index: number ) => {
+		const {
 			product_id,
+			product_name,
+			product_slug,
+			currency,
+			item_subtotal_integer,
+			is_domain_registration,
+			meta,
 			extra,
 			volume,
-		},
+		} = serverCartItem;
+
+		// Sublabel is the domain name for registrations
+		const sublabel = is_domain_registration ? meta : undefined;
+
+		// TODO: watch out for this when localizing
+		const value = is_coupon_applied
+			? item_subtotal_integer + ( coupon_discounts_int[ product_id ] ?? 0 )
+			: item_subtotal_integer;
+		const displayValue = localizeCurrency( currency, value );
+
+		return {
+			id: String( index ),
+			label: product_name,
+			sublabel: sublabel,
+			type: product_slug,
+			amount: {
+				currency,
+				value,
+				displayValue,
+			},
+			wpcom_meta: {
+				uuid: String( index ),
+				meta: typeof meta === 'string' ? meta : undefined,
+				product_id,
+				extra,
+				volume,
+			},
+		};
 	};
 }
