@@ -69,7 +69,9 @@ function getHtmlLangAttribute() {
 	// translation of this string contains the desired HTML attribute value
 	const slug = i18n.translate( 'html_lang_attribute' );
 
-	// Hasn't been translated? Likely the default `en` locale. Return the default i18n slug.
+	// Hasn't been translated? Some languages don't have the translation for this string,
+	// or maybe we are dealing with the default `en` locale. Return the general purpose locale slug
+	// -- there's no special one available for `<html lang>`.
 	if ( slug === 'html_lang_attribute' ) {
 		return i18n.getLocaleSlug();
 	}
