@@ -91,6 +91,7 @@
 		"resume-editing": true,
 		"republicize": true,
 		"rubberband-scroll-disable": false,
+		"safari-idb-mitigation": true,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"settings/theme-setup": false,

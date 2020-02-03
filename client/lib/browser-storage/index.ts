@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { kebabCase } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { once } from 'lib/memoize-last';
@@ -11,7 +16,7 @@ import {
 } from './bypass';
 import { StoredItems } from './types';
 import { mc } from 'lib/analytics';
-import { kebabCase } from 'lodash';
+import config from 'config';
 
 let shouldBypass = false;
 
@@ -23,6 +28,7 @@ const SANITY_TEST_KEY = 'browser-storage-sanity-test';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isAffectedSafari =
+	config.isEnabled( 'safari-idb-mitigation' ) &&
 	typeof window !== 'undefined' &&
 	!! window.IDBKeyRange?.lowerBound( 0 ).includes &&
 	!! ( window as any ).webkitAudioContext &&

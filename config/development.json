@@ -139,6 +139,7 @@
 		"resume-editing": true,
 		"republicize": true,
 		"rubberband-scroll-disable": false,
+		"safari-idb-mitigation": true,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"settings/security/monitor/wp-note": true,
