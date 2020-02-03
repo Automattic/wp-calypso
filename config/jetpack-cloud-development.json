@@ -1,7 +1,7 @@
 {
 	"env": "development",
 	"env_id": "jetpack-cloud-development",
-	"favicon_url": "/calypso/images/favicons/favicon-development.ico",
+	"favicon_url": "/calypso/images/favicons/favicon-jetpack-cloud-development.ico",
 	"client_slug": "browser",
 	"protocol": "http",
 	"hostname": "jetpack.cloud.localhost",
