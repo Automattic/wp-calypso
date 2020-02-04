@@ -9,7 +9,6 @@
  * Internal dependencies
  */
 import { SiteVertical } from './stores/onboard/types';
-import { DomainName } from '@automattic/data-stores/types/domain-suggestions';
 
 /**
  * ⚠️😱 Calypso dependencies 😱⚠️
@@ -20,7 +19,7 @@ import { urlToSlug } from '../../lib/url';
 
 interface CreateSite {
 	siteTitle?: string;
-	siteUrl?: DomainName;
+	siteUrl?: string;
 	theme?: string;
 	siteVertical: SiteVertical | undefined;
 }

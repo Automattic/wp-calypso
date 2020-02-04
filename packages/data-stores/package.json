@@ -22,12 +22,11 @@
 	"files": [
 		"autocomplete.gif",
 		"dist",
-		"types",
 		"src"
 	],
-	"types": "types",
+	"types": "dist/types",
 	"scripts": {
-		"clean": "npx rimraf dist types",
+		"clean": "npx rimraf dist",
 		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
 		"prepublish": "npm run clean",
 		"watch": "tsc --project ./tsconfig.json --watch"

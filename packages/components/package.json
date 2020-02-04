@@ -24,10 +24,9 @@
 	},
 	"files": [
 		"dist",
-		"types",
 		"src"
 	],
-	"types": "types",
+	"types": "dist/types",
 	"dependencies": {
 		"classnames": "^2.2.6",
 		"gridicons": "^3.3.1",
@@ -38,7 +37,7 @@
 		"react-modal": "^3.8.1"
 	},
 	"scripts": {
-		"clean": "npx rimraf dist types",
+		"clean": "npx rimraf dist",
 		"prepublish": "npm run clean",
 		"prepare": "transpile && tsc && copy-assets"
 	}

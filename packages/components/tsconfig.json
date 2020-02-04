@@ -6,7 +6,7 @@
 		"checkJs": false,
 		"jsx": "react",
 		"declaration": true,
-		"declarationDir": "./types",
+		"declarationDir": "dist/types",
 		"emitDeclarationOnly": true,
 		"isolatedModules": true,
 
