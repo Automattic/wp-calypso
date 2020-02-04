@@ -97,7 +97,7 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 				return 'R$' + amount / 100;
 		}
 
-		throw new Error( 'Currency not supported: ' + currency );
+		throw new Error( 'Currency not supported: ' + currencyCode );
 	}
 
 	return {
