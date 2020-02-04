@@ -67,7 +67,7 @@
 				 *
 				 * @api private
 				 * @param {*} val The value to test.
-				 * @return {boolean} true if the value is a boolean, otherwise false.
+				 * @returns {boolean} true if the value is a boolean, otherwise false.
 				 */
 				function isArray( val ) {
 					return objToString.call( val ) === '[object Array]';
@@ -86,7 +86,7 @@
 				 * @api public
 				 * @param {string} name Event name.
 				 * @param {Function} fn Event handler.
-				 * @return {EventEmitter} Emitter instance.
+				 * @returns {EventEmitter} Emitter instance.
 				 */
 				EventEmitter.prototype.on = function( name, fn ) {
 					if ( ! this.$events ) {
@@ -112,7 +112,7 @@
 				 * @api public
 				 * @param {string} name Event name.
 				 * @param {Function} fn Event handler.
-				 * @return {EventEmitter} Emitter instance.
+				 * @returns {EventEmitter} Emitter instance.
 				 */
 				EventEmitter.prototype.once = function( name, fn ) {
 					var self = this;
@@ -134,7 +134,7 @@
 				 * @api public
 				 * @param {string} name Event name.
 				 * @param {Function} fn Event handler.
-				 * @return {EventEmitter} Emitter instance.
+				 * @returns {EventEmitter} Emitter instance.
 				 */
 				EventEmitter.prototype.removeListener = function( name, fn ) {
 					if ( this.$events && this.$events[ name ] ) {
@@ -172,7 +172,7 @@
 				 *
 				 * @api public
 				 * @param {string} name Event name.
-				 * @return {EventEmitter} Emitter instance.
+				 * @returns {EventEmitter} Emitter instance.
 				 */
 				EventEmitter.prototype.removeAllListeners = function( name ) {
 					if ( name === undefined ) {
@@ -192,7 +192,7 @@
 				 *
 				 * @api public
 				 * @param {string} name Event name.
-				 * @return {EventEmitter} Emitter instance.
+				 * @returns {EventEmitter} Emitter instance.
 				 */
 				EventEmitter.prototype.listeners = function( name ) {
 					if ( ! this.$events ) {
@@ -215,7 +215,7 @@
 				 *
 				 * @api public
 				 * @param {string} name Event name.
-				 * @return {boolean} true if at least one handler was invoked, else false.
+				 * @returns {boolean} true if at least one handler was invoked, else false.
 				 */
 				EventEmitter.prototype.emit = function( name ) {
 					if ( ! this.$events ) {
@@ -270,7 +270,7 @@
 				 *
 				 * @api public
 				 * @param {number} size
-				 * @return {Progress} Progress instance.
+				 * @returns {Progress} Progress instance.
 				 */
 				Progress.prototype.size = function( size ) {
 					this._size = size;
@@ -282,7 +282,7 @@
 				 *
 				 * @api public
 				 * @param {string} text
-				 * @return {Progress} Progress instance.
+				 * @returns {Progress} Progress instance.
 				 */
 				Progress.prototype.text = function( text ) {
 					this._text = text;
@@ -294,7 +294,7 @@
 				 *
 				 * @api public
 				 * @param {number} size
-				 * @return {Progress} Progress instance.
+				 * @returns {Progress} Progress instance.
 				 */
 				Progress.prototype.fontSize = function( size ) {
 					this._fontSize = size;
@@ -305,7 +305,7 @@
 				 * Set font to `family`.
 				 *
 				 * @param {string} family
-				 * @return {Progress} Progress instance.
+				 * @returns {Progress} Progress instance.
 				 */
 				Progress.prototype.font = function( family ) {
 					this._font = family;
@@ -316,7 +316,7 @@
 				 * Update percentage to `n`.
 				 *
 				 * @param {number} n
-				 * @return {Progress} Progress instance.
+				 * @returns {Progress} Progress instance.
 				 */
 				Progress.prototype.update = function( n ) {
 					this.percent = n;
@@ -327,7 +327,7 @@
 				 * Draw on `ctx`.
 				 *
 				 * @param {CanvasRenderingContext2d} ctx
-				 * @return {Progress} Progress instance.
+				 * @returns {Progress} Progress instance.
 				 */
 				Progress.prototype.draw = function( ctx ) {
 					try {
@@ -416,7 +416,7 @@
 				 *
 				 * @api private
 				 * @param {Runnable} runnable
-				 * @return {Context}
+				 * @returns {Context}
 				 */
 				Context.prototype.runnable = function( runnable ) {
 					if ( ! arguments.length ) {
@@ -431,7 +431,7 @@
 				 *
 				 * @api private
 				 * @param {number} ms
-				 * @return {Context} self
+				 * @returns {Context} self
 				 */
 				Context.prototype.timeout = function( ms ) {
 					if ( ! arguments.length ) {
@@ -446,7 +446,7 @@
 				 *
 				 * @api private
 				 * @param {boolean} enabled
-				 * @return {Context} self
+				 * @returns {Context} self
 				 */
 				Context.prototype.enableTimeouts = function( enabled ) {
 					this.runnable().enableTimeouts( enabled );
@@ -458,7 +458,7 @@
 				 *
 				 * @api private
 				 * @param {number} ms
-				 * @return {Context} self
+				 * @returns {Context} self
 				 */
 				Context.prototype.slow = function( ms ) {
 					this.runnable().slow( ms );
@@ -469,7 +469,7 @@
 				 * Mark a test as skipped.
 				 *
 				 * @api private
-				 * @return {Context} self
+				 * @returns {Context} self
 				 */
 				Context.prototype.skip = function() {
 					this.runnable().skip();
@@ -481,7 +481,7 @@
 				 *
 				 * @api private
 				 * @param {number} n
-				 * @return {Context} self
+				 * @returns {Context} self
 				 */
 				Context.prototype.retries = function( n ) {
 					if ( ! arguments.length ) {
@@ -495,7 +495,7 @@
 				 * Inspect the context void of `._runnable`.
 				 *
 				 * @api private
-				 * @return {string}
+				 * @returns {string}
 				 */
 				Context.prototype.inspect = function() {
 					return JSON.stringify(
@@ -545,7 +545,7 @@
 				 * Get or set the test `err`.
 				 *
 				 * @param {Error} err
-				 * @return {Error}
+				 * @returns {Error}
 				 * @api public
 				 */
 				Hook.prototype.error = function( err ) {
@@ -691,7 +691,7 @@
 				 *
 				 * @param {Suite[]} suites
 				 * @param {Context} context
-				 * @return {object} An object containing common functions.
+				 * @returns {object} An object containing common functions.
 				 */
 				module.exports = function( suites, context ) {
 					return {
@@ -700,7 +700,7 @@
 						 * root suite execution.
 						 *
 						 * @param {Suite} suite The root wuite.
-						 * @return {Function} A function which runs the root suite
+						 * @returns {Function} A function which runs the root suite
 						 */
 						runWithSuite: function runWithSuite( suite ) {
 							return function run() {
@@ -1109,7 +1109,7 @@
 					 *
 					 * @api private
 					 * @param {string} name
-					 * @return {string}
+					 * @returns {string}
 					 */
 					function image( name ) {
 						return path.join( __dirname, '../images', name + '.png' );
@@ -1315,10 +1315,10 @@
 					 * Add regexp to grep, if `re` is a string it is escaped.
 					 *
 					 * @param {RegExp|string} re
-					 * @return {Mocha}
+					 * @returns {Mocha}
 					 * @api public
 					 * @param {RegExp|string} re
-					 * @return {Mocha}
+					 * @returns {Mocha}
 					 */
 					Mocha.prototype.grep = function( re ) {
 						this.options.grep = typeof re === 'string' ? new RegExp( escapeRe( re ) ) : re;
@@ -1328,7 +1328,7 @@
 					/**
 					 * Invert `.grep()` matches.
 					 *
-					 * @return {Mocha}
+					 * @returns {Mocha}
 					 * @api public
 					 */
 					Mocha.prototype.invert = function() {
@@ -1340,10 +1340,10 @@
 					 * Ignore global leaks.
 					 *
 					 * @param {boolean} ignore
-					 * @return {Mocha}
+					 * @returns {Mocha}
 					 * @api public
 					 * @param {boolean} ignore
-					 * @return {Mocha}
+					 * @returns {Mocha}
 					 */
 					Mocha.prototype.ignoreLeaks = function( ignore ) {
 						this.options.ignoreLeaks = Boolean( ignore );
@@ -1353,7 +1353,7 @@
 					/**
 					 * Enable global leak checking.
 					 *
-					 * @return {Mocha}
+					 * @returns {Mocha}
 					 * @api public
 					 */
 					Mocha.prototype.checkLeaks = function() {
@@ -1364,7 +1364,7 @@
 					/**
 					 * Display long stack-trace on failing
 					 *
-					 * @return {Mocha}
+					 * @returns {Mocha}
 					 * @api public
 					 */
 					Mocha.prototype.fullTrace = function() {
@@ -1375,7 +1375,7 @@
 					/**
 					 * Enable growl support.
 					 *
-					 * @return {Mocha}
+					 * @returns {Mocha}
 					 * @api public
 					 */
 					Mocha.prototype.growl = function() {
@@ -1387,10 +1387,10 @@
 					 * Ignore `globals` array or string.
 					 *
 					 * @param {Array|string} globals
-					 * @return {Mocha}
+					 * @returns {Mocha}
 					 * @api public
 					 * @param {Array|string} globals
-					 * @return {Mocha}
+					 * @returns {Mocha}
 					 */
 					Mocha.prototype.globals = function( globals ) {
 						this.options.globals = ( this.options.globals || [] ).concat( globals );
@@ -1401,10 +1401,10 @@
 					 * Emit color output.
 					 *
 					 * @param {boolean} colors
-					 * @return {Mocha}
+					 * @returns {Mocha}
 					 * @api public
 					 * @param {boolean} colors
-					 * @return {Mocha}
+					 * @returns {Mocha}
 					 */
 					Mocha.prototype.useColors = function( colors ) {
 						if ( colors !== undefined ) {
@@ -1417,10 +1417,10 @@
 					 * Use inline diffs rather than +/-.
 					 *
 					 * @param {boolean} inlineDiffs
-					 * @return {Mocha}
+					 * @returns {Mocha}
 					 * @api public
 					 * @param {boolean} inlineDiffs
-					 * @return {Mocha}
+					 * @returns {Mocha}
 					 */
 					Mocha.prototype.useInlineDiffs = function( inlineDiffs ) {
 						this.options.useInlineDiffs = inlineDiffs !== undefined && inlineDiffs;
@@ -1431,10 +1431,10 @@
 					 * Set the timeout in milliseconds.
 					 *
 					 * @param {number} timeout
-					 * @return {Mocha}
+					 * @returns {Mocha}
 					 * @api public
 					 * @param {number} timeout
-					 * @return {Mocha}
+					 * @returns {Mocha}
 					 */
 					Mocha.prototype.timeout = function( timeout ) {
 						this.suite.timeout( timeout );
@@ -1445,7 +1445,7 @@
 					 * Set the number of times to retry failed tests.
 					 *
 					 * @param {number} retry times
-					 * @return {Mocha}
+					 * @returns {Mocha}
 					 * @api public
 					 */
 					Mocha.prototype.retries = function( n ) {
@@ -1457,10 +1457,10 @@
 					 * Set slowness threshold in milliseconds.
 					 *
 					 * @param {number} slow
-					 * @return {Mocha}
+					 * @returns {Mocha}
 					 * @api public
 					 * @param {number} slow
-					 * @return {Mocha}
+					 * @returns {Mocha}
 					 */
 					Mocha.prototype.slow = function( slow ) {
 						this.suite.slow( slow );
@@ -1471,10 +1471,10 @@
 					 * Enable timeouts.
 					 *
 					 * @param {boolean} enabled
-					 * @return {Mocha}
+					 * @returns {Mocha}
 					 * @api public
 					 * @param {boolean} enabled
-					 * @return {Mocha}
+					 * @returns {Mocha}
 					 */
 					Mocha.prototype.enableTimeouts = function( enabled ) {
 						this.suite.enableTimeouts( arguments.length && enabled !== undefined ? enabled : true );
@@ -1484,7 +1484,7 @@
 					/**
 					 * Makes all tests async (accepting a callback)
 					 *
-					 * @return {Mocha}
+					 * @returns {Mocha}
 					 * @api public
 					 */
 					Mocha.prototype.asyncOnly = function() {
@@ -1505,7 +1505,7 @@
 					/**
 					 * Enable uncaught errors to propagate (in browser).
 					 *
-					 * @return {Mocha}
+					 * @returns {Mocha}
 					 * @api public
 					 */
 					Mocha.prototype.allowUncaught = function() {
@@ -1528,7 +1528,7 @@
 					 *
 					 * @api public
 					 * @param {Function} fn
-					 * @return {Runner}
+					 * @returns {Runner}
 					 */
 					Mocha.prototype.run = function( fn ) {
 						if ( this.files.length ) {
@@ -1618,7 +1618,7 @@
 				 * @api public
 				 * @param {string|number} val
 				 * @param {object} options
-				 * @return {string|number}
+				 * @returns {string|number}
 				 */
 				module.exports = function( val, options ) {
 					options = options || {};
@@ -1634,7 +1634,7 @@
 				 *
 				 * @api private
 				 * @param {string} str
-				 * @return {number}
+				 * @returns {number}
 				 */
 				function parse( str ) {
 					var match = /^((?:\d+)?\.?\d+) *(ms|seconds?|s|minutes?|m|hours?|h|days?|d|years?|y)?$/i.exec(
@@ -1678,7 +1678,7 @@
 				 *
 				 * @api private
 				 * @param {number} ms
-				 * @return {string}
+				 * @returns {string}
 				 */
 				function shortFormat( ms ) {
 					if ( ms >= d ) {
@@ -1701,7 +1701,7 @@
 				 *
 				 * @api private
 				 * @param {number} ms
-				 * @return {string}
+				 * @returns {string}
 				 */
 				function longFormat( ms ) {
 					return (
@@ -1854,7 +1854,7 @@
 					 *
 					 * @param {string} type
 					 * @param {string} str
-					 * @return {string}
+					 * @returns {string}
 					 * @api private
 					 */
 					var color = ( exports.color = function( type, str ) {
@@ -2105,7 +2105,7 @@
 					 * @api private
 					 * @param {string} str
 					 * @param {string} len
-					 * @return {string}
+					 * @returns {string}
 					 */
 					function pad( str, len ) {
 						str = String( str );
@@ -2118,7 +2118,7 @@
 					 * @api private
 					 * @param {Error} err with actual/expected
 					 * @param {boolean} escape
-					 * @return {string} Diff
+					 * @returns {string} Diff
 					 */
 					function inlineDiff( err, escape ) {
 						var msg = errorDiff( err, 'WordsWithSpace', escape );
@@ -2155,7 +2155,7 @@
 					 * @api private
 					 * @param {Error} err with actual/expected
 					 * @param {boolean} escape
-					 * @return {string} The diff.
+					 * @returns {string} The diff.
 					 */
 					function unifiedDiff( err, escape ) {
 						var indent = '      ';
@@ -2202,7 +2202,7 @@
 					 * @param {Error} err
 					 * @param {string} type
 					 * @param {boolean} escape
-					 * @return {string}
+					 * @returns {string}
 					 */
 					function errorDiff( err, type, escape ) {
 						var actual = escape ? escapeInvisibles( err.actual ) : err.actual;
@@ -2225,7 +2225,7 @@
 					 *
 					 * @api private
 					 * @param {string} line
-					 * @return {string}
+					 * @returns {string}
 					 */
 					function escapeInvisibles( line ) {
 						return line
@@ -2240,7 +2240,7 @@
 					 * @api private
 					 * @param {string} name
 					 * @param {string} str
-					 * @return {string}
+					 * @returns {string}
 					 */
 					function colorLines( name, str ) {
 						return str
@@ -2262,7 +2262,7 @@
 					 * @api private
 					 * @param {object} a
 					 * @param {object} b
-					 * @return {boolean}
+					 * @returns {boolean}
 					 */
 					function sameType( a, b ) {
 						return objToString.call( a ) === objToString.call( b );
@@ -2468,7 +2468,7 @@
 					 *
 					 * @api private
 					 * @param {number} coveragePctg
-					 * @return {string}
+					 * @returns {string}
 					 */
 					function coverageClass( coveragePctg ) {
 						if ( coveragePctg >= 75 ) {
@@ -2731,7 +2731,7 @@
 					 * Makes a URL, preserving querystring ("search") parameters.
 					 *
 					 * @param {string} s
-					 * @return {string} A new URL.
+					 * @returns {string} A new URL.
 					 */
 					function makeUrl( s ) {
 						var search = window.location.search;
@@ -2967,7 +2967,7 @@
 					 *
 					 * @api private
 					 * @param {object} cov
-					 * @return {object}
+					 * @returns {object}
 					 */
 
 					function map( cov ) {
@@ -3008,7 +3008,7 @@
 					 * @api private
 					 * @param {string} filename name of the source file
 					 * @param {object} data jscoverage coverage data
-					 * @return {object}
+					 * @returns {object}
 					 */
 					function coverage( filename, data ) {
 						var ret = {
@@ -3048,7 +3048,7 @@
 					 *
 					 * @api private
 					 * @param {object} test
-					 * @return {object}
+					 * @returns {object}
 					 */
 					function clean( test ) {
 						return {
@@ -3125,7 +3125,7 @@
 					 *
 					 * @api private
 					 * @param {object} test
-					 * @return {object}
+					 * @returns {object}
 					 */
 					function clean( test ) {
 						return {
@@ -3206,7 +3206,7 @@
 					 *
 					 * @api private
 					 * @param {object} test
-					 * @return {object}
+					 * @returns {object}
 					 */
 					function clean( test ) {
 						return {
@@ -3223,7 +3223,7 @@
 					 *
 					 * @api private
 					 * @param {Error} err
-					 * @return {object}
+					 * @returns {object}
 					 */
 					function errorJSON( err ) {
 						var res = {};
@@ -3732,7 +3732,7 @@
 					 * Draw nyan cat face.
 					 *
 					 * @api private
-					 * @return {string}
+					 * @returns {string}
 					 */
 
 					NyanCat.prototype.face = function() {
@@ -3773,7 +3773,7 @@
 					 * Generate rainbow colors.
 					 *
 					 * @api private
-					 * @return {Array}
+					 * @returns {Array}
 					 */
 					NyanCat.prototype.generateColors = function() {
 						var colors = [];
@@ -3795,7 +3795,7 @@
 					 *
 					 * @api private
 					 * @param {string} str
-					 * @return {string}
+					 * @returns {string}
 					 */
 					NyanCat.prototype.rainbowify = function( str ) {
 						if ( ! Base.useColors ) {
@@ -4067,7 +4067,7 @@
 				 *
 				 * @api private
 				 * @param {object} test
-				 * @return {string}
+				 * @returns {string}
 				 */
 				function title( test ) {
 					return test.fullTitle().replace( /#/g, '' );
@@ -4238,7 +4238,7 @@
 					 * @param attrs
 					 * @param close
 					 * @param content
-					 * @return {string}
+					 * @returns {string}
 					 */
 					function tag( name, attrs, close, content ) {
 						var end = close ? '/>' : '>';
@@ -4350,7 +4350,7 @@
 					 *
 					 * @api private
 					 * @param {number|string} ms
-					 * @return {Runnable|number} ms or Runnable instance.
+					 * @returns {Runnable|number} ms or Runnable instance.
 					 */
 					Runnable.prototype.timeout = function( ms ) {
 						if ( ! arguments.length ) {
@@ -4375,7 +4375,7 @@
 					 *
 					 * @api private
 					 * @param {number|string} ms
-					 * @return {Runnable|number} ms or Runnable instance.
+					 * @returns {Runnable|number} ms or Runnable instance.
 					 */
 					Runnable.prototype.slow = function( ms ) {
 						if ( ! arguments.length ) {
@@ -4394,7 +4394,7 @@
 					 *
 					 * @api private
 					 * @param {boolean} enabled
-					 * @return {Runnable|boolean} enabled or Runnable instance.
+					 * @returns {Runnable|boolean} enabled or Runnable instance.
 					 */
 					Runnable.prototype.enableTimeouts = function( enabled ) {
 						if ( ! arguments.length ) {
@@ -4443,7 +4443,7 @@
 					 * full title.
 					 *
 					 * @api public
-					 * @return {string}
+					 * @returns {string}
 					 */
 					Runnable.prototype.fullTitle = function() {
 						return this.parent.fullTitle() + ' ' + this.title;
@@ -4462,7 +4462,7 @@
 					 * Inspect the runnable void of private properties.
 					 *
 					 * @api private
-					 * @return {string}
+					 * @returns {string}
 					 */
 					Runnable.prototype.inspect = function() {
 						return JSON.stringify(
@@ -4774,11 +4774,11 @@
 					 *
 					 * @param {RegExp} re
 					 * @param {boolean} invert
-					 * @return {Runner} for chaining
+					 * @returns {Runner} for chaining
 					 * @api public
 					 * @param {RegExp} re
 					 * @param {boolean} invert
-					 * @return {Runner} Runner instance.
+					 * @returns {Runner} Runner instance.
 					 */
 					Runner.prototype.grep = function( re, invert ) {
 						debug( 'grep %s', re );
@@ -4793,10 +4793,10 @@
 					 * given suite.
 					 *
 					 * @param {Suite} suite
-					 * @return {number}
+					 * @returns {number}
 					 * @api public
 					 * @param {Suite} suite
-					 * @return {number}
+					 * @returns {number}
 					 */
 					Runner.prototype.grepTotal = function( suite ) {
 						var self = this;
@@ -4818,7 +4818,7 @@
 					/**
 					 * Return a list of global properties.
 					 *
-					 * @return {Array}
+					 * @returns {Array}
 					 * @api private
 					 */
 					Runner.prototype.globalProps = function() {
@@ -4839,10 +4839,10 @@
 					 * Allow the given `arr` of globals.
 					 *
 					 * @param {Array} arr
-					 * @return {Runner} for chaining
+					 * @returns {Runner} for chaining
 					 * @api public
 					 * @param {Array} arr
-					 * @return {Runner} Runner instance.
+					 * @returns {Runner} Runner instance.
 					 */
 					Runner.prototype.globals = function( arr ) {
 						if ( ! arguments.length ) {
@@ -5059,7 +5059,7 @@
 					 * Return an array of parent Suites from
 					 * closest to furthest.
 					 *
-					 * @return {Array}
+					 * @returns {Array}
 					 * @api private
 					 */
 					Runner.prototype.parents = function() {
@@ -5449,10 +5449,10 @@
 					 * on completion.
 					 *
 					 * @param {Function} fn
-					 * @return {Runner} for chaining
+					 * @returns {Runner} for chaining
 					 * @api public
 					 * @param {Function} fn
-					 * @return {Runner} Runner instance.
+					 * @returns {Runner} Runner instance.
 					 */
 					Runner.prototype.run = function( fn ) {
 						var self = this;
@@ -5504,7 +5504,7 @@
 					 * Cleanly abort execution.
 					 *
 					 * @api public
-					 * @return {Runner} Runner instance.
+					 * @returns {Runner} Runner instance.
 					 */
 					Runner.prototype.abort = function() {
 						debug( 'aborting' );
@@ -5519,7 +5519,7 @@
 					 * @api private
 					 * @param {Array} ok
 					 * @param {Array} globals
-					 * @return {Array}
+					 * @returns {Array}
 					 */
 					function filterLeaks( ok, globals ) {
 						return filter( globals, function( key ) {
@@ -5559,7 +5559,7 @@
 					/**
 					 * Array of globals dependent on the environment.
 					 *
-					 * @return {Array}
+					 * @returns {Array}
 					 * @api private
 					 */
 					function extraGlobals() {
@@ -5619,7 +5619,7 @@
 				 * @api public
 				 * @param {Suite} parent
 				 * @param {string} title
-				 * @return {Suite}
+				 * @returns {Suite}
 				 */
 				exports.create = function( parent, title ) {
 					var suite = new Suite( title, parent.ctx );
@@ -5669,7 +5669,7 @@
 				 * Return a clone of this `Suite`.
 				 *
 				 * @api private
-				 * @return {Suite}
+				 * @returns {Suite}
 				 */
 				Suite.prototype.clone = function() {
 					var suite = new Suite( this.title );
@@ -5688,7 +5688,7 @@
 				 *
 				 * @api private
 				 * @param {number|string} ms
-				 * @return {Suite|number} for chaining
+				 * @returns {Suite|number} for chaining
 				 */
 				Suite.prototype.timeout = function( ms ) {
 					if ( ! arguments.length ) {
@@ -5710,7 +5710,7 @@
 				 *
 				 * @api private
 				 * @param {number|string} n
-				 * @return {Suite|number} for chaining
+				 * @returns {Suite|number} for chaining
 				 */
 				Suite.prototype.retries = function( n ) {
 					if ( ! arguments.length ) {
@@ -5726,7 +5726,7 @@
 				 *
 				 * @api private
 				 * @param {boolean} enabled
-				 * @return {Suite|boolean} self or enabled
+				 * @returns {Suite|boolean} self or enabled
 				 */
 				Suite.prototype.enableTimeouts = function( enabled ) {
 					if ( ! arguments.length ) {
@@ -5742,7 +5742,7 @@
 				 *
 				 * @api private
 				 * @param {number|string} ms
-				 * @return {Suite|number} for chaining
+				 * @returns {Suite|number} for chaining
 				 */
 				Suite.prototype.slow = function( ms ) {
 					if ( ! arguments.length ) {
@@ -5761,7 +5761,7 @@
 				 *
 				 * @api private
 				 * @param {boolean} bail
-				 * @return {Suite|number} for chaining
+				 * @returns {Suite|number} for chaining
 				 */
 				Suite.prototype.bail = function( bail ) {
 					if ( ! arguments.length ) {
@@ -5778,7 +5778,7 @@
 				 * @api private
 				 * @param {string} title
 				 * @param {Function} fn
-				 * @return {Suite} for chaining
+				 * @returns {Suite} for chaining
 				 */
 				Suite.prototype.beforeAll = function( title, fn ) {
 					if ( this.pending ) {
@@ -5808,7 +5808,7 @@
 				 * @api private
 				 * @param {string} title
 				 * @param {Function} fn
-				 * @return {Suite} for chaining
+				 * @returns {Suite} for chaining
 				 */
 				Suite.prototype.afterAll = function( title, fn ) {
 					if ( this.pending ) {
@@ -5838,7 +5838,7 @@
 				 * @api private
 				 * @param {string} title
 				 * @param {Function} fn
-				 * @return {Suite} for chaining
+				 * @returns {Suite} for chaining
 				 */
 				Suite.prototype.beforeEach = function( title, fn ) {
 					if ( this.pending ) {
@@ -5868,7 +5868,7 @@
 				 * @api private
 				 * @param {string} title
 				 * @param {Function} fn
-				 * @return {Suite} for chaining
+				 * @returns {Suite} for chaining
 				 */
 				Suite.prototype.afterEach = function( title, fn ) {
 					if ( this.pending ) {
@@ -5897,7 +5897,7 @@
 				 *
 				 * @api private
 				 * @param {Suite} suite
-				 * @return {Suite} for chaining
+				 * @returns {Suite} for chaining
 				 */
 				Suite.prototype.addSuite = function( suite ) {
 					suite.parent = this;
@@ -5916,7 +5916,7 @@
 				 *
 				 * @api private
 				 * @param {Test} test
-				 * @return {Suite} for chaining
+				 * @returns {Suite} for chaining
 				 */
 				Suite.prototype.addTest = function( test ) {
 					test.parent = this;
@@ -5935,7 +5935,7 @@
 				 * full title.
 				 *
 				 * @api public
-				 * @return {string}
+				 * @returns {string}
 				 */
 				Suite.prototype.fullTitle = function() {
 					if ( this.parent ) {
@@ -5951,7 +5951,7 @@
 				 * Return the total number of tests.
 				 *
 				 * @api public
-				 * @return {number}
+				 * @returns {number}
 				 */
 				Suite.prototype.total = function() {
 					return (
@@ -5971,7 +5971,7 @@
 				 *
 				 * @api private
 				 * @param {Function} fn
-				 * @return {Suite}
+				 * @returns {Suite}
 				 */
 				Suite.prototype.eachTest = function( fn ) {
 					utils.forEach( this.tests, fn );
@@ -6073,7 +6073,7 @@
 					 *
 					 * @api private
 					 * @param  {string} html
-					 * @return {string}
+					 * @returns {string}
 					 */
 					exports.escape = function( html ) {
 						return String( html )
@@ -6102,7 +6102,7 @@
 					 *
 					 * @api private
 					 * @param {object} obj
-					 * @return {boolean}
+					 * @returns {boolean}
 					 */
 					exports.isString = function( obj ) {
 						return typeof obj === 'string';
@@ -6115,7 +6115,7 @@
 					 * @param {Array} arr
 					 * @param {Function} fn
 					 * @param {object} scope
-					 * @return {Array}
+					 * @returns {Array}
 					 */
 					exports.map = function( arr, fn, scope ) {
 						var result = [];
@@ -6132,7 +6132,7 @@
 					 * @param {Array} arr
 					 * @param {object} obj to find index of
 					 * @param {number} start
-					 * @return {number}
+					 * @returns {number}
 					 */
 					exports.indexOf = function( arr, obj, start ) {
 						for ( var i = start || 0, l = arr.length; i < l; i++ ) {
@@ -6150,7 +6150,7 @@
 					 * @param {Array} arr
 					 * @param {Function} fn
 					 * @param {object} val Initial value.
-					 * @return {*}
+					 * @returns {*}
 					 */
 					exports.reduce = function( arr, fn, val ) {
 						var rval = val;
@@ -6168,7 +6168,7 @@
 					 * @api private
 					 * @param {Array} arr
 					 * @param {Function} fn
-					 * @return {Array}
+					 * @returns {Array}
 					 */
 					exports.filter = function( arr, fn ) {
 						var ret = [];
@@ -6188,7 +6188,7 @@
 					 *
 					 * @api private
 					 * @param {object} obj
-					 * @return {Array} keys
+					 * @returns {Array} keys
 					 */
 					exports.keys =
 						typeof Object.keys === 'function'
@@ -6231,7 +6231,7 @@
 					 *
 					 * @api private
 					 * @param {object} obj
-					 * @return {boolean}
+					 * @returns {boolean}
 					 */
 					var isArray =
 						typeof Array.isArray === 'function'
@@ -6260,7 +6260,7 @@
 					 *
 					 * @api private
 					 * @param {string} path
-					 * @return {boolean}
+					 * @returns {boolean}
 					 */
 					function ignored( path ) {
 						return ! ~ignore.indexOf( path );
@@ -6273,7 +6273,7 @@
 					 * @param {string} dir
 					 * @param {string[]} [ext=['.js']]
 					 * @param {Array} [ret=[]]
-					 * @return {Array}
+					 * @returns {Array}
 					 */
 					exports.files = function( dir, ext, ret ) {
 						ret = ret || [];
@@ -6300,7 +6300,7 @@
 					 *
 					 * @api private
 					 * @param {string} str
-					 * @return {string}
+					 * @returns {string}
 					 */
 					exports.slug = function( str ) {
 						return str
@@ -6313,7 +6313,7 @@
 					 * Strip the function definition from `str`, and re-indent for pre whitespace.
 					 *
 					 * @param {string} str
-					 * @return {string}
+					 * @returns {string}
 					 */
 					exports.clean = function( str ) {
 						str = str
@@ -6339,7 +6339,7 @@
 					 *
 					 * @api private
 					 * @param {string} str
-					 * @return {string}
+					 * @returns {string}
 					 */
 					exports.trim = function( str ) {
 						return str.replace( /^\s+|\s+$/g, '' );
@@ -6350,7 +6350,7 @@
 					 *
 					 * @api private
 					 * @param {string} qs
-					 * @return {object}
+					 * @returns {object}
 					 */
 					exports.parseQuery = function( qs ) {
 						return exports.reduce(
@@ -6372,7 +6372,7 @@
 					 *
 					 * @api private
 					 * @param {string} js
-					 * @return {string}
+					 * @returns {string}
 					 */
 					function highlight( js ) {
 						return js
@@ -6481,7 +6481,7 @@
 					 * @api private
 					 * @see exports.type
 					 * @param {*} value
-					 * @return {string}
+					 * @returns {string}
 					 */
 					exports.stringify = function( value ) {
 						var type = exports.type( value );
@@ -6596,7 +6596,7 @@
 					 *
 					 * @api private
 					 * @param {*} value The value to test.
-					 * @return {boolean} True if `value` is a buffer, otherwise false
+					 * @returns {boolean} True if `value` is a buffer, otherwise false
 					 */
 					exports.isBuffer = function( value ) {
 						return typeof Buffer !== 'undefined' && Buffer.isBuffer( value );
@@ -6618,7 +6618,7 @@
 					 * @see {@link exports.stringify}
 					 * @param {*} value Thing to inspect.  May or may not have properties.
 					 * @param {Array} [stack=[]] Stack of seen values
-					 * @return {(object|Array|Function|string|undefined)}
+					 * @returns {(object|Array|Function|string|undefined)}
 					 */
 					exports.canonicalize = function( value, stack ) {
 						var canonicalizedObj;
@@ -6691,7 +6691,7 @@
 					 * @param {string} path Base path to start searching from.
 					 * @param {string[]} extensions File extensions to look for.
 					 * @param {boolean} recursive Whether or not to recurse into subdirectories.
-					 * @return {string[]} An array of paths.
+					 * @returns {string[]} An array of paths.
 					 */
 					exports.lookupFiles = function lookupFiles( path, extensions, recursive ) {
 						var files = [];
@@ -6745,7 +6745,7 @@
 					/**
 					 * Generate an undefined error with a message warning the user.
 					 *
-					 * @return {Error}
+					 * @returns {Error}
 					 */
 
 					exports.undefinedError = function() {
@@ -6756,7 +6756,7 @@
 					 * Generate an undefined error if `err` is not defined.
 					 *
 					 * @param {Error} err
-					 * @return {Error}
+					 * @returns {Error}
 					 */
 
 					exports.getError = function( err ) {
@@ -8684,7 +8684,7 @@
 				 *        // > false
 				 *
 				 * @param {mixed} val
-				 * @return {bool}
+				 * @returns {bool}
 				 */
 
 				module.exports =
@@ -13157,7 +13157,7 @@
 					/**
 					 * Create a Mocha instance.
 					 *
-					 * @return {undefined}
+					 * @returns {undefined}
 					 */
 
 					var mocha = new Mocha( { reporter: 'html' } );

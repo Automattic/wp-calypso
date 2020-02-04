@@ -10,7 +10,7 @@ import commentLike from './site.comment.like';
  * @param {string} [pid] post id
  * @param {string} sid site id
  * @param {WPCOM} wpcom - wpcom instance
- * @return {null} null
+ * @returns {null} null
  */
 export default function Comment( cid, pid, sid, wpcom ) {
 	if ( ! sid ) {
@@ -32,7 +32,7 @@ export default function Comment( cid, pid, sid, wpcom ) {
  *
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Comment.prototype.get = function( query, fn ) {
 	var path = '/sites/' + this._sid + '/comments/' + this._cid;
@@ -44,7 +44,7 @@ Comment.prototype.get = function( query, fn ) {
  *
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Comment.prototype.replies = function( query, fn ) {
 	var path = '/sites/' + this._sid + '/posts/' + this._pid + '/replies/';
@@ -57,7 +57,7 @@ Comment.prototype.replies = function( query, fn ) {
  * @param {object} [query] - query object parameter
  * @param {string|object} body - body parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Comment.prototype.add = function( query, body, fn ) {
 	if ( undefined === fn ) {
@@ -83,7 +83,7 @@ Comment.prototype.add = function( query, body, fn ) {
  * @param {object} [query] - query object parameter
  * @param {string|object} body - body parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Comment.prototype.update = function( query, body, fn ) {
 	if ( 'function' === typeof body ) {
@@ -104,7 +104,7 @@ Comment.prototype.update = function( query, body, fn ) {
  * @param {object} [query] - query object parameter
  * @param {string|object} body - body parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Comment.prototype.reply = function( query, body, fn ) {
 	if ( 'function' === typeof body ) {
@@ -124,7 +124,7 @@ Comment.prototype.reply = function( query, body, fn ) {
  *
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Comment.prototype.del =
 Comment.prototype.delete = function( query, fn ) {
@@ -135,7 +135,7 @@ Comment.prototype.delete = function( query, fn ) {
 /**
  * Create a `commentLike` instance
  *
- * @return {CommentLink} CommentLink instance
+ * @returns {CommentLink} CommentLink instance
  */
 Comment.prototype.like = function() {
 	return commentLike( this._cid, this._sid, this.wpcom );
@@ -146,7 +146,7 @@ Comment.prototype.like = function() {
  *
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Comment.prototype.likesList = function( query, fn ) {
 	var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes';

@@ -3,7 +3,7 @@
  *
  * @param {string} sid - site identifier
  * @param {WPCOM} wpcom - wpcom instance
- * @return {null} null
+ * @returns {null} null
  */
 export default function SiteWordAdsTOS( sid, wpcom ) {
 	if ( ! ( this instanceof SiteWordAdsTOS ) ) {
@@ -29,7 +29,7 @@ export default function SiteWordAdsTOS( sid, wpcom ) {
 
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 SiteWordAdsTOS.prototype.get = function( query, fn ) {
 	return this.wpcom.req.get( '/sites/' + this._sid + '/wordads/tos', query, fn );
@@ -51,7 +51,7 @@ SiteWordAdsTOS.prototype.get = function( query, fn ) {
  * @param {object} [query] - query object parameter
  * @param {object} body - body object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 SiteWordAdsTOS.prototype.update = function( query, body, fn ) {
 	var path = '/sites/' + this._sid + '/wordads/tos';
@@ -73,7 +73,7 @@ SiteWordAdsTOS.prototype.update = function( query, body, fn ) {
  *
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 SiteWordAdsTOS.prototype.sign = function( query, fn ) {
 	var path = '/sites/' + this._sid + '/wordads/tos';

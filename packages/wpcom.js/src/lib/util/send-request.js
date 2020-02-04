@@ -14,7 +14,7 @@ const debug_res = debugFactory( 'wpcom:send-request:res' );
  * @param {object} [query] - query object parameter
  * @param {object} [body] - body object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 export default function sendRequest( params, query, body, fn ) {
 	// `params` can be just the path ( String )

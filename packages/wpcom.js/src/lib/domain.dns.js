@@ -6,7 +6,7 @@ class DomainDns {
 	 *
 	 * @param {string} domainId - domain identifier
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {undefined} undefined
+	 * @returns {undefined} undefined
 	 */
 	constructor( domainId, wpcom ) {
 		if ( ! ( this instanceof DomainDns ) ) {
@@ -24,7 +24,7 @@ class DomainDns {
 	 * @param {object} record - record
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	add( record, query, fn ) {
 		if ( 'function' === typeof query ) {
@@ -41,7 +41,7 @@ class DomainDns {
 	 * @param {string} record - record
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	delete( record, query, fn ) {
 		return this.wpcom.req.post( this._subpath + '/delete', query, record, fn );

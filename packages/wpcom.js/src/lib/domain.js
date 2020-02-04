@@ -12,7 +12,7 @@ class Domain {
 	 *
 	 * @param {string} id - domain identifier
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {undefined} undefined
+	 * @returns {undefined} undefined
 	 */
 	constructor( id, wpcom ) {
 		if ( ! ( this instanceof Domain ) ) {
@@ -27,7 +27,7 @@ class Domain {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	status( query, fn ) {
 		return this.wpcom.req.get( root + this._id + '/status', query, fn );
@@ -38,7 +38,7 @@ class Domain {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	isAvailable( query, fn ) {
 		return this.wpcom.req.get( root + this._id + '/is-available', query, fn );
@@ -50,7 +50,7 @@ class Domain {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	isMappable( query, fn ) {
 		return this.wpcom.req.get( root + this._id + '/is-mappable', query, fn );
@@ -62,7 +62,7 @@ class Domain {
 	 * @param {string} siteId - site id of the site to check
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	canRedirect( siteId, query, fn ) {
 		var path = root + siteId + '/' + this._id + '/can-redirect';
@@ -74,7 +74,7 @@ class Domain {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	emailForwards( query, fn ) {
 		return this.wpcom.req.get( root + this._id + '/email', query, fn );
@@ -85,7 +85,7 @@ class Domain {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	nameserversList( query, fn ) {
 		return this.wpcom.req.get( root + this._id + '/nameservers', query, fn );
@@ -97,7 +97,7 @@ class Domain {
 	 * @param {Array} nameservers- nameservers list
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	updateNameservers( nameservers, query, fn ) {
 		let body = { nameservers: nameservers };
@@ -109,7 +109,7 @@ class Domain {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	dnsList( query, fn ) {
 		return this.wpcom.req.get( root + this._id + '/dns', query, fn );
@@ -120,7 +120,7 @@ class Domain {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	googleAppsList( query, fn ) {
 		return this.wpcom.req.get( root + this._id + '/google-apps', query, fn );
@@ -131,7 +131,7 @@ class Domain {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	resendICANN( query, fn ) {
 		return this.wpcom.req.post( root + this._id + '/resend-icann', query, fn );
@@ -141,7 +141,7 @@ class Domain {
 	 * Return `DomainEmail` instance
 	 *
 	 * @param {string} [email] - email identifier
-	 * @return {DomainEmail} DomainEmail instance
+	 * @returns {DomainEmail} DomainEmail instance
 	 */
 	email( email ) {
 		return new DomainEmail( email, this._id, this.wpcom );
@@ -150,7 +150,7 @@ class Domain {
 	/**
 	 * Return `DomainDns` instance
 	 *
-	 * @return {DomainDns} DomainDns instance
+	 * @returns {DomainDns} DomainDns instance
 	 */
 	dns() {
 		return new DomainDns( this._id, this.wpcom );

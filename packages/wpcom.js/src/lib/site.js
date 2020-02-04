@@ -35,7 +35,7 @@ class Site {
 	 *
 	 * @param {string} id - site id
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {null} null
+	 * @returns {null} null
 	 */
 	constructor( id, wpcom ) {
 		if ( ! ( this instanceof Site ) ) {
@@ -54,7 +54,7 @@ class Site {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	get( query, fn ) {
 		return this.wpcom.req.get( this.path, query, fn );
@@ -64,7 +64,7 @@ class Site {
 	 * Create a `Post` instance
 	 *
 	 * @param {string} id - post id
-	 * @return {Post} Post instance
+	 * @returns {Post} Post instance
 	 */
 	post( id ) {
 		return new Post( id, this._id, this.wpcom );
@@ -75,7 +75,7 @@ class Site {
 	 *
 	 * @param {object} body - body object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	addPost( body, fn ) {
 		const post = new Post( null, this._id, this.wpcom );
@@ -87,7 +87,7 @@ class Site {
 	 *
 	 * @param {string} id - post id
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	deletePost( id, fn ) {
 		const post = new Post( id, this._id, this.wpcom );
@@ -98,7 +98,7 @@ class Site {
 	 * Create a `Media` instance
 	 *
 	 * @param {string} id - post id
-	 * @return {Media} Media instance
+	 * @returns {Media} Media instance
 	 */
 	media( id ) {
 		return new Media( id, this._id, this.wpcom );
@@ -110,7 +110,7 @@ class Site {
 	 * @param {object} [query] - query object parameter
 	 * @param {Array|string} files - media files to add
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	addMediaFiles( query, files, fn ) {
 		const media = new Media( null, this._id, this.wpcom );
@@ -123,7 +123,7 @@ class Site {
 	 * @param {object} [query] - query object parameter
 	 * @param {Array|string} files - media files to add
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	addMediaUrls( query, files, fn ) {
 		const media = new Media( null, this._id, this.wpcom );
@@ -135,7 +135,7 @@ class Site {
 	 *
 	 * @param {string} id - media id
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	deleteMedia( id, fn ) {
 		const media = new Media( id, this._id, this.wpcom );
@@ -146,7 +146,7 @@ class Site {
 	 * Create a `Comment` instance
 	 *
 	 * @param {string} id - comment id
-	 * @return {Comment} Comment instance
+	 * @returns {Comment} Comment instance
 	 */
 	comment( id ) {
 		return new Comment( id, null, this._id, this.wpcom );
@@ -155,7 +155,7 @@ class Site {
 	/**
 	 * Create a `Follow` instance
 	 *
-	 * @return {Follow} Follow instance
+	 * @returns {Follow} Follow instance
 	 */
 	follow() {
 		return new Follow( this._id, this.wpcom );
@@ -165,7 +165,7 @@ class Site {
 	 * Create a `SitePlugin` instance
 	 *
 	 * @param {string} slug - plugin identifier
-	 * @return {SitePlugin} SitePlugin instance
+	 * @returns {SitePlugin} SitePlugin instance
 	 */
 	plugin( slug ) {
 		return new SitePlugin( slug, this._id, this.wpcom );
@@ -175,7 +175,7 @@ class Site {
 	 * Create a `SiteWPComPlugin` instance
 	 *
 	 * @param {string} slug - plugin identifier
-	 * @return {SiteWPComPlugin} SiteWPComPlugin instance
+	 * @returns {SiteWPComPlugin} SiteWPComPlugin instance
 	 */
 	wpcomPlugin( slug ) {
 		return new SiteWPComPlugin( slug, this._id, this.wpcom );
@@ -186,7 +186,7 @@ class Site {
 	 * Set `cat` alias
 	 *
 	 * @param {string} [slug] - category slug
-	 * @return {Category} Category instance
+	 * @returns {Category} Category instance
 	 */
 	category( slug ) {
 		return new Category( slug, this._id, this.wpcom );
@@ -196,7 +196,7 @@ class Site {
 	 * Create a `Tag` instance
 	 *
 	 * @param {string} [slug] - tag slug
-	 * @return {Tag} Tag instance
+	 * @returns {Tag} Tag instance
 	 */
 	tag( slug ) {
 		return new Tag( slug, this._id, this.wpcom );
@@ -206,7 +206,7 @@ class Site {
 	 * Create a `Taxonomy` instance
 	 *
 	 * @param {string} [slug] - taxonomy slug
-	 * @return {SiteTaxonomy} SiteTaxonomy instance
+	 * @returns {SiteTaxonomy} SiteTaxonomy instance
 	 */
 	taxonomy( slug ) {
 		return new SiteTaxonomy( slug, this._id, this.wpcom );
@@ -215,7 +215,7 @@ class Site {
 	/**
 	 * Create a `SiteCreditVouchers` instance
 	 *
-	 * @return {SiteCreditVouchers} SiteCreditVouchers instance
+	 * @returns {SiteCreditVouchers} SiteCreditVouchers instance
 	 */
 	creditVouchers() {
 		return new SiteCreditVouchers( this._id, this.wpcom );
@@ -225,7 +225,7 @@ class Site {
 	 * Create a `SitePostType` instance
 	 *
 	 * @param {string} [slug] - post type slug
-	 * @return {SitePostType} SitePostType instance
+	 * @returns {SitePostType} SitePostType instance
 	 */
 	postType( slug ) {
 		return new SitePostType( slug, this._id, this.wpcom );
@@ -234,7 +234,7 @@ class Site {
 	/**
 	 * Create a `SiteSettings` instance
 	 *
-	 * @return {SiteSettings} SiteSettings instance
+	 * @returns {SiteSettings} SiteSettings instance
 	 */
 	settings() {
 		return new SiteSettings( this._id, this.wpcom );
@@ -243,7 +243,7 @@ class Site {
 	/**
 	 * Create a `SiteDomain` instance
 	 *
-	 * @return {SiteDomain} SiteDomain instance
+	 * @returns {SiteDomain} SiteDomain instance
 	 */
 	domain() {
 		return new SiteDomain( this._id, this.wpcom );
@@ -263,7 +263,7 @@ class Site {
 	 * @param {string} type - post type
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	postCounts( type = 'post', query, fn ) {
 		if ( 'function' === typeof query ) {
@@ -282,7 +282,7 @@ class Site {
 	 * @param {string} url - shortcode url
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	renderShortcode( url, query, fn ) {
 		if ( 'string' !== typeof url ) {
@@ -308,7 +308,7 @@ class Site {
 	 * @param {string} url - embed url
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	renderEmbed( url, query, fn ) {
 		if ( 'string' !== typeof url ) {
@@ -331,7 +331,7 @@ class Site {
 	 *
 	 * @param {string} domain - domain
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	statsReferrersSpamNew( domain, fn ) {
 		const path = `${ this.path }/stats/referrers/spam/new`;
@@ -343,7 +343,7 @@ class Site {
 	 *
 	 * @param {string} domain - domain
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	statsReferrersSpamDelete( domain, fn ) {
 		const path = `${ this.path }/stats/referrers/spam/delete`;
@@ -356,7 +356,7 @@ class Site {
 	 * @param {string} videoId - video id
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	statsVideo( videoId, query, fn ) {
 		const path = `${ this.path }/stats/video/${ videoId }`;
@@ -375,7 +375,7 @@ class Site {
 	 * @param {string} postId - post id
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	statsPostViews( postId, query, fn ) {
 		const path = `${ this.path }/stats/post/${ postId }`;
@@ -398,7 +398,7 @@ class Site {
 	 *      .site( 'my-blog.wordpress.com' )
 	 *      .wordAds();
 	 *
-	 * @return {SiteWordAds} SiteWordAds instance
+	 * @returns {SiteWordAds} SiteWordAds instance
 	 */
 	wordAds() {
 		return new SiteWordAds( this._id, this.wpcom );

@@ -4,7 +4,7 @@
  * @param {string} pid - post id
  * @param {string} sid - site id
  * @param {WPCOM} wpcom - wpcom instance
- * @return {null} null
+ * @returns {null} null
  */
 export default function Like( pid, sid, wpcom ) {
 	if ( ! sid ) {
@@ -41,7 +41,7 @@ Like.prototype.state = function( query, fn ) {
  *
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Like.prototype.add = function( query, fn ) {
 	var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/new';

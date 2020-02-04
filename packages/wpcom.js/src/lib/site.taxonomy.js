@@ -13,7 +13,7 @@ class SiteTaxonomy {
 	 * @param {string} taxonomy - taxonomy type
 	 * @param {string} siteId - site id
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {null} null
+	 * @returns {null} null
 	 */
 	constructor( taxonomy, siteId, wpcom ) {
 		if ( ! siteId ) {
@@ -40,7 +40,7 @@ class SiteTaxonomy {
 	 *
 	 * @param {object} [query] - query object
  	 * @param {Function} fn - callback function
- 	 * @return {Promise} Promise
+ 	 * @returns {Promise} Promise
  	 */
 	termsList( query, fn ) {
 		const termsPath = `${ this._rootPath }/terms`;
@@ -51,7 +51,7 @@ class SiteTaxonomy {
 	 * Return `Term` instance
 	 *
 	 * @param {string} [term] - term slug
-	 * @return {Term} Term instance
+	 * @returns {Term} Term instance
 	 */
 	term( term ) {
 		return new SiteTaxonomyTerm( term, this._taxonomy, this._siteId, this.wpcom );

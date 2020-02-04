@@ -11,7 +11,7 @@ class SitePlugin {
 	 * @param {string} [slug] - the plugin slug
 	 * @param {number|string} sid - site identifier
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {undefined} undefined
+	 * @returns {undefined} undefined
 	 */
 	constructor( slug, sid, wpcom ) {
 		if ( ! ( this instanceof SitePlugin ) ) {
@@ -35,7 +35,7 @@ class SitePlugin {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	get( query, fn ) {
 		return this.wpcom.req.get( this.pluginPath, query, fn );
@@ -47,7 +47,7 @@ class SitePlugin {
 	 * @param {object} [query] - query object parameter
 	 * @param {object} body - plugin body object
 	 * @param {Function} [fn] - callback function
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	update( query, body, fn ) {
 		return this.wpcom.req.put( this.pluginPath, query, body, fn );
@@ -58,7 +58,7 @@ class SitePlugin {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	updateVersion( query, fn ) {
 		return this.wpcom.req.put( `${ this.pluginPath }/update`, query, fn );
@@ -69,7 +69,7 @@ class SitePlugin {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	install( query, fn ) {
 		return this.wpcom.req.put( `${ this.pluginPath }/install`, query, fn );
@@ -80,7 +80,7 @@ class SitePlugin {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	delete( query, fn ) {
 		return this.wpcom.req.put( `${ this.pluginPath }/delete`, query, fn );
@@ -92,7 +92,7 @@ class SitePlugin {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	activate( query, fn ) {
 		return this.update( query, { active: true }, fn );
@@ -104,7 +104,7 @@ class SitePlugin {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	deactivate( query, fn ) {
 		return this.update( query, { active: false }, fn );
@@ -116,7 +116,7 @@ class SitePlugin {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	enableAutoupdate( query, fn ) {
 		return this.update( query, { autoupdate: true }, fn );
@@ -128,7 +128,7 @@ class SitePlugin {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	disableAutoupdate( query, fn ) {
 		return this.update( query, { autoupdate: false }, fn );

@@ -13,7 +13,7 @@ const debug = debugFactory( 'wpcom:runtime' );
  *
  * @param {object} methodParams - method methodParams
  * @param {Function} buildPath - function called to build method path
- * @return {string} method path
+ * @returns {string} method path
  */
 const methodBuilder = ( methodParams, buildPath ) => {
 	return function( query, fn ) {

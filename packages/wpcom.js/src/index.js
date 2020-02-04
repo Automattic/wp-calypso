@@ -35,7 +35,7 @@ const DEFAULT_ASYNC_TIMEOUT = 30000;
  *
  * @param {string} [token] - OAuth API access token
  * @param {Function} [reqHandler] - function Request Handler
- * @return {WPCOM} wpcom instance
+ * @returns {WPCOM} wpcom instance
  */
 export default function WPCOM( token, reqHandler ) {
 	if ( ! ( this instanceof WPCOM ) ) {
@@ -84,7 +84,7 @@ export default function WPCOM( token, reqHandler ) {
 /**
  * Return `Marketing` object instance
  *
- * @return {Marketing} Marketing instance
+ * @returns {Marketing} Marketing instance
  */
 WPCOM.prototype.marketing = function() {
 	return new Marketing( this );
@@ -93,7 +93,7 @@ WPCOM.prototype.marketing = function() {
 /**
  * Return `Me` object instance
  *
- * @return {Me} Me instance
+ * @returns {Me} Me instance
  */
 WPCOM.prototype.me = function() {
 	return new Me( this );
@@ -102,7 +102,7 @@ WPCOM.prototype.me = function() {
 /**
  * Return `Domains` object instance
  *
- * @return {Domains} Domains instance
+ * @returns {Domains} Domains instance
  */
 WPCOM.prototype.domains = function() {
 	return new Domains( this );
@@ -112,7 +112,7 @@ WPCOM.prototype.domains = function() {
  * Return `Domain` object instance
  *
  * @param {string} domainId - domain identifier
- * @return {Domain} Domain instance
+ * @returns {Domain} Domain instance
  */
 WPCOM.prototype.domain = function( domainId ) {
 	return new Domain( domainId, this );
@@ -122,7 +122,7 @@ WPCOM.prototype.domain = function( domainId ) {
  * Return `Site` object instance
  *
  * @param {string} id - site identifier
- * @return {Site} Site instance
+ * @returns {Site} Site instance
  */
 WPCOM.prototype.site = function( id ) {
 	return new Site( id, this );
@@ -131,7 +131,7 @@ WPCOM.prototype.site = function( id ) {
 /**
  * Return `Users` object instance
  *
- * @return {Users} Users instance
+ * @returns {Users} Users instance
  */
 WPCOM.prototype.users = function() {
 	return new Users( this );
@@ -140,7 +140,7 @@ WPCOM.prototype.users = function() {
 /**
  * Return `Plans` object instance
  *
- * @return {Plans} Plans instance
+ * @returns {Plans} Plans instance
  */
 WPCOM.prototype.plans = function() {
 	return new Plans( this );
@@ -149,7 +149,7 @@ WPCOM.prototype.plans = function() {
 /**
  * Return `Batch` object instance
  *
- * @return {Batch} Batch instance
+ * @returns {Batch} Batch instance
  */
 WPCOM.prototype.batch = function() {
 	return new Batch( this );
@@ -160,7 +160,7 @@ WPCOM.prototype.batch = function() {
  *
  * @param {object} [query] - query object
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 WPCOM.prototype.freshlyPressed = function( query, fn ) {
 	return this.req.get( '/freshly-pressed', query, fn );
@@ -206,7 +206,7 @@ if ( ! Promise.prototype.timeout ) {
 	 * the deadline, the timer is cancelled.
 	 *
 	 * @param {number} delay how many ms to wait
-	 * @return {Promise} promise
+	 * @returns {Promise} promise
 	 */
 	Promise.prototype.timeout = function( delay = DEFAULT_ASYNC_TIMEOUT ) {
 		let cancelTimeout, timer, timeout;

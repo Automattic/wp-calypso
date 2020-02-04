@@ -4,7 +4,7 @@
  *
  * @param {string} sid - site id
  * @param {WPCOM} wpcom - wpcom instance
- * @return {null} null
+ * @returns {null} null
  */
 class SiteCreditVouchers {
 	constructor( sid, wpcom ) {
@@ -26,7 +26,7 @@ class SiteCreditVouchers {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	list( query = {}, fn ) {
 		query.apiNamespace = 'wpcom/v2';
@@ -39,7 +39,7 @@ class SiteCreditVouchers {
 	 * @param {string} serviceType - service type
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	get( serviceType, query = {}, fn ) {
 		query.apiNamespace = 'wpcom/v2';
@@ -52,7 +52,7 @@ class SiteCreditVouchers {
 	 * @param {string} serviceType - service type
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	assign( serviceType, query = {}, fn ) {
 		query.apiNamespace = 'wpcom/v2';

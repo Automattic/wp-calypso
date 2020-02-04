@@ -11,7 +11,7 @@ import MeTwoStep from './me.two-step';
  * Create `Me` instance
  *
  * @param {WPCOM} wpcom - wpcom instance
- * @return {null} null
+ * @returns {null} null
  */
 export default function Me( wpcom ) {
 	if ( ! ( this instanceof Me ) ) {
@@ -26,7 +26,7 @@ export default function Me( wpcom ) {
  *
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Me.prototype.get = function( query, fn ) {
 	return this.wpcom.req.get( '/me', query, fn );
@@ -37,7 +37,7 @@ Me.prototype.get = function( query, fn ) {
  *
  * @param {object} [query] - query object parameter
  * @param {Function} [fn] - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Me.prototype.billingHistory = function( query, fn ) {
 	return this.wpcom.req.get( '/me/billing-history', query, fn );
@@ -56,7 +56,7 @@ Me.prototype.billingHistory = function( query, fn ) {
  *
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Me.prototype.postsList = function( query, fn ) {
 	return this.wpcom.req.get( '/me/posts', query, fn );
@@ -67,7 +67,7 @@ Me.prototype.postsList = function( query, fn ) {
  *
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Me.prototype.sites = function( query, fn ) {
 	return this.wpcom.req.get( '/me/sites', query, fn );
@@ -78,7 +78,7 @@ Me.prototype.sites = function( query, fn ) {
  *
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Me.prototype.likes = function( query, fn ) {
 	return this.wpcom.req.get( '/me/likes', query, fn );
@@ -89,7 +89,7 @@ Me.prototype.likes = function( query, fn ) {
  *
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Me.prototype.connectedApps = function( query, fn ) {
 	return this.wpcom.req.get( '/me/connected-applications', query, fn );
@@ -101,7 +101,7 @@ Me.prototype.connectedApps = function( query, fn ) {
  *
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Me.prototype.keyringConnections = function( query, fn ) {
 	return this.wpcom.req.get( '/me/keyring-connections', query, fn );
@@ -113,7 +113,7 @@ Me.prototype.keyringConnections = function( query, fn ) {
  *
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Me.prototype.publicizeConnections = function( query, fn ) {
 	return this.wpcom.req.get( '/me/publicize-connections', query, fn );
@@ -122,7 +122,7 @@ Me.prototype.publicizeConnections = function( query, fn ) {
 /**
  * Return a `MeSettings` instance.
  *
- * @return {MeSettings} MeSettings instance
+ * @returns {MeSettings} MeSettings instance
  */
 Me.prototype.settings = function() {
 	return new MeSettings( this.wpcom );
@@ -132,7 +132,7 @@ Me.prototype.settings = function() {
  * Return a `MeConnectedApp` instance.
  *
  * @param {string} id - app id
- * @return {ConnectedApp} Me ConnectedApp instance
+ * @returns {ConnectedApp} Me ConnectedApp instance
  */
 Me.prototype.connectedApp = function( id ) {
 	return new MeConnectedApp( id, this.wpcom );
@@ -142,7 +142,7 @@ Me.prototype.connectedApp = function( id ) {
  * Return a `MePublicizeConnection` instance.
  *
  * @param {string} id - connection id
- * @return {MePublicizeConnection} MeSettings instance
+ * @returns {MePublicizeConnection} MeSettings instance
  */
 Me.prototype.publicizeConnection = function( id ) {
 	return new MePublicizeConnection( id, this.wpcom );
@@ -151,7 +151,7 @@ Me.prototype.publicizeConnection = function( id ) {
 /**
  * Return a `MeTwoStep` instance.
  *
- * @return {MeTwoStep} MeTwoStep instance
+ * @returns {MeTwoStep} MeTwoStep instance
  */
 Me.prototype.twoStep = function() {
 	return new MeTwoStep( this.wpcom );
@@ -161,7 +161,7 @@ Me.prototype.twoStep = function() {
  * Return a `MeKeyringConnection` instance.
  *
  * @param {string} id - connection id
- * @return {MeKeyringConnection} MeKeyringConnection instance
+ * @returns {MeKeyringConnection} MeKeyringConnection instance
  */
 Me.prototype.keyringConnection = function( id ) {
 	return new MeKeyringConnection( id, this.wpcom );

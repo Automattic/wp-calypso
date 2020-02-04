@@ -7,7 +7,7 @@ const root = '/me/settings/profile-links';
  * `ProfileLinks` constructor.
  *
  * @param {WPCOM} wpcom - wpcom instance
- * @return {null} null
+ * @returns {null} null
  */
 export default function ProfileLinks( wpcom ) {
 	if ( ! ( this instanceof ProfileLinks ) ) {
@@ -32,7 +32,7 @@ export default function ProfileLinks( wpcom ) {
  *
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 ProfileLinks.prototype.get = function( query, fn ) {
 	return this.wpcom.req.get( root, query, fn );
@@ -60,7 +60,7 @@ ProfileLinks.prototype.mine = ProfileLinks.prototype.get;
  * @param {Array|object} links - profile links
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 ProfileLinks.prototype.add = function( links, query, fn ) {
 	// query object is optional
@@ -97,7 +97,7 @@ ProfileLinks.prototype.add = function( links, query, fn ) {
  * @param {string} slug - the URL of the profile link
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 ProfileLinks.prototype.del = function( slug, query, fn ) {
 	let path = root + '/' + slug + '/delete';

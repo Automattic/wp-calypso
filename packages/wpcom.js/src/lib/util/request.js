@@ -18,7 +18,7 @@ export default function Req( wpcom ) {
  * @param {object|string} params - params object
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Req.prototype.get = function( params, query, fn ) {
 	// `query` is optional
@@ -65,7 +65,7 @@ Req.prototype.post = Req.prototype.put = function( params, query, body, fn ) {
  * @param {object|string} params - params object
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Req.prototype.del = function( params, query, fn ) {
 	if ( 'function' === typeof query ) {

@@ -11,7 +11,7 @@ class SiteWPComPlugin {
 	 * @param {string} [slug] - the plugin slug
 	 * @param {number|string} sid - site identifier
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {undefined} undefined
+	 * @returns {undefined} undefined
 	 */
 	constructor( slug, sid, wpcom ) {
 		if ( ! ( this instanceof SiteWPComPlugin ) ) {
@@ -36,7 +36,7 @@ class SiteWPComPlugin {
 	 * @param {object} [query] - query object parameter
 	 * @param {object} body - plugin body object
 	 * @param {Function} [fn] - callback function
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	update( query, body, fn ) {
 		return this.wpcom.req.put( this.pluginPath, query, body, fn );
@@ -48,7 +48,7 @@ class SiteWPComPlugin {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	activate( query, fn ) {
 		return this.update( query, { active: true }, fn );
@@ -60,7 +60,7 @@ class SiteWPComPlugin {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	deactivate( query, fn ) {
 		return this.update( query, { active: false }, fn );

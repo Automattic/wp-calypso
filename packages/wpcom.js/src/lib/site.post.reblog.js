@@ -4,7 +4,7 @@
  * @param {string} pid post id
  * @param {string} sid site id
  * @param {WPCOM} wpcom - wpcom instance
- * @return {null} null
+ * @returns {null} null
  */
 export default function Reblog( pid, sid, wpcom ) {
 	if ( ! sid ) {
@@ -29,7 +29,7 @@ export default function Reblog( pid, sid, wpcom ) {
  *
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Reblog.prototype.mine =
 Reblog.prototype.state = function( query, fn ) {
@@ -43,7 +43,7 @@ Reblog.prototype.state = function( query, fn ) {
  * @param {object} [query] - query object parameter
  * @param {object} body - body object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Reblog.prototype.add = function( query, body, fn ) {
 	if ( 'function' === typeof body ) {
@@ -67,7 +67,7 @@ Reblog.prototype.add = function( query, body, fn ) {
  * @param {number|string} dest site id destination
  * @param {string} [note] - post reblog note
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Reblog.prototype.to = function( dest, note, fn ) {
 	if ( undefined === fn ) {

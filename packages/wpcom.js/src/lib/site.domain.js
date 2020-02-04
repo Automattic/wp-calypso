@@ -9,7 +9,7 @@ class SiteDomain {
 	 *
 	 * @param {number|string} id - site identifier
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {undefined} undefined
+	 * @returns {undefined} undefined
 	 */
 	constructor( id, wpcom ) {
 		if ( ! ( this instanceof SiteDomain ) ) {
@@ -25,7 +25,7 @@ class SiteDomain {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	getPrimary( query, fn ) {
 		return this.wpcom.req.get( `${this.path}/primary`, query, fn );
@@ -36,7 +36,7 @@ class SiteDomain {
 	 *
 	 * @param {string} domain - domain to set
 	 * @param {Function} [fn] - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	setPrimary( domain, fn ) {
 		return this.wpcom.req.put( `${this.path}/primary`, {}, { domain }, fn );
@@ -47,7 +47,7 @@ class SiteDomain {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	getRedirect( query, fn ) {
 		return this.wpcom.req.get( `${this.path}/redirect`, query, fn );
@@ -58,7 +58,7 @@ class SiteDomain {
 	 *
 	 * @param {string|object} location - location to set
 	 * @param {Function} [fn] - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	setRedirect( location, fn ) {
 		if ( typeof location === 'string' ) {

@@ -5,7 +5,7 @@ class Domains {
 	 * `Domains` constructor.
 	 *
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {undefined} undefined
+	 * @returns {undefined} undefined
 	 */
 	constructor( wpcom ) {
 		if ( ! ( this instanceof Domains ) ) {
@@ -20,7 +20,7 @@ class Domains {
 	 *
 	 * @param {string|object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	suggestions( query, fn ) {
 		if ( 'string' === typeof query ) {
@@ -34,7 +34,7 @@ class Domains {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	suggestionsExamples( query, fn ) {
 		return this.wpcom.req.get( root + 'suggestions/examples', query, fn );
@@ -45,7 +45,7 @@ class Domains {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	supportedCountries( query, fn ) {
 		return this.wpcom.req.get( root + 'supported-countries', query, fn );
@@ -57,7 +57,7 @@ class Domains {
 	 * @param {string} countryCode - country code ISO 3166-1 alpha-2 identifier
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	supportedStates( countryCode, query, fn ) {
 		var path = root + 'supported-states/' + countryCode;

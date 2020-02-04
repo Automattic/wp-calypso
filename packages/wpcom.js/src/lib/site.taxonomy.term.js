@@ -10,7 +10,7 @@ class SiteTaxonomyTerm {
 	 * @param {string} taxonomy - taxonomy type
 	 * @param {string} siteId - site id
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {null} null
+	 * @returns {null} null
 	 */
 	constructor( term, taxonomy, siteId, wpcom ) {
 		if ( ! siteId ) {
@@ -38,7 +38,7 @@ class SiteTaxonomyTerm {
 	 *
 	 * @param {object} [query] - query parameters
  	 * @param {Function} fn - callback function
- 	 * @return {Promise} Promise
+ 	 * @returns {Promise} Promise
 	 */
 	get( query, fn ) {
 		if ( ! this._term ) {
@@ -60,7 +60,7 @@ class SiteTaxonomyTerm {
 	 *
 	 * @param {object} [params] - term parameters
  	 * @param {Function} fn - callback function
- 	 * @return {Promise} Promise
+ 	 * @returns {Promise} Promise
 	 */
 	add( params, fn ) {
 		if ( ! params || ! params.name ) {
@@ -76,7 +76,7 @@ class SiteTaxonomyTerm {
 	 * Delete Term
 	 *
  	 * @param {Function} fn - callback function
- 	 * @return {Promise} Promise
+ 	 * @returns {Promise} Promise
 	 */
 	delete( fn ) {
 		if ( ! this._term ) {
@@ -93,7 +93,7 @@ class SiteTaxonomyTerm {
 	 *
 	 * @param {object} [params] - term parameters
  	 * @param {Function} fn - callback function
- 	 * @return {Promise} Promise
+ 	 * @returns {Promise} Promise
 	 */
 	update( params, fn ) {
 		if ( ! this._term ) {

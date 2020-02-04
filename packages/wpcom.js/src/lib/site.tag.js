@@ -4,7 +4,7 @@
  * @param {string} [slug] - tag slug
  * @param {string} sid - site id
  * @param {WPCOM} wpcom - wpcom instance
- * @return {null} null
+ * @returns {null} null
  */
 export default function Tag( slug, sid, wpcom ) {
 	if ( ! sid ) {
@@ -34,7 +34,7 @@ Tag.prototype.slug = function( slug ) {
  *
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Tag.prototype.get = function( query, fn ) {
 	var path = '/sites/' + this._sid + '/tags/slug:' + this._slug;
@@ -47,7 +47,7 @@ Tag.prototype.get = function( query, fn ) {
  * @param {object} [query] - query object parameter
  * @param {object} body - body object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Tag.prototype.add = function( query, body, fn ) {
 	var path = '/sites/' + this._sid + '/tags/new';
@@ -60,7 +60,7 @@ Tag.prototype.add = function( query, body, fn ) {
  * @param {object} [query] - query object parameter
  * @param {object} body - body object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Tag.prototype.update = function( query, body, fn ) {
 	var path = '/sites/' + this._sid + '/tags/slug:' + this._slug;
@@ -72,7 +72,7 @@ Tag.prototype.update = function( query, body, fn ) {
  *
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Tag.prototype.delete = Tag.prototype.del = function( query, fn ) {
 	var path = '/sites/' + this._sid + '/tags/slug:' + this._slug + '/delete';

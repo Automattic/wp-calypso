@@ -25,7 +25,7 @@ class SitePost {
 	 * @param {string} id - post id
 	 * @param {string} sid site id
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {null} null
+	 * @returns {null} null
 	 */
 	constructor( id, sid, wpcom ) {
 		if ( ! ( this instanceof SitePost ) ) {
@@ -67,7 +67,7 @@ class SitePost {
 	/**
 	 * Get post url path
 	 *
-	 * @return {string} post path
+	 * @returns {string} post path
 	 */
 
 	getPostPath() {
@@ -79,7 +79,7 @@ class SitePost {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	get( query, fn ) {
 		if ( ! this._id && this._slug ) {
@@ -94,7 +94,7 @@ class SitePost {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	getBySlug( query, fn ) {
 		return this.wpcom.req.get( `${this.path}/slug:${this._slug}`, query, fn );
@@ -106,7 +106,7 @@ class SitePost {
 	 * @param {object} [query] - query object parameter
 	 * @param {object} body - body object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	add( query, body, fn ) {
 		if ( undefined === fn ) {
@@ -150,7 +150,7 @@ class SitePost {
 	 * @param {object} [query] - query object parameter
 	 * @param {object} body - body object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	update( query, body, fn ) {
 		return this.wpcom.req.put( this.getPostPath(), query, body, fn );
@@ -161,7 +161,7 @@ class SitePost {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	delete( query, fn ) {
 		const path = `${this.getPostPath()}/delete`;
@@ -173,7 +173,7 @@ class SitePost {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	del( query, fn ) {
 		return this.delete( query, fn );
@@ -184,7 +184,7 @@ class SitePost {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	restore( query, fn ) {
 		return this.wpcom.req.put( `${this.getPostPath()}/restore`, query, null, fn );
@@ -195,7 +195,7 @@ class SitePost {
 	 *
 	 * @param {object} body - body object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	related( body, fn ) {
 		return this.wpcom.req.put( `${this.getPostPath()}/related`, body, null, fn );
@@ -205,7 +205,7 @@ class SitePost {
 	 * Create a `Comment` instance
 	 *
 	 * @param {string} [cid] - comment id
-	 * @return {Comment} Comment instance
+	 * @returns {Comment} Comment instance
 	 */
 	comment( cid ) {
 		return new Comment( cid, this._id, this._sid, this.wpcom );
@@ -216,7 +216,7 @@ class SitePost {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	comments( query, fn ) {
 		var comment = new Comment( null, this._id, this._sid, this.wpcom );
@@ -226,7 +226,7 @@ class SitePost {
 	/**
 	 * Create a `Like` instance
 	 *
-	 * @return {Like} Like instance
+	 * @returns {Like} Like instance
 	 */
 	like() {
 		return new Like( this._id, this._sid, this.wpcom );
@@ -235,7 +235,7 @@ class SitePost {
 	/**
 	 * Create a `Reblog` instance
 	 *
-	 * @return {Reblog} Reblog instance
+	 * @returns {Reblog} Reblog instance
 	 */
 	reblog() {
 		return new Reblog( this._id, this._sid, this.wpcom );
@@ -249,7 +249,7 @@ class SitePost {
 	 *    var post = wpcom.site( 'en.blog.wordpress.com' ).post( 1234 );
 	 *    var subs = post.subscriber();
 	 *
-	 * @return {Subscriber} Subscriber instance
+	 * @returns {Subscriber} Subscriber instance
 	 */
 	subscriber() {
 		return new Subscriber( this._id, this._sid, this.wpcom );

@@ -11,7 +11,7 @@ export default class MeTwoStep {
 	 * `MeTwoStep` constructor.
 	 *
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {null} null
+	 * @returns {null} null
 	 */
 	constructor( wpcom ) {
 		if ( ! ( this instanceof MeTwoStep ) ) {
@@ -25,7 +25,7 @@ export default class MeTwoStep {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	get( query, fn ) {
 		return this.wpcom.req.get( root, query, fn );
@@ -34,7 +34,7 @@ export default class MeTwoStep {
 	/**
 	 * Return a `MeTwoStepSMS` instance.
 	 *
-	 * @return {MeTwoStepSMS} MeTwoStepSMS instance
+	 * @returns {MeTwoStepSMS} MeTwoStepSMS instance
 	 */
 	sms() {
 		return new MeTwoStepSMS( this.wpcom );

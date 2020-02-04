@@ -7,7 +7,7 @@ class DomainEmail {
 	 * @param {string} [email] - email
 	 * @param {string} domainId - domain identifier
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {undefined} undefined
+	 * @returns {undefined} undefined
 	 */
 	constructor( email, domainId, wpcom ) {
 		if ( ! ( this instanceof DomainEmail ) ) {
@@ -29,7 +29,7 @@ class DomainEmail {
 	 * @param {string} destination - the email address to forward email to.
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	forward( destination, query, fn ) {
 		let body = { destination: destination };
@@ -42,7 +42,7 @@ class DomainEmail {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 
 	add( mailbox, destination, query, fn ) {
@@ -65,7 +65,7 @@ class DomainEmail {
 	 * @param {string} mailbox - mailbox to alter
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	delete( mailbox, query, fn ) {
 		return this.wpcom.req.del( this._subpath + mailbox + '/delete', query, fn );

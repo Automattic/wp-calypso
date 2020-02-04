@@ -7,7 +7,7 @@ export default class KeyringConnection {
 	 *
 	 * @param {string} keyId - the connection ID to take action on.
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {null} null
+	 * @returns {null} null
 	 */
 	constructor( keyId, wpcom ) {
 		if ( ! ( this instanceof KeyringConnection ) ) {
@@ -22,7 +22,7 @@ export default class KeyringConnection {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	get( query, fn ) {
 		return this.wpcom.req.get( root + this._id, query, fn );
@@ -34,7 +34,7 @@ export default class KeyringConnection {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	delete( query, fn ) {
 		return this.wpcom.req.del( root + this._id + '/delete', query, fn );

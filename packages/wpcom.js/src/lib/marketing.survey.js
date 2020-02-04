@@ -10,7 +10,7 @@ export default class MarketingSurvey {
 	 * @param {string} id - survey identification
 	 * @param {string} [siteId] - site identification
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {undefined} undefined
+	 * @returns {undefined} undefined
 	 */
 	constructor( id, siteId, wpcom ) {
 		if ( ! id ) {
@@ -61,7 +61,7 @@ export default class MarketingSurvey {
 	 * @param {object} [query] - query object parameter
 	 * @param {object} [body] - body object parameter
 	 * @param {Function} [fn] - callback function
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	submit( query = {}, body = {}, fn ) {
 		body.survey_id = this._id;

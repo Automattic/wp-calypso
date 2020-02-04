@@ -6,7 +6,7 @@ export default class PublicizeConnection {
 	*
 	* @param {string} connectionId - application identifier
 	* @param {WPCOM} wpcom - wpcom instance
-	* @return {null} null
+	* @returns {null} null
 	*/
 	constructor( connectionId, wpcom ) {
 		if ( ! ( this instanceof PublicizeConnection ) ) {
@@ -21,7 +21,7 @@ export default class PublicizeConnection {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	get( query, fn ) {
 		return this.wpcom.req.get( root + this._id, query, fn );
@@ -33,7 +33,7 @@ export default class PublicizeConnection {
 	 * @param {object} [query] - query object parameter
 	 * @param {object} body - body object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	add( query, body, fn ) {
 		return this.wpcom.req.post( root + 'new', query, body, fn );
@@ -45,7 +45,7 @@ export default class PublicizeConnection {
 	 * @param {object} [query] - query object parameter
 	 * @param {object} body - body object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	update( query, body, fn ) {
 		return this.wpcom.req.put( root + this._id, query, body, fn );
@@ -57,7 +57,7 @@ export default class PublicizeConnection {
 	*
 	* @param {object} [query] - query object parameter
 	* @param {Function} fn - callback function
-	* @return {Function} request handler
+	* @returns {Function} request handler
 	*/
 	delete( query, fn ) {
 		return this.wpcom.req.del( root + this._id + '/delete', query, fn );

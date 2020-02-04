@@ -5,7 +5,7 @@ export default class Plans {
 	 * `Plans` constructor.
 	 *
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {undefined} undefined
+	 * @returns {undefined} undefined
 	 */
 	constructor( wpcom ) {
 		if ( ! ( this instanceof Plans ) ) {
@@ -19,7 +19,7 @@ export default class Plans {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	list( query, fn ) {
 		return this.wpcom.req.get( root, query, fn );
@@ -30,7 +30,7 @@ export default class Plans {
 	 *
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	features( query, fn ) {
 		return this.wpcom.req.get( `${ root }/features`, query, fn );

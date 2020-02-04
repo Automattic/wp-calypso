@@ -4,7 +4,7 @@
  * @param {string} cid comment id
  * @param {string} sid site id
  * @param {WPCOM} wpcom - wpcom instance
- * @return {null} null
+ * @returns {null} null
  */
 export default function CommentLike( cid, sid, wpcom ) {
 	if ( ! sid ) {
@@ -29,7 +29,7 @@ export default function CommentLike( cid, sid, wpcom ) {
  *
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 CommentLike.prototype.mine =
 CommentLike.prototype.state = function( query, fn ) {
@@ -42,7 +42,7 @@ CommentLike.prototype.state = function( query, fn ) {
  *
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 CommentLike.prototype.add = function( query, fn ) {
 	var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/new';
@@ -54,7 +54,7 @@ CommentLike.prototype.add = function( query, fn ) {
  *
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 CommentLike.prototype.del =
 CommentLike.prototype.delete = function( query, fn ) {

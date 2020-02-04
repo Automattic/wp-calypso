@@ -3,7 +3,7 @@
  *
  * @param {string} sid - site identifier
  * @param {WPCOM} wpcom - wpcom instance
- * @return {null} null
+ * @returns {null} null
  */
 export default function SiteWordAdsSettings( sid, wpcom ) {
 	if ( ! ( this instanceof SiteWordAdsSettings ) ) {
@@ -29,7 +29,7 @@ export default function SiteWordAdsSettings( sid, wpcom ) {
  *
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 SiteWordAdsSettings.prototype.get = function( query, fn ) {
 	return this.wpcom.req.get( '/sites/' + this._sid + '/wordads/settings', query, fn );
@@ -53,7 +53,7 @@ SiteWordAdsSettings.prototype.get = function( query, fn ) {
  * @param {object} [query] - query object parameter
  * @param {object} body - body object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 SiteWordAdsSettings.prototype.update = function( query, body, fn ) {
 	var path = '/sites/' + this._sid + '/wordads/settings';
