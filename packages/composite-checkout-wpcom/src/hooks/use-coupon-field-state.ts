@@ -10,6 +10,7 @@ export type CouponFieldStateProps = {
 	isApplyButtonActive: boolean;
 	isFreshOrEdited: boolean;
 	setIsFreshOrEdited: ( boolean ) => void;
+	handleCouponSubmit: ( any ) => void; // TODO: fix this type
 };
 
 export default function useCouponFieldState( submitCoupon ): CouponFieldStateProps {
