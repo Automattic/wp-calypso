@@ -21,6 +21,9 @@ export default function Coupon( { id, className, disabled, submitCoupon, couponS
 	const [ isApplyButtonActive, setIsApplyButtonActive ] = useState( false );
 	const [ couponFieldValue, setCouponFieldValue ] = useState( '' );
 
+	// Used to hide error messages if the user has edited the form field
+	const [ isFreshOrEdited, setIsFreshOrEdited ] = useState( true );
+
 	if ( couponStatus === 'applied' ) {
 		return null;
 	}
@@ -30,7 +33,7 @@ export default function Coupon( { id, className, disabled, submitCoupon, couponS
 
 	const errorMessage =
 		// eslint-disable-next-line no-nested-ternary
-		couponStatus === 'invalid'
+		couponStatus === 'invalid' && ! isFreshOrEdited
 			? translate( "We couldn't find your coupon. Please check your code and try again." )
 			: couponStatus === 'rejected'
 			? translate( 'This coupon does not apply to any items in the cart.' )
@@ -40,6 +43,7 @@ export default function Coupon( { id, className, disabled, submitCoupon, couponS
 		<CouponWrapper
 			className={ joinClasses( [ className, 'coupon' ] ) }
 			onSubmit={ event => {
+				setIsFreshOrEdited( false );
 				handleFormSubmit( event, couponFieldValue, onEvent, submitCoupon );
 			} }
 		>
@@ -47,9 +51,10 @@ export default function Coupon( { id, className, disabled, submitCoupon, couponS
 				id={ id }
 				disabled={ disabled || isPending }
 				placeholder={ translate( 'Enter your coupon code' ) }
-				isError={ hasCouponError }
+				isError={ hasCouponError && ! isFreshOrEdited }
 				errorMessage={ errorMessage }
 				onChange={ input => {
+					setIsFreshOrEdited( true );
 					handleFieldInput( input, setCouponFieldValue, setIsApplyButtonActive );
 				} }
 			/>
