@@ -6,7 +6,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-// import './style.scss';
+import Spinner from 'components/spinner';
+import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export default function LoadingPlaceholder() {
@@ -30,6 +31,8 @@ export default function LoadingPlaceholder() {
 								<div className="placeholder placeholder-title wp-block editor-post-title__block">
 									Placeholder
 								</div>
+								<Spinner size={ 100 } />
+								<div className="editor-post-title__text">Your site is being created...</div>
 							</div>
 						</div>
 					</div>

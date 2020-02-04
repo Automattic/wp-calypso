@@ -1,0 +1,32 @@
+.editor__placeholder {
+    background: rgba( 100, 100, 100, 0.1 );
+    min-height: 500px;
+
+	.placeholder {
+        @include placeholder();
+        background-color: var( --color-primary-5 );
+		height: 16px;
+		border-radius: 8px;
+	}
+
+	.placeholder-site {
+		margin-left: 18px;
+	}
+
+	.placeholder-button {
+		width: 40px;
+		margin: 0 8px;
+	}
+
+	.placeholder-title {
+		height: 40px;
+		border-radius: 20px;
+		margin: 0 8px;
+	}
+
+	.editor-post-title__text {
+		margin-top: 20px;
+		text-align: center;
+		font-size: 2rem;
+	}
+}
