@@ -16,6 +16,7 @@ import StepperWizard from './stepper-wizard';
 import VerticalSelect from './vertical-select';
 import SignupForm from './signup-form';
 import SiteTitle from './site-title';
+import LoadingPlaceholder from './loading-placeholder';
 import { Attributes } from './types';
 import { Step } from '../steps';
 import './style.scss';
@@ -73,6 +74,9 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 				</Route>
 				<Route exact path={ Step.Signup }>
 					<SignupForm />
+				</Route>
+				<Route exact path={ Step.SiteLoading }>
+					<LoadingPlaceholder />
 				</Route>
 			</Switch>
 		</>
