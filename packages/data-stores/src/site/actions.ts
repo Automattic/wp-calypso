@@ -25,11 +25,11 @@ export const receiveNewSiteFailed = ( error: NewSiteErrorResponse ) => ( {
 export function* createSite( params: CreateSiteParams ) {
 	yield fetchNewSite();
 	try {
-		const newUser = yield {
+		const newSite = yield {
 			type: ActionType.CREATE_SITE as const,
 			params,
 		};
-		return receiveNewSite( newUser );
+		return receiveNewSite( newSite );
 	} catch ( err ) {
 		return receiveNewSiteFailed( err );
 	}
