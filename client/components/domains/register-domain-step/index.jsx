@@ -380,11 +380,7 @@ class RegisterDomainStep extends React.Component {
 					suggestions.unshift( { is_placeholder: true } );
 				}
 			} else if ( ! isEmpty( this.state.subdomainSearchResults ) ) {
-				if ( this.props.includeDotBlogSubdomain && this.state.subdomainSearchResults.length > 1 ) {
-					// Let's put the .blog subdomain first
-					suggestions.unshift( this.state.subdomainSearchResults[ 1 ] );
-				}
-				suggestions.unshift( this.state.subdomainSearchResults[ 0 ] );
+				suggestions.unshift( ...this.state.subdomainSearchResults );
 			}
 		}
 		return suggestions;
