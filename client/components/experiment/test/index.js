@@ -51,8 +51,8 @@ describe( 'Experiment Component', () => {
 		expect( container ).toMatchSnapshot();
 	} );
 
-	test( 'renders a default variation by name if loaded', () => {
-		const { container } = testComponent( createState( 'a', false ) );
+	test( 'renders a default variation if loaded', () => {
+		const { container } = testComponent( createState( null, false ) );
 		expect( container ).toMatchSnapshot();
 	} );
 
