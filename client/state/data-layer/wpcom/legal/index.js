@@ -20,11 +20,12 @@ const requestLegalData = action => {
 
 const storeLegalData = ( action, legalData ) => setLegalData( legalData );
 
-const formatLegalData = ( { tos: { accepted, effective_date } } ) => {
+const formatLegalData = ( { tos: { accepted, active_date, display_prompt } } ) => {
 	return {
 		tos: {
 			accepted,
-			effectiveDate: effective_date,
+			activeDate: active_date,
+			displayPrompt: display_prompt,
 		},
 	};
 };
