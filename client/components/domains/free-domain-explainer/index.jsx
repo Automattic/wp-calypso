@@ -40,7 +40,6 @@ class FreeDomainExplainer extends React.Component {
 							borderless
 							className="free-domain-explainer__subtitle-link"
 							onClick={ this.handleClick }
-							href
 						>
 							{ translate( 'Review our plans to get started' ) } &raquo;
 						</Button>
