@@ -57,12 +57,11 @@ export default function WPCheckout( {
 	renderDomainContactFields,
 } ) {
 	const translate = useTranslate();
-	const couponFieldStateProps = useCouponFieldState();
+	const couponFieldStateProps = useCouponFieldState( submitCoupon );
 
 	const ReviewContent = () => (
 		<WPCheckoutOrderReview
 			removeItem={ removeItem }
-			submitCoupon={ submitCoupon }
 			couponStatus={ couponStatus }
 			couponFieldStateProps={ couponFieldStateProps }
 			onChangePlanLength={ changePlanLength }
@@ -87,7 +86,6 @@ export default function WPCheckout( {
 			completeStepContent: (
 				<WPCheckoutOrderSummary
 					siteUrl={ siteUrl }
-					submitCoupon={ submitCoupon }
 					couponStatus={ couponStatus }
 					couponFieldStateProps={ couponFieldStateProps }
 				/>

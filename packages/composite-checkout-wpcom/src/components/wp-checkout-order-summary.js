@@ -19,7 +19,7 @@ import Button from './button';
 import Coupon from './coupon';
 import { isLineItemADomain } from '../hooks/has-domains';
 
-export default function WPCheckoutOrderSummary( { siteUrl, submitCoupon, couponStatus } ) {
+export default function WPCheckoutOrderSummary( { siteUrl, couponStatus, couponFieldStateProps } ) {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
 	const [ items ] = useLineItems();
@@ -58,8 +58,8 @@ export default function WPCheckoutOrderSummary( { siteUrl, submitCoupon, couponS
 				<CouponField
 					id="order-summary-coupon"
 					disabled={ formStatus !== 'ready' }
-					submitCoupon={ submitCoupon }
 					couponStatus={ couponStatus }
+					couponFieldStateProps={ couponFieldStateProps }
 				/>
 			) }
 		</React.Fragment>

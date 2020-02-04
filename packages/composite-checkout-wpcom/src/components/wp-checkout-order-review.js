@@ -22,8 +22,8 @@ import {
 export default function WPCheckoutOrderReview( {
 	className,
 	removeItem,
-	submitCoupon,
 	couponStatus,
+	couponFieldStateProps,
 	siteUrl,
 } ) {
 	const [ items, total ] = useLineItems();
@@ -40,8 +40,8 @@ export default function WPCheckoutOrderReview( {
 			<CouponField
 				id="order-review-coupon"
 				disabled={ formStatus !== 'ready' }
-				submitCoupon={ submitCoupon }
 				couponStatus={ couponStatus }
+				couponFieldStateProps={ couponFieldStateProps }
 			/>
 
 			<WPOrderReviewSection>
