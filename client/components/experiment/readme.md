@@ -1,6 +1,8 @@
 # Experiment Component
 
-A handy helper component for experiments!
+A component for wrapping experiment variations and making the variations easier to reason about.
+You can use this component as a reference implementation in your own component or simply use this
+component to take advantage of current and future best-practices.
 
 Usage:
 
