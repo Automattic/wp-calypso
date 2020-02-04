@@ -23,7 +23,9 @@ import VerticalBackground from './vertical-background';
 import Link from '../components/link';
 
 const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
-	const { siteVertical, siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
+	const { siteVertical, siteTitle, selectedDesign } = useSelect( select =>
+		select( STORE_KEY ).getState()
+	);
 
 	return (
 		<>
@@ -57,6 +59,13 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 				</Route>
 				<Route exact path={ Step.DesignSelection }>
 					{ ! siteVertical ? <Redirect to={ Step.IntentGathering } /> : <DesignSelector /> }
+				</Route>
+				<Route exact path={ Step.PageSelection }>
+					{ ! selectedDesign ? (
+						<Redirect to={ Step.DesignSelection } />
+					) : (
+						<DesignSelector showPageSelector={ true } />
+					) }
 				</Route>
 				<Route exact path={ Step.Signup }>
 					<SignupForm />

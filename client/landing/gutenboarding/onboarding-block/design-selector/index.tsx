@@ -3,13 +3,15 @@
  */
 import { __ as NO__ } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
-import React, { useState, useLayoutEffect, useRef, FunctionComponent } from 'react';
+import React, { useLayoutEffect, useRef, FunctionComponent } from 'react';
 import classnames from 'classnames';
 import PageLayoutSelector from './page-layout-selector';
 import { partition } from 'lodash';
 import { Portal } from 'reakit/Portal';
 import { useDialogState, Dialog, DialogBackdrop } from 'reakit/Dialog';
 import { useSpring, animated } from 'react-spring';
+import { useHistory } from 'react-router-dom';
+import { Step } from '../../steps';
 
 /**
  * Internal dependencies
@@ -24,13 +26,15 @@ type Template = VerticalsTemplates.Template;
 
 const VERTICALS_TEMPLATES_STORE = VerticalsTemplates.register();
 
-const DesignSelector: FunctionComponent = () => {
+interface Props {
+	showPageSelector?: boolean;
+}
+
+const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false } ) => {
 	const { selectedDesign, siteVertical } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
-
-	const [ isPageSelectorOpen, setIsPageSelectorOpen ] = useState( false );
 
 	// @FIXME: If we don't have an ID (because we're dealing with a user-supplied vertical that
 	// WordPress.com doesn't know about), fall back to the 'm1' (Business) vertical. This is the
@@ -68,30 +72,32 @@ const DesignSelector: FunctionComponent = () => {
 
 	const designSelectorSpring = useSpring( {
 		transform: `translate3d( 0, ${
-			isPageSelectorOpen ? -selectionTransitionShift.current : 0
+			showPageSelector ? -selectionTransitionShift.current : 0
 		}px, 0 )`,
 	} );
 
 	const descriptionContainerSpring = useSpring( {
-		transform: `translate3d( 0, ${ isPageSelectorOpen ? '0' : '100vh' }, 0 )`,
-		visibility: isPageSelectorOpen ? 'visible' : 'hidden',
+		transform: `translate3d( 0, ${ showPageSelector ? '0' : '100vh' }, 0 )`,
+		visibility: showPageSelector ? 'visible' : 'hidden',
 	} );
 
 	const pageSelectorSpring = useSpring( {
-		transform: `translate3d( 0, ${ isPageSelectorOpen ? '0' : '100vh' }, 0 )`,
+		transform: `translate3d( 0, ${ showPageSelector ? '0' : '100vh' }, 0 )`,
 		onStart: () => {
-			isPageSelectorOpen && dialog.show();
+			showPageSelector && dialog.show();
 		},
 		onRest: () => {
-			! isPageSelectorOpen && dialog.hide();
+			! showPageSelector && dialog.hide();
 		},
 	} );
+
+	const history = useHistory();
 
 	return (
 		<animated.div style={ designSelectorSpring }>
 			<div
 				className="design-selector__header-container"
-				aria-hidden={ isPageSelectorOpen ? 'true' : undefined }
+				aria-hidden={ showPageSelector ? 'true' : undefined }
 				ref={ headingContainer }
 			>
 				<h1 className="design-selector__title">
@@ -103,7 +109,7 @@ const DesignSelector: FunctionComponent = () => {
 			</div>
 			<div
 				className={ classnames( 'design-selector__grid-container', {
-					'is-page-selector-open': isPageSelectorOpen,
+					'is-page-selector-open': showPageSelector,
 				} ) }
 			>
 				<div className="design-selector__grid">
@@ -119,13 +125,13 @@ const DesignSelector: FunctionComponent = () => {
 											gridColumn: descriptionOnRight ? 1 : 2,
 									  }
 									: {
-											visibility: isPageSelectorOpen ? 'hidden' : undefined,
+											visibility: showPageSelector ? 'hidden' : undefined,
 									  }
 							}
 							onClick={ () => {
 								window.scrollTo( 0, 0 );
 								setSelectedDesign( design );
-								setIsPageSelectorOpen( true );
+								history.push( Step.PageSelection );
 							} }
 						/>
 					) ) }
@@ -149,14 +155,16 @@ const DesignSelector: FunctionComponent = () => {
 
 			<Portal>
 				<DialogBackdrop
-					visible={ isPageSelectorOpen }
+					visible={ showPageSelector }
 					className="design-selector__page-layout-backdrop"
 				/>
 			</Portal>
 
 			<Dialog
 				{ ...dialog }
-				hide={ () => setIsPageSelectorOpen( false ) }
+				hide={ () => {
+					history.push( Step.DesignSelection );
+				} }
 				aria-labelledby="page-layout-selector__title"
 				hideOnClickOutside
 				hideOnEsc
