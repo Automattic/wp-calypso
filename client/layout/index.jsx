@@ -198,6 +198,9 @@ class Layout extends Component {
 				{ config.isEnabled( 'gdpr-banner' ) && (
 					<AsyncLoad require="blocks/gdpr-banner" placeholder={ null } />
 				) }
+				{ config.isEnabled( 'legal-updates-banner' ) && (
+					<AsyncLoad require="blocks/legal-updates-banner" placeholder={ null } />
+				) }
 			</div>
 		);
 	}

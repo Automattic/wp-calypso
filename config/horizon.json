@@ -50,6 +50,7 @@
 		"jetpack/happychat": true,
 		"jitms": true,
 		"keyboard-shortcuts": true,
+		"legal-updates-banner": false,
 		"login/native-login-links": true,
 		"login/wp-login": true,
 		"mailchimp": false,
