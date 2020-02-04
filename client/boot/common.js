@@ -48,6 +48,7 @@ import { getInitialState, persistOnChange, loadAllState } from 'state/initial-st
 import detectHistoryNavigation from 'lib/detect-history-navigation';
 import userFactory from 'lib/user';
 import { getUrlParts } from 'lib/url/url-parts';
+import { setStore } from 'state/redux-store';
 
 const debug = debugFactory( 'calypso' );
 
@@ -420,6 +421,7 @@ const boot = currentUser => {
 	loadAllState().then( () => {
 		const initialState = getInitialState( initialReducer );
 		const reduxStore = createReduxStore( initialState, initialReducer );
+		setStore( reduxStore );
 		persistOnChange( reduxStore );
 		setupLocale( currentUser.get(), reduxStore );
 		configureReduxStore( currentUser, reduxStore );
