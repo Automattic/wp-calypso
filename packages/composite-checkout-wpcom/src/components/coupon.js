@@ -1,12 +1,11 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React from 'react';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/core';
 import PropTypes from 'prop-types';
 import { useTranslate } from 'i18n-calypso';
-import { useEvents } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -15,14 +14,16 @@ import joinClasses from './join-classes';
 import Field from './field';
 import Button from './button';
 
-export default function Coupon( { id, className, disabled, submitCoupon, couponStatus } ) {
+export default function Coupon( { id, className, disabled, couponStatus, couponFieldStateProps } ) {
 	const translate = useTranslate();
-	const onEvent = useEvents();
-	const [ isApplyButtonActive, setIsApplyButtonActive ] = useState( false );
-	const [ couponFieldValue, setCouponFieldValue ] = useState( '' );
-
-	// Used to hide error messages if the user has edited the form field
-	const [ isFreshOrEdited, setIsFreshOrEdited ] = useState( true );
+	const {
+		couponFieldValue,
+		setCouponFieldValue,
+		isApplyButtonActive,
+		isFreshOrEdited,
+		setIsFreshOrEdited,
+		handleCouponSubmit,
+	} = couponFieldStateProps;
 
 	if ( couponStatus === 'applied' ) {
 		return null;
@@ -44,18 +45,19 @@ export default function Coupon( { id, className, disabled, submitCoupon, couponS
 			className={ joinClasses( [ className, 'coupon' ] ) }
 			onSubmit={ event => {
 				setIsFreshOrEdited( false );
-				handleFormSubmit( event, couponFieldValue, onEvent, submitCoupon );
+				handleCouponSubmit( event );
 			} }
 		>
 			<Field
 				id={ id }
+				value={ couponFieldValue }
 				disabled={ disabled || isPending }
 				placeholder={ translate( 'Enter your coupon code' ) }
 				isError={ hasCouponError && ! isFreshOrEdited }
 				errorMessage={ errorMessage }
 				onChange={ input => {
 					setIsFreshOrEdited( true );
-					handleFieldInput( input, setCouponFieldValue, setIsApplyButtonActive );
+					setCouponFieldValue( input );
 				} }
 			/>
 
@@ -101,37 +103,3 @@ const ApplyButton = styled( Button )`
 	animation-fill-mode: backwards;
 	margin: 0;
 `;
-
-function handleFieldInput( input, setCouponFieldValue, setIsApplyButtonActive ) {
-	if ( input.length > 0 ) {
-		setCouponFieldValue( input );
-		setIsApplyButtonActive( true );
-		return;
-	}
-
-	setIsApplyButtonActive( false );
-}
-
-function handleFormSubmit( event, couponFieldValue, onEvent, submitCoupon ) {
-	event.preventDefault();
-	if ( isCouponValid( couponFieldValue ) ) {
-		onEvent( {
-			type: 'a8c_checkout_add_coupon',
-			payload: { coupon: couponFieldValue },
-		} );
-
-		submitCoupon( couponFieldValue );
-
-		return;
-	}
-
-	onEvent( {
-		type: 'a8c_checkout_add_coupon_error',
-		payload: { type: 'Invalid code' },
-	} );
-}
-
-function isCouponValid( coupon ) {
-	// TODO: figure out some basic validation here
-	return coupon.match( /^[a-zA-Z0-9_-]+$/ );
-}
