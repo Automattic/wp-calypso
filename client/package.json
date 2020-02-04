@@ -161,7 +161,6 @@
 		"valid-url": "1.0.9",
 		"wpcom": "file:../packages/wpcom.js",
 		"wpcom-proxy-request": "5.0.2",
-		"wpcom-xhr-request": "1.1.3",
-		"yamlparser": "0.0.2"
+		"wpcom-xhr-request": "1.1.3"
 	}
 }
