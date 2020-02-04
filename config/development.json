@@ -65,7 +65,6 @@
 		"gutenboarding": true,
 		"help": true,
 		"help/courses": true,
-		"home/all": true,
 		"i18n/community-translator": false,
 		"i18n/translation-scanner": true,
 		"ive/me": false,

@@ -124,4 +124,13 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	customerHomeAll: {
+		datestamp: '20200204',
+		variations: {
+			showCustomerHome: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 };
