@@ -10,7 +10,6 @@ import i18n from 'i18n-calypso';
  */
 import { abtest } from 'lib/abtest';
 import { sectionify } from 'lib/route';
-import feedLookup from 'lib/feed-lookup';
 import {
 	trackPageLoad,
 	trackUpdatesLoaded,
@@ -23,6 +22,8 @@ import StreamComponent from 'reader/following/main';
 import { getPrettyFeedUrl, getPrettySiteUrl } from 'reader/route';
 import { recordTrack } from 'reader/stats';
 import { preload } from 'sections-helper';
+import { requestFeedDiscovery } from 'state/data-getters';
+import { waitForData } from 'state/data-layer/http-data';
 import AsyncLoad from 'components/async-load';
 
 const analyticsPageTitle = 'Reader';
@@ -157,9 +158,14 @@ const exported = {
 
 	feedDiscovery( context, next ) {
 		if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
-			feedLookup( context.params.feed_id )
-				.then( function( feedId ) {
-					page.redirect( `/read/feeds/${ feedId }` );
+			waitForData( {
+				feeds: () => requestFeedDiscovery( context.params.feed_id ),
+			} )
+				.then( ( { feeds } ) => {
+					const feed = feeds?.data?.feeds?.[ 0 ];
+					if ( feed && feed.feed_ID ) {
+						page.redirect( `/read/feeds/${ feed.feed_ID }` );
+					}
 				} )
 				.catch( function() {
 					renderFeedError( context, next );
