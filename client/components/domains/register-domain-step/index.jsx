@@ -376,6 +376,9 @@ class RegisterDomainStep extends React.Component {
 		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
 			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {
 				suggestions.unshift( { is_placeholder: true } );
+				if ( this.props.includeDotBlogSubdomain ) {
+					suggestions.unshift( { is_placeholder: true } );
+				}
 			} else if ( ! isEmpty( this.state.subdomainSearchResults ) ) {
 				if ( this.props.includeDotBlogSubdomain && this.state.subdomainSearchResults.length > 1 ) {
 					// Let's put the .blog subdomain first
