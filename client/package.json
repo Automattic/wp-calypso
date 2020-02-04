@@ -28,6 +28,7 @@
 		"@automattic/viewport-react": "file:../packages/viewport-react",
 		"@babel/runtime": "7.8.4",
 		"@automattic/calypso-analytics": "file:../packages/calypso-analytics",
+		"@automattic/calypso-utils": "file:../packages/calypso-utils",
 		"@emotion/core": "10.0.22",
 		"@emotion/styled": "10.0.23",
 		"@github/webauthn-json": "0.4.1",

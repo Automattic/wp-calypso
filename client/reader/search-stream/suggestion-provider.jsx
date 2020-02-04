@@ -11,7 +11,7 @@ import { map, sampleSize } from 'lodash';
 import { getLocaleSlug } from 'lib/i18n-utils';
 import { suggestions } from 'reader/search-stream/suggestions';
 import { getReaderFollowedTags } from 'state/reader/tags/selectors';
-import { createRandomId } from '@automattic/calypso-analytics';
+import { createRandomId } from '@automattic/calypso-utils';
 
 /**
  * Build suggestions from subscribed tags
