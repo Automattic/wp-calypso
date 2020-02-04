@@ -192,9 +192,13 @@ add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_coblocks_gallery_scr
  * Load Blog Posts block.
  */
 function load_blog_posts_block() {
+	$slug          = 'newspack-blocks/newspack-blocks.php';
 	$disable_block = (
-		in_array( 'newspack-blocks/newspack-blocks.php', (array) get_option( 'active_plugins', array() ), true ) ||
-		in_array( 'newspack-blocks/newspack-blocks.php', (array) get_site_option( 'active_sitewide_plugins', array() ), true )
+		( defined( 'WP_CLI' ) && WP_CLI ) ||
+		/* phpcs:ignore WordPress.Security.NonceVerification */
+		( isset( $_GET['action'], $_GET['plugin'] ) && 'activate' === $_GET['action'] && $slug === $_GET['plugin'] ) ||
+		in_array( $slug, (array) get_option( 'active_plugins', array() ), true ) ||
+		in_array( $slug, (array) get_site_option( 'active_sitewide_plugins', array() ), true )
 	);
 
 	/**
