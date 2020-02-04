@@ -34,7 +34,6 @@
 		"lodash": "^4.17.15",
 		"qs": "^6.9.1",
 		"debug": "^4.1.1",
-		"@automattic/load-script": "file:../load-script",
-		"@automattic/calypso-utils": "file:../calypso-utils"
+		"@automattic/load-script": "file:../load-script"
 	}
 }

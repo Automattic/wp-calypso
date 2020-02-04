@@ -44,8 +44,6 @@
 		"@automattic/material-design-icons": "file:packages/material-design-icons",
 		"@automattic/tree-select": "file:packages/tree-select",
 		"@automattic/wpcom-block-editor": "file:apps/wpcom-block-editor",
-		"@automattic/calypso-analytics": "file:packages/calypso-analytics",
-		"@automattic/calypso-utils": "file:packages/calypso-utils",
 		"i18n-calypso": "file:packages/i18n-calypso",
 		"photon": "file:packages/photon",
 		"wp-calypso": "file:client",
