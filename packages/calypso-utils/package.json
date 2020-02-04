@@ -1,7 +1,7 @@
 {
-	"name": "@automattic/calypso-analytics",
+	"name": "@automattic/utils",
 	"version": "1.0.0-alpha.0",
-	"description": "Automattic Analytics",
+	"description": "Automattic utils",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
@@ -11,7 +11,7 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
-		"directory": "packages/calypso-analytics"
+		"directory": "packages/calypso-utils"
 	},
 	"files": [
 		"dist",
@@ -30,11 +30,6 @@
 		"prepare": "transpile"
 	},
 	"dependencies": {
-		"hash.js": "^1.1.7",
-		"lodash": "^4.17.15",
-		"qs": "^6.9.1",
-		"debug": "^4.1.1",
-		"@automattic/load-script": "file:../load-script",
-		"@automattic/calypso-utils": "file:../calypso-utils"
+		"lodash": "^4.17.15"
 	}
 }
