@@ -5,6 +5,7 @@ import page from 'page';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { map, find } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -35,7 +36,6 @@ import { cancelPurchase, purchasesRoot } from 'me/purchases/paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { receiveDeletedSite } from 'state/sites/actions';
 import { refreshSitePlans } from 'state/sites/plans/actions';
-import SelectDropdown from 'components/select-dropdown';
 import { setAllSitesSelected } from 'state/ui/actions';
 import titles from 'me/purchases/titles';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -46,6 +46,7 @@ import { getCurrentUserId } from 'state/current-user/selectors';
  * Style dependencies
  */
 import './style.scss';
+import FormSelect from 'components/forms/form-select';
 
 class ConfirmCancelDomain extends React.Component {
 	static propTypes = {
@@ -154,8 +155,11 @@ class ConfirmCancelDomain extends React.Component {
 		} );
 	};
 
-	onReasonChange = newReason => {
-		this.setState( { selectedReason: newReason } );
+	onReasonChange = event => {
+		const select = event.currentTarget;
+		this.setState( {
+			selectedReason: find( cancellationReasons, { value: select[ select.selectedIndex ].value } ),
+		} );
 	};
 
 	onConfirmationChange = () => {
@@ -258,7 +262,6 @@ class ConfirmCancelDomain extends React.Component {
 
 		const { purchase } = this.props;
 		const domain = getDomainName( purchase );
-		const selectedReason = this.state.selectedReason;
 
 		return (
 			<Main className="confirm-cancel-domain">
@@ -284,17 +287,20 @@ class ConfirmCancelDomain extends React.Component {
 								'Please select the best option below.'
 						) }
 					</p>
-					<SelectDropdown
+					<FormSelect
 						className="confirm-cancel-domain__reasons-dropdown"
-						key="confirm-cancel-domain__reasons-dropdown"
-						selectedText={
-							selectedReason
-								? selectedReason.label
-								: this.props.translate( 'Please let us know why you wish to cancel.' )
-						}
-						options={ cancellationReasons }
-						onSelect={ this.onReasonChange }
-					/>
+						onChange={ this.onReasonChange }
+						defaultValue="disabled"
+					>
+						<option disabled="disabled" value="disabled" key="disabled">
+							{ this.props.translate( 'Please let us know why you wish to cancel.' ) }
+						</option>
+						{ map( cancellationReasons, ( { value, label } ) => (
+							<option value={ value } key={ value }>
+								{ label }
+							</option>
+						) ) }
+					</FormSelect>
 					{ this.renderHelpMessage() }
 					{ this.renderConfirmationCheckbox() }
 					{ this.renderSubmitButton() }
