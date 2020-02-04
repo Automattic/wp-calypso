@@ -62,6 +62,9 @@ const getDB = once( () => {
 							mc.bumpStat( 'calypso-browser-storage', kebabCase( errorEvent.target.error.name ) );
 						}
 					};
+					db.onversionchange = () => {
+						db.close();
+					};
 					resolve( db );
 				};
 				request.onupgradeneeded = () => request.result.createObjectStore( STORE_NAME );
@@ -145,20 +148,20 @@ function idbGetAll( pattern?: RegExp ): Promise< StoredItems > {
 
 let idbWriteCount = 0;
 let idbWriteBlock: Promise< void > | null = null;
-function idbSet< T >( key: string, value: T ): Promise< void > {
+async function idbSet< T >( key: string, value: T ): Promise< void > {
+	// if there's a write lock, wait on it
+	if ( idbWriteBlock ) {
+		await idbWriteBlock;
+	}
+	// if we're on safari 13, we need to clear out the object store every
+	// so many writes to make sure we don't chew up the transaction log
+	if ( isAffectedSafari && ++idbWriteCount % 20 === 0 ) {
+		await idbSafariReset();
+	}
+
 	return new Promise( ( resolve, reject ) => {
 		getDB()
 			.then( async db => {
-				// if there's a write lock, wait on it
-				if ( idbWriteBlock ) {
-					await idbWriteBlock;
-				}
-				// if we're on safari 13, we need to clear out the object store every
-				// so many writes to make sure we don't chew up the transaction log
-				if ( isAffectedSafari && ++idbWriteCount % 20 === 0 ) {
-					await idbSafariReset();
-				}
-
 				const transaction = db.transaction( STORE_NAME, 'readwrite' );
 				transaction.objectStore( STORE_NAME ).put( value, key );
 
@@ -191,6 +194,17 @@ function idbClear(): Promise< void > {
 	} );
 }
 
+function idbRemove(): Promise< void > {
+	return new Promise( ( resolve, reject ) => {
+		const deleteRequest = window.indexedDB.deleteDatabase( DB_NAME );
+		deleteRequest.onsuccess = () => {
+			getDB.clear();
+			resolve();
+		};
+		deleteRequest.onerror = event => reject( event );
+	} );
+}
+
 async function idbSafariReset() {
 	if ( idbWriteBlock ) {
 		return idbWriteBlock;
@@ -206,15 +220,17 @@ async function idbSafariReset() {
 
 async function _idbSafariReset(): Promise< void > {
 	const items = await idbGetAll();
-	await idbClear();
+
+	await idbRemove();
 
 	return new Promise( ( resolve, reject ) => {
 		getDB().then(
 			db => {
 				const transaction = db.transaction( STORE_NAME, 'readwrite' );
+				const oStore = transaction.objectStore( STORE_NAME );
 				// eslint-disable-next-line prefer-const
 				for ( let [ key, value ] of Object.entries( items ) ) {
-					transaction.objectStore( STORE_NAME ).put( value, key );
+					oStore.put( value, key );
 				}
 				const success = () => resolve();
 				const error = () => reject( transaction.error );
