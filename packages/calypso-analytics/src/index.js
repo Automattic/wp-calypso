@@ -1,7 +1,7 @@
 /**
  * Re-export
  */
-export { getDoNotTrack } from './utils/do-not-track';
+export { default as getDoNotTrack } from './utils/do-not-track';
 export { getCurrentUser, setCurrentUser } from './utils/current-user';
 export {
 	recordTracksPageView,
