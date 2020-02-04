@@ -34,7 +34,6 @@ import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import { isJetpackSite } from 'state/sites/selectors';
 import { isSupportSession } from 'state/support/selectors';
 import SitePreview from 'blocks/site-preview';
-import SupportArticleDialog from 'blocks/support-article-dialog';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
@@ -193,7 +192,7 @@ class Layout extends Component {
 					'happychat' !== this.props.sectionName && (
 						<AsyncLoad require="blocks/inline-help" placeholder={ null } />
 					) }
-				<SupportArticleDialog />
+				<AsyncLoad require="blocks/support-article-dialog" placeholder={ null } />
 				<AsyncLoad require="blocks/app-banner" placeholder={ null } />
 				{ config.isEnabled( 'gdpr-banner' ) && (
 					<AsyncLoad require="blocks/gdpr-banner" placeholder={ null } />
