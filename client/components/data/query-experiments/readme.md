@@ -1,14 +1,14 @@
 # Query Experiments
 
-`<QueryExperiment />` is a react component used in managing experiments and the user's assigned variations.
+`<QueryExperiments />` calls the API to get a list of user's assigned variations.
 
 ## Usage
 
 ```jsx
-import QueryExperiment from 'components/data/query-experiments'
+import QueryExperiments from 'components/data/query-experiments'
 export default function listExperiments() {
     return <div>
-        <QueryExperiment />
+        <QueryExperiments />
     </div>;
 }
 ```
