@@ -23,6 +23,7 @@ const EVENTS_MAPPING = [ wpcomBlockEditorCloseClick(), wpcomBlockPickerSearchTer
  * Checks the event for a selector which matches
  * the desired target element. Accounts for event
  * bubbling.
+ *
  * @param  {DOMEvent} event          the DOM event
  * @param  {string} targetSelector the CSS selector for the target element
  * @returns {Node}                the target element if found

@@ -66,6 +66,7 @@ async function themeRequest( url, query ) {
 
 /**
  * Fetches details for a particular plugin.
+ *
  * @param {string} pluginSlug The plugin identifier.
  * @returns {Promise} Promise with the plugins details.
  */

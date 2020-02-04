@@ -12,6 +12,7 @@ import {
 /**
  * Edits existing product if one with matching ID found.
  * Otherwise inserts the new one at the beginning of the list.
+ *
  * @param {Array} list of previous products
  * @param {object} newProduct to update list with
  * @returns {Array} updated array of products

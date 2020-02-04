@@ -40,6 +40,7 @@ function jsSlashEncoder( charStr ) {
 
 /**
  * Create JSON serialized string suitable for inclusion in HTML
+ *
  * @param {mixed} value The variable to be serialized
  * @returns {string} JSON serialized string
  **/

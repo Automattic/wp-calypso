@@ -10,6 +10,7 @@ import querystring from 'querystring';
 /**
  * TODO:
  * - l10n
+ *
  * @returns {object} An express app that returns /manifest.json
  */
 const buildManifest = ( { branchName } ) => {

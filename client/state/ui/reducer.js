@@ -85,6 +85,7 @@ export const isPreviewShowing = withoutPersistence( ( state = false, action ) =>
 
 /**
  * Tracks if the notifications panel is open
+ *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
  * @returns {object}        Updated state

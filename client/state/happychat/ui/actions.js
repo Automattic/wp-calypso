@@ -14,36 +14,42 @@ const setChatMinimizing = isMinimizing => ( { type: HAPPYCHAT_MINIMIZING, isMini
 
 /**
  * Set the Happychat sidebar dock to display
+ *
  * @returns {object} Action
  */
 export const openChat = () => setChatOpen( true );
 
 /**
  * Set the Happychat sidebar dock to start minimizing
+ *
  * @returns {object} Action
  */
 export const minimizeChat = () => setChatMinimizing( true );
 
 /**
  * Set the Happychat sidebar dock to finish minimizing
+ *
  * @returns {object} Action
  */
 export const minimizedChat = () => setChatMinimizing( false );
 
 /**
  * Set the Happychat sidebar dock to hide
+ *
  * @returns {object} Action
  */
 export const closeChat = () => setChatOpen( false );
 
 /**
  * Indicates Happychat component lost focus
+ *
  * @returns {object} Action
  */
 export const blur = () => ( { type: HAPPYCHAT_BLUR } );
 
 /**
  * Indicates Happychat component gained focus
+ *
  * @returns {object} Action
  */
 export const focus = () => ( { type: HAPPYCHAT_FOCUS } );

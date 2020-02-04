@@ -76,6 +76,7 @@ module.exports = function preProcessXGettextJSMatch( match ) {
 /**
  * Long translation strings can be broken into multiple strings concatenated with the + operator.
  * This function concatenates the substrings into a single string.
+ *
  * @param  {object} ASTNode - the BinaryExpression object returned from the AST parser
  * @returns {string}          - the concatenated string
  */
@@ -143,6 +144,7 @@ function makeDoubleQuoted( literal ) {
 /**
  * Takes a string argument and turns it into a valid string representation for most languages/format (with double quotes)
  * Anything else than a string is left unchanged
+ *
  * @param  {string} input  - origin string or other type of input
  * @returns {string}        - universal representation of string or input unchanged
  */

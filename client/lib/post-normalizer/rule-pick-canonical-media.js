@@ -10,6 +10,7 @@ import { find, get } from 'lodash';
 import { isUrlLikelyAnImage } from './utils.js';
 
 /** Returns true if an image is large enough to be a featured asset
+ *
  * @param {object} image - image must have a width and height property
  * @returns {boolean} true if large enough, false if image undefined or too small
  */

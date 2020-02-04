@@ -112,6 +112,7 @@ export function handleProductActionListCreate( store, action ) {
  * Makes a product Action List object based on current product edits.
  *
  * For internal and testing use only.
+ *
  * @private
  * @param {object} rootState The root calypso state.
  * @param {number} [siteId=selected site] The siteId for the Action List (TODO: Remove this when edits have siteIds.)

@@ -103,6 +103,7 @@ function getMediaQueryList( breakpoint ) {
 
 /**
  * Returns whether the current window width matches a breakpoint.
+ *
  * @param {string} breakpoint The breakpoint to consider.
  *
  * @returns {boolean} Whether the provided breakpoint is matched.
@@ -114,6 +115,7 @@ export function isWithinBreakpoint( breakpoint ) {
 
 /**
  * Registers a listener to be notified of changes to breakpoint matching status.
+ *
  * @param {string} breakpoint The breakpoint to consider.
  * @param {Function} listener The listener to be called on change.
  *
@@ -147,6 +149,7 @@ export function isMobile() {
 
 /**
  * Registers a listener to be notified of changes to mobile breakpoint matching status.
+ *
  * @param {Function} listener The listener to be called on change.
  *
  * @returns {Function} The registered subscription; undefined if none.
@@ -166,6 +169,7 @@ export function isDesktop() {
 
 /**
  * Registers a listener to be notified of changes to desktop breakpoint matching status.
+ *
  * @param {Function} listener The listener to be called on change.
  *
  * @returns {Function} The registered subscription; undefined if none.
@@ -177,6 +181,7 @@ export function subscribeIsDesktop( listener ) {
 /**
  * Returns the current window width.
  * Avoid using this method, as it triggers a layout recalc.
+ *
  * @returns {number} The current window width, in pixels.
  */
 export function getWindowInnerWidth() {

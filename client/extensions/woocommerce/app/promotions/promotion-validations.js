@@ -8,6 +8,7 @@ import { isEmpty, isUndefined } from 'lodash';
 
 /**
  * Validates a coupon code.
+ *
  * @param { String } fieldName The field name to be validated.
  * @param { Object } promotion The promotion to be validated.
  * @param { String } currency The currency to be used for validation.
@@ -23,6 +24,7 @@ export function validateCouponCode( fieldName, promotion, currency, showEmpty ) 
 
 /**
  * Validates a numeric discount.
+ *
  * @param { String } fieldName The field name to be validated.
  * @param { Object } promotion The promotion to be validated.
  * @param { String } currency The currency to be used for validation.
@@ -41,6 +43,7 @@ export function validateDiscount( fieldName, promotion, currency, showEmpty ) {
 
 /**
  * Validates a sale price.
+ *
  * @param { String } fieldName The field name to be validated.
  * @param { Object } promotion The promotion to be validated.
  * @param { String } currency The currency to be used for validation.
@@ -80,6 +83,7 @@ export function isEndDateBeforeStartDate( startDateString, endDateString ) {
 
 /**
  * Validates a promotion start date.
+ *
  * @param { String } fieldName The field name to be validated.
  * @param { Object } promotion The promotion to be validated.
  * @param { String } currency The currency to be used for validation.
@@ -103,6 +107,7 @@ export function validateStartEndDate( fieldName, promotion ) {
 
 /**
  * Validates a promotion end date.
+ *
  * @param { String } fieldName The field name to be validated.
  * @param { Object } promotion The promotion to be validated.
  * @param { String } currency The currency to be used for validation.
@@ -121,6 +126,7 @@ export function validateEndDate( fieldName, promotion ) {
 
 /**
  * Validates a minimum amount.
+ *
  * @param { String } fieldName The field name to be validated.
  * @param { Object } promotion The promotion to be validated.
  * @param { String } currency The currency to be used for validation.
@@ -150,6 +156,7 @@ export function validateMinimumAmount( fieldName, promotion, currency, showEmpty
 
 /**
  * Validates a maximum amount.
+ *
  * @param { String } fieldName The field name to be validated.
  * @param { Object } promotion The promotion to be validated.
  * @param { String } currency The currency to be used for validation.
@@ -179,6 +186,7 @@ export function validateMaximumAmount( fieldName, promotion, currency, showEmpty
 
 /**
  * Validates an overall usage limit.
+ *
  * @param { String } fieldName The field name to be validated.
  * @param { Object } promotion The promotion to be validated.
  * @param { String } currency The currency to be used for validation.
@@ -208,6 +216,7 @@ export function validateUsageLimit( fieldName, promotion, currency, showEmpty ) 
 
 /**
  * Validates an individual usage limit per user.
+ *
  * @param { String } fieldName The field name to be validated.
  * @param { Object } promotion The promotion to be validated.
  * @param { String } currency The currency to be used for validation.
@@ -237,6 +246,7 @@ export function validateUsageLimitPerUser( fieldName, promotion, currency, showE
 
 /**
  * Validates a coupons "Applies To" list.
+ *
  * @param { String } fieldName The field name to be validated.
  * @param { Object } promotion The promotion to be validated.
  * @param { String } currency The currency to be used for validation.
@@ -259,6 +269,7 @@ export function validateCouponAppliesTo( fieldName, promotion, currency, showEmp
 
 /**
  * Validates an "Applies To" field for a single product.
+ *
  * @param { String } fieldName The field name to be validated.
  * @param { Object } promotion The promotion to be validated.
  * @param { String } currency The currency to be used for validation.

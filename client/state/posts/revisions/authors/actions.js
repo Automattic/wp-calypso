@@ -8,6 +8,7 @@ import 'state/data-layer/wpcom/sites/users';
 
 /**
  * Action creator for receiving an array of users from REST response
+ *
  * @param {Array} users Users received
  * @returns {object} Action object
  */

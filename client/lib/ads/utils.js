@@ -7,6 +7,7 @@ import { isBusiness, isPremium, isEcommerce } from 'lib/products-values';
 
 /**
  * Returns true if the site has WordAds access
+ *
  * @param  {Site} site Site object
  * @returns {boolean}      true if site has WordAds access
  */

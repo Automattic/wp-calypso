@@ -53,6 +53,7 @@ export const getOrdersCurrentSearch = ( state, siteId = getSelectedSiteId( state
 
 /**
  * Get a default order "frame", so we have values for components.
+ *
  * @returns {object} The local edits made to the current order
  */
 export const getDefaultEmptyOrder = () => {

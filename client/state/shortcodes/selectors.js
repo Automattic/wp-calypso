@@ -19,6 +19,7 @@ export const isRequestingShortcode = ( state, siteId, shortcode ) => {
 
 /**
  * Retrieve the data of a certain shortcode for a particular site
+ *
  * @param  {object} state      Global state tree
  * @param  {number} siteId     Site ID
  * @param  {string} shortcode  Shortcode

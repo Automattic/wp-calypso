@@ -61,6 +61,7 @@ class Stepper {
 
 	/**
 	 * Jump directly to a position, bypassing the stepper
+	 *
 	 * @param {number} x - x coord
 	 * @param {number} y - y coord
 	 */
@@ -84,6 +85,7 @@ class Stepper {
 
 	/**
 	 * Move a step along the timeline, with optional easing
+	 *
 	 * @param {number} ts - timestamp
 	 */
 	step = ts => {
@@ -142,6 +144,7 @@ function circularOutEasing( val ) {
 
 /**
  * Scrolls a container to the specified location
+ *
  * @param {object} options - options object (see below)
  * @param {number} options.x - desired left or x coordinate
  * @param {number} options.y - desired top or y coordinate

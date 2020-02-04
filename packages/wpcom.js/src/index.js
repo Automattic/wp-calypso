@@ -146,7 +146,7 @@ WPCOM.prototype.plans = function() {
 	return new Plans( this );
 };
 
- /**
+/**
  * Return `Batch` object instance
  *
  * @return {Batch} Batch instance
@@ -168,6 +168,7 @@ WPCOM.prototype.freshlyPressed = function( query, fn ) {
 
 /**
  * Expose send-request
+ *
  * @TODO: use `this.req` instead of this method
  */
 WPCOM.prototype.sendRequest = function( params, query, body, fn ) {
@@ -198,15 +199,15 @@ WPCOM.Users = Users;
 
 if ( ! Promise.prototype.timeout ) {
 	/**
-	* Returns a new promise with a deadline
-	*
-	* After the timeout interval, the promise will
-	* reject. If the actual promise settles before
-	* the deadline, the timer is cancelled.
-	*
-	* @param {number} delay how many ms to wait
-	* @return {Promise} promise
-	*/
+	 * Returns a new promise with a deadline
+	 *
+	 * After the timeout interval, the promise will
+	 * reject. If the actual promise settles before
+	 * the deadline, the timer is cancelled.
+	 *
+	 * @param {number} delay how many ms to wait
+	 * @return {Promise} promise
+	 */
 	Promise.prototype.timeout = function( delay = DEFAULT_ASYNC_TIMEOUT ) {
 		let cancelTimeout, timer, timeout;
 
@@ -221,9 +222,6 @@ if ( ! Promise.prototype.timeout ) {
 			return this;
 		};
 
-		return Promise.race( [
-			this.then( cancelTimeout ).catch( cancelTimeout ),
-			timeout
-		] );
+		return Promise.race( [ this.then( cancelTimeout ).catch( cancelTimeout ), timeout ] );
 	};
 }

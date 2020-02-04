@@ -26,6 +26,7 @@ function _createRequestAction( method, siteId, path, body, onSuccessAction, onFa
 
 /**
  * Performs HTTP GET in data-layer handlers and dispatches appropriate success/failure actions.
+ *
  * @param {number} siteId id for the WooCommerce site.
  * @param {string} path API endpoint
  * @param {object|Function} [onSuccessAction] Action with extra props { data }
@@ -38,6 +39,7 @@ export function get( siteId, path, onSuccessAction, onFailureAction ) {
 
 /**
  * Performs HTTP POST in data-layer handlers and dispatches appropriate success/failure actions.
+ *
  * @param {number} siteId id for the WooCommerce site.
  * @param {string} path API endpoint
  * @param {object} body JS Object that will be converted to JSON for the HTTP Body
@@ -51,6 +53,7 @@ export function post( siteId, path, body, onSuccessAction, onFailureAction ) {
 
 /**
  * Performs HTTP PUT in data-layer handlers and dispatches appropriate success/failure actions.
+ *
  * @param {number} siteId id for the WooCommerce site.
  * @param {string} path API endpoint
  * @param {object} body JS Object that will be converted to JSON for the HTTP Body
@@ -64,6 +67,7 @@ export function put( siteId, path, body, onSuccessAction, onFailureAction ) {
 
 /**
  * Performs HTTP DELETE in data-layer handlers and dispatches appropriate success/failure actions.
+ *
  * @param {number} siteId id for the WooCommerce site.
  * @param {string} path API endpoint
  * @param {object|Function} [onSuccessAction] Action with extra props { data }

@@ -57,6 +57,7 @@ export function editProductRemoveCategory( siteId, product, categoryId ) {
  * Creates an action list to save product-related edits.
  *
  * Saves products, variations, and product categories.
+ *
  * @param {object} [successAction] Action to be dispatched upon successful completion.
  * @param {object} [failureAction] Action to be dispatched upon failure of execution.
  * @returns {Function} action

@@ -60,6 +60,7 @@ export const REST_API_ERROR_RESPONSE = {
 
 /**
  * Return a whole state with vouchers data structure
+ *
  * @returns {object} an state instance
  *
  * - first site-domians is not requesting

@@ -14,6 +14,7 @@ export const metadataSchema = {
 
 /**
  * Schema of one product stored in custom post type.
+ *
  * @type {{type: string, properties: *}}
  */
 const productSchema = {
@@ -39,6 +40,7 @@ const productListSchema = {
 
 /**
  * Map that maps custom field keys to corresponding keys in redux representation of a product
+ *
  * @type { Object }
  */
 export const metaKeyToSchemaKeyMap = Object.keys( metadataSchema ).reduce( ( prev, curr ) => {

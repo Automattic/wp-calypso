@@ -42,6 +42,7 @@ const debug = debugModule( 'calypso:redux:reader-follows' );
 
 /**
  * Extended information about a reader follow
+ *
  * @typedef {object} follow
  * @property {number} ID
  * @property {string} URL The URL being followed. Usually a feed.
@@ -56,6 +57,7 @@ const debug = debugModule( 'calypso:redux:reader-follows' );
 
 /**
  * Follow a feed URL
+ *
  * @param  {string} feedUrl      The feed URL
  * @param {Follow} followInfo		A subscription, optional
  * @returns {object}              The action
@@ -153,6 +155,7 @@ export function requestFollows() {
 
 /**
  * Represents a completed sync.
+ *
  * @param  {Array} followedUrls An array of all the feed URLS seen during the sync
  * @returns {object}              The action
  */

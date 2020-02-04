@@ -18,6 +18,7 @@ const path = require( 'path' );
  *
  * Providing webpack with these aliases instead of telling it to scan client/extensions for every
  * module resolution speeds up builds significantly.
+ *
  * @returns {object} a mapping of extension name to path
  */
 function getAliasesForExtensions( { extensionsDirectory } ) {

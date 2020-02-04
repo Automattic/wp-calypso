@@ -25,6 +25,7 @@ export function actionListStepNext( actionList ) {
 
 /**
  * Action Creator: Clear the current Action List.
+ *
  * @returns {object} action
  */
 export function actionListClear() {
@@ -35,6 +36,7 @@ export function actionListClear() {
 
 /**
  * Action Creator: Annotate the current representation of the action list to state.
+ *
  * @param {object} actionList The current actionList
  * @returns {object} action
  */

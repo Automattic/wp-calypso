@@ -525,6 +525,7 @@ function normalizePost( post ) {
 
 /**
  * Normalizes attributes to API expectations
+ *
  * @param  {object} attributes - changed attributes
  * @returns {object} - normalized attributes
  */

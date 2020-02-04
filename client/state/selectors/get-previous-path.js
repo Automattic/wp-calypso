@@ -10,6 +10,7 @@ import { get } from 'lodash';
 
 /**
  * Gets the previous path set by a ROUTE_SET action
+ *
  * @param {object} state - global redux state
  * @returns {string} previous path value
  */

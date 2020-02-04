@@ -54,6 +54,7 @@ const fetchProgress = action => {
 
 /**
  * Parse and merge response data for backup creation status with defaults.
+ *
  * @param   {object} data The data received from API response.
  * @returns {object}      Parsed response data.
  */

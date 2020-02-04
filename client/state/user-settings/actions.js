@@ -24,6 +24,7 @@ const debug = debugFactory( 'calypso:user:settings' );
 
 /**
  * Fetch user settings from WordPress.com API and store them in UserSettings instance
+ *
  * @returns {object} Action object
  */
 export const fetchUserSettings = () => ( {

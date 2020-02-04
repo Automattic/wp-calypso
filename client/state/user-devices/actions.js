@@ -8,6 +8,7 @@ import 'state/data-layer/wpcom/me/devices';
 
 /**
  * Returns an action object to signal the request of the user's devices.
+ *
  * @returns {object} Action object
  */
 export const requestUserDevices = () => ( { type: USER_DEVICES_REQUEST } );

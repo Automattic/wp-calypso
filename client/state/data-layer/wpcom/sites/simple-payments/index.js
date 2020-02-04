@@ -35,6 +35,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 
 /**
  * Convert custom post metadata array to product attributes
+ *
  * @param { Array } metadata Array of post metadata
  * @returns { Object } properties extracted from the metadata, to be merged into the product object
  */
@@ -62,6 +63,7 @@ function customPostMetadataToProductAttributes( metadata ) {
 
 /**
  * Validates a `/posts` endpoint response and converts it into a product object
+ *
  * @param { Object } customPost raw /post endpoint response to format
  * @returns { Object } sanitized and formatted product
  */
@@ -84,6 +86,7 @@ export function customPostToProduct( customPost ) {
 /**
  * Extract custom posts array from `responseData`, filter out invalid items and convert the
  * valid custom posts to products.
+ *
  * @param {object} responseData JSON data with shape `{ posts }`
  * @returns {Array} validated and converted product list
  */
@@ -103,6 +106,7 @@ export function customPostsToProducts( responseData ) {
 
 /**
  * Transforms a product definition object into proper custom post type
+ *
  * @param { Object } product action with product payload
  * @returns { Object } custom post type data
  */

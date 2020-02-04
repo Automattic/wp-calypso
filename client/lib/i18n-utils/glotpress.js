@@ -12,6 +12,7 @@ const debug = debugFactory( 'calypso:i18n-utils:glotpress' );
 
 /**
  * Sends the POST request
+ *
  * @param {string} glotPressUrl API url
  * @param {string} postFormData post data url param string
  * @returns {object} request object
@@ -42,6 +43,7 @@ export function encodeOriginalKey( { original, context } ) {
 
 /**
  * Sends originals to translate.wordpress.com to be recorded
+ *
  * @param {[String]} originalKeys Array of original keys to record
  * @param {string} recordId fallback recordId to pass to the backend
  * @param {Function} post see postRequest()

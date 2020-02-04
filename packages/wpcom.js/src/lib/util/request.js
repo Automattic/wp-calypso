@@ -5,6 +5,7 @@ import sendRequest from './send-request';
 
 /**
  * Expose `Request` module
+ *
  * @param {WPCOM} wpcom - wpcom instance
  */
 export default function Req( wpcom ) {
@@ -37,8 +38,7 @@ Req.prototype.get = function( params, query, fn ) {
  * @param {Object} body - body object parameter
  * @param {Function} fn - callback function
  */
-Req.prototype.post =
-Req.prototype.put = function( params, query, body, fn ) {
+Req.prototype.post = Req.prototype.put = function( params, query, body, fn ) {
 	if ( undefined === fn ) {
 		if ( undefined === body ) {
 			body = query;

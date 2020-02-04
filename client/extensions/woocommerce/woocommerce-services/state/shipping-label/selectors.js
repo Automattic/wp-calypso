@@ -112,6 +112,7 @@ export const getForm = ( state, orderId, siteId = getSelectedSiteId( state ) ) =
 
 /**
  * Returns a breakdown of the total price for selected labels in form of { prices, discount, total }
+ *
  * @param {object} state global state tree
  * @param {number} orderId order Id
  * @param {number} siteId site Id
@@ -510,6 +511,7 @@ export const isCustomsFormStepSubmitted = (
 
 /**
  * Checks the form for errors and returns a step with an error in it or null
+ *
  * @param {object} state global state tree
  * @param {object} orderId order Id
  * @param {object} siteId site Id

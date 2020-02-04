@@ -22,6 +22,7 @@ import 'state/data-layer/wpcom/read/streams';
  * This action will fetch a range of posts for a stream and then dispatch
  * READER_STREAM_PAGE_RECEIVE when the page returns. This is usually used to
  * fetch the next page of results, but could be used to fetch arbitrary ranges.
+ *
  * @param  {string} streamKey The stream to fetch posts for
  * @param  {object} query    The query for posts. Parameters vary by stream type.
  * @returns {object}          The action object
