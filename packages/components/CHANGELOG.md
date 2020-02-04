@@ -1,4 +1,8 @@
 
+## 1.0.0-alpha.2
+
+- Added missing dependency on `@babel/runtime`
+
 ## 1.0.0-alpha.1
 
 - Add ProductIcon
