@@ -1,3 +1,8 @@
+interface Clearable {
+	clear(): void;
+}
+
+const UNSET_SYMBOL = Symbol();
 /**
  * Wraps a function in a utility method that remembers the last invocation's
  * arguments and results, and returns the latter if the former match.
@@ -6,15 +11,20 @@
  *
  * @returns The wrapped function.
  */
-export default function memoizeLast< T extends ( ...args: any[] ) => any >( fn: T ): T {
-	let lastArgs: Parameters< T >;
-	let lastResult: ReturnType< T >;
+export default function memoizeLast< T extends ( ...args: any[] ) => any >( fn: T ): T & Clearable {
+	let lastArgs: Parameters< T > | symbol = UNSET_SYMBOL;
+	let lastResult: ReturnType< T > | symbol = UNSET_SYMBOL;
 
-	return ( ( ...args: Parameters< T > ) => {
+	const func = ( ( ...args: Parameters< T > ) => {
+		if ( lastArgs === UNSET_SYMBOL ) {
+			lastArgs = args;
+			lastResult = fn( ...args );
+			return lastResult;
+		}
+
 		const isSame =
-			lastArgs &&
-			args.length === lastArgs.length &&
-			args.every( ( arg, index ) => arg === lastArgs[ index ] );
+			args.length === ( lastArgs as Parameters< T > ).length &&
+			args.every( ( arg, index ) => arg === ( lastArgs as Parameters< T > )[ index ] );
 
 		if ( ! isSame ) {
 			lastArgs = args;
@@ -22,7 +32,14 @@ export default function memoizeLast< T extends ( ...args: any[] ) => any >( fn: 
 		}
 
 		return lastResult;
-	} ) as T;
+	} ) as T & Clearable;
+
+	func.clear = () => {
+		lastArgs = UNSET_SYMBOL;
+		lastResult = UNSET_SYMBOL;
+	};
+
+	return func;
 }
 
 /**
