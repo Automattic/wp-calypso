@@ -57,7 +57,7 @@ export const focus = () => ( { type: HAPPYCHAT_FOCUS } );
 /**
  * Returns an action object that sets the current chat message
  *
- * @param  { String } message Current message to be set
- * @returns { Object } Action object
+ * @param  {string} message Current message to be set
+ * @returns {object} Action object
  */
 export const setCurrentMessage = message => ( { type: HAPPYCHAT_SET_CURRENT_MESSAGE, message } );

@@ -11,7 +11,7 @@ const supportedBrowsers = browserslist( null, { env: process.env.BROWSERSLIST_EN
  * Auxiliary method to help in picking an ECMAScript version based on a list
  * of supported browser versions.
  *
- * @param {Array<String>} browsers The list of supported browsers.
+ * @param {Array<string>} browsers The list of supported browsers.
  *
  * @returns {number} The maximum supported ECMAScript version.
  */

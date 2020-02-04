@@ -11,7 +11,7 @@ import MeTwoStep from './me.two-step';
  * Create `Me` instance
  *
  * @param {WPCOM} wpcom - wpcom instance
- * @return {Null} null
+ * @return {null} null
  */
 export default function Me( wpcom ) {
 	if ( ! ( this instanceof Me ) ) {
@@ -24,7 +24,7 @@ export default function Me( wpcom ) {
 /**
  * Meta data about auth token's User
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */
@@ -35,7 +35,7 @@ Me.prototype.get = function( query, fn ) {
 /**
  * Get user billing history.
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} [fn] - callback function
  * @return {Function} request handler
  */
@@ -54,7 +54,7 @@ Me.prototype.billingHistory = function( query, fn ) {
  *      // posts list data object
  *    } );
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */
@@ -65,7 +65,7 @@ Me.prototype.postsList = function( query, fn ) {
 /**
  * A list of the current user's sites
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */
@@ -76,7 +76,7 @@ Me.prototype.sites = function( query, fn ) {
 /**
  * List the currently authorized user's likes
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */
@@ -87,7 +87,7 @@ Me.prototype.likes = function( query, fn ) {
 /**
  * Get current user's connected applications.
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */
@@ -99,7 +99,7 @@ Me.prototype.connectedApps = function( query, fn ) {
  * Get a list of all the keyring connections
  * associated with the current user
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */
@@ -111,7 +111,7 @@ Me.prototype.keyringConnections = function( query, fn ) {
  * Get a list of publicize connections
  * that the current user has set up.
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */
@@ -131,7 +131,7 @@ Me.prototype.settings = function() {
 /**
  * Return a `MeConnectedApp` instance.
  *
- * @param {String} id - app id
+ * @param {string} id - app id
  * @return {ConnectedApp} Me ConnectedApp instance
  */
 Me.prototype.connectedApp = function( id ) {
@@ -141,7 +141,7 @@ Me.prototype.connectedApp = function( id ) {
 /**
  * Return a `MePublicizeConnection` instance.
  *
- * @param {String} id - connection id
+ * @param {string} id - connection id
  * @return {MePublicizeConnection} MeSettings instance
  */
 Me.prototype.publicizeConnection = function( id ) {
@@ -160,7 +160,7 @@ Me.prototype.twoStep = function() {
 /**
  * Return a `MeKeyringConnection` instance.
  *
- * @param {String} id - connection id
+ * @param {string} id - connection id
  * @return {MeKeyringConnection} MeKeyringConnection instance
  */
 Me.prototype.keyringConnection = function( id ) {

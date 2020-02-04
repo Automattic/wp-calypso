@@ -8,10 +8,10 @@ class SiteWPComPlugin {
 	/**
 	 * `SiteWPComPlugin` constructor.
 	 *
-	 * @param {String} [slug] - the plugin slug
-	 * @param {Number|String} sid - site identifier
+	 * @param {string} [slug] - the plugin slug
+	 * @param {number|string} sid - site identifier
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {Undefined} undefined
+	 * @return {undefined} undefined
 	 */
 	constructor( slug, sid, wpcom ) {
 		if ( ! ( this instanceof SiteWPComPlugin ) ) {
@@ -33,8 +33,8 @@ class SiteWPComPlugin {
 	/**
 	 * Update the plugin configuration
 	 *
-	 * @param {Object} [query] - query object parameter
-	 * @param {Object} body - plugin body object
+	 * @param {object} [query] - query object parameter
+	 * @param {object} body - plugin body object
 	 * @param {Function} [fn] - callback function
 	 * @return {Promise} Promise
 	 */
@@ -46,7 +46,7 @@ class SiteWPComPlugin {
 	 * Activate the plugin
 	 * This method is a shorthand of update()
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @return {Promise} Promise
 	 */
@@ -58,7 +58,7 @@ class SiteWPComPlugin {
 	 * Deactivate the plugin
 	 * This method is a shorthand of update()
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @return {Promise} Promise
 	 */

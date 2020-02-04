@@ -18,7 +18,7 @@ import isJetpackSite from './is-jetpack-site';
  * @param {object} state Global state tree
  * @param {number} siteId Site ID
  * @param {string} action The update action we wanted to perform on this site
- * @returns {?Array<String>} The reasons why file update is disabled
+ * @returns {?Array<string>} The reasons why file update is disabled
  */
 export default function getJetpackSiteUpdateFilesDisabledReasons(
 	state,

@@ -32,7 +32,7 @@ export function isDefaultLocale( locale ) {
  *
  * @param {string} locale The language slug of an existing locale
  * @param {string} urlPath Current path
- * @returns {string|Null} The locale slug of the language, if any found.
+ * @returns {string|null} The locale slug of the language, if any found.
  */
 export function getCurrentNonDefaultLocale( locale, urlPath ) {
 	// First try the locale passed as props.

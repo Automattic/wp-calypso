@@ -17,7 +17,7 @@ import { updateRewindBackupProgress, rewindBackupUpdateError } from 'state/activ
 /** @type {number} how many ms between polls for same data */
 const POLL_INTERVAL = 1500;
 
-/** @type {Map<String, Number>} stores most-recent polling times */
+/** @type {Map<string, number>} stores most-recent polling times */
 const recentRequests = new Map();
 
 /**

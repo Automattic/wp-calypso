@@ -6,11 +6,11 @@ import commentLike from './site.comment.like';
 /**
  * Comment methods
  *
- * @param {String} [cid] comment id
- * @param {String} [pid] post id
- * @param {String} sid site id
+ * @param {string} [cid] comment id
+ * @param {string} [pid] post id
+ * @param {string} sid site id
  * @param {WPCOM} wpcom - wpcom instance
- * @return {Null} null
+ * @return {null} null
  */
 export default function Comment( cid, pid, sid, wpcom ) {
 	if ( ! sid ) {
@@ -30,7 +30,7 @@ export default function Comment( cid, pid, sid, wpcom ) {
 /**
  * Return a single Comment
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */
@@ -42,7 +42,7 @@ Comment.prototype.get = function( query, fn ) {
 /**
  * Return recent comments for a post
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */
@@ -54,8 +54,8 @@ Comment.prototype.replies = function( query, fn ) {
 /**
  * Create a comment on a post
  *
- * @param {Object} [query] - query object parameter
- * @param {String|Object} body - body parameter
+ * @param {object} [query] - query object parameter
+ * @param {string|object} body - body parameter
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */
@@ -80,8 +80,8 @@ Comment.prototype.add = function( query, body, fn ) {
 /**
  * Edit a comment
  *
- * @param {Object} [query] - query object parameter
- * @param {String|Object} body - body parameter
+ * @param {object} [query] - query object parameter
+ * @param {string|object} body - body parameter
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */
@@ -101,8 +101,8 @@ Comment.prototype.update = function( query, body, fn ) {
 /**
  * Create a Comment as a reply to another Comment
  *
- * @param {Object} [query] - query object parameter
- * @param {String|Object} body - body parameter
+ * @param {object} [query] - query object parameter
+ * @param {string|object} body - body parameter
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */
@@ -122,7 +122,7 @@ Comment.prototype.reply = function( query, body, fn ) {
 /**
  * Delete a comment
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */
@@ -144,7 +144,7 @@ Comment.prototype.like = function() {
 /**
  * Get comment likes list
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */

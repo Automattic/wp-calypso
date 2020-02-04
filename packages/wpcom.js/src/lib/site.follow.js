@@ -1,9 +1,9 @@
 /**
  * Follow
  *
- * @param {String} site_id - site id
+ * @param {string} site_id - site id
  * @param {WPCOM} wpcom - wpcom instance
- * @return {Null} null
+ * @return {null} null
  */
 export default function Follow( site_id, wpcom ) {
 	if ( ! site_id ) {
@@ -22,7 +22,7 @@ export default function Follow( site_id, wpcom ) {
  * Get the follow status for current
  * user on current blog sites
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */
@@ -35,7 +35,7 @@ Follow.prototype.state = function( query, fn ) {
 /**
  * Follow the site
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */
@@ -48,7 +48,7 @@ Follow.prototype.add = function( query, fn ) {
 /**
  * Unfollow the site
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */

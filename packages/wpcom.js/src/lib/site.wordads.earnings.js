@@ -1,9 +1,9 @@
 /**
  * `SiteWordAdsEarnings` constructor.
  *
- * @param {String} sid - site identifier
+ * @param {string} sid - site identifier
  * @param {WPCOM} wpcom - wpcom instance
- * @return {Null} null
+ * @return {null} null
  */
 export default function SiteWordAdsEarnings( sid, wpcom ) {
 	if ( ! ( this instanceof SiteWordAdsEarnings ) ) {
@@ -27,7 +27,7 @@ export default function SiteWordAdsEarnings( sid, wpcom ) {
  *      // `earnings` information object
  *    } );
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */

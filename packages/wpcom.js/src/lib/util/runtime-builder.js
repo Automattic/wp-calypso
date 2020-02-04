@@ -11,9 +11,9 @@ const debug = debugFactory( 'wpcom:runtime' );
 /**
  * Build a generic method
  *
- * @param {Object} methodParams - method methodParams
+ * @param {object} methodParams - method methodParams
  * @param {Function} buildPath - function called to build method path
- * @return {String} method path
+ * @return {string} method path
  */
 const methodBuilder = ( methodParams, buildPath ) => {
 	return function( query, fn ) {

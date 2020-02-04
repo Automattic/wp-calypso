@@ -5,10 +5,10 @@ export default class SitePostType {
 	/**
 	 * Create a SitePostType instance
 	 *
-	 * @param {String} postType - post type
-	 * @param {String} siteId - site id
+	 * @param {string} postType - post type
+	 * @param {string} siteId - site id
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {Null} null
+	 * @return {null} null
 	 */
 	constructor( postType, siteId, wpcom ) {
 		if ( ! siteId ) {
@@ -33,7 +33,7 @@ export default class SitePostType {
 	/**
 	 * Get a list of taxonomies for the post type
 	 *
-	 * @param {Object} query - query object
+	 * @param {object} query - query object
 	 * @param {Function} fn - callback function
 	 * @return {Promise} Promise
 	 */

@@ -11,7 +11,7 @@ import { isFunction, reduce } from 'lodash';
  *
  * @param { Function|object } actionCreators - action creators to be bound to siteId and passed on to bindActionCreators
  * @param { Function } dispatch - dispatch function
- * @param { Number } siteId - site ID
+ * @param {number} siteId - site ID
  * @returns {Function|object} result of bindActionCreators
  */
 export const bindActionCreatorsWithSiteId = ( actionCreators, dispatch, siteId ) => {

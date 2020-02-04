@@ -22,10 +22,10 @@ class SitePost {
 	/**
 	 * SitePost methods
 	 *
-	 * @param {String} id - post id
-	 * @param {String} sid site id
+	 * @param {string} id - post id
+	 * @param {string} sid site id
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {Null} null
+	 * @return {null} null
 	 */
 	constructor( id, sid, wpcom ) {
 		if ( ! ( this instanceof SitePost ) ) {
@@ -49,7 +49,7 @@ class SitePost {
 	/**
 	 * Set post `id`
 	 *
-	 * @param {String} id - site id
+	 * @param {string} id - site id
 	 */
 	id( id ) {
 		this._id = id;
@@ -58,7 +58,7 @@ class SitePost {
 	/**
 	 * Set post `slug`
 	 *
-	 * @param {String} slug - site slug
+	 * @param {string} slug - site slug
 	 */
 	slug( slug ) {
 		this._slug = slug;
@@ -67,7 +67,7 @@ class SitePost {
 	/**
 	 * Get post url path
 	 *
-	 * @return {String} post path
+	 * @return {string} post path
 	 */
 
 	getPostPath() {
@@ -77,7 +77,7 @@ class SitePost {
 	/**
 	 * Get post
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */
@@ -92,7 +92,7 @@ class SitePost {
 	/**
 	 * Get post by slug
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */
@@ -103,8 +103,8 @@ class SitePost {
 	/**
 	 * Add post
 	 *
-	 * @param {Object} [query] - query object parameter
-	 * @param {Object} body - body object parameter
+	 * @param {object} [query] - query object parameter
+	 * @param {object} body - body object parameter
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */
@@ -147,8 +147,8 @@ class SitePost {
 	/**
 	 * Edit post
 	 *
-	 * @param {Object} [query] - query object parameter
-	 * @param {Object} body - body object parameter
+	 * @param {object} [query] - query object parameter
+	 * @param {object} body - body object parameter
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */
@@ -159,7 +159,7 @@ class SitePost {
 	/**
 	 * Delete post
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @return {Promise} Promise
 	 */
@@ -171,7 +171,7 @@ class SitePost {
 	/**
 	 * Del post, alias of Delete
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @return {Promise} Promise
 	 */
@@ -182,7 +182,7 @@ class SitePost {
 	/**
 	 * Restore post
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */
@@ -193,7 +193,7 @@ class SitePost {
 	/**
 	 * Search within a site for related posts
 	 *
-	 * @param {Object} body - body object parameter
+	 * @param {object} body - body object parameter
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */
@@ -204,7 +204,7 @@ class SitePost {
 	/**
 	 * Create a `Comment` instance
 	 *
-	 * @param {String} [cid] - comment id
+	 * @param {string} [cid] - comment id
 	 * @return {Comment} Comment instance
 	 */
 	comment( cid ) {
@@ -214,7 +214,7 @@ class SitePost {
 	/**
 	 * Return recent comments
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */

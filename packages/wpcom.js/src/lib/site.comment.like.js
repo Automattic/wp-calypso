@@ -1,10 +1,10 @@
 /**
  * CommentLike methods
  *
- * @param {String} cid comment id
- * @param {String} sid site id
+ * @param {string} cid comment id
+ * @param {string} sid site id
  * @param {WPCOM} wpcom - wpcom instance
- * @return {Null} null
+ * @return {null} null
  */
 export default function CommentLike( cid, sid, wpcom ) {
 	if ( ! sid ) {
@@ -27,7 +27,7 @@ export default function CommentLike( cid, sid, wpcom ) {
 /**
  * Get your Like status for a Comment
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */
@@ -40,7 +40,7 @@ CommentLike.prototype.state = function( query, fn ) {
 /**
  * Like a comment
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */
@@ -52,7 +52,7 @@ CommentLike.prototype.add = function( query, fn ) {
 /**
  * Remove your Like from a Comment
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */

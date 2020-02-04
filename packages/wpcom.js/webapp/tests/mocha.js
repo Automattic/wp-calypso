@@ -527,7 +527,7 @@
 				/**
 				 * Initialize a new `Hook` with the given `title` and callback `fn`.
 				 *
-				 * @param {String} title
+				 * @param {string} title
 				 * @param {Function} fn
 				 * @api private
 				 */
@@ -691,7 +691,7 @@
 				 *
 				 * @param {Suite[]} suites
 				 * @param {Context} context
-				 * @return {Object} An object containing common functions.
+				 * @return {object} An object containing common functions.
 				 */
 				module.exports = function( suites, context ) {
 					return {
@@ -1131,7 +1131,7 @@
 					 *   - `fullTrace` display the full stack-trace on failing
 					 *   - `grep` string or regexp to filter tests with
 					 *
-					 * @param {Object} options
+					 * @param {object} options
 					 * @api public
 					 */
 					function Mocha( options ) {
@@ -1207,11 +1207,11 @@
 					/**
 					 * Set reporter to `reporter`, defaults to "spec".
 					 *
-					 * @param {String|Function} reporter name or constructor
-					 * @param {Object} reporterOptions optional options
+					 * @param {string|Function} reporter name or constructor
+					 * @param {object} reporterOptions optional options
 					 * @api public
 					 * @param {string|Function} reporter name or constructor
-					 * @param {Object} reporterOptions optional options
+					 * @param {object} reporterOptions optional options
 					 */
 					Mocha.prototype.reporter = function( reporter, reporterOptions ) {
 						if ( typeof reporter === 'function' ) {
@@ -1314,7 +1314,7 @@
 					/**
 					 * Add regexp to grep, if `re` is a string it is escaped.
 					 *
-					 * @param {RegExp|String} re
+					 * @param {RegExp|string} re
 					 * @return {Mocha}
 					 * @api public
 					 * @param {RegExp|string} re
@@ -1339,7 +1339,7 @@
 					/**
 					 * Ignore global leaks.
 					 *
-					 * @param {Boolean} ignore
+					 * @param {boolean} ignore
 					 * @return {Mocha}
 					 * @api public
 					 * @param {boolean} ignore
@@ -1386,7 +1386,7 @@
 					/**
 					 * Ignore `globals` array or string.
 					 *
-					 * @param {Array|String} globals
+					 * @param {Array|string} globals
 					 * @return {Mocha}
 					 * @api public
 					 * @param {Array|string} globals
@@ -1400,7 +1400,7 @@
 					/**
 					 * Emit color output.
 					 *
-					 * @param {Boolean} colors
+					 * @param {boolean} colors
 					 * @return {Mocha}
 					 * @api public
 					 * @param {boolean} colors
@@ -1416,7 +1416,7 @@
 					/**
 					 * Use inline diffs rather than +/-.
 					 *
-					 * @param {Boolean} inlineDiffs
+					 * @param {boolean} inlineDiffs
 					 * @return {Mocha}
 					 * @api public
 					 * @param {boolean} inlineDiffs
@@ -1430,7 +1430,7 @@
 					/**
 					 * Set the timeout in milliseconds.
 					 *
-					 * @param {Number} timeout
+					 * @param {number} timeout
 					 * @return {Mocha}
 					 * @api public
 					 * @param {number} timeout
@@ -1444,7 +1444,7 @@
 					/**
 					 * Set the number of times to retry failed tests.
 					 *
-					 * @param {Number} retry times
+					 * @param {number} retry times
 					 * @return {Mocha}
 					 * @api public
 					 */
@@ -1456,7 +1456,7 @@
 					/**
 					 * Set slowness threshold in milliseconds.
 					 *
-					 * @param {Number} slow
+					 * @param {number} slow
 					 * @return {Mocha}
 					 * @api public
 					 * @param {number} slow
@@ -1470,7 +1470,7 @@
 					/**
 					 * Enable timeouts.
 					 *
-					 * @param {Boolean} enabled
+					 * @param {boolean} enabled
 					 * @return {Mocha}
 					 * @api public
 					 * @param {boolean} enabled
@@ -1617,7 +1617,7 @@
 				 *
 				 * @api public
 				 * @param {string|number} val
-				 * @param {Object} options
+				 * @param {object} options
 				 * @return {string|number}
 				 */
 				module.exports = function( val, options ) {
@@ -2260,8 +2260,8 @@
 					 * Check that a / b have the same type.
 					 *
 					 * @api private
-					 * @param {Object} a
-					 * @param {Object} b
+					 * @param {object} a
+					 * @param {object} b
 					 * @return {boolean}
 					 */
 					function sameType( a, b ) {
@@ -2752,7 +2752,7 @@
 					/**
 					 * Provide suite URL.
 					 *
-					 * @param {Object} [suite]
+					 * @param {object} [suite]
 					 */
 					HTML.prototype.suiteURL = function( suite ) {
 						return makeUrl( suite.fullTitle() );
@@ -2761,7 +2761,7 @@
 					/**
 					 * Provide test URL.
 					 *
-					 * @param {Object} [test]
+					 * @param {object} [test]
 					 */
 					HTML.prototype.testURL = function( test ) {
 						return makeUrl( test.fullTitle() );
@@ -2966,8 +2966,8 @@
 					 * suitable for reporting.
 					 *
 					 * @api private
-					 * @param {Object} cov
-					 * @return {Object}
+					 * @param {object} cov
+					 * @return {object}
 					 */
 
 					function map( cov ) {
@@ -3007,8 +3007,8 @@
 					 *
 					 * @api private
 					 * @param {string} filename name of the source file
-					 * @param {Object} data jscoverage coverage data
-					 * @return {Object}
+					 * @param {object} data jscoverage coverage data
+					 * @return {object}
 					 */
 					function coverage( filename, data ) {
 						var ret = {
@@ -3047,8 +3047,8 @@
 					 * free of cyclic properties etc.
 					 *
 					 * @api private
-					 * @param {Object} test
-					 * @return {Object}
+					 * @param {object} test
+					 * @return {object}
 					 */
 					function clean( test ) {
 						return {
@@ -3124,8 +3124,8 @@
 					 * free of cyclic properties etc.
 					 *
 					 * @api private
-					 * @param {Object} test
-					 * @return {Object}
+					 * @param {object} test
+					 * @return {object}
 					 */
 					function clean( test ) {
 						return {
@@ -3205,8 +3205,8 @@
 					 * free of cyclic properties etc.
 					 *
 					 * @api private
-					 * @param {Object} test
-					 * @return {Object}
+					 * @param {object} test
+					 * @return {object}
 					 */
 					function clean( test ) {
 						return {
@@ -3223,7 +3223,7 @@
 					 *
 					 * @api private
 					 * @param {Error} err
-					 * @return {Object}
+					 * @return {object}
 					 */
 					function errorJSON( err ) {
 						var res = {};
@@ -3847,7 +3847,7 @@
 					 *
 					 * @api public
 					 * @param {Runner} runner
-					 * @param {Object} options
+					 * @param {object} options
 					 */
 					function Progress( runner, options ) {
 						Base.call( this, runner );
@@ -4066,8 +4066,8 @@
 				 * Return a TAP-safe title of `test`
 				 *
 				 * @api private
-				 * @param {Object} test
-				 * @return {String}
+				 * @param {object} test
+				 * @return {string}
 				 */
 				function title( test ) {
 					return test.fullTitle().replace( /#/g, '' );
@@ -4320,7 +4320,7 @@
 					/**
 					 * Initialize a new `Runnable` with the given `title` and callback `fn`.
 					 *
-					 * @param {String} title
+					 * @param {string} title
 					 * @param {Function} fn
 					 * @api private
 					 * @param {string} title
@@ -4773,7 +4773,7 @@
 					 * with number of tests matched.
 					 *
 					 * @param {RegExp} re
-					 * @param {Boolean} invert
+					 * @param {boolean} invert
 					 * @return {Runner} for chaining
 					 * @api public
 					 * @param {RegExp} re
@@ -4793,7 +4793,7 @@
 					 * given suite.
 					 *
 					 * @param {Suite} suite
-					 * @return {Number}
+					 * @return {number}
 					 * @api public
 					 * @param {Suite} suite
 					 * @return {number}
@@ -5034,7 +5034,7 @@
 					/**
 					 * Run hooks from the top level down.
 					 *
-					 * @param {String} name
+					 * @param {string} name
 					 * @param {Function} fn
 					 * @api private
 					 */
@@ -5046,7 +5046,7 @@
 					/**
 					 * Run hooks from the bottom up.
 					 *
-					 * @param {String} name
+					 * @param {string} name
 					 * @param {Function} fn
 					 * @api private
 					 */
@@ -6011,7 +6011,7 @@
 				 * Initialize a new `Test` with the given `title` and callback `fn`.
 				 *
 				 * @api private
-				 * @param {String} title
+				 * @param {string} title
 				 * @param {Function} fn
 				 */
 				function Test( title, fn ) {
@@ -6089,7 +6089,7 @@
 					 * @api private
 					 * @param {Array} arr
 					 * @param {Function} fn
-					 * @param {Object} scope
+					 * @param {object} scope
 					 */
 					exports.forEach = function( arr, fn, scope ) {
 						for ( var i = 0, l = arr.length; i < l; i++ ) {
@@ -6101,7 +6101,7 @@
 					 * Test if the given obj is type of string.
 					 *
 					 * @api private
-					 * @param {Object} obj
+					 * @param {object} obj
 					 * @return {boolean}
 					 */
 					exports.isString = function( obj ) {
@@ -6114,7 +6114,7 @@
 					 * @api private
 					 * @param {Array} arr
 					 * @param {Function} fn
-					 * @param {Object} scope
+					 * @param {object} scope
 					 * @return {Array}
 					 */
 					exports.map = function( arr, fn, scope ) {
@@ -6130,7 +6130,7 @@
 					 *
 					 * @api private
 					 * @param {Array} arr
-					 * @param {Object} obj to find index of
+					 * @param {object} obj to find index of
 					 * @param {number} start
 					 * @return {number}
 					 */
@@ -6149,7 +6149,7 @@
 					 * @api private
 					 * @param {Array} arr
 					 * @param {Function} fn
-					 * @param {Object} val Initial value.
+					 * @param {object} val Initial value.
 					 * @return {*}
 					 */
 					exports.reduce = function( arr, fn, val ) {
@@ -6187,7 +6187,7 @@
 					 * Object.keys (<=IE8)
 					 *
 					 * @api private
-					 * @param {Object} obj
+					 * @param {object} obj
 					 * @return {Array} keys
 					 */
 					exports.keys =
@@ -6230,8 +6230,8 @@
 					 * Array.isArray (<=IE8)
 					 *
 					 * @api private
-					 * @param {Object} obj
-					 * @return {Boolean}
+					 * @param {object} obj
+					 * @return {boolean}
 					 */
 					var isArray =
 						typeof Array.isArray === 'function'
@@ -6350,7 +6350,7 @@
 					 *
 					 * @api private
 					 * @param {string} qs
-					 * @return {Object}
+					 * @return {object}
 					 */
 					exports.parseQuery = function( qs ) {
 						return exports.reduce(
@@ -6514,7 +6514,7 @@
 					 * like JSON.stringify but more sense.
 					 *
 					 * @api private
-					 * @param {Object}  object
+					 * @param {object}  object
 					 * @param {number=} spaces
 					 * @param {number=} depth
 					 * @returns {*}
@@ -6618,7 +6618,7 @@
 					 * @see {@link exports.stringify}
 					 * @param {*} value Thing to inspect.  May or may not have properties.
 					 * @param {Array} [stack=[]] Stack of seen values
-					 * @return {(Object|Array|Function|string|undefined)}
+					 * @return {(object|Array|Function|string|undefined)}
 					 */
 					exports.canonicalize = function( value, stack ) {
 						var canonicalizedObj;
@@ -11583,8 +11583,8 @@
 					 * Echos the value of a value. Trys to print the value out
 					 * in the best way possible given the different types.
 					 *
-					 * @param {Object} obj The object to print out.
-					 * @param {Object} opts Optional options object that alters the output.
+					 * @param {object} obj The object to print out.
+					 * @param {object} opts Optional options object that alters the output.
 					 */
 					/* legacy: obj, showHidden, depth, colors*/
 					function inspect( obj, opts ) {
@@ -12053,9 +12053,9 @@
 					 * functions as prototype setup using normal JavaScript does not work as
 					 * expected during bootstrapping (see mirror.js in r114903).
 					 *
-					 * @param {function} ctor Constructor function which needs to inherit the
+					 * @param {Function} ctor Constructor function which needs to inherit the
 					 *     prototype.
-					 * @param {function} superCtor Constructor function to inherit prototype from.
+					 * @param {Function} superCtor Constructor function to inherit prototype from.
 					 */
 					exports.inherits = require( 'inherits' );
 
@@ -12941,7 +12941,7 @@
 					 *
 					 * @param {string} msg
 					 * @param {object} options
-					 * @param {function} fn
+					 * @param {Function} fn
 					 * @api public
 					 */
 

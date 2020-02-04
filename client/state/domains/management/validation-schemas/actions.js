@@ -27,7 +27,7 @@ export const addValidationSchemas = schemas => ( {
 /**
  * Action creator to request tld validation schemas: DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST
  *
- * @param  {string|Array<String>} tlds List of tlds that we're requesting schemas for
+ * @param  {string|Array<string>} tlds List of tlds that we're requesting schemas for
  * @returns {object} action
  */
 export const requestValidationSchemas = tlds => ( {

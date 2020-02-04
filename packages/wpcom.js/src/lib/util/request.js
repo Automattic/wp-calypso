@@ -15,8 +15,8 @@ export default function Req( wpcom ) {
 /**
  * Request methods
  *
- * @param {Object|String} params - params object
- * @param {Object} [query] - query object parameter
+ * @param {object|string} params - params object
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */
@@ -33,9 +33,9 @@ Req.prototype.get = function( params, query, fn ) {
 /**
  * Make `update` request
  *
- * @param {Object|String} params
- * @param {Object} [query] - query object parameter
- * @param {Object} body - body object parameter
+ * @param {object|string} params
+ * @param {object} [query] - query object parameter
+ * @param {object} body - body object parameter
  * @param {Function} fn - callback function
  */
 Req.prototype.post = Req.prototype.put = function( params, query, body, fn ) {
@@ -62,8 +62,8 @@ Req.prototype.post = Req.prototype.put = function( params, query, body, fn ) {
 /**
  * Make a `delete` request
  *
- * @param {Object|String} params - params object
- * @param {Object} [query] - query object parameter
+ * @param {object|string} params - params object
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */

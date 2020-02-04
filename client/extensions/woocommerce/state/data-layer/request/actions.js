@@ -31,7 +31,7 @@ function _createRequestAction( method, siteId, path, body, onSuccessAction, onFa
  * @param {string} path API endpoint
  * @param {object|Function} [onSuccessAction] Action with extra props { data }
  * @param {object|Function} [onFailureAction] Action with extra props { error }
- * @returns {Promise<Object>} A promise to the action (only used for testing)
+ * @returns {Promise<object>} A promise to the action (only used for testing)
  */
 export function get( siteId, path, onSuccessAction, onFailureAction ) {
 	return _createRequestAction( 'get', siteId, path, undefined, onSuccessAction, onFailureAction );
@@ -45,7 +45,7 @@ export function get( siteId, path, onSuccessAction, onFailureAction ) {
  * @param {object} body JS Object that will be converted to JSON for the HTTP Body
  * @param {object|Function} [onSuccessAction] Action with extra props { data }
  * @param {object|Function} [onFailureAction] Action with extra props { error }
- * @returns {Promise<Object>} A promise to the action (only used for testing)
+ * @returns {Promise<object>} A promise to the action (only used for testing)
  */
 export function post( siteId, path, body, onSuccessAction, onFailureAction ) {
 	return _createRequestAction( 'post', siteId, path, body, onSuccessAction, onFailureAction );
@@ -59,7 +59,7 @@ export function post( siteId, path, body, onSuccessAction, onFailureAction ) {
  * @param {object} body JS Object that will be converted to JSON for the HTTP Body
  * @param {object|Function} [onSuccessAction] Action with extra props { data }
  * @param {object|Function} [onFailureAction] Action with extra props { error }
- * @returns {Promise<Object>} A promise to the action (only used for testing)
+ * @returns {Promise<object>} A promise to the action (only used for testing)
  */
 export function put( siteId, path, body, onSuccessAction, onFailureAction ) {
 	return _createRequestAction( 'put', siteId, path, body, onSuccessAction, onFailureAction );
@@ -72,7 +72,7 @@ export function put( siteId, path, body, onSuccessAction, onFailureAction ) {
  * @param {string} path API endpoint
  * @param {object|Function} [onSuccessAction] Action with extra props { data }
  * @param {object|Function} [onFailureAction] Action with extra props { error }
- * @returns {Promise<Object>} A promise to the action (only used for testing)
+ * @returns {Promise<object>} A promise to the action (only used for testing)
  */
 export function del( siteId, path, onSuccessAction, onFailureAction ) {
 	return _createRequestAction( 'del', siteId, path, undefined, onSuccessAction, onFailureAction );

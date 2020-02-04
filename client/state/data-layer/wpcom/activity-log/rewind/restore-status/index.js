@@ -17,7 +17,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 /** @type {number} how many ms between polls for same data */
 const POLL_INTERVAL = 1500;
 
-/** @type {Map<String, Number>} stores most-recent polling times */
+/** @type {Map<string, number>} stores most-recent polling times */
 const recentRequests = new Map();
 
 /** @type {string} Request error notice id. Prevents polling from creating endless notices */

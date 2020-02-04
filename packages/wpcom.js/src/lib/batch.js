@@ -17,7 +17,7 @@ class Batch {
 	/**
 	 * Add url to batch requests
 	 *
-	 * @param {String} url - endpoint url
+	 * @param {string} url - endpoint url
 	 * @return {Batch} batch instance
 	 */
 	add( url ) {
@@ -28,7 +28,7 @@ class Batch {
 	/**
 	 * Run the batch request
 	 *
-	 * @param {Object} [query] - optional query parameter
+	 * @param {object} [query] - optional query parameter
 	 * @param {Function} fn - callback
 	 * @return {Promise} Promise
 	 */

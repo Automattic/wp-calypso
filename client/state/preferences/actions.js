@@ -61,9 +61,9 @@ export function fetchPreferences() {
  * This is not to be confused with the `savePreference` action which will eventually store these values
  * on the setting endpoint.
  *
- * @param   { String | Number }               key User preference key
- * @param   { String | Number | Object }      value User preference value
- * @returns { Object }                        Action object
+ * @param   {string|number}               key User preference key
+ * @param   {string|number|object}      value User preference value
+ * @returns {object}                        Action object
  */
 export const setPreference = ( key, value ) => ( {
 	type: PREFERENCES_SET,
@@ -74,8 +74,8 @@ export const setPreference = ( key, value ) => ( {
 /**
  * Returns an action thunk that stores a preference and saves it to API.
  *
- * @param   { String | Number }               key User preference key
- * @param   { String | Number | Object }      value User preference value
+ * @param   {string|number}               key User preference key
+ * @param   {string|number|object}      value User preference value
  * @returns { Function }                      Action thunk
  */
 export const savePreference = ( key, value ) => dispatch => {

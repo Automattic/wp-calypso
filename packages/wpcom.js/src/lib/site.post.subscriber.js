@@ -2,10 +2,10 @@ class SitePostSubscriber {
 	/**
 	 * `SitePostSubscriber` constructor.
 	 *
-	 * @param {String} id - post identifier
-	 * @param {String} sid - site identifier
+	 * @param {string} id - post identifier
+	 * @param {string} sid - site identifier
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {Null} null
+	 * @return {null} null
 	 */
 	constructor( id, sid, wpcom ) {
 		if ( ! sid ) {
@@ -40,7 +40,7 @@ class SitePostSubscriber {
 	 *      // subscription data
 	 *    } );
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @return {Promise} Promise
 	 */
@@ -61,7 +61,7 @@ class SitePostSubscriber {
 	 *      // current user has been subscribed to post
 	 *    } );
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @return {Promise} Promise
 	 */
@@ -82,7 +82,7 @@ class SitePostSubscriber {
 	 *      // current user has been unsubscribed to post
 	 *    } );
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @return {Promise} Promise
 	 */

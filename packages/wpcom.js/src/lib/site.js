@@ -33,9 +33,9 @@ class Site {
 	/**
 	 * Create a Site instance
 	 *
-	 * @param {String} id - site id
+	 * @param {string} id - site id
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {Null} null
+	 * @return {null} null
 	 */
 	constructor( id, wpcom ) {
 		if ( ! ( this instanceof Site ) ) {
@@ -52,7 +52,7 @@ class Site {
 	/**
 	 * Require site information
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */
@@ -63,7 +63,7 @@ class Site {
 	/**
 	 * Create a `Post` instance
 	 *
-	 * @param {String} id - post id
+	 * @param {string} id - post id
 	 * @return {Post} Post instance
 	 */
 	post( id ) {
@@ -73,7 +73,7 @@ class Site {
 	/**
 	 * Add a new blog post
 	 *
-	 * @param {Object} body - body object parameter
+	 * @param {object} body - body object parameter
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */
@@ -85,7 +85,7 @@ class Site {
 	/**
 	 * Delete a blog post
 	 *
-	 * @param {String} id - post id
+	 * @param {string} id - post id
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */
@@ -97,7 +97,7 @@ class Site {
 	/**
 	 * Create a `Media` instance
 	 *
-	 * @param {String} id - post id
+	 * @param {string} id - post id
 	 * @return {Media} Media instance
 	 */
 	media( id ) {
@@ -107,8 +107,8 @@ class Site {
 	/**
 	 * Add a media from a file
 	 *
-	 * @param {Object} [query] - query object parameter
-	 * @param {Array|String} files - media files to add
+	 * @param {object} [query] - query object parameter
+	 * @param {Array|string} files - media files to add
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */
@@ -120,8 +120,8 @@ class Site {
 	/**
 	 * Add a new media from url
 	 *
-	 * @param {Object} [query] - query object parameter
-	 * @param {Array|String} files - media files to add
+	 * @param {object} [query] - query object parameter
+	 * @param {Array|string} files - media files to add
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */
@@ -133,7 +133,7 @@ class Site {
 	/**
 	 * Delete a blog media
 	 *
-	 * @param {String} id - media id
+	 * @param {string} id - media id
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */
@@ -145,7 +145,7 @@ class Site {
 	/**
 	 * Create a `Comment` instance
 	 *
-	 * @param {String} id - comment id
+	 * @param {string} id - comment id
 	 * @return {Comment} Comment instance
 	 */
 	comment( id ) {
@@ -164,7 +164,7 @@ class Site {
 	/**
 	 * Create a `SitePlugin` instance
 	 *
-	 * @param {String} slug - plugin identifier
+	 * @param {string} slug - plugin identifier
 	 * @return {SitePlugin} SitePlugin instance
 	 */
 	plugin( slug ) {
@@ -174,7 +174,7 @@ class Site {
 	/**
 	 * Create a `SiteWPComPlugin` instance
 	 *
-	 * @param {String} slug - plugin identifier
+	 * @param {string} slug - plugin identifier
 	 * @return {SiteWPComPlugin} SiteWPComPlugin instance
 	 */
 	wpcomPlugin( slug ) {
@@ -185,7 +185,7 @@ class Site {
 	 * Create a `Category` instance
 	 * Set `cat` alias
 	 *
-	 * @param {String} [slug] - category slug
+	 * @param {string} [slug] - category slug
 	 * @return {Category} Category instance
 	 */
 	category( slug ) {
@@ -195,7 +195,7 @@ class Site {
 	/**
 	 * Create a `Tag` instance
 	 *
-	 * @param {String} [slug] - tag slug
+	 * @param {string} [slug] - tag slug
 	 * @return {Tag} Tag instance
 	 */
 	tag( slug ) {
@@ -205,7 +205,7 @@ class Site {
 	/**
 	 * Create a `Taxonomy` instance
 	 *
-	 * @param {String} [slug] - taxonomy slug
+	 * @param {string} [slug] - taxonomy slug
 	 * @return {SiteTaxonomy} SiteTaxonomy instance
 	 */
 	taxonomy( slug ) {
@@ -224,7 +224,7 @@ class Site {
 	/**
 	 * Create a `SitePostType` instance
 	 *
-	 * @param {String} [slug] - post type slug
+	 * @param {string} [slug] - post type slug
 	 * @return {SitePostType} SitePostType instance
 	 */
 	postType( slug ) {
@@ -260,8 +260,8 @@ class Site {
 	 *      // `counts` data object
 	 *    } );
 	 *
-	 * @param {String} type - post type
-	 * @param {Object} [query] - query object parameter
+	 * @param {string} type - post type
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */
@@ -279,8 +279,8 @@ class Site {
 	 *
 	 * Note: The current user must have publishing access.
 	 *
-	 * @param {String} url - shortcode url
-	 * @param {Object} [query] - query object parameter
+	 * @param {string} url - shortcode url
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */
@@ -305,8 +305,8 @@ class Site {
 	 *
 	 * Note: The current user must have publishing access.
 	 *
-	 * @param {String} url - embed url
-	 * @param {Object} [query] - query object parameter
+	 * @param {string} url - embed url
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */
@@ -329,7 +329,7 @@ class Site {
 	/**
 	 * Mark a referrering domain as spam
 	 *
-	 * @param {String} domain - domain
+	 * @param {string} domain - domain
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */
@@ -341,7 +341,7 @@ class Site {
 	/**
 	 * Remove referrering domain from spam
 	 *
-	 * @param {String} domain - domain
+	 * @param {string} domain - domain
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */
@@ -353,8 +353,8 @@ class Site {
 	/**
 	 * Get detailed stats about a VideoPress video
 	 *
-	 * @param {String} videoId - video id
-	 * @param {Object} [query] - query object parameter
+	 * @param {string} videoId - video id
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */
@@ -372,8 +372,8 @@ class Site {
 	/**
 	 * Get detailed stats about a particular post
 	 *
-	 * @param {String} postId - post id
-	 * @param {Object} [query] - query object parameter
+	 * @param {string} postId - post id
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */

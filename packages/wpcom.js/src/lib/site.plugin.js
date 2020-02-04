@@ -8,10 +8,10 @@ class SitePlugin {
 	/**
 	 * `SitePlugin` constructor.
 	 *
-	 * @param {String} [slug] - the plugin slug
-	 * @param {Number|String} sid - site identifier
+	 * @param {string} [slug] - the plugin slug
+	 * @param {number|string} sid - site identifier
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {Undefined} undefined
+	 * @return {undefined} undefined
 	 */
 	constructor( slug, sid, wpcom ) {
 		if ( ! ( this instanceof SitePlugin ) ) {
@@ -33,7 +33,7 @@ class SitePlugin {
 	/**
 	 * Get informtion about the plugin
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @return {Promise} Promise
 	 */
@@ -44,8 +44,8 @@ class SitePlugin {
 	/**
 	 * Update the plugin configuration
 	 *
-	 * @param {Object} [query] - query object parameter
-	 * @param {Object} body - plugin body object
+	 * @param {object} [query] - query object parameter
+	 * @param {object} body - plugin body object
 	 * @param {Function} [fn] - callback function
 	 * @return {Promise} Promise
 	 */
@@ -56,7 +56,7 @@ class SitePlugin {
 	/**
 	 * Update the plugin version
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @return {Promise} Promise
 	 */
@@ -67,7 +67,7 @@ class SitePlugin {
 	/**
 	 * Install the plugin
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @return {Promise} Promise
 	 */
@@ -78,7 +78,7 @@ class SitePlugin {
 	/**
 	 * Delete the plugin
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @return {Promise} Promise
 	 */
@@ -90,7 +90,7 @@ class SitePlugin {
 	 * Activate the plugin
 	 * This method is a shorthand of update()
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @return {Promise} Promise
 	 */
@@ -102,7 +102,7 @@ class SitePlugin {
 	 * Deactivate the plugin
 	 * This method is a shorthand of update()
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @return {Promise} Promise
 	 */
@@ -114,7 +114,7 @@ class SitePlugin {
 	 * Enable plugin autoupdate
 	 * This method is a shorthand of update()
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @return {Promise} Promise
 	 */
@@ -126,7 +126,7 @@ class SitePlugin {
 	 * Disable plugin autoupdate
 	 * This method is a shorthand of update()
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @return {Promise} Promise
 	 */

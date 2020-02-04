@@ -24,7 +24,7 @@ export default function Pinghub( wpcom ) {
 /**
  * Open a websocket to Pinghub
  *
- * @param {String} path - request path
+ * @param {string} path - request path
  * @param {Function} fn - callback function
  * @api public
  */
@@ -51,7 +51,7 @@ Pinghub.prototype.connect = function( path, fn ) {
 /**
  * Close a websocket connection (unsubscribe)
  *
- * @param {String} path - request path
+ * @param {string} path - request path
  * @api public
  */
 Pinghub.prototype.disconnect = function( path ) {
@@ -67,7 +67,7 @@ Pinghub.prototype.disconnect = function( path ) {
 /**
  * Remove a dead connection
  *
- * @param {String} path - pinghub channel
+ * @param {string} path - pinghub channel
  * @api private
  */
 Pinghub.prototype.remove = function( path ) {

@@ -4,9 +4,9 @@ class DomainDns {
 	/**
 	 * `DomainDns` constructor.
 	 *
-	 * @param {String} domainId - domain identifier
+	 * @param {string} domainId - domain identifier
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {Undefined} undefined
+	 * @return {undefined} undefined
 	 */
 	constructor( domainId, wpcom ) {
 		if ( ! ( this instanceof DomainDns ) ) {
@@ -21,8 +21,8 @@ class DomainDns {
 	/**
 	 * Adds a DNS record
 	 *
-	 * @param {Object} record - record
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} record - record
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */
@@ -38,8 +38,8 @@ class DomainDns {
 	/**
 	 * Delete a DNS record
 	 *
-	 * @param {String} record - record
-	 * @param {Object} [query] - query object parameter
+	 * @param {string} record - record
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */

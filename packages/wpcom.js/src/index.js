@@ -33,7 +33,7 @@ const DEFAULT_ASYNC_TIMEOUT = 30000;
  *
  * Request Handler is optional and XHR is defined as default.
  *
- * @param {String} [token] - OAuth API access token
+ * @param {string} [token] - OAuth API access token
  * @param {Function} [reqHandler] - function Request Handler
  * @return {WPCOM} wpcom instance
  */
@@ -111,7 +111,7 @@ WPCOM.prototype.domains = function() {
 /**
  * Return `Domain` object instance
  *
- * @param {String} domainId - domain identifier
+ * @param {string} domainId - domain identifier
  * @return {Domain} Domain instance
  */
 WPCOM.prototype.domain = function( domainId ) {
@@ -121,7 +121,7 @@ WPCOM.prototype.domain = function( domainId ) {
 /**
  * Return `Site` object instance
  *
- * @param {String} id - site identifier
+ * @param {string} id - site identifier
  * @return {Site} Site instance
  */
 WPCOM.prototype.site = function( id ) {
@@ -158,7 +158,7 @@ WPCOM.prototype.batch = function() {
 /**
  * List Freshly Pressed Posts
  *
- * @param {Object} [query] - query object
+ * @param {object} [query] - query object
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */

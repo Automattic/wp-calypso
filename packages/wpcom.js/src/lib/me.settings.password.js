@@ -6,7 +6,7 @@ export default class MeSettingsPassword {
 	 * `MeSettingsPassword` constructor.
 	 *
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {Null} null
+	 * @return {null} null
 	 */
 	constructor( wpcom ) {
 		if ( ! ( this instanceof MeSettingsPassword ) ) {
@@ -18,8 +18,8 @@ export default class MeSettingsPassword {
 	/**
 	 * Verify strength of a user's new password.
 	 *
-	 * @param {String} password - the users's potential new password
-	 * @param {Object} [query] - query object parameter
+	 * @param {string} password - the users's potential new password
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */

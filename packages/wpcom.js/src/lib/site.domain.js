@@ -7,9 +7,9 @@ class SiteDomain {
 	/**
 	 * `SiteDomain` constructor.
 	 *
-	 * @param {Number|String} id - site identifier
+	 * @param {number|string} id - site identifier
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {Undefined} undefined
+	 * @return {undefined} undefined
 	 */
 	constructor( id, wpcom ) {
 		if ( ! ( this instanceof SiteDomain ) ) {
@@ -23,7 +23,7 @@ class SiteDomain {
 	/**
 	 * Get the primary domain for a site
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @return {Function} request handler
 	 */
@@ -34,7 +34,7 @@ class SiteDomain {
 	/**
 	 * Set the primary domain for a site
 	 *
-	 * @param {String} domain - domain to set
+	 * @param {string} domain - domain to set
 	 * @param {Function} [fn] - callback function
 	 * @return {Function} request handler
 	 */
@@ -45,7 +45,7 @@ class SiteDomain {
 	/**
 	 * Get the redirect status for a site
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @return {Function} request handler
 	 */
@@ -56,7 +56,7 @@ class SiteDomain {
 	/**
 	 * Set the redirect location for a site
 	 *
-	 * @param {String|Object} location - location to set
+	 * @param {string|object} location - location to set
 	 * @param {Function} [fn] - callback function
 	 * @return {Function} request handler
 	 */

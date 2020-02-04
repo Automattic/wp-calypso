@@ -8,10 +8,10 @@ import { getCurrentUserLocale } from 'state/current-user/selectors';
 /**
  * Returns an object of happychat skills array ( product - before known as groups and language )
  *
- * @param { Object } state Global state tree
- * @param { String } siteId Id of the selected site used to determine the product (wpcom, jetpack)
+ * @param {object} state Global state tree
+ * @param {string} siteId Id of the selected site used to determine the product (wpcom, jetpack)
  *
- * @returns { String } Current user geo location
+ * @returns {string} Current user geo location
  */
 export default ( state, siteId ) => {
 	const skills = {

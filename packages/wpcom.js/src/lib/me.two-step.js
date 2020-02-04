@@ -11,7 +11,7 @@ export default class MeTwoStep {
 	 * `MeTwoStep` constructor.
 	 *
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {Null} null
+	 * @return {null} null
 	 */
 	constructor( wpcom ) {
 		if ( ! ( this instanceof MeTwoStep ) ) {
@@ -23,7 +23,7 @@ export default class MeTwoStep {
 	/**
 	 * Get information about current user's two factor configuration.
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @return {Function} request handler
 	 */

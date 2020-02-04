@@ -44,7 +44,7 @@ export function encodeOriginalKey( { original, context } ) {
 /**
  * Sends originals to translate.wordpress.com to be recorded
  *
- * @param {[String]} originalKeys Array of original keys to record
+ * @param {[string]} originalKeys Array of original keys to record
  * @param {string} recordId fallback recordId to pass to the backend
  * @param {Function} post see postRequest()
  * @returns {object} request object

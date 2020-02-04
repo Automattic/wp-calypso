@@ -23,7 +23,7 @@ const ReduxWrappedLoggedOutLayout = ( { store, primary, secondary, redirectUri }
 
 /**
  * @param { object } context -- Middleware context
- * @param { function } next -- Call next middleware in chain
+ * @param {Function} next -- Call next middleware in chain
  *
  * Produce a `LayoutLoggedOut` element in `context.layout`, using
  * `context.primary` and `context.secondary` to populate it.

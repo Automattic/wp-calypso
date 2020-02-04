@@ -49,7 +49,7 @@ const productListSchema = {
 /**
  * Map that maps custom field keys to corresponding keys in redux representation of a product
  *
- * @type { Object }
+ * @type {object}
  */
 export const metaKeyToSchemaKeyMap = Object.keys( metadataSchema ).reduce( ( prev, curr ) => {
 	prev[ metadataSchema[ curr ].metaKey ] = curr;

@@ -10,9 +10,9 @@ import SiteWordAdsTOS from './site.wordads.tos';
  *
  * Use a `WPCOM#Me` instance to create a new `SiteWordAds` instance.
  *
- * @param {String} sid - site identifier
+ * @param {string} sid - site identifier
  * @param {WPCOM} wpcom - wpcom instance
- * @return {Null} null
+ * @return {null} null
  */
 export default function SiteWordAds( sid, wpcom ) {
 	if ( ! ( this instanceof SiteWordAds ) ) {

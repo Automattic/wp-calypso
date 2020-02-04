@@ -446,7 +446,7 @@ export class DateRange extends Component {
 	 * Converts a moment date to a native JS Date object
 	 *
 	 * @param  {MomentJSDate} momentDate a momentjs date object to convert
-	 * @returns {DATE}            the converted JS Date object
+	 * @returns {Date}            the converted JS Date object
 	 */
 	momentDateToJsDate( momentDate ) {
 		return this.props.moment.isMoment( momentDate ) ? momentDate.toDate() : momentDate;
