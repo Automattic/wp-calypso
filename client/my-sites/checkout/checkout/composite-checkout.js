@@ -140,8 +140,7 @@ export default function CompositeCheckout( {
 		validateDomainContactDetails || wpcomValidateDomainContactInformation
 	);
 
-	const errorMessages = useMemo( () => errors.map( error => error.message ), [ errors ] );
-	useDisplayErrors( errorMessages, showErrorMessage );
+	useDisplayErrors( errors, showErrorMessage );
 
 	useAddProductToCart( planSlug, isJetpackNotAtomic, addItem );
 
@@ -275,8 +274,20 @@ function useAddProductToCart( planSlug, isJetpackNotAtomic, addItem ) {
 }
 
 function useDisplayErrors( errors, displayError ) {
+	const couponErrorCodes = [
+		'coupon-not-found',
+		'coupon-already-used',
+		'coupon-no-longer-valid',
+		'coupon-expired',
+		'coupon-unknown-error',
+	];
+
+	const isNotCouponError = error => {
+		return ! couponErrorCodes.includes( error.code );
+	};
+
 	useEffect( () => {
-		errors.map( displayError );
+		errors.filter( isNotCouponError ).map( error => displayError( error.message ) );
 	}, [ errors, displayError ] );
 }
 
