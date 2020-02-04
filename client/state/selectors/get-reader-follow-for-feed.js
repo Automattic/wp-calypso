@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { find } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'state/reader/reducer';
 
 /*
  * Find the first follow for a given feed ID

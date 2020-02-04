@@ -24,6 +24,8 @@ import {
 	READER_LISTS_UNFOLLOW_FAILURE,
 } from 'state/action-types';
 
+import 'state/reader/reducer';
+
 /**
  * Returns an action object to signal that list objects have been received.
  *
@@ -235,7 +237,7 @@ export function updateListDetails( list ) {
 /**
  * Trigger an action to dismiss a list update notice.
  *
- * @param  {Integer}  listId List ID
+ * @param  {number}  listId List ID
  * @returns {Function} Action thunk
  */
 export function dismissListNotice( listId ) {
@@ -250,7 +252,7 @@ export function dismissListNotice( listId ) {
 /**
  * Trigger an action to update a list title.
  *
- * @param  {Integer}  listId List ID
+ * @param  {number}  listId List ID
  * @param  {string}  newTitle List title
  * @returns {Function} Action thunk
  */
@@ -267,7 +269,7 @@ export function updateTitle( listId, newTitle ) {
 /**
  * Trigger an action to update a list description.
  *
- * @param  {Integer}  listId List ID
+ * @param  {number}  listId List ID
  * @param  {string}  newDescription List description
  * @returns {Function} Action thunk
  */

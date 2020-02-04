@@ -8,6 +8,8 @@ import { filter, find, has, includes, sortBy } from 'lodash';
  */
 import createSelector from 'lib/create-selector';
 
+import 'state/reader/reducer';
+
 /**
  * Returns true if currently requesting Reader lists, or
  * false otherwise.
@@ -52,7 +54,7 @@ export const getSubscribedLists = createSelector(
  * Returns true if the specified list has been marked as updated.
  *
  * @param  {object}  state  Global state tree
- * @param  {Integer}  listId  List ID
+ * @param  {number}  listId  List ID
  * @returns {boolean}        Whether lists are being requested
  */
 export function isUpdatedList( state, listId ) {
@@ -66,7 +68,7 @@ export function isUpdatedList( state, listId ) {
  * Returns true if the specified list has an error recorded.
  *
  * @param  {object}  state  Global state tree
- * @param  {Integer}  listId  List ID
+ * @param  {number}  listId  List ID
  * @returns {boolean}        Whether list has an error
  */
 export function hasError( state, listId ) {

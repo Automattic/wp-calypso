@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-
 import { find } from 'lodash';
+
+import 'state/reader/reducer';
 
 /*
  * Find the first follow for a given blog ID

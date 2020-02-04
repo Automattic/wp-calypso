@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'state/reader/reducer';
+
+/**
  * Returns the all images available for a given tag.
  *
  * @param  {object}  state  Global state tree

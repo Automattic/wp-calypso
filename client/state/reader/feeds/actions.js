@@ -15,6 +15,8 @@ import {
 
 import 'state/data-layer/wpcom/read/feed';
 
+import 'state/reader/reducer';
+
 export function requestFeed( feedId ) {
 	return {
 		type: READER_FEED_REQUEST,

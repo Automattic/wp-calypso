@@ -76,7 +76,6 @@ import preferences from './preferences/reducer';
 import productsList from './products-list/reducer';
 import purchases from './purchases/reducer';
 import pushNotifications from './push-notifications/reducer';
-import reader from './reader/reducer';
 import receipts from './receipts/reducer';
 import rewind from './rewind/reducer';
 import selectedEditor from './selected-editor/reducer';
@@ -102,6 +101,8 @@ import userSettings from './user-settings/reducer';
 import users from './users/reducer';
 import wordads from './wordads/reducer';
 
+// Legacy reducers
+// The reducers in this list are not modularized, and are always loaded on boot.
 const reducers = {
 	account,
 	accountRecovery,
@@ -167,7 +168,6 @@ const reducers = {
 	productsList,
 	purchases,
 	pushNotifications,
-	reader,
 	receipts,
 	rewind,
 	selectedEditor,

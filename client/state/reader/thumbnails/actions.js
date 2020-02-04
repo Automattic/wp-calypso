@@ -15,6 +15,8 @@ import {
 	READER_THUMBNAIL_RECEIVE,
 } from 'state/action-types';
 
+import 'state/reader/reducer';
+
 /**
  * Module variables
  */
@@ -80,7 +82,7 @@ export const requestThumbnail = embedUrl => dispatch => {
 			} );
 
 			const fetchUrl = `https://vimeo.com/api/v2/video/${ id }.json`;
-			return fetch( fetchUrl ).then(
+			return globalThis.fetch( fetchUrl ).then(
 				async response => {
 					let json;
 					try {

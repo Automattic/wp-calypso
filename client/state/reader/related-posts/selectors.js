@@ -1,11 +1,9 @@
 /**
- * External Dependencies
- */
-
-/**
  * Internal Dependencies
  */
 import { key, SCOPE_ALL } from './utils';
+
+import 'state/reader/reducer';
 
 export function shouldFetchRelated( state, siteId, postId, scope = SCOPE_ALL ) {
 	return (

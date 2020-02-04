@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { values, reject } from 'lodash';
 
 /**
@@ -10,6 +9,8 @@ import { values, reject } from 'lodash';
 import createSelector from 'lib/create-selector';
 import { getSite } from 'state/reader/sites/selectors';
 import { getFeed } from 'state/reader/feeds/selectors';
+
+import 'state/reader/reducer';
 
 /*
  * Get all sites/feeds the user follows.

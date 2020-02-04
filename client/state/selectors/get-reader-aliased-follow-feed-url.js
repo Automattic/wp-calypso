@@ -9,6 +9,8 @@ import { find, includes, some } from 'lodash';
  */
 import { prepareComparableUrl } from 'state/reader/follows/utils';
 
+import 'state/reader/reducer';
+
 export const commonExtensions = [ 'rss', 'rss.xml', 'feed', 'feed/atom', 'atom.xml', 'atom' ];
 
 /**

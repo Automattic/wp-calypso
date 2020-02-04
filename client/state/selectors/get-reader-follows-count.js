@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { size, filter } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'state/reader/reducer';
 
 /*
  * Get the count of follows a user has

@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'state/reader/reducer';
+
+/**
  * Get the high watermark for a Reader stream
  *
  * @param {object} state -

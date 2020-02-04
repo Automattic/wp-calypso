@@ -1,10 +1,7 @@
 /**
- * External dependencies
- */
-
-/**
  * Internal dependencies
  */
+import 'state/reader/reducer';
 
 /**
  * Returns the url for a thumbnail for a given iframe.

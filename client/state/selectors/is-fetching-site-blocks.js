@@ -4,6 +4,11 @@
 import { get, filter } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'state/reader/reducer';
+
+/**
  * @param {object} state Global state tree
  * @returns {boolean} true if we are fetching site blocks
  */

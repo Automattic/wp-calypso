@@ -9,6 +9,8 @@ import { keyBy, some, get } from 'lodash';
 import treeSelect from '@automattic/tree-select';
 import { keyToString, keyForPost } from 'reader/post-key';
 
+import 'state/reader/reducer';
+
 /**
  * Returns a single post.
  *

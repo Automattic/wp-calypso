@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'state/reader/reducer';
+
+/**
  * Returns all of the reader teams for a user
  *
  *

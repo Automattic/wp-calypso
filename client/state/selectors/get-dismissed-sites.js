@@ -5,6 +5,11 @@ import { map, pickBy } from 'lodash';
 import createSelector from 'lib/create-selector';
 
 /**
+ * Internal dependencies
+ */
+import 'state/reader/reducer';
+
+/**
  * Returns a list of site IDs dismissed by the user
  *
  * @param  {object}  state  Global state tree

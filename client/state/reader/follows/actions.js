@@ -35,6 +35,8 @@ import 'state/data-layer/wpcom/read/site/post-email-subscriptions/update';
 import 'state/data-layer/wpcom/read/sites/notification-subscriptions/delete';
 import 'state/data-layer/wpcom/read/sites/notification-subscriptions/new';
 
+import 'state/reader/reducer';
+
 /**
  * Module variables
  */
@@ -59,7 +61,7 @@ const debug = debugModule( 'calypso:redux:reader-follows' );
  * Follow a feed URL
  *
  * @param  {string} feedUrl      The feed URL
- * @param {Follow} followInfo		A subscription, optional
+ * @param {object} followInfo		A subscription, optional
  * @returns {object}              The action
  */
 export function follow( feedUrl, followInfo ) {
