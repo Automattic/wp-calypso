@@ -30,22 +30,24 @@ export default class SitesBlock extends Component {
 						{ this.props.loadingSourceSite && <Spinner /> }
 					</div>
 					<div className="sites-block__faux-site-selector-info">
-						<FormLabel
-							className="sites-block__faux-site-selector-label"
-							htmlFor="sites-block__faux-site-selector-url-input"
-						>
-							Import from...
-						</FormLabel>
-						<div className="sites-block__faux-site-selector-url">
-							<FormTextInput
-								isError={ isError }
-								onChange={ onUrlChange }
-								value={ url }
-								placeholder="example.com"
-								id="sites-block__faux-site-selector-url-input"
-								name="sites-block__faux-site-selector-url-input"
-							/>
-						</div>
+						<form onSubmit={ this.props.onSubmit }>
+							<FormLabel
+								className="sites-block__faux-site-selector-label"
+								htmlFor="sites-block__faux-site-selector-url-input"
+							>
+								Import from...
+							</FormLabel>
+							<div className="sites-block__faux-site-selector-url">
+								<FormTextInput
+									isError={ isError }
+									onChange={ onUrlChange }
+									value={ url }
+									placeholder="example.com"
+									id="sites-block__faux-site-selector-url-input"
+									name="sites-block__faux-site-selector-url-input"
+								/>
+							</div>
+						</form>
 					</div>
 				</div>
 			</div>
@@ -99,4 +101,6 @@ SitesBlock.propTypes = {
 	sourceSite: PropTypes.object,
 	loadingSourceSite: PropTypes.bool,
 	targetSite: PropTypes.object.isRequired,
+	onUrlChange: PropTypes.func,
+	onSubmit: PropTypes.func,
 };
