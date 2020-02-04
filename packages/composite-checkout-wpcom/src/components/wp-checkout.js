@@ -17,6 +17,7 @@ import {
  * Internal dependencies
  */
 import { areDomainsInLineItems } from '../hooks/has-domains';
+import useCouponFieldState from '../hooks/use-coupon-field-state';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary, { WPCheckoutOrderSummaryTitle } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
@@ -56,12 +57,14 @@ export default function WPCheckout( {
 	renderDomainContactFields,
 } ) {
 	const translate = useTranslate();
+	const couponFieldStateProps = useCouponFieldState();
 
 	const ReviewContent = () => (
 		<WPCheckoutOrderReview
 			removeItem={ removeItem }
 			submitCoupon={ submitCoupon }
 			couponStatus={ couponStatus }
+			couponFieldStateProps={ couponFieldStateProps }
 			onChangePlanLength={ changePlanLength }
 			siteUrl={ siteUrl }
 		/>
@@ -86,6 +89,7 @@ export default function WPCheckout( {
 					siteUrl={ siteUrl }
 					submitCoupon={ submitCoupon }
 					couponStatus={ couponStatus }
+					couponFieldStateProps={ couponFieldStateProps }
 				/>
 			),
 			isCompleteCallback: () => true,
