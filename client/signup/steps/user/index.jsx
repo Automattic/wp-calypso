@@ -13,6 +13,7 @@ import classNames from 'classnames';
  */
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import StepWrapper from 'signup/step-wrapper';
+import flows from 'signup/config/flows';
 import SignupForm from 'blocks/signup-form';
 import { getFlowSteps, getNextStepName, getPreviousStepName, getStepUrl } from 'signup/utils';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
@@ -75,7 +76,7 @@ export class UserStep extends Component {
 	}
 
 	componentDidMount() {
-		if ( 'onboarding' === this.props.flowName ) {
+		if ( flows.getFlow( this.props.flowName )?.showRecaptcha ) {
 			this.initGoogleRecaptcha();
 		}
 
@@ -213,7 +214,7 @@ export class UserStep extends Component {
 		let recaptchaDidntLoad = false;
 		let recaptchaFailed = false;
 
-		if ( 'onboarding' === this.props.flowName ) {
+		if ( flows.getFlow( this.props.flowName )?.showRecaptcha ) {
 			if ( isRecaptchaLoaded ) {
 				recaptchaToken = await recordGoogleRecaptchaAction(
 					this.state.recaptchaClientId,
@@ -388,7 +389,7 @@ export class UserStep extends Component {
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
 					recaptchaClientId={ this.state.recaptchaClientId }
-					showRecaptchaToS={ 'onboarding' === this.props.flowName }
+					showRecaptchaToS={ flows.getFlow( this.props.flowName )?.showRecaptcha }
 				/>
 				<div id="g-recaptcha"></div>
 			</>

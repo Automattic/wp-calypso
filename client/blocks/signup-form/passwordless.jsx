@@ -24,6 +24,7 @@ import ValidationFieldset from 'signup/validation-fieldset';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
+import flows from 'signup/config/flows';
 
 class PasswordlessSignupForm extends Component {
 	static propTypes = {
@@ -84,7 +85,7 @@ class PasswordlessSignupForm extends Component {
 		let recaptchaToken = undefined;
 		let recaptchaError = undefined;
 
-		if ( 'onboarding' === this.props.flowName ) {
+		if ( flows.getFlow( this.props.flowName )?.showRecaptcha ) {
 			if ( isRecaptchaLoaded ) {
 				recaptchaToken = await recordGoogleRecaptchaAction(
 					this.props.recaptchaClientId,
