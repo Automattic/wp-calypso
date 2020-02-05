@@ -17,15 +17,17 @@ import wpcom from '../../lib/wp';
 import { untrailingslashit } from '../../lib/route';
 import { urlToSlug } from '../../lib/url';
 
-interface CreateSite {
+interface CreateSiteData {
 	siteTitle?: string;
 	siteUrl?: string;
 	theme?: string;
 	siteVertical: SiteVertical | undefined;
-	onCreate: () => void;
 }
 
-export function createSite( { siteTitle, siteUrl, theme, siteVertical, onCreate }: CreateSite ) {
+export function createSite(
+	{ siteTitle, siteUrl, theme, siteVertical }: CreateSiteData,
+	onCreate: () => void
+) {
 	const newSiteParams = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
 		blog_title: siteTitle,

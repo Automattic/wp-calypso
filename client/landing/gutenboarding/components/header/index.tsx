@@ -4,7 +4,7 @@
 import { __ as NO__ } from '@wordpress/i18n';
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import React, { FunctionComponent, useEffect, useState, useCallback } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import classnames from 'classnames';
 import { DomainSuggestions } from '@automattic/data-stores';
@@ -34,7 +34,9 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		select( ONBOARD_STORE ).getState()
 	);
 	const hasSelectedDesign = !! selectedDesign;
-	const { setDomain, resetOnboardStore, setShouldCreate } = useDispatch( ONBOARD_STORE );
+	const { setDomain, resetOnboardStore, setShouldCreate, setIsSiteCreated } = useDispatch(
+		ONBOARD_STORE
+	);
 
 	const [ domainSearch ] = useDebounce( siteTitle, selectorDebounce );
 	const freeDomainSuggestion = useSelect(
@@ -87,19 +89,21 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		siteVertical,
 		...( siteUrl && { siteUrl } ),
 		...( selectedDesign?.slug && { theme: selectedDesign?.slug } ),
-		onCreate: resetOnboardStore,
 	};
 
-	const handleCreateSite = useCallback( () => {
-		setIsSiteCreating( true );
-		createSite( siteCreationData );
-	}, [ siteCreationData ] );
+	const handleSiteCreated = () => {
+		resetOnboardStore();
+		setIsSiteCreated( true );
+	};
 
-	useEffect( () => {
-		if ( shouldCreate && currentUser && ! isSiteCreating ) {
-			handleCreateSite();
-		}
-	}, [ shouldCreate, currentUser, isSiteCreating, handleCreateSite ] );
+	const handleCreateSite = () => {
+		setIsSiteCreating( true );
+		createSite( siteCreationData, handleSiteCreated );
+	};
+
+	if ( shouldCreate && currentUser && ! isSiteCreating ) {
+		handleCreateSite();
+	}
 
 	const handleSignup = () => {
 		setShouldCreate( true );
