@@ -4,7 +4,7 @@
 import { __ as NO__, __ } from '@wordpress/i18n';
 import { Button, Icon } from '@wordpress/components';
 import { DomainSuggestions } from '@automattic/data-stores';
-import { translate, useTranslate } from 'i18n-calypso';
+import { localize, translate, useTranslate } from 'i18n-calypso';
 import { useDebounce } from 'use-debounce';
 import { useDispatch, useSelect } from '@wordpress/data';
 import classnames from 'classnames';
@@ -27,7 +27,7 @@ interface Props {
 	prev?: string;
 }
 
-const Header: FunctionComponent< Props > = ( { prev } ) => {
+const Header: FunctionComponent< Props > = ( { prev, ...props } ) => {
 	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
 	const { domain, selectedDesign, siteTitle, siteVertical } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
@@ -132,6 +132,10 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 					<p>
 						<code>__( 'Manage' ): { __( 'Manage' ) }</code>
 						<br />
+						<code>props.translate( 'Manage' ): { props.translate( 'Manage' ) }</code>
+						<br />
+						<code>translate( 'Manage' ): { translate( 'Manage' ) }</code>
+						<br />
 						<code>translate( 'Manage' ): { translate( 'Manage' ) }</code>
 						<br />
 						<code>ut( 'Manage' ): { ut( 'Manage' ) }</code>
@@ -150,4 +154,4 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
-export default Header;
+export default localize( Header );
