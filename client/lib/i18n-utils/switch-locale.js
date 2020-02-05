@@ -4,6 +4,7 @@
 import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
 import { map, includes } from 'lodash';
+import { setLocaleData } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -139,6 +140,7 @@ export default function switchLocale( localeSlug ) {
 					}
 
 					i18n.setLocale( body );
+					setLocaleData( body );
 					setLocaleInDOM();
 					loadUserUndeployedTranslations( localeSlug );
 				}

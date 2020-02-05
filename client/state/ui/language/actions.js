@@ -4,6 +4,7 @@
 
 import switchLocale from 'lib/i18n-utils/switch-locale';
 import i18n from 'i18n-calypso';
+import { setLocaleData } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -34,6 +35,7 @@ export const setLocale = ( localeSlug, localeVariant = null ) => {
  */
 export const setLocaleRawData = localeData => {
 	i18n.setLocale( localeData );
+	setLocaleData( localeData );
 
 	const { localeSlug, localeVariant = null } = localeData[ '' ];
 

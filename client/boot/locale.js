@@ -14,6 +14,7 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		// Use the locale translation data that were boostrapped by the server
 		const i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
 		reduxStore.dispatch( setLocaleRawData( i18nLocaleStringsObject ) );
+
 		const languageSlug = get( i18nLocaleStringsObject, [ '', 'localeSlug' ] );
 		if ( languageSlug ) {
 			loadUserUndeployedTranslations( languageSlug );
