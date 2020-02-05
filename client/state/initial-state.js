@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import debugModule from 'debug';
 import { map, pick, throttle } from 'lodash';
 
@@ -40,6 +39,14 @@ function serialize( state, reducer ) {
 
 function deserialize( state, reducer ) {
 	delete state._timestamp;
+
+	// Avoid console errors when deserializing state with extra properties.
+	// This happens when, due to state modularization, the overall stored state contains
+	// more properties than the reducers that have been loaded so far.
+	if ( reducer.keys ) {
+		return reducer( pick( state, reducer.keys ), { type: DESERIALIZE } );
+	}
+
 	return reducer( state, { type: DESERIALIZE } );
 }
 

@@ -177,6 +177,7 @@ function createCombinedReducer( reducers ) {
 	combinedReducer.hasCustomPersistence = true;
 	combinedReducer.addReducer = addReducer( combinedReducer, reducers );
 	combinedReducer.getStorageKeys = getStorageKeys( reducers );
+	combinedReducer.keys = Object.keys( reducers );
 
 	return combinedReducer;
 }
