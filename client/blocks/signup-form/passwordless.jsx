@@ -10,10 +10,11 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { getSavedVariations } from 'lib/abtest';
+import { abtest, getSavedVariations } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
 import { recordPasswordlessRegistration } from 'lib/analytics/signup';
+import { recordGoogleRecaptchaAction } from 'lib/analytics/recaptcha';
 import { Button } from '@automattic/components';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
@@ -78,10 +79,34 @@ class PasswordlessSignupForm extends Component {
 			form,
 		} );
 
+		const isRecaptchaLoaded = typeof this.props.recaptchaClientId === 'number';
+		const isRecaptchaABTest =
+			'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' );
+
+		let recaptchaToken = undefined;
+		let recaptchaError = undefined;
+
+		if ( isRecaptchaABTest ) {
+			if ( isRecaptchaLoaded ) {
+				recaptchaToken = await recordGoogleRecaptchaAction(
+					this.props.recaptchaClientId,
+					'calypso/signup/formSubmit'
+				);
+
+				if ( ! recaptchaToken ) {
+					recaptchaError = 'recaptcha_failed';
+				}
+			} else {
+				recaptchaError = 'recaptcha_didnt_load';
+			}
+		}
+
 		try {
 			const response = await wpcom.undocumented().usersNew(
 				{
 					email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
+					'g-recaptcha-error': recaptchaError,
+					'g-recaptcha-response': recaptchaToken || undefined,
 					is_passwordless: true,
 					signup_flow_name: this.props.flowName,
 					validate: false,

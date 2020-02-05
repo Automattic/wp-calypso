@@ -156,4 +156,13 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	userStepRecaptcha: {
+		datestamp: '20191111',
+		variations: {
+			show: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 };

@@ -159,5 +159,6 @@
 	"server_side_boom_analytics_enabled": true,
 	"boom_analytics_key": "production",
 	"google_analytics_key": "UA-10673494-10",
+	"google_recaptcha_site_key": "6LdoXcAUAAAAAM61KvdgP8xwnC19YuzAiOWn5Wtn",
 	"hotjar_enabled": true
 }

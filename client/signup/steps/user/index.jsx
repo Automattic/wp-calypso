@@ -11,6 +11,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import StepWrapper from 'signup/step-wrapper';
 import SignupForm from 'blocks/signup-form';
@@ -22,6 +23,7 @@ import { getSuggestedUsername } from 'state/signup/optional-dependencies/selecto
 import { recordTracksEvent } from 'state/analytics/actions';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { WPCC } from 'lib/url/support';
+import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'lib/analytics/recaptcha';
 import config from 'config';
 import AsyncLoad from 'components/async-load';
 import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/woocommerce-connect-cart-header';
@@ -46,6 +48,7 @@ export class UserStep extends Component {
 	state = {
 		submitting: false,
 		subHeaderText: '',
+		recaptchaClientId: null,
 	};
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -73,6 +76,10 @@ export class UserStep extends Component {
 	}
 
 	componentDidMount() {
+		if ( 'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' ) ) {
+			this.initGoogleRecaptcha();
+		}
+
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
@@ -143,6 +150,25 @@ export class UserStep extends Component {
 		this.setState( { subHeaderText } );
 	}
 
+	initGoogleRecaptcha() {
+		initGoogleRecaptcha(
+			'g-recaptcha',
+			'calypso/signup/pageLoad',
+			config( 'google_recaptcha_site_key' )
+		).then( result => {
+			if ( ! result ) {
+				return;
+			}
+
+			this.setState( { recaptchaClientId: result.clientId } );
+
+			this.props.saveSignupStep( {
+				stepName: this.props.stepName,
+				recaptchaToken: typeof result.token === 'string' ? result.token : undefined,
+			} );
+		} );
+	}
+
 	save = form => {
 		this.props.saveSignupStep( {
 			stepName: this.props.stepName,
@@ -182,10 +208,36 @@ export class UserStep extends Component {
 
 		this.props.recordTracksEvent( 'calypso_signup_user_step_submit', analyticsData );
 
+		const isRecaptchaLoaded = typeof this.state.recaptchaClientId === 'number';
+		const isRecaptchaABTest =
+			'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' );
+
+		let recaptchaToken = undefined;
+		let recaptchaDidntLoad = false;
+		let recaptchaFailed = false;
+
+		if ( isRecaptchaABTest ) {
+			if ( isRecaptchaLoaded ) {
+				recaptchaToken = await recordGoogleRecaptchaAction(
+					this.state.recaptchaClientId,
+					'calypso/signup/formSubmit'
+				);
+
+				if ( ! recaptchaToken ) {
+					recaptchaFailed = true;
+				}
+			} else {
+				recaptchaDidntLoad = true;
+			}
+		}
+
 		this.submit( {
 			userData,
 			form: formWithoutPassword,
 			queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
+			recaptchaDidntLoad,
+			recaptchaFailed,
+			recaptchaToken: recaptchaToken || undefined,
 		} );
 	};
 
@@ -338,7 +390,12 @@ export class UserStep extends Component {
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
+					recaptchaClientId={ this.state.recaptchaClientId }
+					showRecaptchaToS={
+						'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' )
+					}
 				/>
+				<div id="g-recaptcha"></div>
 			</>
 		);
 	}
