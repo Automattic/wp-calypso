@@ -25,7 +25,7 @@ import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
 import safeProtocolUrl from 'lib/safe-protocol-url';
 import config from 'config';
-import { IncompatiblePlugins } from 'my-sites/plugins/incompatible-plugins';
+import { isCompatiblePlugin } from 'my-sites/plugins/plugin-compatibility';
 import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
 import PluginInformation from 'my-sites/plugins/plugin-information';
@@ -232,15 +232,13 @@ export class PluginMeta extends Component {
 	isWpcomInstallDisabled() {
 		const { isTransfering, plugin } = this.props;
 
-		return (
-			! this.hasBusinessPlan() || includes( IncompatiblePlugins, plugin.slug ) || isTransfering
-		);
+		return ! this.hasBusinessPlan() || ! isCompatiblePlugin( plugin.slug ) || isTransfering;
 	}
 
 	isJetpackInstallDisabled() {
 		const { automatedTransferSite, plugin } = this.props;
 
-		return automatedTransferSite && includes( IncompatiblePlugins, plugin.slug );
+		return automatedTransferSite && ! isCompatiblePlugin( plugin.slug );
 	}
 
 	getInstallButton() {
@@ -263,7 +261,7 @@ export class PluginMeta extends Component {
 	maybeDisplayUnsupportedNotice() {
 		const { plugin, selectedSite } = this.props;
 
-		if ( selectedSite && includes( IncompatiblePlugins, plugin.slug ) ) {
+		if ( selectedSite && ! isCompatiblePlugin( plugin.slug ) ) {
 			return (
 				<Notice
 					text={ this.props.translate(

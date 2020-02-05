@@ -11,7 +11,6 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,7 +25,7 @@ import QuerySiteConnectionStatus from 'components/data/query-site-connection-sta
 import getSiteConnectionStatus from 'state/selectors/get-site-connection-status';
 import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
 import { localizeUrl } from 'lib/i18n-utils';
-import { IncompatiblePlugins } from '../incompatible-plugins';
+import { isCompatiblePlugin } from '../plugin-compatibility';
 
 /**
  * Style dependencies
@@ -297,13 +296,13 @@ export class PluginInstallButton extends Component {
 	}
 
 	renderNoticeOrButton() {
-		const { isWpcomAtomicSite, plugin, selectedSite, siteIsConnected } = this.props;
+		const { plugin, selectedSite, siteIsConnected, siteIsWpcomAtomic } = this.props;
 
 		if ( siteIsConnected === false ) {
 			return this.renderUnreachableNotice();
 		}
 
-		if ( includes( IncompatiblePlugins, plugin.slug ) && isWpcomAtomicSite ) {
+		if ( ! isCompatiblePlugin( plugin.slug ) && siteIsWpcomAtomic ) {
 			return this.renderIncompatiblePluginNotice();
 		}
 
@@ -342,7 +341,7 @@ export default connect(
 		return {
 			siteId,
 			siteIsConnected: getSiteConnectionStatus( state, siteId ),
-			isWpcomAtomicSite: isSiteWpcomAtomic( state, siteId ),
+			siteIsWpcomAtomic: isSiteWpcomAtomic( state, siteId ),
 		};
 	},
 	{
