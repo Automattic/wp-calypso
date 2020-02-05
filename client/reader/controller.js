@@ -164,7 +164,7 @@ const exported = {
 				.then( ( { feeds } ) => {
 					const feed = feeds?.data?.feeds?.[ 0 ];
 					if ( feed && feed.feed_ID ) {
-						page.redirect( `/read/feeds/${ feed.feed_ID }` );
+						return page.redirect( `/read/feeds/${ feed.feed_ID }` );
 					}
 				} )
 				.catch( function() {
