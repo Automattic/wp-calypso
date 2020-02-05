@@ -28,10 +28,6 @@ export function setStore( store: Store & WithAddReducer ) {
 	reducerRegistrationQueue = [];
 }
 
-export function getStore() {
-	return applicationStore;
-}
-
 export function registerReducer( key: string[], reducer: Reducer ) {
 	if ( applicationStore ) {
 		// Register immediately.
