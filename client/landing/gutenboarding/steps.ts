@@ -8,7 +8,7 @@ export enum Step {
 	DesignSelection = '/design',
 	PageSelection = '/pages',
 	Signup = '/signup',
-	SiteLoading = '/siteLoading',
+	CreateSite = '/create-site',
 }
 
 export const routes = `(${ map( Step, ( route: string ) => route ).join( '|' ) })`;
