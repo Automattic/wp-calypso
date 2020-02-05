@@ -96,7 +96,6 @@ import {
 } from 'signup/utils';
 import { isExternal } from 'lib/url';
 import { withLocalizedMoment } from 'components/localized-moment';
-import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -452,18 +451,6 @@ export class Checkout extends React.Component {
 		}
 	}
 
-	maybeRedirectToPlanBumpOffer( pendingOrReceiptId ) {
-		const { cart, selectedSiteSlug } = this.props;
-
-		if ( hasPersonalPlan( cart ) ) {
-			if ( 'variantShowPlanBumpOffer' === abtest( 'showPlanBumpVsGsuite' ) ) {
-				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ pendingOrReceiptId }`;
-			}
-		}
-
-		return null;
-	}
-
 	maybeRedirectToGSuiteNudge( pendingOrReceiptId, stepResult ) {
 		const { isNewlyCreatedSite, selectedSiteSlug, cart } = this.props;
 
@@ -478,10 +465,7 @@ export class Checkout extends React.Component {
 			) {
 				const domainsForGSuite = this.getEligibleDomainFromCart();
 				if ( domainsForGSuite.length ) {
-					return (
-						this.maybeRedirectToPlanBumpOffer( pendingOrReceiptId ) ||
-						`/checkout/${ selectedSiteSlug }/with-gsuite/${ domainsForGSuite[ 0 ].meta }/${ pendingOrReceiptId }`
-					);
+					return `/checkout/${ selectedSiteSlug }/with-gsuite/${ domainsForGSuite[ 0 ].meta }/${ pendingOrReceiptId }`;
 				}
 			}
 		}

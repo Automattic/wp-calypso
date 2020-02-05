@@ -118,15 +118,6 @@ export default {
 		allowExistingUsers: false,
 		localeTargets: 'any',
 	},
-	showPlanBumpVsGsuite: {
-		datestamp: '20200107',
-		variations: {
-			variantShowPlanBumpOffer: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	redirectToCustomerHome: {
 		datestamp: '20200117',
 		variations: {
