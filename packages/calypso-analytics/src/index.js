@@ -10,5 +10,4 @@ export {
 	initializeAnalytics,
 	getTracksAnonymousUserId,
 	analyticsEvents,
-	createRandomId,
 } from './tracks';

@@ -30,10 +30,10 @@
 		"prepare": "transpile"
 	},
 	"dependencies": {
+		"@automattic/load-script": "file:../load-script",
+		"debug": "^4.1.1",
 		"hash.js": "^1.1.7",
 		"lodash": "^4.17.15",
-		"qs": "^6.9.1",
-		"debug": "^4.1.1",
-		"@automattic/load-script": "file:../load-script"
+		"qs": "^6.9.1"
 	}
 }

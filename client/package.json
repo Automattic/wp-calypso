@@ -12,6 +12,7 @@
 	},
 	"main": "server/index.js",
 	"dependencies": {
+		"@automattic/calypso-analytics": "file:../packages/calypso-analytics",
 		"@automattic/calypso-polyfills": "file:../packages/calypso-polyfills",
 		"@automattic/color-studio": "2.2.0",
 		"@automattic/components": "file:../packages/components",
@@ -24,7 +25,6 @@
 		"@automattic/react-virtualized": "9.21.2",
 		"@automattic/tree-select": "file:../packages/tree-select",
 		"@babel/runtime": "7.8.4",
-		"@automattic/calypso-analytics": "file:../packages/calypso-analytics",
 		"@emotion/core": "10.0.22",
 		"@emotion/styled": "10.0.23",
 		"@github/webauthn-json": "0.4.1",
