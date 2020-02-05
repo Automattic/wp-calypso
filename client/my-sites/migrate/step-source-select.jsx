@@ -49,7 +49,7 @@ class StepSourceSelect extends Component {
 
 					switch ( result.site_engine ) {
 						case 'wordpress':
-							if ( result.site_engine === 'wpcom' ) {
+							if ( result.site_meta.wpcom_site ) {
 								return this.setState( {
 									error: 'This is site is already hosted on WordPress.com',
 									isLoading: false,
