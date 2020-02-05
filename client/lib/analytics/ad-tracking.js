@@ -1130,6 +1130,7 @@ export async function recordOrder( cart, orderId ) {
 					product_id: product.product_slug,
 					product_price: product.price,
 				} ) ),
+				order_id: orderId,
 			},
 		];
 		debug( 'recordOrder: [Pinterest]', params );
