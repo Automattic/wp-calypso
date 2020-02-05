@@ -54,7 +54,7 @@
 		"npm": "^6.12.1"
 	},
 	"scripts": {
-		"preanalyze-bundles": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=true PROGRESS=true npm run -s build-client-evergreen",
+		"preanalyze-bundles": "cross-env-shell NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=true PROGRESS=true npm run -s build-client-evergreen",
 		"analyze-bundles": "webpack-bundle-analyzer client/stats.json public/evergreen -h 127.0.0.1 -p 9898 -s gzip",
 		"autoprefixer": "postcss -u autoprefixer -r --no-map --config packages/calypso-build/postcss.config.js",
 		"postcss": "postcss -r --config packages/calypso-build/postcss.config.js",
@@ -126,7 +126,7 @@
 		"typecheck": "tsc --noEmit",
 		"update-deps": "npx rimraf package-lock.json && npm run distclean && PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true npm i && replace --silent 'http://' 'https://' . --recursive --include='package-lock.json' && touch -m node_modules",
 		"validate-fallback-es5": "npx eslint --parser-options=ecmaVersion:5 --no-eslintrc --no-ignore ./public/fallback/*.js",
-		"prewhybundled": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=withreasons npm run -s build-client-evergreen",
+		"prewhybundled": "cross-env-shell NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=withreasons npm run -s build-client-evergreen",
 		"whybundled": "whybundled client/stats.json",
 		"composite-checkout-demo": "webpack-dev-server --config ./packages/composite-checkout/webpack.config.demo.js --mode development",
 		"components:storybook:start": "start-storybook -c packages/components/.storybook",
