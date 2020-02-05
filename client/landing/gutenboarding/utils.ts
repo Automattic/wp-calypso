@@ -22,9 +22,10 @@ interface CreateSite {
 	siteUrl?: string;
 	theme?: string;
 	siteVertical: SiteVertical | undefined;
+	onCreate: () => void;
 }
 
-export function createSite( { siteTitle, siteUrl, theme, siteVertical }: CreateSite ) {
+export function createSite( { siteTitle, siteUrl, theme, siteVertical, onCreate }: CreateSite ) {
 	const newSiteParams = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
 		blog_title: siteTitle,
@@ -54,6 +55,7 @@ export function createSite( { siteTitle, siteUrl, theme, siteVertical }: CreateS
 		}
 
 		const siteSlug = urlToSlug( untrailingslashit( url ) );
+		onCreate();
 		window.location.href = `/block-editor/page/${ siteSlug }/home?is-gutenboarding`;
 	} );
 }

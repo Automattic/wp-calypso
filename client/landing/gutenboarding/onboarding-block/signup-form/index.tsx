@@ -26,6 +26,7 @@ declare module '@wordpress/element' {
 const SignupForm = () => {
 	const [ emailVal, setEmailVal ] = useState( '' );
 	const { createAccount } = useDispatch( USER_STORE );
+	const { setShouldCreate } = useDispatch( ONBOARD_STORE );
 	const isFetchingNewUser = useSelect( select => select( USER_STORE ).isFetchingNewUser() );
 	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
 	const newUserError = useSelect( select => select( USER_STORE ).getNewUserError() );
@@ -41,6 +42,9 @@ const SignupForm = () => {
 		//TODO: replace route when https://github.com/Automattic/wp-calypso/pull/39266 is merged
 		//TODO 2: replace with correct action dispatching when https://github.com/Automattic/wp-calypso/pull/39050 is merged
 		window.location.href = window.location.href.replace( '/signup', '/design' );
+	}
+	if ( newUserError && shouldCreate ) {
+		setShouldCreate( false );
 	}
 
 	return (

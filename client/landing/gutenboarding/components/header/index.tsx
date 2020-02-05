@@ -4,7 +4,7 @@
 import { __ as NO__ } from '@wordpress/i18n';
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import React, { FunctionComponent, useEffect } from 'react';
+import React, { FunctionComponent, useEffect, useState, useCallback } from 'react';
 import { useDebounce } from 'use-debounce';
 import classnames from 'classnames';
 import { DomainSuggestions } from '@automattic/data-stores';
@@ -60,6 +60,8 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 
 	const history = useHistory();
 
+	const [ isSiteCreating, setIsSiteCreating ] = useState( false );
+
 	const currentDomain = domain ?? freeDomainSuggestion;
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -85,21 +87,23 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		siteVertical,
 		...( siteUrl && { siteUrl } ),
 		...( selectedDesign?.slug && { theme: selectedDesign?.slug } ),
+		onCreate: resetOnboardStore,
 	};
 
-	if ( shouldCreate && currentUser ) {
+	const handleCreateSite = useCallback( () => {
+		setIsSiteCreating( true );
 		createSite( siteCreationData );
-		resetOnboardStore();
-	}
+	}, [ siteCreationData ] );
 
-	const handleCreateSite = () => {
-		if ( currentUser ) {
-			createSite( siteCreationData );
-			resetOnboardStore();
-		} else {
-			setShouldCreate( true );
-			history.push( Step.Signup );
+	useEffect( () => {
+		if ( shouldCreate && currentUser && ! isSiteCreating ) {
+			handleCreateSite();
 		}
+	}, [ shouldCreate, currentUser, isSiteCreating, handleCreateSite ] );
+
+	const handleSignup = () => {
+		setShouldCreate( true );
+		history.push( Step.Signup );
 	};
 
 	return (
@@ -135,16 +139,18 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 			</div>
 			<div className="gutenboarding__header-section">
 				<div className="gutenboarding__header-group">
-					{ hasSelectedDesign && (
+					{ hasSelectedDesign && ! isSiteCreating && ! shouldCreate && (
 						<Button
 							className="gutenboarding__header-next-button"
 							isPrimary
 							isLarge
-							onClick={ handleCreateSite }
+							onClick={ () => ( currentUser ? handleCreateSite() : handleSignup() ) }
 						>
 							{ NO__( 'Create my site' ) }
 						</Button>
 					) }
+					{ /* Just an intermediary step until adding the loading modal/screen in https://github.com/Automattic/wp-calypso/pull/39266 */ }
+					{ ( isSiteCreating || shouldCreate ) && 'Creating site in progress...' }
 				</div>
 			</div>
 		</div>
