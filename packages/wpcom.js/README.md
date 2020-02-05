@@ -102,7 +102,7 @@ You can omit the API token for operations that don't require permissions:
 import wpcomXhrRequest from 'wpcom-xhr-request';
 import wpcomFactory from 'wpcom';
 
-const wpcom = wpcomFactory( undefined, wpcomXhrRequest );
+const wpcom = wpcomFactory( wpcomXhrRequest );
 const blog = wpcom.site( 'your-blog.wordpress.com' );
 blog.postsList( { number: 8 } )
 	.then( list => { ... } )
