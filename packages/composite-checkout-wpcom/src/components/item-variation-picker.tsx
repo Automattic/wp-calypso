@@ -10,6 +10,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { WPCOMCartItem } from '../types';
 import RadioButton from './radio-button';
+import { VariantRequestStatus } from '../hooks/use-shopping-cart';
 
 export type WPCOMProductSlug = string;
 
@@ -22,12 +23,14 @@ export type WPCOMProductVariant = {
 
 export type ItemVariationPickerProps = {
 	selectedItem: WPCOMCartItem;
+	variantRequestStatus: VariantRequestStatus;
 	getItemVariants: ( WPCOMProductSlug ) => WPCOMProductVariant[];
 	onChangeItemVariant: ( WPCOMCartItem, WPCOMProductSlug, number ) => void;
 };
 
 export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > = ( {
 	selectedItem,
+	variantRequestStatus,
 	getItemVariants,
 	onChangeItemVariant,
 } ) => {
@@ -39,14 +42,17 @@ export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > 
 
 	return (
 		<TermOptions>
-			{ variants.map( renderProductVariant( selectedItem, onChangeItemVariant ) ) }
+			{ variants.map(
+				renderProductVariant( selectedItem, onChangeItemVariant, variantRequestStatus )
+			) }
 		</TermOptions>
 	);
 };
 
 function renderProductVariant(
 	selectedItem: WPCOMCartItem,
-	onChangeItemVariant: ( WPCOMCartItem, WPCOMProductSlug, number ) => void
+	onChangeItemVariant: ( WPCOMCartItem, WPCOMProductSlug, number ) => void,
+	variantRequestStatus: VariantRequestStatus
 ): ( _0: WPCOMProductVariant, _1: number ) => JSX.Element {
 	return (
 		{ variantLabel, variantDetails, productSlug, productId }: WPCOMProductVariant,
@@ -56,6 +62,8 @@ function renderProductVariant(
 		const key = index.toString() + productSlug;
 		const selectedProductSlug = selectedItem.wpcom_meta.product_slug;
 
+		const isDisabled = variantRequestStatus === 'pending';
+
 		return (
 			<TermOptionsItem key={ key }>
 				<RadioButton
@@ -63,6 +71,7 @@ function renderProductVariant(
 					id={ key }
 					value={ productSlug }
 					checked={ productSlug === selectedProductSlug }
+					isDisabled={ isDisabled }
 					onChange={ () => {
 						onChangeItemVariant( selectedItem, productSlug, productId );
 					} }
