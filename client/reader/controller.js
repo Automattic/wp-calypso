@@ -176,8 +176,13 @@ const exported = {
 	},
 
 	feedListing( context, next ) {
-		const basePath = '/read/feeds/:feed_id';
 		const feedId = context.params.feed_id;
+		if ( ! parseInt( feedId, 10 ) ) {
+			next();
+			return;
+		}
+
+		const basePath = '/read/feeds/:feed_id';
 		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Feed > ' + feedId;
 		const mcKey = 'blog';
 
