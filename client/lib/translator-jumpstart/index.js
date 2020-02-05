@@ -33,7 +33,7 @@ const user = new User(),
 		contentChangedCallback() {},
 		glotPress: {
 			url: 'https://translate.wordpress.com',
-			project: 'test',
+			project: 'wpcom',
 			translation_set_slug: 'default',
 		},
 	};
@@ -200,11 +200,7 @@ const communityTranslatorJumpstart = {
 		}
 
 		this.setInjectionURL( 'community-translator.min.js' );
-		if ( process.env.NODE_ENV === 'production' ) {
-			translationDataFromPage.glotPress.project = 'wpcom';
-		} else {
-			translationDataFromPage.glotPress.project = 'test';
-		}
+
 		translationDataFromPage.glotPress.translation_set_slug =
 			translateSetSlugs[ localeVariant ] || 'default';
 	},
