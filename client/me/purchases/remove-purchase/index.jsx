@@ -272,10 +272,6 @@ class RemovePurchase extends Component {
 			return this.renderPlanDialog();
 		}
 
-		if ( this.props.isAtomicSite ) {
-			return this.renderAtomicDialog( purchase );
-		}
-
 		if ( isGoogleApps( purchase ) ) {
 			return (
 				<GSuiteCancellationPurchaseDialog
@@ -285,6 +281,10 @@ class RemovePurchase extends Component {
 					site={ this.props.site }
 				/>
 			);
+		}
+
+		if ( this.props.isAtomicSite ) {
+			return this.renderAtomicDialog( purchase );
 		}
 
 		return this.renderPlanDialog();
