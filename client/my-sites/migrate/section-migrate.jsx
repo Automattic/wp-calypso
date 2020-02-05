@@ -479,7 +479,7 @@ class SectionMigrate extends Component {
 						migrationElement = (
 							<StepImportOrMigrate
 								onJetpackSelect={ this.handleJetpackSelect }
-								sourceSite={ this.state.siteInfo }
+								sourceSiteInfo={ this.state.siteInfo }
 								targetSite={ targetSite }
 								targetSiteSlug={ targetSiteSlug }
 								sourceHasJetpack={ this.state.isJetpackConnected }

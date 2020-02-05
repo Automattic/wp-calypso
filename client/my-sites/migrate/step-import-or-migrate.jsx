@@ -69,7 +69,7 @@ class StepImportOrMigrate extends Component {
 	};
 
 	render() {
-		const { targetSite, targetSiteSlug, sourceHasJetpack, sourceSite } = this.props;
+		const { targetSite, targetSiteSlug, sourceHasJetpack, sourceSite, sourceSiteInfo } = this.props;
 		const backHref = `/migrate/${ targetSiteSlug }`;
 
 		const targetSiteDomain = get( targetSite, 'domain' );
@@ -78,7 +78,11 @@ class StepImportOrMigrate extends Component {
 			<>
 				<HeaderCake backHref={ backHref }>Import from WordPress</HeaderCake>
 
-				<SitesBlock sourceSite={ sourceSite } targetSite={ targetSite } />
+				<SitesBlock
+					sourceSite={ sourceSite }
+					sourceSiteInfo={ sourceSiteInfo }
+					targetSite={ targetSite }
+				/>
 
 				<CompactCard>
 					<CardHeading>What do you want to import?</CardHeading>

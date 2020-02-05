@@ -53,25 +53,22 @@ export default class SitesBlock extends Component {
 	}
 
 	getSourceSiteOrInput = () => {
-		const { sourceSite } = this.props;
+		const { sourceSite, sourceSiteInfo } = this.props;
 
-		if ( ! sourceSite ) {
+		if ( ! sourceSite && ! sourceSiteInfo ) {
 			return this.renderFauxSiteSelector();
 		}
 
-		return (
-			<Site
-				site={ this.convertSourceSiteObjectToSiteComponent( sourceSite ) }
-				indicator={ false }
-			/>
-		);
+		const site = sourceSite || this.convertSourceSiteInfoToSourceSite( sourceSiteInfo );
+
+		return <Site site={ site } indicator={ false } />;
 	};
 
-	convertSourceSiteObjectToSiteComponent = sourceSite => {
-		const { hostname } = getUrlParts( sourceSite.site_url );
+	convertSourceSiteInfoToSourceSite = sourceSiteInfo => {
+		const { hostname } = getUrlParts( sourceSiteInfo.site_url );
 		return {
-			icon: { img: sourceSite.site_favicon },
-			title: sourceSite.site_title,
+			icon: { img: sourceSiteInfo.site_favicon },
+			title: sourceSiteInfo.site_title,
 			domain: hostname,
 		};
 	};
@@ -96,6 +93,7 @@ export default class SitesBlock extends Component {
 }
 
 SitesBlock.propTypes = {
+	sourceSiteInfo: PropTypes.object,
 	sourceSite: PropTypes.object,
 	loadingSourceSite: PropTypes.bool,
 	targetSite: PropTypes.object.isRequired,

@@ -39,8 +39,17 @@
 	}
 }
 
+.migrate__card-footer-text {
+	vertical-align: middle;
+}
+
+.migrate__card-footer-gridicon {
+	color: var( --color-text-subtle );
+	vertical-align: middle;
+}
+
 .migrate__list {
-	margin: 16px 0 32px;
+	margin: 16px 0;
 	li {
 		list-style-type: none;
 		line-height: 30px;
