@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { abtest, getSavedVariations } from 'lib/abtest';
+import { getSavedVariations } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
 import { recordPasswordlessRegistration } from 'lib/analytics/signup';
@@ -80,13 +80,11 @@ class PasswordlessSignupForm extends Component {
 		} );
 
 		const isRecaptchaLoaded = typeof this.props.recaptchaClientId === 'number';
-		const isRecaptchaABTest =
-			'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' );
 
 		let recaptchaToken = undefined;
 		let recaptchaError = undefined;
 
-		if ( isRecaptchaABTest ) {
+		if ( 'onboarding' === this.props.flowName ) {
 			if ( isRecaptchaLoaded ) {
 				recaptchaToken = await recordGoogleRecaptchaAction(
 					this.props.recaptchaClientId,

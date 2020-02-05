@@ -11,7 +11,6 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import StepWrapper from 'signup/step-wrapper';
 import SignupForm from 'blocks/signup-form';
@@ -76,7 +75,7 @@ export class UserStep extends Component {
 	}
 
 	componentDidMount() {
-		if ( 'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' ) ) {
+		if ( 'onboarding' === this.props.flowName ) {
 			this.initGoogleRecaptcha();
 		}
 
@@ -209,14 +208,12 @@ export class UserStep extends Component {
 		this.props.recordTracksEvent( 'calypso_signup_user_step_submit', analyticsData );
 
 		const isRecaptchaLoaded = typeof this.state.recaptchaClientId === 'number';
-		const isRecaptchaABTest =
-			'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' );
 
 		let recaptchaToken = undefined;
 		let recaptchaDidntLoad = false;
 		let recaptchaFailed = false;
 
-		if ( isRecaptchaABTest ) {
+		if ( 'onboarding' === this.props.flowName ) {
 			if ( isRecaptchaLoaded ) {
 				recaptchaToken = await recordGoogleRecaptchaAction(
 					this.state.recaptchaClientId,
@@ -391,9 +388,7 @@ export class UserStep extends Component {
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
 					recaptchaClientId={ this.state.recaptchaClientId }
-					showRecaptchaToS={
-						'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' )
-					}
+					showRecaptchaToS={ 'onboarding' === this.props.flowName }
 				/>
 				<div id="g-recaptcha"></div>
 			</>
