@@ -10,11 +10,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSerializedProductsQuery } from './utils';
 
 function getRawProducts( state, siteId ) {
-	return state?.extensions?.woocommerce?.sites?.[ siteId ]?.products.products;
+	return state?.extensions?.woocommerce?.sites[ siteId ]?.products.products;
 }
 
 function getQuery( state, siteId, key ) {
-	return state?.extensions?.woocommerce?.sites?.[ siteId ]?.products.queries?.[ key ];
+	return state?.extensions?.woocommerce?.sites[ siteId ]?.products.queries?.[ key ];
 }
 
 export function getProduct( state, productId, siteId = getSelectedSiteId( state ) ) {
@@ -39,7 +39,7 @@ export function getAllProducts( state, siteId = getSelectedSiteId( state ) ) {
  */
 export function getAllProductsWithVariations( state, siteId = getSelectedSiteId( state ) ) {
 	const products = getRawProducts( state, siteId ) ?? [];
-	const variations = state?.extensions?.woocommerce?.sites?.[ siteId ]?.productVariations ?? {};
+	const variations = state?.extensions?.woocommerce?.sites[ siteId ]?.productVariations ?? {};
 	// Flatten variations from their productId mapping down into a single array
 	const variationsList = flatten(
 		map( variations, ( items, productId ) => {

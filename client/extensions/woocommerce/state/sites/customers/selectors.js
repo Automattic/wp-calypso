@@ -3,8 +3,8 @@
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-function inFlight( state, siteId, searchTerm ) {
-	return state?.extensions?.woocommerce?.sites?.[ siteId ]?.customers.isSearching[ searchTerm ];
+function getCustomerSearchStatus( state, siteId, searchTerm ) {
+	return state?.extensions?.woocommerce?.sites[ siteId ]?.customers.isSearching[ searchTerm ];
 }
 
 /**
@@ -15,7 +15,7 @@ function inFlight( state, siteId, searchTerm ) {
  */
 export function isCustomerSearchLoaded( state, searchTerm, siteId = getSelectedSiteId( state ) ) {
 	// Strict check because it could also be undefined.
-	return inFlight( state, siteId, searchTerm ) === false;
+	return getCustomerSearchStatus( state, siteId, searchTerm ) === false;
 }
 
 /**
@@ -26,7 +26,7 @@ export function isCustomerSearchLoaded( state, searchTerm, siteId = getSelectedS
  */
 export function isCustomerSearchLoading( state, searchTerm, siteId = getSelectedSiteId( state ) ) {
 	// Strict check because it could also be undefined.
-	return inFlight( state, siteId, searchTerm ) === true;
+	return getCustomerSearchStatus( state, siteId, searchTerm ) === true;
 }
 
 /**
@@ -42,7 +42,7 @@ export function getCustomerSearchResults( state, searchTerm, siteId = getSelecte
 
 	const customers = state?.extensions?.woocommerce?.sites?.[ siteId ]?.customers.items ?? {};
 	const customerIdsForTerm =
-		state?.extensions?.woocommerce?.sites?.[ siteId ]?.customers.queries[ searchTerm ] ?? [];
+		state?.extensions?.woocommerce?.sites[ siteId ]?.customers.queries[ searchTerm ] ?? [];
 	return customerIdsForTerm
 		.map( ( id ) => customers[ id ] || false )
 		.filter( ( customer ) => !! customer );
@@ -55,6 +55,5 @@ export function getCustomerSearchResults( state, searchTerm, siteId = getSelecte
  * @returns {object|boolean} a customer object as stored in the API, false if not found
  */
 export function getCustomer( state, customerId, siteId = getSelectedSiteId( state ) ) {
-	const customer = state?.extensions?.woocommerce?.sites?.[ siteId ]?.customers.items[ customerId ];
-	return customer !== undefined ? customer : false;
+	return state?.extensions?.woocommerce?.sites[ siteId ]?.customers.items[ customerId ] ?? false;
 }

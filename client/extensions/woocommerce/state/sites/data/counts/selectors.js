@@ -5,11 +5,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { statusWaitingPayment, statusWaitingFulfillment } from 'woocommerce/lib/order-status';
 
 function getItems( state, siteId ) {
-	return state?.extensions?.woocommerce?.sites?.[ siteId ]?.data?.counts?.items ?? {};
+	return state?.extensions?.woocommerce?.sites[ siteId ]?.data.counts.items ?? {};
 }
 
 function isLoading( state, siteId ) {
-	return state?.extensions?.woocommerce?.sites?.[ siteId ]?.data?.counts?.isLoading;
+	return state?.extensions?.woocommerce?.sites[ siteId ]?.data.counts.isLoading;
 }
 
 /**
@@ -37,8 +37,7 @@ export function areCountsLoading( state, siteId = getSelectedSiteId( state ) ) {
  */
 export function getCountProducts( state, siteId = getSelectedSiteId( state ) ) {
 	const items = getItems( state, siteId );
-	const allProducts = items?.products?.all;
-	return allProducts !== undefined ? allProducts : 0;
+	return items?.products?.all ?? 0;
 }
 
 /**
@@ -61,6 +60,5 @@ export function getCountNewOrders( state, siteId = getSelectedSiteId( state ) ) 
  */
 export function getCountPendingReviews( state, siteId = getSelectedSiteId( state ) ) {
 	const items = getItems( state, siteId );
-	const awaitingModeration = items?.reviews?.awaiting_moderation;
-	return awaitingModeration !== undefined ? awaitingModeration : 0;
+	return items?.reviews?.awaiting_moderation ?? 0;
 }
