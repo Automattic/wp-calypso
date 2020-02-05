@@ -77,6 +77,9 @@
 		align-self: flex-start;
 		margin-right: 8px;
 		flex: 0 0 auto;
+
+		display: flex;
+		justify-content: center;
 	}
 
 	.sites-block__faux-site-selector-info {

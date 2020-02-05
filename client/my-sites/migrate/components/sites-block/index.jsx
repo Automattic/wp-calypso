@@ -13,6 +13,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import Badge from 'components/badge';
 import { getUrlParts } from 'lib/url';
+import Spinner from 'components/spinner';
 
 export default class SitesBlock extends Component {
 	state = {};
@@ -25,7 +26,9 @@ export default class SitesBlock extends Component {
 		return (
 			<div className="sites-block__faux-site-selector">
 				<div className="sites-block__faux-site-selector-content">
-					<div className="sites-block__faux-site-selector-icon" />
+					<div className="sites-block__faux-site-selector-icon">
+						{ this.props.loadingSourceSite && <Spinner /> }
+					</div>
 					<div className="sites-block__faux-site-selector-info">
 						<FormLabel
 							className="sites-block__faux-site-selector-label"
