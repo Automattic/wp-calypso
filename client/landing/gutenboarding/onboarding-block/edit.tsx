@@ -78,7 +78,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 				{ /*	TODO - Remove LoadingPlaceholder from Route and have it render via a store param.
 					Requires that we clear store after loading into editor. */ }
 				<Route exact path={ Step.SiteLoading }>
-					<LoadingPlaceholder />
+					<CreateSite />
 				</Route>
 			</Switch>
 		</>
