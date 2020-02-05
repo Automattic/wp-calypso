@@ -57,6 +57,31 @@ const DEFAULT_HEADERS = {
 const DEFAULT_DIR = 'build/';
 
 /**
+ * List of translate function to be handled for string extraction.
+ *
+ * @type {string[]}
+ */
+const TRANSLATE_FUNCTION_NAMES = [ '__', '_n', '_nx', '_x', 'translate' ];
+
+/**
+ * Set of keys which are valid to be assigned into a translation object.
+ *
+ * @type {string[]}
+ */
+const VALID_TRANSLATION_KEYS = [ 'msgid_plural', 'msgctxt' ];
+
+/**
+ * The order of arguments in @wordpress/i18n translate function.
+ *
+ * @type {object}
+ */
+const DEFAULT_FUNCTIONS_ARGUMENTS_ORDER = {
+	_n: [ 'msgid_plural' ],
+	_x: [ 'msgctxt' ],
+	_nx: [ 'msgid_plural', null, 'msgctxt' ],
+};
+
+/**
  * Given an argument node (or recursed node), attempts to return a string
  * represenation of that node's value.
  *
@@ -81,6 +106,18 @@ function getNodeAsString( node ) {
 	}
 }
 
+/**
+ * Returns true if the specified key of a function is valid for assignment in
+ * the translation object.
+ *
+ * @param {string} key Key to test.
+ *
+ * @returns {boolean} Whether key is valid for assignment.
+ */
+function isValidTranslationKey( key ) {
+	return -1 !== VALID_TRANSLATION_KEYS.indexOf( key );
+}
+
 module.exports = function() {
 	let strings = {},
 		nplurals = 2,
@@ -98,7 +135,7 @@ module.exports = function() {
 				} else {
 					name = callee.name;
 				}
-				if ( 'translate' !== name ) {
+				if ( ! TRANSLATE_FUNCTION_NAMES.includes( name ) ) {
 					return;
 				}
 				let i = 0;
@@ -144,38 +181,53 @@ module.exports = function() {
 					}
 				}
 
-				if ( path.node.arguments.length > i ) {
-					const msgid_plural = getNodeAsString( path.node.arguments[ i ] );
-					if ( msgid_plural.length ) {
-						translation.msgid_plural = msgid_plural;
-						i++;
-						// For plurals, create an empty mgstr array
-						translation.msgstr = Array.from( Array( nplurals ) ).map( () => '' );
-					}
-				}
-
 				const { filename } = this.file.opts;
 				const pathname = relative( '.', filename )
 					.split( sep )
 					.join( '/' );
 				translation.comments.reference = pathname + ':' + path.node.loc.start.line;
 
-				if (
-					path.node.arguments.length > i &&
-					'ObjectExpression' === path.node.arguments[ i ].type
-				) {
-					for ( const j in path.node.arguments[ i ].properties ) {
-						if ( 'ObjectProperty' === path.node.arguments[ i ].properties[ j ].type ) {
-							switch ( path.node.arguments[ i ].properties[ j ].key.name ) {
-								case 'context':
-									translation.msgctxt = path.node.arguments[ i ].properties[ j ].value.value;
-									break;
-								case 'comment':
-									translation.comments.extracted =
-										path.node.arguments[ i ].properties[ j ].value.value;
-									break;
+				if ( 'translate' === name ) {
+					if ( path.node.arguments.length > i ) {
+						const msgid_plural = getNodeAsString( path.node.arguments[ i ] );
+						if ( msgid_plural.length ) {
+							translation.msgid_plural = msgid_plural;
+							i++;
+							// For plurals, create an empty mgstr array
+							translation.msgstr = Array.from( Array( nplurals ) ).map( () => '' );
+						}
+					}
+
+					if (
+						path.node.arguments.length > i &&
+						'ObjectExpression' === path.node.arguments[ i ].type
+					) {
+						for ( const j in path.node.arguments[ i ].properties ) {
+							if ( 'ObjectProperty' === path.node.arguments[ i ].properties[ j ].type ) {
+								switch ( path.node.arguments[ i ].properties[ j ].key.name ) {
+									case 'context':
+										translation.msgctxt = path.node.arguments[ i ].properties[ j ].value.value;
+										break;
+									case 'comment':
+										translation.comments.extracted =
+											path.node.arguments[ i ].properties[ j ].value.value;
+										break;
+								}
 							}
 						}
+					}
+				} else {
+					const functionKeys = ( state.opts.functions || DEFAULT_FUNCTIONS_ARGUMENTS_ORDER )[
+						name
+					];
+
+					if ( functionKeys ) {
+						path.node.arguments.slice( i ).forEach( ( arg, index ) => {
+							const key = functionKeys[ index ];
+							if ( isValidTranslationKey( key ) ) {
+								translation[ key ] = getNodeAsString( arg );
+							}
+						} );
 					}
 				}
 
