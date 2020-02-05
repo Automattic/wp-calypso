@@ -16,7 +16,7 @@ import StepperWizard from './stepper-wizard';
 import VerticalSelect from './vertical-select';
 import SignupForm from './signup-form';
 import SiteTitle from './site-title';
-import LoadingPlaceholder from './loading-placeholder';
+import CreateSite from './create-site';
 import { Attributes } from './types';
 import { Step } from '../steps';
 import './style.scss';
