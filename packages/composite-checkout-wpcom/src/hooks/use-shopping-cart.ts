@@ -45,6 +45,7 @@ type ShoppingCartHookState = {
 	responseCart: ResponseCart;
 	couponStatus: CouponStatus;
 	cacheStatus: CacheStatus;
+	variantRequestStatus: VariantRequestStatus;
 	shouldShowNotification: {
 		didAddCoupon: boolean;
 	};
@@ -55,6 +56,7 @@ const getInitialShoppingCartHookState: () => ShoppingCartHookState = () => {
 		responseCart: emptyResponseCart,
 		cacheStatus: 'fresh',
 		couponStatus: 'fresh',
+        variantRequestStatus: 'fresh',
 		shouldShowNotification: {
 			didAddCoupon: false,
 		},
@@ -133,12 +135,15 @@ function shoppingCartHookReducer(
 			const response = action.updatedResponseCart;
 			const newCouponStatus = getUpdatedCouponStatus( couponStatus, response );
 			const didAddCoupon = newCouponStatus === 'applied';
+            // TODO: do we need to handle the case where the variant doesn't actually change?
+			const newVariantRequestStatus = ( state.variantRequestStatus === 'pending' ) ? 'valid' : state.variantRequestStatus;
 
 			return {
 				...state,
 				responseCart: response,
 				couponStatus: newCouponStatus,
 				cacheStatus: 'valid',
+                variantRequestStatus: newVariantRequestStatus,
 				shouldShowNotification: {
 					...state.shouldShowNotification,
 					didAddCoupon,
@@ -235,6 +240,7 @@ export interface ShoppingCartManager {
 	couponStatus: CouponStatus;
 	couponCode: string | null;
 	updateLocation: ( CartLocation ) => void;
+	variantRequestStatus: VariantRequestStatus;
 }
 
 /**
@@ -258,7 +264,19 @@ type CacheStatus = 'fresh' | 'valid' | 'invalid' | 'pending' | 'error';
  *   - 'invalid': Coupon code is not recognized.
  *   - 'rejected': Valid code, but does not apply to the cart items.
  */
-type CouponStatus = 'fresh' | 'pending' | 'applied' | 'invalid' | 'rejected' | 'error';
+export type CouponStatus = 'fresh' | 'pending' | 'applied' | 'invalid' | 'rejected' | 'error';
+
+/**
+ * Possible states re. variant selection. Note that all variant
+ * change requests share the same state; this means if there is more
+ * than one item in the cart with variant options they will all be in
+ * pending state at the same time. Right now this is moot because at most
+ * one cart item (the plan, if it exists) can have a variant picker.
+ * If later we want to allow variations on more than one cart item
+ * It should be straightforward to adjust the type of ShoppingCartManager
+ * to accommodate this. For now the extra complexity is not worth it.
+ */
+export type VariantRequestStatus = 'fresh' | 'pending' | 'valid' | 'error';
 
 /**
  * Custom hook for managing state in the WPCOM checkout component.
@@ -321,6 +339,12 @@ export function useShoppingCart(
 	const couponStatus: CouponStatus = hookState.couponStatus;
 	const cacheStatus: CacheStatus = hookState.cacheStatus;
 	const shouldShowNotification = hookState.shouldShowNotification;
+
+	// Used to allow updating the view immediately upon a variant
+	// change request.
+	const [ variantRequestStatus, setVariantRequestStatus ] = useState< VariantRequestStatus >(
+		'fresh'
+	);
 
 	// Asynchronously initialize the cart. This should happen exactly once.
 	useEffect( () => {
@@ -403,6 +427,11 @@ export function useShoppingCart(
 
 	const changeItemVariant: ( WPCOMCartItem, WPCOMProductSlug, number ) => void = useCallback(
 		( itemToChange, newProductSlug, newProductId ) => {
+			if ( variantRequestStatus === 'pending' ) {
+				debug( `variant request status is '${ variantRequestStatus }'; not submitting again` );
+				return;
+			}
+
 			debug( 'changing item variant in cart to', newProductSlug, itemToChange );
 			setResponseCart( currentResponseCart => ( {
 				...currentResponseCart,
@@ -415,8 +444,9 @@ export function useShoppingCart(
 				} ),
 			} ) );
 			setCacheStatus( 'invalid' );
+			setVariantRequestStatus( 'pending' );
 		},
-		[]
+		[ variantRequestStatus ]
 	);
 
 	const updateLocation: ( CartLocation ) => void = useCallback( location => {
@@ -445,5 +475,6 @@ export function useShoppingCart(
 		submitCoupon,
 		couponStatus,
 		couponCode: cart.couponCode,
+		variantRequestStatus,
 	} as ShoppingCartManager;
 }
