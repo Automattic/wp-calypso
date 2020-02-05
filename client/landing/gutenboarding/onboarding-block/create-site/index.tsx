@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
-
+import { __ as NO__ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
@@ -30,7 +30,9 @@ const CreateSite: FunctionComponent< {} > = () => {
 								<div className="placeholder placeholder-title wp-block editor-post-title__block">
 									Placeholder
 								</div>
-								<div className="editor-post-title__text">Your site is being created...</div>
+								<div className="editor-post-title__text">
+									{ NO__( 'Your site is being created...' ) }
+								</div>
 							</div>
 						</div>
 					</div>
