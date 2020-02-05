@@ -69,26 +69,3 @@ case SITES_RECEIVE:
 	const selectedSite = getSelectedSite( state );
 	library.setSelectedSite( selectedSite );
 ```
-
-
-### Sites Change Listeners
-
-If we have no other options, we can simulate subscribing to site changes by dispatching an action like this:
-```jsx
-{ type: SELECTED_SITE_SUBSCRIBE, listener }
-```
-
-Where listener is a function that receives the new selected site id as parameter.
-e.g:
-```jsx
-function setSelectedSiteId( siteId ) {
-	this.selectedSiteId = siteId;
-}
-```
-
-To unsubscribe from selected site changes dispatch the following action:
-```jsx
-{ type: SELECTED_SITE_UNSUBSCRIBE, listener }
-```
-
-Where listener is an exact reference to the same function used when subscribing.
