@@ -4,10 +4,11 @@
 import { __ as NO__ } from '@wordpress/i18n';
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { FunctionComponent, useEffect } from 'react';
 import { useDebounce } from 'use-debounce';
 import classnames from 'classnames';
 import { DomainSuggestions } from '@automattic/data-stores';
+import { useHistory } from 'react-router-dom';
 
 /**
  * Internal dependencies
@@ -20,7 +21,6 @@ import { selectorDebounce } from '../../constants';
 import Link from '../link';
 import { createSite } from '../../utils';
 import { Step } from '../../steps';
-import { useHistory } from 'react-router-dom';
 
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
@@ -62,8 +62,6 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 
 	const history = useHistory();
 
-	const [ isSiteCreating, setIsSiteCreating ] = useState( false );
-
 	const currentDomain = domain ?? freeDomainSuggestion;
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -97,11 +95,11 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 	};
 
 	const handleCreateSite = () => {
-		setIsSiteCreating( true );
 		createSite( siteCreationData, handleSiteCreated );
+		history.push( Step.CreateSite );
 	};
 
-	if ( shouldCreate && currentUser && ! isSiteCreating ) {
+	if ( shouldCreate && currentUser ) {
 		handleCreateSite();
 	}
 
@@ -143,7 +141,7 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 			</div>
 			<div className="gutenboarding__header-section">
 				<div className="gutenboarding__header-group">
-					{ hasSelectedDesign && ! isSiteCreating && ! shouldCreate && (
+					{ hasSelectedDesign && ! shouldCreate && (
 						<Button
 							className="gutenboarding__header-next-button"
 							isPrimary
@@ -153,8 +151,6 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 							{ NO__( 'Create my site' ) }
 						</Button>
 					) }
-					{ /* Just an intermediary step until adding the loading modal/screen in https://github.com/Automattic/wp-calypso/pull/39266 */ }
-					{ ( isSiteCreating || shouldCreate ) && 'Creating site in progress...' }
 				</div>
 			</div>
 		</div>
