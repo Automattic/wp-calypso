@@ -121,10 +121,28 @@ function isValidTranslationKey( key ) {
 module.exports = function() {
 	let strings = {},
 		nplurals = 2,
-		baseData;
+		baseData,
+		hasAliasedTranslate = false;
 
 	return {
 		visitor: {
+			ImportDeclaration( path ) {
+				// Set `hasAliasedTranslate` flag if `translate` from
+				// `i18n-calypso`` is aliased as `__`.
+				if (
+					'i18n-calypso' === path.node.source.value &&
+					path.node.specifiers.some(
+						specifier =>
+							specifier.imported &&
+							specifier.local &&
+							'translate' === specifier.imported.name &&
+							'__' === specifier.local.name
+					)
+				) {
+					hasAliasedTranslate = true;
+				}
+			},
+
 			CallExpression( path, state ) {
 				const { callee } = path.node;
 
@@ -187,7 +205,7 @@ module.exports = function() {
 					.join( '/' );
 				translation.comments.reference = pathname + ':' + path.node.loc.start.line;
 
-				if ( 'translate' === name ) {
+				if ( 'translate' === name || ( hasAliasedTranslate && '__' === name ) ) {
 					if ( path.node.arguments.length > i ) {
 						const msgid_plural = getNodeAsString( path.node.arguments[ i ] );
 						if ( msgid_plural.length ) {
@@ -246,6 +264,7 @@ module.exports = function() {
 			Program: {
 				enter() {
 					strings = {};
+					hasAliasedTranslate = false;
 				},
 				exit( path, state ) {
 					if ( isEmpty( strings ) ) {
