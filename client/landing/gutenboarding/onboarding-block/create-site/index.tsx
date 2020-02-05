@@ -11,31 +11,29 @@ import './style.scss';
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const CreateSite: FunctionComponent< {} > = () => {
 	return (
-		<div className="editor__placeholder">
-			<div className="edit-post-layout">
-				<div className="edit-post-header">
-					<div className="edit-post-header-toolbar">
-						<div className="placeholder placeholder-site">Placeholder</div>
-					</div>
-					<div className="edit-post-header__settings">
-						<div className="placeholder placeholder-button">Placeholder</div>
-						<div className="placeholder placeholder-button">Placeholder</div>
-						<div className="placeholder placeholder-button">Placeholder</div>
-					</div>
-				</div>
-				<div className="edit-post-layout__content">
-					<div className="edit-post-visual-editor editor-styles-wrapper">
-						<div className="editor-writing-flow">
-							<div className="editor-post-title">
-								<div className="placeholder placeholder-title wp-block editor-post-title__block">
-									Placeholder
-								</div>
-								<div className="editor-post-title__text">
-									{ NO__( 'Your site is being created...' ) }
-								</div>
-							</div>
+		<div className="create-site__background">
+			<div className="create-site__layout">
+				<div className="create-site__header">
+					<div className="create-site__toolbar">
+						<div className="create-site__placeholder create-site__placeholder-site">
+							Placeholder
 						</div>
 					</div>
+					<div className="create-site__settings">
+						<div className="create-site__placeholder create-site__placeholder-button">
+							Placeholder
+						</div>
+						<div className="create-site__placeholder create-site__placeholder-button">
+							Placeholder
+						</div>
+						<div className="create-site__placeholder create-site__placeholder-button">
+							Placeholder
+						</div>
+					</div>
+				</div>
+				<div className="create-site__content">
+					<div className="create-site__placeholder create-site__placeholder-title">Placeholder</div>
+					<div className="create-site__text">{ NO__( 'Your site is being created...' ) }</div>
 				</div>
 			</div>
 		</div>

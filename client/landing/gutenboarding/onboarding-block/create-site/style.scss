@@ -1,6 +1,5 @@
-.editor__placeholder {
+.create-site__background {
     background: white;
-	min-height: 500px;
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -8,30 +7,56 @@
 	bottom: 0;
 	z-index: 50;
 
-	.placeholder {
-        @include placeholder();
-        background-color: var( --color-primary-5 );
+	.create-site__layout {
+		max-width: 1200px;
+		margin: 0 auto;
+
+		.create-site__header {
+			padding: 8px;
+			height: 56px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+
+			.create-site__toolbar,
+			.create-site__settings {
+				display: inline-flex;
+				align-items: center;
+			}
+		}
+
+		.create-site__content {
+			background-color: var( --studio-gray-0 );
+			min-height: 70vh;
+			padding-top: 40px;
+		}
+	}
+
+	.create-site__placeholder {
+		@include placeholder();
+		background-color: var( --color-primary-5 );
 		height: 16px;
 		border-radius: 8px;
 	}
 
-	.placeholder-site {
+	.create-site__placeholder-site {
 		margin-left: 18px;
 	}
 
-	.placeholder-button {
+	.create-site__placeholder-button {
 		width: 40px;
 		margin: 0 8px;
 	}
 
-	.placeholder-title {
+	.create-site__placeholder-title {
 		height: 40px;
 		border-radius: 20px;
-		margin: 0 8px;
+		margin: 0 auto;
+		width: 90%;
 	}
 
-	.editor-post-title__text {
-		margin-top: 20px;
+	.create-site__text {
+		margin-top: 60px;
 		text-align: center;
 		font-size: 2rem;
 	}
