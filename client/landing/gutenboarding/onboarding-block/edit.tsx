@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { __ as NO__ } from '@wordpress/i18n';
+import { __ as NO__, __ } from '@wordpress/i18n';
 import { BlockEditProps } from '@wordpress/blocks';
 import { useSelect } from '@wordpress/data';
 import React, { FunctionComponent } from 'react';
@@ -30,6 +30,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 	return (
 		<>
 			<VerticalBackground />
+			{ __( 'Next' ) }
 			<Switch>
 				<Route exact path={ Step.IntentGathering }>
 					<div className="onboarding-block__acquire-intent">

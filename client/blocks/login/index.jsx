@@ -8,6 +8,7 @@ import { capitalize, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -172,33 +173,33 @@ class Login extends Component {
 			oauth2Client,
 			privateSite,
 			socialConnect,
-			translate,
 			twoStepNonce,
 			fromSite,
 			currentUser,
 			twoFactorEnabled,
+			translate,
 		} = this.props;
 
-		let headerText = translate( 'Log in to your account' );
+		let headerText = __( 'Log in to your account' );
 		let preHeader = null;
 		let postHeader = null;
 
 		if ( isManualRenewalImmediateLoginAttempt ) {
-			headerText = translate( 'Log in to update your payment details and renew your subscription' );
+			headerText = __( 'Log in to update your payment details and renew your subscription' );
 		}
 
 		if ( twoStepNonce ) {
-			headerText = translate( 'Two-Step Authentication' );
+			headerText = __( 'Two-Step Authentication' );
 		} else if ( socialConnect ) {
-			headerText = translate( 'Connect your %(service)s account', {
+			headerText = __( 'Connect your %(service)s account', {
 				args: {
 					service: capitalize( linkingSocialService ),
 				},
 			} );
 		} else if ( privateSite ) {
-			headerText = translate( 'This is a private WordPress.com site' );
+			headerText = __( 'This is a private WordPress.com site' );
 		} else if ( oauth2Client ) {
-			headerText = translate( 'Howdy! Log in to %(clientTitle)s with your WordPress.com account.', {
+			headerText = __( 'Howdy! Log in to %(clientTitle)s with your WordPress.com account.', {
 				args: {
 					clientTitle: oauth2Client.title,
 				},
@@ -210,7 +211,7 @@ class Login extends Component {
 				preHeader = <Gridicon icon="my-sites" size={ 72 } />;
 				postHeader = (
 					<p>
-						{ translate(
+						{ __(
 							'WooCommerce.com now uses WordPress.com Accounts.{{br/}}{{a}}Learn more about the benefits{{/a}}',
 							{
 								components: {
@@ -253,10 +254,10 @@ class Login extends Component {
 						) }
 					</Fragment>
 				);
-				headerText = translate( 'Log in with a WordPress.com account' );
+				headerText = __( 'Log in with a WordPress.com account' );
 				postHeader = (
 					<p className="login__header-subtitle">
-						{ translate(
+						{ __(
 							'Log in to WooCommerce.com with your WordPress.com account to connect your store and manage your extensions'
 						) }
 					</p>
@@ -271,7 +272,7 @@ class Login extends Component {
 				} );
 			}
 		} else if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
-			headerText = translate( 'Log in to your WordPress.com account' );
+			headerText = __( 'Log in to your WordPress.com account' );
 			preHeader = (
 				<div className="login__jetpack-logo">
 					<AsyncLoad
@@ -286,13 +287,13 @@ class Login extends Component {
 			);
 			postHeader = (
 				<p className="login__header-subtitle">
-					{ translate(
+					{ __(
 						'Your account will enable you to start using the features and benefits offered by Jetpack & WooCommerce Services.'
 					) }
 				</p>
 			);
 		} else if ( isJetpack ) {
-			headerText = translate( 'Log in or create a WordPress.com account to set up Jetpack' );
+			headerText = __( 'Log in or create a WordPress.com account to set up Jetpack' );
 			preHeader = (
 				<div className="login__jetpack-logo">
 					<AsyncLoad

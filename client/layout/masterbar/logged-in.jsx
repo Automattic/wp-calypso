@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { __, _x } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -84,13 +85,7 @@ class MasterbarLoggedIn extends React.Component {
 	};
 
 	renderMySites() {
-		const {
-				domainOnlySite,
-				hasMoreThanOneSite,
-				siteSlug,
-				translate,
-				isCustomerHomeEnabled,
-			} = this.props,
+		const { domainOnlySite, hasMoreThanOneSite, siteSlug, isCustomerHomeEnabled } = this.props,
 			homeUrl = isCustomerHomeEnabled
 				? `/home/${ siteSlug }`
 				: getStatsPathForTab( 'day', siteSlug ),
@@ -103,12 +98,12 @@ class MasterbarLoggedIn extends React.Component {
 				icon={ this.wordpressIcon() }
 				onClick={ this.clickMySites }
 				isActive={ this.isActive( 'sites' ) }
-				tooltip={ translate( 'View a list of your sites and access their dashboards' ) }
+				tooltip={ __( 'View a list of your sites and access their dashboards' ) }
 				preloadSection={ this.preloadMySites }
 			>
 				{ hasMoreThanOneSite
-					? translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
-					: translate( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
+					? __( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
+					: __( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 			</Item>
 		);
 	}
@@ -121,9 +116,7 @@ class MasterbarLoggedIn extends React.Component {
 				<Masterbar>
 					<div className="masterbar__secure-checkout">
 						<WordPressWordmark className="masterbar__wpcom-wordmark" />
-						<span className="masterbar__secure-checkout-text">
-							{ translate( 'Secure checkout' ) }
-						</span>
+						<span className="masterbar__secure-checkout-text">{ __( 'Secure checkout' ) }</span>
 					</div>
 				</Masterbar>
 			);
@@ -139,10 +132,10 @@ class MasterbarLoggedIn extends React.Component {
 					icon="reader"
 					onClick={ this.clickReader }
 					isActive={ this.isActive( 'reader' ) }
-					tooltip={ translate( 'Read the blogs and topics you follow' ) }
+					tooltip={ __( 'Read the blogs and topics you follow' ) }
 					preloadSection={ this.preloadReader }
 				>
-					{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
+					{ __( 'Reader' ) }
 				</Item>
 				{ ( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) && (
 					<AsyncLoad require="./quick-language-switcher" placeholder={ null } />
@@ -152,9 +145,9 @@ class MasterbarLoggedIn extends React.Component {
 					<Publish
 						isActive={ this.isActive( 'post' ) }
 						className="masterbar__item-new"
-						tooltip={ translate( 'Create a New Post' ) }
+						tooltip={ __( 'Create a New Post' ) }
 					>
-						{ translate( 'Write' ) }
+						{ __( 'Write' ) }
 					</Publish>
 				) }
 				<Item
@@ -164,19 +157,19 @@ class MasterbarLoggedIn extends React.Component {
 					onClick={ this.clickMe }
 					isActive={ this.isActive( 'me' ) }
 					className="masterbar__item-me"
-					tooltip={ translate( 'Update your profile, personal settings, and more' ) }
+					tooltip={ __( 'Update your profile, personal settings, and more' ) }
 					preloadSection={ this.preloadMe }
 				>
-					<Gravatar user={ this.props.user } alt={ translate( 'My Profile' ) } size={ 18 } />
+					<Gravatar user={ this.props.user } alt={ __( 'My Profile' ) } size={ 18 } />
 					<span className="masterbar__item-me-label">
-						{ translate( 'My Profile', { context: 'Toolbar, must be shorter than ~12 chars' } ) }
+						{ _x( 'My Profile', 'Toolbar, must be shorter than ~12 chars' ) }
 					</span>
 				</Item>
 				<Notifications
 					isShowing={ this.props.isNotificationsShowing }
 					isActive={ this.isActive( 'notifications' ) }
 					className="masterbar__item-notifications"
-					tooltip={ translate( 'Manage your notifications' ) }
+					tooltip={ __( 'Manage your notifications' ) }
 				>
 					<span className="masterbar__item-notifications-label">
 						{ translate( 'Notifications', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
