@@ -103,8 +103,7 @@ export function getProducts( state, params = {}, siteId = getSelectedSiteId( sta
  */
 export function getTotalProductsPages( state, params = {}, siteId = getSelectedSiteId( state ) ) {
 	const key = getSerializedProductsQuery( params );
-	const totalPages = getQuery( state, siteId, key )?.totalPages;
-	return totalPages !== undefined ? totalPages : 0;
+	return getQuery( state, siteId, key )?.totalPages ?? 0;
 }
 
 /**
@@ -115,6 +114,5 @@ export function getTotalProductsPages( state, params = {}, siteId = getSelectedS
  */
 export function getTotalProducts( state, params = {}, siteId = getSelectedSiteId( state ) ) {
 	const key = getSerializedProductsQuery( params );
-	const totalProducts = getQuery( state, siteId, key )?.totalProducts;
-	return totalProducts !== undefined ? totalProducts : 0;
+	return getQuery( state, siteId, key )?.totalProducts ?? 0;
 }
