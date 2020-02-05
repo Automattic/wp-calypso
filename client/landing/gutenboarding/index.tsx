@@ -6,6 +6,7 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import config from '../../config';
+import { setLocaleData } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -24,6 +25,10 @@ window.AppBoot = () => {
 		window.location.href = '/';
 	} else {
 		setupWpDataDebug();
+		const maybeLocaleDataString = ( window as { i18nLocaleStrings?: string } ).i18nLocaleStrings;
+		if ( maybeLocaleDataString ) {
+			setLocaleData( JSON.parse( maybeLocaleDataString ) );
+		}
 
 		// Add accessible-focus listener.
 		accessibleFocus();
