@@ -7,7 +7,7 @@ import EventEmitter from 'events';
  * Internal dependencies
  */
 import EmbedView from './view';
-import getSiteEmbeds from 'state/selectors/get-site-embeds';
+import getCurrentSiteEmbeds from 'state/selectors/get-current-site-embeds';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getReduxStore, reduxDispatch, reduxGetState } from 'lib/redux-bridge';
 import { requestEmbeds } from 'state/embeds/actions';
@@ -21,17 +21,13 @@ export default class EmbedViewManager extends EventEmitter {
 				this.createListener( store, getSelectedSiteId, this.onChange.bind( this ) )
 			);
 			store.subscribe(
-				this.createListener( store, this.getCurrentSiteEmbeds, this.onChange.bind( this ) )
+				this.createListener( store, getCurrentSiteEmbeds, this.onChange.bind( this ) )
 			);
 		} );
 	}
 
 	onChange() {
 		this.emit( 'change' );
-	}
-
-	getCurrentSiteEmbeds( state ) {
-		return getSiteEmbeds( state, getSelectedSiteId( state ) );
 	}
 
 	createListener( store, selector, callback ) {
@@ -52,7 +48,7 @@ export default class EmbedViewManager extends EventEmitter {
 			return;
 		}
 
-		const embeds = getSiteEmbeds( reduxGetState(), siteId );
+		const embeds = getCurrentSiteEmbeds( reduxGetState() );
 		if ( ! embeds ) {
 			reduxDispatch( requestEmbeds( siteId ) );
 			return;
