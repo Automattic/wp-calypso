@@ -38,7 +38,9 @@ const SignupForm = () => {
 	};
 
 	if ( newUser && shouldCreate ) {
-		window.location.href = window.location.href.replace( '/signup', '/design' ); //TODO: redirect to some 'creating your website' screen
+		//TODO: replace route when https://github.com/Automattic/wp-calypso/pull/39266 is merged
+		//TODO 2: replace with correct action dispatching when https://github.com/Automattic/wp-calypso/pull/39050 is merged
+		window.location.href = window.location.href.replace( '/signup', '/design' );
 	}
 
 	return (
