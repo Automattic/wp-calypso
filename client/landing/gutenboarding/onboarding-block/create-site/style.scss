@@ -1,6 +1,12 @@
 .editor__placeholder {
-    background: rgba( 100, 100, 100, 0.1 );
-    min-height: 500px;
+    background: white;
+	min-height: 500px;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 50;
 
 	.placeholder {
         @include placeholder();
