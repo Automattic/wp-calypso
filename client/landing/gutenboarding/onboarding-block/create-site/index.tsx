@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 
 /**
  * Internal dependencies
@@ -9,7 +9,7 @@ import React from 'react';
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-export default function LoadingPlaceholder() {
+const CreateSite: FunctionComponent< {} > = () => {
 	return (
 		<div className="editor__placeholder">
 			<div className="edit-post-layout">
@@ -38,4 +38,6 @@ export default function LoadingPlaceholder() {
 			</div>
 		</div>
 	);
-}
+};
+
+export default CreateSite;
