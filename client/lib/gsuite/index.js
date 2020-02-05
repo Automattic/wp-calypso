@@ -11,7 +11,6 @@ import {
 	GSUITE_BASIC_SLUG,
 	GSUITE_BUSINESS_SLUG,
 	GSUITE_EXTRA_LICENSE_SLUG,
-	GSUITE_LINK_PREFIX
 } from 'lib/gsuite/constants';
 import { isMappedDomainWithWpcomNameservers, isRegisteredDomain } from 'lib/domains';
 import userFactory from 'lib/user';
@@ -162,16 +161,6 @@ function getMonthlyPrice( cost, currencyCode, defaultValue = '-' ) {
 }
 
 /**
- * Returns G Suite management url
- *
- * @param {string} domainName - domain name
- * @returns {string} - Returns G Suite settings url
- */
-function getGSuiteSettingsUrl( domainName ) {
-	return GSUITE_LINK_PREFIX + domainName;
-}
-
-/**
  * Given a domain object, does that domain have G Suite with us.
  *
  * @param {object} domain - domain object
@@ -260,7 +249,6 @@ export {
 	canDomainAddGSuite,
 	getAnnualPrice,
 	getEligibleGSuiteDomain,
-	getGSuiteSettingsUrl,
 	getGSuiteSupportedDomains,
 	getLoginUrlWithTOSRedirect,
 	getMonthlyPrice,
