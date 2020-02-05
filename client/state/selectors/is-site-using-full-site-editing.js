@@ -11,6 +11,7 @@ import { hasStaticFrontPage } from 'state/sites/selectors';
 
 /**
  * Checks if a site is using the new Full Site Editing experience
+ *
  * @param {object} state  Global state tree
  * @param {object} siteId Site ID
  * @returns {boolean} True if the site is using Full Site Editing, otherwise false

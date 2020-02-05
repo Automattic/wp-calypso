@@ -63,6 +63,7 @@ export default function transformer( file, api ) {
 	/**
 	 * Removes the extra newlines between two import statements
 	 * caused by `insertAfter()`:
+	 *
 	 * @link https://github.com/benjamn/recast/issues/371
 	 *
 	 * @param  {string} str String

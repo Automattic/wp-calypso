@@ -3,7 +3,7 @@ class Batch {
 	 * Create a `Batch` instance
 	 *
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {null} null
+	 * @returns {null} null
 	 */
 	constructor( wpcom ) {
 		if ( ! ( this instanceof Batch ) ) {
@@ -17,8 +17,8 @@ class Batch {
 	/**
 	 * Add url to batch requests
 	 *
-	 * @param {String} url - endpoint url
-	 * @return {Batch} batch instance
+	 * @param {string} url - endpoint url
+	 * @returns {Batch} batch instance
 	 */
 	add( url ) {
 		this.urls.push( url );
@@ -28,9 +28,9 @@ class Batch {
 	/**
 	 * Run the batch request
 	 *
-	 * @param {Object} [query] - optional query parameter
+	 * @param {object} [query] - optional query parameter
 	 * @param {Function} fn - callback
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	run( query = {}, fn ) {
 		if ( 'function' === typeof query ) {

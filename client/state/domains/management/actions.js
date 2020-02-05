@@ -36,6 +36,7 @@ export function receiveContactDetailsCache( data ) {
 /**
  * Triggers a network request to query domain contact details
  * cached data (originated from last domain purchase)
+ *
  * @returns {Function}          Action thunk
  */
 export function requestContactDetailsCache() {

@@ -35,6 +35,7 @@ export const approvePushToken = async ( pushToken, bearerToken ) => {
 
 /**
  * Extracts specific appData value and notification's persistent id
+ *
  * @param {string} filter appData key to match
  * @param {Function} addPersistentId a function to call with notification's persistent id
  * @param {Function} callback a function to call with a matching appData pair's value when filter matches
@@ -54,6 +55,7 @@ function filterPushDataKey( filter, addPersistentId, callback ) {
 
 /**
  * Listens to push notifications with push token
+ *
  * @param {object} pushConfig GCM keys and tokens
  * @param {Function} callback a function to call when we get a push token
  */

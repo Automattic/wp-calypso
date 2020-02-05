@@ -5,7 +5,7 @@ class Domains {
 	 * `Domains` constructor.
 	 *
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {Undefined} undefined
+	 * @returns {undefined} undefined
 	 */
 	constructor( wpcom ) {
 		if ( ! ( this instanceof Domains ) ) {
@@ -18,9 +18,9 @@ class Domains {
 	 * Get a list of suggested domain names that are available for
 	 * registration based on a given term or domain name.
 	 *
-	 * @param {String|Object} [query] - query object parameter
+	 * @param {string|object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	suggestions( query, fn ) {
 		if ( 'string' === typeof query ) {
@@ -32,9 +32,9 @@ class Domains {
 	/**
 	 * GET example domain suggestions
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	suggestionsExamples( query, fn ) {
 		return this.wpcom.req.get( root + 'suggestions/examples', query, fn );
@@ -43,9 +43,9 @@ class Domains {
 	/**
 	 * Get a localized list of supported countries for domain registrations.
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	supportedCountries( query, fn ) {
 		return this.wpcom.req.get( root + 'supported-countries', query, fn );
@@ -54,10 +54,10 @@ class Domains {
 	/**
 	 * Get a localized list of supported states for domain registrations.
 	 *
-	 * @param {String} countryCode - country code ISO 3166-1 alpha-2 identifier
-	 * @param {Object} [query] - query object parameter
+	 * @param {string} countryCode - country code ISO 3166-1 alpha-2 identifier
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	supportedStates( countryCode, query, fn ) {
 		var path = root + 'supported-states/' + countryCode;

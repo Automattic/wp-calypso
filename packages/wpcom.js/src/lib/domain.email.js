@@ -4,10 +4,10 @@ class DomainEmail {
 	/**
 	 * `DomainEmail` constructor.
 	 *
-	 * @param {String} [email] - email
-	 * @param {String} domainId - domain identifier
+	 * @param {string} [email] - email
+	 * @param {string} domainId - domain identifier
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {Undefined} undefined
+	 * @returns {undefined} undefined
 	 */
 	constructor( email, domainId, wpcom ) {
 		if ( ! ( this instanceof DomainEmail ) ) {
@@ -26,10 +26,10 @@ class DomainEmail {
 	/**
 	 * Update the email forwards/configuration for a domain.
 	 *
-	 * @param {String} destination - the email address to forward email to.
-	 * @param {Object} [query] - query object parameter
+	 * @param {string} destination - the email address to forward email to.
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	forward( destination, query, fn ) {
 		let body = { destination: destination };
@@ -40,9 +40,9 @@ class DomainEmail {
 	 * Create an email forward for the domain
 	 * if it has enough licenses.
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 
 	add( mailbox, destination, query, fn ) {
@@ -62,10 +62,10 @@ class DomainEmail {
 	/**
 	 * Delete an email forward for the domain
 	 *
-	 * @param {String} mailbox - mailbox to alter
-	 * @param {Object} [query] - query object parameter
+	 * @param {string} mailbox - mailbox to alter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	delete( mailbox, query, fn ) {
 		return this.wpcom.req.del( this._subpath + mailbox + '/delete', query, fn );

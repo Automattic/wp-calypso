@@ -10,6 +10,7 @@ import { get } from 'lodash';
 
 /**
  * Gets the last query parameters set by a ROUTE_SET action
+ *
  * @param {object} state - global redux state
  * @returns {object} current state value
  */

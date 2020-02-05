@@ -13,6 +13,7 @@ import i18n, { numberFormat, translate } from '../src';
 /**
  * Pass in a react-generated html string to remove react-specific attributes
  * to make it easier to compare to expected html structure
+ *
  * @param  {string} string React-generated html string
  * @returns {string}        html with react attributes removed
  */

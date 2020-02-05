@@ -17,6 +17,7 @@ import {
 /**
  * Creates a new (empty) Shipping Zone. This will open the newly created zone for editing, but the zone itself
  * won't be saved into "permanent" state until `closeEditingShippingZone` is called.
+ *
  * @param {number} siteId Site ID.
  * @returns {object} Action object.
  */
@@ -26,6 +27,7 @@ export const addNewShippingZone = siteId => {
 
 /**
  * Opens the given Shipping Zone for editing it.
+ *
  * @param {number} siteId Site ID.
  * @param {number} id Shipping Zone ID to open.
  * @returns {object} Action object.
@@ -36,6 +38,7 @@ export const openShippingZoneForEdit = ( siteId, id ) => {
 
 /**
  * Saves the changes made to the Shipping Zone currently being edited, and stops editing it.
+ *
  * @param {number} siteId Site ID.
  * @returns {object} Action object.
  */
@@ -46,6 +49,7 @@ export const closeEditingShippingZone = siteId => {
 /**
  * Stops editing the Shipping Zone currently being edited, discarding all the changes made to it since the modal
  * was opened.
+ *
  * @param {number} siteId Site ID.
  * @returns {object} Action object.
  */
@@ -55,6 +59,7 @@ export const cancelEditingShippingZone = siteId => {
 
 /**
  * Changes the name of the Shipping Zone currently being edited.
+ *
  * @param {number} siteId Site ID.
  * @param {string} name New name for the Shipping Zone.
  * @returns {object} Action object.
@@ -66,6 +71,7 @@ export const changeShippingZoneName = ( siteId, name ) => {
 /**
  * Deletes the given Shipping Zone. Note that this action (as any other in this file) won't trigger any request
  * to the server.
+ *
  * @param {number} siteId Site ID.
  * @param {number} id Shipping Zone ID to delete.
  * @returns {object} Action object.
@@ -78,6 +84,7 @@ export const deleteShippingZone = ( siteId, id ) => {
  * Creates an action list to save shipping-zone-related edits.
  *
  * Saves the shipping zone, its shipping methods and its locations.
+ *
  * @param {Function} [successAction] Action to be dispatched upon successful completion.
  * @param {Function} [failureAction] Action to be dispatched upon failure of execution.
  * @param {Function} [locationsFailAction] Action to be dispatched upon failure of execution.
@@ -103,6 +110,7 @@ export function createShippingZoneSaveActionList(
  * Creates an action list to delete a shipping zone.
  *
  * Deletes the shipping zone, its shipping methods and its locations.
+ *
  * @param {Function} [successAction] Action to be dispatched upon successful completion.
  * @param {Function} [failureAction] Action to be dispatched upon failure of execution.
  * @returns {object} Action object.

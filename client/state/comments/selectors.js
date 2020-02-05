@@ -27,6 +27,7 @@ import { getStateKey, deconstructStateKey, getErrorKey } from './utils';
 
 /**
  * Gets comment items for post
+ *
  * @param {object} state redux state
  * @param {number} siteId site identification
  * @param {number} postId site identification
@@ -62,6 +63,7 @@ export const getCommentErrors = state => {
 
 /**
  * Get total number of comments on the server for a given post
+ *
  * @param {object} state redux state
  * @param {number} siteId site identification
  * @param {number} postId site identification
@@ -103,6 +105,7 @@ export const getPostCommentsCountAtDate = ( state, siteId, postId, date ) => {
 
 /**
  * Get most recent comment date for a given post
+ *
  * @param {object} state redux state
  * @param {number} siteId site identification
  * @param {number} postId site identification
@@ -118,6 +121,7 @@ export const getPostNewestCommentDate = treeSelect(
 
 /**
  * Get oldest comment date for a given post
+ *
  * @param {object} state redux state
  * @param {number} siteId site identification
  * @param {number} postId site identification
@@ -133,6 +137,7 @@ export const getPostOldestCommentDate = treeSelect(
 
 /**
  * Gets comment tree for a given post
+ *
  * @param {object} state redux state
  * @param {number} siteId site identification
  * @param {number} postId site identification
@@ -220,6 +225,7 @@ export const commentsFetchingStatus = ( state, siteId, postId, commentTotal = 0 
 
 /**
  * Gets likes stats for the comment
+ *
  * @param {object} state redux state
  * @param {number} siteId site identification
  * @param {number} postId site identification

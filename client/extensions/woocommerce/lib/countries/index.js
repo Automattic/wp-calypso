@@ -7,6 +7,7 @@ import { filter, includes, sortBy } from 'lodash';
 /**
  * Whether or not we support store management in calypso for
  * the passed country
+ *
  * @param {string} country Country (code) to check
  * @returns {bool} whether store management in calypso is supported
  */
@@ -17,6 +18,7 @@ export const isStoreManagementSupportedInCalypsoForCountry = country => {
 /**
  * Return a "sorted" list of countries, with a subset pulled to the top,
  * and the rest sorted alphabetically.
+ *
  * @param {Array} list  List of countries to sort
  * @returns {Array} sorted list of countries
  */

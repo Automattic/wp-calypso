@@ -1,10 +1,10 @@
 /**
  * Category methods
  *
- * @param {String} [slug] - category slug
- * @param {String} sid - site id
+ * @param {string} [slug] - category slug
+ * @param {string} sid - site id
  * @param {WPCOM} wpcom - wpcom instance
- * @return {Null} null
+ * @returns {null} null
  */
 export default function Category( slug, sid, wpcom ) {
 	if ( ! sid ) {
@@ -23,7 +23,7 @@ export default function Category( slug, sid, wpcom ) {
 /**
  * Set category `slug`
  *
- * @param {String} slug - category slug
+ * @param {string} slug - category slug
  */
 Category.prototype.slug = function( slug ) {
 	this._slug = slug;
@@ -32,9 +32,9 @@ Category.prototype.slug = function( slug ) {
 /**
  * Get category
  *
- * @param {Object} [query] - query object parameter - query object parameter
+ * @param {object} [query] - query object parameter - query object parameter
  * @param {Function} fn - callback function - callback
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Category.prototype.get = function( query, fn ) {
 	var path = '/sites/' + this._sid + '/categories/slug:' + this._slug;
@@ -44,10 +44,10 @@ Category.prototype.get = function( query, fn ) {
 /**
  * Add category
  *
- * @param {Object} [query] - query object parameter
- * @param {Object} body - body object parameter
+ * @param {object} [query] - query object parameter
+ * @param {object} body - body object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Category.prototype.add = function( query, body, fn ) {
 	var path = '/sites/' + this._sid + '/categories/new';
@@ -57,10 +57,10 @@ Category.prototype.add = function( query, body, fn ) {
 /**
  * Edit category
  *
- * @param {Object} [query] - query object parameter
- * @param {Object} body - body object parameter
+ * @param {object} [query] - query object parameter
+ * @param {object} body - body object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Category.prototype.update = function( query, body, fn ) {
 	var path = '/sites/' + this._sid + '/categories/slug:' + this._slug;
@@ -70,9 +70,9 @@ Category.prototype.update = function( query, body, fn ) {
 /**
  * Delete category
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 Category.prototype.delete = Category.prototype.del = function( query, fn ) {
 	var path = '/sites/' + this._sid + '/categories/slug:' + this._slug + '/delete';

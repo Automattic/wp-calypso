@@ -29,6 +29,7 @@ import { getZoneLocationsPriority } from 'woocommerce/state/sites/shipping-zone-
 /**
  * Computes a map of the continents that belong to a zone different than the one that's currently being edited.
  * That information will be used to mark them as "disabled" in the UI.
+ *
  * @param {object} state Whole Redux state tree
  * @param {number} siteId Site ID
  * @returns {object} A map with the form { continentCode => zoneId }. If a continent doesn't appear in the map, it means that
@@ -59,6 +60,7 @@ const getContinentsOwnedByOtherZone = createSelector(
 /**
  * Computes a map of the countries that belong to a zone different than the one that's currently being edited.
  * That information will be used to mark them as "disabled" in the UI.
+ *
  * @param {object} state Whole Redux state tree
  * @param {number} siteId Site ID
  * @returns {object} A map with the form { countryCode => zoneId }. If a country doesn't appear in the map, it means that
@@ -90,6 +92,7 @@ const getCountriesOwnedByOtherZone = createSelector(
 /**
  * Computes a map of the states that belong to a zone different than the one that's currently being edited.
  * That information will be used to mark them as "disabled" in the UI.
+ *
  * @param {object} state Whole Redux state tree
  * @param {number} siteId Site ID
  * @param {string} countryCode 2-letter ISO country code

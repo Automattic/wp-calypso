@@ -166,7 +166,7 @@ export const getOrders = ( state, query = {}, siteId = getSelectedSiteId( state 
  * @param {object} state Whole Redux state tree
  * @param {number} orderId ID number of an order
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @returns {object|Null} The requested order object, or null if not available
+ * @returns {object|null} The requested order object, or null if not available
  */
 export const getOrder = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	return get(

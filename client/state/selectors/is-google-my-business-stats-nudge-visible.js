@@ -15,6 +15,7 @@ import { isRequestingSiteKeyrings, getSiteKeyrings } from 'state/site-keyrings/s
  * It should be visible if:
  * - it meets the Google My Business Site Eligiblility Critera ( see isSiteGoogleMyBusinessEligible ),
  * - site has NOT been connected to a location
+ *
  * @param  {object}  state  Global state tree
  * @param  {string}  siteId The Site ID
  * @returns {boolean} True if we should show the nudge

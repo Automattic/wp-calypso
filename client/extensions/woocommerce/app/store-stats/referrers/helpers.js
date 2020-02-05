@@ -5,6 +5,7 @@ import { sortBy } from 'lodash';
 
 /**
  * Sort Referrer data by sales DESC and optionally trim results
+ *
  * @param {Array} data - One unit's worth of data
  * @param {number} [limit] - trim results to a certain length
  * @returns {Array} - The sorted and trimmed (if desired) array

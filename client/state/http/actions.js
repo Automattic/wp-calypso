@@ -8,8 +8,8 @@ import { HTTP_REQUEST } from 'state/action-types';
  * @typedef {object} RequestDescription
  * @property {string} url the url to request
  * @property {string} method the method we should use in the request: GET, POST etc.
- * @property {Array<Array<String>>} headers array of [ 'key', 'value' ] pairs for the request headers
- * @property {Array<Array<String>>} queryParams array of [ 'key', 'value' ] pairs for the queryParams headers
+ * @property {Array<Array<string>>} headers array of [ 'key', 'value' ] pairs for the request headers
+ * @property {Array<Array<string>>} queryParams array of [ 'key', 'value' ] pairs for the queryParams headers
  * @property {object} body data send as body
  * @property {boolean} withCredentials save cookie set on request
  * @property {object} onSuccess redux action to dispatch on success with data meta

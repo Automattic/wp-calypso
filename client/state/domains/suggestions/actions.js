@@ -28,6 +28,7 @@ export function receiveDomainsSuggestions( suggestions, queryObject ) {
 
 /**
  * Triggers a network request to find domain suggestions
+ *
  * @param   {object}   queryObject                          domain suggestions queryObject
  * @param   {string}   queryObject.query                    domainQuery
  * @param   {number}   queryObject.quantity                 max results

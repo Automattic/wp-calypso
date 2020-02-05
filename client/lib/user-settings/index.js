@@ -73,7 +73,7 @@ function hasLanguageChanged( languageSettingValue, settings = {} ) {
 /**
  * Initialize UserSettings with defaults
  *
- * @returns {Undefined} undefined
+ * @returns {undefined} undefined
  */
 function UserSettings() {
 	if ( ! ( this instanceof UserSettings ) ) {
@@ -145,7 +145,7 @@ UserSettings.prototype.fetchSettings = function() {
  *
  * @param {Function} callback - callback function
  * @param {object} settingsOverride - default settings object
- * @returns {Null} null
+ * @returns {null} null
  */
 UserSettings.prototype.saveSettings = function( callback, settingsOverride ) {
 	const settings = settingsOverride ? settingsOverride : this.unsavedSettings;

@@ -66,6 +66,7 @@ const deleteStatus = withoutPersistence( ( state = {}, action ) => {
 /**
  * Returns the updated preloading state after an action has been dispatched.
  * Preloading state tracks whether the preload for a site is currently in progress.
+ *
  * @param  {object} state Current preloading state
  * @param  {object} action Action object
  * @returns {object} Updated preloading state

@@ -32,6 +32,7 @@ export const isRequestingPlans = state => {
 
 /**
  * Returns a plan
+ *
  * @param  {object} state      global state
  * @param  {number} productId  the plan productId
  * @returns {object} the matching plan
@@ -43,6 +44,7 @@ export const getPlan = createSelector(
 
 /**
  * Returns a plan searched by its slug
+ *
  * @param  {object} state      global state
  * @param  {string} planSlug the plan slug
  * @returns {object} the matching plan
@@ -54,6 +56,7 @@ export const getPlanBySlug = createSelector(
 
 /**
  * Returns a plan price
+ *
  * @param  {object}  state     global state
  * @param  {number}  productId the plan productId
  * @param  {boolean} isMonthly if true, returns monthly price

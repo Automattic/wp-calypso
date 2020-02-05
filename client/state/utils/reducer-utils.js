@@ -13,6 +13,7 @@ import { withoutPersistence } from './without-persistence';
 
 /**
  * Create a new reducer from original `reducers` by adding a new `reducer` at `keyPath`
+ *
  * @param {Function} origReducer Original reducer to copy `storageKey` and other flags from
  * @param {object} reducers Object with reducer names as keys and reducer functions as values that
  *   is used as parameter to `combineReducers` (the original Redux one and our extension, too).
@@ -75,6 +76,7 @@ export function addReducer( origReducer, reducers ) {
  * If you don't need state to be stored, simply use this method instead of
  * combineReducers from redux. This function uses the same interface.
  * *
+ *
  * @example
  * const age = ( state = 0, action ) =>
  *     GROW === action.type

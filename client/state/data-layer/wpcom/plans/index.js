@@ -36,7 +36,7 @@ export const requestPlans = action =>
  *
  * @param {object} action Redux action
  * @param {Array} plans raw data from plans API
- * @returns {Array<Object>} Redux actions
+ * @returns {Array<object>} Redux actions
  */
 export const receivePlans = ( action, plans ) => [
 	plansRequestSuccessAction(),

@@ -33,9 +33,9 @@ const DEFAULT_ASYNC_TIMEOUT = 30000;
  *
  * Request Handler is optional and XHR is defined as default.
  *
- * @param {String} [token] - OAuth API access token
+ * @param {string} [token] - OAuth API access token
  * @param {Function} [reqHandler] - function Request Handler
- * @return {WPCOM} wpcom instance
+ * @returns {WPCOM} wpcom instance
  */
 export default function WPCOM( token, reqHandler ) {
 	if ( ! ( this instanceof WPCOM ) ) {
@@ -84,7 +84,7 @@ export default function WPCOM( token, reqHandler ) {
 /**
  * Return `Marketing` object instance
  *
- * @return {Marketing} Marketing instance
+ * @returns {Marketing} Marketing instance
  */
 WPCOM.prototype.marketing = function() {
 	return new Marketing( this );
@@ -93,7 +93,7 @@ WPCOM.prototype.marketing = function() {
 /**
  * Return `Me` object instance
  *
- * @return {Me} Me instance
+ * @returns {Me} Me instance
  */
 WPCOM.prototype.me = function() {
 	return new Me( this );
@@ -102,7 +102,7 @@ WPCOM.prototype.me = function() {
 /**
  * Return `Domains` object instance
  *
- * @return {Domains} Domains instance
+ * @returns {Domains} Domains instance
  */
 WPCOM.prototype.domains = function() {
 	return new Domains( this );
@@ -111,8 +111,8 @@ WPCOM.prototype.domains = function() {
 /**
  * Return `Domain` object instance
  *
- * @param {String} domainId - domain identifier
- * @return {Domain} Domain instance
+ * @param {string} domainId - domain identifier
+ * @returns {Domain} Domain instance
  */
 WPCOM.prototype.domain = function( domainId ) {
 	return new Domain( domainId, this );
@@ -121,8 +121,8 @@ WPCOM.prototype.domain = function( domainId ) {
 /**
  * Return `Site` object instance
  *
- * @param {String} id - site identifier
- * @return {Site} Site instance
+ * @param {string} id - site identifier
+ * @returns {Site} Site instance
  */
 WPCOM.prototype.site = function( id ) {
 	return new Site( id, this );
@@ -131,7 +131,7 @@ WPCOM.prototype.site = function( id ) {
 /**
  * Return `Users` object instance
  *
- * @return {Users} Users instance
+ * @returns {Users} Users instance
  */
 WPCOM.prototype.users = function() {
 	return new Users( this );
@@ -140,16 +140,16 @@ WPCOM.prototype.users = function() {
 /**
  * Return `Plans` object instance
  *
- * @return {Plans} Plans instance
+ * @returns {Plans} Plans instance
  */
 WPCOM.prototype.plans = function() {
 	return new Plans( this );
 };
 
- /**
+/**
  * Return `Batch` object instance
  *
- * @return {Batch} Batch instance
+ * @returns {Batch} Batch instance
  */
 WPCOM.prototype.batch = function() {
 	return new Batch( this );
@@ -158,9 +158,9 @@ WPCOM.prototype.batch = function() {
 /**
  * List Freshly Pressed Posts
  *
- * @param {Object} [query] - query object
+ * @param {object} [query] - query object
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 WPCOM.prototype.freshlyPressed = function( query, fn ) {
 	return this.req.get( '/freshly-pressed', query, fn );
@@ -168,6 +168,7 @@ WPCOM.prototype.freshlyPressed = function( query, fn ) {
 
 /**
  * Expose send-request
+ *
  * @TODO: use `this.req` instead of this method
  */
 WPCOM.prototype.sendRequest = function( params, query, body, fn ) {
@@ -198,15 +199,15 @@ WPCOM.Users = Users;
 
 if ( ! Promise.prototype.timeout ) {
 	/**
-	* Returns a new promise with a deadline
-	*
-	* After the timeout interval, the promise will
-	* reject. If the actual promise settles before
-	* the deadline, the timer is cancelled.
-	*
-	* @param {number} delay how many ms to wait
-	* @return {Promise} promise
-	*/
+	 * Returns a new promise with a deadline
+	 *
+	 * After the timeout interval, the promise will
+	 * reject. If the actual promise settles before
+	 * the deadline, the timer is cancelled.
+	 *
+	 * @param {number} delay how many ms to wait
+	 * @returns {Promise} promise
+	 */
 	Promise.prototype.timeout = function( delay = DEFAULT_ASYNC_TIMEOUT ) {
 		let cancelTimeout, timer, timeout;
 
@@ -221,9 +222,6 @@ if ( ! Promise.prototype.timeout ) {
 			return this;
 		};
 
-		return Promise.race( [
-			this.then( cancelTimeout ).catch( cancelTimeout ),
-			timeout
-		] );
+		return Promise.race( [ this.then( cancelTimeout ).catch( cancelTimeout ), timeout ] );
 	};
 }

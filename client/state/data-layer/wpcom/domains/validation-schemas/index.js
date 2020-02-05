@@ -19,7 +19,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * validation schemas into an HTTP request actions for the data-layer
  *
  * @param 	{object}        action      the schemas request action
- * @param   {Array<String>} action.tlds the tlds to be fetched from the API
+ * @param   {Array<string>} action.tlds the tlds to be fetched from the API
  * @returns {object}                    The HTTP action for the data
  */
 export const fetch = action =>

@@ -11,6 +11,7 @@ import { forEach, get } from 'lodash';
  * For example,
  * Before: https://example.com/2017/03/25/my-family/img_1/
  * After: https://example.com/2017/03/25/my-family/#jp-carousel-1234
+ *
  * @param  {object} post The post
  * @param  {object} dom  The DOM for the post's content
  * @returns {object}      The post, with any additions

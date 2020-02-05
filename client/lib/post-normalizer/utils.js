@@ -46,6 +46,7 @@ export function maxWidthPhotonishURL( imageURL, width ) {
 	} catch ( e ) {
 		/**
 		 * `url.parse` throws in a few places where it calls decodeURIComponent
+		 *
 		 * @see e.g. https://github.com/Automattic/wp-calypso/issues/18645
 		 */
 	}
@@ -113,6 +114,7 @@ export function domForHtml( html ) {
 }
 
 /** Determine if url is likely pointed to an image
+ *
  * @param {string} uri - a url
  * @returns {boolean} - true or false depending on if it is probably an image (has the right extension)
  */
@@ -127,6 +129,7 @@ export function isUrlLikelyAnImage( uri ) {
 
 /**
  * Determine if a post thumbnail is likely an image
+ *
  * @param  {object} thumb the thumbnail object from a post
  * @returns {boolean}       whether or not we think this is an image
  */
@@ -145,6 +148,7 @@ export function thumbIsLikelyImage( thumb ) {
 /**
  * Determines if an iframe is from a source we trust.  We allow these to be the featured media and also give
  * them a free-er sandbox
+ *
  * @param  {object} iframe the iframe to check
  * @returns {bool} true if whitelisted
  */

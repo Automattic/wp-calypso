@@ -78,7 +78,7 @@ export const getReviews = ( state, query = {}, siteId = getSelectedSiteId( state
  * @param {object} state Whole Redux state tree
  * @param {number} reviewId ID number of a review
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @returns {object|Null} The requested review object, or null if not available
+ * @returns {object|null} The requested review object, or null if not available
  */
 export const getReview = ( state, reviewId, siteId = getSelectedSiteId( state ) ) => {
 	return get(

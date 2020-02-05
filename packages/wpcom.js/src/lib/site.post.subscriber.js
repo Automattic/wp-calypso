@@ -2,10 +2,10 @@ class SitePostSubscriber {
 	/**
 	 * `SitePostSubscriber` constructor.
 	 *
-	 * @param {String} id - post identifier
-	 * @param {String} sid - site identifier
+	 * @param {string} id - post identifier
+	 * @param {string} sid - site identifier
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {Null} null
+	 * @returns {null} null
 	 */
 	constructor( id, sid, wpcom ) {
 		if ( ! sid ) {
@@ -40,9 +40,9 @@ class SitePostSubscriber {
 	 *      // subscription data
 	 *    } );
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	mine( query, fn ) {
 		return this.wpcom.req.get( `${this.path}/mine`, query, fn );
@@ -61,9 +61,9 @@ class SitePostSubscriber {
 	 *      // current user has been subscribed to post
 	 *    } );
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	add( query, fn ) {
 		return this.wpcom.req.put( `${this.path}/new`, query, null, fn );
@@ -82,9 +82,9 @@ class SitePostSubscriber {
 	 *      // current user has been unsubscribed to post
 	 *    } );
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	del( query, fn ) {
 		return this.wpcom.req.del( `${this.path}/mine/delete`, query, fn );

@@ -96,6 +96,7 @@ test( 'should strip out <script> tags', () => expect( clean( '<script></script>'
 
 /**
  * The following tests have borrowed from the OWASP XSS Cheat Sheet
+ *
  * @see https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet
  *
  * Instead of pulling all of the tests the ones included are a sampling

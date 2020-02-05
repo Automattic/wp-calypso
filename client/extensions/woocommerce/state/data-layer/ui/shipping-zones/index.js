@@ -341,6 +341,7 @@ const getZoneMethodCreateSteps = ( siteId, zoneId, method, defaultOrder, state )
 /**
  * Gets the "order" property of the last shipping method the zone currently being edited.
  * All new methods of that zone must use a higher "order" value than this.
+ *
  * @param {object} state The whole Redux state tree
  * @param {number} siteId Site ID to check
  * @returns {number} The "order" property of the last zone method, or 0 if the zone has no methods.
@@ -466,6 +467,7 @@ const getDeleteZoneActionListSteps = state => {
 /**
  * Gets the list of steps needed to create the default Shipping Zones configuration. The default configuration will be
  * a single Shipping Zone of the country where the merchant store is in, with a "Free Shipping" method enabled for everyone.
+ *
  * @param {object} state The whole Redux state tree
  * @returns {Array} List of steps
  */

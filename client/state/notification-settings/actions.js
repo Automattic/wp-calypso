@@ -23,6 +23,7 @@ import 'state/data-layer/wpcom/me/notification/settings';
 
 /**
  * Returns an action object to signal the request of the current user notification settings.
+ *
  * @returns {object} action object
  */
 export const requestNotificationSettings = () => ( { type: NOTIFICATION_SETTINGS_REQUEST } );

@@ -20,7 +20,7 @@ const debug = debugFactory( 'calypso:wpcom-undocumented' );
  *
  * @param {string} [token] - oauth token
  * @param {Function} [reqHandler] - request handler
- * @returns {NUll} null
+ * @returns {null} null
  */
 function WPCOMUndocumented( token, reqHandler ) {
 	if ( ! ( this instanceof WPCOMUndocumented ) ) {

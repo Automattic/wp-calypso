@@ -119,6 +119,7 @@ const REDUX_TRACKING = {
 /**
  * Mapping of Events by DOM selector.
  * Events are matched by selector and their handlers called.
+ *
  * @type {Array}
  */
 const EVENT_TYPES = [ 'keyup', 'click' ];

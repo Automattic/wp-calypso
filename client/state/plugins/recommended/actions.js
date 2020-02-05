@@ -26,7 +26,7 @@ export function fetchRecommendedPlugins( siteId, limit = 6 ) {
  * has been received.
  *
  * @param  {number}         siteId  Site ID
- * @param  {Array<Object>}  data    List of recommended plugins
+ * @param  {Array<object>}  data    List of recommended plugins
  * @returns {object}                 Action object
  */
 export function receiveRecommendedPlugins( siteId, data ) {

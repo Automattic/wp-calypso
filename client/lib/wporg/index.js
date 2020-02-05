@@ -66,6 +66,7 @@ async function themeRequest( url, query ) {
 
 /**
  * Fetches details for a particular plugin.
+ *
  * @param {string} pluginSlug The plugin identifier.
  * @returns {Promise} Promise with the plugins details.
  */
@@ -132,7 +133,7 @@ export function fetchPluginsList( options, callback ) {
  * Otherwise, will return a promise.
  *
  * @param {string}     themeId  The theme identifier.
- * @returns {Promise.<Object>}  A promise that returns a `theme` object
+ * @returns {Promise.<object>}  A promise that returns a `theme` object
  */
 export function fetchThemeInformation( themeId ) {
 	const query = {
@@ -153,7 +154,7 @@ export function fetchThemeInformation( themeId ) {
  * @param  {string}        options.search  Search string
  * @param  {number}        options.number  How many themes to return per page
  * @param  {number}        options.page    Which page of matching themes to return
- * @returns {Promise.<Object>}             A promise that returns an object containing a `themes` array and an `info` object
+ * @returns {Promise.<object>}             A promise that returns an object containing a `themes` array and an `info` object
  */
 export function fetchThemesList( options = {} ) {
 	const { search, page, number } = options;

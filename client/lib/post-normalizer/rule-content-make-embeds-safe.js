@@ -11,6 +11,7 @@ import url from 'url';
  */
 
 /** Given an iframe, is it okay to have it run without a sandbox?
+ *
  * @param {object} iframe - the iframe to check
  * @returns {boolean} true/false if we trust the source and we know they don't work in a sandbox
  */

@@ -1,9 +1,9 @@
 /**
  * SiteSettings methods
  *
- * @param {String} sid - site id
+ * @param {string} sid - site id
  * @param {WPCOM} wpcom - wpcom instance
- * @return {Null} null
+ * @returns {null} null
  */
 class SiteSettings {
 	constructor( sid, wpcom ) {
@@ -23,9 +23,9 @@ class SiteSettings {
 	/**
 	 * Get site-settings
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	get( query, fn ) {
 		return this.wpcom.req.get( this.path, query, fn );
@@ -34,9 +34,9 @@ class SiteSettings {
 	/**
 	 * Get site-settings single option
 	 *
-	 * @param {String} option - option to ask
+	 * @param {string} option - option to ask
 	 * @param {Function} [fn] - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	getOption( option, fn = () => {} ) {
 		let query = { fields: 'settings' };
@@ -68,10 +68,10 @@ class SiteSettings {
 	/**
 	 * Update site-settings
 	 *
-	 * @param {Object} [query] - query object parameter
-	 * @param {Object} body - body object parameter
+	 * @param {object} [query] - query object parameter
+	 * @param {object} body - body object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	update( query, body, fn ) {
 		return this.wpcom.req.put( this.path, query, body, fn );
@@ -80,10 +80,10 @@ class SiteSettings {
 	/**
 	 * Set site-settings single option
 	 *
-	 * @param {String} option - option to set
+	 * @param {string} option - option to set
 	 * @param {*} value - value to assing to the given option
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	setOption( option, value, fn ) {
 		return this.wpcom.req.put( this.path, {}, { [ option ]: value }, fn );

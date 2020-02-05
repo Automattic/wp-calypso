@@ -11,6 +11,7 @@ import createConfig from 'lib/create-config';
 
 /**
  * Manages config flags for various deployment builds
+ *
  * @module config/index
  */
 if ( 'undefined' === typeof window || ! window.configData ) {

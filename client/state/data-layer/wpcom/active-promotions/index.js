@@ -37,7 +37,7 @@ export const requestActivePromotions = action =>
  *
  * @param {object} action Redux action
  * @param {Array} active_promotions raw data from active promotions API
- * @returns {Array<Object>} Redux actions
+ * @returns {Array<object>} Redux actions
  */
 export const receiveActivePromotions = ( action, { active_promotions } ) => [
 	activePromotionsRequestSuccessAction(),

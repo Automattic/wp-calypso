@@ -19,6 +19,7 @@ document.querySelectorAll( '[data-load-more-btn]' ).forEach( attachLoadMoreHandl
 
 /**
  * Attaches an event handler to the Load more button.
+ *
  * @param {DOMElement} btnEl the button that was clicked
  */
 function attachLoadMoreHandler( btnEl ) {
