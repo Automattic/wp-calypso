@@ -55,7 +55,7 @@
 		"predev": "npm run clean",
 		"sync:blog-posts-block": "./bin/sync-blog-posts-block.sh",
 		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh",
-		"prepare": "npm run sync:blog-posts-block --path=../../node_modules/newspack-blocks"
+		"prepare": "npm run sync:blog-posts-block --nodemodules"
 	},
 	"dependencies": {
 		"@wordpress/api-fetch": "*",

@@ -3,43 +3,49 @@
 # try whether user passed --release
 if [ -n "$npm_config_release" ]
 then
-    MODE=release
-    NAME=$npm_config_release
-    URL=https://github.com/Automattic/newspack-blocks/releases/download/$NAME/newspack-blocks.zip
+	MODE=release
+	NAME=$npm_config_release
+	URL=https://github.com/Automattic/newspack-blocks/releases/download/$NAME/newspack-blocks.zip
 fi
 
 # try whether user passed --branch
 if [ -n "$npm_config_branch" ]
 then
-    MODE=branch
-    NAME=$npm_config_branch
-    URL=https://github.com/Automattic/newspack-blocks/archive/$NAME.zip
+	MODE=branch
+	NAME=$npm_config_branch
+	URL=https://github.com/Automattic/newspack-blocks/archive/$NAME.zip
 fi
 
 # try whether user passed --path
 if [ -n "$npm_config_path" ]
 then
-    MODE=path
+	MODE=path
+fi
+
+# try whether user passed --nodemodules
+if [ -n "$npm_config_nodemodules" ]
+then
+	MODE=npm
 fi
 
 # print usage is no mode matched
 if [ -z "$MODE" ]
 then
-    echo "Usage: npm run sync:blog-posts-block [arguments]"
-    echo
-    echo Possible arguments:
-    echo --branch=master
-    echo --release=1.0.0-alpha.17
-    echo
-    echo You can find the latest release ID on https://github.com/Automattic/newspack-blocks/releases/latest
-    echo
-    exit 1
+	echo "Usage: npm run sync:blog-posts-block [arguments]"
+	echo
+	echo Possible arguments:
+	echo --branch=master
+	echo --release=1.0.0-alpha.17
+	echo
+	echo You can find the latest release ID on https://github.com/Automattic/newspack-blocks/releases/latest
+	echo
+	exit 1
 fi
 
 TARGET=./full-site-editing-plugin/blog-posts-block/newspack-homepage-articles
 ENTRY=./full-site-editing-plugin/blog-posts-block/index.php
 
-if [ "$MODE" != "path" ];
+if [[ ( "$MODE" != "path" ) && ( "$MODE" != "npm" ) ]];
 then
 	# make a temp directory
 	TEMP_DIR=`mktemp -d`
@@ -79,8 +85,16 @@ then
 		echo "Error: Could not extract files from newspack-blocks.zip"
 		exit 1
 	fi
-else
+elif [ "$MODE" = "path" ] ; then
 	CODE="${npm_config_path}"
+elif [ "$MODE" = "npm" ] ; then
+	# Way back to wp-calypso root:
+	CODE="../../node_modules/newspack-blocks" 
+fi
+
+if [ ! -d "$CODE" ] ; then
+	echo "Nothing at the specified path to the code ($CODE)."
+	exit 1
 fi
 
 echo Syncing files to FSE…
@@ -105,10 +119,10 @@ echo Sync done.
 
 if [ "$MODE" = "release" ]
 then
-    if ! grep -q "$NAME" "$ENTRY"; then
-        echo
-        echo Warning: $NAME could not be found in $ENTRY
-        echo Make sure to update the NEWSPACK_BLOCKS__VERSION constant to the current version.
-        echo
-    fi
+	if ! grep -q "$NAME" "$ENTRY"; then
+		echo
+		echo Warning: $NAME could not be found in $ENTRY
+		echo Make sure to update the NEWSPACK_BLOCKS__VERSION constant to the current version.
+		echo
+	fi
 fi
