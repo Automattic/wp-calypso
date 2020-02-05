@@ -224,6 +224,7 @@ export default function CompositeCheckout( {
 		subtotal,
 		isLoading,
 		allowedPaymentMethods: serverAllowedPaymentMethods,
+        variantRequestStatus,
 	} = useShoppingCart(
 		siteSlug,
 		setCart || wpcomSetCart,
@@ -485,6 +486,7 @@ export default function CompositeCheckout( {
 					countriesList={ countriesList }
 					StateSelect={ StateSelect }
 					renderDomainContactFields={ renderDomainContactFields }
+					variantRequestStatus={ variantRequestStatus }
 					getItemVariants={ getItemVariants }
 				/>
 			</CheckoutProvider>

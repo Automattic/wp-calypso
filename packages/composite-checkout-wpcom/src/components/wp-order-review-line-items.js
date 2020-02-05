@@ -40,6 +40,7 @@ function WPLineItem( {
 	className,
 	hasDeleteButton,
 	removeItem,
+	variantRequestStatus,
 	getItemVariants,
 	onChangePlanLength,
 } ) {
@@ -85,6 +86,7 @@ function WPLineItem( {
 			{ item.wpcom_meta && (
 				<ItemVariationPicker
 					selectedItem={ item }
+					variantRequestStatus={ variantRequestStatus }
 					getItemVariants={ getItemVariants }
 					onChangeItemVariant={ onChangePlanLength }
 				/>
@@ -190,6 +192,7 @@ export function WPOrderReviewLineItems( {
 	className,
 	isSummaryVisible,
 	removeItem,
+	variantRequestStatus,
 	getItemVariants,
 	onChangePlanLength,
 } ) {
@@ -202,6 +205,7 @@ export function WPOrderReviewLineItems( {
 						item={ item }
 						hasDeleteButton={ canItemBeDeleted( item ) }
 						removeItem={ removeItem }
+						variantRequestStatus={ variantRequestStatus }
 						getItemVariants={ getItemVariants }
 						onChangePlanLength={ onChangePlanLength }
 					/>
