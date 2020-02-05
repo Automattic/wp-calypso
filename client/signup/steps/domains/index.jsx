@@ -50,6 +50,7 @@ import { fetchUsernameSuggestion } from 'state/signup/optional-dependencies/acti
 import { isSitePreviewVisible } from 'state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
 import { abtest } from 'lib/abtest';
+import config from 'config';
 
 /**
  * Style dependencies
@@ -121,6 +122,7 @@ class DomainsStep extends React.Component {
 		}
 
 		this.showTestCopy = false;
+		this.showDesignUpdate = false;
 
 		// Do not assign user to the test if either in the launch flow or in /start/{PLAN_SLUG} flow
 		if (
@@ -128,7 +130,14 @@ class DomainsStep extends React.Component {
 			! props.isPlanStepFulfilled &&
 			'variantShowUpdates' === abtest( 'domainStepCopyUpdates' )
 		) {
-			this.showTestCopy = true;
+			if (
+				config.isEnabled( 'domain-step-design-update-v2' ) &&
+				'variantDesignUpdates' === abtest( 'domainStepDesignUpdates' )
+			) {
+				this.showDesignUpdate = true;
+			} else {
+				this.showTestCopy = true;
+			}
 		}
 	}
 
