@@ -52,9 +52,9 @@ export default function WPCOM( token, reqHandler ) {
 		this.token = token;
 	}
 
-	const noHandler = () => {
+	const noHandler = ( params, fn ) => {
 		debug( 'No request handler. Failing.' );
-		throw new Error( 'No request handler provided' );
+		fn( new Error( 'No request handler provided' ) );
 	};
 
 	this.request = reqHandler || noHandler;
