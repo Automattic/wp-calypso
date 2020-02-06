@@ -8,6 +8,7 @@ import {
 	getByText as getByTextInNode,
 	queryByText as queryByTextInNode,
 	fireEvent,
+	act,
 } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
@@ -28,15 +29,29 @@ import {
 
 const noop = () => {};
 
-let contactInfo = {
-	name: '',
-};
+function makeDataStore() {
+	let contactInfo = {
+		name: '',
+	};
+	let subscribers = [];
+	return {
+		subscribe: handler => {
+			subscribers.push( handler );
+			return () => ( subscribers = subscribers.filter( sub => sub === handler ) );
+		},
+		getState: () => contactInfo,
+		update: changes => {
+			contactInfo = { ...contactInfo, ...changes };
+			subscribers.map( handler => handler() );
+		},
+	};
+}
+
+const dataStore = makeDataStore();
 
 describe( 'Checkout', () => {
 	beforeEach( () => {
-		contactInfo = {
-			name: '',
-		};
+		dataStore.update( { name: '' } );
 	} );
 
 	describe( 'using the default steps', function() {
@@ -377,13 +392,14 @@ describe( 'Checkout', () => {
 			expect( getByTextInNode( step, 'Continue' ) ).toBeDisabled();
 		} );
 
-
-		it( 'renders the continue button enabled if the step is active and complete', () => {
+		it( 'renders the continue button enabled if the step is active and complete', async () => {
 			const { container, getByLabelText } = render(
 				<MyCheckout steps={ [ steps[ 0 ], steps[ 4 ], steps[ 1 ] ] } />
 			);
 
-			fireEvent.change( getByLabelText( 'User Name' ), { target: { value: 'Lyra' } } );
+			await act( async () => {
+				await fireEvent.change( getByLabelText( 'User Name' ), { target: { value: 'Lyra' } } );
+			} );
 			const step = container.querySelector( '.' + steps[ 4 ].className );
 			expect( getByTextInNode( step, 'Continue' ) ).not.toBeDisabled();
 		} );
@@ -584,6 +600,7 @@ function createMockItems() {
 function createMockSteps() {
 	return [
 		{
+			// 0
 			id: 'custom-summary-step',
 			className: 'custom-summary-step-class',
 			hasStepNumber: false,
@@ -597,6 +614,7 @@ function createMockSteps() {
 			getNextStepButtonAriaLabel: () => 'Custom Step - Summary next button label',
 		},
 		{
+			// 1
 			id: 'custom-contact-step',
 			className: 'custom-contact-step-class',
 			hasStepNumber: true,
@@ -610,6 +628,7 @@ function createMockSteps() {
 			getNextStepButtonAriaLabel: () => 'Custom Step - Contact next button label',
 		},
 		{
+			// 2
 			id: 'custom-review-step',
 			className: 'custom-review-step-class',
 			hasStepNumber: true,
@@ -623,6 +642,7 @@ function createMockSteps() {
 			getNextStepButtonAriaLabel: () => 'Custom Step - Review next button label',
 		},
 		{
+			// 3
 			id: 'custom-incomplete-step',
 			className: 'custom-incomplete-step-class',
 			hasStepNumber: true,
@@ -636,30 +656,27 @@ function createMockSteps() {
 			getNextStepButtonAriaLabel: () => 'Custom Step - Incomplete next button label',
 		},
 		{
+			// 4
 			id: 'custom-possibly-complete-step',
 			className: 'custom-possibly-complete-step-class',
 			hasStepNumber: true,
 			titleContent: <PossiblyCompleteTitle />,
-			activeStepContent: (
-				<StepWithEditableField
-					name={ contactInfo.name }
-					setName={ value => ( contactInfo.name = value ) }
-				/>
-			),
+			activeStepContent: <StepWithEditableField />,
 			incompleteStepContent: <span>Custom Step - Possibly Complete Incomplete</span>,
 			completeStepContent: <span>Custom Step - Possibly Complete Complete</span>,
 			isCompleteCallback: () => {
-				const userName = contactInfo.name;
-				return userName.length > 0;
+				const { name } = dataStore.getState();
+				return name.length > 0;
 			},
 			isEditableCallback: () => {
-				const userName = contactInfo.name;
-				return userName.length > 0;
+				const { name } = dataStore.getState();
+				return name.length > 0;
 			},
 			getEditButtonAriaLabel: () => 'Custom Step - Incomplete edit button label',
 			getNextStepButtonAriaLabel: () => 'Custom Step - Incomplete next button label',
 		},
 		{
+			// 5
 			id: 'custom-uneditable-step',
 			className: 'custom-uneditable-step-class',
 			hasStepNumber: true,
@@ -693,7 +710,10 @@ function PossiblyCompleteTitle() {
 	);
 }
 
-function StepWithEditableField( { name, setName } ) {
+function StepWithEditableField() {
+	useSubscribeToDataStore();
+	const { name } = dataStore.getState();
+	const setName = newName => dataStore.update( { name: newName } );
 	const onChange = event => setName( event.target.value );
 	return (
 		<div>
@@ -701,4 +721,11 @@ function StepWithEditableField( { name, setName } ) {
 			<input id="username-field" type="text" value={ name } onChange={ onChange } />
 		</div>
 	);
+}
+
+function useSubscribeToDataStore() {
+	const [ , forceUpdate ] = React.useState( false );
+	React.useEffect( () => {
+		return dataStore.subscribe( () => forceUpdate( oldValue => ! oldValue ) );
+	}, [] );
 }
