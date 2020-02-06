@@ -14,6 +14,7 @@ import { Button, CompactCard } from '@automattic/components';
 import CardHeading from 'components/card-heading';
 import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
+import MigrateButton from './migrate-button.jsx';
 import SitesBlock from 'my-sites/migrate/components/sites-block';
 import { FEATURE_UPLOAD_THEMES_PLUGINS } from 'lib/plans/constants';
 import { planHasFeature } from 'lib/plans';
@@ -66,6 +67,25 @@ class StepConfirmMigration extends Component {
 		);
 	}
 
+	renderMigrationButton() {
+		const { targetSite } = this.props;
+		const targetSiteDomain = get( targetSite, 'domain' );
+
+		if ( this.isTargetSitePlanCompatible() ) {
+			return (
+				<MigrateButton onClick={ this.handleClick } targetSiteDomain={ targetSiteDomain }>
+					Import everything
+				</MigrateButton>
+			);
+		}
+
+		return (
+			<Button primary onClick={ this.handleClick }>
+				Import everything
+			</Button>
+		);
+	}
+
 	render() {
 		const { sourceSite, targetSite, targetSiteSlug } = this.props;
 
@@ -103,9 +123,7 @@ class StepConfirmMigration extends Component {
 							importing.
 						</div>
 					</div>
-					<Button primary onClick={ this.handleClick }>
-						Import everything
-					</Button>
+					{ this.renderMigrationButton() }
 				</CompactCard>
 				{ this.renderCardBusinessFooter() }
 			</>
