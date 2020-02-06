@@ -40,7 +40,7 @@
 /client/my-sites/comment* @Automattic/serenity
 
 # Customer Home
-/client/my-sites/customer-home @Automattic/serenity
+/client/my-sites/customer-home @Automattic/manage
 
 # Developer guides
 /docs/coding-guidelines @Automattic/team-calypso
