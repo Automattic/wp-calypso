@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers, withStorageKey } from 'state/utils';
 import { registerReducer } from 'state/redux-store';
 
 import conversations from './conversations/reducer';
@@ -37,6 +37,7 @@ const combinedReducer = combineReducers( {
 	teams,
 	thumbnails,
 } );
-export default combinedReducer;
+const readerReducer = withStorageKey( 'reader', combinedReducer );
+export default readerReducer;
 
-registerReducer( [ 'reader' ], combinedReducer );
+registerReducer( [ 'reader' ], readerReducer );
