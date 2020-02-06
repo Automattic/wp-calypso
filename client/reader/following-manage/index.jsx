@@ -17,7 +17,7 @@ import DocumentHead from 'components/data/document-head';
 import SearchInput from 'components/search';
 import HeaderCake from 'components/header-cake';
 import ReaderMain from 'reader/components/reader-main';
-import getBlockedSites from 'state/reader/site-blocks/selectors/get-blocked-sites';
+import { getBlockedSites } from 'state/reader/site-blocks/selectors';
 import getDismissedSites from 'state/selectors/get-dismissed-sites';
 import getReaderAliasedFollowFeedUrl from 'state/selectors/get-reader-aliased-follow-feed-url';
 import getReaderFeedsCountForQuery from 'state/selectors/get-reader-feeds-count-for-query';

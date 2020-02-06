@@ -38,7 +38,7 @@ import scrollTo from 'lib/scroll-to';
 import XPostHelper from 'reader/xpost-helper';
 import PostLifecycle from './post-lifecycle';
 import { showSelectedPost, getStreamType } from 'reader/utils';
-import getBlockedSites from 'state/reader/site-blocks/selectors/get-blocked-sites';
+import { getBlockedSites } from 'state/reader/site-blocks/selectors';
 import { keysAreEqual, keyToString, keyForPost } from 'reader/post-key';
 import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
 import { reduxGetState } from 'lib/redux-bridge';

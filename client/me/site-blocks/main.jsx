@@ -16,10 +16,12 @@ import SectionHeader from 'components/section-header';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySiteBlocks from 'components/data/query-site-blocks';
-import getBlockedSites from 'state/reader/site-blocks/selectors/get-blocked-sites';
-import isFetchingSiteBlocks from 'state/reader/site-blocks/selectors/is-fetching-site-blocks';
-import getSiteBlocksCurrentPage from 'state/reader/site-blocks/selectors/get-site-blocks-current-page';
-import getSiteBlocksLastPage from 'state/reader/site-blocks/selectors/get-site-blocks-last-page';
+import {
+	getBlockedSites,
+	isFetchingSiteBlocks,
+	getSiteBlocksCurrentPage,
+	getSiteBlocksLastPage,
+} from 'state/reader/site-blocks/selectors';
 import SiteBlockListItem from './list-item';
 import InfiniteList from 'components/infinite-list';
 import { requestSiteBlocks } from 'state/reader/site-blocks/actions';
