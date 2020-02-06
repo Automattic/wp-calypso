@@ -39,6 +39,9 @@
 # Comments management
 /client/my-sites/comment* @Automattic/serenity
 
+# Customer Home
+/client/my-sites/customer-home @Automattic/manage
+
 # Developer guides
 /docs/coding-guidelines @Automattic/team-calypso
 /docs/guide @Automattic/team-calypso
@@ -70,7 +73,7 @@
 /client/state/gsuite-users @Automattic/larimar
 
 # Gutenberg editor (Gutenframe)
-/client/gutenberg @Automattic/serenity @Automattic/cylon @Automattic/ajax
+/client/gutenberg @Automattic/cylon @Automattic/ajax
 
 # Payments
 /client/blocks/credit-card-form/ @Automattic/payments
@@ -129,7 +132,7 @@
 /apps/full-site-editing/full-site-editing-plugin/global-styles @Automattic/cylon @nosolosw
 
 # WPcom Block Editor
-/apps/wpcom-block-editor @Automattic/serenity @Automattic/cylon @Automattic/ajax
+/apps/wpcom-block-editor @Automattic/cylon @Automattic/ajax
 
 # Gutenboarding
 /client/landing/gutenboarding @Automattic/luna
