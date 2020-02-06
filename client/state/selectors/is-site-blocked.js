@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 /**
  * Returns true if a site is known to be blocked

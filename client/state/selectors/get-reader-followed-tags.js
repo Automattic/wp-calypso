@@ -8,7 +8,7 @@ import { filter, sortBy } from 'lodash';
  */
 import createSelector from 'lib/create-selector';
 
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 /**
  * Selector for all of the reader tags a user is following. Sorted by tag slug

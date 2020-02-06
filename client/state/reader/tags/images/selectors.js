@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 /**
  * Returns the all images available for a given tag.

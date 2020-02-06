@@ -3,7 +3,7 @@
  */
 import { key, SCOPE_ALL } from './utils';
 
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 export function shouldFetchRelated( state, siteId, postId, scope = SCOPE_ALL ) {
 	return (

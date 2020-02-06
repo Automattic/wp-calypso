@@ -14,7 +14,7 @@ import {
 	READER_TAG_IMAGES_RECEIVE,
 } from 'state/action-types';
 
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 /**
  * Module variables

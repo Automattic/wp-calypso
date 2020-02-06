@@ -8,7 +8,7 @@ import {
 
 import 'state/data-layer/wpcom/read/recommendations/sites';
 
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 export const requestRecommendedSites = ( { offset = 0, number = 4, seed = 0 } ) => ( {
 	type: READER_RECOMMENDED_SITES_REQUEST,

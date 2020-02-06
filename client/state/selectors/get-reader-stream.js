@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 const emptyStream = {
 	items: [],

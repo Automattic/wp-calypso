@@ -3,7 +3,7 @@
  */
 import { READER_VIEW_STREAM } from 'state/action-types';
 
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 /**
  * this is a relatively generic action type for something very specific (marking up the watermark)

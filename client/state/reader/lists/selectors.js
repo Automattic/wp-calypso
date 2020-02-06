@@ -8,7 +8,7 @@ import { filter, find, has, includes, sortBy } from 'lodash';
  */
 import createSelector from 'lib/create-selector';
 
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 /**
  * Returns true if currently requesting Reader lists, or

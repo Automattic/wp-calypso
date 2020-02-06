@@ -3,7 +3,7 @@
  */
 import { find } from 'lodash';
 
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 /*
  * Find the first follow for a given blog ID

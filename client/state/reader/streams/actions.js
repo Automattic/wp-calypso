@@ -16,7 +16,7 @@ import { getStreamType } from 'reader/utils';
 
 import 'state/data-layer/wpcom/read/streams';
 
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 /**
  * Fetch posts into a stream

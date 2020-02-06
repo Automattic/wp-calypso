@@ -10,7 +10,7 @@ import createSelector from 'lib/create-selector';
 import { getSite } from 'state/reader/sites/selectors';
 import { getFeed } from 'state/reader/feeds/selectors';
 
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 /*
  * Get all sites/feeds the user follows.

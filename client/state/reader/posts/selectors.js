@@ -9,7 +9,7 @@ import { keyBy, some, get } from 'lodash';
 import treeSelect from '@automattic/tree-select';
 import { keyToString, keyForPost } from 'reader/post-key';
 
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 /**
  * Returns a single post.

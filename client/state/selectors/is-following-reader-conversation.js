@@ -9,7 +9,7 @@ import { get } from 'lodash';
 import { key } from 'state/reader/conversations/utils';
 import { CONVERSATION_FOLLOW_STATUS } from 'state/reader/conversations/follow-status';
 
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 /*
  * Get the conversation following status for a given post

@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import { combineReducers, withStorageKey } from 'state/utils';
-import { registerReducer } from 'state/redux-store';
 
 import conversations from './conversations/reducer';
 import feeds from './feeds/reducer';
@@ -39,5 +38,3 @@ const combinedReducer = combineReducers( {
 } );
 const readerReducer = withStorageKey( 'reader', combinedReducer );
 export default readerReducer;
-
-registerReducer( [ 'reader' ], readerReducer );

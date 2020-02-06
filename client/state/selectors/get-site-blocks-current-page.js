@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 export const getSiteBlocksCurrentPage = state => {
 	const page = get( state, [ 'reader', 'siteBlocks', 'currentPage' ], 1 );

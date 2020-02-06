@@ -8,7 +8,7 @@ import { get } from 'lodash';
  */
 import { key } from 'state/reader/conversations/utils';
 
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 /*
  * Get the conversation following status for a given post

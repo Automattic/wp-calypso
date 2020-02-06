@@ -15,7 +15,7 @@ import {
 	READER_THUMBNAIL_RECEIVE,
 } from 'state/action-types';
 
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 /**
  * Module variables

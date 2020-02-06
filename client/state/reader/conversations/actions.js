@@ -14,7 +14,7 @@ import getReaderConversationFollowStatus from 'state/selectors/get-reader-conver
 import 'state/data-layer/wpcom/read/sites/posts/follow';
 import 'state/data-layer/wpcom/read/sites/posts/mute';
 
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 export function followConversation( { siteId, postId } ) {
 	return ( dispatch, getState ) => {

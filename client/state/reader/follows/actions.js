@@ -35,7 +35,7 @@ import 'state/data-layer/wpcom/read/site/post-email-subscriptions/update';
 import 'state/data-layer/wpcom/read/sites/notification-subscriptions/delete';
 import 'state/data-layer/wpcom/read/sites/notification-subscriptions/new';
 
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 /**
  * Module variables

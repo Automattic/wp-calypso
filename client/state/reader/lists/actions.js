@@ -24,7 +24,7 @@ import {
 	READER_LISTS_UNFOLLOW_FAILURE,
 } from 'state/action-types';
 
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 /**
  * Returns an action object to signal that list objects have been received.

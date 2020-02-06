@@ -11,7 +11,7 @@ import 'state/data-layer/wpcom/me/block/sites/delete';
 import 'state/data-layer/wpcom/me/block/sites/new';
 import 'state/data-layer/wpcom/me/blocks/sites';
 
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 export function blockSite( siteId ) {
 	return {

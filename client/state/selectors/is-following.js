@@ -9,7 +9,7 @@ import { find } from 'lodash';
 import { prepareComparableUrl } from 'state/reader/follows/utils';
 import getReaderAliasedFollowFeedUrl from 'state/selectors/get-reader-aliased-follow-feed-url';
 
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 export default function isFollowing( state, { feedUrl, feedId, blogId } ) {
 	let follow;

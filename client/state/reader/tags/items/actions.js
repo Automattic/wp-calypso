@@ -18,7 +18,7 @@ import 'state/data-layer/wpcom/read/tags';
 import 'state/data-layer/wpcom/read/tags/mine/delete';
 import 'state/data-layer/wpcom/read/tags/mine/new';
 
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 /**
  * Helper function. Turns a tag name into a tag "slug" for use with the API.

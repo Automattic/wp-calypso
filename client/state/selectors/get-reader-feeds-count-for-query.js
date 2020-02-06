@@ -3,7 +3,7 @@
  */
 import queryKey from 'state/reader/feed-searches/query-key';
 
-import 'state/reader/reducer';
+import 'state/reader/init';
 
 /**
  * Returns the number of feed results for a given query. from 0 to 200.
