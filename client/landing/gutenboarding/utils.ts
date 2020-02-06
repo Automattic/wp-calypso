@@ -35,6 +35,8 @@ export function createSite( { siteTitle, siteUrl, theme, siteVertical }: CreateS
 			site_information: {
 				title: siteTitle,
 			},
+			// TODO - Remove DOTCOM FSE creation before Gutenboarding is public facing.
+			site_creation_flow: 'test-fse',
 		},
 		public: -1,
 		validate: false,
