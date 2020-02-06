@@ -23,7 +23,6 @@ export default function createControls( clientCreds: WpcomClientCredentials ) {
 				...providedParams,
 				// Set to false because site validation should be a separate action
 				validate: false,
-				token: authToken,
 			};
 
 			return wpcomRequest( {
@@ -31,6 +30,7 @@ export default function createControls( clientCreds: WpcomClientCredentials ) {
 				apiVersion: '1.1',
 				method: 'post',
 				body: mergedParams,
+				token: authToken,
 			} );
 		},
 	};
