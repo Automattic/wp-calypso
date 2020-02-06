@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+/* eslint-disable import/no-extraneous-dependencies */
+
 import { render } from '@testing-library/react';
 import { blocksFixture } from './helpers/templates-blocks-helpers';
 import TemplateSelectorPreview from '../template-selector-preview';
