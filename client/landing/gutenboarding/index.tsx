@@ -14,6 +14,8 @@ import { setLocaleData } from '@wordpress/i18n';
 import { Gutenboard } from './gutenboard';
 import { setupWpDataDebug } from './devtools';
 import accessibleFocus from 'lib/accessible-focus';
+import SetupUserLanguage from './setup-user-language';
+
 /**
  * Style dependencies
  */
@@ -34,9 +36,12 @@ window.AppBoot = () => {
 		accessibleFocus();
 
 		ReactDom.render(
-			<BrowserRouter basename="gutenboarding">
-				<Gutenboard />
-			</BrowserRouter>,
+			<>
+				<SetupUserLanguage />
+				<BrowserRouter basename="gutenboarding">
+					<Gutenboard />
+				</BrowserRouter>
+			</>,
 			document.getElementById( 'wpcom' )
 		);
 	}
