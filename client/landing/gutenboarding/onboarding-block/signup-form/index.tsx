@@ -12,7 +12,6 @@ import { __ as NO__, _x as NO_x } from '@wordpress/i18n';
  */
 import { USER_STORE } from '../../stores/user';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { Step } from '../../steps';
 import './style.scss';
 
 // TODO: deploy this change to @types/wordpress__element
@@ -41,7 +40,7 @@ const SignupForm = () => {
 
 	if ( newUser && shouldCreate ) {
 		//TODO: replace with correct action dispatching when https://github.com/Automattic/wp-calypso/pull/39050 is merged
-		window.location.href = window.location.href.replace( Step.Signup, Step.CreateSite );
+		window.location.reload( false );
 	}
 	if ( newUserError && shouldCreate ) {
 		setShouldCreate( false );

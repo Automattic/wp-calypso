@@ -89,8 +89,9 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		...( selectedDesign?.slug && { theme: selectedDesign?.slug } ),
 	};
 
-	const createSiteAndResetData = () => {
+	const handleCreateSite = () => {
 		setIsCreatingSite( true );
+		history.push( Step.CreateSite );
 		createSite( siteCreationData ).then( siteSlug => {
 			resetOnboardStore();
 			window.location.href = `/block-editor/page/${ siteSlug }/home?is-gutenboarding`;
@@ -98,14 +99,9 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 	};
 
 	if ( shouldCreate && currentUser ) {
-		createSiteAndResetData();
+		handleCreateSite();
 		setShouldCreate( false );
 	}
-
-	const handleCreateSite = () => {
-		createSiteAndResetData();
-		history.push( Step.CreateSite );
-	};
 
 	const handleSignup = () => {
 		setShouldCreate( true );
