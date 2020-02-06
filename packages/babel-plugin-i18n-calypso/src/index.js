@@ -257,7 +257,11 @@ module.exports = function() {
 
 				if ( ! strings[ msgctxt ].hasOwnProperty( msgid ) ) {
 					strings[ msgctxt ][ msgid ] = translation;
-				} else {
+				} else if (
+					! strings[ msgctxt ][ msgid ].comments.reference.includes(
+						translation.comments.reference
+					)
+				) {
 					strings[ msgctxt ][ msgid ].comments.reference += '\n' + translation.comments.reference;
 				}
 			},
