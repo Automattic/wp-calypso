@@ -417,10 +417,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async dismissPageTemplateSelector() {
 		if ( await driverHelper.isElementPresent( this.driver, By.css( '.page-template-modal' ) ) ) {
 			if ( driverManager.currentScreenSize() === 'mobile' ) {
-				await driverHelper.selectElementByText(
+				await driverHelper.clickWhenClickable(
 					this.driver,
-					By.css( '.template-selector-item__template-title' ),
-					'Blank'
+					By.css( 'button.template-selector-item__label[value="blank"]' )
 				);
 			} else {
 				await driverHelper.clickWhenClickable(
