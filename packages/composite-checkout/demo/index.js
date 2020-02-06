@@ -213,6 +213,7 @@ const Form = styled.div`
 `;
 
 function ContactForm( { summary } ) {
+	useSubscribeToRegistry();
 	const country = select( 'demo' ).getCountry();
 	const onChangeCountry = event => dispatch( 'demo' ).setCountry( event.target.value );
 
@@ -305,6 +306,14 @@ function formatValueForCurrency( currency, value ) {
 // Simulate network request time
 async function asyncTimeout( timeout ) {
 	return new Promise( resolve => setTimeout( resolve, timeout ) );
+}
+
+function useSubscribeToRegistry() {
+	const [ , forceReload ] = useState( false );
+	useEffect( () => {
+		const unsubscribe = subscribe( () => forceReload( oldValue => ! oldValue ) );
+		return unsubscribe;
+	}, [] );
 }
 
 ReactDOM.render( <MyCheckout />, document.getElementById( 'root' ) );
