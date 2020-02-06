@@ -18,7 +18,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySiteBlocks from 'components/data/query-site-blocks';
 import getBlockedSites from 'state/reader/site-blocks/selectors/get-blocked-sites';
 import isFetchingSiteBlocks from 'state/selectors/is-fetching-site-blocks';
-import getSiteBlocksCurrentPage from 'state/selectors/get-site-blocks-current-page';
+import getSiteBlocksCurrentPage from 'state/reader/site-blocks/selectors/get-site-blocks-current-page';
 import getSiteBlocksLastPage from 'state/selectors/get-site-blocks-last-page';
 import SiteBlockListItem from './list-item';
 import InfiniteList from 'components/infinite-list';
