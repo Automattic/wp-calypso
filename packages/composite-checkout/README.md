@@ -102,7 +102,7 @@ Each payment method is an object with the following properties:
 - `inactiveContent: React.ReactNode`. A component that renders a summary of the selected payment method when the step is inactive.
 - `checkoutWrapper?: (children: React.ReactNode) => React.ReactNode`. A [render prop](https://reactjs.org/docs/render-props.html) that returns a component to wrap the whole of the checkout form. Must render the provided `children` argument. This can be used for custom data providers (eg: `StripeProvider` to support [Stripe Elements](https://github.com/stripe/react-stripe-elements)).
 - `getAriaLabel: (localize: () => string) => string`. A function to return the name of the Payment Method. It will receive the localize function as an argument.
-- `isCompleteCallback?: ({activeStep: object}) => boolean`. Used to determine if a step is complete for purposes of validation. Default is a function returning true. When calling the `isCompleteCallback` of the payment method step (see `getDefaultPaymentMethodStep`), it will call the `isCompleteCallback` for the active payment method.
+- `isCompleteCallback?: () => boolean`. Used to determine if a step is complete for purposes of validation. Default is a function returning true. When calling the `isCompleteCallback` of the payment method step (see `getDefaultPaymentMethodStep`), it will call the `isCompleteCallback` for the active payment method.
 
 Within the components, the Hook `usePaymentMethod()` will return an object of the above form with the key of the currently selected payment method or null if none is selected. To retrieve all the payment methods and their properties, the Hook `useAllPaymentMethods()` will return an array that contains them all.
 
