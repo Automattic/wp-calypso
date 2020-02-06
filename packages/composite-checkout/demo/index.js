@@ -176,14 +176,9 @@ const getTotal = items => {
 	};
 };
 
-// Replace this with the host page's translation system
-const useLocalize = () => text => text;
-const hostTranslate = text => text;
-
 const ContactFormTitle = () => {
-	const localize = useLocalize();
 	const isActive = useIsStepActive();
-	return isActive ? localize( 'Enter your contact details' ) : localize( 'Contact details' );
+	return isActive ? 'Enter your contact details' : 'Contact details';
 };
 
 const Label = styled.label`
@@ -242,8 +237,8 @@ const steps = [
 	getDefaultOrderSummaryStep(),
 	{
 		...getDefaultPaymentMethodStep(),
-		getEditButtonAriaLabel: () => hostTranslate( 'Edit the payment method' ),
-		getNextStepButtonAriaLabel: () => hostTranslate( 'Continue with the selected payment method' ),
+		getEditButtonAriaLabel: () => 'Edit the payment method',
+		getNextStepButtonAriaLabel: () => 'Continue with the selected payment method',
 	},
 	{
 		id: 'contact-form',
@@ -260,8 +255,8 @@ const steps = [
 			const country = select( 'demo' ).getCountry();
 			return country?.length > 0;
 		},
-		getEditButtonAriaLabel: () => hostTranslate( 'Edit the contact details' ),
-		getNextStepButtonAriaLabel: () => hostTranslate( 'Continue with the entered contact details' ),
+		getEditButtonAriaLabel: () => 'Edit the contact details',
+		getNextStepButtonAriaLabel: () => 'Continue with the entered contact details',
 	},
 	getDefaultOrderReviewStep(),
 ];
