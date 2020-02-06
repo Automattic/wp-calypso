@@ -229,7 +229,7 @@ function ContactForm( { summary } ) {
 	return (
 		<Form>
 			<Label htmlFor="country">Country</Label>
-			<Input id="country" type="text" value={ country } onChange={ onChangeCountry } />
+			<Input id="country" type="text" value={ country || '' } onChange={ onChangeCountry } />
 		</Form>
 	);
 }
