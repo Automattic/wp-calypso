@@ -12,12 +12,12 @@ import { useTranslate } from 'i18n-calypso';
 import { localizeUrl } from 'lib/i18n-utils';
 import { acceptTos, requestLegalData } from 'state/legal/actions';
 import { shouldDisplayTosUpdateBanner } from 'state/selectors/should-display-tos-update-banner';
+import ExternalLink from 'components/external-link';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import ExternalLink from 'components/external-link';
 
 const LegalUpdateBanner = props => {
 	const translate = useTranslate();
