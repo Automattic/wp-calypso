@@ -337,13 +337,12 @@ jobs:
   test-full-site-editing:
     <<: *defaults
     parallelism: 1
-    working_directory: ~/wp-calypso/apps/full-site-editing
     steps:
       - prepare
       - run:
           name: Run Full Site Editing client tests
           command: |
-            npm run test:unit
+            npx lerna run test:js --scope='@automattic/full-site-editing' --stream
   test-client:
     <<: *defaults
     parallelism: 6
