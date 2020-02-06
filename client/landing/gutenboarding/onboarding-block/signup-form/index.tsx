@@ -40,8 +40,7 @@ const SignupForm = () => {
 	};
 
 	if ( newUser && shouldCreate ) {
-		//TODO: replace route when https://github.com/Automattic/wp-calypso/pull/39266 is merged
-		//TODO 2: replace with correct action dispatching when https://github.com/Automattic/wp-calypso/pull/39050 is merged
+		//TODO: replace with correct action dispatching when https://github.com/Automattic/wp-calypso/pull/39050 is merged
 		window.location.href = window.location.href.replace( Step.Signup, Step.CreateSite );
 	}
 	if ( newUserError && shouldCreate ) {
