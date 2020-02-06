@@ -36,7 +36,7 @@ export function translateWpcomCartToCheckoutCart(
 		sub_total_integer,
 		sub_total_display,
 		coupon,
-		coupon_discounts_int,
+		coupon_discounts_integer,
 		is_coupon_applied,
 	} = serverCart;
 
@@ -53,7 +53,7 @@ export function translateWpcomCartToCheckoutCart(
 
 	// TODO: watch out for minimal currency units while localizing this
 	const couponValueRaw = products
-		.map( product => coupon_discounts_int[ product.product_id ] )
+		.map( product => coupon_discounts_integer[ product.product_id ] )
 		.filter( Boolean )
 		.reduce( ( accum, current ) => accum + current, 0 );
 	const couponValue = Math.round( couponValueRaw );
@@ -108,7 +108,7 @@ export function translateWpcomCartToCheckoutCart(
 		items: products.map(
 			translateWpcomCartItemToCheckoutCartItem(
 				is_coupon_applied,
-				coupon_discounts_int,
+				coupon_discounts_integer,
 				localizeCurrency
 			)
 		),
@@ -136,7 +136,7 @@ export function translateWpcomCartToCheckoutCart(
 // Convert a backend cart item to a checkout cart item
 function translateWpcomCartItemToCheckoutCartItem(
 	is_coupon_applied: boolean,
-	coupon_discounts_int: number[],
+	coupon_discounts_integer: number[],
 	localizeCurrency: ( string, number ) => string
 ): ( ResponseCartProduct, number ) => WPCOMCartItem {
 	return ( serverCartItem: ResponseCartProduct, index: number ) => {
@@ -157,7 +157,7 @@ function translateWpcomCartItemToCheckoutCartItem(
 
 		// TODO: watch out for this when localizing
 		const value = is_coupon_applied
-			? item_subtotal_integer + ( coupon_discounts_int[ product_id ] ?? 0 )
+			? item_subtotal_integer + ( coupon_discounts_integer[ product_id ] ?? 0 )
 			: item_subtotal_integer;
 		const displayValue = localizeCurrency( currency, value );
 

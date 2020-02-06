@@ -43,7 +43,7 @@ export async function mockSetCartEndpoint( {
 		sub_total_integer: totalInteger - taxInteger,
 		coupon: requestCoupon,
 		is_coupon_applied: true,
-		coupon_discounts_int: [],
+		coupon_discounts_integer: [],
 	} as ResponseCart;
 }
 

@@ -182,11 +182,11 @@ export function useShoppingCart(
 					setCouponStatus( 'applied' );
 				}
 
-				if ( ! response.is_coupon_applied && response.coupon_discounts_int?.length <= 0 ) {
+				if ( ! response.is_coupon_applied && response.coupon_discounts_integer?.length <= 0 ) {
 					setCouponStatus( 'invalid' );
 				}
 
-				if ( ! response.is_coupon_applied && response.coupon_discounts_int?.length > 0 ) {
+				if ( ! response.is_coupon_applied && response.coupon_discounts_integer?.length > 0 ) {
 					setCouponStatus( 'rejected' );
 				}
 			}
