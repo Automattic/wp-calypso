@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getBlockedSites from 'state/selectors/get-blocked-sites';
+import getBlockedSites from 'state/reader/site-blocks/selectors/get-blocked-sites';
 
 describe( 'getBlockedSites()', () => {
 	test( 'should return an array of blocked site IDs', () => {
