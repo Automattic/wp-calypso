@@ -15,10 +15,14 @@ import {
  * Translate a cart object as returned by the WPCOM cart endpoint to
  * the format required by the composite checkout component.
  *
+ * @param translate Localization function
  * @param serverCart Cart object returned by the WPCOM cart endpoint
  * @returns Cart object suitable for passing to the checkout component
  */
-export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WPCOMCart {
+export function translateWpcomCartToCheckoutCart(
+	translate: ( string, any? ) => string,
+	serverCart: ResponseCart
+): WPCOMCart {
 	const {
 		products,
 		total_tax_integer,
@@ -38,7 +42,7 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 
 	const taxLineItem: CheckoutCartItem = {
 		id: 'tax-line-item',
-		label: 'Tax',
+		label: translate( 'Tax' ),
 		type: 'tax', // TODO: does this need to be localized, e.g. tax-us?
 		amount: {
 			currency: currency,
@@ -57,7 +61,7 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 
 	const couponLineItem: CheckoutCartItem = {
 		id: 'coupon-line-item',
-		label: `Coupon: ${ coupon }`,
+		label: translate( 'Coupon: %s', coupon ),
 		type: 'coupon',
 		amount: {
 			currency: currency,
@@ -69,7 +73,7 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
     const totalItem: CheckoutCartItem = {
         id: 'total',
         type: 'total',
-		label: 'Total',
+		label: translate( 'Total' ),
 		amount: {
 			currency: currency,
 			value: total_cost_integer,
@@ -80,7 +84,7 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 	const subtotalItem: CheckoutCartItem = {
 		id: 'subtotal',
 		type: 'subtotal',
-		label: 'Subtotal',
+		label: translate( 'Subtotal' ),
 		amount: {
 			currency: currency,
 			value: sub_total_integer,
@@ -115,7 +119,7 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 		credits: {
 			id: 'credits',
 			type: 'credits',
-			label: 'Credits',
+			label: translate( 'Credits' ),
 			amount: { value: credits_integer, displayValue: credits_display, currency },
 		},
 		allowedPaymentMethods: allowed_payment_methods

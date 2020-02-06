@@ -105,6 +105,8 @@ type CouponStatus = 'fresh' | 'pending' | 'applied' | 'invalid' | 'rejected';
  *     An asynchronous wrapper around the wpcom shopping cart GET
  *     endpoint. We pass this in to make testing easier.
  *     @see WPCOM_JSON_API_Me_Shopping_Cart_Endpoint
+ * @param translate
+ *     Localization function
  * @param showAddCouponSuccessMessage
  *     Takes a coupon code and displays a translated notice that
  *     the coupon was successfully applied.
@@ -114,6 +116,7 @@ export function useShoppingCart(
 	cartKey: string | null,
 	setCart: ( string, RequestCart ) => Promise< ResponseCart >,
 	getCart: ( string ) => Promise< ResponseCart >,
+	translate: ( string ) => string,
 	showAddCouponSuccessMessage: ( string ) => void
 ): ShoppingCartManager {
 	cartKey = cartKey || 'no-site';
@@ -215,7 +218,7 @@ export function useShoppingCart(
 
 	// Translate the responseCart into the format needed in checkout.
 	const cart: WPCOMCart = useMemo(
-		() => translateWpcomCartToCheckoutCart( responseCartToDisplay ),
+		() => translateWpcomCartToCheckoutCart( translate, responseCartToDisplay ),
 		[ responseCartToDisplay ]
 	);
 
@@ -249,20 +252,23 @@ export function useShoppingCart(
 		debug( 'updating prices for address in cart', address );
 	};
 
-	const submitCoupon: ( string ) => void = useCallback( newCoupon => {
-		if ( couponStatus === 'applied' || couponStatus === 'pending' ) {
-			debug( `coupon status is '${ couponStatus }'; not submitting again` );
-			return;
-		}
-		debug( 'submitting coupon', newCoupon );
-		setResponseCart( currentResponseCart => ( {
-			...currentResponseCart,
-			coupon: newCoupon,
-			is_coupon_applied: false,
-		} ) );
-		setCacheStatus( 'invalid' );
-		setCouponStatus( 'pending' );
-	}, [] );
+	const submitCoupon: ( string ) => void = useCallback(
+		newCoupon => {
+			if ( couponStatus === 'applied' || couponStatus === 'pending' ) {
+				debug( `coupon status is '${ couponStatus }'; not submitting again` );
+				return;
+			}
+			debug( 'submitting coupon', newCoupon );
+			setResponseCart( currentResponseCart => ( {
+				...currentResponseCart,
+				coupon: newCoupon,
+				is_coupon_applied: false,
+			} ) );
+			setCacheStatus( 'invalid' );
+			setCouponStatus( 'pending' );
+		},
+		[ couponStatus ]
+	);
 
 	return {
 		isLoading: cacheStatus === 'fresh',

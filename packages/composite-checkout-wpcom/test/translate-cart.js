@@ -60,7 +60,7 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 			coupon_discounts_int: [],
 		};
 
-		const clientCart = translateWpcomCartToCheckoutCart( serverResponse );
+		const clientCart = translateWpcomCartToCheckoutCart( x => x, serverResponse );
 
 		it( 'has a total property', function() {
 			expect( clientCart.total.amount ).toBeDefined();
@@ -229,7 +229,7 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 			coupon_discounts_int: [],
 		};
 
-		const clientCart = translateWpcomCartToCheckoutCart( serverResponse );
+		const clientCart = translateWpcomCartToCheckoutCart( x => x, serverResponse );
 
 		it( 'has a total property', function() {
 			expect( clientCart.total.amount ).toBeDefined();
@@ -459,7 +459,7 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 			coupon_discounts_int: [],
 		};
 
-		const clientCart = translateWpcomCartToCheckoutCart( serverResponse );
+		const clientCart = translateWpcomCartToCheckoutCart( x => x, serverResponse );
 
 		it( 'has a total property', function() {
 			expect( clientCart.total.amount ).toBeDefined();
@@ -614,7 +614,9 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 			is_coupon_applied: true,
 		};
 
-		const clientCart = translateWpcomCartToCheckoutCart( serverResponse );
+		const clientCart = translateWpcomCartToCheckoutCart( ( string, variable ) => {
+			return string.replace( '%s', variable );
+		}, serverResponse );
 
 		it( 'has a total property', function() {
 			expect( clientCart.total.amount ).toBeDefined();
