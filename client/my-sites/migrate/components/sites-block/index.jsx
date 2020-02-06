@@ -18,6 +18,14 @@ import Spinner from 'components/spinner';
 export default class SitesBlock extends Component {
 	state = {};
 
+	onSubmit = event => {
+		event.preventDefault();
+
+		this.props.onSubmit( event );
+
+		return false;
+	};
+
 	renderFauxSiteSelector() {
 		const { onUrlChange, url } = this.props;
 		const { error } = this.state;
@@ -30,7 +38,7 @@ export default class SitesBlock extends Component {
 						{ this.props.loadingSourceSite && <Spinner /> }
 					</div>
 					<div className="sites-block__faux-site-selector-info">
-						<form onSubmit={ this.props.onSubmit }>
+						<form onSubmit={ this.onSubmit }>
 							<FormLabel
 								className="sites-block__faux-site-selector-label"
 								htmlFor="sites-block__faux-site-selector-url-input"
