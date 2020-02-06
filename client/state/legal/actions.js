@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { LEGAL_REQUEST, LEGAL_SET } from 'state/action-types';
+import { LEGAL_REQUEST, LEGAL_SET, TOS_ACCEPT } from 'state/action-types';
 import 'state/data-layer/wpcom/legal';
 
 export const requestLegalData = () => ( {
@@ -11,4 +11,8 @@ export const requestLegalData = () => ( {
 export const setLegalData = legalData => ( {
 	type: LEGAL_SET,
 	legalData,
+} );
+
+export const acceptTos = () => ( {
+	type: TOS_ACCEPT,
 } );

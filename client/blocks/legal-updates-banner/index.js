@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { localizeUrl } from 'lib/i18n-utils';
-import { requestLegalData } from 'state/legal/actions';
+import { acceptTos, requestLegalData } from 'state/legal/actions';
 import { shouldDisplayTosUpdateBanner } from 'state/selectors/should-display-tos-update-banner';
 
 /**
@@ -19,14 +19,14 @@ import { shouldDisplayTosUpdateBanner } from 'state/selectors/should-display-tos
 import './style.scss';
 import ExternalLink from 'components/external-link';
 
-const LegalUpdateBanner = ( { fetchLegalData, needsAcceptTos } ) => {
+const LegalUpdateBanner = props => {
 	const translate = useTranslate();
 
 	useEffect( () => {
-		fetchLegalData();
+		props.requestLegalData();
 	}, [] );
 
-	if ( needsAcceptTos ) {
+	if ( props.needsAcceptTos ) {
 		return (
 			<Card className="legal-updates-banner">
 				<div className="legal-updates-banner__content">
@@ -47,7 +47,11 @@ const LegalUpdateBanner = ( { fetchLegalData, needsAcceptTos } ) => {
 					) }
 				</div>
 				<div className="legal-updates-banner__actions">
-					<Button primary className="legal-updates-banner__accept" onClick={ () => {} }>
+					<Button
+						primary
+						className="legal-updates-banner__accept"
+						onClick={ () => props.acceptTos() }
+					>
 						{ translate( 'Accept' ) }
 					</Button>
 				</div>
@@ -63,6 +67,7 @@ export default connect(
 		needsAcceptTos: shouldDisplayTosUpdateBanner( state ),
 	} ),
 	{
-		fetchLegalData: requestLegalData,
+		acceptTos,
+		requestLegalData,
 	}
 )( LegalUpdateBanner );
