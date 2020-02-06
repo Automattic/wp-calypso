@@ -142,6 +142,7 @@ class RegisterDomainStep extends React.Component {
 		includeDotBlogSubdomain: PropTypes.bool,
 		showExampleSuggestions: PropTypes.bool,
 		showTestCopy: PropTypes.bool,
+		showDesignUpdate: PropTypes.bool,
 		onSave: PropTypes.func,
 		onAddMapping: PropTypes.func,
 		onAddDomain: PropTypes.func,
@@ -383,10 +384,16 @@ class RegisterDomainStep extends React.Component {
 		return suggestions;
 	}
 
-	getPlaceholderText() {
-		const { showTestCopy, translate } = this.props;
+	isEligibleVariantForDomainTest() {
+		const { showTestCopy, showDesignUpdate } = this.props;
 
-		return showTestCopy
+		return showTestCopy || showDesignUpdate;
+	}
+
+	getPlaceholderText() {
+		const { translate } = this.props;
+
+		return this.isEligibleVariantForDomainTest()
 			? translate( 'Type the domain you want here' )
 			: translate( 'Enter a name or keyword' );
 	}
@@ -416,7 +423,7 @@ class RegisterDomainStep extends React.Component {
 			: {};
 
 		const searchBoxClassName = classNames( 'register-domain-step__search', {
-			'register-domain-step__search-domain-step-test': this.props.showTestCopy,
+			'register-domain-step__search-domain-step-test': this.isEligibleVariantForDomainTest(),
 		} );
 		return (
 			<div className="register-domain-step">
@@ -1083,6 +1090,7 @@ class RegisterDomainStep extends React.Component {
 						pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 						unavailableDomains={ this.state.unavailableDomains }
 						showTestCopy={ this.props.showTestCopy }
+						showDesignUpdate={ this.props.showDesignUpdate }
 					/>
 				);
 			}, this );
@@ -1237,8 +1245,9 @@ class RegisterDomainStep extends React.Component {
 				pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 				unavailableDomains={ this.state.unavailableDomains }
 				showTestCopy={ this.props.showTestCopy }
+				showDesignUpdate={ this.props.showDesignUpdate }
 			>
-				{ this.props.showTestCopy && hasResults && this.renderFreeDomainExplainer() }
+				{ this.isEligibleVariantForDomainTest() && hasResults && this.renderFreeDomainExplainer() }
 
 				{ showTldFilterBar && (
 					<TldFilterBar

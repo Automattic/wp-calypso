@@ -122,6 +122,7 @@ export class FeaturedDomainSuggestions extends Component {
 						buttonStyles={ { primary: true } }
 						{ ...childProps }
 						showTestCopy={ this.props.showTestCopy }
+						showDesignUpdate={ this.props.showDesignUpdate }
 					/>
 				) }
 				{ secondarySuggestion && (
@@ -134,6 +135,7 @@ export class FeaturedDomainSuggestions extends Component {
 						fetchAlgo={ this.getFetchAlgorithm( secondarySuggestion ) }
 						{ ...childProps }
 						showTestCopy={ this.props.showTestCopy }
+						showDesignUpdate={ this.props.showDesignUpdate }
 					/>
 				) }
 			</div>

@@ -53,6 +53,17 @@
 	.domain-product-price__sale-price {
 		color: var( --color-neutral-60 );
 		display: block;
+
+		&.domain-product-price__free-text-domain-step-copy-updates {
+			display: flex;
+
+			& del,
+			& .info-popover {
+				margin-right: 5px;
+			}
+
+			 
+		}
 	}
 
 	&.no-price .domain-product-price__free-text,
