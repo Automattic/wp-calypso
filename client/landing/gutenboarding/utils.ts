@@ -17,14 +17,17 @@ import wpcom from '../../lib/wp';
 import { untrailingslashit } from '../../lib/route';
 import { urlToSlug } from '../../lib/url';
 
-interface CreateSite {
+interface CreateSiteData {
 	siteTitle?: string;
 	siteUrl?: string;
 	theme?: string;
 	siteVertical: SiteVertical | undefined;
 }
 
-export function createSite( { siteTitle, siteUrl, theme, siteVertical }: CreateSite ) {
+export function createSite(
+	{ siteTitle, siteUrl, theme, siteVertical }: CreateSiteData,
+	onCreate: () => void
+) {
 	const newSiteParams = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
 		blog_title: siteTitle,
@@ -35,11 +38,13 @@ export function createSite( { siteTitle, siteUrl, theme, siteVertical }: CreateS
 			site_information: {
 				title: siteTitle,
 			},
+			site_creation_flow: 'gutenboarding',
 		},
 		public: -1,
 		validate: false,
 		find_available_url: true,
 	};
+
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	wpcom.undocumented().sitesNew( newSiteParams, function( error: any, response: any ) {
 		if ( error ) {
@@ -52,6 +57,7 @@ export function createSite( { siteTitle, siteUrl, theme, siteVertical }: CreateS
 		}
 
 		const siteSlug = urlToSlug( untrailingslashit( url ) );
+		onCreate();
 		window.location.href = `/block-editor/page/${ siteSlug }/home?is-gutenboarding`;
 	} );
 }

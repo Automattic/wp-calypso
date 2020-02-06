@@ -11,6 +11,7 @@ import { __ as NO__, _x as NO_x } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { USER_STORE } from '../../stores/user';
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import './style.scss';
 
 // TODO: deploy this change to @types/wordpress__element
@@ -25,15 +26,26 @@ declare module '@wordpress/element' {
 const SignupForm = () => {
 	const [ emailVal, setEmailVal ] = useState( '' );
 	const { createAccount } = useDispatch( USER_STORE );
+	const { setShouldCreate } = useDispatch( ONBOARD_STORE );
 	const isFetchingNewUser = useSelect( select => select( USER_STORE ).isFetchingNewUser() );
 	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
 	const newUserError = useSelect( select => select( USER_STORE ).getNewUserError() );
+	const { shouldCreate } = useSelect( select => select( ONBOARD_STORE ) ).getState();
 
 	const handleSignUp = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 
 		createAccount( { email: emailVal, is_passwordless: true, signup_flow_name: 'gutenboarding' } );
 	};
+
+	if ( newUser && shouldCreate ) {
+		//TODO: replace route when https://github.com/Automattic/wp-calypso/pull/39266 is merged
+		//TODO 2: replace with correct action dispatching when https://github.com/Automattic/wp-calypso/pull/39050 is merged
+		window.location.href = window.location.href.replace( '/signup', '/design' );
+	}
+	if ( newUserError && shouldCreate ) {
+		setShouldCreate( false );
+	}
 
 	return (
 		<Modal
