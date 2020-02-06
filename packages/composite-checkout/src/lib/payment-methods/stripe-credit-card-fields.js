@@ -245,16 +245,6 @@ export function createStripeMethod( {
 			const errors = selectors.getCardDataErrors( store.getState() );
 			const incompleteFieldKeys = selectors.getIncompleteFieldKeys( store.getState() );
 			const areThereErrors = Object.keys( errors ).some( errorKey => errors[ errorKey ] );
-			if ( ! cardholderName?.value.length ) {
-				// Touch the field so it displays a validation error
-				store.dispatch( actions.changeCardholderName( '' ) );
-			}
-			if ( incompleteFieldKeys.length > 0 ) {
-				// Show "this field is required" for each incomplete field
-				incompleteFieldKeys.map( key =>
-					store.dispatch( actions.setCardDataError( key, 'This field is required' ) )
-				); // TODO: localize this message
-			}
 			if ( areThereErrors || ! cardholderName?.value.length || incompleteFieldKeys.length > 0 ) {
 				return false;
 			}
