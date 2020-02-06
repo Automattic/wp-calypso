@@ -34,9 +34,7 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		select( ONBOARD_STORE ).getState()
 	);
 	const hasSelectedDesign = !! selectedDesign;
-	const { setDomain, resetOnboardStore, setShouldCreate, setIsSiteCreated } = useDispatch(
-		ONBOARD_STORE
-	);
+	const { setDomain, resetOnboardStore, setShouldCreate } = useDispatch( ONBOARD_STORE );
 
 	const [ domainSearch ] = useDebounce( siteTitle, selectorDebounce );
 	const freeDomainSuggestion = useSelect(
@@ -89,19 +87,15 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		...( selectedDesign?.slug && { theme: selectedDesign?.slug } ),
 	};
 
-	const handleSiteCreated = () => {
-		resetOnboardStore();
-		setIsSiteCreated( true );
-	};
+	if ( shouldCreate && currentUser ) {
+		createSite( siteCreationData, resetOnboardStore );
+		setShouldCreate( false );
+	}
 
 	const handleCreateSite = () => {
-		createSite( siteCreationData, handleSiteCreated );
+		createSite( siteCreationData, resetOnboardStore );
 		history.push( Step.CreateSite );
 	};
-
-	if ( shouldCreate && currentUser ) {
-		handleCreateSite();
-	}
 
 	const handleSignup = () => {
 		setShouldCreate( true );
@@ -141,12 +135,13 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 			</div>
 			<div className="gutenboarding__header-section">
 				<div className="gutenboarding__header-group">
-					{ hasSelectedDesign && ! shouldCreate && (
+					{ hasSelectedDesign && (
 						<Button
 							className="gutenboarding__header-next-button"
 							isPrimary
 							isLarge
 							onClick={ () => ( currentUser ? handleCreateSite() : handleSignup() ) }
+							disabled={ shouldCreate }
 						>
 							{ NO__( 'Create my site' ) }
 						</Button>

@@ -99,19 +99,6 @@ const shouldCreate: Reducer<
 	return state;
 };
 
-const isSiteCreated: Reducer<
-	boolean,
-	ReturnType< typeof Actions[ 'setIsSiteCreated' ] | typeof Actions[ 'resetOnboardStore' ] >
-> = ( state = false, action ) => {
-	if ( action.type === ActionType.SET_IS_SITE_CREATED ) {
-		return action.isSiteCreated;
-	}
-	if ( action.type === ActionType.RESET_ONBOARD_STORE ) {
-		return false;
-	}
-	return state;
-};
-
 const reducer = combineReducers( {
 	domain,
 	selectedDesign,
@@ -119,7 +106,6 @@ const reducer = combineReducers( {
 	siteVertical,
 	pageLayouts,
 	shouldCreate,
-	isSiteCreated,
 } );
 
 export type State = ReturnType< typeof reducer >;
