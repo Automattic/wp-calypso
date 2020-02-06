@@ -59,7 +59,7 @@ export default function WPCheckout( {
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( submitCoupon );
 
-	const ReviewContent = () => (
+	const reviewContent = (
 		<WPCheckoutOrderReview
 			removeItem={ removeItem }
 			couponStatus={ couponStatus }
@@ -124,7 +124,7 @@ export default function WPCheckout( {
 			className: 'checkout__review-order-step',
 			hasStepNumber: true,
 			titleContent: <OrderReviewTitle />,
-			activeStepContent: <ReviewContent />,
+			activeStepContent: reviewContent,
 			isCompleteCallback: ( { activeStep } ) => {
 				const isActive = activeStep.id === 'order-review';
 				return isActive;
