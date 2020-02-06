@@ -24,10 +24,7 @@ interface CreateSiteData {
 	siteVertical: SiteVertical | undefined;
 }
 
-export function createSite(
-	{ siteTitle, siteUrl, theme, siteVertical }: CreateSiteData,
-	onCreate: () => void
-) {
+export function createSite( { siteTitle, siteUrl, theme, siteVertical }: CreateSiteData ) {
 	const newSiteParams = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
 		blog_title: siteTitle,
@@ -46,18 +43,19 @@ export function createSite(
 	};
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	wpcom.undocumented().sitesNew( newSiteParams, function( error: any, response: any ) {
-		if ( error ) {
-			throw new Error( error );
-		}
+	return new Promise( resolve => {
+		wpcom.undocumented().sitesNew( newSiteParams, function( error: any, response: any ) {
+			if ( error ) {
+				throw new Error( error );
+			}
 
-		const url = response?.blog_details?.url;
-		if ( ! url ) {
-			throw new Error( 'No url in response!' );
-		}
+			const url = response?.blog_details?.url;
+			if ( ! url ) {
+				throw new Error( 'No url in response!' );
+			}
 
-		const siteSlug = urlToSlug( untrailingslashit( url ) );
-		onCreate();
-		window.location.href = `/block-editor/page/${ siteSlug }/home?is-gutenboarding`;
+			const siteSlug = urlToSlug( untrailingslashit( url ) );
+			resolve( siteSlug );
+		} );
 	} );
 }

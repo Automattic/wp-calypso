@@ -34,7 +34,9 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		select( ONBOARD_STORE ).getState()
 	);
 	const hasSelectedDesign = !! selectedDesign;
-	const { setDomain, resetOnboardStore, setShouldCreate } = useDispatch( ONBOARD_STORE );
+	const { setDomain, resetOnboardStore, setShouldCreate, setIsCreatingSite } = useDispatch(
+		ONBOARD_STORE
+	);
 
 	const [ domainSearch ] = useDebounce( siteTitle, selectorDebounce );
 	const freeDomainSuggestion = useSelect(
@@ -87,13 +89,21 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		...( selectedDesign?.slug && { theme: selectedDesign?.slug } ),
 	};
 
+	const createSiteAndResetData = () => {
+		setIsCreatingSite( true );
+		createSite( siteCreationData ).then( siteSlug => {
+			resetOnboardStore();
+			window.location.href = `/block-editor/page/${ siteSlug }/home?is-gutenboarding`;
+		} );
+	};
+
 	if ( shouldCreate && currentUser ) {
-		createSite( siteCreationData, resetOnboardStore );
+		createSiteAndResetData();
 		setShouldCreate( false );
 	}
 
 	const handleCreateSite = () => {
-		createSite( siteCreationData, resetOnboardStore );
+		createSiteAndResetData();
 		history.push( Step.CreateSite );
 	};
 

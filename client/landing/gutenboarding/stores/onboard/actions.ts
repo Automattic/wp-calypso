@@ -51,3 +51,8 @@ export const setShouldCreate = ( shouldCreate: boolean ) => ( {
 export const resetOnboardStore = () => ( {
 	type: ActionType.RESET_ONBOARD_STORE as const,
 } );
+
+export const setIsCreatingSite = ( isCreatingSite: boolean ) => ( {
+	type: ActionType.IS_CREATING_SITE as const,
+	isCreatingSite,
+} );
