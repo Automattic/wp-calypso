@@ -12,12 +12,15 @@ import page from 'page';
 import CardHeading from 'components/card-heading';
 import HeaderCake from 'components/header-cake';
 import wpLib from 'lib/wp';
+import { recordTracksEvent } from 'state/analytics/actions';
+
 /**
  * Style dependencies
  */
 import './section-migrate.scss';
 import SitesBlock from 'my-sites/migrate/components/sites-block';
 import { redirectTo } from 'my-sites/migrate/helpers';
+import { connect } from 'react-redux';
 
 const wpcom = wpLib.undocumented();
 
@@ -131,5 +134,4 @@ class StepSourceSelect extends Component {
 		);
 	}
 }
-
-export default localize( StepSourceSelect );
+export default connect( null, { recordTracksEvent } )( localize( StepSourceSelect ) );

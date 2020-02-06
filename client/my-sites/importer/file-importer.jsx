@@ -7,7 +7,6 @@ import React from 'react';
 import classNames from 'classnames';
 import { includes } from 'lodash';
 import { connect } from 'react-redux';
-
 /**
  * Internal dependencies
  */
@@ -20,7 +19,6 @@ import ImportingPane from './importing-pane';
 import UploadingPane from './uploading-pane';
 import { startImport } from 'lib/importer/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
-
 /**
  * Style dependencies
  */
@@ -111,6 +109,13 @@ class FileImporter extends React.PureComponent {
 			 */
 			cardProps.href = overrideDestination.replace( '%SITE_SLUG%', site.slug );
 			cardProps.onClick = null;
+
+			if ( this.props.importerStatus.type === 'wordpress' ) {
+				this.props.recordTracksEvent( 'calypso_importer_wordpress_select', {
+					blog_id: site.ID,
+					importer_id: importerStatus.type,
+				} );
+			}
 		}
 
 		return (
