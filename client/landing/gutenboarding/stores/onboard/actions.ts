@@ -52,7 +52,7 @@ export const resetOnboardStore = () => ( {
 	type: ActionType.RESET_ONBOARD_STORE as const,
 } );
 
-export const setIsSiteCreated = ( isSiteCreated: boolean ) => ( {
-	type: ActionType.SET_IS_SITE_CREATED as const,
-	isSiteCreated,
+export const setIsCreatingSite = ( isCreatingSite: boolean ) => ( {
+	type: ActionType.IS_CREATING_SITE as const,
+	isCreatingSite,
 } );

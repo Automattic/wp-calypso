@@ -1,0 +1,59 @@
+.create-site__background {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 50;
+	background-color: var( --studio-gray-0 );
+
+	.create-site__header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		height: 56px;
+		padding: 8px;
+		background-color: white;
+
+		.create-site__toolbar,
+		.create-site__settings {
+			display: inline-flex;
+			align-items: center;
+		}
+	}
+
+	.create-site__content {
+		min-height: 70vh;
+		padding-top: 40px;
+
+		.create-site__text {
+			margin-top: 60px;
+			text-align: center;
+			font-size: 2rem;
+		}
+	}
+	
+	.create-site__placeholder {
+		@include placeholder();
+		height: 16px;
+		border-radius: 8px;
+	}
+
+	.create-site__placeholder-site {
+		margin-left: 18px;
+	}
+
+	.create-site__placeholder-button {
+		width: 40px;
+		margin: 0 8px;
+	}
+
+	.create-site__placeholder-title {
+		height: 40px;
+		min-width: 250px;
+		width: 40%;
+		max-width: 600px;
+		margin: 0 58px;
+		border-radius: 20px;
+	}
+}

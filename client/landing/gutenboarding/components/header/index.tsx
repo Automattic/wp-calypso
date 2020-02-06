@@ -4,10 +4,11 @@
 import { __ as NO__ } from '@wordpress/i18n';
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { FunctionComponent, useEffect } from 'react';
 import { useDebounce } from 'use-debounce';
 import classnames from 'classnames';
 import { DomainSuggestions } from '@automattic/data-stores';
+import { useHistory } from 'react-router-dom';
 
 /**
  * Internal dependencies
@@ -20,7 +21,6 @@ import { selectorDebounce } from '../../constants';
 import Link from '../link';
 import { createSite } from '../../utils';
 import { Step } from '../../steps';
-import { useHistory } from 'react-router-dom';
 
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
@@ -34,7 +34,7 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		select( ONBOARD_STORE ).getState()
 	);
 	const hasSelectedDesign = !! selectedDesign;
-	const { setDomain, resetOnboardStore, setShouldCreate, setIsSiteCreated } = useDispatch(
+	const { setDomain, resetOnboardStore, setShouldCreate, setIsCreatingSite } = useDispatch(
 		ONBOARD_STORE
 	);
 
@@ -61,8 +61,6 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 	}, [ siteTitle, setDomain ] );
 
 	const history = useHistory();
-
-	const [ isSiteCreating, setIsSiteCreating ] = useState( false );
 
 	const currentDomain = domain ?? freeDomainSuggestion;
 
@@ -91,18 +89,18 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		...( selectedDesign?.slug && { theme: selectedDesign?.slug } ),
 	};
 
-	const handleSiteCreated = () => {
-		resetOnboardStore();
-		setIsSiteCreated( true );
-	};
-
 	const handleCreateSite = () => {
-		setIsSiteCreating( true );
-		createSite( siteCreationData, handleSiteCreated );
+		setIsCreatingSite( true );
+		history.push( Step.CreateSite );
+		createSite( siteCreationData ).then( siteSlug => {
+			resetOnboardStore();
+			window.location.href = `/block-editor/page/${ siteSlug }/home?is-gutenboarding`;
+		} );
 	};
 
-	if ( shouldCreate && currentUser && ! isSiteCreating ) {
+	if ( shouldCreate && currentUser ) {
 		handleCreateSite();
+		setShouldCreate( false );
 	}
 
 	const handleSignup = () => {
@@ -143,18 +141,17 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 			</div>
 			<div className="gutenboarding__header-section">
 				<div className="gutenboarding__header-group">
-					{ hasSelectedDesign && ! isSiteCreating && ! shouldCreate && (
+					{ hasSelectedDesign && (
 						<Button
 							className="gutenboarding__header-next-button"
 							isPrimary
 							isLarge
 							onClick={ () => ( currentUser ? handleCreateSite() : handleSignup() ) }
+							disabled={ shouldCreate }
 						>
 							{ NO__( 'Create my site' ) }
 						</Button>
 					) }
-					{ /* Just an intermediary step until adding the loading modal/screen in https://github.com/Automattic/wp-calypso/pull/39266 */ }
-					{ ( isSiteCreating || shouldCreate ) && 'Creating site in progress...' }
 				</div>
 			</div>
 		</div>

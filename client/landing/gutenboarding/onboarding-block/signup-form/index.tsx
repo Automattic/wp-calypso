@@ -39,9 +39,8 @@ const SignupForm = () => {
 	};
 
 	if ( newUser && shouldCreate ) {
-		//TODO: replace route when https://github.com/Automattic/wp-calypso/pull/39266 is merged
-		//TODO 2: replace with correct action dispatching when https://github.com/Automattic/wp-calypso/pull/39050 is merged
-		window.location.href = window.location.href.replace( '/signup', '/design' );
+		//TODO: replace with correct action dispatching when https://github.com/Automattic/wp-calypso/pull/39050 is merged
+		window.location.reload( false );
 	}
 	if ( newUserError && shouldCreate ) {
 		setShouldCreate( false );
