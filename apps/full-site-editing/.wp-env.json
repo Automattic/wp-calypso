@@ -1,4 +1,5 @@
 {
-	"plugins": [ "./full-site-editing-plugin", "../../gutenberg" ],
-	"themes": [ "../../themes/varia", "../../themes/maywood" ]
+	"name": "FSE Plugin",
+	"plugins": [ "./full-site-editing-plugin", "../../../gutenberg" ],
+	"themes": [ "../../../themes/varia", "../../../themes/maywood" ]
 }

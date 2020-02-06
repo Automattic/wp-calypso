@@ -19,7 +19,7 @@ cd ../
 # can find them. This way they can be connected to wp-env.
 parent_dr=$(pwd)
 if [ ! -d "./themes" ] ; then
-	echo -e "\nIt does not seem as if the Automattic themes repo is a sibling of wp-calypso in your file system."
+	echo -e "\nThe Automattic themes repo is not a sibling of wp-calypso in your file system."
 	echo "If you clone it, we can automatically link it to the WordPress environment."
 	read -p "Would you like to clone Automattic/themes as a sibling of wp-calypso? (y for yes)"
 	if [[ $REPLY = 'y' ]] ; then
@@ -30,7 +30,7 @@ if [ ! -d "./themes" ] ; then
 fi
 
 if [ ! -d "./gutenberg" ] ; then
-	echo -e "\nIt does not seem as if the Gutenberg repo is a sibling of wp-calypso in your file system."
+	echo -e "\nThe Gutenberg repo is not a sibling of wp-calypso in your file system."
 	echo "If you clone it, we can automatically link it to the WordPress environment."
 	read -p "Would you like to clone and builg WordPress/gutenberg as a sibling of wp-calypso? (y for yes)"
 	if [[ $REPLY = 'y' ]] ; then
@@ -52,8 +52,15 @@ npm ci
 # Run an initial FSE build so that the plugin can load correctly.
 npx lerna run build --scope='@automattic/full-site-editing' --stream --no-prefix
 
-npm i -g @wordpress/env
+# Where the wp-env.json file lives:
+cd apps/full-site-editing
 
-# Install the environment at the plugin level.
-cd "apps/full-site-editing/full-site-editing-plugin"
-WP_ENV_PORT=4013 WP_ENV_TESTS_PORT=4008 npx wp-env start
+echo -e "\nWould you like to use the development version of wp-env? You can checkout the correct Gutenberg branch and build it before continuing."
+read -p "Type y to use the development version of wp-env. Otherwise, it will use the published version. "
+if [[ $REPLY = 'y' ]] ; then
+	WP_ENV_PORT=4013 WP_ENV_TESTS_PORT=4008 ../../../gutenberg/packages/env/bin/wp-env start
+else
+	# Use the published version of wp-env
+	npm i -g @wordpress/env
+	WP_ENV_PORT=4013 WP_ENV_TESTS_PORT=4008 npx wp-env start
+fi
