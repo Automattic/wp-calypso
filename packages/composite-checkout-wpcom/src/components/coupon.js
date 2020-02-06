@@ -32,13 +32,7 @@ export default function Coupon( { id, className, disabled, couponStatus, couponF
 	const hasCouponError = couponStatus === 'invalid' || couponStatus === 'rejected';
 	const isPending = couponStatus === 'pending';
 
-	const errorMessage =
-		// eslint-disable-next-line no-nested-ternary
-		couponStatus === 'invalid' && ! isFreshOrEdited
-			? translate( "We couldn't find your coupon. Please check your code and try again." )
-			: couponStatus === 'rejected'
-			? translate( 'This coupon does not apply to any items in the cart.' )
-			: null;
+	const errorMessage = getCouponErrorMessageFromStatus( translate, couponStatus, isFreshOrEdited );
 
 	return (
 		<CouponWrapper
@@ -103,3 +97,13 @@ const ApplyButton = styled( Button )`
 	animation-fill-mode: backwards;
 	margin: 0;
 `;
+
+function getCouponErrorMessageFromStatus( translate, status, isFreshOrEdited ) {
+	if ( status === 'invalid' && ! isFreshOrEdited ) {
+		return translate( "We couldn't find your coupon. Please check your code and try again." );
+	}
+	if ( status === 'rejected' ) {
+		return translate( 'This coupon does not apply to any items in the cart.' );
+	}
+	return null;
+}
