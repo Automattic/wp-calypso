@@ -204,7 +204,7 @@ export function useShoppingCart(
 				debug( 'error while fetching cart', error );
 			} );
 		}
-	}, [ setServerCart, cacheStatus, responseCart ] );
+	}, [ cacheStatus, couponStatus, responseCart, showAddCouponSuccessMessage ] );
 
 	// Keep a separate cache of the displayed cart which we regenerate only when
 	// the cart has been downloaded
