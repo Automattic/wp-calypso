@@ -12,6 +12,7 @@
 	},
 	"main": "server/index.js",
 	"dependencies": {
+		"@automattic/calypso-analytics": "file:../packages/calypso-analytics",
 		"@automattic/calypso-polyfills": "file:../packages/calypso-polyfills",
 		"@automattic/color-studio": "2.2.0",
 		"@automattic/components": "file:../packages/components",
