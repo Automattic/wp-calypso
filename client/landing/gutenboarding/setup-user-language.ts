@@ -12,7 +12,6 @@ import { USER_STORE } from './stores/user';
 /**
  * Calypso dependencies ⚠️
  */
-import { isEnabled } from '../../config';
 import switchLocale from '../../lib/i18n-utils/switch-locale';
 
 // Look for user bootstrapping
@@ -21,15 +20,7 @@ declare const window:
 	| { currentUser?: import('@automattic/data-stores').User.CurrentUser };
 
 const SetupUserLanguage: FunctionComponent = () => {
-	let userLang = useSelect( select => select( USER_STORE ).getCurrentUser()?.language );
-	if (
-		! userLang &&
-		isEnabled( 'wpcom-user-bootstrap' ) &&
-		typeof window !== 'undefined' &&
-		window?.currentUser
-	) {
-		userLang = window.currentUser.language;
-	}
+	const userLang = useSelect( select => select( USER_STORE ).getCurrentUser()?.language );
 	useEffect( () => {
 		if ( userLang ) {
 			switchLocale( userLang );
