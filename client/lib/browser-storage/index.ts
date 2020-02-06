@@ -22,6 +22,7 @@ import config from 'config';
 const debug = debugFactory( 'calypso:browser-storage' );
 
 let shouldBypass = false;
+let shouldDisableIDB = false;
 
 const DB_NAME = 'calypso';
 const DB_VERSION = 2; // Match versioning of the previous localforage-based implementation.
@@ -39,6 +40,28 @@ const isAffectedSafari =
 
 debug( 'Safari IDB mitigation active: %s', isAffectedSafari );
 
+export const supportsIDB = once( async () => {
+	if ( typeof window === 'undefined' || ! window.indexedDB ) {
+		debug( 'IDB not found in host' );
+		return false;
+	}
+
+	if ( shouldDisableIDB ) {
+		debug( 'IDB disabled' );
+		return false;
+	}
+
+	try {
+		const testValue = Date.now().toString();
+		await idbSet( SANITY_TEST_KEY, testValue );
+		await idbGet( SANITY_TEST_KEY );
+		return true;
+	} catch ( error ) {
+		// IDB sanity test failed. Fall back to alternative method.
+		return false;
+	}
+} );
+
 const getDB = once( () => {
 	const request = window.indexedDB.open( DB_NAME, DB_VERSION );
 	return new Promise< IDBDatabase >( ( resolve, reject ) => {
@@ -54,15 +77,26 @@ const getDB = once( () => {
 				};
 				request.onsuccess = () => {
 					const db = request.result;
+
 					// Add a general error handler for any future requests made against this db handle.
 					// See https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB#Handling_Errors for
 					// more information on how error events bubble with IndexedDB
 					db.onerror = function( errorEvent: any ) {
+						debug( 'IDB Error', errorEvent );
 						if ( errorEvent.target?.error?.name ) {
 							mc.bumpStat( 'calypso-browser-storage', kebabCase( errorEvent.target.error.name ) );
+
+							if ( errorEvent.target.error.name === 'QuotaExceededError' ) {
+								// we've blown through the quota. Turn off IDB for this page load
+								shouldDisableIDB = true;
+								supportsIDB.clear();
+								debug( 'disabling IDB because we saw a QuotaExceededError' );
+							}
 						}
 					};
 					db.onversionchange = () => {
+						// This fires when the database gets upgraded or when it gets deleted.
+						// We need to close our handle to allow the change to proceed
 						db.close();
 					};
 					resolve( db );
@@ -73,22 +107,6 @@ const getDB = once( () => {
 			reject( error );
 		}
 	} );
-} );
-
-export const supportsIDB = once( async () => {
-	if ( typeof window === 'undefined' || ! window.indexedDB ) {
-		return false;
-	}
-
-	try {
-		const testValue = Date.now().toString();
-		await idbSet( SANITY_TEST_KEY, testValue );
-		await idbGet( SANITY_TEST_KEY );
-		return true;
-	} catch ( error ) {
-		// IDB sanity test failed. Fall back to alternative method.
-		return false;
-	}
 } );
 
 function idbGet< T >( key: string ): Promise< T | undefined > {
