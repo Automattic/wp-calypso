@@ -78,7 +78,7 @@ function useRegisterCheckoutStore() {
 	} );
 }
 
-export default function Checkout( { steps, className } ) {
+export default function Checkout( { steps: stepProps, className } ) {
 	useRegisterCheckoutStore();
 	const [ paymentData ] = usePaymentData();
 	const activePaymentMethod = usePaymentMethod();
