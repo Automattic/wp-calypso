@@ -129,13 +129,6 @@ class PageTemplateModal extends Component {
 		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
 		this.props.saveTemplateChoice( slug );
 
-		const isHomepageTemplate = find( this.props.templates, { slug, category: 'home' } );
-
-		// Load content.
-		const blocks = this.getBlocksByTemplateSlug( slug );
-		// Only overwrite the page title if the template is not one of the Homepage Layouts
-		const title = isHomepageTemplate ? null : this.getTitleByTemplateSlug( slug );
-
 		// Check to see if this is a blank template selection
 		// and reset the template if so.
 		if ( 'blank' === slug ) {
@@ -143,6 +136,13 @@ class PageTemplateModal extends Component {
 			this.setState( { isOpen: false } );
 			return;
 		}
+
+		const isHomepageTemplate = find( this.props.templates, { slug, category: 'home' } );
+
+		// Load content.
+		const blocks = this.getBlocksByTemplateSlug( slug );
+		// Only overwrite the page title if the template is not one of the Homepage Layouts
+		const title = isHomepageTemplate ? null : this.getTitleByTemplateSlug( slug );
 
 		// Skip inserting if this is not a blank template
 		// and there's nothing to insert.
