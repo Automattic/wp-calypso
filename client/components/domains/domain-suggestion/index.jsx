@@ -36,6 +36,12 @@ class DomainSuggestion extends React.Component {
 		showChevron: false,
 	};
 
+	isEligibleVariantForDomainTest() {
+		const { showTestCopy, showDesignUpdate } = this.props;
+
+		return showTestCopy || showDesignUpdate;
+	}
+
 	render() {
 		const {
 			children,
@@ -60,8 +66,11 @@ class DomainSuggestion extends React.Component {
 			extraClasses
 		);
 
+		const shouldApplyContentClass =
+			this.isEligibleVariantForDomainTest() && ! isFeatured && priceRule !== 'FREE_DOMAIN';
+
 		const contentClassName = classNames( 'domain-suggestion__content', {
-			'domain-suggestion__content-domain-copy-test': showTestCopy && ! isFeatured,
+			'domain-suggestion__content-domain-copy-test': shouldApplyContentClass,
 		} );
 
 		/* eslint-disable jsx-a11y/click-events-have-key-events */

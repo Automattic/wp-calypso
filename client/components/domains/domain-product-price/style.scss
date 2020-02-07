@@ -56,13 +56,12 @@
 
 		&.domain-product-price__free-text-domain-step-copy-updates {
 			display: flex;
+			align-items: center;
 
 			& del,
 			& .info-popover {
 				margin-right: 5px;
 			}
-
-			 
 		}
 	}
 
@@ -71,6 +70,10 @@
 		@include breakpoint( '>660px' ) {
 			margin-left: 0;
 		}
+	}
+
+	.domain-product-price__free-text-tooltip {
+		display: flex;
 	}
 
 	.domain-product-price__free-price {

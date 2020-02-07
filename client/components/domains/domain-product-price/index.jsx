@@ -42,27 +42,33 @@ class DomainProductPrice extends React.Component {
 	}
 
 	getDomainPricePopoverElement() {
-		const { price, translate } = this.props;
+		const { price, isFeatured, translate } = this.props;
 
 		return (
-			<InfoPopover iconSize={ 22 } position={ 'left' }>
-				{ translate(
-					'The registration fee for this domain is free for the first year with the purchase of any paid plan. ' +
-						'It will renew for %(cost)s / year after that. {{a}}Learn more{{/a}}.',
-					{
-						args: { cost: price },
-						components: {
-							a: (
-								<a
-									href="https://en.support.wordpress.com/domains/domain-pricing-and-available-tlds/"
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-						},
-					}
-				) }
-			</InfoPopover>
+			! isFeatured && (
+				<InfoPopover
+					iconSize={ 22 }
+					position={ 'left' }
+					className="domain-product-price__free-text-tooltip"
+				>
+					{ translate(
+						'The registration fee for this domain is free for the first year with the purchase of any paid plan. ' +
+							'It will renew for %(cost)s / year after that. {{a}}Learn more{{/a}}.',
+						{
+							args: { cost: price },
+							components: {
+								a: (
+									<a
+										href="https://en.support.wordpress.com/domains/domain-pricing-and-available-tlds/"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						}
+					) }
+				</InfoPopover>
+			)
 		);
 	}
 
