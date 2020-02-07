@@ -93,6 +93,7 @@ class StepSourceSelect extends Component {
 					loadingSourceSite={ this.state.isLoading }
 					targetSite={ targetSite }
 					onUrlChange={ this.props.onUrlChange }
+					onSubmit={ this.handleContinue }
 				/>
 				<Card>
 					<Button busy={ this.state.isLoading } onClick={ this.handleContinue } primary={ true }>
