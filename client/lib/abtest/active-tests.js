@@ -97,17 +97,6 @@ export default {
 		defaultVariation: 'variantShowUpdates',
 		allowExistingUsers: true,
 	},
-	nonEnglishDomainStepCopyUpdates: {
-		datestamp: '20191219',
-		variations: {
-			variantShowUpdates: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-		localeExceptions: [ 'en' ],
-	},
 	showBusinessPlanPopular: {
 		datestamp: '20200109',
 		variations: {
