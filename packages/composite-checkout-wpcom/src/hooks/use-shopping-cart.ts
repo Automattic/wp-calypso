@@ -178,6 +178,7 @@ export function useShoppingCart(
 			setResponseCart( response );
 
 			if ( couponStatus === 'pending' ) {
+				debug( 'isSubscribed:', isSubscribed );
 				if ( response.is_coupon_applied ) {
 					showAddCouponSuccessMessage( response.coupon );
 					setCouponStatus( 'applied' );
