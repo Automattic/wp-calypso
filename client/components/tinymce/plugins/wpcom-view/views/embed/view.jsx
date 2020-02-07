@@ -19,25 +19,8 @@ import QueryEmbed from 'components/data/query-embed';
 import ResizableIframe from 'components/resizable-iframe';
 
 class EmbedView extends Component {
-	state = {
-		wrapper: null,
-	};
-
 	componentDidMount() {
-		// Rendering the frame follows a specific set of steps, whereby an
-		// initial rendering pass is made, at which time the frame is rendered
-		// in a second pass, before finally setting the frame markup.
-		//
-		// TODO: Investigate and evaluate whether we need to avoid rendering
-		//       the iframe on the initial render pass
-		// eslint-disable-next-line react/no-did-mount-set-state
-		this.setState(
-			{
-				// eslint-disable-line react/no-did-mount-set-state
-				wrapper: this.refs.view,
-			},
-			this.setHtml
-		);
+		this.setHtml();
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -98,7 +81,7 @@ class EmbedView extends Component {
 	}
 
 	renderFrame() {
-		if ( ! this.state.wrapper || ! this.props.embed ) {
+		if ( ! this.props.embed ) {
 			return;
 		}
 
