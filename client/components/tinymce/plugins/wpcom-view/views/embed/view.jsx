@@ -1,12 +1,9 @@
-/* eslint-disable react/no-string-refs */
-
 /**
  * External dependencies
  */
-
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import { pick } from 'lodash';
 import { connect } from 'react-redux';
 
@@ -19,6 +16,10 @@ import QueryEmbed from 'components/data/query-embed';
 import ResizableIframe from 'components/resizable-iframe';
 
 class EmbedView extends Component {
+	view = createRef();
+
+	iframe = createRef();
+
 	componentDidMount() {
 		this.setHtml();
 	}
@@ -32,12 +33,12 @@ class EmbedView extends Component {
 	}
 
 	constrainEmbedDimensions() {
-		if ( ! this.refs.iframe ) {
+		if ( ! this.iframe ) {
 			return;
 		}
 
-		const view = ReactDom.findDOMNode( this.refs.view );
-		const iframe = ReactDom.findDOMNode( this.refs.iframe );
+		const view = this.view.current;
+		const iframe = ReactDom.findDOMNode( this.iframe.current );
 		if ( ! iframe.contentDocument ) {
 			return;
 		}
@@ -61,11 +62,11 @@ class EmbedView extends Component {
 	}
 
 	setHtml() {
-		if ( ! this.props.embed?.body || ! this.refs.iframe ) {
+		if ( ! this.props.embed?.body || ! this.iframe ) {
 			return;
 		}
 
-		const iframe = ReactDom.findDOMNode( this.refs.iframe );
+		const iframe = ReactDom.findDOMNode( this.iframe.current );
 		if ( ! iframe.contentDocument ) {
 			return;
 		}
@@ -87,7 +88,7 @@ class EmbedView extends Component {
 
 		return (
 			<ResizableIframe
-				ref="iframe"
+				ref={ this.iframe }
 				onResize={ this.props.onResize }
 				frameBorder="0"
 				seamless
@@ -101,7 +102,7 @@ class EmbedView extends Component {
 
 		return (
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-			<div ref="view" className="wpview-content wpview-type-embed">
+			<div ref={ this.view } className="wpview-content wpview-type-embed">
 				<QueryEmbed siteId={ siteId } url={ content } />
 
 				{ this.renderFrame() }
