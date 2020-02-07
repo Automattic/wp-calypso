@@ -37,7 +37,7 @@
 		"@emotion/core": "10.0.22",
 		"@emotion/styled": "10.0.23",
 		"@wordpress/data": "^4.9.2",
-		"@wordpress/i18n": "3.8.0",
+		"@wordpress/i18n": "3.9.0",
 		"debug": "4.1.1",
 		"emotion-theming": "10.0.19",
 		"interpolate-components": "1.1.1",
