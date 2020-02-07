@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useEvents } from '@automattic/composite-checkout';
 
 export type CouponFieldStateProps = {
@@ -31,7 +31,7 @@ export default function useCouponFieldState( submitCoupon ): CouponFieldStatePro
 		setIsApplyButtonActive( false );
 	}, [ couponFieldValue ] );
 
-	function handleCouponSubmit( event ) {
+	const handleCouponSubmit = useCallback( event => {
 		event.preventDefault();
 		if ( isCouponValid( couponFieldValue ) ) {
 			onEvent( {
@@ -48,7 +48,7 @@ export default function useCouponFieldState( submitCoupon ): CouponFieldStatePro
 			type: 'a8c_checkout_add_coupon_error',
 			payload: { type: 'Invalid code' },
 		} );
-	}
+	} );
 
 	return {
 		couponFieldValue,
