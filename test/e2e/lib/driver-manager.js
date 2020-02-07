@@ -144,7 +144,7 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 
 				if ( useCustomUA ) {
 					options.addArguments(
-						'user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'
+						'user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
 					);
 				}
 				if (
