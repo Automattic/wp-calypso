@@ -3,7 +3,7 @@
  */
 import { controls } from '@wordpress/data-controls';
 import { plugins, registerStore, use } from '@wordpress/data';
-import { isSupportSession } from 'lib/user/support-user-interop';
+//import { isSupportSession } from 'lib/user/support-user-interop';
 
 /**
  * Internal dependencies
@@ -19,8 +19,7 @@ export { STORE_KEY };
 
 // Define the conditions under which data should be persisted to localStorage
 export const shouldPersist = () => {
-	const hasNoPersistParam = window.location.search.indexOf( 'nopersist' ) !== -1;
-	return ! isSupportSession && ! hasNoPersistParam;
+	return true; //&& ! isSupportSession
 };
 
 use( plugins.persistence, persistOptions );
