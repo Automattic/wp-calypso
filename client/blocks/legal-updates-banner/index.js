@@ -32,7 +32,7 @@ const LegalUpdateBanner = props => {
 				<div className="legal-updates-banner__content">
 					{ translate(
 						"We've updated our {{a}}Terms of Service{{/a}}. Please take a few moments to read them. By accepting, " +
-							'you agree to the updates Terms of Service.',
+							'you agree to the new Terms of Service.',
 						{
 							components: {
 								a: (
