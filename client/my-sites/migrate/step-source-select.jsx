@@ -4,16 +4,14 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { Button, CompactCard, Card } from '@automattic/components';
+import { Button, Card, CompactCard } from '@automattic/components';
 import page from 'page';
-
 /**
  * Internal dependencies
  */
 import CardHeading from 'components/card-heading';
 import HeaderCake from 'components/header-cake';
 import wpLib from 'lib/wp';
-
 /**
  * Style dependencies
  */
@@ -41,6 +39,8 @@ class StepSourceSelect extends Component {
 			return;
 		}
 
+		const validEngines = [ 'wordpress', 'blogger', 'medium', 'wix', 'godaddy', 'squarespace' ];
+
 		this.setState( { error: null, isLoading: true }, () => {
 			wpcom
 				.isSiteImportable( this.props.url )
@@ -49,10 +49,24 @@ class StepSourceSelect extends Component {
 
 					switch ( result.site_engine ) {
 						case 'wordpress':
+							if ( result.site_meta.wpcom_site ) {
+								return this.setState( {
+									error: 'This is site is already hosted on WordPress.com',
+									isLoading: false,
+								} );
+							}
+
 							return this.props.onSiteInfoReceived( result, () => {
 								page( `/migrate/choose/${ this.props.targetSiteSlug }` );
 							} );
 						default:
+							if ( validEngines.indexOf( result.site_engine ) === -1 ) {
+								return this.setState( {
+									error: 'This is not a WordPress site',
+									isLoading: false,
+								} );
+							}
+
 							return redirectTo( importUrl );
 					}
 				} )
@@ -95,6 +109,7 @@ class StepSourceSelect extends Component {
 					onUrlChange={ this.props.onUrlChange }
 					onSubmit={ this.handleContinue }
 				/>
+				<p>{ this.state.error }</p>
 				<Card>
 					<Button busy={ this.state.isLoading } onClick={ this.handleContinue } primary={ true }>
 						Continue
