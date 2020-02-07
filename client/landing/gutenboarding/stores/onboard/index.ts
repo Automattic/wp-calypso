@@ -3,7 +3,6 @@
  */
 import { controls } from '@wordpress/data-controls';
 import { plugins, registerStore, use } from '@wordpress/data';
-//import { isSupportSession } from 'lib/user/support-user-interop';
 
 /**
  * Internal dependencies
@@ -17,11 +16,6 @@ import { SelectFromMap, DispatchFromMap } from '@automattic/data-stores';
 
 export { STORE_KEY };
 
-// Define the conditions under which data should be persisted to localStorage
-export const shouldPersist = () => {
-	return true; //&& ! isSupportSession
-};
-
 use( plugins.persistence, persistOptions );
 
 registerStore< State >( STORE_KEY, {
@@ -29,20 +23,14 @@ registerStore< State >( STORE_KEY, {
 	controls,
 	reducer: reducer as any,
 	selectors,
-
-	// Remove the persistence plugin for certain conditions - ie, during a support session
-	...( shouldPersist()
-		? {
-				persist: [
-					'domain',
-					'siteTitle',
-					'siteVertical',
-					'pageLayouts',
-					'selectedDesign',
-					'shouldCreate',
-				],
-		  }
-		: {} ),
+	persist: [
+		'domain',
+		'siteTitle',
+		'siteVertical',
+		'pageLayouts',
+		'selectedDesign',
+		'shouldCreate',
+	],
 } );
 
 declare module '@wordpress/data' {

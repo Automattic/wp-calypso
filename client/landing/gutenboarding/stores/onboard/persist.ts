@@ -41,7 +41,7 @@ const localStorageSupport = (): boolean => {
 const storageHandler = localStorageSupport() ? window.localStorage : objStorage;
 
 // Persisted data expires after seven days
-const isFresh = ( timestampStr: string ): boolean => {
+const isNotExpired = ( timestampStr: string ): boolean => {
 	const timestamp = Number( timestampStr );
 	return Boolean( timestamp ) && timestamp + PERSISTENCE_INTERVAL > Date.now();
 };
@@ -56,7 +56,7 @@ const storage: Pick< Storage, 'getItem' | 'setItem' > = {
 	getItem( key ) {
 		const timestamp = storageHandler.getItem( STORAGE_TS_KEY );
 
-		if ( timestamp && isFresh( timestamp ) && ! hasFreshParam() ) {
+		if ( timestamp && isNotExpired( timestamp ) && ! hasFreshParam() ) {
 			return storageHandler.getItem( key );
 		}
 
