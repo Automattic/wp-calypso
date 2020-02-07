@@ -17,6 +17,11 @@
 
 		&.domain-product-price__domain-step-copy-updates {
 			align-items: flex-start;
+
+			&:not( .is-free-domain ) {
+				min-width: 7%;
+				max-width: 7%;
+			}
 		}
 	}
 		
