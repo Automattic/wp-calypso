@@ -19,8 +19,8 @@ export { STORE_KEY };
 
 // Define the conditions under which data should be persisted to localStorage
 export const shouldPersist = () => {
-	const hasFreshParam = window.location.search.indexOf( 'nopersist' ) !== -1;
-	return ! isSupportSession && ! hasFreshParam;
+	const hasNoPersistParam = window.location.search.indexOf( 'nopersist' ) !== -1;
+	return ! isSupportSession && ! hasNoPersistParam;
 };
 
 use( plugins.persistence, persistOptions );
