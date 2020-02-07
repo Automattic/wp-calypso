@@ -101,12 +101,16 @@ class SocialLoginForm extends Component {
 					);
 				} else if ( error.code === 'user_exists' ) {
 					this.props.createSocialUserFailed( socialInfo, error );
+					this.recordEvent( 'calypso_login_social_prompt_connect', 'google', {
+						error_code: error.code,
+						error_message: error.message,
+					} );
+				} else {
+					this.recordEvent( 'calypso_login_social_login_failure', 'google', {
+						error_code: error.code,
+						error_message: error.message,
+					} );
 				}
-
-				this.recordEvent( 'calypso_login_social_login_failure', 'google', {
-					error_code: error.code,
-					error_message: error.message,
-				} );
 			}
 		);
 	};
@@ -153,12 +157,16 @@ class SocialLoginForm extends Component {
 					);
 				} else if ( error.code === 'user_exists' ) {
 					this.props.createSocialUserFailed( socialInfo, error );
+					this.recordEvent( 'calypso_login_social_prompt_connect', 'apple', {
+						error_code: error.code,
+						error_message: error.message,
+					} );
+				} else {
+					this.recordEvent( 'calypso_login_social_login_failure', 'apple', {
+						error_code: error.code,
+						error_message: error.message,
+					} );
 				}
-
-				this.recordEvent( 'calypso_login_social_login_failure', 'apple', {
-					error_code: error.code,
-					error_message: error.message,
-				} );
 			}
 		);
 	};
