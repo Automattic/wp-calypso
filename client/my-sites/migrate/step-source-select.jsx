@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { Button, Card, CompactCard } from '@automattic/components';
 import page from 'page';
+import { get } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -13,7 +14,6 @@ import CardHeading from 'components/card-heading';
 import HeaderCake from 'components/header-cake';
 import wpLib from 'lib/wp';
 import { recordTracksEvent } from 'state/analytics/actions';
-
 /**
  * Style dependencies
  */
@@ -51,6 +51,14 @@ class StepSourceSelect extends Component {
 				.isSiteImportable( this.props.url )
 				.then( result => {
 					const importUrl = `/import/${ this.props.targetSiteSlug }?not-wp=1&engine=${ result.site_engine }&from-site=${ result.site_url }`;
+
+					this.props.recordTracksEvent( 'calypso_importer_wordpress_enter_url', {
+						url: result.site_url,
+						engine: result.site_engine,
+						has_jetpack: !! get( result, 'site_meta.jetpack_version', false ),
+						jetpack_version: get( result, 'site_meta.jetpack_version', 'no jetpack' ),
+						is_wpcom: get( result, 'site_meta.wpcom_site', false ),
+					} );
 
 					switch ( result.site_engine ) {
 						case 'wordpress':

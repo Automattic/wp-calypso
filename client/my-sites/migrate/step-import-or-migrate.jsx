@@ -34,8 +34,24 @@ class StepImportOrMigrate extends Component {
 		this.setState( { chosenImportType: type } );
 	};
 
+	onJetpackSelect = event => {
+		const { isTargetSiteAtomic } = this.props;
+
+		this.props.recordTracksEvent( 'calypso_importer_wordpress_select', {
+			is_atomic: isTargetSiteAtomic,
+			migration_type: 'migration',
+		} );
+
+		this.props.onJetpackSelect( event );
+	};
+
 	handleImportRedirect = () => {
 		const { isTargetSiteAtomic, targetSiteSlug } = this.props;
+
+		this.props.recordTracksEvent( 'calypso_importer_wordpress_select', {
+			is_atomic: isTargetSiteAtomic,
+			migration_type: 'content',
+		} );
 
 		if ( isTargetSiteAtomic ) {
 			window.location.href = `https://${ targetSiteSlug }/wp-admin/import.php`;
