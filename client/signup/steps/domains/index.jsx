@@ -481,6 +481,7 @@ class DomainsStep extends React.Component {
 				showExampleSuggestions={ showExampleSuggestions }
 				showTestCopy={ this.showTestCopy }
 				showDesignUpdate={ this.showDesignUpdate }
+				isEligibleVariantForDomainTest={ this.isEligibleVariantForDomainTest() }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
 				vendor={ getSuggestionsVendor( true ) }

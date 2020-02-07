@@ -258,6 +258,7 @@ class DomainSearchResults extends React.Component {
 					unavailableDomains={ this.props.unavailableDomains }
 					showTestCopy={ this.props.showTestCopy }
 					showDesignUpdate={ this.props.showDesignUpdate }
+					isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 				/>
 			);
 
@@ -284,6 +285,7 @@ class DomainSearchResults extends React.Component {
 						unavailableDomains={ this.props.unavailableDomains }
 						showTestCopy={ this.props.showTestCopy }
 						showDesignUpdate={ this.props.showDesignUpdate }
+						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 					/>
 				);
 			} );

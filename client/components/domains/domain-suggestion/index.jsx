@@ -36,12 +36,6 @@ class DomainSuggestion extends React.Component {
 		showChevron: false,
 	};
 
-	isEligibleVariantForDomainTest() {
-		const { showTestCopy, showDesignUpdate } = this.props;
-
-		return showTestCopy || showDesignUpdate;
-	}
-
 	render() {
 		const {
 			children,
@@ -53,6 +47,7 @@ class DomainSuggestion extends React.Component {
 			salePrice,
 			showTestCopy,
 			showDesignUpdate,
+			isEligibleVariantForDomainTest,
 			isFeatured,
 		} = this.props;
 		const classes = classNames(
@@ -67,7 +62,7 @@ class DomainSuggestion extends React.Component {
 		);
 
 		const shouldApplyContentClass =
-			this.isEligibleVariantForDomainTest() && ! isFeatured && priceRule !== 'FREE_DOMAIN';
+			isEligibleVariantForDomainTest && ! isFeatured && priceRule !== 'FREE_DOMAIN';
 
 		const contentClassName = classNames( 'domain-suggestion__content', {
 			'domain-suggestion__content-domain-copy-test': shouldApplyContentClass,
@@ -93,6 +88,7 @@ class DomainSuggestion extends React.Component {
 							isFeatured={ isFeatured }
 							showTestCopy={ showTestCopy }
 							showDesignUpdate={ showDesignUpdate }
+							isEligibleVariantForDomainTest={ isEligibleVariantForDomainTest }
 						/>
 					) }
 				</div>

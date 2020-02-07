@@ -123,6 +123,7 @@ export class FeaturedDomainSuggestions extends Component {
 						{ ...childProps }
 						showTestCopy={ this.props.showTestCopy }
 						showDesignUpdate={ this.props.showDesignUpdate }
+						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 					/>
 				) }
 				{ secondarySuggestion && (
@@ -136,6 +137,7 @@ export class FeaturedDomainSuggestions extends Component {
 						{ ...childProps }
 						showTestCopy={ this.props.showTestCopy }
 						showDesignUpdate={ this.props.showDesignUpdate }
+						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 					/>
 				) }
 			</div>

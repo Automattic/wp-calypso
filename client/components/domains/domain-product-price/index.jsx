@@ -35,12 +35,6 @@ class DomainProductPrice extends React.Component {
 		isMappingProduct: false,
 	};
 
-	isEligibleVariantForDomainTest() {
-		const { showTestCopy, showDesignUpdate } = this.props;
-
-		return showTestCopy || showDesignUpdate;
-	}
-
 	getDomainPricePopoverElement() {
 		const { price, isFeatured, translate } = this.props;
 
@@ -73,7 +67,7 @@ class DomainProductPrice extends React.Component {
 	}
 
 	renderFreeWithPlanText() {
-		const { isMappingProduct, translate } = this.props;
+		const { isMappingProduct, isEligibleVariantForDomainTest, translate } = this.props;
 
 		let message, popoverElement;
 		switch ( this.props.rule ) {
@@ -115,7 +109,7 @@ class DomainProductPrice extends React.Component {
 		}
 
 		const className = classnames( 'domain-product-price__free-text', {
-			'domain-product-price__free-text-domain-step-copy-updates': this.isEligibleVariantForDomainTest(),
+			'domain-product-price__free-text-domain-step-copy-updates': isEligibleVariantForDomainTest,
 		} );
 
 		return (
@@ -163,7 +157,7 @@ class DomainProductPrice extends React.Component {
 
 	renderFreeWithPlan() {
 		const className = classnames( 'domain-product-price', 'is-free-domain', {
-			'domain-product-price__domain-step-copy-updates': this.isEligibleVariantForDomainTest(),
+			'domain-product-price__domain-step-copy-updates': this.props.isEligibleVariantForDomainTest,
 		} );
 
 		return (
@@ -176,11 +170,11 @@ class DomainProductPrice extends React.Component {
 
 	renderFree() {
 		const className = classnames( 'domain-product-price', {
-			'domain-product-price__domain-step-copy-updates': this.isEligibleVariantForDomainTest(),
+			'domain-product-price__domain-step-copy-updates': this.props.isEligibleVariantForDomainTest,
 		} );
 
 		const productPriceClassName = classnames( 'domain-product-price__price', {
-			'domain-product-price__free-price': this.isEligibleVariantForDomainTest(),
+			'domain-product-price__free-price': this.props.isEligibleVariantForDomainTest,
 		} );
 
 		return (

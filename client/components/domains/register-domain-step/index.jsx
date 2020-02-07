@@ -384,16 +384,10 @@ class RegisterDomainStep extends React.Component {
 		return suggestions;
 	}
 
-	isEligibleVariantForDomainTest() {
-		const { showTestCopy, showDesignUpdate } = this.props;
-
-		return showTestCopy || showDesignUpdate;
-	}
-
 	getPlaceholderText() {
-		const { translate } = this.props;
+		const { isEligibleVariantForDomainTest, translate } = this.props;
 
-		return this.isEligibleVariantForDomainTest()
+		return isEligibleVariantForDomainTest
 			? translate( 'Type the domain you want here' )
 			: translate( 'Enter a name or keyword' );
 	}
@@ -423,7 +417,7 @@ class RegisterDomainStep extends React.Component {
 			: {};
 
 		const searchBoxClassName = classNames( 'register-domain-step__search', {
-			'register-domain-step__search-domain-step-test': this.isEligibleVariantForDomainTest(),
+			'register-domain-step__search-domain-step-test': this.props.isEligibleVariantForDomainTest,
 		} );
 		return (
 			<div className="register-domain-step">
@@ -1091,6 +1085,7 @@ class RegisterDomainStep extends React.Component {
 						unavailableDomains={ this.state.unavailableDomains }
 						showTestCopy={ this.props.showTestCopy }
 						showDesignUpdate={ this.props.showDesignUpdate }
+						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 					/>
 				);
 			}, this );
@@ -1246,8 +1241,11 @@ class RegisterDomainStep extends React.Component {
 				unavailableDomains={ this.state.unavailableDomains }
 				showTestCopy={ this.props.showTestCopy }
 				showDesignUpdate={ this.props.showDesignUpdate }
+				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 			>
-				{ this.isEligibleVariantForDomainTest() && hasResults && this.renderFreeDomainExplainer() }
+				{ this.props.isEligibleVariantForDomainTest &&
+					hasResults &&
+					this.renderFreeDomainExplainer() }
 
 				{ showTldFilterBar && (
 					<TldFilterBar

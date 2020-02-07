@@ -115,12 +115,6 @@ class DomainRegistrationSuggestion extends React.Component {
 		return includes( this.props.unavailableDomains, domain );
 	};
 
-	isEligibleVariantForDomainTest() {
-		const { showTestCopy, showDesignUpdate } = this.props;
-
-		return showTestCopy || showDesignUpdate;
-	}
-
 	getButtonProps() {
 		const {
 			cart,
@@ -201,7 +195,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		const infoPopoverSize = isFeatured ? 22 : 18;
 		const titleWrapperClassName = classNames( 'domain-registration-suggestion__title-wrapper', {
 			'domain-registration-suggestion__title-domain-copy-test':
-				this.isEligibleVariantForDomainTest() && ! this.props.isFeatured,
+				this.props.isEligibleVariantForDomainTest && ! this.props.isFeatured,
 		} );
 
 		return (
@@ -343,6 +337,7 @@ class DomainRegistrationSuggestion extends React.Component {
 				{ ...this.getButtonProps() }
 				showTestCopy={ this.props.showTestCopy }
 				showDesignUpdate={ this.props.showDesignUpdate }
+				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 				isFeatured={ isFeatured }
 			>
 				{ this.renderDomain() }
@@ -357,9 +352,7 @@ const mapStateToProps = ( state, props ) => {
 	const productSlug = get( props, 'suggestion.product_slug' );
 	const productsList = getProductsList( state );
 	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
-	const showTestCopy = get( props, 'showTestCopy', false );
-	const showDesignUpdate = get( props, 'showDesignUpdate', false );
-	const stripZeros = showTestCopy || showDesignUpdate ? true : false;
+	const stripZeros = props.isEligibleVariantForDomainTest ? true : false;
 
 	return {
 		showHstsNotice: isHstsRequired( productSlug, productsList ),
