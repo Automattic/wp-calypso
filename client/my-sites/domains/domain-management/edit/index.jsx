@@ -21,6 +21,8 @@ import { registrar as registrarNames, type as domainTypes } from 'lib/domains/co
 import SiteRedirect from './site-redirect';
 import Transfer from './transfer';
 import WpcomDomain from './wpcom-domain';
+import WpcomDomainType from './domain-types/wpcom-domain-type';
+import config from 'config';
 
 /**
  * Style dependencies
@@ -30,7 +32,14 @@ import './style.scss';
 class Edit extends React.Component {
 	render() {
 		const domain = this.props.domains && getSelectedDomain( this.props );
-		const Details = this.getDetailsForType( domain && domain.type );
+
+		let Details;
+
+		if ( config.isEnabled( 'domains/new-status-design' ) ) {
+			Details = this.getDomainDetailsForType( domain && domain.type );
+		} else {
+			Details = this.getDetailsForType( domain && domain.type );
+		}
 
 		if ( ! domain || ! Details ) {
 			return <DomainMainPlaceholder goBack={ this.goToDomainManagement } />;
@@ -48,6 +57,15 @@ class Edit extends React.Component {
 			</Main>
 		);
 	}
+
+	getDomainDetailsForType = type => {
+		switch ( type ) {
+			case domainTypes.WPCOM:
+				return WpcomDomainType;
+			default:
+				return null;
+		}
+	};
 
 	getDetailsForType = type => {
 		switch ( type ) {

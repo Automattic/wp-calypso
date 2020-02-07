@@ -38,3 +38,50 @@
 		}
 	}
 }
+
+.wpcom-domain-type__container {
+	.wpcom-domain-type__status-active {
+		border-top: 5px solid #008a20;
+	}
+
+	.wpcom-domain-type__status {
+		h2 {
+			font-size: 32px;
+		}
+		> div {
+			font-size: 16px;
+			display: flex;
+			align-items: center;
+			> svg {
+				margin-right: 5px;
+			}
+			&.domain-types__active {
+				color: #008a20;
+				> svg {
+					fill: #008a20;
+				}
+			}
+		}
+	}
+
+	.wpcom-domain-type__multiline-nav-item {
+		display: flex;
+		align-items: center;
+		.wpcom-domain-type__multiline-nav-item-icon {
+			margin-right: 16px;
+			height: 32px;
+			width: 32px;
+			> svg {
+				fill: var( --color-neutral-60 );
+				width: 32px;
+				height: 32px;
+			}
+		}
+		div {
+			color: var( --color-neutral-90 );
+			small {
+				color: var( --color-neutral-50 );
+			}
+		}
+	}
+}
