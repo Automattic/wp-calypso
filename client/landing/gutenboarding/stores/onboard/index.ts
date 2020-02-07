@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { controls } from '@wordpress/data-controls';
 import { plugins, registerStore, use } from '@wordpress/data';
 import { isSupportSession } from 'lib/user/support-user-interop';
 
@@ -26,7 +27,8 @@ use( plugins.persistence, persistOptions );
 
 registerStore< State >( STORE_KEY, {
 	actions,
-	reducer,
+	controls,
+	reducer: reducer as any,
 	selectors,
 
 	// Remove the persistence plugin for certain conditions - ie, during a support session

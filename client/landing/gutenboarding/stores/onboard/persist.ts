@@ -1,8 +1,9 @@
 /*
-    Defines the options used for the @wp/data persistence plugin, which include a persistent storage implementation to add data expiration handling.
+    Defines the options used for the @wp/data persistence plugin, 
+    which include a persistent storage implementation to add data expiration handling.
 */
 
-const PERSISTANCE_INTERVAL = 7 * 24 * 3600000; // days * hours in days * ms in hour
+const PERSISTENCE_INTERVAL = 7 * 24 * 3600000; // days * hours in days * ms in hour
 const STORAGE_KEY = 'WP_ONBOARD';
 const STORAGE_TS_KEY = 'WP_ONBOARD_TS';
 
@@ -42,7 +43,7 @@ const storageHandler = localStorageSupport() ? window.localStorage : objStorage;
 // Persisted data expires after seven days
 const isFresh = ( timestampStr: string ): boolean => {
 	const timestamp = Number( timestampStr );
-	return Boolean( timestamp ) && timestamp + PERSISTANCE_INTERVAL > Date.now();
+	return Boolean( timestamp ) && timestamp + PERSISTENCE_INTERVAL > Date.now();
 };
 
 // Check for "fresh" query param
