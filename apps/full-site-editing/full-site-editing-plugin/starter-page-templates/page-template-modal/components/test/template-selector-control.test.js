@@ -52,7 +52,7 @@ describe( 'TemplateSelectorControl', () => {
 			);
 
 			expect( getByText( 'Select a Template...' ) ).toBeInTheDocument();
-			expect( getByText( 'Blank' ) ).toBeInTheDocument();
+			expect( getByText( ( content, element ) => element.value === 'blank' ) ).toBeInTheDocument();
 			expect( document.querySelectorAll( 'button.template-selector-item__label' ) ).toHaveLength(
 				4
 			);
@@ -119,7 +119,7 @@ describe( 'TemplateSelectorControl', () => {
 				/>
 			);
 
-			fireEvent.click( getByText( 'Template 3' ) );
+			fireEvent.click( getByText( ( content, element ) => element.value === 'template-3' ) );
 
 			expect( onSelectSpy ).toHaveBeenCalled();
 		} );
@@ -157,7 +157,7 @@ describe( 'TemplateSelectorControl', () => {
 			);
 
 			expect( getByText( 'Select a Template...' ) ).toBeInTheDocument();
-			expect( getByText( 'Blank' ) ).toBeInTheDocument();
+			expect( getByText( ( content, element ) => element.value === 'blank' ) ).toBeInTheDocument();
 		} );
 	} );
 
