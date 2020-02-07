@@ -115,7 +115,9 @@ const exported = {
 	},
 
 	sidebar( context, next ) {
-		context.secondary = <AsyncLoad require="reader/sidebar" path={ context.path } />;
+		context.secondary = (
+			<AsyncLoad require="reader/sidebar" path={ context.path } placeholder={ null } />
+		);
 
 		next();
 	},
@@ -195,6 +197,7 @@ const exported = {
 				showPrimaryFollowButtonOnCards={ false }
 				suppressSiteNameLink={ true }
 				showBack={ userHasHistory( context ) }
+				placeholder={ null }
 			/>
 		);
 		next();
@@ -229,6 +232,7 @@ const exported = {
 				showPrimaryFollowButtonOnCards={ false }
 				suppressSiteNameLink={ true }
 				showBack={ userHasHistory( context ) }
+				placeholder={ null }
 			/>
 		);
 		next();
@@ -263,6 +267,7 @@ const exported = {
 				) }
 				showPrimaryFollowButtonOnCards={ false }
 				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
+				placeholder={ null }
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
