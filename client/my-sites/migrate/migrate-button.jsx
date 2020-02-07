@@ -39,7 +39,7 @@ class MigrateButton extends Component {
 	render() {
 		return (
 			<Button primary busy={ this.state.busy } onClick={ this.handleClick }>
-				Continue
+				{ this.props.children }
 			</Button>
 		);
 	}

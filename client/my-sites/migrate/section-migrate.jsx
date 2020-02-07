@@ -479,7 +479,7 @@ class SectionMigrate extends Component {
 						migrationElement = (
 							<StepImportOrMigrate
 								onJetpackSelect={ this.handleJetpackSelect }
-								sourceSite={ this.state.siteInfo }
+								sourceSiteInfo={ this.state.siteInfo }
 								targetSite={ targetSite }
 								targetSiteSlug={ targetSiteSlug }
 								sourceHasJetpack={ this.state.isJetpackConnected }
@@ -488,7 +488,9 @@ class SectionMigrate extends Component {
 						);
 						break;
 					case 'upgrade':
-						migrationElement = <StepUpgrade startMigration={ this.startMigration } />;
+						migrationElement = (
+							<StepUpgrade startMigration={ this.startMigration } targetSite={ targetSite } />
+						);
 						break;
 					case 'input':
 					default:

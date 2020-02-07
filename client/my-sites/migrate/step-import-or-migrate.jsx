@@ -17,7 +17,6 @@ import CardHeading from 'components/card-heading';
  */
 import './section-migrate.scss';
 import ImportTypeChoice from 'my-sites/migrate/components/import-type-choice';
-import MigrateButton from 'my-sites/migrate/migrate-button';
 import { get } from 'lodash';
 import { redirectTo } from 'my-sites/migrate/helpers';
 import SitesBlock from 'my-sites/migrate/components/sites-block';
@@ -69,16 +68,18 @@ class StepImportOrMigrate extends Component {
 	};
 
 	render() {
-		const { targetSite, targetSiteSlug, sourceHasJetpack, sourceSite } = this.props;
+		const { targetSite, targetSiteSlug, sourceHasJetpack, sourceSite, sourceSiteInfo } = this.props;
 		const backHref = `/migrate/${ targetSiteSlug }`;
-
-		const targetSiteDomain = get( targetSite, 'domain' );
 
 		return (
 			<>
 				<HeaderCake backHref={ backHref }>Import from WordPress</HeaderCake>
 
-				<SitesBlock sourceSite={ sourceSite } targetSite={ targetSite } />
+				<SitesBlock
+					sourceSite={ sourceSite }
+					sourceSiteInfo={ sourceSiteInfo }
+					targetSite={ targetSite }
+				/>
 
 				<CompactCard>
 					<CardHeading>What do you want to import?</CardHeading>
@@ -103,10 +104,9 @@ class StepImportOrMigrate extends Component {
 					/>
 					<div className="migrate__buttons-wrapper">
 						{ this.state.chosenImportType === 'everything' ? (
-							<MigrateButton
-								onClick={ this.props.onJetpackSelect }
-								targetSiteDomain={ targetSiteDomain }
-							/>
+							<Button primary onClick={ this.props.onJetpackSelect }>
+								Continue
+							</Button>
 						) : null }
 						{ this.state.chosenImportType === 'content-only' ? (
 							<Button primary onClick={ this.handleImportRedirect }>
