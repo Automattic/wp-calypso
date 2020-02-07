@@ -11,7 +11,7 @@ let _currentUser;
 /**
  * Gets current user.
  *
- * @returns {object|undefined} Current user.
+ * @returns {Ojbect|undefined} Current user.
  */
 export function getCurrentUser() {
 	return _currentUser;
@@ -20,7 +20,7 @@ export function getCurrentUser() {
 /**
  * Sets current user.
  *
- * @returns {object|undefined} Current user.
+ * @returns {Ojbect|undefined} Current user.
  */
 export function setCurrentUser( { ID, username, email } ) {
 	const userData = { ID: parseInt( ID, 10 ), username, email };

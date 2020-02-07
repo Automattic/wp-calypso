@@ -11,24 +11,8 @@
 
 ## Getting started
 
-You will need to generate a `config/local-decrypted.json` file by following these [fieldguide steps](https://fieldguide.automattic.com/automated-end-to-end-testing/).
+You will need to be in the /test/e2e directory to run the tests
 
-```bash
-# in another terminal session/tab start the devlopment server
-npm start
-
-# in the e2e tests tab
-cd test/e2e
-npm ci
-# Follow these instructions to get the secret (https://fieldguide.automattic.com/automated-end-to-end-testing/
-export CONFIG_KEY='<SECRET_FROM_SECRET_STORE>' 
-export NODE_CONFIG_ENV='decrypted'
-npm run decryptconfig
-# a file `config/local-decrypted.json` will be generated and ignored by git. Make sure to set the `NODE_CONFIG_ENV` variable on every bash/zsh session
-
-# now run tests
-./run.sh -g
-```
 
 ## To run the default specs in parallel (in default browser sizes - mobile and desktop)
 

@@ -3,7 +3,7 @@
  */
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
-import { map, sampleSize, times } from 'lodash';
+import { map, sampleSize } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -11,25 +11,10 @@ import { map, sampleSize, times } from 'lodash';
 import { getLocaleSlug } from 'lib/i18n-utils';
 import { suggestions } from 'reader/search-stream/suggestions';
 import getReaderFollowedTags from 'state/selectors/get-reader-followed-tags';
-
-function createRandomId( randomBytesLength = 9 ) {
-	// 9 * 4/3 = 12
-	// this is to avoid getting padding of a random byte string when it is base64 encoded
-	let randomBytes;
-
-	if ( window.crypto && window.crypto.getRandomValues ) {
-		randomBytes = new Uint8Array( randomBytesLength );
-		window.crypto.getRandomValues( randomBytes );
-	} else {
-		randomBytes = times( randomBytesLength, () => Math.floor( Math.random() * 256 ) );
-	}
-
-	return window.btoa( String.fromCharCode.apply( String, randomBytes ) );
-}
+import analytics from 'lib/analytics';
 
 /**
  * Build suggestions from subscribed tags
- *
  * @param  {number} count The number of suggestions required
  * @param  {Array} tags  An array of subscribed tags
  * @returns {Array}       An array of suggestions, or null if no tags where provided
@@ -63,7 +48,7 @@ function suggestionWithRailcar( text, ui_algo, position ) {
 	return {
 		text: text,
 		railcar: {
-			railcar: createRandomId() + '-' + position,
+			railcar: analytics.tracks.createRandomId() + '-' + position,
 			ui_algo: ui_algo,
 			ui_position: position,
 			rec_result: text,
@@ -79,7 +64,7 @@ function getSuggestions( count, tags ) {
 		return null;
 	}
 
-	const newSuggestions = tagSuggestions.length ? tagSuggestions : suggestionsFromPicks( count );
+	const newSuggestions = !! tagSuggestions.length ? tagSuggestions : suggestionsFromPicks( count );
 
 	return newSuggestions;
 }
