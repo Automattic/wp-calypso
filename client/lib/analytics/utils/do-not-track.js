@@ -8,7 +8,7 @@ import debug from './debug';
  *
  * @returns {boolean} true if Do Not Track is enabled in the user's browser.
  */
-export default function getDoNotTrack() {
+export default function doNotTrack() {
 	const result = Boolean(
 		window &&
 			// Internet Explorer 11 uses window.doNotTrack rather than navigator.doNotTrack.
