@@ -39,23 +39,28 @@ export function createPaymentMethods( {
 	wpcom,
 	credits,
 	total,
+	subtotal,
 	translate,
-} ) {
+}: {
+	isLoading: boolean;
+	allowedPaymentMethods: Array< string >;
+	storedCards: Array< object >;
+	select: Function;
+	registerStore: Function;
+	wpcom: object;
+	credits: LineItem;
+	total: LineItem;
+	subtotal: LineItem;
+	translate: Function;
+} ): Array< object > {
 	if ( isLoading ) {
 		return [];
 	}
 
-	debug(
-		'creating payment methods; allowedPaymentMethods is',
-		allowedPaymentMethods,
-		'credits is',
-		credits.amount.value,
-		'and total is',
-		total.amount.value
-	);
+	debug( 'creating payment methods; allowedPaymentMethods is', allowedPaymentMethods );
 
 	const fullCreditsPaymentMethod =
-		credits.amount.value > 0 && credits.amount.value >= total.amount.value
+		credits.amount.value > 0 && credits.amount.value >= subtotal.amount.value
 			? createFullCreditsMethod( {
 					registerStore,
 					submitTransaction: submitData =>
@@ -358,4 +363,12 @@ async function wpcomPayPalExpress(
 	payload: PayPalExpressEndpointRequestPayload
 ): Promise< PayPalExpressEndpointResponse > {
 	return wp.undocumented().paypalExpressUrl( payload );
+}
+
+// TODO: we can probably import this from somewhere else
+interface LineItem {
+	amount: {
+		value: number;
+		displayValue: string;
+	};
 }
