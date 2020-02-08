@@ -14,7 +14,6 @@ import {
 	WPCOMCart,
 	WPCOMCartItem,
 	CheckoutCartItem,
-	CheckoutCartTotal,
 } from '../types';
 import { translateWpcomCartToCheckoutCart } from '../lib/translate-cart';
 
@@ -41,7 +40,7 @@ export interface ShoppingCartManager {
 	allowedPaymentMethods: string[];
 	items: WPCOMCartItem[];
 	tax: CheckoutCartItem;
-	total: CheckoutCartTotal;
+	total: CheckoutCartItem;
 	credits: CheckoutCartItem;
 	addItem: ( WPCOMCartItem ) => void;
 	removeItem: ( WPCOMCartItem ) => void;

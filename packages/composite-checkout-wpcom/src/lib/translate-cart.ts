@@ -7,7 +7,6 @@ import {
 	WPCOMCart,
 	WPCOMCartItem,
 	CheckoutCartItem,
-	CheckoutCartTotal,
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
 } from '../types';
@@ -43,7 +42,9 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 		},
 	};
 
-	const totalItem: CheckoutCartTotal = {
+	const totalItem: CheckoutCartItem = {
+		id: 'total',
+		type: 'total',
 		label: 'Total',
 		amount: {
 			currency: currency,

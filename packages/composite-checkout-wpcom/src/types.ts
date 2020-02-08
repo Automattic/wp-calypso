@@ -21,7 +21,6 @@ import {
 	emptyWPCOMCart,
 	CheckoutCartItem,
 	CheckoutCartItemAmount,
-	CheckoutCartTotal,
 } from './types/checkout-cart';
 import {
 	WpcomStoreState,
@@ -52,7 +51,6 @@ export {
 	emptyWPCOMCart,
 	CheckoutCartItem,
 	CheckoutCartItemAmount,
-	CheckoutCartTotal,
 	WpcomStoreState,
 	initialWpcomStoreState,
 	ManagedContactDetails,
