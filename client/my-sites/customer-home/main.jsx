@@ -499,8 +499,6 @@ class Home extends Component {
 			siteSlug,
 			trackAction,
 			expandToolsAndTrack,
-			isStaticHomePage,
-			staticHomePageId,
 			hasChecklistData,
 			siteIsUnlaunched,
 		} = this.props;
