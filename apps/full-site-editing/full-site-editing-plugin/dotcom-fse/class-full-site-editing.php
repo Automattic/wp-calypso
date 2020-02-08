@@ -23,7 +23,7 @@ class Full_Site_Editing {
 	 *
 	 * @var array
 	 */
-	private $template_post_types = [ 'wp_template_part' ];
+	private $template_post_types = array( 'wp_template_part' );
 
 	/**
 	 * Current theme slug.
@@ -43,24 +43,24 @@ class Full_Site_Editing {
 	 * Full_Site_Editing constructor.
 	 */
 	private function __construct() {
-		add_action( 'init', [ $this, 'register_blocks' ], 100 );
-		add_action( 'init', [ $this, 'register_template_post_types' ] );
-		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_script_and_style' ], 100 );
-		add_action( 'the_post', [ $this, 'merge_template_and_post' ] );
-		add_filter( 'wp_insert_post_data', [ $this, 'remove_template_components' ], 10, 2 );
-		add_filter( 'admin_body_class', [ $this, 'toggle_editor_post_title_visibility' ] );
-		add_filter( 'block_editor_settings', [ $this, 'set_block_template' ] );
+		add_action( 'init', array( $this, 'register_blocks' ), 100 );
+		add_action( 'init', array( $this, 'register_template_post_types' ) );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script_and_style' ), 100 );
+		add_action( 'the_post', array( $this, 'merge_template_and_post' ) );
+		add_filter( 'wp_insert_post_data', array( $this, 'remove_template_components' ), 10, 2 );
+		add_filter( 'admin_body_class', array( $this, 'toggle_editor_post_title_visibility' ) );
+		add_filter( 'block_editor_settings', array( $this, 'set_block_template' ) );
 		add_filter( 'body_class', array( $this, 'add_fse_body_class' ) );
 
-		add_filter( 'post_row_actions', [ $this, 'remove_trash_row_action_for_template_post_types' ], 10, 2 );
-		add_filter( 'bulk_actions-edit-wp_template', [ $this, 'remove_trash_bulk_action_for_template_post_type' ] );
-		add_action( 'wp_trash_post', [ $this, 'restrict_template_deletion' ] );
-		add_action( 'before_delete_post', [ $this, 'restrict_template_deletion' ] );
-		add_filter( 'wp_template_type_row_actions', [ $this, 'remove_delete_row_action_for_template_taxonomy' ], 10, 2 );
-		add_filter( 'bulk_actions-edit-wp_template_type', [ $this, 'remove_delete_bulk_action_for_template_taxonomy' ] );
-		add_action( 'pre_delete_term', [ $this, 'restrict_template_taxonomy_deletion' ], 10, 2 );
-		add_action( 'transition_post_status', [ $this, 'restrict_template_drafting' ], 10, 3 );
-		add_action( 'admin_menu', [ $this, 'remove_wp_admin_menu_items' ] );
+		add_filter( 'post_row_actions', array( $this, 'remove_trash_row_action_for_template_post_types' ), 10, 2 );
+		add_filter( 'bulk_actions-edit-wp_template', array( $this, 'remove_trash_bulk_action_for_template_post_type' ) );
+		add_action( 'wp_trash_post', array( $this, 'restrict_template_deletion' ) );
+		add_action( 'before_delete_post', array( $this, 'restrict_template_deletion' ) );
+		add_filter( 'wp_template_type_row_actions', array( $this, 'remove_delete_row_action_for_template_taxonomy' ), 10, 2 );
+		add_filter( 'bulk_actions-edit-wp_template_type', array( $this, 'remove_delete_bulk_action_for_template_taxonomy' ) );
+		add_action( 'pre_delete_term', array( $this, 'restrict_template_taxonomy_deletion' ), 10, 2 );
+		add_action( 'transition_post_status', array( $this, 'restrict_template_drafting' ), 10, 3 );
+		add_action( 'admin_menu', array( $this, 'remove_wp_admin_menu_items' ) );
 
 		$this->theme_slug           = normalize_theme_slug( get_stylesheet() );
 		$this->wp_template_inserter = new WP_Template_Inserter( $this->theme_slug );
@@ -115,13 +115,13 @@ class Full_Site_Editing {
 	 * Enqueue assets.
 	 */
 	public function enqueue_script_and_style() {
-		$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/full-site-editing.asset.php';
+		$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/dotcom-fse.asset.php';
 		$script_dependencies = $asset_file['dependencies'];
 		wp_enqueue_script(
 			'a8c-full-site-editing-script',
-			plugins_url( 'dist/full-site-editing.js', __FILE__ ),
+			plugins_url( 'dist/dotcom-fse.js', __FILE__ ),
 			is_array( $script_dependencies ) ? $script_dependencies : array(),
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/full-site-editing.js' ),
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/dotcom-fse.js' ),
 			true
 		);
 
@@ -137,8 +137,8 @@ class Full_Site_Editing {
 		);
 
 		$style_file = is_rtl()
-			? 'full-site-editing.rtl.css'
-			: 'full-site-editing.css';
+			? 'dotcom-fse.rtl.css'
+			: 'dotcom-fse.css';
 		wp_enqueue_style(
 			'a8c-full-site-editing-style',
 			plugins_url( 'dist/' . $style_file, __FILE__ ),
@@ -154,39 +154,39 @@ class Full_Site_Editing {
 		register_block_type(
 			'a8c/navigation-menu',
 			array(
-				'attributes'      => [
-					'className'             => [
+				'attributes'      => array(
+					'className'             => array(
 						'type'    => 'string',
 						'default' => '',
-					],
-					'align'                 => [
+					),
+					'align'                 => array(
 						'type'    => 'string',
 						'default' => 'wide',
-					],
-					'textAlign'             => [
+					),
+					'textAlign'             => array(
 						'type'    => 'string',
 						'default' => 'center',
-					],
-					'textColor'             => [
+					),
+					'textColor'             => array(
 						'type' => 'string',
-					],
-					'customTextColor'       => [
+					),
+					'customTextColor'       => array(
 						'type' => 'string',
-					],
-					'backgroundColor'       => [
+					),
+					'backgroundColor'       => array(
 						'type' => 'string',
-					],
-					'customBackgroundColor' => [
+					),
+					'customBackgroundColor' => array(
 						'type' => 'string',
-					],
-					'fontSize'              => [
+					),
+					'fontSize'              => array(
 						'type'    => 'string',
 						'default' => 'normal',
-					],
-					'customFontSize'        => [
+					),
+					'customFontSize'        => array(
 						'type' => 'number',
-					],
-				],
+					),
+				),
 				'render_callback' => __NAMESPACE__ . '\render_navigation_menu_block',
 			)
 		);
@@ -616,13 +616,13 @@ class Full_Site_Editing {
 		register_setting(
 			'general',
 			'footercredit',
-			[
-				'show_in_rest' => [
+			array(
+				'show_in_rest' => array(
 					'name' => 'footer_credit',
-				],
+				),
 				'type'         => 'string',
 				'description'  => __( 'WordPress Footer Credit' ),
-			]
+			)
 		);
 	}
 }
