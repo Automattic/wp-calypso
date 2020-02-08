@@ -41,6 +41,7 @@ export interface ShoppingCartManager {
 	items: WPCOMCartItem[];
 	tax: CheckoutCartItem;
 	total: CheckoutCartItem;
+	subtotal: CheckoutCartItem;
 	credits: CheckoutCartItem;
 	addItem: ( WPCOMCartItem ) => void;
 	removeItem: ( WPCOMCartItem ) => void;
@@ -207,6 +208,7 @@ export function useShoppingCart(
 		items: cart.items,
 		tax: cart.tax,
 		total: cart.total,
+		subtotal: cart.subtotal,
 		credits: cart.credits,
 		errors: responseCart.messages?.errors ?? [],
 		allowedPaymentMethods: cart.allowedPaymentMethods,

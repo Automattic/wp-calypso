@@ -43,6 +43,7 @@ export interface WPCOMCart {
 	items: WPCOMCartItem[];
 	tax: CheckoutCartItem;
 	total: CheckoutCartItem;
+	subtotal: CheckoutCartItem;
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
 	credits: CheckoutCartItem;
 }
@@ -61,6 +62,14 @@ export const emptyWPCOMCart = {
 	} as CheckoutCartItem,
 	total: {
 		label: 'Total',
+		amount: {
+			value: 0,
+			currency: '',
+			displayValue: '',
+		} as CheckoutCartItemAmount,
+	} as CheckoutCartItem,
+	subtotal: {
+		label: 'Subtotal',
 		amount: {
 			value: 0,
 			currency: '',
