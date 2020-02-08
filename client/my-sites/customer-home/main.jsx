@@ -273,7 +273,6 @@ class Home extends Component {
 						<div className="customer-home__launch-card-text">
 							<CardHeading>{ translate( 'You launched your site!' ) }</CardHeading>
 							<p className="customer-home__launch-card-subtext">
-								{ ' ' }
 								{ this.getChecklistSubHeaderText() }
 							</p>
 						</div>
