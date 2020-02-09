@@ -11,7 +11,7 @@ import { get } from 'lodash';
  */
 import { Card } from '@automattic/components';
 import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
+import VerticalNavItemMulti from '../vertical-nav/item-multi';
 import { domainManagementChangeSiteAddress, domainAddNew } from 'my-sites/domains/paths';
 import { type as domainTypes } from 'lib/domains/constants';
 import { getDomainTypeText } from 'lib/domains';
@@ -80,17 +80,13 @@ class WpcomDomainType extends React.Component {
 		}
 
 		return (
-			<VerticalNavItem
+			<VerticalNavItemMulti
 				path={ domainAddNew( this.props.selectedSite.slug ) }
 				onClick={ this.handlePickCustomDomainClick }
-				className="wpcom-domain-type__multiline-nav-item"
-			>
-				<MaterialIcon icon="search" className="wpcom-domain-type__multiline-nav-item-icon" />
-				<div>
-					<div>{ this.props.translate( 'Pick a custom domain' ) }</div>
-					<small>{ this.props.translate( 'Register or transfer custom domain name' ) }</small>
-				</div>
-			</VerticalNavItem>
+				materialIcon="search"
+				text={ this.props.translate( 'Pick a custom domain' ) }
+				description={ this.props.translate( 'Register or transfer custom domain name' ) }
+			/>
 		);
 	}
 
@@ -105,8 +101,7 @@ class WpcomDomainType extends React.Component {
 		const path = domainManagementChangeSiteAddress( this.props.selectedSite.slug, domain.name );
 
 		return (
-			<VerticalNavItem
-				className="wpcom-domain-type__multiline-nav-item"
+			<VerticalNavItemMulti
 				path={
 					isWpcomDomain
 						? path
@@ -116,17 +111,14 @@ class WpcomDomainType extends React.Component {
 				onClick={
 					isWpcomDomain ? this.handleChangeSiteAddressClick : this.handleEditSiteAddressClick
 				}
-			>
-				<MaterialIcon icon="language" className="wpcom-domain-type__multiline-nav-item-icon" />
-				<div>
-					<div>
-						{ isWpcomDomain
-							? this.props.translate( 'Change WordPress.com Site Address' )
-							: this.props.translate( 'Edit Site Address' ) }
-					</div>
-					<small>{ domain.name }</small>
-				</div>
-			</VerticalNavItem>
+				materialIcon="language"
+				text={
+					isWpcomDomain
+						? this.props.translate( 'Change WordPress.com Site Address' )
+						: this.props.translate( 'Edit Site Address' )
+				}
+				description={ domain.name }
+			/>
 		);
 	}
 
@@ -144,11 +136,8 @@ class WpcomDomainType extends React.Component {
 			domain: { name: domain_name },
 		} = this.props;
 		return (
-			<div className="wpcom-domain-type__container">
-				<Card
-					compact={ true }
-					className="wpcom-domain-type__status wpcom-domain-type__status-active"
-				>
+			<div className="domain-types__container">
+				<Card compact={ true } className="domain-types__status domain-types__status-active">
 					<h2>{ domain_name }</h2>
 					<div className="domain-types__active">
 						<MaterialIcon icon="check_circle" /> Active

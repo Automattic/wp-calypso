@@ -22,6 +22,7 @@ import SiteRedirect from './site-redirect';
 import Transfer from './transfer';
 import WpcomDomain from './wpcom-domain';
 import WpcomDomainType from './domain-types/wpcom-domain-type';
+import RegisteredDomainType from './domain-types/registered-domain-type';
 import config from 'config';
 
 /**
@@ -60,6 +61,8 @@ class Edit extends React.Component {
 
 	getDomainDetailsForType = type => {
 		switch ( type ) {
+			case domainTypes.REGISTERED:
+				return RegisteredDomainType;
 			case domainTypes.WPCOM:
 				return WpcomDomainType;
 			default:
