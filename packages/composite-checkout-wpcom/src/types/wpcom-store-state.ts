@@ -37,7 +37,9 @@ function touchIfDifferent( newValue: string, oldData: ManagedValue ): ManagedVal
 }
 
 function setErrors( errors: string[] | undefined, oldData: ManagedValue ): ManagedValue {
-	return undefined === errors ? { ...oldData, errors: [] } : { ...oldData, errors };
+	return undefined === errors
+		? { ...oldData, errors: [] }
+		: { ...oldData, errors, isTouched: true };
 }
 
 /*
