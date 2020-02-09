@@ -79,7 +79,7 @@ export default function WPCheckout( {
 	);
 
 	const contactInfo = useSelect( sel => sel( 'wpcom' ).getContactInfo() ) || {};
-	const { setSiteId } = useDispatch( 'wpcom' );
+	const { setSiteId, validateContactInfo } = useDispatch( 'wpcom' );
 
 	// Copy siteId to the store so it can be more easily accessed during payment submission
 	useEffect( () => {
@@ -131,6 +131,7 @@ export default function WPCheckout( {
 					subdivisionCode: contactInfo.state.value,
 				} );
 				// TODO: run validation on the form data
+				validateContactInfo();
 				return isCompleteAndValid( contactInfo );
 			},
 			isEditableCallback: () => isFormEditable( contactInfo ),

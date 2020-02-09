@@ -27,6 +27,7 @@ type WpcomStoreAction =
 	| { type: 'UPDATE_PHONE'; payload: string }
 	| { type: 'UPDATE_PHONE_NUMBER_COUNTRY'; payload: string }
 	| { type: 'UPDATE_POSTAL_CODE'; payload: string }
+	| { type: 'CONTACT_INFO_VALIDATE' }
 	| { type: 'UPDATE_COUNTRY_CODE'; payload: string };
 
 export function useWpcomStore( registerStore, onEvent ) {
@@ -56,6 +57,12 @@ export function useWpcomStore( registerStore, onEvent ) {
 				return updaters.updateCountryCode( state, action.payload );
 			case 'APPLY_DOMAIN_CONTACT_VALIDATION_RESULTS':
 				return updaters.setErrorMessages( state, action.payload );
+			case 'CONTACT_INFO_VALIDATE':
+				// TODO: validate fields as appropriate to the field
+				return updaters.setErrorMessages( state, {
+					countryCode: state.countryCode?.value.length > 0 ? [] : [ '' ],
+					postalCode: state.postalCode?.value.length > 0 ? [] : [ '' ],
+				} );
 			default:
 				return state;
 		}
@@ -90,6 +97,10 @@ export function useWpcomStore( registerStore, onEvent ) {
 		},
 
 		actions: {
+			validateContactInfo(): WpcomStoreAction {
+				return { type: 'CONTACT_INFO_VALIDATE' };
+			},
+
 			applyDomainContactValidationResults(
 				payload: ManagedContactDetailsErrors
 			): WpcomStoreAction {
