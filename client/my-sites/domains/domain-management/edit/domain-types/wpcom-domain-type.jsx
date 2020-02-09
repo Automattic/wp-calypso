@@ -14,11 +14,62 @@ import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import { domainManagementChangeSiteAddress, domainAddNew } from 'my-sites/domains/paths';
 import { type as domainTypes } from 'lib/domains/constants';
-
+import { getDomainTypeText } from 'lib/domains';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import MaterialIcon from 'components/material-icon';
 
 class WpcomDomainType extends React.Component {
+	handleEditSiteAddressClick = () => {
+		const { domain } = this.props;
+		const domainType = getDomainTypeText( domain );
+
+		this.props.recordGoogleEvent(
+			'Domain Management',
+			`Clicked "Edit Site Address" navigation link on a ${ domainType } in Edit`,
+			'Domain Name',
+			domain.name
+		);
+
+		this.props.recordTracksEvent( 'calypso_domain_management_edit_navigation_click', {
+			action: 'edit_site_address',
+			section: domain.type,
+		} );
+	};
+
+	handleChangeSiteAddressClick = () => {
+		const { domain } = this.props;
+		const domainType = getDomainTypeText( domain );
+
+		this.props.recordGoogleEvent(
+			'Domain Management',
+			`Clicked "Change Site Address" navigation link on a ${ domainType } in Edit`,
+			'Domain Name',
+			domain.name
+		);
+
+		this.props.recordTracksEvent( 'calypso_domain_management_change_navigation_click', {
+			action: 'change_site_address',
+			section: domain.type,
+		} );
+	};
+
+	handlePickCustomDomainClick = () => {
+		const { domain } = this.props;
+		const domainType = getDomainTypeText( domain );
+
+		this.props.recordGoogleEvent(
+			'Domain Management',
+			`Clicked "Pick a custom domain" navigation link on a ${ domainType } in Edit`,
+			'Domain Name',
+			domain.name
+		);
+
+		this.props.recordTracksEvent( 'calypso_domain_management_wpcom_domain_add_domain', {
+			action: 'change_site_address',
+			section: domain.type,
+		} );
+	};
+
 	getPickCustomDomain() {
 		const { domain } = this.props;
 
@@ -32,9 +83,13 @@ class WpcomDomainType extends React.Component {
 			<VerticalNavItem
 				path={ domainAddNew( this.props.selectedSite.slug ) }
 				onClick={ this.handlePickCustomDomainClick }
+				className="wpcom-domain-type__multiline-nav-item"
 			>
-				<MaterialIcon icon="search" />
-				{ this.props.translate( 'Pick a custom domain' ) }
+				<MaterialIcon icon="search" className="wpcom-domain-type__multiline-nav-item-icon" />
+				<div>
+					<div>{ this.props.translate( 'Pick a custom domain' ) }</div>
+					<small>{ this.props.translate( 'Register or transfer custom domain name' ) }</small>
+				</div>
 			</VerticalNavItem>
 		);
 	}
@@ -51,6 +106,7 @@ class WpcomDomainType extends React.Component {
 
 		return (
 			<VerticalNavItem
+				className="wpcom-domain-type__multiline-nav-item"
 				path={
 					isWpcomDomain
 						? path
@@ -61,20 +117,14 @@ class WpcomDomainType extends React.Component {
 					isWpcomDomain ? this.handleChangeSiteAddressClick : this.handleEditSiteAddressClick
 				}
 			>
-				<div className="wpcom-domain-type__multiline-nav-item">
-					<div className="wpcom-domain-type__multiline-nav-item-icon">
-						<MaterialIcon icon="language" />
-					</div>
+				<MaterialIcon icon="language" className="wpcom-domain-type__multiline-nav-item-icon" />
+				<div>
 					<div>
-						<div>
-							{ isWpcomDomain
-								? this.props.translate( 'Change Site Address' )
-								: this.props.translate( 'Edit Site Address' ) }
-						</div>
-						<div>
-							<small>{ domain.name }</small>
-						</div>
+						{ isWpcomDomain
+							? this.props.translate( 'Change WordPress.com Site Address' )
+							: this.props.translate( 'Edit Site Address' ) }
 					</div>
+					<small>{ domain.name }</small>
 				</div>
 			</VerticalNavItem>
 		);
