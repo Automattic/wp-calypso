@@ -133,8 +133,6 @@
 		"components:storybook:start": "start-storybook -c packages/components/.storybook",
 		"components:storybook:build": "build-storybook -c packages/components/.storybook -o public/storybook",
 		"media-library:storybook:start": "start-storybook -c packages/media-library/.storybook -h calypso.localhost -p 3001"
-
-
 	},
 	"devDependencies": {
 		"@automattic/babel-plugin-i18n-calypso": "file:./packages/babel-plugin-i18n-calypso",
