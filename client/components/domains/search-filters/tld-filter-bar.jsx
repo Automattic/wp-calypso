@@ -14,9 +14,11 @@ import { connect } from 'react-redux';
  */
 import { Button, CompactCard } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormCheckbox from 'components/forms/form-checkbox';
 import Popover from 'components/popover';
 import TokenField from 'components/token-field';
 import { recordTldFilterSelected } from './analytics';
+import FormLegend from 'components/forms/form-legend';
 
 const HANDLED_FILTER_KEYS = [ 'tlds' ];
 
@@ -99,9 +101,22 @@ export class TldFilterBar extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const className = classNames( 'search-filters__buttons', {
+		const className = classNames( '', {
+			'search-filters__buttons': ! this.props.showDesignUpdate,
+			'search-filters__checkboxes': this.props.showDesignUpdate,
 			'search-filters__tld-filter-bar--is-domain-management': ! this.props.isSignupStep,
 		} );
+
+		if ( this.props.showDesignUpdate ) {
+			return (
+				<CompactCard className={ className }>
+					<FormLegend className="search-filters__filter-by">Filter by: </FormLegend>
+					{ this.renderSuggestedCheckboxes() }
+					{ this.renderPopoverButton() }
+					{ this.state.showPopover && this.renderPopover() }
+				</CompactCard>
+			);
+		}
 
 		return (
 			<CompactCard className={ className }>
@@ -110,6 +125,28 @@ export class TldFilterBar extends Component {
 				{ this.state.showPopover && this.renderPopover() }
 			</CompactCard>
 		);
+	}
+
+	renderSuggestedCheckboxes() {
+		const {
+			lastFilters: { tlds: selectedTlds },
+		} = this.props;
+		const checkboxes = this.props.availableTlds
+			.slice( 0, this.props.numberOfTldsShown )
+			.map( tld => (
+				<div className="search-filters__tld-checkbox-label">
+					<FormCheckbox
+						className={ classNames( 'search-filters__tld-button', 'search-filters__tld-checkbox', {
+							'is-active': includes( selectedTlds, tld ),
+						} ) }
+						checked={ includes( selectedTlds, tld ) }
+						onChange={ this.handleButtonClick }
+					/>
+					<span>.{ tld }</span>
+				</div>
+			) );
+
+		return <div className="search-filters__tld-checkbox-wrapper">{ checkboxes }</div>;
 	}
 
 	renderSuggestedButtons() {
@@ -140,6 +177,7 @@ export class TldFilterBar extends Component {
 			<Button
 				className={ classNames( 'search-filters__popover-button', {
 					'is-active': tlds.length > 0,
+					'search-filters__popover-button-domain-step-test': this.props.showDesignUpdate,
 				} ) }
 				onClick={ this.togglePopover }
 				ref={ this.bindButton }

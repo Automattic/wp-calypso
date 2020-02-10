@@ -89,7 +89,10 @@
 	}
 }
 
-.search-filters__buttons {
+
+
+.search-filters__buttons,
+.search-filters__checkboxes {
 	display: flex;
 	flex-flow: row;
 	justify-content: space-between;
@@ -113,11 +116,33 @@
 	// Increase specificity to override button styles in signup
 	body.is-section-signup .layout & {
 		button.search-filters__tld-button,
+		input.search-filters__tld-checkbox,
 		button.search-filters__popover-button {
 			font-size: 14px;
 			padding-top: 0.5em;
 			padding-bottom: 0.5em;
 		}
+
+		button.search-filters__popover-button-domain-step-test {
+			flex: 1 0 0;
+		}
+
+		.search-filters__filter-by {
+			margin-right: 2em;
+		}
+
+		.search-filters__tld-checkbox-wrapper {
+			display: flex;
+			flex: 1 0 auto;
+			justify-content: space-between;
+			margin-right: 1em;
+
+			& .search-filters__tld-checkbox-label span {
+				margin-left: 2em;
+			}
+		}
+
+		
 	}
 
 	@include breakpoint( '<960px' ) {
@@ -151,6 +176,10 @@
 			display: none;
 		}
 	}
+}
+
+.search-filters__checkboxes {
+	align-items: center;
 }
 
 .search-filters__popover-button .gridicon {

@@ -1257,6 +1257,7 @@ class RegisterDomainStep extends React.Component {
 						onReset={ this.onFiltersReset }
 						onSubmit={ this.onFiltersSubmit }
 						showPlaceholder={ this.state.loadingResults || ! this.getSuggestionsFromProps() }
+						showDesignUpdate={ this.props.showDesignUpdate }
 					/>
 				) }
 			</DomainSearchResults>
