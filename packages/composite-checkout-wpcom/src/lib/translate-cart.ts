@@ -56,9 +56,9 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 	};
 
 	const subtotalItem: CheckoutCartItem = {
-		id: 'total',
-		type: 'total',
-		label: 'Total',
+		id: 'subtotal',
+		type: 'subtotal',
+		label: 'Subtotal',
 		amount: {
 			currency: currency,
 			value: sub_total_integer,
