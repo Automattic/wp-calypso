@@ -33,7 +33,7 @@ import { getPlanBySlug } from 'state/plans/selectors';
 import { createPaymentMethods, useStoredCards } from './composite-checkout-payment-methods';
 import notices from 'notices';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
-import { isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite, isNewSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import { FormCountrySelect } from 'components/forms/form-country-select';
 import getCountries from 'state/selectors/get-countries';
@@ -81,6 +81,7 @@ export default function CompositeCheckout( {
 		state => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
 	);
 	const adminUrl = useSelector( state => getSelectedSite( state ) );
+	const isNewlyCreatedSite = useSelector( state => isNewSite( state, siteId ) );
 
 	const onPaymentComplete = useCallback( () => {
 		debug( 'payment completed successfully' );
@@ -94,9 +95,20 @@ export default function CompositeCheckout( {
 				cart,
 				isJetpackNotAtomic,
 				product,
+				isNewlyCreatedSite,
 			} )
 		);
-	}, [ siteSlug, adminUrl, isJetpackNotAtomic, product, redirectTo, feature, purchaseId, cart ] );
+	}, [
+		isNewlyCreatedSite,
+		siteSlug,
+		adminUrl,
+		isJetpackNotAtomic,
+		product,
+		redirectTo,
+		feature,
+		purchaseId,
+		cart,
+	] );
 
 	const showErrorMessage = useCallback(
 		error => {
