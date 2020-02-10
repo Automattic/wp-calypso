@@ -614,8 +614,8 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 			is_coupon_applied: true,
 		};
 
-		const clientCart = translateWpcomCartToCheckoutCart( ( string, variable ) => {
-			return string.replace( '%s', variable );
+		const clientCart = translateWpcomCartToCheckoutCart( ( string, substitution ) => {
+			return substitution ? string.replace( '%s', substitution.args ) : string;
 		}, serverResponse );
 
 		it( 'has a total property', function() {
