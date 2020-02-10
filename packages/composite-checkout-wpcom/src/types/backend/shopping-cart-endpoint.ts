@@ -97,6 +97,7 @@ export interface ResponseCartProduct {
 	meta: string;
 	volume: number;
 	extra: object;
+	uuid: string;
 }
 
 export const prepareRequestCartProduct: ( ResponseCartProduct ) => RequestCartProduct = ( {

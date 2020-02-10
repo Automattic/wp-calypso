@@ -49,6 +49,7 @@ describe( 'CompositeCheckout', () => {
 					volume: 1,
 					item_subtotal_integer: 500,
 					item_subtotal_display: 'R$5',
+					uuid: '0',
 				},
 				{
 					product_name: 'WordPress.com Personal',
@@ -64,6 +65,7 @@ describe( 'CompositeCheckout', () => {
 					volume: 1,
 					item_subtotal_integer: 14400,
 					item_subtotal_display: 'R$144',
+					uuid: '1',
 				},
 			],
 			tax: {

@@ -48,7 +48,7 @@ export async function mockSetCartEndpoint( {
 }
 
 function convertRequestProductToResponseProduct( currency ) {
-	return product => {
+	return ( product, index ) => {
 		const { product_id } = product;
 
 		switch ( product_id ) {
@@ -65,6 +65,7 @@ function convertRequestProductToResponseProduct( currency ) {
 					meta: '',
 					volume: 1,
 					extra: {},
+					uuid: index.toString(),
 				};
 		}
 
@@ -77,6 +78,7 @@ function convertRequestProductToResponseProduct( currency ) {
 			item_subtotal_integer: 0,
 			item_subtotal_display: '$0',
 			item_tax: 0,
+			uuid: index.toString(),
 		};
 	};
 }
