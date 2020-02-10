@@ -70,8 +70,8 @@ export default function CompositeCheckout( {
 	overrideCountryList,
 	redirectTo,
 	feature,
+	purchaseId,
 	// TODO: handle these also
-	// purchaseId,
 	// couponCode,
 } ) {
 	const translate = useTranslate();
@@ -88,12 +88,13 @@ export default function CompositeCheckout( {
 				siteSlug,
 				adminUrl,
 				redirectTo,
+				purchaseId,
 				feature,
 				isJetpackNotAtomic,
 				product,
 			} )
 		);
-	}, [ siteSlug, adminUrl, isJetpackNotAtomic, product, redirectTo, feature ] );
+	}, [ siteSlug, adminUrl, isJetpackNotAtomic, product, redirectTo, feature, purchaseId ] );
 
 	const showErrorMessage = useCallback(
 		error => {
