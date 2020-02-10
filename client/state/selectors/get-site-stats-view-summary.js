@@ -9,6 +9,8 @@ import moment from 'moment';
  */
 import { getSiteStatsForQuery } from 'state/stats/lists/selectors';
 
+import 'state/stats/init';
+
 /**
  * Returns the date of the last site stats query
  *

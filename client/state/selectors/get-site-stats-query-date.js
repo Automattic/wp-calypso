@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getSerializedStatsQuery } from 'state/stats/lists/utils';
+
+import 'state/stats/init';
 
 /**
  * Returns the date of the last site stats query

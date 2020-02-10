@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import wpcom from 'lib/wp';
 import {
 	SITE_STATS_RECEIVE,
@@ -13,6 +12,8 @@ import {
  * External dependencies
  */
 import { includes } from 'lodash';
+
+import 'state/stats/init';
 
 /**
  * Returns an action object to be used in signalling that stats for a given type of stats and query
