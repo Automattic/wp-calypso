@@ -6,8 +6,7 @@ import React, { useLayoutEffect, useRef, FunctionComponent } from 'react';
 import classnames from 'classnames';
 import PageLayoutSelector from './page-layout-selector';
 import { partition } from 'lodash';
-import { Portal } from 'reakit/Portal';
-import { useDialogState, Dialog, DialogBackdrop } from 'reakit/Dialog';
+import { useDialogState, Dialog } from 'reakit/Dialog';
 import { useSpring, animated } from 'react-spring';
 import { useHistory } from 'react-router-dom';
 import { Step, usePath } from '../../path';
@@ -155,14 +154,6 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 					ullamco laboris nisi ut aliquip ex ea commodo consequat.
 				</div>
 			</animated.div>
-
-			<Portal>
-				<DialogBackdrop
-					visible={ showPageSelector }
-					className="design-selector__page-layout-backdrop"
-				/>
-			</Portal>
-
 			<Dialog
 				{ ...dialog }
 				hide={ () => {
