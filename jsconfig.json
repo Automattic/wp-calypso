@@ -18,7 +18,7 @@
 		"**/build-style/*",
 		"**/dist/*",
 		"cached-results.json",
-		"stats.json",
+		"client/stats.json",
 		"client/server/bundler/assets-*.json",
 		"client/server/devdocs/search-index.js"
 	]
