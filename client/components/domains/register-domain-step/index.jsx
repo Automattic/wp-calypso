@@ -927,7 +927,7 @@ class RegisterDomainStep extends React.Component {
 	getSubdomainSuggestions = ( domain, timestamp ) => {
 		const subdomainQuery = {
 			query: domain,
-			quantity: this.props.includeDotBlogSubdomain ? 2 : 1,
+			quantity: this.props.includeWordPressDotCom + this.props.includeDotBlogSubdomain,
 			include_wordpressdotcom: true,
 			include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
 			only_wordpressdotcom: this.props.includeDotBlogSubdomain,
