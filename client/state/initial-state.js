@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import debugModule from 'debug';
 import { map, pick, throttle } from 'lodash';
 

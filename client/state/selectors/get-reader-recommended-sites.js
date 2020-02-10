@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'state/reader/init';
+
+/**
  * Returns the recommended sites for a given seed.
  *
  *

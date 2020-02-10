@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { get, mapValues, reduce, reduceRight } from 'lodash';
+import { get, mapValues, pick, reduce, reduceRight } from 'lodash';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies
  */
-import { APPLY_STORED_STATE, SERIALIZE } from 'state/action-types';
+import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { SerializationResult } from 'state/serialization-result';
 import { withoutPersistence } from './without-persistence';
 
@@ -165,6 +165,9 @@ function createCombinedReducer( reducers ) {
 		switch ( action.type ) {
 			case SERIALIZE:
 				return serializeState( reducers, state, action );
+
+			case DESERIALIZE:
+				return combined( pick( state, Object.keys( reducers ) ), action );
 
 			case APPLY_STORED_STATE:
 				return applyStoredState( reducers, state, action );

@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-
 import { filter, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
+
+import 'state/reader/init';
 
 /**
  * Selector for all of the reader tags a user is following. Sorted by tag slug

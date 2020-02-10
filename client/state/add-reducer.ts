@@ -20,7 +20,7 @@ interface OptionalStorageKey {
 	storageKey?: string;
 }
 
-interface WithAddReducer {
+export interface WithAddReducer {
 	addReducer: ( keys: string[], subReducer: Reducer & OptionalStorageKey ) => void;
 }
 

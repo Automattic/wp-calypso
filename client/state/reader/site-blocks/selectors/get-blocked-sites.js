@@ -1,9 +1,13 @@
 /**
  * External dependencies
  */
-
 import { map, pickBy } from 'lodash';
 import createSelector from 'lib/create-selector';
+
+/**
+ * Internal dependencies
+ */
+import 'state/reader/init';
 
 /**
  * Returns a list of site IDs blocked by the user

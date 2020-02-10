@@ -5,6 +5,8 @@ import { READER_FEED_SEARCH_REQUEST, READER_FEED_SEARCH_RECEIVE } from 'state/ac
 
 import 'state/data-layer/wpcom/read/feed';
 
+import 'state/reader/init';
+
 export const SORT_BY_LAST_UPDATED = 'last_updated';
 export const SORT_BY_RELEVANCE = 'relevance';
 

@@ -16,6 +16,8 @@ import { getStreamType } from 'reader/utils';
 
 import 'state/data-layer/wpcom/read/streams';
 
+import 'state/reader/init';
+
 /**
  * Fetch posts into a stream
  *
@@ -24,7 +26,6 @@ import 'state/data-layer/wpcom/read/streams';
  * fetch the next page of results, but could be used to fetch arbitrary ranges.
  *
  * @param  {string} streamKey The stream to fetch posts for
- * @param  {object} query    The query for posts. Parameters vary by stream type.
  * @returns {object}          The action object
  */
 export function requestPage( { streamKey, pageHandle, isPoll = false, gap = null } ) {

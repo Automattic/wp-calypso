@@ -1,3 +1,8 @@
+/**
+ * Internal dependencies
+ */
+import 'state/reader/init';
+
 const emptyStream = {
 	items: [],
 	pendingItems: { lastUpdated: null, items: [] },

@@ -14,6 +14,8 @@ import { keyForPost, keyToString } from 'reader/post-key';
 import { hasPostBeenSeen } from './selectors';
 import { receiveLikes } from 'state/posts/likes/actions';
 
+import 'state/reader/init';
+
 // TODO: make underlying lib/analytics and reader/stats capable of existing in test code without mocks
 // OR switch to analytics middleware
 let analytics = { tracks: { recordEvent: () => {} }, mc: { bumpStat: () => {} } };
