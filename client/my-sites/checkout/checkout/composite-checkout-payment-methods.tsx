@@ -11,7 +11,10 @@ import {
 	createExistingCardMethod,
 	createFullCreditsMethod,
 } from '@automattic/composite-checkout';
-import { prepareDomainContactDetails } from '@automattic/composite-checkout-wpcom';
+import {
+	prepareDomainContactDetails,
+	CheckoutCartItem,
+} from '@automattic/composite-checkout-wpcom';
 import wp from 'lib/wp';
 
 /**
@@ -48,9 +51,9 @@ export function createPaymentMethods( {
 	select: Function;
 	registerStore: Function;
 	wpcom: object;
-	credits: LineItem;
-	total: LineItem;
-	subtotal: LineItem;
+	credits: CheckoutCartItem;
+	total: CheckoutCartItem;
+	subtotal: CheckoutCartItem;
 	translate: Function;
 } ): Array< object > {
 	if ( isLoading ) {
@@ -363,12 +366,4 @@ async function wpcomPayPalExpress(
 	payload: PayPalExpressEndpointRequestPayload
 ): Promise< PayPalExpressEndpointResponse > {
 	return wp.undocumented().paypalExpressUrl( payload );
-}
-
-// TODO: we can probably import this from somewhere else
-interface LineItem {
-	amount: {
-		value: number;
-		displayValue: string;
-	};
 }
