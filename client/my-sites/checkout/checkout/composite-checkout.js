@@ -42,6 +42,7 @@ import { StateSelect } from 'my-sites/domains/components/form';
 import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
 import { getThankYouPageUrl } from './composite-checkout-thank-you';
 import { getSelectedSite } from 'state/ui/selectors';
+import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-signup-destination';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -82,6 +83,9 @@ export default function CompositeCheckout( {
 	);
 	const adminUrl = useSelector( state => getSelectedSite( state ) );
 	const isNewlyCreatedSite = useSelector( state => isNewSite( state, siteId ) );
+	const isEligibleForSignupDestinationResult = useSelector( state =>
+		isEligibleForSignupDestination( state, siteId, cart )
+	);
 
 	const onPaymentComplete = useCallback( () => {
 		debug( 'payment completed successfully' );
@@ -96,10 +100,12 @@ export default function CompositeCheckout( {
 				isJetpackNotAtomic,
 				product,
 				isNewlyCreatedSite,
+				isEligibleForSignupDestination: isEligibleForSignupDestinationResult,
 			} )
 		);
 	}, [
 		isNewlyCreatedSite,
+		isEligibleForSignupDestinationResult,
 		siteSlug,
 		adminUrl,
 		isJetpackNotAtomic,
