@@ -130,3 +130,15 @@ export const prepareRequestCart: ( ResponseCart ) => RequestCart = ( {
 		// extra: any[]; // TODO: fix this
 	} as RequestCart;
 };
+
+export function removeItemFromResponseCart(
+	cart: ResponseCart,
+	uuidToRemove: string
+): ResponseCart {
+	return {
+		...cart,
+		products: cart.products.filter( product => {
+			return product.uuid !== uuidToRemove;
+		} ),
+	};
+}
