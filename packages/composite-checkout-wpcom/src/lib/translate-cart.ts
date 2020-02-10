@@ -61,7 +61,7 @@ export function translateWpcomCartToCheckoutCart(
 
 	const couponLineItem: CheckoutCartItem = {
 		id: 'coupon-line-item',
-		label: translate( 'Coupon: %s', coupon ),
+		label: translate( 'Coupon: %s', { args: coupon } ),
 		type: 'coupon',
 		amount: {
 			currency: currency,
