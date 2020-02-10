@@ -33,6 +33,8 @@ import {
 
 const debug = debugFactory( 'calypso:composite-checkout-payment-methods' );
 
+let isCreated = false;
+
 export function createPaymentMethods( {
 	isLoading,
 	allowedPaymentMethods,
@@ -56,13 +58,19 @@ export function createPaymentMethods( {
 	total: CheckoutCartItem;
 	subtotal: CheckoutCartItem;
 	translate: Function;
-	getThankYouUrl: Function,
+	getThankYouUrl: Function;
 } ): Array< object > {
 	if ( isLoading ) {
 		return [];
 	}
 
 	debug( 'creating payment methods; allowedPaymentMethods is', allowedPaymentMethods );
+	if ( isCreated ) {
+		throw new Error(
+			'Payment methods must not be re-created; they have state that will be overwritten'
+		);
+	}
+	isCreated = true;
 
 	const fullCreditsPaymentMethod =
 		credits.amount.value > 0 && credits.amount.value >= subtotal.amount.value
