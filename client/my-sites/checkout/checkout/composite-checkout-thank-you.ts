@@ -27,6 +27,7 @@ import { isValidFeatureKey } from 'lib/plans/features-list';
 import { JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
 import { canDomainAddGSuite } from 'lib/gsuite';
 import { abtest } from 'lib/abtest';
+import { persistSignupDestination, retrieveSignupDestination } from 'signup/utils';
 
 export function getThankYouPageUrl( {
 	siteSlug,
@@ -40,9 +41,8 @@ export function getThankYouPageUrl( {
 	cart = {},
 	isJetpackNotAtomic,
 	product,
-	// TODO: use actual cookie functions as defaults
-	getUrlFromCookie = () => null,
-	saveUrlToCookie = () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+	getUrlFromCookie = retrieveSignupDestination,
+	saveUrlToCookie = persistSignupDestination,
 	isNewlyCreatedSite,
 	previousRoute,
 	isEligibleForSignupDestination,
