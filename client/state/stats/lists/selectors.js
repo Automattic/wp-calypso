@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, isArray, map, flatten } from 'lodash';
+import { get, isArray, map, flatten, round } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -144,4 +144,65 @@ export function getSiteStatsCSVData( state, siteId, statType, query ) {
 			return buildExportArray( item );
 		} )
 	);
+}
+
+/**
+ * Returns the date of the last site stats query
+ *
+ * @param  {object}  state    Global state tree
+ * @param  {number}  siteId   Site ID
+ * @param  {string}  statType Type of stat
+ * @param  {object}  query    Stats query object
+ * @returns {Date}             Date of the last site stats query
+ */
+export function getSiteStatsQueryDate( state, siteId, statType, query ) {
+	const serializedQuery = getSerializedStatsQuery( query );
+	return get( state.stats.lists.requests, [ siteId, statType, serializedQuery, 'date' ] );
+}
+
+/**
+ * Returns the date of the last site stats query
+ *
+ * @param   {object}  state    Global state tree
+ * @param   {number}  siteId   Site ID
+ * @returns {object}           Stats View Summary
+ */
+export function getSiteStatsViewSummary( state, siteId ) {
+	const query = {
+		stat_fields: 'views',
+		quantity: -1,
+	};
+	const viewData = getSiteStatsForQuery( state, siteId, 'statsVisits', query );
+
+	if ( ! viewData || ! viewData.data ) {
+		return null;
+	}
+
+	const viewSummary = {};
+
+	viewData.data.forEach( item => {
+		const [ date, value ] = item;
+		const momentDate = moment( date );
+		const { years, months } = momentDate.toObject();
+
+		if ( ! viewSummary[ years ] ) {
+			viewSummary[ years ] = {};
+		}
+
+		if ( ! viewSummary[ years ][ months ] ) {
+			viewSummary[ years ][ months ] = {
+				total: 0,
+				data: [],
+				average: 0,
+				daysInMonth: momentDate.daysInMonth(),
+			};
+		}
+		viewSummary[ years ][ months ].total += value;
+		viewSummary[ years ][ months ].data.push( item );
+		const average =
+			viewSummary[ years ][ months ].total / viewSummary[ years ][ months ].daysInMonth;
+		viewSummary[ years ][ months ].average = round( average, 0 );
+	} );
+
+	return viewSummary;
 }

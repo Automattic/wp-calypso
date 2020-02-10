@@ -10,9 +10,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import getSiteStatsQueryDate from 'state/selectors/get-site-stats-query-date';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
+import { isRequestingSiteStatsForQuery, getSiteStatsQueryDate } from 'state/stats/lists/selectors';
 import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
 import { withLocalizedMoment } from 'components/localized-moment';
 
