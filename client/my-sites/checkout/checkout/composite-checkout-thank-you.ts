@@ -30,7 +30,7 @@ import { abtest } from 'lib/abtest';
 
 export function getThankYouPageUrl( {
 	siteSlug,
-	site,
+	adminUrl,
 	redirectTo,
 	transaction,
 	purchaseId,
@@ -38,28 +38,28 @@ export function getThankYouPageUrl( {
 	cart = {},
 	isJetpackNotAtomic,
 	product,
-	getUrlFromCookie = () => null, // TODO: use actual cookie functions as defaults
-	saveUrlToCookie = () => {}, // TODO: use actual cookie functions as defaults
+	// TODO: use actual cookie functions as defaults
+	getUrlFromCookie = () => null,
+	saveUrlToCookie = () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
 	isNewlyCreatedSite,
 	previousRoute,
 	isEligibleForSignupDestination,
 }: {
-	siteSlug?: string | number,
-	site?: object,
-	redirectTo?: string,
-	transaction?: object,
-	purchaseId?: string | number,
-	feature?: string,
-	cart?: object,
-	isJetpackNotAtomic?: boolean,
-	product?: string,
-	getUrlFromCookie: () => string | null,
-	saveUrlToCookie: (_: string) => void,
-	isNewlyCreatedSite?: boolean,
-	previousRoute?: string,
-	isEligibleForSignupDestination?: boolean,
+	siteSlug?: string | number;
+	adminUrl?: string;
+	redirectTo?: string;
+	transaction?: object;
+	purchaseId?: string | number;
+	feature?: string;
+	cart?: object;
+	isJetpackNotAtomic?: boolean;
+	product?: string;
+	getUrlFromCookie: () => string | null;
+	saveUrlToCookie: ( _: string ) => void;
+	isNewlyCreatedSite?: boolean;
+	previousRoute?: string;
+	isEligibleForSignupDestination?: boolean;
 } ) {
-	const adminUrl = site?.options?.admin_url;
 	const stepResult = transaction?.step?.data;
 
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
