@@ -432,13 +432,15 @@ class Search extends Component {
 	maybeRenderExactMatchToggle() {
 		if ( this.props.showDesignUpdate ) {
 			return (
-				<CompactFormToggle
-					checked={ this.state.exactSldMatchesOnly }
-					onChange={ this.handleOnChange( 'exactSldMatchesOnly' ) }
-					disabled={ false }
-				>
-					Exact text matches
-				</CompactFormToggle>
+				<div className="search__exact-match-toggle">
+					<CompactFormToggle
+						checked={ this.state.exactSldMatchesOnly }
+						onChange={ this.handleOnChange( 'exactSldMatchesOnly' ) }
+						disabled={ false }
+					>
+						<span className="search__exact-match-toggle-label">Exact text matches</span>
+					</CompactFormToggle>
+				</div>
 			);
 		}
 	}
