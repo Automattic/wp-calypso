@@ -23,6 +23,7 @@ import { getRememberedCoupon } from 'lib/cart/actions';
 import { sites } from 'my-sites/controller';
 import config from 'config';
 import CompositeCheckout from './checkout/composite-checkout';
+import CartData from 'components/data/cart';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
@@ -55,15 +56,17 @@ export function checkout( context, next ) {
 
 	if ( config.isEnabled( 'composite-checkout-wpcom' ) ) {
 		context.primary = (
-			<CompositeCheckout
-				siteSlug={ selectedSite?.slug }
-				siteId={ selectedSite?.ID }
-				product={ product }
-				purchaseId={ purchaseId }
-				couponCode={ couponCode }
-				redirectTo={ context.query.redirect_to }
-				feature={ feature }
-			/>
+			<CartData>
+				<CompositeCheckout
+					siteSlug={ selectedSite?.slug }
+					siteId={ selectedSite?.ID }
+					product={ product }
+					purchaseId={ purchaseId }
+					couponCode={ couponCode }
+					redirectTo={ context.query.redirect_to }
+					feature={ feature }
+				/>
+			</CartData>
 		);
 		next();
 		return;

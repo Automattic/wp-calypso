@@ -71,6 +71,7 @@ export default function CompositeCheckout( {
 	redirectTo,
 	feature,
 	purchaseId,
+	cart,
 	// TODO: handle these also
 	// couponCode,
 } ) {
@@ -90,11 +91,12 @@ export default function CompositeCheckout( {
 				redirectTo,
 				purchaseId,
 				feature,
+				cart,
 				isJetpackNotAtomic,
 				product,
 			} )
 		);
-	}, [ siteSlug, adminUrl, isJetpackNotAtomic, product, redirectTo, feature, purchaseId ] );
+	}, [ siteSlug, adminUrl, isJetpackNotAtomic, product, redirectTo, feature, purchaseId, cart ] );
 
 	const showErrorMessage = useCallback(
 		error => {
@@ -252,6 +254,7 @@ CompositeCheckout.propTypes = {
 	allowedPaymentMethods: PropTypes.array,
 	redirectTo: PropTypes.string,
 	feature: PropTypes.string,
+	cart: PropTypes.object,
 };
 
 function useAddProductToCart( planSlug, isJetpackNotAtomic, addItem ) {
