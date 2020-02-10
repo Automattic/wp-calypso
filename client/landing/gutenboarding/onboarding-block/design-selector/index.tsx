@@ -130,6 +130,7 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 											visibility: showPageSelector ? 'hidden' : undefined,
 									  }
 							}
+							tabIndex={ showPageSelector ? '-1' : '0' }
 							onClick={ () => {
 								window.scrollTo( 0, 0 );
 								setSelectedDesign( design );

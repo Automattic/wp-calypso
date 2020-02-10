@@ -19,8 +19,15 @@ interface Props {
 	onClick: MouseEventHandler< HTMLButtonElement >;
 	style?: CSSProperties;
 	dialogId: string;
+	tabIndex: number;
 }
-const DesignCard: FunctionComponent< Props > = ( { design, dialogId, onClick, style } ) => {
+const DesignCard: FunctionComponent< Props > = ( {
+	design,
+	dialogId,
+	onClick,
+	style,
+	tabIndex = 0,
+} ) => {
 	const { __: NO__ } = useI18n();
 	return (
 		<Card
@@ -31,6 +38,7 @@ const DesignCard: FunctionComponent< Props > = ( { design, dialogId, onClick, st
 			style={ style }
 			aria-haspopup="dialog"
 			aria-controls={ dialogId }
+			tabIndex={ tabIndex }
 		>
 			<CardMedia as="span">
 				<img
