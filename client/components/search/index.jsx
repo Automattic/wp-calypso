@@ -15,6 +15,7 @@ import Gridicon from 'components/gridicon';
 import analytics from 'lib/analytics';
 import Spinner from 'components/spinner';
 import TranslatableString from 'components/translatable/proptype';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 
 /**
  * Style dependencies
@@ -103,6 +104,7 @@ class Search extends Component {
 			keyword: props.initialValue || '',
 			isOpen: !! props.isOpen,
 			hasFocus: props.autoFocus,
+			exactSldMatchesOnly: props.exactSldMatchesOnly,
 		};
 
 		this.closeListener = keyListener.bind( this, 'closeSearch' );
@@ -136,10 +138,15 @@ class Search extends Component {
 		) {
 			this.setState( { keyword: nextProps.value } );
 		}
+
+		if ( nextProps.filters.exactSldMatchesOnly !== this.props.filters.exactSldMatchesOnly ) {
+			this.setState( { exactSldMatchesOnly: nextProps.filters.exactSldMatchesOnly } );
+		}
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
 		this.scrollOverlay();
+
 		// Focus if the search box was opened or the autoFocus prop has changed
 		if (
 			( this.state.isOpen && ! prevState.isOpen ) ||
@@ -325,6 +332,7 @@ class Search extends Component {
 			'is-compact': this.props.compact,
 			'has-focus': this.state.hasFocus,
 			'has-open-icon': ! this.props.hideOpenIcon,
+			'domain-step-design-test': this.props.showDesignUpdate,
 			search: true,
 		} );
 
@@ -374,6 +382,7 @@ class Search extends Component {
 					/>
 					{ this.props.overlayStyling && this.renderStylingDiv() }
 				</div>
+				{ this.maybeRenderExactMatchToggle() }
 				{ this.closeButton() }
 			</div>
 		);
@@ -405,6 +414,33 @@ class Search extends Component {
 		}
 
 		return null;
+	}
+
+	handleOnChange = name => () => {
+		const shouldSubmit = ! this.props.hideClose && ( this.state.keyword || this.state.isOpen );
+
+		this.props.onToggleChange(
+			{
+				[ name ]: ! this.state[ name ],
+			},
+			{
+				shouldSubmit,
+			}
+		);
+	};
+
+	maybeRenderExactMatchToggle() {
+		if ( this.props.showDesignUpdate ) {
+			return (
+				<CompactFormToggle
+					checked={ this.state.exactSldMatchesOnly }
+					onChange={ this.handleOnChange( 'exactSldMatchesOnly' ) }
+					disabled={ false }
+				>
+					Exact text matches
+				</CompactFormToggle>
+			);
+		}
 	}
 }
 
