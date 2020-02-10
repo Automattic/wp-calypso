@@ -46,6 +46,7 @@
 		"@automattic/wpcom-block-editor": "file:apps/wpcom-block-editor",
 		"i18n-calypso": "file:packages/i18n-calypso",
 		"photon": "file:packages/photon",
+		"terser": "4.4.3",
 		"wp-calypso": "file:client",
 		"wpcom": "file:packages/wpcom.js"
 	},
