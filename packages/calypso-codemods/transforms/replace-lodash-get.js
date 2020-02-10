@@ -3,7 +3,7 @@
  * Conditions include:
  * - Must be imported in the form `import { get, ... } from 'lodash'` or `import { get as foo, ... } from 'lodash'`
  * - Must either not use a default parameter, or use a default parameter set to the `null` literal
- * - Must use a string literal, string template, or array expression as the path
+ * - Must use a string literal or array expression as the path
  *
  * If at least one of the conditions is not met, the transformation will be dropped.
  *
@@ -30,6 +30,13 @@ export default function transformer( file, api ) {
 	function partToLiteral( string ) {
 		const partAsNumber = Number.parseInt( string, 10 );
 		return j.literal( isNaN( partAsNumber ) ? string : partAsNumber );
+	}
+
+	function handleIdentifier( string ) {
+		if ( isValidIdentifier( string ) ) {
+			return { computed: false, exp: j.identifier( string ) };
+		}
+		return { computed: true, exp: partToLiteral( string ) };
 	}
 
 	const lodashImports = root.find( j.ImportDeclaration, {
@@ -76,10 +83,7 @@ export default function transformer( file, api ) {
 							.filter( el => el !== '' )
 							.map( el => {
 								const part = el.replace( ']', '' );
-								if ( isValidIdentifier( part ) ) {
-									return { computed: false, exp: j.identifier( part ) };
-								}
-								return { computed: true, exp: partToLiteral( part ) };
+								return handleIdentifier( part );
 							} );
 
 						// Special case for empty string.
@@ -91,10 +95,7 @@ export default function transformer( file, api ) {
 						pathElements = path.elements.map( el => {
 							if ( el.type === 'Literal' ) {
 								if ( typeof el.value === 'string' ) {
-									if ( isValidIdentifier( el.value ) ) {
-										return { computed: false, exp: j.identifier( el.value ) };
-									}
-									return { computed: true, exp: partToLiteral( el.value ) };
+									return handleIdentifier( el.value );
 								}
 								return { computed: true, exp: el };
 							}
