@@ -23,17 +23,13 @@ export default function transformer( file, api ) {
 		throw new Error( `${ file.path }: ${ text }` );
 	}
 
-	function isValidIdentifier( string ) {
-		return string.match( /^[A-Za-z_]\w*$/ );
-	}
-
 	function partToLiteral( string ) {
 		const partAsNumber = Number.parseInt( string, 10 );
 		return j.literal( isNaN( partAsNumber ) ? string : partAsNumber );
 	}
 
 	function handleIdentifier( string ) {
-		if ( isValidIdentifier( string ) ) {
+		if ( string.match( /^[A-Za-z_]\w*$/ ) ) {
 			return { computed: false, exp: j.identifier( string ) };
 		}
 		return { computed: true, exp: partToLiteral( string ) };
