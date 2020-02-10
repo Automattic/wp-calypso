@@ -307,7 +307,6 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		entrypoint: getFilesForEntrypoint( target, entrypoint ),
 		manifest: getAssets( target ).manifests.manifest,
 		faviconURL: config( 'favicon_url' ),
-		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		preferencesHelper: !! config.isEnabled( 'dev/preferences-helper' ),
 		devDocsURL: '/devdocs',
