@@ -15,6 +15,7 @@ import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import MaterialIcon from 'components/material-icon';
 import { withLocalizedMoment } from 'components/localized-moment';
 import VerticalNavItemMulti from '../vertical-nav/item-multi';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 
 class RegisteredDomainType extends React.Component {
 	getPickCustomDomainNavItem() {
@@ -138,6 +139,9 @@ class RegisteredDomainType extends React.Component {
 					</div>
 				</Card>
 				<Card compact={ true }>Expires: { moment( domain.expiry ).format( 'LL' ) }</Card>
+				<Card compact={ true }>
+					Auto Renew (on) <CompactFormToggle checked={ true } />
+				</Card>
 				{ this.getVerticalNavigation() }
 			</div>
 		);
