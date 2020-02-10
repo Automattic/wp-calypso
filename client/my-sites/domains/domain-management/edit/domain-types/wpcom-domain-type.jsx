@@ -143,7 +143,6 @@ class WpcomDomainType extends React.Component {
 						<MaterialIcon icon="check_circle" /> Active
 					</div>
 				</Card>
-				<Card compact={ true }>Expires: never</Card>
 				{ this.getVerticalNavigation() }
 			</div>
 		);
