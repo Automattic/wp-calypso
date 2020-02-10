@@ -116,11 +116,14 @@
 	// Increase specificity to override button styles in signup
 	body.is-section-signup .layout & {
 		button.search-filters__tld-button,
-		input.search-filters__tld-checkbox,
 		button.search-filters__popover-button {
 			font-size: 14px;
 			padding-top: 0.5em;
 			padding-bottom: 0.5em;
+		}
+
+		input.search-filters__tld-checkbox {
+			font-size: 14px;
 		}
 
 		button.search-filters__popover-button-domain-step-test {
@@ -131,18 +134,16 @@
 			margin-right: 2em;
 		}
 
-		.search-filters__tld-checkbox-wrapper {
+		.search-filters__tld-checkbox-filter-bar {
 			display: flex;
 			flex: 1 0 auto;
 			justify-content: space-between;
 			margin-right: 1em;
 
-			& .search-filters__tld-checkbox-label span {
+			& .search-filters__tld-checkbox span {
 				margin-left: 2em;
 			}
 		}
-
-		
 	}
 
 	@include breakpoint( '<960px' ) {
@@ -154,25 +155,29 @@
 			margin-bottom: 0.5em;
 		}
 
-		.search-filters__tld-button:nth-child( n + 7 ) {
+		.search-filters__tld-button:nth-child( n + 7 ),
+		.search-filters__tld-checkbox:nth-child( n + 7 ) {
 			display: none;
 		}
 	}
 
 	@include breakpoint( '<800px' ) {
-		.search-filters__tld-button:nth-child( n + 5 ) {
+		.search-filters__tld-button:nth-child( n + 5 ),
+		.search-filters__tld-checkbox:nth-child( n + 5 ) {
 			display: none;
 		}
 	}
 
 	@include breakpoint( '<660px' ) {
-		.search-filters__tld-button:nth-child( n + 4 ) {
+		.search-filters__tld-button:nth-child( n + 4 ),
+		.search-filters__tld-checkbox:nth-child( n + 4 ) {
 			display: none;
 		}
 	}
 
 	@include breakpoint( '<480px' ) {
-		.search-filters__tld-button:nth-child( n + 2 ) {
+		.search-filters__tld-button:nth-child( n + 2 ),
+		.search-filters__tld-checkbox:nth-child( n + 2 ) {
 			display: none;
 		}
 	}
