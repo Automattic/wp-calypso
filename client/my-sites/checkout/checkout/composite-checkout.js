@@ -95,7 +95,7 @@ export default function CompositeCheckout( {
 	const receiptId = transactionStepData.receipt_id;
 	const orderId = transactionStepData.order_id;
 
-	const onPaymentComplete = useCallback( () => {
+	const getThankYouUrl = useCallback( () => {
 		debug( 'payment completed successfully' );
 		page.redirect(
 			getThankYouPageUrl( {
@@ -131,6 +131,11 @@ export default function CompositeCheckout( {
 		purchaseId,
 		cart,
 	] );
+
+	const onPaymentComplete = useCallback( () => {
+		debug( 'payment completed successfully' );
+		page.redirect( getThankYouUrl() );
+	}, [ getThankYouUrl ] );
 
 	const showErrorMessage = useCallback(
 		error => {
@@ -201,6 +206,7 @@ export default function CompositeCheckout( {
 				total,
 				subtotal,
 				translate,
+				getThankYouUrl,
 			} ),
 		[
 			allowedPaymentMethods,
@@ -213,6 +219,7 @@ export default function CompositeCheckout( {
 			total,
 			subtotal,
 			translate,
+			getThankYouUrl,
 		]
 	);
 
