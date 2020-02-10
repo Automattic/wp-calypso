@@ -18,6 +18,7 @@ import { getProductsList } from 'state/products-list/selectors';
 import {
 	currentUserHasFlag,
 	getCurrentUser,
+	isUserLoggedIn,
 	getCurrentUserCurrencyCode,
 } from 'state/current-user/selectors';
 import { Card, Button } from '@automattic/components';
@@ -439,7 +440,8 @@ export default connect(
 	state => ( {
 		currentUser: getCurrentUser( state ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
-		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
+		domainsWithPlansOnly:
+			currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) || ! isUserLoggedIn( state ),
 		selectedSite: getSelectedSite( state ),
 		productsList: getProductsList( state ),
 	} ),
