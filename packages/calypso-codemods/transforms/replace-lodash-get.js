@@ -24,7 +24,7 @@ export default function transformer( file, api ) {
 	}
 
 	function isValidIdentifier( string ) {
-		return string.match( /^[A-Za-z]\w*$/ );
+		return string.match( /^[A-Za-z_]\w*$/ );
 	}
 
 	function partToLiteral( string ) {
