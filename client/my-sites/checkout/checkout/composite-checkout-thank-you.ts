@@ -32,7 +32,9 @@ export function getThankYouPageUrl( {
 	siteSlug,
 	adminUrl,
 	redirectTo,
-	transaction,
+	receiptId,
+	orderId,
+	didPurchaseFail,
 	purchaseId,
 	feature,
 	cart = {},
@@ -48,7 +50,9 @@ export function getThankYouPageUrl( {
 	siteSlug?: string | number;
 	adminUrl?: string;
 	redirectTo?: string;
-	transaction?: object;
+	receiptId?: string | number;
+	orderId?: string | number;
+	didPurchaseFail?: boolean;
 	purchaseId?: string | number;
 	feature?: string;
 	cart?: object;
@@ -60,8 +64,6 @@ export function getThankYouPageUrl( {
 	previousRoute?: string;
 	isEligibleForSignupDestination?: boolean;
 } ) {
-	const stepResult = transaction?.step?.data;
-
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
 	// (i.e. on WordPress.com), or a Jetpack or WP.com site's block editor (in wp-admin).
 	// This is required for Jetpack's (and WP.com's) paid blocks Upgrade Nudge.
@@ -91,7 +93,7 @@ export function getThankYouPageUrl( {
 
 	// Note: this function is called early on for redirect-type payment methods, when the receipt isn't set yet.
 	// The `:receiptId` string is filled in by our pending page after the PayPal checkout
-	const pendingOrReceiptId = getPendingOrReceiptId( stepResult, purchaseId );
+	const pendingOrReceiptId = getPendingOrReceiptId( receiptId, orderId, purchaseId );
 
 	const fallbackUrl = getFallbackDestination( {
 		pendingOrReceiptId,
@@ -130,7 +132,7 @@ export function getThankYouPageUrl( {
 		pendingOrReceiptId,
 		siteSlug,
 		cart,
-		stepResult,
+		didPurchaseFail,
 		isNewlyCreatedSite,
 	} );
 	if ( redirectPathForGSuiteUpsell ) {
@@ -156,12 +158,16 @@ export function getThankYouPageUrl( {
 	return getUrlWithQueryParam( fallbackUrl, displayModeParam );
 }
 
-function getPendingOrReceiptId( stepResult, purchaseId ) {
-	if ( stepResult?.receipt_id ) {
-		return stepResult.receipt_id;
+function getPendingOrReceiptId(
+	receiptId: string | number | undefined,
+	orderId: string | number | undefined,
+	purchaseId: string | number | undefined
+) {
+	if ( receiptId ) {
+		return receiptId;
 	}
-	if ( stepResult?.orderId ) {
-		return `pending/${ stepResult.orderId }`;
+	if ( orderId ) {
+		return `pending/${ orderId }`;
 	}
 	return purchaseId ?? ':receiptId';
 }
@@ -210,12 +216,16 @@ function getEligibleDomainFromCart( cart ) {
 	return domainsForGSuite.length > 0 ? domainsForGSuite[ 0 ] : null;
 }
 
-function shouldRedirectToGSuiteNudge( { stepResult, isNewlyCreatedSite, cart } ) {
-	if (
-		isNewlyCreatedSite &&
-		stepResult &&
-		Object.keys( stepResult?.failed_purchases ?? {} ).length === 0
-	) {
+function shouldRedirectToGSuiteNudge( {
+	didPurchaseFail,
+	isNewlyCreatedSite,
+	cart,
+}: {
+	didPurchaseFail?: boolean;
+	isNewlyCreatedSite?: boolean;
+	cart: object;
+} ) {
+	if ( isNewlyCreatedSite && ! didPurchaseFail ) {
 		if (
 			! hasGoogleApps( cart ) &&
 			! hasConciergeSession( cart ) &&
@@ -240,12 +250,18 @@ function getRedirectUrlForGSuiteNudge( {
 	pendingOrReceiptId,
 	siteSlug,
 	cart,
-	stepResult,
+	didPurchaseFail,
 	isNewlyCreatedSite,
+}: {
+	pendingOrReceiptId?: string | number;
+	siteSlug?: string | number;
+	cart: object;
+	didPurchaseFail?: boolean;
+	isNewlyCreatedSite?: boolean;
 } ) {
 	if (
 		! shouldRedirectToGSuiteNudge( {
-			stepResult,
+			didPurchaseFail,
 			isNewlyCreatedSite,
 			cart,
 		} )
