@@ -38,12 +38,27 @@ export function getThankYouPageUrl( {
 	cart = {},
 	isJetpackNotAtomic,
 	product,
-	getUrlFromCookie = () => {}, // TODO: use proper func
-	saveUrlToCookie = () => {}, // TODO: use proper func
+	getUrlFromCookie = () => null, // TODO: use actual cookie functions as defaults
+	saveUrlToCookie = () => {}, // TODO: use actual cookie functions as defaults
 	isNewlyCreatedSite,
 	previousRoute,
 	isEligibleForSignupDestination,
-} = {} ) {
+}: {
+	siteSlug?: string | number,
+	site?: object,
+	redirectTo?: string,
+	transaction?: object,
+	purchaseId?: string | number,
+	feature?: string,
+	cart?: object,
+	isJetpackNotAtomic?: boolean,
+	product?: string,
+	getUrlFromCookie: () => string | null,
+	saveUrlToCookie: (_: string) => void,
+	isNewlyCreatedSite?: boolean,
+	previousRoute?: string,
+	isEligibleForSignupDestination?: boolean,
+} ) {
 	const adminUrl = site?.options?.admin_url;
 	const stepResult = transaction?.step?.data;
 
