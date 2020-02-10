@@ -74,6 +74,7 @@ export default function CompositeCheckout( {
 	feature,
 	purchaseId,
 	cart,
+	transaction,
 	// TODO: handle these also
 	// couponCode,
 } ) {
@@ -89,12 +90,20 @@ export default function CompositeCheckout( {
 	);
 	const previousRoute = useSelector( state => getPreviousPath( state ) );
 
+	const transactionStepData = transaction?.step?.data ?? {};
+	const didPurchaseFail = Object.keys( transactionStepData.failed_purchases ?? {} ).length > 0;
+	const receiptId = transactionStepData.receipt_id;
+	const orderId = transactionStepData.order_id;
+
 	const onPaymentComplete = useCallback( () => {
 		debug( 'payment completed successfully' );
 		page.redirect(
 			getThankYouPageUrl( {
 				siteSlug,
 				adminUrl,
+				didPurchaseFail,
+				receiptId,
+				orderId,
 				redirectTo,
 				purchaseId,
 				feature,
@@ -107,6 +116,9 @@ export default function CompositeCheckout( {
 			} )
 		);
 	}, [
+		didPurchaseFail,
+		receiptId,
+		orderId,
 		previousRoute,
 		isNewlyCreatedSite,
 		isEligibleForSignupDestinationResult,
@@ -277,6 +289,7 @@ CompositeCheckout.propTypes = {
 	redirectTo: PropTypes.string,
 	feature: PropTypes.string,
 	cart: PropTypes.object,
+	transaction: PropTypes.object,
 };
 
 function useAddProductToCart( planSlug, isJetpackNotAtomic, addItem ) {

@@ -23,7 +23,7 @@ import { getRememberedCoupon } from 'lib/cart/actions';
 import { sites } from 'my-sites/controller';
 import config from 'config';
 import CompositeCheckout from './checkout/composite-checkout';
-import CartData from 'components/data/cart';
+import CheckoutData from 'components/data/checkout';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
@@ -55,8 +55,11 @@ export function checkout( context, next ) {
 	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
 
 	if ( config.isEnabled( 'composite-checkout-wpcom' ) ) {
+		// Note that using CheckoutData instead of CartData means the transaction
+		// will be included; if we want to disinclude the transaction to mimic the
+		// clearTransaction prop used below, we should use CartData instead.
 		context.primary = (
-			<CartData>
+			<CheckoutData>
 				<CompositeCheckout
 					siteSlug={ selectedSite?.slug }
 					siteId={ selectedSite?.ID }
@@ -66,7 +69,7 @@ export function checkout( context, next ) {
 					redirectTo={ context.query.redirect_to }
 					feature={ feature }
 				/>
-			</CartData>
+			</CheckoutData>
 		);
 		next();
 		return;
