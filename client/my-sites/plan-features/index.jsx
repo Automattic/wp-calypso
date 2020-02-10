@@ -14,6 +14,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import FoldableCard from 'components/foldable-card';
 import InlineSupportLink from 'components/inline-support-link';
 import Notice from 'components/notice';
@@ -347,7 +348,7 @@ export class PlanFeatures extends Component {
 		return ReactDOM.createPortal(
 			<Notice className="plan-features__notice" showDismiss={ false } status="is-info">
 				{ translate(
-					"This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner."
+					'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
 				) }
 			</Notice>,
 			bannerContainer
@@ -597,6 +598,11 @@ export class PlanFeatures extends Component {
 		if ( siteIsPrivateAndGoingAtomic ) {
 			if ( isInSignup ) {
 				// Let signup do its thing
+				return;
+			}
+			if ( config.isEnabled( 'coming-soon' ) ) {
+				// When coming soon feature is enabled, we don't want to show any warnings
+				page( checkoutUrlWithArgs );
 				return;
 			}
 			this.setState( {
