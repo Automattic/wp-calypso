@@ -41,6 +41,7 @@ import { fetchPaymentCountries } from 'state/countries/actions';
 import { StateSelect } from 'my-sites/domains/components/form';
 import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
 import { getThankYouPageUrl } from './composite-checkout-thank-you';
+import { getSelectedSite } from 'state/ui/selectors';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -67,6 +68,8 @@ export default function CompositeCheckout( {
 	validateDomainContactDetails,
 	allowedPaymentMethods,
 	overrideCountryList,
+	redirectTo,
+	feature,
 	// TODO: handle these also
 	// purchaseId,
 	// couponCode,
@@ -76,11 +79,21 @@ export default function CompositeCheckout( {
 	const isJetpackNotAtomic = useSelector(
 		state => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
 	);
+	const adminUrl = useSelector( state => getSelectedSite( state ) );
 
 	const onPaymentComplete = useCallback( () => {
 		debug( 'payment completed successfully' );
-		page.redirect( getThankYouPageUrl( { siteId } ) );
-	}, [ siteId ] );
+		page.redirect(
+			getThankYouPageUrl( {
+				siteSlug,
+				adminUrl,
+				redirectTo,
+				feature,
+				isJetpackNotAtomic,
+				product,
+			} )
+		);
+	}, [ siteSlug, adminUrl, isJetpackNotAtomic, product, redirectTo, feature ] );
 
 	const showErrorMessage = useCallback(
 		error => {
@@ -236,6 +249,8 @@ CompositeCheckout.propTypes = {
 	setCart: PropTypes.func,
 	getStoredCards: PropTypes.func,
 	allowedPaymentMethods: PropTypes.array,
+	redirectTo: PropTypes.string,
+	feature: PropTypes.string,
 };
 
 function useAddProductToCart( planSlug, isJetpackNotAtomic, addItem ) {

@@ -61,6 +61,8 @@ export function checkout( context, next ) {
 				product={ product }
 				purchaseId={ purchaseId }
 				couponCode={ couponCode }
+				redirectTo={ context.query.redirect_to }
+				feature={ feature }
 			/>
 		);
 		next();
