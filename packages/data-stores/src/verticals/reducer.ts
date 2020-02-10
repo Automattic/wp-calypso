@@ -7,11 +7,11 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { ActionType, Vertical } from './types';
+import { Vertical } from './types';
 import { Action } from './actions';
 
 const verticals: Reducer< Vertical[], Action > = ( state = [], action ) => {
-	if ( action.type === ActionType.RECEIVE_VERTICALS ) {
+	if ( action.type === 'RECEIVE_VERTICALS' ) {
 		return action.verticals;
 	}
 	return state;

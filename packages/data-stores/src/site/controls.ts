@@ -2,11 +2,11 @@
  * Internal dependencies
  */
 import { wpcomRequest, WpcomClientCredentials } from '../utils';
-import { ActionType, CreateSiteAction } from './types';
+import { CreateSiteAction } from './types';
 
 export default function createControls( clientCreds: WpcomClientCredentials ) {
 	return {
-		[ ActionType.CREATE_SITE ]: async ( action: CreateSiteAction ) => {
+		CREATE_SITE: async ( action: CreateSiteAction ) => {
 			const { authToken, ...providedParams } = action.params;
 
 			const defaultParams = {

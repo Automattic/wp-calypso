@@ -4,14 +4,6 @@
 
 import { Action } from 'redux';
 
-export const enum ActionType {
-	CREATE_SITE = 'CREATE_SITE',
-	RECEIVE_NEW_SITE = 'RECEIVE_NEW_SITE',
-	RECEIVE_NEW_SITE_SUCCESS = 'RECEIVE_NEW_SITE',
-	RECEIVE_NEW_SITE_FAILED = 'RECEIVE_NEW_SITE_FAILED',
-	FETCH_NEW_SITE = 'FETCH_NEW_SITE',
-}
-
 export interface NewSite {
 	blogname: string;
 	blogid: string;
