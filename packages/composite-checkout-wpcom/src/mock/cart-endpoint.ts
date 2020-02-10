@@ -39,6 +39,8 @@ export async function mockSetCartEndpoint( {
 		total_tax_integer: taxInteger,
 		total_cost_display: 'R$156',
 		total_cost_integer: totalInteger,
+		sub_total_display: 'R$149',
+		sub_total_integer: totalInteger - taxInteger,
 		coupon: requestCoupon,
 		is_coupon_applied: true,
 	} as ResponseCart;

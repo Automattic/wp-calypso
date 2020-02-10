@@ -7,7 +7,6 @@ import {
 	WPCOMCart,
 	WPCOMCartItem,
 	CheckoutCartItem,
-	CheckoutCartTotal,
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
 } from '../types';
@@ -30,6 +29,8 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 		credits_integer,
 		credits_display,
 		allowed_payment_methods,
+		sub_total_integer,
+		sub_total_display,
 	} = serverCart;
 
 	const taxLineItem: CheckoutCartItem = {
@@ -43,7 +44,9 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 		},
 	};
 
-	const totalItem: CheckoutCartTotal = {
+	const totalItem: CheckoutCartItem = {
+		id: 'total',
+		type: 'total',
 		label: 'Total',
 		amount: {
 			currency: currency,
@@ -52,10 +55,22 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 		},
 	};
 
+	const subtotalItem: CheckoutCartItem = {
+		id: 'subtotal',
+		type: 'subtotal',
+		label: 'Subtotal',
+		amount: {
+			currency: currency,
+			value: sub_total_integer,
+			displayValue: sub_total_display,
+		},
+	};
+
 	return {
 		items: products.map( translateWpcomCartItemToCheckoutCartItem ),
 		tax: taxLineItem,
 		total: totalItem,
+		subtotal: subtotalItem,
 		credits: {
 			id: 'credits',
 			type: 'credits',

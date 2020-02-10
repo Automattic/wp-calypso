@@ -25,11 +25,6 @@ export interface CheckoutCartItem {
 	amount: CheckoutCartItemAmount;
 }
 
-export interface CheckoutCartTotal {
-	label: string;
-	amount: CheckoutCartItemAmount;
-}
-
 /**
  * Cart item with WPCOM specific info added.
  */
@@ -47,7 +42,8 @@ export type WPCOMCartItem = CheckoutCartItem & {
 export interface WPCOMCart {
 	items: WPCOMCartItem[];
 	tax: CheckoutCartItem;
-	total: CheckoutCartTotal;
+	total: CheckoutCartItem;
+	subtotal: CheckoutCartItem;
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
 	credits: CheckoutCartItem;
 }
@@ -71,7 +67,15 @@ export const emptyWPCOMCart = {
 			currency: '',
 			displayValue: '',
 		} as CheckoutCartItemAmount,
-	} as CheckoutCartTotal,
+	} as CheckoutCartItem,
+	subtotal: {
+		label: 'Subtotal',
+		amount: {
+			value: 0,
+			currency: '',
+			displayValue: '',
+		} as CheckoutCartItemAmount,
+	} as CheckoutCartItem,
 	allowedPaymentMethods: [],
 	credits: {
 		id: 'Credits',

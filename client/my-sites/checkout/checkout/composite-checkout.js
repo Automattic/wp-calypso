@@ -112,6 +112,7 @@ export default function CompositeCheckout( {
 		addItem,
 		changePlanLength,
 		errors,
+		subtotal,
 		isLoading,
 		allowedPaymentMethods: serverAllowedPaymentMethods,
 	} = useShoppingCart( siteSlug, setCart || wpcomSetCart, getCart || wpcomGetCart );
@@ -148,6 +149,7 @@ export default function CompositeCheckout( {
 				wpcom,
 				credits,
 				total,
+				subtotal,
 				translate,
 			} ),
 		[
@@ -159,6 +161,7 @@ export default function CompositeCheckout( {
 			credits,
 			registerStore,
 			total,
+			subtotal,
 			translate,
 		]
 	);
