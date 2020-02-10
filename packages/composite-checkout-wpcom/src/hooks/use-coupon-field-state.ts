@@ -31,24 +31,27 @@ export default function useCouponFieldState( submitCoupon ): CouponFieldStatePro
 		setIsApplyButtonActive( false );
 	}, [ couponFieldValue ] );
 
-	const handleCouponSubmit = useCallback( event => {
-		event.preventDefault();
-		if ( isCouponValid( couponFieldValue ) ) {
+	const handleCouponSubmit = useCallback(
+		event => {
+			event.preventDefault();
+			if ( isCouponValid( couponFieldValue ) ) {
+				onEvent( {
+					type: 'a8c_checkout_add_coupon',
+					payload: { coupon: couponFieldValue },
+				} );
+
+				submitCoupon( couponFieldValue );
+
+				return;
+			}
+
 			onEvent( {
-				type: 'a8c_checkout_add_coupon',
-				payload: { coupon: couponFieldValue },
+				type: 'a8c_checkout_add_coupon_error',
+				payload: { type: 'Invalid code' },
 			} );
-
-			submitCoupon( couponFieldValue );
-
-			return;
-		}
-
-		onEvent( {
-			type: 'a8c_checkout_add_coupon_error',
-			payload: { type: 'Invalid code' },
-		} );
-	} );
+		},
+		[ couponFieldValue ]
+	);
 
 	return {
 		couponFieldValue,
