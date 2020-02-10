@@ -10,7 +10,7 @@
 			"extends": "monorepo:wordpress",
 			"separateMajorMinor": false,
 			"prPriority": 2,
-			"reviewers": [ "team:@Automattic/cylon", "team:@Automattic/ganon", "team:@Automattic/luna" ]
+			"reviewers": [ "team:Automattic/cylon", "team:Automattic/ganon", "team:Automattic/luna" ]
 		},
 		{
 			"extends": "monorepo:babel",
