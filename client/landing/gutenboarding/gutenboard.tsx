@@ -37,6 +37,9 @@ export function Gutenboard() {
 		case Step.DesignSelection:
 			prev = makePath( Step.IntentGathering );
 			break;
+		case Step.PageSelection:
+			prev = Step.DesignSelection;
+			break;
 	}
 
 	// We're persisting the block via `useRef` in order to prevent re-renders
