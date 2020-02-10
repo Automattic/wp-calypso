@@ -19,6 +19,50 @@ import { translateWpcomCartToCheckoutCart } from '../lib/translate-cart';
 
 const debug = debugFactory( 'composite-checkout-wpcom:shopping-cart-manager' );
 
+type ShoppingCartHookState = {
+    responseCart: ResponseCart;
+    couponStatus: CouponStatus;
+    cacheStatus: CacheStatus;
+};
+
+const getInitialShoppingCartHookState: () => ShoppingCartHookState = () => {
+    return {
+        responseCart: emptyResponseCart,
+        cacheStatus: 'fresh',
+        couponStatus: 'fresh',
+    };
+};
+
+// We'll start by reproducing the behavior of the current useState hooks.
+// This type is not the end goal, but it's a minimally invasive step toward it.
+type ShoppingCartHookAction
+    = { type: 'SET_RESPONSE_CART', adjustResponseCart: ( ResponseCart ) => ResponseCart }
+    | { type: 'SET_COUPON_STATUS', newCouponStatus: CouponStatus }
+    | { type: 'SET_CACHE_STATUS', newCacheStatus: CacheStatus };
+
+function shoppingCartHookReducer(
+    state: ShoppingCartHookState,
+    action: ShoppingCartHookAction
+): ShoppingCartHookState {
+    switch ( action.type ) {
+        case 'SET_RESPONSE_CART':
+            return {
+                ...state,
+                responseCart: action.adjustResponseCart( state.responseCart ),
+            };
+        case 'SET_COUPON_STATUS':
+            return {
+                ...state,
+                couponStatus: action.newCouponStatus,
+            };
+        case 'SET_CACHE_STATUS':
+            return {
+                ...state,
+                cacheStatus: action.newCacheStatus,
+            };
+    }
+}
+
 /**
  * This module provides a hook for manipulating the shopping cart state,
  * bundled into a ShoppingCartManager object. All of the details of
