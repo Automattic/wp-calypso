@@ -17,8 +17,8 @@ import { isEcommercePlan } from 'lib/plans';
  * @returns `true` for private by default & `false` for not
  */
 export default function shouldNewSiteBePrivateByDefault( state: object ): boolean {
-	// If coming-soon feature flag is enabled, we want all new sites to be private
 	if ( config.isEnabled( 'coming-soon' ) ) {
+		// When coming-soon feature flag is enabled, we want all new sites to be private
 		return true;
 	}
 
