@@ -18,6 +18,8 @@ import ImportTypeChoice from 'my-sites/migrate/components/import-type-choice';
 import { get } from 'lodash';
 import { redirectTo } from 'my-sites/migrate/helpers';
 import SitesBlock from 'my-sites/migrate/components/sites-block';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { connect } from 'react-redux';
 
 class StepImportOrMigrate extends Component {
 	static propTypes = {
@@ -152,4 +154,4 @@ class StepImportOrMigrate extends Component {
 	}
 }
 
-export default localize( StepImportOrMigrate );
+export default connect( null, { recordTracksEvent } )( localize( StepImportOrMigrate ) );
