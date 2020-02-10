@@ -19,7 +19,7 @@ jest.mock( 'config', () => {
 
 describe( 'getThankYouPageUrl', () => {
 	it( 'redirects to the root page when no site is set', () => {
-		const url = getThankYouPageUrl();
+		const url = getThankYouPageUrl( {} );
 		expect( url ).toBe( '/' );
 	} );
 
@@ -28,19 +28,13 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
 
-	it( 'redirects to the thank-you page with a receipt id when a site and transaction receipt_id is set', () => {
-		const transaction = {
-			step: { data: { receipt_id: '1234abcd', purchases: {}, failed_purchases: {} } },
-		};
-		const url = getThankYouPageUrl( { siteSlug: 'foo.bar', transaction } );
+	it( 'redirects to the thank-you page with a receipt id when a site and receiptId is set', () => {
+		const url = getThankYouPageUrl( { siteSlug: 'foo.bar', receiptId: '1234abcd' } );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
 
-	it( 'redirects to the thank-you pending page with a order id when a site and transaction orderId is set', () => {
-		const transaction = {
-			step: { data: { orderId: '1234abcd', purchases: {}, failed_purchases: {} } },
-		};
-		const url = getThankYouPageUrl( { siteSlug: 'foo.bar', transaction } );
+	it( 'redirects to the thank-you pending page with a order id when a site and orderId is set', () => {
+		const url = getThankYouPageUrl( { siteSlug: 'foo.bar', orderId: '1234abcd' } );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/pending/1234abcd' );
 	} );
 
@@ -60,25 +54,19 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to the thank-you page with a feature when a site, a receipt id, and a valid feature is set', () => {
-		const transaction = {
-			step: { data: { receipt_id: '1234abcd', purchases: {}, failed_purchases: {} } },
-		};
 		const url = getThankYouPageUrl( {
 			siteSlug: 'foo.bar',
 			feature: 'all-free-features',
-			transaction,
+			receiptId: '1234abcd',
 		} );
 		expect( url ).toBe( '/checkout/thank-you/features/all-free-features/foo.bar/1234abcd' );
 	} );
 
 	it( 'redirects to the thank-you pending page with a feature when a site, an order id, and a valid feature is set', () => {
-		const transaction = {
-			step: { data: { orderId: '1234abcd', purchases: {}, failed_purchases: {} } },
-		};
 		const url = getThankYouPageUrl( {
 			siteSlug: 'foo.bar',
 			feature: 'all-free-features',
-			transaction,
+			orderId: '1234abcd',
 		} );
 		expect( url ).toBe( '/checkout/thank-you/features/all-free-features/foo.bar/pending/1234abcd' );
 	} );
@@ -142,10 +130,9 @@ describe( 'getThankYouPageUrl', () => {
 	it( 'redirects to the root url if redirectTo does not start with admin_url for site', () => {
 		const adminUrl = 'https://my.site/wp-admin/';
 		const redirectTo = 'https://other.site/post.php?post=515';
-		const site = { options: { admin_url: adminUrl } };
 		const url = getThankYouPageUrl( {
 			siteSlug: 'foo.bar',
-			site,
+			adminUrl,
 			redirectTo,
 		} );
 		expect( url ).toBe( '/' );
@@ -154,10 +141,9 @@ describe( 'getThankYouPageUrl', () => {
 	it( 'redirects to external redirectTo url if it starts with admin_url for site', () => {
 		const adminUrl = 'https://my.site/wp-admin/';
 		const redirectTo = adminUrl + 'post.php?post=515';
-		const site = { options: { admin_url: adminUrl } };
 		const url = getThankYouPageUrl( {
 			siteSlug: 'foo.bar',
-			site,
+			adminUrl,
 			redirectTo,
 		} );
 		expect( url ).toBe( redirectTo + '&action=edit&plan_upgraded=1' );
@@ -239,13 +225,10 @@ describe( 'getThankYouPageUrl', () => {
 			create_new_blog: true,
 			products: [ { id: '123' } ],
 		};
-		const transaction = {
-			step: { data: { receipt_id: '1234abcd', purchases: {}, failed_purchases: {} } },
-		};
 		const url = getThankYouPageUrl( {
 			siteSlug: 'foo.bar',
 			cart,
-			transaction,
+			receiptId: '1234abcd',
 			getUrlFromCookie,
 		} );
 		expect( url ).toBe( '/cookie/1234abcd' );
@@ -257,13 +240,10 @@ describe( 'getThankYouPageUrl', () => {
 			create_new_blog: true,
 			products: [ { id: '123' } ],
 		};
-		const transaction = {
-			step: { data: { orderId: '1234abcd', purchases: {}, failed_purchases: {} } },
-		};
 		const url = getThankYouPageUrl( {
 			siteSlug: 'foo.bar',
 			cart,
-			transaction,
+			orderId: '1234abcd',
 			getUrlFromCookie,
 		} );
 		expect( url ).toBe( '/cookie/pending/1234abcd' );
@@ -321,14 +301,12 @@ describe( 'getThankYouPageUrl', () => {
 				},
 			],
 		};
-		const transaction = {
-			step: { data: { receipt_id: '1234abcd', purchases: {}, failed_purchases: { foo: 'bar' } } },
-		};
 		mockGSuiteCountryIsValid = true;
 		const url = getThankYouPageUrl( {
 			siteSlug: 'foo.bar',
 			cart,
-			transaction,
+			receiptId: '1234abcd',
+			didPurchaseFail: true,
 			isNewlyCreatedSite: true,
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
@@ -349,14 +327,11 @@ describe( 'getThankYouPageUrl', () => {
 				},
 			],
 		};
-		const transaction = {
-			step: { data: { receipt_id: '1234abcd', purchases: {}, failed_purchases: {} } },
-		};
 		mockGSuiteCountryIsValid = true;
 		const url = getThankYouPageUrl( {
 			siteSlug: 'foo.bar',
 			cart,
-			transaction,
+			receiptId: '1234abcd',
 			isNewlyCreatedSite: true,
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd?d=gsuite' );
@@ -373,14 +348,11 @@ describe( 'getThankYouPageUrl', () => {
 				},
 			],
 		};
-		const transaction = {
-			step: { data: { receipt_id: '1234abcd', purchases: {}, failed_purchases: {} } },
-		};
 		mockGSuiteCountryIsValid = false;
 		const url = getThankYouPageUrl( {
 			siteSlug: 'foo.bar',
 			cart,
-			transaction,
+			receiptId: '1234abcd',
 			isNewlyCreatedSite: true,
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
@@ -398,14 +370,11 @@ describe( 'getThankYouPageUrl', () => {
 				},
 			],
 		};
-		const transaction = {
-			step: { data: { receipt_id: '1234abcd', purchases: {}, failed_purchases: {} } },
-		};
 		mockGSuiteCountryIsValid = false;
 		const url = getThankYouPageUrl( {
 			siteSlug: 'foo.bar',
 			cart,
-			transaction,
+			receiptId: '1234abcd',
 			isNewlyCreatedSite: true,
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd?d=concierge' );
@@ -422,14 +391,11 @@ describe( 'getThankYouPageUrl', () => {
 				},
 			],
 		};
-		const transaction = {
-			step: { data: { receipt_id: '1234abcd', purchases: {}, failed_purchases: {} } },
-		};
 		mockGSuiteCountryIsValid = false;
 		const url = getThankYouPageUrl( {
 			siteSlug: 'foo.bar',
 			cart,
-			transaction,
+			receiptId: '1234abcd',
 			isNewlyCreatedSite: true,
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
@@ -446,14 +412,11 @@ describe( 'getThankYouPageUrl', () => {
 				},
 			],
 		};
-		const transaction = {
-			step: { data: { receipt_id: '1234abcd', purchases: {}, failed_purchases: {} } },
-		};
 		mockGSuiteCountryIsValid = true;
 		const url = getThankYouPageUrl( {
 			siteSlug: 'foo.bar',
 			cart,
-			transaction,
+			receiptId: '1234abcd',
 			isNewlyCreatedSite: true,
 		} );
 		expect( url ).toBe( '/checkout/foo.bar/with-gsuite/my.site/1234abcd' );
@@ -468,13 +431,10 @@ describe( 'getThankYouPageUrl', () => {
 				},
 			],
 		};
-		const transaction = {
-			step: { data: { receipt_id: '1234abcd', purchases: {}, failed_purchases: {} } },
-		};
 		const url = getThankYouPageUrl( {
 			siteSlug: 'foo.bar',
 			cart,
-			transaction,
+			receiptId: '1234abcd',
 		} );
 		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/premium/1234abcd' );
 	} );
@@ -488,13 +448,10 @@ describe( 'getThankYouPageUrl', () => {
 				},
 			],
 		};
-		const transaction = {
-			step: { data: { receipt_id: '1234abcd', purchases: {}, failed_purchases: {} } },
-		};
 		const url = getThankYouPageUrl( {
 			siteSlug: 'foo.bar',
 			cart,
-			transaction,
+			receiptId: '1234abcd',
 		} );
 		expect( url ).toBe( '/checkout/offer-quickstart-session/1234abcd/foo.bar' );
 	} );
@@ -508,13 +465,10 @@ describe( 'getThankYouPageUrl', () => {
 				},
 			],
 		};
-		const transaction = {
-			step: { data: { receipt_id: '1234abcd', purchases: {}, failed_purchases: {} } },
-		};
 		const url = getThankYouPageUrl( {
 			siteSlug: 'foo.bar',
 			cart,
-			transaction,
+			receiptId: '1234abcd',
 		} );
 		expect( url ).toBe( '/checkout/offer-quickstart-session/1234abcd/foo.bar' );
 	} );
@@ -528,13 +482,10 @@ describe( 'getThankYouPageUrl', () => {
 				},
 			],
 		};
-		const transaction = {
-			step: { data: { receipt_id: '1234abcd', purchases: {}, failed_purchases: {} } },
-		};
 		const url = getThankYouPageUrl( {
 			siteSlug: 'foo.bar',
 			cart,
-			transaction,
+			receiptId: '1234abcd',
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd?d=concierge' );
 	} );
@@ -548,13 +499,10 @@ describe( 'getThankYouPageUrl', () => {
 				},
 			],
 		};
-		const transaction = {
-			step: { data: { receipt_id: '1234abcd', purchases: {}, failed_purchases: {} } },
-		};
 		const url = getThankYouPageUrl( {
 			siteSlug: 'foo.bar',
 			cart,
-			transaction,
+			receiptId: '1234abcd',
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
@@ -568,13 +516,10 @@ describe( 'getThankYouPageUrl', () => {
 				},
 			],
 		};
-		const transaction = {
-			step: { data: { receipt_id: '1234abcd', purchases: {}, failed_purchases: {} } },
-		};
 		const url = getThankYouPageUrl( {
 			siteSlug: 'foo.bar',
 			cart,
-			transaction,
+			receiptId: '1234abcd',
 			previousRoute: '/checkout/foo.bar/offer-plan-upgrade/premium/1234abcd',
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
