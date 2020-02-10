@@ -1,9 +1,10 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
 @import '~@wordpress/base-styles/colors';
 
 $design-selector-grid-gap: 4.5em;
 
 $design-selector-max-width: 1100px;
-$design-selector-selection-space: 285px;
+$design-selector-selection-space: 285px + $header-height;
 
 .design-selector__title {
 	color: $dark-gray-800;
