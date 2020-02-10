@@ -5,7 +5,7 @@ import { isMobile } from '@automattic/viewport';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { debounce, noop, uniqueId } from 'lodash';
+import { debounce, get, noop, uniqueId } from 'lodash';
 import i18n from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
 
@@ -139,8 +139,11 @@ class Search extends Component {
 			this.setState( { keyword: nextProps.value } );
 		}
 
-		if ( nextProps.filters.exactSldMatchesOnly !== this.props.filters.exactSldMatchesOnly ) {
-			this.setState( { exactSldMatchesOnly: nextProps.filters.exactSldMatchesOnly } );
+		const nextPropsExactSldMatchesOnly = get( nextProps, 'filters.exactSldMatchesOnly', false );
+		const currentPropsExactSldMatchesOnly = get( this.props, 'filters.exactSldMatchesOnly', false );
+
+		if ( nextPropsExactSldMatchesOnly !== currentPropsExactSldMatchesOnly ) {
+			this.setState( { exactSldMatchesOnly: nextPropsExactSldMatchesOnly } );
 		}
 	}
 
