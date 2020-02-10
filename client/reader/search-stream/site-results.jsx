@@ -9,8 +9,10 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import getReaderFeedsCountForQuery from 'state/selectors/get-reader-feeds-count-for-query';
-import getReaderFeedsForQuery from 'state/selectors/get-reader-feeds-for-query';
+import {
+	getReaderFeedsForQuery,
+	getReaderFeedsCountForQuery,
+} from 'state/reader/feed-searches/selectors';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import ReaderInfiniteStream from 'reader/components/reader-infinite-stream';
 import {

@@ -25,7 +25,7 @@ import QueryReaderFeed from 'components/data/query-reader-feed';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderTeams from 'components/data/query-reader-teams';
 import { isAutomatticTeamMember } from 'reader/lib/teams';
-import getReaderTeams from 'state/selectors/get-reader-teams';
+import { getReaderTeams } from 'state/reader/teams/selectors';
 import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 import ConversationFollowButton from 'blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';

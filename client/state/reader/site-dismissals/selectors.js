@@ -15,7 +15,7 @@ import 'state/reader/init';
  * @param  {object}  state  Global state tree
  * @returns {Array}        Dimissed site IDs
  */
-export default createSelector(
+export const getDismissedSites = createSelector(
 	state => map( Object.keys( pickBy( state.reader.siteDismissals.items ) ), Number ),
 	state => [ state.reader.siteDismissals.items ]
 );

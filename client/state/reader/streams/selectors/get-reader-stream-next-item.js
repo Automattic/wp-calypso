@@ -1,11 +1,9 @@
 /**
- * External dependencies
+ * Internal dependencies
  */
+import getReaderStreamOffsetItem from './get-reader-stream-offset-item';
 
-/**
- * Internal dependencie
- */
-import getReaderStreamOffsetItem from 'state/selectors/get-reader-stream-offset-item';
+import 'state/reader/init';
 
 function getNextItem( state, currentItem ) {
 	return getReaderStreamOffsetItem( state, currentItem, 1 );

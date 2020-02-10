@@ -10,11 +10,12 @@ import { map, sampleSize } from 'lodash';
  */
 import { getLocaleSlug } from 'lib/i18n-utils';
 import { suggestions } from 'reader/search-stream/suggestions';
-import getReaderFollowedTags from 'state/selectors/get-reader-followed-tags';
+import { getReaderFollowedTags } from 'state/reader/tags/selectors';
 import analytics from 'lib/analytics';
 
 /**
  * Build suggestions from subscribed tags
+ *
  * @param  {number} count The number of suggestions required
  * @param  {Array} tags  An array of subscribed tags
  * @returns {Array}       An array of suggestions, or null if no tags where provided
@@ -64,7 +65,7 @@ function getSuggestions( count, tags ) {
 		return null;
 	}
 
-	const newSuggestions = !! tagSuggestions.length ? tagSuggestions : suggestionsFromPicks( count );
+	const newSuggestions = tagSuggestions.length ? tagSuggestions : suggestionsFromPicks( count );
 
 	return newSuggestions;
 }

@@ -1,11 +1,12 @@
 /**
  * Internal dependencies
  */
-import getReaderFollows from 'state/selectors/get-reader-follows';
-
-import getReaderStream from 'state/selectors/get-reader-stream';
+import { getReaderFollows } from 'state/reader/follows/selectors';
+import getReaderStream from './get-reader-stream';
 import treeSelect from '@automattic/tree-select';
 import { injectRecommendations, getDistanceBetweenRecs, combineCards } from 'reader/stream/utils';
+
+import 'state/reader/init';
 
 /*
  * getTransformedStreamItems performs the transformations from raw state to data suitable for

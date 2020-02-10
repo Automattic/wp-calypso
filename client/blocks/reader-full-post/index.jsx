@@ -62,8 +62,7 @@ import { getPostByKey } from 'state/reader/posts/selectors';
 import isLikedPost from 'state/selectors/is-liked-post';
 import QueryPostLikes from 'components/data/query-post-likes';
 import getCurrentStream from 'state/selectors/get-reader-current-stream';
-import getNextItem from 'state/selectors/get-reader-stream-next-item';
-import getPreviousItem from 'state/selectors/get-reader-stream-prev-item';
+import { getNextItem, getPreviousItem } from 'state/reader/streams/selectors';
 
 /**
  * Style dependencies
