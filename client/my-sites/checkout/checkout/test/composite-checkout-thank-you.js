@@ -17,35 +17,49 @@ jest.mock( 'config', () => {
 	return mock;
 } );
 
+const defaultArgs = {
+	getUrlFromCookie: jest.fn( () => null ),
+	saveUrlToCookie: jest.fn(),
+};
+
 describe( 'getThankYouPageUrl', () => {
 	it( 'redirects to the root page when no site is set', () => {
-		const url = getThankYouPageUrl( {} );
+		const url = getThankYouPageUrl( defaultArgs );
 		expect( url ).toBe( '/' );
 	} );
 
 	it( 'redirects to the thank-you page with a purchase id when a site and purchaseId is set', () => {
-		const url = getThankYouPageUrl( { siteSlug: 'foo.bar', purchaseId: '1234abcd' } );
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			purchaseId: '1234abcd',
+		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
 
 	it( 'redirects to the thank-you page with a receipt id when a site and receiptId is set', () => {
-		const url = getThankYouPageUrl( { siteSlug: 'foo.bar', receiptId: '1234abcd' } );
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			receiptId: '1234abcd',
+		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
 
 	it( 'redirects to the thank-you pending page with a order id when a site and orderId is set', () => {
-		const url = getThankYouPageUrl( { siteSlug: 'foo.bar', orderId: '1234abcd' } );
+		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', orderId: '1234abcd' } );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/pending/1234abcd' );
 	} );
 
 	it( 'redirects to the thank-you page with a placeholder receiptId with a site when the cart is not empty but there is no receipt id', () => {
 		const cart = { products: [ { id: 'something' } ] };
-		const url = getThankYouPageUrl( { siteSlug: 'foo.bar', cart } );
+		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', cart } );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
 	} );
 
 	it( 'redirects to the thank-you page with a feature when a site, a purchase id, and a valid feature is set', () => {
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			feature: 'all-free-features',
 			purchaseId: '1234abcd',
@@ -55,6 +69,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to the thank-you page with a feature when a site, a receipt id, and a valid feature is set', () => {
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			feature: 'all-free-features',
 			receiptId: '1234abcd',
@@ -64,6 +79,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to the thank-you pending page with a feature when a site, an order id, and a valid feature is set', () => {
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			feature: 'all-free-features',
 			orderId: '1234abcd',
@@ -74,6 +90,7 @@ describe( 'getThankYouPageUrl', () => {
 	it( 'redirects to the thank-you page with a feature when a site and a valid feature is set with no receipt but the cart is not empty', () => {
 		const cart = { products: [ { id: 'something' } ] };
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			feature: 'all-free-features',
 			cart,
@@ -83,6 +100,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to the thank-you page without a feature when a site, a purchase id, and an invalid feature is set', () => {
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			feature: 'fake-key',
 			purchaseId: '1234abcd',
@@ -92,6 +110,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to the plans page with thank-you query string if there is a non-atomic jetpack product', () => {
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			purchaseId: '1234abcd',
 			isJetpackNotAtomic: true,
@@ -102,6 +121,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to the plans page with thank-you query string and jetpack onboarding if there is a non-atomic jetpack plan', () => {
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			purchaseId: '1234abcd',
 			isJetpackNotAtomic: true,
@@ -111,6 +131,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to the plans page with thank-you query string and jetpack onboarding if there is a non-atomic jetpack plan even if there is a feature', () => {
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			purchaseId: '1234abcd',
 			feature: 'all-free-features',
@@ -121,6 +142,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to internal redirectTo url if set', () => {
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			redirectTo: '/foo/bar',
 		} );
@@ -130,22 +152,14 @@ describe( 'getThankYouPageUrl', () => {
 	it( 'redirects to the root url if redirectTo does not start with admin_url for site', () => {
 		const adminUrl = 'https://my.site/wp-admin/';
 		const redirectTo = 'https://other.site/post.php?post=515';
-		const url = getThankYouPageUrl( {
-			siteSlug: 'foo.bar',
-			adminUrl,
-			redirectTo,
-		} );
+		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', adminUrl, redirectTo } );
 		expect( url ).toBe( '/' );
 	} );
 
 	it( 'redirects to external redirectTo url if it starts with admin_url for site', () => {
 		const adminUrl = 'https://my.site/wp-admin/';
 		const redirectTo = adminUrl + 'post.php?post=515';
-		const url = getThankYouPageUrl( {
-			siteSlug: 'foo.bar',
-			adminUrl,
-			redirectTo,
-		} );
+		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', adminUrl, redirectTo } );
 		expect( url ).toBe( redirectTo + '&action=edit&plan_upgraded=1' );
 	} );
 
@@ -155,10 +169,7 @@ describe( 'getThankYouPageUrl', () => {
 				{ extra: { purchaseType: 'renewal', purchaseDomain: 'foo.bar', purchaseId: '123abc' } },
 			],
 		};
-		const url = getThankYouPageUrl( {
-			siteSlug: 'foo.bar',
-			cart,
-		} );
+		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', cart } );
 		expect( url ).toBe( '/me/purchases/foo.bar/123abc' );
 	} );
 
@@ -168,6 +179,7 @@ describe( 'getThankYouPageUrl', () => {
 			products: [ { product_slug: 'foo' } ],
 		};
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			getUrlFromCookie,
@@ -182,6 +194,7 @@ describe( 'getThankYouPageUrl', () => {
 			products: [ { product_slug: 'foo' } ],
 		};
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			getUrlFromCookie,
@@ -196,6 +209,7 @@ describe( 'getThankYouPageUrl', () => {
 			products: [],
 		};
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			getUrlFromCookie,
@@ -211,6 +225,7 @@ describe( 'getThankYouPageUrl', () => {
 			products: [ { id: '123' } ],
 		};
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			getUrlFromCookie,
@@ -226,6 +241,7 @@ describe( 'getThankYouPageUrl', () => {
 			products: [ { id: '123' } ],
 		};
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: '1234abcd',
@@ -241,6 +257,7 @@ describe( 'getThankYouPageUrl', () => {
 			products: [ { id: '123' } ],
 		};
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			orderId: '1234abcd',
@@ -256,6 +273,7 @@ describe( 'getThankYouPageUrl', () => {
 			products: [ { id: '123' } ],
 		};
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			getUrlFromCookie,
@@ -269,10 +287,7 @@ describe( 'getThankYouPageUrl', () => {
 			create_new_blog: true,
 			products: [ { id: '123' } ],
 		};
-		const url = getThankYouPageUrl( {
-			siteSlug: 'foo.bar',
-			cart,
-		} );
+		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', cart } );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId/:receiptId' );
 	} );
 
@@ -283,6 +298,7 @@ describe( 'getThankYouPageUrl', () => {
 			products: [ { id: '123' } ],
 		};
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			purchaseId: '1234abcd',
 			cart,
@@ -303,6 +319,7 @@ describe( 'getThankYouPageUrl', () => {
 		};
 		mockGSuiteCountryIsValid = true;
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: '1234abcd',
@@ -329,6 +346,7 @@ describe( 'getThankYouPageUrl', () => {
 		};
 		mockGSuiteCountryIsValid = true;
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: '1234abcd',
@@ -350,6 +368,7 @@ describe( 'getThankYouPageUrl', () => {
 		};
 		mockGSuiteCountryIsValid = false;
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: '1234abcd',
@@ -372,6 +391,7 @@ describe( 'getThankYouPageUrl', () => {
 		};
 		mockGSuiteCountryIsValid = false;
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: '1234abcd',
@@ -393,6 +413,7 @@ describe( 'getThankYouPageUrl', () => {
 		};
 		mockGSuiteCountryIsValid = false;
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: '1234abcd',
@@ -414,6 +435,7 @@ describe( 'getThankYouPageUrl', () => {
 		};
 		mockGSuiteCountryIsValid = true;
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: '1234abcd',
@@ -432,6 +454,7 @@ describe( 'getThankYouPageUrl', () => {
 			],
 		};
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: '1234abcd',
@@ -449,6 +472,7 @@ describe( 'getThankYouPageUrl', () => {
 			],
 		};
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: '1234abcd',
@@ -466,6 +490,7 @@ describe( 'getThankYouPageUrl', () => {
 			],
 		};
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: '1234abcd',
@@ -483,6 +508,7 @@ describe( 'getThankYouPageUrl', () => {
 			],
 		};
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: '1234abcd',
@@ -500,6 +526,7 @@ describe( 'getThankYouPageUrl', () => {
 			],
 		};
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: '1234abcd',
@@ -517,6 +544,7 @@ describe( 'getThankYouPageUrl', () => {
 			],
 		};
 		const url = getThankYouPageUrl( {
+			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: '1234abcd',
