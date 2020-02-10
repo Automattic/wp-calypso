@@ -33,8 +33,6 @@ export const settings: BlockConfiguration< Attributes > = {
 	edit,
 	save: () => null,
 	getEditWrapperProps() {
-		return {
-			tabIndex: '-1',
-		};
+		return { tabIndex: -1 };
 	},
 };
