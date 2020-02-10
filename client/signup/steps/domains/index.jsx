@@ -415,15 +415,8 @@ class DomainsStep extends React.Component {
 
 		if (
 			// If we landed here from /domains Search or with a suggested domain.
-			( initialQuery && this.searchOnInitialRender ) ||
-			// If the subdomain type has changed, rerun the search
-			( initialState &&
-				initialState.subdomainSearchResults &&
-				endsWith(
-					get( initialState, 'subdomainSearchResults[0].domain_name', '' ),
-					// Inverted the ending, so we know it's the wrong subdomain in the saved results
-					this.shouldIncludeDotBlogSubdomain() ? '.wordpress.com' : '.blog'
-				) )
+			initialQuery &&
+			this.searchOnInitialRender
 		) {
 			this.searchOnInitialRender = false;
 			if ( initialState ) {

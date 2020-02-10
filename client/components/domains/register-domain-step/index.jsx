@@ -155,13 +155,15 @@ class RegisterDomainStep extends React.Component {
 
 	static defaultProps = {
 		analyticsSection: 'domains',
+		deemphasiseTlds: [],
+		includeDotBlogSubdomain: false,
+		includeWordPressDotCom: false,
 		isDomainOnly: false,
 		onAddDomain: noop,
 		onAddMapping: noop,
 		onDomainsAvailabilityChange: noop,
 		onSave: noop,
 		vendor: getSuggestionsVendor(),
-		deemphasiseTlds: [],
 	};
 
 	constructor( props ) {
@@ -821,10 +823,9 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	getDomainsSuggestions = ( domain, timestamp ) => {
-		const suggestionQuantity =
-			this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain
-				? SUGGESTION_QUANTITY - 1
-				: SUGGESTION_QUANTITY;
+		const freeSubdomainSuggestionsQuantity =
+			this.props.includeWordPressDotCom + this.props.includeDotBlogSubdomain;
+		const suggestionQuantity = SUGGESTION_QUANTITY - freeSubdomainSuggestionsQuantity;
 
 		const query = {
 			query: domain,
