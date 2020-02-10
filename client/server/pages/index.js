@@ -586,7 +586,6 @@ function setUpRoute( req, res, next ) {
 const render404 = ( entrypoint = 'entry-main' ) => ( req, res ) => {
 	const ctx = {
 		faviconURL: config( 'favicon_url' ),
-		isRTL: config( 'rtl' ),
 		entrypoint: getFilesForEntrypoint( getBuildTargetFromRequest( req ), entrypoint ),
 	};
 
@@ -604,7 +603,6 @@ const renderServerError = ( entrypoint = 'entry-main' ) => ( err, req, res, next
 
 	const ctx = {
 		faviconURL: config( 'favicon_url' ),
-		isRTL: config( 'rtl' ),
 		entrypoint: getFilesForEntrypoint( getBuildTargetFromRequest( req ), entrypoint ),
 	};
 
