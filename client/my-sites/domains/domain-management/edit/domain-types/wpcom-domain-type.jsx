@@ -111,7 +111,7 @@ class WpcomDomainType extends React.Component {
 				onClick={
 					isWpcomDomain ? this.handleChangeSiteAddressClick : this.handleEditSiteAddressClick
 				}
-				materialIcon="language"
+				materialIcon="edit"
 				text={
 					isWpcomDomain
 						? this.props.translate( 'Change WordPress.com Site Address' )
