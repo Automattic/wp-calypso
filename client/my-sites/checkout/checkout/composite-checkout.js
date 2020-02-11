@@ -118,41 +118,57 @@ export default function CompositeCheckout( {
 	const receiptId = transactionStepData.receipt_id;
 	const orderId = transactionStepData.order_id;
 
-	const getThankYouUrl = useCallback(
-		() =>
-			getThankYouPageUrl( {
-				siteSlug,
-				adminUrl,
-				didPurchaseFail,
-				receiptId,
-				orderId,
-				redirectTo,
-				purchaseId,
-				feature,
-				cart,
-				isJetpackNotAtomic,
-				product,
-				isNewlyCreatedSite,
-				previousRoute,
-				isEligibleForSignupDestination: isEligibleForSignupDestinationResult,
-			} ),
-		[
+	const getThankYouUrl = useCallback( () => {
+		debug( 'getThankYouUrl called with', {
+			siteSlug,
+			adminUrl,
 			didPurchaseFail,
 			receiptId,
 			orderId,
-			previousRoute,
-			isNewlyCreatedSite,
-			isEligibleForSignupDestinationResult,
-			siteSlug,
-			adminUrl,
+			redirectTo,
+			purchaseId,
+			feature,
+			cart,
 			isJetpackNotAtomic,
 			product,
+			isNewlyCreatedSite,
+			previousRoute,
+			isEligibleForSignupDestination: isEligibleForSignupDestinationResult,
+		} );
+		const url = getThankYouPageUrl( {
+			siteSlug,
+			adminUrl,
+			didPurchaseFail,
+			receiptId,
+			orderId,
 			redirectTo,
-			feature,
 			purchaseId,
+			feature,
 			cart,
-		]
-	);
+			isJetpackNotAtomic,
+			product,
+			isNewlyCreatedSite,
+			previousRoute,
+			isEligibleForSignupDestination: isEligibleForSignupDestinationResult,
+		} );
+		debug( 'getThankYouUrl returned', url );
+		return url;
+	}, [
+		didPurchaseFail,
+		receiptId,
+		orderId,
+		previousRoute,
+		isNewlyCreatedSite,
+		isEligibleForSignupDestinationResult,
+		siteSlug,
+		adminUrl,
+		isJetpackNotAtomic,
+		product,
+		redirectTo,
+		feature,
+		purchaseId,
+		cart,
+	] );
 
 	const onPaymentComplete = useCallback( () => {
 		debug( 'payment completed successfully' );
