@@ -71,6 +71,7 @@ function shoppingCartHookReducer(
 	state: ShoppingCartHookState,
 	action: ShoppingCartHookAction
 ): ShoppingCartHookState {
+	const couponStatus = state.couponStatus;
 	switch ( action.type ) {
 		case 'REMOVE_CART_ITEM': {
 			const uuidToRemove = action.uuidToRemove;
@@ -91,7 +92,6 @@ function shoppingCartHookReducer(
 			};
 		}
 		case 'ADD_COUPON': {
-			const couponStatus = state.couponStatus;
 			const newCoupon = action.couponToAdd;
 
 			if ( couponStatus === 'applied' || couponStatus === 'pending' ) {
@@ -109,7 +109,6 @@ function shoppingCartHookReducer(
 			};
 		}
 		case 'RECEIVE_INITIAL_RESPONSE_CART': {
-			const couponStatus = state.couponStatus;
 			const response = action.initialResponseCart;
 			const updatedCouponStatus = () => {
 				if ( couponStatus === 'fresh' ) {
@@ -133,7 +132,6 @@ function shoppingCartHookReducer(
 				cacheStatus: 'pending',
 			};
 		case 'RECEIVE_UPDATED_RESPONSE_CART': {
-			const couponStatus = state.couponStatus;
 			const response = action.updatedResponseCart;
 			const updatedCouponStatus = () => {
 				if ( couponStatus === 'pending' ) {
