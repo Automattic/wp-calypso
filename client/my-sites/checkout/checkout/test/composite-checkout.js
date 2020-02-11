@@ -88,6 +88,7 @@ describe( 'CompositeCheckout', () => {
 		const store = createStore( () => ( {
 			plans: { items: [] },
 			sites: { items: {} },
+			ui: { selectedSiteId: 123 },
 		} ) );
 
 		MyCheckout = () => (
