@@ -17,6 +17,11 @@
 
 		&.domain-product-price__domain-step-copy-updates {
 			align-items: flex-start;
+
+			&:not( .is-free-domain ) {
+				min-width: 11%;
+				max-width: 11%;
+			}
 		}
 	}
 		
@@ -53,6 +58,17 @@
 	.domain-product-price__sale-price {
 		color: var( --color-neutral-60 );
 		display: block;
+
+		&.domain-product-price__free-text-domain-step-copy-updates {
+			display: flex;
+			align-items: center;
+			height: 100%;
+
+			& del,
+			& .info-popover {
+				margin-right: 5px;
+			}
+		}
 	}
 
 	&.no-price .domain-product-price__free-text,
@@ -60,6 +76,10 @@
 		@include breakpoint( '>660px' ) {
 			margin-left: 0;
 		}
+	}
+
+	.domain-product-price__free-text-tooltip {
+		display: flex;
 	}
 
 	.domain-product-price__free-price {

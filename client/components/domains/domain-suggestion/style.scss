@@ -141,6 +141,12 @@
 			min-width: 50%;
 			margin-right: 1em;
 		}
+
+		@include breakpoint( '>660px' ) {
+			max-width: 65%;
+			min-width: 65%;
+			margin-right: 1em;
+		}
 	}
 
 	.domain-registration-suggestion__title {
@@ -157,6 +163,12 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+	}
+
+	body.is-section-signup .layout:not( .dops ) & {
+		.domain-registration-suggestion__hsts-tooltip {
+			padding: 0;
+		}
 	}
 }
 

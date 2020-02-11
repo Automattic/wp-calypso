@@ -195,7 +195,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		const infoPopoverSize = isFeatured ? 22 : 18;
 		const titleWrapperClassName = classNames( 'domain-registration-suggestion__title-wrapper', {
 			'domain-registration-suggestion__title-domain-copy-test':
-				this.props.showTestCopy && ! this.props.isFeatured,
+				this.props.isEligibleVariantForDomainTest && ! this.props.isFeatured,
 		} );
 
 		return (
@@ -207,6 +207,7 @@ class DomainRegistrationSuggestion extends React.Component {
 						className="domain-registration-suggestion__hsts-tooltip"
 						iconSize={ infoPopoverSize }
 						position={ 'right' }
+						{ ...( this.props.showDesignUpdate ? { icon: 'help-outline' } : {} ) }
 					>
 						{ translate(
 							'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
@@ -336,6 +337,8 @@ class DomainRegistrationSuggestion extends React.Component {
 				onButtonClick={ this.onButtonClick }
 				{ ...this.getButtonProps() }
 				showTestCopy={ this.props.showTestCopy }
+				showDesignUpdate={ this.props.showDesignUpdate }
+				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 				isFeatured={ isFeatured }
 			>
 				{ this.renderDomain() }
@@ -350,8 +353,7 @@ const mapStateToProps = ( state, props ) => {
 	const productSlug = get( props, 'suggestion.product_slug' );
 	const productsList = getProductsList( state );
 	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
-	const showTestCopy = get( props, 'showTestCopy', false );
-	const stripZeros = showTestCopy ? true : false;
+	const stripZeros = props.isEligibleVariantForDomainTest ? true : false;
 
 	return {
 		showHstsNotice: isHstsRequired( productSlug, productsList ),
