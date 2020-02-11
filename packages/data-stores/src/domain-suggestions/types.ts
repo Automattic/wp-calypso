@@ -1,7 +1,3 @@
-export const enum ActionType {
-	RECEIVE_DOMAIN_SUGGESTIONS = 'RECEIVE_DOMAIN_SUGGESTIONS',
-}
-
 export interface DomainSuggestionQuery {
 	/**
 	 * True to include .blog subdomain suggestions

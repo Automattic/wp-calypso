@@ -2,11 +2,11 @@
  * Internal dependencies
  */
 import { wpcomRequest, WpcomClientCredentials } from '../utils';
-import { ActionType, CreateAccountAction } from './types';
+import { CreateAccountAction } from './types';
 
 export default function createControls( clientCreds: WpcomClientCredentials ) {
 	return {
-		[ ActionType.CREATE_ACCOUNT ]: async ( action: CreateAccountAction ) => {
+		CREATE_ACCOUNT: async ( action: CreateAccountAction ) => {
 			const defaultParams = {
 				is_passwordless: true,
 				signup_flow_name: 'gutenboarding',
@@ -28,7 +28,7 @@ export default function createControls( clientCreds: WpcomClientCredentials ) {
 			} );
 			return newUser;
 		},
-		[ ActionType.FETCH_CURRENT_USER ]: async () => {
+		FETCH_CURRENT_USER: async () => {
 			const currentUser = await wpcomRequest( {
 				path: '/me',
 				apiVersion: '1.1',
