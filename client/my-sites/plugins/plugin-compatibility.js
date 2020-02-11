@@ -8,8 +8,7 @@
  * Please keep this list alphabetized within the different categories!
  */
 
-export function isCompatiblePlugin( pluginSlug ) {
-	const incompatiblePlugins = [
+const incompatiblePlugins = new Set( [
 	// "reset" - break/interfere with provided functionality
 	'advanced-database-cleaner',
 	'advanced-reset-wp',
@@ -134,7 +133,8 @@ export function isCompatiblePlugin( pluginSlug ) {
 	'wpematico',
 	'yuzo-related-post',
 	'zapp-proxy-server',
-];
-	
-	return ! incompatiblePlugins.includes( pluginSlug );
+] );
+
+export function isCompatiblePlugin( pluginSlug ) {
+	return ! incompatiblePlugins.has( pluginSlug );
 }
