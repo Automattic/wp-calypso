@@ -56,6 +56,31 @@ const defaultBrowserslistEnv = isCalypsoClient && ! isDesktop ? 'evergreen' : 'd
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 
+function filterEntrypoints( entrypoints ) {
+	if ( ! process.env.ENTRY_LIMIT ) {
+		return entrypoints;
+	}
+
+	const allowedEntrypoints = process.env.ENTRY_LIMIT.split( ',' );
+	// eslint-disable-next-line no-console
+	console.warn( '[entrylimit] Only building entrypoints %s', allowedEntrypoints.join( ', ' ) );
+	const allowed = {};
+	let buildingAtLeastOne = false;
+	Object.entries( entrypoints ).forEach( ( [ key, val ] ) => {
+		if ( allowedEntrypoints.includes( key ) ) {
+			allowed[ key ] = val;
+			buildingAtLeastOne = true;
+		}
+	} );
+	if ( ! buildingAtLeastOne ) {
+		// eslint-disable-next-line no-console
+		console.warn( '[entrylimit] No matches found! Valid entries are:' );
+		// eslint-disable-next-line no-console
+		Object.keys( entrypoints ).forEach( ep => console.warn( '\t' + ep ) );
+	}
+	return allowed;
+}
+
 if ( ! process.env.BROWSERSLIST_ENV ) {
 	process.env.BROWSERSLIST_ENV = browserslistEnv;
 }
@@ -97,13 +122,13 @@ const fileLoader = FileConfig.loader(
 const webpackConfig = {
 	bail: ! isDevelopment,
 	context: __dirname,
-	entry: {
+	entry: filterEntrypoints( {
 		'entry-main': [ path.join( __dirname, 'boot', 'app' ) ],
 		'entry-domains-landing': [ path.join( __dirname, 'landing', 'domains' ) ],
 		'entry-jetpack-cloud': [ path.join( __dirname, 'landing', 'jetpack-cloud' ) ],
 		'entry-login': [ path.join( __dirname, 'landing', 'login' ) ],
 		'entry-gutenboarding': [ path.join( __dirname, 'landing', 'gutenboarding' ) ],
-	},
+	} ),
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
 	output: {
