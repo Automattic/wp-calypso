@@ -15,7 +15,6 @@ import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import MagicLogin from './magic-login';
 import WPLogin from './wp-login';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
-import { getLanguageSlugs } from 'lib/i18n-utils';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
 
 const enhanceContextWithLogin = context => {
@@ -45,11 +44,6 @@ const enhanceContextWithLogin = context => {
 		/>
 	);
 };
-
-// Defining this here so it can be used by both ./index.node.js and ./index.web.js
-// We cannot export it from either of those (to import it from the other) because of
-// the way that `server/bundler/loader` expects only a default export and nothing else.
-export const lang = `:lang(${ getLanguageSlugs().join( '|' ) })?`;
 
 export async function login( context, next ) {
 	const {
