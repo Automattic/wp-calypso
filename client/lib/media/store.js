@@ -9,7 +9,6 @@ import { values } from 'lodash';
 import { isItemBeingUploaded } from 'lib/media/utils';
 import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
-import MediaValidationStore from './validation-store';
 
 /**
  * @typedef {import('events').EventEmitter} Emitter
@@ -103,8 +102,6 @@ MediaStore.getAll = function( siteId ) {
 
 MediaStore.dispatchToken = Dispatcher.register( function( payload ) {
 	const action = payload.action;
-
-	Dispatcher.waitFor( [ MediaValidationStore.dispatchToken ] );
 
 	switch ( action.type ) {
 		case 'CHANGE_MEDIA_SOURCE':
