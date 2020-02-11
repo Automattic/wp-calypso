@@ -3,6 +3,7 @@
 
  * Remove dependency on `core-js`: the package user needs to provide the needed JS environment
  * Move the published `build/` folder to `dist/` to align with other Calypso packages
+ * No longer provide default request handler. This avoids a mandatory dependency on `wpcom-xhr-request`.
 
 5.4.2 / 2018-07-23
 ==================
@@ -289,7 +290,7 @@
   * test: add site.shortcodesList test
   * post: propagate `id` and `slug` when post is added
   * improve tests
- 
+
 3.1.1 / 2014-12-08
 ==================
 
