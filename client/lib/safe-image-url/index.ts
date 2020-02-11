@@ -13,7 +13,7 @@ import { getUrlParts } from 'lib/url/url-parts';
  *
  * @type {RegExp}
  */
-let REGEX_EXEMPT_URL : RegExp;
+let REGEX_EXEMPT_URL: RegExp;
 if ( typeof globalThis.location === 'object' ) {
 	REGEX_EXEMPT_URL = new RegExp(
 		`^(/(?!/)|data:image/[^;]+;|blob:${ globalThis.location.origin }/)`
@@ -39,10 +39,11 @@ const REGEXP_A8C_HOST = /^([-a-zA-Z0-9_]+\.)*(gravatar\.com|wordpress\.com|wp\.c
  * NOTE: This function will return `null` for external URLs with query strings,
  * because Photon itself does not support this!
  *
- * @param  {string} url The URL to secure
+ * @param  {string}      url The URL to secure
+ * @param  {?string[]}   safeDomains List of hosts deemed safe in addition to a8c urls
  * @returns {?string}    The secured URL, or `null` if we couldn't make it safe
  */
-export default function safeImageUrl( url : string, safeDomains? : string[] ) : string | null {
+export default function safeImageUrl( url: string, safeDomains?: string[] ): string | null {
 	if ( typeof url !== 'string' ) {
 		return null;
 	}

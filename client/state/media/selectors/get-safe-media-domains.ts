@@ -19,7 +19,7 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
  * @param  {number}  siteId Site id
  * @returns {string[]}      Safe domains
  */
-export default function getSafeMediaDomains( state: any, siteId: number | null ) {
+export default function getSafeMediaDomains( state: object, siteId: number | null ) {
 	if ( ! config.isEnabled( 'coming-soon' ) ) {
 		return [];
 	}
