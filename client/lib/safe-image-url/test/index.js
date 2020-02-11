@@ -52,6 +52,15 @@ describe( 'safeImageUrl()', () => {
 			] );
 		} );
 
+		test( 'should not make safe variations of urls with safe domains', () => {
+			expect(
+				safeImageUrl( 'https://examplewordpress.com/foo', [ 'examplewordpress.com' ] )
+			).toEqual( 'https://examplewordpress.com/foo' );
+			expect(
+				safeImageUrl( 'http://examplewordpress.com/foo', [ 'examplewordpress.com' ] )
+			).toEqual( 'https://examplewordpress.com/foo' );
+		} );
+
 		test( 'should make a non-wpcom protocol relative url safe', () => {
 			expect( safeImageUrl( '//example.com/foo' ) ).toEqual( 'https://i1.wp.com/example.com/foo' );
 		} );
