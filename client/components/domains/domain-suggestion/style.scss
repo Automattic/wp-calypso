@@ -164,6 +164,12 @@
 		align-items: center;
 		justify-content: center;
 	}
+
+	body.is-section-signup .layout:not( .dops ) & {
+		.domain-registration-suggestion__hsts-tooltip {
+			padding: 0;
+		}
+	}
 }
 
 .domain-registration-suggestion__title {
