@@ -281,8 +281,8 @@ export default function CompositeCheckout( {
 		() =>
 			createFullCreditsMethod( {
 				registerStore,
-				submitTransaction: submitData =>
-					submitCreditsTransaction(
+				submitTransaction: submitData => {
+					const pending = submitCreditsTransaction(
 						{
 							...submitData,
 							siteId: select( 'wpcom' )?.getSiteId?.(),
@@ -292,9 +292,16 @@ export default function CompositeCheckout( {
 							postalCode: null,
 						},
 						wpcomTransaction
-					),
+					);
+					// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+					pending.then( result => {
+						debug( 'saving transaction response', result );
+						dispatch( 'wpcom' ).setTransactionResponse( result );
+					} );
+					return pending;
+				},
 			} ),
-		[ registerStore ]
+		[ registerStore, dispatch ]
 	);
 	fullCreditsPaymentMethod.label = <WordPressCreditsLabel credits={ credits } />;
 	fullCreditsPaymentMethod.inactiveContent = <WordPressCreditsSummary />;
@@ -306,17 +313,24 @@ export default function CompositeCheckout( {
 				getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
 				registerStore,
 				fetchStripeConfiguration: args => fetchStripeConfiguration( args, wpcom ),
-				submitTransaction: submitData =>
-					submitApplePayPayment(
+				submitTransaction: submitData => {
+					const pending = submitApplePayPayment(
 						{
 							...submitData,
 							siteId: select( 'wpcom' )?.getSiteId?.(),
 							domainDetails: getDomainDetails( select ),
 						},
 						wpcomTransaction
-					),
+					);
+					// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+					pending.then( result => {
+						debug( 'saving transaction response', result );
+						dispatch( 'wpcom' ).setTransactionResponse( result );
+					} );
+					return pending;
+				},
 			} ),
-		[ registerStore ]
+		[ registerStore, dispatch ]
 	);
 
 	const existingCardMethods = useMemo(
@@ -328,8 +342,8 @@ export default function CompositeCheckout( {
 					cardExpiry: storedDetails.expiry,
 					brand: storedDetails.card_type,
 					last4: storedDetails.card,
-					submitTransaction: submitData =>
-						submitExistingCardPayment(
+					submitTransaction: submitData => {
+						const pending = submitExistingCardPayment(
 							{
 								...submitData,
 								siteId: select( 'wpcom' )?.getSiteId?.(),
@@ -339,7 +353,14 @@ export default function CompositeCheckout( {
 								domainDetails: getDomainDetails( select ),
 							},
 							wpcomTransaction
-						),
+						);
+						// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+						pending.then( result => {
+							debug( 'saving transaction response', result );
+							dispatch( 'wpcom' ).setTransactionResponse( result );
+						} );
+						return pending;
+					},
 					registerStore,
 					getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
 					getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
