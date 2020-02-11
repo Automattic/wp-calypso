@@ -70,9 +70,9 @@ export function translateWpcomCartToCheckoutCart(
 		},
 	};
 
-    const totalItem: CheckoutCartItem = {
-        id: 'total',
-        type: 'total',
+	const totalItem: CheckoutCartItem = {
+		id: 'total',
+		type: 'total',
 		label: translate( 'Total' ),
 		amount: {
 			currency: currency,
@@ -95,13 +95,11 @@ export function translateWpcomCartToCheckoutCart(
 	// TODO: inject a real currency localization function
 	function localizeCurrency( currencyCode: string, amount: number ): string {
 		switch ( currencyCode ) {
-			case 'USD':
-				return '$' + amount / 100;
 			case 'BRL':
 				return 'R$' + amount / 100;
+			default:
+				return '$' + amount / 100;
 		}
-
-		throw new Error( 'Currency not supported: ' + currencyCode );
 	}
 
 	return {
