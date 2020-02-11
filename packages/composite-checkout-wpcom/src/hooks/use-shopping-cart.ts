@@ -381,9 +381,9 @@ export function useShoppingCart(
 		setCacheStatus( 'invalid' );
 	}, [] );
 
-	const removeItem: ( string ) => void = useCallback( uuidToRemove => {
+	const removeItem: ( string ) => void = uuidToRemove => {
 		hookDispatch( { type: 'REMOVE_CART_ITEM', uuidToRemove } );
-	}, [] );
+	};
 
 	const changePlanLength = ( planItem, planLength ) => {
 		// TODO: change plan length
@@ -395,9 +395,9 @@ export function useShoppingCart(
 		debug( 'updating prices for address in cart', address );
 	};
 
-	const submitCoupon: ( string ) => void = useCallback( couponToAdd => {
+	const submitCoupon: ( string ) => void = couponToAdd => {
 		hookDispatch( { type: 'ADD_COUPON', couponToAdd } );
-	}, [] );
+	};
 
 	return {
 		isLoading: cacheStatus === 'fresh',
