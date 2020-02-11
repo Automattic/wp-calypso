@@ -332,7 +332,6 @@ export class ThreatAlert extends Component {
 			<Fragment>
 				<FoldableCard
 					className={ className }
-					highlight="error"
 					compact
 					clickableHeader={ true }
 					actionButton={ <span /> }
