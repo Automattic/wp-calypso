@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useReducer } from 'react';
 import debugFactory from 'debug';
 
 /**
@@ -19,48 +19,60 @@ import { translateWpcomCartToCheckoutCart } from '../lib/translate-cart';
 
 const debug = debugFactory( 'composite-checkout-wpcom:shopping-cart-manager' );
 
+/**
+ *     * responseCart
+ *         Stored shopping cart endpoint response. We manipulate this
+ *         directly and pass it back to the endpoint on update events.
+ *     * couponStatus
+ *         Used to determine whether to render coupon input fields and
+ *         coupon-related error messages.
+ *     * cacheStatus
+ *         Used to determine whether we need to re-validate the cart on
+ *         the backend. We can't use responseCart directly to decide this
+ *         in e.g. useEffect because this causes an infinite loop.
+ */
 type ShoppingCartHookState = {
-    responseCart: ResponseCart;
-    couponStatus: CouponStatus;
-    cacheStatus: CacheStatus;
+	responseCart: ResponseCart;
+	couponStatus: CouponStatus;
+	cacheStatus: CacheStatus;
 };
 
 const getInitialShoppingCartHookState: () => ShoppingCartHookState = () => {
-    return {
-        responseCart: emptyResponseCart,
-        cacheStatus: 'fresh',
-        couponStatus: 'fresh',
-    };
+	return {
+		responseCart: emptyResponseCart,
+		cacheStatus: 'fresh',
+		couponStatus: 'fresh',
+	};
 };
 
 // We'll start by reproducing the behavior of the current useState hooks.
 // This type is not the end goal, but it's a minimally invasive step toward it.
-type ShoppingCartHookAction
-    = { type: 'SET_RESPONSE_CART', adjustResponseCart: ( ResponseCart ) => ResponseCart }
-    | { type: 'SET_COUPON_STATUS', newCouponStatus: CouponStatus }
-    | { type: 'SET_CACHE_STATUS', newCacheStatus: CacheStatus };
+type ShoppingCartHookAction =
+	| { type: 'SET_RESPONSE_CART'; adjustResponseCart: ( ResponseCart ) => ResponseCart }
+	| { type: 'SET_COUPON_STATUS'; newCouponStatus: CouponStatus }
+	| { type: 'SET_CACHE_STATUS'; newCacheStatus: CacheStatus };
 
 function shoppingCartHookReducer(
-    state: ShoppingCartHookState,
-    action: ShoppingCartHookAction
+	state: ShoppingCartHookState,
+	action: ShoppingCartHookAction
 ): ShoppingCartHookState {
-    switch ( action.type ) {
-        case 'SET_RESPONSE_CART':
-            return {
-                ...state,
-                responseCart: action.adjustResponseCart( state.responseCart ),
-            };
-        case 'SET_COUPON_STATUS':
-            return {
-                ...state,
-                couponStatus: action.newCouponStatus,
-            };
-        case 'SET_CACHE_STATUS':
-            return {
-                ...state,
-                cacheStatus: action.newCacheStatus,
-            };
-    }
+	switch ( action.type ) {
+		case 'SET_RESPONSE_CART':
+			return {
+				...state,
+				responseCart: action.adjustResponseCart( state.responseCart ),
+			};
+		case 'SET_COUPON_STATUS':
+			return {
+				...state,
+				couponStatus: action.newCouponStatus,
+			};
+		case 'SET_CACHE_STATUS':
+			return {
+				...state,
+				cacheStatus: action.newCacheStatus,
+			};
+	}
 }
 
 /**
@@ -170,20 +182,25 @@ export function useShoppingCart(
 	] );
 	const getServerCart = useCallback( () => getCart( cartKey ), [ cartKey, getCart ] );
 
-	// Stored shopping cart endpoint response. We manipulate this
-	// directly and pass it back to the endpoint on update events.
-	// Note that on the first render this state is undefined
-	// since we have to get the initial cart response asynchronously.
-	const [ responseCart, setResponseCart ] = useState< ResponseCart >( emptyResponseCart );
+	const [ hookState, hookDispatch ] = useReducer(
+		shoppingCartHookReducer,
+		getInitialShoppingCartHookState()
+	);
 
-	// Used to determine whether we need to re-validate the cart on
-	// the backend. We can't use responseCart directly to decide this
-	// in e.g. useEffect because this causes an infinite loop.
-	const [ cacheStatus, setCacheStatus ] = useState< CacheStatus >( 'fresh' );
+	const responseCart: ResponseCart = hookState.responseCart;
+	function setResponseCart( adjustResponseCart: ( ResponseCart ) => ResponseCart ): void {
+		hookDispatch( { type: 'SET_RESPONSE_CART', adjustResponseCart } );
+	}
 
-	// Used to determine whether to render coupon input fields and
-	// coupon-related error messages.
-	const [ couponStatus, setCouponStatus ] = useState< CouponStatus >( 'fresh' );
+	const couponStatus: CouponStatus = hookState.couponStatus;
+	function setCouponStatus( newCouponStatus: CouponStatus ): void {
+		hookDispatch( { type: 'SET_COUPON_STATUS', newCouponStatus } );
+	}
+
+	const cacheStatus: CacheStatus = hookState.cacheStatus;
+	function setCacheStatus( newCacheStatus: CacheStatus ): void {
+		hookDispatch( { type: 'SET_CACHE_STATUS', newCacheStatus } );
+	}
 
 	// Asynchronously initialize the cart. This should happen exactly once.
 	useEffect( () => {
@@ -194,7 +211,7 @@ export function useShoppingCart(
 		const initializeResponseCart = async () => {
 			const response = await getServerCart();
 			debug( 'initialized cart is', response );
-			setResponseCart( response );
+			setResponseCart( () => response );
 
 			if ( couponStatus === 'fresh' ) {
 				if ( response.is_coupon_applied ) {
@@ -219,7 +236,7 @@ export function useShoppingCart(
 			debug( 'sending cart with responseCart', responseCart );
 			const response = await setServerCart( prepareRequestCart( responseCart ) );
 			debug( 'cart sent; new responseCart is', response );
-			setResponseCart( response );
+			setResponseCart( () => response );
 
 			if ( couponStatus === 'pending' ) {
 				if ( response.is_coupon_applied ) {
