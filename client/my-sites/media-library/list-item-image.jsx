@@ -15,7 +15,7 @@ import MediaLibraryListItemFileDetails from './list-item-file-details';
 
 import { MEDIA_IMAGE_THUMBNAIL, SCALE_CHOICES } from 'lib/media/constants';
 
-export class MediaLibraryListItemImage extends React.Component {
+export class ListItemImage extends React.Component {
 	static propTypes = {
 		media: PropTypes.object,
 		scale: PropTypes.number,
@@ -107,4 +107,4 @@ export class MediaLibraryListItemImage extends React.Component {
 
 export default connect( state => ( {
 	safeMediaDomains: getSafeMediaDomains( state ),
-} ) )( MediaLibraryListItemImage );
+} ) )( ListItemImage );
