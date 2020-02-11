@@ -48,7 +48,11 @@ jest.mock( 'lib/impure-lodash', () => ( {
 
 let mockReduxPostId = null;
 jest.mock( 'lib/redux-bridge', () => ( {
-	reduxGetState: () => ( { ui: { editor: { postId: mockReduxPostId } } } ),
+	reduxGetState: () => ( {
+		media: { errors: {} },
+		ui: { editor: { postId: mockReduxPostId } },
+	} ),
+	reduxDispatch: () => ( {} ),
 } ) );
 
 describe( 'MediaActions', () => {
