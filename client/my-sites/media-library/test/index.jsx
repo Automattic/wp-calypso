@@ -31,7 +31,14 @@ jest.mock( 'state/sharing/keyring/selectors', () => ( {
 
 describe( 'MediaLibrary', () => {
 	const store = {
-		getState: () => ( {} ),
+		getState: () => ( {
+			media: {
+				errors: {},
+				queries: {},
+				queryRequests: {},
+				mediaItemRequests: {},
+			},
+		} ),
 		dispatch: () => false,
 		subscribe: () => false,
 	};
