@@ -64,6 +64,7 @@ type ShoppingCartHookAction =
 	| { type: 'RECEIVE_INITIAL_RESPONSE_CART'; initialResponseCart: ResponseCart }
 	| { type: 'REQUEST_UPDATED_RESPONSE_CART' }
 	| { type: 'RECEIVE_UPDATED_RESPONSE_CART'; updatedResponseCart: ResponseCart }
+	| { type: 'DID_SHOW_ADD_COUPON_SUCCESS_MESSAGE' }
 	| { type: 'RAISE_ERROR'; error: ShoppingCartHookError };
 
 type ShoppingCartHookError = 'GET_SERVER_CART_ERROR' | 'SET_SERVER_CART_ERROR';
@@ -165,6 +166,14 @@ function shoppingCartHookReducer(
 				},
 			};
 		}
+		case 'DID_SHOW_ADD_COUPON_SUCCESS_MESSAGE':
+			return {
+				...state,
+				showMessage: {
+					...state.showMessage,
+					addCouponSuccess: false,
+				},
+			};
 		case 'RAISE_ERROR':
 			switch ( action.error ) {
 				case 'GET_SERVER_CART_ERROR':
@@ -361,6 +370,7 @@ export function useShoppingCart(
 	useEffect( () => {
 		if ( showMessage.addCouponSuccess ) {
 			showAddCouponSuccessMessage( responseCart.coupon );
+			hookDispatch( { type: 'DID_SHOW_ADD_COUPON_SUCCESS_MESSAGE' } );
 		}
 	}, [ showMessage ] );
 
