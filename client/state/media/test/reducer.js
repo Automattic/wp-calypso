@@ -7,7 +7,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import reducer, { queries, queryRequests, mediaItemRequests } from '../reducer';
+import reducer, { errors, queries, queryRequests, mediaItemRequests } from '../reducer';
 import MediaQueryManager from 'lib/query-manager/media';
 import {
 	DESERIALIZE,
@@ -21,6 +21,19 @@ import {
 	MEDIA_REQUESTING,
 	SERIALIZE,
 } from 'state/action-types';
+import {
+	changeMediaSource,
+	clearMediaErrors,
+	clearMediaItemErrors,
+	createMediaItem,
+	failMediaItemRequest,
+	failMediaRequest,
+} from '../actions';
+import { ValidationErrors as MediaValidationErrors } from 'lib/media/constants';
+
+jest.mock( 'lib/media/utils', () => ( {
+	validateMediaItem: () => [ 'some-error' ],
+} ) );
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
@@ -30,6 +43,268 @@ describe( 'reducer', () => {
 			'queryRequests',
 			'mediaItemRequests',
 		] );
+	} );
+
+	describe( 'errors()', () => {
+		const siteId = 2916284;
+		const site = {
+			ID: siteId,
+		};
+		const mediaItem = {
+			ID: 42,
+		};
+
+		test( 'should default to an empty object', () => {
+			const state = errors( undefined, {} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		test( 'should store errors per site on media upload failure', () => {
+			const state = errors( {}, createMediaItem( site, mediaItem ) );
+
+			expect( state ).to.eql( {
+				[ siteId ]: {
+					[ mediaItem.ID ]: [ 'some-error' ],
+				},
+			} );
+		} );
+
+		test( 'should return a 404 error when failed with http_404 error during external media request', () => {
+			const error = { error: 'http_404' };
+			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
+
+			expect( state ).to.eql( {
+				[ siteId ]: {
+					0: [ MediaValidationErrors.UPLOAD_VIA_URL_404 ],
+				},
+			} );
+		} );
+
+		test( 'should return an error when there is not enough space to upload during external media request', () => {
+			const error = {
+				error: 'upload_error',
+				message: 'Not enough space to upload',
+			};
+			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
+
+			expect( state ).to.eql( {
+				[ siteId ]: {
+					0: [ MediaValidationErrors.NOT_ENOUGH_SPACE ],
+				},
+			} );
+		} );
+
+		test( 'should return an error when the space quota has been exceeded during external media request', () => {
+			const error = {
+				error: 'upload_error',
+				message: 'You have used your space quota',
+			};
+			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
+
+			expect( state ).to.eql( {
+				[ siteId ]: {
+					0: [ MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT ],
+				},
+			} );
+		} );
+
+		test( 'should return a generic server error when there is another upload error during external media request', () => {
+			const error = {
+				error: 'upload_error',
+				message: 'Some misc upload error has occurred',
+			};
+			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
+
+			expect( state ).to.eql( {
+				[ siteId ]: {
+					0: [ MediaValidationErrors.SERVER_ERROR ],
+				},
+			} );
+		} );
+
+		test( 'should return a keyring auth failed error when keyring token failed during external media request', () => {
+			const error = { error: 'keyring_token_error' };
+			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
+
+			expect( state ).to.eql( {
+				[ siteId ]: {
+					0: [ MediaValidationErrors.SERVICE_AUTH_FAILED ],
+				},
+			} );
+		} );
+
+		test( 'should return a service failure error when service failed during external media request', () => {
+			const error = { error: 'servicefail' };
+			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
+
+			expect( state ).to.eql( {
+				[ siteId ]: {
+					0: [ MediaValidationErrors.SERVICE_FAILED ],
+				},
+			} );
+		} );
+
+		test( 'should return a generic server error for any other error during external media request', () => {
+			const error = { error: 'something' };
+			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
+
+			expect( state ).to.eql( {
+				[ siteId ]: {
+					0: [ MediaValidationErrors.SERVER_ERROR ],
+				},
+			} );
+		} );
+
+		test( 'should return a 404 error when failed with http_404 error', () => {
+			const error = { error: 'http_404' };
+			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
+
+			expect( state ).to.eql( {
+				[ siteId ]: {
+					[ mediaItem.ID ]: [ MediaValidationErrors.UPLOAD_VIA_URL_404 ],
+				},
+			} );
+		} );
+
+		test( 'should return an error when there is not enough space to upload', () => {
+			const error = {
+				error: 'upload_error',
+				message: 'Not enough space to upload',
+			};
+			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
+
+			expect( state ).to.eql( {
+				[ siteId ]: {
+					[ mediaItem.ID ]: [ MediaValidationErrors.NOT_ENOUGH_SPACE ],
+				},
+			} );
+		} );
+
+		test( 'should return an error when the space quota has been exceeded', () => {
+			const error = {
+				error: 'upload_error',
+				message: 'You have used your space quota',
+			};
+			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
+
+			expect( state ).to.eql( {
+				[ siteId ]: {
+					[ mediaItem.ID ]: [ MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT ],
+				},
+			} );
+		} );
+
+		test( 'should return a generic server error when there is another upload error', () => {
+			const error = {
+				error: 'upload_error',
+				message: 'Some misc upload error has occurred',
+			};
+			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
+
+			expect( state ).to.eql( {
+				[ siteId ]: {
+					[ mediaItem.ID ]: [ MediaValidationErrors.SERVER_ERROR ],
+				},
+			} );
+		} );
+
+		test( 'should return a keyring auth failed error when keyring token failed', () => {
+			const error = { error: 'keyring_token_error' };
+			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
+
+			expect( state ).to.eql( {
+				[ siteId ]: {
+					[ mediaItem.ID ]: [ MediaValidationErrors.SERVICE_AUTH_FAILED ],
+				},
+			} );
+		} );
+
+		test( 'should return a service failure error when service failed', () => {
+			const error = { error: 'servicefail' };
+			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
+
+			expect( state ).to.eql( {
+				[ siteId ]: {
+					[ mediaItem.ID ]: [ MediaValidationErrors.SERVICE_FAILED ],
+				},
+			} );
+		} );
+
+		test( 'should return a generic server error for any other error', () => {
+			const error = { error: 'something' };
+			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
+
+			expect( state ).to.eql( {
+				[ siteId ]: {
+					[ mediaItem.ID ]: [ MediaValidationErrors.SERVER_ERROR ],
+				},
+			} );
+		} );
+
+		test( 'should clear errors by type', () => {
+			const state = errors(
+				{
+					[ siteId ]: {
+						[ mediaItem.ID ]: [
+							MediaValidationErrors.SERVICE_FAILED,
+							MediaValidationErrors.SERVER_ERROR,
+						],
+					},
+				},
+				clearMediaErrors( siteId, MediaValidationErrors.SERVICE_FAILED )
+			);
+
+			expect( state ).to.eql( {
+				[ siteId ]: {
+					[ mediaItem.ID ]: [ MediaValidationErrors.SERVER_ERROR ],
+				},
+			} );
+		} );
+
+		test( 'should clear errors for a media with a specified ID', () => {
+			const otherMediaId = 123456;
+			const state = errors(
+				{
+					[ siteId ]: {
+						[ mediaItem.ID ]: [
+							MediaValidationErrors.SERVICE_FAILED,
+							MediaValidationErrors.SERVER_ERROR,
+						],
+						[ otherMediaId ]: [ MediaValidationErrors.SERVICE_FAILED ],
+					},
+				},
+				clearMediaItemErrors( siteId, mediaItem.ID )
+			);
+
+			expect( state ).to.eql( {
+				[ siteId ]: {
+					[ otherMediaId ]: [ MediaValidationErrors.SERVICE_FAILED ],
+				},
+			} );
+		} );
+
+		test( 'should clear all errors when source is changed', () => {
+			const otherSiteState = {
+				[ 123456 ]: {
+					[ mediaItem.ID ]: [ MediaValidationErrors.SERVICE_FAILED ],
+				},
+			};
+			const state = errors(
+				{
+					[ siteId ]: {
+						[ mediaItem.ID ]: [
+							MediaValidationErrors.SERVICE_FAILED,
+							MediaValidationErrors.SERVER_ERROR,
+						],
+					},
+					...otherSiteState,
+				},
+				changeMediaSource( siteId )
+			);
+
+			expect( state ).to.eql( otherSiteState );
+		} );
 	} );
 
 	describe( 'queries()', () => {
