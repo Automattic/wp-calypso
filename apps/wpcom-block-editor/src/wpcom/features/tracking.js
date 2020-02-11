@@ -133,6 +133,24 @@ const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
 };
 
 /**
+ * Track inner blocks replacement.
+ * This is how Page Templates insert their content into page, by replacing everything that was already there.
+ *
+ * @param {Array} rootClientId id of parent block
+ * @param {object|Array} blocks block instance object or an array of such objects
+ * @returns {void}
+ */
+const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
+	castArray( blocks ).forEach( block => {
+		tracksRecordEvent( 'wpcom_block_inserted', {
+			block_name: block.name,
+			blocks_replaced: false,
+			from_template_selector: !! window._isCurrentlyinsertingStarterPageTemplate,
+		} );
+	} );
+};
+
+/**
  * Track update and publish action for Global Styles plugin.
  *
  * @param {string} eventName Name of the track event.
