@@ -11,29 +11,37 @@ import debugFactory from 'debug';
 import Button from '../../components/button';
 import { useLocalize } from '../../lib/localize';
 import { useDispatch, useSelect } from '../../lib/registry';
-import { useMessages, useLineItems } from '../../public-api';
+import { useMessages } from '../../public-api';
 import { useFormStatus } from '../form-status';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
 const debug = debugFactory( 'composite-checkout:paypal' );
 
-export function createPayPalMethod( { registerStore, submitTransaction, successUrl, cancelUrl } ) {
+export function createPayPalMethod( { registerStore } ) {
+	debug( 'creating new paypal payment method' );
+
+	const paymentMethod = {
+		id: 'paypal',
+		label: <PaypalLabel />,
+		submitButton: <PaypalSubmitButton />,
+		inactiveContent: <PaypalSummary />,
+		getAriaLabel: localize => localize( 'PayPal' ),
+	};
+
 	registerStore( 'paypal', {
 		controls: {
-			PAYPAL_TRANSACTION_SUBMIT( action ) {
-				const { items } = action.payload;
-				return submitTransaction( {
-					successUrl,
-					cancelUrl,
-					items,
-				} );
+			PAYPAL_TRANSACTION_SUBMIT() {
+				if ( ! paymentMethod.submitTransaction ) {
+					throw new Error( 'PayPal payment method does not have a submitTransaction function' );
+				}
+				return paymentMethod.submitTransaction();
 			},
 		},
 		actions: {
 			*submitPaypalPayment( payload ) {
 				try {
 					yield { type: 'PAYPAL_TRANSACTION_BEGIN', payload };
-					const paypalResponse = yield { type: 'PAYPAL_TRANSACTION_SUBMIT', payload };
+					const paypalResponse = yield { type: 'PAYPAL_TRANSACTION_SUBMIT' };
 					debug( 'received successful paypal endpoint response', paypalResponse );
 					return { type: 'PAYPAL_TRANSACTION_END', payload: paypalResponse };
 				} catch ( error ) {
@@ -65,13 +73,7 @@ export function createPayPalMethod( { registerStore, submitTransaction, successU
 		},
 	} );
 
-	return {
-		id: 'paypal',
-		label: <PaypalLabel />,
-		submitButton: <PaypalSubmitButton />,
-		inactiveContent: <PaypalSummary />,
-		getAriaLabel: localize => localize( 'PayPal' ),
-	};
+	return paymentMethod;
 }
 
 export function PaypalLabel() {
@@ -90,14 +92,10 @@ export function PaypalLabel() {
 export function PaypalSubmitButton( { disabled } ) {
 	const localize = useLocalize();
 	const { submitPaypalPayment } = useDispatch( 'paypal' );
-	const [ items ] = useLineItems();
 	useTransactionStatusHandler();
 	const { formStatus } = useFormStatus();
 
-	const onClick = () =>
-		submitPaypalPayment( {
-			items,
-		} );
+	const onClick = () => submitPaypalPayment();
 	return (
 		<Button
 			disabled={ disabled }

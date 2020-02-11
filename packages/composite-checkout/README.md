@@ -244,8 +244,8 @@ Creates a [Payment Method](#payment-methods) object. Requires passing an object 
 
 - `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
 - `submitTransaction: async object => string`. An async function that sends the request to the endpoint to get the redirect url.
-- `successUrl: string`. The URL to return to after a successful payment redirect.
-- `cancelUrl: string`. The URL to return to after a unsuccessful payment redirect.
+- `getSuccessUrl: () => string`. A function that returns a URL to return to after a successful payment redirect.
+- `getCancelUrl: () => string`. A function that returns a URL to return to after a unsuccessful payment redirect.
 
 ### createStripeMethod
 

@@ -269,10 +269,12 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 
 export type WpcomStoreState = {
 	siteId: string;
+	transactionResult: object;
 	contactDetails: ManagedContactDetails;
 };
 
 export const initialWpcomStoreState: WpcomStoreState = {
 	siteId: '',
+	transactionResult: {},
 	contactDetails: defaultManagedContactDetails,
 };

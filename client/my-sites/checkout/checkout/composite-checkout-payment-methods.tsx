@@ -4,17 +4,7 @@
 import React, { useReducer, useEffect } from 'react';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import {
-	createPayPalMethod,
-	createStripeMethod,
-	createApplePayMethod,
-	createExistingCardMethod,
-	createFullCreditsMethod,
-} from '@automattic/composite-checkout';
-import {
-	prepareDomainContactDetails,
-	CheckoutCartItem,
-} from '@automattic/composite-checkout-wpcom';
+import { prepareDomainContactDetails } from '@automattic/composite-checkout-wpcom';
 import wp from 'lib/wp';
 
 /**
@@ -32,156 +22,6 @@ import {
 } from './types';
 
 const debug = debugFactory( 'calypso:composite-checkout-payment-methods' );
-
-export function createPaymentMethods( {
-	isLoading,
-	allowedPaymentMethods,
-	storedCards,
-	select,
-	registerStore,
-	wpcom,
-	credits,
-	total,
-	subtotal,
-	translate,
-}: {
-	isLoading: boolean;
-	allowedPaymentMethods: Array< string >;
-	storedCards: Array< object >;
-	select: Function;
-	registerStore: Function;
-	wpcom: object;
-	credits: CheckoutCartItem;
-	total: CheckoutCartItem;
-	subtotal: CheckoutCartItem;
-	translate: Function;
-} ): Array< object > {
-	if ( isLoading ) {
-		return [];
-	}
-
-	debug( 'creating payment methods; allowedPaymentMethods is', allowedPaymentMethods );
-
-	const fullCreditsPaymentMethod =
-		credits.amount.value > 0 && credits.amount.value >= subtotal.amount.value
-			? createFullCreditsMethod( {
-					registerStore,
-					submitTransaction: submitData =>
-						submitCreditsTransaction(
-							{
-								...submitData,
-								siteId: select( 'wpcom' )?.getSiteId?.(),
-								domainDetails: getDomainDetails( select ),
-								// this data is intentionally empty so we do not charge taxes
-								country: null,
-								postalCode: null,
-							},
-							wpcomTransaction
-						),
-					creditsDisplayValue: credits.amount.displayValue,
-					label: <WordPressCreditsLabel credits={ credits } />,
-					summary: <WordPressCreditsSummary />,
-					buttonText: translate( 'Pay %(amount)s with WordPress.com Credits', {
-						args: { amount: total.amount.displayValue },
-					} ),
-			  } )
-			: null;
-
-	const stripeMethod = isMethodEnabled( 'card', allowedPaymentMethods )
-		? createStripeMethod( {
-				getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-				getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-				getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-				registerStore,
-				fetchStripeConfiguration: args => fetchStripeConfiguration( args, wpcom ),
-				submitTransaction: submitData =>
-					sendStripeTransaction(
-						{
-							...submitData,
-							siteId: select( 'wpcom' )?.getSiteId?.(),
-							domainDetails: getDomainDetails( select ),
-						},
-						wpcomTransaction
-					),
-		  } )
-		: null;
-
-	const paypalMethod = isMethodEnabled( 'paypal', allowedPaymentMethods )
-		? createPayPalMethod( {
-				successUrl: `/checkout/thank-you/${ select( 'wpcom' )?.getSiteId?.() }/`, // TODO: get the correct redirect URL
-				cancelUrl: window.location.href,
-				registerStore: registerStore,
-				submitTransaction: submitData =>
-					makePayPalExpressRequest(
-						{
-							...submitData,
-							siteId: select( 'wpcom' )?.getSiteId?.(),
-							domainDetails: getDomainDetails( select ),
-							couponId: null, // TODO: get couponId
-							country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-							postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-							subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-						},
-						wpcomPayPalExpress
-					),
-		  } )
-		: null;
-
-	const applePayMethod =
-		isMethodEnabled( 'apple-pay', allowedPaymentMethods ) && isApplePayAvailable()
-			? createApplePayMethod( {
-					getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-					getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-					registerStore,
-					fetchStripeConfiguration: args => fetchStripeConfiguration( args, wpcom ),
-					submitTransaction: submitData =>
-						submitApplePayPayment(
-							{
-								...submitData,
-								siteId: select( 'wpcom' )?.getSiteId?.(),
-								domainDetails: getDomainDetails( select ),
-							},
-							wpcomTransaction
-						),
-			  } )
-			: null;
-
-	const existingCardMethods = isMethodEnabled( 'card', allowedPaymentMethods )
-		? storedCards.map( storedDetails =>
-				createExistingCardMethod( {
-					id: `existingCard-${ storedDetails.stored_details_id }`,
-					cardholderName: storedDetails.name,
-					cardExpiry: storedDetails.expiry,
-					brand: storedDetails.card_type,
-					last4: storedDetails.card,
-					submitTransaction: submitData =>
-						submitExistingCardPayment(
-							{
-								...submitData,
-								siteId: select( 'wpcom' )?.getSiteId?.(),
-								storedDetailsId: storedDetails.stored_details_id,
-								paymentMethodToken: storedDetails.mp_ref,
-								paymentPartnerProcessorId: storedDetails.payment_partner,
-								domainDetails: getDomainDetails( select ),
-							},
-							wpcomTransaction
-						),
-					registerStore,
-					getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-					getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-					getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-				} )
-		  )
-		: [];
-
-	return [
-		fullCreditsPaymentMethod,
-		...existingCardMethods,
-		stripeMethod,
-		paypalMethod,
-		applePayMethod,
-	].filter( Boolean );
-}
 
 export function useStoredCards( getStoredCards ) {
 	const [ state, dispatch ] = useReducer( storedCardsReducer, {
@@ -215,7 +55,7 @@ function storedCardsReducer( state, action ) {
 	}
 }
 
-async function submitExistingCardPayment(
+export async function submitExistingCardPayment(
 	transactionData,
 	submit: WPCOMTransactionEndpoint
 ): Promise< WPCOMTransactionEndpointResponse > {
@@ -229,7 +69,7 @@ async function submitExistingCardPayment(
 	return submit( formattedTransactionData );
 }
 
-async function submitApplePayPayment(
+export async function submitApplePayPayment(
 	transactionData,
 	submit: WPCOMTransactionEndpoint
 ): Promise< WPCOMTransactionEndpointResponse > {
@@ -244,7 +84,7 @@ async function submitApplePayPayment(
 	return submit( formattedTransactionData );
 }
 
-async function makePayPalExpressRequest(
+export async function makePayPalExpressRequest(
 	transactionData,
 	submit: PayPalExpressEndpoint
 ): Promise< WPCOMTransactionEndpointResponse > {
@@ -256,12 +96,12 @@ async function makePayPalExpressRequest(
 	return submit( formattedTransactionData );
 }
 
-function getDomainDetails( select ) {
+export function getDomainDetails( select ) {
 	const managedContactDetails = select( 'wpcom' )?.getContactInfo?.() ?? {};
 	return prepareDomainContactDetails( managedContactDetails );
 }
 
-function isApplePayAvailable(): boolean {
+export function isApplePayAvailable(): boolean {
 	// Our Apple Pay implementation uses the Payment Request API, so check that first.
 	if ( ! window.PaymentRequest ) {
 		return false;
@@ -284,11 +124,11 @@ function isApplePayAvailable(): boolean {
 	return isApplePayAvailable.canMakePayments;
 }
 
-async function fetchStripeConfiguration( requestArgs, wpcom ) {
+export async function fetchStripeConfiguration( requestArgs, wpcom ) {
 	return wpcom.stripeConfiguration( requestArgs );
 }
 
-async function sendStripeTransaction(
+export async function sendStripeTransaction(
 	transactionData,
 	submit: WPCOMTransactionEndpoint
 ): Promise< WPCOMTransactionEndpointResponse > {
@@ -303,7 +143,7 @@ async function sendStripeTransaction(
 	return submit( formattedTransactionData );
 }
 
-function submitCreditsTransaction(
+export function submitCreditsTransaction(
 	transactionData,
 	submit: WPCOMTransactionEndpoint
 ): Promise< WPCOMTransactionEndpointResponse > {
@@ -317,7 +157,7 @@ function submitCreditsTransaction(
 	return submit( formattedTransactionData );
 }
 
-function isMethodEnabled( method: string, allowedPaymentMethods: string[] ): boolean {
+export function isPaymentMethodEnabled( method: string, allowedPaymentMethods: string[] ): boolean {
 	// By default, allow all payment methods
 	if ( ! allowedPaymentMethods?.length ) {
 		return true;
@@ -325,7 +165,7 @@ function isMethodEnabled( method: string, allowedPaymentMethods: string[] ): boo
 	return allowedPaymentMethods.includes( method );
 }
 
-function WordPressCreditsLabel( { credits } ) {
+export function WordPressCreditsLabel( { credits } ) {
 	const translate = useTranslate();
 
 	return (
@@ -340,7 +180,7 @@ function WordPressCreditsLabel( { credits } ) {
 	);
 }
 
-function WordPressCreditsSummary() {
+export function WordPressCreditsSummary() {
 	const translate = useTranslate();
 	return <div>{ translate( 'WordPress.com Credits' ) }</div>;
 }
@@ -356,13 +196,13 @@ function WordPressLogo() {
 	);
 }
 
-async function wpcomTransaction(
+export async function wpcomTransaction(
 	payload: WPCOMTransactionEndpointRequestPayload
 ): Promise< WPCOMTransactionEndpointResponse > {
 	return wp.undocumented().transactions( payload );
 }
 
-async function wpcomPayPalExpress(
+export async function wpcomPayPalExpress(
 	payload: PayPalExpressEndpointRequestPayload
 ): Promise< PayPalExpressEndpointResponse > {
 	return wp.undocumented().paypalExpressUrl( payload );

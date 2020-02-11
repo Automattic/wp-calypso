@@ -15,7 +15,15 @@ import {
 	useShoppingCart,
 	FormFieldAnnotation,
 } from '@automattic/composite-checkout-wpcom';
-import { CheckoutProvider, createRegistry } from '@automattic/composite-checkout';
+import {
+	CheckoutProvider,
+	createRegistry,
+	createPayPalMethod,
+	createStripeMethod,
+	createFullCreditsMethod,
+	createApplePayMethod,
+	createExistingCardMethod,
+} from '@automattic/composite-checkout';
 import { Card } from '@automattic/components';
 
 /**
@@ -30,16 +38,35 @@ import {
 } from 'lib/cart-values/cart-items';
 import { requestPlans } from 'state/plans/actions';
 import { getPlanBySlug } from 'state/plans/selectors';
-import { createPaymentMethods, useStoredCards } from './composite-checkout-payment-methods';
+import {
+	useStoredCards,
+	getDomainDetails,
+	makePayPalExpressRequest,
+	wpcomPayPalExpress,
+	isPaymentMethodEnabled,
+	fetchStripeConfiguration,
+	sendStripeTransaction,
+	wpcomTransaction,
+	submitCreditsTransaction,
+	WordPressCreditsLabel,
+	WordPressCreditsSummary,
+	submitApplePayPayment,
+	isApplePayAvailable,
+	submitExistingCardPayment,
+} from './composite-checkout-payment-methods';
 import notices from 'notices';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
-import { isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite, isNewSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import { FormCountrySelect } from 'components/forms/form-country-select';
 import getCountries from 'state/selectors/get-countries';
 import { fetchPaymentCountries } from 'state/countries/actions';
 import { StateSelect } from 'my-sites/domains/components/form';
 import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
+import { getThankYouPageUrl } from './composite-checkout-thank-you';
+import { getSelectedSite } from 'state/ui/selectors';
+import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-signup-destination';
+import getPreviousPath from 'state/selectors/get-previous-path.js';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -66,8 +93,11 @@ export default function CompositeCheckout( {
 	validateDomainContactDetails,
 	allowedPaymentMethods,
 	overrideCountryList,
+	redirectTo,
+	feature,
+	purchaseId,
+	cart,
 	// TODO: handle these also
-	// purchaseId,
 	// couponCode,
 } ) {
 	const translate = useTranslate();
@@ -75,12 +105,73 @@ export default function CompositeCheckout( {
 	const isJetpackNotAtomic = useSelector(
 		state => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
 	);
+	const selectedSiteData = useSelector( state => getSelectedSite( state ) );
+	const adminUrl = selectedSiteData?.options?.admin_url;
+	const isNewlyCreatedSite = useSelector( state => isNewSite( state, siteId ) );
+	const isEligibleForSignupDestinationResult = useSelector( state =>
+		isEligibleForSignupDestination( state, siteId, cart )
+	);
+	const previousRoute = useSelector( state => getPreviousPath( state ) );
+
+	const getThankYouUrl = useCallback( () => {
+		const transactionResult = select( 'wpcom' ).getTransactionResult();
+		debug( 'for getThankYouUrl, transactionResult is', transactionResult );
+		const didPurchaseFail = Object.keys( transactionResult.failed_purchases ?? {} ).length > 0;
+		const receiptId = transactionResult.receipt_id;
+		const orderId = transactionResult.order_id;
+
+		debug( 'getThankYouUrl called with', {
+			siteSlug,
+			adminUrl,
+			didPurchaseFail,
+			receiptId,
+			orderId,
+			redirectTo,
+			purchaseId,
+			feature,
+			cart,
+			isJetpackNotAtomic,
+			product,
+			isNewlyCreatedSite,
+			previousRoute,
+			isEligibleForSignupDestination: isEligibleForSignupDestinationResult,
+		} );
+		const url = getThankYouPageUrl( {
+			siteSlug,
+			adminUrl,
+			didPurchaseFail,
+			receiptId,
+			orderId,
+			redirectTo,
+			purchaseId,
+			feature,
+			cart,
+			isJetpackNotAtomic,
+			product,
+			isNewlyCreatedSite,
+			previousRoute,
+			isEligibleForSignupDestination: isEligibleForSignupDestinationResult,
+		} );
+		debug( 'getThankYouUrl returned', url );
+		return url;
+	}, [
+		previousRoute,
+		isNewlyCreatedSite,
+		isEligibleForSignupDestinationResult,
+		siteSlug,
+		adminUrl,
+		isJetpackNotAtomic,
+		product,
+		redirectTo,
+		feature,
+		purchaseId,
+		cart,
+	] );
 
 	const onPaymentComplete = useCallback( () => {
 		debug( 'payment completed successfully' );
-		// TODO: determine which thank-you page to visit
-		page.redirect( `/checkout/thank-you/${ siteId || '' }/` );
-	}, [ siteId ] );
+		page.redirect( getThankYouUrl() );
+	}, [ getThankYouUrl ] );
 
 	const showErrorMessage = useCallback(
 		error => {
@@ -134,7 +225,7 @@ export default function CompositeCheckout( {
 		showAddCouponSuccessMessage
 	);
 
-	const { registerStore } = registry;
+	const { registerStore, dispatch } = registry;
 	useWpcomStore(
 		registerStore,
 		handleCheckoutEvent,
@@ -154,33 +245,174 @@ export default function CompositeCheckout( {
 		getStoredCards || wpcomGetStoredCards
 	);
 
-	const paymentMethods = useMemo(
+	const paypalMethod = useMemo( () => createPayPalMethod( { registerStore } ), [ registerStore ] );
+	paypalMethod.id = 'paypal';
+	// This is defined afterward so that getThankYouUrl can be dynamic without having to re-create payment method
+	paypalMethod.submitTransaction = () =>
+		makePayPalExpressRequest(
+			{
+				items,
+				successUrl: getThankYouUrl(),
+				cancelUrl: window.location.href,
+				siteId: select( 'wpcom' )?.getSiteId?.() ?? '',
+				domainDetails: getDomainDetails( select ),
+				couponId: null, // TODO: get couponId
+				country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '',
+				postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '',
+				subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value ?? '',
+			},
+			wpcomPayPalExpress
+		);
+
+	const stripeMethod = useMemo(
 		() =>
-			createPaymentMethods( {
-				isLoading: isLoading || isLoadingStoredCards,
-				storedCards,
-				allowedPaymentMethods: allowedPaymentMethods || serverAllowedPaymentMethods,
-				select,
+			createStripeMethod( {
+				getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+				getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+				getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 				registerStore,
-				wpcom,
-				credits,
-				total,
-				subtotal,
-				translate,
+				fetchStripeConfiguration: args => fetchStripeConfiguration( args, wpcom ),
+				submitTransaction: submitData => {
+					const pending = sendStripeTransaction(
+						{
+							...submitData,
+							siteId: select( 'wpcom' )?.getSiteId?.(),
+							domainDetails: getDomainDetails( select ),
+						},
+						wpcomTransaction
+					);
+					// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+					pending.then( result => {
+						debug( 'saving transaction response', result );
+						dispatch( 'wpcom' ).setTransactionResponse( result );
+					} );
+					return pending;
+				},
 			} ),
-		[
-			allowedPaymentMethods,
-			serverAllowedPaymentMethods,
-			isLoading,
-			isLoadingStoredCards,
-			storedCards,
-			credits,
-			registerStore,
-			total,
-			subtotal,
-			translate,
-		]
+		[ registerStore, dispatch ]
 	);
+	stripeMethod.id = 'card';
+
+	const fullCreditsPaymentMethod = useMemo(
+		() =>
+			createFullCreditsMethod( {
+				registerStore,
+				submitTransaction: submitData => {
+					const pending = submitCreditsTransaction(
+						{
+							...submitData,
+							siteId: select( 'wpcom' )?.getSiteId?.(),
+							domainDetails: getDomainDetails( select ),
+							// this data is intentionally empty so we do not charge taxes
+							country: null,
+							postalCode: null,
+						},
+						wpcomTransaction
+					);
+					// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+					pending.then( result => {
+						debug( 'saving transaction response', result );
+						dispatch( 'wpcom' ).setTransactionResponse( result );
+					} );
+					return pending;
+				},
+			} ),
+		[ registerStore, dispatch ]
+	);
+	fullCreditsPaymentMethod.label = <WordPressCreditsLabel credits={ credits } />;
+	fullCreditsPaymentMethod.inactiveContent = <WordPressCreditsSummary />;
+
+	const applePayMethod = useMemo(
+		() =>
+			createApplePayMethod( {
+				getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+				getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+				registerStore,
+				fetchStripeConfiguration: args => fetchStripeConfiguration( args, wpcom ),
+				submitTransaction: submitData => {
+					const pending = submitApplePayPayment(
+						{
+							...submitData,
+							siteId: select( 'wpcom' )?.getSiteId?.(),
+							domainDetails: getDomainDetails( select ),
+						},
+						wpcomTransaction
+					);
+					// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+					pending.then( result => {
+						debug( 'saving transaction response', result );
+						dispatch( 'wpcom' ).setTransactionResponse( result );
+					} );
+					return pending;
+				},
+			} ),
+		[ registerStore, dispatch ]
+	);
+
+	const existingCardMethods = useMemo(
+		() =>
+			storedCards.map( storedDetails =>
+				createExistingCardMethod( {
+					id: `existingCard-${ storedDetails.stored_details_id }`,
+					cardholderName: storedDetails.name,
+					cardExpiry: storedDetails.expiry,
+					brand: storedDetails.card_type,
+					last4: storedDetails.card,
+					submitTransaction: submitData => {
+						const pending = submitExistingCardPayment(
+							{
+								...submitData,
+								siteId: select( 'wpcom' )?.getSiteId?.(),
+								storedDetailsId: storedDetails.stored_details_id,
+								paymentMethodToken: storedDetails.mp_ref,
+								paymentPartnerProcessorId: storedDetails.payment_partner,
+								domainDetails: getDomainDetails( select ),
+							},
+							wpcomTransaction
+						);
+						// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+						pending.then( result => {
+							debug( 'saving transaction response', result );
+							dispatch( 'wpcom' ).setTransactionResponse( result );
+						} );
+						return pending;
+					},
+					registerStore,
+					getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+					getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+					getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+				} )
+			),
+		[ registerStore, storedCards ]
+	);
+
+	const paymentMethods =
+		isLoading || isLoadingStoredCards
+			? []
+			: [
+					fullCreditsPaymentMethod,
+					applePayMethod,
+					...existingCardMethods,
+					stripeMethod,
+					paypalMethod,
+			  ].filter( methodObject => {
+					if ( methodObject.id === 'full-credits' ) {
+						return credits.amount.value > 0 && credits.amount.value >= subtotal.amount.value;
+					}
+					if ( methodObject.id === 'apple-pay' && ! isApplePayAvailable() ) {
+						return false;
+					}
+					if ( methodObject.id.startsWith( 'existingCard-' ) ) {
+						return isPaymentMethodEnabled(
+							'card',
+							allowedPaymentMethods || serverAllowedPaymentMethods
+						);
+					}
+					return isPaymentMethodEnabled(
+						methodObject.id,
+						allowedPaymentMethods || serverAllowedPaymentMethods
+					);
+			  } );
 
 	const validateDomainContact =
 		validateDomainContactDetails || wpcomValidateDomainContactInformation;
@@ -254,6 +486,10 @@ CompositeCheckout.propTypes = {
 	setCart: PropTypes.func,
 	getStoredCards: PropTypes.func,
 	allowedPaymentMethods: PropTypes.array,
+	redirectTo: PropTypes.string,
+	feature: PropTypes.string,
+	cart: PropTypes.object,
+	transaction: PropTypes.object,
 };
 
 function useAddProductToCart( planSlug, isJetpackNotAtomic, addItem ) {
