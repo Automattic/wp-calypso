@@ -310,7 +310,7 @@ export async function sendStripeTransaction(
 	return submit( formattedTransactionData );
 }
 
-function submitCreditsTransaction(
+export function submitCreditsTransaction(
 	transactionData,
 	submit: WPCOMTransactionEndpoint
 ): Promise< WPCOMTransactionEndpointResponse > {
@@ -332,7 +332,7 @@ export function isPaymentMethodEnabled( method: string, allowedPaymentMethods: s
 	return allowedPaymentMethods.includes( method );
 }
 
-function WordPressCreditsLabel( { credits } ) {
+export function WordPressCreditsLabel( { credits } ) {
 	const translate = useTranslate();
 
 	return (
@@ -347,7 +347,7 @@ function WordPressCreditsLabel( { credits } ) {
 	);
 }
 
-function WordPressCreditsSummary() {
+export function WordPressCreditsSummary() {
 	const translate = useTranslate();
 	return <div>{ translate( 'WordPress.com Credits' ) }</div>;
 }
