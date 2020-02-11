@@ -27,6 +27,7 @@ class Document extends React.Component {
 	render() {
 		const {
 			app,
+			application,
 			chunkFiles,
 			commitSha,
 			buildTimestamp,
@@ -68,6 +69,7 @@ class Document extends React.Component {
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
 			( isSupportSession ? 'var isSupportSession = true;\n' : '' ) +
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
+			( application ? `var application = ${ jsonStringifyForHtml( application ) };\n` : '' ) +
 			( initialReduxState
 				? `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };\n`
 				: '' ) +
@@ -132,7 +134,7 @@ class Document extends React.Component {
 							>
 								<div className="masterbar" />
 								<div className="layout__content">
-									{ 'jetpack-cloud' === sectionName ? (
+									{ 'jetpack-cloud' === application ? (
 										<div className="wpcom-site__loader">
 											<JetpackLogo size={ 72 } className="wpcom-site__logo" />
 											{ translate( 'Loading' ) }

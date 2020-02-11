@@ -140,6 +140,12 @@ class JetpackCloudSidebar extends Component {
 							/>
 						</ul>
 					</ExpandableSidebarMenu>
+					<SidebarItem
+						label="Plugins" // @todo: Localize
+						link="/plugins"
+						onNavigate={ this.onNavigate }
+						selected={ this.isSelected( '/plugins' ) }
+					/>
 				</SidebarRegion>
 				<SidebarFooter>
 					<SidebarMenu>

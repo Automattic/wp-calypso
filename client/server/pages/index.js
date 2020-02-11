@@ -54,7 +54,6 @@ import analytics from 'server/lib/analytics';
 import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'landing/gutenboarding/section';
-import { JETPACK_CLOUD_SECTIONS_DEFINITION } from 'landing/jetpack-cloud/sections';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -314,6 +313,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		bodyClasses,
 		addEvergreenCheck: target === 'evergreen' && calypsoEnv !== 'development',
 		target: target || 'fallback',
+		application: getApplication( request.hostname ),
 	} );
 
 	context.app = {
@@ -655,6 +655,13 @@ const jetpackCloudEnvs = [
 	'jetpack-cloud-production',
 ];
 
+function getApplication( hostname = '' ) {
+	if ( 'jetpack.cloud.localhost' === hostname || jetpackCloudEnvs.includes( calypsoEnv ) ) {
+		return 'jetpack-cloud';
+	}
+	return 'calypso';
+}
+
 module.exports = function() {
 	const app = express();
 
@@ -672,13 +679,6 @@ module.exports = function() {
 		}
 		next();
 	} );
-
-	function getApplication( hostname = '' ) {
-		if ( 'jetpack.cloud.localhost' === hostname || jetpackCloudEnvs.includes( calypsoEnv ) ) {
-			return 'jetpack-cloud';
-		}
-		return 'calypso';
-	}
 
 	app.use( function( req, res, next ) {
 		req.application = getApplication( req.hostname );
@@ -842,11 +842,6 @@ module.exports = function() {
 
 	sections
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
-		.filter(
-			section =>
-				( section.paths.indexOf( '/' ) > -1 && section.app.includes( getApplication() ) ) ||
-				section.paths.indexOf( '/' ) == -1
-		)
 		.forEach( section => {
 			section.paths.forEach( sectionPath => handleSectionPath( section, sectionPath ) );
 

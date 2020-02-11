@@ -13,6 +13,7 @@ import classnames from 'classnames';
  */
 import AsyncLoad from 'components/async-load';
 import MasterbarLoggedIn from 'layout/masterbar/logged-in';
+import JetpackMasterbar from 'landing/jetpack-cloud/masterbar';
 import GlobalNotices from 'components/global-notices';
 import HtmlIsIframeClassname from 'layout/html-is-iframe-classname';
 import notices from 'notices';
@@ -23,6 +24,7 @@ import QuerySites from 'components/data/query-sites';
 import QuerySiteSelectedEditor from 'components/data/query-site-selected-editor';
 import { isOffline } from 'state/application/selectors';
 import {
+	getApplication,
 	getSelectedSiteId,
 	hasSidebar,
 	masterbarIsVisible,
@@ -135,15 +137,6 @@ class Layout extends Component {
 			return optionalProps;
 		};
 
-		const masterbar = this.props.masterbar ? (
-			this.props.masterbar
-		) : (
-			<MasterbarLoggedIn
-				section={ this.props.sectionGroup }
-				isCheckout={ this.props.sectionName === 'checkout' }
-			/>
-		);
-
 		return (
 			<div className={ sectionClass }>
 				<BodySectionCssClass
@@ -160,7 +153,13 @@ class Layout extends Component {
 				<AsyncLoad require="layout/guided-tours" placeholder={ null } />
 				{ ! isE2ETest() && <AsyncLoad require="layout/nps-survey-notice" placeholder={ null } /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
-				{ masterbar }
+				{ 'jetpack-cloud' === this.props.application && <JetpackMasterbar /> }
+				{ 'jetpack-cloud' !== this.props.application && (
+					<MasterbarLoggedIn
+						section={ this.props.sectionGroup }
+						isCheckout={ this.props.sectionName === 'checkout' }
+					/>
+				) }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<LayoutLoader />
 				{ this.props.isOffline && <OfflineStatus /> }
@@ -232,6 +231,7 @@ export default connect( state => {
 	const isFrankenflow = startsWith( currentRoute, '/start/frankenflow' );
 
 	return {
+		application: getApplication( state ),
 		masterbarIsHidden:
 			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,
 		isJetpack,

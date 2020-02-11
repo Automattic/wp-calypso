@@ -5,6 +5,7 @@ export { default as getSelectedSite } from './get-selected-site';
 export { default as getSelectedSiteId } from './get-selected-site-id';
 export { default as getSelectedSiteSlug } from './get-selected-site-slug';
 export { default as getSection } from './get-section';
+export { default as getApplication } from './get-application';
 export { default as getSectionName } from './get-section-name';
 export { default as getSectionGroup } from './get-section-group';
 export { default as isSiteSection } from './is-site-section';

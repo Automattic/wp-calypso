@@ -12,10 +12,12 @@ import {
 	setPreviewShowing,
 	setRoute,
 	setSection,
+	setApplication,
 	setSelectedSiteId,
 	toggleNotificationsPanel,
 } from '../actions';
 import {
+	APPLICATION_SET,
 	NAVIGATE,
 	NOTIFICATIONS_PANEL_TOGGLE,
 	PREVIEW_IS_SHOWING,
@@ -110,6 +112,18 @@ describe( 'actions', () => {
 				type: SECTION_SET,
 				section,
 				hasSidebar: false,
+			} );
+		} );
+	} );
+
+	// setApplication
+	describe( 'setApplication()', () => {
+		test( 'should return an action object with the section specified', () => {
+			const application = 'fun';
+
+			expect( setApplication( 'fun' ) ).to.eql( {
+				type: APPLICATION_SET,
+				application: application,
 			} );
 		} );
 	} );

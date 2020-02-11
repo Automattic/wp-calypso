@@ -38,8 +38,11 @@ import { initConnection as initHappychatConnection } from 'state/happychat/conne
 import { requestHappychatEligibility } from 'state/happychat/user/actions';
 import { getHappychatAuth } from 'state/happychat/utils';
 import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
-import { setRoute as setRouteAction } from 'state/ui/actions';
-import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
+import {
+	setRoute as setRouteAction,
+	setApplication as setApplicationAction,
+} from 'state/ui/actions';
+import { getSelectedSiteId, getSectionName, getApplication } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import setupGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import { createReduxStore } from 'state';
@@ -126,24 +129,29 @@ const loggedOutMiddleware = currentUser => {
 	}
 };
 
-const loggedInMiddleware = currentUser => {
+const loggedInMiddleware = ( currentUser, reduxStore ) => {
 	if ( ! currentUser.get() ) {
 		return;
 	}
 
 	page( '/', context => {
 		const { primarySiteSlug } = currentUser.get();
-		console.log( 'context;', context );
+		const state = reduxStore.getState();
+		const application = getApplication( state );
 		let redirectPath =
 			primarySiteSlug && 'variant' === abtest( 'redirectToCustomerHome' )
 				? `/home/${ primarySiteSlug }`
 				: '/read';
 
+		if ( 'jetpack-cloud' === application ) {
+			redirectPath = '/app';
+		}
+
 		if ( context.querystring ) {
 			redirectPath += `?${ context.querystring }`;
 		}
 
-		// page.redirect( redirectPath );
+		page.redirect( redirectPath );
 	} );
 };
 
@@ -177,6 +185,15 @@ const oauthTokenMiddleware = () => {
 const setRouteMiddleware = () => {
 	page( '*', ( context, next ) => {
 		context.store.dispatch( setRouteAction( context.pathname, context.query ) );
+
+		next();
+	} );
+};
+
+const setApplicationMiddleware = () => {
+	page( '*', ( context, next ) => {
+		const app = window.application ? window.application : 'calypso';
+		context.store.dispatch( setApplicationAction( app ) );
 
 		next();
 	} );
@@ -247,9 +264,10 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	setupContextMiddleware( reduxStore );
 	oauthTokenMiddleware();
 	loggedOutMiddleware( currentUser );
-	loggedInMiddleware( currentUser );
+	loggedInMiddleware( currentUser, reduxStore );
 	loadSectionsMiddleware();
 	setRouteMiddleware();
+	setApplicationMiddleware();
 	clearNoticesMiddleware();
 	unsavedFormsMiddleware();
 

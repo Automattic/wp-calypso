@@ -19,6 +19,7 @@ import route from 'state/ui/route/reducer';
 import masterbarVisibility from 'state/ui/masterbar-visibility/reducer';
 import oauth2ClientsUI from 'state/ui/oauth2-clients/reducer';
 import section from 'state/ui/section/reducer';
+import { application as applicationUIReducer } from 'state/ui/application/reducer';
 import notices from 'state/notices/reducer';
 import i18n from 'state/i18n/reducer';
 import users from 'state/users/reducer';
@@ -45,6 +46,7 @@ const reducer = combineReducers( {
 		masterbarVisibility,
 		oauth2Clients: oauth2ClientsUI,
 		section,
+		application: applicationUIReducer,
 	} ),
 } );
 

@@ -8,6 +8,7 @@ import {
 	NOTIFICATIONS_PANEL_TOGGLE,
 } from 'state/action-types';
 import { combineReducers, withoutPersistence } from 'state/utils';
+import application from './application/reducer';
 import actionLog from './action-log/reducer';
 import billingTransactions from './billing-transactions/reducer';
 import checkout from './checkout/reducer';
@@ -98,6 +99,7 @@ export const isNotificationsOpen = function( state = false, { type } ) {
 };
 
 const reducer = combineReducers( {
+	application,
 	actionLog,
 	billingTransactions,
 	checkout,
