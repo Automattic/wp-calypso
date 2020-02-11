@@ -236,7 +236,7 @@ async function submitExistingCardPayment(
 	return submit( formattedTransactionData );
 }
 
-async function submitApplePayPayment(
+export async function submitApplePayPayment(
 	transactionData,
 	submit: WPCOMTransactionEndpoint
 ): Promise< WPCOMTransactionEndpointResponse > {
@@ -268,7 +268,7 @@ export function getDomainDetails( select ) {
 	return prepareDomainContactDetails( managedContactDetails );
 }
 
-function isApplePayAvailable(): boolean {
+export function isApplePayAvailable(): boolean {
 	// Our Apple Pay implementation uses the Payment Request API, so check that first.
 	if ( ! window.PaymentRequest ) {
 		return false;

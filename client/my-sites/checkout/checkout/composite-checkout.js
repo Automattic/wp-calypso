@@ -21,6 +21,7 @@ import {
 	createPayPalMethod,
 	createStripeMethod,
 	createFullCreditsMethod,
+	createApplePayMethod,
 } from '@automattic/composite-checkout';
 import { Card } from '@automattic/components';
 
@@ -48,6 +49,8 @@ import {
 	submitCreditsTransaction,
 	WordPressCreditsLabel,
 	WordPressCreditsSummary,
+	submitApplePayPayment,
+	isApplePayAvailable,
 } from './composite-checkout-payment-methods';
 import notices from 'notices';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
@@ -273,18 +276,43 @@ export default function CompositeCheckout( {
 	fullCreditsPaymentMethod.label = <WordPressCreditsLabel credits={ credits } />;
 	fullCreditsPaymentMethod.inactiveContent = <WordPressCreditsSummary />;
 
+	const applePayMethod = useMemo(
+		() =>
+			createApplePayMethod( {
+				getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+				getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+				registerStore,
+				fetchStripeConfiguration: args => fetchStripeConfiguration( args, wpcom ),
+				submitTransaction: submitData =>
+					submitApplePayPayment(
+						{
+							...submitData,
+							siteId: select( 'wpcom' )?.getSiteId?.(),
+							domainDetails: getDomainDetails( select ),
+						},
+						wpcomTransaction
+					),
+			} ),
+		[ registerStore ]
+	);
+
 	const paymentMethods =
 		isLoading || isLoadingStoredCards
 			? []
-			: [ fullCreditsPaymentMethod, stripeMethod, paypalMethod ].filter( methodObject => {
-					if ( methodObject.id === 'full-credits' ) {
-						return credits.amount.value > 0 && credits.amount.value >= subtotal.amount.value;
+			: [ fullCreditsPaymentMethod, applePayMethod, stripeMethod, paypalMethod ].filter(
+					methodObject => {
+						if ( methodObject.id === 'full-credits' ) {
+							return credits.amount.value > 0 && credits.amount.value >= subtotal.amount.value;
+						}
+						if ( methodObject.id === 'apple-pay' && ! isApplePayAvailable() ) {
+							return false;
+						}
+						return isPaymentMethodEnabled(
+							methodObject.id,
+							allowedPaymentMethods || serverAllowedPaymentMethods
+						);
 					}
-					return isPaymentMethodEnabled(
-						methodObject.id,
-						allowedPaymentMethods || serverAllowedPaymentMethods
-					);
-			  } );
+			  );
 
 	const validateDomainContact =
 		validateDomainContactDetails || wpcomValidateDomainContactInformation;
