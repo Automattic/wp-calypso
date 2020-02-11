@@ -110,7 +110,7 @@ export interface ShoppingCartManager {
 	couponItem: CheckoutCartItem;
 	credits: CheckoutCartItem;
 	addItem: ( WPCOMCartItem ) => void;
-	removeItem: ( WPCOMCartItem ) => void;
+	removeItem: ( string ) => void;
 	submitCoupon: ( string ) => void;
 	couponStatus: CouponStatus;
 	couponCode: string | null;
@@ -302,8 +302,8 @@ export function useShoppingCart(
 		setCacheStatus( 'invalid' );
 	}, [] );
 
-	const removeItem: ( WPCOMCartItem ) => void = useCallback( itemToRemove => {
-		hookDispatch( { type: 'REMOVE_CART_ITEM', uuidToRemove: itemToRemove.wpcom_meta.uuid } );
+	const removeItem: ( string ) => void = useCallback( uuidToRemove => {
+		hookDispatch( { type: 'REMOVE_CART_ITEM', uuidToRemove } );
 	}, [] );
 
 	const changePlanLength = ( planItem, planLength ) => {
