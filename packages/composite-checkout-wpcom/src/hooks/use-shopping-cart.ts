@@ -12,6 +12,7 @@ import {
 	ResponseCart,
 	emptyResponseCart,
 	removeItemFromResponseCart,
+	addWPCOMCartItemToResponseCart,
 	addCouponToResponseCart,
 	WPCOMCart,
 	WPCOMCartItem,
@@ -61,6 +62,7 @@ type ShoppingCartHookAction =
 	| { type: 'SET_RESPONSE_CART'; adjustResponseCart: ( ResponseCart ) => ResponseCart }
 	| { type: 'SET_CACHE_STATUS'; newCacheStatus: CacheStatus }
 	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
+	| { type: 'ADD_CART_ITEM'; wpcomCartItemToAdd: WPCOMCartItem }
 	| { type: 'ADD_COUPON'; couponToAdd: string }
 	| { type: 'RECEIVE_INITIAL_RESPONSE_CART'; initialResponseCart: ResponseCart }
 	| { type: 'REQUEST_UPDATED_RESPONSE_CART' }
@@ -91,6 +93,16 @@ function shoppingCartHookReducer(
 				responseCart: removeItemFromResponseCart( state.responseCart, action.uuidToRemove ),
 				cacheStatus: 'invalid',
 			};
+		}
+		case 'ADD_CART_ITEM': {
+			const wpcomCartItemToAdd = action.wpcomCartItemToAdd;
+			debug( 'adding item to cart', wpcomCartItemToAdd );
+			return {
+				...state,
+				responseCart: addWPCOMCartItemToResponseCart( state.responseCart, wpcomCartItemToAdd ),
+				cacheStatus: 'invalid',
+			};
+		}
 		case 'ADD_COUPON': {
 			const couponStatus = state.couponStatus;
 			const newCoupon = action.couponToAdd;
@@ -372,14 +384,9 @@ export function useShoppingCart(
 		}
 	}, [ showMessage ] );
 
-	const addItem: ( WPCOMCartItem ) => void = useCallback( itemToAdd => {
-		debug( 'adding item to cart', itemToAdd );
-		setResponseCart( currentResponseCart => ( {
-			...currentResponseCart,
-			products: [ ...currentResponseCart.products, itemToAdd ],
-		} ) );
-		setCacheStatus( 'invalid' );
-	}, [] );
+	const addItem: ( WPCOMCartItem ) => void = wpcomCartItemToAdd => {
+		hookDispatch( { type: 'ADD_CART_ITEM', wpcomCartItemToAdd } );
+	};
 
 	const removeItem: ( string ) => void = uuidToRemove => {
 		hookDispatch( { type: 'REMOVE_CART_ITEM', uuidToRemove } );
