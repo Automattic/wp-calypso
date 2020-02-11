@@ -15,12 +15,13 @@ import { useHistory } from 'react-router-dom';
  */
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { USER_STORE } from '../../stores/user';
+import { SITE_STORE } from '../../stores/site';
 import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
 import { selectorDebounce } from '../../constants';
 import Link from '../link';
-import { createSite } from '../../utils';
 import { Step } from '../../steps';
+import { getSiteSlug, getSiteCreationParams } from '../../utils';
 
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
@@ -30,6 +31,12 @@ interface Props {
 
 const Header: FunctionComponent< Props > = ( { prev } ) => {
 	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
+	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
+
+	const { createSite } = useDispatch( SITE_STORE );
+
+	const newSite = useSelect( select => select( SITE_STORE ).getNewSite() );
+
 	const { domain, selectedDesign, siteTitle, siteVertical, shouldCreate } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
@@ -81,7 +88,9 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		</span>
 	);
 
-	const siteUrl = currentDomain?.domain_name || siteTitle || currentUser?.username;
+	const siteUrl =
+		currentDomain?.domain_name || siteTitle || currentUser?.username || newUser?.username;
+
 	const siteCreationData = {
 		siteTitle,
 		siteVertical,
@@ -89,17 +98,15 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		...( selectedDesign?.slug && { theme: selectedDesign?.slug } ),
 	};
 
-	const handleCreateSite = () => {
+	const handleCreateSite = ( bearerToken?: string ) => {
 		setIsCreatingSite( true );
 		history.push( Step.CreateSite );
-		createSite( siteCreationData ).then( siteSlug => {
-			resetOnboardStore();
-			window.location.href = `/block-editor/page/${ siteSlug }/home?is-gutenboarding`;
-		} );
+
+		createSite( { ...getSiteCreationParams( siteCreationData ), authToken: bearerToken } );
 	};
 
-	if ( shouldCreate && currentUser ) {
-		handleCreateSite();
+	if ( shouldCreate && newUser ) {
+		handleCreateSite( newUser.bearerToken );
 		setShouldCreate( false );
 	}
 
@@ -107,6 +114,13 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		setShouldCreate( true );
 		history.push( Step.Signup );
 	};
+
+	if ( newSite ) {
+		resetOnboardStore();
+		window.location.href = `/block-editor/page/${ getSiteSlug(
+			newSite?.url
+		) }/home?is-gutenboarding`;
+	}
 
 	return (
 		<div
