@@ -6,6 +6,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import { LEGAL_REQUEST, TOS_ACCEPT } from 'state/action-types';
 import { setLegalData } from 'state/legal/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const requestLegalData = action => {
 	return http(
@@ -18,7 +19,10 @@ const requestLegalData = action => {
 	);
 };
 
-const storeLegalData = ( action, legalData ) => setLegalData( legalData );
+const storeLegalData = ( action, legalData ) => [
+	setLegalData( legalData ),
+	recordTracksEvent( 'calypso_tos_accept' ),
+];
 
 const formatLegalData = ( { tos: { accepted, active_date, display_prompt } } ) => {
 	return {
