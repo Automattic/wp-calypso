@@ -364,7 +364,7 @@ export function useShoppingCart(
 	// Translate the responseCart into the format needed in checkout.
 	const cart: WPCOMCart = useMemo(
 		() => translateWpcomCartToCheckoutCart( translate, responseCartToDisplay ),
-		[ responseCartToDisplay ]
+		[ translate, responseCartToDisplay ]
 	);
 
 	useEffect( () => {
@@ -372,7 +372,7 @@ export function useShoppingCart(
 			showAddCouponSuccessMessage( responseCart.coupon );
 			hookDispatch( { type: 'DID_SHOW_ADD_COUPON_SUCCESS_MESSAGE' } );
 		}
-	}, [ shouldShowNotification ] );
+	}, [ shouldShowNotification.didAddCoupon, responseCart.coupon ] );
 
 	const addItem: ( WPCOMCartItem ) => void = wpcomCartItemToAdd => {
 		hookDispatch( { type: 'ADD_CART_ITEM', wpcomCartItemToAdd } );
