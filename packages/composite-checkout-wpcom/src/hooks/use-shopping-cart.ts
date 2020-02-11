@@ -11,6 +11,7 @@ import {
 	prepareRequestCart,
 	ResponseCart,
 	emptyResponseCart,
+	removeItemFromResponseCart,
 	WPCOMCart,
 	WPCOMCartItem,
 	CheckoutCartItem,
@@ -50,7 +51,8 @@ const getInitialShoppingCartHookState: () => ShoppingCartHookState = () => {
 type ShoppingCartHookAction =
 	| { type: 'SET_RESPONSE_CART'; adjustResponseCart: ( ResponseCart ) => ResponseCart }
 	| { type: 'SET_COUPON_STATUS'; newCouponStatus: CouponStatus }
-	| { type: 'SET_CACHE_STATUS'; newCacheStatus: CacheStatus };
+	| { type: 'SET_CACHE_STATUS'; newCacheStatus: CacheStatus }
+	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string };
 
 function shoppingCartHookReducer(
 	state: ShoppingCartHookState,
@@ -71,6 +73,13 @@ function shoppingCartHookReducer(
 			return {
 				...state,
 				cacheStatus: action.newCacheStatus,
+			};
+		case 'REMOVE_CART_ITEM':
+			debug( 'removing item from cart with uuid', action.uuidToRemove );
+			return {
+				...state,
+				responseCart: removeItemFromResponseCart( state.responseCart, action.uuidToRemove ),
+				cacheStatus: 'invalid',
 			};
 	}
 }
@@ -294,14 +303,7 @@ export function useShoppingCart(
 	}, [] );
 
 	const removeItem: ( WPCOMCartItem ) => void = useCallback( itemToRemove => {
-		debug( 'removing item from cart', itemToRemove );
-		setResponseCart( currentResponseCart => ( {
-			...currentResponseCart,
-			products: currentResponseCart.products.filter( ( _, index ) => {
-				return index.toString() !== itemToRemove.wpcom_meta.uuid;
-			} ),
-		} ) );
-		setCacheStatus( 'invalid' );
+		hookDispatch( { type: 'REMOVE_CART_ITEM', uuidToRemove: itemToRemove.wpcom_meta.uuid } );
 	}, [] );
 
 	const changePlanLength = ( planItem, planLength ) => {
