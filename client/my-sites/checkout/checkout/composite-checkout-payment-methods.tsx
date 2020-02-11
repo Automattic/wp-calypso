@@ -46,7 +46,6 @@ export function createPaymentMethods( {
 	total,
 	subtotal,
 	translate,
-	getThankYouUrl,
 }: {
 	isLoading: boolean;
 	allowedPaymentMethods: Array< string >;
@@ -97,7 +96,7 @@ export function createPaymentMethods( {
 			  } )
 			: null;
 
-	const stripeMethod = isMethodEnabled( 'card', allowedPaymentMethods )
+	const stripeMethod = isPaymentMethodEnabled( 'card', allowedPaymentMethods )
 		? createStripeMethod( {
 				getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
 				getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
@@ -116,10 +115,8 @@ export function createPaymentMethods( {
 		  } )
 		: null;
 
-	const paypalMethod = isMethodEnabled( 'paypal', allowedPaymentMethods )
+	const paypalMethod = isPaymentMethodEnabled( 'paypal', allowedPaymentMethods )
 		? createPayPalMethod( {
-				getSuccessUrl: () => getThankYouUrl(),
-				getCancelUrl: () => window.location.href,
 				registerStore: registerStore,
 				submitTransaction: submitData =>
 					makePayPalExpressRequest(
@@ -138,7 +135,7 @@ export function createPaymentMethods( {
 		: null;
 
 	const applePayMethod =
-		isMethodEnabled( 'apple-pay', allowedPaymentMethods ) && isApplePayAvailable()
+		isPaymentMethodEnabled( 'apple-pay', allowedPaymentMethods ) && isApplePayAvailable()
 			? createApplePayMethod( {
 					getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
 					getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
@@ -156,7 +153,7 @@ export function createPaymentMethods( {
 			  } )
 			: null;
 
-	const existingCardMethods = isMethodEnabled( 'card', allowedPaymentMethods )
+	const existingCardMethods = isPaymentMethodEnabled( 'card', allowedPaymentMethods )
 		? storedCards.map( storedDetails =>
 				createExistingCardMethod( {
 					id: `existingCard-${ storedDetails.stored_details_id }`,
