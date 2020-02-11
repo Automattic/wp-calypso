@@ -21,6 +21,7 @@ import {
 	WPCOMCart,
 	WPCOMCartItem,
 	emptyWPCOMCart,
+	addWPCOMCartItemToResponseCart,
 	CheckoutCartItem,
 	CheckoutCartItemAmount,
 } from './types/checkout-cart';
@@ -53,6 +54,7 @@ export {
 	WPCOMCart,
 	WPCOMCartItem,
 	emptyWPCOMCart,
+	addWPCOMCartItemToResponseCart,
 	CheckoutCartItem,
 	CheckoutCartItemAmount,
 	WpcomStoreState,

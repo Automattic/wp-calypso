@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { CheckoutPaymentMethodSlug } from './checkout-payment-method-slug';
+import { ResponseCart, ResponseCartProduct } from './backend/shopping-cart-endpoint';
 
 /**
  * Amount object as used by composite-checkout. If that
@@ -36,6 +37,7 @@ export type WPCOMCartItem = CheckoutCartItem & {
 		product_id: number;
 		extra: object;
 		volume?: number;
+		is_domain_registration?: boolean;
 	};
 };
 
@@ -97,3 +99,41 @@ export const emptyWPCOMCart = {
 	},
 	couponCode: null,
 } as WPCOMCart;
+
+export function addWPCOMCartItemToResponseCart(
+	responseCart: ResponseCart,
+	wpcomCartItem: WPCOMCartItem
+): ResponseCart {
+	const uuid = getFreshCartItemUUID( responseCart );
+	const newProductItem = convertWPCOMCartItemToResponseCartProduct( wpcomCartItem, uuid );
+	return {
+		...responseCart,
+		products: [ ...responseCart.products, newProductItem ],
+	};
+}
+
+function getFreshCartItemUUID( responseCart: ResponseCart ): string {
+	const maxUUID = responseCart.products
+		.map( product => product.uuid )
+		.reduce( ( accum, current ) => ( accum > current ? accum : current ), '' );
+	return maxUUID + '1';
+}
+
+function convertWPCOMCartItemToResponseCartProduct(
+	wpcomCartItem: WPCOMCartItem,
+	uuid: string
+): ResponseCartProduct {
+	return {
+		product_name: wpcomCartItem.label,
+		product_slug: wpcomCartItem.type,
+		product_id: wpcomCartItem.wpcom_meta.product_id,
+		currency: wpcomCartItem.amount.currency,
+		item_subtotal_integer: wpcomCartItem.amount.value,
+		item_subtotal_display: wpcomCartItem.amount.displayValue,
+		is_domain_registration: wpcomCartItem.wpcom_meta.is_domain_registration ?? false,
+		meta: wpcomCartItem.wpcom_meta.meta ?? '',
+		volume: wpcomCartItem.wpcom_meta.volume ?? 1,
+		extra: wpcomCartItem.wpcom_meta.extra,
+		uuid,
+	};
+}

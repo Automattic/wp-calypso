@@ -176,6 +176,7 @@ function translateWpcomCartItemToCheckoutCartItem(
 				product_id,
 				extra,
 				volume,
+				is_domain_registration,
 			},
 		};
 	};
