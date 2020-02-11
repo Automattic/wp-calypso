@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { __ as NO__ } from '@wordpress/i18n';
+import { useI18n, withI18n, I18nProps } from '@automattic/react-i18n';
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { FunctionComponent, useEffect } from 'react';
@@ -29,6 +29,8 @@ interface Props {
 }
 
 const Header: FunctionComponent< Props > = ( { prev } ) => {
+	const { __: NO__ } = useI18n();
+
 	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
 	const { domain, selectedDesign, siteTitle, siteVertical, shouldCreate } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
@@ -117,10 +119,7 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		>
 			<div className="gutenboarding__header-section">
 				<div className="gutenboarding__header-group">
-					<Link className="gutenboarding__header-back-button" to={ prev }>
-						<Icon icon="arrow-left-alt" />
-						{ NO__( 'Back' ) }
-					</Link>
+					<BackButton prev={ prev } />
 				</div>
 				<div className="gutenboarding__header-group">
 					{ siteTitle ? (
@@ -160,3 +159,22 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 };
 
 export default Header;
+
+interface BackButtonProps extends I18nProps {
+	prev?: string;
+}
+
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+const BackButton = withI18n(
+	class C extends React.PureComponent< BackButtonProps > {
+		render() {
+			const { __: NO__ } = this.props;
+			return (
+				<Link className="gutenboarding__header-back-button" to={ this.props.prev }>
+					<Icon icon="arrow-left-alt" />
+					{ NO__( 'Back' ) }
+				</Link>
+			);
+		}
+	}
+);

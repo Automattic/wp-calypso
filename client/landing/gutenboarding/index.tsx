@@ -2,6 +2,7 @@
  * External dependencies
  */
 import '@automattic/calypso-polyfills';
+import { I18nContext } from '@automattic/react-i18n';
 import React from 'react';
 import ReactDom from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
@@ -29,9 +30,11 @@ window.AppBoot = () => {
 		accessibleFocus();
 
 		ReactDom.render(
-			<BrowserRouter basename="gutenboarding">
-				<Gutenboard />
-			</BrowserRouter>,
+			<I18nContext.Provider value={ 'en' }>
+				<BrowserRouter basename="gutenboarding">
+					<Gutenboard />
+				</BrowserRouter>
+			</I18nContext.Provider>,
 			document.getElementById( 'wpcom' )
 		);
 	}
