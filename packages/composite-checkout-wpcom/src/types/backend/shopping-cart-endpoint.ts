@@ -162,3 +162,26 @@ export function processRawResponse( rawResponseCart ): ResponseCart {
 		} ),
 	};
 }
+
+export function addItemToResponseCart( responseCart: ResponseCart, product ): ResponseCart {
+	const uuid = getFreshCartItemUUID( responseCart );
+	const newProductItem = constructResponseCartProduct( product, uuid );
+	return {
+		...responseCart,
+		products: [ ...responseCart.products, newProductItem ],
+	};
+}
+
+function getFreshCartItemUUID( responseCart: ResponseCart ): string {
+	const maxUUID = responseCart.products
+		.map( product => product.uuid )
+		.reduce( ( accum, current ) => ( accum > current ? accum : current ), '' );
+	return maxUUID + '1';
+}
+
+function constructResponseCartProduct( product, uuid: string ): ResponseCartProduct {
+	return {
+		...product,
+		uuid,
+	};
+}
