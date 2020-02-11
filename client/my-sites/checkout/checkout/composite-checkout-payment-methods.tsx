@@ -254,7 +254,7 @@ async function submitApplePayPayment(
 	return submit( formattedTransactionData );
 }
 
-async function makePayPalExpressRequest(
+export async function makePayPalExpressRequest(
 	transactionData,
 	submit: PayPalExpressEndpoint
 ): Promise< WPCOMTransactionEndpointResponse > {
@@ -266,7 +266,7 @@ async function makePayPalExpressRequest(
 	return submit( formattedTransactionData );
 }
 
-function getDomainDetails( select ) {
+export function getDomainDetails( select ) {
 	const managedContactDetails = select( 'wpcom' )?.getContactInfo?.() ?? {};
 	return prepareDomainContactDetails( managedContactDetails );
 }
@@ -327,7 +327,7 @@ function submitCreditsTransaction(
 	return submit( formattedTransactionData );
 }
 
-function isMethodEnabled( method: string, allowedPaymentMethods: string[] ): boolean {
+export function isPaymentMethodEnabled( method: string, allowedPaymentMethods: string[] ): boolean {
 	// By default, allow all payment methods
 	if ( ! allowedPaymentMethods?.length ) {
 		return true;
@@ -372,7 +372,7 @@ async function wpcomTransaction(
 	return wp.undocumented().transactions( payload );
 }
 
-async function wpcomPayPalExpress(
+export async function wpcomPayPalExpress(
 	payload: PayPalExpressEndpointRequestPayload
 ): Promise< PayPalExpressEndpointResponse > {
 	return wp.undocumented().paypalExpressUrl( payload );

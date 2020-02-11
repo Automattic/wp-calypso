@@ -11,27 +11,29 @@ import debugFactory from 'debug';
 import Button from '../../components/button';
 import { useLocalize } from '../../lib/localize';
 import { useDispatch, useSelect } from '../../lib/registry';
-import { useMessages, useLineItems } from '../../public-api';
+import { useMessages } from '../../public-api';
 import { useFormStatus } from '../form-status';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
 const debug = debugFactory( 'composite-checkout:paypal' );
 
-export function createPayPalMethod( {
-	registerStore,
-	submitTransaction,
-	getSuccessUrl,
-	getCancelUrl,
-} ) {
+export function createPayPalMethod( { registerStore } ) {
+	const paymentMethod = {
+		id: 'paypal',
+		label: <PaypalLabel />,
+		submitButton: <PaypalSubmitButton />,
+		inactiveContent: <PaypalSummary />,
+		getAriaLabel: localize => localize( 'PayPal' ),
+	};
+
 	registerStore( 'paypal', {
 		controls: {
 			PAYPAL_TRANSACTION_SUBMIT( action ) {
-				const { items } = action.payload;
-				return submitTransaction( {
-					successUrl: getSuccessUrl(),
-					cancelUrl: getCancelUrl(),
-					items,
-				} );
+				debug( 'submitting paypal transaction' );
+				if ( ! paymentMethod.submitTransaction ) {
+					throw new Error( 'PayPal Payment Method object missing a submitTransaction method' );
+				}
+				return paymentMethod.submitTransaction( action.payload );
 			},
 		},
 		actions: {
