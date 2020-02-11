@@ -109,6 +109,7 @@ const sections = [
 		module: 'my-sites/plugins',
 		secondary: true,
 		group: 'sites',
+		app: [ 'calypso', 'jetpack-cloud' ],
 	},
 	{
 		name: 'pages',
@@ -187,6 +188,7 @@ const sections = [
 		module: 'my-sites/stats',
 		secondary: true,
 		group: 'sites',
+		app: [ 'calypso', 'jetpack-cloud' ],
 	},
 	{
 		name: 'checklist',
@@ -295,6 +297,15 @@ const sections = [
 		module: 'reader',
 		secondary: true,
 		group: 'reader',
+		app: [ 'calypso' ],
+	},
+	{
+		name: 'jetpack-cloud',
+		paths: [ '/' ],
+		module: 'landing/jetpack-cloud',
+		secondary: true,
+		group: 'reader',
+		app: [ 'jetpack-cloud' ],
 	},
 	{
 		name: 'reader',
@@ -470,6 +481,7 @@ const sections = [
 		module: 'landing/jetpack-cloud/sections/scan',
 		secondary: true,
 		group: 'jetpack-cloud',
+		app: [ 'jetpack-cloud' ],
 	},
 	{
 		name: 'backups',
@@ -477,6 +489,7 @@ const sections = [
 		module: 'landing/jetpack-cloud/sections/backups',
 		secondary: true,
 		group: 'jetpack-cloud',
+		app: [ 'jetpack-cloud' ],
 	},
 ];
 

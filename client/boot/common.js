@@ -133,6 +133,7 @@ const loggedInMiddleware = currentUser => {
 
 	page( '/', context => {
 		const { primarySiteSlug } = currentUser.get();
+		console.log( 'context;', context );
 		let redirectPath =
 			primarySiteSlug && 'variant' === abtest( 'redirectToCustomerHome' )
 				? `/home/${ primarySiteSlug }`
@@ -142,7 +143,7 @@ const loggedInMiddleware = currentUser => {
 			redirectPath += `?${ context.querystring }`;
 		}
 
-		page.redirect( redirectPath );
+		// page.redirect( redirectPath );
 	} );
 };
 

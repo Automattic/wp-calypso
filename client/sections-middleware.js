@@ -70,6 +70,7 @@ function createPageDefinition( path, sectionDefinition ) {
 	}
 
 	page( pathRegex, async function( context, next ) {
+		console.log( 'createPageDefinition', pathRegex, sectionDefinition );
 		try {
 			const loadedSection = _loadedSections[ sectionDefinition.module ];
 			if ( loadedSection ) {

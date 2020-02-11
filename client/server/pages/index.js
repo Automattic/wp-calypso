@@ -673,21 +673,17 @@ module.exports = function() {
 		next();
 	} );
 
-	if ( jetpackCloudEnvs.includes( calypsoEnv ) ) {
-		JETPACK_CLOUD_SECTIONS_DEFINITION.forEach( section =>
-			section.paths.forEach( sectionPath =>
-				handleSectionPath( section, sectionPath, 'entry-jetpack-cloud' )
-			)
-		);
-
-		// catchall to render 404 for all routes not whitelisted in client/sections
-		app.use( render404( 'entry-jetpack-cloud' ) );
-
-		// Error handling middleware for displaying the server error 500 page must be the very last middleware defined
-		app.use( renderServerError( 'entry-jetpack-cloud' ) );
-
-		return app;
+	function getApplication( hostname = '' ) {
+		if ( 'jetpack.cloud.localhost' === hostname || jetpackCloudEnvs.includes( calypsoEnv ) ) {
+			return 'jetpack-cloud';
+		}
+		return 'calypso';
 	}
+
+	app.use( function( req, res, next ) {
+		req.application = getApplication( req.hostname );
+		next();
+	} );
 
 	// redirect homepage if the Reader is disabled
 	app.get( '/', function( request, response, next ) {
@@ -807,6 +803,16 @@ module.exports = function() {
 		const pathRegex = pathToRegExp( sectionPath );
 
 		app.get( pathRegex, function( req, res, next ) {
+			// Set the default app of a section to calypso
+			if ( ! section.app ) {
+				section.app = [ 'calypso' ];
+			}
+			// Do not allow calypso only sections into the jetpack cloud
+			if ( ! section.app.includes( req.application ) ) {
+				render404( req, res );
+				next();
+			}
+
 			req.context = {
 				...getDefaultContext( req, entrypoint ),
 				sectionName: section.name,
@@ -836,6 +842,11 @@ module.exports = function() {
 
 	sections
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
+		.filter(
+			section =>
+				( section.paths.indexOf( '/' ) > -1 && section.app.includes( getApplication() ) ) ||
+				section.paths.indexOf( '/' ) == -1
+		)
 		.forEach( section => {
 			section.paths.forEach( sectionPath => handleSectionPath( section, sectionPath ) );
 
