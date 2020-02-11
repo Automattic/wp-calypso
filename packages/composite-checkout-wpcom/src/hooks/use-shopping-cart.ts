@@ -40,8 +40,8 @@ type ShoppingCartHookState = {
 	couponStatus: CouponStatus;
 	cacheStatus: CacheStatus;
 	showMessage: {
-	    addCouponSuccess: boolean;
-    };
+		addCouponSuccess: boolean;
+	};
 };
 
 const getInitialShoppingCartHookState: () => ShoppingCartHookState = () => {
@@ -49,9 +49,9 @@ const getInitialShoppingCartHookState: () => ShoppingCartHookState = () => {
 		responseCart: emptyResponseCart,
 		cacheStatus: 'fresh',
 		couponStatus: 'fresh',
-        showMessage: {
-		    addCouponSuccess: false,
-        },
+		showMessage: {
+			addCouponSuccess: false,
+		},
 	};
 };
 
@@ -59,7 +59,6 @@ const getInitialShoppingCartHookState: () => ShoppingCartHookState = () => {
 // This type is not the end goal, but it's a minimally invasive step toward it.
 type ShoppingCartHookAction =
 	| { type: 'SET_RESPONSE_CART'; adjustResponseCart: ( ResponseCart ) => ResponseCart }
-	| { type: 'SET_COUPON_STATUS'; newCouponStatus: CouponStatus }
 	| { type: 'SET_CACHE_STATUS'; newCacheStatus: CacheStatus }
 	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
 	| { type: 'ADD_COUPON'; couponToAdd: string }
@@ -75,11 +74,6 @@ function shoppingCartHookReducer(
 			return {
 				...state,
 				responseCart: action.adjustResponseCart( state.responseCart ),
-			};
-		case 'SET_COUPON_STATUS':
-			return {
-				...state,
-				couponStatus: action.newCouponStatus,
 			};
 		case 'SET_CACHE_STATUS':
 			return {
@@ -129,42 +123,42 @@ function shoppingCartHookReducer(
 				cacheStatus: 'valid',
 			};
 		}
-        case 'RECEIVE_UPDATED_RESPONSE_CART': {
-            const couponStatus = state.couponStatus;
-            const response = action.updatedResponseCart;
-            const updatedCouponStatus = () => {
-                if ( couponStatus === 'pending' ) {
-                    if ( response.is_coupon_applied ) {
-                        return 'applied';
-                    }
+		case 'RECEIVE_UPDATED_RESPONSE_CART': {
+			const couponStatus = state.couponStatus;
+			const response = action.updatedResponseCart;
+			const updatedCouponStatus = () => {
+				if ( couponStatus === 'pending' ) {
+					if ( response.is_coupon_applied ) {
+						return 'applied';
+					}
 
-                    if ( ! response.is_coupon_applied && response.coupon_discounts_integer?.length <= 0 ) {
-                        return 'invalid';
-                    }
+					if ( ! response.is_coupon_applied && response.coupon_discounts_integer?.length <= 0 ) {
+						return 'invalid';
+					}
 
-                    if ( ! response.is_coupon_applied && response.coupon_discounts_integer?.length > 0 ) {
-                        return 'rejected';
-                    }
-                }
-                return 'error';
-            };
+					if ( ! response.is_coupon_applied && response.coupon_discounts_integer?.length > 0 ) {
+						return 'rejected';
+					}
+				}
+				return 'error';
+			};
 
-            debug( 'received cart is', response );
+			debug( 'received cart is', response );
 
-            const newCouponStatus = updatedCouponStatus();
-            const addCouponSuccess = newCouponStatus === 'applied';
+			const newCouponStatus = updatedCouponStatus();
+			const addCouponSuccess = newCouponStatus === 'applied';
 
-            return {
-                ...state,
-                responseCart: response,
-                couponStatus: newCouponStatus,
-                cacheStatus: 'valid',
-                showMessage: {
-                    ...state.showMessage,
-                    addCouponSuccess,
-                },
-            };
-        }
+			return {
+				...state,
+				responseCart: response,
+				couponStatus: newCouponStatus,
+				cacheStatus: 'valid',
+				showMessage: {
+					...state.showMessage,
+					addCouponSuccess,
+				},
+			};
+		}
 	}
 }
 
@@ -286,9 +280,6 @@ export function useShoppingCart(
 	}
 
 	const couponStatus: CouponStatus = hookState.couponStatus;
-	function setCouponStatus( newCouponStatus: CouponStatus ): void {
-		hookDispatch( { type: 'SET_COUPON_STATUS', newCouponStatus } );
-	}
 
 	const cacheStatus: CacheStatus = hookState.cacheStatus;
 	function setCacheStatus( newCacheStatus: CacheStatus ): void {
@@ -324,10 +315,10 @@ export function useShoppingCart(
 		const fetchAndUpdate = async () => {
 			debug( 'sending cart with responseCart', responseCart );
 			const response = await setServerCart( prepareRequestCart( responseCart ) );
-            hookDispatch( {
-                type: 'RECEIVE_UPDATED_RESPONSE_CART',
-                updatedResponseCart: response,
-            } );
+			hookDispatch( {
+				type: 'RECEIVE_UPDATED_RESPONSE_CART',
+				updatedResponseCart: response,
+			} );
 		};
 
 		debug( 'considering sending cart to server; cacheStatus is', cacheStatus );
@@ -359,10 +350,10 @@ export function useShoppingCart(
 	);
 
 	useEffect( () => {
-	    if ( showMessage.addCouponSuccess ) {
-            showAddCouponSuccessMessage( responseCart.coupon );
-        }
-    }, [ showMessage ] );
+		if ( showMessage.addCouponSuccess ) {
+			showAddCouponSuccessMessage( responseCart.coupon );
+		}
+	}, [ showMessage ] );
 
 	const addItem: ( WPCOMCartItem ) => void = useCallback( itemToAdd => {
 		debug( 'adding item to cart', itemToAdd );
