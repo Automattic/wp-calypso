@@ -4,16 +4,18 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import getSafeMediaDomains from 'state/media/selectors/get-safe-media-domains';
 import { url as mediaUrl } from 'lib/media/utils';
 import MediaLibraryListItemFileDetails from './list-item-file-details';
 
 import { MEDIA_IMAGE_THUMBNAIL, SCALE_CHOICES } from 'lib/media/constants';
 
-export default class MediaLibraryListItemImage extends React.Component {
+export class MediaLibraryListItemImage extends React.Component {
 	static propTypes = {
 		media: PropTypes.object,
 		scale: PropTypes.number,
@@ -77,6 +79,7 @@ export default class MediaLibraryListItemImage extends React.Component {
 		const url = mediaUrl( this.props.media, {
 			resize: `${ width },${ width }`,
 			size: this.props.thumbnailType === MEDIA_IMAGE_THUMBNAIL ? 'medium' : false,
+			safeDomains: this.props.safeMediaDomains,
 		} );
 
 		if ( ! url ) {
@@ -101,3 +104,7 @@ export default class MediaLibraryListItemImage extends React.Component {
 		);
 	}
 }
+
+export default connect( state => ( {
+	safeMediaDomains: getSafeMediaDomains( state ),
+} ) )( MediaLibraryListItemImage );

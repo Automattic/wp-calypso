@@ -65,9 +65,16 @@ const scaleByFactor = value => value * IMAGE_SCALE_FACTOR;
  *                                     arguments (assuming Photon or Gravatar)
  * @param   {?number}         height   Pixel height if specifying resize width
  * @param   {?boolean}        makeSafe Should we make sure this is on a safe host?
+ * @param   {?string[]}       safeDomains List of hosts deemed safe in addition to a8c urls
  * @returns {?string}                  Resized image URL, or `null` if unable to resize
  */
-export default function resizeImageUrl( imageUrl, resize, height, makeSafe = true ) {
+export default function resizeImageUrl(
+	imageUrl,
+	resize,
+	height,
+	makeSafe = true,
+	safeDomains = []
+) {
 	if ( 'string' !== typeof imageUrl ) {
 		return imageUrl;
 	}
@@ -99,7 +106,7 @@ export default function resizeImageUrl( imageUrl, resize, height, makeSafe = tru
 	// External URLs are made "safe" (i.e. passed through Photon), so
 	// recurse with an assumed set of query arguments for Photon
 	if ( ! service && makeSafe ) {
-		return resizeImageUrl( safeImageUrl( imageUrl ), resize, null, false );
+		return resizeImageUrl( safeImageUrl( imageUrl, safeDomains ), resize, null, false );
 	}
 
 	// Map sizing parameters, multiplying their values by the scale factor

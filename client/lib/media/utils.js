@@ -36,7 +36,8 @@ const REGEXP_VIDEOPRESS_GUID = /^[a-z\d]+$/i;
  *
  * @param  {object} media   Media object
  * @param  {object} options Optional options, accepting a `photon` boolean,
- *                          `maxWidth` pixel value, `resize` string, or `size`.
+ *                          `maxWidth` pixel value, `resize` string, `size`,
+ *                          or `whitelistedDomains` string[].
  * @returns {string}         URL to the media
  */
 export function url( media, options ) {
@@ -72,15 +73,27 @@ export function url( media, options ) {
 	}
 
 	if ( options.maxWidth ) {
-		return resize( media.URL, {
-			w: options.maxWidth,
-		} );
+		return resize(
+			media.URL,
+			{
+				w: options.maxWidth,
+			},
+			null,
+			true,
+			options.safeDomains
+		);
 	}
 
 	if ( options.resize ) {
-		return resize( media.URL, {
-			resize: options.resize,
-		} );
+		return resize(
+			media.URL,
+			{
+				resize: options.resize,
+			},
+			null,
+			true,
+			options.safeDomains
+		);
 	}
 
 	return media.URL;

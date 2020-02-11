@@ -13,7 +13,7 @@ import { getUrlParts } from 'lib/url/url-parts';
  *
  * @type {RegExp}
  */
-let REGEX_EXEMPT_URL;
+let REGEX_EXEMPT_URL : RegExp;
 if ( typeof globalThis.location === 'object' ) {
 	REGEX_EXEMPT_URL = new RegExp(
 		`^(/(?!/)|data:image/[^;]+;|blob:${ globalThis.location.origin }/)`
@@ -42,7 +42,7 @@ const REGEXP_A8C_HOST = /^([-a-zA-Z0-9_]+\.)*(gravatar\.com|wordpress\.com|wp\.c
  * @param  {string} url The URL to secure
  * @returns {?string}    The secured URL, or `null` if we couldn't make it safe
  */
-export default function safeImageUrl( url ) {
+export default function safeImageUrl( url : string, safeDomains? : string[] ) : string | null {
 	if ( typeof url !== 'string' ) {
 		return null;
 	}
@@ -53,8 +53,8 @@ export default function safeImageUrl( url ) {
 
 	const { hostname, pathname, search } = getUrlParts( url );
 
-	if ( REGEXP_A8C_HOST.test( hostname ) ) {
-		// Safely promote Automattic domains to HTTPS
+	if ( REGEXP_A8C_HOST.test( hostname ) || safeDomains?.indexOf( hostname ) !== -1 ) {
+		// Safely promote Automattic and whitelisted domains to HTTPS
 		return url.replace( /^http:/, 'https:' );
 	}
 
