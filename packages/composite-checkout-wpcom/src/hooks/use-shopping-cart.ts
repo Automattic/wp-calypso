@@ -63,10 +63,11 @@ type ShoppingCartHookAction =
 	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
 	| { type: 'ADD_COUPON'; couponToAdd: string }
 	| { type: 'RECEIVE_INITIAL_RESPONSE_CART'; initialResponseCart: ResponseCart }
+	| { type: 'REQUEST_UPDATED_RESPONSE_CART' }
 	| { type: 'RECEIVE_UPDATED_RESPONSE_CART'; updatedResponseCart: ResponseCart }
 	| { type: 'RAISE_ERROR'; error: ShoppingCartHookError };
 
-type ShoppingCartHookError = 'GET_SERVER_CART_ERROR';
+type ShoppingCartHookError = 'GET_SERVER_CART_ERROR' | 'SET_SERVER_CART_ERROR';
 
 function shoppingCartHookReducer(
 	state: ShoppingCartHookState,
@@ -124,6 +125,11 @@ function shoppingCartHookReducer(
 				cacheStatus: 'valid',
 			};
 		}
+		case 'REQUEST_UPDATED_RESPONSE_CART':
+			return {
+				...state,
+				cacheStatus: 'pending',
+			};
 		case 'RECEIVE_UPDATED_RESPONSE_CART': {
 			const couponStatus = state.couponStatus;
 			const response = action.updatedResponseCart;
@@ -144,8 +150,6 @@ function shoppingCartHookReducer(
 				return 'error';
 			};
 
-			debug( 'received cart is', response );
-
 			const newCouponStatus = updatedCouponStatus();
 			const addCouponSuccess = newCouponStatus === 'applied';
 
@@ -163,6 +167,7 @@ function shoppingCartHookReducer(
 		case 'RAISE_ERROR':
 			switch ( action.error ) {
 				case 'GET_SERVER_CART_ERROR':
+				case 'SET_SERVER_CART_ERROR':
 					return {
 						...state,
 						cacheStatus: 'error',
@@ -322,26 +327,28 @@ export function useShoppingCart(
 
 	// Asynchronously re-validate when the cache is dirty.
 	useEffect( () => {
-		const fetchAndUpdate = async () => {
-			debug( 'sending cart with responseCart', responseCart );
-			const response = await setServerCart( prepareRequestCart( responseCart ) );
-			hookDispatch( {
-				type: 'RECEIVE_UPDATED_RESPONSE_CART',
-				updatedResponseCart: response,
-			} );
-		};
-
-		debug( 'considering sending cart to server; cacheStatus is', cacheStatus );
-		if ( cacheStatus === 'invalid' ) {
-			debug( 'updating the cart' );
-			setCacheStatus( 'pending' );
-			fetchAndUpdate().catch( error => {
-				// TODO: figure out what to do here
-				setCacheStatus( 'error' );
-				debug( 'error while fetching cart', error );
-			} );
+		if ( cacheStatus !== 'invalid' ) {
+			return;
 		}
-	}, [ cacheStatus, couponStatus, responseCart, showAddCouponSuccessMessage ] );
+
+		debug( 'sending edited cart to server', responseCart );
+
+		hookDispatch( { type: 'REQUEST_UPDATED_RESPONSE_CART' } );
+
+		setServerCart( prepareRequestCart( responseCart ) )
+			.then( response => {
+				debug( 'updated cart is', response );
+				hookDispatch( {
+					type: 'RECEIVE_UPDATED_RESPONSE_CART',
+					updatedResponseCart: response,
+				} );
+			} )
+			.catch( error => {
+				// TODO: figure out what to do here
+				debug( 'error while fetching cart', error );
+				hookDispatch( { type: 'RAISE_ERROR', error: 'SET_SERVER_CART_ERROR' } );
+			} );
+	}, [ setServerCart, cacheStatus, responseCart ] );
 
 	// Keep a separate cache of the displayed cart which we regenerate only when
 	// the cart has been downloaded
