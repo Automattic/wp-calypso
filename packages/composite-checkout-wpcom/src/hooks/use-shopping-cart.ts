@@ -32,11 +32,16 @@ const debug = debugFactory( 'composite-checkout-wpcom:shopping-cart-manager' );
  *         Used to determine whether we need to re-validate the cart on
  *         the backend. We can't use responseCart directly to decide this
  *         in e.g. useEffect because this causes an infinite loop.
+ *     * showMessage
+ *         Used to trigger calypso notification side effects on render
  */
 type ShoppingCartHookState = {
 	responseCart: ResponseCart;
 	couponStatus: CouponStatus;
 	cacheStatus: CacheStatus;
+	showMessage: {
+	    addCouponSuccess: boolean;
+    };
 };
 
 const getInitialShoppingCartHookState: () => ShoppingCartHookState = () => {
@@ -44,6 +49,9 @@ const getInitialShoppingCartHookState: () => ShoppingCartHookState = () => {
 		responseCart: emptyResponseCart,
 		cacheStatus: 'fresh',
 		couponStatus: 'fresh',
+        showMessage: {
+		    addCouponSuccess: false,
+        },
 	};
 };
 
@@ -55,7 +63,8 @@ type ShoppingCartHookAction =
 	| { type: 'SET_CACHE_STATUS'; newCacheStatus: CacheStatus }
 	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
 	| { type: 'ADD_COUPON'; couponToAdd: string }
-	| { type: 'RECEIVE_INITIAL_RESPONSE_CART'; initialResponseCart: ResponseCart };
+	| { type: 'RECEIVE_INITIAL_RESPONSE_CART'; initialResponseCart: ResponseCart }
+	| { type: 'RECEIVE_UPDATED_RESPONSE_CART'; updatedResponseCart: ResponseCart };
 
 function shoppingCartHookReducer(
 	state: ShoppingCartHookState,
@@ -120,6 +129,42 @@ function shoppingCartHookReducer(
 				cacheStatus: 'valid',
 			};
 		}
+        case 'RECEIVE_UPDATED_RESPONSE_CART': {
+            const couponStatus = state.couponStatus;
+            const response = action.updatedResponseCart;
+            const updatedCouponStatus = () => {
+                if ( couponStatus === 'pending' ) {
+                    if ( response.is_coupon_applied ) {
+                        return 'applied';
+                    }
+
+                    if ( ! response.is_coupon_applied && response.coupon_discounts_integer?.length <= 0 ) {
+                        return 'invalid';
+                    }
+
+                    if ( ! response.is_coupon_applied && response.coupon_discounts_integer?.length > 0 ) {
+                        return 'rejected';
+                    }
+                }
+                return 'error';
+            };
+
+            debug( 'received cart is', response );
+
+            const newCouponStatus = updatedCouponStatus();
+            const addCouponSuccess = newCouponStatus === 'applied';
+
+            return {
+                ...state,
+                responseCart: response,
+                couponStatus: newCouponStatus,
+                cacheStatus: 'valid',
+                showMessage: {
+                    ...state.showMessage,
+                    addCouponSuccess,
+                },
+            };
+        }
 	}
 }
 
@@ -176,7 +221,7 @@ type CacheStatus = 'fresh' | 'valid' | 'invalid' | 'pending' | 'error';
  *   - 'invalid': Coupon code is not recognized.
  *   - 'rejected': Valid code, but does not apply to the cart items.
  */
-type CouponStatus = 'fresh' | 'pending' | 'applied' | 'invalid' | 'rejected';
+type CouponStatus = 'fresh' | 'pending' | 'applied' | 'invalid' | 'rejected' | 'error';
 
 /**
  * Custom hook for managing state in the WPCOM checkout component.
@@ -250,6 +295,8 @@ export function useShoppingCart(
 		hookDispatch( { type: 'SET_CACHE_STATUS', newCacheStatus } );
 	}
 
+	const showMessage: { addCouponSuccess: boolean } = hookState.showMessage;
+
 	// Asynchronously initialize the cart. This should happen exactly once.
 	useEffect( () => {
 		if ( cacheStatus !== 'fresh' ) {
@@ -277,25 +324,10 @@ export function useShoppingCart(
 		const fetchAndUpdate = async () => {
 			debug( 'sending cart with responseCart', responseCart );
 			const response = await setServerCart( prepareRequestCart( responseCart ) );
-			debug( 'cart sent; new responseCart is', response );
-			setResponseCart( () => response );
-
-			if ( couponStatus === 'pending' ) {
-				if ( response.is_coupon_applied ) {
-					showAddCouponSuccessMessage( response.coupon );
-					setCouponStatus( 'applied' );
-				}
-
-				if ( ! response.is_coupon_applied && response.coupon_discounts_integer?.length <= 0 ) {
-					setCouponStatus( 'invalid' );
-				}
-
-				if ( ! response.is_coupon_applied && response.coupon_discounts_integer?.length > 0 ) {
-					setCouponStatus( 'rejected' );
-				}
-			}
-
-			setCacheStatus( 'valid' );
+            hookDispatch( {
+                type: 'RECEIVE_UPDATED_RESPONSE_CART',
+                updatedResponseCart: response,
+            } );
 		};
 
 		debug( 'considering sending cart to server; cacheStatus is', cacheStatus );
@@ -325,6 +357,12 @@ export function useShoppingCart(
 		() => translateWpcomCartToCheckoutCart( translate, responseCartToDisplay ),
 		[ responseCartToDisplay ]
 	);
+
+	useEffect( () => {
+	    if ( showMessage.addCouponSuccess ) {
+            showAddCouponSuccessMessage( responseCart.coupon );
+        }
+    }, [ showMessage ] );
 
 	const addItem: ( WPCOMCartItem ) => void = useCallback( itemToAdd => {
 		debug( 'adding item to cart', itemToAdd );
