@@ -112,19 +112,10 @@ function shoppingCartHookReducer(
 		}
 		case 'RECEIVE_INITIAL_RESPONSE_CART': {
 			const response = action.initialResponseCart;
-			const updatedCouponStatus = () => {
-				if ( couponStatus === 'fresh' ) {
-					if ( response.is_coupon_applied ) {
-						return 'applied';
-					}
-				}
-				return couponStatus;
-			};
-
 			return {
 				...state,
 				responseCart: response,
-				couponStatus: updatedCouponStatus(),
+				couponStatus: getUpdatedCouponStatus( couponStatus, response ),
 				cacheStatus: 'valid',
 			};
 		}
@@ -135,24 +126,7 @@ function shoppingCartHookReducer(
 			};
 		case 'RECEIVE_UPDATED_RESPONSE_CART': {
 			const response = action.updatedResponseCart;
-			const updatedCouponStatus = () => {
-				if ( couponStatus === 'pending' ) {
-					if ( response.is_coupon_applied ) {
-						return 'applied';
-					}
-
-					if ( ! response.is_coupon_applied && response.coupon_discounts_integer?.length <= 0 ) {
-						return 'invalid';
-					}
-
-					if ( ! response.is_coupon_applied && response.coupon_discounts_integer?.length > 0 ) {
-						return 'rejected';
-					}
-				}
-				return 'error';
-			};
-
-			const newCouponStatus = updatedCouponStatus();
+			const newCouponStatus = getUpdatedCouponStatus( couponStatus, response );
 			const addCouponSuccess = newCouponStatus === 'applied';
 
 			return {
@@ -183,6 +157,30 @@ function shoppingCartHookReducer(
 						cacheStatus: 'error',
 					};
 			}
+	}
+}
+
+function getUpdatedCouponStatus( currentCouponStatus: CouponStatus, responseCart: ResponseCart ) {
+	const isCouponApplied = responseCart.is_coupon_applied;
+	const couponDiscounts = responseCart.coupon_discounts_integer.length;
+
+	switch ( currentCouponStatus ) {
+		case 'fresh':
+			return isCouponApplied ? 'applied' : currentCouponStatus;
+		case 'pending': {
+			if ( isCouponApplied ) {
+				return 'applied';
+			}
+			if ( ! isCouponApplied && couponDiscounts <= 0 ) {
+				return 'invalid';
+			}
+			if ( ! isCouponApplied && couponDiscounts > 0 ) {
+				return 'rejected';
+			}
+			return 'error';
+		}
+		default:
+			return currentCouponStatus;
 	}
 }
 
