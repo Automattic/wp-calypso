@@ -56,11 +56,7 @@ const getInitialShoppingCartHookState: () => ShoppingCartHookState = () => {
 	};
 };
 
-// We'll start by reproducing the behavior of the current useState hooks.
-// This type is not the end goal, but it's a minimally invasive step toward it.
 type ShoppingCartHookAction =
-	| { type: 'SET_RESPONSE_CART'; adjustResponseCart: ( ResponseCart ) => ResponseCart }
-	| { type: 'SET_CACHE_STATUS'; newCacheStatus: CacheStatus }
 	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
 	| { type: 'ADD_CART_ITEM'; wpcomCartItemToAdd: WPCOMCartItem }
 	| { type: 'ADD_COUPON'; couponToAdd: string }
@@ -76,16 +72,6 @@ function shoppingCartHookReducer(
 	action: ShoppingCartHookAction
 ): ShoppingCartHookState {
 	switch ( action.type ) {
-		case 'SET_RESPONSE_CART':
-			return {
-				...state,
-				responseCart: action.adjustResponseCart( state.responseCart ),
-			};
-		case 'SET_CACHE_STATUS':
-			return {
-				...state,
-				cacheStatus: action.newCacheStatus,
-			};
 		case 'REMOVE_CART_ITEM': {
 			const uuidToRemove = action.uuidToRemove;
 			debug( 'removing item from cart with uuid', uuidToRemove );
@@ -305,17 +291,8 @@ export function useShoppingCart(
 	);
 
 	const responseCart: ResponseCart = hookState.responseCart;
-	function setResponseCart( adjustResponseCart: ( ResponseCart ) => ResponseCart ): void {
-		hookDispatch( { type: 'SET_RESPONSE_CART', adjustResponseCart } );
-	}
-
 	const couponStatus: CouponStatus = hookState.couponStatus;
-
 	const cacheStatus: CacheStatus = hookState.cacheStatus;
-	function setCacheStatus( newCacheStatus: CacheStatus ): void {
-		hookDispatch( { type: 'SET_CACHE_STATUS', newCacheStatus } );
-	}
-
 	const showMessage: { addCouponSuccess: boolean } = hookState.showMessage;
 
 	// Asynchronously initialize the cart. This should happen exactly once.
