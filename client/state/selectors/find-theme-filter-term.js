@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { filter, get } from 'lodash';
 
 /**
@@ -10,6 +9,8 @@ import { filter, get } from 'lodash';
 import createSelector from 'lib/create-selector';
 import getThemeFilters from 'state/selectors/get-theme-filters';
 import getThemeFilterTerm from 'state/selectors/get-theme-filter-term';
+
+import 'state/themes/init';
 
 /**
  * Returns a theme filter term object that corresponds to a given filter term slug

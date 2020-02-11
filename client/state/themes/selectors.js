@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { find, includes, intersection, isEqual, omit, some, get, uniq, flatMap } from 'lodash';
 import i18n from 'i18n-calypso';
 import createSelector from 'lib/create-selector';
@@ -32,6 +31,8 @@ import {
 } from './utils';
 import { DEFAULT_THEME_QUERY } from './constants';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
+
+import 'state/themes/init';
 
 /**
  * Returns a theme object by site ID, theme ID pair.
@@ -507,7 +508,6 @@ export function getThemeDemoUrl( state, themeId, siteId ) {
  *
  * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme ID
- * @param  {string}  siteId  Site ID
  * @returns {?string}         Theme forum URL
  */
 export function getThemeForumUrl( state, themeId ) {
@@ -730,7 +730,7 @@ export function getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ) {
 /**
  * Returns the price string to display for a given theme on a given site:
  *
- * @TODO Add tests!
+ * TODO: Add tests!
  *
  * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme ID
@@ -770,4 +770,28 @@ export function isThemeGutenbergFirst( state, themeId ) {
 	const neededFeatures = [ 'global-styles', 'auto-loading-homepage' ];
 	// The theme should have a positive number of matching features to qualify.
 	return !! intersection( themeFeatures, neededFeatures ).length;
+}
+
+const emptyList = [];
+
+/**
+ * Gets the list of recommended themes.
+ *
+ * @param {object} state Global state tree
+ *
+ * @returns {Array} the list of recommended themes
+ */
+export function getRecommendedThemes( state ) {
+	return state.themes.recommendedThemes.themes || emptyList;
+}
+
+/**
+ * Returns whether the recommended themes list is loading.
+ *
+ * @param {object} state Global state tree
+ *
+ * @returns {boolean} whether the recommended themes list is loading
+ */
+export function areRecommendedThemesLoading( state ) {
+	return state.themes.recommendedThemes.isLoading;
 }

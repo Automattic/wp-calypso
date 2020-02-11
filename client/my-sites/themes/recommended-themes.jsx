@@ -10,6 +10,10 @@ import { connect } from 'react-redux';
 import { ConnectedThemesSelection } from './themes-selection';
 import Spinner from 'components/spinner';
 import { getRecommendedThemes } from 'state/themes/actions';
+import {
+	getRecommendedThemes as getRecommendedThemesSelector,
+	areRecommendedThemesLoading,
+} from 'state/themes/selectors';
 
 class RecommendedThemes extends React.Component {
 	componentDidMount() {
@@ -45,8 +49,8 @@ class RecommendedThemes extends React.Component {
 const ConnectedRecommendedThemes = connect(
 	state => {
 		return {
-			recommendedThemes: state.themes.recommendedThemes.themes || [],
-			isLoading: state.themes.recommendedThemes.isLoading,
+			recommendedThemes: getRecommendedThemesSelector( state ),
+			isLoading: areRecommendedThemesLoading( state ),
 		};
 	},
 	{ getRecommendedThemes }
