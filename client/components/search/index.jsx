@@ -104,7 +104,7 @@ class Search extends Component {
 			keyword: props.initialValue || '',
 			isOpen: !! props.isOpen,
 			hasFocus: props.autoFocus,
-			exactSldMatchesOnly: props.filters.exactSldMatchesOnly,
+			exactSldMatchesOnly: get( props, 'filters.exactSldMatchesOnly', false ),
 		};
 
 		this.closeListener = keyListener.bind( this, 'closeSearch' );
