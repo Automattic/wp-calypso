@@ -54,7 +54,8 @@ type ShoppingCartHookAction =
 	| { type: 'SET_COUPON_STATUS'; newCouponStatus: CouponStatus }
 	| { type: 'SET_CACHE_STATUS'; newCacheStatus: CacheStatus }
 	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
-	| { type: 'ADD_COUPON'; couponToAdd: string };
+	| { type: 'ADD_COUPON'; couponToAdd: string }
+	| { type: 'RECEIVE_INITIAL_RESPONSE_CART'; initialResponseCart: ResponseCart };
 
 function shoppingCartHookReducer(
 	state: ShoppingCartHookState,
@@ -96,6 +97,27 @@ function shoppingCartHookReducer(
 				responseCart: addCouponToResponseCart( state.responseCart, newCoupon ),
 				couponStatus: 'pending',
 				cacheStatus: 'invalid',
+			};
+		}
+		case 'RECEIVE_INITIAL_RESPONSE_CART': {
+			const couponStatus = state.couponStatus;
+			const response = action.initialResponseCart;
+			const updatedCouponStatus = () => {
+				if ( couponStatus === 'fresh' ) {
+					if ( response.is_coupon_applied ) {
+						return 'applied';
+					}
+				}
+				return couponStatus;
+			};
+
+			debug( 'initialized cart is', response );
+
+			return {
+				...state,
+				responseCart: response,
+				couponStatus: updatedCouponStatus(),
+				cacheStatus: 'valid',
 			};
 		}
 	}
@@ -236,16 +258,10 @@ export function useShoppingCart(
 
 		const initializeResponseCart = async () => {
 			const response = await getServerCart();
-			debug( 'initialized cart is', response );
-			setResponseCart( () => response );
-
-			if ( couponStatus === 'fresh' ) {
-				if ( response.is_coupon_applied ) {
-					setCouponStatus( 'applied' );
-				}
-			}
-
-			setCacheStatus( 'valid' );
+			hookDispatch( {
+				type: 'RECEIVE_INITIAL_RESPONSE_CART',
+				initialResponseCart: response,
+			} );
 		};
 
 		debug( `initializing the cart; cacheStatus is ${ cacheStatus }` );
