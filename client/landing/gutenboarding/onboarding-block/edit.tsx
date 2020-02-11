@@ -5,6 +5,7 @@ import { BlockEditProps } from '@wordpress/blocks';
 import { useSelect } from '@wordpress/data';
 import React, { FunctionComponent } from 'react';
 import { Redirect, Switch, Route } from 'react-router-dom';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -21,6 +22,7 @@ import VerticalBackground from './vertical-background';
 import AcquireIntent from './acquire-intent';
 
 const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
+	const { __: NO__ } = useI18n();
 	const { siteVertical, selectedDesign } = useSelect( select => select( STORE_KEY ).getState() );
 	const isCreatingSite = useSelect( select => select( SITE_STORE ).isFetchingSite() );
 
