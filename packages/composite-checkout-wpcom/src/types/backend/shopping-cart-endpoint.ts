@@ -150,3 +150,15 @@ export function addCouponToResponseCart( cart: ResponseCart, couponToAdd: string
 		is_coupon_applied: false,
 	};
 }
+
+export function processRawResponse( rawResponseCart ): ResponseCart {
+	return {
+		...rawResponseCart,
+		products: rawResponseCart.products.map( ( product, index ) => {
+			return {
+				...product,
+				uuid: index.toString(),
+			};
+		} ),
+	};
+}

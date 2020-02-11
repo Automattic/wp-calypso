@@ -16,6 +16,7 @@ import {
 	prepareRequestCart,
 	removeItemFromResponseCart,
 	addCouponToResponseCart,
+	processRawResponse,
 } from './types/backend/shopping-cart-endpoint';
 import {
 	WPCOMCart,
@@ -51,6 +52,7 @@ export {
 	prepareRequestCart,
 	removeItemFromResponseCart,
 	addCouponToResponseCart,
+	processRawResponse,
 	WPCOMCart,
 	WPCOMCartItem,
 	emptyWPCOMCart,

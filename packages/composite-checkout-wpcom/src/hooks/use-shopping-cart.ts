@@ -12,6 +12,7 @@ import {
 	ResponseCart,
 	emptyResponseCart,
 	removeItemFromResponseCart,
+	processRawResponse,
 	addWPCOMCartItemToResponseCart,
 	addCouponToResponseCart,
 	WPCOMCart,
@@ -306,7 +307,7 @@ export function useShoppingCart(
 				debug( 'initialized cart is', response );
 				hookDispatch( {
 					type: 'RECEIVE_INITIAL_RESPONSE_CART',
-					initialResponseCart: response,
+					initialResponseCart: processRawResponse( response ),
 				} );
 			} )
 			.catch( error => {
@@ -331,7 +332,7 @@ export function useShoppingCart(
 				debug( 'updated cart is', response );
 				hookDispatch( {
 					type: 'RECEIVE_UPDATED_RESPONSE_CART',
-					updatedResponseCart: response,
+					updatedResponseCart: processRawResponse( response ),
 				} );
 			} )
 			.catch( error => {
