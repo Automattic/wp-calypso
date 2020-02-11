@@ -523,7 +523,9 @@ function StripePayButton( { disabled } ) {
 		if ( transactionStatus === 'error' ) {
 			debug( 'showing error', transactionError );
 			showErrorMessage(
-				transactionError || localize( 'An error occurred during the transaction' )
+				transactionError
+					? getUserFacingStripeError( localize, transactionError )
+					: localize( 'An error occurred during the transaction' )
 			);
 			resetTransaction();
 			setFormReady();
@@ -611,6 +613,18 @@ function StripePayButton( { disabled } ) {
 			{ buttonString }
 		</Button>
 	);
+}
+
+function getUserFacingStripeError( localize, error ) {
+	switch ( error ) {
+		case 'PaymentFailureError: The security code (CVV) entered does not match the credit card.':
+			return localize(
+				'There was a problem with this transaction; please check your card details and try again.'
+			);
+		case 'PaymentFailureError: The transaction was declined. Please try another card.':
+			return localize( 'The transaction was declined. Please try another card.' );
+	}
+	return error;
 }
 
 function StripeSummary() {
