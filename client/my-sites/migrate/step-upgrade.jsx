@@ -28,16 +28,25 @@ import './section-migrate.scss';
 
 class StepUpgrade extends Component {
 	static propTypes = {
+		plugins: PropTypes.array.isRequired,
 		sourceSite: PropTypes.object.isRequired,
 		startMigration: PropTypes.func.isRequired,
 		targetSite: PropTypes.object.isRequired,
 	};
 
 	render() {
-		const { billingTimeFrame, currency, planPrice, sourceSite, targetSite } = this.props;
+		const {
+			billingTimeFrame,
+			currency,
+			planPrice,
+			plugins,
+			sourceSite,
+			targetSite,
+			themes,
+		} = this.props;
 		const sourceSiteDomain = get( sourceSite, 'domain' );
 		const targetSiteDomain = get( targetSite, 'domain' );
-		window.sourceSite = sourceSite;
+
 		return (
 			<>
 				<QueryPlans />
@@ -62,9 +71,17 @@ class StepUpgrade extends Component {
 						</div>
 						<div className="migrate__plan-upsell-themes">
 							<h4 className="migrate__plan-feature-header">Your custom themes</h4>
+							{ themes.slice( 0, 2 ).map( theme => (
+								<div>{ theme.name }</div>
+							) ) }
+							{ themes.length > 2 && <div>{ themes.length - 2 } more</div> }
 						</div>
 						<div className="migrate__plan-upsell-plugins">
 							<h4 className="migrate__plan-feature-header">Your active plugins</h4>
+							{ plugins.slice( 0, 2 ).map( plugin => (
+								<div>{ plugin.name }</div>
+							) ) }
+							{ plugins.length > 2 && <div>{ plugins.length - 2 } more</div> }
 						</div>
 					</div>
 					<MigrateButton
