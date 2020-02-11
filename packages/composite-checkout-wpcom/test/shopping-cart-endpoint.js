@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { removeItemFromResponseCart } from '../src/types';
+import { removeItemFromResponseCart, addCouponToResponseCart } from '../src/types';
 
 describe( 'removeItemFromResponseCart', function() {
 	const baseResponseCart = {
@@ -97,5 +97,32 @@ describe( 'removeItemFromResponseCart', function() {
 		it( 'has expected array of uuids', function() {
 			expect( result.products.map( product => product.uuid ) ).toEqual( [ '0', '1' ] );
 		} );
+	} );
+} );
+
+describe( 'addCouponToResponseCart', function() {
+	const responseCart = {
+		products: [],
+		total_tax_integer: 0,
+		total_tax_display: '$0',
+		total_cost_integer: 0,
+		total_cost_display: '$0',
+		currency: 'USD',
+		credits_integer: 0,
+		credits_display: '$0',
+		allowed_payment_methods: [],
+		coupon: '',
+		is_coupon_applied: false,
+		coupon_discounts_integer: [],
+		locale: 'en-us',
+	};
+
+	const result = addCouponToResponseCart( responseCart, 'fakecoupon' );
+
+	it( 'has the expected coupon', function() {
+		expect( result.coupon ).toEqual( 'fakecoupon' );
+	} );
+	it( 'does not have the coupon applied', function() {
+		expect( result.is_coupon_applied ).toEqual( false );
 	} );
 } );
