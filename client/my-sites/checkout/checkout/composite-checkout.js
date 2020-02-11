@@ -19,6 +19,7 @@ import {
 	CheckoutProvider,
 	createRegistry,
 	createPayPalMethod,
+	createStripeMethod,
 } from '@automattic/composite-checkout';
 import { Card } from '@automattic/components';
 
@@ -40,6 +41,9 @@ import {
 	makePayPalExpressRequest,
 	wpcomPayPalExpress,
 	isPaymentMethodEnabled,
+	fetchStripeConfiguration,
+	sendStripeTransaction,
+	wpcomTransaction,
 } from './composite-checkout-payment-methods';
 import notices from 'notices';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
@@ -202,7 +206,9 @@ export default function CompositeCheckout( {
 		getStoredCards || wpcomGetStoredCards
 	);
 
-	const paypalMethod = createPayPalMethod( { registerStore } );
+	const paypalMethod = useMemo( () => createPayPalMethod( { registerStore } ), [ registerStore ] );
+	paypalMethod.id = 'paypal';
+	// This is defined afterward so that getThankYouUrl can be dynamic without having to re-create payment method
 	paypalMethod.submitTransaction = () =>
 		makePayPalExpressRequest(
 			{
@@ -219,10 +225,32 @@ export default function CompositeCheckout( {
 			wpcomPayPalExpress
 		);
 
+	const stripeMethod = useMemo(
+		() =>
+			createStripeMethod( {
+				getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+				getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+				getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+				registerStore,
+				fetchStripeConfiguration: args => fetchStripeConfiguration( args, wpcom ),
+				submitTransaction: submitData =>
+					sendStripeTransaction(
+						{
+							...submitData,
+							siteId: select( 'wpcom' )?.getSiteId?.(),
+							domainDetails: getDomainDetails( select ),
+						},
+						wpcomTransaction
+					),
+			} ),
+		[ registerStore ]
+	);
+	stripeMethod.id = 'card';
+
 	const paymentMethods =
 		isLoading || isLoadingStoredCards
 			? []
-			: [ paypalMethod ].filter( methodObject =>
+			: [ stripeMethod, paypalMethod ].filter( methodObject =>
 					isPaymentMethodEnabled(
 						methodObject.id,
 						allowedPaymentMethods || serverAllowedPaymentMethods

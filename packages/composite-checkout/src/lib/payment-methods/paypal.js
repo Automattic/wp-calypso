@@ -18,6 +18,8 @@ import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 const debug = debugFactory( 'composite-checkout:paypal' );
 
 export function createPayPalMethod( { registerStore } ) {
+	debug( 'creating new paypal payment method' );
+
 	const paymentMethod = {
 		id: 'paypal',
 		label: <PaypalLabel />,

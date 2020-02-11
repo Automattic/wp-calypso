@@ -294,11 +294,11 @@ function isApplePayAvailable(): boolean {
 	return isApplePayAvailable.canMakePayments;
 }
 
-async function fetchStripeConfiguration( requestArgs, wpcom ) {
+export async function fetchStripeConfiguration( requestArgs, wpcom ) {
 	return wpcom.stripeConfiguration( requestArgs );
 }
 
-async function sendStripeTransaction(
+export async function sendStripeTransaction(
 	transactionData,
 	submit: WPCOMTransactionEndpoint
 ): Promise< WPCOMTransactionEndpointResponse > {
@@ -366,7 +366,7 @@ function WordPressLogo() {
 	);
 }
 
-async function wpcomTransaction(
+export async function wpcomTransaction(
 	payload: WPCOMTransactionEndpointRequestPayload
 ): Promise< WPCOMTransactionEndpointResponse > {
 	return wp.undocumented().transactions( payload );
