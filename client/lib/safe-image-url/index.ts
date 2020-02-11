@@ -54,7 +54,10 @@ export default function safeImageUrl( url: string, safeDomains?: string[] ): str
 
 	const { hostname, pathname, search } = getUrlParts( url );
 
-	if ( REGEXP_A8C_HOST.test( hostname ) || safeDomains?.indexOf( hostname ) !== -1 ) {
+	const isDomainSafe =
+		REGEXP_A8C_HOST.test( hostname ) ||
+		( Array.isArray( safeDomains ) && safeDomains.indexOf( hostname ) !== -1 );
+	if ( isDomainSafe ) {
 		// Safely promote Automattic and whitelisted domains to HTTPS
 		return url.replace( /^http:/, 'https:' );
 	}
