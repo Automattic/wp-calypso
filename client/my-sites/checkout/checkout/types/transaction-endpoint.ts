@@ -1,7 +1,10 @@
 /**
  * External dependencies
  */
-import { WPCOMCartItem } from '@automattic/composite-checkout-wpcom';
+import {
+	WPCOMCartItem,
+	getNonProductWPCOMCartItemTypes,
+} from '@automattic/composite-checkout-wpcom';
 
 export type WPCOMTransactionEndpoint = (
 	_: WPCOMTransactionEndpointRequestPayload
@@ -106,7 +109,9 @@ export function createTransactionEndpointCartFromLineItems( {
 		currency: currency || '',
 		temporary: false,
 		extra: [],
-		products: items.map( convertItem ),
+		products: items
+			.filter( product => ! getNonProductWPCOMCartItemTypes().includes( product.type ) )
+			.map( convertItem ),
 		tax: {
 			location: {
 				country_code: country,

@@ -179,3 +179,7 @@ function translateWpcomCartItemToCheckoutCartItem(
 		};
 	};
 }
+
+export function getNonProductWPCOMCartItemTypes(): string[] {
+	return [ 'tax', 'coupon', 'total', 'subtotal', 'credits' ];
+}
