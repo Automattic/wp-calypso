@@ -462,6 +462,7 @@ class RegisterDomainStep extends React.Component {
 				{ this.renderContent() }
 				{ this.renderFilterResetNotice() }
 				{ this.renderPaginationControls() }
+				{ this.props.showDesignUpdate && this.renderUseYourDomain() }
 				{ queryObject && <QueryDomainsSuggestions { ...queryObject } /> }
 				<QueryContactDetailsCache />
 			</div>
@@ -489,6 +490,10 @@ class RegisterDomainStep extends React.Component {
 				/>
 			)
 		);
+	}
+
+	renderUseYourDomain() {
+		return <div>Already own a domain? Use it as your site's address.</div>;
 	}
 
 	rejectTrademarkClaim = () => {
