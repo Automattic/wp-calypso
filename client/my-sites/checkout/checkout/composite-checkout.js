@@ -15,7 +15,11 @@ import {
 	useShoppingCart,
 	FormFieldAnnotation,
 } from '@automattic/composite-checkout-wpcom';
-import { CheckoutProvider, createRegistry } from '@automattic/composite-checkout';
+import {
+	CheckoutProvider,
+	createRegistry,
+	createPayPalMethod,
+} from '@automattic/composite-checkout';
 import { Card } from '@automattic/components';
 
 /**
@@ -30,7 +34,13 @@ import {
 } from 'lib/cart-values/cart-items';
 import { requestPlans } from 'state/plans/actions';
 import { getPlanBySlug } from 'state/plans/selectors';
-import { createPaymentMethods, useStoredCards } from './composite-checkout-payment-methods';
+import {
+	useStoredCards,
+	getDomainDetails,
+	makePayPalExpressRequest,
+	wpcomPayPalExpress,
+	isPaymentMethodEnabled,
+} from './composite-checkout-payment-methods';
 import notices from 'notices';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import { isJetpackSite, isNewSite } from 'state/sites/selectors';
@@ -95,9 +105,8 @@ export default function CompositeCheckout( {
 	const receiptId = transactionStepData.receipt_id;
 	const orderId = transactionStepData.order_id;
 
-	const getThankYouUrl = useCallback( () => {
-		debug( 'payment completed successfully' );
-		page.redirect(
+	const getThankYouUrl = useCallback(
+		() =>
 			getThankYouPageUrl( {
 				siteSlug,
 				adminUrl,
@@ -113,24 +122,24 @@ export default function CompositeCheckout( {
 				isNewlyCreatedSite,
 				previousRoute,
 				isEligibleForSignupDestination: isEligibleForSignupDestinationResult,
-			} )
-		);
-	}, [
-		didPurchaseFail,
-		receiptId,
-		orderId,
-		previousRoute,
-		isNewlyCreatedSite,
-		isEligibleForSignupDestinationResult,
-		siteSlug,
-		adminUrl,
-		isJetpackNotAtomic,
-		product,
-		redirectTo,
-		feature,
-		purchaseId,
-		cart,
-	] );
+			} ),
+		[
+			didPurchaseFail,
+			receiptId,
+			orderId,
+			previousRoute,
+			isNewlyCreatedSite,
+			isEligibleForSignupDestinationResult,
+			siteSlug,
+			adminUrl,
+			isJetpackNotAtomic,
+			product,
+			redirectTo,
+			feature,
+			purchaseId,
+			cart,
+		]
+	);
 
 	const onPaymentComplete = useCallback( () => {
 		debug( 'payment completed successfully' );
@@ -162,12 +171,12 @@ export default function CompositeCheckout( {
 		items,
 		tax,
 		total,
-		credits,
+		// credits,
 		removeItem,
 		addItem,
 		changePlanLength,
 		errors,
-		subtotal,
+		// subtotal,
 		isLoading,
 		allowedPaymentMethods: serverAllowedPaymentMethods,
 	} = useShoppingCart( siteSlug, setCart || wpcomSetCart, getCart || wpcomGetCart );
@@ -189,39 +198,36 @@ export default function CompositeCheckout( {
 
 	useRedirectIfCartEmpty( items, `/plans/${ siteSlug || '' }` );
 
-	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
+	const { isLoading: isLoadingStoredCards } = useStoredCards(
 		getStoredCards || wpcomGetStoredCards
 	);
 
-	const paymentMethods = useMemo(
-		() =>
-			createPaymentMethods( {
-				isLoading: isLoading || isLoadingStoredCards,
-				storedCards,
-				allowedPaymentMethods: allowedPaymentMethods || serverAllowedPaymentMethods,
-				select,
-				registerStore,
-				wpcom,
-				credits,
-				total,
-				subtotal,
-				translate,
-				getThankYouUrl,
-			} ),
-		[
-			allowedPaymentMethods,
-			serverAllowedPaymentMethods,
-			isLoading,
-			isLoadingStoredCards,
-			storedCards,
-			credits,
-			registerStore,
-			total,
-			subtotal,
-			translate,
-			getThankYouUrl,
-		]
-	);
+	const paypalMethod = createPayPalMethod( { registerStore } );
+	paypalMethod.submitTransaction = () =>
+		makePayPalExpressRequest(
+			{
+				items,
+				successUrl: getThankYouUrl(),
+				cancelUrl: window.location.href,
+				siteId: select( 'wpcom' )?.getSiteId?.() ?? '',
+				domainDetails: getDomainDetails( select ),
+				couponId: null, // TODO: get couponId
+				country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '',
+				postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '',
+				subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value ?? '',
+			},
+			wpcomPayPalExpress
+		);
+
+	const paymentMethods =
+		isLoading || isLoadingStoredCards
+			? []
+			: [ paypalMethod ].filter( methodObject =>
+					isPaymentMethodEnabled(
+						methodObject.id,
+						allowedPaymentMethods || serverAllowedPaymentMethods
+					)
+			  );
 
 	const validateDomainContact =
 		validateDomainContactDetails || wpcomValidateDomainContactInformation;
