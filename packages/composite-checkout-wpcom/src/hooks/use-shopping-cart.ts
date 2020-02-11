@@ -86,11 +86,12 @@ function shoppingCartHookReducer(
 				...state,
 				cacheStatus: action.newCacheStatus,
 			};
-		case 'REMOVE_CART_ITEM':
-			debug( 'removing item from cart with uuid', action.uuidToRemove );
+		case 'REMOVE_CART_ITEM': {
+			const uuidToRemove = action.uuidToRemove;
+			debug( 'removing item from cart with uuid', uuidToRemove );
 			return {
 				...state,
-				responseCart: removeItemFromResponseCart( state.responseCart, action.uuidToRemove ),
+				responseCart: removeItemFromResponseCart( state.responseCart, uuidToRemove ),
 				cacheStatus: 'invalid',
 			};
 		}
@@ -106,11 +107,14 @@ function shoppingCartHookReducer(
 		case 'ADD_COUPON': {
 			const couponStatus = state.couponStatus;
 			const newCoupon = action.couponToAdd;
+
 			if ( couponStatus === 'applied' || couponStatus === 'pending' ) {
 				debug( `coupon status is '${ couponStatus }'; not submitting again` );
 				return state;
 			}
-			debug( 'submitting coupon', newCoupon );
+
+			debug( 'adding coupon', newCoupon );
+
 			return {
 				...state,
 				responseCart: addCouponToResponseCart( state.responseCart, newCoupon ),
