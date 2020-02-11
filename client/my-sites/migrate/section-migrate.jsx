@@ -489,7 +489,11 @@ class SectionMigrate extends Component {
 						break;
 					case 'upgrade':
 						migrationElement = (
-							<StepUpgrade startMigration={ this.startMigration } targetSite={ targetSite } />
+							<StepUpgrade
+								sourceSite={ sourceSite }
+								startMigration={ this.startMigration }
+								targetSite={ targetSite }
+							/>
 						);
 						break;
 					case 'input':
