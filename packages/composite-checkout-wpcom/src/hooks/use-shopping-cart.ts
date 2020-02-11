@@ -34,15 +34,15 @@ const debug = debugFactory( 'composite-checkout-wpcom:shopping-cart-manager' );
  *         Used to determine whether we need to re-validate the cart on
  *         the backend. We can't use responseCart directly to decide this
  *         in e.g. useEffect because this causes an infinite loop.
- *     * showMessage
+ *     * shouldShowNotification
  *         Used to trigger calypso notification side effects on render
  */
 type ShoppingCartHookState = {
 	responseCart: ResponseCart;
 	couponStatus: CouponStatus;
 	cacheStatus: CacheStatus;
-	showMessage: {
-		addCouponSuccess: boolean;
+	shouldShowNotification: {
+		didAddCoupon: boolean;
 	};
 };
 
@@ -51,8 +51,8 @@ const getInitialShoppingCartHookState: () => ShoppingCartHookState = () => {
 		responseCart: emptyResponseCart,
 		cacheStatus: 'fresh',
 		couponStatus: 'fresh',
-		showMessage: {
-			addCouponSuccess: false,
+		shouldShowNotification: {
+			didAddCoupon: false,
 		},
 	};
 };
@@ -127,25 +127,25 @@ function shoppingCartHookReducer(
 		case 'RECEIVE_UPDATED_RESPONSE_CART': {
 			const response = action.updatedResponseCart;
 			const newCouponStatus = getUpdatedCouponStatus( couponStatus, response );
-			const addCouponSuccess = newCouponStatus === 'applied';
+			const didAddCoupon = newCouponStatus === 'applied';
 
 			return {
 				...state,
 				responseCart: response,
 				couponStatus: newCouponStatus,
 				cacheStatus: 'valid',
-				showMessage: {
-					...state.showMessage,
-					addCouponSuccess,
+				shouldShowNotification: {
+					...state.shouldShowNotification,
+					didAddCoupon,
 				},
 			};
 		}
 		case 'DID_SHOW_ADD_COUPON_SUCCESS_MESSAGE':
 			return {
 				...state,
-				showMessage: {
-					...state.showMessage,
-					addCouponSuccess: false,
+				shouldShowNotification: {
+					...state.shouldShowNotification,
+					didAddCoupon: false,
 				},
 			};
 		case 'RAISE_ERROR':
@@ -301,7 +301,7 @@ export function useShoppingCart(
 	const responseCart: ResponseCart = hookState.responseCart;
 	const couponStatus: CouponStatus = hookState.couponStatus;
 	const cacheStatus: CacheStatus = hookState.cacheStatus;
-	const showMessage: { addCouponSuccess: boolean } = hookState.showMessage;
+	const shouldShowNotification = hookState.shouldShowNotification;
 
 	// Asynchronously initialize the cart. This should happen exactly once.
 	useEffect( () => {
@@ -368,11 +368,11 @@ export function useShoppingCart(
 	);
 
 	useEffect( () => {
-		if ( showMessage.addCouponSuccess ) {
+		if ( shouldShowNotification.didAddCoupon ) {
 			showAddCouponSuccessMessage( responseCart.coupon );
 			hookDispatch( { type: 'DID_SHOW_ADD_COUPON_SUCCESS_MESSAGE' } );
 		}
-	}, [ showMessage ] );
+	}, [ shouldShowNotification ] );
 
 	const addItem: ( WPCOMCartItem ) => void = wpcomCartItemToAdd => {
 		hookDispatch( { type: 'ADD_CART_ITEM', wpcomCartItemToAdd } );
