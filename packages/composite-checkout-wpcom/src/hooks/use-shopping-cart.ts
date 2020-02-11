@@ -63,7 +63,10 @@ type ShoppingCartHookAction =
 	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
 	| { type: 'ADD_COUPON'; couponToAdd: string }
 	| { type: 'RECEIVE_INITIAL_RESPONSE_CART'; initialResponseCart: ResponseCart }
-	| { type: 'RECEIVE_UPDATED_RESPONSE_CART'; updatedResponseCart: ResponseCart };
+	| { type: 'RECEIVE_UPDATED_RESPONSE_CART'; updatedResponseCart: ResponseCart }
+	| { type: 'RAISE_ERROR'; error: ShoppingCartHookError };
+
+type ShoppingCartHookError = 'GET_SERVER_CART_ERROR';
 
 function shoppingCartHookReducer(
 	state: ShoppingCartHookState,
@@ -114,8 +117,6 @@ function shoppingCartHookReducer(
 				return couponStatus;
 			};
 
-			debug( 'initialized cart is', response );
-
 			return {
 				...state,
 				responseCart: response,
@@ -159,6 +160,14 @@ function shoppingCartHookReducer(
 				},
 			};
 		}
+		case 'RAISE_ERROR':
+			switch ( action.error ) {
+				case 'GET_SERVER_CART_ERROR':
+					return {
+						...state,
+						cacheStatus: 'error',
+					};
+			}
 	}
 }
 
@@ -294,20 +303,21 @@ export function useShoppingCart(
 			return;
 		}
 
-		const initializeResponseCart = async () => {
-			const response = await getServerCart();
-			hookDispatch( {
-				type: 'RECEIVE_INITIAL_RESPONSE_CART',
-				initialResponseCart: response,
-			} );
-		};
-
 		debug( `initializing the cart; cacheStatus is ${ cacheStatus }` );
-		initializeResponseCart().catch( error => {
-			// TODO: figure out what to do here
-			setCacheStatus( 'error' );
-			debug( 'error while initializing cart', error );
-		} );
+
+		getServerCart()
+			.then( response => {
+				debug( 'initialized cart is', response );
+				hookDispatch( {
+					type: 'RECEIVE_INITIAL_RESPONSE_CART',
+					initialResponseCart: response,
+				} );
+			} )
+			.catch( error => {
+				// TODO: figure out what to do here
+				debug( 'error while initializing cart', error );
+				hookDispatch( { type: 'RAISE_ERROR', error: 'GET_SERVER_CART_ERROR' } );
+			} );
 	}, [ getServerCart, cacheStatus ] );
 
 	// Asynchronously re-validate when the cache is dirty.
