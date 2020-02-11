@@ -26,9 +26,11 @@
 		"interpolate-components": "^1.1.1",
 		"lodash": "^4.17.11",
 		"lru": "^3.1.0",
-		"react": "^16.8.3",
 		"tannin": "^1.1.1",
 		"use-subscription": "^1.2.0"
+	},
+	"peerDependencies": {
+		"react": "^16.8.3"
 	},
 	"scripts": {
 		"clean": "npx rimraf dist",

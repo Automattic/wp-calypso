@@ -32,7 +32,6 @@
 		"watch": "tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@wordpress/data": "^4.10.0",
 		"@wordpress/data-controls": "^1.4.0",
 		"@wordpress/url": "^2.8.2",
 		"debug": "^4.1.1",
@@ -40,5 +39,8 @@
 		"redux": "^4.0.4",
 		"tslib": "^1.10.0",
 		"wpcom-proxy-request": "^5.0.2"
+	},
+	"peerDependencies": {
+		"@wordpress/data": "^4.10.0"
 	}
 }
