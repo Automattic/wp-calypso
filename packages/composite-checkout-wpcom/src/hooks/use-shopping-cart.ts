@@ -156,6 +156,8 @@ function shoppingCartHookReducer(
 						...state,
 						cacheStatus: 'error',
 					};
+				default:
+					return state;
 			}
 	}
 }
