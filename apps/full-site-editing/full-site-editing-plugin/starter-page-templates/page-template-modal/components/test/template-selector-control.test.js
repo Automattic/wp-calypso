@@ -3,9 +3,8 @@
  */
 /* eslint-disable import/no-extraneous-dependencies */
 import { uniqueId, omit } from 'lodash';
-/* eslint-enable import/no-extraneous-dependencies */
-
 import { render, fireEvent } from '@testing-library/react';
+/* eslint-enable import/no-extraneous-dependencies */
 
 import { templatesFixture, blocksByTemplatesFixture } from './helpers/templates-blocks-helpers';
 import { TemplateSelectorControl } from '../template-selector-control';
@@ -53,7 +52,7 @@ describe( 'TemplateSelectorControl', () => {
 			);
 
 			expect( getByText( 'Select a Template...' ) ).toBeInTheDocument();
-			expect( getByText( 'Blank' ) ).toBeInTheDocument();
+			expect( getByText( ( content, element ) => element.value === 'blank' ) ).toBeInTheDocument();
 			expect( document.querySelectorAll( 'button.template-selector-item__label' ) ).toHaveLength(
 				4
 			);
@@ -120,7 +119,7 @@ describe( 'TemplateSelectorControl', () => {
 				/>
 			);
 
-			fireEvent.click( getByText( 'Template 3' ) );
+			fireEvent.click( getByText( ( content, element ) => element.value === 'template-3' ) );
 
 			expect( onSelectSpy ).toHaveBeenCalled();
 		} );
@@ -158,7 +157,7 @@ describe( 'TemplateSelectorControl', () => {
 			);
 
 			expect( getByText( 'Select a Template...' ) ).toBeInTheDocument();
-			expect( getByText( 'Blank' ) ).toBeInTheDocument();
+			expect( getByText( ( content, element ) => element.value === 'blank' ) ).toBeInTheDocument();
 		} );
 	} );
 
