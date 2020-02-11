@@ -37,8 +37,8 @@ namespace A8C\FSE;
  */
 define( 'PLUGIN_VERSION', '0.19' );
 
-// Always include these helper files for FSE.
-require_once __DIR__ . '/full-site-editing/helpers.php';
+// Always include these helper files for dotcom FSE.
+require_once __DIR__ . '/dotcom-fse/helpers.php';
 
 /**
  * Load Full Site Editing.

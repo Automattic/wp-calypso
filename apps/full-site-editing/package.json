@@ -16,7 +16,7 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
-		"full-site-editing": "calypso-build --source='full-site-editing'",
+		"full-site-editing": "calypso-build --source='dotcom-fse'",
 		"dev:full-site-editing": "npm run full-site-editing",
 		"build:full-site-editing": "NODE_ENV=production npm run full-site-editing",
 		"posts-list-block": "calypso-build --source='posts-list-block'",
