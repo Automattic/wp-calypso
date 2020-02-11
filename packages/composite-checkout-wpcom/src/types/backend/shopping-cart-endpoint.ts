@@ -55,6 +55,7 @@ export interface ResponseCart {
 	allowed_payment_methods: string[];
 	coupon: string;
 	is_coupon_applied: boolean;
+	coupon_discounts_integer: number[];
 	locale: string;
 	messages?: { errors: ResponseCartError[] };
 }
@@ -78,6 +79,7 @@ export const emptyResponseCart = {
 	allowed_payment_methods: [],
 	coupon: '',
 	is_coupon_applied: false,
+	coupon_discounts_integer: [],
 	locale: 'en-us',
 } as ResponseCart;
 
@@ -114,15 +116,16 @@ export const prepareRequestCart: ( ResponseCart ) => RequestCart = ( {
 	currency,
 	locale,
 	coupon,
+	is_coupon_applied,
 }: ResponseCart ) => {
 	return {
 		products: products.map( prepareRequestCartProduct ),
 		currency,
 		locale,
 		coupon,
+		is_coupon_applied,
 		temporary: false,
 		// tax: any[]; // TODO: fix this
-		// is_coupon_applied: boolean;
 		// extra: any[]; // TODO: fix this
 	} as RequestCart;
 };

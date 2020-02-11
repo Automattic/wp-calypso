@@ -42,9 +42,13 @@ export interface ShoppingCartManager {
 	tax: CheckoutCartItem;
 	total: CheckoutCartItem;
 	subtotal: CheckoutCartItem;
+	couponItem: CheckoutCartItem;
 	credits: CheckoutCartItem;
 	addItem: ( WPCOMCartItem ) => void;
 	removeItem: ( WPCOMCartItem ) => void;
+	submitCoupon: ( string ) => void;
+	couponStatus: CouponStatus;
+	couponCode: string | null;
 }
 
 /**
@@ -58,6 +62,17 @@ export interface ShoppingCartManager {
  *   - 'error': Something went wrong.
  */
 type CacheStatus = 'fresh' | 'valid' | 'invalid' | 'pending' | 'error';
+
+/**
+ * Possible states re. coupon submission.
+ *
+ *   - 'fresh': User has not (yet) attempted to apply a coupon.
+ *   - 'pending': Coupon request has been sent, awaiting response.
+ *   - 'applied': Coupon has been applied to the cart.
+ *   - 'invalid': Coupon code is not recognized.
+ *   - 'rejected': Valid code, but does not apply to the cart items.
+ */
+type CouponStatus = 'fresh' | 'pending' | 'applied' | 'invalid' | 'rejected';
 
 /**
  * Custom hook for managing state in the WPCOM checkout component.
@@ -90,12 +105,19 @@ type CacheStatus = 'fresh' | 'valid' | 'invalid' | 'pending' | 'error';
  *     An asynchronous wrapper around the wpcom shopping cart GET
  *     endpoint. We pass this in to make testing easier.
  *     @see WPCOM_JSON_API_Me_Shopping_Cart_Endpoint
+ * @param translate
+ *     Localization function
+ * @param showAddCouponSuccessMessage
+ *     Takes a coupon code and displays a translated notice that
+ *     the coupon was successfully applied.
  * @returns ShoppingCartManager
  */
 export function useShoppingCart(
 	cartKey: string | null,
 	setCart: ( string, RequestCart ) => Promise< ResponseCart >,
-	getCart: ( string ) => Promise< ResponseCart >
+	getCart: ( string ) => Promise< ResponseCart >,
+	translate: ( string ) => string,
+	showAddCouponSuccessMessage: ( string ) => void
 ): ShoppingCartManager {
 	cartKey = cartKey || 'no-site';
 	const setServerCart = useCallback( cartParam => setCart( cartKey, cartParam ), [
@@ -115,24 +137,36 @@ export function useShoppingCart(
 	// in e.g. useEffect because this causes an infinite loop.
 	const [ cacheStatus, setCacheStatus ] = useState< CacheStatus >( 'fresh' );
 
+	// Used to determine whether to render coupon input fields and
+	// coupon-related error messages.
+	const [ couponStatus, setCouponStatus ] = useState< CouponStatus >( 'fresh' );
+
 	// Asynchronously initialize the cart. This should happen exactly once.
 	useEffect( () => {
+		if ( cacheStatus !== 'fresh' ) {
+			return;
+		}
+
 		const initializeResponseCart = async () => {
 			const response = await getServerCart();
 			debug( 'initialized cart is', response );
 			setResponseCart( response );
+
+			if ( couponStatus === 'fresh' ) {
+				if ( response.is_coupon_applied ) {
+					setCouponStatus( 'applied' );
+				}
+			}
+
 			setCacheStatus( 'valid' );
 		};
 
-		debug( 'considering initializing cart to server; cacheStatus is', cacheStatus );
-		if ( cacheStatus === 'fresh' ) {
-			debug( 'initializing the cart' );
-			initializeResponseCart().catch( error => {
-				// TODO: figure out what to do here
-				setCacheStatus( 'error' );
-				debug( 'error while initializing cart', error );
-			} );
-		}
+		debug( `initializing the cart; cacheStatus is ${ cacheStatus }` );
+		initializeResponseCart().catch( error => {
+			// TODO: figure out what to do here
+			setCacheStatus( 'error' );
+			debug( 'error while initializing cart', error );
+		} );
 	}, [ getServerCart, cacheStatus ] );
 
 	// Asynchronously re-validate when the cache is dirty.
@@ -142,6 +176,22 @@ export function useShoppingCart(
 			const response = await setServerCart( prepareRequestCart( responseCart ) );
 			debug( 'cart sent; new responseCart is', response );
 			setResponseCart( response );
+
+			if ( couponStatus === 'pending' ) {
+				if ( response.is_coupon_applied ) {
+					showAddCouponSuccessMessage( response.coupon );
+					setCouponStatus( 'applied' );
+				}
+
+				if ( ! response.is_coupon_applied && response.coupon_discounts_integer?.length <= 0 ) {
+					setCouponStatus( 'invalid' );
+				}
+
+				if ( ! response.is_coupon_applied && response.coupon_discounts_integer?.length > 0 ) {
+					setCouponStatus( 'rejected' );
+				}
+			}
+
 			setCacheStatus( 'valid' );
 		};
 
@@ -155,7 +205,7 @@ export function useShoppingCart(
 				debug( 'error while fetching cart', error );
 			} );
 		}
-	}, [ setServerCart, cacheStatus, responseCart ] );
+	}, [ cacheStatus, couponStatus, responseCart, showAddCouponSuccessMessage ] );
 
 	// Keep a separate cache of the displayed cart which we regenerate only when
 	// the cart has been downloaded
@@ -169,7 +219,7 @@ export function useShoppingCart(
 
 	// Translate the responseCart into the format needed in checkout.
 	const cart: WPCOMCart = useMemo(
-		() => translateWpcomCartToCheckoutCart( responseCartToDisplay ),
+		() => translateWpcomCartToCheckoutCart( translate, responseCartToDisplay ),
 		[ responseCartToDisplay ]
 	);
 
@@ -203,10 +253,29 @@ export function useShoppingCart(
 		debug( 'updating prices for address in cart', address );
 	};
 
+	const submitCoupon: ( string ) => void = useCallback(
+		newCoupon => {
+			if ( couponStatus === 'applied' || couponStatus === 'pending' ) {
+				debug( `coupon status is '${ couponStatus }'; not submitting again` );
+				return;
+			}
+			debug( 'submitting coupon', newCoupon );
+			setResponseCart( currentResponseCart => ( {
+				...currentResponseCart,
+				coupon: newCoupon,
+				is_coupon_applied: false,
+			} ) );
+			setCacheStatus( 'invalid' );
+			setCouponStatus( 'pending' );
+		},
+		[ couponStatus ]
+	);
+
 	return {
 		isLoading: cacheStatus === 'fresh',
 		items: cart.items,
 		tax: cart.tax,
+		couponItem: cart.coupon,
 		total: cart.total,
 		subtotal: cart.subtotal,
 		credits: cart.credits,
@@ -216,5 +285,8 @@ export function useShoppingCart(
 		removeItem,
 		changePlanLength,
 		updatePricesForAddress,
+		submitCoupon,
+		couponStatus,
+		couponCode: cart.couponCode,
 	} as ShoppingCartManager;
 }

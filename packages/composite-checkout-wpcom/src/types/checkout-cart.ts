@@ -44,8 +44,10 @@ export interface WPCOMCart {
 	tax: CheckoutCartItem;
 	total: CheckoutCartItem;
 	subtotal: CheckoutCartItem;
+	coupon: CheckoutCartItem | null;
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
 	credits: CheckoutCartItem;
+	couponCode: string | null;
 }
 
 export const emptyWPCOMCart = {
@@ -54,6 +56,16 @@ export const emptyWPCOMCart = {
 		id: 'tax-line-item',
 		label: 'Tax',
 		type: 'tax',
+		amount: {
+			value: 0,
+			currency: '',
+			displayValue: '',
+		} as CheckoutCartItemAmount,
+	} as CheckoutCartItem,
+	coupon: {
+		id: 'coupon-line-item',
+		label: 'Coupon',
+		type: 'coupon',
 		amount: {
 			value: 0,
 			currency: '',
@@ -83,4 +95,5 @@ export const emptyWPCOMCart = {
 		type: 'credits',
 		amount: { value: 0, currency: 'USD', displayValue: '0' },
 	},
+	couponCode: null,
 } as WPCOMCart;

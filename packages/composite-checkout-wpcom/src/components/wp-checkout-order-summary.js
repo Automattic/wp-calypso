@@ -19,14 +19,14 @@ import Button from './button';
 import Coupon from './coupon';
 import { isLineItemADomain } from '../hooks/has-domains';
 
-export default function WPCheckoutOrderSummary( { siteUrl } ) {
+export default function WPCheckoutOrderSummary( { siteUrl, couponStatus, couponFieldStateProps } ) {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
 	const [ items ] = useLineItems();
 	const onEvent = useEvents();
 	//TODO: tie the default coupon field visibility based on whether there is a coupon in the cart
 	const [ isCouponFieldVisible, setIsCouponFieldVisible ] = useState( false );
-	const [ hasCouponBeenApplied, setHasCouponBeenApplied ] = useState( false );
+	const hasCouponBeenApplied = couponStatus === 'applied';
 
 	const firstDomainItem = items.find( isLineItemADomain );
 	const domainUrl = firstDomainItem ? firstDomainItem.sublabel : siteUrl;
@@ -58,9 +58,8 @@ export default function WPCheckoutOrderSummary( { siteUrl } ) {
 				<CouponField
 					id="order-summary-coupon"
 					disabled={ formStatus !== 'ready' }
-					couponAdded={ () => {
-						handleCouponAdded( setIsCouponFieldVisible, setHasCouponBeenApplied );
-					} }
+					couponStatus={ couponStatus }
+					couponFieldStateProps={ couponFieldStateProps }
 				/>
 			) }
 		</React.Fragment>
@@ -126,11 +125,6 @@ const AddCouponButton = styled( Button )`
 		margin-top: 0;
 	}
 `;
-
-function handleCouponAdded( setIsCouponFieldVisible, setHasCouponBeenApplied ) {
-	setIsCouponFieldVisible( false );
-	setHasCouponBeenApplied( true );
-}
 
 function handleAddCouponButtonClick( setIsCouponFieldVisible, onEvent ) {
 	setIsCouponFieldVisible( true );

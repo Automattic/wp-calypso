@@ -56,9 +56,11 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 				'WPCOM_Billing_Ebanx',
 				'WPCOM_Billing_Web_Payment',
 			],
+			coupon: 'fakecoupon',
+			coupon_discounts_integer: [],
 		};
 
-		const clientCart = translateWpcomCartToCheckoutCart( serverResponse );
+		const clientCart = translateWpcomCartToCheckoutCart( x => x, serverResponse );
 
 		it( 'has a total property', function() {
 			expect( clientCart.total.amount ).toBeDefined();
@@ -85,6 +87,9 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 			expect( clientCart.credits.amount.value ).toBe( 10000 );
 			expect( clientCart.credits.amount.currency ).toBe( 'BRL' );
 			expect( clientCart.credits.amount.displayValue ).toBe( 'R$100' );
+		} );
+		it( 'has the expected coupon', function() {
+			expect( clientCart.couponCode ).toBe( 'fakecoupon' );
 		} );
 
 		describe( 'first cart item (plan)', function() {
@@ -221,9 +226,10 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 				'WPCOM_Billing_Ebanx',
 				'WPCOM_Billing_Web_Payment',
 			],
+			coupon_discounts_integer: [],
 		};
 
-		const clientCart = translateWpcomCartToCheckoutCart( serverResponse );
+		const clientCart = translateWpcomCartToCheckoutCart( x => x, serverResponse );
 
 		it( 'has a total property', function() {
 			expect( clientCart.total.amount ).toBeDefined();
@@ -450,9 +456,10 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 				'WPCOM_Billing_Ebanx',
 				'WPCOM_Billing_Web_Payment',
 			],
+			coupon_discounts_integer: [],
 		};
 
-		const clientCart = translateWpcomCartToCheckoutCart( serverResponse );
+		const clientCart = translateWpcomCartToCheckoutCart( x => x, serverResponse );
 
 		it( 'has a total property', function() {
 			expect( clientCart.total.amount ).toBeDefined();
@@ -536,6 +543,171 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 			} );
 			it( 'has the expected display value', function() {
 				expect( clientCart.tax.amount.displayValue ).toBe( '$5' );
+			} );
+		} );
+
+		describe( 'allowed payment methods', function() {
+			it( 'contains the expected slugs', function() {
+				expect( clientCart.allowedPaymentMethods ).toStrictEqual( [
+					'card',
+					'ebanx',
+					'apple-pay',
+				] );
+			} );
+		} );
+	} );
+
+	describe( 'Cart with one plan only plus a coupon (USD)', function() {
+		const serverResponse = {
+			blog_id: 123,
+			products: [
+				{
+					product_id: 1009,
+					product_name: 'WordPress.com Personal',
+					product_name_en: 'WordPress.com Personal',
+					product_slug: 'personal-bundle',
+					product_cost: 127,
+					meta: '',
+					cost: 127,
+					currency: 'USD',
+					volume: 1,
+					free_trial: false,
+					orig_cost: null,
+					cost_before_coupon: 144,
+					extra: {
+						context: 'signup',
+						domain_to_bundle: 'foo.cash',
+					},
+					bill_period: 365,
+					is_domain_registration: false,
+					time_added_to_cart: 1572551402,
+					is_bundled: false,
+					item_subtotal: 127,
+					item_subtotal_integer: 12700,
+					item_subtotal_display: '$127',
+					item_tax: 0,
+					item_total: 127,
+					subscription_id: 0,
+				},
+			],
+			tax: [],
+			sub_total: '127',
+			sub_total_display: '$127',
+			sub_total_integer: 12700,
+			total_tax: '5',
+			total_tax_display: '$5',
+			total_tax_integer: 500,
+			total_cost: 132,
+			total_cost_display: '$132',
+			total_cost_integer: 13200,
+			currency: 'USD',
+			credits: 100,
+			credits_integer: 10000,
+			credits_display: '$100',
+			allowed_payment_methods: [
+				'WPCOM_Billing_Stripe_Payment_Method',
+				'WPCOM_Billing_Ebanx',
+				'WPCOM_Billing_Web_Payment',
+			],
+			coupon: 'fakecoupon',
+			coupon_discounts_integer: { 1009: 1700 },
+			is_coupon_applied: true,
+		};
+
+		const clientCart = translateWpcomCartToCheckoutCart( ( string, substitution ) => {
+			return substitution ? string.replace( '%s', substitution.args ) : string;
+		}, serverResponse );
+
+		it( 'has a total property', function() {
+			expect( clientCart.total.amount ).toBeDefined();
+		} );
+		it( 'has the expected total value', function() {
+			expect( clientCart.total.amount.value ).toBe( 13200 );
+		} );
+		it( 'has the expected currency', function() {
+			expect( clientCart.total.amount.currency ).toBe( 'USD' );
+		} );
+		it( 'has the expected total display value', function() {
+			expect( clientCart.total.amount.displayValue ).toBe( '$132' );
+		} );
+		it( 'has an array of items', function() {
+			expect( clientCart.items ).toBeDefined();
+		} );
+		it( 'has the expected number of line items', function() {
+			expect( clientCart.items.length ).toBe( 1 );
+		} );
+		it( 'has an array of allowed payment methods', function() {
+			expect( clientCart.allowedPaymentMethods ).toBeDefined();
+		} );
+		it( 'has the expected credits', function() {
+			expect( clientCart.credits.amount.value ).toBe( 10000 );
+			expect( clientCart.credits.amount.currency ).toBe( 'USD' );
+			expect( clientCart.credits.amount.displayValue ).toBe( '$100' );
+		} );
+		it( 'has the expected coupon', function() {
+			expect( clientCart.couponCode ).toBe( 'fakecoupon' );
+		} );
+
+		describe( 'first cart item (plan)', function() {
+			it( 'has an id', function() {
+				expect( clientCart.items[ 0 ].id ).toBeDefined();
+			} );
+			it( 'has the expected label', function() {
+				expect( clientCart.items[ 0 ].label ).toBe( 'WordPress.com Personal' );
+			} );
+			it( 'has the expected type', function() {
+				expect( clientCart.items[ 0 ].type ).toBe( 'personal-bundle' );
+			} );
+			it( 'has the expected currency', function() {
+				expect( clientCart.items[ 0 ].amount.currency ).toBe( 'USD' );
+			} );
+			it( 'has the expected value', function() {
+				expect( clientCart.items[ 0 ].amount.value ).toBe( 14400 );
+			} );
+			it( 'has the expected display value', function() {
+				expect( clientCart.items[ 0 ].amount.displayValue ).toBe( '$144' );
+			} );
+		} );
+
+		describe( 'taxes', function() {
+			it( 'has an id', function() {
+				expect( clientCart.tax.id ).toBeDefined();
+			} );
+			it( 'has the expected label', function() {
+				expect( clientCart.tax.label ).toBe( 'Tax' );
+			} );
+			it( 'has the expected type', function() {
+				expect( clientCart.tax.type ).toBe( 'tax' );
+			} );
+			it( 'has the expected currency', function() {
+				expect( clientCart.tax.amount.currency ).toBe( 'USD' );
+			} );
+			it( 'has the expected value', function() {
+				expect( clientCart.tax.amount.value ).toBe( 500 );
+			} );
+			it( 'has the expected display value', function() {
+				expect( clientCart.tax.amount.displayValue ).toBe( '$5' );
+			} );
+		} );
+
+		describe( 'coupon', function() {
+			it( 'has an id', function() {
+				expect( clientCart.coupon.id ).toBeDefined();
+			} );
+			it( 'has the expected label', function() {
+				expect( clientCart.coupon.label ).toBe( 'Coupon: fakecoupon' );
+			} );
+			it( 'has the expected type', function() {
+				expect( clientCart.coupon.type ).toBe( 'coupon' );
+			} );
+			it( 'has the expected currency', function() {
+				expect( clientCart.coupon.amount.currency ).toBe( 'USD' );
+			} );
+			it( 'has the expected value', function() {
+				expect( clientCart.coupon.amount.value ).toBe( 1700 );
+			} );
+			it( 'has the expected display value', function() {
+				expect( clientCart.coupon.amount.displayValue ).toBe( '-$17' );
 			} );
 		} );
 

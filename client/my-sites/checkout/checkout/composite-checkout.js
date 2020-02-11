@@ -101,21 +101,38 @@ export default function CompositeCheckout( {
 		notices.success( message );
 	}, [] );
 
+	const showAddCouponSuccessMessage = couponCode => {
+		showSuccessMessage(
+			translate( "The '%(couponCode)s' coupon was successfully applied to your shopping cart.", {
+				args: { couponCode },
+			} )
+		);
+	};
+
 	const countriesList = useCountryList( overrideCountryList || [] );
 
 	const {
 		items,
 		tax,
+		couponItem,
 		total,
 		credits,
 		removeItem,
 		addItem,
+		submitCoupon,
+		couponStatus,
 		changePlanLength,
 		errors,
 		subtotal,
 		isLoading,
 		allowedPaymentMethods: serverAllowedPaymentMethods,
-	} = useShoppingCart( siteSlug, setCart || wpcomSetCart, getCart || wpcomGetCart );
+	} = useShoppingCart(
+		siteSlug,
+		setCart || wpcomSetCart,
+		getCart || wpcomGetCart,
+		translate,
+		showAddCouponSuccessMessage
+	);
 
 	const { registerStore } = registry;
 	useWpcomStore(
@@ -124,12 +141,11 @@ export default function CompositeCheckout( {
 		validateDomainContactDetails || wpcomValidateDomainContactInformation
 	);
 
-	const errorMessages = useMemo( () => errors.map( error => error.message ), [ errors ] );
-	useDisplayErrors( errorMessages, showErrorMessage );
+	useDisplayErrors( errors, showErrorMessage );
 
 	useAddProductToCart( planSlug, isJetpackNotAtomic, addItem );
 
-	const itemsForCheckout = items.length ? [ ...items, tax ] : [];
+	const itemsForCheckout = ( items.length ? [ ...items, tax, couponItem ] : [] ).filter( Boolean );
 	debug( 'items for checkout', itemsForCheckout );
 
 	useRedirectIfCartEmpty( items, `/plans/${ siteSlug || '' }` );
@@ -215,6 +231,8 @@ export default function CompositeCheckout( {
 			>
 				<WPCheckout
 					removeItem={ removeItem }
+					submitCoupon={ submitCoupon }
+					couponStatus={ couponStatus }
 					changePlanLength={ changePlanLength }
 					siteId={ siteId }
 					siteUrl={ siteSlug }
@@ -257,8 +275,20 @@ function useAddProductToCart( planSlug, isJetpackNotAtomic, addItem ) {
 }
 
 function useDisplayErrors( errors, displayError ) {
+	const couponErrorCodes = [
+		'coupon-not-found',
+		'coupon-already-used',
+		'coupon-no-longer-valid',
+		'coupon-expired',
+		'coupon-unknown-error',
+	];
+
+	const isNotCouponError = error => {
+		return ! couponErrorCodes.includes( error.code );
+	};
+
 	useEffect( () => {
-		errors.map( displayError );
+		errors.filter( isNotCouponError ).map( error => displayError( error.message ) );
 	}, [ errors, displayError ] );
 }
 

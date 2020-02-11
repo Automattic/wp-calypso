@@ -17,6 +17,7 @@ import {
  * Internal dependencies
  */
 import { areDomainsInLineItems } from '../hooks/has-domains';
+import useCouponFieldState from '../hooks/use-coupon-field-state';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary, { WPCheckoutOrderSummaryTitle } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
@@ -45,6 +46,8 @@ const OrderReviewTitle = () => {
 
 export default function WPCheckout( {
 	removeItem,
+	submitCoupon,
+	couponStatus,
 	changePlanLength,
 	siteId,
 	siteUrl,
@@ -54,10 +57,13 @@ export default function WPCheckout( {
 	renderDomainContactFields,
 } ) {
 	const translate = useTranslate();
+	const couponFieldStateProps = useCouponFieldState( submitCoupon );
 
-	const ReviewContent = () => (
+	const reviewContent = (
 		<WPCheckoutOrderReview
 			removeItem={ removeItem }
+			couponStatus={ couponStatus }
+			couponFieldStateProps={ couponFieldStateProps }
 			onChangePlanLength={ changePlanLength }
 			siteUrl={ siteUrl }
 		/>
@@ -77,7 +83,13 @@ export default function WPCheckout( {
 			className: 'checkout__order-summary-step',
 			hasStepNumber: false,
 			titleContent: <WPCheckoutOrderSummaryTitle />,
-			completeStepContent: <WPCheckoutOrderSummary siteUrl={ siteUrl } />,
+			completeStepContent: (
+				<WPCheckoutOrderSummary
+					siteUrl={ siteUrl }
+					couponStatus={ couponStatus }
+					couponFieldStateProps={ couponFieldStateProps }
+				/>
+			),
 			isCompleteCallback: () => true,
 		},
 		{
@@ -112,7 +124,7 @@ export default function WPCheckout( {
 			className: 'checkout__review-order-step',
 			hasStepNumber: true,
 			titleContent: <OrderReviewTitle />,
-			activeStepContent: <ReviewContent />,
+			activeStepContent: reviewContent,
 			isCompleteCallback: ( { activeStep } ) => {
 				const isActive = activeStep.id === 'order-review';
 				return isActive;
