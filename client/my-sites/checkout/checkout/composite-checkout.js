@@ -97,7 +97,6 @@ export default function CompositeCheckout( {
 	feature,
 	purchaseId,
 	cart,
-	transaction,
 	// TODO: handle these also
 	// couponCode,
 } ) {
@@ -106,19 +105,21 @@ export default function CompositeCheckout( {
 	const isJetpackNotAtomic = useSelector(
 		state => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
 	);
-	const adminUrl = useSelector( state => getSelectedSite( state ) );
+	const selectedSiteData = useSelector( state => getSelectedSite( state ) );
+	const adminUrl = selectedSiteData?.options?.admin_url;
 	const isNewlyCreatedSite = useSelector( state => isNewSite( state, siteId ) );
 	const isEligibleForSignupDestinationResult = useSelector( state =>
 		isEligibleForSignupDestination( state, siteId, cart )
 	);
 	const previousRoute = useSelector( state => getPreviousPath( state ) );
 
-	const transactionStepData = transaction?.step?.data ?? {};
-	const didPurchaseFail = Object.keys( transactionStepData.failed_purchases ?? {} ).length > 0;
-	const receiptId = transactionStepData.receipt_id;
-	const orderId = transactionStepData.order_id;
-
 	const getThankYouUrl = useCallback( () => {
+		const transactionResult = select( 'wpcom' ).getTransactionResult();
+		debug( 'for getThankYouUrl, transactionResult is', transactionResult );
+		const didPurchaseFail = Object.keys( transactionResult.failed_purchases ?? {} ).length > 0;
+		const receiptId = transactionResult.receipt_id;
+		const orderId = transactionResult.order_id;
+
 		debug( 'getThankYouUrl called with', {
 			siteSlug,
 			adminUrl,
@@ -154,9 +155,6 @@ export default function CompositeCheckout( {
 		debug( 'getThankYouUrl returned', url );
 		return url;
 	}, [
-		didPurchaseFail,
-		receiptId,
-		orderId,
 		previousRoute,
 		isNewlyCreatedSite,
 		isEligibleForSignupDestinationResult,
@@ -210,7 +208,7 @@ export default function CompositeCheckout( {
 		allowedPaymentMethods: serverAllowedPaymentMethods,
 	} = useShoppingCart( siteSlug, setCart || wpcomSetCart, getCart || wpcomGetCart );
 
-	const { registerStore } = registry;
+	const { registerStore, dispatch } = registry;
 	useWpcomStore(
 		registerStore,
 		handleCheckoutEvent,
@@ -258,17 +256,24 @@ export default function CompositeCheckout( {
 				getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 				registerStore,
 				fetchStripeConfiguration: args => fetchStripeConfiguration( args, wpcom ),
-				submitTransaction: submitData =>
-					sendStripeTransaction(
+				submitTransaction: submitData => {
+					const pending = sendStripeTransaction(
 						{
 							...submitData,
 							siteId: select( 'wpcom' )?.getSiteId?.(),
 							domainDetails: getDomainDetails( select ),
 						},
 						wpcomTransaction
-					),
+					);
+					// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+					pending.then( result => {
+						debug( 'saving transaction response', result );
+						dispatch( 'wpcom' ).setTransactionResponse( result );
+					} );
+					return pending;
+				},
 			} ),
-		[ registerStore ]
+		[ registerStore, dispatch ]
 	);
 	stripeMethod.id = 'card';
 

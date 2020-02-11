@@ -22,6 +22,7 @@ type WpcomStoreAction =
 	  }
 	| { type: 'UPDATE_CONTACT_DETAILS'; payload: DomainContactDetails }
 	| { type: 'SET_SITE_ID'; payload: string }
+	| { type: 'TRANSACTION_COMPLETE'; payload: object }
 	| { type: 'UPDATE_VAT_ID'; payload: string }
 	| { type: 'UPDATE_PHONE'; payload: string }
 	| { type: 'UPDATE_PHONE_NUMBER_COUNTRY'; payload: string }
@@ -69,12 +70,22 @@ export function useWpcomStore( registerStore, onEvent ) {
 		}
 	}
 
+	function transactionResultReducer( state: object, action: WpcomStoreAction ): object {
+		switch ( action.type ) {
+			case 'TRANSACTION_COMPLETE':
+				return action.payload;
+			default:
+				return state;
+		}
+	}
+
 	registerStore( 'wpcom', {
 		reducer( state: WpcomStoreState | undefined, action: WpcomStoreAction ): WpcomStoreState {
 			const checkedState = state === undefined ? initialWpcomStoreState : state;
 			return {
 				contactDetails: contactReducer( checkedState.contactDetails, action ),
 				siteId: siteIdReducer( checkedState.siteId, action ),
+				transactionResult: transactionResultReducer( checkedState.transactionResult, action ),
 			};
 		},
 
@@ -87,6 +98,10 @@ export function useWpcomStore( registerStore, onEvent ) {
 
 			setSiteId( payload: string ): WpcomStoreAction {
 				return { type: 'SET_SITE_ID', payload };
+			},
+
+			setTransactionResponse( payload: object ): WpcomStoreAction {
+				return { type: 'TRANSACTION_COMPLETE', payload };
 			},
 
 			updateContactDetails( payload: DomainContactDetails ): WpcomStoreAction {
@@ -131,6 +146,10 @@ export function useWpcomStore( registerStore, onEvent ) {
 		selectors: {
 			getSiteId( state: WpcomStoreState ): string {
 				return state.siteId;
+			},
+
+			getTransactionResult( state: WpcomStoreState ): object {
+				return state.transactionResult;
 			},
 
 			getContactInfo( state: WpcomStoreState ): ManagedContactDetails {
