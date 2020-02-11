@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { get, map, reduce, throttle } from 'lodash';
+import { get, isEmpty, map, reduce, throttle } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
@@ -18,7 +18,6 @@ import { serialize as serializeSimplePayment } from 'components/tinymce/plugins/
 import MediaActions from 'lib/media/actions';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import { getMimePrefix } from 'lib/media/utils';
-import MediaValidationStore from 'lib/media/validation-store';
 import { isWithinBreakpoint } from 'lib/viewport';
 import markup from 'post-editor/media-modal/markup';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
@@ -38,6 +37,7 @@ import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
 import EditorMediaModal from 'post-editor/editor-media-modal';
 import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
 import config from 'config';
+import getMediaErrors from 'state/selectors/get-media-errors';
 import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dialog';
 import { withLocalizedMoment } from 'components/localized-moment';
 
@@ -480,14 +480,14 @@ export class EditorHtmlToolbar extends Component {
 	};
 
 	onFilesDrop = () => {
-		const { site } = this.props;
+		const { mediaValidationErrors, site } = this.props;
 		// Find selected images. Non-images will still be uploaded, but not
 		// inserted directly into the post contents.
 		const selectedItems = MediaLibrarySelectedStore.getAll( site.ID );
 		const isSingleImage =
 			1 === selectedItems.length && 'image' === getMimePrefix( selectedItems[ 0 ] );
 
-		if ( isSingleImage && ! MediaValidationStore.hasErrors( site.ID ) ) {
+		if ( isSingleImage && isEmpty( mediaValidationErrors ) ) {
 			// For single image upload, insert into post content, blocking save
 			// until the image has finished upload
 			if ( selectedItems[ 0 ].transient ) {
@@ -707,12 +707,17 @@ export class EditorHtmlToolbar extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
-	contactForm: get( state, 'ui.editor.contactForm', {} ),
-	isDropZoneVisible: isDropZoneVisible( state ),
-	site: getSelectedSite( state ),
-	canUserUploadFiles: canCurrentUser( state, getSelectedSiteId( state ), 'upload_files' ),
-} );
+const mapStateToProps = state => {
+	const site = getSelectedSite( state );
+
+	return {
+		contactForm: get( state, 'ui.editor.contactForm', {} ),
+		isDropZoneVisible: isDropZoneVisible( state ),
+		site,
+		canUserUploadFiles: canCurrentUser( state, getSelectedSiteId( state ), 'upload_files' ),
+		mediaValidationErrors: getMediaErrors( state, site?.ID ),
+	};
+};
 
 const mapDispatchToProps = {
 	blockSave,
