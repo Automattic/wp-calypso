@@ -383,7 +383,7 @@ export default function CompositeCheckout( {
 					getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 				} )
 			),
-		[ registerStore, storedCards ]
+		[ registerStore, storedCards, dispatch ]
 	);
 
 	const paymentMethods =
@@ -511,6 +511,12 @@ function useAddProductToCart( planSlug, isJetpackNotAtomic, addItem ) {
 }
 
 function useDisplayErrors( errors, displayError ) {
+	useEffect( () => {
+		errors.filter( isNotCouponError ).map( error => displayError( error.message ) );
+	}, [ errors, displayError ] );
+}
+
+function isNotCouponError( error ) {
 	const couponErrorCodes = [
 		'coupon-not-found',
 		'coupon-already-used',
@@ -518,14 +524,7 @@ function useDisplayErrors( errors, displayError ) {
 		'coupon-expired',
 		'coupon-unknown-error',
 	];
-
-	const isNotCouponError = error => {
-		return ! couponErrorCodes.includes( error.code );
-	};
-
-	useEffect( () => {
-		errors.filter( isNotCouponError ).map( error => displayError( error.message ) );
-	}, [ errors, displayError ] );
+	return ! couponErrorCodes.includes( error.code );
 }
 
 function createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) {
