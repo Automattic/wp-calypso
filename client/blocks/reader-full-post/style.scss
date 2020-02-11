@@ -146,6 +146,10 @@
 
 .reader-full-post__story-content img {
 	margin-bottom: 12px;
+
+	&.latex {
+		margin-bottom: 0;
+	}
 }
 
 .reader-full-post__story-content figure img {
