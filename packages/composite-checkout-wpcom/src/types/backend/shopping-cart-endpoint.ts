@@ -142,3 +142,11 @@ export function removeItemFromResponseCart(
 		} ),
 	};
 }
+
+export function addCouponToResponseCart( cart: ResponseCart, couponToAdd: string ): ResponseCart {
+	return {
+		...cart,
+		coupon: couponToAdd,
+		is_coupon_applied: false,
+	};
+}
