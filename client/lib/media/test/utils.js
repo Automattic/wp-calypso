@@ -12,6 +12,7 @@ import { map } from 'lodash';
  * Internal dependencies
  */
 import * as MediaUtils from '../utils';
+import { ValidationErrors as MediaValidationErrors } from '../constants';
 
 jest.mock( 'lib/impure-lodash', () => ( {
 	uniqueId: () => 'media-13',
@@ -705,6 +706,61 @@ describe( 'MediaUtils', () => {
 			const actual = MediaUtils.createTransientMedia( DUMMY_FILE_OBJECT );
 
 			expect( actual ).to.eql( EXPECTED_FILE_OBJECT );
+		} );
+	} );
+
+	describe( '#validateMediaItem()', () => {
+		const site = {
+			options: {
+				allowed_file_types: [ 'pdf', 'gif' ],
+				max_upload_size: 123456789,
+			},
+		};
+
+		test( 'should return no errors if file type is supported', () => {
+			const mediaItem = {
+				...EXPECTED_FILE_OBJECT,
+				extension: 'gif',
+			};
+			expect( MediaUtils.validateMediaItem( site, mediaItem ) ).to.eql( [] );
+		} );
+
+		test( 'should return an error if file type is unsupported', () => {
+			expect( MediaUtils.validateMediaItem( site, EXPECTED_FILE_OBJECT ) ).to.eql( [
+				MediaValidationErrors.FILE_TYPE_UNSUPPORTED,
+			] );
+		} );
+
+		test( 'should return an error if file type is not in plan', () => {
+			const mediaItem = {
+				...EXPECTED_FILE_OBJECT,
+				extension: 'mp4',
+			};
+			expect( MediaUtils.validateMediaItem( site, mediaItem ) ).to.eql( [
+				MediaValidationErrors.FILE_TYPE_NOT_IN_PLAN,
+			] );
+		} );
+
+		test( 'should return an error if file exceeds the maximum upload file size', () => {
+			const mediaItem = {
+				...EXPECTED_FILE_OBJECT,
+				extension: 'gif',
+				size: 123456790,
+			};
+			expect( MediaUtils.validateMediaItem( site, mediaItem ) ).to.eql( [
+				MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE,
+			] );
+		} );
+
+		test( 'should return both upload file size and unsupported file type errors', () => {
+			const mediaItem = {
+				...EXPECTED_FILE_OBJECT,
+				size: 123456790,
+			};
+			expect( MediaUtils.validateMediaItem( site, mediaItem ) ).to.eql( [
+				MediaValidationErrors.FILE_TYPE_UNSUPPORTED,
+				MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE,
+			] );
 		} );
 	} );
 } );
