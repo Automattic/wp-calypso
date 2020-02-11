@@ -5,6 +5,7 @@
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getSite from 'state/sites/selectors/get-site';
 import isPrivateSite from 'state/selectors/is-private-site';
@@ -19,6 +20,10 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
  * @returns {string[]}      Safe domains
  */
 export default function getSafeMediaDomains( state: any, siteId: number | null ) {
+	if ( ! config.isEnabled( 'coming-soon' ) ) {
+		return [];
+	}
+
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
 	}
