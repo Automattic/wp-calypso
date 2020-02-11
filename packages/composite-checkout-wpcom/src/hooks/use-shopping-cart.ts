@@ -12,6 +12,7 @@ import {
 	ResponseCart,
 	emptyResponseCart,
 	removeItemFromResponseCart,
+	addCouponToResponseCart,
 	WPCOMCart,
 	WPCOMCartItem,
 	CheckoutCartItem,
@@ -52,7 +53,8 @@ type ShoppingCartHookAction =
 	| { type: 'SET_RESPONSE_CART'; adjustResponseCart: ( ResponseCart ) => ResponseCart }
 	| { type: 'SET_COUPON_STATUS'; newCouponStatus: CouponStatus }
 	| { type: 'SET_CACHE_STATUS'; newCacheStatus: CacheStatus }
-	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string };
+	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
+	| { type: 'ADD_COUPON'; couponToAdd: string };
 
 function shoppingCartHookReducer(
 	state: ShoppingCartHookState,
@@ -81,6 +83,21 @@ function shoppingCartHookReducer(
 				responseCart: removeItemFromResponseCart( state.responseCart, action.uuidToRemove ),
 				cacheStatus: 'invalid',
 			};
+		case 'ADD_COUPON': {
+			const couponStatus = state.couponStatus;
+			const newCoupon = action.couponToAdd;
+			if ( couponStatus === 'applied' || couponStatus === 'pending' ) {
+				debug( `coupon status is '${ couponStatus }'; not submitting again` );
+				return state;
+			}
+			debug( 'submitting coupon', newCoupon );
+			return {
+				...state,
+				responseCart: addCouponToResponseCart( state.responseCart, newCoupon ),
+				couponStatus: 'pending',
+				cacheStatus: 'invalid',
+			};
+		}
 	}
 }
 
@@ -316,23 +333,9 @@ export function useShoppingCart(
 		debug( 'updating prices for address in cart', address );
 	};
 
-	const submitCoupon: ( string ) => void = useCallback(
-		newCoupon => {
-			if ( couponStatus === 'applied' || couponStatus === 'pending' ) {
-				debug( `coupon status is '${ couponStatus }'; not submitting again` );
-				return;
-			}
-			debug( 'submitting coupon', newCoupon );
-			setResponseCart( currentResponseCart => ( {
-				...currentResponseCart,
-				coupon: newCoupon,
-				is_coupon_applied: false,
-			} ) );
-			setCacheStatus( 'invalid' );
-			setCouponStatus( 'pending' );
-		},
-		[ couponStatus ]
-	);
+	const submitCoupon: ( string ) => void = useCallback( couponToAdd => {
+		hookDispatch( { type: 'ADD_COUPON', couponToAdd } );
+	}, [] );
 
 	return {
 		isLoading: cacheStatus === 'fresh',
