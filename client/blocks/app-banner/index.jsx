@@ -73,7 +73,7 @@ export class AppBanner extends Component {
 		saveDismissTime: noop,
 		translate: identity,
 		recordAppBannerOpen: noop,
-		userAgent: globalThis?.navigator?.userAgent ?? '',
+		userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : '',
 	};
 
 	stopBubblingEvents = event => {
