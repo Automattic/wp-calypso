@@ -22,6 +22,7 @@ import {
 	createStripeMethod,
 	createFullCreditsMethod,
 	createApplePayMethod,
+	createExistingCardMethod,
 } from '@automattic/composite-checkout';
 import { Card } from '@automattic/components';
 
@@ -51,6 +52,7 @@ import {
 	WordPressCreditsSummary,
 	submitApplePayPayment,
 	isApplePayAvailable,
+	submitExistingCardPayment,
 } from './composite-checkout-payment-methods';
 import notices from 'notices';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
@@ -209,7 +211,7 @@ export default function CompositeCheckout( {
 
 	useRedirectIfCartEmpty( items, `/plans/${ siteSlug || '' }` );
 
-	const { isLoading: isLoadingStoredCards } = useStoredCards(
+	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
 		getStoredCards || wpcomGetStoredCards
 	);
 
@@ -296,23 +298,63 @@ export default function CompositeCheckout( {
 		[ registerStore ]
 	);
 
+	const existingCardMethods = useMemo(
+		() =>
+			storedCards.map( storedDetails =>
+				createExistingCardMethod( {
+					id: `existingCard-${ storedDetails.stored_details_id }`,
+					cardholderName: storedDetails.name,
+					cardExpiry: storedDetails.expiry,
+					brand: storedDetails.card_type,
+					last4: storedDetails.card,
+					submitTransaction: submitData =>
+						submitExistingCardPayment(
+							{
+								...submitData,
+								siteId: select( 'wpcom' )?.getSiteId?.(),
+								storedDetailsId: storedDetails.stored_details_id,
+								paymentMethodToken: storedDetails.mp_ref,
+								paymentPartnerProcessorId: storedDetails.payment_partner,
+								domainDetails: getDomainDetails( select ),
+							},
+							wpcomTransaction
+						),
+					registerStore,
+					getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+					getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+					getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+				} )
+			),
+		[ registerStore, storedCards ]
+	);
+
 	const paymentMethods =
 		isLoading || isLoadingStoredCards
 			? []
-			: [ fullCreditsPaymentMethod, applePayMethod, stripeMethod, paypalMethod ].filter(
-					methodObject => {
-						if ( methodObject.id === 'full-credits' ) {
-							return credits.amount.value > 0 && credits.amount.value >= subtotal.amount.value;
-						}
-						if ( methodObject.id === 'apple-pay' && ! isApplePayAvailable() ) {
-							return false;
-						}
+			: [
+					fullCreditsPaymentMethod,
+					applePayMethod,
+					...existingCardMethods,
+					stripeMethod,
+					paypalMethod,
+			  ].filter( methodObject => {
+					if ( methodObject.id === 'full-credits' ) {
+						return credits.amount.value > 0 && credits.amount.value >= subtotal.amount.value;
+					}
+					if ( methodObject.id === 'apple-pay' && ! isApplePayAvailable() ) {
+						return false;
+					}
+					if ( methodObject.id.startsWith( 'existingCard-' ) ) {
 						return isPaymentMethodEnabled(
-							methodObject.id,
+							'card',
 							allowedPaymentMethods || serverAllowedPaymentMethods
 						);
 					}
-			  );
+					return isPaymentMethodEnabled(
+						methodObject.id,
+						allowedPaymentMethods || serverAllowedPaymentMethods
+					);
+			  } );
 
 	const validateDomainContact =
 		validateDomainContactDetails || wpcomValidateDomainContactInformation;

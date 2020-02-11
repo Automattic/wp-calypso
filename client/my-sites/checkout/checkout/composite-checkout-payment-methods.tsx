@@ -222,7 +222,7 @@ function storedCardsReducer( state, action ) {
 	}
 }
 
-async function submitExistingCardPayment(
+export async function submitExistingCardPayment(
 	transactionData,
 	submit: WPCOMTransactionEndpoint
 ): Promise< WPCOMTransactionEndpointResponse > {
