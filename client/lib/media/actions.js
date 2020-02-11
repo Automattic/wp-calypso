@@ -13,9 +13,9 @@ import wpcom from 'lib/wp';
 import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { createTransientMedia } from './utils';
+import getMediaItemErrors from 'state/selectors/get-media-item-errors';
 import MediaStore from './store';
 import MediaListStore from './list-store';
-import MediaValidationStore from './validation-store';
 import {
 	changeMediaSource,
 	clearMediaErrors,
@@ -193,7 +193,7 @@ function uploadFiles( uploader, files, site ) {
 		reduxDispatch( createMediaItem( site, transientMedia ) );
 
 		// Abort upload if file fails to pass validation.
-		if ( MediaValidationStore.getErrors( siteId, transientMedia.ID ).length ) {
+		if ( getMediaItemErrors( reduxGetState(), siteId, transientMedia.ID ).length ) {
 			return Promise.resolve();
 		}
 
