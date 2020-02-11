@@ -104,11 +104,7 @@ async function updateCreditCard( {
 	if ( purchase && siteSlug && isRenewable( purchase ) ) {
 		let noticeMessage = '';
 		let noticeOptions = {};
-<<<<<<< HEAD
 		if ( shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) ) {
-=======
-		if ( daysAwayFromRenewal > 90 ) {
->>>>>>> Bump this to 90 days, to match the first notification that goes out for wpcom renewals
 			noticeMessage = translate( 'Your credit card details were successfully updated.' );
 			noticeOptions = {
 				persistent: true,
