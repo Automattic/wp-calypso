@@ -6,24 +6,15 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import {
-	clientRender,
-	jetpackCloud,
-	jetpackBackups,
-	jetpackScan,
-	makeLayout,
-	setupSidebar,
-} from './controller';
+import { jetpackCloud } from './controller';
+import { navigation } from 'my-sites/controller';
+import { makeLayout, render as clientRender } from 'controller';
 import { normalize } from 'lib/route';
 
 const router = () => {
 	page( '*', normalize );
 
-	page( '/', setupSidebar, jetpackCloud, makeLayout, clientRender );
-
-	page( '/backups', setupSidebar, jetpackBackups, makeLayout, clientRender );
-
-	page( '/scan', setupSidebar, jetpackScan, makeLayout, clientRender );
+	page( '/', navigation, jetpackCloud, makeLayout, clientRender );
 };
 
 export default router;

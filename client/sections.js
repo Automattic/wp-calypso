@@ -464,6 +464,20 @@ const sections = [
 		secondary: true,
 		group: 'sites',
 	},
+	{
+		name: 'scan',
+		paths: [ '/scan' ],
+		module: 'landing/jetpack-cloud/sections/scan',
+		secondary: true,
+		group: 'jetpack-cloud',
+	},
+	{
+		name: 'backups',
+		paths: [ '/backups' ],
+		module: 'landing/jetpack-cloud/sections/backups',
+		secondary: true,
+		group: 'jetpack-cloud',
+	},
 ];
 
 for ( const extension of require( './extensions' ) ) {

@@ -13,6 +13,7 @@ import SidebarFooter from 'layout/sidebar/footer';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
+import CurrentSite from 'my-sites/current-site';
 
 /**
  * Style dependencies
@@ -72,6 +73,7 @@ class JetpackCloudSidebar extends Component {
 		return (
 			<Sidebar>
 				<SidebarRegion>
+					<CurrentSite />
 					{ /* @todo: A profile info box needs to be created and added here; similar to <ProfileGravatar /> in client/me/sidebar/index.jsx */ }
 					<SidebarMenu>
 						<SidebarItem

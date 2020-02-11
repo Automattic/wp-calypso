@@ -8,7 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import SitePicker from 'my-sites/picker';
-import Sidebar from 'my-sites/sidebar';
+import Sidebar from 'landing/jetpack-cloud/components/sidebar';
 
 class MySitesNavigation extends React.Component {
 	static displayName = 'MySitesNavigation';

@@ -54,7 +54,7 @@ import analytics from 'server/lib/analytics';
 import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'landing/gutenboarding/section';
-import { JETPACK_CLOUD_SECTION_DEFINITION } from 'landing/jetpack-cloud/section';
+import { JETPACK_CLOUD_SECTIONS_DEFINITION } from 'landing/jetpack-cloud/sections';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -674,8 +674,10 @@ module.exports = function() {
 	} );
 
 	if ( jetpackCloudEnvs.includes( calypsoEnv ) ) {
-		JETPACK_CLOUD_SECTION_DEFINITION.paths.forEach( sectionPath =>
-			handleSectionPath( JETPACK_CLOUD_SECTION_DEFINITION, sectionPath, 'entry-jetpack-cloud' )
+		JETPACK_CLOUD_SECTIONS_DEFINITION.forEach( section =>
+			section.paths.forEach( sectionPath =>
+				handleSectionPath( section, sectionPath, 'entry-jetpack-cloud' )
+			)
 		);
 
 		// catchall to render 404 for all routes not whitelisted in client/sections
@@ -852,8 +854,6 @@ module.exports = function() {
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
 	handleSectionPath( GUTENBOARDING_SECTION_DEFINITION, '/gutenboarding', 'entry-gutenboarding' );
-
-	handleSectionPath( JETPACK_CLOUD_SECTION_DEFINITION, '/jetpack-cloud', 'entry-jetpack-cloud' );
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post(

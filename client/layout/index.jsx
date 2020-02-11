@@ -135,6 +135,15 @@ class Layout extends Component {
 			return optionalProps;
 		};
 
+		const masterbar = this.props.masterbar ? (
+			this.props.masterbar
+		) : (
+			<MasterbarLoggedIn
+				section={ this.props.sectionGroup }
+				isCheckout={ this.props.sectionName === 'checkout' }
+			/>
+		);
+
 		return (
 			<div className={ sectionClass }>
 				<BodySectionCssClass
@@ -151,10 +160,7 @@ class Layout extends Component {
 				<AsyncLoad require="layout/guided-tours" placeholder={ null } />
 				{ ! isE2ETest() && <AsyncLoad require="layout/nps-survey-notice" placeholder={ null } /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
-				<MasterbarLoggedIn
-					section={ this.props.sectionGroup }
-					isCheckout={ this.props.sectionName === 'checkout' }
-				/>
+				{ masterbar }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<LayoutLoader />
 				{ this.props.isOffline && <OfflineStatus /> }
