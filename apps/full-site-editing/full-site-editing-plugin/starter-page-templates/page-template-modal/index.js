@@ -472,6 +472,7 @@ export const PageTemplatesPlugin = compose(
 				} );
 			},
 			insertTemplate: ( title, blocks ) => {
+				window._isCurrentlyinsertingStarterPageTemplate = true;
 				// Set post title.
 				if ( title ) {
 					editorDispatcher.editPost( { title } );
@@ -484,6 +485,7 @@ export const PageTemplatesPlugin = compose(
 					blocks,
 					false
 				);
+				window._isCurrentlyinsertingStarterPageTemplate = false;
 			},
 			hideWelcomeGuide: () => {
 				if ( ownProps.isWelcomeGuideActive ) {
