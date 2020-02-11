@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import JetpackCloudMasterbar from './masterbar';
+import JetpackCloudMasterbar from './components/masterbar';
 import EmptyContent from 'components/empty-content';
 
 class JetpackCloudLayout extends Component {
