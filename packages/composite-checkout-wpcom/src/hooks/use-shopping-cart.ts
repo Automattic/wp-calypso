@@ -231,12 +231,6 @@ export interface ShoppingCartManager {
 	updateLocation: ( CartLocation ) => void;
 }
 
-interface CartLocation {
-	countryCode: string | null;
-	postalCode: string | null;
-	subdivisionCode: string | null;
-}
-
 /**
  * The custom hook keeps a cached version of the server cart, as well as a
  * cache status.

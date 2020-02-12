@@ -167,6 +167,29 @@ export function addCouponToResponseCart( cart: ResponseCart, couponToAdd: string
 	};
 }
 
+export function addLocationToResponseCart(
+	cart: ResponseCart,
+	location: CartLocation
+): ResponseCart {
+	return {
+		...cart,
+		tax: {
+			...cart.tax,
+			location: {
+				country_code: location.countryCode || undefined,
+				postal_code: location.postalCode || undefined,
+				subdivision_code: location.subdivisionCode || undefined,
+			},
+		},
+	};
+}
+
+export interface CartLocation {
+	countryCode: string | null;
+	postalCode: string | null;
+	subdivisionCode: string | null;
+}
+
 export function processRawResponse( rawResponseCart ): ResponseCart {
 	return {
 		...rawResponseCart,
