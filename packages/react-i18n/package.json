@@ -34,7 +34,7 @@
 		"tslib": "^1.10.0"
 	},
 	"peerDependencies": {
-		"@wordpress/i18n": "<=3",
+		"@wordpress/i18n": "*",
 		"react": ">=16.8"
 	},
 	"private": true
