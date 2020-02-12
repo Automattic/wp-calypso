@@ -62,7 +62,7 @@ const getInitialShoppingCartHookState: () => ShoppingCartHookState = () => {
 		cacheStatus: 'fresh',
 		couponStatus: 'fresh',
 		variantRequestStatus: 'fresh',
-        variantSelectOverride: [],
+		variantSelectOverride: [],
 		shouldShowNotification: {
 			didAddCoupon: false,
 		},
@@ -79,6 +79,7 @@ type ShoppingCartHookAction =
 			newProductId: number;
 			newProductSlug: string;
 	  }
+	| { type: 'CLEAR_VARIANT_SELECT_OVERRIDE' }
 	| { type: 'ADD_COUPON'; couponToAdd: string }
 	| { type: 'RECEIVE_INITIAL_RESPONSE_CART'; initialResponseCart: ResponseCart }
 	| { type: 'REQUEST_UPDATED_RESPONSE_CART' }
@@ -134,12 +135,17 @@ function shoppingCartHookReducer(
 				),
 				cacheStatus: 'invalid',
 				variantRequestStatus: 'pending',
-                variantSelectOverride: [
-                    ...state.variantSelectOverride.filter( item => item.uuid !== action.uuidToReplace ),
-                    { uuid: action.uuidToReplace, overrideSelectedProductSlug: action.newProductSlug },
-                ],
+				variantSelectOverride: [
+					...state.variantSelectOverride.filter( item => item.uuid !== action.uuidToReplace ),
+					{ uuid: action.uuidToReplace, overrideSelectedProductSlug: action.newProductSlug },
+				],
 			};
 		}
+		case 'CLEAR_VARIANT_SELECT_OVERRIDE':
+			return {
+				...state,
+				variantSelectOverride: [],
+			};
 		case 'ADD_COUPON': {
 			const newCoupon = action.couponToAdd;
 
@@ -279,7 +285,7 @@ export interface ShoppingCartManager {
 	couponCode: string | null;
 	updateLocation: ( CartLocation ) => void;
 	variantRequestStatus: VariantRequestStatus;
-    variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[];
+	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[];
 }
 
 /**
@@ -421,6 +427,7 @@ export function useShoppingCart(
 					type: 'RECEIVE_UPDATED_RESPONSE_CART',
 					updatedResponseCart: processRawResponse( response ),
 				} );
+				hookDispatch( { type: 'CLEAR_VARIANT_SELECT_OVERRIDE' } );
 			} )
 			.catch( error => {
 				// TODO: figure out what to do here
@@ -495,6 +502,6 @@ export function useShoppingCart(
 		couponStatus,
 		couponCode: cart.couponCode,
 		variantRequestStatus,
-        variantSelectOverride,
+		variantSelectOverride,
 	} as ShoppingCartManager;
 }
