@@ -42,6 +42,7 @@ type ShoppingCartHookState = {
 	responseCart: ResponseCart;
 	couponStatus: CouponStatus;
 	cacheStatus: CacheStatus;
+	location: CartLocation;
 	shouldShowNotification: {
 		didAddCoupon: boolean;
 	};
@@ -52,6 +53,11 @@ const getInitialShoppingCartHookState: () => ShoppingCartHookState = () => {
 		responseCart: emptyResponseCart,
 		cacheStatus: 'fresh',
 		couponStatus: 'fresh',
+		location: {
+			countryCode: null,
+			postalCode: null,
+			subdivisionCode: null,
+		},
 		shouldShowNotification: {
 			didAddCoupon: false,
 		},
@@ -61,6 +67,7 @@ const getInitialShoppingCartHookState: () => ShoppingCartHookState = () => {
 type ShoppingCartHookAction =
 	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
 	| { type: 'ADD_CART_ITEM'; responseCartProductToAdd: ResponseCartProduct }
+	| { type: 'SET_LOCATION'; location: CartLocation }
 	| { type: 'ADD_COUPON'; couponToAdd: string }
 	| { type: 'RECEIVE_INITIAL_RESPONSE_CART'; initialResponseCart: ResponseCart }
 	| { type: 'REQUEST_UPDATED_RESPONSE_CART' }
@@ -160,6 +167,8 @@ function shoppingCartHookReducer(
 				default:
 					return state;
 			}
+		case 'SET_LOCATION':
+			return { ...state, location: action.location };
 	}
 
 	return state;
@@ -219,6 +228,13 @@ export interface ShoppingCartManager {
 	submitCoupon: ( string ) => void;
 	couponStatus: CouponStatus;
 	couponCode: string | null;
+	updateLocation: ( CartLocation ) => void;
+}
+
+interface CartLocation {
+	countryCode: string | null;
+	postalCode: string | null;
+	subdivisionCode: string | null;
 }
 
 /**
@@ -390,10 +406,10 @@ export function useShoppingCart(
 		debug( 'changing plan length in cart', planItem, planLength );
 	};
 
-	const updatePricesForAddress = address => {
-		// TODO: updatePricesForAddress
-		debug( 'updating prices for address in cart', address );
-	};
+	const updateLocation: ( CartLocation ) => void = useCallback( location => {
+		debug( 'updating location for cart to', location );
+		hookDispatch( { type: 'SET_LOCATION', location } );
+	}, [] );
 
 	const submitCoupon: ( string ) => void = useCallback( couponToAdd => {
 		hookDispatch( { type: 'ADD_COUPON', couponToAdd } );
@@ -412,7 +428,7 @@ export function useShoppingCart(
 		addItem,
 		removeItem,
 		changePlanLength,
-		updatePricesForAddress,
+		updateLocation,
 		submitCoupon,
 		couponStatus,
 		couponCode: cart.couponCode,
