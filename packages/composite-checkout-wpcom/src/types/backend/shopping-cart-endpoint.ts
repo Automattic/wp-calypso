@@ -184,6 +184,23 @@ export function addLocationToResponseCart(
 	};
 }
 
+export function doesCartLocationDifferFromResponseCartLocation(
+	cart: ResponseCart,
+	location: CartLocation
+): boolean {
+	const { countryCode, postalCode, subdivisionCode } = location;
+	if ( countryCode && cart.tax.location.country_code !== countryCode ) {
+		return true;
+	}
+	if ( postalCode && cart.tax.location.postal_code !== postalCode ) {
+		return true;
+	}
+	if ( subdivisionCode && cart.tax.location.subdivision_code !== subdivisionCode ) {
+		return true;
+	}
+	return false;
+}
+
 export interface CartLocation {
 	countryCode: string | null;
 	postalCode: string | null;
