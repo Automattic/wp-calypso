@@ -1,7 +1,7 @@
 on:
   push:
     paths:
-    - 'apps/full-site-editing/full-site-editing-plugin/*'
+    - 'apps/full-site-editing/full-site-editing-plugin/**'
 
 jobs:
   build:
