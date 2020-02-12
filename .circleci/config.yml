@@ -465,7 +465,7 @@ jobs:
             npm run build-css                                      \
               && npm run preanalyze-bundles                        \
               && node bin/icfy-analyze.js                          \
-              && mv client/stats.json client/chart.json client/style.json "$CIRCLE_ARTIFACTS/icfy" \
+              && mv client/stats.json client/chart.json "$CIRCLE_ARTIFACTS/icfy" \
               || rm -fr build/.babel-client-cache # In case of failure do not save a potentially bad cache
             exit 0
       - save_cache: *save-terser-cache
