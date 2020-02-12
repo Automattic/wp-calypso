@@ -40,7 +40,7 @@ import { addSiteFragment } from 'lib/route';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
-import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-active';
+import { isAutomatedTransferActive } from 'state/automated-transfer/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { isATEnabled } from 'lib/automated-transfer';
