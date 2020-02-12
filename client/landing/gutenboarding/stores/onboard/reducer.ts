@@ -80,13 +80,6 @@ const shouldCreate: Reducer< boolean, OnboardAction > = ( state = false, action 
 	return state;
 };
 
-const isCreatingSite: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
-	if ( action.type === 'IS_CREATING_SITE' ) {
-		return action.isCreatingSite;
-	}
-	return state;
-};
-
 const reducer = combineReducers( {
 	domain,
 	selectedDesign,
@@ -94,7 +87,6 @@ const reducer = combineReducers( {
 	siteVertical,
 	pageLayouts,
 	shouldCreate,
-	isCreatingSite,
 } );
 
 export type State = ReturnType< typeof reducer >;

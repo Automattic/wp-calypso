@@ -52,11 +52,6 @@ export const resetOnboardStore = () => ( {
 	type: 'RESET_ONBOARD_STORE' as const,
 } );
 
-export const setIsCreatingSite = ( isCreatingSite: boolean ) => ( {
-	type: 'IS_CREATING_SITE' as const,
-	isCreatingSite,
-} );
-
 export type OnboardAction = ReturnType<
 	| typeof setDomain
 	| typeof setSelectedDesign
@@ -66,5 +61,4 @@ export type OnboardAction = ReturnType<
 	| typeof togglePageLayout
 	| typeof setShouldCreate
 	| typeof resetOnboardStore
-	| typeof setIsCreatingSite
 >;

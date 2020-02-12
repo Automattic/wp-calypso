@@ -40,9 +40,7 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		select( ONBOARD_STORE ).getState()
 	);
 	const hasSelectedDesign = !! selectedDesign;
-	const { setDomain, resetOnboardStore, setShouldCreate, setIsCreatingSite } = useDispatch(
-		ONBOARD_STORE
-	);
+	const { setDomain, resetOnboardStore, setShouldCreate } = useDispatch( ONBOARD_STORE );
 
 	const [ domainSearch ] = useDebounce( siteTitle, selectorDebounce );
 	const freeDomainSuggestion = useSelect(
@@ -88,9 +86,6 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 	);
 
 	const handleCreateSite = ( username: string, bearerToken?: string ) => {
-		setIsCreatingSite( true );
-		history.push( Step.CreateSite );
-
 		const siteUrl = currentDomain?.domain_name || siteTitle || username;
 		createSite( {
 			blog_name: siteUrl?.split( '.wordpress' )[ 0 ],

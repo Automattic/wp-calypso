@@ -11,6 +11,7 @@ import { Switch, Route, Redirect } from 'react-router-dom';
  * Internal dependencies
  */
 import { STORE_KEY } from '../stores/onboard';
+import { SITE_STORE } from '../stores/site';
 import DesignSelector from './design-selector';
 import StepperWizard from './stepper-wizard';
 import VerticalSelect from './vertical-select';
@@ -24,13 +25,15 @@ import VerticalBackground from './vertical-background';
 import Link from '../components/link';
 
 const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
-	const { siteVertical, siteTitle, selectedDesign, isCreatingSite } = useSelect( select =>
+	const { siteVertical, siteTitle, selectedDesign } = useSelect( select =>
 		select( STORE_KEY ).getState()
 	);
+	const isCreatingSite = useSelect( select => select( SITE_STORE ).isFetchingSite() );
 
 	return (
 		<>
 			<VerticalBackground />
+			{ isCreatingSite && <Redirect push to={ Step.CreateSite } /> }
 			<Switch>
 				<Route exact path={ Step.IntentGathering }>
 					<div className="onboarding-block__acquire-intent">
