@@ -96,7 +96,7 @@ class SitesBlock extends Component {
 				<div className="sites-block__sites-item">
 					<Site site={ targetSite } indicator={ false } />
 					<div className="sites-block__sites-labels-container">
-						<Badge type="info">{ translate( 'This site' ) }</Badge>
+						<Badge type="info">{ translate( 'This Site' ) }</Badge>
 					</div>
 				</div>
 			</div>
