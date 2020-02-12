@@ -17,6 +17,7 @@ import {
 	processRawResponse,
 	addCouponToResponseCart,
 	addLocationToResponseCart,
+	doesCartLocationDifferFromResponseCartLocation,
 	WPCOMCart,
 	WPCOMCartItem,
 	CheckoutCartItem,
@@ -164,12 +165,16 @@ function shoppingCartHookReducer(
 					return state;
 			}
 		case 'SET_LOCATION':
-			debug( 'setting location on cart', action.location );
-			return {
-				...state,
-				responseCart: addLocationToResponseCart( state.responseCart, action.location ),
-				cacheStatus: 'invalid',
-			};
+			if ( doesCartLocationDifferFromResponseCartLocation( state.responseCart, action.location ) ) {
+				debug( 'setting location on cart', action.location );
+				return {
+					...state,
+					responseCart: addLocationToResponseCart( state.responseCart, action.location ),
+					cacheStatus: 'invalid',
+				};
+			}
+			debug( 'cart location is the same; not updating' );
+			return state;
 	}
 
 	return state;
