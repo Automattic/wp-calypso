@@ -44,14 +44,9 @@ export const useI18n = (): I18nTranslationFunctions => {
  * }
  * export default withI18n( MyComponent );
  */
-export const withI18n = ( WrappedComponent: React.ComponentType ): React.ComponentType => {
-	return class extends React.Component {
-		render() {
-			const i18n = useI18n();
-			return <WrappedComponent { ...i18n } { ...this.props } />;
-		}
-	};
-};
+export const withI18n = ( WrappedComponent: React.ComponentType ): React.ComponentType => props => (
+	<WrappedComponent { ...useI18n() } { ...props } />
+);
 
 function makeI18n(): I18nTranslationFunctions {
 	return { __, _n, _nx, _x };
