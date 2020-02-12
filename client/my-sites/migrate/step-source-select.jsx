@@ -106,7 +106,6 @@ class StepSourceSelect extends Component {
 							"Enter a URL and we'll help you move your site to WordPress.com. If you already have a" +
 								'backup file, you can {{uploadFileLink}}upload it to import content{{/uploadFileLink}}}.',
 							{
-								args: { uploadFileLink },
 								components: {
 									uploadFileLink: <a href={ uploadFileLink } />,
 								},

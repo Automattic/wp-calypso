@@ -52,10 +52,14 @@ class StepImportOrMigrate extends Component {
 			return (
 				<p>
 					{ translate(
-						"You need to have <a href='%(jetpackInstallLink)s'>Jetpack</a> installed on your site to be able to import everything.",
+						'You need to have {{jetpackInstallLink}}>Jetpack{{/jetpackInstallLink}} installed on your site to be able to import everything.',
 						{
-							args: {
-								jetpackInstallLink: `https://wordpress.com/jetpack/connect/install?url=${ sourceSiteDomain }`,
+							components: {
+								jetpackInstallLink: (
+									<a
+										href={ `https://wordpress.com/jetpack/connect/install?url=${ sourceSiteDomain }` }
+									/>
+								),
 							},
 						}
 					) }
