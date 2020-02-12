@@ -27,6 +27,7 @@ import { v4 as uuid } from 'uuid';
 import { stringify } from 'qs';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -493,7 +494,36 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	renderUseYourDomain() {
-		return <div>Already own a domain? Use it as your site's address.</div>;
+		const { translate } = this.props;
+
+		if ( this.state.searchResults === null ) {
+			return null;
+		}
+
+		return (
+			<div className="register-domain-step__use-your-domain">
+				<h3>
+					{ translate( 'Already own a domain?', {
+						context: 'Upgrades: Register domain header',
+						comment: 'Asks if you already own a domain name.',
+					} ) }{ ' ' }
+					{ translate( "You can use it as your site's address.", {
+						context: 'Upgrades: Register domain description',
+						comment: 'Explains how you could use an existing domain name with your site.',
+					} ) }
+				</h3>
+				<div className="register-domain-step__use-your-domain-action">
+					<div className="register-domain-step__use-your-domain-action-text">
+						{ translate( 'Use a domain I own', {
+							context: 'Domain transfer or mapping suggestion button',
+						} ) }
+					</div>
+					<div className="register-domain-step__use-your-domain-action-chevron">
+						<Gridicon className="register-domain-step__chevron" icon="chevron-right" />
+					</div>
+				</div>
+			</div>
+		);
 	}
 
 	rejectTrademarkClaim = () => {

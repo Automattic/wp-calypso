@@ -96,3 +96,26 @@
 		background: var( --color-neutral-0 );
 	}
 }
+
+.register-domain-step__use-your-domain {
+	padding: 16px 24px;
+	text-align: center;
+	color: var( --color-text-inverted );
+
+	.register-domain-step__use-your-domain-action {
+		display: flex;
+		justify-content: center;
+		margin: 1em 0;
+	}
+
+	.register-domain-step__chevron {
+		margin-left: 10px;
+		flex: 1 0 auto;
+		color: var( --color-text-inverted );
+	
+		.is-placeholder & {
+			animation: loading-fade 1.6s ease-in-out infinite;
+			color: var( --color-neutral-0 );
+		}
+	}
+}
