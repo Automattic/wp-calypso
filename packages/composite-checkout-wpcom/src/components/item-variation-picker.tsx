@@ -24,6 +24,7 @@ export type WPCOMProductVariant = {
 export type ItemVariationPickerProps = {
 	selectedItem: WPCOMCartItem;
 	variantRequestStatus: VariantRequestStatus;
+	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[];
 	getItemVariants: ( WPCOMProductSlug ) => WPCOMProductVariant[];
 	onChangeItemVariant: ( WPCOMCartItem, WPCOMProductSlug, number ) => void;
 };
@@ -31,6 +32,7 @@ export type ItemVariationPickerProps = {
 export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > = ( {
 	selectedItem,
 	variantRequestStatus,
+	variantSelectOverride,
 	getItemVariants,
 	onChangeItemVariant,
 } ) => {
@@ -43,7 +45,12 @@ export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > 
 	return (
 		<TermOptions>
 			{ variants.map(
-				renderProductVariant( selectedItem, onChangeItemVariant, variantRequestStatus )
+				renderProductVariant(
+					selectedItem,
+					onChangeItemVariant,
+					variantRequestStatus,
+					variantSelectOverride
+				)
 			) }
 		</TermOptions>
 	);
@@ -51,8 +58,9 @@ export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > 
 
 function renderProductVariant(
 	selectedItem: WPCOMCartItem,
-	onChangeItemVariant: ( WPCOMCartItem, WPCOMProductSlug, number ) => void,
-	variantRequestStatus: VariantRequestStatus
+	onChangeItemVariant: ( string, WPCOMProductSlug, number ) => void,
+	variantRequestStatus: VariantRequestStatus,
+	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[]
 ): ( _0: WPCOMProductVariant, _1: number ) => JSX.Element {
 	return (
 		{ variantLabel, variantDetails, productSlug, productId }: WPCOMProductVariant,
@@ -62,7 +70,14 @@ function renderProductVariant(
 		const key = index.toString() + productSlug;
 		const selectedProductSlug = selectedItem.wpcom_meta.product_slug;
 
-		const isDisabled = variantRequestStatus === 'pending';
+		const isChecked = variantSelectOverride.reduce(
+			( accum, { uuid, overrideSelectedProductSlug } ) => {
+				return uuid === selectedItem.wpcom_meta.uuid
+					? productSlug === overrideSelectedProductSlug
+					: accum;
+			},
+			productSlug === selectedProductSlug
+		);
 
 		return (
 			<TermOptionsItem key={ key }>
@@ -70,10 +85,10 @@ function renderProductVariant(
 					name={ key }
 					id={ key }
 					value={ productSlug }
-					checked={ productSlug === selectedProductSlug }
-					isDisabled={ isDisabled }
+					checked={ isChecked }
+					isDisabled={ false }
 					onChange={ () => {
-						onChangeItemVariant( selectedItem, productSlug, productId );
+						onChangeItemVariant( selectedItem.wpcom_meta.uuid, productSlug, productId );
 					} }
 					ariaLabel={ translate( 'Select a different term length' ) as string }
 					label={
