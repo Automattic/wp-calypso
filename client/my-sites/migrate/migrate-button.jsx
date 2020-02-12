@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { Button } from '@automattic/components';
-
+import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
@@ -23,17 +23,23 @@ class MigrateButton extends Component {
 	};
 
 	handleClick = () => {
+		const { translate } = this.props;
+
 		if ( this.state.busy ) {
 			return;
 		}
 
-		const message =
-			'Overwrite ' +
-			this.props.targetSiteDomain +
-			'? All posts, pages,' +
-			' comments and media will be lost on this WordPress.com site.';
+		const message = translate(
+			'Overwrite %(targetDomain)s? All posts, pages,' +
+				' comments and media will be lost on this WordPress.com site.',
+			{
+				args: {
+					targetDomain: this.props.targetSiteDomain,
+				},
+			}
+		);
 
-		accept( message, this.confirmCallback, 'Overwrite this site' );
+		accept( message, this.confirmCallback, translate( 'Overwrite this site' ) );
 	};
 
 	render() {
@@ -45,4 +51,4 @@ class MigrateButton extends Component {
 	}
 }
 
-export default MigrateButton;
+export default localize( MigrateButton );

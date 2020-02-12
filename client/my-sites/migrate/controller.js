@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import page from 'page';
-
+import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
@@ -40,6 +40,6 @@ export function setStep( migrationStep ) {
 }
 
 export function setSiteSelectionHeader( context, next ) {
-	context.getSiteSelectionHeaderText = () => 'Select a site to import into';
+	context.getSiteSelectionHeaderText = () => translate( 'Select a site to import into' );
 	next();
 }

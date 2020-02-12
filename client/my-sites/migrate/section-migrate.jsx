@@ -287,7 +287,7 @@ class SectionMigrate extends Component {
 	}
 
 	renderMigrationComplete() {
-		const { targetSite } = this.props;
+		const { targetSite, translate } = this.props;
 		const viewSiteURL = get( targetSite, 'URL' );
 
 		return (
@@ -298,9 +298,11 @@ class SectionMigrate extends Component {
 					align="left"
 				/>
 				<CompactCard>
-					<div className="migrate__status">Your import has completed successfully.</div>
+					<div className="migrate__status">
+						{ translate( 'Your import has completed successfully.' ) }
+					</div>
 					<Button primary href={ viewSiteURL }>
-						View site
+						{ translate( 'View site' ) }
 					</Button>
 					<Button onClick={ this.resetMigration }>Start over</Button>
 				</CompactCard>
@@ -308,9 +310,9 @@ class SectionMigrate extends Component {
 		);
 	}
 
-	renderMigrationConfirmation() {}
-
 	renderMigrationError() {
+		const { translate } = this.props;
+
 		return (
 			<Card className="migrate__pane">
 				<FormattedHeader
@@ -319,26 +321,26 @@ class SectionMigrate extends Component {
 					align="center"
 				/>
 				<div className="migrate__status">
-					There was an error with your import.
+					{ translate( 'There was an error with your import.' ) }
 					<br />
 					{ this.state.errorMessage }
 				</div>
 				<Button primary onClick={ this.resetMigration }>
-					Back to your site
+					{ translate( 'Back to your site' ) }
 				</Button>
 			</Card>
 		);
 	}
 
 	renderMigrationProgress() {
-		const { sourceSite, targetSite } = this.props;
+		const { sourceSite, targetSite, translate } = this.props;
 		const sourceSiteDomain = get( sourceSite, 'domain' );
 		const targetSiteDomain = get( targetSite, 'domain' );
 		const subHeaderText = (
 			<>
-				{ "We're moving everything from " }
+				{ translate( "We're moving everything from " ) }
 				<span className="migrate__domain">{ sourceSiteDomain }</span>
-				{ ' to ' }
+				{ translate( ' to ' ) }
 				<span className="migrate__domain">{ targetSiteDomain }</span>.
 			</>
 		);
@@ -367,11 +369,17 @@ class SectionMigrate extends Component {
 	}
 
 	renderStartTime() {
+		const { translate } = this.props;
+
 		if ( isEmpty( this.state.startTime ) ) {
 			return <div className="migrate__start-time">&nbsp;</div>;
 		}
 
-		return <div className="migrate__start-time">Import started { this.state.startTime }</div>;
+		return (
+			<div className="migrate__start-time">
+				{ translate( 'Import started' ) } { this.state.startTime }
+			</div>
+		);
 	}
 
 	renderProgressBar() {
