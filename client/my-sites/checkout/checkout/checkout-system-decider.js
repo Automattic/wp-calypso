@@ -64,8 +64,8 @@ export default function CheckoutSystemDecider( {
 }
 
 function shouldShowCompositeCheckout( cart, countryCode, locale ) {
-	if ( ! config.isEnabled( 'composite-checkout-wpcom' ) ) {
-		return false;
+	if ( config.isEnabled( 'composite-checkout-wpcom' ) ) {
+		return true;
 	}
 	if ( cart?.products?.find( product => product.is_domain_registration ) ) {
 		return false;
