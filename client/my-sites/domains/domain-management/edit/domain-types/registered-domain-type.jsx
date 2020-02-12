@@ -20,6 +20,9 @@ import {
 	domainManagementNameServers,
 	domainManagementTransfer,
 } from 'my-sites/domains/paths';
+import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification';
+import { isRecentlyRegistered } from 'lib/domains/utils';
+import { DOMAINS } from 'lib/url/support';
 
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 
@@ -77,22 +80,87 @@ class RegisteredDomainType extends React.Component {
 		);
 	}
 
+	resolveStatus() {
+		const { domain, translate } = this.props;
+		const { registrationDate } = domain;
+
+		if ( domain.isPendingIcannVerification && domain.currentUserCanManage ) {
+			return {
+				statusText: translate( 'Action required' ),
+				statusClass: 'status-pending',
+				icon: 'info',
+			};
+		}
+
+		const recentlyRegistered = isRecentlyRegistered( registrationDate );
+
+		if ( recentlyRegistered ) {
+			return {
+				statusText: translate( 'Activating' ),
+				statusClass: 'status-pending',
+				icon: 'cloud_upload',
+			};
+		}
+
+		return {
+			statusText: translate( 'Active' ),
+			statusClass: 'status-success',
+			icon: 'check_circle',
+		};
+	}
+
+	renderRecentlyRegistered() {
+		const { domain, translate } = this.props;
+		const { registrationDate, name: domain_name } = domain;
+		const domainsLink = <a href={ DOMAINS } target="_blank" rel="noopener noreferrer" />;
+
+		const recentlyRegistered = isRecentlyRegistered( registrationDate );
+
+		if ( ! recentlyRegistered ) {
+			return null;
+		}
+
+		return (
+			<div>
+				{ translate(
+					'We are setting up %(domain)s for you. It should start working immediately but may be unreliable in the first 2 hours. {{domainsLink}}Learn more{{/domainsLink}}',
+					{
+						args: {
+							domain: domain_name,
+						},
+						components: {
+							domainsLink,
+						},
+					}
+				) }
+			</div>
+		);
+	}
+
 	render() {
 		const { domain, moment } = this.props;
 		const { name: domain_name } = domain;
 
-		// const recentlyRegistered = moment
-		// 	.utc( registrationDate )
-		// 	.isAfter( moment.utc().subtract( 15, 'minutes' ) );
+		const { statusText, statusClass, icon } = this.resolveStatus();
 
 		return (
 			<div className="domain-types__container">
 				<DomainStatus
 					header={ domain_name }
-					statusText={ this.props.translate( 'Active' ) }
-					statusClass="status-success"
-					icon="check_circle"
-				/>
+					statusText={ statusText }
+					statusClass={ statusClass }
+					icon={ icon }
+				>
+					{ domain.isPendingIcannVerification && domain.currentUserCanManage && (
+						<IcannVerificationCard
+							selectedDomainName={ domain.name }
+							selectedSiteSlug={ this.props.selectedSite.slug }
+							explanationContext="new-status"
+							compact={ true }
+						/>
+					) }
+					{ this.renderRecentlyRegistered() }
+				</DomainStatus>
 				<Card compact={ true }>Expires: { moment( domain.expiry ).format( 'LL' ) }</Card>
 				<Card compact={ true }>
 					Auto Renew (on) <CompactFormToggle checked={ true } />

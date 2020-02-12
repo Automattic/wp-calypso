@@ -67,13 +67,22 @@
 		h2 {
 			font-size: 32px;
 		}
-		> div {
+
+		> .domain-status__icon {
 			font-size: 16px;
 			display: flex;
 			align-items: center;
 			> svg {
 				margin-right: 5px;
 			}
+		}
+
+		> div {
+			margin-bottom: 1.5em;
+		}
+
+		> div:last-child {
+			margin-bottom: 0;
 		}
 	}
 }
