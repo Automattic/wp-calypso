@@ -11,8 +11,7 @@ import CheckoutContainer from './checkout-container';
 import CompositeCheckout from './composite-checkout';
 import config from 'config';
 import { abtest } from 'lib/abtest';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
-import { getGeoCountryShort } from 'state/geo/selectors';
+import { getCurrentUserLocale, getCurrentUserCountryCode } from 'state/current-user/selectors';
 
 // Decide if we should use CompositeCheckout or CheckoutContainer
 export default function CheckoutSystemDecider( {
@@ -29,7 +28,7 @@ export default function CheckoutSystemDecider( {
 	clearTransaction,
 	cart,
 } ) {
-	const countryCode = useSelector( state => getGeoCountryShort( state ) );
+	const countryCode = useSelector( state => getCurrentUserCountryCode( state ) );
 	const locale = useSelector( state => getCurrentUserLocale( state ) );
 
 	if ( shouldShowCompositeCheckout( cart, countryCode, locale ) ) {
