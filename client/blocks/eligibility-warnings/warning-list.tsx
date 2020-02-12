@@ -80,8 +80,8 @@ function getWarningDescription(
 	translate: LocalizeProps[ 'translate' ]
 ) {
 	const defaultCopy = translate(
-		"By proceeding you'll lose %d feature:",
-		"By proceeding you'll lose these %d features:",
+		'By proceeding the following change will be made to the site:',
+		'By proceeding the following changes will be made to the site:',
 		{
 			count: warningCount,
 			args: warningCount,
@@ -90,11 +90,11 @@ function getWarningDescription(
 	switch ( context ) {
 		case 'plugins':
 			return hasLocalizedText(
-				"This feature isn't (yet) compatible with plugin uploads and will be disabled:"
+				'By installing a plugin the following change will be made to the site:'
 			)
 				? translate(
-						"This feature isn't (yet) compatible with plugin uploads and will be disabled:",
-						"These features aren't (yet) compatible with plugin uploads and will be disabled:",
+						'By installing a plugin the following change will be made to the site:',
+						'By installing a plugin the following changes will be made to the site:',
 						{
 							count: warningCount,
 							args: warningCount,
@@ -104,11 +104,11 @@ function getWarningDescription(
 
 		case 'themes':
 			return hasLocalizedText(
-				"This feature isn't (yet) compatible with theme uploads and will be disabled:"
+				'By installing a theme the following change will be made to the site:'
 			)
 				? translate(
-						"This feature isn't (yet) compatible with theme uploads and will be disabled:",
-						"These features aren't (yet) compatible with theme uploads and will be disabled:",
+						'By installing a theme the following change will be made to the site:',
+						'By installing a theme the following changes will be made to the site:',
 						{
 							count: warningCount,
 							args: warningCount,
@@ -118,11 +118,11 @@ function getWarningDescription(
 
 		case 'hosting':
 			return hasLocalizedText(
-				"This feature isn't (yet) compatible with hosting access and will be disabled:"
+				'By activating hosting access the following change will be made to the site:'
 			)
 				? translate(
-						"This feature isn't (yet) compatible with hosting access and will be disabled:",
-						"These features aren't (yet) compatible with hosting access and will be disabled:",
+						'By activating hosting access the following change will be made to the site:',
+						'By activating hosting access the following changes will be made to the site:',
 						{
 							count: warningCount,
 							args: warningCount,
