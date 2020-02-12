@@ -6,7 +6,7 @@
 		"isolatedModules": true,
 
 		"paths": {
-			"*": [ "*", "client/*", "client/server/*" ]
+			"*": [ "*", "client/*" ]
 		},
 		"baseUrl": ".",
 		"incremental": true,
