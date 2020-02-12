@@ -21,7 +21,7 @@ interface I18nTranslationFunctions {
  * import { useI18n } from '@automattic/react-i18n';
  * function MyComponent() {
  *   const { __ } = useI18n();
- *   return <div>{ __( 'Translate me.' ) }</div>;
+ *   return <div>{ __( 'Translate me.', 'text-domain' ) }</div>;
  * }
  */
 export const useI18n = (): I18nTranslationFunctions => {
@@ -40,7 +40,7 @@ export const useI18n = (): I18nTranslationFunctions => {
  *
  * import { withI18n } from '@automattic/react-i18n';
  * function MyComponent( { __ } ) {
- *   return <div>{ __( 'Translate me.' ) }</div>;
+ *   return <div>{ __( 'Translate me.', 'text-domain' ) }</div>;
  * }
  * export default withI18n( MyComponent );
  */
