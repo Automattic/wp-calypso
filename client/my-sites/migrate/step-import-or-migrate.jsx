@@ -5,11 +5,13 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { Button, CompactCard } from '@automattic/components';
+
 /**
  * Internal dependencies
  */
 import HeaderCake from 'components/header-cake';
 import CardHeading from 'components/card-heading';
+
 /**
  * Style dependencies
  */
@@ -134,7 +136,7 @@ class StepImportOrMigrate extends Component {
 					/>
 					<div className="migrate__buttons-wrapper">
 						{ this.state.chosenImportType === 'everything' ? (
-							<Button primary onClick={ this.props.onJetpackSelect }>
+							<Button primary onClick={ this.onJetpackSelect }>
 								{ translate( 'Continue' ) }
 							</Button>
 						) : null }
