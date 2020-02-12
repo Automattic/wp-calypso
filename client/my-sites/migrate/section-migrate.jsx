@@ -338,10 +338,18 @@ class SectionMigrate extends Component {
 		const targetSiteDomain = get( targetSite, 'domain' );
 		const subHeaderText = (
 			<>
-				{ translate( "We're moving everything from " ) }
-				<span className="migrate__domain">{ sourceSiteDomain }</span>
-				{ translate( ' to ' ) }
-				<span className="migrate__domain">{ targetSiteDomain }</span>.
+				{ translate(
+					"We're moving everything from {{sp}}%(sourceSiteDomain)s{{/sp}} to {{sp}}{ targetSiteDomain }{{/sp}}.",
+					{
+						args: {
+							sourceSiteDomain,
+							targetSiteDomain,
+						},
+						components: {
+							sp: <span className="migrate__domain" />,
+						},
+					}
+				) }
 			</>
 		);
 
