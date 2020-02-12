@@ -1,26 +1,20 @@
-on:
-  # Trigger the workflow on push or pull request,
-  # but only for the master branch
-  push:
-    branches:
-    - master
-  pull_request:
-    branches:
-    - master
+name: Greet Everyone
+# This workflow is triggered on pushes to the repository.
+on: [push]
 
 jobs:
-  hello_world_job:
+  build:
+    # Job name is Greeting
+    name: Greeting
+    # This job runs on Linux
     runs-on: ubuntu-latest
-    name: A job to say hello
     steps:
-    # To use this repository's private action, you must check out the repository
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Hello world action step
-      uses: ./test-action/ # Uses an action in the root directory
-      id: hello
+    # This step uses GitHub's hello-world-javascript-action: https://github.com/actions/hello-world-javascript-action
+    - name: Hello world
+      uses: actions/hello-world-javascript-action@v1
       with:
         who-to-greet: 'Mona the Octocat'
-    # Use the output from the `hello` step
-    - name: Get the output time
-      run: echo "The time was ${{ steps.hello.outputs.time }}"
+      id: hello
+    # This step prints an output (time) from the previous step's action.
+    - name: Echo the greeting's time
+      run: echo 'The time was ${{ steps.hello.outputs.time }}.'
