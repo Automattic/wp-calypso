@@ -218,13 +218,12 @@ export default function CompositeCheckout( {
 		submitCoupon,
 		updateLocation,
 		couponStatus,
-		changePlanLength,
 		changeItemVariant,
 		errors,
 		subtotal,
 		isLoading,
 		allowedPaymentMethods: serverAllowedPaymentMethods,
-        variantRequestStatus,
+		variantRequestStatus,
 	} = useShoppingCart(
 		siteSlug,
 		setCart || wpcomSetCart,
@@ -695,17 +694,6 @@ function getTermText( term, translate ) {
 	}
 }
 
-function getTaxText( translate ) {
-	return (
-		<sup>
-			{ translate( '+tax', {
-				comment:
-					'This string is displayed immediately next to a localized price with a currency symbol, and is indicating that there may be an additional charge on top of the displayed price.',
-			} ) }
-		</sup>
-	);
-}
-
 function useWpcomProductVariants( { siteId, productSlug, credits, couponDiscounts } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -758,7 +746,6 @@ function useWpcomProductVariants( { siteId, productSlug, credits, couponDiscount
 				<React.Fragment>
 					{ percentSavings( variant.priceMonthly ) }
 					{ variant.product.cost_display }
-					{ getTaxText( translate ) }
 				</React.Fragment>
 			);
 
