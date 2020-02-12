@@ -13,7 +13,7 @@ import classnames from 'classnames';
  */
 import AsyncLoad from 'components/async-load';
 import MasterbarLoggedIn from 'layout/masterbar/logged-in';
-import JetpackMasterbar from 'landing/jetpack-cloud/masterbar';
+import JetpackMasterbar from 'landing/jetpack-cloud/components/masterbar';
 import GlobalNotices from 'components/global-notices';
 import HtmlIsIframeClassname from 'layout/html-is-iframe-classname';
 import notices from 'notices';
