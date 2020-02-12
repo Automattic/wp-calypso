@@ -11,6 +11,7 @@ export interface I18nProps {
 	_n: typeof _n;
 	_nx: typeof _nx;
 	_x: typeof _x;
+	i18nLocale?: string;
 }
 
 /**
@@ -25,9 +26,9 @@ export interface I18nProps {
  * }
  */
 export const useI18n = (): I18nProps => {
-	const lang = React.useContext( I18nContext );
-	const [ i18n, setI18n ] = React.useState< I18nProps >( makeI18n );
-	React.useEffect( () => setI18n( makeI18n ), [ lang ] );
+	const locale = React.useContext( I18nContext );
+	const [ i18n, setI18n ] = React.useState< I18nProps >( makeI18n( locale ) );
+	React.useEffect( () => setI18n( makeI18n( locale ) ), [ locale ] );
 	return i18n;
 };
 
@@ -51,12 +52,17 @@ type Optionalize< T extends K, K > = Omit< T, keyof K >;
  */
 export const withI18n = < T extends I18nProps = I18nProps >(
 	WrappedComponent: React.ComponentType< T >
-): React.FunctionComponent< Optionalize< T, I18nProps > > => props => (
-	// Required cast `props as T`
-	// See https://github.com/Microsoft/TypeScript/issues/28938
-	<WrappedComponent { ...useI18n() } { ...( props as T ) } />
-);
+): React.FunctionComponent< Optionalize< T, I18nProps > > => props => {
+	return (
+		<WrappedComponent
+			{ ...useI18n() }
+			// Required cast `props as T`
+			// See https://github.com/Microsoft/TypeScript/issues/28938
+			{ ...( props as T ) }
+		/>
+	);
+};
 
-function makeI18n(): I18nProps {
-	return { __, _n, _nx, _x };
+function makeI18n( locale: string | undefined ): I18nProps {
+	return { __, _n, _nx, _x, ...( locale && { i18nLocale: locale } ) };
 }
