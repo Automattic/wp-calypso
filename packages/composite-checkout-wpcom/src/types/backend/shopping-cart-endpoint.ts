@@ -133,6 +133,7 @@ export const prepareRequestCart: ( ResponseCart ) => RequestCart = ( {
 	locale,
 	coupon,
 	is_coupon_applied,
+	tax,
 }: ResponseCart ) => {
 	return {
 		products: products.map( prepareRequestCartProduct ),
@@ -141,8 +142,8 @@ export const prepareRequestCart: ( ResponseCart ) => RequestCart = ( {
 		coupon,
 		is_coupon_applied,
 		temporary: false,
-		// tax: any[]; // TODO: fix this
-		// extra: any[]; // TODO: fix this
+		tax,
+		extra: '', // TODO: fix this
 	} as RequestCart;
 };
 
