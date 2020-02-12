@@ -10,6 +10,7 @@ import debugFactory from 'debug';
 import {
 	prepareRequestCart,
 	ResponseCart,
+	ResponseCartProduct,
 	emptyResponseCart,
 	removeItemFromResponseCart,
 	addItemToResponseCart,
@@ -59,7 +60,7 @@ const getInitialShoppingCartHookState: () => ShoppingCartHookState = () => {
 
 type ShoppingCartHookAction =
 	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
-	| { type: 'ADD_CART_ITEM'; responseCartProductToAdd: object }
+	| { type: 'ADD_CART_ITEM'; responseCartProductToAdd: ResponseCartProduct }
 	| { type: 'ADD_COUPON'; couponToAdd: string }
 	| { type: 'RECEIVE_INITIAL_RESPONSE_CART'; initialResponseCart: ResponseCart }
 	| { type: 'REQUEST_UPDATED_RESPONSE_CART' }
@@ -211,7 +212,7 @@ export interface ShoppingCartManager {
 	subtotal: CheckoutCartItem;
 	couponItem: CheckoutCartItem;
 	credits: CheckoutCartItem;
-	addItem: ( WPCOMCartItem ) => void;
+	addItem: ( ResponseCartProduct ) => void;
 	removeItem: ( string ) => void;
 	submitCoupon: ( string ) => void;
 	couponStatus: CouponStatus;

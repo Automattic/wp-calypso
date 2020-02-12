@@ -163,9 +163,12 @@ export function processRawResponse( rawResponseCart ): ResponseCart {
 	};
 }
 
-export function addItemToResponseCart( responseCart: ResponseCart, product ): ResponseCart {
+export function addItemToResponseCart(
+	responseCart: ResponseCart,
+	product: ResponseCartProduct
+): ResponseCart {
 	const uuid = getFreshCartItemUUID( responseCart );
-	const newProductItem = constructResponseCartProduct( product, uuid );
+	const newProductItem = addUUIDToResponseCartProduct( product, uuid );
 	return {
 		...responseCart,
 		products: [ ...responseCart.products, newProductItem ],
@@ -179,7 +182,10 @@ function getFreshCartItemUUID( responseCart: ResponseCart ): string {
 	return maxUUID + '1';
 }
 
-function constructResponseCartProduct( product, uuid: string ): ResponseCartProduct {
+function addUUIDToResponseCartProduct(
+	product: ResponseCartProduct,
+	uuid: string
+): ResponseCartProduct {
 	return {
 		...product,
 		uuid,
