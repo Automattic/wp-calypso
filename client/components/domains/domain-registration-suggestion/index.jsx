@@ -302,7 +302,7 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	renderMatchReason() {
-		if ( this.props.showTestCopy ) {
+		if ( this.props.isEligibleVariantForDomainTest ) {
 			return null;
 		}
 
