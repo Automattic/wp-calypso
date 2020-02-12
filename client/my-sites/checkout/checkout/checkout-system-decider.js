@@ -67,16 +67,23 @@ function shouldShowCompositeCheckout( cart, countryCode, locale ) {
 	if ( config.isEnabled( 'composite-checkout-wpcom' ) ) {
 		return true;
 	}
+	// Disable for domains in the cart
 	if ( cart?.products?.find( product => product.is_domain_registration ) ) {
 		return false;
 	}
-	// TODO: if a non-wpcom product is in the cart, return false
+	// Disable for jetpack plans
+	if ( cart?.products?.find( product => product.product_slug.includes( 'jetpack' ) ) ) {
+		return false;
+	}
+	// Disable for non-EN
 	if ( ! locale?.toLowerCase().startsWith( 'en' ) ) {
 		return false;
 	}
+	// Disable for non-US
 	if ( countryCode?.toLowerCase() !== 'us' ) {
 		return false;
 	}
+
 	if ( abtest( 'showCompositeCheckout' ) === 'composite' ) {
 		return true;
 	}
