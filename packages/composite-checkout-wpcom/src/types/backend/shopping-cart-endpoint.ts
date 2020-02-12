@@ -20,7 +20,13 @@
  */
 export interface RequestCart {
 	products: RequestCartProduct[];
-	tax: null | { location: { country_code: string; postal_code: string; subdivision_code: string } };
+	tax: null | {
+		location: {
+			country_code: string | null;
+			postal_code: string | null;
+			subdivision_code: string | null;
+		};
+	};
 	coupon: string;
 	currency: string;
 	locale: string;
@@ -58,6 +64,14 @@ export interface ResponseCart {
 	coupon_discounts_integer: number[];
 	locale: string;
 	messages?: { errors: ResponseCartError[] };
+	tax: {
+		location: {
+			country_code?: string;
+			postal_code?: string;
+			subdivision_code?: string;
+		};
+		display_taxes: boolean;
+	};
 }
 
 export interface ResponseCartError {
@@ -81,6 +95,7 @@ export const emptyResponseCart = {
 	is_coupon_applied: false,
 	coupon_discounts_integer: [],
 	locale: 'en-us',
+	tax: { location: [], display_taxes: false },
 } as ResponseCart;
 
 /**
@@ -118,6 +133,7 @@ export const prepareRequestCart: ( ResponseCart ) => RequestCart = ( {
 	locale,
 	coupon,
 	is_coupon_applied,
+	tax,
 }: ResponseCart ) => {
 	return {
 		products: products.map( prepareRequestCartProduct ),
@@ -126,8 +142,8 @@ export const prepareRequestCart: ( ResponseCart ) => RequestCart = ( {
 		coupon,
 		is_coupon_applied,
 		temporary: false,
-		// tax: any[]; // TODO: fix this
-		// extra: any[]; // TODO: fix this
+		tax,
+		extra: '', // TODO: fix this
 	} as RequestCart;
 };
 
@@ -151,9 +167,55 @@ export function addCouponToResponseCart( cart: ResponseCart, couponToAdd: string
 	};
 }
 
+export function addLocationToResponseCart(
+	cart: ResponseCart,
+	location: CartLocation
+): ResponseCart {
+	return {
+		...cart,
+		tax: {
+			...cart.tax,
+			location: {
+				country_code: location.countryCode || undefined,
+				postal_code: location.postalCode || undefined,
+				subdivision_code: location.subdivisionCode || undefined,
+			},
+		},
+	};
+}
+
+export function doesCartLocationDifferFromResponseCartLocation(
+	cart: ResponseCart,
+	location: CartLocation
+): boolean {
+	const { countryCode, postalCode, subdivisionCode } = location;
+	if ( countryCode && cart.tax.location.country_code !== countryCode ) {
+		return true;
+	}
+	if ( postalCode && cart.tax.location.postal_code !== postalCode ) {
+		return true;
+	}
+	if ( subdivisionCode && cart.tax.location.subdivision_code !== subdivisionCode ) {
+		return true;
+	}
+	return false;
+}
+
+export interface CartLocation {
+	countryCode: string | null;
+	postalCode: string | null;
+	subdivisionCode: string | null;
+}
+
 export function processRawResponse( rawResponseCart ): ResponseCart {
 	return {
 		...rawResponseCart,
+		// If tax.location is an empty PHP associative array, it will be JSON serialized to [] but we need {}
+		tax: {
+			location: Array.isArray( rawResponseCart.tax.location ) ? {} : rawResponseCart.tax.location,
+			display_taxes: rawResponseCart.tax.display_taxes,
+		},
+		// Add uuid to products returned by the server
 		products: rawResponseCart.products.map( ( product, index ) => {
 			return {
 				...product,

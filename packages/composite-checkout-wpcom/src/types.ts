@@ -17,6 +17,9 @@ import {
 	removeItemFromResponseCart,
 	addItemToResponseCart,
 	addCouponToResponseCart,
+	addLocationToResponseCart,
+	doesCartLocationDifferFromResponseCartLocation,
+	CartLocation,
 	processRawResponse,
 } from './types/backend/shopping-cart-endpoint';
 import {
@@ -53,6 +56,9 @@ export {
 	removeItemFromResponseCart,
 	addItemToResponseCart,
 	addCouponToResponseCart,
+	addLocationToResponseCart,
+	doesCartLocationDifferFromResponseCartLocation,
+	CartLocation,
 	processRawResponse,
 	WPCOMCart,
 	WPCOMCartItem,

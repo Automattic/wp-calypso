@@ -46,6 +46,7 @@ const OrderReviewTitle = () => {
 
 export default function WPCheckout( {
 	removeItem,
+	updateLocation,
 	submitCoupon,
 	couponStatus,
 	changePlanLength,
@@ -114,7 +115,15 @@ export default function WPCheckout( {
 				/>
 			),
 			completeStepContent: <WPContactForm summary isComplete={ true } isActive={ false } />,
-			isCompleteCallback: () => isCompleteAndValid( contactInfo ),
+			isCompleteCallback: () => {
+				// TODO: debounce this or only call it if there is a change
+				updateLocation( {
+					countryCode: contactInfo.countryCode.value,
+					postalCode: contactInfo.postalCode.value,
+					subdivisionCode: contactInfo.state.value,
+				} );
+				return isCompleteAndValid( contactInfo );
+			},
 			isEditableCallback: () => isFormEditable( contactInfo ),
 			getEditButtonAriaLabel: () => translate( 'Edit the billing details' ),
 			getNextStepButtonAriaLabel: () => translate( 'Continue with the entered billing details' ),

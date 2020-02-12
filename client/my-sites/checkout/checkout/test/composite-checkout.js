@@ -67,7 +67,7 @@ describe( 'CompositeCheckout', () => {
 				},
 			],
 			tax: {
-				display_taxes: false,
+				display_taxes: true,
 				location: {},
 			},
 			temporary: false,

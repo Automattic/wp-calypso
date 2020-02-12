@@ -42,7 +42,7 @@ export type WPCOMCartItem = CheckoutCartItem & {
 
 export interface WPCOMCart {
 	items: WPCOMCartItem[];
-	tax: CheckoutCartItem;
+	tax: CheckoutCartItem | null;
 	total: CheckoutCartItem;
 	subtotal: CheckoutCartItem;
 	coupon: CheckoutCartItem | null;

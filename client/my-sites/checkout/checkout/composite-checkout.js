@@ -211,6 +211,7 @@ export default function CompositeCheckout( {
 		removeItem,
 		addItem,
 		submitCoupon,
+		updateLocation,
 		couponStatus,
 		changePlanLength,
 		errors,
@@ -463,6 +464,7 @@ export default function CompositeCheckout( {
 			>
 				<WPCheckout
 					removeItem={ removeItem }
+					updateLocation={ updateLocation }
 					submitCoupon={ submitCoupon }
 					couponStatus={ couponStatus }
 					changePlanLength={ changePlanLength }

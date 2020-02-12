@@ -38,6 +38,7 @@ export function translateWpcomCartToCheckoutCart(
 		coupon,
 		coupon_discounts_integer,
 		is_coupon_applied,
+		tax,
 	} = serverCart;
 
 	const taxLineItem: CheckoutCartItem = {
@@ -110,7 +111,7 @@ export function translateWpcomCartToCheckoutCart(
 				localizeCurrency
 			)
 		),
-		tax: taxLineItem,
+		tax: tax.display_taxes ? taxLineItem : null,
 		coupon: is_coupon_applied ? couponLineItem : null,
 		total: totalItem,
 		subtotal: subtotalItem,
