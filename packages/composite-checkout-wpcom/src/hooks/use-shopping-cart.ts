@@ -50,6 +50,7 @@ type ShoppingCartHookState = {
 	couponStatus: CouponStatus;
 	cacheStatus: CacheStatus;
 	variantRequestStatus: VariantRequestStatus;
+	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[];
 	shouldShowNotification: {
 		didAddCoupon: boolean;
 	};
@@ -61,6 +62,7 @@ const getInitialShoppingCartHookState: () => ShoppingCartHookState = () => {
 		cacheStatus: 'fresh',
 		couponStatus: 'fresh',
 		variantRequestStatus: 'fresh',
+        variantSelectOverride: [],
 		shouldShowNotification: {
 			didAddCoupon: false,
 		},
@@ -132,6 +134,10 @@ function shoppingCartHookReducer(
 				),
 				cacheStatus: 'invalid',
 				variantRequestStatus: 'pending',
+                variantSelectOverride: [
+                    ...state.variantSelectOverride.filter( item => item.uuid !== action.uuidToReplace ),
+                    { uuid: action.uuidToReplace, overrideSelectedProductSlug: action.newProductSlug },
+                ],
 			};
 		}
 		case 'ADD_COUPON': {
@@ -169,16 +175,13 @@ function shoppingCartHookReducer(
 			const response = action.updatedResponseCart;
 			const newCouponStatus = getUpdatedCouponStatus( couponStatus, response );
 			const didAddCoupon = newCouponStatus === 'applied';
-			// TODO: do we need to handle the case where the variant doesn't actually change?
-			const newVariantRequestStatus =
-				state.variantRequestStatus === 'pending' ? 'valid' : state.variantRequestStatus;
 
 			return {
 				...state,
 				responseCart: response,
 				couponStatus: newCouponStatus,
 				cacheStatus: 'valid',
-				variantRequestStatus: newVariantRequestStatus,
+				variantRequestStatus: 'valid', // TODO: what if the variant doesn't actually change?
 				shouldShowNotification: {
 					...state.shouldShowNotification,
 					didAddCoupon,
@@ -276,6 +279,7 @@ export interface ShoppingCartManager {
 	couponCode: string | null;
 	updateLocation: ( CartLocation ) => void;
 	variantRequestStatus: VariantRequestStatus;
+    variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[];
 }
 
 /**
@@ -374,6 +378,7 @@ export function useShoppingCart(
 	const couponStatus: CouponStatus = hookState.couponStatus;
 	const cacheStatus: CacheStatus = hookState.cacheStatus;
 	const variantRequestStatus: VariantRequestStatus = hookState.variantRequestStatus;
+	const variantSelectOverride = hookState.variantSelectOverride;
 	const shouldShowNotification = hookState.shouldShowNotification;
 
 	// Asynchronously initialize the cart. This should happen exactly once.
@@ -490,5 +495,6 @@ export function useShoppingCart(
 		couponStatus,
 		couponCode: cart.couponCode,
 		variantRequestStatus,
+        variantSelectOverride,
 	} as ShoppingCartManager;
 }
