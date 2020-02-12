@@ -3,23 +3,23 @@ on:
     paths:
     - 'apps/full-site-editing/full-site-editing-plugin/**'
 
+name: Build Full Site Editing plugin
+
 jobs:
   build:
-    # Job name is Greeting
-    name: Greeting
-    # This job runs on Linux
+    name: Build FSE plugin
     runs-on: ubuntu-latest
     steps:
-    # This step uses GitHub's hello-world-javascript-action: https://github.com/actions/hello-world-javascript-action
-    - name: Hello world
-      uses: actions/hello-world-javascript-action@v1
-      with:
-        who-to-greet: 'Mona the Octocat'
-      id: hello
-    # This step prints an output (time) from the previous step's action.
-    - name: Echo the greeting's time
-      run: echo 'The time was ${{ steps.hello.outputs.time }}.'
-    - name: clone Calypso
-      run: git clone git@github.com:Automattic/wp-calypso.git
-    - name: Build full site editing
-      run: cd wp-calypso && npx lerna run build --scope='@automattic/full-site-editing'
+    - name: Checkout code
+      uses: actions/checkout@master
+    - name: Install dependencies
+      run: npm ci
+    - name: Build FSE
+      run: npx lerna run build --scope='@automattic/full-site-editing' --stream
+    - name: Create FSE plugin archive
+      run: tar -czvf fse-build-archive.tar.gz -C apps/full-site-editing/full-site-editing-plugin .
+    - name: Upload build artifact
+      - uses: actions/upload-artifact@v1
+        with:
+          name: fse-build-archive.tar.gz
+          path: ./fse-build-archive.tar.gz
