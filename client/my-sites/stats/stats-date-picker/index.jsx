@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isRequestingSiteStatsForQuery, getSiteStatsQueryDate } from 'state/stats/lists/selectors';
-import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { getSiteStatsQueryDate, isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
+import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Style dependencies
