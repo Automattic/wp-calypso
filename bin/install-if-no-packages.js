@@ -6,7 +6,6 @@ if ( ! fs.existsSync( 'node_modules' ) ) {
 	const installResult = spawnSync( 'npm', [ 'ci' ], {
 		shell: true,
 		stdio: 'inherit',
-		env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true', ...process.env },
 	} );
 	if ( installResult.status ) {
 		console.error( 'failed to install: exited with code %d', installResult.status );
