@@ -34,13 +34,7 @@ class Edit extends React.Component {
 	render() {
 		const domain = this.props.domains && getSelectedDomain( this.props );
 
-		let Details;
-
-		if ( config.isEnabled( 'domains/new-status-design' ) ) {
-			Details = this.getDomainDetailsForType( domain && domain.type );
-		} else {
-			Details = this.getDetailsForType( domain && domain.type );
-		}
+		const Details = this.getDetailsForType( domain && domain.type );
 
 		if ( ! domain || ! Details ) {
 			return <DomainMainPlaceholder goBack={ this.goToDomainManagement } />;
@@ -59,24 +53,15 @@ class Edit extends React.Component {
 		);
 	}
 
-	getDomainDetailsForType = type => {
-		switch ( type ) {
-			case domainTypes.REGISTERED:
-				return RegisteredDomainType;
-			case domainTypes.WPCOM:
-				return WpcomDomainType;
-			default:
-				return null;
-		}
-	};
-
 	getDetailsForType = type => {
+		const newStatusDesign = config.isEnabled( 'domains/new-status-design' );
+
 		switch ( type ) {
 			case domainTypes.MAPPED:
 				return MappedDomain;
 
 			case domainTypes.REGISTERED:
-				return RegisteredDomain;
+				return newStatusDesign ? RegisteredDomainType : RegisteredDomain;
 
 			case domainTypes.SITE_REDIRECT:
 				return SiteRedirect;
@@ -85,7 +70,7 @@ class Edit extends React.Component {
 				return Transfer;
 
 			case domainTypes.WPCOM:
-				return WpcomDomain;
+				return newStatusDesign ? WpcomDomainType : WpcomDomain;
 
 			default:
 				return null;
