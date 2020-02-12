@@ -89,7 +89,6 @@ import siteKeyrings from './site-keyrings/reducer';
 import siteRoles from './site-roles/reducer';
 import siteSettings from './site-settings/reducer';
 import sites from './sites/reducer';
-import stats from './stats/reducer';
 import storedCards from './stored-cards/reducer';
 import support from './support/reducer';
 import terms from './terms/reducer';
@@ -182,7 +181,6 @@ const reducers = {
 	siteRoles,
 	siteSettings,
 	sites,
-	stats,
 	storedCards,
 	support,
 	terms,

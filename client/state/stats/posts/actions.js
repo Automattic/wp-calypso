@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import wpcom from 'lib/wp';
 import {
 	POST_STATS_RECEIVE,
@@ -9,6 +8,8 @@ import {
 	POST_STATS_REQUEST_FAILURE,
 	POST_STATS_REQUEST_SUCCESS,
 } from 'state/action-types';
+
+import 'state/stats/init';
 
 /**
  * Returns an action object to be used in signalling that post stat for a site,

@@ -8,6 +8,8 @@ import { get } from 'lodash';
  */
 import { QUERY_FIELDS } from 'state/stats/chart-tabs/constants';
 
+import 'state/stats/init';
+
 const EMPTY_RESULT = [];
 
 /**

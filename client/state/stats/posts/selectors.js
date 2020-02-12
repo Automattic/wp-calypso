@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'state/stats/init';
 
 /**
  * Returns true if current requesting post stat for the specified site ID,

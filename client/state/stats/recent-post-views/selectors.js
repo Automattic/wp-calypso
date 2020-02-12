@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'state/stats/init';
+
+/**
  * Returns the number of views for a given post, or `null`.
  *
  * @param   {object}  state    Global state tree
