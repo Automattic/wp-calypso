@@ -89,6 +89,7 @@ const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
 		tracksRecordEvent( 'wpcom_block_inserted', {
 			block_name: block.name,
 			blocks_replaced: false,
+			// isInsertingPageTemplate filter is set by Starter Page Templates
 			from_template_selector: applyFilters( 'isInsertingPageTemplate', false ),
 		} );
 	} );
