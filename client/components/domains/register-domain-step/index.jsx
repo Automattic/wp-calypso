@@ -172,6 +172,9 @@ class RegisterDomainStep extends React.Component {
 
 		this._isMounted = false;
 		this.state = this.getState();
+		this.state.filters = this.getInitialFiltersState();
+		this.state.lastFilters = this.getInitialFiltersState();
+
 		if ( props.initialState ) {
 			this.state = { ...this.state, ...props.initialState };
 
@@ -209,9 +212,6 @@ class RegisterDomainStep extends React.Component {
 				this.state.railcarId = this.getNewRailcarId();
 			}
 		}
-
-		this.state.filters = this.getInitialFiltersState();
-		this.state.lastFilters = this.getInitialFiltersState();
 	}
 
 	getState() {
@@ -1257,6 +1257,7 @@ class RegisterDomainStep extends React.Component {
 						onReset={ this.onFiltersReset }
 						onSubmit={ this.onFiltersSubmit }
 						showPlaceholder={ this.state.loadingResults || ! this.getSuggestionsFromProps() }
+						showDesignUpdate={ this.props.showDesignUpdate }
 					/>
 				) }
 			</DomainSearchResults>
