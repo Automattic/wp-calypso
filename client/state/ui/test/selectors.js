@@ -29,11 +29,11 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( selected ).to.be.null;
+			expect( selected ).to.be.false;
 		} );
 
 		test( 'should return the object for the selected site', () => {
-			const selected = getSelectedSite( {
+			const selected = getApplication( {
 				ui: {
 					application: 'calypso',
 				},
