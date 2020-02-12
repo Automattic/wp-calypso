@@ -339,7 +339,7 @@ class SectionMigrate extends Component {
 		const subHeaderText = (
 			<>
 				{ translate(
-					"We're moving everything from {{sp}}%(sourceSiteDomain)s{{/sp}} to {{sp}}{ targetSiteDomain }{{/sp}}.",
+					"We're moving everything from {{sp}}%(sourceSiteDomain)s{{/sp}} to {{sp}}%(targetSiteDomain)s{{/sp}}.",
 					{
 						args: {
 							sourceSiteDomain,

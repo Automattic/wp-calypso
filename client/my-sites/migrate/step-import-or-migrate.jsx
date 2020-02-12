@@ -45,20 +45,18 @@ class StepImportOrMigrate extends Component {
 	};
 
 	getJetpackOrUpgradeMessage = () => {
-		const { sourceSite, sourceHasJetpack, isTargetSiteAtomic, translate } = this.props;
+		const { sourceSiteInfo, sourceHasJetpack, isTargetSiteAtomic, translate } = this.props;
 
 		if ( ! sourceHasJetpack ) {
-			const sourceSiteDomain = get( sourceSite, 'domain' );
+			const sourceSiteDomain = get( sourceSiteInfo, 'site_url', '' );
 			return (
 				<p>
 					{ translate(
-						'You need to have {{jetpackInstallLink}}>Jetpack{{/jetpackInstallLink}} installed on your site to be able to import everything.',
+						'You need to have {{jetpackInstallLink}}Jetpack{{/jetpackInstallLink}} installed on your site to be able to import everything.',
 						{
 							components: {
 								jetpackInstallLink: (
-									<a
-										href={ `https://wordpress.com/jetpack/connect/install?url=${ sourceSiteDomain }` }
-									/>
+									<a href={ `https://wordpress.com/jetpack/connect/?url=${ sourceSiteDomain }` } />
 								),
 							},
 						}
