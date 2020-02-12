@@ -65,13 +65,11 @@ export interface ResponseCart {
 	locale: string;
 	messages?: { errors: ResponseCartError[] };
 	tax: {
-		location:
-			| never[] // JSON serialization of an empty PHP associative array is []
-			| {
-					country_code?: string;
-					postal_code?: string;
-					subdivision_code?: string;
-			  };
+		location: {
+			country_code?: string;
+			postal_code?: string;
+			subdivision_code?: string;
+		};
 		display_taxes: boolean;
 	};
 }
@@ -171,6 +169,12 @@ export function addCouponToResponseCart( cart: ResponseCart, couponToAdd: string
 export function processRawResponse( rawResponseCart ): ResponseCart {
 	return {
 		...rawResponseCart,
+		// If tax.location is an empty PHP associative array, it will be JSON serialized to [] but we need {}
+		tax: {
+			location: Array.isArray( rawResponseCart.tax.location ) ? {} : rawResponseCart.tax.location,
+			display_taxes: rawResponseCart.tax.display_taxes,
+		},
+		// Add uuid to products returned by the server
 		products: rawResponseCart.products.map( ( product, index ) => {
 			return {
 				...product,
