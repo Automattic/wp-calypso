@@ -71,14 +71,16 @@ const TRANSLATE_FUNCTION_NAMES = [ '__', '_n', '_nx', '_x', 'translate' ];
 const VALID_TRANSLATION_KEYS = [ 'msgid_plural', 'msgctxt' ];
 
 /**
- * The order of arguments in @wordpress/i18n translate function.
+ * The order of arguments in translate functions.
  *
  * @type {object}
  */
 const DEFAULT_FUNCTIONS_ARGUMENTS_ORDER = {
+	__: [],
 	_n: [ 'msgid_plural' ],
 	_x: [ 'msgctxt' ],
 	_nx: [ 'msgid_plural', null, 'msgctxt' ],
+	translate: [ 'msgid_plural', 'options_object' ],
 };
 
 /**
@@ -205,48 +207,38 @@ module.exports = function() {
 					.join( '/' );
 				translation.comments.reference = pathname + ':' + path.node.loc.start.line;
 
-				if ( 'translate' === name || ( hasAliasedTranslate && '__' === name ) ) {
-					if ( path.node.arguments.length > i ) {
-						const msgid_plural = getNodeAsString( path.node.arguments[ i ] );
-						if ( msgid_plural.length ) {
-							translation.msgid_plural = msgid_plural;
-							i++;
-							// For plurals, create an empty mgstr array
-							translation.msgstr = Array.from( Array( nplurals ) ).map( () => '' );
-						}
-					}
+				const functionKeys = ( state.opts.functions || DEFAULT_FUNCTIONS_ARGUMENTS_ORDER )[
+					// @todo alias __ with translate function keys instead of using the flag here
+					hasAliasedTranslate ? 'translate' : name
+				];
 
-					if (
-						path.node.arguments.length > i &&
-						'ObjectExpression' === path.node.arguments[ i ].type
-					) {
-						for ( const j in path.node.arguments[ i ].properties ) {
-							if ( 'ObjectProperty' === path.node.arguments[ i ].properties[ j ].type ) {
-								switch ( path.node.arguments[ i ].properties[ j ].key.name ) {
-									case 'context':
-										translation.msgctxt = path.node.arguments[ i ].properties[ j ].value.value;
-										break;
-									case 'comment':
-										translation.comments.extracted =
-											path.node.arguments[ i ].properties[ j ].value.value;
-										break;
+				if ( functionKeys ) {
+					path.node.arguments.slice( i ).forEach( ( arg, index ) => {
+						const key = functionKeys[ index ];
+
+						if ( 'options_object' === key ) {
+							arg.properties.forEach( property => {
+								if ( ! 'ObjectProperty' !== property.type ) {
+									return;
 								}
-							}
-						}
-					}
-				} else {
-					const functionKeys = ( state.opts.functions || DEFAULT_FUNCTIONS_ARGUMENTS_ORDER )[
-						name
-					];
 
-					if ( functionKeys ) {
-						path.node.arguments.slice( i ).forEach( ( arg, index ) => {
-							const key = functionKeys[ index ];
-							if ( isValidTranslationKey( key ) ) {
-								translation[ key ] = getNodeAsString( arg );
-							}
-						} );
-					}
+								if ( 'context' === property.key.name ) {
+									translation.msgctxt = property.value.value;
+								}
+
+								if ( 'comment' === property.key.name ) {
+									translation.comments.extracted = property.value.value;
+								}
+							} );
+						} else if ( isValidTranslationKey( key ) ) {
+							translation[ key ] = getNodeAsString( arg );
+						}
+					} );
+				}
+
+				// For plurals, create an empty mgstr array
+				if ( ( translation.msgid_plural || '' ).length ) {
+					translation.msgstr = Array.from( Array( nplurals ) ).map( () => '' );
 				}
 
 				// Create context grouping for translation if not yet exists
