@@ -496,10 +496,19 @@ class RegisterDomainStep extends React.Component {
 	renderUseYourDomain() {
 		const { translate } = this.props;
 
-		if ( this.state.searchResults === null ) {
+		const { searchResults, lastDomainStatus } = this.state;
+
+		if ( searchResults === null ) {
 			return null;
 		}
 
+		const useYourDomainFunction =
+			domainAvailability.MAPPED === lastDomainStatus
+				? this.goToTransferDomainStep
+				: this.goToUseYourDomainStep;
+
+		/* eslint-disable jsx-a11y/click-events-have-key-events */
+		/* eslint-disable jsx-a11y/interactive-supports-focus */
 		return (
 			<div className="register-domain-step__use-your-domain">
 				<h3>
@@ -512,7 +521,12 @@ class RegisterDomainStep extends React.Component {
 						comment: 'Explains how you could use an existing domain name with your site.',
 					} ) }
 				</h3>
-				<div className="register-domain-step__use-your-domain-action">
+				<div
+					className="register-domain-step__use-your-domain-action is-clickable"
+					onClick={ useYourDomainFunction }
+					data-tracks-button-click-source="initial-suggestions-bottom"
+					role="button"
+				>
 					<div className="register-domain-step__use-your-domain-action-text">
 						{ translate( 'Use a domain I own', {
 							context: 'Domain transfer or mapping suggestion button',
@@ -524,6 +538,8 @@ class RegisterDomainStep extends React.Component {
 				</div>
 			</div>
 		);
+		/* eslint-enable jsx-a11y/click-events-have-key-events */
+		/* eslint-enable jsx-a11y/interactive-supports-focus */
 	}
 
 	rejectTrademarkClaim = () => {

@@ -106,6 +106,18 @@
 		display: flex;
 		justify-content: center;
 		margin: 1em 0;
+
+		&.is-clickable {
+			cursor: pointer;
+	
+			// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo
+			transition: box-shadow 0.25s cubic-bezier( 0.19, 1, 0.22, 1 );
+	
+			&:hover {
+				font-weight: 450;
+				z-index: z-index( 'root', '.domain-suggestion.is-clickable:hover' );
+			}
+		}
 	}
 
 	.register-domain-step__chevron {
