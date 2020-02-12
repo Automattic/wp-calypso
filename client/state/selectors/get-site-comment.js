@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-
 import { find } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import getSiteComments from 'state/selectors/get-site-comments';
+
+import 'state/comments/init';
 
 /**
  * Returns a comment for the specified site and comment ID.

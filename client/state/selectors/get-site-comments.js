@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-
 import { filter, get, orderBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
+
+import 'state/comments/init';
 
 function filterCommentsByStatus( comments, status ) {
 	return 'all' === status

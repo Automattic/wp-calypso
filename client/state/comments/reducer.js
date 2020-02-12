@@ -40,7 +40,7 @@ import {
 	READER_EXPAND_COMMENTS,
 	COMMENTS_SET_ACTIVE_REPLY,
 } from 'state/action-types';
-import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
+import { combineReducers, keyedReducer, withoutPersistence, withStorageKey } from 'state/utils';
 import {
 	PLACEHOLDER_STATE,
 	NUMBER_OF_COMMENTS_PER_FETCH,
@@ -528,7 +528,7 @@ export const counts = withoutPersistence( ( state = {}, action ) => {
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	counts,
 	items,
 	pendingItems,
@@ -540,3 +540,5 @@ export default combineReducers( {
 	treesInitialized,
 	activeReplies,
 } );
+const commentsReducer = withStorageKey( 'comments', combinedReducer );
+export default commentsReducer;

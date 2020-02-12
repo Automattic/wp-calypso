@@ -25,6 +25,8 @@ import treeSelect from '@automattic/tree-select';
 import { fetchStatusInitialState } from './reducer';
 import { getStateKey, deconstructStateKey, getErrorKey } from './utils';
 
+import 'state/comments/init';
+
 /**
  * Gets comment items for post
  *

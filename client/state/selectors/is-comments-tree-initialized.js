@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'state/comments/init';
+
+/**
  * Returns true if a comment tree has been initialized.
  *
  * @param  {object}  state    Global state tree
