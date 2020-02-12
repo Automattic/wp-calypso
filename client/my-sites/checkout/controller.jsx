@@ -24,6 +24,7 @@ import { sites } from 'my-sites/controller';
 import config from 'config';
 import CompositeCheckout from './checkout/composite-checkout';
 import CartData from 'components/data/cart';
+import { abtest } from 'lib/abtest';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
@@ -54,7 +55,7 @@ export function checkout( context, next ) {
 
 	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
 
-	if ( config.isEnabled( 'composite-checkout-wpcom' ) ) {
+	if ( shouldShowCompositeCheckout() ) {
 		context.primary = (
 			<CartData>
 				<CompositeCheckout
@@ -217,4 +218,17 @@ export function redirectToSupportSession( context ) {
 		page.redirect( `/checkout/offer-support-session/${ receiptId }/${ site }` );
 	}
 	page.redirect( `/checkout/offer-support-session/${ site }` );
+}
+
+function shouldShowCompositeCheckout() {
+	if ( ! config.isEnabled( 'composite-checkout-wpcom' ) ) {
+		return false;
+	}
+	// TODO: if a domain product is in the cart, return false
+	// TODO: if a non-wpcom product is in the cart, return false
+	// TODO: if the language is not en-us, return false
+	// TODO: if the geolocation is not in the US, return false
+	if ( abtest( 'showCompositeCheckout' ) === 'composite' ) {
+		return true;
+	}
 }
