@@ -33,15 +33,6 @@ module.exports = {
 				step: false,
 			},
 		},
-		{
-			files: [
-				'apps/full-site-editing/**/?(*.)spec.[jt]s?(x)',
-				'apps/full-site-editing/full-site-editing-plugin/e2e-test-helpers/**',
-			],
-			globals: {
-				page: 'readonly',
-			},
-		},
 		merge(
 			// ESLint doesn't allow the `extends` field inside `overrides`, so we need to compose
 			// the TypeScript config manually using internal bits from various plugins
