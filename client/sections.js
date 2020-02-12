@@ -46,6 +46,7 @@ const sections = [
 		module: 'my-sites/activity',
 		secondary: true,
 		group: 'sites',
+		app: [ 'calypso', 'jetpack-cloud' ],
 	},
 	{
 		name: 'security',
@@ -102,6 +103,7 @@ const sections = [
 		module: 'my-sites/people',
 		secondary: true,
 		group: 'sites',
+		app: [ 'calypso', 'jetpack-cloud' ],
 	},
 	{
 		name: 'plugins',
@@ -131,6 +133,7 @@ const sections = [
 		module: 'my-sites/site-settings/settings-performance',
 		secondary: true,
 		group: 'sites',
+		app: [ 'calypso', 'jetpack-cloud' ],
 	},
 	{
 		name: 'settings-writing',
@@ -138,6 +141,7 @@ const sections = [
 		module: 'my-sites/site-settings/settings-writing',
 		secondary: true,
 		group: 'sites',
+		app: [ 'calypso', 'jetpack-cloud' ],
 	},
 	{
 		name: 'settings-discussion',
@@ -145,6 +149,7 @@ const sections = [
 		module: 'my-sites/site-settings/settings-discussion',
 		secondary: true,
 		group: 'sites',
+		app: [ 'calypso', 'jetpack-cloud' ],
 	},
 	{
 		name: 'settings-security',
@@ -152,6 +157,7 @@ const sections = [
 		module: 'my-sites/site-settings/settings-security',
 		secondary: true,
 		group: 'sites',
+		app: [ 'calypso', 'jetpack-cloud' ],
 	},
 	{
 		name: 'settings',
@@ -159,6 +165,7 @@ const sections = [
 		module: 'my-sites/site-settings',
 		secondary: true,
 		group: 'sites',
+		app: [ 'calypso', 'jetpack-cloud' ],
 	},
 	{
 		name: 'marketing',
@@ -166,6 +173,7 @@ const sections = [
 		module: 'my-sites/marketing',
 		secondary: true,
 		group: 'sites',
+		app: [ 'calypso', 'jetpack-cloud' ],
 	},
 	{
 		name: 'jetpack-connect',
@@ -188,6 +196,7 @@ const sections = [
 		module: 'my-sites/stats',
 		secondary: true,
 		group: 'sites',
+		app: [ 'calypso', 'jetpack-cloud' ],
 	},
 	{
 		name: 'checklist',
@@ -246,6 +255,7 @@ const sections = [
 		secondary: true,
 		group: 'sites',
 		enableLoggedOut: true,
+		app: [ 'calypso', 'jetpack-cloud' ],
 	},
 	{
 		name: 'plans',
@@ -253,12 +263,14 @@ const sections = [
 		module: 'my-sites/plans',
 		secondary: true,
 		group: 'sites',
+		app: [ 'calypso', 'jetpack-cloud' ],
 	},
 	{
 		name: 'accept-invite',
 		paths: [ '/accept-invite' ],
 		module: 'my-sites/invites',
 		enableLoggedOut: true,
+		app: [ 'calypso', 'jetpack-cloud' ],
 	},
 	{
 		name: 'earn',
