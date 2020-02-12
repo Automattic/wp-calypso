@@ -14,6 +14,7 @@ import {
 	emptyResponseCart,
 	removeItemFromResponseCart,
 	addItemToResponseCart,
+	replaceItemInResponseCart,
 	processRawResponse,
 	addCouponToResponseCart,
 	addLocationToResponseCart,
@@ -38,6 +39,9 @@ const debug = debugFactory( 'composite-checkout-wpcom:shopping-cart-manager' );
  *         Used to determine whether we need to re-validate the cart on
  *         the backend. We can't use responseCart directly to decide this
  *         in e.g. useEffect because this causes an infinite loop.
+ *     * variantRequestStatus
+ *         Used to allow updating the view immediately upon a variant
+ *         change request.
  *     * shouldShowNotification
  *         Used to trigger calypso notification side effects on render
  */
@@ -56,7 +60,7 @@ const getInitialShoppingCartHookState: () => ShoppingCartHookState = () => {
 		responseCart: emptyResponseCart,
 		cacheStatus: 'fresh',
 		couponStatus: 'fresh',
-        variantRequestStatus: 'fresh',
+		variantRequestStatus: 'fresh',
 		shouldShowNotification: {
 			didAddCoupon: false,
 		},
@@ -67,6 +71,12 @@ type ShoppingCartHookAction =
 	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
 	| { type: 'ADD_CART_ITEM'; responseCartProductToAdd: ResponseCartProduct }
 	| { type: 'SET_LOCATION'; location: CartLocation }
+	| {
+			type: 'REPLACE_CART_ITEM';
+			uuidToReplace: string;
+			newProductId: number;
+			newProductSlug: string;
+	  }
 	| { type: 'ADD_COUPON'; couponToAdd: string }
 	| { type: 'RECEIVE_INITIAL_RESPONSE_CART'; initialResponseCart: ResponseCart }
 	| { type: 'REQUEST_UPDATED_RESPONSE_CART' }
@@ -98,6 +108,30 @@ function shoppingCartHookReducer(
 				...state,
 				responseCart: addItemToResponseCart( state.responseCart, responseCartProductToAdd ),
 				cacheStatus: 'invalid',
+			};
+		}
+		case 'REPLACE_CART_ITEM': {
+			const uuidToReplace = action.uuidToReplace;
+			const newProductId = action.newProductId;
+			const newProductSlug = action.newProductSlug;
+			if ( state.variantRequestStatus === 'pending' ) {
+				debug(
+					`variant request status is '${ state.variantRequestStatus }'; not submitting again`
+				);
+				return state;
+			}
+			debug( `replacing item with uuid ${ uuidToReplace } by product slug`, newProductSlug );
+
+			return {
+				...state,
+				responseCart: replaceItemInResponseCart(
+					state.responseCart,
+					uuidToReplace,
+					newProductId,
+					newProductSlug
+				),
+				cacheStatus: 'invalid',
+				variantRequestStatus: 'pending',
 			};
 		}
 		case 'ADD_COUPON': {
@@ -135,15 +169,16 @@ function shoppingCartHookReducer(
 			const response = action.updatedResponseCart;
 			const newCouponStatus = getUpdatedCouponStatus( couponStatus, response );
 			const didAddCoupon = newCouponStatus === 'applied';
-            // TODO: do we need to handle the case where the variant doesn't actually change?
-			const newVariantRequestStatus = ( state.variantRequestStatus === 'pending' ) ? 'valid' : state.variantRequestStatus;
+			// TODO: do we need to handle the case where the variant doesn't actually change?
+			const newVariantRequestStatus =
+				state.variantRequestStatus === 'pending' ? 'valid' : state.variantRequestStatus;
 
 			return {
 				...state,
 				responseCart: response,
 				couponStatus: newCouponStatus,
 				cacheStatus: 'valid',
-                variantRequestStatus: newVariantRequestStatus,
+				variantRequestStatus: newVariantRequestStatus,
 				shouldShowNotification: {
 					...state.shouldShowNotification,
 					didAddCoupon,
@@ -338,13 +373,8 @@ export function useShoppingCart(
 	const responseCart: ResponseCart = hookState.responseCart;
 	const couponStatus: CouponStatus = hookState.couponStatus;
 	const cacheStatus: CacheStatus = hookState.cacheStatus;
+	const variantRequestStatus: VariantRequestStatus = hookState.variantRequestStatus;
 	const shouldShowNotification = hookState.shouldShowNotification;
-
-	// Used to allow updating the view immediately upon a variant
-	// change request.
-	const [ variantRequestStatus, setVariantRequestStatus ] = useState< VariantRequestStatus >(
-		'fresh'
-	);
 
 	// Asynchronously initialize the cart. This should happen exactly once.
 	useEffect( () => {
@@ -425,29 +455,13 @@ export function useShoppingCart(
 		hookDispatch( { type: 'REMOVE_CART_ITEM', uuidToRemove } );
 	}, [] );
 
-	const changeItemVariant: ( WPCOMCartItem, WPCOMProductSlug, number ) => void = useCallback(
-		( itemToChange, newProductSlug, newProductId ) => {
-			if ( variantRequestStatus === 'pending' ) {
-				debug( `variant request status is '${ variantRequestStatus }'; not submitting again` );
-				return;
-			}
-
-			debug( 'changing item variant in cart to', newProductSlug, itemToChange );
-			setResponseCart( currentResponseCart => ( {
-				...currentResponseCart,
-				products: currentResponseCart.products.map( ( item, index ) => {
-					if ( index.toString() === itemToChange.wpcom_meta.uuid ) {
-						item.product_slug = newProductSlug;
-						item.product_id = newProductId;
-					}
-					return item;
-				} ),
-			} ) );
-			setCacheStatus( 'invalid' );
-			setVariantRequestStatus( 'pending' );
-		},
-		[ variantRequestStatus ]
-	);
+	const changeItemVariant: (
+		uuidToReplace: string,
+		newProductSlug: string,
+		newProductId: number
+	) => void = useCallback( ( uuidToReplace, newProductSlug, newProductId ) => {
+		hookDispatch( { type: 'REPLACE_CART_ITEM', uuidToReplace, newProductSlug, newProductId } );
+	}, [] );
 
 	const updateLocation: ( CartLocation ) => void = useCallback( location => {
 		debug( 'updating location for cart to', location );
