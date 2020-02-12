@@ -48,7 +48,7 @@ const isNotExpired = ( timestampStr: string ): boolean => {
 
 // Check for "fresh" query param
 const hasFreshParam = (): boolean => {
-	return window.location.search.indexOf( 'fresh' ) !== -1;
+	return new URLSearchParams( window.location.search ).has( 'fresh' );
 };
 
 // Handle data expiration by providing a storage object override to the @wp/data persistence plugin.
