@@ -57,20 +57,6 @@ const DEFAULT_HEADERS = {
 const DEFAULT_DIR = 'build/';
 
 /**
- * List of translate function to be handled for string extraction.
- *
- * @type {string[]}
- */
-const TRANSLATE_FUNCTION_NAMES = [ '__', '_n', '_nx', '_x', 'translate' ];
-
-/**
- * Set of keys which are valid to be assigned into a translation object.
- *
- * @type {string[]}
- */
-const VALID_TRANSLATION_KEYS = [ 'msgid_plural', 'msgctxt' ];
-
-/**
  * The order of arguments in translate functions.
  *
  * @type {object}
@@ -109,6 +95,17 @@ function getNodeAsString( node ) {
 }
 
 /**
+ * Returns true if the specified funciton name is valid translate function name
+ *
+ * @param {string} name Function name to test.
+ *
+ * @returns {boolean} Whether function name is valid translate function name.
+ */
+function isValidFunctionName( name ) {
+	return -1 !== Object.keys( DEFAULT_FUNCTIONS_ARGUMENTS_ORDER ).indexOf( name );
+}
+
+/**
  * Returns true if the specified key of a function is valid for assignment in
  * the translation object.
  *
@@ -117,7 +114,9 @@ function getNodeAsString( node ) {
  * @returns {boolean} Whether key is valid for assignment.
  */
 function isValidTranslationKey( key ) {
-	return -1 !== VALID_TRANSLATION_KEYS.indexOf( key );
+	return Object.values( DEFAULT_FUNCTIONS_ARGUMENTS_ORDER ).some(
+		args => -1 !== args.indexOf( key )
+	);
 }
 
 module.exports = function() {
@@ -155,7 +154,7 @@ module.exports = function() {
 				} else {
 					name = callee.name;
 				}
-				if ( ! TRANSLATE_FUNCTION_NAMES.includes( name ) ) {
+				if ( ! isValidFunctionName( name ) ) {
 					return;
 				}
 				let i = 0;
@@ -213,7 +212,7 @@ module.exports = function() {
 					path.node.arguments.slice( i ).forEach( ( arg, index ) => {
 						const key = functionKeys[ index ];
 
-						if ( 'options_object' === key ) {
+						if ( 'options_object' === key && arg.properties ) {
 							arg.properties.forEach( property => {
 								if ( ! 'ObjectProperty' !== property.type ) {
 									return;
