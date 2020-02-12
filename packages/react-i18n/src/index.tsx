@@ -6,7 +6,7 @@ import { __, _n, _nx, _x } from '@wordpress/i18n';
 
 export const I18nContext = React.createContext< undefined | string >( undefined );
 
-interface I18nTranslationFunctions {
+export interface I18nProps {
 	__: typeof __;
 	_n: typeof _n;
 	_nx: typeof _nx;
@@ -24,12 +24,17 @@ interface I18nTranslationFunctions {
  *   return <div>{ __( 'Translate me.', 'text-domain' ) }</div>;
  * }
  */
-export const useI18n = (): I18nTranslationFunctions => {
+export const useI18n = (): I18nProps => {
 	const lang = React.useContext( I18nContext );
-	const [ i18n, setI18n ] = React.useState< I18nTranslationFunctions >( makeI18n );
+	const [ i18n, setI18n ] = React.useState< I18nProps >( makeI18n );
 	React.useEffect( () => setI18n( makeI18n ), [ lang ] );
 	return i18n;
 };
+
+/**
+ * Remove from T the keys that are in common with K
+ */
+type Optionalize< T extends K, K > = Omit< T, keyof K >;
 
 /**
  * React hook providing i18n translate functions
@@ -44,10 +49,14 @@ export const useI18n = (): I18nTranslationFunctions => {
  * }
  * export default withI18n( MyComponent );
  */
-export const withI18n = ( WrappedComponent: React.ComponentType ): React.ComponentType => props => (
-	<WrappedComponent { ...useI18n() } { ...props } />
+export const withI18n = < T extends I18nProps = I18nProps >(
+	WrappedComponent: React.ComponentType< T >
+): React.FunctionComponent< Optionalize< T, I18nProps > > => props => (
+	// Required cast `props as T`
+	// See https://github.com/Microsoft/TypeScript/issues/28938
+	<WrappedComponent { ...useI18n() } { ...( props as T ) } />
 );
 
-function makeI18n(): I18nTranslationFunctions {
+function makeI18n(): I18nProps {
 	return { __, _n, _nx, _x };
 }
