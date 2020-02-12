@@ -5,12 +5,6 @@
 import { Action } from 'redux';
 
 export interface NewSite {
-	blogname: string;
-	blogid: string;
-	blog_details: object;
-}
-
-export interface NewSiteSuccessResponseBlogDetails {
 	url: string;
 	blogid: number;
 	blogname: string;
@@ -19,7 +13,7 @@ export interface NewSiteSuccessResponseBlogDetails {
 
 export interface NewSiteSuccessResponse {
 	success: boolean;
-	blog_details: NewSiteSuccessResponseBlogDetails;
+	blog_details: NewSite;
 	is_signup_sandbox?: boolean;
 }
 

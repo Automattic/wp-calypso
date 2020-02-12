@@ -10,12 +10,10 @@ import { combineReducers } from '@wordpress/data';
 import { NewSite, NewSiteErrorResponse } from './types';
 import { Action } from './actions';
 
-const newSiteData: Reducer< NewSite | {} | undefined, Action > = ( state, action ) => {
+const newSiteData: Reducer< NewSite | undefined, Action > = ( state, action ) => {
 	if ( action.type === 'RECEIVE_NEW_SITE' ) {
 		const { response } = action;
-		return {
-			...response.blog_details,
-		};
+		return response.blog_details;
 	} else if ( action.type === 'RECEIVE_NEW_SITE_FAILED' ) {
 		return undefined;
 	}
