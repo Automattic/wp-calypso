@@ -33,6 +33,8 @@
 		]
 	},
 	"dependencies": {
+		"@actions/core": "1.2.2",
+		"@actions/github": "2.1.0",
 		"@automattic/calypso-polyfills": "file:packages/calypso-polyfills",
 		"@automattic/components": "file:packages/components",
 		"@automattic/composite-checkout": "file:packages/composite-checkout",
