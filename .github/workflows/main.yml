@@ -1,5 +1,5 @@
 on:
-  push:
+  [push, pull_request]:
     paths:
     - 'apps/full-site-editing/full-site-editing-plugin/**'
 
