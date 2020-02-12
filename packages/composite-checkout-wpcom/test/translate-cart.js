@@ -39,7 +39,7 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 				},
 			],
 			tax: {
-				location: [],
+				location: {},
 				display_taxes: false,
 			},
 			sub_total: '144',
@@ -217,7 +217,7 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 				},
 			],
 			tax: {
-				location: [],
+				location: {},
 				display_taxes: false,
 			},
 			sub_total: '144',
@@ -453,7 +453,7 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 				},
 			],
 			tax: {
-				location: [],
+				location: {},
 				display_taxes: false,
 			},
 			sub_total: '216',
@@ -607,7 +607,7 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 				},
 			],
 			tax: {
-				location: [],
+				location: {},
 				display_taxes: false,
 			},
 			sub_total: '127',

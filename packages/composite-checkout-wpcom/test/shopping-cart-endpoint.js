@@ -18,7 +18,7 @@ describe( 'removeItemFromResponseCart', function() {
 		coupon_discounts_integer: [],
 		locale: 'en-us',
 		tax: {
-			location: [],
+			location: {},
 			display_taxes: false,
 		},
 	};
@@ -120,7 +120,7 @@ describe( 'addCouponToResponseCart', function() {
 		coupon_discounts_integer: [],
 		locale: 'en-us',
 		tax: {
-			location: [],
+			location: {},
 			display_taxes: false,
 		},
 	};
