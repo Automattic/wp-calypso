@@ -58,6 +58,16 @@ export interface ResponseCart {
 	coupon_discounts_integer: number[];
 	locale: string;
 	messages?: { errors: ResponseCartError[] };
+	tax: {
+		location:
+			| never[] // JSON serialization of an empty PHP associative array is []
+			| {
+					country_code?: string;
+					postal_code?: string;
+					subdivision_code?: string;
+			  };
+		display_taxes: boolean;
+	};
 }
 
 export interface ResponseCartError {
@@ -81,6 +91,7 @@ export const emptyResponseCart = {
 	is_coupon_applied: false,
 	coupon_discounts_integer: [],
 	locale: 'en-us',
+	tax: { location: [], display_taxes: false },
 } as ResponseCart;
 
 /**
