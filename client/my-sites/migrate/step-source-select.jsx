@@ -35,6 +35,8 @@ class StepSourceSelect extends Component {
 	};
 
 	handleContinue = () => {
+		const { translate } = this.props;
+
 		if ( this.state.isLoading ) {
 			return;
 		}
@@ -51,7 +53,7 @@ class StepSourceSelect extends Component {
 						case 'wordpress':
 							if ( result.site_meta.wpcom_site ) {
 								return this.setState( {
-									error: 'This is site is already hosted on WordPress.com',
+									error: translate( 'This is site is already hosted on WordPress.com' ),
 									isLoading: false,
 								} );
 							}
@@ -62,7 +64,7 @@ class StepSourceSelect extends Component {
 						default:
 							if ( validEngines.indexOf( result.site_engine ) === -1 ) {
 								return this.setState( {
-									error: 'This is not a WordPress site',
+									error: translate( 'This is not a WordPress site' ),
 									isLoading: false,
 								} );
 							}
@@ -74,12 +76,14 @@ class StepSourceSelect extends Component {
 					switch ( error.code ) {
 						case 'rest_invalid_param':
 							return this.setState( {
-								error: "We couldn't reach that site. Please check the URL and try again.",
+								error: translate(
+									"We couldn't reach that site. Please check the URL and try again."
+								),
 								isLoading: false,
 							} );
 						default:
 							return this.setState( {
-								error: 'Something went wrong. Please check the URL and try again.',
+								error: translate( 'Something went wrong. Please check the URL and try again.' ),
 								isLoading: false,
 							} );
 					}
@@ -88,18 +92,22 @@ class StepSourceSelect extends Component {
 	};
 
 	render() {
-		const { targetSite, targetSiteSlug } = this.props;
+		const { targetSite, targetSiteSlug, translate } = this.props;
 		const backHref = `/import/${ targetSiteSlug }`;
-		const uploadHref = `/import/${ targetSiteSlug }?engine=wordpress`;
+		const uploadFileLink = `/import/${ targetSiteSlug }?engine=wordpress`;
 
 		return (
 			<>
-				<HeaderCake backHref={ backHref }>Import from WordPress</HeaderCake>
+				<HeaderCake backHref={ backHref }>{ translate( 'Import from WordPress' ) }</HeaderCake>
 				<CompactCard>
-					<CardHeading>What WordPress site do you want to import?</CardHeading>
+					<CardHeading>{ translate( 'What WordPress site do you want to import?' ) }</CardHeading>
 					<div className="migrate__explain">
-						Enter a URL and we'll help you move your site to WordPress.com. If you already have a
-						backup file, you can <a href={ uploadHref }>upload it to import content</a>.
+						{ translate(
+							"Enter a URL and we'll help you move your site to WordPress.com. If you already have a" +
+								"backup file, you can <a href='%(uploadFileLink)'>upload it to import content</a>.",
+							{ args: { uploadFileLink } }
+						) }
+						;
 					</div>
 				</CompactCard>
 				<SitesBlock
@@ -112,7 +120,7 @@ class StepSourceSelect extends Component {
 				<p>{ this.state.error }</p>
 				<Card>
 					<Button busy={ this.state.isLoading } onClick={ this.handleContinue } primary={ true }>
-						Continue
+						{ translate( 'Continue' ) }
 					</Button>
 				</Card>
 			</>

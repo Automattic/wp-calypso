@@ -294,7 +294,7 @@ class SectionMigrate extends Component {
 			<>
 				<FormattedHeader
 					className="migrate__section-header"
-					headerText="Congratulations!"
+					headerText={ translate( 'Congratulations!' ) }
 					align="left"
 				/>
 				<CompactCard>
@@ -317,7 +317,7 @@ class SectionMigrate extends Component {
 			<Card className="migrate__pane">
 				<FormattedHeader
 					className="migrate__section-header"
-					headerText="Import failed"
+					headerText={ translate( 'Import failed' ) }
 					align="center"
 				/>
 				<div className="migrate__status">
@@ -356,7 +356,7 @@ class SectionMigrate extends Component {
 					/>
 					<FormattedHeader
 						className="migrate__section-header"
-						headerText="Import in progress"
+						headerText={ translate( 'Import in progress' ) }
 						subHeaderText={ subHeaderText }
 						align="center"
 					/>
@@ -466,7 +466,7 @@ class SectionMigrate extends Component {
 	}
 
 	render() {
-		const { step, sourceSite, targetSite, targetSiteSlug } = this.props;
+		const { step, sourceSite, targetSite, targetSiteSlug, translate } = this.props;
 
 		let migrationElement;
 
@@ -536,7 +536,7 @@ class SectionMigrate extends Component {
 
 		return (
 			<Main>
-				<DocumentHead title="Migrate" />
+				<DocumentHead title={ translate( 'Migrate' ) } />
 				<SidebarNavigation />
 				{ migrationElement }
 			</Main>
