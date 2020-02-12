@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { useSelector } from 'react-redux';
 
 /**
  * Internal Dependencies
@@ -10,6 +11,8 @@ import CheckoutContainer from './checkout-container';
 import CompositeCheckout from './composite-checkout';
 import config from 'config';
 import { abtest } from 'lib/abtest';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { getGeoCountryShort } from 'state/geo/selectors';
 
 // Decide if we should use CompositeCheckout or CheckoutContainer
 export default function CheckoutSystemDecider( {
@@ -26,7 +29,10 @@ export default function CheckoutSystemDecider( {
 	clearTransaction,
 	cart,
 } ) {
-	if ( shouldShowCompositeCheckout( cart ) ) {
+	const countryCode = useSelector( state => getGeoCountryShort( state ) );
+	const locale = useSelector( state => getCurrentUserLocale( state ) );
+
+	if ( shouldShowCompositeCheckout( cart, countryCode, locale ) ) {
 		return (
 			<CompositeCheckout
 				siteSlug={ selectedSite?.slug }
@@ -57,7 +63,7 @@ export default function CheckoutSystemDecider( {
 	);
 }
 
-function shouldShowCompositeCheckout( cart ) {
+function shouldShowCompositeCheckout( cart, countryCode, locale ) {
 	if ( ! config.isEnabled( 'composite-checkout-wpcom' ) ) {
 		return false;
 	}
@@ -65,8 +71,12 @@ function shouldShowCompositeCheckout( cart ) {
 		return false;
 	}
 	// TODO: if a non-wpcom product is in the cart, return false
-	// TODO: if the language is not en-us, return false
-	// TODO: if the geolocation is not in the US, return false
+	if ( ! locale?.toLowerCase().startsWith( 'en' ) ) {
+		return false;
+	}
+	if ( countryCode?.toLowerCase() !== 'us' ) {
+		return false;
+	}
 	if ( abtest( 'showCompositeCheckout' ) === 'composite' ) {
 		return true;
 	}
