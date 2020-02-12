@@ -124,13 +124,13 @@ module.exports = function() {
 	let strings = {},
 		nplurals = 2,
 		baseData,
-		hasAliasedTranslate = false;
+		functions = { ...DEFAULT_FUNCTIONS_ARGUMENTS_ORDER };
 
 	return {
 		visitor: {
 			ImportDeclaration( path ) {
-				// Set `hasAliasedTranslate` flag if `translate` from
-				// `i18n-calypso`` is aliased as `__`.
+				// Set functions.__ as reference to functions.translate if
+				// `translate` from  `i18n-calypso`` is aliased as `__`.
 				if (
 					'i18n-calypso' === path.node.source.value &&
 					path.node.specifiers.some(
@@ -141,7 +141,7 @@ module.exports = function() {
 							'__' === specifier.local.name
 					)
 				) {
-					hasAliasedTranslate = true;
+					functions.__ = functions.translate;
 				}
 			},
 
@@ -207,10 +207,7 @@ module.exports = function() {
 					.join( '/' );
 				translation.comments.reference = pathname + ':' + path.node.loc.start.line;
 
-				const functionKeys = ( state.opts.functions || DEFAULT_FUNCTIONS_ARGUMENTS_ORDER )[
-					// @todo alias __ with translate function keys instead of using the flag here
-					hasAliasedTranslate ? 'translate' : name
-				];
+				const functionKeys = state.opts.functions || functions[ name ];
 
 				if ( functionKeys ) {
 					path.node.arguments.slice( i ).forEach( ( arg, index ) => {
@@ -260,7 +257,7 @@ module.exports = function() {
 			Program: {
 				enter() {
 					strings = {};
-					hasAliasedTranslate = false;
+					functions = { ...DEFAULT_FUNCTIONS_ARGUMENTS_ORDER };
 				},
 				exit( path, state ) {
 					if ( isEmpty( strings ) ) {
