@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { getReaderFollows } from 'state/reader/follows/selectors';
-import getReaderStream from './get-reader-stream';
+import getReaderStream from 'state/reader/streams/selectors/get-reader-stream';
 import treeSelect from '@automattic/tree-select';
 import { injectRecommendations, getDistanceBetweenRecs, combineCards } from 'reader/stream/utils';
 

@@ -3,7 +3,7 @@
  */
 import { getDistanceBetweenRecs, RECS_PER_BLOCK } from 'reader/stream/utils';
 import { getReaderFollows } from 'state/reader/follows/selectors';
-import getReaderStream from './get-reader-stream';
+import getReaderStream from 'state/reader/streams/selectors/get-reader-stream';
 
 import 'state/reader/init';
 

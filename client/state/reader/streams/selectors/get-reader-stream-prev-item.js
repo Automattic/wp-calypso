@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getReaderStreamOffsetItem from './get-reader-stream-offset-item';
+import getReaderStreamOffsetItem from 'state/reader/streams/selectors/get-reader-stream-offset-item';
 
 import 'state/reader/init';
 
