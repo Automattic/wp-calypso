@@ -23,7 +23,7 @@
 		"forceConsistentCasingInFileNames": true,
 
 		"typeRoots": [ "../../node_modules/@types" ],
-		"types": [ "webpack-env" ],
+		"types": [],
 
 		"importHelpers": true
 	},
