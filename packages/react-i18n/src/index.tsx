@@ -2,9 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
-import { __, _n, _nx, _x } from '@wordpress/i18n';
-
-export const I18nContext = React.createContext< undefined | string >( undefined );
+import { __, _n, _nx, _x, setLocaleData } from '@wordpress/i18n';
 
 export interface I18nProps {
 	__: typeof __;
@@ -12,6 +10,46 @@ export interface I18nProps {
 	_nx: typeof _nx;
 	_x: typeof _x;
 	i18nLocale?: string;
+}
+
+const I18nContext = React.createContext< I18nProps >( { __, _n, _nx, _x } );
+
+interface Props {
+	/**
+	 * The current locale
+	 */
+	locale: string;
+
+	/**
+	 * A callback that resolves with the translations data
+	 */
+	onLocaleChange?( newLocale: string | undefined ): Promise< object >;
+}
+export const I18nProvider: React.FunctionComponent< Props > = ( {
+	children,
+	locale,
+	onLocaleChange = () => Promise.resolve( {} ),
+} ) => {
+	const [ contextValue, setContextValue ] = React.useState< I18nProps >( makeI18n( locale ) );
+	React.useEffect( () => {
+		let cancelled = false;
+		const cancel = () => {
+			cancelled = true;
+		};
+		onLocaleChange( locale ).then( nextLocaleData => {
+			if ( cancelled ) {
+				return;
+			}
+			setLocaleData( nextLocaleData );
+			setContextValue( makeI18n( locale ) );
+		} );
+		return cancel;
+	}, [ locale, onLocaleChange ] );
+	return <I18nContext.Provider value={ contextValue }>{ children }</I18nContext.Provider>;
+};
+
+function makeI18n( i18nLocale: string ) {
+	return { ...( i18nLocale && { i18nLocale } ), __, _n, _nx, _x };
 }
 
 /**
@@ -26,9 +64,8 @@ export interface I18nProps {
  * }
  */
 export const useI18n = (): I18nProps => {
-	const locale = React.useContext( I18nContext );
-	const [ i18n, setI18n ] = React.useState< I18nProps >( makeI18n( locale ) );
-	React.useEffect( () => setI18n( makeI18n( locale ) ), [ locale ] );
+	const i18n = React.useContext( I18nContext );
+	React.useDebugValue( i18n.i18nLocale );
 	return i18n;
 };
 
@@ -62,7 +99,3 @@ export const withI18n = < T extends I18nProps = I18nProps >(
 		/>
 	);
 };
-
-function makeI18n( locale: string | undefined ): I18nProps {
-	return { __, _n, _nx, _x, ...( locale && { i18nLocale: locale } ) };
-}
