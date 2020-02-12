@@ -9,10 +9,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-import VerticalNavItemMulti from '../vertical-nav/item-multi';
 import { domainManagementChangeSiteAddress, domainAddNew } from 'my-sites/domains/paths';
 import { type as domainTypes } from 'lib/domains/constants';
 import { getDomainTypeText } from 'lib/domains';
@@ -71,58 +69,6 @@ class WpcomDomainType extends React.Component {
 		} );
 	};
 
-	getPickCustomDomainNew() {
-		const { domain } = this.props;
-
-		const isWpcomDomain = get( domain, 'type' ) === domainTypes.WPCOM;
-
-		if ( ! isWpcomDomain ) {
-			return;
-		}
-
-		return (
-			<VerticalNavItemMulti
-				path={ domainAddNew( this.props.selectedSite.slug ) }
-				onClick={ this.handlePickCustomDomainClick }
-				materialIcon="search"
-				text={ this.props.translate( 'Pick a custom domain' ) }
-				description={ this.props.translate( 'Register or transfer custom domain name' ) }
-			/>
-		);
-	}
-
-	getSiteAddressChangeNew() {
-		const { domain } = this.props;
-
-		if ( domain.isWpcomStagingDomain ) {
-			return;
-		}
-
-		const isWpcomDomain = get( domain, 'type' ) === domainTypes.WPCOM;
-		const path = domainManagementChangeSiteAddress( this.props.selectedSite.slug, domain.name );
-
-		return (
-			<VerticalNavItemMulti
-				path={
-					isWpcomDomain
-						? path
-						: `https://${ this.props.domain.name }/wp-admin/index.php?page=my-blogs#blog_row_${ this.props.selectedSite.ID }`
-				}
-				external={ ! isWpcomDomain }
-				onClick={
-					isWpcomDomain ? this.handleChangeSiteAddressClick : this.handleEditSiteAddressClick
-				}
-				materialIcon="edit"
-				text={
-					isWpcomDomain
-						? this.props.translate( 'Change WordPress.com Site Address' )
-						: this.props.translate( 'Edit Site Address' )
-				}
-				description={ domain.name }
-			/>
-		);
-	}
-
 	getPickCustomDomain() {
 		const { domain } = this.props;
 
@@ -180,21 +126,10 @@ class WpcomDomainType extends React.Component {
 		);
 	}
 
-	getVerticalNavigationNew() {
-		return (
-			<VerticalNav>
-				{ this.getSiteAddressChangeNew() }
-				{ this.getPickCustomDomainNew() }
-			</VerticalNav>
-		);
-	}
-
 	render() {
 		const {
 			domain: { name: domain_name },
 		} = this.props;
-
-		const newStatusDesignNav = config.isEnabled( 'domains/new-status-design/nav' );
 
 		return (
 			<div className="domain-types__container">
@@ -204,7 +139,7 @@ class WpcomDomainType extends React.Component {
 					statusClass="status-success"
 					icon="check_circle"
 				/>
-				{ newStatusDesignNav ? this.getVerticalNavigationNew() : this.getVerticalNavigation() }
+				{ this.getVerticalNavigation() }
 			</div>
 		);
 	}
