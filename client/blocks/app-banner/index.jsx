@@ -39,6 +39,7 @@ import {
 } from './utils';
 import versionCompare from 'lib/version-compare';
 import { isWpMobileApp } from 'lib/mobile-app';
+import { shouldDisplayTosUpdateBanner } from 'state/selectors/should-display-tos-update-banner';
 
 /**
  * Style dependencies
@@ -72,7 +73,7 @@ export class AppBanner extends Component {
 		saveDismissTime: noop,
 		translate: identity,
 		recordAppBannerOpen: noop,
-		userAgent: typeof window !== 'undefined' ? navigator.userAgent : '',
+		userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : '',
 	};
 
 	stopBubblingEvents = event => {
@@ -93,7 +94,14 @@ export class AppBanner extends Component {
 	};
 
 	isVisible() {
-		const { dismissedUntil, currentSection } = this.props;
+		const { dismissedUntil, currentSection, isTosBannerVisible } = this.props;
+
+		// The ToS update banner is displayed in the same position as the mobile app banner. Since the ToS update
+		// has higher priority, we repress all other non-essential sticky banners if the ToS update banner needs to
+		// be displayed.
+		if ( isTosBannerVisible ) {
+			return false;
+		}
 
 		return this.isMobile() && ! isWpMobileApp() && ! isDismissed( dismissedUntil, currentSection );
 	}
@@ -260,6 +268,7 @@ const mapStateToProps = state => {
 		currentRoute,
 		fetchingPreferences: isFetchingPreferences( state ),
 		siteId: getSelectedSiteId( state ),
+		isTosBannerVisible: shouldDisplayTosUpdateBanner( state ),
 	};
 };
 
