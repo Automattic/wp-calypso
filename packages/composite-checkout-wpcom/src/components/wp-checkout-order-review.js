@@ -26,6 +26,7 @@ export default function WPCheckoutOrderReview( {
 	couponFieldStateProps,
 	siteUrl,
 	variantRequestStatus,
+	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
 } ) {
@@ -41,6 +42,7 @@ export default function WPCheckoutOrderReview( {
 					items={ items }
 					removeItem={ removeItem }
 					variantRequestStatus={ variantRequestStatus }
+					variantSelectOverride={ variantSelectOverride }
 					getItemVariants={ getItemVariants }
 					onChangePlanLength={ onChangePlanLength }
 				/>

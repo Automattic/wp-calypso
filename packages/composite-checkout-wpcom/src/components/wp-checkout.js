@@ -57,6 +57,7 @@ export default function WPCheckout( {
 	StateSelect,
 	renderDomainContactFields,
 	variantRequestStatus,
+	variantSelectOverride,
 	getItemVariants,
 } ) {
 	const translate = useTranslate();
@@ -70,6 +71,7 @@ export default function WPCheckout( {
 			onChangePlanLength={ changePlanLength }
 			siteUrl={ siteUrl }
 			variantRequestStatus={ variantRequestStatus }
+			variantSelectOverride={ variantSelectOverride }
 			getItemVariants={ getItemVariants }
 		/>
 	);
