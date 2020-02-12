@@ -212,9 +212,9 @@ module.exports = function() {
 					path.node.arguments.slice( i ).forEach( ( arg, index ) => {
 						const key = functionKeys[ index ];
 
-						if ( 'options_object' === key && arg.properties ) {
+						if ( 'ObjectExpression' === arg.type ) {
 							arg.properties.forEach( property => {
-								if ( ! 'ObjectProperty' !== property.type ) {
+								if ( 'ObjectProperty' !== property.type ) {
 									return;
 								}
 
