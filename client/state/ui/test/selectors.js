@@ -7,6 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	getApplication,
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
@@ -20,6 +21,28 @@ import {
 import { userState } from 'state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
+	describe( '#getApplication()', () => {
+		test( 'should return null if application is set', () => {
+			const selected = getApplication( {
+				ui: {
+					application: null,
+				},
+			} );
+
+			expect( selected ).to.be.null;
+		} );
+
+		test( 'should return the object for the selected site', () => {
+			const selected = getSelectedSite( {
+				ui: {
+					application: 'calypso',
+				},
+			} );
+
+			expect( selected ).to.eql( 'calypso' );
+		} );
+	} );
+
 	describe( '#getSelectedSite()', () => {
 		test( 'should return null if no site is selected', () => {
 			const selected = getSelectedSite( {

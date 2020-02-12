@@ -188,7 +188,6 @@ const sections = [
 		module: 'my-sites/stats',
 		secondary: true,
 		group: 'sites',
-		app: [ 'calypso', 'jetpack-cloud' ],
 	},
 	{
 		name: 'checklist',
