@@ -145,7 +145,7 @@ const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
 		tracksRecordEvent( 'wpcom_block_inserted', {
 			block_name: block.name,
 			blocks_replaced: false,
-			from_template_selector: !! window._isCurrentlyinsertingStarterPageTemplate,
+			from_template_selector: applyFilters( 'isInsertingPageTemplate', false ),
 		} );
 	} );
 };
