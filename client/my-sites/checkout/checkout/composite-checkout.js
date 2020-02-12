@@ -527,6 +527,11 @@ function isNotCouponError( error ) {
 	return ! couponErrorCodes.includes( error.code );
 }
 
+/**
+ * Create and return an object to be added to the cart
+ *
+ * @returns ResponseCartProduct
+ */
 function createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) {
 	let cartItem, cartMeta;
 
@@ -555,6 +560,8 @@ function createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) {
 	}
 
 	cartItem.extra = { ...cartItem.extra, context: 'calypstore' };
+
+	cartItem.uuid = 'unknown'; // This must be filled-in later
 
 	return cartItem;
 }
