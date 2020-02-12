@@ -126,13 +126,14 @@ class RegisteredDomainType extends React.Component {
 		return (
 			<div>
 				{ translate(
-					'We are setting up %(domain)s for you. It should start working immediately but may be unreliable in the first 2 hours. {{domainsLink}}Learn more{{/domainsLink}}',
+					'We are setting up {{strong}}%(domain)s{{/strong}} for you. It should start working immediately but may be unreliable in the first 30 minutes. {{domainsLink}}Learn more{{/domainsLink}}',
 					{
 						args: {
 							domain: domain_name,
 						},
 						components: {
 							domainsLink,
+							strong: <strong />,
 						},
 					}
 				) }
