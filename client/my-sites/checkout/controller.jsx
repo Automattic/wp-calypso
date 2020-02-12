@@ -22,6 +22,7 @@ import UpsellNudge from './upsell-nudge';
 import { isGSuiteRestricted } from 'lib/gsuite';
 import { getRememberedCoupon } from 'lib/cart/actions';
 import { sites } from 'my-sites/controller';
+import CartData from 'components/data/cart';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
@@ -54,19 +55,21 @@ export function checkout( context, next ) {
 	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
 
 	context.primary = (
-		<CheckoutSystemDecider
-			product={ product }
-			purchaseId={ purchaseId }
-			selectedFeature={ feature }
-			couponCode={ couponCode }
-			isComingFromSignup={ !! context.query.signup }
-			plan={ plan }
-			selectedSite={ selectedSite }
-			reduxStore={ context.store }
-			redirectTo={ context.query.redirect_to }
-			upgradeIntent={ context.query.intent }
-			clearTransaction={ false }
-		/>
+		<CartData>
+			<CheckoutSystemDecider
+				product={ product }
+				purchaseId={ purchaseId }
+				selectedFeature={ feature }
+				couponCode={ couponCode }
+				isComingFromSignup={ !! context.query.signup }
+				plan={ plan }
+				selectedSite={ selectedSite }
+				reduxStore={ context.store }
+				redirectTo={ context.query.redirect_to }
+				upgradeIntent={ context.query.intent }
+				clearTransaction={ false }
+			/>
+		</CartData>
 	);
 
 	next();

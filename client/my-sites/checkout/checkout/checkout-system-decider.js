@@ -9,7 +9,6 @@ import React from 'react';
 import CheckoutContainer from './checkout-container';
 import CompositeCheckout from './composite-checkout';
 import config from 'config';
-import CartData from 'components/data/cart';
 import { abtest } from 'lib/abtest';
 
 // Decide if we should use CompositeCheckout or CheckoutContainer
@@ -25,20 +24,19 @@ export default function CheckoutSystemDecider( {
 	redirectTo,
 	upgradeIntent,
 	clearTransaction,
+	cart,
 } ) {
-	if ( shouldShowCompositeCheckout() ) {
+	if ( shouldShowCompositeCheckout( cart ) ) {
 		return (
-			<CartData>
-				<CompositeCheckout
-					siteSlug={ selectedSite?.slug }
-					siteId={ selectedSite?.ID }
-					product={ product }
-					purchaseId={ purchaseId }
-					couponCode={ couponCode }
-					redirectTo={ redirectTo }
-					feature={ selectedFeature }
-				/>
-			</CartData>
+			<CompositeCheckout
+				siteSlug={ selectedSite?.slug }
+				siteId={ selectedSite?.ID }
+				product={ product }
+				purchaseId={ purchaseId }
+				couponCode={ couponCode }
+				redirectTo={ redirectTo }
+				feature={ selectedFeature }
+			/>
 		);
 	}
 
@@ -59,15 +57,18 @@ export default function CheckoutSystemDecider( {
 	);
 }
 
-function shouldShowCompositeCheckout() {
+function shouldShowCompositeCheckout( cart ) {
 	if ( ! config.isEnabled( 'composite-checkout-wpcom' ) ) {
 		return false;
 	}
-	// TODO: if a domain product is in the cart, return false
+	if ( cart?.products?.find( product => product.is_domain_registration ) ) {
+		return false;
+	}
 	// TODO: if a non-wpcom product is in the cart, return false
 	// TODO: if the language is not en-us, return false
 	// TODO: if the geolocation is not in the US, return false
 	if ( abtest( 'showCompositeCheckout' ) === 'composite' ) {
 		return true;
 	}
+	return false;
 }
