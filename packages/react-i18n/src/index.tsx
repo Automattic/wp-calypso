@@ -90,9 +90,10 @@ type Optionalize< T extends K, K > = Omit< T, keyof K >;
 export const withI18n = < T extends I18nProps = I18nProps >(
 	WrappedComponent: React.ComponentType< T >
 ): React.FunctionComponent< Optionalize< T, I18nProps > > => props => {
+	const i18n = useI18n();
 	return (
 		<WrappedComponent
-			{ ...useI18n() }
+			{ ...i18n }
 			// Required cast `props as T`
 			// See https://github.com/Microsoft/TypeScript/issues/28938
 			{ ...( props as T ) }
