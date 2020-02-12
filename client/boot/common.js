@@ -263,11 +263,11 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	installPerfmonPageHandlers();
 	setupContextMiddleware( reduxStore );
 	oauthTokenMiddleware();
+	setApplicationMiddleware();
 	loggedOutMiddleware( currentUser );
 	loggedInMiddleware( currentUser, reduxStore );
 	loadSectionsMiddleware();
 	setRouteMiddleware();
-	setApplicationMiddleware();
 	clearNoticesMiddleware();
 	unsavedFormsMiddleware();
 

@@ -291,8 +291,16 @@ const sections = [
 	},
 	// this MUST be the first section for /read paths so subsequent sections under /read can override settings
 	{
+		name: 'entry',
+		paths: [ '/' ],
+		module: 'entry',
+		secondary: true,
+		group: 'reader',
+		app: [ 'calypso', 'jetpack-cloud' ],
+	},
+	{
 		name: 'reader',
-		paths: [ '/', '/read' ],
+		paths: [ '/read' ],
 		module: 'reader',
 		secondary: true,
 		group: 'reader',
@@ -484,7 +492,7 @@ const sections = [
 	},
 	{
 		name: 'jetpack-cloud',
-		paths: [ '/', '/app' ],
+		paths: [ '/app' ],
 		module: 'landing/jetpack-cloud',
 		secondary: true,
 		group: 'jetpack-cloud',
