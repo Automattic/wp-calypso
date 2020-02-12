@@ -7,7 +7,7 @@ import { find } from 'lodash';
  * Internal dependencies
  */
 import { prepareComparableUrl } from 'state/reader/follows/utils';
-import getReaderAliasedFollowFeedUrl from 'state/selectors/get-reader-aliased-follow-feed-url';
+import getReaderAliasedFollowFeedUrl from 'state/reader/follows/selectors/get-reader-aliased-follow-feed-url';
 
 import 'state/reader/init';
 

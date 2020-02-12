@@ -11,7 +11,7 @@ import {
 	READER_STREAMS_SELECT_PREV_ITEM,
 	READER_STREAMS_UPDATES_RECEIVE,
 } from 'state/action-types';
-import getStream from 'state/selectors/get-reader-stream';
+import { getStream } from 'state/reader/streams/selectors';
 import { getStreamType } from 'reader/utils';
 
 import 'state/data-layer/wpcom/read/streams';

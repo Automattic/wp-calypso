@@ -2,8 +2,10 @@
  * Internal dependencies
  */
 import { getDistanceBetweenRecs, RECS_PER_BLOCK } from 'reader/stream/utils';
-import getReaderFollows from 'state/selectors/get-reader-follows';
-import getReaderStream from 'state/selectors/get-reader-stream';
+import { getReaderFollows } from 'state/reader/follows/selectors';
+import getReaderStream from 'state/reader/streams/selectors/get-reader-stream';
+
+import 'state/reader/init';
 
 /*
  * shouldRequestRecs is used for calculating whether or not we need more recommendations
