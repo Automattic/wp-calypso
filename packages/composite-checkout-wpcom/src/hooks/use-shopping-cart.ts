@@ -375,13 +375,13 @@ export function useShoppingCart(
 		}
 	}, [ shouldShowNotification.didAddCoupon, responseCart.coupon, showAddCouponSuccessMessage ] );
 
-	const addItem: ( ResponseCartProduct ) => void = responseCartProductToAdd => {
+	const addItem: ( ResponseCartProduct ) => void = useCallback( responseCartProductToAdd => {
 		hookDispatch( { type: 'ADD_CART_ITEM', responseCartProductToAdd } );
-	};
+	}, [] );
 
-	const removeItem: ( string ) => void = uuidToRemove => {
+	const removeItem: ( string ) => void = useCallback( uuidToRemove => {
 		hookDispatch( { type: 'REMOVE_CART_ITEM', uuidToRemove } );
-	};
+	}, [] );
 
 	const changePlanLength = ( planItem, planLength ) => {
 		// TODO: change plan length
@@ -393,9 +393,9 @@ export function useShoppingCart(
 		debug( 'updating prices for address in cart', address );
 	};
 
-	const submitCoupon: ( string ) => void = couponToAdd => {
+	const submitCoupon: ( string ) => void = useCallback( couponToAdd => {
 		hookDispatch( { type: 'ADD_COUPON', couponToAdd } );
-	};
+	}, [] );
 
 	return {
 		isLoading: cacheStatus === 'fresh',
