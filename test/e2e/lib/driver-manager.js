@@ -9,6 +9,7 @@ import config from 'config';
 import proxy from 'selenium-webdriver/proxy';
 import SauceLabs from 'saucelabs';
 import { times } from 'lodash';
+import { readFileSync } from 'fs';
 
 import * as remote from 'selenium-webdriver/remote';
 
@@ -143,9 +144,9 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 				options.addArguments( '--no-first-run' );
 
 				if ( useCustomUA ) {
-					options.addArguments(
-						'user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'
-					);
+					const chromeVersion = await readFileSync( './.chromedriver_version', 'utf8' ).trim();
+					const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ chromeVersion } Safari/537.36`;
+					options.addArguments( userAgent );
 				}
 				if (
 					process.env.HEADLESS ||
