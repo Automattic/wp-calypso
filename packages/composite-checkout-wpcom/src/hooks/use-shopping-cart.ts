@@ -161,6 +161,8 @@ function shoppingCartHookReducer(
 					return state;
 			}
 	}
+
+	return state;
 }
 
 function getUpdatedCouponStatus( currentCouponStatus: CouponStatus, responseCart: ResponseCart ) {
