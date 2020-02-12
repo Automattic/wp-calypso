@@ -16,9 +16,11 @@ import {
 	addItemToResponseCart,
 	processRawResponse,
 	addCouponToResponseCart,
+	addLocationToResponseCart,
 	WPCOMCart,
 	WPCOMCartItem,
 	CheckoutCartItem,
+	CartLocation,
 } from '../types';
 import { translateWpcomCartToCheckoutCart } from '../lib/translate-cart';
 
@@ -42,7 +44,6 @@ type ShoppingCartHookState = {
 	responseCart: ResponseCart;
 	couponStatus: CouponStatus;
 	cacheStatus: CacheStatus;
-	location: CartLocation;
 	shouldShowNotification: {
 		didAddCoupon: boolean;
 	};
@@ -53,11 +54,6 @@ const getInitialShoppingCartHookState: () => ShoppingCartHookState = () => {
 		responseCart: emptyResponseCart,
 		cacheStatus: 'fresh',
 		couponStatus: 'fresh',
-		location: {
-			countryCode: null,
-			postalCode: null,
-			subdivisionCode: null,
-		},
 		shouldShowNotification: {
 			didAddCoupon: false,
 		},
@@ -168,7 +164,12 @@ function shoppingCartHookReducer(
 					return state;
 			}
 		case 'SET_LOCATION':
-			return { ...state, location: action.location };
+			debug( 'setting location on cart', action.location );
+			return {
+				...state,
+				responseCart: addLocationToResponseCart( state.responseCart, action.location ),
+				cacheStatus: 'invalid',
+			};
 	}
 
 	return state;
