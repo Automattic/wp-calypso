@@ -20,7 +20,13 @@
  */
 export interface RequestCart {
 	products: RequestCartProduct[];
-	tax: null | { location: { country_code: string; postal_code: string; subdivision_code: string } };
+	tax: null | {
+		location: {
+			country_code: string | null;
+			postal_code: string | null;
+			subdivision_code: string | null;
+		};
+	};
 	coupon: string;
 	currency: string;
 	locale: string;
