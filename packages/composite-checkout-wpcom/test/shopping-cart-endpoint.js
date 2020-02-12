@@ -17,6 +17,10 @@ describe( 'removeItemFromResponseCart', function() {
 		is_coupon_applied: false,
 		coupon_discounts_integer: [],
 		locale: 'en-us',
+		tax: {
+			location: [],
+			display_taxes: false,
+		},
 	};
 
 	describe( 'cart with two items and item present', function() {
@@ -115,6 +119,10 @@ describe( 'addCouponToResponseCart', function() {
 		is_coupon_applied: false,
 		coupon_discounts_integer: [],
 		locale: 'en-us',
+		tax: {
+			location: [],
+			display_taxes: false,
+		},
 	};
 
 	const result = addCouponToResponseCart( responseCart, 'fakecoupon' );
