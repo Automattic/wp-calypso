@@ -39,12 +39,31 @@
 	}
 }
 
+@mixin domain_status_color( $color ) {
+	border-top: 5px solid $color;
+	> div.domain-status__icon {
+		color: $color;
+		> svg {
+			fill: $color;
+		}
+	}
+}
+
 .domain-types__container {
-	.domain-types__status-active {
-		border-top: 5px solid #008a20;
+	.status-success {
+		@include domain_status_color( #008a20 );
+	}
+	.status-pending {
+		@include domain_status_color( #3582C4 );
+	}
+	.status-warning {
+		@include domain_status_color( #B69000 );
+	}
+	.status-error {
+		@include domain_status_color( #C9356E );
 	}
 
-	.domain-types__status {
+	.domain-status__card {
 		h2 {
 			font-size: 32px;
 		}
@@ -54,12 +73,6 @@
 			align-items: center;
 			> svg {
 				margin-right: 5px;
-			}
-			&.domain-types__active {
-				color: #008a20;
-				> svg {
-					fill: #008a20;
-				}
 			}
 		}
 	}

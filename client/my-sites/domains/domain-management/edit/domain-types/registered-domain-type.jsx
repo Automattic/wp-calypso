@@ -12,9 +12,10 @@ import { Card } from '@automattic/components';
 import VerticalNav from 'components/vertical-nav';
 import { domainAddNew } from 'my-sites/domains/paths';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
-import MaterialIcon from 'components/material-icon';
 import { withLocalizedMoment } from 'components/localized-moment';
 import VerticalNavItemMulti from '../vertical-nav/item-multi';
+import DomainStatus from '../card/domain-status';
+
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 
 class RegisteredDomainType extends React.Component {
@@ -130,14 +131,19 @@ class RegisteredDomainType extends React.Component {
 	render() {
 		const { domain, moment } = this.props;
 		const { name: domain_name } = domain;
+
+		// const recentlyRegistered = moment
+		// 	.utc( registrationDate )
+		// 	.isAfter( moment.utc().subtract( 15, 'minutes' ) );
+
 		return (
 			<div className="domain-types__container">
-				<Card compact={ true } className="domain-types__status domain-types__status-active">
-					<h2>{ domain_name }</h2>
-					<div className="domain-types__active">
-						<MaterialIcon icon="check_circle" /> Active
-					</div>
-				</Card>
+				<DomainStatus
+					header={ domain_name }
+					statusText={ this.props.translate( 'Active' ) }
+					statusClass="status-success"
+					icon="check_circle"
+				/>
 				<Card compact={ true }>Expires: { moment( domain.expiry ).format( 'LL' ) }</Card>
 				<Card compact={ true }>
 					Auto Renew (on) <CompactFormToggle checked={ true } />

@@ -9,14 +9,13 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItemMulti from '../vertical-nav/item-multi';
 import { domainManagementChangeSiteAddress, domainAddNew } from 'my-sites/domains/paths';
 import { type as domainTypes } from 'lib/domains/constants';
 import { getDomainTypeText } from 'lib/domains';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
-import MaterialIcon from 'components/material-icon';
+import DomainStatus from '../card/domain-status';
 
 class WpcomDomainType extends React.Component {
 	handleEditSiteAddressClick = () => {
@@ -137,12 +136,12 @@ class WpcomDomainType extends React.Component {
 		} = this.props;
 		return (
 			<div className="domain-types__container">
-				<Card compact={ true } className="domain-types__status domain-types__status-active">
-					<h2>{ domain_name }</h2>
-					<div className="domain-types__active">
-						<MaterialIcon icon="check_circle" /> Active
-					</div>
-				</Card>
+				<DomainStatus
+					header={ domain_name }
+					statusText={ this.props.translate( 'Active' ) }
+					statusClass="status-success"
+					icon="check_circle"
+				/>
 				{ this.getVerticalNavigation() }
 			</div>
 		);
