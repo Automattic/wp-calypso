@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { flowRight as compose } from 'lodash';
 
 /**
@@ -9,6 +8,8 @@ import { flowRight as compose } from 'lodash';
  */
 import { transferStates } from 'state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
+
+import 'state/automated-transfer/init';
 
 /**
  * Maps automated transfer status value to indication if transfer is failed

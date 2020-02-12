@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST,
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE,
@@ -15,6 +14,8 @@ import 'state/data-layer/wpcom/sites/automated-transfer/eligibility';
 import 'state/data-layer/wpcom/sites/automated-transfer/initiate';
 import 'state/data-layer/wpcom/sites/automated-transfer/status';
 
+import 'state/automated-transfer/init';
+
 /**
  * Initiate a transfer to an Atomic site.
  *
@@ -22,7 +23,7 @@ import 'state/data-layer/wpcom/sites/automated-transfer/status';
  * plugin ID or theme zip, see state/themes/actions#initiateThemeTransfer
  *
  * @param {number} siteId The id of the site to transfer
- * @param {File} pluginZip The plugin to upload and install on transferred site
+ * @param {window.File} pluginZip The plugin to upload and install on transferred site
  * @returns {object} An action object
  */
 export const initiateAutomatedTransferWithPluginZip = ( siteId, pluginZip ) => ( {
