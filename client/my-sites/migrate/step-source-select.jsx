@@ -3,10 +3,12 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { Button, Card, CompactCard } from '@automattic/components';
 import page from 'page';
 import { get } from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -14,13 +16,13 @@ import CardHeading from 'components/card-heading';
 import HeaderCake from 'components/header-cake';
 import wpLib from 'lib/wp';
 import { recordTracksEvent } from 'state/analytics/actions';
+
 /**
  * Style dependencies
  */
 import './section-migrate.scss';
 import SitesBlock from 'my-sites/migrate/components/sites-block';
 import { redirectTo } from 'my-sites/migrate/helpers';
-import { connect } from 'react-redux';
 
 const wpcom = wpLib.undocumented();
 
