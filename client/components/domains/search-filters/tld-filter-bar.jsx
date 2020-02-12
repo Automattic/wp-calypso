@@ -97,20 +97,24 @@ export class TldFilterBar extends Component {
 	}
 
 	render() {
-		if ( this.props.showPlaceholder ) {
+		const { showDesignUpdate, isSignupStep, showPlaceholder, translate } = this.props;
+
+		if ( showPlaceholder ) {
 			return this.renderPlaceholder();
 		}
 
-		const className = classNames( '', {
-			'search-filters__buttons': ! this.props.showDesignUpdate,
-			'search-filters__checkboxes': this.props.showDesignUpdate,
-			'search-filters__tld-filter-bar--is-domain-management': ! this.props.isSignupStep,
+		const className = classNames( {
+			'search-filters__buttons': ! showDesignUpdate,
+			'search-filters__checkboxes': showDesignUpdate,
+			'search-filters__tld-filter-bar--is-domain-management': ! isSignupStep,
 		} );
 
-		if ( this.props.showDesignUpdate ) {
+		if ( showDesignUpdate ) {
 			return (
 				<CompactCard className={ className }>
-					<FormLegend className="search-filters__filter-by">Filter by: </FormLegend>
+					<FormLegend className="search-filters__filter-by">
+						{ translate( 'Filter by:' ) }
+					</FormLegend>
 					{ this.renderSuggestedCheckboxes() }
 					{ this.renderPopoverButton() }
 					{ this.state.showPopover && this.renderPopover() }
