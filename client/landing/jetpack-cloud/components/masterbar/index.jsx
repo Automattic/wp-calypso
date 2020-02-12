@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -16,12 +17,14 @@ import Masterbar from 'layout/masterbar/masterbar';
 import './style.scss';
 
 export default function() {
+	const translate = useTranslate();
+
 	return (
 		<Masterbar>
 			<Item
 				className="masterbar__item-home"
 				url="/"
-				tooltip="Jetpack Cloud Homepage" /* @todo: localize the string */
+				tooltip={ translate( 'Jetpack Cloud Homepage' ) }
 			>
 				<JetpackLogo size={ 28 } full monochrome />
 			</Item>

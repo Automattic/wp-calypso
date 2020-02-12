@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -69,6 +70,8 @@ class JetpackCloudSidebar extends Component {
 	};
 
 	render() {
+		const { translate } = this.props;
+
 		return (
 			<Sidebar>
 				<SidebarRegion>
@@ -76,7 +79,7 @@ class JetpackCloudSidebar extends Component {
 					<SidebarMenu>
 						<SidebarItem
 							link="/"
-							label="Dashboard" // @todo: Localize
+							label={ translate( 'Dashboard' ) }
 							materialIcon="dashboard"
 							materialIconStyle="filled"
 							selected={ this.isSelected( '/' ) }
@@ -87,23 +90,23 @@ class JetpackCloudSidebar extends Component {
 						onClick={ this.handleExpandableMenuClick( '/backups' ) }
 						materialIcon="backup"
 						materialIconStyle="filled"
-						title="Backups" // @todo: Localize
+						title={ translate( 'Backups' ) }
 					>
 						<ul>
 							<SidebarItem
-								label="Backups" // @todo: Localize
+								label={ translate( 'Backups' ) }
 								link="/backups"
 								onNavigate={ this.onNavigate }
 								selected={ this.isSelected( '/backups' ) }
 							/>
 							<SidebarItem
-								label="Restore site" // @todo: Localize
+								label={ translate( 'Restore site' ) }
 								link="#" // @todo: Add /backup/restore route
 								onNavigate={ this.onNavigate }
 								selected={ this.isSelected( '/backups/restore' ) }
 							/>
 							<SidebarItem
-								label="Settings" // @todo: Localize
+								label={ translate( 'Settings' ) }
 								link="#" // @todo: Add backup/settings route
 								onNavigate={ this.onNavigate }
 								selected={ this.isSelected( '/backups/settings' ) }
@@ -115,23 +118,23 @@ class JetpackCloudSidebar extends Component {
 						onClick={ this.handleExpandableMenuClick( '/scan' ) }
 						materialIcon="security" // @todo: The Scan logo differs from the Material Icon used here
 						materialIconStyle="filled"
-						title="Scan" // @todo: Localize
+						title={ translate( 'Scan' ) }
 					>
 						<ul>
 							<SidebarItem
-								label="Scanner" // @todo: Localize
+								label={ translate( 'Scanner' ) }
 								link="/scan"
 								onNavigate={ this.onNavigate }
 								selected={ this.isSelected( '/scan' ) }
 							/>
 							<SidebarItem
-								label="History" // @todo: Localize
+								label={ translate( 'History' ) }
 								link="#" // @todo: Add /scan/history route
 								onNavigate={ this.onNavigate }
 								selected={ this.isSelected( '/scan/history' ) }
 							/>
 							<SidebarItem
-								label="Settings" // @todo: Localize
+								label={ translate( 'Settings' ) }
 								link="#" // @todo: Add /scan/settings route
 								onNavigate={ this.onNavigate }
 								selected={ this.isSelected( '/scan/settings' ) }
@@ -142,7 +145,7 @@ class JetpackCloudSidebar extends Component {
 				<SidebarFooter>
 					<SidebarMenu>
 						<SidebarItem
-							label="Support" // @todo: Localize
+							label={ translate( 'Support' ) }
 							link="#" // @todo: Add /support route or change link to other destination
 							materialIcon="help"
 							materialIconStyle="filled"
@@ -151,7 +154,7 @@ class JetpackCloudSidebar extends Component {
 						/>
 						<SidebarItem
 							forceInternalLink={ true }
-							label="Manage site" // @todo: Localize
+							label={ translate( 'Manage site' ) }
 							link="https://wordpress.com/stats" // @todo: Confirm a correct link is used here
 							materialIcon="arrow_back"
 							materialIconStyle="filled"
@@ -163,4 +166,4 @@ class JetpackCloudSidebar extends Component {
 	}
 }
 
-export default JetpackCloudSidebar;
+export default localize( JetpackCloudSidebar );
