@@ -116,10 +116,11 @@ export default function WPCheckout( {
 			),
 			completeStepContent: <WPContactForm summary isComplete={ true } isActive={ false } />,
 			isCompleteCallback: () => {
+				// TODO: debounce this or only call it if there is a change
 				updateLocation( {
-					countryCode: contactInfo.countryCode,
-					postalCode: contactInfo.postalCode,
-					subdivisionCode: contactInfo.state,
+					countryCode: contactInfo.countryCode.value,
+					postalCode: contactInfo.postalCode.value,
+					subdivisionCode: contactInfo.state.value,
 				} );
 				return isCompleteAndValid( contactInfo );
 			},
