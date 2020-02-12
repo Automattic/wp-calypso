@@ -54,6 +54,7 @@
 		"domains/kracken-ui/max-characters-filter": true,
 		"domains/kracken-ui/pagination": true,
 		"domains/new-status-design": true,
+		"domains/new-status-design/auto-renew": false,
 		"domain-step-design-update-v2": true,
 		"external-media": true,
 		"external-media/google-photos": true,

@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { Card } from '@automattic/components';
 import VerticalNav from 'components/vertical-nav';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
@@ -23,6 +24,8 @@ import {
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification';
 import { isRecentlyRegistered } from 'lib/domains/utils';
 import { DOMAINS } from 'lib/url/support';
+import SubscriptionSettings from '../card/subscription-settings';
+import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 
@@ -137,11 +140,25 @@ class RegisteredDomainType extends React.Component {
 		);
 	}
 
+	renderAutoRenew() {
+		return (
+			<Card compact={ true }>
+				Auto Renew (on) <CompactFormToggle checked={ true } />
+			</Card>
+		);
+	}
+
+	handlePaymentSettingsClick = () => {
+		this.props.recordPaymentSettingsClick( this.props.domain );
+	};
+
 	render() {
 		const { domain, moment } = this.props;
 		const { name: domain_name } = domain;
 
 		const { statusText, statusClass, icon } = this.resolveStatus();
+
+		const newStatusDesignAutoRenew = config.isEnabled( 'domains/new-status-design/auto-renew' );
 
 		return (
 			<div className="domain-types__container">
@@ -160,17 +177,33 @@ class RegisteredDomainType extends React.Component {
 						/>
 					) }
 					{ this.renderRecentlyRegistered() }
+					{ ! newStatusDesignAutoRenew && (
+						<div>
+							<SubscriptionSettings
+								type={ domain.type }
+								subscriptionId={ domain.subscriptionId }
+								siteSlug={ this.props.selectedSite.slug }
+								onClick={ this.handlePaymentSettingsClick }
+							/>
+						</div>
+					) }
 				</DomainStatus>
-				<Card compact={ true }>Expires: { moment( domain.expiry ).format( 'LL' ) }</Card>
 				<Card compact={ true }>
-					Auto Renew (on) <CompactFormToggle checked={ true } />
+					{ this.props.translate( 'Expires: %(expiry_date)s', {
+						args: {
+							expiry_date: moment( domain.expiry ).format( 'LL' ),
+						},
+					} ) }
 				</Card>
+				{ newStatusDesignAutoRenew && this.renderAutoRenew() }
 				{ this.getVerticalNavigation() }
 			</div>
 		);
 	}
 }
 
-export default connect( null, { recordTracksEvent, recordGoogleEvent } )(
-	withLocalizedMoment( localize( RegisteredDomainType ) )
-);
+export default connect( null, {
+	recordTracksEvent,
+	recordGoogleEvent,
+	recordPaymentSettingsClick,
+} )( withLocalizedMoment( localize( RegisteredDomainType ) ) );
