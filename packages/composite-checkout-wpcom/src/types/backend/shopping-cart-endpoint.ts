@@ -97,6 +97,7 @@ export interface ResponseCartProduct {
 	meta: string;
 	volume: number;
 	extra: object;
+	uuid: string;
 }
 
 export const prepareRequestCartProduct: ( ResponseCartProduct ) => RequestCartProduct = ( {
@@ -129,3 +130,64 @@ export const prepareRequestCart: ( ResponseCart ) => RequestCart = ( {
 		// extra: any[]; // TODO: fix this
 	} as RequestCart;
 };
+
+export function removeItemFromResponseCart(
+	cart: ResponseCart,
+	uuidToRemove: string
+): ResponseCart {
+	return {
+		...cart,
+		products: cart.products.filter( product => {
+			return product.uuid !== uuidToRemove;
+		} ),
+	};
+}
+
+export function addCouponToResponseCart( cart: ResponseCart, couponToAdd: string ): ResponseCart {
+	return {
+		...cart,
+		coupon: couponToAdd,
+		is_coupon_applied: false,
+	};
+}
+
+export function processRawResponse( rawResponseCart ): ResponseCart {
+	return {
+		...rawResponseCart,
+		products: rawResponseCart.products.map( ( product, index ) => {
+			return {
+				...product,
+				uuid: index.toString(),
+			};
+		} ),
+	};
+}
+
+export function addItemToResponseCart(
+	responseCart: ResponseCart,
+	product: ResponseCartProduct
+): ResponseCart {
+	const uuid = getFreshCartItemUUID( responseCart );
+	const newProductItem = addUUIDToResponseCartProduct( product, uuid );
+	return {
+		...responseCart,
+		products: [ ...responseCart.products, newProductItem ],
+	};
+}
+
+function getFreshCartItemUUID( responseCart: ResponseCart ): string {
+	const maxUUID = responseCart.products
+		.map( product => product.uuid )
+		.reduce( ( accum, current ) => ( accum > current ? accum : current ), '' );
+	return maxUUID + '1';
+}
+
+function addUUIDToResponseCartProduct(
+	product: ResponseCartProduct,
+	uuid: string
+): ResponseCartProduct {
+	return {
+		...product,
+		uuid,
+	};
+}

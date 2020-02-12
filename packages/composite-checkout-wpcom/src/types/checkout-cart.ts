@@ -36,6 +36,7 @@ export type WPCOMCartItem = CheckoutCartItem & {
 		product_id: number;
 		extra: object;
 		volume?: number;
+		is_domain_registration?: boolean;
 	};
 };
 

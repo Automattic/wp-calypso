@@ -3,7 +3,7 @@ import '@automattic/calypso-polyfills';
 /**
  * Internal dependencies
  */
-import { RequestCart, ResponseCart } from '../types';
+import { RequestCart } from '../types';
 
 /**
  * A fake WPCOM shopping cart endpoint.
@@ -13,7 +13,7 @@ export async function mockSetCartEndpoint( {
 	currency: requestCurrency,
 	coupon: requestCoupon,
 	locale: requestLocale,
-}: RequestCart ): Promise< ResponseCart > {
+}: RequestCart ): Promise< object > {
 	const products = requestProducts.map( convertRequestProductToResponseProduct( requestCurrency ) );
 
 	const taxInteger = products.reduce( ( accum, current ) => {
@@ -44,7 +44,7 @@ export async function mockSetCartEndpoint( {
 		coupon: requestCoupon,
 		is_coupon_applied: true,
 		coupon_discounts_integer: [],
-	} as ResponseCart;
+	};
 }
 
 function convertRequestProductToResponseProduct( currency ) {
@@ -81,9 +81,7 @@ function convertRequestProductToResponseProduct( currency ) {
 	};
 }
 
-export function mockGetCartEndpointWith(
-	initialCart: ResponseCart
-): ( string ) => Promise< ResponseCart > {
+export function mockGetCartEndpointWith( initialCart: object ): ( string ) => Promise< object > {
 	return async () => {
 		return initialCart;
 	};

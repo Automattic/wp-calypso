@@ -67,7 +67,7 @@ function WPLineItem( { item, className, hasDeleteButton, removeItem } ) {
 							setIsModalVisible( false );
 						} }
 						primaryAction={ () => {
-							removeItem( item );
+							removeItem( item.wpcom_meta.uuid );
 						} }
 						title={ modalCopy.title }
 						copy={ modalCopy.description }
