@@ -137,7 +137,7 @@ function translateWpcomCartItemToCheckoutCartItem(
 	is_coupon_applied: boolean,
 	coupon_discounts_integer: number[],
 	localizeCurrency: ( string, number ) => string
-): ( ResponseCartProduct, number ) => WPCOMCartItem {
+): ( ResponseCartProduct ) => WPCOMCartItem {
 	return ( serverCartItem: ResponseCartProduct ) => {
 		const {
 			product_id,
@@ -175,6 +175,7 @@ function translateWpcomCartItemToCheckoutCartItem(
 				uuid: uuid,
 				meta: typeof meta === 'string' ? meta : undefined,
 				product_id,
+				product_slug,
 				extra,
 				volume,
 				is_domain_registration,
