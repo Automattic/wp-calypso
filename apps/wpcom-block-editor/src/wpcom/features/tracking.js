@@ -4,6 +4,7 @@
  */
 import { use, select } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
+import { applyFilters } from '@wordpress/hooks';
 import { castArray } from 'lodash';
 import debugFactory from 'debug';
 
@@ -88,7 +89,7 @@ const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
 		tracksRecordEvent( 'wpcom_block_inserted', {
 			block_name: block.name,
 			blocks_replaced: false,
-			from_template_selector: !! window._isCurrentlyinsertingStarterPageTemplate,
+			from_template_selector: applyFilters( 'isInsertingPageTemplate', false ),
 		} );
 	} );
 };
