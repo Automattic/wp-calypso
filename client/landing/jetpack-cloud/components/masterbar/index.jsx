@@ -19,10 +19,9 @@ export default function() {
 	return (
 		<Masterbar>
 			<Item
-				tipTarget="jetpack"
 				className="masterbar__item-home"
 				url="/"
-				tooltip="Jetpack Cloud Homepage"
+				tooltip="Jetpack Cloud Homepage" /* @todo: localize the string */
 			>
 				<JetpackLogo size={ 28 } full monochrome />
 			</Item>
