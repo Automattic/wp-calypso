@@ -172,7 +172,7 @@ export class JetpackAuthorize extends Component {
 			// as controlled by MAX_AUTH_ATTEMPTS.
 			const attempts = this.props.authAttempts || 0;
 			this.retryingAuth = true;
-			return retryAuth( site, attempts + 1, nextProps.authQuery.from );
+			return retryAuth( site, attempts + 1, nextProps.authQuery.from, redirectAfterAuth );
 		}
 	}
 
