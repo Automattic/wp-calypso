@@ -1,6 +1,7 @@
-name: Greet Everyone
-# This workflow is triggered on pushes to the repository.
-on: [push]
+on:
+  push:
+    paths:
+    - 'apps/full-site-editing/full-site-editing-plugin/*'
 
 jobs:
   build:
