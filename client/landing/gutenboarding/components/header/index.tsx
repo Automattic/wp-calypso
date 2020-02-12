@@ -21,7 +21,6 @@ import DomainPickerButton from '../domain-picker-button';
 import { selectorDebounce } from '../../constants';
 import Link from '../link';
 import { Step } from '../../steps';
-import { getSiteSlug } from '../../utils';
 
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
@@ -121,9 +120,7 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 
 	if ( newSite ) {
 		resetOnboardStore();
-		window.location.href = `/block-editor/page/${ getSiteSlug(
-			newSite?.url
-		) }/home?is-gutenboarding`;
+		window.location.href = `/block-editor/page/${ newSite.blogid }/home?is-gutenboarding`;
 	}
 
 	return (
