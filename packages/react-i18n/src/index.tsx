@@ -2,17 +2,31 @@
  * External dependencies
  */
 import * as React from 'react';
-import { __, _n, _nx, _x, setLocaleData } from '@wordpress/i18n';
 
-export interface I18nProps {
-	__: typeof __;
-	_n: typeof _n;
-	_nx: typeof _nx;
-	_x: typeof _x;
-	i18nLocale?: string;
+function makeI18n( i18nLocale: string | undefined, localeData?: object ): I18nProps {
+	delete require.cache[ require.resolve( '@wordpress/i18n' ) ];
+	const { setLocaleData, __, _n, _nx, _x } = require( '@wordpress/i18n' );
+	if ( localeData ) {
+		setLocaleData( localeData );
+	}
+	return {
+		__,
+		_n,
+		_nx,
+		_x,
+		i18nLocale,
+	};
 }
 
-const I18nContext = React.createContext< I18nProps >( { __, _n, _nx, _x } );
+export interface I18nProps {
+	__: typeof import('@wordpress/i18n').__;
+	_n: typeof import('@wordpress/i18n')._n;
+	_nx: typeof import('@wordpress/i18n')._nx;
+	_x: typeof import('@wordpress/i18n')._x;
+	i18nLocale: string | undefined;
+}
+
+const I18nContext = React.createContext< I18nProps >( makeI18n( undefined ) );
 
 interface Props {
 	/**
@@ -40,17 +54,13 @@ export const I18nProvider: React.FunctionComponent< Props > = ( {
 			if ( cancelled ) {
 				return;
 			}
-			setLocaleData( nextLocaleData );
-			setContextValue( makeI18n( locale ) );
+
+			setContextValue( makeI18n( locale, nextLocaleData ) );
 		} );
 		return cancel;
 	}, [ locale, onLocaleChange ] );
 	return <I18nContext.Provider value={ contextValue }>{ children }</I18nContext.Provider>;
 };
-
-function makeI18n( i18nLocale: string ) {
-	return { ...( i18nLocale && { i18nLocale } ), __, _n, _nx, _x };
-}
 
 /**
  * React hook providing i18n translate functions
