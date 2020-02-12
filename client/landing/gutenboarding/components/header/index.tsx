@@ -21,7 +21,7 @@ import DomainPickerButton from '../domain-picker-button';
 import { selectorDebounce } from '../../constants';
 import Link from '../link';
 import { Step } from '../../steps';
-import { getSiteSlug, getSiteCreationParams } from '../../utils';
+import { getSiteSlug } from '../../utils';
 
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
@@ -88,25 +88,29 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		</span>
 	);
 
-	const siteUrl =
-		currentDomain?.domain_name || siteTitle || currentUser?.username || newUser?.username;
-
-	const siteCreationData = {
-		siteTitle,
-		siteVertical,
-		...( siteUrl && { siteUrl } ),
-		...( selectedDesign?.slug && { theme: selectedDesign?.slug } ),
-	};
-
-	const handleCreateSite = ( bearerToken?: string ) => {
+	const handleCreateSite = ( username: string, bearerToken?: string ) => {
 		setIsCreatingSite( true );
 		history.push( Step.CreateSite );
 
-		createSite( { ...getSiteCreationParams( siteCreationData ), authToken: bearerToken } );
+		const siteUrl = currentDomain?.domain_name || siteTitle || username;
+		createSite( {
+			blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
+			blog_title: siteTitle,
+			options: {
+				site_vertical: siteVertical?.id,
+				site_vertical_name: siteVertical?.label,
+				site_information: {
+					title: siteTitle,
+				},
+				site_creation_flow: 'gutenboarding',
+				theme: `pub/${ selectedDesign?.slug }`,
+			},
+			...( bearerToken && { authToken: bearerToken } ),
+		} );
 	};
 
-	if ( shouldCreate && newUser ) {
-		handleCreateSite( newUser.bearerToken );
+	if ( shouldCreate && newUser && newUser.bearerToken && newUser.username ) {
+		handleCreateSite( newUser.username, newUser.bearerToken );
 		setShouldCreate( false );
 	}
 
@@ -160,7 +164,9 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 							className="gutenboarding__header-next-button"
 							isPrimary
 							isLarge
-							onClick={ () => ( currentUser ? handleCreateSite() : handleSignup() ) }
+							onClick={ () =>
+								currentUser ? handleCreateSite( currentUser.username ) : handleSignup()
+							}
 							disabled={ shouldCreate }
 						>
 							{ NO__( 'Create my site' ) }
