@@ -13,13 +13,9 @@ import Head from '../components/head';
 import EmptyContent from 'components/empty-content';
 import { chunkCssLinks } from './utils';
 
-function Browsehappy( { faviconURL, entrypoint, isRTL, lang, isFluidWidth, dashboardUrl } ) {
+function Browsehappy( { faviconURL, entrypoint, isRTL, lang, dashboardUrl } ) {
 	return (
-		<html
-			lang={ lang }
-			dir={ isRTL ? 'rtl' : 'ltr' }
-			className={ classNames( { 'is-fluid-width': isFluidWidth } ) }
-		>
+		<html lang={ lang } dir={ isRTL ? 'rtl' : 'ltr' }>
 			<Head
 				title="Unsupported Browser — WordPress.com"
 				faviconURL={ faviconURL }

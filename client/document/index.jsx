@@ -45,7 +45,6 @@ class Document extends React.Component {
 			sectionGroup,
 			sectionName,
 			clientData,
-			isFluidWidth,
 			env,
 			badge,
 			abTestHelper,
@@ -86,10 +85,7 @@ class Document extends React.Component {
 			<html
 				lang={ lang }
 				dir={ isRTL ? 'rtl' : 'ltr' }
-				className={ classNames( {
-					'is-fluid-width': isFluidWidth,
-					'is-iframe': sectionName === 'gutenberg-editor',
-				} ) }
+				className={ classNames( { 'is-iframe': sectionName === 'gutenberg-editor' } ) }
 			>
 				<Head
 					title={ head.title }
