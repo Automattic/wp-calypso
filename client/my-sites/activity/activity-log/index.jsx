@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import { isMobile } from '@automattic/viewport';
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -11,7 +12,6 @@ import { find, get, includes, isEmpty, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-
 import ActivityLogBanner from '../activity-log-banner';
 import ActivityLogExample from '../activity-log-example';
 import ActivityLogItem from '../activity-log-item';
@@ -69,7 +69,6 @@ import isVipSite from 'state/selectors/is-vip-site';
 import siteSupportsRealtimeBackup from 'state/selectors/site-supports-realtime-backup';
 import { requestActivityLogs } from 'state/data-getters';
 import { emptyFilter } from 'state/activity-log/reducer';
-import { isMobile } from 'lib/viewport';
 import analytics from 'lib/analytics';
 import { applySiteOffset } from 'lib/site/timezone';
 import { withLocalizedMoment } from 'components/localized-moment';

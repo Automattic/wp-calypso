@@ -44,6 +44,8 @@
 		"@automattic/material-design-icons": "file:packages/material-design-icons",
 		"@automattic/react-i18n": "file:packages/react-i18n",
 		"@automattic/tree-select": "file:packages/tree-select",
+		"@automattic/viewport": "file:packages/viewport",
+		"@automattic/viewport-react": "file:packages/viewport-react",
 		"@automattic/wpcom-block-editor": "file:apps/wpcom-block-editor",
 		"i18n-calypso": "file:packages/i18n-calypso",
 		"photon": "file:packages/photon",

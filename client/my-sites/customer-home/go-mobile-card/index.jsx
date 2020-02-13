@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { isDesktop } from '@automattic/viewport';
 import React from 'react';
 import classnames from 'classnames';
 import { Card, Button } from '@automattic/components';
@@ -12,7 +13,6 @@ import { connect } from 'react-redux';
  */
 import AppsBadge from 'blocks/get-apps/apps-badge';
 import userAgent from 'lib/user-agent';
-import { isDesktop } from 'lib/viewport';
 import CardHeading from 'components/card-heading';
 import appleStoreLogo from 'assets/images/customer-home/apple-store.png';
 import googlePlayLogo from 'assets/images/customer-home/google-play.png';

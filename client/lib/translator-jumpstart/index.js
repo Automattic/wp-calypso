@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import debugModule from 'debug';
 import React from 'react';
 import i18n from 'i18n-calypso';
@@ -13,7 +13,6 @@ import { find, isUndefined } from 'lodash';
 import { languages } from 'languages';
 import { loadjQueryDependentScriptDesktopWrapper } from 'lib/load-jquery-dependent-script-desktop-wrapper';
 import User from 'lib/user';
-import { isMobile } from 'lib/viewport';
 import analytics from 'lib/analytics';
 import { canBeTranslated } from 'lib/i18n-utils';
 

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-
+import { withMobileBreakpoint } from '@automattic/viewport-react';
 import React from 'react';
 import PropTypes from 'prop-types';
 import wrapWithClickOutside from 'react-click-outside';
@@ -18,7 +18,6 @@ import SimplifiedSegmentedControl from 'components/segmented-control/simplified'
 import KeyedSuggestions from 'components/keyed-suggestions';
 import StickyPanel from 'components/sticky-panel';
 import config from 'config';
-import { withMobileBreakpoint } from 'lib/viewport/react';
 import { localize } from 'i18n-calypso';
 import MagicSearchWelcome from './welcome';
 import getThemeFilters from 'state/selectors/get-theme-filters';

@@ -12,7 +12,7 @@ import {
 	subscribeIsWithinBreakpoint,
 	MOBILE_BREAKPOINT,
 	DESKTOP_BREAKPOINT,
-} from '.';
+} from '@automattic/viewport';
 
 /**
  * React hook for getting the status for a breakpoint and keeping it updated.

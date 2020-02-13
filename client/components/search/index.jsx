@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -14,7 +14,6 @@ import Gridicon from 'components/gridicon';
  */
 import analytics from 'lib/analytics';
 import Spinner from 'components/spinner';
-import { isMobile } from 'lib/viewport';
 import TranslatableString from 'components/translatable/proptype';
 
 /**

@@ -1,14 +1,9 @@
 /**
  * External dependencies
  */
-
+import { isWithinBreakpoint } from '@automattic/viewport';
 import tinymce from 'tinymce/tinymce';
 import { throttle } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { isWithinBreakpoint } from 'lib/viewport';
 
 /**
  * TinyMCE plugin for toggling an `is-pinned` class on the editor container
