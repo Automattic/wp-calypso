@@ -66,8 +66,16 @@ function shouldShowCompositeCheckout( cart, countryCode, locale ) {
 	if ( config.isEnabled( 'composite-checkout-wpcom' ) ) {
 		return true;
 	}
+	// Disable for non-USD
+	if ( cart?.currency !== 'USD' ) {
+		return false;
+	}
 	// Disable for domains in the cart
 	if ( cart?.products?.find( product => product.is_domain_registration ) ) {
+		return false;
+	}
+	// Disable for GSuite plans
+	if ( cart?.products?.find( product => product.product_slug.includes( 'gapps' ) ) ) {
 		return false;
 	}
 	// Disable for jetpack plans
