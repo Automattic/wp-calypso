@@ -36,6 +36,7 @@ class SwitchingHomepageModal extends Component {
 		} ),
 		hasActivated: PropTypes.bool.isRequired,
 		isActivating: PropTypes.bool.isRequired,
+		hasAutoLoadingHomepage: PropTypes.bool,
 		isThemeWpCom: PropTypes.bool.isRequired,
 		siteId: PropTypes.number,
 		isVisible: PropTypes.bool,
