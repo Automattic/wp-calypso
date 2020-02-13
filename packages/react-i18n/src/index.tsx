@@ -28,7 +28,7 @@ interface Props {
 export const I18nProvider: React.FunctionComponent< Props > = ( {
 	children,
 	locale,
-	onLocaleChange = () => Promise.resolve( {} ),
+	loadLocaleData = () => Promise.resolve( {} ),
 } ) => {
 	const [ contextValue, setContextValue ] = React.useState< I18nProps >( makeI18n( locale ) );
 	React.useEffect( () => {
@@ -36,7 +36,7 @@ export const I18nProvider: React.FunctionComponent< Props > = ( {
 		const cancel = () => {
 			cancelled = true;
 		};
-		onLocaleChange( locale ).then( nextLocaleData => {
+		loadLocaleData( locale ).then( nextLocaleData => {
 			if ( cancelled ) {
 				return;
 			}
@@ -44,7 +44,7 @@ export const I18nProvider: React.FunctionComponent< Props > = ( {
 			setContextValue( makeI18n( locale ) );
 		} );
 		return cancel;
-	}, [ locale, onLocaleChange ] );
+	}, [ locale, loadLocaleData ] );
 	return <I18nContext.Provider value={ contextValue }>{ children }</I18nContext.Provider>;
 };
 
