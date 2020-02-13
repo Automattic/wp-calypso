@@ -43,6 +43,10 @@
 	.sites-block__sites-item {
 		padding: 25px;
 		width: 50%;
+
+		.site__badge {
+			display: none;
+		}
 	}
 
 	.site__content {
