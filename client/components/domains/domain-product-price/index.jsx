@@ -36,7 +36,51 @@ class DomainProductPrice extends React.Component {
 	};
 
 	getDomainPricePopoverElement() {
-		const { price, isFeatured, translate } = this.props;
+		const { price, rule, isFeatured, translate } = this.props;
+
+		let popoverText;
+
+		switch ( rule ) {
+			case 'FREE_DOMAIN':
+				popoverText = translate(
+					'Every WordPress.com site comes with a free address using a WordPress.com subdomain. {{a}}Learn more{{/a}}.',
+					{
+						components: {
+							a: (
+								<a
+									href="https://en.support.wordpress.com/domains/#domain-name-overview"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					}
+				);
+				break;
+
+			case 'INCLUDED_IN_HIGHER_PLAN':
+				popoverText = translate(
+					'The registration fee for this domain is free for the first year with the purchase of any paid plan. ' +
+						'It will renew for %(cost)s / year after that. {{a}}Learn more{{/a}}.',
+					{
+						args: { cost: price },
+						components: {
+							a: (
+								<a
+									href="https://en.support.wordpress.com/domains/domain-pricing-and-available-tlds/"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					}
+				);
+				break;
+		}
+
+		if ( ! popoverText ) {
+			return;
+		}
 
 		return (
 			! isFeatured && (
@@ -45,22 +89,7 @@ class DomainProductPrice extends React.Component {
 					position={ 'left' }
 					className="domain-product-price__free-text-tooltip"
 				>
-					{ translate(
-						'The registration fee for this domain is free for the first year with the purchase of any paid plan. ' +
-							'It will renew for %(cost)s / year after that. {{a}}Learn more{{/a}}.',
-						{
-							args: { cost: price },
-							components: {
-								a: (
-									<a
-										href="https://en.support.wordpress.com/domains/domain-pricing-and-available-tlds/"
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						}
-					) }
+					{ popoverText }
 				</InfoPopover>
 			)
 		);
@@ -170,18 +199,24 @@ class DomainProductPrice extends React.Component {
 	}
 
 	renderFree() {
+		const { isEligibleVariantForDomainTest, showDesignUpdate, translate } = this.props;
+
 		const className = classnames( 'domain-product-price', {
-			'domain-product-price__domain-step-copy-updates': this.props.isEligibleVariantForDomainTest,
-			'domain-product-price__domain-step-design-updates': this.props.showDesignUpdate,
+			'domain-product-price__domain-step-copy-updates': isEligibleVariantForDomainTest,
+			'domain-product-price__domain-step-design-updates': showDesignUpdate,
 		} );
 
 		const productPriceClassName = classnames( 'domain-product-price__price', {
-			'domain-product-price__free-price': this.props.isEligibleVariantForDomainTest,
+			'domain-product-price__free-price': isEligibleVariantForDomainTest,
+			'domain-product-price__free-price-domain-step-design-updates': showDesignUpdate,
 		} );
 
 		return (
 			<div className={ className }>
-				<div className={ productPriceClassName }>{ this.props.translate( 'Free' ) }</div>
+				<div className={ productPriceClassName }>
+					<span>{ translate( 'Free' ) }</span>
+					{ showDesignUpdate && this.getDomainPricePopoverElement() }
+				</div>
 			</div>
 		);
 	}

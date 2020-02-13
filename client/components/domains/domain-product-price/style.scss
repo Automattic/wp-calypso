@@ -89,6 +89,15 @@
 
 	.domain-product-price__free-price {
 		color: var( --color-success );
+
+		&.domain-product-price__free-price-domain-step-design-updates {
+			display: flex;
+			align-items: center;
+
+			& span {
+				margin-right: 0.3em;
+			}
+		}
 	}
 
 	.domain-product-price__price,
