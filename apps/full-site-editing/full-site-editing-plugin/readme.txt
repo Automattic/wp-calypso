@@ -39,6 +39,7 @@ It adds an excerpt! And meta information! It really is much more useful, especia
 
 This plugin is experimental, so we don't provide any support for it outside of websites hosted on WordPress.com at this time.
 
+Temp change to test a pull request
 
 == Changelog ==
 
