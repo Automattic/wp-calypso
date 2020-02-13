@@ -10,7 +10,6 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import { trackClick } from './helpers';
 import {
 	getCanonicalTheme,
 	hasActivatedTheme,
@@ -40,39 +39,16 @@ class SwitchingHomepageModal extends Component {
 		isThemeWpCom: PropTypes.bool.isRequired,
 		siteId: PropTypes.number,
 		isVisible: PropTypes.bool,
+		onClose: PropTypes.func,
 	};
 
-	onCloseModal = () => {
-		this.setState( { show: false } );
+	onCloseModal = ( activate = false ) => {
+		if ( this.props.onClose ) {
+			this.props.onClose( activate );
+		}
 	};
 
-	trackClick = ( eventName, verb ) => {
-		trackClick( 'current theme', eventName, verb );
-	};
-
-	keepCurrentTheme = () => {
-		this.trackClick( 'keep current theme' );
-		this.onCloseModal();
-	};
-
-	getButtons = themeName => {
-		return [
-			{
-				action: 'keepCurrentTheme',
-				label: translate( 'No, keep my current theme' ),
-				isPrimary: false,
-				onClick: this.keepCurrentTheme,
-			},
-			{
-				action: 'activeTheme',
-				label: translate( 'Yes, active %(themeName)s', {
-					args: { themeName },
-				} ),
-				isPrimary: true,
-				onClick: this.goToCustomizer,
-			},
-		];
-	};
+	onClickButtonHandler = activate => () => this.onCloseModal( activate );
 
 	render() {
 		const {
@@ -109,8 +85,23 @@ class SwitchingHomepageModal extends Component {
 			<Dialog
 				className="themes__switching-homepage-modal"
 				isVisible={ isVisible }
-				buttons={ this.getButtons( themeName ) }
-				onClose={ this.onCloseModal }
+				buttons={ [
+					{
+						action: 'keepCurrentTheme',
+						label: translate( 'No, keep my current theme' ),
+						isPrimary: false,
+						onClick: this.onClickButtonHandler( false ),
+					},
+					{
+						action: 'activeTheme',
+						label: translate( 'Yes, active %(themeName)s', {
+							args: { themeName },
+						} ),
+						isPrimary: true,
+						onClick: this.onClickButtonHandler( true ),
+					},
+				] }
+				onClose={ this.onClickButtonHandler( false ) }
 			>
 				<div>
 					<h1>
