@@ -1,3 +1,6 @@
+/**
+ * Internal Dependencies
+ */
 import { APPLICATION_SET } from 'state/action-types';
 
 export default function setApplication( application ) {
