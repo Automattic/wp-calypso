@@ -52,6 +52,7 @@ import {
 	getThemeDetailsUrl,
 	getThemeRequestErrors,
 	getThemeForumUrl,
+	hasAutoLoadingHomepageFeature,
 } from 'state/themes/selectors';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -109,10 +110,15 @@ class ThemeSheet extends React.Component {
 			action: PropTypes.func,
 			getUrl: PropTypes.func,
 		} ),
+		hasAutoLoadingHomepage: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		section: '',
+	};
+
+	state = {
+		showSwitchingHomepageModal: false,
 	};
 
 	scrollToTop = () => {
@@ -141,8 +147,24 @@ class ThemeSheet extends React.Component {
 	};
 
 	onButtonClick = () => {
-		const { defaultOption } = this.props;
-		defaultOption.action && defaultOption.action( this.props.id );
+		const { defaultOption, hasAutoLoadingHomepage, id } = this.props;
+
+		// if the Theme has auto loading homepage, shows the switching modal.
+		if ( hasAutoLoadingHomepage ) {
+			return this.setState( { showSwitchingHomepageModal: true } );
+		}
+
+		defaultOption.action && defaultOption.action( id );
+	};
+
+	activateSwitchingHomepage = activate => {
+		const { defaultOption, id } = this.props;
+
+		this.setState( { showSwitchingHomepageModal: false } );
+
+		if ( activate ) {
+			defaultOption.action && defaultOption.action( id );
+		}
 	};
 
 	onSecondaryButtonClick = () => {
@@ -691,7 +713,12 @@ class ThemeSheet extends React.Component {
 				{ this.renderBar() }
 				<QueryActiveTheme siteId={ siteId } />
 				<ThanksModal source={ 'details' } />
-				<SwitchingHomepageModal source={ 'details' } themeId={ id } />
+				<SwitchingHomepageModal
+					source={ 'details' }
+					themeId={ id }
+					isVisible={ this.state.showSwitchingHomepageModal }
+					onClose={ this.activateSwitchingHomepage }
+				/>
 				{ pageUpsellBanner }
 				<HeaderCake
 					className="theme__sheet-action-bar"
@@ -798,6 +825,7 @@ export default connect(
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
 			hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
+			hasAutoLoadingHomepage: hasAutoLoadingHomepageFeature( state, id ),
 			// No siteId specified since we want the *canonical* URL :-)
 			canonicalUrl: 'https://wordpress.com' + getThemeDetailsUrl( state, id ),
 			previousRoute: getPreviousRoute( state ),
