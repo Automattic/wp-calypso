@@ -137,7 +137,7 @@ references:
 
   npm-install: &npm-install
     environment:
-      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
     name: Install npm dependencies
     command: npm ci
 
@@ -152,12 +152,12 @@ references:
   restore-e2e-node_modules: &restore-e2e-node_modules
     name: 'Restore test/e2e node_modules'
     keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-npm-e2e-modules-{{ checksum "~/wp-calypso/tests/e2e/package-lock.json" }}-{{ checksum "~/wp-calypso/tests/e2e/.chromedriver_version" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-npm-e2e-modules-{{ checksum "~/wp-calypso/test/e2e/package-lock.json" }}-{{ checksum "~/wp-calypso/test/e2e/.chromedriver_version" }}
   save-e2e-node_modules: &save-e2e-node_modules
     name: 'Save test/e2e node_modules'
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-npm-e2e-modules-{{ checksum "~/wp-calypso/tests/e2e/package-lock.json" }}-{{ checksum "~/wp-calypso/tests/e2e/.chromedriver_version" }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-npm-e2e-modules-{{ checksum "~/wp-calypso/test/e2e/package-lock.json" }}-{{ checksum "~/wp-calypso/test/e2e/.chromedriver_version" }}
     paths:
-      - ~/wp-calypso/tests/e2e/node_modules
+      - ~/wp-calypso/test/e2e/node_modules
 
   # Babel cache
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
@@ -743,10 +743,10 @@ workflows:
       - wait-calypso-live:
           requires:
             - setup-e2e
-#      - test-e2e-canary:
-#          requires:
-#            - wait-calypso-live
-#          test-flags: '-C -S $CIRCLE_SHA1'
+      #      - test-e2e-canary:
+      #          requires:
+      #            - wait-calypso-live
+      #          test-flags: '-C -S $CIRCLE_SHA1'
       - test-e2e-canary:
           name: test-e2e-canary-ie
           requires:
