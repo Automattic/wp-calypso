@@ -30,6 +30,7 @@ import { getDomainPrice, getDomainSalePrice, getTld, isHstsRequired } from 'lib/
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getProductsList } from 'state/products-list/selectors';
 import Badge from 'components/badge';
+import PlanPill from 'components/plans/plan-pill';
 import InfoPopover from 'components/info-popover';
 import { HTTPS_SSL } from 'lib/url/support';
 
@@ -242,7 +243,7 @@ class DomainRegistrationSuggestion extends React.Component {
 
 		let title, progressBarProps;
 		if ( isRecommended ) {
-			title = this.props.showTestCopy
+			title = this.props.isEligibleVariantForDomainTest
 				? translate( 'Our Recommendation' )
 				: translate( 'Best Match' );
 			progressBarProps = {
@@ -266,9 +267,27 @@ class DomainRegistrationSuggestion extends React.Component {
 					success: isRecommended,
 					'info-blue': isBestAlternative,
 				} );
+
 				return (
 					<div className="domain-registration-suggestion__progress-bar">
 						<Badge type={ badgeClassName }>{ title }</Badge>
+					</div>
+				);
+			}
+
+			if ( this.props.showDesignUpdate ) {
+				const pillClassNames = classNames(
+					'domain-registration-suggestion__progress-bar',
+					'domain-registration-suggestion__progress-bar-design-update-test',
+					{
+						'pill-success': isRecommended,
+						'pill-primary': isBestAlternative,
+					}
+				);
+
+				return (
+					<div className={ pillClassNames }>
+						<PlanPill>{ title }</PlanPill>
 					</div>
 				);
 			}
@@ -283,7 +302,7 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	renderMatchReason() {
-		if ( this.props.showTestCopy ) {
+		if ( this.props.isEligibleVariantForDomainTest ) {
 			return null;
 		}
 
