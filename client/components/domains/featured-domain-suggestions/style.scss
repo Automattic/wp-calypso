@@ -17,6 +17,12 @@
 	.is-section-signup & {
 		@include breakpoint( '>480px' ) {
 			flex-direction: row;
+
+			&.featured-domain-suggestions__domain-step-design-updates .domain-registration-suggestion__title {
+					font-size: 22px;
+					font-weight: 600;
+					line-height: 18px;
+			}
 		}
 	}
 

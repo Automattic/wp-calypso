@@ -196,7 +196,9 @@ class DomainRegistrationSuggestion extends React.Component {
 		const infoPopoverSize = isFeatured ? 22 : 18;
 		const titleWrapperClassName = classNames( 'domain-registration-suggestion__title-wrapper', {
 			'domain-registration-suggestion__title-domain-copy-test':
-				this.props.isEligibleVariantForDomainTest && ! this.props.isFeatured,
+				this.props.showTestCopy && ! this.props.isFeatured,
+			'domain-registration-suggestion__title-domain-design-updates':
+				this.props.showDesignUpdate && ! this.props.isFeatured,
 		} );
 
 		return (

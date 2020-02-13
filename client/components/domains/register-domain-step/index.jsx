@@ -419,6 +419,7 @@ class RegisterDomainStep extends React.Component {
 
 		const searchBoxClassName = classNames( 'register-domain-step__search', {
 			'register-domain-step__search-domain-step-test': this.props.isEligibleVariantForDomainTest,
+			'register-domain-step__search-domain-step-design-updates': this.props.showDesignUpdate,
 		} );
 		return (
 			<div className="register-domain-step">
@@ -1182,7 +1183,12 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	renderFreeDomainExplainer() {
-		return <FreeDomainExplainer onSkip={ this.props.hideFreePlan } />;
+		return (
+			<FreeDomainExplainer
+				onSkip={ this.props.hideFreePlan }
+				showDesignUpdate={ this.props.showDesignUpdate }
+			/>
+		);
 	}
 
 	onAddDomain = suggestion => {
