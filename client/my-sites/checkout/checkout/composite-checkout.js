@@ -696,6 +696,12 @@ function getTermText( term, translate ) {
 	}
 }
 
+// TODO: replace this with a real localize function
+function localizeCurrency( amount ) {
+	const decimalAmount = ( amount / 100 ).toFixed( 2 );
+	return `$${ decimalAmount }`;
+}
+
 function useWpcomProductVariants( { siteId, productSlug, credits, couponDiscounts } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -742,11 +748,22 @@ function useWpcomProductVariants( { siteId, productSlug, credits, couponDiscount
 			return savings > 0 ? <Discount>-{ savings.toString() }%</Discount> : null;
 		};
 
+		// What the customer would pay if using the
+		// most expensive schedule
+		const highestTermPrice = term => {
+			if ( term !== TERM_BIENNIALLY ) {
+				return;
+			}
+			const annualPrice = Math.round( 100 * 24 * highestMonthlyPrice );
+			return <DoNotPayThis>{ localizeCurrency( annualPrice, 'USD' ) }</DoNotPayThis>;
+		};
+
 		return productsWithPrices.map( variant => {
 			const label = getTermText( variant.plan.term, translate );
 			const price = (
 				<React.Fragment>
 					{ percentSavings( variant.priceMonthly ) }
+					{ highestTermPrice( variant.plan.term ) }
 					{ variant.product.cost_display }
 				</React.Fragment>
 			);
@@ -808,5 +825,10 @@ function getPlanProductSlugs(
 
 const Discount = styled.span`
 	color: ${props => props.theme.colors.discount};
+	margin-right: 8px;
+`;
+
+const DoNotPayThis = styled.span`
+	text-decoration: line-through;
 	margin-right: 8px;
 `;
