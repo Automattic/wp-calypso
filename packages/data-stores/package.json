@@ -41,6 +41,6 @@
 		"wpcom-proxy-request": "^5.0.2"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^4.10.0"
+		"@wordpress/data": "^4"
 	}
 }

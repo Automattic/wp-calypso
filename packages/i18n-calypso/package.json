@@ -30,7 +30,7 @@
 		"use-subscription": "^1.2.0"
 	},
 	"peerDependencies": {
-		"react": "^16.8.3"
+		"react": "^16.8"
 	},
 	"scripts": {
 		"clean": "npx rimraf dist",
