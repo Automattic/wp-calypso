@@ -26,6 +26,7 @@ import {
 	createExistingCardMethod,
 } from '@automattic/composite-checkout';
 import { Card } from '@automattic/components';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Internal dependencies
@@ -233,10 +234,13 @@ export default function CompositeCheckout( {
 		showAddCouponSuccessMessage
 	);
 
+	const reduxDispatch = useDispatch();
+	const recordEvent = useCallback( getCheckoutEventHandler( reduxDispatch ), [] );
+
 	const { registerStore, dispatch } = registry;
 	useWpcomStore(
 		registerStore,
-		handleCheckoutEvent,
+		recordEvent,
 		validateDomainContactDetails || wpcomValidateDomainContactInformation
 	);
 
@@ -469,7 +473,7 @@ export default function CompositeCheckout( {
 				showErrorMessage={ showErrorMessage }
 				showInfoMessage={ showInfoMessage }
 				showSuccessMessage={ showSuccessMessage }
-				onEvent={ handleCheckoutEvent }
+				onEvent={ recordEvent }
 				paymentMethods={ paymentMethods }
 				registry={ registry }
 				isLoading={ isLoading || isLoadingStoredCards }
@@ -583,9 +587,23 @@ function createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) {
 	return cartItem;
 }
 
-function handleCheckoutEvent( action ) {
-	debug( 'checkout event', action );
-	// TODO: record stats
+function getCheckoutEventHandler( dispatch ) {
+	return action => {
+		debug( 'heard checkout event', action );
+		switch ( action.type ) {
+			case 'a8c_checkout_error':
+				return dispatch( recordTracksEvent( action.type, action.payload ) );
+			case 'a8c_checkout_add_coupon':
+				return dispatch( recordTracksEvent( action.type, action.payload ) );
+			case 'a8c_checkout_add_coupon_error':
+				return dispatch( recordTracksEvent( action.type, action.payload ) );
+			case 'a8c_checkout_add_coupon_button_clicked':
+				return dispatch( recordTracksEvent( action.type, action.payload ) );
+			default:
+				debug( 'unknown checkout event being recorded', action );
+				return dispatch( recordTracksEvent( action.type, {} ) );
+		}
+	};
 }
 
 function useRedirectIfCartEmpty( items, redirectUrl ) {
