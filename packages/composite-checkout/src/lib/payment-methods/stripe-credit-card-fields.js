@@ -313,9 +313,13 @@ function StripeCreditCardFields() {
 		},
 	};
 
-	if ( stripeLoadingError ) {
-		onEvent( { type: 'a8c_checkout_error', payload: { type: 'Stripe loading error' } } );
+	useEffect( () => {
+		if ( stripeLoadingError ) {
+			onEvent( { type: 'a8c_checkout_error', payload: { type: 'Stripe loading error' } } );
+		}
+	}, [ stripeLoadingError, onEvent ] );
 
+	if ( stripeLoadingError ) {
 		return (
 			<CreditCardFieldsWrapper isLoaded={ true }>
 				<ErrorMessage>
