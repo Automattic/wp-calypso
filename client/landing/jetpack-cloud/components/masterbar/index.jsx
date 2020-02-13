@@ -24,7 +24,9 @@ export default function() {
 			<Item
 				className="masterbar__item-home"
 				url="/"
-				tooltip={ translate( 'Jetpack Cloud Homepage' ) }
+				tooltip={ translate( 'Jetpack Cloud Homepage', {
+					comment: 'Jetpack Cloud masterbar nav item',
+				} ) }
 			>
 				<JetpackLogo size={ 28 } full monochrome />
 			</Item>

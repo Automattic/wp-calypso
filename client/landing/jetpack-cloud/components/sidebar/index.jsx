@@ -79,7 +79,9 @@ class JetpackCloudSidebar extends Component {
 					<SidebarMenu>
 						<SidebarItem
 							link="/"
-							label={ translate( 'Dashboard' ) }
+							label={ translate( 'Dashboard', {
+								comment: 'Jetpack Cloud sidebar navigation item',
+							} ) }
 							materialIcon="dashboard"
 							materialIconStyle="filled"
 							selected={ this.isSelected( '/' ) }
@@ -90,23 +92,29 @@ class JetpackCloudSidebar extends Component {
 						onClick={ this.handleExpandableMenuClick( '/backups' ) }
 						materialIcon="backup"
 						materialIconStyle="filled"
-						title={ translate( 'Backups' ) }
+						title={ translate( 'Backups', { comment: 'Jetpack Cloud sidebar navigation item' } ) }
 					>
 						<ul>
 							<SidebarItem
-								label={ translate( 'Backups' ) }
+								label={ translate( 'Backups', {
+									comment: 'Jetpack Cloud sidebar navigation item',
+								} ) }
 								link="/backups"
 								onNavigate={ this.onNavigate }
 								selected={ this.isSelected( '/backups' ) }
 							/>
 							<SidebarItem
-								label={ translate( 'Restore site' ) }
+								label={ translate( 'Restore site', {
+									comment: 'Jetpack Cloud / Backups sidebar navigation item',
+								} ) }
 								link="#" // @todo: Add /backup/restore route
 								onNavigate={ this.onNavigate }
 								selected={ this.isSelected( '/backups/restore' ) }
 							/>
 							<SidebarItem
-								label={ translate( 'Settings' ) }
+								label={ translate( 'Settings', {
+									comment: 'Jetpack Cloud / Backups sidebar navigation item',
+								} ) }
 								link="#" // @todo: Add backup/settings route
 								onNavigate={ this.onNavigate }
 								selected={ this.isSelected( '/backups/settings' ) }
@@ -118,23 +126,29 @@ class JetpackCloudSidebar extends Component {
 						onClick={ this.handleExpandableMenuClick( '/scan' ) }
 						materialIcon="security" // @todo: The Scan logo differs from the Material Icon used here
 						materialIconStyle="filled"
-						title={ translate( 'Scan' ) }
+						title={ translate( 'Scan', { comment: 'Jetpack Cloud sidebar navigation item' } ) }
 					>
 						<ul>
 							<SidebarItem
-								label={ translate( 'Scanner' ) }
+								label={ translate( 'Scanner', {
+									comment: 'Jetpack Cloud / Scan sidebar navigation item',
+								} ) }
 								link="/scan"
 								onNavigate={ this.onNavigate }
 								selected={ this.isSelected( '/scan' ) }
 							/>
 							<SidebarItem
-								label={ translate( 'History' ) }
+								label={ translate( 'History', {
+									comment: 'Jetpack Cloud / Scan sidebar navigation item',
+								} ) }
 								link="#" // @todo: Add /scan/history route
 								onNavigate={ this.onNavigate }
 								selected={ this.isSelected( '/scan/history' ) }
 							/>
 							<SidebarItem
-								label={ translate( 'Settings' ) }
+								label={ translate( 'Settings', {
+									comment: 'Jetpack Cloud / Scan sidebar navigation item',
+								} ) }
 								link="#" // @todo: Add /scan/settings route
 								onNavigate={ this.onNavigate }
 								selected={ this.isSelected( '/scan/settings' ) }
@@ -145,7 +159,7 @@ class JetpackCloudSidebar extends Component {
 				<SidebarFooter>
 					<SidebarMenu>
 						<SidebarItem
-							label={ translate( 'Support' ) }
+							label={ translate( 'Support', { comment: 'Jetpack Cloud sidebar navigation item' } ) }
 							link="#" // @todo: Add /support route or change link to other destination
 							materialIcon="help"
 							materialIconStyle="filled"
@@ -154,7 +168,9 @@ class JetpackCloudSidebar extends Component {
 						/>
 						<SidebarItem
 							forceInternalLink={ true }
-							label={ translate( 'Manage site' ) }
+							label={ translate( 'Manage site', {
+								comment: 'Jetpack Cloud sidebar navigation item',
+							} ) }
 							link="https://wordpress.com/stats" // @todo: Confirm a correct link is used here
 							materialIcon="arrow_back"
 							materialIconStyle="filled"
