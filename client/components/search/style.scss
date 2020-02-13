@@ -230,16 +230,3 @@
 .animating.search-opening .search input {
 	opacity: 1;
 }
-
-.search__exact-match-toggle {
-	padding-right: 24px;
-
-	@include breakpoint( '<660px' ) {
-		padding-right: 12px;
-	}
-
-	& .search__exact-match-toggle-label {
-		color: var( --color-text-subtle );
-		font-size: 14px;
-	}
-}

@@ -27,10 +27,6 @@
 		// Add some padding to account for the filter button.
 		body.is-section-signup & {
 			padding-right: 72px;
-
-			&.domain-step-design-test {
-				padding-right: 0;
-			}
 		}
 	}
 
