@@ -146,11 +146,18 @@ references:
     key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "package-lock.json" }}
     paths:
       - ~/.npm
-  npm-e2e-install: &npm-e2e-install
-    name: Install e2e npm dependencies
-    command: |
-      cd test/e2e &&
-      CHROMEDRIVER_VERSION=$(<.chromedriver_version) npm ci
+
+  # Specific npm caches for e2e
+  # We either restore a full cache or do a full install
+  restore-npm-cache: &restore-e2e-node_modules
+    name: 'Restore npm cache'
+    keys:
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-npm-e2e-modules-{{ checksum "~/wp-calypso/tests/e2e/package-lock.json" }}-{{ checksum "~/wp-calypso/tests/e2e/.chromedriver_version" }}
+  save-npm-cache: &save-e2e-node_modules
+    name: 'Save node_modules cache'
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-npm-e2e-modules-{{ checksum "~/wp-calypso/tests/e2e/package-lock.json" }}-{{ checksum "~/wp-calypso/tests/e2e/.chromedriver_version" }}
+    paths:
+      - ~/wp-calypso/tests/e2e/node_modules
 
   # Babel cache
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
@@ -217,10 +224,23 @@ jobs:
       - restore_cache: *restore-tsc-cache
       - restore_cache: *restore-npm-cache
       - run: *npm-install
-      - run: *npm-e2e-install
       - save_cache: *save-npm-cache
       - save_cache: *save-tsc-cache
       - run: npm run build-packages
+      - persist_to_workspace:
+          root: '~'
+          paths:
+            - wp-calypso
+
+  setup-e2e:
+    <<: *defaults
+    working_directory: ~/wp-calypso/test/e2e
+    steps:
+      - restore_cache: *restore-e2e-node_modules
+      - run:
+        name: Install e2e npm dependencies
+        command: CHROMEDRIVER_VERSION=$(<.chromedriver_version) npm ci
+      - save_cache: *save-e2e-node_modules
       - persist_to_workspace:
           root: '~'
           paths:
@@ -706,7 +726,7 @@ workflows:
       - typecheck-strict:
           requires:
             - setup
-      - wait-calypso-live:
+      - setup-e2e:
           requires:
             - test-client
             - test-server
@@ -717,6 +737,9 @@ workflows:
                 - master
                 # Do not spin up calypso.live for fork pull requests. Calypso.live will not build them.
                 - /pull\/[0-9]+/
+      - wait-calypso-live:
+          requires:
+            - setup-e2e
 #      - test-e2e-canary:
 #          requires:
 #            - wait-calypso-live
