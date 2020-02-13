@@ -53,6 +53,8 @@ function WPLineItem( {
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const modalCopy = returnModalCopy( item.type, translate, hasDomainsInCart );
 
+	const shouldShowVariantSelector = item.wpcom_meta && item.wpcom_meta.extra?.context === 'signup';
+
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
 			<ProductTitle id={ itemSpanId }>{ item.label }</ProductTitle>
@@ -84,7 +86,7 @@ function WPLineItem( {
 				</React.Fragment>
 			) }
 
-			{ item.wpcom_meta && (
+			{ shouldShowVariantSelector && (
 				<ItemVariationPicker
 					selectedItem={ item }
 					variantRequestStatus={ variantRequestStatus }
