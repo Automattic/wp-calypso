@@ -42,6 +42,7 @@
 		"@automattic/full-site-editing": "file:apps/full-site-editing",
 		"@automattic/load-script": "file:packages/load-script",
 		"@automattic/material-design-icons": "file:packages/material-design-icons",
+		"@automattic/react-i18n": "file:packages/react-i18n",
 		"@automattic/tree-select": "file:packages/tree-select",
 		"@automattic/wpcom-block-editor": "file:apps/wpcom-block-editor",
 		"i18n-calypso": "file:packages/i18n-calypso",
