@@ -295,6 +295,7 @@ class DomainSearchResults extends React.Component {
 					<DomainTransferSuggestion
 						onButtonClick={ this.props.onClickUseYourDomain }
 						tracksButtonClickSource="search-suggestions-bottom"
+						showDesignUpdate={ this.props.showDesignUpdate }
 					/>
 				);
 			}
