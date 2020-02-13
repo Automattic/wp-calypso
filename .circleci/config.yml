@@ -248,7 +248,7 @@ jobs:
       - persist_to_workspace:
           root: '~'
           paths:
-            - wp-calypso
+            - wp-calypso/test/e2e
 
   typecheck:
     <<: *defaults
