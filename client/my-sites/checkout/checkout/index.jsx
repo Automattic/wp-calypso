@@ -474,6 +474,11 @@ export class Checkout extends React.Component {
 	}
 
 	maybeRedirectToConciergeNudge( pendingOrReceiptId ) {
+		// For testing Frankenflow we disable any redirect to Nudge
+		if ( this.props.hideNudge ) {
+			return;
+		}
+
 		const { cart, selectedSiteSlug, previousRoute } = this.props;
 
 		// For a user purchasing a qualifying plan, show either a plan upgrade upsell or concierge upsell.

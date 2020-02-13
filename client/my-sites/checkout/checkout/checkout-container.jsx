@@ -73,6 +73,7 @@ class CheckoutContainer extends React.Component {
 			upgradeIntent,
 			shouldShowCart = true,
 			clearTransaction,
+			isComingFromFrankenflow,
 		} = this.props;
 
 		const TransactionData = clearTransaction ? CartData : CheckoutData;
@@ -97,6 +98,7 @@ class CheckoutContainer extends React.Component {
 							reduxStore={ reduxStore }
 							redirectTo={ redirectTo }
 							upgradeIntent={ upgradeIntent }
+							hideNudge={ isComingFromFrankenflow }
 						>
 							{ this.props.children }
 						</Checkout>
