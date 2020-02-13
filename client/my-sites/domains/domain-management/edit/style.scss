@@ -89,3 +89,14 @@
 		margin-top: 0;
 	}
 }
+
+.icann-verification__placeholder {
+	p {
+		@include placeholder( --color-neutral-10 );
+		margin-bottom: 0.5em;
+
+		&:last-child {
+			width: 35%;
+		}
+	}
+}

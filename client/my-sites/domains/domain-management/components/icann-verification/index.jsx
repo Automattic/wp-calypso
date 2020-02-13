@@ -72,7 +72,19 @@ class IcannVerificationCard extends React.Component {
 		const changeEmailHref = domainManagementEditContactInfo( selectedSiteSlug, selectedDomainName );
 
 		if ( ! contactDetails ) {
-			return <QueryWhois domain={ selectedDomainName } />;
+			const placeHolder = compact ? (
+				<div className="icann-verification__placeholder">
+					<p />
+					<p />
+					<p />
+				</div>
+			) : null;
+			return (
+				<React.Fragment>
+					{ placeHolder }
+					<QueryWhois domain={ selectedDomainName } />
+				</React.Fragment>
+			);
 		}
 		const verificationExplanation = this.getExplanation();
 
