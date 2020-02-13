@@ -157,13 +157,15 @@ class RegisterDomainStep extends React.Component {
 
 	static defaultProps = {
 		analyticsSection: 'domains',
+		deemphasiseTlds: [],
+		includeDotBlogSubdomain: false,
+		includeWordPressDotCom: false,
 		isDomainOnly: false,
 		onAddDomain: noop,
 		onAddMapping: noop,
 		onDomainsAvailabilityChange: noop,
 		onSave: noop,
 		vendor: getSuggestionsVendor(),
-		deemphasiseTlds: [],
 	};
 
 	constructor( props ) {
@@ -347,6 +349,10 @@ class RegisterDomainStep extends React.Component {
 		}
 	}
 
+	getFreeSubdomainSuggestionsQuantity() {
+		return this.props.includeWordPressDotCom + this.props.includeDotBlogSubdomain;
+	}
+
 	getNewRailcarId() {
 		return `${ uuid().replace( /-/g, '' ) }-domain-suggestion`;
 	}
@@ -377,9 +383,12 @@ class RegisterDomainStep extends React.Component {
 
 		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
 			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {
-				suggestions.unshift( { is_placeholder: true } );
-			} else if ( this.state.subdomainSearchResults && this.state.subdomainSearchResults.length ) {
-				suggestions.unshift( this.state.subdomainSearchResults[ 0 ] );
+				const freeSubdomainPlaceholders = Array(
+					this.getFreeSubdomainSuggestionsQuantity()
+				).fill( { is_placeholder: true } );
+				suggestions.unshift( ...freeSubdomainPlaceholders );
+			} else if ( ! isEmpty( this.state.subdomainSearchResults ) ) {
+				suggestions.unshift( ...this.state.subdomainSearchResults );
 			}
 		}
 		return suggestions;
@@ -870,10 +879,7 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	getDomainsSuggestions = ( domain, timestamp ) => {
-		const suggestionQuantity =
-			this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain
-				? SUGGESTION_QUANTITY - 1
-				: SUGGESTION_QUANTITY;
+		const suggestionQuantity = SUGGESTION_QUANTITY - this.getFreeSubdomainSuggestionsQuantity();
 
 		const query = {
 			query: domain,
@@ -975,9 +981,10 @@ class RegisterDomainStep extends React.Component {
 	getSubdomainSuggestions = ( domain, timestamp ) => {
 		const subdomainQuery = {
 			query: domain,
-			quantity: 1,
-			include_wordpressdotcom: ! this.props.includeDotBlogSubdomain,
+			quantity: this.getFreeSubdomainSuggestionsQuantity(),
+			include_wordpressdotcom: true,
 			include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
+			only_wordpressdotcom: this.props.includeDotBlogSubdomain,
 			tld_weight_overrides: null,
 			vendor: 'dot',
 			vertical: this.props.vertical,
