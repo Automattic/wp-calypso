@@ -592,16 +592,34 @@ function getCheckoutEventHandler( dispatch ) {
 		debug( 'heard checkout event', action );
 		switch ( action.type ) {
 			case 'a8c_checkout_error':
-				return dispatch( recordTracksEvent( action.type, action.payload ) );
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_error', {
+						error_type: action.payload.type,
+						error_field: action.payload.field,
+						error_message: action.payload.message,
+					} )
+				);
 			case 'a8c_checkout_add_coupon':
-				return dispatch( recordTracksEvent( action.type, action.payload ) );
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_coupon_add_submit', {
+						coupon: action.payload.coupon,
+					} )
+				);
 			case 'a8c_checkout_add_coupon_error':
-				return dispatch( recordTracksEvent( action.type, action.payload ) );
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_coupon_add_error', {
+						error_type: action.payload.type,
+					} )
+				);
 			case 'a8c_checkout_add_coupon_button_clicked':
-				return dispatch( recordTracksEvent( action.type, action.payload ) );
+				return dispatch( recordTracksEvent( 'calypso_checkout_composite_add_coupon_clicked', {} ) );
+			case 'STEP_NUMBER_CHANGE_EVENT':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_step_changed', { step: action.payload } )
+				);
 			default:
-				debug( 'unknown checkout event being recorded', action );
-				return dispatch( recordTracksEvent( action.type, {} ) );
+				debug( 'unknown checkout event: not recording', action );
+				return;
 		}
 	};
 }
