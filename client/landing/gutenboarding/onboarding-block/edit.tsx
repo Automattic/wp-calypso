@@ -75,7 +75,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 					<SignupForm />
 				</Route>
 				<Route exact path={ Step.CreateSite }>
-					{ ! isCreatingSite ? <Redirect to={ Step.IntentGathering } /> : <CreateSite /> }
+					<CreateSite />
 				</Route>
 			</Switch>
 		</>

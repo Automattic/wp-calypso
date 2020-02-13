@@ -74,9 +74,6 @@ const shouldCreate: Reducer< boolean, OnboardAction > = ( state = false, action 
 	if ( action.type === 'SET_SHOULD_CREATE' ) {
 		return action.shouldCreate;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return false;
-	}
 	return state;
 };
 
