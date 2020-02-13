@@ -253,3 +253,21 @@ function addUUIDToResponseCartProduct(
 		uuid,
 	};
 }
+
+export function replaceItemInResponseCart(
+	responseCart: ResponseCart,
+	uuidToReplace: string,
+	newProductId: number,
+	newProductSlug: string
+) {
+	return {
+		...responseCart,
+		products: responseCart.products.map( item => {
+			if ( item.uuid === uuidToReplace ) {
+				item.product_id = newProductId;
+				item.product_slug = newProductSlug;
+			}
+			return item;
+		} ),
+	};
+}

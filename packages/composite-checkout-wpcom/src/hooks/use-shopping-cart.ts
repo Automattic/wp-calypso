@@ -14,6 +14,7 @@ import {
 	emptyResponseCart,
 	removeItemFromResponseCart,
 	addItemToResponseCart,
+	replaceItemInResponseCart,
 	processRawResponse,
 	addCouponToResponseCart,
 	addLocationToResponseCart,
@@ -38,6 +39,9 @@ const debug = debugFactory( 'composite-checkout-wpcom:shopping-cart-manager' );
  *         Used to determine whether we need to re-validate the cart on
  *         the backend. We can't use responseCart directly to decide this
  *         in e.g. useEffect because this causes an infinite loop.
+ *     * variantRequestStatus
+ *         Used to allow updating the view immediately upon a variant
+ *         change request.
  *     * shouldShowNotification
  *         Used to trigger calypso notification side effects on render
  */
@@ -45,6 +49,8 @@ type ShoppingCartHookState = {
 	responseCart: ResponseCart;
 	couponStatus: CouponStatus;
 	cacheStatus: CacheStatus;
+	variantRequestStatus: VariantRequestStatus;
+	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[];
 	shouldShowNotification: {
 		didAddCoupon: boolean;
 	};
@@ -55,6 +61,8 @@ const getInitialShoppingCartHookState: () => ShoppingCartHookState = () => {
 		responseCart: emptyResponseCart,
 		cacheStatus: 'fresh',
 		couponStatus: 'fresh',
+		variantRequestStatus: 'fresh',
+		variantSelectOverride: [],
 		shouldShowNotification: {
 			didAddCoupon: false,
 		},
@@ -65,6 +73,13 @@ type ShoppingCartHookAction =
 	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
 	| { type: 'ADD_CART_ITEM'; responseCartProductToAdd: ResponseCartProduct }
 	| { type: 'SET_LOCATION'; location: CartLocation }
+	| {
+			type: 'REPLACE_CART_ITEM';
+			uuidToReplace: string;
+			newProductId: number;
+			newProductSlug: string;
+	  }
+	| { type: 'CLEAR_VARIANT_SELECT_OVERRIDE' }
 	| { type: 'ADD_COUPON'; couponToAdd: string }
 	| { type: 'RECEIVE_INITIAL_RESPONSE_CART'; initialResponseCart: ResponseCart }
 	| { type: 'REQUEST_UPDATED_RESPONSE_CART' }
@@ -98,6 +113,39 @@ function shoppingCartHookReducer(
 				cacheStatus: 'invalid',
 			};
 		}
+		case 'REPLACE_CART_ITEM': {
+			const uuidToReplace = action.uuidToReplace;
+			const newProductId = action.newProductId;
+			const newProductSlug = action.newProductSlug;
+			if ( state.variantRequestStatus === 'pending' ) {
+				debug(
+					`variant request status is '${ state.variantRequestStatus }'; not submitting again`
+				);
+				return state;
+			}
+			debug( `replacing item with uuid ${ uuidToReplace } by product slug`, newProductSlug );
+
+			return {
+				...state,
+				responseCart: replaceItemInResponseCart(
+					state.responseCart,
+					uuidToReplace,
+					newProductId,
+					newProductSlug
+				),
+				cacheStatus: 'invalid',
+				variantRequestStatus: 'pending',
+				variantSelectOverride: [
+					...state.variantSelectOverride.filter( item => item.uuid !== action.uuidToReplace ),
+					{ uuid: action.uuidToReplace, overrideSelectedProductSlug: action.newProductSlug },
+				],
+			};
+		}
+		case 'CLEAR_VARIANT_SELECT_OVERRIDE':
+			return {
+				...state,
+				variantSelectOverride: [],
+			};
 		case 'ADD_COUPON': {
 			const newCoupon = action.couponToAdd;
 
@@ -139,6 +187,7 @@ function shoppingCartHookReducer(
 				responseCart: response,
 				couponStatus: newCouponStatus,
 				cacheStatus: 'valid',
+				variantRequestStatus: 'valid', // TODO: what if the variant doesn't actually change?
 				shouldShowNotification: {
 					...state.shouldShowNotification,
 					didAddCoupon,
@@ -235,6 +284,8 @@ export interface ShoppingCartManager {
 	couponStatus: CouponStatus;
 	couponCode: string | null;
 	updateLocation: ( CartLocation ) => void;
+	variantRequestStatus: VariantRequestStatus;
+	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[];
 }
 
 /**
@@ -258,7 +309,19 @@ type CacheStatus = 'fresh' | 'valid' | 'invalid' | 'pending' | 'error';
  *   - 'invalid': Coupon code is not recognized.
  *   - 'rejected': Valid code, but does not apply to the cart items.
  */
-type CouponStatus = 'fresh' | 'pending' | 'applied' | 'invalid' | 'rejected' | 'error';
+export type CouponStatus = 'fresh' | 'pending' | 'applied' | 'invalid' | 'rejected' | 'error';
+
+/**
+ * Possible states re. variant selection. Note that all variant
+ * change requests share the same state; this means if there is more
+ * than one item in the cart with variant options they will all be in
+ * pending state at the same time. Right now this is moot because at most
+ * one cart item (the plan, if it exists) can have a variant picker.
+ * If later we want to allow variations on more than one cart item
+ * It should be straightforward to adjust the type of ShoppingCartManager
+ * to accommodate this. For now the extra complexity is not worth it.
+ */
+export type VariantRequestStatus = 'fresh' | 'pending' | 'valid' | 'error';
 
 /**
  * Custom hook for managing state in the WPCOM checkout component.
@@ -320,6 +383,8 @@ export function useShoppingCart(
 	const responseCart: ResponseCart = hookState.responseCart;
 	const couponStatus: CouponStatus = hookState.couponStatus;
 	const cacheStatus: CacheStatus = hookState.cacheStatus;
+	const variantRequestStatus: VariantRequestStatus = hookState.variantRequestStatus;
+	const variantSelectOverride = hookState.variantSelectOverride;
 	const shouldShowNotification = hookState.shouldShowNotification;
 
 	// Asynchronously initialize the cart. This should happen exactly once.
@@ -362,6 +427,7 @@ export function useShoppingCart(
 					type: 'RECEIVE_UPDATED_RESPONSE_CART',
 					updatedResponseCart: processRawResponse( response ),
 				} );
+				hookDispatch( { type: 'CLEAR_VARIANT_SELECT_OVERRIDE' } );
 			} )
 			.catch( error => {
 				// TODO: figure out what to do here
@@ -401,10 +467,13 @@ export function useShoppingCart(
 		hookDispatch( { type: 'REMOVE_CART_ITEM', uuidToRemove } );
 	}, [] );
 
-	const changePlanLength = ( planItem, planLength ) => {
-		// TODO: change plan length
-		debug( 'changing plan length in cart', planItem, planLength );
-	};
+	const changeItemVariant: (
+		uuidToReplace: string,
+		newProductSlug: string,
+		newProductId: number
+	) => void = useCallback( ( uuidToReplace, newProductSlug, newProductId ) => {
+		hookDispatch( { type: 'REPLACE_CART_ITEM', uuidToReplace, newProductSlug, newProductId } );
+	}, [] );
 
 	const updateLocation: ( CartLocation ) => void = useCallback( location => {
 		debug( 'updating location for cart to', location );
@@ -427,10 +496,12 @@ export function useShoppingCart(
 		allowedPaymentMethods: cart.allowedPaymentMethods,
 		addItem,
 		removeItem,
-		changePlanLength,
 		updateLocation,
+		changeItemVariant,
 		submitCoupon,
 		couponStatus,
 		couponCode: cart.couponCode,
+		variantRequestStatus,
+		variantSelectOverride,
 	} as ShoppingCartManager;
 }
