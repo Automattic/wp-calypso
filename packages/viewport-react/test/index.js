@@ -93,7 +93,7 @@ describe( '@automattic/viewport-react', () => {
 
 	beforeAll( async () => {
 		window.matchMedia = matchMediaMock;
-		helpers = await import( '../react' );
+		helpers = await import( '../src' );
 		// Disable console warnings.
 		jest.spyOn( console, 'warn' ).mockImplementation( () => '' );
 	} );
