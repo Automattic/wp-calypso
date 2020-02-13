@@ -119,6 +119,7 @@ class StepSourceSelect extends Component {
 					targetSite={ targetSite }
 					onUrlChange={ this.props.onUrlChange }
 					onSubmit={ this.handleContinue }
+					url={ this.props.url }
 				/>
 				<p>{ this.state.error }</p>
 				<Card>
