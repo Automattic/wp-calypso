@@ -64,6 +64,8 @@ class Full_Site_Editing {
 
 		$this->theme_slug           = normalize_theme_slug( get_stylesheet() );
 		$this->wp_template_inserter = new WP_Template_Inserter( $this->theme_slug );
+
+		// Just a dummy change.
 	}
 
 	/**
