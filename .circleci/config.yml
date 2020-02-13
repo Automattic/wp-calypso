@@ -236,8 +236,6 @@ jobs:
     <<: *defaults
     working_directory: ~/wp-calypso/test/e2e
     steps:
-      - run: pwd
-      - run: ls -la
       - restore_cache: *restore-e2e-node_modules
       - run:
           name: Install e2e npm dependencies
@@ -391,35 +389,35 @@ jobs:
     <<: *defaults
     parallelism: 6
     steps:
-      - run: echo 'skip'
-      # - prepare
-      # - restore_cache: *restore-jest-cache
-      # - run:
-      #     name: Run Client Tests
-      #     no_output_timeout: 2m
-      #     command: |
-      #       # Use Jest to list tests to run via config
-      #       ./node_modules/.bin/jest              \
-      #         --listTests                         \
-      #         --config=test/client/jest.config.js \
-      #         > ~/jest-tests
-      #       # Run jest on the CircleCI split for parallelization across containers
-      #       # Avoid using `--split-by=timings` here so that per-node Jest caches
-      #       # receive a stable sub-set of tests for optimal cache usage.
-      #       JEST_JUNIT_OUTPUT_DIR="$CIRCLE_TEST_REPORTS/client" \
-      #       JEST_JUNIT_OUTPUT_NAME="results.xml" \
-      #         ./node_modules/.bin/jest                                  \
-      #           --cacheDirectory="$HOME/jest-cache"                     \
-      #           --ci                                                    \
-      #           --maxWorkers=2                                          \
-      #           --reporters=default                                     \
-      #           --reporters=jest-junit                                  \
-      #           --runTestsByPath                                        \
-      #           --silent                                                \
-      #           --config=test/client/jest.config.js                     \
-      #           $( circleci tests split < ~/jest-tests )
-      # - save_cache: *save-jest-cache
-      # - store-artifacts-and-test-results
+      - prepare
+      - restore_cache: *restore-jest-cache
+      - run:
+          name: Run Client Tests
+          no_output_timeout: 2m
+          command: |
+            # Use Jest to list tests to run via config
+            ./node_modules/.bin/jest              \
+              --listTests                         \
+              --config=test/client/jest.config.js \
+              > ~/jest-tests
+
+            # Run jest on the CircleCI split for parallelization across containers
+            # Avoid using `--split-by=timings` here so that per-node Jest caches
+            # receive a stable sub-set of tests for optimal cache usage.
+            JEST_JUNIT_OUTPUT_DIR="$CIRCLE_TEST_REPORTS/client" \
+            JEST_JUNIT_OUTPUT_NAME="results.xml" \
+              ./node_modules/.bin/jest                                  \
+                --cacheDirectory="$HOME/jest-cache"                     \
+                --ci                                                    \
+                --maxWorkers=2                                          \
+                --reporters=default                                     \
+                --reporters=jest-junit                                  \
+                --runTestsByPath                                        \
+                --silent                                                \
+                --config=test/client/jest.config.js                     \
+                $( circleci tests split < ~/jest-tests )
+      - save_cache: *save-jest-cache
+      - store-artifacts-and-test-results
 
   test-integration:
     <<: *defaults
@@ -470,25 +468,24 @@ jobs:
     <<: *defaults
     parallelism: 1
     steps:
-      - run: echo 'skip'
-      # - prepare
-      # - restore_cache: *restore-jest-cache
-      # - run:
-      #     name: Run Server Tests
-      #     no_output_timeout: 2m
-      #     command: |
-      #       JEST_JUNIT_OUTPUT_DIR="$CIRCLE_TEST_REPORTS/server" \
-      #       JEST_JUNIT_OUTPUT_NAME="results.xml" \
-      #         ./node_modules/.bin/jest                                  \
-      #           --cacheDirectory="$HOME/jest-cache"                     \
-      #           --ci                                                    \
-      #           --maxWorkers=2                                          \
-      #           --reporters=default                                     \
-      #           --reporters=jest-junit                                  \
-      #           --silent                                                \
-      #           --config=test/server/jest.config.js
-      # - save_cache: *save-jest-cache
-      # - store-artifacts-and-test-results
+      - prepare
+      - restore_cache: *restore-jest-cache
+      - run:
+          name: Run Server Tests
+          no_output_timeout: 2m
+          command: |
+            JEST_JUNIT_OUTPUT_DIR="$CIRCLE_TEST_REPORTS/server" \
+            JEST_JUNIT_OUTPUT_NAME="results.xml" \
+              ./node_modules/.bin/jest                                  \
+                --cacheDirectory="$HOME/jest-cache"                     \
+                --ci                                                    \
+                --maxWorkers=2                                          \
+                --reporters=default                                     \
+                --reporters=jest-junit                                  \
+                --silent                                                \
+                --config=test/server/jest.config.js
+      - save_cache: *save-jest-cache
+      - store-artifacts-and-test-results
 
   icfy-stats:
     <<: *defaults
@@ -692,46 +689,46 @@ workflows:
   calypso:
     jobs:
       - setup
-      # - prime-calypso-live:
-      #     filters:
-      #       branches:
-      #         ignore: master
-      # - build-full-site-editing:
-      #     requires:
-      #       - setup
-      # - test-full-site-editing:
-      #     requires:
-      #       - setup
-      # - build-notifications:
-      #     requires:
-      #       - setup
-      # - build-o2-blocks:
-      #     requires:
-      #       - setup
-      # - build-wpcom-block-editor:
-      #     requires:
-      #       - setup
-      # - icfy-stats:
-      #     requires:
-      #       - setup
-      # - lint-and-translate:
-      #     requires:
-      #       - setup
+      - prime-calypso-live:
+          filters:
+            branches:
+              ignore: master
+      - build-full-site-editing:
+          requires:
+            - setup
+      - test-full-site-editing:
+          requires:
+            - setup
+      - build-notifications:
+          requires:
+            - setup
+      - build-o2-blocks:
+          requires:
+            - setup
+      - build-wpcom-block-editor:
+          requires:
+            - setup
+      - icfy-stats:
+          requires:
+            - setup
+      - lint-and-translate:
+          requires:
+            - setup
       - test-client:
           requires:
             - setup
-      # - test-packages:
-      #     requires:
-      #       - setup
+      - test-packages:
+          requires:
+            - setup
       - test-server:
           requires:
             - setup
-      # - typecheck:
-      #     requires:
-      #       - setup
-      # - typecheck-strict:
-      #     requires:
-      #       - setup
+      - typecheck:
+          requires:
+            - setup
+      - typecheck-strict:
+          requires:
+            - setup
       - setup-e2e:
           requires:
             - test-client
