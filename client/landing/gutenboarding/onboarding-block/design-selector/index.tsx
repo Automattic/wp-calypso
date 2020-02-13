@@ -6,13 +6,13 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import React, { useLayoutEffect, useRef, FunctionComponent } from 'react';
 import classnames from 'classnames';
 import PageLayoutSelector from './page-layout-selector';
-import { partition } from 'lodash';
+import { partition, memoize, reduce } from 'lodash';
 import { Portal } from 'reakit/Portal';
 import { useDialogState, Dialog, DialogBackdrop } from 'reakit/Dialog';
 import { useSpring, animated } from 'react-spring';
 import { useHistory } from 'react-router-dom';
 import { Step } from '../../steps';
-
+import { parse as parseBlocks } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
@@ -21,6 +21,8 @@ import DesignCard from './design-card';
 
 import './style.scss';
 import { VerticalsTemplates } from '@automattic/data-stores';
+
+import DynamicPreview from './dynamic-preview';
 
 type Template = VerticalsTemplates.Template;
 
@@ -47,6 +49,19 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 		useSelect( select =>
 			select( VERTICALS_TEMPLATES_STORE ).getTemplates( siteVertical?.id ?? 'm1' )
 		) ?? [];
+
+	// Parse templates blocks and memoize them.
+	const getBlocksByTemplateSlugs = memoize( templates =>
+		reduce(
+			templates,
+			( prev, { slug, content } ) => {
+				prev[ slug ] = content ? parseBlocks( content ) : [];
+				return prev;
+			},
+			{}
+		)
+	);
+	const blocksByTemplateSlug = getBlocksByTemplateSlugs( templates );
 
 	const [ designs, otherTemplates ] = partition(
 		templates,
@@ -114,26 +129,27 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 			>
 				<div className="design-selector__grid">
 					{ designs.map( design => (
-						<DesignCard
-							key={ design.slug }
-							dialogId={ dialogId }
-							design={ design }
-							style={
-								selectedDesign?.slug === design.slug
-									? {
-											gridRow: 1,
-											gridColumn: descriptionOnRight ? 1 : 2,
-									  }
-									: {
-											visibility: showPageSelector ? 'hidden' : undefined,
-									  }
-							}
-							onClick={ () => {
-								window.scrollTo( 0, 0 );
-								setSelectedDesign( design );
-								history.push( Step.PageSelection );
-							} }
-						/>
+						// <DesignCard
+						// 	key={ design.slug }
+						// 	dialogId={ dialogId }
+						// 	design={ design }
+						// 	style={
+						// 		selectedDesign?.slug === design.slug
+						// 			? {
+						// 					gridRow: 1,
+						// 					gridColumn: descriptionOnRight ? 1 : 2,
+						// 			  }
+						// 			: {
+						// 					visibility: showPageSelector ? 'hidden' : undefined,
+						// 			  }
+						// 	}
+						// 	onClick={ () => {
+						// 		window.scrollTo( 0, 0 );
+						// 		setSelectedDesign( design );
+						// 		history.push( Step.PageSelection );
+						// 	} }
+						// />
+						<DynamicPreview key={ design.slug } blocks={ blocksByTemplateSlug[ design.slug ] } />
 					) ) }
 				</div>
 			</div>
