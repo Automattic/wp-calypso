@@ -150,11 +150,11 @@ references:
   # Specific npm caches for e2e
   # We either restore a full cache or do a full install
   restore-npm-cache: &restore-e2e-node_modules
-    name: 'Restore npm cache'
+    name: 'Restore test/e2e node_modules'
     keys:
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-npm-e2e-modules-{{ checksum "~/wp-calypso/tests/e2e/package-lock.json" }}-{{ checksum "~/wp-calypso/tests/e2e/.chromedriver_version" }}
   save-npm-cache: &save-e2e-node_modules
-    name: 'Save node_modules cache'
+    name: 'Save test/e2e node_modules'
     key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-npm-e2e-modules-{{ checksum "~/wp-calypso/tests/e2e/package-lock.json" }}-{{ checksum "~/wp-calypso/tests/e2e/.chromedriver_version" }}
     paths:
       - ~/wp-calypso/tests/e2e/node_modules
