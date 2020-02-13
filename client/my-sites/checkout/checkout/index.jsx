@@ -474,7 +474,7 @@ export class Checkout extends React.Component {
 	}
 
 	maybeRedirectToConciergeNudge( pendingOrReceiptId ) {
-		// For testing Frankenflow we disable any redirect to Nudge
+		// Using hideNudge prop will disable any redirect to Nudge
 		if ( this.props.hideNudge ) {
 			return;
 		}
