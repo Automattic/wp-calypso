@@ -25,7 +25,7 @@ export default function() {
 				className="masterbar__item-home"
 				url="/"
 				tooltip={ translate( 'Jetpack Cloud Dashboard', {
-					comment: 'Jetpack Cloud masterbar nav item',
+					comment: 'Jetpack Cloud top navigation bar item',
 				} ) }
 			>
 				<JetpackLogo size={ 28 } full monochrome />
