@@ -450,9 +450,6 @@ class RegisterDomainStep extends React.Component {
 							onSearchChange={ this.onSearchChange }
 							placeholder={ this.getPlaceholderText() }
 							ref={ this.bindSearchCardReference }
-							showDesignUpdate={ this.props.showDesignUpdate }
-							filters={ this.state.filters }
-							onToggleChange={ this.onFiltersChange }
 						/>
 						{ this.renderSearchFilters() }
 					</CompactCard>
