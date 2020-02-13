@@ -63,10 +63,11 @@
 		color: var( --color-neutral-60 );
 		display: block;
 
-		&.domain-product-price__free-text-domain-step-copy-updates {
+		&.domain-product-price__free-text-domain-step-design-updates {
 			display: flex;
 			align-items: center;
 			height: 100%;
+			color: var( --color-neutral-30 );
 
 			& del,
 			& span {
@@ -104,6 +105,10 @@
 		.domain-product-price__renewal-price {
 			font-size: 80%;
 			color: var( --color-text-subtle );
+		}
+
+		&.domain-product-price__domain-step-design-updates .domain-product-price__price {
+			color: var( --color-neutral-60 );
 		}
 
 		@include breakpoint( '>660px' ) {

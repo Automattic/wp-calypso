@@ -67,7 +67,7 @@ class DomainProductPrice extends React.Component {
 	}
 
 	renderFreeWithPlanText() {
-		const { isMappingProduct, isEligibleVariantForDomainTest, translate } = this.props;
+		const { isMappingProduct, showDesignUpdate, translate } = this.props;
 
 		let message, popoverElement;
 		switch ( this.props.rule ) {
@@ -109,7 +109,7 @@ class DomainProductPrice extends React.Component {
 		}
 
 		const className = classnames( 'domain-product-price__free-text', {
-			'domain-product-price__free-text-domain-step-copy-updates': isEligibleVariantForDomainTest,
+			'domain-product-price__free-text-domain-step-design-updates': showDesignUpdate,
 		} );
 
 		return (
