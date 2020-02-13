@@ -172,6 +172,7 @@ class DomainProductPrice extends React.Component {
 	renderFree() {
 		const className = classnames( 'domain-product-price', {
 			'domain-product-price__domain-step-copy-updates': this.props.isEligibleVariantForDomainTest,
+			'domain-product-price__domain-step-design-updates': this.props.showDesignUpdate,
 		} );
 
 		const productPriceClassName = classnames( 'domain-product-price__price', {

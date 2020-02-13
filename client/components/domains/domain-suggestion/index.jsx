@@ -61,10 +61,8 @@ class DomainSuggestion extends React.Component {
 			extraClasses
 		);
 
-		const shouldApplyContentClass = showTestCopy && ! isFeatured && priceRule !== 'FREE_DOMAIN';
-
 		const contentClassName = classNames( 'domain-suggestion__content', {
-			'domain-suggestion__content-domain-copy-test': shouldApplyContentClass,
+			'domain-suggestion__content-domain-copy-test': showTestCopy && ! isFeatured,
 		} );
 
 		/* eslint-disable jsx-a11y/click-events-have-key-events */

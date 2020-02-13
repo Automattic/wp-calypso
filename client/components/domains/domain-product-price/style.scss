@@ -19,19 +19,18 @@
 			align-items: flex-start;
 		}
 	}
-		
 
-	.is-section-signup {
+	.is-section-signup & {
 		@include breakpoint( '>660px' ) {
 			padding-left: 1em;
 			padding-right: 2em;
 
-			.domain-product-price__domain-step-copy-updates {
+			&.domain-product-price__domain-step-copy-updates {
 				padding-left: 0;
 				padding-right: 0;
 			}
 
-			.domain-product-price__domain-step-design-updates {
+			&.domain-product-price__domain-step-design-updates {
 				padding-left: 0;
 				padding-right: 1em;
 			}
