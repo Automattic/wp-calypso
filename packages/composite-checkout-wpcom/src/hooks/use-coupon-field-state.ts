@@ -50,7 +50,7 @@ export default function useCouponFieldState( submitCoupon ): CouponFieldStatePro
 				payload: { type: 'Invalid code' },
 			} );
 		},
-		[ couponFieldValue ]
+		[ couponFieldValue, onEvent, submitCoupon ]
 	);
 
 	return {
