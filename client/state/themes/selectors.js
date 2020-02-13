@@ -30,7 +30,10 @@ import {
 	oldShowcaseUrl,
 } from './utils';
 import { DEFAULT_THEME_QUERY } from './constants';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
+import {
+	FEATURE_AUTO_LOADING_HOMEPAGE,
+	FEATURE_UNLIMITED_PREMIUM_THEMES,
+} from 'lib/plans/constants';
 
 import 'state/themes/init';
 
@@ -729,8 +732,12 @@ export function getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ) {
 
 /**
  * Returns the price string to display for a given theme on a given site:
+<<<<<<< HEAD
  *
  * TODO: Add tests!
+=======
+ * `@TODO Add tests!`
+>>>>>>> 5e14f22... themes: hasAutoLoadingHomepageFeature() selector
  *
  * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme ID
@@ -794,4 +801,18 @@ export function getRecommendedThemes( state ) {
  */
 export function areRecommendedThemesLoading( state ) {
 	return state.themes.recommendedThemes.isLoading;
+}
+
+/**
+ * Checks if a theme has auto loading homepage feature.
+ *
+ * @param {object} state   Global state tree
+ * @param {string} themeId An identifier for the theme
+ * @returns {boolean} True if the theme has auto loading homepage. Otherwise, False.
+ */
+export function hasAutoLoadingHomepageFeature( state, themeId ) {
+	return includes(
+		getThemeTaxonomySlugs( getTheme( state, 'wpcom', themeId ), 'theme_feature' ),
+		FEATURE_AUTO_LOADING_HOMEPAGE
+	);
 }
