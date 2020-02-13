@@ -236,6 +236,7 @@ jobs:
     <<: *defaults
     working_directory: ~/wp-calypso/test/e2e
     steps:
+      - prepare
       - restore_cache: *restore-e2e-node_modules
       - run:
           name: Install e2e npm dependencies
