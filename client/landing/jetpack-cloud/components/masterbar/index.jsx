@@ -24,7 +24,7 @@ export default function() {
 			<Item
 				className="masterbar__item-home"
 				url="/"
-				tooltip={ translate( 'Jetpack Cloud Homepage', {
+				tooltip={ translate( 'Jetpack Cloud Dashboard', {
 					comment: 'Jetpack Cloud masterbar nav item',
 				} ) }
 			>
