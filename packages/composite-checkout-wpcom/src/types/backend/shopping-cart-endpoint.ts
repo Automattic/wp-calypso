@@ -32,7 +32,7 @@ export interface RequestCart {
 	locale: string;
 	is_coupon_applied: boolean;
 	temporary: false;
-	extra: string; // TODO: fix this
+	extra: string;
 }
 
 /**
@@ -42,6 +42,7 @@ export interface RequestCartProduct {
 	product_slug: string;
 	product_id: number;
 	meta: string;
+	extra: object;
 }
 
 /**
@@ -119,11 +120,13 @@ export const prepareRequestCartProduct: ( ResponseCartProduct ) => RequestCartPr
 	product_slug,
 	meta,
 	product_id,
+	extra,
 }: ResponseCartProduct ) => {
 	return {
 		product_slug,
 		meta,
 		product_id,
+		extra,
 	} as RequestCartProduct;
 };
 
