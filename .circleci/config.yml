@@ -238,11 +238,11 @@ jobs:
     steps:
       - restore_cache: *restore-e2e-node_modules
       - run:
-        name: Install e2e npm dependencies
-        command: |
-          if [[ ! -d "node_modules" ]]; then
-            CHROMEDRIVER_VERSION=$(<.chromedriver_version) npm ci
-          fi
+          name: Install e2e npm dependencies
+          command: |
+            if [[ ! -d "node_modules" ]]; then
+              CHROMEDRIVER_VERSION=$(<.chromedriver_version) npm ci
+            fi
       - save_cache: *save-e2e-node_modules
       - persist_to_workspace:
           root: '~'
