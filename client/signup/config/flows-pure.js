@@ -353,7 +353,7 @@ export function generateFlows( {
 
 	if ( isEnabled( 'gutenboarding' ) ) {
 		flows.frankenflow = {
-			steps: [ 'domains-launch', 'plans-launch', 'launch' ],
+			steps: [ 'plans-launch', 'launch' ],
 			destination: getLaunchDestination,
 			description: 'Frankenflow launch for a site created from Gutenboarding',
 			lastModified: '2020-01-22',
