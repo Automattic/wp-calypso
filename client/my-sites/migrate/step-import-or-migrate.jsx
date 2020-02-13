@@ -5,13 +5,11 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { Button, CompactCard } from '@automattic/components';
-
 /**
  * Internal dependencies
  */
 import HeaderCake from 'components/header-cake';
 import CardHeading from 'components/card-heading';
-
 /**
  * Style dependencies
  */
@@ -47,28 +45,40 @@ class StepImportOrMigrate extends Component {
 	};
 
 	getJetpackOrUpgradeMessage = () => {
-		const { sourceSite, sourceHasJetpack, isTargetSiteAtomic } = this.props;
+		const { sourceSiteInfo, sourceHasJetpack, isTargetSiteAtomic, translate } = this.props;
 
 		if ( ! sourceHasJetpack ) {
-			const sourceSiteDomain = get( sourceSite, 'domain' );
+			const sourceSiteDomain = get( sourceSiteInfo, 'site_url', '' );
 			return (
 				<p>
-					You need to have{ ' ' }
-					<a href={ `https://wordpress.com/jetpack/connect/install?url=${ sourceSiteDomain }` }>
-						Jetpack
-					</a>{ ' ' }
-					installed on your site to be able to import everything.
+					{ translate(
+						'You need to have {{jetpackInstallLink}}Jetpack{{/jetpackInstallLink}} installed on your site to be able to import everything.',
+						{
+							components: {
+								jetpackInstallLink: (
+									<a href={ `https://wordpress.com/jetpack/connect/?url=${ sourceSiteDomain }` } />
+								),
+							},
+						}
+					) }
 				</p>
 			);
 		}
 
 		if ( ! isTargetSiteAtomic ) {
-			return <p>Import your entire site with the Business Plan.</p>;
+			return <p>{ translate( 'Import your entire site with the Business Plan.' ) }</p>;
 		}
 	};
 
 	render() {
-		const { targetSite, targetSiteSlug, sourceHasJetpack, sourceSite, sourceSiteInfo } = this.props;
+		const {
+			targetSite,
+			targetSiteSlug,
+			sourceHasJetpack,
+			sourceSite,
+			sourceSiteInfo,
+			translate,
+		} = this.props;
 		const backHref = `/migrate/${ targetSiteSlug }`;
 
 		return (
@@ -82,22 +92,24 @@ class StepImportOrMigrate extends Component {
 				/>
 
 				<CompactCard>
-					<CardHeading>What do you want to import?</CardHeading>
+					<CardHeading>{ translate( 'What do you want to import?' ) }</CardHeading>
 
 					{ this.getJetpackOrUpgradeMessage() }
 					<ImportTypeChoice
 						onChange={ this.chooseImportType }
 						radioOptions={ {
 							everything: {
-								title: 'Everything',
-								labels: [ 'Upgrade' ],
-								description: "All your site's content, themes, plugins, users and settings",
+								title: translate( 'Everything' ),
+								labels: [ translate( 'Upgrade' ) ],
+								description: translate(
+									"All your site's content, themes, plugins, users and settings"
+								),
 								enabled: sourceHasJetpack,
 							},
 							'content-only': {
 								key: 'content-only',
-								title: 'Content only',
-								description: 'Import posts, pages, comments, and media.',
+								title: translate( 'Content only' ),
+								description: translate( 'Import posts, pages, comments, and media.' ),
 								enabled: true,
 							},
 						} }
@@ -105,17 +117,17 @@ class StepImportOrMigrate extends Component {
 					<div className="migrate__buttons-wrapper">
 						{ this.state.chosenImportType === 'everything' ? (
 							<Button primary onClick={ this.props.onJetpackSelect }>
-								Continue
+								{ translate( 'Continue' ) }
 							</Button>
 						) : null }
 						{ this.state.chosenImportType === 'content-only' ? (
 							<Button primary onClick={ this.handleImportRedirect }>
-								Continue
+								{ translate( 'Continue' ) }
 							</Button>
 						) : null }
 
 						<Button className="migrate__cancel" href={ backHref }>
-							Cancel
+							{ translate( 'Cancel' ) }
 						</Button>
 					</div>
 				</CompactCard>

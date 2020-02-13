@@ -3,6 +3,8 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -15,7 +17,7 @@ import Badge from 'components/badge';
 import { getUrlParts } from 'lib/url';
 import Spinner from 'components/spinner';
 
-export default class SitesBlock extends Component {
+class SitesBlock extends Component {
 	state = {};
 
 	onSubmit = event => {
@@ -84,7 +86,7 @@ export default class SitesBlock extends Component {
 	};
 
 	render() {
-		const { targetSite } = this.props;
+		const { targetSite, translate } = this.props;
 		return (
 			<div className="sites-block__sites">
 				<div className="sites-block__sites-item">{ this.getSourceSiteOrInput() }</div>
@@ -94,7 +96,7 @@ export default class SitesBlock extends Component {
 				<div className="sites-block__sites-item">
 					<Site site={ targetSite } indicator={ false } />
 					<div className="sites-block__sites-labels-container">
-						<Badge type="info">This site</Badge>
+						<Badge type="info">{ translate( 'This Site' ) }</Badge>
 					</div>
 				</div>
 			</div>
@@ -110,3 +112,5 @@ SitesBlock.propTypes = {
 	onUrlChange: PropTypes.func,
 	onSubmit: PropTypes.func,
 };
+
+export default localize( SitesBlock );

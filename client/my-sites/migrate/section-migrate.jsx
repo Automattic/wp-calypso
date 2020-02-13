@@ -287,20 +287,22 @@ class SectionMigrate extends Component {
 	}
 
 	renderMigrationComplete() {
-		const { targetSite } = this.props;
+		const { targetSite, translate } = this.props;
 		const viewSiteURL = get( targetSite, 'URL' );
 
 		return (
 			<>
 				<FormattedHeader
 					className="migrate__section-header"
-					headerText="Congratulations!"
+					headerText={ translate( 'Congratulations!' ) }
 					align="left"
 				/>
 				<CompactCard>
-					<div className="migrate__status">Your import has completed successfully.</div>
+					<div className="migrate__status">
+						{ translate( 'Your import has completed successfully.' ) }
+					</div>
 					<Button primary href={ viewSiteURL }>
-						View site
+						{ translate( 'View site' ) }
 					</Button>
 					<Button onClick={ this.resetMigration }>Start over</Button>
 				</CompactCard>
@@ -308,38 +310,46 @@ class SectionMigrate extends Component {
 		);
 	}
 
-	renderMigrationConfirmation() {}
-
 	renderMigrationError() {
+		const { translate } = this.props;
+
 		return (
 			<Card className="migrate__pane">
 				<FormattedHeader
 					className="migrate__section-header"
-					headerText="Import failed"
+					headerText={ translate( 'Import failed' ) }
 					align="center"
 				/>
 				<div className="migrate__status">
-					There was an error with your import.
+					{ translate( 'There was an error with your import.' ) }
 					<br />
 					{ this.state.errorMessage }
 				</div>
 				<Button primary onClick={ this.resetMigration }>
-					Back to your site
+					{ translate( 'Back to your site' ) }
 				</Button>
 			</Card>
 		);
 	}
 
 	renderMigrationProgress() {
-		const { sourceSite, targetSite } = this.props;
+		const { sourceSite, targetSite, translate } = this.props;
 		const sourceSiteDomain = get( sourceSite, 'domain' );
 		const targetSiteDomain = get( targetSite, 'domain' );
 		const subHeaderText = (
 			<>
-				{ "We're moving everything from " }
-				<span className="migrate__domain">{ sourceSiteDomain }</span>
-				{ ' to ' }
-				<span className="migrate__domain">{ targetSiteDomain }</span>.
+				{ translate(
+					"We're moving everything from {{sp}}%(sourceSiteDomain)s{{/sp}} to {{sp}}%(targetSiteDomain)s{{/sp}}.",
+					{
+						args: {
+							sourceSiteDomain,
+							targetSiteDomain,
+						},
+						components: {
+							sp: <span className="migrate__domain" />,
+						},
+					}
+				) }
 			</>
 		);
 
@@ -354,7 +364,7 @@ class SectionMigrate extends Component {
 					/>
 					<FormattedHeader
 						className="migrate__section-header"
-						headerText="Import in progress"
+						headerText={ translate( 'Import in progress' ) }
 						subHeaderText={ subHeaderText }
 						align="center"
 					/>
@@ -367,11 +377,17 @@ class SectionMigrate extends Component {
 	}
 
 	renderStartTime() {
+		const { translate } = this.props;
+
 		if ( isEmpty( this.state.startTime ) ) {
 			return <div className="migrate__start-time">&nbsp;</div>;
 		}
 
-		return <div className="migrate__start-time">Import started { this.state.startTime }</div>;
+		return (
+			<div className="migrate__start-time">
+				{ translate( 'Import started' ) } { this.state.startTime }
+			</div>
+		);
 	}
 
 	renderProgressBar() {
@@ -458,7 +474,7 @@ class SectionMigrate extends Component {
 	}
 
 	render() {
-		const { step, sourceSite, targetSite, targetSiteSlug } = this.props;
+		const { step, sourceSite, targetSite, targetSiteSlug, translate } = this.props;
 
 		let migrationElement;
 
@@ -528,7 +544,7 @@ class SectionMigrate extends Component {
 
 		return (
 			<Main>
-				<DocumentHead title="Migrate" />
+				<DocumentHead title={ translate( 'Migrate' ) } />
 				<SidebarNavigation />
 				{ migrationElement }
 			</Main>
