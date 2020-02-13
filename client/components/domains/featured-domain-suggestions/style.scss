@@ -122,6 +122,10 @@
 		&.domain-registration-suggestion__progress-bar-design-update-test {
 			order: 0;
 			margin: 0.7em 0 1em;
+
+			@include breakpoint( '<480px' ) {
+				margin: 0 0 0.5em;
+			}
 			
 			&.pill-success .plan-pill {
 				position: inherit;

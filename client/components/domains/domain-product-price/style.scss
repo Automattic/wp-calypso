@@ -73,6 +73,10 @@
 			& span {
 				margin-right: 0.3em;
 			}
+
+			@include breakpoint( '<480px' ) {
+				margin-top: 5px;
+			}
 		}
 	}
 
@@ -85,6 +89,10 @@
 
 	.domain-product-price__free-text-tooltip {
 		display: flex;
+
+		body.is-section-signup .layout & {
+			padding: 0;
+		}
 	}
 
 	.domain-product-price__free-price {
@@ -96,6 +104,10 @@
 
 			& span {
 				margin-right: 0.3em;
+			}
+
+			@include breakpoint( '<480px' ) {
+				margin-top: 5px;
 			}
 		}
 	}
