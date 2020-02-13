@@ -39,6 +39,7 @@ class SwitchingHomepageModal extends Component {
 		isActivating: PropTypes.bool.isRequired,
 		isThemeWpCom: PropTypes.bool.isRequired,
 		siteId: PropTypes.number,
+		isVisible: PropTypes.bool,
 	};
 
 	onCloseModal = () => {
@@ -80,11 +81,8 @@ class SwitchingHomepageModal extends Component {
 			isActivating,
 			hasAutoLoadingHomepage,
 			isCurrentTheme,
+			isVisible = false,
 		} = this.props;
-
-		if ( ! theme ) {
-			return null;
-		}
 
 		// Nothing to do when it's the current theme.
 		if ( isCurrentTheme ) {
@@ -110,7 +108,7 @@ class SwitchingHomepageModal extends Component {
 		return (
 			<Dialog
 				className="themes__switching-homepage-modal"
-				isVisible={ hasAutoLoadingHomepage }
+				isVisible={ isVisible }
 				buttons={ this.getButtons( themeName ) }
 				onClose={ this.onCloseModal }
 			>
