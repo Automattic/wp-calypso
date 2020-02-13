@@ -12,7 +12,7 @@ describe( 'pathToSection', () => {
 	} );
 
 	test( 'should assume the Reader as the default app root', () => {
-		expect( pathToSection( '/' ) ).toBe( 'reader' );
+		expect( pathToSection( '/' ) ).toBe( 'entry' );
 	} );
 
 	test( 'should handle cases where path and section have different names', () => {
