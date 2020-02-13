@@ -4,7 +4,7 @@
 import { __ as NO__ } from '@wordpress/i18n';
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import React, { FunctionComponent, useEffect } from 'react';
+import React, { FunctionComponent, useEffect, useCallback } from 'react';
 import { useDebounce } from 'use-debounce';
 import classnames from 'classnames';
 import { DomainSuggestions } from '@automattic/data-stores';
@@ -85,38 +85,45 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		</span>
 	);
 
-	const handleCreateSite = ( username: string, bearerToken?: string ) => {
-		const siteUrl = currentDomain?.domain_name || siteTitle || username;
-		createSite( {
-			blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
-			blog_title: siteTitle,
-			options: {
-				site_vertical: siteVertical?.id,
-				site_vertical_name: siteVertical?.label,
-				site_information: {
-					title: siteTitle,
+	const handleCreateSite = useCallback(
+		( username: string, bearerToken?: string ) => {
+			const siteUrl = currentDomain?.domain_name || siteTitle || username;
+			createSite( {
+				blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
+				blog_title: siteTitle,
+				options: {
+					site_vertical: siteVertical?.id,
+					site_vertical_name: siteVertical?.label,
+					site_information: {
+						title: siteTitle,
+					},
+					site_creation_flow: 'gutenboarding',
+					theme: `pub/${ selectedDesign?.slug }`,
 				},
-				site_creation_flow: 'gutenboarding',
-				theme: `pub/${ selectedDesign?.slug }`,
-			},
-			...( bearerToken && { authToken: bearerToken } ),
-		} );
-	};
-
-	if ( shouldCreate && newUser && newUser.bearerToken && newUser.username ) {
-		handleCreateSite( newUser.username, newUser.bearerToken );
-		setShouldCreate( false );
-	}
+				...( bearerToken && { authToken: bearerToken } ),
+			} );
+		},
+		[ createSite, currentDomain, selectedDesign, siteTitle, siteVertical ]
+	);
 
 	const handleSignup = () => {
 		setShouldCreate( true );
 		history.push( Step.Signup );
 	};
 
-	if ( newSite ) {
-		resetOnboardStore();
-		window.location.href = `/block-editor/page/${ newSite.blogid }/home?is-gutenboarding`;
-	}
+	useEffect( () => {
+		if ( shouldCreate && newUser && newUser.bearerToken && newUser.username ) {
+			handleCreateSite( newUser.username, newUser.bearerToken );
+			setShouldCreate( false );
+		}
+	}, [ shouldCreate, newUser, handleCreateSite, setShouldCreate ] );
+
+	useEffect( () => {
+		if ( newSite ) {
+			resetOnboardStore();
+			window.location.href = `/block-editor/page/${ newSite.blogid }/home?is-gutenboarding`;
+		}
+	}, [ newSite, resetOnboardStore ] );
 
 	return (
 		<div
