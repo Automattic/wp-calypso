@@ -34,6 +34,8 @@ import isVipSite from 'state/selectors/is-vip-site';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isUserPaid } from 'state/purchases/selectors';
 import ThanksModal from 'my-sites/themes/thanks-modal';
+import SwitchingHomepageModal from 'my-sites/themes/switching-homepage-modal';
+
 import QueryActiveTheme from 'components/data/query-active-theme';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryUserPurchases from 'components/data/query-user-purchases';
@@ -689,6 +691,7 @@ class ThemeSheet extends React.Component {
 				{ this.renderBar() }
 				<QueryActiveTheme siteId={ siteId } />
 				<ThanksModal source={ 'details' } />
+				<SwitchingHomepageModal source={ 'details' } themeId={ id } />
 				{ pageUpsellBanner }
 				<HeaderCake
 					className="theme__sheet-action-bar"
