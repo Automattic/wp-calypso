@@ -90,7 +90,7 @@ class RegisteredDomainType extends React.Component {
 		if ( domain.isPendingIcannVerification && domain.currentUserCanManage ) {
 			return {
 				statusText: translate( 'Action required' ),
-				statusClass: 'status-pending',
+				statusClass: 'status-error',
 				icon: 'info',
 			};
 		}
