@@ -95,6 +95,14 @@ class RegisteredDomainType extends React.Component {
 			};
 		}
 
+		if ( domain.expired ) {
+			return {
+				statusText: translate( 'Action required' ),
+				statusClass: 'status-error',
+				icon: 'info',
+			};
+		}
+
 		const recentlyRegistered = isRecentlyRegistered( registrationDate );
 
 		if ( recentlyRegistered ) {
@@ -110,6 +118,28 @@ class RegisteredDomainType extends React.Component {
 			statusClass: 'status-success',
 			icon: 'check_circle',
 		};
+	}
+
+	renderExpired() {
+		const { domain, translate } = this.props;
+		const domainsLink = <a href={ DOMAINS } target="_blank" rel="noopener noreferrer" />;
+
+		if ( ! domain.expired ) {
+			return null;
+		}
+
+		return (
+			<div>
+				{ translate(
+					'Your domain has expired and is no longer active. {{domainsLink}}Learn more{{/domainsLink}}',
+					{
+						components: {
+							domainsLink,
+						},
+					}
+				) }
+			</div>
+		);
 	}
 
 	renderRecentlyRegistered() {
@@ -177,6 +207,7 @@ class RegisteredDomainType extends React.Component {
 							compact={ true }
 						/>
 					) }
+					{ this.renderExpired() }
 					{ this.renderRecentlyRegistered() }
 					{ ! newStatusDesignAutoRenew && (
 						<div>
@@ -190,11 +221,17 @@ class RegisteredDomainType extends React.Component {
 					) }
 				</DomainStatus>
 				<Card compact={ true }>
-					{ this.props.translate( 'Expires: %(expiry_date)s', {
-						args: {
-							expiry_date: moment( domain.expiry ).format( 'LL' ),
-						},
-					} ) }
+					{ domain.expired
+						? this.props.translate( 'Expired: %(expiry_date)s', {
+								args: {
+									expiry_date: moment( domain.expiry ).format( 'LL' ),
+								},
+						  } )
+						: this.props.translate( 'Expires: %(expiry_date)s', {
+								args: {
+									expiry_date: moment( domain.expiry ).format( 'LL' ),
+								},
+						  } ) }
 				</Card>
 				{ newStatusDesignAutoRenew && this.renderAutoRenew() }
 				{ this.getVerticalNavigation() }
