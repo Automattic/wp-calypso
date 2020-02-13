@@ -131,7 +131,8 @@ export function generateFlows( {
 			],
 			destination: getSignupDestination,
 			description: 'The improved onboarding flow.',
-			lastModified: '2019-06-20',
+			lastModified: '2020-02-05',
+			showRecaptcha: true,
 		},
 
 		desktop: {

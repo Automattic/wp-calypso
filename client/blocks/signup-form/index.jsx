@@ -96,6 +96,7 @@ class SignupForm extends Component {
 		isSocialSignupEnabled: PropTypes.bool,
 		locale: PropTypes.string,
 		positionInFlow: PropTypes.number,
+		recaptchaClientId: PropTypes.number,
 		save: PropTypes.func,
 		signupDependencies: PropTypes.object,
 		step: PropTypes.object,
@@ -103,6 +104,7 @@ class SignupForm extends Component {
 		submitting: PropTypes.bool,
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+		showRecaptchaToS: PropTypes.bool,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -114,6 +116,7 @@ class SignupForm extends Component {
 		displayUsernameInput: true,
 		flowName: '',
 		isSocialSignupEnabled: false,
+		showRecaptchaToS: false,
 	};
 
 	state = {
@@ -830,7 +833,7 @@ class SignupForm extends Component {
 	}
 
 	footerLink() {
-		const { flowName, translate } = this.props;
+		const { flowName, showRecaptchaToS, translate } = this.props;
 
 		const logInUrl = config.isEnabled( 'login/native-login-links' )
 			? this.getLoginLink()
@@ -851,6 +854,25 @@ class SignupForm extends Component {
 						/>
 					) }
 				</LoggedOutFormLinks>
+				{ showRecaptchaToS && (
+					<div className="signup-form__recaptcha-tos">
+						<LoggedOutFormLinks>
+							<p>
+								{ translate(
+									'This site is protected by reCAPTCHA and the Google {{a1}}Privacy Policy{{/a1}} and {{a2}}Terms of Service{{/a2}} apply.',
+									{
+										components: {
+											a1: <a href="https://policies.google.com/privacy" />,
+											a2: <a href="https://policies.google.com/terms" />,
+										},
+										comment:
+											'English wording comes from Google: https://developers.google.com/recaptcha/docs/faq#id-like-to-hide-the-recaptcha-badge.-what-is-allowed',
+									}
+								) }
+							</p>
+						</LoggedOutFormLinks>
+					</div>
+				) }
 			</>
 		);
 	}
@@ -943,7 +965,11 @@ class SignupForm extends Component {
 				: localizeUrl( config( 'login_url' ), this.props.locale );
 
 			return (
-				<div className={ classNames( 'signup-form', this.props.className ) }>
+				<div
+					className={ classNames( 'signup-form', this.props.className, {
+						'is-showing-recaptcha-tos': this.props.showRecaptchaToS,
+					} ) }
+				>
 					{ this.getNotice() }
 					<PasswordlessSignupForm
 						step={ this.props.step }
@@ -954,6 +980,7 @@ class SignupForm extends Component {
 						logInUrl={ logInUrl }
 						disabled={ this.props.disabled }
 						disableSubmitButton={ this.props.disableSubmitButton }
+						recaptchaClientId={ this.props.recaptchaClientId }
 					/>
 					{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 						<SocialSignupForm
@@ -969,7 +996,11 @@ class SignupForm extends Component {
 		}
 
 		return (
-			<div className={ classNames( 'signup-form', this.props.className ) }>
+			<div
+				className={ classNames( 'signup-form', this.props.className, {
+					'is-showing-recaptcha-tos': this.props.showRecaptchaToS,
+				} ) }
+			>
 				{ this.getNotice() }
 
 				<LoggedOutForm onSubmit={ this.handleSubmit } noValidate={ true }>

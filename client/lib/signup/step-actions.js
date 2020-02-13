@@ -382,7 +382,18 @@ export function launchSiteApi( callback, dependencies ) {
 export function createAccount(
 	callback,
 	dependencies,
-	{ userData, flowName, queryArgs, service, access_token, id_token, oauth2Signup },
+	{
+		userData,
+		flowName,
+		queryArgs,
+		service,
+		access_token,
+		id_token,
+		oauth2Signup,
+		recaptchaDidntLoad,
+		recaptchaFailed,
+		recaptchaToken,
+	},
 	reduxStore
 ) {
 	const state = reduxStore.getState();
@@ -449,7 +460,10 @@ export function createAccount(
 							// convert to legacy oauth2_redirect format: %s@https://public-api.wordpress.com/oauth2/authorize/...
 							oauth2_redirect: queryArgs.oauth2_redirect && '0@' + queryArgs.oauth2_redirect,
 					  }
-					: null
+					: null,
+				recaptchaDidntLoad ? { 'g-recaptcha-error': 'recaptcha_didnt_load' } : null,
+				recaptchaFailed ? { 'g-recaptcha-error': 'recaptcha_failed' } : null,
+				recaptchaToken ? { 'g-recaptcha-response': recaptchaToken } : null
 			),
 			( error, response ) => {
 				const errors =
