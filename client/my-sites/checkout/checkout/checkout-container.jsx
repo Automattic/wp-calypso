@@ -15,6 +15,8 @@ import CartData from 'components/data/cart';
 import CheckoutData from 'components/data/checkout';
 import SecondaryCart from '../cart/secondary-cart';
 import SignupSiteCreatedNotice from 'my-sites/checkout/checkout/signup-site-created-notice';
+import Gridicon from 'components/gridicon';
+import { Button } from '@automattic/components';
 
 /**
  * Style dependencies
@@ -47,7 +49,21 @@ class CheckoutContainer extends React.Component {
 		}
 	}
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	renderCheckoutHeader() {
+		if ( this.props.isComingFromFrankenflow ) {
+			return (
+				<Button
+					borderless
+					className="navigation-link back"
+					// href={ window.history.back() }
+					onClick={ () => window.history.go( -2 ) }
+				>
+					<Gridicon icon="arrow-left" size={ 18 } />
+					{ this.props.translate( 'Back' ) }
+				</Button>
+			);
+		}
 		return this.state.headerText && <FormattedHeader headerText={ this.state.headerText } />;
 	}
 
