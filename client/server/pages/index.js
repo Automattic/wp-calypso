@@ -366,6 +366,11 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	return context;
 }
 
+const setupDefaultContext = entrypoint => ( req, res, next ) => {
+	req.context = getDefaultContext( req, entrypoint );
+	next();
+};
+
 function setUpLoggedOutRoute( req, res, next ) {
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN',
@@ -586,7 +591,6 @@ function setUpRoute( req, res, next ) {
 const render404 = ( entrypoint = 'entry-main' ) => ( req, res ) => {
 	const ctx = {
 		faviconURL: config( 'favicon_url' ),
-		isRTL: config( 'rtl' ),
 		entrypoint: getFilesForEntrypoint( getBuildTargetFromRequest( req ), entrypoint ),
 	};
 
@@ -604,7 +608,6 @@ const renderServerError = ( entrypoint = 'entry-main' ) => ( err, req, res, next
 
 	const ctx = {
 		faviconURL: config( 'favicon_url' ),
-		isRTL: config( 'rtl' ),
 		entrypoint: getFilesForEntrypoint( getBuildTargetFromRequest( req ), entrypoint ),
 	};
 
@@ -785,30 +788,31 @@ module.exports = function() {
 	} );
 
 	// Landing pages for domains-related emails
-	app.get( '/domain-services/:action', function( req, res ) {
-		const ctx = getDefaultContext( req, 'entry-domains-landing' );
-		attachBuildTimestamp( ctx );
-		attachHead( ctx );
-		attachI18n( ctx );
+	app.get(
+		'/domain-services/:action',
+		setupDefaultContext( 'entry-domains-landing' ),
+		( req, res ) => {
+			const ctx = req.context;
+			attachBuildTimestamp( ctx );
+			attachHead( ctx );
+			attachI18n( ctx );
 
-		ctx.clientData = config.clientData;
-		ctx.domainsLandingData = {
-			action: get( req, [ 'params', 'action' ], 'unknown-action' ),
-			query: get( req, 'query', {} ),
-		};
+			ctx.clientData = config.clientData;
+			ctx.domainsLandingData = {
+				action: get( req, [ 'params', 'action' ], 'unknown-action' ),
+				query: get( req, 'query', {} ),
+			};
 
-		const pageHtml = renderJsx( 'domains-landing', ctx );
-		res.send( pageHtml );
-	} );
+			const pageHtml = renderJsx( 'domains-landing', ctx );
+			res.send( pageHtml );
+		}
+	);
 
 	function handleSectionPath( section, sectionPath, entrypoint ) {
 		const pathRegex = pathToRegExp( sectionPath );
 
-		app.get( pathRegex, function( req, res, next ) {
-			req.context = {
-				...getDefaultContext( req, entrypoint ),
-				sectionName: section.name,
-			};
+		app.get( pathRegex, setupDefaultContext( entrypoint ), function( req, res, next ) {
+			req.context.sectionName = section.name;
 
 			if ( ! entrypoint && config.isEnabled( 'code-splitting' ) ) {
 				req.context.chunkFiles = getFilesForChunk( section.name, req );
@@ -878,19 +882,16 @@ module.exports = function() {
 		}
 	);
 
-	app.get( '/browsehappy', setUpRoute, function( req, res ) {
+	app.get( '/browsehappy', setupDefaultContext(), setUpRoute, function( req, res ) {
 		const wpcomRe = /^https?:\/\/[A-z0-9_-]+\.wordpress\.com$/;
 		const primaryBlogUrl = get( req, 'context.user.primary_blog_url', '' );
 		const isWpcom = wpcomRe.test( primaryBlogUrl );
-		const dashboardUrl = isWpcom
+
+		req.context.dashboardUrl = isWpcom
 			? primaryBlogUrl + '/wp-admin'
 			: 'https://dashboard.wordpress.com/wp-admin/';
-		const ctx = {
-			...req.context,
-			dashboardUrl,
-		};
 
-		res.send( renderJsx( 'browsehappy', ctx ) );
+		res.send( renderJsx( 'browsehappy', req.context ) );
 	} );
 
 	app.get( '/support-user', function( req, res ) {
