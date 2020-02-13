@@ -28,6 +28,7 @@ references:
         "$CIRCLE_TEST_REPORTS/server"           \
         "$CIRCLE_TEST_REPORTS/e2ereports"       \
         "$HOME/jest-cache"                      \
+        "$HOME/.tsc-cache"                      \
         "$HOME/terser-cache"
 
   # Jest cache caching
@@ -58,6 +59,22 @@ references:
     key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
     paths:
       - ~/jest-cache
+
+  #
+  # TypeScript compiler (tsc) cache caching
+  #
+  restore-tsc-cache: &restore-tsc-cache
+    name: Restore TypeScript cache
+    keys:
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-tsc-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-tsc-{{ .Branch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-tsc-master
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-tsc
+  save-tsc-cache: &save-tsc-cache
+    name: Save TypeScript cache
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-tsc-{{ .Branch }}-{{ .Revision }}
+    paths:
+      - ~/.tsc-cache
 
   #
   # Terser cache caching
@@ -197,10 +214,12 @@ jobs:
       - run: *update-git-master
       - save_cache: *save-git-cache
       # npm dependencies
+      - restore_cache: *restore-tsc-cache
       - restore_cache: *restore-npm-cache
       - run: *npm-install
       - run: *npm-e2e-install
       - save_cache: *save-npm-cache
+      - save_cache: *save-tsc-cache
       - run: npm run build-packages
       - persist_to_workspace:
           root: '~'

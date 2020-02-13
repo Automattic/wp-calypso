@@ -8,6 +8,10 @@
 		"baseUrl": ".",
 		"paths": {
 			"*": [ "*", "../../*" ]
-		}
+		},
+
+		"noEmit": true,
+		"incremental": true,
+		"tsBuildInfoFile": "../../../.tsc-cache/gutenboarding"
 	}
 }

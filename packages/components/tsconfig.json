@@ -22,7 +22,10 @@
 		"forceConsistentCasingInFileNames": true,
 
 		"typeRoots": [ "../../node_modules/@types" ],
-		"types": []
+		"types": [],
+
+		"incremental": true,
+		"tsBuildInfoFile": "../../.tsc-cache/components"
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]
