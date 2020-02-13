@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { get } from 'lodash';
@@ -25,7 +26,6 @@ import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { isMobile } from 'lib/viewport';
 import { planLevelsMatch } from 'lib/plans/index';
 
 export class PlanFeaturesHeader extends Component {

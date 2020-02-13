@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -16,7 +16,6 @@ import SegmentedControl from 'components/segmented-control';
 import InfoPopover from 'components/info-popover';
 import { withLocalizedMoment } from 'components/localized-moment';
 import getSiteSetting from 'state/selectors/get-site-setting';
-import { isMobile } from 'lib/viewport';
 
 /**
  * Local dependencies

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';
@@ -14,7 +14,6 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import { isMobile } from 'lib/viewport';
 import { getHappychatAuth } from 'state/happychat/utils';
 import hasUnreadMessages from 'state/happychat/selectors/has-unread-messages';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';

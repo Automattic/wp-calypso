@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-
+import { getWindowInnerWidth } from '@automattic/viewport';
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
@@ -12,7 +12,6 @@ import { debounce } from 'lodash';
  * Internal Dependencies
  */
 import SelectDropdown from 'components/select-dropdown';
-import { getWindowInnerWidth } from 'lib/viewport';
 import afterLayoutFlush from 'lib/after-layout-flush';
 import TranslatableString from 'components/translatable/proptype';
 

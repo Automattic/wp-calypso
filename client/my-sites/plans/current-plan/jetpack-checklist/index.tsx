@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { isDesktop } from '@automattic/viewport';
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { get, includes } from 'lodash';
@@ -21,7 +22,6 @@ import QuerySiteChecklist from 'components/data/query-site-checklist';
 import { format as formatUrl, parse as parseUrl } from 'url';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getCustomizerUrl } from 'state/sites/selectors';
-import { isDesktop } from 'lib/viewport';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { URL } from 'types';

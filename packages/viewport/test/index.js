@@ -1,10 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-
 /**
- * Internal dependencies
+ * External dependencies
  */
+import 'regenerator-runtime';
+
 let viewport;
 
 const matchesMock = jest.fn( () => 'foo' );

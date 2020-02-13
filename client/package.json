@@ -24,6 +24,8 @@
 		"@automattic/react-i18n": "file:../packages/react-i18n",
 		"@automattic/react-virtualized": "9.21.2",
 		"@automattic/tree-select": "file:../packages/tree-select",
+		"@automattic/viewport": "file:../packages/viewport",
+		"@automattic/viewport-react": "file:../packages/viewport-react",
 		"@babel/runtime": "7.8.4",
 		"@emotion/core": "10.0.22",
 		"@emotion/styled": "10.0.23",

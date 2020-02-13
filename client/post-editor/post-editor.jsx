@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { isWithinBreakpoint } from '@automattic/viewport';
 import React from 'react';
 import ReactDom from 'react-dom';
 import page from 'page';
@@ -76,7 +77,6 @@ import EditorSidebar from 'post-editor/editor-sidebar';
 import Site from 'blocks/site';
 import EditorStatusLabel from 'post-editor/editor-status-label';
 import EditorGroundControl from 'post-editor/editor-ground-control';
-import { isWithinBreakpoint } from 'lib/viewport';
 import { isSitePreviewable } from 'state/sites/selectors';
 import { removep } from 'lib/formatting';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';

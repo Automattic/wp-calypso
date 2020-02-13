@@ -3,8 +3,9 @@
  */
 
 /**
- * Internal dependencies
+ * External dependencies
  */
+import 'regenerator-runtime';
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { act } from 'react-dom/test-utils';
@@ -45,7 +46,7 @@ const matchMediaMock = jest.fn( query => {
 	return mediaListObjectMock;
 } );
 
-describe( 'viewport/react', () => {
+describe( '@automattic/viewport-react', () => {
 	let container;
 
 	// Auxiliary method to test a valid component.
@@ -92,7 +93,7 @@ describe( 'viewport/react', () => {
 
 	beforeAll( async () => {
 		window.matchMedia = matchMediaMock;
-		helpers = await import( '../react' );
+		helpers = await import( '../src' );
 		// Disable console warnings.
 		jest.spyOn( console, 'warn' ).mockImplementation( () => '' );
 	} );
@@ -143,6 +144,7 @@ describe( 'viewport/react', () => {
 			expect( container.textContent ).toBe( 'undefined' );
 		} );
 
+		// eslint-disable-next-line jest/expect-expect
 		test( 'returns the current breakpoint state for a valid breakpoint', () => {
 			function TestComponent() {
 				const isActive = helpers.useBreakpoint( '<960px' );
@@ -204,6 +206,7 @@ describe( 'viewport/react', () => {
 	} );
 
 	describe( 'useMobileBreakpoint', () => {
+		// eslint-disable-next-line jest/expect-expect
 		test( 'returns the current breakpoint state for the mobile breakpoint', () => {
 			function TestComponent() {
 				const isActive = helpers.useMobileBreakpoint();
@@ -215,6 +218,7 @@ describe( 'viewport/react', () => {
 	} );
 
 	describe( 'useDesktopBreakpoint', () => {
+		// eslint-disable-next-line jest/expect-expect
 		test( 'returns the current breakpoint state for the desktop breakpoint', () => {
 			function TestComponent() {
 				const isActive = helpers.useDesktopBreakpoint();
@@ -253,6 +257,7 @@ describe( 'viewport/react', () => {
 			expect( container.textContent ).toBe( 'undefined' );
 		} );
 
+		// eslint-disable-next-line jest/expect-expect
 		test( 'returns the current breakpoint state for a valid breakpoint', () => {
 			const TestComponent = helpers.withBreakpoint( '<960px' )( BaseComponent );
 			runComponentTests( TestComponent, '(max-width: 960px)' );
@@ -260,6 +265,7 @@ describe( 'viewport/react', () => {
 	} );
 
 	describe( 'withMobileBreakpoint', () => {
+		// eslint-disable-next-line jest/expect-expect
 		test( 'returns the current breakpoint state for the mobile breakpoint', () => {
 			const TestComponent = helpers.withMobileBreakpoint( BaseComponent );
 			runComponentTests( TestComponent, '(max-width: 480px)' );
@@ -267,6 +273,7 @@ describe( 'viewport/react', () => {
 	} );
 
 	describe( 'withDesktopBreakpoint', () => {
+		// eslint-disable-next-line jest/expect-expect
 		test( 'returns the current breakpoint state for the desktop breakpoint', () => {
 			const TestComponent = helpers.withDesktopBreakpoint( BaseComponent );
 			runComponentTests( TestComponent, '(min-width: 961px)' );

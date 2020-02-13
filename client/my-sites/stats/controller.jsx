@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { isDesktop } from '@automattic/viewport';
 import React from 'react';
 import page from 'page';
 import i18n from 'i18n-calypso';
@@ -25,7 +26,6 @@ import StatsSummary from './summary';
 import StatsPostDetail from './stats-post-detail';
 import StatsCommentFollows from './comment-follows';
 import WordAds from './wordads';
-import { isDesktop } from 'lib/viewport';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 function rangeOfPeriod( period, date ) {

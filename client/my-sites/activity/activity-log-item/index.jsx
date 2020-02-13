@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { withDesktopBreakpoint } from '@automattic/viewport-react';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -40,7 +41,6 @@ import getRewindState from 'state/selectors/get-rewind-state';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import { getSite } from 'state/sites/selectors';
-import { withDesktopBreakpoint } from 'lib/viewport/react';
 import { withLocalizedMoment } from 'components/localized-moment';
 
 /**

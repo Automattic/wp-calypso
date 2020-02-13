@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
+import { isMobile } from '@automattic/viewport';
 import { head, find, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import userSettings from 'lib/user-settings';
-import { isMobile } from 'lib/viewport';
 import { postRequest } from 'lib/i18n-utils/glotpress';
 import {
 	GP_PROJECT,
