@@ -724,7 +724,7 @@ function useWpcomProductVariants( { siteId, productSlug, credits, couponDiscount
 			dispatch( requestProductsList() );
 			setHaveFetchedProducts( true );
 		}
-	}, [ shouldFetchProducts, haveFetchedProducts ] );
+	}, [ shouldFetchProducts, haveFetchedProducts, dispatch ] );
 
 	return anyProductSlug => {
 		if ( anyProductSlug !== productSlug ) {
@@ -771,14 +771,14 @@ function useVariantWpcomPlanProductSlugs( productSlug ) {
 
 	useEffect( () => {
 		// Trigger at most one HTTP request
-		debug( 'deciding whether to request plan variant data for', productSlug );
+		debug( 'deciding whether to request plan variant data' );
 		if ( shouldFetchPlans && ! haveFetchedPlans ) {
 			debug( 'dispatching request for plan variant data' );
 			dispatch( requestPlans() );
 			dispatch( requestProductsList() );
 			setHaveFetchedPlans( true );
 		}
-	}, [ haveFetchedPlans, shouldFetchPlans ] );
+	}, [ haveFetchedPlans, shouldFetchPlans, dispatch ] );
 
 	if ( ! chosenPlan ) {
 		return [];
