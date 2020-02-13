@@ -51,16 +51,16 @@
 
 .domain-types__container {
 	.status-success {
-		@include domain_status_color( #008a20 );
+		@include domain_status_color( var( --color-success ) );
 	}
 	.status-pending {
-		@include domain_status_color( #3582C4 );
+		@include domain_status_color( var( --color-primary-40 ) );
 	}
 	.status-warning {
-		@include domain_status_color( #B69000 );
+		@include domain_status_color( var( --color-warning ) );
 	}
 	.status-error {
-		@include domain_status_color( #C9356E );
+		@include domain_status_color( var( --color-accent ) );
 	}
 
 	.domain-status__card {
@@ -69,7 +69,6 @@
 		}
 
 		> .domain-status__icon {
-			font-size: 16px;
 			display: flex;
 			align-items: center;
 			> svg {
