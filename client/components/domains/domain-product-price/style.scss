@@ -17,19 +17,24 @@
 
 		&.domain-product-price__domain-step-copy-updates {
 			align-items: flex-start;
-
-			&:not( .is-free-domain ) {
-				min-width: 11%;
-				max-width: 11%;
-			}
 		}
 	}
 		
 
-	.is-section-signup &:not( .domain-product-price__domain-step-copy-updates ) {
+	.is-section-signup {
 		@include breakpoint( '>660px' ) {
 			padding-left: 1em;
 			padding-right: 2em;
+
+			.domain-product-price__domain-step-copy-updates {
+				padding-left: 0;
+				padding-right: 0;
+			}
+
+			.domain-product-price__domain-step-design-updates {
+				padding-left: 0;
+				padding-right: 1em;
+			}
 		}
 	}
 
@@ -65,8 +70,8 @@
 			height: 100%;
 
 			& del,
-			& .info-popover {
-				margin-right: 5px;
+			& span {
+				margin-right: 0.3em;
 			}
 		}
 	}

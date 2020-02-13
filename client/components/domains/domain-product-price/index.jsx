@@ -114,8 +114,8 @@ class DomainProductPrice extends React.Component {
 
 		return (
 			<div className={ className }>
-				{ popoverElement }
 				{ message }
+				{ popoverElement }
 			</div>
 		);
 	}
@@ -157,7 +157,8 @@ class DomainProductPrice extends React.Component {
 
 	renderFreeWithPlan() {
 		const className = classnames( 'domain-product-price', 'is-free-domain', {
-			'domain-product-price__domain-step-copy-updates': this.props.isEligibleVariantForDomainTest,
+			'domain-product-price__domain-step-copy-updates': this.props.showTestCopy,
+			'domain-product-price__domain-step-design-updates': this.props.showDesignUpdate,
 		} );
 
 		return (
