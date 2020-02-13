@@ -1,0 +1,32 @@
+name: Deploy FSE plugin to WordPress.org
+
+# Until we are ready to move to continuous deployment to Simple and Atomic sites
+# we need a manual way to trigger this workflow. One way to do it is to push a tag
+# to wp-calypso repository. Since we already have other tags for desktop releases
+# I'm prefixing this matcher with fse so it doesn't run when it's not supposed to.
+# Once we are ready to move to continuous workflow we can remove this and trigger
+# the workflow on on each merge to master that contains changes in FSE plugin folder.
+on:
+  push:
+    tags:
+    - "fse/*"
+
+jobs:
+  tag:
+    name: Deploy FSE plugin to WordPress.org
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+    - uses: actions/checkout@master
+    - name: Install dependencies
+      run: npm ci
+    - name: Build FSE
+      run: npx lerna run build --scope='@automattic/full-site-editing' --stream
+    - name: WordPress Plugin Deploy
+      uses: 10up/action-wordpress-plugin-deploy@master
+      env:
+        ASSETS_DIR: 'apps/full-site-editing/full-site-editing-plugin/'
+        SLUG: full-site-editing
+        SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+        SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+        
