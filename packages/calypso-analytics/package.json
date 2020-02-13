@@ -6,8 +6,8 @@
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
 	"sideEffects": false,
-	"main": "dist/cjs/index.js",
-	"module": "dist/esm/index.js",
+	"main": "dist/cjs/index",
+	"module": "dist/esm/index",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
@@ -15,9 +15,9 @@
 	},
 	"files": [
 		"dist",
-		"types",
 		"src"
 	],
+	"types": "dist/types",
 	"publishConfig": {
 		"access": "public"
 	},
@@ -27,12 +27,14 @@
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prepublish": "npm run clean",
-		"prepare": "transpile"
+		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
+		"watch": "tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"@automattic/load-script": "file:../load-script",
 		"debug": "^4.1.1",
 		"hash.js": "^1.1.7",
-		"lodash": "^4.17.15"
+		"lodash": "^4.17.15",
+		"tslib": "^1.10.0"
 	}
 }

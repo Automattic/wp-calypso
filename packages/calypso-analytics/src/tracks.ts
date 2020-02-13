@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /**
  * External dependencies
  */
-import { assign, includes, isObjectLike, isUndefined, omit, times } from 'lodash';
+import { assign, includes, isObjectLike, isUndefined, omitBy, times } from 'lodash';
 import cookie from 'cookie';
 import { EventEmitter } from 'events';
 import { loadScript } from '@automattic/load-script';
@@ -11,7 +13,15 @@ import { loadScript } from '@automattic/load-script';
  */
 import { getCurrentUser, setCurrentUser } from './utils/current-user';
 import getDoNotTrack from './utils/do-not-track';
+import { getPageViewParams } from './page-view-params';
 import debug from './utils/debug';
+
+declare global {
+	interface Window {
+		_tkq: Array< Array< any > >;
+	}
+}
+declare const window: undefined | ( Window & { BUILD_TIMESTAMP?: number } );
 
 /**
  * Tracks uses a bunch of special query params that should not be used as property name
@@ -27,21 +37,20 @@ const EVENT_NAME_EXCEPTIONS = [
 	'wcadmin_storeprofiler_payment_login',
 	'wcadmin_storeprofiler_payment_create_account',
 ];
-let _superProps; // Added to all Tracks events.
+let _superProps: any; // Added to all Tracks events.
 let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments.
-
-if ( typeof window !== 'undefined' ) {
-	window._tkq = window._tkq || [];
-}
 
 if ( typeof document !== 'undefined' ) {
 	_loadTracksResult = loadScript( '//stats.wp.com/w.js?60' );
 }
 
-function createRandomId( randomBytesLength = 9 ) {
+function createRandomId( randomBytesLength = 9 ): string {
+	if ( typeof window === 'undefined' ) {
+		return '';
+	}
 	// 9 * 4/3 = 12
 	// this is to avoid getting padding of a random byte string when it is base64 encoded
-	let randomBytes;
+	let randomBytes: any;
 
 	if ( window.crypto && window.crypto.getRandomValues ) {
 		randomBytes = new Uint8Array( randomBytesLength );
@@ -50,17 +59,20 @@ function createRandomId( randomBytesLength = 9 ) {
 		randomBytes = times( randomBytesLength, () => Math.floor( Math.random() * 256 ) );
 	}
 
-	return window.btoa( String.fromCharCode.apply( String, randomBytes ) );
+	return window.btoa( String.fromCharCode( ...randomBytes ) );
 }
 
-function getUrlParameter( name ) {
+function getUrlParameter( name: string ): string {
+	if ( typeof window === 'undefined' ) {
+		return '';
+	}
 	name = name.replace( /[[]/g, '\\[' ).replace( /[\]]/g, '\\]' );
 	const regex = new RegExp( '[\\?&]' + name + '=([^&#]*)' );
 	const results = regex.exec( window.location.search );
 	return results === null ? '' : decodeURIComponent( results[ 1 ].replace( /\+/g, ' ' ) );
 }
 
-function checkForBlockedTracks() {
+function checkForBlockedTracks(): Promise< void > {
 	// Proceed only after the tracks script load finished and failed.
 	// Calling this function from `initialize` ensures current user is set.
 	// This detects stats blocking, and identifies by `getCurrentUser()`, URL, or cookie.
@@ -92,20 +104,30 @@ function checkForBlockedTracks() {
 	} );
 }
 
-export const analyticsEvents = new EventEmitter();
+export function pushEventToTracksQueue( args: Array< any > ) {
+	if ( typeof window !== 'undefined' ) {
+		window._tkq = window._tkq || [];
+		window._tkq.push( args );
+	}
+}
+
+export const analyticsEvents: EventEmitter = new EventEmitter();
 
 /**
  * Returns the anoymous id stored in the `tk_ai` cookie
  *
  * @returns {string} - The Tracks anonymous user id
  */
-export function getTracksAnonymousUserId() {
+export function getTracksAnonymousUserId(): string {
 	const cookies = cookie.parse( document.cookie );
 
 	return cookies.tk_ai;
 }
 
-export function initializeAnalytics( currentUser, superProps ) {
+export function initializeAnalytics(
+	currentUser: any | undefined,
+	superProps: any
+): Promise< void > {
 	// Update super props.
 	if ( 'function' === typeof superProps ) {
 		debug( 'superProps', superProps );
@@ -123,7 +145,7 @@ export function initializeAnalytics( currentUser, superProps ) {
 	return checkForBlockedTracks();
 }
 
-export function identifyUser( userData ) {
+export function identifyUser( userData: any ): any {
 	// Ensure object.
 	if ( 'object' !== typeof userData ) {
 		debug( 'Invalid userData.', userData );
@@ -139,10 +161,10 @@ export function identifyUser( userData ) {
 
 	// Tracks user identification.
 	debug( 'Tracks identifyUser.', currentUser );
-	window._tkq.push( [ 'identifyUser', currentUser.ID, currentUser.username ] );
+	pushEventToTracksQueue( [ 'identifyUser', currentUser.ID, currentUser.username ] );
 }
 
-export function recordTracksEvent( eventName, eventProperties ) {
+export function recordTracksEvent( eventName: string, eventProperties: any ) {
 	eventProperties = eventProperties || {};
 
 	if ( process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' ) {
@@ -203,22 +225,27 @@ export function recordTracksEvent( eventName, eventProperties ) {
 
 	// Remove properties that have an undefined value
 	// This allows a caller to easily remove properties from the recorded set by setting them to undefined
-	eventProperties = omit( eventProperties, isUndefined );
+	eventProperties = omitBy( eventProperties, isUndefined );
 
 	debug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
 
-	if ( 'undefined' !== typeof window ) {
-		window._tkq.push( [ 'recordEvent', eventName, eventProperties ] );
-	}
+	pushEventToTracksQueue( [ 'recordEvent', eventName, eventProperties ] );
 	analyticsEvents.emit( 'record-event', eventName, eventProperties );
 }
 
-export function recordTracksPageView( urlPath, params ) {
+export function recordTracksPageView( urlPath: string, params: any ) {
+	debug( 'Recording pageview in tracks.', urlPath, params );
+
 	let eventProperties = {
-		build_timestamp: window.BUILD_TIMESTAMP,
 		do_not_track: getDoNotTrack() ? 1 : 0,
 		path: urlPath,
 	};
+
+	// Add calypso build timestamp if set
+	const build_timestamp = typeof window !== 'undefined' && window.BUILD_TIMESTAMP;
+	if ( build_timestamp ) {
+		eventProperties = assign( eventProperties, { build_timestamp } );
+	}
 
 	// add optional path params
 	if ( params ) {
@@ -227,7 +254,7 @@ export function recordTracksPageView( urlPath, params ) {
 
 	// Record all `utm` marketing parameters as event properties on the page view event
 	// so we can analyze their performance with our analytics tools
-	if ( window.location ) {
+	if ( typeof window !== 'undefined' && window.location ) {
 		const urlParams = new URL( window.location.href ).searchParams;
 		const utmParamEntries =
 			urlParams &&
@@ -238,4 +265,9 @@ export function recordTracksPageView( urlPath, params ) {
 	}
 
 	recordTracksEvent( 'calypso_page_view', eventProperties );
+}
+
+export function recordTracksPageViewWithPageParams( urlPath: string, params?: any ) {
+	const pageViewParams = getPageViewParams( urlPath );
+	recordTracksPageView( urlPath, Object.assign( params || {}, pageViewParams ) );
 }

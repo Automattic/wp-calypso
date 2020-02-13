@@ -18,6 +18,7 @@
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
+	"types": "src/types",
 	"publishConfig": {
 		"access": "public"
 	},

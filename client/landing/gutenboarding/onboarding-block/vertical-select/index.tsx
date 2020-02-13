@@ -6,6 +6,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { Suggestions } from '@automattic/components';
 import { ENTER } from '@wordpress/keycodes';
 import { useI18n } from '@automattic/react-i18n';
+import { recordTracksPageViewWithPageParams } from '@automattic/calypso-analytics';
 
 /**
  * Internal dependencies
@@ -138,6 +139,10 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 			inputRef.current?.focus();
 		}
 	}, [ isActive, inputRef ] );
+
+	useEffect( () => {
+		recordTracksPageViewWithPageParams( '/gutenboarding/about' );
+	}, [] );
 
 	return (
 		<Question
