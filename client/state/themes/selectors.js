@@ -827,3 +827,13 @@ export function hasAutoLoadingHomepageFeature( state, themeId ) {
 		FEATURE_AUTO_LOADING_HOMEPAGE
 	);
 }
+
+/**
+ * Return the theme ID which is going to be installed.
+ *
+ * @param {object} state   Global state tree
+ * @returns {string} Theme ID,
+ */
+export function getPreInstallingThemeId( state ) {
+	return get( state.themes, 'themeShowSwitchingHomepageWarning' );
+}
