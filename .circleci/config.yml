@@ -482,8 +482,7 @@ jobs:
             set +o errexit
             npm run preanalyze-bundles                                           \
               && node --max-old-space-size=4096 bin/icfy-analyze.js              \
-              && mv client/stats.json client/chart.json "$CIRCLE_ARTIFACTS/icfy" \
-              || rm -fr build/.babel-client-cache # In case of failure do not save a potentially bad cache
+              && mv client/stats.json client/chart.json "$CIRCLE_ARTIFACTS/icfy"
       - save_cache: *save-terser-cache
       - save_cache: *save-babel-client-cache
       - store-artifacts-and-test-results
