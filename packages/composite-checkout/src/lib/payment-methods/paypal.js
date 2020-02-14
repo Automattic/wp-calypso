@@ -11,7 +11,7 @@ import debugFactory from 'debug';
 import Button from '../../components/button';
 import { useLocalize } from '../../lib/localize';
 import { useDispatch, useSelect } from '../../lib/registry';
-import { useMessages } from '../../public-api';
+import { useMessages, useEvents } from '../../public-api';
 import { useFormStatus } from '../form-status';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
@@ -94,8 +94,12 @@ export function PaypalSubmitButton( { disabled } ) {
 	const { submitPaypalPayment } = useDispatch( 'paypal' );
 	useTransactionStatusHandler();
 	const { formStatus } = useFormStatus();
+	const onEvent = useEvents();
 
-	const onClick = () => submitPaypalPayment();
+	const onClick = () => {
+		onEvent( { type: 'PAYPAL_TRANSACTION_BEGIN' } );
+		submitPaypalPayment();
+	};
 	return (
 		<Button
 			disabled={ disabled }
@@ -116,6 +120,7 @@ function useTransactionStatusHandler() {
 	const transactionError = useSelect( select => select( 'paypal' ).getTransactionError() );
 	const { setFormReady, setFormSubmitting } = useFormStatus();
 	const paypalExpressUrl = useSelect( select => select( 'paypal' ).getRedirectUrl() );
+	const onEvent = useEvents();
 
 	useEffect( () => {
 		if ( transactionStatus === 'redirecting' ) {
@@ -126,6 +131,7 @@ function useTransactionStatusHandler() {
 		}
 		if ( transactionStatus === 'error' ) {
 			setFormReady();
+			onEvent( { type: 'PAYPAL_TRANSACTION_ERROR', payload: transactionError || '' } );
 			showErrorMessage(
 				transactionError || localize( 'An error occurred during the transaction' )
 			);
@@ -136,6 +142,7 @@ function useTransactionStatusHandler() {
 			return;
 		}
 	}, [
+		onEvent,
 		localize,
 		showErrorMessage,
 		transactionStatus,

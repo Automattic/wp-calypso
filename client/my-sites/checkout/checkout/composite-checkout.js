@@ -625,6 +625,16 @@ function getCheckoutEventHandler( dispatch ) {
 						error_message: action.payload,
 					} )
 				);
+			case 'PAYPAL_TRANSACTION_BEGIN':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_paypal_button_clicked', {} )
+				);
+			case 'PAYPAL_TRANSACTION_ERROR':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_paypal_transaction_error', {
+						error_message: action.payload,
+					} )
+				);
 			default:
 				debug( 'unknown checkout event: not recording', action );
 				return;
