@@ -16,8 +16,8 @@ import {
 	hasAutoLoadingHomepageFeature,
 	isActivatingTheme,
 	isThemeActive,
-	isWpcomTheme,
 	shouldShowHomepageWarning,
+	getPreInstallingThemeId,
 } from 'state/themes/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { hideSwitchingHomepageWarning, activate as activateTheme } from 'state/themes/actions';
@@ -39,7 +39,6 @@ class SwitchingHomepageModal extends Component {
 		hasActivated: PropTypes.bool.isRequired,
 		isActivating: PropTypes.bool.isRequired,
 		hasAutoLoadingHomepage: PropTypes.bool,
-		isThemeWpCom: PropTypes.bool.isRequired,
 		siteId: PropTypes.number,
 		isVisible: PropTypes.bool,
 		onClose: PropTypes.func,
@@ -125,18 +124,18 @@ class SwitchingHomepageModal extends Component {
 }
 
 export default connect(
-	( state, { themeId } ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
+		const installingThemeId = getPreInstallingThemeId( state );
 
 		return {
 			siteId,
-			theme: themeId && getCanonicalTheme( state, siteId, themeId ),
+			theme: installingThemeId && getCanonicalTheme( state, siteId, installingThemeId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
-			hasAutoLoadingHomepage: hasAutoLoadingHomepageFeature( state, themeId ),
-			isThemeWpCom: isWpcomTheme( state, themeId ),
-			isCurrentTheme: isThemeActive( state, themeId, siteId ),
-			show: shouldShowHomepageWarning( state, themeId ),
+			hasAutoLoadingHomepage: hasAutoLoadingHomepageFeature( state, installingThemeId ),
+			isCurrentTheme: isThemeActive( state, installingThemeId, siteId ),
+			show: shouldShowHomepageWarning( state, installingThemeId ),
 		};
 	},
 	{
