@@ -480,7 +480,6 @@ jobs:
             npm run preanalyze-bundles
             node --max-old-space-size=4096 bin/icfy-analyze.js
             mv client/stats.json client/chart.json "$CIRCLE_ARTIFACTS/icfy"
-            exit 1
       - save_cache: *save-terser-cache
       - save_cache: *save-babel-client-cache
       - store-artifacts-and-test-results
