@@ -64,6 +64,7 @@ import {
 	getWpcomParentThemeId,
 	shouldFilterWpcomThemes,
 	isDownloadableFromWpcom,
+	hasAutoLoadingHomepageFeature,
 } from './selectors';
 import {
 	getThemeIdFromStylesheet,
@@ -81,6 +82,7 @@ import i18n from 'i18n-calypso';
 import accept from 'lib/accept';
 
 import 'state/data-layer/wpcom/theme-filters';
+import theme from '@automattic/composite-checkout/src/theme';
 
 import 'state/themes/init';
 
@@ -365,6 +367,11 @@ export function requestActiveTheme( siteId ) {
  */
 export function activate( themeId, siteId, source = 'unknown', purchased = false ) {
 	return ( dispatch, getState ) => {
+		// Show switching homepage warning?
+		if ( hasAutoLoadingHomepageFeature( getState(), themeId ) ) {
+			return dispatch( showSwitchingHomepageWarning( themeId ) );
+		}
+
 		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
 			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
 			// If theme is already installed, installation will silently fail,
