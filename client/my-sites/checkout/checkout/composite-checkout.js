@@ -176,6 +176,10 @@ export default function CompositeCheckout( {
 	const reduxDispatch = useDispatch();
 	const recordEvent = useCallback( getCheckoutEventHandler( reduxDispatch ), [] );
 
+	useEffect( () => {
+		recordEvent( { type: 'CHECKOUT_LOADED' } );
+	}, [ recordEvent ] );
+
 	const onPaymentComplete = useCallback( () => {
 		debug( 'payment completed successfully' );
 		const url = getThankYouUrl();
@@ -592,6 +596,8 @@ function getCheckoutEventHandler( dispatch ) {
 	return action => {
 		debug( 'heard checkout event', action );
 		switch ( action.type ) {
+			case 'CHECKOUT_LOADED':
+				return dispatch( recordTracksEvent( 'calypso_checkout_composite_loaded', {} ) );
 			case 'PAYMENT_COMPLETE':
 				return dispatch(
 					recordTracksEvent( 'calypso_checkout_composite_payment_complete', {
