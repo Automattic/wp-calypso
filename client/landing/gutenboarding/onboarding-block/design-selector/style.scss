@@ -151,6 +151,8 @@ $design-selector-selection-space: 285px;
 .design-selector__design-option {
 	position: relative;
 	cursor: pointer;
+	overflow-y: auto;
+	overflow-x: hidden;
 
 	.design-selector__option-overlay {
 		background-color: rgba( var( --color-primary-rgb ), 0.8 );

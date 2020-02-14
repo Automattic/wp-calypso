@@ -18,19 +18,7 @@ const BlockTemplatePreview = ( { design } ) => {
 		return null;
 	}
 
-	return (
-		<div
-			style={ {
-				width: '300px',
-				height: '300px',
-				overflowY: 'scroll',
-				backgroundColor: 'white',
-				cursor: 'pointer',
-			} }
-		>
-			<BlockPreview blocks={ blocks } viewportWidth={ 1280 } />
-		</div>
-	);
+	return <BlockPreview blocks={ blocks } viewportWidth={ 1280 } />;
 };
 
 export default BlockTemplatePreview;

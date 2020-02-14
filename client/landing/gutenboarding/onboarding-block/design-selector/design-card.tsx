@@ -23,38 +23,42 @@ interface Props {
 }
 const DesignCard: FunctionComponent< Props > = ( { design, dialogId, onClick, style } ) => {
 	const [ preview, setPreview ] = useState< boolean >( false );
+	const startPreview = () => setPreview( true );
+	const endPreview = () => setPreview( false );
 
 	return (
-		<div onMouseEnter={ () => setPreview( true ) } onMouseLeave={ () => setPreview( false ) }>
+		<Card
+			as="button"
+			className="design-selector__design-option"
+			isElevated
+			onClick={ onClick }
+			style={ style }
+			aria-haspopup="dialog"
+			aria-controls={ dialogId }
+			onMouseEnter={ startPreview }
+			onMouseLeave={ endPreview }
+			onFocus={ startPreview }
+			onBlur={ endPreview }
+		>
 			{ preview ? (
 				<DynamicPreview design={ design } />
 			) : (
-				<Card
-					as="button"
-					className="design-selector__design-option"
-					isElevated
-					onClick={ onClick }
-					style={ style }
-					aria-haspopup="dialog"
-					aria-controls={ dialogId }
-				>
-					<CardMedia as="span">
-						<img
-							width={ 480 }
-							height={ 360 }
-							alt={ design.title }
-							src={ removeQueryArgs( design.preview, 'w' ) }
-							srcSet={ srcSet( design.preview, [ gridWidth / 2, gridWidth / 4 ] ) }
-						/>
-						<span className="design-selector__option-overlay">
-							<span className="design-selector__option-overlay-text">
-								{ NO__( 'Select this design' ) }
-							</span>
+				<CardMedia as="span">
+					<img
+						width={ 480 }
+						height={ 360 }
+						alt={ design.title }
+						src={ removeQueryArgs( design.preview, 'w' ) }
+						srcSet={ srcSet( design.preview, [ gridWidth / 2, gridWidth / 4 ] ) }
+					/>
+					<span className="design-selector__option-overlay">
+						<span className="design-selector__option-overlay-text">
+							{ NO__( 'Select this design' ) }
 						</span>
-					</CardMedia>
-				</Card>
+					</span>
+				</CardMedia>
 			) }
-		</div>
+		</Card>
 	);
 };
 
