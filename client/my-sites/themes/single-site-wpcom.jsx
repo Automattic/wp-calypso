@@ -13,6 +13,7 @@ import CurrentTheme from 'my-sites/themes/current-theme';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import FormattedHeader from 'components/formatted-header';
 import ThanksModal from 'my-sites/themes/thanks-modal';
+import SwitchingHomepageModal from 'my-sites/themes/switching-homepage-modal';
 import { connectOptions } from './theme-options';
 import Banner from 'components/banner';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from 'lib/plans/constants';
@@ -87,6 +88,7 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 				{ siteId && <QuerySitePlans siteId={ siteId } /> }
 				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 				<ThanksModal source={ 'list' } />
+				<SwitchingHomepageModal source={ 'list' } />
 			</ThemeShowcase>
 		</Main>
 	);
