@@ -167,10 +167,10 @@ export function ApplePaySubmitButton( { disabled } ) {
 	useEffect( () => {
 		if ( transactionStatus === 'error' ) {
 			debug( 'showing error', transactionError );
-			onEvent( { type: 'APPLE_PAY_TRANSACTION_ERROR', transactionError } );
 			showErrorMessage(
 				transactionError || localize( 'An error occurred during the transaction' )
 			);
+			onEvent( { type: 'APPLE_PAY_TRANSACTION_ERROR', payload: transactionError || '' } );
 			resetTransaction();
 			setFormReady();
 		}
@@ -368,6 +368,7 @@ async function submitStripePayment( {
 		resetTransaction();
 		setFormReady();
 		debug( 'showing error for submit', error );
+		onEvent( { type: 'APPLE_PAY_TRANSACTION_ERROR', payload: error } );
 		showErrorMessage( error );
 		return;
 	}
