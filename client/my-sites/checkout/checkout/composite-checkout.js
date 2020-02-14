@@ -617,7 +617,7 @@ function getCheckoutEventHandler( dispatch ) {
 				);
 			case 'STRIPE_TRANSACTION_BEGIN':
 				return dispatch(
-					recordTracksEvent( 'calypso_checkout_composite_stripe_button_clicked', {} )
+					recordTracksEvent( 'calypso_checkout_composite_stripe_submit_clicked', {} )
 				);
 			case 'STRIPE_TRANSACTION_ERROR':
 				return dispatch(
@@ -627,7 +627,7 @@ function getCheckoutEventHandler( dispatch ) {
 				);
 			case 'PAYPAL_TRANSACTION_BEGIN':
 				return dispatch(
-					recordTracksEvent( 'calypso_checkout_composite_paypal_button_clicked', {} )
+					recordTracksEvent( 'calypso_checkout_composite_paypal_submit_clicked', {} )
 				);
 			case 'PAYPAL_TRANSACTION_ERROR':
 				return dispatch(
@@ -637,11 +637,21 @@ function getCheckoutEventHandler( dispatch ) {
 				);
 			case 'FULL_CREDITS_TRANSACTION_BEGIN':
 				return dispatch(
-					recordTracksEvent( 'calypso_checkout_composite_full_credits_button_clicked', {} )
+					recordTracksEvent( 'calypso_checkout_composite_full_credits_submit_clicked', {} )
 				);
 			case 'FULL_CREDITS_TRANSACTION_ERROR':
 				return dispatch(
 					recordTracksEvent( 'calypso_checkout_composite_full_credits_error', {
+						error_message: action.payload,
+					} )
+				);
+			case 'EXISTING_CARD_TRANSACTION_BEGIN':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_existing_card_submit_clicked', {} )
+				);
+			case 'EXISTING_CARD_TRANSACTION_ERROR':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_existing_card_error', {
 						error_message: action.payload,
 					} )
 				);

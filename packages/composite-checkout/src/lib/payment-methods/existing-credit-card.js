@@ -14,6 +14,7 @@ import {
 	useDispatch,
 	useMessages,
 	useLineItems,
+	useEvents,
 	renderDisplayValueMarkdown,
 } from '../../public-api';
 import { sprintf, useLocalize } from '../localize';
@@ -222,6 +223,7 @@ function ExistingCardPayButton( { disabled, id } ) {
 	);
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 	const { stripeConfiguration } = useStripe();
+	const onEvent = useEvents();
 
 	useEffect( () => {
 		if ( transactionStatus === 'error' ) {
@@ -303,6 +305,7 @@ function ExistingCardPayButton( { disabled, id } ) {
 					beginCardTransaction,
 					setFormSubmitting,
 					resetTransaction,
+					onEvent,
 				} )
 			}
 			buttonState={ disabled ? 'disabled' : 'primary' }
@@ -341,9 +344,11 @@ async function submitExistingCardPayment( {
 	setFormSubmitting,
 	setFormReady,
 	resetTransaction,
+	onEvent,
 } ) {
 	debug( 'submitting existing card payment with the id', id );
 	try {
+		onEvent( { type: 'EXISTING_CARD_TRANSACTION_BEGIN' } );
 		setFormSubmitting();
 		beginCardTransaction( {
 			items,
@@ -352,6 +357,7 @@ async function submitExistingCardPayment( {
 	} catch ( error ) {
 		resetTransaction();
 		setFormReady();
+		onEvent( { type: 'EXISTING_CARD_TRANSACTION_ERROR', payload: String( error ) } );
 		showErrorMessage( error );
 		return;
 	}
