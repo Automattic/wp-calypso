@@ -45,7 +45,7 @@ export function createPayPalMethod( { registerStore } ) {
 					debug( 'received successful paypal endpoint response', paypalResponse );
 					return { type: 'PAYPAL_TRANSACTION_END', payload: paypalResponse };
 				} catch ( error ) {
-					return { type: 'PAYPAL_TRANSACTION_ERROR', payload: String( error ) };
+					return { type: 'PAYPAL_TRANSACTION_ERROR', payload: error };
 				}
 			},
 		},

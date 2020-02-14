@@ -94,7 +94,7 @@ export function createStripeMethod( {
 				debug( 'stripe transaction complete', stripeResponse );
 			} catch ( error ) {
 				debug( 'stripe transaction had an error', error );
-				return { type: 'STRIPE_TRANSACTION_ERROR', payload: String( error ) };
+				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
 			}
 			if ( stripeResponse?.message?.payment_intent_client_secret ) {
 				debug( 'stripe transaction requires auth' );
