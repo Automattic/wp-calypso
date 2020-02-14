@@ -8,6 +8,8 @@ import { filter, get } from 'lodash';
  */
 import createSelector from 'lib/create-selector';
 
+import 'state/comments/init';
+
 /**
  * Returns a tree of loaded comments for a given site, filtered by status
  *
