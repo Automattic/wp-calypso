@@ -25,5 +25,5 @@ jobs:
     - name: Upload build artifact
       uses: actions/upload-artifact@v1
       with:
-        name: fse-build-archive.tar.gz
-        path: ./fse-build-archive.tar.gz
+        name: fse-build-archive
+        path: apps/full-site-editing/full-site-editing-plugin
