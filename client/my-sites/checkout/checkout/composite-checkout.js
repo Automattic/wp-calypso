@@ -235,7 +235,8 @@ export default function CompositeCheckout( {
 		setCart || wpcomSetCart,
 		getCart || wpcomGetCart,
 		translate,
-		showAddCouponSuccessMessage
+		showAddCouponSuccessMessage,
+		recordEvent
 	);
 
 	const { registerStore, dispatch } = registry;
@@ -593,8 +594,14 @@ function getCheckoutEventHandler( dispatch ) {
 		switch ( action.type ) {
 			case 'PAYMENT_COMPLETE':
 				return dispatch(
-					recordTracksEvent( 'calypso_checkout_payment_complete', {
+					recordTracksEvent( 'calypso_checkout_composite_payment_complete', {
 						redirect_url: action.payload.url,
+					} )
+				);
+			case 'CART_ERROR':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_cart_error', {
+						error_message: action.payload.error,
 					} )
 				);
 			case 'a8c_checkout_error':

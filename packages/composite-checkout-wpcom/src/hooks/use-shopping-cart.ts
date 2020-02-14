@@ -359,6 +359,9 @@ export type VariantRequestStatus = 'fresh' | 'pending' | 'valid' | 'error';
  * @param showAddCouponSuccessMessage
  *     Takes a coupon code and displays a translated notice that
  *     the coupon was successfully applied.
+ * @param onEvent
+ *     Optional callback that Takes a React Standard Action object ( {
+ *     type: string, payload?: any } ) for analytics.
  * @returns ShoppingCartManager
  */
 export function useShoppingCart(
@@ -366,7 +369,8 @@ export function useShoppingCart(
 	setCart: ( string, RequestCart ) => Promise< ResponseCart >,
 	getCart: ( string ) => Promise< ResponseCart >,
 	translate: ( string ) => string,
-	showAddCouponSuccessMessage: ( string ) => void
+	showAddCouponSuccessMessage: ( string ) => void,
+	onEvent?: ( object: { type: string; payload?: any } ) => void // eslint-disable-line @typescript-eslint/no-explicit-any
 ): ShoppingCartManager {
 	cartKey = cartKey || 'no-site';
 	const setServerCart = useCallback( cartParam => setCart( cartKey, cartParam ), [
@@ -407,8 +411,9 @@ export function useShoppingCart(
 				// TODO: figure out what to do here
 				debug( 'error while initializing cart', error );
 				hookDispatch( { type: 'RAISE_ERROR', error: 'GET_SERVER_CART_ERROR' } );
+				onEvent?.( { type: 'CART_ERROR', payload: { error: 'GET_SERVER_CART_ERROR' } } );
 			} );
-	}, [ getServerCart, cacheStatus ] );
+	}, [ getServerCart, cacheStatus, onEvent ] );
 
 	// Asynchronously re-validate when the cache is dirty.
 	useEffect( () => {
@@ -433,8 +438,9 @@ export function useShoppingCart(
 				// TODO: figure out what to do here
 				debug( 'error while fetching cart', error );
 				hookDispatch( { type: 'RAISE_ERROR', error: 'SET_SERVER_CART_ERROR' } );
+				onEvent?.( { type: 'CART_ERROR', payload: { error: 'SET_SERVER_CART_ERROR' } } );
 			} );
-	}, [ setServerCart, cacheStatus, responseCart ] );
+	}, [ setServerCart, cacheStatus, responseCart, onEvent ] );
 
 	// Keep a separate cache of the displayed cart which we regenerate only when
 	// the cart has been downloaded
