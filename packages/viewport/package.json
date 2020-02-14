@@ -20,5 +20,8 @@
 		"clean": "npx rimraf dist",
 		"prepublish": "npm run clean",
 		"prepare": "transpile"
+	},
+	"publishConfig": {
+		"access": "public"
 	}
 }
