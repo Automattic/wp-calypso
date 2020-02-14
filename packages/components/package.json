@@ -36,8 +36,8 @@
 		"react-modal": "^3.8.1"
 	},
 	"peerDependencies": {
-		"react": "^16.8.3",
-		"react-dom": "^16.8.3"
+		"react": "^16.8",
+		"react-dom": "^16.8"
 	},
 	"scripts": {
 		"clean": "npx rimraf dist",
