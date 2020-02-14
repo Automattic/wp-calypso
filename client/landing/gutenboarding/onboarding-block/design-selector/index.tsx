@@ -51,9 +51,9 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 		) ?? [];
 
 	// Parse templates blocks and memoize them.
-	const getBlocksByTemplateSlugs = memoize( templates =>
+	const getBlocksByTemplateSlugs = memoize( designTemplate =>
 		reduce(
-			templates,
+			designTemplate,
 			( prev, { slug, content } ) => {
 				prev[ slug ] = content ? parseBlocks( content ) : [];
 				return prev;
@@ -67,6 +67,13 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 		templates,
 		( { category } ) => category === 'home'
 	);
+
+	// Try previewing multiple copies of the same designs
+	const repeatDesigns = [];
+	designs.forEach( ( design, index ) => repeatDesigns.push( designs[ ( index % 2 ) + 5 ] ) );
+
+	const repeatPages = [];
+	otherTemplates.forEach( ( temp, i ) => repeatPages.push( otherTemplates[ i % 2 ] ) );
 
 	const headingContainer = useRef< HTMLDivElement >( null );
 	const selectionTransitionShift = useRef< number >( 0 );
@@ -129,6 +136,10 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 			>
 				<div className="design-selector__grid">
 					{ designs.map( design => (
+						// repeatDesigns.map( design => (
+						// otherTemplates.map( design => (
+						// repeatPages.map( design => (
+						<DynamicPreview key={ design.slug } blocks={ blocksByTemplateSlug[ design.slug ] } />
 						// <DesignCard
 						// 	key={ design.slug }
 						// 	dialogId={ dialogId }
@@ -149,7 +160,6 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 						// 		history.push( Step.PageSelection );
 						// 	} }
 						// />
-						<DynamicPreview key={ design.slug } blocks={ blocksByTemplateSlug[ design.slug ] } />
 					) ) }
 				</div>
 			</div>

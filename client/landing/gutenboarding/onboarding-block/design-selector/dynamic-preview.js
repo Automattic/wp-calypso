@@ -25,6 +25,7 @@ const BlockTemplatePreview = ( { blocks = [] } ) => {
 				width: '300px',
 				height: '300px',
 				overflowY: 'scroll',
+				backgroundColor: 'white',
 			} }
 		>
 			<BlockPreview blocks={ blocks } viewportWidth={ 1280 } />
