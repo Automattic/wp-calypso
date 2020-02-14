@@ -530,6 +530,7 @@ function StripePayButton( { disabled } ) {
 			showErrorMessage(
 				transactionError || localize( 'An error occurred during the transaction' )
 			);
+			onEvent( { type: 'STRIPE_TRANSACTION_ERROR', payload: transactionError || '' } );
 			resetTransaction();
 			setFormReady();
 		}
@@ -543,6 +544,7 @@ function StripePayButton( { disabled } ) {
 			window.location = redirectUrl;
 		}
 	}, [
+		onEvent,
 		resetTransaction,
 		setFormReady,
 		setFormComplete,
