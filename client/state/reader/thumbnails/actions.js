@@ -3,7 +3,6 @@
  */
 import debugModule from 'debug';
 import getEmbedMetadata from 'get-video-id';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -91,7 +90,7 @@ export const requestThumbnail = embedUrl => dispatch => {
 						dispatch( requestFailure( embedUrl, error ) );
 					}
 
-					const thumbnailUrl = get( json, [ 0, 'thumbnail_large' ] );
+					const thumbnailUrl = json?.[ 0 ]?.thumbnail_large;
 					if ( thumbnailUrl ) {
 						dispatch( requestSuccessful( embedUrl ) );
 						dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );

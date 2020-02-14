@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import 'state/reader/init';
@@ -16,7 +11,7 @@ import 'state/reader/init';
  * @returns {object} Image
  */
 export function getTagImages( state, tag ) {
-	const items = get( state, 'reader.tags.images.items' );
+	const items = state?.reader?.tags?.images?.items;
 
 	if ( ! items || ! items[ tag ] ) {
 		return undefined;

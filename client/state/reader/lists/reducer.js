@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { filter, find, get, includes, keyBy, map, omit, union } from 'lodash';
+import { filter, find, includes, keyBy, map, omit, union } from 'lodash';
 
 /**
  * Internal dependencies
@@ -72,7 +72,7 @@ export const subscribedLists = withSchemaValidation(
 			case READER_LISTS_RECEIVE:
 				return map( action.lists, 'ID' );
 			case READER_LISTS_FOLLOW_SUCCESS:
-				const newListId = get( action, [ 'data', 'list', 'ID' ] );
+				const newListId = action?.data?.list?.ID;
 				if ( ! newListId || includes( state, newListId ) ) {
 					return state;
 				}
@@ -97,7 +97,7 @@ export const subscribedLists = withSchemaValidation(
 export const updatedLists = withSchemaValidation( updatedListsSchema, ( state = [], action ) => {
 	switch ( action.type ) {
 		case READER_LIST_UPDATE_SUCCESS:
-			const newListId = get( action, 'data.list.ID' );
+			const newListId = action?.data?.list?.ID;
 			if ( ! newListId ) {
 				return state;
 			}

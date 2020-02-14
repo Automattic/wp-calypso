@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { key } from 'state/reader/conversations/utils';
@@ -20,7 +15,7 @@ import 'state/reader/init';
  */
 export default function isFollowingReaderConversation( state, { siteId, postId } ) {
 	return (
-		get( state, [ 'reader', 'conversations', 'items', key( siteId, postId ) ] ) ===
+		state?.reader?.conversations?.items?.[ key( siteId, postId ) ] ===
 		CONVERSATION_FOLLOW_STATUS.following
 	);
 }

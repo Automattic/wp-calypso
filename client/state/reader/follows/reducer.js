@@ -158,10 +158,7 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 			// Respect the existing state of the new post notification toggle.
 			// User may have toggled it on immediately after subscribing and
 			// action.payload.follow may overwrite it with the old value
-			const existingNotificationState = get( state[ urlKey ], [
-				'delivery_methods',
-				'notification',
-			] );
+			const existingNotificationState = state[ urlKey ]?.delivery_methods?.notification;
 			if ( existingNotificationState ) {
 				newValues.delivery_methods = {
 					notification: existingNotificationState,
@@ -219,7 +216,7 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 			const urlKey = prepareComparableUrl( incomingSite.feed_URL );
 			const currentFollow = state[ urlKey ];
 			const newFollow = {
-				delivery_methods: get( incomingSite, 'subscription.delivery_methods' ),
+				delivery_methods: incomingSite?.subscription?.delivery_methods,
 				is_following: true,
 				URL: incomingSite.URL,
 				feed_URL: incomingSite.feed_URL,

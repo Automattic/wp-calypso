@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { keyBy, get } from 'lodash';
+import { keyBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,7 +26,7 @@ export function items( state = {}, action ) {
 	return state;
 }
 export function seen( state = {}, action ) {
-	const id = get( action, 'payload.post.global_ID' );
+	const id = action?.payload?.post?.global_ID;
 
 	if ( action.type === READER_POST_SEEN && id ) {
 		return { ...state, [ id ]: true };
