@@ -4,7 +4,7 @@
 	"favicon_url": "/calypso/images/favicons/favicon-development.ico",
 	"client_slug": "browser",
 	"directly_rtm_widget_environment": "sandbox",
-	"protocol": "http",
+	"protocol": "https",
 	"hostname": "calypso.localhost",
 	"port": 3000,
 	"i18n_default_locale_slug": "en",

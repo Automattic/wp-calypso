@@ -61,6 +61,7 @@ class Security2faBackupCodes extends React.Component {
 	};
 
 	onRequestComplete = ( error, data ) => {
+		debugger;
 		if ( error ) {
 			this.setState( {
 				lastError: this.props.translate(

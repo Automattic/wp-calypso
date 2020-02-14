@@ -13,7 +13,7 @@ import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
-import TextControl from 'extensions/woocommerce/components/text-control';
+import FormPasswordInput from 'components/forms/form-password-input';
 
 class Security2faBackupCodesPasswordPromt extends React.Component {
 	static propTypes = {
@@ -45,8 +45,11 @@ class Security2faBackupCodesPasswordPromt extends React.Component {
 			<form className="security-2fa-key__add-key-name-form" onSubmit={ this.handleSubmit }>
 				<FormFieldset>
 					<FormLabel htmlFor="user_password">{ this.props.translate( 'Password' ) }</FormLabel>
-					<FormTextInput
-						autoComplete="off"
+					<FormPasswordInput
+						autoCapitalize="off"
+						autoCorrect="off"
+						spellCheck="false"
+						label={ this.props.translate( 'Password' ) }
 						name="user_password"
 						type="password"
 						ref={ input => ( this.passwordInput = input ) }
