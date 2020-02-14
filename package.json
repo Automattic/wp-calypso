@@ -192,7 +192,7 @@
 		"babel-plugin-dynamic-import-node": "2.3.0",
 		"babel-plugin-transform-react-remove-prop-types": "0.4.24",
 		"calypso-codemods": "file:./packages/calypso-codemods",
-		"caniuse-lite": "1.0.30001022",
+		"caniuse-lite": "1.0.30001027",
 		"chai": "4.2.0",
 		"chai-enzyme": "1.0.0-beta.1",
 		"chalk": "3.0.0",
