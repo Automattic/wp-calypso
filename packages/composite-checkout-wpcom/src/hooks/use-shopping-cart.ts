@@ -392,28 +392,7 @@ export function useShoppingCart(
 	const shouldShowNotification = hookState.shouldShowNotification;
 
 	// Asynchronously initialize the cart. This should happen exactly once.
-	useEffect( () => {
-		if ( cacheStatus !== 'fresh' ) {
-			return;
-		}
-
-		debug( `initializing the cart; cacheStatus is ${ cacheStatus }` );
-
-		getServerCart()
-			.then( response => {
-				debug( 'initialized cart is', response );
-				hookDispatch( {
-					type: 'RECEIVE_INITIAL_RESPONSE_CART',
-					initialResponseCart: processRawResponse( response ),
-				} );
-			} )
-			.catch( error => {
-				// TODO: figure out what to do here
-				debug( 'error while initializing cart', error );
-				hookDispatch( { type: 'RAISE_ERROR', error: 'GET_SERVER_CART_ERROR' } );
-				onEvent?.( { type: 'CART_ERROR', payload: { error: 'GET_SERVER_CART_ERROR' } } );
-			} );
-	}, [ getServerCart, cacheStatus, onEvent ] );
+	useInitializeCartFromServer( cacheStatus, getServerCart, hookDispatch, onEvent );
 
 	// Asynchronously re-validate when the cache is dirty.
 	useEffect( () => {
@@ -510,4 +489,29 @@ export function useShoppingCart(
 		variantRequestStatus,
 		variantSelectOverride,
 	} as ShoppingCartManager;
+}
+
+function useInitializeCartFromServer( cacheStatus, getServerCart, hookDispatch, onEvent ) {
+	useEffect( () => {
+		if ( cacheStatus !== 'fresh' ) {
+			return;
+		}
+
+		debug( `initializing the cart; cacheStatus is ${ cacheStatus }` );
+
+		getServerCart()
+			.then( response => {
+				debug( 'initialized cart is', response );
+				hookDispatch( {
+					type: 'RECEIVE_INITIAL_RESPONSE_CART',
+					initialResponseCart: processRawResponse( response ),
+				} );
+			} )
+			.catch( error => {
+				// TODO: figure out what to do here
+				debug( 'error while initializing cart', error );
+				hookDispatch( { type: 'RAISE_ERROR', error: 'GET_SERVER_CART_ERROR' } );
+				onEvent?.( { type: 'CART_ERROR', payload: { error: 'GET_SERVER_CART_ERROR' } } );
+			} );
+	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 }
