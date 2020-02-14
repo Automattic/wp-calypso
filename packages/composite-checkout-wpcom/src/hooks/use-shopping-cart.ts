@@ -461,7 +461,12 @@ export function useShoppingCart(
 	} as ShoppingCartManager;
 }
 
-function useInitializeCartFromServer( cacheStatus, getServerCart, hookDispatch, onEvent ) {
+function useInitializeCartFromServer(
+	cacheStatus: CacheStatus,
+	getServerCart: Function,
+	hookDispatch: Function,
+	onEvent?: Function
+): void {
 	useEffect( () => {
 		if ( cacheStatus !== 'fresh' ) {
 			return;
@@ -487,12 +492,12 @@ function useInitializeCartFromServer( cacheStatus, getServerCart, hookDispatch, 
 }
 
 function useCartUpdateAndRevalidate(
-	cacheStatus,
-	responseCart,
-	setServerCart,
-	hookDispatch,
-	onEvent
-) {
+	cacheStatus: CacheStatus,
+	responseCart: ResponseCart,
+	setServerCart: Function,
+	hookDispatch: Function,
+	onEvent?: Function
+): void {
 	useEffect( () => {
 		if ( cacheStatus !== 'invalid' ) {
 			return;
@@ -520,7 +525,7 @@ function useCartUpdateAndRevalidate(
 	}, [ setServerCart, cacheStatus, responseCart, onEvent, hookDispatch ] );
 }
 
-function useCachedValidCart( cacheStatus, responseCart ) {
+function useCachedValidCart( cacheStatus: CacheStatus, responseCart: ResponseCart ): ResponseCart {
 	const [ responseCartToDisplay, setResponseCartToDisplay ] = useState( responseCart );
 	useEffect( () => {
 		if ( cacheStatus === 'valid' ) {
@@ -532,11 +537,11 @@ function useCachedValidCart( cacheStatus, responseCart ) {
 }
 
 function useShowAddCouponSuccessMessage(
-	didAddCoupon,
-	responseCart,
-	showAddCouponSuccessMessage,
-	hookDispatch
-) {
+	didAddCoupon: boolean,
+	responseCart: ResponseCart,
+	showAddCouponSuccessMessage: Function,
+	hookDispatch: Function
+): void {
 	useEffect( () => {
 		if ( didAddCoupon ) {
 			showAddCouponSuccessMessage( responseCart.coupon );
