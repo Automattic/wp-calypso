@@ -250,7 +250,6 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	setupContextMiddleware( reduxStore );
 	oauthTokenMiddleware();
 	loggedOutMiddleware( currentUser );
-	loggedInMiddleware( currentUser );
 	loadSectionsMiddleware();
 	setRouteMiddleware();
 	clearNoticesMiddleware();
