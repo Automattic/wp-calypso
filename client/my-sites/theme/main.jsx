@@ -147,24 +147,8 @@ class ThemeSheet extends React.Component {
 	};
 
 	onButtonClick = () => {
-		const { defaultOption, hasAutoLoadingHomepage, id } = this.props;
-
-		// if the Theme has auto loading homepage, shows the switching modal.
-		if ( hasAutoLoadingHomepage ) {
-			return this.setState( { showSwitchingHomepageModal: true } );
-		}
-
-		defaultOption.action && defaultOption.action( id );
-	};
-
-	activateSwitchingHomepage = activate => {
 		const { defaultOption, id } = this.props;
-
-		this.setState( { showSwitchingHomepageModal: false } );
-
-		if ( activate ) {
-			defaultOption.action && defaultOption.action( id );
-		}
+		defaultOption.action && defaultOption.action( id );
 	};
 
 	onSecondaryButtonClick = () => {
@@ -713,12 +697,7 @@ class ThemeSheet extends React.Component {
 				{ this.renderBar() }
 				<QueryActiveTheme siteId={ siteId } />
 				<ThanksModal source={ 'details' } />
-				<SwitchingHomepageModal
-					source={ 'details' }
-					themeId={ id }
-					isVisible={ this.state.showSwitchingHomepageModal }
-					onClose={ this.activateSwitchingHomepage }
-				/>
+				<SwitchingHomepageModal source={ 'details' } themeId={ id } />
 				{ pageUpsellBanner }
 				<HeaderCake
 					className="theme__sheet-action-bar"
@@ -760,7 +739,15 @@ const ConnectedThemeSheet = connectOptions( props => {
 } );
 
 const ThemeSheetWithOptions = props => {
-	const { siteId, isActive, isLoggedIn, isPremium, isPurchased, isJetpack } = props;
+	const {
+		siteId,
+		isActive,
+		isLoggedIn,
+		isPremium,
+		isPurchased,
+		isJetpack,
+		hasAutoLoadingHomepage,
+	} = props;
 
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
@@ -779,6 +766,8 @@ const ThemeSheetWithOptions = props => {
 		defaultOption = 'upgradePlan';
 	} else if ( isPremium && ! isPurchased ) {
 		defaultOption = 'purchase';
+	} else if ( hasAutoLoadingHomepage ) {
+		defaultOption = 'showSwitchingHomepageWarning';
 	} else {
 		defaultOption = 'activate';
 	}

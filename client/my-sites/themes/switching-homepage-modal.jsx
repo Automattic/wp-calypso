@@ -17,8 +17,10 @@ import {
 	isActivatingTheme,
 	isThemeActive,
 	isWpcomTheme,
+	shouldShowHomepageWarning,
 } from 'state/themes/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { hideSwitchingHomepageWarning, activate as activateTheme } from 'state/themes/actions';
 
 /**
  * Style dependencies
@@ -44,8 +46,11 @@ class SwitchingHomepageModal extends Component {
 	};
 
 	onCloseModal = ( activate = false ) => {
-		if ( this.props.onClose ) {
-			this.props.onClose( activate );
+		this.props.hideSwitchingHomepageWarning();
+
+		if ( activate ) {
+			const { themeId, siteId, source } = this.props;
+			this.props.activateTheme( themeId, siteId, source );
 		}
 	};
 
@@ -58,7 +63,7 @@ class SwitchingHomepageModal extends Component {
 			isActivating,
 			hasAutoLoadingHomepage,
 			isCurrentTheme,
-			isVisible = false,
+			show = false,
 		} = this.props;
 
 		// Nothing to do when it's the current theme.
@@ -85,7 +90,7 @@ class SwitchingHomepageModal extends Component {
 		return (
 			<Dialog
 				className="themes__switching-homepage-modal"
-				isVisible={ isVisible }
+				isVisible={ show }
 				buttons={ [
 					{
 						action: 'keepCurrentTheme',
@@ -119,16 +124,23 @@ class SwitchingHomepageModal extends Component {
 	}
 }
 
-export default connect( ( state, { themeId } ) => {
-	const siteId = getSelectedSiteId( state );
+export default connect(
+	( state, { themeId } ) => {
+		const siteId = getSelectedSiteId( state );
 
-	return {
-		siteId,
-		theme: themeId && getCanonicalTheme( state, siteId, themeId ),
-		isActivating: !! isActivatingTheme( state, siteId ),
-		hasActivated: !! hasActivatedTheme( state, siteId ),
-		hasAutoLoadingHomepage: hasAutoLoadingHomepageFeature( state, themeId ),
-		isThemeWpCom: isWpcomTheme( state, themeId ),
-		isCurrentTheme: isThemeActive( state, themeId, siteId ),
-	};
-} )( SwitchingHomepageModal );
+		return {
+			siteId,
+			theme: themeId && getCanonicalTheme( state, siteId, themeId ),
+			isActivating: !! isActivatingTheme( state, siteId ),
+			hasActivated: !! hasActivatedTheme( state, siteId ),
+			hasAutoLoadingHomepage: hasAutoLoadingHomepageFeature( state, themeId ),
+			isThemeWpCom: isWpcomTheme( state, themeId ),
+			isCurrentTheme: isThemeActive( state, themeId, siteId ),
+			show: shouldShowHomepageWarning( state, themeId ),
+		};
+	},
+	{
+		hideSwitchingHomepageWarning,
+		activateTheme,
+	}
+)( SwitchingHomepageModal );
