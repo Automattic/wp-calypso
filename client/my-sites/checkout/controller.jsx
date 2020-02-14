@@ -54,6 +54,14 @@ export function checkout( context, next ) {
 	// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
 	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
 
+	const isComingFromSignup = !! context.query.signup;
+	if ( isComingFromSignup ) {
+		const currentHref = document.location.href;
+		window.history.pushState( null, null, `/plans/${ selectedSite?.slug ?? '' }` );
+		window.history.pushState( null, null, `/plans/${ selectedSite?.slug ?? '' }` );
+		window.history.replaceState( null, null, currentHref );
+	}
+
 	context.primary = (
 		<CartData>
 			<CheckoutSystemDecider
