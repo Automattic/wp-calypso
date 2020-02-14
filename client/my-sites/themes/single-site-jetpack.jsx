@@ -14,6 +14,7 @@ import CurrentTheme from 'my-sites/themes/current-theme';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import FormattedHeader from 'components/formatted-header';
 import ThanksModal from 'my-sites/themes/thanks-modal';
+import SwitchingHomepageModal from 'my-sites/themes/switching-homepage-modal';
 import config from 'config';
 import { isPartnerPurchase } from 'lib/purchases';
 import JetpackReferrerMessage from './jetpack-referrer-message';
@@ -120,6 +121,7 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 				{ siteId && <QuerySitePlans siteId={ siteId } /> }
 				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 				<ThanksModal source={ 'list' } />
+				<SwitchingHomepageModal source={ 'list' } />
 				{ showWpcomThemesList && (
 					<div>
 						<ConnectedThemesSelection
