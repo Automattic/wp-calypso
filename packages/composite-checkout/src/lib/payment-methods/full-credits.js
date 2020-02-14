@@ -13,6 +13,7 @@ import {
 	useDispatch,
 	useMessages,
 	useLineItems,
+	useEvents,
 	renderDisplayValueMarkdown,
 } from '../../public-api';
 import { sprintf, useLocalize } from '../localize';
@@ -108,9 +109,11 @@ function FullCreditsSubmitButton( { disabled } ) {
 	const transactionError = useSelect( select => select( 'full-credits' ).getTransactionError() );
 	const { showErrorMessage } = useMessages();
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
+	const onEvent = useEvents();
 
 	useEffect( () => {
 		if ( transactionStatus === 'error' ) {
+			onEvent( { type: 'FULL_CREDITS_TRANSACTION_ERROR', payload: transactionError || '' } );
 			showErrorMessage(
 				transactionError || localize( 'An error occurred during the transaction' )
 			);
@@ -121,6 +124,7 @@ function FullCreditsSubmitButton( { disabled } ) {
 			setFormComplete();
 		}
 	}, [
+		onEvent,
 		setFormReady,
 		setFormComplete,
 		showErrorMessage,
@@ -131,6 +135,7 @@ function FullCreditsSubmitButton( { disabled } ) {
 
 	const onClick = () => {
 		setFormSubmitting();
+		onEvent( { type: 'FULL_CREDITS_TRANSACTION_BEGIN' } );
 		beginCreditsTransaction( {
 			items,
 		} );

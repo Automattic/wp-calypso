@@ -635,6 +635,16 @@ function getCheckoutEventHandler( dispatch ) {
 						error_message: action.payload,
 					} )
 				);
+			case 'FULL_CREDITS_TRANSACTION_BEGIN':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_full_credits_button_clicked', {} )
+				);
+			case 'FULL_CREDITS_TRANSACTION_ERROR':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_full_credits_error', {
+						error_message: action.payload,
+					} )
+				);
 			default:
 				debug( 'unknown checkout event: not recording', action );
 				return;
