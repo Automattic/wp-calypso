@@ -10,7 +10,6 @@ import { useSelector } from 'react-redux';
 import CheckoutContainer from './checkout-container';
 import CompositeCheckout from './composite-checkout';
 import config from 'config';
-import { abtest } from 'lib/abtest';
 import { getCurrentUserLocale, getCurrentUserCountryCode } from 'state/current-user/selectors';
 
 // Decide if we should use CompositeCheckout or CheckoutContainer
@@ -91,8 +90,5 @@ function shouldShowCompositeCheckout( cart, countryCode, locale ) {
 		return false;
 	}
 
-	if ( abtest( 'showCompositeCheckout' ) === 'composite' ) {
-		return true;
-	}
 	return false;
 }
