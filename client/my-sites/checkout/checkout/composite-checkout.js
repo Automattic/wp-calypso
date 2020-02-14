@@ -615,6 +615,16 @@ function getCheckoutEventHandler( dispatch ) {
 				return dispatch(
 					recordTracksEvent( 'calypso_checkout_composite_step_changed', { step: action.payload } )
 				);
+			case 'STRIPE_TRANSACTION_BEGIN':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_stripe_button_clicked', {} )
+				);
+			case 'STRIPE_TRANSACTION_ERROR':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_stripe_transaction_error', {
+						error_message: action.payload,
+					} )
+				);
 			default:
 				debug( 'unknown checkout event: not recording', action );
 				return;

@@ -522,6 +522,7 @@ function StripePayButton( { disabled } ) {
 	const name = useSelect( select => select( 'stripe' ).getCardholderName() );
 	const redirectUrl = useSelect( select => select( 'stripe' ).getRedirectUrl() );
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
+	const onEvent = useEvents();
 
 	useEffect( () => {
 		if ( transactionStatus === 'error' ) {
@@ -607,6 +608,7 @@ function StripePayButton( { disabled } ) {
 					beginStripeTransaction,
 					setFormSubmitting,
 					resetTransaction,
+					onEvent,
 				} )
 			}
 			buttonState={ disabled ? 'disabled' : 'primary' }
@@ -642,10 +644,12 @@ async function submitStripePayment( {
 	setFormSubmitting,
 	setFormReady,
 	resetTransaction,
+	onEvent,
 } ) {
 	debug( 'submitting stripe payment' );
 	try {
 		setFormSubmitting();
+		onEvent( { type: 'STRIPE_TRANSACTION_BEGIN' } );
 		beginStripeTransaction( {
 			stripe,
 			name,
@@ -656,6 +660,7 @@ async function submitStripePayment( {
 	} catch ( error ) {
 		resetTransaction();
 		setFormReady();
+		onEvent( { type: 'STRIPE_TRANSACTION_ERROR', payload: error } );
 		debug( 'showing error for submit', error );
 		showErrorMessage( error );
 		return;
