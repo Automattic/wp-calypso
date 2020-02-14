@@ -681,8 +681,12 @@ function getCheckoutEventHandler( dispatch ) {
 					} )
 				);
 			default:
-				debug( 'unknown checkout event: not recording', action );
-				return;
+				debug( 'unknown checkout event', action );
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_unknown_error', {
+						error_type: String( action.type ),
+					} )
+				);
 		}
 	};
 }
