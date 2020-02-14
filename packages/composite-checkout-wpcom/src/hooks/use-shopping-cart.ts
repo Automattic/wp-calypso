@@ -407,12 +407,12 @@ export function useShoppingCart(
 		[ translate, responseCartToDisplay ]
 	);
 
-	useEffect( () => {
-		if ( shouldShowNotification.didAddCoupon ) {
-			showAddCouponSuccessMessage( responseCart.coupon );
-			hookDispatch( { type: 'DID_SHOW_ADD_COUPON_SUCCESS_MESSAGE' } );
-		}
-	}, [ shouldShowNotification.didAddCoupon, responseCart.coupon, showAddCouponSuccessMessage ] );
+	useShowAddCouponSuccessMessage(
+		shouldShowNotification.didAddCoupon,
+		responseCart,
+		showAddCouponSuccessMessage,
+		hookDispatch
+	);
 
 	const addItem: ( ResponseCartProduct ) => void = useCallback( responseCartProductToAdd => {
 		hookDispatch( { type: 'ADD_CART_ITEM', responseCartProductToAdd } );
@@ -529,4 +529,18 @@ function useCachedValidCart( cacheStatus, responseCart ) {
 		}
 	}, [ responseCart, cacheStatus ] );
 	return responseCartToDisplay;
+}
+
+function useShowAddCouponSuccessMessage(
+	didAddCoupon,
+	responseCart,
+	showAddCouponSuccessMessage,
+	hookDispatch
+) {
+	useEffect( () => {
+		if ( didAddCoupon ) {
+			showAddCouponSuccessMessage( responseCart.coupon );
+			hookDispatch( { type: 'DID_SHOW_ADD_COUPON_SUCCESS_MESSAGE' } );
+		}
+	}, [ didAddCoupon, responseCart.coupon, showAddCouponSuccessMessage, hookDispatch ] );
 }
