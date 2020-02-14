@@ -7,7 +7,7 @@ import { flowRight as compose } from 'lodash';
  * Internal Dependencies
  */
 import { transferStates } from 'state/automated-transfer/constants';
-import { getAutomatedTransferStatus } from './get-automated-transfer-status';
+import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors/get-automated-transfer-status';
 
 import 'state/automated-transfer/init';
 

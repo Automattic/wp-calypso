@@ -6,7 +6,7 @@ import { get, flowRight as compose } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getAutomatedTransfer } from './get-automated-transfer';
+import { getAutomatedTransfer } from 'state/automated-transfer/selectors/get-automated-transfer';
 
 import 'state/automated-transfer/init';
 

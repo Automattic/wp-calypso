@@ -6,7 +6,7 @@ import { get, isEmpty } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { getAutomatedTransfer } from './get-automated-transfer';
+import { getAutomatedTransfer } from 'state/automated-transfer/selectors/get-automated-transfer';
 
 import 'state/automated-transfer/init';
 
