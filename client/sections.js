@@ -6,10 +6,10 @@ const path = require( 'path' ); // eslint-disable-line import/no-nodejs-modules
 
 const sections = [
 	{
-		name: 'calypso-entry',
+		name: 'root-entry',
 		paths: [ '/' ],
-		module: 'boot/entry',
-		group: 'reader',
+		module: 'root-entry',
+		group: 'root-entry',
 		secondary: true,
 	},
 	{
