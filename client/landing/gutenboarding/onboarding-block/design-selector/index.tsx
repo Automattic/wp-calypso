@@ -139,7 +139,15 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 						// repeatDesigns.map( design => (
 						// otherTemplates.map( design => (
 						// repeatPages.map( design => (
-						<DynamicPreview key={ design.slug } blocks={ blocksByTemplateSlug[ design.slug ] } />
+						<DynamicPreview 
+							key={ design.slug } 
+							blocks={ blocksByTemplateSlug[ design.slug ] } 
+							onClick={ () => {
+								window.scrollTo( 0, 0 );
+								setSelectedDesign( design );
+								history.push( Step.PageSelection );
+							} }
+						/>
 						// <DesignCard
 						// 	key={ design.slug }
 						// 	dialogId={ dialogId }

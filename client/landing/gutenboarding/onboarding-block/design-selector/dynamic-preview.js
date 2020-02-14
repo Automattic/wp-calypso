@@ -14,18 +14,20 @@ import { BlockPreview } from '@wordpress/block-editor';
 // import { BlockPreview } from '@wordpress/block-editor';
 /* eslint-enable import/no-extraneous-dependencies */
 
-const BlockTemplatePreview = ( { blocks = [] } ) => {
+const BlockTemplatePreview = ( { blocks = [], onClick } ) => {
 	if ( ! blocks || ! blocks.length ) {
 		return null;
 	}
 
 	return (
 		<div
+            onClick={ onClick }
 			style={ {
 				width: '300px',
 				height: '300px',
 				overflowY: 'scroll',
-				backgroundColor: 'white',
+                backgroundColor: 'white',
+                cursor: 'pointer'
 			} }
 		>
 			<BlockPreview blocks={ blocks } viewportWidth={ 1280 } />
