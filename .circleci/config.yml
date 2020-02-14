@@ -476,17 +476,10 @@ jobs:
             NODE_ENV: 'production'
             BROWSERSLIST_ENV: 'defaults'
           command: |
-            #
-            # This block should not cause a test failure and block PRs.
-            # The shell should never error and exit 0 to indicate success.
-            #
             set +o errexit
-            npm run build-css                                      \
-              && npm run preanalyze-bundles                        \
-              && node bin/icfy-analyze.js                          \
-              && mv client/stats.json client/chart.json "$CIRCLE_ARTIFACTS/icfy" \
-              || rm -fr build/.babel-client-cache # In case of failure do not save a potentially bad cache
-            exit 0
+            npm run preanalyze-bundles
+            node --max-old-space-size=4096 bin/icfy-analyze.js
+            mv client/stats.json client/chart.json "$CIRCLE_ARTIFACTS/icfy"
       - save_cache: *save-terser-cache
       - save_cache: *save-babel-client-cache
       - store-artifacts-and-test-results
