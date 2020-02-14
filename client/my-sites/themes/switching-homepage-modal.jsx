@@ -20,7 +20,11 @@ import {
 	getPreInstallingThemeId,
 } from 'state/themes/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { hideSwitchingHomepageWarning, activate as activateTheme } from 'state/themes/actions';
+import {
+	acceptSwitchingHomepageWarning,
+	hideSwitchingHomepageWarning,
+	activate as activateTheme,
+} from 'state/themes/actions';
 
 /**
  * Style dependencies
@@ -42,15 +46,16 @@ class SwitchingHomepageModal extends Component {
 		siteId: PropTypes.number,
 		isVisible: PropTypes.bool,
 		onClose: PropTypes.func,
+		installingThemeId: PropTypes.string.isRequired,
 	};
 
 	onCloseModal = ( activate = false ) => {
-		this.props.hideSwitchingHomepageWarning();
-
 		if ( activate ) {
-			const { themeId, siteId, source } = this.props;
-			this.props.activateTheme( themeId, siteId, source );
+			const { installingThemeId, siteId, source } = this.props;
+			this.props.acceptSwitchingHomepageWarning( installingThemeId );
+			return this.props.activateTheme( installingThemeId, siteId, source );
 		}
+		this.props.hideSwitchingHomepageWarning();
 	};
 
 	onClickButtonHandler = activate => () => this.onCloseModal( activate );
@@ -130,6 +135,7 @@ export default connect(
 
 		return {
 			siteId,
+			installingThemeId,
 			theme: installingThemeId && getCanonicalTheme( state, siteId, installingThemeId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
@@ -139,6 +145,7 @@ export default connect(
 		};
 	},
 	{
+		acceptSwitchingHomepageWarning,
 		hideSwitchingHomepageWarning,
 		activateTheme,
 	}
