@@ -22,7 +22,7 @@ import {
 	isConciergeSession,
 } from 'lib/products-values';
 import { addItems } from 'lib/cart/actions';
-import { JETPACK_PRODUCT_DISPLAY_NAMES } from 'lib/products-values/constants';
+import { getJetpackProductsDisplayNames } from 'lib/products-values/constants';
 
 function getIncludedDomain( purchase ) {
 	return purchase.includedDomain;
@@ -72,8 +72,9 @@ function getName( purchase ) {
 }
 
 function getDisplayName( purchase ) {
-	if ( JETPACK_PRODUCT_DISPLAY_NAMES[ purchase.productSlug ] ) {
-		return JETPACK_PRODUCT_DISPLAY_NAMES[ purchase.productSlug ];
+	const jetpackProductsDisplayNames = getJetpackProductsDisplayNames();
+	if ( jetpackProductsDisplayNames[ purchase.productSlug ] ) {
+		return jetpackProductsDisplayNames[ purchase.productSlug ];
 	}
 	return getName( purchase );
 }

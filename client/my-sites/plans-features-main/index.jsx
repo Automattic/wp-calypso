@@ -32,7 +32,7 @@ import {
 import {
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_PRODUCT_PRICE_MATRIX,
-	JETPACK_PRODUCTS,
+	getJetpackProducts,
 } from 'lib/products-values/constants';
 import { addQueryArgs } from 'lib/url';
 import JetpackFAQ from './jetpack-faq';
@@ -441,6 +441,7 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		const { basePlansPath, intervalType, redirectTo } = this.props;
+		const jetpackProducts = getJetpackProducts();
 
 		return (
 			<div className="plans-features-main__group is-narrow">
@@ -452,7 +453,7 @@ export class PlansFeaturesMain extends Component {
 					products={ JETPACK_BACKUP_PRODUCTS }
 				/>
 				<ProductSelector
-					products={ JETPACK_PRODUCTS }
+					products={ jetpackProducts }
 					intervalType={ intervalType }
 					basePlansPath={ basePlansPath }
 					productPriceMatrix={ JETPACK_PRODUCT_PRICE_MATRIX }
