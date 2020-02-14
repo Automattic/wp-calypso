@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import Gridicon from 'components/gridicon';
 import React, { Component } from 'react';
-import { includes, isEqual, pick } from 'lodash';
+import { difference, includes, isEqual, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -179,11 +179,21 @@ export class TldFilterBar extends Component {
 	}
 
 	renderPopoverButton() {
-		const { filters: { tlds = [] } = {}, translate } = this.props;
+		const {
+			lastFilters: { tlds: lastFilterTlds = [] } = {},
+			availableTlds,
+			numberOfTldsShown,
+			translate,
+		} = this.props;
+
+		const visibleTldsInFilterBar = availableTlds.slice( 0, numberOfTldsShown );
+		const isSelectedFiltersNotInFilterBar =
+			difference( lastFilterTlds, visibleTldsInFilterBar ).length > 0;
+
 		return (
 			<Button
 				className={ classNames( 'search-filters__popover-button', {
-					'is-active': tlds.length > 0,
+					'is-active': isSelectedFiltersNotInFilterBar,
 					'search-filters__popover-button-domain-step-test': this.props.showDesignUpdate,
 				} ) }
 				onClick={ this.togglePopover }
