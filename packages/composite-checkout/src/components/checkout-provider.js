@@ -44,10 +44,14 @@ export const CheckoutProvider = props => {
 	const [ paymentMethodId, setPaymentMethodId ] = useState(
 		paymentMethods?.length ? paymentMethods[ 0 ].id : null
 	);
+	const [ prevPaymentMethods, setPrevPaymentMethods ] = useState( [] );
 	useEffect( () => {
-		debug( 'paymentMethods changed; setting payment method to first of', paymentMethods );
-		setPaymentMethodId( paymentMethods?.length ? paymentMethods[ 0 ].id : null );
-	}, [ paymentMethods ] );
+		if ( paymentMethods.length !== prevPaymentMethods.length ) {
+			debug( 'paymentMethods changed; setting payment method to first of', paymentMethods );
+			setPaymentMethodId( paymentMethods?.length ? paymentMethods[ 0 ].id : null );
+			setPrevPaymentMethods( paymentMethods );
+		}
+	}, [ paymentMethods, prevPaymentMethods ] );
 
 	const [ formStatus, setFormStatus ] = useFormStatusManager( isLoading );
 	useEffect( () => {
