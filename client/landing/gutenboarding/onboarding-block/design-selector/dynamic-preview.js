@@ -10,8 +10,10 @@ import React from 'react';
  * WordPress dependencies
  */
 import { BlockPreview } from '@wordpress/block-editor';
+import { parse as parseBlocks } from '@wordpress/blocks';
 
-const BlockTemplatePreview = ( { blocks = [] } ) => {
+const BlockTemplatePreview = ( { design } ) => {
+	const blocks = parseBlocks( design?.content );
 	if ( ! blocks || ! blocks.length ) {
 		return null;
 	}

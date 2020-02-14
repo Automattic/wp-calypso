@@ -2,13 +2,14 @@
  * External dependencies
  */
 import { __ as NO__ } from '@wordpress/i18n';
-import React, { FunctionComponent, MouseEventHandler, CSSProperties } from 'react';
+import React, { FunctionComponent, MouseEventHandler, CSSProperties, useState } from 'react';
 import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
 
 /**
  * Internal dependencies
  */
 import { Card, CardMedia } from '@wordpress/components';
+import DynamicPreview from './dynamic-preview';
 
 const gridWidth = 960;
 const srcSet = ( src: string, widths: number[] ) =>
@@ -20,31 +21,41 @@ interface Props {
 	style?: CSSProperties;
 	dialogId: string;
 }
-const DesignCard: FunctionComponent< Props > = ( { design, dialogId, onClick, style } ) => (
-	<Card
-		as="button"
-		className="design-selector__design-option"
-		isElevated
-		onClick={ onClick }
-		style={ style }
-		aria-haspopup="dialog"
-		aria-controls={ dialogId }
-	>
-		<CardMedia as="span">
-			<img
-				width={ 480 }
-				height={ 360 }
-				alt={ design.title }
-				src={ removeQueryArgs( design.preview, 'w' ) }
-				srcSet={ srcSet( design.preview, [ gridWidth / 2, gridWidth / 4 ] ) }
-			/>
-			<span className="design-selector__option-overlay">
-				<span className="design-selector__option-overlay-text">
-					{ NO__( 'Select this design' ) }
-				</span>
-			</span>
-		</CardMedia>
-	</Card>
-);
+const DesignCard: FunctionComponent< Props > = ( { design, dialogId, onClick, style } ) => {
+	const [ preview, setPreview ] = useState< boolean >( false );
+
+	return (
+		<div onMouseEnter={ () => setPreview( true ) } onMouseLeave={ () => setPreview( false ) }>
+			{ preview ? (
+				<DynamicPreview design={ design } />
+			) : (
+				<Card
+					as="button"
+					className="design-selector__design-option"
+					isElevated
+					onClick={ onClick }
+					style={ style }
+					aria-haspopup="dialog"
+					aria-controls={ dialogId }
+				>
+					<CardMedia as="span">
+						<img
+							width={ 480 }
+							height={ 360 }
+							alt={ design.title }
+							src={ removeQueryArgs( design.preview, 'w' ) }
+							srcSet={ srcSet( design.preview, [ gridWidth / 2, gridWidth / 4 ] ) }
+						/>
+						<span className="design-selector__option-overlay">
+							<span className="design-selector__option-overlay-text">
+								{ NO__( 'Select this design' ) }
+							</span>
+						</span>
+					</CardMedia>
+				</Card>
+			) }
+		</div>
+	);
+};
 
 export default DesignCard;
