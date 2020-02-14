@@ -158,11 +158,9 @@ $design-selector-selection-space: 285px;
 		background-color: rgba( var( --color-primary-rgb ), 0.8 );
 		position: absolute;
 		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
+		width: 100%;
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 		justify-content: center;
 		opacity: 0;
 		transition: 400ms;
@@ -171,10 +169,12 @@ $design-selector-selection-space: 285px;
 			font-size: 24px;
 			color: $white;
 			border-bottom: 2px solid $white;
+			margin: 10px;
 		}
 	}
 
 	&:hover {
+		border: 5px solid rgba( var( --color-primary-rgb ), 0.8 );
 		.design-selector__option-overlay {
 			opacity: 1;
 		}
@@ -241,6 +241,7 @@ $design-selector-selection-space: 285px;
 
 	.design-selector__design-option {
 		&:focus {
+			border: 5px solid rgba( var( --color-primary-rgb ), 0.8 );
 			.design-selector__option-overlay {
 				opacity: 1;
 			}

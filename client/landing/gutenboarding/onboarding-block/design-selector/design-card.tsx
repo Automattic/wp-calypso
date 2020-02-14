@@ -40,10 +40,10 @@ const DesignCard: FunctionComponent< Props > = ( { design, dialogId, onClick, st
 			onFocus={ startPreview }
 			onBlur={ endPreview }
 		>
-			{ preview ? (
-				<DynamicPreview design={ design } />
-			) : (
-				<CardMedia as="span">
+			<CardMedia as="span">
+				{ preview ? (
+					<DynamicPreview design={ design } />
+				) : (
 					<img
 						width={ 480 }
 						height={ 360 }
@@ -51,13 +51,13 @@ const DesignCard: FunctionComponent< Props > = ( { design, dialogId, onClick, st
 						src={ removeQueryArgs( design.preview, 'w' ) }
 						srcSet={ srcSet( design.preview, [ gridWidth / 2, gridWidth / 4 ] ) }
 					/>
-					<span className="design-selector__option-overlay">
-						<span className="design-selector__option-overlay-text">
-							{ NO__( 'Select this design' ) }
-						</span>
+				) }
+				<span className="design-selector__option-overlay">
+					<span className="design-selector__option-overlay-text">
+						{ NO__( 'Select this design' ) }
 					</span>
-				</CardMedia>
-			) }
+				</span>
+			</CardMedia>
 		</Card>
 	);
 };
