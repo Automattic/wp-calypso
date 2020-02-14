@@ -21,6 +21,7 @@ import {
 	RECOMMENDED_THEMES_FAIL,
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
+	THEME_ACCEPT_SWITCHING_HOMEPAGE_WARNING,
 	THEME_ACTIVATE,
 	THEME_ACTIVATE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
@@ -65,6 +66,7 @@ import {
 	shouldFilterWpcomThemes,
 	isDownloadableFromWpcom,
 	hasAutoLoadingHomepageFeature,
+	hasSwitchingHomepageWarningAccepted,
 } from './selectors';
 import {
 	getThemeIdFromStylesheet,
@@ -359,16 +361,19 @@ export function requestActiveTheme( siteId ) {
  * Triggers a network request to activate a specific theme on a given site.
  * If it's a Jetpack site, installs the theme prior to activation if it isn't already.
  *
- * @param  {string}   themeId   Theme ID
- * @param  {number}   siteId    Site ID
- * @param  {string}   source    The source that is reuquesting theme activation, e.g. 'showcase'
- * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
- * @returns {Function}           Action thunk
+ * @param  {string}   themeId      Theme ID
+ * @param  {number}   siteId       Site ID
+ * @param  {string}   source       The source that is reuquesting theme activation, e.g. 'showcase'
+ * @param  {boolean}  purchased    Whether the theme has been purchased prior to activation
+ * @returns {Function}             Action thunk
  */
 export function activate( themeId, siteId, source = 'unknown', purchased = false ) {
 	return ( dispatch, getState ) => {
 		// Show switching homepage warning?
-		if ( hasAutoLoadingHomepageFeature( getState(), themeId ) ) {
+		if (
+			hasAutoLoadingHomepageFeature( getState(), themeId ) &&
+			! hasSwitchingHomepageWarningAccepted( getState(), themeId )
+		) {
 			return dispatch( showSwitchingHomepageWarning( themeId ) );
 		}
 
@@ -908,7 +913,13 @@ export function showSwitchingHomepageWarning( themeId ) {
 export function hideSwitchingHomepageWarning() {
 	return {
 		type: THEME_HIDE_SWITCHING_HOMEPAGE_WARNING,
-		themeId: null,
+	};
+}
+
+export function acceptSwitchingHomepageWarning( themeId ) {
+	return {
+		type: THEME_ACCEPT_SWITCHING_HOMEPAGE_WARNING,
+		themeId,
 	};
 }
 
