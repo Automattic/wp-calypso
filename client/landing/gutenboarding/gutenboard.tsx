@@ -7,12 +7,12 @@ import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
 import { Popover, DropZoneProvider } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import '@wordpress/format-library';
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 // Uncomment and remove the redundant sass import from `./style.css` when a release after @wordpress/components@8.5.0 is published.
 // See https://github.com/WordPress/gutenberg/pull/19535
 // import '@wordpress/components/build-style/style.css';
 import { useRouteMatch } from 'react-router-dom';
-
+import { registerCoreBlocks } from '@wordpress/block-library';
 /**
  * Internal dependencies
  */
@@ -24,6 +24,10 @@ import './style.scss';
 registerBlockType( name, settings );
 
 export function Gutenboard() {
+	useEffect( () => {
+		registerCoreBlocks();
+	}, [] );
+
 	// @TODO: This is currently needed in addition to the routing (inside the Onboarding Block)
 	// for the 'Back' and 'Next' buttons in the header. If we remove those (and move navigation
 	// entirely into the block), we'll be able to remove this code.
