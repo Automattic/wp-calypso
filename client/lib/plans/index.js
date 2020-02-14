@@ -439,14 +439,7 @@ export function getPlanTermLabel( planName, translate ) {
 	}
 }
 
-export const getPopularPlanSpec = ( {
-	customerType,
-	isJetpack,
-	abtest,
-	isInSignup,
-	isLaunchPage,
-	countryCode,
-} ) => {
+export const getPopularPlanSpec = ( { customerType, isJetpack } ) => {
 	// Jetpack doesn't currently highlight "Popular" plans
 	if ( isJetpack ) {
 		return false;
@@ -458,17 +451,6 @@ export const getPopularPlanSpec = ( {
 	};
 
 	if ( customerType === 'personal' ) {
-		const isUserOutsideUS = countryCode && 'US' !== countryCode;
-
-		if (
-			isInSignup &&
-			! isLaunchPage &&
-			isUserOutsideUS &&
-			'variantShowBizPopular' === abtest( 'showBusinessPlanPopular' )
-		) {
-			return spec;
-		}
-
 		spec.type = TYPE_PREMIUM;
 	}
 

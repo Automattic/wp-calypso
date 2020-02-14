@@ -7,7 +7,6 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -71,7 +70,6 @@ import {
 import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
-import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -113,7 +111,6 @@ export class PlansFeaturesMain extends Component {
 	getPlanFeatures() {
 		const {
 			basePlansPath,
-			countryCode,
 			customerType,
 			disableBloggerPlanWithNonBlogDomain,
 			displayJetpackPlans,
@@ -177,12 +174,8 @@ export class PlansFeaturesMain extends Component {
 					discountEndDate={ discountEndDate }
 					withScroll={ plansWithScroll }
 					popularPlanSpec={ getPopularPlanSpec( {
-						abtest,
 						customerType,
 						isJetpack,
-						isInSignup,
-						isLaunchPage,
-						countryCode,
 					} ) }
 					siteId={ siteId }
 				/>
@@ -542,12 +535,6 @@ export default connect(
 			currentPlan,
 		} );
 
-		const isDevelopment = 'development' === process.env.NODE_ENV;
-		const devCountryCode = isDevelopment && global.window && global.window.userCountryCode;
-		const cookies = cookie.parse( document.cookie );
-		const countryCodeFromCookie = cookies.country_code;
-		const countryCode = devCountryCode || countryCodeFromCookie;
-
 		return {
 			// This is essentially a hack - discounts are the only endpoint that we can rely on both on /plans and
 			// during the signup, and we're going to remove the code soon after the test. Also, since this endpoint is
@@ -563,7 +550,6 @@ export default connect(
 			siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
 			sitePlanSlug: currentPlan && currentPlan.product_slug,
-			countryCode,
 		};
 	},
 	{
