@@ -21,7 +21,6 @@
 		"calypsoify/plugins": true,
 		"catch-js-errors": true,
 		"code-splitting": true,
-		"composite-checkout-wpcom": true,
 		"devdocs": false,
 		"domains/cctlds": true,
 		"domains/cctlds/ca": true,
