@@ -39,6 +39,8 @@ import {
 	THEMES_REQUEST_FAILURE,
 	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
+	THEME_SHOW_SWITCHING_HOMEPAGE_WARNING,
+	THEME_HIDE_SWITCHING_HOMEPAGE_WARNING,
 } from 'state/action-types';
 import { getSerializedThemesQuery, getThemeIdFromStylesheet } from './utils';
 import {
@@ -456,6 +458,20 @@ export const themePreviewVisibility = withoutPersistence( ( state = null, action
 	return state;
 } );
 
+export const themeShowSwitchingHomepageWarning = withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case THEME_SHOW_SWITCHING_HOMEPAGE_WARNING: {
+			return action.themeId;
+		}
+
+		case THEME_HIDE_SWITCHING_HOMEPAGE_WARNING: {
+			return null;
+		}
+	}
+
+	return state;
+} );
+
 export const themeFilters = withSchemaValidation( themeFiltersSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case THEME_FILTERS_ADD: {
@@ -506,6 +522,7 @@ const combinedReducer = combineReducers( {
 	themePreviewVisibility,
 	themeFilters,
 	recommendedThemes,
+	themeShowSwitchingHomepageWarning,
 } );
 const themesReducer = withStorageKey( 'themes', combinedReducer );
 
