@@ -395,31 +395,7 @@ export function useShoppingCart(
 	useInitializeCartFromServer( cacheStatus, getServerCart, hookDispatch, onEvent );
 
 	// Asynchronously re-validate when the cache is dirty.
-	useEffect( () => {
-		if ( cacheStatus !== 'invalid' ) {
-			return;
-		}
-
-		debug( 'sending edited cart to server', responseCart );
-
-		hookDispatch( { type: 'REQUEST_UPDATED_RESPONSE_CART' } );
-
-		setServerCart( prepareRequestCart( responseCart ) )
-			.then( response => {
-				debug( 'updated cart is', response );
-				hookDispatch( {
-					type: 'RECEIVE_UPDATED_RESPONSE_CART',
-					updatedResponseCart: processRawResponse( response ),
-				} );
-				hookDispatch( { type: 'CLEAR_VARIANT_SELECT_OVERRIDE' } );
-			} )
-			.catch( error => {
-				// TODO: figure out what to do here
-				debug( 'error while fetching cart', error );
-				hookDispatch( { type: 'RAISE_ERROR', error: 'SET_SERVER_CART_ERROR' } );
-				onEvent?.( { type: 'CART_ERROR', payload: { error: 'SET_SERVER_CART_ERROR' } } );
-			} );
-	}, [ setServerCart, cacheStatus, responseCart, onEvent ] );
+	useCartUpdateAndRevalidate( cacheStatus, responseCart, setServerCart, hookDispatch, onEvent );
 
 	// Keep a separate cache of the displayed cart which we regenerate only when
 	// the cart has been downloaded
@@ -514,4 +490,38 @@ function useInitializeCartFromServer( cacheStatus, getServerCart, hookDispatch, 
 				onEvent?.( { type: 'CART_ERROR', payload: { error: 'GET_SERVER_CART_ERROR' } } );
 			} );
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
+}
+
+function useCartUpdateAndRevalidate(
+	cacheStatus,
+	responseCart,
+	setServerCart,
+	hookDispatch,
+	onEvent
+) {
+	useEffect( () => {
+		if ( cacheStatus !== 'invalid' ) {
+			return;
+		}
+
+		debug( 'sending edited cart to server', responseCart );
+
+		hookDispatch( { type: 'REQUEST_UPDATED_RESPONSE_CART' } );
+
+		setServerCart( prepareRequestCart( responseCart ) )
+			.then( response => {
+				debug( 'updated cart is', response );
+				hookDispatch( {
+					type: 'RECEIVE_UPDATED_RESPONSE_CART',
+					updatedResponseCart: processRawResponse( response ),
+				} );
+				hookDispatch( { type: 'CLEAR_VARIANT_SELECT_OVERRIDE' } );
+			} )
+			.catch( error => {
+				// TODO: figure out what to do here
+				debug( 'error while fetching cart', error );
+				hookDispatch( { type: 'RAISE_ERROR', error: 'SET_SERVER_CART_ERROR' } );
+				onEvent?.( { type: 'CART_ERROR', payload: { error: 'SET_SERVER_CART_ERROR' } } );
+			} );
+	}, [ setServerCart, cacheStatus, responseCart, onEvent, hookDispatch ] );
 }
