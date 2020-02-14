@@ -17,6 +17,12 @@
 	.is-section-signup & {
 		@include breakpoint( '>480px' ) {
 			flex-direction: row;
+
+			&.featured-domain-suggestions__domain-step-design-updates .domain-registration-suggestion__title {
+					font-size: 22px;
+					font-weight: 600;
+					line-height: 18px;
+			}
 		}
 	}
 
@@ -115,7 +121,11 @@
 
 		&.domain-registration-suggestion__progress-bar-design-update-test {
 			order: 0;
-			margin: 0.3em 0 1em;
+			margin: 0.7em 0 1em;
+
+			@include breakpoint( '<480px' ) {
+				margin: 0 0 0.5em;
+			}
 			
 			&.pill-success .plan-pill {
 				position: inherit;

@@ -135,7 +135,8 @@
 	flex-direction: row;
 	flex-wrap: wrap;
 
-	&.domain-registration-suggestion__title-domain-copy-test {
+	&.domain-registration-suggestion__title-domain-copy-test,
+	&.domain-registration-suggestion__title-domain-design-updates {
 		@include breakpoint( '>480px' ) {
 			max-width: 50%;
 			min-width: 50%;
@@ -143,16 +144,28 @@
 		}
 
 		@include breakpoint( '>660px' ) {
-			max-width: 65%;
-			min-width: 65%;
+			max-width: 55%;
+			min-width: 55%;
 			margin-right: 1em;
 		}
+	}
+
+	&.domain-registration-suggestion__title-domain-design-updates {
+		font-size: 18px;
+		font-weight: 600;
+		line-height: 18px;
 	}
 
 	.domain-registration-suggestion__title {
 		width: auto;
 		max-width: 100%;
 		padding-right: 0.2em;
+	}
+
+	&.domain-registration-suggestion__title-domain-design-updates .domain-registration-suggestion__title {
+		font-size: 18px;
+		font-weight: 600;
+		line-height: 18px;
 	}
 
 	.badge {

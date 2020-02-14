@@ -30,6 +30,12 @@
 		}
 	}
 
+	&.register-domain-step__search-domain-step-design-updates .search .search__input:not( :placeholder-shown ) {
+		font-size: 16px;
+		font-weight: 600;
+		line-height: 18px;
+	}
+
 	&.disabled {
 		border-bottom: none; // so that bottom border is not there during google app dialog animation
 		opacity: 0.7;
