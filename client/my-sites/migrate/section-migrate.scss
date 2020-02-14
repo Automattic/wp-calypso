@@ -88,6 +88,26 @@
 	font-size: 14px;
 }
 
+.migrate__plan-upsell-item {
+	flex-basis: 100%;
+	max-width: 180px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	.gridicon {
+		vertical-align: middle;
+		margin-right: 8px;
+	}
+}
+
+.migrate__plan-upsell-item-label {
+	display: inline-block;
+	line-height: 18px;
+	vertical-align: middle;
+}
+
+
 .migrate__card-footer {
 	color: var( --color-text-subtle );
 	font-size: 13px;

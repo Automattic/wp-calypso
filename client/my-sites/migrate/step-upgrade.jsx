@@ -12,6 +12,7 @@ import { CompactCard, ProductIcon } from '@automattic/components';
  * Internal dependencies
  */
 import CardHeading from 'components/card-heading';
+import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
 import MigrateButton from './migrate-button.jsx';
 import PlanPrice from 'my-sites/plan-price';
@@ -72,16 +73,32 @@ class StepUpgrade extends Component {
 						<div className="migrate__plan-upsell-themes">
 							<h4 className="migrate__plan-feature-header">Your custom themes</h4>
 							{ themes.slice( 0, 2 ).map( theme => (
-								<div>{ theme.name }</div>
+								<div className="migrate__plan-upsell-item">
+									<Gridicon size={ 18 } icon="checkmark" />
+									<div className="migrate__plan-upsell-item-label">{ theme.name }</div>
+								</div>
 							) ) }
-							{ themes.length > 2 && <div>{ themes.length - 2 } more</div> }
+							{ themes.length > 2 && (
+								<div className="migrate__plan-upsell-item">
+									<Gridicon size={ 18 } icon="plus" />
+									<div className="migrate__plan-upsell-item-label">{ themes.length - 2 } more</div>
+								</div>
+							) }
 						</div>
 						<div className="migrate__plan-upsell-plugins">
 							<h4 className="migrate__plan-feature-header">Your active plugins</h4>
 							{ plugins.slice( 0, 2 ).map( plugin => (
-								<div>{ plugin.name }</div>
+								<div className="migrate__plan-upsell-item">
+									<Gridicon size={ 18 } icon="checkmark" />
+									<div className="migrate__plan-upsell-item-label">{ plugin.name }</div>
+								</div>
 							) ) }
-							{ plugins.length > 2 && <div>{ plugins.length - 2 } more</div> }
+							{ plugins.length > 2 && (
+								<div className="migrate__plan-upsell-item">
+									<Gridicon size={ 18 } icon="plus" />
+									<div className="migrate__plan-upsell-item-label">{ plugins.length - 2 } more</div>
+								</div>
+							) }
 						</div>
 					</div>
 					<MigrateButton
