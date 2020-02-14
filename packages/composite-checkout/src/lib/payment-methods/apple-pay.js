@@ -7,7 +7,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { useLineItems, useDispatch, useMessages, useSelect } from '../../public-api';
+import { useLineItems, useDispatch, useMessages, useSelect, useEvents } from '../../public-api';
 import { useLocalize } from '../../lib/localize';
 import PaymentRequestButton from '../../components/payment-request-button';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
@@ -130,6 +130,7 @@ export function ApplePaySubmitButton( { disabled } ) {
 	const transactionStatus = useSelect( select => select( 'apple-pay' ).getTransactionStatus() );
 	const transactionError = useSelect( select => select( 'apple-pay' ).getTransactionError() );
 	const { beginStripeTransaction, resetTransaction } = useDispatch( 'apple-pay' );
+	const onEvent = useEvents();
 	const onSubmit = useCallback(
 		( { name, paymentMethodToken } ) =>
 			submitStripePayment( {
@@ -143,8 +144,10 @@ export function ApplePaySubmitButton( { disabled } ) {
 				beginStripeTransaction,
 				setFormSubmitting,
 				resetTransaction,
+				onEvent,
 			} ),
 		[
+			onEvent,
 			beginStripeTransaction,
 			items,
 			total,
@@ -164,6 +167,7 @@ export function ApplePaySubmitButton( { disabled } ) {
 	useEffect( () => {
 		if ( transactionStatus === 'error' ) {
 			debug( 'showing error', transactionError );
+			onEvent( { type: 'APPLE_PAY_TRANSACTION_ERROR', transactionError } );
 			showErrorMessage(
 				transactionError || localize( 'An error occurred during the transaction' )
 			);
@@ -175,6 +179,7 @@ export function ApplePaySubmitButton( { disabled } ) {
 			setFormComplete();
 		}
 	}, [
+		onEvent,
 		resetTransaction,
 		setFormReady,
 		setFormComplete,
@@ -345,10 +350,12 @@ async function submitStripePayment( {
 	setFormSubmitting,
 	setFormReady,
 	resetTransaction,
+	onEvent,
 } ) {
 	debug( 'submitting stripe payment with key', paymentMethodToken );
 	try {
 		setFormSubmitting();
+		onEvent( { type: 'APPLE_PAY_TRANSACTION_BEGIN' } );
 		beginStripeTransaction( {
 			stripe,
 			paymentMethodToken,

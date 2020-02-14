@@ -615,6 +615,56 @@ function getCheckoutEventHandler( dispatch ) {
 				return dispatch(
 					recordTracksEvent( 'calypso_checkout_composite_step_changed', { step: action.payload } )
 				);
+			case 'STRIPE_TRANSACTION_BEGIN':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_stripe_submit_clicked', {} )
+				);
+			case 'STRIPE_TRANSACTION_ERROR':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_stripe_transaction_error', {
+						error_message: String( action.payload ),
+					} )
+				);
+			case 'PAYPAL_TRANSACTION_BEGIN':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_paypal_submit_clicked', {} )
+				);
+			case 'PAYPAL_TRANSACTION_ERROR':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_paypal_transaction_error', {
+						error_message: String( action.payload ),
+					} )
+				);
+			case 'FULL_CREDITS_TRANSACTION_BEGIN':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_full_credits_submit_clicked', {} )
+				);
+			case 'FULL_CREDITS_TRANSACTION_ERROR':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_full_credits_error', {
+						error_message: String( action.payload ),
+					} )
+				);
+			case 'EXISTING_CARD_TRANSACTION_BEGIN':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_existing_card_submit_clicked', {} )
+				);
+			case 'EXISTING_CARD_TRANSACTION_ERROR':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_existing_card_error', {
+						error_message: String( action.payload ),
+					} )
+				);
+			case 'APPLE_PAY_TRANSACTION_BEGIN':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_apple_pay_submit_clicked', {} )
+				);
+			case 'APPLE_PAY_TRANSACTION_ERROR':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_apple_pay_error', {
+						error_message: String( action.payload ),
+					} )
+				);
 			default:
 				debug( 'unknown checkout event: not recording', action );
 				return;
