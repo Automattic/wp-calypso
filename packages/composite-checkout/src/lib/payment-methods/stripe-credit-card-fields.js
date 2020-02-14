@@ -530,6 +530,7 @@ function StripePayButton( { disabled } ) {
 			showErrorMessage(
 				transactionError || localize( 'An error occurred during the transaction' )
 			);
+			onEvent( { type: 'STRIPE_TRANSACTION_ERROR', payload: transactionError || '' } );
 			resetTransaction();
 			setFormReady();
 		}
@@ -543,6 +544,7 @@ function StripePayButton( { disabled } ) {
 			window.location = redirectUrl;
 		}
 	}, [
+		onEvent,
 		resetTransaction,
 		setFormReady,
 		setFormComplete,
@@ -572,6 +574,7 @@ function StripePayButton( { disabled } ) {
 					showErrorMessage(
 						localize( 'Authorization failed for that card. Please try a different payment method.' )
 					);
+					onEvent( { type: 'EXISTING_CARD_TRANSACTION_ERROR', payload: error } );
 					isSubscribed && resetTransaction();
 					isSubscribed && setFormReady();
 				} );
@@ -579,6 +582,7 @@ function StripePayButton( { disabled } ) {
 
 		return () => ( isSubscribed = false );
 	}, [
+		onEvent,
 		setStripeComplete,
 		resetTransaction,
 		setFormReady,

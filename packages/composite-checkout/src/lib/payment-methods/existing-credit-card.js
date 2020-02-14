@@ -230,6 +230,7 @@ function ExistingCardPayButton( { disabled, id } ) {
 			showErrorMessage(
 				transactionError || localize( 'An error occurred during the transaction' )
 			);
+			onEvent( { type: 'EXISTING_CARD_TRANSACTION_ERROR', payload: transactionError || '' } );
 			setFormReady();
 		}
 		if ( transactionStatus === 'complete' ) {
@@ -242,6 +243,7 @@ function ExistingCardPayButton( { disabled, id } ) {
 			window.location = redirectUrl;
 		}
 	}, [
+		onEvent,
 		redirectUrl,
 		setFormReady,
 		setFormComplete,
@@ -271,6 +273,7 @@ function ExistingCardPayButton( { disabled, id } ) {
 					showErrorMessage(
 						localize( 'Authorization failed for that card. Please try a different payment method.' )
 					);
+					onEvent( { type: 'EXISTING_CARD_TRANSACTION_ERROR', payload: error } );
 					isSubscribed && resetTransaction();
 					isSubscribed && setFormReady();
 				} );
@@ -278,6 +281,7 @@ function ExistingCardPayButton( { disabled, id } ) {
 
 		return () => ( isSubscribed = false );
 	}, [
+		onEvent,
 		resetTransaction,
 		setTransactionComplete,
 		setFormReady,

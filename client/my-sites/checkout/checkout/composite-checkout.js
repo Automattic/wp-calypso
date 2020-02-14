@@ -173,10 +173,15 @@ export default function CompositeCheckout( {
 		cart,
 	] );
 
+	const reduxDispatch = useDispatch();
+	const recordEvent = useCallback( getCheckoutEventHandler( reduxDispatch ), [] );
+
 	const onPaymentComplete = useCallback( () => {
 		debug( 'payment completed successfully' );
-		page.redirect( getThankYouUrl() );
-	}, [ getThankYouUrl ] );
+		const url = getThankYouUrl();
+		recordEvent( { type: 'PAYMENT_COMPLETE', payload: { url } } );
+		page.redirect( url );
+	}, [ recordEvent, getThankYouUrl ] );
 
 	const showErrorMessage = useCallback(
 		error => {
@@ -230,11 +235,9 @@ export default function CompositeCheckout( {
 		setCart || wpcomSetCart,
 		getCart || wpcomGetCart,
 		translate,
-		showAddCouponSuccessMessage
+		showAddCouponSuccessMessage,
+		recordEvent
 	);
-
-	const reduxDispatch = useDispatch();
-	const recordEvent = useCallback( getCheckoutEventHandler( reduxDispatch ), [] );
 
 	const { registerStore, dispatch } = registry;
 	useWpcomStore(
@@ -589,6 +592,18 @@ function getCheckoutEventHandler( dispatch ) {
 	return action => {
 		debug( 'heard checkout event', action );
 		switch ( action.type ) {
+			case 'PAYMENT_COMPLETE':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_payment_complete', {
+						redirect_url: action.payload.url,
+					} )
+				);
+			case 'CART_ERROR':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_cart_error', {
+						error_message: action.payload.error,
+					} )
+				);
 			case 'a8c_checkout_error':
 				return dispatch(
 					recordTracksEvent( 'calypso_checkout_composite_error', {
