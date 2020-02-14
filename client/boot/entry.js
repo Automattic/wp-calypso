@@ -6,7 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest'; // used by error logger
+import { abtest } from 'lib/abtest';
 import userFactory from 'lib/user';
 
 export default function() {
