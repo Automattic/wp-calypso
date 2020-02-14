@@ -21,30 +21,20 @@ interface Props {
 	locale: string;
 
 	/**
-	 * A callback that resolves with the translations data
+	 * Locale data
 	 */
-	loadLocaleData?( newLocale: string ): Promise< object >;
+	localeData?: object;
 }
 export const I18nProvider: React.FunctionComponent< Props > = ( {
 	children,
 	locale,
-	loadLocaleData = () => Promise.resolve( {} ),
+	localeData,
 } ) => {
 	const [ contextValue, setContextValue ] = React.useState< I18nProps >( makeI18n( locale ) );
 	React.useEffect( () => {
-		let cancelled = false;
-		const cancel = () => {
-			cancelled = true;
-		};
-		loadLocaleData( locale ).then( nextLocaleData => {
-			if ( cancelled ) {
-				return;
-			}
-			setLocaleData( nextLocaleData );
-			setContextValue( makeI18n( locale ) );
-		} );
-		return cancel;
-	}, [ locale, loadLocaleData ] );
+		setLocaleData( localeData );
+		setContextValue( makeI18n( locale ) );
+	}, [ locale, localeData ] );
 	return <I18nContext.Provider value={ contextValue }>{ children }</I18nContext.Provider>;
 };
 
@@ -89,14 +79,15 @@ type Optionalize< T extends K, K > = Omit< T, keyof K >;
  */
 export const withI18n = < T extends I18nProps = I18nProps >(
 	WrappedComponent: React.ComponentType< T >
-): React.FunctionComponent< Optionalize< T, I18nProps > > => props => {
-	const i18n = useI18n();
-	return (
-		<WrappedComponent
-			{ ...i18n }
-			// Required cast `props as T`
-			// See https://github.com/Microsoft/TypeScript/issues/28938
-			{ ...( props as T ) }
-		/>
-	);
-};
+): React.FunctionComponent< Optionalize< T, I18nProps > > => props => (
+	<I18nContext.Consumer>
+		{ i18n => (
+			<WrappedComponent
+				{ ...i18n }
+				// Required cast `props as T`
+				// See https://github.com/Microsoft/TypeScript/issues/28938
+				{ ...( props as T ) }
+			/>
+		) }
+	</I18nContext.Consumer>
+);
