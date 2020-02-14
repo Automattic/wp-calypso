@@ -562,17 +562,6 @@ export function isThemeActive( state, themeId, siteId ) {
 }
 
 /**
- * Returns whether the theme is currently active on the given site.
- *
- * @param  {object}  state   Global state tree
- * @param  {string}  themeId Theme ID
- * @returns {boolean}         True if the theme is active on the site
- */
-export function shouldShowHomepageWarning( state, themeId ) {
-	return get( state.themes, 'themeShowSwitchingHomepageWarning' ) === themeId;
-}
-
-/**
  * Returns whether the theme activation action is currently ongoing on the site.
  *
  * @param  {object}  state   Global state tree
@@ -835,5 +824,33 @@ export function hasAutoLoadingHomepageFeature( state, themeId ) {
  * @returns {string} Theme ID,
  */
 export function getPreInstallingThemeId( state ) {
-	return get( state.themes, 'themeShowSwitchingHomepageWarning' );
+	return get( state.themes, [ 'themeShowSwitchingHomepageWarning', 'themeId' ] );
+}
+
+/**
+ * Returns whether the theme is currently active on the given site.
+ *
+ * @param {object} state   Global state tree
+ * @param {string} themeId Theme ID used to show the warning message before to activate.
+ * @returns {boolean}      True if the theme is active on the site. Otherwise, False.
+ */
+export function shouldShowHomepageWarning( state, themeId ) {
+	return (
+		get( state.themes, [ 'themeShowSwitchingHomepageWarning', 'themeId' ] ) === themeId &&
+		get( state.themes, [ 'themeShowSwitchingHomepageWarning', 'show' ] )
+	);
+}
+
+/**
+ * Returns whether the theme is currently active on the given site.
+ *
+ * @param {object} state   Global state tree
+ * @param {string} themeId Theme ID used to show the warning message before to activate.
+ * @returns {boolean}      True if the theme is active on the site. Otherwise, False.
+ */
+export function hasSwitchingHomepageWarningAccepted( state, themeId ) {
+	return (
+		get( state.themes, [ 'themeShowSwitchingHomepageWarning', 'themeId' ] ) === themeId &&
+		get( state.themes, [ 'themeShowSwitchingHomepageWarning', 'accepted' ] )
+	);
 }
