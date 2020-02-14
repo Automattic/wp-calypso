@@ -399,13 +399,7 @@ export function useShoppingCart(
 
 	// Keep a separate cache of the displayed cart which we regenerate only when
 	// the cart has been downloaded
-	const [ responseCartToDisplay, setResponseCartToDisplay ] = useState( responseCart );
-	useEffect( () => {
-		if ( cacheStatus === 'valid' ) {
-			debug( 'updating the displayed cart to match the server cart' );
-			setResponseCartToDisplay( responseCart );
-		}
-	}, [ responseCart, cacheStatus ] );
+	const responseCartToDisplay = useCachedValidCart( cacheStatus, responseCart );
 
 	// Translate the responseCart into the format needed in checkout.
 	const cart: WPCOMCart = useMemo(
@@ -524,4 +518,15 @@ function useCartUpdateAndRevalidate(
 				onEvent?.( { type: 'CART_ERROR', payload: { error: 'SET_SERVER_CART_ERROR' } } );
 			} );
 	}, [ setServerCart, cacheStatus, responseCart, onEvent, hookDispatch ] );
+}
+
+function useCachedValidCart( cacheStatus, responseCart ) {
+	const [ responseCartToDisplay, setResponseCartToDisplay ] = useState( responseCart );
+	useEffect( () => {
+		if ( cacheStatus === 'valid' ) {
+			debug( 'updating the displayed cart to match the server cart' );
+			setResponseCartToDisplay( responseCart );
+		}
+	}, [ responseCart, cacheStatus ] );
+	return responseCartToDisplay;
 }
