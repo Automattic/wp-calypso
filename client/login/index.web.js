@@ -9,7 +9,6 @@ import { Provider as ReduxProvider } from 'react-redux';
  */
 import config from 'config';
 import {
-	lang,
 	login,
 	magicLogin,
 	magicLoginUse,
@@ -20,6 +19,7 @@ import { setShouldServerSideRenderLogin } from './ssr';
 import { setUpLocale, setSection, makeLayoutMiddleware } from 'controller/shared';
 import { redirectLoggedIn } from 'controller/web-util';
 import LayoutLoggedOut from 'layout/logged-out';
+import { getLanguageRouteParam } from 'lib/i18n-utils';
 
 export const LOGIN_SECTION_DEFINITION = {
 	name: 'login',
@@ -41,6 +41,8 @@ const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => {
 const makeLoggedOutLayout = makeLayoutMiddleware( ReduxWrappedLayout );
 
 export default router => {
+	const lang = getLanguageRouteParam();
+
 	if ( config.isEnabled( 'login/magic-login' ) ) {
 		router(
 			`/log-in/link/use/${ lang }`,

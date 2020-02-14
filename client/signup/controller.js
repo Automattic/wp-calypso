@@ -17,7 +17,6 @@ import {
 	getStepUrl,
 	canResumeFlow,
 	getFlowName,
-	getLocale,
 	getStepName,
 	getStepSectionName,
 	getValidPath,
@@ -45,7 +44,7 @@ let initialContext;
 export default {
 	redirectWithoutLocaleIfLoggedIn( context, next ) {
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
-		if ( userLoggedIn && getLocale( context.params ) ) {
+		if ( userLoggedIn && context.params.lang ) {
 			const flowName = getFlowName( context.params );
 			const stepName = getStepName( context.params );
 			const stepSectionName = getStepSectionName( context.params );
@@ -80,7 +79,7 @@ export default {
 
 	redirectToFlow( context, next ) {
 		const flowName = getFlowName( context.params );
-		const localeFromParams = getLocale( context.params );
+		const localeFromParams = context.params.lang;
 		const localeFromStore = store.get( 'signup-locale' );
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		const signupProgress = getSignupProgress( context.store.getState() );
@@ -168,7 +167,7 @@ export default {
 			store: context.store,
 			path: context.path,
 			initialContext,
-			locale: getLocale( context.params ),
+			locale: context.params.lang,
 			flowName: flowName,
 			queryObject: query,
 			refParameter: query && query.ref,

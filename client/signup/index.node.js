@@ -1,18 +1,20 @@
 /**
  * Internal dependencies
  */
-import { getLanguage, getLanguageSlugs } from 'lib/i18n-utils';
-
-const lang = `(${ getLanguageSlugs().join( '|' ) })`;
+import { getLanguage, getLanguageRouteParam } from 'lib/i18n-utils';
 
 export default function( router ) {
-	// The idea is to look out for optional `lang` route params matching our whitelist,
-	// and fall through to the next route def (with free form `flowName`, `stepName`,
-	// and `stepSectionName` route params) if we don't match one.
-	router( `/start/:lang${ lang }?`, setUpLocale );
-	router( `/start/:flowName/:lang${ lang }?`, setUpLocale );
-	router( `/start/:flowName/:stepName/:lang${ lang }?`, setUpLocale );
-	router( `/start/:flowName/:stepName/:stepSectionName/:lang${ lang }?`, setUpLocale );
+	const lang = getLanguageRouteParam();
+
+	router(
+		[
+			`/start/${ lang }`,
+			`/start/:flowName/${ lang }`,
+			`/start/:flowName/:stepName/${ lang }`,
+			`/start/:flowName/:stepName/:stepSectionName/${ lang }`,
+		],
+		setUpLocale
+	);
 }
 
 // Set up the locale if there is one

@@ -98,6 +98,17 @@ export function getLanguageSlugs() {
 }
 
 /**
+ * Return a specifier for page.js/Express route param that enumerates all supported languages.
+ *
+ * @param {string} name of the parameter. By default it's `lang`, some routes use `locale`.
+ * @param {boolean} optional whether to put the `?` character at the end, making the param optional
+ * @returns {string} Router param specifier that looks like `:lang(cs|de|fr|pl)`
+ */
+export function getLanguageRouteParam( name = 'lang', optional = true ) {
+	return `:${ name }(${ getLanguageSlugs().join( '|' ) })${ optional ? '?' : '' }`;
+}
+
+/**
  * Matches and returns language from config.languages based on the given localeSlug
  *
  * @param   {string} langSlug locale slug of the language to match
