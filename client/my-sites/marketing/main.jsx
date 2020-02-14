@@ -14,7 +14,7 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isVipSite from 'state/selectors/is-vip-site';
 import DocumentHead from 'components/data/document-head';
-import { getSiteSlug, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Main from 'components/main';
 import NavItem from 'components/section-nav/item';
@@ -134,9 +134,7 @@ export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId );
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-	const hasSharedaddy =
-		isJetpackModuleActive( state, siteId, 'sharedaddy' ) &&
-		isJetpackMinimumVersion( state, siteId, '3.4-dev' );
+	const hasSharedaddy = isJetpackModuleActive( state, siteId, 'sharedaddy' );
 
 	return {
 		showButtons: siteId && canManageOptions && ( ! isJetpack || hasSharedaddy ),
