@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { once, defer } from 'lodash';
-import debugFactory from 'debug';
 import notices from 'notices';
 import page from 'page';
 
@@ -18,8 +17,6 @@ import {
 	SITE_DELETE_RECEIVE,
 	SITE_RECEIVE,
 	SITES_RECEIVE,
-	SELECTED_SITE_SUBSCRIBE,
-	SELECTED_SITE_UNSUBSCRIBE,
 } from 'state/action-types';
 import userFactory from 'lib/user';
 import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
@@ -36,7 +33,6 @@ import {
 } from 'state/immediate-login/utils';
 import { saveImmediateLoginInformation } from 'state/immediate-login/actions';
 
-const debug = debugFactory( 'calypso:state:middleware' );
 const user = userFactory();
 
 /**
@@ -92,45 +88,6 @@ const notifyAboutImmediateLoginLinkEffects = once( ( dispatch, action, getState 
 		notices.success( createImmediateLoginMessage( action.query.login_reason, email ) );
 	} );
 } );
-
-/*
- * Object holding functions that will be called once selected site changes.
- */
-let selectedSiteChangeListeners = [];
-
-/**
- * Calls the listeners to selected site.
- *
- * @param {Function} dispatch - redux dispatch function
- * @param {number} siteId     - the selected site id
- */
-const updateSelectedSiteIdForSubscribers = ( dispatch, { siteId } ) => {
-	selectedSiteChangeListeners.forEach( listener => listener( siteId ) );
-};
-
-/**
- * Registers a listener function to be fired once selected site changes.
- *
- * @param {Function} dispatch - redux dispatch function
- * @param {object}   action   - the dispatched action
- */
-const receiveSelectedSitesChangeListener = ( dispatch, action ) => {
-	debug( 'receiveSelectedSitesChangeListener' );
-	selectedSiteChangeListeners.push( action.listener );
-};
-
-/**
- * Removes a selectedSite listener.
- *
- * @param {Function} dispatch - redux dispatch function
- * @param {object}   action   - the dispatched action
- */
-const removeSelectedSitesChangeListener = ( dispatch, action ) => {
-	debug( 'removeSelectedSitesChangeListener' );
-	selectedSiteChangeListeners = selectedSiteChangeListeners.filter(
-		listener => listener !== action.listener
-	);
-};
 
 /**
  * Sets the selectedSite for lib/keyboard-shortcuts/global
@@ -191,9 +148,6 @@ const handler = ( dispatch, action, getState ) => {
 			return updateNotificationsOpenForKeyboardShortcuts( dispatch, action, getState );
 
 		case SELECTED_SITE_SET:
-			//let this fall through
-			updateSelectedSiteIdForSubscribers( dispatch, action );
-
 		case SITE_RECEIVE:
 		case SITES_RECEIVE:
 			// Wait a tick for the reducer to update the state tree
@@ -207,13 +161,6 @@ const handler = ( dispatch, action, getState ) => {
 
 				fetchAutomatedTransferStatusForSelectedSite( dispatch, getState );
 			}, 0 );
-			return;
-
-		case SELECTED_SITE_SUBSCRIBE:
-			receiveSelectedSitesChangeListener( dispatch, action );
-			return;
-		case SELECTED_SITE_UNSUBSCRIBE:
-			removeSelectedSitesChangeListener( dispatch, action );
 			return;
 
 		case SITE_DELETE_RECEIVE:
