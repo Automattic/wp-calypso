@@ -346,6 +346,8 @@ export type VariantRequestStatus = 'fresh' | 'pending' | 'valid' | 'error';
  *
  * @param cartKey
  *     The cart key. Will use 'no-site' if no key is set.
+ * @param productToAdd
+ *     The product object to add to the cart immediately.
  * @param setCart
  *     An asynchronous wrapper around the wpcom shopping cart POST
  *     endpoint. We pass this in to make testing easier.
@@ -366,6 +368,7 @@ export type VariantRequestStatus = 'fresh' | 'pending' | 'valid' | 'error';
  */
 export function useShoppingCart(
 	cartKey: string | null,
+	productToAdd: ResponseCartProduct | null,
 	setCart: ( string, RequestCart ) => Promise< ResponseCart >,
 	getCart: ( string ) => Promise< ResponseCart >,
 	translate: ( string ) => string,
@@ -392,7 +395,14 @@ export function useShoppingCart(
 	const shouldShowNotification = hookState.shouldShowNotification;
 
 	// Asynchronously initialize the cart. This should happen exactly once.
-	useInitializeCartFromServer( cacheStatus, getServerCart, hookDispatch, onEvent );
+	useInitializeCartFromServer(
+		cacheStatus,
+		productToAdd,
+		getServerCart,
+		setServerCart,
+		hookDispatch,
+		onEvent
+	);
 
 	// Asynchronously re-validate when the cache is dirty.
 	useCartUpdateAndRevalidate( cacheStatus, responseCart, setServerCart, hookDispatch, onEvent );
@@ -463,7 +473,9 @@ export function useShoppingCart(
 
 function useInitializeCartFromServer(
 	cacheStatus: CacheStatus,
+	productToAdd: ResponseCartProduct | null,
 	getServerCart: Function,
+	setServerCart: Function,
 	hookDispatch: Function,
 	onEvent?: Function
 ): void {
@@ -475,6 +487,22 @@ function useInitializeCartFromServer(
 		debug( `initializing the cart; cacheStatus is ${ cacheStatus }` );
 
 		getServerCart()
+			.then( response => {
+				if ( productToAdd ) {
+					debug(
+						'initialized cart is',
+						response,
+						'; proceeding to add initial product',
+						productToAdd
+					);
+					const updatedResponseCart = addItemToResponseCart(
+						processRawResponse( response ),
+						productToAdd
+					);
+					return setServerCart( prepareRequestCart( updatedResponseCart ) );
+				}
+				return response;
+			} )
 			.then( response => {
 				debug( 'initialized cart is', response );
 				hookDispatch( {
