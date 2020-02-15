@@ -416,6 +416,8 @@ export class CheckoutThankYouHeader extends PureComponent {
 							<h2 className="checkout-thank-you__header-text">{ this.getText() }</h2>
 						) }
 
+						{ this.props.children }
+
 						{ this.getButtons() }
 					</div>
 				</div>
