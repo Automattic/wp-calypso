@@ -30,7 +30,9 @@ export default function CheckoutSystemDecider( {
 	const countryCode = useSelector( state => getCurrentUserCountryCode( state ) );
 	const locale = useSelector( state => getCurrentUserLocale( state ) );
 
-	if ( shouldShowCompositeCheckout( cart, countryCode, locale ) ) {
+	// TODO: fetch the current cart, ideally without using CartData, and use that to pass to shouldShowCompositeCheckout
+
+	if ( shouldShowCompositeCheckout( cart, countryCode, locale, product ) ) {
 		return (
 			<CompositeCheckout
 				siteSlug={ selectedSite?.slug }
@@ -61,9 +63,24 @@ export default function CheckoutSystemDecider( {
 	);
 }
 
-function shouldShowCompositeCheckout( cart, countryCode, locale ) {
+function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug ) {
 	if ( config.isEnabled( 'composite-checkout-wpcom' ) ) {
 		return true;
+	}
+	// If the URL is adding a product, only allow wpcom plans
+	const slugFragmentsToAllow = [
+		'personal-bundle',
+		'value_bundle',
+		'value-bundle',
+		'blogger',
+		'ecommerce',
+		'business',
+	];
+	if (
+		productSlug &&
+		! slugFragmentsToAllow.find( fragment => productSlug.includes( fragment ) )
+	) {
+		return false;
 	}
 	// Disable for non-USD
 	if ( cart?.currency !== 'USD' ) {
