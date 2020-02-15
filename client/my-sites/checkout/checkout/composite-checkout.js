@@ -216,6 +216,23 @@ export default function CompositeCheckout( {
 
 	const countriesList = useCountryList( overrideCountryList || [] );
 
+	const plan = useSelector( state => getPlanBySlug( state, planSlug ) );
+	useEffect( () => {
+		if ( ! planSlug ) {
+			return;
+		}
+		// TODO: what if the plans did load but there is no matching plan? check for plans loaded instead
+		if ( ! plan ) {
+			debug( 'there is a request to add a plan but no plan was found', planSlug );
+			reduxDispatch( requestPlans() );
+			return;
+		}
+	}, [ reduxDispatch, planSlug, plan ] );
+	planSlug && debug( 'adding item as requested in url', { planSlug, plan, isJetpackNotAtomic } );
+	const productForCart = planSlug
+		? createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } )
+		: null;
+
 	const {
 		items,
 		tax,
@@ -223,7 +240,6 @@ export default function CompositeCheckout( {
 		total,
 		credits,
 		removeItem,
-		addItem,
 		submitCoupon,
 		updateLocation,
 		couponStatus,
@@ -236,6 +252,7 @@ export default function CompositeCheckout( {
 		variantSelectOverride,
 	} = useShoppingCart(
 		siteSlug,
+		productForCart,
 		setCart || wpcomSetCart,
 		getCart || wpcomGetCart,
 		translate,
@@ -251,8 +268,6 @@ export default function CompositeCheckout( {
 	);
 
 	useDisplayErrors( errors, showErrorMessage );
-
-	useAddProductToCart( planSlug, isJetpackNotAtomic, addItem );
 
 	const itemsForCheckout = ( items.length ? [ ...items, tax, couponItem ] : [] ).filter( Boolean );
 	debug( 'items for checkout', itemsForCheckout );
@@ -518,24 +533,6 @@ CompositeCheckout.propTypes = {
 	transaction: PropTypes.object,
 };
 
-function useAddProductToCart( planSlug, isJetpackNotAtomic, addItem ) {
-	const dispatch = useDispatch();
-	const plan = useSelector( state => getPlanBySlug( state, planSlug ) );
-
-	useEffect( () => {
-		if ( ! planSlug ) {
-			return;
-		}
-		if ( ! plan ) {
-			debug( 'there is a request to add a plan but no plan was found', planSlug );
-			dispatch( requestPlans() );
-			return;
-		}
-		debug( 'adding item as requested in url', { planSlug, plan, isJetpackNotAtomic } );
-		addItem( createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) );
-	}, [ dispatch, planSlug, plan, isJetpackNotAtomic, addItem ] );
-}
-
 function useDisplayErrors( errors, displayError ) {
 	useEffect( () => {
 		errors.filter( isNotCouponError ).map( error => displayError( error.message ) );
@@ -561,10 +558,8 @@ function isNotCouponError( error ) {
 function createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) {
 	let cartItem, cartMeta;
 
-	if ( planSlug ) {
-		cartItem = planItem( planSlug );
-		cartItem.product_id = plan.product_id;
-	}
+	cartItem = planItem( planSlug );
+	cartItem.product_id = plan.product_id;
 
 	if ( planSlug.startsWith( 'theme' ) ) {
 		cartMeta = planSlug.split( ':' )[ 1 ];
