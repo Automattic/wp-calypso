@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useState, useEffect, useMemo, useCallback, useReducer } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef, useReducer } from 'react';
 import debugFactory from 'debug';
 
 /**
@@ -346,8 +346,13 @@ export type VariantRequestStatus = 'fresh' | 'pending' | 'valid' | 'error';
  *
  * @param cartKey
  *     The cart key. Will use 'no-site' if no key is set.
+ * @param canInitializeCart
+ *     If false, the cart will not be initialized until it changes to true. Can
+ *     be used along with productToAdd to delay initializing the cart until the
+ *     product is ready to be added.
  * @param productToAdd
- *     The product object to add to the cart immediately.
+ *     The product object to add to the cart immediately when the cart is
+ *     initialized. Has no effect if it changes after initializing.
  * @param setCart
  *     An asynchronous wrapper around the wpcom shopping cart POST
  *     endpoint. We pass this in to make testing easier.
@@ -368,6 +373,7 @@ export type VariantRequestStatus = 'fresh' | 'pending' | 'valid' | 'error';
  */
 export function useShoppingCart(
 	cartKey: string | null,
+	canInitializeCart: boolean,
 	productToAdd: ResponseCartProduct | null,
 	setCart: ( string, RequestCart ) => Promise< ResponseCart >,
 	getCart: ( string ) => Promise< ResponseCart >,
@@ -397,6 +403,7 @@ export function useShoppingCart(
 	// Asynchronously initialize the cart. This should happen exactly once.
 	useInitializeCartFromServer(
 		cacheStatus,
+		canInitializeCart,
 		productToAdd,
 		getServerCart,
 		setServerCart,
@@ -473,17 +480,24 @@ export function useShoppingCart(
 
 function useInitializeCartFromServer(
 	cacheStatus: CacheStatus,
+	canInitializeCart: boolean,
 	productToAdd: ResponseCartProduct | null,
 	getServerCart: Function,
 	setServerCart: Function,
 	hookDispatch: Function,
 	onEvent?: Function
 ): void {
+	const isInitialized = useRef( false );
 	useEffect( () => {
-		if ( cacheStatus !== 'fresh' ) {
+		if ( cacheStatus !== 'fresh' || canInitializeCart !== true ) {
 			return;
 		}
 
+		if ( isInitialized.current ) {
+			debug( 'not initializing cart again' );
+			return;
+		}
+		isInitialized.current = true;
 		debug( `initializing the cart; cacheStatus is ${ cacheStatus }` );
 
 		getServerCart()
@@ -516,7 +530,15 @@ function useInitializeCartFromServer(
 				hookDispatch( { type: 'RAISE_ERROR', error: 'GET_SERVER_CART_ERROR' } );
 				onEvent?.( { type: 'CART_ERROR', payload: { error: 'GET_SERVER_CART_ERROR' } } );
 			} );
-	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [
+		cacheStatus,
+		canInitializeCart,
+		hookDispatch,
+		onEvent,
+		getServerCart,
+		productToAdd,
+		setServerCart,
+	] );
 }
 
 function useCartUpdateAndRevalidate(

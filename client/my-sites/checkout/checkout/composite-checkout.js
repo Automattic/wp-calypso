@@ -232,6 +232,7 @@ export default function CompositeCheckout( {
 	const productForCart = planSlug
 		? createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } )
 		: null;
+	const canInitializeCart = ! planSlug || ( planSlug && productForCart );
 
 	const {
 		items,
@@ -252,6 +253,7 @@ export default function CompositeCheckout( {
 		variantSelectOverride,
 	} = useShoppingCart(
 		siteSlug,
+		canInitializeCart,
 		productForCart,
 		setCart || wpcomSetCart,
 		getCart || wpcomGetCart,
