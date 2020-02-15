@@ -11,6 +11,7 @@ import CheckoutContainer from './checkout-container';
 import CompositeCheckout from './composite-checkout';
 import config from 'config';
 import { getCurrentUserLocale, getCurrentUserCountryCode } from 'state/current-user/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 
 // Decide if we should use CompositeCheckout or CheckoutContainer
 export default function CheckoutSystemDecider( {
@@ -27,12 +28,13 @@ export default function CheckoutSystemDecider( {
 	clearTransaction,
 	cart,
 } ) {
+	const isJetpack = useSelector( state => isJetpackSite( state, selectedSite?.ID ) );
 	const countryCode = useSelector( state => getCurrentUserCountryCode( state ) );
 	const locale = useSelector( state => getCurrentUserLocale( state ) );
 
 	// TODO: fetch the current cart, ideally without using CartData, and use that to pass to shouldShowCompositeCheckout
 
-	if ( shouldShowCompositeCheckout( cart, countryCode, locale, product ) ) {
+	if ( shouldShowCompositeCheckout( cart, countryCode, locale, product, isJetpack ) ) {
 		return (
 			<CompositeCheckout
 				siteSlug={ selectedSite?.slug }
@@ -63,9 +65,13 @@ export default function CheckoutSystemDecider( {
 	);
 }
 
-function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug ) {
+function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, isJetpack ) {
 	if ( config.isEnabled( 'composite-checkout-wpcom' ) ) {
 		return true;
+	}
+	// Disable if this is a jetpack site
+	if ( isJetpack ) {
+		return false;
 	}
 	// If the URL is adding a product, only allow wpcom plans
 	const slugFragmentsToAllow = [
