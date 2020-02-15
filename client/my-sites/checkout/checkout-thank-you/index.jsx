@@ -592,42 +592,44 @@ export class CheckoutThankYou extends React.Component {
 
 		return (
 			<div>
-				<CheckoutThankYouHeader
-					isDataLoaded={ this.isDataLoaded() }
-					isSimplified={ isSimplified }
-					primaryPurchase={ primaryPurchase }
-					selectedSite={ selectedSite }
-					hasFailedPurchases={ hasFailedPurchases }
-					siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
-					upgradeIntent={ upgradeIntent }
-					primaryCta={ this.primaryCta }
-					displayMode={ displayMode }
-				/>
-
-				{ ! isSimplified && primaryPurchase && (
-					<CheckoutThankYouFeaturesHeader
+				{
+					<CheckoutThankYouHeader
 						isDataLoaded={ this.isDataLoaded() }
-						isGenericReceipt={ this.isGenericReceipt() }
-						purchases={ purchases }
+						isSimplified={ isSimplified }
+						primaryPurchase={ primaryPurchase }
+						selectedSite={ selectedSite }
 						hasFailedPurchases={ hasFailedPurchases }
-					/>
-				) }
+						siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
+						upgradeIntent={ upgradeIntent }
+						primaryCta={ this.primaryCta }
+						displayMode={ displayMode }
+					>
+						{ ! isSimplified && primaryPurchase && (
+							<CheckoutThankYouFeaturesHeader
+								isDataLoaded={ this.isDataLoaded() }
+								isGenericReceipt={ this.isGenericReceipt() }
+								purchases={ purchases }
+								hasFailedPurchases={ hasFailedPurchases }
+							/>
+						) }
 
-				{ ! isSimplified && ComponentClass && (
-					<div className="checkout-thank-you__purchase-details-list">
-						<ComponentClass
-							customizeUrl={ customizeUrl }
-							domain={ domain }
-							purchases={ purchases }
-							failedPurchases={ failedPurchases }
-							isRootDomainWithUs={ isRootDomainWithUs }
-							registrarSupportUrl={ registrarSupportUrl }
-							selectedSite={ selectedSite }
-							selectedFeature={ getFeatureByKey( this.props.selectedFeature ) }
-							sitePlans={ sitePlans }
-						/>
-					</div>
-				) }
+						{ ! isSimplified && ComponentClass && (
+							<div className="checkout-thank-you__purchase-details-list">
+								<ComponentClass
+									customizeUrl={ customizeUrl }
+									domain={ domain }
+									purchases={ purchases }
+									failedPurchases={ failedPurchases }
+									isRootDomainWithUs={ isRootDomainWithUs }
+									registrarSupportUrl={ registrarSupportUrl }
+									selectedSite={ selectedSite }
+									selectedFeature={ getFeatureByKey( this.props.selectedFeature ) }
+									sitePlans={ sitePlans }
+								/>
+							</div>
+						) }
+					</CheckoutThankYouHeader>
+				}
 			</div>
 		);
 	};
