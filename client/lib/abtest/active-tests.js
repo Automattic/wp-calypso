@@ -118,15 +118,6 @@ export default {
 		allowExistingUsers: false,
 		localeTargets: 'any',
 	},
-	redirectToCustomerHome: {
-		datestamp: '20200117',
-		variations: {
-			variant: 10,
-			control: 90,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: false,
-	},
 	sidebarUpsellNudgeUnification: {
 		datestamp: '20200127',
 		variations: {
