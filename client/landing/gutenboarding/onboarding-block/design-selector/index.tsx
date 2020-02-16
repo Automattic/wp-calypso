@@ -3,7 +3,7 @@
  */
 import { __ as NO__ } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
-import React, { useLayoutEffect, useRef, FunctionComponent } from 'react';
+import React, { useLayoutEffect, useRef, FunctionComponent, useState, useEffect } from 'react';
 import classnames from 'classnames';
 import PageLayoutSelector from './page-layout-selector';
 import { partition, memoize, reduce } from 'lodash';
@@ -50,18 +50,19 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 			select( VERTICALS_TEMPLATES_STORE ).getTemplates( siteVertical?.id ?? 'm1' )
 		) ?? [];
 
-	// Parse templates blocks and memoize them.
-	const getBlocksByTemplateSlugs = memoize( designTemplate =>
-		reduce(
-			designTemplate,
+	// Parse blocks to state when templates updates.
+	const [ blocksByTemplateSlug, setBlocksByTemplateSlug ] = useState< object >( {} );
+	useEffect( () => {
+		const templateBlocks = reduce(
+			templates,
 			( prev, { slug, content } ) => {
 				prev[ slug ] = content ? parseBlocks( content ) : [];
 				return prev;
 			},
 			{}
-		)
-	);
-	const blocksByTemplateSlug = getBlocksByTemplateSlugs( templates );
+		);
+		setBlocksByTemplateSlug( templateBlocks );
+	}, [ templates ] );
 
 	const [ designs, otherTemplates ] = partition(
 		templates,
@@ -139,9 +140,9 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 						// repeatDesigns.map( design => (
 						// otherTemplates.map( design => (
 						// repeatPages.map( design => (
-						<DynamicPreview 
-							key={ design.slug } 
-							blocks={ blocksByTemplateSlug[ design.slug ] } 
+						<DynamicPreview
+							key={ design.slug }
+							blocks={ blocksByTemplateSlug[ design.slug ] }
 							onClick={ () => {
 								window.scrollTo( 0, 0 );
 								setSelectedDesign( design );
