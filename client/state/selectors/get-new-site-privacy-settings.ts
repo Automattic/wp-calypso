@@ -25,7 +25,7 @@ export default function getNewSitePrivacySettings( state: object ): PrivacySetti
 	if ( config.isEnabled( 'coming-soon' ) ) {
 		return {
 			comingSoon: 1,
-			public: -1,
+			public: 0,
 		};
 	}
 
