@@ -60,38 +60,49 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	if ( '' !== $attributes['customTextColor'] ) {
 		$styles = 'color: ' . $attributes['customTextColor'] . ';';
 	}
-
 	$articles_rest_url = add_query_arg(
 		array_merge(
 			array_map(
 				function( $attribute ) {
-					return false === $attribute ? '0' : $attribute;
+					return false === $attribute ? '0' : str_replace( '#', '%23', $attribute );
 				},
 				$attributes
 			),
-			array( 'page' => 2 )
+			array(
+				'page' => 2,
+				'amp'  => Newspack_Blocks::is_amp(),
+			)
 		),
 		rest_url( '/newspack-blocks/v1/articles' )
 	);
 
+	$page = $article_query->paged ?? 1;
+
+	$has_more_pages = ( ++$page ) <= $article_query->max_num_pages;
+
+	$has_more_button = $has_more_pages && boolval( $attributes['moreButton'] );
+
+	if ( $has_more_button ) {
+		$classes .= ' has-more-button';
+	}
+
 	ob_start();
 
 	if ( $article_query->have_posts() ) : ?>
-		<div  class="<?php echo esc_attr( $classes ); ?>" style="<?php echo esc_attr( $styles ); ?>">
-			<div data-posts-container>
+		<?php if ( $has_more_button && Newspack_Blocks::is_amp() ) : ?>
+			<amp-script layout="container" src="<?php echo esc_url( plugins_url( '/newspack-blocks/amp/homepage-articles/view.js' ) ); ?>">
+		<?php endif; ?>
+		<div
+			class="<?php echo esc_attr( $classes ); ?>"
+			style="<?php echo esc_attr( $styles ); ?>"
+			>
+			<div data-posts>
 				<?php if ( '' !== $attributes['sectionHeader'] ) : ?>
 					<h2 class="article-section-title">
 						<span><?php echo wp_kses_post( $attributes['sectionHeader'] ); ?></span>
 					</h2>
 				<?php endif; ?>
 				<?php
-
-				/*
-				* We are not using an AMP-based renderer on AMP requests because it has limitations
-				* around dynamically calculating the height of the the article list on load.
-				* As a result we render the same standards-based markup for all requests.
-				*/
-
 				echo Newspack_Blocks::template_inc(
 					__DIR__ . '/templates/articles-list.php',
 					array(
@@ -104,21 +115,9 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			</div>
 			<?php
 
-			/*
-			 * AMP-requests cannot contain client-side scripting (eg: JavaScript). As a result
-			 * we do not display the "More" button on AMP-requests. This feature is deliberately
-			 * disabled.
-			 *
-			 * @see https://github.com/Automattic/newspack-blocks/pull/226#issuecomment-558695909
-			 * @see https://wp.me/paYJgx-jW
-			 */
-			$page = $article_query->paged ?? 1;
-
-			$has_more_pages = ( ++$page ) <= $article_query->max_num_pages;
-
-			if ( ! Newspack_Blocks::is_amp() && $has_more_pages && boolval( $attributes['moreButton'] ) ) :
+			if ( $has_more_button ) :
 				?>
-				<button type="button" data-load-more-btn data-load-more-url="<?php echo esc_url( $articles_rest_url ); ?>">
+				<button type="button" data-next="<?php echo esc_url( $articles_rest_url ); ?>">
 				<?php
 				if ( ! empty( $attributes['moreButtonText'] ) ) {
 					echo esc_html( $attributes['moreButtonText'] );
@@ -127,15 +126,19 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				}
 				?>
 				</button>
-				<p data-load-more-loading-text hidden>
+				<p class="loading">
 					<?php _e( 'Loading...', 'newspack-blocks' ); ?>
 				</p>
-				<p data-load-more-error-text hidden>
+				<p class="error">
 					<?php _e( 'Something went wrong. Please refresh the page and/or try again.', 'newspack-blocks' ); ?>
 				</p>
+
 			<?php endif; ?>
 
 		</div>
+		<?php if ( $has_more_button && Newspack_Blocks::is_amp() ) : ?>
+			</amp-script>
+		<?php endif; ?>
 		<?php
 	endif;
 
@@ -225,3 +228,31 @@ function newspack_blocks_format_byline( $author_info ) {
 
 	return implode( '', $elements );
 }
+
+
+/**
+ * Inject amp-state containing all post IDs visible on page load.
+ */
+function newspack_blocks_inject_amp_state() {
+	if ( ! Newspack_Blocks::is_amp() ) {
+		return;
+	}
+	global $newspack_blocks_post_id;
+	if ( ! $newspack_blocks_post_id || ! count( $newspack_blocks_post_id ) ) {
+		return;
+	}
+	$post_ids = implode( ', ', array_keys( $newspack_blocks_post_id ) );
+	ob_start();
+	?>
+	<amp-state id='newspackHomepagePosts'>
+		<script type="application/json">
+			{
+				"exclude_ids": [ <?php echo esc_attr( $post_ids ); ?> ]
+			}
+		</script>
+	</amp-state>
+	<?php
+	echo ob_get_clean(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+
+add_action( 'wp_footer', 'newspack_blocks_inject_amp_state' );

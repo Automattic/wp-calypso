@@ -57,6 +57,12 @@ class Newspack_Blocks {
 				$script_data['version'],
 				true
 			);
+
+			wp_set_script_translations(
+				'newspack-blocks-editor',
+				'newspack-blocks',
+				plugin_dir_path( __FILE__ ) . 'languages'
+			);
 		}
 
 		$editor_style = plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.css', __FILE__ );
@@ -66,12 +72,6 @@ class Newspack_Blocks {
 			$editor_style,
 			array(),
 			NEWSPACK_BLOCKS__VERSION
-		);
-
-		wp_set_script_translations(
-			'newspack-blocks-editor',
-			'newspack-blocks',
-			plugin_dir_path( __FILE__ ) . 'languages'
 		);
 	}
 
