@@ -498,6 +498,7 @@ class RegisterDomainStep extends React.Component {
 					onChange={ this.onFiltersChange }
 					onReset={ this.onFiltersReset }
 					onSubmit={ this.onFiltersSubmit }
+					showDesignUpdate={ this.props.showDesignUpdate }
 				/>
 			)
 		);
