@@ -146,7 +146,7 @@ describe( 'SiteSettingsFormGeneral ', () => {
 		} );
 
 		[
-			[ 'Coming soon', 'Coming Soon', 1, { blog_public: -1, wpcom_coming_soon: 1 } ],
+			[ 'Coming soon', 'Coming Soon', 1, { blog_public: 0, wpcom_coming_soon: 1 } ],
 			[ 'Public', 'Public', -1, { blog_public: 1, wpcom_coming_soon: 0 } ],
 			[
 				'Hidden',
