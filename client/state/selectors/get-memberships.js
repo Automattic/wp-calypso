@@ -23,7 +23,7 @@ export default createSelector(
 			return null;
 		}
 
-		const membershipsProducts = state.memberships.productList.items?.[ siteId ] ?? null;
+		const membershipsProducts = state.memberships.productList.items[ siteId ] ?? null;
 
 		if ( ! membershipsProducts ) {
 			return null;

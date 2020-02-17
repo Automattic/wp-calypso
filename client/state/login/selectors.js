@@ -23,7 +23,7 @@ export const getTwoFactorUserId = state => {
  * @returns {?string}         The nonce.
  */
 export const getTwoFactorAuthNonce = ( state, nonceType ) => {
-	return state?.login?.twoFactorAuth?.[ `two_step_nonce_${ nonceType }` ] ?? null;
+	return state.login.twoFactorAuth[ `two_step_nonce_${ nonceType }` ] ?? null;
 };
 
 /**

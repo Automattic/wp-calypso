@@ -158,7 +158,7 @@ export const items = withSchemaValidation( domainWhoisSchema, ( state = {}, acti
 		}
 		case DOMAIN_MANAGEMENT_WHOIS_UPDATE: {
 			const { domain, whoisData } = action;
-			const domainState = state?.[ domain ];
+			const domainState = state[ domain ];
 			return merge( {}, state, {
 				[ domain ]: mergeDomainRegistrantContactDetails(
 					domainState !== undefined ? domainState : {},

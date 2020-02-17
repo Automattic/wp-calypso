@@ -1,2 +1,2 @@
 export const isSidebarSectionOpen = ( state, section ) =>
-	state?.mySites?.sidebarSections?.[ section ]?.isOpen;
+	state.mySites.sidebarSections[ section ]?.isOpen;

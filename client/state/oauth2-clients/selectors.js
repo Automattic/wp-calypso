@@ -6,5 +6,5 @@
  * @returns {object}          OAuth2 client data
  */
 export const getOAuth2Client = ( state, clientId ) => {
-	return state?.oauth2Clients?.[ clientId ] ?? null;
+	return state.oauth2Clients[ clientId ] ?? null;
 };

@@ -10,8 +10,8 @@ import { getOAuth2Client } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'getOAuth2Client()', () => {
-		test( 'should return null if no state provided', () => {
-			const client = getOAuth2Client();
+		test( 'should return null if empty state provided', () => {
+			const client = getOAuth2Client( { oauth2Clients: {} } );
 
 			expect( client ).to.be.null;
 		} );
