@@ -18,7 +18,7 @@ import { ReduxWrappedLayout } from 'controller';
 import notices from 'notices';
 import { getToken } from 'lib/oauth-token';
 import emailVerification from 'components/email-verification';
-import { abtest, getSavedVariations } from 'lib/abtest'; // used by error logger
+import { getSavedVariations } from 'lib/abtest'; // used by error logger
 import accessibleFocus from 'lib/accessible-focus';
 import Logger from 'lib/catch-js-errors';
 import { bindState as bindWpLocaleState } from 'lib/wp/localization';
@@ -132,11 +132,7 @@ const loggedInMiddleware = currentUser => {
 	}
 
 	page( '/', context => {
-		const { primarySiteSlug } = currentUser.get();
-		let redirectPath =
-			primarySiteSlug && 'variant' === abtest( 'redirectToCustomerHome' )
-				? `/home/${ primarySiteSlug }`
-				: '/read';
+		let redirectPath = '/read';
 
 		if ( context.querystring ) {
 			redirectPath += `?${ context.querystring }`;
