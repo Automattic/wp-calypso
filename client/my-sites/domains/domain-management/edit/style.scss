@@ -86,6 +86,14 @@
 		}
 	}
 
+	.domain-types__expiration_row {
+		display: flex;
+		align-items: center;
+		> div:first-child {
+			margin-right: auto;
+		}
+	}
+
 	.subscription-settings {
 		margin-top: 0;
 	}
