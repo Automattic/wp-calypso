@@ -84,7 +84,7 @@ export const useI18n = (): I18nProps => {
  * }
  * export default withI18n( MyComponent );
  */
-export const withI18n = createHigherOrderComponent( InnerComponent => {
+export const withI18n = createHigherOrderComponent< I18nProps >( InnerComponent => {
 	return props => {
 		const i18n = useI18n();
 		return <InnerComponent { ...i18n } { ...props } />;
