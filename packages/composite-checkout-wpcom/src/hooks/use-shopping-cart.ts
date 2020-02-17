@@ -448,7 +448,6 @@ export function useShoppingCart(
 	}, [] );
 
 	const updateLocation: ( CartLocation ) => void = useCallback( location => {
-		debug( 'updating location for cart to', location );
 		hookDispatch( { type: 'SET_LOCATION', location } );
 	}, [] );
 
@@ -489,12 +488,17 @@ function useInitializeCartFromServer(
 ): void {
 	const isInitialized = useRef( false );
 	useEffect( () => {
-		if ( cacheStatus !== 'fresh' || canInitializeCart !== true ) {
+		if ( cacheStatus !== 'fresh' ) {
+			debug( 'not initializing cart; cacheStatus is not fresh' );
+			return;
+		}
+		if ( canInitializeCart !== true ) {
+			debug( 'not initializing cart; canInitializeCart is not true' );
 			return;
 		}
 
 		if ( isInitialized.current ) {
-			debug( 'not initializing cart again' );
+			debug( 'not initializing cart; already initialized' );
 			return;
 		}
 		isInitialized.current = true;
