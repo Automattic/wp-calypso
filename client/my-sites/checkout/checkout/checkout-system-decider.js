@@ -13,6 +13,7 @@ import CompositeCheckout from './composite-checkout';
 import config from 'config';
 import { getCurrentUserLocale, getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import { abtest } from 'lib/abtest';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
 
@@ -125,6 +126,10 @@ function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, is
 		return false;
 	}
 
+	if ( abtest( 'showCompositeCheckout' ) === 'composite' ) {
+		debug( 'shouldShowCompositeCheckout true because user is in abtest' );
+		return true;
+	}
 	debug( 'shouldShowCompositeCheckout false because test not enabled' );
 	return false;
 }
