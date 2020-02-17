@@ -46,17 +46,6 @@ const SiteSettingsSecurity = ( {
 		);
 	}
 
-	if ( ! site.canManage ) {
-		return (
-			<JetpackManageErrorPage
-				template="optInManage"
-				title={ translate( "Looking to manage this site's security settings?" ) }
-				section="security-settings"
-				siteId={ siteId }
-			/>
-		);
-	}
-
 	return (
 		<Main className="settings-security site-settings">
 			<QueryRewindState siteId={ siteId } />
