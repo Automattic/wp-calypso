@@ -475,13 +475,13 @@ export default function CompositeCheckout( {
 		productSlug: getPlanProductSlugs( items )[ 0 ],
 	} );
 
-	const { analyticsPath, analyticsProps } = getAnalyticsPath( {
+	const { analyticsPath, analyticsProps } = getAnalyticsPath(
 		purchaseId,
 		product,
 		siteSlug,
 		feature,
-		plan,
-	} );
+		plan
+	);
 
 	return (
 		<React.Fragment>
@@ -956,7 +956,8 @@ function usePrepareProductForCart( planSlug, isJetpackNotAtomic ) {
 	return { productForCart, canInitializeCart };
 }
 
-function getAnalyticsPath( { purchaseId, product, selectedSiteSlug, selectedFeature, plan } ) {
+function getAnalyticsPath( purchaseId, product, selectedSiteSlug, selectedFeature, plan ) {
+	debug( 'getAnalyticsPath', { purchaseId, product, selectedSiteSlug, selectedFeature, plan } );
 	let analyticsPath = '';
 	let analyticsProps = {};
 	if ( purchaseId && product ) {
