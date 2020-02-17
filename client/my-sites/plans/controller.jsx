@@ -24,7 +24,7 @@ export function plans( context, next ) {
 			context.pathname,
 			{
 				...context.state,
-				query: omit( context.state.query, 'signup' ),
+				query: omit( context.query, 'signup' ),
 			},
 			false,
 			false
