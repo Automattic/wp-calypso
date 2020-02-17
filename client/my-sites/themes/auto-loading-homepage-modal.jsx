@@ -29,9 +29,9 @@ import {
 /**
  * Style dependencies
  */
-import './switching-homepage-modal.scss';
+import './auto-loading-homepage-modal.scss';
 
-class SwitchingHomepageModal extends Component {
+class AutoLoadingHomepageModal extends Component {
 	static propTypes = {
 		source: PropTypes.oneOf( [ 'details', 'list', 'upload' ] ).isRequired,
 		theme: PropTypes.shape( {
@@ -93,7 +93,7 @@ class SwitchingHomepageModal extends Component {
 
 		return (
 			<Dialog
-				className="themes__switching-homepage-modal"
+				className="themes__auto-loading-homepage-modal"
 				isVisible={ show }
 				buttons={ [
 					{
@@ -149,4 +149,4 @@ export default connect(
 		hideSwitchingHomepageWarning,
 		activateTheme,
 	}
-)( SwitchingHomepageModal );
+)( AutoLoadingHomepageModal );
