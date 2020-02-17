@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useState, useEffect, useMemo, useCallback, useReducer } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef, useReducer } from 'react';
 import debugFactory from 'debug';
 
 /**
@@ -323,6 +323,8 @@ export type CouponStatus = 'fresh' | 'pending' | 'applied' | 'invalid' | 'reject
  */
 export type VariantRequestStatus = 'fresh' | 'pending' | 'valid' | 'error';
 
+type ReactStandardAction = { type: string; payload?: any }; // eslint-disable-line @typescript-eslint/no-explicit-any
+
 /**
  * Custom hook for managing state in the WPCOM checkout component.
  *
@@ -346,6 +348,13 @@ export type VariantRequestStatus = 'fresh' | 'pending' | 'valid' | 'error';
  *
  * @param cartKey
  *     The cart key. Will use 'no-site' if no key is set.
+ * @param canInitializeCart
+ *     If false, the cart will not be initialized until it changes to true. Can
+ *     be used along with productToAdd to delay initializing the cart until the
+ *     product is ready to be added.
+ * @param productToAdd
+ *     The product object to add to the cart immediately when the cart is
+ *     initialized. Has no effect if it changes after initializing.
  * @param setCart
  *     An asynchronous wrapper around the wpcom shopping cart POST
  *     endpoint. We pass this in to make testing easier.
@@ -360,17 +369,18 @@ export type VariantRequestStatus = 'fresh' | 'pending' | 'valid' | 'error';
  *     Takes a coupon code and displays a translated notice that
  *     the coupon was successfully applied.
  * @param onEvent
- *     Optional callback that Takes a React Standard Action object ( {
- *     type: string, payload?: any } ) for analytics.
+ *     Optional callback that takes a ReactStandardAction object for analytics.
  * @returns ShoppingCartManager
  */
 export function useShoppingCart(
 	cartKey: string | null,
+	canInitializeCart: boolean,
+	productToAdd: ResponseCartProduct | null,
 	setCart: ( string, RequestCart ) => Promise< ResponseCart >,
 	getCart: ( string ) => Promise< ResponseCart >,
 	translate: ( string ) => string,
 	showAddCouponSuccessMessage: ( string ) => void,
-	onEvent?: ( object: { type: string; payload?: any } ) => void // eslint-disable-line @typescript-eslint/no-explicit-any
+	onEvent?: ( ReactStandardAction ) => void
 ): ShoppingCartManager {
 	cartKey = cartKey || 'no-site';
 	const setServerCart = useCallback( cartParam => setCart( cartKey, cartParam ), [
@@ -392,65 +402,22 @@ export function useShoppingCart(
 	const shouldShowNotification = hookState.shouldShowNotification;
 
 	// Asynchronously initialize the cart. This should happen exactly once.
-	useEffect( () => {
-		if ( cacheStatus !== 'fresh' ) {
-			return;
-		}
-
-		debug( `initializing the cart; cacheStatus is ${ cacheStatus }` );
-
-		getServerCart()
-			.then( response => {
-				debug( 'initialized cart is', response );
-				hookDispatch( {
-					type: 'RECEIVE_INITIAL_RESPONSE_CART',
-					initialResponseCart: processRawResponse( response ),
-				} );
-			} )
-			.catch( error => {
-				// TODO: figure out what to do here
-				debug( 'error while initializing cart', error );
-				hookDispatch( { type: 'RAISE_ERROR', error: 'GET_SERVER_CART_ERROR' } );
-				onEvent?.( { type: 'CART_ERROR', payload: { error: 'GET_SERVER_CART_ERROR' } } );
-			} );
-	}, [ getServerCart, cacheStatus, onEvent ] );
+	useInitializeCartFromServer(
+		cacheStatus,
+		canInitializeCart,
+		productToAdd,
+		getServerCart,
+		setServerCart,
+		hookDispatch,
+		onEvent
+	);
 
 	// Asynchronously re-validate when the cache is dirty.
-	useEffect( () => {
-		if ( cacheStatus !== 'invalid' ) {
-			return;
-		}
-
-		debug( 'sending edited cart to server', responseCart );
-
-		hookDispatch( { type: 'REQUEST_UPDATED_RESPONSE_CART' } );
-
-		setServerCart( prepareRequestCart( responseCart ) )
-			.then( response => {
-				debug( 'updated cart is', response );
-				hookDispatch( {
-					type: 'RECEIVE_UPDATED_RESPONSE_CART',
-					updatedResponseCart: processRawResponse( response ),
-				} );
-				hookDispatch( { type: 'CLEAR_VARIANT_SELECT_OVERRIDE' } );
-			} )
-			.catch( error => {
-				// TODO: figure out what to do here
-				debug( 'error while fetching cart', error );
-				hookDispatch( { type: 'RAISE_ERROR', error: 'SET_SERVER_CART_ERROR' } );
-				onEvent?.( { type: 'CART_ERROR', payload: { error: 'SET_SERVER_CART_ERROR' } } );
-			} );
-	}, [ setServerCart, cacheStatus, responseCart, onEvent ] );
+	useCartUpdateAndRevalidate( cacheStatus, responseCart, setServerCart, hookDispatch, onEvent );
 
 	// Keep a separate cache of the displayed cart which we regenerate only when
 	// the cart has been downloaded
-	const [ responseCartToDisplay, setResponseCartToDisplay ] = useState( responseCart );
-	useEffect( () => {
-		if ( cacheStatus === 'valid' ) {
-			debug( 'updating the displayed cart to match the server cart' );
-			setResponseCartToDisplay( responseCart );
-		}
-	}, [ responseCart, cacheStatus ] );
+	const responseCartToDisplay = useCachedValidCart( cacheStatus, responseCart );
 
 	// Translate the responseCart into the format needed in checkout.
 	const cart: WPCOMCart = useMemo(
@@ -458,12 +425,12 @@ export function useShoppingCart(
 		[ translate, responseCartToDisplay ]
 	);
 
-	useEffect( () => {
-		if ( shouldShowNotification.didAddCoupon ) {
-			showAddCouponSuccessMessage( responseCart.coupon );
-			hookDispatch( { type: 'DID_SHOW_ADD_COUPON_SUCCESS_MESSAGE' } );
-		}
-	}, [ shouldShowNotification.didAddCoupon, responseCart.coupon, showAddCouponSuccessMessage ] );
+	useShowAddCouponSuccessMessage(
+		shouldShowNotification.didAddCoupon,
+		responseCart,
+		showAddCouponSuccessMessage,
+		hookDispatch
+	);
 
 	const addItem: ( ResponseCartProduct ) => void = useCallback( responseCartProductToAdd => {
 		hookDispatch( { type: 'ADD_CART_ITEM', responseCartProductToAdd } );
@@ -482,7 +449,6 @@ export function useShoppingCart(
 	}, [] );
 
 	const updateLocation: ( CartLocation ) => void = useCallback( location => {
-		debug( 'updating location for cart to', location );
 		hookDispatch( { type: 'SET_LOCATION', location } );
 	}, [] );
 
@@ -510,4 +476,131 @@ export function useShoppingCart(
 		variantRequestStatus,
 		variantSelectOverride,
 	} as ShoppingCartManager;
+}
+
+function useInitializeCartFromServer(
+	cacheStatus: CacheStatus,
+	canInitializeCart: boolean,
+	productToAdd: ResponseCartProduct | null,
+	getServerCart: () => Promise< ResponseCart >,
+	setServerCart: ( RequestCart ) => Promise< ResponseCart >,
+	hookDispatch: ( ShoppingCartHookAction ) => void,
+	onEvent?: ( ReactStandardAction ) => void
+): void {
+	const isInitialized = useRef( false );
+	useEffect( () => {
+		if ( cacheStatus !== 'fresh' ) {
+			debug( 'not initializing cart; cacheStatus is not fresh' );
+			return;
+		}
+		if ( canInitializeCart !== true ) {
+			debug( 'not initializing cart; canInitializeCart is not true' );
+			return;
+		}
+
+		if ( isInitialized.current ) {
+			debug( 'not initializing cart; already initialized' );
+			return;
+		}
+		isInitialized.current = true;
+		debug( `initializing the cart; cacheStatus is ${ cacheStatus }` );
+
+		getServerCart()
+			.then( response => {
+				if ( productToAdd ) {
+					debug(
+						'initialized cart is',
+						response,
+						'; proceeding to add initial product',
+						productToAdd
+					);
+					const updatedResponseCart = addItemToResponseCart(
+						processRawResponse( response ),
+						productToAdd
+					);
+					return setServerCart( prepareRequestCart( updatedResponseCart ) );
+				}
+				return response;
+			} )
+			.then( response => {
+				debug( 'initialized cart is', response );
+				hookDispatch( {
+					type: 'RECEIVE_INITIAL_RESPONSE_CART',
+					initialResponseCart: processRawResponse( response ),
+				} );
+			} )
+			.catch( error => {
+				// TODO: figure out what to do here
+				debug( 'error while initializing cart', error );
+				hookDispatch( { type: 'RAISE_ERROR', error: 'GET_SERVER_CART_ERROR' } );
+				onEvent?.( { type: 'CART_ERROR', payload: { error: 'GET_SERVER_CART_ERROR' } } );
+			} );
+	}, [
+		cacheStatus,
+		canInitializeCart,
+		hookDispatch,
+		onEvent,
+		getServerCart,
+		productToAdd,
+		setServerCart,
+	] );
+}
+
+function useCartUpdateAndRevalidate(
+	cacheStatus: CacheStatus,
+	responseCart: ResponseCart,
+	setServerCart: ( RequestCart ) => Promise< ResponseCart >,
+	hookDispatch: ( ShoppingCartHookAction ) => void,
+	onEvent?: ( ReactStandardAction ) => void
+): void {
+	useEffect( () => {
+		if ( cacheStatus !== 'invalid' ) {
+			return;
+		}
+
+		debug( 'sending edited cart to server', responseCart );
+
+		hookDispatch( { type: 'REQUEST_UPDATED_RESPONSE_CART' } );
+
+		setServerCart( prepareRequestCart( responseCart ) )
+			.then( response => {
+				debug( 'updated cart is', response );
+				hookDispatch( {
+					type: 'RECEIVE_UPDATED_RESPONSE_CART',
+					updatedResponseCart: processRawResponse( response ),
+				} );
+				hookDispatch( { type: 'CLEAR_VARIANT_SELECT_OVERRIDE' } );
+			} )
+			.catch( error => {
+				// TODO: figure out what to do here
+				debug( 'error while fetching cart', error );
+				hookDispatch( { type: 'RAISE_ERROR', error: 'SET_SERVER_CART_ERROR' } );
+				onEvent?.( { type: 'CART_ERROR', payload: { error: 'SET_SERVER_CART_ERROR' } } );
+			} );
+	}, [ setServerCart, cacheStatus, responseCart, onEvent, hookDispatch ] );
+}
+
+function useCachedValidCart( cacheStatus: CacheStatus, responseCart: ResponseCart ): ResponseCart {
+	const [ responseCartToDisplay, setResponseCartToDisplay ] = useState( responseCart );
+	useEffect( () => {
+		if ( cacheStatus === 'valid' ) {
+			debug( 'updating the displayed cart to match the server cart' );
+			setResponseCartToDisplay( responseCart );
+		}
+	}, [ responseCart, cacheStatus ] );
+	return responseCartToDisplay;
+}
+
+function useShowAddCouponSuccessMessage(
+	didAddCoupon: boolean,
+	responseCart: ResponseCart,
+	showAddCouponSuccessMessage: ( string ) => void,
+	hookDispatch: ( ShoppingCartHookAction ) => void
+): void {
+	useEffect( () => {
+		if ( didAddCoupon ) {
+			showAddCouponSuccessMessage( responseCart.coupon );
+			hookDispatch( { type: 'DID_SHOW_ADD_COUPON_SUCCESS_MESSAGE' } );
+		}
+	}, [ didAddCoupon, responseCart.coupon, showAddCouponSuccessMessage, hookDispatch ] );
 }
