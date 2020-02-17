@@ -66,7 +66,7 @@ import {
 	getWpcomParentThemeId,
 	shouldFilterWpcomThemes,
 	isDownloadableFromWpcom,
-	hasAutoLoadingHomepageFeature,
+	themeHasAutoLoadingHomepage,
 	hasSwitchingHomepageWarningAccepted,
 } from './selectors';
 import {
@@ -371,7 +371,7 @@ export function activate( themeId, siteId, source = 'unknown', purchased = false
 	return ( dispatch, getState ) => {
 		// Show switching homepage warning?
 		if (
-			hasAutoLoadingHomepageFeature( getState(), themeId ) &&
+			themeHasAutoLoadingHomepage( getState(), themeId ) &&
 			! hasSwitchingHomepageWarningAccepted( getState(), themeId )
 		) {
 			return dispatch( showSwitchingHomepageWarning( themeId ) );

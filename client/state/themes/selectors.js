@@ -802,7 +802,7 @@ export function areRecommendedThemesLoading( state ) {
  * @param {string} themeId An identifier for the theme
  * @returns {boolean} True if the theme has auto loading homepage. Otherwise, False.
  */
-export function hasAutoLoadingHomepageFeature( state, themeId ) {
+export function themeHasAutoLoadingHomepage( state, themeId ) {
 	return includes(
 		getThemeTaxonomySlugs( getTheme( state, 'wpcom', themeId ), 'theme_feature' ),
 		'auto-loading-homepage'

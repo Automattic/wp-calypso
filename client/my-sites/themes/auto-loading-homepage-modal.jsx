@@ -13,7 +13,7 @@ import { Dialog } from '@automattic/components';
 import {
 	getCanonicalTheme,
 	hasActivatedTheme,
-	hasAutoLoadingHomepageFeature,
+	themeHasAutoLoadingHomepage,
 	isActivatingTheme,
 	isThemeActive,
 	shouldShowHomepageWarning,
@@ -139,7 +139,7 @@ export default connect(
 			theme: installingThemeId && getCanonicalTheme( state, siteId, installingThemeId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
-			hasAutoLoadingHomepage: hasAutoLoadingHomepageFeature( state, installingThemeId ),
+			hasAutoLoadingHomepage: themeHasAutoLoadingHomepage( state, installingThemeId ),
 			isCurrentTheme: isThemeActive( state, installingThemeId, siteId ),
 			isVisible: shouldShowHomepageWarning( state, installingThemeId ),
 		};
