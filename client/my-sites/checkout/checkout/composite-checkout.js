@@ -100,6 +100,7 @@ export default function CompositeCheckout( {
 	overrideCountryList,
 	redirectTo,
 	feature,
+	plan,
 	purchaseId,
 	cart,
 	// TODO: handle these also
@@ -519,6 +520,7 @@ CompositeCheckout.propTypes = {
 	allowedPaymentMethods: PropTypes.array,
 	redirectTo: PropTypes.string,
 	feature: PropTypes.string,
+	plan: PropTypes.string,
 	cart: PropTypes.object,
 	transaction: PropTypes.object,
 };
