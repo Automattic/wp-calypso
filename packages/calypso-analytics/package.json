@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-analytics",
-	"version": "1.0.0-alpha.0",
+	"version": "1.0.0-alpha.1",
 	"description": "Automattic Analytics",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -33,7 +33,6 @@
 		"@automattic/load-script": "file:../load-script",
 		"debug": "^4.1.1",
 		"hash.js": "^1.1.7",
-		"lodash": "^4.17.15",
-		"qs": "^6.9.1"
+		"lodash": "^4.17.15"
 	}
 }

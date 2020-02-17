@@ -1,10 +1,8 @@
 /**
  * External dependencies
  */
-import { assign, includes, isObjectLike, isUndefined, omit, pickBy, times } from 'lodash';
-import { parse } from 'qs';
+import { assign, includes, isObjectLike, isUndefined, omit, times } from 'lodash';
 import cookie from 'cookie';
-import url from 'url';
 import { EventEmitter } from 'events';
 import { loadScript } from '@automattic/load-script';
 
@@ -230,9 +228,11 @@ export function recordTracksPageView( urlPath, params ) {
 	// Record all `utm` marketing parameters as event properties on the page view event
 	// so we can analyze their performance with our analytics tools
 	if ( window.location ) {
-		const parsedUrl = url.parse( window.location.href );
-		const urlParams = parse( parsedUrl.query );
-		const utmParams = pickBy( urlParams, ( value, key ) => key.startsWith( 'utm_' ) );
+		const urlParams = new URL( window.location.href ).searchParams;
+		const utmParamEntries =
+			urlParams &&
+			Array.from( urlParams.entries() ).filter( ( [ key ] ) => key.startsWith( 'utm_' ) );
+		const utmParams = utmParamEntries ? Object.fromEntries( utmParamEntries ) : {};
 
 		eventProperties = assign( eventProperties, utmParams );
 	}
