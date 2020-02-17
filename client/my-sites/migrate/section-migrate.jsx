@@ -48,6 +48,8 @@ class SectionMigrate extends Component {
 		percent: 0,
 		siteInfo: null,
 		selectedSiteSlug: null,
+		sourceSitePlugins: [],
+		sourceSiteThemes: [],
 		startTime: '',
 		url: '',
 		chosenImportType: '',
@@ -60,14 +62,42 @@ class SectionMigrate extends Component {
 			this.startMigration();
 		}
 
+		this.fetchSourceSitePluginsAndThemes();
 		this.updateFromAPI();
 	}
 
 	componentDidUpdate( prevProps ) {
+		if ( this.props.sourceSiteId !== prevProps.sourceSiteId ) {
+			this.fetchSourceSitePluginsAndThemes();
+		}
+
 		if ( this.props.targetSiteId !== prevProps.targetSiteId ) {
 			this.updateFromAPI();
 		}
 	}
+
+	fetchSourceSitePluginsAndThemes = () => {
+		if ( ! this.props.sourceSite ) {
+			return;
+		}
+
+		wpcom.site( this.props.sourceSite.ID ).pluginsList( ( error, data ) => {
+			if ( data.plugins ) {
+				this.setState( { sourceSitePlugins: data.plugins } );
+			}
+		} );
+
+		wpcom.undocumented().themes( this.props.sourceSite.ID, { apiVersion: '1' }, ( err, data ) => {
+			if ( data.themes ) {
+				const sourceSiteThemes = [
+					// Put active theme first
+					...data.themes.filter( theme => theme.active ),
+					...data.themes.filter( theme => ! theme.active ),
+				];
+				this.setState( { sourceSiteThemes } );
+			}
+		} );
+	};
 
 	getImportHref = () => {
 		const { isTargetSiteJetpack, targetSiteImportAdminUrl, targetSiteSlug } = this.props;
@@ -505,7 +535,13 @@ class SectionMigrate extends Component {
 						break;
 					case 'upgrade':
 						migrationElement = (
-							<StepUpgrade startMigration={ this.startMigration } targetSite={ targetSite } />
+							<StepUpgrade
+								plugins={ this.state.sourceSitePlugins }
+								sourceSite={ sourceSite }
+								startMigration={ this.startMigration }
+								targetSite={ targetSite }
+								themes={ this.state.sourceSiteThemes }
+							/>
 						);
 						break;
 					case 'input':
