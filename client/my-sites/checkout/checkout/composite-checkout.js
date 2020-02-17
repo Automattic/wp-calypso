@@ -38,7 +38,7 @@ import {
 	jetpackProductItem,
 } from 'lib/cart-values/cart-items';
 import { requestPlans } from 'state/plans/actions';
-import { getPlanBySlug } from 'state/plans/selectors';
+import { getPlanBySlug, getPlans } from 'state/plans/selectors';
 import {
 	useStoredCards,
 	getDomainDetails,
@@ -177,6 +177,7 @@ export default function CompositeCheckout( {
 	const recordEvent = useCallback( getCheckoutEventHandler( reduxDispatch ), [] );
 
 	useEffect( () => {
+		debug( 'composite checkout has loaded' );
 		recordEvent( { type: 'CHECKOUT_LOADED' } );
 	}, [ recordEvent ] );
 
@@ -216,8 +217,10 @@ export default function CompositeCheckout( {
 
 	const countriesList = useCountryList( overrideCountryList || [] );
 
-	const productForCart = usePrepareProductForCart( planSlug, isJetpackNotAtomic );
-	const canInitializeCart = ! planSlug || ( planSlug && productForCart );
+	const { productForCart, canInitializeCart } = usePrepareProductForCart(
+		planSlug,
+		isJetpackNotAtomic
+	);
 
 	const {
 		items,
@@ -912,27 +915,31 @@ const DoNotPayThis = styled.span`
 `;
 
 function usePrepareProductForCart( planSlug, isJetpackNotAtomic ) {
+	const plans = useSelector( state => getPlans( state ) );
 	const plan = useSelector( state => getPlanBySlug( state, planSlug ) );
 	const reduxDispatch = useDispatch();
+	const [ canInitializeCart, setCanInitializeCart ] = useState( ! planSlug );
+	const [ productForCart, setProductForCart ] = useState();
 
 	// Fetch plans if they are not loaded
 	useEffect( () => {
 		if ( ! planSlug ) {
 			return;
 		}
-		// TODO: what if the plans did load but there is no matching plan? check for plans loaded instead
-		if ( ! plan ) {
-			debug( 'there is a request to add a plan but no plan was found', planSlug );
+		if ( ! plans || plans.length < 1 ) {
+			debug( 'there is a request to add a plan but no plans are loaded; fetching plans' );
 			reduxDispatch( requestPlans() );
 			return;
 		}
-	}, [ reduxDispatch, planSlug, plan ] );
+		if ( ! plan ) {
+			debug( 'there is a request to add a plan but no plan was found' );
+			setCanInitializeCart( true );
+			return;
+		}
+		debug( 'preparing item that was requested in url', { planSlug, plan, isJetpackNotAtomic } );
+		setProductForCart( createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) );
+		setCanInitializeCart( true );
+	}, [ reduxDispatch, planSlug, plan, plans, isJetpackNotAtomic ] );
 
-	const productForCart = planSlug
-		? createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } )
-		: null;
-	if ( productForCart ) {
-		debug( 'item was requested in url', { planSlug, plan, isJetpackNotAtomic }, productForCart );
-	}
-	return productForCart;
+	return { productForCart, canInitializeCart };
 }
