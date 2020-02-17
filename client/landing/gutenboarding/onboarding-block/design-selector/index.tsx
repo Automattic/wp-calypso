@@ -6,13 +6,13 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import React, { useLayoutEffect, useRef, FunctionComponent, useState, useEffect } from 'react';
 import classnames from 'classnames';
 import PageLayoutSelector from './page-layout-selector';
-import { partition, memoize, reduce } from 'lodash';
+import { partition } from 'lodash';
 import { Portal } from 'reakit/Portal';
 import { useDialogState, Dialog, DialogBackdrop } from 'reakit/Dialog';
 import { useSpring, animated } from 'react-spring';
 import { useHistory } from 'react-router-dom';
 import { Step } from '../../steps';
-import { parse as parseBlocks } from '@wordpress/blocks';
+
 /**
  * Internal dependencies
  */
@@ -50,31 +50,13 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 			select( VERTICALS_TEMPLATES_STORE ).getTemplates( siteVertical?.id ?? 'm1' )
 		) ?? [];
 
-	// Parse blocks to state when templates updates.
-	const [ blocksByTemplateSlug, setBlocksByTemplateSlug ] = useState< object >( {} );
-	useEffect( () => {
-		const templateBlocks = reduce(
-			templates,
-			( prev, { slug, content } ) => {
-				prev[ slug ] = content ? parseBlocks( content ) : [];
-				return prev;
-			},
-			{}
-		);
-		setBlocksByTemplateSlug( templateBlocks );
-	}, [ templates ] );
+	// index for where we start dynamic preview.
+	const [ previewIndex, setPreviewIndex ] = useState< number >( 0 );
 
 	const [ designs, otherTemplates ] = partition(
 		templates,
 		( { category } ) => category === 'home'
 	);
-
-	// Try previewing multiple copies of the same designs
-	const repeatDesigns = [];
-	designs.forEach( ( design, index ) => repeatDesigns.push( designs[ ( index % 2 ) + 5 ] ) );
-
-	const repeatPages = [];
-	otherTemplates.forEach( ( temp, i ) => repeatPages.push( otherTemplates[ i % 2 ] ) );
 
 	const headingContainer = useRef< HTMLDivElement >( null );
 	const selectionTransitionShift = useRef< number >( 0 );
@@ -116,8 +98,30 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 
 	const history = useHistory();
 
+	const stepperStyles = {
+		position: 'fixed',
+		bottom: '0',
+		backgroundColor: 'white',
+		padding: '15px',
+		border: '2px solid black',
+		cursor: 'pointer',
+		fontSize: '20px',
+	};
+
 	return (
 		<animated.div style={ designSelectorSpring }>
+			<button
+				style={ { ...stepperStyles, left: '0' } }
+				onClick={ () => setPreviewIndex( ( previewIndex - 3 ) % designs.length ) }
+			>
+				Last Group
+			</button>
+			<button
+				style={ { ...stepperStyles, right: '0' } }
+				onClick={ () => setPreviewIndex( ( previewIndex + 3 ) % designs.length ) }
+			>
+				Next Group
+			</button>
 			<div
 				className="design-selector__header-container"
 				aria-hidden={ showPageSelector ? 'true' : undefined }
@@ -136,40 +140,23 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 				} ) }
 			>
 				<div className="design-selector__grid">
-					{ designs.map( design => (
-						// repeatDesigns.map( design => (
-						// otherTemplates.map( design => (
-						// repeatPages.map( design => (
-						<DynamicPreview
-							key={ design.slug }
-							blocks={ blocksByTemplateSlug[ design.slug ] }
-							onClick={ () => {
-								window.scrollTo( 0, 0 );
-								setSelectedDesign( design );
-								history.push( Step.PageSelection );
-							} }
-						/>
-						// <DesignCard
-						// 	key={ design.slug }
-						// 	dialogId={ dialogId }
-						// 	design={ design }
-						// 	style={
-						// 		selectedDesign?.slug === design.slug
-						// 			? {
-						// 					gridRow: 1,
-						// 					gridColumn: descriptionOnRight ? 1 : 2,
-						// 			  }
-						// 			: {
-						// 					visibility: showPageSelector ? 'hidden' : undefined,
-						// 			  }
-						// 	}
-						// 	onClick={ () => {
-						// 		window.scrollTo( 0, 0 );
-						// 		setSelectedDesign( design );
-						// 		history.push( Step.PageSelection );
-						// 	} }
-						// />
-					) ) }
+					{ designs.map( ( design, i ) => {
+						let numberToPreview = 3;
+						if ( i >= previewIndex && i < previewIndex + numberToPreview ) {
+							return (
+								<DynamicPreview
+									key={ design.slug }
+									design={ design }
+									onClick={ () => {
+										window.scrollTo( 0, 0 );
+										setSelectedDesign( design );
+										history.push( Step.PageSelection );
+									} }
+								/>
+							);
+						}
+						return null;
+					} ) }
 				</div>
 			</div>
 
