@@ -26,19 +26,13 @@ import PluginsBrowserList from 'my-sites/plugins/plugins-browser-list';
 import PluginsListStore from 'lib/plugins/wporg-data/list-store';
 import PluginsActions from 'lib/plugins/wporg-data/actions';
 import urlSearch from 'lib/url-search';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import canCurrentUser from 'state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import getRecommendedPlugins from 'state/selectors/get-recommended-plugins';
 import hasJetpackSites from 'state/selectors/has-jetpack-sites';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import {
-	getSitePlan,
-	isJetpackSite,
-	isRequestingSites,
-	canJetpackSiteManage,
-} from 'state/sites/selectors';
+import { getSitePlan, isJetpackSite, isRequestingSites } from 'state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
 import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
 import { Button } from '@automattic/components';
@@ -509,40 +503,6 @@ export class PluginsBrowser extends Component {
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
-	getMockPluginItems() {
-		return (
-			<PluginsBrowserList
-				plugins={ this.getPluginsShortList( 'popular' ) }
-				listName={ 'Plugins' }
-				title={ this.props.translate( 'Popular Plugins' ) }
-				size={ 12 }
-			/>
-		);
-	}
-
-	renderDocumentHead() {
-		return <DocumentHead title={ this.props.translate( 'Plugin Browser', { textOnly: true } ) } />;
-	}
-
-	renderJetpackManageError() {
-		const { selectedSiteId } = this.props;
-
-		return (
-			<MainComponent>
-				{ this.renderDocumentHead() }
-				<SidebarNavigation />
-				<JetpackManageErrorPage
-					template="optInManage"
-					title={ this.props.translate( "Looking to manage this site's plugins?" ) }
-					siteId={ selectedSiteId }
-					section="plugins"
-					illustration="/calypso/images/jetpack/jetpack-manage.svg"
-					featureExample={ this.getMockPluginItems() }
-				/>
-			</MainComponent>
-		);
-	}
-
 	renderUpgradeNudge() {
 		if (
 			! this.props.selectedSiteId ||
@@ -597,17 +557,13 @@ export class PluginsBrowser extends Component {
 			);
 		}
 
-		if ( this.props.jetpackManageError ) {
-			return this.renderJetpackManageError();
-		}
-
 		return (
 			<MainComponent wideLayout>
 				{ this.isRecommendedPluginsEnabled() && (
 					<QuerySiteRecommendedPlugins siteId={ this.props.selectedSiteId } />
 				) }
 				{ this.renderPageViewTracker() }
-				{ this.renderDocumentHead() }
+				<DocumentHead title={ this.props.translate( 'Plugin Browser', { textOnly: true } ) } />
 				<SidebarNavigation />
 				<FormattedHeader
 					className="plugins-browser__page-heading"
@@ -645,9 +601,6 @@ export default flow(
 				isJetpackSite: isJetpackSite( state, selectedSiteId ),
 				isVipSite: isVipSite( state, selectedSiteId ),
 				hasJetpackSites: hasJetpackSites( state ),
-				jetpackManageError:
-					!! isJetpackSite( state, selectedSiteId ) &&
-					! canJetpackSiteManage( state, selectedSiteId ),
 				isRequestingSites: isRequestingSites( state ),
 				noPermissionsError:
 					!! selectedSiteId && ! canCurrentUser( state, selectedSiteId, 'manage_options' ),
