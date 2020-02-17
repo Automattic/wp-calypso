@@ -732,12 +732,7 @@ export function getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ) {
 
 /**
  * Returns the price string to display for a given theme on a given site:
-<<<<<<< HEAD
- *
- * TODO: Add tests!
-=======
  * `@TODO Add tests!`
->>>>>>> 5e14f22... themes: hasAutoLoadingHomepageFeature() selector
  *
  * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme ID
