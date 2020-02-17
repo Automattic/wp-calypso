@@ -10,6 +10,7 @@ import config from 'config';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
 import { generateFlows } from 'signup/config/flows-pure';
+import { getPlansSlugs } from 'lib/plans';
 
 const user = userFactory();
 
@@ -17,8 +18,16 @@ function getCheckoutUrl( dependencies ) {
 	return `/checkout/${ dependencies.siteSlug }?signup=1`;
 }
 
+function getPlansUrl( dependencies ) {
+	return `/plans/${ dependencies.siteSlug }?signup=1`;
+}
+
 function dependenciesContainCartItem( dependencies ) {
 	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
+}
+
+function dependenciesContainPlan( dependencies ) {
+	return getPlansSlugs().includes( dependencies.cartItem?.product_slug );
 }
 
 function getSiteDestination( dependencies ) {
@@ -89,6 +98,14 @@ function removeUserStepFromFlow( flow ) {
 
 function filterDestination( destination, dependencies ) {
 	if ( dependenciesContainCartItem( dependencies ) ) {
+		if ( dependenciesContainPlan( dependencies ) ) {
+			// Ideally we should redirect to the checkout page, but we're adding a redirect to the plans page in between
+			// (plans will redirect to checkout) to reduce the number of duplicate sites when users go back in the
+			// browser trying to change a plan during checkout.
+			// See https://github.com/Automattic/wp-calypso/issues/39424
+			return getPlansUrl( dependencies );
+		}
+
 		return getCheckoutUrl( dependencies );
 	}
 

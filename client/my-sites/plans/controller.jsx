@@ -3,15 +3,39 @@
  */
 import page from 'page';
 import React from 'react';
-import { get } from 'lodash';
+import { get, omit } from 'lodash';
 
 /**
  * Internal Dependencies
  */
 import Plans from './plans';
 import { isValidFeatureKey } from 'lib/plans/features-list';
+import { getSelectedSite } from 'state/ui/selectors';
 
 export function plans( context, next ) {
+	// Users coming from signing up should see the checkout page. The signup flow redirects to the plans page
+	// assuming it will end up redirecting to the checkout page. This is a way of reducing the number of duplicate
+	// sites when users go back in the browser trying to change a plan during checkout.
+	// See https://github.com/Automattic/wp-calypso/issues/39424
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+	const checkoutUrl = `/checkout/${ selectedSite.slug }?signup=1`;
+	const isComingFromSignUp = !! context.query.signup;
+	if ( isComingFromSignUp ) {
+		// Removes the signup query param so users going back to plans are not redirected to checkout again.
+		page.replace(
+			context.pathname,
+			{
+				...context.state,
+				query: omit( context.state.query, 'signup' ),
+			},
+			false,
+			false
+		);
+
+		return page.show( checkoutUrl, context.state );
+	}
+
 	context.primary = (
 		<Plans
 			context={ context }

@@ -339,7 +339,7 @@ class Signup extends React.Component {
 			// deferred in case the user is logged in and the redirect triggers a dispatch
 			defer( () => {
 				debug( `Redirecting you to "${ destination }"` );
-				window.location.href = destination;
+				page.redirect( destination );
 			} );
 		}
 
