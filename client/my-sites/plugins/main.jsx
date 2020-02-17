@@ -13,7 +13,6 @@ import Gridicon from 'components/gridicon';
  */
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import PluginItem from './plugin-item/plugin-item';
 import DocumentHead from 'components/data/document-head';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
@@ -27,19 +26,13 @@ import { getPlugin } from 'state/plugins/wporg/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PluginsList from './plugins-list';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginsBrowser from './plugins-browser';
 import NoPermissionsError from './no-permissions-error';
 import canCurrentUser from 'state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
 import getSelectedOrAllSitesWithPlugins from 'state/selectors/get-selected-or-all-sites-with-plugins';
 import hasJetpackSites from 'state/selectors/has-jetpack-sites';
-import {
-	canJetpackSiteManage,
-	canJetpackSiteUpdateFiles,
-	isJetpackSite,
-	isRequestingSites,
-} from 'state/sites/selectors';
+import { canJetpackSiteUpdateFiles, isJetpackSite, isRequestingSites } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { Button } from '@automattic/components';
 import { isEnabled } from 'config';
@@ -287,10 +280,6 @@ export class PluginsMain extends Component {
 		return isEmpty( plugins ) && this.isFetchingPlugins();
 	}
 
-	renderDocumentHead() {
-		return <DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
-	}
-
 	renderPageViewTracking() {
 		const { selectedSiteId, filter, selectedSiteIsJetpack } = this.props;
 
@@ -374,47 +363,6 @@ export class PluginsMain extends Component {
 		);
 	}
 
-	getMockPluginItems() {
-		const plugins = [
-			{
-				slug: 'akismet',
-				name: 'Akismet',
-				icon: '//ps.w.org/akismet/assets/icon-256x256.png',
-				wporg: true,
-			},
-			{
-				slug: 'wp-super-cache',
-				name: 'WP Super Cache',
-				icon: '//ps.w.org/wp-super-cache/assets/icon-256x256.png',
-				wporg: true,
-			},
-			{
-				slug: 'jetpack',
-				name: 'Jetpack by WordPress.com',
-				icon: '//ps.w.org/jetpack/assets/icon-256x256.png',
-				wporg: true,
-			},
-		];
-		const selectedSite = {
-			slug: 'no-slug',
-			canUpdateFiles: true,
-			name: 'Not a real site',
-		};
-
-		return plugins.map( plugin => {
-			return (
-				<PluginItem
-					key={ 'plugin-item-mock-' + plugin.slug }
-					plugin={ plugin }
-					sites={ [] }
-					selectedSite={ selectedSite }
-					progress={ [] }
-					isMock={ true }
-				/>
-			);
-		} );
-	}
-
 	handleAddPluginButtonClick = () => {
 		this.props.recordGoogleEvent( 'Plugins', 'Clicked Add New Plugins' );
 	};
@@ -463,27 +411,8 @@ export class PluginsMain extends Component {
 	}
 
 	render() {
-		const { selectedSiteId } = this.props;
-
 		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
 			return <NoPermissionsError title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
-		}
-
-		if ( this.props.selectedSiteIsJetpack && ! this.props.canSelectedJetpackSiteManage ) {
-			return (
-				<Main>
-					{ this.renderDocumentHead() }
-					{ this.renderPageViewTracking() }
-					<SidebarNavigation />
-					<JetpackManageErrorPage
-						template="optInManage"
-						siteId={ selectedSiteId }
-						title={ this.props.translate( "Looking to manage this site's plugins?" ) }
-						section="plugins"
-						featureExample={ this.getMockPluginItems() }
-					/>
-				</Main>
-			);
 		}
 
 		const navItems = this.getFilters().map( filterItem => {
@@ -505,7 +434,7 @@ export class PluginsMain extends Component {
 
 		return (
 			<Main wideLayout>
-				{ this.renderDocumentHead() }
+				<DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />
 				{ this.renderPageViewTracking() }
 				<SidebarNavigation />
 				<div className="plugins__main">
@@ -549,7 +478,6 @@ export default flow(
 				selectedSiteId,
 				selectedSiteSlug: getSelectedSiteSlug( state ),
 				selectedSiteIsJetpack: selectedSite && isJetpackSite( state, selectedSiteId ),
-				canSelectedJetpackSiteManage: selectedSite && canJetpackSiteManage( state, selectedSiteId ),
 				canSelectedJetpackSiteUpdateFiles:
 					selectedSite && canJetpackSiteUpdateFiles( state, selectedSiteId ),
 				/* eslint-disable wpcalypso/redux-no-bound-selectors */
