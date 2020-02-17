@@ -44,6 +44,7 @@ class StepUpgrade extends Component {
 			sourceSite,
 			targetSite,
 			themes,
+			translate,
 		} = this.props;
 		const sourceSiteDomain = get( sourceSite, 'domain' );
 		const targetSiteDomain = get( targetSite, 'domain' );
@@ -51,27 +52,35 @@ class StepUpgrade extends Component {
 		return (
 			<>
 				<QueryPlans />
-				<HeaderCake>Import Everything</HeaderCake>
+				<HeaderCake>{ translate( 'Import Everything' ) }</HeaderCake>
 
 				<CompactCard>
-					<CardHeading>A Business Plan is required to import everything.</CardHeading>
+					<CardHeading>
+						{ translate( 'A Business Plan is required to import everything.' ) }
+					</CardHeading>
 					<div>
-						To import your themes, plugins, users, and settings from { sourceSiteDomain } we need to
-						upgrade your WordPress.com site.
+						{ translate(
+							'To import your themes, plugins, users, and settings from %(sourceSiteDomain)s we need to upgrade your WordPress.com site.',
+							{
+								args: { sourceSiteDomain },
+							}
+						) }
 					</div>
 					<div className="migrate__plan-upsell">
 						<div className="migrate__plan-upsell-icon">
 							<ProductIcon slug="business-bundle" />
 						</div>
 						<div className="migrate__plan-upsell-info">
-							<div className="migrate__plan-name">WordPress.com Business</div>
+							<div className="migrate__plan-name">{ translate( 'WordPress.com Business' ) }</div>
 							<div className="migrate__plan-price">
 								<PlanPrice rawPrice={ planPrice } currencyCode={ currency } />
 							</div>
 							<div className="migrate__plan-billing-time-frame">{ billingTimeFrame }</div>
 						</div>
 						<div className="migrate__plan-upsell-themes">
-							<h4 className="migrate__plan-feature-header">Your custom themes</h4>
+							<h4 className="migrate__plan-feature-header">
+								{ translate( 'Your custom themes' ) }
+							</h4>
 							{ themes.slice( 0, 2 ).map( theme => (
 								<div className="migrate__plan-upsell-item">
 									<Gridicon size={ 18 } icon="checkmark" />
@@ -81,12 +90,16 @@ class StepUpgrade extends Component {
 							{ themes.length > 2 && (
 								<div className="migrate__plan-upsell-item">
 									<Gridicon size={ 18 } icon="plus" />
-									<div className="migrate__plan-upsell-item-label">{ themes.length - 2 } more</div>
+									<div className="migrate__plan-upsell-item-label">
+										{ translate( '%(number)d more', { args: { number: themes.length - 2 } } ) }
+									</div>
 								</div>
 							) }
 						</div>
 						<div className="migrate__plan-upsell-plugins">
-							<h4 className="migrate__plan-feature-header">Your active plugins</h4>
+							<h4 className="migrate__plan-feature-header">
+								{ translate( 'Your active plugins' ) }
+							</h4>
 							{ plugins.slice( 0, 2 ).map( plugin => (
 								<div className="migrate__plan-upsell-item">
 									<Gridicon size={ 18 } icon="checkmark" />
@@ -96,7 +109,9 @@ class StepUpgrade extends Component {
 							{ plugins.length > 2 && (
 								<div className="migrate__plan-upsell-item">
 									<Gridicon size={ 18 } icon="plus" />
-									<div className="migrate__plan-upsell-item-label">{ plugins.length - 2 } more</div>
+									<div className="migrate__plan-upsell-item-label">
+										{ translate( '%(number)d more', { args: { number: plugins.length - 2 } } ) }
+									</div>
 								</div>
 							) }
 						</div>
@@ -105,7 +120,7 @@ class StepUpgrade extends Component {
 						onClick={ this.props.startMigration }
 						targetSiteDomain={ targetSiteDomain }
 					>
-						Upgrade and import
+						{ translate( 'Upgrade and import' ) }
 					</MigrateButton>
 				</CompactCard>
 			</>
