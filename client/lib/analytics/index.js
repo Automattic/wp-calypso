@@ -419,9 +419,10 @@ const analytics = {
 
 			const referrer = window.location.href;
 			const parsedUrl = urlParseAmpCompatible( referrer );
-			const affiliateId = parsedUrl.query.aff || parsedUrl.query.affiliate;
-			const campaignId = parsedUrl.query.cid;
-			const subId = parsedUrl.query.sid;
+			const affiliateId =
+				parsedUrl?.searchParams.get( 'aff' ) || parsedUrl?.searchParams.get( 'affiliate' );
+			const campaignId = parsedUrl?.searchParams.get( 'cid' );
+			const subId = parsedUrl?.searchParams.get( 'sid' );
 
 			if ( affiliateId && ! isNaN( affiliateId ) ) {
 				analytics.tracks.recordEvent( 'calypso_refer_visit', {

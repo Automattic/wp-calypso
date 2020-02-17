@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { stringify } from 'qs';
 import { pick } from 'lodash';
 import debug from 'debug';
 
@@ -33,12 +32,12 @@ export async function trackAffiliateReferral( { affiliateId, campaignId, subId, 
 		Accept: 'application/json',
 	};
 
-	const body = stringify( {
+	const body = new URLSearchParams( {
 		affiliate_id: affiliateId,
 		campaign_id: campaignId || '',
 		sub_id: subId || '',
 		referrer: referrer || '',
-	} );
+	} ).toString();
 
 	referDebug( 'Fetching Refer platform response.' );
 
