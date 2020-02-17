@@ -15,6 +15,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import FormattedHeader from 'components/formatted-header';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import config from 'config';
+import { isPartnerPurchase } from 'lib/purchases';
 import JetpackReferrerMessage from './jetpack-referrer-message';
 import JetpackUpgradeMessage from './jetpack-upgrade-message';
 import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
@@ -26,7 +27,8 @@ import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
 import ThemesSelection from './themes-selection';
 import { addTracking } from './helpers';
-import { hasFeature, isRequestingSitePlans } from 'state/sites/plans/selectors';
+import { getCurrentPlan, hasFeature, isRequestingSitePlans } from 'state/sites/plans/selectors';
+import { getByPurchaseId } from 'state/purchases/selectors';
 import { getLastThemeQuery, getThemesFoundForQuery } from 'state/themes/selectors';
 import {
 	canJetpackSiteManage,
@@ -54,10 +56,12 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 		analyticsPath,
 		analyticsPageTitle,
 		canManage,
+		currentPlan,
 		emptyContent,
 		filter,
 		getScreenshotOption,
 		hasJetpackThemes,
+		purchase,
 		showWpcomThemesList,
 		search,
 		siteId,
@@ -85,6 +89,8 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 		return <JetpackManageDisabledMessage siteId={ siteId } />;
 	}
 
+	const isPartnerPlan = purchase && isPartnerPurchase( purchase );
+
 	return (
 		<Main className="themes">
 			<SidebarNavigation />
@@ -94,7 +100,7 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 				align="left"
 			/>
 			<CurrentTheme siteId={ siteId } />
-			{ ! requestingSitePlans && ! hasUnlimitedPremiumThemes && (
+			{ ! requestingSitePlans && currentPlan && ! hasUnlimitedPremiumThemes && ! isPartnerPlan && (
 				<Banner
 					plan={ PLAN_JETPACK_BUSINESS }
 					title={ translate( 'Access all our premium themes with our Professional plan!' ) }
@@ -152,6 +158,7 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 } );
 
 export default connect( ( state, { siteId, tier } ) => {
+	const currentPlan = getCurrentPlan( state, siteId );
 	const isMultisite = isJetpackSiteMultiSite( state, siteId );
 	const showWpcomThemesList =
 		hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) && ! isMultisite;
@@ -165,7 +172,9 @@ export default connect( ( state, { siteId, tier } ) => {
 	}
 	return {
 		canManage: canJetpackSiteManage( state, siteId ),
+		currentPlan,
 		hasJetpackThemes: hasJetpackSiteJetpackThemes( state, siteId ),
+		purchase: currentPlan ? getByPurchaseId( state, currentPlan.id ) : null,
 		tier,
 		showWpcomThemesList,
 		emptyContent,
