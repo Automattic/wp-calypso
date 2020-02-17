@@ -264,11 +264,13 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 				return state;
 			}
 
+			const siteMigrationMeta = state[ siteId ].site_migration || {};
+
 			return {
 				...state,
 				[ siteId ]: {
 					...state[ siteId ],
-					migration_status: migrationStatus,
+					site_migration: merge( {}, siteMigrationMeta, { status: migrationStatus } ),
 				},
 			};
 		}

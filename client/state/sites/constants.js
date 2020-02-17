@@ -16,7 +16,7 @@ export const SITE_REQUEST_FIELDS = [
 	'visible',
 	'lang',
 	'launch_status',
-	'migration_status',
+	'site_migration',
 	'is_fse_active',
 	'is_fse_eligible',
 ].join();
