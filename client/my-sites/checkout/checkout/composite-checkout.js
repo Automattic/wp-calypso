@@ -216,22 +216,7 @@ export default function CompositeCheckout( {
 
 	const countriesList = useCountryList( overrideCountryList || [] );
 
-	const plan = useSelector( state => getPlanBySlug( state, planSlug ) );
-	useEffect( () => {
-		if ( ! planSlug ) {
-			return;
-		}
-		// TODO: what if the plans did load but there is no matching plan? check for plans loaded instead
-		if ( ! plan ) {
-			debug( 'there is a request to add a plan but no plan was found', planSlug );
-			reduxDispatch( requestPlans() );
-			return;
-		}
-	}, [ reduxDispatch, planSlug, plan ] );
-	planSlug && debug( 'adding item as requested in url', { planSlug, plan, isJetpackNotAtomic } );
-	const productForCart = planSlug
-		? createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } )
-		: null;
+	const productForCart = usePrepareProductForCart( planSlug, isJetpackNotAtomic );
 	const canInitializeCart = ! planSlug || ( planSlug && productForCart );
 
 	const {
@@ -925,3 +910,29 @@ const DoNotPayThis = styled.span`
 	text-decoration: line-through;
 	margin-right: 8px;
 `;
+
+function usePrepareProductForCart( planSlug, isJetpackNotAtomic ) {
+	const plan = useSelector( state => getPlanBySlug( state, planSlug ) );
+	const reduxDispatch = useDispatch();
+
+	// Fetch plans if they are not loaded
+	useEffect( () => {
+		if ( ! planSlug ) {
+			return;
+		}
+		// TODO: what if the plans did load but there is no matching plan? check for plans loaded instead
+		if ( ! plan ) {
+			debug( 'there is a request to add a plan but no plan was found', planSlug );
+			reduxDispatch( requestPlans() );
+			return;
+		}
+	}, [ reduxDispatch, planSlug, plan ] );
+
+	const productForCart = planSlug
+		? createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } )
+		: null;
+	if ( productForCart ) {
+		debug( 'item was requested in url', { planSlug, plan, isJetpackNotAtomic }, productForCart );
+	}
+	return productForCart;
+}
