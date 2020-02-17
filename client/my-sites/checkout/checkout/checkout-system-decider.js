@@ -37,6 +37,10 @@ export default function CheckoutSystemDecider( {
 
 	// TODO: fetch the current cart, ideally without using CartData, and use that to pass to shouldShowCompositeCheckout
 
+	if ( ! cart || ! cart.currency ) {
+		debug( 'not deciding yet; cart has not loaded' );
+		return null; // TODO: replace with loading page
+	}
 	if ( shouldShowCompositeCheckout( cart, countryCode, locale, product, isJetpack ) ) {
 		return (
 			<CompositeCheckout
@@ -91,22 +95,22 @@ function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, is
 		return false;
 	}
 	// Disable for non-USD
-	if ( cart?.currency !== 'USD' ) {
+	if ( cart.currency !== 'USD' ) {
 		debug( 'shouldShowCompositeCheckout false because currency is not USD' );
 		return false;
 	}
 	// Disable for domains in the cart
-	if ( cart?.products?.find( product => product.is_domain_registration ) ) {
+	if ( cart.products?.find( product => product.is_domain_registration ) ) {
 		debug( 'shouldShowCompositeCheckout false because cart contains domain' );
 		return false;
 	}
 	// Disable for GSuite plans
-	if ( cart?.products?.find( product => product.product_slug.includes( 'gapps' ) ) ) {
+	if ( cart.products?.find( product => product.product_slug.includes( 'gapps' ) ) ) {
 		debug( 'shouldShowCompositeCheckout false because cart contains GSuite' );
 		return false;
 	}
 	// Disable for jetpack plans
-	if ( cart?.products?.find( product => product.product_slug.includes( 'jetpack' ) ) ) {
+	if ( cart.products?.find( product => product.product_slug.includes( 'jetpack' ) ) ) {
 		debug( 'shouldShowCompositeCheckout false because cart contains jetpack' );
 		return false;
 	}
