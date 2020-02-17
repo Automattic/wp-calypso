@@ -16,10 +16,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 export default createSelector(
 	state =>
 		getSelectedOrAllSites( state ).filter(
-			site =>
-				isJetpackSite( state, site.ID ) &&
-				site.canManage &&
-				canCurrentUser( state, site.ID, 'manage_options' )
+			site => isJetpackSite( state, site.ID ) && canCurrentUser( state, site.ID, 'manage_options' )
 		),
 	state => [ state.ui.selectedSiteId, state.sites.items, state.currentUser.capabilities ]
 );
