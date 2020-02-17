@@ -616,7 +616,7 @@ export function isThemePremium( state, themeId ) {
 export function isPremiumThemeAvailable( state, themeId, siteId ) {
 	return (
 		isThemePurchased( state, themeId, siteId ) ||
-		hasFeature( state, siteId, 'auto-loading-homepage' )
+		hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
 	);
 }
 
