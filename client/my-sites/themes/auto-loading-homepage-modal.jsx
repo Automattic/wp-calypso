@@ -21,8 +21,8 @@ import {
 } from 'state/themes/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
-	acceptSwitchingHomepageWarning,
-	hideSwitchingHomepageWarning,
+	acceptAutoLoadingHomepageWarning,
+	hideAutoLoadingHomepageWarning,
 	activate as activateTheme,
 } from 'state/themes/actions';
 
@@ -52,10 +52,10 @@ class AutoLoadingHomepageModal extends Component {
 	onCloseModal = ( activate = false ) => {
 		if ( activate ) {
 			const { installingThemeId, siteId, source } = this.props;
-			this.props.acceptSwitchingHomepageWarning( installingThemeId );
+			this.props.acceptAutoLoadingHomepageWarning( installingThemeId );
 			return this.props.activateTheme( installingThemeId, siteId, source );
 		}
-		this.props.hideSwitchingHomepageWarning();
+		this.props.hideAutoLoadingHomepageWarning();
 	};
 
 	onClickButtonHandler = activate => () => this.onCloseModal( activate );
@@ -145,8 +145,8 @@ export default connect(
 		};
 	},
 	{
-		acceptSwitchingHomepageWarning,
-		hideSwitchingHomepageWarning,
+		acceptAutoLoadingHomepageWarning,
+		hideAutoLoadingHomepageWarning,
 		activateTheme,
 	}
 )( AutoLoadingHomepageModal );

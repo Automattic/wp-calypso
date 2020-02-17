@@ -22,7 +22,7 @@ import {
 	RECOMMENDED_THEMES_FAIL,
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
-	THEME_ACCEPT_SWITCHING_HOMEPAGE_WARNING,
+	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_ACTIVATE,
 	THEME_ACTIVATE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
@@ -32,14 +32,14 @@ import {
 	THEME_DELETE_SUCCESS,
 	THEME_DELETE_FAILURE,
 	THEME_FILTERS_REQUEST,
-	THEME_HIDE_SWITCHING_HOMEPAGE_WARNING,
+	THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
 	THEME_INSTALL_FAILURE,
 	THEME_REQUEST,
 	THEME_REQUEST_SUCCESS,
 	THEME_REQUEST_FAILURE,
-	THEME_SHOW_SWITCHING_HOMEPAGE_WARNING,
+	THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_TRANSFER_INITIATE_FAILURE,
 	THEME_TRANSFER_INITIATE_PROGRESS,
 	THEME_TRANSFER_INITIATE_REQUEST,
@@ -67,7 +67,7 @@ import {
 	shouldFilterWpcomThemes,
 	isDownloadableFromWpcom,
 	themeHasAutoLoadingHomepage,
-	hasSwitchingHomepageWarningAccepted,
+	hasAutoLoadingHomepageModalAccepted,
 } from './selectors';
 import {
 	getThemeIdFromStylesheet,
@@ -369,10 +369,10 @@ export function requestActiveTheme( siteId ) {
  */
 export function activate( themeId, siteId, source = 'unknown', purchased = false ) {
 	return ( dispatch, getState ) => {
-		// Show switching homepage warning?
+		// Show auto loading homepage warning?
 		if (
 			themeHasAutoLoadingHomepage( getState(), themeId ) &&
-			! hasSwitchingHomepageWarningAccepted( getState(), themeId )
+			! hasAutoLoadingHomepageModalAccepted( getState(), themeId )
 		) {
 			return dispatch( showAutoLoadingHomepageWarning( themeId ) );
 		}
@@ -905,20 +905,20 @@ export function showThemePreview( themeId ) {
 
 export function showAutoLoadingHomepageWarning( themeId ) {
 	return {
-		type: THEME_SHOW_SWITCHING_HOMEPAGE_WARNING,
+		type: THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING,
 		themeId,
 	};
 }
 
-export function hideSwitchingHomepageWarning() {
+export function hideAutoLoadingHomepageWarning() {
 	return {
-		type: THEME_HIDE_SWITCHING_HOMEPAGE_WARNING,
+		type: THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
 	};
 }
 
-export function acceptSwitchingHomepageWarning( themeId ) {
+export function acceptAutoLoadingHomepageWarning( themeId ) {
 	return {
-		type: THEME_ACCEPT_SWITCHING_HOMEPAGE_WARNING,
+		type: THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
 		themeId,
 	};
 }

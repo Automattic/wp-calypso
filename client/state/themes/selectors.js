@@ -843,7 +843,7 @@ export function shouldShowHomepageWarning( state, themeId ) {
  * @param {string} themeId Theme ID to activate in the site.
  * @returns {boolean}      True if the auto loading homepage dialog has been accepted. Otherwise, False.
  */
-export function hasSwitchingHomepageWarningAccepted( state, themeId ) {
+export function hasAutoLoadingHomepageModalAccepted( state, themeId ) {
 	return (
 		get( state.themes, [ 'themeHasAutoLoadingHomepageWarning', 'themeId' ] ) === themeId &&
 		get( state.themes, [ 'themeHasAutoLoadingHomepageWarning', 'accepted' ] )
