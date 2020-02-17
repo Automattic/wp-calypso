@@ -472,7 +472,10 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 }
 
 .sidebar-modal-opener__warning-options {
-	display: flex;
-	justify-content: space-around;
+	float: right;
 	margin-top: 20px;
+	
+	.components-button {
+		margin-left: 12px;
+	}
 }
