@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { find, get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import isSiteGoogleMyBusinessEligible from 'state/selectors/is-site-google-my-business-eligible';
@@ -29,9 +24,8 @@ export default function isGoogleMyBusinessStatsNudgeVisible( state, siteId ) {
 	}
 
 	// Don't show the nudge if the site is already connected (can be from another admin)
-	const siteKeyrings = get( state, `siteKeyrings.items.${ siteId }`, [] );
-	const googleMyBusinessSiteKeyring = find(
-		siteKeyrings,
+	const siteKeyrings = state.siteKeyrings.items[ siteId ] ?? [];
+	const googleMyBusinessSiteKeyring = siteKeyrings.find(
 		keyring => keyring.service === 'google_my_business' && !! keyring.external_user_id
 	);
 
