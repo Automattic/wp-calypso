@@ -16,7 +16,7 @@ import {
 	tryAndCustomize as tryAndCustomizeAction,
 	confirmDelete,
 	showThemePreview as themePreview,
-	showSwitchingHomepageWarning as showSwitchingHomepageWarningAction,
+	showAutoLoadingHomepageWarning as showAutoLoadingHomepageWarningAction,
 } from 'state/themes/actions';
 import {
 	getThemeSignupUrl,
@@ -146,8 +146,8 @@ function getAllThemeOptions() {
 		action: themePreview,
 	};
 
-	const showSwitchingHomepageWarning = {
-		action: showSwitchingHomepageWarningAction,
+	const showAutoLoadingHomepageWarning = {
+		action: showAutoLoadingHomepageWarningAction,
 	};
 
 	const signupLabel = translate( 'Pick this design', {
@@ -198,7 +198,7 @@ function getAllThemeOptions() {
 		info,
 		support,
 		help,
-		showSwitchingHomepageWarning,
+		showAutoLoadingHomepageWarning,
 	};
 }
 export const connectOptions = connect(

@@ -374,7 +374,7 @@ export function activate( themeId, siteId, source = 'unknown', purchased = false
 			themeHasAutoLoadingHomepage( getState(), themeId ) &&
 			! hasSwitchingHomepageWarningAccepted( getState(), themeId )
 		) {
-			return dispatch( showSwitchingHomepageWarning( themeId ) );
+			return dispatch( showAutoLoadingHomepageWarning( themeId ) );
 		}
 
 		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
@@ -903,7 +903,7 @@ export function showThemePreview( themeId ) {
 	};
 }
 
-export function showSwitchingHomepageWarning( themeId ) {
+export function showAutoLoadingHomepageWarning( themeId ) {
 	return {
 		type: THEME_SHOW_SWITCHING_HOMEPAGE_WARNING,
 		themeId,
