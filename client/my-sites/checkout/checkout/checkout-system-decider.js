@@ -51,6 +51,7 @@ export default function CheckoutSystemDecider( {
 				couponCode={ couponCode }
 				redirectTo={ redirectTo }
 				feature={ selectedFeature }
+				plan={ plan }
 			/>
 		);
 	}
