@@ -820,11 +820,12 @@ export function getPreInstallingThemeId( state ) {
 }
 
 /**
- * Returns whether the theme is currently active on the given site.
+ * Returns whether the auto loading homepage modal should be shown
+ * before to start to install theme.
  *
  * @param {object} state   Global state tree
  * @param {string} themeId Theme ID used to show the warning message before to activate.
- * @returns {boolean}      True if the theme is active on the site. Otherwise, False.
+ * @returns {boolean}      True it should show the auto loading modal. Otherwise, False.
  */
 export function shouldShowHomepageWarning( state, themeId ) {
 	return (
@@ -834,11 +835,13 @@ export function shouldShowHomepageWarning( state, themeId ) {
 }
 
 /**
- * Returns whether the theme is currently active on the given site.
+ * Returns whether the auto loading homepage modal has been
+ * accepted by the user, which means that the theme
+ * will be activated.
  *
  * @param {object} state   Global state tree
- * @param {string} themeId Theme ID used to show the warning message before to activate.
- * @returns {boolean}      True if the theme is active on the site. Otherwise, False.
+ * @param {string} themeId Theme ID to activate in the site.
+ * @returns {boolean}      True if the auto loading homepage dialog has been accepted. Otherwise, False.
  */
 export function hasSwitchingHomepageWarningAccepted( state, themeId ) {
 	return (
