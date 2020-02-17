@@ -67,7 +67,7 @@ class AutoLoadingHomepageModal extends Component {
 			isActivating,
 			hasAutoLoadingHomepage,
 			isCurrentTheme,
-			show = false,
+			isVisible = false,
 		} = this.props;
 
 		// Nothing to do when it's the current theme.
@@ -94,7 +94,7 @@ class AutoLoadingHomepageModal extends Component {
 		return (
 			<Dialog
 				className="themes__auto-loading-homepage-modal"
-				isVisible={ show }
+				isVisible={ isVisible }
 				buttons={ [
 					{
 						action: 'keepCurrentTheme',
@@ -141,7 +141,7 @@ export default connect(
 			hasActivated: !! hasActivatedTheme( state, siteId ),
 			hasAutoLoadingHomepage: hasAutoLoadingHomepageFeature( state, installingThemeId ),
 			isCurrentTheme: isThemeActive( state, installingThemeId, siteId ),
-			show: shouldShowHomepageWarning( state, installingThemeId ),
+			isVisible: shouldShowHomepageWarning( state, installingThemeId ),
 		};
 	},
 	{
