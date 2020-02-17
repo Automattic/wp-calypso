@@ -10,16 +10,23 @@ import config from 'config';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { isEcommercePlan } from 'lib/plans';
 
+interface PrivacySettings {
+	comingSoon?: number;
+	public: number;
+}
+
 /**
- * Should the site be private by default
+ * Get the privacy settings for new site
  *
  * @param state The current client state
- * @returns `true` for private by default & `false` for not
+ * @returns privacy settings for new site
  */
-export default function shouldNewSiteBePrivateByDefault( state: object ): boolean {
+export default function getNewSitePrivacySettings( state: object ): PrivacySettings {
 	if ( config.isEnabled( 'coming-soon' ) ) {
-		// When coming-soon feature flag is enabled, we want all new sites to be private
-		return true;
+		return {
+			comingSoon: 1,
+			public: -1,
+		};
 	}
 
 	/**
@@ -28,8 +35,10 @@ export default function shouldNewSiteBePrivateByDefault( state: object ): boolea
 	 */
 	const plan = get( getSignupDependencyStore( state ), 'cartItem.product_slug', false );
 	if ( plan && isEcommercePlan( plan ) ) {
-		return false;
+		return {
+			public: 1,
+		};
 	}
 
-	return true;
+	return { public: -1 };
 }

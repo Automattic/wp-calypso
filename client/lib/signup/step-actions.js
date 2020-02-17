@@ -37,8 +37,7 @@ import { getSignupDependencyStore } from 'state/signup/dependency-store/selector
 import { requestSites } from 'state/sites/actions';
 import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
-import getNewSitePublicSetting from 'state/selectors/get-new-site-public-setting';
-import getNewSiteComingSoonSetting from 'state/selectors/get-new-site-coming-soon-setting';
+import getNewSitePrivacySettings from 'state/selectors/get-new-site-privacy-settings';
 
 // Current directory dependencies
 import { isValidLandingPageVertical } from './verticals';
@@ -158,6 +157,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 
 	// flowName isn't always passed in
 	const flowToCheck = flowName || lastKnownFlow;
+	const privacySettings = getNewSitePrivacySettings( state );
 
 	const newSiteParams = {
 		blog_title: siteTitle,
@@ -175,12 +175,12 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 			},
 			site_creation_flow: flowToCheck,
 		},
-		public: getNewSitePublicSetting( state ),
+		public: privacySettings.public,
 		validate: false,
 	};
 
 	if ( config.isEnabled( 'coming-soon' ) ) {
-		newSiteParams.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
+		newSiteParams.options.wpcom_coming_soon = privacySettings.comingSoon;
 	}
 
 	const shouldSkipDomainStep = ! siteUrl && isDomainStepSkippable( flowToCheck );
@@ -521,17 +521,18 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 	const { themeSlugWithRepo } = dependencies;
 	const { site } = stepData;
 	const state = reduxStore.getState();
+	const privacySettings = getNewSitePrivacySettings( state );
 
 	const data = {
 		blog_name: site,
 		blog_title: '',
-		public: getNewSitePublicSetting( state ),
+		public: privacySettings.public,
 		options: { theme: themeSlugWithRepo },
 		validate: false,
 	};
 
 	if ( config.isEnabled( 'coming-soon' ) ) {
-		data.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
+		data.options.wpcom_coming_soon = privacySettings.comingSoon;
 	}
 
 	wpcom.undocumented().sitesNew( data, function( errors, response ) {
