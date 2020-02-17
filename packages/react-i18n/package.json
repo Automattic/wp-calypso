@@ -31,7 +31,8 @@
 		"watch": "tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"tslib": "^1.10.0"
+		"tslib": "^1.10.0",
+		"@wordpress/compose": "1.x.x - 3.x.x"
 	},
 	"peerDependencies": {
 		"@wordpress/i18n": "<=3",

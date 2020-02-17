@@ -3,6 +3,7 @@
  */
 import * as React from 'react';
 import { __, _n, _nx, _x, setLocaleData } from '@wordpress/i18n';
+import { createHigherOrderComponent } from '@wordpress/compose';
 
 export interface I18nProps {
 	__: typeof __;
@@ -60,11 +61,6 @@ export const useI18n = (): I18nProps => {
 };
 
 /**
- * Remove from T the keys that are in common with K
- */
-type Optionalize< T extends K, K > = Omit< T, keyof K >;
-
-/**
  * React hook providing i18n translate functions
  *
  * @param InnerComponent Component that will receive translate functions as props
@@ -78,25 +74,9 @@ type Optionalize< T extends K, K > = Omit< T, keyof K >;
  * }
  * export default withI18n( MyComponent );
  */
-export const withI18n = < T extends I18nProps = I18nProps >(
-	InnerComponent: React.ComponentType< T >
-): React.FunctionComponent< Optionalize< T, I18nProps > > => {
-	const WrappedComponent: React.FunctionComponent< Optionalize< T, I18nProps > > = props => (
-		<I18nContext.Consumer>
-			{ i18n => {
-				return (
-					<InnerComponent
-						{ ...i18n }
-						// Required cast `props as T`
-						// See https://github.com/Microsoft/TypeScript/issues/28938
-						{ ...( props as T ) }
-					/>
-				);
-			} }
-		</I18nContext.Consumer>
-	);
-	WrappedComponent.displayName = `withI18n( ${ WrappedComponent.displayName ||
-		WrappedComponent.name ||
-		'Component' } )`;
-	return WrappedComponent;
-};
+export const withI18n = createHigherOrderComponent( InnerComponent => {
+	return props => {
+		const i18n = useI18n();
+		return <InnerComponent { ...i18n } { ...props } />;
+	};
+}, 'withI18n' );
