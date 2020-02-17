@@ -66,7 +66,7 @@ class StepUpgrade extends Component {
 						<div className="migrate__plan-upsell-info">
 							<div className="migrate__plan-name">WordPress.com Business</div>
 							<div className="migrate__plan-price">
-								<PlanPrice rawPrice={ planPrice } currency={ currency } />
+								<PlanPrice rawPrice={ planPrice } currencyCode={ currency } />
 							</div>
 							<div className="migrate__plan-billing-time-frame">{ billingTimeFrame }</div>
 						</div>
