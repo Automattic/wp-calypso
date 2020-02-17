@@ -459,7 +459,7 @@ export const themePreviewVisibility = withoutPersistence( ( state = null, action
 	return state;
 } );
 
-export const themeShowSwitchingHomepageWarning = withoutPersistence( ( state = null, action ) => {
+export const themeHasAutoLoadingHomepageWarning = withoutPersistence( ( state = null, action ) => {
 	switch ( action.type ) {
 		case THEME_SHOW_SWITCHING_HOMEPAGE_WARNING: {
 			return {
@@ -538,7 +538,7 @@ const combinedReducer = combineReducers( {
 	themePreviewVisibility,
 	themeFilters,
 	recommendedThemes,
-	themeShowSwitchingHomepageWarning,
+	themeHasAutoLoadingHomepageWarning,
 } );
 const themesReducer = withStorageKey( 'themes', combinedReducer );
 

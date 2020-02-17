@@ -816,7 +816,7 @@ export function themeHasAutoLoadingHomepage( state, themeId ) {
  * @returns {string} Theme ID,
  */
 export function getPreInstallingThemeId( state ) {
-	return get( state.themes, [ 'themeShowSwitchingHomepageWarning', 'themeId' ] );
+	return get( state.themes, [ 'themeHasAutoLoadingHomepageWarning', 'themeId' ] );
 }
 
 /**
@@ -828,8 +828,8 @@ export function getPreInstallingThemeId( state ) {
  */
 export function shouldShowHomepageWarning( state, themeId ) {
 	return (
-		get( state.themes, [ 'themeShowSwitchingHomepageWarning', 'themeId' ] ) === themeId &&
-		get( state.themes, [ 'themeShowSwitchingHomepageWarning', 'show' ] )
+		get( state.themes, [ 'themeHasAutoLoadingHomepageWarning', 'themeId' ] ) === themeId &&
+		get( state.themes, [ 'themeHasAutoLoadingHomepageWarning', 'show' ] )
 	);
 }
 
@@ -842,7 +842,7 @@ export function shouldShowHomepageWarning( state, themeId ) {
  */
 export function hasSwitchingHomepageWarningAccepted( state, themeId ) {
 	return (
-		get( state.themes, [ 'themeShowSwitchingHomepageWarning', 'themeId' ] ) === themeId &&
-		get( state.themes, [ 'themeShowSwitchingHomepageWarning', 'accepted' ] )
+		get( state.themes, [ 'themeHasAutoLoadingHomepageWarning', 'themeId' ] ) === themeId &&
+		get( state.themes, [ 'themeHasAutoLoadingHomepageWarning', 'accepted' ] )
 	);
 }
