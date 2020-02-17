@@ -15,12 +15,16 @@ import { loadScript } from '@automattic/load-script';
 import {
 	isPiiUrl,
 	costToUSD,
-	doNotTrack,
-	getCurrentUser,
 	isAdTrackingAllowed,
 	mayWeTrackCurrentUserGdpr,
 	refreshCountryCodeCookieGdpr,
 } from 'lib/analytics/utils';
+
+import {
+	getTracksAnonymousUserId,
+	getCurrentUser,
+	getDoNotTrack,
+} from '@automattic/calypso-analytics';
 
 /**
  * Module variables
@@ -1443,7 +1447,7 @@ function floodlightSessionId() {
 function floodlightUserParams() {
 	const params = {};
 	const currentUser = getCurrentUser();
-	const anonymousUserId = tracksAnonymousUserId();
+	const anonymousUserId = getTracksAnonymousUserId();
 
 	if ( currentUser ) {
 		params.u4 = currentUser.hashedPii.ID;
@@ -1708,7 +1712,7 @@ function setupWpcomFloodlightGtag() {
  * 4. the current user could be in the GDPR zone and hasn't consented to tracking
  * 5. `document.location.href` may contain personally identifiable information
  *
- * Note that doNotTrack() and isPiiUrl() can change at any time which is why we do not cache them.
+ * Note that getDoNotTrack() and isPiiUrl() can change at any time which is why we do not cache them.
  *
  * @returns {boolean} true if GA is allowed.
  */
@@ -1716,7 +1720,7 @@ export function isGoogleAnalyticsAllowed() {
 	return (
 		isGoogleAnalyticsEnabled &&
 		config.isEnabled( 'ad-tracking' ) &&
-		! doNotTrack() &&
+		! getDoNotTrack() &&
 		! isPiiUrl() &&
 		mayWeTrackCurrentUserGdpr()
 	);

@@ -48,6 +48,7 @@
 		"@automattic/viewport-react": "file:packages/viewport-react",
 		"@automattic/wpcom-block-editor": "file:apps/wpcom-block-editor",
 		"browserslist": "4.8.6",
+		"@automattic/calypso-analytics": "file:packages/calypso-analytics",
 		"i18n-calypso": "file:packages/i18n-calypso",
 		"photon": "file:packages/photon",
 		"wp-calypso": "file:client",

@@ -3,7 +3,7 @@
  */
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
-import { map, sampleSize } from 'lodash';
+import { map, sampleSize, times } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -11,7 +11,21 @@ import { map, sampleSize } from 'lodash';
 import { getLocaleSlug } from 'lib/i18n-utils';
 import { suggestions } from 'reader/search-stream/suggestions';
 import { getReaderFollowedTags } from 'state/reader/tags/selectors';
-import analytics from 'lib/analytics';
+
+function createRandomId( randomBytesLength = 9 ) {
+	// 9 * 4/3 = 12
+	// this is to avoid getting padding of a random byte string when it is base64 encoded
+	let randomBytes;
+
+	if ( window.crypto && window.crypto.getRandomValues ) {
+		randomBytes = new Uint8Array( randomBytesLength );
+		window.crypto.getRandomValues( randomBytes );
+	} else {
+		randomBytes = times( randomBytesLength, () => Math.floor( Math.random() * 256 ) );
+	}
+
+	return window.btoa( String.fromCharCode.apply( String, randomBytes ) );
+}
 
 /**
  * Build suggestions from subscribed tags
@@ -49,7 +63,7 @@ function suggestionWithRailcar( text, ui_algo, position ) {
 	return {
 		text: text,
 		railcar: {
-			railcar: analytics.tracks.createRandomId() + '-' + position,
+			railcar: createRandomId() + '-' + position,
 			ui_algo: ui_algo,
 			ui_position: position,
 			rec_result: text,

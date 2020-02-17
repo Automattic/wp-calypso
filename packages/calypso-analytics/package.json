@@ -1,0 +1,39 @@
+{
+	"name": "@automattic/calypso-analytics",
+	"version": "1.0.0-alpha.0",
+	"description": "Automattic Analytics",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"sideEffects": false,
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/calypso-analytics"
+	},
+	"files": [
+		"dist",
+		"types",
+		"src"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"prepublish": "npm run clean",
+		"prepare": "transpile"
+	},
+	"dependencies": {
+		"@automattic/load-script": "file:../load-script",
+		"debug": "^4.1.1",
+		"hash.js": "^1.1.7",
+		"lodash": "^4.17.15",
+		"qs": "^6.9.1"
+	}
+}
