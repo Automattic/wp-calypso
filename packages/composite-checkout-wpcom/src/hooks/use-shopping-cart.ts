@@ -485,7 +485,7 @@ function useInitializeCartFromServer(
 	getServerCart: () => Promise< ResponseCart >,
 	setServerCart: ( RequestCart ) => Promise< ResponseCart >,
 	hookDispatch: ( ShoppingCartHookAction ) => void,
-	onEvent?: Function
+	onEvent?: ( ReactStandardAction ) => void
 ): void {
 	const isInitialized = useRef( false );
 	useEffect( () => {
@@ -549,9 +549,9 @@ function useInitializeCartFromServer(
 function useCartUpdateAndRevalidate(
 	cacheStatus: CacheStatus,
 	responseCart: ResponseCart,
-	setServerCart: Function,
-	hookDispatch: Function,
-	onEvent?: Function
+	setServerCart: ( RequestCart ) => Promise< ResponseCart >,
+	hookDispatch: ( ShoppingCartHookAction ) => void,
+	onEvent?: ( ReactStandardAction ) => void
 ): void {
 	useEffect( () => {
 		if ( cacheStatus !== 'invalid' ) {
@@ -594,8 +594,8 @@ function useCachedValidCart( cacheStatus: CacheStatus, responseCart: ResponseCar
 function useShowAddCouponSuccessMessage(
 	didAddCoupon: boolean,
 	responseCart: ResponseCart,
-	showAddCouponSuccessMessage: Function,
-	hookDispatch: Function
+	showAddCouponSuccessMessage: ( string ) => void,
+	hookDispatch: ( ShoppingCartHookAction ) => void
 ): void {
 	useEffect( () => {
 		if ( didAddCoupon ) {
