@@ -323,6 +323,8 @@ export type CouponStatus = 'fresh' | 'pending' | 'applied' | 'invalid' | 'reject
  */
 export type VariantRequestStatus = 'fresh' | 'pending' | 'valid' | 'error';
 
+type ReactStandardAction = { type: string; payload?: any }; // eslint-disable-line @typescript-eslint/no-explicit-any
+
 /**
  * Custom hook for managing state in the WPCOM checkout component.
  *
@@ -367,8 +369,7 @@ export type VariantRequestStatus = 'fresh' | 'pending' | 'valid' | 'error';
  *     Takes a coupon code and displays a translated notice that
  *     the coupon was successfully applied.
  * @param onEvent
- *     Optional callback that Takes a React Standard Action object ( {
- *     type: string, payload?: any } ) for analytics.
+ *     Optional callback that takes a ReactStandardAction object for analytics.
  * @returns ShoppingCartManager
  */
 export function useShoppingCart(
@@ -379,7 +380,7 @@ export function useShoppingCart(
 	getCart: ( string ) => Promise< ResponseCart >,
 	translate: ( string ) => string,
 	showAddCouponSuccessMessage: ( string ) => void,
-	onEvent?: ( object: { type: string; payload?: any } ) => void // eslint-disable-line @typescript-eslint/no-explicit-any
+	onEvent?: ( ReactStandardAction ) => void
 ): ShoppingCartManager {
 	cartKey = cartKey || 'no-site';
 	const setServerCart = useCallback( cartParam => setCart( cartKey, cartParam ), [
@@ -481,9 +482,9 @@ function useInitializeCartFromServer(
 	cacheStatus: CacheStatus,
 	canInitializeCart: boolean,
 	productToAdd: ResponseCartProduct | null,
-	getServerCart: Function,
-	setServerCart: Function,
-	hookDispatch: Function,
+	getServerCart: () => Promise< ResponseCart >,
+	setServerCart: ( RequestCart ) => Promise< ResponseCart >,
+	hookDispatch: ( ShoppingCartHookAction ) => void,
 	onEvent?: Function
 ): void {
 	const isInitialized = useRef( false );
