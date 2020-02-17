@@ -24,6 +24,7 @@ export default function CheckoutSystemDecider( {
 	selectedFeature,
 	couponCode,
 	isComingFromSignup,
+	isComingFromFrankenflow,
 	plan,
 	selectedSite,
 	reduxStore,
@@ -64,6 +65,7 @@ export default function CheckoutSystemDecider( {
 			selectedFeature={ selectedFeature }
 			couponCode={ couponCode }
 			isComingFromSignup={ isComingFromSignup }
+			isComingFromFrankenflow={ isComingFromFrankenflow }
 			plan={ plan }
 			selectedSite={ selectedSite }
 			reduxStore={ reduxStore }
