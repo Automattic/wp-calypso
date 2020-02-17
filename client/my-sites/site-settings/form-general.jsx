@@ -377,10 +377,10 @@ export class SiteSettingsFormGeneral extends Component {
 							<FormRadio
 								name="blog_public"
 								value="-1"
-								checked={ -1 === blogPublic && 1 === wpcomComingSoon }
+								checked={ 0 === blogPublic && 1 === wpcomComingSoon }
 								onChange={ () =>
 									this.handleVisibilityOptionChange( {
-										blog_public: -1,
+										blog_public: 0,
 										wpcom_coming_soon: 1,
 									} )
 								}
@@ -399,7 +399,7 @@ export class SiteSettingsFormGeneral extends Component {
 						<FormRadio
 							name="blog_public"
 							value="1"
-							checked={ blogPublic === 0 || blogPublic === 1 }
+							checked={ ( blogPublic === 0 && ! wpcomComingSoon ) || blogPublic === 1 }
 							onChange={ () =>
 								this.handleVisibilityOptionChange( {
 									blog_public: 1,
@@ -419,7 +419,7 @@ export class SiteSettingsFormGeneral extends Component {
 					<FormInputCheckbox
 						name="blog_public"
 						value="0"
-						checked={ 0 === blogPublic }
+						checked={ 0 === blogPublic && ! wpcomComingSoon }
 						onChange={ () =>
 							this.handleVisibilityOptionChange( {
 								blog_public: blogPublic === 0 ? 1 : 0,
@@ -437,7 +437,7 @@ export class SiteSettingsFormGeneral extends Component {
 							<FormRadio
 								name="blog_public"
 								value="-1"
-								checked={ -1 === blogPublic && ! wpcomComingSoon }
+								checked={ -1 === blogPublic }
 								onChange={ () =>
 									this.handleVisibilityOptionChange( {
 										blog_public: -1,
