@@ -30,10 +30,7 @@ import {
 	oldShowcaseUrl,
 } from './utils';
 import { DEFAULT_THEME_QUERY } from './constants';
-import {
-	FEATURE_AUTO_LOADING_HOMEPAGE,
-	FEATURE_UNLIMITED_PREMIUM_THEMES,
-} from 'lib/plans/constants';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
 import 'state/themes/init';
 
@@ -619,7 +616,7 @@ export function isThemePremium( state, themeId ) {
 export function isPremiumThemeAvailable( state, themeId, siteId ) {
 	return (
 		isThemePurchased( state, themeId, siteId ) ||
-		hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
+		hasFeature( state, siteId, 'auto-loading-homepage' )
 	);
 }
 
@@ -808,7 +805,7 @@ export function areRecommendedThemesLoading( state ) {
 export function hasAutoLoadingHomepageFeature( state, themeId ) {
 	return includes(
 		getThemeTaxonomySlugs( getTheme( state, 'wpcom', themeId ), 'theme_feature' ),
-		FEATURE_AUTO_LOADING_HOMEPAGE
+		'auto-loading-homepage'
 	);
 }
 
