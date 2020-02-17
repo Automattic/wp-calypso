@@ -249,36 +249,13 @@ class DomainsStep extends React.Component {
 	};
 
 	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
-		const shouldHideFreePlanItem = this.isEligibleVariantForDomainTest()
+		const shouldHideFreePlanItem = this.isEligibleVariantForDomainTest() && shouldHideFreePlan
 			? { shouldHideFreePlan }
 			: {};
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
 			: {};
-
-		if ( shouldHideFreePlan ) {
-			let domainItem, isPurchasingItem, siteUrl;
-
-			this.props.submitSignupStep(
-				Object.assign(
-					{
-						stepName: this.props.stepName,
-						domainItem,
-						googleAppsCartItem,
-						isPurchasingItem,
-						siteUrl,
-						stepSectionName: this.props.stepSectionName,
-					},
-					this.getThemeArgs()
-				),
-				Object.assign( { domainItem }, shouldHideFreePlanItem, useThemeHeadstartItem )
-			);
-
-			this.props.goToNextStep();
-
-			return;
-		}
 
 		const suggestion = this.props.step.suggestion;
 
