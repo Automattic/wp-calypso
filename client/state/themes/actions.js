@@ -84,7 +84,6 @@ import i18n from 'i18n-calypso';
 import accept from 'lib/accept';
 
 import 'state/data-layer/wpcom/theme-filters';
-import theme from '@automattic/composite-checkout/src/theme';
 
 import 'state/themes/init';
 
@@ -610,7 +609,7 @@ export function installAndActivateTheme( themeId, siteId, source = 'unknown', pu
  * Triggers a theme upload to the given site.
  *
  * @param {number} siteId -- Site to upload to
- * @param {window.File} file -- the theme zip to upload
+ * @param {File} file -- the theme zip to upload
  *
  * @returns {Function} the action function
  */
@@ -667,7 +666,7 @@ export function clearThemeUpload( siteId ) {
  * Start an Automated Transfer with an uploaded theme.
  *
  * @param {number} siteId -- the site to transfer
- * @param {window.File} file -- theme zip to upload
+ * @param {File} file -- theme zip to upload
  * @param {string} plugin -- plugin slug
  *
  * @returns {Promise} for testing purposes only
