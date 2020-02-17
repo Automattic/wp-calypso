@@ -24,6 +24,11 @@ export interface WithAddReducer {
 	addReducer: ( keys: string[], subReducer: Reducer & OptionalStorageKey ) => void;
 }
 
+export function clear() {
+	initializations.clear();
+	reducers.clear();
+}
+
 function initializeState(
 	store: Store & WithAddReducer,
 	storageKey: string,

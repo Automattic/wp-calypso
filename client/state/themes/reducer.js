@@ -7,7 +7,12 @@ import { mapValues, omit, map } from 'lodash';
  * Internal dependencies
  */
 import ThemeQueryManager from 'lib/query-manager/theme';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import {
+	combineReducers,
+	withSchemaValidation,
+	withStorageKey,
+	withoutPersistence,
+} from 'state/utils';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
@@ -436,9 +441,9 @@ export const themePreviewOptions = withoutPersistence( ( state = {}, action ) =>
  * Returns the updated previewing theme state
  * The state reflects if Theme Preview component should be visible or not.
  *
- * @param  {Bool}   state  Current state
+ * @param  {boolean}   state  Current state
  * @param  {object} action Action payload
- * @returns {Bool}          Updated state
+ * @returns {boolean}          Updated state
  */
 export const themePreviewVisibility = withoutPersistence( ( state = null, action ) => {
 	switch ( action.type ) {
@@ -483,7 +488,7 @@ export function recommendedThemes( state = { isLoading: true, themes: [] }, acti
 	return state;
 }
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	queries,
 	queryRequests,
 	queryRequestErrors,
@@ -502,3 +507,6 @@ export default combineReducers( {
 	themeFilters,
 	recommendedThemes,
 } );
+const themesReducer = withStorageKey( 'themes', combinedReducer );
+
+export default themesReducer;

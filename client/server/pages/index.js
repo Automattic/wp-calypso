@@ -45,6 +45,7 @@ import {
 } from 'server/render';
 import stateCache from 'server/state-cache';
 import { createReduxStore } from 'state';
+import { setStore } from 'state/redux-store';
 import initialReducer from 'state/reducer';
 import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
 import { setCurrentUser } from 'state/current-user/actions';
@@ -293,6 +294,9 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		request.query[ 'wccom-from' ] &&
 		isWooOAuth2Client( { id: parseInt( oauthClientId ) } );
 
+	const reduxStore = createReduxStore( initialServerState );
+	setStore( reduxStore );
+
 	const context = Object.assign( {}, request.context, {
 		commitSha: process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)',
 		compileDebug: process.env.NODE_ENV === 'development',
@@ -310,7 +314,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		preferencesHelper: !! config.isEnabled( 'dev/preferences-helper' ),
 		devDocsURL: '/devdocs',
-		store: createReduxStore( initialServerState ),
+		store: reduxStore,
 		bodyClasses,
 		addEvergreenCheck: target === 'evergreen' && calypsoEnv !== 'development',
 		target: target || 'fallback',

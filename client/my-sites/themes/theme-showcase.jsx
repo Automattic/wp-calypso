@@ -31,6 +31,10 @@ import getThemeShowcaseTitle from 'state/selectors/get-theme-showcase-title';
 import prependThemeFilterKeys from 'state/selectors/prepend-theme-filter-keys';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { openThemesShowcase } from 'state/themes/themes-ui/actions';
+import {
+	getThemesBookmark,
+	hasShowcaseOpened as hasShowcaseOpenedSelector,
+} from 'state/themes/themes-ui/selectors';
 import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'components/data/query-theme-filters';
 import { getActiveTheme } from 'state/themes/selectors';
@@ -441,8 +445,8 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	subjects: getThemeFilterTerms( state, 'subject' ) || {},
 	filterString: prependThemeFilterKeys( state, filter ),
 	filterToTermTable: getThemeFilterToTermTable( state ),
-	hasShowcaseOpened: state.themes.themesUI.themesShowcaseOpen,
-	themesBookmark: state.themes.themesUI.themesBookmark,
+	hasShowcaseOpened: hasShowcaseOpenedSelector( state ),
+	themesBookmark: getThemesBookmark( state ),
 } );
 
 const mapDispatchToProps = {
