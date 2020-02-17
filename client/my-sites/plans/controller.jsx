@@ -17,9 +17,6 @@ export function plans( context, next ) {
 	// assuming it will end up redirecting to the checkout page. This is a way of reducing the number of duplicate
 	// sites when users go back in the browser trying to change a plan during checkout.
 	// See https://github.com/Automattic/wp-calypso/issues/39424
-	const state = context.store.getState();
-	const selectedSite = getSelectedSite( state );
-	const checkoutUrl = `/checkout/${ selectedSite.slug }?signup=1`;
 	const isComingFromSignUp = !! context.query.signup;
 	if ( isComingFromSignUp ) {
 		// Removes the signup query param so users going back to plans are not redirected to checkout again.
@@ -33,7 +30,8 @@ export function plans( context, next ) {
 			false
 		);
 
-		return page.show( checkoutUrl, context.state );
+		const selectedSite = getSelectedSite( context.store.getState() );
+		return page.show( `/checkout/${ selectedSite.slug }?signup=1`, context.state );
 	}
 
 	context.primary = (
