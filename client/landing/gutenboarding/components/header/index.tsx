@@ -9,6 +9,7 @@ import { useDebounce } from 'use-debounce';
 import classnames from 'classnames';
 import { DomainSuggestions } from '@automattic/data-stores';
 import { useHistory } from 'react-router-dom';
+import { useI18n, withI18n, I18nProps } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -29,6 +30,7 @@ interface Props {
 }
 
 const Header: FunctionComponent< Props > = ( { prev } ) => {
+	const { __ } = useI18n();
 	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
 	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
 
@@ -71,7 +73,7 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	const siteTitleElement = (
 		<span className="gutenboarding__site-title">
-			{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
+			{ siteTitle ? siteTitle : __( 'Create your site' ) }
 		</span>
 	);
 
@@ -134,10 +136,7 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		>
 			<div className="gutenboarding__header-section">
 				<div className="gutenboarding__header-group">
-					<Link className="gutenboarding__header-back-button" to={ prev }>
-						<Icon icon="arrow-left-alt" />
-						{ NO__( 'Back' ) }
-					</Link>
+					<BackButton prev={ prev } />
 				</div>
 				<div className="gutenboarding__header-group">
 					{ siteTitle ? (
@@ -179,3 +178,18 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 };
 
 export default Header;
+
+/* eslint-disable */
+const BackButton = withI18n(
+	class InnerBackButton extends React.PureComponent< I18nProps & { prev?: string } > {
+		render() {
+			const { prev, __ } = this.props;
+			return (
+				<Link className="gutenboarding__header-back-button" to={ prev }>
+					<Icon icon="arrow-left-alt" />
+					{ __( 'Back' ) }
+				</Link>
+			);
+		}
+	}
+);

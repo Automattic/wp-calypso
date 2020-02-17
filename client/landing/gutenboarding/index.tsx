@@ -13,13 +13,16 @@ import config from '../../config';
 import { Gutenboard } from './gutenboard';
 import { setupWpDataDebug } from './devtools';
 import accessibleFocus from 'lib/accessible-focus';
+import { getLanguageFile } from 'lib/i18n-utils/switch-locale';
+
 /**
  * Style dependencies
  */
 import 'assets/stylesheets/gutenboarding.scss';
 import 'components/environment-badge/style.scss';
+import { I18nProvider } from '@automattic/react-i18n';
 
-window.AppBoot = () => {
+window.AppBoot = async () => {
 	if ( ! config.isEnabled( 'gutenboarding' ) ) {
 		window.location.href = '/';
 	} else {
@@ -28,11 +31,31 @@ window.AppBoot = () => {
 		// Add accessible-focus listener.
 		accessibleFocus();
 
+		const localeData = await getLanguageFile( 'es' );
 		ReactDom.render(
-			<BrowserRouter basename="gutenboarding">
-				<Gutenboard />
-			</BrowserRouter>,
+			<C initial="es" initialLocale={ localeData }>
+				<BrowserRouter basename="gutenboarding">
+					<Gutenboard />
+				</BrowserRouter>
+			</C>,
 			document.getElementById( 'wpcom' )
 		);
 	}
+};
+
+const C: React.FunctionComponent< { initial: string; initialLocale: object } > = ( {
+	children,
+	initial,
+	initialLocale,
+} ) => {
+	const [ [ l, ld ], setL ] = React.useState( [ initial, initialLocale ] );
+	( window as any ).updateLocale = async ( nextL: string ) => {
+		const nextLd = await getLanguageFile( nextL );
+		setL( [ nextL, nextLd ] );
+	};
+	return (
+		<I18nProvider locale={ l } localeData={ ld }>
+			{ children }
+		</I18nProvider>
+	);
 };
