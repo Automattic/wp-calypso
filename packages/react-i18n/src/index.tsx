@@ -55,6 +55,9 @@ function makeI18n( i18nLocale: string ) {
  */
 export const useI18n = (): I18nProps => {
 	const i18n = React.useContext( I18nContext );
+	if ( i18n === undefined ) {
+		throw new Error( 'useI18n must be descendent of <I18nProvider />' );
+	}
 	React.useDebugValue( i18n.i18nLocale );
 	return i18n;
 };
@@ -67,7 +70,8 @@ type Optionalize< T extends K, K > = Omit< T, keyof K >;
 /**
  * React hook providing i18n translate functions
  *
- * @param WrappedComponent Component that will receive translate functions as props
+ * @param InnerComponent Component that will receive translate functions as props
+ * @returns Component enhanced with i18n context
  *
  * @example
  *
@@ -78,16 +82,27 @@ type Optionalize< T extends K, K > = Omit< T, keyof K >;
  * export default withI18n( MyComponent );
  */
 export const withI18n = < T extends I18nProps = I18nProps >(
-	WrappedComponent: React.ComponentType< T >
-): React.FunctionComponent< Optionalize< T, I18nProps > > => props => (
-	<I18nContext.Consumer>
-		{ i18n => (
-			<WrappedComponent
-				{ ...i18n }
-				// Required cast `props as T`
-				// See https://github.com/Microsoft/TypeScript/issues/28938
-				{ ...( props as T ) }
-			/>
-		) }
-	</I18nContext.Consumer>
-);
+	InnerComponent: React.ComponentType< T >
+): React.FunctionComponent< Optionalize< T, I18nProps > > => {
+	const WrappedComponent: React.FunctionComponent< Optionalize< T, I18nProps > > = props => (
+		<I18nContext.Consumer>
+			{ i18n => {
+				if ( i18n === undefined ) {
+					throw new Error( 'withI18n must be descendent of <I18nProvider />' );
+				}
+				return (
+					<InnerComponent
+						{ ...i18n }
+						// Required cast `props as T`
+						// See https://github.com/Microsoft/TypeScript/issues/28938
+						{ ...( props as T ) }
+					/>
+				);
+			} }
+		</I18nContext.Consumer>
+	);
+	WrappedComponent.displayName = `withI18n( ${ WrappedComponent.displayName ||
+		WrappedComponent.name ||
+		'Component' } )`;
+	return WrappedComponent;
+};
