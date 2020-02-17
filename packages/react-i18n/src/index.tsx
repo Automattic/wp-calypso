@@ -55,9 +55,6 @@ function makeI18n( i18nLocale: string ) {
  */
 export const useI18n = (): I18nProps => {
 	const i18n = React.useContext( I18nContext );
-	if ( i18n === undefined ) {
-		throw new Error( 'useI18n must be descendent of <I18nProvider />' );
-	}
 	React.useDebugValue( i18n.i18nLocale );
 	return i18n;
 };
@@ -87,9 +84,6 @@ export const withI18n = < T extends I18nProps = I18nProps >(
 	const WrappedComponent: React.FunctionComponent< Optionalize< T, I18nProps > > = props => (
 		<I18nContext.Consumer>
 			{ i18n => {
-				if ( i18n === undefined ) {
-					throw new Error( 'withI18n must be descendent of <I18nProvider />' );
-				}
 				return (
 					<InnerComponent
 						{ ...i18n }
