@@ -72,6 +72,7 @@ import { getPlan, findPlansKeys } from 'lib/plans';
 import { GROUP_WPCOM, TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
 import { computeProductsWithPrices } from 'state/products-list/selectors';
 import { requestProductsList } from 'state/products-list/actions';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -474,8 +475,17 @@ export default function CompositeCheckout( {
 		productSlug: getPlanProductSlugs( items )[ 0 ],
 	} );
 
+	const { analyticsPath, analyticsProps } = getAnalyticsPath( {
+		purchaseId,
+		product,
+		siteSlug,
+		feature,
+		plan,
+	} );
+
 	return (
 		<React.Fragment>
+			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
 			<CheckoutProvider
 				locale={ 'en-us' }
 				items={ itemsForCheckout }
@@ -944,4 +954,28 @@ function usePrepareProductForCart( planSlug, isJetpackNotAtomic ) {
 	}, [ reduxDispatch, planSlug, plan, plans, isJetpackNotAtomic ] );
 
 	return { productForCart, canInitializeCart };
+}
+
+function getAnalyticsPath( { purchaseId, product, selectedSiteSlug, selectedFeature, plan } ) {
+	let analyticsPath = '';
+	let analyticsProps = {};
+	if ( purchaseId && product ) {
+		analyticsPath = '/checkout/:product/renew/:purchase_id/:site';
+		analyticsProps = { product, purchase_id: purchaseId, site: selectedSiteSlug };
+	} else if ( selectedFeature && plan ) {
+		analyticsPath = '/checkout/features/:feature/:site/:plan';
+		analyticsProps = { feature: selectedFeature, plan, site: selectedSiteSlug };
+	} else if ( selectedFeature && ! plan ) {
+		analyticsPath = '/checkout/features/:feature/:site';
+		analyticsProps = { feature: selectedFeature, site: selectedSiteSlug };
+	} else if ( product && ! purchaseId ) {
+		analyticsPath = '/checkout/:site/:product';
+		analyticsProps = { product, site: selectedSiteSlug };
+	} else if ( selectedSiteSlug ) {
+		analyticsPath = '/checkout/:site';
+		analyticsProps = { site: selectedSiteSlug };
+	} else {
+		analyticsPath = '/checkout/no-site';
+	}
+	return { analyticsPath, analyticsProps };
 }
