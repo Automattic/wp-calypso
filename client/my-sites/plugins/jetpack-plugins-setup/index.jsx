@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Card, CompactCard, Button } from '@automattic/components';
+import { CompactCard } from '@automattic/components';
 import FeatureExample from 'components/feature-example';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -38,7 +38,7 @@ import './style.scss';
 
 // Redux actions & selectors
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getJetpackSiteRemoteManagementUrl, isRequestingSites } from 'state/sites/selectors';
+import { isRequestingSites } from 'state/sites/selectors';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
@@ -134,7 +134,6 @@ class PlansSetup extends React.Component {
 			site &&
 			site.jetpack &&
 			site.canUpdateFiles &&
-			site.canManage &&
 			this.allPluginsHaveWporgData() &&
 			! this.props.isInstalling &&
 			this.props.nextPlugin
@@ -145,13 +144,7 @@ class PlansSetup extends React.Component {
 
 	warnIfNotFinished = event => {
 		const site = this.props.selectedSite;
-		if (
-			! site ||
-			! site.jetpack ||
-			! site.canUpdateFiles ||
-			! site.canManage ||
-			this.props.isFinished
-		) {
+		if ( ! site || ! site.jetpack || ! site.canUpdateFiles || this.props.isFinished ) {
 			return;
 		}
 		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_user_interrupt' );
@@ -544,28 +537,6 @@ class PlansSetup extends React.Component {
 			return this.renderNoJetpackPlan();
 		}
 
-		let turnOnManage;
-		if ( site && ! site.canManage ) {
-			const manageUrl = this.props.remoteManagementUrl + '&section=plugins-setup';
-			turnOnManage = (
-				<Card className="jetpack-plugins-setup__need-manage">
-					<p>
-						{ translate(
-							'{{strong}}Jetpack Manage must be enabled for us to auto-configure your %(plan)s plan.{{/strong}} This will allow WordPress.com to communicate with your site and auto-configure the features unlocked with your new plan. Or you can opt out.',
-							{
-								args: { plan: site.plan.product_name_short },
-								components: { strong: <strong /> },
-							}
-						) }
-					</p>
-					<Button primary href={ manageUrl }>
-						{ translate( 'Enable Manage' ) }
-					</Button>
-					<Button href={ JETPACK_SUPPORT }>{ translate( 'Manual Installation' ) }</Button>
-				</Card>
-			);
-		}
-
 		return (
 			<div className="jetpack-plugins-setup">
 				<PageViewTracker path="/plugins/setup/:site" title="Jetpack Plugins Setup" />
@@ -578,13 +549,9 @@ class PlansSetup extends React.Component {
 				<p className="jetpack-plugins-setup__description">
 					{ translate( "We need to install a few plugins for you. It won't take long!" ) }
 				</p>
-				{ turnOnManage }
-				{ ! turnOnManage && this.renderSuccess() }
-				{ turnOnManage ? (
-					<FeatureExample>{ this.renderPlugins( true ) }</FeatureExample>
-				) : (
-					this.renderPlugins( false )
-				) }
+				{ this.renderSuccess() }
+				<FeatureExample>{ this.renderPlugins( true ) }</FeatureExample>) : ( this.renderPlugins(
+				false ) ) }
 			</div>
 		);
 	}
@@ -607,7 +574,6 @@ export default connect(
 			nextPlugin: getNextPlugin( state, siteId, whitelist ),
 			selectedSite: selectedSite,
 			isRequestingSites: isRequestingSites( state ),
-			remoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, siteId ),
 			sitesInitialized: hasInitializedSites( state ),
 			siteId,
 		};
