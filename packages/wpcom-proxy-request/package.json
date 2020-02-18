@@ -1,0 +1,51 @@
+{
+	"name": "wpcom-proxy-request",
+	"description": "Proxied cookie-authenticated REST API requests to WordPress.com",
+	"keywords": [
+		"browser",
+		"wpcom",
+		"wordpress",
+		"rest",
+		"api",
+		"cookie"
+	],
+	"scripts": {
+		"prepublish": "make build"
+	},
+	"version": "5.0.2",
+	"author": "Automattic, Inc.",
+	"private": true,
+	"contributors": [
+		"Damian Suarez <rdsuarez@gmail.com>",
+		"Nathan Rajlich <nathan@automattic.com>",
+		"Andy Skelton <andy@automattic.com>",
+		"Gary Pendergast <gary@pento.net>",
+		"Ben Lowery <blowery@automattic.com>",
+		"Jarda Snajdr <jsnajdr@gmail.com>"
+	],
+	"files": [
+		"build",
+		"History.md",
+		"README.md"
+	],
+	"repository": "git://github.com/Automattic/wpcom-proxy-request.git",
+	"license": "MIT",
+	"main": "build/index.js",
+	"dependencies": {
+		"component-event": "0.1.4",
+		"debug": "^3.1.0",
+		"progress-event": "~1.0.0",
+		"uid": "0.0.2",
+		"wp-error": "^1.3.0"
+	},
+	"devDependencies": {
+		"babel-eslint": "^8.2.6",
+		"chai": "^4.1.0",
+		"chokidar-cli": "^1.2.1",
+		"eslint": "^5.1.0",
+		"mocha": "^5.2.0",
+		"n8-make": "^1.8.6",
+		"serve": "^9.2.0",
+		"webpack": "^1.13.1"
+	}
+}
