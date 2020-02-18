@@ -7,10 +7,10 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { NewSite, NewSiteErrorResponse } from './types';
+import { NewSiteBlogDetails, NewSiteErrorResponse } from './types';
 import { Action } from './actions';
 
-const newSiteData: Reducer< NewSite | undefined, Action > = ( state, action ) => {
+const newSiteData: Reducer< NewSiteBlogDetails | undefined, Action > = ( state, action ) => {
 	if ( action.type === 'RECEIVE_NEW_SITE' ) {
 		const { response } = action;
 		return response.blog_details;
