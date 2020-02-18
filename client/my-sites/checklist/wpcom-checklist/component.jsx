@@ -614,7 +614,7 @@ class WpcomChecklistComponent extends PureComponent {
 				bannerImageSrc="/calypso/images/stats/tasks/mobile-app.svg"
 				completedButtonText={ translate( 'Re-download mobile app' ) }
 				completedTitle={ translate( 'You downloaded the WordPress app' ) }
-				completedDescription={ translate( `You can re-download the app at any time.` ) }
+				completedDescription={ translate( 'You can re-download the app at any time.' ) }
 				description={ translate(
 					'Download the WordPress app to your mobile device to manage your site and follow your stats on the go.'
 				) }
