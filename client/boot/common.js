@@ -127,7 +127,15 @@ const loggedOutMiddleware = currentUser => {
 };
 
 const loggedInMiddleware = currentUser => {
-	if ( ! currentUser.get() ) {
+	const jetpackCloudEnvs = [
+		'jetpack-cloud-development',
+		'jetpack-cloud-stage',
+		'jetpack-cloud-production',
+	];
+	const calypsoEnv = config( 'env_id' );
+
+	// TODO: Remove Jetpack Cloud specific logic when root route is no longer handled by the reader section
+	if ( ! currentUser.get() || jetpackCloudEnvs.includes( calypsoEnv ) ) {
 		return;
 	}
 
