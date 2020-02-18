@@ -215,3 +215,12 @@ function load_blog_posts_block() {
 	require_once __DIR__ . '/blog-posts-block/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_blog_posts_block' );
+
+// @TODO - Uncomment once ready to deploy wpcom NUX.
+/**
+ * Load WPCOM Block Editor NUX
+ */
+// function load_wpcom_block_editor_nux() {
+// 	require_once __DIR__ . '/wpcom-block-editor-nux/class-wpcom-block-editor-nux.php';
+// }
+// add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );
