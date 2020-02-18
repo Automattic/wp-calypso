@@ -54,9 +54,11 @@ export const CheckoutProvider = props => {
 	}, [ paymentMethods, prevPaymentMethods ] );
 
 	const [ formStatus, setFormStatus ] = useFormStatusManager( isLoading );
+	const didCallOnPaymentComplete = useRef( false );
 	useEffect( () => {
-		if ( formStatus === 'complete' ) {
+		if ( formStatus === 'complete' && ! didCallOnPaymentComplete.current ) {
 			debug( "form status is complete so I'm calling onPaymentComplete" );
+			didCallOnPaymentComplete.current = true;
 			onPaymentComplete( { paymentMethodId } );
 		}
 	}, [ formStatus, onPaymentComplete, paymentMethodId ] );
