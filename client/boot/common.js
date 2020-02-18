@@ -412,7 +412,7 @@ function renderLayout( reduxStore ) {
 	debug( 'Main layout rendered.' );
 }
 
-const boot = currentUser => {
+const boot = ( currentUser, router ) => {
 	utils();
 	loadAllState().then( () => {
 		const initialState = getInitialState( initialReducer );
@@ -423,14 +423,17 @@ const boot = currentUser => {
 		configureReduxStore( currentUser, reduxStore );
 		setupMiddlewares( currentUser, reduxStore );
 		detectHistoryNavigation.start();
+		if ( router ) {
+			router();
+		}
 		page.start( { decodeURLComponents: false } );
 	} );
 };
 
-export const bootApp = appName => {
+export const bootApp = ( appName, router ) => {
 	const user = userFactory();
 	user.initialize().then( () => {
 		debug( `Starting ${ appName }. Let's do this.` );
-		boot( user );
+		boot( user, router );
 	} );
 };
