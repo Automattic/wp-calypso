@@ -281,7 +281,6 @@ export default function CompositeCheckout( {
 	paypalMethod.id = 'paypal';
 	// This is defined afterward so that getThankYouUrl can be dynamic without having to re-create payment method
 	paypalMethod.submitTransaction = () => {
-		recordEvent( { type: 'REDIRECT_FOR_PAYMENT_AUTHORIZATION' } );
 		makePayPalExpressRequest(
 			{
 				items,
