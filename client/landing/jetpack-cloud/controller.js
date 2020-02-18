@@ -11,6 +11,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import JetpackCloudLayout from './layout';
 import JetpackCloudSidebar from './components/sidebar';
 import LogItem from './components/log-item';
+import { getCurrentUserName } from 'state/current-user/selectors';
 
 export const makeLayout = ( context, next ) => {
 	const { primary, secondary, store } = context;
@@ -65,6 +66,14 @@ export function jetpackBackups( context, next ) {
 }
 
 export function jetpackScan( context, next ) {
-	context.primary = <div>This is the Jetpack Scan landing page!</div>;
+	const state = context.store.getState();
+	const currentUserName = getCurrentUserName( state );
+
+	context.primary = (
+		<div>
+			<p>{ currentUserName ? `Hi, ${ currentUserName }!` : 'Hi!' }</p>
+			<p>This is the Jetpack Scan landing page!</p>
+		</div>
+	);
 	next();
 }
