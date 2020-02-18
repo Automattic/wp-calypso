@@ -57,9 +57,9 @@ export const CheckoutProvider = props => {
 	useEffect( () => {
 		if ( formStatus === 'complete' ) {
 			debug( "form status is complete so I'm calling onPaymentComplete" );
-			onPaymentComplete();
+			onPaymentComplete( { paymentMethodId } );
 		}
-	}, [ formStatus, onPaymentComplete ] );
+	}, [ formStatus, onPaymentComplete, paymentMethodId ] );
 
 	// Remove undefined and duplicate checkoutWrapper properties
 	const wrappers = [
