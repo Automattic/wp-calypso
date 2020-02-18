@@ -6,8 +6,6 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
 import { flowRight, get, has } from 'lodash';
-import moment from 'moment-timezone';
-import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -34,6 +32,7 @@ import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { isJetpackSite, isCurrentPlanPaid } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import guessTimezone from 'lib/i18n-utils/guess-timezone';
 import { preventWidows } from 'lib/formatting';
 import scrollTo from 'lib/scroll-to';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
@@ -310,12 +309,10 @@ export class SiteSettingsFormGeneral extends Component {
 					</FormLabel>
 				) }
 
-				{ i18n.state.localeSlug === i18n.defaultLocaleSlug ||
-					( i18n.hasTranslation( 'Your site is visible to everyone.' ) && (
-						<FormSettingExplanation isIndented>
-							{ translate( 'Your site is visible to everyone.' ) }
-						</FormSettingExplanation>
-					) ) }
+				
+				<FormSettingExplanation isIndented>
+					{ translate( 'Your site is visible to everyone.' ) }
+				</FormSettingExplanation>
 
 				<FormLabel className="site-settings__visibility-label is-checkbox">
 					<FormInputCheckbox
@@ -467,7 +464,7 @@ export class SiteSettingsFormGeneral extends Component {
 
 	Timezone() {
 		const { fields, isRequestingSettings, translate } = this.props;
-		const guessedTimezone = moment.tz.guess();
+		const guessedTimezone = guessTimezone();
 		const setGuessedTimezone = this.onTimezoneSelect.bind( this, guessedTimezone );
 
 		return (
