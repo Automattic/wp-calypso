@@ -794,6 +794,9 @@ function getCheckoutEventHandler( dispatch ) {
 					} )
 				);
 			}
+			case 'SHOW_MODAL_AUTHORIZATION': {
+				return dispatch( recordTracksEvent( 'calypso_checkout_modal_authorization', {} ) );
+			}
 			default:
 				debug( 'unknown checkout event', action );
 				return dispatch(
