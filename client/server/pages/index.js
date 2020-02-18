@@ -862,8 +862,6 @@ module.exports = function() {
 
 	handleSectionPath( GUTENBOARDING_SECTION_DEFINITION, '/gutenboarding', 'entry-gutenboarding' );
 
-	handleSectionPath( JETPACK_CLOUD_SECTION_DEFINITION, '/jetpack-cloud', 'entry-jetpack-cloud' );
-
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post(
 		'/cspreport',
