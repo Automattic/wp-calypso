@@ -29,6 +29,7 @@ function renderFreeToPaidPlanNudge( { siteId, siteSlug, translate }, dispatch ) 
 		return (
 			<UpsellNudge
 				event={ 'free-to-paid-sidebar-reader' }
+				forceHref={ true }
 				callToAction={ translate( 'Upgrade' ) }
 				compact
 				href={ '/plans/' + siteSlug }
