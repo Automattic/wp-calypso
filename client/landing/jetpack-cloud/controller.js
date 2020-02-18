@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import ReactDom from 'react-dom';
+import { Provider as ReduxProvider } from 'react-redux';
 
 /**
  * Internal Dependencies
@@ -12,9 +13,13 @@ import JetpackCloudSidebar from './components/sidebar';
 import LogItem from './components/log-item';
 
 export const makeLayout = ( context, next ) => {
-	const { primary, secondary } = context;
+	const { primary, secondary, store } = context;
 
-	context.layout = <JetpackCloudLayout primary={ primary } secondary={ secondary } />;
+	context.layout = (
+		<ReduxProvider store={ store }>
+			<JetpackCloudLayout primary={ primary } secondary={ secondary } />
+		</ReduxProvider>
+	);
 
 	next();
 };
