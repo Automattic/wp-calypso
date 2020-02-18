@@ -287,6 +287,7 @@ export interface ShoppingCartManager {
 	updateLocation: ( CartLocation ) => void;
 	variantRequestStatus: VariantRequestStatus;
 	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[];
+	responseCart: ResponseCart;
 }
 
 /**
@@ -476,6 +477,7 @@ export function useShoppingCart(
 		couponCode: cart.couponCode,
 		variantRequestStatus,
 		variantSelectOverride,
+		responseCart,
 	} as ShoppingCartManager;
 }
 
