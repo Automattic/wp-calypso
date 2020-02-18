@@ -38,7 +38,7 @@
 		"fast-json-stable-stringify": "^2.1.0",
 		"redux": "^4.0.4",
 		"tslib": "^1.10.0",
-		"wpcom-proxy-request": "^5.0.2"
+		"wpcom-proxy-request": "file:../wpcom-proxy-request"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^4"
