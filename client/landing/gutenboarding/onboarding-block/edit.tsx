@@ -21,9 +21,7 @@ import VerticalBackground from './vertical-background';
 import AcquireIntent from './acquire-intent';
 
 const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
-	const { siteVertical, selectedDesign } = useSelect( select =>
-		select( STORE_KEY ).getState()
-	);
+	const { siteVertical, selectedDesign } = useSelect( select => select( STORE_KEY ).getState() );
 	const isCreatingSite = useSelect( select => select( SITE_STORE ).isFetchingSite() );
 
 	const makePath = usePath();
@@ -57,7 +55,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 					<SignupForm />;
 				</Route>
 
-				<Route exact path={ makePath( Step.CreateSite ) }>
+				<Route path={ makePath( Step.CreateSite ) }>
 					<CreateSite />
 				</Route>
 			</Switch>
