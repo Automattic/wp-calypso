@@ -277,7 +277,10 @@ class ThemeEnhancements extends Component {
 	}
 
 	render() {
-		const { siteIsJetpack, translate } = this.props;
+		const { site, siteIsJetpack, translate } = this.props;
+
+		const jetpackVersion = get( site, 'options.jetpack_version', 0 );
+		const siteHasMinileven = jetpackVersion && versionCompare( jetpackVersion, '8.3-alpha', '<' );
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
@@ -289,8 +292,12 @@ class ThemeEnhancements extends Component {
 						<Fragment>
 							{ this.renderJetpackInfiniteScrollSettings() }
 							<hr />
-							{ this.renderMinilevenSettings() }
-							<hr />
+							{ siteHasMinileven && (
+								<Fragment>
+									{ this.renderMinilevenSettings() }
+									<hr />
+								</Fragment>
+							) }
 							{ this.renderCustomCSSSettings() }
 						</Fragment>
 					) : (
