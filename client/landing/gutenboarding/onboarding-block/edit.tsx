@@ -12,7 +12,7 @@ import { Redirect, Switch, Route } from 'react-router-dom';
 import { STORE_KEY } from '../stores/onboard';
 import { SITE_STORE } from '../stores/site';
 import DesignSelector from './design-selector';
-import SignupForm from './signup-form';
+import SignupForm from '../components/signup-form';
 import CreateSite from './create-site';
 import { Attributes } from './types';
 import { Step, usePath } from '../path';
