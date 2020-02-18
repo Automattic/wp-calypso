@@ -13,6 +13,8 @@
  * @return string Returns the post content with latest posts added.
  */
 function newspack_blocks_render_block_homepage_articles( $attributes ) {
+	$is_blog_private = defined( 'IS_BLOG_PRIVATE' ) && IS_BLOG_PRIVATE;
+
 	$article_query = new WP_Query( Newspack_Blocks::build_articles_query( $attributes ) );
 
 	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, [ 'wpnbha' ] );
@@ -80,7 +82,14 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 	$has_more_pages = ( ++$page ) <= $article_query->max_num_pages;
 
-	$has_more_button = $has_more_pages && boolval( $attributes['moreButton'] );
+	/**
+	 * Hide the "More" button on private sites.
+	 *
+	 * Fetching private blog data from the client-side requires request
+	 * authentication, which is not provided in the current implementation.			 *
+	 * See: https://github.com/Automattic/newspack-blocks/issues/306
+	 */
+	$has_more_button = $is_blog_private !== true && $has_more_pages && boolval( $attributes['moreButton'] );
 
 	if ( $has_more_button ) {
 		$classes .= ' has-more-button';
