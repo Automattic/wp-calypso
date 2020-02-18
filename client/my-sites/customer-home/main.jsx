@@ -12,7 +12,6 @@ import moment from 'moment';
 
 /**
  * Internal dependencies
- start commit
  */
 import Banner from 'components/banner';
 import { Button, Card } from '@automattic/components';
@@ -71,6 +70,7 @@ import './style.scss';
 import commentIcon from 'assets/images/customer-home/comment.svg';
 import customDomainIcon from 'assets/images/customer-home/custom-domain.svg';
 import customizeIcon from 'assets/images/customer-home/customize.svg';
+import freePhotoLibraryDemonstration from 'assets/images/customer-home/free-photo-library-demonstration.gif';
 import gSuiteIcon from 'assets/images/customer-home/gsuite.svg';
 import happinessIllustration from 'assets/images/customer-home/happiness.png';
 import imagesIcon from 'assets/images/customer-home/images.svg';
@@ -510,6 +510,24 @@ class Home extends Component {
 						</Card>
 					) }
 					{ ! siteIsUnlaunched && <StatsCard /> }
+					<Card className="customer-home__free-photo-library-card">
+						<img
+							className="customer-home__free-photo-library-gif"
+							src={ freePhotoLibraryDemonstration }
+							alt={ translate( 'Free Photo Library demonstration' ) }
+						/>
+						<CardHeading>{ translate( 'Over 40,000 Free Photos' ) }</CardHeading>
+						<p className="customer-home__card-subheader">
+							{ translate(
+								'The WordPress.com Free Photo Library integrates ' +
+									'your site with beautiful copyright-free photos to ' +
+									'create stunning designs.'
+							) }
+						</p>
+						<Button href={ localizeUrl( 'https://support.wordpress.com/free-photo-library/' ) }>
+							{ translate( 'Learn more' ) }
+						</Button>
+					</Card>
 					{ ! siteIsUnlaunched && isChecklistComplete && (
 						<Card>
 							<CardHeading>{ translate( 'My Site' ) }</CardHeading>

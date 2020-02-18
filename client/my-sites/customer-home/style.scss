@@ -228,6 +228,16 @@
 			}
 		}
 	}
+	
+	&__free-photo-library-card {
+		.customer-home__free-photo-library-gif {
+			margin-bottom: 12px;
+		}
+		
+		.button {
+			float: right;
+		}
+	}
 
 	&__card-subheader {
 		color: var( --color-text-subtle );
