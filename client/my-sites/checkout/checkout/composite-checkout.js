@@ -183,13 +183,6 @@ export default function CompositeCheckout( {
 		recordEvent( { type: 'CHECKOUT_LOADED' } );
 	}, [ recordEvent ] );
 
-	const onPaymentComplete = useCallback( () => {
-		debug( 'payment completed successfully' );
-		const url = getThankYouUrl();
-		recordEvent( { type: 'PAYMENT_COMPLETE', payload: { url } } );
-		page.redirect( url );
-	}, [ recordEvent, getThankYouUrl ] );
-
 	const showErrorMessage = useCallback(
 		error => {
 			debug( 'error', error );
@@ -250,6 +243,19 @@ export default function CompositeCheckout( {
 		translate,
 		showAddCouponSuccessMessage,
 		recordEvent
+	);
+
+	const onPaymentComplete = useCallback(
+		( { paymentMethodId } ) => {
+			debug( 'payment completed successfully' );
+			const url = getThankYouUrl();
+			recordEvent( {
+				type: 'PAYMENT_COMPLETE',
+				payload: { url, couponItem, paymentMethodId, total },
+			} );
+			page.redirect( url );
+		},
+		[ recordEvent, getThankYouUrl, total, couponItem ]
 	);
 
 	const { registerStore, dispatch } = registry;
@@ -599,6 +605,10 @@ function getCheckoutEventHandler( dispatch ) {
 				return dispatch(
 					recordTracksEvent( 'calypso_checkout_composite_payment_complete', {
 						redirect_url: action.payload.url,
+						coupon_code: action.payload.couponItem?.wpcom_meta.couponCode ?? '',
+						total: action.payload.total.amount.value,
+						currency: action.payload.total.amount.currency,
+						payment_method: action.payload.paymentMethodId,
 					} )
 				);
 			case 'CART_ERROR':
