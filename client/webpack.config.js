@@ -187,6 +187,7 @@ const webpackConfig = {
 				debug: path.resolve( __dirname, '../node_modules/debug' ),
 				store: 'store/dist/store.modern',
 				gridicons$: path.resolve( __dirname, 'components/gridicon' ),
+				'@wordpress/data': require.resolve( '@wordpress/data' ),
 			},
 			getAliasesForExtensions( {
 				extensionsDirectory: path.resolve( __dirname, 'extensions' ),
