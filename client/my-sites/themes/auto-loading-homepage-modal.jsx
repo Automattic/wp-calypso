@@ -114,9 +114,11 @@ class AutoLoadingHomepageModal extends Component {
 				<div>
 					<h1>
 						{ translate(
-							'Activating %(themeName)s will move your existing homepage to draft. Would you like to continue?',
+							'{{strong}}%(themeName)s{{/strong}} will automatically change your homepage layout. ' +
+								'Your current homepage will become a draft. Would you like to continue?',
 							{
 								args: { themeName },
+								components: { strong: <strong /> },
 							}
 						) }
 					</h1>
