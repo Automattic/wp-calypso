@@ -7,6 +7,7 @@ import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import PropTypes from 'prop-types';
+import { supported } from '@github/webauthn-json';
 
 const debug = debugFactory( 'calypso:me:reauth-required' );
 
@@ -28,7 +29,6 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 import userUtilities from 'lib/user/utils';
 import SecurityKeyForm from 'me/reauth-required/security-key-form';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { supported } from '@github/webauthn-json';
 
 /**
  * Style dependencies
@@ -146,25 +146,6 @@ const ReauthRequired = createReactClass( {
 		return this.state.code.length && this.state.code.length > 5;
 	},
 
-	renderSendSMSButton: function() {
-		const { smsRequestsAllowed, smsCodeSent } = this.state;
-
-		const [ clickAction, buttonLabel ] = ! smsCodeSent
-			? [ 'Send SMS Code Button on Reauth Required', this.props.translate( 'Send SMS Code' ) ]
-			: [ 'Resend SMS Code Button on Reauth Required', this.props.translate( 'Resend SMS Code' ) ];
-
-		return (
-			<FormButton
-				disabled={ ! smsRequestsAllowed }
-				isPrimary={ false }
-				onClick={ this.getClickHandler( clickAction, this.sendSMSCode ) }
-				type="button"
-			>
-				{ buttonLabel }
-			</FormButton>
-		);
-	},
-
 	renderFailedValidationMsg: function() {
 		if ( ! this.props.twoStepAuthorization.codeValidationFailed() ) {
 			return null;
@@ -249,8 +230,6 @@ const ReauthRequired = createReactClass( {
 					>
 						{ this.props.translate( 'Verify' ) }
 					</FormButton>
-
-					{ false && this.renderSendSMSButton() }
 				</form>
 			</Card>
 		);

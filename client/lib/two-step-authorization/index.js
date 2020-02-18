@@ -4,6 +4,8 @@
 import debugFactory from 'debug';
 import { replace } from 'lodash';
 
+import { get as webauthn_auth } from '@github/webauthn-json';
+
 const debug = debugFactory( 'calypso:two-step-authorization' );
 
 /**
@@ -17,7 +19,6 @@ import { reduxDispatch } from 'lib/redux-bridge';
 import { requestConnectedApplications } from 'state/connected-applications/actions';
 import { requestUserProfileLinks } from 'state/profile-links/actions';
 import config from 'config';
-import { get as webauthn_auth } from '@github/webauthn-json';
 
 const wpcom = wp.undocumented();
 
