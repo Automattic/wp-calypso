@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { BlockPreview } from '@wordpress/block-editor';
 /**
  * Internal dependencies
  */
@@ -10,9 +9,10 @@ import { BlockPreview } from '@wordpress/block-editor';
 /**
  * WordPress dependencies
  */
-/* eslint-disable import/no-extraneous-dependencies */
-// import { BlockPreview } from '@wordpress/block-editor';
-/* eslint-enable import/no-extraneous-dependencies */
+import { BlockPreview } from '@wordpress/block-editor';
+import '@wordpress/block-library/build-style/style.css';
+import '@wordpress/block-library/build-style/theme.css';
+import '@wordpress/block-library/build-style/editor.css';
 
 const BlockTemplatePreview = ( { blocks = [], onClick } ) => {
 	if ( ! blocks || ! blocks.length ) {
