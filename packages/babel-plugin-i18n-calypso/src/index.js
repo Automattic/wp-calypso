@@ -128,20 +128,17 @@ module.exports = function() {
 	return {
 		visitor: {
 			ImportDeclaration( path ) {
-				// Set functions.__ as reference to functions.translate if
-				// `translate` from  `i18n-calypso`` is aliased as `__`.
-				if (
-					'i18n-calypso' === path.node.source.value &&
-					path.node.specifiers.some(
-						specifier =>
-							specifier.imported &&
-							specifier.local &&
-							'translate' === specifier.imported.name &&
-							'__' === specifier.local.name
-					)
-				) {
-					functions.__ = functions.translate;
+				// If `translate` from  `i18n-calypso`` is imported with an
+				// alias, set the specified alias as a reference to translate.
+				if ( 'i18n-calypso' !== path.node.source.value ) {
+					return;
 				}
+
+				path.node.specifiers.forEach( specifier => {
+					if ( specifier.imported && 'translate' === specifier.imported.name && specifier.local ) {
+						functions[ specifier.local.name ] = functions.translate;
+					}
+				} );
 			},
 
 			CallExpression( path, state ) {
