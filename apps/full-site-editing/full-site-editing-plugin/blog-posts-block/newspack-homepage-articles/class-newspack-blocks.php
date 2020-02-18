@@ -14,7 +14,7 @@ class Newspack_Blocks {
 	 * Add hooks and filters.
 	 */
 	public static function init() {
-		add_action( 'after_setup_theme', array( __CLASS__, 'add_image_sizes' ) );
+		add_action( 'after_setup_theme', [ __CLASS__, 'add_image_sizes' ] );
 	}
 
 	/**
@@ -176,7 +176,7 @@ class Newspack_Blocks {
 	 * @return string Class list separated by spaces.
 	 */
 	public static function block_classes( $type, $attributes = array(), $extra = array() ) {
-		$classes = array( "wp-block-newspack-blocks-{$type}" );
+		$classes = [ "wp-block-newspack-blocks-{$type}" ];
 
 		if ( ! empty( $attributes['align'] ) ) {
 			$classes[] = 'align' . $attributes['align'];

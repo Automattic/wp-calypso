@@ -214,7 +214,7 @@ class Edit extends Component {
 
 	formatByline = authorInfo => (
 		<span className="byline">
-			{ _x( 'by', 'post author', 'newspack-blocks' ) }{ ' ' }
+			{ _x( 'by', 'post author', 'newspack-blocks' ) }{' '}
 			{ authorInfo.reduce( ( accumulator, author, index ) => {
 				return [
 					...accumulator,

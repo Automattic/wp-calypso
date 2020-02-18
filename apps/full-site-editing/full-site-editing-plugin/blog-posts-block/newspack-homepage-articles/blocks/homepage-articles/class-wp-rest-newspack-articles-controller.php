@@ -36,14 +36,14 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 		register_rest_route(
 			$this->namespace,
 			'/' . $this->rest_base,
-			array(
-				array(
+			[
+				[
 					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_items' ),
+					'callback'            => [ $this, 'get_items' ],
 					'args'                => $this->get_attribute_schema(),
 					'permission_callback' => '__return_true',
-				),
-			)
+				],
+			]
 		);
 	}
 
@@ -55,10 +55,10 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 	 */
 	public function get_items( $request ) {
 		$page        = $request->get_param( 'page' ) ?? 1;
-		$exclude_ids = $request->get_param( 'exclude_ids' ) ?? array();
+		$exclude_ids = $request->get_param( 'exclude_ids' ) ?? [];
 		$next_page   = $page + 1;
 		$attributes  = wp_parse_args(
-			$request->get_params() ?? array(),
+			$request->get_params() ?? [],
 			wp_list_pluck( $this->get_attribute_schema(), 'default' )
 		);
 
@@ -66,17 +66,17 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 
 		$query = array_merge(
 			$article_query_args,
-			array(
+			[
 				'post__not_in' => $exclude_ids,
-			)
+			]
 		);
 
 		// Run Query.
 		$article_query = new WP_Query( $query );
 
 		// Defaults.
-		$items    = array();
-		$ids      = array();
+		$items    = [];
+		$ids      = [];
 		$next_url = '';
 
 		// The Loop.
@@ -84,9 +84,9 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 			$article_query->the_post();
 			$html = Newspack_Blocks::template_inc(
 				__DIR__ . '/templates/article.php',
-				array(
+				[
 					'attributes' => $attributes,
-				)
+				]
 			);
 
 			if ( $request->get_param( 'amp' ) ) {
@@ -106,22 +106,22 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 						},
 						$attributes
 					),
-					array(
+					[
 						'exclude_ids' => false,
 						'page'        => $next_page,
 						'amp'         => $request->get_param( 'amp' ),
-					)
+					]
 				),
 				rest_url( '/newspack-blocks/v1/articles' )
 			);
 		}
 
 		return rest_ensure_response(
-			array(
+			[
 				'items' => $items,
 				'ids'   => $ids,
 				'next'  => $next_url,
-			)
+			]
 		);
 	}
 
@@ -139,15 +139,15 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 
 			$this->attribute_schema = array_merge(
 				$block_json['attributes'],
-				array(
-					'exclude_ids' => array(
+				[
+					'exclude_ids' => [
 						'type'    => 'array',
-						'default' => array(),
-						'items'   => array(
+						'default' => [],
+						'items'   => [
 							'type' => 'integer',
-						),
-					),
-				)
+						],
+					],
+				]
 			);
 		}
 		return $this->attribute_schema;
@@ -165,9 +165,9 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 		AMP_Content_Sanitizer::sanitize_document(
 			$dom,
 			amp_get_content_sanitizers(),
-			array(
+			[
 				'use_document_element' => false,
-			)
+			]
 		);
 		$xpath = new DOMXPath( $dom );
 		foreach ( iterator_to_array( $xpath->query( '//noscript | //comment()' ) ) as $node ) {
