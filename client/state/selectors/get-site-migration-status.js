@@ -18,11 +18,6 @@ import getRawSite from 'state/selectors/get-raw-site';
  */
 export default function getSiteMigrationStatus( state, siteId ) {
 	const site = getRawSite( state, siteId );
-	let status = 'inactive';
 
-	if ( site ) {
-		status = get( site, 'site_migration.status', 'inactive' );
-	}
-
-	return status;
+	return get( site, 'site_migration.status', 'inactive' );
 }
