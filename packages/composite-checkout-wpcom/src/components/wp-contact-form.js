@@ -4,7 +4,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { useSelect, useDispatch, useLineItems } from '@automattic/composite-checkout';
+import {
+	useSelect,
+	useDispatch,
+	useLineItems,
+	usePaymentMethodId,
+} from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -30,6 +35,7 @@ export default function WPContactForm( {
 	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
 	const setters = useDispatch( 'wpcom' );
 
+	const [ paymentMethodId ] = usePaymentMethodId();
 	const [ items ] = useLineItems();
 	const firstDomainItem = items.find( isLineItemADomain );
 	const domainName = firstDomainItem ? firstDomainItem.sublabel : siteUrl;
@@ -52,6 +58,7 @@ export default function WPContactForm( {
 				setters,
 				CountrySelectMenu,
 				countriesList,
+				paymentMethodId,
 			} ) }
 		</BillingFormFields>
 	);
@@ -249,6 +256,7 @@ function renderContactDetails( {
 	setters,
 	CountrySelectMenu,
 	countriesList,
+	paymentMethodId,
 } ) {
 	const format = getContactDetailsFormat( isDomainFieldsVisible );
 	const requiresVatId = isEligibleForVat( contactInfo.countryCode.value );
@@ -265,7 +273,8 @@ function renderContactDetails( {
 						[ domainName ],
 						prepareDomainContactDetails( contactInfo ),
 						setters.updateContactDetails,
-						setters.applyDomainContactValidationResults
+						setters.applyDomainContactValidationResults,
+						paymentMethodId
 					) }
 					{ requiresVatId && <VatIdField /> }
 				</React.Fragment>

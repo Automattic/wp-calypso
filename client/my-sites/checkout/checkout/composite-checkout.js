@@ -455,7 +455,8 @@ export default function CompositeCheckout( {
 		domainNames,
 		contactDetails,
 		updateContactDetails,
-		applyDomainContactValidationResults
+		applyDomainContactValidationResults,
+		paymentMethodId
 	) => {
 		return (
 			<WPCheckoutErrorBoundary>
@@ -466,6 +467,15 @@ export default function CompositeCheckout( {
 					onValidate={ ( values, onComplete ) => {
 						// TODO: Should probably handle HTTP errors here
 						validateDomainContact( values, domainNames, ( httpErrors, data ) => {
+							recordEvent( {
+								type: 'VALIDATE_DOMAIN_CONTACT_INFO',
+								payload: {
+									credits: null,
+									payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod(
+										paymentMethodId
+									),
+								},
+							} );
 							debug(
 								'Domain contact info validation ' + ( data.messages ? 'errors:' : 'successful' ),
 								data.messages
@@ -707,6 +717,14 @@ function getCheckoutEventHandler( dispatch ) {
 						error_message: String( action.payload ),
 					} )
 				);
+			case 'VALIDATE_DOMAIN_CONTACT_INFO': {
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_form_submit', {
+						credits: action.payload.credits,
+						payment_method: action.payload.payment_method,
+					} )
+				);
+			}
 			default:
 				debug( 'unknown checkout event', action );
 				return dispatch(
