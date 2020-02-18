@@ -23,7 +23,7 @@ export const getTwoFactorUserId = state => {
  * @returns {?string}         The nonce.
  */
 export const getTwoFactorAuthNonce = ( state, nonceType ) => {
-	return get( state, `login.twoFactorAuth.two_step_nonce_${ nonceType }`, null );
+	return state.login.twoFactorAuth[ `two_step_nonce_${ nonceType }` ] ?? null;
 };
 
 /**
@@ -37,7 +37,7 @@ export const getTwoFactorNotificationSent = state => {
 	return get( state, 'login.twoFactorAuth.two_step_notification_sent', null );
 };
 
-/***
+/**
  * Retrieve a token to be used for push notification auth polling
  *
  * @param  {object}   state  Global state tree
@@ -46,7 +46,7 @@ export const getTwoFactorNotificationSent = state => {
 export const getTwoFactorPushToken = state =>
 	get( state, 'login.twoFactorAuth.push_web_token', null );
 
-/***
+/**
  * Retrieve the progress status of polling for push authentication
  *
  * @param  {object}   state  Global state tree
@@ -55,7 +55,7 @@ export const getTwoFactorPushToken = state =>
 export const getTwoFactorPushPollInProgress = state =>
 	get( state, 'login.twoFactorAuthPushPoll.inProgress', false );
 
-/***
+/**
  * Get whether user logged in successfully via push auth
  *
  * @param  {object}   state  Global state tree
@@ -150,7 +150,7 @@ export const getRequestNotice = state => {
 	return get( state, 'login.requestNotice', null );
 };
 
-/***
+/**
  * Retrieves the last redirect url provided in the query parameters of any login page. This url must be sanitized by the
  * API before being used to avoid open redirection attacks.
  *
@@ -162,7 +162,7 @@ export const getRedirectToOriginal = state => {
 	return get( state, 'login.redirectTo.original', null );
 };
 
-/***
+/**
  * Retrieves the last redirect url provided in the query parameters of any login page that was sanitized by the API
  * during the authentication process.
  *
@@ -173,7 +173,7 @@ export const getRedirectToSanitized = state => {
 	return get( state, 'login.redirectTo.sanitized', null );
 };
 
-/***
+/**
  * Retrieves whether the login form should be disabled due to actions.
  *
  * @param  {object}   state  Global state tree
@@ -193,7 +193,7 @@ export const getAuthAccountType = state => {
 	return get( state, 'login.authAccountType', null );
 };
 
-/***
+/**
  * Tells us if we're in a process of creating a social account
  *
  * @param  {object}   state  Global state tree
@@ -202,7 +202,7 @@ export const getAuthAccountType = state => {
 export const isSocialAccountCreating = state =>
 	get( state, 'login.socialAccount.isCreating', null );
 
-/***
+/**
  * Gets Username of the created social account
  *
  * @param  {object}   state  Global state tree
@@ -211,7 +211,7 @@ export const isSocialAccountCreating = state =>
 export const getCreatedSocialAccountUsername = state =>
 	get( state, 'login.socialAccount.username', null );
 
-/***
+/**
  * Gets Bearer token of the created social account
  *
  * @param  {object}   state  Global state tree
@@ -220,7 +220,7 @@ export const getCreatedSocialAccountUsername = state =>
 export const getCreatedSocialAccountBearerToken = state =>
 	get( state, 'login.socialAccount.bearerToken', null );
 
-/***
+/**
  * Gets error for the create social account request.
  *
  * @param  {object}   state  Global state tree
@@ -229,7 +229,7 @@ export const getCreatedSocialAccountBearerToken = state =>
 export const getCreateSocialAccountError = state =>
 	get( state, 'login.socialAccount.createError', null );
 
-/***
+/**
  * Gets error for the get social account request.
  *
  * @param  {object}   state  Global state tree
@@ -238,7 +238,7 @@ export const getCreateSocialAccountError = state =>
 export const getRequestSocialAccountError = state =>
 	get( state, 'login.socialAccount.requestError', null );
 
-/***
+/**
  * Gets social account linking status
  *
  * @param  {object}   state  Global state tree
@@ -247,7 +247,7 @@ export const getRequestSocialAccountError = state =>
 export const getSocialAccountIsLinking = state =>
 	get( state, 'login.socialAccountLink.isLinking', null );
 
-/***
+/**
  * Gets social account linking email
  *
  * @param  {object}   state  Global state tree
@@ -256,7 +256,7 @@ export const getSocialAccountIsLinking = state =>
 export const getSocialAccountLinkEmail = state =>
 	get( state, 'login.socialAccountLink.email', null );
 
-/***
+/**
  * Gets social account linking service
  *
  * @param  {object}   state  Global state tree
@@ -265,7 +265,7 @@ export const getSocialAccountLinkEmail = state =>
 export const getSocialAccountLinkService = state =>
 	get( state, 'login.socialAccountLink.authInfo.service', null );
 
-/***
+/**
  * Gets the auth information of the social account to be linked.
  *
  * @param  {object}   state  Global state tree

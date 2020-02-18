@@ -18,6 +18,7 @@ export const isRequestingSiteRoles = ( state, siteId ) => {
 
 /**
  * Retrieve the site roles, supported in a particular site
+ *
  * @param  {object} state    Global state tree
  * @param  {number} siteId   Site ID
  * @returns {Array}           Site roles

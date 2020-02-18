@@ -24,15 +24,14 @@ import {
 	getPartnerName,
 	getRenewalPrice,
 	handleRenewNowClick,
+	hasAmountAvailableToRefund,
 	hasPaymentMethod,
 	isCancelable,
 	isExpired,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
 	isPartnerPurchase,
-	isRefundable,
 	isRenewable,
-	isRenewal,
 	isRenewing,
 	isSubscription,
 	purchaseType,
@@ -229,7 +228,7 @@ class ManagePurchase extends Component {
 		const { isAtomicSite, purchase, translate } = this.props;
 		const { id } = purchase;
 
-		if ( ! isCancelable( purchase ) || isPartnerPurchase( purchase ) || ! this.props.site ) {
+		if ( ! isCancelable( purchase ) || isPartnerPurchase( purchase ) ) {
 			return null;
 		}
 
@@ -247,14 +246,9 @@ class ManagePurchase extends Component {
 		if ( isAtomicSite && isSubscription( purchase ) ) {
 			text = translate( 'Contact Support to Cancel your Subscription' );
 			link = CALYPSO_CONTACT;
-		} else if ( isRefundable( purchase ) ) {
+		} else if ( hasAmountAvailableToRefund( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
-				if ( isRenewal( purchase ) ) {
-					text = translate( 'Contact Support to Cancel Domain and Refund' );
-					link = CALYPSO_CONTACT;
-				} else {
-					text = translate( 'Cancel Domain and Refund' );
-				}
+				text = translate( 'Cancel Domain and Refund' );
 			}
 
 			if ( isSubscription( purchase ) ) {
@@ -356,7 +350,7 @@ class ManagePurchase extends Component {
 			<div className="manage-purchase__content">
 				<span className="manage-purchase__description">{ description }</span>
 				<span className="manage-purchase__settings-link">
-					{ ! isPartnerPurchase( purchase ) && (
+					{ ! isPartnerPurchase( purchase ) && site && (
 						<ProductLink purchase={ purchase } selectedSite={ site } />
 					) }
 				</span>

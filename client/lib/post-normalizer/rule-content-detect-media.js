@@ -12,6 +12,7 @@ import { iframeIsWhitelisted, maxWidthPhotonishURL, deduceImageWidthAndHeight } 
 import { READER_CONTENT_WIDTH } from 'state/reader/posts/sizes';
 
 /** Checks whether or not an image is a tracking pixel
+ *
  * @param {Node} image - DOM node for an img
  * @returns {boolean} isTrackingPixel - returns true if image is probably a tracking pixel
  */
@@ -25,6 +26,7 @@ function isTrackingPixel( image ) {
 }
 
 /** Returns true if image should be considered
+ *
  * @param {Node} image - DOM node for an image
  * @returns {boolean} true/false depending on if it should be included as a potential featured image
  */
@@ -45,6 +47,7 @@ function isCandidateForContentImage( image ) {
 }
 
 /** Detects and returns metadata if it should be considered as a content image
+ *
  * @param {image} image - the image
  * @returns {object} metadata - regarding the image or null
  */
@@ -62,6 +65,7 @@ const detectImage = image => {
 };
 
 /**  For an iframe we know how to process, return a string for an autoplaying iframe
+ *
  * @param {Node} iframe - DOM node for an iframe
  * @returns {string} html src for an iframe that autoplays if from a source we understand.  else null;
  */
@@ -98,6 +102,7 @@ const getEmbedType = iframe => {
 };
 
 /** Detects and returns metadata if it should be considered as a content iframe
+ *
  * @param {Node} iframe - a DOM node for an iframe
  * @returns {metadata} metadata - metadata for an embed
  */
@@ -123,6 +128,7 @@ const detectEmbed = iframe => {
 };
 
 /** Adds an ordered list of all of the content_media to the post
+ *
  * @param {post} post - the post object to add content_media to
  * @param {dom} dom - the dom of the post to scan for media
  * @returns {PostMetadata} post - the post object mutated to also have content_media

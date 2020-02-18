@@ -15,6 +15,8 @@ import {
 
 import 'state/data-layer/wpcom/read/sites';
 
+import 'state/reader/init';
+
 export function requestSite( blogId ) {
 	return {
 		type: READER_SITE_REQUEST,

@@ -23,7 +23,6 @@ import { domainManagementList, domainManagementTransfer } from 'my-sites/domains
 import { getSelectedDomain } from 'lib/domains';
 import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import SectionHeader from 'components/section-header';
 import TransferConfirmationDialog from './confirmation-dialog';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import wp from 'lib/wp';
@@ -159,7 +158,6 @@ export class TransferToOtherSite extends React.Component {
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Transfer Domain To Another Site' ) } />
 				<Card className="transfer-to-other-site__card">
 					<p>{ message }</p>
 					<SiteSelector

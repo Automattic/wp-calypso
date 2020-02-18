@@ -46,6 +46,8 @@ class DomainSuggestion extends React.Component {
 			priceRule,
 			salePrice,
 			showTestCopy,
+			showDesignUpdate,
+			isEligibleVariantForDomainTest,
 			isFeatured,
 		} = this.props;
 		const classes = classNames(
@@ -80,7 +82,10 @@ class DomainSuggestion extends React.Component {
 							price={ price }
 							salePrice={ salePrice }
 							rule={ priceRule }
+							isFeatured={ isFeatured }
 							showTestCopy={ showTestCopy }
+							showDesignUpdate={ showDesignUpdate }
+							isEligibleVariantForDomainTest={ isEligibleVariantForDomainTest }
 						/>
 					) }
 				</div>

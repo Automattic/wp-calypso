@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { find, isString, map, pickBy, includes, endsWith } from 'lodash';
-import { getLocaleSlug, hasTranslation } from 'i18n-calypso';
+import i18n, { getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -85,7 +85,7 @@ export function canBeTranslated( locale ) {
  */
 export function translationExists() {
 	const localeSlug = typeof getLocaleSlug === 'function' ? getLocaleSlug() : 'en';
-	return isDefaultLocale( localeSlug ) || hasTranslation.apply( null, arguments );
+	return isDefaultLocale( localeSlug ) || i18n.hasTranslation( ...arguments );
 }
 
 /**
@@ -95,6 +95,17 @@ export function translationExists() {
  */
 export function getLanguageSlugs() {
 	return map( languages, 'langSlug' );
+}
+
+/**
+ * Return a specifier for page.js/Express route param that enumerates all supported languages.
+ *
+ * @param {string} name of the parameter. By default it's `lang`, some routes use `locale`.
+ * @param {boolean} optional whether to put the `?` character at the end, making the param optional
+ * @returns {string} Router param specifier that looks like `:lang(cs|de|fr|pl)`
+ */
+export function getLanguageRouteParam( name = 'lang', optional = true ) {
+	return `:${ name }(${ getLanguageSlugs().join( '|' ) })${ optional ? '?' : '' }`;
 }
 
 /**

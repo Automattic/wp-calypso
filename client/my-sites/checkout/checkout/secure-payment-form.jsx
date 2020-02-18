@@ -11,6 +11,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import notices from 'notices';
 import EmptyContent from 'components/empty-content';
 import CreditsPaymentBox from './credits-payment-box';
@@ -49,7 +50,7 @@ import { INPUT_VALIDATION, RECEIVED_WPCOM_RESPONSE } from 'lib/store-transaction
 import { displayError, clear } from './notices';
 import { isEbanxCreditCardProcessingEnabledForCountry } from 'lib/checkout/processor-specific';
 import { isWpComEcommercePlan } from 'lib/plans';
-import { recordTransactionAnalytics } from 'lib/store-transactions/analytics';
+import { recordTransactionAnalytics } from 'lib/analytics/store-transactions';
 
 /**
  * Module variables
@@ -217,14 +218,16 @@ export class SecurePaymentForm extends Component {
 			return;
 		}
 
-		// Until Atomic sites support being private / unlaunched, set them to public on upgrade
-		debug( 'Setting site to public because it is an Atomic plan' );
-		const response = await this.props.saveSiteSettings( selectedSiteId, {
-			blog_public: 1,
-		} );
+		if ( ! config.isEnabled( 'coming-soon' ) ) {
+			// Until Atomic sites support being private / unlaunched, set them to public on upgrade
+			debug( 'Setting site to public because it is an Atomic plan' );
+			const response = await this.props.saveSiteSettings( selectedSiteId, {
+				blog_public: 1,
+			} );
 
-		if ( ! get( response, [ 'updated', 'blog_public' ] ) ) {
-			throw 'Invalid response';
+			if ( ! get( response, [ 'updated', 'blog_public' ] ) ) {
+				throw 'Invalid response';
+			}
 		}
 	}
 

@@ -560,7 +560,7 @@ export const resetAuthAccountType = () => ( {
 /**
  * Creates an action that indicates that the push poll is completed
  *
- * @param {Array<String>} tokenLinks token links array
+ * @param {Array<string>} tokenLinks token links array
  * @returns {Function} a thunk
  */
 export const receivedTwoFactorPushNotificationApproved = tokenLinks => dispatch => {

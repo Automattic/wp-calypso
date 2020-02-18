@@ -59,3 +59,4 @@ export default function SuggestionsExample() {
 		</div>
 	);
 }
+SuggestionsExample.displayName = 'SuggestionsExample';

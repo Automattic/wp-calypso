@@ -72,7 +72,7 @@ body.is-section-signup .layout.gravatar {
 		position: relative;
 	}
 
-	.suggestions__wrapper {
+	.suggestions {
 		position: absolute;
 		top: 42px;
 		left: 0;
@@ -292,5 +292,59 @@ body.is-section-signup .layout.gravatar .formatted-header {
 			margin-left: auto;
 			height: 48px;
 		}
+	}
+}
+
+// Background color override for new flow
+body.is-section-signup.is-frankenflow {
+	background: var( --color-surface-backdrop );
+
+	.signup-header .wordpress-logo {
+		fill: var( --color-wordpress-com );
+	}
+
+	.signup-processing-screen__content {
+		color: var( --color-text );
+	}
+
+	.signup-processing-screen__floaties .gridicon {
+		fill: var( --color-text );
+	}
+
+	.button.is-borderless.navigation-link {
+		color: var( --color-text );
+
+		svg {
+			fill: var( --color-text );
+		}
+	}
+
+	.flow-progress-indicator.flow-progress-indicator__frankenflow {
+		color: var( --color-text );
+	}
+}
+
+// Text and heading color override for new flow
+body.is-section-signup.is-frankenflow .layout:not( .dops ):not( .is-wccom-oauth-flow ) {
+	&.gravatar .formatted-header, .formatted-header {
+		.formatted-header__title {
+			color: var( --color-text );
+		}
+	
+		.formatted-header__subtitle {
+			color: var( --color-text );
+		}
+	
+		a {
+			color: var( --color-link );
+	
+			&:hover {
+				color: var( --color-link-dark );
+			}
+		}
+	}
+
+	.empty-content .empty-content__title {
+		color: var( --color-text );
 	}
 }

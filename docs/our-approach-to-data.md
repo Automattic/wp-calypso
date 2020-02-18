@@ -83,11 +83,11 @@ The root module of the `state` directory exports a single reducer function. We l
 client/state/
 ├── index.js
 ├── action-types.js
-├── selectors/
 └── { subject }/
     ├── actions.js
     ├── reducer.js
     ├── schema.js
+    ├── selectors.js
     └── test/
         ├── actions.js
         └── reducer.js
@@ -257,17 +257,11 @@ let posts = getSitePosts( state, siteId );
 let posts = state.sites.sitePosts[ siteId ].map( ( postId ) => state.posts.items[ postId ] );
 ```
 
-You'll note in this example that the entire `state` object is passed to the selector. We've chosen to standardize on always sending the entire state object to any selector as the first parameter. This consistency should alleviate uncertainty in calling selectors, as you can always assume that it'll have a similar argument signature. More importantly, it's not uncommon for selectors to need to traverse different parts of the global state, as in the example above where we pull from both the `sites` and `posts` top-level state keys.
+In addition, following our modularized state approach (see [`client/state/README.md`](https://github.com/Automattic/wp-calypso/blob/master/client/state/README.md) for more details), we make sure to initialize the relevant portion of state by importing its `init` module. This is best handled in a dedicated selector module, rather than in individual connected components.
 
-Much like action types, because selectors operate on the entire global state object, we've chosen to place them one-per-file under the `state/selectors` directory. Not only does this reflect their global nature, it removes uncertainty on where selectors are to be found or created by providing a single location for them to exist.
+You'll note in the example above that the entire `state` object is passed to the selector. We've chosen to standardize on always sending the entire state object to any selector as the first parameter. This consistency should alleviate uncertainty in calling selectors, as you can always assume that it'll have a similar argument signature. More importantly, it's not uncommon for selectors to need to traverse different parts of the global state, as in the example above where we pull from both the `sites` and `posts` top-level state keys.
 
-When using selectors, you can import directly from `state/selectors`. For example:
-
-```js
-import canCurrentUser from 'state/selectors/can-current-user';
-```
-
-In this example, the logic for the selector exists at the file `state/selectors/can-current-user.js`.
+Following the modularized state approach, we've defined that the best practice is to place selectors for a given portion of state under its `state/{ subject }` directory, in a `selectors` file or directory. This keeps everything related to a given portion of state colocated. Selectors that touch multiple parts of state should live under `state/selectors`, reflecting their global nature.
 
 It's important that selectors always be pure functions, meaning that the function should always return the same result when passed identical arguments in sequence. There should be no side-effects of calling a selector. For example, in a selector you should never trigger an AJAX request or assign values to variables defined outside the scope of the function.
 
@@ -276,7 +270,7 @@ What are a few common use-cases for selectors?
 - Resolving references: A [normalized state tree](#data-normalization) is ideal from the standpoint of minimizing redundancy and synchronization concerns, but is not as developer-friendly to use. Selectors can be helpful in restoring convenient access to useful objects.
 - Derived data: A normalized state tree avoids storing duplicated data. However, it can be useful to request a value which is calculated based on state data. For example, it might be valuable to retrieve the hostname for a site, which can be calculated based on its URL property.
 - Filtering data: You can use a selector to return a subset of a state tree value. For example, a `getJetpackSites` selector could return an array of all known sites filtered to only those which are Jetpack-enabled.
- - __Side-note:__ In this case, you could achieve a similar effect with a reducer function aggregating an array of Jetpack site IDs. If you were to take this route, you'd probably want a complementary selector anyways. Caching concerns on selectors can be overcome by using memoization techniques (for example, with a library like [`reselect`](https://github.com/reduxjs/reselect)).
+ - __Side-note:__ In this case, you could achieve a similar effect with a reducer function aggregating an array of Jetpack site IDs. If you were to take this route, you'd probably want a complementary selector anyways. Caching concerns on selectors can be overcome by using memoization techniques (for example, with Calypso's `lib/create-selector` or `lib/tree-select`).
 
 ### UI State
 

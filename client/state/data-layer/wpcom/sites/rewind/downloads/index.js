@@ -17,7 +17,7 @@ import { updateRewindBackupProgress, rewindBackupUpdateError } from 'state/activ
 /** @type {number} how many ms between polls for same data */
 const POLL_INTERVAL = 1500;
 
-/** @type {Map<String, Number>} stores most-recent polling times */
+/** @type {Map<string, number>} stores most-recent polling times */
 const recentRequests = new Map();
 
 /**
@@ -54,6 +54,7 @@ const fetchProgress = action => {
 
 /**
  * Parse and merge response data for backup creation status with defaults.
+ *
  * @param   {object} data The data received from API response.
  * @returns {object}      Parsed response data.
  */

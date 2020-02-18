@@ -50,6 +50,7 @@ export const areLocationsErrored = ( state, siteId = getSelectedSiteId( state ) 
 
 /**
  * Common "getDependants" logic for all the selectors that operate on a site's locations data.
+ *
  * @param {number} numArgs Number of arguments the selector takes, excluding the Redux state tree and the site ID
  * @returns {Function} Function, as expected by the "createSelector" library
  */

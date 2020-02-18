@@ -28,6 +28,7 @@ import { getPaymentMethodsEdits } from 'woocommerce/state/ui/payments/methods/se
 
 /**
  * Creates a list of actions required to save the currency settings.
+ *
  * @param {object} state - Redux state
  * @param {number} siteId - site ID
  * @returns {Array} - actions required to save the currency, or an empty array
@@ -66,6 +67,7 @@ const getSaveCurrencySteps = ( state, siteId ) => {
 
 /**
  * Creates a list of actions required to save each payment method. Checks if the methods have changed before saving them
+ *
  * @param {object} state - Redux state
  * @param {number} siteId - site ID
  * @returns {Array} - actions required to save each payment method, or an empty array
@@ -110,6 +112,7 @@ const getSavePaymentMethodsSteps = ( state, siteId ) => {
 
 /**
  * Creates a list of all actions required to save the payment settings
+ *
  * @param {object} state - Redux state
  * @returns {Array} - action list steps
  */
@@ -126,6 +129,7 @@ export default {
 	[ WOOCOMMERCE_PAYMENT_ACTION_LIST_CREATE ]: [
 		/**
 		 * Creates and executes a payments settings action list
+		 *
 		 * @param {object} store -
 		 * @param {object} action - an action containing successAction and failureAction
 		 */
@@ -134,6 +138,7 @@ export default {
 
 			/**
 			 * A callback issued after a successful request
+			 *
 			 * @param {Function} dispatch - dispatch function
 			 */
 			const onSuccess = dispatch => {
@@ -142,6 +147,7 @@ export default {
 			};
 			/**
 			 * A callback issued after a failed request
+			 *
 			 * @param {Function} dispatch - dispatch function
 			 */
 			const onFailure = dispatch => {

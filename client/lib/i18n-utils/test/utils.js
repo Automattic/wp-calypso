@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -77,10 +76,16 @@ jest.mock( 'config', () => key => {
 	}
 } );
 
-jest.mock( 'i18n-calypso', () => ( {
-	getLocaleSlug: jest.fn( () => 'en' ),
-	hasTranslation: jest.fn( () => false ),
-} ) );
+// Mock only the getLocaleSlug function from i18n-calypso, and use
+// original references for all the other functions
+function mockFunctions() {
+	const original = jest.requireActual( 'i18n-calypso' ).default;
+	return Object.assign( Object.create( Object.getPrototypeOf( original ) ), original, {
+		getLocaleSlug: jest.fn( () => 'en' ),
+	} );
+}
+jest.mock( 'i18n-calypso', () => mockFunctions() );
+const { getLocaleSlug } = jest.requireMock( 'i18n-calypso' );
 
 describe( 'utils', () => {
 	describe( '#isDefaultLocale', () => {

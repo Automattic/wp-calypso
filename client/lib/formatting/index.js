@@ -39,6 +39,7 @@ export function interpose( separator, list ) {
 
 /**
  * Strips HTML from a string. Does not handle tags nested in attribute strings.
+ *
  * @param  {string} string The string to strip tags from
  * @returns {string}        The stripped string
  */
@@ -48,6 +49,7 @@ export function stripHTML( string ) {
 
 /**
  * Prevent widows by replacing spaces between the last `wordsToKeep` words in the text with non-breaking spaces
+ *
  * @param  {string} text        the text to work on
  * @param  {number} wordsToKeep the number of words to keep together
  * @returns {string}             the widow-prevented string
@@ -88,6 +90,7 @@ export function preventWidows( text, wordsToKeep = 2 ) {
 
 /**
  * Returns true if we detect a core Gutenberg comment block
+ *
  * @param   {string }   content - html string
  * @returns { boolean } true if we think we found a block
  */

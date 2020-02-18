@@ -26,6 +26,15 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
+	showCompositeCheckout: {
+		datestamp: '20200214',
+		variations: {
+			composite: 0,
+			regular: 100,
+		},
+		defaultVariation: 'regular',
+		allowExistingUsers: true,
+	},
 	skipThemesSelectionModal: {
 		datestamp: '20170904',
 		variations: {
@@ -94,41 +103,11 @@ export default {
 			variantShowUpdates: 90,
 			control: 10,
 		},
-		defaultVariation: 'control',
+		defaultVariation: 'variantShowUpdates',
 		allowExistingUsers: true,
-	},
-	domainStepMoveParagraph: {
-		datestamp: '20191216',
-		variations: {
-			variantMoveParagraph: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	nonEnglishDomainStepCopyUpdates: {
-		datestamp: '20191219',
-		variations: {
-			variantShowUpdates: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-		localeExceptions: [ 'en' ],
-	},
-	domainSuggestionsWithHints: {
-		datestamp: '20191220',
-		variations: {
-			variation2_front: 0,
-			variation3_front: 50,
-			variation4_front: 25,
-			variation5_front: 25,
-		},
-		defaultVariation: 'variation2_front',
 	},
 	showBusinessPlanPopular: {
-		datestamp: '20191220',
+		datestamp: '20200109',
 		variations: {
 			variantShowBizPopular: 50,
 			control: 50,
@@ -147,5 +126,23 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: false,
 		localeTargets: 'any',
+	},
+	sidebarUpsellNudgeUnification: {
+		datestamp: '20200127',
+		variations: {
+			variantShowUnifiedUpsells: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	domainStepDesignUpdates: {
+		datestamp: '20200205',
+		variations: {
+			variantDesignUpdates: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
 };

@@ -2,55 +2,47 @@
  * External dependencies
  */
 import { __ as NO__ } from '@wordpress/i18n';
-import { Icon, IconButton } from '@wordpress/components';
+import { Button, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect, useCallback } from 'react';
 import { useDebounce } from 'use-debounce';
 import classnames from 'classnames';
+import { DomainSuggestions } from '@automattic/data-stores';
+import { useHistory } from 'react-router-dom';
 
 /**
  * Internal dependencies
  */
-import { DomainSuggestions } from '@automattic/data-stores';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { USER_STORE } from '../../stores/user';
+import { SITE_STORE } from '../../stores/site';
 import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
 import { selectorDebounce } from '../../constants';
 import Link from '../link';
+import { Step } from '../../steps';
 
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
 interface Props {
-	isEditorSidebarOpened: boolean;
-	next?: string;
 	prev?: string;
-	toggleGeneralSidebar: () => void;
-	toggleSidebarShortcut: KeyboardShortcut;
 }
 
-interface KeyboardShortcut {
-	raw: string;
-	display: string;
-	ariaLabel: string;
-}
+const Header: FunctionComponent< Props > = ( { prev } ) => {
+	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
+	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
 
-const Header: FunctionComponent< Props > = ( {
-	isEditorSidebarOpened,
-	next,
-	prev,
-	toggleGeneralSidebar,
-	toggleSidebarShortcut,
-} ) => {
-	const { domain, siteTitle, siteVertical } = useSelect( select =>
+	const { createSite } = useDispatch( SITE_STORE );
+
+	const newSite = useSelect( select => select( SITE_STORE ).getNewSite() );
+
+	const { domain, selectedDesign, siteTitle, siteVertical, shouldCreate } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
-	const { setDomain } = useDispatch( ONBOARD_STORE );
+	const hasSelectedDesign = !! selectedDesign;
+	const { setDomain, resetOnboardStore, setShouldCreate } = useDispatch( ONBOARD_STORE );
 
-	const [ domainSearch ] = useDebounce(
-		// If we know a domain, do not search.
-		! domain && siteTitle,
-		selectorDebounce
-	);
+	const [ domainSearch ] = useDebounce( siteTitle, selectorDebounce );
 	const freeDomainSuggestion = useSelect(
 		select => {
 			if ( ! domainSearch ) {
@@ -65,6 +57,14 @@ const Header: FunctionComponent< Props > = ( {
 		},
 		[ domainSearch, siteVertical ]
 	);
+
+	useEffect( () => {
+		if ( ! siteTitle ) {
+			setDomain( undefined );
+		}
+	}, [ siteTitle, setDomain ] );
+
+	const history = useHistory();
 
 	const currentDomain = domain ?? freeDomainSuggestion;
 
@@ -84,6 +84,46 @@ const Header: FunctionComponent< Props > = ( {
 			{ currentDomain ? currentDomain.domain_name : 'example.wordpress.com' }
 		</span>
 	);
+
+	const handleCreateSite = useCallback(
+		( username: string, bearerToken?: string ) => {
+			const siteUrl = currentDomain?.domain_name || siteTitle || username;
+			createSite( {
+				blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
+				blog_title: siteTitle,
+				options: {
+					site_vertical: siteVertical?.id,
+					site_vertical_name: siteVertical?.label,
+					site_information: {
+						title: siteTitle,
+					},
+					site_creation_flow: 'gutenboarding',
+					theme: `pub/${ selectedDesign?.slug }`,
+				},
+				...( bearerToken && { authToken: bearerToken } ),
+			} );
+		},
+		[ createSite, currentDomain, selectedDesign, siteTitle, siteVertical ]
+	);
+
+	const handleSignup = () => {
+		setShouldCreate( true );
+		history.push( Step.Signup );
+	};
+
+	useEffect( () => {
+		if ( shouldCreate && newUser && newUser.bearerToken && newUser.username ) {
+			handleCreateSite( newUser.username, newUser.bearerToken );
+			setShouldCreate( false );
+		}
+	}, [ shouldCreate, newUser, handleCreateSite, setShouldCreate ] );
+
+	useEffect( () => {
+		if ( newSite ) {
+			resetOnboardStore();
+			window.location.href = `/block-editor/page/${ newSite.blogid }/home?is-gutenboarding`;
+		}
+	}, [ newSite, resetOnboardStore ] );
 
 	return (
 		<div
@@ -117,20 +157,20 @@ const Header: FunctionComponent< Props > = ( {
 				</div>
 			</div>
 			<div className="gutenboarding__header-section">
-				<Link to={ next } className="gutenboarding__header-next-button" isPrimary isLarge>
-					{ NO__( 'Next' ) }
-				</Link>
 				<div className="gutenboarding__header-group">
-					<IconButton
-						aria-expanded={ isEditorSidebarOpened }
-						aria-haspopup="menu"
-						aria-pressed={ isEditorSidebarOpened }
-						icon="admin-generic"
-						isToggled={ isEditorSidebarOpened }
-						label={ NO__( 'Site block settings' ) }
-						onClick={ toggleGeneralSidebar }
-						shortcut={ toggleSidebarShortcut }
-					/>
+					{ hasSelectedDesign && (
+						<Button
+							className="gutenboarding__header-next-button"
+							isPrimary
+							isLarge
+							onClick={ () =>
+								currentUser ? handleCreateSite( currentUser.username ) : handleSignup()
+							}
+							disabled={ shouldCreate }
+						>
+							{ NO__( 'Create my site' ) }
+						</Button>
+					) }
 				</div>
 			</div>
 		</div>

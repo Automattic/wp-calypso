@@ -18,7 +18,7 @@ import PaymentLogo from './payment-logo';
 import {
 	useStripe,
 	createStripePaymentMethod,
-	confirmStripePaymentIntent,
+	showStripeModalAuth,
 	StripeHookProvider,
 } from '../stripe';
 import {
@@ -42,7 +42,6 @@ const debug = debugFactory( 'composite-checkout:stripe-payment-method' );
 export function createStripeMethod( {
 	getCountry,
 	getPostalCode,
-	getPhoneNumber,
 	getSubdivisionCode,
 	registerStore,
 	fetchStripeConfiguration,
@@ -62,17 +61,13 @@ export function createStripeMethod( {
 		changeCardholderName( payload ) {
 			return { type: 'CARDHOLDER_NAME_SET', payload };
 		},
-		setStripeError( payload ) {
-			return { type: 'STRIPE_TRANSACTION_ERROR', payload };
+		setStripeComplete( payload ) {
+			debug( 'stripe transaction is successful' );
+			return { type: 'STRIPE_TRANSACTION_END', payload };
 		},
-		*getConfiguration( payload ) {
-			let configuration;
-			try {
-				configuration = yield { type: 'STRIPE_CONFIGURATION_FETCH', payload };
-			} catch ( error ) {
-				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
-			}
-			return { type: 'STRIPE_CONFIGURATION_SET', payload: configuration };
+		resetTransaction() {
+			debug( 'resetting transaction' );
+			return { type: 'STRIPE_TRANSACTION_RESET' };
 		},
 		*beginStripeTransaction( payload ) {
 			let stripeResponse;
@@ -83,7 +78,6 @@ export function createStripeMethod( {
 						...payload,
 						country: getCountry(),
 						postalCode: getPostalCode(),
-						phoneNumber: getPhoneNumber(),
 					},
 				};
 				debug( 'stripe payment token created' );
@@ -110,15 +104,12 @@ export function createStripeMethod( {
 				debug( 'stripe transaction requires redirect' );
 				return { type: 'STRIPE_TRANSACTION_REDIRECT', payload: stripeResponse };
 			}
-			debug( 'stripe transaction requires is successful' );
+			debug( 'stripe transaction is successful' );
 			return { type: 'STRIPE_TRANSACTION_END', payload: stripeResponse };
 		},
 	};
 
 	const selectors = {
-		getStripeConfiguration( state ) {
-			return state.stripeConfiguration;
-		},
 		getBrand( state ) {
 			return state.brand || '';
 		},
@@ -133,6 +124,9 @@ export function createStripeMethod( {
 		},
 		getTransactionAuthData( state ) {
 			return state.transactionAuthData;
+		},
+		getRedirectUrl( state ) {
+			return state.redirectUrl;
 		},
 		getCardDataErrors( state ) {
 			return state.cardDataErrors;
@@ -197,9 +191,13 @@ export function createStripeMethod( {
 					return {
 						...state,
 						transactionStatus: 'redirect',
+						redirectUrl: action.payload.redirect_url,
 					};
-				case 'STRIPE_CONFIGURATION_SET':
-					return { ...state, stripeConfiguration: action.payload };
+				case 'STRIPE_TRANSACTION_RESET':
+					return {
+						...state,
+						transactionStatus: null,
+					};
 				case 'CARDHOLDER_NAME_SET':
 					return { ...state, cardholderName: action.payload };
 				case 'BRAND_SET':
@@ -220,9 +218,6 @@ export function createStripeMethod( {
 		actions,
 		selectors,
 		controls: {
-			STRIPE_CONFIGURATION_FETCH( action ) {
-				return fetchStripeConfiguration( action.payload );
-			},
 			STRIPE_CREATE_PAYMENT_METHOD_TOKEN( action ) {
 				return createStripePaymentMethodToken( action.payload );
 			},
@@ -237,7 +232,11 @@ export function createStripeMethod( {
 		label: <CreditCardLabel />,
 		activeContent: <StripeCreditCardFields />,
 		submitButton: <StripePayButton />,
-		CheckoutWrapper: StripeHookProvider,
+		checkoutWrapper: children => (
+			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+				{ children }
+			</StripeHookProvider>
+		),
 		inactiveContent: <StripeSummary />,
 		getAriaLabel: localize => localize( 'Credit Card' ),
 		isCompleteCallback: () => {
@@ -273,6 +272,7 @@ function StripeCreditCardFields() {
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
+			debug( 'showing error for loading', stripeLoadingError );
 			showErrorMessage( stripeLoadingError );
 		}
 	}, [ showErrorMessage, stripeLoadingError ] );
@@ -313,9 +313,13 @@ function StripeCreditCardFields() {
 		},
 	};
 
-	if ( stripeLoadingError ) {
-		onEvent( { type: 'a8c_checkout_error', payload: { type: 'Stripe loading error' } } );
+	useEffect( () => {
+		if ( stripeLoadingError ) {
+			onEvent( { type: 'a8c_checkout_error', payload: { type: 'Stripe loading error' } } );
+		}
+	}, [ stripeLoadingError, onEvent ] );
 
+	if ( stripeLoadingError ) {
 		return (
 			<CreditCardFieldsWrapper isLoaded={ true }>
 				<ErrorMessage>
@@ -509,45 +513,82 @@ function LoadingFields() {
 function StripePayButton( { disabled } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
-	const { showErrorMessage } = useMessages();
+	const { showErrorMessage, showInfoMessage } = useMessages();
 	const { stripe, stripeConfiguration } = useStripe();
 	const transactionStatus = useSelect( select => select( 'stripe' ).getTransactionStatus() );
 	const transactionError = useSelect( select => select( 'stripe' ).getTransactionError() );
 	const transactionAuthData = useSelect( select => select( 'stripe' ).getTransactionAuthData() );
-	const { beginStripeTransaction } = useDispatch( 'stripe' );
+	const { beginStripeTransaction, setStripeComplete, resetTransaction } = useDispatch( 'stripe' );
 	const name = useSelect( select => select( 'stripe' ).getCardholderName() );
+	const redirectUrl = useSelect( select => select( 'stripe' ).getRedirectUrl() );
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
+	const onEvent = useEvents();
 
 	useEffect( () => {
 		if ( transactionStatus === 'error' ) {
-			// TODO: clear this after showing it
+			debug( 'showing error', transactionError );
 			showErrorMessage(
 				transactionError || localize( 'An error occurred during the transaction' )
 			);
+			onEvent( { type: 'STRIPE_TRANSACTION_ERROR', payload: transactionError || '' } );
+			resetTransaction();
 			setFormReady();
 		}
 		if ( transactionStatus === 'complete' ) {
-			debug( 'stripe transaction is complete' );
+			debug( 'marking complete' );
 			setFormComplete();
 		}
 		if ( transactionStatus === 'redirect' ) {
-			// TODO: notify user that we are going to redirect
-		}
-		if ( transactionStatus === 'auth' ) {
-			showStripeModalAuth( {
-				stripeConfiguration,
-				response: transactionAuthData,
-			} ).catch( error => {
-				setFormReady();
-				showErrorMessage( error.stripeError || error.message );
-			} );
+			debug( 'redirecting' );
+			showInfoMessage( localize( 'Redirecting...' ) );
+			window.location = redirectUrl;
 		}
 	}, [
+		onEvent,
+		resetTransaction,
 		setFormReady,
 		setFormComplete,
 		showErrorMessage,
+		showInfoMessage,
 		transactionStatus,
 		transactionError,
+		redirectUrl,
+		localize,
+	] );
+
+	useEffect( () => {
+		let isSubscribed = true;
+
+		if ( transactionStatus === 'auth' ) {
+			debug( 'showing auth' );
+			showStripeModalAuth( {
+				stripeConfiguration,
+				response: transactionAuthData,
+			} )
+				.then( authenticationResponse => {
+					debug( 'stripe auth is complete', authenticationResponse );
+					isSubscribed && setStripeComplete( authenticationResponse );
+				} )
+				.catch( error => {
+					debug( 'showing error for auth', error );
+					showErrorMessage(
+						localize( 'Authorization failed for that card. Please try a different payment method.' )
+					);
+					onEvent( { type: 'EXISTING_CARD_TRANSACTION_ERROR', payload: error } );
+					isSubscribed && resetTransaction();
+					isSubscribed && setFormReady();
+				} );
+		}
+
+		return () => ( isSubscribed = false );
+	}, [
+		onEvent,
+		setStripeComplete,
+		resetTransaction,
+		setFormReady,
+		showInfoMessage,
+		showErrorMessage,
+		transactionStatus,
 		transactionAuthData,
 		stripeConfiguration,
 		localize,
@@ -570,6 +611,8 @@ function StripePayButton( { disabled } ) {
 					showErrorMessage,
 					beginStripeTransaction,
 					setFormSubmitting,
+					resetTransaction,
+					onEvent,
 				} )
 			}
 			buttonState={ disabled ? 'disabled' : 'primary' }
@@ -604,10 +647,13 @@ async function submitStripePayment( {
 	beginStripeTransaction,
 	setFormSubmitting,
 	setFormReady,
+	resetTransaction,
+	onEvent,
 } ) {
 	debug( 'submitting stripe payment' );
 	try {
 		setFormSubmitting();
+		onEvent( { type: 'STRIPE_TRANSACTION_BEGIN' } );
 		beginStripeTransaction( {
 			stripe,
 			name,
@@ -616,30 +662,21 @@ async function submitStripePayment( {
 			stripeConfiguration,
 		} );
 	} catch ( error ) {
+		resetTransaction();
 		setFormReady();
+		onEvent( { type: 'STRIPE_TRANSACTION_ERROR', payload: error } );
+		debug( 'showing error for submit', error );
 		showErrorMessage( error );
 		return;
 	}
 }
 
-function createStripePaymentMethodToken( { stripe, name, country, postalCode, phoneNumber } ) {
+function createStripePaymentMethodToken( { stripe, name, country, postalCode } ) {
 	return createStripePaymentMethod( stripe, {
 		name,
 		address: {
 			country,
 			postal_code: postalCode,
 		},
-		...( phoneNumber ? { phone: phoneNumber } : {} ),
 	} );
-}
-
-async function showStripeModalAuth( { stripeConfiguration, response } ) {
-	const authenticationResponse = await confirmStripePaymentIntent(
-		stripeConfiguration,
-		response.message.payment_intent_client_secret
-	);
-
-	if ( authenticationResponse ) {
-		// TODO: what do we do here?
-	}
 }

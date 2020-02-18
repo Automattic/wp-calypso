@@ -34,7 +34,6 @@ import QueryUserConnection from 'components/data/query-user-connection';
 import Spinner from 'components/spinner';
 import userUtilities from 'lib/user/utils';
 import versionCompare from 'lib/version-compare';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import { decodeEntities } from 'lib/formatting';
@@ -173,7 +172,7 @@ export class JetpackAuthorize extends Component {
 			// as controlled by MAX_AUTH_ATTEMPTS.
 			const attempts = this.props.authAttempts || 0;
 			this.retryingAuth = true;
-			return retryAuth( site, attempts + 1, nextProps.authQuery.from );
+			return retryAuth( site, attempts + 1, nextProps.authQuery.from, redirectAfterAuth );
 		}
 	}
 
@@ -754,8 +753,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( JetpackAuthorize );
+export default flowRight( connectComponent, localize )( JetpackAuthorize );

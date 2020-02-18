@@ -35,6 +35,7 @@ export default function CheckoutPaymentMethods( { summary, isComplete, className
 	const paymentMethods = useAllPaymentMethods();
 
 	if ( summary && isComplete && paymentMethod ) {
+		debug( 'rendering selected paymentMethod', paymentMethod );
 		return (
 			<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
 				<CheckoutErrorBoundary
@@ -52,8 +53,15 @@ export default function CheckoutPaymentMethods( { summary, isComplete, className
 	}
 
 	if ( summary ) {
+		debug(
+			'summary requested, but no complete paymentMethod is selected; isComplete:',
+			isComplete,
+			'paymentMethod:',
+			paymentMethod
+		);
 		return null;
 	}
+	debug( 'rendering paymentMethods', paymentMethods );
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
@@ -67,7 +75,7 @@ export default function CheckoutPaymentMethods( { summary, isComplete, className
 					>
 						<PaymentMethod
 							{ ...method }
-							checked={ paymentMethod.id === method.id }
+							checked={ paymentMethod?.id === method.id }
 							onClick={ onClickPaymentMethod }
 							ariaLabel={ method.getAriaLabel( localize ) }
 						/>

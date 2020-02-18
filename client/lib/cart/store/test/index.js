@@ -6,10 +6,10 @@
  * Internal dependencies
  */
 import { transactionPaymentSetActions, paymentActionLocations } from './fixtures/actions';
-import { recordUnrecognizedPaymentMethod } from '../cart-analytics';
+import { recordUnrecognizedPaymentMethod } from 'lib/analytics/cart';
 import { setTaxLocation } from 'lib/cart-values';
 
-jest.mock( '../cart-analytics', () => ( {
+jest.mock( 'lib/analytics/cart', () => ( {
 	recordEvents: () => ( {} ),
 	recordUnrecognizedPaymentMethod: jest.fn(),
 } ) );

@@ -100,7 +100,7 @@ export function getUrlParts( url: URLString | URL ): UrlParts {
 	}
 
 	// Path-absolute or path-relative URL; pick only a few parts.
-	const pathPartKeys: UrlPartKey[] = [ 'pathname', 'hash', 'search' ];
+	const pathPartKeys: UrlPartKey[] = [ 'pathname', 'hash', 'search', 'searchParams' ];
 	const pathParts = pickUrlParts( parsed, pathPartKeys );
 
 	// Path-relative URLs require special handling, because they cannot be transformed

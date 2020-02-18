@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/full-site-editing",
-	"version": "0.18.2",
+	"version": "0.19.0",
 	"description": "Plugin for full site editing with the block editor.",
 	"sideEffects": true,
 	"repository": {
@@ -16,7 +16,7 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
-		"full-site-editing": "calypso-build --source='full-site-editing'",
+		"full-site-editing": "calypso-build --source='dotcom-fse'",
 		"dev:full-site-editing": "npm run full-site-editing",
 		"build:full-site-editing": "NODE_ENV=production npm run full-site-editing",
 		"posts-list-block": "calypso-build --source='posts-list-block'",
@@ -33,25 +33,18 @@
 		"global-styles": "calypso-build --source='global-styles'",
 		"build:global-styles": "NODE_ENV=production npm run global-styles",
 		"dev:global-styles": "npm run global-styles",
-		"dev": "npm-run-all --parallel dev:*",
-		"build": "npm-run-all --parallel build:*",
-		"test:unit": "wp-scripts test-unit-js --config='jest.config.js'",
-		"test:unit:help": "wp-scripts test-unit-js --config='jest.config.js' --help",
-		"test:unit:watch": "wp-scripts test-unit-js --config='jest.config.js' --watch",
+		"dev": "node bin/npm-run-build.js --dev",
+		"build": "node bin/npm-run-build.js --build",
+		"test:js": "npx wp-scripts test-unit-js --config='bin/js-unit-config.js'",
+		"test:js:help": "npx wp-scripts test-unit-js --config='bin/js-unit-config.js' --help",
+		"test:js:watch": "npx wp-scripts test-unit-js --config='bin/js-unit-config.js' --watch",
 		"clean": "npx rimraf dist full-site-editing-plugin/*/dist",
 		"prebuild": "npm run clean",
 		"predev": "npm run clean",
-		"sync:blog-posts-block": "./bin/sync-blog-posts-block.sh"
+		"sync:blog-posts-block": "./bin/sync-blog-posts-block.sh",
+		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh"
 	},
 	"dependencies": {
 		"classnames": "2.2.6"
-	},
-	"devDependencies": {
-		"@automattic/calypso-build": "^4.2.1",
-		"@testing-library/jest-dom": "4.2.4",
-		"@testing-library/react": "9.3.3",
-		"@wordpress/jest-preset-default": "5.2.0",
-		"@wordpress/scripts": "6.0.0",
-		"eslint-plugin-jest": "23.1.1"
 	}
 }

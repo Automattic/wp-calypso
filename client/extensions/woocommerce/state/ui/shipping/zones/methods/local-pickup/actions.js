@@ -9,6 +9,7 @@ import {
 
 /**
  * Changes the "tax_status" setting.
+ *
  * @param {number} siteId Site ID.
  * @param {string} methodId ID of the shipping method to edit.
  * @param {boolean} isTaxable Whether the shipping cost must be subject to taxes or not.
@@ -26,6 +27,7 @@ export const setShippingIsTaxable = ( siteId, methodId, isTaxable ) => {
 
 /**
  * Changes the "cost" setting.
+ *
  * @param {number} siteId Site ID.
  * @param {string} methodId ID of the shipping method to edit.
  * @param {number} cost Fixed cost the customer will pay for shipping.

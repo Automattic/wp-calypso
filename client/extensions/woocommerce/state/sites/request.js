@@ -56,6 +56,7 @@ const _requestWithHeaders = ( method, path, siteId, sendBody, namespace = 'wc/v3
 /**
  * Higher-level layer on top of the WPCOM.JS library, made specifically for making requests to a
  * Jetpack-connected WooComemrce site.
+ *
  * @param {number} siteId Site ID to make the request to
  * @returns {object} An object with the properties "get", "post", "put" and "del", which are functions to
  * make an HTTP GET, POST, PUT and DELETE request, respectively.
@@ -63,6 +64,7 @@ const _requestWithHeaders = ( method, path, siteId, sendBody, namespace = 'wc/v3
 export default siteId => ( {
 	/**
 	 * Sends a GET request to the API
+	 *
 	 * @param {string} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
 	 * @param {string} namespace URL namespace, defaults to 'wc/v3'
 	 * @returns {Promise} Resolves with the JSON response, or rejects with an error
@@ -71,6 +73,7 @@ export default siteId => ( {
 
 	/**
 	 * Sends a GET request to the API and returns headers along with the body.
+	 *
 	 * @param {string} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
 	 * @param {string} namespace URL namespace, defaults to 'wc/v3'
 	 * @returns {Promise} Resolves with the JSON response, or rejects with an error
@@ -80,6 +83,7 @@ export default siteId => ( {
 
 	/**
 	 * Sends a POST request to the API
+	 *
 	 * @param {string} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
 	 * @param {object} body Payload to send
 	 * @param {string} namespace URL namespace, defaults to 'wc/v3'
@@ -91,6 +95,7 @@ export default siteId => ( {
 	 * Sends a PUT request to the API.
 	 * Note that the underlying request will be a POST, with an special URL parameter to
 	 * be interpreted by the WPCOM server as a PUT request.
+	 *
 	 * @param {string} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
 	 * @param {object} body Payload to send
 	 * @param {string} namespace URL namespace, defaults to 'wc/v3'
@@ -102,6 +107,7 @@ export default siteId => ( {
 	 * Sends a DELETE request to the API.
 	 * Note that the underlying request will be a POST, with an special URL parameter to
 	 * be interpreted by the WPCOM server as a DELETE request.
+	 *
 	 * @param {string} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
 	 * @param {string} namespace URL namespace, defaults to 'wc/v3'
 	 * @returns {Promise} Resolves with the JSON response, or rejects with an error

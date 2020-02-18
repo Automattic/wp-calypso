@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { drop, join, get, split, startsWith } from 'lodash';
-
+import moment from 'moment';
 /**
  * Internal dependencies
  */
@@ -94,4 +94,8 @@ export function parseDomainAgainstTldList( domainFragment, tldList ) {
 	const suffix = join( drop( parts ), '.' );
 
 	return parseDomainAgainstTldList( suffix, tldList );
+}
+
+export function isRecentlyRegistered( registrationDate ) {
+	return moment.utc( registrationDate ).isAfter( moment.utc().subtract( 30, 'minutes' ) );
 }

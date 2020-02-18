@@ -21,9 +21,11 @@ import {
 	selectPrevItem,
 	showUpdates,
 } from 'state/reader/streams/actions';
-import getStream from 'state/selectors/get-reader-stream';
-import shouldRequestRecs from 'state/selectors/get-reader-stream-should-request-recommendations';
-import getTransformedStreamItems from 'state/selectors/get-reader-stream-transformed-items';
+import {
+	getStream,
+	getTransformedStreamItems,
+	shouldRequestRecs,
+} from 'state/reader/streams/selectors';
 
 import { shouldShowLikes } from 'reader/like-helper';
 import { like as likePost, unlike as unlikePost } from 'state/posts/likes/actions';
@@ -38,7 +40,7 @@ import scrollTo from 'lib/scroll-to';
 import XPostHelper from 'reader/xpost-helper';
 import PostLifecycle from './post-lifecycle';
 import { showSelectedPost, getStreamType } from 'reader/utils';
-import getBlockedSites from 'state/selectors/get-blocked-sites';
+import { getBlockedSites } from 'state/reader/site-blocks/selectors';
 import { keysAreEqual, keyToString, keyForPost } from 'reader/post-key';
 import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
 import { reduxGetState } from 'lib/redux-bridge';

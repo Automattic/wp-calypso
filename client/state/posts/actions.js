@@ -525,6 +525,7 @@ function normalizePost( post ) {
 
 /**
  * Normalizes attributes to API expectations
+ *
  * @param  {object} attributes - changed attributes
  * @returns {object} - normalized attributes
  */
@@ -544,7 +545,7 @@ function normalizeApiAttributes( attributes ) {
  *
  * @param {object} siteId Site ID
  * @param {number} postId Post ID to load
- * @returns {Promise<?Object>} The edited post object
+ * @returns {Promise<?object>} The edited post object
  */
 export const startEditingExistingPost = ( siteId, postId ) => ( dispatch, getState ) => {
 	const currentSiteId = getSelectedSiteId( getState() );

@@ -7,6 +7,7 @@ import getSites from 'state/selectors/get-sites';
 
 /**
  * Returns true if we are requesting sites we don't have yet.
+ *
  * @param {object}    state  Global state tree
  * @returns {boolean}        Request State
  */

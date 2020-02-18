@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * External dependencies
  */
@@ -33,7 +34,7 @@ import getEditorCloseConfig from 'state/selectors/get-editor-close-config';
 import wpcom from 'lib/wp';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
-import { startEditingPost } from 'state/ui/editor/actions';
+import { setEditorIframeLoaded, startEditingPost } from 'state/ui/editor/actions';
 import { Placeholder } from './placeholder';
 import WebPreview from 'components/web-preview';
 import { trashPost } from 'state/posts/actions';
@@ -53,6 +54,7 @@ import * as T from 'types';
  */
 import './style.scss';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 interface Props {
 	duplicatePostId: T.PostId;
 	postId: T.PostId;
@@ -76,6 +78,7 @@ interface State {
 	postUrl?: T.URL;
 	previewUrl: T.URL;
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 enum WindowActions {
 	Loaded = 'loaded',
@@ -97,6 +100,7 @@ enum EditorActions {
 	OpenTemplatePart = 'openTemplatePart',
 	GetCloseButtonUrl = 'getCloseButtonUrl',
 	LogError = 'logError',
+	GetGutenboardingStatus = 'getGutenboardingStatus',
 }
 
 class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedFormProps, State > {
@@ -146,7 +150,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			this.iframeRef.current.contentWindow
 		) {
 			this.successfulIframeLoad = true;
-			const { port1: iframePortObject, port2: transferredPortObject } = new MessageChannel();
+			const { port1: iframePortObject, port2: transferredPortObject } = new window.MessageChannel();
 
 			this.iframePort = iframePortObject;
 			this.iframePort.addEventListener( 'message', this.onIframePortMessage, false );
@@ -158,6 +162,10 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 			// Check if we're generating a post via Press This
 			this.pressThis();
+
+			// Notify external listeners that the iframe has loaded
+			this.props.setEditorIframeLoaded();
+
 			return;
 		}
 
@@ -241,6 +249,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 		if ( EditorActions.CloseEditor === action || EditorActions.GoToAllPosts === action ) {
 			const { unsavedChanges = false } = payload;
+			this.props.setEditorIframeLoaded( false );
 			this.navigate( this.props.closeUrl, unsavedChanges );
 		}
 
@@ -276,6 +285,17 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			ports[ 0 ].postMessage( {
 				closeUrl: `${ window.location.origin }${ closeUrl }`,
 				label: closeLabel,
+			} );
+		}
+
+		if ( EditorActions.GetGutenboardingStatus === action ) {
+			// TODO - In future iterations, replace window param with gutenboarding site info.
+			const urlParams = new URLSearchParams( window.location.search );
+			const isGutenboarding =
+				config.isEnabled( 'gutenboarding' ) && urlParams.has( 'is-gutenboarding' );
+			ports[ 0 ].postMessage( {
+				isGutenboarding,
+				frankenflowUrl: `${ window.location.origin }/start/frankenflow?siteSlug=${ this.props.siteId }`,
 			} );
 		}
 
@@ -551,7 +571,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
 					{ ( shouldLoadIframe || isIframeLoaded ) && (
-						/* eslint-disable-next-line jsx-a11y/iframe-has-title */
+						/* eslint-disable jsx-a11y/iframe-has-title */
 						<iframe
 							ref={ this.iframeRef }
 							/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
@@ -563,6 +583,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 								this.onIframeLoaded( iframeUrl );
 							} }
 						/>
+						/* eslint-enable jsx-a11y/iframe-has-title */
 					) }
 				</div>
 				<MediaLibrarySelectedData siteId={ siteId }>
@@ -592,7 +613,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 }
 
 const mapStateToProps = (
-	state,
+	state: T.AppState,
 	{ postId, postType, duplicatePostId, fseParentPageId, creatingNewHomepage }: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
@@ -661,6 +682,7 @@ const mapDispatchToProps = {
 	setRoute,
 	navigate,
 	openPostRevisionsDialog,
+	setEditorIframeLoaded,
 	startEditingPost,
 	trashPost,
 	updateSiteFrontPage,

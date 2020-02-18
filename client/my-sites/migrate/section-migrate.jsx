@@ -2,63 +2,111 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { localize, getLocaleSlug } from 'i18n-calypso';
+import { getLocaleSlug, localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
-import { get, isEmpty, includes } from 'lodash';
+import { get, includes, isEmpty, omit } from 'lodash';
 import moment from 'moment';
 import { Button, Card, CompactCard, ProgressBar } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import CardHeading from 'components/card-heading';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import Gridicon from 'components/gridicon';
-import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
-import MigrateButton from './migrate-button';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import Site from 'blocks/site';
-import SiteSelector from 'components/site-selector';
 import Spinner from 'components/spinner';
+import { FEATURE_UPLOAD_THEMES_PLUGINS } from 'lib/plans/constants';
+import { planHasFeature } from 'lib/plans';
+import StepConfirmMigration from './step-confirm-migration';
+import StepImportOrMigrate from './step-import-or-migrate';
+import StepSourceSelect from './step-source-select';
+import StepUpgrade from './step-upgrade';
 import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
+import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'state/sites/selectors';
-import { updateSiteMigrationStatus } from 'state/sites/actions';
+import { receiveSite, updateSiteMigrationStatus } from 'state/sites/actions';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { urlToSlug } from 'lib/url';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import wpLib from 'lib/wp';
+import wpcom from 'lib/wp';
 
 /**
  * Style dependencies
  */
 import './section-migrate.scss';
 
-const wpcom = wpLib.undocumented();
-
 class SectionMigrate extends Component {
+	_startedMigrationFromCart = false;
+
 	state = {
+		errorMessage: '',
+		isJetpackConnected: false,
 		migrationStatus: 'unknown',
 		percent: 0,
+		siteInfo: null,
+		selectedSiteSlug: null,
+		sourceSitePlugins: [],
+		sourceSiteThemes: [],
 		startTime: '',
-		errorMessage: '',
+		url: '',
+		chosenImportType: '',
 	};
 
 	componentDidMount() {
+		if ( true === this.props.startMigration ) {
+			this._startedMigrationFromCart = true;
+			this.setMigrationState( { migrationStatus: 'backing-up' } );
+			this.startMigration();
+		}
+
+		this.fetchSourceSitePluginsAndThemes();
 		this.updateFromAPI();
 	}
 
 	componentDidUpdate( prevProps ) {
+		if ( this.props.sourceSiteId !== prevProps.sourceSiteId ) {
+			this.fetchSourceSitePluginsAndThemes();
+		}
+
 		if ( this.props.targetSiteId !== prevProps.targetSiteId ) {
 			this.updateFromAPI();
 		}
 	}
 
+	fetchSourceSitePluginsAndThemes = () => {
+		if ( ! this.props.sourceSite ) {
+			return;
+		}
+
+		wpcom.site( this.props.sourceSite.ID ).pluginsList( ( error, data ) => {
+			if ( data.plugins ) {
+				this.setState( { sourceSitePlugins: data.plugins } );
+			}
+		} );
+
+		wpcom.undocumented().themes( this.props.sourceSite.ID, { apiVersion: '1' }, ( err, data ) => {
+			if ( data.themes ) {
+				const sourceSiteThemes = [
+					// Put active theme first
+					...data.themes.filter( theme => theme.active ),
+					...data.themes.filter( theme => ! theme.active ),
+				];
+				this.setState( { sourceSiteThemes } );
+			}
+		} );
+	};
+
 	getImportHref = () => {
 		const { isTargetSiteJetpack, targetSiteImportAdminUrl, targetSiteSlug } = this.props;
 
 		return isTargetSiteJetpack ? targetSiteImportAdminUrl : `/import/${ targetSiteSlug }`;
+	};
+
+	handleJetpackSelect = () => {
+		this.props.navigateToSelectedSourceSite( this.state.selectedSiteSlug );
 	};
 
 	jetpackSiteFilter = sourceSite => {
@@ -70,48 +118,135 @@ class SectionMigrate extends Component {
 	resetMigration = () => {
 		const { targetSiteId, targetSiteSlug } = this.props;
 
-		wpcom.resetMigration( targetSiteId ).finally( () => {
-			page( `/migrate/${ targetSiteSlug }` );
-			/**
-			 * Note this migrationStatus is local, thus the setState vs setMigrationState.
-			 * Call to updateFromAPI will update both local and non-local state.
-			 */
-			this.setState( { migrationStatus: 'inactive', errorMessage: '' }, this.updateFromAPI );
-		} );
+		wpcom
+			.undocumented()
+			.resetMigration( targetSiteId )
+			.finally( () => {
+				page( `/migrate/${ targetSiteSlug }` );
+				/**
+				 * Note this migrationStatus is local, thus the setState vs setMigrationState.
+				 * Call to updateFromAPI will update both local and non-local state.
+				 */
+				this.setState(
+					{
+						migrationStatus: 'inactive',
+						errorMessage: '',
+					},
+					this.updateFromAPI
+				);
+			} );
 	};
 
 	setMigrationState = state => {
+		// A response from the status endpoint may come in after the
+		// migrate/from endpoint has returned an error. This avoids that
+		// response accidentally clearing the error state.
+		if ( 'error' === this.state.migrationStatus ) {
+			return;
+		}
+
+		// When we redirect from the cart, we set migrationState to 'backing-up'
+		// and start migration straight away. This condition prevents a response
+		// from the status endpoint accidentally changing the local state
+		// before the server's properly registered that we're backing up.
+		if (
+			this._startedMigrationFromCart &&
+			'backing-up' === this.state.migrationStatus &&
+			state.migrationStatus === 'inactive'
+		) {
+			return;
+		}
+
 		if ( state.migrationStatus ) {
 			this.props.updateSiteMigrationStatus( this.props.targetSiteId, state.migrationStatus );
 		}
 		this.setState( state );
 	};
 
+	setSiteInfo = ( siteInfo, callback ) => {
+		this.setState( { siteInfo }, () => {
+			const selectedSiteSlug = urlToSlug( siteInfo.site_url.replace( /\/$/, '' ) );
+			this.setState( { selectedSiteSlug } );
+			wpcom
+				.site( selectedSiteSlug )
+				.get( {
+					apiVersion: '1.2',
+				} )
+				.then( site => {
+					if ( ! ( site && site.capabilities ) ) {
+						// A site isn't connected if we cannot manage it.
+						return this.setState( { isJetpackConnected: false } );
+					}
+
+					// Update the site in the state tree.
+					this.props.receiveSite( omit( site, '_headers' ) );
+					this.setState( { isJetpackConnected: true } );
+				} )
+				.catch( () => {
+					// @TODO: Do we need to better handle this? It most-likely means the site isn't connected.
+					this.setState( { isJetpackConnected: false } );
+				} )
+				.finally( callback );
+		} );
+	};
+
 	setSourceSiteId = sourceSiteId => {
 		this.props.navigateToSelectedSourceSite( sourceSiteId );
 	};
 
+	setUrl = event => this.setState( { url: event.target.value } );
+
 	startMigration = () => {
-		const { sourceSiteId, targetSiteId } = this.props;
+		const { sourceSiteId, targetSiteId, targetSite } = this.props;
 
 		if ( ! sourceSiteId || ! targetSiteId ) {
+			return;
+		}
+
+		const planSlug = get( targetSite, 'plan.product_slug' );
+		if (
+			planSlug &&
+			! this._startedMigrationFromCart &&
+			! planHasFeature( planSlug, FEATURE_UPLOAD_THEMES_PLUGINS )
+		) {
+			this.goToCart();
 			return;
 		}
 
 		this.setMigrationState( { migrationStatus: 'backing-up' } );
 
 		wpcom
+			.undocumented()
 			.startMigration( sourceSiteId, targetSiteId )
 			.then( () => this.updateFromAPI() )
 			.catch( error => {
-				const { message = '' } = error;
-				this.setMigrationState( { migrationStatus: 'error', errorMessage: message } );
+				const { code = '', message = '' } = error;
+
+				if ( 'no_supported_plan' === code ) {
+					this.goToCart();
+					return;
+				}
+
+				this.setMigrationState( {
+					migrationStatus: 'error',
+					errorMessage: message,
+				} );
 			} );
+	};
+
+	goToCart = () => {
+		const { sourceSite, targetSiteSlug } = this.props;
+		const sourceSiteSlug = get( sourceSite, 'slug' );
+
+		page(
+			`/checkout/${ targetSiteSlug }/business?redirect_to=/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }%3Fstart%3Dtrue`
+		);
 	};
 
 	updateFromAPI = () => {
 		const { targetSiteId } = this.props;
 		wpcom
+			.undocumented()
 			.getMigrationStatus( targetSiteId )
 			.then( response => {
 				const {
@@ -158,7 +293,10 @@ class SectionMigrate extends Component {
 			} )
 			.catch( error => {
 				const { message = '' } = error;
-				this.setMigrationState( { migrationStatus: 'error', errorMessage: message } );
+				this.setMigrationState( {
+					migrationStatus: 'error',
+					errorMessage: message,
+				} );
 			} );
 	};
 
@@ -170,22 +308,6 @@ class SectionMigrate extends Component {
 		return includes( [ 'done', 'error', 'unknown' ], this.state.migrationStatus );
 	};
 
-	renderCardBusinessFooter() {
-		const { isTargetSiteAtomic } = this.props;
-
-		// If the site is already Atomic, no upgrade footer is required
-		if ( isTargetSiteAtomic ) {
-			return null;
-		}
-
-		return (
-			<CompactCard className="migrate__card-footer">
-				You need a Business Plan to import your theme and plugins. Or you can{ ' ' }
-				<a href={ this.getImportHref() }>import just your content</a> instead.
-			</CompactCard>
-		);
-	}
-
 	renderLoading() {
 		return (
 			<CompactCard>
@@ -195,20 +317,22 @@ class SectionMigrate extends Component {
 	}
 
 	renderMigrationComplete() {
-		const { targetSite } = this.props;
+		const { targetSite, translate } = this.props;
 		const viewSiteURL = get( targetSite, 'URL' );
 
 		return (
 			<>
 				<FormattedHeader
 					className="migrate__section-header"
-					headerText="Congratulations!"
+					headerText={ translate( 'Congratulations!' ) }
 					align="left"
 				/>
 				<CompactCard>
-					<div className="migrate__status">Your import has completed successfully.</div>
+					<div className="migrate__status">
+						{ translate( 'Your import has completed successfully.' ) }
+					</div>
 					<Button primary href={ viewSiteURL }>
-						View site
+						{ translate( 'View site' ) }
 					</Button>
 					<Button onClick={ this.resetMigration }>Start over</Button>
 				</CompactCard>
@@ -216,85 +340,46 @@ class SectionMigrate extends Component {
 		);
 	}
 
-	renderMigrationConfirmation() {
-		const { sourceSite, targetSite, targetSiteSlug } = this.props;
-
-		const sourceSiteDomain = get( sourceSite, 'domain' );
-		const targetSiteDomain = get( targetSite, 'domain' );
-		const backHref = `/migrate/${ targetSiteSlug }`;
-
-		return (
-			<>
-				<HeaderCake backHref={ backHref }>Import { sourceSiteDomain }</HeaderCake>
-				<CompactCard>
-					<CardHeading>{ `Import everything from ${ sourceSiteDomain } to WordPress.com.` }</CardHeading>
-					<div className="migrate__confirmation">
-						We can move everything from your current site to this WordPress.com site. It will keep
-						working as expected, but your WordPress.com dashboard will be locked during the
-						migration.
-					</div>
-					<div className="migrate__sites">
-						<Site site={ sourceSite } indicator={ false } />
-						<Gridicon className="migrate__sites-arrow" icon="arrow-right" />
-						<Site site={ targetSite } indicator={ false } />
-					</div>
-					<div className="migrate__confirmation">
-						This will overwrite everything on your WordPress.com site.
-						<ul className="migrate__list">
-							<li>
-								<Gridicon icon="checkmark" size="12" className="migrate__checkmark" />
-								All posts, pages, comments, and media
-							</li>
-							<li>
-								<Gridicon icon="checkmark" size="12" className="migrate__checkmark" />
-								All users and roles
-							</li>
-							<li>
-								<Gridicon icon="checkmark" size="12" className="migrate__checkmark" />
-								Theme, plugins, and settings
-							</li>
-						</ul>
-					</div>
-					<MigrateButton onClick={ this.startMigration } targetSiteDomain={ targetSiteDomain } />
-					<Button className="migrate__cancel" href={ backHref }>
-						Cancel
-					</Button>
-				</CompactCard>
-				{ this.renderCardBusinessFooter() }
-			</>
-		);
-	}
-
 	renderMigrationError() {
+		const { translate } = this.props;
+
 		return (
 			<Card className="migrate__pane">
 				<FormattedHeader
 					className="migrate__section-header"
-					headerText="Import failed"
+					headerText={ translate( 'Import failed' ) }
 					align="center"
 				/>
 				<div className="migrate__status">
-					There was an error with your import.
+					{ translate( 'There was an error with your import.' ) }
 					<br />
 					{ this.state.errorMessage }
 				</div>
 				<Button primary onClick={ this.resetMigration }>
-					Back to your site
+					{ translate( 'Back to your site' ) }
 				</Button>
 			</Card>
 		);
 	}
 
 	renderMigrationProgress() {
-		const { sourceSite, targetSite } = this.props;
+		const { sourceSite, targetSite, translate } = this.props;
 		const sourceSiteDomain = get( sourceSite, 'domain' );
 		const targetSiteDomain = get( targetSite, 'domain' );
 		const subHeaderText = (
 			<>
-				{ "We're moving everything from " }
-				<span className="migrate__domain">{ sourceSiteDomain }</span>
-				{ ' to ' }
-				<span className="migrate__domain">{ targetSiteDomain }</span>.
+				{ translate(
+					"We're moving everything from {{sp}}%(sourceSiteDomain)s{{/sp}} to {{sp}}%(targetSiteDomain)s{{/sp}}.",
+					{
+						args: {
+							sourceSiteDomain,
+							targetSiteDomain,
+						},
+						components: {
+							sp: <span className="migrate__domain" />,
+						},
+					}
+				) }
 			</>
 		);
 
@@ -309,7 +394,7 @@ class SectionMigrate extends Component {
 					/>
 					<FormattedHeader
 						className="migrate__section-header"
-						headerText="Import in progress"
+						headerText={ translate( 'Import in progress' ) }
 						subHeaderText={ subHeaderText }
 						align="center"
 					/>
@@ -322,11 +407,17 @@ class SectionMigrate extends Component {
 	}
 
 	renderStartTime() {
+		const { translate } = this.props;
+
 		if ( isEmpty( this.state.startTime ) ) {
 			return <div className="migrate__start-time">&nbsp;</div>;
 		}
 
-		return <div className="migrate__start-time">Import started { this.state.startTime }</div>;
+		return (
+			<div className="migrate__start-time">
+				{ translate( 'Import started' ) } { this.state.startTime }
+			</div>
+		);
 	}
 
 	renderProgressBar() {
@@ -412,47 +503,63 @@ class SectionMigrate extends Component {
 		);
 	}
 
-	renderSourceSiteSelector() {
-		return (
-			<>
-				<FormattedHeader
-					className="migrate__section-header"
-					headerText="Import your WordPress site to WordPress.com"
-					align="left"
-				/>
-				<CompactCard className="migrate__card">
-					<CardHeading>Select the Jetpack enabled site you want to import.</CardHeading>
-					<div className="migrate__explain">
-						If your site is connected to your WordPress.com account through Jetpack, we can import
-						all your content, users, themes, plugins, and settings.
-					</div>
-					<SiteSelector
-						className="migrate__source-site"
-						onSiteSelect={ this.setSourceSiteId }
-						filter={ this.jetpackSiteFilter }
-					/>
-					<div className="migrate__import-instead">
-						Don't see it? You can still{ ' ' }
-						<a href={ this.getImportHref() }>import just your content</a>.
-					</div>
-				</CompactCard>
-				{ this.renderCardBusinessFooter() }
-			</>
-		);
-	}
-
 	render() {
-		const { sourceSiteId } = this.props;
+		const { step, sourceSite, targetSite, targetSiteSlug, translate } = this.props;
 
 		let migrationElement;
 
 		switch ( this.state.migrationStatus ) {
 			case 'inactive':
-				migrationElement = sourceSiteId
-					? this.renderMigrationConfirmation()
-					: this.renderSourceSiteSelector();
+				switch ( step ) {
+					case 'confirm':
+						migrationElement = (
+							<StepConfirmMigration
+								sourceSite={ sourceSite }
+								startMigration={ this.startMigration }
+								targetSite={ targetSite }
+								targetSiteSlug={ targetSiteSlug }
+							/>
+						);
+						break;
+					case 'migrateOrImport':
+						migrationElement = (
+							<StepImportOrMigrate
+								onJetpackSelect={ this.handleJetpackSelect }
+								sourceSiteInfo={ this.state.siteInfo }
+								targetSite={ targetSite }
+								targetSiteSlug={ targetSiteSlug }
+								sourceHasJetpack={ this.state.isJetpackConnected }
+								isTargetSiteAtomic={ this.props.isTargetSiteAtomic }
+							/>
+						);
+						break;
+					case 'upgrade':
+						migrationElement = (
+							<StepUpgrade
+								plugins={ this.state.sourceSitePlugins }
+								sourceSite={ sourceSite }
+								startMigration={ this.startMigration }
+								targetSite={ targetSite }
+								themes={ this.state.sourceSiteThemes }
+							/>
+						);
+						break;
+					case 'input':
+					default:
+						migrationElement = (
+							<StepSourceSelect
+								onSiteInfoReceived={ this.setSiteInfo }
+								onUrlChange={ this.setUrl }
+								targetSite={ targetSite }
+								targetSiteSlug={ targetSiteSlug }
+								url={ this.state.url }
+							/>
+						);
+						break;
+				}
 				break;
 
+			case 'new':
 			case 'backing-up':
 			case 'restoring':
 				migrationElement = this.renderMigrationProgress();
@@ -473,7 +580,7 @@ class SectionMigrate extends Component {
 
 		return (
 			<Main>
-				<DocumentHead title="Migrate" />
+				<DocumentHead title={ translate( 'Migrate' ) } />
 				<SidebarNavigation />
 				{ migrationElement }
 			</Main>
@@ -497,11 +604,13 @@ export default connect(
 			isTargetSiteAtomic: !! isSiteAutomatedTransfer( state, targetSiteId ),
 			isTargetSiteJetpack: !! isJetpackSite( state, targetSiteId ),
 			sourceSite: ownProps.sourceSiteId && getSite( state, ownProps.sourceSiteId ),
+			startMigration: !! get( getCurrentQueryArguments( state ), 'start', false ),
+			sourceSiteHasJetpack: false,
 			targetSite: getSelectedSite( state ),
 			targetSiteId,
 			targetSiteImportAdminUrl: getSiteAdminUrl( state, targetSiteId, 'import.php' ),
 			targetSiteSlug: getSelectedSiteSlug( state ),
 		};
 	},
-	{ navigateToSelectedSourceSite, updateSiteMigrationStatus }
+	{ navigateToSelectedSourceSite, receiveSite, updateSiteMigrationStatus }
 )( localize( SectionMigrate ) );

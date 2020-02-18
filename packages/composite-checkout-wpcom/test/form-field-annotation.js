@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
+/* eslint-disable wpcalypso/jsx-classname-namespace,import/no-extraneous-dependencies */
 
 /**
  * External dependencies
@@ -64,14 +64,6 @@ describe( 'FormFieldAnnotation', () => {
 			const { queryAllByText } = render( <MyFormFieldAnnotation /> );
 			expect( queryAllByText( 'An Error Message' )[ 0 ] ).toBeUndefined();
 		} );
-
-		it( 'does not have a highlighted border', () => {
-			const { getAllByTestId } = render( <MyFormFieldAnnotation /> );
-			expect( getAllByTestId( 'test__annotation_class_wrapper' )[ 0 ] ).toHaveStyleRule(
-				'border',
-				'1px solid black'
-			);
-		} );
 	} );
 
 	describe( 'with error and not disabled', () => {
@@ -105,14 +97,6 @@ describe( 'FormFieldAnnotation', () => {
 		it( 'renders the error string', () => {
 			const { getAllByText } = render( <MyFormFieldAnnotation /> );
 			expect( getAllByText( 'An Error Message' )[ 0 ] ).toBeInTheDocument();
-		} );
-
-		it( 'does not have a highlighted border', () => {
-			const { getAllByTestId } = render( <MyFormFieldAnnotation /> );
-			expect( getAllByTestId( 'test__annotation_class_wrapper' )[ 0 ] ).toHaveStyleRule(
-				'border',
-				'1px solid red'
-			);
 		} );
 	} );
 } );

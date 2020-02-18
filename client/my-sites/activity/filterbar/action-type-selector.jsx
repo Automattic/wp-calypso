@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { isWithinBreakpoint } from '@automattic/viewport';
 import React, { Component, Fragment } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
@@ -19,7 +20,6 @@ import { requestActivityActionTypeCounts } from 'state/data-getters';
 import { updateFilter } from 'state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import MobileSelectPortal from './mobile-select-portal';
-import { isWithinBreakpoint } from 'lib/viewport';
 
 export class ActionTypeSelector extends Component {
 	state = {

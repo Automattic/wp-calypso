@@ -27,7 +27,7 @@ import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searc
 import withDimensions from 'lib/with-dimensions';
 import SuggestionProvider from './suggestion-provider';
 import Suggestion from './suggestion';
-import getReaderAliasedFollowFeedUrl from 'state/selectors/get-reader-aliased-follow-feed-url';
+import { getReaderAliasedFollowFeedUrl } from 'state/reader/follows/selectors';
 import { SEARCH_RESULTS_URL_INPUT } from 'reader/follow-sources';
 import FollowButton from 'reader/follow-button';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';

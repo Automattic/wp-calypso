@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-
 import { filter, get, orderBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
+
+import 'state/comments/init';
 
 function filterCommentsByStatus( comments, status ) {
 	return 'all' === status
@@ -25,7 +26,7 @@ function filterCommentsByStatus( comments, status ) {
  * @param {number} siteId Site for whose comments to find
  * @param {string} [status] Status to filter comments
  * @param {string} [order=asc] Order in which to sort filtered comments
- * @returns {Array<Object>} Available comments for site, filtered by status
+ * @returns {Array<object>} Available comments for site, filtered by status
  */
 export const getSiteComments = createSelector(
 	( state, siteId, status, order = 'asc' ) => {

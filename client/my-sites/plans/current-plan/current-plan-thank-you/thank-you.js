@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { isDesktop } from '@automattic/viewport';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
@@ -8,7 +9,6 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import { isDesktop } from 'lib/viewport';
 import { preventWidows } from 'lib/formatting';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { Button } from '@automattic/components';

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
+import assert from 'assert';
 import { flow } from 'lodash';
 
 /**

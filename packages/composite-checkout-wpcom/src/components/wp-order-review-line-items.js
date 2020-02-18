@@ -4,7 +4,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { renderDisplayValueMarkdown, CheckoutModal } from '@automattic/composite-checkout';
+import {
+	renderDisplayValueMarkdown,
+	CheckoutModal,
+	useFormStatus,
+} from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -12,8 +16,8 @@ import { useTranslate } from 'i18n-calypso';
  */
 import joinClasses from './join-classes';
 import Button from './button';
-import RadioButton from './radio-button';
 import { useHasDomainsInCart } from '../hooks/has-domains';
+import { ItemVariationPicker } from './item-variation-picker';
 
 export function WPOrderReviewSection( { children, className } ) {
 	return (
@@ -31,13 +35,25 @@ const OrderReviewSectionArea = styled.div`
 	margin-bottom: 16px;
 `;
 
-function WPLineItem( { item, className, hasDeleteButtons, removeItem } ) {
+function WPLineItem( {
+	item,
+	className,
+	hasDeleteButton,
+	removeItem,
+	variantRequestStatus,
+	variantSelectOverride,
+	getItemVariants,
+	onChangePlanLength,
+} ) {
 	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
+	const { formStatus } = useFormStatus();
 	const itemSpanId = `checkout-line-item-${ item.id }`;
 	const deleteButtonId = `checkout-delete-button-${ item.id }`;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const modalCopy = returnModalCopy( item.type, translate, hasDomainsInCart );
+
+	const shouldShowVariantSelector = item.wpcom_meta && item.wpcom_meta.extra?.context === 'signup';
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
@@ -45,7 +61,7 @@ function WPLineItem( { item, className, hasDeleteButtons, removeItem } ) {
 			<span aria-labelledby={ itemSpanId }>
 				{ renderDisplayValueMarkdown( item.amount.displayValue ) }
 			</span>
-			{ hasDeleteButtons && item.type !== 'tax' && (
+			{ hasDeleteButton && formStatus === 'ready' && (
 				<React.Fragment>
 					<DeleteButton
 						buttonState="borderless"
@@ -62,7 +78,7 @@ function WPLineItem( { item, className, hasDeleteButtons, removeItem } ) {
 							setIsModalVisible( false );
 						} }
 						primaryAction={ () => {
-							removeItem( item );
+							removeItem( item.wpcom_meta.uuid );
 						} }
 						title={ modalCopy.title }
 						copy={ modalCopy.description }
@@ -70,7 +86,15 @@ function WPLineItem( { item, className, hasDeleteButtons, removeItem } ) {
 				</React.Fragment>
 			) }
 
-			{ item.type === 'plan' && <PlanTermOptions /> }
+			{ shouldShowVariantSelector && (
+				<ItemVariationPicker
+					selectedItem={ item }
+					variantRequestStatus={ variantRequestStatus }
+					variantSelectOverride={ variantSelectOverride }
+					getItemVariants={ getItemVariants }
+					onChangeItemVariant={ onChangePlanLength }
+				/>
+			) }
 		</div>
 	);
 }
@@ -79,7 +103,7 @@ WPLineItem.propTypes = {
 	className: PropTypes.string,
 	total: PropTypes.bool,
 	isSummaryVisible: PropTypes.bool,
-	hasDeleteButtons: PropTypes.bool,
+	hasDeleteButton: PropTypes.bool,
 	removeItem: PropTypes.func,
 	item: PropTypes.shape( {
 		label: PropTypes.string,
@@ -87,6 +111,8 @@ WPLineItem.propTypes = {
 			displayValue: PropTypes.string,
 		} ),
 	} ),
+	getItemVariants: PropTypes.func,
+	onChangePlanLength: PropTypes.func,
 };
 
 const LineItemUI = styled( WPLineItem )`
@@ -101,19 +127,10 @@ const LineItemUI = styled( WPLineItem )`
 		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight};
 	position: relative;
 	margin-right: 30px;
-
-	:first-of-type button {
-		top: -3px;
-	}
 `;
 
 const ProductTitle = styled.span`
 	flex: 1;
-`;
-
-const Discount = styled.span`
-	color: ${props => props.theme.colors.discount};
-	margin-right: 8px;
 `;
 
 const DeleteButton = styled( Button )`
@@ -124,22 +141,6 @@ const DeleteButton = styled( Button )`
 
 	:hover rect {
 		fill: ${props => props.theme.colors.error};
-	}
-`;
-
-const TermOptions = styled.ul`
-	flex-basis: 100%;
-	margin: 12px 0 0;
-	padding: 0;
-`;
-
-const TermOptionsItem = styled.li`
-	margin: 8px 0 0;
-	padding: 0;
-	list-style: none;
-
-	:first-of-type {
-		margin-top: 0;
 	}
 `;
 
@@ -194,8 +195,11 @@ export function WPOrderReviewLineItems( {
 	items,
 	className,
 	isSummaryVisible,
-	hasDeleteButtons,
 	removeItem,
+	variantRequestStatus,
+	variantSelectOverride,
+	getItemVariants,
+	onChangePlanLength,
 } ) {
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
@@ -204,8 +208,12 @@ export function WPOrderReviewLineItems( {
 					<LineItemUI
 						isSummaryVisible={ isSummaryVisible }
 						item={ item }
-						hasDeleteButtons={ hasDeleteButtons }
+						hasDeleteButton={ canItemBeDeleted( item ) }
 						removeItem={ removeItem }
+						variantRequestStatus={ variantRequestStatus }
+						variantSelectOverride={ variantSelectOverride }
+						getItemVariants={ getItemVariants }
+						onChangePlanLength={ onChangePlanLength }
 					/>
 				</WPOrderReviewListItems>
 			) ) }
@@ -216,7 +224,6 @@ export function WPOrderReviewLineItems( {
 WPOrderReviewLineItems.propTypes = {
 	className: PropTypes.string,
 	isSummaryVisible: PropTypes.bool,
-	hasDeleteButtons: PropTypes.bool,
 	removeItem: PropTypes.func,
 	items: PropTypes.arrayOf(
 		PropTypes.shape( {
@@ -226,6 +233,8 @@ WPOrderReviewLineItems.propTypes = {
 			} ),
 		} )
 	),
+	getItemVariants: PropTypes.func,
+	onChangePlanLength: PropTypes.func,
 };
 
 const WPOrderReviewList = styled.ul`
@@ -242,56 +251,11 @@ const WPOrderReviewListItems = styled.li`
 	:first-of-type .checkout-line-item {
 		padding-top: 10px;
 	}
-`;
 
-function PlanTermOptions() {
-	const translate = useTranslate();
-	const [ termDuration, setTermDuration ] = useState( 'one-year' );
-	//TODO: Make these options dynamic and update the cart when a choice is selected.
-	return (
-		<TermOptions>
-			<TermOptionsItem>
-				<RadioButton
-					name="term"
-					id="one-year"
-					value="$60"
-					checked={ termDuration === 'one-year' }
-					onChange={ () => {
-						setTermDuration( 'one-year' );
-					} }
-					ariaLabel={ translate( 'One year term' ) }
-					label={
-						<React.Fragment>
-							<ProductTitle>{ translate( 'One year' ) }</ProductTitle>
-							<span>$60</span>
-						</React.Fragment>
-					}
-				/>
-			</TermOptionsItem>
-			<TermOptionsItem>
-				<RadioButton
-					name="term"
-					id="two-year"
-					value="$60"
-					checked={ termDuration === 'two-year' }
-					onChange={ () => {
-						setTermDuration( 'two-year' );
-					} }
-					ariaLabel={ translate( 'Two year term' ) }
-					label={
-						<React.Fragment>
-							<ProductTitle>{ translate( 'Two years' ) }</ProductTitle>
-							<Discount>Save 10%</Discount>
-							<span>
-								<s>$120</s> $108
-							</span>
-						</React.Fragment>
-					}
-				/>
-			</TermOptionsItem>
-		</TermOptions>
-	);
-}
+	:first-of-type button {
+		top: -3px;
+	}
+`;
 
 function returnModalCopy( product, translate, hasDomainsInCart ) {
 	const modalCopy = {};
@@ -324,4 +288,9 @@ function returnModalCopy( product, translate, hasDomainsInCart ) {
 	}
 
 	return modalCopy;
+}
+
+function canItemBeDeleted( item ) {
+	const itemTypesThatCannotBeDeleted = [ 'tax', 'coupon', 'credits', 'wordpress-com-credits' ];
+	return ! itemTypesThatCannotBeDeleted.includes( item.type );
 }

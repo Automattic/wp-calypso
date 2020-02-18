@@ -7,7 +7,6 @@ import {
 	WPCOMCart,
 	WPCOMCartItem,
 	CheckoutCartItem,
-	CheckoutCartTotal,
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
 } from '../types';
@@ -16,10 +15,14 @@ import {
  * Translate a cart object as returned by the WPCOM cart endpoint to
  * the format required by the composite checkout component.
  *
+ * @param translate Localization function
  * @param serverCart Cart object returned by the WPCOM cart endpoint
  * @returns Cart object suitable for passing to the checkout component
  */
-export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WPCOMCart {
+export function translateWpcomCartToCheckoutCart(
+	translate: ( string, any? ) => string,
+	serverCart: ResponseCart
+): WPCOMCart {
 	const {
 		products,
 		total_tax_integer,
@@ -27,12 +30,20 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 		total_cost_integer,
 		total_cost_display,
 		currency,
+		credits_integer,
+		credits_display,
 		allowed_payment_methods,
+		sub_total_integer,
+		sub_total_display,
+		coupon,
+		coupon_discounts_integer,
+		is_coupon_applied,
+		tax,
 	} = serverCart;
 
 	const taxLineItem: CheckoutCartItem = {
 		id: 'tax-line-item',
-		label: 'Tax',
+		label: translate( 'Tax' ),
 		type: 'tax', // TODO: does this need to be localized, e.g. tax-us?
 		amount: {
 			currency: currency,
@@ -41,8 +52,29 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 		},
 	};
 
-	const totalItem: CheckoutCartTotal = {
-		label: 'Total',
+	// TODO: watch out for minimal currency units while localizing this
+	const couponValueRaw = products
+		.map( product => coupon_discounts_integer[ product.product_id ] )
+		.filter( Boolean )
+		.reduce( ( accum, current ) => accum + current, 0 );
+	const couponValue = Math.round( couponValueRaw );
+	const couponDisplayValue = `-$${ couponValueRaw / 100 }`;
+
+	const couponLineItem: CheckoutCartItem = {
+		id: 'coupon-line-item',
+		label: translate( 'Coupon: %s', { args: coupon } ),
+		type: 'coupon',
+		amount: {
+			currency: currency,
+			value: couponValue,
+			displayValue: couponDisplayValue,
+		},
+	};
+
+	const totalItem: CheckoutCartItem = {
+		id: 'total',
+		type: 'total',
+		label: translate( 'Total' ),
 		amount: {
 			currency: currency,
 			value: total_cost_integer,
@@ -50,10 +82,45 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 		},
 	};
 
+	const subtotalItem: CheckoutCartItem = {
+		id: 'subtotal',
+		type: 'subtotal',
+		label: translate( 'Subtotal' ),
+		amount: {
+			currency: currency,
+			value: sub_total_integer,
+			displayValue: sub_total_display,
+		},
+	};
+
+	// TODO: inject a real currency localization function
+	function localizeCurrency( currencyCode: string, amount: number ): string {
+		switch ( currencyCode ) {
+			case 'BRL':
+				return 'R$' + amount / 100;
+			default:
+				return '$' + amount / 100;
+		}
+	}
+
 	return {
-		items: products.map( translateWpcomCartItemToCheckoutCartItem ),
-		tax: taxLineItem,
+		items: products.map(
+			translateWpcomCartItemToCheckoutCartItem(
+				is_coupon_applied,
+				coupon_discounts_integer,
+				localizeCurrency
+			)
+		),
+		tax: tax.display_taxes ? taxLineItem : null,
+		coupon: is_coupon_applied ? couponLineItem : null,
 		total: totalItem,
+		subtotal: subtotalItem,
+		credits: {
+			id: 'credits',
+			type: 'credits',
+			label: translate( 'Credits' ),
+			amount: { value: credits_integer, displayValue: credits_display, currency },
+		},
 		allowedPaymentMethods: allowed_payment_methods
 			.filter( slug => {
 				return slug !== 'WPCOM_Billing_MoneyPress_Paygate';
@@ -61,48 +128,62 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 			.map( readWPCOMPaymentMethodClass )
 			.map( translateWpcomPaymentMethodToCheckoutPaymentMethod )
 			.filter( Boolean ),
+		couponCode: coupon,
 	};
 }
 
-/**
- * Convert a backend cart item to a checkout cart item
- *
- * @param serverCartItem Cart item object as provided by the backend
- * @param index Index into an array of products; used as a uuid
- * @returns Cart item suitable for passing to the checkout component,
- *     with extra WPCOM specific data attached
- */
+// Convert a backend cart item to a checkout cart item
 function translateWpcomCartItemToCheckoutCartItem(
-	serverCartItem: ResponseCartProduct,
-	index: number
-): WPCOMCartItem {
-	const {
-		product_id,
-		product_name,
-		product_slug,
-		currency,
-		item_subtotal_integer,
-		item_subtotal_display,
-		is_domain_registration,
-		meta,
-	} = serverCartItem;
-
-	// Sublabel is the domain name for registrations
-	const sublabel = is_domain_registration ? meta : undefined;
-
-	return {
-		id: String( index ),
-		label: product_name,
-		sublabel: sublabel,
-		type: product_slug,
-		amount: {
-			currency,
-			value: item_subtotal_integer,
-			displayValue: item_subtotal_display,
-		},
-		wpcom_meta: {
-			uuid: String( index ),
+	is_coupon_applied: boolean,
+	coupon_discounts_integer: number[],
+	localizeCurrency: ( string, number ) => string
+): ( ResponseCartProduct ) => WPCOMCartItem {
+	return ( serverCartItem: ResponseCartProduct ) => {
+		const {
 			product_id,
-		},
+			product_name,
+			product_slug,
+			currency,
+			item_subtotal_integer,
+			is_domain_registration,
+			meta,
+			extra,
+			volume,
+			uuid,
+		} = serverCartItem;
+
+		// Sublabel is the domain name for registrations
+		const sublabel = is_domain_registration ? meta : undefined;
+
+		// TODO: watch out for this when localizing
+		const value = is_coupon_applied
+			? item_subtotal_integer + ( coupon_discounts_integer[ product_id ] ?? 0 )
+			: item_subtotal_integer;
+		const displayValue = localizeCurrency( currency, value );
+
+		return {
+			id: uuid,
+			label: product_name,
+			sublabel: sublabel,
+			type: product_slug,
+			amount: {
+				currency,
+				value,
+				displayValue,
+			},
+			wpcom_meta: {
+				uuid: uuid,
+				meta: typeof meta === 'string' ? meta : undefined,
+				product_id,
+				product_slug,
+				extra,
+				volume,
+				is_domain_registration,
+			},
+		};
 	};
+}
+
+export function getNonProductWPCOMCartItemTypes(): string[] {
+	return [ 'tax', 'coupon', 'total', 'subtotal', 'credits' ];
 }

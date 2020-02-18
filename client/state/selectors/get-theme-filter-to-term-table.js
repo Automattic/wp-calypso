@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { forIn, keys, mapValues } from 'lodash';
 
 /**
@@ -10,6 +9,8 @@ import { forIn, keys, mapValues } from 'lodash';
 import createSelector from 'lib/create-selector';
 import getThemeFilters from 'state/selectors/get-theme-filters';
 import getThemeFilterTermFromString from 'state/selectors/get-theme-filter-term-from-string';
+
+import 'state/themes/init';
 
 /**
  * Return a table of all theme filter terms indexed by

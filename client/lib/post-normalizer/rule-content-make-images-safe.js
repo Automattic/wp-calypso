@@ -32,6 +32,7 @@ const removeUnwantedAttributes = node => {
 };
 
 /** Checks whether or not imageUrl should be removed from the dom
+ *
  * @param {string} imageUrl - the url of the image
  * @returns {boolean} whether or not it should be removed from the dom
  */

@@ -1,7 +1,3 @@
-export const enum ActionType {
-	RECEIVE_VERTICALS = 'RECEIVE_VERTICALS',
-}
-
 /**
  * Representation of well-known verticals
  */

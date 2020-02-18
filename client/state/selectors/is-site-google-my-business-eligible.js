@@ -47,6 +47,7 @@ export const siteHasEligibleJetpackPlan = createSelector(
  *
  * It should be visible if:
  * - site has a business plan on wpcom or Jetpack premium/business
+ *
  * @param  {object}  state  Global state tree
  * @param  {string}  siteId The Site ID
  * @returns {boolean} True if we should show the nudge

@@ -18,7 +18,13 @@ import { isSupportSession } from 'lib/user/support-user-interop';
 import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { createReduxStore } from 'state';
 import initialReducer from 'state/reducer';
-import { getInitialState, persistOnChange, MAX_AGE, SERIALIZE_THROTTLE } from 'state/initial-state';
+import {
+	getInitialState,
+	persistOnChange,
+	loadAllState,
+	MAX_AGE,
+	SERIALIZE_THROTTLE,
+} from 'state/initial-state';
 import { combineReducers, withStorageKey } from 'state/utils';
 import { addReducerToStore } from 'state/add-reducer';
 
@@ -50,16 +56,18 @@ describe( 'initial-state', () => {
 				let state, consoleErrorSpy, getStoredItemSpy;
 
 				const savedState = {
-					currentUser: { id: 123456789 },
-					postTypes: {
-						items: {
-							2916284: {
-								post: { name: 'post', label: 'Posts' },
-								page: { name: 'page', label: 'Pages' },
+					'redux-state-123456789': {
+						currentUser: { id: 123456789 },
+						postTypes: {
+							items: {
+								2916284: {
+									post: { name: 'post', label: 'Posts' },
+									page: { name: 'page', label: 'Pages' },
+								},
 							},
 						},
+						_timestamp: Date.now(),
 					},
-					_timestamp: Date.now(),
 				};
 
 				const serverState = { currentUser: { id: 123456789 } };
@@ -68,9 +76,10 @@ describe( 'initial-state', () => {
 					window.initialReduxState = serverState;
 					consoleErrorSpy = jest.spyOn( global.console, 'error' );
 					getStoredItemSpy = jest
-						.spyOn( browserStorage, 'getStoredItem' )
+						.spyOn( browserStorage, 'getAllStoredItems' )
 						.mockResolvedValue( savedState );
-					state = await getInitialState( initialReducer );
+					await loadAllState();
+					state = getInitialState( initialReducer );
 				} );
 
 				afterAll( () => {
@@ -103,16 +112,18 @@ describe( 'initial-state', () => {
 					let state, consoleErrorSpy, getStoredItemSpy;
 
 					const savedState = {
-						currentUser: { id: 123456789 },
-						postTypes: {
-							items: {
-								2916284: {
-									post: { name: 'post', label: 'Posts' },
-									page: { name: 'page', label: 'Pages' },
+						'redux-state-123456789': {
+							currentUser: { id: 123456789 },
+							postTypes: {
+								items: {
+									2916284: {
+										post: { name: 'post', label: 'Posts' },
+										page: { name: 'page', label: 'Pages' },
+									},
 								},
 							},
+							_timestamp: Date.now(),
 						},
-						_timestamp: Date.now(),
 					};
 
 					beforeAll( async () => {
@@ -121,9 +132,10 @@ describe( 'initial-state', () => {
 						window.initialReduxState = { currentUser: { currencyCode: 'USD' } };
 						consoleErrorSpy = jest.spyOn( global.console, 'error' );
 						getStoredItemSpy = jest
-							.spyOn( browserStorage, 'getStoredItem' )
+							.spyOn( browserStorage, 'getAllStoredItems' )
 							.mockResolvedValue( savedState );
-						state = await getInitialState( initialReducer );
+						await loadAllState();
+						state = getInitialState( initialReducer );
 					} );
 
 					afterAll( () => {
@@ -156,16 +168,18 @@ describe( 'initial-state', () => {
 				let state, consoleErrorSpy, getStoredItemSpy;
 
 				const savedState = {
-					currentUser: { id: 123456789 },
-					postTypes: {
-						items: {
-							2916284: {
-								post: { name: 'post', label: 'Posts' },
-								page: { name: 'page', label: 'Pages' },
+					'redux-state-123456789': {
+						currentUser: { id: 123456789 },
+						postTypes: {
+							items: {
+								2916284: {
+									post: { name: 'post', label: 'Posts' },
+									page: { name: 'page', label: 'Pages' },
+								},
 							},
 						},
+						_timestamp: Date.now(),
 					},
-					_timestamp: Date.now(),
 				};
 
 				const serverState = {
@@ -183,9 +197,10 @@ describe( 'initial-state', () => {
 					isEnabled.enablePersistRedux();
 					consoleErrorSpy = jest.spyOn( global.console, 'error' );
 					getStoredItemSpy = jest
-						.spyOn( browserStorage, 'getStoredItem' )
+						.spyOn( browserStorage, 'getAllStoredItems' )
 						.mockResolvedValue( savedState );
-					state = await getInitialState( initialReducer );
+					await loadAllState();
+					state = getInitialState( initialReducer );
 				} );
 
 				afterAll( () => {
@@ -216,16 +231,18 @@ describe( 'initial-state', () => {
 				let state, consoleErrorSpy, getStoredItemSpy;
 
 				const savedState = {
-					currentUser: { id: 123456789 },
-					postTypes: {
-						items: {
-							2916284: {
-								post: { name: 'post', label: 'Posts' },
-								page: { name: 'page', label: 'Pages' },
+					'redux-state-123456789': {
+						currentUser: { id: 123456789 },
+						postTypes: {
+							items: {
+								2916284: {
+									post: { name: 'post', label: 'Posts' },
+									page: { name: 'page', label: 'Pages' },
+								},
 							},
 						},
+						_timestamp: Date.now() - MAX_AGE - 1,
 					},
-					_timestamp: Date.now() - MAX_AGE - 1,
 				};
 
 				const serverState = {
@@ -243,9 +260,10 @@ describe( 'initial-state', () => {
 					isEnabled.enablePersistRedux();
 					consoleErrorSpy = jest.spyOn( global.console, 'error' );
 					getStoredItemSpy = jest
-						.spyOn( browserStorage, 'getStoredItem' )
+						.spyOn( browserStorage, 'getAllStoredItems' )
 						.mockResolvedValue( savedState );
-					state = await getInitialState( initialReducer );
+					await loadAllState();
+					state = getInitialState( initialReducer );
 				} );
 
 				afterAll( () => {
@@ -276,16 +294,18 @@ describe( 'initial-state', () => {
 				let state, consoleErrorSpy, getStoredItemSpy;
 
 				const savedState = {
-					currentUser: { id: 123456789 },
-					postTypes: {
-						items: {
-							2916284: {
-								post: { name: 'post', label: 'Posts' },
-								page: { name: 'page', label: 'Pages' },
+					'redux-state-123456789': {
+						currentUser: { id: 123456789 },
+						postTypes: {
+							items: {
+								2916284: {
+									post: { name: 'post', label: 'Posts' },
+									page: { name: 'page', label: 'Pages' },
+								},
 							},
 						},
+						_timestamp: Date.now(),
 					},
-					_timestamp: Date.now(),
 				};
 
 				const serverState = {};
@@ -295,9 +315,10 @@ describe( 'initial-state', () => {
 					isEnabled.enablePersistRedux();
 					consoleErrorSpy = jest.spyOn( global.console, 'error' );
 					getStoredItemSpy = jest
-						.spyOn( browserStorage, 'getStoredItem' )
+						.spyOn( browserStorage, 'getAllStoredItems' )
 						.mockResolvedValue( savedState );
-					state = await getInitialState( initialReducer );
+					await loadAllState();
+					state = getInitialState( initialReducer );
 				} );
 
 				afterAll( () => {
@@ -313,7 +334,9 @@ describe( 'initial-state', () => {
 
 				test( 'builds state using local forage state', () => {
 					expect( state.currentUser.id ).toBe( 123456789 );
-					expect( state.postTypes.items ).toEqual( savedState.postTypes.items );
+					expect( state.postTypes.items ).toEqual(
+						savedState[ 'redux-state-123456789' ].postTypes.items
+					);
 				} );
 
 				test( 'does not add timestamp to store', () => {
@@ -324,20 +347,23 @@ describe( 'initial-state', () => {
 			describe( 'with invalid persisted data and no initial server data', () => {
 				let state, consoleErrorSpy, getStoredItemSpy;
 
+				const userId = userFactory().get().ID + 1;
 				const savedState = {
-					// Create an invalid state by forcing the user ID
-					// stored in the state to differ from the current
-					// mocked user ID.
-					currentUser: { id: userFactory().get().ID + 1 },
-					postTypes: {
-						items: {
-							2916284: {
-								post: { name: 'post', label: 'Posts' },
-								page: { name: 'page', label: 'Pages' },
+					[ `redux-state-${ userId }` ]: {
+						// Create an invalid state by forcing the user ID
+						// stored in the state to differ from the current
+						// mocked user ID.
+						currentUser: { id: userFactory().get().ID + 1 },
+						postTypes: {
+							items: {
+								2916284: {
+									post: { name: 'post', label: 'Posts' },
+									page: { name: 'page', label: 'Pages' },
+								},
 							},
 						},
+						_timestamp: Date.now(),
 					},
-					_timestamp: Date.now(),
 				};
 
 				const serverState = {};
@@ -347,9 +373,10 @@ describe( 'initial-state', () => {
 					isEnabled.enablePersistRedux();
 					consoleErrorSpy = jest.spyOn( global.console, 'error' );
 					getStoredItemSpy = jest
-						.spyOn( browserStorage, 'getStoredItem' )
+						.spyOn( browserStorage, 'getAllStoredItems' )
 						.mockResolvedValue( savedState );
-					state = await getInitialState( initialReducer );
+					await loadAllState();
+					state = getInitialState( initialReducer );
 				} );
 
 				afterAll( () => {
@@ -398,10 +425,11 @@ describe( 'initial-state', () => {
 					window.initialReduxState = serverState;
 					consoleErrorSpy = jest.spyOn( global.console, 'error' );
 					getStoredItemSpy = jest
-						.spyOn( browserStorage, 'getStoredItem' )
-						.mockImplementation( key => storedState[ key ] );
+						.spyOn( browserStorage, 'getAllStoredItems' )
+						.mockResolvedValue( storedState );
 
-					state = await getInitialState( initialReducer );
+					await loadAllState();
+					state = getInitialState( initialReducer );
 				} );
 
 				afterAll( () => {
@@ -468,10 +496,11 @@ describe( 'initial-state', () => {
 					window.initialReduxState = serverState;
 					consoleErrorSpy = jest.spyOn( global.console, 'error' );
 					getStoredItemSpy = jest
-						.spyOn( browserStorage, 'getStoredItem' )
-						.mockImplementation( key => storedState[ key ] );
+						.spyOn( browserStorage, 'getAllStoredItems' )
+						.mockResolvedValue( storedState );
 
-					state = await getInitialState( initialReducer );
+					await loadAllState();
+					state = getInitialState( initialReducer );
 				} );
 
 				afterAll( () => {
@@ -526,7 +555,7 @@ describe( 'initial-state', () => {
 		// current mocked user ID).
 		const initialState = { currentUser: { id: 123456789 } };
 
-		beforeEach( () => {
+		beforeEach( async () => {
 			isEnabled.enablePersistRedux();
 			// we use fake timers from Sinon (aka Lolex) because `lodash.throttle` also uses `Date.now()`
 			// and relies on it returning a mocked value. Jest fake timers don't mock `Date`, Lolex does.
@@ -536,7 +565,7 @@ describe( 'initial-state', () => {
 				.mockImplementation( value => Promise.resolve( value ) );
 
 			store = createReduxStore( initialState, reducer );
-			persistOnChange( store );
+			persistOnChange( store, false );
 		} );
 
 		afterEach( () => {
@@ -707,8 +736,8 @@ describe( 'loading stored state with dynamic reducers', () => {
 
 		// `lib/browser-storage` mock to return mock IndexedDB state
 		getStoredItemSpy = jest
-			.spyOn( browserStorage, 'getStoredItem' )
-			.mockImplementation( key => storedState[ key ] );
+			.spyOn( browserStorage, 'getAllStoredItems' )
+			.mockResolvedValue( storedState );
 	} );
 
 	afterEach( () => {
@@ -725,7 +754,8 @@ describe( 'loading stored state with dynamic reducers', () => {
 		} );
 
 		// load initial state and create Redux store with it
-		const state = await getInitialState( reducer );
+		await loadAllState();
+		const state = getInitialState( reducer );
 		const store = createReduxStore( state, reducer );
 
 		// verify that state from all storageKey's was loaded
@@ -751,7 +781,8 @@ describe( 'loading stored state with dynamic reducers', () => {
 		} );
 
 		// load initial state and create Redux store with it
-		const state = await getInitialState( reducer );
+		await loadAllState();
+		const state = getInitialState( reducer );
 		const store = createReduxStore( state, reducer );
 
 		// verify that the initial Redux store loaded state only for `currentUser`
@@ -763,7 +794,7 @@ describe( 'loading stored state with dynamic reducers', () => {
 
 		// load a reducer dynamically
 		const aReducer = withStorageKey( 'A', withKeyPrefix( 'A' ) );
-		await addReducerToStore( store )( [ 'a' ], aReducer );
+		addReducerToStore( store )( [ 'a' ], aReducer );
 
 		// verify that the Redux store contains the stored state for `A` now
 		expect( store.getState() ).toEqual( {
@@ -784,7 +815,8 @@ describe( 'loading stored state with dynamic reducers', () => {
 		} );
 
 		// load initial state and create Redux store with it
-		const state = await getInitialState( reducer );
+		await loadAllState();
+		const state = getInitialState( reducer );
 		const store = createReduxStore( state, reducer );
 
 		// verify that the initial Redux store loaded state only for `currentUser`
@@ -796,7 +828,7 @@ describe( 'loading stored state with dynamic reducers', () => {
 
 		// load a reducer dynamically
 		const cdReducer = withStorageKey( 'CD', withKeyPrefix( 'CD' ) );
-		await addReducerToStore( store )( [ 'c', 'd' ], cdReducer );
+		addReducerToStore( store )( [ 'c', 'd' ], cdReducer );
 
 		// verify that the Redux store contains the stored state for `A` now
 		expect( store.getState() ).toEqual( {
@@ -819,7 +851,8 @@ describe( 'loading stored state with dynamic reducers', () => {
 		} );
 
 		// load initial state and create Redux store with it
-		const state = await getInitialState( reducer );
+		await loadAllState();
+		const state = getInitialState( reducer );
 		const store = createReduxStore( state, reducer );
 
 		// verify that the initial Redux store loaded state only for `currentUser`
@@ -831,10 +864,8 @@ describe( 'loading stored state with dynamic reducers', () => {
 
 		// load a reducer dynamically
 		const eReducer = withStorageKey( 'E', withKeyPrefix( 'E' ) );
-		await Promise.all( [
-			addReducerToStore( store )( [ 'e' ], eReducer ),
-			addReducerToStore( store )( [ 'e' ], eReducer ),
-		] );
+		addReducerToStore( store )( [ 'e' ], eReducer );
+		addReducerToStore( store )( [ 'e' ], eReducer );
 
 		// verify that the Redux store contains the stored state for `E` now
 		expect( store.getState() ).toEqual( {
@@ -855,7 +886,8 @@ describe( 'loading stored state with dynamic reducers', () => {
 		} );
 
 		// load initial state and create Redux store with it
-		const state = await getInitialState( reducer );
+		await loadAllState();
+		const state = getInitialState( reducer );
 		const store = createReduxStore( state, reducer );
 
 		// verify that the initial Redux store loaded state only for `currentUser`
@@ -870,10 +902,8 @@ describe( 'loading stored state with dynamic reducers', () => {
 		const cReducer = withStorageKey( 'C', withKeyPrefix( 'C' ) );
 
 		expect( () => {
-			Promise.all( [
-				addReducerToStore( store )( [ 'b' ], bReducer ),
-				addReducerToStore( store )( [ 'b' ], cReducer ),
-			] );
+			addReducerToStore( store )( [ 'b' ], bReducer );
+			addReducerToStore( store )( [ 'b' ], cReducer );
 		} ).toThrow();
 	} );
 } );

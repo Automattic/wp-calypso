@@ -88,6 +88,7 @@ export const saveZone = ( siteId, zoneId, form, data ) => ( {
 
 /**
  * Returns an action object to indicate that a zone should be deleted.
+ *
  * @param  {number} siteId   Site ID
  * @param  {string} siteSlug Site slug
  * @param  {number} zoneId   Zone ID

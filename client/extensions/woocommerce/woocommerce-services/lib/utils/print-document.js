@@ -9,6 +9,7 @@ let iframe = null;
  * Loads the given URL in an invisible <iframe>
  * To do that, an invisible <iframe> is created, added to the current page, and "print()" is invoked
  * for just that iframe.
+ *
  * @param {string} url URL to load
  * @returns {Promise} Promise that resolves when the iframe finished loading, rejects on error
  */
@@ -48,6 +49,7 @@ const buildBlob = ( b64Content, mimeType ) => {
 /**
  * Opens the native printing dialog to print the given URL.
  * Falls back to opening the PDF in a new tab if opening the printing dialog is not supported.
+ *
  * @param {object} fileData Object with the PDF contents. It needs to have at least these properties:
  * - {string} b64Content The PDF binary content, encoded in Base64
  * - {string} mimeType The MIME Type of the file. Normally it will be "application/pdf"

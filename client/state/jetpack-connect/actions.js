@@ -169,7 +169,7 @@ export function checkUrl( url, isUrlOnSites ) {
 	};
 }
 
-export function retryAuth( url, attemptNumber, fromParam ) {
+export function retryAuth( url, attemptNumber, fromParam, redirectAfterAuth ) {
 	return dispatch => {
 		debug( 'retrying auth', url, attemptNumber );
 		dispatch( {
@@ -191,6 +191,7 @@ export function retryAuth( url, attemptNumber, fromParam ) {
 					calypso_env: calypsoEnv,
 					auth_type: 'jetpack',
 					from: fromParam,
+					redirect_after_auth: redirectAfterAuth,
 				},
 				url + REMOTE_PATH_AUTH
 			)

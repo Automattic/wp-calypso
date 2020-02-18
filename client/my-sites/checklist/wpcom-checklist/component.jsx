@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
+import { isDesktop } from '@automattic/viewport';
 import page from 'page';
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { get, includes } from 'lodash';
-import { isDesktop } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -913,6 +913,7 @@ class WpcomChecklistComponent extends PureComponent {
 				nextInlineHelp={ this.nextInlineHelp }
 				showSkip={ false }
 				buttonText={ translate( 'Update homepage' ) }
+				action="update-homepage"
 			/>
 		);
 	};

@@ -14,7 +14,6 @@ import { find, isNumber, pick, noop, get, isEmpty } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import getSimplePayments from 'state/selectors/get-simple-payments';
 import QuerySimplePayments from 'components/data/query-simple-payments';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -39,7 +38,7 @@ import {
 	receiveUpdateProduct,
 	receiveDeleteProduct,
 } from 'state/simple-payments/product-list/actions';
-import { PLAN_PREMIUM, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
+import { FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
 import UpgradeNudge from 'blocks/upgrade-nudge';
 import TrackComponentView from 'lib/analytics/track-component-view';
@@ -50,7 +49,6 @@ import {
 	withAnalytics,
 } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
-import Banner from 'components/banner';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { DEFAULT_CURRENCY } from 'lib/simple-payments/constants';
 
@@ -143,7 +141,6 @@ class SimplePaymentsDialog extends Component {
 		editPaymentId: PropTypes.number,
 		onClose: PropTypes.func.isRequired,
 		onInsert: PropTypes.func.isRequired,
-		isJetpackNotSupported: PropTypes.bool,
 		canCurrentUserAddButtons: PropTypes.bool,
 	};
 
@@ -446,10 +443,8 @@ class SimplePaymentsDialog extends Component {
 		const {
 			showDialog,
 			siteId,
-			siteSlug,
 			paymentButtons,
 			currencyCode,
-			isJetpackNotSupported,
 			translate,
 			planHasSimplePaymentsFeature,
 			shouldQuerySitePlans,
@@ -463,28 +458,6 @@ class SimplePaymentsDialog extends Component {
 		const showNavigation =
 			activeTab === 'list' ||
 			( activeTab === 'form' && ! this.isDirectEdit() && ! isEmptyArray( paymentButtons ) );
-
-		if ( ! shouldQuerySitePlans && isJetpackNotSupported ) {
-			return this.renderEmptyDialog(
-				<EmptyContent
-					className="upgrade-jetpack"
-					illustration="/calypso/images/illustrations/illustration-jetpack.svg"
-					title={ translate( 'Upgrade Jetpack to use Simple Payments' ) }
-					illustrationWidth={ 600 }
-					action={
-						<Banner
-							icon="star"
-							title={ translate( 'Upgrade your Jetpack!' ) }
-							description={ translate( 'Simple Payments requires Jetpack version 5.2 or later.' ) }
-							feature={ FEATURE_SIMPLE_PAYMENTS }
-							plan={ PLAN_PREMIUM }
-							href={ '../../plugins/jetpack/' + siteSlug }
-						/>
-					}
-				/>,
-				true
-			);
-		}
 
 		if ( ! shouldQuerySitePlans && ! planHasSimplePaymentsFeature ) {
 			return this.renderEmptyDialog(
@@ -606,12 +579,9 @@ export default connect( ( state, { siteId } ) => {
 
 	return {
 		siteId,
-		siteSlug: getSiteSlug( state, siteId ),
 		paymentButtons: getSimplePayments( state, siteId ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		shouldQuerySitePlans: getSitePlanSlug( state, siteId ) === null,
-		isJetpackNotSupported:
-			isJetpackSite( state, siteId ) && ! isJetpackMinimumVersion( state, siteId, '5.2' ),
 		planHasSimplePaymentsFeature: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 		formIsValid: isProductFormValid( state ),
 		formIsDirty: isProductFormDirty( state ),

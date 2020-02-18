@@ -131,9 +131,9 @@ Usage:
 	};
 ```
 
-### onSubmit {Func} (required)
+### onSubmit {Func} (optional)
 
-Triggered onSubmit and when all fields are valid
+Triggered onSubmit and when all fields are valid. If this prop is not present, do not render the Submit button.
 
 #### Arguments
 

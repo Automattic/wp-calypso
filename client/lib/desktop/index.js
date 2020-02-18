@@ -17,6 +17,7 @@ import userUtilities from 'lib/user/utils';
 import { getStatsPathForTab } from 'lib/route';
 import { getReduxStore } from 'lib/redux-bridge';
 import hasUnseenNotifications from 'state/selectors/has-unseen-notifications';
+import { isEditorIframeLoaded } from 'state/ui/editor/selectors';
 import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import { toggleNotificationsPanel, navigate } from 'state/ui/actions';
 
@@ -41,6 +42,8 @@ const Desktop = {
 		ipc.on( 'page-help', this.onShowHelp.bind( this ) );
 
 		this.store = await getReduxStore();
+
+		this.editorLoadedStatus();
 
 		// Send some events immediatley - this sets the app state
 		this.notificationStatus();
@@ -137,6 +140,34 @@ const Desktop = {
 		debug( 'Showing help' );
 
 		this.navigate( '/help' );
+	},
+
+	editorLoadedStatus: function() {
+		const sendLoadedEvt = () => {
+			debug( 'Editor iframe loaded' );
+
+			const evt = new window.Event( 'editor-iframe-loaded' );
+			window.dispatchEvent( evt );
+		};
+
+		let previousLoaded = isEditorIframeLoaded( this.store.getState() );
+
+		if ( previousLoaded ) {
+			sendLoadedEvt();
+		}
+
+		this.store.subscribe( () => {
+			const state = this.store.getState();
+			const loaded = isEditorIframeLoaded( state );
+
+			if ( loaded !== previousLoaded ) {
+				if ( loaded ) {
+					sendLoadedEvt();
+				}
+
+				previousLoaded = loaded;
+			}
+		} );
 	},
 
 	print: function( title, html ) {

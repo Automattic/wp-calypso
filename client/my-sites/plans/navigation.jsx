@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -15,7 +16,6 @@ import { sectionify } from 'lib/route';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
-import { isMobile } from 'lib/viewport';
 import PopoverCart from 'my-sites/checkout/cart/popover-cart';
 import { isATEnabled } from 'lib/automated-transfer';
 import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';

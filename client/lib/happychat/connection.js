@@ -83,7 +83,7 @@ class Connection {
 	/**
 	 * Given a Redux action, emits a SocketIO event.
 	 *
-	 * @param  { Object } action A Redux action with props
+	 * @param  {object} action A Redux action with props
 	 *                    {
 	 *                  		event: SocketIO event name,
 	 *                  	  payload: contents to be sent,
@@ -117,14 +117,14 @@ class Connection {
 	 * - request was unsucessful: would dispatch receiveError
 	 * - request timeout: would dispatch action.callbackTimeout
 	 *
-	 * @param  { Object } action A Redux action with props
+	 * @param  {object} action A Redux action with props
 	 *                  	{
 	 *                  		event: SocketIO event name,
 	 *                  		payload: contents to be sent,
 	 *                  		callback: a Redux action creator,
 	 *                  		callbackTimeout: a Redux action creator,
 	 *                  	}
-	 * @param  { Number } timeout How long (in milliseconds) has the server to respond
+	 * @param  {number} timeout How long (in milliseconds) has the server to respond
 	 * @returns { Promise } Fulfilled (returns the transcript response)
 	 *                     or rejected (returns an error message)
 	 */

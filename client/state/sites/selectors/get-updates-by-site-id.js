@@ -10,6 +10,7 @@ import getRawSite from 'state/selectors/get-raw-site';
 
 /**
  * Returns the updates object for a site
+ *
  * @param {object} state Global state tree
  * @param {number} siteId Site ID
  * @returns {object} Available updates for the site

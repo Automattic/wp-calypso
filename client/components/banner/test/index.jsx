@@ -28,9 +28,13 @@ jest.mock( 'i18n-calypso', () => ( {
 /**
  * External dependencies
  */
-import { assert } from 'chai';
-import { shallow } from 'enzyme';
 import React from 'react';
+import { shallow } from 'enzyme';
+
+/**
+ * Internal dependencies
+ */
+import { Banner } from '../index';
 import {
 	PLAN_FREE,
 	PLAN_BUSINESS,
@@ -48,157 +52,163 @@ import {
 } from 'lib/plans/constants';
 import PlanPrice from 'my-sites/plan-price/';
 
-/**
- * Internal dependencies
- */
-import { Banner } from '../index';
-
 const props = {
-	callToAction: false,
+	callToAction: null,
 	plan: PLAN_FREE,
+	title: 'banner title',
 };
 
 describe( 'Banner basic tests', () => {
 	test( 'should not blow up and have proper CSS class', () => {
 		const comp = shallow( <Banner { ...props } /> );
-		assert.lengthOf( comp.find( '.banner' ), 1 );
+		expect( comp.find( '.banner' ) ).toHaveLength( 1 );
 	} );
 
-	test( 'should render Card if dismissPreferenceName is false', () => {
-		const comp = shallow( <Banner { ...props } dismissPreferenceName={ false } /> );
-		assert.lengthOf( comp.find( 'Card' ), 1 );
-		assert.lengthOf( comp.find( 'DismissibleCard' ), 0 );
+	test( 'should render Card if dismissPreferenceName is null', () => {
+		const comp = shallow( <Banner { ...props } dismissPreferenceName={ null } /> );
+		expect( comp.find( 'Card' ) ).toHaveLength( 1 );
+		expect( comp.find( 'DismissibleCard' ) ).toHaveLength( 0 );
 	} );
 
-	test( 'should render DismissibleCard if dismissPreferenceName is true', () => {
-		const comp = shallow( <Banner { ...props } dismissPreferenceName={ true } /> );
-		assert.lengthOf( comp.find( 'Card' ), 0 );
-		assert.lengthOf( comp.find( 'DismissibleCard' ), 1 );
+	test( 'should render DismissibleCard if dismissPreferenceName is defined', () => {
+		const comp = shallow( <Banner { ...props } dismissPreferenceName={ 'banner-test' } /> );
+		expect( comp.find( 'Card' ) ).toHaveLength( 0 );
+		expect( comp.find( 'DismissibleCard' ) ).toHaveLength( 1 );
 	} );
 
-	test( 'should have .has-call-to-action class if callToAction is true', () => {
-		const comp = shallow( <Banner { ...props } callToAction={ true } /> );
-		assert.lengthOf( comp.find( '.has-call-to-action' ), 1 );
+	test( 'should have .has-call-to-action class if callToAction is defined', () => {
+		const comp = shallow( <Banner { ...props } callToAction={ 'Upgrade Now!' } /> );
+		expect( comp.find( '.has-call-to-action' ) ).toHaveLength( 1 );
 	} );
 
-	test( 'should not have .has-call-to-action class if callToAction is false', () => {
-		const comp = shallow( <Banner { ...props } callToAction={ false } /> );
-		assert.lengthOf( comp.find( '.has-call-to-action' ), 0 );
+	test( 'should not have .has-call-to-action class if callToAction is null', () => {
+		const comp = shallow( <Banner { ...props } callToAction={ null } /> );
+		expect( comp.find( '.has-call-to-action' ) ).toHaveLength( 0 );
 	} );
 
 	test( 'should render a <Button /> when callToAction is specified', () => {
 		const comp = shallow( <Banner { ...props } callToAction={ 'Buy something!' } /> );
-		assert.lengthOf( comp.find( 'Button' ), 1 );
+		expect( comp.find( 'Button' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should not render a <Button /> when callToAction is not specified', () => {
 		const comp = shallow( <Banner { ...props } /> );
-		assert.lengthOf( comp.find( 'Button' ), 0 );
+		expect( comp.find( 'Button' ) ).toHaveLength( 0 );
+	} );
+
+	test( 'should have .is-jetpack class and JetpackLogo if jetpack prop is defined', () => {
+		const { plan, ...propsWithoutPlan } = props;
+		const comp = shallow( <Banner { ...propsWithoutPlan } jetpack /> );
+		expect( comp.find( '.is-jetpack' ) ).toHaveLength( 1 );
+		expect( comp.find( 'JetpackLogo' ) ).toHaveLength( 1 );
+	} );
+
+	test( 'should render have .is-horizontal class if horizontal prop is defined', () => {
+		const comp = shallow( <Banner { ...props } horizontal /> );
+		expect( comp.find( '.is-horizontal' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should render a <PlanPrice /> when price is specified', () => {
 		const comp = shallow( <Banner { ...props } price={ 100 } /> );
-		assert.lengthOf( comp.find( PlanPrice ), 1 );
+		expect( comp.find( PlanPrice ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should render two <PlanPrice /> components when there are two prices', () => {
 		const comp = shallow( <Banner { ...props } price={ [ 100, 80 ] } /> );
-		assert.lengthOf( comp.find( PlanPrice ), 2 );
+		expect( comp.find( PlanPrice ) ).toHaveLength( 2 );
 	} );
 
 	test( 'should render no <PlanPrice /> components when there are no prices', () => {
 		const comp = shallow( <Banner { ...props } /> );
-		assert.lengthOf( comp.find( PlanPrice ), 0 );
+		expect( comp.find( PlanPrice ) ).toHaveLength( 0 );
 	} );
 
 	test( 'should render a .banner__description when description is specified', () => {
 		const comp = shallow( <Banner { ...props } description="test" /> );
-		assert.lengthOf( comp.find( '.banner__description' ), 1 );
+		expect( comp.find( '.banner__description' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should not render a .banner__description when description is not specified', () => {
 		const comp = shallow( <Banner { ...props } /> );
-		assert.lengthOf( comp.find( '.banner__description' ), 0 );
+		expect( comp.find( '.banner__description' ) ).toHaveLength( 0 );
 	} );
 
 	test( 'should render a .banner__list when list is specified', () => {
 		const comp = shallow( <Banner { ...props } list={ [ 'test1', 'test2' ] } /> );
-		assert.lengthOf( comp.find( '.banner__list' ), 1 );
-		assert.lengthOf( comp.find( '.banner__list li' ), 2 );
-		assert.include(
+		expect( comp.find( '.banner__list' ) ).toHaveLength( 1 );
+		expect( comp.find( '.banner__list li' ) ).toHaveLength( 2 );
+		expect(
 			comp
 				.find( '.banner__list li' )
 				.at( 0 )
-				.text(),
-			'test1'
-		);
-		assert.include(
+				.text()
+		).toContain( 'test1' );
+		expect(
 			comp
 				.find( '.banner__list li' )
 				.at( 1 )
-				.text(),
-			'test2'
-		);
+				.text()
+		).toContain( 'test2' );
 	} );
 
 	test( 'should not render a .banner__list when description is not specified', () => {
 		const comp = shallow( <Banner { ...props } /> );
-		assert.lengthOf( comp.find( '.banner__list' ), 0 );
+		expect( comp.find( '.banner__list' ) ).toHaveLength( 0 );
 	} );
 
 	test( 'should record Tracks event when event is specified', () => {
 		const comp = shallow( <Banner { ...props } event="test" /> );
-		assert.lengthOf( comp.find( 'TrackComponentView' ), 1 );
+		expect( comp.find( 'TrackComponentView' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should not record Tracks event when event is not specified', () => {
 		const comp = shallow( <Banner { ...props } /> );
-		assert.lengthOf( comp.find( 'TrackComponentView' ), 0 );
+		expect( comp.find( 'TrackComponentView' ) ).toHaveLength( 0 );
 	} );
 
 	test( 'should render Card with href if href prop is passed', () => {
 		const comp = shallow( <Banner { ...props } href={ '/' } /> );
-		assert.lengthOf( comp.find( 'Card' ), 1 );
-		assert.equal( '/', comp.find( 'Card' ).props().href );
+		expect( comp.find( 'Card' ) ).toHaveLength( 1 );
+		expect( comp.find( 'Card' ).props().href ).toBe( '/' );
 	} );
 
 	test( 'should render Card with no href if href prop is passed but disableHref is true', () => {
 		const comp = shallow( <Banner { ...props } href={ '/' } disableHref={ true } /> );
-		assert.lengthOf( comp.find( 'Card' ), 1 );
-		assert.equal( undefined, comp.find( 'Card' ).props().href );
+		expect( comp.find( 'Card' ) ).toHaveLength( 1 );
+		expect( comp.find( 'Card' ).props().href ).toBeNull();
 	} );
 
 	test( 'should render Card with href if href prop is passed but disableHref is true and forceHref is true', () => {
 		const comp = shallow(
 			<Banner { ...props } href={ '/' } disableHref={ true } forceHref={ true } />
 		);
-		assert.lengthOf( comp.find( 'Card' ), 1 );
-		assert.equal( '/', comp.find( 'Card' ).props().href );
+		expect( comp.find( 'Card' ) ).toHaveLength( 1 );
+		expect( comp.find( 'Card' ).props().href ).toBe( '/' );
 	} );
 
 	test( 'should render Card with no href and CTA button with href if href prop is passed and callToAction is also passed', () => {
 		const comp = shallow( <Banner { ...props } href={ '/' } callToAction="Go WordPress!" /> );
-		assert.lengthOf( comp.find( 'Card' ), 1 );
-		assert.equal( undefined, comp.find( 'Card' ).props().href );
-		assert.equal( null, comp.find( 'Card' ).props().onClick );
+		expect( comp.find( 'Card' ) ).toHaveLength( 1 );
+		expect( comp.find( 'Card' ).props().href ).toBeNull();
+		expect( comp.find( 'Card' ).props().onClick ).toBeNull();
 
-		assert.lengthOf( comp.find( 'Button' ), 1 );
-		assert.equal( '/', comp.find( 'Button' ).props().href );
-		assert.equal( 'Go WordPress!', comp.find( 'Button' ).props().children );
-		assert.equal( comp.instance().handleClick, comp.find( 'Button' ).props().onClick );
+		expect( comp.find( 'Button' ) ).toHaveLength( 1 );
+		expect( comp.find( 'Button' ).props().href ).toBe( '/' );
+		expect( comp.find( 'Button' ).props().children ).toBe( 'Go WordPress!' );
+		expect( comp.find( 'Button' ).props().onClick ).toBe( comp.instance().handleClick );
 	} );
 
 	test( 'should render Card with href and CTA button with no href if href prop is passed and callToAction is also passed and forceHref is true', () => {
 		const comp = shallow(
 			<Banner { ...props } href={ '/' } callToAction="Go WordPress!" forceHref={ true } />
 		);
-		assert.lengthOf( comp.find( 'Card' ), 1 );
-		assert.equal( '/', comp.find( 'Card' ).props().href );
-		assert.equal( comp.instance().handleClick, comp.find( 'Card' ).props().onClick );
+		expect( comp.find( 'Card' ) ).toHaveLength( 1 );
+		expect( comp.find( 'Card' ).props().href ).toBe( '/' );
+		expect( comp.find( 'Card' ).props().onClick ).toBe( comp.instance().handleClick );
 
-		assert.lengthOf( comp.find( 'Button' ), 1 );
-		assert.equal( undefined, comp.find( 'Button' ).props().href );
-		assert.equal( 'Go WordPress!', comp.find( 'Button' ).props().children );
+		expect( comp.find( 'Button' ) ).toHaveLength( 1 );
+		expect( comp.find( 'Button' ).props().href ).toBeUndefined();
+		expect( comp.find( 'Button' ).props().children ).toBe( 'Go WordPress!' );
 	} );
 } );
 
@@ -211,7 +221,7 @@ describe( 'Banner should have a class name corresponding to appropriate plan', (
 	].forEach( plan => {
 		test( 'Personal', () => {
 			const comp = shallow( <Banner { ...props } plan={ plan } /> );
-			assert.lengthOf( comp.find( '.is-upgrade-personal' ), 1 );
+			expect( comp.find( '.is-upgrade-personal' ) ).toHaveLength( 1 );
 		} );
 	} );
 
@@ -223,7 +233,7 @@ describe( 'Banner should have a class name corresponding to appropriate plan', (
 	].forEach( plan => {
 		test( 'Premium', () => {
 			const comp = shallow( <Banner { ...props } plan={ plan } /> );
-			assert.lengthOf( comp.find( '.is-upgrade-premium' ), 1 );
+			expect( comp.find( '.is-upgrade-premium' ) ).toHaveLength( 1 );
 		} );
 	} );
 
@@ -235,7 +245,7 @@ describe( 'Banner should have a class name corresponding to appropriate plan', (
 	].forEach( plan => {
 		test( 'Business', () => {
 			const comp = shallow( <Banner { ...props } plan={ plan } /> );
-			assert.lengthOf( comp.find( '.is-upgrade-business' ), 1 );
+			expect( comp.find( '.is-upgrade-business' ) ).toHaveLength( 1 );
 		} );
 	} );
 } );

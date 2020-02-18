@@ -12,6 +12,7 @@ import config from 'config';
 export {
 	addLocaleToPath,
 	getLanguage,
+	getLanguageRouteParam,
 	getLanguageSlugs,
 	getLocaleFromPath,
 	isDefaultLocale,

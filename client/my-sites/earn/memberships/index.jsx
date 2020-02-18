@@ -12,7 +12,7 @@ import { saveAs } from 'browser-filesaver';
  * Internal dependencies
  */
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import { Card, Button, CompactCard } from '@automattic/components';
 import InfiniteScroll from 'components/infinite-scroll';
 import QueryMembershipsEarnings from 'components/data/query-memberships-earnings';
@@ -167,7 +167,7 @@ class MembershipsSection extends Component {
 			)
 			.join( '\n' );
 
-		const blob = new Blob( [ csvData ], { type: 'text/csv;charset=utf-8' } );
+		const blob = new window.Blob( [ csvData ], { type: 'text/csv;charset=utf-8' } );
 
 		saveAs( blob, fileName );
 	}
@@ -415,23 +415,6 @@ class MembershipsSection extends Component {
 	}
 
 	render() {
-		if ( this.props.isJetpackTooOld ) {
-			return this.renderOnboarding(
-				<Notice
-					status="is-warning"
-					text={ this.props.translate(
-						'Please update the Jetpack plugin to version 7.4 or higher in order to use the Recurring Payments button block.'
-					) }
-					showDismiss={ false }
-				>
-					<NoticeAction
-						href={ `https://wordpress.com/plugins/jetpack/${ this.props.siteSlug }` }
-						icon="external"
-					/>
-				</Notice>
-			);
-		}
-
 		if ( ! this.props.paidPlan ) {
 			return this.renderOnboarding(
 				<UpgradeNudge
@@ -469,7 +452,7 @@ class MembershipsSection extends Component {
 const mapStateToProps = state => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const isJetpack = isJetpackSite( state, siteId );
+
 	return {
 		site,
 		siteId,
@@ -488,8 +471,7 @@ const mapStateToProps = state => {
 		),
 		connectUrl: get( state, [ 'memberships', 'settings', siteId, 'connectUrl' ], '' ),
 		paidPlan: isSiteOnPaidPlan( state, siteId ),
-		isJetpackTooOld: isJetpack && isJetpackMinimumVersion( state, siteId, '7.4' ) === false,
-		isJetpack: isJetpack,
+		isJetpack: isJetpackSite( state, siteId ),
 		products: get( state, [ 'memberships', 'productList', 'items', siteId ], [] ),
 	};
 };

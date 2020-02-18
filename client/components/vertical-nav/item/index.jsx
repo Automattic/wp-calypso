@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -32,8 +33,12 @@ class VerticalNavItem extends Component {
 	};
 
 	placeholder = () => {
+		const compactCardClassNames = classNames(
+			'vertical-nav-item is-placeholder',
+			this.props.className
+		);
 		return (
-			<CompactCard className="vertical-nav-item is-placeholder">
+			<CompactCard className={ compactCardClassNames }>
 				<span />
 				<span />
 			</CompactCard>
@@ -45,13 +50,15 @@ class VerticalNavItem extends Component {
 			return this.placeholder();
 		}
 
+		const compactCardClassNames = classNames( 'vertical-nav-item', this.props.className );
+
 		return (
 			<a
 				href={ this.props.path }
 				onClick={ this.props.onClick }
 				target={ this.props.external ? '_blank' : null }
 			>
-				<CompactCard className="vertical-nav-item">
+				<CompactCard className={ compactCardClassNames }>
 					{ this.getIcon() }
 					<span>{ this.props.children }</span>
 				</CompactCard>

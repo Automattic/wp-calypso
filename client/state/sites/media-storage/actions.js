@@ -28,6 +28,7 @@ export function receiveMediaStorage( mediaStorage, siteId ) {
 
 /**
  * Triggers a network request to find media storage limits for a given site
+ *
  * @param   {number}   siteId Site ID
  * @returns {Function}        Action thunk
  */

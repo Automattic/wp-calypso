@@ -138,9 +138,16 @@ export function getStatsPathForTab(
 	return untrailingslashit( path + siteIdOrSlug );
 }
 
+export function getMessagePathForJITM( path: URLString, siteFragment?: SiteSlug | SiteId ): string {
+	return sectionify( path, siteFragment )
+		.replace( /^\/+/, '' )
+		.replace( /\//g, '-' );
+}
+
 // TODO: Add status enum (see `client/my-sites/pages/main.jsx`).
 /**
  * Post status in our routes mapped to valid API values
+ *
  * @param status  Status param from route
  * @returns        mapped status value
  */

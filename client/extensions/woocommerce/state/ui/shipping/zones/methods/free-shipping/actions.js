@@ -9,6 +9,7 @@ import {
 
 /**
  * Changes the "requires" setting.
+ *
  * @param {number} siteId Site ID.
  * @param {string} methodId ID of the shipping method to edit.
  * @param {string} condition Condition that must be met to qualify for free shipping. See README.md for more details.
@@ -26,6 +27,7 @@ export const setFreeShippingCondition = ( siteId, methodId, condition ) => {
 
 /**
  * Changes the "min_amount" setting.
+ *
  * @param {number} siteId Site ID.
  * @param {string} methodId ID of the shipping method to edit.
  * @param {number} cost Minimum monetary amount for an order to qualify for free shipping.

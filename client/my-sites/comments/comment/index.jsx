@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { isWithinBreakpoint } from '@automattic/viewport';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -21,7 +22,6 @@ import CommentReply from 'my-sites/comments/comment/comment-reply';
 import CommentRepliesList from 'my-sites/comments/comment-replies-list';
 import QueryComment from 'components/data/query-comment';
 import scrollTo from 'lib/scroll-to';
-import { isWithinBreakpoint } from 'lib/viewport';
 import { getMinimumComment } from 'my-sites/comments/comment/utils';
 import getSiteComment from 'state/selectors/get-site-comment';
 import { getSelectedSiteId } from 'state/ui/selectors';

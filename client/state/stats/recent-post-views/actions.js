@@ -8,6 +8,8 @@ import {
 
 import 'state/data-layer/wpcom/sites/stats/views/posts';
 
+import 'state/stats/init';
+
 /**
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve views for a post or posts.

@@ -63,12 +63,17 @@
 
 		.button {
 			border-width: 1px;
-			display: block;
-			min-height: 85px;
+			display: flex;
 			height: 100%;
 			min-width: 100%;
-			padding: 24px;
+			padding: 16px;
 			text-align: center;
+
+			@include breakpoint( '>480px' ) {
+				display: block;
+				min-height: 85px;
+				padding: 24px;
+			}
 		}
 		.button:hover {
 			box-shadow: 0 2px 3px 0 rgba( 98, 109, 118, 0.15 );
@@ -76,6 +81,11 @@
 
 		span {
 			display: block;
+
+			@include breakpoint( '<480px' ) {
+				font-weight: 300;
+				margin: auto 14px;
+			}
 		}
 
 		@mixin box-action-two-col {
@@ -98,8 +108,36 @@
 	&__card-checklist-heading {
 		margin-bottom: -16px;
 	}
-	&__card-boxes {
-		padding-bottom: 0;
+	&__card-boxes.foldable-card {
+		&.is-expanded .foldable-card__header {
+			padding-bottom: 0;
+		}
+		.foldable-card {
+			@include breakpoint( '<480px' ) {
+				&__header {
+					min-height: 0;
+					padding: 12px 16px;
+				}
+			}
+
+			&__content {
+				border: 0;
+			}
+		}
+	}
+	@include breakpoint( '>480px' ) {
+		&__card-boxes.card.foldable-card {
+			margin-top: 0;
+			padding-bottom: 0;
+
+			.foldable-card__header {
+				padding: 0 24px;
+			}
+
+			.foldable-card__content {
+				padding: 0 24px;
+			}
+		}
 	}
 	&__boxes {
 		display: flex;
@@ -125,7 +163,7 @@
 				width: auto;
 			}
 		}
-		@include breakpoint( '>1280px' ) {
+		@include breakpoint( '>1400px' ) {
 			@include card-col-two-col;
 		}
 		@include breakpoint( '800px-1040px' ) {
@@ -144,7 +182,7 @@
 				margin-right: 6px;
 			}
 		}
-		@include breakpoint( '>1280px' ) {
+		@include breakpoint( '>1400px' ) {
 			@include card-col-left-two-col;
 		}
 		@include breakpoint( '800px-1040px' ) {
@@ -161,7 +199,7 @@
 				margin-left: 6px;
 			}
 		}
-		@include breakpoint( '>1280px' ) {
+		@include breakpoint( '>1400px' ) {
 			@include card-col-right-two-col;
 		}
 		@include breakpoint( '800px-1040px' ) {
@@ -190,20 +228,16 @@
 			}
 		}
 	}
-	&__card-mobile {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-	}
+
 	&__card-subheader {
 		color: var( --color-text-subtle );
 		font-size: 0.85rem;
 		margin: -0.5rem 0 1rem;
 	}
-	&__go-mobile,
 	&__grow-earn {
 		padding-bottom: 12px;
 	}
+
 	&__layout {
 		@include grid-row( 3, 1 );
 		@include breakpoint( '>1040px' ) {

@@ -1,31 +1,20 @@
-import '@babel/polyfill';
+import '@automattic/calypso-polyfills';
 
 /**
  * Internal dependencies
  */
-import { RequestCart, ResponseCart } from '../types';
+import { RequestCart } from '../types';
 
 /**
  * A fake WPCOM shopping cart endpoint.
- *
- * This is awful.
- *
- * @param siteSlug Cart key for the 'backend'
- * @param Cart object
- * @returns Promise
  */
-export async function mockSetCartEndpoint(
-	siteSlug: string,
-	{
-		products: requestProducts,
-		currency: requestCurrency,
-		coupon: requestCoupon,
-		locale: requestLocale,
-	}: RequestCart
-): Promise< ResponseCart > {
+export async function mockSetCartEndpoint( {
+	products: requestProducts,
+	currency: requestCurrency,
+	coupon: requestCoupon,
+	locale: requestLocale,
+}: RequestCart ): Promise< object > {
 	const products = requestProducts.map( convertRequestProductToResponseProduct( requestCurrency ) );
-
-	console.log( siteSlug ); // eslint-disable-line no-console
 
 	const taxInteger = products.reduce( ( accum, current ) => {
 		return accum + current.item_tax;
@@ -36,9 +25,11 @@ export async function mockSetCartEndpoint(
 	}, taxInteger );
 
 	return {
-		products: products,
+		products,
 		locale: requestLocale,
 		currency: requestCurrency,
+		credits_integer: 0,
+		credits_display: '0',
 		allowed_payment_methods: [
 			'WPCOM_Billing_Stripe_Payment_Method',
 			'WPCOM_Billing_Ebanx',
@@ -48,9 +39,12 @@ export async function mockSetCartEndpoint(
 		total_tax_integer: taxInteger,
 		total_cost_display: 'R$156',
 		total_cost_integer: totalInteger,
+		sub_total_display: 'R$149',
+		sub_total_integer: totalInteger - taxInteger,
 		coupon: requestCoupon,
 		is_coupon_applied: true,
-	} as ResponseCart;
+		coupon_discounts_integer: [],
+	};
 }
 
 function convertRequestProductToResponseProduct( currency ) {
@@ -69,6 +63,8 @@ function convertRequestProductToResponseProduct( currency ) {
 					item_subtotal_display: 'R$144',
 					item_tax: 0,
 					meta: '',
+					volume: 1,
+					extra: {},
 				};
 		}
 
@@ -85,11 +81,8 @@ function convertRequestProductToResponseProduct( currency ) {
 	};
 }
 
-export function mockGetCartEndpointWith(
-	initialCart: ResponseCart
-): ( string ) => Promise< ResponseCart > {
-	return async ( siteSlug: string ) => {
-		console.log( siteSlug ); // eslint-disable-line no-console
+export function mockGetCartEndpointWith( initialCart: object ): ( string ) => Promise< object > {
+	return async () => {
 		return initialCart;
 	};
 }

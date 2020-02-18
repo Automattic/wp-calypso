@@ -14,6 +14,8 @@ import {
 	READER_TAG_IMAGES_RECEIVE,
 } from 'state/action-types';
 
+import 'state/reader/init';
+
 /**
  * Module variables
  */
@@ -37,8 +39,8 @@ export function receiveTagImages( tag, images ) {
 /**
  * Triggers a network request to fetch tag images.
  *
- * @param  {Integer} tag Tag name
- * @param  {Integer} limit Maximum number of results to return
+ * @param  {number} tag Tag name
+ * @param  {number} limit Maximum number of results to return
  * @returns {Function} Action thunk
  */
 export function requestTagImages( tag, limit = 5 ) {

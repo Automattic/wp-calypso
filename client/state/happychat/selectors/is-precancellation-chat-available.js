@@ -5,6 +5,7 @@ import { get } from 'lodash';
 
 /**
  * Returns if precancellation chat is available.
+ *
  * @param   {object}  state  Global state tree
  * @returns {boolean}        true, when precancellation is available
  */

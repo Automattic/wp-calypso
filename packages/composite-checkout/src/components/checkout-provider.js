@@ -42,8 +42,16 @@ export const CheckoutProvider = props => {
 		children,
 	} = props;
 	const [ paymentMethodId, setPaymentMethodId ] = useState(
-		paymentMethods ? paymentMethods[ 0 ].id : null
+		paymentMethods?.length ? paymentMethods[ 0 ].id : null
 	);
+	const [ prevPaymentMethods, setPrevPaymentMethods ] = useState( [] );
+	useEffect( () => {
+		if ( paymentMethods.length !== prevPaymentMethods.length ) {
+			debug( 'paymentMethods changed; setting payment method to first of', paymentMethods );
+			setPaymentMethodId( paymentMethods?.length ? paymentMethods[ 0 ].id : null );
+			setPrevPaymentMethods( paymentMethods );
+		}
+	}, [ paymentMethods, prevPaymentMethods ] );
 
 	const [ formStatus, setFormStatus ] = useFormStatusManager( isLoading );
 	useEffect( () => {
@@ -53,11 +61,11 @@ export const CheckoutProvider = props => {
 		}
 	}, [ formStatus, onPaymentComplete ] );
 
-	// Remove undefined and duplicate CheckoutWrapper properties
+	// Remove undefined and duplicate checkoutWrapper properties
 	const wrappers = [
-		...new Set( paymentMethods.map( method => method.CheckoutWrapper ).filter( Boolean ) ),
+		...new Set( paymentMethods.map( method => method.checkoutWrapper ).filter( Boolean ) ),
 	];
-	debug( `applying ${ wrappers.length } CheckoutWrapper wrappers` );
+	debug( `applying ${ wrappers.length } checkoutWrapper wrappers` );
 
 	// Create the registry automatically if it's not a prop
 	const registryRef = useRef( registry );
@@ -165,8 +173,8 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 }
 
 function PaymentMethodWrapperProvider( { children, wrappers } ) {
-	return wrappers.reduce( ( whole, Wrapper ) => {
-		return <Wrapper>{ whole }</Wrapper>;
+	return wrappers.reduce( ( whole, wrapper ) => {
+		return wrapper( whole );
 	}, children );
 }
 

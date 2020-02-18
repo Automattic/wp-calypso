@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/components",
-	"version": "1.0.0-alpha.0",
+	"version": "1.0.0-alpha.1",
 	"description": "Automattic Components",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -24,22 +24,23 @@
 	},
 	"files": [
 		"dist",
-		"types",
 		"src"
 	],
-	"types": "types",
+	"types": "dist/types",
 	"dependencies": {
+		"@babel/runtime": "^7.8.4",
 		"classnames": "^2.2.6",
-		"enzyme": "^3.10.0",
 		"gridicons": "^3.3.1",
 		"lodash": "^4.17.15",
 		"prop-types": "^15.7.2",
-		"react": "^16.8.3",
-		"react-dom": "^16.8.3",
 		"react-modal": "^3.8.1"
 	},
+	"peerDependencies": {
+		"react": "^16.8",
+		"react-dom": "^16.8"
+	},
 	"scripts": {
-		"clean": "npx rimraf dist types",
+		"clean": "npx rimraf dist",
 		"prepublish": "npm run clean",
 		"prepare": "transpile && tsc && copy-assets"
 	}

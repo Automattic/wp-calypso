@@ -30,11 +30,11 @@
 		"external-media": true,
 		"external-media/google-photos": true,
 		"external-media/free-photo-library": true,
-		"fluid-width": true,
 		"gdpr-banner": true,
 		"google-my-business": false,
 		"help": true,
 		"help/courses": true,
+		"home/all": false,
 		"ive/me": false,
 		"ive/use-external-defs": false,
 		"ive/use-external-assignment": false,
@@ -43,6 +43,7 @@
 		"jetpack/personalPlan": true,
 		"jetpack/connect/site-questions": false,
 		"jitms": false,
+		"legal-updates-banner": false,
 		"login/magic-login": false,
 		"login/native-login-links": false,
 		"login/wp-login": false,
@@ -128,5 +129,6 @@
 	"server_side_boom_analytics_enabled": false,
 	"boom_analytics_key": "desktop",
 	"google_analytics_key": "UA-10673494-10",
+	"google_recaptcha_site_key": "6LdoXcAUAAAAAM61KvdgP8xwnC19YuzAiOWn5Wtn",
 	"hotjar_enabled": true
 }

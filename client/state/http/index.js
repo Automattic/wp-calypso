@@ -3,7 +3,7 @@
  */
 import { fromPairs, identity, toPairs } from 'lodash';
 
-/***
+/**
  * Internal dependencies
  */
 import { extendAction } from 'state/utils';
@@ -28,7 +28,7 @@ const isAllHeadersValid = headers =>
 			typeof headerPair[ 1 ] === 'string'
 	);
 
-/***
+/**
  * Handler to perform an http request based on `HTTP_REQUEST` action parameters:
  * {string} url the url to request
  * {string} method the method we should use in the request: GET, POST etc.

@@ -8,8 +8,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import scrollbarSize from 'dom-helpers/scrollbarSize';
-import List from 'react-virtualized/List';
-import AutoSizer from 'react-virtualized/AutoSizer';
+import { AutoSizer, List } from '@automattic/react-virtualized';
 import {
 	debounce,
 	memoize,
@@ -37,7 +36,6 @@ import {
 	getPostsLastPageForQuery,
 } from 'state/posts/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
-import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import QueryPosts from 'components/data/query-posts';
 
@@ -459,12 +457,7 @@ class PostSelectorPosts extends React.Component {
 
 export default connect( ( state, ownProps ) => {
 	const { siteId, query } = ownProps;
-
-	const apiVersion =
-		! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.0' )
-			? '1.2'
-			: undefined;
-	const queryWithVersion = { ...query, apiVersion };
+	const queryWithVersion = { ...query, apiVersion: '1.2' };
 
 	return {
 		posts: getPostsForQueryIgnoringPage( state, siteId, queryWithVersion ),

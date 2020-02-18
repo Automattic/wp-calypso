@@ -27,6 +27,7 @@ function getGlotPressFunction( properties ) {
 /**
  * Generate each line of equivalent php from a matching `translate()`
  * request found in the client code
+ *
  * @param  {object} properties - properties describing translation request
  * @param  {string} textdomain - optional string to be added as a textdomain value
  * @returns {string}            the equivalent php code for each translation request

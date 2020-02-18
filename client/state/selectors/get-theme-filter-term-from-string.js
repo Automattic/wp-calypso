@@ -1,8 +1,9 @@
 /**
  * Internal dependencies
  */
-
 import isAmbiguousThemeFilterTerm from 'state/selectors/is-ambiguous-theme-filter-term';
+
+import 'state/themes/init';
 
 /**
  * return term from a taxonomy:term string

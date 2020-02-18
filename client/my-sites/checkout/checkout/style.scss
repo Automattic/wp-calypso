@@ -1187,3 +1187,10 @@
 		height: 40px;
 	}
 }
+
+.composite-checkout__testing-banner {
+  @media( min-width: 700px ) {
+    margin: auto;
+    max-width: 556px;
+  }
+}

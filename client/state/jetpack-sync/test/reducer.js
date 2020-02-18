@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { without } from 'lodash';
 
 /**
  * Internal dependencies
@@ -214,17 +215,30 @@ describe( 'reducer', () => {
 				.to.be.at.least( startTime );
 		} );
 
+		test( 'should set lastSuccessfulStatus to current time when finished without progress for a site', () => {
+			let state = syncStatus( undefined, {} );
+			const startTime = Date.now();
+			state = syncStatus( state, successfulSyncStatusRequest );
+			expect( state )
+				.to.have.property( String( successfulSyncStatusRequest.siteId ) )
+				.to.have.property( 'lastSuccessfulStatus' )
+				.to.be.at.least( startTime );
+		} );
+
 		test( 'should store expected response keys on success', () => {
 			const state = syncStatus( undefined, successfulSyncStatusRequest );
 			expect( state )
 				.to.have.property( successfulSyncStatusRequest.siteId )
 				.to.have.all.keys(
-					getExpectedResponseKeys().concat( [
-						'error',
-						'isRequesting',
-						'lastSuccessfulStatus',
-						'errorCounter',
-					] )
+					without(
+						getExpectedResponseKeys().concat( [
+							'error',
+							'isRequesting',
+							'lastSuccessfulStatus',
+							'errorCounter',
+						] ),
+						'progress'
+					) // legacy sync status will not have `progress` property.
 				);
 		} );
 

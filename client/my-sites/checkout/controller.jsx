@@ -15,14 +15,14 @@ import { getSiteBySlug } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import GSuiteNudge from './gsuite-nudge';
 import CheckoutContainer from './checkout/checkout-container';
+import CheckoutSystemDecider from './checkout/checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import UpsellNudge from './upsell-nudge';
 import { isGSuiteRestricted } from 'lib/gsuite';
 import { getRememberedCoupon } from 'lib/cart/actions';
 import { sites } from 'my-sites/controller';
-import config from 'config';
-import CompositeCheckoutContainer from './checkout/composite-checkout-container';
+import CartData from 'components/data/cart';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
@@ -51,38 +51,25 @@ export function checkout( context, next ) {
 
 	context.store.dispatch( setSection( { name: 'checkout' }, { hasSidebar: false } ) );
 
+	// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
 	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
 
-	if ( config.isEnabled( 'composite-checkout-wpcom' ) ) {
-		context.primary = (
-			<CompositeCheckoutContainer
-				siteSlug={ selectedSite.slug }
-				siteId={ selectedSite.ID }
+	context.primary = (
+		<CartData>
+			<CheckoutSystemDecider
 				product={ product }
 				purchaseId={ purchaseId }
+				selectedFeature={ feature }
 				couponCode={ couponCode }
+				isComingFromSignup={ !! context.query.signup }
+				plan={ plan }
+				selectedSite={ selectedSite }
+				reduxStore={ context.store }
+				redirectTo={ context.query.redirect_to }
+				upgradeIntent={ context.query.intent }
+				clearTransaction={ false }
 			/>
-		);
-		next();
-		return;
-	}
-
-	context.primary = (
-		<CheckoutContainer
-			product={ product }
-			purchaseId={ purchaseId }
-			selectedFeature={ feature }
-			// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
-			couponCode={ context.query.coupon || context.query.code || getRememberedCoupon() }
-			// Are we being redirected from the signup flow?
-			isComingFromSignup={ !! context.query.signup }
-			plan={ plan }
-			selectedSite={ selectedSite }
-			reduxStore={ context.store }
-			redirectTo={ context.query.redirect_to }
-			upgradeIntent={ context.query.intent }
-			clearTransaction={ false }
-		/>
+		</CartData>
 	);
 
 	next();

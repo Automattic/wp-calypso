@@ -80,6 +80,8 @@ import accept from 'lib/accept';
 
 import 'state/data-layer/wpcom/theme-filters';
 
+import 'state/themes/init';
+
 const debug = debugFactory( 'calypso:themes:actions' );
 
 // Set destination for 'back' button on theme sheet
@@ -594,7 +596,7 @@ export function installAndActivateTheme( themeId, siteId, source = 'unknown', pu
  * Triggers a theme upload to the given site.
  *
  * @param {number} siteId -- Site to upload to
- * @param {File} file -- the theme zip to upload
+ * @param {window.File} file -- the theme zip to upload
  *
  * @returns {Function} the action function
  */
@@ -651,7 +653,7 @@ export function clearThemeUpload( siteId ) {
  * Start an Automated Transfer with an uploaded theme.
  *
  * @param {number} siteId -- the site to transfer
- * @param {File} file -- theme zip to upload
+ * @param {window.File} file -- theme zip to upload
  * @param {string} plugin -- plugin slug
  *
  * @returns {Promise} for testing purposes only

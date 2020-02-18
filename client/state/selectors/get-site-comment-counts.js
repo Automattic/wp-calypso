@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import 'state/comments/init';
 
 /**
  * Return comment counts for the given site and post ID, if applicable.

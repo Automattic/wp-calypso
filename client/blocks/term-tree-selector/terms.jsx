@@ -6,8 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import AutoSizer from 'react-virtualized/AutoSizer';
-import List from 'react-virtualized/List';
+import { AutoSizer, List } from '@automattic/react-virtualized';
 import {
 	debounce,
 	difference,

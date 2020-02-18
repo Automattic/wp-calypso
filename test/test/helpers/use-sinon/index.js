@@ -13,6 +13,7 @@ import { isFunction, noop } from 'lodash';
  * You can pass clockCallback as the first argument with no 'now' if you wish
  *
  * See http://sinonjs.org/docs/#clock
+ *
  * @param  {number} now The timestamp to set "now" to.
  * @param  {Function} clockCallback  A function invoked with the clock created by sinon
  * @deprecated Use Jest's timer mocks instead (https://facebook.github.io/jest/docs/timer-mocks.html)

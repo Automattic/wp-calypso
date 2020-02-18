@@ -15,6 +15,7 @@ const CONTENT_LENGTH_ASSUME_SET = 50;
 
 /**
  * Check if the content is empty (ignoring empty tags)
+ *
  * @param  {string}  content Raw post content
  * @returns {boolean}         Whether it's considered empty
  */

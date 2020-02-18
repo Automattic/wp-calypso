@@ -1,0 +1,90 @@
+.upsell-nudge {
+	&.banner.card {
+		border-left-color: var( --color-accent );
+		border-left-width: 6px;
+		background-color: var( --color-neutral-80 );
+		box-shadow: none;
+		color: var( --color-text-inverted );
+		display: flex;
+		align-items: center;
+
+		a {
+			border: none;
+			box-shadow: none;
+			color: var( --color-text-inverted );
+		}
+
+		&.is-compact {
+			border-left-width: 4px;
+			margin-bottom: 0;
+
+			.banner__icon-circle,
+			.banner__icon {
+				margin-top: -2px;
+				margin-right: 0.25em;
+			}
+			.dismissible-card__close-icon {
+				margin-left: 0.75em;
+			}
+			.banner__content {
+				padding: 0 0 0 8px;
+			}
+		}
+
+		&:hover {
+			box-shadow: none;
+		}
+	}
+
+	&.banner.card .banner__icon-circle,
+	&.banner.card .banner__icon {
+		width: auto;
+		height: auto;
+		color: var( --color-text-inverted );
+		border-radius: 0;
+		background: none;
+		padding: 0;
+	}
+
+	&.banner.card .card__link-indicator {
+		fill: var( --color-text-inverted );
+	}
+
+	.banner__content {
+		margin-right: auto;
+		color: var( --color-text-inverted );
+	}
+
+	.banner__info .banner__title {
+		color: var( --color-text-inverted );
+		font-weight: normal;
+		margin-right: 8px;
+	}
+
+	.banner__description {
+		color: var( --color-neutral-5 );
+	}
+
+	.banner__action {
+		margin-top: 5px;
+		margin-left: auto;
+	}
+
+	.dismissible-card__close-icon {
+		fill: var( --color-text-inverted );
+		margin-left: 1em;
+		order: 2;
+
+		@include breakpoint( '>480px' ) {
+			margin-top: 0;
+			position: relative;
+			top: auto;
+			right: auto;
+		}
+	}
+
+	&.is-dismissible .banner__action {
+		margin-top: 3px;
+		margin-right: 0;
+	}
+}

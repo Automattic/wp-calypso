@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -15,6 +14,7 @@ import Theme from 'components/theme';
 import EmptyContent from 'components/empty-content';
 import InfiniteScroll from 'components/infinite-scroll';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
+import { getThemesBookmark } from 'state/themes/themes-ui/selectors';
 
 /**
  * Style dependencies
@@ -149,7 +149,7 @@ export class ThemesList extends React.Component {
 }
 
 const mapStateToProps = state => ( {
-	themesBookmark: state.themes.themesUI.themesBookmark,
+	themesBookmark: getThemesBookmark( state ),
 } );
 
 export default connect( mapStateToProps )( localize( ThemesList ) );

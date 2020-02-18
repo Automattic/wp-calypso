@@ -16,11 +16,7 @@ import { STORE_KEY } from '../stores/onboard';
  */
 import defaultImageUrl from '../../../../static/images/verticals/default.jpg';
 
-export interface VerticalBackgroundProps {
-	onLoad: () => void;
-}
-
-const VerticalBackground: FunctionComponent< VerticalBackgroundProps > = ( { onLoad } ) => {
+const VerticalBackground: FunctionComponent = () => {
 	const { siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
 	const [ imageUrl, setImageUrl ] = useState< string | undefined >();
 
@@ -33,7 +29,6 @@ const VerticalBackground: FunctionComponent< VerticalBackgroundProps > = ( { onL
 			const preloadImage = new window.Image();
 			const failureHandler = () => {
 				setImageUrl( defaultImageUrl );
-				onLoad();
 			};
 
 			// If this is a user-supplied vertical, use the default background.
@@ -45,7 +40,6 @@ const VerticalBackground: FunctionComponent< VerticalBackgroundProps > = ( { onL
 			const successHandler = ( { default: url }: { default: string } ) => {
 				preloadImage.onload = () => {
 					setImageUrl( url );
-					onLoad();
 				};
 				preloadImage.onerror = failureHandler;
 				preloadImage.src = url;
@@ -64,7 +58,7 @@ const VerticalBackground: FunctionComponent< VerticalBackgroundProps > = ( { onL
 			};
 		}
 		setImageUrl( undefined );
-	}, [ siteVertical, onLoad ] );
+	}, [ siteVertical ] );
 
 	return (
 		<SwitchTransition mode="in-out">

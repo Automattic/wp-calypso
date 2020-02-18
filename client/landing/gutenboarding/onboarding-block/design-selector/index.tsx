@@ -2,18 +2,21 @@
  * External dependencies
  */
 import { __ as NO__ } from '@wordpress/i18n';
-import { useSelect } from '@wordpress/data';
-import React, { useState, FunctionComponent, MouseEvent } from 'react';
+import { useDispatch, useSelect } from '@wordpress/data';
+import React, { useLayoutEffect, useRef, FunctionComponent } from 'react';
 import classnames from 'classnames';
-import { CSSTransition } from 'react-transition-group';
 import PageLayoutSelector from './page-layout-selector';
 import { partition } from 'lodash';
 import { Portal } from 'reakit/Portal';
-import { Dialog, DialogBackdrop } from 'reakit/Dialog';
+import { useDialogState, Dialog, DialogBackdrop } from 'reakit/Dialog';
+import { useSpring, animated } from 'react-spring';
+import { useHistory } from 'react-router-dom';
+import { Step } from '../../steps';
 
 /**
  * Internal dependencies
  */
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import DesignCard from './design-card';
 
 import './style.scss';
@@ -23,10 +26,15 @@ type Template = VerticalsTemplates.Template;
 
 const VERTICALS_TEMPLATES_STORE = VerticalsTemplates.register();
 
-const DesignSelector: FunctionComponent = () => {
-	const siteVertical = useSelect(
-		select => select( 'automattic/onboard' ).getState().siteVertical
+interface Props {
+	showPageSelector?: boolean;
+}
+
+const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false } ) => {
+	const { selectedDesign, siteVertical } = useSelect( select =>
+		select( ONBOARD_STORE ).getState()
 	);
+	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
 	// @FIXME: If we don't have an ID (because we're dealing with a user-supplied vertical that
 	// WordPress.com doesn't know about), fall back to the 'm1' (Business) vertical. This is the
@@ -45,39 +53,52 @@ const DesignSelector: FunctionComponent = () => {
 		( { category } ) => category === 'home'
 	);
 
-	const [ selectedDesign, setSelectedDesign ] = useState< Template | undefined >();
-
-	const [ selectedLayouts, setSelectedLayouts ] = useState< Set< string > >( new Set() );
-	const resetLayouts = () => setSelectedLayouts( new Set() );
-	const toggleLayout = ( layout: Template ) =>
-		setSelectedLayouts( layouts => {
-			const nextLayouts = new Set( layouts );
-			if ( nextLayouts.has( layout.slug ) ) {
-				nextLayouts.delete( layout.slug );
-			} else {
-				nextLayouts.add( layout.slug );
-			}
-			return nextLayouts;
-		} );
-
-	const resetState = () => {
-		setSelectedDesign( undefined );
-		resetLayouts();
-	};
-
-	const transitionTiming = 250;
-	const hasSelectedDesign = !! selectedDesign;
-	const [ isDialogVisible, setIsDialogVisible ] = useState( hasSelectedDesign );
-	const [ cp, setCp ] = useState< number >();
+	const headingContainer = useRef< HTMLDivElement >( null );
+	const selectionTransitionShift = useRef< number >( 0 );
+	useLayoutEffect( () => {
+		if ( headingContainer.current ) {
+			// We'll use this height to move the heading up out of the viewport.
+			const rect = headingContainer.current.getBoundingClientRect();
+			selectionTransitionShift.current = rect.height;
+		}
+	}, [ selectedDesign ] );
 
 	const dialogId = 'page-selector-modal';
+	const dialog = useDialogState( { visible: false, baseId: dialogId } );
+
+	const descriptionOnRight: boolean =
+		!! selectedDesign &&
+		designs.findIndex( ( { slug } ) => slug === selectedDesign.slug ) % 2 === 0;
+
+	const designSelectorSpring = useSpring( {
+		transform: `translate3d( 0, ${
+			showPageSelector ? -selectionTransitionShift.current : 0
+		}px, 0 )`,
+	} );
+
+	const descriptionContainerSpring = useSpring( {
+		transform: `translate3d( 0, ${ showPageSelector ? '0' : '100vh' }, 0 )`,
+		visibility: showPageSelector ? 'visible' : 'hidden',
+	} );
+
+	const pageSelectorSpring = useSpring( {
+		transform: `translate3d( 0, ${ showPageSelector ? '0' : '100vh' }, 0 )`,
+		onStart: () => {
+			showPageSelector && dialog.show();
+		},
+		onRest: () => {
+			! showPageSelector && dialog.hide();
+		},
+	} );
+
+	const history = useHistory();
 
 	return (
-		<div className={ classnames( 'design-selector', { 'has-selected-design': selectedDesign } ) }>
+		<animated.div style={ designSelectorSpring }>
 			<div
 				className="design-selector__header-container"
-				onClick={ () => resetState() }
-				aria-hidden={ hasSelectedDesign ? 'true' : undefined }
+				aria-hidden={ showPageSelector ? 'true' : undefined }
+				ref={ headingContainer }
 			>
 				<h1 className="design-selector__title">
 					{ NO__( 'Choose a starting design for your site' ) }
@@ -86,69 +107,76 @@ const DesignSelector: FunctionComponent = () => {
 					{ NO__( "You'll be able to customize your new site in hundreds of ways." ) }
 				</h2>
 			</div>
-
-			<CSSTransition in={ ! hasSelectedDesign } timeout={ transitionTiming }>
-				<div className="design-selector__grid-container">
-					<div className="design-selector__grid">
-						{ designs.map( design => (
-							<DesignCard
-								key={ design.slug }
-								dialogId={ dialogId }
-								design={ design }
-								isSelected={ design.slug === selectedDesign?.slug }
-								style={
-									selectedDesign?.slug === design.slug
-										? {
-												transform: `translate3d( 0, calc( -100vh + ${ -( cp ?? 0 ) + 10 }px ), 0 )`,
-										  }
-										: undefined
-								}
-								onClick={ ( e: MouseEvent< HTMLDivElement > ) => {
-									window.scrollTo( 0, 0 );
-									setCp( e.currentTarget.offsetTop );
-									setSelectedDesign( currentTemplate =>
-										currentTemplate?.slug === design?.slug ? undefined : design
-									);
-									resetLayouts();
-								} }
-							/>
-						) ) }
-					</div>
+			<div
+				className={ classnames( 'design-selector__grid-container', {
+					'is-page-selector-open': showPageSelector,
+				} ) }
+			>
+				<div className="design-selector__grid">
+					{ designs.map( design => (
+						<DesignCard
+							key={ design.slug }
+							dialogId={ dialogId }
+							design={ design }
+							style={
+								selectedDesign?.slug === design.slug
+									? {
+											gridRow: 1,
+											gridColumn: descriptionOnRight ? 1 : 2,
+									  }
+									: {
+											visibility: showPageSelector ? 'hidden' : undefined,
+									  }
+							}
+							onClick={ () => {
+								window.scrollTo( 0, 0 );
+								setSelectedDesign( design );
+								history.push( Step.PageSelection );
+							} }
+						/>
+					) ) }
 				</div>
-			</CSSTransition>
+			</div>
+
+			<animated.div
+				className={ classnames( 'design-selector__description-container', {
+					'on-right-side': descriptionOnRight,
+				} ) }
+				style={ descriptionContainerSpring }
+			>
+				<div className="design-selector__description-title">{ selectedDesign?.title }</div>
+				<div className="design-selector__description-description">
+					{ /* @TODO: Real description? */ }
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+					ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+					ullamco laboris nisi ut aliquip ex ea commodo consequat.
+				</div>
+			</animated.div>
 
 			<Portal>
 				<DialogBackdrop
-					visible={ hasSelectedDesign }
+					visible={ showPageSelector }
 					className="design-selector__page-layout-backdrop"
 				/>
 			</Portal>
 
 			<Dialog
-				visible={ isDialogVisible }
-				baseId={ dialogId }
-				hide={ resetState }
+				{ ...dialog }
+				hide={ () => {
+					history.push( Step.DesignSelection );
+				} }
 				aria-labelledby="page-layout-selector__title"
 				hideOnClickOutside
 				hideOnEsc
 			>
-				<CSSTransition
-					in={ hasSelectedDesign }
-					onEnter={ () => setIsDialogVisible( true ) }
-					onExited={ () => setIsDialogVisible( false ) }
-					timeout={ transitionTiming }
+				<animated.div
+					className="design-selector__page-layout-container"
+					style={ pageSelectorSpring }
 				>
-					<div className="design-selector__page-layout-container">
-						<PageLayoutSelector
-							selectedDesign={ selectedDesign }
-							selectedLayouts={ selectedLayouts }
-							selectLayout={ toggleLayout }
-							templates={ otherTemplates }
-						/>
-					</div>
-				</CSSTransition>
+					<PageLayoutSelector templates={ otherTemplates } />
+				</animated.div>
 			</Dialog>
-		</div>
+		</animated.div>
 	);
 };
 

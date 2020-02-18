@@ -13,6 +13,10 @@
 	text-align: center;
 }
 
+.is-section-migrate .card > .card-heading {
+	margin-bottom: 4px;
+}
+
 .migrate__card {
 	.site__content, .site-selector__hidden-sites-message {
 		border-bottom: 1px solid var( --color-neutral-10 );
@@ -25,6 +29,85 @@
 	}
 }
 
+.migrate__plan-upsell {
+	display: flex;
+	border-top: 1px solid var( --color-neutral-10 );
+	border-bottom: 1px solid var( --color-neutral-10 );
+	margin: 16px 0;
+	padding: 16px 0;
+}
+
+.migrate__plan-upsell-icon,
+.migrate__plan-upsell-info,
+.migrate__plan-upsell-themes,
+.migrate__plan-upsell-plugins {
+	display: flex;
+	flex-wrap: wrap;
+	margin-right: 16px;
+}
+
+.migrate__plan-upsell-icon {
+	min-width: 64px;
+	min-height: 64px;
+	max-width: 64px;
+	max-height: 64px;
+}
+
+.migrate__plan-upsell-info {
+	flex-basis: 40%;
+}
+
+.migrate__plan-upsell-themes,
+.migrate__plan-upsell-plugins {
+	flex-basis: 25%;
+}
+
+.migrate__plan-name,
+.migrate__plan-price,
+.migrate__plan-billing-time-frame {
+	flex-basis: 100%;
+}
+
+.migrate__plan-name {
+	font-size: 18px;
+}
+
+.migrate__plan-price {
+	.plan-price__currency-symbol {
+		font-size: 18px;
+	}
+
+	.plan-price__integer {
+		font-size: 48px;
+		font-weight: bold;
+	}
+}
+
+.migrate__plan-feature-header {
+	font-weight: 600;
+	font-size: 14px;
+}
+
+.migrate__plan-upsell-item {
+	flex-basis: 100%;
+	max-width: 180px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	.gridicon {
+		vertical-align: middle;
+		margin-right: 8px;
+	}
+}
+
+.migrate__plan-upsell-item-label {
+	display: inline-block;
+	line-height: 18px;
+	vertical-align: middle;
+}
+
+
 .migrate__card-footer {
 	color: var( --color-text-subtle );
 	font-size: 13px;
@@ -35,32 +118,18 @@
 	}
 }
 
-.migrate__sites {
-	display: flex;
-	border-top: 1px solid var( --color-neutral-10 );
-	border-bottom: 1px solid var( --color-neutral-10 );
-	margin-bottom: 16px;
-
-	.site__content {
-		padding-left: 0;
-		padding-right: 0;
-	}
+.migrate__card-footer-text {
+	vertical-align: middle;
+	margin-left: 8px;
 }
 
-.migrate__sites-arrow {
-	display: flex;
+.migrate__card-footer-gridicon {
 	color: var( --color-text-subtle );
-	padding: 20px 40px 20px 0;
-	@include breakpoint( '>1040px' ) {
-		padding-right: 64px;
-	}
-	@include breakpoint( '<480px' ) {
-		padding-right: 16px;
-	}
+	vertical-align: middle;
 }
 
 .migrate__list {
-	margin: 16px 0 32px;
+	margin: 16px 0;
 	li {
 		list-style-type: none;
 		line-height: 30px;
@@ -89,6 +158,7 @@
 	display: block;
 	margin: auto;
 	width: 260px;
+	height: 200px;
 }
 
 .migrate__section-header {
@@ -154,4 +224,17 @@
 
 .migrate__progress-item-text {
 	display: flex;
+}
+
+.migrate__token-label {
+	background-color: lightgrey;
+	border-radius: 10px;
+	padding: 2px 5px;
+	font-size: 10px;
+	color: darkgray;
+	margin: 5px 3px 5px 0;
+}
+
+.migrate__buttons-wrapper {
+	margin: 24px 0 8px;
 }

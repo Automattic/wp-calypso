@@ -15,6 +15,7 @@ import CartStore from 'lib/cart/store';
 
 /**
  * Returns whether we should Ebanx credit card processing for a particular country
+ *
  * @param {string} countryCode - a two-letter country code, e.g., 'DE', 'BR'
  * @returns {boolean} Whether the country code requires ebanx payment processing
  */
@@ -27,6 +28,7 @@ export function isEbanxCreditCardProcessingEnabledForCountry( countryCode = '' )
 
 /**
  * Returns whether
+ *
  * @param {string} countryCode - a two-letter country code, e.g., 'DE', 'BR'
  * @returns {boolean} Whether the country requires additional fields
  */

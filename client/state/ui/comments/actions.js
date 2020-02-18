@@ -7,7 +7,7 @@ import { COMMENTS_QUERY_UPDATE } from 'state/action-types';
  * Creates an action that updates the comments pagination for the given site and filters.
  *
  * @param {number} siteId Site identifier.
- * @param {Array<Object>} comments List of comments.
+ * @param {Array<object>} comments List of comments.
  * @param {object} query Current filter parameters.
  * @param {string} [query.order] Query order ('ASC' or 'DESC').
  * @param {number} query.page Page to update.

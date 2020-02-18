@@ -41,7 +41,7 @@ export default function PaymentRequestButton( {
 			</Button>
 		);
 	}
-	if ( disabled ) {
+	if ( disabled && disabledReason ) {
 		return (
 			<Button disabled fullWidth>
 				{ disabledReason }
@@ -50,11 +50,11 @@ export default function PaymentRequestButton( {
 	}
 
 	if ( paymentType === 'apple-pay' ) {
-		return <ApplePayButton onClick={ onClick } />;
+		return <ApplePayButton disabled={ disabled } onClick={ onClick } />;
 	}
 	return (
-		<Button onClick={ onClick } fullWidth>
-			{ localize( 'Select a payment card', { context: 'Loading state on /checkout' } ) }
+		<Button disabled={ disabled } onClick={ onClick } fullWidth>
+			{ localize( 'Select a payment card' ) }
 		</Button>
 	);
 }
@@ -71,4 +71,16 @@ const ApplePayButton = styled.button`
 	-apple-pay-button-style: black;
 	-apple-pay-button-type: plain;
 	width: 100%;
+	position: relative;
+
+	&::after {
+		content: '';
+		position: ${props => ( props.disabled ? 'absolute' : 'relative' )};
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: #ccc;
+		opacity: 0.7;
+	}
 `;

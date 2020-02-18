@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-
 import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import getThemeFilterTermsTable from 'state/selectors/get-theme-filter-terms-table';
+
+import 'state/themes/init';
 
 /**
  * Given the 'term' part, returns a complete filter

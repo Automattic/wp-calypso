@@ -50,6 +50,7 @@ import { fetchUsernameSuggestion } from 'state/signup/optional-dependencies/acti
 import { isSitePreviewVisible } from 'state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
 import { abtest } from 'lib/abtest';
+import config from 'config';
 
 /**
  * Style dependencies
@@ -121,21 +122,22 @@ class DomainsStep extends React.Component {
 		}
 
 		this.showTestCopy = false;
+		this.showDesignUpdate = false;
 
 		// Do not assign user to the test if either in the launch flow or in /start/{PLAN_SLUG} flow
-		if ( false !== this.props.shouldShowDomainTestCopy && ! props.isPlanStepFulfilled ) {
+		if (
+			false !== this.props.shouldShowDomainTestCopy &&
+			! props.isPlanStepFulfilled &&
+			'variantShowUpdates' === abtest( 'domainStepCopyUpdates' )
+		) {
 			if (
-				'variantShowUpdates' === abtest( 'domainStepCopyUpdates' ) ||
-				'variantShowUpdates' === abtest( 'nonEnglishDomainStepCopyUpdates' )
+				config.isEnabled( 'domain-step-design-update-v2' ) &&
+				'variantDesignUpdates' === abtest( 'domainStepDesignUpdates' )
 			) {
+				this.showDesignUpdate = true;
+			} else {
 				this.showTestCopy = true;
 			}
-		}
-
-		this.showTestParagraph = false;
-
-		if ( this.showTestCopy && 'variantMoveParagraph' === abtest( 'domainStepMoveParagraph' ) ) {
-			this.showTestParagraph = true;
 		}
 	}
 
@@ -156,6 +158,10 @@ class DomainsStep extends React.Component {
 				this.props.showSitePreview();
 			}
 		}
+	}
+
+	isEligibleVariantForDomainTest() {
+		return this.showTestCopy || this.showDesignUpdate;
 	}
 
 	getMapDomainUrl = () => {
@@ -214,7 +220,7 @@ class DomainsStep extends React.Component {
 	};
 
 	handleSkip = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
-		const hideFreePlanTracksProp = this.showTestCopy
+		const hideFreePlanTracksProp = this.isEligibleVariantForDomainTest()
 			? { should_hide_free_plan: shouldHideFreePlan }
 			: {};
 
@@ -233,7 +239,9 @@ class DomainsStep extends React.Component {
 	};
 
 	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
-		const shouldHideFreePlanItem = this.showTestCopy ? { shouldHideFreePlan } : {};
+		const shouldHideFreePlanItem = this.isEligibleVariantForDomainTest()
+			? { shouldHideFreePlan }
+			: {};
 
 		if ( shouldHideFreePlan ) {
 			let domainItem, isPurchasingItem, siteUrl;
@@ -422,15 +430,8 @@ class DomainsStep extends React.Component {
 
 		if (
 			// If we landed here from /domains Search or with a suggested domain.
-			( initialQuery && this.searchOnInitialRender ) ||
-			// If the subdomain type has changed, rerun the search
-			( initialState &&
-				initialState.subdomainSearchResults &&
-				endsWith(
-					get( initialState, 'subdomainSearchResults[0].domain_name', '' ),
-					// Inverted the ending, so we know it's the wrong subdomain in the saved results
-					this.shouldIncludeDotBlogSubdomain() ? '.wordpress.com' : '.blog'
-				) )
+			initialQuery &&
+			this.searchOnInitialRender
 		) {
 			this.searchOnInitialRender = false;
 			if ( initialState ) {
@@ -472,7 +473,8 @@ class DomainsStep extends React.Component {
 				isSignupStep
 				showExampleSuggestions={ showExampleSuggestions }
 				showTestCopy={ this.showTestCopy }
-				showTestParagraph={ this.showTestParagraph }
+				showDesignUpdate={ this.showDesignUpdate }
+				isEligibleVariantForDomainTest={ this.isEligibleVariantForDomainTest() }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
 				vendor={ getSuggestionsVendor( true ) }
@@ -554,7 +556,7 @@ class DomainsStep extends React.Component {
 
 	getSubHeaderText() {
 		const { flowName, siteType, translate } = this.props;
-		const subHeaderPropertyName = this.showTestCopy
+		const subHeaderPropertyName = this.isEligibleVariantForDomainTest()
 			? 'domainsStepSubheaderTestCopy'
 			: 'domainsStepSubheader';
 		const onboardingSubHeaderCopy =
@@ -573,7 +575,7 @@ class DomainsStep extends React.Component {
 
 	getHeaderText() {
 		const { headerText, siteType } = this.props;
-		const headerPropertyName = this.showTestCopy
+		const headerPropertyName = this.isEligibleVariantForDomainTest()
 			? 'domainsStepHeaderTestCopy'
 			: 'domainsStepHeader';
 
@@ -615,7 +617,7 @@ class DomainsStep extends React.Component {
 		}
 
 		const stepContentClassName = classNames( 'domains__step-content', {
-			'domains__step-content-domain-step-test': this.showTestCopy,
+			'domains__step-content-domain-step-test': this.isEligibleVariantForDomainTest(),
 		} );
 
 		return (

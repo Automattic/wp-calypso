@@ -7,12 +7,13 @@
 		// see issue: https://github.com/microsoft/TypeScript/issues/35833
 		"target": "es2015",
 
+		"baseUrl": ".",
 		"module": "esnext",
 		"allowJs": false,
 		"jsx": "react",
 		"declaration": true,
-		"declarationDir": "./types",
-		"outDir": "./dist/esm",
+		"declarationDir": "dist/types",
+		"outDir": "dist/esm",
 
 		"strict": true,
 		"noUnusedLocals": true,
@@ -29,8 +30,11 @@
 		"types": [],
 
 		"noEmitHelpers": true,
-		"importHelpers": true
+		"importHelpers": true,
+
+		"incremental": true,
+		"tsBuildInfoFile": "../../.tsc-cache/data-stores"
 	},
-	"files": [ "./src/index.ts" ],
+	"files": [ "./src/index.ts", "./global.d.ts" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]
 }

@@ -35,6 +35,7 @@ const lostFocusAtSchema = { type: 'number' };
  * Tracks the last time Happychat had focus. This lets us determine things like
  * whether the user has unread messages. A numerical value is the timestamp where focus
  * was lost, and `null` means HC currently has focus.
+ *
  * @param {object} state Current state
  * @param {object} action Action payload
  * @returns {object}        Updated state

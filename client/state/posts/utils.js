@@ -191,7 +191,7 @@ function mergeMetadataEdits( edits, nextEdits ) {
  *   That's important especially for term removals.
  * - metadata edits, which are also arrays, are merged with a special algorithm.
  *
- * @param  {Array<Object>} postEditsLog Edits objects to be merged
+ * @param  {Array<object>} postEditsLog Edits objects to be merged
  * @returns {object?}                    Merged edits object with changes from all sources
  */
 export const mergePostEdits = ( ...postEditsLog ) =>
@@ -233,9 +233,9 @@ export const mergePostEdits = ( ...postEditsLog ) =>
  * the save marker will be left intact and a new edits object will be appended
  * at the end. This helps to keep the edits log as compact as possible.
  *
- * @param {Array<Object>?} postEditsLog Existing edits log to be appended to
+ * @param {?Array<object>} postEditsLog Existing edits log to be appended to
  * @param {object} newPostEdits New edits to be appended to the log
- * @returns {Array<Object>} Merged edits log
+ * @returns {Array<object>} Merged edits log
  */
 export const appendToPostEditsLog = ( postEditsLog, newPostEdits ) => {
 	if ( isEmpty( postEditsLog ) ) {

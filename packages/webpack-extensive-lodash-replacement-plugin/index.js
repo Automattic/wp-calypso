@@ -1,4 +1,3 @@
-/* eslint-disable import/no-nodejs-modules */
 const path = require( 'path' );
 const semver = require( 'semver' );
 

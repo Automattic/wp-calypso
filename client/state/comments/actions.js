@@ -29,11 +29,15 @@ import 'state/data-layer/wpcom/sites/comments-tree';
 import 'state/data-layer/wpcom/sites/comments';
 import 'state/data-layer/wpcom/sites/posts/replies';
 
+import 'state/comments/init';
+
 /**
  * Creates an action that requests a single comment for a given site.
- * @param {number} siteId Site identifier
- * @param {number} commentId Comment identifier
- * @param {object} query API call parameters
+ *
+ * @param {object} options options object.
+ * @param {number} options.siteId Site identifier
+ * @param {number} options.commentId Comment identifier
+ * @param {object} options.query API call parameters
  * @returns {object} Action that requests a single comment
  */
 export const requestComment = ( { siteId, commentId, query = {} } ) => ( {
@@ -45,10 +49,12 @@ export const requestComment = ( { siteId, commentId, query = {} } ) => ( {
 
 /**
  * Creates an action for receiving comments for a specific post on a site.
- * @param {number} siteId site identifier
- * @param {number} postId post identifier
- * @param {Array} comments the list of comments received
- * @param {boolean} commentById were the comments retrieved by ID directly?
+ *
+ * @param {object} options options object.
+ * @param {number} options.siteId site identifier
+ * @param {number} options.postId post identifier
+ * @param {Array} options.comments the list of comments received
+ * @param {boolean} options.commentById were the comments retrieved by ID directly?
  * @returns {object} Action for receiving comments
  */
 export const receiveComments = ( { siteId, postId, comments, commentById = false } ) => ( {
@@ -61,8 +67,10 @@ export const receiveComments = ( { siteId, postId, comments, commentById = false
 
 /**
  * Creates an action for receiving comment errors.
- * @param {number} siteId site identifier
- * @param {number} commentId comment identifier
+ *
+ * @param {object} options options object.
+ * @param {number} options.siteId site identifier
+ * @param {number} options.commentId comment identifier
  * @returns {object} Action for receiving comment errors
  */
 export const receiveCommentsError = ( { siteId, commentId } ) => ( {
@@ -71,11 +79,13 @@ export const receiveCommentsError = ( { siteId, commentId } ) => ( {
 	commentId,
 } );
 
-/***
+/**
  * Creates an action that requests comments for a given post
- * @param {number} siteId site identifier
- * @param {number} postId post identifier
- * @param {string} status status filter. Defaults to approved posts
+ *
+ * @param {object} options options object.
+ * @param {number} options.siteId site identifier
+ * @param {number} options.postId post identifier
+ * @param {string} options.status status filter. Defaults to approved posts
  * @returns {Function} action that requests comments for a given post
  */
 export function requestPostComments( {
@@ -107,6 +117,7 @@ export function requestPostComments( {
  * Creates an action that request a list of comments for a given query.
  * Except the two query properties descibed here, this function accepts all query parameters
  * listed in the API docs:
+ *
  * @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/comments/
  *
  * @param {object} query API call parameters
@@ -121,6 +132,7 @@ export const requestCommentsList = query => ( {
 
 /**
  * Creates an action that requests the comments tree for a given site.
+ *
  * @param {object} query API call parameters
  * @param {number} query.siteId Site identifier
  * @param {string} query.status Status filter
@@ -133,6 +145,7 @@ export const requestCommentsTreeForSite = query => ( {
 
 /**
  * Creates an action that requests comment counts for a given site.
+ *
  * @param {number} siteId Site identifier
  * @param {number} [postId] Post identifier
  * @returns {object} Action that requests comment counts by site.
@@ -146,6 +159,7 @@ export const requestCommentCounts = ( siteId, postId ) => ( {
 /**
  * Creates an action that permanently deletes a comment
  * or removes a comment placeholder from the state
+ *
  * @param {number} siteId site identifier
  * @param {number} postId post identifier
  * @param {number|string} commentId comment or comment placeholder identifier
@@ -182,8 +196,9 @@ export const deleteComment = (
 	} );
 };
 
-/***
+/**
  * Creates a write comment action for a siteId and postId
+ *
  * @param {string} commentText text of the comment
  * @param {number} siteId site identifier
  * @param {number} postId post identifier
@@ -196,8 +211,9 @@ export const writeComment = ( commentText, siteId, postId ) => ( {
 	commentText,
 } );
 
-/***
+/**
  * Creates a reply to comment action for a siteId, postId and commentId
+ *
  * @param {string} commentText text of the comment
  * @param {number} siteId site identifier
  * @param {number} postId post identifier
@@ -220,8 +236,9 @@ export const replyComment = (
 	refreshCommentListQuery,
 } );
 
-/***
+/**
  * Creates a thunk that likes a comment
+ *
  * @param {number} siteId site identifier
  * @param {number} postId post identifier
  * @param {number} commentId comment identifier
@@ -234,8 +251,9 @@ export const likeComment = ( siteId, postId, commentId ) => ( {
 	commentId,
 } );
 
-/***
+/**
  * Creates an action that unlikes a comment
+ *
  * @param {number} siteId site identifier
  * @param {number} postId post identifier
  * @param {number} commentId comment identifier
@@ -250,6 +268,7 @@ export const unlikeComment = ( siteId, postId, commentId ) => ( {
 
 /**
  * Creates an action that changes a comment status.
+ *
  * @param {number} siteId Site identifier
  * @param {number} postId Post identifier
  * @param {number} commentId Comment identifier
@@ -302,6 +321,7 @@ export const changeCommentStatus = (
 
 /**
  * Creates an action that edits a comment.
+ *
  * @param {number} siteId Site identifier
  * @param {number} postId Post identifier
  * @param {number} commentId Comment identifier
@@ -334,13 +354,14 @@ export const expandComments = ( { siteId, commentIds, postId, displayType } ) =>
 	payload: { siteId, commentIds, postId, displayType },
 } );
 
-/***
+/**
  * Creates an action that sets the active reply for a given site ID and post ID
  * This is used on the front end to show a reply box under the specified comment.
  *
- * @param {number} siteId site identifier
- * @param {number} postId post identifier
- * @param {number} commentId comment identifier
+ * @param {object} options options object.
+ * @param {number} options.siteId site identifier
+ * @param {number} options.postId post identifier
+ * @param {number} options.commentId comment identifier
  * @returns {object} Action to set active reply
  */
 export const setActiveReply = ( { siteId, postId, commentId } ) => ( {

@@ -6,6 +6,7 @@ import { getSerializedDomainsSuggestionsQuery } from './utils';
 
 /**
  * Returns domains suggestions information for a query.
+ *
  * @param   {object}   state                                Global state tree
  * @param   {object}   queryObject                          domain suggestions queryObject
  * @param   {string}   queryObject.query                    domainQuery
@@ -24,6 +25,7 @@ export function getDomainsSuggestions( state, queryObject ) {
 
 /**
  * Returns true, if we're currently requesting domains suggestions.
+ *
  * @param   {object}     state                                Global state tree
  * @param   {object}     queryObject                          domain suggestions queryObject
  * @param   {string}     queryObject.query                    domainQuery
@@ -42,6 +44,7 @@ export function isRequestingDomainsSuggestions( state, queryObject ) {
 
 /**
  * Returns an error for a given domains suggestions query.
+ *
  * @param   {object}     state                                Global state tree
  * @param   {object}     queryObject                          domain suggestions queryObject
  * @param   {string}     queryObject.query                    domainQuery

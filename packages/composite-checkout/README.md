@@ -25,7 +25,7 @@ It's also possible to build an entirely custom form using the other components e
 
 ## How to use this package
 
-Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the functions [createStripeMethod](#createstripemethod), [createApplePayMethod](#createapplepaymethod), [createPayPalMethod](#createpaypalmethod), and [createExistingCardMethod](#createExistingCardMethod).
+Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the functions [createStripeMethod](#createstripemethod), [createApplePayMethod](#createapplepaymethod), [createPayPalMethod](#createpaypalmethod), [createFullCreditsMethod](#createFullCreditsMethod), and [createExistingCardMethod](#createExistingCardMethod).
 
 Any component which is a child of `CheckoutProvider` gets access to the custom hooks [useAllPaymentMethods](#useAllPaymentMethods), [useEvents](#useEvents), [useFormStatus](#useFormStatus), [useMessages](#useMessages), [useDispatch](#useDispatch), [useLineItems](#useLineItems), [usePaymentData](#usePaymentData), [usePaymentMethod](#usePaymentMethodId), [usePaymentMethodId](#usePaymentMethodId), [useRegisterStore](#useRegisterStore), [useRegistry](#useRegistry), [useSelect](#useSelect), and [useTotal](#useTotal).
 
@@ -102,7 +102,7 @@ Each payment method is an object with the following properties:
 - `activeContent: React.ReactNode`. A component that displays that payment method (this can return null or something like a credit card form).
 - `submitButton: React.ReactNode`. A component button that is used to submit the payment method. This button should include a click handler that performs the actual payment process. When disabled, it will be provided with the `disabled` prop and must disable the button.
 - `inactiveContent: React.ReactNode`. A component that renders a summary of the selected payment method when the step is inactive.
-- `CheckoutWrapper?: React.Component`. A component that wraps the whole of the checkout form. This can be used for custom data providers (eg: `StripeProvider`).
+- `checkoutWrapper?: (children: React.ReactNode) => React.ReactNode`. A [render prop](https://reactjs.org/docs/render-props.html) that returns a component to wrap the whole of the checkout form. Must render the provided `children` argument. This can be used for custom data providers (eg: `StripeProvider` to support [Stripe Elements](https://github.com/stripe/react-stripe-elements)).
 - `getAriaLabel: (localize: () => string) => string`. A function to return the name of the Payment Method. It will receive the localize function as an argument.
 - `isCompleteCallback?: ({paymentData: object, activeStep: object}) => boolean`. Used to determine if a step is complete for purposes of validation. Default is a function returning true.
 
@@ -205,6 +205,9 @@ Creates a [Payment Method](#payment-methods) object. Requires passing an object 
 
 - `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
 - `fetchStripeConfiguration: async ?object => object`. An async function that fetches the stripe configuration (we use Stripe for Apple Pay).
+- `submitTransaction: async object => object`. An async function that sends the request to the endpoint.
+- `getCountry: () => string`. A function that returns the country to use for the transaction.
+- `getPostalCode: () => string`. A function that returns the postal code for the transaction.
 
 ### createRegistry
 
@@ -225,14 +228,24 @@ Creates a [Payment Method](#payment-methods) object for an existing credit card.
 - `brand: string`. The card's brand (eg: `visa`). Used for display only.
 - `last4: string`. The card's last four digits. Used for display only.
 
+### createFullCreditsMethod
+
+Creates a [Payment Method](#payment-methods) object for credits. Requires passing an object with the following properties:
+
+- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
+- `submitTransaction: async ?object => object`. An async function that sends the request to the endpoint process the payment.
+- `creditsDisplayValue: string`. The amount of credits to display as a readable string.
+- `label?: React.ReactNode`. An optional label React element to use in the payment method.
+- `buttonText?: string`. An optional string to display in the payment button.
+
 ### createPayPalMethod
 
 Creates a [Payment Method](#payment-methods) object. Requires passing an object with the following properties:
 
 - `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
 - `submitTransaction: async object => string`. An async function that sends the request to the endpoint to get the redirect url.
-- `successUrl: string`. The URL to return to after a successful payment redirect.
-- `cancelUrl: string`. The URL to return to after a unsuccessful payment redirect.
+- `getSuccessUrl: () => string`. A function that returns a URL to return to after a successful payment redirect.
+- `getCancelUrl: () => string`. A function that returns a URL to return to after a unsuccessful payment redirect.
 
 ### createStripeMethod
 
@@ -244,7 +257,6 @@ Creates a [Payment Method](#payment-methods) object. Requires passing an object 
 - `getCountry: () => string`. A function that returns the country to use for the transaction.
 - `getPostalCode: () => string`. A function that returns the postal code for the transaction.
 - `getSubdivisionCode: () => string`. A function that returns the subdivision code for the transaction.
-- `getPhoneNumber: () => string`. A function that returns the phone number for the transaction.
 
 ### getDefaultOrderReviewStep
 

@@ -341,4 +341,117 @@ describe( 'LanguagePickerModal', () => {
 			} );
 		} );
 	} );
+
+	describe( 'keyboard support', () => {
+		const simulateKeyDownEvent = key => {
+			window.dispatchEvent( new KeyboardEvent( 'keydown', { key } ) ); // eslint-disable-line no-undef
+		};
+
+		test( 'should update isSearchOpen state properly when search fires onOnSearchClose and onSearchOpen', () => {
+			const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
+			const searchWrapper = wrapper.find( 'Search' );
+
+			expect( wrapper.state().isSearchOpen ).toBe( false );
+
+			searchWrapper.prop( 'onSearchOpen' )();
+			expect( wrapper.state().isSearchOpen ).toBe( true );
+
+			searchWrapper.prop( 'onSearchClose' )();
+			expect( wrapper.state().isSearchOpen ).toBe( false );
+		} );
+
+		test( 'should expand search field when start typing', () => {
+			const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
+
+			simulateKeyDownEvent( 'a' );
+
+			expect( wrapper.state().isSearchOpen ).toBe( true );
+			expect( wrapper.state().search ).toBe( 'a' );
+		} );
+
+		test( "should not expand search field when start typing with space key as it's used to select focused language item", () => {
+			const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
+
+			simulateKeyDownEvent( ' ' );
+
+			expect( wrapper.state().isSearchOpen ).toBe( false );
+			expect( wrapper.state().search ).toBe( false );
+		} );
+
+		test( 'should auto select a language if search matches its slug', () => {
+			const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
+			const languages = defaultProps.languages.map( ( { langSlug } ) => langSlug );
+
+			expect( wrapper.state().selectedLanguageSlug ).toBe( 'en' );
+
+			languages.forEach( langSlug => {
+				wrapper.instance().handleSearch( langSlug );
+				expect( wrapper.state().selectedLanguageSlug ).toBe( langSlug );
+			} );
+		} );
+
+		test( 'should confirm language selection when pressing enter key', () => {
+			const mockOnSelected = jest.fn();
+
+			shallow( <LanguagePickerModal { ...defaultProps } onSelected={ mockOnSelected } /> );
+			simulateKeyDownEvent( 'Enter' );
+
+			expect( mockOnSelected ).toHaveBeenCalled();
+		} );
+
+		test( 'should navigate through languages with arrow keys', () => {
+			const getLanguagesListColumnsCount =
+				LanguagePickerModal.prototype.getLanguagesListColumnsCount;
+
+			// Mock getLanguagesListColumnsCount method of LanguagePickerModal
+			// as we can't use it in test environment because it's using
+			// getBoundingClientRect internally
+			LanguagePickerModal.prototype.getLanguagesListColumnsCount = jest.fn( () => 2 );
+
+			const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
+
+			// Set a search state that will match most of the test languages
+			wrapper.setState( { search: 'i' } );
+			const filteredLanguages = wrapper.instance().getFilteredLanguages();
+
+			wrapper.setState( { selectedLanguageSlug: filteredLanguages[ 0 ].langSlug } );
+
+			const horizontalStep = 1;
+			const verticalStep = wrapper.instance().getLanguagesListColumnsCount();
+
+			for ( let i = 0; i < filteredLanguages.length - 1; i += horizontalStep ) {
+				simulateKeyDownEvent( 'ArrowRight' );
+				expect( wrapper.state().selectedLanguageSlug ).toBe(
+					filteredLanguages[ i + horizontalStep ].langSlug
+				);
+			}
+
+			for ( let i = filteredLanguages.length - 1; i > 0; i -= horizontalStep ) {
+				simulateKeyDownEvent( 'ArrowLeft' );
+				expect( wrapper.state().selectedLanguageSlug ).toBe(
+					filteredLanguages[ i - horizontalStep ].langSlug
+				);
+			}
+
+			for ( let i = 0; i < filteredLanguages.length - verticalStep - 1; i += verticalStep ) {
+				simulateKeyDownEvent( 'ArrowDown' );
+				expect( wrapper.state().selectedLanguageSlug ).toBe(
+					filteredLanguages[ i + verticalStep ].langSlug
+				);
+			}
+
+			const selectedLanguageIndex = filteredLanguages.findIndex(
+				( { langSlug } ) => langSlug === wrapper.state().selectedLanguageSlug
+			);
+
+			for ( let i = selectedLanguageIndex; i > 0; i -= verticalStep ) {
+				simulateKeyDownEvent( 'ArrowUp' );
+				expect( wrapper.state().selectedLanguageSlug ).toBe(
+					filteredLanguages[ i - verticalStep ].langSlug
+				);
+			}
+
+			LanguagePickerModal.prototype.getLanguagesListColumnsCount = getLanguagesListColumnsCount;
+		} );
+	} );
 } );

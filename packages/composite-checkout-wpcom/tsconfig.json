@@ -3,10 +3,10 @@
 		"allowJs": true,
 		"jsx": "react",
 		"target": "ES5",
-		"lib": [ "DOM", "ES2015", "ScriptHost" ],
+		"lib": [ "DOM", "ES2015", "ES2017", "ScriptHost" ],
 		"module": "esnext",
 		"declaration": true,
-		"declarationDir": "types",
+		"declarationDir": "dist/types",
 		"outDir": "./dist/esm",
 
 		"strict": true,
@@ -22,7 +22,10 @@
 		"esModuleInterop": true,
 
 		"typeRoots": [ "../../node_modules/@types" ],
-		"types": []
+		"types": [],
+
+		"incremental": true,
+		"tsBuildInfoFile": "../../.tsc-cache/composite-checkout-wpcom"
 	},
 	"include": [ "src/**/*" ],
 	"exclude": [ "**/test/**/*", "**/docs/**/*" ]

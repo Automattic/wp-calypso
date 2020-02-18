@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -21,12 +22,16 @@ class FreeDomainExplainer extends React.Component {
 		this.props.onSkip( undefined, hideFreePlan );
 	};
 	render() {
-		const { translate } = this.props;
+		const { showDesignUpdate, translate } = this.props;
+
+		const titleClassnames = classNames( 'free-domain-explainer__title', {
+			'free-domain-explainer__title-domain-design-updates': showDesignUpdate,
+		} );
 
 		return (
 			<div className="free-domain-explainer card is-compact">
 				<header>
-					<h1 className="free-domain-explainer__title">
+					<h1 className={ titleClassnames }>
 						{ translate( 'Get a free one-year domain registration with any paid plan.' ) }
 					</h1>
 					<p className="free-domain-explainer__subtitle">
@@ -40,7 +45,6 @@ class FreeDomainExplainer extends React.Component {
 							borderless
 							className="free-domain-explainer__subtitle-link"
 							onClick={ this.handleClick }
-							href
 						>
 							{ translate( 'Review our plans to get started' ) } &raquo;
 						</Button>

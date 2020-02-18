@@ -9,6 +9,8 @@ import { filter, get } from 'lodash';
 import createSelector from 'lib/create-selector';
 import getSiteCommentsTree from 'state/selectors/get-site-comments-tree';
 
+import 'state/comments/init';
+
 export const getSiteCommentRepliesTree = createSelector(
 	( state, siteId, status, commentParentId ) =>
 		filter( getSiteCommentsTree( state, siteId, status ), { commentParentId } ),

@@ -27,6 +27,7 @@ import { v4 as uuid } from 'uuid';
 import { stringify } from 'qs';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -113,8 +114,6 @@ const MAX_PAGES = 3;
 const SUGGESTION_QUANTITY = isPaginationEnabled ? PAGE_SIZE * MAX_PAGES : PAGE_SIZE;
 const MIN_QUERY_LENGTH = 2;
 
-const FEATURED_SUGGESTIONS_AT_TOP = [ 'group_7', 'group_8' ];
-
 function getQueryObject( props ) {
 	if ( ! props.selectedSite || ! props.selectedSite.domain ) {
 		return null;
@@ -144,7 +143,7 @@ class RegisterDomainStep extends React.Component {
 		includeDotBlogSubdomain: PropTypes.bool,
 		showExampleSuggestions: PropTypes.bool,
 		showTestCopy: PropTypes.bool,
-		showTestParagraph: PropTypes.bool,
+		showDesignUpdate: PropTypes.bool,
 		onSave: PropTypes.func,
 		onAddMapping: PropTypes.func,
 		onAddDomain: PropTypes.func,
@@ -158,13 +157,15 @@ class RegisterDomainStep extends React.Component {
 
 	static defaultProps = {
 		analyticsSection: 'domains',
+		deemphasiseTlds: [],
+		includeDotBlogSubdomain: false,
+		includeWordPressDotCom: false,
 		isDomainOnly: false,
 		onAddDomain: noop,
 		onAddMapping: noop,
 		onDomainsAvailabilityChange: noop,
 		onSave: noop,
 		vendor: getSuggestionsVendor(),
-		deemphasiseTlds: [],
 	};
 
 	constructor( props ) {
@@ -174,6 +175,9 @@ class RegisterDomainStep extends React.Component {
 
 		this._isMounted = false;
 		this.state = this.getState();
+		this.state.filters = this.getInitialFiltersState();
+		this.state.lastFilters = this.getInitialFiltersState();
+
 		if ( props.initialState ) {
 			this.state = { ...this.state, ...props.initialState };
 
@@ -211,9 +215,6 @@ class RegisterDomainStep extends React.Component {
 				this.state.railcarId = this.getNewRailcarId();
 			}
 		}
-
-		this.state.filters = this.getInitialFiltersState();
-		this.state.lastFilters = this.getInitialFiltersState();
 	}
 
 	getState() {
@@ -348,6 +349,10 @@ class RegisterDomainStep extends React.Component {
 		}
 	}
 
+	getFreeSubdomainSuggestionsQuantity() {
+		return this.props.includeWordPressDotCom + this.props.includeDotBlogSubdomain;
+	}
+
 	getNewRailcarId() {
 		return `${ uuid().replace( /-/g, '' ) }-domain-suggestion`;
 	}
@@ -378,18 +383,21 @@ class RegisterDomainStep extends React.Component {
 
 		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
 			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {
-				suggestions.unshift( { is_placeholder: true } );
-			} else if ( this.state.subdomainSearchResults && this.state.subdomainSearchResults.length ) {
-				suggestions.unshift( this.state.subdomainSearchResults[ 0 ] );
+				const freeSubdomainPlaceholders = Array(
+					this.getFreeSubdomainSuggestionsQuantity()
+				).fill( { is_placeholder: true } );
+				suggestions.unshift( ...freeSubdomainPlaceholders );
+			} else if ( ! isEmpty( this.state.subdomainSearchResults ) ) {
+				suggestions.unshift( ...this.state.subdomainSearchResults );
 			}
 		}
 		return suggestions;
 	}
 
 	getPlaceholderText() {
-		const { showTestCopy, translate } = this.props;
+		const { isEligibleVariantForDomainTest, translate } = this.props;
 
-		return showTestCopy
+		return isEligibleVariantForDomainTest
 			? translate( 'Type the domain you want here' )
 			: translate( 'Enter a name or keyword' );
 	}
@@ -419,7 +427,8 @@ class RegisterDomainStep extends React.Component {
 			: {};
 
 		const searchBoxClassName = classNames( 'register-domain-step__search', {
-			'register-domain-step__search-domain-step-test': this.props.showTestCopy,
+			'register-domain-step__search-domain-step-test': this.props.isEligibleVariantForDomainTest,
+			'register-domain-step__search-domain-step-design-updates': this.props.showDesignUpdate,
 		} );
 		return (
 			<div className="register-domain-step">
@@ -464,6 +473,7 @@ class RegisterDomainStep extends React.Component {
 				{ this.renderContent() }
 				{ this.renderFilterResetNotice() }
 				{ this.renderPaginationControls() }
+				{ this.props.showDesignUpdate && this.renderUseYourDomain() }
 				{ queryObject && <QueryDomainsSuggestions { ...queryObject } /> }
 				<QueryContactDetailsCache />
 			</div>
@@ -488,9 +498,59 @@ class RegisterDomainStep extends React.Component {
 					onChange={ this.onFiltersChange }
 					onReset={ this.onFiltersReset }
 					onSubmit={ this.onFiltersSubmit }
+					showDesignUpdate={ this.props.showDesignUpdate }
 				/>
 			)
 		);
+	}
+
+	renderUseYourDomain() {
+		const { translate } = this.props;
+
+		const { searchResults, lastDomainStatus } = this.state;
+
+		if ( searchResults === null ) {
+			return null;
+		}
+
+		const useYourDomainFunction =
+			domainAvailability.MAPPED === lastDomainStatus
+				? this.goToTransferDomainStep
+				: this.goToUseYourDomainStep;
+
+		/* eslint-disable jsx-a11y/click-events-have-key-events */
+		/* eslint-disable jsx-a11y/interactive-supports-focus */
+		return (
+			<div className="register-domain-step__use-your-domain">
+				<h3>
+					{ translate( 'Already own a domain?', {
+						context: 'Upgrades: Register domain header',
+						comment: 'Asks if you already own a domain name.',
+					} ) }{ ' ' }
+					{ translate( "You can use it as your site's address.", {
+						context: 'Upgrades: Register domain description',
+						comment: 'Explains how you could use an existing domain name with your site.',
+					} ) }
+				</h3>
+				<div
+					className="register-domain-step__use-your-domain-action is-clickable"
+					onClick={ useYourDomainFunction }
+					data-tracks-button-click-source="initial-suggestions-bottom"
+					role="button"
+				>
+					<div className="register-domain-step__use-your-domain-action-text">
+						{ translate( 'Use a domain I own', {
+							context: 'Domain transfer or mapping suggestion button',
+						} ) }
+					</div>
+					<div className="register-domain-step__use-your-domain-action-chevron">
+						<Gridicon className="register-domain-step__chevron" icon="chevron-right" />
+					</div>
+				</div>
+			</div>
+		);
+		/* eslint-enable jsx-a11y/click-events-have-key-events */
+		/* eslint-enable jsx-a11y/interactive-supports-focus */
 	}
 
 	rejectTrademarkClaim = () => {
@@ -582,10 +642,6 @@ class RegisterDomainStep extends React.Component {
 		}
 
 		if ( this.props.showExampleSuggestions ) {
-			if ( this.props.showTestParagraph ) {
-				return this.renderFreeDomainExplainer();
-			}
-
 			return this.renderExampleSuggestions();
 		}
 
@@ -825,10 +881,7 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	getDomainsSuggestions = ( domain, timestamp ) => {
-		const suggestionQuantity =
-			this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain
-				? SUGGESTION_QUANTITY - 1
-				: SUGGESTION_QUANTITY;
+		const suggestionQuantity = SUGGESTION_QUANTITY - this.getFreeSubdomainSuggestionsQuantity();
 
 		const query = {
 			query: domain,
@@ -914,7 +967,7 @@ class RegisterDomainStep extends React.Component {
 			suggestions,
 			this.state.exactMatchDomain,
 			getStrippedDomainBase( domain ),
-			includes( FEATURED_SUGGESTIONS_AT_TOP, this.props.vendor ),
+			true,
 			this.props.deemphasiseTlds
 		);
 
@@ -930,9 +983,10 @@ class RegisterDomainStep extends React.Component {
 	getSubdomainSuggestions = ( domain, timestamp ) => {
 		const subdomainQuery = {
 			query: domain,
-			quantity: 1,
-			include_wordpressdotcom: ! this.props.includeDotBlogSubdomain,
+			quantity: this.getFreeSubdomainSuggestionsQuantity(),
+			include_wordpressdotcom: true,
 			include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
+			only_wordpressdotcom: this.props.includeDotBlogSubdomain,
 			tld_weight_overrides: null,
 			vendor: 'dot',
 			vertical: this.props.vertical,
@@ -1090,6 +1144,8 @@ class RegisterDomainStep extends React.Component {
 						pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 						unavailableDomains={ this.state.unavailableDomains }
 						showTestCopy={ this.props.showTestCopy }
+						showDesignUpdate={ this.props.showDesignUpdate }
+						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 					/>
 				);
 			}, this );
@@ -1135,7 +1191,12 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	renderFreeDomainExplainer() {
-		return <FreeDomainExplainer onSkip={ this.props.hideFreePlan } />;
+		return (
+			<FreeDomainExplainer
+				onSkip={ this.props.hideFreePlan }
+				showDesignUpdate={ this.props.showDesignUpdate }
+			/>
+		);
 	}
 
 	onAddDomain = suggestion => {
@@ -1244,10 +1305,11 @@ class RegisterDomainStep extends React.Component {
 				pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 				unavailableDomains={ this.state.unavailableDomains }
 				showTestCopy={ this.props.showTestCopy }
+				showDesignUpdate={ this.props.showDesignUpdate }
+				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 			>
-				{ this.props.showTestCopy &&
+				{ this.props.isEligibleVariantForDomainTest &&
 					hasResults &&
-					! this.props.showTestParagraph &&
 					this.renderFreeDomainExplainer() }
 
 				{ showTldFilterBar && (
@@ -1260,6 +1322,7 @@ class RegisterDomainStep extends React.Component {
 						onReset={ this.onFiltersReset }
 						onSubmit={ this.onFiltersSubmit }
 						showPlaceholder={ this.state.loadingResults || ! this.getSuggestionsFromProps() }
+						showDesignUpdate={ this.props.showDesignUpdate }
 					/>
 				) }
 			</DomainSearchResults>

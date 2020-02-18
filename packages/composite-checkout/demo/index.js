@@ -1,5 +1,5 @@
 // This is required to fix the "regeneratorRuntime is not defined" error
-require( '@babel/polyfill' );
+import '@automattic/calypso-polyfills';
 
 /**
  * External dependencies
@@ -97,16 +97,20 @@ const stripeMethod = createStripeMethod( {
 
 const applePayMethod = isApplePayAvailable()
 	? createApplePayMethod( {
+			getCountry: () => select( 'checkout' ).getPaymentData().billing.country,
+			getPostalCode: () => 90210,
+			getPhoneNumber: () => 5555555555,
 			registerStore,
 			fetchStripeConfiguration,
+			submitTransaction: sendStripeTransaction,
 	  } )
 	: null;
 
 const paypalMethod = createPayPalMethod( {
 	registerStore,
 	submitTransaction: makePayPalExpressRequest,
-	successUrl: '#',
-	cancelUrl: '#',
+	getSuccessUrl: () => '#',
+	getCancelUrl: () => '#',
 } );
 
 export function isApplePayAvailable() {

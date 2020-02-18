@@ -108,6 +108,7 @@ ProductsList.prototype.fetch = function() {
 
 /**
  * Initializes data with a list of products.
+ *
  * @param {object} productsList The list of products
  **/
 ProductsList.prototype.initialize = function( productsList ) {

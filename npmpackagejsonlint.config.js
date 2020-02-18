@@ -12,11 +12,7 @@ module.exports = {
 	},
 	overrides: [
 		{
-			patterns: [
-				'./apps/full-site-editing/package.json',
-				'./apps/wpcom-block-editor/package.json',
-				'./package.json',
-			],
+			patterns: [ './package.json' ],
 			rules: {
 				'prefer-no-devDependencies': 'off',
 			},
@@ -24,6 +20,8 @@ module.exports = {
 		{
 			patterns: [
 				'./package.json',
+				'./client/package.json',
+				'./packages/calypso-codemods/package.json',
 				'./packages/eslint-config-wpcalypso/package.json',
 				'./packages/eslint-plugin-wpcalypso/package.json',
 				'./packages/i18n-calypso-cli/package.json',

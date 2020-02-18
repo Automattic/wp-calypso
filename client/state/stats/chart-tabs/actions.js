@@ -4,6 +4,8 @@
 import { STATS_CHART_COUNTS_REQUEST, STATS_CHART_COUNTS_RECEIVE } from 'state/action-types';
 import 'state/data-layer/wpcom/sites/stats/visits';
 
+import 'state/stats/init';
+
 /**
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve visitor counts for StatsChartTabs.
@@ -15,6 +17,7 @@ import 'state/data-layer/wpcom/sites/stats/visits';
  * @param  {Array}   statFields    Comma separated list of stat fields
  * @returns {object}  Action object
  */
+
 export function requestChartCounts( { chartTab, date, period, quantity, siteId, statFields } ) {
 	return {
 		type: STATS_CHART_COUNTS_REQUEST,

@@ -45,6 +45,7 @@
 	&.card {
 		@include breakpoint( '>480px' ) {
 			padding: 10px;
+			align-items: flex-start;
 		}
 	}
 

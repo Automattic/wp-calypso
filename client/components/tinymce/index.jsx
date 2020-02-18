@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import { assign, forEach } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -83,7 +83,6 @@ import wpEmojiPlugin from './plugins/wpemoji/plugin';
  * Internal Dependencies
  */
 import i18n from './i18n';
-import { isMobile } from 'lib/viewport';
 import config from 'config';
 import { decodeEntities, wpautop, removep } from 'lib/formatting';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';

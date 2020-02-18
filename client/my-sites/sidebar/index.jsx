@@ -593,10 +593,6 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( ! this.useWPAdminFlows() ) {
-			return null;
-		}
-
 		const adminUrl =
 			this.props.isJetpack && ! this.props.isAtomicSite && ! this.props.isVip
 				? formatUrl( {
@@ -625,31 +621,6 @@ export class MySitesSidebar extends Component {
 			</SidebarMenu>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
-	}
-
-	// Check for cases where WP Admin links should appear, where we need support for legacy reasons (VIP, older users, testing).
-	useWPAdminFlows() {
-		const { isJetpack, isVip } = this.props;
-		const currentUser = this.props.currentUser;
-		const userRegisteredDate = new Date( currentUser.date );
-		const cutOffDate = new Date( '2015-09-07' );
-
-		// VIP sites should always show a WP Admin link regardless of the current user.
-		if ( isVip ) {
-			return true;
-		}
-
-		// Jetpack (including Atomic) sites should always show a WP Admin
-		if ( isJetpack ) {
-			return true;
-		}
-
-		// User registered before the cut-off date of September 7, 2015 and we want to support them as legacy users.
-		if ( userRegisteredDate < cutOffDate ) {
-			return true;
-		}
-
-		return false;
 	}
 
 	trackWpadminClick = () => {

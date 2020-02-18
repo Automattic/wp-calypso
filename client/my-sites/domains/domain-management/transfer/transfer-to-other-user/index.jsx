@@ -23,7 +23,6 @@ import wp from 'lib/wp';
 import { getSelectedDomain } from 'lib/domains';
 import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import SectionHeader from 'components/section-header';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import DesignatedAgentNotice from 'my-sites/domains/domain-management/components/designated-agent-notice';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
@@ -222,7 +221,6 @@ class TransferOtherUser extends React.Component {
 
 		return (
 			<Fragment>
-				<SectionHeader label={ translate( 'Transfer Domain To Another User' ) } />
 				<Card>
 					<p>
 						{ translate(

@@ -65,8 +65,24 @@ export function getLanguageFileUrl( localeSlug, fileType = 'json', languageRevis
 	return typeof revision === 'number' ? fileUrl + `?v=${ revision }` : fileUrl;
 }
 
-function setLocaleInDOM( localeSlug, isRTL ) {
-	document.documentElement.lang = localeSlug;
+function getHtmlLangAttribute() {
+	// translation of this string contains the desired HTML attribute value
+	const slug = i18n.translate( 'html_lang_attribute' );
+
+	// Hasn't been translated? Some languages don't have the translation for this string,
+	// or maybe we are dealing with the default `en` locale. Return the general purpose locale slug
+	// -- there's no special one available for `<html lang>`.
+	if ( slug === 'html_lang_attribute' ) {
+		return i18n.getLocaleSlug();
+	}
+
+	return slug;
+}
+
+function setLocaleInDOM() {
+	const htmlLangAttribute = getHtmlLangAttribute();
+	const isRTL = i18n.isRtl();
+	document.documentElement.lang = htmlLangAttribute;
 	document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
 	document.body.classList[ isRTL ? 'add' : 'remove' ]( 'rtl' );
 
@@ -106,32 +122,25 @@ export default function switchLocale( localeSlug ) {
 		return;
 	}
 
-	const { langSlug: targetLocaleSlug, parentLangSlug } = language;
+	lastRequestedLocale = localeSlug;
 
-	// variant lang objects contain references to their parent lang, which is what we want to tell the browser we're running
-	const domLocaleSlug = parentLangSlug || targetLocaleSlug;
-
-	lastRequestedLocale = targetLocaleSlug;
-
-	if ( isDefaultLocale( targetLocaleSlug ) ) {
-		i18n.configure( { defaultLocaleSlug: targetLocaleSlug } );
-		setLocaleInDOM( domLocaleSlug, !! language.rtl );
+	if ( isDefaultLocale( localeSlug ) ) {
+		i18n.configure( { defaultLocaleSlug: localeSlug } );
+		setLocaleInDOM();
 	} else {
-		getLanguageFile( targetLocaleSlug ).then(
+		getLanguageFile( localeSlug ).then(
 			// Success.
 			body => {
 				if ( body ) {
 					// Handle race condition when we're requested to switch to a different
 					// locale while we're in the middle of request, we should abandon result
-					if ( targetLocaleSlug !== lastRequestedLocale ) {
+					if ( localeSlug !== lastRequestedLocale ) {
 						return;
 					}
 
 					i18n.setLocale( body );
-
-					setLocaleInDOM( domLocaleSlug, !! language.rtl );
-
-					loadUserUndeployedTranslations( targetLocaleSlug );
+					setLocaleInDOM();
+					loadUserUndeployedTranslations( localeSlug );
 				}
 			},
 			// Failure.
@@ -150,11 +159,7 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 	}
 
 	const search = new URLSearchParams( window.location.search );
-	// TODO: replace with Object.fromEntries when available (core-js@3).
-	const params = {};
-	for ( const [ key, value ] of search.entries() ) {
-		params[ key ] = value;
-	}
+	const params = Object.fromEntries( search.entries() );
 
 	const {
 		'load-user-translations': username,

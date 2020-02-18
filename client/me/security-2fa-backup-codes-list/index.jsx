@@ -107,7 +107,7 @@ class Security2faBackupCodesList extends React.Component {
 		this.props.recordGoogleEvent( 'Me', 'Clicked On 2fa Save Backup Codes Button' );
 
 		const backupCodes = this.props.backupCodes.join( '\n' );
-		const toSave = new Blob( [ backupCodes ], { type: 'text/plain;charset=utf-8' } );
+		const toSave = new globalThis.Blob( [ backupCodes ], { type: 'text/plain;charset=utf-8' } );
 		saveAs( toSave, `${ this.props.username }-backup-codes.txt` );
 	};
 
@@ -146,14 +146,16 @@ class Security2faBackupCodesList extends React.Component {
 		let row;
 		let html = '<html><head><title>';
 
-		html += this.props.translate( 'Backup verification codes' );
+		html += this.props.translate( 'WordPress.com Backup Verification Codes' );
 		html += '</title></head>';
 		html += '<body style="font-family:sans-serif">';
 
 		html += '<div style="padding:10px; border:1px dashed black; display:inline-block">';
 		html +=
 			'<p style="margin-top:0"><strong>' +
-			this.props.translate( 'Backup verification codes' ) +
+			this.props.translate( 'WordPress.com backup verification codes for %s', {
+				args: this.props.username,
+			} ) +
 			'</strong></p>';
 
 		html += '<table style="border-spacing:30px 5px">';

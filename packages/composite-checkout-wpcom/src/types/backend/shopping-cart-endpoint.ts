@@ -20,13 +20,19 @@
  */
 export interface RequestCart {
 	products: RequestCartProduct[];
-	tax: null | { location: { country_code: string; postal_code: string; subdivision_code: string } };
+	tax: null | {
+		location: {
+			country_code: string | null;
+			postal_code: string | null;
+			subdivision_code: string | null;
+		};
+	};
 	coupon: string;
 	currency: string;
 	locale: string;
 	is_coupon_applied: boolean;
 	temporary: false;
-	extra: string; // TODO: fix this
+	extra: string;
 }
 
 /**
@@ -36,6 +42,7 @@ export interface RequestCartProduct {
 	product_slug: string;
 	product_id: number;
 	meta: string;
+	extra: object;
 }
 
 /**
@@ -47,12 +54,25 @@ export interface ResponseCart {
 	total_tax_display: string;
 	total_cost_integer: number;
 	total_cost_display: string;
+	sub_total_integer: number;
+	sub_total_display: string;
 	currency: string;
+	credits_integer: number;
+	credits_display: string;
 	allowed_payment_methods: string[];
 	coupon: string;
 	is_coupon_applied: boolean;
+	coupon_discounts_integer: number[];
 	locale: string;
 	messages?: { errors: ResponseCartError[] };
+	tax: {
+		location: {
+			country_code?: string;
+			postal_code?: string;
+			subdivision_code?: string;
+		};
+		display_taxes: boolean;
+	};
 }
 
 export interface ResponseCartError {
@@ -66,11 +86,17 @@ export const emptyResponseCart = {
 	total_tax_display: '0',
 	total_cost_integer: 0,
 	total_cost_display: '0',
+	sub_total_integer: 0,
+	sub_total_display: '0',
 	currency: 'USD',
+	credits_integer: 0,
+	credits_display: '0',
 	allowed_payment_methods: [],
 	coupon: '',
 	is_coupon_applied: false,
+	coupon_discounts_integer: [],
 	locale: 'en-us',
+	tax: { location: [], display_taxes: false },
 } as ResponseCart;
 
 /**
@@ -85,17 +111,22 @@ export interface ResponseCartProduct {
 	item_subtotal_display: string;
 	is_domain_registration: boolean;
 	meta: string;
+	volume: number;
+	extra: object;
+	uuid: string;
 }
 
 export const prepareRequestCartProduct: ( ResponseCartProduct ) => RequestCartProduct = ( {
 	product_slug,
 	meta,
 	product_id,
+	extra,
 }: ResponseCartProduct ) => {
 	return {
 		product_slug,
 		meta,
 		product_id,
+		extra,
 	} as RequestCartProduct;
 };
 
@@ -104,15 +135,142 @@ export const prepareRequestCart: ( ResponseCart ) => RequestCart = ( {
 	currency,
 	locale,
 	coupon,
+	is_coupon_applied,
+	tax,
 }: ResponseCart ) => {
 	return {
 		products: products.map( prepareRequestCartProduct ),
 		currency,
 		locale,
 		coupon,
+		is_coupon_applied,
 		temporary: false,
-		// tax: any[]; // TODO: fix this
-		// is_coupon_applied: boolean;
-		// extra: any[]; // TODO: fix this
+		tax,
+		extra: '', // TODO: fix this
 	} as RequestCart;
 };
+
+export function removeItemFromResponseCart(
+	cart: ResponseCart,
+	uuidToRemove: string
+): ResponseCart {
+	return {
+		...cart,
+		products: cart.products.filter( product => {
+			return product.uuid !== uuidToRemove;
+		} ),
+	};
+}
+
+export function addCouponToResponseCart( cart: ResponseCart, couponToAdd: string ): ResponseCart {
+	return {
+		...cart,
+		coupon: couponToAdd,
+		is_coupon_applied: false,
+	};
+}
+
+export function addLocationToResponseCart(
+	cart: ResponseCart,
+	location: CartLocation
+): ResponseCart {
+	return {
+		...cart,
+		tax: {
+			...cart.tax,
+			location: {
+				country_code: location.countryCode || undefined,
+				postal_code: location.postalCode || undefined,
+				subdivision_code: location.subdivisionCode || undefined,
+			},
+		},
+	};
+}
+
+export function doesCartLocationDifferFromResponseCartLocation(
+	cart: ResponseCart,
+	location: CartLocation
+): boolean {
+	const { countryCode, postalCode, subdivisionCode } = location;
+	if ( countryCode && cart.tax.location.country_code !== countryCode ) {
+		return true;
+	}
+	if ( postalCode && cart.tax.location.postal_code !== postalCode ) {
+		return true;
+	}
+	if ( subdivisionCode && cart.tax.location.subdivision_code !== subdivisionCode ) {
+		return true;
+	}
+	return false;
+}
+
+export interface CartLocation {
+	countryCode: string | null;
+	postalCode: string | null;
+	subdivisionCode: string | null;
+}
+
+export function processRawResponse( rawResponseCart ): ResponseCart {
+	return {
+		...rawResponseCart,
+		// If tax.location is an empty PHP associative array, it will be JSON serialized to [] but we need {}
+		tax: {
+			location: Array.isArray( rawResponseCart.tax.location ) ? {} : rawResponseCart.tax.location,
+			display_taxes: rawResponseCart.tax.display_taxes,
+		},
+		// Add uuid to products returned by the server
+		products: rawResponseCart.products.map( ( product, index ) => {
+			return {
+				...product,
+				uuid: index.toString(),
+			};
+		} ),
+	};
+}
+
+export function addItemToResponseCart(
+	responseCart: ResponseCart,
+	product: ResponseCartProduct
+): ResponseCart {
+	const uuid = getFreshCartItemUUID( responseCart );
+	const newProductItem = addUUIDToResponseCartProduct( product, uuid );
+	return {
+		...responseCart,
+		products: [ ...responseCart.products, newProductItem ],
+	};
+}
+
+function getFreshCartItemUUID( responseCart: ResponseCart ): string {
+	const maxUUID = responseCart.products
+		.map( product => product.uuid )
+		.reduce( ( accum, current ) => ( accum > current ? accum : current ), '' );
+	return maxUUID + '1';
+}
+
+function addUUIDToResponseCartProduct(
+	product: ResponseCartProduct,
+	uuid: string
+): ResponseCartProduct {
+	return {
+		...product,
+		uuid,
+	};
+}
+
+export function replaceItemInResponseCart(
+	responseCart: ResponseCart,
+	uuidToReplace: string,
+	newProductId: number,
+	newProductSlug: string
+) {
+	return {
+		...responseCart,
+		products: responseCart.products.map( item => {
+			if ( item.uuid === uuidToReplace ) {
+				item.product_id = newProductId;
+				item.product_slug = newProductSlug;
+			}
+			return item;
+		} ),
+	};
+}

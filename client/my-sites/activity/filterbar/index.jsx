@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { isWithinBreakpoint } from '@automattic/viewport';
 import React, { Component } from 'react';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
@@ -15,7 +16,6 @@ import DateRangeSelector from './date-range-selector';
 import ActionTypeSelector from './action-type-selector';
 import { updateFilter } from 'state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { isWithinBreakpoint } from 'lib/viewport';
 import getPreviousRoute from 'state/selectors/get-previous-route';
 
 /**

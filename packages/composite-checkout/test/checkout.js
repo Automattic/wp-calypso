@@ -19,6 +19,7 @@ import {
 	CheckoutProvider,
 	useSelect,
 	useDispatch,
+	useFormStatus,
 	createRegistry,
 	useRegisterStore,
 	usePaymentData,
@@ -423,6 +424,18 @@ describe( 'Checkout', () => {
 			expect( getByTextInNode( step, 'Edit' ) ).toBeInTheDocument();
 		} );
 
+		it( 'does not render the edit button if the form status is submitting', () => {
+			const { queryByText, getAllByText } = render(
+				<MyCheckout steps={ [ steps[ 0 ], steps[ 1 ], steps[ 2 ] ] } />
+			);
+			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
+			fireEvent.click( firstStepContinue );
+			expect( queryByText( 'Edit' ) ).toBeInTheDocument();
+			const submitButton = getAllByText( 'Pay Please' )[ 0 ];
+			fireEvent.click( submitButton );
+			expect( queryByText( 'Edit' ) ).not.toBeInTheDocument();
+		} );
+
 		it( 'renders the payment method submitButton', () => {
 			const { getByText } = render( <MyCheckout /> );
 			expect( getByText( 'Pay Please' ) ).toBeTruthy();
@@ -494,10 +507,22 @@ function createMockMethod() {
 		id: 'mock',
 		label: <span data-testid="mock-label">Mock Label</span>,
 		activeContent: <MockPaymentForm />,
-		submitButton: <button>Pay Please</button>,
+		submitButton: <MockSubmitButton />,
 		inactiveContent: 'Mock Method',
 		getAriaLabel: () => 'Mock Method',
 	};
+}
+
+function MockSubmitButton( { disabled } ) {
+	const { setFormSubmitting } = useFormStatus();
+	const onClick = () => {
+		setFormSubmitting();
+	};
+	return (
+		<button disabled={ disabled } onClick={ onClick }>
+			Pay Please
+		</button>
+	);
 }
 
 function MockPaymentForm( { summary } ) {

@@ -13,6 +13,8 @@ import PropTypes from 'prop-types';
 import { getSavedVariations } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
+import { recordPasswordlessRegistration } from 'lib/analytics/signup';
+import { recordGoogleRecaptchaAction } from 'lib/analytics/recaptcha';
 import { Button } from '@automattic/components';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
@@ -22,6 +24,7 @@ import ValidationFieldset from 'signup/validation-fieldset';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
+import flows from 'signup/config/flows';
 
 class PasswordlessSignupForm extends Component {
 	static propTypes = {
@@ -77,10 +80,32 @@ class PasswordlessSignupForm extends Component {
 			form,
 		} );
 
+		const isRecaptchaLoaded = typeof this.props.recaptchaClientId === 'number';
+
+		let recaptchaToken = undefined;
+		let recaptchaError = undefined;
+
+		if ( flows.getFlow( this.props.flowName )?.showRecaptcha ) {
+			if ( isRecaptchaLoaded ) {
+				recaptchaToken = await recordGoogleRecaptchaAction(
+					this.props.recaptchaClientId,
+					'calypso/signup/formSubmit'
+				);
+
+				if ( ! recaptchaToken ) {
+					recaptchaError = 'recaptcha_failed';
+				}
+			} else {
+				recaptchaError = 'recaptcha_didnt_load';
+			}
+		}
+
 		try {
 			const response = await wpcom.undocumented().usersNew(
 				{
 					email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
+					'g-recaptcha-error': recaptchaError,
+					'g-recaptcha-response': recaptchaToken || undefined,
 					is_passwordless: true,
 					signup_flow_name: this.props.flowName,
 					validate: false,
@@ -116,7 +141,7 @@ class PasswordlessSignupForm extends Component {
 		const userId =
 			( response && response.signup_sandbox_user_id ) || ( response && response.user_id );
 
-		analytics.recordPasswordlessRegistration( { flow: this.props.flowName } );
+		recordPasswordlessRegistration( this.props.flowName );
 		analytics.identifyUser( { ID: userId, username, email: this.state.email } );
 
 		this.submitStep( {

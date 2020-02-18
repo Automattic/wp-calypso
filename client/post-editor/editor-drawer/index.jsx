@@ -24,11 +24,7 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import { getPlugins, isRequesting } from 'state/plugins/installed/selectors';
-import {
-	isJetpackMinimumVersion,
-	isJetpackModuleActive,
-	isJetpackSite,
-} from 'state/sites/selectors';
+import { isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
 import config from 'config';
 import areSitePermalinksEditable from 'state/selectors/are-site-permalinks-editable';
 import EditorDrawerTaxonomies from './taxonomies';
@@ -78,7 +74,6 @@ const POST_TYPE_SUPPORTS = {
 class EditorDrawer extends Component {
 	static propTypes = {
 		site: PropTypes.object,
-		canJetpackUseTaxonomies: PropTypes.bool,
 		typeObject: PropTypes.object,
 		type: PropTypes.string,
 		setPostDate: PropTypes.func,
@@ -118,10 +113,9 @@ class EditorDrawer extends Component {
 
 	// Custom Taxonomies
 	renderTaxonomies() {
-		const { canJetpackUseTaxonomies } = this.props;
 		const isCustomTypesEnabled = config.isEnabled( 'manage/custom-post-types' );
 
-		if ( isCustomTypesEnabled && false !== canJetpackUseTaxonomies ) {
+		if ( isCustomTypesEnabled ) {
 			return <EditorDrawerTaxonomies />;
 		}
 	}
@@ -170,10 +164,7 @@ class EditorDrawer extends Component {
 	renderLocation() {
 		const { translate } = this.props;
 
-		if (
-			! this.props.site ||
-			( this.props.isJetpack && ! this.props.jetpackVersionSupportsLocation )
-		) {
+		if ( ! this.props.site ) {
 			return;
 		}
 
@@ -206,7 +197,6 @@ class EditorDrawer extends Component {
 			hasConflictingSeoPlugins,
 			isSeoToolsModuleActive,
 			isJetpack,
-			jetpackVersionSupportsSeo,
 			isRequestingPlugins,
 			site,
 		} = this.props;
@@ -219,7 +209,6 @@ class EditorDrawer extends Component {
 			if (
 				isRequestingPlugins ||
 				! isSeoToolsModuleActive ||
-				! jetpackVersionSupportsSeo ||
 				// Hide SEO accordion if this setting is managed by another SEO plugin.
 				hasConflictingSeoPlugins
 			) {
@@ -327,11 +316,8 @@ const enhance = flow(
 		return {
 			hasConflictingSeoPlugins: !! getFirstConflictingPlugin( activePlugins ),
 			isPermalinkEditable: areSitePermalinksEditable( state, siteId ),
-			canJetpackUseTaxonomies: isJetpackMinimumVersion( state, siteId, '4.1' ),
 			isJetpack: isJetpackSite( state, siteId ),
 			isSeoToolsModuleActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
-			jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4-beta1' ),
-			jetpackVersionSupportsLocation: isJetpackMinimumVersion( state, siteId, '6.3-beta' ),
 			isRequestingPlugins: isRequesting( state, siteId ),
 			type,
 			typeObject: getPostType( state, siteId, type ),

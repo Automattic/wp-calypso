@@ -19,9 +19,15 @@ jest.mock( 'lib/analytics/ad-tracking', () => ( {
 	retarget: () => {},
 	recordAliasInFloodlight: jest.fn(),
 } ) );
-jest.mock( '@automattic/load-script', () => require( './mocks/lib/load-script' ) );
+import { loadScript } from '@automattic/load-script';
+
+jest.mock( '@automattic/load-script', () => ( {
+	loadScript: jest.fn( () => Promise.reject() ),
+} ) );
+
 jest.mock( 'cookie', () => ( {
 	parse: jest.fn(),
+	serialize: jest.fn(),
 } ) );
 
 function logImageLoads() {
@@ -145,6 +151,88 @@ describe( 'Analytics', () => {
 			analytics.identifyUser( { ID: 8, username: 'eight', email: 'eight@example.com' } );
 			expect( recordAliasInFloodlight ).not.toHaveBeenCalled();
 			expect( window._tkq.push ).toHaveBeenCalledWith( [ 'identifyUser', 8, 'eight' ] );
+		} );
+	} );
+	describe( 'initialize', () => {
+		beforeEach( () => {
+			loadScript.mockReset();
+
+			cookie.parse.mockImplementation( () => ( {} ) );
+			cookie.serialize.mockImplementation( () => {} );
+		} );
+		test( 'if stat.js load fails, should load nostat.js', () => {
+			return analytics.initialize().then( () => {
+				expect( loadScript ).toHaveBeenCalledWith( expect.stringMatching( /\/nostats.js/ ) );
+			} );
+		} );
+	} );
+	describe( 'tracks', () => {
+		describe( 'recordEvent', () => {
+			beforeEach( () => {
+				window._tkq.push = jest.fn();
+				cookie.parse.mockImplementation( () => ( { tk_ai: true } ) );
+				global.console.error = jest.fn();
+			} );
+
+			test( 'should log error if event name does not match regex', () => {
+				analytics.tracks.recordEvent( 'calypso_!!!' );
+				expect( global.console.error ).toHaveBeenCalledWith( expect.any( String ), 'calypso_!!!' );
+			} );
+
+			test( 'should log error if nested property', () => {
+				analytics.tracks.recordEvent( 'calypso_abc_def', {
+					nested: {},
+				} );
+				expect( global.console.error ).not.toHaveBeenCalledWith(
+					expect.any( String ),
+					'calypso_abc_def'
+				);
+				expect( global.console.error ).toHaveBeenCalledWith( expect.any( String ), { nested: {} } );
+			} );
+
+			test( 'should log error if property names do not match regex', () => {
+				analytics.tracks.recordEvent( 'calypso_abc_def', {
+					'incorrect!': 'property',
+				} );
+				expect( global.console.error ).toHaveBeenCalledWith(
+					expect.any( String ),
+					expect.any( String ),
+					'incorrect!'
+				);
+			} );
+
+			test( 'should log error if using a special reserved property name', () => {
+				analytics.tracks.recordEvent( 'calypso_abc_def', {
+					geo: 'property',
+				} );
+				expect( global.console.error ).toHaveBeenCalledWith(
+					expect.any( String ),
+					'geo',
+					expect.any( String )
+				);
+			} );
+
+			test( 'should add _superProps if they are initialized', () => {
+				analytics.initialize( {}, () => {
+					return { super: 'prop' };
+				} );
+				analytics.tracks.recordEvent( 'calypso_abc_def' );
+
+				expect( window._tkq.push ).toHaveBeenCalledWith( [
+					'recordEvent',
+					'calypso_abc_def',
+					{ super: 'prop' },
+				] );
+			} );
+
+			test( 'should notify listeners when event is recorded', () => {
+				let numCalled = 0;
+				analytics.addListener( 'record-event', () => {
+					numCalled++;
+				} );
+				analytics.tracks.recordEvent( 'calypso_abc_def' );
+				expect( numCalled ).toEqual( 1 );
+			} );
 		} );
 	} );
 } );

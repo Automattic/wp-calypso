@@ -64,7 +64,7 @@ const FormFieldAnnotation: FunctionComponent< FormFieldAnnotationProps > = ( {
 
 type LabelProps = {
 	isDisabled: boolean;
-	theme?: any;
+	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 
 const Label = styled.label< LabelProps >`
@@ -81,25 +81,12 @@ const Label = styled.label< LabelProps >`
 
 type FormFieldWrapperProps = {
 	isError: boolean;
-	theme?: any;
+	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 
 const FormFieldWrapper = styled.div< FormFieldWrapperProps >`
-	display: block;
-	width: 100%;
-	box-sizing: border-box;
-	font-size: 16px;
-	border: 1px solid
-		${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor )};
-
-	:focus {
-		outline: ${props => ( props.isError ? props.theme.colors.error : props.theme.colors.outline )}
-			solid 2px !important;
-	}
-
-	::-webkit-inner-spin-button,
-	::-webkit-outer-spin-button {
-		-webkit-appearance: none;
+	select {
+		width: 100%;
 	}
 `;
 
@@ -116,7 +103,7 @@ function RenderedDescription( { descriptionText, descriptionId, isError, errorMe
 
 type DescriptionProps = {
 	isError: boolean;
-	theme?: any;
+	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 
 const Description = styled.p< DescriptionProps >`

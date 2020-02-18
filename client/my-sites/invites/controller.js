@@ -4,7 +4,7 @@
 import React from 'react';
 import store from 'store';
 import page from 'page';
-import { find, get, isEmpty, pick } from 'lodash';
+import { get } from 'lodash';
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
 
@@ -17,22 +17,13 @@ import { hideSidebar } from 'state/ui/actions';
 import { getRedirectAfterAccept } from 'my-sites/invites/utils';
 import { acceptInvite as acceptInviteAction } from 'lib/invites/actions';
 import _user from 'lib/user';
-import { getLanguage, getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
+import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
 
 /**
  * Module variables
  */
 const user = _user();
 const debug = debugModule( 'calypso:invite-accept:controller' );
-
-function getLocale( parameters ) {
-	const paths = [ 'site_id', 'invitation_key', 'activation_key', 'auth_key', 'locale' ];
-	return find( pick( parameters, paths ), isLocale );
-}
-
-function isLocale( pathFragment ) {
-	return ! isEmpty( getLanguage( pathFragment ) );
-}
 
 export function redirectWithoutLocaleifLoggedIn( context, next ) {
 	if ( user.get() && getLocaleFromPath( context.path ) ) {
@@ -79,7 +70,7 @@ export function acceptInvite( context, next ) {
 		inviteKey: context.params.invitation_key,
 		activationKey: context.params.activation_key,
 		authKey: context.params.auth_key,
-		locale: getLocale( context.params ),
+		locale: context.params.locale,
 		path: context.path,
 	} );
 	next();

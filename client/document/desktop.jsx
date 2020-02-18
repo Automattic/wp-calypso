@@ -13,7 +13,7 @@ import EnvironmentBadge, { Branch, DevDocsLink, TestHelper } from 'components/en
 import Head from 'components/head';
 import { chunkCssLinks } from './utils';
 import WordPressLogo from 'components/wordpress-logo';
-import { jsonStringifyForHtml } from '../../server/sanitize';
+import { jsonStringifyForHtml } from 'server/sanitize';
 
 class Desktop extends React.Component {
 	render() {
@@ -26,7 +26,6 @@ class Desktop extends React.Component {
 			lang,
 			hasSecondary,
 			clientData,
-			isFluidWidth,
 			badge,
 			abTestHelper,
 			branchName,
@@ -37,11 +36,7 @@ class Desktop extends React.Component {
 		} = this.props;
 
 		return (
-			<html
-				lang={ lang }
-				dir={ isRTL ? 'rtl' : 'ltr' }
-				className={ classNames( 'is-desktop', { 'is-fluid-width': isFluidWidth } ) }
-			>
+			<html lang={ lang } dir={ isRTL ? 'rtl' : 'ltr' } className={ classNames( 'is-desktop' ) }>
 				<Head title="WordPress.com" faviconURL={ faviconURL } cdn={ '//s1.wp.com' }>
 					{ chunkCssLinks( entrypoint, isRTL ) }
 					<link rel="stylesheet" id="desktop-css" href="/desktop/wordpress-desktop.css" />

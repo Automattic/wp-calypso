@@ -37,7 +37,7 @@ export const fetchLanguageNames = action =>
  *
  * @param {object} action Redux action
  * @param {Array} data raw data from i18n/language-names
- * @returns {Array<Object>} Redux actions
+ * @returns {Array<object>} Redux actions
  */
 export const addLanguageNames = ( action, data ) => [ receiveLanguageNames( data ) ];
 

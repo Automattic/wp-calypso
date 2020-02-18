@@ -59,6 +59,7 @@ export function getInlineHelpSearchResultsForQuery( state, searchQuery ) {
 
 /**
  * Returns an array of contextual results
+ *
  * @param  {object}  state  Global state tree
  * @returns {Array}          List of contextual results based on route
  */
@@ -72,6 +73,7 @@ export const getContextualHelpResults = flow(
 
 /**
  * Returns the selected search result item
+ *
  * @param  {object}  state  Global state tree
  * @returns {object}         The selected search result
  */
@@ -85,6 +87,7 @@ export function getInlineHelpCurrentlySelectedResult( state ) {
 
 /**
  * Returns the link / href of the selected search result item
+ *
  * @param  {object}  state  Global state tree
  * @returns {string}         The href of the selected link target
  */

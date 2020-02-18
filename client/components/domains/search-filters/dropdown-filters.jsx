@@ -136,6 +136,21 @@ export class DropdownFilters extends Component {
 		);
 	}
 
+	renderFilterIcon() {
+		if ( this.props.showDesignUpdate ) {
+			return <Gridicon icon="filter" size={ 12 } />;
+		}
+
+		return (
+			<>
+				<Gridicon icon="cog" size={ 12 } />
+				<span className="search-filters__dropdown-filters-button-text">
+					{ this.props.translate( 'Filters' ) }
+				</span>
+			</>
+		);
+	}
+
 	render() {
 		const hasFilterValues = this.getFiltercounts() > 0;
 
@@ -154,10 +169,7 @@ export class DropdownFilters extends Component {
 					ref={ this.button }
 					onClick={ this.togglePopover }
 				>
-					<Gridicon icon="cog" size={ 12 } />
-					<span className="search-filters__dropdown-filters-button-text">
-						{ this.props.translate( 'Filters' ) }
-					</span>
+					{ this.renderFilterIcon() }
 				</Button>
 
 				{ this.state.showPopover && this.renderPopover() }
