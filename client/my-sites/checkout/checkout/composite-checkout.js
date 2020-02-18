@@ -15,6 +15,7 @@ import {
 	useWpcomStore,
 	useShoppingCart,
 	FormFieldAnnotation,
+	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 } from '@automattic/composite-checkout-wpcom';
 import {
 	CheckoutProvider,
@@ -606,7 +607,9 @@ function getCheckoutEventHandler( dispatch ) {
 					recordTracksEvent( 'calypso_checkout_payment_success', {
 						coupon_code: action.payload.couponItem?.wpcom_meta.couponCode ?? '',
 						currency: action.payload.total.amount.currency,
-						payment_method: action.payload.paymentMethodId,
+						payment_method:
+							translateCheckoutPaymentMethodToWpcomPaymentMethod( action.payload.paymentMethodId )
+								?.name || '',
 						total_cost: action.payload.total.amount.value / 100, // TODO: This conversion only works for USD! We have to localize this or get it from the server directly (or better yet, just force people to use the integer version).
 					} )
 				);
