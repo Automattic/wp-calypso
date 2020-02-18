@@ -7,7 +7,6 @@ import page from 'page';
  * Internal dependencies
  */
 import config from 'config';
-import { abtest } from 'lib/abtest';
 import userFactory from 'lib/user';
 
 export default function() {
@@ -49,12 +48,7 @@ function setupLoggedOut() {
 
 function setupLoggedIn() {
 	page( '/', context => {
-		const user = userFactory();
-		const { primarySiteSlug } = user.get();
-		let redirectPath =
-			primarySiteSlug && 'variant' === abtest( 'redirectToCustomerHome' )
-				? `/home/${ primarySiteSlug }`
-				: '/read';
+		let redirectPath = '/read';
 
 		if ( context.querystring ) {
 			redirectPath += `?${ context.querystring }`;
