@@ -198,10 +198,11 @@ class ThemeEnhancements extends Component {
 						jetpackVersion &&
 						versionCompare( jetpackVersion, '8.1-alpha', '>=' )
 							? translate(
-									'{{b}}Action needed:{{/b}} The Jetpack mobile theme will be retired ' +
-										'and removed from Jetpack in March. Please ensure your current theme ' +
+									'{{b}}Action needed:{{/b}} The Jetpack mobile theme is not supported ' +
+										'anymore. It will be removed when you update to the most recent ' +
+										'version of the plugin. Please ensure your current theme ' +
 										'is mobile-ready {{link}}using this tool{{/link}}. ' +
-										'If it is not, consider replacing it before March.',
+										'If it is not, consider replacing it.',
 									{
 										components: {
 											b: <strong />,
@@ -216,8 +217,9 @@ class ThemeEnhancements extends Component {
 									}
 							  )
 							: translate(
-									'{{b}}Note:{{/b}} The Jetpack mobile theme is being retired ' +
-										'and will be removed from Jetpack in March.',
+									'{{b}}Note:{{/b}} The Jetpack mobile theme is not supported ' +
+										'anymore. It will be removed when you update ' +
+										'to the most recent version of the plugin.',
 									{
 										components: {
 											b: <strong />,
