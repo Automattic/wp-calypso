@@ -17,7 +17,7 @@ import {
 	isActivatingTheme,
 	isThemeActive,
 	shouldShowHomepageWarning,
-	getPreInstallingThemeId,
+	getPreActivateThemeId,
 } from 'state/themes/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
@@ -131,7 +131,7 @@ class AutoLoadingHomepageModal extends Component {
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
-		const installingThemeId = getPreInstallingThemeId( state );
+		const installingThemeId = getPreActivateThemeId( state );
 
 		return {
 			siteId,
