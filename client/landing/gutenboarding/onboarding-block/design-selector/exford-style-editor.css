@@ -1,0 +1,1730 @@
+@charset "UTF-8";
+/**
+ * These styles should be loaded by the Block Editor only
+ */
+/**
+ * Abstracts
+ * - Mixins, variables and functions
+ */
+/**
+ * Abstracts
+ * - Mixins, variables and functions
+ */
+/* Sass Functions go here */
+/**
+ * Map deep get
+ * @author Hugo Giraudel
+ * @access public
+ * @param {Map} $map - Map
+ * @param {Arglist} $keys - Key chain
+ * @return {*} - Desired value
+ *
+ * Example:
+ * $m-breakpoint: map-deep-get($__prefix-default-config, "layouts", "M");
+ */
+/**
+ * Deep set function to set a value in nested maps
+ * @author Hugo Giraudel
+ * @access public
+ * @param {Map} $map - Map
+ * @param {List} $keys -  Key chaine
+ * @param {*} $value - Value to assign
+ * @return {Map}
+ *
+ * Example:
+ * $__prefix-default-config: map-deep-set($__prefix-default-config, "layouts" "M", 650px);
+ */
+/**
+ * jQuery-style extend function
+ * - Child themes can use this function to `reset` the values in
+ *   config maps without editing the `master` Sass files.
+ * - src: https://www.sitepoint.com/extra-map-functions-sass/
+ * - About `map-merge()`:
+ * - - only takes 2 arguments
+ * - - is not recursive
+ * @param {Map} $map - first map
+ * @param {ArgList} $maps - other maps
+ * @param {Bool} $deep - recursive mode
+ * @return {Map}
+ *
+ * Examples:
+$grid-configuration-default: (
+	'columns': 12,
+	'layouts': (
+		'small': 800px,
+		'medium': 1000px,
+		'large': 1200px,
+	),
+);
+$grid-configuration-custom: (
+	'layouts': (
+		'large': 1300px,
+		'huge': 1500px
+	),
+);
+$grid-configuration-user: (
+	'direction': 'ltr',
+	'columns': 16,
+	'layouts': (
+		'large': 1300px,
+		'huge': 1500px
+	),
+);
+// $deep: false
+$grid-configuration: map-extend($grid-configuration-default, $grid-configuration-custom, $grid-configuration-user);
+// --> ("columns": 16, "layouts": (("large": 1300px, "huge": 1500px)), "direction": "ltr")
+// $deep: true
+$grid-configuration: map-extend($grid-configuration-default, $grid-configuration-custom, $grid-configuration-user, true);
+// --> ("columns": 16, "layouts": (("small": 800px, "medium": 1000px, "large": 1300px, "huge": 1500px)), "direction": "ltr")
+ */
+/**
+ * Button
+ */
+/**
+ * Cover
+ */
+/**
+ * Heading
+ */
+/**
+ * List
+ */
+/**
+ * Pullquote
+ */
+/**
+ * Quote
+ */
+/**
+ * Separator
+ */
+/**
+ * Responsive breakpoints
+ * - breakpoints values are defined in _config-global.scss
+ */
+/**
+ * Align wide widths
+ * - Sets .alignwide widths
+ */
+/**
+ * Crop Text Boundry
+ * - Sets a fixed-width on content within alignwide and alignfull blocks
+ */
+/**
+ * Add font-family using CSS variables.
+ * It also adds the proper fallback for browsers without support.
+ */
+/**
+ * Child Theme Name
+ */
+/**
+ * Redefine Sass map values for child theme output.
+ * - See: style-child-theme.scss
+ */
+/**
+ * Global
+ */
+/**
+ * Elements
+ */
+/**
+ * Button
+ */
+/**
+ * Cover
+ */
+/**
+ * Heading
+ */
+/**
+ * List
+ */
+/**
+ * Pullquote
+ */
+/**
+ * Quote
+ */
+/**
+ * Separator
+ */
+/**
+ * Header
+ */
+/**
+ * Footer
+ */
+/**
+ * Base
+ * - Reset the browser
+ */
+body {
+	color: #111111;
+	background-color: #FFFFFF;
+	font-family: "Source Serif Pro", "Baskerville Old Face", Garamond, "Times New Roman", serif;
+	font-family: var(--font-base, "Source Serif Pro", "Baskerville Old Face", Garamond, "Times New Roman", serif);
+	font-size: 20px;
+	font-weight: normal;
+	line-height: 1.6;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+}
+
+.editor-post-title__block {
+	font-size: 20px;
+}
+
+p {
+	font-size: 1em;
+	line-height: 1.6;
+}
+
+a {
+	color: #23883D;
+}
+
+a:hover {
+	color: #195f2b;
+}
+
+button,
+a {
+	cursor: pointer;
+}
+
+/**
+ * Elements
+ * - Styles for basic HTML elemants
+ */
+/**
+ * Elements
+ * - Styles for basic HTML elemants
+ */
+blockquote {
+	padding-left: 16px;
+}
+
+blockquote p {
+	font-size: 1.2rem;
+	letter-spacing: normal;
+	line-height: 1.125;
+}
+
+blockquote cite,
+blockquote footer {
+	font-size: 0.83333rem;
+	letter-spacing: normal;
+}
+
+blockquote > * {
+	margin-top: 16px;
+	margin-bottom: 16px;
+}
+
+blockquote > *:first-child {
+	margin-top: 0;
+}
+
+blockquote > *:last-child {
+	margin-bottom: 0;
+}
+
+blockquote.alignleft, blockquote.alignright {
+	padding-left: inherit;
+}
+
+blockquote.alignleft p, blockquote.alignright p {
+	font-size: 1rem;
+	max-width: inherit;
+	width: inherit;
+}
+
+blockquote.alignleft cite,
+blockquote.alignleft footer, blockquote.alignright cite,
+blockquote.alignright footer {
+	font-size: 0.69444rem;
+	letter-spacing: normal;
+}
+
+figcaption {
+	color: #6E6E6E;
+	font-size: 0.69444rem;
+	margin-top: calc(0.5 * 16px);
+	margin-bottom: 16px;
+	text-align: center;
+}
+
+.alignleft figcaption,
+.alignright figcaption {
+	margin-bottom: 0;
+}
+
+/* WP Smiley */
+.page-content .wp-smiley,
+.entry-content .wp-smiley,
+.comment-content .wp-smiley {
+	border: none;
+	margin-bottom: 0;
+	margin-top: 0;
+	padding: 0;
+}
+
+/* Make sure embeds and iframes fit their containers. */
+embed,
+iframe,
+object {
+	max-width: 100%;
+}
+
+/**
+ * Blocks
+ * - These styles replace key Gutenberg Block styles for fonts, colors, and
+ *   spacing with CSS-variables overrides
+ */
+/**
+ * Block Styles for the Editor
+ *
+ * - These styles replace key Gutenberg Block styles for fonts, colors, and
+ *   spacing with CSS-variables overrides in the Block Editor
+ * - In the future the Block styles may get compiled to individual .css
+ *   files and conditionally loaded
+ */
+.wp-block-a8c-blog-posts.image-aligntop .post-thumbnail {
+	margin-bottom: 16px;
+}
+
+.wp-block-a8c-blog-posts.image-alignleft .post-thumbnail {
+	margin-right: 32px;
+}
+
+.wp-block-a8c-blog-posts.image-alignright .post-thumbnail {
+	margin-left: 32px;
+}
+
+.wp-block-a8c-blog-posts.image-alignbehind .post-has-image .entry-wrapper {
+	padding: 32px;
+}
+
+.wp-block-a8c-blog-posts.image-alignbehind .post-has-image .cat-links {
+	color: #fff;
+}
+
+.wp-block-a8c-blog-posts.image-alignbehind .post-has-image a:hover {
+	color: currentColor;
+}
+
+.wp-block-a8c-blog-posts .article-section-title {
+	font-size: 1em;
+	margin-top: 0;
+	margin-bottom: 16px;
+}
+
+.wp-block-a8c-blog-posts article {
+	margin-bottom: 64px;
+}
+
+@media only screen and (min-width: 560px) {
+	.wp-block-a8c-blog-posts article {
+		margin-bottom: 96px;
+	}
+}
+
+.wp-block-a8c-blog-posts .post-thumbnail img {
+	vertical-align: middle;
+	width: auto;
+}
+
+.wp-block-a8c-blog-posts .entry-wrapper > * {
+	/* Vertical margins logic between post details */
+	margin-top: 16px;
+	margin-bottom: 16px;
+}
+
+.wp-block-a8c-blog-posts .entry-wrapper > *:first-child {
+	margin-top: 0;
+}
+
+.wp-block-a8c-blog-posts .entry-wrapper > *:last-child {
+	margin-bottom: 0;
+}
+
+.wp-block-a8c-blog-posts .entry-title a {
+	color: #23883D;
+}
+
+.has-background:not(.has-background-background-color) .wp-block-a8c-blog-posts .entry-title a,
+[class*="background-color"]:not(.has-background-background-color) .wp-block-a8c-blog-posts .entry-title a,
+[style*="background-color"] .wp-block-a8c-blog-posts .entry-title a {
+	color: currentColor;
+}
+
+.wp-block-a8c-blog-posts .entry-title a:hover {
+	color: #195f2b;
+	text-decoration: underline;
+}
+
+.has-background:not(.has-background-background-color) .wp-block-a8c-blog-posts .entry-title a,
+[class*="background-color"]:not(.has-background-background-color) .wp-block-a8c-blog-posts .entry-title a,
+[style*="background-color"] .wp-block-a8c-blog-posts .entry-title a {
+	color: currentColor;
+}
+
+.wp-block-a8c-blog-posts .more-link {
+	display: block;
+	color: inherit;
+	margin-top: 16px;
+}
+
+.wp-block-a8c-blog-posts .more-link:after {
+	content: "\02192";
+	display: inline-block;
+	margin-left: 0.5em;
+}
+
+.wp-block-a8c-blog-posts .more-link:hover, .wp-block-a8c-blog-posts .more-link:active {
+	color: #195f2b;
+	text-decoration: none;
+}
+
+.has-background:not(.has-background-background-color) .wp-block-a8c-blog-posts .more-link:hover,
+[class*="background-color"]:not(.has-background-background-color) .wp-block-a8c-blog-posts .more-link:hover,
+[style*="background-color"] .wp-block-a8c-blog-posts .more-link:hover, .has-background:not(.has-background-background-color) .wp-block-a8c-blog-posts .more-link:active,
+[class*="background-color"]:not(.has-background-background-color) .wp-block-a8c-blog-posts .more-link:active,
+[style*="background-color"] .wp-block-a8c-blog-posts .more-link:active {
+	color: currentColor;
+}
+
+.wp-block-a8c-blog-posts .entry-meta,
+.wp-block-a8c-blog-posts .cat-links {
+	color: #6E6E6E;
+	font-size: 0.83333em;
+}
+
+.has-background:not(.has-background-background-color) .wp-block-a8c-blog-posts .entry-meta,
+[class*="background-color"]:not(.has-background-background-color) .wp-block-a8c-blog-posts .entry-meta,
+[style*="background-color"] .wp-block-a8c-blog-posts .entry-meta, .has-background:not(.has-background-background-color)
+.wp-block-a8c-blog-posts .cat-links,
+[class*="background-color"]:not(.has-background-background-color)
+.wp-block-a8c-blog-posts .cat-links,
+[style*="background-color"]
+.wp-block-a8c-blog-posts .cat-links {
+	color: currentColor;
+}
+
+.wp-block-a8c-blog-posts .entry-meta .byline:not(:last-child),
+.wp-block-a8c-blog-posts .cat-links .byline:not(:last-child) {
+	margin-right: 16px;
+}
+
+.wp-block-a8c-blog-posts .entry-meta .published + .updated,
+.wp-block-a8c-blog-posts .cat-links .published + .updated {
+	display: none;
+}
+
+.wp-block-a8c-blog-posts .entry-meta a,
+.wp-block-a8c-blog-posts .cat-links a {
+	color: currentColor;
+	text-decoration: underline;
+}
+
+.wp-block-a8c-blog-posts .entry-meta a:hover, .wp-block-a8c-blog-posts .entry-meta a:active,
+.wp-block-a8c-blog-posts .cat-links a:hover,
+.wp-block-a8c-blog-posts .cat-links a:active {
+	color: #195f2b;
+	text-decoration: none;
+}
+
+.has-background:not(.has-background-background-color) .wp-block-a8c-blog-posts .entry-meta a:hover,
+[class*="background-color"]:not(.has-background-background-color) .wp-block-a8c-blog-posts .entry-meta a:hover,
+[style*="background-color"] .wp-block-a8c-blog-posts .entry-meta a:hover, .has-background:not(.has-background-background-color) .wp-block-a8c-blog-posts .entry-meta a:active,
+[class*="background-color"]:not(.has-background-background-color) .wp-block-a8c-blog-posts .entry-meta a:active,
+[style*="background-color"] .wp-block-a8c-blog-posts .entry-meta a:active, .has-background:not(.has-background-background-color)
+.wp-block-a8c-blog-posts .cat-links a:hover,
+[class*="background-color"]:not(.has-background-background-color)
+.wp-block-a8c-blog-posts .cat-links a:hover,
+[style*="background-color"]
+.wp-block-a8c-blog-posts .cat-links a:hover, .has-background:not(.has-background-background-color)
+.wp-block-a8c-blog-posts .cat-links a:active,
+[class*="background-color"]:not(.has-background-background-color)
+.wp-block-a8c-blog-posts .cat-links a:active,
+[style*="background-color"]
+.wp-block-a8c-blog-posts .cat-links a:active {
+	color: currentColor;
+}
+
+/**
+ * Button Placeholder style
+ * - Since buttons appear in various blocks,
+ *   let’s use a placeholder to keep them all
+ *   in-sync
+ */
+.wp-block-a8c-blog-posts + .button, .fse-template-part .main-navigation .button {
+	line-height: 1;
+	color: white;
+	cursor: pointer;
+	font-weight: 700;
+	font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+	font-family: var(--font-base, "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif);
+	font-size: 0.83333rem;
+	background-color: #23883D;
+	border-radius: 5px;
+	border-width: 0;
+	padding: 16px 16px;
+}
+
+.wp-block-a8c-blog-posts + .button:before, .fse-template-part .main-navigation .button:before, .wp-block-a8c-blog-posts + .button:after, .fse-template-part .main-navigation .button:after {
+	content: '';
+	display: block;
+	height: 0;
+	width: 0;
+}
+
+.wp-block-a8c-blog-posts + .button:before, .fse-template-part .main-navigation .button:before {
+	margin-bottom: -0.12em;
+}
+
+.wp-block-a8c-blog-posts + .button:after, .fse-template-part .main-navigation .button:after {
+	margin-top: -0.11em;
+}
+
+.wp-block-a8c-blog-posts + .button:hover, .fse-template-part .main-navigation .button:hover, .wp-block-a8c-blog-posts + .button:focus, .fse-template-part .main-navigation .button:focus, .wp-block-a8c-blog-posts + .has-focus.button, .fse-template-part .main-navigation .has-focus.button {
+	color: white;
+	background-color: #195f2b;
+}
+
+/**
+ * Onsale Placeholder style
+ * - Since buttons appear in various blocks,
+ *   let’s use a placeholder to keep them all
+ *   in-sync
+ */
+.wp-block-a8c-blog-posts + .button {
+	display: inline-block;
+	font-size: 1.2em;
+}
+
+.wp-block-a8c-blog-posts + .button:hover {
+	cursor: default;
+}
+
+.has-background:not(.has-background-background-color) .wp-block-a8c-blog-posts + .button,
+[class*="background-color"]:not(.has-background-background-color) .wp-block-a8c-blog-posts + .button,
+[style*="background-color"] .wp-block-a8c-blog-posts + .button {
+	background-color: transparent;
+	border: 2px solid currentColor;
+	color: currentColor;
+}
+
+.wp-block-button {
+	/* Default Style */
+	/* Outline Style */
+	/* Squared Style */
+}
+
+.wp-block-button .wp-block-button__link {
+	color: white;
+	font-weight: 700;
+	font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+	font-family: var(--font-base, "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif);
+	font-size: 0.83333em;
+	line-height: 1;
+	background-color: #23883D;
+	border-radius: 5px;
+	padding: 16px 16px;
+}
+
+.wp-block-button .wp-block-button__link:hover, .wp-block-button .wp-block-button__link:focus, .wp-block-button .wp-block-button__link.has-focus {
+	color: white;
+	background-color: #195f2b;
+}
+
+.wp-block-button.is-style-outline .wp-block-button__link {
+	color: #23883D;
+	background: transparent;
+	border: 2px solid currentcolor;
+}
+
+.wp-block-button.is-style-outline .wp-block-button__link:hover, .wp-block-button.is-style-outline .wp-block-button__link:focus, .wp-block-button.is-style-outline .wp-block-button__link.has-focus {
+	color: #195f2b;
+}
+
+.wp-block-button.is-style-squared .wp-block-button__link {
+	border-radius: 0;
+}
+
+.wp-block-cover,
+.wp-block-cover-image {
+	background-color: #111111;
+	color: #FFFFFF;
+	min-height: 480px;
+	margin-top: inherit;
+	margin-bottom: inherit;
+	/* default & custom background-color */
+	/* Treating H2 separately to account for legacy /core styles */
+}
+
+.wp-block-cover .wp-block-cover__inner-container,
+.wp-block-cover .wp-block-cover-image-text,
+.wp-block-cover .wp-block-cover-text,
+.wp-block-cover .block-editor-block-list__block,
+.wp-block-cover-image .wp-block-cover__inner-container,
+.wp-block-cover-image .wp-block-cover-image-text,
+.wp-block-cover-image .wp-block-cover-text,
+.wp-block-cover-image .block-editor-block-list__block {
+	color: currentColor;
+}
+
+.wp-block-cover .wp-block-cover__inner-container a,
+.wp-block-cover .wp-block-cover-image-text a,
+.wp-block-cover .wp-block-cover-text a,
+.wp-block-cover .block-editor-block-list__block a,
+.wp-block-cover-image .wp-block-cover__inner-container a,
+.wp-block-cover-image .wp-block-cover-image-text a,
+.wp-block-cover-image .wp-block-cover-text a,
+.wp-block-cover-image .block-editor-block-list__block a {
+	color: currentColor;
+}
+
+.wp-block-cover:not([class*='background-color']) .wp-block-cover__inner-container,
+.wp-block-cover:not([class*='background-color']) .wp-block-cover-image-text,
+.wp-block-cover:not([class*='background-color']) .wp-block-cover-text,
+.wp-block-cover:not([class*='background-color']) .block-editor-block-list__block,
+.wp-block-cover-image:not([class*='background-color']) .wp-block-cover__inner-container,
+.wp-block-cover-image:not([class*='background-color']) .wp-block-cover-image-text,
+.wp-block-cover-image:not([class*='background-color']) .wp-block-cover-text,
+.wp-block-cover-image:not([class*='background-color']) .block-editor-block-list__block {
+	color: #FFFFFF;
+}
+
+.wp-block-cover h2,
+.wp-block-cover-image h2 {
+	font-size: 1.728em;
+	letter-spacing: normal;
+	line-height: 1.125;
+	padding: 0;
+	max-width: inherit;
+	text-align: inherit;
+}
+
+.wp-block-cover h2.has-text-align-left,
+.wp-block-cover-image h2.has-text-align-left {
+	text-align: left;
+}
+
+.wp-block-cover h2.has-text-align-center,
+.wp-block-cover-image h2.has-text-align-center {
+	text-align: center;
+}
+
+.wp-block-cover h2.has-text-align-right,
+.wp-block-cover-image h2.has-text-align-right {
+	text-align: right;
+}
+
+.wp-block-heading h1, h1, .h1,
+.wp-block-heading h2, h2, .h2,
+.wp-block-heading h3, h3, .h3,
+.wp-block-heading h4, h4, .h4,
+.wp-block-heading h5, h5, .h5,
+.wp-block-heading h6, h6, .h6 {
+	font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+	font-family: var(--font-headings, "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif);
+	font-weight: 700;
+	clear: both;
+}
+
+.wp-block-heading h1, h1, .h1 {
+	font-size: 2.0736em;
+	letter-spacing: normal;
+	line-height: 1.125;
+}
+
+.wp-block-heading h2, h2, .h2 {
+	font-size: 1.728em;
+	letter-spacing: normal;
+	line-height: 1.125;
+}
+
+.wp-block-heading h3, h3, .h3 {
+	font-size: 1.44em;
+	letter-spacing: normal;
+	line-height: 1.125;
+}
+
+.wp-block-heading h4, h4, .h4 {
+	font-size: 1.2em;
+	letter-spacing: normal;
+	line-height: 1.125;
+}
+
+.wp-block-heading h5, h5, .h5 {
+	font-size: 1em;
+	letter-spacing: normal;
+	line-height: 1.125;
+}
+
+.wp-block-heading h6, h6, .h6 {
+	font-size: 0.83333em;
+	letter-spacing: normal;
+	line-height: 1.125;
+}
+
+/* Center image block by default in the editor */
+.wp-block-image > div {
+	text-align: center;
+}
+
+[data-type="core/image"] .block-editor-block-list__block-edit figure.is-resized {
+	margin: 0 auto;
+}
+
+.wp-block-gallery figcaption {
+	margin-bottom: 0;
+}
+
+.wp-block-group.has-background {
+	padding: 21.312px;
+}
+
+@media only screen and (min-width: 560px) {
+	.wp-block-group.has-background {
+		padding: 32px;
+	}
+}
+
+.wp-block[data-type="core/group"] > .editor-block-list__block-edit > div > .wp-block-group.has-background > .wp-block-group__inner-container > .editor-inner-blocks > .editor-block-list__layout > .wp-block[data-align=full] {
+	margin: 0;
+	width: 100%;
+}
+
+.wp-block-latest-comments {
+	margin-left: 0;
+}
+
+.wp-block-latest-posts {
+	padding-left: 0;
+}
+
+.wp-block-latest-posts > li > a {
+	font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+	font-family: var(--font-headings, "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif);
+	font-size: 1.2rem;
+	font-weight: 700;
+	line-height: 1.125;
+}
+
+.wp-block-latest-posts:not(.is-grid) > li {
+	/* Vertical margins logic */
+	margin-top: 32px;
+	margin-bottom: 32px;
+}
+
+.wp-block-latest-posts:not(.is-grid) > li:first-child {
+	margin-top: 0;
+}
+
+.wp-block-latest-posts:not(.is-grid) > li:last-child {
+	margin-bottom: 0;
+}
+
+.wp-block-latest-posts .wp-block-latest-posts__post-date {
+	color: #6E6E6E;
+	font-size: 0.83333rem;
+	line-height: 1.6;
+}
+
+[class*="inner-container"] .wp-block-latest-posts .wp-block-latest-posts__post-date,
+.has-background .wp-block-latest-posts .wp-block-latest-posts__post-date {
+	color: currentColor;
+}
+
+.wp-block-latest-posts .wp-block-latest-posts__post-excerpt,
+.wp-block-latest-posts .wp-block-latest-posts__post-full-content {
+	font-size: 0.83333rem;
+	line-height: 1.6;
+	margin: 0;
+}
+
+ul,
+ol {
+	margin: 32px 0;
+	padding-left: 32px;
+}
+
+ul.aligncenter,
+ol.aligncenter {
+	list-style-position: inside;
+	padding: 0;
+}
+
+ul.alignright,
+ol.alignright {
+	list-style-position: inside;
+	text-align: right;
+	padding: 0;
+}
+
+li > ul,
+li > ol {
+	margin: 0;
+}
+
+.wp-block-media-text .block-editor-inner-blocks {
+	padding-right: 16px;
+	padding-left: 16px;
+}
+
+@media only screen and (min-width: 640px) {
+	.wp-block-media-text .block-editor-inner-blocks {
+		padding-right: 32px;
+		padding-left: 32px;
+	}
+}
+
+.wp-block-media-text[style*="background-color"]:not(.has-background-background-color) a {
+	color: currentColor;
+}
+
+.a8c-posts-list {
+	padding-left: 0;
+}
+
+p.has-background {
+	padding: 16px 16px;
+}
+
+p.has-background:not(.has-background-background-color) a {
+	color: currentColor;
+}
+
+.wp-block-pullquote {
+	padding: calc( 3 * 16px) 0;
+	margin-left: 0;
+	margin-right: 0;
+	text-align: center;
+	border-top-color: #CCCCCC;
+	border-top-width: 4px;
+	border-bottom-color: #CCCCCC;
+	border-bottom-width: 4px;
+	color: #111111;
+	/**
+	 * Block Options
+	 */
+}
+
+.wp-block-pullquote blockquote {
+	padding-left: 0;
+}
+
+.wp-block-pullquote p {
+	font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+	font-family: var(--font-headings, "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif);
+	font-size: 1.2em;
+	letter-spacing: normal;
+	line-height: 1.125;
+}
+
+.wp-block-pullquote a {
+	color: currentColor;
+}
+
+.wp-block-pullquote .wp-block-pullquote__citation,
+.wp-block-pullquote cite,
+.wp-block-pullquote footer {
+	color: #6E6E6E;
+	font-size: 0.83333em;
+	letter-spacing: normal;
+}
+
+.wp-block-pullquote:not(.is-style-solid-color) {
+	background: none;
+}
+
+.wp-block-pullquote.is-style-solid-color {
+	background-color: #23883D;
+	color: #FFFFFF;
+}
+
+.wp-block-pullquote.is-style-solid-color.alignleft blockquote,
+.wp-block-pullquote.is-style-solid-color.alignright blockquote {
+	padding-left: 16px;
+	padding-right: 16px;
+	max-width: inherit;
+}
+
+.wp-block-pullquote.is-style-solid-color blockquote {
+	padding-left: 0;
+}
+
+.wp-block-pullquote.is-style-solid-color .wp-block-pullquote__citation,
+.wp-block-pullquote.is-style-solid-color cite,
+.wp-block-pullquote.is-style-solid-color footer {
+	color: currentColor;
+}
+
+.wp-block-pullquote.alignwide > p,
+.wp-block-pullquote.alignfull > p,
+.wp-block-pullquote.alignwide blockquote,
+.wp-block-pullquote.alignfull blockquote {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.wp-block-quote {
+	border-left-color: #23883D;
+	margin: 32px 0;
+	padding-left: 16px;
+}
+
+.wp-block-quote p {
+	font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+	font-family: var(--font-headings, "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif);
+	font-size: 1.2em;
+	letter-spacing: normal;
+}
+
+.wp-block-quote.is-large, .wp-block-quote.is-style-large {
+	border: none;
+	padding: 0;
+}
+
+.wp-block-quote.is-large p, .wp-block-quote.is-style-large p {
+	font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+	font-family: var(--font-headings, "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif);
+	font-size: 1.44em;
+	letter-spacing: normal;
+	line-height: 1.125;
+}
+
+.has-background:not(.has-background-background-color) .wp-block-quote,
+[class*="background-color"]:not(.has-background-background-color) .wp-block-quote,
+[style*="background-color"]:not(.has-background-background-color) .wp-block-quote,
+.wp-block-cover[style*="background-image"] .wp-block-quote {
+	border-color: currentColor;
+}
+
+.wp-block-quote .wp-block-quote__citation {
+	color: #6E6E6E;
+	font-size: 0.83333em;
+	letter-spacing: normal;
+}
+
+.has-background:not(.has-background-background-color) .wp-block-quote .wp-block-quote__citation,
+[class*="background-color"]:not(.has-background-background-color) .wp-block-quote .wp-block-quote__citation,
+[style*="background-color"]:not(.has-background-background-color) .wp-block-quote .wp-block-quote__citation,
+.wp-block-cover[style*="background-image"] .wp-block-quote .wp-block-quote__citation {
+	color: currentColor;
+}
+
+.wp-block-separator,
+hr {
+	border-bottom: 2px solid #CCCCCC;
+	clear: both;
+}
+
+.wp-block-separator[style*="text-align:right"], .wp-block-separator[style*="text-align: right"],
+hr[style*="text-align:right"],
+hr[style*="text-align: right"] {
+	border-right-color: #CCCCCC;
+}
+
+.wp-block-separator.is-style-wide,
+hr.is-style-wide {
+	border-bottom-width: 2px;
+}
+
+.wp-block-separator.is-style-dots,
+hr.is-style-dots {
+	border-bottom: none;
+}
+
+.wp-block-separator.is-style-dots.has-background, .wp-block-separator.is-style-dots.has-text-color,
+hr.is-style-dots.has-background,
+hr.is-style-dots.has-text-color {
+	background-color: transparent !important;
+}
+
+.wp-block-separator.is-style-dots.has-background:before, .wp-block-separator.is-style-dots.has-text-color:before,
+hr.is-style-dots.has-background:before,
+hr.is-style-dots.has-text-color:before {
+	color: currentColor !important;
+}
+
+.wp-block-separator.is-style-dots:before,
+hr.is-style-dots:before {
+	color: #CCCCCC;
+}
+
+.has-background:not(.has-background-background-color) .wp-block-separator,
+[class*="background-color"]:not(.has-background-background-color) .wp-block-separator,
+[style*="background-color"]:not(.has-background-background-color) .wp-block-separator,
+.wp-block-cover[style*="background-image"] .wp-block-separator, .has-background:not(.has-background-background-color)
+hr,
+[class*="background-color"]:not(.has-background-background-color)
+hr,
+[style*="background-color"]:not(.has-background-background-color)
+hr,
+.wp-block-cover[style*="background-image"]
+hr {
+	border-color: currentColor;
+}
+
+table th,
+.wp-block-table th {
+	font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+	font-family: var(--font-headings, "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif);
+}
+
+table td,
+table th,
+.wp-block-table td,
+.wp-block-table th {
+	padding: calc( 0.5 * 16px);
+}
+
+/**
+ * Editor Post Title
+ * - Needs a special styles
+ */
+.editor-post-title__block .editor-post-title__input {
+	color: #111111;
+	font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+	font-family: var(--font-headings, "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif);
+	font-weight: 700;
+	font-size: 1.728em;
+	letter-spacing: normal;
+	line-height: 1.125;
+}
+
+.has-primary-color[class] {
+	color: #23883D !important;
+}
+
+.has-secondary-color[class] {
+	color: #0963C4 !important;
+}
+
+.has-foreground-color[class] {
+	color: #111111 !important;
+}
+
+.has-foreground-light-color[class] {
+	color: #6E6E6E !important;
+}
+
+.has-foreground-dark-color[class] {
+	color: #020202 !important;
+}
+
+.has-background-light-color[class] {
+	color: #F7F7F7 !important;
+}
+
+.has-background-dark-color[class] {
+	color: #CCCCCC !important;
+}
+
+.has-background-color[class] {
+	color: #FFFFFF !important;
+}
+
+.has-background:not(.has-background-background-color) a,
+.has-background p, .has-background h1, .has-background h2, .has-background h3, .has-background h4, .has-background h5, .has-background h6 {
+	color: currentColor;
+}
+
+.has-primary-background-color[class] {
+	background-color: #23883D !important;
+	color: #FFFFFF;
+}
+
+.has-primary-background-color[class] {
+	background-color: #23883D !important;
+	color: #FFFFFF;
+}
+
+.has-secondary-background-color[class] {
+	background-color: #0963C4 !important;
+	color: #FFFFFF;
+}
+
+.has-foreground-background-color[class] {
+	background-color: #111111 !important;
+	color: #FFFFFF;
+}
+
+.has-foreground-light-background-color[class] {
+	background-color: #6E6E6E !important;
+	color: #FFFFFF;
+}
+
+.has-foreground-dark-background-color[class] {
+	background-color: #020202 !important;
+	color: #FFFFFF;
+}
+
+.has-background-light-background-color[class] {
+	background-color: #F7F7F7 !important;
+	color: #111111;
+}
+
+.has-background-dark-background-color[class] {
+	background-color: #CCCCCC !important;
+	color: #111111;
+}
+
+.has-background-background-color[class] {
+	background-color: #FFFFFF !important;
+	color: #111111;
+}
+
+.is-small-text,
+.has-small-font-size {
+	font-size: 0.83333em;
+}
+
+.is-regular-text,
+.has-regular-font-size,
+.has-normal-font-size,
+.has-medium-font-size {
+	font-size: 1.2em;
+}
+
+.is-large-text,
+.has-large-font-size {
+	font-size: 1.44em;
+	line-height: 1.125;
+}
+
+.is-larger-text,
+.has-larger-font-size,
+.has-huge-font-size {
+	font-size: 1.728em;
+	line-height: 1.125;
+}
+
+.has-drop-cap:not(:focus)::first-letter {
+	font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+	font-family: var(--font-headings, "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif);
+	font-size: calc(2 * 2.0736em);
+	font-weight: 700;
+}
+
+/**
+ * Spacing Overrides
+ */
+[data-block] {
+	margin-top: 21.312px;
+	margin-bottom: 21.312px;
+}
+
+@media only screen and (min-width: 560px) {
+	[data-block] {
+		margin-top: 32px;
+		margin-bottom: 32px;
+	}
+}
+
+/*
+ * Margins
+ */
+.margin-top-none {
+	margin-top: 0 !important;
+}
+
+.margin-top-half {
+	margin-top: 16px !important;
+}
+
+.margin-top-default {
+	margin-top: 32px !important;
+}
+
+.margin-right-none {
+	/*rtl:ignore*/
+	margin-right: 0 !important;
+}
+
+.margin-right-half {
+	/*rtl:ignore*/
+	margin-right: 16px !important;
+}
+
+.margin-right-default {
+	/*rtl:ignore*/
+	margin-right: 32px !important;
+}
+
+.margin-bottom-none {
+	margin-bottom: 0 !important;
+}
+
+.margin-bottom-half {
+	margin-bottom: 16px !important;
+}
+
+.margin-bottom-default {
+	margin-bottom: 32px !important;
+}
+
+.margin-left-none {
+	/*rtl:ignore*/
+	margin-left: 0 !important;
+}
+
+.margin-left-half {
+	/*rtl:ignore*/
+	margin-left: 16px !important;
+}
+
+.margin-left-default {
+	/*rtl:ignore*/
+	margin-left: 32px !important;
+}
+
+/*
+ * Padding
+ */
+.padding-top-none {
+	padding-top: 0 !important;
+}
+
+.padding-top-half {
+	padding-top: 16px !important;
+}
+
+.padding-top-default {
+	padding-top: 32px !important;
+}
+
+.padding-right-none {
+	/*rtl:ignore*/
+	padding-right: 0 !important;
+}
+
+.padding-right-half {
+	/*rtl:ignore*/
+	padding-right: 16px !important;
+}
+
+.padding-right-default {
+	/*rtl:ignore*/
+	padding-right: 32px !important;
+}
+
+.padding-bottom-none {
+	padding-bottom: 0 !important;
+}
+
+.padding-bottom-half {
+	padding-bottom: 16px !important;
+}
+
+.padding-bottom-default {
+	padding-bottom: 32px !important;
+}
+
+.padding-left-none {
+	/*rtl:ignore*/
+	padding-left: 0 !important;
+}
+
+.padding-left-half {
+	/*rtl:ignore*/
+	padding-left: 16px !important;
+}
+
+.padding-left-default {
+	/*rtl:ignore*/
+	padding-left: 32px !important;
+}
+
+/**
+ * Extras
+ */
+.editor-post-title__input {
+	text-align: center;
+}
+
+.wp-block-cover h1,
+.wp-block-cover-image h1 {
+	font-size: 2.98598em;
+}
+
+.wp-block-cover h2,
+.wp-block-cover-image h2 {
+	font-size: 2.48832em;
+}
+
+.wp-block-cover h3,
+.wp-block-cover-image h3 {
+	font-size: 2.0736em;
+}
+
+.wp-block-cover h4,
+.wp-block-cover-image h4 {
+	font-size: 1.728em;
+}
+
+.wp-block-cover h5,
+.wp-block-cover-image h5 {
+	font-size: 1.44em;
+}
+
+.wp-block-cover h6,
+.wp-block-cover-image h6 {
+	font-size: 1.2em;
+}
+
+@media only screen and (min-width: 560px) {
+	.wp-block-cover,
+	.wp-block-cover-image {
+		min-height: 60vh;
+	}
+}
+
+@media only screen and (min-width: 782px) {
+	.wp-block-cover,
+	.wp-block-cover-image {
+		min-height: 80vh;
+	}
+}
+
+.wp-block-a8c-blog-posts .entry-title a {
+	color: inherit;
+}
+
+.wp-block-a8c-blog-posts .cat-links a,
+.wp-block-a8c-blog-posts .entry-title a:hover,
+.wp-block-a8c-blog-posts .entry-meta a {
+	text-decoration: none;
+}
+
+.wp-block-a8c-blog-posts.image-alignbehind .cat-links a:hover,
+.wp-block-a8c-blog-posts.image-alignbehind .entry-title a:hover,
+.wp-block-a8c-blog-posts.image-alignbehind .entry-meta a:hover {
+	text-decoration: underline;
+}
+
+.has-background:not(.has-background-background-color) .wp-block-a8c-blog-posts .cat-links a:hover,
+.has-background:not(.has-background-background-color) .wp-block-a8c-blog-posts .entry-title a:hover,
+.has-background:not(.has-background-background-color) .wp-block-a8c-blog-posts .entry-meta a:hover,
+[class*="background-color"]:not(.has-background-background-color) .wp-block-a8c-blog-posts .cat-links a:hover,
+[class*="background-color"]:not(.has-background-background-color) .wp-block-a8c-blog-posts .entry-title a:hover,
+[class*="background-color"]:not(.has-background-background-color) .wp-block-a8c-blog-posts .entry-meta a:hover,
+[style*="background-color"] .wp-block-a8c-blog-posts .cat-links a:hover,
+[style*="background-color"] .wp-block-a8c-blog-posts .entry-title a:hover,
+[style*="background-color"] .wp-block-a8c-blog-posts .entry-meta a:hover {
+	text-decoration: underline;
+}
+
+.wp-block-a8c-blog-posts + .button {
+	font-size: 0.83333em;
+}
+
+/**
+ * Full Site Editing
+ * - Full Site Editing overrides
+ */
+@media (min-width: 600px) {
+	.a8c-template-editor .block-editor-block-list__layout .block-editor-block-list__block[data-align="full"] .block-editor-block-list__layout .block-editor-block-list__block[data-align="full"] {
+		margin-left: 0;
+		margin-right: 0;
+	}
+}
+
+.a8c-template-editor .block-editor-block-list__block-edit [data-block] {
+	margin: 12px 0 0 0;
+}
+
+.template-block .fse-template-part {
+	padding: 16px;
+}
+
+@media only screen and (min-width: 560px) {
+	.template-block .fse-template-part {
+		padding: 32px 0;
+	}
+}
+
+.template-block .fse-template-part figure.fse-site-logo {
+	width: auto;
+}
+
+.template-block .fse-template-part .block-list-appender {
+	display: none;
+}
+
+.template-block .fse-template-part .wp-block-column .block-editor-block-list__layout [data-type='a8c/site-title']:first-child .site-title {
+	margin-top: 0;
+}
+
+.fse-template-part .wp-block-cover .site-title,
+.fse-template-part .wp-block-cover .site-description,
+.fse-template-part .wp-block-cover-image .site-title,
+.fse-template-part .wp-block-cover-image .site-description {
+	background: transparent;
+	color: inherit;
+}
+
+.fse-template-part .block-editor-block-list__layout .block-editor-block-list__block[data-align='full'] > .block-editor-block-list__block-edit figure.fse-site-logo {
+	width: auto;
+}
+
+.fse-template-part .wp-block-column {
+	width: 100%;
+}
+
+.fse-template-part .wp-block-columns .wp-block-column > * {
+	margin: 0 0 5px 0;
+}
+
+.fse-template-part .main-navigation {
+	color: #111111;
+}
+
+.fse-template-part .main-navigation > div {
+	display: none;
+}
+
+.fse-template-part .main-navigation #toggle-menu {
+	display: inline-block;
+	margin: 0;
+}
+
+.fse-template-part .main-navigation #toggle:checked ~ div:not(.woocommerce-menu-container) {
+	display: block;
+}
+
+.fse-template-part .main-navigation #toggle:focus + #toggle-menu {
+	background-color: #195f2b;
+	outline: inherit;
+	text-decoration: underline;
+}
+
+.fse-template-part .main-navigation .dropdown-icon.close {
+	display: none;
+}
+
+.fse-template-part .main-navigation #toggle:checked + #toggle-menu .open {
+	display: none;
+}
+
+.fse-template-part .main-navigation #toggle:checked + #toggle-menu .close {
+	display: inline;
+}
+
+@media only screen and (min-width: 560px) {
+	.fse-template-part .main-navigation > div {
+		display: inline-block;
+	}
+	.fse-template-part .main-navigation #toggle-menu {
+		display: none;
+	}
+	.fse-template-part .main-navigation > div > ul > li > ul {
+		display: none;
+	}
+}
+
+.fse-template-part .main-navigation > div > ul {
+	display: flex;
+	flex-wrap: wrap;
+	list-style: none;
+	margin: 0;
+	max-width: none;
+	padding-left: 0;
+	position: relative;
+	/* Sub-menus Flyout */
+}
+
+.fse-template-part .main-navigation > div > ul ul {
+	padding-left: 0;
+}
+
+.fse-template-part .main-navigation > div > ul li {
+	display: block;
+	position: relative;
+	width: 100%;
+	z-index: 1;
+}
+
+.fse-template-part .main-navigation > div > ul li:hover, .fse-template-part .main-navigation > div > ul li[focus-within] {
+	cursor: pointer;
+	z-index: 99999;
+}
+
+.fse-template-part .main-navigation > div > ul li:hover, .fse-template-part .main-navigation > div > ul li:focus-within {
+	cursor: pointer;
+	z-index: 99999;
+}
+
+@media only screen and (min-width: 560px) {
+	.fse-template-part .main-navigation > div > ul li {
+		display: inherit;
+		width: inherit;
+		/* Submenu display */
+	}
+	.fse-template-part .main-navigation > div > ul li:hover > ul,
+	.fse-template-part .main-navigation > div > ul li[focus-within] > ul,
+	.fse-template-part .main-navigation > div > ul li ul:hover,
+	.fse-template-part .main-navigation > div > ul li ul:focus {
+		visibility: visible;
+		opacity: 1;
+		display: block;
+	}
+	.fse-template-part .main-navigation > div > ul li:hover > ul,
+	.fse-template-part .main-navigation > div > ul li:focus-within > ul,
+	.fse-template-part .main-navigation > div > ul li ul:hover,
+	.fse-template-part .main-navigation > div > ul li ul:focus {
+		visibility: visible;
+		opacity: 1;
+		display: block;
+	}
+}
+
+@media only screen and (min-width: 560px) {
+	.fse-template-part .main-navigation > div > ul > li > a {
+		line-height: 1;
+	}
+	.fse-template-part .main-navigation > div > ul > li > a:before, .fse-template-part .main-navigation > div > ul > li > a:after {
+		content: '';
+		display: block;
+		height: 0;
+		width: 0;
+	}
+	.fse-template-part .main-navigation > div > ul > li > a:before {
+		margin-bottom: -0.12em;
+	}
+	.fse-template-part .main-navigation > div > ul > li > a:after {
+		margin-top: -0.11em;
+	}
+	.fse-template-part .main-navigation > div > ul > li:first-of-type > a {
+		padding-left: 0;
+	}
+	.fse-template-part .main-navigation > div > ul > li:last-of-type > a {
+		padding-right: 0;
+	}
+}
+
+.fse-template-part .main-navigation > div > ul > li > .sub-menu {
+	margin: 0;
+	position: relative;
+}
+
+@media only screen and (min-width: 560px) {
+	.fse-template-part .main-navigation > div > ul > li > .sub-menu {
+		background: #FFFFFF;
+		box-shadow: 0px 0px 8px 2px rgba(0, 0, 0, 0.1);
+		left: 0;
+		top: 100%;
+		min-width: max-content;
+		opacity: 0;
+		position: absolute;
+		transition: all 0.5s ease;
+		visibility: hidden;
+	}
+}
+
+.fse-template-part .main-navigation > div > ul > li > .sub-menu .sub-menu {
+	width: 100%;
+}
+
+.fse-template-part .main-navigation a {
+	color: #23883D;
+	display: block;
+	font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+	font-family: var(--font-headings, "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif);
+	font-weight: 700;
+	padding: 8px 0;
+}
+
+@media only screen and (min-width: 560px) {
+	.fse-template-part .main-navigation a {
+		padding: 16px;
+	}
+}
+
+.fse-template-part .main-navigation a:link, .fse-template-part .main-navigation a:visited {
+	color: #23883D;
+}
+
+.fse-template-part .main-navigation a:hover {
+	color: #195f2b;
+}
+
+.fse-template-part .main-navigation .sub-menu {
+	list-style: none;
+	margin-left: 0;
+	/* Reset the counter for each UL */
+	counter-reset: nested-list;
+}
+
+.fse-template-part .main-navigation .sub-menu .menu-item a {
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+
+.fse-template-part .main-navigation .sub-menu .menu-item a::before {
+	/* Increment the dashes */
+	counter-increment: nested-list;
+	/* Insert dashes with spaces in between */
+	content: "– " counters(nested-list, "– ", none);
+}
+
+@media only screen and (min-width: 560px) {
+	.fse-template-part .main-navigation > div > ul > .menu-item-has-children > a::after {
+		content: "\00a0\25BC";
+		display: inline-block;
+		font-size: 0.69444rem;
+		height: inherit;
+		width: inherit;
+	}
+}
+
+.fse-template-part .main-navigation .hide-visually {
+	position: absolute !important;
+	clip: rect(1px, 1px, 1px, 1px);
+	padding: 0 !important;
+	border: 0 !important;
+	height: 1px !important;
+	width: 1px !important;
+	overflow: hidden;
+}
+
+.fse-template-part body:not(.fse-enabled) .main-navigation a {
+	font-size: 1rem;
+}
+
+.fse-template-part .main-navigation {
+	text-align: center;
+	/**
+ * Button Placeholder style
+ * - Since buttons appear in various blocks,
+ *   let’s use a placeholder to keep them all
+ *   in-sync
+ */
+	/**
+ * Onsale Placeholder style
+ * - Since buttons appear in various blocks,
+ *   let’s use a placeholder to keep them all
+ *   in-sync
+ */
+}
+
+.fse-template-part .main-navigation .alignwide, .fse-template-part .main-navigation .alignfull {
+	width: 100%;
+}
+
+.fse-template-part .main-navigation .button {
+	line-height: 1;
+	color: white;
+	cursor: pointer;
+	font-weight: 700;
+	font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+	font-family: var(--font-base, "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif);
+	font-size: 0.83333rem;
+	background-color: #23883D;
+	border-radius: 5px;
+	border-width: 0;
+	padding: 16px 16px;
+}
+
+.fse-template-part .main-navigation .button:before, .fse-template-part .main-navigation .button:after {
+	content: '';
+	display: block;
+	height: 0;
+	width: 0;
+}
+
+.fse-template-part .main-navigation .button:before {
+	margin-bottom: -0.12em;
+}
+
+.fse-template-part .main-navigation .button:after {
+	margin-top: -0.11em;
+}
+
+.fse-template-part .main-navigation .button:hover, .fse-template-part .main-navigation .button:focus, .fse-template-part .main-navigation .has-focus.button {
+	color: white;
+	background-color: #195f2b;
+}
+
+.fse-template-part .main-navigation .main-menu.footer-menu li a {
+	font-size: inherit;
+}
+
+.fse-template-part .main-navigation .main-menu.footer-menu li.menu-item-has-children > a::after {
+	font-size: 0.6em;
+	vertical-align: middle;
+}
+
+.fse-template-part .main-navigation .has-text-color > .main-menu.footer-menu > li > a {
+	color: inherit;
+}
+
+.fse-template-part .main-navigation .has-text-align-left > .main-menu.footer-menu {
+	justify-content: flex-start;
+}
+
+.fse-template-part .main-navigation .has-text-align-center > .main-menu.footer-menu {
+	justify-content: center;
+}
+
+.fse-template-part .main-navigation .has-text-align-right > .main-menu.footer-menu {
+	justify-content: flex-end;
+}
+
+.fse-template-part .main-navigation .has-background > .main-menu.footer-menu {
+	padding: 16px;
+}
+
+@media only screen and (min-width: 560px) {
+	.a8c-template-editor.fse-header .block-editor-block-list__layout > .block-editor-block-list__block.is-selected:first-child[data-align='full'] > .block-editor-block-list__block-edit > [data-block] {
+		margin-top: 14px;
+	}
+	.a8c-template-editor.fse-header .block-editor-block-list__layout > .block-editor-block-list__block:not(.is-selected):first-child[data-align='full'] > .block-editor-block-list__block-edit > [data-block] {
+		margin-top: 0;
+	}
+}
+
+.template-block .fse-header .block-editor-block-list__layout > .block-editor-block-list__block:first-child[data-align='full'] {
+	margin-top: -16px;
+}
+
+@media only screen and (min-width: 560px) {
+	.template-block .fse-header .block-editor-block-list__layout > .block-editor-block-list__block:first-child[data-align='full'] {
+		margin-top: -32px;
+	}
+}
+
+.post-content__block {
+	margin-bottom: 160px;
+	margin-top: 36px;
+	z-index: 20;
+}
+
+.fse-template-part .has-normal-font-size {
+	font-size: 1.2rem;
+}
+
+.fse-template-part .main-navigation .alignwide, .fse-template-part .main-navigation .alignfull {
+	width: 100%;
+}
+
+.fse-template-part .main-navigation a {
+	text-decoration: none;
+}
+
+.fse-template-part .wp-block-cover .site-title,
+.fse-template-part .wp-block-cover-image .site-title {
+	font-weight: 700;
+}
+
+.fse-template-part .wp-block-cover .has-background,
+.fse-template-part .wp-block-cover-image .has-background {
+	text-shadow: none;
+}
+
+.post-content__block {
+	margin-top: -36px;
+}

@@ -106,19 +106,20 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 		border: '2px solid black',
 		cursor: 'pointer',
 		fontSize: '20px',
+		color: 'black',
 	};
 
 	return (
 		<animated.div style={ designSelectorSpring }>
 			<button
 				style={ { ...stepperStyles, left: '0' } }
-				onClick={ () => setPreviewIndex( ( previewIndex - 3 ) % designs.length ) }
+				onClick={ () => setPreviewIndex( ( designs.length + previewIndex - 1 ) % designs.length ) }
 			>
 				Last Group
 			</button>
 			<button
 				style={ { ...stepperStyles, right: '0' } }
-				onClick={ () => setPreviewIndex( ( previewIndex + 3 ) % designs.length ) }
+				onClick={ () => setPreviewIndex( ( previewIndex + 1 ) % designs.length ) }
 			>
 				Next Group
 			</button>
@@ -141,8 +142,7 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 			>
 				<div className="design-selector__grid">
 					{ designs.map( ( design, i ) => {
-						let numberToPreview = 3;
-						if ( i >= previewIndex && i < previewIndex + numberToPreview ) {
+						if ( i === previewIndex ) {
 							return (
 								<DynamicPreview
 									key={ design.slug }

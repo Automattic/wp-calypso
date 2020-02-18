@@ -12,6 +12,14 @@ import React from 'react';
  */
 import { BlockPreview } from '@wordpress/block-editor';
 import { parse as parseBlocks } from '@wordpress/blocks';
+import '@wordpress/block-library/build-style/style.css';
+// import '@wordpress/block-library/build-style/style-rtl.css';
+import '@wordpress/block-library/build-style/theme.css';
+// import '@wordpress/block-library/build-style/theme-rtl.css';
+import '@wordpress/block-library/build-style/editor.css';
+import './exford-style.css';
+import './exford-style-editor.css';
+
 /* eslint-disable import/no-extraneous-dependencies */
 // import { BlockPreview } from '@wordpress/block-editor';
 /* eslint-enable import/no-extraneous-dependencies */
@@ -27,10 +35,11 @@ const BlockTemplatePreview = ( { design, onClick } ) => {
 		<div
 			onClick={ onClick }
 			style={ {
-				width: '300px',
-				height: '300px',
+				width: '1000px',
+				height: '1000px',
 				overflowY: 'scroll',
 				backgroundColor: 'white',
+				border: '1px solid black',
 				cursor: 'pointer',
 			} }
 		>
