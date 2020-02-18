@@ -4,7 +4,7 @@
 import '@automattic/calypso-polyfills';
 import React from 'react';
 import ReactDom from 'react-dom';
-import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter, Route, Switch, Redirect, generatePath } from 'react-router-dom';
 import config from '../../config';
 
 /**
@@ -37,7 +37,7 @@ window.AppBoot = () => {
 						<Gutenboard />
 					</Route>
 					<Route>
-						<Redirect to={ Step.IntentGathering } />;
+						<Redirect to={ generatePath( path, { step: Step.IntentGathering } ) } />
 					</Route>
 				</Switch>
 			</BrowserRouter>,

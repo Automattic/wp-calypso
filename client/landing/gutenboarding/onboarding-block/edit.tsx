@@ -60,10 +60,6 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 				<Route exact path={ makePath( Step.CreateSite ) }>
 					<CreateSite />
 				</Route>
-
-				<Route>
-					<Redirect to={ makePath( Step.IntentGathering ) } />;
-				</Route>
 			</Switch>
 		</>
 	);
