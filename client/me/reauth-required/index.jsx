@@ -291,7 +291,10 @@ const ReauthRequired = createReactClass( {
 					onChange={ this.handleAuthSwitch }
 					isSmsSupported={ method === 'sms' || method === 'authenticator' }
 					isAuthenticatorSupported={ method !== 'sms' }
-					isSmsAllowed={ this.state.smsRequestsAllowed }
+					isSmsAllowed={
+						this.state.smsRequestsAllowed ||
+						( method === 'sms' && this.state.twoFactorAuthType === 'webauthn' )
+					}
 					isSecurityKeySupported={ isSecurityKeySupported }
 				/>
 			</Dialog>
