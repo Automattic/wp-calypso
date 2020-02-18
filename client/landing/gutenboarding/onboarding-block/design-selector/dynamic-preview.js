@@ -12,9 +12,9 @@ import React from 'react';
  */
 import { BlockPreview } from '@wordpress/block-editor';
 import { parse as parseBlocks } from '@wordpress/blocks';
-/* eslint-disable import/no-extraneous-dependencies */
-// import { BlockPreview } from '@wordpress/block-editor';
-/* eslint-enable import/no-extraneous-dependencies */
+import '@wordpress/block-library/build-style/style.css';
+import '@wordpress/block-library/build-style/theme.css';
+import '@wordpress/block-library/build-style/editor.css';
 
 const BlockTemplatePreview = ( { design, onClick } ) => {
 	const blocks = parseBlocks( design?.content );
