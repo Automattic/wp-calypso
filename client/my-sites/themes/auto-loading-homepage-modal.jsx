@@ -49,7 +49,7 @@ class AutoLoadingHomepageModal extends Component {
 		installingThemeId: PropTypes.string.isRequired,
 	};
 
-	onCloseModal = ( activate = false ) => () => {
+	closeModalHandler = ( activate = false ) => () => {
 		if ( activate ) {
 			const { installingThemeId, siteId, source } = this.props;
 			this.props.acceptAutoLoadingHomepageWarning( installingThemeId );
@@ -98,7 +98,7 @@ class AutoLoadingHomepageModal extends Component {
 						action: 'keepCurrentTheme',
 						label: translate( 'No, keep my current theme' ),
 						isPrimary: false,
-						onClick: this.onCloseModal( false ),
+						onClick: this.closeModalHandler( false ),
 					},
 					{
 						action: 'activeTheme',
@@ -106,10 +106,10 @@ class AutoLoadingHomepageModal extends Component {
 							args: { themeName },
 						} ),
 						isPrimary: true,
-						onClick: this.onCloseModal( true ),
+						onClick: this.closeModalHandler( true ),
 					},
 				] }
-				onClose={ this.onCloseModal( false ) }
+				onClose={ this.closeModalHandler( false ) }
 			>
 				<div>
 					<h1>
