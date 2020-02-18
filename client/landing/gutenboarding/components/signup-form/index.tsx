@@ -50,12 +50,12 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		} );
 	}, [] );
 
-	const handleSignUp = ( event: React.FormEvent< HTMLFormElement > ) => {
+	const handleSignUp = async ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 
 		const username_hint = siteTitle || siteVertical?.label;
 
-		createAccount( {
+		const success = await createAccount( {
 			email: emailVal,
 			is_passwordless: true,
 			signup_flow_name: 'gutenboarding',
@@ -64,6 +64,10 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 				extra: { username_hint },
 			} ),
 		} );
+
+		if ( ( success as any ) as boolean ) {
+			onRequestClose();
+		}
 	};
 
 	const handleClose = () => {
