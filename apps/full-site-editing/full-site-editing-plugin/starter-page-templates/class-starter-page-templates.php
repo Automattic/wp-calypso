@@ -251,7 +251,7 @@ class Starter_Page_Templates {
 	private function get_iso_639_locale() {
 		$language = strtolower( get_locale() );
 
-		if ( in_array( $language, [ 'zh_tw', 'zh-tw', 'zh_cn', 'zh-cn' ], true ) ) {
+		if ( in_array( $language, [ 'pt_br', 'pt-br', 'zh_tw', 'zh-tw', 'zh_cn', 'zh-cn' ], true ) ) {
 			$language = str_replace( '_', '-', $language );
 		} else {
 			$language = preg_replace( '/([-_].*)$/i', '', $language );
