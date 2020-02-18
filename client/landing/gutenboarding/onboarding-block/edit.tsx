@@ -52,7 +52,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 				</Route>
 
 				<Route path={ makePath( Step.Signup ) }>
-					<SignupForm />;
+					<SignupForm onRequestClose={ () => undefined } />;
 				</Route>
 
 				<Route path={ makePath( Step.CreateSite ) }>

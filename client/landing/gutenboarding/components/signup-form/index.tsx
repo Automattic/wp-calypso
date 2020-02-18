@@ -6,7 +6,6 @@ import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/com
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
-import { useHistory } from 'react-router-dom';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 /**
@@ -28,7 +27,11 @@ declare module '@wordpress/element' {
 	): ReactNode;
 }
 
-const SignupForm = () => {
+interface Props {
+	onRequestClose: () => void;
+}
+
+const SignupForm = ( { onRequestClose }: Props ) => {
 	const { __: NO__, _x: NO_x } = useI18n();
 	const [ emailVal, setEmailVal ] = useState( '' );
 	const { createAccount } = useDispatch( USER_STORE );
@@ -41,7 +44,6 @@ const SignupForm = () => {
 	).getState();
 	const langParam = useLangRouteParam();
 
-	const history = useHistory();
 	useEffect( () => {
 		recordTracksEvent( 'calypso_gutenboarding_signup_start', {
 			flow: 'gutenboarding',
@@ -67,8 +69,9 @@ const SignupForm = () => {
 	const handleClose = () => {
 		if ( shouldCreate ) {
 			setShouldCreate( false );
-			history.goBack();
 		}
+
+		onRequestClose();
 	};
 
 	const tos = __experimentalCreateInterpolateElement(
@@ -98,7 +101,6 @@ const SignupForm = () => {
 	return (
 		<Modal
 			className="signup-form"
-			isDismissible={ false }
 			title={ NO__( 'Sign up to save your changes' ) }
 			onRequestClose={ handleClose }
 			focusOnMount={ false }

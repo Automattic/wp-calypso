@@ -4,11 +4,10 @@
 import { useI18n } from '@automattic/react-i18n';
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import React, { FunctionComponent, useEffect, useCallback } from 'react';
+import React, { FunctionComponent, useEffect, useCallback, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import classnames from 'classnames';
 import { DomainSuggestions } from '@automattic/data-stores';
-import { useHistory } from 'react-router-dom';
 
 /**
  * Internal dependencies
@@ -20,7 +19,7 @@ import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
 import { selectorDebounce } from '../../constants';
 import Link from '../link';
-import { Step, usePath } from '../../path';
+import SignupForm from '../../components/signup-form';
 
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
@@ -66,8 +65,7 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		}
 	}, [ siteTitle, setDomain ] );
 
-	const history = useHistory();
-	const makePath = usePath();
+	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
 
 	const currentDomain = domain ?? freeDomainSuggestion;
 
@@ -111,7 +109,7 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 
 	const handleSignup = () => {
 		setShouldCreate( true );
-		history.push( makePath( Step.Signup ) );
+		setShowSignupDialog( true );
 	};
 
 	useEffect( () => {
@@ -176,6 +174,7 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 					) }
 				</div>
 			</div>
+			{ showSignupDialog && <SignupForm onRequestClose={ () => setShowSignupDialog( false ) } /> }
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
