@@ -236,6 +236,7 @@ export default function CompositeCheckout( {
 		allowedPaymentMethods: serverAllowedPaymentMethods,
 		variantRequestStatus,
 		variantSelectOverride,
+		responseCart,
 	} = useShoppingCart(
 		siteSlug,
 		canInitializeCart,
@@ -253,11 +254,11 @@ export default function CompositeCheckout( {
 			const url = getThankYouUrl();
 			recordEvent( {
 				type: 'PAYMENT_COMPLETE',
-				payload: { url, couponItem, paymentMethodId, total },
+				payload: { url, couponItem, paymentMethodId, total, responseCart },
 			} );
 			page.redirect( url );
 		},
-		[ recordEvent, getThankYouUrl, total, couponItem ]
+		[ recordEvent, getThankYouUrl, total, couponItem, responseCart ]
 	);
 
 	const { registerStore, dispatch } = registry;
@@ -598,7 +599,7 @@ function createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) {
 }
 
 function getCheckoutEventHandler( dispatch ) {
-	return action => {
+	return function recordEvent( action ) {
 		debug( 'heard checkout event', action );
 		switch ( action.type ) {
 			case 'CHECKOUT_LOADED':
@@ -622,8 +623,9 @@ function getCheckoutEventHandler( dispatch ) {
 					cart: {
 						total_cost,
 						currency: action.payload.total.amount.currency,
-						is_signup,
-						products, // Needs product_slug, product_id, cost, volume, product_name, price, product_type, included_domain_purchase_amount, is_domain_registration
+						is_signup: action.payload.responseCart.is_signup,
+						// TODO: currently maybe missing (?) price, product_type, included_domain_purchase_amount
+						products: action.payload.responseCart.products,
 					},
 					orderId: transactionResult.receipt_id,
 				} );
