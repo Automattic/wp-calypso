@@ -59,8 +59,8 @@
 		"npm": "^6.12.1"
 	},
 	"scripts": {
-		"preanalyze-bundles": "cross-env-shell NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=true PROGRESS=true npm run -s build-client-evergreen",
-		"analyze-bundles": "webpack-bundle-analyzer client/stats.json public/evergreen -h 127.0.0.1 -p 9898 -s gzip",
+		"analyze-bundles": "npm run build-client-stats && webpack-bundle-analyzer client/stats.json public/evergreen -h 127.0.0.1 -p 9898 -s gzip",
+		"analyze-icfy": "npm run build-client-stats && node --max-old-space-size=4096 bin/icfy-analyze.js && mv client/stats.json client/chart.json \"$CIRCLE_ARTIFACTS/icfy\"",
 		"autoprefixer": "postcss -u autoprefixer -r --no-map --config packages/calypso-build/postcss.config.js",
 		"postcss": "postcss -r --config packages/calypso-build/postcss.config.js",
 		"prebuild": "npm run install-if-deps-outdated",
@@ -81,6 +81,7 @@
 		"build-client-both": "CONCURRENT_BUILDS=2 concurrently -c cyan -n \"fallback ,evergreen\" \"npm run build-client-fallback\" \"npm run build-client-evergreen\"",
 		"build-client-if-prod": "node -e \"process.env.CALYPSO_ENV === 'production' && process.exit(1)\" || npm run build-client-both",
 		"build-client-if-desktop": "node -e \"(process.env.CALYPSO_ENV === 'desktop' || process.env.CALYPSO_ENV === 'desktop-development') && process.exit(1)\" || npm run build-client-fallback",
+		"build-client-stats": "cross-env-shell NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=true PROGRESS=true npm run build-client-evergreen",
 		"build-packages": "npx lerna run prepare --stream",
 		"build-packages:watch": "chokidar \"./packages/**\" -i \"./packages/*/dist/**\" -i \"**.css\" -i \"**.d.ts\" --debounce 1000 --throttle 10000 -c \"npm run build-packages\"",
 		"clean": "npm run clean:packages && npm run clean:build && npm run clean:public",
