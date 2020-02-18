@@ -280,7 +280,8 @@ export default function CompositeCheckout( {
 	const paypalMethod = useMemo( () => createPayPalMethod( { registerStore } ), [ registerStore ] );
 	paypalMethod.id = 'paypal';
 	// This is defined afterward so that getThankYouUrl can be dynamic without having to re-create payment method
-	paypalMethod.submitTransaction = () =>
+	paypalMethod.submitTransaction = () => {
+		recordEvent( { type: 'REDIRECT_FOR_PAYMENT_AUTHORIZATION' } );
 		makePayPalExpressRequest(
 			{
 				items,
@@ -295,6 +296,7 @@ export default function CompositeCheckout( {
 			},
 			wpcomPayPalExpress
 		);
+	};
 
 	const stripeMethod = useMemo(
 		() =>
@@ -665,6 +667,7 @@ function getCheckoutEventHandler( dispatch ) {
 					} )
 				);
 			case 'PAYPAL_TRANSACTION_BEGIN':
+				dispatch( recordTracksEvent( 'calypso_checkout_form_redirect', {} ) );
 				return dispatch(
 					recordTracksEvent( 'calypso_checkout_composite_paypal_submit_clicked', {} )
 				);
