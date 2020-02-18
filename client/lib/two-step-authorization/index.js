@@ -16,6 +16,8 @@ import wp from 'lib/wp';
 import { reduxDispatch } from 'lib/redux-bridge';
 import { requestConnectedApplications } from 'state/connected-applications/actions';
 import { requestUserProfileLinks } from 'state/profile-links/actions';
+import config from 'config';
+import { get as webauthn_auth } from '@github/webauthn-json';
 
 const wpcom = wp.undocumented();
 
@@ -63,6 +65,65 @@ TwoStepAuthorization.prototype.fetch = function( callback ) {
 			}
 		}.bind( this )
 	);
+};
+
+TwoStepAuthorization.prototype.loginUserWithSecurityKey = function( args ) {
+	const postLoginRequest = function( endpoint, data ) {
+		const url = 'https://wordpress.com/wp-login.php?action=' + endpoint;
+		// eslint-disable-next-line no-undef
+		const formData = new FormData();
+		const _data = {
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+			user_id: args.user_id,
+			auth_type: 'webauthn',
+			two_step_nonce: this.getTwoStepWebauthnNonce(),
+			...data,
+		};
+		for ( const key in _data ) {
+			formData.set( key, _data[ key ] );
+		}
+		// eslint-disable-next-line no-undef
+		return fetch( url, {
+			method: 'POST',
+			body: formData,
+			credentials: 'include',
+		} ).then( response => response.json() );
+	}.bind( this );
+	return postLoginRequest( 'webauthn-challenge-endpoint', {} )
+		.then( response => {
+			const parameters = response.data || [];
+			this.data.two_step_webauthn_nonce = parameters.two_step_nonce;
+			if ( typeof this.data.two_step_webauthn_nonce === 'undefined' ) {
+				return Promise.reject( response );
+			}
+			return webauthn_auth( { publicKey: parameters } );
+		} )
+		.then( assertion => {
+			const response = assertion.response;
+			if ( typeof response.userHandle !== 'undefined' && null === response.userHandle ) {
+				delete response.userHandle;
+			}
+			return postLoginRequest( 'webauthn-authentication-endpoint', {
+				client_data: JSON.stringify( assertion ),
+			} );
+		} )
+		.then( response => {
+			if ( typeof response.success === 'undefined' || ! response.success ) {
+				return Promise.reject( response );
+			}
+			if ( this.isReauthRequired() ) {
+				userSettings.fetchSettings();
+				reduxDispatch( requestConnectedApplications() );
+				reduxDispatch( requestUserProfileLinks() );
+			}
+			this.data.two_step_reauthorization_required = false;
+			this.data.two_step_authorization_expires_soon = false;
+			this.invalidCode = false;
+
+			this.emit( 'change' );
+			return response;
+		} );
 };
 
 /*
@@ -232,6 +293,14 @@ TwoStepAuthorization.prototype.authExpiresSoon = function() {
 
 TwoStepAuthorization.prototype.isTwoStepSMSEnabled = function() {
 	return this.data ? this.data.two_step_sms_enabled : false;
+};
+
+TwoStepAuthorization.prototype.isSecurityKeyEnabled = function() {
+	return this.data ? this.data.two_step_webauthn_enabled : false;
+};
+
+TwoStepAuthorization.prototype.getTwoStepWebauthnNonce = function() {
+	return this.data ? this.data.two_step_webauthn_nonce : false;
 };
 
 TwoStepAuthorization.prototype.getSMSLastFour = function() {

@@ -11,38 +11,45 @@ import React, { Component } from 'react';
 import { Card } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 import { localize } from 'i18n-calypso';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import { formUpdate, loginUserWithSecurityKey } from 'state/login/actions';
-import TwoFactorActions from './two-factor-actions';
 import Spinner from 'components/spinner';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
  */
-import './verification-code-form.scss';
+import './security-key-form.scss';
+import FormInputValidation from 'components/forms/form-input-validation';
 
 class SecurityKeyForm extends Component {
 	static propTypes = {
-		formUpdate: PropTypes.func.isRequired,
 		loginUserWithSecurityKey: PropTypes.func.isRequired,
-		onSuccess: PropTypes.func.isRequired,
+		onComplete: PropTypes.func,
 		recordTracksEvent: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
 	state = {
 		isAuthenticating: false,
+		showError: false,
 	};
 
 	initiateSecurityKeyAuthentication = event => {
 		event.preventDefault();
 
-		const { onSuccess } = this.props;
-		this.setState( { isAuthenticating: true } );
+		this.setState( { isAuthenticating: true, showError: false } );
 		this.props
 			.loginUserWithSecurityKey()
-			.then( () => onSuccess() )
-			.catch( () => this.setState( { isAuthenticating: false } ) );
+			.then( response => this.onComplete( null, response ) )
+			.catch( error => {
+				this.setState( { isAuthenticating: false, showError: true } );
+				this.onComplete( error, null );
+			} );
+	};
+
+	onComplete = ( error, data ) => {
+		if ( this.props.onComplete ) {
+			this.props.onComplete( error, data );
+		}
 	};
 
 	render() {
@@ -50,7 +57,7 @@ class SecurityKeyForm extends Component {
 
 		return (
 			<form onSubmit={ this.initiateSecurityKeyAuthentication }>
-				<Card compact className="two-factor-authentication__verification-code-form">
+				<Card compact className="security-key-form__verification-code-form">
 					{ ! this.state.isAuthenticating && (
 						<div>
 							<p>
@@ -76,6 +83,16 @@ class SecurityKeyForm extends Component {
 							<p>{ translate( 'Connect and touch your security key to log in.' ) }</p>
 						</div>
 					) }
+					{ this.state.showError && (
+						<p>
+							<FormInputValidation
+								isError
+								text={ this.props.translate(
+									'An error occurred, please try again or use an alternate authentication method.'
+								) }
+							/>
+						</p>
+					) }
 					<FormButton
 						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 						primary
@@ -84,15 +101,11 @@ class SecurityKeyForm extends Component {
 						{ translate( 'Continue with security key' ) }
 					</FormButton>
 				</Card>
-
-				<TwoFactorActions twoFactorAuthType={ 'webauthn' } />
 			</form>
 		);
 	}
 }
 
 export default connect( null, {
-	formUpdate,
-	loginUserWithSecurityKey,
 	recordTracksEvent,
 } )( localize( SecurityKeyForm ) );

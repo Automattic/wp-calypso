@@ -6,15 +6,15 @@ import createReactClass from 'create-react-class';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const debug = debugFactory( 'calypso:me:reauth-required' );
 
 /**
  * Internal Dependencies
  */
-import { Dialog } from '@automattic/components';
+import { Card, Dialog } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
@@ -26,14 +26,18 @@ import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
 import { recordGoogleEvent } from 'state/analytics/actions';
 import userUtilities from 'lib/user/utils';
+import SecurityKeyForm from 'me/reauth-required/security-key-form';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { supported } from '@github/webauthn-json';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import TwoFactorActions from 'me/reauth-required/two-factor-actions';
 
 // autofocus is used for tracking purposes, not an a11y issue
-/* eslint-disable jsx-a11y/no-autofocus */
+/* eslint-disable jsx-a11y/no-autofocus, react/prefer-es6-class, jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/anchor-is-valid */
 const ReauthRequired = createReactClass( {
 	displayName: 'ReauthRequired',
 	mixins: [ observe( 'twoStepAuthorization' ) ],
@@ -44,6 +48,8 @@ const ReauthRequired = createReactClass( {
 			code: '', // User's generated 2fa code
 			smsRequestsAllowed: true, // Can the user request another SMS code?
 			smsCodeSent: false,
+			twoFactorAuthType: 'authenticator',
+			webauthnError: false,
 		};
 	},
 
@@ -84,6 +90,11 @@ const ReauthRequired = createReactClass( {
 						strong: <strong />,
 					},
 				}
+			);
+		}
+		if ( this.state.twoFactorAuthType === 'sms' ) {
+			return this.props.translate(
+				'We just sent you a verification code to your phone number on file, please enter the code below.'
 			);
 		}
 
@@ -184,18 +195,10 @@ const ReauthRequired = createReactClass( {
 		);
 	},
 
-	render: function() {
+	renderVerificationForm() {
 		const method = this.props.twoStepAuthorization.isTwoStepSMSEnabled() ? 'sms' : 'app';
-
 		return (
-			<Dialog
-				autoFocus={ false }
-				className="reauth-required__dialog"
-				isFullScreen={ false }
-				isVisible={ this.props.twoStepAuthorization.isReauthRequired() }
-				buttons={ null }
-				onClose={ null }
-			>
+			<Card compact>
 				<p>{ this.getCodeMessage() }</p>
 
 				<p>
@@ -239,19 +242,67 @@ const ReauthRequired = createReactClass( {
 
 					{ this.renderSMSResendThrottled() }
 
-					<FormButtonsBar>
-						<FormButton
-							disabled={ this.state.validatingCode || ! this.preValidateAuthCode() }
-							onClick={ this.getClickHandler( 'Submit Validation Code on Reauth Required' ) }
-						>
-							{ this.props.translate( 'Verify' ) }
-						</FormButton>
+					<FormButton
+						className="reauth-required__button"
+						disabled={ this.state.validatingCode || ! this.preValidateAuthCode() }
+						onClick={ this.getClickHandler( 'Submit Validation Code on Reauth Required' ) }
+					>
+						{ this.props.translate( 'Verify' ) }
+					</FormButton>
 
-						{ this.renderSendSMSButton() }
-					</FormButtonsBar>
+					{ false && this.renderSendSMSButton() }
 				</form>
+			</Card>
+		);
+	},
+
+	renderSecurityKey() {
+		return (
+			<SecurityKeyForm
+				loginUserWithSecurityKey={ () => {
+					return this.props.twoStepAuthorization.loginUserWithSecurityKey( {
+						user_id: this.props.currentUserId,
+					} );
+				} }
+			/>
+		);
+	},
+
+	render: function() {
+		const method = this.props.twoStepAuthorization.isTwoStepSMSEnabled() ? 'sms' : 'authenticator';
+		const isSecurityKeySupported =
+			this.props.twoStepAuthorization.isSecurityKeyEnabled() && supported();
+
+		return (
+			<Dialog
+				autoFocus={ false }
+				className="reauth-required__dialog"
+				isFullScreen={ false }
+				isVisible={ this.props.twoStepAuthorization.isReauthRequired() }
+				buttons={ null }
+				onClose={ null }
+			>
+				{ isSecurityKeySupported &&
+					this.state.twoFactorAuthType === 'webauthn' &&
+					this.renderSecurityKey() }
+				{ this.state.twoFactorAuthType !== 'webauthn' && this.renderVerificationForm() }
+				<TwoFactorActions
+					twoFactorAuthType={ this.state.twoFactorAuthType }
+					onChange={ this.handleAuthSwitch }
+					isSmsSupported={ method === 'sms' || method === 'authenticator' }
+					isAuthenticatorSupported={ method !== 'sms' }
+					isSmsAllowed={ this.state.smsRequestsAllowed }
+					isSecurityKeySupported={ isSecurityKeySupported }
+				/>
 			</Dialog>
 		);
+	},
+
+	handleAuthSwitch( authType ) {
+		this.setState( { twoFactorAuthType: authType } );
+		if ( authType === 'sms' ) {
+			this.sendSMSCode();
+		}
 	},
 
 	handleChange( e ) {
@@ -264,6 +315,16 @@ const ReauthRequired = createReactClass( {
 		this.setState( { [ name ]: checked } );
 	},
 } );
-/* eslint-enable jsx-a11y/no-autofocus */
 
-export default connect( null, { recordGoogleEvent } )( localize( ReauthRequired ) );
+ReauthRequired.propTypes = {
+	currentUserId: PropTypes.number.isRequired,
+};
+
+/* eslint-enable jsx-a11y/no-autofocus, react/prefer-es6-class, jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/anchor-is-valid */
+
+export default connect(
+	state => ( {
+		currentUserId: getCurrentUserId( state ),
+	} ),
+	{ recordGoogleEvent }
+)( localize( ReauthRequired ) );
