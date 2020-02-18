@@ -80,6 +80,9 @@ TwoStepAuthorization.prototype.loginUserWithSecurityKey = function( args ) {
 			two_step_nonce: this.getTwoStepWebauthnNonce(),
 			...data,
 		};
+		if ( ! _data.two_step_nonce ) {
+			return Promise.reject( 'Invalid nonce' );
+		}
 		for ( const key in _data ) {
 			formData.set( key, _data[ key ] );
 		}
