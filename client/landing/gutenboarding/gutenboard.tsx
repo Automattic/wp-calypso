@@ -8,17 +8,18 @@ import { Popover, DropZoneProvider } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import '@wordpress/format-library';
 import React, { useRef } from 'react';
+import { useParams } from 'react-router-dom';
+
 // Uncomment and remove the redundant sass import from `./style.css` when a release after @wordpress/components@8.5.0 is published.
 // See https://github.com/WordPress/gutenberg/pull/19535
 // import '@wordpress/components/build-style/style.css';
-import { useRouteMatch } from 'react-router-dom';
 
 /**
  * Internal dependencies
  */
 import Header from './components/header';
 import { name, settings } from './onboarding-block';
-import { routes, Step } from './steps';
+import { Step, usePath } from './path';
 import './style.scss';
 
 registerBlockType( name, settings );
@@ -27,11 +28,12 @@ export function Gutenboard() {
 	// @TODO: This is currently needed in addition to the routing (inside the Onboarding Block)
 	// for the 'Back' and 'Next' buttons in the header. If we remove those (and move navigation
 	// entirely into the block), we'll be able to remove this code.
-	const r = useRouteMatch( routes );
+	const { step } = useParams();
+	const makePath = usePath();
 	let prev: undefined | string;
-	switch ( r?.url ) {
+	switch ( step ) {
 		case Step.DesignSelection:
-			prev = Step.IntentGathering;
+			prev = makePath( Step.IntentGathering );
 			break;
 	}
 

@@ -11,7 +11,7 @@ import { Portal } from 'reakit/Portal';
 import { useDialogState, Dialog, DialogBackdrop } from 'reakit/Dialog';
 import { useSpring, animated } from 'react-spring';
 import { useHistory } from 'react-router-dom';
-import { Step } from '../../steps';
+import { Step, usePath } from '../../path';
 
 /**
  * Internal dependencies
@@ -92,6 +92,7 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 	} );
 
 	const history = useHistory();
+	const makePath = usePath();
 
 	return (
 		<animated.div style={ designSelectorSpring }>
@@ -131,7 +132,7 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 							onClick={ () => {
 								window.scrollTo( 0, 0 );
 								setSelectedDesign( design );
-								history.push( Step.PageSelection );
+								history.push( makePath( Step.PageSelection ) );
 							} }
 						/>
 					) ) }
@@ -163,7 +164,7 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 			<Dialog
 				{ ...dialog }
 				hide={ () => {
-					history.push( Step.DesignSelection );
+					history.push( makePath( Step.DesignSelection ) );
 				} }
 				aria-labelledby="page-layout-selector__title"
 				hideOnClickOutside

@@ -20,7 +20,7 @@ import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
 import { selectorDebounce } from '../../constants';
 import Link from '../link';
-import { Step } from '../../steps';
+import { Step, usePath } from '../../path';
 
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
@@ -65,6 +65,7 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 	}, [ siteTitle, setDomain ] );
 
 	const history = useHistory();
+	const makePath = usePath();
 
 	const currentDomain = domain ?? freeDomainSuggestion;
 
@@ -108,7 +109,7 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 
 	const handleSignup = () => {
 		setShouldCreate( true );
-		history.push( Step.Signup );
+		history.push( makePath( Step.Signup ) );
 	};
 
 	useEffect( () => {
