@@ -665,10 +665,17 @@ function getCheckoutEventHandler( dispatch ) {
 				return dispatch(
 					recordTracksEvent( 'calypso_checkout_composite_step_changed', { step: action.payload } )
 				);
-			case 'STRIPE_TRANSACTION_BEGIN':
+			case 'STRIPE_TRANSACTION_BEGIN': {
+				dispatch(
+					recordTracksEvent( 'calypso_checkout_form_submit', {
+						credits: null,
+						payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
+					} )
+				);
 				return dispatch(
 					recordTracksEvent( 'calypso_checkout_composite_stripe_submit_clicked', {} )
 				);
+			}
 			case 'STRIPE_TRANSACTION_ERROR': {
 				dispatch(
 					recordTracksEvent( 'calypso_checkout_payment_error', {
@@ -682,11 +689,18 @@ function getCheckoutEventHandler( dispatch ) {
 					} )
 				);
 			}
-			case 'PAYPAL_TRANSACTION_BEGIN':
+			case 'PAYPAL_TRANSACTION_BEGIN': {
 				dispatch( recordTracksEvent( 'calypso_checkout_form_redirect', {} ) );
+				dispatch(
+					recordTracksEvent( 'calypso_checkout_form_submit', {
+						credits: null,
+						payment_method: 'WPCOM_Billing_PayPal_Express',
+					} )
+				);
 				return dispatch(
 					recordTracksEvent( 'calypso_checkout_composite_paypal_submit_clicked', {} )
 				);
+			}
 			case 'PAYPAL_TRANSACTION_ERROR': {
 				dispatch(
 					recordTracksEvent( 'calypso_checkout_payment_error', {
@@ -700,10 +714,17 @@ function getCheckoutEventHandler( dispatch ) {
 					} )
 				);
 			}
-			case 'FULL_CREDITS_TRANSACTION_BEGIN':
+			case 'FULL_CREDITS_TRANSACTION_BEGIN': {
+				dispatch(
+					recordTracksEvent( 'calypso_checkout_form_submit', {
+						credits: null,
+						payment_method: 'WPCOM_Billing_WPCOM',
+					} )
+				);
 				return dispatch(
 					recordTracksEvent( 'calypso_checkout_composite_full_credits_submit_clicked', {} )
 				);
+			}
 			case 'FULL_CREDITS_TRANSACTION_ERROR': {
 				dispatch(
 					recordTracksEvent( 'calypso_checkout_payment_error', {
@@ -717,10 +738,17 @@ function getCheckoutEventHandler( dispatch ) {
 					} )
 				);
 			}
-			case 'EXISTING_CARD_TRANSACTION_BEGIN':
+			case 'EXISTING_CARD_TRANSACTION_BEGIN': {
+				dispatch(
+					recordTracksEvent( 'calypso_checkout_form_submit', {
+						credits: null,
+						payment_method: 'WPCOM_Billing_MoneyPress_Stored',
+					} )
+				);
 				return dispatch(
 					recordTracksEvent( 'calypso_checkout_composite_existing_card_submit_clicked', {} )
 				);
+			}
 			case 'EXISTING_CARD_TRANSACTION_ERROR': {
 				dispatch(
 					recordTracksEvent( 'calypso_checkout_payment_error', {
@@ -734,10 +762,17 @@ function getCheckoutEventHandler( dispatch ) {
 					} )
 				);
 			}
-			case 'APPLE_PAY_TRANSACTION_BEGIN':
+			case 'APPLE_PAY_TRANSACTION_BEGIN': {
+				dispatch(
+					recordTracksEvent( 'calypso_checkout_form_submit', {
+						credits: null,
+						payment_method: 'WPCOM_Billing_Web_Payment',
+					} )
+				);
 				return dispatch(
 					recordTracksEvent( 'calypso_checkout_composite_apple_pay_submit_clicked', {} )
 				);
+			}
 			case 'APPLE_PAY_TRANSACTION_ERROR': {
 				dispatch(
 					recordTracksEvent( 'calypso_checkout_payment_error', {
