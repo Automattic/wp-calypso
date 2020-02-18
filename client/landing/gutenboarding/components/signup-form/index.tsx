@@ -37,7 +37,6 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const { createAccount } = useDispatch( USER_STORE );
 	const { setShouldCreate } = useDispatch( ONBOARD_STORE );
 	const isFetchingNewUser = useSelect( select => select( USER_STORE ).isFetchingNewUser() );
-	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
 	const newUserError = useSelect( select => select( USER_STORE ).getNewUserError() );
 	const { shouldCreate, siteTitle, siteVertical } = useSelect( select =>
 		select( ONBOARD_STORE )
@@ -142,7 +141,6 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 					</Button>
 				</div>
 			</form>
-			{ newUser && <pre>New user: { JSON.stringify( newUser, null, 2 ) }</pre> }
 		</Modal>
 	);
 };
