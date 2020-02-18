@@ -74,6 +74,7 @@ import { GROUP_WPCOM, TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/p
 import { computeProductsWithPrices } from 'state/products-list/selectors';
 import { requestProductsList } from 'state/products-list/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import analytics from 'lib/analytics';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -602,7 +603,9 @@ function getCheckoutEventHandler( dispatch ) {
 		switch ( action.type ) {
 			case 'CHECKOUT_LOADED':
 				return dispatch( recordTracksEvent( 'calypso_checkout_composite_loaded', {} ) );
-			case 'PAYMENT_COMPLETE':
+			case 'PAYMENT_COMPLETE': {
+				const total_cost = action.payload.total.amount.value / 100; // TODO: This conversion only works for USD! We have to localize this or get it from the server directly (or better yet, just force people to use the integer version).
+
 				dispatch(
 					recordTracksEvent( 'calypso_checkout_payment_success', {
 						coupon_code: action.payload.couponItem?.wpcom_meta.couponCode ?? '',
@@ -610,9 +613,21 @@ function getCheckoutEventHandler( dispatch ) {
 						payment_method:
 							translateCheckoutPaymentMethodToWpcomPaymentMethod( action.payload.paymentMethodId )
 								?.name || '',
-						total_cost: action.payload.total.amount.value / 100, // TODO: This conversion only works for USD! We have to localize this or get it from the server directly (or better yet, just force people to use the integer version).
+						total_cost,
 					} )
 				);
+
+				const transactionResult = select( 'wpcom' ).getTransactionResult();
+				analytics.recordPurchase( {
+					cart: {
+						total_cost,
+						currency: action.payload.total.amount.currency,
+						is_signup,
+						products, // Needs product_slug, product_id, cost, volume, product_name, price, product_type, included_domain_purchase_amount, is_domain_registration
+					},
+					orderId: transactionResult.receipt_id,
+				} );
+
 				return dispatch(
 					recordTracksEvent( 'calypso_checkout_composite_payment_complete', {
 						redirect_url: action.payload.url,
@@ -622,6 +637,7 @@ function getCheckoutEventHandler( dispatch ) {
 						payment_method: action.payload.paymentMethodId,
 					} )
 				);
+			}
 			case 'CART_ERROR':
 				return dispatch(
 					recordTracksEvent( 'calypso_checkout_composite_cart_error', {
