@@ -64,6 +64,7 @@ export interface ResponseCart {
 	is_coupon_applied: boolean;
 	coupon_discounts_integer: number[];
 	locale: string;
+	is_signup: boolean;
 	messages?: { errors: ResponseCartError[] };
 	tax: {
 		location: {
@@ -97,6 +98,7 @@ export const emptyResponseCart = {
 	coupon_discounts_integer: [],
 	locale: 'en-us',
 	tax: { location: [], display_taxes: false },
+	is_signup: false,
 } as ResponseCart;
 
 /**
@@ -114,6 +116,10 @@ export interface ResponseCartProduct {
 	volume: number;
 	extra: object;
 	uuid: string;
+	cost: number;
+	price: number;
+	product_type: string;
+	included_domain_purchase_amount: number;
 }
 
 export const prepareRequestCartProduct: ( ResponseCartProduct ) => RequestCartProduct = ( {
