@@ -11,17 +11,19 @@ import { Button, CompactCard } from '@automattic/components';
  */
 import HeaderCake from 'components/header-cake';
 import CardHeading from 'components/card-heading';
-
-/**
- * Style dependencies
- */
-import './section-migrate.scss';
 import ImportTypeChoice from 'my-sites/migrate/components/import-type-choice';
 import { get } from 'lodash';
 import { redirectTo } from 'my-sites/migrate/helpers';
 import SitesBlock from 'my-sites/migrate/components/sites-block';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { connect } from 'react-redux';
+import { FEATURE_UPLOAD_THEMES_PLUGINS } from 'lib/plans/constants';
+import { planHasFeature } from 'lib/plans';
+
+/**
+ * Style dependencies
+ */
+import './section-migrate.scss';
 
 class StepImportOrMigrate extends Component {
 	static propTypes = {
@@ -64,6 +66,13 @@ class StepImportOrMigrate extends Component {
 		}
 	};
 
+	isTargetSitePlanCompatible = () => {
+		const { targetSite } = this.props;
+		const planSlug = get( targetSite, 'plan.product_slug' );
+
+		return planSlug && planHasFeature( planSlug, FEATURE_UPLOAD_THEMES_PLUGINS );
+	};
+
 	getJetpackOrUpgradeMessage = () => {
 		const { sourceSiteInfo, sourceHasJetpack, isTargetSiteAtomic, translate } = this.props;
 
@@ -101,6 +110,11 @@ class StepImportOrMigrate extends Component {
 		} = this.props;
 		const backHref = `/migrate/${ targetSiteSlug }`;
 
+		const everythingLabels = [];
+		if ( ! this.isTargetSitePlanCompatible() ) {
+			everythingLabels.push( translate( 'Upgrade' ) );
+		}
+
 		return (
 			<>
 				<HeaderCake backHref={ backHref }>Import from WordPress</HeaderCake>
@@ -120,7 +134,7 @@ class StepImportOrMigrate extends Component {
 						radioOptions={ {
 							everything: {
 								title: translate( 'Everything' ),
-								labels: [ translate( 'Upgrade' ) ],
+								labels: everythingLabels,
 								description: translate(
 									"All your site's content, themes, plugins, users and settings"
 								),
