@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { identity, map } from 'lodash';
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -16,6 +17,9 @@ import Gridicon from 'components/gridicon';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { localizeUrl } from 'lib/i18n-utils';
+import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
+import { launchSite } from 'state/sites/launch/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 // Mapping eligibility holds to messages that will be shown to the user
 function getHoldMessages( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
@@ -49,12 +53,13 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
 			} )(),
 			supportUrl: null,
 		},
+		//TODO: return extra case from server to tell between unlaunched/private
 		SITE_PRIVATE: {
 			title: translate( 'Public site needed' ),
 			description: translate(
-				'Change your site\'s Privacy settings to "Public" or "Hidden" (not "Private.")'
+				'Only you and those you invite can view your site. Launch your site to make it visible to the public.'
 			),
-			supportUrl: localizeUrl( 'https://en.support.wordpress.com/settings/privacy-settings/' ),
+			supportUrl: null,
 		},
 		NON_ADMIN_USER: {
 			title: translate( 'Site administrator only' ),
@@ -162,11 +167,20 @@ interface ExternalProps {
 
 type Props = ExternalProps & LocalizeProps;
 
-export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) => {
+export const HoldList = ( {
+	context,
+	holds,
+	isPlaceholder,
+	launchSite: launch,
+	siteId,
+	siteIsUnlaunched,
+	translate,
+}: Props ) => {
 	const holdMessages = getHoldMessages( context, translate );
 	const blockingMessages = getBlockingMessages( translate );
 
 	const blockingHold = holds.find( h => isHardBlockingHoldType( h, blockingMessages ) );
+	const launchCurrentSite = () => launch( siteId );
 
 	return (
 		<>
@@ -232,6 +246,13 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 										</Button>
 									</div>
 								) }
+								{ hold === 'SITE_PRIVATE' && siteIsUnlaunched && (
+									<div className="eligibility-warnings__hold-action">
+										<Button disabled={ !! blockingHold } onClick={ launchCurrentSite }>
+											{ translate( 'Launch Site' ) }
+										</Button>
+									</div>
+								) }
 							</div>
 						)
 					) }
@@ -288,4 +309,15 @@ function isHardBlockingHoldType(
 export const hasBlockingHold = ( holds: string[] ) =>
 	holds.some( hold => isHardBlockingHoldType( hold, getBlockingMessages( identity ) ) );
 
-export default localize( HoldList );
+export default connect(
+	( state: object ) => {
+		const siteId = getSelectedSiteId( state );
+		return {
+			siteId,
+			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
+		};
+	},
+	{
+		launchSite,
+	}
+)( localize( HoldList ) );
