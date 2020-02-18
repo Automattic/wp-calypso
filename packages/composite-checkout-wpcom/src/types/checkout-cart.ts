@@ -41,12 +41,18 @@ export type WPCOMCartItem = CheckoutCartItem & {
 	};
 };
 
+export type WPCOMCartCouponItem = CheckoutCartItem & {
+	wpcom_meta: {
+		couponCode: string;
+	};
+};
+
 export interface WPCOMCart {
 	items: WPCOMCartItem[];
 	tax: CheckoutCartItem | null;
 	total: CheckoutCartItem;
 	subtotal: CheckoutCartItem;
-	coupon: CheckoutCartItem | null;
+	coupon: WPCOMCartCouponItem | null;
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
 	credits: CheckoutCartItem;
 	couponCode: string | null;
@@ -73,7 +79,10 @@ export const emptyWPCOMCart = {
 			currency: '',
 			displayValue: '',
 		} as CheckoutCartItemAmount,
-	} as CheckoutCartItem,
+		wpcom_meta: {
+			couponCode: '',
+		},
+	} as WPCOMCartCouponItem,
 	total: {
 		label: 'Total',
 		amount: {

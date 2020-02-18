@@ -15,6 +15,7 @@ import {
 	useWpcomStore,
 	useShoppingCart,
 	FormFieldAnnotation,
+	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 } from '@automattic/composite-checkout-wpcom';
 import {
 	CheckoutProvider,
@@ -183,13 +184,6 @@ export default function CompositeCheckout( {
 		recordEvent( { type: 'CHECKOUT_LOADED' } );
 	}, [ recordEvent ] );
 
-	const onPaymentComplete = useCallback( () => {
-		debug( 'payment completed successfully' );
-		const url = getThankYouUrl();
-		recordEvent( { type: 'PAYMENT_COMPLETE', payload: { url } } );
-		page.redirect( url );
-	}, [ recordEvent, getThankYouUrl ] );
-
 	const showErrorMessage = useCallback(
 		error => {
 			debug( 'error', error );
@@ -250,6 +244,19 @@ export default function CompositeCheckout( {
 		translate,
 		showAddCouponSuccessMessage,
 		recordEvent
+	);
+
+	const onPaymentComplete = useCallback(
+		( { paymentMethodId } ) => {
+			debug( 'payment completed successfully' );
+			const url = getThankYouUrl();
+			recordEvent( {
+				type: 'PAYMENT_COMPLETE',
+				payload: { url, couponItem, paymentMethodId, total },
+			} );
+			page.redirect( url );
+		},
+		[ recordEvent, getThankYouUrl, total, couponItem ]
 	);
 
 	const { registerStore, dispatch } = registry;
@@ -596,9 +603,23 @@ function getCheckoutEventHandler( dispatch ) {
 			case 'CHECKOUT_LOADED':
 				return dispatch( recordTracksEvent( 'calypso_checkout_composite_loaded', {} ) );
 			case 'PAYMENT_COMPLETE':
+				dispatch(
+					recordTracksEvent( 'calypso_checkout_payment_success', {
+						coupon_code: action.payload.couponItem?.wpcom_meta.couponCode ?? '',
+						currency: action.payload.total.amount.currency,
+						payment_method:
+							translateCheckoutPaymentMethodToWpcomPaymentMethod( action.payload.paymentMethodId )
+								?.name || '',
+						total_cost: action.payload.total.amount.value / 100, // TODO: This conversion only works for USD! We have to localize this or get it from the server directly (or better yet, just force people to use the integer version).
+					} )
+				);
 				return dispatch(
 					recordTracksEvent( 'calypso_checkout_composite_payment_complete', {
 						redirect_url: action.payload.url,
+						coupon_code: action.payload.couponItem?.wpcom_meta.couponCode ?? '',
+						total: action.payload.total.amount.value,
+						currency: action.payload.total.amount.currency,
+						payment_method: action.payload.paymentMethodId,
 					} )
 				);
 			case 'CART_ERROR':

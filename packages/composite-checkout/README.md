@@ -158,7 +158,7 @@ It has the following props.
 - `items: object[]`. An array of [line item objects](#line-items) that will be displayed in the form.
 - `total: object`. A [line item object](#line-items) with the final total to be paid.
 - `theme?: object`. A [theme object](#styles-and-themes).
-- `onPaymentComplete: () => null`. A function to call for non-redirect payment methods when payment is successful.
+- `onPaymentComplete: ({paymentMethodId: string}) => null`. A function to call for non-redirect payment methods when payment is successful. Passed the current payment method id.
 - `showErrorMessage: (string) => null`. A function that will display a message with an "error" type.
 - `showInfoMessage: (string) => null`. A function that will display a message with an "info" type.
 - `showSuccessMessage: (string) => null`. A function that will display a message with a "success" type.

@@ -21,6 +21,7 @@ import {
 	doesCartLocationDifferFromResponseCartLocation,
 	WPCOMCart,
 	WPCOMCartItem,
+	WPCOMCartCouponItem,
 	CheckoutCartItem,
 	CartLocation,
 } from '../types';
@@ -276,7 +277,7 @@ export interface ShoppingCartManager {
 	tax: CheckoutCartItem;
 	total: CheckoutCartItem;
 	subtotal: CheckoutCartItem;
-	couponItem: CheckoutCartItem;
+	couponItem: WPCOMCartCouponItem;
 	credits: CheckoutCartItem;
 	addItem: ( ResponseCartProduct ) => void;
 	removeItem: ( string ) => void;

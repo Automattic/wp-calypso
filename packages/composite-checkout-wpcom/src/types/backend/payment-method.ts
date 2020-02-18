@@ -164,3 +164,41 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'apple-pay';
 	}
 }
+
+export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
+	paymentMethod: CheckoutPaymentMethodSlug
+): WPCOMPaymentMethodClass | null {
+	switch ( paymentMethod ) {
+		case 'ebanx':
+			return { name: 'WPCOM_Billing_Ebanx' };
+		case 'brazil-tef':
+			return { name: 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef' };
+		case 'paypal-direct':
+			return { name: 'WPCOM_Billing_PayPal_Direct' };
+		case 'paypal':
+			return { name: 'WPCOM_Billing_PayPal_Express' };
+		case 'card':
+			return { name: 'WPCOM_Billing_Stripe_Payment_Method' };
+		case 'alipay':
+			return { name: 'WPCOM_Billing_Stripe_Source_Alipay' };
+		case 'bancontact':
+			return { name: 'WPCOM_Billing_Stripe_Source_Bancontact' };
+		case 'eps':
+			return { name: 'WPCOM_Billing_Stripe_Source_Eps' };
+		case 'giropay':
+			return { name: 'WPCOM_Billing_Stripe_Source_Giropay' };
+		case 'ideal':
+			return { name: 'WPCOM_Billing_Stripe_Source_Ideal' };
+		case 'p24':
+			return { name: 'WPCOM_Billing_Stripe_Source_P24' };
+		case 'sofort':
+			return { name: 'WPCOM_Billing_Stripe_Source_Sofort' };
+		case 'stripe-three-d-secure':
+			return { name: 'WPCOM_Billing_Stripe_Source_Three_D_Secure' };
+		case 'wechat':
+			return { name: 'WPCOM_Billing_Stripe_Source_Wechat' };
+		case 'apple-pay':
+			return { name: 'WPCOM_Billing_Web_Payment' };
+	}
+	return null;
+}
