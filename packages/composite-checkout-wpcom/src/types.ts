@@ -26,6 +26,7 @@ import {
 import {
 	WPCOMCart,
 	WPCOMCartItem,
+	WPCOMCartCouponItem,
 	emptyWPCOMCart,
 	CheckoutCartItem,
 	CheckoutCartItemAmount,
@@ -64,6 +65,7 @@ export {
 	processRawResponse,
 	WPCOMCart,
 	WPCOMCartItem,
+	WPCOMCartCouponItem,
 	emptyWPCOMCart,
 	CheckoutCartItem,
 	CheckoutCartItemAmount,

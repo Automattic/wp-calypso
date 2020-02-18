@@ -6,6 +6,7 @@ import {
 	ResponseCartProduct,
 	WPCOMCart,
 	WPCOMCartItem,
+	WPCOMCartCouponItem,
 	CheckoutCartItem,
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
@@ -60,7 +61,7 @@ export function translateWpcomCartToCheckoutCart(
 	const couponValue = Math.round( couponValueRaw );
 	const couponDisplayValue = `-$${ couponValueRaw / 100 }`;
 
-	const couponLineItem: CheckoutCartItem = {
+	const couponLineItem: WPCOMCartCouponItem = {
 		id: 'coupon-line-item',
 		label: translate( 'Coupon: %s', { args: coupon } ),
 		type: 'coupon',
@@ -68,6 +69,9 @@ export function translateWpcomCartToCheckoutCart(
 			currency: currency,
 			value: couponValue,
 			displayValue: couponDisplayValue,
+		},
+		wpcom_meta: {
+			couponCode: coupon,
 		},
 	};
 
