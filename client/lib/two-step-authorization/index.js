@@ -106,6 +106,7 @@ TwoStepAuthorization.prototype.loginUserWithSecurityKey = function( args ) {
 			}
 			return postLoginRequest( 'webauthn-authentication-endpoint', {
 				client_data: JSON.stringify( assertion ),
+				create_2fa_cookies_only: 1,
 			} );
 		} )
 		.then( response => {
