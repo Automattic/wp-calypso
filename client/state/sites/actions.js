@@ -211,10 +211,12 @@ export const updateSiteFrontPage = ( siteId, frontPageOptions ) => ( {
  *
  * @param  {number} siteId Site ID
  * @param  {string} migrationStatus The status of the migration.
+ * @param {string} lastModified Optional timestamp from the migration DB record
  * @returns {object} Action object
  */
-export const updateSiteMigrationStatus = ( siteId, migrationStatus ) => ( {
+export const updateSiteMigrationMeta = ( siteId, migrationStatus, lastModified = null ) => ( {
 	siteId,
 	type: SITE_MIGRATION_STATUS_UPDATE,
 	migrationStatus,
+	lastModified,
 } );

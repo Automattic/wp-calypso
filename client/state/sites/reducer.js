@@ -258,17 +258,23 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 		}
 
 		case SITE_MIGRATION_STATUS_UPDATE: {
-			const { siteId, migrationStatus } = action;
+			const { siteId, migrationStatus, lastModified } = action;
 			const site = state[ siteId ];
 			if ( ! site ) {
 				return state;
+			}
+
+			const siteMigrationMeta = state[ siteId ].site_migration || {};
+			const newMeta = { status: migrationStatus };
+			if ( lastModified ) {
+				newMeta.last_modified = lastModified;
 			}
 
 			return {
 				...state,
 				[ siteId ]: {
 					...state[ siteId ],
-					migration_status: migrationStatus,
+					site_migration: merge( {}, siteMigrationMeta, newMeta ),
 				},
 			};
 		}

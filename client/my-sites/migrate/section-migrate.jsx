@@ -27,7 +27,7 @@ import StepUpgrade from './step-upgrade';
 import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'state/sites/selectors';
-import { receiveSite, updateSiteMigrationStatus } from 'state/sites/actions';
+import { receiveSite, updateSiteMigrationMeta } from 'state/sites/actions';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { urlToSlug } from 'lib/url';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
@@ -158,7 +158,11 @@ class SectionMigrate extends Component {
 		}
 
 		if ( state.migrationStatus ) {
-			this.props.updateSiteMigrationStatus( this.props.targetSiteId, state.migrationStatus );
+			this.props.updateSiteMigrationMeta(
+				this.props.targetSiteId,
+				state.migrationStatus,
+				state.lastModified
+			);
 		}
 		this.setState( state );
 	};
@@ -254,6 +258,7 @@ class SectionMigrate extends Component {
 					percent,
 					source_blog_id: sourceSiteId,
 					created: startTime,
+					last_modified: lastModified,
 				} = response;
 
 				if ( sourceSiteId && sourceSiteId !== this.props.sourceSiteId ) {
@@ -268,6 +273,7 @@ class SectionMigrate extends Component {
 							this.setMigrationState( {
 								migrationStatus,
 								percent,
+								lastModified,
 							} );
 							return;
 						}
@@ -281,6 +287,7 @@ class SectionMigrate extends Component {
 							migrationStatus,
 							percent,
 							startTime: localizedStartTime,
+							lastModified,
 						} );
 						return;
 					}
@@ -288,6 +295,7 @@ class SectionMigrate extends Component {
 					this.setMigrationState( {
 						migrationStatus,
 						percent,
+						lastModified,
 					} );
 				}
 			} )
@@ -612,5 +620,5 @@ export default connect(
 			targetSiteSlug: getSelectedSiteSlug( state ),
 		};
 	},
-	{ navigateToSelectedSourceSite, receiveSite, updateSiteMigrationStatus }
+	{ navigateToSelectedSourceSite, receiveSite, updateSiteMigrationMeta }
 )( localize( SectionMigrate ) );
