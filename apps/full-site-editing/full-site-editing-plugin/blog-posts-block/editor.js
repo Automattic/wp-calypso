@@ -14,6 +14,15 @@ import { settings } from './newspack-homepage-articles/blocks/homepage-articles/
 import { registerQueryStore } from './newspack-homepage-articles/blocks/homepage-articles/store';
 
 /**
+ * Global properties
+ */
+if ( typeof window === 'object' && window.wpcomGutenberg ) {
+	const { blogPublic } = window.wpcomGutenberg;
+
+	window.newspackIsBlogPrivate = Number( blogPublic ) === -1;
+}
+
+/**
  * Block name in the A8C\FSE context.
  */
 const blockName = 'a8c/blog-posts';
