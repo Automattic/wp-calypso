@@ -361,15 +361,19 @@ export function requestActiveTheme( siteId ) {
  * Triggers a network request to activate a specific theme on a given site.
  * If it's a Jetpack site, installs the theme prior to activation if it isn't already.
  *
- * @param  {string}   themeId      Theme ID
- * @param  {number}   siteId       Site ID
- * @param  {string}   source       The source that is reuquesting theme activation, e.g. 'showcase'
- * @param  {boolean}  purchased    Whether the theme has been purchased prior to activation
- * @returns {Function}             Action thunk
+ * @param  {string}   themeId   Theme ID
+ * @param  {number}   siteId    Site ID
+ * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
+ * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
+ * @returns {Function}          Action thunk
  */
 export function activate( themeId, siteId, source = 'unknown', purchased = false ) {
 	return ( dispatch, getState ) => {
-		// Show auto loading homepage warning?
+		/**
+		 * Let's check if the theme will change the homepage of the site,
+		 * before to definitely start the theme-activating process,
+		 * allowing cancel it if it's desired.
+		 */
 		if (
 			themeHasAutoLoadingHomepage( getState(), themeId ) &&
 			! hasAutoLoadingHomepageModalAccepted( getState(), themeId )
@@ -393,7 +397,7 @@ export function activate( themeId, siteId, source = 'unknown', purchased = false
  *
  * @param  {string}   themeId   Theme ID
  * @param  {number}   siteId    Site ID
- * @param  {string}   source    The source that is reuquesting theme activation, e.g. 'showcase'
+ * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
  * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
  * @returns {Function}           Action thunk
  */
@@ -431,7 +435,7 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
  *
  * @param  {string}   themeStylesheet Theme stylesheet string (*not* just a theme ID!)
  * @param  {number}   siteId          Site ID
- * @param  {string}   source          The source that is reuquesting theme activation, e.g. 'showcase'
+ * @param  {string}   source          The source that is requesting theme activation, e.g. 'showcase'
  * @param  {boolean}  purchased       Whether the theme has been purchased prior to activation
  * @returns {Function}                 Action thunk
  */
@@ -592,7 +596,7 @@ export function tryAndCustomizeTheme( themeId, siteId ) {
  *
  * @param  {string}   themeId   Theme ID. If suffixed with '-wpcom', install theme from WordPress.com
  * @param  {number}   siteId    Site ID
- * @param  {string}   source    The source that is reuquesting theme activation, e.g. 'showcase'
+ * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
  * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
  * @returns {Function}           Action thunk
  */
