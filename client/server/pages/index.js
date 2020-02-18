@@ -260,7 +260,8 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	// render to make sure that Redux state and markup are only cached for whitelisted query args.
 	const cacheKey = getNormalizedPath( request.path, request.query );
 	const geoLocation = ( request.headers[ 'x-geoip-country-code' ] || '' ).toLowerCase();
-	const isDebug = calypsoEnv === 'development' || request.query.debug !== undefined;
+	const devEnvironments = [ 'development', 'jetpack-cloud-development' ];
+	const isDebug = devEnvironments.includes( calypsoEnv ) || request.query.debug !== undefined;
 
 	if ( cacheKey ) {
 		const serializeCachedServerState = stateCache.get( cacheKey ) || {};
