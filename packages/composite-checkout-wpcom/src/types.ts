@@ -6,6 +6,7 @@ import {
 	WPCOMPaymentMethodClass,
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
+	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 } from './types/backend/payment-method';
 import {
 	RequestCart,
@@ -49,6 +50,7 @@ export {
 	WPCOMPaymentMethodClass,
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
+	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	RequestCart,
 	RequestCartProduct,
 	ResponseCart,
