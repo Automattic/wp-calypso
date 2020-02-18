@@ -127,7 +127,15 @@ const loggedOutMiddleware = currentUser => {
 };
 
 const loggedInMiddleware = currentUser => {
-	if ( ! currentUser.get() ) {
+	const jetpackCloudEnvs = [
+		'jetpack-cloud-development',
+		'jetpack-cloud-stage',
+		'jetpack-cloud-production',
+	];
+	const calypsoEnv = config( 'env_id' );
+
+	// TODO: Remove Jetpack Cloud specific logic when root route is no longer handled by the reader section
+	if ( ! currentUser.get() || jetpackCloudEnvs.includes( calypsoEnv ) ) {
 		return;
 	}
 
@@ -412,7 +420,7 @@ function renderLayout( reduxStore ) {
 	debug( 'Main layout rendered.' );
 }
 
-const boot = currentUser => {
+const boot = ( currentUser, router ) => {
 	utils();
 	loadAllState().then( () => {
 		const initialState = getInitialState( initialReducer );
@@ -423,14 +431,17 @@ const boot = currentUser => {
 		configureReduxStore( currentUser, reduxStore );
 		setupMiddlewares( currentUser, reduxStore );
 		detectHistoryNavigation.start();
+		if ( router ) {
+			router();
+		}
 		page.start( { decodeURLComponents: false } );
 	} );
 };
 
-export const bootApp = appName => {
+export const bootApp = ( appName, router ) => {
 	const user = userFactory();
 	user.initialize().then( () => {
 		debug( `Starting ${ appName }. Let's do this.` );
-		boot( user );
+		boot( user, router );
 	} );
 };
