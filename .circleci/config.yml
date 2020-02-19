@@ -296,6 +296,7 @@ jobs:
       - run:
           working_directory: wp-babel-makepot
           command: npm run concat
+      - run: ls -lR wp-babel-makepot
       - run:
           working_directory: wp-babel-makepot
           command: npm run sanitize-pot
