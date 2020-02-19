@@ -121,11 +121,11 @@ class StepSourceSelect extends Component {
 					<CardHeading>{ translate( 'What WordPress site do you want to import?' ) }</CardHeading>
 					<div className="migrate__explain">
 						{ translate(
-							"Enter a URL and we'll help you move your site to WordPress.com. If you already have a" +
+							"Enter a URL and we'll help you move your site to WordPress.com. If you already have a " +
 								'backup file, you can {{uploadFileLink}}upload it to import content{{/uploadFileLink}}.',
 							{
 								components: {
-									uploadFileLink: <a href={ uploadFileLink } />,
+									uploadFileLink: <a className="migrate__import-link" href={ uploadFileLink } />,
 								},
 							}
 						) }
