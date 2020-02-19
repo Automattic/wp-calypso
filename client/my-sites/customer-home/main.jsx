@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import classnames from 'classnames';
 import page from 'page';
 import { flowRight } from 'lodash';
 import moment from 'moment';
@@ -71,6 +72,7 @@ import commentIcon from 'assets/images/customer-home/comment.svg';
 import customDomainIcon from 'assets/images/customer-home/custom-domain.svg';
 import customizeIcon from 'assets/images/customer-home/customize.svg';
 import freePhotoLibraryDemonstration from 'assets/images/customer-home/free-photo-library-demonstration.gif';
+import freePhotoLibraryThumbnail from 'assets/images/customer-home/free-photo-library-thumbnail.png';
 import gSuiteIcon from 'assets/images/customer-home/gsuite.svg';
 import happinessIllustration from 'assets/images/customer-home/happiness.png';
 import imagesIcon from 'assets/images/customer-home/images.svg';
@@ -475,7 +477,11 @@ class Home extends Component {
 		}
 
 		const isPrimary = ! isAtomic && isChecklistComplete;
-
+		const handlePhotoLibraryDemonstration = () => {
+			this.setState( {
+				showDemonstrationGif: true,
+			} );
+		};
 		return (
 			<div className="customer-home__layout">
 				<div className="customer-home__layout-col customer-home__layout-col-left">
@@ -511,11 +517,22 @@ class Home extends Component {
 					) }
 					{ ! siteIsUnlaunched && <StatsCard /> }
 					<Card className="customer-home__free-photo-library-card">
+						{ /* eslint-disable */ }
 						<img
-							className="customer-home__free-photo-library-gif"
-							src={ freePhotoLibraryDemonstration }
+							onClick={ handlePhotoLibraryDemonstration }
+							onKeyDown={ handlePhotoLibraryDemonstration }
+							className={ classnames( 'customer-home__free-photo-library-demonstration', {
+								'is-gif-thumbnail': ! this.state.showDemonstrationGif,
+							} ) }
+							src={
+								this.state.showDemonstrationGif
+									? freePhotoLibraryDemonstration
+									: freePhotoLibraryThumbnail
+							}
 							alt={ translate( 'Free Photo Library demonstration' ) }
+							tabIndex="0"
 						/>
+						{ /* eslint-enable */ }
 						<CardHeading>{ translate( 'Over 40,000 Free Photos' ) }</CardHeading>
 						<p className="customer-home__card-subheader">
 							{ translate(
