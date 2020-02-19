@@ -67,7 +67,13 @@ export function Gutenboard() {
 								aria-label={ NO__( 'Onboarding screen content' ) }
 								tabIndex={ -1 }
 							>
-								<BlockList className="gutenboarding-block-list" />
+								<BlockList
+									className="gutenboarding-block-list"
+									__experimentalUIParts={ {
+										hasPopover: false,
+										hasSelectedUI: false,
+									} }
+								/>
 							</div>
 						</div>
 					</BlockEditorProvider>
