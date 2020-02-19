@@ -109,31 +109,18 @@
 	color: var( --color-text-inverted );
 
 	.register-domain-step__use-your-domain-action {
-		display: flex;
-		justify-content: center;
-		margin: 1em 0;
+		color: var( --color-text-inverted );
 
 		&.is-clickable {
 			cursor: pointer;
+			text-decoration: underline;
 	
 			// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo
 			transition: box-shadow 0.25s cubic-bezier( 0.19, 1, 0.22, 1 );
 	
 			&:hover {
-				font-weight: 450;
-				z-index: z-index( 'root', '.domain-suggestion.is-clickable:hover' );
+				color: var( --color-text-inverted );
 			}
-		}
-	}
-
-	.register-domain-step__chevron {
-		margin-left: 10px;
-		flex: 1 0 auto;
-		color: var( --color-text-inverted );
-	
-		.is-placeholder & {
-			animation: loading-fade 1.6s ease-in-out infinite;
-			color: var( --color-neutral-0 );
 		}
 	}
 }
