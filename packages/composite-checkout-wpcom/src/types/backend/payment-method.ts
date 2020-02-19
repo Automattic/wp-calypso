@@ -168,6 +168,10 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 	paymentMethod: CheckoutPaymentMethodSlug
 ): WPCOMPaymentMethodClass | null {
+	// existing cards have unique paymentMethodIds
+	if ( paymentMethod.startsWith( 'existingCard' ) ) {
+		paymentMethod = 'card';
+	}
 	switch ( paymentMethod ) {
 		case 'ebanx':
 			return { name: 'WPCOM_Billing_Ebanx' };
