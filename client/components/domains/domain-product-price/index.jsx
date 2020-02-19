@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import InfoPopover from 'components/info-popover';
+import { getTld } from 'lib/domains';
 
 /**
  * Style dependencies
@@ -36,26 +37,49 @@ class DomainProductPrice extends React.Component {
 	};
 
 	getDomainPricePopoverElement() {
-		const { price, rule, isFeatured, translate } = this.props;
+		const { price, rule, isFeatured, domain, translate } = this.props;
 
 		let popoverText;
 
 		switch ( rule ) {
 			case 'FREE_DOMAIN':
-				popoverText = translate(
-					'Every WordPress.com site comes with a free address using a WordPress.com subdomain. {{a}}Learn more{{/a}}.',
-					{
-						components: {
-							a: (
-								<a
-									href="https://en.support.wordpress.com/domains/#domain-name-overview"
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-						},
-					}
-				);
+				if ( getTld( domain ) === 'blog' ) {
+					popoverText = translate(
+						'Every WordPress.com blog comes with a free .blog address. {{a}}Learn more{{/a}}.',
+						{
+							components: {
+								a: (
+									<a
+										href="https://en.support.wordpress.com/domains/#domain-name-overview"
+										target="_blank"
+										rel="noopener noreferrer"
+										onClick={ event => {
+											event.stopPropagation();
+										} }
+									/>
+								),
+							},
+						}
+					);
+				} else {
+					popoverText = translate(
+						'Every WordPress.com site comes with a free WordPress.com address. {{a}}Learn more{{/a}}.',
+						{
+							components: {
+								a: (
+									<a
+										href="https://en.support.wordpress.com/domains/#domain-name-overview"
+										target="_blank"
+										rel="noopener noreferrer"
+										onClick={ event => {
+											event.stopPropagation();
+										} }
+									/>
+								),
+							},
+						}
+					);
+				}
 				break;
 
 			case 'INCLUDED_IN_HIGHER_PLAN':
@@ -70,6 +94,9 @@ class DomainProductPrice extends React.Component {
 									href="https://en.support.wordpress.com/domains/domain-pricing-and-available-tlds/"
 									target="_blank"
 									rel="noopener noreferrer"
+									onClick={ event => {
+										event.stopPropagation();
+									} }
 								/>
 							),
 						},
@@ -169,6 +196,9 @@ class DomainProductPrice extends React.Component {
 								href="https://en.support.wordpress.com/domains/domain-pricing-and-available-tlds/"
 								target="_blank"
 								rel="noopener noreferrer"
+								onClick={ event => {
+									event.stopPropagation();
+								} }
 							/>
 						),
 					},

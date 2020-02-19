@@ -221,7 +221,16 @@ class DomainRegistrationSuggestion extends React.Component {
 									tld: '.' + getTld( domain ),
 								},
 								components: {
-									a: <a href={ HTTPS_SSL } target="_blank" rel="noopener noreferrer" />,
+									a: (
+										<a
+											href={ HTTPS_SSL }
+											target="_blank"
+											rel="noopener noreferrer"
+											onClick={ event => {
+												event.stopPropagation();
+											} }
+										/>
+									),
 									strong: <strong />,
 								},
 							}

@@ -86,6 +86,7 @@ class DomainSuggestion extends React.Component {
 							showTestCopy={ showTestCopy }
 							showDesignUpdate={ showDesignUpdate }
 							isEligibleVariantForDomainTest={ isEligibleVariantForDomainTest }
+							domain={ this.props.domain }
 						/>
 					) }
 				</div>
