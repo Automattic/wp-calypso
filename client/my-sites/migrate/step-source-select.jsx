@@ -14,6 +14,7 @@ import { get } from 'lodash';
  */
 import CardHeading from 'components/card-heading';
 import HeaderCake from 'components/header-cake';
+import Notice from 'components/notice';
 import wpLib from 'lib/wp';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -139,9 +140,12 @@ class StepSourceSelect extends Component {
 					onSubmit={ this.handleContinue }
 					url={ this.props.url }
 				/>
+				{ this.state.error && (
+					<Notice className="migrate__error" status="is-error">
+						{ this.state.error }
+					</Notice>
+				) }
 				<Card>
-					{ this.state.error && <div className="migrate__site-error">{ this.state.error }</div> }
-
 					<Button busy={ this.state.isLoading } onClick={ this.handleContinue } primary={ true }>
 						{ translate( 'Continue' ) }
 					</Button>

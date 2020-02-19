@@ -111,6 +111,11 @@
 	text-decoration: underline;
 }
 
+.migrate__error {
+	&.notice {
+		margin-bottom: 0;
+	}
+}
 
 .migrate__card-footer {
 	color: var( --color-text-subtle );
