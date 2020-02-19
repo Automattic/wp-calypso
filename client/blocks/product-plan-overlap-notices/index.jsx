@@ -19,7 +19,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePlanSlug } from 'state/sites/plans/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
 import { planHasFeature, planHasSuperiorFeature } from 'lib/plans';
-import { PRODUCT_SHORT_NAMES } from 'lib/products-values/constants';
+import { getJetpackProductsShortNames } from 'lib/products-values/constants';
 
 class ProductPlanOverlapNotices extends Component {
 	static propTypes = {
@@ -111,8 +111,9 @@ class ProductPlanOverlapNotices extends Component {
 			return null;
 		}
 
-		if ( PRODUCT_SHORT_NAMES[ currentProductSlug ] ) {
-			return PRODUCT_SHORT_NAMES[ currentProductSlug ].toLowerCase();
+		const productsShortNames = getJetpackProductsShortNames();
+		if ( productsShortNames[ currentProductSlug ] ) {
+			return productsShortNames[ currentProductSlug ].toLowerCase();
 		}
 
 		if ( availableProducts[ currentProductSlug ] ) {

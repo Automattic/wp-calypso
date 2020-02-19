@@ -10,8 +10,8 @@ import { isGSuiteOrExtraLicenseProductSlug } from 'lib/gsuite';
 import {
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
-	JETPACK_PRODUCT_DISPLAY_NAMES,
-	JETPACK_PRODUCT_TAGLINES,
+	getJetpackProductsDisplayNames,
+	getJetpackProductsTaglines,
 } from './constants';
 import {
 	PLAN_BUSINESS_MONTHLY,
@@ -397,8 +397,9 @@ export function getProductClass( productSlug ) {
 export function getJetpackProductDisplayName( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
+	const jetpackProductsDisplayNames = getJetpackProductsDisplayNames();
 
-	return JETPACK_PRODUCT_DISPLAY_NAMES?.[ product.productSlug ];
+	return jetpackProductsDisplayNames?.[ product.productSlug ];
 }
 
 /**
@@ -410,8 +411,9 @@ export function getJetpackProductDisplayName( product ) {
 export function getJetpackProductTagline( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
+	const jetpackProductsTaglines = getJetpackProductsTaglines();
 
-	return JETPACK_PRODUCT_TAGLINES?.[ product.productSlug ];
+	return jetpackProductsTaglines?.[ product.productSlug ];
 }
 
 export function isDependentProduct( product, dependentProduct, domainsWithPlansOnly ) {
