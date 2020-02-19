@@ -11,6 +11,7 @@ const sections = [
 		module: 'root-entry',
 		group: 'root-entry',
 		secondary: true,
+		enableLoggedOut: true,
 	},
 	{
 		name: 'sites',
