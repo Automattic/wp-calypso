@@ -217,7 +217,7 @@ class SectionMigrate extends Component {
 			return;
 		}
 
-		this.setMigrationState( { migrationStatus: 'backing-up' } );
+		this.setMigrationState( { migrationStatus: 'backing-up', startTime: null } );
 
 		wpcom
 			.undocumented()
