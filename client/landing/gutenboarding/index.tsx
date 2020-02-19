@@ -2,6 +2,7 @@
  * External dependencies
  */
 import '@automattic/calypso-polyfills';
+import { setLocaleData } from '@wordpress/i18n';
 import { I18nProvider } from '@automattic/react-i18n';
 import { getLanguageFile } from '../../lib/i18n-utils/switch-locale';
 import React from 'react';
@@ -46,13 +47,14 @@ window.AppBoot = async () => {
 	accessibleFocus();
 
 	let locale = DEFAULT_LOCALE_SLUG;
-	let localeData;
 	try {
-		[ locale, localeData ] = await getLocale();
+		const [ userLocale, localeData ] = await getLocale();
+		setLocaleData( localeData );
+		locale = userLocale;
 	} catch {}
 
 	ReactDom.render(
-		<I18nProvider locale={ locale } localeData={ localeData }>
+		<I18nProvider locale={ locale }>
 			<BrowserRouter basename="gutenboarding">
 				<Switch>
 					<Route exact path={ path }>
