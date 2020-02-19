@@ -209,29 +209,32 @@ class RegisteredDomainType extends React.Component {
 					) }
 					{ this.renderExpired() }
 					{ this.renderRecentlyRegistered() }
+				</DomainStatus>
+				<Card compact={ true } className="domain-types__expiration-row">
+					<div>
+						{ domain.expired
+							? this.props.translate( 'Expired: %(expiry_date)s', {
+									args: {
+										expiry_date: moment( domain.expiry ).format( 'LL' ),
+									},
+							  } )
+							: this.props.translate( 'Expires: %(expiry_date)s', {
+									args: {
+										expiry_date: moment( domain.expiry ).format( 'LL' ),
+									},
+							  } ) }
+					</div>
 					{ ! newStatusDesignAutoRenew && (
 						<div>
 							<SubscriptionSettings
 								type={ domain.type }
+								compact={ true }
 								subscriptionId={ domain.subscriptionId }
 								siteSlug={ this.props.selectedSite.slug }
 								onClick={ this.handlePaymentSettingsClick }
 							/>
 						</div>
 					) }
-				</DomainStatus>
-				<Card compact={ true }>
-					{ domain.expired
-						? this.props.translate( 'Expired: %(expiry_date)s', {
-								args: {
-									expiry_date: moment( domain.expiry ).format( 'LL' ),
-								},
-						  } )
-						: this.props.translate( 'Expires: %(expiry_date)s', {
-								args: {
-									expiry_date: moment( domain.expiry ).format( 'LL' ),
-								},
-						  } ) }
 				</Card>
 				{ newStatusDesignAutoRenew && this.renderAutoRenew() }
 				{ this.getVerticalNavigation() }
