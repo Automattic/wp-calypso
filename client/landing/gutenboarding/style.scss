@@ -58,6 +58,10 @@ $admin-sidebar-width-collapsed: 0;
 					}
 				}
 			}
+
+			&.is-selected::before {
+				display: none;
+			}
 		}
 	}
 }

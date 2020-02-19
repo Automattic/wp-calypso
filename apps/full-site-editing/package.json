@@ -48,6 +48,24 @@
 		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh"
 	},
 	"dependencies": {
-		"classnames": "2.2.6"
+		"@wordpress/api-fetch": "*",
+		"@wordpress/block-editor": "*",
+		"@wordpress/blocks": "*",
+		"@wordpress/components": "*",
+		"@wordpress/compose": "*",
+		"@wordpress/data": "*",
+		"@wordpress/dom-ready": "*",
+		"@wordpress/edit-post": "*",
+		"@wordpress/editor": "*",
+		"@wordpress/element": "*",
+		"@wordpress/hooks": "*",
+		"@wordpress/html-entities": "*",
+		"@wordpress/i18n": "*",
+		"@wordpress/keycodes": "*",
+		"@wordpress/plugins": "*",
+		"@wordpress/url": "*",
+		"classnames": "2.2.6",
+		"lodash": "*",
+		"moment": "*"
 	}
 }
