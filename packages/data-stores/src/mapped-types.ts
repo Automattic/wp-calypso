@@ -29,7 +29,11 @@ export type SelectFromMap< S extends Record< string, ( ...args: any[] ) => any >
  * @template A Selector map, usually from `import * as actions from './my-store/actions';`
  */
 export type DispatchFromMap< A extends Record< string, ( ...args: any[] ) => any > > = {
-	[ actionCreator in keyof A ]: ( ...args: Parameters< A[ actionCreator ] > ) => void;
+	[ actionCreator in keyof A ]: (
+		...args: Parameters< A[ actionCreator ] >
+	) => A[ actionCreator ] extends ( ...args: any[] ) => Generator
+		? Promise< GeneratorReturnType< A[ actionCreator ] > >
+		: void;
 };
 
 /**
@@ -43,4 +47,13 @@ export type TailParameters< F extends ( head: any, ...tail: any[] ) => any > = F
 	...tail: infer PS
 ) => any
 	? PS
+	: never;
+
+/**
+ * Obtain the type finally returned by the generator when it's done iterating.
+ */
+export type GeneratorReturnType< T extends ( ...args: any[] ) => Generator > = T extends (
+	...args: any
+) => Generator< any, infer R, any >
+	? R
 	: never;

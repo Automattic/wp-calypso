@@ -64,7 +64,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 			} ),
 		} );
 
-		if ( ( success as any ) as boolean ) {
+		if ( success ) {
 			onRequestClose();
 		}
 	};
