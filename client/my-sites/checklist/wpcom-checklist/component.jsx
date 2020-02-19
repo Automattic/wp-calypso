@@ -336,7 +336,7 @@ class WpcomChecklistComponent extends PureComponent {
 				buttonText={ this.verificationTaskButtonText() }
 				completedTitle={ translate( 'You validated your email address' ) }
 				completedDescription={ translate(
-					'Typo in your email address? {{changeButton}}Change it here{{/changeButton}}.',
+					'Need to change something? {{changeButton}}Update your email address here{{/changeButton}}.',
 					{
 						args: {
 							email: this.props.userEmail,
