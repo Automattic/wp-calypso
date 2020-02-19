@@ -332,7 +332,14 @@ class Edit extends Component {
 							required
 						/>
 					) }
-					{ ! specificMode && getIsBlogPrivate() !== true && (
+					{ ! specificMode && ! getIsBlogPrivate() && (
+						/**
+						 * Hide the "More" button option on private sites.
+						 *
+						 * Client-side fetching from a private WP.com blog requires authentication,
+						 * which is not provided in the current implementation.
+						 * See https://github.com/Automattic/newspack-blocks/issues/306.
+						 */
 						<ToggleControl
 							label={ __( 'Show "More" Button', 'newspack-blocks' ) }
 							checked={ moreButton }
@@ -634,8 +641,9 @@ class Edit extends Component {
 						{ latestPosts && latestPosts.map( post => this.renderPost( post ) ) }
 					</div>
 				</div>
-
-				{ ! specificMode && latestPosts && moreButton && getIsBlogPrivate() !== true && (
+				{ ! specificMode && latestPosts && moreButton && ! getIsBlogPrivate() && (
+					// The "More" button option is hidden for private sites, so we should
+					// also hide the button in case it was previously enabled.
 					<div className="editor-styles-wrapper">
 						<div className="wp-block-button">
 							<RichText
