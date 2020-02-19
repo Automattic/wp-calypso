@@ -273,7 +273,7 @@ export default function CompositeCheckout( {
 	const itemsForCheckout = ( items.length ? [ ...items, tax, couponItem ] : [] ).filter( Boolean );
 	debug( 'items for checkout', itemsForCheckout );
 
-	useRedirectIfCartEmpty( items, `/plans/${ siteSlug || '' }` );
+	useRedirectIfCartEmpty( items, `/plans/${ siteSlug || '' }`, isLoading );
 
 	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
 		getStoredCards || wpcomGetStoredCards
@@ -823,7 +823,7 @@ function getCheckoutEventHandler( dispatch ) {
 	};
 }
 
-function useRedirectIfCartEmpty( items, redirectUrl ) {
+function useRedirectIfCartEmpty( items, redirectUrl, isLoading ) {
 	const [ prevItemsLength, setPrevItemsLength ] = useState( 0 );
 
 	useEffect( () => {
@@ -834,8 +834,14 @@ function useRedirectIfCartEmpty( items, redirectUrl ) {
 		if ( prevItemsLength > 0 && items.length === 0 ) {
 			debug( 'cart has become empty; redirecting...' );
 			window.location = redirectUrl;
+			return;
 		}
-	}, [ redirectUrl, items, prevItemsLength ] );
+		if ( ! isLoading && items.length === 0 ) {
+			debug( 'cart is empty and not still loading; redirecting...' );
+			window.location = redirectUrl;
+			return;
+		}
+	}, [ redirectUrl, items, prevItemsLength, isLoading ] );
 }
 
 function useCountryList( overrideCountryList ) {
