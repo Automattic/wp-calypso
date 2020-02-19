@@ -141,7 +141,7 @@ class StepSourceSelect extends Component {
 					url={ this.props.url }
 				/>
 				{ this.state.error && (
-					<Notice className="migrate__error" status="is-error">
+					<Notice className="migrate__error" showDismiss={ false } status="is-error">
 						{ this.state.error }
 					</Notice>
 				) }
