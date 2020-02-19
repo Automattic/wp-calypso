@@ -9,9 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { CompactCard } from '@automattic/components';
+import { Card } from '@automattic/components';
 import ContactDisplay from './contact-display';
-import SectionHeader from 'components/section-header';
 import { PUBLIC_VS_PRIVATE } from 'lib/url/support';
 import FormToggle from 'components/forms/form-toggle';
 import Gridicon from 'components/gridicon';
@@ -102,7 +101,7 @@ class ContactsPrivacyCard extends React.Component {
 		}
 
 		const contactVerificationNotice = isPendingIcannVerification ? (
-			<div class="contacts-privacy__settings warning">
+			<div className="contacts-privacy__settings warning">
 				<Gridicon icon="info-outline" size={ 18 } />
 				<p>
 					{ translate(
@@ -135,27 +134,23 @@ class ContactsPrivacyCard extends React.Component {
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Domain Contacts' ) } />
+				<Card className="contacts-privacy__card">
+					<p>{ translate( 'Your domain contact information' ) }</p>
 
-				<CompactCard className="contacts-privacy__card">
+					<ContactDisplay selectedDomainName={ selectedDomainName } />
+
 					{ this.getPrivacyProtection() }
 
 					{ this.getContactInfoDisclosed() }
 
-					<ContactDisplay selectedDomainName={ selectedDomainName } />
-
 					<p className="contacts-privacy__settings-explanation">
-						{ translate(
-							'Domain owners are required to provide correct contact information. ' +
-								'{{a}}Learn more{{/a}} about private registration and GDPR protection.',
-							{
-								components: {
-									a: <a href={ PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer" />,
-								},
-							}
-						) }
+						{ translate( '{{a}}Learn more{{/a}} about private registration and GDPR protection.', {
+							components: {
+								a: <a href={ PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer" />,
+							},
+						} ) }
 					</p>
-				</CompactCard>
+				</Card>
 			</div>
 		);
 	}
