@@ -291,7 +291,14 @@ jobs:
       - run:
           name: Extract strings
           working_directory: wp-babel-makepot
-          command: ./node_modules/.bin/babel ~/wp-calypso --out-dir "$CIRCLE_ARTIFACTS/translate""
+          command: npm start "~/wp-calypso/{client,packages,apps}/**/*.{js,jsx,ts,tsx}" -- --ignore "**/node_modules/**,,**/test/**"
+      - run:
+          working_directory: wp-babel-makepot
+          command: npm run concat
+      - run:
+          working_directory: wp-babel-makepot
+          command: npm run sanitize-pot
+      - run: mv ~/wp-babel-makepot/build "$CIRCLE_ARTIFACTS/translate"
       - store-artifacts-and-test-results
 
   typecheck-strict:
