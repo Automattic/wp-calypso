@@ -624,7 +624,6 @@ function getCheckoutEventHandler( dispatch ) {
 						total_cost,
 						currency: action.payload.total.amount.currency,
 						is_signup: action.payload.responseCart.is_signup,
-						// TODO: currently maybe missing (?) price, product_type, included_domain_purchase_amount
 						products: action.payload.responseCart.products,
 					},
 					orderId: transactionResult.receipt_id,
