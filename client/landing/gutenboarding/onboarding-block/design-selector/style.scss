@@ -5,6 +5,8 @@ $design-selector-grid-gap: 4.5em;
 
 $design-selector-max-width: 1100px;
 $design-selector-selection-space: 285px + $header-height;
+$page-selector-width-offset: 20px;
+$page-selector-shadow-size: 12px;
 
 .design-selector__title {
 	color: $dark-gray-800;
@@ -51,11 +53,13 @@ $design-selector-selection-space: 285px + $header-height;
 .design-selector__page-layout-container {
 	position: absolute;
 	top: $design-selector-selection-space;
-	width: 100vw;
+	width: calc( 100vw - #{$page-selector-width-offset} );
 	background: $white;
-	box-shadow: $dark-gray-300 0 0 12px;
+	box-shadow: $white 0 $page-selector-shadow-size 0 $page-selector-width-offset,
+		$dark-gray-300 0 ( $page-selector-shadow-size - $page-selector-width-offset )
+			$page-selector-shadow-size;
 	padding: 2em 4em;
-	margin-left: calc( ( 100vw - 100% ) / -2 );
+	margin-left: calc( ( ( 100vw - #{$page-selector-width-offset} ) - 100% ) / -2 );
 }
 
 .page-layout-selector {
