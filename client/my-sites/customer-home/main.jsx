@@ -511,18 +511,20 @@ class Home extends Component {
 					) }
 					{ ! siteIsUnlaunched && <StatsCard /> }
 					<Card className="customer-home__free-photo-library-card">
-						<video
-							className="customer-home__free-photo-library-demonstration"
-							controls
-							muted
-							preload="none"
-							poster={ freePhotoLibraryThumbnail }
-						>
-							<source
-								src="https://wpcom.files.wordpress.com/2020/02/free-photo-library-demonstration.mp4"
-								type="video/mp4"
-							/>
-						</video>
+						{ ! isMobile() && (
+							<video
+								className="customer-home__free-photo-library-demonstration"
+								controls
+								muted
+								preload="none"
+								poster={ freePhotoLibraryThumbnail }
+							>
+								<source
+									src="https://wpcom.files.wordpress.com/2020/02/free-photo-library-demonstration.mp4"
+									type="video/mp4"
+								/>
+							</video>
+						) }
 						<CardHeading>{ translate( 'Over 40,000 Free Photos' ) }</CardHeading>
 						<p className="customer-home__card-subheader">
 							{ translate(
