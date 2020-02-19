@@ -82,20 +82,20 @@ class StepConfirmMigration extends Component {
 	}
 
 	renderMigrationButton() {
-		const { targetSite } = this.props;
+		const { targetSite, translate } = this.props;
 		const targetSiteDomain = get( targetSite, 'domain' );
 
 		if ( this.isTargetSitePlanCompatible() ) {
 			return (
 				<MigrateButton onClick={ this.handleClick } targetSiteDomain={ targetSiteDomain }>
-					Import everything
+					{ translate( 'Import everything' ) }
 				</MigrateButton>
 			);
 		}
 
 		return (
 			<Button primary onClick={ this.handleClick }>
-				Import everything
+				{ translate( 'Import everything' ) }
 			</Button>
 		);
 	}
