@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import { difference, includes, isEqual, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { isWithinBreakpoint } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -178,18 +179,39 @@ export class TldFilterBar extends Component {
 			) );
 	}
 
+	getNumberOfTldsShownInViewport() {
+		// The number of TLDs shown for each breakpoint should match the CSS rule.
+		// e.g. .search-filters__tld-checkbox:nth-child( n + 5 ) is defined as display: none for screen size <800px,
+		// so we return 4 for isWithinBreakpoint( '<800px' ).
+		if ( isWithinBreakpoint( '<480px' ) ) {
+			return 1;
+		}
+
+		if ( isWithinBreakpoint( '<660px' ) ) {
+			return 2;
+		}
+
+		if ( isWithinBreakpoint( '<800px' ) ) {
+			return 4;
+		}
+
+		if ( isWithinBreakpoint( '>800px' ) ) {
+			return this.props.numberOfTldsShown;
+		}
+	}
+
 	renderPopoverButton() {
 		const {
 			filters: { tlds = [] } = {},
 			lastFilters: { tlds: lastFilterTlds = [] } = {},
 			availableTlds,
-			numberOfTldsShown,
 			translate,
 		} = this.props;
 
 		let isActive;
 		if ( this.props.showDesignUpdate ) {
-			const visibleTldsInFilterBar = availableTlds.slice( 0, numberOfTldsShown );
+			const numberOfTldsShownInViewport = this.getNumberOfTldsShownInViewport();
+			const visibleTldsInFilterBar = availableTlds.slice( 0, numberOfTldsShownInViewport );
 			const isSelectedFiltersNotInFilterBar =
 				difference( lastFilterTlds, visibleTldsInFilterBar ).length > 0;
 			isActive = isSelectedFiltersNotInFilterBar;
