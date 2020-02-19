@@ -74,6 +74,7 @@ import { GROUP_WPCOM, TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/p
 import { computeProductsWithPrices } from 'state/products-list/selectors';
 import { requestProductsList } from 'state/products-list/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import analytics from 'lib/analytics';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -235,6 +236,7 @@ export default function CompositeCheckout( {
 		allowedPaymentMethods: serverAllowedPaymentMethods,
 		variantRequestStatus,
 		variantSelectOverride,
+		responseCart,
 	} = useShoppingCart(
 		siteSlug,
 		canInitializeCart,
@@ -252,11 +254,11 @@ export default function CompositeCheckout( {
 			const url = getThankYouUrl();
 			recordEvent( {
 				type: 'PAYMENT_COMPLETE',
-				payload: { url, couponItem, paymentMethodId, total },
+				payload: { url, couponItem, paymentMethodId, total, responseCart },
 			} );
 			page.redirect( url );
 		},
-		[ recordEvent, getThankYouUrl, total, couponItem ]
+		[ recordEvent, getThankYouUrl, total, couponItem, responseCart ]
 	);
 
 	const { registerStore, dispatch } = registry;
@@ -608,12 +610,14 @@ function createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) {
 }
 
 function getCheckoutEventHandler( dispatch ) {
-	return action => {
+	return function recordEvent( action ) {
 		debug( 'heard checkout event', action );
 		switch ( action.type ) {
 			case 'CHECKOUT_LOADED':
 				return dispatch( recordTracksEvent( 'calypso_checkout_composite_loaded', {} ) );
-			case 'PAYMENT_COMPLETE':
+			case 'PAYMENT_COMPLETE': {
+				const total_cost = action.payload.total.amount.value / 100; // TODO: This conversion only works for USD! We have to localize this or get it from the server directly (or better yet, just force people to use the integer version).
+
 				dispatch(
 					recordTracksEvent( 'calypso_checkout_payment_success', {
 						coupon_code: action.payload.couponItem?.wpcom_meta.couponCode ?? '',
@@ -621,9 +625,21 @@ function getCheckoutEventHandler( dispatch ) {
 						payment_method:
 							translateCheckoutPaymentMethodToWpcomPaymentMethod( action.payload.paymentMethodId )
 								?.name || '',
-						total_cost: action.payload.total.amount.value / 100, // TODO: This conversion only works for USD! We have to localize this or get it from the server directly (or better yet, just force people to use the integer version).
+						total_cost,
 					} )
 				);
+
+				const transactionResult = select( 'wpcom' ).getTransactionResult();
+				analytics.recordPurchase( {
+					cart: {
+						total_cost,
+						currency: action.payload.total.amount.currency,
+						is_signup: action.payload.responseCart.is_signup,
+						products: action.payload.responseCart.products,
+					},
+					orderId: transactionResult.receipt_id,
+				} );
+
 				return dispatch(
 					recordTracksEvent( 'calypso_checkout_composite_payment_complete', {
 						redirect_url: action.payload.url,
@@ -633,6 +649,7 @@ function getCheckoutEventHandler( dispatch ) {
 						payment_method: action.payload.paymentMethodId,
 					} )
 				);
+			}
 			case 'CART_ERROR':
 				return dispatch(
 					recordTracksEvent( 'calypso_checkout_composite_cart_error', {
