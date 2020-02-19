@@ -112,7 +112,7 @@ class AutoLoadingHomepageModal extends Component {
 				onClose={ this.closeModalHandler( false ) }
 			>
 				<div>
-					<h1>
+					<h1 className="themes__auto-loading-homepage-modal-title">
 						{ translate(
 							'{{strong}}%(themeName)s{{/strong}} will automatically change your homepage layout. ' +
 								'Your current homepage will become a draft. Would you like to continue?',
