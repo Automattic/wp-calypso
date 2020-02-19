@@ -1,7 +1,10 @@
 /**
  * External dependencies
  */
-import { WPCOMCartItem } from '@automattic/composite-checkout-wpcom';
+import {
+	WPCOMCartItem,
+	getNonProductWPCOMCartItemTypes,
+} from '@automattic/composite-checkout-wpcom';
 
 /**
  * Internal dependencies
@@ -58,7 +61,7 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 			country,
 			postalCode,
 			subdivisionCode,
-			items: items.filter( item => item.type !== 'tax' ),
+			items: items.filter( item => ! getNonProductWPCOMCartItemTypes().includes( item.type ) ),
 		} ),
 		country,
 		postalCode,
