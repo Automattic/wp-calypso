@@ -47,20 +47,24 @@ const view = ( { attributes, className, isEditView } ) => {
 			<div className="event-countdown__date">{ attributes.eventDate }</div>
 			<div className="event-countdown__counter">
 				<p>
-					<strong className="event-countdown__day">{ days }</strong> { __( 'days' ) }
+					<strong className="event-countdown__day">{ days }</strong>{ ' ' }
+					{ __( 'days', 'full-site-editing' ) }
 				</p>
 				<p>
 					<span>
-						<strong className="event-countdown__hour">{ hours }</strong> { __( 'hours' ) }
+						<strong className="event-countdown__hour">{ hours }</strong>{ ' ' }
+						{ __( 'hours', 'full-site-editing' ) }
 					</span>
 					<span>
-						<strong className="event-countdown__minute">{ mins }</strong> { __( 'minutes' ) }
+						<strong className="event-countdown__minute">{ mins }</strong>{ ' ' }
+						{ __( 'minutes', 'full-site-editing' ) }
 					</span>
 					<span>
-						<strong className="event-countdown__second">{ secs }</strong> { __( 'seconds' ) }
+						<strong className="event-countdown__second">{ secs }</strong>{ ' ' }
+						{ __( 'seconds', 'full-site-editing' ) }
 					</span>
 				</p>
-				<p>{ __( 'until' ) }</p>
+				<p>{ __( 'until', 'full-site-editing' ) }</p>
 			</div>
 			<div className="event-countdown__event-title">
 				<p>{ attributes.eventTitle }</p>

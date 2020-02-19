@@ -1,19 +1,22 @@
 /**
- * External dependencies
+ * WordPress dependencies
  */
 import { registerBlockType } from '@wordpress/blocks';
-import { EventCountdownIcon } from './icon';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
+import { EventCountdownIcon } from './icon';
 import edit from './edit';
 import view from './view';
 
 registerBlockType( 'jetpack/event-countdown', {
-	title: 'Event Countdown',
-	description:
+	title: __( 'Event Countdown', 'full-site-editing' ),
+	description: __(
 		'Count down to your favorite next thing, and celebrate with fireworks when the time is right!',
+		'full-site-editing'
+	),
 	icon: EventCountdownIcon,
 	category: 'widgets',
 	supports: {
