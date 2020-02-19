@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import { __ as NO__ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import React, { FunctionComponent } from 'react';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -17,6 +17,7 @@ import './style.scss';
 import Link from '../components/link';
 
 const AcquireIntent: FunctionComponent = () => {
+	const { __: NO__ } = useI18n();
 	const { siteVertical, siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
 	const makePath = usePath();
 	return (
