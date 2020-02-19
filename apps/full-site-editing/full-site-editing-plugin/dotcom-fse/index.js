@@ -11,3 +11,6 @@ import './plugins/close-button-override';
 import './plugins/editor-template-classes';
 import './plugins/template-update-notice';
 import './editor';
+
+/* eslint-disable no-console */
+console.log( 'So say we all.' );
