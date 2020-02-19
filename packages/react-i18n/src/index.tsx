@@ -2,7 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
-import { __, _n, _nx, _x, setLocaleData } from '@wordpress/i18n';
+import { __, _n, _nx, _x } from '@wordpress/i18n';
 import { createHigherOrderComponent } from '@wordpress/compose';
 
 const DEFAULT_LOCALE = 'en';
@@ -17,31 +17,13 @@ export interface I18nProps {
 
 const I18nContext = React.createContext< I18nProps >( makeI18n( DEFAULT_LOCALE ) );
 
-let lastLocale = DEFAULT_LOCALE;
-function updateLocaleOnChange( locale: string, localeData: object ) {
-	if ( locale !== lastLocale ) {
-		setLocaleData( localeData );
-		lastLocale = locale;
-	}
-}
-
 interface Props {
 	/**
 	 * The current locale
 	 */
 	locale: string;
-
-	/**
-	 * Locale data
-	 */
-	localeData?: object;
 }
-export const I18nProvider: React.FunctionComponent< Props > = ( {
-	children,
-	locale,
-	localeData = {},
-} ) => {
-	updateLocaleOnChange( locale, localeData );
+export const I18nProvider: React.FunctionComponent< Props > = ( { children, locale } ) => {
 	const [ contextValue, setContextValue ] = React.useState< I18nProps >( makeI18n( locale ) );
 	React.useEffect( () => {
 		setContextValue( makeI18n( locale ) );
