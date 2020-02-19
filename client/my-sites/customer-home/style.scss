@@ -84,7 +84,7 @@
 
 		.customer-home__launch-fireworks {
 			margin-right: 18px;
-			width: 145px;
+			width: 100px;
 
 			@include breakpoint( '<480px' ) {
 				display: none;
@@ -101,6 +101,7 @@
 
 		.customer-home__launch-card-subtext {
 			margin: 0;
+			font-size: 14px;
 			font-weight: 300;
 		}
 	}
