@@ -84,14 +84,34 @@ const trackBlockReplacement = ( originalBlockIds, blocks ) => {
  * @param {object|Array} blocks block instance object or an array of such objects
  * @returns {void}
  */
-const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
-	castArray( blocks ).forEach( block => {
-		tracksRecordEvent( 'wpcom_block_inserted', {
-			block_name: block.name,
-			blocks_replaced: false,
-			// isInsertingPageTemplate filter is set by Starter Page Templates
-			from_template_selector: applyFilters( 'isInsertingPageTemplate', false ),
-		} );
+let blockCounter = 0;
+const trackInnerBlocksReplacement = ( rootClientId = '', blocks ) => {
+	const castBlocks = castArray( blocks );
+	if ( ! castBlocks || ! castBlocks.length ) {
+		return;
+	}
+
+	castBlocks.forEach( block => {
+		setTimeout(
+			( _rootId, _block ) => {
+				tracksRecordEvent( 'wpcom_block_inserted', {
+					block_name: _block.name,
+					rootClientId: _rootId,
+					blocks_replaced: false,
+					// isInsertingPageTemplate filter is set by Starter Page Templates
+					from_template_selector: applyFilters( 'isInsertingPageTemplate', false ),
+				} );
+			},
+			blockCounter * 50,
+			rootClientId,
+			block
+		);
+
+		blockCounter++;
+
+		if ( block.innerBlocks && block.innerBlocks.length ) {
+			trackInnerBlocksReplacement( block.clientId, block.innerBlocks );
+		}
 	} );
 };
 
