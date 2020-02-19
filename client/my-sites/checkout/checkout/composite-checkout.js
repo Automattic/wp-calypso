@@ -804,12 +804,8 @@ function getCheckoutEventHandler( dispatch ) {
 				);
 			}
 			case 'VALIDATE_DOMAIN_CONTACT_INFO': {
-				return dispatch(
-					recordTracksEvent( 'calypso_checkout_form_submit', {
-						credits: action.payload.credits,
-						payment_method: action.payload.payment_method,
-					} )
-				);
+				// TODO: Decide what to do here
+				return;
 			}
 			case 'SHOW_MODAL_AUTHORIZATION': {
 				return dispatch( recordTracksEvent( 'calypso_checkout_modal_authorization', {} ) );
