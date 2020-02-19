@@ -106,50 +106,6 @@ const setupContextMiddleware = reduxStore => {
 // We need to require sections to load React with i18n mixin
 const loadSectionsMiddleware = () => setupRoutes();
 
-const loggedOutMiddleware = currentUser => {
-	if ( currentUser.get() ) {
-		return;
-	}
-
-	if ( config.isEnabled( 'desktop' ) ) {
-		page( '/', () => {
-			if ( config.isEnabled( 'oauth' ) ) {
-				page.redirect( '/authorize' );
-			} else {
-				page.redirect( '/log-in' );
-			}
-		} );
-	} else if ( config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
-		page( '/', () => {
-			page.redirect( '/devdocs/start' );
-		} );
-	}
-};
-
-const loggedInMiddleware = currentUser => {
-	const jetpackCloudEnvs = [
-		'jetpack-cloud-development',
-		'jetpack-cloud-stage',
-		'jetpack-cloud-production',
-	];
-	const calypsoEnv = config( 'env_id' );
-
-	// TODO: Remove Jetpack Cloud specific logic when root route is no longer handled by the reader section
-	if ( ! currentUser.get() || jetpackCloudEnvs.includes( calypsoEnv ) ) {
-		return;
-	}
-
-	page( '/', context => {
-		let redirectPath = '/read';
-
-		if ( context.querystring ) {
-			redirectPath += `?${ context.querystring }`;
-		}
-
-		page.redirect( redirectPath );
-	} );
-};
-
 const oauthTokenMiddleware = () => {
 	if ( config.isEnabled( 'oauth' ) ) {
 		const loggedOutRoutes = [
@@ -249,7 +205,6 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	installPerfmonPageHandlers();
 	setupContextMiddleware( reduxStore );
 	oauthTokenMiddleware();
-	loggedOutMiddleware( currentUser );
 	loadSectionsMiddleware();
 	setRouteMiddleware();
 	clearNoticesMiddleware();
