@@ -6,10 +6,10 @@ const path = require( 'path' ); // eslint-disable-line import/no-nodejs-modules
 
 const sections = [
 	{
-		name: 'root-entry',
+		name: 'root',
 		paths: [ '/' ],
-		module: 'root-entry',
-		group: 'root-entry',
+		module: 'root',
+		group: 'root',
 		secondary: true,
 		enableLoggedOut: true,
 	},
