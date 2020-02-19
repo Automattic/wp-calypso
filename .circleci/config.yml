@@ -130,6 +130,8 @@ references:
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}
 
   yarn-install: &yarn-install
+    environment:
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
     name: Install dependencies
     command: |
       source "$HOME/.nvm/nvm.sh"
@@ -193,12 +195,12 @@ references:
       cp -r ./screenshots $CIRCLE_ARTIFACTS/screenshots
 
   desktop-install-app-deps: &desktop-install-app-deps
-      name: Install Desktop Dependencies
-      command: |
-        source "$HOME/.nvm/nvm.sh"
-        nvm use
-        npm install -g yarn
-        yarn run build-desktop:install-app-deps
+    name: Install Desktop Dependencies
+    command: |
+      source "$HOME/.nvm/nvm.sh"
+      nvm use
+      npm install -g yarn
+      yarn run build-desktop:install-app-deps
   desktop-cache-paths: &desktop-cache-paths
     - desktop/build
     - desktop/client
@@ -213,26 +215,26 @@ references:
       openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/mac.p12.enc -out desktop/resource/certificates/mac.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
       openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/win.p12.enc -out desktop/resource/certificates/win.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
   desktop-restore-source-cache: &desktop-restore-source-cache
-      name: Restore desktop cache
-      keys:
-        - v6-desktop-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
+    name: Restore desktop cache
+    keys:
+      - v6-desktop-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
   desktop-save-source-cache: &desktop-save-source-cache
-      name: Save desktop cache
-      key: v6-desktop-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
-      paths: *desktop-cache-paths
+    name: Save desktop cache
+    key: v6-desktop-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
+    paths: *desktop-cache-paths
   desktop-notify-github-success: &desktop-notify-github-success
-      name: Notify Github Success
-      when: on_success
-      command: cd desktop && yarn ci:github:dismiss-review
+    name: Notify Github Success
+    when: on_success
+    command: cd desktop && yarn ci:github:dismiss-review
   desktop-notify-github-failure: &desktop-notify-github-failure
-      name: Notify Github Failure
-      when: on_fail
-      command: cd desktop && yarn ci:github:add-review
+    name: Notify Github Failure
+    when: on_fail
+    command: cd desktop && yarn ci:github:add-review
   desktop-notify-slack-failure: &desktop-notify-slack-failure
-      webhook: '$SLACK_WP_DESKTOP_E2E'
-      fail_only: true
-      mentions: '$CIRCLE_USERNAME'
-      failure_message: ':red_circle: wp-desktop tests for $CIRCLE_BRANCH have failed.\n\nCalypso PR: $CIRCLE_PULL_REQUEST'
+    webhook: '$SLACK_WP_DESKTOP_E2E'
+    fail_only: true
+    mentions: '$CIRCLE_USERNAME'
+    failure_message: ':red_circle: wp-desktop tests for $CIRCLE_BRANCH have failed.\n\nCalypso PR: $CIRCLE_PULL_REQUEST'
 
 commands:
   prepare:
@@ -271,6 +273,27 @@ jobs:
           root: '~'
           paths:
             - wp-calypso
+
+  EXPERIMENTAL-translate:
+    docker:
+      - image: circleci/node:lts
+    steps:
+      - run:
+          name: Checkout wp-calypso
+          command: git clone --depth 1 --branch "$CIRCLE_BRANCH" "$CIRCLE_REPOSITORY_URL"
+      - run:
+          name: Checkout wp-babel-makepot
+          command: git clone --depth 1 https://github.com/Automattic/wp-babel-makepot.git
+      - run:
+          name: Build wp-babel-makepot
+          working_directory: wp-babel-makepot
+          command: npm ci
+      - run: *setup-results-and-artifacts
+      - run:
+          name: Extract strings
+          working_directory: wp-babel-makepot
+          command: ./node_modules/.bin/babel ~/wp-calypso --out-dir "$CIRCLE_ARTIFACTS/translate""
+      - store-artifacts-and-test-results
 
   typecheck-strict:
     <<: *defaults
@@ -651,7 +674,7 @@ jobs:
 
   wp-desktop-mac:
     macos:
-      xcode: "10.1.0"
+      xcode: '10.1.0'
     shell: /bin/bash --login
     working_directory: /Users/distiller/wp-calypso
     steps:
@@ -667,11 +690,11 @@ jobs:
             CSC_LINK: resource/certificates/mac.p12
             CSC_FOR_PULL_REQUEST: true
           command: |
-                  set +e
-                  source $HOME/.nvm/nvm.sh
-                  nvm use
+            set +e
+            source $HOME/.nvm/nvm.sh
+            nvm use
 
-                  yarn run build-desktop:app
+            yarn run build-desktop:app
       - run:
           name: e2e Tests
           command: |
@@ -868,6 +891,10 @@ workflows:
       - build-wpcom-block-editor:
           requires:
             - setup
+      - icfy-stats:
+          requires:
+            - setup
+      - EXPERIMENTAL-translate
       - lint-and-translate:
           requires:
             - setup
@@ -894,10 +921,10 @@ workflows:
                 - master
                 # Do not spin up calypso.live for fork pull requests. Calypso.live will not build them.
                 - /pull\/[0-9]+/
-#      - test-e2e-canary:
-#          requires:
-#            - wait-calypso-live
-#          test-flags: '-C -S $CIRCLE_SHA1'
+      #      - test-e2e-canary:
+      #          requires:
+      #            - wait-calypso-live
+      #          test-flags: '-C -S $CIRCLE_SHA1'
       - test-e2e-canary:
           name: test-e2e-canary-ie
           requires:
