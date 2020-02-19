@@ -280,6 +280,7 @@ jobs:
     environment: *shared-environment
     steps:
       - checkout
+      - run: sudo apt-get install gettext
       - run:
           name: Checkout wp-babel-makepot
           command: git clone --depth 1 https://github.com/Automattic/wp-babel-makepot.git
