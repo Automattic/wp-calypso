@@ -38,7 +38,7 @@ export function Gutenboard() {
 			prev = makePath( Step.IntentGathering );
 			break;
 		case Step.PageSelection:
-			prev = Step.DesignSelection;
+			prev = makePath( Step.DesignSelection );
 			break;
 	}
 
