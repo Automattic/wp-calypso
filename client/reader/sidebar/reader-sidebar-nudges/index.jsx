@@ -71,6 +71,7 @@ function mapStateToProps( state ) {
 	const devCountryCode = isDevelopment && global.window && global.window.userCountryCode;
 	const countryCode = devCountryCode || getCurrentUserCountryCode( state );
 	const userLocale = getLocaleSlug( state );
+	const isEnglish = [ 'en', 'en-gb' ].indexOf( userLocale ) !== -1;
 
 	isDevelopment &&
 		debug(
@@ -89,9 +90,9 @@ function mapStateToProps( state ) {
 			! isJetpackSite( state, siteId ) && // not for Jetpack sites
 			! isDomainOnlySite( state, siteId ) && // not for domain only sites
 			isEligibleForFreeToPaidUpsell( state, siteId ) &&
-			// This test is not for English speaking US residents.
-			( ( 'en' === userLocale && 'US' === countryCode ) ||
-				'display' === abtest( 'readerFreeToPaidPlanNudge' ) ),
+			// This nudge only shows up to US EN users.
+			isEnglish &&
+			'US' === countryCode,
 	};
 }
 
