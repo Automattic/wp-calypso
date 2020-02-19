@@ -125,6 +125,12 @@
 		button.search-filters__popover-button-domain-step-test {
 			flex: 1 0 auto;
 			margin-left: 2em;
+			
+			&.is-active {
+				color: var( --color-accent );
+				background-color: unset;
+				border-width: 1px 1px 2px;
+			}
 		}
 
 		legend.search-filters__filter-by {

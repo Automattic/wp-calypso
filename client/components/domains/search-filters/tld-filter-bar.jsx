@@ -180,20 +180,27 @@ export class TldFilterBar extends Component {
 
 	renderPopoverButton() {
 		const {
+			filters: { tlds = [] } = {},
 			lastFilters: { tlds: lastFilterTlds = [] } = {},
 			availableTlds,
 			numberOfTldsShown,
 			translate,
 		} = this.props;
 
-		const visibleTldsInFilterBar = availableTlds.slice( 0, numberOfTldsShown );
-		const isSelectedFiltersNotInFilterBar =
-			difference( lastFilterTlds, visibleTldsInFilterBar ).length > 0;
+		let isActive;
+		if ( this.props.showDesignUpdate ) {
+			const visibleTldsInFilterBar = availableTlds.slice( 0, numberOfTldsShown );
+			const isSelectedFiltersNotInFilterBar =
+				difference( lastFilterTlds, visibleTldsInFilterBar ).length > 0;
+			isActive = isSelectedFiltersNotInFilterBar;
+		} else {
+			isActive = tlds.length > 0;
+		}
 
 		return (
 			<Button
 				className={ classNames( 'search-filters__popover-button', {
-					'is-active': isSelectedFiltersNotInFilterBar,
+					'is-active': isActive,
 					'search-filters__popover-button-domain-step-test': this.props.showDesignUpdate,
 				} ) }
 				onClick={ this.togglePopover }
