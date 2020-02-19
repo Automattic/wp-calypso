@@ -7,6 +7,8 @@ import page from 'page';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { Button, CompactCard } from '@automattic/components';
+import { connect } from 'react-redux';
+
 /**
  * Internal dependencies
  */
@@ -17,6 +19,8 @@ import MigrateButton from './migrate-button.jsx';
 import SitesBlock from 'my-sites/migrate/components/sites-block';
 import { FEATURE_UPLOAD_THEMES_PLUGINS } from 'lib/plans/constants';
 import { planHasFeature } from 'lib/plans';
+import { recordTracksEvent } from 'state/analytics/actions';
+
 /**
  * Style dependencies
  */
@@ -30,12 +34,22 @@ class StepConfirmMigration extends Component {
 		targetSiteSlug: PropTypes.string.isRequired,
 	};
 
+	componentDidMount() {
+		this.props.recordTracksEvent( 'calypso_site_migration_confirm_viewed', {} );
+	}
+
 	handleClick = () => {
 		const { sourceSite, startMigration, targetSiteSlug } = this.props;
 		const sourceSiteId = get( sourceSite, 'ID' );
 		const sourceSiteSlug = get( sourceSite, 'slug', sourceSiteId );
 
-		if ( this.isTargetSitePlanCompatible() ) {
+		const hasCompatiblePlan = this.isTargetSitePlanCompatible();
+
+		this.props.recordTracksEvent( 'calypso_site_migration_confirm_clicked', {
+			plan_compatible: hasCompatiblePlan,
+		} );
+
+		if ( hasCompatiblePlan ) {
 			return startMigration();
 		}
 
@@ -142,4 +156,4 @@ class StepConfirmMigration extends Component {
 	}
 }
 
-export default localize( StepConfirmMigration );
+export default connect( null, { recordTracksEvent } )( localize( StepConfirmMigration ) );
