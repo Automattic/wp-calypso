@@ -27,7 +27,6 @@ import { v4 as uuid } from 'uuid';
 import { stringify } from 'qs';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -532,21 +531,16 @@ class RegisterDomainStep extends React.Component {
 						comment: 'Explains how you could use an existing domain name with your site.',
 					} ) }
 				</h3>
-				<div
+				<Button
+					borderless
 					className="register-domain-step__use-your-domain-action is-clickable"
 					onClick={ useYourDomainFunction }
 					data-tracks-button-click-source="initial-suggestions-bottom"
-					role="button"
 				>
-					<div className="register-domain-step__use-your-domain-action-text">
-						{ translate( 'Use a domain I own', {
-							context: 'Domain transfer or mapping suggestion button',
-						} ) }
-					</div>
-					<div className="register-domain-step__use-your-domain-action-chevron">
-						<Gridicon className="register-domain-step__chevron" icon="chevron-right" />
-					</div>
-				</div>
+					{ translate( 'Use a domain I own', {
+						context: 'Domain transfer or mapping suggestion button',
+					} ) }
+				</Button>
 			</div>
 		);
 		/* eslint-enable jsx-a11y/click-events-have-key-events */
