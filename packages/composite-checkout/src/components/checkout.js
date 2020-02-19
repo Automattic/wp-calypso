@@ -43,6 +43,10 @@ function useRegisterCheckoutStore() {
 		reducer( state = { stepNumber: 1, paymentData: {} }, action ) {
 			switch ( action.type ) {
 				case 'STEP_NUMBER_SET':
+					if ( state.stepNumber === action.payload ) {
+						return state;
+					}
+					onEvent( { type: 'STEP_NUMBER_CHANGE_EVENT', payload: action.payload } );
 					return { ...state, stepNumber: action.payload };
 				case 'PAYMENT_DATA_UPDATE':
 					return {
@@ -63,7 +67,6 @@ function useRegisterCheckoutStore() {
 		},
 		controls: {
 			STEP_NUMBER_CHANGE_EVENT( action ) {
-				onEvent( action );
 				saveStepNumberToUrl( action.payload );
 			},
 		},
