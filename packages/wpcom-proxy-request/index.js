@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -35,12 +34,17 @@ const origin = window.location.protocol + '//' + window.location.host;
 const postStrings = ( () => {
 	let r = false;
 	try {
-		window.postMessage( {
-			toString: function() {
-				r = true;
-			}
-		}, '*' );
-	} catch ( e ) { /* empty */ }
+		window.postMessage(
+			{
+				toString: function() {
+					r = true;
+				},
+			},
+			'*'
+		);
+	} catch ( e ) {
+		/* empty */
+	}
 	return r;
 } )();
 
@@ -94,7 +98,7 @@ debug( 'using "origin": %o', origin );
  * takes care of WordPress.com user authentication (via the currently
  * logged-in user's cookies).
  *
- * @param {Object|String} originalParams - request parameters
+ * @param {Object} originalParams - request parameters
  * @param {Function} [fn] - callback response
  * @return {XMLHttpRequest} XMLHttpRequest instance
  * @api public
@@ -107,10 +111,6 @@ const request = ( originalParams, fn ) => {
 	// inject the <iframe> upon the first proxied API request
 	if ( ! iframe ) {
 		install();
-	}
-
-	if ( 'string' === typeof params ) {
-		params = { path: params };
 	}
 
 	// generate a uid for this API request
@@ -357,7 +357,7 @@ function onmessage( e ) {
 	}
 
 	if ( ! data.length ) {
-		return debug( '`e.data` doesn\'t appear to be an Array, bailing...' );
+		return debug( "`e.data` doesn't appear to be an Array, bailing..." );
 	}
 
 	// first get the `xhr` instance that we're interested in
