@@ -646,7 +646,9 @@ function getCheckoutEventHandler( dispatch ) {
 						coupon_code: action.payload.couponItem?.wpcom_meta.couponCode ?? '',
 						total: action.payload.total.amount.value,
 						currency: action.payload.total.amount.currency,
-						payment_method: action.payload.paymentMethodId,
+						payment_method:
+							translateCheckoutPaymentMethodToWpcomPaymentMethod( action.payload.paymentMethodId )
+								?.name || '',
 					} )
 				);
 			}
