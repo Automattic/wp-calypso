@@ -191,6 +191,7 @@ class TransferOtherUser extends React.Component {
 			selectedUserDisplay = this.getSelectedUserDisplayName();
 		return (
 			<Dialog
+				className="transfer-to-other-user__confirmation-dialog"
 				isVisible={ this.state.showConfirmationDialog }
 				buttons={ buttons }
 				onClose={ this.handleDialogClose }
