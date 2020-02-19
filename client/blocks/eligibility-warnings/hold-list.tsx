@@ -17,7 +17,6 @@ import Gridicon from 'components/gridicon';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { localizeUrl } from 'lib/i18n-utils';
-import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { launchSite } from 'state/sites/launch/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
@@ -53,9 +52,15 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
 			} )(),
 			supportUrl: null,
 		},
-		//TODO: return extra case from server to tell between unlaunched/private
 		SITE_PRIVATE: {
 			title: translate( 'Public site needed' ),
+			description: translate(
+				'Change your site\'s Privacy settings to "Public" or "Hidden" (not "Private.")'
+			),
+			supportUrl: localizeUrl( 'https://en.support.wordpress.com/settings/privacy-settings/' ),
+		},
+		SITE_UNLAUNCHED: {
+			title: translate( 'Launch your site' ),
 			description: translate(
 				'Only you and those you invite can view your site. Launch your site to make it visible to the public.'
 			),
@@ -173,7 +178,6 @@ export const HoldList = ( {
 	isPlaceholder,
 	launchSite: launch,
 	siteId,
-	siteIsUnlaunched,
 	translate,
 }: Props ) => {
 	const holdMessages = getHoldMessages( context, translate );
@@ -246,7 +250,7 @@ export const HoldList = ( {
 										</Button>
 									</div>
 								) }
-								{ hold === 'SITE_PRIVATE' && siteIsUnlaunched && (
+								{ hold === 'SITE_UNLAUNCHED' && (
 									<div className="eligibility-warnings__hold-action">
 										<Button disabled={ !! blockingHold } onClick={ launchCurrentSite }>
 											{ translate( 'Launch site' ) }
@@ -311,10 +315,8 @@ export const hasBlockingHold = ( holds: string[] ) =>
 
 export default connect(
 	( state: object ) => {
-		const siteId = getSelectedSiteId( state );
 		return {
-			siteId,
-			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
+			siteId: getSelectedSiteId( state ),
 		};
 	},
 	{
