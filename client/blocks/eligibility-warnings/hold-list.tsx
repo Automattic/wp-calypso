@@ -249,7 +249,7 @@ export const HoldList = ( {
 								{ hold === 'SITE_PRIVATE' && siteIsUnlaunched && (
 									<div className="eligibility-warnings__hold-action">
 										<Button disabled={ !! blockingHold } onClick={ launchCurrentSite }>
-											{ translate( 'Launch Site' ) }
+											{ translate( 'Launch site' ) }
 										</Button>
 									</div>
 								) }
