@@ -89,7 +89,7 @@ function setLocaleInDOM() {
 	switchWebpackCSS( isRTL );
 }
 
-export async function getLanguageFile( targetLocaleSlug ) {
+async function getLanguageFile( targetLocaleSlug ) {
 	const url = getLanguageFileUrl( targetLocaleSlug, 'json', window.languageRevisions || {} );
 
 	const response = await dedupedGet( url );
