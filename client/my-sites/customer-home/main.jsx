@@ -207,10 +207,12 @@ class Home extends Component {
 			isNewlyCreatedSite,
 			translate,
 			checklistMode,
+			site,
 			siteId,
 			currentThemeId,
 			siteIsUnlaunched,
 			isAtomic,
+			trackAction,
 		} = this.props;
 
 		// Show a thank-you message 30 mins post site creation/purchase
@@ -242,33 +244,42 @@ class Home extends Component {
 			}
 		}
 
-		// Show a congratulatory message post-launch
-		if ( ! siteIsUnlaunched && 'launched' === checklistMode ) {
-			return (
-				<>
-					<img
-						src="/calypso/images/signup/confetti.svg"
-						aria-hidden="true"
-						className="customer-home__confetti"
-						alt=""
-					/>
-					<FormattedHeader
-						headerText={ translate( 'You launched your site!' ) }
-						subHeaderText={ this.getChecklistSubHeaderText() }
-					/>
-				</>
-			);
-		}
-
-		// Show the standard heading otherwise
+		// If launched, show a congratulatory message, else show the standard heading
 		return (
-			<FormattedHeader
-				headerText={ translate( 'My Home' ) }
-				subHeaderText={ translate(
-					'Your home base for all the posting, editing, and growing of your site'
+			<>
+				<div className="customer-home__heading">
+					<FormattedHeader
+						headerText={ translate( 'My Home' ) }
+						subHeaderText={ translate(
+							'Your home base for all the posting, editing, and growing of your site'
+						) }
+						align="left"
+					/>
+					{ ! siteIsUnlaunched && (
+						<div className="customer-home__view-site-button">
+							<Button href={ site.URL } onClick={ () => trackAction( 'my_site', 'view_site' ) }>
+								{ translate( 'View Site' ) }
+							</Button>
+						</div>
+					) }
+				</div>
+				{ ! siteIsUnlaunched && 'launched' === checklistMode && (
+					<Card className="customer-home__launch-card" highlight="info">
+						<img
+							src="/calypso/images/illustrations/fireworks.svg"
+							aria-hidden="true"
+							className="customer-home__launch-fireworks"
+							alt=""
+						/>
+						<div className="customer-home__launch-card-text">
+							<CardHeading>{ translate( 'You launched your site!' ) }</CardHeading>
+							<p className="customer-home__launch-card-subtext">
+								{ this.getChecklistSubHeaderText() }
+							</p>
+						</div>
+					</Card>
 				) }
-				align="left"
-			/>
+			</>
 		);
 	}
 
@@ -326,7 +337,7 @@ class Home extends Component {
 		);
 	}
 
-	renderSiteTools() {
+	renderQuickLinks() {
 		const {
 			displayChecklist,
 			translate,
@@ -335,20 +346,54 @@ class Home extends Component {
 			siteSlug,
 			trackAction,
 			isStaticHomePage,
+			staticHomePageId,
 			showCustomizer,
 			hasCustomDomain,
 		} = this.props;
 
-		const siteTools = (
+		const editHomePageUrl =
+			isStaticHomePage && `/block-editor/page/${ siteSlug }/${ staticHomePageId }`;
+
+		const quickLinks = (
 			<div className="customer-home__boxes">
-				<ActionBox
-					onClick={ () => {
-						trackAction( 'my_site', 'add_page' );
-						page( `/page/${ siteSlug }` );
-					} }
-					label={ translate( 'Add a page' ) }
-					iconSrc={ pageIcon }
-				/>
+				{ isStaticHomePage ? (
+					<ActionBox
+						onClick={ () => {
+							trackAction( 'my_site', 'edit_homepage' );
+							page( editHomePageUrl );
+						} }
+						label={ translate( 'Edit homepage' ) }
+						iconSrc={ imagesIcon }
+					/>
+				) : (
+					<ActionBox
+						onClick={ () => {
+							trackAction( 'my_site', 'write_post' );
+							page( `/post/${ siteSlug }` );
+						} }
+						label={ translate( 'Write blog post' ) }
+						iconSrc={ postIcon }
+					/>
+				) }
+				{ isStaticHomePage ? (
+					<ActionBox
+						onClick={ () => {
+							trackAction( 'my_site', 'add_page' );
+							page( `/page/${ siteSlug }` );
+						} }
+						label={ translate( 'Add a page' ) }
+						iconSrc={ pageIcon }
+					/>
+				) : (
+					<ActionBox
+						onClick={ () => {
+							trackAction( 'my_site', 'manage_comments' );
+							page( `/comments/${ siteSlug }` );
+						} }
+						label={ translate( 'Manage comments' ) }
+						iconSrc={ commentIcon }
+					/>
+				) }
 				{ isStaticHomePage ? (
 					<ActionBox
 						onClick={ () => {
@@ -361,11 +406,19 @@ class Home extends Component {
 				) : (
 					<ActionBox
 						onClick={ () => {
-							trackAction( 'my_site', 'manage_comments' );
-							page( `/comments/${ siteSlug }` );
+							trackAction( 'my_site', 'add_page' );
+							page( `/page/${ siteSlug }` );
 						} }
-						label={ translate( 'Manage comments' ) }
-						iconSrc={ commentIcon }
+						label={ translate( 'Add a page' ) }
+						iconSrc={ pageIcon }
+					/>
+				) }
+				{ showCustomizer && (
+					<ActionBox
+						href={ menusUrl }
+						onClick={ () => trackAction( 'my_site', 'edit_menus' ) }
+						label={ translate( 'Edit menus' ) }
+						iconSrc={ menuIcon }
 					/>
 				) }
 				{ showCustomizer && (
@@ -383,20 +436,6 @@ class Home extends Component {
 					} }
 					label={ translate( 'Change theme' ) }
 					iconSrc={ themeIcon }
-				/>
-				{ showCustomizer && (
-					<ActionBox
-						href={ menusUrl }
-						onClick={ () => trackAction( 'my_site', 'edit_menus' ) }
-						label={ translate( 'Edit menus' ) }
-						iconSrc={ menuIcon }
-					/>
-				) }
-				<ActionBox
-					href={ `/media/${ siteSlug }` }
-					onClick={ () => trackAction( 'my_site', 'change_images' ) }
-					label={ translate( 'Change images' ) }
-					iconSrc={ imagesIcon }
 				/>
 				<ActionBox
 					href="https://wp.me/logo-maker"
@@ -433,16 +472,16 @@ class Home extends Component {
 			<>
 				{ ! isMobile() ? (
 					<Card className="customer-home__card-boxes">
-						<CardHeading>{ translate( 'Site Tools' ) }</CardHeading>
-						{ siteTools }
+						<CardHeading>{ translate( 'Quick Links' ) }</CardHeading>
+						{ quickLinks }
 					</Card>
 				) : (
 					<FoldableCard
 						className="customer-home__card-boxes card-heading-21"
-						header={ translate( 'Site Tools' ) }
+						header={ translate( 'Quick Links' ) }
 						expanded
 					>
-						{ siteTools }
+						{ quickLinks }
 					</FoldableCard>
 				) }
 			</>
@@ -457,17 +496,12 @@ class Home extends Component {
 			needsEmailVerification,
 			translate,
 			checklistMode,
-			site,
 			siteSlug,
 			trackAction,
 			expandToolsAndTrack,
-			isStaticHomePage,
-			staticHomePageId,
 			hasChecklistData,
 			siteIsUnlaunched,
 		} = this.props;
-		const editHomePageUrl =
-			isStaticHomePage && `/block-editor/page/${ siteSlug }/${ staticHomePageId }`;
 
 		if ( ! hasChecklistData ) {
 			return <div className="customer-home__loading-placeholder"></div>;
@@ -489,7 +523,7 @@ class Home extends Component {
 							<WpcomChecklist displayMode={ checklistMode } />
 						</>
 					) }
-					{ this.renderSiteTools() }
+					{ this.renderQuickLinks() }
 				</div>
 				<div className="customer-home__layout-col customer-home__layout-col-right">
 					{ siteIsUnlaunched && ! needsEmailVerification && (
@@ -509,42 +543,6 @@ class Home extends Component {
 						</Card>
 					) }
 					{ ! siteIsUnlaunched && <StatsCard /> }
-					{ ! siteIsUnlaunched && isChecklistComplete && (
-						<Card>
-							<CardHeading>{ translate( 'My Site' ) }</CardHeading>
-							<h6 className="customer-home__card-subheader">
-								{ translate( 'Make changes to your site or view its current state' ) }
-							</h6>
-							<div className="customer-home__card-col">
-								<div className="customer-home__card-col-left">
-									{ isStaticHomePage ? (
-										<Button
-											href={ editHomePageUrl }
-											primary={ isPrimary }
-											onClick={ () => trackAction( 'my_site', 'edit_homepage' ) }
-										>
-											{ translate( 'Edit Homepage' ) }
-										</Button>
-									) : (
-										<Button
-											href={ `/post/${ siteSlug }` }
-											primary={ isPrimary }
-											onClick={ () => {
-												trackAction( 'my_site', 'write_post' );
-											} }
-										>
-											{ translate( 'Write Blog Post' ) }
-										</Button>
-									) }
-								</div>
-								<div className="customer-home__card-col-right">
-									<Button href={ site.URL } onClick={ () => trackAction( 'my_site', 'view_site' ) }>
-										{ translate( 'View Site' ) }
-									</Button>
-								</div>
-							</div>
-						</Card>
-					) }
 					{ ! siteIsUnlaunched && isChecklistComplete && (
 						<Card className="customer-home__grow-earn">
 							<CardHeading>{ translate( 'Grow & Earn' ) }</CardHeading>

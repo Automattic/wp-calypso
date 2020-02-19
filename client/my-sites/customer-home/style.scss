@@ -50,6 +50,27 @@
 		width: 320px;
 		margin: 0 auto;
 	}
+
+	&__heading {
+		display: flex;
+		@include breakpoint( '<660px' ) {
+			margin: 1.5em 16px 0 16px;
+		}
+
+		.formatted-header {
+			margin: 0;
+			margin-right: 12px;
+		}
+
+		.customer-home__view-site-button {
+			margin: auto;
+			margin-right: 0;
+
+			.button {
+				text-align: center;
+			}
+		}
+	}
 	&__launch-button {
 		& .button {
 			font-size: 18px;
@@ -57,6 +78,34 @@
 			height: 50px;
 		}
 	}
+	&__launch-card {
+		display: flex;
+		padding: 12px 16px;
+
+		.customer-home__launch-fireworks {
+			margin-right: 18px;
+			width: 100px;
+
+			@include breakpoint( '<480px' ) {
+				display: none;
+			}
+		}
+
+		.customer-home__launch-card-text {
+			margin: auto 0;
+
+			.card-heading {
+				margin: 0;
+			}
+		}
+
+		.customer-home__launch-card-subtext {
+			margin: 0;
+			font-size: 14px;
+			font-weight: 300;
+		}
+	}
+
 	&__box-action {
 		margin-bottom: 16px;
 		width: 100%;
