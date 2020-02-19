@@ -39,6 +39,11 @@ class StepSourceSelect extends Component {
 		isLoading: false,
 	};
 
+	onUrlChange = args => {
+		this.setState( { error: null } );
+		this.props.onUrlChange( args );
+	};
+
 	handleContinue = () => {
 		const { translate } = this.props;
 
@@ -130,12 +135,13 @@ class StepSourceSelect extends Component {
 					sourceSite={ null }
 					loadingSourceSite={ this.state.isLoading }
 					targetSite={ targetSite }
-					onUrlChange={ this.props.onUrlChange }
+					onUrlChange={ this.onUrlChange }
 					onSubmit={ this.handleContinue }
 					url={ this.props.url }
 				/>
-				<p>{ this.state.error }</p>
 				<Card>
+					{ this.state.error && <div className="migrate__site-error">{ this.state.error }</div> }
+
 					<Button busy={ this.state.isLoading } onClick={ this.handleContinue } primary={ true }>
 						{ translate( 'Continue' ) }
 					</Button>
