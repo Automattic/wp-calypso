@@ -16,8 +16,7 @@
 		}
 
 		@include breakpoint( '<480px' ) {
-			.button,
-			.button:first-child {
+			.button {
 				display: block;
 				margin: 0 auto 10px;
 				width: 100%;
