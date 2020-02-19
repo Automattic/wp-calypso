@@ -728,9 +728,9 @@ export function getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ) {
 }
 
 /**
- * Returns the price string to display for a given theme on a given site:
+ * Returns the price string to display for a given theme on a given site.
  *
- * TODO: Add tests!
+ * TODO Add tests!
  *
  * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme ID
@@ -794,4 +794,63 @@ export function getRecommendedThemes( state ) {
  */
 export function areRecommendedThemesLoading( state ) {
 	return state.themes.recommendedThemes.isLoading;
+}
+
+/**
+ * Checks if a theme has auto loading homepage feature.
+ *
+ * @param {object} state   Global state tree
+ * @param {string} themeId An identifier for the theme
+ * @returns {boolean} True if the theme has auto loading homepage. Otherwise, False.
+ */
+export function themeHasAutoLoadingHomepage( state, themeId ) {
+	return includes(
+		getThemeTaxonomySlugs( getTheme( state, 'wpcom', themeId ), 'theme_feature' ),
+		'auto-loading-homepage'
+	);
+}
+
+/**
+ * Return the theme ID of the theme BEFORE to activated it.
+ * It allows getting the possibility to take action when it's needed.
+ * Specifically, it helps to show a modal when the theme to activate
+ * will change the homepage of the site, usually,
+ * this feature is included in First-Template Themes.
+ *
+ * @param {object} state   Global state tree
+ * @returns {string} Theme ID,
+ */
+export function getPreActivateThemeId( state ) {
+	return get( state.themes, [ 'themeHasAutoLoadingHomepageWarning', 'themeId' ] );
+}
+
+/**
+ * Returns whether the auto loading homepage modal should be shown
+ * before to start to install theme.
+ *
+ * @param {object} state   Global state tree
+ * @param {string} themeId Theme ID used to show the warning message before to activate.
+ * @returns {boolean}      True it should show the auto loading modal. Otherwise, False.
+ */
+export function shouldShowHomepageWarning( state, themeId ) {
+	return (
+		get( state.themes, [ 'themeHasAutoLoadingHomepageWarning', 'themeId' ] ) === themeId &&
+		get( state.themes, [ 'themeHasAutoLoadingHomepageWarning', 'show' ] )
+	);
+}
+
+/**
+ * Returns whether the auto loading homepage modal has been
+ * accepted by the user, which means that the theme
+ * will be activated.
+ *
+ * @param {object} state   Global state tree
+ * @param {string} themeId Theme ID to activate in the site.
+ * @returns {boolean}      True if the auto loading homepage dialog has been accepted. Otherwise, False.
+ */
+export function hasAutoLoadingHomepageModalAccepted( state, themeId ) {
+	return (
+		get( state.themes, [ 'themeHasAutoLoadingHomepageWarning', 'themeId' ] ) === themeId &&
+		get( state.themes, [ 'themeHasAutoLoadingHomepageWarning', 'accepted' ] )
+	);
 }
