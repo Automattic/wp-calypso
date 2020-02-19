@@ -278,9 +278,7 @@ jobs:
     docker:
       - image: circleci/node:lts
     steps:
-      - run:
-          name: Checkout wp-calypso
-          command: git clone --depth 1 --branch "$CIRCLE_BRANCH" "$CIRCLE_REPOSITORY_URL"
+      - checkout
       - run:
           name: Checkout wp-babel-makepot
           command: git clone --depth 1 https://github.com/Automattic/wp-babel-makepot.git
