@@ -88,14 +88,14 @@ class StepConfirmMigration extends Component {
 		if ( this.isTargetSitePlanCompatible() ) {
 			return (
 				<MigrateButton onClick={ this.handleClick } targetSiteDomain={ targetSiteDomain }>
-					{ translate( 'Import everything' ) }
+					{ translate( 'Import Everything' ) }
 				</MigrateButton>
 			);
 		}
 
 		return (
 			<Button primary onClick={ this.handleClick }>
-				{ translate( 'Import everything' ) }
+				{ translate( 'Import Everything' ) }
 			</Button>
 		);
 	}
