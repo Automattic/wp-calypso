@@ -83,7 +83,7 @@ class SecondaryCart extends Component {
 				</ul>
 
 				<ul className="secondary-cart__item">
-					<CartFreeUserPlanUpsell />
+					<CartFreeUserPlanUpsell cart={ cart } />
 				</ul>
 			</div>
 		);

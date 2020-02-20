@@ -9,23 +9,32 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { siteHasPaidPlan } from 'signup/steps/site-picker/site-picker-submit';
+import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
+import { PLAN_UPSELL_FOR_FREE_USERS } from 'state/current-user/constants';
+import { hasPlan } from 'lib/cart-values/cart-items';
 
 class CartFreeUserPlanUpsell extends React.Component {
 	static propTypes = {
 		cart: PropTypes.object,
-		translate: PropTypes.func.isRequired,
-		sitePlans: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		showPlanUpsell: PropTypes.bool,
+		translate: PropTypes.func.isRequired,
 	};
 
 	render() {
-		const { selectedSite } = this.props;
-		if ( ! this.props.selectedSite || siteHasPaidPlan( selectedSite ) ) {
+		const { cart, selectedSite, showPlanUpsell } = this.props;
+
+		if (
+			! showPlanUpsell ||
+			! selectedSite ||
+			siteHasPaidPlan( selectedSite ) ||
+			hasPlan( cart )
+		) {
 			return null;
 		}
+
 		return (
 			<div>
 				<span>TODO!</span>
@@ -39,7 +48,9 @@ const mapStateToProps = state => {
 
 	return {
 		selectedSite,
-		sitePlans: getPlansBySite( state, selectedSite ),
+		showPlanUpsell: getCurrentUser( state )
+			? currentUserHasFlag( state, PLAN_UPSELL_FOR_FREE_USERS )
+			: false,
 	};
 };
 
