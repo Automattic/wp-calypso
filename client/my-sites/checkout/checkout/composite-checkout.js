@@ -833,12 +833,12 @@ function useRedirectIfCartEmpty( items, redirectUrl, isLoading ) {
 	useEffect( () => {
 		if ( prevItemsLength > 0 && items.length === 0 ) {
 			debug( 'cart has become empty; redirecting...' );
-			window.location = redirectUrl;
+			page.redirect( redirectUrl );
 			return;
 		}
 		if ( ! isLoading && items.length === 0 ) {
 			debug( 'cart is empty and not still loading; redirecting...' );
-			window.location = redirectUrl;
+			page.redirect( redirectUrl );
 			return;
 		}
 	}, [ redirectUrl, items, prevItemsLength, isLoading ] );
