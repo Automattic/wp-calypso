@@ -422,7 +422,7 @@ export default function CompositeCheckout( {
 	);
 
 	const paymentMethods =
-		isLoading || isLoadingStoredCards
+		isLoading || isLoadingStoredCards || items.length < 1
 			? []
 			: [
 					fullCreditsPaymentMethod,
@@ -517,7 +517,7 @@ export default function CompositeCheckout( {
 				onEvent={ recordEvent }
 				paymentMethods={ paymentMethods }
 				registry={ registry }
-				isLoading={ isLoading || isLoadingStoredCards }
+				isLoading={ isLoading || isLoadingStoredCards || items.length < 1 }
 			>
 				<WPCheckout
 					removeItem={ removeItem }
