@@ -23,6 +23,7 @@ import {
 	createPayPalMethod,
 	createStripeMethod,
 	createFullCreditsMethod,
+	createFreePaymentMethod,
 	createApplePayMethod,
 	createExistingCardMethod,
 } from '@automattic/composite-checkout';
@@ -51,8 +52,11 @@ import {
 	sendStripeTransaction,
 	wpcomTransaction,
 	submitCreditsTransaction,
+	submitFreePurchaseTransaction,
 	WordPressCreditsLabel,
 	WordPressCreditsSummary,
+	WordPressFreePurchaseLabel,
+	WordPressFreePurchaseSummary,
 	submitApplePayPayment,
 	isApplePayAvailable,
 	submitExistingCardPayment,
@@ -372,6 +376,35 @@ export default function CompositeCheckout( {
 	fullCreditsPaymentMethod.label = <WordPressCreditsLabel credits={ credits } />;
 	fullCreditsPaymentMethod.inactiveContent = <WordPressCreditsSummary />;
 
+	const freePaymentMethod = useMemo(
+		() =>
+			createFreePaymentMethod( {
+				registerStore,
+				submitTransaction: submitData => {
+					const pending = submitFreePurchaseTransaction(
+						{
+							...submitData,
+							siteId: select( 'wpcom' )?.getSiteId?.(),
+							domainDetails: getDomainDetails( select ),
+							// this data is intentionally empty so we do not charge taxes
+							country: null,
+							postalCode: null,
+						},
+						wpcomTransaction
+					);
+					// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+					pending.then( result => {
+						debug( 'saving transaction response', result );
+						dispatch( 'wpcom' ).setTransactionResponse( result );
+					} );
+					return pending;
+				},
+			} ),
+		[ registerStore, dispatch ]
+	);
+	freePaymentMethod.label = <WordPressFreePurchaseLabel />;
+	freePaymentMethod.inactiveContent = <WordPressFreePurchaseSummary />;
+
 	const applePayMethod = useMemo(
 		() =>
 			createApplePayMethod( {
@@ -436,33 +469,49 @@ export default function CompositeCheckout( {
 		[ registerStore, storedCards, dispatch ]
 	);
 
+	const isPurchaseFree = total.amount.value === 0;
+	debug( 'is purchase free?', isPurchaseFree );
+
 	const paymentMethods =
 		isLoading || isLoadingStoredCards || items.length < 1
 			? []
 			: [
+					freePaymentMethod,
 					fullCreditsPaymentMethod,
 					applePayMethod,
 					...existingCardMethods,
 					stripeMethod,
 					paypalMethod,
-			  ].filter( methodObject => {
-					if ( methodObject.id === 'full-credits' ) {
-						return credits.amount.value > 0 && credits.amount.value >= subtotal.amount.value;
-					}
-					if ( methodObject.id === 'apple-pay' && ! isApplePayAvailable() ) {
-						return false;
-					}
-					if ( methodObject.id.startsWith( 'existingCard-' ) ) {
+			  ]
+					.filter( methodObject => {
+						// If the purchase is free, only display the free-purchase method
+						if ( methodObject.id === 'free-purchase' ) {
+							return isPurchaseFree ? true : false;
+						}
+						return isPurchaseFree ? false : true;
+					} )
+					.filter( methodObject => {
+						if ( methodObject.id === 'full-credits' ) {
+							return credits.amount.value > 0 && credits.amount.value >= subtotal.amount.value;
+						}
+						if ( methodObject.id === 'apple-pay' && ! isApplePayAvailable() ) {
+							return false;
+						}
+						if ( methodObject.id.startsWith( 'existingCard-' ) ) {
+							return isPaymentMethodEnabled(
+								'card',
+								allowedPaymentMethods || serverAllowedPaymentMethods
+							);
+						}
+						if ( methodObject.id === 'free-purchase' ) {
+							// If the free payment method still exists here (see above filter), it's enabled
+							return true;
+						}
 						return isPaymentMethodEnabled(
-							'card',
+							methodObject.id,
 							allowedPaymentMethods || serverAllowedPaymentMethods
 						);
-					}
-					return isPaymentMethodEnabled(
-						methodObject.id,
-						allowedPaymentMethods || serverAllowedPaymentMethods
-					);
-			  } );
+					} );
 
 	const validateDomainContact =
 		validateDomainContactDetails || wpcomValidateDomainContactInformation;
