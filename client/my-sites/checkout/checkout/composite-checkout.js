@@ -772,6 +772,30 @@ function getCheckoutEventHandler( dispatch ) {
 					} )
 				);
 			}
+			case 'FREE_TRANSACTION_BEGIN': {
+				dispatch(
+					recordTracksEvent( 'calypso_checkout_form_submit', {
+						credits: null,
+						payment_method: 'WPCOM_Billing_WPCOM',
+					} )
+				);
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_free_purchase_submit_clicked', {} )
+				);
+			}
+			case 'FREE_PURCHASE_TRANSACTION_ERROR': {
+				dispatch(
+					recordTracksEvent( 'calypso_checkout_payment_error', {
+						error_code: null,
+						reason: String( action.payload ),
+					} )
+				);
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_free_purchase_transaction_error', {
+						error_message: String( action.payload ),
+					} )
+				);
+			}
 			case 'PAYPAL_TRANSACTION_BEGIN': {
 				dispatch( recordTracksEvent( 'calypso_checkout_form_redirect', {} ) );
 				dispatch(
