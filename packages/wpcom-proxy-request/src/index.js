@@ -101,7 +101,6 @@ debug( 'using "origin": %o', origin );
  * @param {object} originalParams - request parameters
  * @param {Function} [fn] - callback response
  * @returns {window.XMLHttpRequest} XMLHttpRequest instance
- * @public
  */
 const request = ( originalParams, fn ) => {
 	const params = Object.assign( {}, originalParams );
@@ -176,7 +175,6 @@ const request = ( originalParams, fn ) => {
  * Calls the `postMessage()` function on the <iframe>.
  *
  * @param {object} params
- * @private
  */
 
 function submitRequest( params ) {
@@ -196,7 +194,6 @@ function submitRequest( params ) {
  *
  * @param {any} v - instance to analyze
  * @returns {boolean} `true` if `v` is a DOM File instance
- * @private
  */
 function isFile( v ) {
 	return v && Object.prototype.toString.call( v ) === '[object File]';
@@ -253,8 +250,6 @@ function patchFileObjects( formData ) {
 /**
  * Injects the proxy <iframe> instance in the <body> of the current
  * HTML page.
- *
- * @private
  */
 
 function install() {
@@ -281,8 +276,6 @@ function install() {
 
 /**
  * Reloads the proxy iframe.
- *
- * @public
  */
 const reloadProxy = () => {
 	install();
@@ -290,8 +283,6 @@ const reloadProxy = () => {
 
 /**
  * Removes the <iframe> proxy instance from the <body> of the page.
- *
- * @private
  */
 function uninstall() {
 	debug( 'uninstall()' );
@@ -303,8 +294,6 @@ function uninstall() {
 
 /**
  * The proxy <iframe> instance's "load" event callback function.
- *
- * @private
  */
 
 function onload() {
@@ -324,7 +313,6 @@ function onload() {
  * The main `window` object's "message" event callback function.
  *
  * @param {window.Event} e
- * @private
  */
 
 function onmessage( e ) {
@@ -409,7 +397,6 @@ function onmessage( e ) {
  * Handles a "progress" event being proxied back from the iframe page.
  *
  * @param {object} data
- * @private
  */
 
 function onprogress( data ) {
@@ -427,7 +414,6 @@ function onprogress( data ) {
  *
  * @param {window.XMLHttpRequest} xhr
  * @param {object} body
- * @private
  */
 
 function resolve( xhr, body, headers ) {
@@ -442,7 +428,6 @@ function resolve( xhr, body, headers ) {
  *
  * @param {window.XMLHttpRequest} xhr
  * @param {Error} err
- * @private
  */
 
 function reject( xhr, err, headers ) {
