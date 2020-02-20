@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useState, useEffect, useMemo, useCallback, useRef, useReducer } from 'react';
+import { useEffect, useMemo, useCallback, useRef, useReducer } from 'react';
 import debugFactory from 'debug';
 
 /**
@@ -417,14 +417,10 @@ export function useShoppingCart(
 	// Asynchronously re-validate when the cache is dirty.
 	useCartUpdateAndRevalidate( cacheStatus, responseCart, setServerCart, hookDispatch, onEvent );
 
-	// Keep a separate cache of the displayed cart which we regenerate only when
-	// the cart has been downloaded
-	const responseCartToDisplay = useCachedValidCart( cacheStatus, responseCart );
-
 	// Translate the responseCart into the format needed in checkout.
 	const cart: WPCOMCart = useMemo(
-		() => translateWpcomCartToCheckoutCart( translate, responseCartToDisplay ),
-		[ translate, responseCartToDisplay ]
+		() => translateWpcomCartToCheckoutCart( translate, responseCart ),
+		[ translate, responseCart ]
 	);
 
 	useShowAddCouponSuccessMessage(
@@ -581,17 +577,6 @@ function useCartUpdateAndRevalidate(
 				onEvent?.( { type: 'CART_ERROR', payload: { error: 'SET_SERVER_CART_ERROR' } } );
 			} );
 	}, [ setServerCart, cacheStatus, responseCart, onEvent, hookDispatch ] );
-}
-
-function useCachedValidCart( cacheStatus: CacheStatus, responseCart: ResponseCart ): ResponseCart {
-	const [ responseCartToDisplay, setResponseCartToDisplay ] = useState( responseCart );
-	useEffect( () => {
-		if ( cacheStatus === 'valid' ) {
-			debug( 'updating the displayed cart to match the server cart' );
-			setResponseCartToDisplay( responseCart );
-		}
-	}, [ responseCart, cacheStatus ] );
-	return responseCartToDisplay;
 }
 
 function useShowAddCouponSuccessMessage(
