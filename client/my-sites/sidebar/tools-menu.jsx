@@ -52,15 +52,13 @@ class ToolsMenu extends PureComponent {
 	}
 
 	getImportItem() {
-		const { isJetpack, isAtomicSite, translate } = this.props;
-
-		const migrateEnabled = config.isEnabled( 'tools/migrate' );
+		const { isJetpack, translate } = this.props;
 
 		return {
 			name: 'import',
 			label: translate( 'Import' ),
 			capability: 'manage_options',
-			queryable: ! isJetpack || ( isAtomicSite && migrateEnabled ),
+			queryable: ! isJetpack,
 			link: '/import',
 			paths: [ '/import', '/migrate' ],
 			wpAdminLink: 'import.php',
