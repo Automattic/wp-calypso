@@ -277,6 +277,7 @@ jobs:
   EXPERIMENTAL-translate:
     docker:
       - image: circleci/node:lts
+    working_directory: ~/wp-calypso
     environment: *shared-environment
     steps:
       - checkout
@@ -296,7 +297,6 @@ jobs:
       - run:
           working_directory: wp-babel-makepot
           command: npm run concat
-      - run: ls -lR wp-babel-makepot
       - run:
           working_directory: wp-babel-makepot
           command: npm run sanitize-pot
