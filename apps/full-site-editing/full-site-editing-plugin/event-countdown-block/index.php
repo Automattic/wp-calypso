@@ -37,6 +37,8 @@ add_action(
 			array(),
 			filemtime( __DIR__ . '/editor.css' )
 		);
+
+		wp_set_script_translations( 'jetpack-event-countdown', 'full-site-editing' );
 	}
 );
 

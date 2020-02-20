@@ -38,6 +38,8 @@ add_action(
 			array(),
 			filemtime( __DIR__ . '/editor.css' )
 		);
+
+		wp_set_script_translations( 'jetpack-timeline', 'full-site-editing' );
 	}
 );
 
