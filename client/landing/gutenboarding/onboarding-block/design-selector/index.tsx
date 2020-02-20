@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { __ as NO__ } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { useLayoutEffect, useRef, FunctionComponent } from 'react';
 import classnames from 'classnames';
@@ -12,6 +11,7 @@ import { useDialogState, Dialog, DialogBackdrop } from 'reakit/Dialog';
 import { useSpring, animated } from 'react-spring';
 import { useHistory } from 'react-router-dom';
 import { Step, usePath } from '../../path';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -31,6 +31,7 @@ interface Props {
 }
 
 const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false } ) => {
+	const { __: NO__ } = useI18n();
 	const { selectedDesign, siteVertical } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);

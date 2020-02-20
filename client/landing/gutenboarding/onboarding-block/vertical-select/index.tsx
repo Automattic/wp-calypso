@@ -2,10 +2,10 @@
  * External dependencies
  */
 import React, { createRef, useState, FunctionComponent, useEffect } from 'react';
-import { __ as NO__ } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Suggestions } from '@automattic/components';
 import { ENTER } from '@wordpress/keycodes';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -32,6 +32,7 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 	isActive,
 	onExpand,
 } ) => {
+	const { __: NO__ } = useI18n();
 	const popular = [
 		NO__( 'Travel Agency' ),
 		NO__( 'Digital Marketing' ),

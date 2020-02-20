@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
-import { __ as NO__ } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
+
 /**
  * Internal dependencies
  */
@@ -10,6 +11,7 @@ import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const CreateSite: FunctionComponent< {} > = () => {
+	const { __: NO__ } = useI18n();
 	return (
 		<div className="create-site__background">
 			<div className="create-site__layout">

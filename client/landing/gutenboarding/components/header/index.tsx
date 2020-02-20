@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { __ as NO__ } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { FunctionComponent, useEffect, useCallback } from 'react';
@@ -29,6 +29,8 @@ interface Props {
 }
 
 const Header: FunctionComponent< Props > = ( { prev } ) => {
+	const { __: NO__ } = useI18n();
+
 	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
 	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
 

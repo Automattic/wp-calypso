@@ -2,7 +2,7 @@
  * External dependencies
  */
 import '@wordpress/editor'; // This shouldn't be necessary
-import { __ as NO__ } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
 import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
 import { Popover, DropZoneProvider } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
@@ -25,6 +25,8 @@ import './style.scss';
 registerBlockType( name, settings );
 
 export function Gutenboard() {
+	const { __: NO__ } = useI18n();
+
 	// @TODO: This is currently needed in addition to the routing (inside the Onboarding Block)
 	// for the 'Back' and 'Next' buttons in the header. If we remove those (and move navigation
 	// entirely into the block), we'll be able to remove this code.

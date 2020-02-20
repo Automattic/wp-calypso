@@ -2,9 +2,9 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
-import { __ as NO__ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -20,6 +20,7 @@ interface Props {
 }
 
 const PageLayoutSelector: FunctionComponent< Props > = ( { templates } ) => {
+	const { __: NO__ } = useI18n();
 	const { pageLayouts } = useSelect( select => select( ONBOARD_STORE ).getState() );
 	const { togglePageLayout } = useDispatch( ONBOARD_STORE );
 

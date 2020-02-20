@@ -4,7 +4,8 @@
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { createRef, FunctionComponent, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { __ as NO__ } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
+
 /**
  * Internal dependencies
  */
@@ -19,6 +20,7 @@ const SiteTitle: FunctionComponent< StepProps > = ( {
 	isActive,
 	onExpand,
 } ) => {
+	const { __: NO__ } = useI18n();
 	const { siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 	const history = useHistory();
