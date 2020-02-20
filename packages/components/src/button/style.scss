@@ -7,7 +7,7 @@
 	font-family: $a8c-font-family-sans;
 	background: transparent;
 	border-style: solid;
-	border-width: 1px 1px 2px;
+	border-width: 1px;
 	cursor: pointer;
 	display: inline-block;
 	margin: 0;
@@ -46,7 +46,7 @@
 
 	&:active,
 	&.is-active {
-		border-width: 2px 1px 1px;
+		border-width: 1px;
 	}
 
 	background-color: var( --color-surface );
@@ -72,7 +72,7 @@
 
 		&:active,
 		&.is-active {
-			border-width: 1px 1px 2px;
+			border-width: 1px;
 		}
 	}
 
@@ -82,6 +82,7 @@
 	}
 
 	&.is-compact {
+		border-radius: 3px;
 		padding: 7px;
 		color: var( --color-text-subtle );
 		font-size: 12px;
@@ -124,13 +125,13 @@
 // Primary buttons
 .button.is-primary {
 	background-color: var( --color-accent );
-	border-color: var( --color-accent-dark );
+	border-color: var( --color-accent );
 	color: var( --color-text-inverted );
 
 	&:hover,
 	&:focus {
 		background-color: var( --color-accent-60 );
-		border-color: var( --color-accent-dark );
+		border-color: var( --color-accent-60 );
 		color: var( --color-text-inverted );
 	}
 
