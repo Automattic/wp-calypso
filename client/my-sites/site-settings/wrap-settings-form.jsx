@@ -60,13 +60,18 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			}
 
 			if ( ! this.props.isSavingSettings && prevProps.isSavingSettings ) {
+				const noticeSettings = {
+					id: 'site-settings-save',
+					duration: 10000,
+				};
 				if (
 					this.props.isSaveRequestSuccessful &&
 					( this.props.isJetpackSaveRequestSuccessful || ! this.props.siteIsJetpack )
 				) {
-					this.props.successNotice( this.props.translate( 'Settings saved!' ), {
-						id: 'site-settings-save',
-					} );
+					this.props.successNotice(
+						this.props.translate( 'Settings saved successfully!' ),
+						noticeSettings
+					);
 					// Upon failure to save Jetpack Settings, don't show an error message,
 					// since the JP settings data layer already does that for us.
 				} else if ( ! this.props.isSaveRequestSuccessful ) {
@@ -80,7 +85,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 							);
 							break;
 					}
-					this.props.errorNotice( text, { id: 'site-settings-save' } );
+					this.props.errorNotice( text, noticeSettings );
 				}
 			}
 		}
