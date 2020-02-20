@@ -97,6 +97,10 @@ cp -R $CODE/src/blocks/homepage-articles $TARGET/blocks/
 cp -R $CODE/src/shared $TARGET/
 cp -R $CODE/src/components $TARGET/
 
+# Replace text domain
+find $TARGET/blocks/ -name \*.js -exec sed -i '' "s/, 'newspack-blocks' )/, 'full-site-editing' )/g" "{}" \;
+sed -i '' "s/'newspack-blocks',/'full-site-editing',/g" $TARGET/class-newspack-blocks.php
+
 echo Sync done.
 
 if [ "$MODE" = "release" ]
