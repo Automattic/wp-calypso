@@ -57,6 +57,7 @@ import QueryActiveTheme from 'components/data/query-active-theme';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import GoMobileCard from 'my-sites/customer-home/go-mobile-card';
 import StatsCard from './stats-card';
+import FreePhotoLibraryCard from './free-photo-library-card';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 
 /**
@@ -70,7 +71,6 @@ import './style.scss';
 import commentIcon from 'assets/images/customer-home/comment.svg';
 import customDomainIcon from 'assets/images/customer-home/custom-domain.svg';
 import customizeIcon from 'assets/images/customer-home/customize.svg';
-import freePhotoLibraryThumbnail from 'assets/images/customer-home/free-photo-library-thumbnail.png';
 import gSuiteIcon from 'assets/images/customer-home/gsuite.svg';
 import happinessIllustration from 'assets/images/customer-home/happiness.png';
 import imagesIcon from 'assets/images/customer-home/images.svg';
@@ -510,33 +510,7 @@ class Home extends Component {
 						</Card>
 					) }
 					{ ! siteIsUnlaunched && <StatsCard /> }
-					<Card className="customer-home__free-photo-library-card">
-						{ ! isMobile() && (
-							<video
-								className="customer-home__free-photo-library-demonstration"
-								controls
-								muted
-								preload="none"
-								poster={ freePhotoLibraryThumbnail }
-							>
-								<source
-									src="https://wpcom.files.wordpress.com/2020/02/free-photo-library-demonstration.mp4"
-									type="video/mp4"
-								/>
-							</video>
-						) }
-						<CardHeading>{ translate( 'Over 40,000 Free Photos' ) }</CardHeading>
-						<p className="customer-home__card-subheader">
-							{ translate(
-								'The WordPress.com Free Photo Library integrates ' +
-									'your site with beautiful copyright-free photos to ' +
-									'create stunning designs.'
-							) }
-						</p>
-						<Button href={ localizeUrl( 'https://support.wordpress.com/free-photo-library/' ) }>
-							{ translate( 'Learn more' ) }
-						</Button>
-					</Card>
+					{ <FreePhotoLibraryCard /> }
 					{ ! siteIsUnlaunched && isChecklistComplete && (
 						<Card>
 							<CardHeading>{ translate( 'My Site' ) }</CardHeading>
