@@ -469,7 +469,7 @@ export default function CompositeCheckout( {
 		[ registerStore, storedCards, dispatch ]
 	);
 
-	const isPurchaseFree = total.amount.value === 0;
+	const isPurchaseFree = ! isLoading && total.amount.value === 0;
 	debug( 'is purchase free?', isPurchaseFree );
 
 	const paymentMethods =
