@@ -77,7 +77,6 @@ export function Gutenboard() {
 								tabIndex={ -1 }
 							>
 								<BlockList
-									className="gutenboarding-block-list"
 									__experimentalUIParts={ {
 										hasPopover: false,
 										hasSelectedUI: false,
