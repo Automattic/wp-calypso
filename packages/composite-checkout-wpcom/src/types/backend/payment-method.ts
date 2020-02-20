@@ -38,8 +38,16 @@ export type WPCOMPaymentMethodClass =
 	| WPCOMBillingStripeSourceSofort
 	| WPCOMBillingStripeSourceThreeDSecure
 	| WPCOMBillingStripeSourceWechat
+	| WPCOMBillingFullCredits
+	| WPCOMBillingFree
 	| WPCOMBillingWebPayment;
 
+export interface WPCOMBillingFullCredits {
+	name: 'WPCOM_Billing_WPCOM';
+}
+export interface WPCOMBillingFree {
+	name: 'WPCOM_Billing_WPCOM';
+}
 export interface WPCOMBillingEbanx {
 	name: 'WPCOM_Billing_Ebanx';
 }
@@ -101,6 +109,7 @@ export interface WPCOMBillingWebPayment {
  */
 export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethodClass {
 	switch ( slug ) {
+		case 'WPCOM_Billing_WPCOM':
 		case 'WPCOM_Billing_Ebanx':
 		case 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef':
 		case 'WPCOM_Billing_PayPal_Direct':
@@ -132,6 +141,8 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 	paymentMethod: WPCOMPaymentMethodClass
 ): CheckoutPaymentMethodSlug {
 	switch ( paymentMethod.name ) {
+		case 'WPCOM_Billing_WPCOM':
+			return 'free-purchase';
 		case 'WPCOM_Billing_Ebanx':
 			return 'ebanx';
 		case 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef':
@@ -203,6 +214,10 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 			return { name: 'WPCOM_Billing_Stripe_Source_Wechat' };
 		case 'apple-pay':
 			return { name: 'WPCOM_Billing_Web_Payment' };
+		case 'full-credits':
+			return { name: 'WPCOM_Billing_WPCOM' };
+		case 'free-purchase':
+			return { name: 'WPCOM_Billing_WPCOM' };
 	}
 	return null;
 }
