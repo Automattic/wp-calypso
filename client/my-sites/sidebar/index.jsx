@@ -14,7 +14,6 @@ import { memoize } from 'lodash';
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import { abtest } from 'lib/abtest';
 import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import ExternalLink from 'components/external-link';
@@ -37,6 +36,7 @@ import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import hasJetpackSites from 'state/selectors/has-jetpack-sites';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
 import {
 	getCustomizerUrl,
 	getSite,
@@ -44,7 +44,6 @@ import {
 	canCurrentUserUseAds,
 	canCurrentUserUseEarn,
 	canCurrentUserUseStore,
-	canCurrentUserUseChecklistMenu,
 } from 'state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
@@ -55,6 +54,7 @@ import {
 	expandMySitesSidebarSection as expandSection,
 	toggleMySitesSidebarSection as toggleSection,
 } from 'state/my-sites/sidebar/actions';
+import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import {
@@ -63,7 +63,7 @@ import {
 	SIDEBAR_SECTION_TOOLS,
 	SIDEBAR_SECTION_MANAGE,
 } from './constants';
-
+import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
 /**
  * Style dependencies
  */
@@ -155,48 +155,25 @@ export class MySitesSidebar extends Component {
 	}
 
 	trackCustomerHomeClick = () => {
-		this.trackMenuItemClick( this.props.isCustomerHomeEnabled ? 'customer-home' : 'checklist' );
+		this.trackMenuItemClick( 'customer-home' );
 		this.onNavigate();
 	};
 
 	customerHome() {
-		const {
-			canUserUseChecklistMenu,
-			canUserUseCustomerHome,
-			path,
-			siteSuffix,
-			siteId,
-			translate,
-			isCustomerHomeEnabled,
-		} = this.props;
+		const { canUserUseCustomerHome, path, siteSuffix, siteId, translate } = this.props;
 
-		// This will be eventually removed when Customer Home is finally live
-		const canUserViewChecklistOrCustomerHome = isCustomerHomeEnabled
-			? canUserUseCustomerHome
-			: canUserUseChecklistMenu;
-
-		if ( ! siteId || ! canUserViewChecklistOrCustomerHome ) {
+		if ( ! siteId || ! canUserUseCustomerHome ) {
 			return null;
 		}
-
-		const itemProps = isCustomerHomeEnabled
-			? {
-					label: translate( 'My Home' ),
-					selected: itemLinkMatches( [ '/home' ], path ),
-					link: '/home' + siteSuffix,
-			  }
-			: {
-					label: translate( 'Checklist' ),
-					selected: itemLinkMatches( [ '/checklist' ], path ),
-					link: '/checklist' + siteSuffix,
-			  };
 
 		return (
 			<SidebarItem
 				materialIcon="home"
 				tipTarget="menus"
 				onNavigate={ this.trackCustomerHomeClick }
-				{ ...itemProps }
+				label={ translate( 'My Home' ) }
+				selected={ itemLinkMatches( [ '/home' ], path ) }
+				link={ '/home' + siteSuffix }
 			/>
 		);
 	}
@@ -255,6 +232,11 @@ export class MySitesSidebar extends Component {
 			/>
 		);
 	}
+
+	trackMigrateClick = () => {
+		this.trackMenuItemClick( 'migrate' );
+		this.onNavigate();
+	};
 
 	trackCustomizeClick = () => {
 		this.trackMenuItemClick( 'customize' );
@@ -332,13 +314,14 @@ export class MySitesSidebar extends Component {
 
 	upgrades() {
 		const { path, translate, canUserManageOptions } = this.props;
-		const domainsLink = '/domains/manage' + this.props.siteSuffix;
 
-		if ( ! this.props.siteId ) {
-			return null;
+		let domainsLink = '/domains/manage';
+
+		if ( this.props.siteSuffix ) {
+			domainsLink += this.props.siteSuffix;
 		}
 
-		if ( ! canUserManageOptions ) {
+		if ( this.props.siteId && ! canUserManageOptions ) {
 			return null;
 		}
 
@@ -360,7 +343,15 @@ export class MySitesSidebar extends Component {
 	}
 
 	plan() {
-		const { path, site, translate, canUserManageOptions } = this.props;
+		const {
+			canUserManageOptions,
+			isAtomicSite,
+			isJetpack,
+			isVip,
+			path,
+			site,
+			translate,
+		} = this.props;
 
 		if ( ! site ) {
 			return null;
@@ -396,6 +387,9 @@ export class MySitesSidebar extends Component {
 			} );
 		}
 
+		// Hide the plan name only for Jetpack sites that are not Atomic or VIP.
+		const displayPlanName = ! ( isJetpack && ! isAtomicSite && ! isVip );
+
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<li className={ linkClass } data-tip-target={ tipTarget }>
@@ -404,7 +398,9 @@ export class MySitesSidebar extends Component {
 					<span className="menu-link-text" data-e2e-sidebar="Plan">
 						{ translate( 'Plan', { context: 'noun' } ) }
 					</span>
-					<span className="sidebar__menu-link-secondary-text">{ planName }</span>
+					{ displayPlanName && (
+						<span className="sidebar__menu-link-secondary-text">{ planName }</span>
+					) }
 				</a>
 			</li>
 		);
@@ -418,17 +414,17 @@ export class MySitesSidebar extends Component {
 	};
 
 	store() {
-		const { translate, site, siteSuffix, canUserManageOptions } = this.props;
+		const { translate, site, siteSuffix, canUserUseStore } = this.props;
 
-		if ( ! site ) {
+		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
 			return null;
 		}
 
-		if ( ! canUserManageOptions ) {
+		if ( ! canUserUseStore ) {
 			return null;
 		}
 
-		if ( ! isBusiness( site.plan ) && ! isEcommerce( site.plan ) ) {
+		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
 			return null;
 		}
 
@@ -488,6 +484,30 @@ export class MySitesSidebar extends Component {
 				preloadSectionName="marketing"
 				tipTarget="marketing"
 				expandSection={ this.expandToolsSection }
+			/>
+		);
+	}
+
+	trackHostingClick = () => {
+		this.trackMenuItemClick( 'hosting' );
+		this.onNavigate();
+	};
+
+	hosting() {
+		const { translate, path, siteSuffix, canViewAtomicHosting } = this.props;
+
+		if ( ! canViewAtomicHosting ) {
+			return null;
+		}
+
+		return (
+			<SidebarItem
+				label={ translate( 'Hosting Configuration' ) }
+				selected={ itemLinkMatches( '/hosting-config', path ) }
+				link={ `/hosting-config${ siteSuffix }` }
+				onNavigate={ this.trackHostingClick }
+				preloadSectionName="hosting"
+				expandSection={ this.expandManageSection }
 			/>
 		);
 	}
@@ -554,10 +574,6 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( ! this.useWPAdminFlows() ) {
-			return null;
-		}
-
 		const adminUrl =
 			this.props.isJetpack && ! this.props.isAtomicSite && ! this.props.isVip
 				? formatUrl( {
@@ -586,31 +602,6 @@ export class MySitesSidebar extends Component {
 			</SidebarMenu>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
-	}
-
-	// Check for cases where WP Admin links should appear, where we need support for legacy reasons (VIP, older users, testing).
-	useWPAdminFlows() {
-		const { isJetpack, isVip } = this.props;
-		const currentUser = this.props.currentUser;
-		const userRegisteredDate = new Date( currentUser.date );
-		const cutOffDate = new Date( '2015-09-07' );
-
-		// VIP sites should always show a WP Admin link regardless of the current user.
-		if ( isVip ) {
-			return true;
-		}
-
-		// Jetpack (including Atomic) sites should always show a WP Admin
-		if ( isJetpack ) {
-			return true;
-		}
-
-		// User registered before the cut-off date of September 7, 2015 and we want to support them as legacy users.
-		if ( userRegisteredDate < cutOffDate ) {
-			return true;
-		}
-
-		return false;
 	}
 
 	trackWpadminClick = () => {
@@ -663,8 +654,11 @@ export class MySitesSidebar extends Component {
 			);
 		}
 
+		if ( this.props.isMigrationInProgress ) {
+			return <SidebarMenu />;
+		}
+
 		const tools = !! this.tools() || !! this.marketing() || !! this.earn() || !! this.activity();
-		const manage = !! this.upgrades() || !! this.users() || !! this.siteSettings();
 
 		return (
 			<div className="sidebar__menu-wrapper">
@@ -711,7 +705,7 @@ export class MySitesSidebar extends Component {
 					</ExpandableSidebarMenu>
 				) }
 
-				{ manage && (
+				{
 					<ExpandableSidebarMenu
 						onClick={ this.toggleSection( SIDEBAR_SECTION_MANAGE ) }
 						expanded={ this.props.isManageSectionOpen }
@@ -719,12 +713,13 @@ export class MySitesSidebar extends Component {
 						materialIcon="settings"
 					>
 						<ul>
+							{ this.hosting() }
 							{ this.upgrades() }
 							{ this.users() }
 							{ this.siteSettings() }
 						</ul>
 					</ExpandableSidebarMenu>
-				) }
+				}
 
 				{ this.wpAdmin() }
 			</div>
@@ -757,7 +752,6 @@ function mapStateToProps( state ) {
 	const isDesignSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_DESIGN );
 	const isToolsSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_TOOLS );
 	const isManageSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_MANAGE );
-	const isCustomerHomeEnabled = 'show' === abtest( 'customerHomePage' );
 
 	return {
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),
@@ -767,12 +761,11 @@ function mapStateToProps( state ) {
 		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
 		canUserManagePlugins: canCurrentUserManagePlugins( state ),
-		canUserUseChecklistMenu: canCurrentUserUseChecklistMenu( state, siteId ),
 		canUserUseStore: canCurrentUserUseStore( state, siteId ),
 		canUserUseEarn: canCurrentUserUseEarn( state, siteId ),
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
-		isCustomerHomeEnabled,
 		canUserUseAds: canCurrentUserUseAds( state, siteId ),
+		canUserUpgradeSite: canCurrentUserUpgradeSite( state, siteId ),
 		currentUser,
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		hasJetpackSites: hasJetpackSites( state ),
@@ -783,22 +776,21 @@ function mapStateToProps( state ) {
 		isToolsSectionOpen,
 		isManageSectionOpen,
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
+		isMigrationInProgress: !! isSiteMigrationInProgress( state, selectedSiteId ),
 		isVip: isVipSite( state, selectedSiteId ),
 		showCustomizerLink: ! isSiteUsingFullSiteEditing( state, selectedSiteId ),
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
+		canViewAtomicHosting: canSiteViewAtomicHosting( state ),
 	};
 }
 
-export default connect(
-	mapStateToProps,
-	{
-		recordGoogleEvent,
-		recordTracksEvent,
-		setLayoutFocus,
-		setNextLayoutFocus,
-		expandSection,
-		toggleSection,
-	}
-)( localize( MySitesSidebar ) );
+export default connect( mapStateToProps, {
+	recordGoogleEvent,
+	recordTracksEvent,
+	setLayoutFocus,
+	setNextLayoutFocus,
+	expandSection,
+	toggleSection,
+} )( localize( MySitesSidebar ) );

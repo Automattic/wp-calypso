@@ -23,11 +23,11 @@ import {
 import { shouldShowProgress, getSelectedPostType, isExporting } from 'state/exporter/selectors';
 
 class ExportCard extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.props.advancedSettingsFetch( this.props.siteId );
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		if ( newProps.siteId !== this.props.siteId ) {
 			this.props.advancedSettingsFetch( newProps.siteId );
 		}
@@ -87,14 +87,8 @@ const trackExportClick = ( scope = 'all' ) =>
 	recordTracksEvent( 'calypso_export_start_button_click', { scope } );
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
-	advancedSettingsFetch: flowRight(
-		dispatch,
-		advancedSettingsFetch
-	),
-	setPostType: flowRight(
-		dispatch,
-		setPostType
-	),
+	advancedSettingsFetch: flowRight( dispatch, advancedSettingsFetch ),
+	setPostType: flowRight( dispatch, setPostType ),
 	fetchStatus: () => dispatch( exportStatusFetch( siteId ) ),
 
 	exportAll: () => dispatch( withAnalytics( trackExportClick(), startExport( siteId ) ) ),
@@ -104,7 +98,4 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 		),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ExportCard ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ExportCard ) );

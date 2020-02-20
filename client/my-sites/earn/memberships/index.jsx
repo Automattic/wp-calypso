@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -15,15 +12,14 @@ import { saveAs } from 'browser-filesaver';
  * Internal dependencies
  */
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
-import Card from 'components/card';
+import { isJetpackSite } from 'state/sites/selectors';
+import { Card, Button, CompactCard } from '@automattic/components';
 import InfiniteScroll from 'components/infinite-scroll';
 import QueryMembershipsEarnings from 'components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'components/data/query-memberships-settings';
 import { requestSubscribers } from 'state/memberships/subscribers/actions';
 import { decodeEntities } from 'lib/formatting';
 import Gravatar from 'components/gravatar';
-import Button from 'components/button';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import UpgradeNudge from 'blocks/upgrade-nudge';
 import { FEATURE_MEMBERSHIPS, PLAN_PERSONAL, PLAN_JETPACK_PERSONAL } from 'lib/plans/constants';
@@ -31,12 +27,12 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import SectionHeader from 'components/section-header';
 import QueryMembershipProducts from 'components/data/query-memberships';
-import CompactCard from 'components/card/compact';
 import Gridicon from 'components/gridicon';
 import { userCan } from 'lib/site/utils';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import ExternalLink from 'components/external-link';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -144,7 +140,10 @@ class MembershipsSection extends Component {
 				'renewal_price',
 				'currency',
 				'renew_interval',
-			].join( ',' ),
+				'All time total',
+			]
+				.map( field => '"' + field + '"' )
+				.join( ',' ),
 		]
 			.concat(
 				Object.values( this.props.subscribers ).map( row =>
@@ -160,12 +159,15 @@ class MembershipsSection extends Component {
 						row.plan.renewal_price,
 						row.plan.currency,
 						row.renew_interval,
-					].join( ',' )
+						row.all_time_total,
+					]
+						.map( field => ( field ? '"' + field + '"' : '""' ) )
+						.join( ',' )
 				)
 			)
 			.join( '\n' );
 
-		const blob = new Blob( [ csvData ], { type: 'text/csv;charset=utf-8' } );
+		const blob = new window.Blob( [ csvData ], { type: 'text/csv;charset=utf-8' } );
 
 		saveAs( blob, fileName );
 	}
@@ -196,9 +198,11 @@ class MembershipsSection extends Component {
 					<Card>
 						<div className="memberships__module-content module-content">
 							<div>
-								{ orderBy( Object.values( this.props.subscribers ), [ 'id' ], [ 'desc' ] ).map(
-									sub => this.renderSubscriber( sub )
-								) }
+								{ orderBy(
+									Object.values( this.props.subscribers ),
+									[ 'id' ],
+									[ 'desc' ]
+								).map( sub => this.renderSubscriber( sub ) ) }
 							</div>
 							<InfiniteScroll
 								nextPageMethod={ triggeredByInteraction =>
@@ -246,19 +250,27 @@ class MembershipsSection extends Component {
 				},
 			} );
 		} else if ( subscriber.plan.renew_interval === '1 year' ) {
-			return this.props.translate( 'Paying %(amount)s/year since %(formattedDate)s', {
-				args: {
-					amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
-					formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
-				},
-			} );
+			return this.props.translate(
+				'Paying %(amount)s/year since %(formattedDate)s. Total of %(total)s.',
+				{
+					args: {
+						amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
+						formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
+						total: formatCurrency( subscriber.all_time_total, subscriber.plan.currency ),
+					},
+				}
+			);
 		} else if ( subscriber.plan.renew_interval === '1 month' ) {
-			return this.props.translate( 'Paying %(amount)s/month since %(formattedDate)s', {
-				args: {
-					amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
-					formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
-				},
-			} );
+			return this.props.translate(
+				'Paying %(amount)s/month since %(formattedDate)s. Total of %(total)s.',
+				{
+					args: {
+						amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
+						formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
+						total: formatCurrency( subscriber.all_time_total, subscriber.plan.currency ),
+					},
+				}
+			);
 		}
 	}
 	renderSubscriberActions( subscriber ) {
@@ -346,7 +358,7 @@ class MembershipsSection extends Component {
 					<p className="memberships__onboarding-paragraph">
 						{ this.props.translate(
 							'Start collecting subscription payments! Recurring Payments is a feature inside the block editor. When editing a post or a page you can insert a button that will allow you to collect paying subscribers.'
-						) }{' '}
+						) }{ ' ' }
 						<ExternalLink
 							href="https://support.wordpress.com/recurring-payments-button/"
 							icon={ true }
@@ -394,7 +406,7 @@ class MembershipsSection extends Component {
 				) }
 				{ this.renderOnboarding(
 					<Button primary={ true } href={ this.props.connectUrl }>
-						{ this.props.translate( 'Connect Stripe to Get Started' ) }{' '}
+						{ this.props.translate( 'Connect Stripe to Get Started' ) }{ ' ' }
 						<Gridicon size={ 18 } icon={ 'external' } />
 					</Button>
 				) }
@@ -403,23 +415,6 @@ class MembershipsSection extends Component {
 	}
 
 	render() {
-		if ( this.props.isJetpackTooOld ) {
-			return this.renderOnboarding(
-				<Notice
-					status="is-warning"
-					text={ this.props.translate(
-						'Please update the Jetpack plugin to version 7.4 or higher in order to use the Recurring Payments button block.'
-					) }
-					showDismiss={ false }
-				>
-					<NoticeAction
-						href={ `https://wordpress.com/plugins/jetpack/${ this.props.siteSlug }` }
-						icon="external"
-					/>
-				</Notice>
-			);
-		}
-
 		if ( ! this.props.paidPlan ) {
 			return this.renderOnboarding(
 				<UpgradeNudge
@@ -457,7 +452,7 @@ class MembershipsSection extends Component {
 const mapStateToProps = state => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const isJetpack = isJetpackSite( state, siteId );
+
 	return {
 		site,
 		siteId,
@@ -476,13 +471,11 @@ const mapStateToProps = state => {
 		),
 		connectUrl: get( state, [ 'memberships', 'settings', siteId, 'connectUrl' ], '' ),
 		paidPlan: isSiteOnPaidPlan( state, siteId ),
-		isJetpackTooOld: isJetpack && isJetpackMinimumVersion( state, siteId, '7.4' ) === false,
-		isJetpack: isJetpack,
+		isJetpack: isJetpackSite( state, siteId ),
 		products: get( state, [ 'memberships', 'productList', 'items', siteId ], [] ),
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{ requestSubscribers }
-)( localize( MembershipsSection ) );
+export default connect( mapStateToProps, { requestSubscribers } )(
+	localize( withLocalizedMoment( MembershipsSection ) )
+);

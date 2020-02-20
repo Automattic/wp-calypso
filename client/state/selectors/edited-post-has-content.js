@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,8 +15,9 @@ const CONTENT_LENGTH_ASSUME_SET = 50;
 
 /**
  * Check if the content is empty (ignoring empty tags)
+ *
  * @param  {string}  content Raw post content
- * @return {Boolean}         Whether it's considered empty
+ * @returns {boolean}         Whether it's considered empty
  */
 export function isEmptyContent( content ) {
 	return (
@@ -31,10 +30,10 @@ export function isEmptyContent( content ) {
  * Returns true if the edited post has content
  * (title, excerpt or content not empty)
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @param  {Number}  postId Post ID
- * @return {Boolean}        Whether the edited post has content or not
+ * @param  {object}  state  Global state tree
+ * @param  {number}  siteId Site ID
+ * @param  {number}  postId Post ID
+ * @returns {boolean}        Whether the edited post has content or not
  */
 export default function editedPostHasContent( state, siteId, postId ) {
 	const editedPost = getEditedPost( state, siteId, postId );

@@ -1,7 +1,6 @@
 /**
  * Simple jsonp module that works with the slightly unconventional api.wordpress.org api. Highly inspired by http:
  *
- * @format
  */
 
 /**
@@ -30,8 +29,8 @@ function noop() {}
 /**
  * JSONP handler
  *
- * @param {String} url
- * @param {Object} query params
+ * @param {string} url
+ * @param {object} query params
  * @param {Function} optional callback
  */
 function jsonp( url, query, fn ) {

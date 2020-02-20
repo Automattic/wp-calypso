@@ -1,5 +1,3 @@
-<!-- @format -->
-
 # Action Card
 
 This is a [`Card` component](../../components/card) that has a call-to-action button.
@@ -14,6 +12,7 @@ render() {
 		<ActionCard
 			headerText={ 'Header' }
 			mainText={ 'Some text' }
+			classNames={ 'my-classname-1', 'my-classname-2' }
 			buttonText={ 'Call to action!' }
 			buttonIcon="external"
 			buttonPrimary={ true }
@@ -41,6 +40,14 @@ Header text of the card
 - **Required:** `yes`
 
 Text that describes the header
+
+### `classNames`
+
+- **Type:** `Object`
+- **Required:** `no`
+- **Default:** `{}`
+
+Class names to append to the Card
 
 ### `buttonText`
 

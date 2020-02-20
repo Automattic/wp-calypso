@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -28,6 +26,10 @@ export default class SiteTypePage extends AsyncBaseContainer {
 
 	async selectBusinessType() {
 		return await this._selectType( 'business' );
+	}
+
+	async selectProfessionalType() {
+		return await this._selectType( 'professional' );
 	}
 
 	async selectOnlineStoreType() {

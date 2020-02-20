@@ -1,14 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import page from 'page';
-import { parse } from 'qs';
-import url from 'url';
-import { get, startsWith } from 'lodash';
+import { startsWith } from 'lodash';
 import React from 'react';
 import ReactDom from 'react-dom';
 import Modal from 'react-modal';
@@ -17,6 +12,7 @@ import store from 'store';
 /**
  * Internal dependencies
  */
+import { setupLocale } from './locale';
 import config from 'config';
 import { ReduxWrappedLayout } from 'controller';
 import notices from 'notices';
@@ -34,7 +30,7 @@ import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
 import { init as pushNotificationsInit } from 'state/push-notifications/actions';
 import { setSupportSessionReduxStore } from 'lib/user/support-user-interop';
 import analytics from 'lib/analytics';
-import superProps from 'lib/analytics/super-props';
+import getSuperProps from 'lib/analytics/super-props';
 import { getSiteFragment, normalize } from 'lib/route';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
 import { setCurrentUser } from 'state/current-user/actions';
@@ -44,33 +40,33 @@ import { getHappychatAuth } from 'state/happychat/utils';
 import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
 import { setRoute as setRouteAction } from 'state/ui/actions';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
-import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import setupGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
-import { loadUserUndeployedTranslations } from 'lib/i18n-utils/switch-locale';
+import { createReduxStore } from 'state';
+import initialReducer from 'state/reducer';
+import { getInitialState, persistOnChange, loadAllState } from 'state/initial-state';
+import detectHistoryNavigation from 'lib/detect-history-navigation';
+import userFactory from 'lib/user';
+import { getUrlParts } from 'lib/url/url-parts';
+import { setStore } from 'state/redux-store';
 
 const debug = debugFactory( 'calypso' );
-
-const switchUserLocale = ( currentUser, reduxStore ) => {
-	const { localeSlug, localeVariant } = currentUser.get();
-
-	if ( localeSlug ) {
-		reduxStore.dispatch( setLocale( localeSlug, localeVariant ) );
-	}
-};
 
 const setupContextMiddleware = reduxStore => {
 	page( '*', ( context, next ) => {
 		// page.js url parsing is broken so we had to disable it with `decodeURLComponents: false`
-		const parsed = url.parse( context.canonicalPath, true );
-		context.prevPath = parsed.path === context.path ? false : parsed.path;
-		context.query = parsed.query;
+		const parsed = getUrlParts( context.canonicalPath );
+		const path = parsed.pathname + parsed.search || null;
+		context.prevPath = path === context.path ? false : path;
+		context.query = Object.fromEntries( parsed.searchParams.entries() );
 
 		context.hashstring = ( parsed.hash && parsed.hash.substring( 1 ) ) || '';
 		// set `context.hash` (we have to parse manually)
 		if ( context.hashstring ) {
 			try {
-				context.hash = parse( context.hashstring );
+				context.hash = Object.fromEntries(
+					new globalThis.URLSearchParams( context.hashstring ).entries()
+				);
 			} catch ( e ) {
 				debug( 'failed to query-string parse `location.hash`', e );
 				context.hash = {};
@@ -130,6 +126,30 @@ const loggedOutMiddleware = currentUser => {
 	}
 };
 
+const loggedInMiddleware = currentUser => {
+	const jetpackCloudEnvs = [
+		'jetpack-cloud-development',
+		'jetpack-cloud-stage',
+		'jetpack-cloud-production',
+	];
+	const calypsoEnv = config( 'env_id' );
+
+	// TODO: Remove Jetpack Cloud specific logic when root route is no longer handled by the reader section
+	if ( ! currentUser.get() || jetpackCloudEnvs.includes( calypsoEnv ) ) {
+		return;
+	}
+
+	page( '/', context => {
+		let redirectPath = '/read';
+
+		if ( context.querystring ) {
+			redirectPath += `?${ context.querystring }`;
+		}
+
+		page.redirect( redirectPath );
+	} );
+};
+
 const oauthTokenMiddleware = () => {
 	if ( config.isEnabled( 'oauth' ) ) {
 		const loggedOutRoutes = [
@@ -175,30 +195,7 @@ const unsavedFormsMiddleware = () => {
 	page.exit( '*', checkFormHandler );
 };
 
-export const locales = ( currentUser, reduxStore ) => {
-	debug( 'Executing Calypso locales.' );
-
-	if ( window.i18nLocaleStrings ) {
-		const i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
-		reduxStore.dispatch( setLocaleRawData( i18nLocaleStringsObject ) );
-		const languageSlug = get( i18nLocaleStringsObject, [ '', 'localeSlug' ] );
-		if ( languageSlug ) {
-			debug( 'Checking for load-user-translations parameter' );
-			loadUserUndeployedTranslations( languageSlug );
-		}
-	}
-
-	// Use current user's locale if it was not bootstrapped (non-ssr pages)
-	if (
-		! window.i18nLocaleStrings &&
-		! config.isEnabled( 'wpcom-user-bootstrap' ) &&
-		currentUser.get()
-	) {
-		switchUserLocale( currentUser, reduxStore );
-	}
-};
-
-export const utils = () => {
+const utils = () => {
 	debug( 'Executing Calypso utils.' );
 
 	// Infer touch screen by checking if device supports touch events
@@ -216,7 +213,7 @@ export const utils = () => {
 	Modal.setAppElement( document.getElementById( 'wpcom' ) );
 };
 
-export const configureReduxStore = ( currentUser, reduxStore ) => {
+const configureReduxStore = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso configure Redux store.' );
 
 	bindWpLocaleState( reduxStore );
@@ -246,27 +243,21 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 };
 
-export const setupMiddlewares = ( currentUser, reduxStore ) => {
+const setupMiddlewares = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso setup middlewares.' );
 
 	installPerfmonPageHandlers();
 	setupContextMiddleware( reduxStore );
 	oauthTokenMiddleware();
 	loggedOutMiddleware( currentUser );
+	loggedInMiddleware( currentUser );
 	loadSectionsMiddleware();
 	setRouteMiddleware();
 	clearNoticesMiddleware();
 	unsavedFormsMiddleware();
 
-	analytics.setDispatch( reduxStore.dispatch );
-
-	if ( currentUser.get() ) {
-		// When logged in the analytics module requires user and superProps objects
-		// Inject these here
-		analytics.initialize( currentUser, superProps );
-	} else {
-		analytics.setSuperProps( superProps );
-	}
+	// The analytics module requires user (when logged in) and superProps objects. Inject these here.
+	analytics.initialize( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
 
 	// Render Layout only for non-isomorphic sections.
 	// Isomorphic sections will take care of rendering their Layout last themselves.
@@ -428,3 +419,29 @@ function renderLayout( reduxStore ) {
 
 	debug( 'Main layout rendered.' );
 }
+
+const boot = ( currentUser, router ) => {
+	utils();
+	loadAllState().then( () => {
+		const initialState = getInitialState( initialReducer );
+		const reduxStore = createReduxStore( initialState, initialReducer );
+		setStore( reduxStore );
+		persistOnChange( reduxStore );
+		setupLocale( currentUser.get(), reduxStore );
+		configureReduxStore( currentUser, reduxStore );
+		setupMiddlewares( currentUser, reduxStore );
+		detectHistoryNavigation.start();
+		if ( router ) {
+			router();
+		}
+		page.start( { decodeURLComponents: false } );
+	} );
+};
+
+export const bootApp = ( appName, router ) => {
+	const user = userFactory();
+	user.initialize().then( () => {
+		debug( `Starting ${ appName }. Let's do this.` );
+		boot( user, router );
+	} );
+};

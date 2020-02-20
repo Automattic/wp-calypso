@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 
@@ -26,13 +23,12 @@ const ReduxWrappedLoggedOutLayout = ( { store, primary, secondary, redirectUri }
 
 /**
  * @param { object } context -- Middleware context
- * @param { function } next -- Call next middleware in chain
+ * @param {Function} next -- Call next middleware in chain
  *
  * Produce a `LayoutLoggedOut` element in `context.layout`, using
  * `context.primary` and `context.secondary` to populate it.
  */
 export const makeLayout = makeLayoutMiddleware( ReduxWrappedLoggedOutLayout );
-export const makeLoggedOutLayout = makeLayout;
 
 export function redirectLoggedIn( { isLoggedIn, res }, next ) {
 	// TODO: Make it work also for development env

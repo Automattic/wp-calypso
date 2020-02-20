@@ -4,6 +4,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { isNil, isEmpty } from 'lodash';
 /* eslint-enable import/no-extraneous-dependencies */
+import classnames from 'classnames';
 
 /**
  * WordPress dependencies
@@ -17,13 +18,13 @@ const TemplateSelectorItem = props => {
 	const {
 		id,
 		value,
-		onFocus,
 		onSelect,
 		label,
 		useDynamicPreview = false,
 		staticPreviewImg,
 		staticPreviewImgAlt = '',
 		blocks = [],
+		isSelected,
 	} = props;
 
 	if ( isNil( id ) || isNil( label ) || isNil( value ) ) {
@@ -49,17 +50,21 @@ const TemplateSelectorItem = props => {
 
 	const labelId = `label-${ id }-${ value }`;
 
+	const handleLabelClick = () => {
+		onSelect( value );
+	};
+
 	return (
 		<button
 			type="button"
-			className="template-selector-item__label"
+			className={ classnames( 'template-selector-item__label', {
+				'is-selected': isSelected,
+			} ) }
 			value={ value }
-			onMouseEnter={ () => onFocus( value, label ) }
-			onClick={ () => onSelect( value, label ) }
+			onClick={ handleLabelClick }
 			aria-labelledby={ `${ id } ${ labelId }` }
 		>
 			<div className="template-selector-item__preview-wrap">{ innerPreview }</div>
-			<span id={ labelId }>{ label }</span>
 		</button>
 	);
 };

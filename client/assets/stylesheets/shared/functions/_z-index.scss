@@ -35,6 +35,7 @@ $z-layers: (
 		'.NuxWelcome:before': -1,
 		'.is-group-editor::before': -1,
 		'.is-group-gutenberg::before': -1,
+		'.app-banner__illustration': -1,
 		'.site-icon.is-blank .gridicon': 0,
 		'.chart__bar-section.is-spacer': 0,
 		'.reader__featured-post': 0,
@@ -87,6 +88,7 @@ $z-layers: (
 		'.google-my-business__close-icon': 1,
 		'.google-my-business__stats-nudge.dismissible-card__close-icon': 1,
 		'.is-section-purchases .search': 1,
+		'.checklist__task': 1,
 		'.editor-sidebar': 2,
 		'.editor-action-bar .editor-status-label': 2,
 		'.is-installing .theme': 2,
@@ -143,6 +145,7 @@ $z-layers: (
 		'.app-banner': 180,
 		'.masterbar': 180,
 		'.gdpr-banner': 185,
+		'.legal-updates-banner': 185,
 		'.detail-page__backdrop': 190,
 		'.layout__loader': 200,
 		'.offline-status': 200,
@@ -271,6 +274,10 @@ $z-layers: (
 	'.upwork-banner': (
 		'.button.upwork-banner__cta': 2,
 		'.button.upwork-banner__close': 4
+	),
+	'.checklist__task': (
+		'.checklist__task::before': 10,
+		'.checklist__task-icon': 20
 	),
 
 	// The following may be inserted into different areas.

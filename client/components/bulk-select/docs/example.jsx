@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,14 +7,17 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import BulkSelect from 'components/bulk-select';
 
 export default class extends React.Component {
 	static displayName = 'BulkSelects';
 
 	state = {
-		elements: [ { title: 'Apples', selected: true }, { title: 'Oranges', selected: false } ],
+		elements: [
+			{ title: 'Apples', selected: true },
+			{ title: 'Oranges', selected: false },
+		],
 	};
 
 	handleToggleAll = checkedState => {

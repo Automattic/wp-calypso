@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,6 +10,7 @@ import {
 	CART_COUPON_APPLY,
 	CART_COUPON_REMOVE,
 	CART_DISABLE,
+	CART_GOOGLE_APPS_REGISTRATION_DATA_ADD,
 	CART_ITEM_REMOVE,
 	CART_ITEM_REPLACE,
 	CART_ITEMS_ADD,
@@ -19,14 +19,15 @@ import {
 	CART_PRIVACY_PROTECTION_REMOVE,
 	CART_TAX_COUNTRY_CODE_SET,
 	CART_TAX_POSTAL_CODE_SET,
-	GOOGLE_APPS_REGISTRATION_DATA_ADD,
+} from 'lib/cart/action-types';
+import {
 	TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET,
 	TRANSACTION_PAYMENT_SET,
-} from 'lib/upgrades/action-types';
+} from 'lib/transaction/action-types';
 import emitter from 'lib/mixins/emitter';
 import cartSynchronizer from './cart-synchronizer';
 import PollerPool from 'lib/data-poller';
-import { recordEvents, recordUnrecognizedPaymentMethod } from './cart-analytics';
+import { recordEvents, recordUnrecognizedPaymentMethod } from 'lib/analytics/cart';
 import productsListFactory from 'lib/products-list';
 const productsList = productsListFactory();
 import Dispatcher from 'dispatcher';
@@ -146,7 +147,7 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 			update( removePrivacyFromAllDomains( CartStore.get() ) );
 			break;
 
-		case GOOGLE_APPS_REGISTRATION_DATA_ADD:
+		case CART_GOOGLE_APPS_REGISTRATION_DATA_ADD:
 			update( fillGoogleAppsRegistrationData( CartStore.get(), action.registrationData ) );
 			break;
 
@@ -201,16 +202,12 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 						postalCode = extractStoredCardMetaValue( action, 'card_zip' );
 						countryCode = extractStoredCardMetaValue( action, 'country_code' );
 						break;
-					case 'WPCOM_Billing_MoneyPress_Paygate': {
-						const paymentDetails = get( action, 'payment.newCardDetails', {} );
-						postalCode = paymentDetails[ 'postal-code' ];
-						countryCode = paymentDetails.country;
-						break;
-					}
 					case 'WPCOM_Billing_WPCOM':
 						postalCode = null;
 						countryCode = null;
 						break;
+					case 'WPCOM_Billing_Ebanx':
+					case 'WPCOM_Billing_Web_Payment':
 					case 'WPCOM_Billing_Stripe_Payment_Method': {
 						const paymentDetails = get( action, 'payment.newCardDetails', {} );
 						postalCode = paymentDetails[ 'postal-code' ];

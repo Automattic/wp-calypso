@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -37,7 +36,7 @@ function forceTeamA8C( context, next ) {
 export default function() {
 	if ( config.isEnabled( 'reader' ) ) {
 		page(
-			'/',
+			'/read',
 			preloadReaderBundle,
 			initAbTests,
 			updateLastRoute,
@@ -48,13 +47,12 @@ export default function() {
 		);
 
 		// Old and incomplete paths that should be redirected to /
-		page( '/read/following', '/' );
-		page( '/read', '/' );
-		page( '/read/blogs', '/' );
-		page( '/read/feeds', '/' );
-		page( '/read/blog', '/' );
-		page( '/read/post', '/' );
-		page( '/read/feed', '/' );
+		page( '/read/following', '/read' );
+		page( '/read/blogs', '/read' );
+		page( '/read/feeds', '/read' );
+		page( '/read/blog', '/read' );
+		page( '/read/post', '/read' );
+		page( '/read/feed', '/read' );
 
 		// Feed stream
 		page( '/read/*', preloadReaderBundle, initAbTests );

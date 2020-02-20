@@ -12,7 +12,6 @@ import {
 	SIGNUP_PROGRESS_COMPLETE_STEP,
 	SIGNUP_PROGRESS_PROCESS_STEP,
 	SIGNUP_PROGRESS_INVALIDATE_STEP,
-	SIGNUP_PROGRESS_RESUME_AFTER_LOGIN_SET,
 } from 'state/action-types';
 import { assertValidDependencies } from 'lib/signup/asserts';
 import { getCurrentFlowName } from 'state/signup/flow/selectors';
@@ -38,6 +37,7 @@ function recordSubmitStep( stepName, providedDependencies ) {
 				/**
 				 * There's no need to include a resource ID in our event.
 				 * Just record that a preview was fetched
+				 *
 				 * @see the `sitePreviewImageBlob` dependency
 				 */
 				propName = 'site_preview_image_fetched';
@@ -126,13 +126,5 @@ export function invalidateStep( step, errors ) {
 		type: SIGNUP_PROGRESS_INVALIDATE_STEP,
 		step: { ...step, lastUpdated },
 		errors,
-	};
-}
-
-export function setResumeAfterLogin( step ) {
-	const lastUpdated = Date.now();
-	return {
-		type: SIGNUP_PROGRESS_RESUME_AFTER_LOGIN_SET,
-		resumeStep: { ...step, lastUpdated },
 	};
 }

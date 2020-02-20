@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -66,7 +65,7 @@ class PressThisLink extends React.Component {
 
 	/**
 	 * generate press-this link pointing to current environment
-	 * @return {string} javascript pseudo-protocol link
+	 * @returns {string} javascript pseudo-protocol link
 	 */
 	buildPressThisLink() {
 		const functionText = pressThis.toString();

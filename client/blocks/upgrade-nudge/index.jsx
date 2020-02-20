@@ -12,8 +12,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import { FEATURE_NO_ADS } from 'lib/plans/constants';
 import { addQueryArgs } from 'lib/url';
 import { hasFeature } from 'state/sites/plans/selectors';
@@ -42,6 +41,7 @@ export class UpgradeNudge extends React.Component {
 		compact: PropTypes.bool,
 		plan: PropTypes.string,
 		feature: PropTypes.string,
+		forceDisplay: PropTypes.bool,
 		site: PropTypes.object,
 		translate: PropTypes.func,
 	};
@@ -79,6 +79,7 @@ export class UpgradeNudge extends React.Component {
 			className,
 			compact,
 			event,
+			forceDisplay,
 			plan,
 			planHasFeature,
 			feature,
@@ -94,13 +95,16 @@ export class UpgradeNudge extends React.Component {
 		const shouldNotDisplay =
 			isVip ||
 			! canManageSite ||
-			( ! site || typeof site !== 'object' || typeof site.jetpack !== 'boolean' ) ||
+			! site ||
+			typeof site !== 'object' ||
+			typeof site.jetpack !== 'boolean' ||
 			( feature && planHasFeature ) ||
 			( ! feature && ! isFreePlan( site.plan ) ) ||
 			( feature === FEATURE_NO_ADS && site.options.wordads ) ||
-			( ( ! jetpack && site.jetpack ) || ( jetpack && ! site.jetpack ) );
+			( ! jetpack && site.jetpack ) ||
+			( jetpack && ! site.jetpack );
 
-		if ( shouldNotDisplay ) {
+		if ( shouldNotDisplay && ! forceDisplay ) {
 			return null;
 		}
 

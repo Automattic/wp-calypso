@@ -1,5 +1,3 @@
-/** @format */
-
 const defaultGetCacheKey = ( ...args ) => args.join();
 
 const isFunction = fn => {
@@ -16,10 +14,10 @@ const isObject = o => {
  * @param  {Function} getDependents A Function describing the dependent(s) of the selector.
  *                                    Must return an array which gets passed as the first arg to the selector
  * @param  {Function} selector      A standard selector for calculating cached result
- * @param  {Object}   options       Options bag with additional arguments
+ * @param  {object}   options       Options bag with additional arguments
  * @param  {Function} options.getCacheKey
  *                                  Custom way to compute the cache key from the `args` list
- * @return {Function}               Cached selector
+ * @returns {Function}               Cached selector
  */
 export default function treeSelect( getDependents, selector, options = {} ) {
 	if ( process.env.NODE_ENV !== 'production' ) {
@@ -69,7 +67,7 @@ export default function treeSelect( getDependents, selector, options = {} ) {
 /*
  * This object will be used as a WeakMap key if a dependency is a falsy value (null, undefined, ...)
  */
-const STATIC_FALSY_KEY = {};
+const NULLISH_KEY = {};
 
 /*
  * First tries to get the value for the key.
@@ -79,7 +77,10 @@ const STATIC_FALSY_KEY = {};
  * The last map is a regular one because the the key for the last map is the string results of args.join().
  */
 function insertDependentKey( map, key, currentIndex, arr ) {
-	const weakMapKey = key || STATIC_FALSY_KEY;
+	if ( key != null && Object( key ) !== key ) {
+		throw new TypeError( 'key must be an object, `null`, or `undefined`' );
+	}
+	const weakMapKey = key || NULLISH_KEY;
 
 	const existingMap = map.get( weakMapKey );
 	if ( existingMap ) {

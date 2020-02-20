@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import Main from 'components/main';
 import SiteSelector from 'components/site-selector';
 import VisitSite from 'blocks/visit-site';
@@ -42,6 +40,20 @@ class Sites extends Component {
 		// No support for Gutenberg on VIP.
 		if ( /^\/block-editor/.test( path ) ) {
 			return ! site.is_vip;
+		}
+
+		if ( /^\/hosting-config/.test( path ) ) {
+			if ( ! site.capabilities.view_hosting ) {
+				return false;
+			}
+
+			// allow both Atomic sites and Simple sites, so they can be exposed to upgrade notices.
+			return true;
+		}
+
+		// Supported on Simple and Atomic Sites
+		if ( /^\/home/.test( path ) ) {
+			return ! site.is_vip && ! ( site.jetpack && ! site.options.is_automated_transfer );
 		}
 
 		return site;
@@ -89,6 +101,12 @@ class Sites extends Component {
 				break;
 			case 'settings':
 				path = translate( 'Settings' );
+				break;
+			case 'home':
+				path = translate( 'My Home' );
+				break;
+			case 'hosting-config':
+				path = translate( 'Hosting Configuration' );
 				break;
 		}
 

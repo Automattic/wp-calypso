@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -214,7 +212,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent, recordTracksEvent }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( SharingButtonsAppearance );
+export default flowRight( connectComponent, localize )( SharingButtonsAppearance );

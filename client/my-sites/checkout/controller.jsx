@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -14,15 +13,16 @@ import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
 import { getSiteBySlug } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import GSuiteNudge from 'my-sites/checkout/gsuite-nudge';
+import GSuiteNudge from './gsuite-nudge';
 import CheckoutContainer from './checkout/checkout-container';
-import CartData from 'components/data/cart';
+import CheckoutSystemDecider from './checkout/checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import UpsellNudge from './upsell-nudge';
 import { isGSuiteRestricted } from 'lib/gsuite';
-import { getRememberedCoupon } from 'lib/upgrades/actions';
+import { getRememberedCoupon } from 'lib/cart/actions';
 import { sites } from 'my-sites/controller';
+import CartData from 'components/data/cart';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
@@ -51,21 +51,25 @@ export function checkout( context, next ) {
 
 	context.store.dispatch( setSection( { name: 'checkout' }, { hasSidebar: false } ) );
 
+	// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
+	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
+
 	context.primary = (
-		<CheckoutContainer
-			product={ product }
-			purchaseId={ purchaseId }
-			selectedFeature={ feature }
-			// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
-			couponCode={ context.query.coupon || context.query.code || getRememberedCoupon() }
-			// Are we being redirected from the signup flow?
-			isComingFromSignup={ !! context.query.signup }
-			plan={ plan }
-			selectedSite={ selectedSite }
-			reduxStore={ context.store }
-			redirectTo={ context.query.redirect_to }
-			clearTransaction={ false }
-		/>
+		<CartData>
+			<CheckoutSystemDecider
+				product={ product }
+				purchaseId={ purchaseId }
+				selectedFeature={ feature }
+				couponCode={ couponCode }
+				isComingFromSignup={ !! context.query.signup }
+				plan={ plan }
+				selectedSite={ selectedSite }
+				reduxStore={ context.store }
+				redirectTo={ context.query.redirect_to }
+				upgradeIntent={ context.query.intent }
+				clearTransaction={ false }
+			/>
+		</CartData>
 	);
 
 	next();
@@ -77,7 +81,13 @@ export function checkoutPending( context, next ) {
 
 	context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
 
-	context.primary = <CheckoutPendingComponent orderId={ orderId } siteSlug={ siteSlug } />;
+	context.primary = (
+		<CheckoutPendingComponent
+			orderId={ orderId }
+			siteSlug={ siteSlug }
+			redirectTo={ context.query.redirectTo }
+		/>
+	);
 
 	next();
 }
@@ -101,6 +111,9 @@ export function checkoutThankYou( context, next ) {
 			gsuiteReceiptId={ gsuiteReceiptId }
 			domainOnlySiteFlow={ isEmpty( context.params.site ) }
 			selectedFeature={ context.params.feature }
+			redirectTo={ context.query.redirect_to }
+			upgradeIntent={ context.query.intent }
+			siteUnlaunchedBeforeUpgrade={ context.query.site_unlaunched_before_upgrade === 'true' }
 			selectedSite={ selectedSite }
 			displayMode={ displayMode }
 		/>
@@ -126,13 +139,17 @@ export function gsuiteNudge( context, next ) {
 	}
 
 	context.primary = (
-		<CartData>
+		<CheckoutContainer
+			shouldShowCart={ false }
+			clearTransaction={ true }
+			purchaseId={ Number( receiptId ) }
+		>
 			<GSuiteNudge
 				domain={ domain }
 				receiptId={ Number( receiptId ) }
 				selectedSiteId={ selectedSite.ID }
 			/>
-		</CartData>
+		</CheckoutContainer>
 	);
 
 	next();
@@ -153,6 +170,7 @@ export function upsellNudge( context, next ) {
 		upsellType = 'plan-upgrade-upsell';
 		upgradeItem = context.params.upgradeItem;
 	}
+
 	context.store.dispatch( setSection( { name: upsellType }, { hasSidebar: false } ) );
 
 	context.primary = (

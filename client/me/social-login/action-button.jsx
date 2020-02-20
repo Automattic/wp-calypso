@@ -27,6 +27,8 @@ class SocialLoginActionButton extends Component {
 		translate: PropTypes.func.isRequired,
 		connectSocialUser: PropTypes.func.isRequired,
 		disconnectSocialUser: PropTypes.func.isRequired,
+		socialServiceResponse: PropTypes.object,
+		redirectUri: PropTypes.string,
 	};
 
 	state = {
@@ -84,7 +86,7 @@ class SocialLoginActionButton extends Component {
 	};
 
 	render() {
-		const { service, isConnected, isUpdatingSocialConnection, translate } = this.props;
+		const { service, isConnected, isUpdatingSocialConnection, redirectUri, translate } = this.props;
 
 		const { fetchingUser } = this.state;
 
@@ -119,8 +121,15 @@ class SocialLoginActionButton extends Component {
 		}
 
 		if ( service === 'apple' ) {
+			const uxMode = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : 'popup';
 			return (
-				<AppleLoginButton responseHandler={ this.handleSocialServiceResponse }>
+				<AppleLoginButton
+					clientId={ config( 'apple_oauth_client_id' ) }
+					uxMode={ uxMode }
+					responseHandler={ this.handleSocialServiceResponse }
+					redirectUri={ redirectUri }
+					socialServiceResponse={ this.props.socialServiceResponse }
+				>
 					{ actionButton }
 				</AppleLoginButton>
 			);

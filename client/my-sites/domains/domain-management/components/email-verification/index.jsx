@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -14,9 +13,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import { errorNotice } from 'state/notices/actions';
+import { Button, Card } from '@automattic/components';
+import { errorNotice, successNotice } from 'state/notices/actions';
 
 /**
  * Style dependencies
@@ -33,6 +31,7 @@ class EmailVerificationCard extends React.Component {
 		resendVerification: PropTypes.func.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
+		compact: PropTypes.bool,
 	};
 
 	state = {
@@ -53,7 +52,14 @@ class EmailVerificationCard extends React.Component {
 	};
 
 	handleSubmit = event => {
-		const { errorMessage, resendVerification, selectedDomainName } = this.props;
+		const {
+			errorMessage,
+			resendVerification,
+			selectedDomainName,
+			contactEmail,
+			translate,
+			compact,
+		} = this.props;
 
 		event.preventDefault();
 
@@ -63,6 +69,13 @@ class EmailVerificationCard extends React.Component {
 			if ( error ) {
 				const message = get( error, 'message', errorMessage );
 				this.props.errorNotice( message );
+			} else if ( compact ) {
+				this.props.successNotice(
+					translate( 'Check your email — instructions sent to %(email)s.', {
+						args: { email: contactEmail },
+					} ),
+					{ duration: 5000 }
+				);
 			} else {
 				this.timer = setTimeout( this.revertToWaitingState, 5000 );
 				this.setState( { emailSent: true } );
@@ -120,7 +133,25 @@ class EmailVerificationCard extends React.Component {
 		);
 	}
 
+	renderCompact() {
+		const { translate } = this.props;
+		const { submitting } = this.state;
+
+		return (
+			<div>
+				<p>{ this.props.verificationExplanation }</p>
+				<Button busy={ submitting } disabled={ submitting } onClick={ this.handleSubmit }>
+					{ submitting ? translate( 'Sending…' ) : translate( 'Resend email' ) }
+				</Button>
+			</div>
+		);
+	}
+
 	render() {
+		if ( this.props.compact ) {
+			return this.renderCompact();
+		}
+
 		return (
 			<Card highlight="warning" className="email-verification">
 				<div className="email-verification__explanation">
@@ -133,7 +164,4 @@ class EmailVerificationCard extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{ errorNotice }
-)( localize( EmailVerificationCard ) );
+export default connect( null, { errorNotice, successNotice } )( localize( EmailVerificationCard ) );

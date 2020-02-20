@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,12 +11,11 @@ import { parse } from 'qs';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card, Button } from '@automattic/components';
 import Notice from 'components/notice';
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
 import Header from 'my-sites/domains/domain-management/components/header';
 import Main from 'components/main';
-import Button from 'components/button';
 import { domainManagementEdit, domainManagementDomainConnectMapping } from 'my-sites/domains/paths';
 import { getSelectedDomain } from 'lib/domains';
 import SectionHeader from 'components/section-header';

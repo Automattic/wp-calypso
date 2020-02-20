@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -53,5 +51,14 @@ export default class CloseAccountPage extends AsyncBaseContainer {
 			this.driver,
 			by.css( '.dialog button.is-scary' )
 		);
+	}
+
+	async ConfirmAccountHasBeenClosed() {
+		await driverHelper.verifyTextPresent(
+			this.driver,
+			by.css( '.empty-content__title' ),
+			'Your account has been closed'
+		);
+		return driverHelper.clickWhenClickable( this.driver, by.css( 'button.empty-content__action' ) );
 	}
 }

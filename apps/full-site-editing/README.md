@@ -3,9 +3,11 @@
 This app contains:
 
 * `full-site-editing-plugin` - this is a master Plugin containing:
-  - `full-site-editing` Plugin
+  - `blog-posts-block` Plugin
+  - `dotcom-fse` Plugin
   - `posts-list-block` Plugin
   - `starter-page-templates` Plugin
+  - `blog-posts-block` Plugin
 
 ## File Architecture
 
@@ -13,7 +15,7 @@ This app contains:
 /full-site-editing-plugin
   /dist
     full-site-editing-plugin.css
-    full-site-editing-plugin.deps.json
+    full-site-editing-plugin.asset.php
     full-site-editing-plugin.js
     full-site-editing-plugin.rtl.css
   class-a8c-rest-template-controller.php
@@ -29,7 +31,7 @@ This app contains:
       style.scss
   /dist
     a8c-posts-list.css
-    a8c-posts-list.deps.json
+    a8c-posts-list.asset.php
     a8c-posts-list.js
     a8c-posts-list.rtl.css
   /templates

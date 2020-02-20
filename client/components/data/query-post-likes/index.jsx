@@ -33,7 +33,7 @@ class QueryPostLikes extends Component {
 		this.request();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId !== nextProps.siteId || this.props.postId !== nextProps.postId ) {
 			this.request( nextProps );
 		}

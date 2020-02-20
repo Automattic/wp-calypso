@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { isDesktop } from '@automattic/viewport';
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { get, includes } from 'lodash';
@@ -21,15 +22,13 @@ import QuerySiteChecklist from 'components/data/query-site-checklist';
 import { format as formatUrl, parse as parseUrl } from 'url';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getCustomizerUrl } from 'state/sites/selectors';
-import { isDesktop } from 'lib/viewport';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { URL } from 'types';
 import { getSitePlanSlug } from 'state/sites/plans/selectors';
 import { isBusinessPlan, isPremiumPlan } from 'lib/plans';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import JetpackProductInstall from 'my-sites/plans/current-plan/jetpack-product-install';
 
 /**
@@ -66,7 +65,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 	 * Returns the localized duration of a task in given minutes.
 	 *
 	 * @param  minutes Number of minutes.
-	 * @return Localized duration.
+	 * @returns Localized duration.
 	 */
 	getDuration( minutes: number ) {
 		return this.props.translate( '%d minute', '%d minutes', { count: minutes, args: [ minutes ] } );
@@ -200,9 +199,9 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 					{ isPaidPlan && productInstallStatus && (
 						<Task
 							id="jetpack_akismet"
-							title={ translate( "We're automatically turning on spam filtering." ) }
+							title={ translate( "We're automatically turning on Anti-spam." ) }
 							completedButtonText={ translate( 'View spam stats' ) }
-							completedTitle={ translate( "We've automatically turned on spam filtering." ) }
+							completedTitle={ translate( "We've automatically turned on Anti-spam." ) }
 							completed={ akismetFinished }
 							href={ `//${ siteSlug.replace(
 								'::',
@@ -392,9 +391,6 @@ const connectComponent = connect(
 			isProfessional,
 			isPaidPlan,
 			rewindState,
-			// `phase2: true` is passed to `getTaskList()` in the component and makes it possible to use
-			// the array-based checklist data format
-			phase2: true,
 			productInstallStatus,
 			siteId,
 			siteSlug: getSiteSlug( state, siteId ),

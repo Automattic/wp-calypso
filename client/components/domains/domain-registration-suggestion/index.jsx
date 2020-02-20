@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -26,11 +25,12 @@ import {
 	parseMatchReasons,
 	VALID_MATCH_REASONS,
 } from 'components/domains/domain-registration-suggestion/utility';
-import ProgressBar from 'components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import { getDomainPrice, getDomainSalePrice, getTld, isHstsRequired } from 'lib/domains';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getProductsList } from 'state/products-list/selectors';
 import Badge from 'components/badge';
+import PlanPill from 'components/plans/plan-pill';
 import InfoPopover from 'components/info-popover';
 import { HTTPS_SSL } from 'lib/url/support';
 
@@ -194,9 +194,15 @@ class DomainRegistrationSuggestion extends React.Component {
 			comment: 'Shown next to a domain that has a special discounted sale price',
 		} );
 		const infoPopoverSize = isFeatured ? 22 : 18;
+		const titleWrapperClassName = classNames( 'domain-registration-suggestion__title-wrapper', {
+			'domain-registration-suggestion__title-domain-copy-test':
+				this.props.showTestCopy && ! this.props.isFeatured,
+			'domain-registration-suggestion__title-domain-design-updates':
+				this.props.showDesignUpdate && ! this.props.isFeatured,
+		} );
 
 		return (
-			<div className="domain-registration-suggestion__title-wrapper">
+			<div className={ titleWrapperClassName }>
 				<h3 className="domain-registration-suggestion__title">{ title }</h3>
 				{ productSaleCost && paidDomain && <Badge>{ saleBadgeText }</Badge> }
 				{ showHstsNotice && (
@@ -204,6 +210,7 @@ class DomainRegistrationSuggestion extends React.Component {
 						className="domain-registration-suggestion__hsts-tooltip"
 						iconSize={ infoPopoverSize }
 						position={ 'right' }
+						{ ...( this.props.showDesignUpdate ? { icon: 'help-outline' } : {} ) }
 					>
 						{ translate(
 							'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
@@ -214,7 +221,16 @@ class DomainRegistrationSuggestion extends React.Component {
 									tld: '.' + getTld( domain ),
 								},
 								components: {
-									a: <a href={ HTTPS_SSL } target="_blank" rel="noopener noreferrer" />,
+									a: (
+										<a
+											href={ HTTPS_SSL }
+											target="_blank"
+											rel="noopener noreferrer"
+											onClick={ event => {
+												event.stopPropagation();
+											} }
+										/>
+									),
 									strong: <strong />,
 								},
 							}
@@ -238,7 +254,9 @@ class DomainRegistrationSuggestion extends React.Component {
 
 		let title, progressBarProps;
 		if ( isRecommended ) {
-			title = translate( 'Best Match' );
+			title = this.props.isEligibleVariantForDomainTest
+				? translate( 'Our Recommendation' )
+				: translate( 'Best Match' );
 			progressBarProps = {
 				color: NOTICE_GREEN,
 				title,
@@ -255,6 +273,36 @@ class DomainRegistrationSuggestion extends React.Component {
 		}
 
 		if ( title ) {
+			if ( this.props.showTestCopy ) {
+				const badgeClassName = classNames( '', {
+					success: isRecommended,
+					'info-blue': isBestAlternative,
+				} );
+
+				return (
+					<div className="domain-registration-suggestion__progress-bar">
+						<Badge type={ badgeClassName }>{ title }</Badge>
+					</div>
+				);
+			}
+
+			if ( this.props.showDesignUpdate ) {
+				const pillClassNames = classNames(
+					'domain-registration-suggestion__progress-bar',
+					'domain-registration-suggestion__progress-bar-design-update-test',
+					{
+						'pill-success': isRecommended,
+						'pill-primary': isBestAlternative,
+					}
+				);
+
+				return (
+					<div className={ pillClassNames }>
+						<PlanPill>{ title }</PlanPill>
+					</div>
+				);
+			}
+
 			return (
 				<div className="domain-registration-suggestion__progress-bar">
 					<ProgressBar { ...progressBarProps } />
@@ -265,6 +313,10 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	renderMatchReason() {
+		if ( this.props.isEligibleVariantForDomainTest ) {
+			return null;
+		}
+
 		const {
 			suggestion: { domain_name: domain },
 			isFeatured,
@@ -314,6 +366,10 @@ class DomainRegistrationSuggestion extends React.Component {
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				onButtonClick={ this.onButtonClick }
 				{ ...this.getButtonProps() }
+				showTestCopy={ this.props.showTestCopy }
+				showDesignUpdate={ this.props.showDesignUpdate }
+				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+				isFeatured={ isFeatured }
 			>
 				{ this.renderDomain() }
 				{ this.renderProgressBar() }
@@ -327,15 +383,20 @@ const mapStateToProps = ( state, props ) => {
 	const productSlug = get( props, 'suggestion.product_slug' );
 	const productsList = getProductsList( state );
 	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
+	const stripZeros = props.isEligibleVariantForDomainTest ? true : false;
 
 	return {
 		showHstsNotice: isHstsRequired( productSlug, productsList ),
-		productCost: getDomainPrice( productSlug, productsList, currentUserCurrencyCode ),
-		productSaleCost: getDomainSalePrice( productSlug, productsList, currentUserCurrencyCode ),
+		productCost: getDomainPrice( productSlug, productsList, currentUserCurrencyCode, stripZeros ),
+		productSaleCost: getDomainSalePrice(
+			productSlug,
+			productsList,
+			currentUserCurrencyCode,
+			stripZeros
+		),
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{ recordTracksEvent }
-)( localize( DomainRegistrationSuggestion ) );
+export default connect( mapStateToProps, { recordTracksEvent } )(
+	localize( DomainRegistrationSuggestion )
+);

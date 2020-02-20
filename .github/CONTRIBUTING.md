@@ -58,6 +58,7 @@ Consistent coding style makes the code so much easier to read. Here are ours:
 
 * [All Coding Guidelines](../docs/coding-guidelines.md)
 	- [JavaScript](../docs/coding-guidelines/javascript.md)
+	- [TypeScript](../docs/coding-guidelines/typescript.md)
 	- [CSS/Sass](../docs/coding-guidelines/css.md)
 	- [HTML](../docs/coding-guidelines/html.md)
 	- [React Components](../docs/components.md)

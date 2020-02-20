@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -17,7 +16,7 @@ import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import { preload } from 'sections-helper';
 import SitesPopover from 'components/sites-popover';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { markPostSeen } from 'state/reader/posts/actions';
 import { recordGaEvent, recordAction, recordTrackForPost } from 'reader/stats';
 import { getDailyPostType } from './helper';

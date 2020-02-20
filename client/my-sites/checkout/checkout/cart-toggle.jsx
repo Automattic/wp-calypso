@@ -1,41 +1,34 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
+import React from 'react';
+import { connect } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { showCartOnMobile } from 'lib/upgrades/actions';
+import { Button } from '@automattic/components';
+import { toggleCartOnMobile } from 'state/ui/checkout/actions';
+import { isShowingCartOnMobile } from 'state/ui/checkout/selectors';
 
-class CartToggle extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = { isShowingCartOnMobile: false };
-	}
+function CartToggle( props ) {
+	const translate = useTranslate();
 
-	toggleCartOnMobile = event => {
-		event.preventDefault();
+	const label = props.isShowingCartOnMobile
+		? translate( 'Hide order summary' )
+		: translate( 'Show order summary' );
 
-		const show = ! this.state.isShowingCartOnMobile;
-		this.setState( { isShowingCartOnMobile: show } );
-		showCartOnMobile( show );
-	};
-
-	render() {
-		const label = this.state.isShowingCartOnMobile
-			? this.props.translate( 'Hide order summary' )
-			: this.props.translate( 'Show order summary' );
-		return (
-			<a className="checkout__summary-toggle" onClick={ this.toggleCartOnMobile }>
-				{ label }
-			</a>
-		);
-	}
+	return (
+		<Button className="is-link checkout__summary-toggle" onClick={ props.toggleCartOnMobile }>
+			{ label }
+		</Button>
+	);
 }
 
-export default localize( CartToggle );
+export default connect(
+	state => ( {
+		isShowingCartOnMobile: isShowingCartOnMobile( state ),
+	} ),
+	{ toggleCartOnMobile }
+)( CartToggle );

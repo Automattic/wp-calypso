@@ -1,8 +1,4 @@
 /**
- * @format
- */
-
-/**
  * Internal dependencies
  */
 import {
@@ -10,10 +6,12 @@ import {
 	READER_CONVERSATION_MUTE,
 	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
 } from 'state/action-types';
-import getReaderConversationFollowStatus from 'state/selectors/get-reader-conversation-follow-status';
+import { getReaderConversationFollowStatus } from 'state/reader/conversations/selectors';
 
 import 'state/data-layer/wpcom/read/sites/posts/follow';
 import 'state/data-layer/wpcom/read/sites/posts/mute';
+
+import 'state/reader/init';
 
 export function followConversation( { siteId, postId } ) {
 	return ( dispatch, getState ) => {

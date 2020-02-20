@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -147,13 +146,19 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch receive action when request completes', () => {
-			return saveSettings( siteId, updatedSettings )( spy ).then( () => {
+			return saveSettings(
+				siteId,
+				updatedSettings
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( receiveSettings( siteId, apiResponse.data ) );
 			} );
 		} );
 
 		test( 'should dispatch save success action when request completes', () => {
-			return saveSettings( siteId, updatedSettings )( spy ).then( () => {
+			return saveSettings(
+				siteId,
+				updatedSettings
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
 					siteId,
@@ -162,7 +167,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			return saveSettings( failedSiteId, updatedSettings )( spy ).then( () => {
+			return saveSettings(
+				failedSiteId,
+				updatedSettings
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
 					siteId: failedSiteId,

@@ -23,6 +23,11 @@
 		text-align: center;
 		color: var( --color-text-inverted );
 	}
+	
+	.media__main-section .media-library__content.has-no-upload-button & {
+		// In the Media Library, don't allow contributors to click images.
+		pointer-events: none;
+	}
 }
 
 .media-library__list-item-selected-icon {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,13 +19,11 @@ import CommentListHeader from 'my-sites/comments/comment-list/comment-list-heade
 import CommentNavigation from 'my-sites/comments/comment-navigation';
 import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
-import QuerySiteCommentsList from 'components/data/query-site-comments-list';
 import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import getSiteCommentsTree from 'state/selectors/get-site-comments-tree';
 import isCommentsTreeInitialized from 'state/selectors/is-comments-tree-initialized';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { COMMENTS_PER_PAGE } from '../constants';
 
 const CommentTransition = props => (
@@ -53,7 +49,7 @@ export class CommentTree extends Component {
 		selectedComments: [],
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { siteId, status, changePage } = this.props;
 		const totalPages = this.getTotalPages();
 		if ( ! this.isRequestedPageValid() && totalPages > 1 ) {
@@ -145,7 +141,6 @@ export class CommentTree extends Component {
 
 	render() {
 		const {
-			isCommentsTreeSupported,
 			isLoading,
 			isPostView,
 			order,
@@ -172,15 +167,7 @@ export class CommentTree extends Component {
 		return (
 			<div className="comment-tree comment-list">
 				<QuerySiteSettings siteId={ siteId } />
-				{ ! isCommentsTreeSupported && (
-					<QuerySiteCommentsList
-						number={ 100 }
-						offset={ ( validPage - 1 ) * COMMENTS_PER_PAGE }
-						siteId={ siteId }
-						status={ status }
-					/>
-				) }
-				{ isCommentsTreeSupported && <QuerySiteCommentsTree siteId={ siteId } status={ status } /> }
+				<QuerySiteCommentsTree siteId={ siteId } status={ status } />
 				{ isPostView && <CommentListHeader postId={ postId } /> }
 				<CommentNavigation
 					commentsPage={ commentsPage }
@@ -206,10 +193,7 @@ export class CommentTree extends Component {
 								isBulkMode={ isBulkMode }
 								isPostView={ isPostView }
 								isSelected={ this.isCommentSelected( commentId ) }
-								refreshCommentData={
-									isCommentsTreeSupported &&
-									! this.hasCommentJustMovedBackToCurrentStatus( commentId )
-								}
+								refreshCommentData={ ! this.hasCommentJustMovedBackToCurrentStatus( commentId ) }
 								toggleSelected={ this.toggleCommentSelected }
 								updateLastUndo={ this.updateLastUndo }
 							/>
@@ -261,8 +245,6 @@ const mapStateToProps = ( state, { postId, siteId, status } ) => {
 	const isLoading = ! isCommentsTreeInitialized( state, siteId, status );
 	return {
 		comments,
-		isCommentsTreeSupported:
-			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.5' ),
 		isLoading,
 		isPostView,
 		siteId,
@@ -279,7 +261,4 @@ const mapDispatchToProps = dispatch => ( {
 		),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( CommentTree ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentTree ) );

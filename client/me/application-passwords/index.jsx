@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,8 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AppPasswordItem from 'me/application-password-item';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -44,7 +41,7 @@ class ApplicationPasswords extends Component {
 
 	state = this.constructor.initialState;
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.state.submittingForm && ! this.props.newAppPassword && !! nextProps.newAppPassword ) {
 			this.setState( { submittingForm: false } );
 		}

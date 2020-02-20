@@ -17,6 +17,12 @@
 	.is-section-signup & {
 		@include breakpoint( '>480px' ) {
 			flex-direction: row;
+
+			&.featured-domain-suggestions__domain-step-design-updates .domain-registration-suggestion__title {
+					font-size: 22px;
+					font-weight: 600;
+					line-height: 18px;
+			}
 		}
 	}
 
@@ -105,12 +111,31 @@
 		align-items: center;
 		display: flex;
 		font-size: 12px;
-		margin-top: 16px;
+		margin-top: 10px;
 		order: 2;
 
 		.progress-bar {
 			width: 25%;
 			margin-right: 1em;
+		}
+
+		&.domain-registration-suggestion__progress-bar-design-update-test {
+			order: 0;
+			margin: 0.7em 0 1em;
+
+			@include breakpoint( '<480px' ) {
+				margin: 0 0 0.5em;
+			}
+			
+			&.pill-success .plan-pill {
+				position: inherit;
+				background-color: var( --color-success );
+			}
+
+			&.pill-primary .plan-pill {
+				position: inherit;
+				background-color: var( --color-primary );
+			}
 		}
 	}
 

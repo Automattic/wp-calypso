@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -14,9 +12,9 @@ import 'state/data-layer/wpcom/checklist';
 /**
  * Action creator function: SITE_CHECKLIST_RECEIVE
  *
- * @param {String} siteId for the checklist
- * @param {Object} checklist the new checklist state
- * @return {Object} action object
+ * @param {string} siteId for the checklist
+ * @param {object} checklist the new checklist state
+ * @returns {object} action object
  */
 export function receiveSiteChecklist( siteId, checklist ) {
 	return {
@@ -29,12 +27,14 @@ export function receiveSiteChecklist( siteId, checklist ) {
 /**
  * Action creator function: SITE_CHECKLIST_REQUEST
  *
- * @param {String} siteId for the checklist
- * @return {Object} action object
+ * @param {string} siteId for the checklist
+ * @param {boolean} isSiteEligibleForFSE whether or not the site is eligible for Full Site Editing
+ * @returns {object} action object
  */
-export const requestSiteChecklist = siteId => ( {
+export const requestSiteChecklist = ( siteId, isSiteEligibleForFSE = false ) => ( {
 	type: SITE_CHECKLIST_REQUEST,
 	siteId,
+	isSiteEligibleForFSE,
 	meta: {
 		dataLayer: {
 			trackRequest: true,
@@ -45,9 +45,9 @@ export const requestSiteChecklist = siteId => ( {
 /**
  * Action creator function: SITE_CHECKLIST_TASK_UPDATE
  *
- * @param {String} siteId for the checklist
- * @param {String} taskId for the task
- * @return {Object} action object
+ * @param {string} siteId for the checklist
+ * @param {string} taskId for the task
+ * @returns {object} action object
  */
 export const requestSiteChecklistTaskUpdate = ( siteId, taskId ) => ( {
 	type: SITE_CHECKLIST_TASK_UPDATE,

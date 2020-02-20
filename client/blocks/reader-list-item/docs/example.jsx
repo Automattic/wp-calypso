@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { map } from 'lodash';
  */
 import ConnectedReaderListItem from 'blocks/reader-list-item/connected';
 import ReaderListItemPlaceholder from 'blocks/reader-list-item/placeholder';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 
 const sites = {
 	longreads: { siteId: 70135762 },

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,11 +7,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FeatureExample from '../index';
+import FeatureExample from '..';
 import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
 
-export default class extends React.Component {
-	static displayName = 'FeatureExample';
+export default class FeatureExampleExample extends React.Component {
+	static displayName = 'FeatureExampleExample';
 
 	getContent = () => {
 		const plugins = [

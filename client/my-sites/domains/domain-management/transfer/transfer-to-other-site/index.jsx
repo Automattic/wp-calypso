@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import SiteSelector from 'components/site-selector';
 import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
@@ -24,7 +23,6 @@ import { domainManagementList, domainManagementTransfer } from 'my-sites/domains
 import { getSelectedDomain } from 'lib/domains';
 import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import SectionHeader from 'components/section-header';
 import TransferConfirmationDialog from './confirmation-dialog';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import wp from 'lib/wp';
@@ -160,7 +158,6 @@ export class TransferToOtherSite extends React.Component {
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Transfer Domain To Another Site' ) } />
 				<Card className="transfer-to-other-site__card">
 					<p>{ message }</p>
 					<SiteSelector

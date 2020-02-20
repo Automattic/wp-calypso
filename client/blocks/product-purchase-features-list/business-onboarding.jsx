@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,7 +21,7 @@ export default localize( ( { isWpcomPlan, translate, link, onClick = noop } ) =>
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
 				icon={ <img alt="" src={ conciergeImage } /> }
-				title={ translate( 'Concierge orientation' ) }
+				title={ translate( 'Quick Start session' ) }
 				description={ translate(
 					'Schedule a one-on-one orientation session to set up your site ' +
 						'and learn more about %(serviceName)s.',

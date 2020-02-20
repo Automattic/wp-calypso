@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import { get, isEmpty, pick, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withoutPersistence } from 'state/utils';
 import magicLogin from './magic-login/reducer';
 import {
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
@@ -47,108 +45,225 @@ import {
 } from 'state/action-types';
 import { login } from 'lib/paths';
 
-export const isRequesting = createReducer( false, {
-	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST ]: () => true,
-	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE ]: () => false,
-	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS ]: () => false,
-	[ LOGIN_REQUEST ]: () => true,
-	[ LOGIN_REQUEST_FAILURE ]: () => false,
-	[ LOGIN_REQUEST_SUCCESS ]: () => false,
-	[ SOCIAL_LOGIN_REQUEST ]: () => true,
-	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: () => false,
-	[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: () => false,
-	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST ]: () => true,
-	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE ]: () => false,
-	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => false,
+export const isRequesting = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST:
+			return true;
+		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE:
+			return false;
+		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS:
+			return false;
+		case LOGIN_REQUEST:
+			return true;
+		case LOGIN_REQUEST_FAILURE:
+			return false;
+		case LOGIN_REQUEST_SUCCESS:
+			return false;
+		case SOCIAL_LOGIN_REQUEST:
+			return true;
+		case SOCIAL_LOGIN_REQUEST_FAILURE:
+			return false;
+		case SOCIAL_LOGIN_REQUEST_SUCCESS:
+			return false;
+		case SOCIAL_DISCONNECT_ACCOUNT_REQUEST:
+			return true;
+		case SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE:
+			return false;
+		case SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS:
+			return false;
+	}
+
+	return state;
 } );
 
 export const redirectTo = combineReducers( {
-	original: createReducer( null, {
-		[ ROUTE_SET ]: ( state, { path, query } ) => {
-			if ( startsWith( path, '/log-in' ) ) {
-				return query.redirect_to || state;
+	original: withoutPersistence( ( state = null, action ) => {
+		switch ( action.type ) {
+			case ROUTE_SET: {
+				const { path, query } = action;
+				if ( startsWith( path, '/log-in' ) ) {
+					return query.redirect_to || state;
+				}
+
+				return state;
 			}
-
-			return state;
-		},
-	} ),
-	sanitized: createReducer( null, {
-		[ LOGIN_REQUEST ]: () => null,
-		[ LOGIN_REQUEST_FAILURE ]: () => null,
-		[ LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => get( data, 'redirect_to', null ),
-		[ SOCIAL_LOGIN_REQUEST ]: () => null,
-		[ SOCIAL_LOGIN_REQUEST_FAILURE ]: () => null,
-		[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => get( data, 'redirect_to', null ),
-		[ SOCIAL_CONNECT_ACCOUNT_REQUEST ]: () => null,
-		[ SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE ]: () => null,
-		[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: ( state, action ) =>
-			get( action, 'redirect_to', null ),
-	} ),
-} );
-
-export const isFormDisabled = createReducer( null, {
-	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST ]: () => true,
-	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE ]: () => false,
-	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS ]: () => false,
-	[ LOGIN_REQUEST ]: () => true,
-	[ LOGIN_REQUEST_FAILURE ]: () => false,
-	[ LOGIN_REQUEST_SUCCESS ]: () => true,
-	[ ROUTE_SET ]: () => false,
-	[ SOCIAL_LOGIN_REQUEST ]: () => true,
-	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: () => false,
-	[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: () => true,
-} );
-
-export const requestError = createReducer( null, {
-	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST ]: () => null,
-	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE ]: ( state, { error } ) => error,
-	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS ]: () => null,
-	[ LOGIN_REQUEST ]: () => null,
-	[ LOGIN_REQUEST_FAILURE ]: ( state, { error } ) => error,
-	[ LOGIN_REQUEST_SUCCESS ]: () => null,
-	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST ]: () => null,
-	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE ]: ( state, { error } ) => error,
-	[ SOCIAL_CREATE_ACCOUNT_REQUEST ]: () => null,
-	[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: ( state, { error } ) => error,
-	[ SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS ]: () => null,
-	[ SOCIAL_CONNECT_ACCOUNT_REQUEST ]: () => null,
-	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE ]: ( state, { error } ) => error,
-	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => null,
-	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST ]: () => null,
-	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE ]: ( state, { error } ) => error,
-	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => null,
-	[ ROUTE_SET ]: () => null,
-	[ LOGIN_FORM_UPDATE ]: () => null,
-} );
-
-export const requestSuccess = createReducer( null, {
-	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST ]: () => null,
-	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE ]: () => false,
-	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS ]: () => true,
-	[ LOGIN_REQUEST ]: () => null,
-	[ LOGIN_REQUEST_FAILURE ]: () => false,
-	[ LOGIN_REQUEST_SUCCESS ]: () => true,
-	[ SOCIAL_CREATE_ACCOUNT_REQUEST ]: () => null,
-	[ SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS ]: () => true,
-	[ SOCIAL_CONNECT_ACCOUNT_REQUEST ]: () => null,
-	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => true,
-	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST ]: () => null,
-	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => true,
-} );
-
-export const requestNotice = createReducer( null, {
-	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST ]: ( state, { notice } ) => notice,
-	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE ]: () => null,
-	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS ]: ( state, { notice } ) => notice,
-	[ SOCIAL_CREATE_ACCOUNT_REQUEST ]: ( state, { notice } ) => notice,
-	[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: () => null,
-	[ ROUTE_SET ]: ( state, action ) => {
-		// if we just navigated to the sms 2fa page, keep the notice (if any) from the loginUser action
-		if ( action.path === login( { isNative: true, twoFactorAuthType: 'sms' } ) ) {
-			return state;
 		}
-		return null;
-	},
+
+		return state;
+	} ),
+	sanitized: withoutPersistence( ( state = null, action ) => {
+		switch ( action.type ) {
+			case LOGIN_REQUEST:
+				return null;
+			case LOGIN_REQUEST_FAILURE:
+				return null;
+			case LOGIN_REQUEST_SUCCESS: {
+				const { data } = action;
+				return get( data, 'redirect_to', null );
+			}
+			case SOCIAL_LOGIN_REQUEST:
+				return null;
+			case SOCIAL_LOGIN_REQUEST_FAILURE:
+				return null;
+			case SOCIAL_LOGIN_REQUEST_SUCCESS: {
+				const { data } = action;
+				return get( data, 'redirect_to', null );
+			}
+			case SOCIAL_CONNECT_ACCOUNT_REQUEST:
+				return null;
+			case SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE:
+				return null;
+			case SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS:
+				return get( action, 'redirect_to', null );
+		}
+
+		return state;
+	} ),
+} );
+
+export const isFormDisabled = withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST:
+			return true;
+		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE:
+			return false;
+		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS:
+			return false;
+		case LOGIN_REQUEST:
+			return true;
+		case LOGIN_REQUEST_FAILURE:
+			return false;
+		case LOGIN_REQUEST_SUCCESS:
+			return true;
+		case ROUTE_SET:
+			return false;
+		case SOCIAL_LOGIN_REQUEST:
+			return true;
+		case SOCIAL_LOGIN_REQUEST_FAILURE:
+			return false;
+		case SOCIAL_LOGIN_REQUEST_SUCCESS:
+			return true;
+	}
+
+	return state;
+} );
+
+export const requestError = withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST:
+			return null;
+		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE: {
+			const { error } = action;
+			return error;
+		}
+		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS:
+			return null;
+		case LOGIN_REQUEST:
+			return null;
+		case LOGIN_REQUEST_FAILURE: {
+			const { error } = action;
+			return error;
+		}
+		case LOGIN_REQUEST_SUCCESS:
+			return null;
+		case TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST:
+			return null;
+		case TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE: {
+			const { error } = action;
+			return error;
+		}
+		case SOCIAL_CREATE_ACCOUNT_REQUEST:
+			return null;
+		case SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE: {
+			const { error } = action;
+			return error;
+		}
+		case SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS:
+			return null;
+		case SOCIAL_CONNECT_ACCOUNT_REQUEST:
+			return null;
+		case SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE: {
+			const { error } = action;
+			return error;
+		}
+		case SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS:
+			return null;
+		case SOCIAL_DISCONNECT_ACCOUNT_REQUEST:
+			return null;
+		case SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE: {
+			const { error } = action;
+			return error;
+		}
+		case SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS:
+			return null;
+		case ROUTE_SET:
+			return null;
+		case LOGIN_FORM_UPDATE:
+			return null;
+	}
+
+	return state;
+} );
+
+export const requestSuccess = withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST:
+			return null;
+		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE:
+			return false;
+		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS:
+			return true;
+		case LOGIN_REQUEST:
+			return null;
+		case LOGIN_REQUEST_FAILURE:
+			return false;
+		case LOGIN_REQUEST_SUCCESS:
+			return true;
+		case SOCIAL_CREATE_ACCOUNT_REQUEST:
+			return null;
+		case SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS:
+			return true;
+		case SOCIAL_CONNECT_ACCOUNT_REQUEST:
+			return null;
+		case SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS:
+			return true;
+		case SOCIAL_DISCONNECT_ACCOUNT_REQUEST:
+			return null;
+		case SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS:
+			return true;
+	}
+
+	return state;
+} );
+
+export const requestNotice = withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST: {
+			const { notice } = action;
+			return notice;
+		}
+		case TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE:
+			return null;
+		case TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS: {
+			const { notice } = action;
+			return notice;
+		}
+		case SOCIAL_CREATE_ACCOUNT_REQUEST: {
+			const { notice } = action;
+			return notice;
+		}
+		case SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE:
+			return null;
+		case ROUTE_SET: {
+			// if we just navigated to the sms 2fa page, keep the notice (if any) from the loginUser action
+			if ( action.path === login( { isNative: true, twoFactorAuthType: 'sms' } ) ) {
+				return state;
+			}
+			return null;
+		}
+	}
+
+	return state;
 } );
 
 const updateTwoStepNonce = ( state, { twoStepNonce, nonceType } ) =>
@@ -167,100 +282,161 @@ const twoFactorProperties = [
 	'two_step_nonce_sms',
 	'two_step_nonce_authenticator',
 	'two_step_nonce_push',
+	'two_step_nonce_webauthn',
 	'user_id',
 ];
 
-export const twoFactorAuth = createReducer( null, {
-	[ LOGIN_REQUEST ]: () => null,
-	[ LOGIN_REQUEST_FAILURE ]: () => null,
-	[ LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => {
-		if ( data ) {
-			const twoFactorData = pick( data, twoFactorProperties );
+export const twoFactorAuth = withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case LOGIN_REQUEST:
+			return null;
+		case LOGIN_REQUEST_FAILURE:
+			return null;
+		case LOGIN_REQUEST_SUCCESS: {
+			const { data } = action;
+			if ( data ) {
+				const twoFactorData = pick( data, twoFactorProperties );
 
-			if ( ! isEmpty( twoFactorData ) ) {
-				return twoFactorData;
+				if ( ! isEmpty( twoFactorData ) ) {
+					return twoFactorData;
+				}
 			}
+
+			return null;
+		}
+		case SOCIAL_LOGIN_REQUEST:
+			return null;
+		case SOCIAL_LOGIN_REQUEST_FAILURE:
+			return null;
+		case SOCIAL_LOGIN_REQUEST_SUCCESS: {
+			const { data } = action;
+			if ( data ) {
+				const twoFactorData = pick( data, twoFactorProperties );
+
+				if ( ! isEmpty( twoFactorData ) ) {
+					return twoFactorData;
+				}
+			}
+
+			return null;
+		}
+		case SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS:
+			return null;
+		case TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE: {
+			const { twoStepNonce } = action;
+			return updateTwoStepNonce( state, { twoStepNonce, nonceType: 'sms' } );
+		}
+		case TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS: {
+			const { twoStepNonce } = action;
+			return updateTwoStepNonce( state, { twoStepNonce, nonceType: 'sms' } );
+		}
+		case TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE:
+			return updateTwoStepNonce( state, action );
+	}
+
+	return state;
+} );
+
+export const isRequestingTwoFactorAuth = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST:
+			return true;
+		case TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE:
+			return false;
+		case TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS:
+			return false;
+	}
+
+	return state;
+} );
+
+export const twoFactorAuthRequestError = withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST:
+			return null;
+		case TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE: {
+			const { error } = action;
+			return error;
+		}
+		case TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS:
+			return null;
+		case ROUTE_SET:
+			return null;
+		case LOGIN_FORM_UPDATE:
+			return null;
+	}
+
+	return state;
+} );
+
+export const twoFactorAuthPushPoll = withoutPersistence(
+	( state = { inProgress: false, success: false }, action ) => {
+		switch ( action.type ) {
+			case TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START:
+				return {
+					...state,
+					inProgress: true,
+					success: false,
+				};
+			case TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP:
+				return { ...state, inProgress: false };
+			case TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED:
+				return {
+					...state,
+					inProgress: false,
+					success: true,
+				};
 		}
 
-		return null;
-	},
-	[ SOCIAL_LOGIN_REQUEST ]: () => null,
-	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: () => null,
-	[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => {
-		if ( data ) {
-			const twoFactorData = pick( data, twoFactorProperties );
-
-			if ( ! isEmpty( twoFactorData ) ) {
-				return twoFactorData;
-			}
-		}
-
-		return null;
-	},
-	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => null,
-	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE ]: ( state, { twoStepNonce } ) =>
-		updateTwoStepNonce( state, { twoStepNonce, nonceType: 'sms' } ),
-	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS ]: ( state, { twoStepNonce } ) =>
-		updateTwoStepNonce( state, { twoStepNonce, nonceType: 'sms' } ),
-	[ TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE ]: updateTwoStepNonce,
-} );
-
-export const isRequestingTwoFactorAuth = createReducer( false, {
-	[ TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST ]: () => true,
-	[ TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE ]: () => false,
-	[ TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS ]: () => false,
-} );
-
-export const twoFactorAuthRequestError = createReducer( null, {
-	[ TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST ]: () => null,
-	[ TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE ]: ( state, { error } ) => error,
-	[ TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS ]: () => null,
-	[ ROUTE_SET ]: () => null,
-	[ LOGIN_FORM_UPDATE ]: () => null,
-} );
-
-export const twoFactorAuthPushPoll = createReducer(
-	{ inProgress: false, success: false },
-	{
-		[ TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START ]: state => ( {
-			...state,
-			inProgress: true,
-			success: false,
-		} ),
-		[ TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP ]: state => ( { ...state, inProgress: false } ),
-		[ TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED ]: state => ( {
-			...state,
-			inProgress: false,
-			success: true,
-		} ),
+		return state;
 	}
 );
 
-export const socialAccount = createReducer(
-	{ isCreating: false, createError: null },
-	{
-		[ SOCIAL_CREATE_ACCOUNT_REQUEST ]: () => ( { isCreating: true } ),
-		[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: ( state, { error } ) => ( {
-			isCreating: false,
-			createError: error,
-		} ),
-		[ SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS ]: ( state, { data: { username, bearerToken } } ) => ( {
-			isCreating: false,
-			username,
-			bearerToken,
-			createError: null,
-		} ),
-		[ SOCIAL_LOGIN_REQUEST_FAILURE ]: ( state, { error } ) => ( {
-			...state,
-			requestError: error,
-		} ),
-		[ CURRENT_USER_RECEIVE ]: state => ( {
-			...state,
-			bearerToken: null,
-			username: null,
-			createError: null,
-		} ),
-		[ LOGIN_REQUEST ]: state => ( { ...state, createError: null } ),
+export const socialAccount = withoutPersistence(
+	( state = { isCreating: false, createError: null }, action ) => {
+		switch ( action.type ) {
+			case SOCIAL_CREATE_ACCOUNT_REQUEST:
+				return { isCreating: true };
+			case SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE: {
+				const { error } = action;
+
+				return {
+					isCreating: false,
+					createError: error,
+				};
+			}
+			case SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS: {
+				const {
+					data: { username, bearerToken },
+				} = action;
+
+				return {
+					isCreating: false,
+					username,
+					bearerToken,
+					createError: null,
+				};
+			}
+			case SOCIAL_LOGIN_REQUEST_FAILURE: {
+				const { error } = action;
+
+				return {
+					...state,
+					requestError: error,
+				};
+			}
+			case CURRENT_USER_RECEIVE:
+				return {
+					...state,
+					bearerToken: null,
+					username: null,
+					createError: null,
+				};
+			case LOGIN_REQUEST:
+				return { ...state, createError: null };
+		}
+
+		return state;
 	}
 );
 
@@ -276,23 +452,42 @@ const userExistsErrorHandler = ( state, { error, authInfo } ) => {
 	return state;
 };
 
-export const socialAccountLink = createReducer(
-	{ isLinking: false },
-	{
-		[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: userExistsErrorHandler,
-		[ SOCIAL_LOGIN_REQUEST_FAILURE ]: userExistsErrorHandler,
-		[ SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS ]: () => ( { isLinking: false } ),
-		[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => ( { isLinking: false } ),
-		[ CURRENT_USER_RECEIVE ]: () => ( { isLinking: false } ),
+export const socialAccountLink = withoutPersistence( ( state = { isLinking: false }, action ) => {
+	switch ( action.type ) {
+		case SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE:
+			return userExistsErrorHandler( state, action );
+		case SOCIAL_LOGIN_REQUEST_FAILURE:
+			return userExistsErrorHandler( state, action );
+		case SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS:
+			return { isLinking: false };
+		case SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS:
+			return { isLinking: false };
+		case CURRENT_USER_RECEIVE:
+			return { isLinking: false };
 	}
-);
 
-export const authAccountType = createReducer( null, {
-	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST ]: () => null,
-	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE ]: () => null,
-	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS ]: ( state, { data: { type } } ) => type,
-	[ LOGIN_AUTH_ACCOUNT_TYPE_RESET ]: () => null,
-	[ ROUTE_SET ]: () => null,
+	return state;
+} );
+
+export const authAccountType = withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST:
+			return null;
+		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE:
+			return null;
+		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS: {
+			const {
+				data: { type },
+			} = action;
+			return type;
+		}
+		case LOGIN_AUTH_ACCOUNT_TYPE_RESET:
+			return null;
+		case ROUTE_SET:
+			return null;
+	}
+
+	return state;
 } );
 
 export default combineReducers( {

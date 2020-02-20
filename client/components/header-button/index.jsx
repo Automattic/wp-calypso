@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,19 +8,23 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const HeaderButton = ( { icon, label, ...rest } ) => (
-	<Button className="header-button" { ...rest }>
-		{ icon && <Gridicon icon={ icon } size={ 18 } /> }
-		<span className="header-button__text">{ label }</span>
-	</Button>
-);
+const HeaderButton = React.forwardRef( ( props, ref ) => {
+	const { icon, label, ...rest } = props;
+
+	return (
+		<Button { ...rest } className="header-button" ref={ ref }>
+			{ icon && <Gridicon icon={ icon } size={ 18 } /> }
+			<span className="header-button__text">{ label }</span>
+		</Button>
+	);
+} );
 
 HeaderButton.propTypes = {
 	icon: PropTypes.string,

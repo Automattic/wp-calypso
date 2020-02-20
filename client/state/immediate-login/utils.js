@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { translate } from 'i18n-calypso';
  *
  * @param {string} path  - path
  * @param {object} query - query parameters
- * @return {string}      - the URL without related params
+ * @returns {string}      - the URL without related params
  */
 export const createPathWithoutImmediateLoginInformation = ( path, query ) => {
 	const relatedParamNames = [
@@ -32,7 +30,7 @@ export const createPathWithoutImmediateLoginInformation = ( path, query ) => {
  *
  * @param {string}  loginReason  - Reason why user were logged in, the message may vary depending on it.
  * @param {string}  email        - Email of currently logged in user
- * @return {string}              - Message to show to user
+ * @returns {string}              - Message to show to user
  */
 export const createImmediateLoginMessage = ( loginReason, email ) => {
 	// It's possible to vary the message based on login reason, but currently

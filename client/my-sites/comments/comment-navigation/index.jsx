@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,12 +11,11 @@ import { each, get, includes, isEqual, isUndefined, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import ButtonGroup from 'components/button-group';
 import Count from 'components/count';
 import CommentNavigationTab from './comment-navigation-tab';
 import FormCheckbox from 'components/forms/form-checkbox';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import Search from 'components/search';
@@ -194,7 +191,6 @@ export class CommentNavigation extends Component {
 			hasSearch,
 			hasComments,
 			isBulkMode,
-			isCommentsTreeSupported,
 			isSelectedAll,
 			query,
 			selectedComments,
@@ -296,7 +292,7 @@ export class CommentNavigation extends Component {
 				</NavTabs>
 
 				<CommentNavigationTab className="comment-navigation__actions comment-navigation__open-bulk">
-					{ isCommentsTreeSupported && hasComments && (
+					{ hasComments && (
 						<SegmentedControl compact className="comment-navigation__sort-buttons">
 							<SegmentedControl.Item
 								onClick={ setOrder( NEWEST_FIRST ) }
@@ -350,8 +346,6 @@ const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 		visibleComments,
 		hasComments: visibleComments.length > 0,
 		hasPendingBulkAction: hasPendingCommentRequests( state ),
-		isCommentsTreeSupported:
-			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
 	};
 };
 

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -25,7 +23,7 @@ import fromActivityTypeApi from 'state/data-layer/wpcom/sites/activity-types/fro
  * } );
  *
  * @param {string} url location from which to GET data
- * @return {object} HTTP data wrapped value
+ * @returns {object} HTTP data wrapped value
  */
 export const requestFromUrl = url =>
 	requestHttpData( `get-at-url-${ url }`, rawHttp( { method: 'GET', url } ), {

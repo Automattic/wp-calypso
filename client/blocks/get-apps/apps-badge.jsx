@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,6 +15,11 @@ import classNames from 'classnames';
 import { getLocaleSlug } from 'lib/i18n-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import TranslatableString from 'components/translatable/proptype';
+
+/**
+ * Style dependencies
+ */
+import './apps-badge.scss';
 
 // the locale slugs for each stores' image paths follow different rules
 // therefore we have to perform some trickery in getLocaleSlug()
@@ -125,9 +128,6 @@ export class AppsBadge extends PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-)( localize( AppsBadge ) );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( AppsBadge ) );

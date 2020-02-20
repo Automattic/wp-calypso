@@ -1,27 +1,19 @@
+const config = require( './client/server/config' );
 const isBrowser = process.env.BROWSERSLIST_ENV !== 'server';
 
 // Use commonjs for Node
 const modules = isBrowser ? false : 'commonjs';
-const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
+const codeSplit = config.isEnabled( 'code-splitting' );
 
 // We implicitly use browserslist configuration in package.json for build targets.
 
-const config = {
-	presets: [
-		[
-			'@babel/env',
-			{
-				modules,
-				useBuiltIns: 'entry',
-				corejs: 2,
-				// Exclude transforms that make all code slower, see https://github.com/facebook/create-react-app/pull/5278
-				exclude: [ 'transform-typeof-symbol' ],
-			},
-		],
-		'@automattic/calypso-build/babel/default',
-	],
+const babelConfig = {
+	presets: [ [ '@automattic/calypso-build/babel/default', { modules } ] ],
 	plugins: [ [ '@automattic/transform-wpcalypso-async', { async: isBrowser && codeSplit } ] ],
 	env: {
+		production: {
+			plugins: [ 'babel-plugin-transform-react-remove-prop-types' ],
+		},
 		build_pot: {
 			plugins: [
 				[
@@ -43,4 +35,4 @@ const config = {
 	},
 };
 
-module.exports = config;
+module.exports = babelConfig;

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -36,7 +34,7 @@ class PostCommentForm extends Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.setState( {
 			commentText: nextProps.commentText || '',
 		} );
@@ -200,7 +198,4 @@ PostCommentForm.defaultProps = {
 
 const mapDispatchToProps = dispatch => bindActionCreators( { editComment }, dispatch );
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( PostCommentForm );
+export default connect( null, mapDispatchToProps )( PostCommentForm );

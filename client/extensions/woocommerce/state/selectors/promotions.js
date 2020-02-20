@@ -3,8 +3,6 @@
  */
 import { get, find, isObject } from 'lodash';
 
-/** @format */
-
 /**
  * Internal dependencies
  */

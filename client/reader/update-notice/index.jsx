@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -16,7 +15,7 @@ import Gridicon from 'components/gridicon';
 import DocumentHead from 'components/data/document-head';
 import { getDocumentHeadCappedUnreadCount } from 'state/document-head/selectors';
 import { getCommentById } from 'state/comments/selectors';
-import getStream from 'state/selectors/get-reader-stream';
+import { getStream } from 'state/reader/streams/selectors';
 
 /**
  * Style dependencies

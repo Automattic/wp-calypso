@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { isEmpty, map, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FieldError from 'woocommerce/woocommerce-services/components/field-error';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
@@ -140,7 +138,7 @@ const PackageInfo = props => {
 						<FormLegend>{ translate( 'Individually Shipped Item' ) }</FormLegend>
 					</div>
 					<span className="packages-step__package-item-description">
-						{ translate( 'Item Dimensions' ) } -{' '}
+						{ translate( 'Item Dimensions' ) } -{ ' ' }
 					</span>
 					<span className={ dimensionsClass }>
 						{ renderPackageDimensions( pckg, dimensionUnit ) }
@@ -162,7 +160,7 @@ const PackageInfo = props => {
 				>
 					<option value={ 'not_selected' } key={ 'not_selected' }>
 						{ translate( 'Please select a package' ) }
-					</option>{' '}
+					</option>{ ' ' }
 					)
 					{ map( packageGroups, ( group, groupId ) => {
 						if ( isEmpty( group.definitions ) ) {
@@ -231,7 +229,7 @@ const PackageInfo = props => {
 							{ translate( 'Yes, from an adult', {
 								comment: 'Package requires signature from an adult during delivery.',
 							} ) }
-						</option>{' '}
+						</option>{ ' ' }
 						)
 					</FormSelect>
 				</div>
@@ -280,7 +278,4 @@ const mapDispatchToProps = dispatch => {
 	);
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( PackageInfo ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PackageInfo ) );

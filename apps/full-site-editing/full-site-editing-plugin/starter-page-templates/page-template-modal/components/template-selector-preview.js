@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
 /* eslint-disable import/no-extraneous-dependencies */
-import { isEmpty, isArray, debounce } from 'lodash';
+import { debounce, get, isArray, isEmpty } from 'lodash';
 /* eslint-enable import/no-extraneous-dependencies */
+import classnames from 'classnames';
 
 /**
  * WordPress dependencies
@@ -12,7 +12,14 @@ import { isEmpty, isArray, debounce } from 'lodash';
 /* eslint-disable import/no-extraneous-dependencies */
 import { __ } from '@wordpress/i18n';
 import { Disabled } from '@wordpress/components';
-import { useState, useEffect, useLayoutEffect, useRef, useReducer } from '@wordpress/element';
+import {
+	useState,
+	useEffect,
+	useLayoutEffect,
+	useRef,
+	useReducer,
+	useCallback,
+} from '@wordpress/element';
 /* eslint-enable import/no-extraneous-dependencies */
 
 /**
@@ -23,50 +30,56 @@ import BlockPreview from './block-preview';
 
 const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 	const THRESHOLD_RESIZE = 300;
+	const TITLE_DEFAULT_HEIGHT = 120;
 
-	const previewElClasses = classnames( 'template-selector-preview', 'editor-styles-wrapper' );
-	const [ transform, setTransform ] = useState( 'none' );
-	const [ visibility, setVisibility ] = useState( 'hidden' );
 	const ref = useRef( null );
 
+	const [ previewViewport, setPreviewViewport ] = useState( viewportWidth );
+	const [ titleTransform, setTitleTransform ] = useState( {
+		scale: 1,
+		offset: TITLE_DEFAULT_HEIGHT,
+	} );
 	const [ recompute, triggerRecompute ] = useReducer( state => state + 1, 0 );
 
-	// TODO: we should remove this approach and use the onReady callback.
-	// There is Gutenberg PR which adds the onReady callback
-	// as a component property.
-	// The following approach can be easily replace calling this callback
-	// once the PR ships (finger-crossed)
-	// https://github.com/WordPress/gutenberg/pull/17242
+	const updatePreviewTitle = () => {
+		if ( ! ref || ! ref.current ) {
+			return;
+		}
 
-	const updateTemplateTitle = () => {
-		// Get DOM reference.
 		setTimeout( () => {
-			if ( ! ref || ! ref.current ) {
+			const preview = ref.current.querySelector( '.block-editor-block-preview__content' );
+			if ( ! preview ) {
 				return;
 			}
 
-			// Try to get the preview content element.
-			const previewContainerEl = ref.current.querySelector(
-				'.block-editor-block-preview__content'
+			const previewScale = parseFloat(
+				get( preview, [ 'style', 'transform' ], '' )
+					.replace( 'scale(', '' )
+					.replace( ')', '' )
 			);
-			if ( ! previewContainerEl ) {
-				return;
+			if ( previewScale ) {
+				const titleOffset = TITLE_DEFAULT_HEIGHT * previewScale;
+				setTitleTransform( { scale: previewScale, offset: titleOffset } );
 			}
-
-			// Try to get the `transform` css rule from the preview container element.
-			const elStyles = window.getComputedStyle( previewContainerEl );
-			if ( elStyles && elStyles.transform ) {
-				setTransform( elStyles.transform ); // apply the same transform css rule to template title.
-			}
-
-			setVisibility( 'visible' );
-		}, 300 );
+		}, 500 );
 	};
 
+	const updatePreviewViewport = useCallback( () => {
+		if ( ! ref || ! ref.current ) {
+			return;
+		}
+		const wrapperWidth = ref.current.clientWidth;
+		if ( wrapperWidth >= viewportWidth ) {
+			setPreviewViewport( wrapperWidth );
+		} else {
+			setPreviewViewport( viewportWidth );
+		}
+	}, [ viewportWidth ] );
+
 	useLayoutEffect( () => {
-		setVisibility( 'hidden' );
-		updateTemplateTitle();
-	}, [ blocks ] );
+		updatePreviewViewport();
+		updatePreviewTitle();
+	}, [ blocks, updatePreviewViewport ] );
 
 	useEffect( () => {
 		if ( ! blocks || ! blocks.length ) {
@@ -74,23 +87,29 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 		}
 
 		const rePreviewTemplate = () => {
-			updateTemplateTitle();
+			updatePreviewViewport();
+			updatePreviewTitle();
 			triggerRecompute();
 		};
 
 		const refreshPreview = debounce( rePreviewTemplate, THRESHOLD_RESIZE );
 		window.addEventListener( 'resize', refreshPreview );
 
+		// In wp-admin, listen to the jQuery `wp-collapse-menu` event to refresh the preview on sidebar toggle.
+		if ( window.jQuery ) {
+			window.jQuery( window.document ).on( 'wp-collapse-menu', rePreviewTemplate );
+		}
+
 		return () => {
 			window.removeEventListener( 'resize', refreshPreview );
 		};
-	}, [ blocks ] );
+	}, [ blocks, updatePreviewViewport ] );
 
 	if ( isEmpty( blocks ) || ! isArray( blocks ) ) {
 		return (
-			<div className={ previewElClasses }>
+			<div className={ classnames( 'template-selector-preview', 'is-blank-preview' ) }>
 				<div className="template-selector-preview__placeholder">
-					{ __( 'Select a page template to preview.', 'full-site-editing' ) }
+					{ __( 'Select a layout to preview.', 'full-site-editing' ) }
 				</div>
 			</div>
 		);
@@ -98,13 +117,22 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		<div className={ previewElClasses }>
+		<div className="template-selector-preview">
 			<Disabled>
 				<div ref={ ref } className="edit-post-visual-editor">
-					<div className="editor-styles-wrapper" style={ { visibility } }>
+					<div className="editor-styles-wrapper">
 						<div className="editor-writing-flow">
-							<PreviewTemplateTitle title={ title } transform={ transform } />
-							<BlockPreview key={ recompute } blocks={ blocks } viewportWidth={ viewportWidth } />
+							<PreviewTemplateTitle title={ title } scale={ titleTransform.scale } />
+							<div
+								className="template-selector-preview__offset-correction"
+								style={ { top: titleTransform.offset } }
+							>
+								<BlockPreview
+									key={ recompute }
+									blocks={ blocks }
+									viewportWidth={ previewViewport }
+								/>
+							</div>
 						</div>
 					</div>
 				</div>

@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -45,6 +42,7 @@ import AutoRenewToggle from './auto-renew-toggle';
 import PaymentLogo from 'components/payment-logo';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import UserItem from 'components/user';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
 import { TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
 
@@ -184,7 +182,8 @@ class PurchaseMeta extends Component {
 	}
 
 	renderPaymentInfo() {
-		const { purchase, translate } = this.props;
+		const { purchase, translate, moment } = this.props;
+		const payment = purchase?.payment;
 
 		if ( isIncludedWithPlan( purchase ) ) {
 			return translate( 'Included with plan' );
@@ -198,11 +197,11 @@ class PurchaseMeta extends Component {
 			}
 
 			if ( isPaidWithCreditCard( purchase ) ) {
-				paymentInfo = purchase.payment.creditCard.number;
+				paymentInfo = payment.creditCard.number;
 			} else if ( isPaidWithPayPalDirect( purchase ) ) {
 				paymentInfo = translate( 'expiring %(cardExpiry)s', {
 					args: {
-						cardExpiry: purchase.payment.expiryMoment.format( 'MMMM YYYY' ),
+						cardExpiry: moment( payment.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
 					},
 				} );
 			}
@@ -292,7 +291,7 @@ class PurchaseMeta extends Component {
 	}
 
 	renderExpiration() {
-		const { purchase, site, translate, isAutorenewalEnabled } = this.props;
+		const { purchase, site, translate, moment, isAutorenewalEnabled } = this.props;
 
 		if ( isDomainTransfer( purchase ) ) {
 			return null;
@@ -310,7 +309,7 @@ class PurchaseMeta extends Component {
 			const subsBillingText = isAutorenewalEnabled
 				? translate( 'You will be billed on {{dateSpan}}%(renewDate)s{{/dateSpan}}', {
 						args: {
-							renewDate: purchase.renewMoment.format( 'LL' ),
+							renewDate: purchase.renewDate && moment( purchase.renewDate ).format( 'LL' ),
 						},
 						components: {
 							dateSpan,
@@ -318,7 +317,7 @@ class PurchaseMeta extends Component {
 				  } )
 				: translate( 'Expires on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
 						args: {
-							expireDate: purchase.expiryMoment.format( 'LL' ),
+							expireDate: moment( purchase.expiryDate ).format( 'LL' ),
 						},
 						components: {
 							dateSpan,
@@ -399,4 +398,4 @@ export default connect( ( state, { purchaseId } ) => {
 		owner: purchase ? getUser( state, purchase.userId ) : null,
 		isAutorenewalEnabled: purchase ? ! isExpiring( purchase ) : null,
 	};
-} )( localize( PurchaseMeta ) );
+} )( localize( withLocalizedMoment( PurchaseMeta ) ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -38,7 +36,7 @@ class Connection {
 	 *
 	 * @param  { Function } dispatch Redux dispatch function
 	 * @param  { Promise } auth Authentication promise, will return the user info upon fulfillment
-	 * @return { Promise } Fulfilled (returns the opened socket)
+	 * @returns { Promise } Fulfilled (returns the opened socket)
 	 *                   	 or rejected (returns an error message)
 	 */
 	init( dispatch, auth ) {
@@ -85,13 +83,13 @@ class Connection {
 	/**
 	 * Given a Redux action, emits a SocketIO event.
 	 *
-	 * @param  { Object } action A Redux action with props
+	 * @param  {object} action A Redux action with props
 	 *                    {
 	 *                  		event: SocketIO event name,
 	 *                  	  payload: contents to be sent,
 	 *                  	  error: message to be shown should the event fails to be sent,
 	 *                  	}
-	 * @return { Promise } Fulfilled (returns nothing)
+	 * @returns { Promise } Fulfilled (returns nothing)
 	 *                     or rejected (returns an error message)
 	 */
 	send( action ) {
@@ -119,15 +117,15 @@ class Connection {
 	 * - request was unsucessful: would dispatch receiveError
 	 * - request timeout: would dispatch action.callbackTimeout
 	 *
-	 * @param  { Object } action A Redux action with props
+	 * @param  {object} action A Redux action with props
 	 *                  	{
 	 *                  		event: SocketIO event name,
 	 *                  		payload: contents to be sent,
 	 *                  		callback: a Redux action creator,
 	 *                  		callbackTimeout: a Redux action creator,
 	 *                  	}
-	 * @param  { Number } timeout How long (in milliseconds) has the server to respond
-	 * @return { Promise } Fulfilled (returns the transcript response)
+	 * @param  {number} timeout How long (in milliseconds) has the server to respond
+	 * @returns { Promise } Fulfilled (returns the transcript response)
 	 *                     or rejected (returns an error message)
 	 */
 	request( action, timeout ) {

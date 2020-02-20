@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,13 +14,12 @@ import { map } from 'lodash';
 import Main from 'components/main';
 import EmptyContent from 'components/empty-content';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
 import PeopleSectionNav from 'my-sites/people/people-section-nav';
 import PeopleListItem from 'my-sites/people/people-list-item';
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button, Dialog } from '@automattic/components';
 import QuerySiteInvites from 'components/data/query-site-invites';
-import Dialog from 'components/dialog';
 import InvitesListEnd from './invites-list-end';
 import { getSelectedSite } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -73,7 +70,7 @@ class PeopleInvites extends React.PureComponent {
 	};
 
 	render() {
-		const { site, canViewPeople, isJetpack, isPrivate } = this.props;
+		const { site, canViewPeople, isJetpack, isPrivate, translate } = this.props;
 		const siteId = site && site.ID;
 
 		if ( siteId && ! canViewPeople ) {
@@ -94,6 +91,11 @@ class PeopleInvites extends React.PureComponent {
 				<PageViewTracker path="/people/invites/:site" title="People > Invites" />
 				{ siteId && <QuerySiteInvites siteId={ siteId } /> }
 				<SidebarNavigation />
+				<FormattedHeader
+					className="people-invites__page-heading"
+					headerText={ translate( 'People' ) }
+					align="left"
+				/>
 				<PeopleSectionNav
 					filter="invites"
 					site={ site }
@@ -153,21 +155,20 @@ class PeopleInvites extends React.PureComponent {
 
 		return (
 			<React.Fragment>
-				{ hasPendingInvites ? (
+				{ hasPendingInvites && (
 					<div className="people-invites__pending">
 						<PeopleListSectionHeader label={ pendingLabel } site={ site } />
 						<Card className="people-invites__invites-list">
 							{ pendingInvites.map( this.renderInvite ) }
 						</Card>
 					</div>
-				) : (
-					<div className="people-invites__pending">{ this.renderInviteUsersAction( false ) }</div>
 				) }
 
 				{ hasAcceptedInvites && (
 					<div className="people-invites__accepted">
 						<PeopleListSectionHeader
 							label={ acceptedLabel }
+							site={ hasPendingInvites ? null : site }
 							// Excluding `site=` hides the "Invite user" link.
 						>
 							{ this.renderClearAll() }

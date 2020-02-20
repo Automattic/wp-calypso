@@ -1,7 +1,6 @@
 /**
  * External	dependencies
  *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -20,7 +19,6 @@ import UsAddressFieldset from './us-address-fieldset';
 import EuAddressFieldset from './eu-address-fieldset';
 import UkAddressFieldset from './uk-address-fieldset';
 import { Input, HiddenInput } from 'my-sites/domains/components/form';
-import { abtest } from 'lib/abtest';
 
 export class RegionAddressFieldsets extends Component {
 	static propTypes = {
@@ -29,7 +27,6 @@ export class RegionAddressFieldsets extends Component {
 		countryCode: PropTypes.string,
 		shouldAutoFocusAddressField: PropTypes.bool,
 		hasCountryStates: PropTypes.bool,
-		manualLocationInput: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -38,7 +35,6 @@ export class RegionAddressFieldsets extends Component {
 		countryCode: 'US',
 		shouldAutoFocusAddressField: false,
 		hasCountryStates: false,
-		manualLocationInput: false,
 	};
 
 	inputRefCallback( input ) {
@@ -62,35 +58,24 @@ export class RegionAddressFieldsets extends Component {
 	}
 
 	render() {
-		const {
-			getFieldProps,
-			translate,
-			shouldAutoFocusAddressField,
-			manualLocationInput,
-		} = this.props;
-		const usePlacesApi = abtest( 'placesApiInCheckout' ) === 'placesApi';
-		const showAddressFields = ! usePlacesApi || manualLocationInput;
+		const { getFieldProps, translate, shouldAutoFocusAddressField } = this.props;
 
 		return (
 			<div>
 				<div>
-					{ showAddressFields && (
-						<Input
-							ref={ shouldAutoFocusAddressField ? this.inputRefCallback : noop }
-							label={ translate( 'Address' ) }
-							maxLength={ 40 }
-							{ ...getFieldProps( 'address-1' ) }
-						/>
-					) }
+					<Input
+						ref={ shouldAutoFocusAddressField ? this.inputRefCallback : noop }
+						label={ translate( 'Address' ) }
+						maxLength={ 40 }
+						{ ...getFieldProps( 'address-1' ) }
+					/>
 
-					{ showAddressFields && (
-						<HiddenInput
-							label={ translate( 'Address Line 2' ) }
-							text={ translate( '+ Add Address Line 2' ) }
-							maxLength={ 40 }
-							{ ...getFieldProps( 'address-2', true ) }
-						/>
-					) }
+					<HiddenInput
+						label={ translate( 'Address Line 2' ) }
+						text={ translate( '+ Add Address Line 2' ) }
+						maxLength={ 40 }
+						{ ...getFieldProps( 'address-2', true ) }
+					/>
 				</div>
 				{ this.getRegionAddressFieldset() }
 			</div>

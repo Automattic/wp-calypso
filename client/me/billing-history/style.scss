@@ -96,7 +96,8 @@
 
 .billing-history__transactions tbody .billing-history__date {
 	width: 150px;
-	padding: 12px;
+	padding-left: 12px;
+	padding-right: 12px;
 }
 
 .billing-history__transactions tbody .billing-history__trans-app {
@@ -425,6 +426,10 @@ textarea.billing-history__billing-details-editable {
 		border: 0;
 		padding: 0;
 		margin: 0;
+	}
+
+	body {
+		font-family: -apple-system, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, sans-serif;
 	}
 }
 

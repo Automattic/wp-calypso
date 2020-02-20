@@ -7,15 +7,14 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, includes, some } from 'lodash';
 import Gridicon from 'components/gridicon';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import Button from 'components/button';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
+import { Button, Card, CompactCard } from '@automattic/components';
 import Count from 'components/count';
 import NoticeAction from 'components/notice/notice-action';
 import ExternalLink from 'components/external-link';
@@ -247,12 +246,12 @@ export class PluginMeta extends Component {
 			'database-browser',
 			'duplicator',
 			'extended-wp-reset',
-			'google-captcha',
 			'file-manager-advanced',
 			'file-manager',
 			'plugins-garbage-collector',
 			'post-type-switcher',
 			'reset-wp',
+			'secure-file-manager',
 			'ultimate-wp-reset',
 			'username-changer',
 			'username-updater',
@@ -275,13 +274,14 @@ export class PluginMeta extends Component {
 			'backup-wd',
 			'backupwordpress',
 			'backwpup',
-			'updraftplus',
 			'wp-db-backup',
 
 			// caching
 			'cache-enabler',
 			'comet-cache',
 			'hyper-cache',
+			'powered-cache',
+			'jch-optimize',
 			'quick-cache',
 			'sg-cachepress',
 			'w3-total-cache',
@@ -293,6 +293,7 @@ export class PluginMeta extends Component {
 
 			// sql heavy
 			'another-wordpress-classifieds-plugin',
+			'broken-link-checker',
 			'leads',
 			'native-ads-adnow',
 			'ol_scrapes',
@@ -300,6 +301,7 @@ export class PluginMeta extends Component {
 			'post-views-counter',
 			'tokenad',
 			'top-10',
+			'userpro',
 			'wordpress-popular-posts',
 			'wp-cerber',
 			'wp-inject',
@@ -326,24 +328,33 @@ export class PluginMeta extends Component {
 			'wp-staging',
 
 			// misc
+			'adult-mass-photos-downloader',
+			'adult-mass-videos-embedder',
 			'ari-adminer',
 			'automatic-video-posts',
 			'bwp-minify',
+			'clearfy',
+			'cornerstone',
 			'cryptocurrency-pricing-list',
 			'event-espresso-decaf',
+			'facetwp-manipulator',
 			'fast-velocity-minify',
 			'nginx-helper',
 			'p3',
 			'porn-embed',
 			'propellerads-official',
 			'speed-contact-bar',
+			'unplug-jetpack',
+			'really-simple-ssl',
 			'robo-gallery',
+			'under-construction-page',
 			'video-importer',
 			'woozone',
 			'wp-cleanfix',
 			'wp-file-upload',
 			'wp-monero-miner-pro',
 			'wp-monero-miner-using-coin-hive',
+			'wp-optimize-by-xtraffic',
 			'wpematico',
 			'yuzo-related-post',
 			'zapp-proxy-server',

@@ -27,7 +27,8 @@
 }
 
 .auth.main {
-	background: var( --color-primary );
+	// Use WordPress.com’s brand color for the auth background
+	background: var( --color-wordpress-com );
 	float: none;
 	height: 100%;
 	display: flex;
@@ -87,12 +88,6 @@
 		float: none;
 		margin: 0;
 		width: calc( 100% - 20px );
-	}
-
-	.form-buttons-bar button,
-	.form-buttons-bar .button.is-primary[disabled] {
-		background: #00a8db;
-		border: #00a8db;
 	}
 
 	.form-buttons-bar .button.is-primary[disabled],

@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -84,7 +83,7 @@ describe( 'WechatPaymentBox', () => {
 			'.payment-box__payment-buttons .checkout__secure-payment .checkout__secure-payment-content [icon="lock"]',
 			'Localized(CheckoutTerms)',
 			'Localized(SubscriptionText)',
-			'Localized(CartToggle)',
+			'Connect(CartToggle)',
 			'Connect(Localized(CartCoupon))',
 		];
 

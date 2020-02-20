@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +11,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import EmptyContent from 'components/empty-content';
 import EmailedLoginLinkExpired from './emailed-login-link-expired';
 import config from 'config';
@@ -131,7 +130,7 @@ class HandleEmailedLinkForm extends React.Component {
 		} );
 	};
 
-	componentWillUpdate( nextProps, nextState ) {
+	UNSAFE_componentWillUpdate( nextProps, nextState ) {
 		const { authError, isAuthenticated, isFetching } = nextProps;
 
 		if ( ! nextState.hasSubmitted || isFetching ) {
@@ -158,20 +157,18 @@ class HandleEmailedLinkForm extends React.Component {
 		const action = (
 			<Button primary disabled={ this.state.hasSubmitted } onClick={ this.handleSubmit }>
 				{ this.props.isImmediateLoginAttempt
-					? translate( 'Confirm Login' )
-					: translate( 'Finish Login' ) }
+					? translate( 'Confirm Login to WordPress.com' )
+					: translate( 'Continue to WordPress.com' ) }
 			</Button>
 		);
 
 		let title;
 		if ( this.props.isManualRenewalImmediateLoginAttempt ) {
-			title = translate(
-				'Continue to WordPress.com to update your payment details and renew your subscription'
-			);
+			title = translate( 'Update your payment details and renew your subscription' );
 		} else {
 			title =
 				this.props.clientId === config( 'wpcom_signup_id' )
-					? translate( 'Continue to WordPress.com' )
+					? translate( 'Welcome back!' )
 					: translate( 'Continue to WordPress.com on your WordPress app' );
 		}
 
@@ -236,7 +233,4 @@ const mapDispatch = {
 	showMagicLoginLinkExpiredPage,
 };
 
-export default connect(
-	mapState,
-	mapDispatch
-)( localize( HandleEmailedLinkForm ) );
+export default connect( mapState, mapDispatch )( localize( HandleEmailedLinkForm ) );

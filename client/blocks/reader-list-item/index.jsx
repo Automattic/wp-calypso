@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -35,8 +34,8 @@ import './style.scss';
 /**
  * Takes in a string and removes the starting https, www., and removes a trailing slash
  *
- * @param {String} url - the url to format
- * @returns {String} - the formatted url.  e.g. "https://www.wordpress.com/" --> "wordpress.com"
+ * @param {string} url - the url to format
+ * @returns {string} - the formatted url.  e.g. "https://www.wordpress.com/" --> "wordpress.com"
  */
 const formatUrlForDisplay = url => untrailingslashit( url.replace( /^https?:\/\/(www\.)?/, '' ) );
 
@@ -165,7 +164,4 @@ function ReaderListItem( {
 	);
 }
 
-export default compose(
-	localize,
-	withLocalizedMoment
-)( ReaderListItem );
+export default compose( localize, withLocalizedMoment )( ReaderListItem );

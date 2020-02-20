@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,8 +12,8 @@ import i18n from 'i18n-calypso';
  */
 import config from 'config';
 import { domainManagementEdit } from 'my-sites/domains/paths';
+import { emailManagement } from 'my-sites/email/paths';
 import { getThemeDetailsUrl } from 'state/themes/selectors';
-import { getGSuiteSettingsUrl } from 'lib/gsuite';
 import {
 	isDomainProduct,
 	isGoogleApps,
@@ -44,8 +42,8 @@ const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 	}
 
 	if ( isGoogleApps( purchase ) ) {
-		url = getGSuiteSettingsUrl( purchase.meta );
-		text = i18n.translate( 'G Suite Settings' );
+		url = emailManagement( selectedSite.slug, purchase.meta );
+		text = i18n.translate( 'Email Settings' );
 	}
 
 	if ( isTheme( purchase ) ) {

@@ -1,5 +1,3 @@
-/** @format */
-
 export default [
 	'Hello, Dolly',
 	'Well, hello, Dolly',

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,8 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import FormattedHeader from 'components/formatted-header';
 import { addQueryArgs } from 'lib/route';
 import { getConnectingSite } from 'state/jetpack-connect/selectors';

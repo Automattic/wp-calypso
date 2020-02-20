@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,9 +9,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card, Button } from '@automattic/components';
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
 
 class HostSelect extends React.Component {
 	static displayName = 'HostSelect';

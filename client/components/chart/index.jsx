@@ -1,12 +1,10 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { useState, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
+import { localize, withRtl } from 'i18n-calypso';
 import { noop } from 'lodash';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -15,7 +13,6 @@ import { hasTouch } from 'lib/touch-detect';
 import { useWindowResizeCallback } from 'lib/track-element-size';
 import Tooltip from 'components/tooltip';
 import Notice from 'components/notice';
-import isRtlSelector from 'state/selectors/is-rtl';
 import BarContainer from './bar-container';
 
 /**
@@ -29,7 +26,7 @@ const isTouch = hasTouch();
  * Auxiliary method to calculate the maximum value for the Y axis, based on a dataset.
  * @param {Array} values An array of numeric values.
  *
- * @return {Number} The maximum value for the Y axis.
+ * @returns {number} The maximum value for the Y axis.
  */
 function getYAxisMax( values ) {
 	// Calculate max value in a dataset.
@@ -196,6 +193,4 @@ Chart.defaultProps = {
 	minTouchBarWidth: 42,
 };
 
-export default connect( state => ( {
-	isRtl: isRtlSelector( state ),
-} ) )( localize( Chart ) );
+export default withRtl( localize( Chart ) );

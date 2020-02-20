@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,13 +17,10 @@ import AccordionSection from 'components/accordion/section';
 import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import TermSelector from 'post-editor/editor-term-selector';
 import TermTokenField from 'post-editor/term-token-field';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { addSiteFragment } from 'lib/route';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
-import { getSiteOption, isJetpackMinimumVersion, getSiteSlug } from 'state/sites/selectors';
+import { getSiteOption } from 'state/sites/selectors';
 import { getTerm } from 'state/terms/selectors';
 
 /**
@@ -39,28 +34,10 @@ export class EditorCategoriesTagsAccordion extends Component {
 		postTerms: PropTypes.object,
 		postType: PropTypes.string,
 		defaultCategory: PropTypes.object,
-		isTermsSupported: PropTypes.bool,
-		siteSlug: PropTypes.string,
 	};
 
-	renderJetpackNotice() {
-		const { translate, siteSlug } = this.props;
-		return (
-			<Notice
-				status="is-warning"
-				showDismiss={ false }
-				text={ translate( 'You must update Jetpack to use this feature.' ) }
-				className="editor-categories-tags__upgrade-notice"
-			>
-				<NoticeAction href={ addSiteFragment( '/plugins/jetpack', siteSlug ) }>
-					{ translate( 'Update Now' ) }
-				</NoticeAction>
-			</Notice>
-		);
-	}
-
 	renderCategories() {
-		const { translate, postType, isTermsSupported } = this.props;
+		const { translate, postType } = this.props;
 		if ( postType === 'page' ) {
 			return;
 		}
@@ -71,17 +48,13 @@ export class EditorCategoriesTagsAccordion extends Component {
 					helpText={ translate( 'Use categories to group your posts by topic.' ) }
 					labelText={ translate( 'Categories' ) }
 				/>
-				{ isTermsSupported ? (
-					<TermSelector compact taxonomyName="category" />
-				) : (
-					this.renderJetpackNotice()
-				) }
+				<TermSelector compact taxonomyName="category" />
 			</AccordionSection>
 		);
 	}
 
 	renderTags() {
-		const { isTermsSupported, postType, translate } = this.props;
+		const { postType, translate } = this.props;
 		const helpText =
 			postType === 'page'
 				? translate( 'Use tags to associate more specific keywords with your pages.' )
@@ -90,11 +63,7 @@ export class EditorCategoriesTagsAccordion extends Component {
 		return (
 			<AccordionSection>
 				<EditorDrawerLabel helpText={ helpText } labelText={ translate( 'Tags' ) } />
-				{ isTermsSupported ? (
-					<TermTokenField taxonomyName="post_tag" />
-				) : (
-					this.renderJetpackNotice()
-				) }
+				<TermTokenField taxonomyName="post_tag" />
 			</AccordionSection>
 		);
 	}
@@ -201,15 +170,12 @@ export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 	const defaultCategoryId = getSiteOption( state, siteId, 'default_category' );
-	const isTermsSupported = false !== isJetpackMinimumVersion( state, siteId, '4.1.0' );
 
 	return {
 		defaultCategory: getTerm( state, siteId, 'category', defaultCategoryId ),
 		postTerms: getEditedPostValue( state, siteId, postId, 'terms' ),
 		postType: getEditedPostValue( state, siteId, postId, 'type' ),
-		siteSlug: getSiteSlug( state, siteId ),
 		siteId,
 		postId,
-		isTermsSupported,
 	};
 } )( localize( EditorCategoriesTagsAccordion ) );

@@ -56,4 +56,4 @@ The site ID for which Jetpack Settings should be requested.
 	<tr><th>Required</th><td>No</td></tr>
 </table>
 
-A query to use when requesting Jetpack Settings. We currently use this only to send Jetpack Onboarding credentials, which enable us to query and change a few settings through the REST API without needing to have a Jetpack site connected to WordPress.com.
+A query to use when requesting Jetpack Settings.

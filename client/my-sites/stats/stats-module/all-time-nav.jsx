@@ -1,13 +1,11 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { flowRight, find, get } from 'lodash';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -101,7 +99,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsModuleSummaryLinks );
+export default flowRight( connectComponent, localize )( StatsModuleSummaryLinks );

@@ -4,7 +4,7 @@ exports[`DateRange should render 1`] = `
 <div
   className="date-range"
 >
-  <Localized(DateRangeTrigger)
+  <DateRangeTrigger
     buttonRef={
       Object {
         "current": null,
@@ -19,7 +19,7 @@ exports[`DateRange should render 1`] = `
     startDate={null}
     startDateText="MM/DD/YYYY"
   />
-  <Connect(Popover)
+  <Popover
     className="date-range__popover"
     context={null}
     isVisible={false}
@@ -32,7 +32,7 @@ exports[`DateRange should render 1`] = `
       <div
         className="date-range__controls"
       >
-        <Localized(DateRangeHeader)
+        <DateRangeHeader
           onApplyClick={[Function]}
           onCancelClick={[Function]}
         />
@@ -55,14 +55,14 @@ exports[`DateRange should render 1`] = `
            day.
         </div>
       </div>
-      <Localized(DateRangeInputs)
+      <DateRangeInputs
         endDateValue="MM/DD/YYYY"
         onInputBlur={[Function]}
         onInputChange={[Function]}
         onInputFocus={[Function]}
         startDateValue="MM/DD/YYYY"
       />
-      <Localized(DatePicker)
+      <Localized(WithLocalizedMoment(DatePicker))
         calendarViewDate={null}
         disabledDays={
           Array [
@@ -100,6 +100,6 @@ exports[`DateRange should render 1`] = `
         showOutsideDays={false}
       />
     </div>
-  </Connect(Popover)>
+  </Popover>
 </div>
 `;

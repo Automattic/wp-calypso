@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,8 +11,7 @@ import { isEmpty } from 'lodash';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import FormInputValidation from 'components/forms/form-input-validation';
@@ -234,7 +232,4 @@ class CloneDestinationStep extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ submitSignupStep }
-)( localize( CloneDestinationStep ) );
+export default connect( null, { submitSignupStep } )( localize( CloneDestinationStep ) );

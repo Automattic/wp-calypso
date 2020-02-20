@@ -12,10 +12,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
+import { Card, CompactCard, Button } from '@automattic/components';
 import FeatureExample from 'components/feature-example';
-import Button from 'components/button';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import Spinner from 'components/spinner';
@@ -115,7 +113,6 @@ class PlansSetup extends React.Component {
 				return next();
 			}
 			if ( window.confirm( confirmText ) ) {
-				// eslint-disable-line no-aler
 				next();
 			} else {
 				// save off the current path just in case context changes after this call
@@ -216,12 +213,6 @@ class PlansSetup extends React.Component {
 			this.trackConfigFinished( 'calypso_plans_autoconfig_error', {
 				error: 'cannot_update_files',
 				reason,
-			} );
-		} else if ( ! site.hasMinimumJetpackVersion ) {
-			reason = translate( 'You need to update your version of Jetpack.' );
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error', {
-				error: 'jetpack_version_too_old',
-				jetpack_version: get( site, [ 'options', 'jetpack_version' ], 'unknown' ),
 			} );
 		} else if ( ! site.isMainNetworkSite ) {
 			reason = translate( "We can't install plugins on multisite sites." );

@@ -44,9 +44,9 @@ $image-height: 47px;
 .wp-login__links,
 .wp-login__footer {
 	a,
+	a:visited,
 	button {
 		color: var( --color-neutral-50 );
-		text-decoration: none;
 
 		body.is-section-signup & {
 			color: var( --color-text-inverted );
@@ -75,10 +75,6 @@ $image-height: 47px;
 
 		&:last-child {
 			border-bottom: none;
-		}
-
-		body.is-section-signup & {
-			color: var( --color-text-inverted );
 		}
 	}
 
@@ -157,14 +153,16 @@ $image-height: 47px;
 	@include jetpack-connect-colors();
 }
 
-.layout.is-jetpack-woocommerce-flow, .layout.is-wccom-oauth-flow {
+.layout.is-jetpack-woocommerce-flow,
+.layout.is-wccom-oauth-flow {
 	@include woocommerce-colors();
 }
 
 .layout.is-jetpack-login {
 	background-color: var( --color-jetpack-onboarding-background );
 
-	.login__form-header {
+	.login__form-header,
+	.magic-login__form-header {
 		color: var( --color-jetpack-onboarding-text );
 	}
 
@@ -179,7 +177,9 @@ $image-height: 47px;
 	}
 
 	.login__form-terms a,
-	.form-input-validation a {
+	.login__social-tos a,
+	.form-input-validation a,
+	.login__form-change-username {
 		color: var( --color-accent-dark );
 
 		&:hover,
@@ -189,9 +189,11 @@ $image-height: 47px;
 	}
 
 	.wp-login__links a,
+	.wp-login__links button,
 	.logged-out-form__links a,
 	.logged-out-form__link-item,
-	.translator-invite__content a {
+	.translator-invite__content a,
+	.magic-login__footer a {
 		color: var( --color-neutral-20 );
 		border-bottom-color: var( --color-neutral-70 );
 
@@ -212,8 +214,8 @@ $image-height: 47px;
 	.wp-login__site-return-link::after {
 		background: linear-gradient(
 			to right,
-			rgba( var( --color-jetpack-onboarding-background ), 0 ),
-			rgba( var( --color-jetpack-onboarding-background ), 1 ) 90%
+			rgba( var( --color-jetpack-onboarding-background-rgb ), 0 ),
+			var( --color-jetpack-onboarding-background ) 90%
 		);
 	}
 }
@@ -244,7 +246,7 @@ $image-height: 47px;
 	}
 
 	.login__form {
-		@include elevation ( 2dp );
+		@include elevation( 2dp );
 		padding-bottom: 0;
 		padding-top: 8px;
 	}
@@ -290,6 +292,14 @@ $image-height: 47px;
 			color: var( --studio-pink-50 );
 			box-shadow: none;
 		}
+	}
+
+	.login__social-tos a {
+		color: var( --studio-gray-60 );
+	}
+
+	.wp-login__site-return-link::after {
+		background: none;
 	}
 
 	.woocommerce-muriel-text-control,

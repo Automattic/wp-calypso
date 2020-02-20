@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { flowRight, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import SupportInfo from 'components/support-info';
 import CommentDisplaySettings from './comment-display-settings';
 import FormFieldset from 'components/forms/form-fieldset';

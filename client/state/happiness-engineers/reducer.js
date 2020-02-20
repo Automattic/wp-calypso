@@ -6,7 +6,7 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
 import { itemsSchema } from './schema';
 import {
 	HAPPINESS_ENGINEERS_FETCH,
@@ -19,14 +19,21 @@ import {
  * Returns the updated requesting state after an action has been dispatched.
  * Requesting state tracks whether a network request is in progress for a site.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action object
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action object
+ * @returns {object}        Updated state
  */
-export const requesting = createReducer( false, {
-	[ HAPPINESS_ENGINEERS_FETCH ]: () => true,
-	[ HAPPINESS_ENGINEERS_FETCH_FAILURE ]: () => false,
-	[ HAPPINESS_ENGINEERS_FETCH_SUCCESS ]: () => false,
+export const requesting = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case HAPPINESS_ENGINEERS_FETCH:
+			return true;
+		case HAPPINESS_ENGINEERS_FETCH_FAILURE:
+			return false;
+		case HAPPINESS_ENGINEERS_FETCH_SUCCESS:
+			return false;
+	}
+
+	return state;
 } );
 
 /**
@@ -34,19 +41,20 @@ export const requesting = createReducer( false, {
  * state tracks an array of happiness engineers. Receiving happiness engineers
  * for a site will replace the existing set.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action object
- * @return {Array}         Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action object
+ * @returns {Array}         Updated state
  */
-export const items = createReducerWithValidation(
-	null,
-	{
-		[ HAPPINESS_ENGINEERS_RECEIVE ]: ( state, { happinessEngineers } ) => {
+export const items = withSchemaValidation( itemsSchema, ( state = null, action ) => {
+	switch ( action.type ) {
+		case HAPPINESS_ENGINEERS_RECEIVE: {
+			const { happinessEngineers } = action;
 			return map( happinessEngineers, 'avatar_URL' );
-		},
-	},
-	itemsSchema
-);
+		}
+	}
+
+	return state;
+} );
 
 export default combineReducers( {
 	requesting,

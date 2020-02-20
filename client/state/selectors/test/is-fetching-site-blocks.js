@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import isFetchingSiteBlocks from 'state/selectors/is-fetching-site-blocks';
+import { isFetchingSiteBlocks } from 'state/reader/site-blocks/selectors';
 
 describe( 'isFetchingSiteBlocks()', () => {
 	test( 'should return true if there is a fetch in progress', () => {

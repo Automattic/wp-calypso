@@ -4,6 +4,19 @@
 import { compact } from 'lodash';
 
 /**
+ * Image dependencies
+ */
+import classicBrightImg from 'assets/images/color-schemes/color-scheme-thumbnail-classic-bright.svg';
+import classicBlueImg from 'assets/images/color-schemes/color-scheme-thumbnail-classic-blue.svg';
+import powderSnowImg from 'assets/images/color-schemes/color-scheme-thumbnail-powder-snow.svg';
+import nightfallImg from 'assets/images/color-schemes/color-scheme-thumbnail-nightfall.svg';
+import sakuraImg from 'assets/images/color-schemes/color-scheme-thumbnail-sakura.svg';
+import oceanImg from 'assets/images/color-schemes/color-scheme-thumbnail-ocean.svg';
+import sunsetImg from 'assets/images/color-schemes/color-scheme-thumbnail-sunset.svg';
+import midnightImg from 'assets/images/color-schemes/color-scheme-thumbnail-midnight.svg';
+import contrastImg from 'assets/images/color-schemes/color-scheme-thumbnail-contrast.svg';
+
+/**
  * !! Note !!
  *
  * Every _value_ present in this list should appear in the colorScheme enum array in
@@ -17,6 +30,7 @@ export default function( translate ) {
 			value: 'classic-bright',
 			thumbnail: {
 				cssClass: 'is-classic-bright',
+				imageUrl: classicBrightImg,
 			},
 		},
 		{
@@ -24,6 +38,7 @@ export default function( translate ) {
 			value: 'classic-blue',
 			thumbnail: {
 				cssClass: 'is-classic-blue',
+				imageUrl: classicBlueImg,
 			},
 		},
 		{
@@ -31,6 +46,7 @@ export default function( translate ) {
 			value: 'powder-snow',
 			thumbnail: {
 				cssClass: 'is-powder-snow',
+				imageUrl: powderSnowImg,
 			},
 		},
 		{
@@ -38,6 +54,7 @@ export default function( translate ) {
 			value: 'nightfall',
 			thumbnail: {
 				cssClass: 'is-nightfall',
+				imageUrl: nightfallImg,
 			},
 		},
 		{
@@ -45,6 +62,7 @@ export default function( translate ) {
 			value: 'sakura',
 			thumbnail: {
 				cssClass: 'is-sakura',
+				imageUrl: sakuraImg,
 			},
 		},
 		{
@@ -52,6 +70,7 @@ export default function( translate ) {
 			value: 'ocean',
 			thumbnail: {
 				cssClass: 'is-ocean',
+				imageUrl: oceanImg,
 			},
 		},
 		{
@@ -59,6 +78,7 @@ export default function( translate ) {
 			value: 'sunset',
 			thumbnail: {
 				cssClass: 'is-sunset',
+				imageUrl: sunsetImg,
 			},
 		},
 		{
@@ -66,6 +86,7 @@ export default function( translate ) {
 			value: 'midnight',
 			thumbnail: {
 				cssClass: 'is-midnight',
+				imageUrl: midnightImg,
 			},
 		},
 		{
@@ -73,6 +94,7 @@ export default function( translate ) {
 			value: 'contrast',
 			thumbnail: {
 				cssClass: 'is-contrast',
+				imageUrl: contrastImg,
 			},
 		},
 	] );

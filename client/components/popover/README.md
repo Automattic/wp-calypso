@@ -54,10 +54,6 @@ cases this is not needed but if you want to also have a label
 that can trigger the opening and closing of the Popover then you need to pass
 in the label component as a reference.
 
-#### `isFocusOnShow { bool } - default: false`
-
-Focuses the Popover when it shows. Useful for controlling/improving keyboard navigation.
-
 #### `isVisible { bool } default - false`
 
 By controlling the popover's visibility through the `isVisible` property, the
@@ -82,12 +78,6 @@ The `position` property can be one of the following values:
 This describes the position of the popover relative to the thing it is pointing
 at. If the arrow is supposed to point at something to the top and left of the
 Popover, the correct value for `position` is `bottom right`.
-
-#### `rootClassName { string } - optional`
-
-The `<Popover />` component is mounted into a `<ReactChild />` component at the
-root of the `<body>`. Use this property if you want to add a cuestom css class
-to this root element.
 
 #### `showDelay { number } - default: 0 (false)`
 

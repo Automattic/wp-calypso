@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,7 +21,4 @@ class QueryConciergeInitial extends Component {
 	}
 }
 
-export default connect(
-	state => state,
-	{ requestConciergeInitial }
-)( QueryConciergeInitial );
+export default connect( state => state, { requestConciergeInitial } )( QueryConciergeInitial );

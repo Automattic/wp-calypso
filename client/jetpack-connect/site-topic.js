@@ -16,7 +16,6 @@ import SkipButton from './skip-button';
 import SiteTopicForm from 'signup/steps/site-topic/form';
 import WpcomColophon from 'components/wpcom-colophon';
 import jetpackOnly from './jetpack-only';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import versionCompare from 'lib/version-compare';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSiteOption } from 'state/sites/selectors';
@@ -86,9 +85,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	jetpackOnly,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( JetpackSiteTopic );
+export default flowRight( connectComponent, jetpackOnly, localize )( JetpackSiteTopic );

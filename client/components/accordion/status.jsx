@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
-import React, { PureComponent } from 'react';
+import React, { Fragment, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
@@ -17,7 +15,7 @@ import Tooltip from 'components/tooltip';
 /**
  * Mapping of Notice status to Gridicon icon
  *
- * @type {Object}
+ * @type {object}
  */
 const STATUS_GRIDICON = {
 	info: 'info',
@@ -39,48 +37,40 @@ export default class AccordionStatus extends PureComponent {
 		onClick: () => {},
 	};
 
-	state = {};
-
-	constructor() {
-		super( ...arguments );
-
-		this.showTooltip = this.toggleTooltip.bind( this, true );
-		this.hideTooltip = this.toggleTooltip.bind( this, false );
-	}
-
-	setTooltipContext = tooltipContext => {
-		if ( tooltipContext ) {
-			this.setState( { tooltipContext } );
-		}
+	state = {
+		isTooltipVisible: false,
 	};
 
-	toggleTooltip( isTooltipVisible ) {
-		this.setState( { isTooltipVisible } );
-	}
+	showTooltip = () => this.setState( { isTooltipVisible: true } );
+	hideTooltip = () => this.setState( { isTooltipVisible: false } );
+
+	tooltipContextRef = React.createRef();
 
 	render() {
 		const { type, text, url, position } = this.props;
 
 		return (
-			<a
-				href={ url }
-				onClick={ this.props.onClick }
-				ref={ this.setTooltipContext }
-				onMouseEnter={ this.showTooltip }
-				onMouseLeave={ this.hideTooltip }
-				className={ classNames( 'accordion__status', `is-${ type }` ) }
-			>
-				<Gridicon icon={ STATUS_GRIDICON[ type ] } />
+			<Fragment>
+				<a
+					href={ url }
+					onClick={ this.props.onClick }
+					ref={ this.tooltipContextRef }
+					onMouseEnter={ this.showTooltip }
+					onMouseLeave={ this.hideTooltip }
+					className={ classNames( 'accordion__status', `is-${ type }` ) }
+				>
+					<Gridicon icon={ STATUS_GRIDICON[ type ] } />
+				</a>
 				{ text && (
 					<Tooltip
 						position={ position }
 						isVisible={ this.state.isTooltipVisible }
-						context={ this.state.tooltipContext }
+						context={ this.tooltipContextRef.current }
 					>
 						{ text }
 					</Tooltip>
 				) }
-			</a>
+			</Fragment>
 		);
 	}
 }

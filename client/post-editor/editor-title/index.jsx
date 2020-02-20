@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -18,7 +16,6 @@ import * as PostUtils from 'state/posts/utils';
 import EditorPermalink from 'post-editor/editor-permalink';
 import TrackInputChanges from 'components/track-input-changes';
 import TextareaAutosize from 'components/textarea-autosize';
-import { isMobile } from 'lib/viewport';
 import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import areSitePermalinksEditable from 'state/selectors/are-site-permalinks-editable';

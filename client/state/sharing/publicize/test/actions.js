@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -108,7 +107,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fetch action when thunk triggered', () => {
-			return fetchConnection( 2916284, 2 )( spy ).then( () => {
+			return fetchConnection(
+				2916284,
+				2
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PUBLICIZE_CONNECTION_REQUEST,
 					connectionId: 2,
@@ -118,7 +120,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch receive action when request completes', () => {
-			return fetchConnection( 2916284, 2 )( spy ).then( () => {
+			return fetchConnection(
+				2916284,
+				2
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledThrice;
 
 				const action1 = spy.getCall( 1 ).args[ 0 ];
@@ -134,7 +139,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			return fetchConnection( 77203074, 2 )( spy ).then( () => {
+			return fetchConnection(
+				77203074,
+				2
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledTwice;
 
 				const action = spy.getCall( 1 ).args[ 0 ];
@@ -172,7 +180,11 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch create action when request completes', () => {
-			return createSiteConnection( 2916284, 2, 1 )( spy ).then( () => {
+			return createSiteConnection(
+				2916284,
+				2,
+				1
+			)( spy ).then( () => {
 				const action = spy.getCall( 0 ).args[ 0 ];
 
 				expect( action.type ).to.equal( PUBLICIZE_CONNECTION_CREATE );
@@ -181,7 +193,11 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			return createSiteConnection( 77203074, 2, 1 )( spy ).then( () => {
+			return createSiteConnection(
+				77203074,
+				2,
+				1
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PUBLICIZE_CONNECTION_CREATE_FAILURE,
 					error: sinon.match( {
@@ -214,9 +230,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch update action when request completes', () => {
-			updateSiteConnection( { ID: 2, site_ID: 2916284, label: 'Facebook' }, attributes )(
-				spy
-			).then( () => {
+			updateSiteConnection(
+				{ ID: 2, site_ID: 2916284, label: 'Facebook' },
+				attributes
+			)( spy ).then( () => {
 				const action = spy.getCall( 0 ).args[ 0 ];
 
 				expect( action.type ).to.equal( PUBLICIZE_CONNECTION_UPDATE );
@@ -225,9 +242,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			updateSiteConnection( { ID: 2, site_ID: 77203074, label: 'Facebook' }, attributes )(
-				spy
-			).then( () => {
+			updateSiteConnection(
+				{ ID: 2, site_ID: 77203074, label: 'Facebook' },
+				attributes
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 					error: sinon.match( {

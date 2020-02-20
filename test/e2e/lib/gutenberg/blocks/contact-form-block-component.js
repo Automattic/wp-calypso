@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,7 +16,7 @@ export class ContactFormBlockComponent extends GutenbergBlockComponent {
 
 	async insertEmail( email ) {
 		const emailSelector = By.css(
-			'.jetpack-contact-form .components-base-control:nth-child(2) .components-text-control__input'
+			'.jetpack-contact-form .components-base-control:nth-child(1) .components-text-control__input'
 		);
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, emailSelector );
 
@@ -28,7 +26,7 @@ export class ContactFormBlockComponent extends GutenbergBlockComponent {
 
 	async insertSubject( subject ) {
 		const subjectSelector = By.css(
-			'.jetpack-contact-form .components-base-control:nth-child(4) .components-text-control__input'
+			'.jetpack-contact-form .components-base-control:nth-child(3) .components-text-control__input'
 		);
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, subjectSelector );
 

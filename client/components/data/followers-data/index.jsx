@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -44,7 +43,7 @@ export default class FollowersData extends Component {
 		);
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.fetchOptions ) {
 			return;
 		}

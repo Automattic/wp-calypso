@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import SelectDropdown from 'components/select-dropdown';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -168,9 +166,6 @@ class PreviewToolbar extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-)( localize( PreviewToolbar ) );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( PreviewToolbar ) );

@@ -1,17 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import findThemeFilterTerm from 'state/selectors/find-theme-filter-term';
-
 import getThemeFilterTerm from 'state/selectors/get-theme-filter-term';
+
+import 'state/themes/init';
 
 export default function getThemeShowcaseDescription( state, { filter, tier, vertical } = {} ) {
 	if ( vertical ) {

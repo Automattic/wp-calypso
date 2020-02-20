@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -51,15 +49,10 @@ class RedirectWhenLoggedIn extends React.Component {
 	}
 
 	storageEventHandler = e => {
-		if ( e.key !== 'wpcom_user' ) {
-			return;
+		if ( e.key === 'wpcom_user_id' && e.newValue != null ) {
+			debug( 'detected change of wpcom_user_id, redirecting' );
+			this.doTheRedirect();
 		}
-		try {
-			const newUser = JSON.parse( e.newValue );
-			if ( this.isUserLoggedIn( newUser ) ) {
-				this.doTheRedirect();
-			}
-		} catch {}
 	};
 
 	componentDidMount() {

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -162,7 +161,7 @@ class PostCommentList extends React.Component {
 		}
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.initialFetches();
 		this.scrollWhenDOMReady();
 	}
@@ -171,7 +170,7 @@ class PostCommentList extends React.Component {
 		this.resetActiveReplyComment();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.initialFetches( nextProps );
 		if (
 			this.props.siteId !== nextProps.siteId ||
@@ -301,11 +300,11 @@ class PostCommentList extends React.Component {
 		);
 	};
 
-	/***
+	/**
 	 * Gets comments for display
 	 * @param {Immutable.List<Number>} commentIds The top level commentIds to take from
-	 * @param {Number} numberToTake How many top level comments to take
-	 * @returns {Object} that has the displayed comments + total displayed count including children
+	 * @param {number} numberToTake How many top level comments to take
+	 * @returns {object} that has the displayed comments + total displayed count including children
 	 */
 	getDisplayedComments = ( commentIds, numberToTake ) => {
 		if ( ! commentIds ) {

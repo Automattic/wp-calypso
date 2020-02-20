@@ -47,71 +47,53 @@ class ScrollHelper {
 		return height;
 	}
 
-	forEachInRow( index, callback, context ) {
-		if ( typeof callback !== 'function' ) {
-			return;
-		}
+	forEachInRow( index, callback ) {
+		const { itemsPerRow } = this.props;
 
-		if ( context ) {
-			callback = callback.bind( context );
-		}
+		const firstIndexInRow = index - ( index % itemsPerRow );
+		const lastIndexInRow = Math.min( firstIndexInRow + itemsPerRow, this.props.items.length ) - 1;
 
-		const firstIndexInRow = index - ( index % this.props.itemsPerRow ),
-			lastIndexInRow =
-				Math.min( firstIndexInRow + this.props.itemsPerRow, this.props.items.length ) - 1;
 		for ( let i = firstIndexInRow; i <= lastIndexInRow; i++ ) {
 			callback( this.props.items[ i ], i );
 		}
 	}
 
 	storeRowItemHeights( fromDirection, index ) {
-		this.forEachInRow(
-			index,
-			function( item ) {
-				const itemKey = this.props.getItemRef( item );
-				const itemBounds = this.boundsForRef( itemKey );
-				let height;
+		this.forEachInRow( index, item => {
+			const itemKey = this.props.getItemRef( item );
+			const itemBounds = this.boundsForRef( itemKey );
+			let height;
 
-				if ( itemBounds ) {
-					if ( 'bottom' === fromDirection ) {
-						height = this.containerBottom - this.bottomPlaceholderHeight - itemBounds.top;
-					} else {
-						height = itemBounds.bottom - ( this.containerTop + this.topPlaceholderHeight );
-					}
+			if ( itemBounds ) {
+				if ( 'bottom' === fromDirection ) {
+					height = this.containerBottom - this.bottomPlaceholderHeight - itemBounds.top;
 				} else {
-					height = this.props.guessedItemHeight;
+					height = itemBounds.bottom - ( this.containerTop + this.topPlaceholderHeight );
 				}
+			} else {
+				height = this.props.guessedItemHeight;
+			}
 
-				this.itemHeights[ itemKey ] = height;
-			},
-			this
-		);
+			this.itemHeights[ itemKey ] = height;
+		} );
 	}
 
 	deleteRowItemHeights( index ) {
-		this.forEachInRow(
-			index,
-			item => {
-				const itemKey = this.props.getItemRef( item );
-				delete this.itemHeights[ itemKey ];
-			},
-			this
-		);
+		this.forEachInRow( index, item => {
+			const itemKey = this.props.getItemRef( item );
+			delete this.itemHeights[ itemKey ];
+		} );
 	}
 
 	getRowHeight( index ) {
 		let maxHeight = 0;
 
-		this.forEachInRow(
-			index,
-			item => {
-				const itemKey = this.props.getItemRef( item ),
-					height = this.storedItemHeight( itemKey );
+		this.forEachInRow( index, item => {
+			const itemKey = this.props.getItemRef( item );
+			const height = this.storedItemHeight( itemKey );
 
-				maxHeight = Math.max( maxHeight, height );
-			},
-			this
-		);
+			maxHeight = Math.max( maxHeight, height );
+		} );
 
 		return maxHeight;
 	}

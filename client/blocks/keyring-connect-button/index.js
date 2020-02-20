@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import {
 	deleteStoredKeyringConnection,
 	requestKeyringConnections,
@@ -64,7 +62,7 @@ class KeyringConnectButton extends Component {
 	/**
 	 * Returns the current status of the service's connection.
 	 *
-	 * @return {string} Connection status.
+	 * @returns {string} Connection status.
 	 */
 	getConnectionStatus() {
 		if ( this.props.isFetching || this.props.isAwaitingConnections ) {
@@ -127,7 +125,7 @@ class KeyringConnectButton extends Component {
 		}
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.state.isAwaitingConnections ) {
 			this.setState( {
 				isAwaitingConnections: false,
@@ -151,7 +149,7 @@ class KeyringConnectButton extends Component {
 	 * in creating new Keyring account options.
 	 *
 	 * @param {Array} keyringConnections props to check on if a keyring connection succeeded.
-	 * @return {Boolean} Whether the Keyring authorization attempt succeeded
+	 * @returns {boolean} Whether the Keyring authorization attempt succeeded
 	 */
 	didKeyringConnectionSucceed( keyringConnections ) {
 		const hasAnyConnectionOptions = some(

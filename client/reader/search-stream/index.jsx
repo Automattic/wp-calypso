@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -15,7 +14,7 @@ import classnames from 'classnames';
  */
 import BlankSuggestions from 'reader/components/reader-blank-suggestions';
 import SegmentedControl from 'components/segmented-control';
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import SearchInput from 'components/search';
 import { recordAction, recordTrack } from 'reader/stats';
@@ -28,7 +27,7 @@ import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searc
 import withDimensions from 'lib/with-dimensions';
 import SuggestionProvider from './suggestion-provider';
 import Suggestion from './suggestion';
-import getReaderAliasedFollowFeedUrl from 'state/selectors/get-reader-aliased-follow-feed-url';
+import { getReaderAliasedFollowFeedUrl } from 'state/reader/follows/selectors';
 import { SEARCH_RESULTS_URL_INPUT } from 'reader/follow-sources';
 import FollowButton from 'reader/follow-button';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';

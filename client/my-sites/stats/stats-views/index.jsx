@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,8 +13,8 @@ import { localize } from 'i18n-calypso';
  */
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import getSiteStatsViewSummary from 'state/selectors/get-site-stats-view-summary';
-import Card from 'components/card';
+import { getSiteStatsViewSummary } from 'state/stats/lists/selectors';
+import { Card } from '@automattic/components';
 import Months from './months';
 import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
 import StatsModulePlaceholder from '../stats-module/placeholder';

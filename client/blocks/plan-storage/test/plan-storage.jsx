@@ -1,5 +1,3 @@
-/** @format */
-
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
@@ -91,7 +89,7 @@ describe( 'PlanStorage basic tests', () => {
 		const storage = shallow( <PlanStorage { ...props } jetpackSite={ true } /> );
 		assert.lengthOf( storage.find( '.plan-storage' ), 0 );
 	} );
-	
+
 	test( 'should not render for contributors', () => {
 		const storage = shallow( <PlanStorage { ...props } canViewBar={ false } /> );
 		assert.lengthOf( storage.find( '.plan-storage' ), 0 );

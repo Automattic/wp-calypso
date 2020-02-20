@@ -1,7 +1,4 @@
-/**
- * External dependencies
- */
-import { parse as parseUrl } from 'url';
+/* eslint jest/expect-expect: [ "error", { "assertFunctionNames": [ "expect", "expectPathname", "expectQuery", "expectHostedOnPhoton", "expectHostedOnPhotonInsecurely" ] } ] */
 
 /**
  * Internal dependencies
@@ -17,13 +14,15 @@ function expectHostedOnPhotonInsecurely( url ) {
 }
 
 function expectPathname( url, expected ) {
-	const parsedUrl = parseUrl( url, true, true );
+	const parsedUrl = new URL( url );
 	expect( parsedUrl.pathname ).toBe( expected );
 }
 
 function expectQuery( url, expected ) {
-	const query = parseUrl( url, true, true ).query;
-	expect( query ).toEqual( expected );
+	const searchParams = new URL( url ).searchParams;
+	for ( const key of Object.keys( expected ) ) {
+		expect( searchParams.get( key ) ).toBe( expected[ key ] );
+	}
 }
 
 describe( 'photon()', function() {

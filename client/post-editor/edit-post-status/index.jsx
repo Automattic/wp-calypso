@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -13,7 +10,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FormToggle from 'components/forms/form-toggle/compact';
 import * as postUtils from 'state/posts/utils';
 import InfoPopover from 'components/info-popover';
@@ -33,7 +30,6 @@ import './style.scss';
 
 export class EditPostStatus extends Component {
 	static propTypes = {
-		moment: PropTypes.func,
 		setPostDate: PropTypes.func,
 		onSave: PropTypes.func,
 		post: PropTypes.object,

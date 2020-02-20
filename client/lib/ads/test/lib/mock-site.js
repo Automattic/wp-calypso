@@ -1,4 +1,3 @@
-/** @format */
 export default {
 	ID: 91234567890,
 	URL: 'http://example.com/',
@@ -7,7 +6,6 @@ export default {
 	description: 'Just another WordPress site',
 	domain: 'example.com',
 	hasJetpackProtect: true,
-	hasMinimumJetpackVersion: true,
 	icon: {},
 	is_following: false,
 	is_private: false,

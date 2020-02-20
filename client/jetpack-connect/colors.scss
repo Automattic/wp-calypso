@@ -8,6 +8,7 @@
 	// Override global colors with accent variables
 	--color-primary: var( --color-accent-dark );
 	--color-primary-light: var( --color-accent-light );
+	--color-primary-dark: var( --color-accent-dark );
 
 	::selection {
 		color: var( --color-text-inverted );

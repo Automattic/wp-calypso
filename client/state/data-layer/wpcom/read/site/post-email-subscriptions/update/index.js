@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -15,7 +14,7 @@ import { updateNewPostEmailSubscription } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
 import { buildBody } from '../utils';
 import { bypassDataLayer } from 'state/data-layer/utils';
-import getReaderFollowForBlog from 'state/selectors/get-reader-follow-for-blog';
+import { getReaderFollowForBlog } from 'state/reader/follows/selectors';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 

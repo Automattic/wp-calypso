@@ -1,7 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
+import { isWithinBreakpoint, isMobile, isDesktop } from '@automattic/viewport';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { debounce, get } from 'lodash';
@@ -15,10 +15,9 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption, isSitePreviewable } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { isWithinBreakpoint, isMobile, isDesktop } from 'lib/viewport';
 import canCurrentUser from 'state/selectors/can-current-user';
 import getEditorUrl from 'state/selectors/get-editor-url';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import Gridicon from 'components/gridicon';
@@ -235,13 +234,10 @@ const mapState = state => {
 	};
 };
 
-export default connect(
-	mapState,
-	{
-		recordTracksEvent,
-		setLayoutFocus,
-		showInlineHelpPopover,
-		showChecklistPrompt,
-		showOnboardingWelcomePrompt,
-	}
-)( localize( PreviewMain ) );
+export default connect( mapState, {
+	recordTracksEvent,
+	setLayoutFocus,
+	showInlineHelpPopover,
+	showChecklistPrompt,
+	showOnboardingWelcomePrompt,
+} )( localize( PreviewMain ) );

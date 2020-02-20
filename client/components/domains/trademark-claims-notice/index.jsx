@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,8 +10,7 @@ import { defer, get, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
+import { Button, CompactCard } from '@automattic/components';
 import HeaderCake from 'components/header-cake';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { checkDomainAvailability } from 'lib/domains';
@@ -288,11 +285,8 @@ export const recordAcknowledgeTrademarkButtonClickInTrademarkNotice = domainName
 		} )
 	);
 
-export default connect(
-	state => ( { selectedSite: getSelectedSite( state ) } ),
-	{
-		recordAcknowledgeTrademarkButtonClickInTrademarkNotice,
-		recordChooseAnotherDomainButtonClickInTrademarkNotice,
-		recordShowTrademarkNoticeButtonClickInTrademarkNotice,
-	}
-)( localize( TrademarkClaimsNotice ) );
+export default connect( state => ( { selectedSite: getSelectedSite( state ) } ), {
+	recordAcknowledgeTrademarkButtonClickInTrademarkNotice,
+	recordChooseAnotherDomainButtonClickInTrademarkNotice,
+	recordShowTrademarkNoticeButtonClickInTrademarkNotice,
+} )( localize( TrademarkClaimsNotice ) );

@@ -41,7 +41,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	}
 }
 
-.jetpack-connect__main {
+.jetpack-connect__main.main {
 	max-width: 400px;
 
 	.formatted-header {
@@ -600,17 +600,17 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		margin-top: 11px;
 	}
 
-	.plan-price.is-original {
+	.plan-features .plan-price.is-original {
 		align-self: center;
 		margin-top: 6px;
 	}
 
-	.plan-price.is-original .plan-price__currency-symbol,
-	.plan-price.is-original .plan-price__fraction {
+	.plan-features .plan-price.is-original .plan-price__currency-symbol,
+	.plan-features .plan-price.is-original .plan-price__fraction {
 		font-size: 8px;
 	}
 
-	.plan-price.is-discounted {
+	.plan-features .plan-price.is-discounted {
 		margin-right: 0;
 	}
 
@@ -622,6 +622,17 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	.formatted-header,
 	.formatted-header.is-without-subhead {
 		margin-bottom: 8px;
+	}
+
+	.formatted-header a {
+		color: var( --color-neutral-20 );
+		text-decoration: underline;
+
+		&:hover,
+		&:focus {
+			color: var( --color-primary-20 );
+			text-decoration: underline;
+		}
 	}
 
 	.jetpack-connect__happychat-button {
@@ -905,6 +916,10 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			svg > g {
 				transform: translateX( 25% );
 			}
+
+			@include breakpoint( '<660px' ) {
+				margin-top: 0;
+			}
 		}
 
 		.jetpack-header {
@@ -924,6 +939,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 
 		.formatted-header__subtitle {
+			color: var( --color-primary-10 );
 			margin-top: 1em;
 			font-size: 16px;
 			line-height: 24px;
@@ -986,6 +1002,10 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			color: var( --color-neutral-60 );
 		}
 
+		.signup-form__terms-of-service-link a {
+			text-decoration: underline;
+		}
+
 		.logged-out-form__link-item {
 			text-align: center;
 			text-decoration: underline;
@@ -1000,10 +1020,21 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 				font-size: 12px;
 			}
 
+			.signup-form__social-buttons-tos {
+				color: var( --studio-gray-60 );
+				margin-bottom: 16px;
+				a {
+					text-decoration: underline;
+					color: var( --studio-gray-60 );
+				}
+			}
+
 			.social-buttons__button {
 				border: 1px solid var( --studio-pink-50 );
 				color: var( --studio-pink-50 );
 				box-shadow: none;
+				max-width: 310px;
+				height: 48px;
 			}
 		}
 
@@ -1078,5 +1109,70 @@ body.is-section-jetpack-connect .layout.is-jetpack-woocommerce-flow {
 	.button .gridicon {
 		padding-left: 4px;
 		margin-right: -5px;
+	}
+}
+
+// ProductSelector and ProductCard overrides
+.is-section-jetpack-connect .product-selector {
+	max-width: 520px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 16px;
+	padding-right: 16px;
+}
+
+.is-section-jetpack-connect .product-card {
+	.product-card__header {
+		padding: 12px 0;
+
+		@include breakpoint( '<660px' ) {
+			padding: 16px 0;
+		}
+	}
+
+	.product-card__header-primary {
+		@include breakpoint( '<660px' ) {
+			justify-content: center;
+		}
+	}
+
+	.product-card__title,
+	.product-card__title:not( .is-purchased ) {
+		font-size: 20px;
+		color: var( --color-neutral-70 );
+	}
+
+	.plan-price,
+	.plan-price *,
+	.product-card__billing-timeframe,
+	.product-card__option .product-card__price-group .product-card__billing-timeframe {
+		color: var( --color-neutral-70 );
+		font-style: normal;
+		vertical-align: baseline;
+
+		@include breakpoint( '>660px' ) {
+			font-weight: 600;
+		}
+	}
+
+	.plan-price.is-original,
+	.plan-price.is-original * {
+		color: var( --color-neutral-light );
+	}
+
+	.product-card__billing-timeframe {
+		font-size: 14px;
+	}
+
+	.product-card__header {
+		.plan-price,
+		.plan-price * {
+			font-size: 16px;
+			line-height: 21px;
+		}
+	}
+
+	.product-card__option-name {
+		text-align: left;
 	}
 }

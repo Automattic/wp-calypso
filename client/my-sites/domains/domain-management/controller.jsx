@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,6 +11,7 @@ import React from 'react';
 import DomainManagement from '.';
 import DomainManagementData from 'components/data/domain-management';
 import {
+	domainManagementChangeSiteAddress,
 	domainManagementContactsPrivacy,
 	domainManagementDns,
 	domainManagementEdit,
@@ -52,6 +51,11 @@ export default {
 				needsProductsList
 			/>
 		);
+		next();
+	},
+
+	domainManagementListAllSites( pageContext, next ) {
+		pageContext.primary = <DomainManagement.ListAll />;
 		next();
 	},
 
@@ -106,7 +110,6 @@ export default {
 				component={ DomainManagement.ContactsPrivacy }
 				context={ pageContext }
 				needsDomains
-				needsWhois
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
@@ -139,7 +142,6 @@ export default {
 				component={ DomainManagement.EditContactInfo }
 				context={ pageContext }
 				needsDomains
-				needsWhois
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
@@ -163,8 +165,6 @@ export default {
 				analyticsTitle="Domain Management > Name Servers and DNS > DNS Records"
 				component={ DomainManagement.Dns }
 				context={ pageContext }
-				needsDns
-				needsDomains
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
@@ -213,7 +213,6 @@ export default {
 				analyticsTitle="Domain Management > Redirect Settings"
 				component={ DomainManagement.SiteRedirect }
 				context={ pageContext }
-				needsSiteRedirect
 				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
 			/>
 		);
@@ -285,6 +284,20 @@ export default {
 				needsDomains
 				needsDomainInfo
 				needsUsers
+				selectedDomainName={ pageContext.params.domain }
+			/>
+		);
+		next();
+	},
+
+	domainManagementChangeSiteAddress( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementChangeSiteAddress( ':site', ':domain' ) }
+				analyticsTitle="Domain Management > Change Site Address"
+				component={ DomainManagement.ChangeSiteAddress }
+				context={ pageContext }
+				needsDomains
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);

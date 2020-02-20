@@ -3,7 +3,7 @@
 }
 
 .theme__sheet-bar {
-	background-color: var( --color-primary );
+	background-color: var( --color-masterbar-item-hover-background );
 	color: white;
 	height: 180px;
 	padding: 0;
@@ -204,6 +204,9 @@
 
 	div {
 		width: auto !important; // override inline style in content markup
+	}
+	.banner__icon-circle {
+		width: 24px !important;
 	}
 
 	p:last-child {

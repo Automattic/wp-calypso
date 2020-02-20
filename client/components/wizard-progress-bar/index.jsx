@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,9 +9,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
-import ProgressBar from 'components/progress-bar';
+import { Button, CompactCard, ProgressBar } from '@automattic/components';
 
 /**
  * Style dependencies

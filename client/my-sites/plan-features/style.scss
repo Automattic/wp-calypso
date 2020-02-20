@@ -103,7 +103,8 @@ $plan-features-sidebar-width: 272px;
 
 	@include breakpoint( '<1040px' ) {
 		border-spacing: 0;
-		margin: 0 15px;
+		margin-left: 15px;
+		margin-right: 15px;
 		width: calc( 100% - 30px );
 	}
 }
@@ -525,6 +526,10 @@ $plan-features-sidebar-width: 272px;
 	& + .plans-features-main__group {
 		padding-top: 8px;
 	}
+}
+
+.plans-features-main__group.is-wpcom {
+	padding-top: 19px;
 }
 
 // This is the customer type buttons that let

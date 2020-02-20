@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -15,10 +14,10 @@ import { updateRewindRestoreProgress } from 'state/activity-log/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-/** @type {Number} how many ms between polls for same data */
+/** @type {number} how many ms between polls for same data */
 const POLL_INTERVAL = 1500;
 
-/** @type {Map<String, Number>} stores most-recent polling times */
+/** @type {Map<string, number>} stores most-recent polling times */
 const recentRequests = new Map();
 
 /** @type {string} Request error notice id. Prevents polling from creating endless notices */
@@ -31,8 +30,8 @@ const ERROR_NOTICE_ID = 'AL_REW_RESTORESTATUS_ERR';
  * replaced by the `freshness` system in the data layer
  * when it arrives. For now, it's statefully ugly.
  *
- * @param  {Object} action Redux action
- * @return {Object}        Redux action
+ * @param  {object} action Redux action
+ * @returns {object}        Redux action
  */
 const fetchProgress = action => {
 	const { restoreId, siteId } = action;

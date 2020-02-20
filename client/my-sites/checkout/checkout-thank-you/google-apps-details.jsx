@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -52,9 +50,6 @@ const GoogleAppsDetails = props => {
 	);
 };
 
-export default connect(
-	null,
-	{
-		dismissNudge,
-	}
-)( GoogleAppsDetails );
+export default connect( null, {
+	dismissNudge,
+} )( GoogleAppsDetails );

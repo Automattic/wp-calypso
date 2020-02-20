@@ -1,4 +1,4 @@
-/** @format
+/**
  * @jest-environment jsdom
  */
 

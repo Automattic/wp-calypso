@@ -1,6 +1,5 @@
-/** @format */
 const { merge } = require( 'lodash' );
-const reactVersion = require( './package.json' ).dependencies.react;
+const reactVersion = require( './client/package.json' ).dependencies.react;
 
 module.exports = {
 	root: true,
@@ -15,21 +14,20 @@ module.exports = {
 		{
 			files: [ 'bin/**/*' ],
 			rules: {
-				'import/no-nodejs-modules': 0,
-				'no-console': 0,
-				'no-process-exit': 0,
-				'valid-jsdoc': 0,
+				'import/no-nodejs-modules': 'off',
+				'no-console': 'off',
+				'no-process-exit': 'off',
+				'valid-jsdoc': 'off',
 			},
 		},
 		{
 			files: [ 'test/e2e/**/*' ],
 			rules: {
-				'import/no-nodejs-modules': 0,
-				'import/no-extraneous-dependencies': 0,
-				'no-console': 0,
-				'jest/valid-describe': 0,
-				'jest/no-test-prefixes': 0,
-				'jest/no-identical-title': 0,
+				'import/no-nodejs-modules': 'off',
+				'no-console': 'off',
+				'jest/valid-describe': 'off',
+				'jest/no-test-prefixes': 'off',
+				'jest/no-identical-title': 'off',
 			},
 			globals: {
 				step: false,
@@ -60,26 +58,23 @@ module.exports = {
 					'@typescript-eslint/no-var-requires': 'off',
 					// REST API objects include underscores
 					'@typescript-eslint/camelcase': 'off',
-					'valid-jsdoc': [
-						2,
-						{
-							requireParamType: false,
-							requireReturn: false,
-							requireReturnType: false,
-						},
-					],
 				},
 			}
 		),
 	],
 	env: {
-		browser: true,
 		jest: true,
 		// mocha is only still on because we have not finished porting all of our tests to jest's syntax
 		mocha: true,
 		node: true,
 	},
 	globals: {
+		// allow the browser globals. ESLint's `browser` env is too permissive and allows referencing
+		// directly hundreds of properties that are available on `window` and `document`. That
+		// frequently caused bugs where we used an undefined variable and ESLint didn't warn us.
+		globalThis: true,
+		window: true,
+		document: true,
 		// this is our custom function that's transformed by babel into either a dynamic import or a normal require
 		asyncRequire: true,
 		// this is the SHA of the current commit. Injected at boot in a script tag.
@@ -92,19 +87,25 @@ module.exports = {
 		react: {
 			version: reactVersion,
 		},
+		jsdoc: {
+			mode: 'typescript',
+		},
 	},
 	rules: {
 		// REST API objects include underscores
-		camelcase: 0,
+		camelcase: 'off',
 
 		// TODO: why did we turn this off?
-		'jest/valid-expect': 0,
+		'jest/valid-expect': 'off',
+
+		// Only use known tag names plus `jest-environment`.
+		'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'jest-environment' ] } ],
 
 		// Deprecated rule, fails in some valid cases with custom input components
-		'jsx-a11y/label-has-for': 0,
+		'jsx-a11y/label-has-for': 'off',
 
 		// i18n-calypso translate triggers false failures
-		'jsx-a11y/anchor-has-content': 0,
+		'jsx-a11y/anchor-has-content': 'off',
 
 		'no-restricted-imports': [
 			2,
@@ -123,6 +124,11 @@ module.exports = {
 						importNames: [ 'combineReducers' ],
 						message: "`combineReducers` should be imported from 'state/utils', not 'redux'.",
 					},
+					// Use fetch instead of superagent.
+					{
+						name: 'superagent',
+						message: 'Please use native `fetch` instead.',
+					},
 				],
 			},
 		],
@@ -137,12 +143,19 @@ module.exports = {
 						name: 'gridicons',
 						message: "Please use 'components/gridicon' instead.",
 					},
+					// Use fetch instead of superagent.
+					{
+						name: 'superagent',
+						message: 'Please use native `fetch` instead.',
+					},
 				],
 			},
 		],
 
 		// Allows Chai `expect` expressions. Now that we're on jest, hopefully we can remove this one.
-		'no-unused-expressions': 0,
+		'no-unused-expressions': 'off',
+
+		'react/forbid-foreign-prop-types': 'error',
 
 		// enforce our classname namespacing rules
 		'wpcalypso/jsx-classname-namespace': [
@@ -157,9 +170,5 @@ module.exports = {
 		// - events because we use it for some event emitters
 		// - path because we use it quite a bit
 		'import/no-nodejs-modules': [ 'error', { allow: [ 'url', 'events', 'path', 'config' ] } ],
-
-		// Disallow importing or requiring packages that are not listed in package.json
-		// This prevents us from depending on transitive dependencies, which could break in unexpected ways.
-		'import/no-extraneous-dependencies': [ 'error', { packageDir: './' } ],
 	},
 };

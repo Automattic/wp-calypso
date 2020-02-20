@@ -1,10 +1,12 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 import { ACCOUNT_CLOSE, ACCOUNT_CLOSE_SUCCESS } from 'state/action-types';
 import { closeAccount, closeAccountSuccess } from 'state/account/actions';
+
+jest.mock( 'lib/user', () => () => {
+	return { clear: jest.fn() };
+} );
 
 describe( 'actions', () => {
 	describe( '#closeAccount', () => {
@@ -17,9 +19,10 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#closeAccountSuccess', () => {
-		test( 'should return an action when an account is closed successfully', () => {
-			const action = closeAccountSuccess();
-			expect( action ).toEqual( {
+		test( 'should dispatch an action when an account is closed successfully', async () => {
+			const spy = jest.fn();
+			await closeAccountSuccess()( spy );
+			expect( spy ).toHaveBeenCalledWith( {
 				type: ACCOUNT_CLOSE_SUCCESS,
 			} );
 		} );

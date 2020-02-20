@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,7 +18,7 @@ import FormLabel from 'components/forms/form-label';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import Popover from 'components/popover';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 const HANDLED_FILTER_KEYS = [ 'includeDashes', 'maxCharacters', 'exactSldMatchesOnly' ];
 
@@ -138,6 +136,21 @@ export class DropdownFilters extends Component {
 		);
 	}
 
+	renderFilterIcon() {
+		if ( this.props.showDesignUpdate ) {
+			return <Gridicon icon="filter" size={ 12 } />;
+		}
+
+		return (
+			<>
+				<Gridicon icon="cog" size={ 12 } />
+				<span className="search-filters__dropdown-filters-button-text">
+					{ this.props.translate( 'Filters' ) }
+				</span>
+			</>
+		);
+	}
+
 	render() {
 		const hasFilterValues = this.getFiltercounts() > 0;
 
@@ -156,10 +169,7 @@ export class DropdownFilters extends Component {
 					ref={ this.button }
 					onClick={ this.togglePopover }
 				>
-					<Gridicon icon="cog" size={ 12 } />
-					<span className="search-filters__dropdown-filters-button-text">
-						{ this.props.translate( 'Filters' ) }
-					</span>
+					{ this.renderFilterIcon() }
 				</Button>
 
 				{ this.state.showPopover && this.renderPopover() }
@@ -185,7 +195,6 @@ export class DropdownFilters extends Component {
 				className="search-filters__popover"
 				context={ this.button.current }
 				id={ popoverId }
-				isFocusOnShow
 				isVisible={ this.state.showPopover }
 				onClose={ this.handleFiltersSubmit }
 				position="bottom left"

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 import PropTypes from 'prop-types';
 import React, { Component, createElement } from 'react';
@@ -10,7 +9,6 @@ import {
 	noop,
 	get,
 	deburr,
-	find,
 	kebabCase,
 	pick,
 	head,
@@ -38,7 +36,6 @@ import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
 import { toIcannFormat } from 'components/phone-input/phone-number';
 import NoticeErrorMessage from 'my-sites/checkout/checkout/notice-error-message';
 import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
-import LocationSearch from 'blocks/location-search';
 import notices from 'notices';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import getCountries from 'state/selectors/get-countries';
@@ -48,7 +45,6 @@ import {
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 } from './custom-form-fieldsets/constants';
 import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
-import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -71,8 +67,6 @@ const CONTACT_DETAILS_FORM_FIELDS = [
 	'fax',
 ];
 
-const CREATE_NEW_PLACE_ID = 'create_new_place_id';
-
 export class ContactDetailsFormFields extends Component {
 	static propTypes = {
 		eventFormName: PropTypes.string,
@@ -86,7 +80,7 @@ export class ContactDetailsFormFields extends Component {
 		needsFax: PropTypes.bool,
 		getIsFieldDisabled: PropTypes.func,
 		onContactDetailsChange: PropTypes.func,
-		onSubmit: PropTypes.func.isRequired,
+		onSubmit: PropTypes.func,
 		onValidate: PropTypes.func,
 		onSanitize: PropTypes.func,
 		labelTexts: PropTypes.object,
@@ -127,8 +121,6 @@ export class ContactDetailsFormFields extends Component {
 			phoneCountryCode: this.props.countryCode || this.props.userCountryCode,
 			form: null,
 			submissionCount: 0,
-			locationSelected: false,
-			manualLocationInput: false,
 		};
 
 		this.inputRefs = {};
@@ -142,21 +134,19 @@ export class ContactDetailsFormFields extends Component {
 	shouldComponentUpdate( nextProps, nextState ) {
 		return (
 			( nextProps.isSubmitting === false && this.props.isSubmitting === true ) ||
-			nextState.locationSelected !== this.state.locationSelected ||
-			nextState.manualLocationInput !== this.state.manualLocationInput ||
 			nextState.phoneCountryCode !== this.state.phoneCountryCode ||
 			! isEqual( nextProps.contactDetails, this.props.contactDetails ) ||
 			! isEqual( nextState.form, this.state.form ) ||
 			! isEqual( nextProps.labelTexts, this.props.labelTexts ) ||
 			! isEqual( nextProps.countriesList, this.props.countriesList ) ||
 			! isEqual( nextProps.hasCountryStates, this.props.hasCountryStates ) ||
-			( nextProps.needsFax !== this.props.needsFax ||
-				nextProps.disableSubmitButton !== this.props.disableSubmitButton ||
-				nextProps.needsOnlyGoogleAppsDetails !== this.props.needsOnlyGoogleAppsDetails )
+			nextProps.needsFax !== this.props.needsFax ||
+			nextProps.disableSubmitButton !== this.props.disableSubmitButton ||
+			nextProps.needsOnlyGoogleAppsDetails !== this.props.needsOnlyGoogleAppsDetails
 		);
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.formStateController = formState.Controller( {
 			debounceWait: 500,
 			fieldNames: CONTACT_DETAILS_FORM_FIELDS,
@@ -177,8 +167,14 @@ export class ContactDetailsFormFields extends Component {
 
 	getMainFieldValues() {
 		const mainFieldValues = formState.getAllFieldValues( this.state.form );
-		const { countryCode, hasCountryStates, needsFax } = this.props;
+		const { needsFax } = this.props;
+		const { countryCode } = mainFieldValues;
 		let state = mainFieldValues.state;
+
+		const hasCountryStates =
+			countryCode === this.props.countryCode
+				? this.props.hasCountryStates
+				: ! isEmpty( getCountryStates( this.state, countryCode ) );
 
 		// domains registered according to ancient validation rules may have state set even though not required
 		if (
@@ -341,100 +337,6 @@ export class ContactDetailsFormFields extends Component {
 		} );
 	};
 
-	updateAddressField( addressComponents, componentTypes, fieldName, useShortName = false ) {
-		let newValue = '';
-		componentTypes.forEach( componentType => {
-			const addressComponent = find(
-				addressComponents,
-				this.findAddressComponent( componentType )
-			);
-			if ( addressComponent ) {
-				newValue += useShortName ? addressComponent.short_name : addressComponent.long_name;
-				newValue += ' ';
-			}
-		} );
-
-		this.formStateController.handleFieldChange( {
-			name: fieldName,
-			value: newValue.trim(),
-		} );
-	}
-
-	handleAddressPredictionClick = ( { place_id: placeId }, sessionToken, query ) => {
-		if ( placeId === CREATE_NEW_PLACE_ID ) {
-			this.setState( { locationSelected: true, manualLocationInput: true } );
-			analytics.tracks.recordEvent( 'calypso_contact_information_manual_address_click', { query } );
-			return;
-		}
-
-		// eslint-disable-next-line no-undef
-		const placesService = new google.maps.places.PlacesService( document.createElement( 'div' ) );
-		placesService.getDetails(
-			{
-				placeId: placeId,
-				fields: [ 'address_component' ],
-				sessionToken,
-			},
-			( { address_components: addressComponents }, status ) => {
-				// eslint-disable-next-line no-undef
-				if ( status === google.maps.places.PlacesServiceStatus.OK ) {
-					this.updateAddressField( addressComponents, [ 'postal_code' ], 'postalCode' );
-					this.updateAddressField( addressComponents, [ 'country' ], 'countryCode', true );
-					this.updateAddressField( addressComponents, [ 'locality' ], 'city' );
-					this.updateAddressField(
-						addressComponents,
-						[ 'street_address', 'route', 'street_number' ],
-						'address1'
-					);
-					if ( this.props.hasCountryStates ) {
-						this.updateAddressField(
-							addressComponents,
-							[ 'administrative_area_level_1' ],
-							'state',
-							true
-						);
-					}
-
-					this.formStateController.sanitize();
-					this.formStateController.validate();
-				}
-
-				this.setState( { locationSelected: true } );
-			}
-		);
-	};
-
-	handleLocationSearch = query => {
-		if ( query.length === 0 ) {
-			this.setState( { locationSelected: false, manualLocationInput: false } );
-			[ 'postalCode', 'countryCode', 'city', 'address1', 'address2', 'state' ].forEach( field => {
-				this.formStateController.handleFieldChange( {
-					name: field,
-					value: '',
-					hideError: true,
-				} );
-			} );
-		}
-	};
-
-	addressPredictionTransformer = ( predictions, query ) => {
-		if ( ! query ) {
-			return predictions;
-		}
-
-		const { translate } = this.props;
-		return [
-			...( predictions || [] ),
-			{
-				place_id: CREATE_NEW_PLACE_ID,
-				structured_formatting: {
-					main_text: translate( "Can't find your address?" ),
-					secondary_text: translate( 'Fill out the form manually' ),
-				},
-			},
-		];
-	};
-
 	getFieldProps = ( name, needsChildRef = false ) => {
 		const ref = needsChildRef
 			? { inputRef: this.getRefCallback( name ) }
@@ -460,53 +362,19 @@ export class ContactDetailsFormFields extends Component {
 	};
 
 	createField = ( name, componentClass, additionalProps, needsChildRef ) => {
-		return createElement(
-			componentClass,
-			Object.assign( {}, { ...this.getFieldProps( name, needsChildRef ) }, { ...additionalProps } )
-		);
+		return createElement( componentClass, {
+			...this.getFieldProps( name, needsChildRef ),
+			...additionalProps,
+		} );
 	};
 
 	getCountryCode() {
 		return get( this.state.form, 'countryCode.value', '' );
 	}
 
-	findAddressComponent( type ) {
-		return addressComponent => {
-			return includes( get( addressComponent, 'types', [] ), type );
-		};
-	}
-
-	renderLocationSearch() {
-		const { translate } = this.props;
-		const inputProps = {
-			label: translate( 'Address' ),
-			maxLength: 40,
-			...this.getFieldProps( 'address-1' ),
-		};
-
-		return (
-			<div className="contact-details-form-fields__field location-search">
-				<LocationSearch
-					inputType="input"
-					inputProps={ inputProps }
-					types={ [ 'address' ] }
-					onSearch={ this.handleLocationSearch }
-					onPredictionClick={ this.handleAddressPredictionClick }
-					predictionsTransformation={ this.addressPredictionTransformer }
-					hidePredictionsOnClick={ true }
-				/>
-			</div>
-		);
-	}
-
 	renderContactDetailsFields() {
 		const { translate, needsFax, hasCountryStates, labelTexts } = this.props;
-		const { manualLocationInput } = this.state;
 		const countryCode = this.getCountryCode();
-		const usePlacesApi = abtest( 'placesApiInCheckout' ) === 'placesApi';
-		const hasCountry = ! isEmpty( get( this.state.form, 'countryCode.value', '' ) );
-		const showAddressFields =
-			! usePlacesApi || this.state.locationSelected || manualLocationInput || hasCountry;
 
 		return (
 			<div className="contact-details-form-fields__contact-details">
@@ -527,13 +395,18 @@ export class ContactDetailsFormFields extends Component {
 						label: translate( 'Email' ),
 					} ) }
 
-					{ this.createField( 'phone', FormPhoneMediaInput, {
-						label: translate( 'Phone' ),
-						onChange: this.handlePhoneChange,
-						countriesList: this.props.countriesList,
-						countryCode: this.state.phoneCountryCode,
-						enableStickyCountry: false,
-					} ) }
+					{ this.createField(
+						'phone',
+						FormPhoneMediaInput,
+						{
+							label: translate( 'Phone' ),
+							onChange: this.handlePhoneChange,
+							countriesList: this.props.countriesList,
+							countryCode: this.state.phoneCountryCode,
+							enableStickyCountry: false,
+						},
+						true
+					) }
 				</div>
 
 				<div className="contact-details-form-fields__row">
@@ -543,29 +416,23 @@ export class ContactDetailsFormFields extends Component {
 						} ) }
 				</div>
 
-				{ usePlacesApi && ! manualLocationInput && (
-					<div className="contact-details-form-fields__row">{ this.renderLocationSearch() }</div>
-				) }
-
 				<div className="contact-details-form-fields__row">
-					{ showAddressFields &&
-						this.createField(
-							'country-code',
-							CountrySelect,
-							{
-								label: translate( 'Country' ),
-								countriesList: this.props.countriesList,
-							},
-							true
-						) }
+					{ this.createField(
+						'country-code',
+						CountrySelect,
+						{
+							label: translate( 'Country' ),
+							countriesList: this.props.countriesList,
+						},
+						true
+					) }
 				</div>
 
-				{ showAddressFields && countryCode && (
+				{ countryCode && (
 					<RegionAddressFieldsets
 						getFieldProps={ this.getFieldProps }
 						countryCode={ countryCode }
 						hasCountryStates={ hasCountryStates }
-						manualLocationInput={ manualLocationInput }
 						shouldAutoFocusAddressField={ this.shouldAutoFocusAddressField }
 					/>
 				) }
@@ -606,6 +473,8 @@ export class ContactDetailsFormFields extends Component {
 		const { translate, onCancel, disableSubmitButton, labelTexts } = this.props;
 		const countryCode = this.getCountryCode();
 
+		const isFooterVisible = !! ( this.props.onSubmit || onCancel );
+
 		return (
 			<FormFieldset className="contact-details-form-fields">
 				<div className="contact-details-form-fields__row">
@@ -625,25 +494,29 @@ export class ContactDetailsFormFields extends Component {
 
 				<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
 
-				<FormFooter>
-					<FormButton
-						className="contact-details-form-fields__submit-button"
-						disabled={ ! countryCode || disableSubmitButton }
-						onClick={ this.handleSubmitButtonClick }
-					>
-						{ labelTexts.submitButton || translate( 'Submit' ) }
-					</FormButton>
-					{ onCancel && (
-						<FormButton
-							className="contact-details-form-fields__cancel-button"
-							type="button"
-							isPrimary={ false }
-							onClick={ onCancel }
-						>
-							{ translate( 'Cancel' ) }
-						</FormButton>
-					) }
-				</FormFooter>
+				{ isFooterVisible && (
+					<FormFooter>
+						{ this.props.onSubmit && (
+							<FormButton
+								className="contact-details-form-fields__submit-button"
+								disabled={ ! countryCode || disableSubmitButton }
+								onClick={ this.handleSubmitButtonClick }
+							>
+								{ labelTexts.submitButton || translate( 'Submit' ) }
+							</FormButton>
+						) }
+						{ onCancel && (
+							<FormButton
+								className="contact-details-form-fields__cancel-button"
+								type="button"
+								isPrimary={ false }
+								onClick={ onCancel }
+							>
+								{ translate( 'Cancel' ) }
+							</FormButton>
+						) }
+					</FormFooter>
+				) }
 				<QueryDomainCountries />
 			</FormFieldset>
 		);

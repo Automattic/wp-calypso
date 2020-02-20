@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import { isFetchingStoredCards } from 'state/stored-cards/selectors';
 import { fetchStoredCards } from 'state/stored-cards/actions';
 
 class QueryStoredCards extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( ! this.props.isRequesting ) {
 			this.props.fetchStoredCards();
 		}

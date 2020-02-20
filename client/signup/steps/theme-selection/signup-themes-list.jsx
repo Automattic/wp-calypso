@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,10 +13,16 @@ import { localize } from 'i18n-calypso';
 import getThemes from 'lib/signup/themes';
 import ThemesList from 'components/themes-list';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class SignupThemesList extends Component {
 	static propTypes = {
 		surveyQuestion: PropTypes.string,
 		designType: PropTypes.string,
+		quantity: PropTypes.number,
 		handleScreenshotClick: PropTypes.func,
 		translate: PropTypes.func,
 	};
@@ -26,6 +30,7 @@ class SignupThemesList extends Component {
 	static defaultProps = {
 		surveyQuestion: null,
 		designType: null,
+		quantity: 3,
 		handleScreenshotClick: noop,
 		translate: identity,
 	};
@@ -38,7 +43,7 @@ class SignupThemesList extends Component {
 	}
 
 	getComputedThemes() {
-		return getThemes( this.props.surveyQuestion, this.props.designType, 3 );
+		return getThemes( this.props.surveyQuestion, this.props.designType, this.props.quantity );
 	}
 
 	getScreenshotUrl( theme ) {
@@ -58,13 +63,15 @@ class SignupThemesList extends Component {
 		} );
 
 		return (
-			<ThemesList
-				getButtonOptions={ noop }
-				onScreenshotClick={ this.props.handleScreenshotClick }
-				onMoreButtonClick={ noop }
-				getActionLabel={ getActionLabel }
-				themes={ themes }
-			/>
+			<div className="signup-themes-list">
+				<ThemesList
+					getButtonOptions={ noop }
+					onScreenshotClick={ this.props.handleScreenshotClick }
+					onMoreButtonClick={ noop }
+					getActionLabel={ getActionLabel }
+					themes={ themes }
+				/>
+			</div>
 		);
 	}
 }

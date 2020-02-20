@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,6 +15,7 @@ import { decodeEntities } from 'lib/formatting';
  */
 import Gravatar from 'components/gravatar';
 import InfoPopover from 'components/info-popover';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { requestExternalContributors } from 'state/data-getters';
 /**
  * Style dependencies
@@ -282,4 +281,4 @@ export default connect( ( _state, { siteId, user } ) => {
 			undefined !== linkedUserId ? linkedUserId : userId
 		),
 	};
-} )( localize( PeopleProfile ) );
+} )( localize( withLocalizedMoment( PeopleProfile ) ) );

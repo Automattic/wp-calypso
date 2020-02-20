@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -17,8 +16,7 @@ import EmptyContent from './empty';
 import TagStreamHeader from './header';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import HeaderBack from 'reader/header-back';
-import getReaderFollowedTags from 'state/selectors/get-reader-followed-tags';
-import getReaderTags from 'state/selectors/get-reader-tags';
+import { getReaderTags, getReaderFollowedTags } from 'state/reader/tags/selectors';
 import { requestFollowTag, requestUnfollowTag } from 'state/reader/tags/items/actions';
 import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
 import QueryReaderTag from 'components/data/query-reader-tag';

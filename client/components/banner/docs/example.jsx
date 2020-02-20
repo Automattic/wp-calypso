@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -31,6 +29,7 @@ const BannerExample = () => (
 			icon="star"
 			title="Banner unrelated to any plan"
 		/>
+		<Banner showIcon={ false } title="Banner with showIcon set to false" />
 		<Banner href="#" plan={ PLAN_BLOGGER } title="Upgrade to a Blogger Plan!" />
 		<Banner href="#" plan={ PLAN_PERSONAL } title="Upgrade to a Personal Plan!" />
 		<Banner href="#" plan={ PLAN_PREMIUM } title="Upgrade to a Premium Plan!" />
@@ -58,6 +57,16 @@ const BannerExample = () => (
 		<Banner href="#" plan={ PLAN_JETPACK_PERSONAL } title="Upgrade to a Jetpack Personal Plan!" />
 		<Banner href="#" plan={ PLAN_JETPACK_PREMIUM } title="Upgrade to a Jetpack Premium Plan!" />
 		<Banner href="#" plan={ PLAN_JETPACK_BUSINESS } title="Upgrade to a Jetpack Business Plan!" />
+		<Banner
+			callToAction="Get Backups"
+			description="New plugins can lead to unexpected changes. Ensure you can restore your site if something goes wrong."
+			dismissPreferenceName="devdocs-banner-backups-example"
+			dismissTemporary
+			horizontal
+			href="#"
+			jetpack
+			title="Make sure your site is backed up before installing a new plugin."
+		/>
 	</div>
 );
 

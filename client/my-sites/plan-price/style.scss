@@ -58,6 +58,10 @@
 	color: var( --color-success );
 }
 
+.plan-price__tax-amount {
+	margin-left: 4px;
+}
+
 .plan-price__currency-symbol,
 .plan-price__tax-amount {
 	color: var( --color-text-subtle );

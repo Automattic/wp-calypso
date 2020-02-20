@@ -1,0 +1,96 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+
+// This should match the timeout used in the component.
+$onboarding-block-css-transition-duration: 750ms;
+
+.onboarding-block__acquire-intent {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-top: 40px;
+	position: fixed;
+
+	top: 20%;
+	left: 0%;
+	width: 100%;
+}
+
+.onboarding-block__questions {
+	display: inline-block;
+	min-width: 800px;
+}
+
+.onboarding-block__questions-heading {
+	margin-bottom: 10px;
+	text-align: left;
+	font-size: 20px;
+}
+
+.onboarding-block__footer {
+	text-align: right;
+}
+
+.components-button.is-link.onboarding-block__question-skip {
+	color: $dark-gray-500;
+	font-size: 20px;
+	line-height: 2em;
+	margin: 10px 0;
+	text-decoration: none;
+	position: relative;
+
+	&:hover,
+	&:focus {
+		background: none;
+		border: none;
+		color: $blue-medium-focus;
+		outline: none;
+		box-shadow: none;
+	}
+
+	&:focus {
+		border-bottom: 2px solid $blue-medium-focus;
+	}
+}
+
+.onboarding-block__question input {
+	background: transparent;
+}
+
+.onboarding-block__background {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background-size: cover;
+	z-index: -1;
+}
+
+.onboarding-block__background.has-background::before {
+	background-color: $white;
+	content: '';
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	opacity: 0.7;
+	transition: opacity $onboarding-block-css-transition-duration linear;
+}
+
+.onboarding-block__background-fade-enter {
+	&.onboarding-block__background::before {
+		opacity: 0.8;
+	}
+}
+.onboarding-block__background-fade-enter,
+.onboarding-block__background-fade-exit,
+.onboarding-block__background-fade-exit-done {
+	opacity: 0;
+}
+
+.onboarding-block__background-fade-enter,
+.onboarding-block__background-fade-exit,
+.onboarding-block__background-fade-enter-done {
+	transition: opacity $onboarding-block-css-transition-duration linear;
+}

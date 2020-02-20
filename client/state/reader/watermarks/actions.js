@@ -1,9 +1,9 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 import { READER_VIEW_STREAM } from 'state/action-types';
+
+import 'state/reader/init';
 
 /**
  * this is a relatively generic action type for something very specific (marking up the watermark)
@@ -11,9 +11,10 @@ import { READER_VIEW_STREAM } from 'state/action-types';
  * i.e. unexpanding all photos/videos when opening a stream.
  *
  * @param {Date} mark  - date last viewed
- * @param {String} streamKey - stream being viewed
- * @returns {Object} action object for dispatch
+ * @param {string} streamKey - stream being viewed
+ * @returns {object} action object for dispatch
  */
+
 export const viewStream = ( { mark, streamKey } ) => {
 	return {
 		type: READER_VIEW_STREAM,

@@ -1,10 +1,7 @@
 /**
- * @format
- */
-
-/**
  * External dependencies
  */
+import { isMobile } from '@automattic/viewport';
 import React, { Fragment } from 'react';
 import store from 'store';
 import { connect } from 'react-redux';
@@ -16,7 +13,6 @@ import { localize } from 'i18n-calypso';
 import AppPromo from 'blocks/app-promo';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import QueryUserSettings from 'components/data/query-user-settings';
-import { isMobile } from 'lib/viewport';
 import config from 'config';
 import getUserSetting from 'state/selectors/get-user-setting';
 

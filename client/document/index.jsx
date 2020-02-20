@@ -1,11 +1,11 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import React, { Fragment } from 'react';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -19,8 +19,9 @@ import EnvironmentBadge, {
 	PreferencesHelper,
 } from 'components/environment-badge';
 import { chunkCssLinks } from './utils';
+import JetpackLogo from 'components/jetpack-logo';
 import WordPressLogo from 'components/wordpress-logo';
-import { jsonStringifyForHtml } from '../../server/sanitize';
+import { jsonStringifyForHtml } from 'server/sanitize';
 
 class Document extends React.Component {
 	render() {
@@ -44,7 +45,6 @@ class Document extends React.Component {
 			sectionGroup,
 			sectionName,
 			clientData,
-			isFluidWidth,
 			env,
 			badge,
 			abTestHelper,
@@ -59,6 +59,7 @@ class Document extends React.Component {
 			isWCComConnect,
 			addEvergreenCheck,
 			requestFrom,
+			translate,
 		} = this.props;
 
 		const inlineScript =
@@ -78,16 +79,13 @@ class Document extends React.Component {
 		const isJetpackWooCommerceFlow =
 			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
 			'jetpack-connect' === sectionName &&
-			'woocommerce-setup-wizard' === requestFrom;
+			'woocommerce-onboarding' === requestFrom;
 
 		return (
 			<html
 				lang={ lang }
 				dir={ isRTL ? 'rtl' : 'ltr' }
-				className={ classNames( {
-					'is-fluid-width': isFluidWidth,
-					'is-iframe': sectionName === 'gutenberg-editor',
-				} ) }
+				className={ classNames( { 'is-iframe': sectionName === 'gutenberg-editor' } ) }
 			>
 				<Head
 					title={ head.title }
@@ -134,7 +132,14 @@ class Document extends React.Component {
 							>
 								<div className="masterbar" />
 								<div className="layout__content">
-									<WordPressLogo size={ 72 } className="wpcom-site__logo" />
+									{ 'jetpack-cloud' === sectionName ? (
+										<div className="wpcom-site__loader">
+											<JetpackLogo size={ 72 } className="wpcom-site__logo" />
+											{ translate( 'Loading' ) }
+										</div>
+									) : (
+										<WordPressLogo size={ 72 } className="wpcom-site__logo" />
+									) }
 									{ hasSecondary && (
 										<Fragment>
 											<div className="layout__secondary" />
@@ -258,4 +263,4 @@ class Document extends React.Component {
 	}
 }
 
-export default Document;
+export default localize( Document );

@@ -10,33 +10,32 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Dialog from 'components/dialog';
+import AsyncLoad from 'components/async-load';
+import { Dialog } from '@automattic/components';
 import Main from 'components/main';
-import {
-	getCurrentPlan,
-	isCurrentPlanExpiring,
-	isRequestingSitePlans,
-} from 'state/sites/plans/selectors';
+import { getCurrentPlan, isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import DocumentHead from 'components/data/document-head';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import PlansNavigation from 'my-sites/plans/navigation';
-import ProductPurchaseFeaturesList from 'blocks/product-purchase-features-list';
-import CurrentPlanHeader from './header';
+import PurchasesListing from './purchases-listing';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { getPlan } from 'lib/plans';
 import QuerySiteDomains from 'components/data/query-site-domains';
-import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
+import QuerySitePurchases from 'components/data/query-site-purchases';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
 import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';
+import BackupProductThankYou from './current-plan-thank-you/backup-thank-you';
+import { isFreeJetpackPlan, isFreePlan } from 'lib/products-values';
 
 /**
  * Style dependencies
@@ -51,12 +50,14 @@ class CurrentPlan extends Component {
 		path: PropTypes.string.isRequired,
 		domains: PropTypes.array,
 		currentPlan: PropTypes.object,
-		isExpiring: PropTypes.bool,
 		requestThankYou: PropTypes.bool,
 		shouldShowDomainWarnings: PropTypes.bool,
 		hasDomainsLoaded: PropTypes.bool,
 		showJetpackChecklist: PropTypes.bool,
 		showThankYou: PropTypes.bool,
+
+		// From localize() HoC
+		translate: PropTypes.func.isRequired,
 	};
 
 	componentDidMount() {
@@ -71,34 +72,23 @@ class CurrentPlan extends Component {
 		return ! selectedSite || isRequestingPlans;
 	}
 
-	getHeaderWording( planConstObj ) {
-		const { translate } = this.props;
+	renderThankYou() {
+		const { currentPlan, requestProduct } = this.props;
 
-		const title = translate( 'My Plan: %(planName)s', {
-			args: {
-				planName: planConstObj.getTitle(),
-			},
-		} );
+		if ( requestProduct ) {
+			return <BackupProductThankYou />;
+		}
+		if ( ! currentPlan || isFreePlan( currentPlan ) || isFreeJetpackPlan( currentPlan ) ) {
+			return <FreePlanThankYou />;
+		}
 
-		const tagLine = planConstObj.getTagline
-			? planConstObj.getTagline()
-			: translate(
-					'Unlock the full potential of your site with all the features included in your plan.'
-			  );
-
-		return {
-			title: title,
-			tagLine: tagLine,
-		};
+		return <PaidPlanThankYou />;
 	}
 
 	render() {
 		const {
-			currentPlan,
 			domains,
 			hasDomainsLoaded,
-			isExpiring,
-			isFreePlan,
 			path,
 			selectedSite,
 			selectedSiteId,
@@ -116,23 +106,27 @@ class CurrentPlan extends Component {
 				args: { planName: planConstObj.getTitle() },
 			} );
 
-		const { title, tagLine } = this.getHeaderWording( planConstObj );
-
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
 		return (
 			<Main className="current-plan" wideLayout>
 				<SidebarNavigation />
 				<DocumentHead title={ translate( 'My Plan' ) } />
+				<FormattedHeader
+					className="current-plan__page-heading"
+					headerText={ translate( 'Plans' ) }
+					align="left"
+				/>
 				<QuerySites siteId={ selectedSiteId } />
 				<QuerySitePlans siteId={ selectedSiteId } />
+				<QuerySitePurchases siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
 				<Dialog
 					baseClassName="current-plan__dialog dialog__content dialog__backdrop"
 					isVisible={ showThankYou }
 				>
-					{ isFreePlan ? <FreePlanThankYou /> : <PaidPlanThankYou /> }
+					{ this.renderThankYou() }
 				</Dialog>
 
 				<PlansNavigation path={ path } />
@@ -154,14 +148,7 @@ class CurrentPlan extends Component {
 					/>
 				) }
 
-				<CurrentPlanHeader
-					isPlaceholder={ isLoading }
-					title={ title }
-					tagLine={ tagLine }
-					currentPlan={ currentPlan }
-					isExpiring={ isExpiring }
-					siteSlug={ selectedSite ? selectedSite.slug : null }
-				/>
+				<PurchasesListing />
 
 				{ showJetpackChecklist && (
 					<Fragment>
@@ -177,7 +164,13 @@ class CurrentPlan extends Component {
 				>
 					<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
 				</div>
-				<ProductPurchaseFeaturesList plan={ currentPlanSlug } isPlaceholder={ isLoading } />
+
+				<AsyncLoad
+					require="blocks/product-purchase-features-list"
+					placeholder={ null }
+					plan={ currentPlanSlug }
+					isPlaceholder={ isLoading }
+				/>
 
 				<TrackComponentView eventName={ 'calypso_plans_my_plan_view' } />
 			</Main>
@@ -188,23 +181,23 @@ class CurrentPlan extends Component {
 export default connect( ( state, { requestThankYou } ) => {
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
-	const domains = getDecoratedSiteDomains( state, selectedSiteId );
+	const domains = getDomainsBySiteId( state, selectedSiteId );
 
 	const isJetpack = isJetpackSite( state, selectedSiteId );
 	const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );
 
 	const isJetpackNotAtomic = false === isAutomatedTransfer && isJetpack;
 
+	const currentPlan = getCurrentPlan( state, selectedSiteId );
+
 	return {
-		selectedSite,
-		selectedSiteId,
+		currentPlan,
 		domains,
-		currentPlan: getCurrentPlan( state, selectedSiteId ),
-		isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
-		isFreePlan: isSiteOnFreePlan( state, selectedSiteId ),
-		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
+		selectedSite,
+		selectedSiteId,
+		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
 		showJetpackChecklist: isJetpackNotAtomic,
 		showThankYou: requestThankYou && isJetpackNotAtomic,
 	};

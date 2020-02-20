@@ -15,7 +15,7 @@ import Gridicon from 'components/gridicon';
  */
 import SectionHeader from 'components/section-header';
 import ButtonGroup from 'components/button-group';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import SelectDropdown from 'components/select-dropdown';
 import BulkSelect from 'components/bulk-select';
 import analytics from 'lib/analytics';

@@ -13,7 +13,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import ThemesSelection from './themes-selection';
 import SubMasterbarNav from 'components/sub-masterbar-nav';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -30,10 +30,16 @@ import getThemeShowcaseDescription from 'state/selectors/get-theme-showcase-desc
 import getThemeShowcaseTitle from 'state/selectors/get-theme-showcase-title';
 import prependThemeFilterKeys from 'state/selectors/prepend-theme-filter-keys';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { openThemesShowcase } from 'state/themes/themes-ui/actions';
+import {
+	getThemesBookmark,
+	hasShowcaseOpened as hasShowcaseOpenedSelector,
+} from 'state/themes/themes-ui/selectors';
 import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'components/data/query-theme-filters';
 import { getActiveTheme } from 'state/themes/selectors';
 import UpworkBanner from 'blocks/upwork-banner';
+import RecommendedThemes from './recommended-themes';
 
 /**
  * Style dependencies
@@ -61,6 +67,23 @@ const optionShape = PropTypes.shape( {
 } );
 
 class ThemeShowcase extends React.Component {
+	constructor( props ) {
+		super( props );
+		this.scrollRef = React.createRef();
+		this.bookmarkRef = React.createRef();
+		this.state = {
+			page: 1,
+			showPreview: false,
+			isShowcaseOpen: !! (
+				this.props.loggedOutComponent ||
+				this.props.search ||
+				this.props.filter ||
+				this.props.tier ||
+				this.props.hasShowcaseOpened
+			),
+		};
+	}
+
 	static propTypes = {
 		currentThemeId: PropTypes.string,
 		emptyContent: PropTypes.element,
@@ -76,6 +99,8 @@ class ThemeShowcase extends React.Component {
 		upsellBanner: PropTypes.any,
 		trackUploadClick: PropTypes.func,
 		trackATUploadClick: PropTypes.func,
+		trackMoreThemesClick: PropTypes.func,
+		loggedOutComponent: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -86,9 +111,48 @@ class ThemeShowcase extends React.Component {
 		showUploadButton: true,
 	};
 
-	state = {
-		page: 1,
-		showPreview: false,
+	componentDidMount() {
+		const { search, filter, tier, hasShowcaseOpened, themesBookmark } = this.props;
+		// Open showcase on state if we open here with query override.
+		if ( ( search || filter || tier ) && ! hasShowcaseOpened ) {
+			this.props.openThemesShowcase();
+		}
+		// Scroll to bookmark if applicable.
+		if ( themesBookmark ) {
+			// Timeout to move this to the end of the event queue or it won't work here.
+			setTimeout( () => {
+				const lastTheme = this.bookmarkRef.current;
+				if ( lastTheme ) {
+					lastTheme.scrollIntoView( {
+						behavior: 'auto',
+						block: 'center',
+						inline: 'center',
+					} );
+				}
+			} );
+		}
+	}
+
+	componentDidUpdate( prevProps ) {
+		if (
+			prevProps.search !== this.props.search ||
+			prevProps.filter !== this.props.filter ||
+			prevProps.tier !== this.props.tier
+		) {
+			this.scrollToSearchInput();
+		}
+	}
+
+	scrollToSearchInput = () => {
+		if ( ! this.props.loggedOutComponent && this.scrollRef && this.scrollRef.current ) {
+			this.scrollRef.current.scrollIntoView();
+		}
+	};
+
+	toggleShowcase = () => {
+		this.setState( { isShowcaseOpen: ! this.state.isShowcaseOpen } );
+		this.props.openThemesShowcase();
+		this.props.trackMoreThemesClick();
 	};
 
 	doSearch = searchBoxContent => {
@@ -107,19 +171,20 @@ class ThemeShowcase extends React.Component {
 				.trim(),
 		} );
 		page( url );
+		this.scrollToSearchInput();
 	};
 
 	/**
 	 * Returns a full showcase url from current props.
 	 *
-	 * @param {Object} sections fields from this object will override current props.
-	 * @param {String} sections.vertical override vertical prop
-	 * @param {String} sections.tier override tier prop
-	 * @param {String} sections.filter override filter prop
-	 * @param {String} sections.siteSlug override siteSlug prop
-	 * @param {String} sections.searchString override searchString prop
+	 * @param {object} sections fields from this object will override current props.
+	 * @param {string} sections.vertical override vertical prop
+	 * @param {string} sections.tier override tier prop
+	 * @param {string} sections.filter override filter prop
+	 * @param {string} sections.siteSlug override siteSlug prop
+	 * @param {string} sections.searchString override searchString prop
 	 *
-	 * @returns {String} Theme showcase url
+	 * @returns {string} Theme showcase url
 	 */
 	constructUrl = sections => {
 		const { vertical, tier, filter, siteSlug, searchString } = { ...this.props, ...sections };
@@ -139,6 +204,7 @@ class ThemeShowcase extends React.Component {
 		trackClick( 'search bar filter', tier );
 		const url = this.constructUrl( { tier } );
 		page( url );
+		this.scrollToSearchInput();
 	};
 
 	onUploadClick = () => {
@@ -208,6 +274,8 @@ class ThemeShowcase extends React.Component {
 
 		const showBanners = currentThemeId || ! siteId || ! isLoggedIn;
 
+		const { isShowcaseOpen } = this.state;
+		const isQueried = this.props.search || this.props.filter || this.props.tier;
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
@@ -224,20 +292,6 @@ class ThemeShowcase extends React.Component {
 					/>
 				) }
 				<div className="themes__content">
-					<QueryThemeFilters />
-					{ showBanners &&
-						abtest &&
-						abtest( 'builderReferralThemesBanner' ) === 'builderReferralBanner' && (
-							<UpworkBanner location={ 'theme-banner' } />
-						) }
-					<ThemesSearchCard
-						onSearch={ this.doSearch }
-						search={ filterString + search }
-						tier={ tier }
-						showTierThemesControl={ ! isMultisite }
-						select={ this.onTierSelect }
-					/>
-					{ this.props.upsellBanner }
 					{ this.showUploadButton() && (
 						<Button
 							className="themes__upload-button"
@@ -249,43 +303,133 @@ class ThemeShowcase extends React.Component {
 							{ translate( 'Install Theme' ) }
 						</Button>
 					) }
-					<ThemesSelection
-						upsellUrl={ this.props.upsellUrl }
-						search={ search }
-						tier={ this.props.tier }
-						filter={ filter }
-						vertical={ this.props.vertical }
-						siteId={ this.props.siteId }
-						listLabel={ this.props.listLabel }
-						defaultOption={ this.props.defaultOption }
-						secondaryOption={ this.props.secondaryOption }
-						placeholderCount={ this.props.placeholderCount }
-						getScreenshotUrl={ function( theme ) {
-							if ( ! getScreenshotOption( theme ).getUrl ) {
-								return null;
-							}
-							return getScreenshotOption( theme ).getUrl( theme );
-						} }
-						onScreenshotClick={ function( themeId ) {
-							if ( ! getScreenshotOption( themeId ).action ) {
-								return;
-							}
-							getScreenshotOption( themeId ).action( themeId );
-						} }
-						getActionLabel={ function( theme ) {
-							return getScreenshotOption( theme ).label;
-						} }
-						getOptions={ function( theme ) {
-							return pickBy(
-								addTracking( options ),
-								option => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
-							);
-						} }
-						trackScrollPage={ this.props.trackScrollPage }
-						emptyContent={ this.props.emptyContent }
-					/>
-					<ThemePreview />
-					{ this.props.children }
+					{ ! this.props.loggedOutComponent && ! isQueried && (
+						<>
+							<RecommendedThemes
+								upsellUrl={ this.props.upsellUrl }
+								search={ search }
+								tier={ this.props.tier }
+								filter={ filter }
+								vertical={ this.props.vertical }
+								siteId={ this.props.siteId }
+								listLabel={ this.props.listLabel }
+								defaultOption={ this.props.defaultOption }
+								secondaryOption={ this.props.secondaryOption }
+								placeholderCount={ this.props.placeholderCount }
+								getScreenshotUrl={ function( theme ) {
+									if ( ! getScreenshotOption( theme ).getUrl ) {
+										return null;
+									}
+									return getScreenshotOption( theme ).getUrl( theme );
+								} }
+								onScreenshotClick={ function( themeId ) {
+									if ( ! getScreenshotOption( themeId ).action ) {
+										return;
+									}
+									getScreenshotOption( themeId ).action( themeId );
+								} }
+								getActionLabel={ function( theme ) {
+									return getScreenshotOption( theme ).label;
+								} }
+								getOptions={ function( theme ) {
+									return pickBy(
+										addTracking( options ),
+										option => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
+									);
+								} }
+								trackScrollPage={ this.props.trackScrollPage }
+								emptyContent={ this.props.emptyContent }
+								isShowcaseOpen={ isShowcaseOpen }
+								scrollToSearchInput={ this.scrollToSearchInput }
+								bookmarkRef={ this.bookmarkRef }
+							/>
+							<div className="theme-showcase__open-showcase-button-holder">
+								{ isShowcaseOpen ? (
+									<hr />
+								) : (
+									<Button onClick={ this.toggleShowcase } data-e2e-value="open-themes-button">
+										{ translate( 'Show All Themes' ) }
+									</Button>
+								) }
+							</div>
+						</>
+					) }
+
+					<div
+						ref={ this.scrollRef }
+						className={
+							! isShowcaseOpen
+								? 'themes__hidden-content theme-showcase__all-themes'
+								: 'theme-showcase__all-themes'
+						}
+					>
+						{ ! this.props.loggedOutComponent && (
+							<>
+								<h2>
+									<strong>{ translate( 'Advanced Themes' ) }</strong>
+								</h2>
+								<p>
+									{ translate(
+										'These themes offer more power and flexibility, but can be harder to setup and customize.'
+									) }
+								</p>
+								{ showBanners &&
+									abtest &&
+									abtest( 'builderReferralThemesBanner' ) === 'builderReferralBanner' && (
+										<UpworkBanner location={ 'theme-banner' } />
+									) }
+							</>
+						) }
+						<QueryThemeFilters />
+
+						<ThemesSearchCard
+							onSearch={ this.doSearch }
+							search={ filterString + search }
+							tier={ tier }
+							showTierThemesControl={ ! isMultisite }
+							select={ this.onTierSelect }
+						/>
+						{ this.props.upsellBanner }
+
+						<ThemesSelection
+							upsellUrl={ this.props.upsellUrl }
+							search={ search }
+							tier={ this.props.tier }
+							filter={ filter }
+							vertical={ this.props.vertical }
+							siteId={ this.props.siteId }
+							listLabel={ this.props.listLabel }
+							defaultOption={ this.props.defaultOption }
+							secondaryOption={ this.props.secondaryOption }
+							placeholderCount={ this.props.placeholderCount }
+							getScreenshotUrl={ function( theme ) {
+								if ( ! getScreenshotOption( theme ).getUrl ) {
+									return null;
+								}
+								return getScreenshotOption( theme ).getUrl( theme );
+							} }
+							onScreenshotClick={ function( themeId ) {
+								if ( ! getScreenshotOption( themeId ).action ) {
+									return;
+								}
+								getScreenshotOption( themeId ).action( themeId );
+							} }
+							getActionLabel={ function( theme ) {
+								return getScreenshotOption( theme ).label;
+							} }
+							getOptions={ function( theme ) {
+								return pickBy(
+									addTracking( options ),
+									option => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
+								);
+							} }
+							trackScrollPage={ this.props.trackScrollPage }
+							emptyContent={ this.props.emptyContent }
+							bookmarkRef={ this.bookmarkRef }
+						/>
+						<ThemePreview />
+						{ this.props.children }
+					</div>
 				</div>
 			</div>
 		);
@@ -301,13 +445,15 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	subjects: getThemeFilterTerms( state, 'subject' ) || {},
 	filterString: prependThemeFilterKeys( state, filter ),
 	filterToTermTable: getThemeFilterToTermTable( state ),
+	hasShowcaseOpened: hasShowcaseOpenedSelector( state ),
+	themesBookmark: getThemesBookmark( state ),
 } );
 
 const mapDispatchToProps = {
 	trackUploadClick: () => recordTracksEvent( 'calypso_click_theme_upload' ),
 	trackATUploadClick: () => recordTracksEvent( 'calypso_automated_transfer_click_theme_upload' ),
+	trackMoreThemesClick: () => recordTracksEvent( 'calypso_themeshowcase_more_themes_clicked' ),
+	openThemesShowcase: () => openThemesShowcase(),
 };
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ThemeShowcase ) );
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ThemeShowcase ) );

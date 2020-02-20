@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { filter, get } from 'lodash';
 
 /**
@@ -13,12 +10,14 @@ import createSelector from 'lib/create-selector';
 import getThemeFilters from 'state/selectors/get-theme-filters';
 import getThemeFilterTerm from 'state/selectors/get-theme-filter-term';
 
+import 'state/themes/init';
+
 /**
  * Returns a theme filter term object that corresponds to a given filter term slug
  *
- * @param  {Object}  state  Global state tree
- * @param  {String}  search The term to search for
- * @return {Object}         A filter term object
+ * @param  {object}  state  Global state tree
+ * @param  {string}  search The term to search for
+ * @returns {object}         A filter term object
  */
 export default createSelector(
 	( state, search ) => {

@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import isFollowingReaderConversation from 'state/selectors/is-following-reader-conversation';
+import { isFollowingReaderConversation } from 'state/reader/conversations/selectors';
 
 describe( 'isFollowingReaderConversation()', () => {
 	test( 'should return true for a known followed post', () => {

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -21,7 +20,7 @@ import {
 } from 'reader/stats';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import { getStreamUrl } from 'reader/route';
-import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
+import { isAuthorNameBlocked } from 'reader/lib/author-name-blocklist';
 import ReaderAuthorLink from 'blocks/reader-author-link';
 import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
 
@@ -83,7 +82,7 @@ class PostByline extends React.Component {
 		const shouldDisplayAuthor =
 			! isDiscoverPost &&
 			hasAuthorName &&
-			! isAuthorNameBlacklisted( post.author.name ) &&
+			! isAuthorNameBlocked( post.author.name ) &&
 			( ! hasMatchingAuthorAndSiteNames || ! showSiteName );
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const siteIcon = get( site, 'icon.img' );

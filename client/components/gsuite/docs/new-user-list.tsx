@@ -8,7 +8,7 @@ import React, { useState } from 'react';
  */
 import FormLabel from 'components/forms/form-label';
 import FormToggle from 'components/forms/form-toggle';
-import Card from 'components/card/compact';
+import { CompactCard as Card } from '@automattic/components';
 import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
 import {
 	areAllUsersValid,
@@ -64,28 +64,28 @@ const GSuiteNewUserListExample = () => {
 					<span>
 						<span role="img" aria-label="check mark">
 							✅
-						</span>{' '}
+						</span>{ ' ' }
 						- All Users Ready
 					</span>
 				) : (
 					<span>
 						<span role="img" aria-label="red error x">
 							❌
-						</span>{' '}
+						</span>{ ' ' }
 						- Verification Errors
 					</span>
 				) }
 			</GSuiteNewUserList>
 			<hr />
 			<FormLabel key="mulitple-domains">
-				<FormToggle checked={ useMultipleDomains } onChange={ toggleUseMultipleDomains } />{' '}
+				<FormToggle checked={ useMultipleDomains } onChange={ toggleUseMultipleDomains } />{ ' ' }
 				<span>{ 'Use multiple domains' }</span>
 			</FormLabel>
 			<FormLabel key="extra-validation">
 				<FormToggle
 					checked={ useExtraValidation }
 					onChange={ () => setUseExtraValidation( ! useExtraValidation ) }
-				/>{' '}
+				/>{ ' ' }
 				<span>{ "Use extra validation ( no a's in name )" }</span>
 			</FormLabel>
 		</Card>

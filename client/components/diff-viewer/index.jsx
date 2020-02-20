@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -34,7 +33,7 @@ const decompose = path => {
  *
  * @param {string} oldFileName filename of left contents
  * @param {string} newFileName filename of right contents
- * @return {Element} description of the file or files in the diff
+ * @returns {Element} description of the file or files in the diff
  */
 const filename = ( { oldFileName, newFileName } ) => {
 	// if we think the diff utility added a bogus

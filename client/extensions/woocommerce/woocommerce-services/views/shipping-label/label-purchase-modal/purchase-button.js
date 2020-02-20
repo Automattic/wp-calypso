@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import getPDFSupport from 'woocommerce/woocommerce-services/lib/utils/pdf-support';
 import {
 	confirmPrintLabel,
@@ -89,7 +87,4 @@ const mapDispatchToProps = ( dispatch, { orderId, siteId } ) => ( {
 	purchaseLabel: () => dispatch( purchaseLabel( orderId, siteId ) ),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( PurchaseButton ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PurchaseButton ) );

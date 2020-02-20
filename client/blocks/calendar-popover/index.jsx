@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -34,7 +32,6 @@ class CalendarPopover extends Component {
 		ignoreContext: PropTypes.shape( { getDOMNode: PropTypes.function } ),
 		isVisible: PropTypes.bool,
 		position: PropTypes.string,
-		rootClassName: PropTypes.string,
 		showDelay: PropTypes.number,
 		onClose: PropTypes.func,
 		onShow: PropTypes.func,
@@ -99,7 +96,6 @@ class CalendarPopover extends Component {
 			'ignoreContext',
 			'isVisible',
 			'position',
-			'rootClassName',
 			'showDelay',
 			'onClose',
 			'onShow',

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +11,7 @@ import { get, noop, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import CommentHtmlEditor from 'my-sites/comments/comment/comment-html-editor';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -22,6 +21,7 @@ import InfoPopover from 'components/info-popover';
 import Popover from 'components/popover';
 import PostSchedule from 'components/post-schedule';
 import QuerySiteSettings from 'components/data/query-site-settings';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { decodeEntities } from 'lib/formatting';
 import {
 	bumpStat,
@@ -33,7 +33,6 @@ import { editComment } from 'state/comments/actions';
 import { removeNotice, successNotice } from 'state/notices/actions';
 import getSiteComment from 'state/selectors/get-site-comment';
 import getSiteSetting from 'state/selectors/get-site-setting';
-import { getSiteSlug, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 export class CommentEdit extends Component {
@@ -126,11 +125,9 @@ export class CommentEdit extends Component {
 	render() {
 		const {
 			isAuthorRegistered,
-			isEditCommentSupported,
 			moment,
 			siteGmtOffset,
 			siteId,
-			siteSlug,
 			siteTimezone,
 			toggleEditMode,
 			translate,
@@ -157,7 +154,7 @@ export class CommentEdit extends Component {
 							</InfoPopover>
 						) }
 						<FormTextInput
-							disabled={ ! isEditCommentSupported || isAuthorRegistered }
+							disabled={ isAuthorRegistered }
 							id="author"
 							onChange={ this.setAuthorDisplayNameValue }
 							value={ authorDisplayName }
@@ -172,7 +169,7 @@ export class CommentEdit extends Component {
 							</InfoPopover>
 						) }
 						<FormTextInput
-							disabled={ ! isEditCommentSupported || isAuthorRegistered }
+							disabled={ isAuthorRegistered }
 							id="author_url"
 							onChange={ this.setAuthorUrlValue }
 							value={ authorUrl }
@@ -215,25 +212,11 @@ export class CommentEdit extends Component {
 
 					<CommentHtmlEditor
 						commentContent={ commentContent }
-						disabled={ ! isEditCommentSupported }
 						onChange={ this.setCommentContentValue }
 					/>
 
-					{ ! isEditCommentSupported && (
-						<p className="comment__edit-jetpack-update-notice">
-							<Gridicon icon="notice-outline" />
-							{ translate( 'Comment editing requires a newer version of Jetpack.' ) }
-							<a
-								className="comment__edit-jetpack-update-notice-link"
-								href={ `/plugins/jetpack/${ siteSlug }` }
-							>
-								{ translate( 'Update Now' ) }
-							</a>
-						</p>
-					) }
-
 					<div className="comment__edit-buttons">
-						<FormButton compact disabled={ ! isEditCommentSupported } onClick={ this.submitEdit }>
+						<FormButton compact onClick={ this.submitEdit }>
 							{ translate( 'Save' ) }
 						</FormButton>
 						<FormButton compact isPrimary={ false } onClick={ toggleEditMode } type="button">
@@ -248,8 +231,6 @@ export class CommentEdit extends Component {
 
 const mapStateToProps = ( state, { commentId } ) => {
 	const siteId = getSelectedSiteId( state );
-	const isEditCommentSupported =
-		! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' );
 	const comment = getSiteComment( state, siteId, commentId );
 	const authorDisplayName = decodeEntities( get( comment, 'author.name' ) );
 
@@ -259,11 +240,9 @@ const mapStateToProps = ( state, { commentId } ) => {
 		commentContent: get( comment, 'raw_content' ),
 		commentDate: get( comment, 'date' ),
 		isAuthorRegistered: 0 !== get( comment, 'author.ID' ),
-		isEditCommentSupported,
 		postId: get( comment, 'post.ID' ),
 		siteGmtOffset: getSiteSetting( state, siteId, 'gmt_offset' ),
 		siteId,
-		siteSlug: getSiteSlug( state, siteId ),
 		siteTimezone: getSiteSetting( state, siteId, 'timezone_string' ),
 	};
 };
@@ -286,4 +265,4 @@ const mapDispatchToProps = ( dispatch, { commentId } ) => ( {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)( localize( CommentEdit ) );
+)( localize( withLocalizedMoment( CommentEdit ) ) );

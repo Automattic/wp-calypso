@@ -12,8 +12,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import { localizeUrl } from 'lib/i18n-utils';
 import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { decodeEntities, preventWidows } from 'lib/formatting';
@@ -127,7 +126,4 @@ const mapDispatchToProps = {
 		),
 };
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( GdprBanner );
+export default connect( null, mapDispatchToProps )( GdprBanner );

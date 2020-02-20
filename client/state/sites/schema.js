@@ -1,4 +1,3 @@
-/** @format */
 export const sitesSchema = {
 	type: 'object',
 	patternProperties: {

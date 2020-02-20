@@ -1,27 +1,30 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { shuffle } from 'lodash';
 import { connect } from 'react-redux';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
-import { submitSurvey } from 'lib/upgrades/actions';
+import { submitSurvey } from 'lib/purchases/actions';
 import { isDomainRegistration, isPlan } from 'lib/products-values';
 import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import PrecancellationChatButton from 'components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
+
+/**
+ * Style dependencies
+ */
 import './style.scss';
 
 class CancelAutoRenewalForm extends Component {
@@ -61,7 +64,7 @@ class CancelAutoRenewalForm extends Component {
 		const { translate } = props;
 		const productType = this.getProductTypeString();
 
-		this.radioButtons = [
+		this.radioButtons = shuffle( [
 			[
 				'let-it-expire',
 				/* translators: %(productType)s will be either "plan", "domain", or "subscription". */
@@ -77,7 +80,7 @@ class CancelAutoRenewalForm extends Component {
 				} ),
 			],
 			[ 'not-sure', translate( "I'm not sure." ) ],
-		];
+		] );
 	}
 
 	onSubmit = () => {
@@ -91,7 +94,7 @@ class CancelAutoRenewalForm extends Component {
 		submitSurvey(
 			'calypso-cancel-auto-renewal',
 			selectedSite.ID,
-			enrichedSurveyData( surveyData, moment(), selectedSite, purchase )
+			enrichedSurveyData( surveyData, purchase )
 		);
 
 		this.props.onClose();

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import QueryThemeFilters from 'components/data/query-theme-filters';
 import SectionHeader from 'components/section-header';
 import isValidThemeFilterTerm from 'state/selectors/is-valid-theme-filter-term';

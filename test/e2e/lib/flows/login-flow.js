@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,6 +14,7 @@ import StatsPage from '../pages/stats-page.js';
 import StoreDashboardPage from '../pages/woocommerce/store-dashboard-page';
 import PluginsBrowserPage from '../pages/plugins-browser-page';
 import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
+import CustomerHomePage from '../pages/customer-home-page';
 
 import SidebarComponent from '../components/sidebar-component.js';
 import NavBarComponent from '../components/nav-bar-component.js';
@@ -125,7 +124,7 @@ export default class LoginFlow {
 
 		if ( usingGutenberg ) {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
-			await gEditorComponent.closeSidebar();
+			await gEditorComponent.initEditor();
 		}
 
 		if ( ! usingGutenberg ) {
@@ -139,7 +138,7 @@ export default class LoginFlow {
 	async loginAndStartNewPage(
 		site = null,
 		usingGutenberg = false,
-		{ useFreshLogin = false } = {}
+		{ useFreshLogin = false, dismissPageTemplateSelector = true } = {}
 	) {
 		if ( site || ( host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser' ) ) {
 			site = site || dataHelper.getJetpackSiteName();
@@ -155,8 +154,7 @@ export default class LoginFlow {
 
 		if ( usingGutenberg ) {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
-			await gEditorComponent.dismissPageTemplateSelector();
-			await gEditorComponent.closeSidebar();
+			await gEditorComponent.initEditor( { dismissPageTemplateSelector } );
 		}
 
 		if ( ! usingGutenberg ) {
@@ -206,7 +204,11 @@ export default class LoginFlow {
 			await sideBarComponent.searchForSite( siteURL );
 		}
 
-		return await StatsPage.Expect( this.driver );
+		if ( this.account.username !== 'e2eflowtestinggutenbergsimpleedge' ) {
+			await StatsPage.Expect( this.driver );
+		} else {
+			await CustomerHomePage.Expect( this.driver );
+		}
 	}
 
 	async loginAndSelectAllSites() {
@@ -224,10 +226,7 @@ export default class LoginFlow {
 	}
 
 	async loginAndSelectManagePlugins() {
-		await this.loginAndSelectMySite();
-
-		const sideBarComponent = await SidebarComponent.Expect( this.driver );
-		await sideBarComponent.selectPlugins();
+		await this.loginAndSelectPlugins();
 
 		const pluginsBrowserPage = await PluginsBrowserPage.Expect( this.driver );
 		return await pluginsBrowserPage.selectManagePlugins();

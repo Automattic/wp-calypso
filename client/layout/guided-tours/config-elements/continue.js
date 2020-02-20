@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -41,11 +39,11 @@ export default class Continue extends Component {
 		this.removeTargetListener();
 	}
 
-	componentWillReceiveProps( nextProps, nextContext ) {
+	UNSAFE_componentWillReceiveProps( nextProps, nextContext ) {
 		nextProps.when && nextContext.isValid( nextProps.when ) && this.onContinue();
 	}
 
-	componentWillUpdate() {
+	UNSAFE_componentWillUpdate() {
 		this.removeTargetListener();
 	}
 

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,8 +12,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import HappychatButton from 'components/happychat/button';
 import QueryRewindState from 'components/data/query-rewind-state';
 import {
@@ -281,10 +278,10 @@ class DisconnectJetpack extends PureComponent {
 					className="disconnect-jetpack__try-rewind disconnect-jetpack__block"
 				>
 					<p className="disconnect-jetpack__highlight">
-						{ translate( 'Experiencing connection issues? Try to go back and rewind your site.' ) }
+						{ translate( 'Experiencing connection issues? Try to go back and restore your site.' ) }
 					</p>
 					<div className="disconnect-jetpack__try-rewind-button-wrap">
-						<Button onClick={ this.handleTryRewind }>{ translate( 'Rewind site' ) }</Button>
+						<Button onClick={ this.handleTryRewind }>{ translate( 'Restore site' ) }</Button>
 						<HappychatButton borderless={ false } onClick={ this.props.trackTryRewindHelp } primary>
 							<Gridicon icon="chat" size={ 18 } />
 							{ translate( 'Get help' ) }

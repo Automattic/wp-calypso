@@ -24,28 +24,21 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import config from 'config';
-
-/**
- * Style dependencies
- */
-import './style.scss';
-
-// Components
+import * as oauthToken from 'lib/oauth-token';
+import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/products-values';
+import SignupFlowController from 'lib/signup/flow-controller';
+import { disableCart } from 'lib/cart/actions';
+import {
+	recordSignupStart,
+	recordSignupComplete,
+	recordSignupStep,
+	recordSignupInvalidStep,
+} from 'lib/analytics/signup';
 import DocumentHead from 'components/data/document-head';
 import LocaleSuggestions from 'components/locale-suggestions';
 import SignupProcessingScreen from 'signup/processing-screen';
 import SignupHeader from 'signup/signup-header';
 import QuerySiteDomains from 'components/data/query-site-domains';
-
-// Libraries
-import { abtest } from 'lib/abtest';
-import analytics from 'lib/analytics';
-import * as oauthToken from 'lib/oauth-token';
-import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/products-values';
-import SignupFlowController from 'lib/signup/flow-controller';
-import { disableCart } from 'lib/upgrades/actions';
-
-// State actions and selectors
 import { loadTrackingTool } from 'state/analytics/actions';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import {
@@ -68,8 +61,6 @@ import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { isSitePreviewVisible } from 'state/signup/preview/selectors';
 import { showSitePreview, hideSitePreview } from 'state/signup/preview/actions';
-
-// Current directory dependencies
 import steps from './config/steps';
 import flows from './config/flows';
 import { getStepComponent } from './config/step-components';
@@ -82,11 +73,13 @@ import {
 	persistSignupDestination,
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
-import SiteMockups from 'signup/site-mockup';
+import SiteMockups from './site-mockup';
 
 /**
- * Constants
+ * Style dependencies
  */
+import './style.scss';
+
 const debug = debugModule( 'calypso:signup' );
 
 function dependenciesContainCartItem( dependencies ) {
@@ -164,24 +157,12 @@ class Signup extends React.Component {
 			this.setState( { resumingStep: destinationStep } );
 			return page.redirect( getStepUrl( this.props.flowName, destinationStep, this.props.locale ) );
 		}
-
-		if ( 'remove' === abtest( 'removeBlogFlow' ) && 'blog' === this.props.flowName ) {
-			const destinationStep = flows.getFlow( 'onboarding' ).steps[ 0 ];
-			this.setState( { resumingStep: destinationStep } );
-			return page.redirect( getStepUrl( 'onboarding', destinationStep, this.props.locale ) );
-		}
-
-		this.recordStep();
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { stepName, flowName, progress } = nextProps;
 
 		this.removeFulfilledSteps( nextProps );
-
-		if ( this.props.stepName !== stepName ) {
-			this.recordStep( stepName, flowName );
-		}
 
 		if ( stepName === this.state.resumingStep ) {
 			this.setState( { resumingStep: undefined } );
@@ -203,29 +184,18 @@ class Signup extends React.Component {
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 		this.startTrackingForBusinessSite();
-		this.recordSignupStart();
+		recordSignupStart( this.props.flowName, this.props.refParameter );
+		recordSignupStep( this.props.flowName, this.props.stepName );
 		this.preloadNextStep();
 		this.maybeShowSitePreview();
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { flowName, stepName } = this.props;
-		const positionInFlowPrev = indexOf( flows.getFlow( flowName ).steps, prevProps.stepName );
-
-		// TODO: Here we're tracking the impact of a bug that renders a blank screen. Remove when this bug is fixed.
 		if (
-			prevProps.flowName &&
-			prevProps.flowName !== flowName && // Specifically tracking flow forking bug.
-			! ( positionInFlowPrev > 0 && prevProps.progress.length === 0 ) &&
-			this.getPositionInFlow() > 0 &&
-			this.props.progress.length === 0
+			this.props.flowName !== prevProps.flowName ||
+			this.props.stepName !== prevProps.stepName
 		) {
-			analytics.tracks.recordEvent( 'calypso_signup_error_forked_flow_null_render', {
-				flow: flowName,
-				step: stepName,
-				previous_flow: prevProps.flowName,
-				previous_step: prevProps.stepName,
-			} );
+			recordSignupStep( this.props.flowName, this.props.stepName );
 		}
 
 		if (
@@ -267,13 +237,6 @@ class Signup extends React.Component {
 		if ( siteType === 'business' ) {
 			this.props.loadTrackingTool( 'HotJar' );
 		}
-	}
-
-	recordSignupStart() {
-		analytics.recordSignupStart( {
-			flow: this.props.flowName,
-			ref: this.props.refParameter,
-		} );
 	}
 
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
@@ -321,13 +284,6 @@ class Signup extends React.Component {
 		nextStepName && getStepComponent( nextStepName );
 	}
 
-	recordStep = ( stepName = this.props.stepName, flowName = this.props.flowName ) => {
-		analytics.tracks.recordEvent( 'calypso_signup_step_start', {
-			flow: flowName,
-			step: stepName,
-		} );
-	};
-
 	handleFlowComplete = ( dependencies, destination ) => {
 		debug( 'The flow is completed. Destination: %s', destination );
 
@@ -352,11 +308,11 @@ class Signup extends React.Component {
 		};
 		debug( 'Tracking signup completion.', debugProps );
 
-		analytics.recordSignupComplete( {
+		recordSignupComplete( {
+			flow: this.props.flowName,
 			isNewUser,
 			isNewSite,
 			hasCartItems,
-			flow: this.props.flowName,
 			isNew7DUserSite,
 		} );
 
@@ -368,6 +324,8 @@ class Signup extends React.Component {
 
 		debug( `Logging you in to "${ destination }"` );
 
+		this.signupFlowController.reset();
+
 		if ( ! this.state.controllerHasReset ) {
 			this.setState( { controllerHasReset: true } );
 		}
@@ -375,14 +333,12 @@ class Signup extends React.Component {
 		if ( userIsLoggedIn ) {
 			// don't use page.js for external URLs (eg redirect to new site after signup)
 			if ( /^https?:\/\//.test( destination ) ) {
-				this.signupFlowController.reset();
 				return ( window.location.href = destination );
 			}
 
 			// deferred in case the user is logged in and the redirect triggers a dispatch
 			defer( () => {
 				debug( `Redirecting you to "${ destination }"` );
-				this.signupFlowController.reset();
 				window.location.href = destination;
 			} );
 		}
@@ -390,7 +346,6 @@ class Signup extends React.Component {
 		if ( ! userIsLoggedIn && ( config.isEnabled( 'oauth' ) || dependencies.oauth2_client_id ) ) {
 			debug( `Handling oauth login` );
 			oauthToken.setToken( dependencies.bearer_token );
-			this.signupFlowController.reset();
 			window.location.href = destination;
 			return;
 		}
@@ -436,14 +391,23 @@ class Signup extends React.Component {
 		const scrollPromise = new Promise( resolve => {
 			this.setState( { scrolling: true } );
 
-			const scrollIntervalId = setInterval( () => {
-				if ( window.pageYOffset > 0 ) {
-					window.scrollBy( 0, -10 );
+			const ANIMATION_LENGTH_MS = 200;
+			const startTime = window.performance.now();
+			const scrollHeight = window.pageYOffset;
+
+			const scrollToTop = timestamp => {
+				const progress = timestamp - startTime;
+
+				if ( progress < ANIMATION_LENGTH_MS ) {
+					window.scrollTo( 0, scrollHeight - ( scrollHeight * progress ) / ANIMATION_LENGTH_MS );
+					window.requestAnimationFrame( scrollToTop );
 				} else {
 					this.setState( { scrolling: false } );
-					resolve( clearInterval( scrollIntervalId ) );
+					resolve();
 				}
-			}, 1 );
+			};
+
+			window.requestAnimationFrame( scrollToTop );
 		} );
 
 		// redirect the user to the next step
@@ -476,10 +440,7 @@ class Signup extends React.Component {
 		const firstInvalidStep = getFirstInvalidStep( this.props.flowName, progress );
 
 		if ( firstInvalidStep ) {
-			analytics.tracks.recordEvent( 'calypso_signup_goto_invalid_step', {
-				step: firstInvalidStep.stepName,
-				flow: this.props.flowName,
-			} );
+			recordSignupInvalidStep( this.props.flowName, this.props.stepName );
 
 			if ( firstInvalidStep.stepName === this.props.stepName ) {
 				// No need to redirect
@@ -519,7 +480,9 @@ class Signup extends React.Component {
 			( isDomainRegistration( domainItem ) ||
 				isDomainTransfer( domainItem ) ||
 				isDomainMapping( domainItem ) );
-		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite;
+		// Hide the free option as part of 'domainStepCopyUpdates' a/b test
+		const selectedHideFreePlan = get( this.props, 'signupDependencies.shouldHideFreePlan', false );
+		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		return (

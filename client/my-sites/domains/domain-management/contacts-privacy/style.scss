@@ -1,4 +1,34 @@
 .contacts-privacy__card {
+	.contacts-privacy__settings {
+		margin-bottom: 10px;
+
+		&.warning {
+			color: var( --color-text-subtle );
+
+			@include breakpoint( '>660px' ) {
+				padding: 0;
+				text-align: left;
+			}
+
+			p {
+				font-size: 12px;
+				margin: 0;
+
+				@include breakpoint( '>660px' ) {
+					margin-left: 24px;
+				}
+			}
+
+			.gridicon {
+				float: left;
+
+				@include breakpoint( '<660px' ) {
+					display: none;
+				}
+			}
+		}
+	}
+
 	.contacts-privacy__settings-explanation {
 		color: var( --color-text-subtle );
 		display: block;

@@ -1,10 +1,24 @@
-module.exports = () => ( {
+// @babel/preset-env modules option. `false` for ECMAScript modules.
+function modulesOption( opts ) {
+	if ( opts && opts.modules !== undefined ) {
+		return opts.modules;
+	}
+
+	if ( typeof process.env.MODULES !== 'undefined' ) {
+		return process.env.MODULES === 'esm' ? false : process.env.MODULES;
+	}
+
+	return false; // Default
+}
+
+module.exports = ( api, opts ) => ( {
 	presets: [
 		[
 			require.resolve( '@babel/preset-env' ),
 			{
+				corejs: 3.6,
+				modules: modulesOption( opts ),
 				useBuiltIns: 'entry',
-				corejs: 2,
 				// Exclude transforms that make all code slower, see https://github.com/facebook/create-react-app/pull/5278
 				exclude: [ 'transform-typeof-symbol' ],
 			},
@@ -14,7 +28,6 @@ module.exports = () => ( {
 	],
 	plugins: [
 		require.resolve( '@babel/plugin-proposal-class-properties' ),
-		require.resolve( '@babel/plugin-syntax-dynamic-import' ),
 		[
 			require.resolve( '@babel/plugin-transform-runtime' ),
 			{
@@ -24,7 +37,8 @@ module.exports = () => ( {
 				useESModules: false,
 				// Needed so that helpers aren't duplicated.
 				// This will need to be kept up to date while https://github.com/babel/babel/issues/10261 is unresolved.
-				version: '7.5.5',
+				// eslint-disable-next-line import/no-extraneous-dependencies
+				version: require( '@babel/helpers/package.json' ).version,
 			},
 		],
 	],

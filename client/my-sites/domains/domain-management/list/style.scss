@@ -17,12 +17,13 @@
 	cursor: pointer;
 	display: block;
 	overflow: hidden;
+	text-align: inherit;
 
 	.domain__primary-flag {
 		vertical-align: middle;
 		margin-left: 8px;
-		background: var( --sidebar-menu-hover-background );
-		color: var( --sidebar-menu-hover-color );
+		background-color: var( --color-sidebar-menu-hover-background );
+		color: var( --color-sidebar-menu-hover-text );
 		border-radius: 12px;
 		display: inline-block;
 		padding: 2px 10px;
@@ -39,6 +40,7 @@
 	white-space: pre;
 	max-width: 70%;
 	font-family: $serif;
+	text-align: inherit;
 
 	@include breakpoint( '>480px' ) {
 		font-size: 18px;
@@ -109,5 +111,15 @@ input[type='radio'].domain-management-list-item__radio {
 		float: right;
 		margin-top: -11px;
 		margin-right: 15px;
+	}
+}
+
+.list-all__container .list-all__site {
+	margin-bottom: 10px;
+}
+
+.domain-management__claim-free-domain {
+	@include breakpoint( '>660px' ) {
+		display: none;
 	}
 }

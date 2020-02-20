@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,8 +15,8 @@ import isSiteGoogleMyBusinessEligible from 'state/selectors/is-site-google-my-bu
 /**
  * Returns an object of service objects.
  *
- * @param  {Object} state Global state tree
- * @return {Object}       Keyring services, if known.
+ * @param  {object} state Global state tree
+ * @returns {object}       Keyring services, if known.
  */
 export function getKeyringServices( state ) {
 	return state.sharing.services.items;
@@ -27,9 +25,9 @@ export function getKeyringServices( state ) {
 /**
  * Returns an object of service objects with the specified type.
  *
- * @param  {Object} state Global state tree
- * @param  {String} type  Type of service. 'publicize' or 'other'.
- * @return {Array}        Keyring services, if known.
+ * @param  {object} state Global state tree
+ * @param  {string} type  Type of service. 'publicize' or 'other'.
+ * @returns {Array}        Keyring services, if known.
  */
 export function getKeyringServicesByType( state, type ) {
 	return filter( getKeyringServices( state ), { type } );
@@ -38,9 +36,9 @@ export function getKeyringServicesByType( state, type ) {
 /**
  * Returns an object for the specified service name
  *
- * @param  {Object} state Global state tree
- * @param  {String} name  Service name
- * @return {Object}        Keyring service, if known, or false.
+ * @param  {object} state Global state tree
+ * @param  {string} name  Service name
+ * @returns {object}        Keyring service, if known, or false.
  */
 export function getKeyringServiceByName( state, name ) {
 	const services = getKeyringServices( state );
@@ -57,10 +55,10 @@ export function getKeyringServiceByName( state, name ) {
  *  3. the current user can manage options in case of the eventbrite service,
  *  4. the current user can publish posts in case of all publicize services.
  *
- * @param  {Object} state  Global state tree
- * @param  {Number} siteId Site ID.
- * @param  {String} type   Type of service. 'publicize' or 'other'.
- * @return {Array}         Keyring services, if known.
+ * @param  {object} state  Global state tree
+ * @param  {number} siteId Site ID.
+ * @param  {string} type   Type of service. 'publicize' or 'other'.
+ * @returns {Array}         Keyring services, if known.
  */
 export function getEligibleKeyringServices( state, siteId, type ) {
 	const services = getKeyringServicesByType( state, type );
@@ -119,6 +117,14 @@ export function getEligibleKeyringServices( state, siteId, type ) {
 			return false;
 		}
 
+		if (
+			'google-drive' === service.ID &&
+			( ! config.isEnabled( 'google-drive' ) ||
+				! canCurrentUser( state, siteId, 'manage_options' ) )
+		) {
+			return false;
+		}
+
 		return true;
 	} );
 }
@@ -127,8 +133,8 @@ export function getEligibleKeyringServices( state, siteId, type ) {
  * Returns true if a request is in progress to retrieve keyring services,
  * or false otherwise.
  *
- * @param  {Object}  state Global state tree
- * @return {Boolean}       Whether a request is in progress
+ * @param  {object}  state Global state tree
+ * @returns {boolean}       Whether a request is in progress
  */
 export function isKeyringServicesFetching( state ) {
 	return state.sharing.services.isFetching;

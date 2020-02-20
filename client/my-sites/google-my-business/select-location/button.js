@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { connectGoogleMyBusinessLocation } from 'state/google-my-business/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
@@ -58,7 +56,7 @@ class GoogleMyBusinessSelectLocationButton extends Component {
 						className="gmb-select-location__connected-icon"
 						icon="checkmark-circle"
 						size={ 18 }
-					/>{' '}
+					/>{ ' ' }
 					{ translate( 'Connected' ) }
 				</div>
 			);

@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { addQueryArgs } from 'lib/url';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getPlan } from 'lib/plans';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -34,9 +34,8 @@ interface ExternalProps {
 	planSlug: T.PlanSlug;
 }
 
-const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent<
-	ExternalProps & ConnectedProps
-> = ( {
+const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent< ExternalProps &
+	ConnectedProps > = ( {
 	buttonText,
 	hasPlanFeature,
 	onDefaultButtonClick,

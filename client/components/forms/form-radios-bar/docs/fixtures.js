@@ -1,4 +1,3 @@
-/** @format */
 export const radios = [
 	{
 		label: 'First Radio',

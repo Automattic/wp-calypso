@@ -1,36 +1,34 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { CALYPSO_CONTACT } from 'lib/url/support';
+import { Button } from '@automattic/components';
+import StatsNavigation from 'blocks/stats-navigation';
 import DocumentHead from 'components/data/document-head';
-import getGoogleMyBusinessConnectedLocation from 'state/selectors/get-google-my-business-connected-location';
-import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
-import GoogleMyBusinessStatsChart from 'my-sites/google-my-business/stats/chart';
 import Gridicon from 'components/gridicon';
+import { withLocalizedMoment } from 'components/localized-moment';
 import Main from 'components/main';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import QueryKeyringServices from 'components/data/query-keyring-services';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
+import { CALYPSO_CONTACT } from 'lib/url/support';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import StatsNavigation from 'blocks/stats-navigation';
+import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
+import GoogleMyBusinessStatsChart from 'my-sites/google-my-business/stats/chart';
 import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
+import getGoogleMyBusinessConnectedLocation from 'state/selectors/get-google-my-business-connected-location';
 import { withEnhancers } from 'state/utils';
 
 /**
@@ -85,7 +83,7 @@ class GoogleMyBusinessStats extends Component {
 					count: viewCount,
 					args: {
 						value: viewCount,
-						monday: moment( date ).format( 'LL' ),
+						monday: this.props.moment( date ).format( 'LL' ),
 					},
 				}
 			);
@@ -95,7 +93,7 @@ class GoogleMyBusinessStats extends Component {
 			count: viewCount,
 			args: {
 				value: viewCount,
-				day: moment( date ).format( 'LL' ),
+				day: this.props.moment( date ).format( 'LL' ),
 			},
 		} );
 	};
@@ -110,7 +108,7 @@ class GoogleMyBusinessStats extends Component {
 					count: actionCount,
 					args: {
 						value: actionCount,
-						monday: moment( date ).format( 'LL' ),
+						monday: this.props.moment( date ).format( 'LL' ),
 					},
 				}
 			);
@@ -120,7 +118,7 @@ class GoogleMyBusinessStats extends Component {
 			count: actionCount,
 			args: {
 				value: actionCount,
-				day: moment( date ).format( 'LL' ),
+				day: this.props.moment( date ).format( 'LL' ),
 			},
 		} );
 	};
@@ -286,4 +284,4 @@ export default connect(
 	{
 		recordTracksEvent: withEnhancers( recordTracksEvent, enhanceWithSiteType ),
 	}
-)( localize( GoogleMyBusinessStats ) );
+)( localize( withLocalizedMoment( GoogleMyBusinessStats ) ) );

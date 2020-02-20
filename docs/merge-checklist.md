@@ -15,7 +15,7 @@ This document aims to provide a list of things to check and test whenever you ar
 
 It's also important to keep the general WP.com commit checklist at hand (modified for Calypso):
 
-1. It must be responsive on phone, tablet, and desktop; interactions must be fluid on a touch device. Responsive goes both ways, be sure to test with the `is-fluid-width` feature flag enabled. An easy way to do that is to add `is-fluid-width` as a CSS class to the `html` tag using the web-inspector.
+1. It must be responsive on phone, tablet, and desktop; interactions must be fluid on a touch device.
 2. Test in IE11+, Chrome, Firefox, Mac/Win on the desktop.
 3. Collect relevant and useful stats/events. What questions do they answer? How do you expect them to change over time?
 4. All strings must be fully translatable (without concatenation, handling plurals), and you should be aware of how long strings affect layout.

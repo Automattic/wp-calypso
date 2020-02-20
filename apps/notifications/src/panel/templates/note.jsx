@@ -1,7 +1,13 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 
+/**
+ * Internal dependencies
+ */
 import getIsNoteApproved from '../state/selectors/get-is-note-approved';
 import getIsNoteRead from '../state/selectors/get-is-note-read';
 
@@ -14,7 +20,7 @@ import { getActions } from '../helpers/notes';
 const hasBadge = body =>
 	body.some( ( { media } ) => media && media.some( ( { type } ) => 'badge' === type ) );
 
-export const Note = props => {
+export const Note = React.forwardRef( ( props, ref ) => {
 	const { currentNote, detailView, global, isApproved, isRead, note, selectedNote } = props;
 
 	let hasCommentReply = false;
@@ -47,7 +53,7 @@ export const Note = props => {
 	} );
 
 	return (
-		<li id={ 'note-' + note.id } className={ classes }>
+		<li id={ 'note-' + note.id } className={ classes } ref={ ref }>
 			{ detailView && note.header && note.header.length > 0 && (
 				<SummaryInSingle key={ 'note-summary-single-' + note.id } note={ note } />
 			) }
@@ -62,11 +68,11 @@ export const Note = props => {
 			{ detailView && <NoteBody key={ 'note-body-' + note.id } note={ note } global={ global } /> }
 		</li>
 	);
-};
+} );
 
 const mapStateToProps = ( state, { note } ) => ( {
 	isApproved: getIsNoteApproved( state, note ),
 	isRead: getIsNoteRead( state, note ),
 } );
 
-export default connect( mapStateToProps )( Note );
+export default connect( mapStateToProps, null, null, { forwardRef: true } )( Note );

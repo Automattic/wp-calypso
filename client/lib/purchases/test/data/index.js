@@ -1,4 +1,3 @@
-/** @format */
 const DOMAIN_PURCHASE = {
 	expiryStatus: 'active',
 	id: 10001,
@@ -8,6 +7,7 @@ const DOMAIN_PURCHASE = {
 	productSlug: 'domain_reg',
 	isRefundable: true,
 	isCancelable: true,
+	refundAmount: 20,
 };
 
 const DOMAIN_PURCHASE_PENDING_TRANSFER = {
@@ -64,12 +64,13 @@ const SITE_REDIRECT_PURCHASE_EXPIRED = Object.assign( {}, SITE_REDIRECT_PURCHASE
 } );
 
 const PLAN_PURCHASE = {
+	canDisableAutoRenew: true,
 	expiryStatus: 'active',
 	id: 40001,
 	meta: '',
 	productName: 'WordPress.com Premium',
 	productSlug: 'value_bundle',
-	isRefundable: true,
+	isRefundable: false,
 	isCancelable: true,
 	isRenewable: true,
 	isDomainRegistration: false,

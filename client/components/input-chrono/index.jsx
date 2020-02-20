@@ -1,13 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import chrono from 'chrono-node';
+
+/**
+ * Internal dependencies
+ */
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -42,7 +44,7 @@ class InputChrono extends React.Component {
 
 	focused = false;
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! this.focused && this.props.value !== nextProps.value ) {
 			this.setState( { value: nextProps.value } );
 		}
@@ -103,4 +105,4 @@ class InputChrono extends React.Component {
 	}
 }
 
-export default localize( InputChrono );
+export default localize( withLocalizedMoment( InputChrono ) );

@@ -1,7 +1,6 @@
 /**
  * Extrenal dependencies
  *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -103,11 +102,11 @@ export default function WithContactDetailsValidation( tld, WrappedComponent ) {
 
 		displayName = 'WithContactDetailsValidation(' + tld + ', ' + wrappedComponentName + ')';
 
-		componentWillMount() {
+		UNSAFE_componentWillMount() {
 			this.compileValidator();
 		}
 
-		componentWillReceiveProps( nextProps ) {
+		UNSAFE_componentWillReceiveProps( nextProps ) {
 			if ( nextProps.validationSchema !== this.props.validationSchema ) {
 				this.compileValidator();
 			}

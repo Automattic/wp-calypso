@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,16 +12,20 @@ import {
 	REWIND_ACTIVATE_REQUEST,
 	REWIND_ACTIVATE_SUCCESS,
 } from 'state/action-types';
-import { createReducer, keyedReducer } from 'state/utils';
+import { keyedReducer, withoutPersistence } from 'state/utils';
 
 export const activationRequesting = keyedReducer(
 	'siteId',
-	createReducer(
-		{},
-		{
-			[ REWIND_ACTIVATE_REQUEST ]: stubTrue,
-			[ REWIND_ACTIVATE_FAILURE ]: stubFalse,
-			[ REWIND_ACTIVATE_SUCCESS ]: stubFalse,
+	withoutPersistence( ( state = {}, action ) => {
+		switch ( action.type ) {
+			case REWIND_ACTIVATE_REQUEST:
+				return stubTrue( state, action );
+			case REWIND_ACTIVATE_FAILURE:
+				return stubFalse( state, action );
+			case REWIND_ACTIVATE_SUCCESS:
+				return stubFalse( state, action );
 		}
-	)
+
+		return state;
+	} )
 );

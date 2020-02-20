@@ -233,7 +233,7 @@ function build_chunks( sub_text, sub_ranges, range_data, container, options ) {
  * index for the first one in the array will be returned.
  *
  * @param {Array} rs Range objects, having at least { indices: [ start, end ] }
- * @returns {Number|null} Index in the range array with the longest span between indices or null if no valid ranges
+ * @returns {number|null} Index in the range array with the longest span between indices or null if no valid ranges
  */
 function find_largest_range( rs ) {
 	let r_id = -1,

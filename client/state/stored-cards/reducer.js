@@ -11,7 +11,7 @@ import {
 	STORED_CARDS_DELETE_COMPLETED,
 	STORED_CARDS_DELETE_FAILED,
 } from 'state/action-types';
-import { combineReducers, createReducerWithValidation } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import { storedCardsSchema } from './schema';
 
 /**
@@ -19,28 +19,34 @@ import { storedCardsSchema } from './schema';
  * concerning stored cards data updates
  *
  * @param  {Array}  state  Current state
- * @param  {Object} action storeCard action
- * @return {Array}         Updated state
+ * @param  {object} action storeCard action
+ * @returns {Array}         Updated state
  */
-export const items = createReducerWithValidation(
-	[],
-	{
-		[ STORED_CARDS_ADD_COMPLETED ]: ( state, { item } ) => [ ...state, item ],
+export const items = withSchemaValidation( storedCardsSchema, ( state = [], action ) => {
+	switch ( action.type ) {
+		case STORED_CARDS_ADD_COMPLETED: {
+			const { item } = action;
+			return [ ...state, item ];
+		}
+		case STORED_CARDS_FETCH_COMPLETED: {
+			const { list } = action;
+			return list;
+		}
+		case STORED_CARDS_DELETE_COMPLETED: {
+			const { card } = action;
+			return state.filter( item => item.stored_details_id !== card.stored_details_id );
+		}
+	}
 
-		[ STORED_CARDS_FETCH_COMPLETED ]: ( state, { list } ) => list,
-
-		[ STORED_CARDS_DELETE_COMPLETED ]: ( state, { card } ) =>
-			state.filter( item => item.stored_details_id !== card.stored_details_id ),
-	},
-	storedCardsSchema
-);
+	return state;
+} );
 
 /**
  * Returns whether the list of stored cards has been loaded from the server in reaction to the specified action.
  *
  * @param {Array} state - current state
- * @param {Object} action - action payload
- * @return {Boolean} - updated state
+ * @param {object} action - action payload
+ * @returns {boolean} - updated state
  */
 export const hasLoadedFromServer = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -55,9 +61,9 @@ export const hasLoadedFromServer = ( state = false, action ) => {
  * `Reducer` function which handles request/response actions
  * concerning stored cards fetching
  *
- * @param {Object} state - current state
- * @param {Object} action - storedCard action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - storedCard action
+ * @returns {object} updated state
  */
 export const isFetching = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -76,9 +82,9 @@ export const isFetching = ( state = false, action ) => {
  * `Reducer` function which handles request/response actions
  * concerning stored card deletion
  *
- * @param {Object} state - current state
- * @param {Object} action - storedCard action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - storedCard action
+ * @returns {object} updated state
  */
 export const isDeleting = ( state = {}, action ) => {
 	switch ( action.type ) {

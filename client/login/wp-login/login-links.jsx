@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import Gridicon from 'components/gridicon';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -18,6 +15,7 @@ import { stringify } from 'qs';
  */
 import config, { isEnabled } from 'config';
 import ExternalLink from 'components/external-link';
+import Gridicon from 'components/gridicon';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import { addQueryArgs } from 'lib/url';
@@ -68,7 +66,7 @@ export class LoginLinks extends React.Component {
 		const loginParameters = {
 			isNative: true,
 			locale: this.props.locale,
-			twoFactorAuthType: 'link',
+			twoFactorAuthType: this.props.currentRoute === '/log-in/jetpack' ? 'jetpack/link' : 'link',
 		};
 		const emailAddress = get( this.props, [ 'query', 'email_address' ] );
 		if ( emailAddress ) {
@@ -192,7 +190,7 @@ export class LoginLinks extends React.Component {
 		const loginParameters = {
 			isNative: true,
 			locale: this.props.locale,
-			twoFactorAuthType: 'link',
+			twoFactorAuthType: this.props.currentRoute === '/log-in/jetpack' ? 'jetpack/link' : 'link',
 		};
 
 		return (
@@ -315,7 +313,7 @@ export default connect(
 		oauth2Client: getCurrentOAuth2Client( state ),
 		query: getCurrentQueryArguments( state ),
 		isJetpackWooCommerceFlow:
-			'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' ),
+			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 	} ),
 	{

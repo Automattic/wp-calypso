@@ -36,6 +36,7 @@
 // Token input
 input[type='text'].token-field__input {
 	display: inline-block;
+	flex-grow: 1;
 	width: auto;
 	max-width: 100%;
 	margin: 2px 0 2px 8px;

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,9 +6,9 @@ import request from 'request-promise';
 
 // /**
 //  * Marks a push token as approved on WPCOM API
-//  * @param {String} pushToken push token that recieved via a push notification on an app
-//  * @param {String} bearerToken user bearer token to be used with the API
-//  * @returns {Boolean} true if token approved
+//  * @param {string} pushToken push token that recieved via a push notification on an app
+//  * @param {string} bearerToken user bearer token to be used with the API
+//  * @returns {boolean} true if token approved
 //  */
 export const approvePushToken = async ( pushToken, bearerToken ) => {
 	const responseString = await request( {
@@ -37,7 +35,8 @@ export const approvePushToken = async ( pushToken, bearerToken ) => {
 
 /**
  * Extracts specific appData value and notification's persistent id
- * @param {String} filter appData key to match
+ *
+ * @param {string} filter appData key to match
  * @param {Function} addPersistentId a function to call with notification's persistent id
  * @param {Function} callback a function to call with a matching appData pair's value when filter matches
  * @returns {Function} a funciton that can be used as a notifications callback
@@ -56,7 +55,8 @@ function filterPushDataKey( filter, addPersistentId, callback ) {
 
 /**
  * Listens to push notifications with push token
- * @param {Object} pushConfig GCM keys and tokens
+ *
+ * @param {object} pushConfig GCM keys and tokens
  * @param {Function} callback a function to call when we get a push token
  */
 export const subscribeToPush = ( pushConfig, callback ) => {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,6 +20,7 @@ import SidebarComponent from '../lib/components/sidebar-component.js';
 import NoticesComponent from '../lib/components/notices-component.js';
 import NavBarComponent from '../lib/components/nav-bar-component.js';
 import PostPreviewComponent from '../lib/components/post-preview-component';
+import RevisionsModalComponent from '../lib/components/revisions-modal-component';
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 import GutenbergEditorSidebarComponent from '../lib/gutenberg/gutenberg-editor-sidebar-component';
 import SimplePaymentsBlockComponent from '../lib/gutenberg/blocks/payment-block-component';
@@ -37,6 +36,8 @@ const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
+const gutenbergUser =
+	process.env.GUTENBERG_EDGE === 'true' ? 'gutenbergSimpleSiteEdgeUser' : 'gutenbergSimpleSiteUser';
 
 let driver;
 
@@ -63,7 +64,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 
 		step( 'Can log in', async function() {
-			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
@@ -242,14 +243,14 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 	} );
 
-	describe( 'Basic Public Post @canary @parallel', function() {
+	describe( 'Basic Public Post @canary @ie11canary @parallel', function() {
 		describe( 'Publish a New Post', function() {
 			const blogPostTitle = dataHelper.randomPhrase();
 			const blogPostQuote =
 				'“Whenever you find yourself on the side of the majority, it is time to pause and reflect.”\n- Mark Twain';
 
 			step( 'Can log in', async function() {
-				this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+				this.loginFlow = new LoginFlow( driver, gutenbergUser );
 				return await this.loginFlow.login( { useFreshLogin: true } );
 			} );
 
@@ -264,7 +265,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 			step( 'Can enter post title and text content', async function() {
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-				await gEditorComponent.closeSidebar();
+				await gEditorComponent.initEditor();
 				await gEditorComponent.enterTitle( blogPostTitle );
 				await gEditorComponent.enterText( blogPostQuote );
 
@@ -274,6 +275,21 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 					false,
 					'There is an error shown on the Gutenberg editor page!'
 				);
+			} );
+
+			step( 'Can see the Jetpack blocks', async function() {
+				// Jetpack blocks are broken in IE11. See https://github.com/Automattic/jetpack/issues/14273
+				if ( dataHelper.getTargetType() === 'IE11' ) {
+					return this.skip();
+				}
+				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+				await gEditorComponent.openBlockInserterAndSearch( 'Jetpack' );
+				assert.strictEqual(
+					await gEditorComponent.isBlockCategoryPresent( 'Jetpack' ),
+					true,
+					'Jetpack blocks are not present'
+				);
+				await gEditorComponent.closeBlockInserter();
 			} );
 
 			step( 'Can publish and view content', async function() {
@@ -299,7 +315,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			'“We are what we pretend to be, so we must be careful about what we pretend to be”\n- Kurt Vonnegut';
 
 		step( 'Can log in', async function() {
-			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			const loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await loginFlow.loginAndStartNewPost( null, true );
 		} );
 
@@ -348,7 +364,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			const blogPostQuote = '“Worries shared are worries halved.”\n- Unknown';
 
 			step( 'Can log in', async function() {
-				this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+				this.loginFlow = new LoginFlow( driver, gutenbergUser );
 				return await this.loginFlow.loginAndStartNewPost( null, true );
 			} );
 
@@ -382,6 +398,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 				await gEditorComponent.closeScheduledPanel();
 				const gSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
+				await gSidebarComponent.selectDocumentTab();
 				await gSidebarComponent.trashPost();
 			} );
 
@@ -408,7 +425,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				'If you’re not prepared to be wrong; you’ll never come up with anything original.\n— Sir Ken Robinson';
 
 			step( 'Can log in', async function() {
-				this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+				this.loginFlow = new LoginFlow( driver, gutenbergUser );
 				return await this.loginFlow.loginAndStartNewPost( null, true );
 			} );
 
@@ -532,7 +549,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			const postPassword = 'e2e' + new Date().getTime().toString();
 
 			step( 'Can log in', async function() {
-				const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+				const loginFlow = new LoginFlow( driver, gutenbergUser );
 				await loginFlow.loginAndStartNewPost( null, true );
 			} );
 
@@ -796,7 +813,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				'The only victory that counts is the victory over yourself.\n— Jesse Owens\n';
 
 			step( 'Can log in', async function() {
-				const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+				const loginFlow = new LoginFlow( driver, gutenbergUser );
 				return await loginFlow.loginAndStartNewPost( null, true );
 			} );
 
@@ -837,7 +854,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				'Science is organised knowledge. Wisdom is organised life..\n~ Immanuel Kant';
 
 			step( 'Can log in', async function() {
-				const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+				const loginFlow = new LoginFlow( driver, gutenbergUser );
 				return await loginFlow.loginAndStartNewPost( null, true );
 			} );
 
@@ -937,7 +954,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			const subject = "Let's work together";
 
 			step( 'Can log in', async function() {
-				const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+				const loginFlow = new LoginFlow( driver, gutenbergUser );
 				return await loginFlow.loginAndStartNewPost( null, true );
 			} );
 
@@ -991,14 +1008,14 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		};
 
 		step( 'Can log in', async function() {
-			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
 		step( 'Can insert the payment button', async function() {
 			const blogPostTitle = 'Payment Button: ' + dataHelper.randomPhrase();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			const blockId = await gEditorComponent.addBlock( 'Simple Payments' );
+			const blockId = await gEditorComponent.addBlock( 'Simple Payments button' );
 
 			const gPaymentComponent = await SimplePaymentsBlockComponent.Expect( driver, blockId );
 			await gPaymentComponent.insertPaymentButtonDetails( paymentButtonDetails );
@@ -1072,7 +1089,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 
 		step( 'Can log in', async function() {
-			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			const loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await loginFlow.loginAndStartNewPost( null, true );
 		} );
 
@@ -1089,7 +1106,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				'To really be of help to others we need to be guided by compassion.\n— Dalai Lama';
 
 			step( 'Can log in', async function() {
-				const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+				const loginFlow = new LoginFlow( driver, gutenbergUser );
 				return await loginFlow.loginAndStartNewPost( null, true );
 			} );
 
@@ -1108,8 +1125,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 			step( 'Can publish the post', async function() {
 				const gHeaderComponent = await GutenbergEditorComponent.Expect( driver );
-				await gHeaderComponent.publish();
-				return await gHeaderComponent.closePublishedPanel();
+				return await gHeaderComponent.publish();
 			} );
 		} );
 
@@ -1130,7 +1146,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 	describe( 'Insert embeds: @parallel', function() {
 		step( 'Can log in', async function() {
-			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
@@ -1183,6 +1199,88 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 		after( async function() {
 			await driverHelper.acceptAlertIfPresent( driver );
+		} );
+	} );
+
+	describe( 'Can Share Posts From Reader (PressThis)! @parallel', function() {
+		step( 'Can log in', async function() {
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
+			await this.loginFlow.login();
+			return this.loginFlow.checkForDevDocsAndRedirectToReader();
+		} );
+
+		step( 'Find a post to share (press this)', async function() {
+			const readerPage = await ReaderPage.Expect( driver );
+			const sharePostError = await readerPage.shareLatestPost();
+			if ( sharePostError instanceof Error ) {
+				throw sharePostError;
+			}
+		} );
+
+		step( 'Block Editor loads with shared content', async function() {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			await gEditorComponent.initEditor();
+		} );
+
+		step( 'Can publish and view content', async function() {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			await gEditorComponent.publish( { visit: true } );
+		} );
+
+		step( 'Can see a post title and post content', async function() {
+			const viewPostPage = await ViewPostPage.Expect( driver );
+			const postTitle = await viewPostPage.postTitle();
+			const postContent = await viewPostPage.postContent();
+			assert.ok( postTitle.length > 0, 'Press This did not copy a post title!' );
+			assert.ok( postContent.length > 0, 'Press This did not copy any post content!' );
+		} );
+	} );
+
+	describe( 'Use the Calypso revisions modal @parallel', function() {
+		const originalTitle = dataHelper.randomPhrase();
+		const updatedTitle = dataHelper.randomPhrase();
+		const originalContent = 'Details matter, it’s worth waiting to get it right. ~ Steve Jobs';
+		const updatedContent =
+			'Your most unhappy customers are your greatest source of learning. ~ Bill Gates';
+
+		step( 'Can log in', async function() {
+			const loginFlow = new LoginFlow( driver, gutenbergUser );
+			await loginFlow.loginAndStartNewPost( null, true );
+		} );
+
+		step( 'Can enter post title and text content', async function() {
+			const editor = await GutenbergEditorComponent.Expect( driver );
+			await editor.enterTitle( originalTitle );
+			await editor.enterText( originalContent );
+			await editor.ensureSaved();
+		} );
+
+		step( 'Can update post title and text content', async function() {
+			const editor = await GutenbergEditorComponent.Expect( driver );
+			await editor.enterTitle( updatedTitle );
+			await editor.replaceTextOnLastParagraph( updatedContent );
+			await editor.ensureSaved();
+		} );
+
+		step( 'Can open the revisions modal', async function() {
+			const editor = await GutenbergEditorComponent.Expect( driver );
+			await editor.openSidebar();
+			const sidebar = await GutenbergEditorSidebarComponent.Expect( driver );
+			await sidebar.selectDocumentTab();
+			await sidebar.openRevisionsDialog();
+		} );
+
+		step( 'Can restore the previous revision', async function() {
+			const revisions = await RevisionsModalComponent.Expect( driver );
+			await revisions.loadFirstRevision();
+
+			const editor = await GutenbergEditorComponent.Expect( driver );
+			await editor.closeSidebar();
+			await editor.ensureSaved();
+			const title = await editor.getTitle();
+			const content = await editor.getContent();
+			assert.strictEqual( title, originalTitle, 'The restored post title is not correct' );
+			assert.strictEqual( content, originalContent, 'The restored post content is not correct' );
 		} );
 	} );
 } );

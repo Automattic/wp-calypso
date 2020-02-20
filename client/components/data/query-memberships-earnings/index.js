@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -46,7 +44,4 @@ class QueryMembershipsEarnings extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestEarnings }
-)( QueryMembershipsEarnings );
+export default connect( null, { requestEarnings } )( QueryMembershipsEarnings );

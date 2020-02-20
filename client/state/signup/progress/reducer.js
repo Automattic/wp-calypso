@@ -13,11 +13,11 @@ import {
 	SIGNUP_PROGRESS_COMPLETE_STEP,
 	SIGNUP_PROGRESS_INVALIDATE_STEP,
 	SIGNUP_PROGRESS_PROCESS_STEP,
-	SIGNUP_PROGRESS_RESUME_AFTER_LOGIN_SET,
 	SIGNUP_PROGRESS_SAVE_STEP,
 	SIGNUP_PROGRESS_SUBMIT_STEP,
+	SIGNUP_STEPS_SITE_TYPE_SET,
 } from 'state/action-types';
-import { createReducerWithValidation } from 'state/utils';
+import { withSchemaValidation } from 'state/utils';
 import { schema } from './schema';
 
 const debug = debugFactory( 'calypso:state:signup:progress:reducer' );
@@ -94,11 +94,6 @@ const saveStep = ( state, { step } ) =>
 		? updateStep( state, step )
 		: addStep( state, { ...step, status: 'in-progress' } );
 
-function setResumeAfterLogin( state, { resumeStep } ) {
-	debug( `Setting resume after login for step ${ resumeStep.stepName }` );
-	return updateStep( state, { ...resumeStep, status: 'in-progress' } );
-}
-
 const submitStep = ( state, { step } ) => {
 	const stepHasApiRequestFunction = get( stepsConfig, [ step.stepName, 'apiRequestFunction' ] );
 	const status = stepHasApiRequestFunction ? 'pending' : 'completed';
@@ -108,16 +103,24 @@ const submitStep = ( state, { step } ) => {
 		: addStep( state, { ...step, status } );
 };
 
-export default createReducerWithValidation(
-	{},
-	{
-		[ SIGNUP_COMPLETE_RESET ]: overwriteSteps,
-		[ SIGNUP_PROGRESS_COMPLETE_STEP ]: completeStep,
-		[ SIGNUP_PROGRESS_INVALIDATE_STEP ]: invalidateStep,
-		[ SIGNUP_PROGRESS_PROCESS_STEP ]: processStep,
-		[ SIGNUP_PROGRESS_RESUME_AFTER_LOGIN_SET ]: setResumeAfterLogin,
-		[ SIGNUP_PROGRESS_SAVE_STEP ]: saveStep,
-		[ SIGNUP_PROGRESS_SUBMIT_STEP ]: submitStep,
-	},
-	schema
-);
+export default withSchemaValidation( schema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case SIGNUP_COMPLETE_RESET:
+			return overwriteSteps( state, action );
+		case SIGNUP_PROGRESS_COMPLETE_STEP:
+			return completeStep( state, action );
+		case SIGNUP_PROGRESS_INVALIDATE_STEP:
+			return invalidateStep( state, action );
+		case SIGNUP_PROGRESS_PROCESS_STEP:
+			return processStep( state, action );
+		case SIGNUP_PROGRESS_SAVE_STEP:
+			return saveStep( state, action );
+		case SIGNUP_PROGRESS_SUBMIT_STEP:
+			return submitStep( state, action );
+		case SIGNUP_STEPS_SITE_TYPE_SET:
+			delete state[ 'domains-with-preview' ];
+			return state;
+	}
+
+	return state;
+} );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
@@ -82,7 +80,7 @@ class SiteTitleStep extends Component {
 							/>
 							<Button primary type="submit" onClick={ this.handleSubmit }>
 								{ this.props.translate( 'Continue' ) }
-							</Button>{' '}
+							</Button>{ ' ' }
 						</FormFieldset>
 					</div>
 				</form>

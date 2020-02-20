@@ -1,17 +1,14 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import debugModule from 'debug';
-import { get, map, pick, throttle } from 'lodash';
+import { map, pick, throttle } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { APPLY_STORED_STATE, SERIALIZE, DESERIALIZE } from 'state/action-types';
-import { getStoredItem, setStoredItem, clearStorage } from 'lib/browser-storage';
+import { getAllStoredItems, setStoredItem, clearStorage } from 'lib/browser-storage';
 import { isSupportSession } from 'lib/user/support-user-interop';
 import config from 'config';
 import User from 'lib/user';
@@ -26,6 +23,15 @@ const DAY_IN_HOURS = 24;
 const HOUR_IN_MS = 3600000;
 export const SERIALIZE_THROTTLE = 5000;
 export const MAX_AGE = 7 * DAY_IN_HOURS * HOUR_IN_MS;
+
+/**
+ * In-memory copy of persisted state.
+ *
+ * We load from browser storage into this cache on boot, and initialize state
+ * from it, rather than asynchronously reading from browser storage for every
+ * persisted reducer.
+ */
+let stateCache = {};
 
 function serialize( state, reducer ) {
 	return reducer( state, { type: SERIALIZE } );
@@ -89,8 +95,8 @@ function shouldAddSympathy() {
 // scenario where state data may have been stored without this
 // check being performed.
 function verifyStoredRootState( state ) {
-	const currentUserId = get( user.get(), 'ID', null );
-	const storedUserId = get( state, [ 'currentUser', 'id' ], null );
+	const currentUserId = user?.get()?.ID ?? null;
+	const storedUserId = state?.currentUser?.id ?? null;
 
 	if ( currentUserId !== storedUserId ) {
 		debug( `current user ID=${ currentUserId } and state user ID=${ storedUserId } don't match` );
@@ -104,15 +110,29 @@ function verifyStateTimestamp( state ) {
 	return state._timestamp && state._timestamp + MAX_AGE > Date.now();
 }
 
-export async function getStateFromLocalStorage( reducer, subkey, forceLoggedOutUser = false ) {
+export async function loadAllState() {
+	try {
+		const storedState = await getAllStoredItems( /^redux-state-/ );
+		debug( 'fetched stored Redux state from persistent storage', storedState );
+		stateCache = storedState ?? {};
+	} catch ( error ) {
+		debug( 'error while loading stored Redux state:', error );
+	}
+}
+
+export async function clearAllState() {
+	stateCache = {};
+	await clearStorage();
+}
+
+export function getStateFromCache( reducer, subkey, forceLoggedOutUser = false ) {
 	const reduxStateKey = getReduxStateKey( forceLoggedOutUser ) + ( subkey ? ':' + subkey : '' );
 
 	try {
-		const storedState = await getStoredItem( reduxStateKey );
-		debug( 'fetched stored Redux state from persistent storage', storedState );
+		const storedState = stateCache[ reduxStateKey ] ?? null;
 
 		if ( storedState === null ) {
-			debug( 'stored Redux state not found in persistent storage' );
+			debug( 'stored Redux state not found in cache' );
 			return null;
 		}
 
@@ -140,7 +160,7 @@ export async function getStateFromLocalStorage( reducer, subkey, forceLoggedOutU
 }
 
 function getReduxStateKey( forceLoggedOutUser = false ) {
-	return getReduxStateKeyForUserId( forceLoggedOutUser ? null : get( user.get(), 'ID', null ) );
+	return getReduxStateKeyForUserId( forceLoggedOutUser ? null : user?.get()?.ID ?? null );
 }
 
 function getReduxStateKeyForUserId( userId ) {
@@ -159,16 +179,19 @@ function isValidReduxKeyAndState( key, state ) {
 	// able to force the state in memory to be rebuilt - possibly using
 	// https://stackoverflow.com/questions/35622588/how-to-reset-the-state-of-a-redux-store/35641992#35641992
 	// - without generating any errors. Until then, it must remain in place.)
-	const userId = get( state, [ 'currentUser', 'id' ], null );
+	const userId = state?.currentUser?.id ?? null;
 	return key === getReduxStateKeyForUserId( userId );
 }
 
-function persistentStoreState( reduxStateKey, storageKey, state, _timestamp ) {
+async function persistentStoreState( reduxStateKey, storageKey, state, _timestamp ) {
 	if ( storageKey !== 'root' ) {
 		reduxStateKey += ':' + storageKey;
 	}
 
-	return setStoredItem( reduxStateKey, Object.assign( {}, state, { _timestamp } ) );
+	const newState = { ...state, _timestamp };
+	const result = await setStoredItem( reduxStateKey, newState );
+	stateCache[ reduxStateKey ] = newState;
+	return result;
 }
 
 export function persistOnChange( reduxStore ) {
@@ -214,13 +237,13 @@ export function persistOnChange( reduxStore ) {
 	reduxStore.subscribe( throttledSaveState );
 }
 
-async function getInitialStoredState( initialReducer ) {
+function getInitialStoredState( initialReducer ) {
 	if ( ! shouldPersist() ) {
 		return null;
 	}
 
 	if ( 'development' === process.env.NODE_ENV ) {
-		window.resetState = () => clearStorage().then( () => location.reload( true ) );
+		window.resetState = () => clearAllState().then( () => window.location.reload( true ) );
 
 		if ( shouldAddSympathy() ) {
 			// eslint-disable-next-line no-console
@@ -229,19 +252,19 @@ async function getInitialStoredState( initialReducer ) {
 				'font-size: 14px; color: red;'
 			);
 
-			clearStorage();
+			clearAllState();
 			return null;
 		}
 	}
 
-	let initialStoredState = await getStateFromLocalStorage( initialReducer );
+	let initialStoredState = getStateFromCache( initialReducer );
 	const storageKeys = [ ...initialReducer.getStorageKeys() ];
 
-	async function loadReducerState( { storageKey, reducer } ) {
-		let storedState = await getStateFromLocalStorage( reducer, storageKey, false );
+	function loadReducerState( { storageKey, reducer } ) {
+		let storedState = getStateFromCache( reducer, storageKey, false );
 
 		if ( ! storedState && storageKey === 'signup' ) {
-			storedState = await getStateFromLocalStorage( reducer, storageKey, true );
+			storedState = getStateFromCache( reducer, storageKey, true );
 			debug( 'fetched signup state from logged out state', storedState );
 		}
 
@@ -254,13 +277,15 @@ async function getInitialStoredState( initialReducer ) {
 		}
 	}
 
-	await Promise.all( map( storageKeys, loadReducerState ) );
+	for ( const item of storageKeys ) {
+		loadReducerState( item );
+	}
 
 	return initialStoredState;
 }
 
-export async function getInitialState( initialReducer ) {
-	const storedState = await getInitialStoredState( initialReducer );
+export function getInitialState( initialReducer ) {
+	const storedState = getInitialStoredState( initialReducer );
 	const serverState = getInitialServerState( initialReducer );
 	return { ...storedState, ...serverState };
 }

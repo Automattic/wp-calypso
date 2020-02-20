@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -37,13 +36,8 @@ describe( 'LoginTest', () => {
 		} );
 	} );
 
-	test( 'cannot submit until login details entered', done => {
-		expect( page.find( FormButton ).props().disabled ).to.be.true;
-		page.setState( { login: 'test', password: 'test', inProgress: false }, function() {
-			page.update();
-			expect( page.find( FormButton ).props().disabled ).to.be.false;
-			done();
-		} );
+	test( 'can submit without login details entered', () => {
+		expect( page.find( FormButton ).props().disabled ).to.be.false;
 	} );
 
 	test( 'shows OTP box with valid login', done => {

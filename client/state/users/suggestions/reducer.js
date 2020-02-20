@@ -7,50 +7,55 @@ import {
 	USER_SUGGESTIONS_REQUEST_FAILURE,
 	USER_SUGGESTIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
  * Returns the updated requesting state after an action has been dispatched.
  * Requesting state tracks whether a user suggestions request is in progress for a site.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action object
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action object
+ * @returns {object}        Updated state
  */
-export const requesting = createReducer(
-	{},
-	{
-		[ USER_SUGGESTIONS_REQUEST ]: ( state, { siteId } ) => {
+export const requesting = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case USER_SUGGESTIONS_REQUEST: {
+			const { siteId } = action;
 			return { ...state, [ siteId ]: true };
-		},
-		[ USER_SUGGESTIONS_REQUEST_FAILURE ]: ( state, { siteId } ) => {
+		}
+		case USER_SUGGESTIONS_REQUEST_FAILURE: {
+			const { siteId } = action;
 			return { ...state, [ siteId ]: false };
-		},
-		[ USER_SUGGESTIONS_REQUEST_SUCCESS ]: ( state, { siteId } ) => {
+		}
+		case USER_SUGGESTIONS_REQUEST_SUCCESS: {
+			const { siteId } = action;
 			return { ...state, [ siteId ]: false };
-		},
+		}
 	}
-);
+
+	return state;
+} );
 
 /**
  * Returns the updated items state after an action has been dispatched. Items
  * state tracks an array of user suggestions available for a site. Receiving
  * user suggestions for a site will replace the existing set.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action object
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action object
+ * @returns {object}        Updated state
  */
-export const items = createReducerWithValidation(
-	{},
-	{
-		[ USER_SUGGESTIONS_RECEIVE ]: ( state, { siteId, suggestions } ) => {
+export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case USER_SUGGESTIONS_RECEIVE: {
+			const { siteId, suggestions } = action;
 			return { ...state, [ siteId ]: suggestions };
-		},
-	},
-	itemsSchema
-);
+		}
+	}
+
+	return state;
+} );
 
 export default combineReducers( {
 	requesting,

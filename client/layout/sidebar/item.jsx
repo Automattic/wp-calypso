@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -27,6 +25,7 @@ export default class SidebarItem extends React.Component {
 		icon: PropTypes.string,
 		customIcon: PropTypes.object,
 		materialIcon: PropTypes.string,
+		materialIconStyle: PropTypes.string,
 		selected: PropTypes.bool,
 		expandSection: PropTypes.func,
 		preloadSectionName: PropTypes.string,
@@ -56,7 +55,7 @@ export default class SidebarItem extends React.Component {
 		const isExternalLink = isExternal( this.props.link );
 		const showAsExternal = isExternalLink && ! this.props.forceInternalLink;
 		const classes = classnames( this.props.className, { selected: this.props.selected } );
-		const { materialIcon, icon, customIcon } = this.props;
+		const { materialIcon, materialIconStyle, icon, customIcon } = this.props;
 
 		return (
 			<li
@@ -75,7 +74,11 @@ export default class SidebarItem extends React.Component {
 					{ icon && <Gridicon className={ 'sidebar__menu-icon' } icon={ icon } size={ 24 } /> }
 
 					{ materialIcon && (
-						<MaterialIcon className={ 'sidebar__menu-icon' } icon={ materialIcon } />
+						<MaterialIcon
+							className={ 'sidebar__menu-icon' }
+							icon={ materialIcon }
+							style={ materialIconStyle }
+						/>
 					) }
 
 					{ customIcon && customIcon }

@@ -14,7 +14,7 @@ import { find } from 'lodash';
 import { deserialize } from 'lib/media-serialization';
 import MediaStore from 'lib/media/store';
 import { url as mediaUrl } from 'lib/media/utils';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormButton from 'components/forms/form-button';
@@ -49,7 +49,7 @@ class LinkDialog extends React.Component {
 		firstLoad: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.visible && ! this.props.visible ) {
 			this.setState( this.getState() );
 		}

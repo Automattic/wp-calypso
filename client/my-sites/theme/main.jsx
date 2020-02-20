@@ -6,6 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import config from 'config';
 import titlecase from 'to-title-case';
 import Gridicon from 'components/gridicon';
 import { head, split } from 'lodash';
@@ -15,6 +16,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import AsyncLoad from 'components/async-load';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
@@ -22,17 +24,18 @@ import SectionHeader from 'components/section-header';
 import ThemeDownloadCard from './theme-download-card';
 import ThemePreview from 'my-sites/themes/theme-preview';
 import Banner from 'components/banner';
-import Button from 'components/button';
+import { Button, Card } from '@automattic/components';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
-import Card from 'components/card';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isUserPaid } from 'state/purchases/selectors';
 import ThanksModal from 'my-sites/themes/thanks-modal';
+import AutoLoadingHomepageModal from 'my-sites/themes/auto-loading-homepage-modal';
+
 import QueryActiveTheme from 'components/data/query-active-theme';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryUserPurchases from 'components/data/query-user-purchases';
@@ -120,7 +123,7 @@ class ThemeSheet extends React.Component {
 		this.scrollToTop();
 	}
 
-	componentWillUpdate( nextProps ) {
+	UNSAFE_componentWillUpdate( nextProps ) {
 		if ( nextProps.id !== this.props.id ) {
 			this.scrollToTop();
 		}
@@ -138,8 +141,8 @@ class ThemeSheet extends React.Component {
 	};
 
 	onButtonClick = () => {
-		const { defaultOption } = this.props;
-		defaultOption.action && defaultOption.action( this.props.id );
+		const { defaultOption, id } = this.props;
+		defaultOption.action && defaultOption.action( id );
 	};
 
 	onSecondaryButtonClick = () => {
@@ -332,6 +335,9 @@ class ThemeSheet extends React.Component {
 
 		return (
 			<div className="theme__sheet-content">
+				{ config.isEnabled( 'jitms' ) && this.props.siteSlug && (
+					<AsyncLoad require="blocks/jitm" messagePath={ 'calypso:theme:admin_notices' } />
+				) }
 				{ this.renderSectionNav( section ) }
 				{ activeSection }
 				<div className="theme__sheet-footer-line">
@@ -685,6 +691,7 @@ class ThemeSheet extends React.Component {
 				{ this.renderBar() }
 				<QueryActiveTheme siteId={ siteId } />
 				<ThanksModal source={ 'details' } />
+				<AutoLoadingHomepageModal source={ 'details' } />
 				{ pageUpsellBanner }
 				<HeaderCake
 					className="theme__sheet-action-bar"

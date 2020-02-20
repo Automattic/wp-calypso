@@ -16,7 +16,7 @@ import {
 	TERMS_REQUEST_SUCCESS,
 	SERIALIZE,
 } from 'state/action-types';
-import { combineReducers, createReducerWithValidation } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import TermQueryManager from 'lib/query-manager/term';
 import { getSerializedTermsQuery } from './utils';
 import { queriesSchema } from './schema';
@@ -26,9 +26,9 @@ import { queriesSchema } from './schema';
  * dispatched. The state reflects a mapping of serialized query to whether a
  * network request is in-progress for that query.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function queryRequests( state = {}, action ) {
 	switch ( action.type ) {
@@ -53,10 +53,9 @@ export function queryRequests( state = {}, action ) {
  * The state reflects a mapping of serialized query key to an array of term IDs
  * for the query, if a query response was successfully received.
  */
-export const queries = createReducerWithValidation(
-	{},
-	{
-		[ TERMS_RECEIVE ]: ( state, action ) => {
+export const queries = withSchemaValidation( queriesSchema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case TERMS_RECEIVE: {
 			const { siteId, query, taxonomy, terms, found } = action;
 			const hasManager = state[ siteId ] && state[ siteId ][ taxonomy ];
 			const manager = hasManager ? state[ siteId ][ taxonomy ] : new TermQueryManager();
@@ -73,8 +72,8 @@ export const queries = createReducerWithValidation(
 					[ taxonomy ]: nextManager,
 				},
 			};
-		},
-		[ TERM_REMOVE ]: ( state, action ) => {
+		}
+		case TERM_REMOVE: {
 			const { siteId, taxonomy, termId } = action;
 			if ( ! state[ siteId ] || ! state[ siteId ][ taxonomy ] ) {
 				return state;
@@ -92,24 +91,25 @@ export const queries = createReducerWithValidation(
 					[ taxonomy ]: nextManager,
 				},
 			};
-		},
-		[ SERIALIZE ]: state => {
+		}
+		case SERIALIZE: {
 			return mapValues( state, taxonomies => {
 				return mapValues( taxonomies, ( { data, options } ) => {
 					return { data, options };
 				} );
 			} );
-		},
-		[ DESERIALIZE ]: state => {
+		}
+		case DESERIALIZE: {
 			return mapValues( state, taxonomies => {
 				return mapValues( taxonomies, ( { data, options } ) => {
 					return new TermQueryManager( data, options );
 				} );
 			} );
-		},
-	},
-	queriesSchema
-);
+		}
+	}
+
+	return state;
+} );
 
 export default combineReducers( {
 	queries,

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +7,7 @@ import { connect } from 'react-redux';
 import { map, get, last, uniqBy, size, filter, takeRight, compact } from 'lodash';
 import { localize } from 'i18n-calypso';
 
-/***
+/**
  * Internal dependencies
  */
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import PropTypes from 'prop-types';
 import { contextTypes } from '../context-types';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 class SiteLink extends Component {
 	static propTypes = {
@@ -72,7 +70,4 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = null;
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( SiteLink );
+export default connect( mapStateToProps, mapDispatchToProps )( SiteLink );

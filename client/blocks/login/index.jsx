@@ -4,8 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
-import { capitalize, findLast, get, includes, isEmpty } from 'lodash';
+import { capitalize, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
@@ -13,12 +12,14 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import Gridicon from 'components/gridicon';
 import config from 'config';
 import {
 	getRedirectToSanitized,
 	getRequestNotice,
 	getTwoFactorNotificationSent,
 	isTwoFactorEnabled,
+	isTwoFactorAuthTypeSupported,
 	getSocialAccountIsLinking,
 	getSocialAccountLinkService,
 } from 'state/login/selectors';
@@ -27,8 +28,6 @@ import { wasManualRenewalImmediateLoginAttempted } from 'state/immediate-login/s
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
-import { setResumeAfterLogin } from 'state/signup/progress/actions';
-import { getSignupProgress } from 'state/signup/progress/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import { login } from 'lib/paths';
@@ -40,9 +39,11 @@ import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/wooc
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
-import VerificationCodeForm from './two-factor-authentication/verification-code-form';
-import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
 import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
+import VerificationCodeForm from './two-factor-authentication/verification-code-form';
+import SecurityKeyForm from './two-factor-authentication/security-key-form';
+import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
+import { isWebAuthnSupported } from 'lib/webauthn';
 
 /**
  * Style dependencies
@@ -70,6 +71,11 @@ class Login extends Component {
 		twoFactorAuthType: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
+		isSecurityKeySupported: PropTypes.bool,
+	};
+
+	state = {
+		isBrowserSupported: isWebAuthnSupported(),
 	};
 
 	static defaultProps = { isJetpack: false, isJetpackWooCommerceFlow: false };
@@ -77,7 +83,7 @@ class Login extends Component {
 	componentDidMount() {
 		if ( ! this.props.twoFactorEnabled && this.props.twoFactorAuthType ) {
 			// Disallow access to the 2FA pages unless the user has 2FA enabled
-			page( login( { isNative: true } ) );
+			page( login( { isNative: true, isJetpack: this.props.isJetpack } ) );
 		}
 
 		window.scrollTo( 0, 0 );
@@ -94,14 +100,22 @@ class Login extends Component {
 
 	handleValidLogin = () => {
 		if ( this.props.twoFactorEnabled ) {
+			let defaultAuthType;
+			if (
+				this.state.isBrowserSupported &&
+				this.props.isSecurityKeySupported &&
+				this.props.twoFactorNotificationSent !== 'push'
+			) {
+				defaultAuthType = 'webauthn';
+			} else {
+				defaultAuthType = this.props.twoFactorNotificationSent.replace( 'none', 'authenticator' );
+			}
 			page(
 				login( {
 					isNative: true,
+					isJetpack: this.props.isJetpack,
 					// If no notification is sent, the user is using the authenticator for 2FA by default
-					twoFactorAuthType: this.props.twoFactorNotificationSent.replace(
-						'none',
-						'authenticator'
-					),
+					twoFactorAuthType: defaultAuthType,
 				} )
 			);
 		} else if ( this.props.isLinking ) {
@@ -129,33 +143,23 @@ class Login extends Component {
 		}
 	};
 
-	rebootAfterLogin = () => {
-		const { redirectTo } = this.props;
-
+	rebootAfterLogin = async () => {
 		this.props.recordTracksEvent( 'calypso_login_success', {
 			two_factor_enabled: this.props.twoFactorEnabled,
 			social_service_connected: this.props.socialConnect,
 		} );
 
 		// Redirects to / if no redirect url is available
-		const url = redirectTo ? redirectTo : window.location.origin;
+		const url = this.props.redirectTo || '/';
 
 		// User data is persisted in localstorage at `lib/user/user` line 157.
 		// Only clear the data if a user is currently set, otherwise keep the
 		// logged out state around so that it can be used in signup.
 		if ( user.get() ) {
-			user.clear().then( () => {
-				window.location.href = url;
-			} );
-		} else {
-			if ( ! isEmpty( this.props.signupProgress ) ) {
-				const lastStep = findLast( this.props.signupProgress, step => step.stepName !== 'user' );
-				if ( lastStep ) {
-					this.props.setResumeAfterLogin( lastStep );
-				}
-			}
-			window.location.href = url;
+			await user.clear();
 		}
+
+		window.location.href = url;
 	};
 
 	renderHeader() {
@@ -235,8 +239,8 @@ class Login extends Component {
 						{ 'cart' === wccomFrom ? (
 							<WooCommerceConnectCartHeader />
 						) : (
-							<div className="login__woocommerce-logo">
-								<div className={ classNames( 'connect-header' ) }>
+							<div className="login__woocommerce-wrapper">
+								<div className={ classNames( 'login__woocommerce-logo' ) }>
 									<svg width={ 200 } viewBox={ '0 0 1270 170' }>
 										<AsyncLoad
 											require="components/jetpack-header/woocommerce"
@@ -260,12 +264,9 @@ class Login extends Component {
 			}
 
 			if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-				headerText = translate( 'Howdy!{{br/}}Log in to %(clientTitle)s:', {
+				headerText = translate( 'Sign in to %(clientTitle)s', {
 					args: {
 						clientTitle: oauth2Client.title,
-					},
-					components: {
-						br: <br />,
 					},
 				} );
 			}
@@ -291,7 +292,7 @@ class Login extends Component {
 				</p>
 			);
 		} else if ( isJetpack ) {
-			headerText = translate( 'Log in to your WordPress.com account to set up Jetpack' );
+			headerText = translate( 'Log in or create a WordPress.com account to set up Jetpack' );
 			preHeader = (
 				<div className="login__jetpack-logo">
 					<AsyncLoad
@@ -336,6 +337,7 @@ class Login extends Component {
 	renderContent() {
 		const {
 			domain,
+			isJetpack,
 			privateSite,
 			twoFactorAuthType,
 			twoFactorEnabled,
@@ -345,6 +347,14 @@ class Login extends Component {
 			socialServiceResponse,
 			disableAutoFocus,
 		} = this.props;
+
+		if ( twoFactorEnabled && twoFactorAuthType === 'webauthn' && this.state.isBrowserSupported ) {
+			return (
+				<div>
+					<SecurityKeyForm twoFactorAuthType="webauthn" onSuccess={ this.handleValid2FACode } />
+				</div>
+			);
+		}
 
 		let poller;
 		if ( twoFactorEnabled && twoFactorAuthType && twoFactorNotificationSent === 'push' ) {
@@ -356,6 +366,7 @@ class Login extends Component {
 				<div>
 					{ poller }
 					<VerificationCodeForm
+						isJetpack={ isJetpack }
 						onSuccess={ this.handleValid2FACode }
 						twoFactorAuthType={ twoFactorAuthType }
 					/>
@@ -367,7 +378,7 @@ class Login extends Component {
 			return (
 				<div>
 					{ poller }
-					<WaitingTwoFactorNotificationApproval />
+					<WaitingTwoFactorNotificationApproval isJetpack={ isJetpack } />
 				</div>
 			);
 		}
@@ -419,15 +430,12 @@ export default connect(
 		oauth2Client: getCurrentOAuth2Client( state ),
 		isLinking: getSocialAccountIsLinking( state ),
 		isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
+		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
 		linkingSocialService: getSocialAccountLinkService( state ),
 		partnerSlug: getPartnerSlugFromQuery( state ),
 		isJetpackWooCommerceFlow:
-			'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' ),
-		signupProgress: getSignupProgress( state ),
+			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 	} ),
-	{
-		recordTracksEvent,
-		setResumeAfterLogin,
-	}
+	{ recordTracksEvent }
 )( localize( Login ) );

@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/full-site-editing",
-	"version": "0.7.0",
+	"version": "0.19.0",
 	"description": "Plugin for full site editing with the block editor.",
 	"sideEffects": true,
 	"repository": {
@@ -9,37 +9,63 @@
 		"directory": "apps/full-site-editing"
 	},
 	"private": true,
-	"author": "Automattic, Inc.",
+	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
-		"full-site-editing": "calypso-build --source='full-site-editing'",
+		"full-site-editing": "calypso-build --source='dotcom-fse'",
 		"dev:full-site-editing": "npm run full-site-editing",
 		"build:full-site-editing": "NODE_ENV=production npm run full-site-editing",
 		"posts-list-block": "calypso-build --source='posts-list-block'",
 		"dev:posts-list-block": "npm run posts-list-block",
 		"build:posts-list-block": "NODE_ENV=production npm run posts-list-block",
+		"blog-posts-block-editor": "calypso-build --source='blog-posts-block/editor'",
+		"blog-posts-block-view": "calypso-build --source='blog-posts-block/view'",
+		"blog-posts-block": "npm-run-all --parallel blog-posts-block-*",
+		"dev:blog-posts-block": "npm run blog-posts-block",
+		"build:blog-posts-block": "NODE_ENV=production npm run blog-posts-block",
 		"starter-page-templates": "calypso-build --source='starter-page-templates'",
 		"dev:starter-page-templates": "npm run starter-page-templates",
 		"build:starter-page-templates": "NODE_ENV=production npm run starter-page-templates",
-		"dev": "rimraf dist && npm-run-all --parallel dev:*",
-		"build": "rimraf dist && npm-run-all --parallel build:*",
-		"test:unit": "wp-scripts test-unit-js --config='jest.config.js'",
-		"test:unit:help": "wp-scripts test-unit-js --config='jest.config.js' --help",
-		"test:unit:watch": "wp-scripts test-unit-js --config='jest.config.js' --watch"
+		"global-styles": "calypso-build --source='global-styles'",
+		"build:global-styles": "NODE_ENV=production npm run global-styles",
+		"dev:global-styles": "npm run global-styles",
+		"wpcom-block-editor-nux": "calypso-build --source='wpcom-block-editor-nux'",
+		"dev:wpcom-block-editor-nux": "npm run wpcom-block-editor-nux",
+		"build:wpcom-block-editor-nux": "NODE_ENV=production npm run wpcom-block-editor-nux",
+		"dev": "node bin/npm-run-build.js --dev",
+		"build": "node bin/npm-run-build.js --build",
+		"test:js": "npx wp-scripts test-unit-js --config='bin/js-unit-config.js'",
+		"test:js:help": "npx wp-scripts test-unit-js --config='bin/js-unit-config.js' --help",
+		"test:js:watch": "npx wp-scripts test-unit-js --config='bin/js-unit-config.js' --watch",
+		"clean": "npx rimraf dist full-site-editing-plugin/*/dist",
+		"prebuild": "npm run clean",
+		"predev": "npm run clean",
+		"sync:blog-posts-block": "./bin/sync-blog-posts-block.sh",
+		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh"
 	},
 	"dependencies": {
-		"classnames": "2.2.6"
-	},
-	"devDependencies": {
-		"@automattic/calypso-build": "file:../../packages/calypso-build",
-		"@testing-library/jest-dom": "^4.1.0",
-		"@testing-library/react": "^9.1.3",
-		"@wordpress/scripts": "^3.4.0",
-		"@wordpress/jest-preset-default": "^5.0.0",
-		"eslint-plugin-jest": "^22.15.2"
+		"@wordpress/api-fetch": "*",
+		"@wordpress/block-editor": "*",
+		"@wordpress/blocks": "*",
+		"@wordpress/components": "*",
+		"@wordpress/compose": "*",
+		"@wordpress/data": "*",
+		"@wordpress/dom-ready": "*",
+		"@wordpress/edit-post": "*",
+		"@wordpress/editor": "*",
+		"@wordpress/element": "*",
+		"@wordpress/hooks": "*",
+		"@wordpress/html-entities": "*",
+		"@wordpress/i18n": "*",
+		"@wordpress/keycodes": "*",
+		"@wordpress/plugins": "*",
+		"@wordpress/url": "*",
+		"classnames": "2.2.6",
+		"lodash": "*",
+		"moment": "*"
 	}
 }

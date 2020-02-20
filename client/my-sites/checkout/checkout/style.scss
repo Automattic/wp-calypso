@@ -1,5 +1,24 @@
 @import 'jetpack-connect/colors.scss';
 
+@mixin section-border ( $position ) {
+  &::before {
+  	display: block;
+  	content: '';
+  	position: absolute;
+  	#{ $position }: 0;
+  	left: -8px;
+  	width: calc( 100% + 16px );
+  	height: 1px;
+  	box-sizing: border-box;
+  	background: var( --color-border-subtle );
+  	
+  	@include breakpoint( '>660px' ) {
+  		width: calc( 100% + 60px );
+  		left: -30px;
+  	}
+  }
+}
+
 .checkout {
 	position: relative;
 
@@ -239,6 +258,7 @@
 
 	.checkout__terms,
 	.checkout__domain-refund-policy,
+	.checkout__concierge-refund-policy,
 	.checkout__domain-registration-agreement-link,
 	.checkout__domain-registration-hsts {
 		color: var( --color-text-subtle );
@@ -305,7 +325,7 @@
 		}
 
 		.checkout__payment-box-section.is-selected.no-stored-cards {
-			border-left: 1px solid var( --color-neutral-0 );
+			border: 1px solid var( --color-neutral-5 );
 		}
 
 		.checkout__payment-box-section.is-selected:not( .no-stored-cards ) .checkout__new-card-fields {
@@ -351,12 +371,16 @@
 		}
 	}
 
+	.checkout__payment-box-section {
+		border: 1px solid var( --color-neutral-5 );
+	}
+
 	.checkout__summary-toggle {
 		cursor: pointer;
 		display: block;
 		font-size: 14px;
 		padding: 10px;
-		text-align: center;
+		margin: 0 auto;
 
 		@include breakpoint( '>660px' ) {
 			display: none;
@@ -367,24 +391,29 @@
 	// -----------------------------------
 
 	.subscription-length-picker {
-		margin-top: 15px;
-	}
-
-	&__subscription-length-picker-separator {
-		display: none;
 		position: relative;
-		// Parent overflow is hidden, so 80px here is an arbitrary number
-		// to make sure this element will cover entire width of the parent.
-		// If it's wider, it's okay too.
-		width: calc( 100% + 80px * 2 );
-		left: -80px;
-		margin-top: 1.7em;
-		margin-bottom: 1.7em;
-		background: var( --color-neutral-0 );
+		padding-bottom: 10px;
+		margin: 15px 0;
+
+		@include breakpoint( '>660px' ) {
+			padding-bottom: 30px;
+			margin-bottom: 20px;
+		}
+
+		@include section-border( bottom );
 	}
 
-	.subscription-length-picker + &__subscription-length-picker-separator {
-		display: block;
+	.subscription-length-picker__header {
+		margin-bottom: 8px;
+		padding-top: 10px;
+		position: relative;
+
+		@include breakpoint( '>660px' ) {
+			margin-top: 30px;
+			padding-top: 20px;
+		}
+
+		@include section-border( top );
 	}
 
 	// PayPal Payment Box
@@ -522,18 +551,17 @@
 
 	// Web Payment Box
 	// -----------------------------------
-	.web-payment-box {
-		.web-payment-box__apple-pay-button {
-			-webkit-appearance: -apple-pay-button;
-			-apple-pay-button-type: buy;
-			-apple-pay-button-style: black;
-			vertical-align: middle;
-			cursor: pointer;
+	.payment-request-button {
+		-webkit-appearance: -apple-pay-button;
+		-apple-pay-button-type: buy;
+		-apple-pay-button-style: black;
+		vertical-align: middle;
+		cursor: pointer;
+		width: 100%;
+		height: 40px;
 
-			&[disabled] {
-				opacity: 0.4;
-				cursor: not-allowed;
-			}
+		&[disabled] {
+			cursor: not-allowed;
 		}
 	}
 
@@ -859,6 +887,7 @@
 .checkout__alternative-payment-methods {
 	float: right;
 }
+
 .checkout__payment-box-container {
 	.select-dropdown__option {
 		&:first-child {
@@ -1157,4 +1186,11 @@
 	.checkout__site-created-image {
 		height: 40px;
 	}
+}
+
+.composite-checkout__testing-banner {
+  @media( min-width: 700px ) {
+    margin: auto;
+    max-width: 556px;
+  }
 }

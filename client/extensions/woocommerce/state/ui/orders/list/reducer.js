@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,9 +8,9 @@ import { WOOCOMMERCE_UI_ORDERS_SET_QUERY } from 'woocommerce/state/action-types'
 /**
  * Tracks the current page of orders displayed for the current site.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function currentPage( state = 1, action ) {
 	const { type, query } = action;
@@ -27,9 +25,9 @@ export function currentPage( state = 1, action ) {
 /**
  * Tracks the current search term used for the current site.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function currentSearch( state = '', action ) {
 	const { type, query } = action;

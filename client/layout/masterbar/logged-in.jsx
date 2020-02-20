@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -25,12 +24,14 @@ import AsyncLoad from 'components/async-load';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isNotificationsOpen from 'state/selectors/is-notifications-open';
+import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import { getStatsPathForTab } from 'lib/route';
 import { domainManagementList } from 'my-sites/domains/paths';
+import WordPressWordmark from 'components/wordpress-wordmark';
 
 class MasterbarLoggedIn extends React.Component {
 	static propTypes = {
@@ -40,7 +41,7 @@ class MasterbarLoggedIn extends React.Component {
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string,
 		hasMoreThanOneSite: PropTypes.bool,
-		compact: PropTypes.bool,
+		isCheckout: PropTypes.bool,
 	};
 
 	clickMySites = () => {
@@ -113,10 +114,19 @@ class MasterbarLoggedIn extends React.Component {
 	}
 
 	render() {
-		const { domainOnlySite, translate, compact } = this.props;
+		const { domainOnlySite, translate, isCheckout, isMigrationInProgress } = this.props;
 
-		if ( compact === true ) {
-			return <Masterbar>{ this.renderMySites() }</Masterbar>;
+		if ( isCheckout === true ) {
+			return (
+				<Masterbar>
+					<div className="masterbar__secure-checkout">
+						<WordPressWordmark className="masterbar__wpcom-wordmark" />
+						<span className="masterbar__secure-checkout-text">
+							{ translate( 'Secure checkout' ) }
+						</span>
+					</div>
+				</Masterbar>
+			);
 		}
 
 		return (
@@ -125,7 +135,7 @@ class MasterbarLoggedIn extends React.Component {
 				<Item
 					tipTarget="reader"
 					className="masterbar__reader"
-					url="/"
+					url="/read"
 					icon="reader"
 					onClick={ this.clickReader }
 					isActive={ this.isActive( 'reader' ) }
@@ -138,7 +148,7 @@ class MasterbarLoggedIn extends React.Component {
 					<AsyncLoad require="./quick-language-switcher" placeholder={ null } />
 				) }
 				{ config.isEnabled( 'resume-editing' ) && <ResumeEditing /> }
-				{ ! domainOnlySite && (
+				{ ! domainOnlySite && ! isMigrationInProgress && (
 					<Publish
 						isActive={ this.isActive( 'post' ) }
 						className="masterbar__item-new"
@@ -191,6 +201,7 @@ export default connect(
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
 			user: getCurrentUser( state ),
 			isSupportSession: isSupportSession( state ),
+			isMigrationInProgress: !! isSiteMigrationInProgress( state, siteId ),
 		};
 	},
 	{ setNextLayoutFocus, recordTracksEvent }

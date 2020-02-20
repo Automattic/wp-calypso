@@ -1,28 +1,22 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
 /**
  * External dependencies
  */
-import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
 import deepFreeze from 'deep-freeze';
 import React from 'react';
-import TestUtils from 'react-dom/test-utils';
-import ReactDom from 'react-dom';
-import { Provider as ReduxProvider } from 'react-redux';
-import { shallow } from 'enzyme';
+import { Provider } from 'react-redux';
+import { shallow, mount } from 'enzyme';
 
 /**
  * Internal dependencies
  */
-import { List as DomainList } from '../';
+import { List as DomainList } from '..';
 import { PRIMARY_DOMAIN_CHANGE_SUCCESS, PRIMARY_DOMAIN_CHANGE_FAIL } from '../constants';
 import { createReduxStore } from 'state';
-import { useSandbox } from 'test/helpers/use-sinon';
 
-jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'lib/wp', () => ( {
 	undocumented: () => ( {
 		getProducts: () => {},
@@ -30,9 +24,7 @@ jest.mock( 'lib/wp', () => ( {
 } ) );
 
 describe( 'index', () => {
-	let component, sandbox;
-
-	useSandbox( newSandbox => ( sandbox = newSandbox ) );
+	let component;
 
 	const selectedSite = deepFreeze( {
 		slug: 'example.com',
@@ -62,16 +54,10 @@ describe( 'index', () => {
 	} );
 
 	function renderWithProps( props = defaultProps ) {
-		const container = document.createElement( 'div' );
-		const store = createReduxStore(),
-			dom = ReactDom.render(
-				<ReduxProvider store={ store }>
-					<DomainList { ...props } />
-				</ReduxProvider>,
-				container
-			);
-
-		return TestUtils.scryRenderedComponentsWithType( dom, DomainList )[ 0 ];
+		return mount( <DomainList { ...props } />, {
+			wrappingComponent: Provider,
+			wrappingComponentProps: { store: createReduxStore() },
+		} );
 	}
 
 	describe( 'regular cases', () => {
@@ -80,12 +66,7 @@ describe( 'index', () => {
 		} );
 
 		test( 'should list two domains', () => {
-			assert.equal(
-				[].slice.call(
-					ReactDom.findDOMNode( component ).querySelectorAll( '.domain-management-list-item' )
-				).length,
-				2
-			);
+			expect( component.find( 'ListItem' ) ).toHaveLength( 2 );
 		} );
 	} );
 
@@ -96,88 +77,82 @@ describe( 'index', () => {
 			} );
 
 			test( 'should show "Change Primary Domain" button', () => {
-				assert(
-					ReactDom.findDOMNode( component ).querySelector(
-						'.domain-management-list__change-primary-button'
-					)
-				);
+				const button = component.find( {
+					className: 'domain-management-list__change-primary-button',
+				} );
+				expect( button ).toHaveLength( 1 );
 			} );
 
 			test( 'should enable upon clicking the button', () => {
-				const button = ReactDom.findDOMNode( component ).querySelector(
-					'.domain-management-list__change-primary-button'
-				);
-				TestUtils.Simulate.click( button );
-				assert( component.state.changePrimaryDomainModeEnabled );
+				const button = component.find( {
+					className: 'domain-management-list__change-primary-button',
+				} );
+				button.simulate( 'click' );
+				expect( component.state( 'changePrimaryDomainModeEnabled' ) ).toBe( true );
 			} );
 		} );
 
 		describe( 'when enabled', () => {
 			beforeEach( () => {
 				component = renderWithProps();
-				const button = ReactDom.findDOMNode( component ).querySelector(
-					'.domain-management-list__change-primary-button'
-				);
-				TestUtils.Simulate.click( button );
+				const button = component.find( {
+					className: 'domain-management-list__change-primary-button',
+				} );
+				button.simulate( 'click' );
 			} );
 
 			test( 'should show the cancel button', () => {
-				assert(
-					ReactDom.findDOMNode( component ).querySelector(
-						'.domain-management-list__cancel-change-primary-button'
-					)
-				);
+				const cancelButton = component.find( {
+					className: 'domain-management-list__cancel-change-primary-button',
+				} );
+				expect( cancelButton ).toHaveLength( 1 );
 			} );
 
 			test( 'should disable upon clicking cancel button', () => {
-				const button = ReactDom.findDOMNode( component ).querySelector(
-					'.domain-management-list__cancel-change-primary-button'
-				);
-				TestUtils.Simulate.click( button );
-				assert( ! component.state.changePrimaryDomainModeEnabled );
+				const cancelButton = component.find( {
+					className: 'domain-management-list__cancel-change-primary-button',
+				} );
+				cancelButton.simulate( 'click' );
+				expect( component.state( 'changePrimaryDomainModeEnabled' ) ).toBe( false );
 			} );
 
 			test( 'should set the primaryDomainIndex correctly', () => {
-				const primaryDomainIndex = 1; // from data above
-				assert.equal( component.state.primaryDomainIndex, primaryDomainIndex );
+				expect( component.state( 'primaryDomainIndex' ) ).toBe( 1 );
 			} );
 
 			describe( '#handleUpdatePrimaryDomain', () => {
 				let setPrimaryDomainStub, setPrimaryDomainResolve, setPrimaryDomainReject;
 				beforeEach( () => {
-					setPrimaryDomainStub = sandbox.stub( component, 'setPrimaryDomain' ).returns(
-						new Promise( ( resolve, reject ) => {
-							setPrimaryDomainResolve = resolve;
-							setPrimaryDomainReject = reject;
-						} )
-					);
+					setPrimaryDomainStub = jest
+						.spyOn( component.instance(), 'setPrimaryDomain' )
+						.mockReturnValue(
+							new Promise( ( resolve, reject ) => {
+								setPrimaryDomainResolve = resolve;
+								setPrimaryDomainReject = reject;
+							} )
+						);
 				} );
+
 				test( 'should not call setPrimaryDomain with on trying to set the already primary domain', () => {
-					component.handleUpdatePrimaryDomain( 1, defaultProps.domains[ 1 ] );
+					component.instance().handleUpdatePrimaryDomain( 1, defaultProps.domains[ 1 ] );
 					setPrimaryDomainResolve();
-					assert( ! component.state.settingPrimaryDomain );
-					assert( ! component.state.changePrimaryDomainModeEnabled );
-					assert( ! setPrimaryDomainStub.called );
+					expect( component.state( 'settingPrimaryDomain' ) ).toBe( false );
+					expect( component.state( 'changePrimaryDomainModeEnabled' ) ).toBe( false );
+					expect( setPrimaryDomainStub ).not.toHaveBeenCalled();
 				} );
 
 				test( 'should call setPrimaryDomain with a domain name', done => {
-					component.handleUpdatePrimaryDomain( 0, defaultProps.domains[ 0 ] );
-					assert( component.state.settingPrimaryDomain );
-					assert( component.state.primaryDomainIndex === 0 );
-					assert(
-						setPrimaryDomainStub.calledWith( defaultProps.domains[ 0 ].name ),
-						'#setPrimaryDomain should be called with the domain name'
-					);
+					component.instance().handleUpdatePrimaryDomain( 0, defaultProps.domains[ 0 ] );
+					expect( component.state( 'settingPrimaryDomain' ) ).toBe( true );
+					expect( component.state( 'primaryDomainIndex' ) ).toBe( 0 );
+					// `.setPrimaryDomain` should be called with the domain name
+					expect( setPrimaryDomainStub ).toHaveBeenCalledWith( defaultProps.domains[ 0 ].name );
 					setPrimaryDomainResolve();
 					setTimeout( () => {
-						assert(
-							! component.state.settingPrimaryDomain,
-							'Setting Primary Domain should be false'
-						);
-						assert( ! component.changePrimaryDomainModeEnabled );
-						assert.equal( component.state.notice.type, PRIMARY_DOMAIN_CHANGE_SUCCESS );
-						assert.equal(
-							component.state.notice.previousDomainName,
+						expect( component.state( 'settingPrimaryDomain' ) ).toBe( false );
+						expect( component.state( 'changePrimaryDomainModeEnabled' ) ).toBe( false );
+						expect( component.state( 'notice' ).type ).toBe( PRIMARY_DOMAIN_CHANGE_SUCCESS );
+						expect( component.state( 'notice' ).previousDomainName ).toBe(
 							defaultProps.domains[ 1 ].name
 						);
 						done();
@@ -185,13 +160,13 @@ describe( 'index', () => {
 				} );
 
 				test( 'should handle errors and revert the optimistic updates', done => {
-					component.handleUpdatePrimaryDomain( 0, defaultProps.domains[ 0 ] );
+					component.instance().handleUpdatePrimaryDomain( 0, defaultProps.domains[ 0 ] );
 					setPrimaryDomainReject();
 					setTimeout( () => {
-						assert( ! component.state.settingPrimaryDomain );
-						assert( component.state.changePrimaryDomainModeEnabled );
-						assert.equal( component.state.primaryDomainIndex, 1 );
-						assert.equal( component.state.notice.type, PRIMARY_DOMAIN_CHANGE_FAIL );
+						expect( component.state( 'settingPrimaryDomain' ) ).toBe( false );
+						expect( component.state( 'changePrimaryDomainModeEnabled' ) ).toBe( true );
+						expect( component.state( 'primaryDomainIndex' ) ).toBe( 1 );
+						expect( component.state( 'notice' ).type ).toBe( PRIMARY_DOMAIN_CHANGE_FAIL );
 						done();
 					}, 0 );
 				} );
@@ -209,27 +184,24 @@ describe( 'index', () => {
 			} );
 
 			test( 'should not show "Change Primary Domain" button', () => {
-				const button = ReactDom.findDOMNode( component ).querySelector(
-					'.domain-management-list__change-primary-button'
-				);
-				assert( button === null );
+				const button = component.find( {
+					className: 'domain-management-list__change-primary-button',
+				} );
+				expect( button ).toHaveLength( 0 );
 			} );
 		} );
 	} );
 
 	describe( 'when user can not manage options', () => {
-		let wrapper;
-		beforeEach( () => {
+		test( 'shows an EmptyContent view', () => {
 			const props = deepFreeze( {
 				...defaultProps,
 				userCanManageOptions: false,
 			} );
 
-			wrapper = shallow( <DomainList { ...props } /> );
-		} );
+			const wrapper = shallow( <DomainList { ...props } /> );
 
-		test( 'shows an EmptyContent view', () => {
-			assert.equal( wrapper.find( 'EmptyContent' ).length, 1 );
+			expect( wrapper.find( 'EmptyContent' ) ).toHaveLength( 1 );
 		} );
 	} );
 } );

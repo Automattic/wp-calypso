@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,9 +11,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
+import { Button, Card, CompactCard } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';

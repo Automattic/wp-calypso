@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -128,9 +126,4 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { toggleStep }, dispatch );
 };
 
-export default localize(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( AddressStep )
-);
+export default localize( connect( mapStateToProps, mapDispatchToProps )( AddressStep ) );

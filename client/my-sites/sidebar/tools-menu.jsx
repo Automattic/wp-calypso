@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -62,7 +60,7 @@ class ToolsMenu extends PureComponent {
 			capability: 'manage_options',
 			queryable: ! isJetpack,
 			link: '/import',
-			paths: [ '/import' ],
+			paths: [ '/import', '/migrate' ],
 			wpAdminLink: 'import.php',
 		};
 	}

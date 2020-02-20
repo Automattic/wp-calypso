@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,9 +11,10 @@ import { hasStaticFrontPage } from 'state/sites/selectors';
 
 /**
  * Checks if a site is using the new Full Site Editing experience
- * @param {Object} state  Global state tree
- * @param {Object} siteId Site ID
- * @return {Boolean} True if the site is using Full Site Editing, otherwise false
+ *
+ * @param {object} state  Global state tree
+ * @param {object} siteId Site ID
+ * @returns {boolean} True if the site is using Full Site Editing, otherwise false
  */
 export default function isSiteUsingFullSiteEditing( state, siteId ) {
 	const site = getRawSite( state, siteId );

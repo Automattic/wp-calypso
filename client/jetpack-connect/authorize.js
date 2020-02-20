@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -14,9 +13,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AuthFormHeader from './auth-form-header';
-import Button from 'components/button';
+import { Button, Card } from '@automattic/components';
 import canCurrentUser from 'state/selectors/can-current-user';
-import Card from 'components/card';
 import config from 'config';
 import Disclaimer from './disclaimer';
 import FormLabel from 'components/forms/form-label';
@@ -36,7 +34,6 @@ import QueryUserConnection from 'components/data/query-user-connection';
 import Spinner from 'components/spinner';
 import userUtilities from 'lib/user/utils';
 import versionCompare from 'lib/version-compare';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import { decodeEntities } from 'lib/formatting';
@@ -75,6 +72,7 @@ import {
 	isRemoteSiteOnSitesList,
 	isSiteBlacklistedError as isSiteBlacklistedSelector,
 } from 'state/jetpack-connect/selectors';
+import getPartnerIdFromQuery from 'state/selectors/get-partner-id-from-query';
 import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
 
 /**
@@ -147,7 +145,7 @@ export class JetpackAuthorize extends Component {
 
 		if (
 			this.isSso( nextProps ) ||
-			this.isWoo( nextProps ) ||
+			this.isWooRedirect( nextProps ) ||
 			this.isFromJpo( nextProps ) ||
 			this.shouldRedirectJetpackStart( nextProps ) ||
 			this.props.isVip
@@ -174,7 +172,7 @@ export class JetpackAuthorize extends Component {
 			// as controlled by MAX_AUTH_ATTEMPTS.
 			const attempts = this.props.authAttempts || 0;
 			this.retryingAuth = true;
-			return retryAuth( site, attempts + 1, nextProps.authQuery.from );
+			return retryAuth( site, attempts + 1, nextProps.authQuery.from, redirectAfterAuth );
 		}
 	}
 
@@ -211,7 +209,7 @@ export class JetpackAuthorize extends Component {
 
 		if (
 			this.isSso() ||
-			this.isWoo() ||
+			this.isWooRedirect() ||
 			this.isFromJpo() ||
 			this.shouldRedirectJetpackStart() ||
 			getRoleFromScope( scope ) === 'subscriber'
@@ -241,9 +239,7 @@ export class JetpackAuthorize extends Component {
 		const { alreadyAuthorized, authApproved, from } = this.props.authQuery;
 		return (
 			this.isSso() ||
-			( 'woocommerce-services-auto-authorize' === from ||
-				( ! config.isEnabled( 'jetpack/connect/woocommerce' ) &&
-					'woocommerce-setup-wizard' === from ) ) ||
+			includes( [ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ], from ) || // Auto authorize the old WooCommerce setup wizard only.
 			( ! this.props.isAlreadyOnSitesList &&
 				! alreadyAuthorized &&
 				( this.props.calypsoStartedConnection || authApproved ) )
@@ -258,40 +254,54 @@ export class JetpackAuthorize extends Component {
 	/**
 	 * Check whether this a valid authorized SSO request
 	 *
-	 * @param  {Object}  props          Props to test
+	 * @param  {object}  props          Props to test
 	 * @param  {?string} props.authQuery.from     Where is the request from
 	 * @param  {?number} props.authQuery.clientId Remote site ID
-	 * @return {boolean}                True if it's a valid SSO request otherwise false
+	 * @returns {boolean}                True if it's a valid SSO request otherwise false
 	 */
 	isSso( props = this.props ) {
 		const { from, clientId } = props.authQuery;
 		return 'sso' === from && isSsoApproved( clientId );
 	}
 
-	isWoo( props = this.props ) {
+	isWooRedirect( props = this.props ) {
 		const { from } = props.authQuery;
-		return includes( [ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ], from );
+		return includes(
+			[
+				'woocommerce-services-auto-authorize',
+				'woocommerce-setup-wizard',
+				'woocommerce-onboarding',
+			],
+			from
+		);
+	}
+
+	isWooOnboarding( props = this.props ) {
+		const { from } = props.authQuery;
+		return 'woocommerce-onboarding' === from;
 	}
 
 	shouldRedirectJetpackStart( props = this.props ) {
-		const { partnerSlug } = props;
-		const partnerRedirectFlag = config.isEnabled(
+		const { partnerSlug, partnerID } = props;
+		const pressableRedirectFlag = config.isEnabled(
 			'jetpack/connect-redirect-pressable-credential-approval'
 		);
 
 		// If the redirect flag is set, then we conditionally redirect the Pressable client to
 		// a credential approval screen. Otherwise, we need to redirect all other partners back
 		// to wp-admin.
-		return partnerRedirectFlag ? partnerSlug && 'pressable' !== partnerSlug : partnerSlug;
+		if ( pressableRedirectFlag ) {
+			return partnerID && 'pressable' !== partnerSlug;
+		}
+
+		// If partner ID query param is set, then assume that the connection is from the Jetpack Start flow.
+		return !! partnerID;
 	}
 
 	handleSignIn = () => {
 		const { recordTracksEvent } = this.props;
 		const { from } = this.props.authQuery;
-		if (
-			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
-			'woocommerce-setup-wizard' === from
-		) {
+		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && 'woocommerce-onboarding' === from ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { different_account: true } );
 		}
 	};
@@ -301,10 +311,7 @@ export class JetpackAuthorize extends Component {
 		const { from } = this.props.authQuery;
 		recordTracksEvent( 'calypso_jpc_signout_click' );
 
-		if (
-			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
-			'woocommerce-setup-wizard' === from
-		) {
+		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && 'woocommerce-onboarding' === from ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { create_jetpack: true } );
 		}
 
@@ -358,10 +365,7 @@ export class JetpackAuthorize extends Component {
 
 		recordTracksEvent( 'calypso_jpc_approve_click' );
 
-		if (
-			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
-			'woocommerce-setup-wizard' === from
-		) {
+		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && 'woocommerce-onboarding' === from ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { use_account: true } );
 		}
 
@@ -619,7 +623,7 @@ export class JetpackAuthorize extends Component {
 		const { blogname, redirectAfterAuth } = this.props.authQuery;
 		const backToWpAdminLink = (
 			<LoggedOutFormLinkItem href={ redirectAfterAuth }>
-				<Gridicon size={ 18 } icon="arrow-left" />{' '}
+				<Gridicon size={ 18 } icon="arrow-left" />{ ' ' }
 				{ translate( 'Return to %(sitename)s', {
 					args: { sitename: decodeEntities( blogname ) },
 				} ) }
@@ -638,7 +642,7 @@ export class JetpackAuthorize extends Component {
 						isJetpack: true,
 						isNative: config.isEnabled( 'login/native-login-links' ),
 						redirectTo: window.location.href,
-						isWoo: this.isWoo(),
+						isWoo: this.isWooOnboarding(),
 					} ) }
 					onClick={ this.handleSignIn }
 				>
@@ -692,14 +696,14 @@ export class JetpackAuthorize extends Component {
 
 	render() {
 		return (
-			<MainWrapper isWoo={ this.isWoo() }>
+			<MainWrapper isWoo={ this.isWooOnboarding() }>
 				<div className="jetpack-connect__authorize-form">
 					<div className="jetpack-connect__logged-in-form">
 						<QueryUserConnection
 							siteId={ this.props.authQuery.clientId }
 							siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
 						/>
-						<AuthFormHeader authQuery={ this.props.authQuery } isWoo={ this.isWoo() } />
+						<AuthFormHeader authQuery={ this.props.authQuery } isWoo={ this.isWooOnboarding() } />
 						<Card className="jetpack-connect__logged-in-card">
 							<Gravatar user={ this.props.user } size={ 64 } />
 							<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
@@ -736,9 +740,10 @@ const connectComponent = connect(
 			isSiteBlacklisted: isSiteBlacklistedSelector( state ),
 			isVip: isVipSite( state, authQuery.clientId ),
 			mobileAppRedirect,
+			partnerID: getPartnerIdFromQuery( state ),
+			partnerSlug: getPartnerSlugFromQuery( state ),
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
-			partnerSlug: getPartnerSlugFromQuery( state ),
 		};
 	},
 	{
@@ -748,8 +753,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( JetpackAuthorize );
+export default flowRight( connectComponent, localize )( JetpackAuthorize );

@@ -1,13 +1,10 @@
-/** @format */
 /**
  * Internal dependencies
  */
-import { isUsingGivenLocales } from 'lib/abtest';
 
-export const getSuggestionsVendor = () => {
-	if ( isUsingGivenLocales( [ 'en' ] ) ) {
-		return 'variation_front';
+export const getSuggestionsVendor = ( isSignup = false ) => {
+	if ( isSignup ) {
+		return 'variation4_front';
 	}
-
 	return 'variation2_front';
 };

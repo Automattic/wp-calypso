@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Component which handle remote credentials for installing Jetpack
  */
@@ -12,8 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * External dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
@@ -28,7 +26,6 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import MainWrapper from './main-wrapper';
 import Spinner from 'components/spinner';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { addCalypsoEnvQueryArg } from './utils';
 import { addQueryArgs } from 'lib/route';
 import {
@@ -72,7 +69,7 @@ export class OrgCredentialsForm extends Component {
 		this.props.jetpackRemoteInstall( siteToConnect, this.state.username, this.state.password );
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { installError } = nextProps;
 
 		if ( installError ) {
@@ -80,7 +77,7 @@ export class OrgCredentialsForm extends Component {
 		}
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { siteToConnect } = this.props;
 
 		if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
@@ -305,7 +302,6 @@ export class OrgCredentialsForm extends Component {
 		return (
 			<LoggedOutFormLinks>
 				{ ( this.isInvalidCreds() || ! installError ) && (
-					// eslint-disable-next-line react/no-jsx-bind
 					<LoggedOutFormLinkItem href={ manualInstallUrl } onClick={ manualInstallClick }>
 						{ translate( 'Install Jetpack manually' ) }
 					</LoggedOutFormLinkItem>
@@ -385,8 +381,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( OrgCredentialsForm );
+export default flowRight( connectComponent, localize )( OrgCredentialsForm );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import { compact, find, isEqual, uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 import {
 	WOOCOMMERCE_PRODUCT_CREATE,
 	WOOCOMMERCE_PRODUCT_EDIT,
@@ -26,13 +24,23 @@ import { editProductAttribute } from '../edits-reducer';
 import { getBucket } from 'woocommerce/state/ui/helpers';
 import generateVariations from 'woocommerce/lib/generate-variations';
 
-export default createReducer( null, {
-	[ WOOCOMMERCE_PRODUCT_EDIT ]: editProductAction,
-	[ WOOCOMMERCE_PRODUCT_UPDATED ]: productUpdatedAction,
-	[ WOOCOMMERCE_PRODUCT_VARIATION_EDIT ]: editProductVariationAction,
-	[ WOOCOMMERCE_PRODUCT_VARIATION_EDIT_CLEAR ]: clearEditsAction,
-	[ WOOCOMMERCE_PRODUCT_VARIATION_UPDATED ]: productVariationUpdatedAction,
-	[ WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT ]: editProductAttributeAction,
+export default withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case WOOCOMMERCE_PRODUCT_EDIT:
+			return editProductAction( state, action );
+		case WOOCOMMERCE_PRODUCT_UPDATED:
+			return productUpdatedAction( state, action );
+		case WOOCOMMERCE_PRODUCT_VARIATION_EDIT:
+			return editProductVariationAction( state, action );
+		case WOOCOMMERCE_PRODUCT_VARIATION_EDIT_CLEAR:
+			return clearEditsAction( state, action );
+		case WOOCOMMERCE_PRODUCT_VARIATION_UPDATED:
+			return productVariationUpdatedAction( state, action );
+		case WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT:
+			return editProductAttributeAction( state, action );
+	}
+
+	return state;
 } );
 
 /**
@@ -43,17 +51,17 @@ export default createReducer( null, {
  *
  * ```
  * {
- *   productId: <Number|Object>,
+ *   productId: <number|object>,
  *   creates: [ {<new variation object>} ]
  *   updated: [ {<variation props to update>} ]
  *   deletes: [ <variation id> ]
  * }
  * ```
  *
- * @param {Object} edits The state at `woocommerce.ui.products.variations.edits`
- * @param {Number|Object} productId The id of product edits object to be updating.
+ * @param {object} edits The state at `woocommerce.ui.products.variations.edits`
+ * @param {number|object} productId The id of product edits object to be updating.
  * @param {Function} doUpdate ( productEdits ) Called with previous product edits, takes return as new product edits.
- * @return {Object} The new, updated product edits to be used in state.
+ * @returns {object} The new, updated product edits to be used in state.
  */
 function updateProductEdits( edits, productId, doUpdate ) {
 	const prevEdits = edits || [];

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -484,5 +482,31 @@ describe( 'isSiteTopicFulfilled()', () => {
 
 		expect( setSurvey ).not.toHaveBeenCalled();
 		expect( submitSiteVertical ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should remove a step with optional dependency not met', () => {
+		const flowName = 'flowWithSiteTopicWithOptionalTheme';
+		const stepName = 'site-topic-with-optional-theme';
+		const initialContext = { query: { vertical: 'verticalSlug' } };
+		const nextProps = { initialContext, flowName, submitSignupStep, submitSiteVertical, setSurvey };
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+
+		isSiteTopicFulfilled( stepName, undefined, nextProps );
+
+		expect( flows.excludeStep ).toHaveBeenCalledWith( 'site-topic-with-optional-theme' );
+	} );
+
+	test( 'should remove a step with optional dependency met', () => {
+		const flowName = 'flowWithSiteTopicWithOptionalSurveyQuestion';
+		const stepName = 'site-topic-with-optional-survey-question';
+		const initialContext = { query: { vertical: 'verticalSlug' } };
+		const nextProps = { initialContext, flowName, submitSignupStep, submitSiteVertical, setSurvey };
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+
+		isSiteTopicFulfilled( stepName, undefined, nextProps );
+
+		expect( flows.excludeStep ).toHaveBeenCalledWith( 'site-topic-with-optional-survey-question' );
 	} );
 } );

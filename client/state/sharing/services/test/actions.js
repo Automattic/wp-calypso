@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -21,13 +20,14 @@ import { useSandbox } from 'test/helpers/use-sinon';
 describe( 'actions', () => {
 	let spy;
 	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	const getState = () => ( { ui: { selectedSiteId: '2916284' } } );
 
 	describe( 'requestKeyringServices()', () => {
 		describe( 'successful requests', () => {
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/meta/external-services/' )
+					.get( '/wpcom/v2/sites/2916284/external-services' )
 					.reply( 200, {
 						services: {
 							facebook: { ID: 'facebook' },
@@ -37,7 +37,7 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch fetch action when thunk triggered', () => {
-				requestKeyringServices()( spy );
+				requestKeyringServices()( spy, getState );
 
 				expect( spy ).to.have.been.calledWith( {
 					type: KEYRING_SERVICES_REQUEST,
@@ -45,7 +45,7 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch keyring services receive action when request completes', () => {
-				return requestKeyringServices()( spy ).then( () => {
+				return requestKeyringServices()( spy, getState ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: KEYRING_SERVICES_RECEIVE,
 						services: {
@@ -57,7 +57,7 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch keyring services request success action when request completes', () => {
-				return requestKeyringServices()( spy ).then( () => {
+				return requestKeyringServices()( spy, getState ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: KEYRING_SERVICES_REQUEST_SUCCESS,
 					} );
@@ -69,7 +69,7 @@ describe( 'actions', () => {
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/meta/external-services/' )
+					.get( '/wpcom/v2/sites/2916284/external-services' )
 					.reply( 500, {
 						error: 'server_error',
 						message: 'A server error occurred',
@@ -77,7 +77,7 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch fetch action when thunk triggered', () => {
-				requestKeyringServices()( spy );
+				requestKeyringServices()( spy, getState );
 
 				expect( spy ).to.have.been.calledWith( {
 					type: KEYRING_SERVICES_REQUEST,
@@ -85,7 +85,7 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch keyring services request fail action when request fails', () => {
-				return requestKeyringServices()( spy ).then( () => {
+				return requestKeyringServices()( spy, getState ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: KEYRING_SERVICES_REQUEST_FAILURE,
 						error: sinon.match( { message: 'A server error occurred' } ),

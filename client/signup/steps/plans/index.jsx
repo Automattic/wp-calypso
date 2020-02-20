@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -35,37 +33,6 @@ import './style.scss';
 
 export class PlansStep extends Component {
 	componentDidMount() {
-		if (
-			typeof window !== 'undefined' &&
-			window.location &&
-			typeof document !== 'undefined' &&
-			document.createElement &&
-			document.body
-		) {
-			if ( window.location.search ) {
-				// save this so that we can enter debug mode in the widget
-				window.salesteam_initial_search_string = window.location.search;
-			}
-
-			const salesTeamStyles = document.createElement( 'link' );
-			salesTeamStyles.setAttribute(
-				'href',
-				'//s0.wp.com/wp-content/a8c-plugins/wpcom-salesteam/css/wpcom-salesteam.css?ver=1'
-			);
-			salesTeamStyles.setAttribute( 'rel', 'stylesheet' );
-			salesTeamStyles.setAttribute( 'type', 'text/css' );
-			salesTeamStyles.setAttribute( 'media', 'all' );
-			document.head.appendChild( salesTeamStyles );
-
-			const salesTeamScript = document.createElement( 'script' );
-			salesTeamScript.setAttribute(
-				'src',
-				'//s0.wp.com/wp-content/a8c-plugins/wpcom-salesteam/js/wpcom-salesteam.js?ver=20190418'
-			);
-			salesTeamScript.setAttribute( 'defer', true );
-			document.head.appendChild( salesTeamScript );
-		}
-
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
@@ -119,14 +86,9 @@ export class PlansStep extends Component {
 		}
 
 		const siteGoals = this.props.siteGoals.split( ',' );
-		let customerType =
+		const customerType =
 			getSiteTypePropertyValue( 'slug', this.props.siteType, 'customerType' ) ||
 			( intersection( siteGoals, [ 'sell', 'promote' ] ).length > 0 ? 'business' : 'personal' );
-
-		// Default to 'business' when the blogger plan is not available.
-		if ( customerType === 'personal' && this.props.disableBloggerPlanWithNonBlogDomain ) {
-			customerType = 'business';
-		}
 
 		return customerType;
 	}
@@ -172,9 +134,11 @@ export class PlansStep extends Component {
 		const { flowName, stepName, positionInFlow, translate, selectedSite, siteSlug } = this.props;
 
 		const headerText = this.props.headerText || translate( "Pick a plan that's right for you." );
-
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
-		const subHeaderText = this.props.subHeaderText;
+		const subHeaderText =
+			this.props.subHeaderText || translate( 'Choose a plan. Upgrade as you grow.' );
+		const fallbackSubHeaderText = this.props.fallbackSubHeaderText || subHeaderText;
+
 		let backUrl, backLabelText;
 
 		if ( 0 === positionInFlow && selectedSite ) {
@@ -190,6 +154,7 @@ export class PlansStep extends Component {
 				headerText={ headerText }
 				fallbackHeaderText={ fallbackHeaderText }
 				subHeaderText={ subHeaderText }
+				fallbackSubHeaderText={ fallbackSubHeaderText }
 				isWideLayout={ true }
 				stepContent={ this.plansFeaturesList() }
 				allowBackFirstStep={ !! selectedSite }
@@ -226,8 +191,8 @@ PlansStep.propTypes = {
  * Checks if the domainItem picked in the domain step is a top level .blog domain -
  * we only want to make Blogger plan available if it is.
  *
- * @param {Object} domainItem domainItem object stored in the "choose domain" step
- * @return {bool} is .blog domain registration
+ * @param {object} domainItem domainItem object stored in the "choose domain" step
+ * @returns {boolean} is .blog domain registration
  */
 export const isDotBlogDomainRegistration = domainItem => {
 	if ( ! domainItem ) {

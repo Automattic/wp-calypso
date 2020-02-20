@@ -1,4 +1,3 @@
-/** @format */
 import { By } from 'selenium-webdriver';
 import * as driverHelper from '../../driver-helper';
 import AsyncBaseContainer from '../../async-base-container';

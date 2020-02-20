@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,7 +14,7 @@ import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleHeader from '../stats-module/header';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {

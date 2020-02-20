@@ -29,9 +29,9 @@ import { itemsSchema, subscriptionsSchema, updatedListsSchema, errorsSchema } fr
 /**
  * Tracks all known list objects, indexed by list ID.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -61,9 +61,9 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 /**
  * Tracks which list IDs the current user is subscribed to.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const subscribedLists = withSchemaValidation(
 	subscriptionsSchema,
@@ -90,9 +90,9 @@ export const subscribedLists = withSchemaValidation(
 /**
  * Tracks which list IDs have been updated recently. Used to show the correct success message.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const updatedLists = withSchemaValidation( updatedListsSchema, ( state = [], action ) => {
 	switch ( action.type ) {
@@ -114,9 +114,9 @@ export const updatedLists = withSchemaValidation( updatedListsSchema, ( state = 
 /**
  * Returns the updated requests state after an action has been dispatched.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function isRequestingList( state = false, action ) {
 	switch ( action.type ) {
@@ -132,9 +132,9 @@ export function isRequestingList( state = false, action ) {
 /**
  * Returns the updated requests state after an action has been dispatched.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function isRequestingLists( state = false, action ) {
 	switch ( action.type ) {
@@ -150,9 +150,9 @@ export function isRequestingLists( state = false, action ) {
 /**
  * Returns errors received when trying to update lists, keyed by list ID.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const errors = withSchemaValidation( errorsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -172,9 +172,9 @@ export const errors = withSchemaValidation( errorsSchema, ( state = {}, action )
 /**
  * A missing list is one that's been requested, but we couldn't find (API response 404-ed).
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function missingLists( state = [], action ) {
 	switch ( action.type ) {

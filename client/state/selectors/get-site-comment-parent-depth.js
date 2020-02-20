@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,6 +8,8 @@ import { get } from 'lodash';
  */
 import createSelector from 'lib/create-selector';
 import getSiteComment from 'state/selectors/get-site-comment';
+
+import 'state/comments/init';
 
 export const getSiteCommentParentDepth = createSelector(
 	( state, siteId, commentId ) => {

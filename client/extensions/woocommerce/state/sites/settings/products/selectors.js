@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,18 +15,18 @@ const getRawProductsSettings = ( state, siteId ) => {
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the products settings list has been successfully loaded from the server
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {boolean} Whether the products settings list has been successfully loaded from the server
  */
 export const areSettingsProductsLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return isArray( getRawProductsSettings( state, siteId ) );
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the products settings list is currently being retrieved from the server
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {boolean} Whether the products settings list is currently being retrieved from the server
  */
 export const areSettingsProductsLoading = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return LOADING === getRawProductsSettings( state, siteId );
@@ -37,9 +35,9 @@ export const areSettingsProductsLoading = ( state, siteId = getSelectedSiteId( s
 /**
  * Gets weight unit setting from API data.
  *
- * @param {Object} state Global state tree
- * @param {Number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
- * @return {Object} Weight unit setting.
+ * @param {object} state Global state tree
+ * @param {number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
+ * @returns {object} Weight unit setting.
  */
 export function getWeightUnitSetting( state, siteId = getSelectedSiteId( state ) ) {
 	const productsSettings = getRawProductsSettings( state, siteId );
@@ -50,9 +48,9 @@ export function getWeightUnitSetting( state, siteId = getSelectedSiteId( state )
 /**
  * Gets dimensions unit setting from API data.
  *
- * @param {Object} state Global state tree
- * @param {Number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
- * @return {Object} Dimensions unit setting.
+ * @param {object} state Global state tree
+ * @param {number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
+ * @returns {object} Dimensions unit setting.
  */
 export function getDimensionsUnitSetting( state, siteId = getSelectedSiteId( state ) ) {
 	const productsSettings = getRawProductsSettings( state, siteId );
@@ -63,10 +61,10 @@ export function getDimensionsUnitSetting( state, siteId = getSelectedSiteId( sta
 /**
  * Gets an arbitrary product setting value from API data.
  *
- * @param {Object} state Global state tree
- * @param {String} id setting name / id of the products setting you would like the value of
- * @param {Number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
- * @return {mixed} value for the products setting returned from the API
+ * @param {object} state Global state tree
+ * @param {string} id setting name / id of the products setting you would like the value of
+ * @param {number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
+ * @returns {mixed} value for the products setting returned from the API
  */
 export function getProductsSettingValue( state, id, siteId = getSelectedSiteId( state ) ) {
 	const productsSettings = getRawProductsSettings( state, siteId );

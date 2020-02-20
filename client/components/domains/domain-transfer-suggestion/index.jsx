@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,6 +21,10 @@ class DomainTransferSuggestion extends React.Component {
 	};
 
 	render() {
+		if ( this.props.showDesignUpdate ) {
+			return null;
+		}
+
 		const { translate } = this.props;
 		const buttonContent = translate( 'Use a domain I own', {
 			context: 'Domain transfer or mapping suggestion button',

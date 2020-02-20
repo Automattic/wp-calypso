@@ -2,18 +2,17 @@
 	&.formatted-header {
 		margin: 0 auto;
 		max-width: 500px;
-	}
 
-	.formatted-header__title {
-		text-transform: capitalize;
+		@include breakpoint( '<660px' ) {
+			display: none;
+		}
 	}
 
 	.formatted-header__subtitle {
 		color: var( --color-neutral-dark );
 
 		a {
-			display: block;
-			width: 100%;
+			display: inline-block;
 		}
 	}
 }

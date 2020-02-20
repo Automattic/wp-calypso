@@ -54,22 +54,30 @@
 				transform: scale( 1.1 );
 			}
 		}
+
+		@mixin env-bug-style( $color-name ) {
+			background-color: var( --studio-#{ $color-name }-20 );
+			color: var( --studio-#{ $color-name }-90 );
+		}
+
 		&.is-staging {
-			background-color: var( --color-warning-20 );
-			color: var( --color-warning-80 );
+			@include env-bug-style( 'orange' );
 		}
 		&.is-wpcalypso {
-			background-color: var( --color-green-5 );
-			color: var( --color-green-80 );
+			@include env-bug-style( 'celadon' );
 		}
 		&.is-dev {
-			background-color: var( --color-error );
-			color: var( --color-text-inverted );
+			@include env-bug-style( 'purple' );
 		}
 		&.is-horizon,
 		&.is-feedback {
-			background-color: var( --color-primary-light );
+			@include env-bug-style( 'blue' );
 		}
+		&.is-jetpack-cloud-dev,
+		&.is-jetpack-cloud-staging {
+			@include env-bug-style( 'jetpack-green' );
+		}
+
 		&.branch-name {
 			text-transform: inherit;
 			background-color: var( --color-neutral-70 );

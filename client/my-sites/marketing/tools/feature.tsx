@@ -6,7 +6,7 @@ import React, { ReactNode, FunctionComponent } from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import CardHeading from 'components/card-heading';
 
 interface Props {

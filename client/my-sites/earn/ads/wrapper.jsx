@@ -4,7 +4,6 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import page from 'page';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -19,7 +18,7 @@ import {
 import { isPremium, isBusiness, isEcommerce } from 'lib/products-values';
 import FeatureExample from 'components/feature-example';
 import FormButton from 'components/forms/form-button';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import EmptyContent from 'components/empty-content';
 import { requestWordAdsApproval, dismissWordAdsError } from 'state/wordads/approve/actions';
 import {
@@ -37,6 +36,12 @@ import { isSiteWordadsUnsafe } from 'state/wordads/status/selectors';
 import { wordadsUnsafeValues } from 'state/wordads/status/schema';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import ActionCard from 'components/action-card';
+
+/**
+ * Image dependencies
+ */
+import wordAdsImage from 'assets/images/illustrations/dotcom-wordads.svg';
 
 /**
  * Style dependencies
@@ -62,14 +67,76 @@ class AdsWrapper extends Component {
 	};
 
 	renderInstantActivationToggle( component ) {
-		const { siteId, translate } = this.props;
+		const { siteId, translate, adsProgramName } = this.props;
 
 		return (
 			<div>
 				<QueryWordadsStatus siteId={ siteId } />
+
+				{ this.props.wordAdsError && (
+					<Notice
+						classname="ads__activate-notice"
+						status="is-error"
+						onDismissClick={ this.handleDismissWordAdsError }
+					>
+						{ this.props.wordAdsError }
+					</Notice>
+				) }
+				{ this.props.isUnsafe === 'mature' && (
+					<Notice
+						classname="ads__activate-notice"
+						status="is-warning"
+						showDismiss={ false }
+						text={ translate(
+							'Your site has been identified as serving mature content. ' +
+								'Our advertisers would like to include only family-friendly sites in the program.'
+						) }
+					>
+						<NoticeAction
+							href="https://wordads.co/2012/09/06/wordads-is-for-family-safe-sites/"
+							external={ true }
+						>
+							{ translate( 'Learn more' ) }
+						</NoticeAction>
+					</Notice>
+				) }
+				{ this.props.isUnsafe === 'spam' && (
+					<Notice
+						classname="ads__activate-notice"
+						status="is-warning"
+						showDismiss={ false }
+						text={ translate(
+							'Your site has been identified as serving automatically created or copied content. ' +
+								'We cannot serve WordAds on these kind of sites.'
+						) }
+					/>
+				) }
+				{ this.props.isUnsafe === 'private' && (
+					<Notice
+						classname="ads__activate-notice"
+						status="is-warning"
+						showDismiss={ false }
+						text={ translate(
+							'Your site is marked as private. It needs to be public so that visitors can see the ads.'
+						) }
+					>
+						<NoticeAction href={ '/settings/general/' + this.props.siteSlug }>
+							{ translate( 'Change privacy settings' ) }
+						</NoticeAction>
+					</Notice>
+				) }
+				{ this.props.isUnsafe === 'other' && (
+					<Notice
+						classname="ads__activate-notice"
+						status="is-warning"
+						showDismiss={ false }
+						text={ translate( 'Your site cannot participate in WordAds program.' ) }
+					/>
+				) }
+
 				<Card className="ads__activate-wrapper">
 					<div className="ads__activate-header">
-						<h2 className="ads__activate-header-title">{ translate( 'WordAds Disabled' ) }</h2>
+						<h2 className="ads__activate-header-title">{ translate( 'Apply to Join WordAds' ) }</h2>
 						<div className="ads__activate-header-toggle">
 							<FormButton
 								disabled={
@@ -83,79 +150,30 @@ class AdsWrapper extends Component {
 							</FormButton>
 						</div>
 					</div>
-					{ this.props.wordAdsError && (
-						<Notice
-							classname="ads__activate-notice"
-							status="is-error"
-							onDismissClick={ this.handleDismissWordAdsError }
-						>
-							{ this.props.wordAdsError }
-						</Notice>
-					) }
-					{ this.props.isUnsafe === 'mature' && (
-						<Notice
-							classname="ads__activate-notice"
-							status="is-warning"
-							showDismiss={ false }
-							text={ translate(
-								'Your site has been identified as serving mature content. ' +
-									'Our advertisers would like to include only family-friendly sites in the program.'
-							) }
-						>
-							<NoticeAction
-								href="https://wordads.co/2012/09/06/wordads-is-for-family-safe-sites/"
-								external={ true }
-							>
-								{ translate( 'Learn more' ) }
-							</NoticeAction>
-						</Notice>
-					) }
-					{ this.props.isUnsafe === 'spam' && (
-						<Notice
-							classname="ads__activate-notice"
-							status="is-warning"
-							showDismiss={ false }
-							text={ translate(
-								'Your site has been identified as serving automatically created or copied content. ' +
-									'We cannot serve WordAds on these kind of sites.'
-							) }
-						/>
-					) }
-					{ this.props.isUnsafe === 'private' && (
-						<Notice
-							classname="ads__activate-notice"
-							status="is-warning"
-							showDismiss={ false }
-							text={ translate(
-								'Your site is marked as private. It needs to be public so that visitors can see the ads.'
-							) }
-						>
-							<NoticeAction href={ '/settings/general/' + this.props.siteSlug }>
-								{ translate( 'Change privacy settings' ) }
-							</NoticeAction>
-						</Notice>
-					) }
-					{ this.props.isUnsafe === 'other' && (
-						<Notice
-							classname="ads__activate-notice"
-							status="is-warning"
-							showDismiss={ false }
-							text={ translate( 'Your site cannot participate in WordAds program.' ) }
-						/>
-					) }
-					<p className="ads__activate-description">
-						{ translate(
-							'WordAds allows you to make money from advertising that runs on your site. ' +
-								'Because you have a WordPress.com %(plan)s plan, you can skip the review process and activate WordAds instantly. ' +
-								'{{a}}Learn more about the program.{{/a}}',
+					<ActionCard
+						headerText={ translate( 'Start Earning Income from Your Site' ) }
+						mainText={ translate(
+							'WordAds is the leading advertising optimization platform for WordPress sites, ' +
+								'where the internet’s top ad suppliers bid against each other to deliver their ads to your site, maximizing your revenue.' +
+								'{{br/}}{{br/}}{{em}}Because you have a paid plan, you can skip the review process and activate %(program)s instantly.{{/em}}' +
+								'{{br/}}{{br/}}{{a}}Learn more about the program{{/a}}',
 							{
-								args: { plan: this.props.site.plan.product_name_short },
+								args: { program: adsProgramName },
 								components: {
-									a: <a href={ 'http://wordads.co' } />,
+									a: <a href="http://wordads.co" target="_blank" rel="noopener noreferrer" />,
+									em: <em />,
+									br: <br />,
 								},
 							}
 						) }
-					</p>
+						buttonText={ translate( 'Learn More on WordAds.co' ) }
+						buttonIcon="external"
+						buttonPrimary={ false }
+						buttonHref="https://wordads.co"
+						buttonTarget="_blank"
+					>
+						<img src={ wordAdsImage } width="170" height="143" alt="WordPress logo" />
+					</ActionCard>
 				</Card>
 				<FeatureExample>{ component }</FeatureExample>
 			</div>
@@ -276,8 +294,4 @@ const mergeProps = ( stateProps, dispatchProps, parentProps ) => ( {
 	...stateProps,
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps,
-	mergeProps
-)( localize( AdsWrapper ) );
+export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( localize( AdsWrapper ) );

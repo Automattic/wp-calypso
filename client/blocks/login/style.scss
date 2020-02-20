@@ -47,14 +47,14 @@
 		}
 	}
 
-	.login__woocommerce-logo {
+	.login__woocommerce-wrapper {
 		svg > g {
 			transform: translateX( 50% );
 		}
 	}
 
 	.jetpack-header,
-	.connect-header {
+	.login__woocommerce-logo {
 		margin: 0;
 		text-align: center;
 		margin-right: auto;
@@ -93,6 +93,11 @@
 	.login__form-action .form-button {
 		border: 0;
 		box-shadow: none;
+	}
+
+	.login__social-tos a {
+		color: var( --studio-gray-60 );
+		text-decoration: underline;
 	}
 
 	.jetpack-header__partner-logo-plus svg {

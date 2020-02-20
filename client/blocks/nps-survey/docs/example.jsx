@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -123,10 +121,7 @@ const mapDispatchToProp = {
 	successNotice,
 };
 
-const ConnectedNpsSurveyExample = connect(
-	mapStateToProps,
-	mapDispatchToProp
-)( NpsSurveyExample );
+const ConnectedNpsSurveyExample = connect( mapStateToProps, mapDispatchToProp )( NpsSurveyExample );
 
 ConnectedNpsSurveyExample.displayName = 'NpsSurvey';
 

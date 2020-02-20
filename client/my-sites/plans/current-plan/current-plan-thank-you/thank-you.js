@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { isDesktop } from '@automattic/viewport';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
@@ -8,10 +9,9 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import { isDesktop } from 'lib/viewport';
 import { preventWidows } from 'lib/formatting';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { addQueryArgs } from 'lib/url';

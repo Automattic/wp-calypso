@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -105,7 +103,7 @@ class SiteTools extends Component {
 						description={ changeAddressText }
 					/>
 				) }
-				{ showClone && config.isEnabled( 'rewind/clone-site' ) && (
+				{ showClone && (
 					<SiteToolsLink href={ cloneUrl } title={ cloneTitle } description={ cloneText } />
 				) }
 				{ showThemeSetup && (

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,11 +15,12 @@ import accountPasswordData from 'lib/account-password-data';
 import SocialLoginComponent from 'me/social-login';
 import ConnectedAppsComponent from 'me/connected-applications';
 import AccountRecoveryComponent from 'me/security-account-recovery';
+import { getSocialServiceFromClientId } from 'lib/login';
 
 export function password( context, next ) {
 	if ( context.query && context.query.updated === 'password' ) {
 		notices.success( i18n.translate( 'Your password was saved successfully.' ), {
-			displayOnNextPage: true,
+			persistent: true,
 		} );
 
 		page.replace( window.location.pathname );
@@ -62,9 +61,24 @@ export function accountRecovery( context, next ) {
 }
 
 export function socialLogin( context, next ) {
+	// Remove id_token from the address bar and push social connect args into the state instead
+	if ( context.hash && context.hash.client_id ) {
+		page.replace( context.path, context.hash );
+		return;
+	}
+
+	const previousHash = context.state || {};
+	const { client_id, user_email, user_name, id_token, state } = previousHash;
+	const socialServiceResponse = client_id
+		? { client_id, user_email, user_name, id_token, state }
+		: null;
+	const socialService = getSocialServiceFromClientId( client_id );
+
 	context.primary = React.createElement( SocialLoginComponent, {
-		userSettings: userSettings,
 		path: context.path,
+		socialService,
+		socialServiceResponse,
+		userSettings,
 	} );
 	next();
 }

@@ -1,12 +1,12 @@
-/** @format */
 /**
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { keys, last, noop, sortBy } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -41,11 +41,11 @@ class OrderEvents extends Component {
 		siteId: PropTypes.number.isRequired,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.setState( { openDay: last( keys( this.props.eventsByDay ) ) } );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const newOpenDay = last( keys( nextProps.eventsByDay ) );
 		//if a new latest day has been appended, open it
 		if ( ! this.props.eventsByDay[ newOpenDay ] ) {

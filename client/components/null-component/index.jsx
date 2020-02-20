@@ -1,2 +1,1 @@
-/** @format */
 export default () => null;

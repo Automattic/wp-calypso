@@ -11,14 +11,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard, ProgressBar } from '@automattic/components';
 import Notice from 'components/notice';
-import ProgressBar from 'components/progress-bar';
 import { getSelectedSite } from 'state/ui/selectors';
 import syncSelectors from 'state/jetpack-sync/selectors';
 import { getSyncStatus, scheduleJetpackFullysync } from 'state/jetpack-sync/actions';
 import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
 import NoticeAction from 'components/notice/notice-action';
+import { withLocalizedMoment } from 'components/localized-moment';
 import analytics from 'lib/analytics';
 
 /**
@@ -33,7 +33,7 @@ const debug = debugModule( 'calypso:site-settings:jetpack-sync-panel' );
 const SYNC_STATUS_ERROR_NOTICE_THRESHOLD = 3; // Only show sync status error notice if >= this number
 
 class JetpackSyncPanel extends React.Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.fetchSyncStatus();
 	}
 
@@ -208,4 +208,4 @@ export default connect(
 		};
 	},
 	dispatch => bindActionCreators( { getSyncStatus, scheduleJetpackFullysync }, dispatch )
-)( localize( JetpackSyncPanel ) );
+)( localize( withLocalizedMoment( JetpackSyncPanel ) ) );

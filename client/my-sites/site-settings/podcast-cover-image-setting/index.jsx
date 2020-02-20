@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import AsyncLoad from 'components/async-load';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import EditorMediaModalDialog from 'post-editor/media-modal/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -28,7 +26,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { infoNotice, errorNotice } from 'state/notices/actions';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import RecentRenewals from './recent-renewals';
 import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';

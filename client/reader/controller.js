@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -163,7 +162,7 @@ const exported = {
 					page.redirect( `/read/feeds/${ feedId }` );
 				} )
 				.catch( function() {
-					renderFeedError( context );
+					renderFeedError( context, next );
 				} );
 		} else {
 			next();

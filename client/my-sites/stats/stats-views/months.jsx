@@ -12,6 +12,7 @@ import page from 'page';
  */
 import { formatNumberMetric } from 'lib/format-number-compact';
 import Popover from 'components/popover';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 class Month extends PureComponent {
 	static propTypes = {
@@ -227,4 +228,4 @@ const StatsViewsMonths = props => {
 	);
 };
 
-export default localize( StatsViewsMonths );
+export default localize( withLocalizedMoment( StatsViewsMonths ) );

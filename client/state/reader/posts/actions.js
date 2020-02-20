@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -14,6 +13,8 @@ import wpcom from 'lib/wp';
 import { keyForPost, keyToString } from 'reader/post-key';
 import { hasPostBeenSeen } from './selectors';
 import { receiveLikes } from 'state/posts/likes/actions';
+
+import 'state/reader/init';
 
 // TODO: make underlying lib/analytics and reader/stats capable of existing in test code without mocks
 // OR switch to analytics middleware
@@ -47,7 +48,7 @@ const hideRejections = promise => promise.catch( () => null );
  * Returns an action object to signal that post objects have been received.
  *
  * @param  {Array}  posts Posts received
- * @return {Object} Action object
+ * @returns {object} Action object
  */
 export const receivePosts = posts => dispatch => {
 	if ( ! posts ) {

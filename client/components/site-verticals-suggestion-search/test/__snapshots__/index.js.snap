@@ -23,6 +23,7 @@ exports[`<SiteVerticalsSuggestionSearch /> should render 1`] = `
         "action": "site_vertical_selected",
         "fetch_algo": "/verticals",
         "id": "fakeuuid-site-vertical-suggestion",
+        "ui_algo": "signup/site-topic/related_1",
       }
     }
     suggestions={Array []}

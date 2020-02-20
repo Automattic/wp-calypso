@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,44 +20,52 @@ import {
 	JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS,
 	JETPACK_USER_CONNECTION_DATA_REQUEST_FAILURE,
 } from 'state/action-types';
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
 
 /**
  * `Reducer` function which handles request/response actions
  * concerning Jetpack connection updates
  *
  * @param  {Array}  state  Current state
- * @param  {Object} action action
- * @return {Array}         Updated state
+ * @param  {object} action action
+ * @returns {Array}         Updated state
  */
 export const items = keyedReducer(
 	'siteId',
-	createReducer(
-		{},
-		{
-			[ JETPACK_CONNECTION_STATUS_RECEIVE ]: ( state, { status } ) => status,
+	withoutPersistence( ( state = {}, action ) => {
+		switch ( action.type ) {
+			case JETPACK_CONNECTION_STATUS_RECEIVE: {
+				const { status } = action;
+				return status;
+			}
 		}
-	)
+
+		return state;
+	} )
 );
 
 /**
  * `Reducer` function which handles request/response actions
  * concerning Jetpack connection requests
  *
- * @param {Object} state - current state
- * @param {Object} action - action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - action
+ * @returns {object} updated state
  */
 export const requests = keyedReducer(
 	'siteId',
-	createReducer(
-		{},
-		{
-			[ JETPACK_CONNECTION_STATUS_REQUEST ]: stubTrue,
-			[ JETPACK_CONNECTION_STATUS_REQUEST_FAILURE ]: stubFalse,
-			[ JETPACK_CONNECTION_STATUS_REQUEST_SUCCESS ]: stubFalse,
+	withoutPersistence( ( state = {}, action ) => {
+		switch ( action.type ) {
+			case JETPACK_CONNECTION_STATUS_REQUEST:
+				return stubTrue( state, action );
+			case JETPACK_CONNECTION_STATUS_REQUEST_FAILURE:
+				return stubFalse( state, action );
+			case JETPACK_CONNECTION_STATUS_REQUEST_SUCCESS:
+				return stubFalse( state, action );
 		}
-	)
+
+		return state;
+	} )
 );
 
 /**
@@ -67,49 +73,61 @@ export const requests = keyedReducer(
  * concerning Jetpack user connection data
  *
  * @param  {Array}  state  Current state
- * @param  {Object} action action
- * @return {Array}         Updated state
+ * @param  {object} action action
+ * @returns {Array}         Updated state
  */
 export const dataItems = keyedReducer(
 	'siteId',
-	createReducer(
-		{},
-		{
-			[ JETPACK_USER_CONNECTION_DATA_RECEIVE ]: ( state, { data } ) => data,
+	withoutPersistence( ( state = {}, action ) => {
+		switch ( action.type ) {
+			case JETPACK_USER_CONNECTION_DATA_RECEIVE: {
+				const { data } = action;
+				return data;
+			}
 		}
-	)
+
+		return state;
+	} )
 );
 
 /**
  * `Reducer` function which handles request/response actions
  * concerning Jetpack user connection data requests
  *
- * @param {Object} state - current state
- * @param {Object} action - action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - action
+ * @returns {object} updated state
  */
 export const dataRequests = keyedReducer(
 	'siteId',
-	createReducer(
-		{},
-		{
-			[ JETPACK_USER_CONNECTION_DATA_REQUEST ]: stubTrue,
-			[ JETPACK_USER_CONNECTION_DATA_REQUEST_FAILURE ]: stubFalse,
-			[ JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS ]: stubFalse,
+	withoutPersistence( ( state = {}, action ) => {
+		switch ( action.type ) {
+			case JETPACK_USER_CONNECTION_DATA_REQUEST:
+				return stubTrue( state, action );
+			case JETPACK_USER_CONNECTION_DATA_REQUEST_FAILURE:
+				return stubFalse( state, action );
+			case JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS:
+				return stubFalse( state, action );
 		}
-	)
+
+		return state;
+	} )
 );
 
 export const disconnectRequests = keyedReducer(
 	'siteId',
-	createReducer(
-		{},
-		{
-			[ JETPACK_DISCONNECT_REQUEST ]: stubTrue,
-			[ JETPACK_DISCONNECT_REQUEST_FAILURE ]: stubFalse,
-			[ JETPACK_DISCONNECT_REQUEST_SUCCESS ]: stubFalse,
+	withoutPersistence( ( state = {}, action ) => {
+		switch ( action.type ) {
+			case JETPACK_DISCONNECT_REQUEST:
+				return stubTrue( state, action );
+			case JETPACK_DISCONNECT_REQUEST_FAILURE:
+				return stubFalse( state, action );
+			case JETPACK_DISCONNECT_REQUEST_SUCCESS:
+				return stubFalse( state, action );
 		}
-	)
+
+		return state;
+	} )
 );
 
 export const reducer = combineReducers( {

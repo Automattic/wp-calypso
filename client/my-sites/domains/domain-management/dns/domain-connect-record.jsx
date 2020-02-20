@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,10 +10,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { deleteDns, addDns } from 'lib/upgrades/actions';
+import { addDns, deleteDns } from 'state/domains/dns/actions';
 import Toggle from 'components/forms/form-toggle';
 import { domainConnect } from 'lib/domains/constants';
-import { getNormalizedData } from 'lib/domains/dns';
+import { getNormalizedData } from 'state/domains/dns/utils';
 import DnsRecordsList from '../dns-records/list';
 import DnsRecordsListItem from '../dns-records/item';
 
@@ -43,20 +41,21 @@ class DomainConnectRecord extends React.Component {
 			type: 'TXT',
 		};
 
-		deleteDns( selectedDomainName, record, error => {
-			if ( error ) {
-				this.props.errorNotice(
-					error.message || translate( 'The Domain Connect record could not be disabled.' )
-				);
-			} else {
+		this.props.deleteDns( selectedDomainName, record ).then(
+			() => {
 				const successNoticeId = 'domain-connect-disable-success-notice';
 				this.props.successNotice( translate( 'The Domain Connect record has been disabled.' ), {
 					id: successNoticeId,
 					showDismiss: false,
 					duration: 5000,
 				} );
+			},
+			error => {
+				this.props.errorNotice(
+					error.message || translate( 'The Domain Connect record could not be disabled.' )
+				);
 			}
-		} );
+		);
 	};
 
 	enableDomainConnect() {
@@ -69,18 +68,19 @@ class DomainConnectRecord extends React.Component {
 
 		const normalizedData = getNormalizedData( record, this.props.selectedDomainName );
 
-		addDns( this.props.selectedDomainName, normalizedData, error => {
-			if ( error ) {
-				this.props.errorNotice(
-					error.message || translate( 'The Domain Connect record could not be enabled.' )
-				);
-			} else {
+		this.props.addDns( this.props.selectedDomainName, normalizedData ).then(
+			() => {
 				this.props.successNotice( translate( 'The Domain Connect record has been enabled.' ), {
 					showDismiss: false,
 					duration: 5000,
 				} );
+			},
+			error => {
+				this.props.errorNotice(
+					error.message || translate( 'The Domain Connect record could not be enabled.' )
+				);
 			}
-		} );
+		);
 	}
 
 	handleToggle = () => {
@@ -136,11 +136,10 @@ class DomainConnectRecord extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		errorNotice,
-		removeNotice,
-		successNotice,
-	}
-)( localize( DomainConnectRecord ) );
+export default connect( null, {
+	addDns,
+	deleteDns,
+	errorNotice,
+	removeNotice,
+	successNotice,
+} )( localize( DomainConnectRecord ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import isECommerceManageNudgeDismissed from './selectors';
 import QueryPreferences from 'components/data/query-preferences';
 import { dismissNudge } from './actions';

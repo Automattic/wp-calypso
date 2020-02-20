@@ -2,7 +2,6 @@
  * This module contains a collection of mini components for composing
  * host details pages
  *
- * @format
  */
 
 /**
@@ -14,7 +13,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';

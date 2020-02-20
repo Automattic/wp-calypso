@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,6 +20,7 @@ import StatsNavigation from 'blocks/stats-navigation';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import DatePicker from '../stats-date-picker';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import WordAdsChartTabs from '../wordads-chart-tabs';
 import titlecase from 'to-title-case';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -139,6 +138,7 @@ class WordAds extends Component {
 			date: endOf.format( 'YYYY-MM-DD' ),
 		};
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Main wideLayout={ true }>
 				<DocumentHead title={ translate( 'WordAds Stats' ) } />
@@ -148,6 +148,11 @@ class WordAds extends Component {
 				/>
 				<PrivacyPolicyBanner />
 				<SidebarNavigation />
+				<FormattedHeader
+					className="wordads__section-header"
+					headerText={ translate( 'Stats and Insights' ) }
+					align="left"
+				/>
 				{ ! canAccessAds && (
 					<EmptyContent
 						illustration="/calypso/images/illustrations/illustration-404.svg"
@@ -211,6 +216,7 @@ class WordAds extends Component {
 				) }
 			</Main>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

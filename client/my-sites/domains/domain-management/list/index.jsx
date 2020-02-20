@@ -1,15 +1,14 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/** @format */
-
 /**
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { find, findIndex, get, identity, noop, times } from 'lodash';
+import { find, findIndex, get, identity, noop, times, isEmpty } from 'lodash';
 import Gridicon from 'components/gridicon';
 import page from 'page';
 import React from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -27,10 +26,10 @@ import {
 	domainManagementTransferIn,
 } from 'my-sites/domains/paths';
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import PlansNavigation from 'my-sites/plans/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { setPrimaryDomain } from 'lib/upgrades/actions/domain-management';
+import { setPrimaryDomain } from 'state/sites/domains/actions';
 import DomainListNotice from './domain-list-notice';
 import {
 	PRIMARY_DOMAIN_CHANGE_SUCCESS,
@@ -50,6 +49,8 @@ import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
 import { type } from 'lib/domains/constants';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import DocumentHead from 'components/data/document-head';
+import FormattedHeader from 'components/formatted-header';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -57,6 +58,15 @@ import DocumentHead from 'components/data/document-head';
 import './style.scss';
 
 export class List extends React.Component {
+	static propTypes = {
+		selectedSite: PropTypes.object.isRequired,
+		domains: PropTypes.array.isRequired,
+		isRequestingDomains: PropTypes.bool,
+		cart: PropTypes.object,
+		context: PropTypes.object,
+		renderAllSites: PropTypes.bool,
+	};
+
 	static defaultProps = {
 		translate: identity,
 		enablePrimaryDomainMode: noop,
@@ -65,6 +75,7 @@ export class List extends React.Component {
 	};
 
 	state = {
+		settingPrimaryDomain: false,
 		changePrimaryDomainModeEnabled: false,
 		primaryDomainIndex: -1,
 		notice: null,
@@ -114,10 +125,11 @@ export class List extends React.Component {
 
 		return (
 			<Notice
-				status="is-info"
+				status="is-success"
 				showDismiss={ false }
 				text={ translate( 'Free domain available' ) }
-				icon="globe"
+				icon="info-outline"
+				className="domain-management__claim-free-domain"
 			>
 				<NoticeAction
 					onClick={ this.props.clickClaimDomainNotice }
@@ -133,8 +145,15 @@ export class List extends React.Component {
 		);
 	}
 
+	filterOutWpcomDomains( domains ) {
+		return domains.filter( domain => domain.type !== type.WPCOM || domain.isWpcomStagingDomain );
+	}
+
 	render() {
 		if ( ! this.props.userCanManageOptions ) {
+			if ( this.props.renderAllSites ) {
+				return null;
+			}
 			return (
 				<Main>
 					<SidebarNavigation />
@@ -150,32 +169,52 @@ export class List extends React.Component {
 			return null;
 		}
 
+		if ( this.props.selectedSite.jetpack && this.props.renderAllSites ) {
+			return null;
+		}
+
 		if ( this.props.isDomainOnly ) {
-			return (
-				<Main>
-					<DocumentHead title={ this.props.translate( 'Settings' ) } />
-					<SidebarNavigation />
-					<DomainOnly
-						hasNotice={ this.isFreshDomainOnlyRegistration() }
-						siteId={ this.props.selectedSite.ID }
-					/>
-				</Main>
-			);
+			if ( ! this.props.renderAllSites ) {
+				return (
+					<Main>
+						<DocumentHead title={ this.props.translate( 'Settings' ) } />
+						<SidebarNavigation />
+						<DomainOnly
+							hasNotice={ this.isFreshDomainOnlyRegistration() }
+							siteId={ this.props.selectedSite.ID }
+						/>
+					</Main>
+				);
+			}
+
+			if ( isEmpty( this.filterOutWpcomDomains( this.props.domains ) ) ) {
+				return null;
+			}
 		}
 
 		const headerText = this.props.translate( 'Domains', { context: 'A navigation label.' } );
+		const sectionLabel = this.props.renderAllSites ? this.props.selectedSite.title : null;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Main wideLayout>
 				<DocumentHead title={ headerText } />
 				<SidebarNavigation />
-				<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
-				{ this.domainWarnings() }
+				{ ! this.props.renderAllSites && (
+					<FormattedHeader
+						className="domain-management__page-heading"
+						headerText={ this.props.translate( 'Domains' ) }
+						align="left"
+					/>
+				) }
+				{ ! this.props.renderAllSites && (
+					<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
+				) }
+				{ ! this.props.renderAllSites && this.domainWarnings() }
 
-				{ this.domainCreditsInfoNotice() }
+				{ ! this.props.renderAllSites && this.domainCreditsInfoNotice() }
 
-				<SectionHeader label={ headerText }>{ this.headerButtons() }</SectionHeader>
+				<SectionHeader label={ sectionLabel }>{ this.headerButtons() }</SectionHeader>
 
 				<div className="domain-management-list__items">
 					{ this.notice() }
@@ -195,11 +234,11 @@ export class List extends React.Component {
 
 		return (
 			domain &&
-			domain.registrationMoment &&
+			domain.registrationDate &&
 			this.props
 				.moment()
 				.subtract( 1, 'day' )
-				.isBefore( domain.registrationMoment )
+				.isBefore( this.props.moment( domain.registrationDate ) )
 		);
 	}
 
@@ -312,10 +351,10 @@ export class List extends React.Component {
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 		return (
-			<div>
+			<>
 				{ this.changePrimaryButton() }
 				{ this.addDomainButton() }
-			</div>
+			</>
 		);
 	}
 
@@ -424,9 +463,10 @@ export class List extends React.Component {
 			return times( 3, n => <ListItemPlaceholder key={ `item-${ n }` } /> );
 		}
 
-		const domains = this.props.selectedSite.jetpack
-			? this.props.domains.filter( domain => domain.type !== type.WPCOM )
-			: this.props.domains;
+		const domains =
+			this.props.selectedSite.jetpack || ( this.props.renderAllSites && this.props.isDomainOnly )
+				? this.filterOutWpcomDomains( this.props.domains )
+				: this.props.domains;
 
 		return domains.map( ( domain, index ) => {
 			return (
@@ -531,4 +571,4 @@ export default connect(
 			undoChangePrimary: domain => dispatch( undoChangePrimary( domain ) ),
 		};
 	}
-)( localize( List ) );
+)( localize( withLocalizedMoment( List ) ) );

@@ -12,6 +12,7 @@ import * as controller from './controller';
 import { login } from 'lib/paths';
 import { siteSelection } from 'my-sites/controller';
 import { makeLayout, render as clientRender } from 'controller';
+import { getLanguageRouteParam } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -21,6 +22,7 @@ import './style.scss';
 export default function() {
 	const user = userFactory();
 	const isLoggedOut = ! user.get();
+	const locale = getLanguageRouteParam( 'locale' );
 
 	page(
 		'/jetpack/connect/:type(personal|premium|pro)/:interval(yearly|monthly)?',
@@ -41,7 +43,7 @@ export default function() {
 		);
 	} else {
 		page(
-			'/jetpack/connect/:type(install)/:locale?',
+			`/jetpack/connect/:type(install)/${ locale }`,
 			controller.redirectWithoutLocaleIfLoggedIn,
 			controller.persistMobileAppFlow,
 			controller.setMasterbar,
@@ -62,8 +64,7 @@ export default function() {
 
 	if ( isLoggedOut ) {
 		page(
-			'/jetpack/connect/authorize/:locale?',
-			controller.maybeOnboard,
+			`/jetpack/connect/authorize/${ locale }`,
 			controller.setMasterbar,
 			controller.signupForm,
 			makeLayout,
@@ -71,8 +72,7 @@ export default function() {
 		);
 	} else {
 		page(
-			'/jetpack/connect/authorize/:locale?',
-			controller.maybeOnboard,
+			`/jetpack/connect/authorize/${ locale }`,
 			controller.redirectWithoutLocaleIfLoggedIn,
 			controller.setMasterbar,
 			controller.authorizeForm,
@@ -90,7 +90,7 @@ export default function() {
 	);
 
 	page(
-		'/jetpack/connect/store/:interval(yearly|monthly)?/:locale?',
+		`/jetpack/connect/store/:interval(yearly|monthly)?/${ locale }`,
 		controller.setLoggedOutLocale,
 		controller.plansLanding,
 		makeLayout,
@@ -142,7 +142,7 @@ export default function() {
 	);
 
 	page(
-		'/jetpack/connect/:locale?',
+		`/jetpack/connect/${ locale }`,
 		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.persistMobileAppFlow,
 		controller.setMasterbar,

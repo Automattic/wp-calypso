@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,6 +14,7 @@ import classnames from 'classnames';
 import AsyncLoad from 'components/async-load';
 import MasterbarLoggedIn from 'layout/masterbar/logged-in';
 import GlobalNotices from 'components/global-notices';
+import HtmlIsIframeClassname from 'layout/html-is-iframe-classname';
 import notices from 'notices';
 import config from 'config';
 import OfflineStatus from 'layout/offline-status';
@@ -40,14 +39,12 @@ import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import DocumentHead from 'components/data/document-head';
-import AppBanner from 'blocks/app-banner';
-import GdprBanner from 'blocks/gdpr-banner';
 import { getPreference } from 'state/preferences/selectors';
-import JITM from 'blocks/jitm';
 import KeyboardShortcutsMenu from 'lib/keyboard-shortcuts/menu';
 import SupportUser from 'support/support-user';
 import { isCommunityTranslatorEnabled } from 'components/community-translator/utils';
 import { isE2ETest } from 'lib/e2e';
+import { getMessagePathForJITM } from 'lib/route';
 import BodySectionCssClass from './body-section-css-class';
 import { retrieveMobileRedirect } from 'jetpack-connect/persistence-utils';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
@@ -128,9 +125,24 @@ class Layout extends Component {
 			}
 		);
 
+		const optionalBodyProps = () => {
+			const optionalProps = {};
+
+			if ( this.props.isFrankenflow ) {
+				optionalProps.bodyClass = 'is-frankenflow';
+			}
+
+			return optionalProps;
+		};
+
 		return (
 			<div className={ sectionClass }>
-				<BodySectionCssClass group={ this.props.sectionGroup } section={ this.props.sectionName } />
+				<BodySectionCssClass
+					group={ this.props.sectionGroup }
+					section={ this.props.sectionName }
+					{ ...optionalBodyProps() }
+				/>
+				<HtmlIsIframeClassname />
 				<DocumentHead />
 				<QuerySites primaryAndRecent />
 				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
@@ -141,13 +153,19 @@ class Layout extends Component {
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				<MasterbarLoggedIn
 					section={ this.props.sectionGroup }
-					compact={ this.props.sectionName === 'checkout' }
+					isCheckout={ this.props.sectionName === 'checkout' }
 				/>
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<LayoutLoader />
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
-					{ config.isEnabled( 'jitms' ) && <JITM /> }
+					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
+						<AsyncLoad
+							require="blocks/jitm"
+							messagePath={ `calypso:${ this.props.sectionJitmPath }:admin_notices` }
+							sectionName={ this.props.sectionName }
+						/>
+					) }
 					<GlobalNotices id="notices" notices={ notices.list } />
 					<div id="secondary" className="layout__secondary" role="navigation">
 						{ this.props.secondary }
@@ -171,12 +189,18 @@ class Layout extends Component {
 				{ ( 'jetpack-connect' !== this.props.sectionName ||
 					this.props.currentRoute === '/jetpack/new' ) &&
 					this.props.currentRoute !== '/log-in/jetpack' &&
+					this.props.currentRoute !== '/me/account/closed' &&
 					'happychat' !== this.props.sectionName && (
 						<AsyncLoad require="blocks/inline-help" placeholder={ null } />
 					) }
 				<SupportArticleDialog />
-				<AppBanner />
-				{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner /> }
+				<AsyncLoad require="blocks/app-banner" placeholder={ null } />
+				{ config.isEnabled( 'gdpr-banner' ) && (
+					<AsyncLoad require="blocks/gdpr-banner" placeholder={ null } />
+				) }
+				{ config.isEnabled( 'legal-updates-banner' ) && (
+					<AsyncLoad require="blocks/legal-updates-banner" placeholder={ null } />
+				) }
 			</div>
 		);
 	}
@@ -187,17 +211,19 @@ export default connect( state => {
 	const sectionName = getSectionName( state );
 	const currentRoute = getCurrentRoute( state );
 	const siteId = getSelectedSiteId( state );
-	const isJetpackLogin = currentRoute === '/log-in/jetpack';
+	const sectionJitmPath = getMessagePathForJITM( currentRoute );
+	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
 	const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
-	const noMasterbarForCheckout = startsWith( currentRoute, '/checkout' );
-	const noMasterbarForRoute = isJetpackLogin || noMasterbarForCheckout;
+	const noMasterbarForRoute = isJetpackLogin || currentRoute === '/me/account/closed';
 	const noMasterbarForSection = 'signup' === sectionName || 'jetpack-connect' === sectionName;
 	const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 	const isJetpackWooCommerceFlow =
 		( 'jetpack-connect' === sectionName || 'login' === sectionName ) &&
-		'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' );
+		'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' );
 	const oauth2Client = getCurrentOAuth2Client( state );
 	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
+	const isEligibleForJITM = [ 'stats', 'plans', 'themes', 'plugins' ].indexOf( sectionName ) >= 0;
+	const isFrankenflow = startsWith( currentRoute, '/start/frankenflow' );
 
 	return {
 		masterbarIsHidden:
@@ -206,11 +232,13 @@ export default connect( state => {
 		isJetpackLogin,
 		isJetpackWooCommerceFlow,
 		isJetpackMobileFlow,
+		isEligibleForJITM,
 		oauth2Client,
 		wccomFrom,
 		isSupportSession: isSupportSession( state ),
 		sectionGroup,
 		sectionName,
+		sectionJitmPath,
 		hasSidebar: hasSidebar( state ),
 		isOffline: isOffline( state ),
 		currentLayoutFocus: getCurrentLayoutFocus( state ),
@@ -224,5 +252,6 @@ export default connect( state => {
 		authorization, it would remove the newly connected site that has been fetched separately.
 		See https://github.com/Automattic/wp-calypso/pull/31277 for more details. */
 		shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
+		isFrankenflow,
 	};
 } )( Layout );

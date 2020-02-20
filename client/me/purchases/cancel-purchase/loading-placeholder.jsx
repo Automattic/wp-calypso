@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,21 +8,20 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
+import { Button, Card, CompactCard } from '@automattic/components';
 import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';
 import { managePurchase } from 'me/purchases/paths';
 import titles from 'me/purchases/titles';
 
-const CancelPurchaseLoadingPlaceholder = ( { purchaseId, selectedSite } ) => {
+const CancelPurchaseLoadingPlaceholder = ( { purchaseId, siteSlug } ) => {
 	let path;
 
-	if ( selectedSite ) {
-		path = managePurchase( selectedSite.slug, purchaseId );
+	if ( siteSlug ) {
+		path = managePurchase( siteSlug, purchaseId );
 	}
 
 	return (
+		/* eslint-disable */
 		<LoadingPlaceholder title={ titles.cancelPurchase } path={ path }>
 			<Card className="cancel-purchase-loading-placeholder__card">
 				<h2 className="loading-placeholder__content cancel-purchase-loading-placeholder__header" />
@@ -37,12 +34,13 @@ const CancelPurchaseLoadingPlaceholder = ( { purchaseId, selectedSite } ) => {
 				<Button className="cancel-purchase-loading-placeholder__cancel-button" />
 			</CompactCard>
 		</LoadingPlaceholder>
+		/* eslint-enable */
 	);
 };
 
 CancelPurchaseLoadingPlaceholder.propTypes = {
 	purchaseId: PropTypes.number.isRequired,
-	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
+	siteSlug: PropTypes.string.isRequired,
 };
 
 export default CancelPurchaseLoadingPlaceholder;

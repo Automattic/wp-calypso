@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -73,12 +72,6 @@ export class PluginAutoUpdateToggle extends Component {
 			);
 		}
 
-		if ( ! site.hasMinimumJetpackVersion ) {
-			return translate( '%(site)s is not running an up to date version of Jetpack', {
-				args: { site: site.title },
-			} );
-		}
-
 		if ( site.options.is_multi_network ) {
 			return translate(
 				'%(site)s is part of a multi-network installation, which is not currently supported.',
@@ -113,6 +106,7 @@ export class PluginAutoUpdateToggle extends Component {
 					<li key={ 'reason-i' + i + '-' + site.ID }>{ reason }</li>
 				) );
 				html.push(
+					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 					<ul className="plugin-action__disabled-info-list" key="reason-shell-list">
 						{ list }
 					</ul>
@@ -184,10 +178,7 @@ PluginAutoUpdateToggle.defaultProps = {
 	disabled: false,
 };
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-		recordTracksEvent,
-	}
-)( localize( PluginAutoUpdateToggle ) );
+export default connect( null, {
+	recordGoogleEvent,
+	recordTracksEvent,
+} )( localize( PluginAutoUpdateToggle ) );

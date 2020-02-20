@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -26,6 +24,7 @@ import {
 	SITES_REQUEST_FAILURE,
 	SITE_PLUGIN_UPDATED,
 	SITE_FRONT_PAGE_UPDATE,
+	SITE_MIGRATION_STATUS_UPDATE,
 } from 'state/action-types';
 import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'state/sites/constants';
 
@@ -33,8 +32,8 @@ import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'state/sites/constants
  * Returns an action object to be used in signalling that a site has been
  * deleted.
  *
- * @param  {Number} siteId  ID of deleted site
- * @return {Object}         Action object
+ * @param  {number} siteId  ID of deleted site
+ * @returns {object}         Action object
  */
 export function receiveDeletedSite( siteId ) {
 	return {
@@ -47,8 +46,8 @@ export function receiveDeletedSite( siteId ) {
  * Returns an action object to be used in signalling that a site object has
  * been received.
  *
- * @param  {Object} site Site received
- * @return {Object}      Action object
+ * @param  {object} site Site received
+ * @returns {object}      Action object
  */
 export function receiveSite( site ) {
 	return {
@@ -61,8 +60,8 @@ export function receiveSite( site ) {
  * Returns an action object to be used in signalling that site objects have
  * been received.
  *
- * @param  {Object[]} sites Sites received
- * @return {Object}         Action object
+ * @param  {object[]} sites Sites received
+ * @returns {object}         Action object
  */
 export function receiveSites( sites ) {
 	return {
@@ -73,6 +72,7 @@ export function receiveSites( sites ) {
 
 /**
  * Triggers a network request to request all visible sites
+ *
  * @returns {Function}        Action thunk
  */
 export function requestSites() {
@@ -110,8 +110,8 @@ export function requestSites() {
  * Returns a function which, when invoked, triggers a network request to fetch
  * a site.
  *
- * @param  {Number}   siteFragment Site ID or slug
- * @return {Function}              Action thunk
+ * @param  {number}   siteFragment Site ID or slug
+ * @returns {Function}              Action thunk
  */
 export function requestSite( siteFragment ) {
 	return dispatch => {
@@ -156,8 +156,8 @@ export function requestSite( siteFragment ) {
  * Returns a function which, when invoked, triggers a network request to delete
  * a site.
  *
- * @param  {Number}   siteId Site ID
- * @return {Function}        Action thunk
+ * @param  {number}   siteId Site ID
+ * @returns {Function}        Action thunk
  */
 export function deleteSite( siteId ) {
 	return dispatch => {
@@ -193,15 +193,30 @@ export const sitePluginUpdated = siteId => ( {
 /**
  * Returns an action object to be used to update the site front page options.
  *
- * @param  {Number} siteId Site ID
- * @param  {Object} frontPageOptions Object containing the three optional front page options.
- * @param  {String} [frontPageOptions.show_on_front] What to show in homepage. Can be 'page' or 'posts'.
- * @param  {Number} [frontPageOptions.page_on_front] If `show_on_front = 'page'`, the front page ID.
- * @param  {Number} [frontPageOptions.page_for_posts] If `show_on_front = 'page'`, the posts page ID.
- * @return {Object} Action object
+ * @param  {number} siteId Site ID
+ * @param  {object} frontPageOptions Object containing the three optional front page options.
+ * @param  {string} [frontPageOptions.show_on_front] What to show in homepage. Can be 'page' or 'posts'.
+ * @param  {number} [frontPageOptions.page_on_front] If `show_on_front = 'page'`, the front page ID.
+ * @param  {number} [frontPageOptions.page_for_posts] If `show_on_front = 'page'`, the posts page ID.
+ * @returns {object} Action object
  */
 export const updateSiteFrontPage = ( siteId, frontPageOptions ) => ( {
 	type: SITE_FRONT_PAGE_UPDATE,
 	siteId,
 	frontPageOptions,
+} );
+
+/**
+ * Returns an action object to be used to update the site migration status.
+ *
+ * @param  {number} siteId Site ID
+ * @param  {string} migrationStatus The status of the migration.
+ * @param {string} lastModified Optional timestamp from the migration DB record
+ * @returns {object} Action object
+ */
+export const updateSiteMigrationMeta = ( siteId, migrationStatus, lastModified = null ) => ( {
+	siteId,
+	type: SITE_MIGRATION_STATUS_UPDATE,
+	migrationStatus,
+	lastModified,
 } );

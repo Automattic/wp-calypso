@@ -89,15 +89,19 @@
 	}
 }
 
-.search-filters__buttons {
+
+
+.search-filters__buttons,
+.search-filters__checkboxes {
 	display: flex;
-	flex-flow: row-reverse;
-	justify-content: space-between;
+	flex-flow: row;
+	overflow: hidden;
+	align-items: center;
 
 	.button {
 		flex: 1 0 auto;
 		margin-left: 1em;
-		&:last-child {
+		&:first-child {
 			margin-left: 0;
 		}
 
@@ -117,11 +121,51 @@
 			padding-top: 0.5em;
 			padding-bottom: 0.5em;
 		}
+
+		button.search-filters__popover-button-domain-step-test {
+			flex: 1 0 auto;
+			margin-left: 2em;
+			
+			&.is-active {
+				color: var( --color-accent );
+				background-color: unset;
+				border-width: 1px 1px 2px;
+			}
+		}
+
+		legend.search-filters__filter-by {
+			font-size: 14px;
+			color: var( --color-neutral-30 );
+		}
 	}
 
-	&.search-filters__tld-filter-bar--is-domain-management
-		.search-filters__tld-button:nth-child( n + 6 ) {
-		display: none;
+	.search-filters__tld-checkbox-filter-bar {
+		display: flex;
+		flex: 1 0 auto;
+		justify-content: space-around;
+		font-size: 14px;
+
+		@include breakpoint( '<480px' ) {
+			flex-grow: 0;
+		}
+
+		.search-filters__tld-checkbox {
+			display: flex;
+			align-items: center;
+			margin-left: 2em;
+
+			&:last-child {
+				margin-right: 0;
+			}
+
+			& .form-checkbox {
+				font-size: 14px;
+			}
+
+			& span {
+				margin-left: 1em;
+			}
+		}
 	}
 
 	@include breakpoint( '<960px' ) {
@@ -133,25 +177,29 @@
 			margin-bottom: 0.5em;
 		}
 
-		.search-filters__tld-button:nth-child( n + 7 ) {
+		.search-filters__tld-button:nth-child( n + 7 ),
+		.search-filters__tld-checkbox:nth-child( n + 7 ) {
 			display: none;
 		}
 	}
 
 	@include breakpoint( '<800px' ) {
-		.search-filters__tld-button:nth-child( n + 5 ) {
+		.search-filters__tld-button:nth-child( n + 5 ),
+		.search-filters__tld-checkbox:nth-child( n + 5 ) {
 			display: none;
 		}
 	}
 
 	@include breakpoint( '<660px' ) {
-		.search-filters__tld-button:nth-child( n + 4 ) {
+		.search-filters__tld-button:nth-child( n + 4 ),
+		.search-filters__tld-checkbox:nth-child( n + 3 ) {
 			display: none;
 		}
 	}
 
 	@include breakpoint( '<480px' ) {
-		.search-filters__tld-button:nth-child( n + 2 ) {
+		.search-filters__tld-button:nth-child( n + 2 ),
+		.search-filters__tld-checkbox:nth-child( n + 2 ) {
 			display: none;
 		}
 	}
@@ -217,5 +265,8 @@
 
 	.token-field__suggestion {
 		color: var( --color-neutral-70 );
+		&.is-selected span {
+			color: var( --color-text-inverted );
+		}
 	}
 }

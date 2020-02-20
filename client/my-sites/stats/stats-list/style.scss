@@ -123,7 +123,7 @@
 		}
 
 		.module-content-list-item-right::before {
-			background-image: linear-gradient( to right, rgba( var( --color-neutral-0 ), 0 ) 0%, var( --color-neutral-0 ) 90% );
+			background-image: linear-gradient( to right, rgba( var( --color-neutral-0-rgb ), 0 ) 0%, var( --color-neutral-0 ) 90% );
 		}
 
 		// Display hidden actions
@@ -157,7 +157,7 @@
 	}
 
 	.module-content-list-item-right::before {
-		background-image: linear-gradient( to right, rgba( var( --color-neutral-0 ), 0 ) 0%, var( --color-neutral-0 ) 90% );
+		background-image: linear-gradient( to right, rgba( var( --color-neutral-0-rgb ), 0 ) 0%, var( --color-neutral-0 ) 90% );
 	}
 
 	// Display hidden actions
@@ -366,6 +366,7 @@ ul.module-content-list-item-actions {
 		.module-content-list-item-action-wrapper,
 		ul.module-content-list-item-action-submenu {
 			display: block;
+			opacity: 1;
 			text-align: left;
 		}
 
@@ -547,16 +548,20 @@ ul.module-content-list-item-action-submenu {
 		}
 	}
 
-	// Icon settings
-	// 1: Optically align a bit better
+	// Optically align a bit better
 	.gridicon {
 		vertical-align: middle;
 		margin-right: 4px;
-		margin-top: -2px; // 1
+		margin-top: -2px;
 
 		&.gridicons-cross {
 			margin-right: 0;
 		}
+	}
+	
+	// When a button instead of a link is used
+	.button.module-content-list-item-action-wrapper .gridicon {
+		vertical-align: unset;
 	}
 
 	// Color spam action red
@@ -748,7 +753,7 @@ ul.module-content-list-legend {
 	}
 
 	> .stats-list__module-content-list-item-wrapper .module-content-list-item-right::before {
-		background-image: linear-gradient( to right, rgba( var( --color-neutral-0 ), 0 ) 0%, var( --color-neutral-0 ) 90% );
+		background-image: linear-gradient( to right, rgba( var( --color-neutral-0-rgb ), 0 ) 0%, var( --color-neutral-0 ) 90% );
 	}
 
 	// Rotate toggle icon

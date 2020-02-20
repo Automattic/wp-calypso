@@ -1,40 +1,31 @@
 {
+	"extends": "@automattic/calypso-build/tsconfig",
 	"compilerOptions": {
-		// Target latest version of ECMAScript.
-		"target": "esnext",
-		// Search under node_modules for non-relative imports.
-		"moduleResolution": "node",
-		// Process & infer types from .js files.
-		"allowJs": true,
-		"jsx": "react",
-		// Don't emit; allow Babel to transform files.
-		"noEmit": true,
-		// Enable strictest settings like strictNullChecks & noImplicitAny.
-		"strict": true,
 		// Disallow features that require cross-file information for emit.
+		// Must be used with babel typescript
 		"isolatedModules": true,
-		// Import non-ES modules as default imports.
-		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"module": "es2015",
-		"baseUrl": ".",
+
 		"paths": {
-			"*": [ "*", "client/*", "server/*" ]
-		}
+			"*": [ "*", "client/*" ]
+		},
+		"baseUrl": ".",
+		"incremental": true,
+		"tsBuildInfoFile": ".tsc-cache/client"
 	},
-	"include": [ "client", "server" ],
+	"include": [ "client" ],
 	"exclude": [
-		"public",
-		"node_modules",
-		"**/node_modules/*",
+		"**/build",
+		"**/build-module",
+		"**/build-style",
+		"**/dist",
+		"**/node_modules",
+		"apps",
 		"build",
-		"**/build/*",
-		"**/build-module/*",
-		"**/build-style/*",
-		"**/dist/*",
 		"cached-results.json",
-		"stats.json",
-		"server/bundlers/assets-*.json",
-		"server/devdocs/search-index.js"
+		"client/server/bundler/assets*.json",
+		"client/server/devdocs/search-index.js",
+		"packages",
+		"public",
+		"stats.json"
 	]
 }

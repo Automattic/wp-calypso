@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import productListSchema from './schema';
-import { combineReducers, createReducerWithValidation } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import {
 	SIMPLE_PAYMENTS_PRODUCT_RECEIVE,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE,
@@ -13,8 +13,9 @@ import {
 /**
  * Edits existing product if one with matching ID found.
  * Otherwise inserts the new one at the beginning of the list.
+ *
  * @param {Array} list of previous products
- * @param {Object} newProduct to update list with
+ * @param {object} newProduct to update list with
  * @returns {Array} updated array of products
  */
 function addOrEditProduct( list = [], newProduct ) {
@@ -36,32 +37,48 @@ function addOrEditProduct( list = [], newProduct ) {
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID keys to an object that contains the site roles.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
-export const items = createReducerWithValidation(
-	{},
-	{
-		[ SIMPLE_PAYMENTS_PRODUCT_RECEIVE ]: ( state, { siteId, product } ) => ( {
-			...state,
-			[ siteId ]: addOrEditProduct( state[ siteId ], product ),
-		} ),
-		[ SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE ]: ( state, { siteId, products } ) => ( {
-			...state,
-			[ siteId ]: products,
-		} ),
-		[ SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_UPDATE ]: ( state, { siteId, product } ) => ( {
-			...state,
-			[ siteId ]: addOrEditProduct( state[ siteId ], product ),
-		} ),
-		[ SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_DELETE ]: ( state, { siteId, productId } ) => ( {
-			...state,
-			[ siteId ]: state[ siteId ].filter( product => product.ID !== productId ),
-		} ),
-	},
-	productListSchema
-);
+export const items = withSchemaValidation( productListSchema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case SIMPLE_PAYMENTS_PRODUCT_RECEIVE: {
+			const { siteId, product } = action;
+
+			return {
+				...state,
+				[ siteId ]: addOrEditProduct( state[ siteId ], product ),
+			};
+		}
+		case SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE: {
+			const { siteId, products } = action;
+
+			return {
+				...state,
+				[ siteId ]: products,
+			};
+		}
+		case SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_UPDATE: {
+			const { siteId, product } = action;
+
+			return {
+				...state,
+				[ siteId ]: addOrEditProduct( state[ siteId ], product ),
+			};
+		}
+		case SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_DELETE: {
+			const { siteId, productId } = action;
+
+			return {
+				...state,
+				[ siteId ]: state[ siteId ].filter( product => product.ID !== productId ),
+			};
+		}
+	}
+
+	return state;
+} );
 
 export default combineReducers( {
 	items,

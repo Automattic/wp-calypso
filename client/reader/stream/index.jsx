@@ -21,9 +21,11 @@ import {
 	selectPrevItem,
 	showUpdates,
 } from 'state/reader/streams/actions';
-import getStream from 'state/selectors/get-reader-stream';
-import shouldRequestRecs from 'state/selectors/get-reader-stream-should-request-recommendations';
-import getTransformedStreamItems from 'state/selectors/get-reader-stream-transformed-items';
+import {
+	getStream,
+	getTransformedStreamItems,
+	shouldRequestRecs,
+} from 'state/reader/streams/selectors';
 
 import { shouldShowLikes } from 'reader/like-helper';
 import { like as likePost, unlike as unlikePost } from 'state/posts/likes/actions';
@@ -38,7 +40,7 @@ import scrollTo from 'lib/scroll-to';
 import XPostHelper from 'reader/xpost-helper';
 import PostLifecycle from './post-lifecycle';
 import { showSelectedPost, getStreamType } from 'reader/utils';
-import getBlockedSites from 'state/selectors/get-blocked-sites';
+import { getBlockedSites } from 'state/reader/site-blocks/selectors';
 import { keysAreEqual, keyToString, keyForPost } from 'reader/post-key';
 import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
 import { reduxGetState } from 'lib/redux-bridge';
@@ -97,6 +99,8 @@ class ReaderStream extends React.Component {
 		forcePlaceholders: false,
 	};
 
+	listRef = React.createRef();
+
 	componentDidUpdate( { selectedPostKey, streamKey } ) {
 		if ( streamKey !== this.props.streamKey ) {
 			this.props.resetCardExpansions();
@@ -117,7 +121,7 @@ class ReaderStream extends React.Component {
 	}
 
 	_popstate = () => {
-		if ( this.props.selectedPostKey && history.scrollRestoration !== 'manual' ) {
+		if ( this.props.selectedPostKey && window.history.scrollRestoration !== 'manual' ) {
 			this.scrollToSelectedPost( false );
 		}
 	};
@@ -153,11 +157,12 @@ class ReaderStream extends React.Component {
 		KeyboardShortcuts.on( 'move-selection-down', this.selectNextItem );
 		KeyboardShortcuts.on( 'move-selection-up', this.selectPrevItem );
 		KeyboardShortcuts.on( 'open-selection', this.handleOpenSelection );
+		KeyboardShortcuts.on( 'open-selection-new-tab', this.handleOpenSelectionNewTab );
 		KeyboardShortcuts.on( 'like-selection', this.toggleLikeOnSelectedPost );
 		KeyboardShortcuts.on( 'go-to-top', this.goToTop );
 		window.addEventListener( 'popstate', this._popstate );
-		if ( 'scrollRestoration' in history ) {
-			history.scrollRestoration = 'manual';
+		if ( 'scrollRestoration' in window.history ) {
+			window.history.scrollRestoration = 'manual';
 		}
 	}
 
@@ -165,13 +170,18 @@ class ReaderStream extends React.Component {
 		KeyboardShortcuts.off( 'move-selection-down', this.selectNextItem );
 		KeyboardShortcuts.off( 'move-selection-up', this.selectPrevItem );
 		KeyboardShortcuts.off( 'open-selection', this.handleOpenSelection );
+		KeyboardShortcuts.off( 'open-selection-new-tab', this.handleOpenSelectionNewTab );
 		KeyboardShortcuts.off( 'like-selection', this.toggleLikeOnSelectedPost );
 		KeyboardShortcuts.off( 'go-to-top', this.goToTop );
 		window.removeEventListener( 'popstate', this._popstate );
-		if ( 'scrollRestoration' in history ) {
-			history.scrollRestoration = 'auto';
+		if ( 'scrollRestoration' in window.history ) {
+			window.history.scrollRestoration = 'auto';
 		}
 	}
+
+	handleOpenSelectionNewTab = () => {
+		window.open( this.props.selectedPostKey.url, '_blank', 'noreferrer,noopener' );
+	};
 
 	handleOpenSelection = () => {
 		showSelectedPost( {
@@ -216,7 +226,10 @@ class ReaderStream extends React.Component {
 	};
 
 	getVisibleItemIndexes() {
-		return this._list && this._list.getVisibleItemIndexes( { offsetTop: HEADER_OFFSET_TOP } );
+		return (
+			this.listRef.current &&
+			this.listRef.current.getVisibleItemIndexes( { offsetTop: HEADER_OFFSET_TOP } )
+		);
 	}
 
 	selectNextItem = () => {
@@ -323,8 +336,8 @@ class ReaderStream extends React.Component {
 		// if ( this.props.recommendationsStore ) {
 		// 	shufflePosts( this.props.recommendationsStore.id );
 		// }
-		if ( this._list ) {
-			this._list.scrollToTop();
+		if ( this.listRef.current ) {
+			this.listRef.current.scrollToTop();
 		}
 	};
 
@@ -359,7 +372,7 @@ class ReaderStream extends React.Component {
 		return (
 			<PostLifecycle
 				key={ itemKey }
-				ref={ itemKey }
+				ref={ itemKey /* The ref is stored into `InfiniteList`'s `this.ref` map */ }
 				isSelected={ isSelected }
 				handleClick={ showPost }
 				postKey={ postKey }
@@ -404,7 +417,7 @@ class ReaderStream extends React.Component {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			body = (
 				<InfiniteList
-					ref={ c => ( this._list = c ) }
+					ref={ this.listRef }
 					className="reader__content"
 					items={ items }
 					lastPage={ lastPage }

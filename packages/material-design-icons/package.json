@@ -8,7 +8,7 @@
 	"keywords": [
 		"wordpress"
 	],
-	"author": "Brad Griffith <brad.griffith@automattic.com>",
+	"author": "Automattic Inc.",
 	"contributors": [],
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "Apache-2.0",

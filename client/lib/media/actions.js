@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { assign } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:media' );
@@ -21,7 +18,16 @@ import MediaListStore from './list-store';
 import MediaValidationStore from './validation-store';
 
 /**
- * Module variables
+ * @typedef MediaActions
+ *
+ * TODO: Better method types
+ *
+ * @property {Function} fetch
+ * @property {Function} setLibrarySelectedItems
+ */
+
+/**
+ * @type {MediaActions} MediaActions
  */
 const MediaActions = {
 	_fetching: {},

@@ -1,14 +1,13 @@
-/** @format */
-
-/**
- * External dependencies
- */
-
 /**
  * Internal dependencies
  */
 import {
 	isJetpackPlan,
+	isJetpackPlanSlug,
+	isJetpackProduct,
+	isJetpackProductSlug,
+	isJetpackBackup,
+	isJetpackBackupSlug,
 	isMonthly,
 	isYearly,
 	isBiennially,
@@ -17,7 +16,15 @@ import {
 	isBusiness,
 	isEcommerce,
 	isPlan,
+	getJetpackProductDisplayName,
+	getJetpackProductTagline,
 } from '..';
+import {
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_PRODUCTS_LIST,
+	getJetpackProductsDisplayNames,
+	getJetpackProductsTaglines,
+} from '../constants';
 import {
 	JETPACK_PLANS,
 	PLAN_FREE,
@@ -40,8 +47,8 @@ import {
 /**
  * Test helper to build a product object
  *
- * @param  {String} product_slug Product slug
- * @return {Object}              Object containing product_slug
+ * @param   {string} product_slug Product slug
+ * @returns {object}              Object containing product_slug
  */
 const makeProductFromSlug = product_slug => ( { product_slug } );
 
@@ -72,10 +79,22 @@ describe( 'isPlan', () => {
 	} );
 } );
 
+describe( 'isJetpackPlanSlug', () => {
+	test( 'should return true for Jetpack plan slugs', () => {
+		JETPACK_PLANS.forEach( planSlug => expect( isJetpackPlanSlug( planSlug ) ).toBe( true ) );
+	} );
+
+	test( 'should return false for non-Jetpack plan slugs', () => {
+		const nonJetpackPlans = [ PLAN_BUSINESS, PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ];
+
+		nonJetpackPlans.forEach( planSlug => expect( isJetpackPlanSlug( planSlug ) ).toBe( false ) );
+	} );
+} );
+
 describe( 'isJetpackPlan', () => {
-	test( 'should return true for Jetpack products', () => {
-		JETPACK_PLANS.map( makeProductFromSlug ).forEach( product =>
-			expect( isJetpackPlan( product ) ).toBe( true )
+	test( 'should return true for Jetpack plans', () => {
+		JETPACK_PLANS.map( makeProductFromSlug ).forEach( plan =>
+			expect( isJetpackPlan( plan ) ).toBe( true )
 		);
 	} );
 
@@ -84,7 +103,113 @@ describe( 'isJetpackPlan', () => {
 
 		nonJetpackPlans
 			.map( makeProductFromSlug )
-			.forEach( product => expect( isJetpackPlan( product ) ).toBe( false ) );
+			.forEach( plan => expect( isJetpackPlan( plan ) ).toBe( false ) );
+	} );
+} );
+
+describe( 'isJetpackProductSlug', () => {
+	test( 'should return true for Jetpack product slugs', () => {
+		JETPACK_PRODUCTS_LIST.forEach( productSlug =>
+			expect( isJetpackProductSlug( productSlug ) ).toBe( true )
+		);
+	} );
+
+	test( 'should return false for non-Jetpack product slugs', () => {
+		const nonJetpackProducts = [
+			PLAN_BUSINESS,
+			PLAN_FREE,
+			PLAN_JETPACK_PERSONAL,
+			PLAN_JETPACK_PREMIUM,
+		];
+
+		nonJetpackProducts.forEach( productSlug =>
+			expect( isJetpackProductSlug( productSlug ) ).toBe( false )
+		);
+	} );
+} );
+
+describe( 'isJetpackProduct', () => {
+	test( 'should return true for Jetpack products', () => {
+		JETPACK_PRODUCTS_LIST.map( makeProductFromSlug ).forEach( product =>
+			expect( isJetpackProduct( product ) ).toBe( true )
+		);
+	} );
+
+	test( 'should return false for non-Jetpack products', () => {
+		const nonJetpackProducts = [
+			PLAN_BUSINESS,
+			PLAN_FREE,
+			PLAN_JETPACK_PERSONAL,
+			PLAN_JETPACK_PREMIUM,
+		];
+
+		nonJetpackProducts
+			.map( makeProductFromSlug )
+			.forEach( product => expect( isJetpackProduct( product ) ).toBe( false ) );
+	} );
+} );
+
+describe( 'isJetpackBackupSlug', () => {
+	test( 'should return true for Jetpack Backup product slugs', () => {
+		JETPACK_BACKUP_PRODUCTS.forEach( productSlug =>
+			expect( isJetpackBackupSlug( productSlug ) ).toBe( true )
+		);
+	} );
+
+	test( 'should return false for non-Jetpack Backup product slugs', () => {
+		const nonJetpackProducts = [
+			PLAN_BUSINESS,
+			PLAN_FREE,
+			PLAN_JETPACK_PERSONAL,
+			PLAN_JETPACK_PREMIUM,
+		];
+
+		nonJetpackProducts.forEach( productSlug =>
+			expect( isJetpackBackupSlug( productSlug ) ).toBe( false )
+		);
+	} );
+} );
+
+describe( 'isJetpackBackup', () => {
+	test( 'should return true for Jetpack Backup products', () => {
+		JETPACK_BACKUP_PRODUCTS.map( makeProductFromSlug ).forEach( product =>
+			expect( isJetpackBackup( product ) ).toBe( true )
+		);
+	} );
+
+	test( 'should return false for non-Jetpack Backup products', () => {
+		const nonJetpackProducts = [
+			PLAN_BUSINESS,
+			PLAN_FREE,
+			PLAN_JETPACK_PERSONAL,
+			PLAN_JETPACK_PREMIUM,
+		];
+
+		nonJetpackProducts
+			.map( makeProductFromSlug )
+			.forEach( product => expect( isJetpackBackup( product ) ).toBe( false ) );
+	} );
+} );
+
+describe( 'getJetpackProductDisplayName', () => {
+	test( 'should return Jetpack Backup product display name', () => {
+		const jetpackProductsDisplayNames = getJetpackProductsDisplayNames();
+		JETPACK_BACKUP_PRODUCTS.map( makeProductFromSlug ).forEach( product =>
+			expect( getJetpackProductDisplayName( product ) ).toBe(
+				jetpackProductsDisplayNames[ product.productSlug ]
+			)
+		);
+	} );
+} );
+
+describe( 'getJetpackProductTagline', () => {
+	test( 'should return Jetpack Backup product tagline', () => {
+		const jetpackProductsTaglines = getJetpackProductsTaglines();
+		JETPACK_BACKUP_PRODUCTS.map( makeProductFromSlug ).forEach( product =>
+			expect( getJetpackProductTagline( product ) ).toBe(
+				jetpackProductsTaglines[ product.productSlug ]
+			)
+		);
 	} );
 } );
 

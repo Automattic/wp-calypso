@@ -1,7 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
+import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { get } from 'lodash';
@@ -26,7 +26,6 @@ import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { isMobile } from 'lib/viewport';
 import { planLevelsMatch } from 'lib/plans/index';
 
 export class PlanFeaturesHeader extends Component {
@@ -43,7 +42,16 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	renderPlansHeader() {
-		const { newPlan, bestValue, planType, popular, selectedPlan, title, translate } = this.props;
+		const {
+			newPlan,
+			bestValue,
+			planType,
+			popular,
+			selectedPlan,
+			isInSignup,
+			title,
+			translate,
+		} = this.props;
 
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 		const isCurrent = this.isPlanCurrent();
@@ -58,7 +66,7 @@ export class PlanFeaturesHeader extends Component {
 					{ this.getPlanFeaturesPrices() }
 					{ this.getBillingTimeframe() }
 				</div>
-				{ isCurrent && <PlanPill>{ translate( 'Your Plan' ) }</PlanPill> }
+				{ ! isInSignup && isCurrent && <PlanPill>{ translate( 'Your Plan' ) }</PlanPill> }
 				{ planLevelsMatch( selectedPlan, planType ) && ! isCurrent && (
 					<PlanPill>{ translate( 'Suggested' ) }</PlanPill>
 				) }
@@ -88,7 +96,7 @@ export class PlanFeaturesHeader extends Component {
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 
 		return (
-			<>
+			<span>
 				<header className={ headerClasses }>
 					<h4 className="plan-features__header-title">{ title }</h4>
 					<div className="plan-features__audience">{ audience }</div>
@@ -98,13 +106,12 @@ export class PlanFeaturesHeader extends Component {
 					{ popular && ! selectedPlan && <PlanPill>{ translate( 'Popular' ) }</PlanPill> }
 					{ newPlan && ! selectedPlan && <PlanPill>{ translate( 'New' ) }</PlanPill> }
 					{ bestValue && ! selectedPlan && <PlanPill>{ translate( 'Best Value' ) }</PlanPill> }
-					{ this.isPlanCurrent() && <PlanPill>{ translate( 'Your Plan' ) }</PlanPill> }
 				</header>
 				<div className="plan-features__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
 					{ this.getIntervalDiscount() }
 				</div>
-			</>
+			</span>
 		);
 	}
 
@@ -290,18 +297,21 @@ export class PlanFeaturesHeader extends Component {
 			currentSitePlan,
 			discountPrice,
 			isJetpack,
+			isSiteAT,
 			planType,
 			rawPrice,
 			showPlanCreditsApplied,
 			translate,
 		} = this.props;
 
+		const isJetpackNotAtomic = isJetpack && ! isSiteAT;
+
 		if (
 			! showPlanCreditsApplied ||
 			! availableForPurchase ||
 			planMatches( planType, { type: TYPE_FREE } ) ||
 			planType === currentSitePlan.productSlug ||
-			isJetpack ||
+			isJetpackNotAtomic ||
 			! discountPrice ||
 			discountPrice >= rawPrice
 		) {

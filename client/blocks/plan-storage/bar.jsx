@@ -10,7 +10,7 @@ import filesize from 'filesize';
 /**
  * Internal dependencies
  */
-import ProgressBar from 'components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import { planHasFeature } from 'lib/plans';
 import { FEATURE_UNLIMITED_STORAGE } from 'lib/plans/constants';
 

@@ -13,6 +13,7 @@ import ActionPanelTitle from 'components/action-panel/title';
 import ActionPanelBody from 'components/action-panel/body';
 import PromoCardCta from './cta';
 import classNames from 'classnames';
+import Badge from 'components/badge';
 
 /**
  * Style dependencies
@@ -29,9 +30,10 @@ export interface Props {
 	image?: Image;
 	title: string | TranslateResult;
 	isPrimary?: boolean;
+	badge: string;
 }
 
-const PromoCard: FunctionComponent< Props > = ( { title, image, isPrimary, children } ) => {
+const PromoCard: FunctionComponent< Props > = ( { title, image, isPrimary, children, badge } ) => {
 	const classes = classNames( {
 		'promo-card': true,
 		'is-primary': isPrimary,
@@ -46,6 +48,7 @@ const PromoCard: FunctionComponent< Props > = ( { title, image, isPrimary, child
 			<ActionPanelBody>
 				<ActionPanelTitle className={ classNames( { 'is-primary': isPrimary } ) }>
 					{ title }
+					{ badge && <Badge className="promo-card__title-badge">{ badge }</Badge> }
 				</ActionPanelTitle>
 				{ isPrimary
 					? React.Children.map( children, child => {

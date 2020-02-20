@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -43,9 +41,8 @@ export default {
 	 * replacing any matches with markers,
 	 * and creates a new instance for every match.
 	 *
-	 * @param {String} content The string to scan.
-	 *
-	 * @return {String} The string with markers.
+	 * @param   {string} content The string to scan.
+	 * @returns {string}         The string with markers.
 	 */
 	setMarkers( content ) {
 		let pieces = [ { content: content } ],

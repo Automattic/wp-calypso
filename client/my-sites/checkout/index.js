@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -95,14 +94,6 @@ export default function() {
 	);
 
 	if ( config.isEnabled( 'upsell/concierge-session' ) ) {
-		page(
-			'/checkout/(add|offer)-support-session/pending/:site/:orderId',
-			siteSelection,
-			checkoutPending,
-			makeLayout,
-			clientRender
-		);
-
 		// For backwards compatibility, retaining the old URL structure.
 		page( '/checkout/:site/add-support-session/:receiptId?', redirectToSupportSession );
 
@@ -118,14 +109,6 @@ export default function() {
 			'/checkout/offer-support-session/:receiptId/:site',
 			siteSelection,
 			upsellNudge,
-			makeLayout,
-			clientRender
-		);
-
-		page(
-			'/checkout/offer-quickstart-session/pending/:site/:orderId',
-			siteSelection,
-			checkoutPending,
 			makeLayout,
 			clientRender
 		);
@@ -177,14 +160,6 @@ export default function() {
 		'/checkout/:site/offer-plan-upgrade/:upgradeItem/:receiptId?',
 		siteSelection,
 		upsellNudge,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/checkout/:site/offer-plan-upgrade/:upgradeItem/pending/:receiptId?',
-		siteSelection,
-		checkoutPending,
 		makeLayout,
 		clientRender
 	);

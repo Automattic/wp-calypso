@@ -362,9 +362,9 @@ function cleanupLocalCache() {
  * Advance this.lastSeenTime to proposedTime or the latest visible note time.
  * If the timestamp comes from a note, update the remote database.
  *
- * @param {Number} proposedTime A proposed update to our lastSeenTime timestamp
- * @param {Boolean} fromStorage Whether this call is from handleStorageEvent
- * @returns {Boolean} whether or not we will update our lastSeenTime value
+ * @param {number} proposedTime A proposed update to our lastSeenTime timestamp
+ * @param {boolean} fromStorage Whether this call is from handleStorageEvent
+ * @returns {boolean} whether or not we will update our lastSeenTime value
  */
 function updateLastSeenTime( proposedTime, fromStorage ) {
 	let fromNote = false;

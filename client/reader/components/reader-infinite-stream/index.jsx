@@ -1,14 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import List from 'react-virtualized/List';
-import WindowScroller from 'react-virtualized/WindowScroller';
-import { CellMeasurer, CellMeasurerCache } from 'react-virtualized/CellMeasurer';
-import InfiniteLoader from 'react-virtualized/InfiniteLoader';
+import {
+	CellMeasurer,
+	CellMeasurerCache,
+	InfiniteLoader,
+	List,
+	WindowScroller,
+} from '@automattic/react-virtualized';
 
 import { debounce, noop, get, pickBy } from 'lodash';
 

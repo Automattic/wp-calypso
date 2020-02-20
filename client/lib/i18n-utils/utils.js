@@ -1,15 +1,15 @@
-/** @format */
 /**
  * External dependencies
  */
 import { find, isString, map, pickBy, includes, endsWith } from 'lodash';
-import url from 'url';
-import { getLocaleSlug } from 'i18n-calypso';
+import i18n, { getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
+import { languages } from 'languages';
+import { getUrlParts, getUrlFromParts } from 'lib/url/url-parts';
 
 /**
  * a locale can consist of three component
@@ -30,7 +30,7 @@ export function getPathParts( path ) {
  * Checks if provided locale is a default one.
  *
  * @param {string} locale - locale slug (eg: 'fr')
- * @return {boolean} true when the default locale is provided
+ * @returns {boolean} true when the default locale is provided
  */
 export function isDefaultLocale( locale ) {
 	return locale === config( 'i18n_default_locale_slug' );
@@ -40,7 +40,7 @@ export function isDefaultLocale( locale ) {
  * Checks if provided locale has a parentLangSlug and is therefore a locale variant
  *
  * @param {string} locale - locale slug (eg: 'fr')
- * @return {boolean} true when the locale has a parentLangSlug
+ * @returns {boolean} true when the locale has a parentLangSlug
  */
 export function isLocaleVariant( locale ) {
 	if ( ! isString( locale ) ) {
@@ -50,38 +50,77 @@ export function isLocaleVariant( locale ) {
 	return !! language && isString( language.parentLangSlug );
 }
 
+export function isLocaleRtl( locale ) {
+	if ( ! isString( locale ) ) {
+		return null;
+	}
+	const language = getLanguage( locale );
+	if ( ! language ) {
+		return null;
+	}
+
+	return Boolean( language.rtl );
+}
+
 /**
  * Checks against a list of locales that don't have any GP translation sets
  * A 'translation set' refers to a collection of strings to be translated see:
  * https://glotpress.blog/the-manual/translation-sets/
+ *
  * @param {string} locale - locale slug (eg: 'fr')
- * @return {boolean} true when the locale is NOT a member of the exception list
+ * @returns {boolean} true when the locale is NOT a member of the exception list
  */
 export function canBeTranslated( locale ) {
 	return [ 'en', 'sr_latin' ].indexOf( locale ) === -1;
 }
 
 /**
+ * To be used with the same parameters as i18n-calpyso's translate():
+ * Check whether the user would be exposed to text not in their language.
+ *
+ * Since the text is in English, this is always true in that case. Otherwise
+ * We check whether a translation was provided for this text.
+ *
+ * @returns {boolean} true when a user would see text they can read.
+ */
+export function translationExists() {
+	const localeSlug = typeof getLocaleSlug === 'function' ? getLocaleSlug() : 'en';
+	return isDefaultLocale( localeSlug ) || i18n.hasTranslation( ...arguments );
+}
+
+/**
  * Return a list of all supported language slugs
  *
- * @return {Array} A list of all supported language slugs
+ * @returns {Array} A list of all supported language slugs
  */
 export function getLanguageSlugs() {
-	return map( config( 'languages' ), 'langSlug' );
+	return map( languages, 'langSlug' );
+}
+
+/**
+ * Return a specifier for page.js/Express route param that enumerates all supported languages.
+ *
+ * @param {string} name of the parameter. By default it's `lang`, some routes use `locale`.
+ * @param {boolean} optional whether to put the `?` character at the end, making the param optional
+ * @returns {string} Router param specifier that looks like `:lang(cs|de|fr|pl)`
+ */
+export function getLanguageRouteParam( name = 'lang', optional = true ) {
+	return `:${ name }(${ getLanguageSlugs().join( '|' ) })${ optional ? '?' : '' }`;
 }
 
 /**
  * Matches and returns language from config.languages based on the given localeSlug
- * @param  {String} langSlug locale slug of the language to match
- * @return {Object|undefined} An object containing the locale data or undefined.
+ *
+ * @param   {string} langSlug locale slug of the language to match
+ * @returns {object|undefined} An object containing the locale data or undefined.
  */
 export function getLanguage( langSlug ) {
 	if ( localeRegex.test( langSlug ) ) {
 		// Find for the langSlug first. If we can't find it, split it and find its parent slug.
 		// Please see the comment above `localeRegex` to see why we can split by - or _ and find the parent slug.
 		return (
-			find( config( 'languages' ), { langSlug } ) ||
-			find( config( 'languages' ), { langSlug: langSlug.split( /[-_]/ )[ 0 ] } )
+			find( languages, { langSlug } ) ||
+			find( languages, { langSlug: langSlug.split( /[-_]/ )[ 0 ] } )
 		);
 	}
 
@@ -90,11 +129,12 @@ export function getLanguage( langSlug ) {
 
 /**
  * Assuming that locale is adding at the end of path, retrieves the locale if present.
+ *
  * @param {string} path - original path
- * @return {string|undefined} The locale slug if present or undefined
+ * @returns {string|undefined} The locale slug if present or undefined
  */
 export function getLocaleFromPath( path ) {
-	const urlParts = url.parse( path );
+	const urlParts = getUrlParts( path );
 	const locale = getPathParts( urlParts.pathname ).pop();
 
 	return 'undefined' === typeof getLanguage( locale ) ? undefined : locale;
@@ -110,7 +150,7 @@ export function getLocaleFromPath( path ) {
  * @returns {string} original path with new locale slug
  */
 export function addLocaleToPath( path, locale ) {
-	const urlParts = url.parse( path );
+	const urlParts = getUrlParts( path );
 	const queryString = urlParts.search || '';
 
 	return removeLocaleFromPath( urlParts.pathname ) + `/${ locale }` + queryString;
@@ -166,34 +206,38 @@ const urlLocalizationMapping = {
 
 export function localizeUrl( fullUrl, locale ) {
 	const localeSlug = locale || ( typeof getLocaleSlug === 'function' ? getLocaleSlug() : 'en' );
-	const urlParts = url.parse( String( fullUrl ) );
+	const urlParts = getUrlParts( String( fullUrl ) );
 
-	if ( ! urlParts ) {
+	if ( ! urlParts.host ) {
 		return fullUrl;
 	}
 
 	// Let's unify the URL.
-	urlParts.protocol = 'https';
-	if ( 'en.wordpress.com' === urlParts.hostname ) {
-		urlParts.host = 'wordpress.com';
-	}
+	urlParts.protocol = 'https:';
+	// Let's use `host` for everything.
+	delete urlParts.hostname;
+
 	if ( ! endsWith( urlParts.pathname, '.php' ) ) {
 		urlParts.pathname = ( urlParts.pathname + '/' ).replace( /\/+$/, '/' );
 	}
 
 	if ( ! localeSlug || 'en' === localeSlug ) {
-		if ( 'en.wordpress.com' === urlParts.hostname ) {
+		if ( 'en.wordpress.com' === urlParts.host ) {
 			urlParts.host = 'wordpress.com';
-			return url.format( urlParts );
+			return getUrlFromParts( urlParts ).href;
 		}
 		return fullUrl;
 	}
 
-	const lookup = [ urlParts.hostname, urlParts.hostname + urlParts.pathname ];
+	if ( 'en.wordpress.com' === urlParts.host ) {
+		urlParts.host = 'wordpress.com';
+	}
+
+	const lookup = [ urlParts.host, urlParts.host + urlParts.pathname ];
 
 	for ( let i = lookup.length - 1; i >= 0; i-- ) {
 		if ( lookup[ i ] in urlLocalizationMapping ) {
-			return url.format( urlLocalizationMapping[ lookup[ i ] ]( urlParts, localeSlug ) );
+			return getUrlFromParts( urlLocalizationMapping[ lookup[ i ] ]( urlParts, localeSlug ) ).href;
 		}
 	}
 
@@ -204,11 +248,12 @@ export function localizeUrl( fullUrl, locale ) {
 /**
  * Removes the trailing locale slug from the path, if it is present.
  * '/start/en' => '/start', '/start' => '/start', '/start/flow/fr' => '/start/flow', '/start/flow' => '/start/flow'
+ *
  * @param {string} path - original path
  * @returns {string} original path minus locale slug
  */
 export function removeLocaleFromPath( path ) {
-	const urlParts = url.parse( path );
+	const urlParts = getUrlParts( path );
 	const queryString = urlParts.search || '';
 	const parts = getPathParts( urlParts.pathname );
 	const locale = parts.pop();
@@ -223,9 +268,9 @@ export function removeLocaleFromPath( path ) {
 /**
  * Filter out unexpected values from the given language revisions object.
  *
- * @param {Object} languageRevisions A candidate language revisions object for filtering.
+ * @param {object} languageRevisions A candidate language revisions object for filtering.
  *
- * @return {Object} A valid language revisions object derived from the given one.
+ * @returns {object} A valid language revisions object derived from the given one.
  */
 export function filterLanguageRevisions( languageRevisions ) {
 	const langSlugs = getLanguageSlugs();

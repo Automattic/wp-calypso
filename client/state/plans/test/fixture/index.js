@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -530,7 +528,7 @@ export const ACTION_PLANS_REQUEST_FAILURE = {
  * - requesting: false
  * - error: false
  *
- * @return {Object} an state instance
+ * @returns {object} an state instance
  */
 export const getStateInstance = () => {
 	return {

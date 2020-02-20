@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { identity, isEmpty, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import SearchCard from 'components/search-card';
 import Search from 'components/search';
 import Prediction from './prediction';

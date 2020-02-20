@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import {
 	EDITOR_TYPE_REQUEST,
 	EDITOR_TYPE_SET,
 	EDITOR_TYPE_UPDATE,
-	GUTENBERG_OPT_IN_SET,
+	GUTENBERG_OPT_IN_OUT_SET,
 } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -30,9 +28,12 @@ const fetchGutenbergOptInData = action =>
 		action
 	);
 
-const setGutenbergOptInData = ( { siteId }, { editor_web: editor, opt_in: optIn } ) => dispatch => {
+const setGutenbergOptInData = (
+	{ siteId },
+	{ editor_web: editor, opt_in: optIn, opt_out: optOut }
+) => dispatch => {
 	dispatch( { type: EDITOR_TYPE_SET, siteId, editor } );
-	dispatch( { type: GUTENBERG_OPT_IN_SET, siteId, optIn } );
+	dispatch( { type: GUTENBERG_OPT_IN_OUT_SET, siteId, optIn, optOut } );
 };
 
 const dispatchFetchGutenbergOptInData = dispatchRequest( {

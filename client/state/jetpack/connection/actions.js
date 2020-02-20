@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -122,7 +120,7 @@ export const disconnect = siteId => {
  * @param {number} siteId the site ID
  * @param {number} newOwnerWporgId the wporg user ID of the new owner
  * @param {string} newOwnerWpcomDisplayName display name for UI messages
- * @return {Object} action object
+ * @returns {object} action object
  */
 export const changeOwner = ( siteId, newOwnerWporgId, newOwnerWpcomDisplayName ) => {
 	return {

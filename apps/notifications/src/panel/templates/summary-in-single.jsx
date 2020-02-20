@@ -4,7 +4,7 @@ import { html } from '../indices-to-html';
 import { linkProps } from './functions';
 
 const Snippet = ( { note, snippet, url } ) => (
-	<a href={ url } { ...linkProps( note ) } target="_blank">
+	<a href={ url } { ...linkProps( note ) } target="_blank" rel="noopener noreferrer">
 		<span className="wpnc__excerpt">{ snippet.text }</span>
 	</a>
 );
@@ -19,7 +19,7 @@ class UserHeader extends React.Component {
 		var get_home_link = function( classNames, children ) {
 			if ( home_url ) {
 				return (
-					<a className={ classNames } href={ home_url } target="_blank">
+					<a className={ classNames } href={ home_url } target="_blank" rel="noopener noreferrer">
 						{ children }
 					</a>
 				);

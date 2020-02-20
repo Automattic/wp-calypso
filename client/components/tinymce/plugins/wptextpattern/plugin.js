@@ -12,7 +12,6 @@
  * If the transformation in unwanted, the user can undo the change by pressing backspace,
  * using the undo shortcut, or the undo button in the toolbar.
  *
- * @format
  * @copyright 2015 by the WordPress contributors.
  * @license See CREDITS.md.
  * @since 4.3.0

@@ -1,8 +1,6 @@
-/** @format */
 /**
  * A little module for loading a external script
  *
- * @format
  */
 
 /**
@@ -68,7 +66,10 @@ export function loadjQueryDependentScript( url, callback ) {
 
 	// if callback is provided, call it on resolution
 	if ( typeof callback === 'function' ) {
-		loadPromise.then( () => callback( null ), error => callback( error ) );
+		loadPromise.then(
+			() => callback( null ),
+			error => callback( error )
+		);
 		return;
 	}
 

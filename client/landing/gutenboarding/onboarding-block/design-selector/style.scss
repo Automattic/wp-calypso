@@ -1,0 +1,247 @@
+@import '~@wordpress/base-styles/colors';
+
+$design-selector-grid-gap: 4.5em;
+
+$design-selector-max-width: 1100px;
+$design-selector-selection-space: 285px;
+
+.design-selector__title {
+	color: $dark-gray-800;
+	font-size: 2em;
+	font-weight: bold;
+	margin-bottom: 0.25em;
+	text-align: center;
+}
+
+.design-selector__subtitle {
+	color: $dark-gray-800;
+	font-size: 1.3em;
+	text-align: center;
+}
+
+.design-selector__grid-container {
+	position: absolute;
+	padding-bottom: 48px;
+	padding-top: 19px;
+
+	&.is-page-selector-open {
+		overflow-y: hidden;
+		height: 100vh;
+	}
+}
+
+.design-selector__grid {
+	display: grid;
+	grid-gap: $design-selector-grid-gap;
+
+	@include breakpoint( '>660px' ) {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+.design-selector__page-layout-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.design-selector__page-layout-container {
+	position: absolute;
+	top: $design-selector-selection-space;
+	width: 100%;
+	background: $white;
+	box-shadow: $dark-gray-300 0 0 12px;
+	padding: 2em 4em;
+}
+
+.page-layout-selector {
+	max-width: $design-selector-max-width;
+	margin: 0 auto;
+}
+
+.design-selector__header-container {
+	padding-top: 48px;
+	padding-bottom: 29px;
+}
+
+.page-layout-selector__title {
+	font-weight: bold;
+	margin-bottom: 1em;
+	font-size: 1.3em;
+}
+
+.page-layout-selector__grid {
+	display: grid;
+	grid-gap: 1.25em;
+	grid-template-columns: repeat( auto-fill, minmax( 280px, 1fr ) );
+}
+
+.page-layout-selector__item {
+	position: relative;
+	overflow: hidden;
+	padding: 2px;
+	cursor: pointer;
+
+	&::before {
+		content: '';
+		display: inline-block;
+		width: 1px;
+		height: 0;
+		padding-bottom: calc(
+			100% * 7 / 8
+		); // This gives us a 7:8 aspect ratio for individual grid items.
+	}
+
+	&.is-selected {
+		.page-layout-selector__selected-indicator {
+			top: -2px;
+			right: -2px;
+			transform: translate3d( 0, 0, 0 );
+		}
+
+		// Offset for the 2px of added border when hovered.
+		&:hover {
+			.page-layout-selector__selected-indicator {
+				top: -4px;
+				right: -4px;
+			}
+		}
+	}
+
+	&:hover {
+		border: 3px solid var( --color-neutral-dark );
+		padding: 0;
+		// Offset absolute-positioned card content when border state occurs
+		.page-layout-selector__card-media {
+			width: calc( 100% + 4px ); /* This number is the change in border width when hovered * 2 */
+			top: -2px; /* This is half of the above number. */
+		}
+
+		.page-layout-selector__card-footer {
+			bottom: -2px;
+			width: calc( 100% + 4px );
+		}
+	}
+}
+
+.page-layout-selector__selected-indicator {
+	$size: 24px; // should match icon size
+	$full-size: floor( $size * 1.66 );
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: $full-size;
+	height: $full-size;
+
+	text-align: right;
+	color: $white;
+	background: linear-gradient(
+		to bottom left,
+		$blue-medium-focus,
+		$blue-medium-focus 50%,
+		transparent 51% /* 1% difference helps prevent a rough edge */
+	);
+
+	transition: 80ms transform linear;
+	transform: translate3d( $size, -$size, 0 );
+}
+
+.design-selector__design-option {
+	position: relative;
+	cursor: pointer;
+
+	.design-selector__option-overlay {
+		background-color: rgba( var( --color-primary-rgb ), 0.8 );
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		opacity: 0;
+		transition: 400ms;
+
+		.design-selector__option-overlay-text {
+			font-size: 24px;
+			color: $white;
+			border-bottom: 2px solid $white;
+		}
+	}
+
+	&:hover {
+		.design-selector__option-overlay {
+			opacity: 1;
+		}
+	}
+}
+
+// Adjust to display full with accounting for padding/borders
+.page-layout-selector__card-footer,
+.page-layout-selector__card-media {
+	display: block;
+	margin-left: -2px;
+	margin-right: -2px;
+}
+
+// Necessary for grid layout
+.page-layout-selector__card-footer {
+	background: $white;
+	bottom: 0;
+	position: absolute;
+	width: 100%;
+}
+
+// Necessary for grid layout
+.page-layout-selector__card-media {
+	position: absolute;
+	top: 0;
+	width: 100%;
+}
+
+.design-selector__description-container {
+	position: fixed;
+	display: flex;
+	flex-direction: column;
+	width: calc( 50% - #{$design-selector-grid-gap} );
+	padding-top: 23px;
+
+	@include breakpoint( '>660px' ) {
+		&.on-right-side {
+			right: 0;
+		}
+	}
+}
+
+.design-selector__description-title {
+	color: $dark-gray-800;
+	font-size: 2em;
+	font-weight: bold;
+	margin-bottom: 0.8em;
+}
+.design-selector__description-description {
+	color: $dark-gray-800;
+	font-size: 1.3em;
+	line-height: 1.3;
+}
+
+.accessible-focus {
+	.page-layout-selector__item {
+		&:focus {
+			box-shadow: 0 0 0 1px $white, 0 0 0 3px $blue-medium-500;
+			// Windows High Contrast mode will show this outline, but not the box-shadow.
+			outline: 2px solid transparent;
+		}
+	}
+
+	.design-selector__design-option {
+		&:focus {
+			.design-selector__option-overlay {
+				opacity: 1;
+			}
+		}
+	}
+}

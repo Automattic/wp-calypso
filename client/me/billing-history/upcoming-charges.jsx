@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +7,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import PurchasesHeader from '../purchases/purchases-list/header';
 import UpcomingChargesTable from './upcoming-charges-table';

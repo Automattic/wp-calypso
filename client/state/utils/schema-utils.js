@@ -92,8 +92,8 @@ function isValidSerializedState( schema, reducer, state ) {
  * age( 23, { type: DESERIALIZE } ) === 23
  *
  * @param {object} schema JSON-schema description of state
- * @param {function} reducer normal reducer from ( state, action ) to new state
- * @returns {function} wrapped reducer handling validation on DESERIALIZE
+ * @param {Function} reducer normal reducer from ( state, action ) to new state
+ * @returns {Function} wrapped reducer handling validation on DESERIALIZE
  */
 export const withSchemaValidation = ( schema, reducer ) => {
 	if ( process.env.NODE_ENV !== 'production' && ! schema ) {

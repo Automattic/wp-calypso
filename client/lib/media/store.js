@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { values } from 'lodash';
 
 /**
@@ -15,7 +12,19 @@ import emitter from 'lib/mixins/emitter';
 import MediaValidationStore from './validation-store';
 
 /**
- * Module variables
+ * @typedef {import('events').EventEmitter} Emitter
+ */
+
+/**
+ * @typedef MediaStoreShape
+ *
+ * TODO: Better method types
+ *
+ * @property {Function} get
+ */
+
+/**
+ * @type {Emitter & MediaStoreShape} MediaStore
  */
 const MediaStore = {
 	_media: {},

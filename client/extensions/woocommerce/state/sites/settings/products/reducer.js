@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 import { ERROR, LOADING } from 'woocommerce/state/constants';
 import { updateSettings } from '../helpers';
 import {
@@ -24,24 +22,27 @@ const update = ( state, { data } ) => {
 	return updateSettings( 'products', state || [], data );
 };
 
-export default createReducer( null, {
-	[ WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST ]: () => {
-		return LOADING;
-	},
+export default withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST: {
+			return LOADING;
+		}
+		case WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS: {
+			const { data } = action;
+			return data;
+		}
+		case WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_SUCCESS:
+			return update( state, action );
+		case WOOCOMMERCE_SETTINGS_PRODUCTS_CHANGE_SETTING:
+			return update( state, action );
+		case WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS: {
+			const { data } = action;
+			return updateSettings( 'products', state || [], data );
+		}
+		case WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_FAILURE: {
+			return ERROR;
+		}
+	}
 
-	[ WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS ]: ( state, { data } ) => {
-		return data;
-	},
-
-	[ WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_SUCCESS ]: update,
-
-	[ WOOCOMMERCE_SETTINGS_PRODUCTS_CHANGE_SETTING ]: update,
-
-	[ WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS ]: ( state, { data } ) => {
-		return updateSettings( 'products', state || [], data );
-	},
-
-	[ WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_FAILURE ]: () => {
-		return ERROR;
-	},
+	return state;
 } );

@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -25,11 +22,12 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import { isEnabled } from 'config';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import { deletePostShareAction } from 'state/sharing/publicize/publicize-actions/actions';
 import analytics from 'lib/analytics';
 import SharingPreviewModal from './sharing-preview-modal';
 import Notice from 'components/notice';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 class PublicizeActionsList extends PureComponent {
 	static propTypes = {
@@ -66,7 +64,8 @@ class PublicizeActionsList extends PureComponent {
 	};
 
 	renderActionItem( item, index ) {
-		const { service, connectionName, shareDate, message } = item;
+		const { service, connectionName, date, message } = item;
+		const shareDate = this.props.moment( date ).format( 'llll' );
 
 		return (
 			<div className="post-share__footer-items" key={ index }>
@@ -278,4 +277,4 @@ export default connect(
 		};
 	},
 	{ deletePostShareAction }
-)( localize( PublicizeActionsList ) );
+)( localize( withLocalizedMoment( PublicizeActionsList ) ) );

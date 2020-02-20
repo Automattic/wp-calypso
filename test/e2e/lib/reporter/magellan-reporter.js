@@ -1,5 +1,3 @@
-/** @format */
-
 const BaseReporter = require( 'testarmada-magellan' ).Reporter;
 const util = require( 'util' );
 

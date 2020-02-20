@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import { defer, get, has, omit } from 'lodash';
  */
 import { mapAuthor, startImporting } from 'lib/importer/actions';
 import { appStates } from 'state/imports/constants';
-import ProgressBar from 'components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import AuthorMappingPane from './author-mapping-pane';
 import Spinner from 'components/spinner';
 import { loadTrackingTool } from 'state/analytics/actions';
@@ -125,8 +123,7 @@ class ImportingPane extends React.PureComponent {
 
 	getHeadingText = () => {
 		return this.props.translate(
-			'Importing may take a while if your site has a lot of media, but ' +
-				"you can safely navigate away from this page if you need to: we'll send you a notification when it's done."
+			"You can safely navigate away from this page if you need to; we'll send you a notification when it's done."
 		);
 	};
 
@@ -135,47 +132,12 @@ class ImportingPane extends React.PureComponent {
 	};
 
 	getSuccessText = () => {
-		const {
-				site: { slug },
-				progress: { page, post },
-			} = this.props.importerStatus,
-			pageLink = <a href={ '/pages/' + slug } />,
-			pageText = this.props.translate( 'Pages', { context: 'noun' } ),
-			postLink = <a href={ '/posts/' + slug } />,
-			postText = this.props.translate( 'Posts', { context: 'noun' } );
-
-		const pageCount = page.total;
-		const postCount = post.total;
-
-		if ( pageCount && postCount ) {
-			return this.props.translate(
-				'All done! Check out {{a}}Posts{{/a}} and ' +
-					'{{b}}Pages{{/b}} to see your imported content.',
-				{
-					components: {
-						a: postLink,
-						b: pageLink,
-					},
-				}
-			);
-		}
-
-		if ( pageCount || postCount ) {
-			return this.props.translate(
-				'All done! Check out {{a}}%(articles)s{{/a}} ' + 'to see your imported content.',
-				{
-					components: { a: pageCount ? pageLink : postLink },
-					args: { articles: pageCount ? pageText : postText },
-				}
-			);
-		}
-
-		return this.props.translate( 'Import complete!' );
+		return this.props.translate( 'Success! Your content has been imported.' );
 	};
 
 	getImportMessage = numResources => {
 		if ( 0 === numResources ) {
-			return this.props.translate( 'Finishing up the import' );
+			return this.props.translate( 'Finishing up the import.' );
 		}
 
 		return this.props.translate(
@@ -320,7 +282,9 @@ class ImportingPane extends React.PureComponent {
 							<br />
 						</div>
 					) ) }
-				{ blockingMessage && <div>{ blockingMessage }</div> }
+				{ blockingMessage && (
+					<div className="importer__import-progress-message">{ blockingMessage }</div>
+				) }
 				<div>
 					<p className="importer__status-message">{ statusMessage }</p>
 				</div>
@@ -330,7 +294,4 @@ class ImportingPane extends React.PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{ loadTrackingTool }
-)( localize( ImportingPane ) );
+export default connect( null, { loadTrackingTool } )( localize( ImportingPane ) );

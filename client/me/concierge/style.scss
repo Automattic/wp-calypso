@@ -63,6 +63,14 @@
 	}
 }
 
+.shared__appointment-info-start-session {
+	display: flex;
+
+	& input {
+		flex: 1;
+	}
+}
+
 .book__schedule-button,
 .cancel__schedule-button,
 .reschedule__schedule-button,

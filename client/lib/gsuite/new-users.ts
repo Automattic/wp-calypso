@@ -9,7 +9,7 @@ import { countBy, find, includes, groupBy, map, mapValues } from 'lodash';
  * Internal dependencies
  */
 import { googleApps, googleAppsExtraLicenses } from 'lib/cart-values/cart-items';
-import { hasGSuite } from '.';
+import { hasGSuiteWithUs } from '.';
 
 // exporting these in the big export below causes trouble
 export interface GSuiteNewUserField {
@@ -248,7 +248,7 @@ const getItemsForCart = (
 
 	return map( usersGroupedByDomain, ( groupedUsers: GSuiteProductUser[], domain: string ) => {
 		const domainInfo = find( domains, [ 'name', domain ] );
-		return domainInfo && hasGSuite( domainInfo )
+		return domainInfo && hasGSuiteWithUs( domainInfo )
 			? googleAppsExtraLicenses( {
 					domain,
 					users: groupedUsers,

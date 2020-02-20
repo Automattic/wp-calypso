@@ -2,9 +2,8 @@
  * Returns an array of course objects.
  *
  *
- * @format
- * @param {Object} state  Global state tree
- * @return {Array}         Course objects
+ * @param {object} state  Global state tree
+ * @returns {Array}         Course objects
  */
 
 export function getHelpCourses( state ) {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,6 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal Dependencies
  */
-import { getDocumentHeadTitle } from 'state/document-head/selectors';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import TranslatableString from 'components/translatable/proptype';
 
@@ -21,17 +18,14 @@ import TranslatableString from 'components/translatable/proptype';
  */
 import './style.scss';
 
-function SidebarNavigation( { title, sectionTitle, children, toggleSidebar } ) {
+function SidebarNavigation( { sectionTitle, children, toggleSidebar } ) {
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<header className="current-section">
 			<button onClick={ toggleSidebar }>
-				<Gridicon icon="chevron-left" />
+				<Gridicon icon="menu" />
 				{ children }
-				<div>
-					<p className="current-section__group-title">{ sectionTitle }</p>
-					<h1 className="current-section__section-title">{ title }</h1>
-				</div>
+				<h1 className="current-section__site-title">{ sectionTitle }</h1>
 			</button>
 		</header>
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -39,15 +33,12 @@ function SidebarNavigation( { title, sectionTitle, children, toggleSidebar } ) {
 }
 
 SidebarNavigation.propTypes = {
-	title: TranslatableString,
 	sectionTitle: TranslatableString,
 	toggleSidebar: PropTypes.func.isRequired,
 };
 
 export default connect(
-	state => ( {
-		title: getDocumentHeadTitle( state ),
-	} ),
+	null,
 	{
 		toggleSidebar: () => setLayoutFocus( 'sidebar' ),
 	}

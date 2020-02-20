@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -29,7 +27,7 @@ class QueryMediaStorage extends Component {
 		}
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.requestStorage();
 		MediaStore.on( 'fetch-media-limits', this.requestStorage );
 	}
@@ -38,7 +36,7 @@ class QueryMediaStorage extends Component {
 		MediaStore.off( 'fetch-media-limits', this.requestStorage );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			nextProps.requestingMediaStorage ||
 			! nextProps.siteId ||

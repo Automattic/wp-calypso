@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Internal dependencies
  */
@@ -8,6 +7,8 @@ import {
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/read/recommendations/sites';
+
+import 'state/reader/init';
 
 export const requestRecommendedSites = ( { offset = 0, number = 4, seed = 0 } ) => ( {
 	type: READER_RECOMMENDED_SITES_REQUEST,

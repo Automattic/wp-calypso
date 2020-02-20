@@ -1,12 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
 
 /**
@@ -19,6 +16,7 @@ import getEditorUrl from 'state/selectors/get-editor-url';
 import PostMetadata from 'lib/post-metadata';
 import { getTheme } from 'state/themes/selectors';
 import QueryTheme from 'components/data/query-theme';
+import { useLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -42,8 +40,6 @@ const getContentLink = ( state, siteId, page ) => {
 const ICON_SIZE = 12;
 
 function PageCardInfo( {
-	translate,
-	moment,
 	page,
 	showTimestamp,
 	isFront,
@@ -53,6 +49,9 @@ function PageCardInfo( {
 	theme,
 	themeId,
 } ) {
+	const translate = useTranslate();
+	const moment = useLocalizedMoment();
+
 	const renderTimestamp = function() {
 		if ( page.status === 'future' ) {
 			return (
@@ -80,15 +79,15 @@ function PageCardInfo( {
 			<div>
 				{ showTimestamp && renderTimestamp() }
 				{ isFront && (
-					<span className="page-card-info__item">
-						<Gridicon icon="house" size={ ICON_SIZE } className="page-card-info__item-icon" />
-						<span className="page-card-info__item-text">{ translate( 'Homepage' ) }</span>
+					<span className="page-card-info__badge">
+						<Gridicon icon="house" size={ ICON_SIZE } className="page-card-info__badge-icon" />
+						<span className="page-card-info__badge-text">{ translate( 'Homepage' ) }</span>
 					</span>
 				) }
 				{ isPosts && (
-					<span className="page-card-info__item">
-						<Gridicon icon="posts" size={ ICON_SIZE } className="page-card-info__item-icon" />
-						<span className="page-card-info__item-text">{ translate( 'Your latest posts' ) }</span>
+					<span className="page-card-info__badge">
+						<Gridicon icon="posts" size={ ICON_SIZE } className="page-card-info__badge-icon" />
+						<span className="page-card-info__badge-text">{ translate( 'Your latest posts' ) }</span>
 					</span>
 				) }
 				{ ! isFront && theme && (
@@ -114,4 +113,4 @@ export default connect( ( state, props ) => {
 		themeId,
 		contentLink: getContentLink( state, props.page.site_ID, props.page ),
 	};
-} )( localize( PageCardInfo ) );
+} )( PageCardInfo );

@@ -7,7 +7,7 @@ import { omit, findIndex } from 'lodash';
  * Internal dependencies
  */
 import status from './status/reducer';
-import { combineReducers, createReducerWithValidation } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import {
 	PLUGINS_RECEIVE,
 	PLUGINS_REQUEST,
@@ -54,22 +54,29 @@ const updatePlugin = function( state, action ) {
 /*
  * Tracks all known installed plugin objects indexed by site ID.
  */
-export const plugins = createReducerWithValidation(
-	{},
-	{
-		[ PLUGINS_RECEIVE ]: ( state, action ) => {
+export const plugins = withSchemaValidation( pluginsSchema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case PLUGINS_RECEIVE: {
 			return { ...state, [ action.siteId ]: action.data };
-		},
-		[ PLUGIN_ACTIVATE_REQUEST_SUCCESS ]: updatePlugin,
-		[ PLUGIN_DEACTIVATE_REQUEST_SUCCESS ]: updatePlugin,
-		[ PLUGIN_UPDATE_REQUEST_SUCCESS ]: updatePlugin,
-		[ PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS ]: updatePlugin,
-		[ PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS ]: updatePlugin,
-		[ PLUGIN_INSTALL_REQUEST_SUCCESS ]: updatePlugin,
-		[ PLUGIN_REMOVE_REQUEST_SUCCESS ]: updatePlugin,
-	},
-	pluginsSchema
-);
+		}
+		case PLUGIN_ACTIVATE_REQUEST_SUCCESS:
+			return updatePlugin( state, action );
+		case PLUGIN_DEACTIVATE_REQUEST_SUCCESS:
+			return updatePlugin( state, action );
+		case PLUGIN_UPDATE_REQUEST_SUCCESS:
+			return updatePlugin( state, action );
+		case PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS:
+			return updatePlugin( state, action );
+		case PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS:
+			return updatePlugin( state, action );
+		case PLUGIN_INSTALL_REQUEST_SUCCESS:
+			return updatePlugin( state, action );
+		case PLUGIN_REMOVE_REQUEST_SUCCESS:
+			return updatePlugin( state, action );
+	}
+
+	return state;
+} );
 
 /*
  * Tracks the list of premium plugin objects for a single site

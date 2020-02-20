@@ -1,5 +1,3 @@
-/** @format */
-
 describe( 'safeImageUrl()', () => {
 	let safeImageUrl;
 

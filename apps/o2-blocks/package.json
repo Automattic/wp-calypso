@@ -10,7 +10,7 @@
 		"directory": "packages/o2-blocks"
 	},
 	"private": true,
-	"author": "Automattic, Inc.",
+	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
@@ -22,11 +22,11 @@
 		"build": "calypso-build editor='./src/editor.js' --env.WP"
 	},
 	"dependencies": {
-		"@wordpress/blocks": "6.0.7",
-		"@wordpress/components": "7.0.8",
-		"@wordpress/editor": "9.0.11",
-		"@wordpress/element": "2.1.9",
-		"@wordpress/i18n": "3.1.1",
+		"@wordpress/blocks": "6.12.0",
+		"@wordpress/components": "9.2.1",
+		"@wordpress/editor": "9.12.1",
+		"@wordpress/element": "2.11.0",
+		"@wordpress/i18n": "3.9.0",
 		"classnames": "2.2.6"
 	}
 }

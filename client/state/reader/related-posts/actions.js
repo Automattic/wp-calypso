@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -17,6 +16,8 @@ import {
 import { receivePosts } from 'state/reader/posts/actions';
 import wpcom from 'lib/wp';
 import { SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER } from './utils';
+
+import 'state/reader/init';
 
 export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
 	return function( dispatch ) {

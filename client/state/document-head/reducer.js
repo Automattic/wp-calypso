@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducerWithValidation } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import {
 	DOCUMENT_HEAD_LINK_SET,
 	DOCUMENT_HEAD_META_SET,
@@ -16,38 +16,43 @@ import { titleSchema, unreadCountSchema, linkSchema, metaSchema } from './schema
  */
 export const DEFAULT_META_STATE = [ { property: 'og:site_name', content: 'WordPress.com' } ];
 
-export const title = createReducerWithValidation(
-	'',
-	{
-		[ DOCUMENT_HEAD_TITLE_SET ]: ( state, action ) => action.title,
-	},
-	titleSchema
-);
+export const title = withSchemaValidation( titleSchema, ( state = '', action ) => {
+	switch ( action.type ) {
+		case DOCUMENT_HEAD_TITLE_SET:
+			return action.title;
+	}
 
-export const unreadCount = createReducerWithValidation(
-	0,
-	{
-		[ DOCUMENT_HEAD_UNREAD_COUNT_SET ]: ( state, action ) => action.count,
-		[ ROUTE_SET ]: () => 0,
-	},
-	unreadCountSchema
-);
+	return state;
+} );
 
-export const meta = createReducerWithValidation(
-	DEFAULT_META_STATE,
-	{
-		[ DOCUMENT_HEAD_META_SET ]: ( state, action ) => action.meta,
-	},
-	metaSchema
-);
+export const unreadCount = withSchemaValidation( unreadCountSchema, ( state = 0, action ) => {
+	switch ( action.type ) {
+		case DOCUMENT_HEAD_UNREAD_COUNT_SET:
+			return action.count;
+		case ROUTE_SET:
+			return 0;
+	}
 
-export const link = createReducerWithValidation(
-	[],
-	{
-		[ DOCUMENT_HEAD_LINK_SET ]: ( state, action ) => action.link,
-	},
-	linkSchema
-);
+	return state;
+} );
+
+export const meta = withSchemaValidation( metaSchema, ( state = DEFAULT_META_STATE, action ) => {
+	switch ( action.type ) {
+		case DOCUMENT_HEAD_META_SET:
+			return action.meta;
+	}
+
+	return state;
+} );
+
+export const link = withSchemaValidation( linkSchema, ( state = [], action ) => {
+	switch ( action.type ) {
+		case DOCUMENT_HEAD_LINK_SET:
+			return action.link;
+	}
+
+	return state;
+} );
 
 export default combineReducers( {
 	link,

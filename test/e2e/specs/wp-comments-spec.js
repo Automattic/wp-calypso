@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,6 +14,8 @@ import EditorPage from '../lib/pages/editor-page';
 import PostEditorToolbarComponent from '../lib/components/post-editor-toolbar-component';
 import CommentsAreaComponent from '../lib/pages/frontend/comments-area-component';
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
+import WPAdminLogonPage from '../lib/pages/wp-admin/wp-admin-logon-page';
+import WPAdminSidebar from '../lib/pages/wp-admin/wp-admin-sidebar';
 
 const host = dataHelper.getJetpackHost();
 const screenSize = driverManager.currentScreenSize();
@@ -43,6 +43,15 @@ describe( `[${ host }] Comments: (${ screenSize })`, function() {
 	} );
 
 	describe( 'Commenting and replying to newly created post: @parallel @jetpack', function() {
+		if ( host !== 'WPCOM' ) {
+			step( 'Can log into Jetpack site', async function() {
+				const account = dataHelper.getAccountConfig();
+				const loginPage = await WPAdminLogonPage.Visit( driver, dataHelper.getJetpackSiteName() );
+				await loginPage.login( account[ 0 ], account[ 1 ] );
+				await WPAdminSidebar.Expect( driver );
+			} );
+		}
+
 		step( 'Can login and create a new post', async function() {
 			await new LoginFlow( driver ).loginAndStartNewPost();
 			const editorPage = await EditorPage.Expect( driver );

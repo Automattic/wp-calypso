@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,8 +8,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import Button from 'components/button';
+import { CompactCard, Button } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
@@ -22,17 +19,27 @@ import './style.scss';
 
 export class ConciergeQuickstartSession extends PureComponent {
 	render() {
-		const { receiptId, translate } = this.props;
+		const { receiptId, translate, siteSlug, isLoggedIn } = this.props;
 
 		const title = translate( 'Checkout ‹ Quick Start Session', {
 			comment: '"Checkout" is the part of the site where a user is preparing to make a purchase.',
 		} );
 
+		let pageViewTrackerPath;
+		if ( receiptId ) {
+			pageViewTrackerPath = '/checkout/offer-quickstart-session/:receipt_id/:site';
+		} else if ( siteSlug ) {
+			pageViewTrackerPath = '/checkout/offer-quickstart-session/:site';
+		} else {
+			pageViewTrackerPath = '/checkout/offer-quickstart-session';
+		}
+
 		return (
 			<>
 				<PageViewTracker
-					path="/checkout/:site/offer-quickstart-session/:receipt_id"
+					path={ pageViewTrackerPath }
 					title={ title }
+					properties={ { is_logged_in: isLoggedIn } }
 				/>
 				<DocumentHead title={ title } />
 				{ receiptId ? (
@@ -76,7 +83,7 @@ export class ConciergeQuickstartSession extends PureComponent {
 					<div className="concierge-quickstart-session__column-content">
 						<p>
 							{ translate(
-								"What if you could sit with a true expert, someone who's helped hundreds of people succeed online, and get their advice to build a great site… in less time you ever thought possible?"
+								"What if you could sit with a true expert, someone who's helped hundreds of people succeed online, and get their advice to build a great site… in less time than you ever thought possible?"
 							) }
 						</p>
 						<p>
@@ -184,12 +191,12 @@ export class ConciergeQuickstartSession extends PureComponent {
 									{
 										components: { del: <del />, em: <em /> },
 										args: {
-											oldPrice: formatCurrency( fullCost, currencyCode ),
+											oldPrice: formatCurrency( fullCost, currencyCode, { stripZeros: true } ),
 											price: productDisplayCost,
 										},
 									}
 								) }
-							</b>{' '}
+							</b>{ ' ' }
 						</p>
 						<p>
 							{ receiptId
@@ -198,7 +205,7 @@ export class ConciergeQuickstartSession extends PureComponent {
 										{
 											components: { b: <b />, em: <em /> },
 											args: {
-												oldPrice: formatCurrency( fullCost, currencyCode ),
+												oldPrice: formatCurrency( fullCost, currencyCode, { stripZeros: true } ),
 											},
 										}
 								  )

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,9 +17,8 @@ import ActionPanelTitle from 'components/action-panel/title';
 import ActionPanelBody from 'components/action-panel/body';
 import ActionPanelFigure from 'components/action-panel/figure';
 import ActionPanelFooter from 'components/action-panel/footer';
-import Button from 'components/button';
+import { Button, Dialog } from '@automattic/components';
 import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
-import Dialog from 'components/dialog';
 import { hasLoadedSitePurchasesFromServer } from 'state/purchases/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSite, getSiteDomain } from 'state/sites/selectors';
@@ -225,7 +222,7 @@ class DeleteSite extends Component {
 						</p>
 						<p>
 							{ translate(
-								'This content {{strong}}can not{{/strong}} be recovered once your delete this site.',
+								'This content {{strong}}can not{{/strong}} be recovered once you delete this site.',
 								{
 									components: {
 										strong: <strong />,

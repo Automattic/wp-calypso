@@ -15,3 +15,10 @@ export function setSection( section, options = {} ) {
 
 	return action;
 }
+
+export function hideSidebar() {
+	return {
+		type: SECTION_SET,
+		hasSidebar: false,
+	};
+}

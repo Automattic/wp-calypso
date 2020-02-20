@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -15,6 +14,8 @@ import {
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/read/feed';
+
+import 'state/reader/init';
 
 export function requestFeed( feedId ) {
 	return {

@@ -1,12 +1,15 @@
 /**
+ * Internal dependencies
+ */
+import 'state/themes/init';
+
+/**
  * Returns the list of available theme filters
  *
  *
- * @format
- * @param {Object}  state Global state tree
- * @return {Object}        A nested list of theme filters, keyed by filter slug
+ * @param {object}  state Global state tree
+ * @returns {object}        A nested list of theme filters, keyed by filter slug
  */
-
 export default function getThemeFilters( state ) {
 	return state.themes.themeFilters;
 }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,8 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import Button from 'components/button';
+import { Dialog, Button } from '@automattic/components';
 
 /**
  * Style dependencies

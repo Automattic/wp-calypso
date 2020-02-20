@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card/compact';
+import { CompactCard as Card } from '@automattic/components';
 import { domainManagementDns } from 'my-sites/domains/paths';
 import getEmailForwardingMXServers from 'state/selectors/get-email-forwarding-mx-servers';
 

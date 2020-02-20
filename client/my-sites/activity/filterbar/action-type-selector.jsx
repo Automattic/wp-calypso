@@ -1,7 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
+import { isWithinBreakpoint } from '@automattic/viewport';
 import React, { Component, Fragment } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
@@ -12,8 +12,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import Popover from 'components/popover';
@@ -21,7 +20,6 @@ import { requestActivityActionTypeCounts } from 'state/data-getters';
 import { updateFilter } from 'state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import MobileSelectPortal from './mobile-select-portal';
-import { isWithinBreakpoint } from 'lib/viewport';
 
 export class ActionTypeSelector extends Component {
 	state = {
@@ -280,7 +278,4 @@ const mapDispatchToProps = dispatch => ( {
 	},
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ActionTypeSelector ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ActionTypeSelector ) );

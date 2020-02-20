@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal Dependencies
  */
@@ -20,6 +18,7 @@ export function setReduxStore( store ) {
 /**
  * Asynchronously get the current Redux store. Returns a Promise that gets resolved only
  * after the store is set by `setReduxStore`.
+ *
  * @returns {Promise<ReduxStore>} Promise of the Redux store object.
  */
 export function getReduxStore() {
@@ -28,7 +27,8 @@ export function getReduxStore() {
 
 /**
  * Get the state of the current redux store
- * @returns {Object} Redux state
+ *
+ * @returns {object} Redux state
  */
 export function reduxGetState() {
 	if ( ! reduxStore ) {
@@ -39,6 +39,7 @@ export function reduxGetState() {
 
 /**
  * Dispatch an action against the current redux store
+ *
  * @returns {mixed} Result of the dispatch
  */
 export function reduxDispatch( ...args ) {

@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * Retrieve a field's schema, handling referenced schema definitions if need be.
  *
- * @param {Object} fieldSchema - Schema object for field.
- * @param {Object} definitions - Common definitions.
- * @returns {Object} - Schema object for field, potentially pulled from $ref's definition.
+ * @param {object} fieldSchema - Schema object for field.
+ * @param {object} definitions - Common definitions.
+ * @returns {object} - Schema object for field, potentially pulled from $ref's definition.
  */
 const getFieldSchema = ( fieldSchema, definitions ) => {
 	if ( fieldSchema.$ref ) {
@@ -21,9 +19,9 @@ const getFieldSchema = ( fieldSchema, definitions ) => {
 /**
  * Coerces a value into a type.
  *
- * @param {Object} schema - Schema containing type declarations.
+ * @param {object} schema - Schema containing type declarations.
  * @param {*} value - Value to coerce.
- * @param {Object} definitions - Schema definitions.
+ * @param {object} definitions - Schema definitions.
  * @returns {*} - Coerced value.
  */
 export const coerceValue = ( schema, value, definitions ) => {
@@ -81,9 +79,9 @@ export const coerceValue = ( schema, value, definitions ) => {
 /**
  * Coerce a form values object using the provided schema.
  *
- * @param {Object} schema - Schema containing type declarations.
- * @param {Object} values - Form values.
- * @returns {Object} - Coerced values based on schema.
+ * @param {object} schema - Schema containing type declarations.
+ * @param {object} values - Form values.
+ * @returns {object} - Coerced values based on schema.
  */
 const coerceFormValues = ( schema, values ) => {
 	return coerceValue(

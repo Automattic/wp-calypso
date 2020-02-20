@@ -18,6 +18,8 @@ import { preventWidows } from 'lib/formatting';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { isFormDisabled } from 'state/login/selectors';
 
+let auth2InitDone = false;
+
 /**
  * Style dependencies
  */
@@ -30,6 +32,7 @@ class GoogleLoginButton extends Component {
 		isFormDisabled: PropTypes.bool,
 		onClick: PropTypes.func,
 		recordTracksEvent: PropTypes.func.isRequired,
+		redirectUri: PropTypes.string,
 		responseHandler: PropTypes.func.isRequired,
 		scope: PropTypes.string,
 		translate: PropTypes.func.isRequired,
@@ -71,6 +74,21 @@ class GoogleLoginButton extends Component {
 		return window.gapi;
 	}
 
+	async initializeAuth2( gapi ) {
+		if ( auth2InitDone ) {
+			return;
+		}
+
+		await gapi.auth2.init( {
+			fetch_basic_profile: this.props.fetchBasicProfile,
+			client_id: this.props.clientId,
+			scope: this.props.scope,
+			ux_mode: this.props.uxMode,
+			redirect_uri: this.props.redirectUri,
+		} );
+		auth2InitDone = true;
+	}
+
 	initialize() {
 		if ( this.initialized ) {
 			return this.initialized;
@@ -83,27 +101,19 @@ class GoogleLoginButton extends Component {
 		this.initialized = this.loadDependency()
 			.then( gapi => new Promise( resolve => gapi.load( 'auth2', resolve ) ).then( () => gapi ) )
 			.then( gapi =>
-				gapi.auth2
-					.init( {
-						fetch_basic_profile: this.props.fetchBasicProfile,
-						client_id: this.props.clientId,
-						scope: this.props.scope,
-						ux_mode: this.props.uxMode,
-						redirect_uri: this.props.redirectUri,
-					} )
-					.then( () => {
-						this.setState( { isDisabled: false } );
+				this.initializeAuth2( gapi ).then( () => {
+					this.setState( { isDisabled: false } );
 
-						const googleAuth = gapi.auth2.getAuthInstance();
-						const currentUser = googleAuth.currentUser.get();
+					const googleAuth = gapi.auth2.getAuthInstance();
+					const currentUser = googleAuth.currentUser.get();
 
-						// handle social authentication response from a redirect-based oauth2 flow
-						if ( currentUser && this.props.uxMode === 'redirect' ) {
-							this.props.responseHandler( currentUser, false );
-						}
+					// handle social authentication response from a redirect-based oauth2 flow
+					if ( currentUser && this.props.uxMode === 'redirect' ) {
+						this.props.responseHandler( currentUser, false );
+					}
 
-						return gapi; // don't try to return googleAuth here, it's a thenable but not a valid promise
-					} )
+					return gapi; // don't try to return googleAuth here, it's a thenable but not a valid promise
+				} )
 			)
 			.catch( error => {
 				this.initialized = null;
@@ -184,7 +194,9 @@ class GoogleLoginButton extends Component {
 				className: classNames( { disabled: isDisabled } ),
 				onClick: this.handleClick,
 				onMouseOver: this.showError,
+				onFocus: this.showError,
 				onMouseOut: this.hideError,
+				onBlur: this.hideError,
 			};
 
 			customButton = React.cloneElement( children, childProps );

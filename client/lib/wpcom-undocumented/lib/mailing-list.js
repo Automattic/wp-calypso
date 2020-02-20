@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ const debug = debugFactory( 'calypso:wpcom-undocumented:mailing-list' );
 /**
  * `MailingList` constructor.
  *
- * @constructor
+ * @class
  * @param {WPCOM} wpcom
  * @public
  */
@@ -37,9 +35,9 @@ function MailingList( category, wpcom ) {
  *      // result object contains `category`, `email`, and `subscribed` properties
  *    });
  *
- * @param {String} emailAddress
- * @param {String} hmac
- * @param {Object} [context]
+ * @param {string} emailAddress
+ * @param {string} hmac
+ * @param {object} [context]
  * @param {Function} callback
  * @public
  */
@@ -73,9 +71,9 @@ MailingList.prototype.subscribe = function( emailAddress, hmac, context, callbac
  *      // result object contains `category`, `email`, and `subscribed` properties
  *    });
  *
- * @param {String} emailAddress
- * @param {String} hmac
- * @param {Object} [context]
+ * @param {string} emailAddress
+ * @param {string} hmac
+ * @param {object} [context]
  * @param {Function} callback
  * @public
  */

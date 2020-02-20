@@ -88,15 +88,42 @@
 }
 
 .crowdsignal {
-	// Crowdsignal color palette
-	--color-accent: #fb5457;
-	--color-crowdsignal: #384869;
-	--color-link: #384869;
-	--color-text: #384869;
+	background: var( --color-surface );
+	color: var( --studio-gray-100 );
 
-	background: #f2f2f2;
-	color: var( --color-text );
-	font-family: 'Muli', $sans;
+	@include breakpoint( '>660px' ) {
+		background: var( --studio-gray-0 );
+	}
+
+	a, a:visited {
+		color: inherit;
+	}
+
+	.button {
+		background-color: var( --studio-gray-0 );
+		border-radius: 5px;
+		border-width: 1px 1px 2px;
+		box-shadow: none;
+		box-sizing: border-box;
+		font-size: 14px;
+		font-weight: 500;
+		height: 45px;
+		line-height: normal;
+		padding: 13px 40px 12px;
+
+		&.is-borderless {
+			background-color: transparent;
+		}
+
+		&.is-primary {
+			background-color: var( --color-accent );
+			border-color: var( --color-accent-dark );
+		}
+	}
+
+	.card {
+		--color-link-hover: #4ccee4;
+	}
 
 	&.is-section-login {
 		padding-bottom: 100px;
@@ -106,17 +133,7 @@
 			padding-bottom: 145px;
 		}
 
-		.button {
-			border: 0;
-			border-radius: 0;
-			box-sizing: border-box;
-			font-family: 'Muli', $sans;
-			font-weight: normal;
-			letter-spacing: 0.5px;
-			padding: 12px 20px;
-		}
-
-		.card {
+		.card:not( .gdpr-banner ) {
 			background: none;
 			box-shadow: none;
 			border: 0;
@@ -155,6 +172,30 @@
 			position: relative;
 		}
 
+		.login__social-buttons {
+			.button {
+				display: none;
+				margin-bottom: 40px;
+				text-align: left;
+
+				&:first-child {
+					display: block;
+				}
+
+				@include breakpoint( '<660px' ) {
+					margin-bottom: 20px;
+				}
+			}
+
+			.social-buttons__service-name {
+				margin-left: 15px;
+			}
+
+			.login__social-tos {
+				display: none;
+			}
+		}
+
 		.login form {
 			box-sizing: border-box;
 			display: block;
@@ -184,10 +225,12 @@
 		}
 
 		.login__form-header {
+			font-family: 'Recoleta', serif;
 			font-size: 25px;
 			color: var( --color-text );
 			font-weight: 600;
 			margin-bottom: 80px;
+			margin-top: 0;
 
 			@include breakpoint( '>480px' ) {
 				font-size: 32px;
@@ -215,7 +258,6 @@
 			display: none;
 
 			@include breakpoint( '>660px' ) {
-				color: var( --color-text );
 				display: block;
 				font-size: 20px;
 				font-weight: 600;
@@ -225,30 +267,16 @@
 		}
 
 		.login__form-terms {
-			color: var( --color-text );
 			margin: 0;
 			position: absolute;
 			left: 0;
 			right: 0;
-			top: 84px;
+			top: 60px;
 			text-align: center;
 
-			@include breakpoint( '>480px' ) {
-				top: 106px;
-			}
-
 			@include breakpoint( '>660px' ) {
-				display: none;
-			}
-
-			&.login__form-terms-bottom {
-				display: none;
-
-				@include breakpoint( '>660px' ) {
-					display: block;
-					position: initial;
-					margin-bottom: 30px;
-				}
+				position: static;
+				margin-bottom: 30px;
 			}
 
 			a {
@@ -312,15 +340,6 @@
 			margin: 0 0 24px;
 		}
 
-		.social-buttons__button {
-			border: 1px solid #cecfd1;
-			border-radius: 0;
-
-			&:last-of-type {
-				margin-bottom: 40px;
-			}
-		}
-
 		.translator-invite {
 			display: none;
 		}
@@ -328,10 +347,10 @@
 		.wp-login__crowdsignal-footer {
 			background-color: var( --color-crowdsignal );
 			box-sizing: border-box;
-			color: var( --color-neutral-0 );
+			color: var( --color-text-inverted );
 			display: flex;
 			flex-direction: row;
-			fill: var( --color-neutral-0 );
+			fill: var( --color-text-inverted );
 			height: 58px;
 			padding: 20px 40px;
 			position: absolute;
@@ -424,12 +443,17 @@
 		line-height: 83px;
 		margin: 0 auto;
 		z-index: 100;
+	}
 
-		nav {
-			box-sizing: border-box;
-			max-width: 1500px;
-			margin-left: auto;
-			margin-right: auto;
+	.masterbar__oauth-client nav {
+		box-sizing: border-box;
+		max-width: 1500px;
+		margin-left: auto;
+		margin-right: auto;
+		padding-left: 13px;
+		padding-right: 13px;
+
+		@include breakpoint( '>480px' ) {
 			padding-left: 55px;
 			padding-right: 13px;
 		}
@@ -451,10 +475,18 @@
 			color: #999;
 			font-size: 0.9em;
 			font-weight: bold;
-			padding: 32px;
+			padding: 32px 10px;
 			text-decoration: none;
 			text-transform: uppercase;
+
+			@include breakpoint( '>480px' ) {
+				padding: 32px;
+			}
 		}
+	}
+
+	.layout__content {
+		padding-top: 85px;
 	}
 
 	.button.is-primary {
@@ -540,8 +572,14 @@
 	.login__social-buttons {
 		margin-top: 0;
 
+		.login__social-tos {
+			margin: 2.5em auto 0;
+			max-width: 90%;
+		}
+
 		@include breakpoint( '>660px' ) {
 			flex-direction: row;
+			flex-wrap: wrap;
 
 			button:not( :first-of-type ) {
 				margin-top: 0;
@@ -562,6 +600,10 @@
 		box-shadow: none;
 		padding-left: 0;
 		padding-right: 0;
+	}
+
+	.wp-login__container {
+		margin-top: 50px;
 	}
 
 	.wp-login__container,

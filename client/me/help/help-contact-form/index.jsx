@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -99,7 +97,7 @@ export class HelpContactForm extends React.PureComponent {
 
 	/**
 	 * Setup our initial state
-	 * @return {Object} An object representing our initial state
+	 * @returns {object} An object representing our initial state
 	 */
 	state = this.props.valueLink.value || {
 		howCanWeHelp: 'gettingStarted',
@@ -110,7 +108,7 @@ export class HelpContactForm extends React.PureComponent {
 		qanda: [],
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { npsSurveyFeedback, translate } = this.props;
 
 		if ( npsSurveyFeedback ) {
@@ -125,7 +123,7 @@ export class HelpContactForm extends React.PureComponent {
 		this.debouncedQandA = debounce( this.doQandASearch, 500 );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.valueLink.value || isEqual( nextProps.valueLink.value, this.state ) ) {
 			return;
 		}
@@ -199,7 +197,7 @@ export class HelpContactForm extends React.PureComponent {
 	 * @param  {object} selectionOptions An array of objects consisting of a value and a label. It can also have a property called subtext
 	 *                                   value is used when setting state, label is used for display in the selection component, and subtext
 	 *                                   is used for the second line of text displayed in the SegmentedControl
-	 * @return {object}                  A JSX object containing both the SegmentedControl and the SelectDropdown.
+	 * @returns {object}                  A JSX object containing both the SegmentedControl and the SelectDropdown.
 	 */
 	renderFormSelection = ( selectionName, selectionOptions ) => {
 		const { translate } = this.props;
@@ -244,7 +242,7 @@ export class HelpContactForm extends React.PureComponent {
 
 	/**
 	 * Determine if this form is ready to submit
-	 * @return {bool}	Return true if this form can be submitted
+	 * @returns {bool}	Return true if this form can be submitted
 	 */
 	canSubmitForm = () => {
 		const { disabled, showSubjectField } = this.props;
@@ -315,7 +313,7 @@ export class HelpContactForm extends React.PureComponent {
 
 	/**
 	 * Render the contact form
-	 * @return {object} ReactJS JSX object
+	 * @returns {object} ReactJS JSX object
 	 */
 	render() {
 		const {
@@ -488,7 +486,4 @@ const mapDispatchToProps = {
 	showQandAOnInlineHelpContactForm,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( HelpContactForm ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( HelpContactForm ) );

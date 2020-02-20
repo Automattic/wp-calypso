@@ -2,7 +2,6 @@
  * Adapted from the WordPress wp-view TinyMCE plugin.
  *
  *
- * @format
  * @copyright 2015 by the WordPress contributors.
  * @license See CREDITS.md.
  */
@@ -50,7 +49,7 @@ function wpview( editor ) {
 	/**
 	 * Replaces all marker nodes tied to this view instance.
 	 *
-	 * @return {boolean} True if the replacement succeeded; false if it failed.
+	 * @returns {boolean} True if the replacement succeeded; false if it failed.
 	 */
 	function replaceMarkers() {
 		const markers = $( '.wpview-marker' );
@@ -131,7 +130,7 @@ function wpview( editor ) {
 	 * @param {object} node The node to search.
 	 * @param {string} className The class name to search for.
 	 *
-	 * @return {object|boolean} A node on success; false on failure.
+	 * @returns {object|boolean} A node on success; false on failure.
 	 */
 	function getParent( node, className ) {
 		while ( node && node.parentNode ) {
@@ -355,9 +354,7 @@ function wpview( editor ) {
 			if ( imageMatch ) {
 				// If the link looks like an image, replace the pasted content with an <img> tag.
 				// As a side effect, this won't request an embed code to the REST API anymore.
-				event.content = `<img src="${ imageMatch[ 1 ] }${
-					imageMatch[ 2 ]
-				}" style="max-width:100%;" />`;
+				event.content = `<img src="${ imageMatch[ 1 ] }${ imageMatch[ 2 ] }" style="max-width:100%;" />`;
 			} else if ( /^https?:\/\/\S+$/i.test( pastedStr ) ) {
 				// Otherwise replace the content with the cleaned URL.
 				event.content = pastedStr;
