@@ -27,6 +27,7 @@ import {
 	createExistingCardMethod,
 } from '@automattic/composite-checkout';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { format as formatUrl, parse as parseUrl } from 'url';
 
 /**
  * Internal dependencies
@@ -283,11 +284,25 @@ export default function CompositeCheckout( {
 	paypalMethod.id = 'paypal';
 	// This is defined afterward so that getThankYouUrl can be dynamic without having to re-create payment method
 	paypalMethod.submitTransaction = () => {
+		const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
+		const successUrl = formatUrl( {
+			protocol,
+			hostname,
+			port,
+			pathname: getThankYouUrl(),
+		} );
+		const cancelUrl = formatUrl( {
+			protocol,
+			hostname,
+			port,
+			pathname,
+		} );
+
 		return makePayPalExpressRequest(
 			{
 				items,
-				successUrl: getThankYouUrl(),
-				cancelUrl: window.location.href,
+				successUrl,
+				cancelUrl,
 				siteId: select( 'wpcom' )?.getSiteId?.() ?? '',
 				domainDetails: getDomainDetails( select ),
 				couponId: null, // TODO: get couponId
