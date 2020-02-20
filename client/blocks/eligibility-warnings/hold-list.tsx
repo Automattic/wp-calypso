@@ -325,7 +325,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		return {
 			siteId,
-			siteIsLaunching: getRequest( state, launchSite( siteId, null ) )?.isLoading ?? false,
+			siteIsLaunching: getRequest( state, launchSite( siteId ) )?.isLoading ?? false,
 		};
 	},
 	{
