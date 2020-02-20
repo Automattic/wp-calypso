@@ -379,8 +379,26 @@ class SectionMigrate extends Component {
 					{ this.state.errorMessage }
 				</div>
 				<Button primary onClick={ this.resetMigration }>
-					{ translate( 'Back to your site' ) }
+					{ translate( 'Try again' ) }
 				</Button>
+				<p>
+					{ translate(
+						'Or {{supportLink}}contact us{{/supportLink}} so we can' +
+							' figure out exactly' +
+							' what needs adjusting and get your site imported.',
+						{
+							components: {
+								supportLink: (
+									<a
+										href="https://support.wordpress.com"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						}
+					) }
+				</p>
 			</Card>
 		);
 	}
