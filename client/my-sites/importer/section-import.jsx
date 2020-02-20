@@ -149,7 +149,20 @@ class SectionImport extends Component {
 	 * @returns {Array} A list of react elements for each enabled importer
 	 */
 	renderIdleImporters( site, siteTitle, state ) {
-		const importerElements = getImporters().map( importer => {
+		const {
+			options: { is_wpcom_atomic: isAtomic },
+		} = site;
+
+		const importerElementsAll = getImporters();
+
+		/**
+		 * Filter out all importers except the WordPress ones for Atomic sites.
+		 */
+		const importerElementsFiltered = isAtomic
+			? importerElementsAll.filter( importer => importer.engine === 'wordpress' )
+			: importerElementsAll;
+
+		const importerElements = importerElementsFiltered.map( importer => {
 			const { engine } = importer;
 			const ImporterComponent = importerComponents[ engine ];
 
@@ -296,7 +309,10 @@ class SectionImport extends Component {
 			);
 		}
 
-		const { jetpack: isJetpack } = site;
+		const {
+			jetpack: isJetpack,
+			options: { is_wpcom_atomic: isAtomic },
+		} = site;
 
 		return (
 			<Main>
@@ -308,7 +324,7 @@ class SectionImport extends Component {
 					align="left"
 				/>
 				<EmailVerificationGate allowUnlaunched>
-					{ isJetpack ? <JetpackImporter /> : this.renderImportersList() }
+					{ isJetpack && ! isAtomic ? <JetpackImporter /> : this.renderImportersList() }
 				</EmailVerificationGate>
 			</Main>
 		);
