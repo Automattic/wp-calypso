@@ -50,7 +50,6 @@ import { fetchUsernameSuggestion } from 'state/signup/optional-dependencies/acti
 import { isSitePreviewVisible } from 'state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
 import { abtest } from 'lib/abtest';
-import config from 'config';
 
 /**
  * Style dependencies
@@ -130,10 +129,7 @@ class DomainsStep extends React.Component {
 			! props.isPlanStepFulfilled &&
 			'variantShowUpdates' === abtest( 'domainStepCopyUpdates' )
 		) {
-			if (
-				config.isEnabled( 'domain-step-design-update-v2' ) &&
-				'variantDesignUpdates' === abtest( 'domainStepDesignUpdates' )
-			) {
+			if ( 'variantDesignUpdates' === abtest( 'domainStepDesignUpdates' ) ) {
 				this.showDesignUpdate = true;
 			} else {
 				this.showTestCopy = true;
