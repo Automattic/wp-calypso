@@ -16,3 +16,5 @@ export { getActiveReplyCommentId } from 'state/comments/selectors/get-active-rep
 export { getSiteCommentCounts } from 'state/comments/selectors/get-site-comment-counts';
 export { getSiteCommentParentDepth } from 'state/comments/selectors/get-site-comment-parent-depth';
 export { getSiteCommentRepliesTree } from 'state/comments/selectors/get-site-comment-replies-tree';
+export { getSiteComment } from 'state/comments/selectors/get-site-comment';
+export { getSiteComments } from 'state/comments/selectors/get-site-comments';

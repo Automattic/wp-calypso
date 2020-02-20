@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import getSiteComment from 'state/selectors/get-site-comment';
+import { getSiteComment } from 'state/comments/selectors';
 
 import 'state/comments/init';
 

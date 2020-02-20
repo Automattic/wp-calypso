@@ -22,7 +22,7 @@ import replies from './replies';
 import likes from './likes';
 import { errorNotice, removeNotice } from 'state/notices/actions';
 import getRawSite from 'state/selectors/get-raw-site';
-import getSiteComment from 'state/selectors/get-site-comment';
+import { getSiteComment } from 'state/comments/selectors';
 import {
 	changeCommentStatus,
 	editComment as editCommentAction,
@@ -54,7 +54,7 @@ const requestChangeCommentStatus = action => {
 
 export const handleChangeCommentStatusSuccess = ( { commentId, refreshCommentListQuery } ) => {
 	const actions = [ removeNotice( `comment-notice-error-${ commentId }` ) ];
-	if ( !! refreshCommentListQuery ) {
+	if ( refreshCommentListQuery ) {
 		actions.push( requestCommentsList( refreshCommentListQuery ) );
 	}
 	return actions;
@@ -158,7 +158,7 @@ export const addComments = ( { query }, { comments } ) => {
 	const { siteId, status } = query;
 	// Initialize the comments tree to let CommentList know if a tree is actually loaded and empty.
 	// This is needed as a workaround for Jetpack sites populating their comments trees
-	// via `fetchCommentsList` instead of `fetchCommentsTreeForSite`.
+	// via `fetchCommentsList` instead of `fetchCommentsTreeForSite`.
 	// @see https://github.com/Automattic/wp-calypso/pull/16997#discussion_r132161699
 	if ( 0 === comments.length ) {
 		return [

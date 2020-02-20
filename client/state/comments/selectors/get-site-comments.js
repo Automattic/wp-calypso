@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, get, orderBy } from 'lodash';
+import { filter, orderBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,7 +30,7 @@ function filterCommentsByStatus( comments, status ) {
  */
 export const getSiteComments = createSelector(
 	( state, siteId, status, order = 'asc' ) => {
-		const comments = get( state, 'comments.items', {} );
+		const comments = state.comments.items ?? {};
 		const parsedComments = Object.keys( comments )
 			.filter( key => parseInt( key.split( '-', 1 ), 10 ) === siteId )
 			.reduce( ( list, key ) => [ ...list, ...comments[ key ] ], [] );
@@ -41,5 +41,3 @@ export const getSiteComments = createSelector(
 	},
 	state => [ state.comments.items ]
 );
-
-export default getSiteComments;
