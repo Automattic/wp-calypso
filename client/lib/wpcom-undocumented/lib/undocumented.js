@@ -2463,30 +2463,15 @@ Undocumented.prototype.startMigration = function( sourceSiteId, targetSiteId ) {
 	} );
 };
 
-Undocumented.prototype.getAtomicSiteMediaViaProxy = function( siteIdOrSlug, mediaPath, query, fn ) {
+Undocumented.prototype.getAtomicSiteMediaViaProxy = function( siteIdOrSlug, mediaPath, fn ) {
 	return this.wpcom.req.get(
 		{
-			path: `/sites/${ siteIdOrSlug }/atomic-auth-proxy/file${ mediaPath }${ query }`,
+			path: `/sites/${ siteIdOrSlug }/atomic-auth-proxy/file${ mediaPath }`,
 			apiNamespace: 'wpcom/v2',
 			responseType: 'blob',
 		},
 		fn
 	);
-};
-
-Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function(
-	siteIdOrSlug,
-	mediaPath,
-	query,
-	fn
-) {
-	return this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, query, ( err, data ) => {
-		if ( err || ! ( data instanceof Blob ) ) {
-			return this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, query, fn );
-		}
-
-		fn( err, data );
-	} );
 };
 
 export default Undocumented;
