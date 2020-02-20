@@ -47,6 +47,7 @@ import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actio
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import isSiteRecentlyMigrated from 'state/selectors/is-site-recently-migrated';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import StatsBanners from 'my-sites/stats/stats-banners';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
@@ -194,6 +195,9 @@ class Home extends Component {
 			case 'launched':
 				return translate( 'Make sure you share it with everyone and show it off.' );
 
+			case 'migrated':
+				return translate( 'Next, make sure everything looks the way' + ' you expected.' );
+
 			default:
 				return translate(
 					'Next, use this quick list of setup tasks to get your site ready to share.'
@@ -205,6 +209,7 @@ class Home extends Component {
 		const {
 			displayChecklist,
 			isNewlyCreatedSite,
+			isRecentlyMigratedSite,
 			translate,
 			checklistMode,
 			site,
@@ -216,7 +221,7 @@ class Home extends Component {
 		} = this.props;
 
 		// Show a thank-you message 30 mins post site creation/purchase
-		if ( isNewlyCreatedSite && displayChecklist ) {
+		if ( isNewlyCreatedSite && ! isRecentlyMigratedSite && displayChecklist ) {
 			if ( siteIsUnlaunched || isAtomic ) {
 				//Only show pre-launch, or for Atomic sites
 				return (
@@ -242,6 +247,25 @@ class Home extends Component {
 					</>
 				);
 			}
+		}
+
+		if ( isRecentlyMigratedSite ) {
+			return (
+				<Card className="customer-home__migrate-card" highlight="info">
+					<img
+						src="/calypso/images/illustrations/fireworks.svg"
+						aria-hidden="true"
+						className="customer-home__migrate-fireworks"
+						alt=""
+					/>
+					<div className="customer-home__migrate-card-text">
+						<CardHeading>{ translate( 'Your site has been imported!' ) }</CardHeading>
+						<p className="customer-home__migrate-card-subtext">
+							{ this.getChecklistSubHeaderText() }
+						</p>
+					</div>
+				</Card>
+			);
 		}
 
 		// If launched, show a congratulatory message, else show the standard heading
@@ -638,6 +662,7 @@ const connectHome = connect(
 			siteHasPaidPlan: isSiteOnPaidPlan( state, siteId ),
 			isNewlyCreatedSite: isNewSite( state, siteId ),
 			isEstablishedSite: moment().isAfter( moment( createdAt ).add( 2, 'days' ) ),
+			isRecentlyMigratedSite: isSiteRecentlyMigrated( state, siteId ),
 			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 			staticHomePageId: getSiteFrontPage( state, siteId ),
 			showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),

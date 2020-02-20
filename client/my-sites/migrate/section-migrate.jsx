@@ -74,6 +74,10 @@ class SectionMigrate extends Component {
 		if ( this.props.targetSiteId !== prevProps.targetSiteId ) {
 			this.updateFromAPI();
 		}
+
+		if ( 'done' === this.state.migrationStatus ) {
+			this.finishMigration();
+		}
 	}
 
 	fetchSourceSitePluginsAndThemes = () => {
@@ -113,6 +117,17 @@ class SectionMigrate extends Component {
 		const { targetSiteId } = this.props;
 
 		return sourceSite.jetpack && sourceSite.ID !== targetSiteId;
+	};
+
+	finishMigration = () => {
+		const { targetSiteId, targetSiteSlug } = this.props;
+
+		wpcom
+			.undocumented()
+			.resetMigration( targetSiteId )
+			.finally( () => {
+				page( `/home/${ targetSiteSlug }` );
+			} );
 	};
 
 	resetMigration = () => {
@@ -574,8 +589,7 @@ class SectionMigrate extends Component {
 				break;
 
 			case 'done':
-				migrationElement = this.renderMigrationComplete();
-				break;
+				return null;
 
 			case 'error':
 				migrationElement = this.renderMigrationError();
