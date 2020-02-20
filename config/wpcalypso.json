@@ -130,6 +130,7 @@
 		"signup/ecommerce-flow": false,
 		"signup/wpcc": true,
 		"support-user": true,
+		"tools/migrate": true,
 		"try/preconnect": true,
 		"try/preload": true,
 		"try/single-cdn": true,
