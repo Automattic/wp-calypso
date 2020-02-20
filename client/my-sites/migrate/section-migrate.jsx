@@ -103,20 +103,8 @@ class SectionMigrate extends Component {
 		} );
 	};
 
-	getImportHref = () => {
-		const { isTargetSiteJetpack, targetSiteImportAdminUrl, targetSiteSlug } = this.props;
-
-		return isTargetSiteJetpack ? targetSiteImportAdminUrl : `/import/${ targetSiteSlug }`;
-	};
-
 	handleJetpackSelect = () => {
 		this.props.navigateToSelectedSourceSite( this.state.selectedSiteSlug );
-	};
-
-	jetpackSiteFilter = sourceSite => {
-		const { targetSiteId } = this.props;
-
-		return sourceSite.jetpack && sourceSite.ID !== targetSiteId;
 	};
 
 	finishMigration = () => {

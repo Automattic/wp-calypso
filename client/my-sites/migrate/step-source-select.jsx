@@ -23,7 +23,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
  */
 import './section-migrate.scss';
 import SitesBlock from 'my-sites/migrate/components/sites-block';
-import { redirectTo } from 'my-sites/migrate/helpers';
+import { getImportSectionLocation, redirectTo } from 'my-sites/migrate/helpers';
 
 const wpcom = wpLib.undocumented();
 
@@ -113,7 +113,7 @@ class StepSourceSelect extends Component {
 	render() {
 		const { targetSite, targetSiteSlug, translate } = this.props;
 		const backHref = `/import/${ targetSiteSlug }`;
-		const uploadFileLink = `/import/${ targetSiteSlug }?engine=wordpress`;
+		const uploadFileLink = getImportSectionLocation( targetSiteSlug, targetSite.jetpack );
 
 		return (
 			<>
