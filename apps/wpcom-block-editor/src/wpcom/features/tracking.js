@@ -95,12 +95,10 @@ const getBlocksTracker = eventName => blockIds => {
  * @returns {void}
  */
 const trackBlockInsertion = blocks => {
-	castArray( blocks ).forEach( block => {
-		tracksRecordEvent( 'wpcom_block_inserted', {
-			block_name: block.name,
-			blocks_replaced: false,
-		} );
-	} );
+	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( { name } ) => ( {
+		block_name: name,
+		blocks_replaced: false,
+	} ) );
 };
 
 /**
@@ -111,12 +109,10 @@ const trackBlockInsertion = blocks => {
  * @returns {void}
  */
 const trackBlockReplacement = ( originalBlockIds, blocks ) => {
-	castArray( blocks ).forEach( block => {
-		tracksRecordEvent( 'wpcom_block_picker_block_inserted', {
-			block_name: block.name,
-			blocks_replaced: true,
-		} );
-	} );
+	trackBlocksHandler( blocks, 'wpcom_block_picker_block_inserted', ( { name } ) => ( {
+		block_name: name,
+		blocks_replaced: true,
+	} ) );
 };
 
 /**
