@@ -124,9 +124,9 @@ const trackBlockReplacement = ( originalBlockIds, blocks ) => {
  * @returns {void}
  */
 const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
-	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( block, parent ) => ( {
-		block_name: block.name,
-		blocks_replaced: ! parent,
+	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( { name } ) => ( {
+		block_name: name,
+		blocks_replaced: true,
 		// isInsertingPageTemplate filter is set by Starter Page Templates
 		from_template_selector: applyFilters( 'isInsertingPageTemplate', false ),
 	} ) );
