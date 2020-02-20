@@ -13,7 +13,7 @@ import { map, take } from 'lodash';
 import Comment from 'my-sites/comments/comment';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import getSiteCommentParentDepth from 'state/selectors/get-site-comment-parent-depth';
+import { getSiteCommentParentDepth } from 'state/comments/selectors';
 import getSiteCommentRepliesTree from 'state/selectors/get-site-comment-replies-tree';
 
 /**
