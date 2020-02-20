@@ -2,11 +2,14 @@
  * External dependencies
  */
 import { useContext } from 'react';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import CheckoutContext from '../checkout-context';
+
+const debug = debugFactory( 'composite-checkout:payment-methods' );
 
 export function usePaymentMethodId() {
 	const { paymentMethodId, setPaymentMethodId } = useContext( CheckoutContext );
@@ -27,7 +30,8 @@ export function usePaymentMethod() {
 	}
 	const paymentMethod = allPaymentMethods.find( ( { id } ) => id === paymentMethodId );
 	if ( ! paymentMethod ) {
-		throw new Error( `No payment method found matching id '${ paymentMethodId }'` );
+		debug( `No payment method found matching id '${ paymentMethodId }' in`, allPaymentMethods );
+		return null;
 	}
 	return paymentMethod;
 }
