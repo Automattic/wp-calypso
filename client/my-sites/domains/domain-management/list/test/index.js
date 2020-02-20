@@ -143,6 +143,7 @@ describe( 'index', () => {
 					expect( setPrimaryDomainStub ).not.toHaveBeenCalled();
 				} );
 
+				// eslint-disable-next-line jest/no-test-callback
 				test( 'should call setPrimaryDomain with a domain name', done => {
 					component.instance().handleUpdatePrimaryDomain( 0, defaultProps.domains[ 0 ] );
 					expect( component.state( 'settingPrimaryDomain' ) ).toBe( true );
@@ -157,6 +158,7 @@ describe( 'index', () => {
 					}, 0 );
 				} );
 
+				// eslint-disable-next-line jest/no-test-callback
 				test( 'should handle errors and revert the optimistic updates', done => {
 					component.instance().handleUpdatePrimaryDomain( 0, defaultProps.domains[ 0 ] );
 					setPrimaryDomainReject();
