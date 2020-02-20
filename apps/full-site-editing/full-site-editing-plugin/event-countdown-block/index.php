@@ -42,8 +42,4 @@ add_action(
 	}
 );
 
-/**
- * AUTO-GENERATED blocks will be added here
- */
-
 require_once __DIR__ . '/blocks/event-countdown.php';
