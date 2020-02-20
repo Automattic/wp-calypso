@@ -13,3 +13,4 @@ export { commentsFetchingStatus } from 'state/comments/selectors/comments-fetchi
 export { getCommentLike } from 'state/comments/selectors/get-comment-like';
 
 export { getActiveReplyCommentId } from 'state/comments/selectors/get-active-reply-comment-id';
+export { getSiteCommentCounts } from 'state/comments/selectors/get-site-comment-counts';

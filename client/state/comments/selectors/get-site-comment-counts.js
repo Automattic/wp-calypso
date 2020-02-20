@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import 'state/comments/init';
@@ -16,11 +11,9 @@ import 'state/comments/init';
  * @param {number} [postId] Post identifier
  * @returns {object} The requested comment counts
  */
-export const getSiteCommentCounts = ( state, siteId, postId ) => {
+export function getSiteCommentCounts( state, siteId, postId ) {
 	if ( postId ) {
-		return get( state, [ 'comments', 'counts', siteId, postId ], null );
+		return state.comments.counts[ siteId ]?.[ postId ] ?? null;
 	}
-	return get( state, [ 'comments', 'counts', siteId, 'site' ], null );
-};
-
-export default getSiteCommentCounts;
+	return state.comments.counts[ siteId ]?.site ?? null;
+}
