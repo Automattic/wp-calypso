@@ -7,7 +7,7 @@ import { I18nProvider } from '@automattic/react-i18n';
 import { getLanguageFile } from '../../lib/i18n-utils/switch-locale';
 import React from 'react';
 import ReactDom from 'react-dom';
-import { BrowserRouter, Route, Switch, Redirect, generatePath } from 'react-router-dom';
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import config from '../../config';
 import { subscribe, select } from '@wordpress/data';
 
@@ -17,7 +17,7 @@ import { subscribe, select } from '@wordpress/data';
 import { Gutenboard } from './gutenboard';
 import { setupWpDataDebug } from './devtools';
 import accessibleFocus from 'lib/accessible-focus';
-import { path, Step } from './path';
+import { path } from './path';
 import { USER_STORE } from './stores/user';
 
 /**
@@ -61,7 +61,7 @@ window.AppBoot = async () => {
 						<Gutenboard />
 					</Route>
 					<Route>
-						<Redirect to={ generatePath( path, { step: Step.IntentGathering } ) } />
+						<Redirect to="/" />
 					</Route>
 				</Switch>
 			</BrowserRouter>
