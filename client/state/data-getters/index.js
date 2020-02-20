@@ -9,6 +9,7 @@ import { http as rawHttp } from 'state/http/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { requestHttpData } from 'state/data-layer/http-data';
 import { filterStateToApiQuery } from 'state/activity-log/utils';
+import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import fromActivityLogApi from 'state/data-layer/wpcom/sites/activity/from-api';
 import fromActivityTypeApi from 'state/data-layer/wpcom/sites/activity-types/from-api';
 
@@ -147,6 +148,28 @@ export const requestGeoLocation = () =>
 		} ),
 		{ fromApi: () => ( { body: { country_short } } ) => [ [ 'geo', country_short ] ] }
 	);
+
+export const requestFeedDiscovery = feedId => {
+	const requestId = `feed-discovery-${ feedId }`;
+
+	return requestHttpData(
+		requestId,
+		http(
+			{
+				method: 'GET',
+				path: '/read/feed',
+				query: {
+					url: feedId,
+				},
+				retryPolicy: noRetry(),
+			},
+			{}
+		),
+		{
+			fromApi: () => ( { feeds } ) => [ [ requestId, feeds ] ],
+		}
+	);
+};
 
 export const requestSiteAlerts = siteId => {
 	const id = `site-alerts-${ siteId }`;
