@@ -29,12 +29,13 @@ import { publicizeActionsSchema } from './schema';
 
 /**
  * Updates deeply nested data for the siteId/postId subtree
+ *
  * @param {mixed} newValue - new value to assign in the subtree
- * @param {Object} state previous state
+ * @param {object} state previous state
  * @param {number} siteId siteId
  * @param {number} postId siteId
  * @param {number} actionId This parameter is optional. If passed, it will update value nested deeper in the actionId subtree
- * @returns {Object} New mutated state
+ * @returns {object} New mutated state
  */
 export function updateDataForPost( newValue, state, siteId, postId, actionId ) {
 	if ( typeof actionId !== 'undefined' ) {

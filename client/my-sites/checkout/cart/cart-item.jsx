@@ -10,6 +10,7 @@ import { getCurrencyObject } from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
+import { withLocalizedMoment } from 'components/localized-moment';
 import analytics from 'lib/analytics';
 import { canRemoveFromCart } from 'lib/cart-values';
 import { getIncludedDomain } from 'lib/cart-values/cart-items';
@@ -355,4 +356,4 @@ export class CartItem extends React.Component {
 
 export default connect( state => ( {
 	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
-} ) )( localize( CartItem ) );
+} ) )( localize( withLocalizedMoment( CartItem ) ) );

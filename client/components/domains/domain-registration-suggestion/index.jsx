@@ -30,6 +30,7 @@ import { getDomainPrice, getDomainSalePrice, getTld, isHstsRequired } from 'lib/
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getProductsList } from 'state/products-list/selectors';
 import Badge from 'components/badge';
+import PlanPill from 'components/plans/plan-pill';
 import InfoPopover from 'components/info-popover';
 import { HTTPS_SSL } from 'lib/url/support';
 
@@ -196,6 +197,8 @@ class DomainRegistrationSuggestion extends React.Component {
 		const titleWrapperClassName = classNames( 'domain-registration-suggestion__title-wrapper', {
 			'domain-registration-suggestion__title-domain-copy-test':
 				this.props.showTestCopy && ! this.props.isFeatured,
+			'domain-registration-suggestion__title-domain-design-updates':
+				this.props.showDesignUpdate && ! this.props.isFeatured,
 		} );
 
 		return (
@@ -207,6 +210,7 @@ class DomainRegistrationSuggestion extends React.Component {
 						className="domain-registration-suggestion__hsts-tooltip"
 						iconSize={ infoPopoverSize }
 						position={ 'right' }
+						{ ...( this.props.showDesignUpdate ? { icon: 'help-outline' } : {} ) }
 					>
 						{ translate(
 							'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
@@ -217,7 +221,16 @@ class DomainRegistrationSuggestion extends React.Component {
 									tld: '.' + getTld( domain ),
 								},
 								components: {
-									a: <a href={ HTTPS_SSL } target="_blank" rel="noopener noreferrer" />,
+									a: (
+										<a
+											href={ HTTPS_SSL }
+											target="_blank"
+											rel="noopener noreferrer"
+											onClick={ event => {
+												event.stopPropagation();
+											} }
+										/>
+									),
 									strong: <strong />,
 								},
 							}
@@ -241,7 +254,9 @@ class DomainRegistrationSuggestion extends React.Component {
 
 		let title, progressBarProps;
 		if ( isRecommended ) {
-			title = this.props.showTestCopy ? 'Our Recommendation' : translate( 'Best Match' );
+			title = this.props.isEligibleVariantForDomainTest
+				? translate( 'Our Recommendation' )
+				: translate( 'Best Match' );
 			progressBarProps = {
 				color: NOTICE_GREEN,
 				title,
@@ -263,9 +278,27 @@ class DomainRegistrationSuggestion extends React.Component {
 					success: isRecommended,
 					'info-blue': isBestAlternative,
 				} );
+
 				return (
 					<div className="domain-registration-suggestion__progress-bar">
 						<Badge type={ badgeClassName }>{ title }</Badge>
+					</div>
+				);
+			}
+
+			if ( this.props.showDesignUpdate ) {
+				const pillClassNames = classNames(
+					'domain-registration-suggestion__progress-bar',
+					'domain-registration-suggestion__progress-bar-design-update-test',
+					{
+						'pill-success': isRecommended,
+						'pill-primary': isBestAlternative,
+					}
+				);
+
+				return (
+					<div className={ pillClassNames }>
+						<PlanPill>{ title }</PlanPill>
 					</div>
 				);
 			}
@@ -280,7 +313,7 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	renderMatchReason() {
-		if ( this.props.showTestCopy ) {
+		if ( this.props.isEligibleVariantForDomainTest ) {
 			return null;
 		}
 
@@ -334,6 +367,8 @@ class DomainRegistrationSuggestion extends React.Component {
 				onButtonClick={ this.onButtonClick }
 				{ ...this.getButtonProps() }
 				showTestCopy={ this.props.showTestCopy }
+				showDesignUpdate={ this.props.showDesignUpdate }
+				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 				isFeatured={ isFeatured }
 			>
 				{ this.renderDomain() }
@@ -348,8 +383,7 @@ const mapStateToProps = ( state, props ) => {
 	const productSlug = get( props, 'suggestion.product_slug' );
 	const productsList = getProductsList( state );
 	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
-	const showTestCopy = get( props, 'showTestCopy', false );
-	const stripZeros = showTestCopy ? true : false;
+	const stripZeros = props.isEligibleVariantForDomainTest ? true : false;
 
 	return {
 		showHstsNotice: isHstsRequired( productSlug, productsList ),

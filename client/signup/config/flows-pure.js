@@ -131,7 +131,8 @@ export function generateFlows( {
 			],
 			destination: getSignupDestination,
 			description: 'The improved onboarding flow.',
-			lastModified: '2019-06-20',
+			lastModified: '2020-02-05',
+			showRecaptcha: true,
 		},
 
 		desktop: {
@@ -199,23 +200,21 @@ export function generateFlows( {
 		},
 	};
 
-	if ( isEnabled( 'rewind/clone-site' ) ) {
-		flows[ 'clone-site' ] = {
-			steps: [
-				'clone-start',
-				'clone-destination',
-				'clone-credentials',
-				'clone-point',
-				'clone-ready',
-				'clone-cloning',
-			],
-			destination: '/activity-log',
-			description: 'Allow Jetpack users to clone a site via Rewind (alternate restore)',
-			lastModified: '2018-05-28',
-			disallowResume: true,
-			allowContinue: false,
-		};
-	}
+	flows[ 'clone-site' ] = {
+		steps: [
+			'clone-start',
+			'clone-destination',
+			'clone-credentials',
+			'clone-point',
+			'clone-ready',
+			'clone-cloning',
+		],
+		destination: '/activity-log',
+		description: 'Allow Jetpack users to clone a site via Rewind (alternate restore)',
+		lastModified: '2018-05-28',
+		disallowResume: true,
+		allowContinue: false,
+	};
 
 	if ( isEnabled( 'signup/atomic-store-flow' ) ) {
 		// Important: For any changes done to the ecommerce flow,
@@ -350,6 +349,17 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'User testing Signup flow for Full Site Editing',
 			lastModified: '2019-12-02',
+		};
+	}
+
+	if ( isEnabled( 'gutenboarding' ) ) {
+		flows.frankenflow = {
+			steps: [ 'plans-launch', 'launch' ],
+			destination: getLaunchDestination,
+			description: 'Frankenflow launch for a site created from Gutenboarding',
+			lastModified: '2020-01-22',
+			pageTitle: translate( 'Launch your site' ),
+			providesDependenciesInQuery: [ 'siteSlug' ],
 		};
 	}
 

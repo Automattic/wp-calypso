@@ -32,8 +32,8 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * `site:1234`
  * `search:a:value` ( prefix is `search`, suffix is `a:value` )
  *
- * @param  {String} streamKey The stream ID to break apart
- * @return {String}          The stream ID suffix
+ * @param  {string} streamKey The stream ID to break apart
+ * @returns {string}          The stream ID suffix
  */
 function streamKeySuffix( streamKey ) {
 	return streamKey.substring( streamKey.indexOf( ':' ) + 1 );
@@ -166,6 +166,7 @@ const streamApis = {
 
 /**
  * Request a page for the given stream
+ *
  * @param  {object}   action   Action being handled
  * @returns {object} http action for data-layer to dispatch
  */

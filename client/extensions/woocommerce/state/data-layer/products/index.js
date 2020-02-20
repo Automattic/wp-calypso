@@ -50,11 +50,11 @@ export function apiError( { dispatch }, action, error ) {
 /**
  * Wraps an action with a product update action.
  *
- * @param {Number} siteId The id of the site upon which the request should be made.
- * @param {Object} originatingAction The action which precipitated this request.
- * @param {Object} successAction Will be dispatched with extra props: { sentData, receivedData }
- * @param {Object} [sentData] The sentData to be embedded in the successAction along with receivedData.
- * @return {Function} Curried function to be dispatched.
+ * @param {number} siteId The id of the site upon which the request should be made.
+ * @param {object} originatingAction The action which precipitated this request.
+ * @param {object} successAction Will be dispatched with extra props: { sentData, receivedData }
+ * @param {object} [sentData] The sentData to be embedded in the successAction along with receivedData.
+ * @returns {Function} Curried function to be dispatched.
  */
 function updatedAction( siteId, originatingAction, successAction, sentData ) {
 	return ( dispatch, getState, { data: receivedData } ) => {

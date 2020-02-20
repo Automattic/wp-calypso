@@ -1,7 +1,7 @@
 /**
  * Detects if CSS custom properties are supported
  *
- * @return {boolean} true when feature is supported
+ * @returns {boolean} true when feature is supported
  */
 export function supportsCssCustomProperties() {
 	return (

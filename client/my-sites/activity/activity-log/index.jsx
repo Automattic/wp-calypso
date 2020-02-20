@@ -2,16 +2,16 @@
 /**
  * External dependencies
  */
+import { isMobile } from '@automattic/viewport';
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, includes, isEmpty, isEqual, some } from 'lodash';
+import { find, get, includes, isEmpty, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
  */
-
 import ActivityLogBanner from '../activity-log-banner';
 import ActivityLogExample from '../activity-log-example';
 import ActivityLogItem from '../activity-log-item';
@@ -26,7 +26,6 @@ import Filterbar from '../filterbar';
 import UpgradeBanner from '../activity-log-banner/upgrade-banner';
 import IntroBanner from '../activity-log-banner/intro-banner';
 import { isFreePlan } from 'lib/plans';
-import { isJetpackBackup } from 'lib/products-values';
 import JetpackBackupCredsBanner from 'blocks/jetpack-backup-creds-banner';
 import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
@@ -44,7 +43,7 @@ import FormattedHeader from 'components/formatted-header';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import RewindUnavailabilityNotice from './rewind-unavailability-notice';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSitePurchases } from 'state/purchases/selectors';
+import { siteHasBackupProductPurchase } from 'state/purchases/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSiteSlug, getSiteTitle, isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
@@ -67,9 +66,9 @@ import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import isVipSite from 'state/selectors/is-vip-site';
+import siteSupportsRealtimeBackup from 'state/selectors/site-supports-realtime-backup';
 import { requestActivityLogs } from 'state/data-getters';
 import { emptyFilter } from 'state/activity-log/reducer';
-import { isMobile } from 'lib/viewport';
 import analytics from 'lib/analytics';
 import { applySiteOffset } from 'lib/site/timezone';
 import { withLocalizedMoment } from 'components/localized-moment';
@@ -371,6 +370,7 @@ class ActivityLog extends Component {
 			isAtomic,
 			isJetpack,
 			isIntroDismissed,
+			supportsRealtimeBackup,
 		} = this.props;
 
 		const disableRestore =
@@ -407,12 +407,24 @@ class ActivityLog extends Component {
 			};
 		} )();
 
+		const provisioningText = supportsRealtimeBackup
+			? translate(
+					"We're currently backing up your site for the first time, and we'll let you know when we're finished. " +
+						"After this initial backup, we'll save future changes in real time."
+			  )
+			: translate(
+					"We're currently backing up your site for the first time, and we'll let you know when we're finished. " +
+						"After this initial backup, we'll save future changes every day."
+			  );
+
 		return (
 			<div>
 				{ siteId && 'active' === rewindState.state && (
 					<QueryRewindBackupStatus siteId={ siteId } />
 				) }
 				<QuerySiteSettings siteId={ siteId } />
+				<QuerySitePurchases siteId={ siteId } />
+
 				<SidebarNavigation />
 
 				<JetpackBackupCredsBanner event={ 'activity-backup-credentials' } />
@@ -432,10 +444,7 @@ class ActivityLog extends Component {
 						icon="history"
 						disableHref
 						title={ translate( 'Your backup is underway' ) }
-						description={ translate(
-							"We're currently backing up your site for the first time, and we'll let you know when we're finished. " +
-								"After this initial backup, we'll save future changes in real time."
-						) }
+						description={ provisioningText }
 					/>
 				) }
 				<IntroBanner siteId={ siteId } />
@@ -565,10 +574,6 @@ class ActivityLog extends Component {
 
 const emptyList = [];
 
-const hasBackupProduct = purchases => {
-	return some( purchases, purchase => purchase.active && isJetpackBackup( purchase ) );
-};
-
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
@@ -583,8 +588,7 @@ export default connect(
 		const siteIsOnFreePlan =
 			isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) ) &&
 			! isVipSite( state, siteId );
-		const purchases = getSitePurchases( state, siteId );
-		const siteHasNoLog = siteIsOnFreePlan && ! hasBackupProduct( purchases );
+		const siteHasNoLog = siteIsOnFreePlan && ! siteHasBackupProductPurchase( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
 
 		return {
@@ -611,6 +615,7 @@ export default connect(
 			timezone,
 			siteHasNoLog,
 			isIntroDismissed: getPreference( state, 'dismissible-card-activity-introduction-banner' ),
+			supportsRealtimeBackup: siteSupportsRealtimeBackup( state, siteId ),
 		};
 	},
 	{

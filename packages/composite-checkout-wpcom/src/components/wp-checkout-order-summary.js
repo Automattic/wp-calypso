@@ -3,7 +3,13 @@
  */
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
-import { useLineItems, useTotal, renderDisplayValueMarkdown } from '@automattic/composite-checkout';
+import {
+	useLineItems,
+	useTotal,
+	renderDisplayValueMarkdown,
+	useEvents,
+	useFormStatus,
+} from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -11,31 +17,36 @@ import { useTranslate } from 'i18n-calypso';
  */
 import Button from './button';
 import Coupon from './coupon';
+import { isLineItemADomain } from '../hooks/has-domains';
 
-export default function WPCheckoutOrderSummary() {
+export default function WPCheckoutOrderSummary( { siteUrl, couponStatus, couponFieldStateProps } ) {
 	const translate = useTranslate();
+	const { formStatus } = useFormStatus();
 	const [ items ] = useLineItems();
+	const onEvent = useEvents();
 	//TODO: tie the default coupon field visibility based on whether there is a coupon in the cart
 	const [ isCouponFieldVisible, setIsCouponFieldVisible ] = useState( false );
-	const [ hasCouponBeenApplied, setHasCouponBeenApplied ] = useState( false );
+	const hasCouponBeenApplied = couponStatus === 'applied';
 
-	//TODO: Replace yourdomain.tld with actual domian: show .wordpress subdomain if no custom domain available or in the cart
+	const firstDomainItem = items.find( isLineItemADomain );
+	const domainUrl = firstDomainItem ? firstDomainItem.sublabel : siteUrl;
+
 	return (
 		<React.Fragment>
-			<DomainURL>yourdomain.tld</DomainURL>
+			{ domainUrl && <DomainURL>{ domainUrl }</DomainURL> }
 
 			<SummaryContent>
 				<ProductList>
-					{ items.map( product => {
+					{ items.filter( shouldItemBeInSummary ).map( product => {
 						return <ProductListItem key={ product.id }>{ product.label }</ProductListItem>;
 					} ) }
 				</ProductList>
 
-				{ ! hasCouponBeenApplied && ! isCouponFieldVisible && (
+				{ ! hasCouponBeenApplied && ! isCouponFieldVisible && formStatus === 'ready' && (
 					<AddCouponButton
 						buttonState="text-button"
 						onClick={ () => {
-							setIsCouponFieldVisible( true );
+							handleAddCouponButtonClick( setIsCouponFieldVisible, onEvent );
 						} }
 					>
 						{ translate( 'Add a coupon' ) }
@@ -43,13 +54,14 @@ export default function WPCheckoutOrderSummary() {
 				) }
 			</SummaryContent>
 
-			<CouponField
-				id="order-summary-coupon"
-				isCouponFieldVisible={ isCouponFieldVisible }
-				couponAdded={ () => {
-					handleCouponAdded( setIsCouponFieldVisible, setHasCouponBeenApplied );
-				} }
-			/>
+			{ isCouponFieldVisible && (
+				<CouponField
+					id="order-summary-coupon"
+					disabled={ formStatus !== 'ready' }
+					couponStatus={ couponStatus }
+					couponFieldStateProps={ couponFieldStateProps }
+				/>
+			) }
 		</React.Fragment>
 	);
 }
@@ -114,7 +126,14 @@ const AddCouponButton = styled( Button )`
 	}
 `;
 
-function handleCouponAdded( setIsCouponFieldVisible, setHasCouponBeenApplied ) {
-	setIsCouponFieldVisible( false );
-	setHasCouponBeenApplied( true );
+function handleAddCouponButtonClick( setIsCouponFieldVisible, onEvent ) {
+	setIsCouponFieldVisible( true );
+	onEvent( {
+		type: 'a8c_checkout_add_coupon_button_clicked',
+	} );
+}
+
+function shouldItemBeInSummary( item ) {
+	const itemTypesToIgnore = [ 'tax', 'credits', 'wordpress-com-credits' ];
+	return ! itemTypesToIgnore.includes( item.type );
 }

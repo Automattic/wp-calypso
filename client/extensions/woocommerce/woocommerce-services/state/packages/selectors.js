@@ -30,8 +30,9 @@ const getPredefinedPackageServices = form => {
 
 /**
  * Returns a list of all selected packages, custom and predefined
- * @param {Object} state - state tree
- * @param {Number} siteId - current site id
+ *
+ * @param {object} state - state tree
+ * @param {number} siteId - current site id
  * @returns {Array} selected packages
  */
 export const getAllSelectedPackages = createSelector(
@@ -85,9 +86,10 @@ export const getAllSelectedPackages = createSelector(
 /**
  * Returns definitions of packages that can be used during the label purchase,
  * including all flat rate boxes. Results are grouped
- * @param {Object} state - state tree
- * @param {Number} siteId - current site id
- * @returns {Object} packages grouped by services
+ *
+ * @param {object} state - state tree
+ * @param {number} siteId - current site id
+ * @returns {object} packages grouped by services
  */
 export const getPackageGroupsForLabelPurchase = createSelector(
 	( state, orderId, siteId = getSelectedSiteId( state ) ) => {
@@ -156,9 +158,10 @@ export const getPackageGroupsForLabelPurchase = createSelector(
 
 /**
  * Returns all available package definitions, keyed by their ID
- * @param {Object} state - state tree
- * @param {Number} siteId - current site id
- * @returns {Object} packages keyed by id
+ *
+ * @param {object} state - state tree
+ * @param {number} siteId - current site id
+ * @returns {object} packages keyed by id
  */
 export const getAllPackageDefinitions = createSelector(
 	( state, siteId = getSelectedSiteId( state ) ) => {
@@ -200,9 +203,10 @@ export const getAllPackageDefinitions = createSelector(
 /**
  * Returns currently edited predefined non-flat-rate packages, including their definitions,
  * decorated with selected state and service information
- * @param {Object} state - state tree
- * @param {Number} siteId - site ID
- * @returns {Object} an object containing package groups and their definitions
+ *
+ * @param {object} state - state tree
+ * @param {number} siteId - site ID
+ * @returns {object} an object containing package groups and their definitions
  */
 export const getCurrentlyEditingPredefinedPackages = createSelector(
 	( state, siteId = getSelectedSiteId( state ) ) => {
@@ -266,9 +270,10 @@ export const getCurrentlyEditingPredefinedPackages = createSelector(
 
 /**
  * Returns a summary of edits made to the predefined packages (added packages count, removed packages count)
- * @param {Object} state - state tree
- * @param {Number} siteId - site ID
- * @returns {Object} an object containing the changes summary
+ *
+ * @param {object} state - state tree
+ * @param {number} siteId - site ID
+ * @returns {object} an object containing the changes summary
  */
 export const getPredefinedPackagesChangesSummary = createSelector(
 	( state, siteId = getSelectedSiteId( state ) ) => {

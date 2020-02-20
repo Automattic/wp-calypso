@@ -9,8 +9,12 @@ export function useHasDomainsInCart() {
 }
 
 export function areDomainsInLineItems( items ) {
-	if ( items.find( item => item.type === 'domain' ) ) {
+	if ( items.find( isLineItemADomain ) ) {
 		return true;
 	}
 	return false;
+}
+
+export function isLineItemADomain( item ) {
+	return item.type.includes( 'domain' );
 }

@@ -20,9 +20,9 @@ import 'state/data-layer/wpcom/sites/homepage';
 /**
  * Returns an action object to be used in signalling that site settings have been received.
  *
- * @param  {Number} siteId Site ID
- * @param  {Object} settings The site settings object
- * @return {Object}        Action object
+ * @param  {number} siteId Site ID
+ * @param  {object} settings The site settings object
+ * @returns {object}        Action object
  */
 export function receiveSiteSettings( siteId, settings ) {
 	return {
@@ -35,9 +35,9 @@ export function receiveSiteSettings( siteId, settings ) {
 /**
  * Returns an action object to be used in signalling that some site settings have been update.
  *
- * @param  {Number} siteId Site ID
- * @param  {Object} settings The updated site settings
- * @return {Object}        Action object
+ * @param  {number} siteId Site ID
+ * @param  {object} settings The updated site settings
+ * @returns {object}        Action object
  */
 export function updateSiteSettings( siteId, settings ) {
 	return {
@@ -51,8 +51,8 @@ export function updateSiteSettings( siteId, settings ) {
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve site settings
  *
- * @param  {Number} siteId Site ID
- * @return {Function}      Action thunk
+ * @param  {number} siteId Site ID
+ * @returns {Function}      Action thunk
  */
 export function requestSiteSettings( siteId ) {
 	return dispatch => {

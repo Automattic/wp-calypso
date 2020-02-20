@@ -26,7 +26,6 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import MainWrapper from './main-wrapper';
 import Spinner from 'components/spinner';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { addCalypsoEnvQueryArg } from './utils';
 import { addQueryArgs } from 'lib/route';
 import {
@@ -303,7 +302,6 @@ export class OrgCredentialsForm extends Component {
 		return (
 			<LoggedOutFormLinks>
 				{ ( this.isInvalidCreds() || ! installError ) && (
-					// eslint-disable-next-line react/no-jsx-bind
 					<LoggedOutFormLinkItem href={ manualInstallUrl } onClick={ manualInstallClick }>
 						{ translate( 'Install Jetpack manually' ) }
 					</LoggedOutFormLinkItem>
@@ -383,8 +381,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( OrgCredentialsForm );
+export default flowRight( connectComponent, localize )( OrgCredentialsForm );

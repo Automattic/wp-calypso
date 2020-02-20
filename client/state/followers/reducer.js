@@ -72,9 +72,9 @@ export function queries( state = {}, action ) {
  * Returns the updated state for in-progress network calls to fetch followers
  * for a given query.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function queryRequests( state = {}, action ) {
 	switch ( action.type ) {

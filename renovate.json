@@ -9,7 +9,8 @@
 		{
 			"extends": "monorepo:wordpress",
 			"separateMajorMinor": false,
-			"prPriority": 2
+			"prPriority": 2,
+			"reviewers": [ "team:@Automattic/cylon", "team:@Automattic/ganon", "team:@Automattic/luna" ]
 		},
 		{
 			"extends": "monorepo:babel",
@@ -43,6 +44,10 @@
 		{
 			"packageName": "tinymce",
 			"allowedVersions": "^4"
+		},
+		{
+			"extends": "monorepo:storybook",
+			"prPriority": 1
 		}
 	],
 	"statusCheckVerify": true,

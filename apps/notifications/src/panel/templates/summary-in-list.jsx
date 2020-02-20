@@ -53,7 +53,7 @@ export class SummaryInList extends React.Component {
 						}
 					/>
 					<span className="wpnc__gridicon">
-						<Gridicon icon={ noticon2gridicon( this.props.note.noticon ) } size={ 16 } />
+						<Gridicon icon={ noticon2gridicon( this.props.note.noticon ) } size={ 12 } />
 					</span>
 				</div>
 				<div className="wpnc__text-summary">

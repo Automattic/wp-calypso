@@ -37,9 +37,9 @@ import 'state/data-layer/wpcom/sites/rewind/restores';
 /**
  * Turn the 'rewind' feature on for a site.
  *
- * @param  {String|number} siteId      Site ID
+ * @param  {string|number} siteId      Site ID
  * @param  {bool}          isVpMigrate Whether this is a VaultPress migration.
- * @return {Object}        Action object
+ * @returns {object}        Action object
  */
 export function activateRewind( siteId, isVpMigrate ) {
 	return {
@@ -66,8 +66,8 @@ export function rewindActivateFailure( siteId ) {
 /**
  * Turn the 'rewind' feature off for a site.
  *
- * @param {String|number} siteId site ID
- * @return {Object} action object
+ * @param {string|number} siteId site ID
+ * @returns {object} action object
  */
 export function deactivateRewind( siteId ) {
 	return {
@@ -95,7 +95,7 @@ export function rewindDeactivateFailure( siteId ) {
  *
  * @param  {string|number} siteId Site ID
  * @param  {number}        activityId Activity ID
- * @return {Object}        action object
+ * @returns {object}        action object
  */
 export function rewindRequestRestore( siteId, activityId ) {
 	return {
@@ -109,7 +109,7 @@ export function rewindRequestRestore( siteId, activityId ) {
  * Dismiss a restore request.
  *
  * @param  {string|number} siteId Site ID
- * @return {Object}        action object
+ * @returns {object}        action object
  */
 export function rewindRequestDismiss( siteId ) {
 	return {
@@ -121,10 +121,10 @@ export function rewindRequestDismiss( siteId ) {
 /**
  * Restore a site to the given timestamp.
  *
- * @param {String|number} siteId the site ID
+ * @param {string|number} siteId the site ID
  * @param {number} timestamp Unix timestamp to restore site to
  * @param {object} args Additional request params, such as `types`
- * @return {Object} action object
+ * @returns {object} action object
  */
 export function rewindRestore( siteId, timestamp, args ) {
 	return {
@@ -175,7 +175,7 @@ export function updateRewindRestoreProgress( siteId, timestamp, restoreId, progr
  *
  * @param  {string|number} siteId Site ID
  * @param  {number}        rewindId Rewind ID
- * @return {Object}        action object
+ * @returns {object}        action object
  */
 export function rewindRequestBackup( siteId, rewindId ) {
 	return {
@@ -189,7 +189,7 @@ export function rewindRequestBackup( siteId, rewindId ) {
  * Dismiss a backup request.
  *
  * @param  {string|number} siteId Site ID
- * @return {Object}        action object
+ * @returns {object}        action object
  */
 export function rewindBackupDismiss( siteId ) {
 	return {
@@ -204,7 +204,7 @@ export function rewindBackupDismiss( siteId ) {
  * @param  {string|number} siteId   The site ID
  * @param  {number}        rewindId Id of activity up to the one the backup will be created.
  * @param  {object}        args     Additional request params, such as `types`
- * @return {object}                 Action object
+ * @returns {object}                 Action object
  */
 export function rewindBackup( siteId, rewindId, args ) {
 	return {
@@ -219,7 +219,7 @@ export function rewindBackup( siteId, rewindId, args ) {
  * Check progress of backup creation for the a given download id.
  *
  * @param  {string|number} siteId The site ID
- * @return {object}               Action object
+ * @returns {object}               Action object
  */
 export function getRewindBackupProgress( siteId ) {
 	return {
@@ -234,7 +234,7 @@ export function getRewindBackupProgress( siteId ) {
  * @param  {string|number} siteId     The site ID
  * @param  {number}        downloadId Id of the backup being created.
  * @param  {number}        progress   Number from 0 to 100 that indicates the progress of the backup creation.
- * @return {object}                   Action object
+ * @returns {object}                   Action object
  */
 export function updateRewindBackupProgress( siteId, downloadId, progress ) {
 	return {
@@ -251,7 +251,7 @@ export function updateRewindBackupProgress( siteId, downloadId, progress ) {
  * @param  {string|number} siteId     The site ID
  * @param  {number}        downloadId Id of the backup being created.
  * @param  {object}        error      Info about downloadable backup and error.
- * @return {object}                   Action object
+ * @returns {object}                   Action object
  */
 export function rewindBackupUpdateError( siteId, downloadId, error ) {
 	return {
@@ -267,7 +267,7 @@ export function rewindBackupUpdateError( siteId, downloadId, error ) {
  *
  * @param  {string|number} siteId     The site ID
  * @param  {number}        downloadId Id of the backup being dismissed.
- * @return {object}                   Action object
+ * @returns {object}                   Action object
  */
 export function dismissRewindBackupProgress( siteId, downloadId ) {
 	return {

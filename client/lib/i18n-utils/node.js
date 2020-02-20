@@ -12,6 +12,7 @@ import config from 'config';
 export {
 	addLocaleToPath,
 	getLanguage,
+	getLanguageRouteParam,
 	getLanguageSlugs,
 	getLocaleFromPath,
 	isDefaultLocale,
@@ -22,6 +23,7 @@ export {
 	removeLocaleFromPath,
 	getPathParts,
 	filterLanguageRevisions,
+	translationExists,
 } from './utils';
 
 export const getLocaleSlug = () => config( 'i18n_default_locale_slug' );

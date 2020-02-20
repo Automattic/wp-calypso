@@ -10,9 +10,10 @@ import isClassicEditorForced from 'state/selectors/is-classic-editor-forced';
 
 /**
  * Returns the editor of the selected site
- * @param {Object} state Global state tree
- * @param {Number} siteId Site ID
- * @return {String} "gutenberg-iframe", "gutenberg-redirect", "gutenberg-redirect-and-style" or "classic", or null if we
+ *
+ * @param {object} state Global state tree
+ * @param {number} siteId Site ID
+ * @returns {string} "gutenberg-iframe", "gutenberg-redirect", "gutenberg-redirect-and-style" or "classic", or null if we
  * have no data yet
  */
 export const getSelectedEditor = ( state, siteId ) => {

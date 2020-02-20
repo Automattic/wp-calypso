@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import ChangeSiteAddress from './change-site-address';
 import ContactsPrivacy from './contacts-privacy';
 import Dns from './dns';
 import DomainConnectMapping from './domain-connect-mapping';
@@ -16,8 +17,10 @@ import TransferIn from './edit/transfer-in';
 import TransferOut from './transfer/transfer-out';
 import TransferToOtherSite from './transfer/transfer-to-other-site';
 import TransferToOtherUser from './transfer/transfer-to-other-user';
+import ListAll from './list/list-all';
 
 export default {
+	ChangeSiteAddress,
 	ContactsPrivacy,
 	Dns,
 	DomainConnectMapping,
@@ -25,6 +28,7 @@ export default {
 	EditContactInfo,
 	ManageConsent,
 	List,
+	ListAll,
 	NameServers,
 	PrimaryDomain,
 	SiteRedirect,

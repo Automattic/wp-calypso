@@ -16,6 +16,7 @@ import Spinner from 'components/spinner';
 
 class Task extends PureComponent {
 	static propTypes = {
+		action: PropTypes.string,
 		buttonText: PropTypes.node,
 		collapsed: PropTypes.bool, // derived from ui state
 		completed: PropTypes.bool,
@@ -120,6 +121,7 @@ class Task extends PureComponent {
 
 	render() {
 		const {
+			action,
 			buttonText,
 			collapsed,
 			completed,
@@ -203,6 +205,7 @@ class Task extends PureComponent {
 											onClick={ onClick }
 											primary={ ! _collapsed }
 											target={ target }
+											data-e2e-action={ action }
 										>
 											{ taskActionButtonText }
 										</Button>

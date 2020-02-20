@@ -39,8 +39,8 @@ export default withoutPersistence( ( state = {}, action ) => {
  * Merge a product into the products list
  *
  * @param  {Array}  products A list of products
- * @param  {Object} product  A single product to update or add to the products list
- * @return {Array}         Updated product list
+ * @param  {object} product  A single product to update or add to the products list
+ * @returns {Array}         Updated product list
  */
 function updateCachedProduct( products, product ) {
 	let found = false;
@@ -63,10 +63,10 @@ function updateCachedProduct( products, product ) {
 /**
  * Set the loading status for a param set in state
  *
- * @param  {Object}  state     The current state
- * @param  {Object}  params    Params of the query to update
- * @param  {Boolean} newStatus The new value to save
- * @return {Object}            Updated isLoading state
+ * @param  {object}  state     The current state
+ * @param  {object}  params    Params of the query to update
+ * @param  {boolean} newStatus The new value to save
+ * @returns {object}            Updated isLoading state
  */
 function setLoading( state, params, newStatus ) {
 	const queries = ( state.queries && { ...state.queries } ) || {};
@@ -78,9 +78,9 @@ function setLoading( state, params, newStatus ) {
 /**
  * Update a single product in the state
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function productUpdated( state, action ) {
 	const { data } = action;
@@ -94,9 +94,9 @@ export function productUpdated( state, action ) {
 /**
  * Update the product state after products load
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function productsRequestSuccess( state = {}, action ) {
 	let products = get( state, 'products', [] );
@@ -131,9 +131,9 @@ export function productsRequestSuccess( state = {}, action ) {
 /**
  * Delete a product from the state
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function productsDeleteSuccess( state = {}, action ) {
 	const products = get( state, 'products', [] );
@@ -155,9 +155,9 @@ export function productsDeleteSuccess( state = {}, action ) {
 /**
  * Store that a product request has been started
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function productsRequest( state = {}, action ) {
 	const queries = setLoading( state, action.params, true );
@@ -167,9 +167,9 @@ export function productsRequest( state = {}, action ) {
 /**
  * Store that the product request has failed
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function productsRequestFailure( state = {}, action ) {
 	const queries = setLoading( state, action.params, false );

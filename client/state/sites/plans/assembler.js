@@ -1,9 +1,3 @@
-/**
- * External dependencies
- */
-
-import moment from 'moment';
-
 export const createSitePlanObject = plan => {
 	if ( ! plan ) {
 		return {};
@@ -11,15 +5,13 @@ export const createSitePlanObject = plan => {
 
 	return {
 		autoRenew: Boolean( plan.auto_renew ), // Always true for plans paid with credits.
-		autoRenewDateMoment: plan.auto_renew_date
-			? moment( plan.auto_renew_date ).startOf( 'day' )
-			: null,
+		autoRenewDate: plan.auto_renew_date,
 		canStartTrial: Boolean( plan.can_start_trial ),
 		currentPlan: Boolean( plan.current_plan ),
 		currencyCode: plan.currency_code,
 		discountReason: plan.discount_reason,
 		expiry: plan.expiry,
-		expiryMoment: plan.expiry ? moment( plan.expiry ).startOf( 'day' ) : null,
+		expiryDate: plan.expiry,
 		formattedDiscount: plan.formatted_discount,
 		formattedOriginalPrice: plan.formatted_original_price,
 		formattedPrice: plan.formatted_price,
@@ -33,7 +25,6 @@ export const createSitePlanObject = plan => {
 		rawDiscount: plan.raw_discount,
 		rawPrice: plan.raw_price,
 		subscribedDate: plan.subscribed_date,
-		subscribedDayMoment: moment( plan.subscribed_date ).startOf( 'day' ),
 		userIsOwner: Boolean( plan.user_is_owner ),
 	};
 };

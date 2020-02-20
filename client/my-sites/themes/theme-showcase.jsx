@@ -31,6 +31,10 @@ import getThemeShowcaseTitle from 'state/selectors/get-theme-showcase-title';
 import prependThemeFilterKeys from 'state/selectors/prepend-theme-filter-keys';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { openThemesShowcase } from 'state/themes/themes-ui/actions';
+import {
+	getThemesBookmark,
+	hasShowcaseOpened as hasShowcaseOpenedSelector,
+} from 'state/themes/themes-ui/selectors';
 import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'components/data/query-theme-filters';
 import { getActiveTheme } from 'state/themes/selectors';
@@ -74,6 +78,7 @@ class ThemeShowcase extends React.Component {
 				this.props.loggedOutComponent ||
 				this.props.search ||
 				this.props.filter ||
+				this.props.tier ||
 				this.props.hasShowcaseOpened
 			),
 		};
@@ -107,9 +112,9 @@ class ThemeShowcase extends React.Component {
 	};
 
 	componentDidMount() {
-		const { search, filter, hasShowcaseOpened, themesBookmark } = this.props;
+		const { search, filter, tier, hasShowcaseOpened, themesBookmark } = this.props;
 		// Open showcase on state if we open here with query override.
-		if ( ( search || filter ) && ! hasShowcaseOpened ) {
+		if ( ( search || filter || tier ) && ! hasShowcaseOpened ) {
 			this.props.openThemesShowcase();
 		}
 		// Scroll to bookmark if applicable.
@@ -129,7 +134,11 @@ class ThemeShowcase extends React.Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( prevProps.search !== this.props.search || prevProps.filter !== this.props.filter ) {
+		if (
+			prevProps.search !== this.props.search ||
+			prevProps.filter !== this.props.filter ||
+			prevProps.tier !== this.props.tier
+		) {
 			this.scrollToSearchInput();
 		}
 	}
@@ -266,7 +275,7 @@ class ThemeShowcase extends React.Component {
 		const showBanners = currentThemeId || ! siteId || ! isLoggedIn;
 
 		const { isShowcaseOpen } = this.state;
-		const isQueried = this.props.search || this.props.filter;
+		const isQueried = this.props.search || this.props.filter || this.props.tier;
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
@@ -436,8 +445,8 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	subjects: getThemeFilterTerms( state, 'subject' ) || {},
 	filterString: prependThemeFilterKeys( state, filter ),
 	filterToTermTable: getThemeFilterToTermTable( state ),
-	hasShowcaseOpened: state.themes.themesUI.themesShowcaseOpen,
-	themesBookmark: state.themes.themesUI.themesBookmark,
+	hasShowcaseOpened: hasShowcaseOpenedSelector( state ),
+	themesBookmark: getThemesBookmark( state ),
 } );
 
 const mapDispatchToProps = {

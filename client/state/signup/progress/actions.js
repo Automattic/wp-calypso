@@ -37,6 +37,7 @@ function recordSubmitStep( stepName, providedDependencies ) {
 				/**
 				 * There's no need to include a resource ID in our event.
 				 * Just record that a preview was fetched
+				 *
 				 * @see the `sitePreviewImageBlob` dependency
 				 */
 				propName = 'site_preview_image_fetched';

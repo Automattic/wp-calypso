@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { stringify } from 'qs';
 import { pick } from 'lodash';
 import debug from 'debug';
 
@@ -33,17 +32,17 @@ export async function trackAffiliateReferral( { affiliateId, campaignId, subId, 
 		Accept: 'application/json',
 	};
 
-	const body = stringify( {
+	const body = new URLSearchParams( {
 		affiliate_id: affiliateId,
 		campaign_id: campaignId || '',
 		sub_id: subId || '',
 		referrer: referrer || '',
-	} );
+	} ).toString();
 
 	referDebug( 'Fetching Refer platform response.' );
 
 	try {
-		const response = await fetch( 'https://refer.wordpress.com/clicks/67402', {
+		const response = await window.fetch( 'https://refer.wordpress.com/clicks/67402', {
 			withCredentials: true, // Needed to check and set the 'wp-affiliate-tracker' cookie.
 			method: 'POST',
 			headers,

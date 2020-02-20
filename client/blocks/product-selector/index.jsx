@@ -12,14 +12,14 @@ import { recordTracksEvent } from 'state/analytics/actions';
 /**
  * Internal dependencies
  */
-import ExternalLinkWithTracking from 'components/external-link/with-tracking';
 import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
 import ProductCard from 'components/product-card';
 import ProductCardAction from 'components/product-card/action';
 import ProductCardOptions from 'components/product-card/options';
+import ProductCardPromoNudge from 'components/product-card/promo-nudge';
 import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePurchases from 'components/data/query-site-purchases';
-import { addQueryArgs } from 'lib/route';
+import ProductExpiration from 'components/product-expiration';
 import { extractProductSlugs, filterByProductSlugs } from './utils';
 import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
@@ -42,7 +42,6 @@ export class ProductSelector extends Component {
 				title: PropTypes.string,
 				id: PropTypes.string,
 				description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] ),
-				landingPageUrl: PropTypes.string,
 				options: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ).isRequired,
 				optionDescriptions: PropTypes.objectOf(
 					PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] )
@@ -157,22 +156,41 @@ export class ProductSelector extends Component {
 	}
 
 	getSubtitleByProduct( product ) {
-		const { moment, translate } = this.props;
-		const purchase = this.getPurchaseByProduct( product );
+		const { currentPlanSlug, moment, selectedSiteSlug, translate } = this.props;
+		const currentPlan = currentPlanSlug && getPlan( currentPlanSlug );
+		const currentPlanIncludesProduct = !! this.getProductSlugByCurrentPlan();
 
-		if ( ! purchase ) {
-			return;
+		if ( currentPlan && currentPlanIncludesProduct ) {
+			return translate( 'Included in your {{planLink}}%(planName)s plan{{/planLink}}', {
+				args: {
+					planName: currentPlan.getTitle(),
+				},
+				components: {
+					planLink: <a href={ `/plans/my-plan/${ selectedSiteSlug }` } />,
+				},
+			} );
 		}
 
-		return translate( 'Purchased on %(purchaseDate)s', {
-			args: {
-				purchaseDate: moment( purchase.subscribedDate ).format( 'LL' ),
-			},
-		} );
+		const purchase = product ? this.getPurchaseByProduct( product ) : null;
+
+		if ( ! purchase ) {
+			return null;
+		}
+
+		const subscribedMoment = purchase.subscribedDate ? moment( purchase.subscribedDate ) : null;
+
+		const expiryMoment = purchase.expiryDate ? moment( purchase.expiryDate ) : null;
+
+		return (
+			<ProductExpiration
+				expiryDateMoment={ expiryMoment }
+				purchaseDateMoment={ subscribedMoment }
+				isRefundable={ purchase.isRefundable }
+			/>
+		);
 	}
 
 	getDescriptionByProduct( product ) {
-		const { basePlansPath, selectedSiteSlug, translate } = this.props;
 		const { description, optionDescriptions } = product;
 		const purchase = this.getPurchaseByProduct( product );
 
@@ -187,34 +205,8 @@ export class ProductSelector extends Component {
 			return optionDescriptions[ planProductSlug ];
 		}
 
-		// Default product description, without a landing page link.
-		let linkUrl = product.landingPageUrl;
-		if ( ! linkUrl || !! basePlansPath ) {
-			return description;
-		}
-
-		// If we have a site in this context, add it to the landing page URL.
-		if ( selectedSiteSlug ) {
-			linkUrl = addQueryArgs( { site: selectedSiteSlug }, linkUrl );
-		}
-
-		// Default product description, with a link to the landing page appended to it.
-		return (
-			<Fragment>
-				{ description }{ ' ' }
-				<ExternalLinkWithTracking
-					href={ linkUrl }
-					tracksEventName="calypso_plan_link_click"
-					tracksEventProps={ {
-						link_location: 'product_jetpack_backup_description',
-						link_slug: 'which-one-do-i-need',
-					} }
-					icon
-				>
-					{ translate( 'Which one do I need?' ) }
-				</ExternalLinkWithTracking>
-			</Fragment>
-		);
+		// Default product description.
+		return description;
 	}
 
 	getProductName( product, productSlug ) {
@@ -466,14 +458,11 @@ export class ProductSelector extends Component {
 
 	renderProducts() {
 		const {
-			currencyCode,
-			currentPlanSlug,
 			fetchingPlans,
 			fetchingSitePlans,
 			fetchingSitePurchases,
 			intervalType,
 			products,
-			selectedSiteSlug,
 			storeProducts,
 			translate,
 		} = this.props;
@@ -491,12 +480,10 @@ export class ProductSelector extends Component {
 			} );
 		}
 
-		const currentPlan = currentPlanSlug && getPlan( currentPlanSlug );
 		const currentPlanIncludesProduct = !! this.getProductSlugByCurrentPlan();
 		const currentPlanInSelectedTimeframe = this.isCurrentPlanInSelectedTimeframe();
 
 		return map( products, product => {
-			const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
 			const stateKey = this.getStateKey( product.id, intervalType );
 
 			let purchase, isCurrent;
@@ -510,44 +497,29 @@ export class ProductSelector extends Component {
 
 			const hasProductPurchase = !! purchase;
 
-			let billingTimeFrame, fullPrice, discountedPrice, subtitle;
-			if ( currentPlanIncludesProduct ) {
-				billingTimeFrame = null;
-				fullPrice = null;
-				discountedPrice = null;
-				subtitle = translate( 'Included in your {{planLink}}%(planName)s plan{{/planLink}}', {
-					args: {
-						planName: currentPlan.getTitle(),
-					},
-					components: {
-						planLink: <a href={ `/plans/my-plan/${ selectedSiteSlug }` } />,
-					},
-				} );
-			} else {
-				subtitle = this.getSubtitleByProduct( product );
-
-				if ( ! hasProductPurchase ) {
-					billingTimeFrame = this.getBillingTimeFrameLabel();
-					fullPrice = this.getProductOptionFullPrice( selectedProductSlug );
-					discountedPrice = this.getProductOptionDiscountedPrice( selectedProductSlug );
-				}
-			}
-
 			return (
 				<ProductCard
 					key={ product.id }
 					title={ this.getProductDisplayName( product ) }
-					billingTimeFrame={ billingTimeFrame }
-					fullPrice={ fullPrice }
-					discountedPrice={ discountedPrice }
 					description={ this.getDescriptionByProduct( product ) }
-					currencyCode={ currencyCode }
 					purchase={ purchase }
-					subtitle={ subtitle }
+					subtitle={ this.getSubtitleByProduct( product ) }
 				>
 					{ hasProductPurchase && isCurrent && this.renderManageButton( purchase ) }
 					{ ! hasProductPurchase && ! isCurrent && (
 						<Fragment>
+							<ProductCardPromoNudge
+								badgeText={ translate( 'Up to %(discount)s off!', {
+									args: { discount: '70%' },
+								} ) }
+								text={ translate(
+									'Hurry, these are {{strong}}Limited time introductory prices!{{/strong}}',
+									{
+										components: { strong: <strong /> },
+									}
+								) }
+							/>
+
 							<ProductCardOptions
 								optionsLabel={ product.optionsLabel }
 								options={ this.getProductOptions( product ) }

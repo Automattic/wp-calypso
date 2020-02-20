@@ -1,28 +1,42 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import {
 	Checkout,
 	getDefaultPaymentMethodStep,
 	useIsStepActive,
+	useIsStepComplete,
 	useSelect,
 	useLineItems,
+	useDispatch,
 } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
 import { areDomainsInLineItems } from '../hooks/has-domains';
+import useCouponFieldState from '../hooks/use-coupon-field-state';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary, { WPCheckoutOrderSummaryTitle } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
+import { isCompleteAndValid } from '../types';
 
 const ContactFormTitle = () => {
 	const translate = useTranslate();
 	const isActive = useIsStepActive();
-	return isActive ? translate( 'Billing details' ) : translate( 'Enter your billing details' );
+	const isComplete = useIsStepComplete();
+	const [ items ] = useLineItems();
+
+	if ( areDomainsInLineItems( items ) ) {
+		return ! isActive && isComplete
+			? translate( 'Contact information' )
+			: translate( 'Enter your contact information' );
+	}
+	return ! isActive && isComplete
+		? translate( 'Billing information' )
+		: translate( 'Enter your billing information' );
 };
 
 const OrderReviewTitle = () => {
@@ -30,17 +44,45 @@ const OrderReviewTitle = () => {
 	return translate( 'Review your order' );
 };
 
-export default function WPCheckout( { removeItem, changePlanLength } ) {
+export default function WPCheckout( {
+	removeItem,
+	updateLocation,
+	submitCoupon,
+	couponStatus,
+	changePlanLength,
+	siteId,
+	siteUrl,
+	CountrySelectMenu,
+	countriesList,
+	StateSelect,
+	renderDomainContactFields,
+	variantRequestStatus,
+	variantSelectOverride,
+	getItemVariants,
+} ) {
 	const translate = useTranslate();
-	const [ itemsWithTax ] = useLineItems();
+	const couponFieldStateProps = useCouponFieldState( submitCoupon );
 
-	const ReviewContent = () => (
-		<WPCheckoutOrderReview removeItem={ removeItem } onChangePlanLength={ changePlanLength } />
+	const reviewContent = (
+		<WPCheckoutOrderReview
+			removeItem={ removeItem }
+			couponStatus={ couponStatus }
+			couponFieldStateProps={ couponFieldStateProps }
+			onChangePlanLength={ changePlanLength }
+			siteUrl={ siteUrl }
+			variantRequestStatus={ variantRequestStatus }
+			variantSelectOverride={ variantSelectOverride }
+			getItemVariants={ getItemVariants }
+		/>
 	);
 
 	const contactInfo = useSelect( sel => sel( 'wpcom' ).getContactInfo() ) || {};
-	const domainContactInfo = useSelect( sel => sel( 'wpcom' ).getDomainContactInfo() ) || {};
-	const isDomainContactSame = useSelect( sel => sel( 'wpcom' ).isDomainContactSame() ) || false;
+	const { setSiteId } = useDispatch( 'wpcom' );
+
+	// Copy siteId to the store so it can be more easily accessed during payment submission
+	useEffect( () => {
+		setSiteId( siteId );
+	}, [ siteId, setSiteId ] );
 
 	const steps = [
 		{
@@ -48,7 +90,13 @@ export default function WPCheckout( { removeItem, changePlanLength } ) {
 			className: 'checkout__order-summary-step',
 			hasStepNumber: false,
 			titleContent: <WPCheckoutOrderSummaryTitle />,
-			completeStepContent: <WPCheckoutOrderSummary />,
+			completeStepContent: (
+				<WPCheckoutOrderSummary
+					siteUrl={ siteUrl }
+					couponStatus={ couponStatus }
+					couponFieldStateProps={ couponFieldStateProps }
+				/>
+			),
 			isCompleteCallback: () => true,
 		},
 		{
@@ -61,12 +109,28 @@ export default function WPCheckout( { removeItem, changePlanLength } ) {
 			className: 'checkout__billing-details-step',
 			hasStepNumber: true,
 			titleContent: <ContactFormTitle />,
-			activeStepContent: <WPContactForm isComplete={ false } isActive={ true } />,
+			activeStepContent: (
+				<WPContactForm
+					siteUrl={ siteUrl }
+					isComplete={ false }
+					isActive={ true }
+					CountrySelectMenu={ CountrySelectMenu }
+					countriesList={ countriesList }
+					StateSelect={ StateSelect }
+					renderDomainContactFields={ renderDomainContactFields }
+				/>
+			),
 			completeStepContent: <WPContactForm summary isComplete={ true } isActive={ false } />,
-			isCompleteCallback: () =>
-				isFormComplete( contactInfo, domainContactInfo, isDomainContactSame, itemsWithTax ),
-			isEditableCallback: () =>
-				isFormEditable( contactInfo, domainContactInfo, isDomainContactSame, itemsWithTax ),
+			isCompleteCallback: () => {
+				// TODO: debounce this or only call it if there is a change
+				updateLocation( {
+					countryCode: contactInfo.countryCode.value,
+					postalCode: contactInfo.postalCode.value,
+					subdivisionCode: contactInfo.state.value,
+				} );
+				return isCompleteAndValid( contactInfo );
+			},
+			isEditableCallback: () => isFormEditable( contactInfo ),
 			getEditButtonAriaLabel: () => translate( 'Edit the billing details' ),
 			getNextStepButtonAriaLabel: () => translate( 'Continue with the entered billing details' ),
 		},
@@ -75,7 +139,7 @@ export default function WPCheckout( { removeItem, changePlanLength } ) {
 			className: 'checkout__review-order-step',
 			hasStepNumber: true,
 			titleContent: <OrderReviewTitle />,
-			activeStepContent: <ReviewContent />,
+			activeStepContent: reviewContent,
 			isCompleteCallback: ( { activeStep } ) => {
 				const isActive = activeStep.id === 'order-review';
 				return isActive;
@@ -86,79 +150,7 @@ export default function WPCheckout( { removeItem, changePlanLength } ) {
 	return <Checkout steps={ steps } />;
 }
 
-function isElligibleForVat() {
-	//TODO: Detect whether people are in EU or AU and return true if they are
-	return false;
-}
-
-function isFormComplete( contactInfo, domainContactInfo, isDomainContactSame, items ) {
-	const taxFields = [ contactInfo.country, contactInfo.postalCode ];
-	const contactFields = [
-		contactInfo.firstName,
-		contactInfo.lastName,
-		contactInfo.email,
-		contactInfo.address,
-		contactInfo.city,
-		contactInfo.state,
-		...( isElligibleForVat() ? [ contactInfo.vatId ] : [] ),
-	];
-	const domainFields = [
-		domainContactInfo.firstName,
-		domainContactInfo.lastName,
-		domainContactInfo.email,
-		domainContactInfo.address,
-		domainContactInfo.city,
-		domainContactInfo.state,
-		domainContactInfo.phoneNumber,
-	];
-	let allFields = taxFields;
-	if ( areDomainsInLineItems( items ) ) {
-		allFields = allFields.concat( contactFields );
-		if ( ! isDomainContactSame ) {
-			allFields = allFields.concat( domainFields );
-		}
-	}
-
-	if ( ! allFields.every( field => field ) ) {
-		return false;
-	}
-
-	// Make sure all required fields are filled
-	return allFields.every( ( { isValid } ) => isValid );
-}
-
-function isFormEditable( contactInfo, domainContactInfo, isDomainContactSame, items ) {
-	const taxFields = [ contactInfo.country, contactInfo.postalCode ];
-	const contactFields = [
-		contactInfo.firstName,
-		contactInfo.lastName,
-		contactInfo.email,
-		contactInfo.address,
-		contactInfo.city,
-		contactInfo.state,
-		...( isElligibleForVat() ? [ contactInfo.vatId ] : [] ),
-	];
-	const domainFields = [
-		domainContactInfo.firstName,
-		domainContactInfo.lastName,
-		domainContactInfo.email,
-		domainContactInfo.address,
-		domainContactInfo.city,
-		domainContactInfo.state,
-		domainContactInfo.phoneNumber,
-	];
-	let allFields = taxFields;
-	if ( areDomainsInLineItems( items ) ) {
-		allFields = allFields.concat( contactFields );
-		if ( ! isDomainContactSame ) {
-			allFields = allFields.concat( domainFields );
-		}
-	}
-
-	if ( ! allFields.every( field => field ) ) {
-		return false;
-	}
-
+function isFormEditable( contactInfo ) {
 	// If any field has been touched, it is editable
-	return allFields.some( ( { isTouched } ) => isTouched );
+	return Object.values( contactInfo ).some( ( { isTouched } ) => isTouched );
 }

@@ -23,14 +23,15 @@ import PhpMyAdminCard from './phpmyadmin-card';
 import SupportCard from './support-card';
 import PhpVersionCard from './php-version-card';
 import SiteBackupCard from './site-backup-card';
-import { isEnabled } from 'config';
 import NoticeAction from 'components/notice/notice-action';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import Notice from 'components/notice';
 import Banner from 'components/banner';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
-import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-active';
+import {
+	getAutomatedTransferStatus,
+	isAutomatedTransferActive,
+} from 'state/automated-transfer/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
 import { requestSite } from 'state/sites/actions';
 import FeatureExample from 'components/feature-example';
@@ -74,8 +75,6 @@ class Hosting extends Component {
 		if ( ! canViewAtomicHosting ) {
 			return null;
 		}
-
-		const sftpPhpMyAdminFeaturesEnabled = isEnabled( 'hosting/sftp-phpmyadmin' );
 
 		const getUpgradeBanner = () => (
 			<Banner
@@ -159,12 +158,12 @@ class Hosting extends Component {
 				<WrapperComponent>
 					<div className="hosting__layout">
 						<div className="hosting__layout-col">
-							{ sftpPhpMyAdminFeaturesEnabled && <SFTPCard disabled={ isDisabled } /> }
-							{ sftpPhpMyAdminFeaturesEnabled && <PhpMyAdminCard disabled={ isDisabled } /> }
+							<SFTPCard disabled={ isDisabled } />
+							<PhpMyAdminCard disabled={ isDisabled } />
 							{ <PhpVersionCard disabled={ isDisabled } /> }
 						</div>
 						<div className="hosting__layout-col">
-							{ sftpPhpMyAdminFeaturesEnabled && <SiteBackupCard disabled={ isDisabled } /> }
+							<SiteBackupCard disabled={ isDisabled } />
 							<SupportCard />
 						</div>
 					</div>
@@ -179,11 +178,9 @@ class Hosting extends Component {
 				<SidebarNavigation />
 				<FormattedHeader
 					headerText={ translate( 'Hosting Configuration' ) }
-					subHeaderText={
-						sftpPhpMyAdminFeaturesEnabled
-							? translate( 'Access your website’s database and more advanced settings.' )
-							: translate( 'Access and manage more advanced settings of your website.' )
-					}
+					subHeaderText={ translate(
+						'Access your website’s database and more advanced settings.'
+					) }
 					align="left"
 				/>
 				{ isOnAtomicPlan ? getAtomicActivationNotice() : getUpgradeBanner() }

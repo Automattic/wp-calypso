@@ -3,6 +3,8 @@
  */
 import { THEMES_BANNER_HIDE, THEMES_SHOWCASE_OPEN, THEMES_BOOKMARK_SET } from 'state/action-types';
 
+import 'state/themes/init';
+
 // Hides the theme showcase banner.
 export function hideThemesBanner() {
 	return {

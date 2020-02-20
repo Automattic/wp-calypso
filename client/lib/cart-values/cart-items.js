@@ -713,7 +713,7 @@ const getDomainPartFromEmail = emailAddress =>
  * Returns a predicate that determines if a domain matches a product meta.
  *
  * @param {string} domain domain to compare.
- * @returns {function(*=): (boolean)} true if the domain matches.
+ * @returns {Function(*=): (boolean)} true if the domain matches.
  */
 const isSameDomainAsProductMeta = domain => product =>
 	product &&

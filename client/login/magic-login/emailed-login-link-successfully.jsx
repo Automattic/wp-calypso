@@ -21,7 +21,13 @@ import {
 	enhanceWithSiteType,
 } from 'state/analytics/actions';
 import { withEnhancers } from 'state/utils';
+import { getCurrentRoute } from 'state/selectors/get-current-route';
 import Gridicon from 'components/gridicon';
+
+/**
+ * Image dependencies
+ */
+import checkEmailImage from 'assets/images/illustrations/check-email.svg';
 
 class EmailedLoginLinkSuccessfully extends React.Component {
 	static propTypes = {
@@ -39,7 +45,9 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 
 		this.props.hideMagicLoginRequestForm();
 
-		page( login( { isNative: true, locale: this.props.locale } ) );
+		page(
+			login( { isNative: true, isJetpack: this.props.isJetpackLogin, locale: this.props.locale } )
+		);
 	};
 
 	render() {
@@ -68,7 +76,8 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 
 				<Card className="magic-login__form">
 					<img
-						src="/calypso/images/login/check-email.svg"
+						alt=""
+						src={ checkEmailImage }
 						className="magic-login__check-email-image"
 					/>
 					<p>{ line }</p>
@@ -76,7 +85,11 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 
 				<div className="magic-login__footer">
 					<a
-						href={ login( { isNative: true, locale: this.props.locale } ) }
+						href={ login( {
+							isNative: true,
+							isJetpack: this.props.isJetpackLogin,
+							locale: this.props.locale,
+						} ) }
 						onClick={ this.onClickBackLink }
 					>
 						<Gridicon icon="arrow-left" size={ 18 } />
@@ -90,6 +103,7 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 
 const mapState = state => ( {
 	locale: getCurrentLocaleSlug( state ),
+	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
 } );
 
 const mapDispatch = {

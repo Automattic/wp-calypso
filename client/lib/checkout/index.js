@@ -1,7 +1,11 @@
 /**
+ * External dependencies
+ */
+import { parse } from 'url';
+
+/**
  * Internal dependencies
  */
-
 import {
 	hasRenewalItem,
 	getRenewalItems,
@@ -10,8 +14,61 @@ import {
 	hasProduct,
 } from 'lib/cart-values/cart-items';
 import { managePurchase } from 'me/purchases/paths';
+import {
+	UPGRADE_INTENT_PLUGINS,
+	UPGRADE_INTENT_INSTALL_PLUGIN,
+	UPGRADE_INTENT_THEMES,
+	UPGRADE_INTENT_INSTALL_THEME,
+} from 'lib/checkout/constants';
+import { decodeURIComponentIfValid, isExternal } from 'lib/url';
 
-export function getExitCheckoutUrl( cart, siteSlug ) {
+const isValidValue = url => typeof url === 'string' && url;
+
+export function isValidUpgradeIntent( upgradeIntent ) {
+	switch ( upgradeIntent ) {
+		case UPGRADE_INTENT_PLUGINS:
+		case UPGRADE_INTENT_INSTALL_PLUGIN:
+		case UPGRADE_INTENT_THEMES:
+		case UPGRADE_INTENT_INSTALL_THEME:
+			return true;
+	}
+	return false;
+}
+
+export function parseRedirectToChain( rawUrl, includeOriginalUrl = true ) {
+	const redirectChain = [];
+	const url = decodeURIComponentIfValid( rawUrl );
+
+	if ( includeOriginalUrl && isValidValue( url ) ) {
+		redirectChain.push( url );
+	}
+
+	const parseUrlAndPushToChain = currentUrl => {
+		const {
+			query: { redirect_to },
+		} = parse( currentUrl, true );
+		if ( isValidValue( redirect_to ) ) {
+			redirectChain.push( redirect_to );
+			parseUrlAndPushToChain( decodeURIComponentIfValid( redirect_to ) );
+		}
+	};
+
+	parseUrlAndPushToChain( url );
+	return redirectChain;
+}
+
+export function getValidDeepRedirectTo( redirectTo ) {
+	const redirectChain = parseRedirectToChain( redirectTo );
+	if (
+		Array.isArray( redirectChain ) &&
+		redirectChain.length &&
+		! isExternal( redirectChain[ redirectChain.length - 1 ] )
+	) {
+		return redirectChain[ redirectChain.length - 1 ];
+	}
+}
+
+export function getExitCheckoutUrl( cart, siteSlug, upgradeIntent, redirectTo ) {
 	let url = '/plans/';
 
 	if ( hasRenewalItem( cart ) ) {
@@ -19,6 +76,13 @@ export function getExitCheckoutUrl( cart, siteSlug ) {
 			siteName = siteSlug || purchaseDomain;
 
 		return managePurchase( siteName, purchaseId );
+	}
+
+	if ( isValidUpgradeIntent( upgradeIntent ) ) {
+		const finalRedirectTo = getValidDeepRedirectTo( redirectTo );
+		if ( finalRedirectTo ) {
+			return finalRedirectTo;
+		}
 	}
 
 	if ( hasDomainRegistration( cart ) ) {

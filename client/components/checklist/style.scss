@@ -13,7 +13,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 
 .checklist__tasks-completed-title {
 	order: 3;
-	margin: 40px 0 8px 25px;
+	margin: 40px 0 8px 16px;
 
 	@include breakpoint( '>660px' ) {
 		margin-left: 0;
@@ -27,6 +27,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 .checklist__task {
 	width: 100%;
 	order: 1;
+	z-index: z-index( 'root', '.checklist__task' );
 
 	.hide-completed &.is-completed {
 		display: none;
@@ -44,19 +45,24 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		bottom: 0;
 		left: 34px;
 		border-left: 1px solid var( --color-neutral-10 );
-		z-index: 1;
+		z-index: z-index( '.checklist__task', '.checklist__task::before' );
 	}
 
 	.checklist__task-icon {
 		display: block;
 		position: absolute;
 		top: 16px;
-		left: 24px;
+		left: 16px;
 		width: 16px;
 		height: 16px;
 		border: 2px solid var( --color-neutral-5 );
 		border-radius: 16px;
 		background: var( --color-surface );
+		z-index: z-index( '.checklist__task', '.checklist__task-icon' );
+
+		@include breakpoint( '>660px' ) {
+			left: 24px;
+		}
 
 		.gridicons-checkmark {
 			display: none;

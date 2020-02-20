@@ -29,7 +29,7 @@ import './style.scss';
 
 class ProfileLinks extends React.Component {
 	state = {
-		showingForm: false,
+		showingForm: null,
 		showPopoverMenu: false,
 	};
 
@@ -61,7 +61,7 @@ class ProfileLinks extends React.Component {
 
 	hideForms = () => {
 		this.setState( {
-			showingForm: false,
+			showingForm: null,
 		} );
 	};
 

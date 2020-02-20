@@ -19,8 +19,8 @@ const defaultLanguageSlug = config( 'i18n_default_locale_slug' );
  * locale's prefix matches the default locale. E.g., a locale of en-AU
  * starts with 'en', the defaultLanguageSlug.
  *
- * @param {String} locale An language slug
- * @returns {Boolean} The locale slug of the language, if any found.
+ * @param {string} locale An language slug
+ * @returns {boolean} The locale slug of the language, if any found.
  */
 export function isDefaultLocale( locale ) {
 	return startsWith( locale, defaultLanguageSlug );
@@ -30,9 +30,9 @@ export function isDefaultLocale( locale ) {
  * Checks incoming locale then urlPath for a valid non-default locale.
  * If no matching locale exists, we look in the user's browser preferences.
  *
- * @param {String} locale The language slug of an existing locale
- * @param {String} urlPath Current path
- * @returns {String|Null} The locale slug of the language, if any found.
+ * @param {string} locale The language slug of an existing locale
+ * @param {string} urlPath Current path
+ * @returns {string|null} The locale slug of the language, if any found.
  */
 export function getCurrentNonDefaultLocale( locale, urlPath ) {
 	// First try the locale passed as props.

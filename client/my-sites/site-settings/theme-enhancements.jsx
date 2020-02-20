@@ -2,6 +2,7 @@
  * External dependencies
  */
 
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
@@ -19,11 +20,14 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getCustomizerUrl, isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import SupportInfo from 'components/support-info';
+import versionCompare from 'lib/version-compare';
 
 class ThemeEnhancements extends Component {
 	static defaultProps = {
@@ -39,6 +43,7 @@ class ThemeEnhancements extends Component {
 		isSavingSettings: PropTypes.bool,
 		isRequestingSettings: PropTypes.bool,
 		fields: PropTypes.object,
+		site: PropTypes.object,
 	};
 
 	isFormPending() {
@@ -169,19 +174,71 @@ class ThemeEnhancements extends Component {
 	}
 
 	renderMinilevenSettings() {
-		const { selectedSiteId, minilevenModuleActive, translate } = this.props;
+		const { minilevenModuleActive, selectedSiteId, site, translate } = this.props;
 		const formPending = this.isFormPending();
+		const jetpackVersion = get( site, 'options.jetpack_version', 0 );
+		const minilevenSupportUrl = 'https://jetpack.com/support/mobile-theme/';
+		const googleMobileCheckUrl = `https://search.google.com/test/mobile-friendly?url=${ encodeURIComponent(
+			`${ site.URL }?jetpack-preview=responsivetheme`
+		) }`;
 
 		return (
-			<FormFieldset>
+			<FormFieldset
+				className={ classnames(
+					'minileven',
+					`${ minilevenModuleActive ? `active` : `inactive` }`
+				) }
+			>
+				<FormLegend>{ translate( 'Mobile Theme' ) }</FormLegend>
+				<Notice
+					status="is-info"
+					showDismiss={ false }
+					text={
+						minilevenModuleActive &&
+						jetpackVersion &&
+						versionCompare( jetpackVersion, '8.1-alpha', '>=' )
+							? translate(
+									'{{b}}Action needed:{{/b}} The Jetpack mobile theme is not supported ' +
+										'anymore. It will be removed when you update to the most recent ' +
+										'version of the plugin. Please ensure your current theme ' +
+										'is mobile-ready {{link}}using this tool{{/link}}. ' +
+										'If it is not, consider replacing it.',
+									{
+										components: {
+											b: <strong />,
+											link: (
+												<a
+													href={ googleMobileCheckUrl }
+													target="_blank"
+													rel="noopener noreferrer"
+												/>
+											),
+										},
+									}
+							  )
+							: translate(
+									'{{b}}Note:{{/b}} The Jetpack mobile theme is not supported ' +
+										'anymore. It will be removed when you update ' +
+										'to the most recent version of the plugin.',
+									{
+										components: {
+											b: <strong />,
+										},
+									}
+							  )
+					}
+				>
+					<NoticeAction href={ minilevenSupportUrl } external>
+						{ translate( 'Learn more' ) }
+					</NoticeAction>
+				</Notice>
 				<SupportInfo
 					text={ translate(
 						'Enables a lightweight, mobile-friendly theme ' +
 							'that will be displayed to visitors on mobile devices.'
 					) }
-					link="https://jetpack.com/support/mobile-theme/"
+					link={ minilevenSupportUrl }
 				/>
-				<FormLegend>{ translate( 'Mobile Theme' ) }</FormLegend>
 				<p>
 					{ translate(
 						'Give your site a fast-loading, streamlined look for mobile devices. Visitors will ' +
@@ -192,7 +249,7 @@ class ThemeEnhancements extends Component {
 					siteId={ selectedSiteId }
 					moduleSlug="minileven"
 					label={ translate( 'Enable the Jetpack Mobile theme' ) }
-					disabled={ formPending }
+					disabled={ formPending || ! minilevenModuleActive }
 				/>
 
 				<div className="theme-enhancements__module-settings site-settings__child-settings">
@@ -224,7 +281,7 @@ class ThemeEnhancements extends Component {
 	}
 
 	render() {
-		const { siteIsJetpack, translate } = this.props;
+		const { siteIsJetpack, siteHasMinileven, translate } = this.props;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
@@ -236,8 +293,12 @@ class ThemeEnhancements extends Component {
 						<Fragment>
 							{ this.renderJetpackInfiniteScrollSettings() }
 							<hr />
-							{ this.renderMinilevenSettings() }
-							<hr />
+							{ siteHasMinileven && (
+								<Fragment>
+									{ this.renderMinilevenSettings() }
+									<hr />
+								</Fragment>
+							) }
 							{ this.renderCustomCSSSettings() }
 						</Fragment>
 					) : (
@@ -251,7 +312,8 @@ class ThemeEnhancements extends Component {
 }
 
 export default connect( state => {
-	const selectedSiteId = getSelectedSiteId( state );
+	const site = getSelectedSite( state );
+	const selectedSiteId = get( site, 'ID' );
 
 	return {
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
@@ -263,5 +325,7 @@ export default connect( state => {
 			'infinite-scroll'
 		),
 		minilevenModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'minileven' ),
+		site,
+		siteHasMinileven: false === isJetpackMinimumVersion( state, selectedSiteId, '8.3-alpha' ),
 	};
 } )( localize( ThemeEnhancements ) );

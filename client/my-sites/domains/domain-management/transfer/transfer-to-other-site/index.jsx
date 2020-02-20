@@ -23,7 +23,6 @@ import { domainManagementList, domainManagementTransfer } from 'my-sites/domains
 import { getSelectedDomain } from 'lib/domains';
 import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import SectionHeader from 'components/section-header';
 import TransferConfirmationDialog from './confirmation-dialog';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import wp from 'lib/wp';
@@ -75,10 +74,10 @@ export class TransferToOtherSite extends React.Component {
 
 	handleConfirmTransfer = ( targetSite, closeDialog ) => {
 		const { selectedDomainName } = this.props;
-		const targetSiteName = targetSite.name;
+		const targetSiteTitle = targetSite.title;
 		const successMessage = this.props.translate(
-			'%(selectedDomainName)s has been transferred to site: %(targetSiteName)s',
-			{ args: { selectedDomainName, targetSiteName } }
+			'%(selectedDomainName)s has been transferred to site: %(targetSiteTitle)s',
+			{ args: { selectedDomainName, targetSiteTitle } }
 		);
 		const defaultErrorMessage = this.props.translate(
 			'Failed to transfer %(selectedDomainName)s, please try again or contact support.',
@@ -159,7 +158,6 @@ export class TransferToOtherSite extends React.Component {
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Transfer Domain To Another Site' ) } />
 				<Card className="transfer-to-other-site__card">
 					<p>{ message }</p>
 					<SiteSelector

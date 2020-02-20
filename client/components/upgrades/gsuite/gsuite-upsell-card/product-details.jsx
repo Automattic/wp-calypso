@@ -21,22 +21,24 @@ function GSuiteUpsellProductDetails( { currencyCode, domain, product, productSlu
 	return (
 		<div className="gsuite-upsell-card__product-details">
 			<div className="gsuite-upsell-card__product-intro">
-				<div className="gsuite-upsell-card__product-name">
-					{ /* Intentionally not translated as it is a brand name and Google keeps it in English */ }
-					<span className="gsuite-upsell-card__product-logo">G Suite</span>
+				<div className="gsuite-upsell-card__product-presentation">
+					<div className="gsuite-upsell-card__product-name">
+						{ /* Intentionally not translated as it is a brand name and Google keeps it in English */ }
+						<span className="gsuite-upsell-card__product-logo">G Suite</span>
+					</div>
+
+					<p>
+						{ translate(
+							"We've teamed up with Google to offer you email, storage, docs, calendars, " +
+								'and more, integrated with your site.'
+						) }
+					</p>
 				</div>
 
-				<p>
-					{ translate(
-						"We've teamed up with Google to offer you email, storage, docs, calendars, " +
-							'and more, integrated with your site.'
-					) }
-				</p>
-
-				<GSuitePrice product={ product } currencyCode={ currencyCode } />
+				<GSuiteCompactFeatures domainName={ domain } productSlug={ productSlug } type={ 'list' } />
 			</div>
 
-			<GSuiteCompactFeatures domainName={ domain } productSlug={ productSlug } type={ 'list' } />
+			<GSuitePrice product={ product } currencyCode={ currencyCode } />
 		</div>
 	);
 }

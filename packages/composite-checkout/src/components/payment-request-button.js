@@ -2,7 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React from 'react';
 import styled from '@emotion/styled';
 
 /**
@@ -10,6 +10,7 @@ import styled from '@emotion/styled';
  */
 import { useLocalize } from '../lib/localize';
 import Button from './button';
+import { useFormStatus } from '../lib/form-status';
 
 // The react-stripe-elements PaymentRequestButtonElement cannot have its
 // paymentRequest updated once it has been rendered, so this is a custom one.
@@ -21,26 +22,26 @@ export default function PaymentRequestButton( {
 	disabledReason,
 } ) {
 	const localize = useLocalize();
-	const [ isSubmitting, setIsSubmitting ] = useState( false );
+	const { formStatus, setFormReady, setFormSubmitting } = useFormStatus();
 	const onClick = event => {
 		event.persist();
 		event.preventDefault();
-		setIsSubmitting( true );
-		paymentRequest.on( 'cancel', () => setIsSubmitting( false ) );
+		setFormSubmitting();
+		paymentRequest.on( 'cancel', setFormReady );
 		paymentRequest.show();
 	};
 	if ( ! paymentRequest ) {
 		disabled = true;
 	}
 
-	if ( isSubmitting ) {
+	if ( formStatus === 'submitting' ) {
 		return (
 			<Button disabled fullWidth>
 				{ localize( 'Completing your purchase', { context: 'Loading state on /checkout' } ) }
 			</Button>
 		);
 	}
-	if ( disabled ) {
+	if ( disabled && disabledReason ) {
 		return (
 			<Button disabled fullWidth>
 				{ disabledReason }
@@ -49,11 +50,11 @@ export default function PaymentRequestButton( {
 	}
 
 	if ( paymentType === 'apple-pay' ) {
-		return <ApplePayButton onClick={ onClick } />;
+		return <ApplePayButton disabled={ disabled } onClick={ onClick } />;
 	}
 	return (
-		<Button onClick={ onClick } fullWidth>
-			{ localize( 'Select a payment card', { context: 'Loading state on /checkout' } ) }
+		<Button disabled={ disabled } onClick={ onClick } fullWidth>
+			{ localize( 'Select a payment card' ) }
 		</Button>
 	);
 }
@@ -70,4 +71,16 @@ const ApplePayButton = styled.button`
 	-apple-pay-button-style: black;
 	-apple-pay-button-type: plain;
 	width: 100%;
+	position: relative;
+
+	&::after {
+		content: '';
+		position: ${props => ( props.disabled ? 'absolute' : 'relative' )};
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: #ccc;
+		opacity: 0.7;
+	}
 `;

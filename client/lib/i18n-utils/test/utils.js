@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,6 +16,7 @@ import {
 	canBeTranslated,
 	getPathParts,
 	filterLanguageRevisions,
+	translationExists,
 } from 'lib/i18n-utils';
 
 jest.mock( 'config', () => key => {
@@ -76,9 +76,16 @@ jest.mock( 'config', () => key => {
 	}
 } );
 
-jest.mock( 'i18n-calypso', () => ( {
-	getLocaleSlug: jest.fn( () => 'en' ),
-} ) );
+// Mock only the getLocaleSlug function from i18n-calypso, and use
+// original references for all the other functions
+function mockFunctions() {
+	const original = jest.requireActual( 'i18n-calypso' ).default;
+	return Object.assign( Object.create( Object.getPrototypeOf( original ) ), original, {
+		getLocaleSlug: jest.fn( () => 'en' ),
+	} );
+}
+jest.mock( 'i18n-calypso', () => mockFunctions() );
+const { getLocaleSlug } = jest.requireMock( 'i18n-calypso' );
 
 describe( 'utils', () => {
 	describe( '#isDefaultLocale', () => {
@@ -509,6 +516,33 @@ describe( 'utils', () => {
 			};
 
 			expect( filterLanguageRevisions( invalid ) ).toEqual( valid );
+		} );
+	} );
+
+	describe( 'translationExists()', function() {
+		it( 'should return true for a simple translation', function() {
+			expect( translationExists( 'test1' ) ).toBe( true );
+		} );
+
+		it( 'should return false for a string without translation', function() {
+			getLocaleSlug.mockImplementationOnce( () => 'fr' );
+			expect(
+				translationExists(
+					'It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness…'
+				)
+			).toBe( false );
+		} );
+
+		it( 'should return true for a simple translation when using default locale', function() {
+			expect( translationExists( 'test1' ) ).toBe( true );
+		} );
+
+		it( 'should return true for a string without translation when using default locale', function() {
+			expect(
+				translationExists(
+					'It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness…'
+				)
+			).toBe( true );
 		} );
 	} );
 } );

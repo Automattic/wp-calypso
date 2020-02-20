@@ -35,9 +35,9 @@ const initialState = {
  * Overwrites the purchases in the store with the purchases from the new purchases array
  * that share the same `id` value.
  *
- * @param {array} existingPurchases - an array of purchases in the store
- * @param {array} newPurchases - an array of purchases fetched from the API
- * @return {array} An array of purchases
+ * @param {Array} existingPurchases - an array of purchases in the store
+ * @param {Array} newPurchases - an array of purchases fetched from the API
+ * @returns {Array} An array of purchases
  */
 function overwriteExistingPurchases( existingPurchases, newPurchases ) {
 	let purchases = newPurchases;
@@ -54,10 +54,10 @@ function overwriteExistingPurchases( existingPurchases, newPurchases ) {
 /**
  * Removes purchases that are missing from the new purchases array and match the given predicate.
  *
- * @param {array} existingPurchases - an array of purchases in the store
- * @param {array} newPurchases - an array of purchases fetched from the API
+ * @param {Array} existingPurchases - an array of purchases in the store
+ * @param {Array} newPurchases - an array of purchases fetched from the API
  * @param {object} predicate - the predicate to check before removing the item from the array.
- * @return {array} An array of purchases
+ * @returns {Array} An array of purchases
  */
 function removeMissingPurchasesByPredicate( existingPurchases, newPurchases, predicate ) {
 	return existingPurchases.filter(

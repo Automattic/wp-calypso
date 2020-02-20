@@ -6,49 +6,48 @@ import styled from '@emotion/styled';
 import { useTheme } from 'emotion-theming';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 import { LeftColumn, RightColumn } from '../styled-components/ie-fallback';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import Field from '../../components/field';
 import GridRow from '../../components/grid-row';
-import { Button } from '@automattic/components';
+import Button from '../../components/button';
+import PaymentLogo from './payment-logo';
 import {
 	useStripe,
 	createStripePaymentMethod,
-	confirmStripePaymentIntent,
+	showStripeModalAuth,
 	StripeHookProvider,
 } from '../stripe';
 import {
 	useSelect,
-	usePaymentData,
 	useDispatch,
-	useCheckoutHandlers,
+	useMessages,
 	useLineItems,
-	useCheckoutRedirects,
 	renderDisplayValueMarkdown,
+	useEvents,
 } from '../../public-api';
-import useLocalize, { sprintf } from '../localize';
-import {
-	VisaLogo,
-	AmexLogo,
-	MastercardLogo,
-	JcbLogo,
-	DinersLogo,
-	UnionpayLogo,
-	DiscoverLogo,
-} from '../../components/payment-logos';
+import { sprintf, useLocalize } from '../localize';
 import { CreditCardLabel } from './credit-card';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import CreditCardFields, { CVVImage } from './credit-card-fields';
 import Spinner from '../../components/spinner';
 import ErrorMessage from '../../components/error-message';
+import { useFormStatus } from '../form-status';
+
+const debug = debugFactory( 'composite-checkout:stripe-payment-method' );
 
 export function createStripeMethod( {
+	getCountry,
+	getPostalCode,
+	getSubdivisionCode,
 	registerStore,
 	fetchStripeConfiguration,
-	sendStripeTransaction,
+	submitTransaction,
 } ) {
+	debug( 'creating a new stripe payment method' );
 	const actions = {
 		changeBrand( payload ) {
 			return { type: 'BRAND_SET', payload };
@@ -62,43 +61,55 @@ export function createStripeMethod( {
 		changeCardholderName( payload ) {
 			return { type: 'CARDHOLDER_NAME_SET', payload };
 		},
-		setStripeError( payload ) {
-			return { type: 'STRIPE_TRANSACTION_ERROR', payload };
+		setStripeComplete( payload ) {
+			debug( 'stripe transaction is successful' );
+			return { type: 'STRIPE_TRANSACTION_END', payload };
 		},
-		*getConfiguration( payload ) {
-			let configuration;
-			try {
-				configuration = yield { type: 'STRIPE_CONFIGURATION_FETCH', payload };
-			} catch ( error ) {
-				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
-			}
-			return { type: 'STRIPE_CONFIGURATION_SET', payload: configuration };
+		resetTransaction() {
+			debug( 'resetting transaction' );
+			return { type: 'STRIPE_TRANSACTION_RESET' };
 		},
 		*beginStripeTransaction( payload ) {
 			let stripeResponse;
 			try {
-				stripeResponse = yield { type: 'STRIPE_TRANSACTION_BEGIN', payload };
+				const paymentMethodToken = yield {
+					type: 'STRIPE_CREATE_PAYMENT_METHOD_TOKEN',
+					payload: {
+						...payload,
+						country: getCountry(),
+						postalCode: getPostalCode(),
+					},
+				};
+				debug( 'stripe payment token created' );
+				stripeResponse = yield {
+					type: 'STRIPE_TRANSACTION_BEGIN',
+					payload: {
+						...payload,
+						country: getCountry(),
+						postalCode: getPostalCode(),
+						subdivisionCode: getSubdivisionCode(),
+						paymentMethodToken,
+					},
+				};
+				debug( 'stripe transaction complete', stripeResponse );
 			} catch ( error ) {
+				debug( 'stripe transaction had an error', error );
 				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
 			}
-			if (
-				stripeResponse &&
-				stripeResponse.message &&
-				stripeResponse.message.payment_intent_client_secret
-			) {
+			if ( stripeResponse?.message?.payment_intent_client_secret ) {
+				debug( 'stripe transaction requires auth' );
 				return { type: 'STRIPE_TRANSACTION_AUTH', payload: stripeResponse };
 			}
-			if ( stripeResponse && stripeResponse.redirect_url ) {
+			if ( stripeResponse?.redirect_url ) {
+				debug( 'stripe transaction requires redirect' );
 				return { type: 'STRIPE_TRANSACTION_REDIRECT', payload: stripeResponse };
 			}
+			debug( 'stripe transaction is successful' );
 			return { type: 'STRIPE_TRANSACTION_END', payload: stripeResponse };
 		},
 	};
 
 	const selectors = {
-		getStripeConfiguration( state ) {
-			return state.stripeConfiguration;
-		},
 		getBrand( state ) {
 			return state.brand || '';
 		},
@@ -113,6 +124,9 @@ export function createStripeMethod( {
 		},
 		getTransactionAuthData( state ) {
 			return state.transactionAuthData;
+		},
+		getRedirectUrl( state ) {
+			return state.redirectUrl;
 		},
 		getCardDataErrors( state ) {
 			return state.cardDataErrors;
@@ -177,9 +191,13 @@ export function createStripeMethod( {
 					return {
 						...state,
 						transactionStatus: 'redirect',
+						redirectUrl: action.payload.redirect_url,
 					};
-				case 'STRIPE_CONFIGURATION_SET':
-					return { ...state, stripeConfiguration: action.payload };
+				case 'STRIPE_TRANSACTION_RESET':
+					return {
+						...state,
+						transactionStatus: null,
+					};
 				case 'CARDHOLDER_NAME_SET':
 					return { ...state, cardholderName: action.payload };
 				case 'BRAND_SET':
@@ -200,11 +218,11 @@ export function createStripeMethod( {
 		actions,
 		selectors,
 		controls: {
-			STRIPE_CONFIGURATION_FETCH( action ) {
-				return fetchStripeConfiguration( action.payload );
+			STRIPE_CREATE_PAYMENT_METHOD_TOKEN( action ) {
+				return createStripePaymentMethodToken( action.payload );
 			},
 			STRIPE_TRANSACTION_BEGIN( action ) {
-				return sendStripeTransaction( formatDataForStripeTransaction( action.payload ) );
+				return submitTransaction( action.payload );
 			},
 		},
 	} );
@@ -214,7 +232,11 @@ export function createStripeMethod( {
 		label: <CreditCardLabel />,
 		activeContent: <StripeCreditCardFields />,
 		submitButton: <StripePayButton />,
-		CheckoutWrapper: StripeHookProvider,
+		checkoutWrapper: children => (
+			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+				{ children }
+			</StripeHookProvider>
+		),
 		inactiveContent: <StripeSummary />,
 		getAriaLabel: localize => localize( 'Credit Card' ),
 		isCompleteCallback: () => {
@@ -233,7 +255,8 @@ export function createStripeMethod( {
 function StripeCreditCardFields() {
 	const localize = useLocalize();
 	const theme = useTheme();
-	const { onFailure } = useCheckoutHandlers();
+	const { showErrorMessage } = useMessages();
+	const onEvent = useEvents();
 	const { stripeLoadingError, isStripeLoading } = useStripe();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
 	const cardholderName = useSelect( select => select( 'stripe' ).getCardholderName() );
@@ -249,9 +272,10 @@ function StripeCreditCardFields() {
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
-			onFailure( stripeLoadingError );
+			debug( 'showing error for loading', stripeLoadingError );
+			showErrorMessage( stripeLoadingError );
 		}
-	}, [ onFailure, stripeLoadingError ] );
+	}, [ showErrorMessage, stripeLoadingError ] );
 
 	const handleStripeFieldChange = input => {
 		setCardDataComplete( input.elementType, input.complete );
@@ -260,6 +284,14 @@ function StripeCreditCardFields() {
 		}
 
 		if ( input.error && input.error.message ) {
+			onEvent( {
+				type: 'a8c_checkout_error',
+				payload: {
+					type: 'Stripe field error',
+					field: input.elementType,
+					message: input.error.message,
+				},
+			} );
 			setCardDataError( input.elementType, input.error.message );
 			return;
 		}
@@ -280,6 +312,12 @@ function StripeCreditCardFields() {
 			color: theme.colors.textColor,
 		},
 	};
+
+	useEffect( () => {
+		if ( stripeLoadingError ) {
+			onEvent( { type: 'a8c_checkout_error', payload: { type: 'Stripe loading error' } } );
+		}
+	}, [ stripeLoadingError, onEvent ] );
 
 	if ( stripeLoadingError ) {
 		return (
@@ -318,7 +356,7 @@ function StripeCreditCardFields() {
 								handleStripeFieldChange( input );
 							} }
 						/>
-						<CardFieldIcon brand={ brand } />
+						<PaymentLogo brand={ brand } />
 
 						{ cardNumberError && <StripeErrorMessage>{ cardNumberError }</StripeErrorMessage> }
 					</StripeFieldWrapper>
@@ -463,87 +501,6 @@ const StripeErrorMessage = styled.span`
 	font-weight: ${props => props.theme.weights.normal};
 `;
 
-const LockIconGraphic = styled( LockIcon )`
-	display: block;
-	position: absolute;
-	right: 10px;
-	top: 14px;
-	width: 20px;
-	height: 20px;
-`;
-
-function CardFieldIcon( { brand, isSummary } ) {
-	let cardFieldIcon = null;
-
-	switch ( brand ) {
-		case 'visa':
-			cardFieldIcon = (
-				<BrandLogo isSummary={ isSummary }>
-					<VisaLogo />
-				</BrandLogo>
-			);
-			break;
-		case 'mastercard':
-			cardFieldIcon = (
-				<SmallBrandLogo isSummary={ isSummary }>
-					<MastercardLogo />
-				</SmallBrandLogo>
-			);
-			break;
-		case 'amex':
-			cardFieldIcon = (
-				<BrandLogo isSummary={ isSummary }>
-					<AmexLogo />
-				</BrandLogo>
-			);
-			break;
-		case 'jcb':
-			cardFieldIcon = (
-				<SmallBrandLogo isSummary={ isSummary }>
-					<JcbLogo />
-				</SmallBrandLogo>
-			);
-			break;
-		case 'diners':
-			cardFieldIcon = (
-				<SmallBrandLogo isSummary={ isSummary }>
-					<DinersLogo />
-				</SmallBrandLogo>
-			);
-			break;
-		case 'unionpay':
-			cardFieldIcon = (
-				<SmallBrandLogo isSummary={ isSummary }>
-					<UnionpayLogo />
-				</SmallBrandLogo>
-			);
-			break;
-		case 'discover':
-			cardFieldIcon = (
-				<BrandLogo isSummary={ isSummary }>
-					<DiscoverLogo />
-				</BrandLogo>
-			);
-			break;
-		default:
-			cardFieldIcon = brand === 'unknown' && isSummary ? null : <LockIconGraphic />;
-	}
-
-	return cardFieldIcon;
-}
-
-const BrandLogo = styled.span`
-	display: ${props => ( props.isSummary ? 'inline-block' : 'block' )};
-	position: ${props => ( props.isSummary ? 'relative' : 'absolute' )};
-	top: ${props => ( props.isSummary ? '0' : '15px' )};
-	right: ${props => ( props.isSummary ? '0' : '10px' )};
-	transform: translateY( ${props => ( props.isSummary ? '4px' : '0' )} );
-`;
-
-const SmallBrandLogo = styled( BrandLogo )`
-	transform: translate( ${props => ( props.isSummary ? '-10px, 4px' : '10px, 0' )} );
-`;
-
 function LoadingFields() {
 	return (
 		<React.Fragment>
@@ -553,89 +510,110 @@ function LoadingFields() {
 	);
 }
 
-function LockIcon( { className } ) {
-	return (
-		<svg
-			className={ className }
-			xmlns="http://www.w3.org/2000/svg"
-			width="24"
-			height="24"
-			viewBox="0 0 24 24"
-			aria-hidden="true"
-			focusable="false"
-		>
-			<g fill="none">
-				<path d="M0 0h24v24H0V0z" />
-				<path opacity=".87" d="M0 0h24v24H0V0z" />
-			</g>
-			<path
-				fill="#8E9196"
-				d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"
-			/>
-		</svg>
-	);
-}
-
 function StripePayButton( { disabled } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
-	const { onSuccess, onFailure } = useCheckoutHandlers();
-	const { successRedirectUrl, failureRedirectUrl } = useCheckoutRedirects();
+	const { showErrorMessage, showInfoMessage } = useMessages();
 	const { stripe, stripeConfiguration } = useStripe();
 	const transactionStatus = useSelect( select => select( 'stripe' ).getTransactionStatus() );
 	const transactionError = useSelect( select => select( 'stripe' ).getTransactionError() );
 	const transactionAuthData = useSelect( select => select( 'stripe' ).getTransactionAuthData() );
-	const { beginStripeTransaction } = useDispatch( 'stripe' );
-	const [ paymentData ] = usePaymentData();
-	const { billing = {}, domains = {} } = paymentData;
+	const { beginStripeTransaction, setStripeComplete, resetTransaction } = useDispatch( 'stripe' );
+	const name = useSelect( select => select( 'stripe' ).getCardholderName() );
+	const redirectUrl = useSelect( select => select( 'stripe' ).getRedirectUrl() );
+	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
+	const onEvent = useEvents();
 
 	useEffect( () => {
 		if ( transactionStatus === 'error' ) {
-			onFailure( transactionError || localize( 'An error occurred during the transaction' ) );
+			debug( 'showing error', transactionError );
+			showErrorMessage(
+				transactionError || localize( 'An error occurred during the transaction' )
+			);
+			onEvent( { type: 'STRIPE_TRANSACTION_ERROR', payload: transactionError || '' } );
+			resetTransaction();
+			setFormReady();
 		}
 		if ( transactionStatus === 'complete' ) {
-			onSuccess();
+			debug( 'marking complete' );
+			setFormComplete();
 		}
 		if ( transactionStatus === 'redirect' ) {
-			// TODO: notify user that we are going to redirect
+			debug( 'redirecting' );
+			showInfoMessage( localize( 'Redirecting...' ) );
+			window.location = redirectUrl;
 		}
+	}, [
+		onEvent,
+		resetTransaction,
+		setFormReady,
+		setFormComplete,
+		showErrorMessage,
+		showInfoMessage,
+		transactionStatus,
+		transactionError,
+		redirectUrl,
+		localize,
+	] );
+
+	useEffect( () => {
+		let isSubscribed = true;
+
 		if ( transactionStatus === 'auth' ) {
+			debug( 'showing auth' );
+			onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
 			showStripeModalAuth( {
 				stripeConfiguration,
 				response: transactionAuthData,
-			} ).catch( error => {
-				onFailure( error.stripeError || error.message );
-			} );
+			} )
+				.then( authenticationResponse => {
+					debug( 'stripe auth is complete', authenticationResponse );
+					isSubscribed && setStripeComplete( authenticationResponse );
+				} )
+				.catch( error => {
+					debug( 'showing error for auth', error );
+					showErrorMessage(
+						localize( 'Authorization failed for that card. Please try a different payment method.' )
+					);
+					onEvent( { type: 'EXISTING_CARD_TRANSACTION_ERROR', payload: error } );
+					isSubscribed && resetTransaction();
+					isSubscribed && setFormReady();
+				} );
 		}
+
+		return () => ( isSubscribed = false );
 	}, [
-		onSuccess,
-		onFailure,
+		onEvent,
+		setStripeComplete,
+		resetTransaction,
+		setFormReady,
+		showInfoMessage,
+		showErrorMessage,
 		transactionStatus,
-		transactionError,
 		transactionAuthData,
 		stripeConfiguration,
 		localize,
 	] );
 
-	const buttonString = sprintf(
-		localize( 'Pay %s' ),
-		renderDisplayValueMarkdown( total.amount.displayValue )
-	);
+	const buttonString =
+		formStatus === 'submitting'
+			? localize( 'Processing...' )
+			: sprintf( localize( 'Pay %s' ), renderDisplayValueMarkdown( total.amount.displayValue ) );
 	return (
 		<Button
 			disabled={ disabled }
 			onClick={ () =>
 				submitStripePayment( {
-					billing,
-					domains,
+					name,
 					items,
 					total,
 					stripe,
 					stripeConfiguration,
-					onFailure,
-					successUrl: successRedirectUrl,
-					cancelUrl: failureRedirectUrl,
+					showErrorMessage,
 					beginStripeTransaction,
+					setFormSubmitting,
+					resetTransaction,
+					onEvent,
 				} )
 			}
 			buttonState={ disabled ? 'disabled' : 'primary' }
@@ -654,143 +632,52 @@ function StripeSummary() {
 		<SummaryDetails>
 			<SummaryLine>{ cardholderName }</SummaryLine>
 			<SummaryLine>
-				{ brand !== 'unknown' && '****' } <CardFieldIcon brand={ brand } isSummary={ true } />
+				{ brand !== 'unknown' && '****' } <PaymentLogo brand={ brand } isSummary={ true } />
 			</SummaryLine>
 		</SummaryDetails>
 	);
 }
 
 async function submitStripePayment( {
+	name,
 	items,
 	total,
 	stripe,
 	stripeConfiguration,
-	onFailure,
-	successUrl,
-	cancelUrl,
-	billing,
-	domains,
+	showErrorMessage,
 	beginStripeTransaction,
+	setFormSubmitting,
+	setFormReady,
+	resetTransaction,
+	onEvent,
 } ) {
-	const name = billing.name || '';
-	const country = billing.country || '';
-	const postalCode = billing.zipCode || billing.postalCode || '';
-	const phone = domains.phone || '';
-	const subdivisionCode = billing.state || billing.province || '';
-	// TODO: validate fields
-	const paymentDetailsForStripe = {
+	debug( 'submitting stripe payment' );
+	try {
+		setFormSubmitting();
+		onEvent( { type: 'STRIPE_TRANSACTION_BEGIN' } );
+		beginStripeTransaction( {
+			stripe,
+			name,
+			items,
+			total,
+			stripeConfiguration,
+		} );
+	} catch ( error ) {
+		resetTransaction();
+		setFormReady();
+		onEvent( { type: 'STRIPE_TRANSACTION_ERROR', payload: error } );
+		debug( 'showing error for submit', error );
+		showErrorMessage( error );
+		return;
+	}
+}
+
+function createStripePaymentMethodToken( { stripe, name, country, postalCode } ) {
+	return createStripePaymentMethod( stripe, {
 		name,
 		address: {
 			country,
 			postal_code: postalCode,
 		},
-	};
-
-	if ( phone ) {
-		paymentDetailsForStripe.phone = phone;
-	}
-
-	try {
-		const stripePaymentMethod = await createStripePaymentMethod( stripe, paymentDetailsForStripe );
-		const dataForTransaction = {
-			items,
-			total,
-			country,
-			postalCode,
-			subdivisionCode,
-			paymentData: { billing, domains },
-			stripePaymentMethod,
-			stripeConfiguration,
-			successUrl,
-			cancelUrl,
-		};
-		beginStripeTransaction( dataForTransaction );
-	} catch ( error ) {
-		onFailure( error );
-		return;
-	}
-}
-
-async function showStripeModalAuth( { stripeConfiguration, response } ) {
-	const authenticationResponse = await confirmStripePaymentIntent(
-		stripeConfiguration,
-		response.message.payment_intent_client_secret
-	);
-
-	if ( authenticationResponse ) {
-		// TODO: what do we do here?
-	}
-}
-
-function formatDataForStripeTransaction( {
-	name,
-	items,
-	total,
-	country,
-	postalCode,
-	subdivisionCode,
-	paymentData,
-	stripePaymentMethod,
-	stripeConfiguration,
-	successUrl,
-	cancelUrl,
-} ) {
-	const siteId = ''; // TODO: get site id
-	const couponId = null; // TODO: get couponId
-	const payment = {
-		payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
-		payment_key: stripePaymentMethod.id,
-		payment_partner: stripeConfiguration.processor_id,
-		name,
-		zip: postalCode,
-		country,
-		successUrl,
-		cancelUrl,
-	};
-	return {
-		cart: createCartFromLineItems( {
-			siteId,
-			couponId,
-			items,
-			total,
-			country,
-			postalCode,
-			subdivisionCode,
-		} ),
-		domainDetails: paymentData, // TODO: get this somehow
-		payment,
-	};
-}
-
-function createCartFromLineItems( {
-	siteId,
-	couponId,
-	items,
-	country,
-	postalCode,
-	subdivisionCode,
-} ) {
-	// TODO: use cart manager to create cart object needed for this transaction
-	const currency = items.reduce( ( value, item ) => value || item.amount.currency );
-	return {
-		blog_id: siteId,
-		coupon: couponId || '',
-		currency: currency || '',
-		temporary: false,
-		extra: [],
-		products: items.map( item => ( {
-			product_id: item.id,
-			meta: '', // TODO: get this for domains, etc
-			cost: item.amount.value, // TODO: how to convert this from 3500 to 35?
-			currency: item.amount.currency,
-			volume: 1,
-		} ) ),
-		tax: {
-			location: {
-				country_code: country,
-				postal_code: postalCode,
-				subdivision_code: subdivisionCode,
-			},
-		},
-	};
+	} );
 }

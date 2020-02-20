@@ -31,10 +31,11 @@ import {
 import {
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_PRODUCT_PRICE_MATRIX,
-	JETPACK_PRODUCTS,
+	getJetpackProducts,
 } from 'lib/products-values/constants';
 import { addQueryArgs } from 'lib/url';
 import JetpackFAQ from './jetpack-faq';
+import PlansFeaturesMainProductsHeader from './products-header';
 import WpcomFAQ from './wpcom-faq';
 import CartData from 'components/data/cart';
 import QueryPlans from 'components/data/query-plans';
@@ -61,19 +62,14 @@ import isHappychatAvailable from 'state/happychat/selectors/is-happychat-availab
 import { getDiscountByName } from 'lib/discounts';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import {
-	getSiteOption,
 	getSitePlan,
 	getSiteSlug,
-	isJetpackMinimumVersion,
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'state/sites/selectors';
-import { getSiteType as getSignupSiteType } from 'state/signup/steps/site-type/selectors';
 import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
-import { abtest } from 'lib/abtest';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 /**
  * Style dependencies
@@ -97,7 +93,7 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	isJetpackBackupAvailable() {
-		const { displayJetpackPlans, isMultisite, jetpackSupportsBackupProducts, siteId } = this.props;
+		const { displayJetpackPlans, isMultisite } = this.props;
 
 		// Jetpack Backup does not support Multisite yet.
 		if ( isMultisite ) {
@@ -106,11 +102,6 @@ export class PlansFeaturesMain extends Component {
 
 		// Only for Jetpack, non-atomic sites
 		if ( ! displayJetpackPlans ) {
-			return false;
-		}
-
-		// Only for sites with Jetpack >= 7.9alpha
-		if ( siteId && ! jetpackSupportsBackupProducts ) {
 			return false;
 		}
 
@@ -135,7 +126,6 @@ export class PlansFeaturesMain extends Component {
 			discountEndDate,
 			redirectTo,
 			siteId,
-			siteType,
 			plansWithScroll,
 			translate,
 		} = this.props;
@@ -184,10 +174,8 @@ export class PlansFeaturesMain extends Component {
 					discountEndDate={ discountEndDate }
 					withScroll={ plansWithScroll }
 					popularPlanSpec={ getPopularPlanSpec( {
-						abtest,
 						customerType,
 						isJetpack,
-						siteType,
 					} ) }
 					siteId={ siteId }
 				/>
@@ -439,16 +427,12 @@ export class PlansFeaturesMain extends Component {
 			return null;
 		}
 
-		const { basePlansPath, intervalType, translate, redirectTo } = this.props;
+		const { basePlansPath, intervalType, redirectTo } = this.props;
+		const jetpackProducts = getJetpackProducts();
 
 		return (
 			<div className="plans-features-main__group is-narrow">
-				<FormattedHeader
-					headerText={ translate( 'Solutions' ) }
-					subHeaderText={ translate( 'Just need backups? Learn about add-on solutions.' ) }
-					compactOnMobile
-					isSecondary
-				/>
+				<PlansFeaturesMainProductsHeader />
 				<AsyncLoad
 					require="blocks/product-plan-overlap-notices"
 					placeholder={ null }
@@ -456,7 +440,7 @@ export class PlansFeaturesMain extends Component {
 					products={ JETPACK_BACKUP_PRODUCTS }
 				/>
 				<ProductSelector
-					products={ JETPACK_PRODUCTS }
+					products={ jetpackProducts }
 					intervalType={ intervalType }
 					basePlansPath={ basePlansPath }
 					productPriceMatrix={ JETPACK_PRODUCT_PRICE_MATRIX }
@@ -483,8 +467,8 @@ export class PlansFeaturesMain extends Component {
 				<QueryPlans />
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
-				{ this.renderProductsSelector() }
 				{ this.getPlanFeatures() }
+				{ this.renderProductsSelector() }
 				<CartData>
 					<PaymentMethods />
 				</CartData>
@@ -545,16 +529,10 @@ export default connect(
 		const siteId = get( props.site, [ 'ID' ] );
 		const currentPlan = getSitePlan( state, siteId );
 
-		const siteType = props.isInSignup
-			? getSignupSiteType( state )
-			: getSiteTypePropertyValue( 'id', getSiteOption( state, siteId, 'site_segment' ), 'slug' );
-
 		const customerType = chooseDefaultCustomerType( {
 			currentCustomerType: props.customerType,
 			selectedPlan: props.selectedPlan,
 			currentPlan,
-			siteType,
-			abtest,
 		} );
 
 		return {
@@ -569,11 +547,9 @@ export default connect(
 			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack: isJetpackSite( state, siteId ),
 			isMultisite: isJetpackSiteMultiSite( state, siteId ),
-			jetpackSupportsBackupProducts: isJetpackMinimumVersion( state, siteId, '7.9-alpha' ),
 			siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
 			sitePlanSlug: currentPlan && currentPlan.product_slug,
-			siteType,
 		};
 	},
 	{

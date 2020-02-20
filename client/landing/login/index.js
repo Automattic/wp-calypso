@@ -18,6 +18,7 @@ import { setupMiddlewares, configureReduxStore } from './common';
 import initLoginSection from 'login';
 import userFactory from 'lib/user';
 import { setupLocale } from 'boot/locale';
+import { setStore } from 'state/redux-store';
 
 const debug = debugFactory( 'calypso' );
 
@@ -27,6 +28,7 @@ import 'components/environment-badge/style.scss';
 
 // Create Redux store
 const store = createStore();
+setStore( store );
 
 const boot = currentUser => {
 	debug( "Starting Calypso. Let's do this." );

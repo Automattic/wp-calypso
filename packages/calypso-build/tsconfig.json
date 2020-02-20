@@ -14,7 +14,8 @@
 		// Import non-ES modules as default imports.
 		"esModuleInterop": true,
 		"skipLibCheck": false,
-		"module": "esnext"
-	},
-	"types": [ "webpack-env" ]
+		"module": "esnext",
+		"typeRoots": [ "./typings", "**/node_modules/@types" ],
+		"types": [ "webpack-env", "calypso-assets" ]
+	}
 }

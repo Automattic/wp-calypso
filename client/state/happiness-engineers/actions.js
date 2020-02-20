@@ -14,8 +14,8 @@ import {
  * Returns an action object used in signalling that a list of HEs
  * has been received.
  *
- * @param  {Object[]} happinessEngineers Array of template objects
- * @return {Object}                      Action object
+ * @param  {object[]} happinessEngineers Array of template objects
+ * @returns {object}                      Action object
  */
 export function receiveHappinessEngineers( happinessEngineers ) {
 	return {
@@ -27,7 +27,7 @@ export function receiveHappinessEngineers( happinessEngineers ) {
 /**
  * Returns a function which, when invoked, triggers a network request to fetch HEs.
  *
- * @return {Function} Action thunk
+ * @returns {Function} Action thunk
  */
 export function fetchHappinessEngineers() {
 	return dispatch => {

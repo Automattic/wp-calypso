@@ -15,6 +15,7 @@ import {
 	SIGNUP_PROGRESS_PROCESS_STEP,
 	SIGNUP_PROGRESS_SAVE_STEP,
 	SIGNUP_PROGRESS_SUBMIT_STEP,
+	SIGNUP_STEPS_SITE_TYPE_SET,
 } from 'state/action-types';
 import { withSchemaValidation } from 'state/utils';
 import { schema } from './schema';
@@ -116,6 +117,9 @@ export default withSchemaValidation( schema, ( state = {}, action ) => {
 			return saveStep( state, action );
 		case SIGNUP_PROGRESS_SUBMIT_STEP:
 			return submitStep( state, action );
+		case SIGNUP_STEPS_SITE_TYPE_SET:
+			delete state[ 'domains-with-preview' ];
+			return state;
 	}
 
 	return state;

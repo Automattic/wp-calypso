@@ -61,8 +61,9 @@ class Stepper {
 
 	/**
 	 * Jump directly to a position, bypassing the stepper
-	 * @param {Number} x - x coord
-	 * @param {Number} y - y coord
+	 *
+	 * @param {number} x - x coord
+	 * @param {number} y - y coord
 	 */
 	jumpTo( x, y ) {
 		this.cancel();
@@ -84,7 +85,8 @@ class Stepper {
 
 	/**
 	 * Move a step along the timeline, with optional easing
-	 * @param {Number} ts - timestamp
+	 *
+	 * @param {number} ts - timestamp
 	 */
 	step = ts => {
 		// reset the nextFrame raf handle so we can schedule another step
@@ -132,8 +134,8 @@ class Stepper {
 /**
  * Eases the progress of a curve from 0 to 1. Slows down as it approaches the target.
  *
- * @param {Number} val current value to be eased. [0,1]
- * @returns {Number} eased val
+ * @param {number} val current value to be eased. [0,1]
+ * @returns {number} eased val
  */
 function circularOutEasing( val ) {
 	const inverse = val - 1;
@@ -142,15 +144,16 @@ function circularOutEasing( val ) {
 
 /**
  * Scrolls a container to the specified location
- * @param {Object} options - options object (see below)
+ *
+ * @param {object} options - options object (see below)
  * @param {number} options.x - desired left or x coordinate
  * @param {number} options.y - desired top or y coordinate
- * @param {function} options.easing - easing function, defaults to TWEEN.Easing.Circular.Out
+ * @param {Function} options.easing - easing function, defaults to TWEEN.Easing.Circular.Out
  * @param {number} options.duration - duration in ms, default 500
- * @param {function} options.onStart - callback before start is called
- * @param {function} options.onComplete - callback when scroll is finished
+ * @param {Function} options.onStart - callback before start is called
+ * @param {Function} options.onComplete - callback when scroll is finished
  * @param {HTMLElement} options.container - the container to scroll instead of window, if any
- * @returns {Object} - the stepper
+ * @returns {object} - the stepper
  */
 export default function scrollTo( options ) {
 	const container = options.container || window;

@@ -8,13 +8,16 @@ import { get } from 'lodash';
  */
 import { getStateKey } from 'state/comments/utils';
 
+import 'state/comments/init';
+
 /**
  * Returns the active reply comment for a given site and post.
  *
- * @param  {Object}  state   Global state tree
- * @param  {Number}  siteId  The ID of the site we're querying
- * @param  {Number}  postId  The ID of the post we're querying
- * @return {Number|String}	commentId 	Can be a string if the comment is a placeholder
+ * @param  {object}  options options object.
+ * @param  {object}  options.state   Global state tree
+ * @param  {number}  options.siteId  The ID of the site we're querying
+ * @param  {number}  options.postId  The ID of the post we're querying
+ * @returns {number|string}	commentId 	Can be a string if the comment is a placeholder
  */
 export default function getActiveReplyCommentId( { state, siteId, postId } ) {
 	return get( state.comments.activeReplies, getStateKey( siteId, postId ), null );

@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { max, throttle, values } from 'lodash';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -17,6 +17,7 @@ import Month from './month';
 import { Card } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { getSiteOption } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteStatsPostStreakData } from 'state/stats/lists/selectors';
@@ -127,7 +128,7 @@ class PostTrends extends React.Component {
 		const months = [];
 
 		for ( let i = 11; i >= 0; i-- ) {
-			const startDate = i18n
+			const startDate = this.props
 				.moment()
 				.subtract( i, 'months' )
 				.startOf( 'month' );
@@ -195,14 +196,12 @@ class PostTrends extends React.Component {
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 	const query = {
-		startDate: i18n
-			.moment()
+		startDate: moment()
 			.locale( 'en' )
 			.subtract( 1, 'year' )
 			.startOf( 'month' )
 			.format( 'YYYY-MM-DD' ),
-		endDate: i18n
-			.moment()
+		endDate: moment()
 			.locale( 'en' )
 			.endOf( 'month' )
 			.format( 'YYYY-MM-DD' ),
@@ -219,4 +218,4 @@ const mapStateToProps = state => {
 
 export default connect( mapStateToProps, null, null, {
 	areStatePropsEqual: compareProps( { deep: [ 'query' ] } ),
-} )( localize( PostTrends ) );
+} )( localize( withLocalizedMoment( PostTrends ) ) );

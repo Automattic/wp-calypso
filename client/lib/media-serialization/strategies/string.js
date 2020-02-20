@@ -10,8 +10,8 @@ import createElementFromString from '../create-element-from-string';
  * object containing all detected values.
  *
  * @param  {string} node    Media object to parse
- * @param  {Object} _parsed In recursion, the known values
- * @return {Object}         Object of all detected values
+ * @param  {object} _parsed In recursion, the known values
+ * @returns {object}         Object of all detected values
  */
 function parseAsShortcode( node, _parsed ) {
 	// Attempt to convert string element into DOM node. If successful, recurse
@@ -29,8 +29,8 @@ function parseAsShortcode( node, _parsed ) {
  * object containing all detected values.
  *
  * @param  {string} node    Media object to parse
- * @param  {Object} _parsed In recursion, the known values
- * @return {Object}         Object of all detected values
+ * @param  {object} _parsed In recursion, the known values
+ * @returns {object}         Object of all detected values
  */
 function parseAsElement( node, _parsed ) {
 	// Attempt to convert string element into DOM node. If invalid, this will
@@ -48,8 +48,8 @@ function parseAsElement( node, _parsed ) {
  * Given a media string, returns an object containing all detected values.
  *
  * @param  {string} node    Media object to parse
- * @param  {Object} _parsed In recursion, the known values
- * @return {Object}         Object of all detected values
+ * @param  {object} _parsed In recursion, the known values
+ * @returns {object}         Object of all detected values
  */
 export function deserialize( node, _parsed = { media: {}, appearance: {} } ) {
 	return [ parseAsShortcode, parseAsElement ].reduce( ( memo, parse ) => {

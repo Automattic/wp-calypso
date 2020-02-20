@@ -30,9 +30,9 @@ function ABTest( name, geoLocation ) {
 /**
  * Returns a user's variation, setting it if he or she is not already a participant
  *
- * @param {String} name - The name of the A/B test
- * @param {String} geoLocation - Location of current user
- * @returns {String} - The user's variation
+ * @param {string} name - The name of the A/B test
+ * @param {string} geoLocation - Location of current user
+ * @returns {string} - The user's variation
  */
 export const abtest = ( name, geoLocation = false ) =>
 	new ABTest( name, geoLocation ).getVariationAndSetAsNeeded();
@@ -40,23 +40,23 @@ export const abtest = ( name, geoLocation = false ) =>
 /**
  * Returns a user's variation
  *
- * @param {String} name - The name of the A/B test
- * @returns {String} - The user's variation or null if the user is not a participant
+ * @param {string} name - The name of the A/B test
+ * @returns {string} - The user's variation or null if the user is not a participant
  */
 export const getABTestVariation = name => new ABTest( name ).getVariation();
 
 /**
  * Returns a user's variations from localStorage.
  *
- * @returns {Object} - The user's variations, or an empty object if the user is not a participant
+ * @returns {object} - The user's variations, or an empty object if the user is not a participant
  */
 export const getSavedVariations = () => store.get( ABTEST_LOCALSTORAGE_KEY ) || {};
 
 /**
  * Save the variation for a test - useful for testing!
  *
- * @param {String} name - The name of the A/B test
- * @param {String} variation - The test variation to save
+ * @param {string} name - The name of the A/B test
+ * @param {string} variation - The test variation to save
  * @returns {undefined}
  */
 export const saveABTestVariation = ( name, variation ) =>

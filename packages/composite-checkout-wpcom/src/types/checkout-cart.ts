@@ -25,23 +25,37 @@ export interface CheckoutCartItem {
 	amount: CheckoutCartItemAmount;
 }
 
-export interface CheckoutCartTotal {
-	label: string;
-	amount: CheckoutCartItemAmount;
-}
-
 /**
  * Cart item with WPCOM specific info added.
  */
 export type WPCOMCartItem = CheckoutCartItem & {
-	wpcom_meta: { uuid: string; plan_length?: string };
+	wpcom_meta: {
+		uuid: string;
+		meta?: string;
+		plan_length?: string;
+		product_id: number;
+		product_slug: string;
+		extra: object;
+		volume?: number;
+		is_domain_registration?: boolean;
+	};
+};
+
+export type WPCOMCartCouponItem = CheckoutCartItem & {
+	wpcom_meta: {
+		couponCode: string;
+	};
 };
 
 export interface WPCOMCart {
 	items: WPCOMCartItem[];
-	tax: CheckoutCartItem;
-	total: CheckoutCartTotal;
+	tax: CheckoutCartItem | null;
+	total: CheckoutCartItem;
+	subtotal: CheckoutCartItem;
+	coupon: WPCOMCartCouponItem | null;
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
+	credits: CheckoutCartItem;
+	couponCode: string | null;
 }
 
 export const emptyWPCOMCart = {
@@ -56,6 +70,19 @@ export const emptyWPCOMCart = {
 			displayValue: '',
 		} as CheckoutCartItemAmount,
 	} as CheckoutCartItem,
+	coupon: {
+		id: 'coupon-line-item',
+		label: 'Coupon',
+		type: 'coupon',
+		amount: {
+			value: 0,
+			currency: '',
+			displayValue: '',
+		} as CheckoutCartItemAmount,
+		wpcom_meta: {
+			couponCode: '',
+		},
+	} as WPCOMCartCouponItem,
 	total: {
 		label: 'Total',
 		amount: {
@@ -63,6 +90,21 @@ export const emptyWPCOMCart = {
 			currency: '',
 			displayValue: '',
 		} as CheckoutCartItemAmount,
-	} as CheckoutCartTotal,
+	} as CheckoutCartItem,
+	subtotal: {
+		label: 'Subtotal',
+		amount: {
+			value: 0,
+			currency: '',
+			displayValue: '',
+		} as CheckoutCartItemAmount,
+	} as CheckoutCartItem,
 	allowedPaymentMethods: [],
+	credits: {
+		id: 'Credits',
+		label: 'Credits',
+		type: 'credits',
+		amount: { value: 0, currency: 'USD', displayValue: '0' },
+	},
+	couponCode: null,
 } as WPCOMCart;

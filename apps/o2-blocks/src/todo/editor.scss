@@ -135,7 +135,7 @@ $color-accent-green: #31843f;
 }
 
 // Same for the "add item" input.
-.editor-block-list__block .wp-block-a8c-todo .add-new-item {
+.block-editor-block-list__block .wp-block-a8c-todo .add-new-item {
 	width: 100%;
 	margin-right: 6px;
 	padding: 7.5px 8px;
@@ -154,8 +154,8 @@ body:not( .wp-admin ) .gutenberg {
 	display: none;
 }
 
-.editor-block-list__block.is-selected,
-.editor-block-list__block.is-typing {
+.block-editor-block-list__block.is-selected,
+.block-editor-block-list__block.is-typing {
 	.wp-block-a8c-todo .add-new-todo-item-form {
 		display: flex;
 	}

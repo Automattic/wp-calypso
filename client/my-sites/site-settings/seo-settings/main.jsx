@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import AsyncLoad from 'components/async-load';
 import notices from 'notices';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import QuerySiteSettings from 'components/data/query-site-settings';
@@ -18,7 +19,6 @@ import {
 	getPurchasesError,
 } from 'state/purchases/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import SeoForm from './form';
 
 export class SeoSettings extends Component {
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -34,7 +34,7 @@ export class SeoSettings extends Component {
 			<div>
 				<QuerySiteSettings siteId={ siteId } />
 				<QuerySitePurchases siteId={ siteId } />
-				<SeoForm />
+				<AsyncLoad require="my-sites/site-settings/seo-settings/form" placeholder={ null } />
 			</div>
 		);
 	}

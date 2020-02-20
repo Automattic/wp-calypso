@@ -36,6 +36,7 @@ import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import hasJetpackSites from 'state/selectors/has-jetpack-sites';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
 import {
 	getCustomizerUrl,
 	getSite,
@@ -63,7 +64,6 @@ import {
 	SIDEBAR_SECTION_MANAGE,
 } from './constants';
 import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
-import Badge from 'components/badge';
 /**
  * Style dependencies
  */
@@ -229,9 +229,7 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.trackEarnClick }
 				tipTarget="earn"
 				expandSection={ this.expandToolsSection }
-			>
-				<Badge type="info">{ translate( 'New' ) }</Badge>
-			</SidebarItem>
+			/>
 		);
 	}
 
@@ -239,25 +237,6 @@ export class MySitesSidebar extends Component {
 		this.trackMenuItemClick( 'migrate' );
 		this.onNavigate();
 	};
-
-	migrate() {
-		const { path, siteSuffix, translate } = this.props;
-
-		if ( ! isEnabled( 'tools/migrate' ) ) {
-			return null;
-		}
-
-		return (
-			<SidebarItem
-				label={ translate( 'Migrate' ) }
-				selected={ itemLinkMatches( '/migrate', path ) }
-				link={ `/migrate${ siteSuffix }` }
-				onNavigate={ this.trackMigrateClick }
-				tipTarget="migrate"
-				expandSection={ this.expandToolsSection }
-			/>
-		);
-	}
 
 	trackCustomizeClick = () => {
 		this.trackMenuItemClick( 'customize' );
@@ -335,13 +314,14 @@ export class MySitesSidebar extends Component {
 
 	upgrades() {
 		const { path, translate, canUserManageOptions } = this.props;
-		const domainsLink = '/domains/manage' + this.props.siteSuffix;
 
-		if ( ! this.props.siteId ) {
-			return null;
+		let domainsLink = '/domains/manage';
+
+		if ( this.props.siteSuffix ) {
+			domainsLink += this.props.siteSuffix;
 		}
 
-		if ( ! canUserManageOptions ) {
+		if ( this.props.siteId && ! canUserManageOptions ) {
 			return null;
 		}
 
@@ -594,10 +574,6 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( ! this.useWPAdminFlows() ) {
-			return null;
-		}
-
 		const adminUrl =
 			this.props.isJetpack && ! this.props.isAtomicSite && ! this.props.isVip
 				? formatUrl( {
@@ -626,31 +602,6 @@ export class MySitesSidebar extends Component {
 			</SidebarMenu>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
-	}
-
-	// Check for cases where WP Admin links should appear, where we need support for legacy reasons (VIP, older users, testing).
-	useWPAdminFlows() {
-		const { isJetpack, isVip } = this.props;
-		const currentUser = this.props.currentUser;
-		const userRegisteredDate = new Date( currentUser.date );
-		const cutOffDate = new Date( '2015-09-07' );
-
-		// VIP sites should always show a WP Admin link regardless of the current user.
-		if ( isVip ) {
-			return true;
-		}
-
-		// Jetpack (including Atomic) sites should always show a WP Admin
-		if ( isJetpack ) {
-			return true;
-		}
-
-		// User registered before the cut-off date of September 7, 2015 and we want to support them as legacy users.
-		if ( userRegisteredDate < cutOffDate ) {
-			return true;
-		}
-
-		return false;
 	}
 
 	trackWpadminClick = () => {
@@ -703,8 +654,11 @@ export class MySitesSidebar extends Component {
 			);
 		}
 
+		if ( this.props.isMigrationInProgress ) {
+			return <SidebarMenu />;
+		}
+
 		const tools = !! this.tools() || !! this.marketing() || !! this.earn() || !! this.activity();
-		const manage = !! this.upgrades() || !! this.users() || !! this.siteSettings();
 
 		return (
 			<div className="sidebar__menu-wrapper">
@@ -745,14 +699,13 @@ export class MySitesSidebar extends Component {
 						materialIcon="build"
 					>
 						{ this.tools() }
-						{ this.migrate() }
 						{ this.marketing() }
 						{ this.earn() }
 						{ this.activity() }
 					</ExpandableSidebarMenu>
 				) }
 
-				{ manage && (
+				{
 					<ExpandableSidebarMenu
 						onClick={ this.toggleSection( SIDEBAR_SECTION_MANAGE ) }
 						expanded={ this.props.isManageSectionOpen }
@@ -766,7 +719,7 @@ export class MySitesSidebar extends Component {
 							{ this.siteSettings() }
 						</ul>
 					</ExpandableSidebarMenu>
-				) }
+				}
 
 				{ this.wpAdmin() }
 			</div>
@@ -823,6 +776,7 @@ function mapStateToProps( state ) {
 		isToolsSectionOpen,
 		isManageSectionOpen,
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
+		isMigrationInProgress: !! isSiteMigrationInProgress( state, selectedSiteId ),
 		isVip: isVipSite( state, selectedSiteId ),
 		showCustomizerLink: ! isSiteUsingFullSiteEditing( state, selectedSiteId ),
 		siteId,

@@ -16,7 +16,7 @@ import moment from 'moment-timezone';
  * @param  {MomentInput}  input Valid input for moment (string, timestamp, moment.js object)
  *                        to which timezone or offset will be applied.
  * @param  {OffsetParams} params Parameters
- * @return {Object}       Moment with timezone applied if provided.
+ * @returns {object}       Moment with timezone applied if provided.
  *                        Moment with gmtOffset applied if no timezone is provided.
  *                        If neither is provided, the original moment is returned.
  */

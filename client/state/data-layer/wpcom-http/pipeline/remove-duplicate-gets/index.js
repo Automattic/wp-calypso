@@ -36,19 +36,19 @@ export const clearQueue = () => {
 /**
  * Determines if a request object specifies the GET HTTP method
  *
- * @param {Object} request the HTTP request action
- * @returns {Boolean} whether or not the method is GET
+ * @param {object} request the HTTP request action
+ * @returns {boolean} whether or not the method is GET
  */
 const isGetRequest = request => 'GET' === get( request, 'method', '' ).toUpperCase();
 
 /**
  * Generate a deterministic key for comparing request descriptions
  *
- * @param {String} path API endpoint path
- * @param {String} apiNamespace used for endpoint versioning
- * @param {String} apiVersion used for endpoint versioning
- * @param {Object<String, *>} query GET query string
- * @returns {String} unique key up to duplicate request descriptions
+ * @param {string} path API endpoint path
+ * @param {string} apiNamespace used for endpoint versioning
+ * @param {string} apiVersion used for endpoint versioning
+ * @param {object<string, *>} query GET query string
+ * @returns {string} unique key up to duplicate request descriptions
  */
 export const buildKey = ( { path, apiNamespace, apiVersion, query } ) =>
 	JSON.stringify( [ path, apiNamespace, apiVersion, sortBy( toPairs( query ), head ) ] );
@@ -56,9 +56,9 @@ export const buildKey = ( { path, apiNamespace, apiVersion, query } ) =>
 /**
  * Joins a responder action into a unique list of responder actions
  *
- * @param {Object<String, Object[]>} list existing responder actions
- * @param {Object} item new responder action to add
- * @returns {Object<String, Object[]>} union of existing list and new item
+ * @param {object<string, object[]>} list existing responder actions
+ * @param {object} item new responder action to add
+ * @returns {object<string, object[]>} union of existing list and new item
  */
 export const addResponder = ( list, item ) => ( {
 	failures: unionWith( list.failures, compact( [ item.onFailure ] ), isEqual ),

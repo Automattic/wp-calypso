@@ -1,10 +1,4 @@
 /**
- * External dependencies
- */
-import { assign } from 'lodash';
-import { parse as parseUrl } from 'url';
-
-/**
  * Internal dependencies
  */
 import debug from './debug';
@@ -12,8 +6,8 @@ import debug from './debug';
 /**
  * Decodes a url-safe base64 encoded string.
  *
- * @param {String} str The url-safe base64 encoded string
- * @return {String} The decoded string
+ * @param {string} str The url-safe base64 encoded string
+ * @returns {string} The decoded string
  */
 function urlSafeBase64DecodeString( str ) {
 	const decodeMap = {
@@ -22,15 +16,15 @@ function urlSafeBase64DecodeString( str ) {
 		'.': '=',
 	};
 
-	return atob( str.replace( /[-_.]/g, ch => decodeMap[ ch ] ) );
+	return window.atob( str.replace( /[-_.]/g, ch => decodeMap[ ch ] ) );
 }
 
 /**
  * Decodes a URL param encoded by AMP's linker.js
  * See also https://github.com/ampproject/amphtml/blob/master/extensions/amp-analytics/linker-id-receiving.md
  *
- * @param {String} value Value to be decoded
- * @return {null|Object} null or and object containing key/value pairs
+ * @param {string} value Value to be decoded
+ * @returns {null|object} null or and object containing key/value pairs
  */
 function parseAmpEncodedParams( value ) {
 	value = value
@@ -50,26 +44,33 @@ function parseAmpEncodedParams( value ) {
 }
 
 /**
- * Returns an object equivalent to what url.parse( url, true ) would return plus the data extracted from `tk_amp`.
+ * Returns a URL instance with the original data plus the data extracted from `tk_amp`. Null if not a valid absolute URL.
  * URL parameters explicitly present in the URL take precedence over the ones extracted from `tk_amp`.
  * This function is used to support AMP-compatible tracking.
  *
- * @param {String} url URL to be parsed like `document.location.href`.
- * @return {Object} An object equivalent to what url.parse( url, true ) would return plus the data extracted from in `tk_amp`
+ * @param {string} url URL to be parsed like `document.location.href`.
+ * @returns {object} A URL instance with the original data plus the data extracted from `tk_amp`. Null if not a valid absolute URL.
  */
 export default function urlParseAmpCompatible( url ) {
-	const parsedUrl = parseUrl( url, true );
-	const query = parsedUrl.query;
+	try {
+		const parsedUrl = new URL( url );
 
-	debug( 'urlParseAmpCompatible: original query:', query );
+		debug( 'urlParseAmpCompatible: original query:', parsedUrl.search );
 
-	if ( 'tk_amp' in query ) {
-		const tk_amp = parseAmpEncodedParams( query.tk_amp );
-		debug( 'urlParseAmpCompatible: tk_amp:', tk_amp );
-		parsedUrl.query = assign( {}, tk_amp, query );
+		if ( parsedUrl.searchParams.has( 'tk_amp' ) ) {
+			const tk_amp = parseAmpEncodedParams( parsedUrl.searchParams.tk_amp );
+			debug( 'urlParseAmpCompatible: tk_amp:', tk_amp );
+			for ( const key of Object.keys( tk_amp ) ) {
+				if ( ! parsedUrl.searchParams.has( key ) ) {
+					parsedUrl.searchParams.set( key, tk_amp[ key ] );
+				}
+			}
+		}
+
+		debug( 'urlParseAmpCompatible: merged query:', parsedUrl.search );
+
+		return parsedUrl;
+	} catch {
+		return null;
 	}
-
-	debug( 'urlParseAmpCompatible: merged query:', parsedUrl.query );
-
-	return parsedUrl;
 }

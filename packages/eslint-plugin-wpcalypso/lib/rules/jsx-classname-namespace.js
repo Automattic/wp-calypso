@@ -1,5 +1,5 @@
 /**
- * @fileoverview Ensure JSX className adheres to CSS namespace guidelines
+ * @file Ensure JSX className adheres to CSS namespace guidelines
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -101,7 +101,15 @@ const rule = ( module.exports = function( context ) {
 } );
 
 rule.ERROR_MESSAGE = 'className should follow CSS namespace guidelines (expected {{expected}})';
-rule.DEFAULT_ROOT_FILES = [ 'index.js', 'index.jsx', 'index.ts', 'index.tsx' ];
+rule.DEFAULT_ROOT_FILES = [
+	'index.js',
+	'index.jsx',
+	'index.ts',
+	'index.tsx',
+	// Storybook files
+	'index.stories.js',
+	'index.stories.jsx',
+];
 
 rule.schema = [
 	{

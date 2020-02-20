@@ -37,9 +37,9 @@ const wpcom = wp.undocumented();
  * an object containing the domains for
  * a given site have been received.
  *
- * @param {Number} siteId - identifier of the site
- * @param {Object} domains - domains array gotten from WP REST-API response
- * @returns {Object} the action object
+ * @param {number} siteId - identifier of the site
+ * @param {object} domains - domains array gotten from WP REST-API response
+ * @returns {object} the action object
  */
 export const domainsReceiveAction = ( siteId, domains ) => {
 	const action = {
@@ -57,8 +57,8 @@ export const domainsReceiveAction = ( siteId, domains ) => {
  *
  * Return SITE_DOMAINS_REQUEST action object
  *
- * @param {Number} siteId - side identifier
- * @return {Object} siteId - action object
+ * @param {number} siteId - side identifier
+ * @returns {object} siteId - action object
  */
 export const domainsRequestAction = siteId => {
 	const action = {
@@ -75,8 +75,8 @@ export const domainsRequestAction = siteId => {
  *
  * Return SITE_DOMAINS_REQUEST_SUCCESS action object
  *
- * @param {Number} siteId - side identifier
- * @return {Object} siteId - action object
+ * @param {number} siteId - side identifier
+ * @returns {object} siteId - action object
  */
 export const domainsRequestSuccessAction = siteId => {
 	const action = {
@@ -93,9 +93,9 @@ export const domainsRequestSuccessAction = siteId => {
  *
  * Return SITE_DOMAINS_REQUEST_FAILURE action object
  *
- * @param {Number} siteId - site identifier
- * @param {Object} error - error message according to REST-API error response
- * @return {Object} action object
+ * @param {number} siteId - site identifier
+ * @param {object} error - error message according to REST-API error response
+ * @returns {object} action object
  */
 export const domainsRequestFailureAction = ( siteId, error ) => {
 	const action = {
@@ -111,7 +111,7 @@ export const domainsRequestFailureAction = ( siteId, error ) => {
 /**
  * Fetches domains for the given site.
  *
- * @param {Number} siteId - identifier of the site
+ * @param {number} siteId - identifier of the site
  * @returns {Function} a promise that will resolve once fetching is completed
  */
 export function fetchSiteDomains( siteId ) {

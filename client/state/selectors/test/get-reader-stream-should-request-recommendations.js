@@ -6,14 +6,13 @@ import _ from 'lodash';
 /**
  * Internal Dependencies
  */
-import getReaderFollows from 'state/selectors/get-reader-follows';
-
-import shouldRequestRecs from 'state/selectors/get-reader-stream-should-request-recommendations';
 import { getDistanceBetweenRecs } from 'reader/stream/utils';
+import { getReaderFollows } from 'state/reader/follows/selectors';
+import { shouldRequestRecs } from 'state/reader/streams/selectors';
 
 jest.mock( 'lib/user/utils', () => ( { getLocaleSlug: () => 'en' } ) );
 jest.mock( 'reader/stream/utils' );
-jest.mock( 'state/selectors/get-reader-follows' );
+jest.mock( 'state/reader/follows/selectors/get-reader-follows' );
 
 describe( 'shouldRequestRecs', () => {
 	const generateState = ( { following, recs } ) => ( {

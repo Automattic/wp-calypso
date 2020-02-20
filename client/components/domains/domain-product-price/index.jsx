@@ -13,6 +13,8 @@ import { localize } from 'i18n-calypso';
  */
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+import InfoPopover from 'components/info-popover';
+import { getTld } from 'lib/domains';
 
 /**
  * Style dependencies
@@ -34,10 +36,96 @@ class DomainProductPrice extends React.Component {
 		isMappingProduct: false,
 	};
 
-	renderFreeWithPlanText() {
-		const { isMappingProduct, translate } = this.props;
+	getDomainPricePopoverElement() {
+		const { price, rule, isFeatured, domain, translate } = this.props;
 
-		let message;
+		let popoverText;
+
+		switch ( rule ) {
+			case 'FREE_DOMAIN':
+				if ( getTld( domain ) === 'blog' ) {
+					popoverText = translate(
+						'Every WordPress.com blog comes with a free .blog address. {{a}}Learn more{{/a}}.',
+						{
+							components: {
+								a: (
+									<a
+										href="https://en.support.wordpress.com/domains/#domain-name-overview"
+										target="_blank"
+										rel="noopener noreferrer"
+										onClick={ event => {
+											event.stopPropagation();
+										} }
+									/>
+								),
+							},
+						}
+					);
+				} else {
+					popoverText = translate(
+						'Every WordPress.com site comes with a free WordPress.com address. {{a}}Learn more{{/a}}.',
+						{
+							components: {
+								a: (
+									<a
+										href="https://en.support.wordpress.com/domains/#domain-name-overview"
+										target="_blank"
+										rel="noopener noreferrer"
+										onClick={ event => {
+											event.stopPropagation();
+										} }
+									/>
+								),
+							},
+						}
+					);
+				}
+				break;
+
+			case 'INCLUDED_IN_HIGHER_PLAN':
+				popoverText = translate(
+					'The registration fee for this domain is free for the first year with the purchase of any paid plan. ' +
+						'It will renew for %(cost)s / year after that. {{a}}Learn more{{/a}}.',
+					{
+						args: { cost: price },
+						components: {
+							a: (
+								<a
+									href="https://en.support.wordpress.com/domains/domain-pricing-and-available-tlds/"
+									target="_blank"
+									rel="noopener noreferrer"
+									onClick={ event => {
+										event.stopPropagation();
+									} }
+								/>
+							),
+						},
+					}
+				);
+				break;
+		}
+
+		if ( ! popoverText ) {
+			return;
+		}
+
+		return (
+			! isFeatured && (
+				<InfoPopover
+					iconSize={ 22 }
+					position={ 'left' }
+					className="domain-product-price__free-text-tooltip"
+				>
+					{ popoverText }
+				</InfoPopover>
+			)
+		);
+	}
+
+	renderFreeWithPlanText() {
+		const { isMappingProduct, showDesignUpdate, translate } = this.props;
+
+		let message, popoverElement;
 		switch ( this.props.rule ) {
 			case 'FREE_WITH_PLAN':
 				message = translate( 'First year free with your plan' );
@@ -47,12 +135,22 @@ class DomainProductPrice extends React.Component {
 				break;
 			case 'INCLUDED_IN_HIGHER_PLAN':
 				if ( this.props.showTestCopy ) {
-					message = (
-						<>
-							Registration fee: <del>{ this.props.price }</del>{' '}
-							<span className="domain-product-price__free-price">Free</span>
-						</>
-					);
+					message = translate( 'Registration fee: {{del}}%(cost)s{{/del}} {{span}}Free{{/span}}', {
+						args: { cost: this.props.price },
+						components: {
+							del: <del />,
+							span: <span className="domain-product-price__free-price" />,
+						},
+					} );
+				} else if ( this.props.showDesignUpdate ) {
+					message = translate( '{{del}}%(cost)s{{/del}} {{span}}Free with a paid plan{{/span}}', {
+						args: { cost: this.props.price },
+						components: {
+							del: <del />,
+							span: <span className="domain-product-price__free-price" />,
+						},
+					} );
+					popoverElement = this.getDomainPricePopoverElement();
 				} else {
 					message = translate( 'First year included in paid plans' );
 				}
@@ -66,7 +164,16 @@ class DomainProductPrice extends React.Component {
 				break;
 		}
 
-		return <div className="domain-product-price__free-text">{ message }</div>;
+		const className = classnames( 'domain-product-price__free-text', {
+			'domain-product-price__free-text-domain-step-design-updates': showDesignUpdate,
+		} );
+
+		return (
+			<div className={ className }>
+				{ message }
+				{ popoverElement }
+			</div>
+		);
 	}
 
 	renderFreeWithPlanPrice() {
@@ -74,19 +181,43 @@ class DomainProductPrice extends React.Component {
 			return;
 		}
 
-		const priceText = this.props.showTestCopy
-			? `Renews at ${ this.props.price }/year`
-			: this.props.translate( 'Renewal: %(cost)s {{small}}/year{{/small}}', {
+		let priceText;
+		if ( this.props.showTestCopy ) {
+			priceText = this.props.translate( 'Renews at %(cost)s / year', {
+				args: { cost: this.props.price },
+			} );
+		} else if ( this.props.showDesignUpdate ) {
+			if ( this.props.isFeatured ) {
+				priceText = this.props.translate( 'Renews at %(cost)s / year. {{a}}Learn more{{/a}}.', {
 					args: { cost: this.props.price },
-					components: { small: <small /> },
-			  } );
+					components: {
+						a: (
+							<a
+								href="https://en.support.wordpress.com/domains/domain-pricing-and-available-tlds/"
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ event => {
+									event.stopPropagation();
+								} }
+							/>
+						),
+					},
+				} );
+			}
+		} else {
+			priceText = this.props.translate( 'Renewal: %(cost)s {{small}}/year{{/small}}', {
+				args: { cost: this.props.price },
+				components: { small: <small /> },
+			} );
+		}
 
-		return <div className="domain-product-price__price">{ priceText }</div>;
+		return priceText && <div className="domain-product-price__price">{ priceText }</div>;
 	}
 
 	renderFreeWithPlan() {
 		const className = classnames( 'domain-product-price', 'is-free-domain', {
 			'domain-product-price__domain-step-copy-updates': this.props.showTestCopy,
+			'domain-product-price__domain-step-design-updates': this.props.showDesignUpdate,
 		} );
 
 		return (
@@ -98,17 +229,24 @@ class DomainProductPrice extends React.Component {
 	}
 
 	renderFree() {
+		const { isEligibleVariantForDomainTest, showDesignUpdate, translate } = this.props;
+
 		const className = classnames( 'domain-product-price', {
-			'domain-product-price__domain-step-copy-updates': this.props.showTestCopy,
+			'domain-product-price__domain-step-copy-updates': isEligibleVariantForDomainTest,
+			'domain-product-price__domain-step-design-updates': showDesignUpdate,
 		} );
 
 		const productPriceClassName = classnames( 'domain-product-price__price', {
-			'domain-product-price__free-price': this.props.showTestCopy,
+			'domain-product-price__free-price': isEligibleVariantForDomainTest,
+			'domain-product-price__free-price-domain-step-design-updates': showDesignUpdate,
 		} );
 
 		return (
 			<div className={ className }>
-				<div className={ productPriceClassName }>{ this.props.translate( 'Free' ) }</div>
+				<div className={ productPriceClassName }>
+					<span>{ translate( 'Free' ) }</span>
+					{ showDesignUpdate && this.getDomainPricePopoverElement() }
+				</div>
 			</div>
 		);
 	}

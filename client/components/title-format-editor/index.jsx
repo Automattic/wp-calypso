@@ -11,14 +11,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import {
-	CompositeDecorator,
-	Editor,
-	EditorState,
-	Entity,
-	Modifier,
-	SelectionState,
-} from 'draft-js';
+import { CompositeDecorator, Editor, EditorState, Modifier, SelectionState } from 'draft-js';
 import { fromEditor, mapTokenTitleForEditor, toEditor } from './parser';
 import Token from './token';
 import { buildSeoTitle } from 'state/sites/selectors';
@@ -164,8 +157,10 @@ export class TitleFormatEditor extends Component {
 		return () => {
 			const { editorState } = this.state;
 			const currentSelection = editorState.getSelection();
+			const currentContent = editorState.getCurrentContent();
 
-			const tokenEntity = Entity.create( 'TOKEN', 'IMMUTABLE', { name } );
+			currentContent.createEntity( 'TOKEN', 'IMMUTABLE', { name } );
+			const tokenEntity = currentContent.getLastCreatedEntityKey();
 
 			const contentState = Modifier.replaceText(
 				editorState.getCurrentContent(),
@@ -213,15 +208,14 @@ export class TitleFormatEditor extends Component {
 		};
 	}
 
-	renderTokens( contentBlock, callback ) {
+	renderTokens( contentBlock, callback, contentState ) {
 		contentBlock.findEntityRanges( character => {
 			const entity = character.getEntity();
 
 			if ( null === entity ) {
 				return false;
 			}
-
-			return 'TOKEN' === Entity.get( entity ).getType();
+			return 'TOKEN' === contentState.getEntity( entity ).getType();
 		}, callback );
 	}
 

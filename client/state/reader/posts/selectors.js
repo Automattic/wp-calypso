@@ -9,12 +9,14 @@ import { keyBy, some, get } from 'lodash';
 import treeSelect from '@automattic/tree-select';
 import { keyToString, keyForPost } from 'reader/post-key';
 
+import 'state/reader/init';
+
 /**
  * Returns a single post.
  *
- * @param  {Object}  state  Global state tree
- * @param  {String}  postGlobalId Post global ID
- * @return {Object} Post
+ * @param  {object}  state  Global state tree
+ * @param  {string}  postGlobalId Post global ID
+ * @returns {object} Post
  */
 export function getPostById( state, postGlobalId ) {
 	return state.reader.posts.items[ postGlobalId ];

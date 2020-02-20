@@ -4,12 +4,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { useLineItems } from '@automattic/composite-checkout';
+import { useLineItems, useFormStatus } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
 import joinClasses from './join-classes';
+import { isLineItemADomain } from '../hooks/has-domains';
 import Coupon from './coupon';
 import WPTermsAndConditions from './wp-terms-and-conditions';
 import {
@@ -18,27 +19,47 @@ import {
 	WPOrderReviewSection,
 } from './wp-order-review-line-items';
 
-export default function WPCheckoutOrderReview( { className, removeItem } ) {
+export default function WPCheckoutOrderReview( {
+	className,
+	removeItem,
+	couponStatus,
+	couponFieldStateProps,
+	siteUrl,
+	variantRequestStatus,
+	variantSelectOverride,
+	getItemVariants,
+	onChangePlanLength,
+} ) {
 	const [ items, total ] = useLineItems();
+	const { formStatus } = useFormStatus();
+	const firstDomainItem = items.find( isLineItemADomain );
+	const domainName = firstDomainItem ? firstDomainItem.sublabel : siteUrl;
 
-	//TODO: tie the coupon field visibility based on whether there is a coupon in the cart
 	return (
 		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
 			<WPOrderReviewSection>
 				<WPOrderReviewLineItems
 					items={ items }
-					hasDeleteButtons={ true }
 					removeItem={ removeItem }
+					variantRequestStatus={ variantRequestStatus }
+					variantSelectOverride={ variantSelectOverride }
+					getItemVariants={ getItemVariants }
+					onChangePlanLength={ onChangePlanLength }
 				/>
 			</WPOrderReviewSection>
 
-			<CouponField id="order-review-coupon" isCouponFieldVisible={ true } />
+			<CouponField
+				id="order-review-coupon"
+				disabled={ formStatus !== 'ready' }
+				couponStatus={ couponStatus }
+				couponFieldStateProps={ couponFieldStateProps }
+			/>
 
 			<WPOrderReviewSection>
-				<WPOrderReviewTotal total={ total } hasDeleteButtons={ true } />
+				<WPOrderReviewTotal total={ total } />
 			</WPOrderReviewSection>
 
-			<WPTermsAndConditions />
+			<WPTermsAndConditions domainName={ domainName } />
 		</div>
 	);
 }
@@ -47,6 +68,9 @@ WPCheckoutOrderReview.propTypes = {
 	summary: PropTypes.bool,
 	className: PropTypes.string,
 	removeItem: PropTypes.func.isRequired,
+	siteUrl: PropTypes.string,
+	getItemVariants: PropTypes.func,
+	onChangePlanLength: PropTypes.func,
 };
 
 const CouponField = styled( Coupon )`

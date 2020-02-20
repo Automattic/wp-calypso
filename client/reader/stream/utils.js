@@ -18,9 +18,9 @@ export const RECS_PER_BLOCK = 2;
 /**
  * Check if two postKeys are for the same siteId or feedId
  *
- * @param {Object} postKey1 First post key
- * @param {Object} postKey2 Second post key
- * @returns {Boolean} Returns true if two postKeys are for the same siteId or feedId
+ * @param {object} postKey1 First post key
+ * @param {object} postKey2 Second post key
+ * @returns {boolean} Returns true if two postKeys are for the same siteId or feedId
  */
 export function sameSite( postKey1, postKey2 ) {
 	return (
@@ -54,9 +54,9 @@ export function sameXPost( postKey1, postKey2 ) {
  * Takes two postKeys and combines them into a ReaderCombinedCard postKey.
  * Note: This only makes sense for postKeys from the same site
  *
- * @param {Object} postKey1 must be either a ReaderCombinedCard postKey or a regular postKey
- * @param {Object} postKey2 can only be a regular postKey. May not be a combinedCard postKey or a recommendations postKey
- * @returns {Object} A ReaderCombinedCard postKey
+ * @param {object} postKey1 must be either a ReaderCombinedCard postKey or a regular postKey
+ * @param {object} postKey2 can only be a regular postKey. May not be a combinedCard postKey or a recommendations postKey
+ * @returns {object} A ReaderCombinedCard postKey
  */
 export function combine( postKey1, postKey2 ) {
 	if ( ! postKey1 || ! postKey2 ) {

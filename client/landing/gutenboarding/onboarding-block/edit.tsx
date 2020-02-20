@@ -1,58 +1,66 @@
 /**
  * External dependencies
  */
-import { __ as NO__ } from '@wordpress/i18n';
 import { BlockEditProps } from '@wordpress/blocks';
 import { useSelect } from '@wordpress/data';
 import React, { FunctionComponent } from 'react';
-import { Button } from '@wordpress/components';
+import { Redirect, Switch, Route } from 'react-router-dom';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY } from '../stores/onboard';
+import { SITE_STORE } from '../stores/site';
 import DesignSelector from './design-selector';
-import StepperWizard from './stepper-wizard';
-import VerticalSelect from './vertical-select';
-import SiteTitle from './site-title';
+import SignupForm from './signup-form';
+import CreateSite from './create-site';
 import { Attributes } from './types';
-import { Steps } from '../types';
+import { Step, usePath } from '../path';
 import './style.scss';
+import VerticalBackground from './vertical-background';
+import AcquireIntent from './acquire-intent';
 
-const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = ( {
-	attributes: { step = 0 },
-} ) => {
-	const { siteVertical, siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
+const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
+	const { siteVertical, selectedDesign } = useSelect( select => select( STORE_KEY ).getState() );
+	const isCreatingSite = useSelect( select => select( SITE_STORE ).isFetchingSite() );
 
-	switch ( step ) {
-		case Steps.IntentGathering:
-			return (
-				<div className="onboarding-block__acquire-intent">
-					<div className="onboarding-block__questions">
-						<h2 className="onboarding-block__questions-heading">
-							{ ! siteVertical &&
-								! siteTitle &&
-								NO__( "Let's set up your website – it takes only a moment." ) }
-						</h2>
-						<StepperWizard>
-							<VerticalSelect />
-							{ ( siteVertical || siteTitle ) && <SiteTitle /> }
-						</StepperWizard>
-						{ siteVertical && (
-							<div className="onboarding-block__footer">
-								<Button className="onboarding-block__question-skip" isLink>
-									{ NO__( "Don't know yet" ) } →
-								</Button>
-							</div>
-						) }
-					</div>
-				</div>
-			);
-		case Steps.DesignSelection:
-			return <DesignSelector />;
-	}
+	const makePath = usePath();
 
-	return null;
+	return (
+		<>
+			<VerticalBackground />
+			{ isCreatingSite && <Redirect push to={ makePath( Step.CreateSite ) } /> }
+			<Switch>
+				<Route path={ makePath( Step.IntentGathering ) }>
+					<AcquireIntent />
+				</Route>
+
+				<Route path={ makePath( Step.DesignSelection ) }>
+					{ ! siteVertical ? (
+						<Redirect to={ makePath( Step.IntentGathering ) } />
+					) : (
+						<DesignSelector />
+					) }
+				</Route>
+
+				<Route path={ makePath( Step.PageSelection ) }>
+					{ ! selectedDesign ? (
+						<Redirect to={ makePath( Step.DesignSelection ) } />
+					) : (
+						<DesignSelector showPageSelector />
+					) }
+				</Route>
+
+				<Route path={ makePath( Step.Signup ) }>
+					<SignupForm />;
+				</Route>
+
+				<Route path={ makePath( Step.CreateSite ) }>
+					<CreateSite />
+				</Route>
+			</Switch>
+		</>
+	);
 };
 
 export default OnboardingEdit;

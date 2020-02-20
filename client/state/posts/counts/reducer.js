@@ -25,9 +25,9 @@ import { countsSchema } from './schema';
  * dispatched. The state reflects a mapping of site ID, post type pairing to a
  * boolean reflecting whether a request for the post types is in progress.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function requesting( state = {}, action ) {
 	switch ( action.type ) {
@@ -49,9 +49,9 @@ export function requesting( state = {}, action ) {
  * The state reflects a mapping of site ID, post type, [all/mine], post status
  * to the number of posts.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const counts = ( () => {
 	let currentUserId;
@@ -60,9 +60,9 @@ export const counts = ( () => {
 	/**
 	 * Returns a serialized key to be used in tracking post status properties
 	 *
-	 * @param  {Number} siteId Site ID
-	 * @param  {Number} postId Post ID
-	 * @return {String}        Serialized key
+	 * @param  {number} siteId Site ID
+	 * @param  {number} postId Post ID
+	 * @returns {string}        Serialized key
 	 */
 	function getPostStatusKey( siteId, postId ) {
 		return [ siteId, postId ].join();
@@ -72,11 +72,11 @@ export const counts = ( () => {
 	 * Returns the updated post count state after transitioning a post to a new
 	 * status.
 	 *
-	 * @param  {Object} state  Current state
-	 * @param  {Number} siteId Site ID
-	 * @param  {Number} postId Post ID
-	 * @param  {String} status Post status
-	 * @return {Object}        Updated state
+	 * @param  {object} state  Current state
+	 * @param  {number} siteId Site ID
+	 * @param  {number} postId Post ID
+	 * @param  {string} status Post status
+	 * @returns {object}        Updated state
 	 */
 	function transitionPostStateToStatus( state, siteId, postId, status ) {
 		const postStatusKey = getPostStatusKey( siteId, postId );

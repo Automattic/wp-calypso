@@ -46,6 +46,7 @@ export function maxWidthPhotonishURL( imageURL, width ) {
 	} catch ( e ) {
 		/**
 		 * `url.parse` throws in a few places where it calls decodeURIComponent
+		 *
 		 * @see e.g. https://github.com/Automattic/wp-calypso/issues/18645
 		 */
 	}
@@ -113,6 +114,7 @@ export function domForHtml( html ) {
 }
 
 /** Determine if url is likely pointed to an image
+ *
  * @param {string} uri - a url
  * @returns {boolean} - true or false depending on if it is probably an image (has the right extension)
  */
@@ -127,8 +129,9 @@ export function isUrlLikelyAnImage( uri ) {
 
 /**
  * Determine if a post thumbnail is likely an image
+ *
  * @param  {object} thumb the thumbnail object from a post
- * @return {boolean}       whether or not we think this is an image
+ * @returns {boolean}       whether or not we think this is an image
  */
 export function thumbIsLikelyImage( thumb ) {
 	if ( ! thumb || ! thumb.URL ) {
@@ -145,8 +148,9 @@ export function thumbIsLikelyImage( thumb ) {
 /**
  * Determines if an iframe is from a source we trust.  We allow these to be the featured media and also give
  * them a free-er sandbox
+ *
  * @param  {object} iframe the iframe to check
- * @return {bool} true if whitelisted
+ * @returns {bool} true if whitelisted
  */
 export function iframeIsWhitelisted( iframe ) {
 	const iframeWhitelist = [
@@ -215,8 +219,8 @@ function getPathname( uri ) {
 
 /** returns whether or not a posts featuredImages is contained within the contents
  *
- * @param {Object} post - the post to check
- * @returns {Boolean|Number} false if featuredImage is not within content content_images.
+ * @param {object} post - the post to check
+ * @returns {boolean|number} false if featuredImage is not within content content_images.
  *   otherwise returns the index of the dupe in post.images.
  */
 export function isFeaturedImageInContent( post ) {
@@ -265,8 +269,8 @@ export const safeLinkRe = /^https?:\/\//;
 /**
  * Only accept links that start with http or https. Reject others.
  *
- * @param {String} link the link to check
- * @returns {String|undefined} the safe link or undefined
+ * @param {string} link the link to check
+ * @returns {string|undefined} the safe link or undefined
  */
 export function safeLink( link ) {
 	if ( safeLinkRe.test( link ) ) {

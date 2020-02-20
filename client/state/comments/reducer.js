@@ -40,7 +40,7 @@ import {
 	READER_EXPAND_COMMENTS,
 	COMMENTS_SET_ACTIVE_REPLY,
 } from 'state/action-types';
-import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
+import { combineReducers, keyedReducer, withoutPersistence, withStorageKey } from 'state/utils';
 import {
 	PLACEHOLDER_STATE,
 	NUMBER_OF_COMMENTS_PER_FETCH,
@@ -84,11 +84,12 @@ const updateComment = ( commentId, newProperties ) => comment => {
 	};
 };
 
-/***
+/**
  * Comments items reducer, stores a comments items Immutable.List per siteId, postId
- * @param {Object} state redux state
- * @param {Object} action redux action
- * @returns {Object} new redux state
+ *
+ * @param {object} state redux state
+ * @param {object} action redux action
+ * @returns {object} new redux state
  */
 export function items( state = {}, action ) {
 	const { type, siteId, postId, commentId, like_count } = action;
@@ -169,11 +170,12 @@ export function items( state = {}, action ) {
 	return state;
 }
 
-/***
+/**
  * Comments pending items reducer, stores new comments per siteId and postId
- * @param {Object} state redux state
- * @param {Object} action redux action
- * @returns {Object} new redux state
+ *
+ * @param {object} state redux state
+ * @param {object} action redux action
+ * @returns {object} new redux state
  */
 export function pendingItems( state = {}, action ) {
 	const { type, siteId, postId } = action;
@@ -277,7 +279,7 @@ export const expansions = withoutPersistence( ( state = {}, action ) => {
 	return state;
 } );
 
-/***
+/**
  * Stores whether or not there are more comments, and in which directions, for a particular post.
  * Also includes whether or not a before/after has ever been queried
  * Example state:
@@ -290,9 +292,9 @@ export const expansions = withoutPersistence( ( state = {}, action ) => {
  *     }
  *  }
  *
- * @param {Object} state redux state
- * @param {Object} action redux action
- * @returns {Object} new redux state
+ * @param {object} state redux state
+ * @param {object} action redux action
+ * @returns {object} new redux state
  */
 export const fetchStatus = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -323,11 +325,12 @@ export const fetchStatus = withoutPersistence( ( state = {}, action ) => {
 	return state;
 } );
 
-/***
+/**
  * Stores latest comments count for post we've seen from the server
- * @param {Object} state redux state, prev totalCommentsCount
- * @param {Object} action redux action
- * @returns {Object} new redux state
+ *
+ * @param {object} state redux state, prev totalCommentsCount
+ * @param {object} action redux action
+ * @returns {object} new redux state
  */
 export const totalCommentsCount = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -392,11 +395,12 @@ export const treesInitialized = keyedReducer(
 	keyedReducer( 'status', treesInitializedReducer )
 );
 
-/***
+/**
  * Stores the active reply comment for a given siteId and postId
- * @param {Object} state redux state
- * @param {Object} action redux action
- * @returns {Object} new redux state
+ *
+ * @param {object} state redux state
+ * @param {object} action redux action
+ * @returns {object} new redux state
  */
 export const activeReplies = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -524,7 +528,7 @@ export const counts = withoutPersistence( ( state = {}, action ) => {
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	counts,
 	items,
 	pendingItems,
@@ -536,3 +540,5 @@ export default combineReducers( {
 	treesInitialized,
 	activeReplies,
 } );
+const commentsReducer = withStorageKey( 'comments', combinedReducer );
+export default commentsReducer;

@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
+import { isDesktop } from '@automattic/viewport';
 import page from 'page';
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { get, includes } from 'lodash';
-import { isDesktop } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -241,7 +241,6 @@ class WpcomChecklistComponent extends PureComponent {
 
 	render() {
 		const {
-			phase2,
 			siteId,
 			taskList,
 			taskStatuses,
@@ -284,7 +283,6 @@ class WpcomChecklistComponent extends PureComponent {
 					setStoredTask={ setStoredTask }
 					storedTask={ storedTask }
 					taskList={ taskList }
-					phase2={ phase2 }
 					onExpandTask={ this.trackExpandTask }
 					showChecklistHeader={ false }
 				>
@@ -915,6 +913,7 @@ class WpcomChecklistComponent extends PureComponent {
 				nextInlineHelp={ this.nextInlineHelp }
 				showSkip={ false }
 				buttonText={ translate( 'Update homepage' ) }
+				action="update-homepage"
 			/>
 		);
 	};
@@ -1093,7 +1092,6 @@ export default connect(
 
 		return {
 			designType: getSiteOption( state, siteId, 'design_type' ),
-			phase2: get( siteChecklist, 'phase2' ),
 			siteId,
 			siteSlug,
 			siteVerticals: get( siteChecklist, 'verticals' ),

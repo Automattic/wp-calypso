@@ -38,3 +38,63 @@
 		}
 	}
 }
+
+@mixin domain_status_color( $color ) {
+	border-top: 5px solid $color;
+	> div.domain-status__icon {
+		color: $color;
+		> svg {
+			fill: $color;
+		}
+	}
+}
+
+.domain-types__container {
+	.status-success {
+		@include domain_status_color( #008a20 );
+	}
+	.status-pending {
+		@include domain_status_color( #3582C4 );
+	}
+	.status-warning {
+		@include domain_status_color( #B69000 );
+	}
+	.status-error {
+		@include domain_status_color( #C9356E );
+	}
+
+	.domain-status__card {
+		h2 {
+			font-size: 32px;
+		}
+
+		> .domain-status__icon {
+			font-size: 16px;
+			display: flex;
+			align-items: center;
+			> svg {
+				margin-right: 5px;
+			}
+		}
+
+		> div {
+			margin-bottom: 1.5em;
+		}
+
+		> div:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	.domain-types__expiration-row {
+		display: flex;
+		align-items: center;
+		> div:first-child {
+			margin-right: auto;
+		}
+	}
+
+	.subscription-settings {
+		margin-top: 0;
+	}
+}

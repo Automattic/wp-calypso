@@ -142,6 +142,7 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
  * event, we transform the unicode value of KeyboardEvent.keyIdentifier to what
  * it should be. Note that Windows/Webkit may return incorrect values for
  * keyIdentifier.
+ *
  * @param {object} event - KeyboardEvent
  * @returns {string} - key
  * @private

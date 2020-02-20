@@ -1,0 +1,40 @@
+{
+	"compilerOptions": {
+		// FIXME: Should target "ES5" according to our package convention.
+		// There is a compatibility issue between the TypeScript generator
+		// es5 helper and `@wordpress/redux-routine` that breaks when
+		// targetting es5.
+		// see issue: https://github.com/microsoft/TypeScript/issues/35833
+		"target": "es2015",
+
+		"baseUrl": ".",
+		"module": "esnext",
+		"allowJs": false,
+		"jsx": "react",
+		"declaration": true,
+		"declarationDir": "dist/types",
+		"outDir": "dist/esm",
+
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+
+		"forceConsistentCasingInFileNames": true,
+
+		"typeRoots": [ "../../node_modules/@types" ],
+		"types": [],
+
+		"noEmitHelpers": true,
+		"importHelpers": true,
+
+		"incremental": true,
+		"tsBuildInfoFile": "../../.tsc-cache/data-stores"
+	},
+	"files": [ "./src/index.ts", "./global.d.ts" ],
+	"exclude": [ "**/docs/*", "**/test/*" ]
+}

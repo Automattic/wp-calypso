@@ -4,8 +4,8 @@
  *
  *
  * @see ./constants.js (MediaView)
- * @param {Object}    state Global state tree
- * @return {MediaView}       Current media view
+ * @param {object}    state Global state tree
+ * @returns {MediaView}       Current media view
  */
 
 export function getMediaModalView( state ) {

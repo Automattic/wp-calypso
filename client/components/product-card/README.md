@@ -11,6 +11,8 @@ In some cases, e.g. when a lower-tier product has been already purchased, an upg
 [`<ProductCardAction />`](#product-card-action) component. Like the `<ProductCardOptions />` component, it should be
 passed as a child to the `<ProductCard />`.
 
+The Product Card may contain a [`<ProductCardPromoNudge />`](#product-card-promo-nudge) consisting of a green star sticker badge and a promo copy.
+
 It's used e.g. on `my-plans` page near the bundle plans grid and is intended to render a product card (not a regular
 plan).
 
@@ -67,6 +69,49 @@ The following props can be passed to the Product Card component:
  used also in other use-cases. It can be a string, a node or a React element (e.g. `<Fragment>`)
 * `title`: ( string | element ) Product title. It can be a string or a React element (e.g. `<Fragment>`)
 
+<a name="product-card-promo-nudge"></a>Product Card Promo Nudge
+=======
+
+Product Card Promo Nudge is a Product Card's sub-component for rendering a promotion nudge. It consists of a badge label
+(a green star sticker to the left) and a promo text. Both props are optional. 
+
+### How to use the `<ProductCardPromoNudge />`
+
+```jsx
+import React, { Fragment } from 'react';
+import ProductCard from 'components/product-card';
+import ProductCardPromoNudge from 'components/product-card/promo-nudge';
+
+export default class extends React.Component {
+	render() {
+		return (
+			<ProductCard
+				title="Jetpack Backup Daily"
+				subtitle="Purchased 2019-09-13"
+				description="Looking for more? With Real-time backups we save as you edit and you’ll get unlimited backup archives"
+			>
+				<ProductCardPromoNudge
+					badgeText="Up to 70% off!"
+					text={
+						<Fragment>
+							Hurry, these are <strong>Limited time introductory prices!</strong>
+						</Fragment>
+					}
+				/>
+			</ProductCard>
+		);
+	}
+}
+```
+
+### `<ProductCardPromoNudge />` Props
+
+The following props can be passed to the Product Card Promo Nudge component:
+
+* `badgeText`: ( string ) Copy shown inside the promo badge (a green star sticker)
+* `text`: ( string | element | node ) Promo text. Looks best if a `<strong>` element is used inside. It can be a string,
+  a node or a React element (e.g. `<Fragment>`)
+
 <a name="product-card-options"></a>Product Card Options
 =======
 
@@ -78,7 +123,7 @@ be passed to the Product Card as a child component.
 ```jsx
 import React, { useState } from 'react';
 import ProductCard from 'components/product-card';
-import ProductCardOptions from 'components/product-card-options';
+import ProductCardOptions from 'components/product-card/options';
 
 export default class extends React.Component {
 	const [ selectedProductOption, selectProductOption ] = useState( 'jetpack_backup_realtime_monthly' );
@@ -149,7 +194,7 @@ text (optional) and a button.
 ```jsx
 import React from 'react';
 import ProductCard from 'components/product-card';
-import ProductCardAction from 'components/product-card-action';
+import ProductCardAction from 'components/product-card/action';
 
 export default class extends React.Component {
 	render() {

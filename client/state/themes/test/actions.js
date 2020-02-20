@@ -582,6 +582,11 @@ describe( 'actions', () => {
 						},
 					},
 				},
+				themes: {
+					queries: {
+						wpcom: new ThemeQueryManager(),
+					},
+				},
 			} );
 			test( 'should dispatch (only) activateTheme() and pass the unsuffixed themeId', () => {
 				return new Promise( done => {

@@ -10,14 +10,14 @@ import urlParseAmpCompatible from './url-parse-amp-compatible';
  */
 export default function saveCouponQueryArgument() {
 	// Read coupon query argument, return early if there is none.
-	const parsedUrl = urlParseAmpCompatible( location.href );
-	const couponCode = parsedUrl.query.coupon;
+	const parsedUrl = urlParseAmpCompatible( window.location.href );
+	const couponCode = parsedUrl?.searchParams.get( 'coupon' );
 	if ( ! couponCode ) {
 		return;
 	}
 
 	// Read coupon list from localStorage, create new if it's not there yet, refresh existing.
-	const couponsJson = localStorage.getItem( MARKETING_COUPONS_KEY );
+	const couponsJson = window.localStorage.getItem( MARKETING_COUPONS_KEY );
 	const coupons = JSON.parse( couponsJson ) || {};
 	const THIRTY_DAYS_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
 	const now = Date.now();
@@ -34,5 +34,5 @@ export default function saveCouponQueryArgument() {
 
 	// Write remembered coupons back to localStorage.
 	debug( 'Storing coupons in localStorage: ', coupons );
-	localStorage.setItem( MARKETING_COUPONS_KEY, JSON.stringify( coupons ) );
+	window.localStorage.setItem( MARKETING_COUPONS_KEY, JSON.stringify( coupons ) );
 }

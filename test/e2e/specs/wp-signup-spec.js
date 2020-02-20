@@ -58,6 +58,7 @@ import SignUpStep from '../lib/flows/sign-up-step';
 import * as sharedSteps from '../lib/shared-steps/wp-signup-spec';
 import AccountSettingsPage from '../lib/pages/account/account-settings-page';
 import ChecklistPage from '../lib/pages/checklist-page';
+import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -80,7 +81,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 	describe( 'Sign up for a free WordPress.com site from the Jetpack new site page, and log in via a magic link @signup @email', function() {
 		const blogName = dataHelper.getNewBlogName();
-		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
+		// const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
 		let magicLoginLink;
 
@@ -127,15 +128,16 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			async function() {
 				const findADomainComponent = await FindADomainComponent.Expect( driver );
 				await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
-				await findADomainComponent.checkAndRetryForFreeBlogAddresses(
-					expectedBlogAddresses,
-					blogName
-				);
-				const actualAddress = await findADomainComponent.freeBlogAddress();
-				assert(
-					expectedBlogAddresses.indexOf( actualAddress ) > -1,
-					`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
-				);
+				// See https://github.com/Automattic/wp-calypso/pull/38641/
+				// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
+				// 	expectedBlogAddresses,
+				// 	blogName
+				// );
+				// const actualAddress = await findADomainComponent.freeBlogAddress();
+				// assert(
+				// 	expectedBlogAddresses.indexOf( actualAddress ) > -1,
+				// 	`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
+				// );
 				return await findADomainComponent.selectFreeAddress();
 			}
 		);
@@ -203,7 +205,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 	describe( 'Sign up for a free site, see the site preview, activate email and can publish @signup', function() {
 		const blogName = dataHelper.getNewBlogName();
-		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
+		// const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
 
 		before( async function() {
@@ -245,15 +247,16 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			async function() {
 				const findADomainComponent = await FindADomainComponent.Expect( driver );
 				await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
-				await findADomainComponent.checkAndRetryForFreeBlogAddresses(
-					expectedBlogAddresses,
-					blogName
-				);
-				const actualAddress = await findADomainComponent.freeBlogAddress();
-				assert(
-					expectedBlogAddresses.indexOf( actualAddress ) > -1,
-					`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
-				);
+				// See https://github.com/Automattic/wp-calypso/pull/38641/
+				// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
+				// 	expectedBlogAddresses,
+				// 	blogName
+				// );
+				// const actualAddress = await findADomainComponent.freeBlogAddress();
+				// assert(
+				// 	expectedBlogAddresses.indexOf( actualAddress ) > -1,
+				// 	`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
+				// );
 				return await findADomainComponent.selectFreeAddress();
 			}
 		);
@@ -513,6 +516,26 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 
 		sharedSteps.canSeeTheOnboardingChecklist();
+
+		step( 'Can update the homepage', async function() {
+			const checklistPage = await ChecklistPage.Expect( this.driver );
+			await checklistPage.updateHomepage();
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+
+			const errorShown = await gEditorComponent.errorDisplayed();
+			assert.strictEqual(
+				errorShown,
+				false,
+				'There is a block editor error when editing the homepage'
+			);
+
+			const hasInvalidBlocks = await gEditorComponent.hasInvalidBlocks();
+			return assert.strictEqual(
+				hasInvalidBlocks,
+				false,
+				'There are invalid blocks when editing the homepage'
+			);
+		} );
 
 		step( 'Can delete the plan', async function() {
 			return await new DeletePlanFlow( driver ).deletePlan( 'premium' );
@@ -1182,18 +1205,19 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		step(
 			'Can then see the domains page, and Can search for a blog name, can see and select a free .wordpress address in the results',
 			async function() {
-				const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
+				// const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 				const findADomainComponent = await FindADomainComponent.Expect( driver );
 				await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
-				await findADomainComponent.checkAndRetryForFreeBlogAddresses(
-					expectedBlogAddresses,
-					blogName
-				);
-				const actualAddress = await findADomainComponent.freeBlogAddress();
-				assert(
-					expectedBlogAddresses.indexOf( actualAddress ) > -1,
-					`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
-				);
+				// See https://github.com/Automattic/wp-calypso/pull/38641/
+				// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
+				// 	expectedBlogAddresses,
+				// 	blogName
+				// );
+				// const actualAddress = await findADomainComponent.freeBlogAddress();
+				// assert(
+				// 	expectedBlogAddresses.indexOf( actualAddress ) > -1,
+				// 	`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
+				// );
 				return await findADomainComponent.selectFreeAddress();
 			}
 		);
@@ -1211,6 +1235,31 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		);
 
 		sharedSteps.canSeeTheOnboardingChecklist();
+
+		step( 'Can update the homepage', async function() {
+			const checklistPage = await ChecklistPage.Expect( this.driver );
+			await checklistPage.updateHomepage();
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+
+			const errorShown = await gEditorComponent.errorDisplayed();
+			assert.strictEqual(
+				errorShown,
+				false,
+				'There is a block editor error when editing the homepage'
+			);
+
+			// Jetpack blocks are broken in IE11. See https://github.com/Automattic/jetpack/issues/14273
+			if ( dataHelper.getTargetType() === 'IE11' ) {
+				return this.skip();
+			}
+
+			const hasInvalidBlocks = await gEditorComponent.hasInvalidBlocks();
+			return assert.strictEqual(
+				hasInvalidBlocks,
+				false,
+				'There are invalid blocks when editing the homepage'
+			);
+		} );
 
 		after( 'Can delete our newly created account', async function() {
 			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
@@ -1442,7 +1491,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 	describe( 'Sign up for an account only (no site) then add a site @signup', function() {
 		const userName = dataHelper.getNewBlogName();
 		const blogName = dataHelper.getNewBlogName();
-		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
+		// const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 
 		before( async function() {
 			await driverManager.ensureNotLoggedIn( driver );
@@ -1509,15 +1558,16 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			async function() {
 				const findADomainComponent = await FindADomainComponent.Expect( driver );
 				await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
-				await findADomainComponent.checkAndRetryForFreeBlogAddresses(
-					expectedBlogAddresses,
-					blogName
-				);
-				const actualAddress = await findADomainComponent.freeBlogAddress();
-				assert(
-					expectedBlogAddresses.indexOf( actualAddress ) > -1,
-					`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
-				);
+				// See https://github.com/Automattic/wp-calypso/pull/38641/
+				// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
+				// 	expectedBlogAddresses,
+				// 	blogName
+				// );
+				// const actualAddress = await findADomainComponent.freeBlogAddress();
+				// assert(
+				// 	expectedBlogAddresses.indexOf( actualAddress ) > -1,
+				// 	`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
+				//);
 				return await findADomainComponent.selectFreeAddress();
 			}
 		);

@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { isEnabled as isConfigEnabled } from 'config';
 import { appStates } from 'state/imports/constants';
 import { Card } from '@automattic/components';
 import ErrorPane from './error-pane';
@@ -81,7 +82,13 @@ class FileImporter extends React.PureComponent {
 	};
 
 	render() {
-		const { title, icon, description, uploadDescription } = this.props.importerData;
+		const {
+			title,
+			icon,
+			description,
+			overrideDestination,
+			uploadDescription,
+		} = this.props.importerData;
 		const { importerStatus, site } = this.props;
 		const { errorData, importerState } = importerStatus;
 		const isEnabled = appStates.DISABLED !== importerState;
@@ -95,6 +102,16 @@ class FileImporter extends React.PureComponent {
 			onClick: this.handleClick,
 			tagName: 'button',
 		};
+
+		if ( isConfigEnabled( 'tools/migrate' ) && overrideDestination ) {
+			/**
+			 * Override where the user lands when they click the importer.
+			 *
+			 * This is used for the new Migration logic for the moment.
+			 */
+			cardProps.href = overrideDestination.replace( '%SITE_SLUG%', site.slug );
+			cardProps.onClick = null;
+		}
 
 		return (
 			<Card className={ cardClasses } { ...( showStart ? cardProps : undefined ) }>

@@ -15,7 +15,7 @@
 function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	$article_query = new WP_Query( Newspack_Blocks::build_articles_query( $attributes ) );
 
-	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, [ 'wpnbha' ] );
+	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, array( 'wpnbha' ) );
 
 	if ( isset( $attributes['postLayout'] ) && 'grid' === $attributes['postLayout'] ) {
 		$classes .= ' is-grid';
@@ -69,7 +69,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				},
 				$attributes
 			),
-			[ 'page' => 2 ]
+			array( 'page' => 2 )
 		),
 		rest_url( '/newspack-blocks/v1/articles' )
 	);
@@ -77,8 +77,8 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	ob_start();
 
 	if ( $article_query->have_posts() ) : ?>
-		<div>
-			<div data-posts-container class="<?php echo esc_attr( $classes ); ?>" style="<?php echo esc_attr( $styles ); ?>">
+		<div  class="<?php echo esc_attr( $classes ); ?>" style="<?php echo esc_attr( $styles ); ?>">
+			<div data-posts-container>
 				<?php if ( '' !== $attributes['sectionHeader'] ) : ?>
 					<h2 class="article-section-title">
 						<span><?php echo wp_kses_post( $attributes['sectionHeader'] ); ?></span>
@@ -94,11 +94,11 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 				echo Newspack_Blocks::template_inc(
 					__DIR__ . '/templates/articles-list.php',
-					[
+					array(
 						'articles_rest_url' => $articles_rest_url,
 						'article_query'     => $article_query,
 						'attributes'        => $attributes,
-					]
+					)
 				);
 				?>
 			</div>
@@ -119,7 +119,13 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			if ( ! Newspack_Blocks::is_amp() && $has_more_pages && boolval( $attributes['moreButton'] ) ) :
 				?>
 				<button type="button" data-load-more-btn data-load-more-url="<?php echo esc_url( $articles_rest_url ); ?>">
-					<?php _e( 'Load more articles', 'newspack-blocks' ); ?>
+				<?php
+				if ( ! empty( $attributes['moreButtonText'] ) ) {
+					echo esc_html( $attributes['moreButtonText'] );
+				} else {
+					esc_html_e( 'Load more posts', 'newspack-blocks' );
+				}
+				?>
 				</button>
 				<p data-load-more-loading-text hidden>
 					<?php _e( 'Loading...', 'newspack-blocks' ); ?>
@@ -190,9 +196,9 @@ function newspack_blocks_format_avatars( $author_info ) {
 function newspack_blocks_format_byline( $author_info ) {
 	$index    = -1;
 	$elements = array_merge(
-		[
+		array(
 			esc_html_x( 'by', 'post author', 'newspack-blocks' ) . ' ',
-		],
+		),
 		array_reduce(
 			$author_info,
 			function ( $accumulator, $author ) use ( $author_info, &$index ) {
@@ -201,7 +207,7 @@ function newspack_blocks_format_byline( $author_info ) {
 
 				return array_merge(
 					$accumulator,
-					[
+					array(
 						sprintf(
 							/* translators: 1: author link. 2: author name. 3. variable seperator (comma, 'and', or empty) */
 							'<span class="author vcard"><a class="url fn n" href="%1$s">%2$s</a></span>',
@@ -210,10 +216,10 @@ function newspack_blocks_format_byline( $author_info ) {
 						),
 						( $index < $penultimate ) ? ', ' : '',
 						( count( $author_info ) > 1 && $penultimate === $index ) ? esc_html_x( ' and ', 'post author', 'newspack-blocks' ) : '',
-					]
+					)
 				);
 			},
-			[]
+			array()
 		)
 	);
 

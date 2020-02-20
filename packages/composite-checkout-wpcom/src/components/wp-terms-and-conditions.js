@@ -11,11 +11,10 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { useHasDomainsInCart } from '../hooks/has-domains';
 
-export default function WPTermsAndConditions() {
+export default function WPTermsAndConditions( { domainName } ) {
 	const isDomainsTermsVisible = useHasDomainsInCart();
 	const translate = useTranslate();
 
-	//TODO: replace domainname.com next to domainRegistrationAgreement with the domain being purchased.
 	return (
 		<TermsAndConditionsWrapper>
 			<TermsParagraph>
@@ -50,7 +49,12 @@ export default function WPTermsAndConditions() {
 					<TermsParagraph>
 						{ interpolateComponents( {
 							mixedString: translate(
-								'You agree to the {{domainRegistrationAgreement}}Domain Registration Agreement{{/domainRegistrationAgreement}} for domainname.com.'
+								'You agree to the {{domainRegistrationAgreement}}Domain Registration Agreement{{/domainRegistrationAgreement}} for %(domainName)s.',
+								{
+									args: {
+										domainName,
+									},
+								}
 							),
 							components: {
 								domainRegistrationAgreement: (
@@ -87,8 +91,12 @@ export default function WPTermsAndConditions() {
 
 const TermsAndConditionsWrapper = styled.div`
 	padding: 24px 0 0;
-	margin: 24px 30px 8px 0;
+	margin: 24px 30px 100px 0;
 	border-top: 1px solid ${props => props.theme.colors.borderColorLight};
+
+	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
+		margin-bottom: 8px;
+	}
 `;
 
 const TermsParagraph = styled.p`
@@ -97,7 +105,7 @@ const TermsParagraph = styled.p`
 	color: ${props => props.theme.colors.textColor};
 
 	a {
-		color: ${props => props.theme.colors.textColor};
+		text-decoration: underline;
 	}
 
 	a:hover {

@@ -10,6 +10,7 @@ import {
 	isFetchingSitePurchases,
 	isFetchingUserPurchases,
 	isUserPaid,
+	siteHasBackupProductPurchase,
 } from '../selectors';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
@@ -86,7 +87,6 @@ describe( 'selectors', () => {
 				domainRegistrationAgreementUrl: null,
 				error: null,
 				expiryDate: undefined,
-				expiryMoment: null,
 				expiryStatus: '',
 				includedDomain: undefined,
 				includedDomainPurchaseAmount: undefined,
@@ -98,7 +98,6 @@ describe( 'selectors', () => {
 				isRenewal: false,
 				meta: undefined,
 				mostRecentRenewDate: undefined,
-				mostRecentRenewMoment: null,
 				payment: {
 					countryCode: undefined,
 					countryName: undefined,
@@ -113,7 +112,6 @@ describe( 'selectors', () => {
 				refundAmount: NaN,
 				refundText: undefined,
 				renewDate: undefined,
-				renewMoment: null,
 				siteName: undefined,
 				subscribedDate: undefined,
 				subscriptionStatus: undefined,
@@ -190,6 +188,43 @@ describe( 'selectors', () => {
 			expect( result ).toHaveLength( 2 );
 			expect( result[ 0 ].siteId ).toBe( 1234 );
 			expect( result[ 1 ].siteId ).toBe( 1234 );
+		} );
+	} );
+
+	describe( 'siteHasBackupProductPurchase', () => {
+		test( 'should return true if a site has a Jetpack Backup purchase, false otherwise', () => {
+			const state = {
+				purchases: {
+					data: [
+						{
+							ID: '81414',
+							blog_id: '1234',
+							active: true,
+							product_slug: 'jetpack_personal',
+						},
+						{
+							ID: '82867',
+							blog_id: '1234',
+							active: true,
+							product_slug: 'something',
+						},
+						{
+							ID: '105103',
+							blog_id: '123',
+							active: true,
+							product_slug: 'jetpack_backup_daily',
+						},
+					],
+					error: null,
+					isFetchingSitePurchases: true,
+					isFetchingUserPurchases: false,
+					hasLoadedSitePurchasesFromServer: false,
+					hasLoadedUserPurchasesFromServer: false,
+				},
+			};
+
+			expect( siteHasBackupProductPurchase( state, 1234 ) ).toBe( false );
+			expect( siteHasBackupProductPurchase( state, 123 ) ).toBe( true );
 		} );
 	} );
 

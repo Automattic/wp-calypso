@@ -32,7 +32,6 @@ export const TemplateSelectorControl = ( {
 	onTemplateSelect = noop,
 	siteInformation = {},
 	selectedTemplate,
-	handleTemplateConfirmation = noop,
 } ) => {
 	if ( isEmpty( templates ) || ! isArray( templates ) ) {
 		return null;
@@ -68,7 +67,6 @@ export const TemplateSelectorControl = ( {
 							blocks={ blocksByTemplates.hasOwnProperty( slug ) ? blocksByTemplates[ slug ] : [] }
 							useDynamicPreview={ useDynamicPreview }
 							isSelected={ slug === selectedTemplate }
-							handleTemplateConfirmation={ handleTemplateConfirmation }
 						/>
 					</li>
 				) ) }

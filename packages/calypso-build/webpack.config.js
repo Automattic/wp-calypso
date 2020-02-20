@@ -20,7 +20,7 @@ const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extrac
 /**
  * Internal dependencies
  */
-const { cssNameFromFilename } = require( './webpack/util' );
+const { cssNameFromFilename, shouldTranspileDependency } = require( './webpack/util' );
 // const { workerCount } = require( './webpack.common' ); // todo: shard...
 
 /**
@@ -43,7 +43,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  * @param  {string}  argv.'output-path'            Output path
  * @param  {string}  argv.'output-filename'        Output filename pattern
  * @param  {string}  argv.'output-library-target'  Output library target
- * @return {object}                                webpack config
+ * @returns {object}                                webpack config
  */
 function getWebpackConfig(
 	env = {},
@@ -110,6 +110,12 @@ function getWebpackConfig(
 					configFile: babelConfig,
 					exclude: /node_modules\//,
 					presets,
+					workerCount,
+				} ),
+				TranspileConfig.loader( {
+					cacheDirectory: true,
+					include: shouldTranspileDependency,
+					presets: [ path.join( __dirname, 'babel', 'dependencies' ) ],
 					workerCount,
 				} ),
 				SassConfig.loader( { postCssConfig: { path: postCssConfigPath } } ),

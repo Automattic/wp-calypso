@@ -45,7 +45,6 @@ The following props can be passed to the Product Selector block:
 	* `title`: ( string ) Product title.
 	* `description`: ( string ) Product description.
 	* `id`: ( string ) Product ID.
-	* `landingPageUrl`: ( string ) URL of the landing page for more information about the product.
 	* `options`: ( object ) Product options. Each option has the billing interval as a key, and the value is an array with corresponding product slugs. Example:
 		```
 		options: {

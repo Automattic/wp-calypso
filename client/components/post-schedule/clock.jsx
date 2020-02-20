@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -16,7 +16,6 @@ import SegmentedControl from 'components/segmented-control';
 import InfoPopover from 'components/info-popover';
 import { withLocalizedMoment } from 'components/localized-moment';
 import getSiteSetting from 'state/selectors/get-site-setting';
-import { isMobile } from 'lib/viewport';
 
 /**
  * Local dependencies
@@ -114,8 +113,8 @@ class PostScheduleClock extends Component {
 	/**
 	 * Converts a 12-hour time to a 24-hour time, depending on time format.
 	 *
-	 * @param {Number}  hour The hour to convert.
-	 * @return {Number}      The converted hour.
+	 * @param {number}  hour The hour to convert.
+	 * @returns {number}      The converted hour.
 	 */
 	convertTo24Hour( hour ) {
 		if ( 'PM' === this.amPmRef.current.value && hour < 12 ) {

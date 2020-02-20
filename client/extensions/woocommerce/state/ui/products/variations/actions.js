@@ -11,11 +11,11 @@ import {
  * Edits a product variation.
  * This adds the variation to the edit state.
  *
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @param {object} product The product to which the variation should belong.
  * @param {object} variation The variation to be edited, or null if new.
  * @param {object} data The fields to be edited and values for them.
- * @return {object} the action to be dispatched.
+ * @returns {object} the action to be dispatched.
  */
 export function editProductVariation( siteId, product, variation, data ) {
 	return {
@@ -30,8 +30,8 @@ export function editProductVariation( siteId, product, variation, data ) {
 /**
  * Action Creator: Clear All Product Variation Edits
  *
- * @param {Number} siteId The site for which to clear all product variation edits.
- * @return {Object} action
+ * @param {number} siteId The site for which to clear all product variation edits.
+ * @returns {object} action
  */
 export function clearProductVariationEdits( siteId ) {
 	return {

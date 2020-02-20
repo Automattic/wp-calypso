@@ -15,7 +15,13 @@ import moment from 'moment';
  */
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment, RawHTML } from '@wordpress/element';
-import { InspectorControls, RichText, BlockControls } from '@wordpress/editor';
+import {
+	BlockControls,
+	InspectorControls,
+	PanelColorSettings,
+	RichText,
+	withColors,
+} from '@wordpress/block-editor';
 import {
 	Button,
 	ButtonGroup,
@@ -35,7 +41,6 @@ import { withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
-import { PanelColorSettings, withColors } from '@wordpress/block-editor';
 
 /**
  * Module Constants
@@ -109,7 +114,7 @@ class Edit extends Component {
 		};
 
 		const authorNumber = post.newspack_author_info.length;
-
+		const postTitle = this.titleForPost( post );
 		return (
 			<article
 				className={ post.newspack_featured_image_src ? 'post-has-image' : null }
@@ -145,11 +150,11 @@ class Edit extends Component {
 					) }
 					{ RichText.isEmpty( sectionHeader ) ? (
 						<h2 className="entry-title" key="title">
-							<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
+							<a href="#">{ postTitle }</a>
 						</h2>
 					) : (
 						<h3 className="entry-title" key="title">
-							<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
+							<a href="#">{ postTitle }</a>
 						</h3>
 					) }
 					{ showExcerpt && (
@@ -173,11 +178,23 @@ class Edit extends Component {
 		);
 	};
 
+	titleForPost = post => {
+		if ( ! post.title ) {
+			return '';
+		}
+		if ( typeof post.title === 'string' ) {
+			return decodeEntities( post.title.trim() );
+		}
+		if ( typeof post.title === 'object' && post.title.rendered ) {
+			return decodeEntities( post.title.rendered.trim() );
+		}
+	};
+
 	formatAvatars = authorInfo =>
 		authorInfo.map( author => (
-			<span className="avatar author-avatar">
+			<span className="avatar author-avatar" key={ author.id }>
 				<a className="url fn n" href="#">
-					<RawHTML key={ author.id }>{ author.avatar }</RawHTML>
+					<RawHTML>{ author.avatar }</RawHTML>
 				</a>
 			</span>
 		) );
@@ -226,6 +243,7 @@ class Edit extends Component {
 			mobileStack,
 			minHeight,
 			moreButton,
+			moreButtonText,
 			showExcerpt,
 			typeScale,
 			showDate,
@@ -236,6 +254,7 @@ class Edit extends Component {
 			mediaPosition,
 			specificMode,
 			tags,
+			tagExclusions,
 			url,
 		} = attributes;
 
@@ -285,6 +304,8 @@ class Edit extends Component {
 							onCategoriesChange={ value => setAttributes( { categories: value } ) }
 							tags={ tags }
 							onTagsChange={ value => setAttributes( { tags: value } ) }
+							tagExclusions={ tagExclusions }
+							onTagExclusionsChange={ value => setAttributes( { tagExclusions: value } ) }
 						/>
 					) }
 					{ postLayout === 'grid' && (
@@ -347,6 +368,7 @@ class Edit extends Component {
 													isPrimary={ isCurrent }
 													aria-pressed={ isCurrent }
 													aria-label={ option.label }
+													key={ option.value }
 													onClick={ () => setAttributes( { imageScale: option.value } ) }
 												>
 													{ option.shortName }
@@ -465,6 +487,7 @@ class Edit extends Component {
 			postLayout,
 			mediaPosition,
 			moreButton,
+			moreButtonText,
 			columns,
 			categories,
 			typeScale,
@@ -568,30 +591,41 @@ class Edit extends Component {
 						color: textColor.color,
 					} }
 				>
-					{ latestPosts && ( ! RichText.isEmpty( sectionHeader ) || isSelected ) && (
-						<RichText
-							onChange={ value => setAttributes( { sectionHeader: value } ) }
-							placeholder={ __( 'Write header…', 'newspack-blocks' ) }
-							value={ sectionHeader }
-							tagName="h2"
-							className="article-section-title"
-						/>
-					) }
-					{ latestPosts && ! latestPosts.length && (
-						<Placeholder>{ __( 'Sorry, no posts were found.', 'newspack-blocks' ) }</Placeholder>
-					) }
-					{ ! latestPosts && (
-						<Placeholder>
-							<Spinner />
-						</Placeholder>
-					) }
-					{ latestPosts && latestPosts.map( post => this.renderPost( post ) ) }
+					<div>
+						{ latestPosts && ( ! RichText.isEmpty( sectionHeader ) || isSelected ) && (
+							<RichText
+								onChange={ value => setAttributes( { sectionHeader: value } ) }
+								placeholder={ __( 'Write header…', 'newspack-blocks' ) }
+								value={ sectionHeader }
+								tagName="h2"
+								className="article-section-title"
+							/>
+						) }
+						{ latestPosts && ! latestPosts.length && (
+							<Placeholder>{ __( 'Sorry, no posts were found.', 'newspack-blocks' ) }</Placeholder>
+						) }
+						{ ! latestPosts && (
+							<Placeholder>
+								<Spinner />
+							</Placeholder>
+						) }
+						{ latestPosts && latestPosts.map( post => this.renderPost( post ) ) }
+					</div>
 				</div>
 
 				{ ! specificMode && latestPosts && moreButton && (
-					<button className="button" type="button">
-						{ __( 'More…', 'newspack-blocks' ) }
-					</button>
+					<div className="editor-styles-wrapper">
+						<div className="wp-block-button">
+							<RichText
+								placeholder={ __( 'Load more posts', 'newspack-blocks' ) }
+								value={ moreButtonText }
+								onChange={ value => setAttributes( { moreButtonText: value } ) }
+								className="wp-block-button__link"
+								keepPlaceholderOnFocus
+								allowedFormats={ [] }
+							/>
+						</div>
+					</div>
 				) }
 
 				<BlockControls>
@@ -613,6 +647,7 @@ export default compose( [
 			authors,
 			categories,
 			tags,
+			tagExclusions,
 			specificPosts,
 			specificMode,
 		} = props.attributes;
@@ -628,6 +663,7 @@ export default compose( [
 						categories,
 						author: authors,
 						tags,
+						tags_exclude: tagExclusions,
 				  },
 			value => ! isUndefined( value )
 		);

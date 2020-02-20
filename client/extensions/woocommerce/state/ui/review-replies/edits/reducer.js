@@ -18,9 +18,9 @@ import {
  * The state reflects the currently edited review reply ID (which might
  * be a placeholder object).
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function currentlyEditingId( state = null, action ) {
 	switch ( action.type ) {
@@ -40,9 +40,9 @@ export function currentlyEditingId( state = null, action ) {
  * Returns the updated state after an action has been dispatched.
  * The state reflects the review Id for the reply currently being edited.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function reviewId( state = null, action ) {
 	switch ( action.type ) {
@@ -60,9 +60,9 @@ export function reviewId( state = null, action ) {
  * The state reflects changes made to the current review reply (including
  * new replies)
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function changes( state = {}, action ) {
 	switch ( action.type ) {

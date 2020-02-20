@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-
-import { get, isArray, map, flatten } from 'lodash';
-import i18n from 'i18n-calypso';
+import { get, isArray, map, flatten, round } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -12,15 +11,17 @@ import treeSelect from '@automattic/tree-select';
 import { getSerializedStatsQuery, normalizers, buildExportArray } from './utils';
 import { getSite } from 'state/sites/selectors';
 
+import 'state/stats/init';
+
 /**
  * Returns true if currently requesting stats for the statType and query combo, or false
  * otherwise.
  *
- * @param  {Object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
- * @param  {String}  statType Type of stat
- * @param  {Object}  query    Stats query object
- * @return {Boolean}          Whether stats are being requested
+ * @param   {object}  state    Global state tree
+ * @param   {number}  siteId   Site ID
+ * @param   {string}  statType Type of stat
+ * @param   {object}  query    Stats query object
+ * @returns {boolean}          Whether stats are being requested
  */
 export function isRequestingSiteStatsForQuery( state, siteId, statType, query ) {
 	const serializedQuery = getSerializedStatsQuery( query );
@@ -31,11 +32,11 @@ export function isRequestingSiteStatsForQuery( state, siteId, statType, query ) 
  * Returns true if the stats request for the statType and query combo has failed, or false
  * otherwise.
  *
- * @param  {Object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
- * @param  {String}  statType Type of stat
- * @param  {Object}  query    Stats query object
- * @return {Boolean}          Whether stats are being requested
+ * @param   {object}  state    Global state tree
+ * @param   {number}  siteId   Site ID
+ * @param   {string}  statType Type of stat
+ * @param   {object}  query    Stats query object
+ * @returns {boolean}          Whether stats are being requested
  */
 export function hasSiteStatsQueryFailed( state, siteId, statType, query ) {
 	const serializedQuery = getSerializedStatsQuery( query );
@@ -48,11 +49,11 @@ export function hasSiteStatsQueryFailed( state, siteId, statType, query ) {
  * Returns object of stats data for the statType and query combo, or null if no stats have been
  * received.
  *
- * @param  {Object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
- * @param  {String}  statType Type of stat
- * @param  {Object}  query    Stats query object
- * @return {?Object}           Data for the query
+ * @param   {object}  state    Global state tree
+ * @param   {number}  siteId   Site ID
+ * @param   {string}  statType Type of stat
+ * @param   {object}  query    Stats query object
+ * @returns {?object}           Data for the query
  */
 export function getSiteStatsForQuery( state, siteId, statType, query ) {
 	const serializedQuery = getSerializedStatsQuery( query );
@@ -63,11 +64,11 @@ export function getSiteStatsForQuery( state, siteId, statType, query ) {
  * Returns a parsed object of statsStreak data for a given query, or default "empty" object
  * if no statsStreak data has been received for that site.
  *
- * @param  {Object}  state    			Global state tree
- * @param  {Number}  siteId   			Site ID
- * @param  {Object}  query    			Stats query object
- * @param  {?Number} query.gmtOffset    GMT offset of the queried site
- * @return {Object}           			Parsed Data for the query
+ * @param   {object}  state    			Global state tree
+ * @param   {number}  siteId   			Site ID
+ * @param   {object}  query    			Stats query object
+ * @param   {?number} query.gmtOffset    GMT offset of the queried site
+ * @returns {object}           			Parsed Data for the query
  */
 export const getSiteStatsPostStreakData = treeSelect(
 	( state, siteId, query ) => [ getSiteStatsForQuery( state, siteId, 'statsStreak', query ) ],
@@ -77,7 +78,7 @@ export const getSiteStatsPostStreakData = treeSelect(
 		// ensure streakData.data exists and it is not an array
 		if ( streakData && streakData.data && ! isArray( streakData.data ) ) {
 			Object.keys( streakData.data ).forEach( timestamp => {
-				const postDay = i18n.moment.unix( timestamp ).locale( 'en' );
+				const postDay = moment.unix( timestamp );
 				const datestamp = postDay.utcOffset( gmtOffset ).format( 'YYYY-MM-DD' );
 
 				if ( 'undefined' === typeof response[ datestamp ] ) {
@@ -99,11 +100,11 @@ export const getSiteStatsPostStreakData = treeSelect(
  * Returns normalized stats data for a given query and stat type, or the un-normalized response
  * from the API if no normalizer method for that stats type exists in ./utils
  *
- * @param  {Object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
- * @param  {String}  statType Type of stat
- * @param  {Object}  query    Stats query object
- * @return {*}                Normalized Data for the query, typically an array or object
+ * @param   {object}  state    Global state tree
+ * @param   {number}  siteId   Site ID
+ * @param   {string}  statType Type of stat
+ * @param   {object}  query    Stats query object
+ * @returns {*}                Normalized Data for the query, typically an array or object
  */
 export const getSiteStatsNormalizedData = treeSelect(
 	( state, siteId, statType, query ) => [
@@ -126,11 +127,11 @@ export const getSiteStatsNormalizedData = treeSelect(
 /**
  * Returns an array of stats data ready for csv export
  *
- * @param  {Object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
- * @param  {String}  statType Type of stat
- * @param  {Object}  query    Stats query object
- * @return {Array}            Array of stats data ready for CSV export
+ * @param   {object}  state    Global state tree
+ * @param   {number}  siteId   Site ID
+ * @param   {string}  statType Type of stat
+ * @param   {object}  query    Stats query object
+ * @returns {Array}            Array of stats data ready for CSV export
  */
 export function getSiteStatsCSVData( state, siteId, statType, query ) {
 	const data = getSiteStatsNormalizedData( state, siteId, statType, query );
@@ -143,4 +144,65 @@ export function getSiteStatsCSVData( state, siteId, statType, query ) {
 			return buildExportArray( item );
 		} )
 	);
+}
+
+/**
+ * Returns the date of the last site stats query
+ *
+ * @param  {object}  state    Global state tree
+ * @param  {number}  siteId   Site ID
+ * @param  {string}  statType Type of stat
+ * @param  {object}  query    Stats query object
+ * @returns {Date}             Date of the last site stats query
+ */
+export function getSiteStatsQueryDate( state, siteId, statType, query ) {
+	const serializedQuery = getSerializedStatsQuery( query );
+	return get( state.stats.lists.requests, [ siteId, statType, serializedQuery, 'date' ] );
+}
+
+/**
+ * Returns the date of the last site stats query
+ *
+ * @param   {object}  state    Global state tree
+ * @param   {number}  siteId   Site ID
+ * @returns {object}           Stats View Summary
+ */
+export function getSiteStatsViewSummary( state, siteId ) {
+	const query = {
+		stat_fields: 'views',
+		quantity: -1,
+	};
+	const viewData = getSiteStatsForQuery( state, siteId, 'statsVisits', query );
+
+	if ( ! viewData || ! viewData.data ) {
+		return null;
+	}
+
+	const viewSummary = {};
+
+	viewData.data.forEach( item => {
+		const [ date, value ] = item;
+		const momentDate = moment( date );
+		const { years, months } = momentDate.toObject();
+
+		if ( ! viewSummary[ years ] ) {
+			viewSummary[ years ] = {};
+		}
+
+		if ( ! viewSummary[ years ][ months ] ) {
+			viewSummary[ years ][ months ] = {
+				total: 0,
+				data: [],
+				average: 0,
+				daysInMonth: momentDate.daysInMonth(),
+			};
+		}
+		viewSummary[ years ][ months ].total += value;
+		viewSummary[ years ][ months ].data.push( item );
+		const average =
+			viewSummary[ years ][ months ].total / viewSummary[ years ][ months ].daysInMonth;
+		viewSummary[ years ][ months ].average = round( average, 0 );
+	} );
+
+	return viewSummary;
 }

@@ -27,6 +27,9 @@ import { getSelectedDomain } from 'lib/domains';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import FetchError from './fetch-error';
+import Notice from 'components/notice';
+import { CHANGE_NAME_SERVERS } from 'lib/url/support';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -82,6 +85,40 @@ class NameServers extends React.Component {
 		return get( domain, 'pendingTransfer', false );
 	}
 
+	warning() {
+		const { translate } = this.props;
+
+		if (
+			this.hasWpcomNameservers() ||
+			this.isPendingTransfer() ||
+			this.needsVerification() ||
+			! this.state.nameservers
+		) {
+			return null;
+		}
+
+		return (
+			<Notice status="is-warning" showDismiss={ false }>
+				{ translate(
+					'Your domain must use WordPress.com name servers for your ' +
+						'WordPress.com site to load & other features to be available.'
+				) }{ ' ' }
+				<a
+					href={ CHANGE_NAME_SERVERS }
+					target="_blank"
+					rel="noopener noreferrer"
+					onClick={ this.handleLearnMoreClick }
+				>
+					{ translate( 'Learn more.' ) }
+				</a>
+			</Notice>
+		);
+	}
+
+	handleLearnMoreClick = () => {
+		this.props.customNameServersLearnMoreClick( this.props.selectedDomainName );
+	};
+
 	getContent() {
 		if ( this.props.nameservers.error ) {
 			return <FetchError selectedDomainName={ this.props.selectedDomainName } />;
@@ -97,6 +134,7 @@ class NameServers extends React.Component {
 					selectedSite={ this.props.selectedSite }
 					ruleWhiteList={ [ 'pendingTransfer' ] }
 				/>
+				{ this.warning() }
 				<VerticalNav>
 					{ this.wpcomNameserversToggle() }
 					{ this.customNameservers() }
@@ -255,7 +293,22 @@ class NameServers extends React.Component {
 	}
 }
 
+const customNameServersLearnMoreClick = domainName =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			'Clicked "Learn More" link in "Custom Name Servers" Form in Name Servers and DNS',
+			'Domain Name',
+			domainName
+		),
+		recordTracksEvent(
+			'calypso_domain_management_name_servers_custom_name_servers_learn_more_click',
+			{ domain_name: domainName }
+		)
+	);
+
 export default connect( null, {
+	customNameServersLearnMoreClick,
 	errorNotice,
 	successNotice,
 } )( localize( NameServers ) );

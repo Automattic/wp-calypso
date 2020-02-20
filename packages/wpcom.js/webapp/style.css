@@ -1,0 +1,393 @@
+/**
+ * Reset
+ */
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+  margin: 0;
+  padding: 0;
+}
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+blockquote,
+q {
+  quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+*,
+*:before,
+*:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+.group:before,
+.group:after {
+  content: "";
+  display: table;
+}
+.group {
+  zoom: 1;
+}
+.group:after {
+  clear: both;
+}
+/**
+ * Page styes
+ */
+body {
+  background: #47a3da;
+  color: #fff;
+}
+#wrapper {
+  font-family: "Open Sans", sans-serif;
+  height: 100%;
+}
+a {
+  text-decoration: none;
+}
+.center {
+  text-align: center;
+  display: block;
+  margin: 0 auto;
+}
+.main-title {
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-size: 1em;
+  font-weight: 600;
+  padding: 70px 0 50px;
+  padding: 50px 20px;
+}
+.project-title {
+  color: #2f7097;
+  font-size: 2.25em;
+  letter-spacing: 1px;
+  margin-bottom: 30px;
+  padding: 0 20px;
+  font-size: 1.75em;
+  line-height: 1em;
+  opacity: 1;
+}
+.project-desc {
+  font-family: "Merriweather", serif;
+  font-size: 1.25em;
+  line-height: 1.625em;
+  color: #c7e3f4;
+  margin-bottom: 60px;
+  position: relative;
+  padding: 0 20px;
+  font-size: 1em;
+  line-height: 1.4em;
+  margin-bottom: 50px;
+}
+button,
+a.button {
+  border-radius: 3px;
+  color: #fff;
+  letter-spacing: 0.5px;
+  background-color: #005684;
+  text-transform: uppercase;
+  font-size: 0.75em;
+  font-weight: 600;
+  padding: 20px 40px;
+}
+button:hover,
+a.button:hover {
+  background-color: #2b303b;
+  cursor: auto;
+}
+.git-button {
+  position: relative;
+  opacity: 1;
+  top: 0;
+}
+a.button {
+  display: inline;
+}
+.editor-inner {
+  margin: 30px 20px 0;
+  background-color: white;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  text-align: left;
+  padding-top: 5px;
+  border-radius: 3px;
+}
+/**
+ * Gist code
+ */
+.gist {
+  font-size: 13px;
+  line-height: 18px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+.gist .highlight {
+  background: white !important;
+}
+.gist pre {
+  font-family: Menlo, Monaco, 'Bitstream Vera Sans Mono', 'Courier New', monospace !important;
+}
+.gist .gist-file .gist-data .line-numbers {
+  padding: 0.5em 20px !important;
+  border-right: 1px solid #494e58 !important;
+}
+.gist .gist-file .gist-data .line-pre {
+  position: relative;
+  left: 10px;
+}
+.gist .line-data .line-pre .line * {
+  color: #aaa !important;
+}
+.gist-meta {
+  display: none;
+}
+.file-data {
+  padding-top: 20px;
+}
+.gist,
+.gist-file,
+.gist-data,
+.line-ndiv umbers {
+  background: none !important;
+  border-bottom: none !important;
+}
+.gist-syntax {
+  background: none !important;
+}
+.gist-file {
+  border: none !important;
+  border-bottom: none !important;
+}
+* {
+  margin: 0;
+  padding: 0;
+  border: none;
+  -webkit-user-select: text;
+}
+
+#wpcom-version {
+	font-size: 10px;
+	color: #add;
+	padding-top: 3px;
+}
+
+/**
+ * Footer
+ */
+#footer {
+  height: 70px;
+  margin-top: -70px;
+  background-color: #fff;
+  font-family: "Open Sans", sans-serif;
+  position: static;
+  width: 100%;
+  bottom: 0;
+  z-index: 100;
+}
+#footer a {
+  margin-top: 10px;
+  display: block;
+  padding: 0 20px;
+  margin-top: 6px;
+  margin-top: 10px;
+  padding-top: 6px;
+}
+.foot-img {
+  background-image: url("http://automattic.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo-2x.png");
+  background-size: 184px 20px;
+  width: 184px;
+  height: 20px;
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-position: left top;
+  background-color: transparent;
+  margin-left: 10px;
+  top: 5px;
+  position: relative;
+}
+.foot-desc {
+  display: block;
+  text-transform: uppercase;
+  font-size: 0.75em;
+  font-weight: 400;
+  color: #050708;
+  letter-spacing: 0.5px;
+  top: 12px;
+  position: relative;
+}
+/**
+ * Footer position
+ */
+html,
+body {
+  height: 100%;
+}
+@media screen and (max-width: 700px), screen and (max-height: 700px) {
+  #wrapper {
+    min-height: 450px;
+    margin-top: 50px;
+  }
+  .project-title {
+    font-size: 1.75em;
+    line-height: 1em;
+    opacity: 1;
+  }
+  .project-desc {
+    font-size: 1em;
+    line-height: 1.4em;
+    margin-bottom: 50px;
+  }
+  .editor-outer {
+    display: none;
+  }
+  .editor-inner {
+    display: none;
+  }
+  #footer {
+    bottom: 0;
+  }
+  #footer a {
+    margin-top: 6px;
+  }
+  .main-title {
+    padding: 50px 20px;
+  }
+}
+@media screen and (min-width: 1200px) {
+  .editor-inner {
+    margin: 30px auto 0;
+    max-width: 900px;
+  }
+}
+@media screen and (min-device-width: 320px) and (max-device-width: 568px) {
+  .project-desc {
+    opacity: 1;
+    top: 0;
+  }
+  .git-button {
+    opacity: 1;
+    top: 0;
+  }
+  #footer {
+    bottom: 0;
+    position: relative;
+  }
+  #footer a {
+    margin-top: 10px;
+    padding-top: 6px;
+  }
+}
+@media screen and (min-device-width: 768px) and (orientation: portrait) {
+  #footer {
+    bottom: 0;
+    position: static;
+  }
+}

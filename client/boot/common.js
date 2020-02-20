@@ -1,11 +1,8 @@
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import page from 'page';
-import { parse } from 'qs';
-import url from 'url';
 import { startsWith } from 'lodash';
 import React from 'react';
 import ReactDom from 'react-dom';
@@ -15,6 +12,7 @@ import store from 'store';
 /**
  * Internal dependencies
  */
+import { setupLocale } from './locale';
 import config from 'config';
 import { ReduxWrappedLayout } from 'controller';
 import notices from 'notices';
@@ -44,21 +42,31 @@ import { setRoute as setRouteAction } from 'state/ui/actions';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import setupGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
+import { createReduxStore } from 'state';
+import initialReducer from 'state/reducer';
+import { getInitialState, persistOnChange, loadAllState } from 'state/initial-state';
+import detectHistoryNavigation from 'lib/detect-history-navigation';
+import userFactory from 'lib/user';
+import { getUrlParts } from 'lib/url/url-parts';
+import { setStore } from 'state/redux-store';
 
 const debug = debugFactory( 'calypso' );
 
 const setupContextMiddleware = reduxStore => {
 	page( '*', ( context, next ) => {
 		// page.js url parsing is broken so we had to disable it with `decodeURLComponents: false`
-		const parsed = url.parse( context.canonicalPath, true );
-		context.prevPath = parsed.path === context.path ? false : parsed.path;
-		context.query = parsed.query;
+		const parsed = getUrlParts( context.canonicalPath );
+		const path = parsed.pathname + parsed.search || null;
+		context.prevPath = path === context.path ? false : path;
+		context.query = Object.fromEntries( parsed.searchParams.entries() );
 
 		context.hashstring = ( parsed.hash && parsed.hash.substring( 1 ) ) || '';
 		// set `context.hash` (we have to parse manually)
 		if ( context.hashstring ) {
 			try {
-				context.hash = parse( context.hashstring );
+				context.hash = Object.fromEntries(
+					new globalThis.URLSearchParams( context.hashstring ).entries()
+				);
 			} catch ( e ) {
 				debug( 'failed to query-string parse `location.hash`', e );
 				context.hash = {};
@@ -119,15 +127,25 @@ const loggedOutMiddleware = currentUser => {
 };
 
 const loggedInMiddleware = currentUser => {
-	if ( ! currentUser.get() ) {
+	const jetpackCloudEnvs = [
+		'jetpack-cloud-development',
+		'jetpack-cloud-stage',
+		'jetpack-cloud-production',
+	];
+	const calypsoEnv = config( 'env_id' );
+
+	// TODO: Remove Jetpack Cloud specific logic when root route is no longer handled by the reader section
+	if ( ! currentUser.get() || jetpackCloudEnvs.includes( calypsoEnv ) ) {
 		return;
 	}
 
 	page( '/', context => {
 		let redirectPath = '/read';
+
 		if ( context.querystring ) {
 			redirectPath += `?${ context.querystring }`;
 		}
+
 		page.redirect( redirectPath );
 	} );
 };
@@ -177,7 +195,7 @@ const unsavedFormsMiddleware = () => {
 	page.exit( '*', checkFormHandler );
 };
 
-export const utils = () => {
+const utils = () => {
 	debug( 'Executing Calypso utils.' );
 
 	// Infer touch screen by checking if device supports touch events
@@ -195,7 +213,7 @@ export const utils = () => {
 	Modal.setAppElement( document.getElementById( 'wpcom' ) );
 };
 
-export const configureReduxStore = ( currentUser, reduxStore ) => {
+const configureReduxStore = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso configure Redux store.' );
 
 	bindWpLocaleState( reduxStore );
@@ -225,7 +243,7 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 };
 
-export const setupMiddlewares = ( currentUser, reduxStore ) => {
+const setupMiddlewares = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso setup middlewares.' );
 
 	installPerfmonPageHandlers();
@@ -401,3 +419,29 @@ function renderLayout( reduxStore ) {
 
 	debug( 'Main layout rendered.' );
 }
+
+const boot = ( currentUser, router ) => {
+	utils();
+	loadAllState().then( () => {
+		const initialState = getInitialState( initialReducer );
+		const reduxStore = createReduxStore( initialState, initialReducer );
+		setStore( reduxStore );
+		persistOnChange( reduxStore );
+		setupLocale( currentUser.get(), reduxStore );
+		configureReduxStore( currentUser, reduxStore );
+		setupMiddlewares( currentUser, reduxStore );
+		detectHistoryNavigation.start();
+		if ( router ) {
+			router();
+		}
+		page.start( { decodeURLComponents: false } );
+	} );
+};
+
+export const bootApp = ( appName, router ) => {
+	const user = userFactory();
+	user.initialize().then( () => {
+		debug( `Starting ${ appName }. Let's do this.` );
+		boot( user, router );
+	} );
+};

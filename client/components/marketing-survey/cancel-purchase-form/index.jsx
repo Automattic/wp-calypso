@@ -77,13 +77,21 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	getAllSurveySteps = () => {
-		const { purchase, isChatAvailable, isChatActive, precancellationChatAvailable } = this.props;
+		const {
+			purchase,
+			isChatAvailable,
+			isChatActive,
+			precancellationChatAvailable,
+			downgradeClick,
+		} = this.props;
+		const downgradePossible = !! downgradeClick;
 
 		return stepsForProductAndSurvey(
 			this.state,
 			purchase,
 			isChatAvailable || isChatActive,
-			precancellationChatAvailable
+			precancellationChatAvailable,
+			downgradePossible
 		);
 	};
 
@@ -228,9 +236,9 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	onSubmit = () => {
-		const { purchase, selectedSite } = this.props;
+		const { purchase } = this.props;
 
-		if ( ! isGoogleApps( purchase ) && selectedSite ) {
+		if ( ! isGoogleApps( purchase ) ) {
 			this.setState( {
 				isSubmitting: true,
 			} );
@@ -251,8 +259,8 @@ class CancelPurchaseForm extends React.Component {
 
 			submitSurvey(
 				'calypso-remove-purchase',
-				selectedSite.ID,
-				enrichedSurveyData( surveyData, selectedSite, purchase )
+				purchase.siteId,
+				enrichedSurveyData( surveyData, purchase )
 			).then( () => {
 				this.setState( {
 					isSubmitting: false,

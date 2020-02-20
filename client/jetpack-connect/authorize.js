@@ -34,7 +34,6 @@ import QueryUserConnection from 'components/data/query-user-connection';
 import Spinner from 'components/spinner';
 import userUtilities from 'lib/user/utils';
 import versionCompare from 'lib/version-compare';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import { decodeEntities } from 'lib/formatting';
@@ -173,7 +172,7 @@ export class JetpackAuthorize extends Component {
 			// as controlled by MAX_AUTH_ATTEMPTS.
 			const attempts = this.props.authAttempts || 0;
 			this.retryingAuth = true;
-			return retryAuth( site, attempts + 1, nextProps.authQuery.from );
+			return retryAuth( site, attempts + 1, nextProps.authQuery.from, redirectAfterAuth );
 		}
 	}
 
@@ -255,10 +254,10 @@ export class JetpackAuthorize extends Component {
 	/**
 	 * Check whether this a valid authorized SSO request
 	 *
-	 * @param  {Object}  props          Props to test
+	 * @param  {object}  props          Props to test
 	 * @param  {?string} props.authQuery.from     Where is the request from
 	 * @param  {?number} props.authQuery.clientId Remote site ID
-	 * @return {boolean}                True if it's a valid SSO request otherwise false
+	 * @returns {boolean}                True if it's a valid SSO request otherwise false
 	 */
 	isSso( props = this.props ) {
 		const { from, clientId } = props.authQuery;
@@ -754,8 +753,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( JetpackAuthorize );
+export default flowRight( connectComponent, localize )( JetpackAuthorize );

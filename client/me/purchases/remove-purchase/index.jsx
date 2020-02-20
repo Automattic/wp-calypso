@@ -19,7 +19,14 @@ import { CANCEL_FLOW_TYPE } from 'components/marketing-survey/cancel-purchase-fo
 import GSuiteCancellationPurchaseDialog from 'components/marketing-survey/gsuite-cancel-purchase-dialog';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
 import { isDataLoading } from '../utils';
-import { isDomainRegistration, isGoogleApps, isJetpackPlan, isPlan } from 'lib/products-values';
+import {
+	isDomainMapping,
+	isDomainRegistration,
+	isDomainTransfer,
+	isGoogleApps,
+	isJetpackPlan,
+	isPlan,
+} from 'lib/products-values';
 import notices from 'notices';
 import { purchasesRoot } from '../paths';
 import { getPurchasesError } from 'state/purchases/selectors';
@@ -257,12 +264,12 @@ class RemovePurchase extends Component {
 	renderDialog() {
 		const { purchase } = this.props;
 
-		if ( this.props.isAtomicSite ) {
-			return this.renderAtomicDialog( purchase );
-		}
-
 		if ( isDomainRegistration( purchase ) ) {
 			return this.renderDomainDialog();
+		}
+
+		if ( isDomainMapping( purchase ) || isDomainTransfer( purchase ) ) {
+			return this.renderPlanDialog();
 		}
 
 		if ( isGoogleApps( purchase ) ) {
@@ -274,6 +281,10 @@ class RemovePurchase extends Component {
 					site={ this.props.site }
 				/>
 			);
+		}
+
+		if ( this.props.isAtomicSite ) {
+			return this.renderAtomicDialog( purchase );
 		}
 
 		return this.renderPlanDialog();

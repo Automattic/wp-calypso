@@ -1,5 +1,5 @@
 // This is required to fix the "regeneratorRuntime is not defined" error
-require( '@babel/polyfill' );
+import '@automattic/calypso-polyfills';
 
 /**
  * External dependencies
@@ -10,16 +10,15 @@ import ReactDOM from 'react-dom';
 import {
 	Checkout,
 	CheckoutProvider,
+	createApplePayMethod,
+	createPayPalMethod,
 	createRegistry,
 	createStripeMethod,
-	createPayPalMethod,
-	createApplePayMethod,
-	createCreditCardMethod,
+	getDefaultOrderReviewStep,
+	getDefaultOrderSummaryStep,
+	getDefaultPaymentMethodStep,
 	useIsStepActive,
 	usePaymentData,
-	getDefaultPaymentMethodStep,
-	getDefaultOrderSummaryStep,
-	getDefaultOrderReviewStep,
 } from '../src/public-api';
 
 const stripeKey = 'pk_test_zIh4nRbVgmaetTZqoG4XKxWT';
@@ -40,34 +39,46 @@ const initialItems = [
 	},
 ];
 
-// These are used only for non-redirect payment methods
-const onSuccess = () => window.alert( 'Payment succeeded!' );
-const onFailure = error => {
+const onPaymentComplete = () => {
+	const successRedirectUrl = '/complete.html';
+	window.location.href = successRedirectUrl;
+};
+const onEvent = event => window.console.log( 'Event', event );
+const showErrorMessage = error => {
 	console.log( 'Error:', error ); /* eslint-disable-line no-console */
 	window.alert( 'There was a problem with your payment: ' + error );
 };
-
-// These are used only for redirect payment methods
-const successRedirectUrl = window.location.href;
-const failureRedirectUrl = window.location.href;
+const showInfoMessage = message => {
+	console.log( 'Info:', message ); /* eslint-disable-line no-console */
+	window.alert( message );
+};
+const showSuccessMessage = message => {
+	console.log( 'Success:', message ); /* eslint-disable-line no-console */
+	window.alert( message );
+};
 
 async function fetchStripeConfiguration() {
-	// return await wpcom.req.get( '/me/stripe-configuration', query );
+	// This simulates the network request time
+	await asyncTimeout( 2000 );
 	return {
 		public_key: stripeKey,
 		js_url: 'https://js.stripe.com/v3/',
 	};
 }
 
-async function sendStripeTransaction() {
-	// return await wpcom.req.post( '/me/transactions', transaction );
+async function sendStripeTransaction( data ) {
+	window.console.log( 'Processing stripe transaction with data', data );
+	// This simulates the transaction and provisioning time
+	await asyncTimeout( 2000 );
 	return {
 		success: true,
 	};
 }
 
-async function makePayPalExpressRequest() {
-	// return this.wpcom.req.post( '/me/paypal-express-url', data );
+async function makePayPalExpressRequest( data ) {
+	window.console.log( 'Processing paypal transaction with data', data );
+	// This simulates the transaction and provisioning time
+	await asyncTimeout( 2000 );
 	return window.location.href;
 }
 
@@ -75,21 +86,32 @@ const registry = createRegistry();
 const { registerStore, select, subscribe } = registry;
 
 const stripeMethod = createStripeMethod( {
+	getCountry: () => select( 'checkout' ).getPaymentData().billing.country,
+	getPostalCode: () => 90210,
+	getPhoneNumber: () => 5555555555,
+	getSubdivisionCode: () => 'CA',
 	registerStore,
 	fetchStripeConfiguration,
-	sendStripeTransaction,
+	submitTransaction: sendStripeTransaction,
 } );
-
-const creditCardMethod = createCreditCardMethod();
 
 const applePayMethod = isApplePayAvailable()
 	? createApplePayMethod( {
+			getCountry: () => select( 'checkout' ).getPaymentData().billing.country,
+			getPostalCode: () => 90210,
+			getPhoneNumber: () => 5555555555,
 			registerStore,
 			fetchStripeConfiguration,
+			submitTransaction: sendStripeTransaction,
 	  } )
 	: null;
 
-const paypalMethod = createPayPalMethod( { registerStore, makePayPalExpressRequest } );
+const paypalMethod = createPayPalMethod( {
+	registerStore,
+	submitTransaction: makePayPalExpressRequest,
+	getSuccessUrl: () => '#',
+	getCancelUrl: () => '#',
+} );
 
 export function isApplePayAvailable() {
 	// Our Apple Pay implementation uses the Payment Request API, so check that first.
@@ -281,19 +303,25 @@ function MyCheckout() {
 	}, [] );
 	const total = useMemo( () => getTotal( items ), [ items ] );
 
+	// This simulates loading the data
+	const [ isLoading, setIsLoading ] = useState( true );
+	useEffect( () => {
+		setTimeout( () => setIsLoading( false ), 1500 );
+	}, [] );
+
 	return (
 		<CheckoutProvider
 			locale={ 'en' }
 			items={ items }
 			total={ total }
-			onSuccess={ onSuccess }
-			onFailure={ onFailure }
-			successRedirectUrl={ successRedirectUrl }
-			failureRedirectUrl={ failureRedirectUrl }
+			onEvent={ onEvent }
+			onPaymentComplete={ onPaymentComplete }
+			showErrorMessage={ showErrorMessage }
+			showInfoMessage={ showInfoMessage }
+			showSuccessMessage={ showSuccessMessage }
 			registry={ registry }
-			paymentMethods={ [ applePayMethod, creditCardMethod, stripeMethod, paypalMethod ].filter(
-				Boolean
-			) }
+			isLoading={ isLoading }
+			paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }
 		>
 			<Checkout steps={ steps } />
 		</CheckoutProvider>
@@ -306,6 +334,11 @@ function formatValueForCurrency( currency, value ) {
 	}
 	const floatValue = value / 100;
 	return '$' + floatValue.toString();
+}
+
+// Simulate network request time
+async function asyncTimeout( timeout ) {
+	return new Promise( resolve => setTimeout( resolve, timeout ) );
 }
 
 ReactDOM.render( <MyCheckout />, document.getElementById( 'root' ) );

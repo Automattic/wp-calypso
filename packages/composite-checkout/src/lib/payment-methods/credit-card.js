@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
+import Button from '../../components/button';
 import { useLocalize, sprintf } from '../../lib/localize';
 import joinClasses from '../../lib/join-classes';
 import { usePaymentData, useLineItems, renderDisplayValueMarkdown } from '../../public-api';

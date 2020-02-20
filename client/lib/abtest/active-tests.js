@@ -26,6 +26,15 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
+	showCompositeCheckout: {
+		datestamp: '20200219',
+		variations: {
+			composite: 10,
+			regular: 90,
+		},
+		defaultVariation: 'regular',
+		allowExistingUsers: true,
+	},
 	skipThemesSelectionModal: {
 		datestamp: '20170904',
 		variations: {
@@ -71,14 +80,6 @@ export default {
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
 	},
-	popularPlanBy: {
-		datestamp: '20190529',
-		variations: {
-			siteType: 0,
-			customerType: 100,
-		},
-		defaultVariation: 'siteType',
-	},
 	skippableDomainStep: {
 		datestamp: '20290717',
 		variations: {
@@ -96,38 +97,29 @@ export default {
 		},
 		defaultVariation: 'default',
 	},
-	showPlanUpsellConcierge: {
-		datestamp: '20191106',
-		variations: {
-			variantShowPlanBump: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	userStepRecaptcha: {
-		datestamp: '20191111',
-		variations: {
-			show: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	domainStepCopyUpdates: {
 		datestamp: '20191121',
 		variations: {
 			variantShowUpdates: 90,
 			control: 10,
 		},
+		defaultVariation: 'variantShowUpdates',
+		allowExistingUsers: true,
+	},
+	sidebarUpsellNudgeUnification: {
+		datestamp: '20200127',
+		variations: {
+			variantShowUnifiedUpsells: 50,
+			control: 50,
+		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	gsuitePrice: {
-		datestamp: '20191125',
+	domainStepDesignUpdates: {
+		datestamp: '20200220',
 		variations: {
-			discount: 0,
-			control: 100,
+			variantDesignUpdates: 50,
+			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,

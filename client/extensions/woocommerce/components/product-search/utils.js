@@ -6,9 +6,9 @@ import { difference, filter, intersection, isArray, uniq } from 'lodash';
 /**
  * Check if a string is found in a product name or attribute option
  *
- * @param {Object} product A given product to search
- * @param {String} textString A string to search for
- * @return {Boolean} Whether the string was found in the product
+ * @param {object} product A given product to search
+ * @param {string} textString A string to search for
+ * @returns {boolean} Whether the string was found in the product
  */
 export function productContainsString( product, textString ) {
 	const matchString = textString.trim().toLocaleLowerCase();
@@ -31,8 +31,8 @@ export function productContainsString( product, textString ) {
  * Check if a string is found in a product name or attribute option
  *
  * @param {Array} value An array of existing values
- * @param {Number} productId The product ID to search for
- * @return {Boolean} Whether the product ID exists in the list of values
+ * @param {number} productId The product ID to search for
+ * @returns {boolean} Whether the product ID exists in the list of values
  */
 export function isProductSelected( value = [], productId ) {
 	if ( isArray( value ) && value.length ) {
@@ -45,8 +45,8 @@ export function isProductSelected( value = [], productId ) {
  * Check if any variations of a product are selected
  *
  * @param {Array} value An array of existing values
- * @param {Object} product The product to check
- * @return {Boolean} Whether any variations exist in the values list
+ * @param {object} product The product to check
+ * @returns {boolean} Whether any variations exist in the values list
  */
 export function areVariationsSelected( value = [], product ) {
 	const variations = product.variations;
@@ -62,8 +62,8 @@ export function areVariationsSelected( value = [], product ) {
 /**
  * Check if a product is `variable` (has selectable variations)
  *
- * @param {Object} product A product to check
- * @return {Boolean} Whether the product has variations
+ * @param {object} product A product to check
+ * @returns {boolean} Whether the product has variations
  */
 export function isVariableProduct( product ) {
 	return 'variable' === product.type && ! product.isVariation;
@@ -73,8 +73,8 @@ export function isVariableProduct( product ) {
  * Add a product ID (or list of IDs) to a list of values
  *
  * @param {Array} value An array of existing values
- * @param {Number|Array} productId The product ID(s) to add
- * @return {Array} Updated list of values
+ * @param {number|Array} productId The product ID(s) to add
+ * @returns {Array} Updated list of values
  */
 export function addProductId( value = [], productId ) {
 	if ( isArray( productId ) ) {
@@ -87,8 +87,8 @@ export function addProductId( value = [], productId ) {
  * Remove a product ID (or list of IDs) from a list of values
  *
  * @param {Array} value An array of existing values
- * @param {Number|Array} productId The product ID(s) to remove
- * @return {Array} Updated list of values
+ * @param {number|Array} productId The product ID(s) to remove
+ * @returns {Array} Updated list of values
  */
 export function removeProductId( value = [], productId ) {
 	if ( isArray( productId ) ) {

@@ -11,10 +11,15 @@ import { localize } from 'i18n-calypso';
  */
 import EmptyContent from 'components/empty-content';
 
+/**
+ * Image dependencies
+ */
+import whoopsImage from 'assets/images/illustrations/whoops.svg';
+
 function PostTypeForbidden( { translate } ) {
 	return (
 		<EmptyContent
-			illustration="/calypso/images/illustrations/whoops.svg"
+			illustration={ whoopsImage }
 			title={ translate( 'You need permission to manage this post type' ) }
 			line={ translate( 'Ask your site administrator to grant you access' ) }
 		/>

@@ -30,6 +30,8 @@ import * as driverManager from '../lib/driver-manager';
 import * as driverHelper from '../lib/driver-helper';
 import * as mediaHelper from '../lib/media-helper';
 import * as dataHelper from '../lib/data-helper';
+import WPAdminLogonPage from '../lib/pages/wp-admin/wp-admin-logon-page';
+import WPAdminSidebar from '../lib/pages/wp-admin/wp-admin-sidebar';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -1035,6 +1037,15 @@ describe( `[${ host }] Editor: Posts (${ screenSize })`, function() {
 			const updatedBlogPostTitle = dataHelper.randomPhrase();
 			const blogPostQuote =
 				'Science is organised knowledge. Wisdom is organised life..\n~ Immanuel Kant\n';
+
+			if ( host !== 'WPCOM' ) {
+				step( 'Can log into Jetpack site', async function() {
+					const account = dataHelper.getAccountConfig();
+					const loginPage = await WPAdminLogonPage.Visit( driver, dataHelper.getJetpackSiteName() );
+					await loginPage.login( account[ 0 ], account[ 1 ] );
+					await WPAdminSidebar.Expect( driver );
+				} );
+			}
 
 			step( 'Can log in', async function() {
 				this.loginFlow = new LoginFlow( driver );

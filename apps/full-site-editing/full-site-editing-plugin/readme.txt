@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, codebykat, copons, dmsnell, ge
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.3
-Stable tag: 0.17
+Stable tag: 0.19
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -41,6 +41,19 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 0.19 =
+* Starter Page Templates: Added more than twenty new block editor page templates.
+* Starter Page Templates: Fix issues with full width blocks in the preview.
+* General: Fix style compatibility with the latest versions of the block editor.
+
+= 0.18.2 =
+* Address core/nux package deprecation.
+
+= 0.18 =
+* Blog Posts Block: Tag Exclusion feature
+* Blog Posts Block: Image orientation issues resolved.
+* Blog Posts Block: Full width alignment issue resolved.
 
 = 0.17 =
 * Introduces Blog Posts block, a better version of Posts List.

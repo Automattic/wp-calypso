@@ -8,8 +8,8 @@ import 'state/data-layer/wpcom/locale-guess';
 /**
  * Action creator function: I18N_LOCALE_SUGGESTIONS_ADD
  *
- * @param {Object} items - list of locale suggestions
- * @return {Object} action object
+ * @param {object} items - list of locale suggestions
+ * @returns {object} action object
  */
 export const receiveLocaleSuggestions = items => ( {
 	type: I18N_LOCALE_SUGGESTIONS_ADD,
@@ -19,7 +19,7 @@ export const receiveLocaleSuggestions = items => ( {
 /**
  * Action creator to request locale suggestions: I18N_LOCALE_SUGGESTIONS_REQUEST
  *
- * @return {Object} action object
+ * @returns {object} action object
  */
 export const requestLocaleSuggestions = () => ( {
 	type: I18N_LOCALE_SUGGESTIONS_REQUEST,

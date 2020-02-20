@@ -1,4 +1,6 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
+@import 'assets/stylesheets/shared/mixins/placeholder'; // Contains the placeholder mixin
+@import 'assets/stylesheets/shared/animation'; // Needed for the placeholder
 
 // Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-widgets/src/components/header/style.scss
 .gutenboarding__header {
@@ -8,7 +10,7 @@
 	border-bottom: 1px solid $light-gray-500;
 	height: $header-height;
 	background: $white;
-	z-index: z-index( '.edit-post-header' );
+	z-index: z-index( '.block-editor-editor-skeleton__header' );
 
 	left: 0;
 	right: 0;
@@ -30,6 +32,7 @@
 }
 
 .gutenboarding__header-back-button {
+	color: inherit;
 	.dashicons-arrow-left-alt {
 		margin-right: 5px;
 	}
@@ -54,6 +57,13 @@ $padding--gutenboarding__header-domain-picker-button: 0.3em 0.5em;
 		outline: 0;
 	}
 
+	&:disabled {
+		opacity: 1;
+		.gutenboarding__site-title {
+			color: black;
+		}
+	}
+
 	.gutenboarding__site-title {
 		padding: 0;
 	}
@@ -68,39 +78,13 @@ $padding--gutenboarding__header-domain-picker-button: 0.3em 0.5em;
 	}
 }
 
+.gutenboarding__header-domain-picker-button-domain {
+	&.placeholder {
+		@include placeholder();
+	}
+}
+
 .gutenboarding__site-title {
 	padding: $padding--gutenboarding__header-domain-picker-button;
 	font-weight: bold;
-}
-
-.gutenboarding__header-actions {
-	padding: 0 20px;
-
-	// Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-post/src/style.scss
-	display: inline-flex;
-	align-items: center;
-	flex-wrap: wrap;
-
-	> * {
-		margin-left: 20px;
-	}
-}
-
-// Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-post/src/style.scss
-.gutenboarding__header .components-button {
-	// Header toggle buttons.
-	&.is-toggled {
-		color: $white;
-		background: $dark-gray-500;
-		margin: 1px;
-		padding: 7px;
-	}
-
-	// The !important in this ruleset need to override the pile of :not() selectors used in the icon-button.
-	&.is-toggled:hover,
-	&.is-toggled:focus {
-		box-shadow: 0 0 0 $border-width $dark-gray-500, inset 0 0 0 $border-width $white !important;
-		color: $white !important;
-		background: $dark-gray-500 !important;
-	}
 }

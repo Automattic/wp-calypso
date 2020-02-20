@@ -11,6 +11,35 @@
 	margin-bottom: 1em;
 }
 
+.account-close__sites-item {
+	.gridicon {
+		cursor: pointer;
+		position: relative;
+		margin-left: 2px;
+		top: 4px;
+	}
+
+	.account-close__sites-list {
+		margin-top: 12px;
+
+		li {
+			margin-bottom: 8px;
+		}
+
+		span {
+			display: block;
+			font-size: 10px;
+			margin-left: 3px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
+}
+
+.is-hiding-other-sites .account-close__sites-item .gridicon {
+	transform: rotate( 180deg );
+}
+
 // Placeholders
 .account-close.is-loading .account-close__body-copy,
 .account-close.is-loading .account-close__body-copy a,
@@ -21,4 +50,3 @@
 .account-close.is-loading .action-panel__footer .button {
 	border: 0;
 }
-

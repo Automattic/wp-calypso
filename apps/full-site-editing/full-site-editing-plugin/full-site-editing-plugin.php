@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Full Site Editing
  * Description: Enhances your page creation workflow within the Block Editor.
- * Version: 0.17
+ * Version: 0.19
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
@@ -35,10 +35,10 @@ namespace A8C\FSE;
  *
  * @var string
  */
-define( 'PLUGIN_VERSION', '0.17' );
+define( 'PLUGIN_VERSION', '0.19' );
 
-// Always include these helper files for FSE.
-require_once __DIR__ . '/full-site-editing/helpers.php';
+// Always include these helper files for dotcom FSE.
+require_once __DIR__ . '/dotcom-fse/helpers.php';
 
 /**
  * Load Full Site Editing.
@@ -117,6 +117,26 @@ function load_global_styles() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_global_styles' );
 
 /**
+ * Load Event Countdown Block
+ */
+add_action(
+	'plugins_loaded',
+	function() {
+		require_once __DIR__ . '/event-countdown-block/index.php';
+	}
+);
+
+/**
+ * Load Timeline Block
+ */
+add_action(
+	'plugins_loaded',
+	function() {
+		require_once __DIR__ . '/jetpack-timeline/index.php';
+	}
+);
+
+/**
  * Add front-end CoBlocks gallery block scripts.
  *
  * This function performs the same enqueueing duties as `CoBlocks_Block_Assets::frontend_scripts`,
@@ -172,9 +192,13 @@ add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_coblocks_gallery_scr
  * Load Blog Posts block.
  */
 function load_blog_posts_block() {
+	$slug          = 'newspack-blocks/newspack-blocks.php';
 	$disable_block = (
-		in_array( 'newspack-blocks/newspack-blocks.php', (array) get_option( 'active_plugins', array() ), true ) ||
-		in_array( 'newspack-blocks/newspack-blocks.php', (array) get_site_option( 'active_sitewide_plugins', array() ), true )
+		( defined( 'WP_CLI' ) && WP_CLI ) ||
+		/* phpcs:ignore WordPress.Security.NonceVerification */
+		( isset( $_GET['action'], $_GET['plugin'] ) && 'activate' === $_GET['action'] && $slug === $_GET['plugin'] ) ||
+		in_array( $slug, (array) get_option( 'active_plugins', array() ), true ) ||
+		in_array( $slug, (array) get_site_option( 'active_sitewide_plugins', array() ), true )
 	);
 
 	/**
@@ -191,3 +215,12 @@ function load_blog_posts_block() {
 	require_once __DIR__ . '/blog-posts-block/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_blog_posts_block' );
+
+// @TODO - Uncomment once ready to deploy wpcom NUX.
+/**
+ * Load WPCOM Block Editor NUX
+ */
+// function load_wpcom_block_editor_nux() {
+// 	require_once __DIR__ . '/wpcom-block-editor-nux/class-wpcom-block-editor-nux.php';
+// }
+// add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );

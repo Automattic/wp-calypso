@@ -231,8 +231,9 @@ export const clearAvailableRates = ( orderId, siteId ) => {
 
 /**
  * Checks the form for errors, and if there are none, fetches the label rates. Otherwise expands the first erroneous step
- * @param {Number} orderId order ID
- * @param {Number} siteId site ID
+ *
+ * @param {number} orderId order ID
+ * @param {number} siteId site ID
  * @param {Function} dispatch dispatch function
  * @param {Function} getState getState function
  */
@@ -811,7 +812,7 @@ const handlePrintFinished = ( orderId, siteId, dispatch, getState, hasError, lab
  * Generates the action that is triggered upon successful print.
  *
  * @param {number} count The amount of labels that were successfuly purchased and printed.
- * @returns {Object}     TheA plain action object.
+ * @returns {object}     TheA plain action object.
  */
 const createPrintSuccessNotice = count => {
 	return NoticeActions.successNotice(
@@ -831,7 +832,7 @@ const createPrintSuccessNotice = count => {
  *
  * @param  {number}   count   The amount of labels that are being purchased.
  * @param  {Function} onClick A callback for the retry button.
- * @returns {Object}          The plain action that should be dispatched.
+ * @returns {object}          The plain action that should be dispatched.
  */
 const createPrintFailureNotice = ( count, onClick ) => {
 	const errorMessage = translate(

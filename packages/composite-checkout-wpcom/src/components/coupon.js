@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React from 'react';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/core';
 import PropTypes from 'prop-types';
@@ -14,46 +14,51 @@ import joinClasses from './join-classes';
 import Field from './field';
 import Button from './button';
 
-export default function Coupon( { id, couponAdded, className, isCouponFieldVisible } ) {
+export default function Coupon( { id, className, disabled, couponStatus, couponFieldStateProps } ) {
 	const translate = useTranslate();
-	const [ isApplyButtonActive, setIsApplyButtonActive ] = useState( false );
-	const [ couponFieldValue, setCouponFieldValue ] = useState( '' );
-	const [ hasCouponError, setHasCouponError ] = useState( false );
-	const [ isCouponApplied, setIsCouponApplied ] = useState( false );
+	const {
+		couponFieldValue,
+		setCouponFieldValue,
+		isApplyButtonActive,
+		isFreshOrEdited,
+		setIsFreshOrEdited,
+		handleCouponSubmit,
+	} = couponFieldStateProps;
 
-	if ( ! isCouponFieldVisible || isCouponApplied ) {
+	if ( couponStatus === 'applied' ) {
 		return null;
 	}
+
+	const hasCouponError = couponStatus === 'invalid' || couponStatus === 'rejected';
+	const isPending = couponStatus === 'pending';
+
+	const errorMessage = getCouponErrorMessageFromStatus( translate, couponStatus, isFreshOrEdited );
 
 	return (
 		<CouponWrapper
 			className={ joinClasses( [ className, 'coupon' ] ) }
 			onSubmit={ event => {
-				handleFormSubmit(
-					event,
-					couponFieldValue,
-					setHasCouponError,
-					couponAdded,
-					setIsCouponApplied
-				);
+				setIsFreshOrEdited( false );
+				handleCouponSubmit( event );
 			} }
 		>
 			<Field
 				id={ id }
+				value={ couponFieldValue }
+				disabled={ disabled || isPending }
 				placeholder={ translate( 'Enter your coupon code' ) }
-				isError={ hasCouponError }
-				errorMessage={
-					hasCouponError
-						? translate( "We couldn't find your coupon. Please check your code and try again." )
-						: null
-				}
+				isError={ hasCouponError && ! isFreshOrEdited }
+				errorMessage={ errorMessage }
 				onChange={ input => {
-					handleFieldInput( input, setCouponFieldValue, setIsApplyButtonActive, setHasCouponError );
+					setIsFreshOrEdited( true );
+					setCouponFieldValue( input );
 				} }
 			/>
 
 			{ isApplyButtonActive && (
-				<ApplyButton buttonState="secondary">{ translate( 'Apply' ) }</ApplyButton>
+				<ApplyButton buttonState={ isPending ? 'disabled' : 'secondary' }>
+					{ isPending ? translate( 'Processing…' ) : translate( 'Apply' ) }
+				</ApplyButton>
 			) }
 		</CouponWrapper>
 	);
@@ -62,6 +67,7 @@ export default function Coupon( { id, couponAdded, className, isCouponFieldVisib
 Coupon.propTypes = {
 	id: PropTypes.string.isRequired,
 	couponAdded: PropTypes.func,
+	disabled: PropTypes.bool,
 };
 
 const animateIn = keyframes`
@@ -92,36 +98,12 @@ const ApplyButton = styled( Button )`
 	margin: 0;
 `;
 
-function handleFieldInput( input, setCouponFieldValue, setIsApplyButtonActive, setHasCouponError ) {
-	if ( input.length > 0 ) {
-		setCouponFieldValue( input );
-		setIsApplyButtonActive( true );
-		setHasCouponError( false );
-		return;
+function getCouponErrorMessageFromStatus( translate, status, isFreshOrEdited ) {
+	if ( status === 'invalid' && ! isFreshOrEdited ) {
+		return translate( "We couldn't find your coupon. Please check your code and try again." );
 	}
-
-	setIsApplyButtonActive( false );
-}
-
-function handleFormSubmit(
-	event,
-	couponFieldValue,
-	setHasCouponError,
-	couponAdded,
-	setIsCouponApplied
-) {
-	event.preventDefault();
-
-	//TODO: Validate coupon field and replace condition in the following if statement
-	if ( couponFieldValue === 'Add' ) {
-		setIsCouponApplied( true );
-
-		if ( couponAdded ) {
-			couponAdded();
-		}
-
-		return;
+	if ( status === 'rejected' ) {
+		return translate( 'This coupon does not apply to any items in the cart.' );
 	}
-
-	setHasCouponError( true );
+	return null;
 }

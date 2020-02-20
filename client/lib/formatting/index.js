@@ -39,8 +39,9 @@ export function interpose( separator, list ) {
 
 /**
  * Strips HTML from a string. Does not handle tags nested in attribute strings.
+ *
  * @param  {string} string The string to strip tags from
- * @return {string}        The stripped string
+ * @returns {string}        The stripped string
  */
 export function stripHTML( string ) {
 	return stripTags( string );
@@ -48,9 +49,10 @@ export function stripHTML( string ) {
 
 /**
  * Prevent widows by replacing spaces between the last `wordsToKeep` words in the text with non-breaking spaces
+ *
  * @param  {string} text        the text to work on
  * @param  {number} wordsToKeep the number of words to keep together
- * @return {string}             the widow-prevented string
+ * @returns {string}             the widow-prevented string
  */
 export function preventWidows( text, wordsToKeep = 2 ) {
 	if ( typeof text !== 'string' ) {
@@ -88,6 +90,7 @@ export function preventWidows( text, wordsToKeep = 2 ) {
 
 /**
  * Returns true if we detect a core Gutenberg comment block
+ *
  * @param   {string }   content - html string
  * @returns { boolean } true if we think we found a block
  */
@@ -105,7 +108,7 @@ function hasGutenbergBlocks( content ) {
  * @see wp-admin/js/editor.js
  *
  * @param {string} pee     html string
- * @return {string}        html string with HTML paragraphs instead of double line-breaks
+ * @returns {string}        html string with HTML paragraphs instead of double line-breaks
  */
 export function wpautop( pee ) {
 	if ( hasGutenbergBlocks( pee ) ) {
@@ -310,8 +313,8 @@ export function capitalPDangit( input ) {
 /**
  * Parses HTML by using the browser's built in string to DOM converter.
  *
- * @param  {String} html HTML String to be converted into DOM fragment
- * @return {Dom} DOM fragment that can be queried using built in browser functions.
+ * @param  {string} html HTML String to be converted into DOM fragment
+ * @returns {Dom} DOM fragment that can be queried using built in browser functions.
  */
 export function parseHtml( html ) {
 	if ( html && html.querySelector ) {
@@ -352,8 +355,8 @@ const nbsp = String.fromCharCode( 160 );
  * using '&nbsp;' for this because again, React will escape whatever we pass
  * in).
  *
- * @param	{String} str String to unescape in preparation for React rendering
- * @return	{String} Transformed string
+ * @param	{string} str String to unescape in preparation for React rendering
+ * @returns	{string} Transformed string
  */
 export function unescapeAndFormatSpaces( str ) {
 	return decodeEntities( str ).replace( / /g, nbsp );

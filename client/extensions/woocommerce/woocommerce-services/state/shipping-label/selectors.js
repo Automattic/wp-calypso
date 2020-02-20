@@ -112,11 +112,12 @@ export const getForm = ( state, orderId, siteId = getSelectedSiteId( state ) ) =
 
 /**
  * Returns a breakdown of the total price for selected labels in form of { prices, discount, total }
- * @param {Object} state global state tree
- * @param {Number} orderId order Id
- * @param {Number} siteId site Id
  *
- * @returns {Object} price breakdown
+ * @param {object} state global state tree
+ * @param {number} orderId order Id
+ * @param {number} siteId site Id
+ *
+ * @returns {object} price breakdown
  */
 export const getTotalPriceBreakdown = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const form = getForm( state, orderId, siteId );
@@ -183,11 +184,11 @@ export const isCustomsFormRequired = createSelector(
 /**
  * Generates an object with errors for all fields within an address.
  *
- * @param {Object}  appState            Local Redux state.
- * @param {Object}  addressData         Address to check, including normalization state and values.
+ * @param {object}  appState            Local Redux state.
+ * @param {object}  addressData         Address to check, including normalization state and values.
  * @param {number}  siteId              The ID of the current site ID.
  * @param {boolean} shouldValidatePhone An indiator whether phone validation is required.
- * @return {Object}                     A hash of errors with field names as keys.
+ * @returns {object}                     A hash of errors with field names as keys.
  */
 const getRawAddressErrors = ( appState, addressData, siteId, shouldValidatePhone ) => {
 	const { values } = addressData;
@@ -466,10 +467,10 @@ export const getFormErrors = createSelector(
  * Checks whether an address has enough data to be forcefully saved
  * without normalization/verification.
  *
- * @param {Object} appState The local Redux state.
+ * @param {object} appState The local Redux state.
  * @param {number} orderId  ID of the order that the label belongs to.
  * @param {number} siteId   The ID of the site that is being currently modified.
- * @return {boolean}
+ * @returns {boolean}
  */
 export const isAddressUsable = createSelector(
 	( appState, orderId, group, siteId = getSelectedSiteId( appState ) ) => {
@@ -510,11 +511,12 @@ export const isCustomsFormStepSubmitted = (
 
 /**
  * Checks the form for errors and returns a step with an error in it or null
- * @param {Object} state global state tree
- * @param {Object} orderId order Id
- * @param {Object} siteId site Id
  *
- * @returns {String} erroneous step name or null
+ * @param {object} state global state tree
+ * @param {object} orderId order Id
+ * @param {object} siteId site Id
+ *
+ * @returns {string} erroneous step name or null
  */
 export const getFirstErroneousStep = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const form = getForm( state, orderId, siteId );
@@ -579,9 +581,9 @@ export const canPurchase = createSelector(
 );
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object} Map with the pairs { countryCode: countryName } of countries that are available as origin to print shipping labels
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {object} Map with the pairs { countryCode: countryName } of countries that are available as origin to print shipping labels
  */
 export const getOriginCountryNames = createSelector(
 	( state, siteId = getSelectedSiteId( state ) ) => {
@@ -594,9 +596,9 @@ export const getOriginCountryNames = createSelector(
 );
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object} Map with the pairs { countryCode: countryName } of countries that are available as destination to print shipping labels
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {object} Map with the pairs { countryCode: countryName } of countries that are available as destination to print shipping labels
  */
 export const getDestinationCountryNames = createSelector(
 	( state, siteId = getSelectedSiteId( state ) ) => {
@@ -609,11 +611,11 @@ export const getDestinationCountryNames = createSelector(
 );
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {String} countryCode 2-letter ISO country code
- * @param {String} stateCode 2-letter code of the country's state
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object|null} Map with the form { stateCode: stateName } with all the states of the given country, or null if
+ * @param {object} state Whole Redux state tree
+ * @param {string} countryCode 2-letter ISO country code
+ * @param {string} stateCode 2-letter code of the country's state
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {object|null} Map with the form { stateCode: stateName } with all the states of the given country, or null if
  * the country doesn't have a list of states
  */
 export const getStateNames = createSelector(

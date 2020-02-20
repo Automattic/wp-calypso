@@ -24,8 +24,8 @@ import {
 /**
  * Triggers a network request to fetch search results for a query string.
  *
- * @param  {?String}  searchQuery Search query
- * @return {Function}        Action thunk
+ * @param  {?string}  searchQuery Search query
+ * @returns {Function}        Action thunk
  */
 export function requestInlineHelpSearchResults( searchQuery ) {
 	return dispatch => {
@@ -56,8 +56,8 @@ export function requestInlineHelpSearchResults( searchQuery ) {
 /**
  * Selects a specific result in the inline help results list.
  *
- * @param  {Number}  resultIndex Index of the result to select
- * @return {Function}        Action thunk
+ * @param  {number}  resultIndex Index of the result to select
+ * @returns {Function}        Action thunk
  */
 export function selectResult( resultIndex ) {
 	return dispatch => {
@@ -71,7 +71,7 @@ export function selectResult( resultIndex ) {
 /**
  * Resets the inline contact form state.
  *
- * @return {Function}  Action thunk
+ * @returns {Function}  Action thunk
  */
 export function resetInlineHelpContactForm() {
 	return dispatch => {
@@ -84,7 +84,7 @@ export function resetInlineHelpContactForm() {
 /**
  * Shows the Q&A suggestions on the contact form.
  *
- * @return {Function}  Action thunk
+ * @returns {Function}  Action thunk
  */
 export function showQandAOnInlineHelpContactForm() {
 	return dispatch => {
@@ -97,7 +97,7 @@ export function showQandAOnInlineHelpContactForm() {
 /**
  * Selects the next result in the inline help results list.
  *
- * @return {Function}        Action thunk
+ * @returns {Function}        Action thunk
  */
 export function selectNextResult() {
 	return dispatch => {
@@ -110,7 +110,7 @@ export function selectNextResult() {
 /**
  * Selects the previous result in the inline help results list.
  *
- * @return {Function}        Action thunk
+ * @returns {Function}        Action thunk
  */
 export function selectPreviousResult() {
 	return dispatch => {

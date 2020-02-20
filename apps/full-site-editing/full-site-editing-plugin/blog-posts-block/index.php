@@ -9,7 +9,7 @@ namespace A8C\FSE;
 
 define( 'NEWSPACK_BLOCKS__BLOCKS_DIRECTORY', 'dist/' );
 define( 'NEWSPACK_BLOCKS__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'NEWSPACK_BLOCKS__VERSION', '1.0.0-alpha.18' );
+define( 'NEWSPACK_BLOCKS__VERSION', '1.0.0-alpha.20' );
 
 /**
  * Filters block name.

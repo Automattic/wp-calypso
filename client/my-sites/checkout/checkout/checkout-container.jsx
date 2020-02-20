@@ -24,9 +24,9 @@ import './checkout-container.scss';
 /**
  * Returns whether a given site creation date is "new", that is whether the date falls in the last `n` minutes
  *
- * @param  {String}  createdAt               The site creation date stamp
- * @param  {Number}  creationWindowInMinutes A site creation date is considered 'new' if it's been created in this time window (in minutes)
- * @return {Boolean}                         If the creation date is 'new'. Default `false`
+ * @param  {string}  createdAt               The site creation date stamp
+ * @param  {number}  creationWindowInMinutes A site creation date is considered 'new' if it's been created in this time window (in minutes)
+ * @returns {boolean}                        If the creation date is 'new'. Default `false`
  */
 function isSiteCreatedDateNew( createdAt, creationWindowInMinutes = 5 ) {
 	return moment( createdAt ).isAfter( moment().subtract( creationWindowInMinutes, 'minutes' ) );
@@ -70,6 +70,7 @@ class CheckoutContainer extends React.Component {
 			selectedSite,
 			reduxStore,
 			redirectTo,
+			upgradeIntent,
 			shouldShowCart = true,
 			clearTransaction,
 		} = this.props;
@@ -95,6 +96,7 @@ class CheckoutContainer extends React.Component {
 							setHeaderText={ this.setHeaderText }
 							reduxStore={ reduxStore }
 							redirectTo={ redirectTo }
+							upgradeIntent={ upgradeIntent }
 						>
 							{ this.props.children }
 						</Checkout>

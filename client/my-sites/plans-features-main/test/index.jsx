@@ -7,7 +7,6 @@ jest.mock( 'react-redux', () => ( {
 } ) );
 jest.mock( 'lib/analytics/index', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'config', () => {
 	const fn = () => {};
 	fn.isEnabled = jest.fn( () => true );
@@ -18,8 +17,6 @@ jest.mock( 'components/data/query-plans', () => 'QueryPlans' );
 jest.mock( 'components/data/query-site-plans', () => 'QuerySitePlans' );
 jest.mock( 'components/data/cart', () => 'CartData' );
 jest.mock( 'blocks/payment-methods', () => 'PaymentMethods' );
-jest.mock( 'components/main', () => 'MainComponent' );
-jest.mock( 'components/popover', () => 'Popover' );
 jest.mock( 'my-sites/plan-features', () => 'PlanFeatures' );
 jest.mock( 'my-sites/plans-features-main/wpcom-faq', () => 'WpcomFAQ' );
 jest.mock( 'my-sites/plans-features-main/jetpack-faq', () => 'JetpackFAQ' );
@@ -63,7 +60,6 @@ import {
 	TYPE_ECOMMERCE,
 	TYPE_FREE,
 	TERM_ANNUALLY,
-	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 } from 'lib/plans/constants';
 
@@ -312,40 +308,7 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		).toBe( 1 );
 	} );
 
-	test( 'Highlights TYPE_PERSONAL as popular plan for blog site type', () => {
-		const instance = new PlansFeaturesMain( {
-			siteType: 'blog',
-		} );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'PlanFeatures' ).props().popularPlanSpec ).toEqual( {
-			type: TYPE_PERSONAL,
-			group: GROUP_WPCOM,
-		} );
-	} );
-
-	test( 'Highlights TYPE_PREMIUM as popular plan for professional site type', () => {
-		const instance = new PlansFeaturesMain( {
-			siteType: 'professional',
-		} );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'PlanFeatures' ).props().popularPlanSpec ).toEqual( {
-			type: TYPE_PREMIUM,
-			group: GROUP_WPCOM,
-		} );
-	} );
-
-	test( 'Highlights TYPE_BUSINESS as popular plan for business site type', () => {
-		const instance = new PlansFeaturesMain( {
-			siteType: 'business',
-		} );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'PlanFeatures' ).props().popularPlanSpec ).toEqual( {
-			type: TYPE_BUSINESS,
-			group: GROUP_WPCOM,
-		} );
-	} );
-
-	test( 'Highlights TYPE_PREMIUM as popular plan for empty site type and personal customer type', () => {
+	test( 'Highlights TYPE_PREMIUM as popular plan for personal customer type', () => {
 		const instance = new PlansFeaturesMain( {
 			customerType: 'personal',
 		} );
@@ -356,7 +319,7 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		} );
 	} );
 
-	test( 'Highlights TYPE_BUSINESS as popular plan for empty site type and business customer type', () => {
+	test( 'Highlights TYPE_BUSINESS as popular plan for business customer type', () => {
 		const instance = new PlansFeaturesMain( {
 			customerType: 'business',
 		} );
@@ -367,7 +330,7 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		} );
 	} );
 
-	test( 'Highlights TYPE_BUSINESS as popular plan for empty site type and empty customer type', () => {
+	test( 'Highlights TYPE_BUSINESS as popular plan for empty customer type', () => {
 		const instance = new PlansFeaturesMain( {} );
 		const comp = shallow( instance.render() );
 		expect( comp.find( 'PlanFeatures' ).props().popularPlanSpec ).toEqual( {

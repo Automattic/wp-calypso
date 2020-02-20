@@ -1,11 +1,20 @@
 # next
 
+- Upgrade [mini-css-extract-plugin-with-rtl](https://github.com/Automattic/mini-css-extract-plugin-with-rtl) to 0.8.0, use an npm-published version instead of GitHub branch reference
+
+# 6.0.0
+
+- Breaking Change: Replace `copy-styles` with a generic `copy-assets` script to handle both styles and images.
+- Upgrade to [sass-loader@8](https://github.com/webpack-contrib/sass-loader/releases/tag/v8.0.0)
+- Add basic TypeScript config, `tsconfig.json` (for projects to extend).
+- Add support for transpiling selected NPM dependencies from ESnext to the target's ES version.
+- Add `punycode` to the list of transpiled NPM dependencies.
+
+# 5.1.0
+
 - Add `util.IncrementalProgressPlugin` to show incremental build progress
 - Add support for [optional chaining](https://github.com/tc39/proposal-optional-chaining).
 - Add support for [nullish coalescing](https://github.com/tc39/proposal-nullish-coalescing).
-- Upgrade to [sass-loader@8](https://github.com/webpack-contrib/sass-loader/releases/tag/v8.0.0)
-- Add basic TypeScript config, `tsconfig.json` (for projects to extend).
-- Replace `copy-styles` with a generic `copy-assets` script to handle both styles and images.
 
 # 5.0.1
 

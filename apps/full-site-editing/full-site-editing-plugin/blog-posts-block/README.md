@@ -15,6 +15,8 @@ view.js — assets for the block rendered on frontend
 newspack-homepage-articles/** — source code synced from the Newspack Blocks repository
 ```
 
+`editor.js`, `view.js` and `index.php` are files written in order to bridge the parent plugin with the Blog Posts Block. It changes the block name to `a8c/blog-posts` and does things like registering REST fields or styles and scripts. In these files we are free to do all those changes because they are not shared with Newspack and only live here in this repository.
+
 ### Synchronizing the code
 
 You can see that `newspack-homepage-articles` is being synced with the Newspack Blocks repository. Please make all improvements and additions on the Newspack side. Please don't make any direct changes to files in this directory as the next synchronization will overwrite them.
@@ -28,3 +30,11 @@ npm run sync:blog-posts-block --release=1.0.0-alpha.17
 ```
 
 This will pull the code from the release and integrate it into this repository. Please review changes, make sure to update `NEWSPACK_BLOCKS__VERSION` in [index.php](./index.php) and commit.
+
+### Local development
+
+Sometimes, probably, you will need to sync the NHA code straight in your local environment. It means you will get working on both projects at the same time. For this situation, you'd like to reference the code source through the `path` bin script argument.
+
+```js
+npm run sync:blog-posts-block --path=/Absolute/path/of/newspack-blocks/
+```

@@ -18,9 +18,9 @@ import {
  * Returns the updated plugins requesting state after an action has been dispatched.
  * Requesting state tracks whether a plugins request is in progress for a site.
  *
- * @param  {Object} state Current requesting state
- * @param  {Object} action Action object
- * @return {Object} Updated requesting state
+ * @param  {object} state Current requesting state
+ * @param  {object} action Action object
+ * @returns {object} Updated requesting state
  */
 export const requesting = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -53,9 +53,9 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
  * Returns the updated plugin toggling state after an action has been dispatched.
  * Toggling state tracks whether a WPSC plugin on a site is currently being toggled.
  *
- * @param  {Object} state Current toggling state
- * @param  {Object} action Action object
- * @return {Object} Updated saving state
+ * @param  {object} state Current toggling state
+ * @param  {object} action Action object
+ * @returns {object} Updated saving state
  */
 export const toggling = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -97,9 +97,9 @@ export const toggling = withoutPersistence( ( state = {}, action ) => {
 /**
  * Tracks the plugins for a particular site.
  *
- * @param  {Object} state Current plugins
- * @param  {Object} action Action object
- * @return {Object} Updated plugins
+ * @param  {object} state Current plugins
+ * @param  {object} action Action object
+ * @returns {object} Updated plugins
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

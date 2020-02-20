@@ -10,8 +10,9 @@ import { getCreditCardType } from 'lib/checkout';
 
 /**
  * Formats a credit card card number
- * @param {String} cardNumber unformatted field value
- * @returns {String} formatted value
+ *
+ * @param {string} cardNumber unformatted field value
+ * @returns {string} formatted value
  */
 export function formatCreditCard( cardNumber ) {
 	if ( getCreditCardType( cardNumber ) === 'amex' ) {
@@ -27,8 +28,9 @@ export function formatCreditCard( cardNumber ) {
 
 /**
  * Formats an American Express card number
- * @param {String} cardNumber unformatted field value
- * @returns {String} formatted value
+ *
+ * @param {string} cardNumber unformatted field value
+ * @returns {string} formatted value
  */
 export function formatAmexCreditCard( cardNumber ) {
 	const digits = cardNumber.replace( /[^0-9]/g, '' ).slice( 0, 15 );
@@ -129,10 +131,11 @@ fieldMasks.document = {
 
 /**
  * Formats a field value
- * @param {String} fieldName name of field corresponding to a child open of `fieldMasks`
- * @param {String} previousValue the current value of the field before change
- * @param {String} nextValue the new, incoming value of the field on change
- * @returns {String} formatted value
+ *
+ * @param {string} fieldName name of field corresponding to a child open of `fieldMasks`
+ * @param {string} previousValue the current value of the field before change
+ * @param {string} nextValue the new, incoming value of the field on change
+ * @returns {string} formatted value
  */
 export function maskField( fieldName, previousValue, nextValue ) {
 	const fieldMask = fieldMasks[ fieldName ];
@@ -145,10 +148,11 @@ export function maskField( fieldName, previousValue, nextValue ) {
 
 /**
  * Reverses masking formats of a field value
- * @param {String} fieldName name of field corresponding to a child open of `fieldMasks`
- * @param {String} previousValue the current value of the field before change
- * @param {String} nextValue the new, incoming value of the field on change
- * @returns {String} deformatted value
+ *
+ * @param {string} fieldName name of field corresponding to a child open of `fieldMasks`
+ * @param {string} previousValue the current value of the field before change
+ * @param {string} nextValue the new, incoming value of the field on change
+ * @returns {string} deformatted value
  */
 export function unmaskField( fieldName, previousValue, nextValue ) {
 	const fieldMask = fieldMasks[ fieldName ];

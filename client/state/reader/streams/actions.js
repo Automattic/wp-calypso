@@ -11,10 +11,12 @@ import {
 	READER_STREAMS_SELECT_PREV_ITEM,
 	READER_STREAMS_UPDATES_RECEIVE,
 } from 'state/action-types';
-import getStream from 'state/selectors/get-reader-stream';
+import { getStream } from 'state/reader/streams/selectors';
 import { getStreamType } from 'reader/utils';
 
 import 'state/data-layer/wpcom/read/streams';
+
+import 'state/reader/init';
 
 /**
  * Fetch posts into a stream
@@ -22,9 +24,9 @@ import 'state/data-layer/wpcom/read/streams';
  * This action will fetch a range of posts for a stream and then dispatch
  * READER_STREAM_PAGE_RECEIVE when the page returns. This is usually used to
  * fetch the next page of results, but could be used to fetch arbitrary ranges.
+ *
  * @param  {string} streamKey The stream to fetch posts for
- * @param  {object} query    The query for posts. Parameters vary by stream type.
- * @return {object}          The action object
+ * @returns {object}          The action object
  */
 export function requestPage( { streamKey, pageHandle, isPoll = false, gap = null } ) {
 	const streamType = getStreamType( streamKey );

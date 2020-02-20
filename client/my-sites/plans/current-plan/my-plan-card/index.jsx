@@ -48,7 +48,7 @@ MyPlanCard.propTypes = {
 	action: PropTypes.oneOfType( [ PropTypes.node, PropTypes.element ] ),
 	isError: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
-	details: PropTypes.string,
+	details: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ),
 	product: PropTypes.string,
 	tagline: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node, PropTypes.element ] ),
 	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node, PropTypes.element ] ),

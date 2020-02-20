@@ -96,8 +96,8 @@ export const siteStyleOptions = {
 /**
  * Returns a style definition object
  *
- * @param  {String} siteType A site type/segement as selected in the onboarding flow
- * @return {Object}          The site style definition object.
+ * @param  {string} siteType A site type/segement as selected in the onboarding flow
+ * @returns {object}          The site style definition object.
  */
 export const getSiteStyleOptions = siteType =>
 	get( siteStyleOptions, siteType, siteStyleOptions.business );

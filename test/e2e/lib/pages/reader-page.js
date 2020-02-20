@@ -31,7 +31,9 @@ export default class ReaderPage extends AsyncBaseContainer {
 		const hasSharablePost = await driverHelper.isElementPresent( this.driver, shareButtonSelector );
 
 		if ( ! hasSharablePost ) {
-			return new Error( 'No sharable posts found in reader' );
+			// no shareable posts on this screen. try moving into a combined card
+			const firstComboCardPostSelector = by.css( '.reader-combined-card__post-title-link' );
+			await driverHelper.clickWhenClickable( this.driver, firstComboCardPostSelector );
 		}
 
 		await driverHelper.clickWhenClickable( this.driver, shareButtonSelector );

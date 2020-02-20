@@ -29,7 +29,7 @@ import { isAutomatticTeamMember } from 'reader/lib/teams';
 import { getTagStreamUrl } from 'reader/route';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { getSubscribedLists } from 'state/reader/lists/selectors';
-import getReaderTeams from 'state/selectors/get-reader-teams';
+import { getReaderTeams } from 'state/reader/teams/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
 import ReaderSidebarPromo from './promo';
@@ -157,7 +157,7 @@ export class ReaderSidebar extends React.Component {
 								label={ translate( 'Followed Sites' ) }
 								onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
 								materialIcon="check_circle"
-								link="/"
+								link="/read"
 							/>
 
 							<SidebarItem

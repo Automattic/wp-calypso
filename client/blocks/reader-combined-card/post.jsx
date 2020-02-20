@@ -1,5 +1,5 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import AutoDirection from 'components/auto-direction';
 import Emojify from 'components/emojify';
@@ -22,7 +22,7 @@ import TimeSince from 'components/time-since';
 import ReaderFeaturedImage from 'blocks/reader-featured-image';
 import ReaderFeaturedVideo from 'blocks/reader-featured-video';
 import ReaderCombinedCardPostPlaceholder from 'blocks/reader-combined-card/placeholders/post';
-import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
+import { isAuthorNameBlocked } from 'reader/lib/author-name-blocklist';
 import QueryReaderPost from 'components/data/query-reader-post';
 
 class ReaderCombinedCardPost extends React.Component {
@@ -88,8 +88,7 @@ class ReaderCombinedCardPost extends React.Component {
 			);
 		}
 
-		const hasAuthorName =
-			has( post, 'author.name' ) && ! isAuthorNameBlacklisted( post.author.name );
+		const hasAuthorName = has( post, 'author.name' ) && ! isAuthorNameBlocked( post.author.name );
 		let featuredAsset = null;
 		if ( post.canonical_media && post.canonical_media.mediaType === 'video' ) {
 			featuredAsset = (

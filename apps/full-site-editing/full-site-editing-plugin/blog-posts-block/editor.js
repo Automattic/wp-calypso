@@ -31,4 +31,8 @@ registerBlockType( blockName, {
 	...settings,
 	title: __( 'Blog Posts', 'full-site-editing' ),
 	category: 'layout',
+	supports: {
+		...settings.supports,
+		multiple: false,
+	},
 } );

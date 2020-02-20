@@ -87,8 +87,8 @@ class InlineHelp extends Component {
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! this.props.isHappychatOpen && nextProps.isHappychatOpen ) {
+	componentDidUpdate( prevProps ) {
+		if ( ! prevProps.isHappychatOpen && this.props.isHappychatOpen ) {
 			this.closeInlineHelp();
 		}
 	}

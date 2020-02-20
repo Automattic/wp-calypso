@@ -14,6 +14,7 @@ export default function RadioButton( {
 	label,
 	id,
 	ariaLabel,
+	isDisabled,
 } ) {
 	const [ isFocused, changeFocus ] = useState( false );
 
@@ -35,7 +36,7 @@ export default function RadioButton( {
 				readOnly={ ! onChange }
 				aria-label={ ariaLabel }
 			/>
-			<Label checked={ checked } htmlFor={ id }>
+			<Label checked={ checked } htmlFor={ id } isDisabled={ isDisabled }>
 				{ label }
 			</Label>
 			{ children && <RadioButtonChildren checked={ checked }>{ children }</RadioButtonChildren> }
@@ -48,6 +49,7 @@ RadioButton.propTypes = {
 	id: PropTypes.string.isRequired,
 	label: PropTypes.node.isRequired,
 	checked: PropTypes.bool,
+	isDisabled: PropTypes.bool,
 	value: PropTypes.string.isRequired,
 	onChange: PropTypes.func,
 	ariaLabel: PropTypes.string.isRequired,
@@ -131,7 +133,7 @@ const Label = styled.label`
 		transform: translateY( -50% );
 		left: 16px;
 		position: absolute;
-		background: ${props => props.theme.colors.surface};
+		background: ${getRadioBackgroundColor};
 		box-sizing: border-box;
 		z-index: 2;
 	}
@@ -162,6 +164,10 @@ function getBorderColor( { checked, theme } ) {
 
 function getRadioColor( { checked, theme } ) {
 	return checked ? theme.colors.highlight : theme.colors.surface;
+}
+
+function getRadioBackgroundColor( { isDisabled, theme } ) {
+	return isDisabled ? 'lightgray' : theme.colors.surface;
 }
 
 function getBorderWidth( { checked } ) {

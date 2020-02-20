@@ -1,20 +1,15 @@
 /**
  * External dependencies
  */
-
+import { isWithinBreakpoint } from '@automattic/viewport';
 import tinymce from 'tinymce/tinymce';
 import { throttle } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { isWithinBreakpoint } from 'lib/viewport';
 
 /**
  * TinyMCE plugin for toggling an `is-pinned` class on the editor container
  * when the viewport scroll position exceeds the top edge of the container.
  *
- * @param {Object} editor TinyMCE editor instance
+ * @param {object} editor TinyMCE editor instance
  */
 function toolbarPin( editor ) {
 	let isMonitoringScroll = false,
@@ -31,7 +26,7 @@ function toolbarPin( editor ) {
 	/**
 	 * Updates the pinned state, toggling the container class as appropriate.
 	 *
-	 * @param {Boolean} toBePinned Whether toolbar should be pinned
+	 * @param {boolean} toBePinned Whether toolbar should be pinned
 	 */
 	function togglePinned( toBePinned ) {
 		isPinned = toBePinned;

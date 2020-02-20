@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useEffect, useState } from 'react';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { Card } from '@automattic/components';
 import { connect } from 'react-redux';
 
@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import CardHeading from 'components/card-heading';
+import { useLocalizedMoment } from 'components/localized-moment';
 import getLastGoodRewindBackup from 'state/selectors/get-last-good-rewind-backup';
 import { requestRewindBackups } from 'state/rewind/backups/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -19,14 +20,10 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  */
 import './style.scss';
 
-const SiteBackupCard = ( {
-	disabled,
-	lastGoodBackup,
-	moment,
-	requestBackups,
-	siteId,
-	translate,
-} ) => {
+const SiteBackupCard = ( { disabled, lastGoodBackup, requestBackups, siteId } ) => {
+	const translate = useTranslate();
+	const moment = useLocalizedMoment();
+
 	const hasRetrievedLastBackup = lastGoodBackup !== null;
 	const [ isLoading, setIsLoading ] = useState( false );
 
@@ -36,7 +33,7 @@ const SiteBackupCard = ( {
 			requestBackups( siteId );
 			setIsLoading( true );
 		}
-	}, [ disabled, isLoading, lastGoodBackup, siteId ] );
+	}, [ disabled, hasRetrievedLastBackup, isLoading, lastGoodBackup, requestBackups, siteId ] );
 
 	useEffect( () => {
 		if ( hasRetrievedLastBackup ) {
@@ -92,4 +89,4 @@ export default connect(
 	{
 		requestBackups: requestRewindBackups,
 	}
-)( localize( SiteBackupCard ) );
+)( SiteBackupCard );

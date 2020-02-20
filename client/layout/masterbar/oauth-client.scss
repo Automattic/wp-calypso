@@ -133,7 +133,7 @@
 			padding-bottom: 145px;
 		}
 
-		.card:not(.gdpr-banner) {
+		.card:not( .gdpr-banner ) {
 			background: none;
 			box-shadow: none;
 			border: 0;
@@ -202,7 +202,7 @@
 
 			@include breakpoint( '>660px' ) {
 				background-color: var( --color-surface );
-				box-shadow: 0 2px 3px 0 var(--color-neutral-10);
+				box-shadow: 0 2px 3px 0 var( --color-neutral-10 );
 				margin: 0 auto;
 				padding: 35px 55px 20px;
 				width: 550px;

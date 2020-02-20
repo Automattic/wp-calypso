@@ -12,8 +12,8 @@ import { getUser } from 'state/users/selectors';
 /**
  * Returns the current user ID
  *
- * @param  {Object}  state  Global state tree
- * @return {?Number}        Current user ID
+ * @param  {object}  state  Global state tree
+ * @returns {?number}        Current user ID
  */
 export function getCurrentUserId( state ) {
 	return get( state, [ 'currentUser', 'id' ] );
@@ -22,8 +22,8 @@ export function getCurrentUserId( state ) {
 /**
  * Is the current user logged in?
  *
- * @param {Object} state Global state tree
- * @return {Boolean}	True if logged in, False if not
+ * @param {object} state Global state tree
+ * @returns {boolean}	True if logged in, False if not
  */
 export function isUserLoggedIn( state ) {
 	return getCurrentUserId( state ) !== null;
@@ -32,8 +32,8 @@ export function isUserLoggedIn( state ) {
 /**
  * Returns the user object for the current user.
  *
- * @param  {Object}  state  Global state tree
- * @return {?Object}        Current user
+ * @param  {object}  state  Global state tree
+ * @returns {?object}        Current user
  */
 export function getCurrentUser( state ) {
 	const userId = getCurrentUserId( state );
@@ -46,9 +46,10 @@ export function getCurrentUser( state ) {
 
 /**
  * Returns a selector that fetches a property from the current user object
- * @param {String} path Path to the property in the user object
+ *
+ * @param {string} path Path to the property in the user object
  * @param {?Any} otherwise A default value that is returned if no user or property is found
- * @returns {function} A selector which takes the state as a parameter
+ * @returns {Function} A selector which takes the state as a parameter
  */
 export const createCurrentUserSelector = ( path, otherwise = null ) => state => {
 	const user = getCurrentUser( state );
@@ -58,31 +59,32 @@ export const createCurrentUserSelector = ( path, otherwise = null ) => state => 
 /**
  * Returns the locale slug for the current user.
  *
- * @param  {Object}  state  Global state tree
- * @return {?String}        Current user locale
+ * @param  {object}  state  Global state tree
+ * @returns {?string}        Current user locale
  */
 export const getCurrentUserLocale = createCurrentUserSelector( 'localeSlug' );
 
 /**
  * Returns the locale variant slug for the current user.
- * @param  {Object}  state  Global state tree
- * @return {?String}        Current user locale variant
+ *
+ * @param  {object}  state  Global state tree
+ * @returns {?string}        Current user locale variant
  */
 export const getCurrentUserLocaleVariant = createCurrentUserSelector( 'localeVariant' );
 
 /**
  * Returns the country code for the current user.
  *
- * @param  {Object}  state  Global state tree
- * @return {?String}        Current user country code
+ * @param  {object}  state  Global state tree
+ * @returns {?string}        Current user country code
  */
 export const getCurrentUserCountryCode = createCurrentUserSelector( 'user_ip_country_code' );
 
 /**
  * Returns the number of sites for the current user.
  *
- * @param  {Object}  state  Global state tree
- * @return {?Number}        Current user site count
+ * @param  {object}  state  Global state tree
+ * @returns {?number}        Current user site count
  */
 export function getCurrentUserSiteCount( state ) {
 	const user = getCurrentUser( state );
@@ -96,8 +98,8 @@ export function getCurrentUserSiteCount( state ) {
 /**
  * Returns the number of visible sites for the current user.
  *
- * @param  {Object}  state  Global state tree
- * @return {?Number}        Current user visible site count
+ * @param  {object}  state  Global state tree
+ * @returns {?number}        Current user visible site count
  */
 export function getCurrentUserVisibleSiteCount( state ) {
 	const user = getCurrentUser( state );
@@ -111,8 +113,8 @@ export function getCurrentUserVisibleSiteCount( state ) {
 /**
  * Returns the currency code for the current user.
  *
- * @param  {Object}  state  Global state tree
- * @return {?String}        Current currency code
+ * @param  {object}  state  Global state tree
+ * @returns {?string}        Current currency code
  */
 export function getCurrentUserCurrencyCode( state ) {
 	return state.currentUser.currencyCode;
@@ -121,24 +123,24 @@ export function getCurrentUserCurrencyCode( state ) {
 /**
  * Returns the date (of registration) for the current user.
  *
- * @param  {Object}  state  Global state tree
- * @return {?String}        Date of registration for user
+ * @param  {object}  state  Global state tree
+ * @returns {?string}        Date of registration for user
  */
 export const getCurrentUserDate = createCurrentUserSelector( 'date' );
 
 /**
  *  Returns the username of the current user.
  *
- *  @param {Object} state Global state tree
- *  @returns {?String} The username of the current user.
+ *  @param {object} state Global state tree
+ *  @returns {?string} The username of the current user.
  */
 export const getCurrentUserName = createCurrentUserSelector( 'username' );
 
 /**
  *  Returns the primary email of the current user.
  *
- *  @param {Object} state Global state tree
- *  @returns {?String} The primary email of the current user.
+ *  @param {object} state Global state tree
+ *  @returns {?string} The primary email of the current user.
  */
 export const getCurrentUserEmail = createCurrentUserSelector( 'email' );
 
@@ -147,10 +149,10 @@ export const getCurrentUserEmail = createCurrentUserSelector( 'email' );
  * site, false if capabilities are known for the site but the name is invalid,
  * or null if capabilities are not known for the site.
  *
- * @param  {Object}   state      Global state tree
- * @param  {Number}   siteId     Site ID
- * @param  {String}   capability Capability name
- * @return {?Boolean}            Whether capability name is valid
+ * @param  {object}   state      Global state tree
+ * @param  {number}   siteId     Site ID
+ * @param  {string}   capability Capability name
+ * @returns {?boolean}            Whether capability name is valid
  */
 export function isValidCapability( state, siteId, capability ) {
 	const capabilities = state.currentUser.capabilities[ siteId ];
@@ -163,8 +165,9 @@ export function isValidCapability( state, siteId, capability ) {
 
 /**
  * Returns true if the specified flag is enabled for the user
- * @param  {Object}   state      Global state tree
- * @param {String}    flagName   Flag name
+ *
+ * @param  {object}   state      Global state tree
+ * @param {string}    flagName   Flag name
  * @returns {boolean}            Whether the flag is enabled for the user
  */
 export function currentUserHasFlag( state, flagName ) {
@@ -174,7 +177,7 @@ export function currentUserHasFlag( state, flagName ) {
 /**
  * Returns true if the current user is email-verified.
  *
- * @param   {Object } state Global state tree
+ * @param   {object } state Global state tree
  * @returns {boolean}       Whether the current user is email-verified.
  */
 export const isCurrentUserEmailVerified = createCurrentUserSelector( 'email_verified', false );

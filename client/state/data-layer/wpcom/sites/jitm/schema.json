@@ -71,6 +71,12 @@
 					},
 					"url": {
 						"type": "string"
+					},
+					"tracks": {
+						"type": "object"
+					},
+					"action": {
+						"type": "object"
 					}
 				},
 				"type": "object"

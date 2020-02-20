@@ -11,6 +11,7 @@ import React from 'react';
 import DomainManagement from '.';
 import DomainManagementData from 'components/data/domain-management';
 import {
+	domainManagementChangeSiteAddress,
 	domainManagementContactsPrivacy,
 	domainManagementDns,
 	domainManagementEdit,
@@ -50,6 +51,11 @@ export default {
 				needsProductsList
 			/>
 		);
+		next();
+	},
+
+	domainManagementListAllSites( pageContext, next ) {
+		pageContext.primary = <DomainManagement.ListAll />;
 		next();
 	},
 
@@ -278,6 +284,20 @@ export default {
 				needsDomains
 				needsDomainInfo
 				needsUsers
+				selectedDomainName={ pageContext.params.domain }
+			/>
+		);
+		next();
+	},
+
+	domainManagementChangeSiteAddress( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementChangeSiteAddress( ':site', ':domain' ) }
+				analyticsTitle="Domain Management > Change Site Address"
+				component={ DomainManagement.ChangeSiteAddress }
+				context={ pageContext }
+				needsDomains
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);

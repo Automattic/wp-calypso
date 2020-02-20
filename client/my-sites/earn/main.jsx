@@ -98,7 +98,7 @@ class EarningsMain extends Component {
 	 * Remove any query parameters from the path before using it to
 	 * identify which screen the user is seeing.
 	 *
-	 * @returns {String} Path to current screen.
+	 * @returns {string} Path to current screen.
 	 */
 	getCurrentPath = () => {
 		let currentPath = this.props.path;
@@ -112,7 +112,7 @@ class EarningsMain extends Component {
 	/**
 	 * Check the current path and returns an appropriate title.
 	 *
-	 * @returns {String} Header text for current screen.
+	 * @returns {string} Header text for current screen.
 	 */
 	getHeaderText = () => {
 		const { translate } = this.props;

@@ -2,13 +2,13 @@
  * External dependencies
  */
 
-import { get, assign, omit, includes, mapValues, findKey } from 'lodash';
-import { parse, format } from 'url';
+import { mapValues } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import safeImageUrl from 'lib/safe-image-url';
+import { getUrlParts, getUrlFromParts } from 'lib/url/url-parts';
 
 /**
  * Pattern matching valid http(s) URLs
@@ -22,22 +22,21 @@ const REGEXP_VALID_PROTOCOL = /^https?:$/;
  * high pixel-density displays (e.g. retina). This multiplier currently maxes
  * at 2x image size, though could foreseeably be the exact display ratio.
  *
- * @type {Number}
+ * @type {number}
  */
-const IMAGE_SCALE_FACTOR =
-	get( typeof window !== 'undefined' && window, 'devicePixelRatio', 1 ) > 1 ? 2 : 1;
+const IMAGE_SCALE_FACTOR = typeof window !== 'undefined' && window?.devicePixelRatio > 1 ? 2 : 1;
 
 /**
  * Query parameters to be treated as image dimensions
  *
- * @type {String[]}
+ * @type {string[]}
  */
 const SIZE_PARAMS = [ 'w', 'h', 'resize', 'fit', 's' ];
 
 /**
  * Mappings of supported safe services to patterns by which they can be matched
  *
- * @type {Object}
+ * @type {object}
  */
 const SERVICE_HOSTNAME_PATTERNS = {
 	photon: /(^[is]\d\.wp\.com|(^|\.)wordpress\.com)$/,
@@ -47,8 +46,8 @@ const SERVICE_HOSTNAME_PATTERNS = {
 /**
  * Given a numberic value, returns the value multiplied by image scale factor
  *
- * @param  {Number} value Original value
- * @return {Number}       Updated value
+ * @param  {number} value Original value
+ * @returns {number}       Updated value
  */
 const scaleByFactor = value => value * IMAGE_SCALE_FACTOR;
 
@@ -61,32 +60,32 @@ const scaleByFactor = value => value * IMAGE_SCALE_FACTOR;
  * URL containing query string arguments is passed to this function, it will
  * return `null`.
  *
- * @param   {String}          imageUrl Original image url
- * @param   {(Number|Object)} resize   Resize pixel width, or object of query
+ * @param   {string}          imageUrl Original image url
+ * @param   {(number|object)} resize   Resize pixel width, or object of query
  *                                     arguments (assuming Photon or Gravatar)
- * @param   {?Number}         height   Pixel height if specifying resize width
- * @param   {?Boolean}        makeSafe Should we make sure this is on a safe host?
- * @returns {?String}                  Resized image URL, or `null` if unable to resize
+ * @param   {?number}         height   Pixel height if specifying resize width
+ * @param   {?boolean}        makeSafe Should we make sure this is on a safe host?
+ * @returns {?string}                  Resized image URL, or `null` if unable to resize
  */
 export default function resizeImageUrl( imageUrl, resize, height, makeSafe = true ) {
 	if ( 'string' !== typeof imageUrl ) {
 		return imageUrl;
 	}
 
-	const parsedUrl = parse( imageUrl, true, true );
-	if ( ! REGEXP_VALID_PROTOCOL.test( parsedUrl.protocol ) ) {
+	const { search, ...resultUrl } = getUrlParts( imageUrl );
+
+	if ( ! REGEXP_VALID_PROTOCOL.test( resultUrl.protocol ) ) {
 		return imageUrl;
 	}
-	if ( ! parsedUrl.hostname ) {
+	if ( ! resultUrl.hostname ) {
 		// no hostname? must be a bad url.
 		return imageUrl;
 	}
 
-	parsedUrl.query = omit( parsedUrl.query, SIZE_PARAMS );
+	SIZE_PARAMS.forEach( param => resultUrl.searchParams.delete( param ) );
 
-	const service = findKey(
-		SERVICE_HOSTNAME_PATTERNS,
-		String.prototype.match.bind( parsedUrl.hostname )
+	const service = Object.keys( SERVICE_HOSTNAME_PATTERNS ).find( key =>
+		resultUrl.hostname.match( SERVICE_HOSTNAME_PATTERNS[ key ] )
 	);
 
 	if ( 'number' === typeof resize ) {
@@ -104,23 +103,22 @@ export default function resizeImageUrl( imageUrl, resize, height, makeSafe = tru
 	}
 
 	// Map sizing parameters, multiplying their values by the scale factor
-	assign(
-		parsedUrl.query,
-		mapValues( resize, ( value, key ) => {
-			if ( 'resize' === key || 'fit' === key ) {
-				return value
-					.split( ',' )
-					.map( scaleByFactor )
-					.join( ',' );
-			} else if ( includes( SIZE_PARAMS, key ) ) {
-				return scaleByFactor( value );
-			}
+	const mapped = mapValues( resize, ( value, key ) => {
+		if ( 'resize' === key || 'fit' === key ) {
+			return value
+				.split( ',' )
+				.map( scaleByFactor )
+				.join( ',' );
+		} else if ( SIZE_PARAMS.includes( key ) ) {
+			return scaleByFactor( value );
+		}
 
-			return value;
-		} )
-	);
+		return value;
+	} );
 
-	delete parsedUrl.search;
+	for ( const key of Object.keys( mapped ) ) {
+		resultUrl.searchParams.set( key, mapped[ key ] );
+	}
 
-	return format( parsedUrl );
+	return getUrlFromParts( resultUrl ).href;
 }

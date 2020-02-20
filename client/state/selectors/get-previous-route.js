@@ -10,8 +10,9 @@ import getPreviousPath from 'state/selectors/get-previous-path';
 import getPreviousQuery from 'state/selectors/get-previous-query';
 /**
  * Gets the previous route set by a ROUTE_SET action
- * @param {Object} state - global redux state
- * @return {string} previous route value
+ *
+ * @param {object} state - global redux state
+ * @returns {string} previous route value
  */
 
 export const getPreviousRoute = state => {

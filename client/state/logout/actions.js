@@ -13,8 +13,8 @@ import { postLoginRequest, getErrorFromHTTPError } from 'state/login/utils';
 /**
  * Logs the current user out.
  *
- * @param  {String}   redirectTo Url to redirect the user to upon successful logout
- * @return {Function}            A thunk that can be dispatched
+ * @param  {string}   redirectTo Url to redirect the user to upon successful logout
+ * @returns {Function}            A thunk that can be dispatched
  */
 export const logoutUser = redirectTo => ( dispatch, getState ) => {
 	const currentUser = getCurrentUser( getState() );

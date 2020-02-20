@@ -624,6 +624,17 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		margin-bottom: 8px;
 	}
 
+	.formatted-header a {
+		color: var( --color-neutral-20 );
+		text-decoration: underline;
+
+		&:hover,
+		&:focus {
+			color: var( --color-primary-20 );
+			text-decoration: underline;
+		}
+	}
+
 	.jetpack-connect__happychat-button {
 		text-align: center;
 	}
@@ -1103,42 +1114,25 @@ body.is-section-jetpack-connect .layout.is-jetpack-woocommerce-flow {
 
 // ProductSelector and ProductCard overrides
 .is-section-jetpack-connect .product-selector {
+	max-width: 520px;
+	margin-left: auto;
+	margin-right: auto;
 	padding-left: 16px;
 	padding-right: 16px;
 }
 
 .is-section-jetpack-connect .product-card {
-	@include breakpoint( '>660px' ) {
-		text-align: left;
-	}
-
 	.product-card__header {
+		padding: 12px 0;
+
 		@include breakpoint( '<660px' ) {
-			border-bottom: none;
+			padding: 16px 0;
 		}
 	}
 
 	.product-card__header-primary {
-		padding-top: 13px;
-		padding-bottom: 14px;
-
 		@include breakpoint( '<660px' ) {
 			justify-content: center;
-		}
-	}
-
-	.product-card__header-secondary {
-		padding-top: 20px;
-		padding-bottom: 20px;
-
-		@include breakpoint( '<660px' ) {
-			padding-bottom: 8px;
-			border-top: solid 2px var( --color-jetpack-plan-free );
-		}
-
-		&::after {
-			bottom: auto;
-			top: 0;
 		}
 	}
 
@@ -1146,14 +1140,6 @@ body.is-section-jetpack-connect .layout.is-jetpack-woocommerce-flow {
 	.product-card__title:not( .is-purchased ) {
 		font-size: 20px;
 		color: var( --color-neutral-70 );
-
-		@include breakpoint( '>660px' ) {
-			font-size: 22px;
-		}
-	}
-
-	.product-card__price-group {
-		justify-content: center;
 	}
 
 	.plan-price,

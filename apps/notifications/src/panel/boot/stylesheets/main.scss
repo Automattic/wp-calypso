@@ -56,7 +56,7 @@
 	}
 
 	header {
-		border-bottom: 1px solid var( --color-neutral-0 );
+		border-bottom: 1px solid var( --color-neutral-5 );
 		box-sizing: border-box;
 		background-color: var( --color-surface );
 		font-size: $wpnc__capital-font-size;
@@ -149,7 +149,7 @@
 	}
 
 	span.wpnc__post {
-		font-style: italic;
+		font-weight: 600;
 	}
 
 	%headertext {
@@ -167,7 +167,7 @@
 		width: 100%;
 		background-color: var( --color-surface );
 		color: var( --color-text-subtle );
-		border-bottom: 1px solid var( --color-neutral-0 );
+		border-bottom: 1px solid var( --color-neutral-5 );
 		border-left: 1px solid var( --color-border-inverted );
 		text-align: center; // Center filter in IE 9
 		height: $wpnc__filter-height;
@@ -251,7 +251,7 @@
 		font-weight: normal;
 		position: relative;
 		clear: both;
-		border-bottom: 1px solid var( --color-neutral-0 );
+		border-bottom: 1px solid var( --color-neutral-5 );
 
 		div.wpnc__body > p,
 		div.wpnc__preface p {
@@ -265,7 +265,7 @@
 			height: $wpnc__icon-size;
 			position: relative;
 			float: left;
-			margin: 0 $wpnc__padding-medium 0 $wpnc__padding-medium;
+			margin: 0 $wpnc__padding-large 0 $wpnc__padding-large;
 		}
 
 		.wpnc__note-icon img {
@@ -278,10 +278,10 @@
 			align-items: center;
 			justify-content: center;
 			color: white;
-			height: 22px;
-			width: 22px;
+			height: 16px;
+			width: 16px;
 			border: {
-				width: 2px;
+				width: 1px;
 				style: solid;
 				radius: 50%;
 			}
@@ -386,6 +386,15 @@
 			background: rgba( var( --color-primary-rgb ), 0.1 ); // rgba is used to meet AA contrast standard
 		}
 
+		.wpnc__traffic_surge .wpnc__note-icon img {
+			width: 32px;
+			height: 32px;
+			background: var( --color-primary );
+			border-color: var( --color-primary );
+			border-width: 4px;
+			border-style: solid;
+		}
+
 		.wpnc__selected-note {
 			box-shadow: inset 4px 0 0 var( --color-primary );
 
@@ -395,7 +404,7 @@
 		}
 
 		.wpnc__text-summary {
-			padding: 0 $wpnc__padding-medium 0 1.6 * $wpnc__icon-size;
+			padding: 0 $wpnc__padding-large 0 2 * $wpnc__padding-large + $wpnc__icon-size;
 			word-wrap: break-word;
 			text-align: left;
 
@@ -403,6 +412,9 @@
 				max-height: 3em;
 				-webkit-line-clamp: 2;
 				@extend %ellipsy-box;
+				font-size: $wpnc__font-size;
+				line-height: $wpnc__line-height;
+				letter-spacing: 0.15px;
 			}
 
 			.wpnc__subject .wpnc__gridicon {
@@ -413,10 +425,14 @@
 			}
 
 			.wpnc__subject .wpnc__comment {
-				font-style: italic;
+				font-weight: 600;
 			}
 
 			.wpnc__subject .wpnc__user__site {
+				font-weight: 600;
+			}
+
+			.wpnc__subject .wpnc__site {
 				font-weight: 600;
 			}
 
@@ -425,6 +441,9 @@
 				-webkit-line-clamp: 2;
 				@extend %ellipsy-box;
 				color: var( --color-text-subtle );
+				font-size: $wpnc__font-size;
+				letter-spacing: 0.25px;
+				padding-top: 2px;
 			}
 		}
 
@@ -434,7 +453,7 @@
 			color: var( --color-neutral-40 );
 			padding: 6px 0;
 			background: rgba( 255, 255, 255, 0.95 );
-			border-bottom: 1px solid var( --color-neutral-0 );
+			border-bottom: 1px solid var( --color-neutral-5 );
 
 			.gridicons-time {
 				align-self: center;
@@ -560,6 +579,7 @@
 			}
 
 			.wpnc__excerpt {
+				color: var( --color-secondary );
 				-webkit-line-clamp: 1;
 				@extend %ellipsy-box;
 				white-space: nowrap;
@@ -572,15 +592,15 @@
 		}
 
 		.wpnc__comment .wpnc__user p.wpnc__excerpt {
-			color: var( --color-primary );
-			font-style: italic;
+			color: var( --color-secondary );
 			max-height: 1.5em;
+			font-size: 14px;
 		}
 
 		.wpnc__reply {
 			color: var( --color-text-subtle );
 			padding: $wpnc__padding-medium 0;
-			border-bottom: 1px solid var( --color-neutral-0 );
+			border-bottom: 1px solid var( --color-neutral-5 );
 
 			.wpnc__gridicon {
 				padding: 0 10px;
@@ -654,7 +674,7 @@
 
 	.wpnc__summary {
 		@extend %container;
-		padding: $wpnc__padding-medium 0;
+		padding: $wpnc__padding-large 0;
 	}
 
 	.time-notification {
@@ -766,7 +786,7 @@
 	.wpnc__comment .wpnc__body .wpnc__body-content,
 	.wpnc__new_post .wpnc__body .wpnc__body-content,
 	.wpnc__automattcher .wpnc__body .wpnc__body-content {
-		border-bottom: 1px solid var( --color-neutral-0 );
+		border-bottom: 1px solid var( --color-neutral-5 );
 		padding-top: $wpnc__padding-small;
 	}
 

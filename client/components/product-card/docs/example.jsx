@@ -9,6 +9,7 @@ import React, { Fragment, useState } from 'react';
 import { Button } from '@automattic/components';
 import ProductCard from '../index';
 import ProductCardAction from '../action';
+import ProductCardPromoNudge from '../promo-nudge';
 import ProductCardOptions from '../options';
 
 const purchase = {
@@ -62,6 +63,14 @@ function ProductCardExample() {
 					</Fragment>
 				}
 			>
+				<ProductCardPromoNudge
+					badgeText="Up to 70% off!"
+					text={
+						<Fragment>
+							Hurry, these are <strong>Limited time introductory prices!</strong>
+						</Fragment>
+					}
+				/>
 				<ProductCardOptions
 					optionsLabel="Backup options:"
 					options={ [
@@ -82,6 +91,7 @@ function ProductCardExample() {
 					selectedSlug={ selectedProductOption }
 					handleSelect={ slug => selectProductOption( slug ) }
 				/>
+				<ProductCardAction label="Upgrade" />
 			</ProductCard>
 
 			<h3>Product Card - already purchased</h3>

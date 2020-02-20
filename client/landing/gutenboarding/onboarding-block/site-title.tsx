@@ -3,23 +3,28 @@
  */
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { createRef, FunctionComponent, useEffect } from 'react';
-import { __ as NO__ } from '@wordpress/i18n';
+import { useHistory } from 'react-router-dom';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY } from '../stores/onboard';
-import { InjectedStepProps } from './stepper-wizard';
+import { StepProps } from './stepper-wizard';
 import Question from './question';
+import { Step, usePath } from '../path';
 
-const SiteTitle: FunctionComponent< InjectedStepProps > = ( {
+const SiteTitle: FunctionComponent< StepProps > = ( {
 	onSelect,
 	inputClass,
 	isActive,
 	onExpand,
 } ) => {
+	const { __: NO__ } = useI18n();
 	const { siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
 	const { setSiteTitle } = useDispatch( STORE_KEY );
+	const history = useHistory();
+	const makePath = usePath();
 
 	const handleChange = ( e: React.ChangeEvent< HTMLInputElement > ) =>
 		setSiteTitle( e.target.value.trim().length ? e.target.value : '' );
@@ -35,8 +40,14 @@ const SiteTitle: FunctionComponent< InjectedStepProps > = ( {
 		}
 	}, [ isActive, inputRef ] );
 
+	// As last input on first step, hitting 'Enter' should direct to next step.
+	const handleSubmit = ( e: React.FormEvent< HTMLFormElement > ) => {
+		e.preventDefault();
+		history.push( makePath( Step.DesignSelection ) );
+	};
+
 	return (
-		<>
+		<form onSubmit={ handleSubmit }>
 			<Question label={ label } displayValue={ value } isActive={ isActive } onExpand={ onExpand }>
 				<input
 					ref={ inputRef }
@@ -47,7 +58,7 @@ const SiteTitle: FunctionComponent< InjectedStepProps > = ( {
 					value={ siteTitle }
 				/>
 			</Question>
-		</>
+		</form>
 	);
 };
 

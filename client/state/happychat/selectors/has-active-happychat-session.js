@@ -18,8 +18,9 @@ import createSelector from 'lib/create-selector';
  * Returns true if there's an active chat session in-progress. Chat sessions with
  * the status `new`, `default`, or `closed` are considered inactive, as the session
  * is not connected to an operator.
- * @param {Object} state - global redux state
- * @return {Boolean} Whether there's an active Happychat session happening
+ *
+ * @param {object} state - global redux state
+ * @returns {boolean} Whether there's an active Happychat session happening
  */
 export default createSelector(
 	state =>

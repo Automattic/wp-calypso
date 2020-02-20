@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, find } from 'lodash';
+import { get, find, some } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -13,6 +13,7 @@ import {
 	getIncludedDomainPurchaseAmount,
 	isDomainRegistration,
 	isDomainMapping,
+	isJetpackBackup,
 } from 'lib/products-values';
 import { getPlan, findPlansKeys } from 'lib/plans';
 import { TYPE_PERSONAL } from 'lib/plans/constants';
@@ -20,8 +21,8 @@ import { getPlanRawPrice } from 'state/plans/selectors';
 /**
  * Return the list of purchases from state object
  *
- * @param {Object} state - current state object
- * @return {Array} Purchases
+ * @param   {object} state - current state object
+ * @returns {Array} Purchases
  */
 export const getPurchases = createSelector(
 	state => createPurchasesArray( state.purchases.data ),
@@ -30,9 +31,10 @@ export const getPurchases = createSelector(
 
 /**
  * Returns a list of Purchases associated with a User from the state using its userId
- * @param  {Object} state       global state
- * @param  {Number} userId      the user id
- * @return {Object} the matching purchases if there are some
+ *
+ * @param   {object} state       global state
+ * @param   {number} userId      the user id
+ * @returns {object} the matching purchases if there are some
  */
 export const getUserPurchases = ( state, userId ) =>
 	state.purchases.hasLoadedUserPurchasesFromServer &&
@@ -41,16 +43,17 @@ export const getUserPurchases = ( state, userId ) =>
 /**
  * Returns the server error for site or user purchases (if there is one)
  *
- * @param {Object} state - current state object
- * @return {Object} an error object from the server
+ * @param   {object} state - current state object
+ * @returns {object} an error object from the server
  */
 export const getPurchasesError = state => get( state, 'purchases.error', '' );
 
 /**
  * Returns a Purchase object from the state using its id
- * @param  {Object} state       global state
- * @param  {Number} purchaseId  the purchase id
- * @return {Object} the matching purchase if there is one
+ *
+ * @param   {object} state       global state
+ * @param   {number} purchaseId  the purchase id
+ * @returns {object} the matching purchase if there is one
  */
 export const getByPurchaseId = ( state, purchaseId ) =>
 	getPurchases( state )
@@ -59,23 +62,38 @@ export const getByPurchaseId = ( state, purchaseId ) =>
 
 /**
  * Returns a list of Purchases associated with a Site from the state using its siteId
- * @param  {Object} state       global state
- * @param  {Number} siteId      the site id
- * @return {Object} the matching purchases if there are some
+ *
+ * @param   {object} state       global state
+ * @param   {number} siteId      the site id
+ * @returns {object} the matching purchases if there are some
  */
 export const getSitePurchases = ( state, siteId ) =>
 	getPurchases( state ).filter( purchase => purchase.siteId === siteId );
 
-/***
+/**
+ * Whether a site has an active Jetpack backup purchase.
+ *
+ * @param   {object} state       global state
+ * @param   {number} siteId      the site id
+ * @returns {boolean} True if the site has an active Jetpack Backup purchase, false otherwise.
+ */
+export const siteHasBackupProductPurchase = ( state, siteId ) => {
+	return some(
+		getSitePurchases( state, siteId ),
+		purchase => purchase.active && isJetpackBackup( purchase )
+	);
+};
+
+/**
  * Returns a purchase object that corresponds to that subscription's included domain
  *
  * Even if a domain registration was purchased with the subscription, it will
  * not be returned if the domain product was paid for separately (eg: if it was
  * renewed on its own).
  *
- * @param  {Object} state  global state
- * @param  {Object} subscriptionPurchase  subscription purchase object
- * @return {Object} domain purchase if there is one, null if none found or not a subscription object passed
+ * @param   {object} state  global state
+ * @param   {object} subscriptionPurchase  subscription purchase object
+ * @returns {object} domain purchase if there is one, null if none found or not a subscription object passed
  */
 export const getIncludedDomainPurchase = ( state, subscriptionPurchase ) => {
 	if (
@@ -123,9 +141,10 @@ export const getDowngradePlanRawPrice = ( state, purchase ) => {
 
 /**
  * Does the user have any current purchases?
- * @param  {Object}  state       global state
- * @param  {Number}  userId      the user id
- * @return {Boolean} if the user currently has any purchases.
+ *
+ * @param   {object}  state       global state
+ * @param   {number}  userId      the user id
+ * @returns {boolean} if the user currently has any purchases.
  */
 export const isUserPaid = ( state, userId ) =>
 	state.purchases.hasLoadedUserPurchasesFromServer && 0 < getUserPurchases( state, userId ).length;

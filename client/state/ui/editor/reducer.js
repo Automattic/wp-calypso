@@ -11,6 +11,7 @@ import {
 	EDITOR_AUTOSAVE_SUCCESS,
 	EDITOR_AUTOSAVE_FAILURE,
 	EDITOR_AUTOSAVE_RESET,
+	EDITOR_IFRAME_LOADED,
 	EDITOR_RESET,
 	EDITOR_START,
 	EDITOR_STOP,
@@ -28,9 +29,9 @@ import rawContent from './raw-content/reducer';
  * Returns the updated editor post ID state after an action has been
  * dispatched.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function postId( state = null, action ) {
 	switch ( action.type ) {
@@ -58,6 +59,17 @@ export function isLoading( state = false, action ) {
 	switch ( action.type ) {
 		case EDITOR_RESET:
 			return get( action, 'isLoading', false );
+	}
+
+	return state;
+}
+
+export function isIframeLoaded( state = false, action ) {
+	switch ( action.type ) {
+		case EDITOR_IFRAME_LOADED: {
+			const loaded = action.isIframeLoaded;
+			return loaded !== undefined ? loaded : state;
+		}
 	}
 
 	return state;
@@ -93,6 +105,7 @@ export default combineReducers( {
 	postId,
 	loadingError,
 	isLoading,
+	isIframeLoaded,
 	isAutosaving,
 	autosavePreviewUrl,
 	imageEditor,

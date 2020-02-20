@@ -4,6 +4,10 @@
 import { filter, startsWith } from 'lodash';
 import { stringify } from 'qs';
 
+export function domainAddNew( siteName ) {
+	return '/domains/add/' + siteName;
+}
+
 export function domainManagementRoot() {
 	return '/domains/manage';
 }
@@ -65,6 +69,10 @@ export function domainManagementEmail( siteName, domainName ) {
 
 export function domainManagementEmailForwarding( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'email-forwarding' );
+}
+
+export function domainManagementChangeSiteAddress( siteName, domainName ) {
+	return domainManagementEdit( siteName, domainName, 'change-site-address' );
 }
 
 export function domainManagementNameServers( siteName, domainName ) {

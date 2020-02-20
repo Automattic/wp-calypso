@@ -7,7 +7,8 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, includes, some } from 'lodash';
 import Gridicon from 'components/gridicon';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -39,7 +40,7 @@ import { addSiteFragment } from 'lib/route';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
-import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-active';
+import { isAutomatedTransferActive } from 'state/automated-transfer/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { isATEnabled } from 'lib/automated-transfer';

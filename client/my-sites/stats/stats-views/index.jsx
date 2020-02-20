@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import getSiteStatsViewSummary from 'state/selectors/get-site-stats-view-summary';
+import { getSiteStatsViewSummary } from 'state/stats/lists/selectors';
 import { Card } from '@automattic/components';
 import Months from './months';
 import SimplifiedSegmentedControl from 'components/segmented-control/simplified';

@@ -150,7 +150,9 @@ const ProductFormSimpleCard = ( {
 								'You can enable it under your {{managementLink}}inventory settings{{/managementLink}}.',
 							{
 								components: {
-									managementLink: <a href={ inventorySettingsUrl } target="_blank" />,
+									managementLink: (
+										<a href={ inventorySettingsUrl } target="_blank" rel="noopener noreferrer" />
+									),
 								},
 							}
 						) }

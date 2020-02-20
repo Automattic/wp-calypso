@@ -15,7 +15,6 @@ import jetpackOnly from '../jetpack-only';
 import MainWrapper from '../main-wrapper';
 import SkipButton from '../skip-button';
 import UserTypeForm from './form';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import WpcomColophon from 'components/wpcom-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { saveSiteUserType } from 'state/jetpack-connect/actions';
@@ -66,9 +65,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	jetpackOnly,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( JetpackUserType );
+export default flowRight( connectComponent, jetpackOnly, localize )( JetpackUserType );

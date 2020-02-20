@@ -11,9 +11,9 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import StepWrapper from 'signup/step-wrapper';
+import flows from 'signup/config/flows';
 import SignupForm from 'blocks/signup-form';
 import { getFlowSteps, getNextStepName, getPreviousStepName, getStepUrl } from 'signup/utils';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
@@ -76,7 +76,7 @@ export class UserStep extends Component {
 	}
 
 	componentDidMount() {
-		if ( 'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' ) ) {
+		if ( flows.getFlow( this.props.flowName )?.showRecaptcha ) {
 			this.initGoogleRecaptcha();
 		}
 
@@ -197,7 +197,7 @@ export class UserStep extends Component {
 		this.props.goToNextStep();
 	};
 
-	submitForm = ( form, userData, analyticsData ) => {
+	submitForm = async ( form, userData, analyticsData ) => {
 		const formWithoutPassword = {
 			...form,
 			password: {
@@ -208,22 +208,34 @@ export class UserStep extends Component {
 
 		this.props.recordTracksEvent( 'calypso_signup_user_step_submit', analyticsData );
 
-		const shouldRecordRecaptchaAction =
-			typeof this.state.recaptchaClientId === 'number' &&
-			'onboarding' === this.props.flowName &&
-			'show' === abtest( 'userStepRecaptcha' );
+		const isRecaptchaLoaded = typeof this.state.recaptchaClientId === 'number';
 
-		const recaptchaPromise = shouldRecordRecaptchaAction
-			? recordGoogleRecaptchaAction( this.state.recaptchaClientId, 'calypso/signup/formSubmit' )
-			: Promise.resolve();
+		let recaptchaToken = undefined;
+		let recaptchaDidntLoad = false;
+		let recaptchaFailed = false;
 
-		recaptchaPromise.then( token => {
-			this.submit( {
-				userData,
-				form: formWithoutPassword,
-				queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
-				recaptchaToken: token || undefined,
-			} );
+		if ( flows.getFlow( this.props.flowName )?.showRecaptcha ) {
+			if ( isRecaptchaLoaded ) {
+				recaptchaToken = await recordGoogleRecaptchaAction(
+					this.state.recaptchaClientId,
+					'calypso/signup/formSubmit'
+				);
+
+				if ( ! recaptchaToken ) {
+					recaptchaFailed = true;
+				}
+			} else {
+				recaptchaDidntLoad = true;
+			}
+		}
+
+		this.submit( {
+			userData,
+			form: formWithoutPassword,
+			queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
+			recaptchaDidntLoad,
+			recaptchaFailed,
+			recaptchaToken: recaptchaToken || undefined,
 		} );
 	};
 
@@ -377,9 +389,7 @@ export class UserStep extends Component {
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
 					recaptchaClientId={ this.state.recaptchaClientId }
-					showRecaptchaToS={
-						'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' )
-					}
+					showRecaptchaToS={ flows.getFlow( this.props.flowName )?.showRecaptcha }
 				/>
 				<div id="g-recaptcha"></div>
 			</>

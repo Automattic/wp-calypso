@@ -10,7 +10,7 @@ import { sanitizeSectionContent as clean } from '../sanitize-section-content';
 /**
  * Attempts to create a DOM node from given HTML
  *
- * @param {String} html expected HTML to create node
+ * @param {string} html expected HTML to create node
  * @returns {Node | null} possible node described by HTML
  */
 const cleanNode = html => {
@@ -96,6 +96,7 @@ test( 'should strip out <script> tags', () => expect( clean( '<script></script>'
 
 /**
  * The following tests have borrowed from the OWASP XSS Cheat Sheet
+ *
  * @see https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet
  *
  * Instead of pulling all of the tests the ones included are a sampling

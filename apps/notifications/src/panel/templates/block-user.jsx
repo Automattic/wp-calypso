@@ -94,7 +94,12 @@ export class UserBlock extends React.Component {
 
 			timeIndicator = (
 				<span className="wpnc__user__timeIndicator">
-					<a href={ this.props.note.url } target="_blank" { ...linkProps( this.props.note ) }>
+					<a
+						href={ this.props.note.url }
+						target="_blank"
+						rel="noopener noreferrer"
+						{ ...linkProps( this.props.note ) }
+					>
 						{ this.getTimeString( this.props.note.timestamp ) }
 					</a>
 					<span className="wpnc__user__bullet" />
@@ -114,6 +119,7 @@ export class UserBlock extends React.Component {
 						className="wpnc__user__site"
 						href={ home_url }
 						target="_blank"
+						rel="noopener noreferrer"
 						{ ...linkProps( this.props.note, this.props.block ) }
 					>
 						{ home_title }
