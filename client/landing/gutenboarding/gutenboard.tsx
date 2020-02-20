@@ -3,7 +3,7 @@
  */
 import '@wordpress/editor'; // This shouldn't be necessary
 import { useI18n } from '@automattic/react-i18n';
-import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
+import { BlockEditorProvider, BlockList as OriginalBlockList } from '@wordpress/block-editor';
 import { Popover, DropZoneProvider } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import '@wordpress/format-library';
@@ -23,6 +23,15 @@ import { Step, usePath } from './path';
 import './style.scss';
 
 registerBlockType( name, settings );
+
+interface BlockListProps extends OriginalBlockList.Props {
+	__experimentalUIParts: {
+		hasPopover: boolean;
+		hasSelectedUI: boolean;
+	};
+}
+
+const BlockList = ( props: BlockListProps ) => <OriginalBlockList { ...props } />;
 
 export function Gutenboard() {
 	const { __: NO__ } = useI18n();
