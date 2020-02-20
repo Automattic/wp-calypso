@@ -19,3 +19,4 @@ export { getSiteCommentRepliesTree } from 'state/comments/selectors/get-site-com
 export { getSiteComment } from 'state/comments/selectors/get-site-comment';
 export { getSiteComments } from 'state/comments/selectors/get-site-comments';
 export { getSiteCommentsTree } from 'state/comments/selectors/get-site-comments-tree';
+export { isCommentsTreeInitialized } from 'state/comments/selectors/is-comments-tree-initialized';

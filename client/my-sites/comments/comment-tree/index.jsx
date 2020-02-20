@@ -21,8 +21,7 @@ import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
 import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import { getSiteCommentsTree } from 'state/comments/selectors';
-import isCommentsTreeInitialized from 'state/selectors/is-comments-tree-initialized';
+import { getSiteCommentsTree, isCommentsTreeInitialized } from 'state/comments/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { COMMENTS_PER_PAGE } from '../constants';
 
