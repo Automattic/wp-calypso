@@ -228,7 +228,9 @@ class ThemeEnhancements extends Component {
 							  )
 					}
 				>
-					<NoticeAction href={ minilevenSupportUrl }>{ translate( 'Learn more' ) }</NoticeAction>
+					<NoticeAction href={ minilevenSupportUrl } external>
+						{ translate( 'Learn more' ) }
+					</NoticeAction>
 				</Notice>
 				<SupportInfo
 					text={ translate(
