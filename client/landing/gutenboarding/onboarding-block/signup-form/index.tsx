@@ -35,7 +35,9 @@ const SignupForm = () => {
 	const isFetchingNewUser = useSelect( select => select( USER_STORE ).isFetchingNewUser() );
 	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
 	const newUserError = useSelect( select => select( USER_STORE ).getNewUserError() );
-	const { shouldCreate } = useSelect( select => select( ONBOARD_STORE ) ).getState();
+	const { shouldCreate, siteTitle, siteVertical } = useSelect( select =>
+		select( ONBOARD_STORE )
+	).getState();
 	const langParam = useLangRouteParam();
 
 	const history = useHistory();
@@ -43,11 +45,16 @@ const SignupForm = () => {
 	const handleSignUp = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 
+		const username_hint = siteTitle || siteVertical?.label;
+
 		createAccount( {
 			email: emailVal,
 			is_passwordless: true,
 			signup_flow_name: 'gutenboarding',
 			locale: langParam,
+			...( username_hint && {
+				extra: { username_hint },
+			} ),
 		} );
 	};
 
