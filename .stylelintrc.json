@@ -1,0 +1,7 @@
+{
+	"extends": "stylelint-config-wordpress/scss",
+	"rules": {
+			"selector-max-id": [ 0 ],
+			"unit-whitelist": [ "%", "deg", "em", "fr", "ms", "px", "rem", "s", "vh", "vw" ]
+	}
+}
