@@ -2462,4 +2462,15 @@ Undocumented.prototype.startMigration = function( sourceSiteId, targetSiteId ) {
 	} );
 };
 
+Undocumented.prototype.getAtomicSiteMediaViaProxy = function( siteIdOrSlug, mediaPath, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/sites/${ siteIdOrSlug }/atomic-auth-proxy/file${ mediaPath }`,
+			apiNamespace: 'wpcom/v2',
+			responseType: 'blob',
+		},
+		fn
+	);
+};
+
 export default Undocumented;

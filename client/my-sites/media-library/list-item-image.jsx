@@ -4,16 +4,22 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { url as mediaUrl } from 'lib/media/utils';
+import { getUrlParts } from 'lib/url/url-parts';
 import MediaLibraryListItemFileDetails from './list-item-file-details';
-
+import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
+import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
+import isPrivateSite from 'state/selectors/is-private-site';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import ProxiedImage from './proxied-image';
 import { MEDIA_IMAGE_THUMBNAIL, SCALE_CHOICES } from 'lib/media/constants';
 
-export default class MediaLibraryListItemImage extends React.Component {
+export class MediaLibraryListItemImage extends React.Component {
 	static propTypes = {
 		media: PropTypes.object,
 		scale: PropTypes.number,
@@ -70,10 +76,31 @@ export default class MediaLibraryListItemImage extends React.Component {
 	};
 
 	render() {
+		const { isAtomic, isPrivate, media, siteSlug } = this.props;
+
 		const width = Math.round(
 			( 1 / this.props.maxScale ) * this.state.maxSeenScale * this.props.maxImageWidth
 		);
 
+		// For some reason, site privacy / coming soon are getting clobbered when the media lib loads
+		// Hard-coding for now so I can keep working...
+		const useProxy = true || !! ( isAtomic && isPrivate );
+
+		if ( useProxy ) {
+			const { pathname, hostname } = getUrlParts( media?.URL );
+			if ( hostname === siteSlug && pathname.length ) {
+				// TODO: Support resizing
+				return (
+					<ProxiedImage
+						siteSlug={ siteSlug }
+						mediaUrl={ pathname }
+						onLoad={ this.setUnknownImageDimensions }
+						alt={ this.props.media.alt || this.props.media.title }
+						style={ this.getImageStyle() }
+					/>
+				);
+			}
+		}
 		const url = mediaUrl( this.props.media, {
 			resize: `${ width },${ width }`,
 			size: this.props.thumbnailType === MEDIA_IMAGE_THUMBNAIL ? 'medium' : false,
@@ -101,3 +128,12 @@ export default class MediaLibraryListItemImage extends React.Component {
 		);
 	}
 }
+
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		isAtomic: isSiteAutomatedTransfer( state, siteId ),
+		isPrivate: isPrivateSite( state, siteId ),
+		siteSlug: getSelectedSiteSlug( state ),
+	};
+} )( MediaLibraryListItemImage );
