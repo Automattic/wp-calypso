@@ -21,16 +21,21 @@ export const path = `/:step(${ steps.join( '|' ) })/:lang(${ langs.join( '|' ) }
 export type StepType = ValuesType< typeof Step >;
 
 export function usePath() {
-	const match = useRouteMatch< { lang?: string } >( path );
+	const langParam = useLangRouteParam();
 
 	return ( step: StepType, lang?: string ) => {
 		// When lang is null, remove lang.
 		// When lang is empty or undefined, get lang from route param.
-		lang = lang === null ? '' : lang || match?.params.lang;
+		lang = lang === null ? '' : lang || langParam;
 
 		return generatePath( path, {
 			step,
 			...( lang && langs.includes( lang ) && { lang } ),
 		} );
 	};
+}
+
+export function useLangRouteParam() {
+	const match = useRouteMatch< { lang?: string } >( path );
+	return match?.params.lang;
 }
