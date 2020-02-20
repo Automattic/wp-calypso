@@ -258,6 +258,7 @@ export const HoldList = ( {
 											disabled={ siteIsLaunching }
 											busy={ siteIsLaunching }
 											onClick={ launchCurrentSite }
+											compact
 										>
 											{ translate( 'Launch site' ) }
 										</Button>
