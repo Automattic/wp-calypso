@@ -89,22 +89,24 @@
 }
 
 .migrate__plan-upsell-item {
+	display: flex;
 	flex-basis: 100%;
 	max-width: 180px;
 	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 
 	.gridicon {
-		vertical-align: middle;
 		margin-right: 8px;
+		flex-grow: 0;
+		flex-shrink: 0;
 	}
 }
 
 .migrate__plan-upsell-item-label {
 	display: inline-block;
 	line-height: 18px;
-	vertical-align: middle;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	flex-grow: 1;
 }
 
 .migrate__import-link {
