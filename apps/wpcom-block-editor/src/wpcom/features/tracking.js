@@ -29,8 +29,6 @@ const getTypeForBlockId = blockId => {
 	return block ? block.name : null;
 };
 
-let trackerBlocksCounter = 0;
-
 /**
  * This helper function trackers the given blocks recursively
  * in order to be able to track also the inner ones.
@@ -47,35 +45,26 @@ let trackerBlocksCounter = 0;
  * @param {object}   parentBlock       parent block. optional.
  * @returns {void}
  */
-function trackBlocks( blocks, eventName, propertiesHandler = noop, parentBlock ) {
+function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parentBlock ) {
 	const castBlocks = castArray( blocks );
 	if ( ! castBlocks || ! castBlocks.length ) {
 		return;
 	}
 
 	castBlocks.forEach( block => {
-		setTimeout(
-			( _block, _parent ) => {
-				const eventProperties = {
-					...propertiesHandler( _block, _parent ),
-					inner_block: !! _parent,
-				};
+		const eventProperties = {
+			...propertiesHandler( block, parentBlock ),
+			inner_block: !! parentBlock,
+		};
 
-				if ( _parent ) {
-					eventProperties.parent_block_client_id = _parent.clientId;
-					eventProperties.parent_block_name = _parent.name;
-				}
-				tracksRecordEvent( eventName, eventProperties );
-			},
-			trackerBlocksCounter * 50,
-			block,
-			parentBlock
-		);
+		if ( parentBlock ) {
+			eventProperties.parent_block_name = parentBlock.name;
+		}
 
-		trackerBlocksCounter++;
+		tracksRecordEvent( eventName, eventProperties );
 
 		if ( block.innerBlocks && block.innerBlocks.length ) {
-			trackBlocks( block.innerBlocks, eventName, propertiesHandler, block );
+			trackBlocksHandler( block.innerBlocks, eventName, propertiesHandler, block );
 		}
 	} );
 }
@@ -136,9 +125,9 @@ const trackBlockReplacement = ( originalBlockIds, blocks ) => {
  * @returns {void}
  */
 const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
-	trackBlocks( blocks, 'wpcom_block_inserted', block => ( {
+	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( block, parent ) => ( {
 		block_name: block.name,
-		blocks_replaced: false,
+		blocks_replaced: ! parent,
 		// isInsertingPageTemplate filter is set by Starter Page Templates
 		from_template_selector: applyFilters( 'isInsertingPageTemplate', false ),
 	} ) );
