@@ -86,14 +86,9 @@ export class PlansStep extends Component {
 		}
 
 		const siteGoals = this.props.siteGoals.split( ',' );
-		let customerType =
+		const customerType =
 			getSiteTypePropertyValue( 'slug', this.props.siteType, 'customerType' ) ||
 			( intersection( siteGoals, [ 'sell', 'promote' ] ).length > 0 ? 'business' : 'personal' );
-
-		// Default to 'business' when the blogger plan is not available.
-		if ( customerType === 'personal' && this.props.disableBloggerPlanWithNonBlogDomain ) {
-			customerType = 'business';
-		}
 
 		return customerType;
 	}

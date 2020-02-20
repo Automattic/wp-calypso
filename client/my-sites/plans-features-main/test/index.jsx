@@ -308,10 +308,9 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		).toBe( 1 );
 	} );
 
-	test( 'Highlights TYPE_PREMIUM as popular plan for personal customer type if not in	signup flow', () => {
+	test( 'Highlights TYPE_PREMIUM as popular plan for personal customer type', () => {
 		const instance = new PlansFeaturesMain( {
 			customerType: 'personal',
-			isInSignup: false,
 		} );
 		const comp = shallow( instance.render() );
 		expect( comp.find( 'PlanFeatures' ).props().popularPlanSpec ).toEqual( {
@@ -320,66 +319,13 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		} );
 	} );
 
-	test( 'Highlights TYPE_BUSINESS as popular plan for business customer type if not in signup flow', () => {
+	test( 'Highlights TYPE_BUSINESS as popular plan for business customer type', () => {
 		const instance = new PlansFeaturesMain( {
 			customerType: 'business',
-			isInSignup: false,
 		} );
 		const comp = shallow( instance.render() );
 		expect( comp.find( 'PlanFeatures' ).props().popularPlanSpec ).toEqual( {
 			type: TYPE_BUSINESS,
-			group: GROUP_WPCOM,
-		} );
-	} );
-
-	test( 'Highlights TYPE_PREMIUM as popular plan for personal customer type in signup flow', () => {
-		const instance = new PlansFeaturesMain( {
-			customerType: 'personal',
-			isInSignup: true,
-			isLaunchPage: false,
-		} );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'PlanFeatures' ).props().popularPlanSpec ).toEqual( {
-			type: TYPE_PREMIUM,
-			group: GROUP_WPCOM,
-		} );
-	} );
-
-	test( 'Highlights TYPE_BUSINESS as popular plan for business customer type in signup flow', () => {
-		const instance = new PlansFeaturesMain( {
-			customerType: 'business',
-			isInSignup: true,
-			isLaunchPage: false,
-		} );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'PlanFeatures' ).props().popularPlanSpec ).toEqual( {
-			type: TYPE_BUSINESS,
-			group: GROUP_WPCOM,
-		} );
-	} );
-
-	test( 'Highlights TYPE_BUSINESS as popular plan for business customer type in launch flow', () => {
-		const instance = new PlansFeaturesMain( {
-			customerType: 'business',
-			isInSignup: true,
-			isLaunchPage: true,
-		} );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'PlanFeatures' ).props().popularPlanSpec ).toEqual( {
-			type: TYPE_BUSINESS,
-			group: GROUP_WPCOM,
-		} );
-	} );
-
-	test( 'Highlights TYPE_PREMIUM as popular plan for personal customer type in launch flow', () => {
-		const instance = new PlansFeaturesMain( {
-			customerType: 'personal',
-			isInSignup: true,
-			isLaunchPage: true,
-		} );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'PlanFeatures' ).props().popularPlanSpec ).toEqual( {
-			type: TYPE_PREMIUM,
 			group: GROUP_WPCOM,
 		} );
 	} );
