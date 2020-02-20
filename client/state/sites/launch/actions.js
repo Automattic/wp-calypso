@@ -10,6 +10,12 @@ import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 export const launchSite = siteId => ( {
 	type: SITE_LAUNCH,
 	siteId,
+	meta: {
+		dataLayer: {
+			trackRequest: true,
+			requestKey: `${ SITE_LAUNCH }-${ siteId }`,
+		},
+	},
 } );
 
 export const launchSiteOrRedirectToLaunchSignupFlow = siteId => ( dispatch, getState ) => {

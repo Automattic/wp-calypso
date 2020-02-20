@@ -19,6 +19,7 @@ import NoticeAction from 'components/notice/notice-action';
 import { localizeUrl } from 'lib/i18n-utils';
 import { launchSite } from 'state/sites/launch/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import getRequest from 'state/selectors/get-request';
 
 // Mapping eligibility holds to messages that will be shown to the user
 function getHoldMessages( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
@@ -178,6 +179,7 @@ export const HoldList = ( {
 	isPlaceholder,
 	launchSite: launch,
 	siteId,
+	siteIsLaunching,
 	translate,
 }: Props ) => {
 	const holdMessages = getHoldMessages( context, translate );
@@ -252,7 +254,11 @@ export const HoldList = ( {
 								) }
 								{ hold === 'SITE_UNLAUNCHED' && (
 									<div className="eligibility-warnings__hold-action">
-										<Button disabled={ !! blockingHold } onClick={ launchCurrentSite }>
+										<Button
+											disabled={ siteIsLaunching }
+											busy={ siteIsLaunching }
+											onClick={ launchCurrentSite }
+										>
 											{ translate( 'Launch site' ) }
 										</Button>
 									</div>
@@ -315,8 +321,10 @@ export const hasBlockingHold = ( holds: string[] ) =>
 
 export default connect(
 	( state: object ) => {
+		const siteId = getSelectedSiteId( state );
 		return {
-			siteId: getSelectedSiteId( state ),
+			siteId,
+			siteIsLaunching: getRequest( state, launchSite( siteId, null ) )?.isLoading ?? false,
 		};
 	},
 	{
