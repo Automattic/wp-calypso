@@ -41,6 +41,8 @@
 				@include grid-column( 2, 2 );
 				margin: 0;
 				padding: 24px 0;
+				position: relative;
+				top: 6px;
 			}
 
 		}
