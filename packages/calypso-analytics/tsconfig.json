@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"target": "ES5",
-		"lib": [ "ESNext" ],
+		"lib": [ "DOM", "DOM.Iterable", "ESNext" ],
 		"baseUrl": ".",
 		"module": "esnext",
 		"allowJs": false,
