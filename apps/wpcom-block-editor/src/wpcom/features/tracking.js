@@ -30,14 +30,17 @@ const getTypeForBlockId = blockId => {
 };
 
 /**
- * This helper function trackers the given blocks recursively
- * in order to be able to track also the inner ones.
- * The event properties will be populated (optional) propertiesHandler function.
- * It acts as a callback passing two current block and the parent block (if exists).
- * Take this as an advantage to add other custom properties to the event.
+ * This helper function tracks the given blocks recursively
+ * in order to be able to do it also for its inner ones.
+ *
+ * The event properties will be populated (optional)
+ * propertiesHandler function. It acts as a callback
+ * passing two arguments: the current block and
+ * the parent block (if exists). Take this as
+ * an advantage to add other custom properties to the event.
+ *
  * Also, it adds as default `inner_block`,
- * and `parent_block_client_id` and `parent_block_name` properties
- * if the block has a parent block.
+ * and `parent_block_client_id` (if parent exists) properties.
  *
  * @param {Array}    blocks            Block instances object or an array of such objects
  * @param {string}   eventName         Event name used to track.
