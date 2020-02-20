@@ -112,7 +112,7 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 				className={ classnames( 'design-selector__grid-container', {
 					'is-page-selector-open': showPageSelector,
 				} ) }
-				tabIndex="-1"
+				tabIndex={-1}
 			>
 				<div className="design-selector__grid">
 					{ designs.map( design => (
