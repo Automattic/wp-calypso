@@ -1,21 +1,24 @@
 /**
  * External dependencies
  */
+import { Provider as ReduxProvider } from 'react-redux';
 import React from 'react';
 import ReactDom from 'react-dom';
-import { Provider as ReduxProvider } from 'react-redux';
 
 /**
  * Internal Dependencies
  */
-import { getSiteFragment } from 'lib/route';
+
+import { getSiteFragment, sectionify } from 'lib/route';
 import { isJetpackSite } from 'state/sites/selectors';
 import { requestSite } from 'state/sites/actions';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { setSelectedSiteId } from 'state/ui/actions';
 import getSiteId from 'state/selectors/get-site-id';
 import isAtomicSite from 'state/selectors/is-site-wpcom-atomic';
 import JetpackCloudLayout from './layout';
 import JetpackCloudSidebar from './components/sidebar';
+import SitesComponent from 'my-sites/sites';
 
 export const makeLayout = ( context, next ) => {
 	const { primary, secondary, store } = context;
@@ -44,6 +47,10 @@ export async function siteSelection( context, next ) {
 
 	const siteFragment = context.params.site || getSiteFragment( context.path );
 
+	// 1. request all sites ( or get them if they already are present)
+	// 2. filter to our preferred list ( non-atomic, jetpack )
+	// 3. use that list to determine the correct way to render ( 0, 1, or a list )
+
 	const siteId = await ( async () => {
 		const firstTrySiteId = getSiteId( getState(), siteFragment );
 		if ( firstTrySiteId ) {
@@ -70,5 +77,38 @@ export async function siteSelection( context, next ) {
 		await dispatch( setSelectedSiteId( siteId ) );
 	}
 
+	next();
+}
+
+/**
+ * Returns the site-picker react element.
+ *  * extended from my-sites/controller to only allow non-atomic jetpack sites
+ *
+ * @param {object} context -- Middleware context
+ * @returns {object} A site-picker React element
+ */
+function createSitesComponent( context ) {
+	const contextPath = sectionify( context.path );
+
+	return (
+		<SitesComponent
+			siteBasePath={ contextPath }
+			getSiteSelectionHeaderText={ context.getSiteSelectionHeaderText }
+			fromSite={ context.query.site }
+		/>
+	);
+}
+
+/**
+ * Middleware that adds the site selector screen to the layout.
+ * extended from my-sites/controller to only allow non-atomic jetpack sites
+ *
+ * @param {object} context -- Middleware context
+ * @param {Function} next -- Call next middleware in chain
+ */
+export function sites( context, next ) {
+	context.store.dispatch( setLayoutFocus( 'content' ) );
+	// removeSidebar( context );
+	context.primary = createSitesComponent( context );
 	next();
 }

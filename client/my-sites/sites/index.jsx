@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-
+import config from 'config';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -54,6 +54,11 @@ class Sites extends Component {
 		// Supported on Simple and Atomic Sites
 		if ( /^\/home/.test( path ) ) {
 			return ! site.is_vip && ! ( site.jetpack && ! site.options.is_automated_transfer );
+		}
+
+		// apply specific filters for jetpack cloud app
+		if ( config.isEnabled( 'jetpack-cloud' ) ) {
+			return site.jetpack && ! site.options.is_automated_transfer;
 		}
 
 		return site;
