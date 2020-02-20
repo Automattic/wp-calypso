@@ -7,8 +7,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { normalize } from 'lib/route';
-import { siteSelection } from 'my-sites/controller';
-import { clientRender, makeLayout, setupSidebar } from './controller';
+import { clientRender, makeLayout, setupSidebar, siteSelection } from './controller';
 import { dashboard } from './sections/dashboard/controller';
 import {
 	backups,
