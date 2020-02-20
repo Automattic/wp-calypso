@@ -46,7 +46,10 @@ class StepSourceSelect extends Component {
 	};
 
 	handleContinue = () => {
-		const { translate } = this.props;
+		const {
+			translate,
+			targetSite: { jetpack: isJetpackSite },
+		} = this.props;
 
 		if ( this.state.isLoading ) {
 			return;
@@ -81,7 +84,7 @@ class StepSourceSelect extends Component {
 								page( `/migrate/choose/${ this.props.targetSiteSlug }` );
 							} );
 						default:
-							if ( validEngines.indexOf( result.site_engine ) === -1 ) {
+							if ( validEngines.indexOf( result.site_engine ) === -1 || isJetpackSite ) {
 								return this.setState( {
 									error: translate( 'This is not a WordPress site' ),
 									isLoading: false,
