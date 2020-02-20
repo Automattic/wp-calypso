@@ -2,10 +2,11 @@
  * External dependencies
  */
 import React, { useState } from 'react';
-import { Button, ExternalLink, TextControl, Modal } from '@wordpress/components';
+import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { __ as NO__, _x as NO_x } from '@wordpress/i18n';
+import { User as UserTypes } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -66,7 +67,13 @@ const SignupForm = () => {
 						'E.g., yourname@email.com',
 						"An example of a person's email, use something appropriate for the locale"
 					) }
+					required
 				/>
+				{ newUserError && (
+					<Notice className="signup-form__error-notice" status="error" isDismissible={ false }>
+						{ getErrorMessage( newUserError ) }
+					</Notice>
+				) }
 				<div className="signup-form__footer">
 					<p className="signup-form__terms-of-service-link">{ renderTos() }</p>
 
@@ -81,7 +88,6 @@ const SignupForm = () => {
 					</Button>
 				</div>
 			</form>
-			{ newUserError && <pre>Error: { JSON.stringify( newUserError, null, 2 ) }</pre> }
 			{ newUser && <pre>New user: { JSON.stringify( newUser, null, 2 ) }</pre> }
 		</Modal>
 	);
@@ -94,6 +100,20 @@ function renderTos() {
 			link_to_tos: <ExternalLink href="https://wordpress.com/tos/" />,
 		}
 	);
+}
+
+function getErrorMessage( errorObj: UserTypes.NewUserErrorResponse ): string {
+	switch ( errorObj.error ) {
+		case 'already_taken':
+		case 'already_active':
+		case 'email_exists':
+			return NO__( 'An account with this email address already exists.' );
+
+		default:
+			return NO__(
+				'Sorry, something went wrong when trying to create your account. Please try again.'
+			);
+	}
 }
 
 export default SignupForm;
