@@ -74,6 +74,10 @@ class SectionMigrate extends Component {
 		if ( this.props.targetSiteId !== prevProps.targetSiteId ) {
 			this.updateFromAPI();
 		}
+
+		if ( 'done' === this.state.migrationStatus ) {
+			this.finishMigration();
+		}
 	}
 
 	fetchSourceSitePluginsAndThemes = () => {
@@ -113,6 +117,17 @@ class SectionMigrate extends Component {
 		const { targetSiteId } = this.props;
 
 		return sourceSite.jetpack && sourceSite.ID !== targetSiteId;
+	};
+
+	finishMigration = () => {
+		const { targetSiteId, targetSiteSlug } = this.props;
+
+		wpcom
+			.undocumented()
+			.resetMigration( targetSiteId )
+			.finally( () => {
+				page( `/home/${ targetSiteSlug }` );
+			} );
 	};
 
 	resetMigration = () => {
@@ -364,8 +379,26 @@ class SectionMigrate extends Component {
 					{ this.state.errorMessage }
 				</div>
 				<Button primary onClick={ this.resetMigration }>
-					{ translate( 'Back to your site' ) }
+					{ translate( 'Try again' ) }
 				</Button>
+				<p>
+					{ translate(
+						'Or {{supportLink}}contact us{{/supportLink}} so we can' +
+							' figure out exactly' +
+							' what needs adjusting and get your site imported.',
+						{
+							components: {
+								supportLink: (
+									<a
+										href="https://support.wordpress.com"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						}
+					) }
+				</p>
 			</Card>
 		);
 	}
@@ -574,8 +607,7 @@ class SectionMigrate extends Component {
 				break;
 
 			case 'done':
-				migrationElement = this.renderMigrationComplete();
-				break;
+				return null;
 
 			case 'error':
 				migrationElement = this.renderMigrationError();
