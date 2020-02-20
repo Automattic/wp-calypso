@@ -304,7 +304,7 @@ class Home extends Component {
 						</div>
 					</Card>
 				) }
-				{ <WelcomeBanner /> }
+				<WelcomeBanner />
 			</>
 		);
 	}
