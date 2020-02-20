@@ -49,9 +49,7 @@ window.AppBoot = async () => {
 	let locale = DEFAULT_LOCALE_SLUG;
 	try {
 		const [ userLocale, localeData ] = await getLocale();
-		console.log( 'Setting locale data: %o', localeData );
 		setLocaleData( localeData );
-		console.log( 'Just invoked setLocaleData with : %o', localeData );
 		locale = userLocale;
 	} catch {}
 
