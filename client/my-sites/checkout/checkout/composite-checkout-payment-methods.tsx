@@ -184,7 +184,7 @@ export function WordPressFreePurchaseLabel() {
 
 	return (
 		<React.Fragment>
-			<div>{ translate( "Woohoo! You don't owe us anything!" ) }</div>
+			<div>{ translate( 'Free Purchase' ) }</div>
 			<WordPressLogo />
 		</React.Fragment>
 	);
@@ -192,7 +192,7 @@ export function WordPressFreePurchaseLabel() {
 
 export function WordPressFreePurchaseSummary() {
 	const translate = useTranslate();
-	return <div>{ translate( 'Just complete checkout to add these upgrades to your site.' ) }</div>;
+	return <div>{ translate( 'Free Purchase' ) }</div>;
 }
 
 export function WordPressCreditsLabel( { credits } ) {

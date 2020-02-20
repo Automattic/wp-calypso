@@ -95,7 +95,7 @@ function FreePurchaseLabel() {
 
 	return (
 		<React.Fragment>
-			<div>{ localize( "Woohoo! You don't owe us anything!" ) }</div>
+			<div>{ localize( 'Free Purchase' ) }</div>
 		</React.Fragment>
 	);
 }
@@ -160,5 +160,5 @@ function FreePurchaseSubmitButton( { disabled } ) {
 
 function FreePurchaseSummary() {
 	const localize = useLocalize();
-	return <div>{ localize( 'Just complete checkout to add these upgrades to your site.' ) }</div>;
+	return <div>{ localize( 'Free Purchase' ) }</div>;
 }
