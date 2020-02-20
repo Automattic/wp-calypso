@@ -157,12 +157,42 @@ export function submitCreditsTransaction(
 	return submit( formattedTransactionData );
 }
 
+export function submitFreePurchaseTransaction(
+	transactionData,
+	submit: WPCOMTransactionEndpoint
+): Promise< WPCOMTransactionEndpointResponse > {
+	debug( 'formatting free transaction', transactionData );
+	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+		debug,
+		...transactionData,
+		paymentMethodType: 'WPCOM_Billing_WPCOM',
+	} );
+	debug( 'submitting free transaction', formattedTransactionData );
+	return submit( formattedTransactionData );
+}
+
 export function isPaymentMethodEnabled( method: string, allowedPaymentMethods: string[] ): boolean {
 	// By default, allow all payment methods
 	if ( ! allowedPaymentMethods?.length ) {
 		return true;
 	}
 	return allowedPaymentMethods.includes( method );
+}
+
+export function WordPressFreePurchaseLabel() {
+	const translate = useTranslate();
+
+	return (
+		<React.Fragment>
+			<div>{ translate( "Woohoo! You don't owe us anything!" ) }</div>
+			<WordPressLogo />
+		</React.Fragment>
+	);
+}
+
+export function WordPressFreePurchaseSummary() {
+	const translate = useTranslate();
+	return <div>{ translate( 'Just complete checkout to add these upgrades to your site.' ) }</div>;
 }
 
 export function WordPressCreditsLabel( { credits } ) {
