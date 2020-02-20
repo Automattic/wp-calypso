@@ -20,7 +20,7 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
+import { getCustomizerUrl, isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import Notice from 'components/notice';
@@ -281,10 +281,7 @@ class ThemeEnhancements extends Component {
 	}
 
 	render() {
-		const { site, siteIsJetpack, translate } = this.props;
-
-		const jetpackVersion = get( site, 'options.jetpack_version', 0 );
-		const siteHasMinileven = jetpackVersion && versionCompare( jetpackVersion, '8.3-alpha', '<' );
+		const { siteIsJetpack, siteHasMinileven, translate } = this.props;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
@@ -329,5 +326,6 @@ export default connect( state => {
 		),
 		minilevenModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'minileven' ),
 		site,
+		siteHasMinileven: false === isJetpackMinimumVersion( state, selectedSiteId, '8.3-alpha' ),
 	};
 } )( localize( ThemeEnhancements ) );
