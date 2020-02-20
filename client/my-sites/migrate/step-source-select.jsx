@@ -23,7 +23,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
  */
 import './section-migrate.scss';
 import SitesBlock from 'my-sites/migrate/components/sites-block';
-import { getImportSectionLocation, redirectTo } from 'my-sites/migrate/helpers';
+import { redirectTo } from 'my-sites/migrate/helpers';
 
 const wpcom = wpLib.undocumented();
 
@@ -46,10 +46,7 @@ class StepSourceSelect extends Component {
 	};
 
 	handleContinue = () => {
-		const {
-			translate,
-			targetSite: { jetpack: isJetpackSite },
-		} = this.props;
+		const { translate } = this.props;
 
 		if ( this.state.isLoading ) {
 			return;
@@ -84,7 +81,7 @@ class StepSourceSelect extends Component {
 								page( `/migrate/choose/${ this.props.targetSiteSlug }` );
 							} );
 						default:
-							if ( validEngines.indexOf( result.site_engine ) === -1 || isJetpackSite ) {
+							if ( validEngines.indexOf( result.site_engine ) === -1 ) {
 								return this.setState( {
 									error: translate( 'This is not a WordPress site' ),
 									isLoading: false,
@@ -116,7 +113,7 @@ class StepSourceSelect extends Component {
 	render() {
 		const { targetSite, targetSiteSlug, translate } = this.props;
 		const backHref = `/import/${ targetSiteSlug }`;
-		const uploadFileLink = getImportSectionLocation( targetSiteSlug, targetSite.jetpack );
+		const uploadFileLink = `/import/${ targetSiteSlug }?engine=wordpress`;
 
 		return (
 			<>

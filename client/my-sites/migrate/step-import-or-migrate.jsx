@@ -14,7 +14,7 @@ import HeaderCake from 'components/header-cake';
 import CardHeading from 'components/card-heading';
 import ImportTypeChoice from 'my-sites/migrate/components/import-type-choice';
 import { get } from 'lodash';
-import { getImportSectionLocation, redirectTo } from 'my-sites/migrate/helpers';
+import { redirectTo } from 'my-sites/migrate/helpers';
 import SitesBlock from 'my-sites/migrate/components/sites-block';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { FEATURE_UPLOAD_THEMES_PLUGINS } from 'lib/plans/constants';
@@ -59,12 +59,10 @@ class StepImportOrMigrate extends Component {
 			migration_type: 'content',
 		} );
 
-		const destinationURL = getImportSectionLocation( targetSiteSlug, isTargetSiteAtomic );
-
 		if ( isTargetSiteAtomic ) {
-			window.location.href = destinationURL;
+			window.location.href = `https://${ targetSiteSlug }/wp-admin/import.php`;
 		} else {
-			redirectTo( destinationURL );
+			redirectTo( `/import/${ targetSiteSlug }/?engine=wordpress` );
 		}
 	};
 
