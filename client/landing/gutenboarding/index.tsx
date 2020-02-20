@@ -5,7 +5,7 @@ import '@automattic/calypso-polyfills';
 import { setLocaleData } from '@wordpress/i18n';
 import { I18nProvider } from '@automattic/react-i18n';
 import { getLanguageSlugs } from '../../lib/i18n-utils';
-import { getLanguageFile } from '../../lib/i18n-utils/switch-locale';
+import { getLanguageFile, switchWebpackCSS } from '../../lib/i18n-utils/switch-locale';
 import React from 'react';
 import ReactDom from 'react-dom';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
@@ -52,6 +52,11 @@ window.AppBoot = async () => {
 		const [ userLocale, localeData ] = await getLocale();
 		setLocaleData( localeData );
 		locale = userLocale;
+
+		// FIXME: Use rtl detection tooling
+		if ( ( localeData as any )[ 'text direction\u0004ltr' ]?.[ 0 ] === 'rtl' ) {
+			switchWebpackCSS( true );
+		}
 	} catch {}
 
 	ReactDom.render(
