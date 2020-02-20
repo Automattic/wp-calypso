@@ -15,3 +15,4 @@ export { getCommentLike } from 'state/comments/selectors/get-comment-like';
 export { getActiveReplyCommentId } from 'state/comments/selectors/get-active-reply-comment-id';
 export { getSiteCommentCounts } from 'state/comments/selectors/get-site-comment-counts';
 export { getSiteCommentParentDepth } from 'state/comments/selectors/get-site-comment-parent-depth';
+export { getSiteCommentRepliesTree } from 'state/comments/selectors/get-site-comment-replies-tree';
