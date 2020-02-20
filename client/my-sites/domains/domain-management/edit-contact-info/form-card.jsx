@@ -35,6 +35,8 @@ import { findRegistrantWhois } from 'lib/domains/whois/utils';
 
 const wpcom = wp.undocumented();
 
+import './style.scss';
+
 class EditContactInfoFormCard extends React.Component {
 	static propTypes = {
 		selectedDomain: PropTypes.object.isRequired,
@@ -45,6 +47,7 @@ class EditContactInfoFormCard extends React.Component {
 		whoisData: PropTypes.array,
 		whoisSaveError: PropTypes.object,
 		whoisSaveSuccess: PropTypes.bool,
+		showContactInfoNote: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -390,7 +393,7 @@ class EditContactInfoFormCard extends React.Component {
 	}
 
 	render() {
-		const { selectedDomain, translate } = this.props;
+		const { selectedDomain, showContactInfoNote, translate } = this.props;
 		const canUseDesignatedAgent = selectedDomain.transferLockOnWhoisUpdateOptional;
 		const whoisRegistrantData = this.getContactFormFieldValues();
 
@@ -400,6 +403,13 @@ class EditContactInfoFormCard extends React.Component {
 
 		return (
 			<Card>
+				{ showContactInfoNote && (
+					<p className="edit-contact-info__note">
+						<em>
+							{ translate( 'Domain owners are required to provide correct contact information.' ) }
+						</em>
+					</p>
+				) }
 				<form>
 					<ContactDetailsFormFields
 						eventFormName="Edit Contact Info"
