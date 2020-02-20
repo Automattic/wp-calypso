@@ -68,8 +68,6 @@ export function Gutenboard() {
 							</div>
 						</div>
 					</BlockEditorProvider>
-					<div>Your locale: { useI18n().i18nLocale }</div>
-					<div>__( 'Next' ): { useI18n().__( 'Next' ) }</div>
 				</div>
 			</DropZoneProvider>
 			<Popover.Slot />
