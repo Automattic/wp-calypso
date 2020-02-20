@@ -1,6 +1,10 @@
 {
 	"name": "wpcom-proxy-request",
+	"version": "6.0.0",
 	"description": "Proxied cookie-authenticated REST API requests to WordPress.com",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"sideEffects": false,
 	"keywords": [
 		"browser",
 		"wpcom",
@@ -9,43 +13,36 @@
 		"api",
 		"cookie"
 	],
-	"scripts": {
-		"prepublish": "make build"
-	},
-	"version": "5.0.2",
 	"author": "Automattic, Inc.",
+	"license": "MIT",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/wpcom-proxy-request"
+	},
 	"private": true,
-	"contributors": [
-		"Damian Suarez <rdsuarez@gmail.com>",
-		"Nathan Rajlich <nathan@automattic.com>",
-		"Andy Skelton <andy@automattic.com>",
-		"Gary Pendergast <gary@pento.net>",
-		"Ben Lowery <blowery@automattic.com>",
-		"Jarda Snajdr <jsnajdr@gmail.com>"
-	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
 	"files": [
-		"build",
+		"dist",
 		"History.md",
 		"README.md"
 	],
-	"repository": "git://github.com/Automattic/wpcom-proxy-request.git",
-	"license": "MIT",
-	"main": "build/index.js",
-	"dependencies": {
-		"component-event": "0.1.4",
-		"debug": "^3.1.0",
-		"progress-event": "~1.0.0",
-		"uid": "0.0.2",
-		"wp-error": "^1.3.0"
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"prepublish": "npm run clean",
+		"prepare": "transpile"
 	},
-	"devDependencies": {
-		"babel-eslint": "^8.2.6",
-		"chai": "^4.1.0",
-		"chokidar-cli": "^1.2.1",
-		"eslint": "^5.1.0",
-		"mocha": "^5.2.0",
-		"n8-make": "^1.8.6",
-		"serve": "^9.2.0",
-		"webpack": "^1.13.1"
+	"dependencies": {
+		"component-event": "^0.1.4",
+		"debug": "^4.1.1",
+		"progress-event": "^1.0.0",
+		"uid": "^0.0.2",
+		"wp-error": "^1.3.0"
 	}
 }

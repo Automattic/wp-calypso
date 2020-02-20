@@ -1,3 +1,9 @@
+6.0.0 / TBD
+==================
+
+ * Move the published `build/` folder to `dist/` to align with other Calypso packages
+ * Upgrade dependency 'debug' to 4.1.1
+
 5.0.2 / 2018-10-30
 ==================
 

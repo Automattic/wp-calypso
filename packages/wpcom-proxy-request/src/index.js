@@ -1,5 +1,5 @@
 /**
- * Module dependencies.
+ * External dependencies
  */
 import uid from 'uid';
 import WPError from 'wp-error';
@@ -54,7 +54,7 @@ const postStrings = ( () => {
 const supportsFileConstructor = ( () => {
 	try {
 		// eslint-disable-next-line no-new
-		new File( [ 'a' ], 'test.jpg', { type: 'image/jpeg' } );
+		new window.File( [ 'a' ], 'test.jpg', { type: 'image/jpeg' } );
 		return true;
 	} catch ( e ) {
 		return false;
@@ -98,13 +98,12 @@ debug( 'using "origin": %o', origin );
  * takes care of WordPress.com user authentication (via the currently
  * logged-in user's cookies).
  *
- * @param {Object} originalParams - request parameters
+ * @param {object} originalParams - request parameters
  * @param {Function} [fn] - callback response
- * @return {XMLHttpRequest} XMLHttpRequest instance
- * @api public
+ * @returns {window.XMLHttpRequest} XMLHttpRequest instance
  */
 const request = ( originalParams, fn ) => {
-	let params = Object.assign( {}, originalParams );
+	const params = Object.assign( {}, originalParams );
 
 	debug( 'request(%o)', params );
 
@@ -125,7 +124,7 @@ const request = ( originalParams, fn ) => {
 
 	debug( 'params object: %o', params );
 
-	const xhr = new XMLHttpRequest();
+	const xhr = new window.XMLHttpRequest();
 	xhr.params = params;
 
 	// store the `XMLHttpRequest` instance so that "onmessage" can access it again
@@ -134,7 +133,7 @@ const request = ( originalParams, fn ) => {
 	if ( 'function' === typeof fn ) {
 		// a callback function was provided
 		let called = false;
-		function xhrOnLoad( e ) {
+		const xhrOnLoad = e => {
 			if ( called ) {
 				return;
 			}
@@ -144,8 +143,8 @@ const request = ( originalParams, fn ) => {
 			debug( 'body: ', body );
 			debug( 'headers: ', e.headers );
 			fn( null, body, e.headers );
-		}
-		function xhrOnError( e ) {
+		};
+		const xhrOnError = e => {
 			if ( called ) {
 				return;
 			}
@@ -155,7 +154,7 @@ const request = ( originalParams, fn ) => {
 			debug( 'error: ', error );
 			debug( 'headers: ', e.headers );
 			fn( error, null, e.headers );
-		}
+		};
 
 		event.bind( xhr, 'load', xhrOnLoad );
 		event.bind( xhr, 'abort', xhrOnError );
@@ -175,8 +174,7 @@ const request = ( originalParams, fn ) => {
 /**
  * Calls the `postMessage()` function on the <iframe>.
  *
- * @param {Object} params
- * @api private
+ * @param {object} params
  */
 
 function submitRequest( params ) {
@@ -194,9 +192,8 @@ function submitRequest( params ) {
 /**
  * Returns `true` if `v` is a DOM File instance, `false` otherwise.
  *
- * @param {Mixed} v - instance to analyze
- * @return {Boolean} `true` if `v` is a DOM File instance
- * @private
+ * @param {any} v - instance to analyze
+ * @returns {boolean} `true` if `v` is a DOM File instance
  */
 function isFile( v ) {
 	return v && Object.prototype.toString.call( v ) === '[object File]';
@@ -245,7 +242,7 @@ function patchFileObjects( formData ) {
 	for ( let i = 0; i < formData.length; i++ ) {
 		const val = getFileValue( formData[ i ][ 1 ] );
 		if ( val ) {
-			formData[ i ][ 1 ] = new File( [ val ], val.name, { type: val.type } );
+			formData[ i ][ 1 ] = new window.File( [ val ], val.name, { type: val.type } );
 		}
 	}
 }
@@ -253,8 +250,6 @@ function patchFileObjects( formData ) {
 /**
  * Injects the proxy <iframe> instance in the <body> of the current
  * HTML page.
- *
- * @api private
  */
 
 function install() {
@@ -281,8 +276,6 @@ function install() {
 
 /**
  * Reloads the proxy iframe.
- *
- * @api public
  */
 const reloadProxy = () => {
 	install();
@@ -290,8 +283,6 @@ const reloadProxy = () => {
 
 /**
  * Removes the <iframe> proxy instance from the <body> of the page.
- *
- * @api private
  */
 function uninstall() {
 	debug( 'uninstall()' );
@@ -303,8 +294,6 @@ function uninstall() {
 
 /**
  * The proxy <iframe> instance's "load" event callback function.
- *
- * @api private
  */
 
 function onload() {
@@ -323,8 +312,7 @@ function onload() {
 /**
  * The main `window` object's "message" event callback function.
  *
- * @param {Event} e
- * @api private
+ * @param {window.Event} e
  */
 
 function onmessage( e ) {
@@ -370,14 +358,10 @@ function onmessage( e ) {
 
 	// Build `error` and `body` object from the `data` object
 	const { params } = xhr;
-	let body, statusCode, headers;
 
-	// apiNamespace (WP-API)
-	const { apiNamespace } = params;
-
-	body = data[ 0 ];
-	statusCode = data[ 1 ];
-	headers = data[ 2 ];
+	const body = data[ 0 ];
+	let statusCode = data[ 1 ];
+	const headers = data[ 2 ];
 
 	if ( statusCode === 207 ) {
 		// 207 is a signal from rest-proxy. It means, "this isn't the final
@@ -412,8 +396,7 @@ function onmessage( e ) {
 /**
  * Handles a "progress" event being proxied back from the iframe page.
  *
- * @param {Object} data
- * @private
+ * @param {object} data
  */
 
 function onprogress( data ) {
@@ -429,9 +412,8 @@ function onprogress( data ) {
 /**
  * Emits the "load" event on the `xhr`.
  *
- * @param {XMLHttpRequest} xhr
- * @param {Object} body
- * @private
+ * @param {window.XMLHttpRequest} xhr
+ * @param {object} body
  */
 
 function resolve( xhr, body, headers ) {
@@ -444,9 +426,8 @@ function resolve( xhr, body, headers ) {
 /**
  * Emits the "error" event on the `xhr`.
  *
- * @param {XMLHttpRequest} xhr
+ * @param {window.XMLHttpRequest} xhr
  * @param {Error} err
- * @private
  */
 
 function reject( xhr, err, headers ) {
