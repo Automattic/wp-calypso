@@ -238,3 +238,8 @@
 .migrate__buttons-wrapper {
 	margin: 24px 0 8px;
 }
+
+.migrate__site-error {
+	color: var( --color-error );
+	margin-bottom: 1rem;
+}
