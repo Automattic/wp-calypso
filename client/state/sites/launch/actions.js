@@ -34,5 +34,5 @@ export const launchSiteOrRedirectToLaunchSignupFlow = siteId => ( dispatch, getS
 	const siteSlug = getSiteSlug( getState(), siteId );
 
 	// TODO: consider using the `page` library instead of calling using `location.href` here
-	location.href = `/start/launch-site?siteSlug=${ siteSlug }`;
+	window.location.href = `/start/launch-site?siteSlug=${ siteSlug }`;
 };
