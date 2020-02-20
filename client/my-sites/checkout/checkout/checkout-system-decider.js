@@ -103,7 +103,12 @@ function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, is
 	}
 	// Disable for domains in the cart
 	if ( cart.products?.find( product => product.is_domain_registration ) ) {
-		debug( 'shouldShowCompositeCheckout false because cart contains domain' );
+		debug( 'shouldShowCompositeCheckout false because cart contains domain registration' );
+		return false;
+	}
+	// Disable for domain mapping
+	if ( cart.products?.find( product => product.product_slug.includes( 'domain' ) ) ) {
+		debug( 'shouldShowCompositeCheckout false because cart contains domain item' );
 		return false;
 	}
 	// Disable for GSuite plans
