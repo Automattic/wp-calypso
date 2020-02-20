@@ -85,9 +85,8 @@ window.AppBoot = async () => {
  */
 async function getLocale(): Promise< [ string, object ] > {
 	// Explicit locale slug.
-	const lastPathSegment = window.location.href.substr(
-		window.location.href.lastIndexOf( '/' ) + 1
-	);
+	const pathname = new URL( window.location.href ).pathname;
+	const lastPathSegment = pathname.substr( pathname.lastIndexOf( '/' ) + 1 );
 	if ( getLanguageSlugs().includes( lastPathSegment ) ) {
 		const data = await getLocaleData( lastPathSegment );
 		return [ lastPathSegment, data ];
