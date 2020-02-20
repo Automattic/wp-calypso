@@ -11,3 +11,5 @@ export { getExpansionsForPost } from 'state/comments/selectors/get-expansions-fo
 export { getHiddenCommentsForPost } from 'state/comments/selectors/get-hidden-comments-for-post';
 export { commentsFetchingStatus } from 'state/comments/selectors/comments-fetching-status';
 export { getCommentLike } from 'state/comments/selectors/get-comment-like';
+
+export { getActiveReplyCommentId } from 'state/comments/selectors/get-active-reply-comment-id';
