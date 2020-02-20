@@ -84,9 +84,7 @@ class StepUpgrade extends Component {
 							{ themes.slice( 0, 2 ).map( theme => (
 								<div className="migrate__plan-upsell-item">
 									<Gridicon size={ 18 } icon="checkmark" />
-									<div className="migrate__plan-upsell-item-label">
-										{ theme.name } fsaasf saf asf asf asfasf
-									</div>
+									<div className="migrate__plan-upsell-item-label">{ theme.name }</div>
 								</div>
 							) ) }
 							{ themes.length > 2 && (
@@ -105,9 +103,7 @@ class StepUpgrade extends Component {
 							{ plugins.slice( 0, 2 ).map( plugin => (
 								<div className="migrate__plan-upsell-item">
 									<Gridicon size={ 18 } icon="checkmark" />
-									<div className="migrate__plan-upsell-item-label">
-										{ plugin.name } fiuewhif wehf ehiufw huifew hf
-									</div>
+									<div className="migrate__plan-upsell-item-label">{ plugin.name }</div>
 								</div>
 							) ) }
 							{ plugins.length > 2 && (
