@@ -57,6 +57,7 @@ import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/s
 import QueryActiveTheme from 'components/data/query-active-theme';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import GoMobileCard from 'my-sites/customer-home/go-mobile-card';
+import WelcomeBanner from './welcome-banner';
 import StatsCard from './stats-card';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 
@@ -303,6 +304,7 @@ class Home extends Component {
 						</div>
 					</Card>
 				) }
+				{ <WelcomeBanner /> }
 			</>
 		);
 	}
