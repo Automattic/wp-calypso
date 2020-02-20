@@ -23,9 +23,9 @@ const defaultArgs = {
 };
 
 describe( 'getThankYouPageUrl', () => {
-	it( 'redirects to the generic thank-you page when no site is set', () => {
+	it( 'redirects to the root page when no site is set', () => {
 		const url = getThankYouPageUrl( defaultArgs );
-		expect( url ).toBe( '/checkout/thank-you/foo.bar' );
+		expect( url ).toBe( '/' );
 	} );
 
 	it( 'redirects to the thank-you page with a purchase id when a site and purchaseId is set', () => {

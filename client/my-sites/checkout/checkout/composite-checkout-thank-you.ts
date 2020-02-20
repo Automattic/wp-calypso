@@ -202,7 +202,10 @@ function getFallbackDestination( {
 			: `/checkout/thank-you/${ siteSlug }/${ pendingOrReceiptId }`;
 	}
 
-	return `/checkout/thank-you/${ siteSlug }`;
+	if ( siteSlug ) {
+		return `/checkout/thank-you/${ siteSlug }`;
+	}
+	return '/';
 }
 
 function getEligibleDomainFromCart( cart ) {
