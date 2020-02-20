@@ -4,6 +4,7 @@
 import '@automattic/calypso-polyfills';
 import { setLocaleData } from '@wordpress/i18n';
 import { I18nProvider } from '@automattic/react-i18n';
+import { getLanguageSlugs } from '../../lib/i18n-utils';
 import { getLanguageFile } from '../../lib/i18n-utils/switch-locale';
 import React from 'react';
 import ReactDom from 'react-dom';
@@ -73,19 +74,32 @@ window.AppBoot = async () => {
 /**
  * Load the user's locale
  *
- * 1. If i18nLocalStrings is present use those strings and data.
- * 2. If we have a currentUser object, use that locale to fetch data.
- * 3. Fetch the current user and use language to fetch data.
- * 4. TODO (#39312): If we have a URL locale slug, fetch and use data.
- * 5. Fallback to "en" locale without data.
+ * 1. If there's an explicit locale slug, use that locale.
+ * 2. If i18nLocalStrings is present use those strings and data.
+ * 3. If we have a currentUser object, use that locale to fetch data.
+ * 4. Fetch the current user and use language to fetch data.
+ * 5. TODO (#39312): If we have a URL locale slug, fetch and use data.
+ * 6. Fallback to "en" locale without data.
  *
  * @returns Tuple of locale slug and locale data
  */
 async function getLocale(): Promise< [ string, object ] > {
+	// Explicit locale slug.
+	const lastPathSegment = window.location.href.substr(
+		window.location.href.lastIndexOf( '/' ) + 1
+	);
+	if ( getLanguageSlugs().includes( lastPathSegment ) ) {
+		const data = await getLocaleData( lastPathSegment );
+		return [ lastPathSegment, data ];
+	}
+
+	// Bootstraped locale
 	if ( window.i18nLocaleStrings ) {
 		const bootstrappedLocaleData = JSON.parse( window.i18nLocaleStrings );
 		return [ bootstrappedLocaleData[ '' ].localeSlug, bootstrappedLocaleData ];
 	}
+
+	// User without bootstrapped locale
 	const user = window.currentUser || ( await waitForCurrentUser() );
 	if ( ! user ) {
 		return [ DEFAULT_LOCALE_SLUG, {} ];
