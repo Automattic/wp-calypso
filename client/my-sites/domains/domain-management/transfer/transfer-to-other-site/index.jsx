@@ -74,10 +74,10 @@ export class TransferToOtherSite extends React.Component {
 
 	handleConfirmTransfer = ( targetSite, closeDialog ) => {
 		const { selectedDomainName } = this.props;
-		const targetSiteName = targetSite.name;
+		const targetSiteTitle = targetSite.title;
 		const successMessage = this.props.translate(
-			'%(selectedDomainName)s has been transferred to site: %(targetSiteName)s',
-			{ args: { selectedDomainName, targetSiteName } }
+			'%(selectedDomainName)s has been transferred to site: %(targetSiteTitle)s',
+			{ args: { selectedDomainName, targetSiteTitle } }
 		);
 		const defaultErrorMessage = this.props.translate(
 			'Failed to transfer %(selectedDomainName)s, please try again or contact support.',
