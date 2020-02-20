@@ -196,7 +196,7 @@ class Home extends Component {
 				return translate( 'Make sure you share it with everyone and show it off.' );
 
 			case 'migrated':
-				return translate( 'Next, make sure everything looks the way' + ' you expected.' );
+				return translate( 'Next, make sure everything looks the way you expected.' );
 
 			default:
 				return translate(
