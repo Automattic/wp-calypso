@@ -107,6 +107,15 @@
 	vertical-align: middle;
 }
 
+.migrate__import-link {
+	text-decoration: underline;
+}
+
+.migrate__error {
+	&.notice {
+		margin-bottom: 0;
+	}
+}
 
 .migrate__card-footer {
 	color: var( --color-text-subtle );
@@ -237,9 +246,4 @@
 
 .migrate__buttons-wrapper {
 	margin: 24px 0 8px;
-}
-
-.migrate__site-error {
-	color: var( --color-error );
-	margin-bottom: 1rem;
 }
