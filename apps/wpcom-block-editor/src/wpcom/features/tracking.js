@@ -5,7 +5,7 @@
 import { use, select } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 import { applyFilters } from '@wordpress/hooks';
-import { castArray } from 'lodash';
+import { castArray, noop } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -28,6 +28,57 @@ const getTypeForBlockId = blockId => {
 	const block = select( 'core/block-editor' ).getBlock( blockId );
 	return block ? block.name : null;
 };
+
+let trackerBlocksCounter = 0;
+
+/**
+ * This helper function trackers the given blocks recursively
+ * in order to be able to track also the inner ones.
+ * The event properties will be populated (optional) propertiesHandler function.
+ * It acts as a callback passing two current block and the parent block (if exists).
+ * Take this as an advantage to add other custom properties to the event.
+ * Also, it adds as default `inner_block`,
+ * and `parent_block_client_id` and `parent_block_name` properties
+ * if the block has a parent block.
+ *
+ * @param {Array}    blocks            Block instances object or an array of such objects
+ * @param {string}   eventName         Event name used to track.
+ * @param {Function} propertiesHandler Callback function to populate event properties
+ * @param {object}   parentBlock       parent block. optional.
+ * @returns {void}
+ */
+function trackBlocks( blocks, eventName, propertiesHandler = noop, parentBlock ) {
+	const castBlocks = castArray( blocks );
+	if ( ! castBlocks || ! castBlocks.length ) {
+		return;
+	}
+
+	castBlocks.forEach( block => {
+		setTimeout(
+			( _block, _parent ) => {
+				const eventProperties = {
+					...propertiesHandler( _block, _parent ),
+					inner_block: !! _parent,
+				};
+
+				if ( _parent ) {
+					eventProperties.parent_block_client_id = _parent.clientId;
+					eventProperties.parent_block_name = _parent.name;
+				}
+				tracksRecordEvent( eventName, eventProperties );
+			},
+			trackerBlocksCounter * 50,
+			block,
+			parentBlock
+		);
+
+		trackerBlocksCounter++;
+
+		if ( block.innerBlocks && block.innerBlocks.length ) {
+			trackBlocks( block.innerBlocks, eventName, propertiesHandler, block );
+		}
+	} );
+}
 
 /**
  * A lot of actions accept either string (block id)
@@ -84,35 +135,13 @@ const trackBlockReplacement = ( originalBlockIds, blocks ) => {
  * @param {object|Array} blocks block instance object or an array of such objects
  * @returns {void}
  */
-let blockCounter = 0;
-const trackInnerBlocksReplacement = ( rootClientId = '', blocks ) => {
-	const castBlocks = castArray( blocks );
-	if ( ! castBlocks || ! castBlocks.length ) {
-		return;
-	}
-
-	castBlocks.forEach( block => {
-		setTimeout(
-			( _rootId, _block ) => {
-				tracksRecordEvent( 'wpcom_block_inserted', {
-					block_name: _block.name,
-					rootClientId: _rootId,
-					blocks_replaced: false,
-					// isInsertingPageTemplate filter is set by Starter Page Templates
-					from_template_selector: applyFilters( 'isInsertingPageTemplate', false ),
-				} );
-			},
-			blockCounter * 50,
-			rootClientId,
-			block
-		);
-
-		blockCounter++;
-
-		if ( block.innerBlocks && block.innerBlocks.length ) {
-			trackInnerBlocksReplacement( block.clientId, block.innerBlocks );
-		}
-	} );
+const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
+	trackBlocks( blocks, 'wpcom_block_inserted', block => ( {
+		block_name: block.name,
+		blocks_replaced: false,
+		// isInsertingPageTemplate filter is set by Starter Page Templates
+		from_template_selector: applyFilters( 'isInsertingPageTemplate', false ),
+	} ) );
 };
 
 /**
