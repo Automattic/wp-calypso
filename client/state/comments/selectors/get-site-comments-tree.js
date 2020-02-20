@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, get } from 'lodash';
+import { filter } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,7 +20,7 @@ import 'state/comments/init';
  */
 export const getSiteCommentsTree = createSelector(
 	( state, siteId, status ) => {
-		const siteTree = get( state, [ 'comments', 'trees', siteId ] );
+		const siteTree = state.comments.trees[ siteId ];
 		if ( ! status ) {
 			return siteTree;
 		}
@@ -32,7 +32,5 @@ export const getSiteCommentsTree = createSelector(
 			  )
 			: filter( siteTree, { status } );
 	},
-	( state, siteId ) => [ get( state, [ 'comments', 'trees', siteId ] ) ]
+	( state, siteId ) => [ state.comments.trees[ siteId ] ]
 );
-
-export default getSiteCommentsTree;

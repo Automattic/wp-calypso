@@ -18,3 +18,4 @@ export { getSiteCommentParentDepth } from 'state/comments/selectors/get-site-com
 export { getSiteCommentRepliesTree } from 'state/comments/selectors/get-site-comment-replies-tree';
 export { getSiteComment } from 'state/comments/selectors/get-site-comment';
 export { getSiteComments } from 'state/comments/selectors/get-site-comments';
+export { getSiteCommentsTree } from 'state/comments/selectors/get-site-comments-tree';

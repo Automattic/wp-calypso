@@ -7,7 +7,7 @@ import { filter } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import getSiteCommentsTree from 'state/selectors/get-site-comments-tree';
+import { getSiteCommentsTree } from 'state/comments/selectors';
 
 import 'state/comments/init';
 
