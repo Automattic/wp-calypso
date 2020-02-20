@@ -11,7 +11,7 @@ import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
  * @returns {*} metadata about request
  */
 export default ( state, action ) => {
-	const data = state.dataRequests[ getRequestKey( action ) ] || {};
+	const data = state?.dataRequests?.[ getRequestKey( action ) ] ?? {};
 
 	return {
 		...data,
