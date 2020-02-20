@@ -97,5 +97,13 @@ export default function( translate ) {
 				imageUrl: contrastImg,
 			},
 		},
+		{
+			label: translate( 'G2' ),
+			value: 'g2',
+			thumbnail: {
+				cssClass: 'is-g2',
+				imageUrl: contrastImg,
+			},
+		},
 	] );
 }
