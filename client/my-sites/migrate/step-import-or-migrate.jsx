@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { Button, CompactCard } from '@automattic/components';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -16,7 +17,6 @@ import { get } from 'lodash';
 import { redirectTo } from 'my-sites/migrate/helpers';
 import SitesBlock from 'my-sites/migrate/components/sites-block';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { connect } from 'react-redux';
 import { FEATURE_UPLOAD_THEMES_PLUGINS } from 'lib/plans/constants';
 import { planHasFeature } from 'lib/plans';
 
