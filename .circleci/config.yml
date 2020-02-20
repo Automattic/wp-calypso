@@ -293,7 +293,7 @@ jobs:
       - run:
           name: Extract strings
           working_directory: wp-babel-makepot
-          command: npm start "~/wp-calypso/{client,packages,apps}/**/*.{js,jsx,ts,tsx}" -- --ignore "**/node_modules/**,**/test/**"
+          command: npm start "~/wp-calypso/{client,packages,apps}/**/*.{js,jsx,ts,tsx}" -- --ignore "**/node_modules/**,**/test/**,**/*.d.ts"
       - run:
           working_directory: wp-babel-makepot
           command: npm run concat
