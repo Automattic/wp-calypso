@@ -89,11 +89,10 @@
 }
 
 .migrate__plan-upsell-item {
+	display: flex;
 	flex-basis: 100%;
 	max-width: 180px;
 	white-space: nowrap;
-	display: flex;
-	flex-direction: row;
 
 	.gridicon {
 		margin-right: 8px;
@@ -107,9 +106,7 @@
 	line-height: 18px;
 	overflow: hidden;
 	text-overflow: ellipsis;
-
 	flex-grow: 1;
-	flex-shrink: 1;
 }
 
 .migrate__import-link {
