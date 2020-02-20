@@ -1,28 +1,23 @@
 /**
  * External dependencies
  */
-
 import { flowRight as compose, get } from 'lodash';
 
-export const getAutomatedTransfer = ( state, siteId: number | null ) =>
-	get( state, [ 'automatedTransfer', siteId ], {} );
+/**
+ * Internal dependencies
+ */
+import { getAutomatedTransfer } from 'state/automated-transfer/selectors/get-automated-transfer';
+
+import 'state/automated-transfer/init';
 
 /**
- * Helper to get status state from local transfer state sub-tree
- *
- * @param {object} state automated transfer state sub-tree for a site
- * @returns {string} status of transfer
+ * Re-exports
  */
-export const getStatusData = state => get( state, 'status', null );
-
-/**
- * Returns status info for transfer
- *
- * @param {object} state global app state
- * @param {number} siteId requested site for transfer info
- * @returns {string|null} status if available else `null`
- */
-export const getAutomatedTransferStatus = compose( getStatusData, getAutomatedTransfer );
+export { getAutomatedTransfer } from 'state/automated-transfer/selectors/get-automated-transfer';
+export { getAutomatedTransferStatus } from 'state/automated-transfer/selectors/get-automated-transfer-status';
+export { isAutomatedTransferActive } from 'state/automated-transfer/selectors/is-automated-transfer-active';
+export { isAutomatedTransferFailed } from 'state/automated-transfer/selectors/is-automated-transfer-failed';
+export { default as isFetchingAutomatedTransferStatus } from 'state/automated-transfer/selectors/is-fetching-automated-transfer-status';
 
 export interface EligibilityWarning {
 	description: string;

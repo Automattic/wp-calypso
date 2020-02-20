@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isFetchingAutomatedTransferStatus from 'state/selectors/is-fetching-automated-transfer-status';
+import { isFetchingAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 
 describe( 'isFetchingAutomatedTransferStatus()', () => {
 	test(
