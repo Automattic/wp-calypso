@@ -5,7 +5,7 @@
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -48,20 +48,20 @@ const view = ( { attributes, className, isEditView } ) => {
 			<div className="event-countdown__counter">
 				<p>
 					<strong className="event-countdown__day">{ days }</strong>{ ' ' }
-					{ __( 'days', 'full-site-editing' ) }
+					{ _x( 'days', 'Countdown days remaining', 'full-site-editing' ) }
 				</p>
 				<p>
 					<span>
 						<strong className="event-countdown__hour">{ hours }</strong>{ ' ' }
-						{ __( 'hours', 'full-site-editing' ) }
+						{ _x( 'hours', 'Countdown hours remaining', 'full-site-editing' ) }
 					</span>
 					<span>
 						<strong className="event-countdown__minute">{ mins }</strong>{ ' ' }
-						{ __( 'minutes', 'full-site-editing' ) }
+						{ _x( 'minutes', 'Countdown minutes remaining', 'full-site-editing' ) }
 					</span>
 					<span>
 						<strong className="event-countdown__second">{ secs }</strong>{ ' ' }
-						{ __( 'seconds', 'full-site-editing' ) }
+						{ _x( 'seconds', 'Countdown seconds remaining', 'full-site-editing' ) }
 					</span>
 				</p>
 				<p>{ __( 'until', 'full-site-editing' ) }</p>
