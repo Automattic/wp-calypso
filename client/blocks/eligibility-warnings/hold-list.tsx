@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { identity, map } from 'lodash';
 import React from 'react';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -17,9 +16,6 @@ import Gridicon from 'components/gridicon';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { localizeUrl } from 'lib/i18n-utils';
-import { launchSite } from 'state/sites/launch/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import getRequest from 'state/selectors/get-request';
 
 // Mapping eligibility holds to messages that will be shown to the user
 function getHoldMessages( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
@@ -173,20 +169,11 @@ interface ExternalProps {
 
 type Props = ExternalProps & LocalizeProps;
 
-export const HoldList = ( {
-	context,
-	holds,
-	isPlaceholder,
-	launchSite: launch,
-	siteId,
-	siteIsLaunching,
-	translate,
-}: Props ) => {
+export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) => {
 	const holdMessages = getHoldMessages( context, translate );
 	const blockingMessages = getBlockingMessages( translate );
 
 	const blockingHold = holds.find( h => isHardBlockingHoldType( h, blockingMessages ) );
-	const launchCurrentSite = () => launch( siteId );
 
 	return (
 		<>
@@ -252,18 +239,6 @@ export const HoldList = ( {
 										</Button>
 									</div>
 								) }
-								{ hold === 'SITE_UNLAUNCHED' && (
-									<div className="eligibility-warnings__hold-action">
-										<Button
-											disabled={ siteIsLaunching }
-											busy={ siteIsLaunching }
-											onClick={ launchCurrentSite }
-											compact
-										>
-											{ translate( 'Launch site' ) }
-										</Button>
-									</div>
-								) }
 							</div>
 						)
 					) }
@@ -320,15 +295,4 @@ function isHardBlockingHoldType(
 export const hasBlockingHold = ( holds: string[] ) =>
 	holds.some( hold => isHardBlockingHoldType( hold, getBlockingMessages( identity ) ) );
 
-export default connect(
-	( state: object ) => {
-		const siteId = getSelectedSiteId( state );
-		return {
-			siteId,
-			siteIsLaunching: getRequest( state, launchSite( siteId, null ) )?.isLoading ?? false,
-		};
-	},
-	{
-		launchSite,
-	}
-)( localize( HoldList ) );
+export default localize( HoldList );

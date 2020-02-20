@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { includes, noop } from 'lodash';
+import { union, includes, noop } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
 import page from 'page';
@@ -22,6 +22,8 @@ import { Button, CompactCard } from '@automattic/components';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import HoldList, { hasBlockingHold } from './hold-list';
 import WarningList from './warning-list';
+import { launchSite } from 'state/sites/launch/actions';
+import getRequest from 'state/selectors/get-request';
 
 /**
  * Style dependencies
@@ -46,6 +48,8 @@ export const EligibilityWarnings = ( {
 	recordUpgradeClick,
 	siteId,
 	siteSlug,
+	siteIsLaunching,
+	launchSite: launch,
 	translate,
 }: Props ) => {
 	const warnings = eligibilityData.eligibilityWarnings || [];
@@ -57,10 +61,16 @@ export const EligibilityWarnings = ( {
 		'eligibility-warnings--with-indent': showWarnings,
 	} );
 
+	const launchCurrentSite = () => launch( siteId );
+
 	const logEventAndProceed = () => {
 		if ( siteRequiresUpgrade( listHolds ) ) {
 			recordUpgradeClick( ctaName, feature );
 			page.redirect( `/checkout/${ siteSlug }/business` );
+			return;
+		}
+		if ( siteRequiresLaunch( listHolds ) ) {
+			launchCurrentSite();
 			return;
 		}
 		onProceed();
@@ -101,7 +111,8 @@ export const EligibilityWarnings = ( {
 				<div className="eligibility-warnings__confirm-buttons">
 					<Button
 						primary={ true }
-						disabled={ isProceedButtonDisabled( isEligible, listHolds ) }
+						disabled={ isProceedButtonDisabled( isEligible, listHolds ) || siteIsLaunching }
+						busy={ siteIsLaunching }
 						onClick={ logEventAndProceed }
 					>
 						{ getProceedButtonText( listHolds, translate ) }
@@ -136,9 +147,14 @@ function getSiteIsEligibleMessage(
 
 function getProceedButtonText( holds: string[], translate: LocalizeProps[ 'translate' ] ) {
 	const defaultCopy = translate( 'Proceed' );
-	if ( holds.includes( 'NO_BUSINESS_PLAN' ) ) {
+	if ( siteRequiresUpgrade( holds ) ) {
 		return hasLocalizedText( 'Upgrade and continue' )
 			? translate( 'Upgrade and continue' )
+			: defaultCopy;
+	}
+	if ( siteRequiresLaunch( holds ) ) {
+		return hasLocalizedText( 'Launch your site and continue' )
+			? translate( 'Launch your site and continue' )
 			: defaultCopy;
 	}
 
@@ -146,14 +162,17 @@ function getProceedButtonText( holds: string[], translate: LocalizeProps[ 'trans
 }
 
 function isProceedButtonDisabled( isEligible: boolean, holds: string[] ) {
-	const canHandleHoldsAutomatically =
-		holds.length <= 2 && holds.every( hold => [ 'NO_BUSINESS_PLAN' ].includes( hold ) );
-
+	const resoveableHolds = [ 'NO_BUSINESS_PLAN', 'SITE_UNLAUNCHED' ];
+	const canHandleHoldsAutomatically = union( resoveableHolds, holds ).length === 2;
 	return ! canHandleHoldsAutomatically && ! isEligible;
 }
 
 function siteRequiresUpgrade( holds: string[] ) {
 	return holds.includes( 'NO_BUSINESS_PLAN' );
+}
+
+function siteRequiresLaunch( holds: string[] ) {
+	return holds.includes( 'SITE_UNLAUNCHED' );
 }
 
 EligibilityWarnings.defaultProps = {
@@ -173,6 +192,7 @@ const mapStateToProps = ( state: object ) => {
 		isPlaceholder: ! dataLoaded,
 		siteId,
 		siteSlug,
+		siteIsLaunching: getRequest( state, launchSite( siteId ) )?.isLoading ?? false,
 	};
 };
 
@@ -185,6 +205,7 @@ const mapDispatchToProps = {
 			cta_feature: feature,
 			cta_size: 'regular',
 		} ),
+	launchSite,
 };
 
 function mergeProps(
