@@ -84,14 +84,12 @@ class SecurityKeyForm extends Component {
 						</div>
 					) }
 					{ this.state.showError && (
-						<p>
-							<FormInputValidation
-								isError
-								text={ this.props.translate(
-									'An error occurred, please try again or use an alternate authentication method.'
-								) }
-							/>
-						</p>
+						<FormInputValidation
+							isError
+							text={ this.props.translate(
+								'An error occurred, please try again or use an alternate authentication method.'
+							) }
+						/>
 					) }
 					<FormButton
 						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
