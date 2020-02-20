@@ -11,6 +11,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import CartBody from './cart-body';
+import CartFreeUserPlanUpsell from 'my-sites/checkout/cart/cart-free-user-plan-upsell';
 import CartMessages from './cart-messages';
 import CartSummaryBar from './cart-summary-bar';
 import CartPlanAdTheme from './cart-plan-ad-theme';
@@ -54,29 +55,37 @@ class SecondaryCart extends Component {
 
 		if ( ! cart.hasLoadedFromServer ) {
 			return (
-				<ul className={ cartClasses }>
-					<CartMessages cart={ cart } selectedSite={ selectedSite } />
-					<CartSummaryBar additionalClasses="cart-header" />
-					<CartBodyLoadingPlaceholder />
-				</ul>
+				<div className={ cartClasses }>
+					<ul className="secondary-cart__item">
+						<CartMessages cart={ cart } selectedSite={ selectedSite } />
+						<CartSummaryBar additionalClasses="cart-header" />
+						<CartBodyLoadingPlaceholder />
+					</ul>
+				</div>
 			);
 		}
 
 		return (
-			<ul className={ cartClasses }>
-				<CartMessages cart={ cart } selectedSite={ selectedSite } />
-				<CartSummaryBar additionalClasses="cart-header" />
-				<CartPlanAdTheme selectedSite={ selectedSite } cart={ cart } />
-				<CartBody
-					ref={ this.cartBodyRef }
-					cart={ cart }
-					selectedSite={ selectedSite }
-					showCoupon={ true }
-				/>
-				<CartPlanDiscountAd cart={ cart } selectedSite={ selectedSite } />
+			<div className={ cartClasses }>
+				<ul className="secondary-cart__item">
+					<CartMessages cart={ cart } selectedSite={ selectedSite } />
+					<CartSummaryBar additionalClasses="cart-header" />
+					<CartPlanAdTheme selectedSite={ selectedSite } cart={ cart } />
+					<CartBody
+						ref={ this.cartBodyRef }
+						cart={ cart }
+						selectedSite={ selectedSite }
+						showCoupon={ true }
+					/>
+					<CartPlanDiscountAd cart={ cart } selectedSite={ selectedSite } />
 
-				{ isJetpackNotAtomic && <JetpackLogo full /> }
-			</ul>
+					{ isJetpackNotAtomic && <JetpackLogo full /> }
+				</ul>
+
+				<ul className="secondary-cart__item">
+					<CartFreeUserPlanUpsell />
+				</ul>
+			</div>
 		);
 	}
 }
