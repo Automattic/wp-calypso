@@ -17,7 +17,6 @@ import { hasFeature } from 'state/sites/plans/selectors';
 import { getThemeTaxonomySlugs } from 'state/themes/utils';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import { getTheme } from 'state/themes/selectors/get-theme';
-import { isWpcomTheme } from 'state/themes/selectors/is-wpcom-theme';
 import { isThemePremium } from 'state/themes/selectors/is-theme-premium';
 import { isPremiumThemeAvailable } from 'state/themes/selectors/is-premium-theme-available';
 
@@ -54,22 +53,7 @@ export { isActivatingTheme } from 'state/themes/selectors/is-activating-theme';
 export { hasActivatedTheme } from 'state/themes/selectors/has-activated-theme';
 export { isThemePurchased } from 'state/themes/selectors/is-theme-purchased';
 export { isPremiumThemeAvailable } from 'state/themes/selectors/is-premium-theme-available';
-
-/**
- * Whether a given theme is installed or can be installed on a Jetpack site.
- *
- * @param  {object}  state   Global state tree
- * @param  {string}  themeId Theme ID for which we check availability
- * @param  {number}  siteId  Site ID
- * @returns {boolean}         True if siteId is a Jetpack site on which theme is installed or can be installed.
- */
-export function isThemeAvailableOnJetpackSite( state, themeId, siteId ) {
-	return (
-		!! getTheme( state, siteId, themeId ) || // The theme is already available or...
-		( isWpcomTheme( state, themeId ) && // ...it's a WP.com theme and...
-			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) ) // ...the site supports theme installation from WP.com.
-	);
-}
+export { isThemeAvailableOnJetpackSite } from 'state/themes/selectors/is-theme-available-on-jetpack-site';
 
 export function getThemePreviewThemeOptions( state ) {
 	return get( state.themes, 'themePreviewOptions', {} );
