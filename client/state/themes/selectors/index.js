@@ -8,7 +8,6 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import {
-	getCustomizerUrl,
 	getSiteSlug,
 	isJetpackSite,
 	hasJetpackSiteJetpackThemesExtendedFeatures,
@@ -23,7 +22,6 @@ import { getCanonicalTheme } from 'state/themes/selectors/get-canonical-theme';
 import { isWpcomTheme } from 'state/themes/selectors/is-wpcom-theme';
 import { isWporgTheme } from 'state/themes/selectors/is-wporg-theme';
 import { isThemePremium } from 'state/themes/selectors/is-theme-premium';
-import { isThemeActive } from 'state/themes/selectors/is-theme-active';
 
 import 'state/themes/init';
 
@@ -50,37 +48,7 @@ export { getThemeHelpUrl } from 'state/themes/selectors/get-theme-help-url';
 export { getThemePurchaseUrl } from 'state/themes/selectors/get-theme-purchase-url';
 export { getActiveTheme } from 'state/themes/selectors/get-active-theme';
 export { isThemeActive } from 'state/themes/selectors/is-theme-active';
-
-/**
- * Returns the URL for opening the customizer with the given theme on the given site.
- *
- * @param  {object}   state   Global state tree
- * @param  {string}   themeId Theme ID
- * @param  {?number}  siteId  Site ID to open the customizer for
- * @returns {?string}          Customizer URL
- */
-export function getThemeCustomizeUrl( state, themeId, siteId ) {
-	const customizerUrl = getCustomizerUrl( state, siteId );
-
-	if ( ! ( siteId && themeId ) || isThemeActive( state, themeId, siteId ) ) {
-		return customizerUrl;
-	}
-
-	const separator = includes( customizerUrl, '?' ) ? '&' : '?';
-	let identifier;
-
-	if ( isJetpackSite( state, siteId ) ) {
-		identifier = themeId;
-	} else {
-		const theme = getTheme( state, 'wpcom', themeId );
-		if ( ! theme ) {
-			return customizerUrl;
-		}
-		identifier = theme.stylesheet;
-	}
-
-	return customizerUrl + separator + 'theme=' + identifier;
-}
+export { getThemeCustomizeUrl } from 'state/themes/selectors/get-theme-customize-url';
 
 /**
  * Returns the URL for signing up for a new WordPress.com account with the given theme pre-selected.
