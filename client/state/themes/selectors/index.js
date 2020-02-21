@@ -39,18 +39,7 @@ import 'state/themes/init';
 export { getTheme } from 'state/themes/selectors/get-theme';
 export { getCanonicalTheme } from 'state/themes/selectors/get-canonical-theme';
 export { isInstallingTheme } from 'state/themes/selectors/is-installing-theme';
-
-/**
- * Returns theme request error object
- *
- * @param  {object}  state   Global state tree
- * @param  {string}  themeId Theme ID
- * @param  {number}  siteId  Site ID
- * @returns {object}          error object if present or null otherwise
- */
-export function getThemeRequestErrors( state, themeId, siteId ) {
-	return get( state.themes.themeRequestErrors, [ siteId, themeId ], null );
-}
+export { getThemeRequestErrors } from 'state/themes/selectors/get-theme-request-errors';
 
 /**
  * Returns an array of normalized themes for the themes query, or null if no
