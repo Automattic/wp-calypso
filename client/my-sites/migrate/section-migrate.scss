@@ -249,3 +249,12 @@
 .migrate__buttons-wrapper {
 	margin: 24px 0 8px;
 }
+
+.migrate__error {
+	.button {
+		margin-bottom: 16px;
+	}
+	.migrate__info {
+		width: 67%;
+	}
+}
