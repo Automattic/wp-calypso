@@ -19,7 +19,6 @@ import { getThemeTaxonomySlugs } from 'state/themes/utils';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import { getTheme } from 'state/themes/selectors/get-theme';
 import { isWpcomTheme } from 'state/themes/selectors/is-wpcom-theme';
-import { isWporgTheme } from 'state/themes/selectors/is-wporg-theme';
 import { isThemePremium } from 'state/themes/selectors/is-theme-premium';
 
 import 'state/themes/init';
@@ -50,27 +49,7 @@ export { isThemeActive } from 'state/themes/selectors/is-theme-active';
 export { getThemeCustomizeUrl } from 'state/themes/selectors/get-theme-customize-url';
 export { getThemeSignupUrl } from 'state/themes/selectors/get-theme-signup-url';
 export { getThemeDemoUrl } from 'state/themes/selectors/get-theme-demo-url';
-
-/**
- * Returns the URL for a premium theme's dedicated forum, or for the general themes
- * forum for a free theme.
- *
- * @param  {object}  state   Global state tree
- * @param  {string}  themeId Theme ID
- * @returns {?string}         Theme forum URL
- */
-export function getThemeForumUrl( state, themeId ) {
-	if ( isThemePremium( state, themeId ) ) {
-		return '//premium-themes.forums.wordpress.com/forum/' + themeId;
-	}
-	if ( isWpcomTheme( state, themeId ) ) {
-		return '//en.forums.wordpress.com/forum/themes';
-	}
-	if ( isWporgTheme( state, themeId ) ) {
-		return '//wordpress.org/support/theme/' + themeId;
-	}
-	return null;
-}
+export { getThemeForumUrl } from 'state/themes/selectors/get-theme-forum-url';
 
 /**
  * Returns whether the theme activation action is currently ongoing on the site.
