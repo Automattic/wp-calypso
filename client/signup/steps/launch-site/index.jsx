@@ -12,7 +12,10 @@ import { submitSignupStep } from 'state/signup/progress/actions';
 class LaunchSiteComponent extends Component {
 	componentDidMount() {
 		const { flowName, stepName } = this.props;
-		this.props.submitSignupStep( { stepName } );
+		this.props.submitSignupStep(
+			{ stepName },
+			{ isPreLaunch: this.props.flowName === 'frankenflow' }
+		);
 		this.props.goToNextStep( flowName );
 	}
 

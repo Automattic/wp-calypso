@@ -10,11 +10,18 @@ import config from 'config';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
 import { generateFlows } from 'signup/config/flows-pure';
+import { addQueryArgs } from 'lib/url';
 
 const user = userFactory();
 
 function getCheckoutUrl( dependencies ) {
-	return `/checkout/${ dependencies.siteSlug }?signup=1`;
+	return addQueryArgs(
+		{
+			signup: 1,
+			...( dependencies.isPreLaunch && { preLaunch: 1 } ),
+		},
+		`/checkout/${ dependencies.siteSlug }`
+	);
 }
 
 function dependenciesContainCartItem( dependencies ) {

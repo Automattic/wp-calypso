@@ -568,6 +568,7 @@ export function generateSteps( {
 			stepName: 'launch',
 			apiRequestFunction: launchSiteApi,
 			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'isPreLaunch' ],
 		},
 
 		passwordless: {
