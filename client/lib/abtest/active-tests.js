@@ -127,8 +127,8 @@ export default {
 	customerHomeAll: {
 		datestamp: '20200224',
 		variations: {
-			showCustomerHome: 50,
-			control: 50,
+			showCustomerHome: 10,
+			control: 90,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
