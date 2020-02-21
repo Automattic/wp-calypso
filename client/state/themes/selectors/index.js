@@ -2,16 +2,12 @@
  * External dependencies
  */
 import { includes, intersection, get } from 'lodash';
-import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { isJetpackSite } from 'state/sites/selectors';
 import { getThemeTaxonomySlugs } from 'state/themes/utils';
 import { getTheme } from 'state/themes/selectors/get-theme';
-import { isThemePremium } from 'state/themes/selectors/is-theme-premium';
-import { isPremiumThemeAvailable } from 'state/themes/selectors/is-premium-theme-available';
 
 import 'state/themes/init';
 
@@ -53,32 +49,7 @@ export { getWpcomParentThemeId } from 'state/themes/selectors/get-wpcom-parent-t
 export { isDownloadableFromWpcom } from 'state/themes/selectors/is-downloadable-from-wpcom';
 export { shouldFilterWpcomThemes } from 'state/themes/selectors/should-filter-wpcom-themes';
 export { getJetpackUpgradeUrlIfPremiumTheme } from 'state/themes/selectors/get-jetpack-upgrade-url-if-premium-theme';
-
-/**
- * Returns the price string to display for a given theme on a given site.
- *
- * TODO Add tests!
- *
- * @param  {object}  state   Global state tree
- * @param  {string}  themeId Theme ID
- * @param  {number}  siteId  Site ID
- * @returns {string}          Price
- */
-export function getPremiumThemePrice( state, themeId, siteId ) {
-	if ( ! isThemePremium( state, themeId ) || isPremiumThemeAvailable( state, themeId, siteId ) ) {
-		return '';
-	}
-
-	if ( isJetpackSite( state, siteId ) ) {
-		return i18n.translate( 'Upgrade', {
-			comment:
-				'Used to indicate a premium theme is available to the user once they upgrade their plan',
-		} );
-	}
-
-	const theme = getTheme( state, 'wpcom', themeId );
-	return get( theme, 'price' );
-}
+export { getPremiumThemePrice } from 'state/themes/selectors/get-premium-theme-price';
 
 /**
  * Checks if a theme should be customized primarily with Gutenberg.
