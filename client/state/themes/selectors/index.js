@@ -24,6 +24,7 @@ import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import { getTheme } from 'state/themes/selectors/get-theme';
 import { getCanonicalTheme } from 'state/themes/selectors/get-canonical-theme';
 import { isWpcomTheme } from 'state/themes/selectors/is-wpcom-theme';
+import { isWporgTheme } from 'state/themes/selectors/is-wporg-theme';
 
 import 'state/themes/init';
 
@@ -42,17 +43,7 @@ export { isRequestingThemesForQueryIgnoringPage } from 'state/themes/selectors/i
 export { isRequestingTheme } from 'state/themes/selectors/is-requesting-theme';
 export { isRequestingActiveTheme } from 'state/themes/selectors/is-requesting-active-theme';
 export { isWpcomTheme } from 'state/themes/selectors/is-wpcom-theme';
-
-/**
- * Whether a theme is present in the WordPress.org Theme Directory
- *
- * @param  {object}  state   Global state tree
- * @param  {number}  themeId Theme ID
- * @returns {boolean}         Whether theme is in WP.org theme directory
- */
-export function isWporgTheme( state, themeId ) {
-	return !! getTheme( state, 'wporg', themeId );
-}
+export { isWporgTheme } from 'state/themes/selectors/is-wporg-theme';
 
 /**
  * Returns the URL for a given theme's details sheet.
