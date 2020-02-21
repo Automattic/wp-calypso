@@ -14,11 +14,11 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { siteHasPaidPlan } from 'signup/steps/site-picker/site-picker-submit';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { PLAN_UPSELL_FOR_FREE_USERS } from 'state/current-user/constants';
-import { hasPlan } from 'lib/cart-values/cart-items';
+import { hasDomainRegistration, hasPlan } from 'lib/cart-values/cart-items';
 import SectionHeader from 'components/section-header';
 import { PLAN_PERSONAL } from 'lib/plans/constants';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
-import { getPlan as getPlanById, isRequestingPlans } from 'state/plans/selectors';
+import { isRequestingPlans } from 'state/plans/selectors';
 import { getPlan } from 'lib/plans';
 import { getPlanPrice } from 'state/products-list/selectors';
 
@@ -29,6 +29,7 @@ class CartFreeUserPlanUpsell extends React.Component {
 		hasPaidPlan: PropTypes.bool,
 		hasPlanInCart: PropTypes.bool,
 		isPlansListFetching: PropTypes.bool,
+		isRegisteringDomain: PropTypes.bool,
 		isSitePlansListFetching: PropTypes.bool,
 		personalPlan: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		planPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
@@ -47,16 +48,30 @@ class CartFreeUserPlanUpsell extends React.Component {
 		return 'TODO!';
 	}
 
-	render() {
+	shouldRender() {
 		if ( this.isLoading() ) {
+			return false;
+		}
+
+		const {
+			hasPaidPlan,
+			hasPlanInCart,
+			isRegisteringDomain,
+			selectedSite,
+			showPlanUpsell,
+		} = this.props;
+
+		return (
+			isRegisteringDomain && showPlanUpsell && selectedSite && ! hasPaidPlan && ! hasPlanInCart
+		);
+	}
+
+	render() {
+		if ( ! this.shouldRender() ) {
 			return null;
 		}
 
-		const { hasPaidPlan, hasPlanInCart, selectedSite, showPlanUpsell, translate } = this.props;
-
-		if ( ! showPlanUpsell || ! selectedSite || hasPaidPlan || hasPlanInCart ) {
-			return null;
-		}
+		const { translate } = this.props;
 
 		const header = translate( 'Upgrade and save' );
 
@@ -75,16 +90,16 @@ class CartFreeUserPlanUpsell extends React.Component {
 const mapStateToProps = ( state, { cart } ) => {
 	const selectedSite = getSelectedSite( state );
 	const isPlansListFetching = isRequestingPlans( state );
-	const personalPlanId = getPlan( PLAN_PERSONAL ).getProductId();
-	const personalPlan = ! isPlansListFetching && getPlanById( state, personalPlanId );
+	const personalPlan = getPlan( PLAN_PERSONAL );
 
 	return {
 		hasPaidPlan: siteHasPaidPlan( selectedSite ),
 		hasPlanInCart: hasPlan( cart ),
 		isPlansListFetching: isPlansListFetching,
+		isRegisteringDomain: hasDomainRegistration( cart ),
 		isSitePlansListFetching: isRequestingSitePlans( state ),
 		personalPlan: personalPlan,
-		planPrice: personalPlan && getPlanPrice( state, selectedSite.ID, personalPlan, false ),
+		planPrice: ! isPlansListFetching && getPlanPrice( state, selectedSite.ID, personalPlan, false ),
 		selectedSite: selectedSite,
 		showPlanUpsell: getCurrentUser( state )
 			? currentUserHasFlag( state, PLAN_UPSELL_FOR_FREE_USERS )
