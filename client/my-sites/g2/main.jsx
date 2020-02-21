@@ -17,7 +17,7 @@ import './style.scss';
 
 const TestingG2 = () => {
 	return (
-		<Main>
+		<Main wideLayout>
 			<Card>
 				<h1>Hello!</h1>
 				<h2>I'm a heading.</h2>

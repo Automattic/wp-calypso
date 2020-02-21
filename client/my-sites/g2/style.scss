@@ -23,8 +23,6 @@ h5 {
 	grid-template-columns: [start quarter-1 third-2] 1fr 1fr 1fr [quarter-2] 1fr [third-2] 1fr 1fr [half quarter-3] 1fr 1fr [third-3] 1fr [quarter-4] 1fr 1fr 1fr [end];
 	grid-gap: 1.5em;
 
-	max-width: 800px;
-
 	.card {
 		padding: 1.5em;
 		margin: 0;
