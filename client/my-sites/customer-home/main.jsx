@@ -319,6 +319,7 @@ class Home extends Component {
 			isChecklistComplete,
 			siteIsUnlaunched,
 			isEstablishedSite,
+			displayWelcomeBanner,
 		} = this.props;
 
 		if ( ! canUserUseCustomerHome ) {
@@ -340,7 +341,7 @@ class Home extends Component {
 				<SidebarNavigation />
 				<div className="customer-home__page-heading">{ this.renderCustomerHomeHeader() }</div>
 				{ //Only show upgrade nudges to sites > 2 days old
-				isEstablishedSite && (
+				isEstablishedSite && ! displayWelcomeBanner && (
 					<div className="customer-home__upsells">
 						<StatsBanners
 							siteId={ siteId }
