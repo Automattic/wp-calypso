@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -14,13 +16,14 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { siteHasPaidPlan } from 'signup/steps/site-picker/site-picker-submit';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { PLAN_UPSELL_FOR_FREE_USERS } from 'state/current-user/constants';
-import { hasDomainRegistration, hasPlan } from 'lib/cart-values/cart-items';
+import { getAllCartItems, hasDomainRegistration, hasPlan } from 'lib/cart-values/cart-items';
 import SectionHeader from 'components/section-header';
 import { PLAN_PERSONAL } from 'lib/plans/constants';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { isRequestingPlans } from 'state/plans/selectors';
 import { getPlan } from 'lib/plans';
 import { getPlanPrice } from 'state/products-list/selectors';
+import { isDomainRegistration } from 'lib/products-values';
 
 class CartFreeUserPlanUpsell extends React.Component {
 	static propTypes = {
@@ -45,7 +48,48 @@ class CartFreeUserPlanUpsell extends React.Component {
 	}
 
 	getUpgradeText() {
-		return 'TODO!';
+		const { cart, planPrice, translate } = this.props;
+		const firstDomain = find( getAllCartItems( cart ), isDomainRegistration );
+
+		if ( planPrice > firstDomain.cost ) {
+			const extraToPay = planPrice - firstDomain.cost;
+			return translate(
+				'Pay an {{strong}}extra %(extraToPay)s{{/strong}} for our Personal plan, and get access to all its ' +
+					'features, plus the first year of your domain for free.',
+				{
+					args: {
+						extraToPay: formatCurrency( extraToPay, firstDomain.currency ),
+					},
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
+		} else if ( planPrice < firstDomain.cost ) {
+			const savings = firstDomain.cost - planPrice;
+			return translate(
+				'{{strong}}Save %(savings)s{{/strong}} when you purchase a WordPress.com Personal plan ' +
+					'instead — your domain comes free for a year.',
+				{
+					args: {
+						savings: formatCurrency( savings, firstDomain.currency ),
+					},
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
+		}
+
+		return translate(
+			'Purchase our Personal plan at {{strong}}no extra cost{{/strong}}, and get access to all its ' +
+				'features, plus the first year of your domain for free.',
+			{
+				components: {
+					strong: <strong />,
+				},
+			}
+		);
 	}
 
 	shouldRender() {
