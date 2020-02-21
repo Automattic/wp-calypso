@@ -52,21 +52,7 @@ export { getRecommendedThemes } from 'state/themes/selectors/get-recommended-the
 export { areRecommendedThemesLoading } from 'state/themes/selectors/are-recommended-themes-loading';
 export { themeHasAutoLoadingHomepage } from 'state/themes/selectors/theme-has-auto-loading-homepage';
 export { getPreActivateThemeId } from 'state/themes/selectors/get-pre-activate-theme-id';
-
-/**
- * Returns whether the auto loading homepage modal should be shown
- * before to start to install theme.
- *
- * @param {object} state   Global state tree
- * @param {string} themeId Theme ID used to show the warning message before to activate.
- * @returns {boolean}      True it should show the auto loading modal. Otherwise, False.
- */
-export function shouldShowHomepageWarning( state, themeId ) {
-	return (
-		get( state.themes, [ 'themeHasAutoLoadingHomepageWarning', 'themeId' ] ) === themeId &&
-		get( state.themes, [ 'themeHasAutoLoadingHomepageWarning', 'show' ] )
-	);
-}
+export { shouldShowHomepageWarning } from 'state/themes/selectors/should-show-homepage-warning';
 
 /**
  * Returns whether the auto loading homepage modal has been
