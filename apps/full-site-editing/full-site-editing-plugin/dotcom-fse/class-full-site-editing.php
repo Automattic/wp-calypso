@@ -79,6 +79,8 @@ class Full_Site_Editing {
 		return self::$instance;
 	}
 
+	// Dummy FSE change to test the sync workflows.
+
 	/**
 	 * Inserts template data for the theme we are currently switching to.
 	 *
