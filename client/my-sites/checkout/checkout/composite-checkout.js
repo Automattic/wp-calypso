@@ -762,7 +762,10 @@ function getCheckoutEventHandler( dispatch ) {
 					);
 				}
 				return dispatch(
-					recordTracksEvent( 'calypso_checkout_composite_step_changed', { step: action.payload } )
+					recordTracksEvent( 'calypso_checkout_composite_step_changed', {
+						step: action.payload.stepNumber,
+						stepId: action.payload.stepId,
+					} )
 				);
 
 			case 'STRIPE_TRANSACTION_BEGIN': {
