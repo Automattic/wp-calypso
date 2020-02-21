@@ -49,27 +49,7 @@ export { getThemePurchaseUrl } from 'state/themes/selectors/get-theme-purchase-u
 export { getActiveTheme } from 'state/themes/selectors/get-active-theme';
 export { isThemeActive } from 'state/themes/selectors/is-theme-active';
 export { getThemeCustomizeUrl } from 'state/themes/selectors/get-theme-customize-url';
-
-/**
- * Returns the URL for signing up for a new WordPress.com account with the given theme pre-selected.
- *
- * @param  {object}  state   Global state tree
- * @param  {string}  themeId Theme ID
- * @returns {?string}         Signup URL
- */
-export function getThemeSignupUrl( state, themeId ) {
-	if ( ! themeId ) {
-		return null;
-	}
-
-	let url = '/start/with-theme?ref=calypshowcase&theme=' + themeId;
-
-	if ( isThemePremium( state, themeId ) ) {
-		url += '&premium=true';
-	}
-
-	return url;
-}
+export { getThemeSignupUrl } from 'state/themes/selectors/get-theme-signup-url';
 
 /**
  * Returns the URL for a theme's demo.
