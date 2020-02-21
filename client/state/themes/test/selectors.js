@@ -1386,6 +1386,7 @@ describe( 'themes selectors', () => {
 								items: { twentysixteen },
 							} ),
 						},
+						activeThemes: {},
 					},
 				},
 				'twentysixteen',
@@ -1443,6 +1444,7 @@ describe( 'themes selectors', () => {
 								items: { twentysixteen },
 							} ),
 						},
+						activeThemes: {},
 					},
 				};
 
@@ -1497,6 +1499,7 @@ describe( 'themes selectors', () => {
 								items: { twentysixteen },
 							} ),
 						},
+						activeThemes: {},
 					},
 				};
 
@@ -1778,7 +1781,7 @@ describe( 'themes selectors', () => {
 		test( 'given no site, should return null', () => {
 			const activeTheme = getActiveTheme( {
 				themes: {
-					activeTheme: {},
+					activeThemes: {},
 				},
 			} );
 
