@@ -118,7 +118,6 @@ class MasterbarItemNotifications extends Component {
 		return (
 			<div className="masterbar__notifications" ref={ this.notificationLink }>
 				<MasterbarItem
-					url="/notifications"
 					icon="bell"
 					onClick={ this.toggleNotesFrame }
 					isActive={ this.props.isActive }
