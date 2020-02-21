@@ -41,17 +41,7 @@ export { getCanonicalTheme } from 'state/themes/selectors/get-canonical-theme';
 export { isInstallingTheme } from 'state/themes/selectors/is-installing-theme';
 export { getThemeRequestErrors } from 'state/themes/selectors/get-theme-request-errors';
 export { getThemesForQuery } from 'state/themes/selectors/get-themes-for-query';
-
-/**
- * Returns last query used.
- *
- * @param  {object}  state  Global state tree
- * @param  {number}  siteId Site ID
- * @returns {object}         Last query
- */
-export function getLastThemeQuery( state, siteId ) {
-	return get( state.themes.lastQuery, siteId, {} );
-}
+export { getLastThemeQuery } from 'state/themes/selectors/get-last-theme-query';
 
 /**
  * Returns true if currently requesting themes for the themes query, or false
