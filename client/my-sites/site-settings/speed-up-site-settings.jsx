@@ -102,7 +102,7 @@ class SpeedUpSiteSettings extends Component {
 							) }
 						</FormSettingExplanation>
 						<CompactFormToggle
-							checked={ siteAcceleratorStatus }
+							checked={ siteAcceleratorStatus && ! siteIsAtomicPrivate }
 							disabled={ isRequestingOrSaving || photonModuleUnavailable }
 							onChange={ this.handleCdnChange }
 						>
