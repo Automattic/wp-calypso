@@ -37,7 +37,7 @@ import useConstructor from '../lib/use-constructor';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 
-function useRegisterCheckoutStore() {
+function useRegisterCheckoutStore( steps, activePaymentMethod ) {
 	const onEvent = useEvents();
 	useRegisterPrimaryStore( {
 		reducer( state = { stepNumber: 1, paymentData: {} }, action ) {
@@ -46,7 +46,15 @@ function useRegisterCheckoutStore() {
 					if ( state.stepNumber === action.payload ) {
 						return state;
 					}
-					onEvent( { type: 'STEP_NUMBER_CHANGE_EVENT', payload: action.payload } );
+					onEvent( {
+						type: 'STEP_NUMBER_CHANGED',
+						payload: {
+							stepNumber: action.payload,
+							previousStepNumber: state.stepNumber,
+							stepId: steps[ action.payload ].id,
+							paymentMethodId: activePaymentMethod?.id,
+						},
+					} );
 					return { ...state, stepNumber: action.payload };
 				case 'PAYMENT_DATA_UPDATE':
 					return {
@@ -82,10 +90,10 @@ function useRegisterCheckoutStore() {
 }
 
 export default function Checkout( { steps, className } ) {
-	useRegisterCheckoutStore();
 	const localize = useLocalize();
 	const [ paymentData ] = usePaymentData();
 	const activePaymentMethod = usePaymentMethod();
+	useRegisterCheckoutStore( steps, activePaymentMethod );
 	const { formStatus } = useFormStatus();
 
 	// Re-render if any store changes; that way isComplete can rely on any data
