@@ -30,13 +30,6 @@ import { Button } from '@automattic/components';
 import PlansNavigation from 'my-sites/plans/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { setPrimaryDomain } from 'state/sites/domains/actions';
-import DomainListNotice from './domain-list-notice';
-import {
-	PRIMARY_DOMAIN_CHANGE_SUCCESS,
-	PRIMARY_DOMAIN_CHANGE_FAIL,
-	PRIMARY_DOMAIN_REVERT_FAIL,
-	PRIMARY_DOMAIN_REVERT_SUCCESS,
-} from './constants';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import EmptyContent from 'components/empty-content';
@@ -51,7 +44,7 @@ import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/an
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import { withLocalizedMoment } from 'components/localized-moment';
-
+import { successNotice, errorNotice } from 'state/notices/actions';
 /**
  * Style dependencies
  */
@@ -78,16 +71,7 @@ export class List extends React.Component {
 		settingPrimaryDomain: false,
 		changePrimaryDomainModeEnabled: false,
 		primaryDomainIndex: -1,
-		notice: null,
 	};
-
-	componentDidUpdate( prevProps ) {
-		if (
-			get( this.props, 'selectedSite.ID', null ) !== get( prevProps, 'selectedSite.ID', null )
-		) {
-			this.hideNotice();
-		}
-	}
 
 	isLoading() {
 		return this.props.isRequestingSiteDomains && this.props.domains.length === 0;
@@ -216,10 +200,7 @@ export class List extends React.Component {
 
 				<SectionHeader label={ sectionLabel }>{ this.headerButtons() }</SectionHeader>
 
-				<div className="domain-management-list__items">
-					{ this.notice() }
-					{ this.listItems() }
-				</div>
+				<div className="domain-management-list__items">{ this.listItems() }</div>
 
 				<DomainToPlanNudge />
 			</Main>
@@ -241,71 +222,6 @@ export class List extends React.Component {
 				.isBefore( this.props.moment( domain.registrationDate ) )
 		);
 	}
-
-	hideNotice = () => {
-		this.setState( { notice: null } );
-	};
-
-	notice() {
-		const { notice } = this.state;
-		if ( ! notice ) {
-			return null;
-		}
-
-		return (
-			<DomainListNotice
-				type={ notice.type }
-				errorMessage={ notice.error && notice.error.message }
-				onDismissClick={ this.hideNotice }
-				onUndoClick={ this.undoSetPrimaryDomain }
-				domainName={ notice.domainName }
-			/>
-		);
-	}
-
-	undoSetPrimaryDomain = () => {
-		if ( ! this.state.notice ) {
-			return;
-		}
-
-		const { previousDomainName } = this.state.notice;
-
-		this.setPrimaryDomain( previousDomainName ).then(
-			() => {
-				this.setState( {
-					primaryDomainIndex: -1,
-					settingPrimaryDomain: false,
-					changePrimaryDomainModeEnabled: false,
-					notice: {
-						type: PRIMARY_DOMAIN_REVERT_SUCCESS,
-						domainName: previousDomainName,
-					},
-				} );
-			},
-			error => {
-				this.setState( {
-					notice: {
-						primaryDomainIndex: -1,
-						settingPrimaryDomain: false,
-						changePrimaryDomainModeEnabled: false,
-						type: PRIMARY_DOMAIN_REVERT_FAIL,
-						domainName: previousDomainName,
-						error,
-					},
-				} );
-			}
-		);
-		const previousDomainIndex = findIndex( this.props.domains, { name: previousDomainName } );
-
-		this.setState( {
-			notice: null,
-			changePrimaryDomainModeEnabled: true,
-			primaryDomainIndex: previousDomainIndex,
-			settingPrimaryDomain: true,
-		} );
-
-		this.props.undoChangePrimary( this.props.domains[ previousDomainIndex ] );
-	};
 
 	clickAddDomain = () => {
 		this.props.addDomainClick();
@@ -411,6 +327,8 @@ export class List extends React.Component {
 	}
 
 	handleUpdatePrimaryDomain = ( index, domain ) => {
+		const { translate } = this.props;
+
 		if ( this.state.settingPrimaryDomain ) {
 			return;
 		}
@@ -437,23 +355,25 @@ export class List extends React.Component {
 				this.setState( {
 					settingPrimaryDomain: false,
 					changePrimaryDomainModeEnabled: false,
-					notice: {
-						type: PRIMARY_DOMAIN_CHANGE_SUCCESS,
-						domainName: domain.name,
-						previousDomainName: currentPrimaryName,
-					},
 				} );
+
+				this.props.successNotice(
+					translate(
+						'Primary domain changed: all domains will redirect to {{em}}%(domainName)s{{/em}}.',
+						{ args: { domainName: domain.name }, components: { em: <em /> } }
+					),
+					{ duration: 10000, isPersistent: true }
+				);
 			},
-			error => {
+			() => {
 				this.setState( {
 					settingPrimaryDomain: false,
 					primaryDomainIndex: currentPrimaryIndex,
-					notice: {
-						type: PRIMARY_DOMAIN_CHANGE_FAIL,
-						domainName: domain.name,
-						error,
-					},
 				} );
+				this.props.errorNotice(
+					translate( "Something went wrong and we couldn't change your primary domain." ),
+					{ duration: 10000, isPersistent: true }
+				);
 			}
 		);
 	};
@@ -530,19 +450,6 @@ const changePrimary = domain =>
 		} )
 	);
 
-const undoChangePrimary = domain =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Management',
-			'Undo change Primary Domain in List',
-			'Domain Name (Reverted to)',
-			domain.name
-		),
-		recordTracksEvent( 'calypso_domain_management_list_undo_change_primary_domain_click', {
-			section: domain.type,
-		} )
-	);
-
 export default connect(
 	( state, ownProps ) => {
 		const siteId = get( ownProps, 'selectedSite.ID', null );
@@ -568,7 +475,8 @@ export default connect(
 			enablePrimaryDomainMode: () => dispatch( enablePrimaryDomainMode() ),
 			disablePrimaryDomainMode: () => dispatch( disablePrimaryDomainMode() ),
 			changePrimary: domain => dispatch( changePrimary( domain ) ),
-			undoChangePrimary: domain => dispatch( undoChangePrimary( domain ) ),
+			successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
+			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
 		};
 	}
 )( localize( withLocalizedMoment( List ) ) );
