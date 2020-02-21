@@ -219,6 +219,7 @@ class Home extends Component {
 			siteIsUnlaunched,
 			isAtomic,
 			trackAction,
+			displayWelcomeBanner,
 		} = this.props;
 
 		// Show a thank-you message 30 mins post site creation/purchase
@@ -304,7 +305,7 @@ class Home extends Component {
 						</div>
 					</Card>
 				) }
-				<WelcomeBanner />
+				{ displayWelcomeBanner && <WelcomeBanner /> }
 			</>
 		);
 	}
@@ -646,10 +647,12 @@ const connectHome = connect(
 		const isAtomic = isAtomicSite( state, siteId );
 		const isChecklistComplete = isSiteChecklistComplete( state, siteId );
 		const createdAt = getSiteOption( state, siteId, 'created_at' );
+		const user = getCurrentUser( state );
 
 		return {
 			displayChecklist:
 				isEligibleForDotcomChecklist( state, siteId ) && hasChecklistData && ! isChecklistComplete,
+			displayWelcomeBanner: user.date ? new Date( user.date ) < new Date( '2019-08-06' ) : false,
 			site: getSelectedSite( state ),
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
@@ -669,7 +672,7 @@ const connectHome = connect(
 			staticHomePageId: getSiteFrontPage( state, siteId ),
 			showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
 			hasCustomDomain: getGSuiteSupportedDomains( domains ).length > 0,
-			user: getCurrentUser( state ),
+			user,
 			...themeInfo,
 		};
 	},
