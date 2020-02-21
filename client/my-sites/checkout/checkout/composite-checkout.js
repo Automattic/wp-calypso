@@ -1002,7 +1002,7 @@ function getCheckoutEventHandler( dispatch ) {
 			default:
 				debug( 'unknown checkout event', action );
 				return dispatch(
-					recordTracksEvent( 'calypso_checkout_composite_unknown_error', {
+					recordTracksEvent( 'calypso_checkout_composite_unknown_event', {
 						error_type: String( action.type ),
 					} )
 				);
