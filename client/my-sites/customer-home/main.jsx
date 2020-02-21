@@ -223,7 +223,12 @@ class Home extends Component {
 		} = this.props;
 
 		// Show a thank-you message 30 mins post site creation/purchase
-		if ( isNewlyCreatedSite && ! isRecentlyMigratedSite && displayChecklist ) {
+		if (
+			isNewlyCreatedSite &&
+			! isRecentlyMigratedSite &&
+			displayChecklist &&
+			'launched' !== checklistMode
+		) {
 			if ( siteIsUnlaunched || isAtomic ) {
 				//Only show pre-launch, or for Atomic sites
 				return (
@@ -645,12 +650,13 @@ const connectHome = connect(
 			const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
 			themeInfo = { currentTheme, currentThemeId };
 		}
-
+		const isNewlyCreatedSite = isNewSite( state, siteId );
 		const isAtomic = isAtomicSite( state, siteId );
 		const isChecklistComplete = isSiteChecklistComplete( state, siteId );
 		const createdAt = getSiteOption( state, siteId, 'created_at' );
 		const user = getCurrentUser( state );
-		const displayWelcomeBanner = user.date && new Date( user.date ) < new Date( '2019-08-06' );
+		const displayWelcomeBanner =
+			! isNewlyCreatedSite && user.date && new Date( user.date ) < new Date( '2019-08-06' );
 
 		return {
 			displayChecklist:
@@ -668,7 +674,7 @@ const connectHome = connect(
 			needsEmailVerification: ! isCurrentUserEmailVerified( state ),
 			isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 			siteHasPaidPlan: isSiteOnPaidPlan( state, siteId ),
-			isNewlyCreatedSite: isNewSite( state, siteId ),
+			isNewlyCreatedSite,
 			isEstablishedSite: moment().isAfter( moment( createdAt ).add( 2, 'days' ) ),
 			isRecentlyMigratedSite: isSiteRecentlyMigrated( state, siteId ),
 			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
