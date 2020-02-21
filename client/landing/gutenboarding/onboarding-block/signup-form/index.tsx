@@ -81,6 +81,7 @@ const SignupForm = () => {
 			isDismissible={ false }
 			title={ NO__( 'Sign up to save your changes' ) }
 			onRequestClose={ handleClose }
+			focusOnMount={ false }
 		>
 			<form onSubmit={ handleSignUp }>
 				<TextControl
@@ -94,6 +95,7 @@ const SignupForm = () => {
 						"An example of a person's email, use something appropriate for the locale"
 					) }
 					required
+					autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 				/>
 				{ errorMessage && (
 					<Notice className="signup-form__error-notice" status="error" isDismissible={ false }>
