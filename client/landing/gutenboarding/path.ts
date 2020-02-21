@@ -5,8 +5,11 @@ import { generatePath, useRouteMatch } from 'react-router-dom';
 import { getLanguageSlugs } from '../../lib/i18n-utils';
 import { ValuesType } from 'utility-types';
 
+// The first step (IntentGathering), which is found at the root route (/), is set as
+// `undefined`, as that's what matching our `path` pattern against a route with no explicit
+// step fragment will return.
 export const Step = {
-	IntentGathering: 'about',
+	IntentGathering: undefined,
 	DesignSelection: 'design',
 	PageSelection: 'pages',
 	Signup: 'signup',
@@ -14,19 +17,25 @@ export const Step = {
 } as const;
 
 export const langs: string[] = getLanguageSlugs();
-export const steps = Object.keys( Step ).map( key => Step[ key as keyof typeof Step ] );
+// We remove falsey `steps` with `.filter( Boolean )` as they'd mess up our |-separated route pattern.
+export const steps = Object.values( Step ).filter( Boolean );
 
-export const path = `/:step(${ steps.join( '|' ) })/:lang(${ langs.join( '|' ) })?`;
+// We add back the possibility of an empty step fragment through the `?` question mark at the end of that fragment.
+export const path = `/:step(${ steps.join( '|' ) })?/:lang(${ langs.join( '|' ) })?`;
 
 export type StepType = ValuesType< typeof Step >;
 
 export function usePath() {
 	const langParam = useLangRouteParam();
 
-	return ( step: StepType, lang?: string ) => {
+	return ( step?: StepType, lang?: string ) => {
 		// When lang is null, remove lang.
 		// When lang is empty or undefined, get lang from route param.
 		lang = lang === null ? '' : lang || langParam;
+
+		if ( ! step && ! lang ) {
+			return '/';
+		}
 
 		return generatePath( path, {
 			step,
