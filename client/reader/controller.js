@@ -4,6 +4,7 @@
 import React from 'react';
 import page from 'page';
 import i18n from 'i18n-calypso';
+import { Provider as ReduxProvider } from 'react-redux';
 
 /**
  * Internal Dependencies
@@ -20,11 +21,14 @@ import {
 import FeedError from 'reader/feed-error';
 import StreamComponent from 'reader/following/main';
 import { getPrettyFeedUrl, getPrettySiteUrl } from 'reader/route';
+import { makeLayoutMiddleware } from 'controller/shared';
+import { MomentProvider } from 'components/localized-moment/context';
 import { recordTrack } from 'reader/stats';
 import { preload } from 'sections-helper';
 import { requestFeedDiscovery } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
 import AsyncLoad from 'components/async-load';
+import Layout from 'layout';
 
 const analyticsPageTitle = 'Reader';
 
@@ -42,7 +46,18 @@ function renderFeedError( context, next ) {
 	next();
 }
 
+const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => {
+	return (
+		<ReduxProvider store={ store }>
+			<MomentProvider>
+				<Layout primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+			</MomentProvider>
+		</ReduxProvider>
+	);
+};
+
 const exported = {
+	makeLayout: makeLayoutMiddleware( ReduxWrappedLayout ),
 	initAbTests( context, next ) {
 		// spin up the ab tests that are currently active for the reader
 		activeAbTests.forEach( test => abtest( test ) );
@@ -287,6 +302,7 @@ const exported = {
 };
 
 export const {
+	makeLayout,
 	initAbTests,
 	prettyRedirects,
 	legacyRedirects,
