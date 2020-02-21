@@ -7,10 +7,8 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import { hasFeature } from 'state/sites/plans/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import { getThemeTaxonomySlugs } from 'state/themes/utils';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import { getTheme } from 'state/themes/selectors/get-theme';
 import { isThemePremium } from 'state/themes/selectors/is-theme-premium';
 import { isPremiumThemeAvailable } from 'state/themes/selectors/is-premium-theme-available';
@@ -54,25 +52,7 @@ export { themePreviewVisibility } from 'state/themes/selectors/theme-preview-vis
 export { getWpcomParentThemeId } from 'state/themes/selectors/get-wpcom-parent-theme-id';
 export { isDownloadableFromWpcom } from 'state/themes/selectors/is-downloadable-from-wpcom';
 export { shouldFilterWpcomThemes } from 'state/themes/selectors/should-filter-wpcom-themes';
-
-/**
- * Returns the URL for purchasing a Jetpack Professional plan if the theme is a premium theme and site doesn't have access to them.
- *
- * @param  {object}  state   Global state tree
- * @param  {string}  themeId Theme to check whether it's premium.¡
- * @param  {number}  siteId  Site ID for which to purchase the plan
- * @returns {?string}         Plan purchase URL
- */
-export function getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ) {
-	if (
-		isJetpackSite( state, siteId ) &&
-		isThemePremium( state, themeId ) &&
-		! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
-	) {
-		return `/checkout/${ getSiteSlug( state, siteId ) }/professional`;
-	}
-	return null;
-}
+export { getJetpackUpgradeUrlIfPremiumTheme } from 'state/themes/selectors/get-jetpack-upgrade-url-if-premium-theme';
 
 /**
  * Returns the price string to display for a given theme on a given site.
