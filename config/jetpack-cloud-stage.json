@@ -9,6 +9,7 @@
 	"login_url": "https://wordpress.com/wp-login.php",
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
 	"features": {
-		"jetpack-cloud": true
+		"jetpack-cloud": true,
+		"login/wp-login": true
 	}
 }

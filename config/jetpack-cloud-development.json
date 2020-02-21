@@ -8,9 +8,12 @@
 	"i18n_default_locale_slug": "en",
 	"port": 3000,
 	"rtl": false,
+	"wpcom_signup_id": "39911",
+	"wpcom_signup_key": "cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8",
 	"login_url": "https://wordpress.com/wp-login.php",
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
 	"features": {
-		"jetpack-cloud": true
+		"jetpack-cloud": true,
+		"login/wp-login": true
 	}
 }

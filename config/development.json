@@ -71,7 +71,7 @@
 		"ive/me": false,
 		"ive/use-external-defs": false,
 		"ive/use-external-assignment": false,
-		"jetpack-cloud": true,
+		"jetpack-cloud": false,
 		"jetpack/api-cache": true,
 		"jetpack/blocks/beta": true,
 		"jetpack/concierge-sessions": false,
