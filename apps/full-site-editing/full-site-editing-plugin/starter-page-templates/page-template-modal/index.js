@@ -197,7 +197,7 @@ class PageTemplateModal extends Component {
 		window.top.location = calypsoifyCloseUrl || 'edit.php?post_type=page';
 	};
 
-	getBlocksByTemplateSlugs = getAllParsingTemplates;
+	getAllTemplatesOrderBySlug = getAllParsingTemplates;
 
 	getBlocksByTemplateSlug = getParsingBlocksByTemplateSlug;
 
@@ -232,7 +232,7 @@ class PageTemplateModal extends Component {
 				<TemplateSelectorControl
 					label={ __( 'Layout', 'full-site-editing' ) }
 					templates={ templatesList }
-					blocksByTemplates={ this.getBlocksByTemplateSlugs }
+					blocksByTemplates={ this.getAllTemplatesOrderBySlug() }
 					onTemplateSelect={ this.previewTemplate }
 					useDynamicPreview={ false }
 					siteInformation={ this.props.siteInformation }
