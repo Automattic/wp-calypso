@@ -681,7 +681,39 @@ module.exports = function() {
 		next();
 	} );
 
+	function handleSectionPath( section, sectionPath, entrypoint ) {
+		const pathRegex = pathToRegExp( sectionPath );
+
+		app.get( pathRegex, setupDefaultContext( entrypoint ), function( req, res, next ) {
+			req.context.sectionName = section.name;
+
+			if ( ! entrypoint && config.isEnabled( 'code-splitting' ) ) {
+				req.context.chunkFiles = getFilesForChunk( section.name, req );
+			} else {
+				req.context.chunkFiles = EMPTY_ASSETS;
+			}
+
+			if ( section.secondary && req.context ) {
+				req.context.hasSecondary = true;
+			}
+
+			if ( section.group && req.context ) {
+				req.context.sectionGroup = section.group;
+			}
+
+			next();
+		} );
+
+		if ( ! section.isomorphic ) {
+			app.get( pathRegex, setUpRoute, serverRender );
+		}
+	}
+
 	if ( jetpackCloudEnvs.includes( calypsoEnv ) ) {
+		// Set up login routing.
+		handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );
+		loginRouter( serverRouter( app, setUpRoute, null ) );
+
 		JETPACK_CLOUD_SECTION_DEFINITION.paths.forEach( sectionPath =>
 			handleSectionPath( JETPACK_CLOUD_SECTION_DEFINITION, sectionPath, 'entry-jetpack-cloud' )
 		);
@@ -812,34 +844,6 @@ module.exports = function() {
 			res.send( pageHtml );
 		}
 	);
-
-	function handleSectionPath( section, sectionPath, entrypoint ) {
-		const pathRegex = pathToRegExp( sectionPath );
-
-		app.get( pathRegex, setupDefaultContext( entrypoint ), function( req, res, next ) {
-			req.context.sectionName = section.name;
-
-			if ( ! entrypoint && config.isEnabled( 'code-splitting' ) ) {
-				req.context.chunkFiles = getFilesForChunk( section.name, req );
-			} else {
-				req.context.chunkFiles = EMPTY_ASSETS;
-			}
-
-			if ( section.secondary && req.context ) {
-				req.context.hasSecondary = true;
-			}
-
-			if ( section.group && req.context ) {
-				req.context.sectionGroup = section.group;
-			}
-
-			next();
-		} );
-
-		if ( ! section.isomorphic ) {
-			app.get( pathRegex, setUpRoute, serverRender );
-		}
-	}
 
 	sections
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
