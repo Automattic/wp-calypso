@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { find, isEmpty, reduce, get, keyBy, mapValues, memoize, filter, sortBy } from 'lodash';
+import { find, isEmpty, get, keyBy, mapValues, memoize, filter, sortBy } from 'lodash';
 import classnames from 'classnames';
 import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
@@ -10,7 +10,6 @@ import { compose } from '@wordpress/compose';
 import { Button, Modal, Spinner, IconButton } from '@wordpress/components';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
-import { parse as parseBlocks } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -19,8 +18,8 @@ import './styles/starter-page-templates-editor.scss';
 import TemplateSelectorControl from './components/template-selector-control';
 import TemplateSelectorPreview from './components/template-selector-preview';
 import { trackDismiss, trackSelection, trackView } from './utils/tracking';
-import replacePlaceholders from './utils/replace-placeholders';
 import ensureAssets from './utils/ensure-assets';
+import { getAllParsingTemplates, getParsingBlocksByTemplateSlug } from './utils/template-parser';
 /* eslint-enable import/no-extraneous-dependencies */
 
 const DEFAULT_HOMEPAGE_TEMPLATE = 'maywood';
@@ -36,20 +35,6 @@ class PageTemplateModal extends Component {
 	// Extract titles for faster lookup.
 	getTitlesByTemplateSlugs = memoize( templates =>
 		mapValues( keyBy( templates, 'slug' ), 'title' )
-	);
-
-	// Parse templates blocks and memoize them.
-	getBlocksByTemplateSlugs = memoize( templates =>
-		reduce(
-			templates,
-			( prev, { slug, content } ) => {
-				prev[ slug ] = content
-					? parseBlocks( replacePlaceholders( content, this.props.siteInformation ) )
-					: [];
-				return prev;
-			},
-			{}
-		)
 	);
 
 	static getDerivedStateFromProps( props, state ) {
@@ -212,9 +197,9 @@ class PageTemplateModal extends Component {
 		window.top.location = calypsoifyCloseUrl || 'edit.php?post_type=page';
 	};
 
-	getBlocksByTemplateSlug( slug ) {
-		return get( this.getBlocksByTemplateSlugs( this.props.templates ), [ slug ], [] );
-	}
+	getBlocksByTemplateSlugs = getAllParsingTemplates;
+
+	getBlocksByTemplateSlug = getParsingBlocksByTemplateSlug;
 
 	getTitleByTemplateSlug( slug ) {
 		return get( this.getTitlesByTemplateSlugs( this.props.templates ), [ slug ], '' );
@@ -247,7 +232,7 @@ class PageTemplateModal extends Component {
 				<TemplateSelectorControl
 					label={ __( 'Layout', 'full-site-editing' ) }
 					templates={ templatesList }
-					blocksByTemplates={ this.getBlocksByTemplateSlugs( this.props.templates ) }
+					blocksByTemplates={ this.getBlocksByTemplateSlugs }
 					onTemplateSelect={ this.previewTemplate }
 					useDynamicPreview={ false }
 					siteInformation={ this.props.siteInformation }

@@ -50,7 +50,6 @@ const parseTemplate = ( { content, title, slug } ) => {
 			return debug( "'%s' template is already parsed", slug );
 		}
 
-		debug( "parsing '%s' template", title );
 		const blocks = content ? parseBlocks( replacePlaceholders( content, siteInformation ) ) : [];
 
 		const template = {
@@ -60,6 +59,8 @@ const parseTemplate = ( { content, title, slug } ) => {
 			title,
 			slug,
 		};
+
+		debug( "'%s' template parsed: %o", slug, template );
 
 		// Populate global templates container.
 		templatesBySlug[ slug ] = template;
@@ -81,7 +82,11 @@ window.addEventListener( 'onTemplateParse', () => {
 	if ( parsingTemplateIndex < templates.length ) {
 		parseTemplate( templates[ parsingTemplateIndex ] );
 	} else {
-		debug( 'all templates %s have been parsed: %o', templatesBySlug.length, templatesBySlug );
+		debug(
+			'All (%o) templates have been parsed: %o',
+			Object.keys( templatesBySlug ).length,
+			templatesBySlug
+		);
 	}
 } );
 
@@ -94,14 +99,15 @@ parseTemplate( templates[ parsingTemplateIndex ] );
 // Selectors.
 export const hasTemplates = () => !! templates.length;
 
-export const getBlocksByTemplateSlug = slug => get( templatesBySlug, [ slug, 'blocks' ], [] );
+export const getParsingBlocksByTemplateSlug = slug =>
+	get( templatesBySlug, [ slug, 'blocks' ], [] );
 
-export const getTemplateBySlug = slug => get( templatesBySlug, slug, {} );
+export const getParsingTemplateBySlug = slug => get( templatesBySlug, slug, {} );
 
-export const getTitleByTemplateSlug = slug => get( templatesBySlug, [ slug, 'title' ], [] );
+export const getParsingTitleByTemplateSlug = slug => get( templatesBySlug, [ slug, 'title' ], [] );
 
-export const getFirstTemplateSlug = () => get( templates, [ 0, 'slug' ], null );
+export const getParsingFirstTemplateSlug = () => get( templates, [ 0, 'slug' ], null );
 
-export const getAllTemplateSlugs = () => allTemplates;
+export const getAllParsingTemplates = () => allTemplates;
 
 export default templatesBySlug;
