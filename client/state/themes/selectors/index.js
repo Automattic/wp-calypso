@@ -39,18 +39,7 @@ export { isThemesLastPageForQuery } from 'state/themes/selectors/is-themes-last-
 export { getThemesForQueryIgnoringPage } from 'state/themes/selectors/get-themes-for-query-ignoring-page';
 export { isRequestingThemesForQueryIgnoringPage } from 'state/themes/selectors/is-requesting-themes-for-query-ignoring-page';
 export { isRequestingTheme } from 'state/themes/selectors/is-requesting-theme';
-
-/**
- * Returns true if a request is in progress for the site active theme, or
- * false otherwise.
- *
- * @param  {object}  state  Global state tree
- * @param  {number}  siteId Site ID
- * @returns {boolean}        Whether request is in progress
- */
-export function isRequestingActiveTheme( state, siteId ) {
-	return get( state.themes.activeThemeRequests, siteId, false );
-}
+export { isRequestingActiveTheme } from 'state/themes/selectors/is-requesting-active-theme';
 
 /**
  * Whether a theme is present in the WordPress.com Theme Directory
