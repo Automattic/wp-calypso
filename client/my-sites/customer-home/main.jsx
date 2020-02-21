@@ -289,7 +289,7 @@ class Home extends Component {
 						</div>
 					) }
 				</div>
-				{ ! siteIsUnlaunched && 'launched' === checklistMode && (
+				{ ! siteIsUnlaunched && 'launched' === checklistMode ? (
 					<Card className="customer-home__launch-card" highlight="info">
 						<img
 							src="/calypso/images/illustrations/fireworks.svg"
@@ -304,8 +304,9 @@ class Home extends Component {
 							</p>
 						</div>
 					</Card>
+				) : (
+					displayWelcomeBanner && <WelcomeBanner />
 				) }
-				{ displayWelcomeBanner && <WelcomeBanner /> }
 			</>
 		);
 	}
@@ -649,9 +650,7 @@ const connectHome = connect(
 		const isChecklistComplete = isSiteChecklistComplete( state, siteId );
 		const createdAt = getSiteOption( state, siteId, 'created_at' );
 		const user = getCurrentUser( state );
-		const siteIsUnlaunched = isUnlaunchedSite( state, siteId );
-		const displayWelcomeBanner =
-			siteIsUnlaunched && user.date && new Date( user.date ) < new Date( '2019-08-06' );
+		const displayWelcomeBanner = user.date && new Date( user.date ) < new Date( '2019-08-06' );
 
 		return {
 			displayChecklist:
@@ -672,7 +671,7 @@ const connectHome = connect(
 			isNewlyCreatedSite: isNewSite( state, siteId ),
 			isEstablishedSite: moment().isAfter( moment( createdAt ).add( 2, 'days' ) ),
 			isRecentlyMigratedSite: isSiteRecentlyMigrated( state, siteId ),
-			siteIsUnlaunched,
+			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 			staticHomePageId: getSiteFrontPage( state, siteId ),
 			showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
 			hasCustomDomain: getGSuiteSupportedDomains( domains ).length > 0,
