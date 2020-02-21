@@ -19,7 +19,7 @@ import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import { getTheme } from 'state/themes/selectors/get-theme';
 import { isWpcomTheme } from 'state/themes/selectors/is-wpcom-theme';
 import { isThemePremium } from 'state/themes/selectors/is-theme-premium';
-import { isThemePurchased } from 'state/themes/selectors/is-theme-purchased';
+import { isPremiumThemeAvailable } from 'state/themes/selectors/is-premium-theme-available';
 
 import 'state/themes/init';
 
@@ -53,21 +53,7 @@ export { getThemeForumUrl } from 'state/themes/selectors/get-theme-forum-url';
 export { isActivatingTheme } from 'state/themes/selectors/is-activating-theme';
 export { hasActivatedTheme } from 'state/themes/selectors/has-activated-theme';
 export { isThemePurchased } from 'state/themes/selectors/is-theme-purchased';
-
-/**
- * Whether a WPCOM premium theme can be activated on a site.
- *
- * @param  {object}  state   Global state tree
- * @param  {string}  themeId Theme ID for which we check availability
- * @param  {number}  siteId  Site ID
- * @returns {boolean}         True if the premium theme is available for the given site
- */
-export function isPremiumThemeAvailable( state, themeId, siteId ) {
-	return (
-		isThemePurchased( state, themeId, siteId ) ||
-		hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
-	);
-}
+export { isPremiumThemeAvailable } from 'state/themes/selectors/is-premium-theme-available';
 
 /**
  * Whether a given theme is installed or can be installed on a Jetpack site.
