@@ -27,7 +27,7 @@ export const TemplateSelectorControl = ( {
 	help,
 	instanceId,
 	templates = [],
-	templatesOrderBySlug = {},
+	parsedTemplates = {},
 	useDynamicPreview = false,
 	onTemplateSelect = noop,
 	selectedTemplate,
@@ -36,7 +36,7 @@ export const TemplateSelectorControl = ( {
 		return null;
 	}
 
-	if ( true === useDynamicPreview && isEmpty( templatesOrderBySlug ) ) {
+	if ( true === useDynamicPreview && isEmpty( parsedTemplates ) ) {
 		return null;
 	}
 
