@@ -751,7 +751,16 @@ function getCheckoutEventHandler( dispatch ) {
 			case 'a8c_checkout_add_coupon_button_clicked':
 				return dispatch( recordTracksEvent( 'calypso_checkout_composite_add_coupon_clicked', {} ) );
 
-			case 'STEP_NUMBER_CHANGE_EVENT':
+			case 'STEP_NUMBER_CHANGED':
+				if ( action.payload.stepNumber === 2 && action.payload.previousStepNumber === 1 ) {
+					dispatch(
+						recordTracksEvent( 'calypso_checkout_composite_first_step_complete', {
+							payment_method:
+								translateCheckoutPaymentMethodToWpcomPaymentMethod( action.payload.paymentMethodId )
+									?.name || '',
+						} )
+					);
+				}
 				return dispatch(
 					recordTracksEvent( 'calypso_checkout_composite_step_changed', { step: action.payload } )
 				);
