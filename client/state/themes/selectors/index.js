@@ -23,6 +23,7 @@ import { getThemeTaxonomySlugs, isPremium, oldShowcaseUrl } from 'state/themes/u
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import { getTheme } from 'state/themes/selectors/get-theme';
 import { getCanonicalTheme } from 'state/themes/selectors/get-canonical-theme';
+import { isWpcomTheme } from 'state/themes/selectors/is-wpcom-theme';
 
 import 'state/themes/init';
 
@@ -40,17 +41,7 @@ export { getThemesForQueryIgnoringPage } from 'state/themes/selectors/get-themes
 export { isRequestingThemesForQueryIgnoringPage } from 'state/themes/selectors/is-requesting-themes-for-query-ignoring-page';
 export { isRequestingTheme } from 'state/themes/selectors/is-requesting-theme';
 export { isRequestingActiveTheme } from 'state/themes/selectors/is-requesting-active-theme';
-
-/**
- * Whether a theme is present in the WordPress.com Theme Directory
- *
- * @param  {object}  state   Global state tree
- * @param  {number}  themeId Theme ID
- * @returns {boolean}         Whether theme is in WP.com theme directory
- */
-export function isWpcomTheme( state, themeId ) {
-	return !! getTheme( state, 'wpcom', themeId );
-}
+export { isWpcomTheme } from 'state/themes/selectors/is-wpcom-theme';
 
 /**
  * Whether a theme is present in the WordPress.org Theme Directory
