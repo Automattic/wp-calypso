@@ -1,13 +1,3 @@
-/**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import 'state/themes/init';
-
 export { getTheme } from 'state/themes/selectors/get-theme';
 export { getCanonicalTheme } from 'state/themes/selectors/get-canonical-theme';
 export { isInstallingTheme } from 'state/themes/selectors/is-installing-theme';
@@ -53,19 +43,4 @@ export { areRecommendedThemesLoading } from 'state/themes/selectors/are-recommen
 export { themeHasAutoLoadingHomepage } from 'state/themes/selectors/theme-has-auto-loading-homepage';
 export { getPreActivateThemeId } from 'state/themes/selectors/get-pre-activate-theme-id';
 export { shouldShowHomepageWarning } from 'state/themes/selectors/should-show-homepage-warning';
-
-/**
- * Returns whether the auto loading homepage modal has been
- * accepted by the user, which means that the theme
- * will be activated.
- *
- * @param {object} state   Global state tree
- * @param {string} themeId Theme ID to activate in the site.
- * @returns {boolean}      True if the auto loading homepage dialog has been accepted. Otherwise, False.
- */
-export function hasAutoLoadingHomepageModalAccepted( state, themeId ) {
-	return (
-		get( state.themes, [ 'themeHasAutoLoadingHomepageWarning', 'themeId' ] ) === themeId &&
-		get( state.themes, [ 'themeHasAutoLoadingHomepageWarning', 'accepted' ] )
-	);
-}
+export { hasAutoLoadingHomepageModalAccepted } from 'state/themes/selectors/has-auto-loading-homepage-modal-accepted';
