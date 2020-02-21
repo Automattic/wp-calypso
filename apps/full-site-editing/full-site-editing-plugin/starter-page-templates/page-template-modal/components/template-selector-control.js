@@ -13,13 +13,13 @@ import classnames from 'classnames';
 import { withInstanceId, compose } from '@wordpress/compose';
 import { BaseControl } from '@wordpress/components';
 import { memo } from '@wordpress/element';
+import { getParsingBlocksByTemplateSlug, getTitleByTemplateSlug } from '../utils/template-parser';
 /* eslint-enable import/no-extraneous-dependencies */
 
 /**
  * Internal dependencies
  */
 import TemplateSelectorItem from './template-selector-item';
-import replacePlaceholders from '../utils/replace-placeholders';
 
 export const TemplateSelectorControl = ( {
 	label,
@@ -27,17 +27,16 @@ export const TemplateSelectorControl = ( {
 	help,
 	instanceId,
 	templates = [],
-	blocksByTemplates = {},
+	templatesOrderBySlug = {},
 	useDynamicPreview = false,
 	onTemplateSelect = noop,
-	siteInformation = {},
 	selectedTemplate,
 } ) => {
 	if ( isEmpty( templates ) || ! isArray( templates ) ) {
 		return null;
 	}
 
-	if ( true === useDynamicPreview && isEmpty( blocksByTemplates ) ) {
+	if ( true === useDynamicPreview && isEmpty( templatesOrderBySlug ) ) {
 		return null;
 	}
 
@@ -54,17 +53,17 @@ export const TemplateSelectorControl = ( {
 				className="template-selector-control__options"
 				data-testid="template-selector-control-options"
 			>
-				{ map( templates, ( { slug, title, preview, previewAlt } ) => (
+				{ map( templates, ( { slug, preview, previewAlt } ) => (
 					<li key={ `${ id }-${ slug }` } className="template-selector-control__template">
 						<TemplateSelectorItem
 							id={ id }
 							value={ slug }
-							label={ replacePlaceholders( title, siteInformation ) }
+							label={ getTitleByTemplateSlug( slug ) }
 							help={ help }
 							onSelect={ onTemplateSelect }
 							staticPreviewImg={ preview }
 							staticPreviewImgAlt={ previewAlt }
-							blocks={ blocksByTemplates.hasOwnProperty( slug ) ? blocksByTemplates[ slug ] : [] }
+							blocks={ getParsingBlocksByTemplateSlug( slug ) }
 							useDynamicPreview={ useDynamicPreview }
 							isSelected={ slug === selectedTemplate }
 						/>

@@ -102,11 +102,7 @@ export const hasTemplates = () => !! templates.length;
 export const getParsingBlocksByTemplateSlug = slug =>
 	get( templatesBySlug, [ slug, 'blocks' ], [] );
 
-export const getParsingTemplateBySlug = slug => get( templatesBySlug, slug, {} );
-
-export const getParsingTitleByTemplateSlug = slug => get( templatesBySlug, [ slug, 'title' ], [] );
-
-export const getParsingFirstTemplateSlug = () => get( templates, [ 0, 'slug' ], null );
+export const getTitleByTemplateSlug = slug => get( templatesBySlug, [ slug, 'title' ], [] );
 
 export const getAllParsingTemplates = () => allTemplates;
 
