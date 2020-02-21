@@ -23,7 +23,7 @@ import navigationMiddleware from './navigation/middleware';
 import noticesMiddleware from './notices/middleware';
 import wpcomApiMiddleware from 'state/data-layer/wpcom-api-middleware';
 
-const addReducerEnhancer = nextCreator => ( reducer, initialState ) => {
+export const addReducerEnhancer = nextCreator => ( reducer, initialState ) => {
 	const nextStore = nextCreator( reducer, initialState );
 
 	let currentReducer = reducer;
