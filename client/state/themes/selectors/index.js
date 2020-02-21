@@ -33,6 +33,7 @@ import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import { getTheme } from 'state/themes/selectors/get-theme';
 import { getCanonicalTheme } from 'state/themes/selectors/get-canonical-theme';
+import { getThemesLastPageForQuery } from 'state/themes/selectors/get-themes-last-page-for-query';
 
 import 'state/themes/init';
 
@@ -44,33 +45,7 @@ export { getThemesForQuery } from 'state/themes/selectors/get-themes-for-query';
 export { getLastThemeQuery } from 'state/themes/selectors/get-last-theme-query';
 export { isRequestingThemesForQuery } from 'state/themes/selectors/is-requesting-themes-for-query';
 export { getThemesFoundForQuery } from 'state/themes/selectors/get-themes-found-for-query';
-
-/**
- * Returns the last queryable page of themes for the given query, or null if the
- * total number of queryable themes if unknown.
- *
- * @param  {object}  state  Global state tree
- * @param  {number}  siteId Site ID
- * @param  {object}  query  Theme query object
- * @returns {?number}        Last themes page
- */
-export function getThemesLastPageForQuery( state, siteId, query ) {
-	if ( ! state.themes.queries[ siteId ] ) {
-		return null;
-	}
-
-	const pages = state.themes.queries[ siteId ].getNumberOfPages( query );
-	if ( null === pages ) {
-		return null;
-	}
-
-	// No pagination on Jetpack sites -- everything is returned at once, i.e. on one page
-	if ( isJetpackSite( state, siteId ) ) {
-		return 1;
-	}
-
-	return Math.max( pages, 1 );
-}
+export { getThemesLastPageForQuery } from 'state/themes/selectors/get-themes-last-page-for-query';
 
 /**
  * Returns true if the query has reached the last page of queryable pages, or
