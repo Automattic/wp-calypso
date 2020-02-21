@@ -11,7 +11,7 @@
   	height: 1px;
   	box-sizing: border-box;
   	background: var( --color-border-subtle );
-  	
+
   	@include breakpoint( '>660px' ) {
   		width: calc( 100% + 60px );
   		left: -30px;
@@ -1193,4 +1193,11 @@
     margin: auto;
     max-width: 556px;
   }
+}
+
+body.is-section-checkout .navigation-link.button.back {
+	position: absolute;
+	top: 6px;
+	left: 11px;
+	padding: 0;
 }

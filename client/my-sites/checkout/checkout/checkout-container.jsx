@@ -51,19 +51,6 @@ class CheckoutContainer extends React.Component {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	renderCheckoutHeader() {
-		if ( this.props.isComingFromFrankenflow ) {
-			return (
-				<Button
-					borderless
-					className="navigation-link back"
-					// href={ window.history.back() }
-					onClick={ () => window.history.go( -2 ) }
-				>
-					<Gridicon icon="arrow-left" size={ 18 } />
-					{ this.props.translate( 'Back' ) }
-				</Button>
-			);
-		}
 		return this.state.headerText && <FormattedHeader headerText={ this.state.headerText } />;
 	}
 
@@ -71,8 +58,9 @@ class CheckoutContainer extends React.Component {
 
 	shouldDisplaySiteCreatedNotice() {
 		return (
-			this.props.isComingFromSignup &&
-			isSiteCreatedDateNew( get( this.props, 'selectedSite.options.created_at', '' ) )
+			( this.props.isComingFromSignup &&
+				isSiteCreatedDateNew( get( this.props, 'selectedSite.options.created_at', '' ) ) ) ||
+			this.props.isComingFromFrankenflow
 		);
 	}
 
@@ -96,6 +84,16 @@ class CheckoutContainer extends React.Component {
 
 		return (
 			<>
+				{ this.props.isComingFromFrankenflow && (
+					<Button
+						borderless
+						className="navigation-link back"
+						onClick={ () => window.history.go( -2 ) } // going back to signup flow and skipping '/launch' step
+					>
+						<Gridicon icon="arrow-left" size={ 18 } />
+						{ this.props.translate( 'Back' ) }
+					</Button>
+				) }
 				{ this.renderCheckoutHeader() }
 				{ this.shouldDisplaySiteCreatedNotice() && (
 					<TransactionData>
