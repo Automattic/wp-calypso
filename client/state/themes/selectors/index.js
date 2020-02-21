@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { includes, intersection, some, get } from 'lodash';
+import { includes, intersection, get } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**
@@ -13,13 +13,13 @@ import {
 	hasJetpackSiteJetpackThemesExtendedFeatures,
 	isJetpackSiteMultiSite,
 } from 'state/sites/selectors';
-import { getSitePurchases } from 'state/purchases/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getThemeTaxonomySlugs } from 'state/themes/utils';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import { getTheme } from 'state/themes/selectors/get-theme';
 import { isWpcomTheme } from 'state/themes/selectors/is-wpcom-theme';
 import { isThemePremium } from 'state/themes/selectors/is-theme-premium';
+import { isThemePurchased } from 'state/themes/selectors/is-theme-purchased';
 
 import 'state/themes/init';
 
@@ -52,6 +52,7 @@ export { getThemeDemoUrl } from 'state/themes/selectors/get-theme-demo-url';
 export { getThemeForumUrl } from 'state/themes/selectors/get-theme-forum-url';
 export { isActivatingTheme } from 'state/themes/selectors/is-activating-theme';
 export { hasActivatedTheme } from 'state/themes/selectors/has-activated-theme';
+export { isThemePurchased } from 'state/themes/selectors/is-theme-purchased';
 
 /**
  * Whether a WPCOM premium theme can be activated on a site.
@@ -82,21 +83,6 @@ export function isThemeAvailableOnJetpackSite( state, themeId, siteId ) {
 		( isWpcomTheme( state, themeId ) && // ...it's a WP.com theme and...
 			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) ) // ...the site supports theme installation from WP.com.
 	);
-}
-
-/**
- * Returns whether the theme has been purchased for the given site.
- *
- * Use this selector alongside with the <QuerySitePurchases /> component.
- *
- * @param  {object}  state   Global state tree
- * @param  {string}  themeId Theme ID
- * @param  {number}  siteId  Site ID
- * @returns {boolean}         True if the theme has been purchased for the site
- */
-export function isThemePurchased( state, themeId, siteId ) {
-	const sitePurchases = getSitePurchases( state, siteId );
-	return some( sitePurchases, { productSlug: 'premium_theme', meta: themeId } );
 }
 
 export function getThemePreviewThemeOptions( state ) {
