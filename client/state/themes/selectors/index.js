@@ -29,11 +29,9 @@ import {
 	isPremium,
 	oldShowcaseUrl,
 } from 'state/themes/utils';
-import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import { getTheme } from 'state/themes/selectors/get-theme';
 import { getCanonicalTheme } from 'state/themes/selectors/get-canonical-theme';
-import { getThemesLastPageForQuery } from 'state/themes/selectors/get-themes-last-page-for-query';
 
 import 'state/themes/init';
 
@@ -46,24 +44,7 @@ export { getLastThemeQuery } from 'state/themes/selectors/get-last-theme-query';
 export { isRequestingThemesForQuery } from 'state/themes/selectors/is-requesting-themes-for-query';
 export { getThemesFoundForQuery } from 'state/themes/selectors/get-themes-found-for-query';
 export { getThemesLastPageForQuery } from 'state/themes/selectors/get-themes-last-page-for-query';
-
-/**
- * Returns true if the query has reached the last page of queryable pages, or
- * null if the total number of queryable themes if unknown.
- *
- * @param  {object}   state  Global state tree
- * @param  {number}   siteId Site ID
- * @param  {object}   query  Theme query object
- * @returns {?boolean}        Whether last themes page has been reached
- */
-export function isThemesLastPageForQuery( state, siteId, query = {} ) {
-	const lastPage = getThemesLastPageForQuery( state, siteId, query );
-	if ( null === lastPage ) {
-		return lastPage;
-	}
-
-	return lastPage === ( query.page || DEFAULT_THEME_QUERY.page );
-}
+export { isThemesLastPageForQuery } from 'state/themes/selectors/is-themes-last-page-for-query';
 
 /**
  * Returns an array of normalized themes for the themes query, including all
