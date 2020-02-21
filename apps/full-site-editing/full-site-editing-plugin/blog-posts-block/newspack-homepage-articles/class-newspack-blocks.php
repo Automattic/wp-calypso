@@ -14,7 +14,7 @@ class Newspack_Blocks {
 	 * Add hooks and filters.
 	 */
 	public static function init() {
-		add_action( 'after_setup_theme', array( __CLASS__, 'add_image_sizes' ) );
+		add_action( 'after_setup_theme', [ __CLASS__, 'add_image_sizes' ] );
 	}
 
 	/**
@@ -57,6 +57,12 @@ class Newspack_Blocks {
 				$script_data['version'],
 				true
 			);
+
+			wp_set_script_translations(
+				'newspack-blocks-editor',
+				'newspack-blocks',
+				plugin_dir_path( __FILE__ ) . 'languages'
+			);
 		}
 
 		$editor_style = plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.css', __FILE__ );
@@ -66,12 +72,6 @@ class Newspack_Blocks {
 			$editor_style,
 			array(),
 			NEWSPACK_BLOCKS__VERSION
-		);
-
-		wp_set_script_translations(
-			'newspack-blocks-editor',
-			'newspack-blocks',
-			plugin_dir_path( __FILE__ ) . 'languages'
 		);
 	}
 
@@ -176,7 +176,7 @@ class Newspack_Blocks {
 	 * @return string Class list separated by spaces.
 	 */
 	public static function block_classes( $type, $attributes = array(), $extra = array() ) {
-		$classes = array( "wp-block-newspack-blocks-{$type}" );
+		$classes = [ "wp-block-newspack-blocks-{$type}" ];
 
 		if ( ! empty( $attributes['align'] ) ) {
 			$classes[] = 'align' . $attributes['align'];

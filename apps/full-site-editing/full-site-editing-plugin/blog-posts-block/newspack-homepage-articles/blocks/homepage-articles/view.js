@@ -8,49 +8,39 @@
  */
 import './view.scss';
 
-const btnURLAttr = 'data-load-more-url';
 const fetchRetryCount = 3;
 
 /**
  * Load More Button Handling
- */
-
-document.querySelectorAll( '[data-load-more-btn]' ).forEach( attachLoadMoreHandler );
-
-/**
- * Attaches an event handler to the Load more button.
  *
- * @param {DOMElement} btnEl the button that was clicked
+ * Calls Array.prototype.forEach for IE11 compatibility.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/NodeList
  */
-function attachLoadMoreHandler( btnEl ) {
-	if ( ! btnEl ) {
-		return null;
-	}
-
-	const handler = buildLoadMoreHandler( btnEl );
-
-	btnEl.addEventListener( 'click', handler );
-}
+Array.prototype.forEach.call(
+	document.querySelectorAll( '.wp-block-newspack-blocks-homepage-articles.has-more-button' ),
+	buildLoadMoreHandler
+);
 
 /**
  * Builds a function to handle clicks on the load more button.
  * Creates internal state via closure to ensure all state is
  * isolated to a single Block + button instance.
  *
- * @param {DOMElement} btnEl the button that was clicked
+ * @param {HTMLElement} blockWrapperEl the button that was clicked
  */
-function buildLoadMoreHandler( btnEl ) {
-	// Set elements from scope determined by the clicked "Load more" button.
-	const blockWrapperEl = btnEl.parentElement; // scope root element
-	const postsContainerEl = blockWrapperEl.querySelector( '[data-posts-container]' );
-	const loadingEl = blockWrapperEl.querySelector( '[data-load-more-loading-text]' );
-	const errorEl = blockWrapperEl.querySelector( '[data-load-more-error-text]' );
+function buildLoadMoreHandler( blockWrapperEl ) {
+	const btnEl = blockWrapperEl.querySelector( '[data-next]' );
+	if ( ! btnEl ) {
+		return;
+	}
+	const postsContainerEl = blockWrapperEl.querySelector( '[data-posts]' );
 
 	// Set initial state flags.
 	let isFetching = false;
 	let isEndOfData = false;
 
-	return () => {
+	btnEl.addEventListener( 'click', () => {
 		// Early return if still fetching or no more posts to render.
 		if ( isFetching || isEndOfData ) {
 			return false;
@@ -58,18 +48,18 @@ function buildLoadMoreHandler( btnEl ) {
 
 		isFetching = true;
 
-		// Set elements visibility for fetching state.
-		hideEl( btnEl );
-		hideEl( errorEl );
-		showEl( loadingEl );
+		blockWrapperEl.classList.remove( 'is-error' );
+		blockWrapperEl.classList.add( 'is-loading' );
 
-		const requestURL = new URL( btnEl.getAttribute( btnURLAttr ) );
+		// Set currently rendered posts' IDs as a query param (e.g. exclude_ids=1,2,3)
+		const requestURL =
+			btnEl.getAttribute( 'data-next' ) + '&exclude_ids=' + getRenderedPostsIds().join( ',' );
 
-		// Set currenty rendered posts' IDs as a query param (e.g. exclude_ids=1,2,3)
-		requestURL.searchParams.set( 'exclude_ids', getRenderedPostsIds().join( ',' ) );
+		fetchWithRetry( { url: encodeURI( requestURL ), onSuccess, onError }, fetchRetryCount );
 
-		fetchWithRetry( { url: requestURL.toString(), onSuccess, onError }, fetchRetryCount );
-
+		/**
+		 * @param {Object} data Post data
+		 */
 		function onSuccess( data ) {
 			// Validate received data.
 			if ( ! isPostsDataValid( data ) ) {
@@ -84,37 +74,38 @@ function buildLoadMoreHandler( btnEl ) {
 
 			if ( data.next ) {
 				// Save next URL as button's attribute.
-				btnEl.setAttribute( btnURLAttr, data.next );
-
-				// Unhide button since there are more posts available.
-				showEl( btnEl );
+				btnEl.setAttribute( 'data-next', data.next );
 			}
 
 			if ( ! data.items.length || ! data.next ) {
 				isEndOfData = true;
+				blockWrapperEl.classList.remove( 'has-more-button' );
 			}
 
 			isFetching = false;
 
-			hideEl( loadingEl );
+			blockWrapperEl.classList.remove( 'is-loading' );
 		}
 
+		/**
+		 * Handle fetching error
+		 */
 		function onError() {
 			isFetching = false;
 
-			// Display error message and keep the button visible to enable retrying.
-			hideEl( loadingEl );
-			showEl( errorEl );
-			showEl( btnEl );
+			blockWrapperEl.classList.remove( 'is-loading' );
+			blockWrapperEl.classList.add( 'is-error' );
 		}
-	};
+	} );
 }
 
 /**
  * Returns unique IDs for posts that are currently in the DOM.
  */
 function getRenderedPostsIds() {
-	const postEls = document.querySelectorAll( 'article[data-post-id]' );
+	const postEls = document.querySelectorAll(
+		'.wp-block-newspack-blocks-homepage-articles [data-post-id]'
+	);
 	const postIds = Array.from( postEls ).map( el => el.getAttribute( 'data-post-id' ) );
 
 	return [ ...new Set( postIds ) ]; // Make values unique with Set
@@ -124,7 +115,7 @@ function getRenderedPostsIds() {
  * Wrapper for XMLHttpRequest that performs given number of retries when error
  * occurs.
  *
- * @param {object} options XMLHttpRequest options
+ * @param {Object} options XMLHttpRequest options
  * @param {number} n retry count before throwing
  */
 function fetchWithRetry( options, n ) {
@@ -181,7 +172,7 @@ function fetchWithRetry( options, n ) {
  * 	"required": ["items", "next"]
  * }
  *
- * @param {object} data posts endpoint payload
+ * @param {Object} data posts endpoint payload
  */
 function isPostsDataValid( data ) {
 	let isValid = false;
@@ -207,30 +198,10 @@ function isPostsDataValid( data ) {
 }
 
 /**
- * Hides given DOM element.
- *
- * @param {DOMElement} el
- */
-function hideEl( el ) {
-	el.style.display = 'none';
-	el.setAttribute( 'hidden', '' );
-}
-
-/**
- * Unhides given DOM element.
- *
- * @param {DOMElement} el
- */
-function showEl( el ) {
-	el.style.display = '';
-	el.removeAttribute( 'hidden' );
-}
-
-/**
  * Checks if object has own property.
  *
- * @param {object} obj
- * @param {string} prop
+ * @param {Object} obj Object
+ * @param {string} prop Property to check
  */
 function hasOwnProp( obj, prop ) {
 	return Object.prototype.hasOwnProperty.call( obj, prop );
