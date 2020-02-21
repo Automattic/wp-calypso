@@ -64,7 +64,7 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function() {
 		} );
 
 		step( 'Log In and Select Domains', async function() {
-			return await new LoginFlow( driver ).loginAndSelectDomains();
+			return await new LoginFlow( driver, 'gutenbergSimpleSiteUser' ).loginAndSelectDomains();
 		} );
 
 		step( 'Can see the Domains page and choose add a domain', async function() {
