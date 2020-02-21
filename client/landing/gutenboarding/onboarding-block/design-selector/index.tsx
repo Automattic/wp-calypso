@@ -155,23 +155,21 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 					ullamco laboris nisi ut aliquip ex ea commodo consequat.
 				</div>
 			</animated.div>
-			<Dialog
-				{ ...dialog }
-				modal={ false }
-				hide={ () => {
-					history.push( makePath( Step.DesignSelection ) );
-				} }
-				aria-labelledby="page-layout-selector__title"
-				hideOnClickOutside={ false }
-				hideOnEsc
-			>
-				<animated.div
-					className="design-selector__page-layout-container"
-					style={ pageSelectorSpring }
+
+			<animated.div className="design-selector__page-layout-container" style={ pageSelectorSpring }>
+				<Dialog
+					{ ...dialog }
+					modal={ false }
+					hide={ () => {
+						history.push( makePath( Step.DesignSelection ) );
+					} }
+					aria-labelledby="page-layout-selector__title"
+					hideOnClickOutside={ false }
+					hideOnEsc
 				>
 					<PageLayoutSelector templates={ otherTemplates } />
-				</animated.div>
-			</Dialog>
+				</Dialog>
+			</animated.div>
 		</animated.div>
 	);
 };
