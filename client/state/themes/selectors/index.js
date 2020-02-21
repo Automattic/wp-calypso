@@ -46,21 +46,7 @@ export { getThemeDetailsUrl } from 'state/themes/selectors/get-theme-details-url
 export { isThemePremium } from 'state/themes/selectors/is-theme-premium';
 export { getThemeSupportUrl } from 'state/themes/selectors/get-theme-support-url';
 export { getThemeHelpUrl } from 'state/themes/selectors/get-theme-help-url';
-
-/**
- * Returns the URL for purchasing the given theme for the given site.
- *
- * @param  {object}  state   Global state tree
- * @param  {string}  themeId Theme ID
- * @param  {number}  siteId  Site ID for which to buy the theme
- * @returns {?string}         Theme purchase URL
- */
-export function getThemePurchaseUrl( state, themeId, siteId ) {
-	if ( isJetpackSite( state, siteId ) || ! isThemePremium( state, themeId ) ) {
-		return null;
-	}
-	return `/checkout/${ getSiteSlug( state, siteId ) }/theme:${ themeId }`;
-}
+export { getThemePurchaseUrl } from 'state/themes/selectors/get-theme-purchase-url';
 
 /**
  * Returns the URL for opening the customizer with the given theme on the given site.
