@@ -14,6 +14,8 @@ import {
 	processInbound as inboundProcessor,
 	processOutbound as outboundProcessor,
 } from './pipeline';
+import * as oauthToken from 'lib/oauth-token';
+import config from 'config';
 
 /**
  * Returns the appropriate fetcher in wpcom given the request method
@@ -50,9 +52,11 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 
 	const method = rawMethod.toUpperCase();
 
+	const authToken = config.isEnabled( 'oauth' ) && oauthToken.getToken();
+
 	const request = fetcherMap( method )(
 		...compact( [
-			{ path, formData },
+			{ path, formData, authToken },
 			{ ...query }, // wpcom mutates the query so hand it a copy
 			method === 'POST' && body,
 			( error, data, headers ) => {
@@ -69,7 +73,7 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 					return null;
 				}
 
-				return !! nextError
+				return nextError
 					? failures.forEach( handler =>
 							dispatch( extendAction( handler, failureMeta( nextError, nextHeaders ) ) )
 					  )
