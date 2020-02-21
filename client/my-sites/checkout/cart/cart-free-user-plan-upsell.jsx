@@ -16,7 +16,13 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { siteHasPaidPlan } from 'signup/steps/site-picker/site-picker-submit';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { PLAN_UPSELL_FOR_FREE_USERS } from 'state/current-user/constants';
-import { getAllCartItems, hasDomainRegistration, hasPlan } from 'lib/cart-values/cart-items';
+import {
+	getAllCartItems,
+	hasDomainRegistration,
+	hasPlan,
+	planItem,
+} from 'lib/cart-values/cart-items';
+import { addItem } from 'lib/cart/actions';
 import SectionHeader from 'components/section-header';
 import { PLAN_PERSONAL } from 'lib/plans/constants';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
@@ -41,7 +47,8 @@ class CartFreeUserPlanUpsell extends React.Component {
 	};
 
 	isLoading() {
-		const isLoadingCart = ! this.props.cart.hasLoadedFromServer;
+		const { cart } = this.props;
+		const isLoadingCart = ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates;
 		const isLoadingPlans = this.props.isPlansListFetching;
 		const isLoadingSitePlans = this.props.isSitePlansListFetching;
 		return isLoadingCart || isLoadingPlans || isLoadingSitePlans;
@@ -110,6 +117,11 @@ class CartFreeUserPlanUpsell extends React.Component {
 		);
 	}
 
+	addPlanToCart() {
+		const planCartItem = planItem( PLAN_PERSONAL, {} );
+		addItem( planCartItem );
+	}
+
 	render() {
 		if ( ! this.shouldRender() ) {
 			return null;
@@ -124,7 +136,7 @@ class CartFreeUserPlanUpsell extends React.Component {
 				<SectionHeader className="cart__header" label={ header } />
 				<div style={ { padding: '16px' } }>
 					<p>{ this.getUpgradeText() }</p>
-					<Button>{ 'Add to cart' }</Button>
+					<Button onClick={ () => this.addPlanToCart() }>{ 'Add to cart' }</Button>
 				</div>
 			</div>
 		);
