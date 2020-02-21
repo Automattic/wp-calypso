@@ -23,35 +23,38 @@ class AutocompleteTokenField extends Component {
 		this.state = {
 			suggestions: [],
 			validValues: {},
-			loading: false,
+			loading: this.isFetchingInfoOnLoad(),
 		};
 
-		this.debouncedUpdateSuggestions = debounce( this.updateSuggestions, 500 )
+		this.debouncedUpdateSuggestions = debounce( this.updateSuggestions, 500 );
 	}
+
+	/**
+	 * If the component has tokens passed in props, it should fetch info after it mounts.
+	 */
+	isFetchingInfoOnLoad = () => {
+		const { tokens, fetchSavedInfo } = this.props;
+		return Boolean( tokens.length && fetchSavedInfo );
+	};
 
 	/**
 	 * When the component loads, fetch information about the tokens so we can populate
 	 * the tokens with the correct labels.
 	 */
 	componentDidMount() {
-		const { tokens, fetchSavedInfo } = this.props;
+		if ( this.isFetchingInfoOnLoad() ) {
+			const { tokens, fetchSavedInfo } = this.props;
 
-		if ( ! tokens.length || ! fetchSavedInfo ) {
-			return;
-		}
+			fetchSavedInfo( tokens ).then( results => {
+				const { validValues } = this.state;
 
-		this.setState( { loading: true }, () => {
-			fetchSavedInfo( tokens )
-				.then( results => {
-					const { validValues }  = this.state;
-
-					results.forEach( suggestion => {
-						validValues[ suggestion.value ] = suggestion.label;
-					} );
-
-					this.setState( { validValues, loading: false } );
+				results.forEach( suggestion => {
+					validValues[ suggestion.value ] = suggestion.label;
 				} );
-		} );
+
+				this.setState( { validValues, loading: false } );
+			} );
+		}
 	}
 
 	/**
@@ -65,8 +68,8 @@ class AutocompleteTokenField extends Component {
 	/**
 	 * Get a list of labels for input values.
 	 *
-	 * @param array values Array of values (ids, etc.).
-	 * @returns array Array of valid labels corresponding to the values.
+	 * @param {Array} values Array of values (ids, etc.).
+	 * @return {Array} array of valid labels corresponding to the values.
 	 */
 	getLabelsForValues( values ) {
 		const { validValues } = this.state;
@@ -80,8 +83,8 @@ class AutocompleteTokenField extends Component {
 	/**
 	 * Get a list of values for input labels.
 	 *
-	 * @param array labels Array of labels from the tokens.
-	 * @returns array Array of valid values corresponding to the labels.
+	 * @param {Array} labels Array of labels from the tokens.
+	 * @return {Array} Array of valid values corresponding to the labels.
 	 */
 	getValuesForLabels( labels ) {
 		const { validValues } = this.state;
@@ -92,6 +95,8 @@ class AutocompleteTokenField extends Component {
 
 	/**
 	 * Refresh the autocomplete dropdown.
+	 *
+	 * @param {string} input Input to fetch suggestions for
 	 */
 	updateSuggestions( input ) {
 		const { fetchSuggestions } = this.props;
@@ -101,30 +106,32 @@ class AutocompleteTokenField extends Component {
 
 		this.setState( { loading: true }, () => {
 			const request = fetchSuggestions( input );
-			request.then( suggestions => { 
-				// A fetch Promise doesn't have an abort option. It's mimicked by
-				// comparing the request reference in on the instance, which is
-				// reset or deleted on subsequent requests or unmounting.
-				if ( this.suggestionsRequest !== request ) {
-					return;
-				}
+			request
+				.then( suggestions => {
+					// A fetch Promise doesn't have an abort option. It's mimicked by
+					// comparing the request reference in on the instance, which is
+					// reset or deleted on subsequent requests or unmounting.
+					if ( this.suggestionsRequest !== request ) {
+						return;
+					}
 
-				const { validValues }  = this.state;
-				const currentSuggestions = []
+					const { validValues } = this.state;
+					const currentSuggestions = [];
 
-				suggestions.forEach( suggestion => {
-					currentSuggestions.push( suggestion.label );
-					validValues[ suggestion.value ] = suggestion.label;
-				} );
-
-				this.setState( { suggestions: currentSuggestions, validValues, loading: false } );
-			} ).catch( () => {
-				if ( this.suggestionsRequest === request ) {
-					this.setState( {
-						loading: false,
+					suggestions.forEach( suggestion => {
+						currentSuggestions.push( suggestion.label );
+						validValues[ suggestion.value ] = suggestion.label;
 					} );
-				}
-			} );
+
+					this.setState( { suggestions: currentSuggestions, validValues, loading: false } );
+				} )
+				.catch( () => {
+					if ( this.suggestionsRequest === request ) {
+						this.setState( {
+							loading: false,
+						} );
+					}
+				} );
 
 			this.suggestionsRequest = request;
 		} );
@@ -133,7 +140,7 @@ class AutocompleteTokenField extends Component {
 	/**
 	 * When a token is selected, we need to convert the string label into a recognized value suitable for saving as an attribute.
 	 *
-	 * @param array tokenStrings An array of token label strings.
+	 * @param {Array} tokenStrings An array of token label strings.
 	 */
 	handleOnChange( tokenStrings ) {
 		const { onChange } = this.props;
@@ -143,7 +150,7 @@ class AutocompleteTokenField extends Component {
 	/**
 	 * To populate the tokens, we need to convert the values into a human-readable label.
 	 *
-	 * @returns array An array of token label strings.
+	 * @return {Array} An array of token label strings.
 	 */
 	getTokens() {
 		const { tokens } = this.props;
@@ -154,11 +161,11 @@ class AutocompleteTokenField extends Component {
 	 * Render.
 	 */
 	render() {
-		const { label = '' } = this.props;
+		const { help, label = '' } = this.props;
 		const { suggestions, loading } = this.state;
 
 		return (
-			<div className='autocomplete-tokenfield'>
+			<div className="autocomplete-tokenfield">
 				<FormTokenField
 					value={ this.getTokens() }
 					suggestions={ suggestions }
@@ -167,6 +174,7 @@ class AutocompleteTokenField extends Component {
 					label={ label }
 				/>
 				{ loading && <Spinner /> }
+				{ help && <p className="autocomplete-tokenfield__help">{ help }</p> }
 			</div>
 		);
 	}
