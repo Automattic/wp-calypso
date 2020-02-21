@@ -51,19 +51,7 @@ export { shouldFilterWpcomThemes } from 'state/themes/selectors/should-filter-wp
 export { getJetpackUpgradeUrlIfPremiumTheme } from 'state/themes/selectors/get-jetpack-upgrade-url-if-premium-theme';
 export { getPremiumThemePrice } from 'state/themes/selectors/get-premium-theme-price';
 export { isThemeGutenbergFirst } from 'state/themes/selectors/is-theme-gutenberg-first';
-
-const emptyList = [];
-
-/**
- * Gets the list of recommended themes.
- *
- * @param {object} state Global state tree
- *
- * @returns {Array} the list of recommended themes
- */
-export function getRecommendedThemes( state ) {
-	return state.themes.recommendedThemes.themes || emptyList;
-}
+export { getRecommendedThemes } from 'state/themes/selectors/get-recommended-themes';
 
 /**
  * Returns whether the recommended themes list is loading.
