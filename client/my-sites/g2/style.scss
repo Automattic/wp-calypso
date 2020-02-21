@@ -1,4 +1,5 @@
-h1, h2, h3, h4 {
+h1, h2, h3, h4, h5 {
+	font-weight: bold;
 	line-height: 1.25;
 }
 h1 {
@@ -8,8 +9,40 @@ h2 {
 	font-size: 48px;
 }
 h3 {
-	font-size: 18px;
+	font-size: 22px;
 }
 h4 {
+	font-size: 18px;
+}
+h5 {
 	font-size: 12px;
+}
+
+.layout__primary .main {
+	display: grid;
+	grid-template-columns: [start quarter-1 third-2] 1fr 1fr 1fr [quarter-2] 1fr [third-2] 1fr 1fr [half quarter-3] 1fr 1fr [third-3] 1fr [quarter-4] 1fr 1fr 1fr [end];
+	grid-gap: 1.5em;
+
+	max-width: 800px;
+
+	.card {
+		padding: 1.5em;
+		margin: 0;
+
+		grid-column: start / end;
+	}
+
+	@include breakpoint( '>960px' ) {
+		.col-1 {
+			grid-column: start / third-3;
+		}
+
+		.col-2 {
+			grid-column: third-3 / end;
+		}
+	}
+}
+
+.button + .button {
+	margin-left: 0.75em;
 }
