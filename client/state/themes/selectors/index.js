@@ -55,16 +55,7 @@ export { isThemePurchased } from 'state/themes/selectors/is-theme-purchased';
 export { isPremiumThemeAvailable } from 'state/themes/selectors/is-premium-theme-available';
 export { isThemeAvailableOnJetpackSite } from 'state/themes/selectors/is-theme-available-on-jetpack-site';
 export { getThemePreviewThemeOptions } from 'state/themes/selectors/get-theme-preview-theme-options';
-
-/**
- * Returns the ThemePreview state
- *
- * @param  {object}  state Global state tree
- * @returns {?string}  ThemePreview state
- */
-export function themePreviewVisibility( state ) {
-	return get( state.themes, 'themePreviewVisibility', null );
-}
+export { themePreviewVisibility } from 'state/themes/selectors/theme-preview-visibility';
 
 /**
  * Returns id of the parent theme, if any, for a wpcom theme.
