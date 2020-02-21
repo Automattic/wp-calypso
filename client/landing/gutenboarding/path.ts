@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { generatePath, useRouteMatch } from 'react-router-dom';
-import { getLanguageSlugs } from '../../lib/i18n-utils';
+import { getLanguageRouteParam } from '../../lib/i18n-utils';
 import { ValuesType } from 'utility-types';
 
 // The first step (IntentGathering), which is found at the root route (/), is set as
@@ -16,12 +16,11 @@ export const Step = {
 	CreateSite: 'create-site',
 } as const;
 
-export const langs: string[] = getLanguageSlugs();
 // We remove falsey `steps` with `.filter( Boolean )` as they'd mess up our |-separated route pattern.
 export const steps = Object.values( Step ).filter( Boolean );
 
 // We add back the possibility of an empty step fragment through the `?` question mark at the end of that fragment.
-export const path = `/:step(${ steps.join( '|' ) })?/:lang(${ langs.join( '|' ) })?`;
+export const path = `/:step(${ steps.join( '|' ) })?/${ getLanguageRouteParam() }`;
 
 export type StepType = ValuesType< typeof Step >;
 
@@ -37,10 +36,15 @@ export function usePath() {
 			return '/';
 		}
 
-		return generatePath( path, {
-			step,
-			...( lang && langs.includes( lang ) && { lang } ),
-		} );
+		try {
+			return generatePath( path, {
+				step,
+				lang,
+			} );
+		} catch {
+			// If we get an invalid lang, `generatePath` throws a TypeError.
+			return generatePath( path, { step } );
+		}
 	};
 }
 
