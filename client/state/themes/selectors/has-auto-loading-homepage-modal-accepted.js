@@ -14,7 +14,7 @@ import 'state/themes/init';
  */
 export function hasAutoLoadingHomepageModalAccepted( state, themeId ) {
 	return (
-		state.themes.themeHasAutoLoadingHomepageWarning.themeId === themeId &&
-		state.themes.themeHasAutoLoadingHomepageWarning.accepted
+		state.themes.themeHasAutoLoadingHomepageWarning?.themeId === themeId &&
+		state.themes.themeHasAutoLoadingHomepageWarning?.accepted
 	);
 }

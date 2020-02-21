@@ -13,7 +13,7 @@ import 'state/themes/init';
  */
 export function shouldShowHomepageWarning( state, themeId ) {
 	return (
-		state.themes.themeHasAutoLoadingHomepageWarning.themeId === themeId &&
-		state.themes.themeHasAutoLoadingHomepageWarning.show
+		state.themes.themeHasAutoLoadingHomepageWarning?.themeId === themeId &&
+		state.themes.themeHasAutoLoadingHomepageWarning?.show
 	);
 }

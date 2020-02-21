@@ -14,5 +14,5 @@ import 'state/themes/init';
  * @returns {string} Theme ID,
  */
 export function getPreActivateThemeId( state ) {
-	return state.themes.themeHasAutoLoadingHomepageWarning.themeId;
+	return state.themes.themeHasAutoLoadingHomepageWarning?.themeId;
 }
