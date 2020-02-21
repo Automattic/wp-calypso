@@ -1,5 +1,6 @@
 .free-photo-library-card {
-	.free-photo-library-card__demonstration {
+	.free-photo-library-card__demonstration-image {
+		cursor: pointer;
 		margin-bottom: 12px;
 		width: 100%;
 	}
@@ -7,4 +8,15 @@
 	.button {
 		float: right;
 	}
+}
+
+.free-photo-library-card__dialog-close {
+	margin-top: 12px;
+	text-align: right;
+}
+
+.free-photo-library-card__demonstration-video {
+	max-height: 600px;
+	max-width: 800px;
+	width: 100%;
 }
