@@ -38,23 +38,7 @@ export { getThemesLastPageForQuery } from 'state/themes/selectors/get-themes-las
 export { isThemesLastPageForQuery } from 'state/themes/selectors/is-themes-last-page-for-query';
 export { getThemesForQueryIgnoringPage } from 'state/themes/selectors/get-themes-for-query-ignoring-page';
 export { isRequestingThemesForQueryIgnoringPage } from 'state/themes/selectors/is-requesting-themes-for-query-ignoring-page';
-
-/**
- * Returns true if a request is in progress for the specified site theme, or
- * false otherwise.
- *
- * @param  {object}  state  Global state tree
- * @param  {number}  siteId Site ID
- * @param  {number}  themeId Theme ID
- * @returns {boolean}        Whether request is in progress
- */
-export function isRequestingTheme( state, siteId, themeId ) {
-	if ( ! state.themes.themeRequests[ siteId ] ) {
-		return false;
-	}
-
-	return !! state.themes.themeRequests[ siteId ][ themeId ];
-}
+export { isRequestingTheme } from 'state/themes/selectors/is-requesting-theme';
 
 /**
  * Returns true if a request is in progress for the site active theme, or
