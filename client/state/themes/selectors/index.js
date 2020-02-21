@@ -42,20 +42,7 @@ export { isInstallingTheme } from 'state/themes/selectors/is-installing-theme';
 export { getThemeRequestErrors } from 'state/themes/selectors/get-theme-request-errors';
 export { getThemesForQuery } from 'state/themes/selectors/get-themes-for-query';
 export { getLastThemeQuery } from 'state/themes/selectors/get-last-theme-query';
-
-/**
- * Returns true if currently requesting themes for the themes query, or false
- * otherwise.
- *
- * @param  {object}  state  Global state tree
- * @param  {number}  siteId Site ID
- * @param  {object}  query  Theme query object
- * @returns {boolean}        Whether themes are being requested
- */
-export function isRequestingThemesForQuery( state, siteId, query ) {
-	const serializedQuery = getSerializedThemesQuery( query, siteId );
-	return !! state.themes.queryRequests[ serializedQuery ];
-}
+export { isRequestingThemesForQuery } from 'state/themes/selectors/is-requesting-themes-for-query';
 
 /**
  * Returns the total number of items reported to be found for the given query,
