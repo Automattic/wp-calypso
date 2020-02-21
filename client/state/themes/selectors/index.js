@@ -56,18 +56,7 @@ export { isPremiumThemeAvailable } from 'state/themes/selectors/is-premium-theme
 export { isThemeAvailableOnJetpackSite } from 'state/themes/selectors/is-theme-available-on-jetpack-site';
 export { getThemePreviewThemeOptions } from 'state/themes/selectors/get-theme-preview-theme-options';
 export { themePreviewVisibility } from 'state/themes/selectors/theme-preview-visibility';
-
-/**
- * Returns id of the parent theme, if any, for a wpcom theme.
- *
- * @param {object} state Global state tree
- * @param {string} themeId Child theme ID
- *
- * @returns {?string} Parent theme id if it exists
- */
-export function getWpcomParentThemeId( state, themeId ) {
-	return get( getTheme( state, 'wpcom', themeId ), 'template', null );
-}
+export { getWpcomParentThemeId } from 'state/themes/selectors/get-wpcom-parent-theme-id';
 
 /**
  * Determine whether a zip of a given theme is hosted on
