@@ -23,7 +23,7 @@ import { getCanonicalTheme } from 'state/themes/selectors/get-canonical-theme';
 import { isWpcomTheme } from 'state/themes/selectors/is-wpcom-theme';
 import { isWporgTheme } from 'state/themes/selectors/is-wporg-theme';
 import { isThemePremium } from 'state/themes/selectors/is-theme-premium';
-import { getActiveTheme } from 'state/themes/selectors/get-active-theme';
+import { isThemeActive } from 'state/themes/selectors/is-theme-active';
 
 import 'state/themes/init';
 
@@ -49,6 +49,7 @@ export { getThemeSupportUrl } from 'state/themes/selectors/get-theme-support-url
 export { getThemeHelpUrl } from 'state/themes/selectors/get-theme-help-url';
 export { getThemePurchaseUrl } from 'state/themes/selectors/get-theme-purchase-url';
 export { getActiveTheme } from 'state/themes/selectors/get-active-theme';
+export { isThemeActive } from 'state/themes/selectors/is-theme-active';
 
 /**
  * Returns the URL for opening the customizer with the given theme on the given site.
@@ -134,18 +135,6 @@ export function getThemeForumUrl( state, themeId ) {
 		return '//wordpress.org/support/theme/' + themeId;
 	}
 	return null;
-}
-
-/**
- * Returns whether the theme is currently active on the given site.
- *
- * @param  {object}  state   Global state tree
- * @param  {string}  themeId Theme ID
- * @param  {number}  siteId  Site ID
- * @returns {boolean}         True if the theme is active on the site
- */
-export function isThemeActive( state, themeId, siteId ) {
-	return getActiveTheme( state, siteId ) === themeId;
 }
 
 /**
