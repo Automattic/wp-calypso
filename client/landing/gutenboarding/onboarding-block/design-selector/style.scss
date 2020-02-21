@@ -55,11 +55,14 @@ $page-selector-shadow-size: 12px;
 	top: $design-selector-selection-space;
 	width: calc( 100vw - #{$page-selector-width-offset} );
 	background: $white;
-	box-shadow: $white 0 $page-selector-shadow-size 0 $page-selector-width-offset,
-		$dark-gray-300 0 ( $page-selector-shadow-size - $page-selector-width-offset )
-			$page-selector-shadow-size;
-	padding: 2em 4em;
 	margin-left: calc( ( ( 100vw - #{$page-selector-width-offset} ) - 100% ) / -2 );
+
+	&.is-open {
+		padding: 2em 4em;
+		box-shadow: $white 0 $page-selector-shadow-size 0 $page-selector-width-offset,
+			$dark-gray-300 0 ( $page-selector-shadow-size - $page-selector-width-offset )
+				$page-selector-shadow-size;
+	}
 }
 
 .page-layout-selector {

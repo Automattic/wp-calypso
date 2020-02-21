@@ -157,7 +157,12 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 				</div>
 			</animated.div>
 
-			<animated.div className="design-selector__page-layout-container" style={ pageSelectorSpring }>
+			<animated.div
+				className={ classnames( 'design-selector__page-layout-container', {
+					'is-open': showPageSelector,
+				} ) }
+				style={ pageSelectorSpring }
+			>
 				<Dialog
 					{ ...dialog }
 					modal={ false }
