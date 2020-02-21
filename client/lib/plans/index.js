@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { format as urlFormat, parse as urlParse } from 'url';
 import { difference, get, includes, pick, values } from 'lodash';
 
 /**
@@ -9,6 +8,7 @@ import { difference, get, includes, pick, values } from 'lodash';
  */
 import { isEnabled } from 'config';
 import { isFreeJetpackPlan, isJetpackPlan, isMonthly } from 'lib/products-values';
+import { format as formatUrl, getUrlParts, getUrlFromParts, determineUrlType } from 'lib/url';
 import {
 	PLAN_FREE,
 	PLAN_PERSONAL,
@@ -390,16 +390,22 @@ export function getBillingMonthsForTerm( term ) {
 }
 
 export function plansLink( url, siteSlug, intervalType, forceIntervalType = false ) {
-	const parsedUrl = urlParse( url );
+	const originalUrlType = determineUrlType( url );
+	const resultUrl = getUrlParts( url );
+
 	if ( 'monthly' === intervalType || forceIntervalType ) {
-		parsedUrl.pathname += '/' + intervalType;
+		resultUrl.pathname += '/' + intervalType;
 	}
 
 	if ( siteSlug ) {
-		parsedUrl.pathname += '/' + siteSlug;
+		resultUrl.pathname += '/' + siteSlug;
 	}
 
-	return urlFormat( parsedUrl );
+	// getUrlFromParts only works with absolute URLs, so add some dummy data if
+	// needed, and format down to the type of the original url.
+	resultUrl.protocol = resultUrl.protocol || 'https:';
+	resultUrl.hostname = resultUrl.hostname || '__hostname__.invalid';
+	return formatUrl( getUrlFromParts( resultUrl ), originalUrlType );
 }
 
 export function applyTestFiltersToPlansList( planName, abtest ) {
