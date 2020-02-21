@@ -54,10 +54,7 @@ export { hasActivatedTheme } from 'state/themes/selectors/has-activated-theme';
 export { isThemePurchased } from 'state/themes/selectors/is-theme-purchased';
 export { isPremiumThemeAvailable } from 'state/themes/selectors/is-premium-theme-available';
 export { isThemeAvailableOnJetpackSite } from 'state/themes/selectors/is-theme-available-on-jetpack-site';
-
-export function getThemePreviewThemeOptions( state ) {
-	return get( state.themes, 'themePreviewOptions', {} );
-}
+export { getThemePreviewThemeOptions } from 'state/themes/selectors/get-theme-preview-theme-options';
 
 /**
  * Returns the ThemePreview state
