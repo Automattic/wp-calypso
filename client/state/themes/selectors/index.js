@@ -43,23 +43,7 @@ export { getThemeRequestErrors } from 'state/themes/selectors/get-theme-request-
 export { getThemesForQuery } from 'state/themes/selectors/get-themes-for-query';
 export { getLastThemeQuery } from 'state/themes/selectors/get-last-theme-query';
 export { isRequestingThemesForQuery } from 'state/themes/selectors/is-requesting-themes-for-query';
-
-/**
- * Returns the total number of items reported to be found for the given query,
- * or null if the total number of queryable themes if unknown.
- *
- * @param  {object}  state  Global state tree
- * @param  {number}  siteId Site ID
- * @param  {object}  query  Theme query object
- * @returns {?number}        Total number of found items
- */
-export function getThemesFoundForQuery( state, siteId, query ) {
-	if ( ! state.themes.queries[ siteId ] ) {
-		return null;
-	}
-
-	return state.themes.queries[ siteId ].getFound( query );
-}
+export { getThemesFoundForQuery } from 'state/themes/selectors/get-themes-found-for-query';
 
 /**
  * Returns the last queryable page of themes for the given query, or null if the
