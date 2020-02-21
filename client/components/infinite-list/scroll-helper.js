@@ -130,6 +130,10 @@ class ScrollHelper {
 		const topPlaceholderRect = this.getTopPlaceholderBounds();
 		const bottomPlaceholderRect = this.getBottomPlaceholderBounds();
 
+		if ( ! topPlaceholderRect || ! bottomPlaceholderRect ) {
+			return;
+		}
+
 		this.topPlaceholderHeight = topPlaceholderRect.height;
 		this.containerTop = topPlaceholderRect.top;
 
