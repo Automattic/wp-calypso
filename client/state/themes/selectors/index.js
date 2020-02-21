@@ -51,17 +51,7 @@ export { getThemeSignupUrl } from 'state/themes/selectors/get-theme-signup-url';
 export { getThemeDemoUrl } from 'state/themes/selectors/get-theme-demo-url';
 export { getThemeForumUrl } from 'state/themes/selectors/get-theme-forum-url';
 export { isActivatingTheme } from 'state/themes/selectors/is-activating-theme';
-
-/**
- * Returns whether the theme activation action has finished on the site.
- *
- * @param  {object}  state   Global state tree
- * @param  {number}  siteId  Site ID
- * @returns {boolean}         True if the theme activation has finished
- */
-export function hasActivatedTheme( state, siteId ) {
-	return get( state.themes.completedActivationRequests, siteId, false );
-}
+export { hasActivatedTheme } from 'state/themes/selectors/has-activated-theme';
 
 /**
  * Whether a WPCOM premium theme can be activated on a site.
