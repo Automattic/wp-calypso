@@ -45,28 +45,7 @@ export { isWpcomTheme } from 'state/themes/selectors/is-wpcom-theme';
 export { isWporgTheme } from 'state/themes/selectors/is-wporg-theme';
 export { getThemeDetailsUrl } from 'state/themes/selectors/get-theme-details-url';
 export { isThemePremium } from 'state/themes/selectors/is-theme-premium';
-
-/**
- * Returns the URL for a given theme's setup instructions
- *
- * @param  {object}  state   Global state tree
- * @param  {string}  themeId Theme ID
- * @param  {?number} siteId  Site ID to optionally use as context
- * @returns {?string}         Theme setup instructions URL
- */
-export function getThemeSupportUrl( state, themeId, siteId ) {
-	if ( ! themeId || ! isThemePremium( state, themeId ) ) {
-		return null;
-	}
-
-	const sitePart = siteId ? `/${ getSiteSlug( state, siteId ) }` : '';
-
-	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		return `/theme/${ themeId }/setup${ sitePart }`;
-	}
-
-	return `${ oldShowcaseUrl }${ sitePart }${ themeId }/support`;
-}
+export { getThemeSupportUrl } from 'state/themes/selectors/get-theme-support-url';
 
 /**
  * Returns the URL for a given theme's support page.
