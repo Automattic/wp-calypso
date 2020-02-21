@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { includes, intersection, isEqual, omit, some, get, uniq, flatMap } from 'lodash';
+import { includes, intersection, isEqual, omit, some, get } from 'lodash';
 import i18n from 'i18n-calypso';
 import createSelector from 'lib/create-selector';
 
@@ -24,7 +24,6 @@ import {
 	getDeserializedThemesQueryDetails,
 	getNormalizedThemesQuery,
 	getSerializedThemesQuery,
-	getSerializedThemesQueryWithoutPage,
 	getThemeTaxonomySlugs,
 	isPremium,
 	oldShowcaseUrl,
@@ -45,46 +44,7 @@ export { isRequestingThemesForQuery } from 'state/themes/selectors/is-requesting
 export { getThemesFoundForQuery } from 'state/themes/selectors/get-themes-found-for-query';
 export { getThemesLastPageForQuery } from 'state/themes/selectors/get-themes-last-page-for-query';
 export { isThemesLastPageForQuery } from 'state/themes/selectors/is-themes-last-page-for-query';
-
-/**
- * Returns an array of normalized themes for the themes query, including all
- * known queried pages, or null if the themes for the query are not known.
- *
- * @param  {object}  state  Global state tree
- * @param  {number}  siteId Site ID
- * @param  {object}  query  Theme query object
- * @returns {?Array}         Themes for the theme query
- */
-export const getThemesForQueryIgnoringPage = createSelector(
-	( state, siteId, query ) => {
-		const themes = state.themes.queries[ siteId ];
-		if ( ! themes ) {
-			return null;
-		}
-
-		let themesForQueryIgnoringPage = themes.getItemsIgnoringPage( query );
-		if ( ! themesForQueryIgnoringPage ) {
-			return null;
-		}
-
-		// If query is default, filter out recommended themes.
-		if ( ! ( query.search || query.filter || query.tier ) ) {
-			const recommendedThemes = state.themes.recommendedThemes.themes;
-			const themeIds = flatMap( recommendedThemes, theme => {
-				return theme.id;
-			} );
-			themesForQueryIgnoringPage = themesForQueryIgnoringPage.filter( theme => {
-				return ! themeIds.includes( theme.id );
-			} );
-		}
-
-		// FIXME: The themes endpoint weirdly sometimes returns duplicates (spread
-		// over different pages) which we need to remove manually here for now.
-		return uniq( themesForQueryIgnoringPage );
-	},
-	state => state.themes.queries,
-	( state, siteId, query ) => getSerializedThemesQueryWithoutPage( query, siteId )
-);
+export { getThemesForQueryIgnoringPage } from 'state/themes/selectors/get-themes-for-query-ignoring-page';
 
 /**
  * Returns true if currently requesting themes for the themes query, regardless
