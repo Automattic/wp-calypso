@@ -1,14 +1,11 @@
 /**
  * External dependencies
  */
-import { includes, get } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getThemeTaxonomySlugs } from 'state/themes/utils';
-import { getTheme } from 'state/themes/selectors/get-theme';
-
 import 'state/themes/init';
 
 export { getTheme } from 'state/themes/selectors/get-theme';
@@ -53,20 +50,7 @@ export { getPremiumThemePrice } from 'state/themes/selectors/get-premium-theme-p
 export { isThemeGutenbergFirst } from 'state/themes/selectors/is-theme-gutenberg-first';
 export { getRecommendedThemes } from 'state/themes/selectors/get-recommended-themes';
 export { areRecommendedThemesLoading } from 'state/themes/selectors/are-recommended-themes-loading';
-
-/**
- * Checks if a theme has auto loading homepage feature.
- *
- * @param {object} state   Global state tree
- * @param {string} themeId An identifier for the theme
- * @returns {boolean} True if the theme has auto loading homepage. Otherwise, False.
- */
-export function themeHasAutoLoadingHomepage( state, themeId ) {
-	return includes(
-		getThemeTaxonomySlugs( getTheme( state, 'wpcom', themeId ), 'theme_feature' ),
-		'auto-loading-homepage'
-	);
-}
+export { themeHasAutoLoadingHomepage } from 'state/themes/selectors/theme-has-auto-loading-homepage';
 
 /**
  * Return the theme ID of the theme BEFORE to activated it.
