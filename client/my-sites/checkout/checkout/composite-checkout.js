@@ -721,7 +721,8 @@ function getCheckoutEventHandler( dispatch ) {
 			case 'CART_ERROR':
 				return dispatch(
 					recordTracksEvent( 'calypso_checkout_composite_cart_error', {
-						error_message: action.payload.error,
+						error_type: action.payload.type,
+						error_message: String( action.payload.message ),
 					} )
 				);
 
