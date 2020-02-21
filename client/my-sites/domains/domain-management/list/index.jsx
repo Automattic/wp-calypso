@@ -359,7 +359,7 @@ export class List extends React.Component {
 
 				this.props.successNotice(
 					translate(
-						'Primary Domain changed: All domains will redirect to {{em}}%(domainName)s{{/em}}.',
+						'Primary domain changed: all domains will redirect to {{em}}%(domainName)s{{/em}}.',
 						{ args: { domainName: domain.name }, components: { em: <em /> } }
 					),
 					{ duration: 10000, isPersistent: true }
@@ -371,7 +371,7 @@ export class List extends React.Component {
 					primaryDomainIndex: currentPrimaryIndex,
 				} );
 				this.props.errorNotice(
-					translate( "Something went wrong and we couldn't change your Primary Domain." ),
+					translate( "Something went wrong and we couldn't change your primary domain." ),
 					{ duration: 10000, isPersistent: true }
 				);
 			}
