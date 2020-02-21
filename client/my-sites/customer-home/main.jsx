@@ -648,11 +648,14 @@ const connectHome = connect(
 		const isChecklistComplete = isSiteChecklistComplete( state, siteId );
 		const createdAt = getSiteOption( state, siteId, 'created_at' );
 		const user = getCurrentUser( state );
+		const siteIsUnlaunched = isUnlaunchedSite( state, siteId );
+		const displayWelcomeBanner =
+			siteIsUnlaunched && user.date && new Date( user.date ) < new Date( '2019-08-06' );
 
 		return {
 			displayChecklist:
 				isEligibleForDotcomChecklist( state, siteId ) && hasChecklistData && ! isChecklistComplete,
-			displayWelcomeBanner: user.date ? new Date( user.date ) < new Date( '2019-08-06' ) : false,
+			displayWelcomeBanner,
 			site: getSelectedSite( state ),
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
@@ -668,7 +671,7 @@ const connectHome = connect(
 			isNewlyCreatedSite: isNewSite( state, siteId ),
 			isEstablishedSite: moment().isAfter( moment( createdAt ).add( 2, 'days' ) ),
 			isRecentlyMigratedSite: isSiteRecentlyMigrated( state, siteId ),
-			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
+			siteIsUnlaunched,
 			staticHomePageId: getSiteFrontPage( state, siteId ),
 			showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
 			hasCustomDomain: getGSuiteSupportedDomains( domains ).length > 0,
