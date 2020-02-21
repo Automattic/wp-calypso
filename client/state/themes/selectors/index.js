@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-import { includes, intersection, isEqual, omit, some, get } from 'lodash';
+import { includes, intersection, some, get } from 'lodash';
 import i18n from 'i18n-calypso';
-import createSelector from 'lib/create-selector';
 
 /**
  * Internal dependencies
@@ -20,14 +19,7 @@ import {
 } from 'state/sites/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
-import {
-	getDeserializedThemesQueryDetails,
-	getNormalizedThemesQuery,
-	getSerializedThemesQuery,
-	getThemeTaxonomySlugs,
-	isPremium,
-	oldShowcaseUrl,
-} from 'state/themes/utils';
+import { getThemeTaxonomySlugs, isPremium, oldShowcaseUrl } from 'state/themes/utils';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import { getTheme } from 'state/themes/selectors/get-theme';
 import { getCanonicalTheme } from 'state/themes/selectors/get-canonical-theme';
@@ -45,35 +37,7 @@ export { getThemesFoundForQuery } from 'state/themes/selectors/get-themes-found-
 export { getThemesLastPageForQuery } from 'state/themes/selectors/get-themes-last-page-for-query';
 export { isThemesLastPageForQuery } from 'state/themes/selectors/is-themes-last-page-for-query';
 export { getThemesForQueryIgnoringPage } from 'state/themes/selectors/get-themes-for-query-ignoring-page';
-
-/**
- * Returns true if currently requesting themes for the themes query, regardless
- * of page, or false otherwise.
- *
- * @param  {object}  state  Global state tree
- * @param  {number}  siteId Site ID
- * @param  {object}  query  Theme query object
- * @returns {boolean}        Whether themes are being requested
- */
-export const isRequestingThemesForQueryIgnoringPage = createSelector(
-	( state, siteId, query ) => {
-		const normalizedQueryWithoutPage = omit( getNormalizedThemesQuery( query ), 'page' );
-		return some( state.themes.queryRequests, ( isRequesting, serializedQuery ) => {
-			if ( ! isRequesting ) {
-				return false;
-			}
-
-			const queryDetails = getDeserializedThemesQueryDetails( serializedQuery );
-			if ( queryDetails.siteId !== siteId ) {
-				return false;
-			}
-
-			return isEqual( normalizedQueryWithoutPage, omit( queryDetails.query, 'page' ) );
-		} );
-	},
-	state => state.themes.queryRequests,
-	( state, siteId, query ) => getSerializedThemesQuery( query, siteId )
-);
+export { isRequestingThemesForQueryIgnoringPage } from 'state/themes/selectors/is-requesting-themes-for-query-ignoring-page';
 
 /**
  * Returns true if a request is in progress for the specified site theme, or
