@@ -60,7 +60,7 @@ class CheckoutContainer extends React.Component {
 		return (
 			( this.props.isComingFromSignup &&
 				isSiteCreatedDateNew( get( this.props, 'selectedSite.options.created_at', '' ) ) ) ||
-			this.props.isComingFromFrankenflow
+			this.props.isComingFromGutenboarding
 		);
 	}
 
@@ -77,14 +77,14 @@ class CheckoutContainer extends React.Component {
 			upgradeIntent,
 			shouldShowCart = true,
 			clearTransaction,
-			isComingFromFrankenflow,
+			isComingFromGutenboarding,
 		} = this.props;
 
 		const TransactionData = clearTransaction ? CartData : CheckoutData;
 
 		return (
 			<>
-				{ this.props.isComingFromFrankenflow && (
+				{ this.props.isComingFromGutenboarding && (
 					<Button
 						borderless
 						className="navigation-link back"
@@ -112,7 +112,7 @@ class CheckoutContainer extends React.Component {
 							reduxStore={ reduxStore }
 							redirectTo={ redirectTo }
 							upgradeIntent={ upgradeIntent }
-							hideNudge={ isComingFromFrankenflow }
+							hideNudge={ isComingFromGutenboarding }
 						>
 							{ this.props.children }
 						</Checkout>

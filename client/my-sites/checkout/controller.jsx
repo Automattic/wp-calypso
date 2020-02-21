@@ -65,7 +65,7 @@ export function checkout( context, next ) {
 				selectedFeature={ feature }
 				couponCode={ couponCode }
 				isComingFromSignup={ !! context.query.signup }
-				isComingFromFrankenflow={ !! context.query.preLaunch }
+				isComingFromGutenboarding={ !! context.query.preLaunch }
 				plan={ plan }
 				selectedSite={ selectedSite }
 				reduxStore={ context.store }
