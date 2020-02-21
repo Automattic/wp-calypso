@@ -19,7 +19,7 @@ import TemplateSelectorControl from './components/template-selector-control';
 import TemplateSelectorPreview from './components/template-selector-preview';
 import { trackDismiss, trackSelection, trackView } from './utils/tracking';
 import ensureAssets from './utils/ensure-assets';
-import { getAllParsingTemplates, getParsingBlocksByTemplateSlug } from './utils/template-parser';
+import { getParsingBlocksByTemplateSlug } from './utils/template-parser';
 /* eslint-enable import/no-extraneous-dependencies */
 
 const DEFAULT_HOMEPAGE_TEMPLATE = 'maywood';
@@ -197,8 +197,6 @@ class PageTemplateModal extends Component {
 		window.top.location = calypsoifyCloseUrl || 'edit.php?post_type=page';
 	};
 
-	getParsedTemplaresObject = getAllParsingTemplates;
-
 	getBlocksByTemplateSlug = getParsingBlocksByTemplateSlug;
 
 	getTitleByTemplateSlug( slug ) {
@@ -232,7 +230,6 @@ class PageTemplateModal extends Component {
 				<TemplateSelectorControl
 					label={ __( 'Layout', 'full-site-editing' ) }
 					templates={ templatesList }
-					parsedTemplates={ this.getParsedTemplaresObject() }
 					onTemplateSelect={ this.previewTemplate }
 					useDynamicPreview={ false }
 					siteInformation={ this.props.siteInformation }
