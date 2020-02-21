@@ -206,14 +206,40 @@ class SectionImport extends Component {
 
 			const ImporterComponent = importerComponents[ importer.engine ];
 
+			/**
+			 * Ugly hack™
+			 *
+			 * Sometimes due to the convoluted voodoo sorcery that is the Import Red(fl)ux store
+			 * the `site` object that gets passed in `importItem` contains only `{ ID: <site_id> }`.
+			 *
+			 * This makes the components down the chain fail as they expect to have the full `site` object
+			 * with all it's properties.
+			 *
+			 * That usually happens when you land on an import directly, such as when coming from a
+			 * `/?engine=wordpress` URL. In those cases a slew of artifacts occur - the upload reports issues,
+			 * the author mapping screen doesn't show any authors to choose from, etc.
+			 *
+			 * This hack makes sure to overwrite the the `site` object if it's the same as the current site.
+			 * Ideally this should always be the case, but if there's an instance where the current site is different
+			 * than what's stored in the import data, let it fail as it does now.
+			 */
+			const importItemId = get( importItem, 'site.ID', null );
+			const currentSiteId = get( this.props, 'site.ID', null );
+
+			if ( importItemId && importItemId === currentSiteId ) {
+				importItem.site = this.props.site;
+			}
+
 			return (
 				ImporterComponent && (
 					<ImporterComponent
 						key={ importItem.type + idx }
 						site={ importItem.site }
-						siteTitle={ importItem.siteTitle || this.props.siteTitle }
 						fromSite={ this.props.fromSite }
-						importerStatus={ importItem }
+						importerStatus={ {
+							...importItem,
+							siteTitle: importItem.siteTitle || this.props.siteTitle,
+						} }
 					/>
 				)
 			);
