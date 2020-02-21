@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, includes, intersection, isEqual, omit, some, get, uniq, flatMap } from 'lodash';
+import { includes, intersection, isEqual, omit, some, get, uniq, flatMap } from 'lodash';
 import i18n from 'i18n-calypso';
 import createSelector from 'lib/create-selector';
 
@@ -32,26 +32,12 @@ import {
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import { getTheme } from 'state/themes/selectors/get-theme';
+import { getCanonicalTheme } from 'state/themes/selectors/get-canonical-theme';
 
 import 'state/themes/init';
 
 export { getTheme } from 'state/themes/selectors/get-theme';
-
-/**
- * Returns a theme object from what is considered the 'canonical' source, i.e.
- * the one with richest information. Checks WP.com (which has a long description
- * and multiple screenshots, and a preview URL) first, then WP.org (which has a
- * preview URL), then the given JP site.
- *
- * @param  {object}  state   Global state tree
- * @param  {number}  siteId  Jetpack Site ID to fall back to
- * @param  {string}  themeId Theme ID
- * @returns {?object}         Theme object
- */
-export function getCanonicalTheme( state, siteId, themeId ) {
-	const source = find( [ 'wpcom', 'wporg', siteId ], s => getTheme( state, s, themeId ) );
-	return getTheme( state, source, themeId );
-}
+export { getCanonicalTheme } from 'state/themes/selectors/get-canonical-theme';
 
 /**
  * When wpcom themes are installed on Jetpack sites, the
