@@ -355,7 +355,7 @@ class SectionMigrate extends Component {
 		const { translate } = this.props;
 
 		return (
-			<Card className="migrate__pane">
+			<Card className="migrate__pane migrate__error">
 				<FormattedHeader
 					className="migrate__section-header"
 					headerText={ translate( 'Import failed' ) }
@@ -369,7 +369,7 @@ class SectionMigrate extends Component {
 				<Button primary onClick={ this.resetMigration }>
 					{ translate( 'Try again' ) }
 				</Button>
-				<p>
+				<p className="migrate__info">
 					{ translate(
 						'Or {{supportLink}}contact us{{/supportLink}} so we can' +
 							' figure out exactly' +
