@@ -10,7 +10,6 @@ import { Provider as ReduxProvider } from 'react-redux';
  */
 import JetpackCloudLayout from './layout';
 import JetpackCloudSidebar from './components/sidebar';
-import LogItem from './components/log-item';
 
 export const makeLayout = ( context, next ) => {
 	const { primary, secondary, store } = context;
