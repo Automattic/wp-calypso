@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { Provider as ReduxProvider } from 'react-redux';
+import page from 'page';
 import React from 'react';
 import ReactDom from 'react-dom';
 
@@ -10,12 +11,11 @@ import ReactDom from 'react-dom';
  */
 
 import { getSiteFragment, sectionify } from 'lib/route';
-import { isJetpackSite } from 'state/sites/selectors';
-import { requestSite } from 'state/sites/actions';
+import { requestSites } from 'state/sites/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { setSelectedSiteId } from 'state/ui/actions';
-import getSiteId from 'state/selectors/get-site-id';
-import isAtomicSite from 'state/selectors/is-site-wpcom-atomic';
+import getSites from 'state/selectors/get-sites';
+import hasLoadedSites from 'state/selectors/has-loaded-sites';
 import JetpackCloudLayout from './layout';
 import JetpackCloudSidebar from './components/sidebar';
 import SitesComponent from 'my-sites/sites';
@@ -48,36 +48,42 @@ export async function siteSelection( context, next ) {
 	const siteFragment = context.params.site || getSiteFragment( context.path );
 
 	// 1. request all sites ( or get them if they already are present)
-	// 2. filter to our preferred list ( non-atomic, jetpack )
-	// 3. use that list to determine the correct way to render ( 0, 1, or a list )
-
-	const siteId = await ( async () => {
-		const firstTrySiteId = getSiteId( getState(), siteFragment );
-		if ( firstTrySiteId ) {
-			return firstTrySiteId;
+	const allSites = await ( async () => {
+		if ( hasLoadedSites( getState() ) ) {
+			return getSites( getState() );
 		}
 
-		return dispatch( requestSite( siteFragment ) ).then( () => {
-			const secondTrySiteId = getSiteId( getState(), siteFragment );
-			if ( secondTrySiteId ) {
-				return secondTrySiteId;
-			}
+		return dispatch( requestSites() ).then( () => {
+			return getSites( getState() );
 		} );
 	} )();
 
-	if ( siteId ) {
-		const isJetpack = isJetpackSite( getState(), siteId );
-		const isAtomic = isAtomicSite( getState(), siteId );
+	// 2. filter to our preferred list ( non-atomic, jetpack )
+	const eligibleSites = allSites.filter(
+		site => site.jetpack && ! site.options.is_automated_transfer
+	);
 
-		if ( ! isJetpack || isAtomic ) {
-			// TODO: redirect to not-a-jetpack site page
-			next();
+	// 3. use that list to determine the correct way to render ( 0, 1, or a list )
+	if ( eligibleSites.length === 1 && ! siteFragment ) {
+		const { name } = eligibleSites[ 0 ];
+
+		let redirectPath = `${ context.pathname }/${ name }`;
+		if ( context.querystring ) {
+			redirectPath += `?${ context.querystring }`;
 		}
+		page.redirect( redirectPath );
+	} else if ( eligibleSites.length > 0 ) {
+		// figure out if the siteFragment matched one of the eligible sites
 
-		await dispatch( setSelectedSiteId( siteId ) );
+		for ( const { ID, name } of eligibleSites ) {
+			if ( siteFragment === ID || siteFragment === name ) {
+				dispatch( setSelectedSiteId( ID ) );
+				next();
+			}
+		}
+	} else {
+		// zero sites, or no matching site above
 	}
-
-	next();
 }
 
 /**

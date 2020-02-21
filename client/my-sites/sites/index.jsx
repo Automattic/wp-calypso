@@ -57,7 +57,10 @@ class Sites extends Component {
 		}
 
 		// apply specific filters for jetpack cloud app
-		if ( config.isEnabled( 'jetpack-cloud' ) ) {
+		if (
+			config.isEnabled( 'jetpack-cloud' ) &&
+			( /^\/scan/.test( path ) || /^\/backup/.test( path ) )
+		) {
 			return site.jetpack && ! site.options.is_automated_transfer;
 		}
 
