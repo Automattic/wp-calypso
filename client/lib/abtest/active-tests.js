@@ -134,5 +134,14 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+	planStepCopyUpdates: {
+		datestamp: '20200221',
+		variations: {
+			variantCopyUpdates: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 };
 
