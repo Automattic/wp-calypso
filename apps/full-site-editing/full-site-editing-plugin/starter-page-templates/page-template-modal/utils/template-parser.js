@@ -60,7 +60,7 @@ const parseTemplate = ( { content, title, slug } ) => {
 			slug,
 		};
 
-		debug( "'%s' template parsed: %o", slug, template );
+		debug( '%o template parsed', slug );
 
 		// Populate global templates container.
 		templatesBySlug[ slug ] = template;
