@@ -279,6 +279,10 @@ export class LoginLinks extends React.Component {
 			signupUrl = `${ signupUrl }/wpcc?${ stringify( oauth2Params ) }`;
 		}
 
+		if ( ! signupUrl ) {
+			return null;
+		}
+
 		return (
 			<a
 				href={ signupUrl }

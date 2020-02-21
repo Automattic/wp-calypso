@@ -13,6 +13,7 @@ import { startCase } from 'lodash';
  * Internal dependencies
  */
 import AutomatticLogo from 'components/automattic-logo';
+import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import getCurrentRoute from 'state/selectors/get-current-route';
@@ -110,7 +111,7 @@ export class Login extends React.Component {
 		const { currentRoute, translate } = this.props;
 		const isOauthLogin = !! this.props.oauth2Client;
 
-		if ( currentRoute === '/log-in/jetpack' ) {
+		if ( currentRoute === '/log-in/jetpack' || config.isEnabled( 'jetpack-cloud' ) ) {
 			return null;
 		}
 
@@ -227,6 +228,8 @@ export class Login extends React.Component {
 			twoFactorAuthType,
 		} = this.props;
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
+		const showTranslatorInvite = isLoginView && ! config.isEnabled( 'jetpack-cloud' );
+
 		return (
 			<div>
 				<Main className="wp-login__main">
@@ -248,7 +251,7 @@ export class Login extends React.Component {
 								twoFactorAuthType={ twoFactorAuthType }
 							/>
 						) }
-						{ isLoginView && <TranslatorInvite path={ path } /> }
+						{ showTranslatorInvite && <TranslatorInvite path={ path } /> }
 					</div>
 				</Main>
 
