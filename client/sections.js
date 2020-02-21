@@ -464,6 +464,13 @@ const sections = [
 		secondary: true,
 		group: 'sites',
 	},
+	{
+		name: 'g2',
+		paths: [ '/g2' ],
+		module: 'my-sites/g2',
+		secondary: true,
+		group: 'sites',
+	},
 ];
 
 for ( const extension of require( './extensions' ) ) {
