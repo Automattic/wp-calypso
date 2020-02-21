@@ -162,7 +162,7 @@ function getProceedButtonText( holds: string[], translate: LocalizeProps[ 'trans
 }
 
 function isProceedButtonDisabled( isEligible: boolean, holds: string[] ) {
-	const resoveableHolds = [ 'NO_BUSINESS_PLAN', 'SITE_UNLAUNCHED' ];
+	const resolvableHolds = [ 'NO_BUSINESS_PLAN', 'SITE_UNLAUNCHED' ];
 	const canHandleHoldsAutomatically = union( resoveableHolds, holds ).length === 2;
 	return ! canHandleHoldsAutomatically && ! isEligible;
 }
