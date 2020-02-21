@@ -56,7 +56,7 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 
 	const request = fetcherMap( method )(
 		...compact( [
-			{ path, formData, authToken },
+			{ path, formData, ...( authToken && { authToken, token: authToken } ) },
 			{ ...query }, // wpcom mutates the query so hand it a copy
 			method === 'POST' && body,
 			( error, data, headers ) => {
