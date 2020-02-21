@@ -99,6 +99,42 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 };
 
+const loggedInMiddleware = currentUser => {
+	if ( ! currentUser.get() ) {
+		return;
+	}
+
+	page( '/', context => {
+		let redirectPath = '/read';
+
+		if ( context.querystring ) {
+			redirectPath += `?${ context.querystring }`;
+		}
+
+		page.redirect( redirectPath );
+	} );
+};
+
+const loggedOutMiddleware = currentUser => {
+	if ( currentUser.get() ) {
+		return;
+	}
+
+	if ( config.isEnabled( 'desktop' ) ) {
+		page( '/', () => {
+			if ( config.isEnabled( 'oauth' ) ) {
+				page( '/authorize' );
+			} else {
+				page( '/log-in' );
+			}
+		} );
+	} else if ( config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
+		page( '/', () => {
+			page( '/devdocs/start' );
+		} );
+	}
+};
+
 const setRouteMiddleware = reduxStore => {
 	page( '*', ( context, next ) => {
 		reduxStore.dispatch( setRouteAction( context.pathname, context.query ) );
@@ -113,6 +149,8 @@ const setAnalyticsMiddleware = ( currentUser, reduxStore ) => {
 
 export function setupMiddlewares( currentUser, reduxStore ) {
 	setupContextMiddleware( reduxStore );
+	loggedOutMiddleware( currentUser );
+	loggedInMiddleware( currentUser );
 	setRouteMiddleware( reduxStore );
 	setAnalyticsMiddleware( currentUser, reduxStore );
 	renderDevHelpers( reduxStore );
