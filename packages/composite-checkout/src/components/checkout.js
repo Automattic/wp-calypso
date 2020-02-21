@@ -152,7 +152,7 @@ export default function Checkout( { steps, className } ) {
 										stepNumber: nextStep.stepNumber,
 										previousStepNumber: activeStep.stepNumber,
 										stepId: nextStep.id,
-										paymentMethodId: activePaymentMethod?.id,
+										paymentMethodId: activePaymentMethod?.id ?? '',
 									},
 								} );
 								changeStep( nextStep.stepNumber );
