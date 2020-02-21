@@ -27,7 +27,7 @@ const router = () => {
 	page( '/backups/:site', siteSelection, setupSidebar, jetpackCloudBackups, makeLayout, clientRender );
 	page( '/backups/:site/detail/:backupId', siteSelection, setupSidebar, jetpackCloudBackupDetail, makeLayout, clientRender );
 	page( '/backups/:site/download/:downloadId', siteSelection, setupSidebar, jetpackCloudBackupDownload, makeLayout, clientRender );
-	page( '/backups/:site/restore', siteSelection, setupSidebar, jetpackCloudBackupRestore, makeLayout, clientRender )
+	page( '/backups/:site/restore', siteSelection, setupSidebar, jetpackCloudBackupRestore, makeLayout, clientRender );
 	page( '/backups/:site/restore/:restoreId', siteSelection, setupSidebar, jetpackCloudBackupRestore, makeLayout, clientRender );
 
 	page( '/scan', siteSelection, setupSidebar, jetpackCloudScan, makeLayout, clientRender );
