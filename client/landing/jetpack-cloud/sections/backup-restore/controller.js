@@ -15,7 +15,7 @@ export function jetpackCloudBackupRestore( context, next ) {
 		<JetpackCloudBackupRestorePage
 			restoreId={
 				context.params.restoreId
-					? parseInt( context.params.restoreId )
+					? restoreId
 					: null
 			}
 		/>
