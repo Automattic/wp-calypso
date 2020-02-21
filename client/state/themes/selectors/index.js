@@ -50,17 +50,7 @@ export { getThemeCustomizeUrl } from 'state/themes/selectors/get-theme-customize
 export { getThemeSignupUrl } from 'state/themes/selectors/get-theme-signup-url';
 export { getThemeDemoUrl } from 'state/themes/selectors/get-theme-demo-url';
 export { getThemeForumUrl } from 'state/themes/selectors/get-theme-forum-url';
-
-/**
- * Returns whether the theme activation action is currently ongoing on the site.
- *
- * @param  {object}  state   Global state tree
- * @param  {number}  siteId  Site ID
- * @returns {boolean}         True if theme activation is ongoing
- */
-export function isActivatingTheme( state, siteId ) {
-	return get( state.themes.activationRequests, siteId, false );
-}
+export { isActivatingTheme } from 'state/themes/selectors/is-activating-theme';
 
 /**
  * Returns whether the theme activation action has finished on the site.
