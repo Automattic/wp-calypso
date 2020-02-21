@@ -128,11 +128,12 @@ class Document extends React.Component {
 									[ 'is-section-' + sectionName ]: sectionName,
 									'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
 									'is-wccom-oauth-flow': isWCComConnect,
+									'is-jetpack-cloud-flow': config.isEnabled( 'jetpack-cloud' ),
 								} ) }
 							>
 								<div className="masterbar" />
 								<div className="layout__content">
-									{ 'jetpack-cloud' === sectionName ? (
+									{ config.isEnabled( 'jetpack-cloud' ) ? (
 										<div className="wpcom-site__loader">
 											<JetpackLogo size={ 72 } className="wpcom-site__logo" />
 											{ translate( 'Loading' ) }
