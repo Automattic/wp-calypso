@@ -3,20 +3,17 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import CurrentSite from '../current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 /**
  * Style dependencies
@@ -26,7 +23,6 @@ import './style.scss';
 class JetpackCloudSidebar extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
-		selectedSiteSlug: PropTypes.string,
 	};
 
 	state = {
@@ -74,11 +70,10 @@ class JetpackCloudSidebar extends Component {
 	};
 
 	render() {
-		const { selectedSiteSlug, translate } = this.props;
+		const { translate } = this.props;
 
 		return (
 			<Sidebar>
-				<CurrentSite />
 				<SidebarRegion>
 					{ /* @todo: A profile info box needs to be created and added here; similar to <ProfileGravatar /> in client/me/sidebar/index.jsx */ }
 					<SidebarMenu>
@@ -104,7 +99,7 @@ class JetpackCloudSidebar extends Component {
 								label={ translate( 'Backups', {
 									comment: 'Jetpack Cloud sidebar navigation item',
 								} ) }
-								link={ selectedSiteSlug ? `/backups/${ selectedSiteSlug }` : '/backups' }
+								link="/backups"
 								onNavigate={ this.onNavigate }
 								selected={ this.isSelected( '/backups' ) }
 							/>
@@ -138,7 +133,7 @@ class JetpackCloudSidebar extends Component {
 								label={ translate( 'Scanner', {
 									comment: 'Jetpack Cloud / Scan sidebar navigation item',
 								} ) }
-								link={ selectedSiteSlug ? `/scan/${ selectedSiteSlug }` : '/scan' }
+								link="/scan"
 								onNavigate={ this.onNavigate }
 								selected={ this.isSelected( '/scan' ) }
 							/>
@@ -187,6 +182,4 @@ class JetpackCloudSidebar extends Component {
 	}
 }
 
-export default connect( state => ( {
-	selectedSiteSlug: getSelectedSiteSlug( state ),
-} ) )( localize( JetpackCloudSidebar ) );
+export default localize( JetpackCloudSidebar );

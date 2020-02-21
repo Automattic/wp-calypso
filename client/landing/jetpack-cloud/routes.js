@@ -57,8 +57,10 @@ const router = () => {
 		makeLayout,
 		clientRender
 	);
+
+	page( '/backups/restore', siteSelection, sites, setupSidebar, makeLayout, clientRender );
 	page(
-		'/backups/:site/restore',
+		'/backups/restore/:site',
 		siteSelection,
 		setupSidebar,
 		backupRestore,
@@ -66,7 +68,7 @@ const router = () => {
 		clientRender
 	);
 	page(
-		'/backups/:site/restore/:restoreId',
+		'/backups/restore/:site/:restoreId',
 		siteSelection,
 		setupSidebar,
 		backupRestore,
