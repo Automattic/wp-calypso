@@ -251,3 +251,15 @@ $page-selector-shadow-size: 12px;
 		}
 	}
 }
+
+// When page selector is open, design card should behave like a static image.
+.design-selector__grid-container {
+	&.is-page-selector-open {
+		.design-selector__design-option {
+			cursor: default;
+		}
+		.design-selector__option-overlay {
+			display: none;
+		}
+	}
+}

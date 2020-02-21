@@ -132,6 +132,7 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 							}
 							tabIndex={ showPageSelector ? -1 : 0 }
 							onClick={ () => {
+								if ( showPageSelector ) return;
 								window.scrollTo( 0, 0 );
 								setSelectedDesign( design );
 								history.push( makePath( Step.PageSelection ) );
