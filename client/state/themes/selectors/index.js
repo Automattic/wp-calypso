@@ -7,7 +7,6 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import {
 	getCustomizerUrl,
 	getSiteSlug,
@@ -17,7 +16,7 @@ import {
 } from 'state/sites/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
-import { getThemeTaxonomySlugs, oldShowcaseUrl } from 'state/themes/utils';
+import { getThemeTaxonomySlugs } from 'state/themes/utils';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import { getTheme } from 'state/themes/selectors/get-theme';
 import { getCanonicalTheme } from 'state/themes/selectors/get-canonical-theme';
@@ -46,27 +45,7 @@ export { isWporgTheme } from 'state/themes/selectors/is-wporg-theme';
 export { getThemeDetailsUrl } from 'state/themes/selectors/get-theme-details-url';
 export { isThemePremium } from 'state/themes/selectors/is-theme-premium';
 export { getThemeSupportUrl } from 'state/themes/selectors/get-theme-support-url';
-
-/**
- * Returns the URL for a given theme's support page.
- *
- * @param  {object}  state   Global state tree
- * @param  {string}  themeId Theme ID
- * @param  {?number} siteId  Site ID to optionally use as context
- * @returns {?string}         Theme support page URL
- */
-export function getThemeHelpUrl( state, themeId, siteId ) {
-	if ( ! themeId ) {
-		return null;
-	}
-
-	let baseUrl = oldShowcaseUrl + themeId;
-	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		baseUrl = `/theme/${ themeId }/support`;
-	}
-
-	return baseUrl + ( siteId ? `/${ getSiteSlug( state, siteId ) }` : '' );
-}
+export { getThemeHelpUrl } from 'state/themes/selectors/get-theme-help-url';
 
 /**
  * Returns the URL for purchasing the given theme for the given site.
