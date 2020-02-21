@@ -52,17 +52,7 @@ export { getJetpackUpgradeUrlIfPremiumTheme } from 'state/themes/selectors/get-j
 export { getPremiumThemePrice } from 'state/themes/selectors/get-premium-theme-price';
 export { isThemeGutenbergFirst } from 'state/themes/selectors/is-theme-gutenberg-first';
 export { getRecommendedThemes } from 'state/themes/selectors/get-recommended-themes';
-
-/**
- * Returns whether the recommended themes list is loading.
- *
- * @param {object} state Global state tree
- *
- * @returns {boolean} whether the recommended themes list is loading
- */
-export function areRecommendedThemesLoading( state ) {
-	return state.themes.recommendedThemes.isLoading;
-}
+export { areRecommendedThemesLoading } from 'state/themes/selectors/are-recommended-themes-loading';
 
 /**
  * Checks if a theme has auto loading homepage feature.
