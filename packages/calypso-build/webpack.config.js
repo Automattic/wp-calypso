@@ -96,6 +96,7 @@ function getWebpackConfig(
 					: 'docker' !== process.env.CONTAINER,
 				parallel: workerCount,
 				sourceMap: Boolean( process.env.SOURCEMAP ),
+				extractComments: false,
 				terserOptions: {
 					ecma: 5,
 					safari10: true,
