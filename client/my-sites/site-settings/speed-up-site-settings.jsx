@@ -10,11 +10,14 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
+import Banner from 'components/banner';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isPrivateSite from 'state/selectors/is-private-site';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
@@ -30,6 +33,7 @@ class SpeedUpSiteSettings extends Component {
 
 		// Connected props
 		photonModuleUnavailable: PropTypes.bool,
+		photonCdnModuleUnavailable: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
 		siteAcceleratorStatus: PropTypes.bool,
 		siteSlug: PropTypes.string,
@@ -53,16 +57,35 @@ class SpeedUpSiteSettings extends Component {
 			isRequestingSettings,
 			isSavingSettings,
 			photonModuleUnavailable,
+			photonCdnModuleUnavailable,
 			selectedSiteId,
 			siteAcceleratorStatus,
+			siteIsAtomicPrivate,
 			siteIsJetpack,
+			siteSlug,
 			translate,
 		} = this.props;
 		const isRequestingOrSaving = isRequestingSettings || isSavingSettings;
 
+		const privacySettingsHref = '/settings/general/' + siteSlug + '#site-privacy-settings';
 		return (
 			<div className="site-settings__module-settings site-settings__speed-up-site-settings">
 				<Card>
+					{ siteIsAtomicPrivate && photonCdnModuleUnavailable && photonModuleUnavailable && (
+						<Banner
+							showIcon={ false }
+							title={ translate( 'Site Accelerator is only available on public sites.' ) }
+							href={ privacySettingsHref }
+							description={ translate(
+								'If you want to use it, you must set your privacy settings to "public".',
+								{
+									comment:
+										'This is a second line of text under "Site Accelerator is only available on public sites."',
+								}
+							) }
+						/>
+					) }
+
 					<FormFieldset className="site-settings__formfieldset jetpack-site-accelerator-settings">
 						<SupportInfo
 							text={ translate(
@@ -96,7 +119,7 @@ class SpeedUpSiteSettings extends Component {
 								siteId={ selectedSiteId }
 								moduleSlug="photon-cdn"
 								label={ translate( 'Speed up static file load times' ) }
-								disabled={ isRequestingOrSaving }
+								disabled={ isRequestingOrSaving || photonCdnModuleUnavailable }
 							/>
 						</div>
 					</FormFieldset>
@@ -136,6 +159,8 @@ export default connect( state => {
 		selectedSiteId,
 		'photon'
 	);
+	const siteIsAtomicPrivate =
+		isSiteAutomatedTransfer( state, selectedSiteId ) && isPrivateSite( state, selectedSiteId );
 	const photonModuleActive = isJetpackModuleActive( state, selectedSiteId, 'photon' );
 	const assetCdnModuleActive = isJetpackModuleActive( state, selectedSiteId, 'photon-cdn' );
 
@@ -143,9 +168,11 @@ export default connect( state => {
 	const siteAcceleratorStatus = !! ( photonModuleActive || assetCdnModuleActive );
 
 	return {
-		photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
+		photonCdnModuleUnavailable: siteIsAtomicPrivate,
+		photonModuleUnavailable: siteIsAtomicPrivate || ( siteInDevMode && moduleUnavailableInDevMode ),
 		selectedSiteId,
 		siteAcceleratorStatus,
+		siteIsAtomicPrivate,
 		siteIsJetpack: isJetpackSite( state, selectedSiteId ),
 		siteSlug: getSiteSlug( state, selectedSiteId ),
 	};
