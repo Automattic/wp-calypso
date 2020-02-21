@@ -13,6 +13,7 @@ import { includes, get, startsWith } from 'lodash';
 import config from 'config';
 import GlobalNotices from 'components/global-notices';
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
+import JetpackCloudMasterbar from 'landing/jetpack-cloud/components/masterbar';
 import notices from 'notices';
 import OauthClientMasterbar from 'layout/masterbar/oauth-client';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
@@ -70,6 +71,7 @@ const LayoutLoggedOut = ( {
 			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
 			isWooOAuth2Client( oauth2Client ) &&
 			wccomFrom,
+		'is-jetpack-cloud-flow': config.isEnabled( 'jetpack-cloud' ),
 	};
 
 	let masterbar = null;
@@ -93,6 +95,8 @@ const LayoutLoggedOut = ( {
 
 			masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
 		}
+	} else if ( config.isEnabled( 'jetpack-cloud' ) ) {
+		masterbar = <JetpackCloudMasterbar />;
 	} else {
 		masterbar = (
 			<MasterbarLoggedOut

@@ -1,5 +1,6 @@
 // Jetpack Cloud color scheme for Calypso
-.is-group-jetpack-cloud.is-section-jetpack-cloud {
+.is-group-jetpack-cloud.is-section-jetpack-cloud,
+.layout.is-jetpack-cloud-flow {
 	/* Theme Properties */
 	--color-link: var( --studio-jetpack-green-40 );
 	--color-link-rgb: var( --studio-jetpack-green-40-rgb );

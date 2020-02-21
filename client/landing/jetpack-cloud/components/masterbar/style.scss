@@ -19,4 +19,9 @@
 			fill: var( --color-masterbar-text );
 		}
 	}
+
+	.is-section-login.is-jetpack-cloud-flow & {
+		width: 100%;
+		border: none;
+	}
 }
