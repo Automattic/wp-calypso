@@ -129,14 +129,12 @@ class CartFreeUserPlanUpsell extends React.Component {
 
 		const { translate } = this.props;
 
-		const header = translate( 'Upgrade and save' );
-
 		return (
 			<div>
-				<SectionHeader className="cart__header" label={ header } />
+				<SectionHeader className="cart__header" label={ translate( 'Upgrade and save' ) } />
 				<div style={ { padding: '16px' } }>
 					<p>{ this.getUpgradeText() }</p>
-					<Button onClick={ () => this.addPlanToCart() }>{ 'Add to cart' }</Button>
+					<Button onClick={ () => this.addPlanToCart() }>{ translate( 'Add to cart' ) }</Button>
 				</div>
 			</div>
 		);
