@@ -230,15 +230,18 @@ class SectionImport extends Component {
 				importItem.site = this.props.site;
 			}
 
+			const siteTitle = importItem.siteTitle || this.props.siteTitle;
+
 			return (
 				ImporterComponent && (
 					<ImporterComponent
 						key={ importItem.type + idx }
 						site={ importItem.site }
 						fromSite={ this.props.fromSite }
+						siteTitle={ siteTitle }
 						importerStatus={ {
 							...importItem,
-							siteTitle: importItem.siteTitle || this.props.siteTitle,
+							siteTitle: siteTitle,
 						} }
 					/>
 				)
