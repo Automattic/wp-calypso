@@ -28,8 +28,8 @@ import {
 	getThemeTaxonomySlugs,
 	isPremium,
 	oldShowcaseUrl,
-} from './utils';
-import { DEFAULT_THEME_QUERY } from './constants';
+} from 'state/themes/utils';
+import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
 import 'state/themes/init';
