@@ -6,14 +6,15 @@ import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/com
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
+import { useHistory } from 'react-router-dom';
 
 /**
  * Internal dependencies
  */
 import { USER_STORE } from '../../stores/user';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { useLangRouteParam } from '../../path';
 import './style.scss';
-import { useHistory } from 'react-router-dom';
 
 type NewUserErrorResponse = import('@automattic/data-stores').User.NewUserErrorResponse;
 
@@ -35,13 +36,19 @@ const SignupForm = () => {
 	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
 	const newUserError = useSelect( select => select( USER_STORE ).getNewUserError() );
 	const { shouldCreate } = useSelect( select => select( ONBOARD_STORE ) ).getState();
+	const langParam = useLangRouteParam();
 
 	const history = useHistory();
 
 	const handleSignUp = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 
-		createAccount( { email: emailVal, is_passwordless: true, signup_flow_name: 'gutenboarding' } );
+		createAccount( {
+			email: emailVal,
+			is_passwordless: true,
+			signup_flow_name: 'gutenboarding',
+			locale: langParam,
+		} );
 	};
 
 	const handleClose = () => {
