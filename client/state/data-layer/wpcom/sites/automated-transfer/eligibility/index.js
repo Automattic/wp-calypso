@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { get, identity, isEmpty, map } from 'lodash';
 
 /**
@@ -10,12 +9,11 @@ import { get, identity, isEmpty, map } from 'lodash';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST } from 'state/action-types';
-
 import { updateEligibility } from 'state/automated-transfer/actions';
 import { eligibilityHolds } from 'state/automated-transfer/constants';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-
 import { registerHandlers } from 'state/data-layer/handler-registry';
+import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 
 /**
  * Maps the constants used in the WordPress.com API with
@@ -31,6 +29,7 @@ const statusMapping = {
 	no_jetpack_sites: eligibilityHolds.NO_JETPACK_SITES,
 	no_vip_sites: eligibilityHolds.NO_VIP_SITES,
 	site_private: eligibilityHolds.SITE_PRIVATE,
+	//site_private: eligibilityHolds.SITE_UNLAUNCHED, // modified in eligibilityHoldsFromApi
 	site_graylisted: eligibilityHolds.SITE_GRAYLISTED,
 	non_admin_user: eligibilityHolds.NON_ADMIN_USER,
 	not_resolving_to_wpcom: eligibilityHolds.NOT_RESOLVING_TO_WPCOM,
@@ -44,10 +43,20 @@ const statusMapping = {
  *
  * @param {object} response API response data
  * @param {Array} response.errors List of { code, message } pairs describing issues
+ * @param {object} options object
  * @returns {Array} list of hold constants associated with issues listed in API response
+ *
  */
-const eligibilityHoldsFromApi = ( { errors = [] } ) =>
-	errors.map( ( { code } ) => get( statusMapping, code, '' ) ).filter( identity );
+export const eligibilityHoldsFromApi = ( { errors = [] }, options = {} ) =>
+	errors
+		.map( ( { code } ) => {
+			//differentiate on the client between a launched private site vs an unlaunched site
+			if ( options.sitePrivateUnlaunched && code === 'site_private' ) {
+				return eligibilityHolds.SITE_UNLAUNCHED;
+			}
+			return get( statusMapping, code, '' );
+		} )
+		.filter( identity );
 
 /**
  * Maps from API response the issues which trigger a confirmation for automated transfer
@@ -69,11 +78,12 @@ const eligibilityWarningsFromApi = ( { warnings = {} } ) =>
  * Maps from API response to internal representation of automated transfer eligibility data
  *
  * @param {object} data API response data
+ * @param {object} options object
  * @returns {object} Calypso eligibility information
  */
-const fromApi = data => ( {
+const fromApi = ( data, options = {} ) => ( {
 	lastUpdate: Date.now(),
-	eligibilityHolds: eligibilityHoldsFromApi( data ),
+	eligibilityHolds: eligibilityHoldsFromApi( data, options ),
 	eligibilityWarnings: eligibilityWarningsFromApi( data ),
 } );
 
@@ -121,8 +131,18 @@ export const requestAutomatedTransferEligibility = action =>
 		action
 	);
 
-export const updateAutomatedTransferEligibility = ( { siteId }, data ) =>
-	withAnalytics( trackEligibility( data ), updateEligibility( siteId, fromApi( data ) ) );
+export const updateAutomatedTransferEligibility = ( { siteId }, data ) => (
+	dispatch,
+	getState
+) => {
+	const siteIsUnlaunched = isUnlaunchedSite( getState(), siteId );
+	dispatch(
+		withAnalytics(
+			trackEligibility( data ),
+			updateEligibility( siteId, fromApi( data, { sitePrivateUnlaunched: siteIsUnlaunched } ) )
+		)
+	);
+};
 
 registerHandlers( 'state/data-layer/wpcom/sites/automated-transfer/eligibility/index.js', {
 	[ AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST ]: [
