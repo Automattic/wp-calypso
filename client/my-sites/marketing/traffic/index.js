@@ -109,12 +109,17 @@ const SiteSettingsTraffic = ( {
 	</Main>
 );
 
-const connectComponent = connect( state => ( {
-	isJetpackAdmin:
-		isJetpackSite( state, getSelectedSiteId( state ) ) &&
-		canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
-	isAdmin: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
-} ) );
+const connectComponent = connect( state => {
+	const siteId = getSelectedSiteId( state );
+	const isAdmin = canCurrentUser( state, siteId, 'manage_options' );
+	const isJetpack = isJetpackSite( state, siteId );
+	const isJetpackAdmin = isJetpack && isAdmin;
+
+	return {
+		isAdmin,
+		isJetpack,
+	};
+} );
 
 const getFormSettings = partialRight( pick, [
 	'stats',
