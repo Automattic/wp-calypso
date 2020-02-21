@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -15,6 +16,7 @@ import SidebarFooter from 'layout/sidebar/footer';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 /**
  * Style dependencies
@@ -24,6 +26,7 @@ import './style.scss';
 class JetpackCloudSidebar extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
+		selectedSiteSlug: PropTypes.string,
 	};
 
 	state = {
@@ -71,7 +74,7 @@ class JetpackCloudSidebar extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { selectedSiteSlug, translate } = this.props;
 
 		return (
 			<Sidebar>
@@ -101,7 +104,7 @@ class JetpackCloudSidebar extends Component {
 								label={ translate( 'Backups', {
 									comment: 'Jetpack Cloud sidebar navigation item',
 								} ) }
-								link="/backups"
+								link={ selectedSiteSlug ? `/backups/${ selectedSiteSlug }` : '/backups' }
 								onNavigate={ this.onNavigate }
 								selected={ this.isSelected( '/backups' ) }
 							/>
@@ -135,7 +138,7 @@ class JetpackCloudSidebar extends Component {
 								label={ translate( 'Scanner', {
 									comment: 'Jetpack Cloud / Scan sidebar navigation item',
 								} ) }
-								link="/scan"
+								link={ selectedSiteSlug ? `/scan/${ selectedSiteSlug }` : '/scan' }
 								onNavigate={ this.onNavigate }
 								selected={ this.isSelected( '/scan' ) }
 							/>
@@ -184,4 +187,6 @@ class JetpackCloudSidebar extends Component {
 	}
 }
 
-export default localize( JetpackCloudSidebar );
+export default connect( state => ( {
+	selectedSiteSlug: getSelectedSiteSlug( state ),
+} ) )( localize( JetpackCloudSidebar ) );

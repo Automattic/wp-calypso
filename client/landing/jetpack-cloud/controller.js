@@ -65,9 +65,9 @@ export async function siteSelection( context, next ) {
 
 	// 3. use that list to determine the correct way to render ( 0, 1, or a list )
 	if ( eligibleSites.length === 1 && ! siteFragment ) {
-		const { name } = eligibleSites[ 0 ];
+		const { slug } = eligibleSites[ 0 ];
 
-		let redirectPath = `${ context.pathname }/${ name }`;
+		let redirectPath = `${ context.pathname }/${ slug }`;
 		if ( context.querystring ) {
 			redirectPath += `?${ context.querystring }`;
 		}
@@ -75,8 +75,8 @@ export async function siteSelection( context, next ) {
 	} else if ( eligibleSites.length > 0 ) {
 		// figure out if the siteFragment matched one of the eligible sites
 
-		for ( const { ID, name } of eligibleSites ) {
-			if ( siteFragment === ID || siteFragment === name ) {
+		for ( const { ID, slug } of eligibleSites ) {
+			if ( siteFragment === ID || siteFragment === slug ) {
 				dispatch( setSelectedSiteId( ID ) );
 				next();
 			}
