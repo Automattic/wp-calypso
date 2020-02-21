@@ -57,6 +57,7 @@ import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/s
 import QueryActiveTheme from 'components/data/query-active-theme';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import GoMobileCard from 'my-sites/customer-home/go-mobile-card';
+import WelcomeBanner from './welcome-banner';
 import StatsCard from './stats-card';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 
@@ -218,6 +219,7 @@ class Home extends Component {
 			siteIsUnlaunched,
 			isAtomic,
 			trackAction,
+			displayWelcomeBanner,
 		} = this.props;
 
 		// Show a thank-you message 30 mins post site creation/purchase
@@ -287,7 +289,7 @@ class Home extends Component {
 						</div>
 					) }
 				</div>
-				{ ! siteIsUnlaunched && 'launched' === checklistMode && (
+				{ ! siteIsUnlaunched && 'launched' === checklistMode ? (
 					<Card className="customer-home__launch-card" highlight="info">
 						<img
 							src="/calypso/images/illustrations/fireworks.svg"
@@ -302,6 +304,8 @@ class Home extends Component {
 							</p>
 						</div>
 					</Card>
+				) : (
+					displayWelcomeBanner && <WelcomeBanner />
 				) }
 			</>
 		);
@@ -316,6 +320,7 @@ class Home extends Component {
 			isChecklistComplete,
 			siteIsUnlaunched,
 			isEstablishedSite,
+			displayWelcomeBanner,
 		} = this.props;
 
 		if ( ! canUserUseCustomerHome ) {
@@ -337,7 +342,7 @@ class Home extends Component {
 				<SidebarNavigation />
 				<div className="customer-home__page-heading">{ this.renderCustomerHomeHeader() }</div>
 				{ //Only show upgrade nudges to sites > 2 days old
-				isEstablishedSite && (
+				isEstablishedSite && ! displayWelcomeBanner && (
 					<div className="customer-home__upsells">
 						<StatsBanners
 							siteId={ siteId }
@@ -644,10 +649,13 @@ const connectHome = connect(
 		const isAtomic = isAtomicSite( state, siteId );
 		const isChecklistComplete = isSiteChecklistComplete( state, siteId );
 		const createdAt = getSiteOption( state, siteId, 'created_at' );
+		const user = getCurrentUser( state );
+		const displayWelcomeBanner = user.date && new Date( user.date ) < new Date( '2019-08-06' );
 
 		return {
 			displayChecklist:
 				isEligibleForDotcomChecklist( state, siteId ) && hasChecklistData && ! isChecklistComplete,
+			displayWelcomeBanner,
 			site: getSelectedSite( state ),
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
@@ -667,7 +675,7 @@ const connectHome = connect(
 			staticHomePageId: getSiteFrontPage( state, siteId ),
 			showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
 			hasCustomDomain: getGSuiteSupportedDomains( domains ).length > 0,
-			user: getCurrentUser( state ),
+			user,
 			...themeInfo,
 		};
 	},

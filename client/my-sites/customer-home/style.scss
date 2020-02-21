@@ -26,6 +26,42 @@
 		}
 	}
 
+	&__welcome-banner {
+		@include breakpoint( '>1040px' ) {
+			@include display-grid;
+			@include grid-template-columns( 12, 24px, 1fr );
+			padding: 0;
+		}
+
+		img {
+			margin: 0 33%;
+			@include breakpoint( '>1040px' ) {
+				@include grid-column( 2, 2 );
+				margin: 0;
+				padding: 24px 0;
+			}
+
+		}
+
+		div {
+			@include breakpoint( '>1040px' ) {
+				@include grid-column( 5, 8 );
+				padding: 24px 24px 24px 0;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+
+				.card-heading {
+					margin-top: 0;
+				}
+			}
+
+			p {
+				margin-bottom: 0;
+			}
+		}
+	}
+
 	&__upsells {
 		@include grid-column( 1, 12 );
 	}
