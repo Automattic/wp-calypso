@@ -42,14 +42,14 @@ const isWpcomGoogleAdsGtagEnabled = true;
 const isQuantcastEnabled = true;
 const isExperianEnabled = true;
 const isOutbrainEnabled = true;
-const isIconMediaEnabled = false;
+const isIconMediaEnabled = true;
 const isPinterestEnabled = true;
 const isTwitterEnabled = false;
 const isLinkedinEnabled = false;
 const isCriteoEnabled = false;
 const isPandoraEnabled = false;
 const isQuoraEnabled = false;
-const isAdRollEnabled = false;
+const isAdRollEnabled = true;
 
 // Retargeting events are fired once every `retargetingPeriod` seconds.
 const retargetingPeriod = 60 * 60 * 24;
