@@ -17,12 +17,13 @@ import {
 } from 'state/sites/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
-import { getThemeTaxonomySlugs, isPremium, oldShowcaseUrl } from 'state/themes/utils';
+import { getThemeTaxonomySlugs, oldShowcaseUrl } from 'state/themes/utils';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import { getTheme } from 'state/themes/selectors/get-theme';
 import { getCanonicalTheme } from 'state/themes/selectors/get-canonical-theme';
 import { isWpcomTheme } from 'state/themes/selectors/is-wpcom-theme';
 import { isWporgTheme } from 'state/themes/selectors/is-wporg-theme';
+import { isThemePremium } from 'state/themes/selectors/is-theme-premium';
 
 import 'state/themes/init';
 
@@ -43,6 +44,7 @@ export { isRequestingActiveTheme } from 'state/themes/selectors/is-requesting-ac
 export { isWpcomTheme } from 'state/themes/selectors/is-wpcom-theme';
 export { isWporgTheme } from 'state/themes/selectors/is-wporg-theme';
 export { getThemeDetailsUrl } from 'state/themes/selectors/get-theme-details-url';
+export { isThemePremium } from 'state/themes/selectors/is-theme-premium';
 
 /**
  * Returns the URL for a given theme's setup instructions
@@ -243,18 +245,6 @@ export function isActivatingTheme( state, siteId ) {
  */
 export function hasActivatedTheme( state, siteId ) {
 	return get( state.themes.completedActivationRequests, siteId, false );
-}
-
-/**
- * Whether a WPCOM theme given by its ID is premium.
- *
- * @param  {object} state   Global state tree
- * @param  {object} themeId Theme ID
- * @returns {boolean}        True if the theme is premium
- */
-export function isThemePremium( state, themeId ) {
-	const theme = getTheme( state, 'wpcom', themeId );
-	return isPremium( theme );
 }
 
 /**
