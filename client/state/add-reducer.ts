@@ -8,6 +8,7 @@ import { Reducer, Store } from 'redux';
  */
 import { APPLY_STORED_STATE } from 'state/action-types';
 import { getStateFromCache } from 'state/initial-state';
+import { setReduxStore } from 'lib/redux-bridge';
 
 const initializations = new Map< string, boolean >();
 const reducers = new Map< string, Reducer >();
@@ -67,5 +68,7 @@ export const addReducerToStore = < T extends Reducer & OptionalStorageKey >(
 
 		initializations.set( normalizedKey, true );
 		reducers.set( normalizedKey, reducer );
+
+		setReduxStore( store );
 	}
 };
