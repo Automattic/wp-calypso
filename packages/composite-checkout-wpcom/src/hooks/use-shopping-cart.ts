@@ -532,7 +532,10 @@ function useInitializeCartFromServer(
 				// TODO: figure out what to do here
 				debug( 'error while initializing cart', error );
 				hookDispatch( { type: 'RAISE_ERROR', error: 'GET_SERVER_CART_ERROR' } );
-				onEvent?.( { type: 'CART_ERROR', payload: { error: 'GET_SERVER_CART_ERROR' } } );
+				onEvent?.( {
+					type: 'CART_ERROR',
+					payload: { type: 'GET_SERVER_CART_ERROR', message: error },
+				} );
 			} );
 	}, [
 		cacheStatus,
@@ -574,7 +577,10 @@ function useCartUpdateAndRevalidate(
 				// TODO: figure out what to do here
 				debug( 'error while fetching cart', error );
 				hookDispatch( { type: 'RAISE_ERROR', error: 'SET_SERVER_CART_ERROR' } );
-				onEvent?.( { type: 'CART_ERROR', payload: { error: 'SET_SERVER_CART_ERROR' } } );
+				onEvent?.( {
+					type: 'CART_ERROR',
+					payload: { type: 'SET_SERVER_CART_ERROR', message: error },
+				} );
 			} );
 	}, [ setServerCart, cacheStatus, responseCart, onEvent, hookDispatch ] );
 }
