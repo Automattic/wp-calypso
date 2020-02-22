@@ -389,7 +389,7 @@ function MyCheckoutBody() {
 				<CheckoutStep
 					stepId="payment-method-step"
 					isCompleteCallback={ () =>
-						new Promise( resolve => setTimeout( () => resolve( true ), 1500 ) )
+						new Promise( resolve => setTimeout( () => resolve( true ), 500 ) )
 					}
 					activeStepContent={ paymentMethodStep.activeStepContent }
 					completeStepContent={ paymentMethodStep.completeStepContent }
@@ -397,9 +397,9 @@ function MyCheckoutBody() {
 				/>
 				<CheckoutStep
 					stepId={ contactFormStep.id }
-					isCompleteCallback={ () => {
-						return country.length > 0;
-					} }
+					isCompleteCallback={ () =>
+						new Promise( resolve => setTimeout( () => resolve( country.length > 0 ), 1500 ) )
+					}
 					activeStepContent={ contactFormStep.activeStepContent }
 					completeStepContent={ contactFormStep.completeStepContent }
 					titleContent={ contactFormStep.titleContent }
