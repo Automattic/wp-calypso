@@ -17,6 +17,7 @@ import LoadingContent from './loading-content';
 import CheckoutSubmitButton from './checkout-submit-button';
 import Button from './button';
 import { CheckIcon } from './shared-icons';
+import CheckoutNextStepButton from './checkout-next-step-button';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 
@@ -85,7 +86,6 @@ export function CheckoutSteps( { children } ) {
 		activeStepNumber,
 		stepCompleteStatus,
 		setActiveStepNumber,
-		setStepCompleteStatus,
 		setTotalSteps,
 	} = useContext( CheckoutStepDataContext );
 
@@ -113,8 +113,6 @@ export function CheckoutSteps( { children } ) {
 			isStepActive,
 			isStepComplete,
 			setActiveStepNumber,
-			setStepCompleteStatus: newStatus =>
-				setStepCompleteStatus( { ...stepCompleteStatus, [ stepNumber ]: newStatus } ),
 		} );
 	} );
 }
@@ -130,18 +128,21 @@ export function CheckoutStep( {
 	isStepActive,
 	isStepComplete,
 	setActiveStepNumber,
-	setStepCompleteStatus,
 } ) {
 	const localize = useLocalize();
-	const { totalSteps } = useContext( CheckoutStepDataContext );
+	const { totalSteps, setStepCompleteStatus, stepCompleteStatus } = useContext(
+		CheckoutStepDataContext
+	);
 	const { setFormPending, setFormReady } = useFormStatus();
+	const setThisStepCompleteStatus = newStatus =>
+		setStepCompleteStatus( { ...stepCompleteStatus, [ stepNumber ]: newStatus } );
 	const goToThisStep = () => setActiveStepNumber( stepNumber );
 	const goToNextStep = () => {
 		const completeResult = isCompleteCallback();
 		if ( completeResult.then ) {
 			setFormPending();
 			completeResult.then( delayedCompleteResult => {
-				setStepCompleteStatus( delayedCompleteResult );
+				setThisStepCompleteStatus( delayedCompleteResult );
 				if ( delayedCompleteResult ) {
 					setActiveStepNumber( nextStepNumber );
 				}
@@ -149,7 +150,7 @@ export function CheckoutStep( {
 			} );
 			return;
 		}
-		setStepCompleteStatus( !! completeResult );
+		setThisStepCompleteStatus( !! completeResult );
 		if ( completeResult ) {
 			setActiveStepNumber( nextStepNumber );
 		}
@@ -180,19 +181,25 @@ export function CheckoutStep( {
 						onEdit={ isStepComplete ? goToThisStep : null }
 						editButtonAriaLabel={ localize( 'Edit this step' ) }
 					/>
-					<StepContentUI isVisible={ isStepActive }>{ activeStepContent }</StepContentUI>
+					<StepContentUI isVisible={ isStepActive }>
+						{ activeStepContent }
+						{ nextStepNumber > 0 && (
+							<CheckoutNextStepButton
+								value={ localize( 'Continue' ) }
+								onClick={ goToNextStep }
+								ariaLabel={ localize( 'Continue to next step' ) }
+								buttonState={ 'primary' }
+								disabled={ false }
+							/>
+						) }
+					</StepContentUI>
 					{ isStepComplete ? (
 						<StepSummaryUI isVisible={ ! isStepActive }>{ completeStepContent }</StepSummaryUI>
 					) : null }
-					{ nextStepNumber > 0 ? <CheckoutStepContinueButton onClick={ goToNextStep } /> : null }
 				</CheckoutSingleStepDataContext.Provider>
 			</StepWrapperUI>
 		</CheckoutErrorBoundary>
 	);
-}
-
-function CheckoutStepContinueButton( { onClick } ) {
-	return <Button onClick={ onClick }>Continue</Button>;
 }
 
 const ContainerUI = styled.div`
