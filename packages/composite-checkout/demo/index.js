@@ -197,14 +197,9 @@ const getTotal = items => {
 	};
 };
 
-// Replace this with the host page's translation system
-const useLocalize = () => text => text;
-const hostTranslate = text => text;
-
 const ContactFormTitle = () => {
-	const localize = useLocalize();
 	const isActive = useIsStepActive();
-	return isActive ? localize( 'Enter your contact details' ) : localize( 'Contact details' );
+	return isActive ? 'Enter your contact details' : 'Contact details';
 };
 
 const Label = styled.label`
@@ -262,34 +257,17 @@ function ContactForm( { summary } ) {
 const orderSummaryStep = getDefaultOrderSummaryStep();
 const paymentMethodStep = getDefaultPaymentMethodStep();
 const reviewOrderStep = getDefaultOrderReviewStep();
-
-const steps = [
-	getDefaultOrderSummaryStep(),
-	{
-		...getDefaultPaymentMethodStep(),
-		getEditButtonAriaLabel: () => hostTranslate( 'Edit the payment method' ),
-		getNextStepButtonAriaLabel: () => hostTranslate( 'Continue with the selected payment method' ),
+const contactFormStep = {
+	id: 'contact-form',
+	className: 'checkout__billing-details-step',
+	titleContent: <ContactFormTitle />,
+	activeStepContent: <ContactForm />,
+	completeStepContent: <ContactForm summary />,
+	isCompleteCallback: () => {
+		const country = select( 'demo' ).getCountry();
+		return country?.length > 0;
 	},
-	{
-		id: 'contact-form',
-		className: 'checkout__contact-details-step',
-		hasStepNumber: true,
-		titleContent: <ContactFormTitle />,
-		activeStepContent: <ContactForm />,
-		completeStepContent: <ContactForm summary />,
-		isCompleteCallback: () => {
-			const country = select( 'demo' ).getCountry();
-			return country?.length > 0;
-		},
-		isEditableCallback: () => {
-			const country = select( 'demo' ).getCountry();
-			return country?.length > 0;
-		},
-		getEditButtonAriaLabel: () => hostTranslate( 'Edit the contact details' ),
-		getNextStepButtonAriaLabel: () => hostTranslate( 'Continue with the entered contact details' ),
-	},
-	getDefaultOrderReviewStep(),
-];
+};
 
 function HostPage() {
 	return (
@@ -420,6 +398,13 @@ function MyCheckout() {
 						activeStepContent={ paymentMethodStep.activeStepContent }
 						completeStepContent={ paymentMethodStep.completeStepContent }
 						titleContent={ paymentMethodStep.titleContent }
+					/>
+					<CheckoutStep
+						stepId={ contactFormStep.id }
+						isCompleteCallback={ contactFormStep.isCompleteCallback }
+						activeStepContent={ contactFormStep.activeStepContent }
+						completeStepContent={ contactFormStep.completeStepContent }
+						titleContent={ contactFormStep.titleContent }
 					/>
 					<CheckoutStep
 						stepId="review-order-step"
