@@ -41,6 +41,8 @@ If the payment method succeeds, the `onPaymentComplete` prop will be called inst
 
 ## Steps
 
+**This API has changed significantly and the below information is not correct. The docs will be updated soon.**
+
 The `Checkout` component accepts an optional `steps` prop which is an array of Step objects. Each Step is an object with properties that include both React elements to display at certain times as well as metadata about how the step should be displayed. Here's an example step:
 
 ```js
@@ -134,6 +136,8 @@ The registry used for these stores is created by default in `CheckoutProvider` b
 While the `Checkout` component takes care of most everything, there are many situations where its appearance and behavior will be customized. In these cases it's appropriate to use the underlying building blocks of this package.
 
 ### Checkout
+
+**This API has changed significantly and the below information is not correct. The docs will be updated soon.**
 
 The main component in this package. It has the following props.
 
