@@ -6,6 +6,7 @@ import {
 	CheckoutSteps,
 	Checkout,
 	CheckoutStep,
+	CheckoutStepBody,
 	useIsStepActive,
 	useIsStepComplete,
 } from './components/checkout-steps';
@@ -53,6 +54,7 @@ export {
 	CheckoutPaymentMethods,
 	CheckoutProvider,
 	CheckoutStep,
+	CheckoutStepBody,
 	CheckoutSteps,
 	OrderReviewLineItems,
 	OrderReviewSection,
