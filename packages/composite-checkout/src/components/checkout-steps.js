@@ -133,7 +133,7 @@ export function CheckoutStep( {
 	const { stepNumber, nextStepNumber, isStepActive, isStepComplete } = useContext(
 		CheckoutSingleStepDataContext
 	);
-	const { setFormPending, setFormReady } = useFormStatus();
+	const { setFormValidating, setFormReady } = useFormStatus();
 	const setThisStepCompleteStatus = newStatus =>
 		setStepCompleteStatus( { ...stepCompleteStatus, [ stepNumber ]: newStatus } );
 	const goToThisStep = () => setActiveStepNumber( stepNumber );
@@ -147,7 +147,7 @@ export function CheckoutStep( {
 	const goToNextStep = async () => {
 		const completeResult = isCompleteCallback();
 		if ( completeResult.then ) {
-			setFormPending();
+			setFormValidating();
 			const delayedCompleteResult = await completeResult;
 			finishIsCompleteCallback( delayedCompleteResult );
 			return;
