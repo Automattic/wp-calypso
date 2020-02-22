@@ -2,14 +2,13 @@
  * Internal dependencies
  */
 import { CheckoutProvider, useEvents, useMessages } from './components/checkout-provider';
-import CheckoutStep from './components/checkout-step';
+import { CheckoutSteps, Checkout, CheckoutStep } from './components/checkout-steps';
 import CheckoutPaymentMethods from './components/checkout-payment-methods';
 import {
 	OrderReviewLineItems,
 	OrderReviewTotal,
 	OrderReviewSection,
 } from './components/order-review-line-items';
-import Checkout from './components/checkout';
 import CheckoutModal from './components/checkout-modal';
 import { renderDisplayValueMarkdown } from './lib/render';
 import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './lib/payment-methods';
@@ -49,6 +48,7 @@ export {
 	CheckoutPaymentMethods,
 	CheckoutProvider,
 	CheckoutStep,
+	CheckoutSteps,
 	OrderReviewLineItems,
 	OrderReviewSection,
 	OrderReviewTotal,
