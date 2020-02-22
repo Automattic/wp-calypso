@@ -82,12 +82,9 @@ export function CheckoutSteps( { children } ) {
 	let stepNumber = 0;
 	let nextStepNumber = 1;
 	const totalSteps = React.Children.count( children );
-	const {
-		activeStepNumber,
-		stepCompleteStatus,
-		setActiveStepNumber,
-		setTotalSteps,
-	} = useContext( CheckoutStepDataContext );
+	const { activeStepNumber, stepCompleteStatus, setTotalSteps } = useContext(
+		CheckoutStepDataContext
+	);
 
 	useEffect( () => {
 		setTotalSteps( totalSteps );
@@ -107,13 +104,18 @@ export function CheckoutSteps( { children } ) {
 		nextStepNumber = stepNumber === totalSteps ? null : stepNumber + 1;
 		const isStepActive = activeStepNumber === stepNumber;
 		const isStepComplete = !! stepCompleteStatus[ stepNumber ];
-		return React.cloneElement( child, {
-			stepNumber,
-			nextStepNumber,
-			isStepActive,
-			isStepComplete,
-			setActiveStepNumber,
-		} );
+		return (
+			<CheckoutSingleStepDataContext.Provider
+				value={ {
+					stepNumber,
+					nextStepNumber,
+					isStepActive,
+					isStepComplete,
+				} }
+			>
+				{ child }
+			</CheckoutSingleStepDataContext.Provider>
+		);
 	} );
 }
 
@@ -123,15 +125,13 @@ export function CheckoutStep( {
 	titleContent,
 	stepId,
 	isCompleteCallback,
-	stepNumber,
-	nextStepNumber,
-	isStepActive,
-	isStepComplete,
-	setActiveStepNumber,
 } ) {
 	const localize = useLocalize();
-	const { totalSteps, setStepCompleteStatus, stepCompleteStatus } = useContext(
+	const { totalSteps, setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } = useContext(
 		CheckoutStepDataContext
+	);
+	const { stepNumber, nextStepNumber, isStepActive, isStepComplete } = useContext(
+		CheckoutSingleStepDataContext
 	);
 	const { setFormPending, setFormReady } = useFormStatus();
 	const setThisStepCompleteStatus = newStatus =>
@@ -171,32 +171,30 @@ export function CheckoutStep( {
 				className={ joinClasses( classNames ) }
 				isFinalStep={ stepNumber === totalSteps }
 			>
-				<CheckoutSingleStepDataContext.Provider value={ stepNumber }>
-					<CheckoutStepHeader
-						id={ stepId }
-						stepNumber={ stepNumber }
-						title={ titleContent }
-						isActive={ isStepActive }
-						isComplete={ isStepComplete }
-						onEdit={ isStepComplete ? goToThisStep : null }
-						editButtonAriaLabel={ localize( 'Edit this step' ) }
-					/>
-					<StepContentUI isVisible={ isStepActive }>
-						{ activeStepContent }
-						{ nextStepNumber > 0 && (
-							<CheckoutNextStepButton
-								value={ localize( 'Continue' ) }
-								onClick={ goToNextStep }
-								ariaLabel={ localize( 'Continue to next step' ) }
-								buttonState={ 'primary' }
-								disabled={ false }
-							/>
-						) }
-					</StepContentUI>
-					{ isStepComplete ? (
-						<StepSummaryUI isVisible={ ! isStepActive }>{ completeStepContent }</StepSummaryUI>
-					) : null }
-				</CheckoutSingleStepDataContext.Provider>
+				<CheckoutStepHeader
+					id={ stepId }
+					stepNumber={ stepNumber }
+					title={ titleContent }
+					isActive={ isStepActive }
+					isComplete={ isStepComplete }
+					onEdit={ isStepComplete ? goToThisStep : null }
+					editButtonAriaLabel={ localize( 'Edit this step' ) }
+				/>
+				<StepContentUI isVisible={ isStepActive }>
+					{ activeStepContent }
+					{ nextStepNumber > 0 && (
+						<CheckoutNextStepButton
+							value={ localize( 'Continue' ) }
+							onClick={ goToNextStep }
+							ariaLabel={ localize( 'Continue to next step' ) }
+							buttonState={ 'primary' }
+							disabled={ false }
+						/>
+					) }
+				</StepContentUI>
+				{ isStepComplete ? (
+					<StepSummaryUI isVisible={ ! isStepActive }>{ completeStepContent }</StepSummaryUI>
+				) : null }
 			</StepWrapperUI>
 		</CheckoutErrorBoundary>
 	);
