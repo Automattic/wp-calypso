@@ -133,7 +133,7 @@ export function CheckoutStep( {
 	const { stepNumber, nextStepNumber, isStepActive, isStepComplete } = useContext(
 		CheckoutSingleStepDataContext
 	);
-	const { setFormValidating, setFormReady } = useFormStatus();
+	const { formStatus, setFormValidating, setFormReady } = useFormStatus();
 	const setThisStepCompleteStatus = newStatus =>
 		setStepCompleteStatus( { ...stepCompleteStatus, [ stepNumber ]: newStatus } );
 	const goToThisStep = () => setActiveStepNumber( stepNumber );
@@ -185,8 +185,8 @@ export function CheckoutStep( {
 							value={ localize( 'Continue' ) }
 							onClick={ goToNextStep }
 							ariaLabel={ localize( 'Continue to next step' ) }
-							buttonState={ 'primary' }
-							disabled={ false }
+							buttonState={ formStatus !== 'ready' ? 'disabled' : 'primary' }
+							disabled={ formStatus !== 'ready' }
 						/>
 					) }
 				</StepContentUI>
