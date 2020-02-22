@@ -162,11 +162,53 @@ export function CheckoutStep( {
 	];
 
 	return (
-		<CheckoutErrorBoundary errorMessage={ localize( 'There was an error with this step' ) }>
+		<CheckoutStepBody
+			errorMessage={ localize( 'There was an error with this step.' ) }
+			editButtonAriaLabel={ localize( 'Edit this step' ) }
+			nextStepButtonText={ localize( 'Continue' ) }
+			nextStepButtonAriaLabel={ localize( 'Continue to the next step' ) }
+			isStepActive={ isStepActive }
+			isStepComplete={ isStepComplete }
+			stepNumber={ stepNumber }
+			totalSteps={ totalSteps }
+			stepId={ stepId }
+			titleContent={ titleContent }
+			goToThisStep={ goToThisStep }
+			goToNextStep={ goToNextStep }
+			activeStepContent={ activeStepContent }
+			nextStepNumber={ nextStepNumber }
+			formStatus={ formStatus }
+			completeStepContent={ completeStepContent }
+			className={ joinClasses( classNames ) }
+		/>
+	);
+}
+
+export function CheckoutStepBody( {
+	errorMessage,
+	editButtonAriaLabel,
+	nextStepButtonText,
+	nextStepButtonAriaLabel,
+	isStepActive,
+	isStepComplete,
+	className,
+	stepNumber,
+	totalSteps,
+	stepId,
+	titleContent,
+	goToThisStep,
+	goToNextStep,
+	activeStepContent,
+	nextStepNumber,
+	formStatus,
+	completeStepContent,
+} ) {
+	return (
+		<CheckoutErrorBoundary errorMessage={ errorMessage }>
 			<StepWrapperUI
 				isActive={ isStepActive }
 				isComplete={ isStepComplete }
-				className={ joinClasses( classNames ) }
+				className={ className }
 				isFinalStep={ stepNumber === totalSteps }
 			>
 				<CheckoutStepHeader
@@ -175,28 +217,48 @@ export function CheckoutStep( {
 					title={ titleContent }
 					isActive={ isStepActive }
 					isComplete={ isStepComplete }
-					onEdit={ isStepComplete ? goToThisStep : null }
-					editButtonAriaLabel={ localize( 'Edit this step' ) }
+					onEdit={ isStepComplete && goToThisStep ? goToThisStep : null }
+					editButtonAriaLabel={ editButtonAriaLabel || 'Edit' }
 				/>
 				<StepContentUI isVisible={ isStepActive }>
 					{ activeStepContent }
-					{ nextStepNumber > 0 && (
+					{ nextStepNumber > 0 && goToNextStep && (
 						<CheckoutNextStepButton
-							value={ localize( 'Continue' ) }
+							value={ nextStepButtonText || 'Continue' }
 							onClick={ goToNextStep }
-							ariaLabel={ localize( 'Continue to next step' ) }
+							ariaLabel={ nextStepButtonAriaLabel || 'Continue' }
 							buttonState={ formStatus !== 'ready' ? 'disabled' : 'primary' }
 							disabled={ formStatus !== 'ready' }
 						/>
 					) }
 				</StepContentUI>
-				{ isStepComplete ? (
+				{ isStepComplete && completeStepContent ? (
 					<StepSummaryUI isVisible={ ! isStepActive }>{ completeStepContent }</StepSummaryUI>
 				) : null }
 			</StepWrapperUI>
 		</CheckoutErrorBoundary>
 	);
 }
+
+CheckoutStepBody.propTypes = {
+	errorMessage: PropTypes.string,
+	editButtonAriaLabel: PropTypes.string,
+	nextStepButtonText: PropTypes.string,
+	nextStepButtonAriaLabel: PropTypes.string,
+	isStepActive: PropTypes.bool.isRequired,
+	isStepComplete: PropTypes.bool.isRequired,
+	className: PropTypes.string,
+	stepNumber: PropTypes.number.isRequired,
+	totalSteps: PropTypes.number.isRequired,
+	stepId: PropTypes.string.isRequired,
+	titleContent: PropTypes.node.isRequired,
+	goToThisStep: PropTypes.func,
+	goToNextStep: PropTypes.func,
+	activeStepContent: PropTypes.node.isRequired,
+	nextStepNumber: PropTypes.number,
+	formStatus: PropTypes.string,
+	completeStepContent: PropTypes.node,
+};
 
 const ContainerUI = styled.div`
 	*:focus {
