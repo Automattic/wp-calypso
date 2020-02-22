@@ -22,9 +22,11 @@ export function CheckoutSteps( { children } ) {
 	const [ stepCompleteStatus, setStepCompleteStatus ] = useState( {} );
 	let stepNumber = 0;
 	let nextStepNumber = 1;
+	const totalSteps = React.Children.count( children );
+
 	return React.Children.map( children, child => {
 		stepNumber = nextStepNumber;
-		nextStepNumber = stepNumber + 1;
+		nextStepNumber = stepNumber === totalSteps ? null : stepNumber + 1;
 		const isStepActive = activeStepNumber === stepNumber;
 		const isStepComplete = !! stepCompleteStatus[ stepNumber ];
 		return React.cloneElement( child, {
