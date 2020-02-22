@@ -8,12 +8,29 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import joinClasses from '../lib/join-classes';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { useFormStatus } from '../lib/form-status';
+import LoadingContent from './loading-content';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 
-export function Checkout( { children } ) {
+export function Checkout( { children, className } ) {
+	const { formStatus } = useFormStatus();
+
+	if ( formStatus === 'loading' ) {
+		return (
+			<ContainerUI className={ joinClasses( [ className, 'composite-checkout' ] ) }>
+				<MainContentUI
+					className={ joinClasses( [ className, 'checkout__content' ] ) }
+					isLastStepActive={ false }
+				>
+					<LoadingContent />
+				</MainContentUI>
+			</ContainerUI>
+		);
+	}
+
 	return children;
 }
 
@@ -119,3 +136,23 @@ function CheckoutStepEditButton( { onClick } ) {
 function CheckoutStepContinueButton( { onClick } ) {
 	return <button onClick={ onClick }>Continue</button>;
 }
+
+const ContainerUI = styled.div`
+	*:focus {
+		outline: ${props => props.theme.colors.outline} solid 2px;
+	}
+`;
+
+const MainContentUI = styled.div`
+	background: ${props => props.theme.colors.surface};
+	width: 100%;
+	box-sizing: border-box;
+	margin-bottom: ${props => ( props.isLastStepActive ? '89px' : 0 )};
+
+	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
+		border: 1px solid ${props => props.theme.colors.borderColorLight};
+		margin: 32px auto;
+		box-sizing: border-box;
+		max-width: 556px;
+	}
+`;
