@@ -31,7 +31,7 @@ Any component which is a child of `CheckoutProvider` gets access to the custom h
 
 The [Checkout](#checkout) component creates the form itself. That component displays a series of steps which are passed in as [Step objects](#steps). While you can create these objects manually, the package provides three pre-defined steps that can be created by using the functions [getDefaultOrderSummaryStep](#getDefaultOrderSummaryStep), [getDefaultPaymentMethodStep](#getDefaultPaymentMethodStep), and [getDefaultOrderReviewStep](#getDefaultOrderReviewStep).
 
-Any component within a Step object gets access to the custom hooks above as well as [useActiveStep](#useActiveStep), and [useIsStepActive](#useIsStepActive) and [useIsStepComplete](#useIsStepComplete).
+Any component within a Step object gets access to the custom hooks above as well as [useIsStepActive](#useIsStepActive) and [useIsStepComplete](#useIsStepComplete).
 
 ## Submitting the form
 
@@ -72,7 +72,7 @@ All properties except for `id` are optional.
 - `id: string`. A unique ID for the step.
 - `className?: string`. Displayed on the step wrapper.
 - `hasStepNumber?: boolean`. If false, the step will not have a number displayed and will never be made active. Can be used for informational blocks. Defaults to false.
-- `titleContent?: React.ReactNode`. Displays as the title of the step. This can be be variable based on form status by using hooks like `useActiveStep()` to see if the step is active.
+- `titleContent?: React.ReactNode`. Displays as the title of the step.
 - `activeStepContent?: React.ReactNode`. Displays as the content of the step when it is active. It is also displayed when the step is inactive but is hidden by CSS.
 - `incompleteStepContent?: React.ReactNode`. Displays as the content of the step when it is inactive and incomplete as defined by the `isCompleteCallback`. It is also displayed when the step is active but is hidden by CSS.
 - `completeStepContent?: React.ReactNode`. Displays as the content of the step when it is inactive and complete as defined by the `isCompleteCallback`. It is also displayed when the step is active but is hidden by CSS.
@@ -286,16 +286,6 @@ Takes two arguments, a currency string and an integer string and returns the loc
 ### renderDisplayValueMarkdown
 
 Takes one argument, a displayValue string, and returns the displayValue with some minor Markdown formatting. Specifically, the `~~` characters can be used to make ~~strike-through~~ text.
-
-### useActiveStep
-
-A React Hook that will return the currently active [Step object](#steps). Only works within a step.
-
-The step object that is returned will include some additional properties:
-
-- `isComplete: boolean`. True if the `isCompleteCallback` function returned true (it's not recommended to call the function yourself because it expects certain arguments that you may not be able to provide).
-- `stepNumber: number | null`. The step's visible number. If the step has no number (because `hasStepNumber` is false), this will be `null`.
-- `stepIndex: number`. The index of the step in the array of steps.
 
 ### useAllPaymentMethods
 

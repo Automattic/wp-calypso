@@ -34,7 +34,6 @@ import { createStripeMethod } from './lib/payment-methods/stripe-credit-card-fie
 import { createApplePayMethod } from './lib/payment-methods/apple-pay';
 import { createPayPalMethod } from './lib/payment-methods/paypal';
 import { createExistingCardMethod } from './lib/payment-methods/existing-credit-card';
-import { useActiveStep } from './lib/active-step';
 import CheckoutOrderSummary, {
 	CheckoutOrderSummaryTitle,
 } from './components/checkout-order-summary';
@@ -70,7 +69,6 @@ export {
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
 	renderDisplayValueMarkdown,
-	useActiveStep,
 	useAllPaymentMethods,
 	useDispatch,
 	useEvents,
