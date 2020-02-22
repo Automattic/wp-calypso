@@ -430,7 +430,9 @@ function MyCheckout() {
 				<CheckoutSteps>
 					<CheckoutStep
 						stepId="payment-method-step"
-						isCompleteCallback={ () => true }
+						isCompleteCallback={ () =>
+							new Promise( resolve => setTimeout( () => resolve( true ), 1500 ) )
+						}
 						activeStepContent={ paymentMethodStep.activeStepContent }
 						completeStepContent={ paymentMethodStep.completeStepContent }
 						titleContent={ paymentMethodStep.titleContent }
