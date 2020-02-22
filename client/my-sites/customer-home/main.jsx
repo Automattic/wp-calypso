@@ -52,6 +52,7 @@ import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-
 import StatsBanners from 'my-sites/stats/stats-banners';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { getActiveTheme, getCanonicalTheme } from 'state/themes/selectors';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import QueryActiveTheme from 'components/data/query-active-theme';
@@ -523,6 +524,7 @@ class Home extends Component {
 			displayChecklist,
 			isAtomic,
 			isChecklistComplete,
+			isUsingClassicEditor,
 			needsEmailVerification,
 			translate,
 			checklistMode,
@@ -573,7 +575,7 @@ class Home extends Component {
 						</Card>
 					) }
 					{ ! siteIsUnlaunched && <StatsCard /> }
-					{ <MasteringGutenbergCard /> }
+					{ ! isUsingClassicEditor && <MasteringGutenbergCard /> }
 					{ ! siteIsUnlaunched && isChecklistComplete && (
 						<Card className="customer-home__grow-earn">
 							<CardHeading>{ translate( 'Grow & Earn' ) }</CardHeading>
@@ -669,6 +671,7 @@ const connectHome = connect(
 			isAtomic,
 			needsEmailVerification: ! isCurrentUserEmailVerified( state ),
 			isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
+			isUsingClassicEditor: 'classic' === getSelectedEditor( state, siteId ),
 			siteHasPaidPlan: isSiteOnPaidPlan( state, siteId ),
 			isNewlyCreatedSite: isNewSite( state, siteId ),
 			isEstablishedSite: moment().isAfter( moment( createdAt ).add( 2, 'days' ) ),
