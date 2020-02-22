@@ -1,22 +1,32 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
+import { useLocalize, sprintf } from '../lib/localize';
 import joinClasses from '../lib/join-classes';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { useFormStatus } from '../lib/form-status';
 import LoadingContent from './loading-content';
+import CheckoutSubmitButton from './checkout-submit-button';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 
+const CheckoutStepDataContext = React.createContext();
+const CheckoutSingleStepDataContext = React.createContext();
+
 export function Checkout( { children, className } ) {
 	const { formStatus } = useFormStatus();
+	const localize = useLocalize();
+	const [ activeStepNumber, setActiveStepNumber ] = useState( 1 );
+	const [ stepCompleteStatus, setStepCompleteStatus ] = useState( {} );
+	const [ totalSteps, setTotalSteps ] = useState( 0 );
+	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
 
 	if ( formStatus === 'loading' ) {
 		return (
@@ -31,15 +41,53 @@ export function Checkout( { children, className } ) {
 		);
 	}
 
-	return children;
+	return (
+		<ContainerUI className={ joinClasses( [ className, 'composite-checkout' ] ) }>
+			<CheckoutStepDataContext.Provider
+				value={ {
+					activeStepNumber,
+					stepCompleteStatus,
+					setActiveStepNumber,
+					setStepCompleteStatus,
+					setTotalSteps,
+				} }
+			>
+				<MainContentUI
+					className={ joinClasses( [ className, 'checkout__content' ] ) }
+					isLastStepActive={ isThereAnotherNumberedStep }
+				>
+					{ children }
+
+					<SubmittButtonWrapperUI isLastStepActive={ ! isThereAnotherNumberedStep }>
+						<CheckoutErrorBoundary
+							errorMessage={ localize( 'There was a problem with the submit button.' ) }
+						>
+							<CheckoutSubmitButton
+								disabled={ isThereAnotherNumberedStep || formStatus !== 'ready' }
+							/>
+						</CheckoutErrorBoundary>
+					</SubmittButtonWrapperUI>
+				</MainContentUI>
+			</CheckoutStepDataContext.Provider>
+		</ContainerUI>
+	);
 }
 
 export function CheckoutSteps( { children } ) {
-	const [ activeStepNumber, setActiveStepNumber ] = useState( 1 );
-	const [ stepCompleteStatus, setStepCompleteStatus ] = useState( {} );
 	let stepNumber = 0;
 	let nextStepNumber = 1;
 	const totalSteps = React.Children.count( children );
+	const {
+		activeStepNumber,
+		stepCompleteStatus,
+		setActiveStepNumber,
+		setStepCompleteStatus,
+		setTotalSteps,
+	} = useContext( CheckoutStepDataContext );
+
+	useEffect( () => {
+		setTotalSteps( totalSteps );
+	}, [ totalSteps, setTotalSteps ] );
 
 	return React.Children.map( children, child => {
 		stepNumber = nextStepNumber;
@@ -94,17 +142,19 @@ export function CheckoutStep( {
 
 	return (
 		<CheckoutErrorBoundary errorMessage="There was an error with this step">
-			<CheckoutStepHeaderUI>
-				{ isStepComplete ? (
-					<CheckoutStepCompleteBadge />
-				) : (
-					<CheckoutStepBadgeUI>{ stepNumber }</CheckoutStepBadgeUI>
-				) }
-				<CheckoutStepTitleUI>{ title }</CheckoutStepTitleUI>
-				{ isStepComplete ? <CheckoutStepEditButton onClick={ goToThisStep } /> : null }
-			</CheckoutStepHeaderUI>
-			{ children }
-			{ nextStepNumber > 0 ? <CheckoutStepContinueButton onClick={ goToNextStep } /> : null }
+			<CheckoutSingleStepDataContext.Provider value={ stepNumber }>
+				<CheckoutStepHeaderUI>
+					{ isStepComplete ? (
+						<CheckoutStepCompleteBadge />
+					) : (
+						<CheckoutStepBadgeUI>{ stepNumber }</CheckoutStepBadgeUI>
+					) }
+					<CheckoutStepTitleUI>{ title }</CheckoutStepTitleUI>
+					{ isStepComplete ? <CheckoutStepEditButton onClick={ goToThisStep } /> : null }
+				</CheckoutStepHeaderUI>
+				{ children }
+				{ nextStepNumber > 0 ? <CheckoutStepContinueButton onClick={ goToNextStep } /> : null }
+			</CheckoutSingleStepDataContext.Provider>
 		</CheckoutErrorBoundary>
 	);
 }
@@ -156,3 +206,34 @@ const MainContentUI = styled.div`
 		max-width: 556px;
 	}
 `;
+
+const SubmittButtonWrapperUI = styled.div`
+	background: ${props => props.theme.colors.background};
+	padding: 24px;
+	position: ${props => ( props.isLastStepActive ? 'fixed' : 'relative' )};
+	bottom: 0;
+	left: 0;
+	box-sizing: border-box;
+	width: 100%;
+	z-index: 10;
+	border-top-width: ${props => ( props.isLastStepActive ? '1px' : '0' )};
+	border-top-style: solid;
+	border-top-color: ${props => props.theme.colors.borderColorLight};
+
+	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
+		position: relative;
+		border: 0;
+	}
+`;
+
+export function useIsStepActive() {
+	const { activeStepNumber } = useContext( CheckoutStepDataContext );
+	const stepNumber = useContext( CheckoutSingleStepDataContext );
+	return activeStepNumber === stepNumber;
+}
+
+export function useIsStepComplete() {
+	const { stepCompleteStatus } = useContext( CheckoutStepDataContext );
+	const stepNumber = useContext( CheckoutSingleStepDataContext );
+	return !! stepCompleteStatus[ stepNumber ];
+}
