@@ -254,7 +254,7 @@ CheckoutStepBody.propTypes = {
 	titleContent: PropTypes.node.isRequired,
 	goToThisStep: PropTypes.func,
 	goToNextStep: PropTypes.func,
-	activeStepContent: PropTypes.node.isRequired,
+	activeStepContent: PropTypes.node,
 	nextStepNumber: PropTypes.number,
 	formStatus: PropTypes.string,
 	completeStepContent: PropTypes.node,
