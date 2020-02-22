@@ -2,7 +2,13 @@
  * Internal dependencies
  */
 import { CheckoutProvider, useEvents, useMessages } from './components/checkout-provider';
-import { CheckoutSteps, Checkout, CheckoutStep } from './components/checkout-steps';
+import {
+	CheckoutSteps,
+	Checkout,
+	CheckoutStep,
+	useIsStepActive,
+	useIsStepComplete,
+} from './components/checkout-steps';
 import CheckoutPaymentMethods from './components/checkout-payment-methods';
 import {
 	OrderReviewLineItems,
@@ -28,7 +34,7 @@ import { createApplePayMethod } from './lib/payment-methods/apple-pay';
 import { createPayPalMethod } from './lib/payment-methods/paypal';
 import { createCreditCardMethod } from './lib/payment-methods/credit-card';
 import { createExistingCardMethod } from './lib/payment-methods/existing-credit-card';
-import { useActiveStep, useIsStepActive, useIsStepComplete } from './lib/active-step';
+import { useActiveStep } from './lib/active-step';
 import CheckoutOrderSummary, {
 	CheckoutOrderSummaryTitle,
 } from './components/checkout-order-summary';
