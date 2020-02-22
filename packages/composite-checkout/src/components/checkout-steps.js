@@ -137,24 +137,22 @@ export function CheckoutStep( {
 	const setThisStepCompleteStatus = newStatus =>
 		setStepCompleteStatus( { ...stepCompleteStatus, [ stepNumber ]: newStatus } );
 	const goToThisStep = () => setActiveStepNumber( stepNumber );
-	const goToNextStep = () => {
-		const completeResult = isCompleteCallback();
-		if ( completeResult.then ) {
-			setFormPending();
-			completeResult.then( delayedCompleteResult => {
-				setThisStepCompleteStatus( delayedCompleteResult );
-				if ( delayedCompleteResult ) {
-					setActiveStepNumber( nextStepNumber );
-				}
-				setFormReady();
-			} );
-			return;
-		}
+	const finishIsCompleteCallback = completeResult => {
 		setThisStepCompleteStatus( !! completeResult );
 		if ( completeResult ) {
 			setActiveStepNumber( nextStepNumber );
 		}
 		setFormReady();
+	};
+	const goToNextStep = async () => {
+		const completeResult = isCompleteCallback();
+		if ( completeResult.then ) {
+			setFormPending();
+			const delayedCompleteResult = await completeResult;
+			finishIsCompleteCallback( delayedCompleteResult );
+			return;
+		}
+		finishIsCompleteCallback( completeResult );
 	};
 
 	const classNames = [
