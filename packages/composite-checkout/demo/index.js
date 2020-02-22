@@ -431,6 +431,7 @@ function MyCheckout() {
 						stepId="payment-method-step"
 						isCompleteCallback={ () => true }
 						activeStepContent={ paymentMethodStep.activeStepContent }
+						completeStepContent={ paymentMethodStep.completeStepContent }
 						titleContent={ paymentMethodStep.titleContent }
 					/>
 				</CheckoutSteps>

@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { useLocalize, sprintf } from '../lib/localize';
+import { useLocalize } from '../lib/localize';
 import joinClasses from '../lib/join-classes';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { useFormStatus } from '../lib/form-status';
@@ -93,6 +93,15 @@ export function CheckoutSteps( { children } ) {
 		setTotalSteps( totalSteps );
 	}, [ totalSteps, setTotalSteps ] );
 
+	debug(
+		'active step',
+		activeStepNumber,
+		'step complete status',
+		stepCompleteStatus,
+		'total steps',
+		totalSteps
+	);
+
 	return React.Children.map( children, child => {
 		stepNumber = nextStepNumber;
 		nextStepNumber = stepNumber === totalSteps ? null : stepNumber + 1;
@@ -112,6 +121,7 @@ export function CheckoutSteps( { children } ) {
 
 export function CheckoutStep( {
 	activeStepContent,
+	completeStepContent,
 	titleContent,
 	stepId,
 	isCompleteCallback,
@@ -152,19 +162,6 @@ export function CheckoutStep( {
 		...( isStepComplete ? [ 'checkout-step--is-complete' ] : [] ),
 	];
 
-	// const old = (
-	// 	<div>
-	// 		<StepContent className="checkout-step__content" isVisible={ isStepActive }>
-	// 			{ stepContent }
-	// 		</StepContent>
-	// 		{ stepSummary && (
-	// 			<StepSummary className="checkout-step__summary" isVisible={ ! isStepActive }>
-	// 				{ stepSummary }
-	// 			</StepSummary>
-	// 		) }
-	// 	</div>
-	// );
-  //
 	return (
 		<CheckoutErrorBoundary errorMessage={ localize( 'There was an error with this step' ) }>
 			<StepWrapperUI
@@ -183,7 +180,10 @@ export function CheckoutStep( {
 						onEdit={ isStepComplete ? goToThisStep : null }
 						editButtonAriaLabel={ localize( 'Edit this step' ) }
 					/>
-					{ activeStepContent }
+					<StepContentUI isVisible={ isStepActive }>{ activeStepContent }</StepContentUI>
+					{ isStepComplete ? (
+						<StepSummaryUI isVisible={ ! isStepActive }>{ completeStepContent }</StepSummaryUI>
+					) : null }
 					{ nextStepNumber > 0 ? <CheckoutStepContinueButton onClick={ goToNextStep } /> : null }
 				</CheckoutSingleStepDataContext.Provider>
 			</StepWrapperUI>
@@ -279,18 +279,11 @@ function CheckoutStepHeader( {
 			<Stepper isComplete={ isComplete } isActive={ isActive } id={ id }>
 				{ stepNumber || null }
 			</Stepper>
-			<StepTitle
-				fullWidth={ ! shouldShowEditButton }
-				isActive={ isActive }
-			>
+			<StepTitle fullWidth={ ! shouldShowEditButton } isActive={ isActive }>
 				{ title }
 			</StepTitle>
 			{ shouldShowEditButton && (
-				<Button
-					buttonState="text-button"
-					onClick={ onEdit }
-					aria-label={ editButtonAriaLabel }
-				>
+				<Button buttonState="text-button" onClick={ onEdit } aria-label={ editButtonAriaLabel }>
 					{ localize( 'Edit' ) }
 				</Button>
 			) }
@@ -416,13 +409,13 @@ function getStepNumberForegroundColor( { isComplete, isActive, theme } ) {
 	return theme.colors.textColor;
 }
 
-const StepContent = styled.div`
+const StepContentUI = styled.div`
 	color: ${props => props.theme.colors.textColor};
 	display: ${props => ( props.isVisible ? 'block' : 'none' )};
 	padding-left: 35px;
 `;
 
-const StepSummary = styled.div`
+const StepSummaryUI = styled.div`
 	color: ${props => props.theme.colors.textColorLight};
 	font-size: 14px;
 	display: ${props => ( props.isVisible ? 'block' : 'none' )};
