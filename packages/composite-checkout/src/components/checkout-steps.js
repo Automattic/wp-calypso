@@ -217,7 +217,7 @@ export function CheckoutStepBody( {
 					title={ titleContent }
 					isActive={ isStepActive }
 					isComplete={ isStepComplete }
-					onEdit={ isStepComplete && goToThisStep ? goToThisStep : null }
+					onEdit={ isStepComplete && goToThisStep && ! isStepActive ? goToThisStep : null }
 					editButtonAriaLabel={ editButtonAriaLabel || 'Edit' }
 				/>
 				<StepContentUI isVisible={ isStepActive }>
