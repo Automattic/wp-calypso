@@ -11,6 +11,7 @@ import {
 	Checkout,
 	CheckoutSteps,
 	CheckoutStep,
+	CheckoutStepBody,
 	CheckoutProvider,
 	createApplePayMethod,
 	createPayPalMethod,
@@ -276,6 +277,7 @@ function AdditionalFields() {
 	);
 }
 
+const orderSummaryStep = getDefaultOrderSummaryStep();
 const paymentMethodStep = getDefaultPaymentMethodStep();
 const reviewOrderStep = getDefaultOrderReviewStep();
 
@@ -427,6 +429,17 @@ function MyCheckout() {
 			paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }
 		>
 			<Checkout>
+				<CheckoutStepBody
+					activeStepContent={ orderSummaryStep.activeStepContent }
+					completeStepContent={ orderSummaryStep.completeStepContent }
+					titleContent={ orderSummaryStep.titleContent }
+					errorMessage={ 'There was an error with this step.' }
+					isStepActive={ false }
+					isStepComplete={ true }
+					stepNumber={ 1 }
+					totalSteps={ 1 }
+					stepId={ 'order-summary' }
+				/>
 				<CheckoutSteps>
 					<CheckoutStep
 						stepId="payment-method-step"
