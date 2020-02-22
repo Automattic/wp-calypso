@@ -276,10 +276,7 @@ function AdditionalFields() {
 	);
 }
 
-const PaymentMethodStep = () => {
-	const { activeStepContent } = getDefaultPaymentMethodStep();
-	return <div>{ activeStepContent }</div>;
-};
+const paymentMethodStep = getDefaultPaymentMethodStep();
 
 const steps = [
 	getDefaultOrderSummaryStep(),
@@ -431,12 +428,11 @@ function MyCheckout() {
 			<Checkout>
 				<CheckoutSteps>
 					<CheckoutStep
-						title="Pick a payment method"
 						stepId="payment-method-step"
-						isComplete={ () => true }
-					>
-						<PaymentMethodStep />
-					</CheckoutStep>
+						isCompleteCallback={ () => true }
+						activeStepContent={ paymentMethodStep.activeStepContent }
+						titleContent={ paymentMethodStep.titleContent }
+					/>
 				</CheckoutSteps>
 			</Checkout>
 		</CheckoutProvider>

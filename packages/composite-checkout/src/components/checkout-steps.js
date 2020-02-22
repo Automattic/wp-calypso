@@ -4,6 +4,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -14,6 +15,8 @@ import CheckoutErrorBoundary from './checkout-error-boundary';
 import { useFormStatus } from '../lib/form-status';
 import LoadingContent from './loading-content';
 import CheckoutSubmitButton from './checkout-submit-button';
+import Button from './button';
+import { CheckIcon } from './shared-icons';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 
@@ -47,6 +50,7 @@ export function Checkout( { children, className } ) {
 				value={ {
 					activeStepNumber,
 					stepCompleteStatus,
+					totalSteps,
 					setActiveStepNumber,
 					setStepCompleteStatus,
 					setTotalSteps,
@@ -107,10 +111,10 @@ export function CheckoutSteps( { children } ) {
 }
 
 export function CheckoutStep( {
-	children,
-	title,
+	activeStepContent,
+	titleContent,
 	stepId,
-	isComplete,
+	isCompleteCallback,
 	stepNumber,
 	nextStepNumber,
 	isStepActive,
@@ -118,10 +122,12 @@ export function CheckoutStep( {
 	setActiveStepNumber,
 	setStepCompleteStatus,
 } ) {
+	const localize = useLocalize();
+	const { totalSteps } = useContext( CheckoutStepDataContext );
 	const { setFormPending, setFormReady } = useFormStatus();
 	const goToThisStep = () => setActiveStepNumber( stepNumber );
 	const goToNextStep = () => {
-		const completeResult = isComplete();
+		const completeResult = isCompleteCallback();
 		if ( completeResult.then ) {
 			setFormPending();
 			completeResult.then( delayedCompleteResult => {
@@ -140,51 +146,53 @@ export function CheckoutStep( {
 		setFormReady();
 	};
 
+	const classNames = [
+		'checkout-step',
+		...( isStepActive ? [ 'checkout-step--is-active' ] : [] ),
+		...( isStepComplete ? [ 'checkout-step--is-complete' ] : [] ),
+	];
+
+	// const old = (
+	// 	<div>
+	// 		<StepContent className="checkout-step__content" isVisible={ isStepActive }>
+	// 			{ stepContent }
+	// 		</StepContent>
+	// 		{ stepSummary && (
+	// 			<StepSummary className="checkout-step__summary" isVisible={ ! isStepActive }>
+	// 				{ stepSummary }
+	// 			</StepSummary>
+	// 		) }
+	// 	</div>
+	// );
+  //
 	return (
-		<CheckoutErrorBoundary errorMessage="There was an error with this step">
-			<CheckoutSingleStepDataContext.Provider value={ stepNumber }>
-				<CheckoutStepHeaderUI>
-					{ isStepComplete ? (
-						<CheckoutStepCompleteBadge />
-					) : (
-						<CheckoutStepBadgeUI>{ stepNumber }</CheckoutStepBadgeUI>
-					) }
-					<CheckoutStepTitleUI>{ title }</CheckoutStepTitleUI>
-					{ isStepComplete ? <CheckoutStepEditButton onClick={ goToThisStep } /> : null }
-				</CheckoutStepHeaderUI>
-				{ children }
-				{ nextStepNumber > 0 ? <CheckoutStepContinueButton onClick={ goToNextStep } /> : null }
-			</CheckoutSingleStepDataContext.Provider>
+		<CheckoutErrorBoundary errorMessage={ localize( 'There was an error with this step' ) }>
+			<StepWrapperUI
+				isActive={ isStepActive }
+				isComplete={ isStepComplete }
+				className={ joinClasses( classNames ) }
+				isFinalStep={ stepNumber === totalSteps }
+			>
+				<CheckoutSingleStepDataContext.Provider value={ stepNumber }>
+					<CheckoutStepHeader
+						id={ stepId }
+						stepNumber={ stepNumber }
+						title={ titleContent }
+						isActive={ isStepActive }
+						isComplete={ isStepComplete }
+						onEdit={ isStepComplete ? goToThisStep : null }
+						editButtonAriaLabel={ localize( 'Edit this step' ) }
+					/>
+					{ activeStepContent }
+					{ nextStepNumber > 0 ? <CheckoutStepContinueButton onClick={ goToNextStep } /> : null }
+				</CheckoutSingleStepDataContext.Provider>
+			</StepWrapperUI>
 		</CheckoutErrorBoundary>
 	);
 }
 
-const CheckoutStepHeaderUI = styled.div`
-	border: 1px solid orange;
-`;
-
-const CheckoutStepBadgeUI = styled.div`
-	width: 10px;
-	height: 10px;
-	background: green;
-`;
-
-const CheckoutStepTitleUI = styled.div`
-	border: 1px dotted green;
-`;
-
-const CheckoutStepCompleteBadge = styled.div`
-	width: 10px;
-	height: 10px;
-	background: green;
-`;
-
-function CheckoutStepEditButton( { onClick } ) {
-	return <button onClick={ onClick }>Edit</button>;
-}
-
 function CheckoutStepContinueButton( { onClick } ) {
-	return <button onClick={ onClick }>Continue</button>;
+	return <Button onClick={ onClick }>Continue</Button>;
 }
 
 const ContainerUI = styled.div`
@@ -237,3 +245,186 @@ export function useIsStepComplete() {
 	const stepNumber = useContext( CheckoutSingleStepDataContext );
 	return !! stepCompleteStatus[ stepNumber ];
 }
+
+const StepWrapperUI = styled.div`
+	padding-bottom: ${props => ( props.isFinalStep ? '0' : '32px' )};
+	position: relative;
+	border-bottom: 1px solid ${props => props.theme.colors.borderColorLight};
+	padding: 16px;
+
+	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
+		padding: 24px;
+	}
+`;
+
+function CheckoutStepHeader( {
+	id,
+	className,
+	stepNumber,
+	title,
+	isActive,
+	isComplete,
+	onEdit,
+	editButtonAriaLabel,
+} ) {
+	const localize = useLocalize();
+	const shouldShowEditButton = !! onEdit;
+
+	return (
+		<StepHeader
+			isComplete={ isComplete }
+			isActive={ isActive }
+			className={ joinClasses( [ className, 'checkout-step__header' ] ) }
+		>
+			<Stepper isComplete={ isComplete } isActive={ isActive } id={ id }>
+				{ stepNumber || null }
+			</Stepper>
+			<StepTitle
+				fullWidth={ ! shouldShowEditButton }
+				isActive={ isActive }
+			>
+				{ title }
+			</StepTitle>
+			{ shouldShowEditButton && (
+				<Button
+					buttonState="text-button"
+					onClick={ onEdit }
+					aria-label={ editButtonAriaLabel }
+				>
+					{ localize( 'Edit' ) }
+				</Button>
+			) }
+		</StepHeader>
+	);
+}
+
+CheckoutStepHeader.propTypes = {
+	id: PropTypes.string,
+	className: PropTypes.string,
+	title: PropTypes.node.isRequired,
+	isActive: PropTypes.bool,
+	isComplete: PropTypes.bool,
+	onEdit: PropTypes.func,
+};
+
+function Stepper( { isComplete, isActive, className, children, id } ) {
+	// Prevent showing complete stepper when active
+	const isCompleteAndInactive = isActive ? false : isComplete;
+	return (
+		<StepNumberOuterWrapper className={ joinClasses( [ className, 'checkout-step__stepper' ] ) }>
+			<StepNumberInnerWrapper isComplete={ isCompleteAndInactive }>
+				<StepNumber isComplete={ isCompleteAndInactive } isActive={ isActive }>
+					{ children }
+				</StepNumber>
+				<StepNumberCompleted>
+					<CheckIcon id={ id } />
+				</StepNumberCompleted>
+			</StepNumberInnerWrapper>
+		</StepNumberOuterWrapper>
+	);
+}
+
+Stepper.propTypes = {
+	id: PropTypes.string,
+	className: PropTypes.string,
+	isComplete: PropTypes.bool,
+	isActive: PropTypes.bool,
+};
+
+const StepTitle = styled.span`
+	color: ${props =>
+		props.isActive ? props.theme.colors.textColorDark : props.theme.colors.textColor};
+	font-weight: ${props =>
+		props.isActive ? props.theme.weights.bold : props.theme.weights.normal};
+	margin-right: ${props => ( props.fullWidth ? '0' : '8px' )};
+	flex: ${props => ( props.fullWidth ? '1' : 'inherit' )};
+`;
+
+const StepHeader = styled.h2`
+	font-size: 16px;
+	display: flex;
+	width: 100%;
+	align-items: center;
+	margin: 0 0 ${props => ( props.isComplete || props.isActive ? '8px' : '0' )};
+`;
+
+const StepNumberOuterWrapper = styled.div`
+	position: relative;
+	width: 27px;
+	height: 27px;
+	margin-right: 8px;
+`;
+
+const StepNumberInnerWrapper = styled.div`
+	position: relative;
+	transform-origin: center center;
+	transition: transform 0.3s 0.1s ease-out;
+	transform-style: preserve-3d;
+	transform: ${props => ( props.isComplete ? 'rotateY(180deg)' : 'rotateY(0)' )};
+`;
+
+const StepNumber = styled.div`
+	background: ${ getStepNumberBackgroundColor };
+	font-weight: normal;
+	width: 27px;
+	height: 27px;
+	line-height: 27px;
+	box-sizing: border-box;
+	text-align: center;
+	border-radius: 50%;
+	color: ${ getStepNumberForegroundColor };
+	position: absolute;
+	top: 0;
+	left: 0;
+	backface-visibility: hidden;
+	// Reason: The IE media query needs to not have spaces within brackets otherwise ie11 doesn't read them
+	// prettier-ignore
+	@media all and (-ms-high-contrast:none), (-ms-high-contrast:active) {
+		z-index: ${ props => ( props.isComplete ? '0' : '1' ) };
+	}
+`;
+
+const StepNumberCompleted = styled( StepNumber )`
+	background: ${ props => props.theme.colors.success };
+	transform: rotateY( 180deg );
+	// Reason: media query needs to not have spaces within brackets otherwise ie11 doesn't read them
+	// prettier-ignore
+	@media all and (-ms-high-contrast:none), (-ms-high-contrast:active) {
+		backface-visibility: visible;
+		z-index: ${ props => ( props.isComplete ? '1' : '0' ) };
+	}
+
+	svg {
+		margin-top: 4px;
+	}
+`;
+
+function getStepNumberBackgroundColor( { isComplete, isActive, theme } ) {
+	if ( isActive ) {
+		return theme.colors.highlight;
+	}
+	if ( isComplete ) {
+		return theme.colors.success;
+	}
+	return theme.colors.upcomingStepBackground;
+}
+
+function getStepNumberForegroundColor( { isComplete, isActive, theme } ) {
+	if ( isComplete || isActive ) {
+		return theme.colors.surface;
+	}
+	return theme.colors.textColor;
+}
+
+const StepContent = styled.div`
+	color: ${props => props.theme.colors.textColor};
+	display: ${props => ( props.isVisible ? 'block' : 'none' )};
+	padding-left: 35px;
+`;
+
+const StepSummary = styled.div`
+	color: ${props => props.theme.colors.textColorLight};
+	font-size: 14px;
+	display: ${props => ( props.isVisible ? 'block' : 'none' )};
+	padding-left: 35px;
+`;
