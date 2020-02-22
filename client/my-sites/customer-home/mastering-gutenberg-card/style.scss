@@ -1,0 +1,35 @@
+.mastering-gutenberg-card {
+	border-top: 2px solid var( --studio-blue );
+}
+
+.mastering-gutenberg-card__illustration {
+	margin-bottom: 8px;
+	text-align: center;
+}
+
+.mastering-gutenberg-card__links {
+	align-items: center;
+	display: flex;
+	margin-bottom: 4px;
+
+	.gridicon {
+		fill: var( --color-neutral );
+	}
+
+	.mastering-gutenberg-card__item {
+		margin-left: 6px;
+	}
+}
+
+.mastering-gutenberg-card__dialog {
+	video {
+		max-height: 600px;
+		max-width: 800px;
+		width: 100%;
+	}
+
+	&-buttons {
+		margin-top: 12px;
+		text-align: right;
+	}
+}
