@@ -19,7 +19,6 @@ import {
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
-	usePaymentMethodId,
 	useIsStepActive,
 	usePaymentData,
 } from '../src/public-api';
@@ -340,7 +339,6 @@ function MyCheckout() {
 		canMakePayment: isApplePayAvailable,
 		isLoading: isApplePayLoading,
 	} = useIsApplePayAvailable( stripe, stripeConfiguration, items );
-	const [ activePaymentMethod ] = usePaymentMethodId();
 
 	const [ isLoading, setIsLoading ] = useState( true );
 	useEffect( () => {
@@ -435,7 +433,7 @@ function MyCheckout() {
 					<CheckoutStep
 						title="Pick a payment method"
 						stepId="payment-method-step"
-						isComplete={ () => !! activePaymentMethod }
+						isComplete={ () => true }
 					>
 						<PaymentMethodStep />
 					</CheckoutStep>

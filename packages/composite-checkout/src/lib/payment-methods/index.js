@@ -14,7 +14,7 @@ const debug = debugFactory( 'composite-checkout:payment-methods' );
 export function usePaymentMethodId() {
 	const { paymentMethodId, setPaymentMethodId } = useContext( CheckoutContext );
 	if ( ! setPaymentMethodId ) {
-		// throw new Error( 'usePaymentMethodId can only be used inside a CheckoutProvider' );
+		throw new Error( 'usePaymentMethodId can only be used inside a CheckoutProvider' );
 	}
 	return [ paymentMethodId, setPaymentMethodId ];
 }
