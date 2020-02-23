@@ -125,6 +125,12 @@ export function CheckoutStep( {
 	titleContent,
 	stepId,
 	isCompleteCallback,
+	editButtonText,
+	editButtonAriaLabel,
+	nextStepButtonText,
+	nextStepButtonAriaLabel,
+	validatingButtonText,
+	validatingButtonAriaLabel,
 } ) {
 	const localize = useLocalize();
 	const { totalSteps, setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } = useContext(
@@ -164,11 +170,12 @@ export function CheckoutStep( {
 	return (
 		<CheckoutStepBody
 			errorMessage={ localize( 'There was an error with this step.' ) }
-			editButtonAriaLabel={ localize( 'Edit this step' ) }
-			nextStepButtonText={ localize( 'Continue' ) }
-			nextStepButtonAriaLabel={ localize( 'Continue to the next step' ) }
-			validatingButtonText={ localize( 'Please wait…' ) }
-			validatingButtonAriaLabel={ localize( 'Please wait…' ) }
+			editButtonText={ editButtonText || localize( 'Edit' ) }
+			editButtonAriaLabel={ editButtonAriaLabel || localize( 'Edit this step' ) }
+			nextStepButtonText={ nextStepButtonText || localize( 'Continue' ) }
+			nextStepButtonAriaLabel={ nextStepButtonAriaLabel || localize( 'Continue to the next step' ) }
+			validatingButtonText={ validatingButtonText || localize( 'Please wait…' ) }
+			validatingButtonAriaLabel={ validatingButtonAriaLabel || localize( 'Please wait…' ) }
 			isStepActive={ isStepActive }
 			isStepComplete={ isStepComplete }
 			stepNumber={ stepNumber }
