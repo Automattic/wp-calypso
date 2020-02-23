@@ -22,6 +22,8 @@ import {
 import QueryStoredCards from 'components/data/query-stored-cards';
 import { addCreditCard } from 'me/purchases/paths';
 import SectionHeader from 'components/section-header';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { isUserPaid } from 'state/purchases/selectors';
 
 /**
  * Style dependencies
@@ -60,6 +62,10 @@ class CreditCards extends Component {
 			return null;
 		}
 
+		if ( ! this.props.isUserPaid ) {
+			return null;
+		}
+
 		return (
 			<Button primary compact className="credit-cards__add" onClick={ this.goToAddCreditCard }>
 				{ this.props.translate( 'Add Credit Card' ) }
@@ -84,8 +90,12 @@ class CreditCards extends Component {
 	}
 }
 
-export default connect( state => ( {
-	cards: getStoredCards( state ),
-	hasLoadedFromServer: hasLoadedStoredCardsFromServer( state ),
-	isFetching: isFetchingStoredCards( state ),
-} ) )( localize( CreditCards ) );
+export default connect( state => {
+	const userId = getCurrentUserId( state );
+	return {
+		cards: getStoredCards( state ),
+		hasLoadedFromServer: hasLoadedStoredCardsFromServer( state ),
+		isFetching: isFetchingStoredCards( state ),
+		isUserPaid: isUserPaid( state, userId ),
+	};
+} )( localize( CreditCards ) );
