@@ -5,6 +5,9 @@ import React, { useEffect } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import {
 	Checkout,
+	CheckoutStepBody,
+	CheckoutSteps,
+	CheckoutStep,
 	getDefaultPaymentMethodStep,
 	useIsStepActive,
 	useIsStepComplete,
@@ -45,6 +48,8 @@ const OrderReviewTitle = () => {
 	return translate( 'Review your order' );
 };
 
+const paymentMethodStep = getDefaultPaymentMethodStep();
+
 export default function WPCheckout( {
 	removeItem,
 	updateLocation,
@@ -65,19 +70,6 @@ export default function WPCheckout( {
 	const couponFieldStateProps = useCouponFieldState( submitCoupon );
 	const total = useTotal();
 
-	const reviewContent = (
-		<WPCheckoutOrderReview
-			removeItem={ removeItem }
-			couponStatus={ couponStatus }
-			couponFieldStateProps={ couponFieldStateProps }
-			onChangePlanLength={ changePlanLength }
-			siteUrl={ siteUrl }
-			variantRequestStatus={ variantRequestStatus }
-			variantSelectOverride={ variantSelectOverride }
-			getItemVariants={ getItemVariants }
-		/>
-	);
-
 	const contactInfo = useSelect( sel => sel( 'wpcom' ).getContactInfo() ) || {};
 	const { setSiteId } = useDispatch( 'wpcom' );
 
@@ -86,78 +78,96 @@ export default function WPCheckout( {
 		setSiteId( siteId );
 	}, [ siteId, setSiteId ] );
 
-	const steps = [
-		{
-			id: 'order-summary',
-			className: 'checkout__order-summary-step',
-			hasStepNumber: false,
-			titleContent: <WPCheckoutOrderSummaryTitle />,
-			completeStepContent: (
-				<WPCheckoutOrderSummary
-					siteUrl={ siteUrl }
-					couponStatus={ couponStatus }
-					couponFieldStateProps={ couponFieldStateProps }
+	return (
+		<Checkout>
+			<CheckoutStepBody
+				activeStepContent={ null }
+				completeStepContent={
+					<WPCheckoutOrderSummary
+						siteUrl={ siteUrl }
+						couponStatus={ couponStatus }
+						couponFieldStateProps={ couponFieldStateProps }
+					/>
+				}
+				titleContent={ <WPCheckoutOrderSummaryTitle /> }
+				errorMessage={ translate( 'There was an error with the summary step.' ) }
+				isStepActive={ false }
+				isStepComplete={ true }
+				stepNumber={ 1 }
+				totalSteps={ 1 }
+				stepId={ 'order-summary' }
+			/>
+			<CheckoutSteps>
+				<CheckoutStep
+					stepId="payment-method-step"
+					isCompleteCallback={ () => true }
+					activeStepContent={ paymentMethodStep.activeStepContent }
+					completeStepContent={ paymentMethodStep.completeStepContent }
+					titleContent={ paymentMethodStep.titleContent }
+					editButtonText={ translate( 'Edit' ) }
+					editButtonAriaLabel={ translate( 'Edit the payment method' ) }
+					nextStepButtonText={ translate( 'Continue' ) }
+					nextStepButtonAriaLabel={ translate( 'Continue with the selected payment method' ) }
+					validatingButtonText={ translate( 'Please wait…' ) }
+					validatingButtonAriaLabel={ translate( 'Please wait…' ) }
 				/>
-			),
-			isCompleteCallback: () => true,
-		},
-		{
-			...getDefaultPaymentMethodStep(),
-			getEditButtonAriaLabel: () => translate( 'Edit the payment method' ),
-			getNextStepButtonAriaLabel: () => translate( 'Continue with the selected payment method' ),
-		},
-		{
-			id: 'contact-form',
-			className: 'checkout__billing-details-step',
-			hasStepNumber: true,
-			titleContent: <ContactFormTitle />,
-			activeStepContent: (
-				<WPContactForm
-					siteUrl={ siteUrl }
-					isComplete={ false }
-					isActive={ true }
-					CountrySelectMenu={ CountrySelectMenu }
-					countriesList={ countriesList }
-					StateSelect={ StateSelect }
-					renderDomainContactFields={ renderDomainContactFields }
+				{ total.amount.value !== 0 && (
+					<CheckoutStep
+						stepId={ 'contact-form' }
+						isCompleteCallback={ () => {
+							// TODO: debounce this or only call it if there is a change
+							updateLocation( {
+								countryCode: contactInfo.countryCode.value,
+								postalCode: contactInfo.postalCode.value,
+								subdivisionCode: contactInfo.state.value,
+							} );
+							return isCompleteAndValid( contactInfo );
+						} }
+						activeStepContent={
+							<WPContactForm
+								siteUrl={ siteUrl }
+								isComplete={ false }
+								isActive={ true }
+								CountrySelectMenu={ CountrySelectMenu }
+								countriesList={ countriesList }
+								StateSelect={ StateSelect }
+								renderDomainContactFields={ renderDomainContactFields }
+							/>
+						}
+						completeStepContent={ <WPContactForm summary isComplete={ true } isActive={ false } /> }
+						titleContent={ <ContactFormTitle /> }
+						editButtonText={ translate( 'Edit' ) }
+						editButtonAriaLabel={ translate( 'Edit the contact details' ) }
+						nextStepButtonText={ translate( 'Continue' ) }
+						nextStepButtonAriaLabel={ translate( 'Continue with the entered contact details' ) }
+						validatingButtonText={ translate( 'Please wait…' ) }
+						validatingButtonAriaLabel={ translate( 'Please wait…' ) }
+					/>
+				) }
+				<CheckoutStep
+					stepId="review-order-step"
+					isCompleteCallback={ () => true }
+					activeStepContent={
+						<WPCheckoutOrderReview
+							removeItem={ removeItem }
+							couponStatus={ couponStatus }
+							couponFieldStateProps={ couponFieldStateProps }
+							onChangePlanLength={ changePlanLength }
+							siteUrl={ siteUrl }
+							variantRequestStatus={ variantRequestStatus }
+							variantSelectOverride={ variantSelectOverride }
+							getItemVariants={ getItemVariants }
+						/>
+					}
+					titleContent={ <OrderReviewTitle /> }
+					editButtonText={ translate( 'Edit' ) }
+					editButtonAriaLabel={ translate( 'Edit the payment method' ) }
+					nextStepButtonText={ translate( 'Continue' ) }
+					nextStepButtonAriaLabel={ translate( 'Continue with the selected payment method' ) }
+					validatingButtonText={ translate( 'Please wait…' ) }
+					validatingButtonAriaLabel={ translate( 'Please wait…' ) }
 				/>
-			),
-			completeStepContent: <WPContactForm summary isComplete={ true } isActive={ false } />,
-			isCompleteCallback: () => {
-				// TODO: debounce this or only call it if there is a change
-				updateLocation( {
-					countryCode: contactInfo.countryCode.value,
-					postalCode: contactInfo.postalCode.value,
-					subdivisionCode: contactInfo.state.value,
-				} );
-				return isCompleteAndValid( contactInfo );
-			},
-			isEditableCallback: () => isFormEditable( contactInfo ),
-			getEditButtonAriaLabel: () => translate( 'Edit the billing details' ),
-			getNextStepButtonAriaLabel: () => translate( 'Continue with the entered billing details' ),
-		},
-		{
-			id: 'order-review',
-			className: 'checkout__review-order-step',
-			hasStepNumber: true,
-			titleContent: <OrderReviewTitle />,
-			activeStepContent: reviewContent,
-			isCompleteCallback: ( { activeStep } ) => {
-				const isActive = activeStep.id === 'order-review';
-				return isActive;
-			},
-		},
-	].filter( step => {
-		if ( total.amount.value === 0 && step.id === 'contact-form' ) {
-			return false;
-		}
-		return true;
-	} );
-
-	return <Checkout steps={ steps } />;
-}
-
-function isFormEditable( contactInfo ) {
-	// If any field has been touched, it is editable
-	return Object.values( contactInfo ).some( ( { isTouched } ) => isTouched );
+			</CheckoutSteps>
+		</Checkout>
+	);
 }
