@@ -21,12 +21,18 @@ import titles from 'me/purchases/titles';
 import { billingHistory } from 'me/purchases/paths';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { StripeHookProvider } from 'lib/stripe';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { isUserPaid } from 'state/purchases/selectors';
 
 function AddCreditCard( props ) {
 	const createAddCardToken = ( ...args ) => createCardToken( 'card_add', ...args );
 	const goToBillingHistory = () => page( billingHistory );
 	const recordFormSubmitEvent = () =>
 		analytics.tracks.recordEvent( 'calypso_add_credit_card_form_submit' );
+
+	if ( ! props.isUserPaid ) {
+		page.redirect( '/me/purchases' );
+	}
 
 	return (
 		<Main>
@@ -51,8 +57,13 @@ AddCreditCard.propTypes = {
 	addStoredCard: PropTypes.func.isRequired,
 };
 
+const mapStateToProps = state => {
+	const userId = getCurrentUserId( state );
+	return { isUserPaid: isUserPaid( state, userId ) };
+};
+
 const mapDispatchToProps = {
 	addStoredCard,
 };
 
-export default connect( null, mapDispatchToProps )( AddCreditCard );
+export default connect( mapStateToProps, mapDispatchToProps )( AddCreditCard );
