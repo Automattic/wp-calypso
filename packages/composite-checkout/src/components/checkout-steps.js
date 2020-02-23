@@ -167,6 +167,8 @@ export function CheckoutStep( {
 			editButtonAriaLabel={ localize( 'Edit this step' ) }
 			nextStepButtonText={ localize( 'Continue' ) }
 			nextStepButtonAriaLabel={ localize( 'Continue to the next step' ) }
+			validatingButtonText={ localize( 'Please wait…' ) }
+			validatingButtonAriaLabel={ localize( 'Please wait…' ) }
 			isStepActive={ isStepActive }
 			isStepComplete={ isStepComplete }
 			stepNumber={ stepNumber }
@@ -188,7 +190,9 @@ export function CheckoutStepBody( {
 	errorMessage,
 	editButtonAriaLabel,
 	nextStepButtonText,
+	validatingButtonText,
 	nextStepButtonAriaLabel,
+	validatingButtonAriaLabel,
 	isStepActive,
 	isStepComplete,
 	className,
@@ -218,15 +222,23 @@ export function CheckoutStepBody( {
 					isActive={ isStepActive }
 					isComplete={ isStepComplete }
 					onEdit={ isStepComplete && goToThisStep && ! isStepActive ? goToThisStep : null }
-					editButtonAriaLabel={ editButtonAriaLabel || 'Edit' }
+					editButtonAriaLabel={ editButtonAriaLabel || 'Edit this step' }
 				/>
 				<StepContentUI isVisible={ isStepActive }>
 					{ activeStepContent }
 					{ nextStepNumber > 0 && goToNextStep && (
 						<CheckoutNextStepButton
-							value={ nextStepButtonText || 'Continue' }
 							onClick={ goToNextStep }
-							ariaLabel={ nextStepButtonAriaLabel || 'Continue' }
+							value={
+								formStatus === 'validating'
+									? validatingButtonText || 'Please wait…'
+									: nextStepButtonText || 'Continue'
+							}
+							ariaLabel={
+								formStatus === 'validating'
+									? validatingButtonAriaLabel || 'Please wait…'
+									: nextStepButtonAriaLabel || 'Continue to next step'
+							}
 							buttonState={ formStatus !== 'ready' ? 'disabled' : 'primary' }
 							disabled={ formStatus !== 'ready' }
 						/>
