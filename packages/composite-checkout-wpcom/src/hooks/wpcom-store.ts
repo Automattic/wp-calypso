@@ -8,7 +8,7 @@ import { useRef } from 'react';
  */
 import {
 	WpcomStoreState,
-	initialWpcomStoreState,
+	getInitialWpcomStoreState,
 	DomainContactDetails,
 	ManagedContactDetails,
 	ManagedContactDetailsErrors,
@@ -29,7 +29,11 @@ type WpcomStoreAction =
 	| { type: 'UPDATE_POSTAL_CODE'; payload: string }
 	| { type: 'UPDATE_COUNTRY_CODE'; payload: string };
 
-export function useWpcomStore( registerStore, onEvent ) {
+export function useWpcomStore(
+	registerStore,
+	onEvent,
+	managedContactDetails: ManagedContactDetails
+) {
 	// Only register once
 	const registerIsComplete = useRef< boolean >( false );
 	if ( registerIsComplete.current ) {
@@ -81,7 +85,8 @@ export function useWpcomStore( registerStore, onEvent ) {
 
 	registerStore( 'wpcom', {
 		reducer( state: WpcomStoreState | undefined, action: WpcomStoreAction ): WpcomStoreState {
-			const checkedState = state === undefined ? initialWpcomStoreState : state;
+			const checkedState =
+				state === undefined ? getInitialWpcomStoreState( managedContactDetails ) : state;
 			return {
 				contactDetails: contactReducer( checkedState.contactDetails, action ),
 				siteId: siteIdReducer( checkedState.siteId, action ),
