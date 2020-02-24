@@ -20,6 +20,7 @@ import {
 	useIsStepActive,
 	usePaymentData,
 } from '../src/public-api';
+import { StripeHookProvider } from '../src/lib/stripe';
 
 const stripeKey = 'pk_test_zIh4nRbVgmaetTZqoG4XKxWT';
 
@@ -310,21 +311,23 @@ function MyCheckout() {
 	}, [] );
 
 	return (
-		<CheckoutProvider
-			locale={ 'en' }
-			items={ items }
-			total={ total }
-			onEvent={ onEvent }
-			onPaymentComplete={ onPaymentComplete }
-			showErrorMessage={ showErrorMessage }
-			showInfoMessage={ showInfoMessage }
-			showSuccessMessage={ showSuccessMessage }
-			registry={ registry }
-			isLoading={ isLoading }
-			paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }
-		>
-			<Checkout steps={ steps } />
-		</CheckoutProvider>
+		<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+			<CheckoutProvider
+				locale={ 'en' }
+				items={ items }
+				total={ total }
+				onEvent={ onEvent }
+				onPaymentComplete={ onPaymentComplete }
+				showErrorMessage={ showErrorMessage }
+				showInfoMessage={ showInfoMessage }
+				showSuccessMessage={ showSuccessMessage }
+				registry={ registry }
+				isLoading={ isLoading }
+				paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }
+			>
+				<Checkout steps={ steps } />
+			</CheckoutProvider>
+		</StripeHookProvider>
 	);
 }
 
