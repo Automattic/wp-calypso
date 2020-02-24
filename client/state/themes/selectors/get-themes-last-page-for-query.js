@@ -19,7 +19,7 @@ export function getThemesLastPageForQuery( state, siteId, query ) {
 		return null;
 	}
 
-	const pages = state.themes.queries[ siteId ].getNumberOfPages( query );
+	const pages = state.themes.queries[ siteId ]?.getNumberOfPages( query );
 	if ( null === pages ) {
 		return null;
 	}
