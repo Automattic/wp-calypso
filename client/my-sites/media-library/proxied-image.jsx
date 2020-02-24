@@ -15,19 +15,19 @@ export default function( { alt, mediaUrl, onLoad = noop, siteSlug, style } ) {
 	const [ imageData, setImageData ] = useState( null );
 
 	useEffect( () => {
-		if ( imageData !== null ) {
-			return;
+		if ( imageData === null ) {
+			wpcom.undocumented().getAtomicSiteMediaViaProxyRetry( siteSlug, mediaUrl, ( err, data ) => {
+				if ( ! ( data instanceof Blob ) ) {
+					setImageData( false );
+					return;
+				}
+
+				const imageUrl = URL.createObjectURL( data );
+				setImageData( imageUrl );
+			} );
 		}
 
-		wpcom.undocumented().getAtomicSiteMediaViaProxyRetry( siteSlug, mediaUrl, ( err, data ) => {
-			if ( ! ( data instanceof Blob ) ) {
-				setImageData( false );
-				return;
-			}
-
-			const imageUrl = URL.createObjectURL( data );
-			setImageData( imageUrl );
-		} );
+		return () => imageData && URL.revokeObjectURL( imageData );
 	} );
 
 	return (
