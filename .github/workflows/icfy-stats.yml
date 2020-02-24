@@ -15,6 +15,8 @@ jobs:
         node-version: '>=12.15.0'
     - name: Checkout code
       uses: actions/checkout@master
+      with:
+        fetch-depth: 0
     - name: Install dependencies
       run: npm ci
     - name: Build ICFY stats
