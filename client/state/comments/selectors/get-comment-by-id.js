@@ -12,12 +12,12 @@ import 'state/comments/init';
 
 export function getCommentById( { state, commentId, siteId } ) {
 	const errorKey = getErrorKey( siteId, commentId );
-	if ( ( state.comments.errors ?? {} )[ errorKey ] ) {
+	if ( state.comments.errors[ errorKey ] ) {
 		return state.comments.errors[ errorKey ];
 	}
 
 	const commentsForSite = flatMap(
-		filter( state.comments.items ?? [], ( comment, key ) => {
+		filter( state.comments.items, ( comment, key ) => {
 			return deconstructStateKey( key ).siteId === siteId;
 		} )
 	);
