@@ -20,7 +20,7 @@ import {
 	useIsStepActive,
 	usePaymentData,
 } from '../src/public-api';
-import { StripeHookProvider } from '../src/lib/stripe';
+import { StripeHookProvider, useStripe } from '../src/lib/stripe';
 
 const stripeKey = 'pk_test_zIh4nRbVgmaetTZqoG4XKxWT';
 
@@ -275,26 +275,31 @@ function MyCheckout() {
 		subscribe( handleEvent( setItems ) );
 	}, [] );
 	const total = useMemo( () => getTotal( items ), [ items ] );
+	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 
-	// This simulates loading the data
 	const [ isLoading, setIsLoading ] = useState( true );
 	useEffect( () => {
+		if ( isStripeLoading || stripeLoadingError || ! stripe || ! stripeConfiguration ) {
+			return;
+		}
+		// This simulates an additional loading delay
 		setTimeout( () => setIsLoading( false ), 1500 );
-	}, [] );
+	}, [ isStripeLoading, stripeLoadingError, stripe, stripeConfiguration ] );
 
-	const stripeMethod = useMemo(
-		() =>
-			createStripeMethod( {
-				getCountry: () => select( 'checkout' ).getPaymentData().billing.country,
-				getPostalCode: () => 90210,
-				getPhoneNumber: () => 5555555555,
-				getSubdivisionCode: () => 'CA',
-				registerStore,
-				fetchStripeConfiguration,
-				submitTransaction: sendStripeTransaction,
-			} ),
-		[]
-	);
+	const stripeMethod = useMemo( () => {
+		if ( isStripeLoading || stripeLoadingError || ! stripe || ! stripeConfiguration ) {
+			return null;
+		}
+		return createStripeMethod( {
+			getCountry: () => select( 'checkout' ).getPaymentData().billing.country,
+			getPostalCode: () => 90210,
+			getSubdivisionCode: () => 'CA',
+			registerStore,
+			stripe,
+			stripeConfiguration,
+			submitTransaction: sendStripeTransaction,
+		} );
+	}, [ stripe, stripeConfiguration, isStripeLoading, stripeLoadingError ] );
 
 	const applePayMethod = useMemo(
 		() =>
@@ -302,7 +307,6 @@ function MyCheckout() {
 				? createApplePayMethod( {
 						getCountry: () => select( 'checkout' ).getPaymentData().billing.country,
 						getPostalCode: () => 90210,
-						getPhoneNumber: () => 5555555555,
 						registerStore,
 						fetchStripeConfiguration,
 						submitTransaction: sendStripeTransaction,
