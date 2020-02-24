@@ -144,4 +144,3 @@ export default {
 		allowExistingUsers: true,
 	},
 };
-
