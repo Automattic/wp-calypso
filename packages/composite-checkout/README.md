@@ -102,7 +102,6 @@ Each payment method is an object with the following properties:
 - `activeContent: React.ReactNode`. A component that displays that payment method (this can return null or something like a credit card form).
 - `submitButton: React.ReactNode`. A component button that is used to submit the payment method. This button should include a click handler that performs the actual payment process. When disabled, it will be provided with the `disabled` prop and must disable the button.
 - `inactiveContent: React.ReactNode`. A component that renders a summary of the selected payment method when the step is inactive.
-- `checkoutWrapper?: (children: React.ReactNode) => React.ReactNode`. A [render prop](https://reactjs.org/docs/render-props.html) that returns a component to wrap the whole of the checkout form. Must render the provided `children` argument. This can be used for custom data providers (eg: `StripeProvider` to support [Stripe Elements](https://github.com/stripe/react-stripe-elements)).
 - `getAriaLabel: (localize: () => string) => string`. A function to return the name of the Payment Method. It will receive the localize function as an argument.
 - `isCompleteCallback?: ({paymentData: object, activeStep: object}) => boolean`. Used to determine if a step is complete for purposes of validation. Default is a function returning true.
 
