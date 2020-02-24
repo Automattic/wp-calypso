@@ -27,16 +27,11 @@ export const TemplateSelectorControl = ( {
 	help,
 	instanceId,
 	templates = [],
-	parsedTemplates = {},
 	useDynamicPreview = false,
 	onTemplateSelect = noop,
 	selectedTemplate,
 } ) => {
 	if ( isEmpty( templates ) || ! isArray( templates ) ) {
-		return null;
-	}
-
-	if ( true === useDynamicPreview && isEmpty( parsedTemplates ) ) {
 		return null;
 	}
 
