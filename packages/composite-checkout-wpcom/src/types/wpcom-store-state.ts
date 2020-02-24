@@ -31,6 +31,10 @@ function getInitialManagedValue( initialProperties?: {
 	};
 }
 
+function touchField( oldData: ManagedValue ): ManagedValue {
+	return { ...oldData, isTouched: true };
+}
+
 function touchIfDifferent( newValue: string, oldData: ManagedValue ): ManagedValue {
 	return newValue === oldData.value ? oldData : { ...oldData, value: newValue, isTouched: true };
 }
@@ -187,6 +191,7 @@ export type ManagedContactDetailsUpdaters = {
 	updatePhoneNumberCountry: ( ManagedContactDetails, string ) => ManagedContactDetails;
 	updatePostalCode: ( ManagedContactDetails, string ) => ManagedContactDetails;
 	updateCountryCode: ( ManagedContactDetails, string ) => ManagedContactDetails;
+	touchContactFields: ( ManagedContactDetails ) => ManagedContactDetails;
 	updateVatId: ( ManagedContactDetails, string ) => ManagedContactDetails;
 	setErrorMessages: ( ManagedContactDetails, ManagedContactDetailsErrors ) => ManagedContactDetails;
 };
@@ -249,6 +254,12 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 			...oldDetails,
 			countryCode: touchIfDifferent( newCountryCode, oldDetails.countryCode ),
 		};
+	},
+
+	touchContactFields: ( oldDetails: ManagedContactDetails ): ManagedContactDetails => {
+		return Object.keys( oldDetails ).reduce( ( newDetails, detailKey ) => {
+			return { ...newDetails, [ detailKey ]: touchField( oldDetails[ detailKey ] ) };
+		}, oldDetails );
 	},
 
 	updateVatId: ( oldDetails: ManagedContactDetails, newVatId: string ): ManagedContactDetails => {
