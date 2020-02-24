@@ -9,18 +9,4 @@ export { iframeIsWhitelisted } from 'lib/post-normalizer/utils/iframe-is-whiteli
 export { isCandidateForCanonicalImage } from 'lib/post-normalizer/utils/is-candidate-for-canonical-image';
 export { isFeaturedImageInContent } from 'lib/post-normalizer/utils/is-featured-image-in-content';
 export { deduceImageWidthAndHeight } from 'lib/post-normalizer/utils/deduce-image-width-and-height';
-
-export const safeLinkRe = /^https?:\/\//;
-
-/**
- * Only accept links that start with http or https. Reject others.
- *
- * @param {string} link the link to check
- * @returns {string|undefined} the safe link or undefined
- */
-export function safeLink( link ) {
-	if ( safeLinkRe.test( link ) ) {
-		return link;
-	}
-	return undefined;
-}
+export { safeLink, safeLinkRe } from 'lib/post-normalizer/utils/safe-link';
