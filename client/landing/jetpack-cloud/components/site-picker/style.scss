@@ -1,0 +1,16 @@
+.site-picker.card {
+	.site-selector {
+		overflow: auto;
+	}
+
+	.card-heading {
+		font-size: 22px;
+		margin-bottom: 24px;
+		margin-top: 16px;
+		text-align: center;
+
+		strong {
+			text-transform: capitalize;
+		}
+	}
+}

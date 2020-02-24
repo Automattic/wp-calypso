@@ -9,7 +9,6 @@ import ReactDom from 'react-dom';
 /**
  * Internal Dependencies
  */
-
 import { getSiteFragment, sectionify } from 'lib/route';
 import { requestSites } from 'state/sites/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -18,7 +17,7 @@ import getSites from 'state/selectors/get-sites';
 import hasLoadedSites from 'state/selectors/has-loaded-sites';
 import JetpackCloudLayout from './layout';
 import JetpackCloudSidebar from './components/sidebar';
-import SitesComponent from 'my-sites/sites';
+import JetpackCloudSitePicker from './components/site-picker';
 
 export const makeLayout = ( context, next ) => {
 	const { primary, secondary, store } = context;
@@ -95,13 +94,7 @@ export async function siteSelection( context, next ) {
 function createSitesComponent( context ) {
 	const contextPath = sectionify( context.path );
 
-	return (
-		<SitesComponent
-			siteBasePath={ contextPath }
-			getSiteSelectionHeaderText={ context.getSiteSelectionHeaderText }
-			fromSite={ context.query.site }
-		/>
-	);
+	return <JetpackCloudSitePicker siteBasePath={ contextPath } />;
 }
 
 /**
@@ -113,7 +106,6 @@ function createSitesComponent( context ) {
  */
 export function sites( context, next ) {
 	context.store.dispatch( setLayoutFocus( 'content' ) );
-	// removeSidebar( context );
 	context.primary = createSitesComponent( context );
 	next();
 }
