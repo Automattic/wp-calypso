@@ -144,6 +144,10 @@ class RegisteredDomainType extends React.Component {
 		const { domain, translate, moment } = this.props;
 		const { expiry } = domain;
 
+		if ( domain.expired ) {
+			return null;
+		}
+
 		if ( isExpiringSoon( expiry, 30 ) ) {
 			return (
 				<div>
