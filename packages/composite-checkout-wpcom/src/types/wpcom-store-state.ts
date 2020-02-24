@@ -66,24 +66,6 @@ export type ManagedContactDetails = {
 	vatId: ManagedValue;
 };
 
-export const defaultManagedContactDetails: ManagedContactDetails = {
-	firstName: getInitialManagedValue(),
-	lastName: getInitialManagedValue(),
-	organization: getInitialManagedValue(),
-	email: getInitialManagedValue(),
-	alternateEmail: getInitialManagedValue(),
-	phone: getInitialManagedValue(),
-	phoneNumberCountry: getInitialManagedValue(),
-	address1: getInitialManagedValue(),
-	address2: getInitialManagedValue(),
-	city: getInitialManagedValue(),
-	state: getInitialManagedValue(),
-	postalCode: getInitialManagedValue(),
-	countryCode: getInitialManagedValue(),
-	fax: getInitialManagedValue(),
-	vatId: getInitialManagedValue(),
-};
-
 export function isCompleteAndValid( details: ManagedContactDetails ): boolean {
 	const values = Object.values( details );
 	const result = values.length > 0 && values.every( isValid );
@@ -283,8 +265,48 @@ export type WpcomStoreState = {
 	contactDetails: ManagedContactDetails;
 };
 
-export const initialWpcomStoreState: WpcomStoreState = {
-	siteId: '',
-	transactionResult: {},
-	contactDetails: defaultManagedContactDetails,
+export const domainManagedContactDetails: ManagedContactDetails = {
+	firstName: getInitialManagedValue( { isRequired: true } ),
+	lastName: getInitialManagedValue( { isRequired: true } ),
+	organization: getInitialManagedValue( { isRequired: true } ),
+	email: getInitialManagedValue( { isRequired: true } ),
+	alternateEmail: getInitialManagedValue( { isRequired: true } ),
+	phone: getInitialManagedValue( { isRequired: true } ),
+	phoneNumberCountry: getInitialManagedValue( { isRequired: true } ),
+	address1: getInitialManagedValue( { isRequired: true } ),
+	address2: getInitialManagedValue( { isRequired: true } ),
+	city: getInitialManagedValue( { isRequired: true } ),
+	state: getInitialManagedValue( { isRequired: true } ),
+	postalCode: getInitialManagedValue( { isRequired: true } ),
+	countryCode: getInitialManagedValue( { isRequired: true } ),
+	fax: getInitialManagedValue( { isRequired: true } ),
+	vatId: getInitialManagedValue( { isRequired: true } ),
 };
+
+export const taxManagedContactDetails: ManagedContactDetails = {
+	firstName: getInitialManagedValue(),
+	lastName: getInitialManagedValue(),
+	organization: getInitialManagedValue(),
+	email: getInitialManagedValue(),
+	alternateEmail: getInitialManagedValue(),
+	phone: getInitialManagedValue(),
+	phoneNumberCountry: getInitialManagedValue(),
+	address1: getInitialManagedValue(),
+	address2: getInitialManagedValue(),
+	city: getInitialManagedValue(),
+	state: getInitialManagedValue(),
+	postalCode: getInitialManagedValue( { isRequired: true } ),
+	countryCode: getInitialManagedValue( { isRequired: true } ),
+	fax: getInitialManagedValue(),
+	vatId: getInitialManagedValue(),
+};
+
+export function getInitialWpcomStoreState(
+	contactDetails: ManagedContactDetails
+): WpcomStoreState {
+	return {
+		siteId: '',
+		transactionResult: {},
+		contactDetails,
+	};
+}
