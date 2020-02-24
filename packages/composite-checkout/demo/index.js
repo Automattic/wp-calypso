@@ -301,19 +301,22 @@ function MyCheckout() {
 		} );
 	}, [ stripe, stripeConfiguration, isStripeLoading, stripeLoadingError ] );
 
-	const applePayMethod = useMemo(
-		() =>
-			isApplePayAvailable()
-				? createApplePayMethod( {
-						getCountry: () => select( 'checkout' ).getPaymentData().billing.country,
-						getPostalCode: () => 90210,
-						registerStore,
-						fetchStripeConfiguration,
-						submitTransaction: sendStripeTransaction,
-				  } )
-				: null,
-		[]
-	);
+	const applePayMethod = useMemo( () => {
+		if ( ! isApplePayAvailable() ) {
+			return null;
+		}
+		if ( isStripeLoading || stripeLoadingError || ! stripe || ! stripeConfiguration ) {
+			return null;
+		}
+		return createApplePayMethod( {
+			getCountry: () => select( 'checkout' ).getPaymentData().billing.country,
+			getPostalCode: () => 90210,
+			registerStore,
+			submitTransaction: sendStripeTransaction,
+			stripe,
+			stripeConfiguration,
+		} );
+	}, [ stripe, stripeConfiguration, isStripeLoading, stripeLoadingError ] );
 
 	const paypalMethod = useMemo(
 		() =>
