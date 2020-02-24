@@ -34,19 +34,19 @@ const TemplateSelectorPreview = ( { blocks = [], viewportWidth, title } ) => {
 	const [ previewViewport, setPreviewViewport ] = useState( viewportWidth );
 	const [ recompute, triggerRecompute ] = useReducer( state => state + 1, 0 );
 
-	const updatePreviewViewport = useCallback( () => {
-		if ( ! ref || ! ref.current ) {
-			return;
-		}
-		const wrapperWidth = ref.current.clientWidth;
-		if ( wrapperWidth >= viewportWidth ) {
-			setPreviewViewport( wrapperWidth );
-		} else {
-			setPreviewViewport( viewportWidth );
-		}
-	}, [ viewportWidth ] );
+	// const updatePreviewViewport = useCallback( () => {
+	// 	if ( ! ref || ! ref.current ) {
+	// 		return;
+	// 	}
+	// 	const wrapperWidth = ref.current.clientWidth;
+	// 	if ( wrapperWidth >= viewportWidth ) {
+	// 		setPreviewViewport( wrapperWidth );
+	// 	} else {
+	// 		setPreviewViewport( viewportWidth );
+	// 	}
+	// }, [ viewportWidth ] );
 
-	useLayoutEffect( updatePreviewViewport, [ blocks ] );
+	// useLayoutEffect( updatePreviewViewport, [ blocks ] );
 
 	useEffect( () => {
 		if ( blocks.length === 1 ) {
@@ -54,7 +54,7 @@ const TemplateSelectorPreview = ( { blocks = [], viewportWidth, title } ) => {
 		}
 
 		const rePreviewTemplate = () => {
-			updatePreviewViewport();
+			// updatePreviewViewport();
 			triggerRecompute();
 		};
 
@@ -69,7 +69,7 @@ const TemplateSelectorPreview = ( { blocks = [], viewportWidth, title } ) => {
 		return () => {
 			window.removeEventListener( 'resize', refreshPreview );
 		};
-	}, [ blocks, updatePreviewViewport ] );
+	}, [ blocks ] );
 
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -79,8 +79,8 @@ const TemplateSelectorPreview = ( { blocks = [], viewportWidth, title } ) => {
 				blocks={
 					! blocks.length
 						? createBlock( 'core/paragraph', {
-								content: __( 'Select a layout to preview.', 'full-site-editing' ),
-						  } )
+							content: __( 'Select a layout to preview.', 'full-site-editing' ),
+						} )
 						: [
 								createBlock( 'core/heading', {
 									content: title,
@@ -90,7 +90,7 @@ const TemplateSelectorPreview = ( { blocks = [], viewportWidth, title } ) => {
 								...blocks,
 						  ]
 				}
-				viewportWidth={ previewViewport }
+				viewportWidth={ blocks.length ? previewViewport : 960 }
 			/>
 		</div>
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

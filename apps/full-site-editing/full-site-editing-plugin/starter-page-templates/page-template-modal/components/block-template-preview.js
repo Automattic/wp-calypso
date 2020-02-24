@@ -56,8 +56,30 @@ const BlockTemplatePreview = ( { blocks = [], viewportWidth } ) => {
 					const iFrameLink = document.createElement( 'link' );
 					iFrameLink.rel = 'stylesheet';
 					iFrameLink.type = 'text/css';
-					iFrameLink.href = href.replace( /http:\/\/localhost\//, '../' );
+					iFrameLink.href = href;
 					iFrameHead.appendChild( iFrameLink );
+				}
+			);
+
+			each(
+				filter(
+					document.querySelectorAll( 'head style' ),
+				),
+				( { innerHTML } ) => {
+					const iFrameHeadStyle = document.createElement( 'style' );
+					iFrameHeadStyle.innerHTML = innerHTML;
+					iFrameHead.appendChild( iFrameHeadStyle );
+				}
+			);
+
+			each(
+				filter(
+					document.querySelectorAll( 'body style' ),
+				),
+				( { innerHTML } ) => {
+					const iFrameStyle = document.createElement( 'style' );
+					iFrameStyle.innerHTML = innerHTML;
+					iFrameBody.appendChild( iFrameStyle );
 				}
 			);
 
