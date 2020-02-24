@@ -190,6 +190,7 @@ export function ApplePaySubmitButton( { disabled } ) {
 	] );
 
 	if ( ! isLoading && ! canMakePayment ) {
+		onEvent( { type: 'APPLE_PAY_LOADING_ERROR', payload: 'This payment type is not supported' } );
 		return (
 			<PaymentRequestButton
 				paymentRequest={ paymentRequest }
