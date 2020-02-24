@@ -8,15 +8,14 @@ import url from 'url';
  * Internal Dependencies
  */
 import safeImageURL from 'lib/safe-image-url';
+import { isPhotonHost } from 'lib/post-normalizer/utils/is-photon-host';
 
 const IMAGE_SCALE_FACTOR =
 	typeof window !== 'undefined' && window.devicePixelRatio && window.devicePixelRatio > 1 ? 2 : 1;
 
 const DEFAULT_PHOTON_QUALITY = 80; // 80 was chosen after some heuristic testing as the best blend of size and quality
 
-export function isPhotonHost( hostname ) {
-	return /^i[0-2]\.wp\.com$/.test( hostname );
-}
+export { isPhotonHost } from 'lib/post-normalizer/utils/is-photon-host';
 
 export function imageSizeFromAttachments( post, imageUrl ) {
 	if ( ! post.attachments ) {
