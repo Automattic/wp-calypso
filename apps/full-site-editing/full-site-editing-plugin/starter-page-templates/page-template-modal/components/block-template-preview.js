@@ -32,9 +32,7 @@ const BlockTemplatePreview = ( { blocks = [], viewportWidth } ) => {
 
 			const iFrameHead = get( iFrameWrapper, [ 'contentWindow', 'document', 'head' ] );
 			const iFrameBody = get( iFrameWrapper, [ 'contentWindow', 'document', 'body' ] );
-			iFrameBody.className = `block-preview-iframe-body ${
-				blocks.length === 1 ? 'not-selected' : ''
-			}`;
+			iFrameBody.className = `block-preview-iframe-body ${ ! blocks.length ? 'not-selected' : '' }`;
 
 			const iFrameWrapperLevel01 = document.createElement( 'div' );
 			iFrameWrapperLevel01.className = 'edit-post-visual-editor';

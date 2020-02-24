@@ -73,7 +73,7 @@ const TemplateSelectorPreview = ( { blocks = [], viewportWidth, title } ) => {
 
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		<div className={ `template-selector-preview ${ blocks.length === 1 ? 'not-selected' : '' }` }>
+		<div className={ `template-selector-preview ${ ! blocks.length ? 'not-selected' : '' }` }>
 			<BlockTemplatePreview
 				key={ recompute }
 				blocks={

@@ -425,6 +425,13 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		}
 	}
 
+	.block-editor-inserter {
+		display: none;
+		visibility: hidden;
+		position: absolute;
+		left: -9999vw;
+	}
+
 	// Preview adjustments.
 	// Tweak styles which are inside of the preview container.
 	.editor-styles-wrapper {
