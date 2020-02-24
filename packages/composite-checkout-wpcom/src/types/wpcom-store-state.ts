@@ -9,25 +9,24 @@ interface ManagedValue {
 	value: string;
 	isTouched: boolean; // Has value been edited by the user?
 	errors: string[]; // Has value passed validation?
+	isRequired: boolean; // Is this field required?
 }
 
 export function isValid( arg: ManagedValue ): boolean {
-	return arg.errors?.length <= 0;
+	return arg.errors?.length <= 0 && ( arg.value?.length > 0 || ! arg.isRequired );
 }
 
 function getInitialManagedValue( initialProperties?: {
 	value?: string;
 	isTouched?: boolean;
 	errors?: Array< string >;
+	isRequired?: boolean;
 } ): ManagedValue {
 	return {
 		value: '',
 		isTouched: false,
-		// This initial error is to prevent any field from being empty;
-		// validation will change this value when the field is touched. If
-		// the field is valid when it is empty, it should be initialized
-		// with an empty array in `errors` instead.
-		errors: [ '' ],
+		isRequired: false,
+		errors: [],
 		...initialProperties,
 	};
 }
