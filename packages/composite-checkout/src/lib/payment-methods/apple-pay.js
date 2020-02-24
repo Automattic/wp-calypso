@@ -12,16 +12,16 @@ import { useLocalize } from '../../lib/localize';
 import PaymentRequestButton from '../../components/payment-request-button';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 import { useFormStatus } from '../form-status';
-import { useStripe, StripeHookProvider } from '../stripe';
 
 const debug = debugFactory( 'composite-checkout:apple-pay-payment-method' );
 
 export function createApplePayMethod( {
 	registerStore,
-	fetchStripeConfiguration,
 	submitTransaction,
 	getCountry,
 	getPostalCode,
+	stripe,
+	stripeConfiguration,
 } ) {
 	const actions = {
 		setStripeComplete( payload ) {
@@ -96,13 +96,10 @@ export function createApplePayMethod( {
 	return {
 		id: 'apple-pay',
 		label: <ApplePayLabel />,
-		submitButton: <ApplePaySubmitButton />,
-		inactiveContent: <ApplePaySummary />,
-		checkoutWrapper: children => (
-			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-				{ children }
-			</StripeHookProvider>
+		submitButton: (
+			<ApplePaySubmitButton stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
 		),
+		inactiveContent: <ApplePaySummary />,
 		getAriaLabel: localize => localize( 'Apple Pay' ),
 	};
 }
@@ -120,11 +117,10 @@ export function ApplePayLabel() {
 	);
 }
 
-export function ApplePaySubmitButton( { disabled } ) {
+export function ApplePaySubmitButton( { disabled, stripe, stripeConfiguration } ) {
 	const localize = useLocalize();
-	const paymentRequestOptions = usePaymentRequestOptions();
+	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration );
 	const [ items, total ] = useLineItems();
-	const { stripe, stripeConfiguration } = useStripe();
 	const { setFormSubmitting, setFormReady, setFormComplete } = useFormStatus();
 	const { showErrorMessage } = useMessages();
 	const transactionStatus = useSelect( select => select( 'apple-pay' ).getTransactionStatus() );
@@ -161,6 +157,7 @@ export function ApplePaySubmitButton( { disabled } ) {
 	const { paymentRequest, canMakePayment, isLoading } = useStripePaymentRequest( {
 		paymentRequestOptions,
 		onSubmit,
+		stripe,
 	} );
 	debug( 'apple-pay button isLoading', isLoading );
 
@@ -256,8 +253,7 @@ const PAYMENT_REQUEST_OPTIONS = {
 	requestShipping: false,
 };
 
-function usePaymentRequestOptions() {
-	const { stripeConfiguration } = useStripe();
+function usePaymentRequestOptions( stripeConfiguration ) {
 	const [ items, total ] = useLineItems();
 	const countryCode = getProcessorCountryFromStripeConfiguration( stripeConfiguration );
 	const currency = items.reduce(
@@ -277,8 +273,7 @@ function usePaymentRequestOptions() {
 	return paymentRequestOptions;
 }
 
-function useStripePaymentRequest( { paymentRequestOptions, onSubmit } ) {
-	const { stripe } = useStripe();
+function useStripePaymentRequest( { paymentRequestOptions, onSubmit, stripe } ) {
 	const [ canMakePayment, setCanMakePayment ] = useState( 'loading' );
 	const [ paymentRequest, setPaymentRequest ] = useState();
 
