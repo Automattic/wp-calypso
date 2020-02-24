@@ -145,6 +145,14 @@
 		}
 	}
 
+	&__migrate-card {
+		align-items: center;
+
+		.customer-home__view-site-button {
+			margin-left: auto;
+		}
+	}
+
 	&__box-action {
 		margin-bottom: 16px;
 		width: 100%;

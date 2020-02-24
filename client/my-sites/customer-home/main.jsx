@@ -271,6 +271,15 @@ class Home extends Component {
 							{ this.getChecklistSubHeaderText() }
 						</p>
 					</div>
+					<div className="customer-home__view-site-button">
+						<Button
+							href={ site.URL }
+							onClick={ () => trackAction( 'my_site', 'view_site' ) }
+							primary={ true }
+						>
+							{ translate( 'View Site' ) }
+						</Button>
+					</div>
 				</Card>
 			);
 		}
