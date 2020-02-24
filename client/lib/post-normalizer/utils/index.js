@@ -13,23 +13,7 @@ export { isPhotonHost } from 'lib/post-normalizer/utils/is-photon-host';
 export { imageSizeFromAttachments } from 'lib/post-normalizer/utils/image-size-from-attachments';
 export { maxWidthPhotonishURL } from 'lib/post-normalizer/utils/max-width-photonish-url';
 export { makeImageURLSafe } from 'lib/post-normalizer/utils/make-image-url-safe';
-
-export function domForHtml( html ) {
-	if ( typeof DOMParser !== 'undefined' && window.DOMParser.prototype.parseFromString ) {
-		const parser = new window.DOMParser();
-		const parsed = parser.parseFromString( html, 'text/html' );
-		if ( parsed && parsed.body ) {
-			return parsed.body;
-		}
-	}
-
-	// DOMParser support is not present or non-standard
-	const newDoc = document.implementation.createHTMLDocument( 'processing doc' );
-	const dom = newDoc.createElement( 'div' );
-	dom.innerHTML = html;
-
-	return dom;
-}
+export { domForHtml } from 'lib/post-normalizer/utils/dom-for-html';
 
 /** Determine if url is likely pointed to an image
  *
