@@ -8,7 +8,7 @@ import url from 'url';
  * Internal Dependencies
  */
 import { isPhotonHost } from 'lib/post-normalizer/utils/is-photon-host';
-import { isUrlLikelyAnImage } from 'lib/post-normalizer/utils/is-url-likely-an-image';
+import { thumbIsLikelyImage } from 'lib/post-normalizer/utils/thumb-is-likely-image';
 
 export { isPhotonHost } from 'lib/post-normalizer/utils/is-photon-host';
 export { imageSizeFromAttachments } from 'lib/post-normalizer/utils/image-size-from-attachments';
@@ -16,24 +16,7 @@ export { maxWidthPhotonishURL } from 'lib/post-normalizer/utils/max-width-photon
 export { makeImageURLSafe } from 'lib/post-normalizer/utils/make-image-url-safe';
 export { domForHtml } from 'lib/post-normalizer/utils/dom-for-html';
 export { isUrlLikelyAnImage } from 'lib/post-normalizer/utils/is-url-likely-an-image';
-
-/**
- * Determine if a post thumbnail is likely an image
- *
- * @param  {object} thumb the thumbnail object from a post
- * @returns {boolean}       whether or not we think this is an image
- */
-export function thumbIsLikelyImage( thumb ) {
-	if ( ! thumb || ! thumb.URL ) {
-		return false;
-	}
-	// this doesn't work because jetpack 4.2 lies
-	// normally I wouldn't leave commented code in, but it's the best way to explain what not to do
-	//if ( startsWith( thumb.mime_type, 'image/' ) ) {
-	//	return true;
-	// }
-	return isUrlLikelyAnImage( thumb.URL );
-}
+export { thumbIsLikelyImage } from 'lib/post-normalizer/utils/thumb-is-likely-image';
 
 /**
  * Determines if an iframe is from a source we trust.  We allow these to be the featured media and also give
