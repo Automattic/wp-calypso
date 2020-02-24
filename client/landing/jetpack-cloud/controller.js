@@ -78,12 +78,11 @@ export async function siteSelection( context, next ) {
 		for ( const { ID, slug } of eligibleSites ) {
 			if ( siteFragment === ID || siteFragment === slug ) {
 				dispatch( setSelectedSiteId( ID ) );
-				next();
 			}
 		}
-	} else {
-		// zero sites, or no matching site above
 	}
+
+	next();
 }
 
 /**

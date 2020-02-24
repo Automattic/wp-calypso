@@ -50,26 +50,25 @@ const router = () => {
 		clientRender
 	);
 	page(
-		'/backups/:site/download/:downloadId',
-		siteSelection,
+		'/site/:site/backups/backups/download/:downloadId',
 		setupSidebar,
 		backupDownload,
 		makeLayout,
 		clientRender
 	);
 
-	page( '/backups/restore', siteSelection, sites, setupSidebar, makeLayout, clientRender );
+	page( '/backups/restore', siteSelection, sites, makeLayout, clientRender );
 	page(
-		'/backups/restore/:site',
-		siteSelection,
+		'/backups/:site/restore',
+		// siteSelection,
 		setupSidebar,
 		backupRestore,
 		makeLayout,
 		clientRender
 	);
 	page(
-		'/backups/restore/:site/:restoreId',
-		siteSelection,
+		'/backups/:site/restore/:restoreId',
+		// siteSelection,
 		setupSidebar,
 		backupRestore,
 		makeLayout,
