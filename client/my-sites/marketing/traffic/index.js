@@ -117,7 +117,7 @@ const connectComponent = connect( state => {
 
 	return {
 		isAdmin,
-		isJetpack,
+		isJetpackAdmin,
 	};
 } );
 
