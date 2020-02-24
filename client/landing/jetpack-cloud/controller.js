@@ -85,19 +85,6 @@ export async function siteSelection( context, next ) {
 }
 
 /**
- * Returns the site-picker react element.
- *  * extended from my-sites/controller to only allow non-atomic jetpack sites
- *
- * @param {object} context -- Middleware context
- * @returns {object} A site-picker React element
- */
-function createSitesComponent( context ) {
-	const contextPath = sectionify( context.path );
-
-	return <JetpackCloudSitePicker siteBasePath={ contextPath } />;
-}
-
-/**
  * Middleware that adds the site selector screen to the layout.
  * extended from my-sites/controller to only allow non-atomic jetpack sites
  *
@@ -106,6 +93,6 @@ function createSitesComponent( context ) {
  */
 export function sites( context, next ) {
 	context.store.dispatch( setLayoutFocus( 'content' ) );
-	context.primary = createSitesComponent( context );
+	context.primary = <JetpackCloudSitePicker siteBasePath={ sectionify( context.path ) } />;
 	next();
 }
