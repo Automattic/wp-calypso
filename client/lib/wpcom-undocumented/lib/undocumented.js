@@ -2473,4 +2473,14 @@ Undocumented.prototype.getAtomicSiteMediaViaProxy = function( siteIdOrSlug, medi
 	);
 };
 
+Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function( siteIdOrSlug, mediaPath, fn ) {
+	this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, function( err, data ) {
+		if ( err ) {
+			this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, fn );
+		} else {
+			fn( err, data );
+		}
+	} );
+};
+
 export default Undocumented;

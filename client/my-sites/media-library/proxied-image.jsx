@@ -19,7 +19,7 @@ export default function( { alt, mediaUrl, onLoad = noop, siteSlug, style } ) {
 			return;
 		}
 
-		wpcom.undocumented().getAtomicSiteMediaViaProxy( siteSlug, mediaUrl, ( err, data ) => {
+		wpcom.undocumented().getAtomicSiteMediaViaProxyRetry( siteSlug, mediaUrl, ( err, data ) => {
 			if ( ! ( data instanceof Blob ) ) {
 				setImageData( false );
 				return;
