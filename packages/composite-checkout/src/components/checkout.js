@@ -38,7 +38,6 @@ import useConstructor from '../lib/use-constructor';
 const debug = debugFactory( 'composite-checkout:checkout' );
 
 function useRegisterCheckoutStore() {
-	const onEvent = useEvents();
 	useRegisterPrimaryStore( {
 		reducer( state = { stepNumber: 1, paymentData: {} }, action ) {
 			switch ( action.type ) {
@@ -46,7 +45,6 @@ function useRegisterCheckoutStore() {
 					if ( state.stepNumber === action.payload ) {
 						return state;
 					}
-					onEvent( { type: 'STEP_NUMBER_CHANGE_EVENT', payload: action.payload } );
 					return { ...state, stepNumber: action.payload };
 				case 'PAYMENT_DATA_UPDATE':
 					return {
@@ -83,10 +81,11 @@ function useRegisterCheckoutStore() {
 
 export default function Checkout( { steps, className } ) {
 	useRegisterCheckoutStore();
+	const activePaymentMethod = usePaymentMethod();
 	const localize = useLocalize();
 	const [ paymentData ] = usePaymentData();
-	const activePaymentMethod = usePaymentMethod();
 	const { formStatus } = useFormStatus();
+	const onEvent = useEvents();
 
 	// Re-render if any store changes; that way isComplete can rely on any data
 	useRenderOnStoreUpdate();
@@ -146,7 +145,18 @@ export default function Checkout( { steps, className } ) {
 							shouldShowNextButton={
 								step.hasStepNumber && step.id === activeStep.id && isThereAnotherNumberedStep
 							}
-							goToNextStep={ () => changeStep( nextStep.stepNumber ) }
+							goToNextStep={ () => {
+								onEvent( {
+									type: 'STEP_NUMBER_CHANGED',
+									payload: {
+										stepNumber: nextStep.stepNumber,
+										previousStepNumber: activeStep.stepNumber,
+										stepId: nextStep.id,
+										paymentMethodId: activePaymentMethod?.id ?? '',
+									},
+								} );
+								changeStep( nextStep.stepNumber );
+							} }
 							onEdit={
 								formStatus === 'ready' &&
 								step.id !== activeStep.id &&
