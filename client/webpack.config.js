@@ -129,7 +129,8 @@ const webpackConfig = {
 			cache: process.env.CIRCLECI
 				? `${ process.env.HOME }/terser-cache/${ extraPath }`
 				: 'docker' !== process.env.CONTAINER,
-			parallel: workerCount,
+			// disable parallel mode when computing stats in Circle CI, hopefully to save memory
+			parallel: shouldEmitStats && process.env.CIRCLECI ? false : workerCount,
 			sourceMap: Boolean( process.env.SOURCEMAP ),
 			terserOptions: {
 				mangle: ! isDesktop,
