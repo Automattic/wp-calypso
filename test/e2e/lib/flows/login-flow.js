@@ -194,6 +194,8 @@ export default class LoginFlow {
 
 		await ReaderPage.Expect( this.driver );
 
+		await ReaderPage.overrideABTestInLocalStorage( 'customerHomeAll', 'control' );
+
 		const navbarComponent = await NavBarComponent.Expect( this.driver );
 		await navbarComponent.clickMySites();
 
