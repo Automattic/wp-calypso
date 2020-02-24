@@ -97,8 +97,8 @@ export function makeImageURLSafe( object, propName, maxWidth, baseURL ) {
 }
 
 export function domForHtml( html ) {
-	if ( typeof DOMParser !== 'undefined' && DOMParser.prototype.parseFromString ) {
-		const parser = new DOMParser();
+	if ( typeof DOMParser !== 'undefined' && window.DOMParser.prototype.parseFromString ) {
+		const parser = new window.DOMParser();
 		const parsed = parser.parseFromString( html, 'text/html' );
 		if ( parsed && parsed.body ) {
 			return parsed.body;
@@ -150,7 +150,7 @@ export function thumbIsLikelyImage( thumb ) {
  * them a free-er sandbox
  *
  * @param  {object} iframe the iframe to check
- * @returns {bool} true if whitelisted
+ * @returns {boolean} true if whitelisted
  */
 export function iframeIsWhitelisted( iframe ) {
 	const iframeWhitelist = [
