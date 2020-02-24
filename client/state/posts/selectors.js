@@ -27,6 +27,8 @@ import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
 import { addQueryArgs } from 'lib/route';
 import { getFeaturedImageId } from 'state/posts/utils';
 
+import 'state/posts/init';
+
 /**
  * Returns the PostsQueryManager from the state tree for a given site ID (or
  * for queries related to all sites at once).
