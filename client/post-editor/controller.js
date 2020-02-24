@@ -199,126 +199,124 @@ async function redirectIfBlockEditor( context, next ) {
 	return page.redirect( url );
 }
 
-export default {
-	post: function( context, next ) {
-		const postType = determinePostType( context );
-		const postId = getPostID( context );
-		const postToCopyId = context.query[ 'jetpack-copy' ];
+export function post( context, next ) {
+	const postType = determinePostType( context );
+	const postId = getPostID( context );
+	const postToCopyId = context.query[ 'jetpack-copy' ];
 
-		recordPlaceholdersTiming();
+	recordPlaceholdersTiming();
 
-		function startEditing( siteId ) {
-			if ( maybeRedirect( context ) ) {
-				return;
-			}
+	function startEditing( siteId ) {
+		if ( maybeRedirect( context ) ) {
+			return;
+		}
 
-			// We have everything we need to start loading the post for editing,
-			// so kick it off here to minimize time spent waiting for it to load
-			// in the view components
-			if ( postToCopyId ) {
-				context.store.dispatch( startEditingPostCopy( siteId, postToCopyId ) );
-			} else if ( postId ) {
-				const contextPath = context.path;
-				context.store.dispatch( startEditingExistingPost( siteId, postId ) ).then( editedPost => {
-					if ( contextPath !== page.current ) {
-						// browser navigated elsewhere while the load was in progress
-						return;
-					}
-
-					if ( editedPost && editedPost.type && editedPost.type !== postType ) {
-						// incorrect post type in URL
-						page.redirect( getEditURL( editedPost, getSite( context.store.getState(), siteId ) ) );
-					}
-				} );
-			} else {
-				const post = { type: postType };
-
-				// handle press-this params if applicable
-				if ( context.query.url ) {
-					const pressThisContent = getPressThisContent( context.query );
-					Object.assign( post, {
-						format: 'quote',
-						title: context.query.title,
-						content: pressThisContent,
-					} );
+		// We have everything we need to start loading the post for editing,
+		// so kick it off here to minimize time spent waiting for it to load
+		// in the view components
+		if ( postToCopyId ) {
+			context.store.dispatch( startEditingPostCopy( siteId, postToCopyId ) );
+		} else if ( postId ) {
+			const contextPath = context.path;
+			context.store.dispatch( startEditingExistingPost( siteId, postId ) ).then( editedPost => {
+				if ( contextPath !== page.current ) {
+					// browser navigated elsewhere while the load was in progress
+					return;
 				}
 
-				context.store.dispatch( startEditingNewPost( siteId, post ) );
-			}
-		}
+				if ( editedPost && editedPost.type && editedPost.type !== postType ) {
+					// incorrect post type in URL
+					page.redirect( getEditURL( editedPost, getSite( context.store.getState(), siteId ) ) );
+				}
+			} );
+		} else {
+			const newPost = { type: postType };
 
-		// Before starting to edit, we want to be sure that we have a valid
-		// selected site to work with. Therefore, we wait on the following
-		// conditions:
-		//  - Sites have not yet been initialized (no localStorage available)
-		//  - Sites are initialized, but the site ID is unknown, so we wait for
-		//    the sites list to be refreshed (for example, if the user does not
-		//    have permission to view the site)
-		//  - Sites are initialized _and_ fetched, but the selected site has
-		//    not yet been selected, so is not available in global state yet
-		let unsubscribe;
-		function startEditingOnSiteSelected() {
-			const siteId = getSelectedSiteId( context.store.getState() );
-			if ( ! siteId ) {
-				return false;
+			// handle press-this params if applicable
+			if ( context.query.url ) {
+				const pressThisContent = getPressThisContent( context.query );
+				Object.assign( newPost, {
+					format: 'quote',
+					title: context.query.title,
+					content: pressThisContent,
+				} );
 			}
 
-			if ( unsubscribe ) {
-				unsubscribe();
-			}
-
-			startEditing( siteId );
-			return true;
+			context.store.dispatch( startEditingNewPost( siteId, newPost ) );
 		}
+	}
 
-		if ( ! startEditingOnSiteSelected() ) {
-			unsubscribe = context.store.subscribe( startEditingOnSiteSelected );
-		}
-
-		const [ analyticsPath, analyticsTitle ] = getAnalyticsPathAndTitle(
-			postType,
-			postId,
-			postToCopyId
-		);
-		renderEditor( context, { analyticsPath, analyticsTitle } );
-
-		next();
-	},
-
-	exitPost: function( context, next ) {
-		const postId = getPostID( context );
+	// Before starting to edit, we want to be sure that we have a valid
+	// selected site to work with. Therefore, we wait on the following
+	// conditions:
+	//  - Sites have not yet been initialized (no localStorage available)
+	//  - Sites are initialized, but the site ID is unknown, so we wait for
+	//    the sites list to be refreshed (for example, if the user does not
+	//    have permission to view the site)
+	//  - Sites are initialized _and_ fetched, but the selected site has
+	//    not yet been selected, so is not available in global state yet
+	let unsubscribe;
+	function startEditingOnSiteSelected() {
 		const siteId = getSelectedSiteId( context.store.getState() );
-		if ( siteId ) {
-			context.store.dispatch( stopEditingPost( siteId, postId ) );
+		if ( ! siteId ) {
+			return false;
 		}
+
+		if ( unsubscribe ) {
+			unsubscribe();
+		}
+
+		startEditing( siteId );
+		return true;
+	}
+
+	if ( ! startEditingOnSiteSelected() ) {
+		unsubscribe = context.store.subscribe( startEditingOnSiteSelected );
+	}
+
+	const [ analyticsPath, analyticsTitle ] = getAnalyticsPathAndTitle(
+		postType,
+		postId,
+		postToCopyId
+	);
+	renderEditor( context, { analyticsPath, analyticsTitle } );
+
+	next();
+}
+
+export function exitPost( context, next ) {
+	const postId = getPostID( context );
+	const siteId = getSelectedSiteId( context.store.getState() );
+	if ( siteId ) {
+		context.store.dispatch( stopEditingPost( siteId, postId ) );
+	}
+	next();
+}
+
+export function pressThis( context, next ) {
+	if ( ! context.query.url ) {
+		// not pressThis, early return
+		return next();
+	}
+
+	const { primarySiteSlug } = getCurrentUser( context.store.getState() );
+
+	if ( ! primarySiteSlug ) {
+		return next();
+	}
+
+	const redirectPath = addSiteFragment( context.pathname, primarySiteSlug );
+	const queryString = stringify( context.query );
+	const redirectWithParams = [ redirectPath, queryString ].join( '?' );
+
+	page.redirect( redirectWithParams );
+	return false;
+}
+
+export function gutenberg( context, next ) {
+	if ( ! has( window, 'location.replace' ) ) {
 		next();
-	},
+	}
 
-	pressThis: function( context, next ) {
-		if ( ! context.query.url ) {
-			// not pressThis, early return
-			return next();
-		}
-
-		const { primarySiteSlug } = getCurrentUser( context.store.getState() );
-
-		if ( ! primarySiteSlug ) {
-			return next();
-		}
-
-		const redirectPath = addSiteFragment( context.pathname, primarySiteSlug );
-		const queryString = stringify( context.query );
-		const redirectWithParams = [ redirectPath, queryString ].join( '?' );
-
-		page.redirect( redirectWithParams );
-		return false;
-	},
-
-	gutenberg: ( context, next ) => {
-		if ( ! has( window, 'location.replace' ) ) {
-			next();
-		}
-
-		redirectIfBlockEditor( context, next );
-	},
-};
+	redirectIfBlockEditor( context, next );
+}
