@@ -214,20 +214,20 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	position: relative;
 	pointer-events: none;
 	opacity: 1;
-	transform: translateZ( 0 ); // Fix for Safari rounded border overflow (2/2).
+	//transform: translateZ( 0 ); // Fix for Safari rounded border overflow (2/2).
 
-	@media screen and ( min-width: $breakpoint-mobile ) {
-		padding-top: 100%; // Aspect radio boxes. It will take the 100% of width.
-	}
+	//@media screen and ( min-width: $breakpoint-mobile ) {
+	//	padding-top: 100%; // Aspect radio boxes. It will take the 100% of width.
+	//}
 
 	&.is-rendering {
 		opacity: 0.5;
 	}
 
-	.block-editor-block-list__layout,
-	.block-editor-block-list__block {
-		padding: inherit;
-	}
+	//.block-editor-block-list__layout,
+	//.block-editor-block-list__block {
+	//	padding: inherit;
+	//}
 }
 
 .template-selector-item__media {
@@ -336,91 +336,13 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 			position: relative;
 			top: $template-large-preview-title-height;
 		}
-
-		.editor-post-title {
-			transform-origin: top center;
-			width: 100%;
-			display: block;
-			position: absolute;
-			top: 0;
-		}
-
-		.editor-post-title,
-		.editor-post-title__block,
-		.editor-post-title__input {
-			padding-top: 0;
-			padding-bottom: 0;
-			margin-top: 0;
-			margin-bottom: 0;
-			.editor-post-title__input {
-				margin: 0;
-				padding: 0;
-				height: $template-large-preview-title-height;
-				line-height: $template-large-preview-title-height;
-				overflow: hidden;
-				resize: none;
-			}
-		}
-	}
-}
-
-.template-selector-preview__placeholder {
-	color: var( --color-text-subtle );
-	font-size: 15px;
-	font-weight: 400;
-}
-
-// Preview adjustments.
-// Tweak styles which are inside of the preview container.
-.block-editor-block-preview__container.editor-styles-wrapper {
-	.wp-block {
-		width: 100%;
 	}
 
-	// `core/cover`
-	.wp-block[data-type='core/cover'][data-align='full'] {
-		margin: 0;
-		.wp-block-cover {
-			padding: 0;
-		}
+	&.not-selected {
+		overflow: hidden;
 	}
 
-	// `core/columns`
-	/* stylelint-disable selector-combinator-space-before */
-	.wp-block-columns
-		> .block-editor-inner-blocks
-		> .block-editor-block-list__layout
-		> [data-type='core/column']
-		> .block-editor-block-list__block-edit
-		> div
-		> .block-core-columns
-		> .block-editor-inner-blocks {
-		/* stylelint-enable */
-		margin-top: 0;
-		margin-bottom: 0;
-	}
-
-	.block-editor-block-list__block {
-		&[data-align='full'] {
-			margin: 0;
-		}
-
-		.block-editor-block-list__block-edit {
-			@media screen and ( min-width: 600px ) {
-				margin: 0;
-			}
-		}
-	}
-}
-
-// Set full height to preview container to inherits styles defined for themes.
-.template-selector-preview .components-disabled,
-.template-selector-preview .edit-post-visual-editor,
-.template-selector-item__preview-wrap .components-disabled,
-.template-selector-item__preview-wrap .edit-post-visual-editor {
-	height: 100%;
-
-	.editor-styles-wrapper {
+	.block-editor-block-preview__container {
 		height: 100%;
 	}
 }
@@ -475,4 +397,48 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	display: flex;
 	justify-content: space-around;
 	margin-top: 20px;
+}
+
+.block-preview-iframe {
+	width: 100%;
+}
+
+.block-preview-iframe-body {
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+
+	> .edit-post-visual-editor {
+		padding: 0;
+		margin: 0;
+
+		> .editor-styles-wrapper {
+			min-height: 100vh;
+		}
+	}
+
+	&.not-selected {
+		 // Adjust template block title.
+		.wp-block:first-child {
+			margin-top: 0;
+			padding: 10px;
+		}
+	}
+
+	// Preview adjustments.
+	// Tweak styles which are inside of the preview container.
+	.editor-styles-wrapper {
+		.block-library-cover__resize-container {
+			position: relative;
+			user-select: auto;
+			width: auto;
+			height: auto;
+			min-height: 50px;
+			box-sizing: border-box;
+
+			.wp-block-cover {
+				height: auto;
+			}
+		}
+	}
 }
