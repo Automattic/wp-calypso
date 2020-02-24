@@ -268,7 +268,14 @@ function isContactFormComplete( { paymentData } ) {
 	return true;
 }
 
-// This is the parent component which would be included on a host page
+function HostPage() {
+	return (
+		<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+			<MyCheckout />
+		</StripeHookProvider>
+	);
+}
+
 function MyCheckout() {
 	const [ items, setItems ] = useState( initialItems );
 	useEffect( () => {
@@ -338,23 +345,21 @@ function MyCheckout() {
 	);
 
 	return (
-		<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-			<CheckoutProvider
-				locale={ 'en' }
-				items={ items }
-				total={ total }
-				onEvent={ onEvent }
-				onPaymentComplete={ onPaymentComplete }
-				showErrorMessage={ showErrorMessage }
-				showInfoMessage={ showInfoMessage }
-				showSuccessMessage={ showSuccessMessage }
-				registry={ registry }
-				isLoading={ isLoading }
-				paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }
-			>
-				<Checkout steps={ steps } />
-			</CheckoutProvider>
-		</StripeHookProvider>
+		<CheckoutProvider
+			locale={ 'en' }
+			items={ items }
+			total={ total }
+			onEvent={ onEvent }
+			onPaymentComplete={ onPaymentComplete }
+			showErrorMessage={ showErrorMessage }
+			showInfoMessage={ showInfoMessage }
+			showSuccessMessage={ showSuccessMessage }
+			registry={ registry }
+			isLoading={ isLoading }
+			paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }
+		>
+			<Checkout steps={ steps } />
+		</CheckoutProvider>
 	);
 }
 
@@ -371,4 +376,4 @@ async function asyncTimeout( timeout ) {
 	return new Promise( resolve => setTimeout( resolve, timeout ) );
 }
 
-ReactDOM.render( <MyCheckout />, document.getElementById( 'root' ) );
+ReactDOM.render( <HostPage />, document.getElementById( 'root' ) );
