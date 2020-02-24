@@ -14,6 +14,5 @@ import 'state/themes/init';
  * @returns {boolean}        True if the theme is premium
  */
 export function isThemePremium( state, themeId ) {
-	const theme = getTheme( state, 'wpcom', themeId );
-	return isPremium( theme );
+	return isPremium( getTheme( state, 'wpcom', themeId ) );
 }
