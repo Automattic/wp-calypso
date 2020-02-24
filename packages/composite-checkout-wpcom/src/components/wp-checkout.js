@@ -15,6 +15,7 @@ import {
 	useLineItems,
 	useDispatch,
 	useTotal,
+	usePaymentMethod,
 } from '@automattic/composite-checkout';
 
 /**
@@ -69,6 +70,7 @@ export default function WPCheckout( {
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( submitCoupon );
 	const total = useTotal();
+	const activePaymentMethod = usePaymentMethod();
 
 	const contactInfo = useSelect( sel => sel( 'wpcom' ).getContactInfo() ) || {};
 	const { setSiteId } = useDispatch( 'wpcom' );
@@ -100,7 +102,9 @@ export default function WPCheckout( {
 			<CheckoutSteps>
 				<CheckoutStep
 					stepId="payment-method-step"
-					isCompleteCallback={ () => true }
+					isCompleteCallback={ () =>
+						paymentMethodStep.isCompleteCallback( { activePaymentMethod } )
+					}
 					activeStepContent={ paymentMethodStep.activeStepContent }
 					completeStepContent={ paymentMethodStep.completeStepContent }
 					titleContent={ paymentMethodStep.titleContent }
