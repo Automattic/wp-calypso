@@ -8,6 +8,8 @@ import { get } from 'lodash';
  */
 import { getPost } from 'state/posts/selectors';
 
+import 'state/posts/init';
+
 /**
  * Returns whether the current user can edit the post with the given global ID.
  *

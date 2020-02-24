@@ -10,6 +10,8 @@ import { some, trim } from 'lodash';
 import { getEditedPost } from 'state/posts/selectors';
 import { getEditorRawContent } from 'state/ui/editor/selectors';
 
+import 'state/posts/init';
+
 const REGEXP_EMPTY_CONTENT = /^<p>(<br[^>]*>|&nbsp;|\s)*<\/p>$/;
 const CONTENT_LENGTH_ASSUME_SET = 50;
 
