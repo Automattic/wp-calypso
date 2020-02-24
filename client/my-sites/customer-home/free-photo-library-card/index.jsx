@@ -46,6 +46,7 @@ class FreePhotoLibraryCard extends Component {
 						className="free-photo-library-card__demonstration-video"
 						controls
 						muted
+						autoPlay
 						poster={ freePhotoLibraryThumbnail }
 					>
 						<source
@@ -58,18 +59,15 @@ class FreePhotoLibraryCard extends Component {
 					</div>
 				</Dialog>
 				<Card className="free-photo-library-card">
-					{ /* eslint-disable */ }
 					{ isDesktop() && (
-						<img
-							className="free-photo-library-card__demonstration-image"
-							src={ freePhotoLibraryVideoPrompt }
-							alt={ translate( 'Free Photo Library demonstration' ) }
-							onClick={ this.toggleDialog }
-							onKeyDown={ this.toggleDialog }
-							tabIndex="0"
-						/>
+						<button onClick={ this.toggleDialog }>
+							<img
+								className="free-photo-library-card__demonstration-image"
+								src={ freePhotoLibraryVideoPrompt }
+								alt={ translate( 'Free Photo Library demonstration' ) }
+							/>
+						</button>
 					) }
-					{ /* eslint-enable */ }
 					<CardHeading>{ translate( 'Over 40,000 Free Photos' ) }</CardHeading>
 					<p className="free-photo-library-card__text customer-home__card-subheader">
 						{ translate(
