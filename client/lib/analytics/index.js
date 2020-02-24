@@ -8,14 +8,12 @@ import debug from 'debug';
  */
 import config from 'config';
 import emitter from 'lib/mixins/emitter';
-import { costToUSD, urlParseAmpCompatible, saveCouponQueryArgument } from 'lib/analytics/utils';
+import { urlParseAmpCompatible, saveCouponQueryArgument } from 'lib/analytics/utils';
 
 import {
 	getGoogleAnalyticsDefaultConfig,
 	retarget as retargetAdTrackers,
 	recordAliasInFloodlight,
-	recordAddToCart,
-	recordOrder,
 	setupGoogleAnalyticsGtag,
 	isGoogleAnalyticsAllowed,
 	fireGoogleAnalyticsPageView,
@@ -253,35 +251,6 @@ const analytics = {
 	// the method after page navigation.
 	recordSignupComplete,
 
-	recordAddToCart: function( { cartItem } ) {
-		// TODO: move Tracks event here?
-		// Google Analytics
-		const usdValue = costToUSD( cartItem.cost, cartItem.currency );
-		analytics.ga.recordEvent(
-			'Checkout',
-			'calypso_cart_product_add',
-			'',
-			usdValue ? usdValue : undefined
-		);
-		// Marketing
-		recordAddToCart( cartItem );
-	},
-
-	recordPurchase: function( { cart, orderId } ) {
-		if ( cart.total_cost >= 0.01 ) {
-			// Google Analytics
-			const usdValue = costToUSD( cart.total_cost, cart.currency );
-			analytics.ga.recordEvent(
-				'Purchase',
-				'calypso_checkout_payment_success',
-				'',
-				usdValue ? usdValue : undefined
-			);
-			// Marketing
-			recordOrder( cart, orderId );
-		}
-	},
-
 	timing: {
 		record: function( eventType, duration, triggerName ) {
 			const urlPath = mostRecentUrlPath || 'unknown';
@@ -479,6 +448,8 @@ export function makeGoogleAnalyticsTrackingFunction( func ) {
 }
 
 emitter( analytics );
+
+export { recordAddToCart, recordPurchase } from './cart';
 
 export default analytics;
 export const ga = analytics.ga;
