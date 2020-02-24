@@ -19,5 +19,3 @@ export const getParentComment = ( state, siteId, postId, commentId ) => {
 	const parentCommentId = commentsTree[ commentId ]?.data.parent?.ID ?? 0;
 	return commentsTree[ parentCommentId ]?.data ?? {};
 };
-
-export default getParentComment;
