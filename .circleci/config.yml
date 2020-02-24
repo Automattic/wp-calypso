@@ -300,7 +300,7 @@ jobs:
       - run:
           working_directory: wp-babel-makepot
           command: npm run sanitize-pot
-      - run: mv ~/wp-calypso/wp-babel-makepot/build "$CIRCLE_ARTIFACTS/translate"
+      - run: mv ~/wp-calypso/wp-babel-makepot/build/bundle-strings.pot "$CIRCLE_ARTIFACTS/translate/calypso-strings.pot"
       - store-artifacts-and-test-results
 
   typecheck-strict:
