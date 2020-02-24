@@ -73,7 +73,7 @@ export default function WPCheckout( {
 	const activePaymentMethod = usePaymentMethod();
 
 	const contactInfo = useSelect( sel => sel( 'wpcom' ).getContactInfo() ) || {};
-	const { setSiteId } = useDispatch( 'wpcom' );
+	const { setSiteId, touchContactFields } = useDispatch( 'wpcom' );
 
 	// Copy siteId to the store so it can be more easily accessed during payment submission
 	useEffect( () => {
@@ -119,12 +119,13 @@ export default function WPCheckout( {
 					<CheckoutStep
 						stepId={ 'contact-form' }
 						isCompleteCallback={ () => {
-							// TODO: debounce this or only call it if there is a change
 							updateLocation( {
 								countryCode: contactInfo.countryCode.value,
 								postalCode: contactInfo.postalCode.value,
 								subdivisionCode: contactInfo.state.value,
 							} );
+							// Touch the fields so they display validation errors
+							touchContactFields();
 							return isCompleteAndValid( contactInfo );
 						} }
 						activeStepContent={
