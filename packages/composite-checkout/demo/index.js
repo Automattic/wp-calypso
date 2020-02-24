@@ -86,34 +86,6 @@ async function makePayPalExpressRequest( data ) {
 const registry = createRegistry();
 const { registerStore, select, subscribe } = registry;
 
-const stripeMethod = createStripeMethod( {
-	getCountry: () => select( 'checkout' ).getPaymentData().billing.country,
-	getPostalCode: () => 90210,
-	getPhoneNumber: () => 5555555555,
-	getSubdivisionCode: () => 'CA',
-	registerStore,
-	fetchStripeConfiguration,
-	submitTransaction: sendStripeTransaction,
-} );
-
-const applePayMethod = isApplePayAvailable()
-	? createApplePayMethod( {
-			getCountry: () => select( 'checkout' ).getPaymentData().billing.country,
-			getPostalCode: () => 90210,
-			getPhoneNumber: () => 5555555555,
-			registerStore,
-			fetchStripeConfiguration,
-			submitTransaction: sendStripeTransaction,
-	  } )
-	: null;
-
-const paypalMethod = createPayPalMethod( {
-	registerStore,
-	submitTransaction: makePayPalExpressRequest,
-	getSuccessUrl: () => '#',
-	getCancelUrl: () => '#',
-} );
-
 export function isApplePayAvailable() {
 	// Our Apple Pay implementation uses the Payment Request API, so check that first.
 	if ( ! window.PaymentRequest ) {
@@ -309,6 +281,46 @@ function MyCheckout() {
 	useEffect( () => {
 		setTimeout( () => setIsLoading( false ), 1500 );
 	}, [] );
+
+	const stripeMethod = useMemo(
+		() =>
+			createStripeMethod( {
+				getCountry: () => select( 'checkout' ).getPaymentData().billing.country,
+				getPostalCode: () => 90210,
+				getPhoneNumber: () => 5555555555,
+				getSubdivisionCode: () => 'CA',
+				registerStore,
+				fetchStripeConfiguration,
+				submitTransaction: sendStripeTransaction,
+			} ),
+		[]
+	);
+
+	const applePayMethod = useMemo(
+		() =>
+			isApplePayAvailable()
+				? createApplePayMethod( {
+						getCountry: () => select( 'checkout' ).getPaymentData().billing.country,
+						getPostalCode: () => 90210,
+						getPhoneNumber: () => 5555555555,
+						registerStore,
+						fetchStripeConfiguration,
+						submitTransaction: sendStripeTransaction,
+				  } )
+				: null,
+		[]
+	);
+
+	const paypalMethod = useMemo(
+		() =>
+			createPayPalMethod( {
+				registerStore,
+				submitTransaction: makePayPalExpressRequest,
+				getSuccessUrl: () => '#',
+				getCancelUrl: () => '#',
+			} ),
+		[]
+	);
 
 	return (
 		<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
