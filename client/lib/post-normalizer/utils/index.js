@@ -18,21 +18,7 @@ export { domForHtml } from 'lib/post-normalizer/utils/dom-for-html';
 export { isUrlLikelyAnImage } from 'lib/post-normalizer/utils/is-url-likely-an-image';
 export { thumbIsLikelyImage } from 'lib/post-normalizer/utils/thumb-is-likely-image';
 export { iframeIsWhitelisted } from 'lib/post-normalizer/utils/iframe-is-whitelisted';
-
-export function isCandidateForCanonicalImage( image ) {
-	if ( ! image ) {
-		return false;
-	}
-
-	if ( image.width < 100 ) {
-		return false;
-	}
-
-	if ( image.width * image.height < 100 * 75 ) {
-		return false;
-	}
-	return true;
-}
+export { isCandidateForCanonicalImage } from 'lib/post-normalizer/utils/is-candidate-for-canonical-image';
 
 function getPathname( uri ) {
 	const parsedUrl = url.parse( uri );
