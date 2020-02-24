@@ -10,7 +10,7 @@ import LoginPage from '../pages/login-page.js';
 import EditorPage from '../pages/editor-page';
 import WPAdminLoginPage from '../pages/wp-admin/wp-admin-logon-page';
 import ReaderPage from '../pages/reader-page.js';
-import StatsPage from '../pages/stats-page.js';
+// import StatsPage from '../pages/stats-page.js';
 import StoreDashboardPage from '../pages/woocommerce/store-dashboard-page';
 import PluginsBrowserPage from '../pages/plugins-browser-page';
 import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
@@ -204,11 +204,11 @@ export default class LoginFlow {
 			await sideBarComponent.searchForSite( siteURL );
 		}
 
-		if ( this.account.username !== 'e2eflowtestinggutenbergsimpleedge' ) {
-			await StatsPage.Expect( this.driver );
-		} else {
-			await CustomerHomePage.Expect( this.driver );
-		}
+		// if ( this.account.username !== 'e2eflowtestinggutenbergsimpleedge' ) {
+		// 	await StatsPage.Expect( this.driver );
+		// } else {
+		await CustomerHomePage.Expect( this.driver );
+		// }
 	}
 
 	async loginAndSelectAllSites() {
