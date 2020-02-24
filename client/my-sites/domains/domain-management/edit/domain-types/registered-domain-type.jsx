@@ -28,6 +28,7 @@ import SubscriptionSettings from '../card/subscription-settings';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 
 import CompactFormToggle from 'components/forms/form-toggle/compact';
+import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
 
 class RegisteredDomainType extends React.Component {
 	getVerticalNavigation() {
@@ -87,6 +88,14 @@ class RegisteredDomainType extends React.Component {
 		const { domain, translate, moment } = this.props;
 		const { registrationDate, expiry } = domain;
 
+		if ( domain.isPendingIcannVerification && domain.currentUserCanManage ) {
+			return {
+				statusText: translate( 'Action required' ),
+				statusClass: 'status-error',
+				icon: 'info',
+			};
+		}
+
 		if ( isExpiringSoon( domain, 30 ) ) {
 			const expiresMessage = translate( 'Expires in %(days)s', {
 				args: { days: moment.utc( expiry ).fromNow( true ) },
@@ -103,14 +112,6 @@ class RegisteredDomainType extends React.Component {
 			return {
 				statusText: expiresMessage,
 				statusClass: 'status-warning',
-				icon: 'info',
-			};
-		}
-
-		if ( domain.isPendingIcannVerification && domain.currentUserCanManage ) {
-			return {
-				statusText: translate( 'Action required' ),
-				statusClass: 'status-error',
 				icon: 'info',
 			};
 		}
@@ -147,17 +148,24 @@ class RegisteredDomainType extends React.Component {
 		if ( isExpiringSoon( domain, 30 ) ) {
 			return (
 				<div>
-					{ translate(
-						'Your domain will expire in {{strong}}%(days)s{{/strong}}. Please renew it before it expires or it will stop working.',
-						{
-							components: {
-								strong: <strong />,
-							},
-							args: {
-								days: moment.utc( expiry ).fromNow( true ),
-							},
-						}
-					) }
+					<p>
+						{ translate(
+							'Your domain will expire in {{strong}}%(days)s{{/strong}}. Please renew it before it expires or it will stop working.',
+							{
+								components: {
+									strong: <strong />,
+								},
+								args: {
+									days: moment.utc( expiry ).fromNow( true ),
+								},
+							}
+						) }
+					</p>
+					<RenewButton
+						primary={ true }
+						selectedSite={ this.props.selectedSite }
+						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
+					/>
 				</div>
 			);
 		}
@@ -212,7 +220,16 @@ class RegisteredDomainType extends React.Component {
 			);
 		}
 
-		return <div>{ message }</div>;
+		return (
+			<div>
+				<p>{ message }</p>
+				{ ( domain.isRenewable || domain.isRenewable ) && ( <RenewButton
+					primary={ true }
+					selectedSite={ this.props.selectedSite }
+					subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
+				/> ) }
+			</div>
+		);
 	}
 
 	renderRecentlyRegistered() {
@@ -240,6 +257,24 @@ class RegisteredDomainType extends React.Component {
 						},
 					}
 				) }
+			</div>
+		);
+	}
+
+	renderDefaultRenewButton() {
+		const { domain } = this.props;
+
+		if ( domain.expired || isExpiringSoon( domain, 30 ) ) {
+			return null;
+		}
+
+		return (
+			<div>
+				<RenewButton
+					compact={ true }
+					selectedSite={ this.props.selectedSite }
+					subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
+				/>
 			</div>
 		);
 	}
@@ -298,6 +333,7 @@ class RegisteredDomainType extends React.Component {
 									},
 							  } ) }
 					</div>
+					{ this.renderDefaultRenewButton() }
 					{ ! newStatusDesignAutoRenew && (
 						<div>
 							<SubscriptionSettings
