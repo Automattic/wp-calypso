@@ -15,6 +15,7 @@ jobs:
         node-version: '>=12.15.0'
     - name: Checkout code
       uses: actions/checkout@v2
+    - name: unshallow
       run: git fetch --prune --unshallow
     - name: Install dependencies
       run: npm ci
