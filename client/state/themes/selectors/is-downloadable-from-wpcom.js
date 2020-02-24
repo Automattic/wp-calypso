@@ -15,5 +15,5 @@ import 'state/themes/init';
  */
 export function isDownloadableFromWpcom( state, themeId ) {
 	const downloadUri = getTheme( state, 'wpcom', themeId )?.download ?? '';
-	return !! downloadUri.includes( 'wordpress.com' );
+	return downloadUri.includes( 'wordpress.com' );
 }
