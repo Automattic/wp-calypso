@@ -29,10 +29,10 @@ jobs:
         if [ -e "client/stats.json" ] && [ -e "client/chart.json" ]; then
           ANCESTOR_SHA1=$(git merge-base HEAD origin/master)
           CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-          curl -X POST                                                              \
+          curl -X POST                                                                            \
             "http://api.iscalypsofastyet.com:5000/submit-stats?secret=${{ secrets.ICFY_SECRET }}" \
-            -H 'Cache-Control: no-cache'                                            \
-            -H 'Content-Type: application/json'                                     \
+            -H 'Cache-Control: no-cache'                                                          \
+            -H 'Content-Type: application/json'                                                   \
             -d '{
                   "payload": {
                     "branch": "'"$CURRENT_BRANCH"'",
