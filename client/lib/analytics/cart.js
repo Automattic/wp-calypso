@@ -26,7 +26,7 @@ function removeNestedProperties( cartItem ) {
 
 function recordAddEvent( cartItem ) {
 	analytics.tracks.recordEvent( 'calypso_cart_product_add', removeNestedProperties( cartItem ) );
-	analytics.recordAddToCart( { cartItem } );
+	recordAddToCart( { cartItem } );
 }
 
 function recordRemoveEvent( cartItem ) {
