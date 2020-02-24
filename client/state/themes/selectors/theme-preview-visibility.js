@@ -10,5 +10,5 @@ import 'state/themes/init';
  * @returns {?string}  ThemePreview state
  */
 export function themePreviewVisibility( state ) {
-	return state.themes.themePreviewVisibility ?? null;
+	return state.themes.themePreviewVisibility;
 }
