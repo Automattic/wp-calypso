@@ -8,26 +8,14 @@ import url from 'url';
  * Internal Dependencies
  */
 import { isPhotonHost } from 'lib/post-normalizer/utils/is-photon-host';
+import { isUrlLikelyAnImage } from 'lib/post-normalizer/utils/is-url-likely-an-image';
 
 export { isPhotonHost } from 'lib/post-normalizer/utils/is-photon-host';
 export { imageSizeFromAttachments } from 'lib/post-normalizer/utils/image-size-from-attachments';
 export { maxWidthPhotonishURL } from 'lib/post-normalizer/utils/max-width-photonish-url';
 export { makeImageURLSafe } from 'lib/post-normalizer/utils/make-image-url-safe';
 export { domForHtml } from 'lib/post-normalizer/utils/dom-for-html';
-
-/** Determine if url is likely pointed to an image
- *
- * @param {string} uri - a url
- * @returns {boolean} - true or false depending on if it is probably an image (has the right extension)
- */
-export function isUrlLikelyAnImage( uri ) {
-	if ( ! uri ) {
-		return false;
-	}
-
-	const withoutQuery = url.parse( uri ).pathname;
-	return some( [ '.jpg', '.jpeg', '.png', '.gif' ], ext => endsWith( withoutQuery, ext ) );
-}
+export { isUrlLikelyAnImage } from 'lib/post-normalizer/utils/is-url-likely-an-image';
 
 /**
  * Determine if a post thumbnail is likely an image
