@@ -3,6 +3,9 @@
  */
 import moment from 'moment';
 
-export function isExpiringSoon( expiry, expiresWithinDays ) {
-	return moment.utc( expiry ).isBefore( moment.utc().add( expiresWithinDays, 'days' ) );
+export function isExpiringSoon( domain, expiresWithinDays ) {
+	return (
+		! domain.expired &&
+		moment.utc( domain.expiry ).isBefore( moment.utc().add( expiresWithinDays, 'days' ) )
+	);
 }

@@ -87,12 +87,12 @@ class RegisteredDomainType extends React.Component {
 		const { domain, translate, moment } = this.props;
 		const { registrationDate, expiry } = domain;
 
-		if ( isExpiringSoon( expiry, 30 ) ) {
+		if ( isExpiringSoon( domain, 30 ) ) {
 			const expiresMessage = translate( 'Expires in %(days)s', {
 				args: { days: moment.utc( expiry ).fromNow( true ) },
 			} );
 
-			if ( isExpiringSoon( expiry, 5 ) ) {
+			if ( isExpiringSoon( domain, 5 ) ) {
 				return {
 					statusText: expiresMessage,
 					statusClass: 'status-error',
@@ -144,11 +144,7 @@ class RegisteredDomainType extends React.Component {
 		const { domain, translate, moment } = this.props;
 		const { expiry } = domain;
 
-		if ( domain.expired ) {
-			return null;
-		}
-
-		if ( isExpiringSoon( expiry, 30 ) ) {
+		if ( isExpiringSoon( domain, 30 ) ) {
 			return (
 				<div>
 					{ translate(
