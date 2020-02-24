@@ -11,6 +11,7 @@ import { Card, Button, Dialog } from '@automattic/components';
 import ButtonGroup from 'components/button-group';
 import CardHeading from 'components/card-heading';
 import Gridicon from 'components/gridicon';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -61,32 +62,31 @@ class MasteringGutenbergCard extends Component {
 				'https://wpcom.files.wordpress.com/2020/02/free-photo-library-demonstration.mp4';
 			dialogVideoPoster =
 				'https://ladygeekgirl.files.wordpress.com/2013/05/princess-mononoke-large-380266002.jpg';
-			supportLink = 'https://en.support.wordpress.com/wordpress-editor/#adding-a-block';
-		} else if ( adjustingBlocks ) {
-			dialogVideo =
-				'https://wpcom.files.wordpress.com/2020/02/free-photo-library-demonstration.mp4';
-			dialogVideoPoster =
-				'https://ladygeekgirl.files.wordpress.com/2013/05/princess-mononoke-large-380266002.jpg';
-			supportLink = 'https://en.support.wordpress.com/wordpress-editor/#adding-a-block';
+			supportLink = localizeUrl(
+				'https://en.support.wordpress.com/wordpress-editor/#adding-a-block'
+			);
 		} else if ( navigatingBlocks ) {
 			dialogVideo =
 				'https://wpcom.files.wordpress.com/2020/02/free-photo-library-demonstration.mp4';
 			dialogVideoPoster =
 				'https://ladygeekgirl.files.wordpress.com/2013/05/princess-mononoke-large-380266002.jpg';
-			supportLink = 'https://en.support.wordpress.com/wordpress-editor/#adding-a-block';
+			supportLink = localizeUrl(
+				'https://en.support.wordpress.com/wordpress-editor/#adding-a-block'
+			);
 		} else if ( addingLinks ) {
 			dialogVideo =
 				'https://wpcom.files.wordpress.com/2020/02/free-photo-library-demonstration.mp4';
 			dialogVideoPoster =
 				'https://ladygeekgirl.files.wordpress.com/2013/05/princess-mononoke-large-380266002.jpg';
-			supportLink =
-				'https://en.support.wordpress.com/links/#adding-links-to-posts-pages-and-widgets';
+			supportLink = localizeUrl(
+				'https://en.support.wordpress.com/links/#adding-links-to-posts-pages-and-widgets'
+			);
 		} else if ( usingImages ) {
 			dialogVideo =
 				'https://wpcom.files.wordpress.com/2020/02/free-photo-library-demonstration.mp4';
 			dialogVideoPoster =
 				'https://ladygeekgirl.files.wordpress.com/2013/05/princess-mononoke-large-380266002.jpg';
-			supportLink = 'https://en.support.wordpress.com/images/';
+			supportLink = localizeUrl( 'https://en.support.wordpress.com/images/' );
 		}
 
 		return (
