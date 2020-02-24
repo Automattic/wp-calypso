@@ -99,6 +99,13 @@ export class PlansStep extends Component {
 		this.onSelectPlan( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
 	};
 
+	isEligibleForPlanStepTest() {
+		return (
+			config.isEnabled( 'plans-step-copy-updates' ) &&
+			'variantCopyUpdates' === abtest( 'planStepCopyUpdates' )
+		);
+	}
+
 	plansFeaturesList() {
 		const {
 			disableBloggerPlanWithNonBlogDomain,
@@ -118,6 +125,7 @@ export class PlansStep extends Component {
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ true }
 					isLaunchPage={ isLaunchPage }
+					isEligibleForPlanStepTest={ this.isEligibleForPlanStepTest() }
 					onUpgradeClick={ this.onSelectPlan }
 					showFAQ={ false }
 					displayJetpackPlans={ false }

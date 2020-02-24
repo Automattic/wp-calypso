@@ -119,6 +119,7 @@ export class PlansFeaturesMain extends Component {
 			isJetpack,
 			isLandingPage,
 			isLaunchPage,
+			isEligibleForPlanStepTest,
 			onUpgradeClick,
 			selectedFeature,
 			selectedPlan,
@@ -164,6 +165,7 @@ export class PlansFeaturesMain extends Component {
 					isInSignup={ isInSignup }
 					isLandingPage={ isLandingPage }
 					isLaunchPage={ isLaunchPage }
+					isEligibleForPlanStepTest={ isEligibleForPlanStepTest }
 					onUpgradeClick={ onUpgradeClick }
 					plans={ plans }
 					redirectTo={ redirectTo }

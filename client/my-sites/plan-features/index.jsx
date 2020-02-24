@@ -348,7 +348,7 @@ export class PlanFeatures extends Component {
 		return ReactDOM.createPortal(
 			<Notice className="plan-features__notice" showDismiss={ false } status="is-info">
 				{ translate(
-					"This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner."
+					'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
 				) }
 			</Notice>,
 			bannerContainer
@@ -462,6 +462,7 @@ export class PlanFeatures extends Component {
 			displayJetpackPlans,
 			isInSignup,
 			isJetpack,
+			isEligibleForPlanStepTest,
 			planProperties,
 			selectedPlan,
 			siteType,
@@ -486,7 +487,7 @@ export class PlanFeatures extends Component {
 			} = properties;
 			let { discountPrice } = properties;
 			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
-			let audience = planConstantObj.getAudience();
+			let audience = planConstantObj.getAudience( isEligibleForPlanStepTest );
 			let billingTimeFrame = planConstantObj.getBillingTimeFrame();
 
 			if ( disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0 ) {
@@ -537,7 +538,7 @@ export class PlanFeatures extends Component {
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 						selectedPlan={ selectedPlan }
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
-						title={ planConstantObj.getTitle() }
+						title={ planConstantObj.getTitle( isEligibleForPlanStepTest ) }
 						plansWithScroll={ withScroll }
 					/>
 				</th>
