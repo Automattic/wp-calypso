@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import AppsBadge from 'blocks/get-apps/apps-badge';
 import userAgent from 'lib/user-agent';
 import CardHeading from 'components/card-heading';
@@ -32,6 +33,7 @@ export const GoMobileCard = ( { translate, email, sendMobileLoginEmail } ) => {
 	const showIosBadge = isDesktopView || isIos || ! isAndroid;
 	const showAndroidBadge = isDesktopView || isAndroid || ! isIos;
 	const showOnlyOneBadge = showIosBadge !== showAndroidBadge;
+	const isDesktopApp = [ 'desktop', 'desktop-development' ].includes( config( 'env_id' ) );
 
 	const emailLogin = () => {
 		sendMobileLoginEmail( email );
@@ -67,7 +69,7 @@ export const GoMobileCard = ( { translate, email, sendMobileLoginEmail } ) => {
 					) }
 				</div>
 			</div>
-			{ isDesktopView && (
+			{ isDesktopView && ! isDesktopApp && (
 				<Button className="go-mobile-card__email-link-button" onClick={ emailLogin }>
 					{ translate( 'Email download link' ) }
 				</Button>
