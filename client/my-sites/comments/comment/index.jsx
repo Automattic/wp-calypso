@@ -23,7 +23,7 @@ import CommentRepliesList from 'my-sites/comments/comment-replies-list';
 import QueryComment from 'components/data/query-comment';
 import scrollTo from 'lib/scroll-to';
 import { getMinimumComment } from 'my-sites/comments/comment/utils';
-import getSiteComment from 'state/selectors/get-site-comment';
+import { getSiteComment } from 'state/comments/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**

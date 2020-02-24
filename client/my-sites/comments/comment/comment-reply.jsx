@@ -22,7 +22,7 @@ import {
 } from 'state/analytics/actions';
 import { changeCommentStatus, replyComment } from 'state/comments/actions';
 import { removeNotice, successNotice } from 'state/notices/actions';
-import getSiteComment from 'state/selectors/get-site-comment';
+import { getSiteComment } from 'state/comments/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const TEXTAREA_HEIGHT_COLLAPSED = 47; // 1 line
