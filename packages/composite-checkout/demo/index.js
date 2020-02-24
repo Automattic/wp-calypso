@@ -279,7 +279,15 @@ function MyCheckout() {
 
 	const [ isLoading, setIsLoading ] = useState( true );
 	useEffect( () => {
-		if ( isStripeLoading || stripeLoadingError || ! stripe || ! stripeConfiguration ) {
+		if ( isStripeLoading ) {
+			return;
+		}
+		if ( stripeLoadingError ) {
+			setIsLoading( false );
+			showErrorMessage( stripeLoadingError );
+			return;
+		}
+		if ( ! stripe || ! stripeConfiguration ) {
 			return;
 		}
 		// This simulates an additional loading delay
