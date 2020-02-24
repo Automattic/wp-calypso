@@ -15,12 +15,7 @@ import Field from '../../components/field';
 import GridRow from '../../components/grid-row';
 import Button from '../../components/button';
 import PaymentLogo from './payment-logo';
-import {
-	useStripe,
-	createStripePaymentMethod,
-	showStripeModalAuth,
-	StripeHookProvider,
-} from '../stripe';
+import { createStripePaymentMethod, showStripeModalAuth } from '../stripe';
 import {
 	useSelect,
 	useDispatch,
@@ -34,7 +29,6 @@ import { CreditCardLabel } from './credit-card';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import CreditCardFields, { CVVImage } from './credit-card-fields';
 import Spinner from '../../components/spinner';
-import ErrorMessage from '../../components/error-message';
 import { useFormStatus } from '../form-status';
 
 const debug = debugFactory( 'composite-checkout:stripe-payment-method' );
@@ -44,7 +38,8 @@ export function createStripeMethod( {
 	getPostalCode,
 	getSubdivisionCode,
 	registerStore,
-	fetchStripeConfiguration,
+	stripe,
+	stripeConfiguration,
 	submitTransaction,
 } ) {
 	debug( 'creating a new stripe payment method' );
@@ -230,13 +225,10 @@ export function createStripeMethod( {
 	return {
 		id: 'stripe-card',
 		label: <CreditCardLabel />,
-		activeContent: <StripeCreditCardFields />,
-		submitButton: <StripePayButton />,
-		checkoutWrapper: children => (
-			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-				{ children }
-			</StripeHookProvider>
+		activeContent: (
+			<StripeCreditCardFields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
 		),
+		submitButton: <StripePayButton stripe={ stripe } stripeConfiguration={ stripeConfiguration } />,
 		inactiveContent: <StripeSummary />,
 		getAriaLabel: localize => localize( 'Credit Card' ),
 		isCompleteCallback: () => {
@@ -255,9 +247,7 @@ export function createStripeMethod( {
 function StripeCreditCardFields() {
 	const localize = useLocalize();
 	const theme = useTheme();
-	const { showErrorMessage } = useMessages();
 	const onEvent = useEvents();
-	const { stripeLoadingError, isStripeLoading } = useStripe();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
 	const cardholderName = useSelect( select => select( 'stripe' ).getCardholderName() );
 	const brand = useSelect( select => select( 'stripe' ).getBrand() );
@@ -269,13 +259,6 @@ function StripeCreditCardFields() {
 	const { changeCardholderName, changeBrand, setCardDataError, setCardDataComplete } = useDispatch(
 		'stripe'
 	);
-
-	useEffect( () => {
-		if ( stripeLoadingError ) {
-			debug( 'showing error for loading', stripeLoadingError );
-			showErrorMessage( stripeLoadingError );
-		}
-	}, [ showErrorMessage, stripeLoadingError ] );
 
 	const handleStripeFieldChange = input => {
 		setCardDataComplete( input.elementType, input.complete );
@@ -312,32 +295,6 @@ function StripeCreditCardFields() {
 			color: theme.colors.textColor,
 		},
 	};
-
-	useEffect( () => {
-		if ( stripeLoadingError ) {
-			onEvent( { type: 'a8c_checkout_error', payload: { type: 'Stripe loading error' } } );
-		}
-	}, [ stripeLoadingError, onEvent ] );
-
-	if ( stripeLoadingError ) {
-		return (
-			<CreditCardFieldsWrapper isLoaded={ true }>
-				<ErrorMessage>
-					{ localize(
-						'Our payment processor failed to load, please refresh your screen to try again or pick another payment method to proceed.'
-					) }
-				</ErrorMessage>
-			</CreditCardFieldsWrapper>
-		);
-	}
-
-	if ( isStripeLoading ) {
-		return (
-			<StripeFields>
-				<LoadingFields />
-			</StripeFields>
-		);
-	}
 
 	return (
 		<StripeFields>
@@ -510,11 +467,10 @@ function LoadingFields() {
 	);
 }
 
-function StripePayButton( { disabled } ) {
+function StripePayButton( { disabled, stripe, stripeConfiguration } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
 	const { showErrorMessage, showInfoMessage } = useMessages();
-	const { stripe, stripeConfiguration } = useStripe();
 	const transactionStatus = useSelect( select => select( 'stripe' ).getTransactionStatus() );
 	const transactionError = useSelect( select => select( 'stripe' ).getTransactionError() );
 	const transactionAuthData = useSelect( select => select( 'stripe' ).getTransactionAuthData() );
