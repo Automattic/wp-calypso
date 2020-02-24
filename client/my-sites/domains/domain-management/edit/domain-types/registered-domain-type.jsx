@@ -22,7 +22,7 @@ import {
 	domainManagementTransfer,
 } from 'my-sites/domains/paths';
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification';
-import { isRecentlyRegistered } from 'lib/domains/utils';
+import { isRecentlyRegistered, isExpiringSoon } from 'lib/domains/utils';
 import { DOMAINS } from 'lib/url/support';
 import SubscriptionSettings from '../card/subscription-settings';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
@@ -84,8 +84,28 @@ class RegisteredDomainType extends React.Component {
 	}
 
 	resolveStatus() {
-		const { domain, translate } = this.props;
-		const { registrationDate } = domain;
+		const { domain, translate, moment } = this.props;
+		const { registrationDate, expiry } = domain;
+
+		if ( isExpiringSoon( expiry, 30 ) ) {
+			const expiresMessage = translate( 'Expires in %(days)s', {
+				args: { days: moment.utc( expiry ).fromNow( true ) },
+			} );
+
+			if ( isExpiringSoon( expiry, 5 ) ) {
+				return {
+					statusText: expiresMessage,
+					statusClass: 'status-error',
+					icon: 'info',
+				};
+			}
+
+			return {
+				statusText: expiresMessage,
+				statusClass: 'status-warning',
+				icon: 'info',
+			};
+		}
 
 		if ( domain.isPendingIcannVerification && domain.currentUserCanManage ) {
 			return {
@@ -118,6 +138,31 @@ class RegisteredDomainType extends React.Component {
 			statusClass: 'status-success',
 			icon: 'check_circle',
 		};
+	}
+
+	renderExpiringSoon() {
+		const { domain, translate, moment } = this.props;
+		const { expiry } = domain;
+
+		if ( isExpiringSoon( expiry, 30 ) ) {
+			return (
+				<div>
+					{ translate(
+						'Your domain will expire in {{strong}}%(days)s{{/strong}}. Please renew it before it expires or it will stop working.',
+						{
+							components: {
+								strong: <strong />,
+							},
+							args: {
+								days: moment.utc( expiry ).fromNow( true ),
+							},
+						}
+					) }
+				</div>
+			);
+		}
+
+		return null;
 	}
 
 	renderExpired() {
@@ -207,6 +252,7 @@ class RegisteredDomainType extends React.Component {
 							compact={ true }
 						/>
 					) }
+					{ this.renderExpiringSoon() }
 					{ this.renderExpired() }
 					{ this.renderRecentlyRegistered() }
 				</DomainStatus>

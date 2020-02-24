@@ -5,3 +5,4 @@ export { getDomainRegistrationAgreementUrl } from 'lib/domains/utils/get-domain-
 export { isDomainConnectAuthorizePath } from 'lib/domains/utils/is-domain-connect-authorize-path';
 export { parseDomainAgainstTldList } from 'lib/domains/utils/parse-domain-against-tld-list';
 export { isRecentlyRegistered } from 'lib/domains/utils/is-recently-registered';
+export { isExpiringSoon } from 'lib/domains/utils/is-expiring-soon';
