@@ -11,7 +11,7 @@ import wpcom from 'lib/wp';
 
 const { Blob } = globalThis; // The linter complains if I don't do this...?
 
-export default function( { alt, mediaUrl, onLoad = noop, siteSlug, style } ) {
+export default function ProxiedImage( { alt, mediaUrl, onLoad = noop, siteSlug, style } ) {
 	const [ imageData, setImageData ] = useState( null );
 
 	useEffect( () => {
