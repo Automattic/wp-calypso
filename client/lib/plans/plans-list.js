@@ -11,7 +11,10 @@ import i18n from 'i18n-calypso';
 import { isEnabled } from 'config';
 import * as constants from './constants';
 
-const WPComGetBillingTimeframe = () => i18n.translate( 'per month, billed annually' );
+const WPComGetBillingTimeframe = rawPriceAnnual =>
+	rawPriceAnnual
+		? `Billed at ${ rawPriceAnnual } per year`
+		: i18n.translate( 'per month, billed annually' );
 const WPComGetBiennialBillingTimeframe = () => i18n.translate( '/month, billed every two years' );
 
 const getPlanBloggerDetails = () => ( {

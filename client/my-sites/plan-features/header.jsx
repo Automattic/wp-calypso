@@ -168,6 +168,7 @@ export class PlanFeaturesHeader extends Component {
 			hideMonthly,
 			isInSignup,
 			plansWithScroll,
+			isEligibleForPlanStepTest,
 		} = this.props;
 
 		const isDiscounted = !! discountPrice;
@@ -177,8 +178,11 @@ export class PlanFeaturesHeader extends Component {
 		} );
 
 		if ( isInSignup || plansWithScroll ) {
+			const classes = classNames( 'plan-features__header-billing-info', {
+				'plan-features__header-billing-info-plan-step-test': isEligibleForPlanStepTest,
+			} );
 			return (
-				<div className={ 'plan-features__header-billing-info' }>
+				<div className={ classes }>
 					<span>{ billingTimeFrame }</span>
 				</div>
 			);
@@ -257,7 +261,7 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	renderPriceGroup( fullPrice, discountedPrice = null ) {
-		const { currencyCode, isInSignup, plansWithScroll } = this.props;
+		const { currencyCode, isInSignup, plansWithScroll, isEligibleForPlanStepTest } = this.props;
 		const displayFlatPrice = isInSignup && ! plansWithScroll;
 
 		if ( fullPrice && discountedPrice ) {
@@ -287,6 +291,7 @@ export class PlanFeaturesHeader extends Component {
 				currencyCode={ currencyCode }
 				rawPrice={ fullPrice }
 				isInSignup={ displayFlatPrice }
+				isEligibleForPlanStepTest={ isEligibleForPlanStepTest }
 			/>
 		);
 	}

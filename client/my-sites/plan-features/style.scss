@@ -866,6 +866,10 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		color: var( --color-text-subtle );
 		align-items: center;
 		text-align: center;
+
+		&.plan-features__header-billing-info-plan-step-test {
+			font-size: 12px;
+		}
 	}
 
 	.plan-features__pricing {
@@ -883,6 +887,12 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		.plan-price__currency-symbol {
 			font-size: 50%;
 			font-weight: 400;
+		}
+
+		.plan-price__currency-symbol-plan-step-test {
+			font-size: 35%;
+			font-weight: 800;
+			vertical-align: text-top;
 		}
 
 		.plan-price__integer {
