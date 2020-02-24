@@ -72,6 +72,7 @@ import './style.scss';
 import commentIcon from 'assets/images/customer-home/comment.svg';
 import customDomainIcon from 'assets/images/customer-home/custom-domain.svg';
 import customizeIcon from 'assets/images/customer-home/customize.svg';
+import fireworksIllustration from 'assets/images/illustrations/fireworks.svg';
 import gSuiteIcon from 'assets/images/customer-home/gsuite.svg';
 import happinessIllustration from 'assets/images/customer-home/happiness.png';
 import imagesIcon from 'assets/images/customer-home/images.svg';
@@ -260,7 +261,7 @@ class Home extends Component {
 			return (
 				<Card className="customer-home__migrate-card" highlight="info">
 					<img
-						src="/calypso/images/illustrations/fireworks.svg"
+						src={ fireworksIllustration }
 						aria-hidden="true"
 						className="customer-home__migrate-fireworks"
 						alt=""
@@ -297,7 +298,7 @@ class Home extends Component {
 				{ ! siteIsUnlaunched && 'launched' === checklistMode ? (
 					<Card className="customer-home__launch-card" highlight="info">
 						<img
-							src="/calypso/images/illustrations/fireworks.svg"
+							src={ fireworksIllustration }
 							aria-hidden="true"
 							className="customer-home__launch-fireworks"
 							alt=""
