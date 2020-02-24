@@ -7,8 +7,9 @@ import { BlockEditorProvider, BlockList as OriginalBlockList } from '@wordpress/
 import { Popover, DropZoneProvider } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import '@wordpress/format-library';
-import React, { useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useRef, useEffect } from 'react';
+import { useParams, useHistory } from 'react-router-dom';
+import { recordTracksPageViewWithPageParams } from '@automattic/calypso-analytics';
 
 // Uncomment and remove the redundant sass import from `./style.css` when a release after @wordpress/components@8.5.0 is published.
 // See https://github.com/WordPress/gutenberg/pull/19535
@@ -55,6 +56,14 @@ export function Gutenboard() {
 	// which would collide with the routing done inside of the block
 	// (and would lead to weird mounting/unmounting behavior).
 	const onboardingBlock = useRef( createBlock( name, {} ) );
+
+	const {
+		location: { pathname },
+	} = useHistory();
+
+	useEffect( () => {
+		recordTracksPageViewWithPageParams( `/gutenboarding${ pathname }` );
+	}, [ pathname ] );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
