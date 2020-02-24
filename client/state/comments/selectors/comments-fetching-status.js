@@ -14,7 +14,7 @@ import 'state/comments/init';
 
 export function commentsFetchingStatus( state, siteId, postId, commentTotal = 0 ) {
 	const fetchStatus =
-		state.comments.fetchStatus?.[ getStateKey( siteId, postId ) ] ?? fetchStatusInitialState;
+		state.comments.fetchStatus[ getStateKey( siteId, postId ) ] ?? fetchStatusInitialState;
 	const hasMoreComments = commentTotal > size( getPostCommentItems( state, siteId, postId ) );
 
 	return {
