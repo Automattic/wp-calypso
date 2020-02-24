@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { find, forEach, some, endsWith, findIndex } from 'lodash';
+import { forEach, some, endsWith, findIndex } from 'lodash';
 import url from 'url';
 
 /**
@@ -16,23 +16,7 @@ const IMAGE_SCALE_FACTOR =
 const DEFAULT_PHOTON_QUALITY = 80; // 80 was chosen after some heuristic testing as the best blend of size and quality
 
 export { isPhotonHost } from 'lib/post-normalizer/utils/is-photon-host';
-
-export function imageSizeFromAttachments( post, imageUrl ) {
-	if ( ! post.attachments ) {
-		return;
-	}
-
-	const found = find( post.attachments, function( attachment ) {
-		return attachment.URL === imageUrl;
-	} );
-
-	if ( found ) {
-		return {
-			width: found.width,
-			height: found.height,
-		};
-	}
-}
+export { imageSizeFromAttachments } from 'lib/post-normalizer/utils/image-size-from-attachments';
 
 export function maxWidthPhotonishURL( imageURL, width ) {
 	if ( ! imageURL ) {
