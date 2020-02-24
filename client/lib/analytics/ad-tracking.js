@@ -10,7 +10,7 @@ import { v4 as uuid } from 'uuid';
  * Internal dependencies
  */
 import config from 'config';
-import productsValues from 'lib/products-values';
+import { isJetpackPlan } from 'lib/products-values';
 import { loadScript } from '@automattic/load-script';
 import {
 	isPiiUrl,
@@ -592,15 +592,11 @@ function splitWpcomJetpackCartInfo( cart ) {
 		0 === cart.products.length
 			? 0
 			: cart.products
-					.map( product => ( productsValues.isJetpackPlan( product ) ? product.cost : 0 ) )
+					.map( product => ( isJetpackPlan( product ) ? product.cost : 0 ) )
 					.reduce( ( accumulator, cost ) => accumulator + cost );
 	const wpcomCost = cart.total_cost - jetpackCost;
-	const wpcomProducts = cart.products.filter(
-		product => ! productsValues.isJetpackPlan( product )
-	);
-	const jetpackProducts = cart.products.filter( product =>
-		productsValues.isJetpackPlan( product )
-	);
+	const wpcomProducts = cart.products.filter( product => ! isJetpackPlan( product ) );
+	const jetpackProducts = cart.products.filter( product => isJetpackPlan( product ) );
 
 	return {
 		wpcomProducts: wpcomProducts,
