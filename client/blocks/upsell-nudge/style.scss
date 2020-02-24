@@ -6,7 +6,6 @@
 	color: var( --color-text-inverted );
 	display: flex;
 	align-items: center;
-	margin-top: -1px;
 
 	a,
 	button {
@@ -18,7 +17,8 @@
 
 .upsell-nudge.banner.card.is-compact {
 	border-left-width: 4px;
-	margin-bottom: 0;
+	margin-top: -1px;
+	margin-bottom: -1px;
 
 	.banner__icon-circle,
 	.banner__icon {
