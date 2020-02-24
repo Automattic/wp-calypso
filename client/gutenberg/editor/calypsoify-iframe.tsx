@@ -42,6 +42,7 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { protectForm, ProtectedFormProps } from 'lib/protect-form';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ConvertToBlocksDialog from 'components/convert-to-blocks';
+import EditorDocumentHead from 'post-editor/editor-document-head';
 import config from 'config';
 
 /**
@@ -562,6 +563,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 					title={ this.getStatsTitle() }
 					properties={ this.getStatsProps() }
 				/>
+				<EditorDocumentHead />
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<ConvertToBlocksDialog
 					showDialog={ isConversionPromptVisible }
