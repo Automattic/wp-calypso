@@ -16,6 +16,9 @@ import {
 	useShoppingCart,
 	FormFieldAnnotation,
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+	areDomainsInLineItems,
+	domainManagedContactDetails,
+	taxManagedContactDetails,
 } from '@automattic/composite-checkout-wpcom';
 import {
 	CheckoutProvider,
@@ -279,7 +282,7 @@ export default function CompositeCheckout( {
 	useWpcomStore(
 		registerStore,
 		recordEvent,
-		validateDomainContactDetails || wpcomValidateDomainContactInformation
+		areDomainsInLineItems( items ) ? domainManagedContactDetails : taxManagedContactDetails
 	);
 
 	useDisplayErrors( errors, showErrorMessage );
