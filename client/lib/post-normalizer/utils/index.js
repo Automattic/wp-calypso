@@ -8,29 +8,7 @@ export { thumbIsLikelyImage } from 'lib/post-normalizer/utils/thumb-is-likely-im
 export { iframeIsWhitelisted } from 'lib/post-normalizer/utils/iframe-is-whitelisted';
 export { isCandidateForCanonicalImage } from 'lib/post-normalizer/utils/is-candidate-for-canonical-image';
 export { isFeaturedImageInContent } from 'lib/post-normalizer/utils/is-featured-image-in-content';
-
-export function deduceImageWidthAndHeight( image ) {
-	if ( image.height && image.width ) {
-		return {
-			height: image.height,
-			width: image.width,
-		};
-	}
-	if ( image.naturalHeight && image.naturalWidth ) {
-		return {
-			height: image.naturalHeight,
-			width: image.naturalWidth,
-		};
-	}
-	if ( image.dataset && image.dataset.origSize ) {
-		const [ width, height ] = image.dataset.origSize.split( ',' ).map( Number );
-		return {
-			width,
-			height,
-		};
-	}
-	return null;
-}
+export { deduceImageWidthAndHeight } from 'lib/post-normalizer/utils/deduce-image-width-and-height';
 
 export const safeLinkRe = /^https?:\/\//;
 
