@@ -17,5 +17,5 @@ export function getThemesFoundForQuery( state, siteId, query ) {
 		return null;
 	}
 
-	return state.themes.queries[ siteId ].getFound( query );
+	return state.themes.queries[ siteId ]?.getFound( query );
 }
