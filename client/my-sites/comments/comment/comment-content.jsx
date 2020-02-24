@@ -17,8 +17,7 @@ import CommentPostLink from 'my-sites/comments/comment/comment-post-link';
 import Emojify from 'components/emojify';
 import QueryComment from 'components/data/query-comment';
 import { stripHTML, decodeEntities } from 'lib/formatting';
-import getParentComment from 'state/selectors/get-parent-comment';
-import { getSiteComment } from 'state/comments/selectors';
+import { getParentComment, getSiteComment } from 'state/comments/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 

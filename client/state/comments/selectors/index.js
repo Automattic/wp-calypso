@@ -6,6 +6,7 @@ export { getCommentLike } from 'state/comments/selectors/get-comment-like';
 export { getDateSortedPostComments } from 'state/comments/selectors/get-date-sorted-post-comments';
 export { getExpansionsForPost } from 'state/comments/selectors/get-expansions-for-post';
 export { getHiddenCommentsForPost } from 'state/comments/selectors/get-hidden-comments-for-post';
+export { getParentComment } from 'state/comments/selectors/get-parent-comment';
 export { getPostCommentItems } from 'state/comments/selectors/get-post-comment-items';
 export { getPostCommentsCountAtDate } from 'state/comments/selectors/get-post-comments-count-at-date';
 export { getPostCommentsTree } from 'state/comments/selectors/get-post-comments-tree';

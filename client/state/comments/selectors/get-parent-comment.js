@@ -1,12 +1,9 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import { getPostCommentsTree } from 'state/comments/selectors';
+import { getPostCommentsTree } from 'state/comments/selectors/get-post-comments-tree';
+
+import 'state/comments/init';
 
 /**
  * Returns the parent comment of a given comment
@@ -19,8 +16,8 @@ import { getPostCommentsTree } from 'state/comments/selectors';
  */
 export const getParentComment = ( state, siteId, postId, commentId ) => {
 	const commentsTree = getPostCommentsTree( state, siteId, postId, 'all' );
-	const parentCommentId = get( commentsTree, [ commentId, 'data', 'parent', 'ID' ], 0 );
-	return get( commentsTree, [ parentCommentId, 'data' ], {} );
+	const parentCommentId = commentsTree[ commentId ]?.data.parent?.ID ?? 0;
+	return commentsTree[ parentCommentId ]?.data ?? {};
 };
 
 export default getParentComment;
