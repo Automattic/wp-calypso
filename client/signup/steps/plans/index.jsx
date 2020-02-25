@@ -102,6 +102,7 @@ export class PlansStep extends Component {
 	isEligibleForPlanStepTest() {
 		return (
 			config.isEnabled( 'plans-step-copy-updates' ) &&
+			! this.props.isLaunchPage &&
 			'variantCopyUpdates' === abtest( 'planStepCopyUpdates' )
 		);
 	}
@@ -141,10 +142,7 @@ export class PlansStep extends Component {
 	}
 
 	getHeaderTextAB() {
-		if (
-			config.isEnabled( 'plans-step-copy-updates' ) &&
-			'variantCopyUpdates' === abtest( 'planStepCopyUpdates' )
-		) {
+		if ( this.isEligibleForPlanStepTest() ) {
 			return 'Select your WordPress.com plan';
 		}
 
@@ -152,10 +150,7 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderTextAB() {
-		if (
-			config.isEnabled( 'plans-step-copy-updates' ) &&
-			'variantCopyUpdates' === abtest( 'planStepCopyUpdates' )
-		) {
+		if ( this.isEligibleForPlanStepTest() ) {
 			return 'All plans include blazing-fast WordPress hosting.';
 		}
 
