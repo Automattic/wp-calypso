@@ -8,20 +8,23 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import getRewindBackups from 'state/selectors/get-rewind-backups';
-import QueryRewindBackups from 'components/data/query-rewind-backups';
+import { requestActivityLogs } from 'state/data-getters';
 
 class BackupsPage extends Component {
 	render() {
-		const { backups, siteId } = this.props;
+		const { logs, siteId } = this.props;
 
-		const numBackups = backups ? backups.length : 0;
+		const backupPoints = logs.filter( activity => {
+			return activity.activityIsRewindable === true;
+		} );
+
+		const list = backupPoints.map( point => <div>{ point.activityDate }</div> );
 
 		return (
 			<div>
-				<QueryRewindBackups siteId={ siteId } />
 				<div>Welcome to the backup detail page for site { siteId }.</div>
-				<div>This site has { numBackups } backups.</div>
+				<div>This site has { backupPoints.length } backups.</div>
+				<div>{ list }</div>
 			</div>
 		);
 	}
@@ -29,10 +32,10 @@ class BackupsPage extends Component {
 
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
-	const backups = getRewindBackups( state, siteId );
+	const logs = siteId && requestActivityLogs( siteId, { group: 'rewind' } );
 
 	return {
 		siteId,
-		backups,
+		logs: ( siteId && logs.data ) || [],
 	};
 } )( BackupsPage );
