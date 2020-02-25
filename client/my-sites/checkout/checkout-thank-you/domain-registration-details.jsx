@@ -3,6 +3,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import React from 'react';
 import i18n from 'i18n-calypso';
 
@@ -11,17 +12,33 @@ import i18n from 'i18n-calypso';
  */
 import { getDomainManagementUrl } from './utils';
 import GoogleAppsDetails from './google-apps-details';
-import { isGoogleApps, isBlogger } from 'lib/products-values';
+import {
+	isGoogleApps,
+	isBlogger,
+	isPlan,
+	isFreePlan,
+	isDomainRegistration,
+} from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
 import { EMAIL_VALIDATION_AND_VERIFICATION, DOMAIN_WAITING } from 'lib/url/support';
+import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 
-const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
+const DomainRegistrationDetails = ( {
+	selectedSite,
+	domain,
+	purchases,
+	hasNonPrimaryDomainsFlag,
+} ) => {
 	const googleAppsWasPurchased = purchases.some( isGoogleApps ),
 		domainContactEmailVerified = purchases.some( purchase => purchase.isEmailVerified ),
 		hasOtherPrimaryDomain =
 			selectedSite.options &&
 			selectedSite.options.is_mapped_domain &&
 			selectedSite.domain !== domain,
+		showPlanUpsell =
+			hasNonPrimaryDomainsFlag && isFreePlan( selectedSite.plan ) && ! purchases.some( isPlan ),
+		purchasedDomain = purchases.find( isDomainRegistration ).meta,
 		isRestrictedToBlogDomains = purchases.some( isBlogger ) || isBlogger( selectedSite.plan );
 
 	return (
@@ -58,7 +75,7 @@ const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 				rel="noopener noreferrer"
 			/>
 
-			{ hasOtherPrimaryDomain && (
+			{ ! showPlanUpsell && hasOtherPrimaryDomain && (
 				<PurchaseDetail
 					icon={
 						<img
@@ -83,6 +100,27 @@ const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 					href={ getDomainManagementUrl( selectedSite, domain ) }
 				/>
 			) }
+
+			{ showPlanUpsell && (
+				<PurchaseDetail
+					icon={ <img alt="" src="/calypso/images/upgrades/custom-domain.svg" /> }
+					title={ i18n.translate( 'Your primary domain' ) }
+					description={ i18n.translate(
+						'Your existing domain, %(primaryDomain)s, is the primary domain visitors ' +
+							'see when they visit your site. %(purchasedDomain)s will redirect to %(primaryDomain)s. ' +
+							'Upgrade to a paid plan to make %(purchasedDomain)s the domain people see when they ' +
+							'visit your site.',
+						{
+							args: {
+								primaryDomain: selectedSite.slug,
+								purchasedDomain,
+							},
+						}
+					) }
+					buttonText={ i18n.translate( 'Pick a plan' ) }
+					href={ `/plans/${ selectedSite.slug }` }
+				/>
+			) }
 		</div>
 	);
 };
@@ -91,6 +129,15 @@ DomainRegistrationDetails.propTypes = {
 	domain: PropTypes.string.isRequired,
 	purchases: PropTypes.array.isRequired,
 	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ).isRequired,
+	hasNonPrimaryDomainsFlag: PropTypes.bool,
 };
 
-export default DomainRegistrationDetails;
+const mapStateToProps = state => {
+	return {
+		hasNonPrimaryDomainsFlag: getCurrentUser( state )
+			? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+			: false,
+	};
+};
+
+export default connect( mapStateToProps )( DomainRegistrationDetails );
