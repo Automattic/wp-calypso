@@ -39,7 +39,7 @@ const getTypeForBlockId = blockId => {
  * the parent block (if exists). Take this as
  * an advantage to add other custom properties to the event.
  *
- * Also, it adds as default `inner_block`,
+ * Also, it adds default `inner_block`,
  * and `parent_block_client_id` (if parent exists) properties.
  *
  * @param {Array}    blocks            Block instances object or an array of such objects
