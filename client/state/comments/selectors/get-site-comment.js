@@ -6,7 +6,7 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import getSiteComments from 'state/selectors/get-site-comments';
+import { getSiteComments } from 'state/comments/selectors';
 
 import 'state/comments/init';
 
@@ -18,9 +18,7 @@ import 'state/comments/init';
  * @param {number} commentId Comment identifier
  * @returns {object} The requested comment
  */
-export const getSiteComment = ( state, siteId, commentId ) => {
+export function getSiteComment( state, siteId, commentId ) {
 	const comments = getSiteComments( state, siteId );
 	return find( comments, { ID: commentId } );
-};
-
-export default getSiteComment;
+}

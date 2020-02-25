@@ -6,11 +6,21 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isCommentsTreeInitialized from 'state/selectors/is-comments-tree-initialized';
+import { isCommentsTreeInitialized } from 'state/comments/selectors';
 
 describe( 'isCommentsTreeInitialized()', () => {
 	test( 'should return false if no data is available', () => {
-		expect( isCommentsTreeInitialized( {}, 77203074, 'spam' ) ).to.equal( false );
+		expect(
+			isCommentsTreeInitialized(
+				{
+					comments: {
+						treesInitialized: {},
+					},
+				},
+				77203074,
+				'spam'
+			)
+		).to.equal( false );
 	} );
 	test( 'should return true if data is available', () => {
 		const state = {

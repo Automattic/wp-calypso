@@ -35,7 +35,7 @@ import {
 	unlikeComment,
 } from 'state/comments/actions';
 import { removeNotice, successNotice } from 'state/notices/actions';
-import getSiteComment from 'state/selectors/get-site-comment';
+import { getSiteComment } from 'state/comments/selectors';
 import hasPendingCommentRequests from 'state/selectors/has-pending-comment-requests';
 import { NEWEST_FIRST, OLDEST_FIRST } from '../constants';
 import { extendAction } from 'state/utils';

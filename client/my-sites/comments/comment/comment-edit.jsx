@@ -31,7 +31,7 @@ import {
 } from 'state/analytics/actions';
 import { editComment } from 'state/comments/actions';
 import { removeNotice, successNotice } from 'state/notices/actions';
-import getSiteComment from 'state/selectors/get-site-comment';
+import { getSiteComment } from 'state/comments/selectors';
 import getSiteSetting from 'state/selectors/get-site-setting';
 import { getSelectedSiteId } from 'state/ui/selectors';
 

@@ -3,7 +3,7 @@
  */
 import '@wordpress/editor'; // This shouldn't be necessary
 import { useI18n } from '@automattic/react-i18n';
-import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
+import { BlockEditorProvider, BlockList as OriginalBlockList } from '@wordpress/block-editor';
 import { Popover, DropZoneProvider } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import '@wordpress/format-library';
@@ -24,6 +24,15 @@ import './style.scss';
 
 registerBlockType( name, settings );
 
+interface BlockListProps extends OriginalBlockList.Props {
+	__experimentalUIParts: {
+		hasPopover: boolean;
+		hasSelectedUI: boolean;
+	};
+}
+
+const BlockList = ( props: BlockListProps ) => <OriginalBlockList { ...props } />;
+
 export function Gutenboard() {
 	const { __: NO__ } = useI18n();
 
@@ -36,6 +45,9 @@ export function Gutenboard() {
 	switch ( step ) {
 		case Step.DesignSelection:
 			prev = makePath( Step.IntentGathering );
+			break;
+		case Step.PageSelection:
+			prev = makePath( Step.DesignSelection );
 			break;
 	}
 
@@ -64,7 +76,12 @@ export function Gutenboard() {
 								aria-label={ NO__( 'Onboarding screen content' ) }
 								tabIndex={ -1 }
 							>
-								<BlockList className="gutenboarding-block-list" />
+								<BlockList
+									__experimentalUIParts={ {
+										hasPopover: false,
+										hasSelectedUI: false,
+									} }
+								/>
 							</div>
 						</div>
 					</BlockEditorProvider>

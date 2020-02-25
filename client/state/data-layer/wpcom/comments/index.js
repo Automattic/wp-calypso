@@ -23,8 +23,8 @@ import {
 	getPostOldestCommentDate,
 	getPostNewestCommentDate,
 	getPostCommentsCountAtDate,
+	getSiteComment,
 } from 'state/comments/selectors';
-import getSiteComment from 'state/selectors/get-site-comment';
 import { decodeEntities } from 'lib/formatting';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
