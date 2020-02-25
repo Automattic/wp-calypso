@@ -3,13 +3,11 @@
  */
 import {
 	get,
-	isEmpty,
 	isPlainObject,
 	filter,
 	flow,
 	includes,
 	map,
-	mapValues,
 	reduce,
 	toArray,
 	cloneDeep,
@@ -21,6 +19,8 @@ import {
 	find,
 } from 'lodash';
 import url from 'url';
+
+import { getTermIdsFromEdits } from './get-term-ids-from-edits';
 
 /**
  * Utility
@@ -38,6 +38,7 @@ export { applyPostEdits } from './apply-post-edits';
 export { mergePostEdits } from './merge-post-edits';
 export { appendToPostEditsLog } from './append-to-post-edits-log';
 export { normalizePostForDisplay } from './normalize-post-for-display';
+export { getTermIdsFromEdits } from './get-term-ids-from-edits';
 
 /**
  * Given a post object, returns a normalized post object
@@ -81,50 +82,6 @@ export function normalizePostForState( post ) {
 		},
 		normalizedPost
 	);
-}
-
-/**
- * Takes existing term post edits and updates the `terms_by_id` attribute
- *
- * @param  {object}    post  object of post edits
- * @returns {object}          normalized post edits
- */
-export function getTermIdsFromEdits( post ) {
-	if ( ! post || ! post.terms ) {
-		return post;
-	}
-
-	// Filter taxonomies that are set as arrays ( i.e. tags )
-	// This can be detected by an array of strings vs an array of objects
-	const taxonomies = reduce(
-		post.terms,
-		( prev, taxonomyTerms, taxonomyName ) => {
-			// Ensures we are working with an array
-			const termsArray = toArray( taxonomyTerms );
-			if ( termsArray && termsArray.length && ! isPlainObject( termsArray[ 0 ] ) ) {
-				return prev;
-			}
-
-			prev[ taxonomyName ] = termsArray;
-			return prev;
-		},
-		{}
-	);
-
-	if ( isEmpty( taxonomies ) ) {
-		return post;
-	}
-
-	return {
-		...post,
-		terms_by_id: mapValues( taxonomies, taxonomy => {
-			const termIds = map( taxonomy, 'ID' );
-
-			// Hack: qs omits empty arrays in wpcom.js request, which prevents
-			// removing all terms for a given taxonomy since the empty array is not sent to the API
-			return termIds.length ? termIds : null;
-		} ),
-	};
 }
 
 /**
