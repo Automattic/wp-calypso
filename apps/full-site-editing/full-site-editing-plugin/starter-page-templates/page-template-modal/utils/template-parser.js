@@ -34,7 +34,7 @@ setTimeout(
 		);
 		// console.timeEnd( 'parsing templates' );
 	},
-	0,
+	100,
 	templates
 );
 
