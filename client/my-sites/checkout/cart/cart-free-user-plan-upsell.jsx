@@ -31,6 +31,7 @@ import { getPlan } from 'lib/plans';
 import { getPlanPrice } from 'state/products-list/selectors';
 import { isDomainRegistration } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class CartFreeUserPlanUpsell extends React.Component {
 	static propTypes = {
@@ -121,6 +122,7 @@ class CartFreeUserPlanUpsell extends React.Component {
 	addPlanToCart() {
 		const planCartItem = planItem( PLAN_PERSONAL, {} );
 		addItem( planCartItem );
+		this.props.clickUpsellAddToCart();
 	}
 
 	render() {
@@ -135,7 +137,7 @@ class CartFreeUserPlanUpsell extends React.Component {
 				<SectionHeader className="cart__header" label={ translate( 'Upgrade and save' ) } />
 				<div style={ { padding: '16px' } }>
 					<p>{ this.getUpgradeText() }</p>
-					<Button onClick={ () => this.addPlanToCart() }>{ translate( 'Add to Cart' ) }</Button>
+					<Button onClick={ this.addPlanToCart }>{ translate( 'Add to Cart' ) }</Button>
 				</div>
 				<TrackComponentView eventName="calypso_non_dwpo_checkout_plan_upsell_impression" />
 			</div>
@@ -163,4 +165,11 @@ const mapStateToProps = ( state, { cart } ) => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( CartFreeUserPlanUpsell ) );
+const mapDispatchToProps = dispatch => {
+	return {
+		clickUpsellAddToCart: () =>
+			dispatch( recordTracksEvent( 'calypso_non_dwpo_checkout_plan_upsell_add_to_cart', {} ) ),
+	};
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CartFreeUserPlanUpsell ) );
