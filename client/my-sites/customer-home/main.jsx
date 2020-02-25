@@ -257,25 +257,6 @@ class Home extends Component {
 			}
 		}
 
-		if ( isRecentlyMigratedSite ) {
-			return (
-				<Card className="customer-home__migrate-card" highlight="info">
-					<img
-						src={ fireworksIllustration }
-						aria-hidden="true"
-						className="customer-home__migrate-fireworks"
-						alt=""
-					/>
-					<div className="customer-home__migrate-card-text">
-						<CardHeading>{ translate( 'Your site has been imported!' ) }</CardHeading>
-						<p className="customer-home__migrate-card-subtext">
-							{ this.getChecklistSubHeaderText() }
-						</p>
-					</div>
-				</Card>
-			);
-		}
-
 		// If launched, show a congratulatory message, else show the standard heading
 		return (
 			<>
@@ -295,6 +276,22 @@ class Home extends Component {
 						</div>
 					) }
 				</div>
+				{ isRecentlyMigratedSite && (
+					<Card className="customer-home__migrate-card" highlight="info">
+						<img
+							src="/calypso/images/illustrations/fireworks.svg"
+							aria-hidden="true"
+							className="customer-home__migrate-fireworks"
+							alt=""
+						/>
+						<div className="customer-home__migrate-card-text">
+							<CardHeading>{ translate( 'Your site has been imported!' ) }</CardHeading>
+							<p className="customer-home__migrate-card-subtext">
+								{ this.getChecklistSubHeaderText() }
+							</p>
+						</div>
+					</Card>
+				) }
 				{ ! siteIsUnlaunched && 'launched' === checklistMode ? (
 					<Card className="customer-home__launch-card" highlight="info">
 						<img
