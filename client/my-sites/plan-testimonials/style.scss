@@ -1,0 +1,68 @@
+.plan-testimonials__container {
+    color: var( --color-text-inverted );
+    display: flex;
+    font-size: 14px;
+    justify-content: center;
+
+    @include breakpoint( '<480px' ) {
+        flex-direction: column;
+    }
+
+    .plan-testimonials__content-left {
+        font-size: 24px;
+        width: 8%;
+
+        @include breakpoint( '<960px' ) {
+            width: 15%;
+        }
+
+        @include breakpoint( '<480px' ) {
+            width: auto;
+            text-align: center;
+        }
+    }
+
+    .plan-testimonials__content-right-container {
+        display: flex;
+        flex-direction: column;
+        width: 28%;
+
+        @include breakpoint( '<960px' ) {
+            width: 35%;
+        }
+
+        @include breakpoint( '<480px' ) {
+            width: auto;
+        }
+
+        .plan-testimonials__content-right {
+            border-left: 1px solid #fff;
+            margin-left: 20px;
+            padding-left: 20px;
+
+            @include breakpoint( '<480px' ) {
+                padding: 20px;
+                margin: 0;
+            }
+        }
+
+        .plan-testimonials__content-testimonial-image {
+            background:
+				url( 'https://s1.wp.com/wp-content/themes/h4/landing/marketing/pages/_common/components/vip-pitch/media/vip-brands.png' );
+			background-repeat: no-repeat;
+			background-size: 100%;
+			height: 35px;
+			margin-left: 40px;
+            margin-top: 40px;
+            
+            @include breakpoint( '<960px' ) {
+                margin-top: 20px;
+            }
+
+            @include breakpoint( '<480px' ) {
+                margin: 0 20px;
+            }
+        }
+    }
+}
+
