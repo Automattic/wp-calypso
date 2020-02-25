@@ -525,6 +525,7 @@ export default function CompositeCheckout( {
 				cardExpiry: storedDetails.expiry,
 				brand: storedDetails.card_type,
 				last4: storedDetails.card,
+				stripeConfiguration,
 				submitTransaction: submitData => {
 					const pending = submitExistingCardPayment(
 						{
@@ -550,7 +551,13 @@ export default function CompositeCheckout( {
 				getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 			} )
 		);
-	}, [ registerStore, storedCards, dispatch, shouldLoadExistingCardsMethods ] );
+	}, [
+		registerStore,
+		stripeConfiguration,
+		storedCards,
+		dispatch,
+		shouldLoadExistingCardsMethods,
+	] );
 
 	const isPurchaseFree = ! isLoadingCart && total.amount.value === 0;
 	debug( 'is purchase free?', isPurchaseFree );
