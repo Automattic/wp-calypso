@@ -3,7 +3,7 @@
  */
 import React, { Fragment, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
-import { Card, Button, Dialog } from '@automattic/components';
+import { Button, Card, Dialog } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
 
 /**
