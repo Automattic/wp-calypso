@@ -20,14 +20,9 @@ import {
 } from 'lodash';
 import url from 'url';
 
-import { getTermIdsFromEdits } from './get-term-ids-from-edits';
-
 /**
  * Utility
  */
-
-const normalizeEditedFlow = flow( [ getTermIdsFromEdits ] );
-
 const normalizeApiFlow = flow( [ normalizeTermsForApi ] );
 
 export { getNormalizedPostsQuery } from './get-normalized-posts-query';
@@ -39,20 +34,7 @@ export { mergePostEdits } from './merge-post-edits';
 export { appendToPostEditsLog } from './append-to-post-edits-log';
 export { normalizePostForDisplay } from './normalize-post-for-display';
 export { getTermIdsFromEdits } from './get-term-ids-from-edits';
-
-/**
- * Given a post object, returns a normalized post object
- *
- * @param  {object} post Raw edited post object
- * @returns {object}      Normalized post object
- */
-export function normalizePostForEditing( post ) {
-	if ( ! post ) {
-		return null;
-	}
-
-	return normalizeEditedFlow( post );
-}
+export { normalizePostForEditing } from './normalize-post-for-editing';
 
 /**
  * Given a post object, returns a normalized post object prepared for storing
