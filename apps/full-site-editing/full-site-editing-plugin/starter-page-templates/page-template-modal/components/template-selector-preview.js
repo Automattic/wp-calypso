@@ -13,10 +13,8 @@ import { __ } from '@wordpress/i18n';
 import {
 	useState,
 	useEffect,
-	useLayoutEffect,
 	useRef,
 	useReducer,
-	useCallback,
 } from '@wordpress/element';
 import { createBlock } from '@wordpress/blocks';
 /* eslint-enable import/no-extraneous-dependencies */
@@ -74,6 +72,7 @@ const TemplateSelectorPreview = ( { blocks = [], viewportWidth, title } ) => {
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<div className={ `template-selector-preview ${ ! blocks.length ? 'not-selected' : '' }` }>
+
 			<BlockTemplatePreview
 				key={ recompute }
 				blocks={

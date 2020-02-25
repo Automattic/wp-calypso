@@ -16,10 +16,11 @@ class TemplatePreviewFrame extends Component {
 		this.iframeBody = this.node.contentDocument.body;
 
 		this.iframeBody.className = 'block-preview-iframe-body';
-
 		this.initStyles();
-		// this.forceUpdate();
 
+		// Adjust the scale.
+		this.scale = this.node.parentNode.offsetWidth / this.node.offsetWidth;
+		this.height = this.node.parentNode.offsetHeight / this.scale;
 	}
 
 	initStyles() {
@@ -70,6 +71,7 @@ class TemplatePreviewFrame extends Component {
 				style={ {
 					...this.props.style,
 					height: this.height,
+					transform: `scale( ${ this.scale } )`,
 				} }
 				id="iframe-page-template-preview"
 				className={ this.props.className }
