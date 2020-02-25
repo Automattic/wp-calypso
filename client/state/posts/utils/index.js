@@ -1,8 +1,3 @@
-/**
- * External dependencies
- */
-import url from 'url';
-
 export { getNormalizedPostsQuery } from './get-normalized-posts-query';
 export { getSerializedPostsQuery } from './get-serialized-posts-query';
 export { getDeserializedPostsQueryDetails } from './get-deserialized-posts-query-details';
@@ -23,43 +18,7 @@ export { isStatusEqual } from './is-state-equal';
 export { getUnappliedMetadataEdits, areAllMetadataEditsApplied } from './metadata-edits';
 export { normalizePostForApi } from './normalize-post-for-api';
 export { getEditURL } from './get-edit-url';
-
-export const getPreviewURL = function( site, post, autosavePreviewUrl ) {
-	let parsed, previewUrl;
-
-	if ( ! post || ! post.URL || post.status === 'trash' ) {
-		return '';
-	}
-
-	if ( autosavePreviewUrl ) {
-		previewUrl = autosavePreviewUrl;
-	} else if ( post.status === 'publish' ) {
-		previewUrl = post.URL;
-	} else {
-		parsed = url.parse( post.URL, true );
-		parsed.query.preview = 'true';
-		delete parsed.search;
-		previewUrl = url.format( parsed );
-	}
-
-	if ( post.site_ID ) {
-		if ( ! ( site && site.options ) ) {
-			// site info is still loading, just use what we already have until it does
-			return previewUrl;
-		}
-		if ( site.options.is_mapped_domain ) {
-			previewUrl = previewUrl.replace( site.URL, site.options.unmapped_url );
-		}
-		if ( site.options.frame_nonce ) {
-			parsed = url.parse( previewUrl, true );
-			parsed.query[ 'frame-nonce' ] = site.options.frame_nonce;
-			delete parsed.search;
-			previewUrl = url.format( parsed );
-		}
-	}
-
-	return previewUrl;
-};
+export { getPreviewURL } from './get-preview-url';
 
 export const userCan = function( capability, post ) {
 	const hasCap = post.capabilities && post.capabilities[ capability ];
