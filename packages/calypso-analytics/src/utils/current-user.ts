@@ -8,6 +8,12 @@ import hashPii from './hash-pii';
  */
 let _currentUser: CurrentUser;
 
+export interface SetCurrentUserParams {
+	ID: string;
+	username: string;
+	email: string;
+}
+
 export interface CurrentUserHashedPii {
 	ID: string;
 	username: string;
@@ -18,13 +24,13 @@ export interface CurrentUser {
 	ID: number;
 	username: string;
 	email: string;
-	hashedPii?: CurrentUserHashedPii;
+	hashedPii: CurrentUserHashedPii;
 }
 
 /**
  * Gets current user.
  *
- * @returns {object|undefined} Current user.
+ * @returns Current user.
  */
 export function getCurrentUser(): CurrentUser {
 	return _currentUser;
@@ -33,14 +39,14 @@ export function getCurrentUser(): CurrentUser {
 /**
  * Sets current user, (stored in javascript memory).
  *
- * @param {object} currentUser the user data for the current user
- * @returns {object|undefined} Current user.
+ * @param currentUser the user data for the current user
+ * @returns Current user.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function setCurrentUser( currentUser: any ): CurrentUser | undefined {
+export function setCurrentUser( currentUser: SetCurrentUserParams ): CurrentUser | undefined {
 	if (
 		! currentUser.ID ||
-		isNaN( Number( currentUser.ID ) ) ||
+		isNaN( parseInt( currentUser.ID, 10 ) ) ||
 		! currentUser.username ||
 		! currentUser.email
 	) {
