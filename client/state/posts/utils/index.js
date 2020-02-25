@@ -27,14 +27,7 @@ export { getPreviewURL } from './get-preview-url';
 export { userCan } from './user-can';
 export { isBackDatedPublished } from './is-back-dated-published';
 export { isPublished } from './is-published';
-
-export const isScheduled = function( post ) {
-	if ( ! post ) {
-		return false;
-	}
-
-	return post.status === 'future';
-};
+export { isScheduled } from './is-scheduled';
 
 export const isPrivate = function( post ) {
 	if ( ! post ) {
