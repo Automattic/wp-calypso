@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, flow, every, find } from 'lodash';
+import { flow } from 'lodash';
 import url from 'url';
 
 import { normalizeTermsForApi } from './normalize-terms-for-api';
@@ -28,35 +28,7 @@ export { isDiscussionEqual } from './is-discussion-equal';
 export { isAuthorEqual } from './is-author-equal';
 export { isDateEqual } from './is-date-equal';
 export { isStatusEqual } from './is-state-equal';
-
-function isUnappliedMetadataEdit( edit, savedMetadata ) {
-	const savedRecord = find( savedMetadata, { key: edit.key } );
-
-	// is an update already performed?
-	if ( edit.operation === 'update' ) {
-		return ! savedRecord || savedRecord.value !== edit.value;
-	}
-
-	// is a property already deleted?
-	if ( edit.operation === 'delete' ) {
-		return !! savedRecord;
-	}
-
-	return false;
-}
-
-/*
- * Returns edits that are not yet applied, i.e.:
- * - when updating, the property doesn't already have the desired value in `savedMetadata`
- * - when deleting, the property is still present in `savedMetadata`
- */
-export function getUnappliedMetadataEdits( edits, savedMetadata ) {
-	return filter( edits, edit => isUnappliedMetadataEdit( edit, savedMetadata ) );
-}
-
-export function areAllMetadataEditsApplied( edits, savedMetadata ) {
-	return every( edits, edit => ! isUnappliedMetadataEdit( edit, savedMetadata ) );
-}
+export { getUnappliedMetadataEdits, areAllMetadataEditsApplied } from './metadata-edits';
 
 /**
  * Returns a normalized post object for sending to the API
