@@ -151,7 +151,7 @@ export function useIsApplePayAvailable( stripe, stripeConfiguration, items ) {
 		return ( isSubscribed = false );
 	}, [ canMakePayment, stripe, items, stripeConfiguration ] );
 
-	return canMakePayment;
+	return { canMakePayment: canMakePayment === true, isLoading: canMakePayment === 'loading' };
 }
 
 const handleEvent = setItems => () => {
@@ -328,7 +328,10 @@ function MyCheckout() {
 	}, [] );
 	const total = useMemo( () => getTotal( items ), [ items ] );
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
-	const isApplePayAvailable = useIsApplePayAvailable( stripe, stripeConfiguration, items );
+	const {
+		canMakePayment: isApplePayAvailable,
+		isLoading: isApplePayLoading,
+	} = useIsApplePayAvailable( stripe, stripeConfiguration, items );
 
 	const [ isLoading, setIsLoading ] = useState( true );
 	useEffect( () => {
@@ -343,9 +346,12 @@ function MyCheckout() {
 		if ( ! stripe || ! stripeConfiguration ) {
 			return;
 		}
+		if ( isApplePayLoading ) {
+			return;
+		}
 		// This simulates an additional loading delay
 		setTimeout( () => setIsLoading( false ), 1500 );
-	}, [ isStripeLoading, stripeLoadingError, stripe, stripeConfiguration ] );
+	}, [ isStripeLoading, stripeLoadingError, stripe, stripeConfiguration, isApplePayLoading ] );
 
 	const stripeMethod = useMemo( () => {
 		if ( isStripeLoading || stripeLoadingError || ! stripe || ! stripeConfiguration ) {
