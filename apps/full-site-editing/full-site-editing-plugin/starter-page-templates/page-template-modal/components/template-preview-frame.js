@@ -56,9 +56,11 @@ class TemplatePreviewFrame extends Component {
 
 	wrapBody( body ) {
 		return (
-			<div className="edit-post-visual-editor">
-				<div className="editor-styles-wrapper">
-					<div className="editor-writing-flow">{ body }</div>
+			<div className="block-editor">
+				<div className="edit-post-visual-editor">
+					<div className="editor-styles-wrapper">
+						<div className="editor-writing-flow">{ body }</div>
+					</div>
 				</div>
 			</div>
 		);

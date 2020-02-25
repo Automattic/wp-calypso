@@ -417,7 +417,8 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	overflow-x: hidden;
 	overflow-y: auto;
 
-	> .edit-post-visual-editor {
+	> .block-editor,
+	> .block-editor > .edit-post-visual-editor {
 		padding: 0;
 		margin: 0;
 	}
@@ -430,11 +431,30 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		}
 	}
 
-	// Hide inserter.
+	// Hide inserter/appender.
+	.block-list-appender,
 	.block-editor-inserter {
-		display: none;
+		display: none !important;
 		visibility: hidden;
 		position: absolute;
 		left: -9999vw;
+	}
+
+	// Preview adjustments.
+	.editor-styles-wrapper {
+
+		// core/cover. The following styles are applied using inline-styles
+		.block-library-cover__resize-container {
+			position: relative;
+			user-select: auto;
+			width: auto;
+			height: auto;
+			min-height: 50px;
+			box-sizing: border-box;
+
+			.wp-block-cover {
+				height: auto;
+			}
+		}
 	}
 }

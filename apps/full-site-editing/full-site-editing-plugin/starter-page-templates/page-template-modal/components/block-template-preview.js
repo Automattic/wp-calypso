@@ -26,7 +26,9 @@ function _BlockPreview( {
 } ) {
 	const renderedBlocks = useMemo( () => castArray( blocks ), [ blocks ] );
 	const [ recompute, triggerRecompute ] = useReducer( state => state + 1, 0 );
+
 	useLayoutEffect( triggerRecompute, [ blocks ] );
+
 	return (
 		<BlockEditorProvider value={ renderedBlocks } settings={ settings }>
 			<Disabled key={ recompute }>
