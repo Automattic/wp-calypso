@@ -112,7 +112,6 @@
 		"lru": "3.1.0",
 		"lunr": "2.3.8",
 		"marked": "0.7.0",
-		"memize": "1.0.5",
 		"moment": "2.24.0",
 		"moment-timezone": "0.5.27",
 		"morgan": "1.9.1",
