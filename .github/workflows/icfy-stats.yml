@@ -36,10 +36,6 @@ jobs:
       env:
         ICFY_SECRET: ${{ secrets.ICFY_SECRET }}
       run: |
-        #
-        # This block should not cause a test failure and block PRs.
-        # The shell should never error and exit 0 to indicate success.
-        #
         set +o errexit
         ANCESTOR_SHA1=$(git merge-base HEAD origin/master)
         CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
