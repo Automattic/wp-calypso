@@ -15,8 +15,8 @@ jobs:
         node-version: '>=12.15.0'
     - name: Checkout code
       uses: actions/checkout@v2
-    - name: Fetch origin/master
-      run: git fetch --no-tags --prune --depth=1 origin +refs/heads/master:refs/remotes/origin/master
+    - name: Fetch git history
+      run:  fetch --prune --unshallow
     - name: Install dependencies
       env:
         PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: true
