@@ -420,8 +420,6 @@ div.popover-cart__popover {
 }
 
 .secondary-cart {
-	background: var( --color-surface );
-
 	@include breakpoint( '<660px' ) {
 		left: 0;
 		margin-left: 0;
@@ -432,10 +430,20 @@ div.popover-cart__popover {
 		position: relative;
 		top: 0;
 	}
+}
+
+.secondary-cart__item {
+	background: var( --color-surface );
+	margin: 20px 0 0;
+	box-shadow: 0 1px 0 var( --color-border-subtle );
 
 	.jetpack-logo {
 		margin: 32px 0;
 	}
+}
+
+.secondary-cart__item:first-child {
+	margin-top: 0;
 }
 
 @include breakpoint( '<660px' ) {
