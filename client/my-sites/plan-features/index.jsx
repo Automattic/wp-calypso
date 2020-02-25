@@ -9,7 +9,7 @@ import ReactDOM from 'react-dom';
 import { compact, get, findIndex, last, map, noop, reduce } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { formatCurrency, getCurrencyObject } from '@automattic/format-currency';
+import formatCurrency, { getCurrencyObject } from '@automattic/format-currency';
 
 /**
  * Internal dependencies
