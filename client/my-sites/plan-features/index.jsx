@@ -199,7 +199,6 @@ export class PlanFeatures extends Component {
 						</PlanFeaturesScroller>
 					</div>
 				</div>
-				{ /* <PlanTestimonials /> */ }
 			</div>
 		);
 	}
