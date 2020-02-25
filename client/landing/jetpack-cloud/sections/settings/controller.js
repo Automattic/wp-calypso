@@ -6,9 +6,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import JetpackCloudSettingsPage from './main';
+import SettingsPage from './main';
 
-export function jetpackCloudSettings( context, next ) {
-	context.primary = <JetpackCloudSettingsPage />;
+export function settings( context, next ) {
+	context.primary = <SettingsPage />;
 	next();
 }

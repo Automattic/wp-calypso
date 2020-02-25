@@ -9,9 +9,9 @@ import { connect } from 'react-redux';
  */
 import { getCurrentUserName } from 'state/current-user/selectors';
 
-class JetpackCloudDashboardPage extends Component {
+class DashboardPage extends Component {
 	render() {
-		return ( <div>Welcome to the dashboard, { this.props.currentUserName }!</div> );
+		return <div>Welcome to the dashboard, { this.props.currentUserName }!</div>;
 	}
 }
 
@@ -19,4 +19,4 @@ export default connect( state => {
 	return {
 		currentUserName: getCurrentUserName( state ),
 	};
-} )( JetpackCloudDashboardPage );
+} )( DashboardPage );
