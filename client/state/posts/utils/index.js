@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import {
 	concat,
 	get,
@@ -33,7 +32,7 @@ import url from 'url';
 /**
  * Internal dependencies
  */
-import { DEFAULT_POST_QUERY } from './constants';
+import { DEFAULT_POST_QUERY } from 'state/posts/constants';
 import pickCanonicalImage from 'lib/post-normalizer/rule-pick-canonical-image';
 import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
 import detectMedia from 'lib/post-normalizer/rule-content-detect-media';
@@ -283,7 +282,7 @@ export function normalizePostForDisplay( post ) {
 /**
  * Given a post object, returns a normalized post object
  *
- * @param  {Ojbect} post Raw edited post object
+ * @param  {object} post Raw edited post object
  * @returns {object}      Normalized post object
  */
 export function normalizePostForEditing( post ) {
