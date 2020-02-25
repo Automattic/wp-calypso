@@ -5,11 +5,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
+import formatCurrency from '@automattic/format-currency';
 import { Button } from '@automattic/components';
 import { getSelectedSite } from 'state/ui/selectors';
 import { siteHasPaidPlan } from 'signup/steps/site-picker/site-picker-submit';
