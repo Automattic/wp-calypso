@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, flow, includes, every, find } from 'lodash';
+import { filter, flow, every, find } from 'lodash';
 import url from 'url';
 
 import { normalizeTermsForApi } from './normalize-terms-for-api';
@@ -27,24 +27,7 @@ export { isTermsEqual } from './is-terms-equal';
 export { isDiscussionEqual } from './is-discussion-equal';
 export { isAuthorEqual } from './is-author-equal';
 export { isDateEqual } from './is-date-equal';
-
-export function isStatusEqual( localStatusEdit, savedStatus ) {
-	// When receiving a request to change the `status` attribute, the server
-	// treats `publish` and `future` as synonyms. It's really the post's `date`
-	// that determines the resulting status, not the requested value.
-	// Therefore, the `status` edit is considered saved and removed from the
-	// local edits even if the value returned by server is different.
-	if ( includes( [ 'publish', 'future' ], localStatusEdit ) ) {
-		return includes( [ 'publish', 'future' ], savedStatus );
-	}
-
-	// All other statuses (draft, private, pending) are 1:1. The only possible
-	// exception is requesting `publish` and not having rights to publish new
-	// posts. Then the server sets a `pending` status. But we check for this case
-	// in the UI and request `pending` instead of `publish` if the user doesn't
-	// have the rights.
-	return localStatusEdit === savedStatus;
-}
+export { isStatusEqual } from './is-state-equal';
 
 function isUnappliedMetadataEdit( edit, savedMetadata ) {
 	const savedRecord = find( savedMetadata, { key: edit.key } );
