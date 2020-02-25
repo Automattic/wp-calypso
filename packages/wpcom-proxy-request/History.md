@@ -1,5 +1,7 @@
 # 6.0.0 / TBD
 
+- Breaking: Return Promise (rather than `XMLHttpRequest` instance) if no callback argument is provided.
+  - In practice, most people have probably been using the callback rather than the returned `XMLHttpRequest` instance, so this shouldn't be a breaking change for most.
 - Move the published `build/` folder to `dist/` to align with other Calypso packages
 - Upgrade dependency 'debug' to 4.1.1
 
