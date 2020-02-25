@@ -49,6 +49,7 @@ import detectHistoryNavigation from 'lib/detect-history-navigation';
 import userFactory from 'lib/user';
 import { getUrlParts } from 'lib/url/url-parts';
 import { setStore } from 'state/redux-store';
+import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 
 const debug = debugFactory( 'calypso' );
 
@@ -105,6 +106,37 @@ const setupContextMiddleware = reduxStore => {
 
 // We need to require sections to load React with i18n mixin
 const loadSectionsMiddleware = () => setupRoutes();
+
+const loggedInMiddleware = ( currentUser, reduxStore ) => {
+	const jetpackCloudEnvs = [
+		'jetpack-cloud-development',
+		'jetpack-cloud-stage',
+		'jetpack-cloud-production',
+	];
+	const calypsoEnv = config( 'env_id' );
+	const currentUserData = currentUser.get();
+
+	// TODO: Remove Jetpack Cloud specific logic when root route is no longer handled by the reader section
+	if ( ! currentUserData || jetpackCloudEnvs.includes( calypsoEnv ) ) {
+		return;
+	}
+
+	page( '/', context => {
+		const { primarySiteSlug, primary_blog } = currentUserData;
+		const isCustomerHomeEnabled = canCurrentUserUseCustomerHome(
+			reduxStore.getState(),
+			primary_blog
+		);
+		let redirectPath =
+			primarySiteSlug && isCustomerHomeEnabled ? `/home/${ primarySiteSlug }` : '/read';
+
+		if ( context.querystring ) {
+			redirectPath += `?${ context.querystring }`;
+		}
+
+		page.redirect( redirectPath );
+	} );
+};
 
 const oauthTokenMiddleware = () => {
 	if ( config.isEnabled( 'oauth' ) ) {
@@ -205,6 +237,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	installPerfmonPageHandlers();
 	setupContextMiddleware( reduxStore );
 	oauthTokenMiddleware();
+	loggedInMiddleware( currentUser, reduxStore );
 	loadSectionsMiddleware();
 	setRouteMiddleware();
 	clearNoticesMiddleware();
