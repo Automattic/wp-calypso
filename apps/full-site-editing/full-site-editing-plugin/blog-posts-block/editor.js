@@ -11,6 +11,7 @@ import { addFilter } from '@wordpress/hooks';
  * NHA dependencies
  */
 import { settings } from './newspack-homepage-articles/blocks/homepage-articles/index';
+import { registerQueryStore } from './newspack-homepage-articles/blocks/homepage-articles/store';
 
 /**
  * Block name in the A8C\FSE context.
@@ -36,3 +37,5 @@ registerBlockType( blockName, {
 		multiple: false,
 	},
 } );
+
+registerQueryStore();
