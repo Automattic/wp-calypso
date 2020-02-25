@@ -1,21 +1,10 @@
 /**
  * External dependencies
  */
-import {
-	get,
-	isPlainObject,
-	filter,
-	flow,
-	includes,
-	map,
-	toArray,
-	pickBy,
-	isString,
-	every,
-	xor,
-	find,
-} from 'lodash';
+import { get, isPlainObject, filter, flow, includes, map, toArray, every, xor, find } from 'lodash';
 import url from 'url';
+
+import { normalizeTermsForApi } from './normalize-terms-for-api';
 
 /**
  * Utility
@@ -33,25 +22,7 @@ export { normalizePostForDisplay } from './normalize-post-for-display';
 export { getTermIdsFromEdits } from './get-term-ids-from-edits';
 export { normalizePostForEditing } from './normalize-post-for-editing';
 export { normalizePostForState } from './normalize-post-for-state';
-
-/**
- * Returns a normalized post terms object for sending to the API
- *
- * @param  {object} post Raw post object
- * @returns {object}      Normalized post object
- */
-export function normalizeTermsForApi( post ) {
-	if ( ! post || ! post.terms ) {
-		return post;
-	}
-
-	return {
-		...post,
-		terms: pickBy( post.terms, terms => {
-			return terms.length && every( terms, isString );
-		} ),
-	};
-}
+export { normalizeTermsForApi } from './normalize-terms-for-api';
 
 /**
  * Returns truthy if local terms object is the same as the API response
