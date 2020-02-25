@@ -18,6 +18,12 @@ import CheckoutSubmitButton from './checkout-submit-button';
 import Button from './button';
 import { CheckIcon } from './shared-icons';
 import CheckoutNextStepButton from './checkout-next-step-button';
+import {
+	getDefaultOrderReviewStep,
+	getDefaultOrderSummaryStep,
+	getDefaultPaymentMethodStep,
+	usePaymentMethod,
+} from '../public-api';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 
@@ -31,6 +37,8 @@ export function Checkout( { children, className } ) {
 	const [ stepCompleteStatus, setStepCompleteStatus ] = useState( {} );
 	const [ totalSteps, setTotalSteps ] = useState( 0 );
 	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
+
+	const getDefaultCheckoutSteps = () => <DefaultCheckoutSteps />;
 
 	if ( formStatus === 'loading' ) {
 		return (
@@ -61,7 +69,7 @@ export function Checkout( { children, className } ) {
 					className={ joinClasses( [ className, 'checkout__content' ] ) }
 					isLastStepActive={ isThereAnotherNumberedStep }
 				>
-					{ children }
+					{ children || getDefaultCheckoutSteps() }
 
 					<SubmitButtonWrapperUI isLastStepActive={ ! isThereAnotherNumberedStep }>
 						<CheckoutErrorBoundary
@@ -75,6 +83,46 @@ export function Checkout( { children, className } ) {
 				</MainContentUI>
 			</CheckoutStepDataContext.Provider>
 		</ContainerUI>
+	);
+}
+
+function DefaultCheckoutSteps() {
+	const activePaymentMethod = usePaymentMethod();
+	const orderSummaryStep = getDefaultOrderSummaryStep();
+	const paymentMethodStep = getDefaultPaymentMethodStep();
+	const reviewOrderStep = getDefaultOrderReviewStep();
+	return (
+		<React.Fragment>
+			<CheckoutStepBody
+				activeStepContent={ orderSummaryStep.activeStepContent }
+				completeStepContent={ orderSummaryStep.completeStepContent }
+				titleContent={ orderSummaryStep.titleContent }
+				errorMessage={ 'There was an error with this step.' }
+				isStepActive={ false }
+				isStepComplete={ true }
+				stepNumber={ 1 }
+				totalSteps={ 1 }
+				stepId={ 'order-summary' }
+			/>
+			<CheckoutSteps>
+				<CheckoutStep
+					stepId="payment-method-step"
+					isCompleteCallback={ () =>
+						paymentMethodStep.isCompleteCallback( { activePaymentMethod } )
+					}
+					activeStepContent={ paymentMethodStep.activeStepContent }
+					completeStepContent={ paymentMethodStep.completeStepContent }
+					titleContent={ paymentMethodStep.titleContent }
+				/>
+				<CheckoutStep
+					stepId="review-order-step"
+					isCompleteCallback={ () => true }
+					activeStepContent={ reviewOrderStep.activeStepContent }
+					completeStepContent={ reviewOrderStep.completeStepContent }
+					titleContent={ reviewOrderStep.titleContent }
+				/>
+			</CheckoutSteps>
+		</React.Fragment>
 	);
 }
 
