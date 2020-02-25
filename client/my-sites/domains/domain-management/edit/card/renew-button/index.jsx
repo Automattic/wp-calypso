@@ -28,6 +28,7 @@ class RenewButton extends React.Component {
 		selectedSite: PropTypes.object,
 		subscriptionId: PropTypes.number,
 		redemptionProduct: PropTypes.object,
+		reactivate: PropTypes.bool,
 	};
 
 	handleRenew = () => {
@@ -35,7 +36,7 @@ class RenewButton extends React.Component {
 	};
 
 	render() {
-		const { purchase, selectedSite, redemptionProduct } = this.props;
+		const { purchase, selectedSite, redemptionProduct, reactivate } = this.props;
 
 		let formattedPrice = '...';
 		let loading = true;
@@ -60,10 +61,15 @@ class RenewButton extends React.Component {
 					className={ buttonClasses }
 					onClick={ this.handleRenew }
 				>
-					{ this.props.translate( 'Renew for {{strong}}%(price)s{{/strong}}', {
-						components: { strong: <strong /> },
-						args: { price: formattedPrice },
-					} ) }
+					{ reactivate
+						? this.props.translate( 'Reactivate for {{strong}}%(price)s{{/strong}}', {
+								components: { strong: <strong /> },
+								args: { price: formattedPrice },
+						  } )
+						: this.props.translate( 'Renew for {{strong}}%(price)s{{/strong}}', {
+								components: { strong: <strong /> },
+								args: { price: formattedPrice },
+						  } ) }
 				</Button>
 			</React.Fragment>
 		);

@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import config from 'config';
 import { Card } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import VerticalNav from 'components/vertical-nav';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import { withLocalizedMoment } from 'components/localized-moment';
@@ -26,7 +27,7 @@ import { isRecentlyRegistered, isExpiringSoon } from 'lib/domains/utils';
 import { DOMAINS } from 'lib/url/support';
 import SubscriptionSettings from '../card/subscription-settings';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
-import { getProductBySlug, getProductDisplayCost } from 'state/products-list/selectors';
+import { getProductBySlug } from 'state/products-list/selectors';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
 
@@ -183,9 +184,17 @@ class RegisteredDomainType extends React.Component {
 
 		let message;
 
+		const redemptionCost = this.props.redemptionProduct
+			? formatCurrency(
+					this.props.redemptionProduct.cost,
+					this.props.redemptionProduct.currency_code,
+					{ stripZeros: true }
+			  )
+			: null;
+
 		if ( domain.isRenewable ) {
 			message = translate(
-				'Your domain has expired and is no longer active. You have {{strong}}%(days)s{{/strong}} to renew it at the standard rate before an additional redemption fee is applied. {{domainsLink}}Learn more{{/domainsLink}}',
+				'Your domain has expired and is no longer active. You have {{strong}}%(days)s{{/strong}} to renew it at the standard rate before an additional %(redemptionCost)s redemption fee is applied. {{domainsLink}}Learn more{{/domainsLink}}',
 				{
 					components: {
 						domainsLink,
@@ -193,6 +202,7 @@ class RegisteredDomainType extends React.Component {
 					},
 					args: {
 						days: moment.utc( domain.renewableUntil ).fromNow( true ),
+						redemptionCost: redemptionCost,
 					},
 				}
 			);
@@ -206,7 +216,7 @@ class RegisteredDomainType extends React.Component {
 					},
 					args: {
 						days: moment.utc( domain.redeemableUntil ).fromNow( true ),
-						redemptionCost: this.props.redemptionCost,
+						redemptionCost: redemptionCost,
 					},
 				}
 			);
@@ -230,6 +240,7 @@ class RegisteredDomainType extends React.Component {
 						selectedSite={ this.props.selectedSite }
 						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
 						redemptionProduct={ domain.isRedeemable ? this.props.redemptionProduct : null }
+						reactivate={ ! domain.isRenewable && domain.isRedeemable }
 					/>
 				) }
 			</div>
@@ -360,7 +371,6 @@ class RegisteredDomainType extends React.Component {
 export default connect(
 	state => {
 		return {
-			redemptionCost: getProductDisplayCost( state, 'domain_redemption' ),
 			redemptionProduct: getProductBySlug( state, 'domain_redemption' ),
 		};
 	},
