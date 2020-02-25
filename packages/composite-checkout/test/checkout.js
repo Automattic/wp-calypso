@@ -17,13 +17,15 @@ import '@testing-library/jest-dom/extend-expect';
 import {
 	Checkout,
 	CheckoutProvider,
+	CheckoutSteps,
+	CheckoutStep,
+	CheckoutStepBody,
 	useSelect,
 	useDispatch,
 	useFormStatus,
 	createRegistry,
 	useRegisterStore,
 	usePaymentData,
-	useActiveStep,
 	useIsStepComplete,
 } from '../src/public-api';
 
@@ -249,7 +251,8 @@ describe( 'Checkout', () => {
 		let MyCheckout;
 		const mockMethod = createMockMethod();
 		const { items, total } = createMockItems();
-		const steps = createMockSteps();
+		const steps = createMockStepObjects();
+		const children = createStepsFromStepObjects( steps );
 
 		beforeEach( () => {
 			MyCheckout = props => (
@@ -263,7 +266,9 @@ describe( 'Checkout', () => {
 					showSuccessMessage={ noop }
 					paymentMethods={ [ mockMethod ] }
 				>
-					<Checkout steps={ props.steps || steps } />
+					<Checkout>
+						{ props.steps ? createStepsFromStepObjects( props.steps ) : children }
+					</Checkout>
 				</CheckoutProvider>
 			);
 		} );
@@ -465,30 +470,6 @@ describe( 'Checkout', () => {
 			expect( getByText( 'Pay Please' ) ).not.toBeDisabled();
 		} );
 
-		it( 'provides the active step through useActiveStep to components in the step', () => {
-			const { getByText } = render( <MyCheckout steps={ [ steps[ 1 ], steps[ 4 ] ] } /> );
-			expect( getByText( 'Possibly Complete active id custom-contact-step' ) ).toBeInTheDocument();
-			expect( getByText( 'Possibly Complete active hasStepNumber true' ) ).toBeInTheDocument();
-		} );
-
-		it( 'provides the active step with additional fields through useActiveStep to components in the step', () => {
-			const { getByText } = render( <MyCheckout steps={ [ steps[ 1 ], steps[ 4 ] ] } /> );
-			expect( getByText( 'Possibly Complete active step number 1' ) ).toBeInTheDocument();
-			expect( getByText( 'Possibly Complete active step index 0' ) ).toBeInTheDocument();
-			expect( getByText( 'Possibly Complete active isComplete true' ) ).toBeInTheDocument();
-		} );
-
-		it( 'provides the active step through useActiveStep with isComplete that changes based on isCompleteCallback', () => {
-			const { getAllByText, getByText } = render(
-				<MyCheckout steps={ [ steps[ 1 ], steps[ 4 ] ] } />
-			);
-			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
-			fireEvent.click( firstStepContinue );
-			expect( getByText( 'Possibly Complete active step number 2' ) ).toBeInTheDocument();
-			expect( getByText( 'Possibly Complete active step index 1' ) ).toBeInTheDocument();
-			expect( getByText( 'Possibly Complete active isComplete false' ) ).toBeInTheDocument();
-		} );
-
 		it( 'provides the currently rendering step isComplete through useIsStepComplete', () => {
 			const { getAllByText, getByText, getByLabelText } = render(
 				<MyCheckout steps={ [ steps[ 4 ], steps[ 1 ] ] } />
@@ -581,7 +562,53 @@ function createMockItems() {
 	return { items, total };
 }
 
-function createMockSteps() {
+function createStepsFromStepObjects( stepObjects ) {
+	const stepObjectsWithoutStepNumber = stepObjects.filter(
+		stepObject => ! stepObject.hasStepNumber
+	);
+	const stepObjectsWithStepNumber = stepObjects.filter( stepObject => stepObject.hasStepNumber );
+	return (
+		<React.Fragment>
+			{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
+			<CheckoutSteps>{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }</CheckoutSteps>
+		</React.Fragment>
+	);
+}
+
+function createStepFromStepObject( stepObject ) {
+	if ( stepObject.hasStepNumber ) {
+		return (
+			<CheckoutStep
+				activeStepContent={ stepObject.activeStepContent }
+				completeStepContent={ stepObject.completeStepContent }
+				titleContent={ stepObject.titleContent }
+				stepId={ stepObject.id }
+				key={ stepObject.id }
+				isCompleteCallback={ stepObject.isCompleteCallback }
+				editButtonAriaLabel={ stepObject.getEditButtonAriaLabel() }
+				nextStepButtonAriaLabel={ stepObject.getNextStepButtonAriaLabel() }
+			/>
+		);
+	}
+	return (
+		<CheckoutStepBody
+			errorMessage={ 'error' }
+			editButtonAriaLabel={ stepObject.getEditButtonAriaLabel() }
+			nextStepButtonAriaLabel={ stepObject.getNextStepButtonAriaLabel() }
+			isStepActive={ false }
+			isStepComplete={ true }
+			stepNumber={ 1 }
+			totalSteps={ 1 }
+			stepId={ stepObject.id }
+			key={ stepObject.id }
+			activeStepContent={ stepObject.activeStepContent }
+			completeStepContent={ stepObject.completeStepContent }
+			titleContent={ stepObject.titleContent }
+		/>
+	);
+}
+
+function createMockStepObjects() {
 	return [
 		{
 			id: 'custom-summary-step',
@@ -669,18 +696,10 @@ function createMockSteps() {
 }
 
 function PossiblyCompleteTitle() {
-	const activeStep = useActiveStep();
 	const isComplete = useIsStepComplete();
 	return (
 		<div>
 			<span>Custom Step - Possibly Complete Title</span>
-			<span>Possibly Complete active id { activeStep.id }</span>
-			<span>
-				Possibly Complete active hasStepNumber { activeStep.hasStepNumber ? 'true' : 'false' }
-			</span>
-			<span>Possibly Complete active step number { activeStep.stepNumber }</span>
-			<span>Possibly Complete active step index { activeStep.stepIndex }</span>
-			<span>Possibly Complete active isComplete { activeStep.isComplete ? 'true' : 'false' }</span>
 			<span>Possibly Complete isComplete { isComplete ? 'true' : 'false' }</span>
 		</div>
 	);
