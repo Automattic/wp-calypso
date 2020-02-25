@@ -7,7 +7,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { normalize } from 'lib/route';
-import { clientRender, makeLayout, setupSidebar, siteSelection } from './controller';
+import { clientRender, makeLayout, setupSidebar, sites, siteSelection } from './controller';
 import { dashboard } from './sections/dashboard/controller';
 import {
 	backups,
@@ -21,9 +21,9 @@ import { settings } from './sections/settings/controller';
 const router = () => {
 	page( '*', normalize );
 
-	page( '/', setupSidebar, dashboard, makeLayout, clientRender );
+	page( '/', siteSelection, setupSidebar, dashboard, makeLayout, clientRender );
 
-	page( '/backups', siteSelection, setupSidebar, makeLayout, clientRender );
+	page( '/backups', siteSelection, sites, setupSidebar, makeLayout, clientRender );
 	page( '/backups/:site', siteSelection, setupSidebar, backups, makeLayout, clientRender );
 	page(
 		'/backups/:site/detail',
@@ -57,10 +57,10 @@ const router = () => {
 		clientRender
 	);
 
-	page( '/backups/restore', siteSelection, sites, makeLayout, clientRender );
+	page( '/backups/restore', siteSelection, sites, setupSidebar, makeLayout, clientRender );
 	page(
 		'/backups/:site/restore',
-		// siteSelection,
+		siteSelection,
 		setupSidebar,
 		backupRestore,
 		makeLayout,
@@ -68,18 +68,18 @@ const router = () => {
 	);
 	page(
 		'/backups/:site/restore/:restoreId',
-		// siteSelection,
+		siteSelection,
 		setupSidebar,
 		backupRestore,
 		makeLayout,
 		clientRender
 	);
 
-	page( '/scan', siteSelection, setupSidebar, makeLayout, clientRender );
+	page( '/scan', siteSelection, sites, setupSidebar, makeLayout, clientRender );
 	page( '/scan/:site', siteSelection, setupSidebar, scan, makeLayout, clientRender );
 	page( '/scan/:site/history', siteSelection, setupSidebar, scanHistory, makeLayout, clientRender );
 
-	page( '/settings', siteSelection, setupSidebar, makeLayout, clientRender );
+	page( '/settings', siteSelection, sites, setupSidebar, makeLayout, clientRender );
 	page( '/settings/:site', siteSelection, setupSidebar, settings, makeLayout, clientRender );
 };
 
