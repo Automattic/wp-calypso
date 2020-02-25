@@ -26,6 +26,7 @@ import DomainMainPlaceholder from 'my-sites/domains/domain-management/components
 import { successNotice, errorNotice } from 'state/notices/actions';
 import DesignatedAgentNotice from 'my-sites/domains/domain-management/components/designated-agent-notice';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import { hasLoadedSiteDomains } from 'state/sites/domains/selectors';
 
 /**
  * Style dependencies
@@ -190,6 +191,7 @@ class TransferOtherUser extends React.Component {
 			selectedUserDisplay = this.getSelectedUserDisplayName();
 		return (
 			<Dialog
+				className="transfer-to-other-user__confirmation-dialog"
 				isVisible={ this.state.showConfirmationDialog }
 				buttons={ buttons }
 				onClose={ this.handleDialogClose }
@@ -283,7 +285,11 @@ class TransferOtherUser extends React.Component {
 	}
 
 	isDataReady() {
-		return this.props.wapiDomainInfo.hasLoadedFromServer && ! this.props.isRequestingSiteDomains;
+		return (
+			this.props.hasSiteDomainsLoaded &&
+			this.props.wapiDomainInfo.hasLoadedFromServer &&
+			! this.props.isRequestingSiteDomains
+		);
 	}
 }
 
@@ -291,6 +297,7 @@ export default connect(
 	( state, ownProps ) => ( {
 		currentUser: getCurrentUser( state ),
 		isAtomic: isSiteAutomatedTransfer( state, ownProps.selectedSite.ID ),
+		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, ownProps.selectedSite.ID ),
 	} ),
 	{
 		successNotice,

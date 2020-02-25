@@ -92,6 +92,7 @@ export class SiteNotice extends React.Component {
 					callToAction={ translate( 'Claim' ) }
 					compact
 					event={ eventName }
+					forceHref={ true }
 					href={ `/domains/add/${ this.props.site.slug }` }
 					title={ translate( 'Free domain available' ) }
 					tracksClickName="calypso_domain_credit_reminder_click"

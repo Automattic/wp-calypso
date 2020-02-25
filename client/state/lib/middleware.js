@@ -20,7 +20,7 @@ import {
 } from 'state/action-types';
 import userFactory from 'lib/user';
 import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
-import isFetchingAutomatedTransferStatus from 'state/selectors/is-fetching-automated-transfer-status';
+import { isFetchingAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUserEmail } from 'state/current-user/selectors';

@@ -3,7 +3,6 @@ $devdocs-max-width: 720px;
 // Sidebar Title
 .devdocs__title {
 	color: var( --color-sidebar-text-alternative );
-	font-weight: 300;
 	font-size: 24px;
 	padding: 24px;
 }
@@ -106,7 +105,6 @@ $devdocs-max-width: 720px;
 	.docs-example__wrapper-header-title {
 		font-family: $code;
 		font-size: 18px;
-		font-weight: 300;
 		letter-spacing: 1px;
 		border-bottom: 1px solid rgba( var( --color-neutral-10-rgb ), 0.65 );
 

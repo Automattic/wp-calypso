@@ -1,4 +1,5 @@
-@import "../../shared/sass/variables";
+@import '../../shared/sass/variables';
+@import '../../shared/sass/placeholder';
 
 .type-scale-slider {
 	.dashicon {
@@ -36,4 +37,8 @@
 	.excerpt-contain p {
 		margin: 0.5em 0;
 	}
+}
+
+.editor-styles-wrapper.wpnbha__wp-block-button__wrapper {
+	background-color: transparent;
 }

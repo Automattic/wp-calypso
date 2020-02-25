@@ -121,25 +121,53 @@ class RegisteredDomainType extends React.Component {
 	}
 
 	renderExpired() {
-		const { domain, translate } = this.props;
+		const { domain, translate, moment } = this.props;
 		const domainsLink = <a href={ DOMAINS } target="_blank" rel="noopener noreferrer" />;
 
 		if ( ! domain.expired ) {
 			return null;
 		}
 
-		return (
-			<div>
-				{ translate(
-					'Your domain has expired and is no longer active. {{domainsLink}}Learn more{{/domainsLink}}',
-					{
-						components: {
-							domainsLink,
-						},
-					}
-				) }
-			</div>
-		);
+		let message;
+
+		if ( domain.isRenewable ) {
+			message = translate(
+				'Your domain has expired and is no longer active. You have {{strong}}%(days)s{{/strong}} to renew it at the standard rate before an additional redemption fee is applied. {{domainsLink}}Learn more{{/domainsLink}}',
+				{
+					components: {
+						domainsLink,
+						strong: <strong />,
+					},
+					args: {
+						days: moment.utc( domain.renewableUntil ).fromNow( true ),
+					},
+				}
+			);
+		} else if ( domain.isRedeemable ) {
+			message = translate(
+				'Your domain has expired and is no longer active. You have {{strong}}%(days)s{{/strong}} to reactivate it during this redemption period before someone else can register it. A additional redemption fee will be added to the price of the domain to reactivate it. {{domainsLink}}Learn more{{/domainsLink}}',
+				{
+					components: {
+						domainsLink,
+						strong: <strong />,
+					},
+					args: {
+						days: moment.utc( domain.redeemableUntil ).fromNow( true ),
+					},
+				}
+			);
+		} else {
+			message = translate(
+				'Your domain has expired and is no longer active. {{domainsLink}}Learn more{{/domainsLink}}',
+				{
+					components: {
+						domainsLink,
+					},
+				}
+			);
+		}
+
+		return <div>{ message }</div>;
 	}
 
 	renderRecentlyRegistered() {

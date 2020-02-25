@@ -1,5 +1,5 @@
-@import "../../shared/sass/variables";
-@import "../../shared/sass/mixins";
+@import '../../shared/sass/variables';
+@import '../../shared/sass/mixins';
 
 .wpnbha {
 	margin-bottom: 1em;
@@ -35,7 +35,7 @@
 		article {
 			flex-basis: 100%;
 
-			@include media(tablet) {
+			@include media( tablet ) {
 				&:last-child,
 				& {
 					margin-bottom: 1em;
@@ -44,7 +44,7 @@
 		}
 	}
 
-	@include media(mobile) {
+	@include media( mobile ) {
 		&.columns-3 article,
 		&.columns-6 article {
 			flex-basis: calc( 33.333% - 16px );
@@ -53,17 +53,18 @@
 		&.columns-2 article,
 		&.columns-4 article,
 		&.columns-5 article {
-			flex-basis: calc( 50% - 16px);
+			flex-basis: calc( 50% - 16px );
 		}
 
-		&.columns-5 article:last-of-type:nth-child(odd) {
-			flex-grow: 1;
+		&.columns-5 article:last-of-type {
+			flex-basis: 100%;
 		}
 	}
 
-	@include media(tablet) {
+	@include media( tablet ) {
 		@for $i from 2 through 6 {
-			&.columns-#{ $i } article {
+			&.columns-#{ $i } article,
+			&.columns-#{ $i } article:last-of-type {
 				flex-basis: calc( ( 100% / #{$i} ) - 16px );
 			}
 		}
@@ -73,23 +74,20 @@
 
 	.post-thumbnail {
 		margin: 0;
+		margin-bottom: 0.25em;
 
 		img {
 			height: auto;
 			width: 100%;
 		}
-	}
-
-	figcaption {
-		font-size: $font__size-xxs;
-	}
-
-	.post-thumbnail {
-		margin-bottom: 0.25em;
 
 		figcaption {
 			margin-bottom: 0.5em;
 		}
+	}
+
+	figcaption {
+		font-size: $font__size-xxs;
 	}
 
 	&.image-alignleft,
@@ -109,14 +107,14 @@
 			display: block;
 		}
 
-		@include media(mobile) {
+		@include media( mobile ) {
 			&.mobile-stack .post-has-image {
 				display: flex;
 			}
 		}
 
 		// Image scale
-		@include media(mobile) {
+		@include media( mobile ) {
 			&.is-4 {
 				.post-thumbnail {
 					flex-basis: 75%;
@@ -210,11 +208,11 @@
 		align-items: center;
 		margin-top: 0.5em;
 
-		.byline:not(:last-child) {
+		.byline:not( :last-child ) {
 			margin-right: 1.5em;
 		}
 
-		.updated:not(.published) {
+		.updated:not( .published ) {
 			display: none;
 		}
 	}
@@ -244,10 +242,7 @@
 		figcaption {
 			color: inherit;
 		}
-	}
-
-	&.has-text-color {
-		.entry-meta span:not(.avatar) {
+		.entry-meta span:not( .avatar ) {
 			opacity: 0.8;
 		}
 	}
@@ -278,7 +273,7 @@
 					bottom: 1em;
 					/* autoprefixer: ignore next */
 					-webkit-box-orient: vertical;
-					color: rgba(white, 0.9);
+					color: rgba( white, 0.9 );
 					display: -webkit-box;
 					font-style: italic;
 					left: 0;
@@ -294,7 +289,7 @@
 					z-index: 2;
 				}
 
-				&:after {
+				&::after {
 					background: rgba( 0, 0, 0, 0.5 );
 					bottom: 0;
 					content: '';
@@ -307,9 +302,13 @@
 			}
 
 			.entry-wrapper {
-				padding: 2em;
+				padding: 2em 1em;
 				position: relative;
 				z-index: 2;
+
+				@include media( desktop ) {
+					padding: 2em 1.5em;
+				}
 			}
 
 			.entry-wrapper,
@@ -319,12 +318,47 @@
 			.cat-links a {
 				color: #fff;
 			}
+		}
+	}
 
+	/* "More" button & related elements styles */
+	button,
+	.loading,
+	.error {
+		display: none;
+	}
+
+	button {
+		margin-top: 1em;
+	}
+
+	&.has-more-button {
+		button {
+			display: block;
+		}
+	}
+
+	&.has-more-button.is-loading {
+		button {
+			display: none;
+		}
+		.loading {
+			display: block;
+		}
+	}
+
+	&.has-more-button.is-error {
+		button,
+		.error {
+			display: block;
 		}
 	}
 }
 
-/* Some really rough font sizing */
+/*
+	Some really rough font sizing.
+ */
+/* stylelint-disable no-duplicate-selectors  */
 .wpnbha {
 	/* 'Normal' size */
 	article {
@@ -340,7 +374,7 @@
 			width: 25px;
 		}
 
-		@include media(tablet) {
+		@include media( tablet ) {
 			.entry-title {
 				font-size: 1.6em;
 			}
@@ -358,25 +392,33 @@
 		.entry-title {
 			line-height: 1.1em;
 		}
-		@include media(tablet) {
+		@include media( tablet ) {
 			article .avatar {
 				height: 2.4em;
 				width: 2.4em;
 			}
 		}
+	}
 
+	&.ts-10,
+	&.ts-9,
+	&.ts-8,
+	&.ts-7 {
+		.newspack-post-subtitle {
+			font-size: 1.4em;
+		}
 	}
 
 	&.ts-10 article {
 		.entry-title {
 			font-size: 2.6em;
 		}
-		@include media(tablet) {
+		@include media( tablet ) {
 			.entry-title {
 				font-size: 3.6em;
 			}
 		}
-		@include media(desktop) {
+		@include media( desktop ) {
 			.entry-title {
 				font-size: 4.8em;
 			}
@@ -387,12 +429,12 @@
 		.entry-title {
 			font-size: 2.4em;
 		}
-		@include media(tablet) {
+		@include media( tablet ) {
 			.entry-title {
 				font-size: 3.4em;
 			}
 		}
-		@include media(desktop) {
+		@include media( desktop ) {
 			.entry-title {
 				font-size: 4.2em;
 			}
@@ -403,12 +445,12 @@
 		.entry-title {
 			font-size: 2.2em;
 		}
-		@include media(tablet) {
+		@include media( tablet ) {
 			.entry-title {
-				font-size: 3.0em;
+				font-size: 3em;
 			}
 		}
-		@include media(desktop) {
+		@include media( desktop ) {
 			.entry-title {
 				font-size: 3.6em;
 			}
@@ -419,7 +461,7 @@
 		.entry-title {
 			font-size: 2em;
 		}
-		@include media( tablet) {
+		@include media( tablet ) {
 			.entry-title {
 				font-size: 2.4em;
 			}
@@ -428,7 +470,7 @@
 				width: 48px;
 			}
 		}
-		@include media(desktop) {
+		@include media( desktop ) {
 			.entry-title {
 				font-size: 3em;
 			}
@@ -439,16 +481,19 @@
 		.entry-title {
 			font-size: 1.7em;
 		}
-		@include media(tablet) {
+		.newspack-post-subtitle {
+			font-size: 1.4em;
+		}
+		@include media( tablet ) {
 			.entry-title {
-				font-size: 2.0em;
+				font-size: 2em;
 			}
 			.avatar {
 				height: 44px;
 				width: 44px;
 			}
 		}
-		@include media(desktop) {
+		@include media( desktop ) {
 			.entry-title {
 				font-size: 2.4em;
 			}
@@ -459,7 +504,10 @@
 		.entry-title {
 			font-size: 1.4em;
 		}
-		@include media(tablet) {
+		.newspack-post-subtitle {
+			font-size: 1.2em;
+		}
+		@include media( tablet ) {
 			.entry-title {
 				font-size: 1.8em;
 			}
@@ -468,9 +516,9 @@
 				width: 40px;
 			}
 		}
-		@include media(desktop) {
+		@include media( desktop ) {
 			.entry-title {
-				font-size: 2.0em;
+				font-size: 2em;
 			}
 		}
 	}
@@ -479,8 +527,9 @@
 
 	&.ts-3 article {
 		.entry-title {
-			font-size: 1.0em;
+			font-size: 1em;
 		}
+		.newspack-post-subtitle,
 		.entry-wrapper p {
 			font-size: 0.8em;
 		}
@@ -489,7 +538,7 @@
 		}
 		@include media( tablet ) {
 			.entry-title {
-				font-size: 1.2em
+				font-size: 1.2em;
 			}
 
 			.avatar {
@@ -502,6 +551,9 @@
 	&.ts-2 article {
 		.entry-title {
 			font-size: 0.8em;
+		}
+		.newspack-post-subtitle {
+			font-size: 0.7em;
 		}
 		.entry-wrapper p,
 		.entry-meta {
@@ -525,6 +577,9 @@
 		.entry-wrapper p {
 			font-size: 0.7em;
 		}
+		.newspack-post-subtitle {
+			font-size: 0.7em;
+		}
 		.entry-meta {
 			font-size: 0.6em;
 		}
@@ -536,12 +591,13 @@
 		}
 	}
 }
+/* stylelint-enable */
 
 /* Block styles */
 
 .wpnbha.is-style-borders {
 	article {
-		border: solid rgba(0, 0, 0, 0.2);
+		border: solid rgba( 0, 0, 0, 0.2 );
 		border-width: 0 0 1px;
 		margin-bottom: 1em;
 		padding-bottom: 1em;
@@ -549,20 +605,48 @@
 		&:last-of-type {
 			margin-bottom: 0;
 
-			&:not(:first-of-type) {
+			&:not( :first-of-type ) {
 				border-bottom: 0;
 			}
 		}
 	}
 
-	@include media(tablet) {
-
+	@include media( mobile ) {
 		@for $i from 2 through 6 {
 			&.columns-#{ $i } article {
 				padding-right: calc( ( 16px * #{$i} ) / ( #{$i} - 1 ) );
 			}
 		}
 
+		&.columns-2,
+		&.columns-4,
+		&.columns-5 {
+			article {
+				border-width: 0;
+				&:nth-of-type( odd ) {
+					border-width: 0 1px 0 0;
+				}
+			}
+		}
+
+		&.columns-3,
+		&.columns-6 {
+			article {
+				border-width: 0;
+
+				&:nth-of-type( 3n + 1 ),
+				&:nth-of-type( 3n + 2 ) {
+					border-width: 0 1px 0 0;
+				}
+			}
+		}
+
+		&.is-grid article:last-of-type {
+			border: 0;
+		}
+	}
+
+	@include media( tablet ) {
 		&.is-grid {
 			article {
 				border-width: 0 1px 0 0;
@@ -571,12 +655,40 @@
 
 		&.is-grid article:last-of-type,
 		&.columns-1 article,
-		&.columns-2 article:nth-of-type(2n),
-		&.columns-3 article:nth-of-type(3n),
-		&.columns-4 article:nth-of-type(4n),
-		&.columns-5 article:nth-of-type(5n),
-		&.columns-6 article:nth-of-type(6n) {
+		&.columns-2 article:nth-of-type( 2n ),
+		&.columns-3 article:nth-of-type( 3n ),
+		&.columns-4 article:nth-of-type( 4n ),
+		&.columns-5 article:nth-of-type( 5n ),
+		&.columns-6 article:nth-of-type( 6n ) {
 			border: 0;
 		}
 	}
 }
+
+/* Styles for the Subtitle, as part of the the Block */
+.newspack-post-subtitle {
+	&--in-homepage-block {
+		margin-top: 0.3em;
+		margin-bottom: 0;
+		line-height: 1.4em;
+		font-style: italic;
+	}
+}
+
+/* Prevent tree-shaking Loading and Error style rules */
+/* stylelint-disable selector-type-no-unknown  */
+amp-script .wpnbha.has-more-button.is-loading {
+	button {
+		display: none;
+	}
+	.loading {
+		display: block;
+	}
+}
+amp-script .wpnbha.has-more-button.is-error {
+	button,
+	.error {
+		display: block;
+	}
+}
+/* stylelint-enable */

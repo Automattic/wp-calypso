@@ -149,11 +149,11 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/foo/bar' );
 	} );
 
-	it( 'redirects to the root url if redirectTo does not start with admin_url for site', () => {
+	it( 'redirects to the default url if redirectTo does not start with admin_url for site', () => {
 		const adminUrl = 'https://my.site/wp-admin/';
 		const redirectTo = 'https://other.site/post.php?post=515';
 		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', adminUrl, redirectTo } );
-		expect( url ).toBe( '/' );
+		expect( url ).toBe( '/checkout/thank-you/foo.bar' );
 	} );
 
 	it( 'redirects to external redirectTo url if it starts with admin_url for site', () => {

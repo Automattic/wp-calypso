@@ -20,7 +20,7 @@ import Tooltip from 'components/tooltip';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { decodeEntities } from 'lib/formatting';
 import { urlToDomainAndPath } from 'lib/url';
-import getSiteComment from 'state/selectors/get-site-comment';
+import { getSiteComment } from 'state/comments/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 export class CommentAuthor extends Component {

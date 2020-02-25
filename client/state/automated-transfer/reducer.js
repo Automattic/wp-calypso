@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import eligibility from './eligibility/reducer';
-import { combineReducers, keyedReducer, withSchemaValidation } from 'state/utils';
+import { combineReducers, keyedReducer, withSchemaValidation, withStorageKey } from 'state/utils';
 import { transferStates } from './constants';
 import { automatedTransfer as schema } from './schema';
 import {
@@ -54,4 +54,8 @@ export const siteReducer = combineReducers( {
 
 // state is a map of transfer sub-states
 // keyed by the associated site id
-export default withSchemaValidation( schema, keyedReducer( 'siteId', siteReducer ) );
+const validatedReducer = withSchemaValidation( schema, keyedReducer( 'siteId', siteReducer ) );
+
+const automatedTransferReducer = withStorageKey( 'automatedTransfer', validatedReducer );
+
+export default automatedTransferReducer;

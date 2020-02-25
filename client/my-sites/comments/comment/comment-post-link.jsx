@@ -13,7 +13,7 @@ import { get } from 'lodash';
 import CommentLink from 'my-sites/comments/comment/comment-link';
 import QueryPosts from 'components/data/query-posts';
 import { decodeEntities, stripHTML } from 'lib/formatting';
-import getSiteComment from 'state/selectors/get-site-comment';
+import { getSiteComment } from 'state/comments/selectors';
 import { getSitePost } from 'state/posts/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 

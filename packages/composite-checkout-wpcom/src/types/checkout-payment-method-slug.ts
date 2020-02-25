@@ -17,5 +17,7 @@ export type CheckoutPaymentMethodSlug =
 	| 'paypal'
 	| 'paypal-direct'
 	| 'sofort'
+	| 'free-purchase'
+	| 'full-credits'
 	| 'stripe-three-d-secure'
 	| 'wechat';

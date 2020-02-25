@@ -39,6 +39,9 @@ import {
 	THEMES_REQUEST_FAILURE,
 	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
+	THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING,
+	THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
+	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
 } from 'state/action-types';
 import { getSerializedThemesQuery, getThemeIdFromStylesheet } from './utils';
 import {
@@ -456,6 +459,35 @@ export const themePreviewVisibility = withoutPersistence( ( state = null, action
 	return state;
 } );
 
+export const themeHasAutoLoadingHomepageWarning = withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING: {
+			return {
+				themeId: action.themeId,
+				show: true,
+				accepted: false,
+			};
+		}
+
+		case THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING: {
+			return {
+				themeId: action.themeId,
+				show: false,
+				accepted: true,
+			};
+		}
+
+		case THEME_ACTIVATE:
+		case THEME_ACTIVATE_SUCCESS:
+		case THEME_ACTIVATE_FAILURE:
+		case THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING: {
+			return null;
+		}
+	}
+
+	return state;
+} );
+
 export const themeFilters = withSchemaValidation( themeFiltersSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case THEME_FILTERS_ADD: {
@@ -506,6 +538,7 @@ const combinedReducer = combineReducers( {
 	themePreviewVisibility,
 	themeFilters,
 	recommendedThemes,
+	themeHasAutoLoadingHomepageWarning,
 } );
 const themesReducer = withStorageKey( 'themes', combinedReducer );
 

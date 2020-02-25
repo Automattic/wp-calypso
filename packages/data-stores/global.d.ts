@@ -2,7 +2,7 @@
  * External dependencies
  */
 declare module 'wpcom-proxy-request' {
-	import { WpcomRequestParams } from 'src/utils/wpcom-wrapper';
+	type WpcomRequestParams = import('./src/utils/wpcom-wrapper').WpcomRequestParams;
 	export function reloadProxy(): void;
 	export default function wpcomProxyRequest(
 		params: WpcomRequestParams,

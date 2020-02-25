@@ -64,7 +64,7 @@ const TemplateSelectorItem = props => {
 			onClick={ handleLabelClick }
 			aria-labelledby={ `${ id } ${ labelId }` }
 		>
-			<div className="template-selector-item__preview-wrap">{ innerPreview }</div>
+			<span className="template-selector-item__preview-wrap">{ innerPreview }</span>
 		</button>
 	);
 };

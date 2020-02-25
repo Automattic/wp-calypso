@@ -27,10 +27,10 @@ export default {
 		allowExistingUsers: true,
 	},
 	showCompositeCheckout: {
-		datestamp: '20200214',
+		datestamp: '20200221',
 		variations: {
-			composite: 0,
-			regular: 100,
+			composite: 50,
+			regular: 50,
 		},
 		defaultVariation: 'regular',
 		allowExistingUsers: true,
@@ -106,19 +106,8 @@ export default {
 		defaultVariation: 'variantShowUpdates',
 		allowExistingUsers: true,
 	},
-	showBusinessPlanPopular: {
-		datestamp: '20200109',
-		variations: {
-			variantShowBizPopular: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-		localeExceptions: [ 'en' ],
-	},
 	sidebarUpsellNudgeUnification: {
-		datestamp: '20200127',
+		datestamp: '20200221',
 		variations: {
 			variantShowUnifiedUpsells: 50,
 			control: 50,
@@ -127,9 +116,28 @@ export default {
 		allowExistingUsers: true,
 	},
 	domainStepDesignUpdates: {
-		datestamp: '20200205',
+		datestamp: '20200220',
 		variations: {
 			variantDesignUpdates: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	customerHomeAll: {
+		datestamp: '20200224',
+		variations: {
+			showCustomerHome: 10,
+			control: 90,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+	},
+	planStepCopyUpdates: {
+		datestamp: '20200221',
+		variations: {
+			variantCopyUpdates: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',

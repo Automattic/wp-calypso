@@ -1,0 +1,35 @@
+.themes__auto-loading-homepage-modal {
+	min-height: 90px;
+	max-width: 400px;
+	margin: 0 auto;
+
+	@include breakpoint( '<480px' ) {
+		box-sizing: border-box;
+		max-width: 100%;
+	}
+
+	+ .dialog__action-buttons {
+		text-align: center;
+
+		.button:first-child {
+			margin-left: 0;
+		}
+
+		@include breakpoint( '<480px' ) {
+			.button {
+				display: block;
+				margin: 0 auto 10px;
+				width: 100%;
+			}
+		}
+	}
+
+	.themes__auto-loading-homepage-modal-title {
+		display: block;
+		font-weight: 300;
+		line-height: 1.5em;
+		margin-bottom: 0;
+		text-align: center;
+		height: auto;
+	}
+}

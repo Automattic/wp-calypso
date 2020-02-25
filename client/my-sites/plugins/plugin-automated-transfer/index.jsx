@@ -14,9 +14,11 @@ import wrapWithClickOutside from 'react-click-outside';
 import { transferStates } from 'state/automated-transfer/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
-import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
-import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-active';
-import isAutomatedTransferFailed from 'state/selectors/is-automated-transfer-failed';
+import {
+	getAutomatedTransferStatus,
+	isAutomatedTransferActive,
+	isAutomatedTransferFailed,
+} from 'state/automated-transfer/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import WpAdminAutoLogin from 'components/wpadmin-auto-login';

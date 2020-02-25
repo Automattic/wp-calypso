@@ -149,7 +149,20 @@ class SectionImport extends Component {
 	 * @returns {Array} A list of react elements for each enabled importer
 	 */
 	renderIdleImporters( site, siteTitle, state ) {
-		const importerElements = getImporters().map( importer => {
+		const {
+			options: { is_wpcom_atomic: isAtomic },
+		} = site;
+
+		const importerElementsAll = getImporters();
+
+		/**
+		 * Filter out all importers except the WordPress ones for Atomic sites.
+		 */
+		const importerElementsFiltered = isAtomic
+			? importerElementsAll.filter( importer => importer.engine === 'wordpress' )
+			: importerElementsAll;
+
+		const importerElements = importerElementsFiltered.map( importer => {
 			const { engine } = importer;
 			const ImporterComponent = importerComponents[ engine ];
 
@@ -206,14 +219,43 @@ class SectionImport extends Component {
 
 			const ImporterComponent = importerComponents[ importer.engine ];
 
+			/**
+			 * Ugly hack™
+			 *
+			 * Sometimes due to the convoluted voodoo sorcery that is the Import Red(fl)ux store
+			 * the `site` object that gets passed in `importItem` contains only `{ ID: <site_id> }`.
+			 *
+			 * This makes the components down the chain fail as they expect to have the full `site` object
+			 * with all it's properties.
+			 *
+			 * That usually happens when you land on an import directly, such as when coming from a
+			 * `/?engine=wordpress` URL. In those cases a slew of artifacts occur - the upload reports issues,
+			 * the author mapping screen doesn't show any authors to choose from, etc.
+			 *
+			 * This hack makes sure to overwrite the the `site` object if it's the same as the current site.
+			 * Ideally this should always be the case, but if there's an instance where the current site is different
+			 * than what's stored in the import data, let it fail as it does now.
+			 */
+			const importItemId = get( importItem, 'site.ID', null );
+			const currentSiteId = get( this.props, 'site.ID', null );
+
+			if ( importItemId && importItemId === currentSiteId ) {
+				importItem.site = this.props.site;
+			}
+
+			const siteTitle = importItem.siteTitle || this.props.siteTitle;
+
 			return (
 				ImporterComponent && (
 					<ImporterComponent
 						key={ importItem.type + idx }
 						site={ importItem.site }
-						siteTitle={ importItem.siteTitle || this.props.siteTitle }
 						fromSite={ this.props.fromSite }
-						importerStatus={ importItem }
+						siteTitle={ siteTitle }
+						importerStatus={ {
+							...importItem,
+							siteTitle: siteTitle,
+						} }
 					/>
 				)
 			);
@@ -296,7 +338,10 @@ class SectionImport extends Component {
 			);
 		}
 
-		const { jetpack: isJetpack } = site;
+		const {
+			jetpack: isJetpack,
+			options: { is_wpcom_atomic: isAtomic },
+		} = site;
 
 		return (
 			<Main>
@@ -308,7 +353,7 @@ class SectionImport extends Component {
 					align="left"
 				/>
 				<EmailVerificationGate allowUnlaunched>
-					{ isJetpack ? <JetpackImporter /> : this.renderImportersList() }
+					{ isJetpack && ! isAtomic ? <JetpackImporter /> : this.renderImportersList() }
 				</EmailVerificationGate>
 			</Main>
 		);

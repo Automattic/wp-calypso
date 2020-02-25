@@ -3,7 +3,7 @@
  */
 import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
-import { map, includes } from 'lodash';
+import { forEach, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -89,7 +89,7 @@ function setLocaleInDOM() {
 	switchWebpackCSS( isRTL );
 }
 
-async function getLanguageFile( targetLocaleSlug ) {
+export async function getLanguageFile( targetLocaleSlug ) {
 	const url = getLanguageFileUrl( targetLocaleSlug, 'json', window.languageRevisions || {} );
 
 	const response = await dedupedGet( url );
@@ -226,10 +226,15 @@ function setRTLFlagOnCSSLink( url, isRTL ) {
 	return ! url.endsWith( '.rtl.css' ) ? url : url.replace( /\.rtl.css$/, '.css' );
 }
 
-function switchWebpackCSS( isRTL ) {
+/**
+ * Switch the Calypso CSS between RTL and LTR versions.
+ *
+ * @param {boolean} isRTL True to use RTL css.
+ */
+export function switchWebpackCSS( isRTL ) {
 	const currentLinks = document.querySelectorAll( 'link[rel="stylesheet"][data-webpack]' );
 
-	return map( currentLinks, async currentLink => {
+	forEach( currentLinks, async currentLink => {
 		const currentHref = currentLink.getAttribute( 'href' );
 		const newHref = setRTLFlagOnCSSLink( currentHref, isRTL );
 		if ( currentHref === newHref ) {

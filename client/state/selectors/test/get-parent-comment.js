@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getParentComment from 'state/selectors/get-parent-comment';
+import { getParentComment } from 'state/comments/selectors';
 
 const state = {
 	comments: {

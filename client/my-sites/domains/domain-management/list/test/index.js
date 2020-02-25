@@ -9,12 +9,12 @@ import deepFreeze from 'deep-freeze';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { shallow, mount } from 'enzyme';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { List as DomainList } from '..';
-import { PRIMARY_DOMAIN_CHANGE_SUCCESS, PRIMARY_DOMAIN_CHANGE_FAIL } from '../constants';
 import { createReduxStore } from 'state';
 
 jest.mock( 'lib/wp', () => ( {
@@ -51,6 +51,8 @@ describe( 'index', () => {
 		},
 		sitePlans: {},
 		userCanManageOptions: true,
+		successNotice: noop,
+		errorNotice: noop,
 	} );
 
 	function renderWithProps( props = defaultProps ) {
@@ -141,6 +143,7 @@ describe( 'index', () => {
 					expect( setPrimaryDomainStub ).not.toHaveBeenCalled();
 				} );
 
+				// eslint-disable-next-line jest/no-test-callback
 				test( 'should call setPrimaryDomain with a domain name', done => {
 					component.instance().handleUpdatePrimaryDomain( 0, defaultProps.domains[ 0 ] );
 					expect( component.state( 'settingPrimaryDomain' ) ).toBe( true );
@@ -151,14 +154,11 @@ describe( 'index', () => {
 					setTimeout( () => {
 						expect( component.state( 'settingPrimaryDomain' ) ).toBe( false );
 						expect( component.state( 'changePrimaryDomainModeEnabled' ) ).toBe( false );
-						expect( component.state( 'notice' ).type ).toBe( PRIMARY_DOMAIN_CHANGE_SUCCESS );
-						expect( component.state( 'notice' ).previousDomainName ).toBe(
-							defaultProps.domains[ 1 ].name
-						);
 						done();
 					}, 0 );
 				} );
 
+				// eslint-disable-next-line jest/no-test-callback
 				test( 'should handle errors and revert the optimistic updates', done => {
 					component.instance().handleUpdatePrimaryDomain( 0, defaultProps.domains[ 0 ] );
 					setPrimaryDomainReject();
@@ -166,7 +166,6 @@ describe( 'index', () => {
 						expect( component.state( 'settingPrimaryDomain' ) ).toBe( false );
 						expect( component.state( 'changePrimaryDomainModeEnabled' ) ).toBe( true );
 						expect( component.state( 'primaryDomainIndex' ) ).toBe( 1 );
-						expect( component.state( 'notice' ).type ).toBe( PRIMARY_DOMAIN_CHANGE_FAIL );
 						done();
 					}, 0 );
 				} );

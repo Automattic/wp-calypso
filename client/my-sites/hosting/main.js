@@ -28,8 +28,10 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 import Notice from 'components/notice';
 import Banner from 'components/banner';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
-import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-active';
+import {
+	getAutomatedTransferStatus,
+	isAutomatedTransferActive,
+} from 'state/automated-transfer/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
 import { requestSite } from 'state/sites/actions';
 import FeatureExample from 'components/feature-example';

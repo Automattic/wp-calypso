@@ -2,8 +2,8 @@
  * External dependencies
  */
 import '@wordpress/editor'; // This shouldn't be necessary
-import { __ as NO__ } from '@wordpress/i18n';
-import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
+import { useI18n } from '@automattic/react-i18n';
+import { BlockEditorProvider, BlockList as OriginalBlockList } from '@wordpress/block-editor';
 import { Popover, DropZoneProvider } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import '@wordpress/format-library';
@@ -24,7 +24,18 @@ import './style.scss';
 
 registerBlockType( name, settings );
 
+interface BlockListProps extends OriginalBlockList.Props {
+	__experimentalUIParts: {
+		hasPopover: boolean;
+		hasSelectedUI: boolean;
+	};
+}
+
+const BlockList = ( props: BlockListProps ) => <OriginalBlockList { ...props } />;
+
 export function Gutenboard() {
+	const { __: NO__ } = useI18n();
+
 	// @TODO: This is currently needed in addition to the routing (inside the Onboarding Block)
 	// for the 'Back' and 'Next' buttons in the header. If we remove those (and move navigation
 	// entirely into the block), we'll be able to remove this code.
@@ -34,6 +45,9 @@ export function Gutenboard() {
 	switch ( step ) {
 		case Step.DesignSelection:
 			prev = makePath( Step.IntentGathering );
+			break;
+		case Step.PageSelection:
+			prev = makePath( Step.DesignSelection );
 			break;
 	}
 
@@ -62,7 +76,12 @@ export function Gutenboard() {
 								aria-label={ NO__( 'Onboarding screen content' ) }
 								tabIndex={ -1 }
 							>
-								<BlockList className="gutenboarding-block-list" />
+								<BlockList
+									__experimentalUIParts={ {
+										hasPopover: false,
+										hasSelectedUI: false,
+									} }
+								/>
 							</div>
 						</div>
 					</BlockEditorProvider>

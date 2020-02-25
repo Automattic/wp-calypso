@@ -16,7 +16,7 @@ import { convertDateToUserLocation } from 'components/post-schedule/utils';
 import { decodeEntities, stripHTML } from 'lib/formatting';
 import { gmtOffset, timezone } from 'lib/site/utils';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import getSiteComments from 'state/selectors/get-site-comments';
+import { getSiteComments } from 'state/comments/selectors';
 import hasNavigated from 'state/selectors/has-navigated';
 import { getSitePost } from 'state/posts/selectors';
 import { isJetpackSite } from 'state/sites/selectors';

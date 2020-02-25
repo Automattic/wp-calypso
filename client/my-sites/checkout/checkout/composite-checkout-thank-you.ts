@@ -202,6 +202,9 @@ function getFallbackDestination( {
 			: `/checkout/thank-you/${ siteSlug }/${ pendingOrReceiptId }`;
 	}
 
+	if ( siteSlug ) {
+		return `/checkout/thank-you/${ siteSlug }`;
+	}
 	return '/';
 }
 

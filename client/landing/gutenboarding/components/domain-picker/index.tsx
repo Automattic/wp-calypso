@@ -10,10 +10,10 @@ import {
 	PanelRow,
 	TextControl,
 } from '@wordpress/components';
-import { __ as NO__ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import { useDebounce } from 'use-debounce';
 import { times } from 'lodash';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -52,6 +52,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	onDomainSelect,
 	queryParameters,
 } ) => {
+	const { __: NO__ } = useI18n();
 	const label = NO__( 'Search for a domain' );
 
 	const [ domainSearch, setDomainSearch ] = useState( '' );

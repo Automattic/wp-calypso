@@ -56,6 +56,13 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
 			),
 			supportUrl: localizeUrl( 'https://en.support.wordpress.com/settings/privacy-settings/' ),
 		},
+		SITE_UNLAUNCHED: {
+			title: translate( 'Launch your site' ),
+			description: translate(
+				'Only you and those you invite can view your site. Launch your site to make it visible to the public.'
+			),
+			supportUrl: null,
+		},
 		NON_ADMIN_USER: {
 			title: translate( 'Site administrator only' ),
 			description: translate( 'Only the site administrators can use this feature.' ),

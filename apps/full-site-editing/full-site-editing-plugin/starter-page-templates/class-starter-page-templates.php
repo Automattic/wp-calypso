@@ -249,7 +249,9 @@ class Starter_Page_Templates {
 	 * @return string ISO 639 locale string
 	 */
 	private function get_iso_639_locale() {
-		$language = strtolower( get_locale() );
+		// Make sure to get blog locale, not user locale.
+		$language = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
+		$language = strtolower( $language );
 
 		if ( in_array( $language, [ 'pt_br', 'pt-br', 'zh_tw', 'zh-tw', 'zh_cn', 'zh-cn' ], true ) ) {
 			$language = str_replace( '_', '-', $language );

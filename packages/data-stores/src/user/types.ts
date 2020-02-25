@@ -7,6 +7,17 @@ export interface CurrentUser {
 	ID: number;
 	display_name: string;
 	username: string;
+
+	/**
+	 * The user's locale slug, e.g. `es`.
+	 */
+	language: string;
+
+	/**
+	 * The user's locale variant, e.g. `es-mx`.
+	 * If there is no variant, `""` empty string is returned.
+	 */
+	locale_variant: string;
 }
 
 export interface NewUser {
@@ -44,6 +55,7 @@ export interface CreateAccountParams {
 	extra?: {
 		first_name?: string;
 		last_name?: string;
+		username_hint?: string;
 	};
 }
 

@@ -335,6 +335,17 @@ class WpcomChecklistComponent extends PureComponent {
 				bannerImageSrc="/calypso/images/illustrations/checkEmailsDesktop.svg"
 				buttonText={ this.verificationTaskButtonText() }
 				completedTitle={ translate( 'You validated your email address' ) }
+				completedDescription={ translate(
+					'Need to change something? {{changeButton}}Update your email address here{{/changeButton}}.',
+					{
+						args: {
+							email: this.props.userEmail,
+						},
+						components: {
+							changeButton: <a href="/me/account?tour=checklistUserEmail" />,
+						},
+					}
+				) }
 				description={ translate(
 					'Please click the link in the email we sent to %(email)s.{{br /}}' +
 						'Typo in your email address? {{changeButton}}Change it here{{/changeButton}}.',
@@ -601,8 +612,9 @@ class WpcomChecklistComponent extends PureComponent {
 			<TaskComponent
 				{ ...baseProps }
 				bannerImageSrc="/calypso/images/stats/tasks/mobile-app.svg"
-				completedButtonText={ translate( 'Download mobile app' ) }
+				completedButtonText={ translate( 'Re-download mobile app' ) }
 				completedTitle={ translate( 'You downloaded the WordPress app' ) }
+				completedDescription={ translate( 'You can re-download the app at any time.' ) }
 				description={ translate(
 					'Download the WordPress app to your mobile device to manage your site and follow your stats on the go.'
 				) }

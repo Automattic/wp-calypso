@@ -36,14 +36,14 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 		register_rest_route(
 			$this->namespace,
 			'/' . $this->rest_base,
-			array(
-				array(
+			[
+				[
 					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_items' ),
+					'callback'            => [ $this, 'get_items' ],
 					'args'                => $this->get_attribute_schema(),
 					'permission_callback' => '__return_true',
-				),
-			)
+				],
+			]
 		);
 	}
 
@@ -55,10 +55,10 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 	 */
 	public function get_items( $request ) {
 		$page        = $request->get_param( 'page' ) ?? 1;
-		$exclude_ids = $request->get_param( 'exclude_ids' ) ?? array();
+		$exclude_ids = $request->get_param( 'exclude_ids' ) ?? [];
 		$next_page   = $page + 1;
 		$attributes  = wp_parse_args(
-			$request->get_params() ?? array(),
+			$request->get_params() ?? [],
 			wp_list_pluck( $this->get_attribute_schema(), 'default' )
 		);
 
@@ -66,27 +66,34 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 
 		$query = array_merge(
 			$article_query_args,
-			array(
+			[
 				'post__not_in' => $exclude_ids,
-			)
+			]
 		);
 
 		// Run Query.
 		$article_query = new WP_Query( $query );
 
 		// Defaults.
-		$items    = array();
+		$items    = [];
+		$ids      = [];
 		$next_url = '';
 
 		// The Loop.
 		while ( $article_query->have_posts() ) {
 			$article_query->the_post();
-			$items[]['html'] = Newspack_Blocks::template_inc(
+			$html = Newspack_Blocks::template_inc(
 				__DIR__ . '/templates/article.php',
-				array(
+				[
 					'attributes' => $attributes,
-				)
+				]
 			);
+
+			if ( $request->get_param( 'amp' ) ) {
+				$html = $this->generate_amp_partial( $html );
+			}
+			$items[]['html'] = $html;
+			$ids[]           = get_the_ID();
 		}
 
 		// Provide next URL if there are more pages.
@@ -95,21 +102,26 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 				array_merge(
 					array_map(
 						function( $attribute ) {
-							return false === $attribute ? '0' : $attribute;
+							return false === $attribute ? '0' : str_replace( '#', '%23', $attribute );
 						},
 						$attributes
 					),
-					array( 'page' => $next_page ) // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
+					[
+						'exclude_ids' => false,
+						'page'        => $next_page,
+						'amp'         => $request->get_param( 'amp' ),
+					]
 				),
 				rest_url( '/newspack-blocks/v1/articles' )
 			);
 		}
 
 		return rest_ensure_response(
-			array(
+			[
 				'items' => $items,
+				'ids'   => $ids,
 				'next'  => $next_url,
-			)
+			]
 		);
 	}
 
@@ -127,17 +139,40 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 
 			$this->attribute_schema = array_merge(
 				$block_json['attributes'],
-				array(
-					'exclude_ids' => array(
+				[
+					'exclude_ids' => [
 						'type'    => 'array',
-						'default' => array(),
-						'items'   => array(
+						'default' => [],
+						'items'   => [
 							'type' => 'integer',
-						),
-					),
-				)
+						],
+					],
+				]
 			);
 		}
 		return $this->attribute_schema;
+	}
+
+	/**
+	 * Use AMP Plugin functions to render markup as valid AMP.
+	 *
+	 * @param string $html Markup to convert to AMP.
+	 * @return string
+	 */
+	public function generate_amp_partial( $html ) {
+		$dom = AMP_DOM_Utils::get_dom_from_content( $html );
+
+		AMP_Content_Sanitizer::sanitize_document(
+			$dom,
+			amp_get_content_sanitizers(),
+			[
+				'use_document_element' => false,
+			]
+		);
+		$xpath = new DOMXPath( $dom );
+		foreach ( iterator_to_array( $xpath->query( '//noscript | //comment()' ) ) as $node ) {
+			$node->parentNode->removeChild( $node ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar
+		}
+		return AMP_DOM_Utils::get_content_from_dom( $dom );
 	}
 }

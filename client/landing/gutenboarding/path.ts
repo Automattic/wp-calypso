@@ -2,35 +2,53 @@
  * External dependencies
  */
 import { generatePath, useRouteMatch } from 'react-router-dom';
-import { getLanguageSlugs } from '../../lib/i18n-utils';
+import { getLanguageRouteParam } from '../../lib/i18n-utils';
 import { ValuesType } from 'utility-types';
 
+// The first step (IntentGathering), which is found at the root route (/), is set as
+// `undefined`, as that's what matching our `path` pattern against a route with no explicit
+// step fragment will return.
 export const Step = {
-	IntentGathering: 'about',
+	IntentGathering: undefined,
 	DesignSelection: 'design',
 	PageSelection: 'pages',
 	Signup: 'signup',
 	CreateSite: 'create-site',
 } as const;
 
-export const langs: string[] = getLanguageSlugs();
-export const steps = Object.keys( Step ).map( key => Step[ key as keyof typeof Step ] );
+// We remove falsey `steps` with `.filter( Boolean )` as they'd mess up our |-separated route pattern.
+export const steps = Object.values( Step ).filter( Boolean );
 
-export const path = `/:step(${ steps.join( '|' ) })/:lang(${ langs.join( '|' ) })?`;
+// We add back the possibility of an empty step fragment through the `?` question mark at the end of that fragment.
+export const path = `/:step(${ steps.join( '|' ) })?/${ getLanguageRouteParam() }`;
 
 export type StepType = ValuesType< typeof Step >;
 
 export function usePath() {
-	const match = useRouteMatch< { lang?: string } >( path );
+	const langParam = useLangRouteParam();
 
-	return ( step: StepType, lang?: string ) => {
+	return ( step?: StepType, lang?: string ) => {
 		// When lang is null, remove lang.
 		// When lang is empty or undefined, get lang from route param.
-		lang = lang === null ? '' : lang || match?.params.lang;
+		lang = lang === null ? '' : lang || langParam;
 
-		return generatePath( path, {
-			step,
-			...( lang && langs.includes( lang ) && { lang } ),
-		} );
+		if ( ! step && ! lang ) {
+			return '/';
+		}
+
+		try {
+			return generatePath( path, {
+				step,
+				lang,
+			} );
+		} catch {
+			// If we get an invalid lang, `generatePath` throws a TypeError.
+			return generatePath( path, { step } );
+		}
 	};
+}
+
+export function useLangRouteParam() {
+	const match = useRouteMatch< { lang?: string } >( path );
+	return match?.params.lang;
 }

@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/no-undefined-types */
 /**
  * External dependencies
  */
@@ -21,6 +22,7 @@ import {
 	RECOMMENDED_THEMES_FAIL,
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
+	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_ACTIVATE,
 	THEME_ACTIVATE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
@@ -30,12 +32,14 @@ import {
 	THEME_DELETE_SUCCESS,
 	THEME_DELETE_FAILURE,
 	THEME_FILTERS_REQUEST,
+	THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
 	THEME_INSTALL_FAILURE,
 	THEME_REQUEST,
 	THEME_REQUEST_SUCCESS,
 	THEME_REQUEST_FAILURE,
+	THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_TRANSFER_INITIATE_FAILURE,
 	THEME_TRANSFER_INITIATE_PROGRESS,
 	THEME_TRANSFER_INITIATE_REQUEST,
@@ -62,6 +66,8 @@ import {
 	getWpcomParentThemeId,
 	shouldFilterWpcomThemes,
 	isDownloadableFromWpcom,
+	themeHasAutoLoadingHomepage,
+	hasAutoLoadingHomepageModalAccepted,
 } from './selectors';
 import {
 	getThemeIdFromStylesheet,
@@ -357,12 +363,24 @@ export function requestActiveTheme( siteId ) {
  *
  * @param  {string}   themeId   Theme ID
  * @param  {number}   siteId    Site ID
- * @param  {string}   source    The source that is reuquesting theme activation, e.g. 'showcase'
+ * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
  * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
- * @returns {Function}           Action thunk
+ * @returns {Function}          Action thunk
  */
 export function activate( themeId, siteId, source = 'unknown', purchased = false ) {
 	return ( dispatch, getState ) => {
+		/**
+		 * Let's check if the theme will change the homepage of the site,
+		 * before to definitely start the theme-activating process,
+		 * allowing cancel it if it's desired.
+		 */
+		if (
+			themeHasAutoLoadingHomepage( getState(), themeId ) &&
+			! hasAutoLoadingHomepageModalAccepted( getState(), themeId )
+		) {
+			return dispatch( showAutoLoadingHomepageWarning( themeId ) );
+		}
+
 		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
 			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
 			// If theme is already installed, installation will silently fail,
@@ -379,7 +397,7 @@ export function activate( themeId, siteId, source = 'unknown', purchased = false
  *
  * @param  {string}   themeId   Theme ID
  * @param  {number}   siteId    Site ID
- * @param  {string}   source    The source that is reuquesting theme activation, e.g. 'showcase'
+ * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
  * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
  * @returns {Function}           Action thunk
  */
@@ -417,7 +435,7 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
  *
  * @param  {string}   themeStylesheet Theme stylesheet string (*not* just a theme ID!)
  * @param  {number}   siteId          Site ID
- * @param  {string}   source          The source that is reuquesting theme activation, e.g. 'showcase'
+ * @param  {string}   source          The source that is requesting theme activation, e.g. 'showcase'
  * @param  {boolean}  purchased       Whether the theme has been purchased prior to activation
  * @returns {Function}                 Action thunk
  */
@@ -578,7 +596,7 @@ export function tryAndCustomizeTheme( themeId, siteId ) {
  *
  * @param  {string}   themeId   Theme ID. If suffixed with '-wpcom', install theme from WordPress.com
  * @param  {number}   siteId    Site ID
- * @param  {string}   source    The source that is reuquesting theme activation, e.g. 'showcase'
+ * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
  * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
  * @returns {Function}           Action thunk
  */
@@ -596,7 +614,7 @@ export function installAndActivateTheme( themeId, siteId, source = 'unknown', pu
  * Triggers a theme upload to the given site.
  *
  * @param {number} siteId -- Site to upload to
- * @param {window.File} file -- the theme zip to upload
+ * @param {File} file -- the theme zip to upload
  *
  * @returns {Function} the action function
  */
@@ -653,7 +671,7 @@ export function clearThemeUpload( siteId ) {
  * Start an Automated Transfer with an uploaded theme.
  *
  * @param {number} siteId -- the site to transfer
- * @param {window.File} file -- theme zip to upload
+ * @param {File} file -- theme zip to upload
  * @param {string} plugin -- plugin slug
  *
  * @returns {Promise} for testing purposes only
@@ -885,6 +903,26 @@ export function setThemePreviewOptions( primary, secondary ) {
 export function showThemePreview( themeId ) {
 	return {
 		type: THEME_PREVIEW_STATE,
+		themeId,
+	};
+}
+
+export function showAutoLoadingHomepageWarning( themeId ) {
+	return {
+		type: THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING,
+		themeId,
+	};
+}
+
+export function hideAutoLoadingHomepageWarning() {
+	return {
+		type: THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
+	};
+}
+
+export function acceptAutoLoadingHomepageWarning( themeId ) {
+	return {
+		type: THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
 		themeId,
 	};
 }

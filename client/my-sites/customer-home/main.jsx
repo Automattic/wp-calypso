@@ -47,6 +47,7 @@ import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actio
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import isSiteRecentlyMigrated from 'state/selectors/is-site-recently-migrated';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import StatsBanners from 'my-sites/stats/stats-banners';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
@@ -56,6 +57,7 @@ import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/s
 import QueryActiveTheme from 'components/data/query-active-theme';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import GoMobileCard from 'my-sites/customer-home/go-mobile-card';
+import WelcomeBanner from './welcome-banner';
 import StatsCard from './stats-card';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 
@@ -70,6 +72,7 @@ import './style.scss';
 import commentIcon from 'assets/images/customer-home/comment.svg';
 import customDomainIcon from 'assets/images/customer-home/custom-domain.svg';
 import customizeIcon from 'assets/images/customer-home/customize.svg';
+import fireworksIllustration from 'assets/images/illustrations/fireworks.svg';
 import gSuiteIcon from 'assets/images/customer-home/gsuite.svg';
 import happinessIllustration from 'assets/images/customer-home/happiness.png';
 import imagesIcon from 'assets/images/customer-home/images.svg';
@@ -194,6 +197,9 @@ class Home extends Component {
 			case 'launched':
 				return translate( 'Make sure you share it with everyone and show it off.' );
 
+			case 'migrated':
+				return translate( 'Next, make sure everything looks the way you expected.' );
+
 			default:
 				return translate(
 					'Next, use this quick list of setup tasks to get your site ready to share.'
@@ -205,6 +211,7 @@ class Home extends Component {
 		const {
 			displayChecklist,
 			isNewlyCreatedSite,
+			isRecentlyMigratedSite,
 			translate,
 			checklistMode,
 			site,
@@ -213,10 +220,16 @@ class Home extends Component {
 			siteIsUnlaunched,
 			isAtomic,
 			trackAction,
+			displayWelcomeBanner,
 		} = this.props;
 
 		// Show a thank-you message 30 mins post site creation/purchase
-		if ( isNewlyCreatedSite && displayChecklist ) {
+		if (
+			isNewlyCreatedSite &&
+			! isRecentlyMigratedSite &&
+			displayChecklist &&
+			'launched' !== checklistMode
+		) {
 			if ( siteIsUnlaunched || isAtomic ) {
 				//Only show pre-launch, or for Atomic sites
 				return (
@@ -263,10 +276,26 @@ class Home extends Component {
 						</div>
 					) }
 				</div>
-				{ ! siteIsUnlaunched && 'launched' === checklistMode && (
-					<Card className="customer-home__launch-card" highlight="info">
+				{ isRecentlyMigratedSite && (
+					<Card className="customer-home__migrate-card" highlight="info">
 						<img
 							src="/calypso/images/illustrations/fireworks.svg"
+							aria-hidden="true"
+							className="customer-home__migrate-fireworks"
+							alt=""
+						/>
+						<div className="customer-home__migrate-card-text">
+							<CardHeading>{ translate( 'Your site has been imported!' ) }</CardHeading>
+							<p className="customer-home__migrate-card-subtext">
+								{ this.getChecklistSubHeaderText() }
+							</p>
+						</div>
+					</Card>
+				) }
+				{ ! siteIsUnlaunched && 'launched' === checklistMode ? (
+					<Card className="customer-home__launch-card" highlight="info">
+						<img
+							src={ fireworksIllustration }
 							aria-hidden="true"
 							className="customer-home__launch-fireworks"
 							alt=""
@@ -278,6 +307,8 @@ class Home extends Component {
 							</p>
 						</div>
 					</Card>
+				) : (
+					displayWelcomeBanner && <WelcomeBanner />
 				) }
 			</>
 		);
@@ -292,6 +323,7 @@ class Home extends Component {
 			isChecklistComplete,
 			siteIsUnlaunched,
 			isEstablishedSite,
+			displayWelcomeBanner,
 		} = this.props;
 
 		if ( ! canUserUseCustomerHome ) {
@@ -313,7 +345,7 @@ class Home extends Component {
 				<SidebarNavigation />
 				<div className="customer-home__page-heading">{ this.renderCustomerHomeHeader() }</div>
 				{ //Only show upgrade nudges to sites > 2 days old
-				isEstablishedSite && (
+				isEstablishedSite && ! displayWelcomeBanner && (
 					<div className="customer-home__upsells">
 						<StatsBanners
 							siteId={ siteId }
@@ -616,14 +648,18 @@ const connectHome = connect(
 			const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
 			themeInfo = { currentTheme, currentThemeId };
 		}
-
+		const isNewlyCreatedSite = isNewSite( state, siteId );
 		const isAtomic = isAtomicSite( state, siteId );
 		const isChecklistComplete = isSiteChecklistComplete( state, siteId );
 		const createdAt = getSiteOption( state, siteId, 'created_at' );
+		const user = getCurrentUser( state );
+		const displayWelcomeBanner =
+			! isNewlyCreatedSite && user.date && new Date( user.date ) < new Date( '2019-08-06' );
 
 		return {
 			displayChecklist:
 				isEligibleForDotcomChecklist( state, siteId ) && hasChecklistData && ! isChecklistComplete,
+			displayWelcomeBanner,
 			site: getSelectedSite( state ),
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
@@ -636,13 +672,14 @@ const connectHome = connect(
 			needsEmailVerification: ! isCurrentUserEmailVerified( state ),
 			isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 			siteHasPaidPlan: isSiteOnPaidPlan( state, siteId ),
-			isNewlyCreatedSite: isNewSite( state, siteId ),
+			isNewlyCreatedSite,
 			isEstablishedSite: moment().isAfter( moment( createdAt ).add( 2, 'days' ) ),
+			isRecentlyMigratedSite: isSiteRecentlyMigrated( state, siteId ),
 			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 			staticHomePageId: getSiteFrontPage( state, siteId ),
 			showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
 			hasCustomDomain: getGSuiteSupportedDomains( domains ).length > 0,
-			user: getCurrentUser( state ),
+			user,
 			...themeInfo,
 		};
 	},

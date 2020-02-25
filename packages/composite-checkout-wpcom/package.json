@@ -37,10 +37,10 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/composite-checkout-wpcom#readme",
 	"dependencies": {
 		"@automattic/composite-checkout": "file:../composite-checkout",
-		"@emotion/core": "10.0.22",
-		"@emotion/styled": "10.0.23",
-		"debug": "4.1.1",
-		"emotion-theming": "10.0.19",
+		"@emotion/core": "^10.0.27",
+		"@emotion/styled": "^10.0.27",
+		"debug": "^4.1.1",
+		"emotion-theming": "^10.0.27",
 		"i18n-calypso": "file:../i18n-calypso",
 		"prop-types": "^15.7.2",
 		"react-stripe-elements": "^5.1.0"

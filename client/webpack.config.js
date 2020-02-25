@@ -188,6 +188,7 @@ const webpackConfig = {
 				store: 'store/dist/store.modern',
 				gridicons$: path.resolve( __dirname, 'components/gridicon' ),
 				'@wordpress/data': require.resolve( '@wordpress/data' ),
+				'@wordpress/i18n': require.resolve( '@wordpress/i18n' ),
 			},
 			getAliasesForExtensions( {
 				extensionsDirectory: path.resolve( __dirname, 'extensions' ),

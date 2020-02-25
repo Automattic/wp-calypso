@@ -16,6 +16,7 @@ import {
 	tryAndCustomize as tryAndCustomizeAction,
 	confirmDelete,
 	showThemePreview as themePreview,
+	showAutoLoadingHomepageWarning as showAutoLoadingHomepageWarningAction,
 } from 'state/themes/actions';
 import {
 	getThemeSignupUrl,
@@ -145,6 +146,10 @@ function getAllThemeOptions() {
 		action: themePreview,
 	};
 
+	const showAutoLoadingHomepageWarning = {
+		action: showAutoLoadingHomepageWarningAction,
+	};
+
 	const signupLabel = translate( 'Pick this design', {
 		comment: 'when signing up for a WordPress.com account with a selected theme',
 	} );
@@ -193,6 +198,7 @@ function getAllThemeOptions() {
 		info,
 		support,
 		help,
+		showAutoLoadingHomepageWarning,
 	};
 }
 export const connectOptions = connect(

@@ -27,14 +27,14 @@ exports[`TemplateSelectorControl Basic rendering renders with required props 1`]
             type="button"
             value="blank"
           >
-            <div
+            <span
               class="template-selector-item__preview-wrap"
             >
               <img
                 alt=""
                 class="template-selector-item__media"
               />
-            </div>
+            </span>
           </button>
         </li>
         <li
@@ -46,7 +46,7 @@ exports[`TemplateSelectorControl Basic rendering renders with required props 1`]
             type="button"
             value="template-1"
           >
-            <div
+            <span
               class="template-selector-item__preview-wrap"
             >
               <img
@@ -54,7 +54,7 @@ exports[`TemplateSelectorControl Basic rendering renders with required props 1`]
                 class="template-selector-item__media"
                 src="https://via.placeholder.com/350x150"
               />
-            </div>
+            </span>
           </button>
         </li>
         <li
@@ -66,7 +66,7 @@ exports[`TemplateSelectorControl Basic rendering renders with required props 1`]
             type="button"
             value="template-2"
           >
-            <div
+            <span
               class="template-selector-item__preview-wrap"
             >
               <img
@@ -74,7 +74,7 @@ exports[`TemplateSelectorControl Basic rendering renders with required props 1`]
                 class="template-selector-item__media"
                 src="https://via.placeholder.com/300x250"
               />
-            </div>
+            </span>
           </button>
         </li>
         <li
@@ -86,7 +86,7 @@ exports[`TemplateSelectorControl Basic rendering renders with required props 1`]
             type="button"
             value="template-3"
           >
-            <div
+            <span
               class="template-selector-item__preview-wrap"
             >
               <img
@@ -94,7 +94,7 @@ exports[`TemplateSelectorControl Basic rendering renders with required props 1`]
                 class="template-selector-item__media"
                 src="https://via.placeholder.com/500x200"
               />
-            </div>
+            </span>
           </button>
         </li>
       </ul>

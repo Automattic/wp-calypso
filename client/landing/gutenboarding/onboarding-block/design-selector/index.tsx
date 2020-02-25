@@ -1,17 +1,16 @@
 /**
  * External dependencies
  */
-import { __ as NO__ } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { useLayoutEffect, useRef, FunctionComponent } from 'react';
 import classnames from 'classnames';
 import PageLayoutSelector from './page-layout-selector';
 import { partition } from 'lodash';
-import { Portal } from 'reakit/Portal';
-import { useDialogState, Dialog, DialogBackdrop } from 'reakit/Dialog';
+import { useDialogState, Dialog } from 'reakit/Dialog';
 import { useSpring, animated } from 'react-spring';
 import { useHistory } from 'react-router-dom';
 import { Step, usePath } from '../../path';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -31,6 +30,7 @@ interface Props {
 }
 
 const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false } ) => {
+	const { __: NO__ } = useI18n();
 	const { selectedDesign, siteVertical } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
@@ -112,6 +112,7 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 				className={ classnames( 'design-selector__grid-container', {
 					'is-page-selector-open': showPageSelector,
 				} ) }
+				tabIndex={ -1 }
 			>
 				<div className="design-selector__grid">
 					{ designs.map( design => (
@@ -129,7 +130,9 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 											visibility: showPageSelector ? 'hidden' : undefined,
 									  }
 							}
+							tabIndex={ showPageSelector ? -1 : 0 }
 							onClick={ () => {
+								if ( showPageSelector ) return;
 								window.scrollTo( 0, 0 );
 								setSelectedDesign( design );
 								history.push( makePath( Step.PageSelection ) );
@@ -154,29 +157,25 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 				</div>
 			</animated.div>
 
-			<Portal>
-				<DialogBackdrop
-					visible={ showPageSelector }
-					className="design-selector__page-layout-backdrop"
-				/>
-			</Portal>
-
-			<Dialog
-				{ ...dialog }
-				hide={ () => {
-					history.push( makePath( Step.DesignSelection ) );
-				} }
-				aria-labelledby="page-layout-selector__title"
-				hideOnClickOutside
-				hideOnEsc
+			<animated.div
+				className={ classnames( 'design-selector__page-layout-container', {
+					'is-open': showPageSelector,
+				} ) }
+				style={ pageSelectorSpring }
 			>
-				<animated.div
-					className="design-selector__page-layout-container"
-					style={ pageSelectorSpring }
+				<Dialog
+					{ ...dialog }
+					modal={ false }
+					hide={ () => {
+						history.push( makePath( Step.DesignSelection ) );
+					} }
+					aria-labelledby="page-layout-selector__title"
+					hideOnClickOutside={ false }
+					hideOnEsc
 				>
 					<PageLayoutSelector templates={ otherTemplates } />
-				</animated.div>
-			</Dialog>
+				</Dialog>
+			</animated.div>
 		</animated.div>
 	);
 };

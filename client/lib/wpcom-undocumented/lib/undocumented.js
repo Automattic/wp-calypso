@@ -1203,11 +1203,6 @@ function addReaderContentWidth( params ) {
 	}
 }
 
-Undocumented.prototype.discoverFeed = function( query, fn ) {
-	debug( '/read/feed' );
-	return this.wpcom.req.get( '/read/feed/', query, fn );
-};
-
 Undocumented.prototype.readFeedPost = function( query, fn ) {
 	const params = omit( query, [ 'feedId', 'postId' ] );
 	debug( '/read/feed/' + query.feedId + '/posts/' + query.postId );

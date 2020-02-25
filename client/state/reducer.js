@@ -19,7 +19,6 @@ import activePromotions from './active-promotions/reducer';
 import activityLog from './activity-log/reducer';
 import application from './application/reducer';
 import applicationPasswords from './application-passwords/reducer';
-import automatedTransfer from './automated-transfer/reducer';
 import atomicHosting from './hosting/reducer';
 import atomicTransfer from './atomic-transfer/reducer';
 import billingTransactions from './billing-transactions/reducer';
@@ -108,7 +107,6 @@ const reducers = {
 	activityLog,
 	application,
 	applicationPasswords,
-	automatedTransfer,
 	atomicHosting,
 	atomicTransfer,
 	billingTransactions,

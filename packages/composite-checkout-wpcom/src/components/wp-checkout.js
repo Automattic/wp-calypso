@@ -11,6 +11,7 @@ import {
 	useSelect,
 	useLineItems,
 	useDispatch,
+	useTotal,
 } from '@automattic/composite-checkout';
 
 /**
@@ -62,6 +63,7 @@ export default function WPCheckout( {
 } ) {
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( submitCoupon );
+	const total = useTotal();
 
 	const reviewContent = (
 		<WPCheckoutOrderReview
@@ -145,7 +147,12 @@ export default function WPCheckout( {
 				return isActive;
 			},
 		},
-	];
+	].filter( step => {
+		if ( total.amount.value === 0 && step.id === 'contact-form' ) {
+			return false;
+		}
+		return true;
+	} );
 
 	return <Checkout steps={ steps } />;
 }

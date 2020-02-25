@@ -81,8 +81,8 @@ class StepUpgrade extends Component {
 							<h4 className="migrate__plan-feature-header">
 								{ translate( 'Your custom themes' ) }
 							</h4>
-							{ themes.slice( 0, 2 ).map( theme => (
-								<div className="migrate__plan-upsell-item">
+							{ themes.slice( 0, 2 ).map( ( theme, index ) => (
+								<div className="migrate__plan-upsell-item" key={ index }>
 									<Gridicon size={ 18 } icon="checkmark" />
 									<div className="migrate__plan-upsell-item-label">{ theme.name }</div>
 								</div>
@@ -100,8 +100,8 @@ class StepUpgrade extends Component {
 							<h4 className="migrate__plan-feature-header">
 								{ translate( 'Your active plugins' ) }
 							</h4>
-							{ plugins.slice( 0, 2 ).map( plugin => (
-								<div className="migrate__plan-upsell-item">
+							{ plugins.slice( 0, 2 ).map( ( plugin, index ) => (
+								<div className="migrate__plan-upsell-item" key={ index }>
 									<Gridicon size={ 18 } icon="checkmark" />
 									<div className="migrate__plan-upsell-item-label">{ plugin.name }</div>
 								</div>

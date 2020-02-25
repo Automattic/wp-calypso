@@ -1,19 +1,22 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+
 /**
  * Internal dependencies
  */
 import QueryControls from '../../components/query-controls';
+import { STORE_NAMESPACE } from './store';
+import { isBlogPrivate, isSpecificPostModeActive, queryCriteriaFromAttributes } from './utils';
 
 /**
  * External dependencies
  */
 import classNames from 'classnames';
-import { isUndefined, pickBy } from 'lodash';
-import moment from 'moment';
 
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
+import { dateI18n, __experimentalGetSettings } from '@wordpress/date';
 import { Component, Fragment, RawHTML } from '@wordpress/element';
 import {
 	BlockControls,
@@ -30,22 +33,24 @@ import {
 	RangeControl,
 	Toolbar,
 	ToggleControl,
-	Dashicon,
 	Placeholder,
 	Spinner,
 	BaseControl,
 	Path,
 	SVG,
 } from '@wordpress/components';
-import { withSelect } from '@wordpress/data';
+import { withDispatch, withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
-import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
 
-/**
- * Module Constants
- */
-const MAX_POSTS_COLUMNS = 6;
+let IS_SUBTITLE_SUPPORTED_IN_THEME;
+if (
+	typeof window === 'object' &&
+	window.newspackIsPostSubtitleSupported &&
+	window.newspackIsPostSubtitleSupported.post_subtitle
+) {
+	IS_SUBTITLE_SUPPORTED_IN_THEME = true;
+}
 
 /* From https://material.io/tools/icons */
 const landscapeIcon = (
@@ -93,6 +98,7 @@ class Edit extends Component {
 			minHeight,
 			showCaption,
 			showExcerpt,
+			showSubtitle,
 			showAuthor,
 			showAvatar,
 			showDate,
@@ -113,8 +119,8 @@ class Edit extends Component {
 				minHeight / 5 + 'vh',
 		};
 
-		const authorNumber = post.newspack_author_info.length;
 		const postTitle = this.titleForPost( post );
+		const dateFormat = __experimentalGetSettings().formats.date;
 		return (
 			<article
 				className={ post.newspack_featured_image_src ? 'post-has-image' : null }
@@ -125,15 +131,16 @@ class Edit extends Component {
 					<figure className="post-thumbnail" key="thumbnail">
 						<a href="#">
 							{ imageShape === 'landscape' && (
-								<img src={ post.newspack_featured_image_src.landscape } />
+								<img src={ post.newspack_featured_image_src.landscape } alt="" />
 							) }
 							{ imageShape === 'portrait' && (
-								<img src={ post.newspack_featured_image_src.portrait } />
+								<img src={ post.newspack_featured_image_src.portrait } alt="" />
 							) }
-							{ imageShape === 'square' && <img src={ post.newspack_featured_image_src.square } /> }
-
+							{ imageShape === 'square' && (
+								<img src={ post.newspack_featured_image_src.square } alt="" />
+							) }
 							{ imageShape === 'uncropped' && (
-								<img src={ post.newspack_featured_image_src.uncropped } />
+								<img src={ post.newspack_featured_image_src.uncropped } alt="" />
 							) }
 						</a>
 						{ showCaption && '' !== post.newspack_featured_image_caption && (
@@ -157,6 +164,14 @@ class Edit extends Component {
 							<a href="#">{ postTitle }</a>
 						</h3>
 					) }
+					{ IS_SUBTITLE_SUPPORTED_IN_THEME && showSubtitle && (
+						<RawHTML
+							key="subtitle"
+							className="newspack-post-subtitle newspack-post-subtitle--in-homepage-block"
+						>
+							{ post.meta.newspack_post_subtitle || '' }
+						</RawHTML>
+					) }
 					{ showExcerpt && (
 						<RawHTML key="excerpt" className="excerpt-contain">
 							{ post.excerpt.rendered }
@@ -167,9 +182,7 @@ class Edit extends Component {
 						{ showAuthor && this.formatByline( post.newspack_author_info ) }
 						{ showDate && (
 							<time className="entry-date published" key="pub-date">
-								{ moment( post.date_gmt )
-									.local()
-									.format( 'MMMM DD, Y' ) }
+								{ dateI18n( dateFormat, post.date_gmt ) }
 							</time>
 						) }
 					</div>
@@ -201,7 +214,7 @@ class Edit extends Component {
 
 	formatByline = authorInfo => (
 		<span className="byline">
-			{ __( 'by', 'newspack-blocks' ) }{ ' ' }
+			{ _x( 'by', 'post author', 'newspack-blocks' ) }{ ' ' }
 			{ authorInfo.reduce( ( accumulator, author, index ) => {
 				return [
 					...accumulator,
@@ -213,29 +226,20 @@ class Edit extends Component {
 					index < authorInfo.length - 2 && ', ',
 					authorInfo.length > 1 &&
 						index === authorInfo.length - 2 &&
-						__( ' and ', 'newspack-blocks' ),
+						_x( ' and ', 'post author', 'newspack-blocks' ),
 				];
 			}, [] ) }
 		</span>
 	);
 
 	renderInspectorControls = () => {
-		const {
-			attributes,
-			setAttributes,
-			latestPosts,
-			isSelected,
-			textColor,
-			setTextColor,
-		} = this.props;
-		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
+		const { attributes, setAttributes, textColor, setTextColor } = this.props;
 
 		const {
 			authors,
 			specificPosts,
 			postsToShow,
 			categories,
-			sectionHeader,
 			columns,
 			showImage,
 			showCaption,
@@ -243,8 +247,8 @@ class Edit extends Component {
 			mobileStack,
 			minHeight,
 			moreButton,
-			moreButtonText,
 			showExcerpt,
+			showSubtitle,
 			typeScale,
 			showDate,
 			showAuthor,
@@ -255,7 +259,6 @@ class Edit extends Component {
 			specificMode,
 			tags,
 			tagExclusions,
-			url,
 		} = attributes;
 
 		const imageSizeOptions = [
@@ -293,39 +296,53 @@ class Edit extends Component {
 					{ postsToShow && (
 						<QueryControls
 							numberOfItems={ postsToShow }
-							onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
+							onNumberOfItemsChange={ _postsToShow =>
+								setAttributes( { postsToShow: _postsToShow } )
+							}
 							specificMode={ specificMode }
-							onSpecificModeChange={ value => setAttributes( { specificMode: value } ) }
+							onSpecificModeChange={ _specificMode =>
+								setAttributes( { specificMode: _specificMode } )
+							}
 							specificPosts={ specificPosts }
-							onSpecificPostsChange={ value => setAttributes( { specificPosts: value } ) }
+							onSpecificPostsChange={ _specificPosts =>
+								setAttributes( { specificPosts: _specificPosts } )
+							}
 							authors={ authors }
-							onAuthorsChange={ value => setAttributes( { authors: value } ) }
+							onAuthorsChange={ _authors => setAttributes( { authors: _authors } ) }
 							categories={ categories }
-							onCategoriesChange={ value => setAttributes( { categories: value } ) }
+							onCategoriesChange={ _categories => setAttributes( { categories: _categories } ) }
 							tags={ tags }
-							onTagsChange={ value => setAttributes( { tags: value } ) }
+							onTagsChange={ _tags => {
+								setAttributes( { tags: _tags } );
+							} }
 							tagExclusions={ tagExclusions }
-							onTagExclusionsChange={ value => setAttributes( { tagExclusions: value } ) }
+							onTagExclusionsChange={ _tagExclusions =>
+								setAttributes( { tagExclusions: _tagExclusions } )
+							}
 						/>
 					) }
 					{ postLayout === 'grid' && (
 						<RangeControl
 							label={ __( 'Columns', 'newspack-blocks' ) }
 							value={ columns }
-							onChange={ value => setAttributes( { columns: value } ) }
+							onChange={ _columns => setAttributes( { columns: _columns } ) }
 							min={ 2 }
-							max={
-								! hasPosts ? MAX_POSTS_COLUMNS : Math.min( MAX_POSTS_COLUMNS, latestPosts.length )
-							}
+							max={ 6 }
 							required
 						/>
 					) }
-					{ ! specificMode && (
+					{ ! specificMode && ! isBlogPrivate() && (
+						/*
+						 * Hide the "More" button option on private sites.
+						 *
+						 * Client-side fetching from a private WP.com blog requires authentication,
+						 * which is not provided in the current implementation.
+						 * See https://github.com/Automattic/newspack-blocks/issues/306.
+						 */
 						<ToggleControl
 							label={ __( 'Show "More" Button', 'newspack-blocks' ) }
 							checked={ moreButton }
 							onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
-							help={ __( 'Only available for non-AMP requests.', 'newspack-blocks' ) }
 						/>
 					) }
 				</PanelBody>
@@ -357,9 +374,15 @@ class Edit extends Component {
 									onChange={ () => setAttributes( { mobileStack: ! mobileStack } ) }
 								/>
 							</PanelRow>
-							<BaseControl label={ __( 'Featured Image Size', 'newspack-blocks' ) }>
+							<BaseControl
+								label={ __( 'Featured Image Size', 'newspack-blocks' ) }
+								id="newspackfeatured-image-size"
+							>
 								<PanelRow>
-									<ButtonGroup aria-label={ __( 'Featured Image Size', 'newspack-blocks' ) }>
+									<ButtonGroup
+										id="newspackfeatured-image-size"
+										aria-label={ __( 'Featured Image Size', 'newspack-blocks' ) }
+									>
 										{ imageSizeOptions.map( option => {
 											const isCurrent = imageScale === option.value;
 											return (
@@ -389,7 +412,7 @@ class Edit extends Component {
 								'newspack-blocks'
 							) }
 							value={ minHeight }
-							onChange={ value => setAttributes( { minHeight: value } ) }
+							onChange={ _minHeight => setAttributes( { minHeight: _minHeight } ) }
 							min={ 0 }
 							max={ 100 }
 							required
@@ -397,6 +420,15 @@ class Edit extends Component {
 					) }
 				</PanelBody>
 				<PanelBody title={ __( 'Post Control Settings', 'newspack-blocks' ) }>
+					{ IS_SUBTITLE_SUPPORTED_IN_THEME && (
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Show Subtitle', 'newspack-blocks' ) }
+								checked={ showSubtitle }
+								onChange={ () => setAttributes( { showSubtitle: ! showSubtitle } ) }
+							/>
+						</PanelRow>
+					) }
 					<PanelRow>
 						<ToggleControl
 							label={ __( 'Show Excerpt', 'newspack-blocks' ) }
@@ -408,7 +440,7 @@ class Edit extends Component {
 						className="type-scale-slider"
 						label={ __( 'Type Scale', 'newspack-blocks' ) }
 						value={ typeScale }
-						onChange={ value => setAttributes( { typeScale: value } ) }
+						onChange={ _typeScale => setAttributes( { typeScale: _typeScale } ) }
 						min={ 1 }
 						max={ 10 }
 						beforeIcon="editor-textcolor"
@@ -467,29 +499,26 @@ class Edit extends Component {
 		/**
 		 * Constants
 		 */
+
 		const {
 			attributes,
 			className,
+			clientId,
 			setAttributes,
 			isSelected,
 			latestPosts,
-			hasPosts,
 			textColor,
-		} = this.props; // variables getting pulled out of props
+			markPostsAsDisplayed,
+		} = this.props;
+
 		const {
-			showExcerpt,
-			showDate,
 			showImage,
 			imageShape,
-			showAuthor,
-			showAvatar,
-			postsToShow,
 			postLayout,
 			mediaPosition,
 			moreButton,
 			moreButtonText,
 			columns,
-			categories,
 			typeScale,
 			imageScale,
 			mobileStack,
@@ -583,6 +612,7 @@ class Edit extends Component {
 			},
 		];
 
+		markPostsAsDisplayed( clientId, latestPosts );
 		return (
 			<Fragment>
 				<div
@@ -605,16 +635,18 @@ class Edit extends Component {
 							<Placeholder>{ __( 'Sorry, no posts were found.', 'newspack-blocks' ) }</Placeholder>
 						) }
 						{ ! latestPosts && (
-							<Placeholder>
-								<Spinner />
-							</Placeholder>
+							<Placeholder icon={ <Spinner /> } className="component-placeholder__align-center" />
 						) }
 						{ latestPosts && latestPosts.map( post => this.renderPost( post ) ) }
 					</div>
 				</div>
 
-				{ ! specificMode && latestPosts && moreButton && (
-					<div className="editor-styles-wrapper">
+				{ ! specificMode && latestPosts && moreButton && ! isBlogPrivate() && (
+					/*
+					 * The "More" button option is hidden for private sites, so we should
+					 * also hide the button in case it was previously enabled.
+					 */
+					<div className="editor-styles-wrapper wpnbha__wp-block-button__wrapper">
 						<div className="wp-block-button">
 							<RichText
 								placeholder={ __( 'Load more posts', 'newspack-blocks' ) }
@@ -642,36 +674,26 @@ class Edit extends Component {
 export default compose( [
 	withColors( { textColor: 'color' } ),
 	withSelect( ( select, props ) => {
-		const {
-			postsToShow,
-			authors,
-			categories,
-			tags,
-			tagExclusions,
-			specificPosts,
-			specificMode,
-		} = props.attributes;
-		const { getAuthors, getEntityRecords } = select( 'core' );
-		const latestPostsQuery = pickBy(
-			specificMode && specificPosts && specificPosts.length
-				? {
-						include: specificPosts,
-						orderby: 'include',
-				  }
-				: {
-						per_page: postsToShow,
-						categories,
-						author: authors,
-						tags,
-						tags_exclude: tagExclusions,
-				  },
-			value => ! isUndefined( value )
-		);
-		const postsListQuery = {
-			per_page: 50,
-		};
+		const { attributes, clientId } = props;
+
+		const latestPostsQuery = queryCriteriaFromAttributes( attributes );
+		if ( ! isSpecificPostModeActive( attributes ) ) {
+			const postIdsToExclude = select( STORE_NAMESPACE ).previousPostIds( clientId );
+			latestPostsQuery.exclude = postIdsToExclude.join( ',' );
+		}
+
 		return {
-			latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
+			latestPosts: select( 'core' ).getEntityRecords( 'postType', 'post', latestPostsQuery ),
+		};
+	} ),
+	withDispatch( ( dispatch, props ) => {
+		const { attributes } = props;
+		const markPostsAsDisplayed = isSpecificPostModeActive( attributes )
+			? dispatch( STORE_NAMESPACE ).markSpecificPostsAsDisplayed
+			: dispatch( STORE_NAMESPACE ).markPostsAsDisplayed;
+
+		return {
+			markPostsAsDisplayed,
 		};
 	} ),
 ] )( Edit );

@@ -14,6 +14,7 @@ import { get } from 'lodash';
  */
 import CardHeading from 'components/card-heading';
 import HeaderCake from 'components/header-cake';
+import Notice from 'components/notice';
 import wpLib from 'lib/wp';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -22,7 +23,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
  */
 import './section-migrate.scss';
 import SitesBlock from 'my-sites/migrate/components/sites-block';
-import { redirectTo } from 'my-sites/migrate/helpers';
+import { getImportSectionLocation, redirectTo } from 'my-sites/migrate/helpers';
 
 const wpcom = wpLib.undocumented();
 
@@ -39,8 +40,16 @@ class StepSourceSelect extends Component {
 		isLoading: false,
 	};
 
+	onUrlChange = args => {
+		this.setState( { error: null } );
+		this.props.onUrlChange( args );
+	};
+
 	handleContinue = () => {
-		const { translate } = this.props;
+		const {
+			translate,
+			targetSite: { jetpack: isJetpackSite },
+		} = this.props;
 
 		if ( this.state.isLoading ) {
 			return;
@@ -75,7 +84,7 @@ class StepSourceSelect extends Component {
 								page( `/migrate/choose/${ this.props.targetSiteSlug }` );
 							} );
 						default:
-							if ( validEngines.indexOf( result.site_engine ) === -1 ) {
+							if ( validEngines.indexOf( result.site_engine ) === -1 || isJetpackSite ) {
 								return this.setState( {
 									error: translate( 'This is not a WordPress site' ),
 									isLoading: false,
@@ -107,7 +116,7 @@ class StepSourceSelect extends Component {
 	render() {
 		const { targetSite, targetSiteSlug, translate } = this.props;
 		const backHref = `/import/${ targetSiteSlug }`;
-		const uploadFileLink = `/import/${ targetSiteSlug }?engine=wordpress`;
+		const uploadFileLink = getImportSectionLocation( targetSiteSlug, targetSite.jetpack );
 
 		return (
 			<>
@@ -116,11 +125,11 @@ class StepSourceSelect extends Component {
 					<CardHeading>{ translate( 'What WordPress site do you want to import?' ) }</CardHeading>
 					<div className="migrate__explain">
 						{ translate(
-							"Enter a URL and we'll help you move your site to WordPress.com. If you already have a" +
+							"Enter a URL and we'll help you move your site to WordPress.com. If you already have a " +
 								'backup file, you can {{uploadFileLink}}upload it to import content{{/uploadFileLink}}.',
 							{
 								components: {
-									uploadFileLink: <a href={ uploadFileLink } />,
+									uploadFileLink: <a className="migrate__import-link" href={ uploadFileLink } />,
 								},
 							}
 						) }
@@ -130,11 +139,15 @@ class StepSourceSelect extends Component {
 					sourceSite={ null }
 					loadingSourceSite={ this.state.isLoading }
 					targetSite={ targetSite }
-					onUrlChange={ this.props.onUrlChange }
+					onUrlChange={ this.onUrlChange }
 					onSubmit={ this.handleContinue }
 					url={ this.props.url }
 				/>
-				<p>{ this.state.error }</p>
+				{ this.state.error && (
+					<Notice className="migrate__error" showDismiss={ false } status="is-error">
+						{ this.state.error }
+					</Notice>
+				) }
 				<Card>
 					<Button busy={ this.state.isLoading } onClick={ this.handleContinue } primary={ true }>
 						{ translate( 'Continue' ) }

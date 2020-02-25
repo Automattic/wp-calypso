@@ -25,6 +25,8 @@ import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { abtest } from 'lib/abtest';
+import config from 'config';
 
 /**
  * Style dependencies
@@ -86,14 +88,9 @@ export class PlansStep extends Component {
 		}
 
 		const siteGoals = this.props.siteGoals.split( ',' );
-		let customerType =
+		const customerType =
 			getSiteTypePropertyValue( 'slug', this.props.siteType, 'customerType' ) ||
 			( intersection( siteGoals, [ 'sell', 'promote' ] ).length > 0 ? 'business' : 'personal' );
-
-		// Default to 'business' when the blogger plan is not available.
-		if ( customerType === 'personal' && this.props.disableBloggerPlanWithNonBlogDomain ) {
-			customerType = 'business';
-		}
 
 		return customerType;
 	}
@@ -135,13 +132,40 @@ export class PlansStep extends Component {
 		);
 	}
 
+	getHeaderTextAB() {
+		if (
+			config.isEnabled( 'plans-step-copy-updates' ) &&
+			'variantCopyUpdates' === abtest( 'planStepCopyUpdates' )
+		) {
+			return 'Select your WordPress.com plan';
+		}
+
+		return null;
+	}
+
+	getSubHeaderTextAB() {
+		if (
+			config.isEnabled( 'plans-step-copy-updates' ) &&
+			'variantCopyUpdates' === abtest( 'planStepCopyUpdates' )
+		) {
+			return 'All plans include blazing-fast WordPress hosting.';
+		}
+
+		return null;
+	}
+
 	plansFeaturesSelection() {
 		const { flowName, stepName, positionInFlow, translate, selectedSite, siteSlug } = this.props;
 
-		const headerText = this.props.headerText || translate( "Pick a plan that's right for you." );
+		const headerText =
+			this.getHeaderTextAB() ||
+			this.props.headerText ||
+			translate( "Pick a plan that's right for you." );
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
 		const subHeaderText =
-			this.props.subHeaderText || translate( 'Choose a plan. Upgrade as you grow.' );
+			this.getSubHeaderTextAB() ||
+			this.props.subHeaderText ||
+			translate( 'Choose a plan. Upgrade as you grow.' );
 		const fallbackSubHeaderText = this.props.fallbackSubHeaderText || subHeaderText;
 
 		let backUrl, backLabelText;
