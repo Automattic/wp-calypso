@@ -6,7 +6,7 @@ import { isEmpty, initial, last, isString } from 'lodash';
 /**
  * Internal dependencies
  */
-import { mergePostEdits } from './merge-post-edits';
+import { mergePostEdits } from 'state/posts/utils/merge-post-edits';
 
 /**
  * Appends a new edits object to existing edits log. If the last one is
@@ -18,7 +18,7 @@ import { mergePostEdits } from './merge-post-edits';
  * @param {object} newPostEdits New edits to be appended to the log
  * @returns {Array<object>} Merged edits log
  */
-export const appendToPostEditsLog = ( postEditsLog, newPostEdits ) => {
+export function appendToPostEditsLog( postEditsLog, newPostEdits ) {
 	if ( isEmpty( postEditsLog ) ) {
 		return [ newPostEdits ];
 	}
@@ -32,4 +32,4 @@ export const appendToPostEditsLog = ( postEditsLog, newPostEdits ) => {
 	const newEditsLog = initial( postEditsLog );
 	newEditsLog.push( mergePostEdits( lastEdits, newPostEdits ) );
 	return newEditsLog;
-};
+}

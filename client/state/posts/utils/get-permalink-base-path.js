@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { isPublished } from './is-published';
-import { removeSlug } from './remove-slug';
+import { isPublished } from 'state/posts/utils/is-published';
+import { removeSlug } from 'state/posts/utils/remove-slug';
 
 export function getPermalinkBasePath( post ) {
 	if ( ! post ) {
