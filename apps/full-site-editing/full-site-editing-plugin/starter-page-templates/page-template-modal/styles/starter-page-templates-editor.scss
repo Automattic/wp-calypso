@@ -162,16 +162,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	position: relative;
 	transform: translateZ( 0 ); // Fix for Safari rounded border overflow (1/2).
 
-	.template-selector-item__template-title {
-		width: 100%;
-		position: absolute;
-		bottom: 0;
-		left: 0;
-		height: 40px;
-		line-height: 40px;
-		background-color: $template-selector-empty-background;
-	}
-
 	&:focus {
 		box-shadow: 0 0 0 1px $template-selector-empty-background,
 			0 0 0 3px $template-selector-border-color-active;
@@ -368,10 +358,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 	.template-selector-item__label {
 		max-width: 300px;
-	}
-
-	.template-selector-item__template-title {
-		font-size: 1.2rem;
 	}
 }
 
