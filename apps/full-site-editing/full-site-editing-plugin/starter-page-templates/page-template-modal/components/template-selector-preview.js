@@ -47,27 +47,18 @@ const TemplateSelectorPreview = ( { blocks = [], viewportWidth, title } ) => {
 	// useLayoutEffect( updatePreviewViewport, [ blocks ] );
 
 	useEffect( () => {
-		if ( blocks.length === 1 ) {
-			return;
-		}
-
-		const rePreviewTemplate = () => {
-			// updatePreviewViewport();
-			triggerRecompute();
-		};
-
-		const refreshPreview = debounce( rePreviewTemplate, THRESHOLD_RESIZE );
+		const refreshPreview = debounce( triggerRecompute, THRESHOLD_RESIZE );
 		window.addEventListener( 'resize', refreshPreview );
 
 		// In wp-admin, listen to the jQuery `wp-collapse-menu` event to refresh the preview on sidebar toggle.
 		if ( window.jQuery ) {
-			window.jQuery( window.document ).on( 'wp-collapse-menu', rePreviewTemplate );
+			window.jQuery( window.document ).on( 'wp-collapse-menu', triggerRecompute );
 		}
 
 		return () => {
 			window.removeEventListener( 'resize', refreshPreview );
 		};
-	}, [ blocks ] );
+	}, [] );
 
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
