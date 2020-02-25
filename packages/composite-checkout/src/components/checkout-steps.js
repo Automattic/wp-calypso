@@ -124,6 +124,7 @@ export function CheckoutStep( {
 	completeStepContent,
 	titleContent,
 	stepId,
+	className,
 	isCompleteCallback,
 	editButtonText,
 	editButtonAriaLabel,
@@ -165,6 +166,7 @@ export function CheckoutStep( {
 		'checkout-step',
 		...( isStepActive ? [ 'checkout-step--is-active' ] : [] ),
 		...( isStepComplete ? [ 'checkout-step--is-complete' ] : [] ),
+		...( className ? [ className ] : [] ),
 	];
 
 	return (
