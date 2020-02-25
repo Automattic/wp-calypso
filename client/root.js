@@ -10,17 +10,6 @@ import config from 'config';
 import userFactory from 'lib/user';
 
 export default function() {
-	// TODO: Remove Jetpack Cloud specific logic when root route is no longer handled by the reader section
-	const jetpackCloudEnvs = [
-		'jetpack-cloud-development',
-		'jetpack-cloud-stage',
-		'jetpack-cloud-production',
-	];
-	const calypsoEnv = config( 'env_id' );
-	if ( jetpackCloudEnvs.includes( calypsoEnv ) ) {
-		return;
-	}
-
 	const user = userFactory();
 	const isLoggedOut = ! user.get();
 	if ( isLoggedOut ) {
