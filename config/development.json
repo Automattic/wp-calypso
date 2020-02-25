@@ -39,6 +39,7 @@
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
 		"current-site/stale-cart-notice": true,
+		"custom-editor": true,
 		"desktop-promo": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,

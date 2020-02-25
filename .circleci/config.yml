@@ -324,7 +324,9 @@ jobs:
       - prepare
       - run:
           name: TypeScript strict typecheck of individual subprojects
-          command: yarn run tsc --project client/landing/gutenboarding
+          command: |
+            yarn run tsc --project client/landing/custom-editor
+              && yarn run tsc --project client/landing/gutenboarding
 
   lint:
     <<: *defaults

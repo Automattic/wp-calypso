@@ -1,0 +1,13 @@
+{
+	"extends": "@automattic/calypso-build/tsconfig",
+	"compilerOptions": {
+		// Disallow features that require cross-file information for emit.
+		// Must be used with babel typescript
+		"isolatedModules": true,
+
+		"baseUrl": ".",
+		"paths": {
+			"*": [ "*", "../../*" ]
+		}
+	}
+}
