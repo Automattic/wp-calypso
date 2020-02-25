@@ -15,7 +15,7 @@ import { Button } from '@automattic/components';
 import { getSelectedSite } from 'state/ui/selectors';
 import { siteHasPaidPlan } from 'signup/steps/site-picker/site-picker-submit';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
-import { PLAN_UPSELL_FOR_FREE_USERS } from 'state/current-user/constants';
+import { DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 import {
 	getAllCartItems,
 	hasDomainRegistration,
@@ -160,7 +160,7 @@ const mapStateToProps = ( state, { cart } ) => {
 		planPrice: ! isPlansListFetching && getPlanPrice( state, selectedSite.ID, personalPlan, false ),
 		selectedSite: selectedSite,
 		showPlanUpsell: getCurrentUser( state )
-			? currentUserHasFlag( state, PLAN_UPSELL_FOR_FREE_USERS )
+			? currentUserHasFlag( state, DOMAINS_TO_FREE_USERS )
 			: false,
 	};
 };
