@@ -158,9 +158,13 @@ npm ci
 npm run build-packages
 ```
 
+### Getting NPM permissions to publish in the `@automattic` scope
+
+To publish packages in the `@automattic` scope, and to update packages owned by the `automattic` organization, you need to be a member of this organization on npmjs.com. If you're an Automattician, ask around to find an organization owner or admin who will add you as a member. Publish packages under your own name, so that people can find you and ping you in case anything goes wrong with the published package.
+
 ### Publishing all outdated packages
 
-It might be good to start un-authenticated, since Lerna doesn't have `--dry-run` option like NPM does: `npm logout`.
+It's good to start un-authenticated, since Lerna doesn't have `--dry-run` option like NPM does: `npm logout`.
 
 Now run: `npx lerna publish from-package`
 
@@ -170,15 +174,43 @@ If you say "yes" to the Lerna prompt, and are not authenticated, the publishing 
 
 Now make sure you're logged in at this point, we're going to publish 🚀: `npm whoami`, `npm login`. Enter your username, password, and the OTP code.
 
-Craft the following command, we'll add `--yes` to skip prompts and save OTP cycle time. `--dist-tag next` is optional, use it when publishing unstable versions.
+Before publishing, keep your OTP (one time password) authenticator app around, as NPM will ask for another OTP code when publishing, even though you already entered one code when logging in. We recommend to set your NPM account to the highest security level, which requires two-factor authentication for both authentication and publishing.
 
-Wait for your NPM OTP (one time password) cycle to start -- if your NPM account is correctly set up for maximum security, you'll need to enter the OTP code when publishing, even though you've already logged in with another OTP. Write the code into the command and publish:
+The following command will publish the packages:
 
 ```
-NPM_CONFIG_OTP=[YOUR_OTP_CODE] npx lerna publish --dist-tag next from-package --yes
+npx lerna publish from-package
 ```
+
+Lerna will ask you to confirm the publish action, and will also ask for an OTP code.
 
 Pat yourself on the back, you published!
+
+#### Publishing unstable (beta) versions of packages
+
+If you publish a package the default way, the new version will be tagged in the NPM registry with the `latest` tag. NPM clients will install the `latest` version by default, if no other version is specified.
+
+To publish unstable (alpha, beta) versions of packages, and to keep the `latest` tag pointing to a stable version, you can add a `--dist-tag next` option:
+
+```
+npx lerna publish --dist-tag next from-package
+```
+
+The published packages will be tagged as `next`, and installed only when the `next` tag is specified explicitly:
+
+```
+npm install i18n-calypso@next
+```
+
+#### Running `lerna publish` in non-interactive mode
+
+If you don't want Lerna to ask you any questions when publishing, specify the `--yes` option to skip the confirmation prompt.
+
+The OTP code can be specified as the `NPM_CONFIG_OTP` environment variable, again avoiding Lerna/NPM asking for it interactively. For example:
+
+```
+NPM_CONFIG_OTP=[YOUR_OTP_CODE] npx lerna publish from-package --yes
+```
 
 ### Publishing a single package
 
@@ -196,7 +228,3 @@ git tag "@automattic/components@1.0.0"
 Now `lerna publish from-git` will offer to publish only the packages that have a matching Git tag on the current `HEAD` revision.
 
 The rest of the workflow is exactly the same as in the `from-package` case.
-
-### Getting NPM permissions to publish in the `@automattic` scope
-
-To publish packages in the `@automattic` scope, and to update packages owned by the `automattic` organization, you need to be a member of the `automattic` organization on npmjs.com. If you're an Automattician, ask around to find an organization owner or admin who will add your personal account to the organization. Publish packages under your own name, so that people can find you and ping you in case anything goes wrong with the published package.
