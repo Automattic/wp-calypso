@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-class JetpackCloudScanHistoryPage extends Component {
+class ScanHistoryPage extends Component {
 	render() {
 		return ( <div>Welcome to the scan history page for site { this.props.siteId }</div> );
 	}
@@ -21,4 +21,4 @@ export default connect( state => {
 	return {
 		siteId,
 	};
-} )( JetpackCloudScanHistoryPage );
+} )( ScanHistoryPage );
