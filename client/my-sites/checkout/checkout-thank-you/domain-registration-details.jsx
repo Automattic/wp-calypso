@@ -23,6 +23,7 @@ import PurchaseDetail from 'components/purchase-detail';
 import { EMAIL_VALIDATION_AND_VERIFICATION, DOMAIN_WAITING } from 'lib/url/support';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
+import TrackComponentView from 'lib/analytics/track-component-view';
 
 const DomainRegistrationDetails = ( {
 	selectedSite,
@@ -120,6 +121,10 @@ const DomainRegistrationDetails = ( {
 					buttonText={ i18n.translate( 'Pick a plan' ) }
 					href={ `/plans/${ selectedSite.slug }` }
 				/>
+			) }
+
+			{ showPlanUpsell && (
+				<TrackComponentView eventName="calypso_non_primary_domain_thank_you_upsell_impression" />
 			) }
 		</div>
 	);
