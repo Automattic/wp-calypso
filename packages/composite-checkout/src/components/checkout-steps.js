@@ -103,6 +103,7 @@ function DefaultCheckoutSteps() {
 				stepNumber={ 1 }
 				totalSteps={ 1 }
 				stepId={ 'order-summary' }
+				className={ orderSummaryStep.className }
 			/>
 			<CheckoutSteps>
 				<CheckoutStep
@@ -113,6 +114,7 @@ function DefaultCheckoutSteps() {
 					activeStepContent={ paymentMethodStep.activeStepContent }
 					completeStepContent={ paymentMethodStep.completeStepContent }
 					titleContent={ paymentMethodStep.titleContent }
+					className={ paymentMethodStep.className }
 				/>
 				<CheckoutStep
 					stepId="review-order-step"
@@ -120,6 +122,7 @@ function DefaultCheckoutSteps() {
 					activeStepContent={ reviewOrderStep.activeStepContent }
 					completeStepContent={ reviewOrderStep.completeStepContent }
 					titleContent={ reviewOrderStep.titleContent }
+					className={ reviewOrderStep.className }
 				/>
 			</CheckoutSteps>
 		</React.Fragment>
@@ -287,7 +290,7 @@ export function CheckoutStepBody( {
 					editButtonText={ editButtonText || 'Edit' }
 					editButtonAriaLabel={ editButtonAriaLabel || 'Edit this step' }
 				/>
-				<StepContentUI isVisible={ isStepActive }>
+				<StepContentUI isVisible={ isStepActive } className="checkout-steps__step-content">
 					{ activeStepContent }
 					{ nextStepNumber > 0 && goToNextStep && (
 						<CheckoutNextStepButton
