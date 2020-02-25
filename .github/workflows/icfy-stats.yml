@@ -1,13 +1,13 @@
 name: Calculate ICFY stats
 
 on: [push]
-   
+
 jobs:
   build:
     name: Build ICFY stats
 
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Set up Node
       uses: actions/setup-node@v1
@@ -43,4 +43,4 @@ jobs:
                     "ancestor": "'"$ANCESTOR_SHA1"'"
                   }
                 }'
-        fi 
+        fi
