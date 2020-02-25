@@ -229,7 +229,11 @@ export function CheckoutStepBody( {
 					title={ titleContent }
 					isActive={ isStepActive }
 					isComplete={ isStepComplete }
-					onEdit={ isStepComplete && goToThisStep && ! isStepActive ? goToThisStep : null }
+					onEdit={
+						formStatus === 'ready' && isStepComplete && goToThisStep && ! isStepActive
+							? goToThisStep
+							: null
+					}
 					editButtonText={ editButtonText || 'Edit' }
 					editButtonAriaLabel={ editButtonAriaLabel || 'Edit this step' }
 				/>
