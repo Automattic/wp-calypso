@@ -90,6 +90,7 @@ export class PlanFeaturesHeader extends Component {
 			selectedPlan,
 			title,
 			audience,
+			isEligibleForPlanStepTest,
 			translate,
 		} = this.props;
 
@@ -103,7 +104,12 @@ export class PlanFeaturesHeader extends Component {
 					{ planLevelsMatch( selectedPlan, planType ) && (
 						<PlanPill>{ translate( 'Suggested' ) }</PlanPill>
 					) }
-					{ popular && ! selectedPlan && <PlanPill>{ translate( 'Popular' ) }</PlanPill> }
+					{ popular && ! selectedPlan && ! isEligibleForPlanStepTest && (
+						<PlanPill>{ translate( 'Popular' ) }</PlanPill>
+					) }
+					{ popular && ! selectedPlan && isEligibleForPlanStepTest && (
+						<PlanPill>{ translate( 'Most popular' ) }</PlanPill>
+					) }
 					{ newPlan && ! selectedPlan && <PlanPill>{ translate( 'New' ) }</PlanPill> }
 					{ bestValue && ! selectedPlan && <PlanPill>{ translate( 'Best Value' ) }</PlanPill> }
 				</header>
