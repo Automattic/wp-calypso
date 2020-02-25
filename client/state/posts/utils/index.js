@@ -3,6 +3,7 @@
  */
 import { isPublished } from './is-published';
 import { removeSlug } from './remove-slug';
+import { getPermalinkBasePath } from './get-permalink-base-path';
 
 export { getNormalizedPostsQuery } from './get-normalized-posts-query';
 export { getSerializedPostsQuery } from './get-serialized-posts-query';
@@ -37,21 +38,7 @@ export { isBackDated } from './is-back-dated';
 export { isPage } from './is-page';
 export { getVisibility } from './get-visibility';
 export { removeSlug } from './remove-slug';
-
-export const getPermalinkBasePath = function( post ) {
-	if ( ! post ) {
-		return;
-	}
-
-	let path = post.URL;
-
-	// if we have a permalink_URL, utlize that
-	if ( ! isPublished( post ) && post.other_URLs && post.other_URLs.permalink_URL ) {
-		path = post.other_URLs.permalink_URL;
-	}
-
-	return removeSlug( path );
-};
+export { getPermalinkBasePath } from './get-permalink-base-path';
 
 export const getPagePath = function( post ) {
 	if ( ! post ) {
