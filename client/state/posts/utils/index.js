@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, filter, flow, includes, every, find } from 'lodash';
+import { filter, flow, includes, every, find } from 'lodash';
 import url from 'url';
 
 import { normalizeTermsForApi } from './normalize-terms-for-api';
@@ -25,18 +25,7 @@ export { normalizePostForState } from './normalize-post-for-state';
 export { normalizeTermsForApi } from './normalize-terms-for-api';
 export { isTermsEqual } from './is-terms-equal';
 export { isDiscussionEqual } from './is-discussion-equal';
-
-/**
- * Returns true if the locally edited author ID is equal to the saved post author's ID. Other
- * properties of the `author` object are irrelevant.
- *
- * @param  {object}  localAuthorEdit locally edited author object
- * @param  {object}  savedAuthor     author property returned from API POST
- * @returns {boolean}                 are the locally edited and saved values equal?
- */
-export function isAuthorEqual( localAuthorEdit, savedAuthor ) {
-	return get( localAuthorEdit, 'ID' ) === get( savedAuthor, 'ID' );
-}
+export { isAuthorEqual } from './is-author-equal';
 
 export function isDateEqual( localDateEdit, savedDate ) {
 	// if the local date edit is false, it means we are asking the server to reset
