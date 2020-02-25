@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { isPublished } from './is-published';
+import { removeSlug } from './remove-slug';
 
 export { getNormalizedPostsQuery } from './get-normalized-posts-query';
 export { getSerializedPostsQuery } from './get-serialized-posts-query';
@@ -35,17 +36,7 @@ export { isFutureDated } from './is-future-dated';
 export { isBackDated } from './is-back-dated';
 export { isPage } from './is-page';
 export { getVisibility } from './get-visibility';
-
-export const removeSlug = function( path ) {
-	if ( ! path ) {
-		return;
-	}
-
-	const pathParts = path.slice( 0, -1 ).split( '/' );
-	pathParts[ pathParts.length - 1 ] = '';
-
-	return pathParts.join( '/' );
-};
+export { removeSlug } from './remove-slug';
 
 export const getPermalinkBasePath = function( post ) {
 	if ( ! post ) {
