@@ -30,7 +30,7 @@ jobs:
     - run: mkdir icfy-stats && mv client/{chart,stats}.json icfy-stats
     - uses: actions/upload-artifact@v1
       with:
-        name: stats.json
+        name: icfy
         path: icfy-stats
     - name: Upload build artifact
       env:
