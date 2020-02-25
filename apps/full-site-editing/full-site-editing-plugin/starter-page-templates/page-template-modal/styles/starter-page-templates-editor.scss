@@ -408,21 +408,18 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	overflow: visible;
 	min-height: auto;
 
-	width: 1200px;
+	width: 1440px;
 }
 
 .block-preview-iframe-body {
 	margin: 0;
 	padding: 0;
-	//overflow: hidden;
+	overflow-x: hidden;
+	overflow-y: auto;
 
 	> .edit-post-visual-editor {
 		padding: 0;
 		margin: 0;
-
-		> .editor-styles-wrapper {
-			min-height: 100vh;
-		}
 	}
 
 	&.not-selected {
@@ -433,27 +430,11 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		}
 	}
 
+	// Hide inserter.
 	.block-editor-inserter {
 		display: none;
 		visibility: hidden;
 		position: absolute;
 		left: -9999vw;
-	}
-
-	// Preview adjustments.
-	// Tweak styles which are inside of the preview container.
-	.editor-styles-wrapper {
-		.block-library-cover__resize-container {
-			position: relative;
-			user-select: auto;
-			width: auto;
-			height: auto;
-			min-height: 50px;
-			box-sizing: border-box;
-
-			.wp-block-cover {
-				height: auto;
-			}
-		}
 	}
 }

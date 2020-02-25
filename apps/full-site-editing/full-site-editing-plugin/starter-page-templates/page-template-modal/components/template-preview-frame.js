@@ -3,6 +3,7 @@
  */
 import { each, filter } from 'lodash';
 import { createPortal } from 'react-dom';
+import classnames from 'classnames';
 
 /**
  * WordPress dependencies
@@ -19,7 +20,8 @@ class TemplatePreviewFrame extends Component {
 		this.initStyles();
 
 		// Adjust the scale.
-		this.scale = this.node.parentNode.offsetWidth / this.node.offsetWidth;
+		this.viewportWidth = this.props.viewportWidth || this.node.offsetWidth;
+		this.scale = this.node.parentNode.offsetWidth / this.viewportWidth;
 		this.height = this.node.parentNode.offsetHeight / this.scale;
 	}
 
@@ -70,11 +72,15 @@ class TemplatePreviewFrame extends Component {
 				ref={ node => ( this.node = node ) }
 				style={ {
 					...this.props.style,
+					width: this.viewportWidth,
 					height: this.height,
 					transform: `scale( ${ this.scale } )`,
 				} }
 				id="iframe-page-template-preview"
-				className={ this.props.className }
+				className={ classnames(
+					'editor-styles-wrapper',
+					this.props.className,
+				) }
 			>
 				{ this.iframeHead && createPortal( head, this.iframeHead ) }
 				{ this.iframeBody && createPortal( this.wrapBody( children ), this.iframeBody ) }
