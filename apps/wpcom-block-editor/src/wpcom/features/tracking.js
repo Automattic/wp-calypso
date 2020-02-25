@@ -31,7 +31,7 @@ const getTypeForBlockId = blockId => {
 
 /**
  * This helper function tracks the given blocks recursively
- * in order to be able to do it also for its inner ones.
+ * in order to track inner blocks.
  *
  * The event properties will be populated (optional)
  * propertiesHandler function. It acts as a callback
