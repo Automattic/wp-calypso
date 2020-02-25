@@ -36,8 +36,6 @@ const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
 const getAliasesForExtensions = require( './webpack/extensions' );
 
-console.log( 'Workers: %o', workerCount );
-
 /**
  * Internal variables
  */
