@@ -86,27 +86,72 @@ async function makePayPalExpressRequest( data ) {
 const registry = createRegistry();
 const { registerStore, select, subscribe } = registry;
 
-export function isApplePayAvailable() {
-	// Our Apple Pay implementation uses the Payment Request API, so check that first.
-	if ( ! window.PaymentRequest ) {
-		return false;
-	}
+export function useIsApplePayAvailable( stripe, stripeConfiguration, items ) {
+	const [ canMakePayment, setCanMakePayment ] = useState( 'loading' );
 
-	// Check if Apple Pay is available. This can be very expensive on certain
-	// Safari versions due to a bug (https://trac.webkit.org/changeset/243447/webkit),
-	// and there is no way it can change during a page request, so cache the
-	// result.
-	if ( typeof isApplePayAvailable.canMakePayments === 'undefined' ) {
-		try {
-			isApplePayAvailable.canMakePayments = Boolean(
-				window.ApplePaySession && window.ApplePaySession.canMakePayments()
-			);
-		} catch ( error ) {
-			console.error( error ); // eslint-disable-line no-console
-			return false;
+	useEffect( () => {
+		let isSubscribed = true;
+		// Only calculate this once
+		if ( canMakePayment !== 'loading' ) {
+			return;
 		}
-	}
-	return isApplePayAvailable.canMakePayments;
+
+		// We'll need the Stripe library so wait until it is loaded
+		if ( ! stripe || ! stripeConfiguration ) {
+			return;
+		}
+
+		// Our Apple Pay implementation uses the Payment Request API, so
+		// check that first.
+		if ( ! window.PaymentRequest ) {
+			setCanMakePayment( false );
+			return;
+		}
+
+		// Ask the browser if apple pay can be used. This can be very
+		// expensive on certain Safari versions due to a bug
+		// (https://trac.webkit.org/changeset/243447/webkit)
+		try {
+			const browserResponse = !! window.ApplePaySession?.canMakePayments();
+			if ( ! browserResponse ) {
+				setCanMakePayment( false );
+				return;
+			}
+		} catch ( error ) {
+			setCanMakePayment( false );
+			return;
+		}
+
+		// Ask Stripe if apple pay can be used. This is async.
+		const countryCode =
+			stripeConfiguration && stripeConfiguration.processor_id === 'stripe_ie' ? 'IE' : 'US';
+		const currency = items.reduce(
+			( firstCurrency, item ) => firstCurrency || item.amount.currency,
+			'usd'
+		);
+		const paymentRequestOptions = {
+			requestPayerName: true,
+			requestPayerPhone: false,
+			requestPayerEmail: false,
+			requestShipping: false,
+			country: countryCode,
+			currency: currency.toLowerCase(),
+			// This is just used here to determine if apple pay is available, not for the actual payment, so we leave this blank
+			displayItems: [],
+			total: {
+				label: 'Total',
+				amount: 0,
+			},
+		};
+		const request = stripe.paymentRequest( paymentRequestOptions );
+		request.canMakePayment().then( result => {
+			isSubscribed && setCanMakePayment( !! result?.applePay );
+		} );
+
+		return ( isSubscribed = false );
+	}, [ canMakePayment, stripe, items, stripeConfiguration ] );
+
+	return canMakePayment;
 }
 
 const handleEvent = setItems => () => {
@@ -283,6 +328,7 @@ function MyCheckout() {
 	}, [] );
 	const total = useMemo( () => getTotal( items ), [ items ] );
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
+	const isApplePayAvailable = useIsApplePayAvailable( stripe, stripeConfiguration, items );
 
 	const [ isLoading, setIsLoading ] = useState( true );
 	useEffect( () => {
@@ -317,10 +363,13 @@ function MyCheckout() {
 	}, [ stripe, stripeConfiguration, isStripeLoading, stripeLoadingError ] );
 
 	const applePayMethod = useMemo( () => {
-		if ( ! isApplePayAvailable() ) {
-			return null;
-		}
-		if ( isStripeLoading || stripeLoadingError || ! stripe || ! stripeConfiguration ) {
+		if (
+			isStripeLoading ||
+			stripeLoadingError ||
+			! stripe ||
+			! stripeConfiguration ||
+			! isApplePayAvailable
+		) {
 			return null;
 		}
 		return createApplePayMethod( {
@@ -331,7 +380,7 @@ function MyCheckout() {
 			stripe,
 			stripeConfiguration,
 		} );
-	}, [ stripe, stripeConfiguration, isStripeLoading, stripeLoadingError ] );
+	}, [ stripe, stripeConfiguration, isStripeLoading, stripeLoadingError, isApplePayAvailable ] );
 
 	const paypalMethod = useMemo(
 		() =>
