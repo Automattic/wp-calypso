@@ -19,6 +19,8 @@ class TemplatePreviewFrame extends Component {
 
 		this.initStyles();
 		this.height = '100%';
+
+		this.forceUpdate();
 	}
 
 	componentDidUpdate() {
@@ -54,6 +56,16 @@ class TemplatePreviewFrame extends Component {
 		} );
 	}
 
+	wrapBody( body ) {
+		return (
+			<div className="edit-post-visual-editor">
+				<div className="editor-styles-wrapper">
+					<div className="editor-writing-flow">{ body }</div>
+				</div>
+			</div>
+		);
+	}
+
 	render() {
 		const { children, head } = this.props;
 		/* eslint-disable jsx-a11y/iframe-has-title */
@@ -62,10 +74,10 @@ class TemplatePreviewFrame extends Component {
 				ref={ node => ( this.node = node ) }
 				style={ { height: this.height } }
 				id="iframe-page-template-preview"
-				className="block-preview-iframe"
+				className={ this.props.className }
 			>
 				{ this.iframeHead && ReactDOM.createPortal( head, this.iframeHead ) }
-				{ this.iframeBody && ReactDOM.createPortal( children, this.iframeBody ) }
+				{ this.iframeBody && ReactDOM.createPortal( this.wrapBody( children ), this.iframeBody ) }
 			</iframe>
 		);
 		/* eslint-ensable jsx-a11y/iframe-has-title */
