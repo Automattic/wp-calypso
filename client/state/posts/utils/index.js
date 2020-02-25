@@ -33,14 +33,7 @@ export { isPending } from './is-pending';
 export { getEditedTime } from './get-edited-time';
 export { isFutureDated } from './is-future-dated';
 export { isBackDated } from './is-back-dated';
-
-export const isPage = function( post ) {
-	if ( ! post ) {
-		return false;
-	}
-
-	return post && 'page' === post.type;
-};
+export { isPage } from './is-page';
 
 export const getVisibility = function( post ) {
 	if ( ! post ) {
