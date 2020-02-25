@@ -15,7 +15,6 @@ import {
 	mapValues,
 	mergeWith,
 	omit,
-	omitBy,
 	reduce,
 	toArray,
 	cloneDeep,
@@ -32,12 +31,13 @@ import url from 'url';
 /**
  * Internal dependencies
  */
-import { DEFAULT_POST_QUERY } from 'state/posts/constants';
 import pickCanonicalImage from 'lib/post-normalizer/rule-pick-canonical-image';
 import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
 import detectMedia from 'lib/post-normalizer/rule-content-detect-media';
 import withContentDom from 'lib/post-normalizer/rule-with-content-dom';
 import stripHtml from 'lib/post-normalizer/rule-strip-html';
+
+import { getNormalizedPostsQuery } from './get-normalized-posts-query';
 
 /**
  * Constants
@@ -60,16 +60,7 @@ const normalizeDisplayFlow = flow( [
 	pickCanonicalImage,
 ] );
 
-/**
- * Returns a normalized posts query, excluding any values which match the
- * default post query.
- *
- * @param  {object} query Posts query
- * @returns {object}       Normalized posts query
- */
-export function getNormalizedPostsQuery( query ) {
-	return omitBy( query, ( value, key ) => DEFAULT_POST_QUERY[ key ] === value );
-}
+export { getNormalizedPostsQuery } from './get-normalized-posts-query';
 
 /**
  * Returns a serialized posts query
