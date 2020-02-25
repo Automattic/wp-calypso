@@ -647,6 +647,7 @@ export class PlanFeatures extends Component {
 			isInSignup,
 			isLandingPage,
 			isLaunchPage,
+			isEligibleForPlanStepTest,
 			planProperties,
 			selectedPlan,
 			selectedSiteSlug,
@@ -696,6 +697,7 @@ export class PlanFeatures extends Component {
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
 						isLaunchPage={ isLaunchPage }
+						isEligibleForPlanStepTest={ isEligibleForPlanStepTest }
 						manageHref={ `/plans/my-plan/${ selectedSiteSlug }` }
 						onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
 						planName={ planConstantObj.getTitle() }
