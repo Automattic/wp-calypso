@@ -30,6 +30,7 @@ import { isRequestingPlans } from 'state/plans/selectors';
 import { getPlan } from 'lib/plans';
 import { getPlanPrice } from 'state/products-list/selectors';
 import { isDomainRegistration } from 'lib/products-values';
+import TrackComponentView from 'lib/analytics/track-component-view';
 
 class CartFreeUserPlanUpsell extends React.Component {
 	static propTypes = {
@@ -136,6 +137,7 @@ class CartFreeUserPlanUpsell extends React.Component {
 					<p>{ this.getUpgradeText() }</p>
 					<Button onClick={ () => this.addPlanToCart() }>{ translate( 'Add to Cart' ) }</Button>
 				</div>
+				<TrackComponentView eventName="calypso_non_dwpo_checkout_plan_upsell_impression" />
 			</div>
 		);
 	}
