@@ -10,11 +10,9 @@ import LoginPage from '../pages/login-page.js';
 import EditorPage from '../pages/editor-page';
 import WPAdminLoginPage from '../pages/wp-admin/wp-admin-logon-page';
 import ReaderPage from '../pages/reader-page.js';
-import StatsPage from '../pages/stats-page.js';
 import StoreDashboardPage from '../pages/woocommerce/store-dashboard-page';
 import PluginsBrowserPage from '../pages/plugins-browser-page';
 import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
-import CustomerHomePage from '../pages/customer-home-page';
 
 import SidebarComponent from '../components/sidebar-component.js';
 import NavBarComponent from '../components/nav-bar-component.js';
@@ -202,13 +200,6 @@ export default class LoginFlow {
 			const sideBarComponent = await SidebarComponent.Expect( this.driver );
 			await sideBarComponent.selectSiteSwitcher();
 			await sideBarComponent.searchForSite( siteURL );
-		}
-
-		if ( this.account.username !== 'e2eflowtestinggutenbergsimpleedge' ) {
-			await StatsPage.overrideABTestInLocalStorage( 'customerHomeAll', 'control' );
-			await StatsPage.Expect( this.driver );
-		} else {
-			await CustomerHomePage.Expect( this.driver );
 		}
 	}
 

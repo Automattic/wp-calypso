@@ -12,7 +12,6 @@ import * as dataHelper from '../lib/data-helper';
 
 import LoginFlow from '../lib/flows/login-flow.js';
 import PlansPage from '../lib/pages/plans-page.js';
-import StatsPage from '../lib/pages/stats-page.js';
 import SidebarComponent from '../lib/components/sidebar-component.js';
 import SecurePaymentComponent from '../lib/components/secure-payment-component';
 import NavBarComponent from '../lib/components/nav-bar-component';
@@ -42,8 +41,6 @@ describe( `[${ host }] Plans: (${ screenSize })`, function() {
 		} );
 
 		step( 'Can Select Plans', async function() {
-			const statsPage = await StatsPage.Expect( driver );
-			await statsPage.waitForPage();
 			const sideBarComponent = await SidebarComponent.Expect( driver );
 			return await sideBarComponent.selectPlan();
 		} );
@@ -92,8 +89,6 @@ describe( `[${ host }] Plans: (${ screenSize })`, function() {
 		} );
 
 		step( 'Can Select Plans', async function() {
-			const statsPage = await StatsPage.Expect( driver );
-			await statsPage.waitForPage();
 			const sideBarComponent = await SidebarComponent.Expect( driver );
 			return await sideBarComponent.selectPlan();
 		} );

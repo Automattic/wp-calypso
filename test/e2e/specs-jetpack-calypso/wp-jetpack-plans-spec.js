@@ -13,7 +13,6 @@ import * as dataHelper from '../lib/data-helper';
 import LoginFlow from '../lib/flows/login-flow';
 
 import PlansPage from '../lib/pages/plans-page';
-import StatsPage from '../lib/pages/stats-page';
 import WPAdminJetpackPage from '../lib/pages/wp-admin/wp-admin-jetpack-page';
 
 import ReaderPage from '../lib/pages/reader-page.js';
@@ -87,8 +86,6 @@ describe( `[${ host }] Jetpack Plans: (${ screenSize }) @jetpack`, function() {
 
 			const navbarComponent = await NavBarComponent.Expect( driver );
 			await navbarComponent.clickMySites();
-
-			await StatsPage.Expect( driver );
 
 			const sidebarComponent = await SidebarComponent.Expect( driver );
 			await sidebarComponent.selectPlan();
