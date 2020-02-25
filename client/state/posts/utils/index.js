@@ -28,14 +28,7 @@ export { userCan } from './user-can';
 export { isBackDatedPublished } from './is-back-dated-published';
 export { isPublished } from './is-published';
 export { isScheduled } from './is-scheduled';
-
-export const isPrivate = function( post ) {
-	if ( ! post ) {
-		return false;
-	}
-
-	return post.status === 'private';
-};
+export { isPrivate } from './is-private';
 
 export const isPending = function( post ) {
 	if ( ! post ) {
