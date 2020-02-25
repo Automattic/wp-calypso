@@ -24,12 +24,14 @@ import { EMAIL_VALIDATION_AND_VERIFICATION, DOMAIN_WAITING } from 'lib/url/suppo
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const DomainRegistrationDetails = ( {
 	selectedSite,
 	domain,
 	purchases,
 	hasNonPrimaryDomainsFlag,
+	onPickPlanUpsellClick,
 } ) => {
 	const googleAppsWasPurchased = purchases.some( isGoogleApps ),
 		domainContactEmailVerified = purchases.some( purchase => purchase.isEmailVerified ),
@@ -120,11 +122,12 @@ const DomainRegistrationDetails = ( {
 					) }
 					buttonText={ i18n.translate( 'Pick a plan' ) }
 					href={ `/plans/${ selectedSite.slug }` }
+					onClick={ onPickPlanUpsellClick }
 				/>
 			) }
 
 			{ showPlanUpsell && (
-				<TrackComponentView eventName="calypso_non_primary_domain_thank_you_upsell_impression" />
+				<TrackComponentView eventName="calypso_non_primary_domain_thank_you_plan_upsell_impression" />
 			) }
 		</div>
 	);
@@ -145,4 +148,11 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps )( DomainRegistrationDetails );
+const mapDispatchToProps = dispatch => {
+	return {
+		onPickPlanUpsellClick: () =>
+			dispatch( recordTracksEvent( 'calypso_non_primary_domain_thank_you_plan_upsell_click', {} ) ),
+	};
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( DomainRegistrationDetails );
