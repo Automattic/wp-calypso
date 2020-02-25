@@ -215,7 +215,7 @@ export async function wpcomPayPalExpress(
 	return wp.undocumented().paypalExpressUrl( payload );
 }
 
-export function useIsApplePayAvailable( stripe, stripeConfiguration, items ) {
+export function useIsApplePayAvailable( stripe, stripeConfiguration, isStripeError, items ) {
 	const [ canMakePayment, setCanMakePayment ] = useState( { isLoading: true, value: false } );
 
 	useEffect( () => {
@@ -223,19 +223,29 @@ export function useIsApplePayAvailable( stripe, stripeConfiguration, items ) {
 		const unsubscribe = () => {
 			isSubscribed = false;
 		};
+
 		// Only calculate this once
 		if ( ! canMakePayment.isLoading ) {
 			return unsubscribe;
 		}
 
+		// If stripe did not load, we will never load
+		if ( isStripeError ) {
+			debug( 'isApplePayAvailable giving up due to stripe error' );
+			setCanMakePayment( { isLoading: false, value: false } );
+			return unsubscribe;
+		}
+
 		// We'll need the Stripe library so wait until it is loaded
 		if ( ! stripe || ! stripeConfiguration ) {
+			debug( 'isApplePayAvailable waiting on stripe' );
 			return unsubscribe;
 		}
 
 		// Our Apple Pay implementation uses the Payment Request API, so
 		// check that first.
 		if ( ! window.PaymentRequest ) {
+			debug( 'isApplePayAvailable giving up because there is no paymentRequest API' );
 			setCanMakePayment( { isLoading: false, value: false } );
 			return unsubscribe;
 		}
@@ -246,10 +256,12 @@ export function useIsApplePayAvailable( stripe, stripeConfiguration, items ) {
 		try {
 			const browserResponse = !! window.ApplePaySession?.canMakePayments();
 			if ( ! browserResponse ) {
+				debug( 'isApplePayAvailable giving up because apple pay is not available in browser' );
 				setCanMakePayment( { isLoading: false, value: false } );
 				return unsubscribe;
 			}
 		} catch ( error ) {
+			debug( 'isApplePayAvailable giving up because apple pay is not available in browser' );
 			setCanMakePayment( { isLoading: false, value: false } );
 			return unsubscribe;
 		}
@@ -282,11 +294,12 @@ export function useIsApplePayAvailable( stripe, stripeConfiguration, items ) {
 				debug( 'useIsApplePayAvailable not subscribed; not updating' );
 				return;
 			}
+			debug( 'isApplePayAvailable setting result from Stripe', !! result?.applePay );
 			setCanMakePayment( { isLoading: false, value: !! result?.applePay } );
 		} );
 
 		return unsubscribe;
-	}, [ canMakePayment, stripe, items, stripeConfiguration ] );
+	}, [ canMakePayment, stripe, items, stripeConfiguration, isStripeError ] );
 
 	debug( 'useIsApplePayAvailable', canMakePayment );
 	return { canMakePayment: canMakePayment.value, isLoading: canMakePayment.isLoading };
