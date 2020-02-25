@@ -43,6 +43,8 @@ jobs:
         if [ -e "client/stats.json" ] && [ -e "client/chart.json" ]; then
           ANCESTOR_SHA1=$(git merge-base HEAD origin/master)
           CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          echo 'Ancestor: ' $ANCESTOR_SHA1
+          echo 'CURRENT_BRANCH: ' $CURRENT_BRANCH
           curl -X POST --globoff                                                     \
             "http://api.iscalypsofastyet.com:5000/submit-stats?secret=$ICFY_SECRET"  \
             -H 'Cache-Control: no-cache'                                             \
