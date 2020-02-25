@@ -10,6 +10,8 @@ import debugFactory from 'debug';
  */
 import CheckoutContainer from './checkout-container';
 import CompositeCheckout from './composite-checkout';
+import { fetchStripeConfiguration } from './composite-checkout-payment-methods';
+import { StripeHookProvider } from 'lib/stripe';
 import config from 'config';
 import { getCurrentUserLocale, getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -45,16 +47,18 @@ export default function CheckoutSystemDecider( {
 	}
 	if ( shouldShowCompositeCheckout( cart, countryCode, locale, product, isJetpack ) ) {
 		return (
-			<CompositeCheckout
-				siteSlug={ selectedSite?.slug }
-				siteId={ selectedSite?.ID }
-				product={ product }
-				purchaseId={ purchaseId }
-				couponCode={ couponCode }
-				redirectTo={ redirectTo }
-				feature={ selectedFeature }
-				plan={ plan }
-			/>
+			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+				<CompositeCheckout
+					siteSlug={ selectedSite?.slug }
+					siteId={ selectedSite?.ID }
+					product={ product }
+					purchaseId={ purchaseId }
+					couponCode={ couponCode }
+					redirectTo={ redirectTo }
+					feature={ selectedFeature }
+					plan={ plan }
+				/>
+			</StripeHookProvider>
 		);
 	}
 
