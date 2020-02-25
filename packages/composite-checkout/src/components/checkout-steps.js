@@ -195,6 +195,7 @@ export function CheckoutStep( {
 
 export function CheckoutStepBody( {
 	errorMessage,
+	editButtonText,
 	editButtonAriaLabel,
 	nextStepButtonText,
 	validatingButtonText,
@@ -229,6 +230,7 @@ export function CheckoutStepBody( {
 					isActive={ isStepActive }
 					isComplete={ isStepComplete }
 					onEdit={ isStepComplete && goToThisStep && ! isStepActive ? goToThisStep : null }
+					editButtonText={ editButtonText || 'Edit' }
 					editButtonAriaLabel={ editButtonAriaLabel || 'Edit this step' }
 				/>
 				<StepContentUI isVisible={ isStepActive }>
@@ -349,6 +351,7 @@ function CheckoutStepHeader( {
 	isActive,
 	isComplete,
 	onEdit,
+	editButtonText,
 	editButtonAriaLabel,
 } ) {
 	const localize = useLocalize();
@@ -368,7 +371,7 @@ function CheckoutStepHeader( {
 			</StepTitle>
 			{ shouldShowEditButton && (
 				<Button buttonState="text-button" onClick={ onEdit } aria-label={ editButtonAriaLabel }>
-					{ localize( 'Edit' ) }
+					{ editButtonText || localize( 'Edit' ) }
 				</Button>
 			) }
 		</StepHeader>
@@ -381,6 +384,8 @@ CheckoutStepHeader.propTypes = {
 	title: PropTypes.node.isRequired,
 	isActive: PropTypes.bool,
 	isComplete: PropTypes.bool,
+	editButtonText: PropTypes.string,
+	editButtonAriaLabel: PropTypes.string,
 	onEdit: PropTypes.func,
 };
 
