@@ -22,39 +22,7 @@ export { isDateEqual } from './is-date-equal';
 export { isStatusEqual } from './is-state-equal';
 export { getUnappliedMetadataEdits, areAllMetadataEditsApplied } from './metadata-edits';
 export { normalizePostForApi } from './normalize-post-for-api';
-
-export const getEditURL = function( post, site ) {
-	if ( ! site ) {
-		return '/post';
-	}
-
-	if ( ! post ) {
-		return `/post/${ site.slug }`;
-	}
-
-	let path;
-
-	const type = post.type || 'post';
-	switch ( type ) {
-		case 'post':
-			path = '/post';
-			break;
-		case 'page':
-			path = '/page';
-			break;
-		default:
-			path = `/edit/${ type }`;
-			break;
-	}
-
-	path += `/${ site.slug }`;
-
-	if ( post.ID ) {
-		path += `/${ post.ID }`;
-	}
-
-	return path;
-};
+export { getEditURL } from './get-edit-url';
 
 export const getPreviewURL = function( site, post, autosavePreviewUrl ) {
 	let parsed, previewUrl;
