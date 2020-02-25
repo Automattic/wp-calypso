@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useState, useContext } from 'react';
 import {
 	render,
 	getAllByLabelText as getAllByLabelTextInNode,
@@ -25,11 +25,12 @@ import {
 	useFormStatus,
 	createRegistry,
 	useRegisterStore,
-	usePaymentData,
 	useIsStepComplete,
 } from '../src/public-api';
 
 const noop = () => {};
+const myContext = React.createContext();
+const usePaymentData = () => useContext( myContext );
 
 describe( 'Checkout', () => {
 	describe( 'using the default steps', function() {
@@ -252,25 +253,29 @@ describe( 'Checkout', () => {
 		const mockMethod = createMockMethod();
 		const { items, total } = createMockItems();
 		const steps = createMockStepObjects();
-		const children = createStepsFromStepObjects( steps );
 
 		beforeEach( () => {
-			MyCheckout = props => (
-				<CheckoutProvider
-					locale="en-us"
-					items={ items }
-					total={ total }
-					onPaymentComplete={ noop }
-					showErrorMessage={ noop }
-					showInfoMessage={ noop }
-					showSuccessMessage={ noop }
-					paymentMethods={ [ mockMethod ] }
-				>
-					<Checkout>
-						{ props.steps ? createStepsFromStepObjects( props.steps ) : children }
-					</Checkout>
-				</CheckoutProvider>
-			);
+			MyCheckout = props => {
+				const [ paymentData, setPaymentData ] = useState( {} );
+				return (
+					<myContext.Provider value={ [ paymentData, setPaymentData ] }>
+						<CheckoutProvider
+							locale="en-us"
+							items={ items }
+							total={ total }
+							onPaymentComplete={ noop }
+							showErrorMessage={ noop }
+							showInfoMessage={ noop }
+							showSuccessMessage={ noop }
+							paymentMethods={ [ mockMethod ] }
+						>
+							<Checkout>
+								{ createStepsFromStepObjects( props.steps || steps, paymentData ) }
+							</Checkout>
+						</CheckoutProvider>
+					</myContext.Provider>
+				);
+			};
 		} );
 
 		it( 'renders the step className', () => {
@@ -562,7 +567,8 @@ function createMockItems() {
 	return { items, total };
 }
 
-function createStepsFromStepObjects( stepObjects ) {
+function createStepsFromStepObjects( stepObjects, paymentData ) {
+	const createStepFromStepObject = createStepObjectConverter( paymentData );
 	const stepObjectsWithoutStepNumber = stepObjects.filter(
 		stepObject => ! stepObject.hasStepNumber
 	);
@@ -575,39 +581,41 @@ function createStepsFromStepObjects( stepObjects ) {
 	);
 }
 
-function createStepFromStepObject( stepObject ) {
-	if ( stepObject.hasStepNumber ) {
+function createStepObjectConverter( paymentData ) {
+	return function createStepFromStepObject( stepObject ) {
+		if ( stepObject.hasStepNumber ) {
+			return (
+				<CheckoutStep
+					activeStepContent={ stepObject.activeStepContent }
+					completeStepContent={ stepObject.completeStepContent }
+					titleContent={ stepObject.titleContent }
+					stepId={ stepObject.id }
+					key={ stepObject.id }
+					isCompleteCallback={ () => stepObject.isCompleteCallback( { paymentData } ) }
+					editButtonAriaLabel={ stepObject.getEditButtonAriaLabel() }
+					nextStepButtonAriaLabel={ stepObject.getNextStepButtonAriaLabel() }
+					className={ stepObject.className }
+				/>
+			);
+		}
 		return (
-			<CheckoutStep
+			<CheckoutStepBody
+				errorMessage={ 'error' }
+				editButtonAriaLabel={ stepObject.getEditButtonAriaLabel() }
+				nextStepButtonAriaLabel={ stepObject.getNextStepButtonAriaLabel() }
+				isStepActive={ false }
+				isStepComplete={ true }
+				stepNumber={ 1 }
+				totalSteps={ 1 }
+				stepId={ stepObject.id }
+				key={ stepObject.id }
 				activeStepContent={ stepObject.activeStepContent }
 				completeStepContent={ stepObject.completeStepContent }
 				titleContent={ stepObject.titleContent }
-				stepId={ stepObject.id }
-				key={ stepObject.id }
-				isCompleteCallback={ stepObject.isCompleteCallback }
-				editButtonAriaLabel={ stepObject.getEditButtonAriaLabel() }
-				nextStepButtonAriaLabel={ stepObject.getNextStepButtonAriaLabel() }
 				className={ stepObject.className }
 			/>
 		);
-	}
-	return (
-		<CheckoutStepBody
-			errorMessage={ 'error' }
-			editButtonAriaLabel={ stepObject.getEditButtonAriaLabel() }
-			nextStepButtonAriaLabel={ stepObject.getNextStepButtonAriaLabel() }
-			isStepActive={ false }
-			isStepComplete={ true }
-			stepNumber={ 1 }
-			totalSteps={ 1 }
-			stepId={ stepObject.id }
-			key={ stepObject.id }
-			activeStepContent={ stepObject.activeStepContent }
-			completeStepContent={ stepObject.completeStepContent }
-			titleContent={ stepObject.titleContent }
-			className={ stepObject.className }
-		/>
-	);
+	};
 }
 
 function createMockStepObjects() {
