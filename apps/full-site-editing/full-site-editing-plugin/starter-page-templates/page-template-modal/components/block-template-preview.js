@@ -30,10 +30,10 @@ const BlockTemplatePreview = ( { blocks = [], viewportWidth } ) => {
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<TemplatePreviewFrame>
-			<div class={ `block-preview-iframe-body ${ ! blocks.length ? 'not-selected' : '' }` }>
-				<div class="edit-post-visual-editor">
-					<div class="editor-styles-wrapper">
-						<div class="editor-writing-flow">
+			<div className={ `block-preview-iframe-body ${ ! blocks.length ? 'not-selected' : '' }` }>
+				<div className="edit-post-visual-editor">
+					<div className="editor-styles-wrapper">
+						<div className="editor-writing-flow">
 							<BlockPreview
 								blocks={ blocks }
 								viewportWidth={ viewportWidth }
