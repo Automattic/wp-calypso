@@ -488,7 +488,7 @@ function StripePayButton( { disabled, stripe, stripeConfiguration } ) {
 	const transactionError = useSelect( select => select( 'stripe' ).getTransactionError() );
 	const transactionAuthData = useSelect( select => select( 'stripe' ).getTransactionAuthData() );
 	const { beginStripeTransaction, setStripeComplete, resetTransaction } = useDispatch( 'stripe' );
-	const name = useSelect( select => select( 'stripe' ).getCardholderName() );
+	const cardholderName = useSelect( select => select( 'stripe' ).getCardholderName() );
 	const redirectUrl = useSelect( select => select( 'stripe' ).getRedirectUrl() );
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 	const onEvent = useEvents();
@@ -573,7 +573,7 @@ function StripePayButton( { disabled, stripe, stripeConfiguration } ) {
 			disabled={ disabled }
 			onClick={ () =>
 				submitStripePayment( {
-					name,
+					name: cardholderName?.value,
 					items,
 					total,
 					stripe,
