@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { concat, map, mergeWith, reduce, cloneDeep, find, reject } from 'lodash';
+import { cloneDeep, concat, find, map, mergeWith, reduce, reject } from 'lodash';
 
 /*
  * Applies a metadata edit operation (either update or delete) to an existing array of

@@ -27,8 +27,8 @@ export { isStatusEqual } from 'state/posts/utils/is-state-equal';
 export { isTermsEqual } from 'state/posts/utils/is-terms-equal';
 export { mergePostEdits } from 'state/posts/utils/merge-post-edits';
 export {
-	getUnappliedMetadataEdits,
 	areAllMetadataEditsApplied,
+	getUnappliedMetadataEdits,
 } from 'state/posts/utils/metadata-edits';
 export { normalizePostForApi } from 'state/posts/utils/normalize-post-for-api';
 export { normalizePostForDisplay } from 'state/posts/utils/normalize-post-for-display';

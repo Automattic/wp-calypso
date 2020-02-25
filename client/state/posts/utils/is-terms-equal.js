@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isPlainObject, map, toArray, every, xor } from 'lodash';
+import { every, isPlainObject, map, toArray, xor } from 'lodash';
 
 /**
  * Returns truthy if local terms object is the same as the API response

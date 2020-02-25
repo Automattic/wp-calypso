@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { concat, mergeWith, reduce, cloneDeep, isString, find, reject } from 'lodash';
+import { cloneDeep, concat, find, isString, mergeWith, reduce, reject } from 'lodash';
 
 function mergeMetadataEdits( edits, nextEdits ) {
 	// remove existing edits that get updated in `nextEdits`

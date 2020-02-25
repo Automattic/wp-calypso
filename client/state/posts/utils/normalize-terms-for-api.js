@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { pickBy, isString, every } from 'lodash';
+import { every, isString, pickBy } from 'lodash';
 
 /**
  * Returns a normalized post terms object for sending to the API

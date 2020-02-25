@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { map, reduce, cloneDeep, unset } from 'lodash';
+import { cloneDeep, map, reduce, unset } from 'lodash';
 
 /**
  * Given a post object, returns a normalized post object prepared for storing

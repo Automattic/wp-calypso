@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { flow, cloneDeep } from 'lodash';
+import { cloneDeep, flow } from 'lodash';
 
 /**
  * Internal dependencies

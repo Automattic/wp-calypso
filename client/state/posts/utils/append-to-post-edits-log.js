@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, initial, last, isString } from 'lodash';
+import { initial, isEmpty, isString, last } from 'lodash';
 
 /**
  * Internal dependencies
