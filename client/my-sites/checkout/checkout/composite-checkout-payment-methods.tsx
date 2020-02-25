@@ -216,25 +216,25 @@ export async function wpcomPayPalExpress(
 }
 
 export function useIsApplePayAvailable( stripe, stripeConfiguration, items ) {
-	const [ canMakePayment, setCanMakePayment ] = useState( 'loading' );
+	const [ canMakePayment, setCanMakePayment ] = useState( { isLoading: true, value: false } );
 
 	useEffect( () => {
 		let isSubscribed = true;
 		// Only calculate this once
-		if ( canMakePayment !== 'loading' ) {
-			return;
+		if ( canMakePayment.isLoading ) {
+			return () => ( isSubscribed = false );
 		}
 
 		// We'll need the Stripe library so wait until it is loaded
 		if ( ! stripe || ! stripeConfiguration ) {
-			return;
+			return () => ( isSubscribed = false );
 		}
 
 		// Our Apple Pay implementation uses the Payment Request API, so
 		// check that first.
 		if ( ! window.PaymentRequest ) {
-			setCanMakePayment( false );
-			return;
+			setCanMakePayment( { isLoading: false, value: false } );
+			return () => ( isSubscribed = false );
 		}
 
 		// Ask the browser if apple pay can be used. This can be very
@@ -243,12 +243,12 @@ export function useIsApplePayAvailable( stripe, stripeConfiguration, items ) {
 		try {
 			const browserResponse = !! window.ApplePaySession?.canMakePayments();
 			if ( ! browserResponse ) {
-				setCanMakePayment( false );
-				return;
+				setCanMakePayment( { isLoading: false, value: false } );
+				return () => ( isSubscribed = false );
 			}
 		} catch ( error ) {
-			setCanMakePayment( false );
-			return;
+			setCanMakePayment( { isLoading: false, value: false } );
+			return () => ( isSubscribed = false );
 		}
 
 		// Ask Stripe if apple pay can be used. This is async.
@@ -274,11 +274,14 @@ export function useIsApplePayAvailable( stripe, stripeConfiguration, items ) {
 		};
 		const request = stripe.paymentRequest( paymentRequestOptions );
 		request.canMakePayment().then( result => {
-			isSubscribed && setCanMakePayment( !! result?.applePay );
+			if ( ! isSubscribed ) {
+				return;
+			}
+			setCanMakePayment( { isLoading: false, value: !! result?.applePay } );
 		} );
 
 		return () => ( isSubscribed = false );
 	}, [ canMakePayment, stripe, items, stripeConfiguration ] );
 
-	return { canMakePayment: canMakePayment === true, isLoading: canMakePayment === 'loading' };
+	return { canMakePayment: canMakePayment.value, isLoading: canMakePayment.isLoading };
 }
