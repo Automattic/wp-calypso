@@ -36,7 +36,6 @@ jobs:
       env:
         ICFY_SECRET: ${{ secrets.ICFY_SECRET }}
       run: |
-        set +o errexit
         ANCESTOR_SHA1=$(git merge-base HEAD origin/master)
         CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
         echo 'Ancestor: ' $ANCESTOR_SHA1
