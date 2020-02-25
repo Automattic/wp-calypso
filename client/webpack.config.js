@@ -49,6 +49,7 @@ const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'fa
 const shouldShowProgress = process.env.PROGRESS && process.env.PROGRESS !== 'false';
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
+const shouldConcatenateModules = process.env.CONCATENATE_MODULES !== 'false';
 const isCalypsoClient = process.env.BROWSERSLIST_ENV !== 'server';
 const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
 
@@ -115,6 +116,7 @@ const webpackConfig = {
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]',
 	},
 	optimization: {
+		concatenateModules: shouldConcatenateModules,
 		splitChunks: {
 			chunks: 'all',
 			name: !! ( isDevelopment || shouldEmitStats ),
