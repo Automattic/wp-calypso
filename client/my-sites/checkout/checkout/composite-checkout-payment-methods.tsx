@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect, useState } from 'react';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { prepareDomainContactDetails } from '@automattic/composite-checkout-wpcom';
@@ -99,29 +99,6 @@ export async function makePayPalExpressRequest(
 export function getDomainDetails( select ) {
 	const managedContactDetails = select( 'wpcom' )?.getContactInfo?.() ?? {};
 	return prepareDomainContactDetails( managedContactDetails );
-}
-
-export function isApplePayAvailable(): boolean {
-	// Our Apple Pay implementation uses the Payment Request API, so check that first.
-	if ( ! window.PaymentRequest ) {
-		return false;
-	}
-
-	// Check if Apple Pay is available. This can be very expensive on certain
-	// Safari versions due to a bug (https://trac.webkit.org/changeset/243447/webkit),
-	// and there is no way it can change during a page request, so cache the
-	// result.
-	if ( typeof isApplePayAvailable.canMakePayments === 'undefined' ) {
-		try {
-			isApplePayAvailable.canMakePayments = Boolean(
-				window.ApplePaySession && window.ApplePaySession.canMakePayments()
-			);
-		} catch ( error ) {
-			console.error( error ); // eslint-disable-line no-console
-			return false;
-		}
-	}
-	return isApplePayAvailable.canMakePayments;
 }
 
 export async function fetchStripeConfiguration( requestArgs, wpcom ) {
@@ -236,4 +213,72 @@ export async function wpcomPayPalExpress(
 	payload: PayPalExpressEndpointRequestPayload
 ): Promise< PayPalExpressEndpointResponse > {
 	return wp.undocumented().paypalExpressUrl( payload );
+}
+
+export function useIsApplePayAvailable( stripe, stripeConfiguration, items ) {
+	const [ canMakePayment, setCanMakePayment ] = useState( 'loading' );
+
+	useEffect( () => {
+		let isSubscribed = true;
+		// Only calculate this once
+		if ( canMakePayment !== 'loading' ) {
+			return;
+		}
+
+		// We'll need the Stripe library so wait until it is loaded
+		if ( ! stripe || ! stripeConfiguration ) {
+			return;
+		}
+
+		// Our Apple Pay implementation uses the Payment Request API, so
+		// check that first.
+		if ( ! window.PaymentRequest ) {
+			setCanMakePayment( false );
+			return;
+		}
+
+		// Ask the browser if apple pay can be used. This can be very
+		// expensive on certain Safari versions due to a bug
+		// (https://trac.webkit.org/changeset/243447/webkit)
+		try {
+			const browserResponse = !! window.ApplePaySession?.canMakePayments();
+			if ( ! browserResponse ) {
+				setCanMakePayment( false );
+				return;
+			}
+		} catch ( error ) {
+			setCanMakePayment( false );
+			return;
+		}
+
+		// Ask Stripe if apple pay can be used. This is async.
+		const countryCode =
+			stripeConfiguration && stripeConfiguration.processor_id === 'stripe_ie' ? 'IE' : 'US';
+		const currency = items.reduce(
+			( firstCurrency, item ) => firstCurrency || item.amount.currency,
+			'usd'
+		);
+		const paymentRequestOptions = {
+			requestPayerName: true,
+			requestPayerPhone: false,
+			requestPayerEmail: false,
+			requestShipping: false,
+			country: countryCode,
+			currency: currency.toLowerCase(),
+			// This is just used here to determine if apple pay is available, not for the actual payment, so we leave this blank
+			displayItems: [],
+			total: {
+				label: 'Total',
+				amount: 0,
+			},
+		};
+		const request = stripe.paymentRequest( paymentRequestOptions );
+		request.canMakePayment().then( result => {
+			isSubscribed && setCanMakePayment( !! result?.applePay );
+		} );
+
+		return ( isSubscribed = false );
+	}, [ canMakePayment, stripe, items, stripeConfiguration ] );
+
+	return { canMakePayment: canMakePayment === true, isLoading: canMakePayment === 'loading' };
 }
