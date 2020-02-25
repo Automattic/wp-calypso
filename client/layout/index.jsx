@@ -213,7 +213,10 @@ export default connect( state => {
 	const sectionJitmPath = getMessagePathForJITM( currentRoute );
 	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
 	const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
-	const noMasterbarForRoute = isJetpackLogin || currentRoute === '/me/account/closed';
+	const isCheckoutFromGutenboarding =
+		'checkout' === sectionName && '1' === get( getCurrentQueryArguments( state ), 'preLaunch' );
+	const noMasterbarForRoute =
+		isJetpackLogin || isCheckoutFromGutenboarding || currentRoute === '/me/account/closed';
 	const noMasterbarForSection = 'signup' === sectionName || 'jetpack-connect' === sectionName;
 	const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 	const isJetpackWooCommerceFlow =
