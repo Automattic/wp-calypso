@@ -1,11 +1,8 @@
-// we use this variable to track URL paths submitted to analytics.pageView.record
-// so that analytics.pageLoading.record can re-use the urlPath parameter.
-// this helps avoid some nasty coupling, but it's not the cleanest code - sorry.
+// We use this module state to track url paths submitted to recordTracksPageView
+// `lib/analytics/index.js` also reuses it for timing.record
 let mostRecentUrlPath: string | null = null;
 
-// pathCounter is used to keep track of the order of calypso_page_view Tracks
-// events. The pathCounter value is appended to the last_pageview_path_with_count and
-// this_pageview_path_with_count Tracks event props.
+// pathCounter is used to keep track of the order of calypso_page_view Tracks events.
 let pathCounter = 0;
 
 if ( typeof window !== 'undefined' ) {
@@ -31,6 +28,10 @@ export function getPageViewParams( urlPath: string ): PageViewParams {
 	return params;
 }
 
+/**
+ * Gets the url path which was set on the last call to getPageViewParams() and stored in module state
+ * mostRecentUrlPath will be null if the page was refreshed or getPageViewParams() has not been called
+ */
 export function getMostRecentUrlPath(): string | null {
 	return mostRecentUrlPath;
 }
