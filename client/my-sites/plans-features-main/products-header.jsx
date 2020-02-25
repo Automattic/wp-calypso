@@ -45,7 +45,7 @@ class PlansFeaturesMainProductsHeader extends Component {
 
 	getSubHeader() {
 		const { isFetching, siteSlug, translate } = this.props;
-		const baseCopy = translate( "Just looking for a backups? We've got you covered." );
+		const baseCopy = translate( "Just looking for backups? We've got you covered." );
 
 		// Don't render a link if a user already has a Jetpack Backup product or a plan with a backup feature.
 		if ( isFetching || this.siteHasJetpackBackup() ) {
