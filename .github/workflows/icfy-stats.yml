@@ -26,6 +26,11 @@ jobs:
         NODE_ENV: production
         BROWSERSLIST_ENV: defaults
       run: npm run analyze-icfy
+    - run: mkdir icfy-stats && mv client/{chart,stats}.json icfy-stats
+    - uses: actions/upload-artifact@v1
+      with:
+        name: stats.json
+        path: icfy-stats
     - name: Upload build artifact
       env:
         ICFY_SECRET: ${{ secrets.ICFY_SECRET }}
