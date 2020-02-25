@@ -26,17 +26,7 @@ export { normalizeTermsForApi } from './normalize-terms-for-api';
 export { isTermsEqual } from './is-terms-equal';
 export { isDiscussionEqual } from './is-discussion-equal';
 export { isAuthorEqual } from './is-author-equal';
-
-export function isDateEqual( localDateEdit, savedDate ) {
-	// if the local date edit is false, it means we are asking the server to reset
-	// the scheduled date to "now". In that case, we accept the date value returned
-	// by the server and consider the edit saved.
-	if ( localDateEdit === false ) {
-		return true;
-	}
-
-	return localDateEdit && new Date( localDateEdit ).getTime() === new Date( savedDate ).getTime();
-}
+export { isDateEqual } from './is-date-equal';
 
 export function isStatusEqual( localStatusEdit, savedStatus ) {
 	// When receiving a request to change the `status` attribute, the server
