@@ -15,9 +15,10 @@ class TemplatePreviewFrame extends Component {
 		this.iframeHead = this.node.contentDocument.head;
 		this.iframeBody = this.node.contentDocument.body;
 
+		this.iframeBody.className = 'block-preview-iframe-body';
+
 		this.initStyles();
 		this.height = '100%';
-		this.forceUpdate();
 	}
 
 	componentDidUpdate() {
@@ -59,9 +60,9 @@ class TemplatePreviewFrame extends Component {
 		return (
 			<iframe
 				ref={ node => ( this.node = node ) }
-				style={ { width: '100%', height: this.height } }
+				style={ { height: this.height } }
 				id="iframe-page-template-preview"
-				class="block-preview-iframe"
+				className="block-preview-iframe"
 			>
 				{ this.iframeHead && ReactDOM.createPortal( head, this.iframeHead ) }
 				{ this.iframeBody && ReactDOM.createPortal( children, this.iframeBody ) }
