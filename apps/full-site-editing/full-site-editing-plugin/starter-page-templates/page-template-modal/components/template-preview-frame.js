@@ -72,7 +72,10 @@ class TemplatePreviewFrame extends Component {
 		return (
 			<iframe
 				ref={ node => ( this.node = node ) }
-				style={ { height: this.height } }
+				style={ {
+					...this.props.style,
+					height: this.height,
+				} }
 				id="iframe-page-template-preview"
 				className={ this.props.className }
 			>
