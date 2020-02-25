@@ -355,7 +355,9 @@ export default function CompositeCheckout( {
 		isStripeLoading,
 		stripeLoadingError,
 	] );
-	stripeMethod.id = 'card';
+	if ( stripeMethod ) {
+		stripeMethod.id = 'card';
+	}
 
 	const fullCreditsPaymentMethod = useMemo(
 		() =>
