@@ -37,7 +37,7 @@ import detectMedia from 'lib/post-normalizer/rule-content-detect-media';
 import withContentDom from 'lib/post-normalizer/rule-with-content-dom';
 import stripHtml from 'lib/post-normalizer/rule-strip-html';
 
-import { getNormalizedPostsQuery } from './get-normalized-posts-query';
+import { getSerializedPostsQuery } from './get-serialized-posts-query';
 
 /**
  * Constants
@@ -61,24 +61,7 @@ const normalizeDisplayFlow = flow( [
 ] );
 
 export { getNormalizedPostsQuery } from './get-normalized-posts-query';
-
-/**
- * Returns a serialized posts query
- *
- * @param  {object} query  Posts query
- * @param  {number} siteId Optional site ID
- * @returns {string}        Serialized posts query
- */
-export function getSerializedPostsQuery( query = {}, siteId ) {
-	const normalizedQuery = getNormalizedPostsQuery( query );
-	const serializedQuery = JSON.stringify( normalizedQuery );
-
-	if ( siteId ) {
-		return [ siteId, serializedQuery ].join( ':' );
-	}
-
-	return serializedQuery;
-}
+export { getSerializedPostsQuery } from './get-serialized-posts-query';
 
 /**
  * Returns an object with details related to the specified serialized query.
