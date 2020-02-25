@@ -18,9 +18,14 @@ jobs:
     - name: unshallow
       run: git fetch --prune --unshallow
     - name: Install dependencies
+      env:
+        PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: true
       run: npm ci
     - name: Build ICFY stats
-      run: NODE_ENV=production BROWSERSLIST_ENV=defaults npm run analyze-icfy
+      env:
+        NODE_ENV: production
+        BROWSERSLIST_ENV: defaults
+      run: npm run analyze-icfy
     - name: Upload build artifact
       env:
         ICFY_SECRET: ${{ secrets.ICFY_SECRET }}
