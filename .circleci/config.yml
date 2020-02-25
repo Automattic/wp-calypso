@@ -689,9 +689,9 @@ workflows:
       - test-server:
           requires:
             - setup
-      - typecheck:
-          requires:
-            - setup
+      # - typecheck:
+      #     requires:
+      #       - setup
       - typecheck-strict:
           requires:
             - setup
