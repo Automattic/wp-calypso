@@ -147,9 +147,9 @@ module.exports = function() {
 				// Determine function name by direct invocation or property name
 				let name;
 				if ( 'MemberExpression' === callee.type ) {
-					name = callee.property.name;
+					name = callee.property.loc ? callee.property.loc.identifierName : callee.property.name;
 				} else {
-					name = callee.name;
+					name = callee.loc ? callee.loc.identifierName : callee.name;
 				}
 				if ( ! isValidFunctionName( name ) ) {
 					return;
