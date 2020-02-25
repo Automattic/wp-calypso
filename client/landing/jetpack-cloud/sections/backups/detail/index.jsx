@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-class JetpackCloudBackupDetailPage extends Component {
+class BackupDetailPage extends Component {
 	render() {
 		const { siteId, backupId } = this.props;
 
@@ -29,4 +29,4 @@ export default connect( state => {
 	return {
 		siteId,
 	};
-} )( JetpackCloudBackupDetailPage );
+} )( BackupDetailPage );

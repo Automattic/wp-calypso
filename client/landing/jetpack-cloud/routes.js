@@ -10,10 +10,12 @@ import { normalize } from 'lib/route';
 import { siteSelection } from 'my-sites/controller';
 import { clientRender, makeLayout, setupSidebar } from './controller';
 import { jetpackCloudDashboard } from './sections/dashboard/controller';
-import { jetpackCloudBackups } from './sections/backups/controller';
-import { jetpackCloudBackupDetail } from './sections/backup-detail/controller';
-import { jetpackCloudBackupDownload } from './sections/backup-download/controller';
-import { jetpackCloudBackupRestore } from './sections/backup-restore/controller';
+import {
+	backups,
+	backupDetail,
+	backupDownload,
+	backupRestore,
+} from './sections/backups/controller';
 import { scan, scanHistory } from './sections/scan/controller';
 import { jetpackCloudSettings } from './sections/settings/controller';
 
@@ -22,12 +24,13 @@ const router = () => {
 
 	page( '/', setupSidebar, jetpackCloudDashboard, makeLayout, clientRender );
 
-	page( '/backups', siteSelection, setupSidebar, jetpackCloudBackups, makeLayout, clientRender );
+	page( '/backups', siteSelection, setupSidebar, makeLayout, clientRender );
+	page( '/backups/:site', siteSelection, setupSidebar, backups, makeLayout, clientRender );
 	page(
-		'/backups/:site',
+		'/backups/:site/detail',
 		siteSelection,
 		setupSidebar,
-		jetpackCloudBackups,
+		backupDetail,
 		makeLayout,
 		clientRender
 	);
@@ -35,7 +38,15 @@ const router = () => {
 		'/backups/:site/detail/:backupId',
 		siteSelection,
 		setupSidebar,
-		jetpackCloudBackupDetail,
+		backupDetail,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/backups/:site/download',
+		siteSelection,
+		setupSidebar,
+		backupDownload,
 		makeLayout,
 		clientRender
 	);
@@ -43,7 +54,7 @@ const router = () => {
 		'/backups/:site/download/:downloadId',
 		siteSelection,
 		setupSidebar,
-		jetpackCloudBackupDownload,
+		backupDownload,
 		makeLayout,
 		clientRender
 	);
@@ -51,7 +62,7 @@ const router = () => {
 		'/backups/:site/restore',
 		siteSelection,
 		setupSidebar,
-		jetpackCloudBackupRestore,
+		backupRestore,
 		makeLayout,
 		clientRender
 	);
@@ -59,7 +70,7 @@ const router = () => {
 		'/backups/:site/restore/:restoreId',
 		siteSelection,
 		setupSidebar,
-		jetpackCloudBackupRestore,
+		backupRestore,
 		makeLayout,
 		clientRender
 	);
