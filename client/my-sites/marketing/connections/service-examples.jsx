@@ -28,7 +28,6 @@ import GooglePlusDeprication from './google-plus-deprecation';
  */
 const SERVICES_WHITELIST = [
 	'bandpage',
-	'eventbrite',
 	'facebook',
 	'google_plus',
 	'google_my_business',
@@ -70,42 +69,6 @@ class SharingServiceExamples extends Component {
 					{
 						components: {
 							link: <a href="https://support.wordpress.com/widgets/bandpage-widget/" />,
-						},
-					}
-				),
-			},
-		];
-	}
-
-	eventbrite() {
-		return [
-			{
-				image: {
-					src: '/calypso/images/sharing/eventbrite-list.png',
-					alt: this.props.translate( 'Connect Eventbrite to list your events', { textOnly: true } ),
-				},
-				label: this.props.translate(
-					'{{strong}}Connect{{/strong}} Eventbrite to {{link}}list all your events{{/link}} on a page.',
-					{
-						components: {
-							strong: <strong />,
-							link: <a href="https://support.wordpress.com/eventbrite" />,
-						},
-					}
-				),
-			},
-			{
-				image: {
-					src: '/calypso/images/sharing/eventbrite-widget.png',
-					alt: this.props.translate( 'Add an Eventbrite widget to your page', { textOnly: true } ),
-				},
-				label: this.props.translate(
-					'Add an {{link}}Eventbrite widget{{/link}} to display a list of your upcoming events.',
-					{
-						components: {
-							link: (
-								<a href="https://support.wordpress.com/widgets/eventbrite-event-calendarlisting-widget/" />
-							),
 						},
 					}
 				),
