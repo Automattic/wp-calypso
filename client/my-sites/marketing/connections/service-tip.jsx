@@ -19,7 +19,7 @@ import Gridicon from 'components/gridicon';
  *
  * @type {string[]}
  */
-const SERVICES_WHITELIST = [ 'facebook', 'twitter', 'instagram', 'google_plus', 'eventbrite' ];
+const SERVICES_WHITELIST = [ 'facebook', 'twitter', 'instagram', 'google_plus' ];
 
 class SharingServiceTip extends Component {
 	static propTypes = {
@@ -77,28 +77,14 @@ class SharingServiceTip extends Component {
 		return null;
 	}
 
-	eventbrite() {
-		return this.props.translate(
-			'You can also add the {{embedLink}}Eventbrite widget{{/embedLink}} to display events in a sidebar.',
-			{
-				components: {
-					embedLink: (
-						<a href="https://support.wordpress.com/widgets/eventbrite-event-calendarlisting-widget/" />
-					),
-				},
-				context: 'Sharing: Tip in settings',
-			}
-		);
-	}
-
 	render() {
 		const { service } = this.props;
 		if ( ! includes( SERVICES_WHITELIST, service.ID ) || 'google_plus' === service.ID ) {
-			return <div className="sharing-service-tip" />;
+			return <div className="connections__sharing-service-tip" />;
 		}
 
 		return (
-			<div className="sharing-service-tip">
+			<div className="connections__sharing-service-tip">
 				<Gridicon icon="info" size={ 18 } />
 				{ this[ service.ID ]() }
 			</div>
