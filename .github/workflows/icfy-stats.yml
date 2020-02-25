@@ -16,7 +16,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Fetch git history
-      run:  fetch --prune --unshallow
+      run: git fetch --prune --unshallow
     - name: Install dependencies
       env:
         PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: true
