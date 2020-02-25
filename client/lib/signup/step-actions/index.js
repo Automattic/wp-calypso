@@ -29,12 +29,10 @@ import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteVerticalId, getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors';
-import getSiteId from 'state/selectors/get-site-id';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
-import { requestSites } from 'state/sites/actions';
 import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
 import getNewSitePublicSetting from 'state/selectors/get-new-site-public-setting';
@@ -45,12 +43,13 @@ import { isValidLandingPageVertical } from 'lib/signup/verticals';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 import SignupCart from 'lib/signup/cart';
-import { promisify } from 'utils';
 
 // Others
 import flows from 'signup/config/flows';
 import steps, { isDomainStepSkippable } from 'signup/config/steps';
 import { isEligibleForPageBuilder, shouldEnterPageBuilder } from 'lib/signup/page-builder';
+
+import { fetchSitesAndUser } from 'lib/signup/step-actions/fetch-sites-and-user';
 
 /**
  * Constants
@@ -254,31 +253,6 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 			themeSlugWithRepo
 		);
 	} );
-}
-
-function fetchSitesUntilSiteAppears( siteSlug, reduxStore, callback ) {
-	if ( getSiteId( reduxStore.getState(), siteSlug ) ) {
-		debug( 'fetchReduxSite: found new site' );
-		callback();
-		return;
-	}
-
-	// Have to manually call the thunk in order to access the promise on which
-	// to call `then`.
-	debug( 'fetchReduxSite: requesting all sites', siteSlug );
-	reduxStore
-		.dispatch( requestSites() )
-		.then( () => fetchSitesUntilSiteAppears( siteSlug, reduxStore, callback ) );
-}
-
-export function fetchSitesAndUser( siteSlug, onComplete, reduxStore ) {
-	Promise.all( [
-		promisify( fetchSitesUntilSiteAppears )( siteSlug, reduxStore ),
-		new Promise( resolve => {
-			user.once( 'change', resolve );
-			user.fetch();
-		} ),
-	] ).then( onComplete );
 }
 
 export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
