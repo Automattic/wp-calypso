@@ -66,6 +66,7 @@
 		"@wordpress/url": "*",
 		"classnames": "2.2.6",
 		"lodash": "*",
-		"moment": "*"
+		"moment": "*",
+		"react-dom": "^16.12.0"
 	}
 }
