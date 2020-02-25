@@ -218,6 +218,13 @@ export default function CompositeCheckout( {
 		);
 	};
 
+	useEffect( () => {
+		if ( stripeLoadingError ) {
+			debug( 'showing error for loading', stripeLoadingError );
+			showErrorMessage( stripeLoadingError );
+		}
+	}, [ showErrorMessage, stripeLoadingError ] );
+
 	const countriesList = useCountryList( overrideCountryList || [] );
 
 	const { productForCart, canInitializeCart } = usePrepareProductForCart(
