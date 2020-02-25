@@ -63,7 +63,7 @@ export function Checkout( { children, className } ) {
 				>
 					{ children }
 
-					<SubmittButtonWrapperUI isLastStepActive={ ! isThereAnotherNumberedStep }>
+					<SubmitButtonWrapperUI isLastStepActive={ ! isThereAnotherNumberedStep }>
 						<CheckoutErrorBoundary
 							errorMessage={ localize( 'There was a problem with the submit button.' ) }
 						>
@@ -71,7 +71,7 @@ export function Checkout( { children, className } ) {
 								disabled={ isThereAnotherNumberedStep || formStatus !== 'ready' }
 							/>
 						</CheckoutErrorBoundary>
-					</SubmittButtonWrapperUI>
+					</SubmitButtonWrapperUI>
 				</MainContentUI>
 			</CheckoutStepDataContext.Provider>
 		</ContainerUI>
@@ -305,7 +305,7 @@ const MainContentUI = styled.div`
 	}
 `;
 
-const SubmittButtonWrapperUI = styled.div`
+const SubmitButtonWrapperUI = styled.div`
 	background: ${props => props.theme.colors.background};
 	padding: 24px;
 	position: ${props => ( props.isLastStepActive ? 'fixed' : 'relative' )};
