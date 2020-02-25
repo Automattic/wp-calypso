@@ -30,18 +30,7 @@ export { isPublished } from './is-published';
 export { isScheduled } from './is-scheduled';
 export { isPrivate } from './is-private';
 export { isPending } from './is-pending';
-
-export const getEditedTime = function( post ) {
-	if ( ! post ) {
-		return;
-	}
-
-	if ( post.status === 'publish' || post.status === 'future' ) {
-		return post.date;
-	}
-
-	return post.modified;
-};
+export { getEditedTime } from './get-edited-time';
 
 export const isFutureDated = function( post ) {
 	if ( ! post ) {
