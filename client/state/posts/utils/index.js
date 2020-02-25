@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, isPlainObject, filter, flow, includes, map, toArray, every, xor, find } from 'lodash';
+import { get, filter, flow, includes, every, find } from 'lodash';
 import url from 'url';
 
 import { normalizeTermsForApi } from './normalize-terms-for-api';
@@ -23,24 +23,7 @@ export { getTermIdsFromEdits } from './get-term-ids-from-edits';
 export { normalizePostForEditing } from './normalize-post-for-editing';
 export { normalizePostForState } from './normalize-post-for-state';
 export { normalizeTermsForApi } from './normalize-terms-for-api';
-
-/**
- * Returns truthy if local terms object is the same as the API response
- *
- * @param  {object}  localTermEdits local state of term edits
- * @param  {object}  savedTerms     term object returned from API POST
- * @returns {boolean}                are there differences in local edits vs saved terms
- */
-export function isTermsEqual( localTermEdits, savedTerms ) {
-	return every( localTermEdits, ( terms, taxonomy ) => {
-		const termsArray = toArray( terms );
-		const isHierarchical = isPlainObject( termsArray[ 0 ] );
-		const normalizedEditedTerms = isHierarchical ? map( termsArray, 'ID' ) : termsArray;
-		const normalizedKey = isHierarchical ? 'ID' : 'name';
-		const normalizedSavedTerms = map( savedTerms[ taxonomy ], normalizedKey );
-		return ! xor( normalizedEditedTerms, normalizedSavedTerms ).length;
-	} );
-}
+export { isTermsEqual } from './is-terms-equal';
 
 /**
  * Returns true if the modified properties in the local edit of the `discussion` object (the edited
