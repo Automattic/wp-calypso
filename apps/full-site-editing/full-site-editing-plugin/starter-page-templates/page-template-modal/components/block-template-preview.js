@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import { each, get, filter, castArray, noop } from 'lodash';
-import classnames from 'classnames';
-``;
+import { castArray, noop } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -11,17 +9,7 @@ import classnames from 'classnames';
 /* eslint-disable import/no-extraneous-dependencies */
 import { Disabled } from '@wordpress/components';
 import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
-import {
-	useCallback,
-	Fragment,
-	useMemo,
-	useLayoutEffect,
-	useRef,
-	useState,
-	useReducer,
-	useEffect,
-	Component,
-} from '@wordpress/element';
+import { useMemo,  useLayoutEffect,  useReducer } from '@wordpress/element';
 import { withSelect } from '@wordpress/data';
 /* eslint-enable import/no-extraneous-dependencies */
 
@@ -29,28 +17,6 @@ import { withSelect } from '@wordpress/data';
  * Internal dependencies
  */
 import TemplatePreviewFrame from './template-preview-frame';
-
-export function getBlockDOMNode( clientId ) {
-	return document.getElementById( 'block-' + clientId );
-}
-
-export function getBlockPreviewContainerDOMNode( clientId ) {
-	const domNode = getBlockDOMNode( clientId );
-
-	if ( ! domNode ) {
-		return;
-	}
-
-	return domNode.firstChild || domNode;
-}
-
-const getInlineStyles = ( scale, x, y, isReady, width ) => ( {
-	transform: `scale(${ scale })`,
-	visibility: isReady ? 'visible' : 'hidden',
-	left: x,
-	top: y,
-	width,
-} );
 
 function _BlockPreview( {
 	blocks,
@@ -77,36 +43,10 @@ const BlockPreview = withSelect( select => {
 } )( _BlockPreview );
 
 const BlockTemplatePreview = ( { blocks = [], viewportWidth } ) => {
-	const iFrameRef = useRef();
-	const [ scale, setScale ] = useState( 1 );
-	useEffect( () => {
-		console.log( 'component is mount' );
-		if ( ! iFrameRef ) {
-			return;
-		}
-
-		// Get iFrame width;
-		const { current: iFrameElement } = iFrameRef;
-		const iFrameWidth = get( iFrameElement, [ 'node', 'offsetWidth' ] );
-
-		if ( ! iFrameWidth ) {
-			return;
-		}
-		console.log( { iFrameWidth } );
-
-		const templatePreviewWidth = get( iFrameElement, [ 'node', 'parentElement', 'offsetWidth' ] );
-		if ( ! templatePreviewWidth ) {
-			return;
-		}
-		setScale( templatePreviewWidth / iFrameWidth );
-	}, [ blocks ] );
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<TemplatePreviewFrame
-			ref={ iFrameRef }
-			style={ {
-				transform: `scale(${ scale })`,
-			} }
+			viewportWidth={ viewportWidth }
 			className="block-preview-iframe"
 		>
 			<BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } />

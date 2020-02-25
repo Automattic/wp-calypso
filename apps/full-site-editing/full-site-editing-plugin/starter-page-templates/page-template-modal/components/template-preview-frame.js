@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { each, filter } from 'lodash';
-import ReactDOM from 'react-dom';
+import { createPortal } from 'react-dom';
 
 /**
  * WordPress dependencies
@@ -18,13 +18,8 @@ class TemplatePreviewFrame extends Component {
 		this.iframeBody.className = 'block-preview-iframe-body';
 
 		this.initStyles();
-		this.height = '100%';
+		// this.forceUpdate();
 
-		this.forceUpdate();
-	}
-
-	componentDidUpdate() {
-		this.height = this.iframeBody.scrollHeight + 'px';
 	}
 
 	initStyles() {
@@ -79,8 +74,8 @@ class TemplatePreviewFrame extends Component {
 				id="iframe-page-template-preview"
 				className={ this.props.className }
 			>
-				{ this.iframeHead && ReactDOM.createPortal( head, this.iframeHead ) }
-				{ this.iframeBody && ReactDOM.createPortal( this.wrapBody( children ), this.iframeBody ) }
+				{ this.iframeHead && createPortal( head, this.iframeHead ) }
+				{ this.iframeBody && createPortal( this.wrapBody( children ), this.iframeBody ) }
 			</iframe>
 		);
 		/* eslint-ensable jsx-a11y/iframe-has-title */
