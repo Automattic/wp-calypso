@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
 import formatCurrency from '@automattic/format-currency';
 
 /**
@@ -17,7 +16,7 @@ import { siteHasPaidPlan } from 'signup/steps/site-picker/site-picker-submit';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 import {
-	getAllCartItems,
+	getDomainRegistrations,
 	hasDomainRegistration,
 	hasPlan,
 	planItem,
@@ -29,7 +28,6 @@ import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { isRequestingPlans } from 'state/plans/selectors';
 import { getPlan } from 'lib/plans';
 import { getPlanPrice } from 'state/products-list/selectors';
-import { isDomainRegistration } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -58,7 +56,7 @@ class CartFreeUserPlanUpsell extends React.Component {
 
 	getUpgradeText() {
 		const { cart, planPrice, translate } = this.props;
-		const firstDomain = find( getAllCartItems( cart ), isDomainRegistration );
+		const firstDomain = getDomainRegistrations( cart )[ 0 ];
 
 		if ( planPrice > firstDomain.cost ) {
 			const extraToPay = planPrice - firstDomain.cost;
