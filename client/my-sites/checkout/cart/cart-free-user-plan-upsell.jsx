@@ -119,11 +119,11 @@ class CartFreeUserPlanUpsell extends React.Component {
 		);
 	}
 
-	addPlanToCart() {
+	addPlanToCart = () => {
 		const planCartItem = planItem( PLAN_PERSONAL, {} );
 		addItem( planCartItem );
 		this.props.clickUpsellAddToCart();
-	}
+	};
 
 	render() {
 		if ( ! this.shouldRender() ) {
