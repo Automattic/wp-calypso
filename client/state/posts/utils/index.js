@@ -19,16 +19,7 @@ export { getUnappliedMetadataEdits, areAllMetadataEditsApplied } from './metadat
 export { normalizePostForApi } from './normalize-post-for-api';
 export { getEditURL } from './get-edit-url';
 export { getPreviewURL } from './get-preview-url';
-
-export const userCan = function( capability, post ) {
-	const hasCap = post.capabilities && post.capabilities[ capability ];
-
-	if ( capability === 'edit_post' ) {
-		return hasCap && post.status !== 'trash';
-	}
-
-	return hasCap;
-};
+export { userCan } from './user-can';
 
 // Return backdated-published status of a post. Optionally, the `status` can be overridden
 // with a custom value: what would the post status be if a `status` edit was applied?
