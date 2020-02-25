@@ -14,7 +14,6 @@ import {
 	map,
 	mapValues,
 	mergeWith,
-	omit,
 	reduce,
 	toArray,
 	cloneDeep,
@@ -37,8 +36,6 @@ import detectMedia from 'lib/post-normalizer/rule-content-detect-media';
 import withContentDom from 'lib/post-normalizer/rule-with-content-dom';
 import stripHtml from 'lib/post-normalizer/rule-strip-html';
 
-import { getSerializedPostsQuery } from './get-serialized-posts-query';
-
 /**
  * Utility
  */
@@ -57,17 +54,7 @@ const normalizeDisplayFlow = flow( [
 export { getNormalizedPostsQuery } from './get-normalized-posts-query';
 export { getSerializedPostsQuery } from './get-serialized-posts-query';
 export { getDeserializedPostsQueryDetails } from './get-deserialized-posts-query-details';
-
-/**
- * Returns a serialized posts query, excluding any page parameter
- *
- * @param  {object} query  Posts query
- * @param  {number} siteId Optional site ID
- * @returns {string}        Serialized posts query
- */
-export function getSerializedPostsQueryWithoutPage( query, siteId ) {
-	return getSerializedPostsQuery( omit( query, 'page' ), siteId );
-}
+export { getSerializedPostsQueryWithoutPage } from './get-serialized-posts-query-without-page';
 
 /*
  * Applies a metadata edit operation (either update or delete) to an existing array of
