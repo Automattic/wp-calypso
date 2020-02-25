@@ -13,6 +13,8 @@ import {
 
 import 'state/data-layer/wpcom/posts/revisions';
 
+import 'state/posts/init';
+
 /**
  * Action creator function: POST_REVISIONS_REQUEST
  *

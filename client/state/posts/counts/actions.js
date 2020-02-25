@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import wpcom from 'lib/wp';
 import {
 	POST_COUNTS_RECEIVE,
@@ -9,6 +8,8 @@ import {
 	POST_COUNTS_REQUEST_SUCCESS,
 	POST_COUNTS_REQUEST_FAILURE,
 } from 'state/action-types';
+
+import 'state/posts/init';
 
 /**
  * Returns an action object signalling that post counts have been received for
