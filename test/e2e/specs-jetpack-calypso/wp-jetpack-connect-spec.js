@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { xstep } from 'mocha-steps';
 import assert from 'assert';
 import config from 'config';
 
@@ -40,9 +39,6 @@ import * as dataHelper from '../lib/data-helper';
 import JetpackComPricingPage from '../lib/pages/external/jetpackcom-pricing-page';
 import SecurePaymentComponent from '../lib/components/secure-payment-component';
 import WPHomePage from '../lib/pages/wp-home-page';
-import JetpackConnectSiteTypePage from '../lib/pages/jetpack/jetpack-connect-site-type-page';
-import JetpackConnectSiteTopicPage from '../lib/pages/jetpack/jetpack-connect-site-topic-page';
-import JetpackConnectUserTypePage from '../lib/pages/jetpack/jetpack-connect-user-type-page';
 import ThankYouModalComponent from '../lib/components/thank-you-modal-component';
 import MyPlanPage from '../lib/pages/my-plan-page';
 
@@ -110,24 +106,6 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 			return await jetpackAuthorizePage.waitToDisappear();
 		} );
 
-		// This step is controlled by `jetpack/connect/site-questions` feature flag in Calypso
-		xstep( 'Can select a site type', async function() {
-			const siteTypePage = await JetpackConnectSiteTypePage.Expect( driver );
-			return await siteTypePage.selectSiteType( 'blog' );
-		} );
-
-		// This step is controlled by `jetpack/connect/site-questions` feature flag in Calypso
-		xstep( 'Can select a site topic', async function() {
-			const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( driver );
-			return await siteTopicPage.selectSiteTopic( 'test site' );
-		} );
-
-		// This step is controlled by `jetpack/connect/site-questions` feature flag in Calypso
-		xstep( 'Can select a user type', async function() {
-			const userTypePage = await JetpackConnectUserTypePage.Expect( driver );
-			return await userTypePage.selectUserType( 'creator' );
-		} );
-
 		step( 'Can click the free plan button', async function() {
 			const pickAPlanPage = await PickAPlanPage.Expect( driver );
 			return await pickAPlanPage.selectFreePlanJetpack();
@@ -175,24 +153,6 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 		step( 'Can approve connection on the authorization page', async function() {
 			const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( driver );
 			return await jetpackAuthorizePage.approveConnection();
-		} );
-
-		// This step is controlled by `jetpack/connect/site-questions` feature flag in Calypso
-		xstep( 'Can select a site type', async function() {
-			const siteTypePage = await JetpackConnectSiteTypePage.Expect( driver );
-			return await siteTypePage.selectSiteType( 'blog' );
-		} );
-
-		// This step is controlled by `jetpack/connect/site-questions` feature flag in Calypso
-		xstep( 'Can select a site topic', async function() {
-			const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( driver );
-			return await siteTopicPage.selectSiteTopic( 'test site' );
-		} );
-
-		// This step is controlled by `jetpack/connect/site-questions` feature flag in Calypso
-		xstep( 'Can select a user type', async function() {
-			const userTypePage = await JetpackConnectUserTypePage.Expect( driver );
-			return await userTypePage.selectUserType( 'creator' );
 		} );
 
 		step( 'Can click the free plan button', async function() {
@@ -341,24 +301,6 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 			return await jetpackAuthorizePage.waitToDisappear();
 		} );
 
-		// This step is controlled by `jetpack/connect/site-questions` feature flag in Calypso
-		xstep( 'Can select a site type', async function() {
-			const siteTypePage = await JetpackConnectSiteTypePage.Expect( driver );
-			return await siteTypePage.selectSiteType( 'blog' );
-		} );
-
-		// This step is controlled by `jetpack/connect/site-questions` feature flag in Calypso
-		xstep( 'Can select a site topic', async function() {
-			const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( driver );
-			return await siteTopicPage.selectSiteTopic( 'test site' );
-		} );
-
-		// This step is controlled by `jetpack/connect/site-questions` feature flag in Calypso
-		xstep( 'Can select a user type', async function() {
-			const userTypePage = await JetpackConnectUserTypePage.Expect( driver );
-			return await userTypePage.selectUserType( 'creator' );
-		} );
-
 		step(
 			'Can see the secure payment page and enter/submit test payment details',
 			async function() {
@@ -459,24 +401,6 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 			return await jetpackAuthorizePage.approveConnection();
 		} );
 
-		// This step is controlled by `jetpack/connect/site-questions` feature flag in Calypso
-		xstep( 'Can select a site type', async function() {
-			const siteTypePage = await JetpackConnectSiteTypePage.Expect( driver );
-			return await siteTypePage.selectSiteType( 'blog' );
-		} );
-
-		// This step is controlled by `jetpack/connect/site-questions` feature flag in Calypso
-		xstep( 'Can select a site topic', async function() {
-			const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( driver );
-			return await siteTopicPage.selectSiteTopic( 'test site' );
-		} );
-
-		// This step is controlled by `jetpack/connect/site-questions` feature flag in Calypso
-		xstep( 'Can select a user type', async function() {
-			const userTypePage = await JetpackConnectUserTypePage.Expect( driver );
-			return await userTypePage.selectUserType( 'creator' );
-		} );
-
 		step( 'Can click the free plan button', async function() {
 			const pickAPlanPage = await PickAPlanPage.Expect( driver );
 			return await pickAPlanPage.selectFreePlanJetpack();
@@ -533,24 +457,6 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 		step( 'Can wait for Jetpack get connected', async function() {
 			const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( driver );
 			return await jetpackAuthorizePage.waitToDisappear();
-		} );
-
-		// This step is controlled by `jetpack/connect/site-questions` feature flag in Calypso
-		xstep( 'Can select a site type', async function() {
-			const siteTypePage = await JetpackConnectSiteTypePage.Expect( driver );
-			return await siteTypePage.selectSiteType( 'blog' );
-		} );
-
-		// This step is controlled by `jetpack/connect/site-questions` feature flag in Calypso
-		xstep( 'Can select a site topic', async function() {
-			const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( driver );
-			return await siteTopicPage.selectSiteTopic( 'test site' );
-		} );
-
-		// This step is controlled by `jetpack/connect/site-questions` feature flag in Calypso
-		xstep( 'Can select a user type', async function() {
-			const userTypePage = await JetpackConnectUserTypePage.Expect( driver );
-			return await userTypePage.selectUserType( 'creator' );
 		} );
 
 		step( 'Can click the free plan button', async function() {

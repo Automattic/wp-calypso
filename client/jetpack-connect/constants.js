@@ -1,6 +1,5 @@
 export const JETPACK_MINIMUM_WORDPRESS_VERSION = '4.7';
 export const JPC_PATH_PLANS = '/jetpack/connect/plans';
-export const JPC_PATH_SITE_TYPE = '/jetpack/connect/site-type';
 export const JPC_PATH_REMOTE_INSTALL = '/jetpack/connect/install';
 export const MINIMUM_JETPACK_VERSION = '3.9.6';
 export const REMOTE_PATH_ACTIVATE = '/wp-admin/plugins.php';
