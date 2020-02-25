@@ -49,9 +49,7 @@ export default function CheckoutSystemDecider( {
 	}
 	if ( shouldShowCompositeCheckout( cart, countryCode, locale, product, isJetpack ) ) {
 		return (
-			<StripeHookProvider
-				fetchStripeConfiguration={ args => fetchStripeConfiguration( args, wpcom ) }
-			>
+			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
 				<CompositeCheckout
 					siteSlug={ selectedSite?.slug }
 					siteId={ selectedSite?.ID }
@@ -148,4 +146,8 @@ function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, is
 	}
 	debug( 'shouldShowCompositeCheckout false because test not enabled' );
 	return false;
+}
+
+function fetchStripeConfigurationWpcom( args ) {
+	return fetchStripeConfiguration( args, wpcom );
 }
