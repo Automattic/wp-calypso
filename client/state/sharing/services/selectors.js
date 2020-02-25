@@ -61,6 +61,7 @@ export function getKeyringServiceByName( state, name ) {
  */
 export function getEligibleKeyringServices( state, siteId, type ) {
 	const services = getKeyringServicesByType( state, type );
+
 	if ( ! siteId ) {
 		return services;
 	}
@@ -118,7 +119,7 @@ export function getEligibleKeyringServices( state, siteId, type ) {
 			return false;
 		}
 
-		// Omit Eventbrite has the API that is used by Eventbrite plugin was disable 20/02/2020
+		// Omit Eventbrite as the API that is used by Eventbrite plugin was disabled 20/02/2020
 		if ( service.ID === 'eventbrite' ) {
 			return false;
 		}
