@@ -160,7 +160,7 @@ const trackBlockReplacement = ( originalBlockIds, blocks ) => {
 
 /**
  * Track inner blocks replacement.
- * This is how Page Templates insert their content into page, by replacing everything that was already there.
+ * Page Templates insert their content into the page replacing everything that was already there.
  *
  * @param {Array} rootClientId id of parent block
  * @param {object|Array} blocks block instance object or an array of such objects
