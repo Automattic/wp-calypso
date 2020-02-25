@@ -1,10 +1,3 @@
-/**
- * Internal dependencies
- */
-import { isPublished } from './is-published';
-import { removeSlug } from './remove-slug';
-import { getPermalinkBasePath } from './get-permalink-base-path';
-
 export { getNormalizedPostsQuery } from './get-normalized-posts-query';
 export { getSerializedPostsQuery } from './get-serialized-posts-query';
 export { getDeserializedPostsQueryDetails } from './get-deserialized-posts-query-details';
@@ -39,17 +32,7 @@ export { isPage } from './is-page';
 export { getVisibility } from './get-visibility';
 export { removeSlug } from './remove-slug';
 export { getPermalinkBasePath } from './get-permalink-base-path';
-
-export const getPagePath = function( post ) {
-	if ( ! post ) {
-		return;
-	}
-	if ( ! isPublished( post ) ) {
-		return getPermalinkBasePath( post );
-	}
-
-	return removeSlug( post.URL );
-};
+export { getPagePath } from './get-page-path';
 
 /**
  * Returns the ID of the featured image assigned to the specified post, or
