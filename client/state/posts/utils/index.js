@@ -31,16 +31,7 @@ export { isScheduled } from './is-scheduled';
 export { isPrivate } from './is-private';
 export { isPending } from './is-pending';
 export { getEditedTime } from './get-edited-time';
-
-export const isFutureDated = function( post ) {
-	if ( ! post ) {
-		return false;
-	}
-
-	const oneMinute = 1000 * 60;
-
-	return post && +new Date() + oneMinute < +new Date( post.date );
-};
+export { isFutureDated } from './is-future-dated';
 
 export const isBackDated = function( post ) {
 	if ( ! post || ! post.date || ! post.modified ) {
