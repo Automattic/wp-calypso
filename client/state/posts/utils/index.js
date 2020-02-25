@@ -34,22 +34,7 @@ export { getEditedTime } from './get-edited-time';
 export { isFutureDated } from './is-future-dated';
 export { isBackDated } from './is-back-dated';
 export { isPage } from './is-page';
-
-export const getVisibility = function( post ) {
-	if ( ! post ) {
-		return null;
-	}
-
-	if ( post.password ) {
-		return 'password';
-	}
-
-	if ( 'private' === post.status ) {
-		return 'private';
-	}
-
-	return 'public';
-};
+export { getVisibility } from './get-visibility';
 
 export const removeSlug = function( path ) {
 	if ( ! path ) {
