@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isBackDatedPublished } from './is-back-dated-published';
+import { isPublished } from './is-published';
 
 export { getNormalizedPostsQuery } from './get-normalized-posts-query';
 export { getSerializedPostsQuery } from './get-serialized-posts-query';
@@ -26,22 +26,7 @@ export { getEditURL } from './get-edit-url';
 export { getPreviewURL } from './get-preview-url';
 export { userCan } from './user-can';
 export { isBackDatedPublished } from './is-back-dated-published';
-
-// Return published status of a post. Optionally, the `status` can be overridden
-// with a custom value: what would the post status be if a `status` edit was applied?
-export const isPublished = function( post, status ) {
-	if ( ! post ) {
-		return false;
-	}
-
-	const effectiveStatus = status || post.status;
-
-	return (
-		effectiveStatus === 'publish' ||
-		effectiveStatus === 'private' ||
-		isBackDatedPublished( post, status )
-	);
-};
+export { isPublished } from './is-published';
 
 export const isScheduled = function( post ) {
 	if ( ! post ) {
