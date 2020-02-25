@@ -18,13 +18,16 @@ import hasLoadedSites from 'state/selectors/has-loaded-sites';
 import JetpackCloudLayout from './layout';
 import JetpackCloudSidebar from './components/sidebar';
 import JetpackCloudSitePicker from './components/site-picker';
+import { MomentProvider } from 'components/localized-moment/context';
 
 export const makeLayout = ( context, next ) => {
 	const { primary, secondary, store } = context;
 
 	context.layout = (
 		<ReduxProvider store={ store }>
-			<JetpackCloudLayout primary={ primary } secondary={ secondary } />
+			<MomentProvider>
+				<JetpackCloudLayout primary={ primary } secondary={ secondary } />
+			</MomentProvider>
 		</ReduxProvider>
 	);
 
