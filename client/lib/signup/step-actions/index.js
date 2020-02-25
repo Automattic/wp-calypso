@@ -41,11 +41,11 @@ import getNewSitePublicSetting from 'state/selectors/get-new-site-public-setting
 import getNewSiteComingSoonSetting from 'state/selectors/get-new-site-coming-soon-setting';
 
 // Current directory dependencies
-import { isValidLandingPageVertical } from './verticals';
-import { getSiteTypePropertyValue } from './site-type';
+import { isValidLandingPageVertical } from 'lib/signup/verticals';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
-import SignupCart from './cart';
-import { promisify } from '../../utils';
+import SignupCart from 'lib/signup/cart';
+import { promisify } from 'utils';
 
 // Others
 import flows from 'signup/config/flows';
