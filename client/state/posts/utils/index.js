@@ -32,14 +32,7 @@ export { isPrivate } from './is-private';
 export { isPending } from './is-pending';
 export { getEditedTime } from './get-edited-time';
 export { isFutureDated } from './is-future-dated';
-
-export const isBackDated = function( post ) {
-	if ( ! post || ! post.date || ! post.modified ) {
-		return false;
-	}
-
-	return new Date( post.date ) < new Date( post.modified );
-};
+export { isBackDated } from './is-back-dated';
 
 export const isPage = function( post ) {
 	if ( ! post ) {
