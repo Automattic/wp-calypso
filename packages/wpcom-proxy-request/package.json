@@ -33,10 +33,11 @@
 		"History.md",
 		"README.md"
 	],
+	"types": "dist/types",
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prepublish": "npm run clean",
-		"prepare": "transpile"
+		"prepare": "transpile && mkdir -p dist/types && cp src/index.d.ts dist/types/"
 	},
 	"dependencies": {
 		"component-event": "^0.1.4",
