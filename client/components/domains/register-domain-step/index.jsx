@@ -165,6 +165,7 @@ class RegisterDomainStep extends React.Component {
 		onDomainsAvailabilityChange: noop,
 		onSave: noop,
 		vendor: getSuggestionsVendor(),
+		showExampleSuggestions: false,
 	};
 
 	constructor( props ) {
@@ -744,6 +745,10 @@ class RegisterDomainStep extends React.Component {
 		const cleanedQuery = getDomainSuggestionSearch( searchQuery, MIN_QUERY_LENGTH );
 		const loadingResults = Boolean( cleanedQuery );
 		const isInitialQueryActive = searchQuery === this.props.suggestion;
+
+		if ( isEmpty( cleanedQuery ) && ! this.props.isSignupStep ) {
+			return;
+		}
 
 		this.setState(
 			{

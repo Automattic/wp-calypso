@@ -170,6 +170,8 @@ class DomainSearch extends Component {
 				/>
 			);
 		} else {
+			const suggestion =
+				this.props.context.query.suggestion ?? selectedSite.domain.split( '.' )[ 0 ];
 			content = (
 				<span>
 					<div className="domain-search__content">
@@ -180,8 +182,7 @@ class DomainSearch extends Component {
 							noticeStatus="is-info"
 						>
 							<RegisterDomainStep
-								path={ this.props.context.path }
-								suggestion={ this.props.context.query.suggestion }
+								suggestion={ suggestion }
 								domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 								onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
 								onAddDomain={ this.handleAddRemoveDomain }
