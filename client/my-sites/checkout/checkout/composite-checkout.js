@@ -48,7 +48,6 @@ import {
 	makePayPalExpressRequest,
 	wpcomPayPalExpress,
 	isPaymentMethodEnabled,
-	fetchStripeConfiguration,
 	sendStripeTransaction,
 	wpcomTransaction,
 	submitCreditsTransaction,
@@ -320,33 +319,42 @@ export default function CompositeCheckout( {
 		);
 	};
 
-	const stripeMethod = useMemo(
-		() =>
-			createStripeMethod( {
-				getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-				getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-				getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-				registerStore,
-				fetchStripeConfiguration: args => fetchStripeConfiguration( args, wpcom ),
-				submitTransaction: submitData => {
-					const pending = sendStripeTransaction(
-						{
-							...submitData,
-							siteId: select( 'wpcom' )?.getSiteId?.(),
-							domainDetails: getDomainDetails( select ),
-						},
-						wpcomTransaction
-					);
-					// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-					pending.then( result => {
-						debug( 'saving transaction response', result );
-						dispatch( 'wpcom' ).setTransactionResponse( result );
-					} );
-					return pending;
-				},
-			} ),
-		[ registerStore, dispatch ]
-	);
+	const stripeMethod = useMemo( () => {
+		if ( isStripeLoading || stripeLoadingError || ! stripe || ! stripeConfiguration ) {
+			return null;
+		}
+		return createStripeMethod( {
+			getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+			getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+			getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+			registerStore,
+			stripe,
+			stripeConfiguration,
+			submitTransaction: submitData => {
+				const pending = sendStripeTransaction(
+					{
+						...submitData,
+						siteId: select( 'wpcom' )?.getSiteId?.(),
+						domainDetails: getDomainDetails( select ),
+					},
+					wpcomTransaction
+				);
+				// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+				pending.then( result => {
+					debug( 'saving transaction response', result );
+					dispatch( 'wpcom' ).setTransactionResponse( result );
+				} );
+				return pending;
+			},
+		} );
+	}, [
+		registerStore,
+		dispatch,
+		stripe,
+		stripeConfiguration,
+		isStripeLoading,
+		stripeLoadingError,
+	] );
 	stripeMethod.id = 'card';
 
 	const fullCreditsPaymentMethod = useMemo(
