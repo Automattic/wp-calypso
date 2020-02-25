@@ -196,14 +196,14 @@ describe( 'Checkout', () => {
 
 			it( 'makes the payment method step visible', () => {
 				const firstStep = container.querySelector( '.checkout__payment-methods-step' );
-				const firstStepContent = firstStep.querySelector( '.checkout-step__content' );
+				const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 				expect( firstStepContent ).toHaveStyle( 'display: block' );
 			} );
 
 			it( 'makes the review step invisible', () => {
 				const reviewStep = container.querySelector( '.checkout__review-order-step' );
 				expect( reviewStep ).toHaveTextContent( 'Review your order' );
-				const reviewStepContent = reviewStep.querySelector( '.checkout-step__content' );
+				const reviewStepContent = reviewStep.querySelector( '.checkout-steps__step-content' );
 				expect( reviewStepContent ).toHaveStyle( 'display: none' );
 			} );
 		} );
@@ -236,13 +236,13 @@ describe( 'Checkout', () => {
 
 			it( 'makes the first step invisible', () => {
 				const firstStep = container.querySelector( '.checkout__payment-methods-step' );
-				const firstStepContent = firstStep.querySelector( '.checkout-step__content' );
+				const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 				expect( firstStepContent ).toHaveStyle( 'display: none' );
 			} );
 
 			it( 'makes the review step visible', () => {
 				const reviewStep = container.querySelector( '.checkout__review-order-step' );
-				const reviewStepContent = reviewStep.querySelector( '.checkout-step__content' );
+				const reviewStepContent = reviewStep.querySelector( '.checkout-steps__step-content' );
 				expect( reviewStepContent ).toHaveStyle( 'display: block' );
 			} );
 		} );
@@ -305,17 +305,17 @@ describe( 'Checkout', () => {
 		it( 'renders the activeStepContent as visible when active', () => {
 			const { container } = render( <MyCheckout /> );
 			const step = container.querySelector( '.' + steps[ 1 ].className );
-			const content = step.querySelector( '.checkout-step__content' );
+			const content = step.querySelector( '.checkout-steps__step-content' );
 			expect( content ).toHaveStyle( 'display: block' );
 		} );
 
 		it( 'renders the activeStepContent as invisible when inactive', () => {
 			const { container } = render( <MyCheckout /> );
 			let step = container.querySelector( '.' + steps[ 0 ].className );
-			let content = step.querySelector( '.checkout-step__content' );
+			let content = step.querySelector( '.checkout-steps__step-content' );
 			expect( content ).toHaveStyle( 'display: none' );
 			step = container.querySelector( '.' + steps[ 2 ].className );
-			content = step.querySelector( '.checkout-step__content' );
+			content = step.querySelector( '.checkout-steps__step-content' );
 			expect( content ).toHaveStyle( 'display: none' );
 		} );
 
