@@ -36,6 +36,6 @@ export default connect( state => {
 
 	return {
 		siteId,
-		logs: ( siteId && logs.data ) || [],
+		logs: logs?.data ?? [],
 	};
 } )( BackupsPage );
