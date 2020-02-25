@@ -21,7 +21,7 @@ import { sprintf, useLocalize } from '../localize';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import { useFormStatus } from '../form-status';
 import PaymentLogo from './payment-logo.js';
-import { useStripe, showStripeModalAuth } from '../stripe';
+import { showStripeModalAuth } from '../stripe';
 
 const debug = debugFactory( 'composite-checkout:existing-card-payment-method' );
 
@@ -36,6 +36,7 @@ export function createExistingCardMethod( {
 	cardExpiry,
 	brand,
 	last4,
+	stripeConfiguration,
 } ) {
 	debug( 'creating a new existing credit card payment method', {
 		id,
@@ -160,7 +161,7 @@ export function createExistingCardMethod( {
 				brand={ brand }
 			/>
 		),
-		submitButton: <ExistingCardPayButton id={ id } />,
+		submitButton: <ExistingCardPayButton id={ id } stripeConfiguration={ stripeConfiguration } />,
 		inactiveContent: (
 			<ExistingCardSummary
 				cardholderName={ cardholderName }
@@ -204,7 +205,7 @@ const CardHolderName = styled.span`
 	display: block;
 `;
 
-function ExistingCardPayButton( { disabled, id } ) {
+function ExistingCardPayButton( { disabled, id, stripeConfiguration } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
 	const { showErrorMessage, showInfoMessage } = useMessages();
@@ -222,7 +223,6 @@ function ExistingCardPayButton( { disabled, id } ) {
 		`existing-card-${ id }`
 	);
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
-	const { stripeConfiguration } = useStripe();
 	const onEvent = useEvents();
 
 	useEffect( () => {
