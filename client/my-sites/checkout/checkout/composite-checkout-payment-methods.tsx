@@ -277,7 +277,7 @@ export function useIsApplePayAvailable( stripe, stripeConfiguration, items ) {
 			isSubscribed && setCanMakePayment( !! result?.applePay );
 		} );
 
-		return ( isSubscribed = false );
+		return () => ( isSubscribed = false );
 	}, [ canMakePayment, stripe, items, stripeConfiguration ] );
 
 	return { canMakePayment: canMakePayment === true, isLoading: canMakePayment === 'loading' };
