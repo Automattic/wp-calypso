@@ -58,8 +58,8 @@ import {
 	WordPressFreePurchaseLabel,
 	WordPressFreePurchaseSummary,
 	submitApplePayPayment,
-	isApplePayAvailable,
 	submitExistingCardPayment,
+	useIsApplePayAvailable,
 } from './composite-checkout-payment-methods';
 import notices from 'notices';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
@@ -80,6 +80,7 @@ import { computeProductsWithPrices } from 'state/products-list/selectors';
 import { requestProductsList } from 'state/products-list/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import analytics from 'lib/analytics';
+import { useStripe } from 'lib/stripe';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -126,6 +127,7 @@ export default function CompositeCheckout( {
 		isEligibleForSignupDestination( state, siteId, cart )
 	);
 	const previousRoute = useSelector( state => getPreviousPath( state ) );
+	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 
 	const getThankYouUrl = useCallback( () => {
 		const transactionResult = select( 'wpcom' ).getTransactionResult();
@@ -405,32 +407,54 @@ export default function CompositeCheckout( {
 	freePaymentMethod.label = <WordPressFreePurchaseLabel />;
 	freePaymentMethod.inactiveContent = <WordPressFreePurchaseSummary />;
 
-	const applePayMethod = useMemo(
-		() =>
-			createApplePayMethod( {
-				getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-				getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-				registerStore,
-				fetchStripeConfiguration: args => fetchStripeConfiguration( args, wpcom ),
-				submitTransaction: submitData => {
-					const pending = submitApplePayPayment(
-						{
-							...submitData,
-							siteId: select( 'wpcom' )?.getSiteId?.(),
-							domainDetails: getDomainDetails( select ),
-						},
-						wpcomTransaction
-					);
-					// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-					pending.then( result => {
-						debug( 'saving transaction response', result );
-						dispatch( 'wpcom' ).setTransactionResponse( result );
-					} );
-					return pending;
-				},
-			} ),
-		[ registerStore, dispatch ]
-	);
+	const {
+		canMakePayment: isApplePayAvailable,
+		isLoading: isApplePayLoading,
+	} = useIsApplePayAvailable( stripe, stripeConfiguration, items );
+	const applePayMethod = useMemo( () => {
+		if (
+			isStripeLoading ||
+			stripeLoadingError ||
+			! stripe ||
+			! stripeConfiguration ||
+			isApplePayLoading ||
+			! isApplePayAvailable
+		) {
+			return null;
+		}
+		return createApplePayMethod( {
+			getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+			getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+			registerStore,
+			submitTransaction: submitData => {
+				const pending = submitApplePayPayment(
+					{
+						...submitData,
+						siteId: select( 'wpcom' )?.getSiteId?.(),
+						domainDetails: getDomainDetails( select ),
+					},
+					wpcomTransaction
+				);
+				// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+				pending.then( result => {
+					debug( 'saving transaction response', result );
+					dispatch( 'wpcom' ).setTransactionResponse( result );
+				} );
+				return pending;
+			},
+			stripe,
+			stripeConfiguration,
+		} );
+	}, [
+		isApplePayLoading,
+		dispatch,
+		registerStore,
+		stripe,
+		stripeConfiguration,
+		isStripeLoading,
+		stripeLoadingError,
+		isApplePayAvailable,
+	] );
 
 	const existingCardMethods = useMemo(
 		() =>
@@ -473,7 +497,7 @@ export default function CompositeCheckout( {
 	debug( 'is purchase free?', isPurchaseFree );
 
 	const paymentMethods =
-		isLoading || isLoadingStoredCards || items.length < 1
+		isLoading || isLoadingStoredCards || isApplePayLoading || items.length < 1
 			? []
 			: [
 					freePaymentMethod,
@@ -483,6 +507,7 @@ export default function CompositeCheckout( {
 					stripeMethod,
 					paypalMethod,
 			  ]
+					.filter( methodObject => Boolean( methodObject ) )
 					.filter( methodObject => {
 						// If the purchase is free, only display the free-purchase method
 						if ( methodObject.id === 'free-purchase' ) {
@@ -493,9 +518,6 @@ export default function CompositeCheckout( {
 					.filter( methodObject => {
 						if ( methodObject.id === 'full-credits' ) {
 							return credits.amount.value > 0 && credits.amount.value >= subtotal.amount.value;
-						}
-						if ( methodObject.id === 'apple-pay' && ! isApplePayAvailable() ) {
-							return false;
 						}
 						if ( methodObject.id.startsWith( 'existingCard-' ) ) {
 							return isPaymentMethodEnabled(
@@ -581,7 +603,7 @@ export default function CompositeCheckout( {
 				onEvent={ recordEvent }
 				paymentMethods={ paymentMethods }
 				registry={ registry }
-				isLoading={ isLoading || isLoadingStoredCards || items.length < 1 }
+				isLoading={ isLoading || isLoadingStoredCards || isApplePayLoading || items.length < 1 }
 			>
 				<WPCheckout
 					removeItem={ removeItem }
