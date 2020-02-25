@@ -620,7 +620,13 @@ export default function CompositeCheckout( {
 				onEvent={ recordEvent }
 				paymentMethods={ paymentMethods }
 				registry={ registry }
-				isLoading={ isLoading || isLoadingStoredCards || isApplePayLoading || items.length < 1 }
+				isLoading={
+					isLoading ||
+					isLoadingStoredCards ||
+					isApplePayLoading ||
+					paymentMethods.length < 1 ||
+					items.length < 1
+				}
 			>
 				<WPCheckout
 					removeItem={ removeItem }
