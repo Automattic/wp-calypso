@@ -4,6 +4,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import debugFactory from 'debug';
+import wp from 'lib/wp';
 
 /**
  * Internal Dependencies
@@ -18,6 +19,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import { abtest } from 'lib/abtest';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
+const wpcom = wp.undocumented();
 
 // Decide if we should use CompositeCheckout or CheckoutContainer
 export default function CheckoutSystemDecider( {
@@ -47,7 +49,9 @@ export default function CheckoutSystemDecider( {
 	}
 	if ( shouldShowCompositeCheckout( cart, countryCode, locale, product, isJetpack ) ) {
 		return (
-			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+			<StripeHookProvider
+				fetchStripeConfiguration={ args => fetchStripeConfiguration( args, wpcom ) }
+			>
 				<CompositeCheckout
 					siteSlug={ selectedSite?.slug }
 					siteId={ selectedSite?.ID }
