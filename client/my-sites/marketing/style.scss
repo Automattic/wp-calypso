@@ -146,7 +146,7 @@
 		margin-top: 10px;
 	}
 
-	.sharing-service-tip {
+	.connections__sharing-service-tip {
 		margin-top: 16px;
 		font-size: 14px;
 		color: var( --color-neutral-40 );
@@ -157,7 +157,7 @@
 		}
 	}
 
-	.sharing-service-tip:empty {
+	.connections__sharing-service-tip:empty {
 		display: none;
 	}
 
@@ -171,7 +171,7 @@
 		}
 
 		&.not-connected .sharing-service-accounts-detail,
-		&.not-connected .sharing-service-tip {
+		&.not-connected .connections__sharing-service-tip {
 			display: none;
 		}
 	}

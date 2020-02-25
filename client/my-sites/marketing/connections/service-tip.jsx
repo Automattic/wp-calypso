@@ -80,11 +80,11 @@ class SharingServiceTip extends Component {
 	render() {
 		const { service } = this.props;
 		if ( ! includes( SERVICES_WHITELIST, service.ID ) || 'google_plus' === service.ID ) {
-			return <div className="sharing-service-tip" />;
+			return <div className="connections__sharing-service-tip" />;
 		}
 
 		return (
-			<div className="sharing-service-tip">
+			<div className="connections__sharing-service-tip">
 				<Gridicon icon="info" size={ 18 } />
 				{ this[ service.ID ]() }
 			</div>
