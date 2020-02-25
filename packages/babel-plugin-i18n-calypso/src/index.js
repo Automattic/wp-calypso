@@ -89,6 +89,11 @@ function getNodeAsString( node ) {
 		case 'StringLiteral':
 			return node.value;
 
+		case 'TemplateLiteral':
+			return ( node.quasis || [] ).reduce( ( string, element ) => {
+				return ( string += element.value.cooked );
+			}, '' );
+
 		default:
 			return '';
 	}
