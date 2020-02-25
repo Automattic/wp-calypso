@@ -105,6 +105,7 @@ export default function CompositeCheckout( {
 	getStoredCards,
 	validateDomainContactDetails,
 	allowedPaymentMethods,
+	onlyLoadPaymentMethods,
 	overrideCountryList,
 	redirectTo,
 	feature,
@@ -245,7 +246,7 @@ export default function CompositeCheckout( {
 		changeItemVariant,
 		errors,
 		subtotal,
-		isLoading,
+		isLoading: isLoadingCart,
 		allowedPaymentMethods: serverAllowedPaymentMethods,
 		variantRequestStatus,
 		variantSelectOverride,
@@ -286,48 +287,67 @@ export default function CompositeCheckout( {
 	const itemsForCheckout = ( items.length ? [ ...items, tax, couponItem ] : [] ).filter( Boolean );
 	debug( 'items for checkout', itemsForCheckout );
 
-	useRedirectIfCartEmpty( items, `/plans/${ siteSlug || '' }`, isLoading );
+	useRedirectIfCartEmpty( items, `/plans/${ siteSlug || '' }`, isLoadingCart );
 
 	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
 		getStoredCards || wpcomGetStoredCards
 	);
 
-	const paypalMethod = useMemo( () => createPayPalMethod( { registerStore } ), [ registerStore ] );
-	paypalMethod.id = 'paypal';
-	// This is defined afterward so that getThankYouUrl can be dynamic without having to re-create payment method
-	paypalMethod.submitTransaction = () => {
-		const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
-		const successUrl = formatUrl( {
-			protocol,
-			hostname,
-			port,
-			pathname: getThankYouUrl(),
-		} );
-		const cancelUrl = formatUrl( {
-			protocol,
-			hostname,
-			port,
-			pathname,
-		} );
+	const shouldLoadPayPalMethod = onlyLoadPaymentMethods
+		? onlyLoadPaymentMethods.includes( 'paypal' )
+		: true;
+	const paypalMethod = useMemo( () => {
+		if ( ! shouldLoadPayPalMethod ) {
+			return null;
+		}
+		return createPayPalMethod( { registerStore } );
+	}, [ registerStore, shouldLoadPayPalMethod ] );
+	if ( paypalMethod ) {
+		paypalMethod.id = 'paypal';
+		// This is defined afterward so that getThankYouUrl can be dynamic without having to re-create payment method
+		paypalMethod.submitTransaction = () => {
+			const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
+			const successUrl = formatUrl( {
+				protocol,
+				hostname,
+				port,
+				pathname: getThankYouUrl(),
+			} );
+			const cancelUrl = formatUrl( {
+				protocol,
+				hostname,
+				port,
+				pathname,
+			} );
 
-		return makePayPalExpressRequest(
-			{
-				items,
-				successUrl,
-				cancelUrl,
-				siteId: select( 'wpcom' )?.getSiteId?.() ?? '',
-				domainDetails: getDomainDetails( select ),
-				couponId: null, // TODO: get couponId
-				country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '',
-				postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '',
-				subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value ?? '',
-			},
-			wpcomPayPalExpress
-		);
-	};
+			return makePayPalExpressRequest(
+				{
+					items,
+					successUrl,
+					cancelUrl,
+					siteId: select( 'wpcom' )?.getSiteId?.() ?? '',
+					domainDetails: getDomainDetails( select ),
+					couponId: null, // TODO: get couponId
+					country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '',
+					postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '',
+					subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value ?? '',
+				},
+				wpcomPayPalExpress
+			);
+		};
+	}
 
+	const shouldLoadStripeMethod = onlyLoadPaymentMethods
+		? onlyLoadPaymentMethods.includes( 'card' )
+		: true;
 	const stripeMethod = useMemo( () => {
-		if ( isStripeLoading || stripeLoadingError || ! stripe || ! stripeConfiguration ) {
+		if (
+			isStripeLoading ||
+			stripeLoadingError ||
+			! stripe ||
+			! stripeConfiguration ||
+			! shouldLoadStripeMethod
+		) {
 			return null;
 		}
 		return createStripeMethod( {
@@ -355,6 +375,7 @@ export default function CompositeCheckout( {
 			},
 		} );
 	}, [
+		shouldLoadStripeMethod,
 		registerStore,
 		dispatch,
 		stripe,
@@ -366,70 +387,86 @@ export default function CompositeCheckout( {
 		stripeMethod.id = 'card';
 	}
 
-	const fullCreditsPaymentMethod = useMemo(
-		() =>
-			createFullCreditsMethod( {
-				registerStore,
-				submitTransaction: submitData => {
-					const pending = submitCreditsTransaction(
-						{
-							...submitData,
-							siteId: select( 'wpcom' )?.getSiteId?.(),
-							domainDetails: getDomainDetails( select ),
-							// this data is intentionally empty so we do not charge taxes
-							country: null,
-							postalCode: null,
-						},
-						wpcomTransaction
-					);
-					// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-					pending.then( result => {
-						debug( 'saving transaction response', result );
-						dispatch( 'wpcom' ).setTransactionResponse( result );
-					} );
-					return pending;
-				},
-			} ),
-		[ registerStore, dispatch ]
-	);
-	fullCreditsPaymentMethod.label = <WordPressCreditsLabel credits={ credits } />;
-	fullCreditsPaymentMethod.inactiveContent = <WordPressCreditsSummary />;
+	const shouldLoadFullCreditsMethod = onlyLoadPaymentMethods
+		? onlyLoadPaymentMethods.includes( 'full-credits' )
+		: true;
+	const fullCreditsPaymentMethod = useMemo( () => {
+		if ( ! shouldLoadFullCreditsMethod ) {
+			return null;
+		}
+		return createFullCreditsMethod( {
+			registerStore,
+			submitTransaction: submitData => {
+				const pending = submitCreditsTransaction(
+					{
+						...submitData,
+						siteId: select( 'wpcom' )?.getSiteId?.(),
+						domainDetails: getDomainDetails( select ),
+						// this data is intentionally empty so we do not charge taxes
+						country: null,
+						postalCode: null,
+					},
+					wpcomTransaction
+				);
+				// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+				pending.then( result => {
+					debug( 'saving transaction response', result );
+					dispatch( 'wpcom' ).setTransactionResponse( result );
+				} );
+				return pending;
+			},
+		} );
+	}, [ registerStore, dispatch, shouldLoadFullCreditsMethod ] );
+	if ( fullCreditsPaymentMethod ) {
+		fullCreditsPaymentMethod.label = <WordPressCreditsLabel credits={ credits } />;
+		fullCreditsPaymentMethod.inactiveContent = <WordPressCreditsSummary />;
+	}
 
-	const freePaymentMethod = useMemo(
-		() =>
-			createFreePaymentMethod( {
-				registerStore,
-				submitTransaction: submitData => {
-					const pending = submitFreePurchaseTransaction(
-						{
-							...submitData,
-							siteId: select( 'wpcom' )?.getSiteId?.(),
-							domainDetails: getDomainDetails( select ),
-							// this data is intentionally empty so we do not charge taxes
-							country: null,
-							postalCode: null,
-						},
-						wpcomTransaction
-					);
-					// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-					pending.then( result => {
-						debug( 'saving transaction response', result );
-						dispatch( 'wpcom' ).setTransactionResponse( result );
-					} );
-					return pending;
-				},
-			} ),
-		[ registerStore, dispatch ]
-	);
-	freePaymentMethod.label = <WordPressFreePurchaseLabel />;
-	freePaymentMethod.inactiveContent = <WordPressFreePurchaseSummary />;
+	const shouldLoadFreePaymentMethod = onlyLoadPaymentMethods
+		? onlyLoadPaymentMethods.includes( 'free-purchase' )
+		: true;
+	const freePaymentMethod = useMemo( () => {
+		if ( ! shouldLoadFreePaymentMethod ) {
+			return null;
+		}
+		return createFreePaymentMethod( {
+			registerStore,
+			submitTransaction: submitData => {
+				const pending = submitFreePurchaseTransaction(
+					{
+						...submitData,
+						siteId: select( 'wpcom' )?.getSiteId?.(),
+						domainDetails: getDomainDetails( select ),
+						// this data is intentionally empty so we do not charge taxes
+						country: null,
+						postalCode: null,
+					},
+					wpcomTransaction
+				);
+				// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+				pending.then( result => {
+					debug( 'saving transaction response', result );
+					dispatch( 'wpcom' ).setTransactionResponse( result );
+				} );
+				return pending;
+			},
+		} );
+	}, [ registerStore, dispatch, shouldLoadFreePaymentMethod ] );
+	if ( freePaymentMethod ) {
+		freePaymentMethod.label = <WordPressFreePurchaseLabel />;
+		freePaymentMethod.inactiveContent = <WordPressFreePurchaseSummary />;
+	}
 
 	const {
 		canMakePayment: isApplePayAvailable,
 		isLoading: isApplePayLoading,
 	} = useIsApplePayAvailable( stripe, stripeConfiguration, !! stripeLoadingError, items );
+	const shouldLoadApplePay = onlyLoadPaymentMethods
+		? onlyLoadPaymentMethods.includes( 'apple-pay' ) && isApplePayAvailable
+		: isApplePayAvailable;
 	const applePayMethod = useMemo( () => {
 		if (
+			! shouldLoadApplePay ||
 			isStripeLoading ||
 			stripeLoadingError ||
 			! stripe ||
@@ -463,6 +500,7 @@ export default function CompositeCheckout( {
 			stripeConfiguration,
 		} );
 	}, [
+		shouldLoadApplePay,
 		isApplePayLoading,
 		dispatch,
 		registerStore,
@@ -473,48 +511,57 @@ export default function CompositeCheckout( {
 		isApplePayAvailable,
 	] );
 
-	const existingCardMethods = useMemo(
-		() =>
-			storedCards.map( storedDetails =>
-				createExistingCardMethod( {
-					id: `existingCard-${ storedDetails.stored_details_id }`,
-					cardholderName: storedDetails.name,
-					cardExpiry: storedDetails.expiry,
-					brand: storedDetails.card_type,
-					last4: storedDetails.card,
-					submitTransaction: submitData => {
-						const pending = submitExistingCardPayment(
-							{
-								...submitData,
-								siteId: select( 'wpcom' )?.getSiteId?.(),
-								storedDetailsId: storedDetails.stored_details_id,
-								paymentMethodToken: storedDetails.mp_ref,
-								paymentPartnerProcessorId: storedDetails.payment_partner,
-								domainDetails: getDomainDetails( select ),
-							},
-							wpcomTransaction
-						);
-						// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-						pending.then( result => {
-							debug( 'saving transaction response', result );
-							dispatch( 'wpcom' ).setTransactionResponse( result );
-						} );
-						return pending;
-					},
-					registerStore,
-					getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-					getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-					getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-				} )
-			),
-		[ registerStore, storedCards, dispatch ]
-	);
+	const shouldLoadExistingCardsMethods = onlyLoadPaymentMethods
+		? onlyLoadPaymentMethods.includes( 'existingCard' )
+		: true;
+	const existingCardMethods = useMemo( () => {
+		if ( ! shouldLoadExistingCardsMethods ) {
+			return [];
+		}
+		return storedCards.map( storedDetails =>
+			createExistingCardMethod( {
+				id: `existingCard-${ storedDetails.stored_details_id }`,
+				cardholderName: storedDetails.name,
+				cardExpiry: storedDetails.expiry,
+				brand: storedDetails.card_type,
+				last4: storedDetails.card,
+				submitTransaction: submitData => {
+					const pending = submitExistingCardPayment(
+						{
+							...submitData,
+							siteId: select( 'wpcom' )?.getSiteId?.(),
+							storedDetailsId: storedDetails.stored_details_id,
+							paymentMethodToken: storedDetails.mp_ref,
+							paymentPartnerProcessorId: storedDetails.payment_partner,
+							domainDetails: getDomainDetails( select ),
+						},
+						wpcomTransaction
+					);
+					// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+					pending.then( result => {
+						debug( 'saving transaction response', result );
+						dispatch( 'wpcom' ).setTransactionResponse( result );
+					} );
+					return pending;
+				},
+				registerStore,
+				getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+				getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+				getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+			} )
+		);
+	}, [ registerStore, storedCards, dispatch, shouldLoadExistingCardsMethods ] );
 
-	const isPurchaseFree = ! isLoading && total.amount.value === 0;
+	const isPurchaseFree = ! isLoadingCart && total.amount.value === 0;
 	debug( 'is purchase free?', isPurchaseFree );
 
 	const paymentMethods =
-		isLoading || isLoadingStoredCards || isApplePayLoading || items.length < 1
+		isLoadingCart ||
+		isLoadingStoredCards ||
+		( onlyLoadPaymentMethods
+			? onlyLoadPaymentMethods.includes( 'apple-pay' ) && isApplePayLoading
+			: isApplePayLoading ) ||
+		items.length < 1
 			? []
 			: [
 					freePaymentMethod,
@@ -621,11 +668,7 @@ export default function CompositeCheckout( {
 				paymentMethods={ paymentMethods }
 				registry={ registry }
 				isLoading={
-					isLoading ||
-					isLoadingStoredCards ||
-					isApplePayLoading ||
-					paymentMethods.length < 1 ||
-					items.length < 1
+					isLoadingCart || isLoadingStoredCards || paymentMethods.length < 1 || items.length < 1
 				}
 			>
 				<WPCheckout
