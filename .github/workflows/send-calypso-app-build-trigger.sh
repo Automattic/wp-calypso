@@ -1,6 +1,9 @@
 #!/bin/bash
 set -Eeuo pipefail
 
+# It may take a few seconds for the Artifact to be visible over the GitHub API.
+sleep 5
+
 trigger_payload=`cat $GITHUB_EVENT_PATH`
 
 workflow_data="{
