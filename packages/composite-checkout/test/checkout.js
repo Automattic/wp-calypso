@@ -587,6 +587,7 @@ function createStepFromStepObject( stepObject ) {
 				isCompleteCallback={ stepObject.isCompleteCallback }
 				editButtonAriaLabel={ stepObject.getEditButtonAriaLabel() }
 				nextStepButtonAriaLabel={ stepObject.getNextStepButtonAriaLabel() }
+				className={ stepObject.className }
 			/>
 		);
 	}
@@ -604,6 +605,7 @@ function createStepFromStepObject( stepObject ) {
 			activeStepContent={ stepObject.activeStepContent }
 			completeStepContent={ stepObject.completeStepContent }
 			titleContent={ stepObject.titleContent }
+			className={ stepObject.className }
 		/>
 	);
 }
@@ -619,7 +621,6 @@ function createMockStepObjects() {
 			incompleteStepContent: <span>Custom Step - Summary Incomplete</span>,
 			completeStepContent: <span>Custom Step - Summary Complete</span>,
 			isCompleteCallback: () => true,
-			isEditableCallback: () => true,
 			getEditButtonAriaLabel: () => 'Custom Step - Summary edit button label',
 			getNextStepButtonAriaLabel: () => 'Custom Step - Summary next button label',
 		},
@@ -632,7 +633,6 @@ function createMockStepObjects() {
 			incompleteStepContent: <span>Custom Step - Contact Incomplete</span>,
 			completeStepContent: <span>Custom Step - Contact Complete</span>,
 			isCompleteCallback: () => true,
-			isEditableCallback: () => true,
 			getEditButtonAriaLabel: () => 'Custom Step - Contact edit button label',
 			getNextStepButtonAriaLabel: () => 'Custom Step - Contact next button label',
 		},
@@ -645,7 +645,6 @@ function createMockStepObjects() {
 			incompleteStepContent: <span>Custom Step - Review Incomplete</span>,
 			completeStepContent: <span>Custom Step - Review Complete</span>,
 			isCompleteCallback: () => true,
-			isEditableCallback: () => true,
 			getEditButtonAriaLabel: () => 'Custom Step - Review edit button label',
 			getNextStepButtonAriaLabel: () => 'Custom Step - Review next button label',
 		},
@@ -658,7 +657,6 @@ function createMockStepObjects() {
 			incompleteStepContent: <span>Custom Step - Incomplete Incomplete</span>,
 			completeStepContent: <span>Custom Step - Incomplete Complete</span>,
 			isCompleteCallback: () => false,
-			isEditableCallback: () => true,
 			getEditButtonAriaLabel: () => 'Custom Step - Incomplete edit button label',
 			getNextStepButtonAriaLabel: () => 'Custom Step - Incomplete next button label',
 		},
@@ -673,9 +671,6 @@ function createMockStepObjects() {
 			isCompleteCallback: ( { paymentData } ) => {
 				return paymentData.userName && paymentData.userName.length > 0 ? true : false;
 			},
-			isEditableCallback: ( { paymentData } ) => {
-				return !! paymentData.userName;
-			},
 			getEditButtonAriaLabel: () => 'Custom Step - Incomplete edit button label',
 			getNextStepButtonAriaLabel: () => 'Custom Step - Incomplete next button label',
 		},
@@ -688,7 +683,6 @@ function createMockStepObjects() {
 			incompleteStepContent: <span>Custom Step - Uneditable Incomplete</span>,
 			completeStepContent: <span>Custom Step - Uneditable Complete</span>,
 			isCompleteCallback: () => true,
-			isEditableCallback: () => false,
 			getEditButtonAriaLabel: () => 'Custom Step - Uneditable edit button label',
 			getNextStepButtonAriaLabel: () => 'Custom Step - Uneditable next button label',
 		},
