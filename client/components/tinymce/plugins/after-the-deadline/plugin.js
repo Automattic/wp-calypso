@@ -29,8 +29,8 @@ import { getLocaleSlug, translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import AtDCore from './core';
-import PreferencesActions from 'lib/preferences/actions';
-import PreferencesStore from 'lib/preferences/store';
+import { fetchPreferences, savePreference } from 'state/preferences/actions';
+import { getPreference, hasReceivedRemotePreferences } from 'state/preferences/selectors';
 
 /**
  * Module variables
@@ -255,13 +255,18 @@ function plugin( editor ) {
 	}
 
 	function setAlwaysIgnore( text ) {
+		const store = editor.getParam( 'redux_store' );
+		if ( ! store ) {
+			return;
+		}
+
 		// Save ignore preference
-		const ignores = PreferencesStore.get( IGNORE_PREFERENCE_NAME ) || [];
+		const ignores = getPreference( store.getState(), IGNORE_PREFERENCE_NAME ) || [];
 		if ( -1 === ignores.indexOf( text ) ) {
 			ignores.push( text );
 		}
 
-		PreferencesActions.set( IGNORE_PREFERENCE_NAME, ignores );
+		store.dispatch( savePreference( IGNORE_PREFERENCE_NAME, ignores ) );
 	}
 
 	// Create the suggestions menu
@@ -458,25 +463,32 @@ function plugin( editor ) {
 			return;
 		}
 
+		const store = editor.getParam( 'redux_store' );
+		if ( ! store ) {
+			return;
+		}
+
 		// Fetch preferences if unknown
-		if ( undefined === PreferencesStore.getAll() ) {
-			PreferencesActions.fetch();
+		if ( ! hasReceivedRemotePreferences( store.getState() ) ) {
+			store.dispatch( fetchPreferences() );
 		}
 
 		// Sync ignored strings to core
 		function syncToCore() {
-			const ignores = PreferencesStore.get( IGNORE_PREFERENCE_NAME );
+			const ignores = getPreference( store.getState(), IGNORE_PREFERENCE_NAME );
 			if ( ignores ) {
 				atdCore.setIgnoreStrings( ignores );
 			}
 		}
 
+		let unsubscribe;
+
 		editor.on( 'init', () => {
-			PreferencesStore.on( 'change', syncToCore );
+			unsubscribe = store.subscribe( syncToCore );
 		} );
 
 		editor.on( 'remove', () => {
-			PreferencesStore.off( 'change', syncToCore );
+			unsubscribe();
 		} );
 	} )();
 
