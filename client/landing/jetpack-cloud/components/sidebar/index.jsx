@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import CurrentSite from '../current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
@@ -74,6 +75,7 @@ class JetpackCloudSidebar extends Component {
 
 		return (
 			<Sidebar>
+				<CurrentSite />
 				<SidebarRegion>
 					{ /* @todo: A profile info box needs to be created and added here; similar to <ProfileGravatar /> in client/me/sidebar/index.jsx */ }
 					<SidebarMenu>
