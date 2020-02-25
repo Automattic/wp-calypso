@@ -17,6 +17,14 @@ import { render } from '@testing-library/react'; // eslint-disable-line import/n
  * Internal dependencies
  */
 import CompositeCheckout from '../composite-checkout';
+import { StripeHookProvider } from 'lib/stripe';
+
+const fetchStripeConfiguration = async () => {
+	return {
+		public_key: 'abc123',
+		js_url: 'https://js.stripe.com/v3/',
+	};
+};
 
 describe( 'CompositeCheckout', () => {
 	let container;
@@ -98,16 +106,18 @@ describe( 'CompositeCheckout', () => {
 		} );
 
 		MyCheckout = () => (
-			<ReduxProvider store={ store }>
-				<CompositeCheckout
-					siteSlug={ 'foo.com' }
-					setCart={ mockSetCartEndpoint }
-					getCart={ mockGetCartEndpointWith( initialCart ) }
-					getStoredCards={ async () => [] }
-					allowedPaymentMethods={ [ 'paypal' ] }
-					overrideCountryList={ countryList }
-				/>
-			</ReduxProvider>
+			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+				<ReduxProvider store={ store }>
+					<CompositeCheckout
+						siteSlug={ 'foo.com' }
+						setCart={ mockSetCartEndpoint }
+						getCart={ mockGetCartEndpointWith( initialCart ) }
+						getStoredCards={ async () => [] }
+						allowedPaymentMethods={ [ 'paypal' ] }
+						overrideCountryList={ countryList }
+					/>
+				</ReduxProvider>
+			</StripeHookProvider>
 		);
 	} );
 
