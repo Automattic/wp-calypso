@@ -1,8 +1,13 @@
 /**
+ * External dependencies
+ */
+import wpcomRequest, { WpcomClientCredentials } from 'wpcom-proxy-request';
+
+/**
  * Internal dependencies
  */
-import { wpcomRequest, WpcomClientCredentials } from '../utils';
 import { CreateAccountAction } from './types';
+import '../utils';
 
 export default function createControls( clientCreds: WpcomClientCredentials ) {
 	return {
