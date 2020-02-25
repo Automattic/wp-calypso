@@ -54,7 +54,8 @@ jobs:
                     "branch": "'"$CURRENT_BRANCH"'",
                     "build_num": '"$GITHUB_RUN_NUMBER"',
                     "sha": "'"$GITHUB_SHA"'",
-                    "ancestor": "'"$ANCESTOR_SHA1"'"
+                    "ancestor": "'"$ANCESTOR_SHA1"'",
+                    "from": "gh-action"
                   }
                 }'
         fi
