@@ -27,6 +27,7 @@ class RenewButton extends React.Component {
 		primary: PropTypes.bool,
 		selectedSite: PropTypes.object,
 		subscriptionId: PropTypes.number,
+		redemptionProduct: PropTypes.object,
 	};
 
 	handleRenew = () => {
@@ -34,13 +35,14 @@ class RenewButton extends React.Component {
 	};
 
 	render() {
-		const { purchase, selectedSite } = this.props;
+		const { purchase, selectedSite, redemptionProduct } = this.props;
 
 		let formattedPrice = '...';
 		let loading = true;
 
 		if ( purchase && selectedSite.ID ) {
-			const renewalPrice = getRenewalPrice( purchase );
+			const renewalPrice =
+				getRenewalPrice( purchase ) + ( redemptionProduct ? redemptionProduct.cost : 0 );
 			const currencyCode = purchase.currencyCode;
 			formattedPrice = formatCurrency( renewalPrice, currencyCode, { stripZeros: true } );
 			loading = false;

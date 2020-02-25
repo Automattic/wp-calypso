@@ -26,7 +26,7 @@ import { isRecentlyRegistered, isExpiringSoon } from 'lib/domains/utils';
 import { DOMAINS } from 'lib/url/support';
 import SubscriptionSettings from '../card/subscription-settings';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
-
+import { getProductBySlug, getProductDisplayCost } from 'state/products-list/selectors';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
 
@@ -198,7 +198,7 @@ class RegisteredDomainType extends React.Component {
 			);
 		} else if ( domain.isRedeemable ) {
 			message = translate(
-				'Your domain has expired and is no longer active. You have {{strong}}%(days)s{{/strong}} to reactivate it during this redemption period before someone else can register it. A additional redemption fee will be added to the price of the domain to reactivate it. {{domainsLink}}Learn more{{/domainsLink}}',
+				'Your domain has expired and is no longer active. You have {{strong}}%(days)s{{/strong}} to reactivate it during this redemption period before someone else can register it. An additional redemption fee of {{strong}}%(redemptionCost)s{{/strong}} will be added to the price of the domain to reactivate it. {{domainsLink}}Learn more{{/domainsLink}}',
 				{
 					components: {
 						domainsLink,
@@ -206,6 +206,7 @@ class RegisteredDomainType extends React.Component {
 					},
 					args: {
 						days: moment.utc( domain.redeemableUntil ).fromNow( true ),
+						redemptionCost: this.props.redemptionCost,
 					},
 				}
 			);
@@ -223,11 +224,14 @@ class RegisteredDomainType extends React.Component {
 		return (
 			<div>
 				<p>{ message }</p>
-				{ ( domain.isRenewable || domain.isRenewable ) && ( <RenewButton
-					primary={ true }
-					selectedSite={ this.props.selectedSite }
-					subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
-				/> ) }
+				{ ( domain.isRenewable || domain.isRedeemable ) && (
+					<RenewButton
+						primary={ true }
+						selectedSite={ this.props.selectedSite }
+						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
+						redemptionProduct={ domain.isRedeemable ? this.props.redemptionProduct : null }
+					/>
+				) }
 			</div>
 		);
 	}
@@ -353,8 +357,16 @@ class RegisteredDomainType extends React.Component {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent,
-	recordGoogleEvent,
-	recordPaymentSettingsClick,
-} )( withLocalizedMoment( localize( RegisteredDomainType ) ) );
+export default connect(
+	state => {
+		return {
+			redemptionCost: getProductDisplayCost( state, 'domain_redemption' ),
+			redemptionProduct: getProductBySlug( state, 'domain_redemption' ),
+		};
+	},
+	{
+		recordTracksEvent,
+		recordGoogleEvent,
+		recordPaymentSettingsClick,
+	}
+)( withLocalizedMoment( localize( RegisteredDomainType ) ) );
