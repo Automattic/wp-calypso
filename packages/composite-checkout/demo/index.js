@@ -374,6 +374,7 @@ function MyCheckout() {
 			stripeLoadingError ||
 			! stripe ||
 			! stripeConfiguration ||
+			isApplePayLoading ||
 			! isApplePayAvailable
 		) {
 			return null;
@@ -386,7 +387,14 @@ function MyCheckout() {
 			stripe,
 			stripeConfiguration,
 		} );
-	}, [ stripe, stripeConfiguration, isStripeLoading, stripeLoadingError, isApplePayAvailable ] );
+	}, [
+		isApplePayLoading,
+		stripe,
+		stripeConfiguration,
+		isStripeLoading,
+		stripeLoadingError,
+		isApplePayAvailable,
+	] );
 
 	const paypalMethod = useMemo(
 		() =>
