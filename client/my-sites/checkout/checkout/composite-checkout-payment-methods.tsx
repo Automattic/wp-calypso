@@ -220,21 +220,24 @@ export function useIsApplePayAvailable( stripe, stripeConfiguration, items ) {
 
 	useEffect( () => {
 		let isSubscribed = true;
+		const unsubscribe = () => {
+			isSubscribed = false;
+		};
 		// Only calculate this once
-		if ( canMakePayment.isLoading ) {
-			return () => ( isSubscribed = false );
+		if ( ! canMakePayment.isLoading ) {
+			return unsubscribe;
 		}
 
 		// We'll need the Stripe library so wait until it is loaded
 		if ( ! stripe || ! stripeConfiguration ) {
-			return () => ( isSubscribed = false );
+			return unsubscribe;
 		}
 
 		// Our Apple Pay implementation uses the Payment Request API, so
 		// check that first.
 		if ( ! window.PaymentRequest ) {
 			setCanMakePayment( { isLoading: false, value: false } );
-			return () => ( isSubscribed = false );
+			return unsubscribe;
 		}
 
 		// Ask the browser if apple pay can be used. This can be very
@@ -244,11 +247,11 @@ export function useIsApplePayAvailable( stripe, stripeConfiguration, items ) {
 			const browserResponse = !! window.ApplePaySession?.canMakePayments();
 			if ( ! browserResponse ) {
 				setCanMakePayment( { isLoading: false, value: false } );
-				return () => ( isSubscribed = false );
+				return unsubscribe;
 			}
 		} catch ( error ) {
 			setCanMakePayment( { isLoading: false, value: false } );
-			return () => ( isSubscribed = false );
+			return unsubscribe;
 		}
 
 		// Ask Stripe if apple pay can be used. This is async.
@@ -274,14 +277,17 @@ export function useIsApplePayAvailable( stripe, stripeConfiguration, items ) {
 		};
 		const request = stripe.paymentRequest( paymentRequestOptions );
 		request.canMakePayment().then( result => {
+			debug( 'applePay canMakePayment returned', result );
 			if ( ! isSubscribed ) {
+				debug( 'useIsApplePayAvailable not subscribed; not updating' );
 				return;
 			}
 			setCanMakePayment( { isLoading: false, value: !! result?.applePay } );
 		} );
 
-		return () => ( isSubscribed = false );
+		return unsubscribe;
 	}, [ canMakePayment, stripe, items, stripeConfiguration ] );
 
+	debug( 'useIsApplePayAvailable', canMakePayment );
 	return { canMakePayment: canMakePayment.value, isLoading: canMakePayment.isLoading };
 }
