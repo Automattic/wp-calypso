@@ -40,7 +40,7 @@ const SiteSettingsTraffic = ( {
 	handleAutosavingRadio,
 	handleSubmitForm,
 	isAdmin,
-	isJetpack,
+	isJetpackAdmin,
 	isRequestingSettings,
 	isSavingSettings,
 	setFieldValue,
@@ -58,7 +58,7 @@ const SiteSettingsTraffic = ( {
 		) }
 		<JetpackDevModeNotice />
 
-		{ isJetpack && (
+		{ isJetpackAdmin && (
 			<JetpackAds
 				handleAutosavingToggle={ handleAutosavingToggle }
 				isSavingSettings={ isSavingSettings }
@@ -78,7 +78,7 @@ const SiteSettingsTraffic = ( {
 			/>
 		) }
 
-		{ isJetpack && (
+		{ isJetpackAdmin && (
 			<JetpackSiteStats
 				handleAutosavingToggle={ handleAutosavingToggle }
 				setFieldValue={ setFieldValue }
@@ -88,7 +88,7 @@ const SiteSettingsTraffic = ( {
 			/>
 		) }
 		{ isAdmin && <AnalyticsSettings /> }
-		{ isJetpack && (
+		{ isJetpackAdmin && (
 			<Shortlinks
 				handleAutosavingRadio={ handleAutosavingRadio }
 				handleAutosavingToggle={ handleAutosavingToggle }
@@ -109,10 +109,17 @@ const SiteSettingsTraffic = ( {
 	</Main>
 );
 
-const connectComponent = connect( state => ( {
-	isJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
-	isAdmin: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
-} ) );
+const connectComponent = connect( state => {
+	const siteId = getSelectedSiteId( state );
+	const isAdmin = canCurrentUser( state, siteId, 'manage_options' );
+	const isJetpack = isJetpackSite( state, siteId );
+	const isJetpackAdmin = isJetpack && isAdmin;
+
+	return {
+		isAdmin,
+		isJetpackAdmin,
+	};
+} );
 
 const getFormSettings = partialRight( pick, [
 	'stats',
