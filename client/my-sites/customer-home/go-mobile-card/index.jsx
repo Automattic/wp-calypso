@@ -33,7 +33,7 @@ export const GoMobileCard = ( { translate, email, sendMobileLoginEmail } ) => {
 	const showIosBadge = isDesktopView || isIos || ! isAndroid;
 	const showAndroidBadge = isDesktopView || isAndroid || ! isIos;
 	const showOnlyOneBadge = showIosBadge !== showAndroidBadge;
-	const isDesktopApp = [ 'desktop', 'desktop-development' ].includes( config( 'env_id' ) );
+	const isDesktopApp = config.isEnabled( 'desktop' );
 
 	const emailLogin = () => {
 		sendMobileLoginEmail( email );
