@@ -14,3 +14,4 @@ import './editor';
 
 /* eslint-disable no-console */
 console.log( 'So say we all.' );
+console.log( 'Why is it not working?' );
