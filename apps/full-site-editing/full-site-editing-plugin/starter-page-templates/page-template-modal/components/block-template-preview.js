@@ -16,7 +16,7 @@ import { withSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import TemplatePreviewFrame from './template-preview-frame';
+import BlockFramePreview from './template-preview-frame';
 
 function _BlockPreview( {
 	blocks,
@@ -47,12 +47,9 @@ const BlockPreview = withSelect( select => {
 const BlockTemplatePreview = ( { blocks = [], viewportWidth } ) => {
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		<TemplatePreviewFrame
-			viewportWidth={ viewportWidth }
-			className="block-preview-iframe"
-		>
+		<BlockFramePreview viewportWidth={ viewportWidth }>
 			<BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } />
-		</TemplatePreviewFrame>
+		</BlockFramePreview>
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	);
 };

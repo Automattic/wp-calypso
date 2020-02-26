@@ -80,7 +80,7 @@ const TemplateSelectorPreview = ( { blocks = [], viewportWidth, title } ) => {
 								...blocks,
 						  ]
 				}
-				viewportWidth={ blocks.length ? previewViewport : 960 }
+				viewportWidth={ viewportWidth }
 			/>
 		</div>
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

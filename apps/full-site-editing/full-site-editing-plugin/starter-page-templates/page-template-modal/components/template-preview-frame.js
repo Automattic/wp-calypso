@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { each, filter } from 'lodash';
+import { each, filter, get } from 'lodash';
 import { createPortal } from 'react-dom';
 import classnames from 'classnames';
 
@@ -9,87 +9,105 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 /* eslint-disable import/no-extraneous-dependencies */
-import { Component } from '@wordpress/element';
+import { useRef, useEffect, useState } from '@wordpress/element';
+/* eslint-enable import/no-extraneous-dependencies */
 
-class TemplatePreviewFrame extends Component {
-	componentDidMount() {
-		this.iframeHead = this.node.contentDocument.head;
-		this.iframeBody = this.node.contentDocument.body;
+/**
+ * This function will populate the styles from the current document
+ * to the given `<head />` and `<boby />` arguments.
+ *
+ * @param {Element} iFrameHead iframe <head /> element.
+ * @param {Element} iFrameBody iframe <body /> element.
+ */
+const loadStyles = ( iFrameHead, iFrameBody ) => {
+	each(
+		filter(
+			document.querySelectorAll( 'head link' ),
+			( { rel, href } ) => rel && rel === 'stylesheet' && href.match( /wp-content/ ) // only move styles from wp-content
+		),
+		( { href } ) => {
+			const iFrameLink = document.createElement( 'link' );
+			iFrameLink.rel = 'stylesheet';
+			iFrameLink.type = 'text/css';
+			iFrameLink.href = href;
+			iFrameHead.appendChild( iFrameLink );
+		}
+	);
 
-		this.iframeBody.className = 'block-preview-iframe-body';
-		this.initStyles();
+	each( filter( document.querySelectorAll( 'head style' ) ), ( { innerHTML } ) => {
+		const iFrameHeadStyle = document.createElement( 'style' );
+		iFrameHeadStyle.innerHTML = innerHTML;
+		iFrameHead.appendChild( iFrameHeadStyle );
+	} );
 
-		// Adjust the scale.
-		this.viewportWidth = this.props.viewportWidth || this.node.offsetWidth;
-		this.scale = this.node.parentNode.offsetWidth / this.viewportWidth;
-		this.height = this.node.parentNode.offsetHeight / this.scale;
-	}
+	each( filter( document.querySelectorAll( 'body style' ) ), ( { innerHTML } ) => {
+		const iFrameStyle = document.createElement( 'style' );
+		iFrameStyle.innerHTML = innerHTML;
+		iFrameBody.appendChild( iFrameStyle );
+	} );
+};
 
-	initStyles() {
-		// Populate styles to iframe element.
-		each(
-			filter(
-				document.querySelectorAll( 'head link' ),
-				( { rel, href } ) => rel && rel === 'stylesheet' && href.match( /wp-content/ ) // only move styles from wp-content
-			),
-			( { href } ) => {
-				const iframeLink = document.createElement( 'link' );
-				iframeLink.rel = 'stylesheet';
-				iframeLink.type = 'text/css';
-				iframeLink.href = href;
-				this.iframeHead.appendChild( iframeLink );
-			}
-		);
+const BlockFramePreview = ( {
+	head,
+	children,
+	className= 'block-iframe-preview',
+	bodyClassName = 'block-iframe-preview-body',
+	viewportWidth,
+} ) => {
+	const iFrameRef = useRef();
+	const [ style, setStyle ] = useState( {
+		transform: `scale( 1 )`,
+	} );
 
-		each( filter( document.querySelectorAll( 'head style' ) ), ( { innerHTML } ) => {
-			const iframeHeadStyle = document.createElement( 'style' );
-			iframeHeadStyle.innerHTML = innerHTML;
-			this.iframeHead.appendChild( iframeHeadStyle );
+	const iFrameHead = get( iFrameRef, [ 'current', 'contentDocument', 'head' ] );
+	const iFrameBody = get( iFrameRef, [ 'current', 'contentDocument', 'body' ] );
+
+	useEffect( () => {
+		if ( ! iFrameHead || ! iFrameBody ) {
+			return;
+		}
+		iFrameBody.className = bodyClassName;
+
+		loadStyles( iFrameHead, iFrameBody );
+
+		const parentNode = get( iFrameRef, [ 'current', 'parentNode' ] );
+		if ( ! parentNode ) {
+			return;
+		}
+
+		const width = viewportWidth || iFrameRef.current.offsetWidth;
+		const scale = parentNode.offsetWidth / viewportWidth;
+		const height = parentNode.offsetHeight / scale;
+
+		setStyle( {
+			width,
+			height,
+			transform: `scale( ${ scale } )`,
 		} );
+	}, [ iFrameHead, iFrameHead ] );
 
-		each( filter( document.querySelectorAll( 'body style' ) ), ( { innerHTML } ) => {
-			const iframeStyle = document.createElement( 'style' );
-			iframeStyle.innerHTML = innerHTML;
-			this.iframeBody.appendChild( iframeStyle );
-		} );
-	}
-
-	wrapBody( body ) {
-		return (
-			<div className="block-editor">
-				<div className="edit-post-visual-editor">
-					<div className="editor-styles-wrapper">
-						<div className="editor-writing-flow">{ body }</div>
+	return (
+		<iframe
+			ref={ iFrameRef }
+			className={ classnames(
+				'editor-styles-wrapper',
+				className,
+			) }
+			style={ style }
+		>
+			{ iFrameHead && createPortal( head, iFrameHead ) }
+			{ iFrameBody && createPortal(
+				<div className="block-editor">
+					<div className="edit-post-visual-editor">
+						<div className="editor-styles-wrapper">
+							<div className="editor-writing-flow">{ children }</div>
+						</div>
 					</div>
-				</div>
-			</div>
-		);
-	}
+				</div>,
+				iFrameBody
+			) }
+		</iframe>
+	);
+};
 
-	render() {
-		const { children, head } = this.props;
-		/* eslint-disable jsx-a11y/iframe-has-title */
-		return (
-			<iframe
-				ref={ node => ( this.node = node ) }
-				style={ {
-					...this.props.style,
-					width: this.viewportWidth,
-					height: this.height,
-					transform: `scale( ${ this.scale } )`,
-				} }
-				id="iframe-page-template-preview"
-				className={ classnames(
-					'editor-styles-wrapper',
-					this.props.className,
-				) }
-			>
-				{ this.iframeHead && createPortal( head, this.iframeHead ) }
-				{ this.iframeBody && createPortal( this.wrapBody( children ), this.iframeBody ) }
-			</iframe>
-		);
-		/* eslint-ensable jsx-a11y/iframe-has-title */
-	}
-}
-
-export default TemplatePreviewFrame;
+export default BlockFramePreview;

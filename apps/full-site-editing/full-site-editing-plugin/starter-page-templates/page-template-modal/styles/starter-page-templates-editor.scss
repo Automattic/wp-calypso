@@ -384,7 +384,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	margin-top: 20px;
 }
 
-.block-preview-iframe {
+.block-iframe-preview {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -397,7 +397,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	width: 1440px;
 }
 
-.block-preview-iframe-body {
+.block-iframe-preview-body {
 	margin: 0;
 	padding: 0;
 	overflow-x: hidden;
