@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { each, filter, get, castArray } from 'lodash';
+import { each, filter, get, castArray, debounce } from 'lodash';
 import { createPortal } from 'react-dom';
 import classnames from 'classnames';
 
@@ -9,11 +9,13 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 /* eslint-disable import/no-extraneous-dependencies */
-import { useRef, useEffect, useState, useMemo, useReducer, useLayoutEffect } from '@wordpress/element';
+import { useRef, useEffect, useState, useMemo, useReducer, useLayoutEffect, useCallback } from '@wordpress/element';
 import { withSelect } from '@wordpress/data';
 import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
 import { Disabled } from '@wordpress/components';
 /* eslint-enable import/no-extraneous-dependencies */
+
+const THRESHOLD_RESIZE = 300;
 
 /**
  * This function will populate the styles from the current document
@@ -63,11 +65,12 @@ const BlockFramePreview = ( {
 		transform: `scale( 1 )`,
 	} );
 
+	// Rendering blocks list.
 	const renderedBlocks = useMemo( () => castArray( blocks ), [ blocks ] );
-	const [ recompute, triggerRecompute ] = useReducer( state => state + 1, 0 );
+	const [ recomputeBlockListKey, triggerRecomputeBlockList ] = useReducer( state => state + 1, 0 );
+	useLayoutEffect( triggerRecomputeBlockList, [ blocks ] );
 
-	useLayoutEffect( triggerRecompute, [ blocks ] );
-
+	// Pick up iFrame <head /> and <body />
 	const iFrameHead = get( iFrameRef, [ 'current', 'contentDocument', 'head' ] );
 	const iFrameBody = get( iFrameRef, [ 'current', 'contentDocument', 'body' ] );
 
@@ -76,24 +79,45 @@ const BlockFramePreview = ( {
 			return;
 		}
 		iFrameBody.className = bodyClassName;
-
 		loadStyles( iFrameHead, iFrameBody );
 
-		const parentNode = get( iFrameRef, [ 'current', 'parentNode' ] );
-		if ( ! parentNode ) {
-			return;
+		reScale();
+	}, [ iFrameHead, iFrameHead ] );
+
+	const reScale = useCallback(
+		() => {
+			const parentNode = get( iFrameRef, [ 'current', 'parentNode' ] );
+			if ( ! parentNode ) {
+				return;
+			}
+
+			// Scaling iFrame.
+			const width = viewportWidth || iFrameRef.current.offsetWidth;
+			const scale = parentNode.offsetWidth / viewportWidth;
+			const height = parentNode.offsetHeight / scale;
+
+			setStyle( {
+				width,
+				height,
+				transform: `scale( ${ scale } )`,
+			} );
+		},
+		[]
+	);
+
+	useEffect( () => {
+		const refreshPreview = debounce( reScale, THRESHOLD_RESIZE );
+		window.addEventListener( 'resize', refreshPreview );
+
+		// In wp-admin, listen to the jQuery `wp-collapse-menu` event to refresh the preview on sidebar toggle.
+		if ( window.jQuery ) {
+			window.jQuery( window.document ).on( 'wp-collapse-menu', reScale );
 		}
 
-		const width = viewportWidth || iFrameRef.current.offsetWidth;
-		const scale = parentNode.offsetWidth / viewportWidth;
-		const height = parentNode.offsetHeight / scale;
-
-		setStyle( {
-			width,
-			height,
-			transform: `scale( ${ scale } )`,
-		} );
-	}, [ iFrameHead, iFrameHead ] );
+		return () => {
+			window.removeEventListener( 'resize', refreshPreview );
+		};
+	}, [] );
 
 	return (
 		<iframe
@@ -111,7 +135,7 @@ const BlockFramePreview = ( {
 						<div className="editor-styles-wrapper">
 							<div className="editor-writing-flow">
 								<BlockEditorProvider value={ renderedBlocks } settings={ settings }>
-									<Disabled key={ recompute }>
+									<Disabled key={ recomputeBlockListKey }>
 										<BlockList />
 									</Disabled>
 								</BlockEditorProvider>
