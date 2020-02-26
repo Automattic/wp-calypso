@@ -14,7 +14,6 @@ import CompactFormToggle from 'components/forms/form-toggle/compact';
 import EligibilityWarnings from 'blocks/eligibility-warnings';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { FEATURE_PERFORMANCE } from 'lib/plans/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
@@ -22,8 +21,8 @@ import isPrivateSite from 'state/selectors/is-private-site';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
+import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import { saveSiteSettings } from 'state/site-settings/actions';
 import SupportInfo from 'components/support-info';
 
 class SpeedUpSiteSettings extends Component {
@@ -59,11 +58,12 @@ class SpeedUpSiteSettings extends Component {
 			isRequestingSettings,
 			isSavingSettings,
 			photonModuleUnavailable,
-			saveSettings,
 			selectedSiteId,
 			siteAcceleratorStatus,
+			siteSlug,
 			siteIsAtomicPrivate,
 			siteIsJetpack,
+			siteIsUnlaunched,
 			translate,
 		} = this.props;
 		const isRequestingOrSaving = isRequestingSettings || isSavingSettings;
@@ -71,22 +71,12 @@ class SpeedUpSiteSettings extends Component {
 		if ( siteIsAtomicPrivate ) {
 			return (
 				<EligibilityWarnings
-					context="performance"
-					feature={ FEATURE_PERFORMANCE }
-					ctaName="calypso-performance-features-activate-nudge"
-					eligibilityData={ {
-						eligibilityHolds: [ 'SITE_NOT_PUBLIC' ],
-					} }
-					isBusy={ isSavingSettings }
-					isEligible={ true }
-					onProceed={ () => {
-						saveSettings( selectedSiteId, {
-							blog_public: 1,
-							wpcom_coming_soon: 0,
-							apiVersion: '1.4',
-						} );
-					} }
 					className="site-settings__card"
+					isEligible={ true }
+					backUrl={ `/settings/performance/${ siteSlug }` }
+					eligibilityData={ {
+						eligibilityHolds: [ siteIsUnlaunched ? 'SITE_UNLAUNCHED' : 'SITE_NOT_PUBLIC' ],
+					} }
 				/>
 			);
 		}
@@ -159,33 +149,29 @@ class SpeedUpSiteSettings extends Component {
 	}
 }
 
-export default connect(
-	state => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
-		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
-			state,
-			selectedSiteId,
-			'photon'
-		);
-		const siteIsAtomicPrivate =
-			isSiteAutomatedTransfer( state, selectedSiteId ) && isPrivateSite( state, selectedSiteId );
-		const photonModuleActive = isJetpackModuleActive( state, selectedSiteId, 'photon' );
-		const assetCdnModuleActive = isJetpackModuleActive( state, selectedSiteId, 'photon-cdn' );
+export default connect( state => {
+	const selectedSiteId = getSelectedSiteId( state );
+	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
+		state,
+		selectedSiteId,
+		'photon'
+	);
+	const siteIsAtomicPrivate =
+		isSiteAutomatedTransfer( state, selectedSiteId ) && isPrivateSite( state, selectedSiteId );
+	const photonModuleActive = isJetpackModuleActive( state, selectedSiteId, 'photon' );
+	const assetCdnModuleActive = isJetpackModuleActive( state, selectedSiteId, 'photon-cdn' );
 
-		// Status of the main site accelerator toggle.
-		const siteAcceleratorStatus = !! ( photonModuleActive || assetCdnModuleActive );
+	// Status of the main site accelerator toggle.
+	const siteAcceleratorStatus = !! ( photonModuleActive || assetCdnModuleActive );
 
-		return {
-			photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
-			selectedSiteId,
-			siteAcceleratorStatus,
-			siteIsAtomicPrivate,
-			siteIsJetpack: isJetpackSite( state, selectedSiteId ),
-			siteSlug: getSiteSlug( state, selectedSiteId ),
-		};
-	},
-	{
-		saveSettings: saveSiteSettings,
-	}
-)( localize( SpeedUpSiteSettings ) );
+	return {
+		photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
+		selectedSiteId,
+		siteAcceleratorStatus,
+		siteIsAtomicPrivate,
+		siteIsJetpack: isJetpackSite( state, selectedSiteId ),
+		siteIsUnlaunched: isUnlaunchedSite( state, selectedSiteId ),
+		siteSlug: getSiteSlug( state, selectedSiteId ),
+	};
+} )( localize( SpeedUpSiteSettings ) );

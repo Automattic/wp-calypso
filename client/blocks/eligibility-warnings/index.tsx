@@ -13,7 +13,12 @@ import page from 'page';
  * Internal dependencies
  */
 import hasLocalizedText from './has-localized-text';
-import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES, FEATURE_SFTP } from 'lib/plans/constants';
+import {
+	FEATURE_UPLOAD_PLUGINS,
+	FEATURE_PERFORMANCE,
+	FEATURE_UPLOAD_THEMES,
+	FEATURE_SFTP,
+} from 'lib/plans/constants';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
@@ -23,6 +28,8 @@ import QueryEligibility from 'components/data/query-atat-eligibility';
 import HoldList, { hasBlockingHold } from './hold-list';
 import WarningList from './warning-list';
 import { launchSite } from 'state/sites/launch/actions';
+import { isSavingSiteSettings } from 'state/site-settings/selectors';
+import { saveSiteSettings } from 'state/site-settings/actions';
 import getRequest from 'state/selectors/get-request';
 
 /**
@@ -38,6 +45,11 @@ interface ExternalProps {
 	context?: string;
 	feature?: string;
 	ctaName?: string;
+	eligibilityData?: {
+		eligibilityHolds: string[];
+		eligibilityWarnings: string[];
+		lastUpdated: string;
+	};
 }
 
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
@@ -56,7 +68,9 @@ export const EligibilityWarnings = ( {
 	siteId,
 	siteSlug,
 	siteIsLaunching,
+	siteIsSavingSettings,
 	launchSite: launch,
+	makeSitePublic,
 	translate,
 }: Props ) => {
 	const warnings = eligibilityData.eligibilityWarnings || [];
@@ -73,6 +87,7 @@ export const EligibilityWarnings = ( {
 	);
 
 	const launchCurrentSite = () => launch( siteId );
+	const makeCurrentSitePublic = () => makeSitePublic( siteId );
 
 	const logEventAndProceed = e => {
 		if ( siteRequiresUpgrade( listHolds ) ) {
@@ -82,6 +97,10 @@ export const EligibilityWarnings = ( {
 		}
 		if ( siteRequiresLaunch( listHolds ) ) {
 			launchCurrentSite();
+			return;
+		}
+		if ( siteRequiresGoingPublic( listHolds ) ) {
+			makeCurrentSitePublic();
 			return;
 		}
 		onProceed( e );
@@ -123,9 +142,12 @@ export const EligibilityWarnings = ( {
 					<Button
 						primary={ true }
 						disabled={
-							isProceedButtonDisabled( isEligible, listHolds ) || siteIsLaunching || isBusy
+							isProceedButtonDisabled( isEligible, listHolds ) ||
+							siteIsSavingSettings ||
+							siteIsLaunching ||
+							isBusy
 						}
-						busy={ siteIsLaunching || isBusy }
+						busy={ siteIsLaunching || siteIsSavingSettings || isBusy }
 						onClick={ logEventAndProceed }
 					>
 						{ getProceedButtonText( listHolds, translate ) }
@@ -201,7 +223,7 @@ EligibilityWarnings.defaultProps = {
 	onProceed: noop,
 };
 
-const mapStateToProps = ( state: object, ownProps: object ) => {
+const mapStateToProps = ( state: object, ownProps: ExternalProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
 	const eligibilityData = ownProps.eligibilityData || getEligibility( state, siteId );
@@ -215,6 +237,7 @@ const mapStateToProps = ( state: object, ownProps: object ) => {
 		siteId,
 		siteSlug,
 		siteIsLaunching: getRequest( state, launchSite( siteId ) )?.isLoading ?? false,
+		siteIsSavingSettings: isSavingSiteSettings( state, siteId ),
 	};
 };
 
@@ -228,6 +251,12 @@ const mapDispatchToProps = {
 			cta_size: 'regular',
 		} ),
 	launchSite,
+	makeSitePublic: ( selectedSiteId: number ) =>
+		saveSiteSettings( selectedSiteId, {
+			blog_public: 1,
+			wpcom_coming_soon: 0,
+			apiVersion: '1.4',
+		} ),
 };
 
 function mergeProps(
@@ -235,9 +264,9 @@ function mergeProps(
 	dispatchProps: typeof mapDispatchToProps,
 	ownProps: ExternalProps
 ) {
-	let context: string | null = ownProps.context;
-	let feature = ownProps.feature || '';
-	let ctaName = ownProps.ctaName || '';
+	let context: string | null;
+	let feature = '';
+	let ctaName = '';
 	if ( includes( ownProps.backUrl, 'plugins' ) ) {
 		context = 'plugins';
 		feature = FEATURE_UPLOAD_PLUGINS;
@@ -250,6 +279,10 @@ function mergeProps(
 		context = 'hosting';
 		feature = FEATURE_SFTP;
 		ctaName = 'calypso-hosting-eligibility-upgrade-nudge';
+	} else if ( includes( ownProps.backUrl, 'performance' ) ) {
+		context = 'performance';
+		feature = FEATURE_PERFORMANCE;
+		ctaName = 'calypso-performance-features-activate-nudge';
 	}
 
 	const onProceed = e => {
