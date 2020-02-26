@@ -80,22 +80,15 @@ import 'state/themes/init';
 
 import { receiveThemes } from 'state/themes/actions/receive-themes';
 import { receiveTheme } from 'state/themes/actions/receive-theme';
+import { themeRequestFailure } from 'state/themes/actions/theme-request-failure';
 
 export { setBackPath } from 'state/themes/actions/set-back-path';
 export { receiveThemes } from 'state/themes/actions/receive-themes';
 export { receiveTheme } from 'state/themes/actions/receive-theme';
 export { requestThemes } from 'state/themes/actions/request-themes';
+export { themeRequestFailure } from 'state/themes/actions/theme-request-failure';
 
 const debug = debugFactory( 'calypso:themes:actions' );
-
-export function themeRequestFailure( siteId, themeId, error ) {
-	return {
-		type: THEME_REQUEST_FAILURE,
-		siteId,
-		themeId,
-		error,
-	};
-}
 
 /**
  * Triggers a network request to fetch a specific theme from a site.
