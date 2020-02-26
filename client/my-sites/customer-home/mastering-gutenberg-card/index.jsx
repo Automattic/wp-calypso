@@ -3,14 +3,13 @@
  */
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
-import { Card, Button, Dialog } from '@automattic/components';
+import { Button, Dialog } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import ButtonGroup from 'components/button-group';
+import DismissibleCard from 'blocks/dismissible-card';
 import CardHeading from 'components/card-heading';
-import Gridicon from 'components/gridicon';
 import { localizeUrl } from 'lib/i18n-utils';
 
 /**
@@ -101,62 +100,53 @@ class MasteringGutenbergCard extends Component {
 						<source src={ dialogVideo } type="video/mp4" />
 					</video>
 					<div className="mastering-gutenberg-card__dialog-buttons">
-						<ButtonGroup>
-							<Button onClick={ this.handleDialogClosure }>{ translate( 'Close' ) }</Button>
-							<Button href={ supportLink } primary target="_blank">
-								{ translate( 'Learn more' ) }
-								<Gridicon icon="external" />
-							</Button>
-						</ButtonGroup>
+						<Button onClick={ this.handleDialogClosure }>{ translate( 'Close' ) }</Button>
+						<Button href={ supportLink } primary target="_blank">
+							{ translate( 'Learn more' ) }
+							<Gridicon icon="external" />
+						</Button>
 					</div>
 				</Dialog>
-				<Card className="mastering-gutenberg-card">
+				<DismissibleCard
+					preferenceName="customer-home-mastering-gutenberg-card"
+					className="mastering-gutenberg-card"
+				>
 					<div className="mastering-gutenberg-card__illustration">
 						<img src="/calypso/images/illustrations/gutenberg-mini.svg" alt="" />
 					</div>
-					<CardHeading>{ translate( 'Master the Block Editor' ) }</CardHeading>
-					<p className="mastering-gutenberg-card__text customer-home__card-subheader">
-						{ translate(
-							'Learn how to create stunning post and page layouts ' + 'through our video guides.'
-						) }
-					</p>
-					<div className="mastering-gutenberg-card__links">
-						<Gridicon icon="add-outline" size={ 18 } />
+					<div>
+						<CardHeading>{ translate( 'Master the block editor' ) }</CardHeading>
+						<p className="mastering-gutenberg-card__text customer-home__card-subheader">
+							{ translate(
+								'Learn how to create stunning post and page layouts ' + 'through our video guides.'
+							) }
+						</p>
 						<Button
 							onClick={ this.handleAdjustingBlocksClick }
-							className="mastering-gutenberg-card__item is-link"
+							className="mastering-gutenberg-card__link is-link"
 						>
 							{ translate( 'Adding, moving and deleting blocks' ) }
 						</Button>
-					</div>
-					<div className="mastering-gutenberg-card__links">
-						<Gridicon icon="layout-blocks" size={ 18 } />
 						<Button
 							onClick={ this.handleNavigatingBlocksClick }
-							className="mastering-gutenberg-card__item is-link"
+							className="mastering-gutenberg-card__link is-link"
 						>
 							{ translate( 'Quickly navigating between blocks' ) }
 						</Button>
-					</div>
-					<div className="mastering-gutenberg-card__links">
-						<Gridicon icon="link" size={ 18 } />
 						<Button
 							onClick={ this.handleAddingLinkClick }
-							className="mastering-gutenberg-card__item is-link"
+							className="mastering-gutenberg-card__link is-link"
 						>
 							{ translate( 'Adding links' ) }
 						</Button>
-					</div>
-					<div className="mastering-gutenberg-card__links">
-						<Gridicon icon="image-multiple" size={ 18 } />
 						<Button
 							onClick={ this.handleUsingImagesClick }
-							className="mastering-gutenberg-card__item is-link"
+							className="mastering-gutenberg-card__link is-link"
 						>
 							{ translate( 'Using images' ) }
 						</Button>
 					</div>
-				</Card>
+				</DismissibleCard>
 			</Fragment>
 		);
 	}
