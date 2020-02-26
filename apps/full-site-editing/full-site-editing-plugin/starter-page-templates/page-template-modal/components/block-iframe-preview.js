@@ -53,7 +53,6 @@ const loadStyles = ( iFrameHead, iFrameBody ) => {
 };
 
 const BlockFramePreview = ( {
-	head,
 	className= 'block-iframe-preview',
 	bodyClassName = 'block-iframe-preview-body',
 	viewportWidth,
@@ -130,7 +129,6 @@ const BlockFramePreview = ( {
 			) }
 			style={ style }
 		>
-			{ iFrameHead && createPortal( head, iFrameHead ) }
 			{ iFrameBody && createPortal(
 				<div className="block-editor">
 					<div className="edit-post-visual-editor">
