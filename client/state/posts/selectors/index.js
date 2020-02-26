@@ -14,8 +14,6 @@ import {
 	isDiscussionEqual,
 	areAllMetadataEditsApplied,
 	applyPostEdits,
-	mergePostEdits,
-	normalizePostForEditing,
 } from 'state/posts/utils';
 import { decodeURIIfValid } from 'lib/url';
 import { getSite } from 'state/sites/selectors';
@@ -24,6 +22,7 @@ import { addQueryArgs } from 'lib/route';
 
 import { getSitePosts } from 'state/posts/selectors/get-site-posts';
 import { getSitePost } from 'state/posts/selectors/get-site-post';
+import { getPostEdits } from 'state/posts/selectors/get-post-edits';
 
 import 'state/posts/init';
 
@@ -39,26 +38,7 @@ export { isPostsLastPageForQuery } from 'state/posts/selectors/is-posts-last-pag
 export { getPostsForQueryIgnoringPage } from 'state/posts/selectors/get-posts-for-query-ignoring-page';
 export { isRequestingPostsForQueryIgnoringPage } from 'state/posts/selectors/is-requesting-posts-for-query-ignoring-page';
 export { isRequestingSitePost } from 'state/posts/selectors/is-requesting-site-post';
-
-/**
- * Returns an object of edited post attributes for the site ID post ID pairing.
- *
- * @param   {object} state  Global state tree
- * @param   {number} siteId Site ID
- * @param   {number} postId Post ID
- * @returns {object}        Post revisions
- */
-export const getPostEdits = createSelector(
-	( state, siteId, postId ) => {
-		const postEditsLog = get( state.posts.edits, [ siteId, postId || '' ] );
-		if ( ! postEditsLog ) {
-			return null;
-		}
-
-		return normalizePostForEditing( mergePostEdits( ...postEditsLog ) );
-	},
-	state => [ state.posts.edits ]
-);
+export { getPostEdits } from 'state/posts/selectors/get-post-edits';
 
 /**
  * Returns a post object by site ID post ID pairing, with editor revisions.
