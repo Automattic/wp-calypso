@@ -41,19 +41,7 @@ export { isRequestingSitePost } from 'state/posts/selectors/is-requesting-site-p
 export { getPostEdits } from 'state/posts/selectors/get-post-edits';
 export { getEditedPost } from 'state/posts/selectors/get-edited-post';
 export { getEditedPostValue } from 'state/posts/selectors/get-edited-post-value';
-
-/**
- * Returns true if the edited post is password protected.
- *
- * @param   {object}  state  Global state tree
- * @param   {number}  siteId Site ID
- * @param   {number}  postId Post ID
- * @returns {boolean}        Result of the check
- */
-export function isEditedPostPasswordProtected( state, siteId, postId ) {
-	const password = getEditedPostValue( state, siteId, postId, 'password' );
-	return !! ( password && password.length > 0 );
-}
+export { isEditedPostPasswordProtected } from 'state/posts/selectors/is-edited-post-password-protected';
 
 /**
  * Returns true if the edited post is password protected and has a valid password set
