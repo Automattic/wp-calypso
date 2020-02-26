@@ -30,55 +30,54 @@ export default function Button( {
 }
 
 Button.propTypes = {
-	buttonState: PropTypes.string,
-	buttonType: PropTypes.string,
+	buttonState: PropTypes.string, // Either 'disabled', 'primary', 'secondary', or 'text-button'.
+	buttonType: PropTypes.string, // Service type (i.e. 'paypal' or 'apple-pay').
 	onClick: PropTypes.func,
 	fullWidth: PropTypes.bool,
 };
 
 const CallToAction = styled.button`
 	display: block;
-	width: ${ props => ( props.fullWidth ? '100%' : 'auto' ) };
+	width: ${props => ( props.fullWidth ? '100%' : 'auto' )};
 	font-size: 16px;
-	border-radius: ${ props => ( props.buttonType === 'paypal' ? '50px' : '3px' ) };
-	padding: ${ props => props.padding };
-	background: ${ getBackgroundColor };
-	border-width: ${ getBorderWeight };
+	border-radius: ${props => ( props.buttonType === 'paypal' ? '50px' : '3px' )};
+	padding: ${props => props.padding};
+	background: ${getBackgroundColor};
+	border-width: ${getBorderWeight};
 	border-style: solid;
-	border-color: ${ getBorderColor };
-	color: ${ getTextColor };
-	border-bottom-width: ${ getBorderElevationWeight };
-	font-weight: ${ getFontWeight };
-	text-decoration: ${ getTextDecoration };
+	border-color: ${getBorderColor};
+	color: ${getTextColor};
+	border-bottom-width: ${getBorderElevationWeight};
+	font-weight: ${getFontWeight};
+	text-decoration: ${getTextDecoration};
 
 	:hover {
-		cursor: pointer;
-		background: ${ getRollOverColor };
-		border-width: ${ getBorderWeight };
+		background: ${getRollOverColor};
+		border-width: ${getBorderWeight};
 		border-style: solid;
-		border-color: ${ getRollOverBorderColor };
-		border-bottom-width: ${ getBorderElevationWeight };
+		border-color: ${getRollOverBorderColor};
+		border-bottom-width: ${getBorderElevationWeight};
 		text-decoration: none;
-		color: ${ getTextColor };
-		cursor: ${ ( { buttonState } ) =>
-			buttonState && buttonState.includes( 'disabled' ) ? 'not-allowed' : 'pointer' };
+		color: ${getTextColor};
+		cursor: ${( { buttonState } ) =>
+			buttonState && buttonState.includes( 'disabled' ) ? 'not-allowed' : 'pointer'};
 	}
 
 	:active {
-		background: ${ getRollOverColor };
-		border-width: ${ getBorderWeight };
+		background: ${getRollOverColor};
+		border-width: ${getBorderWeight};
 		border-style: solid;
-		border-color: ${ getRollOverBorderColor };
-		border-top-width: ${ getBorderElevationWeight };
-		text-decoration: ${ getTextDecoration };
-		color: ${ getTextColor };
+		border-color: ${getRollOverBorderColor};
+		border-top-width: ${getBorderElevationWeight};
+		text-decoration: ${getTextDecoration};
+		color: ${getTextColor};
 	}
 
 	svg {
 		margin-bottom: -1px;
-		transform: translateY(2px);
-		filter: ${ getImageFilter }
-		opacity: ${ getImageOpacity };
+		transform: translateY( 2px );
+		filter: ${getImageFilter};
+		opacity: ${getImageOpacity};
 	}
 `;
 
