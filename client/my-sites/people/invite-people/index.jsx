@@ -387,7 +387,7 @@ class InvitePeople extends React.Component {
 						</FormFieldset>
 
 						<FormButton disabled={ this.isSubmitDisabled() } onClick={ onClickSendInvites }>
-							{ translate( 'Send Invitation', 'Send Invitations', {
+							{ translate( 'Send invitation', 'Send invitations', {
 								count: this.state.usernamesOrEmails.length || 1,
 								context: 'Button label',
 							} ) }

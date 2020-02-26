@@ -194,7 +194,7 @@ class PeopleInvites extends React.PureComponent {
 
 		const dialogButtons = [
 			<Button busy={ deleting } primary onClick={ this.handleClearAll }>
-				{ translate( 'Clear All' ) }
+				{ translate( 'Clear all' ) }
 			</Button>,
 			<Button busy={ deleting } onClick={ this.toggleClearAllConfirmation }>
 				{ translate( 'Cancel' ) }
@@ -204,7 +204,7 @@ class PeopleInvites extends React.PureComponent {
 		return (
 			<React.Fragment>
 				<Button busy={ deleting } compact onClick={ this.toggleClearAllConfirmation }>
-					{ translate( 'Clear All Accepted' ) }
+					{ translate( 'Clear all accepted' ) }
 				</Button>
 				<Dialog isVisible={ this.state.showClearAllConfirmation } buttons={ dialogButtons }>
 					<h1>{ translate( 'Clear All Accepted' ) }</h1>
