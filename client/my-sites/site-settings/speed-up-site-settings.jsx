@@ -35,9 +35,9 @@ class SpeedUpSiteSettings extends Component {
 
 		// Connected props
 		photonModuleUnavailable: PropTypes.bool,
-		photonCdnModuleUnavailable: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
 		siteAcceleratorStatus: PropTypes.bool,
+		siteIsAtomicPrivate: PropTypes.bool,
 		siteSlug: PropTypes.string,
 	};
 
@@ -59,7 +59,6 @@ class SpeedUpSiteSettings extends Component {
 			isRequestingSettings,
 			isSavingSettings,
 			photonModuleUnavailable,
-			photonCdnModuleUnavailable,
 			saveSettings,
 			selectedSiteId,
 			siteAcceleratorStatus,
@@ -69,7 +68,7 @@ class SpeedUpSiteSettings extends Component {
 		} = this.props;
 		const isRequestingOrSaving = isRequestingSettings || isSavingSettings;
 
-		if ( siteIsAtomicPrivate && photonCdnModuleUnavailable && photonModuleUnavailable ) {
+		if ( siteIsAtomicPrivate ) {
 			return (
 				<EligibilityWarnings
 					context="performance"
@@ -128,7 +127,7 @@ class SpeedUpSiteSettings extends Component {
 								siteId={ selectedSiteId }
 								moduleSlug="photon-cdn"
 								label={ translate( 'Speed up static file load times' ) }
-								disabled={ isRequestingOrSaving || photonCdnModuleUnavailable }
+								disabled={ isRequestingOrSaving }
 							/>
 						</div>
 					</FormFieldset>
@@ -178,9 +177,7 @@ export default connect(
 		const siteAcceleratorStatus = !! ( photonModuleActive || assetCdnModuleActive );
 
 		return {
-			photonCdnModuleUnavailable: siteIsAtomicPrivate,
-			photonModuleUnavailable:
-				siteIsAtomicPrivate || ( siteInDevMode && moduleUnavailableInDevMode ),
+			photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 			selectedSiteId,
 			siteAcceleratorStatus,
 			siteIsAtomicPrivate,
