@@ -1,15 +1,3 @@
-/**
- * External dependencies
- */
-import { filter, find } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { getSitePosts } from 'state/posts/selectors/get-site-posts';
-
-import 'state/posts/init';
-
 export { getPost } from 'state/posts/selectors/get-post';
 export { getNormalizedPost } from 'state/posts/selectors/get-normalized-post';
 export { getSitePosts } from 'state/posts/selectors/get-site-posts';
@@ -31,13 +19,4 @@ export { isEditedPostDirty } from 'state/posts/selectors/is-edited-post-dirty';
 export { isPostPublished } from 'state/posts/selectors/is-post-published';
 export { getEditedPostSlug } from 'state/posts/selectors/get-edited-post-slug';
 export { getPostPreviewUrl } from 'state/posts/selectors/get-post-preview-url';
-
-export function getSitePostsByTerm( state, siteId, taxonomy, termId ) {
-	return filter( getSitePosts( state, siteId ), post => {
-		return (
-			post.terms &&
-			post.terms[ taxonomy ] &&
-			find( post.terms[ taxonomy ], postTerm => postTerm.ID === termId )
-		);
-	} );
-}
+export { getSitePostsByTerm } from 'state/posts/selectors/get-site-posts-by-term';
