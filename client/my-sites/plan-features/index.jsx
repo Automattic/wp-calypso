@@ -570,7 +570,7 @@ export class PlanFeatures extends Component {
 	}
 
 	renderPlanDescriptions() {
-		const { planProperties, withScroll } = this.props;
+		const { planProperties, withScroll, isEligibleForPlanStepTest } = this.props;
 
 		return map( planProperties, properties => {
 			const { planName, planConstantObj, isPlaceholder } = properties;
@@ -582,7 +582,7 @@ export class PlanFeatures extends Component {
 
 			let description = null;
 			if ( withScroll ) {
-				description = planConstantObj.getShortDescription( abtest );
+				description = planConstantObj.getShortDescription( isEligibleForPlanStepTest );
 			} else {
 				description = planConstantObj.getDescription( abtest );
 			}
