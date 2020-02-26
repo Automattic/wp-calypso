@@ -187,9 +187,7 @@ const request = ( originalParams, fn ) => {
 	// if callback is provided, behave traditionally
 	if ( 'function' === typeof fn ) {
 		// request method
-		return makeRequest( originalParams, function( err, res, headers ) {
-			fn( err, res, headers );
-		} );
+		return makeRequest( originalParams, fn );
 	}
 
 	// but if not, return a Promise
@@ -199,6 +197,13 @@ const request = ( originalParams, fn ) => {
 		} );
 	} );
 };
+
+/**
+ * Set proxy to "access all users' blogs" mode.
+ */
+export function requestAllBlogsAccess() {
+	return request( { metaAPI: { accessAllUsersBlogs: true } } );
+}
 
 /**
  * Calls the `postMessage()` function on the <iframe>.
