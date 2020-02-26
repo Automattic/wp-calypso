@@ -12,7 +12,6 @@ import {
 	getNormalizedPostsQuery,
 	getSerializedPostsQuery,
 	getDeserializedPostsQueryDetails,
-	getSerializedPostsQueryWithoutPage,
 	isAuthorEqual,
 	isDateEqual,
 	isDiscussionEqual,
@@ -20,14 +19,12 @@ import {
 	applyPostEdits,
 	mergePostEdits,
 	normalizePostForEditing,
-	normalizePostForDisplay,
 } from 'state/posts/utils';
 import { decodeURIIfValid } from 'lib/url';
 import { getSite } from 'state/sites/selectors';
 import { DEFAULT_NEW_POST_VALUES } from 'state/posts/constants';
 import { addQueryArgs } from 'lib/route';
 
-import { getQueryManager } from 'state/posts/selectors/get-query-manager';
 import { getSitePosts } from 'state/posts/selectors/get-site-posts';
 import { getSitePost } from 'state/posts/selectors/get-site-post';
 
@@ -42,33 +39,7 @@ export { isRequestingPostsForQuery } from 'state/posts/selectors/is-requesting-p
 export { getPostsFoundForQuery } from 'state/posts/selectors/get-posts-found-for-query';
 export { getPostsLastPageForQuery } from 'state/posts/selectors/get-posts-last-page-for-query';
 export { isPostsLastPageForQuery } from 'state/posts/selectors/is-posts-last-page-for-query';
-
-/**
- * Returns an array of normalized posts for the posts query, including all
- * known queried pages, or null if the posts for the query are not known.
- *
- * @param   {object}  state  Global state tree
- * @param   {?number} siteId Site ID, or `null` for all-sites queries
- * @param   {object}  query  Post query object
- * @returns {?Array}         Posts for the post query
- */
-export const getPostsForQueryIgnoringPage = createSelector(
-	( state, siteId, query ) => {
-		const manager = getQueryManager( state, siteId );
-		if ( ! manager ) {
-			return null;
-		}
-
-		const itemsIgnoringPage = manager.getItemsIgnoringPage( query );
-		if ( ! itemsIgnoringPage ) {
-			return null;
-		}
-
-		return itemsIgnoringPage.map( normalizePostForDisplay );
-	},
-	state => [ state.posts.queries, state.posts.allSitesQueries ],
-	( state, siteId, query ) => getSerializedPostsQueryWithoutPage( query, siteId )
-);
+export { getPostsForQueryIgnoringPage } from 'state/posts/selectors/get-posts-for-query-ignoring-page';
 
 /**
  * Returns true if currently requesting posts for the posts query, regardless
