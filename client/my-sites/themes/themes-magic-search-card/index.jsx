@@ -21,7 +21,7 @@ import config from 'config';
 import { localize } from 'i18n-calypso';
 import MagicSearchWelcome from './welcome';
 import getThemeFilters from 'state/selectors/get-theme-filters';
-import getThemeFilterToTermTable from 'state/selectors/get-theme-filter-to-term-table';
+import { getThemeFilterToTermTable } from 'state/themes/selectors';
 
 /**
  * Style dependencies
