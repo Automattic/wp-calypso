@@ -1078,6 +1078,14 @@ function getCheckoutEventHandler( dispatch ) {
 				);
 			}
 
+			case 'APPLE_PAY_LOADING_ERROR':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_apple_pay_error', {
+						error_message: String( action.payload ),
+						is_loading_error: true,
+					} )
+				);
+
 			case 'APPLE_PAY_TRANSACTION_ERROR': {
 				dispatch(
 					recordTracksEvent( 'calypso_checkout_payment_error', {
