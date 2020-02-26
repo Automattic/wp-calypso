@@ -8,6 +8,7 @@ import createSelector from 'lib/create-selector';
  * Internal dependencies
  */
 import {
+	getFeaturedImageId,
 	getNormalizedPostsQuery,
 	getSerializedPostsQuery,
 	getDeserializedPostsQueryDetails,
@@ -20,12 +21,11 @@ import {
 	mergePostEdits,
 	normalizePostForEditing,
 	normalizePostForDisplay,
-} from './utils';
+} from 'state/posts/utils';
 import { decodeURIIfValid } from 'lib/url';
 import { getSite } from 'state/sites/selectors';
-import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
+import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from 'state/posts/constants';
 import { addQueryArgs } from 'lib/route';
-import { getFeaturedImageId } from 'state/posts/utils';
 
 import 'state/posts/init';
 
