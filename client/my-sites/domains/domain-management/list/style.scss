@@ -2,6 +2,11 @@
 	margin-bottom: 0;
 }
 
+.domain-management-list__cancel-change-primary-button {
+	margin-top: 1px;
+	margin-bottom: 2px;
+}
+
 .domain-management-list-item {
 	&.busy {
 		background-color: var( --color-neutral-0 );
@@ -14,10 +19,9 @@
 }
 
 .domain-management-list-item__link {
-	cursor: pointer;
-	display: block;
 	overflow: hidden;
 	text-align: inherit;
+	line-height: normal;
 
 	.domain__primary-flag {
 		vertical-align: middle;
@@ -35,12 +39,10 @@
 	color: var( --color-neutral-70 );
 	font-size: 14px;
 	font-weight: 600;
-	text-overflow: ellipsis;
-	overflow: hidden;
 	white-space: pre;
-	max-width: 70%;
 	font-family: $serif;
 	text-align: inherit;
+	line-height: normal;
 
 	@include breakpoint( '>480px' ) {
 		font-size: 18px;
@@ -56,6 +58,7 @@
 	min-height: 20px;
 	text-overflow: ellipsis;
 	overflow: hidden;
+	line-height: normal;
 
 	@include breakpoint( '>480px' ) {
 		text-transform: uppercase;
