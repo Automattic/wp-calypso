@@ -9,10 +9,14 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import BlockPreview from './template-preview-frame';
 /* eslint-disable import/no-extraneous-dependencies */
 import { Disabled } from '@wordpress/components';
 /* eslint-enable import/no-extraneous-dependencies */
+
+/**
+ * Internal dependencies
+ */
+import BlockIFrameBock from './template-preview-frame';
 
 const TemplateSelectorItem = props => {
 	const {
@@ -38,7 +42,7 @@ const TemplateSelectorItem = props => {
 	// Define static or dynamic preview.
 	const innerPreview = useDynamicPreview ? (
 		<Disabled>
-			<BlockPreview blocks={ blocks } viewportWidth={ 960 } />
+			<BlockIFrameBock blocks={ blocks } viewportWidth={ 960 } />
 		</Disabled>
 	) : (
 		<img
