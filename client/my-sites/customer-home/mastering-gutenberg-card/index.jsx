@@ -21,33 +21,18 @@ import './style.scss';
 
 class MasteringGutenbergCard extends Component {
 	state = {
-		showDialog: false,
+		activeDialog: false,
 	};
 
 	handleDialogClosure = () => {
 		this.setState( {
 			showDialog: false,
-			adjustingBlocks: false,
-			navigatingBlocks: false,
-			addingLinks: false,
-			usingImages: false,
+			activeDialog: false,
 		} );
 	};
 
-	handleAdjustingBlocksClick = () => {
-		this.setState( { showDialog: true, activeDialog: 'adjustingBlocks' } );
-	};
-
-	handleNavigatingBlocksClick = () => {
-		this.setState( { showDialog: true, activeDialog: 'navigatingBlocks' } );
-	};
-
-	handleAddingLinkClick = () => {
-		this.setState( { showDialog: true, activeDialog: 'addingLinks' } );
-	};
-
-	handleUsingImagesClick = () => {
-		this.setState( { showDialog: true, activeDialog: 'usingImages' } );
+	handleButtonClick = button => {
+		this.setState( { showDialog: true, activeDialog: button } );
 	};
 
 	render() {
@@ -81,7 +66,7 @@ class MasteringGutenbergCard extends Component {
 				dialogVideo =
 					'https://wpcom.files.wordpress.com/2020/02/free-photo-library-demonstration.mp4';
 				dialogVideoPoster =
-					'https://ladygeekgirl.files.wordpress.com/2013/05/princess-mononoke-large-380266002.jpg';
+					'https://dazedimg-dazedgroup.netdna-ssl.com/1200/azure/dazed-prod/1210/6/1216840.jpg';
 				supportLink = localizeUrl(
 					'https://en.support.wordpress.com/links/#adding-links-to-posts-pages-and-widgets'
 				);
@@ -89,8 +74,7 @@ class MasteringGutenbergCard extends Component {
 			case 'usingImages':
 				dialogVideo =
 					'https://wpcom.files.wordpress.com/2020/02/free-photo-library-demonstration.mp4';
-				dialogVideoPoster =
-					'https://ladygeekgirl.files.wordpress.com/2013/05/princess-mononoke-large-380266002.jpg';
+				dialogVideoPoster = 'https://miro.medium.com/max/1023/1*yBCgIO7Az4yfvFqQRplG1A.png';
 				supportLink = localizeUrl( 'https://en.support.wordpress.com/images/' );
 				break;
 		}
@@ -126,25 +110,25 @@ class MasteringGutenbergCard extends Component {
 							) }
 						</p>
 						<Button
-							onClick={ this.handleAdjustingBlocksClick }
+							onClick={ this.handleButtonClick.bind( this, 'adjustingBlocks' ) }
 							className="mastering-gutenberg-card__link is-link"
 						>
 							{ translate( 'Adding, moving and deleting blocks' ) }
 						</Button>
 						<Button
-							onClick={ this.handleNavigatingBlocksClick }
+							onClick={ this.handleButtonClick.bind( this, 'navigatingBlocks' ) }
 							className="mastering-gutenberg-card__link is-link"
 						>
 							{ translate( 'Quickly navigating between blocks' ) }
 						</Button>
 						<Button
-							onClick={ this.handleAddingLinkClick }
+							onClick={ this.handleButtonClick.bind( this, 'addingLinks' ) }
 							className="mastering-gutenberg-card__link is-link"
 						>
 							{ translate( 'Adding links' ) }
 						</Button>
 						<Button
-							onClick={ this.handleUsingImagesClick }
+							onClick={ this.handleButtonClick.bind( this, 'usingImages' ) }
 							className="mastering-gutenberg-card__link is-link"
 						>
 							{ translate( 'Using images' ) }
