@@ -13,7 +13,9 @@ export class PlanTestimonials extends Component {
 	render() {
 		return (
 			<div className="plan-testimonials__container">
-				<div className="plan-testimonials__content-left">You're in good hands</div>
+				<div className="plan-testimonials__content-left">
+					You're in <br /> good hands
+				</div>
 				<div className="plan-testimonials__content-right-container">
 					<div className="plan-testimonials__content-right">
 						Did you know that WordPress powers 35% of the entire internet? WordPress.com is the best
