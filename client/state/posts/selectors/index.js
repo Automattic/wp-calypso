@@ -13,7 +13,6 @@ import {
 	isDateEqual,
 	isDiscussionEqual,
 	areAllMetadataEditsApplied,
-	applyPostEdits,
 } from 'state/posts/utils';
 import { decodeURIIfValid } from 'lib/url';
 import { getSite } from 'state/sites/selectors';
@@ -23,6 +22,7 @@ import { addQueryArgs } from 'lib/route';
 import { getSitePosts } from 'state/posts/selectors/get-site-posts';
 import { getSitePost } from 'state/posts/selectors/get-site-post';
 import { getPostEdits } from 'state/posts/selectors/get-post-edits';
+import { getEditedPost } from 'state/posts/selectors/get-edited-post';
 
 import 'state/posts/init';
 
@@ -39,27 +39,7 @@ export { getPostsForQueryIgnoringPage } from 'state/posts/selectors/get-posts-fo
 export { isRequestingPostsForQueryIgnoringPage } from 'state/posts/selectors/is-requesting-posts-for-query-ignoring-page';
 export { isRequestingSitePost } from 'state/posts/selectors/is-requesting-site-post';
 export { getPostEdits } from 'state/posts/selectors/get-post-edits';
-
-/**
- * Returns a post object by site ID post ID pairing, with editor revisions.
- *
- * @param   {object} state  Global state tree
- * @param   {number} siteId Site ID
- * @param   {number} postId Post ID
- * @returns {object}        Post object with revisions
- */
-export const getEditedPost = createSelector(
-	( state, siteId, postId ) => {
-		const post = getSitePost( state, siteId, postId );
-		const edits = getPostEdits( state, siteId, postId );
-		if ( ! edits ) {
-			return post;
-		}
-
-		return applyPostEdits( post, edits );
-	},
-	state => [ state.posts.queries, state.posts.edits ]
-);
+export { getEditedPost } from 'state/posts/selectors/get-edited-post';
 
 /**
  * Returns the assigned value for the edited post by field key.
