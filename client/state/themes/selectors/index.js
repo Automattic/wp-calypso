@@ -11,6 +11,7 @@ export { getTheme } from 'state/themes/selectors/get-theme';
 export { getThemeCustomizeUrl } from 'state/themes/selectors/get-theme-customize-url';
 export { getThemeDemoUrl } from 'state/themes/selectors/get-theme-demo-url';
 export { getThemeDetailsUrl } from 'state/themes/selectors/get-theme-details-url';
+export { getThemeFilters } from 'state/themes/selectors/get-theme-filters';
 export { getThemeFilterStringFromTerm } from 'state/themes/selectors/get-theme-filter-string-from-term';
 export { getThemeFilterTerm } from 'state/themes/selectors/get-theme-filter-term';
 export { getThemeFilterTermFromString } from 'state/themes/selectors/get-theme-filter-term-from-string';

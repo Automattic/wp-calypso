@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import getThemeFilters from 'state/selectors/get-theme-filters';
+import { getThemeFilters } from 'state/themes/selectors/get-theme-filters';
 
 import 'state/themes/init';
 

@@ -20,8 +20,7 @@ import StickyPanel from 'components/sticky-panel';
 import config from 'config';
 import { localize } from 'i18n-calypso';
 import MagicSearchWelcome from './welcome';
-import getThemeFilters from 'state/selectors/get-theme-filters';
-import { getThemeFilterToTermTable } from 'state/themes/selectors';
+import { getThemeFilters, getThemeFilterToTermTable } from 'state/themes/selectors';
 
 /**
  * Style dependencies
