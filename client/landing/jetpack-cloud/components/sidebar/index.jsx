@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import CurrentSite from '../current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import Sidebar from 'layout/sidebar';
@@ -89,74 +90,86 @@ class JetpackCloudSidebar extends Component {
 							selected={ this.isSelected( '/' ) }
 						/>
 					</SidebarMenu>
-					<ExpandableSidebarMenu
-						expanded={ this.isExpanded( '/backups' ) }
-						onClick={ this.handleExpandableMenuClick( '/backups' ) }
-						materialIcon="backup"
-						materialIconStyle="filled"
-						title={ translate( 'Backups', { comment: 'Jetpack Cloud sidebar navigation item' } ) }
-					>
-						<ul>
-							<SidebarItem
-								label={ translate( 'Backups', {
-									comment: 'Jetpack Cloud sidebar navigation item',
-								} ) }
-								link="/backups"
-								onNavigate={ this.onNavigate }
-								selected={ this.isSelected( '/backups' ) }
-							/>
-							<SidebarItem
-								label={ translate( 'Restore site', {
-									comment: 'Jetpack Cloud / Backups sidebar navigation item',
-								} ) }
-								link="#" // @todo: Add /backup/restore route
-								onNavigate={ this.onNavigate }
-								selected={ this.isSelected( '/backups/restore' ) }
-							/>
-							<SidebarItem
-								label={ translate( 'Settings', {
-									comment: 'Jetpack Cloud / Backups sidebar navigation item',
-								} ) }
-								link="#" // @todo: Add backup/settings route
-								onNavigate={ this.onNavigate }
-								selected={ this.isSelected( '/backups/settings' ) }
-							/>
-						</ul>
-					</ExpandableSidebarMenu>
-					<ExpandableSidebarMenu
-						expanded={ this.isExpanded( '/scan' ) }
-						onClick={ this.handleExpandableMenuClick( '/scan' ) }
-						materialIcon="security" // @todo: The Scan logo differs from the Material Icon used here
-						materialIconStyle="filled"
-						title={ translate( 'Scan', { comment: 'Jetpack Cloud sidebar navigation item' } ) }
-					>
-						<ul>
-							<SidebarItem
-								label={ translate( 'Scanner', {
-									comment: 'Jetpack Cloud / Scan sidebar navigation item',
-								} ) }
-								link="/scan"
-								onNavigate={ this.onNavigate }
-								selected={ this.isSelected( '/scan' ) }
-							/>
-							<SidebarItem
-								label={ translate( 'History', {
-									comment: 'Jetpack Cloud / Scan sidebar navigation item',
-								} ) }
-								link="#" // @todo: Add /scan/history route
-								onNavigate={ this.onNavigate }
-								selected={ this.isSelected( '/scan/history' ) }
-							/>
-							<SidebarItem
-								label={ translate( 'Settings', {
-									comment: 'Jetpack Cloud / Scan sidebar navigation item',
-								} ) }
-								link="#" // @todo: Add /scan/settings route
-								onNavigate={ this.onNavigate }
-								selected={ this.isSelected( '/scan/settings' ) }
-							/>
-						</ul>
-					</ExpandableSidebarMenu>
+					{ config.isEnabled( 'jetpack-cloud/backups' ) && (
+						<ExpandableSidebarMenu
+							expanded={ this.isExpanded( '/backups' ) }
+							onClick={ this.handleExpandableMenuClick( '/backups' ) }
+							materialIcon="backup"
+							materialIconStyle="filled"
+							title={ translate( 'Backups', { comment: 'Jetpack Cloud sidebar navigation item' } ) }
+						>
+							<ul>
+								<SidebarItem
+									label={ translate( 'Backups', {
+										comment: 'Jetpack Cloud sidebar navigation item',
+									} ) }
+									link="/backups"
+									onNavigate={ this.onNavigate }
+									selected={ this.isSelected( '/backups' ) }
+								/>
+								{ config.isEnabled( 'jetpack-cloud/backups-restore' ) && (
+									<SidebarItem
+										label={ translate( 'Restore site', {
+											comment: 'Jetpack Cloud / Backups sidebar navigation item',
+										} ) }
+										link="#" // @todo: Add /backup/restore route
+										onNavigate={ this.onNavigate }
+										selected={ this.isSelected( '/backups/restore' ) }
+									/>
+								) }
+								{ config.isEnabled( 'jetpack-cloud/settings' ) && (
+									<SidebarItem
+										label={ translate( 'Settings', {
+											comment: 'Jetpack Cloud / Backups sidebar navigation item',
+										} ) }
+										link="#" // @todo: Add backup/settings route
+										onNavigate={ this.onNavigate }
+										selected={ this.isSelected( '/backups/settings' ) }
+									/>
+								) }
+							</ul>
+						</ExpandableSidebarMenu>
+					) }
+					{ config.isEnabled( 'jetpack-cloud/scan' ) && (
+						<ExpandableSidebarMenu
+							expanded={ this.isExpanded( '/scan' ) }
+							onClick={ this.handleExpandableMenuClick( '/scan' ) }
+							materialIcon="security" // @todo: The Scan logo differs from the Material Icon used here
+							materialIconStyle="filled"
+							title={ translate( 'Scan', { comment: 'Jetpack Cloud sidebar navigation item' } ) }
+						>
+							<ul>
+								<SidebarItem
+									label={ translate( 'Scanner', {
+										comment: 'Jetpack Cloud / Scan sidebar navigation item',
+									} ) }
+									link="/scan"
+									onNavigate={ this.onNavigate }
+									selected={ this.isSelected( '/scan' ) }
+								/>
+								{ config.isEnabled( 'jetpack-cloud/scan-history' ) && (
+									<SidebarItem
+										label={ translate( 'History', {
+											comment: 'Jetpack Cloud / Scan sidebar navigation item',
+										} ) }
+										link="#" // @todo: Add /scan/history route
+										onNavigate={ this.onNavigate }
+										selected={ this.isSelected( '/scan/history' ) }
+									/>
+								) }
+								{ config.isEnabled( 'jetpack-cloud/settings' ) && (
+									<SidebarItem
+										label={ translate( 'Settings', {
+											comment: 'Jetpack Cloud / Scan sidebar navigation item',
+										} ) }
+										link="#" // @todo: Add /scan/settings route
+										onNavigate={ this.onNavigate }
+										selected={ this.isSelected( '/scan/settings' ) }
+									/>
+								) }
+							</ul>
+						</ExpandableSidebarMenu>
+					) }
 				</SidebarRegion>
 				<SidebarFooter>
 					<SidebarMenu>
