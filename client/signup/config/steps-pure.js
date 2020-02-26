@@ -34,6 +34,7 @@ export function generateSteps( {
 	isDomainFulfilled = noop,
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
+	createSitelessCart = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -552,20 +553,12 @@ export function generateSteps( {
 
 		'domains-with-preview': {
 			stepName: 'domains-with-preview',
-			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [
-				'siteId',
-				'siteSlug',
-				'domainItem',
-				'themeItem',
-				'shouldHideFreePlan',
-			],
-			optionalDependencies: [ 'shouldHideFreePlan' ],
+			apiRequestFunction: createSitelessCart,
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
 			props: {
 				showSiteMockups: true,
 				isDomainOnly: false,
 			},
-			dependencies: [ 'themeSlugWithRepo' ],
 			delayApiRequestUntilComplete: true,
 		},
 

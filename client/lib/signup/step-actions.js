@@ -256,6 +256,23 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	} );
 }
 
+export function createSitelessCart( callback, dependencies, stepData ) {
+	const { domainItem } = stepData;
+
+	const cartKey = 'no-site';
+	const providedDependencies = {
+		siteId: null,
+		siteSlug: cartKey,
+		domainItem,
+	};
+
+	const cart = omitBy( pick( dependencies, 'domainItem', 'privacyItem', 'cartItem' ), isNull );
+
+	SignupCart.createCart( cartKey, cart, error => {
+		callback( error, providedDependencies );
+	} );
+}
+
 function fetchSitesUntilSiteAppears( siteSlug, reduxStore, callback ) {
 	if ( getSiteId( reduxStore.getState(), siteSlug ) ) {
 		debug( 'fetchReduxSite: found new site' );
