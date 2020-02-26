@@ -59,6 +59,7 @@ import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import GoMobileCard from 'my-sites/customer-home/go-mobile-card';
 import WelcomeBanner from './welcome-banner';
 import StatsCard from './stats-card';
+import FreePhotoLibraryCard from './free-photo-library-card';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 
 /**
@@ -575,6 +576,7 @@ class Home extends Component {
 						</Card>
 					) }
 					{ ! siteIsUnlaunched && <StatsCard /> }
+					{ <FreePhotoLibraryCard /> }
 					{ ! siteIsUnlaunched && isChecklistComplete && (
 						<Card className="customer-home__grow-earn">
 							<CardHeading>{ translate( 'Grow & Earn' ) }</CardHeading>
