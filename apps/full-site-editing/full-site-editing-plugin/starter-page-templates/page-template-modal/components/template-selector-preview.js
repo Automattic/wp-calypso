@@ -115,9 +115,14 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 		);
 	}
 
+	const blockEditorRequiredClasses = classnames(
+		'template-selector-preview', // SPT specific styles
+		'block-editor' // needed to enable Core classes that rely on this being in the cascade
+	);
+
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		<div className="template-selector-preview">
+		<div className={ blockEditorRequiredClasses }>
 			<Disabled>
 				<div ref={ ref } className="edit-post-visual-editor">
 					<div className="editor-styles-wrapper">
