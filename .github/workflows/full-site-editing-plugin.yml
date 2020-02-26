@@ -31,4 +31,4 @@ jobs:
         name: fse-build-archive
         path: apps/full-site-editing/full-site-editing-plugin
     - name: Send hook to Mission Control
-      run: .github/workflows/send-calypso-app-build-trigger.sh
+      run: .github/workflows/send-calypso-app-build-trigger.sh &
