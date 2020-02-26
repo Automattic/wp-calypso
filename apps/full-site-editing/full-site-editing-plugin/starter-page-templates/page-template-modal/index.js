@@ -26,12 +26,15 @@ import ensureAssets from './utils/ensure-assets';
 const DEFAULT_HOMEPAGE_TEMPLATE = 'maywood';
 
 function modifyParsedBlocks( blocks ) {
-	function handleBlock( block ) {
+	function modifyBlock( block ) {
 		const attrsToMerge = {};
 
 		// `jetpack/contact-form` has a placeholder to configure form settings
 		// we need to disable this to show the full form in the preview
-		if ( block.attributes.hasFormSettingsSet !== undefined ) {
+		if (
+			'jetpack/contact-form' === block.name &&
+			undefined !== block.attributes.hasFormSettingsSet
+		) {
 			attrsToMerge.hasFormSettingsSet = true;
 		}
 
@@ -42,11 +45,11 @@ function modifyParsedBlocks( blocks ) {
 		// particular contexts. For example we may wish to show blocks
 		// differently in the preview than we do when they are inserted into the
 		// editor itself.
-		return attrsToMerge.length ? cloneBlock( block, attrsToMerge ) : block;
+		return cloneBlock( block, attrsToMerge );
 	}
 
 	return blocks.map( block => {
-		block = handleBlock( block );
+		block = modifyBlock( block );
 
 		// Recurse into nested Blocks
 		if ( block.innerBlocks && block.innerBlocks.length ) {
