@@ -457,7 +457,7 @@ export class PluginsMain extends Component {
 				onClick={ this.handleUploadPluginButtonClick }
 			>
 				<Gridicon icon="cloud-upload" />
-				<span className="plugins__button-text">{ translate( 'Install Plugin' ) }</span>
+				<span className="plugins__button-text">{ translate( 'Install plugin' ) }</span>
 			</Button>
 		);
 	}

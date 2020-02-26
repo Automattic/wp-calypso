@@ -482,7 +482,7 @@ export class PluginsBrowser extends Component {
 				href={ uploadUrl }
 			>
 				<Gridicon icon="cloud-upload" />
-				<span className="plugins-browser__button-text">{ translate( 'Install Plugin' ) }</span>
+				<span className="plugins-browser__button-text">{ translate( 'Install plugin' ) }</span>
 			</Button>
 		);
 	}
