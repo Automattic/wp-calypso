@@ -30,6 +30,7 @@ import { addQueryArgs } from 'lib/route';
 import { getQueryManager } from 'state/posts/selectors/get-query-manager';
 import { getSitePosts } from 'state/posts/selectors/get-site-posts';
 import { getSitePost } from 'state/posts/selectors/get-site-post';
+import { getPostsLastPageForQuery } from 'state/posts/selectors/get-posts-last-page-for-query';
 
 import 'state/posts/init';
 
@@ -40,29 +41,7 @@ export { getSitePost } from 'state/posts/selectors/get-site-post';
 export { getPostsForQuery } from 'state/posts/selectors/get-posts-for-query';
 export { isRequestingPostsForQuery } from 'state/posts/selectors/is-requesting-posts-for-query';
 export { getPostsFoundForQuery } from 'state/posts/selectors/get-posts-found-for-query';
-
-/**
- * Returns the last queryable page of posts for the given query, or null if the
- * total number of queryable posts if unknown.
- *
- * @param   {object}  state  Global state tree
- * @param   {?number} siteId Site ID, or `null` for all-sites queries
- * @param   {object}  query  Post query object
- * @returns {?number}        Last posts page
- */
-export function getPostsLastPageForQuery( state, siteId, query ) {
-	const manager = getQueryManager( state, siteId );
-	if ( ! manager ) {
-		return null;
-	}
-
-	const pages = manager.getNumberOfPages( query );
-	if ( null === pages ) {
-		return null;
-	}
-
-	return Math.max( pages, 1 );
-}
+export { getPostsLastPageForQuery } from 'state/posts/selectors/get-posts-last-page-for-query';
 
 /**
  * Returns true if the query has reached the last page of queryable pages, or
