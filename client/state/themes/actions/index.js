@@ -15,8 +15,6 @@ import {
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
 	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
-	THEME_ACTIVATE,
-	THEME_ACTIVATE_FAILURE,
 	THEME_CLEAR_ACTIVATED,
 	THEME_DELETE,
 	THEME_DELETE_SUCCESS,
@@ -60,7 +58,7 @@ import 'state/data-layer/wpcom/theme-filters';
 import 'state/themes/init';
 
 import { receiveTheme } from 'state/themes/actions/receive-theme';
-import { themeActivated } from 'state/themes/actions/theme-activated';
+import { activateTheme } from 'state/themes/actions/activate-theme';
 
 export { setBackPath } from 'state/themes/actions/set-back-path';
 export { receiveThemes } from 'state/themes/actions/receive-themes';
@@ -70,6 +68,7 @@ export { themeRequestFailure } from 'state/themes/actions/theme-request-failure'
 export { requestTheme } from 'state/themes/actions/request-theme';
 export { requestActiveTheme } from 'state/themes/actions/request-active-theme';
 export { themeActivated } from 'state/themes/actions/theme-activated';
+export { activateTheme } from 'state/themes/actions/activate-theme';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
@@ -103,42 +102,6 @@ export function activate( themeId, siteId, source = 'unknown', purchased = false
 		}
 
 		return dispatch( activateTheme( themeId, siteId, source, purchased ) );
-	};
-}
-
-/**
- * Triggers a network request to activate a specific theme on a given site.
- *
- * @param  {string}   themeId   Theme ID
- * @param  {number}   siteId    Site ID
- * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
- * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
- * @returns {Function}           Action thunk
- */
-export function activateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
-	return dispatch => {
-		dispatch( {
-			type: THEME_ACTIVATE,
-			themeId,
-			siteId,
-		} );
-
-		return wpcom
-			.undocumented()
-			.activateTheme( themeId, siteId )
-			.then( theme => {
-				// Fall back to ID for Jetpack sites which don't return a stylesheet attr.
-				const themeStylesheet = theme.stylesheet || themeId;
-				dispatch( themeActivated( themeStylesheet, siteId, source, purchased ) );
-			} )
-			.catch( error => {
-				dispatch( {
-					type: THEME_ACTIVATE_FAILURE,
-					themeId,
-					siteId,
-					error,
-				} );
-			} );
 	};
 }
 
