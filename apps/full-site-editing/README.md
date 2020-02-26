@@ -108,7 +108,7 @@ npx lerna run test:js:watch --scope='@automattic/full-site-editing' --stream
 Occasionally you will need to update Jest Snapshots. This is so common that there's a dedicated script for this:
 
 ```shell
-npx lerna run test:js:updatesnapshots --scope='@automattic/full-site-editing' --stream
+npx lerna run test:js:update-snapshots --scope='@automattic/full-site-editing' --stream
 ```
 
 ### Writing Tests

@@ -41,7 +41,7 @@
 		"test:js": "npx wp-scripts test-unit-js --config='bin/js-unit-config.js'",
 		"test:js:help": "npx wp-scripts test-unit-js --config='bin/js-unit-config.js' --help",
 		"test:js:watch": "npx wp-scripts test-unit-js --config='bin/js-unit-config.js' --watch",
-		"test:js:updatesnapshots": "npx wp-scripts test-unit-js -u --config='bin/js-unit-config.js'",
+		"test:js:update-snapshots": "npx wp-scripts test-unit-js -u --config='bin/js-unit-config.js'",
 		"clean": "npx rimraf dist full-site-editing-plugin/*/dist",
 		"prebuild": "npm run clean",
 		"predev": "npm run clean",
