@@ -9,27 +9,30 @@ interface ManagedValue {
 	value: string;
 	isTouched: boolean; // Has value been edited by the user?
 	errors: string[]; // Has value passed validation?
+	isRequired: boolean; // Is this field required?
 }
 
 export function isValid( arg: ManagedValue ): boolean {
-	return arg.errors?.length <= 0;
+	return arg.errors?.length <= 0 && ( arg.value?.length > 0 || ! arg.isRequired );
 }
 
 function getInitialManagedValue( initialProperties?: {
 	value?: string;
 	isTouched?: boolean;
 	errors?: Array< string >;
+	isRequired?: boolean;
 } ): ManagedValue {
 	return {
 		value: '',
 		isTouched: false,
-		// This initial error is to prevent any field from being empty;
-		// validation will change this value when the field is touched. If
-		// the field is valid when it is empty, it should be initialized
-		// with an empty array in `errors` instead.
-		errors: [ '' ],
+		isRequired: false,
+		errors: [],
 		...initialProperties,
 	};
+}
+
+function touchField( oldData: ManagedValue ): ManagedValue {
+	return { ...oldData, isTouched: true };
 }
 
 function touchIfDifferent( newValue: string, oldData: ManagedValue ): ManagedValue {
@@ -61,24 +64,6 @@ export type ManagedContactDetails = {
 	countryCode: ManagedValue;
 	fax: ManagedValue;
 	vatId: ManagedValue;
-};
-
-export const defaultManagedContactDetails: ManagedContactDetails = {
-	firstName: getInitialManagedValue(),
-	lastName: getInitialManagedValue(),
-	organization: getInitialManagedValue(),
-	email: getInitialManagedValue(),
-	alternateEmail: getInitialManagedValue(),
-	phone: getInitialManagedValue(),
-	phoneNumberCountry: getInitialManagedValue(),
-	address1: getInitialManagedValue(),
-	address2: getInitialManagedValue(),
-	city: getInitialManagedValue(),
-	state: getInitialManagedValue(),
-	postalCode: getInitialManagedValue(),
-	countryCode: getInitialManagedValue(),
-	fax: getInitialManagedValue(),
-	vatId: getInitialManagedValue(),
 };
 
 export function isCompleteAndValid( details: ManagedContactDetails ): boolean {
@@ -188,6 +173,7 @@ export type ManagedContactDetailsUpdaters = {
 	updatePhoneNumberCountry: ( ManagedContactDetails, string ) => ManagedContactDetails;
 	updatePostalCode: ( ManagedContactDetails, string ) => ManagedContactDetails;
 	updateCountryCode: ( ManagedContactDetails, string ) => ManagedContactDetails;
+	touchContactFields: ( ManagedContactDetails ) => ManagedContactDetails;
 	updateVatId: ( ManagedContactDetails, string ) => ManagedContactDetails;
 	setErrorMessages: ( ManagedContactDetails, ManagedContactDetailsErrors ) => ManagedContactDetails;
 };
@@ -252,6 +238,12 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 		};
 	},
 
+	touchContactFields: ( oldDetails: ManagedContactDetails ): ManagedContactDetails => {
+		return Object.keys( oldDetails ).reduce( ( newDetails, detailKey ) => {
+			return { ...newDetails, [ detailKey ]: touchField( oldDetails[ detailKey ] ) };
+		}, oldDetails );
+	},
+
 	updateVatId: ( oldDetails: ManagedContactDetails, newVatId: string ): ManagedContactDetails => {
 		return {
 			...oldDetails,
@@ -273,8 +265,48 @@ export type WpcomStoreState = {
 	contactDetails: ManagedContactDetails;
 };
 
-export const initialWpcomStoreState: WpcomStoreState = {
-	siteId: '',
-	transactionResult: {},
-	contactDetails: defaultManagedContactDetails,
+export const domainManagedContactDetails: ManagedContactDetails = {
+	firstName: getInitialManagedValue( { isRequired: true } ),
+	lastName: getInitialManagedValue( { isRequired: true } ),
+	organization: getInitialManagedValue( { isRequired: true } ),
+	email: getInitialManagedValue( { isRequired: true } ),
+	alternateEmail: getInitialManagedValue( { isRequired: true } ),
+	phone: getInitialManagedValue( { isRequired: true } ),
+	phoneNumberCountry: getInitialManagedValue( { isRequired: true } ),
+	address1: getInitialManagedValue( { isRequired: true } ),
+	address2: getInitialManagedValue( { isRequired: true } ),
+	city: getInitialManagedValue( { isRequired: true } ),
+	state: getInitialManagedValue( { isRequired: true } ),
+	postalCode: getInitialManagedValue( { isRequired: true } ),
+	countryCode: getInitialManagedValue( { isRequired: true } ),
+	fax: getInitialManagedValue( { isRequired: true } ),
+	vatId: getInitialManagedValue( { isRequired: true } ),
 };
+
+export const taxManagedContactDetails: ManagedContactDetails = {
+	firstName: getInitialManagedValue(),
+	lastName: getInitialManagedValue(),
+	organization: getInitialManagedValue(),
+	email: getInitialManagedValue(),
+	alternateEmail: getInitialManagedValue(),
+	phone: getInitialManagedValue(),
+	phoneNumberCountry: getInitialManagedValue(),
+	address1: getInitialManagedValue(),
+	address2: getInitialManagedValue(),
+	city: getInitialManagedValue(),
+	state: getInitialManagedValue(),
+	postalCode: getInitialManagedValue( { isRequired: true } ),
+	countryCode: getInitialManagedValue( { isRequired: true } ),
+	fax: getInitialManagedValue(),
+	vatId: getInitialManagedValue(),
+};
+
+export function getInitialWpcomStoreState(
+	contactDetails: ManagedContactDetails
+): WpcomStoreState {
+	return {
+		siteId: '',
+		transactionResult: {},
+		contactDetails,
+	};
+}

@@ -16,6 +16,9 @@ import {
 	useShoppingCart,
 	FormFieldAnnotation,
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+	areDomainsInLineItems,
+	domainManagedContactDetails,
+	taxManagedContactDetails,
 } from '@automattic/composite-checkout-wpcom';
 import {
 	CheckoutProvider,
@@ -279,7 +282,7 @@ export default function CompositeCheckout( {
 	useWpcomStore(
 		registerStore,
 		recordEvent,
-		validateDomainContactDetails || wpcomValidateDomainContactInformation
+		areDomainsInLineItems( items ) ? domainManagedContactDetails : taxManagedContactDetails
 	);
 
 	useDisplayErrors( errors, showErrorMessage );
@@ -860,7 +863,6 @@ function getCheckoutEventHandler( dispatch ) {
 				return dispatch(
 					recordTracksEvent( 'calypso_checkout_composite_step_changed', {
 						step: action.payload.stepNumber,
-						step_id: action.payload.stepId,
 					} )
 				);
 

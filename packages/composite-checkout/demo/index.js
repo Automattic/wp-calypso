@@ -9,6 +9,9 @@ import styled from '@emotion/styled';
 import ReactDOM from 'react-dom';
 import {
 	Checkout,
+	CheckoutSteps,
+	CheckoutStep,
+	CheckoutStepBody,
 	CheckoutProvider,
 	createApplePayMethod,
 	createPayPalMethod,
@@ -18,7 +21,11 @@ import {
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
 	useIsStepActive,
-	usePaymentData,
+	useSelect,
+	useDispatch,
+	useMessages,
+	useFormStatus,
+	usePaymentMethod,
 } from '../src/public-api';
 import { StripeHookProvider, useStripe } from '../src/lib/stripe';
 
@@ -84,7 +91,26 @@ async function makePayPalExpressRequest( data ) {
 }
 
 const registry = createRegistry();
-const { registerStore, select, subscribe } = registry;
+const { registerStore, select } = registry;
+
+registerStore( 'demo', {
+	actions: {
+		setCountry( payload ) {
+			return { type: 'set_country', payload };
+		},
+	},
+	selectors: {
+		getCountry( state ) {
+			return state.country;
+		},
+	},
+	reducer( state = {}, action ) {
+		if ( action.type === 'set_country' ) {
+			return { ...state, country: action.payload };
+		}
+		return state;
+	},
+} );
 
 export function useIsApplePayAvailable( stripe, stripeConfiguration, items ) {
 	const [ canMakePayment, setCanMakePayment ] = useState( 'loading' );
@@ -154,15 +180,6 @@ export function useIsApplePayAvailable( stripe, stripeConfiguration, items ) {
 	return { canMakePayment: canMakePayment === true, isLoading: canMakePayment === 'loading' };
 }
 
-const handleEvent = setItems => () => {
-	const cardholderName = select( 'stripe' ).getCardholderName();
-	if ( cardholderName === 'admin' ) {
-		setItems( items =>
-			items.map( item => ( { ...item, amount: { ...item.amount, value: 0, displayValue: '0' } } ) )
-		);
-	}
-};
-
 const getTotal = items => {
 	const lineItemTotal = items.reduce( ( sum, item ) => sum + item.amount.value, 0 );
 	const currency = items.reduce( ( lastCurrency, item ) => item.amount.currency, 'USD' );
@@ -176,14 +193,9 @@ const getTotal = items => {
 	};
 };
 
-// Replace this with the host page's translation system
-const useLocalize = () => text => text;
-const hostTranslate = text => text;
-
 const ContactFormTitle = () => {
-	const localize = useLocalize();
 	const isActive = useIsStepActive();
-	return isActive ? localize( 'Enter your billing details' ) : localize( 'Billing details' );
+	return isActive ? 'Enter your contact details' : 'Contact details';
 };
 
 const Label = styled.label`
@@ -218,14 +230,10 @@ const Form = styled.div`
 `;
 
 function ContactForm( { summary } ) {
-	const [ paymentData, changePaymentData ] = usePaymentData();
-	const { billing = {} } = paymentData;
-	const { country = '' } = billing;
-	const onChangeCountry = event =>
-		changePaymentData( 'billing', { ...billing, country: event.target.value } );
-	const showAdditionalFields = shouldShowAdditionalFields( paymentData );
-	const toggleAdditionalFields = () =>
-		changePaymentData( 'billing', { ...billing, showAdditionalFields: ! showAdditionalFields } );
+	const country = useSelect( storeSelect => storeSelect( 'demo' )?.getCountry() ?? '' );
+	const { setCountry } = useDispatch( 'demo' );
+	const onChangeCountry = event => setCountry( event.target.value );
+	const { formStatus } = useFormStatus();
 
 	if ( summary ) {
 		return (
@@ -239,79 +247,27 @@ function ContactForm( { summary } ) {
 	return (
 		<Form>
 			<Label htmlFor="country">Country</Label>
-			<Input id="country" type="text" value={ country } onChange={ onChangeCountry } />
-			<input
-				id="show-additional-fields"
-				type="checkbox"
-				defaultChecked={ showAdditionalFields }
-				onChange={ toggleAdditionalFields }
+			<Input
+				id="country"
+				type="text"
+				value={ country }
+				onChange={ onChangeCountry }
+				disabled={ formStatus !== 'ready' }
 			/>
-			<label htmlFor="show-additional-fields">Show additional fields?</label>
-			{ showAdditionalFields && <AdditionalFields /> }
 		</Form>
 	);
 }
 
-function shouldShowAdditionalFields( paymentData ) {
-	return paymentData.billing && paymentData.billing.showAdditionalFields;
-}
-
-function AdditionalFields() {
-	const [ paymentData, changePaymentData ] = usePaymentData();
-	const { domain = {} } = paymentData;
-	const { name = '', address = '' } = domain;
-	const onChangeName = event =>
-		changePaymentData( 'domain', { ...domain, name: event.target.value } );
-	const onChangeAddress = event =>
-		changePaymentData( 'domain', { ...domain, address: event.target.value } );
-	return (
-		<Form>
-			<Label htmlFor="name">Name</Label>
-			<Input id="name" type="text" value={ name } onChange={ onChangeName } />
-			<Label htmlFor="address">Address</Label>
-			<Input id="address" type="text" value={ address } onChange={ onChangeAddress } />
-		</Form>
-	);
-}
-
-const steps = [
-	getDefaultOrderSummaryStep(),
-	{
-		...getDefaultPaymentMethodStep(),
-		getEditButtonAriaLabel: () => hostTranslate( 'Edit the payment method' ),
-		getNextStepButtonAriaLabel: () => hostTranslate( 'Continue with the selected payment method' ),
-	},
-	{
-		id: 'contact-form',
-		className: 'checkout__billing-details-step',
-		hasStepNumber: true,
-		titleContent: <ContactFormTitle />,
-		activeStepContent: <ContactForm />,
-		completeStepContent: <ContactForm summary />,
-		isCompleteCallback: isContactFormComplete,
-		isEditableCallback: ( { paymentData } ) => {
-			if ( paymentData.billing ) {
-				return true;
-			}
-			return false;
-		},
-		getEditButtonAriaLabel: () => hostTranslate( 'Edit the billing details' ),
-		getNextStepButtonAriaLabel: () => hostTranslate( 'Continue with the entered billing details' ),
-	},
-	getDefaultOrderReviewStep(),
-];
-
-function isContactFormComplete( { paymentData } ) {
-	const { billing = {}, domain = {} } = paymentData;
-	const allFields = [ billing.country ].concat(
-		shouldShowAdditionalFields( paymentData ) ? [ domain.name, domain.address ] : []
-	);
-	const emptyFields = allFields.filter( value => ! value );
-	if ( emptyFields.length > 0 ) {
-		return false;
-	}
-	return true;
-}
+const orderSummaryStep = getDefaultOrderSummaryStep();
+const paymentMethodStep = getDefaultPaymentMethodStep();
+const reviewOrderStep = getDefaultOrderReviewStep();
+const contactFormStep = {
+	id: 'contact-form',
+	className: 'checkout__billing-details-step',
+	titleContent: <ContactFormTitle />,
+	activeStepContent: <ContactForm />,
+	completeStepContent: <ContactForm summary />,
+};
 
 function HostPage() {
 	return (
@@ -322,10 +278,7 @@ function HostPage() {
 }
 
 function MyCheckout() {
-	const [ items, setItems ] = useState( initialItems );
-	useEffect( () => {
-		subscribe( handleEvent( setItems ) );
-	}, [] );
+	const [ items ] = useState( initialItems );
 	const total = useMemo( () => getTotal( items ), [ items ] );
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const {
@@ -358,7 +311,7 @@ function MyCheckout() {
 			return null;
 		}
 		return createStripeMethod( {
-			getCountry: () => select( 'checkout' ).getPaymentData().billing.country,
+			getCountry: () => select( 'demo' ).getCountry(),
 			getPostalCode: () => 90210,
 			getSubdivisionCode: () => 'CA',
 			registerStore,
@@ -380,7 +333,7 @@ function MyCheckout() {
 			return null;
 		}
 		return createApplePayMethod( {
-			getCountry: () => select( 'checkout' ).getPaymentData().billing.country,
+			getCountry: () => select( 'demo' ).getCountry(),
 			getPostalCode: () => 90210,
 			registerStore,
 			submitTransaction: sendStripeTransaction,
@@ -400,12 +353,12 @@ function MyCheckout() {
 		() =>
 			createPayPalMethod( {
 				registerStore,
-				submitTransaction: makePayPalExpressRequest,
 				getSuccessUrl: () => '#',
 				getCancelUrl: () => '#',
 			} ),
 		[]
 	);
+	paypalMethod.submitTransaction = makePayPalExpressRequest;
 
 	return (
 		<CheckoutProvider
@@ -421,8 +374,66 @@ function MyCheckout() {
 			isLoading={ isLoading }
 			paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }
 		>
-			<Checkout steps={ steps } />
+			<MyCheckoutBody />
 		</CheckoutProvider>
+	);
+}
+
+function MyCheckoutBody() {
+	const country = useSelect( storeSelect => storeSelect( 'demo' )?.getCountry() ?? '' );
+	const { showErrorMessage: showError } = useMessages();
+	const activePaymentMethod = usePaymentMethod();
+
+	return (
+		<Checkout>
+			<CheckoutStepBody
+				activeStepContent={ orderSummaryStep.activeStepContent }
+				completeStepContent={ orderSummaryStep.completeStepContent }
+				titleContent={ orderSummaryStep.titleContent }
+				errorMessage={ 'There was an error with this step.' }
+				isStepActive={ false }
+				isStepComplete={ true }
+				stepNumber={ 1 }
+				totalSteps={ 1 }
+				stepId={ 'order-summary' }
+			/>
+			<CheckoutSteps>
+				<CheckoutStep
+					stepId="payment-method-step"
+					isCompleteCallback={ () =>
+						paymentMethodStep.isCompleteCallback( { activePaymentMethod } )
+					}
+					activeStepContent={ paymentMethodStep.activeStepContent }
+					completeStepContent={ paymentMethodStep.completeStepContent }
+					titleContent={ paymentMethodStep.titleContent }
+				/>
+				<CheckoutStep
+					stepId={ contactFormStep.id }
+					isCompleteCallback={ () =>
+						new Promise( resolve =>
+							setTimeout( () => {
+								if ( country.length === 0 ) {
+									showError( 'The country field is required' );
+									resolve( false );
+									return;
+								}
+								resolve( true );
+							}, 1500 )
+						)
+					}
+					activeStepContent={ contactFormStep.activeStepContent }
+					completeStepContent={ contactFormStep.completeStepContent }
+					titleContent={ contactFormStep.titleContent }
+				/>
+				<CheckoutStep
+					stepId="review-order-step"
+					isCompleteCallback={ () => true }
+					activeStepContent={ reviewOrderStep.activeStepContent }
+					completeStepContent={ reviewOrderStep.completeStepContent }
+					titleContent={ reviewOrderStep.titleContent }
+				/>
+			</CheckoutSteps>
+		</Checkout>
 	);
 }
 
