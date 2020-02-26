@@ -28,34 +28,13 @@ import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from 'state/posts/constan
 import { addQueryArgs } from 'lib/route';
 
 import { getQueryManager } from 'state/posts/selectors/get-query-manager';
+import { getSitePosts } from 'state/posts/selectors/get-site-posts';
 
 import 'state/posts/init';
 
 export { getPost } from 'state/posts/selectors/get-post';
 export { getNormalizedPost } from 'state/posts/selectors/get-normalized-post';
-
-/**
- * Returns an array of post objects by site ID.
- *
- * @param   {object} state  Global state tree
- * @param   {number} siteId Site ID
- * @returns {Array}         Site posts
- */
-export const getSitePosts = createSelector(
-	( state, siteId ) => {
-		if ( ! siteId ) {
-			return null;
-		}
-
-		const manager = state.posts.queries[ siteId ];
-		if ( ! manager ) {
-			return [];
-		}
-
-		return manager.getItems();
-	},
-	state => state.posts.queries
-);
+export { getSitePosts } from 'state/posts/selectors/get-site-posts';
 
 /**
  * Returns a post object by site ID, post ID pair.
