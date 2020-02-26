@@ -1,4 +1,5 @@
 export { areRecommendedThemesLoading } from 'state/themes/selectors/are-recommended-themes-loading';
+export { findThemeFilterTerm } from 'state/themes/selectors/find-theme-filter-term';
 export { getActiveTheme } from 'state/themes/selectors/get-active-theme';
 export { getCanonicalTheme } from 'state/themes/selectors/get-canonical-theme';
 export { getJetpackUpgradeUrlIfPremiumTheme } from 'state/themes/selectors/get-jetpack-upgrade-url-if-premium-theme';

@@ -19,7 +19,7 @@ import 'state/themes/init';
  * @param  {string}  search The term to search for
  * @returns {object}         A filter term object
  */
-export default createSelector(
+export const findThemeFilterTerm = createSelector(
 	( state, search ) => {
 		const [ left, right ] = search.split( ':' );
 		if ( right ) {
