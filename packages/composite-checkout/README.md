@@ -29,59 +29,17 @@ Most components of this package require being inside a [CheckoutProvider](#check
 
 Any component which is a child of `CheckoutProvider` gets access to the custom hooks [useAllPaymentMethods](#useAllPaymentMethods), [useEvents](#useEvents), [useFormStatus](#useFormStatus), [useMessages](#useMessages), [useDispatch](#useDispatch), [useLineItems](#useLineItems), [usePaymentData](#usePaymentData), [usePaymentMethod](#usePaymentMethodId), [usePaymentMethodId](#usePaymentMethodId), [useRegisterStore](#useRegisterStore), [useRegistry](#useRegistry), [useSelect](#useSelect), and [useTotal](#useTotal).
 
-The [Checkout](#checkout) component creates the form itself. That component displays a series of steps which are passed in as [Step objects](#steps). While you can create these objects manually, the package provides three pre-defined steps that can be created by using the functions [getDefaultOrderSummaryStep](#getDefaultOrderSummaryStep), [getDefaultPaymentMethodStep](#getDefaultPaymentMethodStep), and [getDefaultOrderReviewStep](#getDefaultOrderReviewStep).
+The [Checkout](#checkout) component creates the form itself. Within the component's children, you can render elements to create the checkout experience. Any child is allowed but the [CheckoutStepBody](#CheckoutStepBody) component can be used to render something that looks like a checkout step. A series of these can be used to create a semantic form. If you would like to have a series of steps that are joined by "Continue" buttons which are hidden and displayed as needed, you can instead use the [CheckoutSteps](#CheckoutSteps) component with [CheckoutStep](#CheckoutStep) children that will take care of the logic for you.
 
-Any component within a Step object gets access to the custom hooks above as well as [useIsStepActive](#useIsStepActive) and [useIsStepComplete](#useIsStepComplete).
+Each `CheckoutStep` has a `isCompleteCallback` prop, which will be called when the "Continue" button is pressed. It can perform validation on that step's contents to determine if the form should continue to the next step. If the function returns true, the form continues to the next step, otherwise it remains on the same step. If the function returns a `Promise`, then the "Continue" button will change to "Please wait…" until the Promise resolves allowing for async operations. The value resolved by the Promise must be a boolean; true to continue, false to stay on the current step.
+
+Any component within a `CheckoutStep` gets access to the custom hooks above as well as [useIsStepActive](#useIsStepActive) and [useIsStepComplete](#useIsStepComplete).
 
 ## Submitting the form
 
 When the payment button is pressed, the form data will be validated and submitted in a way appropriate to the payment method. If there is a problem with either validation or submission, or if the payment method's service returns an error, the `showErrorMessage` prop on `Checkout` will be called with an object describing the error.
 
 If the payment method succeeds, the `onPaymentComplete` prop will be called instead.
-
-## Steps
-
-**This API has changed significantly and the below information is not correct. The docs will be updated soon.**
-
-The `Checkout` component accepts an optional `steps` prop which is an array of Step objects. Each Step is an object with properties that include both React elements to display at certain times as well as metadata about how the step should be displayed. Here's an example step:
-
-```js
-{
-	id: 'payment-method',
-	className: 'checkout__payment-methods-step',
-	hasStepNumber: true,
-	titleContent: <CheckoutPaymentMethodsTitle />,
-	activeStepContent: <CheckoutPaymentMethods isComplete={ false } />,
-	incompleteStepContent: null,
-	completeStepContent: <CheckoutPaymentMethods summary isComplete={ true } />,
-	isCompleteCallback: ( { paymentData } ) => {
-		const { billing = {} } = paymentData;
-		if ( ! billing.country ) {
-			return false;
-		}
-		return true;
-	},
-	isEditableCallback: ( { paymentData } ) => {
-		return ( paymentData.billing ) ? true : false;
-	},
-	getEditButtonAriaLabel: () => translate( 'Edit the payment method' ),
-	getNextStepButtonAriaLabel: () => translate( 'Continue with the selected payment method' ),
-}
-````
-
-All properties except for `id` are optional.
-
-- `id: string`. A unique ID for the step.
-- `className?: string`. Displayed on the step wrapper.
-- `hasStepNumber?: boolean`. If false, the step will not have a number displayed and will never be made active. Can be used for informational blocks. Defaults to false.
-- `titleContent?: React.ReactNode`. Displays as the title of the step.
-- `activeStepContent?: React.ReactNode`. Displays as the content of the step when it is active. It is also displayed when the step is inactive but is hidden by CSS.
-- `incompleteStepContent?: React.ReactNode`. Displays as the content of the step when it is inactive and incomplete as defined by the `isCompleteCallback`. It is also displayed when the step is active but is hidden by CSS.
-- `completeStepContent?: React.ReactNode`. Displays as the content of the step when it is inactive and complete as defined by the `isCompleteCallback`. It is also displayed when the step is active but is hidden by CSS.
-- `isCompleteCallback?: ({paymentData: object, activeStep: object}) => boolean`. Used to determine if a step is complete for purposes of validation. Default is a function returning false.
-- `isEditableCallback?: ({paymentData: object}) => boolean`. Used to determine if an inactive step should display an "Edit" button. Default is a function returning false.
-- `getEditButtonAriaLabel?: () => string`. Used to fill in the `aria-label` attribute for the "Edit" button if one exists.
-- `getNextStepButtonAriaLabel?: () => string`. Used to fill in the `aria-label` attribute for the "Continue" button if one exists.
 
 ## Example
 
@@ -137,19 +95,9 @@ While the `Checkout` component takes care of most everything, there are many sit
 
 ### Checkout
 
-**This API has changed significantly and the below information is not correct. The docs will be updated soon.**
-
 The main component in this package. It has the following props.
 
-- `steps: array`. See the [Steps](#steps) section above for more details.
-
-### CheckoutNextStepButton
-
-Renders a button to move to the next `CheckoutStep` component. Its `value` prop can be used to customize the text which by default will be "Continue".
-
-### CheckoutPaymentMethods
-
-Renders buttons for each payment method that can be used. The `onChange` callback prop can be used to determine which payment method has been selected. When the `isComplete` prop is true and `isActive` is false, it will display a summary of the current choice.
+- `className?: string`. The className for the component.
 
 ### CheckoutProvider
 
@@ -171,6 +119,23 @@ It has the following props.
 - `isLoading?: boolean`. If set and true, the form will be replaced with a loading placeholder.
 
 The line items are for display purposes only. They should also include subtotals, discounts, and taxes. No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `total`, which is another line item.
+
+## CheckoutStep
+
+A checkout step. This should be a direct child of [CheckoutSteps](#CheckoutSteps) and is itself a wrapper for [CheckoutStepBody](#CheckoutStepBody). This component's props are:
+
+- `stepId: string`. A unique ID for the step.
+- `className?: string`. A className for the step wrapper.
+- `titleContent?: React.ReactNode`. Displays as the title of the step.
+- `activeStepContent: React.ReactNode`. Displays as the content of the step when it is active. It is also displayed when the step is inactive but is hidden by CSS.
+- `completeStepContent?: React.ReactNode`. Displays as the content of the step when it is inactive and complete as defined by the `isCompleteCallback`.
+- `isCompleteCallback: ({paymentData: object, activeStep: object}) => boolean | Promise<boolean>`. Used to determine if a step is complete for purposes of validation.
+- `editButtonAriaLabel?: string`. Used to fill in the `aria-label` attribute for the "Edit" button if one exists.
+- `nextStepButtonAriaLabel?: string`. Used to fill in the `aria-label` attribute for the "Continue" button if one exists.
+- `editButtonText?: string`. Used in place of "Edit" on the edit step button.
+- `nextStepButtonText?: string`. Used in place of "Continue" on the next step button.
+- `validatingButtonText?: string`. Used in place of "Please wait…" on the next step button when `isCompleteCallback` returns an unresolved Promise.
+- `validatingButtonAriaLabel:? string`. Used for the `aria-label` attribute on the next step button when `isCompleteCallback` returns an unresolved Promise.
 
 ### CheckoutReviewOrder
 
