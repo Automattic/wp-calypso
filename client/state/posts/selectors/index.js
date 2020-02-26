@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, find, has, get, includes } from 'lodash';
-import createSelector from 'lib/create-selector';
+import { filter, find, has, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +13,7 @@ import { addQueryArgs } from 'lib/route';
 import { getSitePosts } from 'state/posts/selectors/get-site-posts';
 import { getSitePost } from 'state/posts/selectors/get-site-post';
 import { getPostEdits } from 'state/posts/selectors/get-post-edits';
+import { isPostPublished } from 'state/posts/selectors/is-post-published';
 
 import 'state/posts/init';
 
@@ -35,31 +35,7 @@ export { getEditedPostValue } from 'state/posts/selectors/get-edited-post-value'
 export { isEditedPostPasswordProtected } from 'state/posts/selectors/is-edited-post-password-protected';
 export { isEditedPostPasswordProtectedWithValidPassword } from 'state/posts/selectors/is-edited-post-password-protected-with-valid-password';
 export { isEditedPostDirty } from 'state/posts/selectors/is-edited-post-dirty';
-
-/**
- * Returns true if the post status is publish, private, or future
- * and the date is in the past
- *
- * @param   {object}  state  Global state tree
- * @param   {number}  siteId Site ID
- * @param   {number}  postId Post ID
- * @returns {boolean}        Whether post is published
- */
-export const isPostPublished = createSelector(
-	( state, siteId, postId ) => {
-		const post = getSitePost( state, siteId, postId );
-
-		if ( ! post ) {
-			return null;
-		}
-
-		return (
-			includes( [ 'publish', 'private' ], post.status ) ||
-			( post.status === 'future' && new Date( post.date ) < new Date() )
-		);
-	},
-	state => state.posts.queries
-);
+export { isPostPublished } from 'state/posts/selectors/is-post-published';
 
 /**
  * Returns the slug, or suggested_slug, for the edited post
