@@ -1,0 +1,12 @@
+export { deduceImageWidthAndHeight } from 'lib/post-normalizer/utils/deduce-image-width-and-height';
+export { domForHtml } from 'lib/post-normalizer/utils/dom-for-html';
+export { iframeIsWhitelisted } from 'lib/post-normalizer/utils/iframe-is-whitelisted';
+export { imageSizeFromAttachments } from 'lib/post-normalizer/utils/image-size-from-attachments';
+export { isCandidateForCanonicalImage } from 'lib/post-normalizer/utils/is-candidate-for-canonical-image';
+export { isFeaturedImageInContent } from 'lib/post-normalizer/utils/is-featured-image-in-content';
+export { isPhotonHost } from 'lib/post-normalizer/utils/is-photon-host';
+export { isUrlLikelyAnImage } from 'lib/post-normalizer/utils/is-url-likely-an-image';
+export { makeImageURLSafe } from 'lib/post-normalizer/utils/make-image-url-safe';
+export { maxWidthPhotonishURL } from 'lib/post-normalizer/utils/max-width-photonish-url';
+export { safeLink, safeLinkRe } from 'lib/post-normalizer/utils/safe-link';
+export { thumbIsLikelyImage } from 'lib/post-normalizer/utils/thumb-is-likely-image';
