@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { registerStore } from '@wordpress/data';
+import { WpcomClientCredentials } from 'wpcom-proxy-request';
 
 /**
  * Internal dependencies
@@ -13,7 +14,6 @@ import * as resolvers from './resolvers';
 import * as selectors from './selectors';
 import createControls from './controls';
 import { DispatchFromMap, SelectFromMap } from '../mapped-types';
-import { WpcomClientCredentials } from '../utils';
 
 export * from './types';
 export { State };
