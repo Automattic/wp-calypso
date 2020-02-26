@@ -22,7 +22,6 @@ import { addQueryArgs } from 'lib/route';
 import { getSitePosts } from 'state/posts/selectors/get-site-posts';
 import { getSitePost } from 'state/posts/selectors/get-site-post';
 import { getPostEdits } from 'state/posts/selectors/get-post-edits';
-import { getEditedPostValue } from 'state/posts/selectors/get-edited-post-value';
 
 import 'state/posts/init';
 
@@ -42,19 +41,7 @@ export { getPostEdits } from 'state/posts/selectors/get-post-edits';
 export { getEditedPost } from 'state/posts/selectors/get-edited-post';
 export { getEditedPostValue } from 'state/posts/selectors/get-edited-post-value';
 export { isEditedPostPasswordProtected } from 'state/posts/selectors/is-edited-post-password-protected';
-
-/**
- * Returns true if the edited post is password protected and has a valid password set
- *
- * @param   {object}  state  Global state tree
- * @param   {number}  siteId Site ID
- * @param   {number}  postId Post ID
- * @returns {boolean}        Result of the check
- */
-export function isEditedPostPasswordProtectedWithValidPassword( state, siteId, postId ) {
-	const password = getEditedPostValue( state, siteId, postId, 'password' );
-	return !! ( password && password.trim().length > 0 );
-}
+export { isEditedPostPasswordProtectedWithValidPassword } from 'state/posts/selectors/is-edited-post-password-protected-with-valid-password';
 
 /**
  * Returns true if there are "dirty" edited fields to be saved for the post
