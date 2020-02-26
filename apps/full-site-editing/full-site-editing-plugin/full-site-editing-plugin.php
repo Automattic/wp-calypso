@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Full Site Editing
  * Description: Enhances your page creation workflow within the Block Editor.
- * Version: 0.19
+ * Version: 0.19.1
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
@@ -35,7 +35,7 @@ namespace A8C\FSE;
  *
  * @var string
  */
-define( 'PLUGIN_VERSION', '0.19' );
+define( 'PLUGIN_VERSION', '0.19.1' );
 
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';
@@ -221,6 +221,6 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_blog_posts_block' );
  * Load WPCOM Block Editor NUX
  */
 // function load_wpcom_block_editor_nux() {
-// 	require_once __DIR__ . '/wpcom-block-editor-nux/class-wpcom-block-editor-nux.php';
+// require_once __DIR__ . '/wpcom-block-editor-nux/class-wpcom-block-editor-nux.php';
 // }
 // add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );

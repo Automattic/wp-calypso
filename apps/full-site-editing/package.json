@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/full-site-editing",
-	"version": "0.19.0",
+	"version": "0.19.1",
 	"description": "Plugin for full site editing with the block editor.",
 	"sideEffects": true,
 	"repository": {
