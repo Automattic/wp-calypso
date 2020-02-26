@@ -50,8 +50,6 @@ import 'state/themes/init';
 import { receiveTheme } from 'state/themes/actions/receive-theme';
 import { activateTheme } from 'state/themes/actions/activate-theme';
 import { installTheme } from 'state/themes/actions/install-theme';
-import { tryAndCustomizeTheme } from 'state/themes/actions/try-and-customize-theme';
-import { installAndTryAndCustomizeTheme } from 'state/themes/actions/install-and-try-and-customize-theme';
 import { suffixThemeIdForInstall } from 'state/themes/actions/suffix-theme-id-for-install';
 
 export { setBackPath } from 'state/themes/actions/set-back-path';
@@ -67,6 +65,7 @@ export { installTheme } from 'state/themes/actions/install-theme';
 export { clearActivated } from 'state/themes/actions/clear-activated';
 export { tryAndCustomizeTheme } from 'state/themes/actions/try-and-customize-theme';
 export { installAndTryAndCustomizeTheme } from 'state/themes/actions/install-and-try-and-customize-theme';
+export { tryAndCustomize } from 'state/themes/actions/try-and-customize';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
@@ -100,27 +99,6 @@ export function activate( themeId, siteId, source = 'unknown', purchased = false
 		}
 
 		return dispatch( activateTheme( themeId, siteId, source, purchased ) );
-	};
-}
-
-/**
- * Switches to the customizer to preview a given theme.
- * If it's a Jetpack site, installs the theme prior to activation if it isn't already.
- *
- * @param  {string}   themeId   Theme ID
- * @param  {number}   siteId    Site ID
- * @returns {Function}           Action thunk
- */
-export function tryAndCustomize( themeId, siteId ) {
-	return ( dispatch, getState ) => {
-		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
-			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
-			// If theme is already installed, installation will silently fail,
-			// and we just switch to the customizer.
-			return dispatch( installAndTryAndCustomizeTheme( installId, siteId ) );
-		}
-
-		return dispatch( tryAndCustomizeTheme( themeId, siteId ) );
 	};
 }
 
