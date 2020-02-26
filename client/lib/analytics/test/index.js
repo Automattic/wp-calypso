@@ -108,7 +108,9 @@ describe( 'Analytics', () => {
 
 	describe( 'identifyUser', () => {
 		beforeEach( () => {
-			window._tkq.push = jest.fn();
+			window._tkq = {
+				push: jest.fn(),
+			};
 			cookie.parse.mockImplementation( () => ( { tk_ai: true } ) );
 		} );
 
@@ -169,7 +171,9 @@ describe( 'Analytics', () => {
 	describe( 'tracks', () => {
 		describe( 'recordEvent', () => {
 			beforeEach( () => {
-				window._tkq.push = jest.fn();
+				window._tkq = {
+					push: jest.fn(),
+				};
 				cookie.parse.mockImplementation( () => ( { tk_ai: true } ) );
 				global.console.error = jest.fn();
 			} );

@@ -11,6 +11,7 @@ import ReactDom from 'react-dom';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import config from '../../config';
 import { subscribe, select } from '@wordpress/data';
+import { initializeAnalytics } from '@automattic/calypso-analytics';
 
 /**
  * Internal dependencies
@@ -26,6 +27,15 @@ import { USER_STORE } from './stores/user';
  */
 import 'assets/stylesheets/gutenboarding.scss';
 import 'components/environment-badge/style.scss';
+
+function generateGetSuperProps() {
+	return () => ( {
+		environment: process.env.NODE_ENV,
+		environment_id: config( 'env_id' ),
+		site_id_label: 'wpcom',
+		client: config( 'client_slug' ),
+	} );
+}
 
 const DEFAULT_LOCALE_SLUG: string = config( 'i18n_default_locale_slug' );
 
@@ -43,10 +53,13 @@ window.AppBoot = async () => {
 		return;
 	}
 	setupWpDataDebug();
-
+	// User is left undefined here because the user account will not be created
+	// until after the user has completed the gutenboarding flow.
+	// This also saves us from having to pull in lib/user/user and it's dependencies.
+	initializeAnalytics( undefined, generateGetSuperProps() );
 	// Add accessible-focus listener.
 	accessibleFocus();
-
+	
 	let locale = DEFAULT_LOCALE_SLUG;
 	try {
 		const [ userLocale, localeData ] = await getLocale();

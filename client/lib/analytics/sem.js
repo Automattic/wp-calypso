@@ -3,6 +3,7 @@
  */
 import cookie from 'cookie';
 import debugFactory from 'debug';
+import { pushEventToTracksQueue } from '@automattic/calypso-analytics';
 
 /**
  * Internal dependencies.
@@ -104,7 +105,7 @@ export function updateQueryParamsTracking() {
 
 		// Cross domain tracking for AMP.
 		if ( searchParams.get( 'amp_client_id' ) ) {
-			window._tkq.push( [ 'identifyAnonUser', searchParams.get( 'amp_client_id' ) ] );
+			pushEventToTracksQueue( [ 'identifyAnonUser', searchParams.get( 'amp_client_id' ) ] );
 		}
 	}
 

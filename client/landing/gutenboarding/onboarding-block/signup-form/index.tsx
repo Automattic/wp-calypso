@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
 import { useHistory } from 'react-router-dom';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 /**
  * Internal dependencies
@@ -41,6 +42,11 @@ const SignupForm = () => {
 	const langParam = useLangRouteParam();
 
 	const history = useHistory();
+	useEffect( () => {
+		recordTracksEvent( 'calypso_gutenboarding_signup_start', {
+			flow: 'gutenboarding',
+		} );
+	}, [] );
 
 	const handleSignUp = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();

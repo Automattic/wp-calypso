@@ -33,6 +33,7 @@
 		]
 	},
 	"dependencies": {
+		"@automattic/calypso-analytics": "file:packages/calypso-analytics",
 		"@automattic/calypso-polyfills": "file:packages/calypso-polyfills",
 		"@automattic/components": "file:packages/components",
 		"@automattic/composite-checkout": "file:packages/composite-checkout",
@@ -48,7 +49,6 @@
 		"@automattic/viewport-react": "file:packages/viewport-react",
 		"@automattic/wpcom-block-editor": "file:apps/wpcom-block-editor",
 		"browserslist": "4.8.6",
-		"@automattic/calypso-analytics": "file:packages/calypso-analytics",
 		"i18n-calypso": "file:packages/i18n-calypso",
 		"photon": "file:packages/photon",
 		"wp-calypso": "file:client",
@@ -156,6 +156,7 @@
 		"@testing-library/jest-dom": "4.2.4",
 		"@testing-library/react": "9.3.3",
 		"@types/classnames": "2.2.9",
+		"@types/cookie": "^0.3.3",
 		"@types/debug": "4.1.5",
 		"@types/fast-json-stable-stringify": "2.0.0",
 		"@types/jest": "24.9.1",

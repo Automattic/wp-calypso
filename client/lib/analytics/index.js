@@ -35,13 +35,15 @@ import {
 	getTracksAnonymousUserId,
 	recordTracksPageView,
 	getCurrentUser,
+	recordTracksPageViewWithPageParams,
+	getMostRecentUrlPath,
+	pushEventToTracksQueue,
 } from '@automattic/calypso-analytics';
 
 /**
  * Module variables
  */
 const identifyUserDebug = debug( 'calypso:analytics:identifyUser' );
-const pageViewDebug = debug( 'calypso:analytics:pageview' );
 const mcDebug = debug( 'calypso:analytics:mc' );
 const gaDebug = debug( 'calypso:analytics:ga' );
 const queueDebug = debug( 'calypso:analytics:queue' );
@@ -73,23 +75,6 @@ function buildQuerystringNoPrefix( group, name ) {
 	}
 
 	return uriComponent;
-}
-
-// we use this variable to track URL paths submitted to analytics.pageView.record
-// so that analytics.pageLoading.record can re-use the urlPath parameter.
-// this helps avoid some nasty coupling, but it's not the cleanest code - sorry.
-let mostRecentUrlPath = null;
-
-// pathCounter is used to keep track of the order of calypso_page_view Tracks
-// events. The pathCounter value is appended to the last_pageview_path_with_count and
-// this_pageview_path_with_count Tracks event props.
-let pathCounter = 0;
-
-if ( typeof window !== 'undefined' ) {
-	window.addEventListener( 'popstate', function() {
-		// throw away our URL value if the user used the back/forward buttons
-		mostRecentUrlPath = null;
-	} );
 }
 
 const analytics = {
@@ -150,15 +135,8 @@ const analytics = {
 			// Add delay to avoid stale `_dl` in recorded calypso_page_view event details.
 			// `_dl` (browserdocumentlocation) is read from the current URL by external JavaScript.
 			setTimeout( () => {
-				// Add paths to parameters.
-				params.last_pageview_path_with_count =
-					mostRecentUrlPath + '(' + pathCounter.toString() + ')';
-				params.this_pageview_path_with_count = urlPath + '(' + ( pathCounter + 1 ).toString() + ')';
-
-				pageViewDebug( 'Recording pageview.', urlPath, pageTitle, params );
-
 				// Tracks, Google Analytics, Refer platform.
-				analytics.tracks.recordPageView( urlPath, params );
+				recordTracksPageViewWithPageParams( urlPath, params );
 				analytics.ga.recordPageView( urlPath, pageTitle );
 				analytics.refer.recordPageView();
 
@@ -169,10 +147,6 @@ const analytics = {
 
 				// Event emitter.
 				analytics.emit( 'page-view', urlPath, pageTitle );
-
-				// Record this path.
-				mostRecentUrlPath = urlPath;
-				pathCounter++;
 
 				// Process queue.
 				analytics.queue.process();
@@ -284,7 +258,7 @@ const analytics = {
 
 	timing: {
 		record: function( eventType, duration, triggerName ) {
-			const urlPath = mostRecentUrlPath || 'unknown';
+			const urlPath = getMostRecentUrlPath() || 'unknown';
 			analytics.ga.recordTiming( urlPath, eventType, duration, triggerName );
 			analytics.statsd.recordTiming( urlPath, eventType, duration, triggerName );
 		},
@@ -304,7 +278,7 @@ const analytics = {
 		},
 
 		setOptOut: function( isOptingOut ) {
-			window._tkq.push( [ 'setOptOut', isOptingOut ] );
+			pushEventToTracksQueue( [ 'setOptOut', isOptingOut ] );
 		},
 	},
 
@@ -446,11 +420,11 @@ const analytics = {
 	},
 
 	setProperties: function( properties ) {
-		window._tkq.push( [ 'setProperties', properties ] );
+		pushEventToTracksQueue( [ 'setProperties', properties ] );
 	},
 
 	clearedIdentity: function() {
-		window._tkq.push( [ 'clearIdentity' ] );
+		pushEventToTracksQueue( [ 'clearIdentity' ] );
 	},
 };
 
