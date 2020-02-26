@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { delay, endsWith } from 'lodash';
+import { delay } from 'lodash';
 import page from 'page';
 
 /**
@@ -21,9 +21,6 @@ import {
 	THEME_DELETE_FAILURE,
 	THEME_FILTERS_REQUEST,
 	THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
-	THEME_INSTALL,
-	THEME_INSTALL_SUCCESS,
-	THEME_INSTALL_FAILURE,
 	THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_TRANSFER_INITIATE_FAILURE,
 	THEME_TRANSFER_INITIATE_PROGRESS,
@@ -43,7 +40,6 @@ import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import {
 	getTheme,
 	getThemeCustomizeUrl,
-	getWpcomParentThemeId,
 	isDownloadableFromWpcom,
 	themeHasAutoLoadingHomepage,
 	hasAutoLoadingHomepageModalAccepted,
@@ -59,6 +55,7 @@ import 'state/themes/init';
 
 import { receiveTheme } from 'state/themes/actions/receive-theme';
 import { activateTheme } from 'state/themes/actions/activate-theme';
+import { installTheme } from 'state/themes/actions/install-theme';
 
 export { setBackPath } from 'state/themes/actions/set-back-path';
 export { receiveThemes } from 'state/themes/actions/receive-themes';
@@ -69,6 +66,7 @@ export { requestTheme } from 'state/themes/actions/request-theme';
 export { requestActiveTheme } from 'state/themes/actions/request-active-theme';
 export { themeActivated } from 'state/themes/actions/theme-activated';
 export { activateTheme } from 'state/themes/actions/activate-theme';
+export { installTheme } from 'state/themes/actions/install-theme';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
@@ -102,56 +100,6 @@ export function activate( themeId, siteId, source = 'unknown', purchased = false
 		}
 
 		return dispatch( activateTheme( themeId, siteId, source, purchased ) );
-	};
-}
-
-/**
- * Triggers a network request to install a WordPress.org or WordPress.com theme on a Jetpack site.
- * To install a theme from WordPress.com, suffix the theme name with '-wpcom'. Note that this options
- * requires Jetpack 4.4
- *
- * @param  {string}   themeId Theme ID. If suffixed with '-wpcom', install from WordPress.com
- * @param  {string}   siteId  Jetpack Site ID
- * @returns {Function}         Action thunk
- */
-export function installTheme( themeId, siteId ) {
-	return ( dispatch, getState ) => {
-		dispatch( {
-			type: THEME_INSTALL,
-			siteId,
-			themeId,
-		} );
-
-		return wpcom
-			.undocumented()
-			.installThemeOnJetpack( siteId, themeId )
-			.then( theme => {
-				dispatch( receiveTheme( theme, siteId ) );
-				dispatch( {
-					type: THEME_INSTALL_SUCCESS,
-					siteId,
-					themeId,
-				} );
-
-				// Install parent theme if theme requires one
-				if ( endsWith( themeId, '-wpcom' ) ) {
-					const parentThemeId = getWpcomParentThemeId(
-						getState(),
-						themeId.replace( '-wpcom', '' )
-					);
-					if ( parentThemeId ) {
-						return dispatch( installTheme( parentThemeId + '-wpcom', siteId ) );
-					}
-				}
-			} )
-			.catch( error => {
-				dispatch( {
-					type: THEME_INSTALL_FAILURE,
-					siteId,
-					themeId,
-					error,
-				} );
-			} );
 	};
 }
 
