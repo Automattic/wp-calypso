@@ -6,9 +6,12 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { getThemeFilterStringFromTerm, getThemeFilterTermFromString } from 'state/themes/selectors';
+import {
+	getThemeFilterStringFromTerm,
+	getThemeFilterTerm,
+	getThemeFilterTermFromString,
+} from 'state/themes/selectors';
 
-import getThemeFilterTerm from 'state/selectors/get-theme-filter-term';
 import isValidThemeFilterTerm from 'state/selectors/is-valid-theme-filter-term';
 
 // Reorder and remove invalid filters to redirect to canonical URL

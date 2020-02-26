@@ -8,7 +8,7 @@ import { filter, get } from 'lodash';
  */
 import createSelector from 'lib/create-selector';
 import getThemeFilters from 'state/selectors/get-theme-filters';
-import getThemeFilterTerm from 'state/selectors/get-theme-filter-term';
+import { getThemeFilterTerm } from 'state/themes/selectors/get-theme-filter-term';
 
 import 'state/themes/init';
 
