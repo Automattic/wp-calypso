@@ -69,7 +69,7 @@ import {
 	themeHasAutoLoadingHomepage,
 	hasAutoLoadingHomepageModalAccepted,
 	prependThemeFilterKeys,
-} from './selectors';
+} from 'state/themes/selectors';
 import {
 	getThemeIdFromStylesheet,
 	isThemeMatchingQuery,
@@ -77,7 +77,7 @@ import {
 	normalizeJetpackTheme,
 	normalizeWpcomTheme,
 	normalizeWporgTheme,
-} from './utils';
+} from 'state/themes/utils';
 import { getSiteTitle, isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { requestSitePosts } from 'state/posts/actions';
