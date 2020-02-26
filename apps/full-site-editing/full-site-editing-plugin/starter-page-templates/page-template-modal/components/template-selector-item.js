@@ -9,7 +9,7 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import BlockPreview from './block-template-preview';
+import BlockPreview from './template-preview-frame';
 /* eslint-disable import/no-extraneous-dependencies */
 import { Disabled } from '@wordpress/components';
 /* eslint-enable import/no-extraneous-dependencies */
