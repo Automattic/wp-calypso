@@ -16,7 +16,6 @@ import {
 	RECOMMENDED_THEMES_SUCCESS,
 	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_ACTIVATE,
-	THEME_ACTIVATE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
 	THEME_CLEAR_ACTIVATED,
 	THEME_DELETE,
@@ -45,19 +44,14 @@ import {
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import {
 	getTheme,
-	getActiveTheme,
-	getLastThemeQuery,
 	getThemeCustomizeUrl,
 	getWpcomParentThemeId,
 	isDownloadableFromWpcom,
 	themeHasAutoLoadingHomepage,
 	hasAutoLoadingHomepageModalAccepted,
-	prependThemeFilterKeys,
 } from 'state/themes/selectors';
-import { getThemeIdFromStylesheet } from 'state/themes/utils';
 import { getSiteTitle, isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { requestSitePosts } from 'state/posts/actions';
 import i18n from 'i18n-calypso';
 import accept from 'lib/accept';
 
@@ -66,6 +60,7 @@ import 'state/data-layer/wpcom/theme-filters';
 import 'state/themes/init';
 
 import { receiveTheme } from 'state/themes/actions/receive-theme';
+import { themeActivated } from 'state/themes/actions/theme-activated';
 
 export { setBackPath } from 'state/themes/actions/set-back-path';
 export { receiveThemes } from 'state/themes/actions/receive-themes';
@@ -74,6 +69,7 @@ export { requestThemes } from 'state/themes/actions/request-themes';
 export { themeRequestFailure } from 'state/themes/actions/theme-request-failure';
 export { requestTheme } from 'state/themes/actions/request-theme';
 export { requestActiveTheme } from 'state/themes/actions/request-active-theme';
+export { themeActivated } from 'state/themes/actions/theme-activated';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
@@ -144,44 +140,6 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
 				} );
 			} );
 	};
-}
-
-/**
- * Returns an action thunk to be used in signalling that a theme has been activated
- * on a given site. Careful, this action is different from most others here in that
- * expects a theme stylesheet string (not just a theme ID).
- *
- * @param  {string}   themeStylesheet Theme stylesheet string (*not* just a theme ID!)
- * @param  {number}   siteId          Site ID
- * @param  {string}   source          The source that is requesting theme activation, e.g. 'showcase'
- * @param  {boolean}  purchased       Whether the theme has been purchased prior to activation
- * @returns {Function}                 Action thunk
- */
-export function themeActivated( themeStylesheet, siteId, source = 'unknown', purchased = false ) {
-	const themeActivatedThunk = ( dispatch, getState ) => {
-		const action = {
-			type: THEME_ACTIVATE_SUCCESS,
-			themeStylesheet,
-			siteId,
-		};
-		const previousThemeId = getActiveTheme( getState(), siteId );
-		const query = getLastThemeQuery( getState(), siteId );
-		const search_taxonomies = prependThemeFilterKeys( getState(), query.filter );
-		const search_term = search_taxonomies + ( query.search || '' );
-		const trackThemeActivation = recordTracksEvent( 'calypso_themeshowcase_theme_activate', {
-			theme: getThemeIdFromStylesheet( themeStylesheet ),
-			previous_theme: previousThemeId,
-			source: source,
-			purchased: purchased,
-			search_term: search_term || null,
-			search_taxonomies,
-		} );
-		dispatch( withAnalytics( trackThemeActivation, action ) );
-
-		// Update pages in case the front page was updated on theme switch.
-		dispatch( requestSitePosts( siteId, { type: 'page' } ) );
-	};
-	return themeActivatedThunk; // it is named function just for testing purposes
 }
 
 /**
