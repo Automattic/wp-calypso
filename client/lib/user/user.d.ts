@@ -3,16 +3,18 @@
  */
 import { EventEmitter } from 'events';
 import { Language } from '../../languages';
-import { GravatarOptions } from './gravatar';
+import { GravatarOptions } from '../../gravatar/types';
 import { URL } from '../../types';
 
-/**
- * Takes an optional callback function. If no callback is passed in, it will return a promise.
- **/
-export interface RequestHandler {
-	( fn: ( err: unknown, res: unknown, headers: unknown ) => unknown ): unknown;
-	(): Promise< unknown >;
-}
+type JSONSerializable = boolean | string | number;
+type WPCOMError = { message: string };
+type WPCOMHeaders = { [ name: string ]: string } & { status: number };
+
+type WPCOMCallback = (
+	error: WPCOMError | null,
+	result: JSONSerializable | null,
+	headers: WPCOMHeaders
+) => void;
 
 export interface User extends EventEmitter {
 	initialize: () => Promise< void >;
@@ -24,7 +26,8 @@ export interface User extends EventEmitter {
 	getLanguage: () => Language | void;
 	getAvatarUrl: ( options: GravatarOptions ) => URL;
 	clear: () => Promise< void > | void;
-	sendVerificationEmail: RequestHandler;
+	sendVerificationEmail< F extends WPCOMCallback >( f: F ): XMLHttpRequest;
+	sendVerificationEmail(): Promise< void >;
 	set: ( attributes: UserData ) => boolean;
 	decrementSiteCount: () => void;
 	incrementSiteCount: () => boolean | void;
