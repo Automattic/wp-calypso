@@ -129,7 +129,7 @@ class Page extends Component {
 		return (
 			<PopoverMenuItem onClick={ this.viewPage }>
 				<Gridicon icon={ isPreviewable ? 'visible' : 'external' } size={ 18 } />
-				{ this.props.translate( 'View Page' ) }
+				{ this.props.translate( 'View page' ) }
 			</PopoverMenuItem>
 		);
 	}
@@ -324,7 +324,7 @@ class Page extends Component {
 		return (
 			<PopoverMenuItem onClick={ this.copyPage } href={ duplicateUrl }>
 				<Gridicon icon="clipboard" size={ 18 } />
-				{ this.props.translate( 'Copy Page' ) }
+				{ this.props.translate( 'Copy page' ) }
 			</PopoverMenuItem>
 		);
 	}
@@ -333,7 +333,7 @@ class Page extends Component {
 		const { page, translate } = this.props;
 		return (
 			<PopoverMenuItemClipboard text={ page.URL } onCopy={ this.copyPageLink } icon={ 'link' }>
-				{ translate( 'Copy Link' ) }
+				{ translate( 'Copy link' ) }
 			</PopoverMenuItemClipboard>
 		);
 	}
