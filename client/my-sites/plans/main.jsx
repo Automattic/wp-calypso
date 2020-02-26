@@ -82,8 +82,14 @@ class Plans extends React.Component {
 
 		const partnerName = getPartnerName( purchase );
 
+		const eventProps = {
+			partner_managed: true,
+			partner_slug: purchase.partnerSlug ?? '',
+		};
+
 		return (
 			<div>
+				<TrackComponentView eventName="calypso_plans_view" eventProperties={ eventProps } />
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<Main wideLayout={ true }>
 					<SidebarNavigation />
@@ -134,7 +140,8 @@ class Plans extends React.Component {
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />
 				<QueryContactDetailsCache />
-				<TrackComponentView eventName="calypso_plans_view" />
+				{ /* We intentionally delay the track event below so that we know whether this is a partner purchase. */ }
+				{ purchase && <TrackComponentView eventName="calypso_plans_view" /> }
 				<Main wideLayout={ true }>
 					<SidebarNavigation />
 					{ ! canAccessPlans && (
