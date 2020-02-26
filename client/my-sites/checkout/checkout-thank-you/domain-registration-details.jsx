@@ -108,18 +108,34 @@ const DomainRegistrationDetails = ( {
 				<PurchaseDetail
 					icon={ <img alt="" src="/calypso/images/upgrades/custom-domain.svg" /> }
 					title={ i18n.translate( 'Your primary domain' ) }
-					description={ i18n.translate(
-						'Your existing domain, %(primaryDomain)s, is the primary domain visitors ' +
-							'see when they visit your site. %(purchasedDomain)s will redirect to %(primaryDomain)s. ' +
-							'Upgrade to a paid plan to make %(purchasedDomain)s the domain people see when they ' +
-							'visit your site.',
-						{
-							args: {
-								primaryDomain: selectedSite.slug,
-								purchasedDomain,
-							},
-						}
-					) }
+					description={
+						<div>
+							<p>
+								{ i18n.translate(
+									'Your existing domain, %(primaryDomain)s, is the primary domain visitors ' +
+										'see when they visit your site. %(purchasedDomain)s will redirect to %(primaryDomain)s.',
+									{
+										args: {
+											primaryDomain: selectedSite.slug,
+											purchasedDomain,
+										},
+									}
+								) }
+							</p>
+
+							<p>
+								{ i18n.translate(
+									'Upgrade to a paid plan to make %(purchasedDomain)s the domain people ' +
+										'see when they visit your site.',
+									{
+										args: {
+											purchasedDomain,
+										},
+									}
+								) }
+							</p>
+						</div>
+					}
 					buttonText={ i18n.translate( 'Pick a plan' ) }
 					href={ `/plans/${ selectedSite.slug }` }
 					onClick={ onPickPlanUpsellClick }
