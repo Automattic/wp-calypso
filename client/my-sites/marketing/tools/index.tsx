@@ -80,7 +80,7 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 						href="https://wp.me/logo-maker"
 						target="_blank"
 					>
-						{ translate( 'Create A Logo' ) }
+						{ translate( 'Create a logo' ) }
 					</Button>
 				</MarketingToolsFeature>
 
@@ -92,7 +92,7 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					imagePath="/calypso/images/marketing/social-media-logos.svg"
 				>
 					<Button compact onClick={ handleStartSharingClick }>
-						{ translate( 'Start Sharing' ) }
+						{ translate( 'Start sharing' ) }
 					</Button>
 				</MarketingToolsFeature>
 
@@ -113,7 +113,7 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 						href={ '/experts/upwork?source=marketingtools' }
 						target="_blank"
 					>
-						{ translate( 'Find Your Expert' ) }
+						{ translate( 'Find your expert' ) }
 					</Button>
 				</MarketingToolsFeature>
 			</div>

@@ -163,6 +163,8 @@ class SharingButtonsAppearance extends Component {
 	}
 
 	render() {
+		// Disable classname namespace because `sharing-buttons` makes the most sense here
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const changeButtonStyle = partial( this.props.onChange, 'sharing_button_style' );
 		return (
 			<div className="sharing-buttons__panel sharing-buttons-appearance">
@@ -190,10 +192,11 @@ class SharingButtonsAppearance extends Component {
 				>
 					{ this.props.saving
 						? this.props.translate( 'Saving…' )
-						: this.props.translate( 'Save Changes' ) }
+						: this.props.translate( 'Save changes' ) }
 				</button>
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

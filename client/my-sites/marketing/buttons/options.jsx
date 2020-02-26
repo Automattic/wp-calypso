@@ -262,7 +262,7 @@ class SharingButtonsOptions extends Component {
 						className="button sharing-buttons__submit"
 						disabled={ saving || ! initialized }
 					>
-						{ saving ? translate( 'Saving…' ) : translate( 'Save Changes' ) }
+						{ saving ? translate( 'Saving…' ) : translate( 'Save changes' ) }
 					</button>
 				</div>
 			</Fragment>
