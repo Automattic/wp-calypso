@@ -57,28 +57,38 @@ const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 
 function filterEntrypoints( entrypoints ) {
+	/* eslint-disable no-console */
 	if ( ! process.env.ENTRY_LIMIT ) {
 		return entrypoints;
 	}
 
 	const allowedEntrypoints = process.env.ENTRY_LIMIT.split( ',' );
-	// eslint-disable-next-line no-console
-	console.warn( '[entrylimit] Only building entrypoints %s', allowedEntrypoints.join( ', ' ) );
+
+	console.warn( '[entrylimit] Limiting build to %s', allowedEntrypoints.join( ', ' ) );
+
+	const validEntrypoints = allowedEntrypoints.filter( ep => {
+		if ( entrypoints.hasOwnProperty( ep ) ) {
+			return true;
+		}
+		console.warn( '[entrylimit] Invalid entrypoint: %s. Valid entries are:', ep );
+		Object.keys( entrypoints ).forEach( e => console.warn( '\t' + e ) );
+		return false;
+	} );
+
+	if ( validEntrypoints.length === 0 ) {
+		console.warn( '[entrylimit] No matches found!' );
+		throw new Error( 'No valid entrypoints' );
+	}
+
 	const allowed = {};
-	let buildingAtLeastOne = false;
 	Object.entries( entrypoints ).forEach( ( [ key, val ] ) => {
-		if ( allowedEntrypoints.includes( key ) ) {
+		if ( validEntrypoints.includes( key ) ) {
 			allowed[ key ] = val;
-			buildingAtLeastOne = true;
 		}
 	} );
-	if ( ! buildingAtLeastOne ) {
-		// eslint-disable-next-line no-console
-		console.warn( '[entrylimit] No matches found! Valid entries are:' );
-		// eslint-disable-next-line no-console
-		Object.keys( entrypoints ).forEach( ep => console.warn( '\t' + ep ) );
-	}
+
 	return allowed;
+	/* eslint-enable no-console */
 }
 
 if ( ! process.env.BROWSERSLIST_ENV ) {
