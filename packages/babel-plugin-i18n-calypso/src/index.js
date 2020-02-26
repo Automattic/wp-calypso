@@ -203,7 +203,8 @@ module.exports = function() {
 				}
 
 				const { filename } = this.file.opts;
-				const pathname = relative( '.', filename )
+				const base = state.opts.base || '.';
+				const pathname = relative( base, filename )
 					.split( sep )
 					.join( '/' );
 				translation.comments.reference = pathname + ':' + path.node.loc.start.line;
@@ -273,7 +274,8 @@ module.exports = function() {
 					! existsSync( dir ) && mkdirSync( dir, { recursive: true } );
 
 					const { filename } = this.file.opts;
-					const pathname = relative( '.', filename )
+					const base = state.opts.base || '.';
+					const pathname = relative( base, filename )
 						.split( sep )
 						.join( '-' );
 					writeFileSync( dir + pathname + '.pot', compiled );
