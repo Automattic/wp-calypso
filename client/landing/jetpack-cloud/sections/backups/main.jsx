@@ -8,45 +8,78 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import DateRangeSelector from 'my-sites/activity/filterbar/date-range-selector';
 import { requestActivityLogs } from 'state/data-getters';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
+import BackupDateSelector from './backup-date-selector';
 
 class BackupsPage extends Component {
-	selectDateRange = ( siteId, fromDate, toDate ) => {
-		// eslint-disable-next-line no-console
-		console.log( fromDate, toDate );
+
+	state = {
+		currentDateSetting: false,
 	};
+
+	onDateChange = newDate => {
+		this.setState( { currentDateSetting: newDate } );
+	};
+
+	getDateActivities = () => {
+		const { logs } = this.props;
+		const targetDate = new Date( this.state.currentDateSetting );
+		
+		return logs.filter( entry => {
+			const activityDate = new Date( entry.activityDate );
+
+			if ( targetDate.getFullYear() == activityDate.getFullYear() && targetDate.getMonth() == activityDate.getMonth() && targetDate.getDate() == activityDate.getDate() ) {
+				return true;
+			}
+		} );
+	};
+
+	getContentInBackup = () => {
+		const allActivities = this.getDateActivities();
+
+		return allActivities.map( activity => {
+			return ( <li key={ activity.activityId }>{ activity.activityTitle }</li> );
+		} );
+	}
 
 	render() {
 		const { logs, siteId } = this.props;
 
+		const entries = this.getDateActivities();
+		const mainBackup = entries.filter( entry => {
+			return 'rewind__backup_complete_full' === entry.activityName;
+		} );
+
+		console.log( logs );
+
+		const dateHasMainBackup = mainBackup.length > 0;
+
 		return (
 			<div>
 				<div>Welcome to the backup detail page for site { this.props.siteId }</div>
-				<DateRangeSelector
-					isVisible={ true }
-					onButtonClick={ null }
-					onClose={ null }
+				<BackupDateSelector
 					siteId={ siteId }
-					selectDateRange={ this.selectDateRange }
+					onDateChange={ this.onDateChange }
 				/>
-				<p>There are { logs.length } log entries.</p>
+				{ dateHasMainBackup && ( <div>Backup complete</div> ) }
+				{ ! dateHasMainBackup && ( <div>Backup attempt failed</div> ) }
+				{ dateHasMainBackup && ( <div>Content in backup: { this.getContentInBackup() }</div> ) }
 			</div>
 		);
 	}
 }
 
 export default connect( state => {
-	const siteId = getSelectedSiteId( state );
+	const siteId = 173369839; //getSelectedSiteId( state );
 	const filter = getActivityLogFilter( state, siteId );
-	filter.group = 'rewind';
+	//filter.group = 'rewind';
 	const rawLogs = siteId && requestActivityLogs( siteId, filter );
 
 	let logs = rawLogs?.data ?? [];
 
 	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-	logs = logs.filter( activity => activity.activityIsRewindable === true );
+	//logs = logs.filter( activity => activity.activityIsRewindable === true );
 
 	return {
 		siteId,
