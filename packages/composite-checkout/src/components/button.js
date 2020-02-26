@@ -5,32 +5,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-export default function Button( {
-	buttonState,
-	buttonType,
-	onClick,
-	className,
-	fullWidth,
-	children,
-	...props
-} ) {
-	return (
-		<CallToAction
-			buttonState={ buttonState }
-			buttonType={ buttonType }
-			padding={ buttonState === 'text-button' ? '0' : '10px 15px' }
-			onClick={ onClick }
-			className={ className }
-			fullWidth={ fullWidth }
-			{ ...props }
-		>
-			{ children }
-		</CallToAction>
-	);
+export default function Button( { children, ...props } ) {
+	return <CallToAction { ...props }>{ children }</CallToAction>;
 }
 
 Button.propTypes = {
-	buttonState: PropTypes.string, // Either 'disabled', 'primary', 'secondary', or 'text-button'.
+	buttonState: PropTypes.string, // Either 'disabled', 'primary', 'secondary', 'text-button', 'borderless'.
 	buttonType: PropTypes.string, // Service type (i.e. 'paypal' or 'apple-pay').
 	onClick: PropTypes.func,
 	fullWidth: PropTypes.bool,
@@ -41,7 +21,7 @@ const CallToAction = styled.button`
 	width: ${props => ( props.fullWidth ? '100%' : 'auto' )};
 	font-size: 16px;
 	border-radius: ${props => ( props.buttonType === 'paypal' ? '50px' : '3px' )};
-	padding: ${props => props.padding};
+	padding: ${props => ( props.buttonState === 'text-button' ? '0' : '10px 15px' )};
 	background: ${getBackgroundColor};
 	border-width: ${getBorderWeight};
 	border-style: solid;
@@ -82,13 +62,13 @@ const CallToAction = styled.button`
 `;
 
 function getImageFilter( { buttonType, buttonState } ) {
-	return `grayscale( ${ buttonState && buttonState.includes( 'primary' ) ? 0 : 100 } ) invert( ${
-		buttonState === 'primary' && buttonType === 'apple-pay' ? '100%' : 0
+	return `grayscale( ${ buttonState === 'primary' ? '0' : '100' } ) invert( ${
+		buttonState === 'primary' && buttonType === 'apple-pay' ? '100%' : '0'
 	} );`;
 }
 
 function getImageOpacity( { buttonState } ) {
-	return buttonState && buttonState.includes( 'primary' ) ? 1 : '0.5';
+	return buttonState === 'primary' ? '1' : '0.5';
 }
 
 function getBorderWeight( { buttonState } ) {
@@ -115,7 +95,6 @@ function getRollOverColor( { buttonState, buttonType, theme } ) {
 		case 'disabled':
 			return colors.disabledPaymentButtons;
 		case 'text-button':
-			return 'none';
 		case 'borderless':
 			return 'none';
 		default:
