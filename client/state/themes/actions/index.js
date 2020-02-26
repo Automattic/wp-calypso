@@ -3,7 +3,6 @@
  * External dependencies
  */
 import { delay, endsWith } from 'lodash';
-import debugFactory from 'debug';
 import page from 'page';
 
 /**
@@ -12,9 +11,6 @@ import page from 'page';
 import { isExternal } from 'lib/url';
 import wpcom from 'lib/wp';
 import {
-	ACTIVE_THEME_REQUEST,
-	ACTIVE_THEME_REQUEST_SUCCESS,
-	ACTIVE_THEME_REQUEST_FAILURE,
 	RECOMMENDED_THEMES_FAIL,
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
@@ -77,48 +73,7 @@ export { receiveTheme } from 'state/themes/actions/receive-theme';
 export { requestThemes } from 'state/themes/actions/request-themes';
 export { themeRequestFailure } from 'state/themes/actions/theme-request-failure';
 export { requestTheme } from 'state/themes/actions/request-theme';
-
-const debug = debugFactory( 'calypso:themes:actions' );
-
-/**
- * This action queries wpcom endpoint for active theme for site.
- * If request success information about active theme is stored in Redux themes subtree.
- * In case of error, error is stored in Redux themes subtree.
- *
- * @param  {number}   siteId Site for which to check active theme
- * @returns {Function}        Redux thunk with request action
- */
-export function requestActiveTheme( siteId ) {
-	return ( dispatch, getState ) => {
-		dispatch( {
-			type: ACTIVE_THEME_REQUEST,
-			siteId,
-		} );
-
-		return wpcom
-			.undocumented()
-			.activeTheme( siteId )
-			.then( theme => {
-				debug( 'Received current theme', theme );
-				// We want to store the theme object in the appropriate Redux subtree -- either 'wpcom'
-				// for WPCOM sites, or siteId for Jetpack sites.
-				const siteIdOrWpcom = isJetpackSite( getState(), siteId ) ? siteId : 'wpcom';
-				dispatch( receiveTheme( theme, siteIdOrWpcom ) );
-				dispatch( {
-					type: ACTIVE_THEME_REQUEST_SUCCESS,
-					siteId,
-					theme,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
-					type: ACTIVE_THEME_REQUEST_FAILURE,
-					siteId,
-					error,
-				} );
-			} );
-	};
-}
+export { requestActiveTheme } from 'state/themes/actions/request-active-theme';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
