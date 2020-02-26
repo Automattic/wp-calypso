@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, find, has, get, includes, isEqual, omit, some } from 'lodash';
+import { filter, find, has, get, includes, some } from 'lodash';
 import createSelector from 'lib/create-selector';
 
 /**
@@ -9,9 +9,6 @@ import createSelector from 'lib/create-selector';
  */
 import {
 	getFeaturedImageId,
-	getNormalizedPostsQuery,
-	getSerializedPostsQuery,
-	getDeserializedPostsQueryDetails,
 	isAuthorEqual,
 	isDateEqual,
 	isDiscussionEqual,
@@ -40,40 +37,7 @@ export { getPostsFoundForQuery } from 'state/posts/selectors/get-posts-found-for
 export { getPostsLastPageForQuery } from 'state/posts/selectors/get-posts-last-page-for-query';
 export { isPostsLastPageForQuery } from 'state/posts/selectors/is-posts-last-page-for-query';
 export { getPostsForQueryIgnoringPage } from 'state/posts/selectors/get-posts-for-query-ignoring-page';
-
-/**
- * Returns true if currently requesting posts for the posts query, regardless
- * of page, or false otherwise.
- *
- * @param   {object}  state  Global state tree
- * @param   {?number} siteId Site ID, or `null` for all-sites queries
- * @param   {object}  query  Post query object
- * @returns {boolean}        Whether posts are being requested
- */
-export const isRequestingPostsForQueryIgnoringPage = createSelector(
-	( state, siteId, query ) => {
-		const normalizedQueryWithoutPage = omit( getNormalizedPostsQuery( query ), 'page' );
-		return some( state.posts.queryRequests, ( isRequesting, serializedQuery ) => {
-			if ( ! isRequesting ) {
-				return false;
-			}
-
-			const queryDetails = getDeserializedPostsQueryDetails( serializedQuery );
-			// Specific site query
-			if ( queryDetails.siteId && queryDetails.siteId !== siteId ) {
-				return false;
-			}
-			// All-sites query
-			if ( ! queryDetails.siteId && siteId ) {
-				return false;
-			}
-
-			return isEqual( normalizedQueryWithoutPage, omit( queryDetails.query, 'page' ) );
-		} );
-	},
-	state => state.posts.queryRequests,
-	( state, siteId, query ) => getSerializedPostsQuery( query, siteId )
-);
+export { isRequestingPostsForQueryIgnoringPage } from 'state/posts/selectors/is-requesting-posts-for-query-ignoring-page';
 
 /**
  * Returns true if a request is in progress for the specified site post, or
