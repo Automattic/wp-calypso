@@ -35,6 +35,8 @@ jobs:
       CALYPSO_APP: fse_plugin
       TRIGGER_CALYPSO_APP_BUILD_ENDPOINT: ${{ secrets.TRIGGER_CALYPSO_APP_BUILD_ENDPOINT }}
     steps:
+    - name: Checkout code
+      uses: actions/checkout@master
     - name: Download plugin artifact
       uses: actions/download-artifact@v1
       with:
