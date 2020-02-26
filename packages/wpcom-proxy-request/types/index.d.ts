@@ -24,7 +24,7 @@ export interface WpcomRequestParams {
 
 export function reloadProxy(): void;
 
-export function requestAllBlogsAccess(): void;
+export function requestAllBlogsAccess(): ReturnType< typeof request >;
 
 export default function request( params: WpcomRequestParams, callback: Function ): XMLHttpRequest;
 export default function request< T >( params: WpcomRequestParams ): Promise< T >;
