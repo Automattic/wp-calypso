@@ -4,6 +4,7 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { Button, Dialog } from '@automattic/components';
+import { isMobile } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -112,9 +113,11 @@ class MasteringGutenbergCard extends Component {
 					preferenceName="customer-home-mastering-gutenberg-card"
 					className="mastering-gutenberg-card"
 				>
-					<div className="mastering-gutenberg-card__illustration">
-						<img src="/calypso/images/illustrations/gutenberg-mini.svg" alt="" />
-					</div>
+					{ ! isMobile() && (
+						<div className="mastering-gutenberg-card__illustration">
+							<img src="/calypso/images/illustrations/gutenberg-mini.svg" alt="" />
+						</div>
+					) }
 					<div>
 						<CardHeading>{ translate( 'Master the block editor' ) }</CardHeading>
 						<p className="mastering-gutenberg-card__text customer-home__card-subheader">
