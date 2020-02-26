@@ -20,7 +20,6 @@ import {
  */
 import wpcom from 'lib/wp';
 import { decodeEntities } from 'lib/formatting';
-import PreferencesStore from 'lib/preferences/store';
 import {
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
@@ -71,6 +70,7 @@ import {
 } from 'state/ui/editor/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getPreference } from 'state/preferences/selectors';
 
 import 'state/posts/init';
 
@@ -680,7 +680,7 @@ export const saveEdited = options => async ( dispatch, getState ) => {
 	dispatch( editorSave( siteId, postId, saveMarker ) );
 
 	changedAttributes = normalizeApiAttributes( changedAttributes );
-	const mode = PreferencesStore.get( 'editor-mode' );
+	const mode = getPreference( getState(), 'editor-mode' );
 	const isNew = ! postId;
 
 	const postHandle = wpcom.site( siteId ).post( postId );
@@ -714,7 +714,7 @@ export const saveEdited = options => async ( dispatch, getState ) => {
 
 	const data = await postHandle[ isNew ? 'add' : 'update' ]( query, changedAttributes );
 
-	const currentMode = PreferencesStore.get( 'editor-mode' );
+	const currentMode = getPreference( getState(), 'editor-mode' );
 
 	dispatch( editorAutosaveReset() );
 	dispatch( editorLoadingErrorReset() );
