@@ -10,7 +10,7 @@ import { compose } from '@wordpress/compose';
 import { Button, Modal, Spinner, IconButton } from '@wordpress/components';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
-import { parse as parseBlocks, cloneBlock } from '@wordpress/blocks';
+import { parse as parseBlocks } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -21,44 +21,10 @@ import TemplateSelectorPreview from './components/template-selector-preview';
 import { trackDismiss, trackSelection, trackView } from './utils/tracking';
 import replacePlaceholders from './utils/replace-placeholders';
 import ensureAssets from './utils/ensure-assets';
+import modifyBlocks from './utils/modify-blocks';
 /* eslint-enable import/no-extraneous-dependencies */
 
 const DEFAULT_HOMEPAGE_TEMPLATE = 'maywood';
-
-function modifyBlocksForPreview( blocks ) {
-	function modifyBlock( block ) {
-		const attrsToMerge = {};
-
-		// `jetpack/contact-form` has a placeholder to configure form settings
-		// we need to disable this to show the full form in the preview
-		if (
-			'jetpack/contact-form' === block.name &&
-			undefined !== block.attributes.hasFormSettingsSet
-		) {
-			attrsToMerge.hasFormSettingsSet = true;
-		}
-
-		// `blocks` is an object. Therefore any changes made here will
-		// be reflected across all references to the blocks object. To ensure we
-		// only modify the blocks when needed, we return a new object reference
-		// for any blocks we modify. This allows us to modify blocks for
-		// particular contexts. For example we may wish to show blocks
-		// differently in the preview than we do when they are inserted into the
-		// editor itself.
-		return cloneBlock( block, attrsToMerge );
-	}
-
-	return blocks.map( block => {
-		block = modifyBlock( block );
-
-		// Recurse into nested Blocks
-		if ( block.innerBlocks && block.innerBlocks.length ) {
-			block.innerBlocks = modifyBlocksForPreview( block.innerBlocks );
-		}
-
-		return block;
-	} );
-}
 
 class PageTemplateModal extends Component {
 	state = {
@@ -89,7 +55,20 @@ class PageTemplateModal extends Component {
 
 	getBlocksForPreview = memoize( previewedTemplate => {
 		const blocks = this.getBlocksByTemplateSlug( previewedTemplate );
-		return modifyBlocksForPreview( blocks );
+
+		// Modify the existing blocks returning new block object references.
+		return modifyBlocks( blocks, function modifyBlocksForPreview( block ) {
+			// `jetpack/contact-form` has a placeholder to configure form settings
+			// we need to disable this to show the full form in the preview
+			if (
+				'jetpack/contact-form' === block.name &&
+				undefined !== block.attributes.hasFormSettingsSet
+			) {
+				block.attributes.hasFormSettingsSet = true;
+			}
+
+			return block;
+		} );
 	} );
 
 	static getDerivedStateFromProps( props, state ) {
