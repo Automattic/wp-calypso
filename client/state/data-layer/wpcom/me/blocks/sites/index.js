@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { READER_SITE_BLOCKS_RECEIVE, READER_SITE_BLOCKS_REQUEST } from 'state/action-types';
+import { READER_SITE_BLOCKS_RECEIVE, READER_SITE_BLOCKS_REQUEST } from 'state/reader/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';

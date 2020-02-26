@@ -15,11 +15,11 @@ import {
 	receiveReadFeedSuccess,
 	receiveReadFeedError,
 } from '../';
+import { NOTICE_CREATE } from 'state/action-types';
 import {
-	NOTICE_CREATE,
 	READER_FEED_REQUEST_SUCCESS,
 	READER_FEED_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { requestFeed } from 'state/reader/feeds/actions';
 import { requestFeedSearch, receiveFeedSearch } from 'state/reader/feed-searches/actions';

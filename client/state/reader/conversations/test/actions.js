@@ -5,7 +5,7 @@ import {
 	READER_CONVERSATION_FOLLOW,
 	READER_CONVERSATION_MUTE,
 	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 import {
 	followConversation,
 	muteConversation,

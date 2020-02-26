@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { READER_DISMISS_POST, READER_DISMISS_SITE } from 'state/action-types';
+import { READER_DISMISS_POST, READER_DISMISS_SITE } from 'state/reader/action-types';
 
 import 'state/data-layer/wpcom/me/dismiss/sites/new';
 

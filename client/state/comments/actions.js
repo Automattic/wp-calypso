@@ -18,8 +18,8 @@ import {
 	COMMENTS_TREE_SITE_REQUEST,
 	COMMENTS_UNLIKE,
 	COMMENTS_WRITE,
-	READER_EXPAND_COMMENTS,
 } from 'state/action-types';
+import { READER_EXPAND_COMMENTS } from 'state/reader/action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 import { getSiteComment } from 'state/comments/selectors';
 

@@ -4,7 +4,7 @@
 import {
 	READER_RECOMMENDED_SITES_REQUEST,
 	READER_RECOMMENDED_SITES_RECEIVE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 
 import 'state/data-layer/wpcom/read/recommendations/sites';
 

@@ -12,7 +12,7 @@ import {
 	READER_SITE_BLOCKS_REQUEST,
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_UNBLOCK,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 import { combineReducers, withoutPersistence } from 'state/utils';
 
 export const items = withoutPersistence( ( state = {}, action ) => {

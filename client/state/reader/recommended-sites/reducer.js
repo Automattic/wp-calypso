@@ -6,7 +6,7 @@ import { uniqBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_RECOMMENDED_SITES_RECEIVE } from 'state/action-types';
+import { READER_RECOMMENDED_SITES_RECEIVE } from 'state/reader/action-types';
 import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
 
 /**
