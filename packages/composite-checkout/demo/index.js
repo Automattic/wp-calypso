@@ -353,12 +353,12 @@ function MyCheckout() {
 		() =>
 			createPayPalMethod( {
 				registerStore,
-				submitTransaction: makePayPalExpressRequest,
 				getSuccessUrl: () => '#',
 				getCancelUrl: () => '#',
 			} ),
 		[]
 	);
+	paypalMethod.submitTransaction = makePayPalExpressRequest;
 
 	return (
 		<CheckoutProvider
