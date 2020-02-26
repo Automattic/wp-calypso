@@ -25,7 +25,7 @@ export interface User extends EventEmitter {
 	getLanguage: () => Language | undefined;
 	getAvatarUrl: ( options: GravatarOptions ) => URL;
 	clear: () => Promise< void > | void;
-	sendVerificationEmail< F extends WPCOMCallback >( f: F ): XMLHttpRequest;
+	sendVerificationEmail< Callback extends WPCOMCallback >( callback: Callback ): XMLHttpRequest;
 	sendVerificationEmail(): Promise< void >;
 	set: ( attributes: UserData ) => boolean;
 	decrementSiteCount: () => void;
