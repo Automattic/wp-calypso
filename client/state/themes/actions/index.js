@@ -15,7 +15,6 @@ import {
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
 	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
-	THEME_CLEAR_ACTIVATED,
 	THEME_DELETE,
 	THEME_DELETE_SUCCESS,
 	THEME_DELETE_FAILURE,
@@ -67,6 +66,7 @@ export { requestActiveTheme } from 'state/themes/actions/request-active-theme';
 export { themeActivated } from 'state/themes/actions/theme-activated';
 export { activateTheme } from 'state/themes/actions/activate-theme';
 export { installTheme } from 'state/themes/actions/install-theme';
+export { clearActivated } from 'state/themes/actions/clear-activated';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
@@ -100,20 +100,6 @@ export function activate( themeId, siteId, source = 'unknown', purchased = false
 		}
 
 		return dispatch( activateTheme( themeId, siteId, source, purchased ) );
-	};
-}
-
-/**
- * Returns an action object to be used in signalling that theme activated status
- * for site should be cleared
- *
- * @param  {number}   siteId    Site ID
- * @returns {object}        Action object
- */
-export function clearActivated( siteId ) {
-	return {
-		type: THEME_CLEAR_ACTIVATED,
-		siteId,
 	};
 }
 
