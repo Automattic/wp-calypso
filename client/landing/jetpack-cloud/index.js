@@ -1,25 +1,89 @@
+
 /**
  * External dependencies
  */
-import config from '../../config';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-import initJetpackCloudRoutes from './routes';
-import { bootApp } from 'boot/common';
 
-/**
- * Style dependencies
- */
-import 'components/environment-badge/style.scss';
-import 'layout/style.scss';
-import 'assets/stylesheets/jetpack-cloud.scss';
+import { navigation, siteSelection, sites } from 'my-sites/controller';
+import { makeLayout, render as clientRender } from 'controller';
 
-window.AppBoot = () => {
-	if ( ! config.isEnabled( 'jetpack-cloud' ) ) {
-		window.location.href = '/';
-	} else {
-		bootApp( 'Jetpack Cloud', initJetpackCloudRoutes );
-	}
-};
+import { dashboard } from './sections/dashboard/controller';
+import {
+	backups,
+	backupDetail,
+	backupDownload,
+	backupRestore,
+} from './sections/backups/controller';
+import { scan, scanHistory } from './sections/scan/controller';
+import { settings } from './sections/settings/controller';
+
+
+export default function() {
+
+	page( '/', siteSelection, dashboard, makeLayout, clientRender );
+
+	page( '/backups', siteSelection, backupDetail, makeLayout, clientRender );
+	page( '/backups/:site', siteSelection, navigation, backups, makeLayout, clientRender );
+	page(
+		'/backups/detail/:site',
+		siteSelection,
+		navigation,
+		backupDetail,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/backups/:site/detail/:backupId',
+		siteSelection,
+		navigation,
+		backupDetail,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/backups/:site/download',
+		siteSelection,
+		navigation,
+		backupDownload,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/site/:site/backups/backups/download/:downloadId',
+		navigation,
+		backupDownload,
+		makeLayout,
+		clientRender
+	);
+
+	page( '/backups/restore', siteSelection, sites, navigation, makeLayout, clientRender );
+	page(
+		'/backups/restore/:site',
+		siteSelection,
+		navigation,
+		backupRestore,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/backups/restore/:site/:restoreId',
+		siteSelection,
+		navigation,
+		backupRestore,
+		makeLayout,
+		clientRender
+	);
+
+	page( '/scan', siteSelection, sites, navigation, makeLayout, clientRender );
+	page( '/scan/:site', siteSelection, navigation, scan, makeLayout, clientRender );
+	page( '/scan/:site/history', siteSelection, navigation, scanHistory, makeLayout, clientRender );
+
+	page( '/settings', siteSelection, sites, navigation, makeLayout, clientRender );
+	page( '/settings/:site', siteSelection, navigation, settings, makeLayout, clientRender );
+
+
+}

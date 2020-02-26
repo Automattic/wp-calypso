@@ -4,6 +4,8 @@
 const fs = require( 'fs' ); // eslint-disable-line import/no-nodejs-modules
 const path = require( 'path' ); // eslint-disable-line import/no-nodejs-modules
 
+const JETPACK_CLOUD_SECTION_DEFINITION = require( './landing/jetpack-cloud/sections.js' ); // eslint-disable-line import/no-nodejs-modules
+
 const sections = [
 	{
 		name: 'root',
@@ -483,6 +485,10 @@ for ( const extension of require( './extensions' ) ) {
 			envId: pkg.env_id,
 		} );
 	} catch {}
+}
+
+for ( const jetpack_cloud_section of JETPACK_CLOUD_SECTION_DEFINITION ) {
+	sections.push( jetpack_cloud_section );
 }
 
 module.exports = sections;

@@ -129,5 +129,11 @@
 	"wpcom_signup_key": false,
 	"statsd_analytics_response_time_max_logs_per_second": 50,
 	"google_maps_and_places_api_key": "AIzaSyAJN-ceOpTLP1CSQdyoRLS4VT9Zlsibkeg",
-	"push_notification_vapid_key": "BDQlTOrVTrxRM0i-gCsrxjxOyul281c5WVdfstXaqZqTSpjSI9M-E99CvwwJRWDkZ0goa8VSqUCgwiexxcDuXCs"
+	"push_notification_vapid_key": "BDQlTOrVTrxRM0i-gCsrxjxOyul281c5WVdfstXaqZqTSpjSI9M-E99CvwwJRWDkZ0goa8VSqUCgwiexxcDuXCs",
+	"disable_sections": false,
+	"sections": {
+		"jetpack-cloud": false
+	},
+	"masterbar": "default",
+	"sidebar": "default"
 }

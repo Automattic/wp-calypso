@@ -55,7 +55,6 @@ import analytics from 'server/lib/analytics';
 import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'landing/gutenboarding/section';
-import { JETPACK_CLOUD_SECTION_DEFINITION } from 'landing/jetpack-cloud/section';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -681,23 +680,10 @@ module.exports = function() {
 		next();
 	} );
 
-	if ( jetpackCloudEnvs.includes( calypsoEnv ) ) {
-		JETPACK_CLOUD_SECTION_DEFINITION.paths.forEach( sectionPath =>
-			handleSectionPath( JETPACK_CLOUD_SECTION_DEFINITION, sectionPath, 'entry-jetpack-cloud' )
-		);
-
-		// catchall to render 404 for all routes not whitelisted in client/sections
-		app.use( render404( 'entry-jetpack-cloud' ) );
-
-		// Error handling middleware for displaying the server error 500 page must be the very last middleware defined
-		app.use( renderServerError( 'entry-jetpack-cloud' ) );
-
-		return app;
-	}
 
 	// redirect homepage if the Reader is disabled
 	app.get( '/', function( request, response, next ) {
-		if ( ! config.isEnabled( 'reader' ) ) {
+		if ( ! config.isEnabled( 'reader' ) && ! jetpackCloudEnvs.includes( calypsoEnv ) ) {
 			response.redirect( '/stats' );
 		} else {
 			next();
@@ -843,6 +829,13 @@ module.exports = function() {
 
 	sections
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
+		.filter( section => {
+			const activeSections = config( 'sections' );
+			if ( activeSections && activeSections[ section.name ] ) {
+				return activeSections[ section.name ];
+			}
+			return ! config( 'disable_sections' );
+		} )
 		.forEach( section => {
 			section.paths.forEach( sectionPath => handleSectionPath( section, sectionPath ) );
 

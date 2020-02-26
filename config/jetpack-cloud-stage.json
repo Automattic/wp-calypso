@@ -15,5 +15,11 @@
 		"jetpack-cloud/settings": true,
 		"jetpack-cloud/scan": true,
 		"jetpack-cloud/scan-history": true
-	}
+	},
+	"disable_sections": true,
+	"sections": {
+		"jetpack-cloud": true
+	},
+	"masterbar": "jetpack-cloud",
+	"sidebar": "jetpack-cloud"
 }

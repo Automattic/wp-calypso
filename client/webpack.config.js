@@ -136,7 +136,6 @@ const webpackConfig = {
 	entry: filterEntrypoints( {
 		'entry-main': [ path.join( __dirname, 'boot', 'app' ) ],
 		'entry-domains-landing': [ path.join( __dirname, 'landing', 'domains' ) ],
-		'entry-jetpack-cloud': [ path.join( __dirname, 'landing', 'jetpack-cloud' ) ],
 		'entry-login': [ path.join( __dirname, 'landing', 'login' ) ],
 		'entry-gutenboarding': [ path.join( __dirname, 'landing', 'gutenboarding' ) ],
 	} ),
