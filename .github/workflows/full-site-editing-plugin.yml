@@ -15,9 +15,6 @@ jobs:
   build:
     name: Build FSE plugin
     runs-on: ubuntu-latest
-    env:
-      CALYPSO_APP: fse_plugin
-      TRIGGER_CALYPSO_APP_BUILD_ENDPOINT: ${{ secrets.TRIGGER_CALYPSO_APP_BUILD_ENDPOINT }}
     steps:
     - name: Checkout code
       uses: actions/checkout@master
@@ -30,5 +27,15 @@ jobs:
       with:
         name: fse-build-archive
         path: apps/full-site-editing/full-site-editing-plugin
+  send:
+    name: Trigger MC script
+    runs-on: ubuntu-latest
+    env:
+      CALYPSO_APP: fse_plugin
+      TRIGGER_CALYPSO_APP_BUILD_ENDPOINT: ${{ secrets.TRIGGER_CALYPSO_APP_BUILD_ENDPOINT }}
+    - name: Download plugin artifact
+      uses: actions/download-artifact@v1
+      with:
+        name: fse-build-archive
     - name: Send hook to Mission Control
       run: .github/workflows/send-calypso-app-build-trigger.sh
