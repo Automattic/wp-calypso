@@ -27,22 +27,9 @@ import { getSite } from 'state/sites/selectors';
 import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from 'state/posts/constants';
 import { addQueryArgs } from 'lib/route';
 
-import 'state/posts/init';
+import { getQueryManager } from 'state/posts/selectors/get-query-manager';
 
-/**
- * Returns the PostsQueryManager from the state tree for a given site ID (or
- * for queries related to all sites at once).
- *
- * @param   {object}  state  Global state tree
- * @param   {?number} siteId Site ID, or `null` for all-sites queries
- * @returns {object}         Posts query manager
- */
-function getQueryManager( state, siteId ) {
-	if ( ! siteId ) {
-		return state.posts.allSitesQueries;
-	}
-	return state.posts.queries[ siteId ] || null;
-}
+import 'state/posts/init';
 
 /**
  * Returns a post object by its global ID.
