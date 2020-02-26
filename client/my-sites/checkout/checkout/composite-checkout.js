@@ -863,7 +863,6 @@ function getCheckoutEventHandler( dispatch ) {
 				return dispatch(
 					recordTracksEvent( 'calypso_checkout_composite_step_changed', {
 						step: action.payload.stepNumber,
-						step_id: action.payload.stepId,
 					} )
 				);
 
