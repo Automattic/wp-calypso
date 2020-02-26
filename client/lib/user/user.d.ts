@@ -30,7 +30,7 @@ export interface User extends EventEmitter {
 	sendVerificationEmail(): Promise< void >;
 	set: ( attributes: UserData ) => boolean;
 	decrementSiteCount: () => void;
-	incrementSiteCount: () => boolean | void;
+	incrementSiteCount: () => void;
 	verificationPollerCallback: ( signal: unknown ) => void;
 	checkVerification: () => void;
 	signalVerification: () => void;
