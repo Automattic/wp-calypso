@@ -40,6 +40,29 @@ define( 'PLUGIN_VERSION', '0.19' );
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';
 
+
+function load_core_site_editor() {
+	// Check blog sticker for access to Site Editor.
+	if ( ! has_blog_sticker( 'core_site_editor_enabled' ) ) {
+		// Check if experiment is enabled: disable if needed.
+		if ( gutenberg_is_experiment_enabled( 'gutenberg-full-site-editing' ) ) {
+
+		}
+		if ( gutenberg_is_experiment_enabled( 'gutenberg-full-site-editing-demo' ) ) {
+
+		}
+		return;
+	}
+	// Check if experiment is disabled: enable if needed.
+	if ( ! gutenberg_is_experiment_enabled( 'gutenberg-full-site-editing' ) ) {
+
+	}
+	if ( ! gutenberg_is_experiment_enabled( 'gutenberg-full-site-editing-demo' ) ) {
+
+	}
+	// Load site editor
+	// 'gutenberg_edit_site_page' - function to call site editor
+}
 /**
  * Load Full Site Editing.
  */
@@ -221,6 +244,6 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_blog_posts_block' );
  * Load WPCOM Block Editor NUX
  */
 // function load_wpcom_block_editor_nux() {
-// 	require_once __DIR__ . '/wpcom-block-editor-nux/class-wpcom-block-editor-nux.php';
+// require_once __DIR__ . '/wpcom-block-editor-nux/class-wpcom-block-editor-nux.php';
 // }
 // add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );
