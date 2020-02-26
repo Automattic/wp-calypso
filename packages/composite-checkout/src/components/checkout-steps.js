@@ -311,7 +311,12 @@ export function CheckoutStepBody( {
 					) }
 				</StepContentUI>
 				{ isStepComplete && completeStepContent ? (
-					<StepSummaryUI isVisible={ ! isStepActive }>{ completeStepContent }</StepSummaryUI>
+					<StepSummaryUI
+						isVisible={ ! isStepActive }
+						className="checkout-steps__step-complete-content"
+					>
+						{ completeStepContent }
+					</StepSummaryUI>
 				) : null }
 			</StepWrapperUI>
 		</CheckoutErrorBoundary>
