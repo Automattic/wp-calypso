@@ -9,8 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { Button, CompactCard, Card } from '@automattic/components';
-import CardHeading from 'components/card-heading';
+import { Card } from '@automattic/components';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -23,6 +22,7 @@ import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetp
 import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import SupportInfo from 'components/support-info';
+import SiteSettingsFormMakePublic from './form-make-the-site-public';
 
 class SpeedUpSiteSettings extends Component {
 	static propTypes = {
@@ -62,92 +62,54 @@ class SpeedUpSiteSettings extends Component {
 			siteAcceleratorStatus,
 			siteIsAtomicPrivate,
 			siteIsJetpack,
-			// siteSlug,
 			translate,
 		} = this.props;
 		const isRequestingOrSaving = isRequestingSettings || isSavingSettings;
 
 		if ( siteIsAtomicPrivate && photonCdnModuleUnavailable && photonModuleUnavailable ) {
-			// const privacySettingsHref = '/settings/general/' + siteSlug + '#site-privacy-settings';
-			return (
-				<div className="site-settings__module-settings site-settings__speed-up-site-settings">
-					<CompactCard>
-						<CardHeading>
-							<span className="eligibility-warnings__hold-heading">
-								{ translate( "To activate Performance Features you'll need to:" ) }
-							</span>
-						</CardHeading>
-
-						<div className="eligibility-warnings__hold">
-							<div className="eligibility-warnings__message">
-								<div className="eligibility-warnings__message-title">
-									{ translate( 'Public site needed' ) }
-								</div>
-								<div className="eligibility-warnings__message-description">
-									{ translate(
-										'Change your site\'s Privacy settings to "Public" or "Hidden" (not "Private.")'
-									) }
-								</div>
-							</div>
-						</div>
-					</CompactCard>
-					<CompactCard>
-						<div className="eligibility-warnings__confirm-buttons">
-							<Button
-								primary={ true }
-								// disabled={ isProceedButtonDisabled( isEligible, listHolds ) }
-								// onClick={ logEventAndProceed }
-							>
-								{ translate( 'Make your site public and continue' ) }
-							</Button>
-						</div>
-					</CompactCard>
-				</div>
-			);
+			return <SiteSettingsFormMakePublic />;
 		}
 
 		return (
 			<div className="site-settings__module-settings site-settings__speed-up-site-settings">
 				<Card>
-					{ siteIsAtomicPrivate && photonCdnModuleUnavailable && photonModuleUnavailable && (
-						<FormFieldset className="site-settings__formfieldset jetpack-site-accelerator-settings">
-							<SupportInfo
-								text={ translate(
-									"Jetpack's global Content Delivery Network (CDN) optimizes " +
-										'files and images so your visitors enjoy ' +
-										'the fastest experience regardless of device or location.'
-								) }
-								link="http://jetpack.com/support/site-accelerator/"
-							/>
-							<FormSettingExplanation className="site-settings__feature-description">
-								{ translate(
-									'Load pages faster by allowing Jetpack to optimize your images and serve your images ' +
-										'and static files (like CSS and JavaScript) from our global network of servers.'
-								) }
-							</FormSettingExplanation>
-							<CompactFormToggle
-								checked={ siteAcceleratorStatus }
+					<FormFieldset className="site-settings__formfieldset jetpack-site-accelerator-settings">
+						<SupportInfo
+							text={ translate(
+								"Jetpack's global Content Delivery Network (CDN) optimizes " +
+									'files and images so your visitors enjoy ' +
+									'the fastest experience regardless of device or location.'
+							) }
+							link="http://jetpack.com/support/site-accelerator/"
+						/>
+						<FormSettingExplanation className="site-settings__feature-description">
+							{ translate(
+								'Load pages faster by allowing Jetpack to optimize your images and serve your images ' +
+									'and static files (like CSS and JavaScript) from our global network of servers.'
+							) }
+						</FormSettingExplanation>
+						<CompactFormToggle
+							checked={ siteAcceleratorStatus }
+							disabled={ isRequestingOrSaving || photonModuleUnavailable }
+							onChange={ this.handleCdnChange }
+						>
+							{ translate( 'Enable site accelerator' ) }
+						</CompactFormToggle>
+						<div className="site-settings__child-settings">
+							<JetpackModuleToggle
+								siteId={ selectedSiteId }
+								moduleSlug="photon"
+								label={ translate( 'Speed up image load times' ) }
 								disabled={ isRequestingOrSaving || photonModuleUnavailable }
-								onChange={ this.handleCdnChange }
-							>
-								{ translate( 'Enable site accelerator' ) }
-							</CompactFormToggle>
-							<div className="site-settings__child-settings">
-								<JetpackModuleToggle
-									siteId={ selectedSiteId }
-									moduleSlug="photon"
-									label={ translate( 'Speed up image load times' ) }
-									disabled={ isRequestingOrSaving || photonModuleUnavailable }
-								/>
-								<JetpackModuleToggle
-									siteId={ selectedSiteId }
-									moduleSlug="photon-cdn"
-									label={ translate( 'Speed up static file load times' ) }
-									disabled={ isRequestingOrSaving }
-								/>
-							</div>
-						</FormFieldset>
-					) }
+							/>
+							<JetpackModuleToggle
+								siteId={ selectedSiteId }
+								moduleSlug="photon-cdn"
+								label={ translate( 'Speed up static file load times' ) }
+								disabled={ isRequestingOrSaving || photonCdnModuleUnavailable }
+							/>
+						</div>
+					</FormFieldset>
 
 					{ siteIsJetpack && (
 						<FormFieldset className="site-settings__formfieldset has-divider is-top-only jetpack-lazy-images-settings">

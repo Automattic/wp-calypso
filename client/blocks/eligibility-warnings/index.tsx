@@ -32,16 +32,23 @@ import './style.scss';
 
 interface ExternalProps {
 	backUrl: string;
+	isBusy: boolean;
 	onProceed: () => void;
+	className?: string;
+	context?: string;
+	feature?: string;
+	ctaName?: string;
 }
 
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
 
 export const EligibilityWarnings = ( {
+	className,
 	ctaName,
 	context,
 	feature,
 	eligibilityData,
+	isBusy,
 	isEligible,
 	isPlaceholder,
 	onProceed,
@@ -56,14 +63,18 @@ export const EligibilityWarnings = ( {
 	const listHolds = eligibilityData.eligibilityHolds || [];
 
 	const showWarnings = warnings.length > 0 && ! hasBlockingHold( listHolds );
-	const classes = classNames( 'eligibility-warnings', {
-		'eligibility-warnings__placeholder': isPlaceholder,
-		'eligibility-warnings--with-indent': showWarnings,
-	} );
+	const classes = classNames(
+		'eligibility-warnings',
+		{
+			'eligibility-warnings__placeholder': isPlaceholder,
+			'eligibility-warnings--with-indent': showWarnings,
+		},
+		className
+	);
 
 	const launchCurrentSite = () => launch( siteId );
 
-	const logEventAndProceed = () => {
+	const logEventAndProceed = e => {
 		if ( siteRequiresUpgrade( listHolds ) ) {
 			recordUpgradeClick( ctaName, feature );
 			page.redirect( `/checkout/${ siteSlug }/business` );
@@ -73,7 +84,7 @@ export const EligibilityWarnings = ( {
 			launchCurrentSite();
 			return;
 		}
-		onProceed();
+		onProceed( e );
 	};
 
 	const showThisSiteIsEligibleMessage =
@@ -111,8 +122,10 @@ export const EligibilityWarnings = ( {
 				<div className="eligibility-warnings__confirm-buttons">
 					<Button
 						primary={ true }
-						disabled={ isProceedButtonDisabled( isEligible, listHolds ) || siteIsLaunching }
-						busy={ siteIsLaunching }
+						disabled={
+							isProceedButtonDisabled( isEligible, listHolds ) || siteIsLaunching || isBusy
+						}
+						busy={ siteIsLaunching || isBusy }
 						onClick={ logEventAndProceed }
 					>
 						{ getProceedButtonText( listHolds, translate ) }
@@ -157,12 +170,17 @@ function getProceedButtonText( holds: string[], translate: LocalizeProps[ 'trans
 			? translate( 'Launch your site and continue' )
 			: defaultCopy;
 	}
+	if ( siteRequiresGoingPublic( holds ) ) {
+		return hasLocalizedText( 'Make your site public and continue' )
+			? translate( 'Make your site public and continue' )
+			: defaultCopy;
+	}
 
 	return hasLocalizedText( 'Continue' ) ? translate( 'Continue' ) : defaultCopy;
 }
 
 function isProceedButtonDisabled( isEligible: boolean, holds: string[] ) {
-	const resolvableHolds = [ 'NO_BUSINESS_PLAN', 'SITE_UNLAUNCHED' ];
+	const resolvableHolds = [ 'NO_BUSINESS_PLAN', 'SITE_UNLAUNCHED', 'SITE_NOT_PUBLIC' ];
 	const canHandleHoldsAutomatically = union( resolvableHolds, holds ).length === 2;
 	return ! canHandleHoldsAutomatically && ! isEligible;
 }
@@ -175,16 +193,20 @@ function siteRequiresLaunch( holds: string[] ) {
 	return holds.includes( 'SITE_UNLAUNCHED' );
 }
 
+function siteRequiresGoingPublic( holds: string[] ) {
+	return holds.includes( 'SITE_NOT_PUBLIC' );
+}
+
 EligibilityWarnings.defaultProps = {
 	onProceed: noop,
 };
 
-const mapStateToProps = ( state: object ) => {
+const mapStateToProps = ( state: object, ownProps: object ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
-	const eligibilityData = getEligibility( state, siteId );
-	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
-	const dataLoaded = !! eligibilityData.lastUpdate;
+	const eligibilityData = ownProps.eligibilityData || getEligibility( state, siteId );
+	const isEligible = ownProps.isEligible || isEligibleForAutomatedTransfer( state, siteId );
+	const dataLoaded = ownProps.eligibilityData || !! eligibilityData.lastUpdate;
 
 	return {
 		eligibilityData,
@@ -213,9 +235,9 @@ function mergeProps(
 	dispatchProps: typeof mapDispatchToProps,
 	ownProps: ExternalProps
 ) {
-	let context: string | null = null;
-	let feature = '';
-	let ctaName = '';
+	let context: string | null = ownProps.context;
+	let feature = ownProps.feature || '';
+	let ctaName = ownProps.ctaName || '';
 	if ( includes( ownProps.backUrl, 'plugins' ) ) {
 		context = 'plugins';
 		feature = FEATURE_UPLOAD_PLUGINS;
@@ -230,8 +252,8 @@ function mergeProps(
 		ctaName = 'calypso-hosting-eligibility-upgrade-nudge';
 	}
 
-	const onProceed = () => {
-		ownProps.onProceed();
+	const onProceed = e => {
+		ownProps.onProceed( e );
 		dispatchProps.trackProceed( { context } );
 	};
 

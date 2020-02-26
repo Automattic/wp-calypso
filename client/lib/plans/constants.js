@@ -90,6 +90,7 @@ export const FEATURE_ADVANCED_SEO = 'advanced-seo';
 export const FEATURE_BUSINESS_ONBOARDING = 'business-onboarding';
 export const FEATURE_UPLOAD_PLUGINS = 'upload-plugins';
 export const FEATURE_UPLOAD_THEMES = 'upload-themes';
+export const FEATURE_PERFORMANCE = 'performance';
 export const FEATURE_REPUBLICIZE = 'republicize';
 export const FEATURE_SIMPLE_PAYMENTS = 'simple-payments';
 export const FEATURE_ALL_FREE_FEATURES = 'all-free-features';
