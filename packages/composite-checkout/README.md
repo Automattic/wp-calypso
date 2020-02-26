@@ -122,12 +122,14 @@ The line items are for display purposes only. They should also include subtotals
 
 ## CheckoutStep
 
-A checkout step. This should be a direct child of [CheckoutSteps](#CheckoutSteps) and is itself a wrapper for [CheckoutStepBody](#CheckoutStepBody). This component's props are:
+A checkout step. This should be a direct child of [CheckoutSteps](#CheckoutSteps) and is itself a wrapper for [CheckoutStepBody](#CheckoutStepBody). If you want to make something that looks like a step but is not connected to other steps, use a [CheckoutStepBody](#CheckoutStepBody) instead.
+
+This component's props are:
 
 - `stepId: string`. A unique ID for the step.
 - `className?: string`. A className for the step wrapper.
-- `titleContent?: React.ReactNode`. Displays as the title of the step.
-- `activeStepContent: React.ReactNode`. Displays as the content of the step when it is active. It is also displayed when the step is inactive but is hidden by CSS.
+- `titleContent: React.ReactNode`. Displays as the title of the step.
+- `activeStepContent?: React.ReactNode`. Displays as the content of the step when it is active. It is also displayed when the step is inactive but is hidden by CSS.
 - `completeStepContent?: React.ReactNode`. Displays as the content of the step when it is inactive and complete as defined by the `isCompleteCallback`.
 - `isCompleteCallback: () => boolean | Promise<boolean>`. Used to determine if a step is complete for purposes of validation.
 - `editButtonAriaLabel?: string`. Used to fill in the `aria-label` attribute for the "Edit" button if one exists.
@@ -137,17 +139,38 @@ A checkout step. This should be a direct child of [CheckoutSteps](#CheckoutSteps
 - `validatingButtonText?: string`. Used in place of "Please wait…" on the next step button when `isCompleteCallback` returns an unresolved Promise.
 - `validatingButtonAriaLabel:? string`. Used for the `aria-label` attribute on the next step button when `isCompleteCallback` returns an unresolved Promise.
 
+## CheckoutStepBody
+
+A component that looks like a checkout step. Normally you don't need to use this directly, since [CheckoutStep](#CheckoutStep) creates this for you, but you can use it manually if you wish.
+
+- `stepId: string`. A unique ID for this step.
+- `isStepActive: boolean`. True if the step should be rendered as active. Renders `activeStepContent`.
+- `isStepComplete: boolean`. True if the step should be rendered as complete. Renders `completeStepContent`.
+- `stepNumber: number`. The step number to display for the step.
+- `totalSteps: number`. The total number of steps in the current connected group of steps.
+- `errorMessage?: string`. The error message to display in the React error boundary if there is an error thrown by any component in this step.
+- `editButtonText?: string`. The text to display instead of "Edit" for the edit step button.
+- `editButtonAriaLabel?: string`. The text to display for `aria-label` instead of "Edit" for the edit step button.
+- `nextStepButtonText?: string`. Like `editButtonText` but for the "Continue" button.
+- `nextStepButtonAriaLabel?: string`. Like `editButtonAriaLabel` but for the "Continue" button.
+- `validatingButtonText?: string`. Like `editButtonText` but for the "Please wait…" button when `formStatus` is `validating`.
+- `validatingButtonAriaLabel?: string`. Like `editButtonAriaLabel` but for the "Please wait…" button.
+- `className?: string`. A className for the component.
+- `goToThisStep?: () => void`. A function to be called when the "Edit" button is pressed.
+- `goToNextStep?: () => void`. A function to be called when the "Continue" button is pressed.
+- `nextStepNumber?: number`. The step number of the step that will be active after the "Continue" button is pressed.
+- `formStatus?: string`. The current form status. See [useFormStatus](#useFormStatus).
+- `titleContent: React.ReactNode`. Displays as the title of the step.
+- `activeStepContent?: React.ReactNode`. Displays as the content of the step when it is active. It is also displayed when the step is inactive but is hidden by CSS.
+- `completeStepContent?: React.ReactNode`. Displays as the content of the step when it is inactive and complete as defined by `isStepComplete` and `isStepActive`.
+
+## CheckoutSteps
+
+A wrapper for [CheckoutStep](#CheckoutStep) objects that will connect the steps and provide a way to switch between them. Should be a direct child of [Checkout](#Checkout).
+
 ### CheckoutReviewOrder
 
 Renders a list of the line items and their `displayValue` properties followed by the `total` line item, and whatever `submitButton` is in the current payment method.
-
-### CheckoutStep
-
-Each of the steps in the checkout flow will be rendered by one of these. Renders its `children` prop and includes a numbered stepper icon which corresponds to its `stepNumber` prop. Each step must also have a `title` prop for its header. There are two boolean props that can be used to control the step's current state: `isComplete` and `isActive`. Typically the step will be hidden when `isActive` is false and may have a different appearance when `isComplete` is true.
-
-Each should include in its `children` a `CheckoutNextStepButton` if there is a following step.
-
-If a step has the `onEdit` prop, it will include an "Edit" link which will call the `onEdit` prop function. The parent component is responsible for using this to toggle the component's state in an appropriate way. The parent should also modify the URL so that the state is serialized somehow in the URL (this allows the "Back" button to work in an expected way when collapsing and expanding steps).
 
 ### OrderReviewLineItems
 
@@ -264,7 +287,7 @@ A React Hook that will return the `onEvent` callback as passed to `CheckoutProvi
 
 A React Hook that will return an object with the following properties:
 
-- `formStatus: string`. The current status of the form; one of 'loading', 'ready', 'submitting', or 'complete'.
+- `formStatus: string`. The current status of the form; one of 'loading', 'ready', 'validating', 'submitting', or 'complete'.
 - `setFormReady: () => void`. Function to change the form status to 'ready'.
 - `setFormLoading: () => void`. Function to change the form status to 'loading'.
 - `setFormValidating: () => void`. Function to change the form status to 'validating'.
