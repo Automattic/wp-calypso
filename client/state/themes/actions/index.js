@@ -84,23 +84,13 @@ import 'state/data-layer/wpcom/theme-filters';
 import 'state/themes/init';
 
 import { receiveThemes } from 'state/themes/actions/receive-themes';
+import { receiveTheme } from 'state/themes/actions/receive-theme';
 
 export { setBackPath } from 'state/themes/actions/set-back-path';
 export { receiveThemes } from 'state/themes/actions/receive-themes';
+export { receiveTheme } from 'state/themes/actions/receive-theme';
 
 const debug = debugFactory( 'calypso:themes:actions' );
-
-/**
- * Returns an action object to be used in signalling that a theme object has
- * been received.
- *
- * @param  {object} theme  Theme received
- * @param  {number} siteId ID of site for which themes have been received
- * @returns {object}        Action object
- */
-export function receiveTheme( theme, siteId ) {
-	return receiveThemes( [ theme ], siteId );
-}
 
 /**
  * Triggers a network request to fetch themes for the specified site and query.
