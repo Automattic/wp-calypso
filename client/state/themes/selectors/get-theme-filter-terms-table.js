@@ -8,7 +8,7 @@ import { forIn, keys, mapValues } from 'lodash';
  */
 import createSelector from 'lib/create-selector';
 import { getThemeFilters } from 'state/themes/selectors/get-theme-filters';
-import isAmbiguousThemeFilterTerm from 'state/selectors/is-ambiguous-theme-filter-term';
+import { isAmbiguousThemeFilterTerm } from 'state/themes/selectors/is-ambiguous-theme-filter-term';
 
 import 'state/themes/init';
 

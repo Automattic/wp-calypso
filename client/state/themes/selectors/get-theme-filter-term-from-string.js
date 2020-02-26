@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import isAmbiguousThemeFilterTerm from 'state/selectors/is-ambiguous-theme-filter-term';
+import { isAmbiguousThemeFilterTerm } from 'state/themes/selectors/is-ambiguous-theme-filter-term';
 
 import 'state/themes/init';
 

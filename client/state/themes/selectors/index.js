@@ -35,6 +35,7 @@ export { getWpcomParentThemeId } from 'state/themes/selectors/get-wpcom-parent-t
 export { hasActivatedTheme } from 'state/themes/selectors/has-activated-theme';
 export { hasAutoLoadingHomepageModalAccepted } from 'state/themes/selectors/has-auto-loading-homepage-modal-accepted';
 export { isActivatingTheme } from 'state/themes/selectors/is-activating-theme';
+export { isAmbiguousThemeFilterTerm } from 'state/themes/selectors/is-ambiguous-theme-filter-term';
 export { isDownloadableFromWpcom } from 'state/themes/selectors/is-downloadable-from-wpcom';
 export { isInstallingTheme } from 'state/themes/selectors/is-installing-theme';
 export { isPremiumThemeAvailable } from 'state/themes/selectors/is-premium-theme-available';
