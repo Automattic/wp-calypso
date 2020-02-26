@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'state/posts/init';
+
+/**
  * Returns the post likes for a given site ID, post ID.
  *
  * @param  {object}  state  Global state tree
