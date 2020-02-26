@@ -29,36 +29,14 @@ import { addQueryArgs } from 'lib/route';
 
 import { getQueryManager } from 'state/posts/selectors/get-query-manager';
 import { getSitePosts } from 'state/posts/selectors/get-site-posts';
+import { getSitePost } from 'state/posts/selectors/get-site-post';
 
 import 'state/posts/init';
 
 export { getPost } from 'state/posts/selectors/get-post';
 export { getNormalizedPost } from 'state/posts/selectors/get-normalized-post';
 export { getSitePosts } from 'state/posts/selectors/get-site-posts';
-
-/**
- * Returns a post object by site ID, post ID pair.
- *
- * @param   {object}  state  Global state tree
- * @param   {number}  siteId Site ID
- * @param   {string}  postId Post ID
- * @returns {?object}        Post object
- */
-export const getSitePost = createSelector(
-	( state, siteId, postId ) => {
-		if ( ! siteId ) {
-			return null;
-		}
-
-		const manager = state.posts.queries[ siteId ];
-		if ( ! manager ) {
-			return null;
-		}
-
-		return manager.getItem( postId );
-	},
-	state => state.posts.queries
-);
+export { getSitePost } from 'state/posts/selectors/get-site-post';
 
 /**
  * Returns an array of normalized posts for the posts query, or null if no
