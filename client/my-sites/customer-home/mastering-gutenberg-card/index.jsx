@@ -10,6 +10,7 @@ import { Button, Dialog } from '@automattic/components';
  */
 import DismissibleCard from 'blocks/dismissible-card';
 import CardHeading from 'components/card-heading';
+import Gridicon from 'components/gridicon';
 import { localizeUrl } from 'lib/i18n-utils';
 
 /**
