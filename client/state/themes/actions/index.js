@@ -3,12 +3,10 @@
  * External dependencies
  */
 import { delay } from 'lodash';
-import page from 'page';
 
 /**
  * Internal dependencies
  */
-import { isExternal } from 'lib/url';
 import wpcom from 'lib/wp';
 import {
 	RECOMMENDED_THEMES_FAIL,
@@ -38,7 +36,6 @@ import {
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import {
 	getTheme,
-	getThemeCustomizeUrl,
 	isDownloadableFromWpcom,
 	themeHasAutoLoadingHomepage,
 	hasAutoLoadingHomepageModalAccepted,
@@ -55,6 +52,7 @@ import 'state/themes/init';
 import { receiveTheme } from 'state/themes/actions/receive-theme';
 import { activateTheme } from 'state/themes/actions/activate-theme';
 import { installTheme } from 'state/themes/actions/install-theme';
+import { tryAndCustomizeTheme } from 'state/themes/actions/try-and-customize-theme';
 
 export { setBackPath } from 'state/themes/actions/set-back-path';
 export { receiveThemes } from 'state/themes/actions/receive-themes';
@@ -67,6 +65,7 @@ export { themeActivated } from 'state/themes/actions/theme-activated';
 export { activateTheme } from 'state/themes/actions/activate-theme';
 export { installTheme } from 'state/themes/actions/install-theme';
 export { clearActivated } from 'state/themes/actions/clear-activated';
+export { tryAndCustomizeTheme } from 'state/themes/actions/try-and-customize-theme';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
@@ -139,26 +138,6 @@ export function installAndTryAndCustomizeTheme( themeId, siteId ) {
 		return dispatch( installTheme( themeId, siteId ) ).then( () => {
 			dispatch( tryAndCustomizeTheme( themeId, siteId ) );
 		} );
-	};
-}
-
-/**
- * Triggers a switch to the try&customize page of theme.
- * When theme is not available dispatches FAILURE action
- * that trigers displaying error notice by notices middlewaere
- *
- * @param  {string}   themeId      WP.com Theme ID
- * @param  {string}   siteId       Jetpack Site ID
- * @returns {Function}              Action thunk
- */
-export function tryAndCustomizeTheme( themeId, siteId ) {
-	return ( dispatch, getState ) => {
-		const url = getThemeCustomizeUrl( getState(), themeId, siteId );
-		if ( isExternal( url ) ) {
-			window.location.href = url;
-			return;
-		}
-		page( getThemeCustomizeUrl( getState(), themeId, siteId ) );
 	};
 }
 
