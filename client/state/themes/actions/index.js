@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { filter, map, property, delay, endsWith } from 'lodash';
+import { map, property, delay, endsWith } from 'lodash';
 import debugFactory from 'debug';
 import page from 'page';
 
@@ -51,7 +51,6 @@ import {
 	THEME_UPLOAD_CLEAR,
 	THEME_UPLOAD_PROGRESS,
 	THEMES_REQUEST,
-	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
 	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
@@ -63,7 +62,6 @@ import {
 	getLastThemeQuery,
 	getThemeCustomizeUrl,
 	getWpcomParentThemeId,
-	shouldFilterWpcomThemes,
 	isDownloadableFromWpcom,
 	themeHasAutoLoadingHomepage,
 	hasAutoLoadingHomepageModalAccepted,
@@ -71,8 +69,6 @@ import {
 } from 'state/themes/selectors';
 import {
 	getThemeIdFromStylesheet,
-	isThemeMatchingQuery,
-	isThemeFromWpcom,
 	normalizeJetpackTheme,
 	normalizeWpcomTheme,
 	normalizeWporgTheme,
@@ -87,7 +83,10 @@ import 'state/data-layer/wpcom/theme-filters';
 
 import 'state/themes/init';
 
+import { receiveThemes } from 'state/themes/actions/receive-themes';
+
 export { setBackPath } from 'state/themes/actions/set-back-path';
+export { receiveThemes } from 'state/themes/actions/receive-themes';
 
 const debug = debugFactory( 'calypso:themes:actions' );
 
@@ -101,47 +100,6 @@ const debug = debugFactory( 'calypso:themes:actions' );
  */
 export function receiveTheme( theme, siteId ) {
 	return receiveThemes( [ theme ], siteId );
-}
-
-/**
- * Returns an action object to be used in signalling that theme objects from
- * a query have been received.
- *
- * @param {Array}  themes Themes received
- * @param {number} siteId ID of site for which themes have been received
- * @param {?object} query Theme query used in the API request
- * @param {?number} foundCount Number of themes returned by the query
- * @returns {object} Action object
- */
-export function receiveThemes( themes, siteId, query, foundCount ) {
-	return ( dispatch, getState ) => {
-		let filteredThemes = themes;
-		let found = foundCount;
-
-		if ( isJetpackSite( getState(), siteId ) ) {
-			/*
-			 * We need to do client-side filtering for Jetpack sites because:
-			 * 1) Jetpack theme API does not support search queries
-			 * 2) We need to filter out all wpcom themes to show an 'Uploaded' list
-			 */
-			const filterWpcom = shouldFilterWpcomThemes( getState(), siteId );
-			filteredThemes = filter(
-				themes,
-				theme =>
-					isThemeMatchingQuery( query, theme ) && ! ( filterWpcom && isThemeFromWpcom( theme ) )
-			);
-			// Jetpack API returns all themes in one response (no paging)
-			found = filteredThemes.length;
-		}
-
-		dispatch( {
-			type: THEMES_REQUEST_SUCCESS,
-			themes: filteredThemes,
-			siteId,
-			query,
-			found,
-		} );
-	};
 }
 
 /**
