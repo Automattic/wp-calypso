@@ -10,6 +10,8 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
+import FormLabel from 'components/forms/form-label';
+import FormRadio from 'components/forms/form-radio';
 import {
 	getCanonicalTheme,
 	hasActivatedTheme,
@@ -20,6 +22,7 @@ import {
 	getPreActivateThemeId,
 } from 'state/themes/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import getSiteOptions from 'state/selectors/get-site-options';
 import {
 	acceptAutoLoadingHomepageWarning,
 	hideAutoLoadingHomepageWarning,
@@ -49,6 +52,14 @@ class AutoLoadingHomepageModal extends Component {
 		installingThemeId: PropTypes.string,
 	};
 
+	state = {
+		homepageAction: 'keep_latest_posts',
+	};
+
+	handleHomepageAction = ( event ) => {
+		this.setState( { homepageAction: event.currentTarget.value } );
+	};
+
 	closeModalHandler = ( activate = false ) => () => {
 		if ( activate ) {
 			const { installingThemeId, siteId, source } = this.props;
@@ -66,6 +77,7 @@ class AutoLoadingHomepageModal extends Component {
 			hasAutoLoadingHomepage,
 			isCurrentTheme,
 			isVisible = false,
+			siteOptions,
 		} = this.props;
 
 		// Nothing to do when it's the current theme.
@@ -113,15 +125,50 @@ class AutoLoadingHomepageModal extends Component {
 			>
 				<div>
 					<h1 className="themes__auto-loading-homepage-modal-title">
-						{ translate(
-							'{{strong}}%(themeName)s{{/strong}} will automatically change your homepage layout. ' +
-								'Your current homepage will become a draft. Would you like to continue?',
-							{
-								args: { themeName },
-								components: { strong: <strong /> },
-							}
-						) }
+						{ siteOptions.show_on_front === 'posts'
+							? translate(
+									'Your homepage currently shows the latest posts. {{strong}}%(themeName)s{{/strong}} can replace your homepage layout.',
+									{
+										args: { themeName },
+										components: { strong: <strong /> },
+									}
+							  )
+							: translate(
+									'Your already have an existing homepage. {{strong}}%(themeName)s{{/strong}} can replace your homepage layout.',
+									{
+										args: { themeName },
+										components: { strong: <strong /> },
+									}
+							  ) }
 					</h1>
+					<h2>{ translate( 'How would you like to continue?' ) }</h2>
+					{ siteOptions.show_on_front === 'posts' ? (
+						<FormLabel>
+							<FormRadio
+								value="keep_latest_posts"
+								checked={ 'keep_latest_posts' === this.state.homepageAction }
+								onChange={ this.handleHomepageAction }
+							/>
+							<span>With latest post</span>
+						</FormLabel>
+					) : (
+						<FormLabel>
+							<FormRadio
+								value="keep_existing_homepage"
+								checked={ 'keep_existing_homepage' === this.state.homepageAction }
+								onChange={ this.handleHomepageAction }
+							/>
+							<span>Keep existing homepage</span>
+						</FormLabel>
+					) }
+					<FormLabel>
+						<FormRadio
+							value="use_new_homepage"
+							checked={ 'use_new_homepage' === this.state.homepageAction }
+							onChange={ this.handleHomepageAction }
+						/>
+						<span>Use new theme homepage</span>
+					</FormLabel>
 				</div>
 			</Dialog>
 		);
@@ -132,9 +179,11 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const installingThemeId = getPreActivateThemeId( state );
+		const siteOptions = getSiteOptions( state, siteId );
 
 		return {
 			siteId,
+			siteOptions,
 			installingThemeId,
 			theme: installingThemeId && getCanonicalTheme( state, siteId, installingThemeId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
