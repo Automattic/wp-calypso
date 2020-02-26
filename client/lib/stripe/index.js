@@ -265,19 +265,21 @@ function useStripeJs( stripeConfiguration ) {
  * with a value for that error.
  *
  * @param {object} requestArgs (optional) Can include `country` or `needs_intent`
+ * @param {Function} fetchStripeConfiguration (optional) If provided, will call instead of getStripeConfiguration
  * @returns {object} See above
  */
-function useStripeConfiguration( requestArgs ) {
+function useStripeConfiguration( requestArgs, fetchStripeConfiguration ) {
 	const [ stripeError, setStripeError ] = useState();
 	const [ stripeConfiguration, setStripeConfiguration ] = useState();
 	useEffect( () => {
+		const getConfig = fetchStripeConfiguration || getStripeConfiguration;
 		debug( 'loading stripe configuration' );
 		let isSubscribed = true;
-		getStripeConfiguration( requestArgs || {} ).then(
+		getConfig( requestArgs || {} ).then(
 			configuration => isSubscribed && setStripeConfiguration( configuration )
 		);
 		return () => ( isSubscribed = false );
-	}, [ requestArgs, stripeError ] );
+	}, [ requestArgs, stripeError, fetchStripeConfiguration ] );
 	return { stripeConfiguration, setStripeError };
 }
 
@@ -287,9 +289,12 @@ function StripeHookProviderInnerWrapper( { stripe, stripeData, children } ) {
 }
 const StripeInjectedWrapper = injectStripe( StripeHookProviderInnerWrapper );
 
-export function StripeHookProvider( { children, configurationArgs } ) {
+export function StripeHookProvider( { children, configurationArgs, fetchStripeConfiguration } ) {
 	debug( 'rendering StripeHookProvider' );
-	const { stripeConfiguration, setStripeError } = useStripeConfiguration( configurationArgs );
+	const { stripeConfiguration, setStripeError } = useStripeConfiguration(
+		configurationArgs,
+		fetchStripeConfiguration
+	);
 	const { stripeJs, isStripeLoading, stripeLoadingError } = useStripeJs( stripeConfiguration );
 
 	const stripeData = {

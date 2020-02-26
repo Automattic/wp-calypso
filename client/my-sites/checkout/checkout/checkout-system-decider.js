@@ -4,18 +4,22 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import debugFactory from 'debug';
+import wp from 'lib/wp';
 
 /**
  * Internal Dependencies
  */
 import CheckoutContainer from './checkout-container';
 import CompositeCheckout from './composite-checkout';
+import { fetchStripeConfiguration } from './composite-checkout-payment-methods';
+import { StripeHookProvider } from 'lib/stripe';
 import config from 'config';
 import { getCurrentUserLocale, getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { abtest } from 'lib/abtest';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
+const wpcom = wp.undocumented();
 
 // Decide if we should use CompositeCheckout or CheckoutContainer
 export default function CheckoutSystemDecider( {
@@ -45,16 +49,18 @@ export default function CheckoutSystemDecider( {
 	}
 	if ( shouldShowCompositeCheckout( cart, countryCode, locale, product, isJetpack ) ) {
 		return (
-			<CompositeCheckout
-				siteSlug={ selectedSite?.slug }
-				siteId={ selectedSite?.ID }
-				product={ product }
-				purchaseId={ purchaseId }
-				couponCode={ couponCode }
-				redirectTo={ redirectTo }
-				feature={ selectedFeature }
-				plan={ plan }
-			/>
+			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
+				<CompositeCheckout
+					siteSlug={ selectedSite?.slug }
+					siteId={ selectedSite?.ID }
+					product={ product }
+					purchaseId={ purchaseId }
+					couponCode={ couponCode }
+					redirectTo={ redirectTo }
+					feature={ selectedFeature }
+					plan={ plan }
+				/>
+			</StripeHookProvider>
 		);
 	}
 
@@ -140,4 +146,8 @@ function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, is
 	}
 	debug( 'shouldShowCompositeCheckout false because test not enabled' );
 	return false;
+}
+
+function fetchStripeConfigurationWpcom( args ) {
+	return fetchStripeConfiguration( args, wpcom );
 }

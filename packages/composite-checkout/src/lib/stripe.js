@@ -197,7 +197,7 @@ function useStripeJs( stripeConfiguration ) {
 			isSubscribed && setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
 		}
 
-		debug( 'useStripeJs loading', stripeConfiguration );
+		debug( 'useStripeJs loading' );
 		if ( stripeConfiguration ) {
 			loadAndInitStripe().catch( error => {
 				debug( 'loadAndInitStripe error', error );
@@ -208,7 +208,6 @@ function useStripeJs( stripeConfiguration ) {
 		return () => ( isSubscribed = false );
 	}, [ stripeConfiguration ] );
 
-	debug( 'useStripeJs returning', isStripeLoading, stripeLoadingError );
 	return { stripeJs, isStripeLoading, stripeLoadingError };
 }
 
@@ -242,7 +241,7 @@ function useStripeConfiguration( fetchStripeConfiguration ) {
 			debug( 'loading stripe configuration' );
 			fetchStripeConfiguration()
 				.then( configuration => {
-					debug( 'stripe configuration retrieved', configuration );
+					debug( 'stripe configuration retrieved' );
 					isSubscribed && setStripeConfiguration( configuration );
 				} )
 				.catch( error => {
@@ -251,7 +250,6 @@ function useStripeConfiguration( fetchStripeConfiguration ) {
 		}
 		return () => ( isSubscribed = false );
 	}, [ stripeConfiguration, fetchStripeConfiguration ] );
-	debug( 'useStripeConfiguration returning', stripeConfiguration );
 	return stripeConfiguration;
 }
 
