@@ -87,7 +87,7 @@ const PlanFeaturesActions = ( {
 			}
 		} else if ( isInSignup ) {
 			buttonText = isEligibleForPlanStepTest
-				? 'Get Started'
+				? 'Get started'
 				: translate( 'Start with %(plan)s', {
 						args: {
 							plan: planName,
