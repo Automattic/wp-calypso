@@ -14,19 +14,12 @@ import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 
 class BackupsPage extends Component {
 	selectDateRange = ( siteId, fromDate, toDate ) => {
+		// eslint-disable-next-line no-console
 		console.log( fromDate, toDate );
 	};
 
-	componentWillMount() {}
-
 	render() {
 		const { logs, siteId } = this.props;
-
-		const backupPoints = logs.filter( activity => {
-			return activity.activityIsRewindable === true;
-		} );
-
-		console.log( this.props.activityLogFilter );
 
 		return (
 			<div>
@@ -38,6 +31,7 @@ class BackupsPage extends Component {
 					siteId={ siteId }
 					selectDateRange={ this.selectDateRange }
 				/>
+				<p>There are { logs.length } log entries.</p>
 			</div>
 		);
 	}
@@ -45,11 +39,18 @@ class BackupsPage extends Component {
 
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
-	const logs = siteId && requestActivityLogs( siteId, { group: 'rewind' } );
+	const filter = getActivityLogFilter( state, siteId );
+	filter.group = 'rewind';
+	const rawLogs = siteId && requestActivityLogs( siteId, filter );
+
+	let logs = rawLogs?.data ?? [];
+
+	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+	logs = logs.filter( activity => activity.activityIsRewindable === true );
 
 	return {
 		siteId,
-		logs: [],
-		activityLogFilter: getActivityLogFilter( state, siteId ),
+		logs,
+		filter,
 	};
 } )( BackupsPage );
