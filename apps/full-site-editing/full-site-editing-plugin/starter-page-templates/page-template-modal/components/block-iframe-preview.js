@@ -9,7 +9,15 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 /* eslint-disable import/no-extraneous-dependencies */
-import { useRef, useEffect, useState, useMemo, useReducer, useLayoutEffect, useCallback } from '@wordpress/element';
+import {
+	useRef,
+	useEffect,
+	useState,
+	useMemo,
+	useReducer,
+	useLayoutEffect,
+	useCallback,
+} from '@wordpress/element';
 import { withSelect } from '@wordpress/data';
 import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
 import { Disabled } from '@wordpress/components';
@@ -53,7 +61,7 @@ const loadStyles = ( iFrameHead, iFrameBody ) => {
 };
 
 const BlockFramePreview = ( {
-	className= 'block-iframe-preview',
+	className = 'block-iframe-preview',
 	bodyClassName = 'block-iframe-preview-body',
 	viewportWidth,
 	blocks,
@@ -85,26 +93,29 @@ const BlockFramePreview = ( {
 		reScale();
 	}, [] );
 
-	const reScale = useCallback(
-		() => {
-			const parentNode = get( iFrameRef, [ 'current', 'parentNode' ] );
-			if ( ! parentNode ) {
-				return;
-			}
+	useEffect( () => {
+		if ( iFrameBody ) {
+			iFrameBody.scrollTop = 0;
+		}
+	}, [ blocks ] );
 
-			// Scaling iFrame.
-			const width = viewportWidth || iFrameRef.current.offsetWidth;
-			const scale = parentNode.offsetWidth / viewportWidth;
-			const height = parentNode.offsetHeight / scale;
+	const reScale = useCallback( () => {
+		const parentNode = get( iFrameRef, [ 'current', 'parentNode' ] );
+		if ( ! parentNode ) {
+			return;
+		}
 
-			setStyle( {
-				width,
-				height,
-				transform: `scale( ${ scale } )`,
-			} );
-		},
-		[]
-	);
+		// Scaling iFrame.
+		const width = viewportWidth || iFrameRef.current.offsetWidth;
+		const scale = parentNode.offsetWidth / viewportWidth;
+		const height = parentNode.offsetHeight / scale;
+
+		setStyle( {
+			width,
+			height,
+			transform: `scale( ${ scale } )`,
+		} );
+	}, [] );
 
 	useEffect( () => {
 		const refreshPreview = debounce( reScale, THRESHOLD_RESIZE );
@@ -123,28 +134,26 @@ const BlockFramePreview = ( {
 	return (
 		<iframe
 			ref={ iFrameRef }
-			className={ classnames(
-				'editor-styles-wrapper',
-				className,
-			) }
+			className={ classnames( 'editor-styles-wrapper', className ) }
 			style={ style }
 		>
-			{ iFrameBody && createPortal(
-				<div className="block-editor">
-					<div className="edit-post-visual-editor">
-						<div className="editor-styles-wrapper">
-							<div className="editor-writing-flow">
-								<BlockEditorProvider value={ renderedBlocks } settings={ settings }>
-									<Disabled key={ recomputeBlockListKey }>
-										<BlockList />
-									</Disabled>
-								</BlockEditorProvider>
+			{ iFrameBody &&
+				createPortal(
+					<div className="block-editor">
+						<div className="edit-post-visual-editor">
+							<div className="editor-styles-wrapper">
+								<div className="editor-writing-flow">
+									<BlockEditorProvider value={ renderedBlocks } settings={ settings }>
+										<Disabled key={ recomputeBlockListKey }>
+											<BlockList />
+										</Disabled>
+									</BlockEditorProvider>
+								</div>
 							</div>
 						</div>
-					</div>
-				</div>,
-				iFrameBody
-			) }
+					</div>,
+					iFrameBody
+				) }
 		</iframe>
 	);
 };
