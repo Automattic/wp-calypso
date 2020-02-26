@@ -258,7 +258,7 @@ function mergeProps(
 	dispatchProps: typeof mapDispatchToProps,
 	ownProps: ExternalProps
 ) {
-	let context: string | null;
+	let context: string | null = null;
 	let feature = '';
 	let ctaName = '';
 	if ( includes( ownProps.backUrl, 'plugins' ) ) {
@@ -279,8 +279,8 @@ function mergeProps(
 		ctaName = 'calypso-performance-features-activate-nudge';
 	}
 
-	const onProceed = e => {
-		ownProps.onProceed( e );
+	const onProceed = () => {
+		ownProps.onProceed();
 		dispatchProps.trackProceed( { context } );
 	};
 
