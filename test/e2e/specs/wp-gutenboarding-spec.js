@@ -40,7 +40,7 @@ describe( 'Gutenboarding: (' + screenSize + ') @parallel', function() {
 	describe( 'Visit Gutenboarding page as a logged in user', function() {
 		step( 'Can log in as user', async function() {
 			this.loginFlow = new LoginFlow( driver );
-			return await this.loginFlow.login();
+			return this.loginFlow.login();
 		} );
 		step( 'Can visit Gutenboarding', async function() {
 			await GutenboardingPage.Visit( driver );
