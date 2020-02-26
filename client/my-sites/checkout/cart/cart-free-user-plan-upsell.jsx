@@ -145,6 +145,7 @@ class CartFreeUserPlanUpsell extends React.Component {
 
 const mapStateToProps = ( state, { cart } ) => {
 	const selectedSite = getSelectedSite( state );
+	const selectedSiteId = selectedSite ? selectedSite.ID : null;
 	const isPlansListFetching = isRequestingPlans( state );
 	const personalPlan = getPlan( PLAN_PERSONAL );
 
@@ -155,10 +156,13 @@ const mapStateToProps = ( state, { cart } ) => {
 		isRegisteringDomain: hasDomainRegistration( cart ),
 		isSitePlansListFetching: isRequestingSitePlans( state ),
 		personalPlan: personalPlan,
-		planPrice: ! isPlansListFetching && getPlanPrice( state, selectedSite.ID, personalPlan, false ),
+		planPrice:
+			! isPlansListFetching &&
+			selectedSiteId &&
+			getPlanPrice( state, selectedSiteId, personalPlan, false ),
 		selectedSite: selectedSite,
 		showPlanUpsell: getCurrentUser( state )
-			? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+			? selectedSiteId && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 			: false,
 	};
 };
