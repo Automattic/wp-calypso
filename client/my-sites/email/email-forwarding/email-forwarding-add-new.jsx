@@ -121,7 +121,7 @@ class EmailForwardingAddNew extends React.Component {
 				disabled={ this.state.formSubmitting || this.hasReachedLimit() }
 				onClick={ handler }
 			>
-				{ this.props.translate( 'Add New Email Address' ) }
+				{ this.props.translate( 'Add new email address' ) }
 			</FormButton>
 		);
 	}

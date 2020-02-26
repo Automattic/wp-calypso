@@ -47,7 +47,7 @@ class SubscriptionSettings extends React.Component {
 				href={ this.getLink() }
 				onClick={ this.props.onClick }
 			>
-				{ this.props.translate( 'Payment Settings' ) }
+				{ this.props.translate( 'Go to payment settings' ) }
 			</Button>
 		);
 	}

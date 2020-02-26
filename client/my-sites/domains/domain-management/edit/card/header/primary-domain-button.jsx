@@ -27,7 +27,7 @@ class PrimaryDomainButton extends React.Component {
 		if ( domain && ! domain.isPrimary ) {
 			return (
 				<Button compact onClick={ this.handleClick }>
-					{ translate( 'Make Primary' ) }
+					{ translate( 'Make primary' ) }
 				</Button>
 			);
 		}

@@ -286,7 +286,7 @@ export class List extends React.Component {
 				className="domain-management-list__change-primary-button"
 				onClick={ this.enableChangePrimaryDomainMode }
 			>
-				{ this.props.translate( 'Change Primary', {
+				{ this.props.translate( 'Change primary', {
 					context: 'Button label for changing primary domain',
 				} ) }
 			</Button>
@@ -307,7 +307,7 @@ export class List extends React.Component {
 				className="domain-management-list__add-a-domain"
 				onClick={ this.clickAddDomain }
 			>
-				{ this.props.translate( 'Add Domain' ) }
+				{ this.props.translate( 'Add domain' ) }
 			</Button>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

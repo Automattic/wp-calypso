@@ -359,7 +359,7 @@ export class SiteAddressChanger extends Component {
 						/>
 						<FormButtonsBar className="site-address-changer__form-footer">
 							<FormButton disabled={ isDisabled } busy={ isBusy } type="submit">
-								{ translate( 'Change Site Address' ) }
+								{ translate( 'Change site address' ) }
 							</FormButton>
 						</FormButtonsBar>
 					</Card>
