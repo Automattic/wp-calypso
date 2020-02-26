@@ -38,20 +38,7 @@ export { getNormalizedPost } from 'state/posts/selectors/get-normalized-post';
 export { getSitePosts } from 'state/posts/selectors/get-site-posts';
 export { getSitePost } from 'state/posts/selectors/get-site-post';
 export { getPostsForQuery } from 'state/posts/selectors/get-posts-for-query';
-
-/**
- * Returns true if currently requesting posts for the posts query, or false
- * otherwise.
- *
- * @param   {object}  state  Global state tree
- * @param   {?number} siteId Site ID, or `null` for all-sites queries
- * @param   {object}  query  Post query object
- * @returns {boolean}        Whether posts are being requested
- */
-export function isRequestingPostsForQuery( state, siteId, query ) {
-	const serializedQuery = getSerializedPostsQuery( query, siteId );
-	return !! state.posts.queryRequests[ serializedQuery ];
-}
+export { isRequestingPostsForQuery } from 'state/posts/selectors/is-requesting-posts-for-query';
 
 /**
  * Returns the total number of items reported to be found for the given query,
