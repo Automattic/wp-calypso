@@ -1,6 +1,7 @@
-# next
+# 6.1.0
 
 - Upgrade [mini-css-extract-plugin-with-rtl](https://github.com/Automattic/mini-css-extract-plugin-with-rtl) to 0.8.0, use an npm-published version instead of GitHub branch reference
+- Disable Terser's `extractComments` option to prevent Calypso build from adding LICENSE files into the minified output
 
 # 6.0.0
 

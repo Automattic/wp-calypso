@@ -1,9 +1,12 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
 @import '~@wordpress/base-styles/colors';
 
 $design-selector-grid-gap: 4.5em;
 
 $design-selector-max-width: 1100px;
-$design-selector-selection-space: 285px;
+$design-selector-selection-space: 285px + $header-height;
+$page-selector-width-offset: 20px;
+$page-selector-shadow-size: 12px;
 
 .design-selector__title {
 	color: $dark-gray-800;
@@ -50,10 +53,16 @@ $design-selector-selection-space: 285px;
 .design-selector__page-layout-container {
 	position: absolute;
 	top: $design-selector-selection-space;
-	width: 100%;
+	width: calc( 100vw - #{$page-selector-width-offset} );
 	background: $white;
-	box-shadow: $dark-gray-300 0 0 12px;
-	padding: 2em 4em;
+	margin-left: calc( ( ( 100vw - #{$page-selector-width-offset} ) - 100% ) / -2 );
+
+	&.is-open {
+		padding: 2em 4em;
+		box-shadow: $white 0 $page-selector-shadow-size 0 $page-selector-width-offset,
+			$dark-gray-300 0 ( $page-selector-shadow-size - $page-selector-width-offset )
+				$page-selector-shadow-size;
+	}
 }
 
 .page-layout-selector {
@@ -242,6 +251,18 @@ $design-selector-selection-space: 285px;
 			.design-selector__option-overlay {
 				opacity: 1;
 			}
+		}
+	}
+}
+
+// When page selector is open, design card should behave like a static image.
+.design-selector__grid-container {
+	&.is-page-selector-open {
+		.design-selector__design-option {
+			cursor: default;
+		}
+		.design-selector__option-overlay {
+			display: none;
 		}
 	}
 }

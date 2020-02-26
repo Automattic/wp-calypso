@@ -7,7 +7,7 @@ import { find, get } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { isUrlLikelyAnImage } from './utils.js';
+import { isUrlLikelyAnImage } from './utils';
 
 /** Returns true if an image is large enough to be a featured asset
  *
@@ -39,7 +39,7 @@ function isCandidateForFeature( media ) {
 	return false;
 }
 
-/**
+/*
  * Given a post:
  *  1. prefer to return the post's featured image ( post.post_thumbnail )
  *  2. if there is no usable featured image, use the media that appears first in the content of the post

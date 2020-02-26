@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'state/posts/init';
+
+/**
  * Whether or not the current user likes this post
  *
  * @param  {object}  state  Global state tree

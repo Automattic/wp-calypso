@@ -33,16 +33,15 @@ class TransferUnavailableCard extends Component {
 			return (
 				<div>
 					<Notice status="is-warning" showDismiss={ false }>
-						{ translate( `It looks like there are some customizations to your site
-						that can't be transferred.` ) }
+						{ translate(
+							"It looks like there are some customizations to your site that can't be transferred."
+						) }
 					</Notice>
 					<ul>
 						{ premiumThemeIssue && (
 							<Issue title={ translate( 'Your site uses a Premium Theme' ) }>
 								{ translate(
-									`Premium Themes can't be
-								transferred to an external site. Please {{a}}choose a free theme{{/a}}
-								to continue.`,
+									"Premium Themes can't be transferred to an external site. Please {{a}}choose a free theme{{/a}} to continue.",
 									{ components: { a: <a href={ `/themes/free/${ siteSlug }` } /> } }
 								) }
 							</Issue>
@@ -50,9 +49,7 @@ class TransferUnavailableCard extends Component {
 						{ customFontIssue && (
 							<Issue title={ translate( 'Your site uses a custom font' ) }>
 								{ translate(
-									`Custom fonts can't be
-								transferred to an external site. Please {{a}}switch back to your theme's
-								default fonts{{/a}} if you would like to proceed.`,
+									"Custom fonts can't be transferred to an external site. Please {{a}}switch back to your theme's default fonts{{/a}} if you would like to proceed.",
 									{ components: { a: <a href={ `/customize/fonts/${ siteSlug }` } /> } }
 								) }
 							</Issue>
@@ -67,8 +64,7 @@ class TransferUnavailableCard extends Component {
 			<div>
 				<p>
 					{ translate(
-						`Howdy! It looks like there's something stopping us from being able
-				to transfer your site. Please {{a}}contact support{{/a}} and we'll sort it out!`,
+						"Howdy! It looks like there's something stopping us from being able to transfer your site. Please {{a}}contact support{{/a}} and we'll sort it out!",
 						{ components: { a: <a href={ CALYPSO_CONTACT } /> } }
 					) }
 				</p>

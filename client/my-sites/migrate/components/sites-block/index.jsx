@@ -49,6 +49,7 @@ class SitesBlock extends Component {
 							</FormLabel>
 							<div className="sites-block__faux-site-selector-url">
 								<FormTextInput
+									autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 									isError={ isError }
 									onChange={ onUrlChange }
 									value={ url }

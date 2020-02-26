@@ -139,7 +139,7 @@ export class TldFilterBar extends Component {
 		const checkboxes = this.props.availableTlds
 			.slice( 0, this.props.numberOfTldsShown )
 			.map( ( tld, index ) => (
-				<div className="search-filters__tld-checkbox">
+				<div className="search-filters__tld-checkbox" key={ tld }>
 					<FormCheckbox
 						className={ classNames( 'search-filters__tld-button', {
 							'is-active': includes( selectedTlds, tld ),

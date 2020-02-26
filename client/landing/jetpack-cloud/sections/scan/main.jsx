@@ -9,9 +9,9 @@ import { connect } from 'react-redux';
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-class JetpackCloudScanPage extends Component {
+class ScanPage extends Component {
 	render() {
-		return ( <div>Welcome to the scan page for site { this.props.siteId }</div> );
+		return <div>Welcome to the scan page for site { this.props.siteId }</div>;
 	}
 }
 
@@ -21,4 +21,4 @@ export default connect( state => {
 	return {
 		siteId,
 	};
-} )( JetpackCloudScanPage );
+} )( ScanPage );

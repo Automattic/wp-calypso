@@ -3,7 +3,7 @@
 exports[`TemplateSelectorPreview Basic rendering renders the preview when blocks are provided 1`] = `
 <div>
   <div
-    class="template-selector-preview"
+    class="template-selector-preview block-editor"
   >
     <div
       class="components-disabled"

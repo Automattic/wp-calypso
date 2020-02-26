@@ -32,4 +32,7 @@ export const settings: BlockConfiguration< Attributes > = {
 	icon: 'universal-access-alt',
 	edit,
 	save: () => null,
+	getEditWrapperProps() {
+		return { tabIndex: -1 };
+	},
 };

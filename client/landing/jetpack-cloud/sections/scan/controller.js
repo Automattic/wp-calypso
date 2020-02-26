@@ -6,9 +6,19 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import JetpackCloudScanPage from './main';
+import ScanPage from './main';
+import ScanHistoryPage from './history';
 
-export function jetpackCloudScan( context, next ) {
-	context.primary = <JetpackCloudScanPage />;
+export function scan( context, next ) {
+	context.primary = <ScanPage />;
+	next();
+}
+
+/**
+ * Internal dependencies
+ */
+
+export function scanHistory( context, next ) {
+	context.primary = <ScanHistoryPage />;
 	next();
 }

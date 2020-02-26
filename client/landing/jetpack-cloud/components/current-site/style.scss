@@ -1,0 +1,46 @@
+.current-site.card {
+	margin: 0;
+	padding: 0;
+	box-shadow: none;
+	background: transparent;
+
+	&.is-loading {
+		.site-icon {
+			animation: pulse-light 0.8s ease-in-out infinite;
+		}
+
+		.site__title {
+			color: var( --color-sidebar-text );
+			line-height: 35px;
+		}
+
+		.current-site__switch-sites {
+			cursor: default;
+
+			&::before {
+				visibility: hidden;
+			}
+		}
+	}
+}
+
+.current-site .site {
+	transition: opacity 0.15s ease-in-out;
+
+	.site__info {
+		animation: appear 0.3s ease-in-out;
+	}
+
+	.focus-sites & {
+		opacity: 0.2;
+		pointer-events: none;
+	}
+}
+
+.current-site {
+	.site,
+	.all-sites {
+		background: var( --color-sidebar-background );
+		border-bottom: 1px solid var( --color-sidebar-border );
+	}
+}

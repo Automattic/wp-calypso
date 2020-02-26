@@ -6,9 +6,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import JetpackCloudDashboardPage from './main';
+import DashboardPage from './main';
 
-export function jetpackCloudDashboard( context, next ) {
-	context.primary = <JetpackCloudDashboardPage />;
+export function dashboard( context, next ) {
+	context.primary = <DashboardPage />;
 	next();
 }

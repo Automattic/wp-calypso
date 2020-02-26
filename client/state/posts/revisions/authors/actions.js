@@ -6,6 +6,8 @@ import { POST_REVISION_AUTHORS_RECEIVE, POST_REVISIONS_AUTHORS_REQUEST } from 's
 
 import 'state/data-layer/wpcom/sites/users';
 
+import 'state/posts/init';
+
 /**
  * Action creator for receiving an array of users from REST response
  *

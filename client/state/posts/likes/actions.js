@@ -12,6 +12,8 @@ import {
 
 import 'state/data-layer/wpcom/sites/posts/likes';
 
+import 'state/posts/init';
+
 /**
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve post likes for a post.

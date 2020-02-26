@@ -9,9 +9,9 @@ import { connect } from 'react-redux';
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-class JetpackCloudSettingsPage extends Component {
+class SettingsPage extends Component {
 	render() {
-		return ( <div>Welcome to the settings page for { this.props.siteId }</div> );
+		return <div>Welcome to the settings page for { this.props.siteId }</div>;
 	}
 }
 
@@ -21,4 +21,4 @@ export default connect( state => {
 	return {
 		siteId,
 	};
-} )( JetpackCloudSettingsPage );
+} )( SettingsPage );

@@ -6,6 +6,14 @@ const path = require( 'path' ); // eslint-disable-line import/no-nodejs-modules
 
 const sections = [
 	{
+		name: 'root',
+		paths: [ '/' ],
+		module: 'root',
+		group: 'root',
+		secondary: true,
+		enableLoggedOut: true,
+	},
+	{
 		name: 'sites',
 		paths: [ '/sites' ],
 		module: 'my-sites',
@@ -291,7 +299,7 @@ const sections = [
 	// this MUST be the first section for /read paths so subsequent sections under /read can override settings
 	{
 		name: 'reader',
-		paths: [ '/', '/read' ],
+		paths: [ '/read' ],
 		module: 'reader',
 		secondary: true,
 		group: 'reader',

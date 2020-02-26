@@ -31,6 +31,9 @@ import {
 
 jest.mock( 'lib/analytics', () => ( {} ) );
 jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'lib/abtest', () => ( {
+	abtest: () => {},
+} ) );
 jest.mock( 'components/main', () => 'Main' );
 jest.mock( 'components/section-header', () => 'SectionHeader' );
 jest.mock( 'me/sidebar-navigation', () => 'MeSidebarNavigation' );

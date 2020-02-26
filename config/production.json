@@ -37,7 +37,6 @@
 		"happychat": true,
 		"help": true,
 		"help/courses": true,
-		"home/all": false,
 		"i18n/translation-scanner": true,
 		"ive/me": false,
 		"ive/use-external-defs": false,

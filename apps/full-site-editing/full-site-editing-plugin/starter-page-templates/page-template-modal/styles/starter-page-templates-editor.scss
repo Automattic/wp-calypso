@@ -383,6 +383,9 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		.wp-block-cover {
 			padding: 0;
 		}
+		.wp-block-cover.has-parallax {
+			background-attachment: scroll;
+		}
 	}
 
 	// `core/columns`

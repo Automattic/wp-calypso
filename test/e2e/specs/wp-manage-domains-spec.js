@@ -12,7 +12,6 @@ import * as dataHelper from '../lib/data-helper.js';
 import DomainsPage from '../lib/pages/domains-page.js';
 import CheckOutPage from '../lib/pages/signup/checkout-page.js';
 import ReaderPage from '../lib/pages/reader-page.js';
-import StatsPage from '../lib/pages/stats-page.js';
 
 import FindADomainComponent from '../lib/components/find-a-domain-component.js';
 import RegistrationUnavailableComponent from '../lib/components/domain-registration-unavailable-component';
@@ -113,7 +112,6 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function() {
 			await ReaderPage.Visit( driver );
 			const navBarComponent = await NavBarComponent.Expect( driver );
 			await navBarComponent.clickMySites();
-			await StatsPage.Expect( driver );
 			const sidebarComponent = await SidebarComponent.Expect( driver );
 			await sidebarComponent.selectDomains();
 			await DomainsPage.Expect( driver );
@@ -196,7 +194,6 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function() {
 			await ReaderPage.Visit( driver );
 			const navBarComponent = await NavBarComponent.Expect( driver );
 			await navBarComponent.clickMySites();
-			await StatsPage.Expect( driver );
 			const sideBarComponent = await SidebarComponent.Expect( driver );
 			await sideBarComponent.selectDomains();
 			await DomainsPage.Expect( driver );

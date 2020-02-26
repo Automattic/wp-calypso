@@ -3,6 +3,11 @@
  */
 import { get } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
+import 'state/posts/init';
+
 export default function getPostRevisionsDiff(
 	state,
 	siteId,

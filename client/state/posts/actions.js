@@ -72,6 +72,8 @@ import {
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
+import 'state/posts/init';
+
 /**
  * Returns an action object to be used in signalling that a post object has
  * been received.

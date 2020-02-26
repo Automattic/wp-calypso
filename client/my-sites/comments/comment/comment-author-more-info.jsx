@@ -18,7 +18,7 @@ import Popover from 'components/popover';
 import { decodeEntities } from 'lib/formatting';
 import { urlToDomainAndPath } from 'lib/url';
 import canCurrentUser from 'state/selectors/can-current-user';
-import getSiteComment from 'state/selectors/get-site-comment';
+import { getSiteComment } from 'state/comments/selectors';
 import getSiteSetting from 'state/selectors/get-site-setting';
 import isEmailBlacklisted from 'state/selectors/is-email-blacklisted';
 import {
@@ -85,7 +85,7 @@ export class CommentAuthorMoreInfo extends Component {
 			);
 		}
 
-		const newBlacklist = !! siteBlacklist ? siteBlacklist + '\n' + authorEmail : authorEmail;
+		const newBlacklist = siteBlacklist ? siteBlacklist + '\n' + authorEmail : authorEmail;
 
 		updateBlacklist( siteId, newBlacklist, analytics );
 

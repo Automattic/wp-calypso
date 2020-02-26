@@ -21,7 +21,7 @@ import {
 	READER_EXPAND_COMMENTS,
 } from 'state/action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
-import getSiteComment from 'state/selectors/get-site-comment';
+import { getSiteComment } from 'state/comments/selectors';
 
 import 'state/data-layer/wpcom/comments';
 import 'state/data-layer/wpcom/sites/comment-counts';
