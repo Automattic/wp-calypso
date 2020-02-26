@@ -4,9 +4,8 @@
 import { EventEmitter } from 'events';
 import { Language } from '../../languages';
 import { GravatarOptions } from '../../gravatar/types';
-import { URL } from '../../types';
+import { URL, JSONSerializable } from '../../types';
 
-type JSONSerializable = boolean | string | number;
 type WPCOMError = { message: string };
 type WPCOMHeaders = { [ name: string ]: string } & { status: number };
 
@@ -31,7 +30,7 @@ export interface User extends EventEmitter {
 	set: ( attributes: UserData ) => boolean;
 	decrementSiteCount: () => void;
 	incrementSiteCount: () => void;
-	verificationPollerCallback: ( signal: unknown ) => void;
+	verificationPollerCallback: ( signal: boolean ) => void;
 	checkVerification: () => void;
 	signalVerification: () => void;
 	dispatchToken: string;

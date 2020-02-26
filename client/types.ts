@@ -6,6 +6,13 @@ import { NonUndefined } from 'utility-types';
 // Web stuff
 export type URL = string;
 export type Scheme = 'http' | 'https';
+export type JSONSerializable =
+	| null
+	| boolean
+	| number
+	| string
+	| JSONSerializable[]
+	| { [ prop: string ]: JSONSerializable };
 
 // User stuff
 

@@ -1,3 +1,8 @@
+/**
+ * Internal Dependencies
+ */
+import { URL } from '../types';
+
 export type GravatarOptions = Partial< {
 	s: number;
 	d: DefaultImage;
