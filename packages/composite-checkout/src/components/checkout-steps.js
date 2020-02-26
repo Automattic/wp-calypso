@@ -209,6 +209,7 @@ export function CheckoutStep( {
 					paymentMethodId: activePaymentMethod?.id ?? '',
 				},
 			} );
+			saveStepNumberToUrl( nextStepNumber );
 			setActiveStepNumber( nextStepNumber );
 		}
 		setFormReady();
@@ -583,3 +584,18 @@ const StepSummaryUI = styled.div`
 	display: ${props => ( props.isVisible ? 'block' : 'none' )};
 	padding-left: 35px;
 `;
+
+function saveStepNumberToUrl( stepNumber ) {
+	if ( ! window.history?.pushState ) {
+		return;
+	}
+	const newHash = stepNumber > 1 ? `#step${ stepNumber }` : '';
+	if ( window.location.hash === newHash ) {
+		return;
+	}
+	const newUrl = window.location.hash
+		? window.location.href.replace( window.location.hash, newHash )
+		: window.location.href + newHash;
+	debug( 'updating url to', newUrl );
+	window.history.pushState( null, null, newUrl );
+}
