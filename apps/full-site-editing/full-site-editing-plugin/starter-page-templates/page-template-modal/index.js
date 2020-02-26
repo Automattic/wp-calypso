@@ -25,7 +25,7 @@ import ensureAssets from './utils/ensure-assets';
 
 const DEFAULT_HOMEPAGE_TEMPLATE = 'maywood';
 
-function modifyParsedBlocks( blocks ) {
+function modifyBlocksForPreview( blocks ) {
 	function modifyBlock( block ) {
 		const attrsToMerge = {};
 
@@ -53,7 +53,7 @@ function modifyParsedBlocks( blocks ) {
 
 		// Recurse into nested Blocks
 		if ( block.innerBlocks && block.innerBlocks.length ) {
-			block.innerBlocks = modifyParsedBlocks( block.innerBlocks );
+			block.innerBlocks = modifyBlocksForPreview( block.innerBlocks );
 		}
 
 		return block;
@@ -86,6 +86,11 @@ class PageTemplateModal extends Component {
 			{}
 		)
 	);
+
+	getBlocksForPreview = memoize( previewedTemplate => {
+		const blocks = this.getBlocksByTemplateSlug( previewedTemplate );
+		return modifyBlocksForPreview( blocks );
+	} );
 
 	static getDerivedStateFromProps( props, state ) {
 		// The only time `state.previewedTemplate` isn't set is before `templates`
@@ -409,7 +414,7 @@ class PageTemplateModal extends Component {
 									) }
 							</form>
 							<TemplateSelectorPreview
-								blocks={ modifyParsedBlocks( this.getBlocksByTemplateSlug( previewedTemplate ) ) }
+								blocks={ this.getBlocksForPreview( previewedTemplate ) }
 								viewportWidth={ 960 }
 								title={ this.getTitleByTemplateSlug( previewedTemplate ) }
 							/>
