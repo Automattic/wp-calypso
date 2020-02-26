@@ -49,8 +49,8 @@ import 'state/themes/init';
 
 import { receiveTheme } from 'state/themes/actions/receive-theme';
 import { activateTheme } from 'state/themes/actions/activate-theme';
-import { installTheme } from 'state/themes/actions/install-theme';
 import { suffixThemeIdForInstall } from 'state/themes/actions/suffix-theme-id-for-install';
+import { installAndActivateTheme } from 'state/themes/actions/install-and-activate-theme';
 
 export { setBackPath } from 'state/themes/actions/set-back-path';
 export { receiveThemes } from 'state/themes/actions/receive-themes';
@@ -66,6 +66,7 @@ export { clearActivated } from 'state/themes/actions/clear-activated';
 export { tryAndCustomizeTheme } from 'state/themes/actions/try-and-customize-theme';
 export { installAndTryAndCustomizeTheme } from 'state/themes/actions/install-and-try-and-customize-theme';
 export { tryAndCustomize } from 'state/themes/actions/try-and-customize';
+export { installAndActivateTheme } from 'state/themes/actions/install-and-activate-theme';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
@@ -99,27 +100,6 @@ export function activate( themeId, siteId, source = 'unknown', purchased = false
 		}
 
 		return dispatch( activateTheme( themeId, siteId, source, purchased ) );
-	};
-}
-
-/**
- * Triggers a network request to install and activate a specific theme on a given
- * Jetpack site. If the themeId parameter is suffixed with '-wpcom', install the
- * theme from WordPress.com. Otherwise, install from WordPress.org.
- *
- * @param  {string}   themeId   Theme ID. If suffixed with '-wpcom', install theme from WordPress.com
- * @param  {number}   siteId    Site ID
- * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
- * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
- * @returns {Function}           Action thunk
- */
-export function installAndActivateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
-	return dispatch => {
-		return dispatch( installTheme( themeId, siteId ) ).then( () => {
-			// This will be called even if `installTheme` silently fails. We rely on
-			// `activateTheme`'s own error handling here.
-			dispatch( activateTheme( themeId, siteId, source, purchased ) );
-		} );
 	};
 }
 
