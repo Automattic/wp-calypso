@@ -74,33 +74,18 @@ class PageTemplateModal extends Component {
 	);
 
 	// Parse templates blocks and memoize them.
-	getBlocksByTemplateSlugs = memoize( templates => {
-		return reduce(
+	getBlocksByTemplateSlugs = memoize( templates =>
+		reduce(
 			templates,
 			( prev, { slug, content } ) => {
-				if ( ! content ) {
-					prev[ slug ] = [];
-					return prev;
-				}
-
-				let blocks;
-
-				// Replacements on raw Block Grammar
-				blocks = replacePlaceholders( content, this.props.siteInformation );
-
-				// Parse the Blocks
-				blocks = parseBlocks( blocks );
-
-				// Replacements on Parsed Blocks
-				// blocks = modifyParsedBlocks( blocks );
-
-				prev[ slug ] = blocks;
-
+				prev[ slug ] = content
+					? parseBlocks( replacePlaceholders( content, this.props.siteInformation ) )
+					: [];
 				return prev;
 			},
 			{}
-		);
-	} );
+		)
+	);
 
 	static getDerivedStateFromProps( props, state ) {
 		// The only time `state.previewedTemplate` isn't set is before `templates`
