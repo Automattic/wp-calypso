@@ -7,7 +7,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import getThemeFilterStringFromTerm from 'state/selectors/get-theme-filter-string-from-term';
+import { getThemeFilterStringFromTerm } from 'state/themes/selectors';
 
 import getThemeFilterTerm from 'state/selectors/get-theme-filter-term';
 import getThemeFilterTermFromString from 'state/selectors/get-theme-filter-term-from-string';

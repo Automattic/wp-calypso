@@ -11,6 +11,7 @@ export { getTheme } from 'state/themes/selectors/get-theme';
 export { getThemeCustomizeUrl } from 'state/themes/selectors/get-theme-customize-url';
 export { getThemeDemoUrl } from 'state/themes/selectors/get-theme-demo-url';
 export { getThemeDetailsUrl } from 'state/themes/selectors/get-theme-details-url';
+export { getThemeFilterStringFromTerm } from 'state/themes/selectors/get-theme-filter-string-from-term';
 export { getThemeForumUrl } from 'state/themes/selectors/get-theme-forum-url';
 export { getThemeHelpUrl } from 'state/themes/selectors/get-theme-help-url';
 export { getThemePreviewThemeOptions } from 'state/themes/selectors/get-theme-preview-theme-options';

@@ -1,8 +1,7 @@
 /**
  * Internal dependencies
  */
-
-import getThemeFilterStringFromTerm from 'state/selectors/get-theme-filter-string-from-term';
+import { getThemeFilterStringFromTerm } from 'state/themes/selectors';
 
 /**
  * For a string of terms, recreate full search string in

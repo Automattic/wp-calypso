@@ -21,7 +21,7 @@ import 'state/themes/init';
  * @param {string} term The term slug
  * @returns {string} Complete taxonomy:term filter, or empty string if term is not valid
  */
-export default function getThemeFilterStringFromTerm( state, term ) {
+export function getThemeFilterStringFromTerm( state, term ) {
 	const terms = getThemeFilterTermsTable( state );
 	const taxonomy = terms[ term ];
 
