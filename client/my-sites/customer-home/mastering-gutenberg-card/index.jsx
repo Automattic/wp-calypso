@@ -119,7 +119,7 @@ class MasteringGutenbergCard extends Component {
 						</div>
 					) }
 					<div>
-						<CardHeading>{ translate( 'Master the block editor' ) }</CardHeading>
+						<CardHeading>{ translate( 'Master the Block Editor' ) }</CardHeading>
 						<p className="mastering-gutenberg-card__text customer-home__card-subheader">
 							{ translate(
 								'Learn how to create stunning post and page layouts ' + 'through our video guides.'
