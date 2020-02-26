@@ -29,6 +29,7 @@ jobs:
         path: apps/full-site-editing/full-site-editing-plugin
   send:
     name: Trigger MC script
+    needs: build
     runs-on: ubuntu-latest
     env:
       CALYPSO_APP: fse_plugin
