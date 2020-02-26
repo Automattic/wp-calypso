@@ -24,7 +24,6 @@ import { getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from 'config';
-import getThemeShowcaseTitle from 'state/selectors/get-theme-showcase-title';
 import prependThemeFilterKeys from 'state/selectors/prepend-theme-filter-keys';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { openThemesShowcase } from 'state/themes/themes-ui/actions';
@@ -39,6 +38,7 @@ import {
 	getThemeFilterTerms,
 	getThemeFilterToTermTable,
 	getThemeShowcaseDescription,
+	getThemeShowcaseTitle,
 } from 'state/themes/selectors';
 import UpworkBanner from 'blocks/upwork-banner';
 import RecommendedThemes from './recommended-themes';

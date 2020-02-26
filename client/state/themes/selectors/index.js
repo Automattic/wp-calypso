@@ -27,6 +27,7 @@ export { getThemesForQuery } from 'state/themes/selectors/get-themes-for-query';
 export { getThemesForQueryIgnoringPage } from 'state/themes/selectors/get-themes-for-query-ignoring-page';
 export { getThemesFoundForQuery } from 'state/themes/selectors/get-themes-found-for-query';
 export { getThemeShowcaseDescription } from 'state/themes/selectors/get-theme-showcase-description';
+export { getThemeShowcaseTitle } from 'state/themes/selectors/get-theme-showcase-title';
 export { getThemeSignupUrl } from 'state/themes/selectors/get-theme-signup-url';
 export { getThemesLastPageForQuery } from 'state/themes/selectors/get-themes-last-page-for-query';
 export { getThemeSupportUrl } from 'state/themes/selectors/get-theme-support-url';
