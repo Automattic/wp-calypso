@@ -40,53 +40,43 @@ define( 'PLUGIN_VERSION', '0.19' );
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';
 
-function console_log( $output, $with_script_tags = true ) {
-	$js_code = 'console.log(' . json_encode( $output, JSON_HEX_TAG ) .
-	');';
-	if ( $with_script_tags ) {
-		$js_code = '<script>' . $js_code . '</script>';
-	}
-	echo $js_code;
-}
 /**
  * Load Core Site Editor.
  */
 function load_core_site_editor() {
+	// Console log current options for sanity check.
 	$options = get_option( 'gutenberg-experiments' );
-	console_log( $options );
-	// below is found from passing $options through console_log on core gutenberg with experiment active.
-	// {gutenberg-full-site-editing: "1", gutenberg-full-site-editing-demo: "1"}
-
+	echo '<script>' . 'console.log(' . json_encode($options, JSON_HEX_TAG) . 
+	');' . '</script>';
 	// Check blog sticker for access to Site Editor.
 	if ( ! has_blog_sticker( 'core_site_editor_enabled' ) ) {
 		// Check if experiment is enabled: disable if needed.
 		if ( gutenberg_is_experiment_enabled( 'gutenberg-full-site-editing' ) ) {
-			// Disable ALL experiments.  (none are currently enabled on dotcom it seems?).
+			// @TODO: Add support for other experiments, don't override them completely. 
 			$disabled_options = array(
-				'gutenberg-full-site-editing'      => '0',
-				'gutenberg-full-site-editing-demo' => '0',
+				'gutenberg-full-site-editing'		=>	"0",
+				'gutenberg-full-site-editing-demo'	=> 	"0",
 			);
 			update_option( 'gutenberg-experiments', $disabled_options );
-		}
-		if ( ! gutenberg_is_experiment_enabled( 'gutenberg-full-site-editing' ) ) {
-			console_log( 'no it is not!' );
 		}
 		return;
 	}
 	// Check if experiment is disabled: enable if needed.
 	if ( ! gutenberg_is_experiment_enabled( 'gutenberg-full-site-editing' ) ) {
 		$enabled_options = array(
-			'gutenberg-full-site-editing'      => '1',
-			'gutenberg-full-site-editing-demo' => '1',
+			'gutenberg-full-site-editing'		=>	"1",
+			'gutenberg-full-site-editing-demo'	=> 	"1",
 		);
 		update_option( 'gutenberg-experiments', $enabled_options );
 	}
-	if ( gutenberg_is_experiment_enabled( 'gutenberg-full-site-editing' ) ) {
-		console_log( 'yes it is!' );
-	}
-
-	// Load site editor.
-	// 'gutenberg_edit_site_page' - function to call site editor.
+	add_menu_page(
+		__( 'Site Editor (beta)', 'gutenberg' ),
+		__( 'Site Editor (beta)', 'gutenberg' ),
+		'edit_theme_options',
+		'gutenberg-edit-site',
+		'gutenberg_edit_site_page',
+		'dashicons-edit'
+	);
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_core_site_editor' );
 
