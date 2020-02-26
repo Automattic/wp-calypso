@@ -45,12 +45,15 @@ require_once __DIR__ . '/dotcom-fse/helpers.php';
  */
 function load_core_site_editor() {
 	$options = get_option( 'gutenberg-experiments' );
+
 	// Initialize options array if needed.
 	if ( ! $options ) {
 		$options = array();
 	}
+
 	// Check blog sticker for access to Site Editor.
 	if ( ! has_blog_sticker( 'core_site_editor_enabled' ) ) {
+
 		// Check if experiment is enabled: disable if needed.
 		if ( gutenberg_is_experiment_enabled( 'gutenberg-full-site-editing' ) ) {
 			$options['gutenberg-full-site-editing']      = '0';
@@ -59,6 +62,7 @@ function load_core_site_editor() {
 		}
 		return;
 	}
+	
 	// Check if experiment is disabled: enable if needed.
 	if ( ! gutenberg_is_experiment_enabled( 'gutenberg-full-site-editing' ) ) {
 		$options['gutenberg-full-site-editing']      = '1';
