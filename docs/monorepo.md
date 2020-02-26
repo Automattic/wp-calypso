@@ -133,22 +133,98 @@ Note that if you're building with Webpack, you may need to turn off [`resolve.sy
 
 ## Publishing
 
-Please do not use regular [`npm publish`](https://docs.npmjs.com/cli/publish) within a package to publish an individual package; `npx` has issues using this flow.
+We use [Lerna](https://lernajs.io/) and its `publish` command to publish the monorepo packages to NPM registry. Please do not use regular [`npm publish`](https://docs.npmjs.com/cli/publish) within a package to publish an individual package; `npx` has issues using this flow.
 
-Using [Lerna](https://lernajs.io/) to publish package(s):
+### Make sure changelogs and `package.json` versions are up to date
 
-1. Might be good to start un-authenticated, since Lerna doesn't have `--dry-run` option like NPM does: `npm logout`.
-1. Update packages versions as necessary. We’ll rely on package versions for Lerna to know what to publish. Please be mindful about [semantic versioning](https://semver.org/).
-1. `git checkout master`
-1. `git pull`
-1. `git status` (should be clean!)
-1. `npm run distclean`
-1. `npm ci`
-1. `npx lerna publish from-package`
-1. Say “no” at the prompt.
-1. Lerna will confirm which packages and versions will be published. If something looks off, abort!
-1. Make sure you're logged in at this point, we're going to publish 🚀: `npm whoami`, `npm login`.
-1. Craft the following command, we'll add `--yes` to skip prompts and save OTP cycle time. `--dist-tag next` is optional, use it when publishing unstable versions.
-1. Wait for your npm OTP (one time password) cycle to start, write it into the command and publish:
-1. `NPM_CONFIG_OTP=[YOUR_OTP_CODE] npx lerna publish --dist-tag next from-package --yes`
-1. Pat yourself on the back, you published!
+For all packages that you want to publish, make sure that their `package.json` versions are bumped. Decide carefully whether you want to publish a patch, a minor or a major update of the package. Be mindful about [semantic versioning](https://semver.org/).
+
+Make sure that the `CHANGELOG.md` document contains up-to-date information, with the `next` heading replaced with the version number that you are about to publish.
+
+Create PRs with the necessary changes and merge them to `master` before publishing. Lerna will add a `gitHead` field to each published package's `package.json`. That field contains the hash of the Git commit that the package was published from. It's better if this commit hash is a permanent one from the `master` branch, rather than an ephemeral commit from a local branch.
+
+### Checkout the latest master locally and build the packages
+
+Always publish from the latest `master` branch, so that the package contents come from a verified source that everyone has access to. It's too easy to publish a NPM package from a local branch, or even uncommitted local modifications that are invisible to anyone but you.
+
+Build the `dist/` directories (the transpiled package content that will be published) from scratch.
+
+```
+git checkout master
+git pull
+git status (should be clean!)
+npm run distclean
+npm ci
+npm run build-packages
+```
+
+### Getting NPM permissions to publish in the `@automattic` scope
+
+To publish packages in the `@automattic` scope, and to update packages owned by the `automattic` organization, you need to be a member of this organization on npmjs.com. If you're an Automattician, ask around to find an organization owner or admin who will add you as a member. Publish packages under your own name, so that people can find you and ping you in case anything goes wrong with the published package.
+
+### Publishing all outdated packages
+
+It's good to start un-authenticated, since Lerna doesn't have `--dry-run` option like NPM does: `npm logout`.
+
+Now run: `npx lerna publish from-package`
+
+Lerna will show a list of packages that have versions higher than the latest one published in the NPM registry. Verify that this is indeed the list of packages that you want to publish. If something looks off, abort!
+
+If you say "yes" to the Lerna prompt, and are not authenticated, the publishing will fail with authentication error. Better to say "no".
+
+Now make sure you're logged in at this point, we're going to publish 🚀: `npm whoami`, `npm login`. Enter your username, password, and the OTP code.
+
+Before publishing, keep your OTP (one time password) authenticator app around, as NPM will ask for another OTP code when publishing, even though you already entered one code when logging in. We recommend to set your NPM account to the highest security level, which requires two-factor authentication for both authentication and publishing.
+
+The following command will publish the packages:
+
+```
+npx lerna publish from-package
+```
+
+Lerna will ask you to confirm the publish action, and will also ask for an OTP code.
+
+Pat yourself on the back, you published!
+
+#### Publishing unstable (beta) versions of packages
+
+If you publish a package the default way, the new version will be tagged in the NPM registry with the `latest` tag. NPM clients will install the `latest` version by default, if no other version is specified.
+
+To publish unstable (alpha, beta) versions of packages, and to keep the `latest` tag pointing to a stable version, you can add a `--dist-tag next` option:
+
+```
+npx lerna publish --dist-tag next from-package
+```
+
+The published packages will be tagged as `next`, and installed only when the `next` tag is specified explicitly:
+
+```
+npm install i18n-calypso@next
+```
+
+#### Running `lerna publish` in non-interactive mode
+
+If you don't want Lerna to ask you any questions when publishing, specify the `--yes` option to skip the confirmation prompt.
+
+The OTP code can be specified as the `NPM_CONFIG_OTP` environment variable, again avoiding Lerna/NPM asking for it interactively. For example:
+
+```
+NPM_CONFIG_OTP=[YOUR_OTP_CODE] npx lerna publish from-package --yes
+```
+
+### Publishing a single package
+
+What if you want to publish just one updated package? `lerna publish from-package` either publishes all eligible packages, or nothing. It doesn't give you a choice. That's where you need `lerna publish from-git`.
+
+To publish only selected packages, you need to create Git tags in form `name@version`. For example:
+```
+git tag "@automattic/calypso-build@6.1.0"
+```
+or
+```
+git tag "@automattic/components@1.0.0"
+```
+
+Now `lerna publish from-git` will offer to publish only the packages that have a matching Git tag on the current `HEAD` revision.
+
+The rest of the workflow is exactly the same as in the `from-package` case.
