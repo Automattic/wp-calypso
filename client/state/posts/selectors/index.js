@@ -1,19 +1,16 @@
 /**
  * External dependencies
  */
-import { filter, find, has, get } from 'lodash';
+import { filter, find } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { decodeURIIfValid } from 'lib/url';
 import { getSite } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
 
 import { getSitePosts } from 'state/posts/selectors/get-site-posts';
 import { getSitePost } from 'state/posts/selectors/get-site-post';
-import { getPostEdits } from 'state/posts/selectors/get-post-edits';
-import { isPostPublished } from 'state/posts/selectors/is-post-published';
 
 import 'state/posts/init';
 
@@ -36,38 +33,7 @@ export { isEditedPostPasswordProtected } from 'state/posts/selectors/is-edited-p
 export { isEditedPostPasswordProtectedWithValidPassword } from 'state/posts/selectors/is-edited-post-password-protected-with-valid-password';
 export { isEditedPostDirty } from 'state/posts/selectors/is-edited-post-dirty';
 export { isPostPublished } from 'state/posts/selectors/is-post-published';
-
-/**
- * Returns the slug, or suggested_slug, for the edited post
- *
- * @param   {object} state  Global state tree
- * @param   {number} siteId Site ID
- * @param   {number} postId Post ID
- * @returns {string}             Slug value
- */
-export function getEditedPostSlug( state, siteId, postId ) {
-	// if local edits exists, return them regardless of post status
-	const postEdits = getPostEdits( state, siteId, postId );
-	if ( has( postEdits, 'slug' ) ) {
-		return postEdits.slug;
-	}
-
-	const post = getSitePost( state, siteId, postId );
-	const postSlug = get( post, 'slug' );
-
-	// when post is published, return the slug
-	if ( isPostPublished( state, siteId, postId ) ) {
-		return decodeURIIfValid( postSlug );
-	}
-
-	// only return suggested_slug if slug has not been edited
-	const suggestedSlug = get( post, [ 'other_URLs', 'suggested_slug' ] );
-	if ( suggestedSlug && ! postSlug ) {
-		return suggestedSlug;
-	}
-
-	return postSlug;
-}
+export { getEditedPostSlug } from 'state/posts/selectors/get-edited-post-slug';
 
 /**
  * Returns the most reliable preview URL for the post by site ID, post ID pair,
