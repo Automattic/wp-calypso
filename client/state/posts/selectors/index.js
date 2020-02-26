@@ -24,13 +24,12 @@ import {
 } from 'state/posts/utils';
 import { decodeURIIfValid } from 'lib/url';
 import { getSite } from 'state/sites/selectors';
-import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from 'state/posts/constants';
+import { DEFAULT_NEW_POST_VALUES } from 'state/posts/constants';
 import { addQueryArgs } from 'lib/route';
 
 import { getQueryManager } from 'state/posts/selectors/get-query-manager';
 import { getSitePosts } from 'state/posts/selectors/get-site-posts';
 import { getSitePost } from 'state/posts/selectors/get-site-post';
-import { getPostsLastPageForQuery } from 'state/posts/selectors/get-posts-last-page-for-query';
 
 import 'state/posts/init';
 
@@ -42,24 +41,7 @@ export { getPostsForQuery } from 'state/posts/selectors/get-posts-for-query';
 export { isRequestingPostsForQuery } from 'state/posts/selectors/is-requesting-posts-for-query';
 export { getPostsFoundForQuery } from 'state/posts/selectors/get-posts-found-for-query';
 export { getPostsLastPageForQuery } from 'state/posts/selectors/get-posts-last-page-for-query';
-
-/**
- * Returns true if the query has reached the last page of queryable pages, or
- * null if the total number of queryable posts if unknown.
- *
- * @param   {object}   state  Global state tree
- * @param   {?number}  siteId Site ID, or `null` for all-sites queries
- * @param   {object}   query  Post query object
- * @returns {?boolean}        Whether last posts page has been reached
- */
-export function isPostsLastPageForQuery( state, siteId, query = {} ) {
-	const lastPage = getPostsLastPageForQuery( state, siteId, query );
-	if ( null === lastPage ) {
-		return lastPage;
-	}
-
-	return lastPage === ( query.page || DEFAULT_POST_QUERY.page );
-}
+export { isPostsLastPageForQuery } from 'state/posts/selectors/is-posts-last-page-for-query';
 
 /**
  * Returns an array of normalized posts for the posts query, including all
