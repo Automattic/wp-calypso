@@ -77,7 +77,6 @@ const BlockFramePreview = ( {
 	const [ recomputeBlockListKey, triggerRecomputeBlockList ] = useReducer( state => state + 1, 0 );
 	useLayoutEffect( triggerRecomputeBlockList, [ blocks ] );
 
-	const [ iFrameHead, setIFrameHead ] = useState();
 	const [ iFrameBody, setIFrameBody ] = useState();
 
 	useEffect( () => {
@@ -85,7 +84,6 @@ const BlockFramePreview = ( {
 		const iFrameBody = get( iFrameRef, [ 'current', 'contentDocument', 'body' ] );
 
 		// Pick up iFrame <head /> and <body />
-		setIFrameHead( iFrameHead );
 		setIFrameBody( iFrameBody );
 
 		iFrameBody.className = bodyClassName;
