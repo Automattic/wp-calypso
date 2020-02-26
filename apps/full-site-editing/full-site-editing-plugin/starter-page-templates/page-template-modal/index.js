@@ -10,7 +10,7 @@ import { compose } from '@wordpress/compose';
 import { Button, Modal, Spinner, IconButton } from '@wordpress/components';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
-import { parse as parseBlocks } from '@wordpress/blocks';
+import { parse as parseBlocks, cloneBlock } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -25,15 +25,24 @@ import ensureAssets from './utils/ensure-assets';
 
 const DEFAULT_HOMEPAGE_TEMPLATE = 'maywood';
 
-function handleParsedBlocks( blocks ) {
+function modifyParsedBlocks( blocks ) {
 	function handleBlock( block ) {
+		const attrsToMerge = {};
+
 		// `jetpack/contact-form` has a placeholder to configure form settings
 		// we need to disable this to show the full form in the preview
 		if ( block.attributes.hasFormSettingsSet !== undefined ) {
-			block.attributes.hasFormSettingsSet = true;
+			attrsToMerge.hasFormSettingsSet = true;
 		}
 
-		return block;
+		// `blocks` is an object. Therefore any changes made here will
+		// be reflected across all references to the blocks object. To ensure we
+		// only modify the blocks when needed, we return a new object reference
+		// for any blocks we modify. This allows us to modify blocks for
+		// particular contexts. For example we may wish to show blocks
+		// differently in the preview than we do when they are inserted into the
+		// editor itself.
+		return attrsToMerge.length ? cloneBlock( block, attrsToMerge ) : block;
 	}
 
 	return blocks.map( block => {
@@ -41,7 +50,7 @@ function handleParsedBlocks( blocks ) {
 
 		// Recurse into nested Blocks
 		if ( block.innerBlocks && block.innerBlocks.length ) {
-			block.innerBlocks = handleParsedBlocks( block.innerBlocks );
+			block.innerBlocks = modifyParsedBlocks( block.innerBlocks );
 		}
 
 		return block;
@@ -80,7 +89,7 @@ class PageTemplateModal extends Component {
 				blocks = parseBlocks( blocks );
 
 				// Replacements on Parsed Blocks
-				blocks = handleParsedBlocks( blocks );
+				// blocks = modifyParsedBlocks( blocks );
 
 				prev[ slug ] = blocks;
 
@@ -412,7 +421,7 @@ class PageTemplateModal extends Component {
 									) }
 							</form>
 							<TemplateSelectorPreview
-								blocks={ this.getBlocksByTemplateSlug( previewedTemplate ) }
+								blocks={ modifyParsedBlocks( this.getBlocksByTemplateSlug( previewedTemplate ) ) }
 								viewportWidth={ 960 }
 								title={ this.getTitleByTemplateSlug( previewedTemplate ) }
 							/>
