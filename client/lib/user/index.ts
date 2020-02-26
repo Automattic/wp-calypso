@@ -3,4 +3,4 @@
  */
 import { User } from './user';
 
-export default function(): User;
+export default User;
