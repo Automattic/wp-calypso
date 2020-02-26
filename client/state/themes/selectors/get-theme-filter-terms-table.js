@@ -19,7 +19,7 @@ import 'state/themes/init';
  * @param {object} state Global state tree
  * @returns {object} a table of terms to taxonomies.
  */
-export default createSelector(
+export const getThemeFilterTermsTable = createSelector(
 	state => {
 		const termTable = {};
 		const taxonomies = mapValues( getThemeFilters( state ), keys );

@@ -6,7 +6,7 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import getThemeFilterTermsTable from 'state/selectors/get-theme-filter-terms-table';
+import { getThemeFilterTermsTable } from 'state/themes/selectors/get-theme-filter-terms-table';
 
 import 'state/themes/init';
 
