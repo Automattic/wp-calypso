@@ -90,7 +90,7 @@ class Full_Site_Editing {
 		if ( ! is_theme_supported() ) {
 			return;
 		}
-		// try change
+		// try change 123
 		$this->wp_template_inserter->insert_default_template_data();
 		$this->wp_template_inserter->insert_default_pages();
 	}
