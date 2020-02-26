@@ -25,6 +25,29 @@ import ensureAssets from './utils/ensure-assets';
 
 const DEFAULT_HOMEPAGE_TEMPLATE = 'maywood';
 
+function handleParsedBlocks( blocks ) {
+	function handleBlock( block ) {
+		// `jetpack/contact-form` has a placeholder to configure form settings
+		// we need to disable this to show the full form in the preview
+		if ( block.attributes.hasFormSettingsSet !== undefined ) {
+			block.attributes.hasFormSettingsSet = true;
+		}
+
+		return block;
+	}
+
+	return blocks.map( block => {
+		block = handleBlock( block );
+
+		// Recurse into nested Blocks
+		if ( block.innerBlocks && block.innerBlocks.length ) {
+			block.innerBlocks = handleParsedBlocks( block.innerBlocks );
+		}
+
+		return block;
+	} );
+}
+
 class PageTemplateModal extends Component {
 	state = {
 		isLoading: false,
@@ -39,18 +62,33 @@ class PageTemplateModal extends Component {
 	);
 
 	// Parse templates blocks and memoize them.
-	getBlocksByTemplateSlugs = memoize( templates =>
-		reduce(
+	getBlocksByTemplateSlugs = memoize( templates => {
+		return reduce(
 			templates,
 			( prev, { slug, content } ) => {
-				prev[ slug ] = content
-					? parseBlocks( replacePlaceholders( content, this.props.siteInformation ) )
-					: [];
+				if ( ! content ) {
+					prev[ slug ] = [];
+					return prev;
+				}
+
+				let blocks;
+
+				// Replacements on raw Block Grammar
+				blocks = replacePlaceholders( content, this.props.siteInformation );
+
+				// Parse the Blocks
+				blocks = parseBlocks( blocks );
+
+				// Replacements on Parsed Blocks
+				blocks = handleParsedBlocks( blocks );
+
+				prev[ slug ] = blocks;
+
 				return prev;
 			},
 			{}
-		)
-	);
+		);
+	} );
 
 	static getDerivedStateFromProps( props, state ) {
 		// The only time `state.previewedTemplate` isn't set is before `templates`
