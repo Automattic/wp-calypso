@@ -70,19 +70,21 @@ const BlockFramePreview = ( {
 	const [ recomputeBlockListKey, triggerRecomputeBlockList ] = useReducer( state => state + 1, 0 );
 	useLayoutEffect( triggerRecomputeBlockList, [ blocks ] );
 
-	// Pick up iFrame <head /> and <body />
-	const iFrameHead = get( iFrameRef, [ 'current', 'contentDocument', 'head' ] );
-	const iFrameBody = get( iFrameRef, [ 'current', 'contentDocument', 'body' ] );
+	const [ iFrameHead, setIFrameHead ] = useState();
+	const [ iFrameBody, setIFrameBody ] = useState();
 
 	useEffect( () => {
-		if ( ! iFrameHead || ! iFrameBody ) {
-			return;
-		}
+		const iFrameHead = get( iFrameRef, [ 'current', 'contentDocument', 'head' ] );
+		const iFrameBody = get( iFrameRef, [ 'current', 'contentDocument', 'body' ] );
+
+		// Pick up iFrame <head /> and <body />
+		setIFrameHead( iFrameHead );
+		setIFrameBody( iFrameBody );
+
 		iFrameBody.className = bodyClassName;
 		loadStyles( iFrameHead, iFrameBody );
-
 		reScale();
-	}, [ iFrameHead, iFrameHead ] );
+	}, [] );
 
 	const reScale = useCallback(
 		() => {
