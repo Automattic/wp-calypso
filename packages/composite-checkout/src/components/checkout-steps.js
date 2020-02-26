@@ -384,13 +384,13 @@ const SubmitButtonWrapperUI = styled.div`
 
 export function useIsStepActive() {
 	const { activeStepNumber } = useContext( CheckoutStepDataContext );
-	const stepNumber = useContext( CheckoutSingleStepDataContext );
+	const { stepNumber } = useContext( CheckoutSingleStepDataContext );
 	return activeStepNumber === stepNumber;
 }
 
 export function useIsStepComplete() {
 	const { stepCompleteStatus } = useContext( CheckoutStepDataContext );
-	const stepNumber = useContext( CheckoutSingleStepDataContext );
+	const { stepNumber } = useContext( CheckoutSingleStepDataContext );
 	return !! stepCompleteStatus[ stepNumber ];
 }
 
