@@ -39,12 +39,8 @@ import './style.scss';
 
 interface ExternalProps {
 	backUrl: string;
-	isBusy: boolean;
 	onProceed: () => void;
 	className?: string;
-	context?: string;
-	feature?: string;
-	ctaName?: string;
 	eligibilityData?: {
 		eligibilityHolds: string[];
 		eligibilityWarnings: string[];
@@ -60,7 +56,6 @@ export const EligibilityWarnings = ( {
 	context,
 	feature,
 	eligibilityData,
-	isBusy,
 	isEligible,
 	isPlaceholder,
 	onProceed,
@@ -144,10 +139,9 @@ export const EligibilityWarnings = ( {
 						disabled={
 							isProceedButtonDisabled( isEligible, listHolds ) ||
 							siteIsSavingSettings ||
-							siteIsLaunching ||
-							isBusy
+							siteIsLaunching
 						}
-						busy={ siteIsLaunching || siteIsSavingSettings || isBusy }
+						busy={ siteIsLaunching || siteIsSavingSettings }
 						onClick={ logEventAndProceed }
 					>
 						{ getProceedButtonText( listHolds, translate ) }
