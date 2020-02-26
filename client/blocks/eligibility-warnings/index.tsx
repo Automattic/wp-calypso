@@ -84,7 +84,7 @@ export const EligibilityWarnings = ( {
 	const launchCurrentSite = () => launch( siteId );
 	const makeCurrentSitePublic = () => makeSitePublic( siteId );
 
-	const logEventAndProceed = e => {
+	const logEventAndProceed = () => {
 		if ( siteRequiresUpgrade( listHolds ) ) {
 			recordUpgradeClick( ctaName, feature );
 			page.redirect( `/checkout/${ siteSlug }/business` );
@@ -98,7 +98,7 @@ export const EligibilityWarnings = ( {
 			makeCurrentSitePublic();
 			return;
 		}
-		onProceed( e );
+		onProceed();
 	};
 
 	const showThisSiteIsEligibleMessage =
@@ -245,7 +245,7 @@ const mapDispatchToProps = {
 			cta_size: 'regular',
 		} ),
 	launchSite,
-	makeSitePublic: ( selectedSiteId: number ) =>
+	makeSitePublic: ( selectedSiteId: number | null ) =>
 		saveSiteSettings( selectedSiteId, {
 			blog_public: 1,
 			wpcom_coming_soon: 0,
