@@ -41,6 +41,7 @@ const getAliasesForExtensions = require( './webpack/extensions' );
  */
 const calypsoEnv = config( 'env_id' );
 const bundleEnv = config( 'env' );
+
 const isDevelopment = bundleEnv !== 'production';
 const shouldMinify =
 	process.env.MINIFY_JS === 'true' ||

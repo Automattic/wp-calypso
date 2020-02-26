@@ -1,25 +1,20 @@
 /**
  * External dependencies
  */
-import config from '../../config';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-import initJetpackCloudRoutes from './routes';
-import { bootApp } from 'boot/common';
+import { jetpackCloud, jetpackBackups, jetpackScan } from './controller';
 
-/**
- * Style dependencies
- */
-import 'components/environment-badge/style.scss';
-import 'layout/style.scss';
-import 'assets/stylesheets/jetpack-cloud.scss';
+import { navigation } from 'my-sites/controller';
+import { makeLayout, render as clientRender } from 'controller';
 
-window.AppBoot = () => {
-	if ( ! config.isEnabled( 'jetpack-cloud' ) ) {
-		window.location.href = '/';
-	} else {
-		bootApp( 'Jetpack Cloud', initJetpackCloudRoutes );
-	}
-};
+export default function() {
+	page( '/', navigation, jetpackCloud, makeLayout, clientRender );
+
+	page( '/backups', navigation, jetpackBackups, makeLayout, clientRender );
+
+	page( '/scan', navigation, jetpackScan, makeLayout, clientRender );
+}

@@ -13,6 +13,7 @@ import classnames from 'classnames';
  */
 import AsyncLoad from 'components/async-load';
 import MasterbarLoggedIn from 'layout/masterbar/logged-in';
+import JetpackCloudMasterbar from 'landing/jetpack-cloud/components/masterbar';
 import GlobalNotices from 'components/global-notices';
 import HtmlIsIframeClassname from 'layout/html-is-iframe-classname';
 import notices from 'notices';
@@ -135,6 +136,20 @@ class Layout extends Component {
 			return optionalProps;
 		};
 
+		let masterbar = (
+			<MasterbarLoggedIn
+				section={ this.props.sectionGroup }
+				isCheckout={ this.props.sectionName === 'checkout' }
+			/>
+		);
+		if ( 'jetpack-cloud' === config( 'masterbar' ) ) {
+			masterbar = (
+				<JetpackCloudMasterbar
+					section={ this.props.sectionGroup }
+					isCheckout={ this.props.sectionName === 'checkout' }
+				/>
+			);
+		}
 		return (
 			<div className={ sectionClass }>
 				<BodySectionCssClass
@@ -151,10 +166,7 @@ class Layout extends Component {
 				<AsyncLoad require="layout/guided-tours" placeholder={ null } />
 				{ ! isE2ETest() && <AsyncLoad require="layout/nps-survey-notice" placeholder={ null } /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
-				<MasterbarLoggedIn
-					section={ this.props.sectionGroup }
-					isCheckout={ this.props.sectionName === 'checkout' }
-				/>
+				{ masterbar }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<LayoutLoader />
 				{ this.props.isOffline && <OfflineStatus /> }
