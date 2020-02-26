@@ -21,8 +21,6 @@ import BlockFramePreview from './template-preview-frame';
 function _BlockPreview( {
 	blocks,
 	settings,
-	__experimentalOnReady = noop,
-	__experimentalScalingDelay = 100,
 } ) {
 	const renderedBlocks = useMemo( () => castArray( blocks ), [ blocks ] );
 	const [ recompute, triggerRecompute ] = useReducer( state => state + 1, 0 );
@@ -38,19 +36,21 @@ function _BlockPreview( {
 	);
 }
 
-const BlockPreview = withSelect( select => {
-	return {
-		settings: select( 'core/block-editor' ).getSettings(),
-	};
-} )( _BlockPreview );
 
 const BlockTemplatePreview = ( { blocks = [], viewportWidth } ) => {
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		<BlockFramePreview
+			viewportWidth={ viewportWidth }
+			blocks={ blocks }
+		/>
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
+
+		/*
 		<BlockFramePreview viewportWidth={ viewportWidth }>
 			<BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } />
 		</BlockFramePreview>
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
+		 */
 	);
 };
 

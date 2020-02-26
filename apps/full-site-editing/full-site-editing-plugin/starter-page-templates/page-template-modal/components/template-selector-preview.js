@@ -22,30 +22,13 @@ import { createBlock } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-// import BlockPreview from './block-preview';
-import BlockTemplatePreview from './block-template-preview';
+import BlockFramePreview from './template-preview-frame';
 
 const THRESHOLD_RESIZE = 300;
 
 const TemplateSelectorPreview = ( { blocks = [], viewportWidth, title } ) => {
 	const ref = useRef( null );
-	const [ previewViewport, setPreviewViewport ] = useState( viewportWidth );
 	const [ recompute, triggerRecompute ] = useReducer( state => state + 1, 0 );
-
-	// const updatePreviewViewport = useCallback( () => {
-	// 	if ( ! ref || ! ref.current ) {
-	// 		return;
-	// 	}
-	// 	const wrapperWidth = ref.current.clientWidth;
-	// 	if ( wrapperWidth >= viewportWidth ) {
-	// 		setPreviewViewport( wrapperWidth );
-	// 	} else {
-	// 		setPreviewViewport( viewportWidth );
-	// 	}
-	// }, [ viewportWidth ] );
-
-	// useLayoutEffect( updatePreviewViewport, [ blocks ] );
-
 	useEffect( () => {
 		const refreshPreview = debounce( triggerRecompute, THRESHOLD_RESIZE );
 		window.addEventListener( 'resize', refreshPreview );
@@ -64,7 +47,7 @@ const TemplateSelectorPreview = ( { blocks = [], viewportWidth, title } ) => {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<div className={ `template-selector-preview ${ ! blocks.length ? 'not-selected' : '' }` }>
 
-			<BlockTemplatePreview
+			<BlockFramePreview
 				key={ recompute }
 				blocks={
 					! blocks.length

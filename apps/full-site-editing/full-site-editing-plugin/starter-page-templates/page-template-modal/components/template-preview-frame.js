@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { each, filter, get } from 'lodash';
+import { each, filter, get, castArray } from 'lodash';
 import { createPortal } from 'react-dom';
 import classnames from 'classnames';
 
@@ -9,7 +9,10 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 /* eslint-disable import/no-extraneous-dependencies */
-import { useRef, useEffect, useState } from '@wordpress/element';
+import { useRef, useEffect, useState, useMemo, useReducer, useLayoutEffect } from '@wordpress/element';
+import { withSelect } from '@wordpress/data';
+import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
+import { Disabled } from '@wordpress/components';
 /* eslint-enable import/no-extraneous-dependencies */
 
 /**
@@ -49,15 +52,21 @@ const loadStyles = ( iFrameHead, iFrameBody ) => {
 
 const BlockFramePreview = ( {
 	head,
-	children,
 	className= 'block-iframe-preview',
 	bodyClassName = 'block-iframe-preview-body',
 	viewportWidth,
+	blocks,
+	settings,
 } ) => {
 	const iFrameRef = useRef();
 	const [ style, setStyle ] = useState( {
 		transform: `scale( 1 )`,
 	} );
+
+	const renderedBlocks = useMemo( () => castArray( blocks ), [ blocks ] );
+	const [ recompute, triggerRecompute ] = useReducer( state => state + 1, 0 );
+
+	useLayoutEffect( triggerRecompute, [ blocks ] );
 
 	const iFrameHead = get( iFrameRef, [ 'current', 'contentDocument', 'head' ] );
 	const iFrameBody = get( iFrameRef, [ 'current', 'contentDocument', 'body' ] );
@@ -100,7 +109,13 @@ const BlockFramePreview = ( {
 				<div className="block-editor">
 					<div className="edit-post-visual-editor">
 						<div className="editor-styles-wrapper">
-							<div className="editor-writing-flow">{ children }</div>
+							<div className="editor-writing-flow">
+								<BlockEditorProvider value={ renderedBlocks } settings={ settings }>
+									<Disabled key={ recompute }>
+										<BlockList />
+									</Disabled>
+								</BlockEditorProvider>
+							</div>
 						</div>
 					</div>
 				</div>,
@@ -110,4 +125,8 @@ const BlockFramePreview = ( {
 	);
 };
 
-export default BlockFramePreview;
+export default withSelect( select => {
+	return {
+		settings: select( 'core/block-editor' ).getSettings(),
+	};
+} )( BlockFramePreview );
