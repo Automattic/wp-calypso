@@ -39,6 +39,9 @@ export function Checkout( { children, className } ) {
 	const [ totalSteps, setTotalSteps ] = useState( 0 );
 	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
 
+	// Change the step if the url changes
+	useChangeStepNumberForUrl( setActiveStepNumber );
+
 	const getDefaultCheckoutSteps = () => <DefaultCheckoutSteps />;
 
 	if ( formStatus === 'loading' ) {
@@ -598,4 +601,34 @@ function saveStepNumberToUrl( stepNumber ) {
 		: window.location.href + newHash;
 	debug( 'updating url to', newUrl );
 	window.history.pushState( null, null, newUrl );
+}
+
+function getStepNumberFromUrl() {
+	const hashValue = window.location?.hash;
+	if ( hashValue?.startsWith?.( '#step' ) ) {
+		const parts = hashValue.split( '#step' );
+		const stepNumber = parts.length > 1 ? parts[ 1 ] : 1;
+		return parseInt( stepNumber, 10 );
+	}
+	return 1;
+}
+
+function useChangeStepNumberForUrl( setActiveStepNumber ) {
+	// If there is a step number on page load, remove it
+	useEffect( () => {
+		const newStepNumber = getStepNumberFromUrl();
+		if ( newStepNumber ) {
+			saveStepNumberToUrl( 1 );
+		}
+	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
+
+	useEffect( () => {
+		let isSubscribed = true;
+		window.addEventListener?.( 'hashchange', () => {
+			const newStepNumber = getStepNumberFromUrl();
+			debug( 'step number in url changed to', newStepNumber );
+			isSubscribed && setActiveStepNumber( newStepNumber );
+		} );
+		return () => ( isSubscribed = false );
+	}, [ setActiveStepNumber ] );
 }
