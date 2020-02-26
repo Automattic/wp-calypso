@@ -6,13 +6,6 @@ import { NonUndefined } from 'utility-types';
 // Web stuff
 export type URL = string;
 export type Scheme = 'http' | 'https';
-export type JSONSerializable =
-	| null
-	| boolean
-	| number
-	| string
-	| JSONSerializable[]
-	| { [ prop: string ]: JSONSerializable };
 
 // User stuff
 
@@ -38,6 +31,13 @@ export type TimeoutMS = NonUndefined< Parameters< typeof setTimeout >[ 1 ] >;
 export type TimestampMS = ReturnType< typeof Date.now >;
 export type TimerHandle = ReturnType< typeof setTimeout >;
 export type IntervalHandle = ReturnType< typeof setInterval >;
+export type JSONSerializable =
+	| null
+	| boolean
+	| number
+	| string
+	| JSONSerializable[]
+	| { [ prop: string ]: JSONSerializable };
 
 /**
  * Calypso application state
