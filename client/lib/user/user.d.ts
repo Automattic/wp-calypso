@@ -23,7 +23,7 @@ export interface User extends EventEmitter {
 	fetch: () => Promise< void >;
 	handleFetchFailure: ( error: Error ) => void;
 	handleFetchSuccess: ( userdata: UserData ) => void;
-	getLanguage: () => Language | void;
+	getLanguage: () => Language | undefined;
 	getAvatarUrl: ( options: GravatarOptions ) => URL;
 	clear: () => Promise< void > | void;
 	sendVerificationEmail< F extends WPCOMCallback >( f: F ): XMLHttpRequest;
