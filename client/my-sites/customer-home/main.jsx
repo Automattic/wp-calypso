@@ -52,7 +52,7 @@ import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-
 import StatsBanners from 'my-sites/stats/stats-banners';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { getActiveTheme, getCanonicalTheme } from 'state/themes/selectors';
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import isClassicEditorForced from 'state/selectors/is-classic-editor-forced';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import QueryActiveTheme from 'components/data/query-active-theme';
@@ -528,7 +528,7 @@ class Home extends Component {
 			displayChecklist,
 			isAtomic,
 			isChecklistComplete,
-			isUsingClassicEditor,
+			classicEditorIsForced,
 			needsEmailVerification,
 			translate,
 			checklistMode,
@@ -560,7 +560,7 @@ class Home extends Component {
 						</>
 					) }
 					{ this.renderQuickLinks() }
-          { ! isUsingClassicEditor && <MasteringGutenbergCard /> }
+					{ ! classicEditorIsForced && <MasteringGutenbergCard /> }
 				</div>
 				<div className="customer-home__layout-col customer-home__layout-col-right">
 					{ siteIsUnlaunched && ! needsEmailVerification && (
@@ -579,6 +579,7 @@ class Home extends Component {
 							</Button>
 						</Card>
 					) }
+					{ ! siteIsUnlaunched && <StatsCard /> }
 					{ <FreePhotoLibraryCard /> }
 					{ ! siteIsUnlaunched && isChecklistComplete && (
 						<Card className="customer-home__grow-earn">
@@ -676,7 +677,6 @@ const connectHome = connect(
 			isAtomic,
 			needsEmailVerification: ! isCurrentUserEmailVerified( state ),
 			isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
-			isUsingClassicEditor: 'classic' === getSelectedEditor( state, siteId ),
 			siteHasPaidPlan: isSiteOnPaidPlan( state, siteId ),
 			isNewlyCreatedSite,
 			isEstablishedSite: moment().isAfter( moment( createdAt ).add( 2, 'days' ) ),
@@ -684,6 +684,7 @@ const connectHome = connect(
 			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 			staticHomePageId: getSiteFrontPage( state, siteId ),
 			showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
+			classicEditorIsForced: isClassicEditorForced( state, siteId ),
 			hasCustomDomain: getGSuiteSupportedDomains( domains ).length > 0,
 			user,
 			...themeInfo,
