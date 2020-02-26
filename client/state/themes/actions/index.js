@@ -26,7 +26,6 @@ import {
 	THEME_ACTIVATE,
 	THEME_ACTIVATE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
-	THEME_BACK_PATH_SET,
 	THEME_CLEAR_ACTIVATED,
 	THEME_DELETE,
 	THEME_DELETE_SUCCESS,
@@ -88,15 +87,9 @@ import 'state/data-layer/wpcom/theme-filters';
 
 import 'state/themes/init';
 
-const debug = debugFactory( 'calypso:themes:actions' );
+export { setBackPath } from 'state/themes/actions/set-back-path';
 
-// Set destination for 'back' button on theme sheet
-export function setBackPath( path ) {
-	return {
-		type: THEME_BACK_PATH_SET,
-		path,
-	};
-}
+const debug = debugFactory( 'calypso:themes:actions' );
 
 /**
  * Returns an action object to be used in signalling that a theme object has
