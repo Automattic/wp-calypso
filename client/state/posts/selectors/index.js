@@ -28,30 +28,11 @@ import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from 'state/posts/constan
 import { addQueryArgs } from 'lib/route';
 
 import { getQueryManager } from 'state/posts/selectors/get-query-manager';
+import { getPost } from 'state/posts/selectors/get-post';
 
 import 'state/posts/init';
 
-/**
- * Returns a post object by its global ID.
- *
- * @param   {object} state    Global state tree
- * @param   {string} globalId Post global ID
- * @returns {object}          Post object
- */
-export function getPost( state, globalId ) {
-	const path = state.posts.items[ globalId ];
-	if ( ! path ) {
-		return null;
-	}
-
-	const [ siteId, postId ] = path;
-	const manager = state.posts.queries[ siteId ];
-	if ( ! manager ) {
-		return null;
-	}
-
-	return manager.getItem( postId );
-}
+export { getPost } from 'state/posts/selectors/get-post';
 
 /**
  * Returns a normalized post object by its global ID, or null if the post does
