@@ -116,7 +116,7 @@ const webpackConfig = {
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]',
 	},
 	optimization: {
-		concatenateModules: shouldConcatenateModules,
+		concatenateModules: ! isDevelopment && shouldConcatenateModules,
 		splitChunks: {
 			chunks: 'all',
 			name: !! ( isDevelopment || shouldEmitStats ),
