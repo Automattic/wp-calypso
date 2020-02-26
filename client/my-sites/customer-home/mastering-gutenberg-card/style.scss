@@ -1,24 +1,15 @@
 .mastering-gutenberg-card {
-	border-top: 2px solid var( --studio-blue );
+	display: flex;
 }
 
 .mastering-gutenberg-card__illustration {
-	margin-bottom: 8px;
-	text-align: center;
+	margin: auto;
+	margin-right: 16px;
 }
 
-.mastering-gutenberg-card__links {
-	align-items: center;
-	display: flex;
-	margin-bottom: 4px;
-
-	.gridicon {
-		fill: var( --color-neutral );
-	}
-
-	.mastering-gutenberg-card__item {
-		margin-left: 6px;
-	}
+.mastering-gutenberg-card__link {
+	display: block;
+	margin-bottom: 2px;
 }
 
 .mastering-gutenberg-card__dialog {
@@ -31,5 +22,9 @@
 	&-buttons {
 		margin-top: 12px;
 		text-align: right;
+
+		.is-primary {
+			margin-left: 8px;
+		}
 	}
 }
