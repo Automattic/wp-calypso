@@ -16,9 +16,6 @@ import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';
 import JetpackNewSite from './jetpack-new-site/index';
 import JetpackSignup from './signup';
-import JetpackUserType from './user-type/index';
-import JetpackSiteTopic from './site-topic';
-import JetpackSiteType from './site-type';
 import JetpackSsoForm from './sso';
 import NoDirectAccessError from './no-direct-access-error';
 import OrgCredentialsForm from './remote-credentials';
@@ -265,30 +262,6 @@ export function plansSelection( context, next ) {
 			queryRedirect={ context.query.redirect }
 		/>
 	);
-	next();
-}
-
-export function userType( context, next ) {
-	analytics.pageView.record( 'jetpack/connect/user-type', 'Jetpack Site User Type Category' );
-
-	context.primary = <JetpackUserType />;
-
-	next();
-}
-
-export function siteType( context, next ) {
-	analytics.pageView.record( 'jetpack/connect/site-type', 'Jetpack Site Type Selection' );
-
-	context.primary = <JetpackSiteType />;
-
-	next();
-}
-
-export function siteTopic( context, next ) {
-	analytics.pageView.record( 'jetpack/connect/site-topic', 'Jetpack Site Topic Selection' );
-
-	context.primary = <JetpackSiteTopic />;
-
 	next();
 }
 

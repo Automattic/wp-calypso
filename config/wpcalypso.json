@@ -56,7 +56,6 @@
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/mobile-app-flow": true,
 		"jetpack/connect/remote-install": true,
-		"jetpack/connect/site-questions": false,
 		"jetpack/connect/woocommerce": true,
 		"jetpack/happychat": true,
 		"jitms": true,

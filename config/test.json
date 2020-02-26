@@ -42,7 +42,6 @@
 		"ive/use-external-assignment": false,
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/remote-install": true,
-		"jetpack/connect/site-questions": false,
 		"jetpack/happychat": true,
 		"jitms": true,
 		"legal-updates-banner": true,

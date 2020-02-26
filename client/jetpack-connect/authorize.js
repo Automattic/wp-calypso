@@ -33,13 +33,12 @@ import MainWrapper from './main-wrapper';
 import QueryUserConnection from 'components/data/query-user-connection';
 import Spinner from 'components/spinner';
 import userUtilities from 'lib/user/utils';
-import versionCompare from 'lib/version-compare';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import { decodeEntities } from 'lib/formatting';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
-import { JPC_PATH_PLANS, JPC_PATH_SITE_TYPE, REMOTE_PATH_AUTH } from './constants';
+import { JPC_PATH_PLANS, REMOTE_PATH_AUTH } from './constants';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { urlToSlug } from 'lib/url';
@@ -591,8 +590,8 @@ export class JetpackAuthorize extends Component {
 	}
 
 	getRedirectionTarget() {
-		const { clientId, homeUrl, jpVersion, redirectAfterAuth } = this.props.authQuery;
-		const { canManageOptions, isAtomic, partnerSlug } = this.props;
+		const { clientId, homeUrl, redirectAfterAuth } = this.props.authQuery;
+		const { partnerSlug } = this.props;
 
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
 		if (
@@ -602,18 +601,9 @@ export class JetpackAuthorize extends Component {
 			return `/start/pressable-nux?blogid=${ clientId }`;
 		}
 
-		const isJetpackVersionSupported = versionCompare( jpVersion, '7.1-alpha', '>=' );
-		const nextRoute =
-			config.isEnabled( 'jetpack/connect/site-questions' ) &&
-			isJetpackVersionSupported &&
-			canManageOptions &&
-			! isAtomic
-				? JPC_PATH_SITE_TYPE
-				: JPC_PATH_PLANS;
-
 		return addQueryArgs(
 			{ redirect: redirectAfterAuth },
-			`${ nextRoute }/${ urlToSlug( homeUrl ) }`
+			`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
 		);
 	}
 
