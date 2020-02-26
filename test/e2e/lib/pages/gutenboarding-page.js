@@ -24,6 +24,9 @@ export default class GutenboardingPage extends AsyncBaseContainer {
 	}
 
 	async waitForBlock() {
-		return driverHelper.isElementPresent( this.driver, by.css( '.gutenboarding-block-list' ) );
+		return driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			by.css( '.gutenboarding-block-list' )
+		);
 	}
 }
