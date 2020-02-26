@@ -59,7 +59,7 @@ class PodcastingLink extends Component {
 						<PodcastingSupportLink />
 					</div>
 					<Button className="podcasting-details__link-button" href={ detailsLink }>
-						{ translate( 'Set Up' ) }
+						{ translate( 'Set up' ) }
 					</Button>
 				</div>
 			);

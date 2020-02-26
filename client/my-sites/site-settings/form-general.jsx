@@ -149,7 +149,7 @@ export class SiteSettingsFormGeneral extends Component {
 			customAddress = (
 				<Button href={ '/domains/add/' + siteSlug } onClick={ this.trackUpgradeClick }>
 					<Gridicon icon="plus" />{ ' ' }
-					{ translate( 'Add a Custom Address', { context: 'Site address, domain' } ) }
+					{ translate( 'Add custom address', { context: 'Site address, domain' } ) }
 				</Button>
 			);
 
@@ -309,7 +309,6 @@ export class SiteSettingsFormGeneral extends Component {
 					</FormLabel>
 				) }
 
-				
 				<FormSettingExplanation isIndented>
 					{ translate( 'Your site is visible to everyone.' ) }
 				</FormSettingExplanation>
