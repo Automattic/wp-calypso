@@ -336,6 +336,14 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	}
 }
 
+.template-selector-preview__empty-state {
+	position: absolute;
+	z-index: 2;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
 .page-template-modal__loading {
 	position: absolute;
 	top: 50%;
