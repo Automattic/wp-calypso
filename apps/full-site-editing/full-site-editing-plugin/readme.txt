@@ -1,5 +1,5 @@
 === Full Site Editing ===
-Contributors: alexislloyd, allancole, automattic, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, Joen, kwight, marekhrabe, mattwiebe, mmtr86, mppfeiffer, nrqsnchz, obenland, okenobi, vindl, noahtallen, owolski, nosolosw
+Contributors: alexislloyd, allancole, automattic, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, Joen, kwight, marekhrabe, mattwiebe, mkaz, mmtr86, mppfeiffer, nrqsnchz, obenland, okenobi, vindl, noahtallen, owolski, nosolosw
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.3
