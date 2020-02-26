@@ -1,4 +1,3 @@
-
 /**
  * External dependencies
  */
@@ -21,9 +20,7 @@ import {
 import { scan, scanHistory } from './sections/scan/controller';
 import { settings } from './sections/settings/controller';
 
-
 export default function() {
-
 	page( '/', siteSelection, dashboard, makeLayout, clientRender );
 
 	page( '/backups', siteSelection, backupDetail, makeLayout, clientRender );
@@ -84,6 +81,4 @@ export default function() {
 
 	page( '/settings', siteSelection, sites, navigation, makeLayout, clientRender );
 	page( '/settings/:site', siteSelection, navigation, settings, makeLayout, clientRender );
-
-
 }
