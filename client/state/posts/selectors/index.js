@@ -22,7 +22,7 @@ import { addQueryArgs } from 'lib/route';
 import { getSitePosts } from 'state/posts/selectors/get-site-posts';
 import { getSitePost } from 'state/posts/selectors/get-site-post';
 import { getPostEdits } from 'state/posts/selectors/get-post-edits';
-import { getEditedPost } from 'state/posts/selectors/get-edited-post';
+import { getEditedPostValue } from 'state/posts/selectors/get-edited-post-value';
 
 import 'state/posts/init';
 
@@ -40,19 +40,7 @@ export { isRequestingPostsForQueryIgnoringPage } from 'state/posts/selectors/is-
 export { isRequestingSitePost } from 'state/posts/selectors/is-requesting-site-post';
 export { getPostEdits } from 'state/posts/selectors/get-post-edits';
 export { getEditedPost } from 'state/posts/selectors/get-edited-post';
-
-/**
- * Returns the assigned value for the edited post by field key.
- *
- * @param   {object} state  Global state tree
- * @param   {number} siteId Site ID
- * @param   {number} postId Post ID
- * @param   {string} field  Field value to retrieve
- * @returns {*}             Field value
- */
-export function getEditedPostValue( state, siteId, postId, field ) {
-	return get( getEditedPost( state, siteId, postId ), field );
-}
+export { getEditedPostValue } from 'state/posts/selectors/get-edited-post-value';
 
 /**
  * Returns true if the edited post is password protected.
