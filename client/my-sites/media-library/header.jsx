@@ -80,11 +80,11 @@ class MediaLibraryHeader extends React.Component {
 					site={ site }
 					filter={ filter }
 					onAddMedia={ onAddMedia }
-					className="button is-compact"
+					className="media-library__upload-button button is-compact"
 				>
 					<Gridicon icon="add-image" />
-					<span className="is-desktop">
-						{ this.props.translate( 'Add New', { context: 'Media upload' } ) }
+					<span className="media-library__upload-button-label">
+						{ this.props.translate( 'Add new', { context: 'Media upload' } ) }
 					</span>
 				</UploadButton>
 				<Button
@@ -95,7 +95,7 @@ class MediaLibraryHeader extends React.Component {
 					data-tip-target="media-library-upload-more"
 				>
 					<ScreenReaderText>{ this.props.translate( 'More Options' ) }</ScreenReaderText>
-					<Gridicon icon="chevron-down" size={ 20 } />
+					<Gridicon icon="chevron-down" size={ 18 } />
 					<PopoverMenu
 						context={ this.state.moreOptionsContext }
 						isVisible={ this.state.isMoreOptionsVisible }
