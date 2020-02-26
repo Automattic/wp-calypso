@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import wpcomRequest, { requestAllBlogsAccess, WpcomClientCredentials } from 'wpcom-proxy-request';
+import wpcomRequest, { requestAllBlogsAccess } from 'wpcom-proxy-request';
 
 /**
  * Internal dependencies
  */
 import { CreateSiteAction } from './types';
+import { WpcomClientCredentials } from '../shared-types';
 
 export default function createControls( clientCreds: WpcomClientCredentials ) {
 	requestAllBlogsAccess().catch( () => {

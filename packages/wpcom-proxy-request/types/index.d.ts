@@ -6,11 +6,6 @@
  * for inspiration, e.g. `@automattic/data-stores`.)
  */
 
-export interface WpcomClientCredentials {
-	client_id: string;
-	client_secret: string;
-}
-
 export interface WpcomRequestParams {
 	path?: string;
 	method?: string;
