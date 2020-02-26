@@ -5,7 +5,7 @@
  * @returns {object}         Webpack loader object
  */
 module.exports.loader = options => ( {
-	test: /\.(?:gif|jpg|jpeg|png|svg)$/i,
+	test: /\.(?:gif|jpg|jpeg|png|svg|mp4)$/i,
 	use: [
 		{
 			loader: require.resolve( 'file-loader' ),
