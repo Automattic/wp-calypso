@@ -22,7 +22,7 @@ import { createBlock } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import BlockFramePreview from './template-preview-frame';
+import BlockFramePreview from './block-iframe-preview';
 
 const THRESHOLD_RESIZE = 300;
 
