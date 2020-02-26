@@ -17,7 +17,7 @@ type WPCOMCallback = (
 
 export interface User extends EventEmitter {
 	initialize: () => Promise< void >;
-	clearStoreIfChanged: () => void;
+	clearStoreIfChanged: ( userId: number ) => void;
 	get: () => UserData;
 	fetch: () => Promise< void >;
 	handleFetchFailure: ( error: Error ) => void;
