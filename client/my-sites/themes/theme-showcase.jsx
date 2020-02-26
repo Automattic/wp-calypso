@@ -300,7 +300,7 @@ class ThemeShowcase extends React.Component {
 							href={ siteSlug ? `/themes/upload/${ siteSlug }` : '/themes/upload' }
 						>
 							<Gridicon icon="cloud-upload" />
-							{ translate( 'Install Theme' ) }
+							{ translate( 'Install theme' ) }
 						</Button>
 					) }
 					{ ! this.props.loggedOutComponent && ! isQueried && (
@@ -348,7 +348,7 @@ class ThemeShowcase extends React.Component {
 									<hr />
 								) : (
 									<Button onClick={ this.toggleShowcase } data-e2e-value="open-themes-button">
-										{ translate( 'Show All Themes' ) }
+										{ translate( 'Show all themes' ) }
 									</Button>
 								) }
 							</div>
