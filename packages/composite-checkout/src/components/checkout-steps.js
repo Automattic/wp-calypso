@@ -292,7 +292,7 @@ export function CheckoutStepBody( {
 				/>
 				<StepContentUI isVisible={ isStepActive } className="checkout-steps__step-content">
 					{ activeStepContent }
-					{ nextStepNumber > 0 && goToNextStep && (
+					{ nextStepNumber > 0 && goToNextStep && isStepActive && (
 						<CheckoutNextStepButton
 							onClick={ goToNextStep }
 							value={
