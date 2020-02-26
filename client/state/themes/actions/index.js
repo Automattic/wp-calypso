@@ -36,12 +36,10 @@ import {
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import {
 	getTheme,
-	isDownloadableFromWpcom,
 	themeHasAutoLoadingHomepage,
 	hasAutoLoadingHomepageModalAccepted,
 } from 'state/themes/selectors';
 import { getSiteTitle, isJetpackSite } from 'state/sites/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import i18n from 'i18n-calypso';
 import accept from 'lib/accept';
 
@@ -54,6 +52,7 @@ import { activateTheme } from 'state/themes/actions/activate-theme';
 import { installTheme } from 'state/themes/actions/install-theme';
 import { tryAndCustomizeTheme } from 'state/themes/actions/try-and-customize-theme';
 import { installAndTryAndCustomizeTheme } from 'state/themes/actions/install-and-try-and-customize-theme';
+import { suffixThemeIdForInstall } from 'state/themes/actions/suffix-theme-id-for-install';
 
 export { setBackPath } from 'state/themes/actions/set-back-path';
 export { receiveThemes } from 'state/themes/actions/receive-themes';
@@ -479,27 +478,6 @@ export function requestThemeFilters() {
 	return {
 		type: THEME_FILTERS_REQUEST,
 	};
-}
-
-/**
- * Install of any theme hosted as a zip on wpcom must
- * be suffixed with -wpcom. Themes on AT sites are not
- * installed via downloaded zip.
- *
- * @param {object} state Global state tree
- * @param {number} siteId Site ID
- * @param {string} themeId Theme ID
- * @returns {string} the theme id to use when installing the theme
- */
-function suffixThemeIdForInstall( state, siteId, themeId ) {
-	// AT sites do not use the -wpcom suffix
-	if ( isSiteAutomatedTransfer( state, siteId ) ) {
-		return themeId;
-	}
-	if ( ! isDownloadableFromWpcom( state, themeId ) ) {
-		return themeId;
-	}
-	return themeId + '-wpcom';
 }
 
 /**
