@@ -23,7 +23,6 @@ import { useLineItems, useTotal } from './lib/line-items';
 import {
 	createRegistry,
 	useDispatch,
-	usePaymentData,
 	useRegisterStore,
 	useRegistry,
 	useSelect,
@@ -77,7 +76,6 @@ export {
 	useIsStepComplete,
 	useLineItems,
 	useMessages,
-	usePaymentData,
 	usePaymentMethod,
 	usePaymentMethodId,
 	useRegisterStore,
