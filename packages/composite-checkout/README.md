@@ -95,7 +95,7 @@ While the `Checkout` component takes care of most everything, there are many sit
 
 ### Checkout
 
-The main component in this package. It has the following props.
+The main wrapper component for the checkout form. It has the following props.
 
 - `className?: string`. The className for the component.
 
@@ -211,42 +211,34 @@ Creates a [Payment Method](#payment-methods) object for credits. Requires passin
 Creates a [Payment Method](#payment-methods) object. Requires passing an object with the following properties:
 
 - `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
+
+The object returned by this function **must have** the following property added to it:
+
 - `submitTransaction: async object => string`. An async function that sends the request to the endpoint to get the redirect url.
-- `getSuccessUrl: () => string`. A function that returns a URL to return to after a successful payment redirect.
-- `getCancelUrl: () => string`. A function that returns a URL to return to after a unsuccessful payment redirect.
 
 ### createStripeMethod
 
 Creates a [Payment Method](#payment-methods) object. Requires passing an object with the following properties:
 
 - `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
-- `fetchStripeConfiguration: async ?object => object`. An async function that fetches the stripe configuration (we use Stripe for Apple Pay).
 - `submitTransaction: async object => object`. An async function that sends the request to the endpoint.
 - `getCountry: () => string`. A function that returns the country to use for the transaction.
 - `getPostalCode: () => string`. A function that returns the postal code for the transaction.
 - `getSubdivisionCode: () => string`. A function that returns the subdivision code for the transaction.
+- `stripe: object`. The configured stripe object.
+- `stripeConfiguration: object`. The stripe configuration object.
 
 ### getDefaultOrderReviewStep
 
-Returns a [Step object](#steps) which displays an order review. Although it can be modified before passing it to [Checkout](#checkout), by default it has no way to modify the purchase (eg: you cannot delete items). Typically this is the last step of a form. Can be overridden completely to create a custom review step.
-
-If not used as the last step, the two following properties should be customized if you want to provide translations:
-
-- getEditButtonAriaLabel
-- getNextStepButtonAriaLabel
+Returns a step object whose properties can be added to a [CheckoutStep](CheckoutStep) (and customized) to display an itemized order review.
 
 ### getDefaultOrderSummaryStep
 
-Returns a [Step object](#steps) which displays an order summary. Although it can be modified before passing it to [Checkout](#checkout), by default it has no step number and cannot be made active. Typically used as the first step.
+Returns a step object whose properties can be added to a [CheckoutStep](CheckoutStep) (and customized) to display a brief order summary.
 
 ### getDefaultPaymentMethodStep
 
-Returns a [Step object](#steps) which displays a form to choose a [Paymet Method](#payment-methods). It can be modified before passing it to [Checkout](#checkout). The payment methods displayed are those provided to the [CheckoutProvider](#checkoutprovider).
-
-The two following properties should be customized if you want to provide translations:
-
-- getEditButtonAriaLabel
-- getNextStepButtonAriaLabel
+Returns a step object whose properties can be added to a [CheckoutStep](CheckoutStep) (and customized) to display a way to select a payment method. The payment methods displayed are those provided to the [CheckoutProvider](#checkoutprovider).
 
 ### formatValueForCurrency
 
@@ -283,11 +275,11 @@ Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### useIsStepActive
 
-A React Hook that will return true if the current step is the currently active [Step](#steps). Only works within a step.
+A React Hook that will return true if the current step is the currently active step. Only works within a step.
 
 ### useIsStepComplete
 
-A React Hook that will return true if the current [Step](#steps) is complete as defined by the `isCompleteCallback` of that step. Only works within a step.
+A React Hook that will return true if the current step is complete as defined by the `isCompleteCallback` of that step. Only works within a step.
 
 ### useLineItems
 
@@ -296,18 +288,6 @@ A React Hook that will return a two element array where the first element is the
 ### useMessages
 
 A React Hook that will return an object containing the `showErrorMessage`, `showInfoMessage`, and `showSuccessMessage` callbacks as passed to `CheckoutProvider`. Only works within [CheckoutProvider](#CheckoutProvider).
-
-### usePaymentData
-
-The [Checkout](#Checkout) component registers a [Data store](#data-stores) called 'checkout'. Rather than creating a custom store, any component can use this default store to keep arbitrary data with this React Hook. It returns a two element array, where the first element is the current payment data object (the state of the 'checkout' store) and the second argument is a function which will update the payment data object. The update function takes two arguments: a string which will be used as the property name for the modified data, and arbitrary data to be stored in that property.
-
-For example,
-
-```js
-const [ paymentData, updatePaymentData ] = usePaymentData();
-const onClick = () => updatePaymentData( 'color', 'green' );
-// On next render, paymentData.color === 'green'
-```
 
 ### usePaymentMethod
 
@@ -349,7 +329,7 @@ The primary properties used in a line item by default are `id` (which must be un
 
 ### Can I add custom properties to line items?
 
-To maintain the integrity of the line item schema, adding custom fields is discouraged, but allowed. If you need specific custom data as part of a line item so that it can be used in another part of the form, it's recommended to pass the line item object through a helper function to collect the extra data rather than serializing it into the line item itself. This will make that data collection more testable. However, if the data collection process is expensive or slow, and caching isn't an option, it may make sense to preload the data into the line items.
+If you need specific custom data as part of a line item so that it can be used in another part of the form, you can add new properties to the line item objects.
 
 ## Development
 
