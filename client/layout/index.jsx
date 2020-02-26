@@ -127,7 +127,7 @@ class Layout extends Component {
 		const optionalBodyProps = () => {
 			const optionalProps = {};
 
-			if ( this.props.isFrankenflow ) {
+			if ( this.props.isFrankenflow || this.props.isCheckoutFromGutenboarding ) {
 				optionalProps.bodyClass = 'is-frankenflow';
 			}
 
@@ -255,5 +255,6 @@ export default connect( state => {
 		See https://github.com/Automattic/wp-calypso/pull/31277 for more details. */
 		shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 		isFrankenflow,
+		isCheckoutFromGutenboarding,
 	};
 } )( Layout );

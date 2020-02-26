@@ -1195,9 +1195,25 @@
   }
 }
 
-body.is-section-checkout .navigation-link.button.back {
-	position: absolute;
-	top: 6px;
-	left: 11px;
-	padding: 0;
+.is-section-checkout.is-frankenflow {
+	.layout__content {
+		padding-top: 48px;
+	}
+	.navigation-link.button.back {
+		position: absolute;
+		top: 6px;
+		left: 11px;
+		padding: 0;
+	}
+	.checkout__site-created--gutenboarding {
+		display: flex;
+		flex-direction: column;
+		text-align: center;
+		margin-bottom: 60px;
+
+		.checkout__site-created-image {
+			height: 50px;
+			margin-bottom: 16px;
+		}
+	}
 }
