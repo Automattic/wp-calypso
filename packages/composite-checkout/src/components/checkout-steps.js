@@ -23,6 +23,7 @@ import {
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
 	usePaymentMethod,
+	useEvents,
 } from '../public-api';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
@@ -195,9 +196,19 @@ export function CheckoutStep( {
 	const setThisStepCompleteStatus = newStatus =>
 		setStepCompleteStatus( { ...stepCompleteStatus, [ stepNumber ]: newStatus } );
 	const goToThisStep = () => setActiveStepNumber( stepNumber );
+	const onEvent = useEvents();
+	const activePaymentMethod = usePaymentMethod();
 	const finishIsCompleteCallback = completeResult => {
 		setThisStepCompleteStatus( !! completeResult );
 		if ( completeResult ) {
+			onEvent( {
+				type: 'STEP_NUMBER_CHANGED',
+				payload: {
+					stepNumber: nextStepNumber,
+					previousStepNumber: stepNumber,
+					paymentMethodId: activePaymentMethod?.id ?? '',
+				},
+			} );
 			setActiveStepNumber( nextStepNumber );
 		}
 		setFormReady();
