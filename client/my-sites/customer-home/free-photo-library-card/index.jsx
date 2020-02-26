@@ -20,6 +20,7 @@ import './style.scss';
 /**
  * Image dependencies
  */
+import freePhotoLibraryDemonstration from 'assets/images/customer-home/free-photo-library-demonstration.mp4';
 import freePhotoLibraryThumbnail from 'assets/images/customer-home/free-photo-library-thumbnail.png';
 import freePhotoLibraryVideoPrompt from 'assets/images/customer-home/free-photo-library-video-prompt.png';
 
@@ -40,7 +41,7 @@ const FreePhotoLibraryCard = () => {
 					poster={ freePhotoLibraryThumbnail }
 				>
 					<source
-						src="https://wpcom.files.wordpress.com/2020/02/free-photo-library-demonstration.mp4"
+						src={ freePhotoLibraryDemonstration }
 						type="video/mp4"
 					/>
 				</video>
