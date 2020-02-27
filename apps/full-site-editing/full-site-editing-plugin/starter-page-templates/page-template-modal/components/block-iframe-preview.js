@@ -25,49 +25,53 @@ import { Disabled } from '@wordpress/components';
 
 const THRESHOLD_RESIZE = 300;
 
-/**
+/*
  * This function will populate the styles from the current document
- * to the given `<head />` and `<boby />` arguments.
+ * to the given iFrame head and body DOM references.
  *
- * @param {Element} iFrameHead iframe <head /> element.
- * @param {Element} iFrameBody iframe <body /> element.
+ * @param {object} els iFrame elements to populate: <head /> and <body />
  */
-const loadStyles = ( iFrameHead, iFrameBody ) => {
-	each(
-		filter(
-			document.querySelectorAll( 'head link' ),
-			( { rel, href } ) => rel && rel === 'stylesheet' && href.match( /wp-content/ ) // only move styles from wp-content
-		),
-		( { href } ) => {
-			const iFrameLink = document.createElement( 'link' );
-			iFrameLink.rel = 'stylesheet';
-			iFrameLink.type = 'text/css';
-			iFrameLink.href = href;
-			iFrameHead.appendChild( iFrameLink );
-		}
+const loadStyles = iFrameDomRefereces => {
+	each( Object.keys( iFrameDomRefereces ), domReference =>
+		each(
+			filter( window.document[ domReference ].children, ( { localName } ) =>
+				[ 'link', 'style' ].includes( localName )
+			),
+			( { localName, attributes, innerHTML } ) => {
+				const node = document.createElement( localName );
+				each( attributes, ( { name, value } ) => ( node[ name ] = value ) );
+
+				if ( innerHTML ) {
+					node.innerHTML = innerHTML;
+				}
+
+				iFrameDomRefereces[ domReference ].appendChild( node );
+			}
+		)
 	);
-
-	each( filter( document.querySelectorAll( 'head style' ) ), ( { innerHTML } ) => {
-		const iFrameHeadStyle = document.createElement( 'style' );
-		iFrameHeadStyle.innerHTML = innerHTML;
-		iFrameHead.appendChild( iFrameHeadStyle );
-	} );
-
-	each( filter( document.querySelectorAll( 'body style' ) ), ( { innerHTML } ) => {
-		const iFrameStyle = document.createElement( 'style' );
-		iFrameStyle.innerHTML = innerHTML;
-		iFrameBody.appendChild( iFrameStyle );
-	} );
 };
 
+/**
+ * Performs a blocks preview using an iFrame.
+ *
+ * @param {string} className
+ * @param {string} bodyClassName
+ * @param {number} viewportWidth
+ * @param {Array}  blocks
+ * @param {object} settings
+ * @return {*}
+ * @constructor
+ */
 const BlockFramePreview = ( {
-	                            className = 'block-iframe-preview',
-	                            bodyClassName = 'block-iframe-preview-body',
-	                            viewportWidth,
-	                            blocks,
-	                            settings,
-                            } ) => {
+	className = 'block-iframe-preview',
+	bodyClassName = 'block-iframe-preview-body',
+	viewportWidth,
+	blocks,
+	settings,
+} ) => {
 	const iFrameRef = useRef();
+
+	// Set the initial scale factor.
 	const [ style, setStyle ] = useState( {
 		transform: `scale( 1 )`,
 	} );
@@ -77,26 +81,32 @@ const BlockFramePreview = ( {
 	const [ recomputeBlockListKey, triggerRecomputeBlockList ] = useReducer( state => state + 1, 0 );
 	useLayoutEffect( triggerRecomputeBlockList, [ blocks ] );
 
+	// Set iFrame DOM reference.
 	const [ iFrameBody, setIFrameBody ] = useState();
 
+	// Populate iFrame styles.
 	useEffect( () => {
-		const iFrameHead = get( iFrameRef, [ 'current', 'contentDocument', 'head' ] );
-		const iFrameBody = get( iFrameRef, [ 'current', 'contentDocument', 'body' ] );
+		const head = get( iFrameRef, [ 'current', 'contentDocument', 'head' ] );
+		const body = get( iFrameRef, [ 'current', 'contentDocument', 'body' ] );
 
-		// Pick up iFrame <head /> and <body />
-		setIFrameBody( iFrameBody );
+		setIFrameBody( body );
 
-		iFrameBody.className = bodyClassName;
-		loadStyles( iFrameHead, iFrameBody );
+		body.className = `${ bodyClassName } editor-styles-wrapper`;
+		loadStyles( { head, body } );
 		reScale();
 	}, [] );
 
+	// Scroll top the preview once it's rendered.
 	useEffect( () => {
 		if ( iFrameBody ) {
 			iFrameBody.scrollTop = 0;
 		}
 	}, [ blocks ] );
 
+	/**
+	 * This function re scales the viewport depending on
+	 * the wrapper and the iframe width.
+	 */
 	const reScale = useCallback( () => {
 		const parentNode = get( iFrameRef, [ 'current', 'parentNode' ] );
 		if ( ! parentNode ) {
@@ -115,6 +125,7 @@ const BlockFramePreview = ( {
 		} );
 	}, [] );
 
+	// Handling windows resize event.
 	useEffect( () => {
 		const refreshPreview = debounce( reScale, THRESHOLD_RESIZE );
 		window.addEventListener( 'resize', refreshPreview );
@@ -136,22 +147,24 @@ const BlockFramePreview = ( {
 			style={ style }
 		>
 			{ iFrameBody &&
-			createPortal(
-				<div className="block-editor">
-					<div className="edit-post-visual-editor">
-						<div className="editor-styles-wrapper">
-							<div className="editor-writing-flow">
-								<BlockEditorProvider value={ renderedBlocks } settings={ settings }>
-									<Disabled key={ recomputeBlockListKey }>
-										<BlockList />
-									</Disabled>
-								</BlockEditorProvider>
+				createPortal(
+					<div className="block-editor">
+						<div className="edit-post-visual-editor">
+							<div className="editor-styles-wrapper">
+								<div className="editor-writing-flow">
+									{ blocks && blocks.length && (
+										<BlockEditorProvider value={ renderedBlocks } settings={ settings }>
+											<Disabled key={ recomputeBlockListKey }>
+												<BlockList />
+											</Disabled>
+										</BlockEditorProvider>
+									) }
+								</div>
 							</div>
 						</div>
-					</div>
-				</div>,
-				iFrameBody
-			) }
+					</div>,
+					iFrameBody
+				) }
 		</iframe>
 	);
 };
