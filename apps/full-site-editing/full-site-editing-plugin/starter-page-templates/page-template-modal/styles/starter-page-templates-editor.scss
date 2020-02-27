@@ -417,17 +417,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		margin: 0;
 	}
 
-	 // Adjust template block title.
-	.wp-block:first-of-type {
-		margin-top: 0;
-		padding-top: 10px;
-	}
-
-	.wp-block:last-of-type {
-		padding-bottom: 10px;
-		margin-bottom: 0;
-	}
-
 	// Hide inserter/appender.
 	.block-list-appender,
 	.block-editor-inserter {
