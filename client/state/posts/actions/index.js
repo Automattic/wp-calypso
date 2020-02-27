@@ -76,25 +76,7 @@ export { requestSitePosts } from 'state/posts/actions/request-site-posts';
 export { requestAllSitesPosts } from 'state/posts/actions/request-all-sites-posts';
 export { requestSitePost } from 'state/posts/actions/request-site-post';
 export { editPost } from 'state/posts/actions/edit-post';
-
-export function updatePostMetadata( siteId, postId = null, metaKey, metaValue ) {
-	if ( typeof metaKey === 'string' ) {
-		metaKey = { [ metaKey ]: metaValue };
-	}
-
-	return {
-		type: POST_EDIT,
-		siteId,
-		postId,
-		post: {
-			metadata: map( metaKey, ( value, key ) => ( {
-				key,
-				value,
-				operation: 'update',
-			} ) ),
-		},
-	};
-}
+export { updatePostMetadata } from 'state/posts/actions/update-post-metadata';
 
 export function deletePostMetadata( siteId, postId = null, metaKeys ) {
 	if ( ! Array.isArray( metaKeys ) ) {
