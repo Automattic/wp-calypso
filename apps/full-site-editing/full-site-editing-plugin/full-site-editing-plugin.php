@@ -44,39 +44,8 @@ require_once __DIR__ . '/dotcom-fse/helpers.php';
  * Load Core Site Editor.
  */
 function load_core_site_editor() {
-	$options = get_option( 'gutenberg-experiments' );
-
-	// Initialize options array if needed.
-	if ( ! $options ) {
-		$options = array();
-	}
-
-	// Check blog sticker for access to Site Editor.
-	if ( ! has_blog_sticker( 'core_site_editor_enabled' ) ) {
-
-		// Check if experiment is enabled: disable if needed.
-		if ( gutenberg_is_experiment_enabled( 'gutenberg-full-site-editing' ) ) {
-			$options['gutenberg-full-site-editing']      = '0';
-			$options['gutenberg-full-site-editing-demo'] = '0';
-			update_option( 'gutenberg-experiments', $options );
-		}
-		return;
-	}
-	
-	// Check if experiment is disabled: enable if needed.
-	if ( ! gutenberg_is_experiment_enabled( 'gutenberg-full-site-editing' ) ) {
-		$options['gutenberg-full-site-editing']      = '1';
-		$options['gutenberg-full-site-editing-demo'] = '1';
-		update_option( 'gutenberg-experiments', $options );
-	}
-	add_menu_page(
-		__( 'Site Editor (beta)', 'gutenberg' ),
-		__( 'Site Editor (beta)', 'gutenberg' ),
-		'edit_theme_options',
-		'gutenberg-edit-site',
-		'gutenberg_edit_site_page',
-		'dashicons-edit'
-	);
+	require_once __DIR__ . '/site-editor-experiment/index.php';
+	conditionally_enable_site_editor();
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_core_site_editor' );
 
