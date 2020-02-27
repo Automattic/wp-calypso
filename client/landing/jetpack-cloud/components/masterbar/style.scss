@@ -1,4 +1,8 @@
 // Masterbar - home link
+.masterbar {
+	justify-content: space-between;
+}
+
 .masterbar__item-home {
 	width: $sidebar-width-max;
 	padding: 0;
