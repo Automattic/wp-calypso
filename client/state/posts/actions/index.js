@@ -74,20 +74,10 @@ import { getPreference } from 'state/preferences/selectors';
 import 'state/posts/init';
 
 import { receivePosts } from 'state/posts/actions/receive-posts';
+import { receivePost } from 'state/posts/actions/receive-post';
 
 export { receivePosts } from 'state/posts/actions/receive-posts';
-
-/**
- * Returns an action object to be used in signalling that a post object has
- * been received.
- *
- * @param  {object}  post       Post received
- * @param  {?string} saveMarker Save marker in the edits log
- * @returns {object}             Action object
- */
-export function receivePost( post, saveMarker ) {
-	return receivePosts( [ post ], saveMarker );
-}
+export { receivePost } from 'state/posts/actions/receive-post';
 
 /**
  * Triggers a network request to fetch posts for the specified site and query.
