@@ -122,7 +122,7 @@ const BlockFramePreview = ( {
 		reScale();
 	}, [] );
 
-	// Scroll top the preview once it's rendered.
+	// Scroll the preview to the top when the blocks change.
 	useEffect( () => {
 		const body = get( framePreviewRef, [
 			'current',
