@@ -7,7 +7,7 @@ import { filter, get } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import getThemeFilters from 'state/selectors/get-theme-filters';
+import { getThemeFilters } from 'state/themes/selectors/get-theme-filters';
 
 import 'state/themes/init';
 
@@ -19,7 +19,7 @@ import 'state/themes/init';
  * @param  {string}  term   The term to check for ambiguity
  * @returns {boolean}           True if term is ambiguous
  */
-export default createSelector(
+export const isAmbiguousThemeFilterTerm = createSelector(
 	( state, term ) => {
 		const filters = getThemeFilters( state );
 

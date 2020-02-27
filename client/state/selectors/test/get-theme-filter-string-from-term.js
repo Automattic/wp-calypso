@@ -1,25 +1,20 @@
 /**
- * External dependencies
- */
-import { assert } from 'chai';
-
-/**
  * Internal dependencies
  */
-import getThemeFilterStringFromTerm from 'state/selectors/get-theme-filter-string-from-term';
+import { getThemeFilterStringFromTerm } from 'state/themes/selectors';
 import { state } from './fixtures/theme-filters';
 
 describe( 'getThemeFilterStringFromTerm', () => {
 	test( 'should return taxonomy:term filter given the term', () => {
-		assert.equal( getThemeFilterStringFromTerm( state, 'artwork' ), 'subject:artwork' );
-		assert.equal( getThemeFilterStringFromTerm( state, 'bright' ), 'style:bright' );
+		expect( getThemeFilterStringFromTerm( state, 'artwork' ) ).toBe( 'subject:artwork' );
+		expect( getThemeFilterStringFromTerm( state, 'bright' ) ).toBe( 'style:bright' );
 	} );
 
 	test( 'should return empty string given an invalid term', () => {
-		assert.equal( getThemeFilterStringFromTerm( state, '' ), '' );
-		assert.equal( getThemeFilterStringFromTerm( state, ' ' ), '' );
-		assert.equal( getThemeFilterStringFromTerm( state, ' artwork' ), '' );
-		assert.equal( getThemeFilterStringFromTerm( state, 'artwork ' ), '' );
-		assert.equal( getThemeFilterStringFromTerm( state, 'aartwork' ), '' );
+		expect( getThemeFilterStringFromTerm( state, '' ) ).toBe( '' );
+		expect( getThemeFilterStringFromTerm( state, ' ' ) ).toBe( '' );
+		expect( getThemeFilterStringFromTerm( state, ' artwork' ) ).toBe( '' );
+		expect( getThemeFilterStringFromTerm( state, 'artwork ' ) ).toBe( '' );
+		expect( getThemeFilterStringFromTerm( state, 'aartwork' ) ).toBe( '' );
 	} );
 } );

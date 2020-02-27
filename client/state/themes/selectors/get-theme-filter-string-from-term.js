@@ -6,7 +6,7 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import getThemeFilterTermsTable from 'state/selectors/get-theme-filter-terms-table';
+import { getThemeFilterTermsTable } from 'state/themes/selectors/get-theme-filter-terms-table';
 
 import 'state/themes/init';
 
@@ -21,7 +21,7 @@ import 'state/themes/init';
  * @param {string} term The term slug
  * @returns {string} Complete taxonomy:term filter, or empty string if term is not valid
  */
-export default function getThemeFilterStringFromTerm( state, term ) {
+export function getThemeFilterStringFromTerm( state, term ) {
 	const terms = getThemeFilterTermsTable( state );
 	const taxonomy = terms[ term ];
 

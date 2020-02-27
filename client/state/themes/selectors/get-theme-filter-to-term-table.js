@@ -7,8 +7,8 @@ import { forIn, keys, mapValues } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import getThemeFilters from 'state/selectors/get-theme-filters';
-import getThemeFilterTermFromString from 'state/selectors/get-theme-filter-term-from-string';
+import { getThemeFilters } from 'state/themes/selectors/get-theme-filters';
+import { getThemeFilterTermFromString } from 'state/themes/selectors/get-theme-filter-term-from-string';
 
 import 'state/themes/init';
 
@@ -19,7 +19,7 @@ import 'state/themes/init';
  * @param {object} state Global state tree
  * @returns {object} table of 'taxonomy:term' to 'term'
  */
-export default createSelector(
+export const getThemeFilterToTermTable = createSelector(
 	state => {
 		const result = {};
 		const taxonomies = mapValues( getThemeFilters( state ), keys );

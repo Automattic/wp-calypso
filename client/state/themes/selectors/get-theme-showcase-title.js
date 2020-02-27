@@ -6,12 +6,12 @@ import { get, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import findThemeFilterTerm from 'state/selectors/find-theme-filter-term';
-import getThemeFilterTerm from 'state/selectors/get-theme-filter-term';
+import { findThemeFilterTerm } from 'state/themes/selectors/find-theme-filter-term';
+import { getThemeFilterTerm } from 'state/themes/selectors/get-theme-filter-term';
 
 import 'state/themes/init';
 
-export default function getThemeShowcaseTitle( state, { filter, tier, vertical } = {} ) {
+export function getThemeShowcaseTitle( state, { filter, tier, vertical } = {} ) {
 	if ( vertical ) {
 		const name = get( getThemeFilterTerm( state, 'subject', vertical ), 'name' );
 		if ( name ) {

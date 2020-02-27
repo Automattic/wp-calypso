@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import getThemeFilters from 'state/selectors/get-theme-filters';
+import { getThemeFilters } from 'state/themes/selectors/get-theme-filters';
 
 import 'state/themes/init';
 
@@ -17,6 +17,6 @@ import 'state/themes/init';
  * @param  {string}  filter The filter slug
  * @returns {object}         A list of filter terms, keyed by term slug
  */
-export default function getThemeFilterTerms( state, filter ) {
+export function getThemeFilterTerms( state, filter ) {
 	return get( getThemeFilters( state ), filter );
 }

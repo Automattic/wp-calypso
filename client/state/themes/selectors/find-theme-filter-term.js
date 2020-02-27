@@ -7,8 +7,8 @@ import { filter, get } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import getThemeFilters from 'state/selectors/get-theme-filters';
-import getThemeFilterTerm from 'state/selectors/get-theme-filter-term';
+import { getThemeFilters } from 'state/themes/selectors/get-theme-filters';
+import { getThemeFilterTerm } from 'state/themes/selectors/get-theme-filter-term';
 
 import 'state/themes/init';
 
@@ -19,7 +19,7 @@ import 'state/themes/init';
  * @param  {string}  search The term to search for
  * @returns {object}         A filter term object
  */
-export default createSelector(
+export const findThemeFilterTerm = createSelector(
 	( state, search ) => {
 		const [ left, right ] = search.split( ':' );
 		if ( right ) {

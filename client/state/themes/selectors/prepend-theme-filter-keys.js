@@ -1,8 +1,9 @@
 /**
  * Internal dependencies
  */
+import { getThemeFilterStringFromTerm } from 'state/themes/selectors/get-theme-filter-string-from-term';
 
-import getThemeFilterStringFromTerm from 'state/selectors/get-theme-filter-string-from-term';
+import 'state/themes/init';
 
 /**
  * For a string of terms, recreate full search string in
@@ -13,7 +14,7 @@ import getThemeFilterStringFromTerm from 'state/selectors/get-theme-filter-strin
  * @param {string} terms Space or + separated list of filter terms
  * @returns {string} Complete taxonomy:term filter string, or empty string if term is not valid
  */
-export default function prependThemeFilterKeys( state, terms = '' ) {
+export function prependThemeFilterKeys( state, terms = '' ) {
 	const result = terms
 		.split( /[+\s]/ )
 		.map( term => getThemeFilterStringFromTerm( state, term ) )
