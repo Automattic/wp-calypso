@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import { each, filter, get, castArray, debounce } from 'lodash';
+import _ from 'lodash';
 import { createPortal } from 'react-dom';
 import classnames from 'classnames';
+import { render } from 'react-dom';
 
 /**
  * WordPress dependencies
@@ -23,6 +24,7 @@ import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
 import { Disabled } from '@wordpress/components';
 /* eslint-enable import/no-extraneous-dependencies */
 
+const { each, filter, get, castArray, debounce } = _;
 const THRESHOLD_RESIZE = 300;
 
 /**
@@ -58,6 +60,80 @@ const loadStyles = ( iFrameHead, iFrameBody ) => {
 		iFrameStyle.innerHTML = innerHTML;
 		iFrameBody.appendChild( iFrameStyle );
 	} );
+
+	each(
+		window.document.head.children,
+		( { localName, type, src, innerHTML, outerHTML, href, ref, id } ) => {
+			const node = document.createElement( localName );
+			switch ( localName ) {
+				case 'link':
+					node.id = id;
+					node.href = href;
+					node.ref = ref;
+					iFrameHead.appendChild( node );
+					console.log( { node } );
+
+					break;
+				case 'script':
+					node.type = type;
+
+					// script loaded by source.
+					if ( src ) {
+						node.src = src;
+					}
+
+					// script defined in the code.
+					if ( innerHTML ) {
+						node.innerHTML = innerHTML;
+					}
+					iFrameHead.appendChild( node );
+
+					console.log( { node } );
+
+					break;
+
+				default:
+					break;
+			}
+		}
+	);
+
+	each(
+		window.document.body.children,
+		( { localName, type, src, innerHTML, outerHTML, href, ref, id } ) => {
+			const node = document.createElement( localName );
+			switch ( localName ) {
+				case 'link':
+					node.id = id;
+					node.href = href;
+					node.ref = ref;
+					iFrameBody.appendChild( node );
+					console.log( { node } );
+
+					break;
+				case 'script':
+					node.type = type;
+
+					// script loaded by source.
+					if ( src ) {
+						node.src = src;
+					}
+
+					// script defined in the code.
+					if ( innerHTML ) {
+						node.innerHTML = innerHTML;
+					}
+					iFrameBody.appendChild( node );
+
+					console.log( { node } );
+
+					break;
+
+				default:
+					break;
+			}
+		}
+	);
 };
 
 const BlockFramePreview = ( {
@@ -80,6 +156,8 @@ const BlockFramePreview = ( {
 	const [ iFrameBody, setIFrameBody ] = useState();
 
 	useEffect( () => {
+		console.log( { iFrameRef } );
+
 		const iFrameHead = get( iFrameRef, [ 'current', 'contentDocument', 'head' ] );
 		const iFrameBody = get( iFrameRef, [ 'current', 'contentDocument', 'body' ] );
 
@@ -87,6 +165,30 @@ const BlockFramePreview = ( {
 		setIFrameBody( iFrameBody );
 
 		iFrameBody.className = bodyClassName;
+
+		iFrameRef.current.contentWindow._ = Object.assign( {}, _ );
+		console.log( iFrameRef.current.contentWindow._ );
+
+		iFrameRef.current.contentWindow.moment = window.moment;
+		iFrameRef.current.contentWindow.jQuery = window.jQuery;
+		iFrameRef.current.contentWindow.wpWidgets = window.wpWidgets;
+		iFrameRef.current.contentWindow.tinymce = window.tinymce;
+
+		// Populate wp object to iFrame.
+		iFrameRef.current.contentWindow.wp = {
+			i18n: window.wp.i18n,
+			apiFetch: window.wp.apiFetch,
+			mediaWidgets: window.wp.mediaWidgets,
+			data: window.wp.data,
+			blocks: window.wp.blocks,
+			date: window.wp.date,
+			textWidgets: window.wp.textWidgets,
+			codeEditor: window.wp.codeEditor,
+			customHtmlWidgets: window.wp.customHtmlWidgets,
+			domReady: window.wp.domReady,
+			editPost: window.wp.editPost,
+		};
+
 		loadStyles( iFrameHead, iFrameBody );
 		reScale();
 	}, [] );
