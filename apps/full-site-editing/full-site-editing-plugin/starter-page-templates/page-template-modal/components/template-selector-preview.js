@@ -15,12 +15,15 @@ const TemplateSelectorPreview = ( { blocks = [], viewportWidth, title } ) => {
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<div className={ `template-selector-preview ${ ! blocks.length ? 'not-selected' : '' }` }>
+			{ ! blocks.length && (
+				<div class="template-selector-preview__empty-state">
+					{ __( 'Select a layout to preview.', 'full-site-editing' ) }
+				</div>
+			) }
 			<BlockFramePreview
 				blocks={
 					! blocks.length
-						? createBlock( 'core/paragraph', {
-							content: __( 'Select a layout to preview.', 'full-site-editing' ),
-						} )
+						? []
 						: [
 								createBlock( 'core/heading', {
 									content: title,
