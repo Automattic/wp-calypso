@@ -2,7 +2,7 @@
  * External dependencies
  */
 import store from 'store';
-import { assign, clone, get, includes, isEmpty, isNumber, pick, reduce, toArray } from 'lodash';
+import { assign, clone, get, includes, isEmpty, pick, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -44,7 +44,6 @@ import { getPreference } from 'state/preferences/selectors';
 import 'state/posts/init';
 
 import { receivePost } from 'state/posts/actions/receive-post';
-import { editPost } from 'state/posts/actions/edit-post';
 import { savePostSuccess } from 'state/posts/actions/save-post-success';
 
 export { receivePosts } from 'state/posts/actions/receive-posts';
@@ -60,41 +59,7 @@ export { savePost } from 'state/posts/actions/save-post';
 export { trashPost } from 'state/posts/actions/trash-post';
 export { deletePost } from 'state/posts/actions/delete-post';
 export { restorePost } from 'state/posts/actions/restore-post';
-
-/**
- * Returns an action thunk which, when dispatched, adds a term to the current edited post
- *
- * @param  {number}   siteId   Site ID
- * @param  {string}   taxonomy Taxonomy Slug
- * @param  {object}   term     Object of new term attributes
- * @param  {number}   postId   ID of post to which term is associated
- * @returns {Function}          Action thunk
- */
-export function addTermForPost( siteId, taxonomy, term, postId ) {
-	return ( dispatch, getState ) => {
-		const state = getState();
-		const post = getEditedPost( state, siteId, postId );
-
-		// if there is no post, no term, or term is temporary, bail
-		if ( ! post || ! term || ! isNumber( term.ID ) ) {
-			return;
-		}
-
-		const postTerms = post.terms || {};
-
-		// ensure we have an array since API returns an object
-		const taxonomyTerms = toArray( postTerms[ taxonomy ] );
-		taxonomyTerms.push( term );
-
-		dispatch(
-			editPost( siteId, postId, {
-				terms: {
-					[ taxonomy ]: taxonomyTerms,
-				},
-			} )
-		);
-	};
-}
+export { addTermForPost } from 'state/posts/actions/add-term-for-post';
 
 function getParentId( post ) {
 	if ( ! post || ! post.parent ) {
