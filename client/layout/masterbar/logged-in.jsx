@@ -12,7 +12,6 @@ import React from 'react';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Masterbar from './masterbar';
 import Item from './item';
-import Publish from './publish';
 import Notifications from './notifications';
 import Gravatar from 'components/gravatar';
 import config from 'config';
@@ -149,13 +148,15 @@ class MasterbarLoggedIn extends React.Component {
 				) }
 				{ config.isEnabled( 'resume-editing' ) && <ResumeEditing /> }
 				{ ! domainOnlySite && ! isMigrationInProgress && (
-					<Publish
+					<AsyncLoad
+						require="./publish"
+						placeholder={ null }
 						isActive={ this.isActive( 'post' ) }
 						className="masterbar__item-new"
 						tooltip={ translate( 'Create a New Post' ) }
 					>
 						{ translate( 'Write' ) }
-					</Publish>
+					</AsyncLoad>
 				) }
 				<Item
 					tipTarget="me"
