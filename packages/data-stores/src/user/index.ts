@@ -13,7 +13,7 @@ import * as resolvers from './resolvers';
 import * as selectors from './selectors';
 import createControls from './controls';
 import { DispatchFromMap, SelectFromMap } from '../mapped-types';
-import { WpcomClientCredentials } from '../shared-types';
+import { WpcomClientCredentials } from '../utils';
 
 export * from './types';
 export { State };
