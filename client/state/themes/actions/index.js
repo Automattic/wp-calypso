@@ -9,7 +9,6 @@ import {
 	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_FILTERS_REQUEST,
 	THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
-	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
 } from 'state/action-types';
 
@@ -42,14 +41,7 @@ export {
 	initiateThemeTransfer,
 	pollThemeTransferStatus,
 } from 'state/themes/actions/theme-transfer';
-
-export function setThemePreviewOptions( primary, secondary ) {
-	return {
-		type: THEME_PREVIEW_OPTIONS,
-		primary,
-		secondary,
-	};
-}
+export { setThemePreviewOptions } from 'state/themes/actions/set-theme-preview-options';
 
 export function showThemePreview( themeId ) {
 	return {
