@@ -12,9 +12,12 @@ workflow_data="{
 	\"trigger_payload\": $trigger_payload
 }"
 
+# cd here so that the parent directories are not included in the zip file.
+cd apps/full-site-editing/full-site-editing-plugin
+
 # Create a zip of the FSE plugin. Should include built files at this point.
 build_archive=plugin-archive.zip
-zip -r $build_archive apps/full-site-editing/full-site-editing-plugin
+zip -r $build_archive ./*
 
 # Send metadata and build zip file to the endpoint.
 curl -v \
