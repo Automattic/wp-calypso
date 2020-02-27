@@ -341,7 +341,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	z-index: 2;
 	top: 50%;
 	left: 50%;
-	transform: translate(-50%, -50%);
+	transform: translate( -50%, -50% );
 }
 
 .page-template-modal__loading {
@@ -417,12 +417,15 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		margin: 0;
 	}
 
-	&.not-selected {
-		 // Adjust template block title.
-		.wp-block:first-child {
-			margin-top: 0;
-			padding: 10px;
-		}
+	 // Adjust template block title.
+	.wp-block:first-of-type {
+		margin-top: 0;
+		padding-top: 10px;
+	}
+
+	.wp-block:last-of-type {
+		padding-bottom: 10px;
+		margin-bottom: 0;
 	}
 
 	// Hide inserter/appender.
@@ -457,35 +460,35 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 			// we have to use !important here, as the height: 0 is set inline
 			ul {
-				height: auto !important; 
+				height: auto !important;
 				display: flex;
 				flex-direction: column;
 				flex-wrap: wrap;
 				max-height: 1600px; // max-height has to be set for it to wrap
 
 				// this mimicks the order in the mayland preview
-				li:nth-child(2) {
+				li:nth-child( 2 ) {
 					order: 4;
 				}
-				li:nth-child(3) {
+				li:nth-child( 3 ) {
 					order: 8;
 				}
-				li:nth-child(4) {
+				li:nth-child( 4 ) {
 					order: 5;
 				}
-				li:nth-child(5) {
+				li:nth-child( 5 ) {
 					order: 2;
 				}
-				li:nth-child(6) {
+				li:nth-child( 6 ) {
 					order: 8;
 				}
-				li:nth-child(7) {
+				li:nth-child( 7 ) {
 					order: 3;
 				}
-				li:nth-child(8) {
+				li:nth-child( 8 ) {
 					order: 7;
 				}
-				li:nth-child(9) {
+				li:nth-child( 9 ) {
 					order: 9;
 				}
 			}
