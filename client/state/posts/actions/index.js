@@ -68,30 +68,14 @@ import { getPreference } from 'state/preferences/selectors';
 import 'state/posts/init';
 
 import { receivePost } from 'state/posts/actions/receive-post';
+import { editPost } from 'state/posts/actions/edit-post';
 
 export { receivePosts } from 'state/posts/actions/receive-posts';
 export { receivePost } from 'state/posts/actions/receive-post';
 export { requestSitePosts } from 'state/posts/actions/request-site-posts';
 export { requestAllSitesPosts } from 'state/posts/actions/request-all-sites-posts';
 export { requestSitePost } from 'state/posts/actions/request-site-post';
-
-/**
- * Returns an action object to be used in signalling that the specified
- * post updates should be applied to the set of edits.
- *
- * @param  {number} siteId Site ID
- * @param  {number} postId Post ID
- * @param  {object} post   Post attribute updates
- * @returns {object}        Action object
- */
-export function editPost( siteId, postId = null, post ) {
-	return {
-		type: POST_EDIT,
-		post,
-		siteId,
-		postId,
-	};
-}
+export { editPost } from 'state/posts/actions/edit-post';
 
 export function updatePostMetadata( siteId, postId = null, metaKey, metaValue ) {
 	if ( typeof metaKey === 'string' ) {
