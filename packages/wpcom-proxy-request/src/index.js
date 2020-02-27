@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import uid from 'uid';
+import { v4 as uuidv4 } from 'uuid';
 import WPError from 'wp-error';
 import ProgressEvent from 'progress-event';
 import debugFactory from 'debug';
@@ -111,8 +111,8 @@ const request = ( originalParams, fn ) => {
 		install();
 	}
 
-	// generate a uid for this API request
-	const id = uid();
+	// generate a uuid for this API request
+	const id = uuidv4();
 	params.callback = id;
 	params.supports_args = true; // supports receiving variable amount of arguments
 	params.supports_error_obj = true; // better Error object info
