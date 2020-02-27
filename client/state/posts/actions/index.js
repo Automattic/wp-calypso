@@ -2,18 +2,7 @@
  * External dependencies
  */
 import store from 'store';
-import {
-	assign,
-	clone,
-	get,
-	includes,
-	isEmpty,
-	isNumber,
-	map,
-	pick,
-	reduce,
-	toArray,
-} from 'lodash';
+import { assign, clone, get, includes, isEmpty, isNumber, pick, reduce, toArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,7 +13,6 @@ import {
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
 	POST_DELETE_FAILURE,
-	POST_EDIT,
 	POST_RESTORE,
 	POST_RESTORE_FAILURE,
 	POST_RESTORE_SUCCESS,
@@ -77,21 +65,7 @@ export { requestAllSitesPosts } from 'state/posts/actions/request-all-sites-post
 export { requestSitePost } from 'state/posts/actions/request-site-post';
 export { editPost } from 'state/posts/actions/edit-post';
 export { updatePostMetadata } from 'state/posts/actions/update-post-metadata';
-
-export function deletePostMetadata( siteId, postId = null, metaKeys ) {
-	if ( ! Array.isArray( metaKeys ) ) {
-		metaKeys = [ metaKeys ];
-	}
-
-	return {
-		type: POST_EDIT,
-		siteId,
-		postId,
-		post: {
-			metadata: map( metaKeys, key => ( { key, operation: 'delete' } ) ),
-		},
-	};
-}
+export { deletePostMetadata } from 'state/posts/actions/delete-post-metadata';
 
 /**
  * Returns an action object to be used in signalling that a post has been saved
