@@ -29,17 +29,24 @@ class MigrateButton extends Component {
 			return;
 		}
 
-		const message = translate(
-			'Overwrite %(targetDomain)s? All posts, pages,' +
-				' comments and media will be lost on this WordPress.com site.',
-			{
-				args: {
-					targetDomain: this.props.targetSiteDomain,
-				},
-			}
+		const message = (
+			<>
+				<h1>
+					{ translate( 'Import and overwrite everything on %(targetDomain)s?', {
+						args: {
+							targetDomain: this.props.targetSiteDomain,
+						},
+					} ) }
+				</h1>
+				<div>
+					{ translate(
+						'All posts, pages, comments and media will be lost on this WordPress.com site.'
+					) }
+				</div>
+			</>
 		);
 
-		accept( message, this.confirmCallback, translate( 'Overwrite this site' ) );
+		accept( message, this.confirmCallback, translate( 'Import and overwrite' ) );
 	};
 
 	render() {
