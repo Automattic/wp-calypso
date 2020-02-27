@@ -6,7 +6,6 @@ import {
 	RECOMMENDED_THEMES_FAIL,
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
-	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_FILTERS_REQUEST,
 	THEME_PREVIEW_STATE,
 } from 'state/action-types';
@@ -43,13 +42,7 @@ export {
 export { setThemePreviewOptions } from 'state/themes/actions/set-theme-preview-options';
 export { showThemePreview } from 'state/themes/actions/show-theme-preview';
 export { hideAutoLoadingHomepageWarning } from 'state/themes/actions/hide-auto-loading-homepage-warning';
-
-export function acceptAutoLoadingHomepageWarning( themeId ) {
-	return {
-		type: THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
-		themeId,
-	};
-}
+export { acceptAutoLoadingHomepageWarning } from 'state/themes/actions/accept-auto-loading-homepage-warning';
 
 export function hideThemePreview() {
 	return {
