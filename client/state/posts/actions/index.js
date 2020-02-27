@@ -19,14 +19,12 @@ import {
 	normalizeTermsForApi,
 } from 'state/posts/utils';
 import editedPostHasContent from 'state/selectors/edited-post-has-content';
-import isPreviousRouteGutenberg from 'state/selectors/is-previous-route-gutenberg';
 import {
 	startEditingPost,
 	startEditingNewPost,
 	editorAutosave,
 	editorAutosaveReset,
 	editorLoadingErrorReset,
-	editorReset,
 	editorSetLoadingError,
 	editorInitRawContent,
 	editorSave,
@@ -61,6 +59,7 @@ export { trashPost } from 'state/posts/actions/trash-post';
 export { deletePost } from 'state/posts/actions/delete-post';
 export { restorePost } from 'state/posts/actions/restore-post';
 export { addTermForPost } from 'state/posts/actions/add-term-for-post';
+export { startEditingExistingPost } from 'state/posts/actions/start-editing-existing-post';
 
 /**
  * Normalizes attributes to API expectations
@@ -78,40 +77,6 @@ function normalizeApiAttributes( attributes ) {
 
 	return attributes;
 }
-
-/**
- * Load an existing post and keep track of edits to it
- *
- * @param {object} siteId Site ID
- * @param {number} postId Post ID to load
- * @returns {Promise<?object>} The edited post object
- */
-export const startEditingExistingPost = ( siteId, postId ) => ( dispatch, getState ) => {
-	const currentSiteId = getSelectedSiteId( getState() );
-	const currentPostId = getEditorPostId( getState() );
-	const hasJustOptedOutOfGutenberg = isPreviousRouteGutenberg( getState() );
-	if ( ! hasJustOptedOutOfGutenberg && currentSiteId === siteId && currentPostId === postId ) {
-		// already editing same post
-		return Promise.resolve( getEditedPost( getState(), siteId, postId ) );
-	}
-
-	dispatch( startEditingPost( siteId, postId ) );
-
-	return wpcom
-		.site( siteId )
-		.post( postId )
-		.get( { context: 'edit', meta: 'autosave' } )
-		.then( post => {
-			post = normalizePost( post );
-			dispatch( receivePost( post ) );
-			dispatch( editorReset() );
-			return post;
-		} )
-		.catch( error => {
-			dispatch( editorSetLoadingError( error ) );
-			return null;
-		} );
-};
 
 export const startEditingPostCopy = ( siteId, postToCopyId ) => dispatch => {
 	dispatch( startEditingPost( siteId, null ) );
