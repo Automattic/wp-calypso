@@ -137,7 +137,7 @@ export class MySitesSidebar extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<SidebarItem
-				tipTarget="menus"
+				tipTarget="stats"
 				label={ translate( 'Stats' ) }
 				className="stats"
 				selected={ itemLinkMatches(
@@ -169,7 +169,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarItem
 				materialIcon="home"
-				tipTarget="menus"
+				tipTarget="myhome"
 				onNavigate={ this.trackCustomerHomeClick }
 				label={ translate( 'My Home' ) }
 				selected={ itemLinkMatches( [ '/home' ], path ) }
