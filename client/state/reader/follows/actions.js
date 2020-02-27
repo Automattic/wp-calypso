@@ -22,7 +22,7 @@ import {
 	READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION,
 	READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 	READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 
 import 'state/data-layer/wpcom/read/following/mine';
 import 'state/data-layer/wpcom/read/following/mine/delete';

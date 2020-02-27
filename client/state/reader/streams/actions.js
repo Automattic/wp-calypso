@@ -10,7 +10,7 @@ import {
 	READER_STREAMS_SELECT_NEXT_ITEM,
 	READER_STREAMS_SELECT_PREV_ITEM,
 	READER_STREAMS_UPDATES_RECEIVE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 import { getStream } from 'state/reader/streams/selectors';
 import { getStreamType } from 'reader/utils';
 

@@ -7,7 +7,7 @@ import { translate } from 'i18n-calypso';
  * Internal Dependencies
  */
 import config from 'config';
-import { READER_UNFOLLOW } from 'state/action-types';
+import { READER_UNFOLLOW } from 'state/reader/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';

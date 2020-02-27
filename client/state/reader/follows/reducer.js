@@ -23,8 +23,8 @@ import {
 	READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL,
 	READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 	READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
-	SERIALIZE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
+import { SERIALIZE } from 'state/action-types';
 import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
 import { prepareComparableUrl } from './utils';
 import { items as itemsSchema } from './schema';
