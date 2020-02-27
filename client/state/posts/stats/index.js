@@ -7,7 +7,7 @@ import { get, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import { bumpStat, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import * as utils from 'state/posts/utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -15,18 +15,16 @@ import { getEditorPostId, isConfirmationSidebarEnabled } from 'state/ui/editor/s
 import { getEditedPost, getSitePost } from 'state/posts/selectors';
 import getPodcastingCategoryId from 'state/selectors/get-podcasting-category-id';
 
+import { recordEditorEvent } from 'state/posts/stats/record-editor-event';
+import { recordEditorStat } from 'state/posts/stats/record-editor-stat';
+
+export { recordEditorEvent } from 'state/posts/stats/record-editor-event';
+export { recordEditorStat } from 'state/posts/stats/record-editor-stat';
+
 /**
  * Module variables
  */
 const debug = debugModule( 'calypso:posts:stats' );
-
-export function recordEditorStat( action ) {
-	return bumpStat( 'editor_actions', action );
-}
-
-export function recordEditorEvent( action, label, value ) {
-	return recordGoogleEvent( 'Editor', action, label, value );
-}
 
 export const recordSaveEvent = () => ( dispatch, getState ) => {
 	const state = getState();
