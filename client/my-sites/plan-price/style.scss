@@ -75,3 +75,10 @@
 .plan-price__fraction {
 	font-weight: 500;
 }
+
+.plan-price__timeframe-month {
+	vertical-align: baseline;
+	font-size: 14px;
+	color: var( --color-text-subtle );
+	font-weight: 400;
+}

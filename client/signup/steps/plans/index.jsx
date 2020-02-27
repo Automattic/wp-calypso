@@ -99,6 +99,14 @@ export class PlansStep extends Component {
 		this.onSelectPlan( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
 	};
 
+	isEligibleForPlanStepTest() {
+		return (
+			config.isEnabled( 'plans-step-copy-updates' ) &&
+			! this.props.isLaunchPage &&
+			'variantCopyUpdates' === abtest( 'planStepCopyUpdates' )
+		);
+	}
+
 	plansFeaturesList() {
 		const {
 			disableBloggerPlanWithNonBlogDomain,
@@ -118,6 +126,7 @@ export class PlansStep extends Component {
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ true }
 					isLaunchPage={ isLaunchPage }
+					isEligibleForPlanStepTest={ this.isEligibleForPlanStepTest() }
 					onUpgradeClick={ this.onSelectPlan }
 					showFAQ={ false }
 					displayJetpackPlans={ false }
@@ -133,10 +142,7 @@ export class PlansStep extends Component {
 	}
 
 	getHeaderTextAB() {
-		if (
-			config.isEnabled( 'plans-step-copy-updates' ) &&
-			'variantCopyUpdates' === abtest( 'planStepCopyUpdates' )
-		) {
+		if ( this.isEligibleForPlanStepTest() ) {
 			return 'Select your WordPress.com plan';
 		}
 
@@ -144,10 +150,7 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderTextAB() {
-		if (
-			config.isEnabled( 'plans-step-copy-updates' ) &&
-			'variantCopyUpdates' === abtest( 'planStepCopyUpdates' )
-		) {
+		if ( this.isEligibleForPlanStepTest() ) {
 			return 'All plans include blazing-fast WordPress hosting.';
 		}
 
