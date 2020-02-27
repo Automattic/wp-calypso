@@ -48,6 +48,7 @@
 		"@automattic/viewport": "file:packages/viewport",
 		"@automattic/viewport-react": "file:packages/viewport-react",
 		"@automattic/wpcom-block-editor": "file:apps/wpcom-block-editor",
+		"@wordpress/e2e-test-utils": "4.3.0",
 		"browserslist": "4.8.6",
 		"i18n-calypso": "file:packages/i18n-calypso",
 		"photon": "file:packages/photon",
