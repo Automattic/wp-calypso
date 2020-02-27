@@ -2,30 +2,20 @@
  * External dependencies
  */
 import store from 'store';
-import { assign, clone, get, includes, isEmpty, pick, reduce } from 'lodash';
+import { assign, clone, get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import { decodeEntities } from 'lib/formatting';
 import { getSitePost, getEditedPost, getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import { recordSaveEvent } from 'state/posts/stats';
-import {
-	getFeaturedImageId,
-	isBackDated,
-	isFutureDated,
-	isPublished,
-	normalizeTermsForApi,
-} from 'state/posts/utils';
+import { isBackDated, isFutureDated, isPublished, normalizeTermsForApi } from 'state/posts/utils';
 import editedPostHasContent from 'state/selectors/edited-post-has-content';
 import {
-	startEditingPost,
-	startEditingNewPost,
 	editorAutosave,
 	editorAutosaveReset,
 	editorLoadingErrorReset,
-	editorSetLoadingError,
 	editorInitRawContent,
 	editorSave,
 } from 'state/ui/editor/actions';
@@ -60,6 +50,7 @@ export { deletePost } from 'state/posts/actions/delete-post';
 export { restorePost } from 'state/posts/actions/restore-post';
 export { addTermForPost } from 'state/posts/actions/add-term-for-post';
 export { startEditingExistingPost } from 'state/posts/actions/start-editing-existing-post';
+export { startEditingPostCopy } from 'state/posts/actions/start-editing-post-copy';
 
 /**
  * Normalizes attributes to API expectations
@@ -77,62 +68,6 @@ function normalizeApiAttributes( attributes ) {
 
 	return attributes;
 }
-
-export const startEditingPostCopy = ( siteId, postToCopyId ) => dispatch => {
-	dispatch( startEditingPost( siteId, null ) );
-
-	wpcom
-		.site( siteId )
-		.post( postToCopyId )
-		.get( { context: 'edit' } )
-		.then( postToCopy => {
-			const postAttributes = pick( postToCopy, [
-				'canonical_image',
-				'content',
-				'excerpt',
-				'format',
-				'post_thumbnail',
-				'terms',
-				'type',
-			] );
-
-			postAttributes.title = decodeEntities( postToCopy.title );
-			postAttributes.featured_image = getFeaturedImageId( postToCopy );
-
-			/**
-			 * A post metadata whitelist for the `updatePostMetadata()` action.
-			 *
-			 * This is needed because blindly passing all post metadata to `editPost()`
-			 * causes unforeseeable issues, such as Publicize not triggering on the copied post.
-			 *
-			 * @see https://github.com/Automattic/wp-calypso/issues/14840
-			 */
-			const metadataWhitelist = [ 'geo_latitude', 'geo_longitude', 'geo_address', 'geo_public' ];
-
-			// Filter the post metadata to include only the ones we want to copy,
-			// use only the `key` and `value` properties (and, most importantly exclude `id`),
-			// and add an `operation` field to the copied values.
-			const copiedMetadata = reduce(
-				postToCopy.metadata,
-				( copiedMeta, { key, value } ) => {
-					if ( includes( metadataWhitelist, key ) ) {
-						copiedMeta.push( { key, value, operation: 'update' } );
-					}
-					return copiedMeta;
-				},
-				[]
-			);
-
-			if ( copiedMetadata.length > 0 ) {
-				postAttributes.metadata = copiedMetadata;
-			}
-
-			dispatch( startEditingNewPost( siteId, postAttributes ) );
-		} )
-		.catch( error => {
-			dispatch( editorSetLoadingError( error ) );
-		} );
-};
 
 let saveMarkerId = 0;
 
