@@ -75,21 +75,7 @@ import { requestPosts } from 'state/posts/actions/request-posts';
 
 export { receivePosts } from 'state/posts/actions/receive-posts';
 export { receivePost } from 'state/posts/actions/receive-post';
-
-/**
- * Triggers a network request to fetch posts for the specified site and query.
- *
- * @param  {number}   siteId Site ID
- * @param  {string}   query  Post query
- * @returns {Function}        Action thunk
- */
-export function requestSitePosts( siteId, query = {} ) {
-	if ( ! siteId ) {
-		return null;
-	}
-
-	return requestPosts( siteId, query );
-}
+export { requestSitePosts } from 'state/posts/actions/request-site-posts';
 
 /**
  * Returns a function which, when invoked, triggers a network request to fetch
