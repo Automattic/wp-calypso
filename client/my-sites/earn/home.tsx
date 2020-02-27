@@ -209,6 +209,47 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	};
 
 	/**
+	 * Return the content to display in the Peer Referrals card.
+	 *
+	 * @returns {object} Object with props to render a PromoCard.
+	 */
+	const getPeerReferralsCard = () => {
+		const isJetpackNotAtomic = isJetpack && ! isAtomicSite;
+
+		if ( isJetpackNotAtomic ) {
+			return;
+		}
+
+		const components = {
+			components: {
+				em: <em />,
+			},
+		};
+		const cta = {
+			text: translate( 'Earn Free Credits' ),
+			action: {
+				url:
+					'https://refer.wordpress.com/?utm_source=calypso&utm_campaign=calypso_earn&utm_medium=automattic_referred&atk=341b381c971a0631a88f080f598faafb25c344db',
+				onClick: () => trackCtaButton( 'peer-referral-wpcom' ),
+			},
+		};
+
+		return {
+			title: translate( 'Refer a friend, you’ll both earn credits' ),
+			body: translate(
+				'Share WordPress.com with friends, family, and website visitors. For every paying customer you send our way, you’ll both earn US$25 in free credits. {{em}}Available on every plan{{/em}}.',
+				components
+			),
+			image: {
+				path: referralImage,
+			},
+			actions: {
+				cta,
+			},
+		};
+	};
+
+	/**
 	 * Return the content to display in the Ads card based on the current plan.
 	 *
 	 * @returns {object} Object with props to render a PromoCard.
@@ -273,6 +314,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			getSimplePaymentsCard(),
 			getRecurringPaymentsCard(),
 			getAdsCard(),
+			getPeerReferralsCard(),
 			getReferralsCard(),
 		] ),
 	};
