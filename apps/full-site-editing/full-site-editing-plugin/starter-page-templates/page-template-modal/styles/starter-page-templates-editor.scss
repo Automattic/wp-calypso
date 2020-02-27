@@ -272,7 +272,8 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	background: $template-selector-empty-background;
 	border-radius: 2px;
 	overflow: hidden;
-	box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ), 0 3px 1px -2px rgba( 0, 0, 0, 0.12 ),
+	box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ),
+		0 3px 1px -2px rgba( 0, 0, 0, 0.12 ),
 		0 1px 5px 0 rgba( 0, 0, 0, 0.2 );
 
 	@media screen and ( min-width: $breakpoint-mobile ) {
@@ -308,6 +309,25 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	.edit-post-visual-editor {
 		margin: 0;
 		padding: 0;
+	}
+
+	// not-selected template
+	&.not-selected {
+		.editor-styles-wrapper {
+			position: relative;
+			width: 100%;
+			height: 100%;
+
+			.template-selector-preview__empty-state {
+				position: absolute;
+				width: 100%;
+				text-align: center;
+				height: 50px;
+				line-height: 50px;
+				top: 50%;
+				margin: -25px 0 0;
+			}
+		}
 	}
 }
 
