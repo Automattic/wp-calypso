@@ -34,7 +34,6 @@ import {
 	POST_SAVE,
 	POST_SAVE_SUCCESS,
 	POST_SAVE_FAILURE,
-	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
 	POSTS_REQUEST_FAILURE,
@@ -74,6 +73,10 @@ import { getPreference } from 'state/preferences/selectors';
 
 import 'state/posts/init';
 
+import { receivePosts } from 'state/posts/actions/receive-posts';
+
+export { receivePosts } from 'state/posts/actions/receive-posts';
+
 /**
  * Returns an action object to be used in signalling that a post object has
  * been received.
@@ -84,22 +87,6 @@ import 'state/posts/init';
  */
 export function receivePost( post, saveMarker ) {
 	return receivePosts( [ post ], saveMarker );
-}
-
-/**
- * Returns an action object to be used in signalling that post objects have
- * been received.
- *
- * @param  {Array}   posts      Posts received
- * @param  {?string} saveMarker Save marker in the edits log
- * @returns {object}             Action object
- */
-export function receivePosts( posts, saveMarker ) {
-	const action = { type: POSTS_RECEIVE, posts };
-	if ( saveMarker ) {
-		action.saveMarker = saveMarker;
-	}
-	return action;
 }
 
 /**
