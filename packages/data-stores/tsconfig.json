@@ -29,6 +29,6 @@
 		"incremental": true,
 		"tsBuildInfoFile": "../../.tsc-cache/data-stores"
 	},
-	"files": [ "./src/index.ts", "./global.d.ts" ],
+	"files": [ "./src/index.ts" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]
 }

@@ -1,10 +1,18 @@
 /**
+ * External dependencies
+ */
+import wpcomRequest, { requestAllBlogsAccess } from 'wpcom-proxy-request';
+
+/**
  * Internal dependencies
  */
-import { wpcomRequest, WpcomClientCredentials } from '../utils';
 import { CreateAccountAction } from './types';
+import { WpcomClientCredentials } from '../shared-types';
 
 export default function createControls( clientCreds: WpcomClientCredentials ) {
+	requestAllBlogsAccess().catch( () => {
+		throw new Error( 'Could not get all blog access.' );
+	} );
 	return {
 		CREATE_ACCOUNT: async ( action: CreateAccountAction ) => {
 			const defaultParams = {

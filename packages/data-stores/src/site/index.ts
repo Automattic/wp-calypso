@@ -12,7 +12,7 @@ import * as actions from './actions';
 import * as selectors from './selectors';
 import createControls from './controls';
 import { DispatchFromMap, SelectFromMap } from '../mapped-types';
-import { WpcomClientCredentials } from '../utils';
+import { WpcomClientCredentials } from '../shared-types';
 
 export * from './types';
 export { State };
