@@ -100,7 +100,7 @@ const BlockFramePreview = ( {
 			height,
 			transform: `scale( ${ scale } )`,
 		} );
-	}, [] );
+	}, [ viewportWidth ] );
 
 	// Populate iFrame styles.
 	useEffect( () => {
@@ -120,7 +120,7 @@ const BlockFramePreview = ( {
 		body.className = `${ bodyClassName } editor-styles-wrapper`;
 		loadStyles( { head, body } );
 		rescale();
-	}, [] );
+	}, [ bodyClassName, rescale ] );
 
 	// Scroll the preview to the top when the blocks change.
 	useEffect( () => {
@@ -168,7 +168,7 @@ const BlockFramePreview = ( {
 		return () => {
 			window.removeEventListener( 'resize', refreshPreview );
 		};
-	}, [] );
+	}, [ rescale ] );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
