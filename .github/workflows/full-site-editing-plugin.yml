@@ -9,6 +9,7 @@ on:
     paths:
     - 'apps/full-site-editing/full-site-editing-plugin/**'
 
+# test change
 name: Build Full Site Editing plugin
 
 jobs:
