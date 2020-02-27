@@ -84,7 +84,7 @@ const BlockFramePreview = ( {
 	 * This function re scales the viewport depending on
 	 * the wrapper and the iframe width.
 	 */
-	const reScale = useCallback( () => {
+	const rescale = useCallback( () => {
 		const parentNode = get( framePreviewRef, [ 'current', 'parentNode' ] );
 		if ( ! parentNode ) {
 			return;
@@ -119,7 +119,7 @@ const BlockFramePreview = ( {
 
 		body.className = `${ bodyClassName } editor-styles-wrapper`;
 		loadStyles( { head, body } );
-		reScale();
+		rescale();
 	}, [] );
 
 	// Scroll the preview to the top when the blocks change.
@@ -157,12 +157,12 @@ const BlockFramePreview = ( {
 
 	// Handling windows resize event.
 	useEffect( () => {
-		const refreshPreview = debounce( reScale, THRESHOLD_RESIZE );
+		const refreshPreview = debounce( rescale, THRESHOLD_RESIZE );
 		window.addEventListener( 'resize', refreshPreview );
 
 		// In wp-admin, listen to the jQuery `wp-collapse-menu` event to refresh the preview on sidebar toggle.
 		if ( window.jQuery ) {
-			window.jQuery( window.document ).on( 'wp-collapse-menu', reScale );
+			window.jQuery( window.document ).on( 'wp-collapse-menu', rescale );
 		}
 
 		return () => {
