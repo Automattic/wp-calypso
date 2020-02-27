@@ -70,6 +70,7 @@ import {
 import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
+import PlanTestimonials from '../plan-testimonials';
 
 /**
  * Style dependencies
@@ -181,6 +182,7 @@ export class PlansFeaturesMain extends Component {
 					} ) }
 					siteId={ siteId }
 				/>
+				<PlanTestimonials />
 			</div>
 		);
 	}
