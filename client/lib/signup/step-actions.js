@@ -2,7 +2,18 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { assign, defer, difference, get, isEmpty, isNull, omitBy, pick, startsWith } from 'lodash';
+import {
+	assign,
+	compact,
+	defer,
+	difference,
+	get,
+	isEmpty,
+	isNull,
+	omitBy,
+	pick,
+	startsWith,
+} from 'lodash';
 import { parse as parseURL } from 'url';
 
 /**
@@ -256,21 +267,37 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	} );
 }
 
-export function createSitelessCart( callback, dependencies, stepData ) {
-	const { domainItem } = stepData;
+export function createSitelessCart( callback, dependencies, stepData, reduxStore ) {
+	const { cartItem, domainItem, googleAppsCartItem, themeItem, themeSlugWithRepo } = stepData;
 
-	const cartKey = 'no-site';
+	const siteId = null;
+	const siteSlug = 'no-site';
+	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' ) && ! themeItem;
+
+	const cartItems = compact( [ cartItem, domainItem, googleAppsCartItem, themeItem ] );
+
 	const providedDependencies = {
-		siteId: null,
-		siteSlug: cartKey,
+		siteId,
+		siteSlug,
 		domainItem,
+		themeItem,
 	};
 
-	const cart = omitBy( pick( dependencies, 'domainItem', 'privacyItem', 'cartItem' ), isNull );
+	const cartItemsWithPrivacyProtection = cartItems.map( item =>
+		addPrivacyProtectionIfSupported( item, reduxStore )
+	);
 
-	SignupCart.createCart( cartKey, cart, error => {
-		callback( error, providedDependencies );
-	} );
+	if ( isFreeThemePreselected ) {
+		// TODO: Set theme after site is created
+	}
+
+	if ( cartItemsWithPrivacyProtection.length ) {
+		SignupCart.createCart( siteSlug, cartItemsWithPrivacyProtection, error => {
+			callback( error, providedDependencies );
+		} );
+	} else {
+		callback( undefined, providedDependencies );
+	}
 }
 
 function fetchSitesUntilSiteAppears( siteSlug, reduxStore, callback ) {
