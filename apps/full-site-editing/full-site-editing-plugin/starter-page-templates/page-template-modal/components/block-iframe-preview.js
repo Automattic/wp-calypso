@@ -160,13 +160,20 @@ const BlockFramePreview = ( {
 		const refreshPreview = debounce( rescale, THRESHOLD_RESIZE );
 		window.addEventListener( 'resize', refreshPreview );
 
-		// In wp-admin, listen to the jQuery `wp-collapse-menu` event to refresh the preview on sidebar toggle.
+		return () => {
+			window.removeEventListener( 'resize', refreshPreview );
+		};
+	}, [ rescale ] );
+
+	// Handle wp-admin specific `wp-collapse-menu` event to refresh the preview on sidebar toggle.
+	useEffect( () => {
 		if ( window.jQuery ) {
 			window.jQuery( window.document ).on( 'wp-collapse-menu', rescale );
 		}
-
 		return () => {
-			window.removeEventListener( 'resize', refreshPreview );
+			if ( window.jQuery ) {
+				window.jQuery( window.document ).off( 'wp-collapse-menu', rescale );
+			}
 		};
 	}, [ rescale ] );
 
