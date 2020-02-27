@@ -8,7 +8,6 @@ import {
 	RECOMMENDED_THEMES_SUCCESS,
 	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_FILTERS_REQUEST,
-	THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_PREVIEW_STATE,
 } from 'state/action-types';
 
@@ -43,12 +42,7 @@ export {
 } from 'state/themes/actions/theme-transfer';
 export { setThemePreviewOptions } from 'state/themes/actions/set-theme-preview-options';
 export { showThemePreview } from 'state/themes/actions/show-theme-preview';
-
-export function hideAutoLoadingHomepageWarning() {
-	return {
-		type: THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
-	};
-}
+export { hideAutoLoadingHomepageWarning } from 'state/themes/actions/hide-auto-loading-homepage-warning';
 
 export function acceptAutoLoadingHomepageWarning( themeId ) {
 	return {
