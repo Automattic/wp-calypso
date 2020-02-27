@@ -204,6 +204,11 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	position: relative;
 	pointer-events: none;
 	opacity: 1;
+	transform: translateZ( 0 ); // Fix for Safari rounded border overflow (2/2).
+
+	@media screen and ( min-width: $breakpoint-mobile ) {
+		padding-top: 100%; // Aspect radio boxes. It will take the 100% of width.
+	}
 
 	&.is-rendering {
 		opacity: 0.5;
