@@ -20,6 +20,7 @@ import {
 import { withSelect } from '@wordpress/data';
 import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
 import { Disabled } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 /* eslint-enable import/no-extraneous-dependencies */
 
 const THRESHOLD_RESIZE = 300;
@@ -30,8 +31,8 @@ const THRESHOLD_RESIZE = 300;
  *
  * @param {object} els iFrame elements to populate: <head /> and <body />
  */
-const loadStyles = iFrameDomRefereces => {
-	each( Object.keys( iFrameDomRefereces ), domReference =>
+const loadStyles = iFrameDomReferences => {
+	each( Object.keys( iFrameDomReferences ), domReference =>
 		each(
 			filter( window.document[ domReference ].children, ( { localName } ) =>
 				[ 'link', 'style' ].includes( localName )
@@ -44,7 +45,7 @@ const loadStyles = iFrameDomRefereces => {
 					node.innerHTML = innerHTML;
 				}
 
-				iFrameDomRefereces[ domReference ].appendChild( node );
+				iFrameDomReferences[ domReference ].appendChild( node );
 			}
 		)
 	);
@@ -53,13 +54,12 @@ const loadStyles = iFrameDomRefereces => {
 /**
  * Performs a blocks preview using an iFrame.
  *
- * @param {string} className
- * @param {string} bodyClassName
- * @param {number} viewportWidth
- * @param {Array}  blocks
- * @param {object} settings
- * @return {*}
- * @constructor
+ * @param {object} props component's props
+ * @param {object} props.className CSS class to apply to component
+ * @param {string} props.bodyClassName CSS class to apply to the iframe's `<body>` tag
+ * @param {number} props.viewportWidth pixel width of the viewable size of the preview
+ * @param {Array}  props.blocks array of Gutenberg Block objects
+ * @param {object} props.settings block Editor settings object
  */
 const BlockFramePreview = ( {
 	className = 'block-iframe-preview',
@@ -79,41 +79,6 @@ const BlockFramePreview = ( {
 	const renderedBlocks = useMemo( () => castArray( blocks ), [ blocks ] );
 	const [ recomputeBlockListKey, triggerRecomputeBlockList ] = useReducer( state => state + 1, 0 );
 	useLayoutEffect( triggerRecomputeBlockList, [ blocks ] );
-
-	// Populate iFrame styles.
-	useEffect( () => {
-		const head = get( framePreviewRef, [ 'current', 'firstElementChild', 'contentDocument', 'head' ] );
-		const body = get( framePreviewRef, [ 'current', 'firstElementChild', 'contentDocument', 'body' ] );
-
-		body.className = `${ bodyClassName } editor-styles-wrapper`;
-		loadStyles( { head, body } );
-		reScale();
-	}, [] );
-
-	// Scroll top the preview once it's rendered.
-	useEffect( () => {
-		const body = get( framePreviewRef, [ 'current', 'firstElementChild', 'contentDocument', 'body' ] );
-		if ( ! body ) {
-			return;
-		}
-
-		// scroll to top when blocks changes.
-		body.scrollTop = 0;
-
-		const iFrameDocument = get( framePreviewRef, [ 'current', 'firstElementChild', 'contentDocument' ] );
-		// const iFrameRenderedBlocksDOM = iFrameDocument.getElementById( 'rendered-blocks' );
-		// if ( iFrameRenderedBlocksDOM ) {
-		// 	iFrameDocument.body.removeChild( iFrameRenderedBlocksDOM );
-		// }
-
-		const renderedBlocksDOM = get( framePreviewRef, [ 'current', 'children'] )[ 1 ];
-		if (  renderedBlocksDOM ) {
-			iFrameDocument.body.appendChild(  renderedBlocksDOM );
-			// const cloned = renderedBlocksDOM.cloneNode( true );
-			// iFrameDocument.body.appendChild( cloned );
-		}
-
-	}, [ recomputeBlockListKey ] );
 
 	/**
 	 * This function re scales the viewport depending on
@@ -137,6 +102,59 @@ const BlockFramePreview = ( {
 		} );
 	}, [] );
 
+	// Populate iFrame styles.
+	useEffect( () => {
+		const head = get( framePreviewRef, [
+			'current',
+			'firstElementChild',
+			'contentDocument',
+			'head',
+		] );
+		const body = get( framePreviewRef, [
+			'current',
+			'firstElementChild',
+			'contentDocument',
+			'body',
+		] );
+
+		body.className = `${ bodyClassName } editor-styles-wrapper`;
+		loadStyles( { head, body } );
+		reScale();
+	}, [] );
+
+	// Scroll top the preview once it's rendered.
+	useEffect( () => {
+		const body = get( framePreviewRef, [
+			'current',
+			'firstElementChild',
+			'contentDocument',
+			'body',
+		] );
+		if ( ! body ) {
+			return;
+		}
+
+		// scroll to top when blocks changes.
+		body.scrollTop = 0;
+
+		const iFrameDocument = get( framePreviewRef, [
+			'current',
+			'firstElementChild',
+			'contentDocument',
+		] );
+		// const iFrameRenderedBlocksDOM = iFrameDocument.getElementById( 'rendered-blocks' );
+		// if ( iFrameRenderedBlocksDOM ) {
+		// 	iFrameDocument.body.removeChild( iFrameRenderedBlocksDOM );
+		// }
+
+		const renderedBlocksDOM = get( framePreviewRef, [ 'current', 'children' ] )[ 1 ];
+		if ( renderedBlocksDOM ) {
+			iFrameDocument.body.appendChild( renderedBlocksDOM );
+			// const cloned = renderedBlocksDOM.cloneNode( true );
+			// iFrameDocument.body.appendChild( cloned );
+		}
+	}, [ recomputeBlockListKey ] );
+
 	// Handling windows resize event.
 	useEffect( () => {
 		const refreshPreview = debounce( reScale, THRESHOLD_RESIZE );
@@ -152,9 +170,11 @@ const BlockFramePreview = ( {
 		};
 	}, [] );
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div ref={ framePreviewRef }>
 			<iframe
+				title={ __( 'Preview' ) }
 				className={ classnames( 'editor-styles-wrapper', className ) }
 				style={ style }
 			/>
@@ -176,6 +196,7 @@ const BlockFramePreview = ( {
 			</div>
 		</div>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 export default withSelect( select => {
