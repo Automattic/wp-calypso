@@ -20,9 +20,23 @@ build_archive=plugin-archive.zip
 zip -r $build_archive ./*
 
 # Send metadata and build zip file to the endpoint.
-curl -v \
+response=`curl -s \
+	-w "HTTPSTATUS:%{http_code}" \
 	-F "meta=$workflow_data" \
 	-F "build_archive=@$build_archive;type=application/zip" \
-	"$TRIGGER_CALYPSO_APP_BUILD_ENDPOINT?calypso_app=$CALYPSO_APP"
+	"$TRIGGER_CALYPSO_APP_BUILD_ENDPOINT?calypso_app=$CALYPSO_APP"`
+
+# Echo the output given by the server. (Like error messages.)
+output=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
+echo -e "$output"
+
+# Echo the HTTP status.
+status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+echo -e "\n\nHTTP status: $status"
+
+# Exit without 0 so that workflow fails if the server gave a bad response.
+if [ ! $status -eq 200 ]; then
+	exit 1
+fi
 
 exit 0
