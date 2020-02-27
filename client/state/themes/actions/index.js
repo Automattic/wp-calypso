@@ -6,7 +6,6 @@ import {
 	RECOMMENDED_THEMES_FAIL,
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
-	THEME_FILTERS_REQUEST,
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/theme-filters';
@@ -43,17 +42,7 @@ export { showThemePreview } from 'state/themes/actions/show-theme-preview';
 export { hideAutoLoadingHomepageWarning } from 'state/themes/actions/hide-auto-loading-homepage-warning';
 export { acceptAutoLoadingHomepageWarning } from 'state/themes/actions/accept-auto-loading-homepage-warning';
 export { hideThemePreview } from 'state/themes/actions/hide-theme-preview';
-
-/**
- * Triggers a network request to fetch all available theme filters.
- *
- * @returns {object} A nested list of theme filters, keyed by filter slug
- */
-export function requestThemeFilters() {
-	return {
-		type: THEME_FILTERS_REQUEST,
-	};
-}
+export { requestThemeFilters } from 'state/themes/actions/request-theme-filters';
 
 /**
  * Receives themes and dispatches them with recommended themes success signal.
