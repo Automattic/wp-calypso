@@ -9,7 +9,6 @@ import { assign, clone, get, includes, isEmpty, isNumber, pick, reduce, toArray 
  */
 import wpcom from 'lib/wp';
 import { decodeEntities } from 'lib/formatting';
-import { POST_RESTORE, POST_RESTORE_FAILURE, POST_RESTORE_SUCCESS } from 'state/action-types';
 import { getSitePost, getEditedPost, getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import { recordSaveEvent } from 'state/posts/stats';
 import {
@@ -60,50 +59,7 @@ export { savePostSuccess } from 'state/posts/actions/save-post-success';
 export { savePost } from 'state/posts/actions/save-post';
 export { trashPost } from 'state/posts/actions/trash-post';
 export { deletePost } from 'state/posts/actions/delete-post';
-
-/**
- * Returns an action thunk which, when dispatched, triggers a network request
- * to restore the specified post.
- *
- * @param  {number}   siteId Site ID
- * @param  {number}   postId Post ID
- * @returns {Function}        Action thunk
- */
-export function restorePost( siteId, postId ) {
-	return dispatch => {
-		dispatch( {
-			type: POST_RESTORE,
-			siteId,
-			postId,
-		} );
-
-		const restoreResult = wpcom
-			.site( siteId )
-			.post( postId )
-			.restore();
-
-		restoreResult.then(
-			restoredPost => {
-				dispatch( {
-					type: POST_RESTORE_SUCCESS,
-					siteId,
-					postId,
-				} );
-				dispatch( receivePost( restoredPost ) );
-			},
-			error => {
-				dispatch( {
-					type: POST_RESTORE_FAILURE,
-					siteId,
-					postId,
-					error,
-				} );
-			}
-		);
-
-		return restoreResult;
-	};
-}
+export { restorePost } from 'state/posts/actions/restore-post';
 
 /**
  * Returns an action thunk which, when dispatched, adds a term to the current edited post
