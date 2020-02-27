@@ -26,6 +26,7 @@ import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification';
 import { recordPaymentSettingsClick } from './payment-settings-analytics';
+import NonPrimaryDomainPlanUpsell from '../components/domain/non-primary-domain-plan-upsell';
 
 class RegisteredDomain extends React.Component {
 	getAutoRenewalOrExpirationDate() {
@@ -94,6 +95,18 @@ class RegisteredDomain extends React.Component {
 		);
 	}
 
+	planUpsellForNonPrimaryDomain() {
+		const { domain, isDomainOnly, selectedSite } = this.props;
+
+		return (
+			<NonPrimaryDomainPlanUpsell
+				tracksImpressionName="calypso_non_primary_domain_settings_plan_upsell_impression"
+				tracksClickName="calypso_non_primary_domain_settings_plan_upsell_click"
+				{ ...{ domain, isDomainOnly, selectedSite } }
+			/>
+		);
+	}
+
 	getVerticalNav() {
 		const { expiry, expired, pendingTransfer } = this.props.domain;
 		const { moment } = this.props;
@@ -154,6 +167,7 @@ class RegisteredDomain extends React.Component {
 		return (
 			<div>
 				{ this.domainWarnings() }
+				{ this.planUpsellForNonPrimaryDomain() }
 				<div className="domain-details-card">
 					{ domain.isPendingIcannVerification && domain.currentUserCanManage && (
 						<IcannVerificationCard
