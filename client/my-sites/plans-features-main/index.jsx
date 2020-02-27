@@ -182,7 +182,7 @@ export class PlansFeaturesMain extends Component {
 					} ) }
 					siteId={ siteId }
 				/>
-				<PlanTestimonials />
+				{ isEligibleForPlanStepTest && <PlanTestimonials /> }
 			</div>
 		);
 	}
