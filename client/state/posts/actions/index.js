@@ -71,22 +71,11 @@ import { getPreference } from 'state/preferences/selectors';
 import 'state/posts/init';
 
 import { receivePost } from 'state/posts/actions/receive-post';
-import { requestPosts } from 'state/posts/actions/request-posts';
 
 export { receivePosts } from 'state/posts/actions/receive-posts';
 export { receivePost } from 'state/posts/actions/receive-post';
 export { requestSitePosts } from 'state/posts/actions/request-site-posts';
-
-/**
- * Returns a function which, when invoked, triggers a network request to fetch
- * posts across all of the current user's sites for the specified query.
- *
- * @param  {string}   query Post query
- * @returns {Function}       Action thunk
- */
-export function requestAllSitesPosts( query = {} ) {
-	return requestPosts( null, query );
-}
+export { requestAllSitesPosts } from 'state/posts/actions/request-all-sites-posts';
 
 /**
  * Triggers a network request to fetch a specific post from a site.
