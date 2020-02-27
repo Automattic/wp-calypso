@@ -2,13 +2,14 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import React, { FunctionComponent, Fragment } from 'react';
+import React, { FunctionComponent, Fragment, useState, useEffect } from 'react';
 import page from 'page';
 import { get, compact } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import wp from 'lib/wp';
 import { useTranslate } from 'i18n-calypso';
 import { SiteSlug } from 'types';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
@@ -22,6 +23,8 @@ import QueryMembershipsSettings from 'components/data/query-memberships-settings
 import QueryWordadsStatus from 'components/data/query-wordads-status';
 import { FEATURE_WORDADS_INSTANT, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import ClipboardButtonInput from 'components/clipboard-button-input';
+import { CtaButton } from 'components/promo-section/promo-card/cta';
 
 /**
  * Image dependencies
@@ -62,6 +65,16 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	trackCtaButton,
 } ) => {
 	const translate = useTranslate();
+	const [ peerReferralLink, setPeerReferralLink ] = useState( '' );
+
+	useEffect( () => {
+		if ( peerReferralLink ) return;
+		wp.undocumented()
+			.me()
+			.getPeerReferralLink( ( error: string, data: string ) =>
+				setPeerReferralLink( error ? '' : data )
+			);
+	} );
 
 	/**
 	 * Return the content to display in the Simple Payments card based on the current plan.
@@ -220,13 +233,8 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			return;
 		}
 
-		const components = {
-			components: {
-				em: <em />,
-			},
-		};
-		const cta = {
-			text: translate( 'Earn Free Credits' ),
+		const cta: CtaButton = {
+			text: translate( 'Earn Free Credits' ) as string,
 			action: {
 				url:
 					'https://refer.wordpress.com/?utm_source=calypso&utm_campaign=calypso_earn&utm_medium=automattic_referred&atk=341b381c971a0631a88f080f598faafb25c344db',
@@ -234,12 +242,31 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			},
 		};
 
+		if ( peerReferralLink ) {
+			cta.component = <ClipboardButtonInput value={ peerReferralLink } />;
+		}
+
 		return {
 			title: translate( 'Refer a friend, you’ll both earn credits' ),
-			body: translate(
-				'Share WordPress.com with friends, family, and website visitors. For every paying customer you send our way, you’ll both earn US$25 in free credits. {{em}}Available on every plan{{/em}}.',
-				components
-			),
+			body: peerReferralLink
+				? translate(
+						'To earn free credits, share your personal signup link below with your friends and family.{{br/}}' +
+							'By doing so you agree to {{a}}the WordPress.com Peer Referral Program Terms and Conditions.{{/a}}',
+						{
+							components: {
+								a: <a href="https://wordpress.com" />,
+								br: <br />,
+							},
+						}
+				  )
+				: translate(
+						'Share WordPress.com with friends, family, and website visitors. For every paying customer you send our way, you’ll both earn US$25 in free credits. {{em}}Available on every plan{{/em}}.',
+						{
+							components: {
+								em: <em />,
+							},
+						}
+				  ),
 			image: {
 				path: referralImage,
 			},

@@ -28,9 +28,6 @@ import AdsWrapper from './ads/wrapper';
 import MembershipsSection from './memberships';
 import MembershipsProductsSection from './memberships/products';
 import { canAccessAds } from 'lib/ads/utils';
-import wp from 'lib/wp';
-
-const wpcom = wp.undocumented();
 
 class EarningsMain extends Component {
 	static propTypes = {
@@ -38,26 +35,6 @@ class EarningsMain extends Component {
 		site: PropTypes.object,
 		query: PropTypes.object,
 	};
-
-	state = {
-		peerReferralLink: '',
-	};
-
-	componentDidMount() {
-		wpcom.me().getPeerReferralLink( function( error, data ) {
-			this.setState( {
-				peerReferralLink: error ? '' : data,
-			} );
-		} );
-	}
-
-	onSetPeerReferralLinkEnable() {
-		wpcom.me().setPeerReferralLinkEnable( function( error, data ) {
-			this.setState( {
-				peerReferralLink: error ? '' : data,
-			} );
-		} );
-	}
 
 	getSelectedText() {
 		const selected = find( this.getFilters(), { path: this.props.path } );
@@ -108,7 +85,7 @@ class EarningsMain extends Component {
 			case 'payments-plans':
 				return <MembershipsProductsSection section={ this.props.section } />;
 			default:
-				return <Home peerReferralLink={ this.state.peerReferralLink } />;
+				return <Home />;
 		}
 	}
 
