@@ -15,6 +15,15 @@ type WPCOMCallback = (
 	headers: WPCOMHeaders
 ) => void;
 
+export type UserMetaData = {
+	links: Record< 'self' | 'help' | 'site' | 'flags', URL >;
+	data?: {
+		flags: {
+			active_flags: string[];
+		};
+	};
+};
+
 export interface User extends EventEmitter {
 	initialize: () => Promise< void >;
 	clearStoreIfChanged: ( userId: number ) => void;
@@ -39,7 +48,7 @@ export interface User extends EventEmitter {
 export type UserData = { ID: number } & Partial< OptionalUserData >;
 
 export type OptionalUserData = {
-	abtests: unknown;
+	abtests: Record< string, string >;
 	avatar_URL: string;
 	date: string;
 	description: string;
@@ -53,7 +62,7 @@ export type OptionalUserData = {
 	localeSlug: string;
 	localeVariant: string;
 	logout_URL: string;
-	meta: unknown;
+	meta: UserMetaData;
 	newest_note_type: string;
 	phone_account: boolean;
 	primarySiteSlug: string;
