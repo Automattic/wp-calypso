@@ -21,8 +21,6 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@master
-    - name: Install dependencies
-      run: npm ci
     - name: Build FSE
       run: npx lerna run build --scope='@automattic/full-site-editing' --stream
     - name: Upload build artifact
