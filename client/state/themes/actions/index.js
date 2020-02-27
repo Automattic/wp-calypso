@@ -25,11 +25,7 @@ import {
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
-	THEME_UPLOAD_START,
-	THEME_UPLOAD_SUCCESS,
-	THEME_UPLOAD_FAILURE,
 	THEME_UPLOAD_CLEAR,
-	THEME_UPLOAD_PROGRESS,
 	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
 } from 'state/action-types';
@@ -47,7 +43,6 @@ import 'state/data-layer/wpcom/theme-filters';
 
 import 'state/themes/init';
 
-import { receiveTheme } from 'state/themes/actions/receive-theme';
 import { activateTheme } from 'state/themes/actions/activate-theme';
 import { suffixThemeIdForInstall } from 'state/themes/actions/suffix-theme-id-for-install';
 import { installAndActivateTheme } from 'state/themes/actions/install-and-activate-theme';
@@ -67,6 +62,7 @@ export { tryAndCustomizeTheme } from 'state/themes/actions/try-and-customize-the
 export { installAndTryAndCustomizeTheme } from 'state/themes/actions/install-and-try-and-customize-theme';
 export { tryAndCustomize } from 'state/themes/actions/try-and-customize';
 export { installAndActivateTheme } from 'state/themes/actions/install-and-activate-theme';
+export { uploadTheme } from 'state/themes/actions/upload-theme';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
@@ -100,48 +96,6 @@ export function activate( themeId, siteId, source = 'unknown', purchased = false
 		}
 
 		return dispatch( activateTheme( themeId, siteId, source, purchased ) );
-	};
-}
-
-/**
- * Triggers a theme upload to the given site.
- *
- * @param {number} siteId -- Site to upload to
- * @param {File} file -- the theme zip to upload
- *
- * @returns {Function} the action function
- */
-export function uploadTheme( siteId, file ) {
-	return dispatch => {
-		dispatch( {
-			type: THEME_UPLOAD_START,
-			siteId,
-		} );
-		return wpcom
-			.undocumented()
-			.uploadTheme( siteId, file, event => {
-				dispatch( {
-					type: THEME_UPLOAD_PROGRESS,
-					siteId,
-					loaded: event.loaded,
-					total: event.total,
-				} );
-			} )
-			.then( theme => {
-				dispatch( receiveTheme( theme, siteId ) );
-				dispatch( {
-					type: THEME_UPLOAD_SUCCESS,
-					siteId,
-					themeId: theme.id,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
-					type: THEME_UPLOAD_FAILURE,
-					siteId,
-					error,
-				} );
-			} );
 	};
 }
 
