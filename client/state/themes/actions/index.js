@@ -13,9 +13,6 @@ import {
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
 	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
-	THEME_DELETE,
-	THEME_DELETE_SUCCESS,
-	THEME_DELETE_FAILURE,
 	THEME_FILTERS_REQUEST,
 	THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING,
@@ -45,6 +42,7 @@ import 'state/themes/init';
 import { activateTheme } from 'state/themes/actions/activate-theme';
 import { suffixThemeIdForInstall } from 'state/themes/actions/suffix-theme-id-for-install';
 import { installAndActivateTheme } from 'state/themes/actions/install-and-activate-theme';
+import { deleteTheme } from 'state/themes/actions/delete-theme';
 
 export { setBackPath } from 'state/themes/actions/set-back-path';
 export { receiveThemes } from 'state/themes/actions/receive-themes';
@@ -63,6 +61,7 @@ export { tryAndCustomize } from 'state/themes/actions/try-and-customize';
 export { installAndActivateTheme } from 'state/themes/actions/install-and-activate-theme';
 export { uploadTheme } from 'state/themes/actions/upload-theme';
 export { clearThemeUpload } from 'state/themes/actions/clear-theme-upload';
+export { deleteTheme } from 'state/themes/actions/delete-theme';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
@@ -254,43 +253,6 @@ export function pollThemeTransferStatus(
 				} );
 		};
 		return new Promise( pollStatus );
-	};
-}
-
-/**
- * Deletes a theme from the given Jetpack site.
- *
- * @param {string} themeId -- Theme to delete
- * @param {number} siteId -- Site to delete theme from
- *
- * @returns {Function} Action thunk
- */
-export function deleteTheme( themeId, siteId ) {
-	return dispatch => {
-		dispatch( {
-			type: THEME_DELETE,
-			themeId,
-			siteId,
-		} );
-		return wpcom
-			.undocumented()
-			.deleteThemeFromJetpack( siteId, themeId )
-			.then( theme => {
-				dispatch( {
-					type: THEME_DELETE_SUCCESS,
-					themeId,
-					siteId,
-					themeName: theme.name,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
-					type: THEME_DELETE_FAILURE,
-					themeId,
-					siteId,
-					error,
-				} );
-			} );
 	};
 }
 
