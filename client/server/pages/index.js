@@ -680,7 +680,6 @@ module.exports = function() {
 		next();
 	} );
 
-
 	// redirect homepage if the Reader is disabled
 	app.get( '/', function( request, response, next ) {
 		if ( ! config.isEnabled( 'reader' ) && ! jetpackCloudEnvs.includes( calypsoEnv ) ) {
@@ -829,13 +828,7 @@ module.exports = function() {
 
 	sections
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
-		.filter( section => {
-			const activeSections = config( 'sections' );
-			if ( activeSections && activeSections[ section.name ] ) {
-				return activeSections[ section.name ];
-			}
-			return ! config( 'disable_sections' );
-		} )
+		.filter( utils.filterSections )
 		.forEach( section => {
 			section.paths.forEach( sectionPath => handleSectionPath( section, sectionPath ) );
 

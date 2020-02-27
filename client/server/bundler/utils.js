@@ -5,6 +5,11 @@ const crypto = require( 'crypto' );
 const fs = require( 'fs' );
 const qs = require( 'qs' );
 
+/**
+ * Internal dependecies
+ */
+const config = require( '../config' );
+
 const HASH_LENGTH = 10;
 const URL_BASE_PATH = '/calypso';
 
@@ -36,7 +41,18 @@ function getUrl( filename, hash ) {
 	);
 }
 
+const activeSections = config( 'sections' );
+const byDefaultDisableSection = config( 'disable_sections' );
+
+function filterSections( section ) {
+	if ( activeSections && activeSections[ section.name ] ) {
+		return activeSections[ section.name ];
+	}
+	return ! byDefaultDisableSection;
+}
+
 module.exports = {
 	hashFile: hashFile,
 	getUrl: getUrl,
+	filterSections: filterSections,
 };

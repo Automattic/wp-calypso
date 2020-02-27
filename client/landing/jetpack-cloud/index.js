@@ -21,12 +21,12 @@ import { scan, scanHistory } from './sections/scan/controller';
 import { settings } from './sections/settings/controller';
 
 export default function() {
-	page( '/', siteSelection, dashboard, makeLayout, clientRender );
+	page( '/', siteSelection, navigation, dashboard, makeLayout, clientRender );
+	page( '/backups', siteSelection, sites, navigation, makeLayout, clientRender );
 
-	page( '/backups', siteSelection, backupDetail, makeLayout, clientRender );
 	page( '/backups/:site', siteSelection, navigation, backups, makeLayout, clientRender );
 	page(
-		'/backups/detail/:site',
+		'/backups/:site/detail/',
 		siteSelection,
 		navigation,
 		backupDetail,
@@ -50,7 +50,7 @@ export default function() {
 		clientRender
 	);
 	page(
-		'/site/:site/backups/backups/download/:downloadId',
+		'/backups/:site/backups/download/:downloadId',
 		navigation,
 		backupDownload,
 		makeLayout,
@@ -59,7 +59,7 @@ export default function() {
 
 	page( '/backups/restore', siteSelection, sites, navigation, makeLayout, clientRender );
 	page(
-		'/backups/restore/:site',
+		'/backups/:site/restore/',
 		siteSelection,
 		navigation,
 		backupRestore,
