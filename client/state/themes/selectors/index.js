@@ -49,6 +49,7 @@ export { isThemeGutenbergFirst } from 'state/themes/selectors/is-theme-gutenberg
 export { isThemePremium } from 'state/themes/selectors/is-theme-premium';
 export { isThemePurchased } from 'state/themes/selectors/is-theme-purchased';
 export { isThemesLastPageForQuery } from 'state/themes/selectors/is-themes-last-page-for-query';
+export { isValidThemeFilterTerm } from 'state/themes/selectors/is-valid-theme-filter-term';
 export { isWpcomTheme } from 'state/themes/selectors/is-wpcom-theme';
 export { isWporgTheme } from 'state/themes/selectors/is-wporg-theme';
 export { shouldFilterWpcomThemes } from 'state/themes/selectors/should-filter-wpcom-themes';

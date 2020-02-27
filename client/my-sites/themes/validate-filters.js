@@ -10,9 +10,8 @@ import {
 	getThemeFilterStringFromTerm,
 	getThemeFilterTerm,
 	getThemeFilterTermFromString,
+	isValidThemeFilterTerm,
 } from 'state/themes/selectors';
-
-import isValidThemeFilterTerm from 'state/selectors/is-valid-theme-filter-term';
 
 // Reorder and remove invalid filters to redirect to canonical URL
 export function validateFilters( context, next ) {

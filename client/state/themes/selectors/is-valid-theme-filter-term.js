@@ -1,7 +1,9 @@
 /**
  * Internal dependencies
  */
-import { findThemeFilterTerm } from 'state/themes/selectors';
+import { findThemeFilterTerm } from 'state/themes/selectors/find-theme-filter-term';
+
+import 'state/themes/init';
 
 /**
  * Whether a filter term slug is valid
@@ -10,6 +12,6 @@ import { findThemeFilterTerm } from 'state/themes/selectors';
  * @param  {string}  term  The term to validate
  * @returns {boolean}          True if term is valid
  */
-export default function isValidThemeFilterTerm( state, term ) {
+export function isValidThemeFilterTerm( state, term ) {
 	return !! findThemeFilterTerm( state, term );
 }
