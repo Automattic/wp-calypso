@@ -34,9 +34,6 @@ import {
 	POST_SAVE,
 	POST_SAVE_SUCCESS,
 	POST_SAVE_FAILURE,
-	POSTS_REQUEST,
-	POSTS_REQUEST_SUCCESS,
-	POSTS_REQUEST_FAILURE,
 } from 'state/action-types';
 import { getSitePost, getEditedPost, getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import { recordSaveEvent } from 'state/posts/stats';
@@ -73,8 +70,8 @@ import { getPreference } from 'state/preferences/selectors';
 
 import 'state/posts/init';
 
-import { receivePosts } from 'state/posts/actions/receive-posts';
 import { receivePost } from 'state/posts/actions/receive-post';
+import { requestPosts } from 'state/posts/actions/request-posts';
 
 export { receivePosts } from 'state/posts/actions/receive-posts';
 export { receivePost } from 'state/posts/actions/receive-post';
@@ -103,46 +100,6 @@ export function requestSitePosts( siteId, query = {} ) {
  */
 export function requestAllSitesPosts( query = {} ) {
 	return requestPosts( null, query );
-}
-
-/**
- * Triggers a network request to fetch posts for the specified site and query.
- *
- * @param  {?number}  siteId Site ID
- * @param  {string}   query  Post query
- * @returns {Function}        Action thunk
- */
-function requestPosts( siteId, query = {} ) {
-	return dispatch => {
-		dispatch( {
-			type: POSTS_REQUEST,
-			siteId,
-			query,
-		} );
-
-		const source = siteId ? wpcom.site( siteId ) : wpcom.me();
-
-		return source
-			.postsList( { ...query } )
-			.then( ( { found, posts } ) => {
-				dispatch( receivePosts( posts ) );
-				dispatch( {
-					type: POSTS_REQUEST_SUCCESS,
-					siteId,
-					query,
-					found,
-					posts,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
-					type: POSTS_REQUEST_FAILURE,
-					siteId,
-					query,
-					error,
-				} );
-			} );
-	};
 }
 
 /**
