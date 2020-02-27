@@ -58,6 +58,7 @@ import {
 	TldFilterBar,
 } from 'components/domains/search-filters';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
 import { hasDomainInCart } from 'lib/cart-values/cart-items';
@@ -174,7 +175,7 @@ class RegisterDomainStep extends React.Component {
 		resetSearchCount();
 
 		this._isMounted = false;
-		this.state = this.getState();
+		this.state = this.getState( props );
 		this.state.filters = this.getInitialFiltersState();
 		this.state.lastFilters = this.getInitialFiltersState();
 
@@ -217,8 +218,8 @@ class RegisterDomainStep extends React.Component {
 		}
 	}
 
-	getState() {
-		const suggestion = this.props.suggestion ? getFixedDomainSearch( this.props.suggestion ) : '';
+	getState( props ) {
+		const suggestion = props.suggestion ? getFixedDomainSearch( props.suggestion ) : '';
 		const loadingResults = Boolean( suggestion );
 
 		return {
@@ -235,8 +236,7 @@ class RegisterDomainStep extends React.Component {
 			lastQuery: suggestion,
 			loadingResults,
 			loadingSubdomainResults:
-				( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) &&
-				loadingResults,
+				( props.includeWordPressDotCom || props.includeDotBlogSubdomain ) && loadingResults,
 			pageNumber: 1,
 			searchResults: null,
 			showAvailabilityNotice: false,
@@ -248,7 +248,7 @@ class RegisterDomainStep extends React.Component {
 			unavailableDomains: [],
 			trademarkClaimsNoticeInfo: null,
 			selectedSuggestion: null,
-			isInitialQueryActive: !! this.props.suggestion,
+			isInitialQueryActive: !! props.suggestion,
 		};
 	}
 
@@ -267,7 +267,8 @@ class RegisterDomainStep extends React.Component {
 			nextProps.selectedSite &&
 			nextProps.selectedSite.slug !== ( this.props.selectedSite || {} ).slug
 		) {
-			this.setState( this.getState() );
+			this.setState( this.getState( nextProps ) );
+			this.onSearch( nextProps.suggestion );
 		}
 
 		if (
@@ -442,6 +443,7 @@ class RegisterDomainStep extends React.Component {
 							describedBy={ 'step-header' }
 							dir="ltr"
 							initialValue={ this.state.lastQuery }
+							value={ this.state.lastQuery }
 							inputLabel={ this.props.translate( 'What would you like your domain name to be?' ) }
 							minLength={ MIN_QUERY_LENGTH }
 							maxLength={ 60 }
@@ -1439,6 +1441,7 @@ export default connect(
 		return {
 			isSitePreviewVisible: isSitePreviewVisible( state ),
 			currentUser: getCurrentUser( state ),
+			selectedSite: getSelectedSite( state ),
 			defaultSuggestions: getDomainsSuggestions( state, queryObject ),
 			defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject ),
 		};
