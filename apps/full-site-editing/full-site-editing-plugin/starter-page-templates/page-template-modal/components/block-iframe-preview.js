@@ -25,16 +25,21 @@ import { __ } from '@wordpress/i18n';
 
 const THRESHOLD_RESIZE = 300;
 
-/*
- * This function will populate the styles from the current document
+/**
+ * Copies the styles from the provided src document
  * to the given iFrame head and body DOM references.
  *
- * @param {object} els iFrame elements to populate: <head /> and <body />
+ * @param {object} srcDocument the src document from which to copy the
+ * `link` and `style` Nodes from the `head` and `body`
+ * @param {object} targetiFrameDocument the target iframe's
+ * `contentDocument` where the `link` and `style` Nodes from the `head` and
+ * `body` will be copied
  */
-const loadStyles = iFrameDomReferences => {
-	each( Object.keys( iFrameDomReferences ), domReference =>
-		each(
-			filter( window.document[ domReference ].children, ( { localName } ) =>
+const copyStylesToIframe = ( srcDocument, targetiFrameDocument ) => {
+	const iFrameDomReferences = [ 'head', 'body' ];
+	each( iFrameDomReferences, domReference => {
+		return each(
+			filter( srcDocument[ domReference ].children, ( { localName } ) =>
 				[ 'link', 'style' ].includes( localName )
 			),
 			( { localName, attributes, innerHTML } ) => {
@@ -45,10 +50,10 @@ const loadStyles = iFrameDomReferences => {
 					node.innerHTML = innerHTML;
 				}
 
-				iFrameDomReferences[ domReference ].appendChild( node );
+				targetiFrameDocument[ domReference ].appendChild( node );
 			}
-		)
-	);
+		);
+	} );
 };
 
 /**
@@ -105,21 +110,21 @@ const BlockFramePreview = ( {
 
 	// Populate iFrame styles.
 	useEffect( () => {
-		const head = get( frameContainerRef, [
+		const targetIFrameDoc = get( frameContainerRef, [
 			'current',
 			'firstElementChild',
 			'contentDocument',
-			'head',
 		] );
+
 		const body = get( frameContainerRef, [
 			'current',
 			'firstElementChild',
 			'contentDocument',
 			'body',
 		] );
-
 		body.className = `${ bodyClassName } editor-styles-wrapper`;
-		loadStyles( { head, body } );
+
+		copyStylesToIframe( window.document, targetIFrameDoc );
 		rescale();
 	}, [ bodyClassName, rescale ] );
 
