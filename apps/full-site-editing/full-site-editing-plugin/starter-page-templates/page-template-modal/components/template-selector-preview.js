@@ -13,7 +13,7 @@ import BlockFramePreview from './block-iframe-preview';
 const TemplateSelectorPreview = ( { blocks = [], viewportWidth } ) => {
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		<div className={ `template-selector-preview ${ ! blocks.length ? 'not-selected' : '' }` }>
+		<div className="template-selector-preview">
 			{ ! blocks.length && (
 				<div class="template-selector-preview__empty-state editor-styles-wrapper">
 					{ __( 'Select a layout to preview.', 'full-site-editing' ) }

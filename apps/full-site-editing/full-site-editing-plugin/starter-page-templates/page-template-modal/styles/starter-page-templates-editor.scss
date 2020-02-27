@@ -393,13 +393,14 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		left: -9999vw;
 	}
 
-	//// Preview adjustments.
+	// Preview adjustments.
 	.editor-styles-wrapper {
-		// core/cover. The following styles are applied using inline-styles
+		// core/cover.
 		.wp-block-cover {
 			height: auto;
 		}
 
+		// TODO: fix the embed iframe blocks properly.
 		.wp-block-embed__wrapper iframe {
 			height: auto;
 			min-height: 400px;
