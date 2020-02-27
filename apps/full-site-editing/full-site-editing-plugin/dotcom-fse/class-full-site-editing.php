@@ -91,6 +91,8 @@ class Full_Site_Editing {
 			return;
 		}
 
+		// dummy FSE change
+
 		$this->wp_template_inserter->insert_default_template_data();
 		$this->wp_template_inserter->insert_default_pages();
 	}
