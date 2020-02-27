@@ -31,9 +31,7 @@ import {
 	themeHasAutoLoadingHomepage,
 	hasAutoLoadingHomepageModalAccepted,
 } from 'state/themes/selectors';
-import { getSiteTitle, isJetpackSite } from 'state/sites/selectors';
-import i18n from 'i18n-calypso';
-import accept from 'lib/accept';
+import { isJetpackSite } from 'state/sites/selectors';
 
 import 'state/data-layer/wpcom/theme-filters';
 
@@ -42,7 +40,6 @@ import 'state/themes/init';
 import { activateTheme } from 'state/themes/actions/activate-theme';
 import { suffixThemeIdForInstall } from 'state/themes/actions/suffix-theme-id-for-install';
 import { installAndActivateTheme } from 'state/themes/actions/install-and-activate-theme';
-import { deleteTheme } from 'state/themes/actions/delete-theme';
 
 export { setBackPath } from 'state/themes/actions/set-back-path';
 export { receiveThemes } from 'state/themes/actions/receive-themes';
@@ -62,6 +59,7 @@ export { installAndActivateTheme } from 'state/themes/actions/install-and-activa
 export { uploadTheme } from 'state/themes/actions/upload-theme';
 export { clearThemeUpload } from 'state/themes/actions/clear-theme-upload';
 export { deleteTheme } from 'state/themes/actions/delete-theme';
+export { confirmDelete } from 'state/themes/actions/confirm-delete';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
@@ -253,36 +251,6 @@ export function pollThemeTransferStatus(
 				} );
 		};
 		return new Promise( pollStatus );
-	};
-}
-
-/**
- * Shows dialog asking user to confirm delete of theme
- * from jetpack site. Deletes theme if user confirms.
- *
- * @param {string} themeId -- Theme to delete
- * @param {number} siteId -- Site to delete theme from
- *
- * @returns {Function} Action thunk
- */
-export function confirmDelete( themeId, siteId ) {
-	return ( dispatch, getState ) => {
-		const { name: themeName } = getTheme( getState(), siteId, themeId );
-		const siteTitle = getSiteTitle( getState(), siteId );
-		accept(
-			i18n.translate( 'Are you sure you want to delete %(themeName)s from %(siteTitle)s?', {
-				args: { themeName, siteTitle },
-				comment: 'Themes: theme delete confirmation dialog',
-			} ),
-			accepted => {
-				accepted && dispatch( deleteTheme( themeId, siteId ) );
-			},
-			i18n.translate( 'Delete %(themeName)s', {
-				args: { themeName },
-				comment: 'Themes: theme delete dialog confirm button',
-			} ),
-			i18n.translate( 'Back', { context: 'go back (like the back button in a browser)' } )
-		);
 	};
 }
 
