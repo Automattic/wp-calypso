@@ -2,7 +2,6 @@
  * External dependencies
  */
 import config from 'config';
-import assert from 'assert';
 
 /**
  * Internal dependencies
@@ -31,9 +30,8 @@ describe( 'Gutenboarding: (' + screenSize + ') @parallel', function() {
 		} );
 
 		step( 'Can visit Gutenboarding page and see Onboarding block', async function() {
-			const page = await GutenboardingPage.Visit( driver );
-			const blockExists = await page.waitForBlock();
-			return assert( blockExists, 'Onboarding block is not rendered' );
+			const gutenboardingPage = await GutenboardingPage.Visit( driver );
+			return await gutenboardingPage.waitForBlock();
 		} );
 	} );
 

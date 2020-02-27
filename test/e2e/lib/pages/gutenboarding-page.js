@@ -24,7 +24,7 @@ export default class GutenboardingPage extends AsyncBaseContainer {
 	}
 
 	async waitForBlock() {
-		return driverHelper.isEventuallyPresentAndDisplayed(
+		return driverHelper.waitTillPresentAndDisplayed(
 			this.driver,
 			by.css( '[data-type="automattic/onboarding"]' )
 		);
