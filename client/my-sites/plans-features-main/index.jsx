@@ -431,7 +431,7 @@ export class PlansFeaturesMain extends Component {
 			return null;
 		}
 
-		const { basePlansPath, intervalType, redirectTo } = this.props;
+		const { basePlansPath, intervalType, redirectTo, onUpgradeClick } = this.props;
 		const jetpackProducts = getJetpackProducts();
 
 		return (
@@ -449,6 +449,7 @@ export class PlansFeaturesMain extends Component {
 					basePlansPath={ basePlansPath }
 					productPriceMatrix={ JETPACK_PRODUCT_PRICE_MATRIX }
 					redirectTo={ redirectTo }
+					onUpgradeClick={ onUpgradeClick }
 				/>
 			</div>
 		);

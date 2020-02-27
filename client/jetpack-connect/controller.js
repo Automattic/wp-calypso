@@ -116,7 +116,7 @@ export function connect( context, next ) {
 	const { type = false, interval } = params;
 	const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
 
-	debug( 'entered connect flow with params %o', params );
+	console.log( 'entered connect flow with params %o', params );
 
 	const planSlug = getPlanSlugFromFlowType( type, interval );
 
