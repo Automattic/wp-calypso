@@ -21,7 +21,7 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
-import observe from 'lib/mixins/data-observe';
+import observe from 'lib/mixins/data-observe'; //eslint-disable-line no-restricted-imports
 import ProfileLinks from 'me/profile-links';
 import ReauthRequired from 'me/reauth-required';
 import SectionHeader from 'components/section-header';
@@ -37,6 +37,7 @@ import './style.scss';
 
 const debug = debugFactory( 'calypso:me:profile' );
 
+/* eslint-disable react/prefer-es6-class */
 const Profile = createReactClass( {
 	displayName: 'Profile',
 
@@ -68,7 +69,7 @@ const Profile = createReactClass( {
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<SectionHeader label={ this.props.translate( 'Profile' ) } />
-				<Card className="me-profile-settings">
+				<Card className="profile__settings">
 					<EditGravatar />
 
 					<form onSubmit={ this.submitForm } onChange={ this.props.markChanged }>
@@ -131,11 +132,11 @@ const Profile = createReactClass( {
 							>
 								{ this.state.submittingForm
 									? this.props.translate( 'Saving…' )
-									: this.props.translate( 'Save Profile Details' ) }
+									: this.props.translate( 'Save profile details' ) }
 							</FormButton>
 						</p>
 					</form>
-					<p className="me-profile-settings__info-text">
+					<p className="profile__info-text">
 						{ this.props.translate(
 							'This information will be displayed publicly on {{profilelink}}your profile{{/profilelink}} and in ' +
 								'{{hovercardslink}}Gravatar Hovercards{{/hovercardslink}}.',

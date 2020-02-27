@@ -386,7 +386,7 @@ const Account = createReactClass( {
 
 				// We reload here to refresh cookies, user object, and user settings.
 				// @TODO: Do not require reload here.
-				location.reload();
+				window.location.reload();
 			}
 		} );
 	},
@@ -627,7 +627,7 @@ const Account = createReactClass( {
 				>
 					{ this.state.submittingForm
 						? translate( 'Saving…' )
-						: translate( 'Save Account Settings' ) }
+						: translate( 'Save account settings' ) }
 				</FormButton>
 			</div>
 		);
@@ -759,7 +759,7 @@ const Account = createReactClass( {
 						type="button"
 						onClick={ this.getClickHandler( 'Change Username Button', this.submitUsernameForm ) }
 					>
-						{ translate( 'Save Username' ) }
+						{ translate( 'Save username' ) }
 					</FormButton>
 
 					<FormButton
