@@ -2,6 +2,8 @@
 
 This store includes behavior for checking if a current user is logged in, and creating new user accounts.
 
+To log the user in see the [auth store](../auth/README.md).
+
 ## Usage
 
 Register the user store, passing in a valid client ID and secret:
