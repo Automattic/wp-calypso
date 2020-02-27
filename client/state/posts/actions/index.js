@@ -26,7 +26,6 @@ import {
 	isBackDated,
 	isFutureDated,
 	isPublished,
-	normalizePostForApi,
 	normalizeTermsForApi,
 } from 'state/posts/utils';
 import editedPostHasContent from 'state/selectors/edited-post-has-content';
@@ -67,48 +66,7 @@ export { editPost } from 'state/posts/actions/edit-post';
 export { updatePostMetadata } from 'state/posts/actions/update-post-metadata';
 export { deletePostMetadata } from 'state/posts/actions/delete-post-metadata';
 export { savePostSuccess } from 'state/posts/actions/save-post-success';
-
-/**
- * Returns an action thunk which, when dispatched, triggers a network request
- * to save the specified post object.
- *
- * @param  {number}   siteId Site ID
- * @param  {number}   postId Post ID
- * @param  {object}   post   Post attributes
- * @returns {Function}        Action thunk
- */
-export function savePost( siteId, postId = null, post ) {
-	return dispatch => {
-		dispatch( {
-			type: POST_SAVE,
-			siteId,
-			postId,
-			post,
-		} );
-
-		const postHandle = wpcom.site( siteId ).post( postId );
-		const normalizedPost = normalizePostForApi( post );
-		const method = postId ? 'update' : 'add';
-		const saveResult = postHandle[ method ]( { apiVersion: '1.2' }, normalizedPost );
-
-		saveResult.then(
-			savedPost => {
-				dispatch( savePostSuccess( siteId, postId, savedPost, post ) );
-				dispatch( receivePost( savedPost ) );
-			},
-			error => {
-				dispatch( {
-					type: POST_SAVE_FAILURE,
-					siteId,
-					postId,
-					error,
-				} );
-			}
-		);
-
-		return saveResult;
-	};
-}
+export { savePost } from 'state/posts/actions/save-post';
 
 /**
  * Returns an action thunk which, when dispatched, triggers a network request
