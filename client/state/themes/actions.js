@@ -68,6 +68,7 @@ import {
 	isDownloadableFromWpcom,
 	themeHasAutoLoadingHomepage,
 	hasAutoLoadingHomepageModalAccepted,
+	prependThemeFilterKeys,
 } from './selectors';
 import {
 	getThemeIdFromStylesheet,
@@ -79,7 +80,6 @@ import {
 } from './utils';
 import { getSiteTitle, isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import prependThemeFilterKeys from 'state/selectors/prepend-theme-filter-keys';
 import { requestSitePosts } from 'state/posts/actions';
 import i18n from 'i18n-calypso';
 import accept from 'lib/accept';
