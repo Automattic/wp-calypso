@@ -1,6 +1,11 @@
 #!/bin/bash
 set -Eeuo pipefail
 
+if [ $GITHUB_REF -eq 'refs/heads/master'] ; then
+	echo "Do not generate a diff for the merge commit."
+	exit 0;
+fi
+
 trigger_payload=`cat $GITHUB_EVENT_PATH`
 
 workflow_data="{
