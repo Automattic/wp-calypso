@@ -427,7 +427,13 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	}
 
 	//// Preview adjustments.
-	//.editor-styles-wrapper {
+	.editor-styles-wrapper {
+		// core/cover. The following styles are applied using inline-styles
+		.wp-block-cover {
+			height: auto;
+		}
+	}
+
 	//
 	//	// core/cover. The following styles are applied using inline-styles
 	//	.block-library-cover__resize-container {
