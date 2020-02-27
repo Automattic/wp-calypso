@@ -23,7 +23,8 @@ import { Disabled } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 /* eslint-enable import/no-extraneous-dependencies */
 
-const THRESHOLD_RESIZE = 300;
+// Debounce time applied to the on resize window event.
+const DEBOUNCE_TIMEOUT = 300;
 
 /**
  * Copies the styles from the provided src document
@@ -161,7 +162,7 @@ const BlockFramePreview = ( {
 
 	// Handling windows resize event.
 	useEffect( () => {
-		const refreshPreview = debounce( rescale, THRESHOLD_RESIZE );
+		const refreshPreview = debounce( rescale, DEBOUNCE_TIMEOUT );
 		window.addEventListener( 'resize', refreshPreview );
 
 		return () => {
