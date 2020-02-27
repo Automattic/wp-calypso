@@ -64,7 +64,11 @@ export class DateRangeSelector extends Component {
 
 	handleDateRangeCommit = ( startDate, endDate ) => {
 		const { moment, selectDateRange } = this.props;
-		const formattedStartDate = startDate ? moment( startDate ).format( DATE_FORMAT ) : null;
+		const formattedStartDate = startDate
+			? moment( startDate )
+					.startOf( 'day' )
+					.format( DATE_FORMAT )
+			: null;
 		const formattedEndDate = endDate
 			? moment( endDate )
 					.endOf( 'day' )
