@@ -9,14 +9,7 @@ import { assign, clone, get, includes, isEmpty, isNumber, pick, reduce, toArray 
  */
 import wpcom from 'lib/wp';
 import { decodeEntities } from 'lib/formatting';
-import {
-	POST_DELETE,
-	POST_DELETE_SUCCESS,
-	POST_DELETE_FAILURE,
-	POST_RESTORE,
-	POST_RESTORE_FAILURE,
-	POST_RESTORE_SUCCESS,
-} from 'state/action-types';
+import { POST_RESTORE, POST_RESTORE_FAILURE, POST_RESTORE_SUCCESS } from 'state/action-types';
 import { getSitePost, getEditedPost, getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import { recordSaveEvent } from 'state/posts/stats';
 import {
@@ -66,50 +59,7 @@ export { deletePostMetadata } from 'state/posts/actions/delete-post-metadata';
 export { savePostSuccess } from 'state/posts/actions/save-post-success';
 export { savePost } from 'state/posts/actions/save-post';
 export { trashPost } from 'state/posts/actions/trash-post';
-
-/**
- * Returns an action thunk which, when dispatched, triggers a network request
- * to delete the specified post. The post should already have a status of trash
- * when dispatching this action, else you should use `trashPost`.
- *
- * @param  {number}   siteId Site ID
- * @param  {number}   postId Post ID
- * @returns {Function}        Action thunk
- */
-export function deletePost( siteId, postId ) {
-	return dispatch => {
-		dispatch( {
-			type: POST_DELETE,
-			siteId,
-			postId,
-		} );
-
-		const deleteResult = wpcom
-			.site( siteId )
-			.post( postId )
-			.delete();
-
-		deleteResult.then(
-			() => {
-				dispatch( {
-					type: POST_DELETE_SUCCESS,
-					siteId,
-					postId,
-				} );
-			},
-			error => {
-				dispatch( {
-					type: POST_DELETE_FAILURE,
-					siteId,
-					postId,
-					error,
-				} );
-			}
-		);
-
-		return deleteResult;
-	};
-}
+export { deletePost } from 'state/posts/actions/delete-post';
 
 /**
  * Returns an action thunk which, when dispatched, triggers a network request
