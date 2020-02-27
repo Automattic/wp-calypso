@@ -39,7 +39,7 @@ export interface User extends EventEmitter {
 	set: ( attributes: UserData ) => boolean;
 	decrementSiteCount: () => void;
 	incrementSiteCount: () => void;
-	verificationPollerCallback: ( signal: boolean ) => void;
+	verificationPollerCallback: ( signal?: true ) => void;
 	checkVerification: () => void;
 	signalVerification: () => void;
 	dispatchToken: string;
