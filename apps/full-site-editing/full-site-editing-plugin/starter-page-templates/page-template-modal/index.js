@@ -19,7 +19,7 @@ import TemplateSelectorControl from './components/template-selector-control';
 import TemplateSelectorPreview from './components/template-selector-preview';
 import { trackDismiss, trackSelection, trackView } from './utils/tracking';
 import ensureAssets from './utils/ensure-assets';
-import { getParsingBlocksByTemplateSlug } from './utils/template-parser';
+import { parseTemplates, getParsingBlocksByTemplateSlug } from './utils/template-parser';
 /* eslint-enable import/no-extraneous-dependencies */
 
 const DEFAULT_HOMEPAGE_TEMPLATE = 'maywood';
@@ -56,6 +56,8 @@ class PageTemplateModal extends Component {
 	}
 
 	componentDidMount() {
+		parseTemplates();
+
 		if ( this.state.isOpen ) {
 			trackView( this.props.segment.id, this.props.vertical.id );
 		}

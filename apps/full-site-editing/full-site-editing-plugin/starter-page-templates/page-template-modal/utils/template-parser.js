@@ -20,23 +20,24 @@ import replacePlaceholders from './replace-placeholders';
 const { templates = [], siteInformation = {} } = window.starterPageTemplatesConfig;
 
 let templatesBySlug = {};
-setTimeout(
-	_tpls => {
-		// console.time( 'parsing templates' );
-		templatesBySlug = keyBy(
-			map( _tpls, ( { content, slug, title } ) => ( {
-				slug,
-				title,
-				blocks: content ? parseBlocks( replacePlaceholders( content, siteInformation ) ) : [],
-				content,
-			} ) ),
-			'slug'
-		);
-		// console.timeEnd( 'parsing templates' );
-	},
-	100,
-	templates
-);
+
+export const parseTemplates = () => {
+	if ( Object.keys( templatesBySlug ).length ) {
+		return templatesBySlug;
+	}
+
+	templatesBySlug = keyBy(
+		map( templates, ( { content, slug, title } ) => ( {
+			slug,
+			title,
+			blocks: content ? parseBlocks( replacePlaceholders( content, siteInformation ) ) : [],
+			content,
+		} ) ),
+		'slug'
+	);
+
+	return templatesBySlug;
+};
 
 // Selectors.
 export const getParsingBlocksByTemplateSlug = slug =>
