@@ -16,7 +16,7 @@ import { Disabled } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import BlockIFrameBock from './block-iframe-preview';
+import BlockIFrameBlock from './block-iframe-preview';
 
 const TemplateSelectorItem = props => {
 	const {
@@ -42,7 +42,7 @@ const TemplateSelectorItem = props => {
 	// Define static or dynamic preview.
 	const innerPreview = useDynamicPreview ? (
 		<Disabled>
-			<BlockIFrameBock blocks={ blocks } viewportWidth={ 960 } />
+			<BlockIFrameBlock blocks={ blocks } viewportWidth={ 960 } />
 		</Disabled>
 	) : (
 		<img
