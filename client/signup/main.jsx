@@ -525,6 +525,7 @@ class Signup extends React.Component {
 		const isDomainsForSiteEmpty =
 			this.props.isLoggedIn &&
 			this.props.signupDependencies.siteSlug &&
+			this.props.signupDependencies.siteSlug !== 'no-site' &&
 			0 === this.props.siteDomains.length;
 
 		if ( isStepRemovedFromFlow ) {
