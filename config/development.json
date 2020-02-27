@@ -124,7 +124,6 @@
 		"oauth": false,
 		"perfmon": false,
 		"persist-redux": true,
-		"plans/personal-plan": true,
 		"plans-step-copy-updates": true,
 		"post-editor-github-link": false,
 		"post-editor/html-toolbar": true,
