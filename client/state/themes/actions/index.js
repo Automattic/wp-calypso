@@ -25,7 +25,6 @@ import {
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
-	THEME_UPLOAD_CLEAR,
 	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
 } from 'state/action-types';
@@ -63,6 +62,7 @@ export { installAndTryAndCustomizeTheme } from 'state/themes/actions/install-and
 export { tryAndCustomize } from 'state/themes/actions/try-and-customize';
 export { installAndActivateTheme } from 'state/themes/actions/install-and-activate-theme';
 export { uploadTheme } from 'state/themes/actions/upload-theme';
+export { clearThemeUpload } from 'state/themes/actions/clear-theme-upload';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
@@ -96,21 +96,6 @@ export function activate( themeId, siteId, source = 'unknown', purchased = false
 		}
 
 		return dispatch( activateTheme( themeId, siteId, source, purchased ) );
-	};
-}
-
-/**
- * Clears any state remaining from a previous
- * theme upload to the given site.
- *
- * @param {number} siteId -- site to clear state for
- *
- * @returns {object} the action object to dispatch
- */
-export function clearThemeUpload( siteId ) {
-	return {
-		type: THEME_UPLOAD_CLEAR,
-		siteId,
 	};
 }
 
