@@ -45,6 +45,7 @@ import 'state/posts/init';
 
 import { receivePost } from 'state/posts/actions/receive-post';
 import { savePostSuccess } from 'state/posts/actions/save-post-success';
+import { normalizePost } from 'state/posts/actions/normalize-post';
 
 export { receivePosts } from 'state/posts/actions/receive-posts';
 export { receivePost } from 'state/posts/actions/receive-post';
@@ -60,37 +61,6 @@ export { trashPost } from 'state/posts/actions/trash-post';
 export { deletePost } from 'state/posts/actions/delete-post';
 export { restorePost } from 'state/posts/actions/restore-post';
 export { addTermForPost } from 'state/posts/actions/add-term-for-post';
-
-function getParentId( post ) {
-	if ( ! post || ! post.parent ) {
-		return null;
-	}
-
-	if ( post.parent.ID ) {
-		return post.parent.ID;
-	}
-
-	return post.parent;
-}
-
-function getPageTemplate( post ) {
-	if ( ! post || ! post.page_template || post.page_template === 'default' ) {
-		return '';
-	}
-	return post.page_template;
-}
-
-function normalizePost( post ) {
-	post.parent_id = getParentId( post );
-	if ( post.type === 'page' ) {
-		post.page_template = getPageTemplate( post );
-	}
-	if ( post.title ) {
-		post.title = decodeEntities( post.title );
-	}
-
-	return post;
-}
 
 /**
  * Normalizes attributes to API expectations
