@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { each, filter, get, castArray, debounce } from 'lodash';
-import { createPortal } from 'react-dom';
 import classnames from 'classnames';
 
 /**
@@ -98,8 +97,23 @@ const BlockFramePreview = ( {
 			return;
 		}
 
+		// scroll to top when blocks changes.
 		body.scrollTop = 0;
-	}, [ blocks ] );
+
+		const iFrameDocument = get( framePreviewRef, [ 'current', 'firstElementChild', 'contentDocument' ] );
+		// const iFrameRenderedBlocksDOM = iFrameDocument.getElementById( 'rendered-blocks' );
+		// if ( iFrameRenderedBlocksDOM ) {
+		// 	iFrameDocument.body.removeChild( iFrameRenderedBlocksDOM );
+		// }
+
+		const renderedBlocksDOM = get( framePreviewRef, [ 'current', 'children'] )[ 1 ];
+		if (  renderedBlocksDOM ) {
+			iFrameDocument.body.appendChild(  renderedBlocksDOM );
+			// const cloned = renderedBlocksDOM.cloneNode( true );
+			// iFrameDocument.body.appendChild( cloned );
+		}
+
+	}, [ recomputeBlockListKey ] );
 
 	/**
 	 * This function re scales the viewport depending on

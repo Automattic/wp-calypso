@@ -426,61 +426,61 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		left: -9999vw;
 	}
 
-	// Preview adjustments.
-	.editor-styles-wrapper {
-
-		// core/cover. The following styles are applied using inline-styles
-		.block-library-cover__resize-container {
-			position: relative;
-			user-select: auto;
-			width: auto;
-			height: auto;
-			min-height: 50px;
-			box-sizing: border-box;
-
-			.wp-block-cover {
-				height: auto;
-			}
-		}
-
-		// coblocks/gallery mock
-		.coblocks-gallery {
-			padding: 20px;
-
-			// we have to use !important here, as the height: 0 is set inline
-			ul {
-				height: auto !important;
-				display: flex;
-				flex-direction: column;
-				flex-wrap: wrap;
-				max-height: 1600px; // max-height has to be set for it to wrap
-
-				// this mimicks the order in the mayland preview
-				li:nth-child( 2 ) {
-					order: 4;
-				}
-				li:nth-child( 3 ) {
-					order: 8;
-				}
-				li:nth-child( 4 ) {
-					order: 5;
-				}
-				li:nth-child( 5 ) {
-					order: 2;
-				}
-				li:nth-child( 6 ) {
-					order: 8;
-				}
-				li:nth-child( 7 ) {
-					order: 3;
-				}
-				li:nth-child( 8 ) {
-					order: 7;
-				}
-				li:nth-child( 9 ) {
-					order: 9;
-				}
-			}
-		}
-	}
+	//// Preview adjustments.
+	//.editor-styles-wrapper {
+	//
+	//	// core/cover. The following styles are applied using inline-styles
+	//	.block-library-cover__resize-container {
+	//		position: relative;
+	//		user-select: auto;
+	//		width: auto;
+	//		height: auto;
+	//		min-height: 50px;
+	//		box-sizing: border-box;
+	//
+	//		.wp-block-cover {
+	//			height: auto;
+	//		}
+	//	}
+	//
+	//	// coblocks/gallery mock
+	//	.coblocks-gallery {
+	//		padding: 20px;
+	//
+	//		// we have to use !important here, as the height: 0 is set inline
+	//		ul {
+	//			height: auto !important;
+	//			display: flex;
+	//			flex-direction: column;
+	//			flex-wrap: wrap;
+	//			max-height: 1600px; // max-height has to be set for it to wrap
+	//
+	//			// this mimicks the order in the mayland preview
+	//			li:nth-child( 2 ) {
+	//				order: 4;
+	//			}
+	//			li:nth-child( 3 ) {
+	//				order: 8;
+	//			}
+	//			li:nth-child( 4 ) {
+	//				order: 5;
+	//			}
+	//			li:nth-child( 5 ) {
+	//				order: 2;
+	//			}
+	//			li:nth-child( 6 ) {
+	//				order: 8;
+	//			}
+	//			li:nth-child( 7 ) {
+	//				order: 3;
+	//			}
+	//			li:nth-child( 8 ) {
+	//				order: 7;
+	//			}
+	//			li:nth-child( 9 ) {
+	//				order: 9;
+	//			}
+	//		}
+	//	}
+	//}
 }
