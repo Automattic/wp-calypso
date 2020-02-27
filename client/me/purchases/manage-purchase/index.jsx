@@ -147,7 +147,7 @@ class ManagePurchase extends Component {
 
 		return (
 			<Button className="manage-purchase__renew-button" onClick={ this.handleRenew } compact>
-				{ translate( 'Renew Now' ) }
+				{ translate( 'Renew now' ) }
 			</Button>
 		);
 	}

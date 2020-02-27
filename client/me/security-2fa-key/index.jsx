@@ -105,7 +105,7 @@ class Security2faKey extends React.Component {
 							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 							<Gridicon icon="plus-small" size={ 16 } />
 							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-							{ translate( 'Register Key' ) }
+							{ translate( 'Register key' ) }
 						</Button>
 					) }
 				</SectionHeader>

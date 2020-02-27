@@ -134,7 +134,7 @@ class PurchasesList extends Component {
 								'Our plans give your site the power to thrive. ' +
 									'Find the plan that works for you.'
 							) }
-							action={ this.props.translate( 'Upgrade Now' ) }
+							action={ this.props.translate( 'Upgrade now' ) }
 							actionURL={ '/plans' }
 							illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
 						/>

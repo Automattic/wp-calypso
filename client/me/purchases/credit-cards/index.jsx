@@ -62,7 +62,7 @@ class CreditCards extends Component {
 
 		return (
 			<Button primary compact className="credit-cards__add" onClick={ this.goToAddCreditCard }>
-				{ this.props.translate( 'Add Credit Card' ) }
+				{ this.props.translate( 'Add credit card' ) }
 			</Button>
 		);
 	}

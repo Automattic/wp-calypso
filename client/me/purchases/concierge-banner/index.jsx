@@ -81,7 +81,7 @@ class ConciergeBanner extends Component {
 							'Quick Start Session is a one-on-one video session between the user and our support staff.',
 					}
 				);
-				buttonText = translate( 'Schedule Now' );
+				buttonText = translate( 'Schedule now' );
 				buttonHref = '/me/concierge';
 				illustrationUrl = conciergeImage;
 				break;
@@ -95,7 +95,7 @@ class ConciergeBanner extends Component {
 							'Quick Start Session is a one-on-one video session between the user and our support staff.',
 					}
 				);
-				buttonText = translate( 'Schedule Now' );
+				buttonText = translate( 'Schedule now' );
 				buttonHref = '/me/concierge';
 				illustrationUrl = conciergeImage;
 				break;
@@ -109,7 +109,7 @@ class ConciergeBanner extends Component {
 							'Quick Start Session is a one-on-one video session between the user and our support staff.',
 					}
 				);
-				buttonText = translate( 'Learn More' );
+				buttonText = translate( 'Learn more' );
 				buttonHref = '/checkout/offer-quickstart-session';
 				illustrationUrl = '/calypso/images/illustrations/illustration-start.svg';
 				break;

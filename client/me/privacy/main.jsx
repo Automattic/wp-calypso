@@ -158,7 +158,7 @@ const Privacy = createReactClass( {
 						>
 							{ this.state.submittingForm
 								? translate( 'Saving…' )
-								: translate( 'Save Privacy Settings' ) }
+								: translate( 'Save privacy settings' ) }
 						</FormButton>
 					</form>
 				</Card>

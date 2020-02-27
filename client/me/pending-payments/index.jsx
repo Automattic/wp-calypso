@@ -82,7 +82,7 @@ export class PendingPayments extends Component {
 						line={ translate(
 							'Our plans give your site the power to thrive. Find the plan that works for you.'
 						) }
-						action={ translate( 'Upgrade Now' ) }
+						action={ translate( 'Upgrade now' ) }
 						actionURL={ '/plans' }
 						illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
 					/>
