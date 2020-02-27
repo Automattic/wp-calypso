@@ -31,4 +31,6 @@ jobs:
         name: fse-build-archive
         path: apps/full-site-editing/full-site-editing-plugin
     - name: Send hook to Mission Control
+      # don't send MC request when the PR is merged.
+      if: ! github.event.pull_request.merged
       run: .github/workflows/send-calypso-app-build-trigger.sh
