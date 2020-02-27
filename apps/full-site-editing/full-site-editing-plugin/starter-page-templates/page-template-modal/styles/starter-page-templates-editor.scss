@@ -374,6 +374,9 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	overflow: visible;
 	min-height: auto;
 
+	// Fallback viewport width.
+	// Used when BlockFramePreview's viewportWidth prop is undefined.
+	// Can be overridden through more specific CSS.
 	width: 1440px;
 }
 
