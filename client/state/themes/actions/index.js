@@ -7,7 +7,6 @@ import {
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
 	THEME_FILTERS_REQUEST,
-	THEME_PREVIEW_STATE,
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/theme-filters';
@@ -43,13 +42,7 @@ export { setThemePreviewOptions } from 'state/themes/actions/set-theme-preview-o
 export { showThemePreview } from 'state/themes/actions/show-theme-preview';
 export { hideAutoLoadingHomepageWarning } from 'state/themes/actions/hide-auto-loading-homepage-warning';
 export { acceptAutoLoadingHomepageWarning } from 'state/themes/actions/accept-auto-loading-homepage-warning';
-
-export function hideThemePreview() {
-	return {
-		type: THEME_PREVIEW_STATE,
-		themeId: null,
-	};
-}
+export { hideThemePreview } from 'state/themes/actions/hide-theme-preview';
 
 /**
  * Triggers a network request to fetch all available theme filters.
