@@ -25,9 +25,6 @@ import {
 	POST_DELETE_SUCCESS,
 	POST_DELETE_FAILURE,
 	POST_EDIT,
-	POST_REQUEST,
-	POST_REQUEST_SUCCESS,
-	POST_REQUEST_FAILURE,
 	POST_RESTORE,
 	POST_RESTORE_FAILURE,
 	POST_RESTORE_SUCCESS,
@@ -76,44 +73,7 @@ export { receivePosts } from 'state/posts/actions/receive-posts';
 export { receivePost } from 'state/posts/actions/receive-post';
 export { requestSitePosts } from 'state/posts/actions/request-site-posts';
 export { requestAllSitesPosts } from 'state/posts/actions/request-all-sites-posts';
-
-/**
- * Triggers a network request to fetch a specific post from a site.
- *
- * @param  {number}   siteId Site ID
- * @param  {number}   postId Post ID
- * @returns {Function}        Action thunk
- */
-export function requestSitePost( siteId, postId ) {
-	return dispatch => {
-		dispatch( {
-			type: POST_REQUEST,
-			siteId,
-			postId,
-		} );
-
-		return wpcom
-			.site( siteId )
-			.post( postId )
-			.get()
-			.then( post => {
-				dispatch( receivePost( post ) );
-				dispatch( {
-					type: POST_REQUEST_SUCCESS,
-					siteId,
-					postId,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
-					type: POST_REQUEST_FAILURE,
-					siteId,
-					postId,
-					error,
-				} );
-			} );
-	};
-}
+export { requestSitePost } from 'state/posts/actions/request-site-post';
 
 /**
  * Returns an action object to be used in signalling that the specified
