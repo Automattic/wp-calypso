@@ -69,7 +69,7 @@ const BlockFramePreview = ( {
 	blocks,
 	settings,
 } ) => {
-	const iFrameRef = useRef();
+	const framePreviewRef = useRef();
 
 	// Set the initial scale factor.
 	const [ style, setStyle ] = useState( {
@@ -81,15 +81,10 @@ const BlockFramePreview = ( {
 	const [ recomputeBlockListKey, triggerRecomputeBlockList ] = useReducer( state => state + 1, 0 );
 	useLayoutEffect( triggerRecomputeBlockList, [ blocks ] );
 
-	// Set iFrame DOM reference.
-	const [ iFrameBody, setIFrameBody ] = useState();
-
 	// Populate iFrame styles.
 	useEffect( () => {
-		const head = get( iFrameRef, [ 'current', 'contentDocument', 'head' ] );
-		const body = get( iFrameRef, [ 'current', 'contentDocument', 'body' ] );
-
-		setIFrameBody( body );
+		const head = get( framePreviewRef, [ 'current', 'firstElementChild', 'contentDocument', 'head' ] );
+		const body = get( framePreviewRef, [ 'current', 'firstElementChild', 'contentDocument', 'body' ] );
 
 		body.className = `${ bodyClassName } editor-styles-wrapper`;
 		loadStyles( { head, body } );
@@ -98,9 +93,12 @@ const BlockFramePreview = ( {
 
 	// Scroll top the preview once it's rendered.
 	useEffect( () => {
-		if ( iFrameBody ) {
-			iFrameBody.scrollTop = 0;
+		const body = get( framePreviewRef, [ 'current', 'firstElementChild', 'contentDocument', 'body' ] );
+		if ( ! body ) {
+			return;
 		}
+
+		body.scrollTop = 0;
 	}, [ blocks ] );
 
 	/**
@@ -108,13 +106,13 @@ const BlockFramePreview = ( {
 	 * the wrapper and the iframe width.
 	 */
 	const reScale = useCallback( () => {
-		const parentNode = get( iFrameRef, [ 'current', 'parentNode' ] );
+		const parentNode = get( framePreviewRef, [ 'current', 'parentNode' ] );
 		if ( ! parentNode ) {
 			return;
 		}
 
 		// Scaling iFrame.
-		const width = viewportWidth || iFrameRef.current.offsetWidth;
+		const width = viewportWidth || framePreviewRef.current.offsetWidth;
 		const scale = parentNode.offsetWidth / viewportWidth;
 		const height = parentNode.offsetHeight / scale;
 
@@ -141,31 +139,28 @@ const BlockFramePreview = ( {
 	}, [] );
 
 	return (
-		<iframe
-			ref={ iFrameRef }
-			className={ classnames( 'editor-styles-wrapper', className ) }
-			style={ style }
-		>
-			{ iFrameBody &&
-				createPortal(
-					<div className="block-editor">
-						<div className="edit-post-visual-editor">
-							<div className="editor-styles-wrapper">
-								<div className="editor-writing-flow">
-									{ blocks && blocks.length ? (
-										<BlockEditorProvider value={ renderedBlocks } settings={ settings }>
-											<Disabled key={ recomputeBlockListKey }>
-												<BlockList />
-											</Disabled>
-										</BlockEditorProvider>
-									) : null }
-								</div>
-							</div>
+		<div ref={ framePreviewRef }>
+			<iframe
+				className={ classnames( 'editor-styles-wrapper', className ) }
+				style={ style }
+			/>
+
+			<div className="block-editor" id="rendered-blocks">
+				<div className="edit-post-visual-editor">
+					<div className="editor-styles-wrapper">
+						<div className="editor-writing-flow">
+							{ blocks && blocks.length ? (
+								<BlockEditorProvider value={ renderedBlocks } settings={ settings }>
+									<Disabled key={ recomputeBlockListKey }>
+										<BlockList />
+									</Disabled>
+								</BlockEditorProvider>
+							) : null }
 						</div>
-					</div>,
-					iFrameBody
-				) }
-		</iframe>
+					</div>
+				</div>
+			</div>
+		</div>
 	);
 };
 
