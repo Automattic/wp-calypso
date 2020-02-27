@@ -68,7 +68,8 @@ const BlockFramePreview = ( {
 	blocks,
 	settings,
 } ) => {
-	const framePreviewRef = useRef();
+	const frameContainerRef = useRef();
+	const renderedBlocksRef = useRef();
 
 	// Set the initial scale factor.
 	const [ style, setStyle ] = useState( {
@@ -85,13 +86,13 @@ const BlockFramePreview = ( {
 	 * the wrapper and the iframe width.
 	 */
 	const rescale = useCallback( () => {
-		const parentNode = get( framePreviewRef, [ 'current', 'parentNode' ] );
+		const parentNode = get( frameContainerRef, [ 'current', 'parentNode' ] );
 		if ( ! parentNode ) {
 			return;
 		}
 
 		// Scaling iFrame.
-		const width = viewportWidth || framePreviewRef.current.offsetWidth;
+		const width = viewportWidth || frameContainerRef.current.offsetWidth;
 		const scale = parentNode.offsetWidth / viewportWidth;
 		const height = parentNode.offsetHeight / scale;
 
@@ -104,13 +105,13 @@ const BlockFramePreview = ( {
 
 	// Populate iFrame styles.
 	useEffect( () => {
-		const head = get( framePreviewRef, [
+		const head = get( frameContainerRef, [
 			'current',
 			'firstElementChild',
 			'contentDocument',
 			'head',
 		] );
-		const body = get( framePreviewRef, [
+		const body = get( frameContainerRef, [
 			'current',
 			'firstElementChild',
 			'contentDocument',
@@ -124,7 +125,7 @@ const BlockFramePreview = ( {
 
 	// Scroll the preview to the top when the blocks change.
 	useEffect( () => {
-		const body = get( framePreviewRef, [
+		const body = get( frameContainerRef, [
 			'current',
 			'firstElementChild',
 			'contentDocument',
@@ -140,13 +141,14 @@ const BlockFramePreview = ( {
 
 	// Append rendered Blocks to iFrame when changed
 	useEffect( () => {
-		const iFrameDocument = get( framePreviewRef, [
+		const iFrameDocument = get( frameContainerRef, [
 			'current',
 			'firstElementChild',
 			'contentDocument',
 		] );
 
-		const renderedBlocksDOM = get( framePreviewRef, [ 'current', 'children' ] )[ 1 ];
+		const renderedBlocksDOM = renderedBlocksRef && renderedBlocksRef.current;
+
 		if ( renderedBlocksDOM ) {
 			iFrameDocument.body.appendChild( renderedBlocksDOM );
 		}
@@ -176,14 +178,14 @@ const BlockFramePreview = ( {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<div ref={ framePreviewRef }>
+		<div ref={ frameContainerRef }>
 			<iframe
 				title={ __( 'Preview' ) }
 				className={ classnames( 'editor-styles-wrapper', className ) }
 				style={ style }
 			/>
 
-			<div className="block-editor" id="rendered-blocks">
+			<div ref={ renderedBlocksRef } className="block-editor" id="rendered-blocks">
 				<div className="edit-post-visual-editor">
 					<div className="editor-styles-wrapper">
 						<div className="editor-writing-flow">
