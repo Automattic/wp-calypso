@@ -102,7 +102,7 @@ debug( 'using "origin": %o', origin );
  * @param {Function} [fn] - callback response
  * @returns {window.XMLHttpRequest} XMLHttpRequest instance
  */
-const makeRequest = ( originalParams, fn ) => {
+const request = ( originalParams, fn ) => {
 	const params = Object.assign( {}, originalParams );
 
 	debug( 'request(%o)', params );
@@ -170,40 +170,6 @@ const makeRequest = ( originalParams, fn ) => {
 
 	return xhr;
 };
-
-/**
- * Performs a "proxied REST API request". This happens by calling
- * `iframe.postMessage()` on the proxy iframe instance, which from there
- * takes care of WordPress.com user authentication (via the currently
- * logged-in user's cookies).
- *
- * If no function is specified as second parameter, a promise is returned.
- *
- * @param {object} originalParams - request parameters
- * @param {Function} [fn] - callback response
- * @returns {window.XMLHttpRequest|Promise} XMLHttpRequest instance or Promise
- */
-const request = ( originalParams, fn ) => {
-	// if callback is provided, behave traditionally
-	if ( 'function' === typeof fn ) {
-		// request method
-		return makeRequest( originalParams, fn );
-	}
-
-	// but if not, return a Promise
-	return new Promise( ( res, rej ) => {
-		makeRequest( originalParams, ( err, response ) => {
-			err ? rej( err ) : res( response );
-		} );
-	} );
-};
-
-/**
- * Set proxy to "access all users' blogs" mode.
- */
-export function requestAllBlogsAccess() {
-	return request( { metaAPI: { accessAllUsersBlogs: true } } );
-}
 
 /**
  * Calls the `postMessage()` function on the <iframe>.

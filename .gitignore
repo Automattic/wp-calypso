@@ -64,3 +64,6 @@ cached-requests.json
 /apps/*/dist/
 /apps/*/types/
 /packages/*/dist/
+# Redundant after https://github.com/Automattic/wp-calypso/pull/39173
+# Safe to remove after some time has passed
+/packages/*/types/
