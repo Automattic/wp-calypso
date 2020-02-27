@@ -10,8 +10,8 @@ import wpcom from 'lib/wp';
 import { fetchThemesList as fetchWporgThemesList } from 'lib/wporg';
 import { THEMES_REQUEST, THEMES_REQUEST_FAILURE } from 'state/action-types';
 import { recordTracksEvent } from 'state/analytics/actions';
-import prependThemeFilterKeys from 'state/selectors/prepend-theme-filter-keys';
 import { receiveThemes } from 'state/themes/actions/receive-themes';
+import { prependThemeFilterKeys } from 'state/themes/selectors';
 import {
 	normalizeJetpackTheme,
 	normalizeWpcomTheme,
