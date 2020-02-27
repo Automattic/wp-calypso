@@ -1,10 +1,13 @@
 on:
-  pull_request:
-    types: [ opened, edited ]
+  push:
     paths:
     - 'apps/full-site-editing/full-site-editing-plugin/**'
-    branches:
+    branches-ignore:
     - master
+  pull_request:
+    # only trigger this workflow if FSE plugin files have been modified
+    paths:
+    - 'apps/full-site-editing/full-site-editing-plugin/**'
 
 name: Build Full Site Editing plugin
 
