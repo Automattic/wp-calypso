@@ -13,7 +13,6 @@ import Item from 'layout/masterbar/item';
 import JetpackLogo from 'components/jetpack-logo';
 import Masterbar from 'layout/masterbar/masterbar';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { preload } from 'sections-helper';
 
 /**
  * Style dependencies
@@ -23,7 +22,6 @@ import './style.scss';
 export default function() {
 	const translate = useTranslate();
 	const user = useSelector( state => getCurrentUser( state ) );
-	const preloadMe = () => preload( 'me' );
 
 	return (
 		<Masterbar>
@@ -41,7 +39,6 @@ export default function() {
 				url="#" // @todo: add a correct URL
 				icon="user-circle"
 				className="masterbar__item-me"
-				preloadSection={ preloadMe }
 				tooltip={ translate( 'Update your profile, personal settings, and more' ) }
 			>
 				<Gravatar user={ user } alt={ translate( 'My Profile' ) } size={ 18 } />
