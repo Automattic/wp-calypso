@@ -12,7 +12,7 @@ import {
 	READER_RELATED_POSTS_REQUEST,
 	READER_RELATED_POSTS_REQUEST_SUCCESS,
 	READER_RELATED_POSTS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 import { key } from './utils';
 
 export const items = withoutPersistence( ( state = {}, action ) => {

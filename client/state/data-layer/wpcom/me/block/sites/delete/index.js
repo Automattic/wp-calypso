@@ -9,7 +9,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { READER_SITE_UNBLOCK } from 'state/action-types';
+import { READER_SITE_UNBLOCK } from 'state/reader/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, plainNotice } from 'state/notices/actions';

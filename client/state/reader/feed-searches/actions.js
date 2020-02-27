@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { READER_FEED_SEARCH_REQUEST, READER_FEED_SEARCH_RECEIVE } from 'state/action-types';
+import { READER_FEED_SEARCH_REQUEST, READER_FEED_SEARCH_RECEIVE } from 'state/reader/action-types';
 
 import 'state/data-layer/wpcom/read/feed';
 

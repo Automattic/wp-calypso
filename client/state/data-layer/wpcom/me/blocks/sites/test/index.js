@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { handleSiteBlocksRequest, siteBlocksRequestReceived, siteBlocksRequestFailure } from '../';
-import { READER_SITE_BLOCKS_RECEIVE } from 'state/action-types';
+import { READER_SITE_BLOCKS_RECEIVE } from 'state/reader/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 const action = { type: 'DUMMY_ACTION' };

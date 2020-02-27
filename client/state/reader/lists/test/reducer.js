@@ -18,7 +18,7 @@ import {
 	READER_LIST_UPDATE_DESCRIPTION,
 	READER_LIST_REQUEST_SUCCESS,
 	READER_LIST_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
