@@ -14,7 +14,7 @@ module.exports = {
 	testMatch: [ '<rootDir>/**/test/*.[jt]s?(x)', '!**/.eslintrc.*' ],
 	transform: {
 		'\\.[jt]sx?$': path.join( __dirname, 'jest', 'transform', 'babel.js' ),
-		'\\.(gif|jpg|jpeg|png|svg|scss|sass|css)$': path.join(
+		'\\.(gif|jpg|jpeg|png|svg|mp4|scss|sass|css)$': path.join(
 			__dirname,
 			'jest',
 			'transform',

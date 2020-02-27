@@ -18,9 +18,9 @@ import { localizeUrl } from 'lib/i18n-utils';
 import './style.scss';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
-import freePhotoLibraryDemonstration from 'assets/images/customer-home/free-photo-library-demonstration.mp4';
+import freePhotoLibraryDemonstration from 'assets/videos/customer-home/free-photo-library-demonstration.mp4';
 import freePhotoLibraryThumbnail from 'assets/images/customer-home/free-photo-library-thumbnail.png';
 import freePhotoLibraryVideoPrompt from 'assets/images/customer-home/free-photo-library-video-prompt.png';
 
@@ -40,10 +40,7 @@ const FreePhotoLibraryCard = () => {
 					autoPlay
 					poster={ freePhotoLibraryThumbnail }
 				>
-					<source
-						src={ freePhotoLibraryDemonstration }
-						type="video/mp4"
-					/>
+					<source src={ freePhotoLibraryDemonstration } type="video/mp4" />
 				</video>
 				<div className="free-photo-library-card__dialog-close">
 					<Button onClick={ toggleDialog }>{ translate( 'Close' ) }</Button>

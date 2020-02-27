@@ -4,7 +4,7 @@ module.exports = {
 	},
 	transform: {
 		'\\.[jt]sx?$': 'babel-jest',
-		'\\.(gif|jpg|jpeg|png|svg|scss|sass|css)$': require.resolve(
+		'\\.(gif|jpg|jpeg|png|svg|mp4|scss|sass|css)$': require.resolve(
 			'@automattic/calypso-build/jest/transform/asset.js'
 		),
 	},

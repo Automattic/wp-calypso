@@ -17,7 +17,7 @@ the asset file's basename as a string:
 ```js
 {
 	transform: {
-		'\\.(gif|jpg|jpeg|png|svg|scss|sass|css)$': require.resolve(
+		'\\.(gif|jpg|jpeg|png|svg|mp4|scss|sass|css)$': require.resolve(
 			'@automattic/calypso-build/jest/transform/asset.js'
 		)
 	},

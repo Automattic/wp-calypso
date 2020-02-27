@@ -20,6 +20,7 @@ const copyOptions = {
 		'**/*.jpeg',
 		'**/*.png',
 		'**/*.svg',
+		'**/*.mp4',
 		'**/*.scss',
 		'!**/test/**',
 	],
