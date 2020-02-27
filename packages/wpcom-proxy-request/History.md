@@ -1,8 +1,8 @@
 # 6.0.0 / TBD
 
-- Remove `component-event` dependency, use `addEventListener`/`removeEventListener` directly
 - Move the published `build/` folder to `dist/` to align with other Calypso packages
 - Upgrade dependency 'debug' to 4.1.1
+- Remove `component-event` dependency, use `addEventListener`/`removeEventListener` directly
 
 # 5.0.2 / 2018-10-30
 
