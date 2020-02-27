@@ -42,13 +42,7 @@ export {
 	pollThemeTransferStatus,
 } from 'state/themes/actions/theme-transfer';
 export { setThemePreviewOptions } from 'state/themes/actions/set-theme-preview-options';
-
-export function showThemePreview( themeId ) {
-	return {
-		type: THEME_PREVIEW_STATE,
-		themeId,
-	};
-}
+export { showThemePreview } from 'state/themes/actions/show-theme-preview';
 
 export function hideAutoLoadingHomepageWarning() {
 	return {
