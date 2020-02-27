@@ -9,8 +9,10 @@ import { current as currentPage } from 'page';
  */
 import {
 	addPlanToCart,
+	addSitelessPlanToCart,
 	createAccount,
 	createSite,
+	createSitelessCart,
 	createSiteOrDomain,
 	createSiteWithCart,
 	setThemeOnSite,
@@ -20,15 +22,16 @@ import {
 	isDomainFulfilled,
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
-	createSitelessCart,
 } from 'lib/signup/step-actions';
 import { abtest } from 'lib/abtest';
 import { generateSteps } from './steps-pure';
 
 export default generateSteps( {
 	addPlanToCart,
+	addSitelessPlanToCart,
 	createAccount,
 	createSite,
+	createSitelessCart,
 	createSiteOrDomain,
 	createSiteWithCart,
 	currentPage,
@@ -39,7 +42,6 @@ export default generateSteps( {
 	isDomainFulfilled,
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
-	createSitelessCart,
 } );
 
 export function isDomainStepSkippable( flowName ) {

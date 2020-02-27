@@ -28,22 +28,22 @@ export function generateFlows( {
 		},
 
 		business: {
-			steps: [ 'user', 'domains', 'plans-business' ],
-			destination: getSignupDestination,
+			steps: [ 'user', 'domains-siteless', 'plans-business' ],
+			destination: getThankYouNoSiteDestination,
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
 			lastModified: '2020-03-03',
 		},
 
 		premium: {
-			steps: [ 'user', 'domains', 'plans-premium' ],
-			destination: getSignupDestination,
+			steps: [ 'user', 'domains-siteless', 'plans-premium' ],
+			destination: getThankYouNoSiteDestination,
 			description: 'Create an account and a blog and then add the premium plan to the users cart.',
 			lastModified: '2020-03-03',
 		},
 
 		personal: {
-			steps: [ 'user', 'domains', 'plans-personal' ],
-			destination: getSignupDestination,
+			steps: [ 'user', 'domains-siteless', 'plans-personal' ],
+			destination: getThankYouNoSiteDestination,
 			description: 'Create an account and a blog and then add the personal plan to the users cart.',
 			lastModified: '2020-03-03',
 		},
@@ -99,8 +99,8 @@ export function generateFlows( {
 				'site-type',
 				'site-topic-with-preview',
 				'site-title-with-preview',
-				'domains-with-preview',
-				'plans',
+				'domains-siteless',
+				'plans-siteless',
 			],
 			destination: getThankYouNoSiteDestination,
 			description: 'The improved onboarding flow.',

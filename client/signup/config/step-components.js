@@ -27,6 +27,7 @@ const stepNameToModuleName = {
 	'plans-launch': 'plans',
 	'plans-personal': 'plans',
 	'plans-premium': 'plans',
+	'plans-siteless': 'plans',
 	'plans-site-selected': 'plans',
 	'plans-store-nux': 'plans-atomic-store',
 	site: 'site',
@@ -59,6 +60,7 @@ const stepNameToModuleName = {
 	'site-style-with-preview': 'site-style',
 	'site-topic-with-preview': 'site-topic',
 	'domains-with-preview': 'domains',
+	'domains-siteless': 'domains',
 	'site-title-with-preview': 'site-title',
 	passwordless: 'passwordless',
 };
