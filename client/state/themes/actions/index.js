@@ -15,7 +15,6 @@ import {
 	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_FILTERS_REQUEST,
 	THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
-	THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_TRANSFER_INITIATE_FAILURE,
 	THEME_TRANSFER_INITIATE_PROGRESS,
 	THEME_TRANSFER_INITIATE_REQUEST,
@@ -40,6 +39,7 @@ import 'state/themes/init';
 import { activateTheme } from 'state/themes/actions/activate-theme';
 import { suffixThemeIdForInstall } from 'state/themes/actions/suffix-theme-id-for-install';
 import { installAndActivateTheme } from 'state/themes/actions/install-and-activate-theme';
+import { showAutoLoadingHomepageWarning } from 'state/themes/actions/show-auto-loading-homepage-warning';
 
 export { setBackPath } from 'state/themes/actions/set-back-path';
 export { receiveThemes } from 'state/themes/actions/receive-themes';
@@ -60,6 +60,7 @@ export { uploadTheme } from 'state/themes/actions/upload-theme';
 export { clearThemeUpload } from 'state/themes/actions/clear-theme-upload';
 export { deleteTheme } from 'state/themes/actions/delete-theme';
 export { confirmDelete } from 'state/themes/actions/confirm-delete';
+export { showAutoLoadingHomepageWarning } from 'state/themes/actions/show-auto-loading-homepage-warning';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
@@ -265,13 +266,6 @@ export function setThemePreviewOptions( primary, secondary ) {
 export function showThemePreview( themeId ) {
 	return {
 		type: THEME_PREVIEW_STATE,
-		themeId,
-	};
-}
-
-export function showAutoLoadingHomepageWarning( themeId ) {
-	return {
-		type: THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING,
 		themeId,
 	};
 }
