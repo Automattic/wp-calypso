@@ -329,32 +329,6 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
 
-	it( 'redirects to thank-you page (with display mode) for a new site with a domain and no failed purchases but GSuite is in the cart', () => {
-		const cart = {
-			products: [
-				{
-					product_slug: 'gapps',
-					meta: 'my.site',
-				},
-				{
-					product_slug: 'some_domain',
-					is_domain_registration: true,
-					extra: { context: 'signup' },
-					meta: 'my.site',
-				},
-			],
-		};
-		mockGSuiteCountryIsValid = true;
-		const url = getThankYouPageUrl( {
-			...defaultArgs,
-			siteSlug: 'foo.bar',
-			cart,
-			receiptId: '1234abcd',
-			isNewlyCreatedSite: true,
-		} );
-		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd?d=gsuite' );
-	} );
-
 	it( 'redirects to thank-you page for a new site (via isNewlyCreatedSite) without a domain', () => {
 		const cart = {
 			products: [
@@ -420,28 +394,6 @@ describe( 'getThankYouPageUrl', () => {
 			isNewlyCreatedSite: true,
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
-	} );
-
-	it( 'redirects to gsuite nudge for a new site with a domain and no failed purchases but neither GSuite nor concierge are in the cart', () => {
-		const cart = {
-			products: [
-				{
-					product_slug: 'some_domain',
-					is_domain_registration: true,
-					extra: { context: 'signup' },
-					meta: 'my.site',
-				},
-			],
-		};
-		mockGSuiteCountryIsValid = true;
-		const url = getThankYouPageUrl( {
-			...defaultArgs,
-			siteSlug: 'foo.bar',
-			cart,
-			receiptId: '1234abcd',
-			isNewlyCreatedSite: true,
-		} );
-		expect( url ).toBe( '/checkout/foo.bar/with-gsuite/my.site/1234abcd' );
 	} );
 
 	it( 'redirects to premium upgrade nudge if concierge and jetpack are not in the cart, personal is in the cart, and the previous route is not the nudge', () => {

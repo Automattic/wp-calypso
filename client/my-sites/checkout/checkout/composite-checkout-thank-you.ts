@@ -9,13 +9,10 @@ import { format as formatUrl, parse as parseUrl } from 'url';
 import { isExternal } from 'lib/url';
 import config from 'config';
 import {
-	hasGoogleApps,
 	hasRenewalItem,
 	getAllCartItems,
-	getDomainRegistrations,
 	getRenewalItems,
 	hasConciergeSession,
-	hasDomainRegistration,
 	hasJetpackPlan,
 	hasBloggerPlan,
 	hasPersonalPlan,
@@ -25,8 +22,6 @@ import {
 import { managePurchase } from 'me/purchases/paths';
 import { isValidFeatureKey } from 'lib/plans/features-list';
 import { JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
-import { canDomainAddGSuite } from 'lib/gsuite';
-import { abtest } from 'lib/abtest';
 import { persistSignupDestination, retrieveSignupDestination } from 'signup/utils';
 
 export function getThankYouPageUrl( {
@@ -128,17 +123,6 @@ export function getThankYouPageUrl( {
 		return `${ newBlogUrl }/${ pendingOrReceiptId }`;
 	}
 
-	const redirectPathForGSuiteUpsell = getRedirectUrlForGSuiteNudge( {
-		pendingOrReceiptId,
-		siteSlug,
-		cart,
-		didPurchaseFail,
-		isNewlyCreatedSite,
-	} );
-	if ( redirectPathForGSuiteUpsell ) {
-		return redirectPathForGSuiteUpsell;
-	}
-
 	const redirectPathForConciergeUpsell = getRedirectUrlForConciergeNudge( {
 		pendingOrReceiptId,
 		cart,
@@ -208,81 +192,8 @@ function getFallbackDestination( {
 	return '/';
 }
 
-function getEligibleDomainFromCart( cart ) {
-	const domainRegistrations = getDomainRegistrations( cart );
-	const domainsInSignupContext = domainRegistrations.filter(
-		domain => domain.extra?.context === 'signup'
-	);
-	const domainsForGSuite = domainsInSignupContext.filter( domain =>
-		canDomainAddGSuite( domain.meta )
-	);
-	return domainsForGSuite.length > 0 ? domainsForGSuite[ 0 ] : null;
-}
-
-function shouldRedirectToGSuiteNudge( {
-	didPurchaseFail,
-	isNewlyCreatedSite,
-	cart,
-}: {
-	didPurchaseFail?: boolean;
-	isNewlyCreatedSite?: boolean;
-	cart: object;
-} ) {
-	if ( isNewlyCreatedSite && ! didPurchaseFail ) {
-		if (
-			! hasGoogleApps( cart ) &&
-			! hasConciergeSession( cart ) &&
-			hasDomainRegistration( cart )
-		) {
-			return true;
-		}
-	}
-	return false;
-}
-
-function getRedirectUrlForPlanBumpOffer( { pendingOrReceiptId, cart, siteSlug } ) {
-	if ( hasPersonalPlan( cart ) ) {
-		if ( 'variantShowPlanBumpOffer' === abtest( 'showPlanBumpVsGsuite' ) ) {
-			return `/checkout/${ siteSlug }/offer-plan-upgrade/premium/${ pendingOrReceiptId }`;
-		}
-	}
-	return null;
-}
-
-function getRedirectUrlForGSuiteNudge( {
-	pendingOrReceiptId,
-	siteSlug,
-	cart,
-	didPurchaseFail,
-	isNewlyCreatedSite,
-}: {
-	pendingOrReceiptId?: string | number;
-	siteSlug?: string | number;
-	cart: object;
-	didPurchaseFail?: boolean;
-	isNewlyCreatedSite?: boolean;
-} ) {
-	if (
-		! shouldRedirectToGSuiteNudge( {
-			didPurchaseFail,
-			isNewlyCreatedSite,
-			cart,
-		} )
-	) {
-		return null;
-	}
-	const domainForGSuite = getEligibleDomainFromCart( cart );
-	if ( domainForGSuite ) {
-		return (
-			getRedirectUrlForPlanBumpOffer( { pendingOrReceiptId, cart, siteSlug } ) ||
-			`/checkout/${ siteSlug }/with-gsuite/${ domainForGSuite.meta }/${ pendingOrReceiptId }`
-		);
-	}
-}
-
 function getRedirectUrlForConciergeNudge( { pendingOrReceiptId, cart, siteSlug, previousRoute } ) {
 	// For a user purchasing a qualifying plan, show either a plan upgrade upsell or concierge upsell.
-	// This tests the flow that was not eligible for G Suite.
 	// If the user has upgraded a plan from seeing our upsell(we find this by checking the previous route is /offer-plan-upgrade),
 	// then skip this section so that we do not show further upsells.
 	if (
@@ -313,10 +224,6 @@ function getRedirectUrlForConciergeNudge( { pendingOrReceiptId, cart, siteSlug, 
 function getDisplayModeParamFromCart( cart ) {
 	if ( hasConciergeSession( cart ) ) {
 		return { d: 'concierge' };
-	}
-
-	if ( hasGoogleApps( cart ) ) {
-		return { d: 'gsuite' };
 	}
 
 	return {};

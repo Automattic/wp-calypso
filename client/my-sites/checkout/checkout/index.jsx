@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { flatten, filter, find, get, includes, isEmpty, isEqual, reduce, startsWith } from 'lodash';
+import { flatten, find, get, includes, isEmpty, isEqual, reduce, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -24,7 +24,6 @@ import {
 	hasRenewalItem,
 	getRenewalItemFromCartItem,
 	getAllCartItems,
-	getDomainRegistrations,
 	getRenewalItems,
 	hasFreeTrial,
 	hasConciergeSession,
@@ -76,7 +75,6 @@ import { requestSite } from 'state/sites/actions';
 import { isJetpackSite, isNewSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
-import { canDomainAddGSuite } from 'lib/gsuite';
 import { getDomainNameFromReceiptOrCart } from 'lib/domains/cart-utils';
 import { fetchSitesAndUser } from 'lib/signup/step-actions';
 import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
@@ -263,7 +261,7 @@ export class Checkout extends React.Component {
 			return;
 		}
 
-		const cartItem = getRenewalItemFromCartItem(
+		return getRenewalItemFromCartItem(
 			{
 				meta,
 				product_slug: productSlug,
@@ -273,8 +271,6 @@ export class Checkout extends React.Component {
 				domain: selectedSiteSlug,
 			}
 		);
-
-		return cartItem;
 	}
 
 	addNewItemToCart() {
@@ -381,16 +377,6 @@ export class Checkout extends React.Component {
 		} );
 	}
 
-	getEligibleDomainFromCart() {
-		const domainRegistrations = getDomainRegistrations( this.props.cart );
-		const domainsInSignupContext = filter( domainRegistrations, { extra: { context: 'signup' } } );
-		const domainsForGSuite = filter( domainsInSignupContext, ( { meta } ) =>
-			canDomainAddGSuite( meta )
-		);
-
-		return domainsForGSuite;
-	}
-
 	getFallbackDestination( pendingOrReceiptId ) {
 		const { selectedSiteSlug, selectedFeature, cart, isJetpackNotAtomic, product } = this.props;
 
@@ -451,28 +437,6 @@ export class Checkout extends React.Component {
 		}
 	}
 
-	maybeRedirectToGSuiteNudge( pendingOrReceiptId, stepResult ) {
-		const { isNewlyCreatedSite, selectedSiteSlug, cart } = this.props;
-
-		if ( isNewlyCreatedSite && stepResult && isEmpty( stepResult.failed_purchases ) ) {
-			const hasGoogleAppsInCart = hasGoogleApps( cart );
-
-			// Maybe show either the G Suite or plan upgrade upsell pages
-			if (
-				! hasGoogleAppsInCart &&
-				! hasConciergeSession( cart ) &&
-				hasDomainRegistration( cart )
-			) {
-				const domainsForGSuite = this.getEligibleDomainFromCart();
-				if ( domainsForGSuite.length ) {
-					return `/checkout/${ selectedSiteSlug }/with-gsuite/${ domainsForGSuite[ 0 ].meta }/${ pendingOrReceiptId }`;
-				}
-			}
-		}
-
-		return;
-	}
-
 	maybeRedirectToConciergeNudge( pendingOrReceiptId ) {
 		// Using hideNudge prop will disable any redirect to Nudge
 		if ( this.props.hideNudge ) {
@@ -482,8 +446,7 @@ export class Checkout extends React.Component {
 		const { cart, selectedSiteSlug, previousRoute } = this.props;
 
 		// For a user purchasing a qualifying plan, show either a plan upgrade upsell or concierge upsell.
-		// This tests the flow that was not eligible for G Suite.
-		// If the user has upgraded a plan from seeing our upsell(we find this by checking the previous route is /offer-plan-upgrade),
+		// If the user has upgraded a plan from seeing our upsell (we find this by checking the previous route is /offer-plan-upgrade),
 		// then skip this section so that we do not show further upsells.
 		if (
 			config.isEnabled( 'upsell/concierge-session' ) &&
@@ -506,14 +469,12 @@ export class Checkout extends React.Component {
 			return `/checkout/offer-quickstart-session/${ pendingOrReceiptId }/${ selectedSiteSlug }`;
 			// }
 		}
-
-		return;
 	}
 
 	getCheckoutCompleteRedirectPath = () => {
 		// TODO: Cleanup and simplify this function.
 		// I wouldn't be surprised if it doesn't work as intended in some scenarios.
-		// Especially around the G Suite / Concierge / Checklist logic.
+		// Especially around the Concierge / Checklist logic.
 
 		let renewalItem,
 			displayModeParam = {};
@@ -596,14 +557,6 @@ export class Checkout extends React.Component {
 			return `${ signupDestination }/${ pendingOrReceiptId }`;
 		}
 
-		const redirectPathForGSuiteUpsell = this.maybeRedirectToGSuiteNudge(
-			pendingOrReceiptId,
-			stepResult
-		);
-		if ( redirectPathForGSuiteUpsell ) {
-			return redirectPathForGSuiteUpsell;
-		}
-
 		const redirectPathForConciergeUpsell = this.maybeRedirectToConciergeNudge( pendingOrReceiptId );
 		if ( redirectPathForConciergeUpsell ) {
 			return redirectPathForConciergeUpsell;
@@ -613,10 +566,6 @@ export class Checkout extends React.Component {
 		// when purchasing a concierge session.
 		if ( hasConciergeSession( cart ) ) {
 			displayModeParam = { d: 'concierge' };
-		}
-
-		if ( hasGoogleApps( cart ) ) {
-			displayModeParam = { d: 'gsuite' };
 		}
 
 		if ( this.props.isEligibleForSignupDestination ) {
