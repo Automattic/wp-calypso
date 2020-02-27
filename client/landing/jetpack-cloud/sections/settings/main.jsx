@@ -8,10 +8,11 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
+import ServerConnectionIndicator from '../../components/server-connection-indicator';
 
 class SettingsPage extends Component {
 	render() {
-		return <div>Welcome to the settings page for { this.props.siteId }</div>;
+		return <ServerConnectionIndicator />;
 	}
 }
 
