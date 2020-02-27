@@ -3,7 +3,6 @@
  */
 import uid from 'uid';
 import WPError from 'wp-error';
-import event from 'component-event';
 import ProgressEvent from 'progress-event';
 import debugFactory from 'debug';
 
@@ -156,9 +155,9 @@ const request = ( originalParams, fn ) => {
 			fn( error, null, e.headers );
 		};
 
-		event.bind( xhr, 'load', xhrOnLoad );
-		event.bind( xhr, 'abort', xhrOnError );
-		event.bind( xhr, 'error', xhrOnError );
+		xhr.addEventListener( 'load', xhrOnLoad );
+		xhr.addEventListener( 'abort', xhrOnError );
+		xhr.addEventListener( 'error', xhrOnError );
 	}
 
 	if ( loaded ) {
@@ -261,7 +260,7 @@ function install() {
 	buffered = [];
 
 	// listen to messages sent to `window`
-	event.bind( window, 'message', onmessage );
+	window.addEventListener( 'message', onmessage );
 
 	// create the <iframe>
 	iframe = document.createElement( 'iframe' );
@@ -286,7 +285,7 @@ const reloadProxy = () => {
  */
 function uninstall() {
 	debug( 'uninstall()' );
-	event.unbind( window, 'message', onmessage );
+	window.removeEventListener( 'message', onmessage );
 	document.body.removeChild( iframe );
 	loaded = false;
 	iframe = null;
