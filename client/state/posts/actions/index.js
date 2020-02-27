@@ -17,7 +17,6 @@ import {
 	POST_RESTORE_FAILURE,
 	POST_RESTORE_SUCCESS,
 	POST_SAVE,
-	POST_SAVE_SUCCESS,
 	POST_SAVE_FAILURE,
 } from 'state/action-types';
 import { getSitePost, getEditedPost, getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
@@ -57,6 +56,7 @@ import 'state/posts/init';
 
 import { receivePost } from 'state/posts/actions/receive-post';
 import { editPost } from 'state/posts/actions/edit-post';
+import { savePostSuccess } from 'state/posts/actions/save-post-success';
 
 export { receivePosts } from 'state/posts/actions/receive-posts';
 export { receivePost } from 'state/posts/actions/receive-post';
@@ -66,25 +66,7 @@ export { requestSitePost } from 'state/posts/actions/request-site-post';
 export { editPost } from 'state/posts/actions/edit-post';
 export { updatePostMetadata } from 'state/posts/actions/update-post-metadata';
 export { deletePostMetadata } from 'state/posts/actions/delete-post-metadata';
-
-/**
- * Returns an action object to be used in signalling that a post has been saved
- *
- * @param  {number}   siteId     Site ID
- * @param  {number}   postId     Post ID
- * @param  {object}   savedPost  Updated post
- * @param  {object}   post       Post attributes
- * @returns {object}              Action thunk
- */
-export function savePostSuccess( siteId, postId = null, savedPost, post ) {
-	return {
-		type: POST_SAVE_SUCCESS,
-		siteId,
-		postId,
-		savedPost,
-		post,
-	};
-}
+export { savePostSuccess } from 'state/posts/actions/save-post-success';
 
 /**
  * Returns an action thunk which, when dispatched, triggers a network request
