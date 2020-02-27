@@ -136,22 +136,19 @@ const BlockFramePreview = ( {
 
 		// scroll to top when blocks changes.
 		body.scrollTop = 0;
+	}, [ recomputeBlockListKey ] );
 
+	// Append rendered Blocks to iFrame when changed
+	useEffect( () => {
 		const iFrameDocument = get( framePreviewRef, [
 			'current',
 			'firstElementChild',
 			'contentDocument',
 		] );
-		// const iFrameRenderedBlocksDOM = iFrameDocument.getElementById( 'rendered-blocks' );
-		// if ( iFrameRenderedBlocksDOM ) {
-		// 	iFrameDocument.body.removeChild( iFrameRenderedBlocksDOM );
-		// }
 
 		const renderedBlocksDOM = get( framePreviewRef, [ 'current', 'children' ] )[ 1 ];
 		if ( renderedBlocksDOM ) {
 			iFrameDocument.body.appendChild( renderedBlocksDOM );
-			// const cloned = renderedBlocksDOM.cloneNode( true );
-			// iFrameDocument.body.appendChild( cloned );
 		}
 	}, [ recomputeBlockListKey ] );
 
