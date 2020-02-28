@@ -37,21 +37,16 @@ const DEBOUNCE_TIMEOUT = 300;
  * `body` will be copied
  */
 const copyStylesToIframe = ( srcDocument, targetiFrameDocument ) => {
+	const styleNodes = [ 'link', 'style' ];
 	const iFrameDomReferences = [ 'head', 'body' ];
 	each( iFrameDomReferences, domReference => {
 		return each(
 			filter( srcDocument[ domReference ].children, ( { localName } ) =>
-				[ 'link', 'style' ].includes( localName )
+				styleNodes.includes( localName )
 			),
-			( { localName, attributes, innerHTML } ) => {
-				const node = document.createElement( localName );
-				each( attributes, ( { name, value } ) => ( node[ name ] = value ) );
-
-				if ( innerHTML ) {
-					node.innerHTML = innerHTML;
-				}
-
-				targetiFrameDocument[ domReference ].appendChild( node );
+			targetNode => {
+				const deep = true;
+				targetiFrameDocument[ domReference ].appendChild( targetNode.cloneNode( deep ) );
 			}
 		);
 	} );
