@@ -70,7 +70,7 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 					return null;
 				}
 
-				return !! nextError
+				return nextError
 					? failures.forEach( handler =>
 							dispatch( extendAction( handler, failureMeta( nextError, nextHeaders ) ) )
 					  )
