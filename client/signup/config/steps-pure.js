@@ -231,8 +231,8 @@ export function generateSteps( {
 			},
 		},
 
-		'plans-premium-sitelss': {
-			stepName: 'plans-premium',
+		'plans-premium-siteless': {
+			stepName: 'plans-premium-siteless',
 			apiRequestFunction: addSitelessPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
@@ -253,8 +253,8 @@ export function generateSteps( {
 			},
 		},
 
-		'plans-business-sitelss': {
-			stepName: 'plans-business',
+		'plans-business-siteless': {
+			stepName: 'plans-business-siteless',
 			apiRequestFunction: addSitelessPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
