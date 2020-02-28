@@ -7,28 +7,34 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { requestHttpData } from 'state/data-layer/http-data';
 
 const { Blob } = globalThis; // The linter complains if I don't do this...?
 
 export default function ProxiedImage( { alt, mediaUrl, onLoad = noop, siteSlug, style } ) {
 	const [ imageData, setImageData ] = useState( null );
 
+	const requestId = `media-library-proxied-image-${ siteSlug }${ mediaUrl }`;
+
 	useEffect( () => {
-		if ( imageData === null ) {
-			wpcom.undocumented().getAtomicSiteMediaViaProxyRetry( siteSlug, mediaUrl, ( err, data ) => {
-				if ( ! ( data instanceof Blob ) ) {
-					setImageData( false );
-					return;
-				}
-
-				const imageUrl = URL.createObjectURL( data );
-				setImageData( imageUrl );
-			} );
-		}
-
-		return () => imageData && URL.revokeObjectURL( imageData );
-	} );
+		requestHttpData(
+			requestId,
+			http( {
+				method: 'GET',
+				apiNamespace: 'wpcom/v2',
+				path: `/sites/${ siteSlug }/atomic-auth-proxy/file${ mediaUrl }`,
+				responseType: 'blob',
+			} ),
+			{
+				fromApi: () => payload => {
+					const blobUrl = payload instanceof Blob ? URL.createObjectURL( payload ) : undefined;
+					setImageData( blobUrl );
+					return [ [ requestId, payload ] ];
+				},
+			}
+		);
+	}, [ imageData, mediaUrl, requestId, siteSlug ] );
 
 	return (
 		<img
