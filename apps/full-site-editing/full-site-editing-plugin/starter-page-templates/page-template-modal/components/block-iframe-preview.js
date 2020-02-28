@@ -107,16 +107,10 @@ const BlockFramePreview = ( {
 
 	// Populate iFrame styles.
 	useEffect( () => {
-		const body = get( frameContainerRef, [
-			'current',
-			'firstElementChild',
-			'contentDocument',
-			'body',
-		] );
-		body.className = `${ bodyClassName } editor-styles-wrapper`;
-
 		setTimeout( () => {
 			copyStylesToIframe( window.document, iframeRef.current.contentDocument );
+			iframeRef.current.contentDocument.body.classList.add( bodyClassName );
+			iframeRef.current.contentDocument.body.classList.add( 'editor-styles-wrapper' );
 			rescale();
 		}, 0 );
 	}, [ bodyClassName, rescale ] );
@@ -139,16 +133,10 @@ const BlockFramePreview = ( {
 
 	// Append rendered Blocks to iFrame when changed
 	useEffect( () => {
-		const iFrameDocument = get( frameContainerRef, [
-			'current',
-			'firstElementChild',
-			'contentDocument',
-		] );
-
 		const renderedBlocksDOM = renderedBlocksRef && renderedBlocksRef.current;
 
 		if ( renderedBlocksDOM ) {
-			iFrameDocument.body.appendChild( renderedBlocksDOM );
+			iframeRef.current.contentDocument.body.appendChild( renderedBlocksDOM );
 		}
 	}, [ recomputeBlockListKey ] );
 
