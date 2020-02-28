@@ -7,13 +7,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+// import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestActivityLogs } from 'state/data-getters';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 import BackupDateSelector from './backup-date-selector';
+import ActivityLogItem from 'my-sites/activity/activity-log-item';
 
 class BackupsPage extends Component {
-
 	state = {
 		currentDateSetting: false,
 	};
@@ -25,23 +25,36 @@ class BackupsPage extends Component {
 	getDateActivities = () => {
 		const { logs } = this.props;
 		const targetDate = new Date( this.state.currentDateSetting );
-		
+
 		return logs.filter( entry => {
 			const activityDate = new Date( entry.activityDate );
 
-			if ( targetDate.getFullYear() == activityDate.getFullYear() && targetDate.getMonth() == activityDate.getMonth() && targetDate.getDate() == activityDate.getDate() ) {
+			if (
+				targetDate.getFullYear() === activityDate.getFullYear() &&
+				targetDate.getMonth() === activityDate.getMonth() &&
+				targetDate.getDate() === activityDate.getDate()
+			) {
 				return true;
 			}
 		} );
 	};
 
 	getContentInBackup = () => {
+		const { siteId } = this.props;
 		const allActivities = this.getDateActivities();
 
 		return allActivities.map( activity => {
-			return ( <li key={ activity.activityId }>{ activity.activityTitle }</li> );
+			return (
+				<ActivityLogItem
+					key={ activity.activityId }
+					activity={ activity }
+					disableRestore={ false }
+					disableBackup={ false }
+					siteId={ siteId }
+				/>
+			);
 		} );
-	}
+	};
 
 	render() {
 		const { logs, siteId } = this.props;
@@ -51,6 +64,7 @@ class BackupsPage extends Component {
 			return 'rewind__backup_complete_full' === entry.activityName;
 		} );
 
+		// eslint-disable-next-line no-console
 		console.log( logs );
 
 		const dateHasMainBackup = mainBackup.length > 0;
@@ -58,13 +72,10 @@ class BackupsPage extends Component {
 		return (
 			<div>
 				<div>Welcome to the backup detail page for site { this.props.siteId }</div>
-				<BackupDateSelector
-					siteId={ siteId }
-					onDateChange={ this.onDateChange }
-				/>
-				{ dateHasMainBackup && ( <div>Backup complete</div> ) }
-				{ ! dateHasMainBackup && ( <div>Backup attempt failed</div> ) }
-				{ dateHasMainBackup && ( <div>Content in backup: { this.getContentInBackup() }</div> ) }
+				<BackupDateSelector siteId={ siteId } onDateChange={ this.onDateChange } />
+				{ dateHasMainBackup && <div>Backup complete</div> }
+				{ ! dateHasMainBackup && <div>Backup attempt failed</div> }
+				{ dateHasMainBackup && <div>Content in backup: { this.getContentInBackup() }</div> }
 			</div>
 		);
 	}
@@ -76,6 +87,7 @@ export default connect( state => {
 	//filter.group = 'rewind';
 	const rawLogs = siteId && requestActivityLogs( siteId, filter );
 
+	// eslint-disable-next-line prefer-const
 	let logs = rawLogs?.data ?? [];
 
 	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
