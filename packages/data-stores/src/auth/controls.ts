@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { createRegistryControl } from '@wordpress/data';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -24,15 +25,26 @@ export function createControls( clientCreds: WpcomClientCredentials ) {
 			} );
 		},
 		WP_LOGIN: async ( { action, params }: ReturnType< typeof wpLogin > ) => {
-			return await wpcomRequest( {
-				path: '/wp-login.php?action=' + action,
-				method: 'post',
-				body: {
-					rememberme: true,
-					...clientCreds,
-					...params,
-				},
-			} );
+			// eslint-disable-next-line no-undef
+			const response = await fetch(
+				// Use `localizeUrl` from lib/i18n-utils
+				'https://wordpress.com/wp-login.php?action=' + action,
+				{
+					method: 'POST',
+					credentials: 'include',
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/x-www-form-urlencoded',
+					},
+					body: stringify( {
+						remember_me: true,
+						...clientCreds,
+						...params,
+					} ),
+				}
+			);
+
+			return await response.json();
 		},
 	};
 }
