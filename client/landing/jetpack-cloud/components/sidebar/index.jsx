@@ -29,45 +29,15 @@ class JetpackCloudSidebar extends Component {
 		selectedSiteSlug: PropTypes.string,
 	};
 
-	state = {
-		expandedSections: this.props.path.match( /^(\/?[^/]*)/gi ), // @todo: Restore the sections state after page refresh
-	};
-
-	/**
-	 * Toggle an expandable section.
-	 *
-	 * @param {string} path Section path
-	 */
-	toggleSection( path ) {
-		const expandedSections = this.isExpanded( path )
-			? this.state.expandedSections.filter( item => item !== path )
-			: [ ...this.state.expandedSections, path ];
-		this.setState( { expandedSections } );
-	}
-
-	/**
-	 * Check if a menu is expanded.
-	 *
-	 * @param   {string}  path Section path
-	 * @returns {boolean}      True if section is expanded
-	 */
-	isExpanded( path ) {
-		return this.state.expandedSections.includes( path );
-	}
-
 	/**
 	 * Check if a menu item is selected.
 	 *
 	 * @param {string} path Menu item path
-	 * @param {boolean} allowStartsWith if a path is considered selected if the current path starts with the given one
+	 * @param {boolean} allowStartsWith A path is considered selected if the current path starts with the given one
 	 * @returns {boolean}      True if menu item is selected
 	 */
 	isSelected( path, allowStartsWith = true ) {
 		return this.props.path === path || ( allowStartsWith && this.props.path.startsWith( path ) );
-	}
-
-	handleExpandableMenuClick( path ) {
-		return () => this.toggleSection( path );
 	}
 
 	onNavigate = () => {
