@@ -32,7 +32,7 @@ export const loginFlowState: Reducer< LoginFlowState, Action > = (
 	}
 };
 
-const usernameOrEmail: Reducer< string, Action > = ( state = '', action ) => {
+export const usernameOrEmail: Reducer< string, Action > = ( state = '', action ) => {
 	switch ( action.type ) {
 		case 'RESET_LOGIN_FLOW':
 			return '';
@@ -45,18 +45,7 @@ const usernameOrEmail: Reducer< string, Action > = ( state = '', action ) => {
 	}
 };
 
-const password: Reducer< string, Action > = ( state = '', action ) => {
-	switch ( action.type ) {
-		case 'RESET_LOGIN_FLOW':
-			return '';
-		default:
-			return state;
-	}
-};
-
-export const credentials = combineReducers( { usernameOrEmail, password } );
-
-const reducer = combineReducers( { loginFlowState, credentials } );
+const reducer = combineReducers( { loginFlowState, usernameOrEmail } );
 
 export type State = ReturnType< typeof reducer >;
 

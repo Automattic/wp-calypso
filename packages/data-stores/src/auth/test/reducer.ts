@@ -9,7 +9,7 @@
 /**
  * Internal dependencies
  */
-import { credentials, loginFlowState } from '../reducer';
+import { loginFlowState, usernameOrEmail } from '../reducer';
 import { reset, receiveAuthOptions } from '../actions';
 
 describe( 'login flow state', () => {
@@ -26,30 +26,24 @@ describe( 'login flow state', () => {
 	} );
 } );
 
-describe( 'credentials', () => {
+describe( 'usernameOrEmail', () => {
 	it( 'defaults to empty', () => {
-		const state = credentials( undefined, { type: 'TEST_ACTION' } );
-		expect( state ).toEqual( {
-			usernameOrEmail: '',
-			password: '',
-		} );
+		const state = usernameOrEmail( undefined, { type: 'TEST_ACTION' } );
+		expect( state ).toEqual( '' );
 	} );
 
 	it( 'is returned to the default state by the reset action', () => {
-		const defaultState = credentials( undefined, { type: 'TEST_ACTION' } );
+		const defaultState = usernameOrEmail( undefined, { type: 'TEST_ACTION' } );
 
-		const state = credentials( { usernameOrEmail: 'test', password: 'test' }, reset() );
+		const state = usernameOrEmail( 'test', reset() );
 		expect( state ).toEqual( defaultState );
 	} );
 
-	it( 'updates the username after successfully checking auth_options', () => {
-		const state = credentials(
-			{ usernameOrEmail: 'old username', password: 'old password' },
+	it( 'updates after successfully checking auth_options', () => {
+		const state = usernameOrEmail(
+			'old username',
 			receiveAuthOptions( { passwordless: true, email_verified: true }, 'new username' )
 		);
-		expect( state ).toEqual( {
-			usernameOrEmail: 'new username',
-			password: 'old password',
-		} );
+		expect( state ).toBe( 'new username' );
 	} );
 } );
