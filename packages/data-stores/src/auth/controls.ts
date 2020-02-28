@@ -7,7 +7,7 @@ import { createRegistryControl } from '@wordpress/data';
  * Internal dependencies
  */
 import { wpcomRequest, WpcomClientCredentials } from '../utils';
-import { fetchAuthOptions, wpLogin } from './actions';
+import { wpLogin, FetchAuthOptionsAction } from './actions';
 import { STORE_KEY } from './constants';
 
 export function createControls( clientCreds: WpcomClientCredentials ) {
@@ -15,12 +15,11 @@ export function createControls( clientCreds: WpcomClientCredentials ) {
 		SELECT_USERNAME_OR_EMAIL: createRegistryControl( registry => () => {
 			return registry.select( STORE_KEY ).getUsernameOrEmail();
 		} ),
-		FETCH_AUTH_OPTIONS: async ( action: ReturnType< typeof fetchAuthOptions > ) => {
-			// TODO url encode so that this works with email
-			const { usernameOrEmail } = action;
+		FETCH_AUTH_OPTIONS: async ( { usernameOrEmail }: FetchAuthOptionsAction ) => {
+			const escaped = encodeURIComponent( usernameOrEmail );
 
 			return await wpcomRequest( {
-				path: `/users/${ usernameOrEmail }/auth_options`,
+				path: `/users/${ escaped }/auth_options`,
 				apiVersion: '1.1',
 			} );
 		},

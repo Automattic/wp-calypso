@@ -29,7 +29,12 @@ export const receiveAuthOptionsFailed = ( response: AuthOptionsErrorResponse ) =
 		response,
 	} as const );
 
-export const fetchAuthOptions = ( usernameOrEmail: string ) => ( {
+export interface FetchAuthOptionsAction {
+	type: 'FETCH_AUTH_OPTIONS';
+	usernameOrEmail: string;
+}
+
+const fetchAuthOptions = ( usernameOrEmail: string ): FetchAuthOptionsAction => ( {
 	type: 'FETCH_AUTH_OPTIONS',
 	usernameOrEmail,
 } );
