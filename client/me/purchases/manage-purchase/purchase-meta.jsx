@@ -40,7 +40,7 @@ import { getUser } from 'state/users/selectors';
 import { managePurchase } from '../paths';
 import AutoRenewToggle from './auto-renew-toggle';
 import PaymentLogo from 'components/payment-logo';
-import { CALYPSO_CONTACT } from 'lib/url/support';
+import { JETPACK_SUPPORT } from 'lib/url/support';
 import UserItem from 'components/user';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
@@ -247,7 +247,7 @@ class PurchaseMeta extends Component {
 		);
 	}
 
-	renderContactSupportToRenewMessage() {
+	renderReconnectToRenewMessage() {
 		const { purchase, translate } = this.props;
 
 		if ( this.props.site ) {
@@ -255,18 +255,24 @@ class PurchaseMeta extends Component {
 		}
 
 		return (
-			<div className="manage-purchase__contact-support">
+			<div className="manage-purchase__footnotes">
 				{ translate(
-					'You are the owner of %(purchaseName)s but because you are no longer a user on %(siteSlug)s, ' +
-						'renewing it will require staff assistance. Please {{contactSupportLink}}contact support{{/contactSupportLink}}, ' +
-						'and consider transferring this purchase to another active user on %(siteSlug)s to avoid this issue in the future.',
+					'You are the owner of %(purchaseName)s, but your site %(siteSlug)s is no longer connected to WordPress.com. ' +
+						'To renew %(purchaseName)s, you have to reconnect the site to your WordPress.com account first. ' +
+						'Please, check out this {{supportPageLink}}support page{{/supportPageLink}} to get more help.',
 					{
 						args: {
 							purchaseName: getName( purchase ),
 							siteSlug: this.props.purchase.domain,
 						},
 						components: {
-							contactSupportLink: <a href={ CALYPSO_CONTACT } />,
+							supportPageLink: (
+								<a
+									href={
+										JETPACK_SUPPORT + 'reconnecting-reinstalling-jetpack/#reconnecting-jetpack'
+									}
+								/>
+							),
 						},
 					}
 				) }
@@ -381,7 +387,7 @@ class PurchaseMeta extends Component {
 					{ this.renderExpiration() }
 					{ this.renderPaymentDetails() }
 				</ul>
-				{ this.renderContactSupportToRenewMessage() }
+				{ this.renderReconnectToRenewMessage() }
 			</>
 		);
 	}
