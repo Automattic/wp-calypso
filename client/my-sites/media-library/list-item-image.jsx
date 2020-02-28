@@ -82,7 +82,8 @@ export class MediaLibraryListItemImage extends React.Component {
 			( 1 / this.props.maxScale ) * this.state.maxSeenScale * this.props.maxImageWidth
 		);
 
-		// For some reason, site privacy / coming soon are getting clobbered when the media lib loads
+		// Site privacy / coming soon are getting clobbered when the media lib loads
+		// Should be fixed when D39264-code lands
 		// Hard-coding for now so I can keep working...
 		const useProxy = true || !! ( isAtomic && isPrivate );
 
