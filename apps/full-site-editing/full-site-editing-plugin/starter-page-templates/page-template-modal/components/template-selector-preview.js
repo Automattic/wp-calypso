@@ -22,7 +22,11 @@ const TemplateSelectorPreview = ( { blocks = [], viewportWidth } ) => {
 					</div>
 				</div>
 			) }
-			{ ! noBlocks && <BlockFramePreview blocks={ blocks } viewportWidth={ viewportWidth } /> }
+
+			{ /* Always render preview iframe to ensure it's ready to populate with Blocks. */
+			/* Without this some browsers will experience a noticavle delay
+			/* before Blocks are populated into the iframe. */ }
+			<BlockFramePreview blocks={ blocks } viewportWidth={ viewportWidth } />
 		</div>
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	);
