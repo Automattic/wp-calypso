@@ -41,7 +41,7 @@ describe( 'password login flow', () => {
 
 		expect( wpcomRequest ).toHaveBeenLastCalledWith(
 			expect.objectContaining( {
-				path: '/users/user1/auth_options',
+				path: '/users/user1/auth-options',
 			} )
 		);
 

@@ -37,7 +37,7 @@ describe( 'FETCH_AUTH_OPTIONS', () => {
 
 		expect( wpcomRequest ).toHaveBeenLastCalledWith(
 			expect.objectContaining( {
-				path: '/users/user1/auth_options',
+				path: '/users/user1/auth-options',
 			} )
 		);
 	} );
@@ -50,7 +50,7 @@ describe( 'FETCH_AUTH_OPTIONS', () => {
 
 		expect( wpcomRequest ).toHaveBeenLastCalledWith(
 			expect.objectContaining( {
-				path: '/users/test%40email.com/auth_options',
+				path: '/users/test%40email.com/auth-options',
 			} )
 		);
 	} );

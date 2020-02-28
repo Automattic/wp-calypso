@@ -19,7 +19,7 @@ export function createControls( clientCreds: WpcomClientCredentials ) {
 			const escaped = encodeURIComponent( usernameOrEmail );
 
 			return await wpcomRequest( {
-				path: `/users/${ escaped }/auth_options`,
+				path: `/users/${ escaped }/auth-options`,
 				apiVersion: '1.1',
 			} );
 		},
