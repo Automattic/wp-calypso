@@ -115,9 +115,6 @@ export function connect( context, next ) {
 	const { path, pathname, params, query } = context;
 	const { type = false, interval } = params;
 	const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
-
-	console.log( 'entered connect flow with params %o', params );
-
 	const planSlug = getPlanSlugFromFlowType( type, interval );
 
 	// Not clearing the plan here, because other flows can set the cookie before arriving here.

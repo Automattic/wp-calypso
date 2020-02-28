@@ -75,7 +75,6 @@ class PlansLanding extends Component {
 		storePlan( cartItem ? cartItem.product_slug : PLAN_JETPACK_FREE );
 
 		setTimeout( () => {
-			console.log( 'Redirecting to', redirectUrl, cartItem );
 			page.redirect( redirectUrl );
 		}, 25 );
 	};

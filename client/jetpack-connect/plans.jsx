@@ -171,7 +171,6 @@ class Plans extends Component {
 		addItem( cartItem );
 		this.props.completeFlow();
 		persistSignupDestination( this.getMyPlansDestination() );
-		console.log( 'Checking out with', cartItem );
 
 		this.redirect( '/checkout/' );
 	};
