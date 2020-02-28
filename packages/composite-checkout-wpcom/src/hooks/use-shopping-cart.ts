@@ -520,6 +520,7 @@ function useInitializeCartFromServer(
 						'; proceeding to add initial product',
 						productToAdd
 					);
+					onEvent?.( { type: 'ADD_CART_ITEM', payload: productToAdd } );
 					const updatedResponseCart = addItemToResponseCart(
 						processRawResponse( response ),
 						productToAdd
