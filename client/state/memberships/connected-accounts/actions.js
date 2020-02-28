@@ -5,7 +5,12 @@
 import wpcom from 'lib/wp';
 import requestExternalAccess from 'lib/sharing';
 import { listMembershipsConnectedAccounts } from '../actions';
-import { MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_AUTHORIZE_REQUEST } from 'state/action-types';
+import {
+	MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_AUTHORIZE_REQUEST,
+	MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_DISCONNECT,
+	MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_DISCONNECT_FAILURE,
+	NOTICE_CREATE,
+} from 'state/action-types';
 import { change } from 'redux-form';
 
 export function authorizeStripeAccount() {
@@ -31,3 +36,55 @@ export function authorizeStripeAccount() {
 		);
 	};
 }
+
+export const requestDisconnectStripeAccount = ( connectedAccountId, noticeText ) => {
+	return dispatch => {
+		dispatch( {
+			type: MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_DISCONNECT,
+			connectedAccountId,
+		} );
+
+		dispatch( {
+			type: NOTICE_CREATE,
+			notice: {
+				duration: 5000,
+				text: noticeText,
+				status: 'is-success',
+			},
+		} );
+
+		return {};
+
+		// return wpcom.req
+		// 	.post( {
+		// 		method: 'POST',
+		// 		path: `/me/connected_account/stripe/${connectedAccountId}/disconnect`,
+		// 	} )
+		// 	.then( () => {
+		// 		dispatch( {
+		// 			type: NOTICE_CREATE,
+		// 			notice: {
+		// 				duration: 5000,
+		// 				text: noticeText,
+		// 				status: 'is-success',
+		// 			},
+		// 		} );
+		// 		return connectedAccountId;
+		// 	} )
+		// 	.catch( error => {
+		// 		dispatch( {
+		// 			type: MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_DISCONNECT_FAILURE,
+		// 			connectedAccountId,
+		// 			error,
+		// 		} );
+		// 		dispatch( {
+		// 			type: NOTICE_CREATE,
+		// 			notice: {
+		// 				duration: 10000,
+		// 				text: error.message,
+		// 				status: 'is-error',
+		// 			},
+		// 		} );
+		// 	} );
+	};
+};
