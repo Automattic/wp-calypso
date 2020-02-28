@@ -50,6 +50,8 @@ interface ConnectedProps {
 	trackCtaButton: ( feature: string ) => void;
 }
 
+const wpcom = wp.undocumented();
+
 const Home: FunctionComponent< ConnectedProps > = ( {
 	siteId,
 	selectedSiteSlug,
@@ -69,12 +71,17 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 
 	useEffect( () => {
 		if ( peerReferralLink ) return;
-		wp.undocumented()
-			.me()
-			.getPeerReferralLink( ( error: string, data: string ) =>
-				setPeerReferralLink( error ? '' : data )
-			);
-	} );
+		wpcom.me().getPeerReferralLink( ( error: string, data: string ) => {
+			setPeerReferralLink( ! error && data ? data : '' );
+		} );
+	}, [ peerReferralLink ] );
+
+	const onPeerReferralCtaClick = () => {
+		if ( peerReferralLink ) return;
+		wpcom.me().setPeerReferralLinkEnable( true, ( error: string, data: string ) => {
+			setPeerReferralLink( ! error && data ? data : '' );
+		} );
+	};
 
 	/**
 	 * Return the content to display in the Simple Payments card based on the current plan.
@@ -235,10 +242,9 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 
 		const cta: CtaButton = {
 			text: translate( 'Earn Free Credits' ) as string,
-			action: {
-				url:
-					'https://refer.wordpress.com/?utm_source=calypso&utm_campaign=calypso_earn&utm_medium=automattic_referred&atk=341b381c971a0631a88f080f598faafb25c344db',
-				onClick: () => trackCtaButton( 'peer-referral-wpcom' ),
+			action: () => {
+				trackCtaButton( 'peer-referral-wpcom' );
+				onPeerReferralCtaClick();
 			},
 		};
 
@@ -250,17 +256,22 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			title: translate( 'Refer a friend, you’ll both earn credits' ),
 			body: peerReferralLink
 				? translate(
-						'To earn free credits, share your personal signup link below with your friends and family.{{br/}}' +
-							'By doing so you agree to {{a}}the WordPress.com Peer Referral Program Terms and Conditions.{{/a}}',
+						'To earn free credits, share the link below with your friends, family, and website visitors. ' +
+							'By doing so you agree to the WordPress.com Peer Referral Program {{a}}Terms and Conditions.{{/a}}',
 						{
 							components: {
-								a: <a href="https://wordpress.com" />,
-								br: <br />,
+								a: (
+									<a
+										href="https://en.support.wordpress.com/peer-referral-tos/"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
 							},
 						}
 				  )
 				: translate(
-						'Share WordPress.com with friends, family, and website visitors. For every paying customer you send our way, you’ll both earn US$25 in free credits. {{em}}Available on every plan{{/em}}.',
+						'Share WordPress.com with friends, family, and website visitors. For every paying customer you send our way, you’ll both earn US$25 in free credits. {{em}}Available with every plan{{/em}}.',
 						{
 							components: {
 								em: <em />,
