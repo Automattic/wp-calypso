@@ -365,28 +365,29 @@ class SectionMigrate extends Component {
 					{ translate( 'There was an error with your import.' ) }
 					<br />
 					{ this.state.errorMessage }
+
+					<p className="migrate__info">
+						{ translate(
+							'{{supportLink}}Contact us{{/supportLink}} so we can' +
+								' figure out exactly' +
+								' what needs adjusting and get your site imported.',
+							{
+								components: {
+									supportLink: (
+										<a
+											href="https://support.wordpress.com"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
+					</p>
 				</div>
 				<Button primary onClick={ this.resetMigration }>
 					{ translate( 'Try again' ) }
 				</Button>
-				<p className="migrate__info">
-					{ translate(
-						'Or {{supportLink}}contact us{{/supportLink}} so we can' +
-							' figure out exactly' +
-							' what needs adjusting and get your site imported.',
-						{
-							components: {
-								supportLink: (
-									<a
-										href="https://support.wordpress.com"
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						}
-					) }
-				</p>
 			</Card>
 		);
 	}
