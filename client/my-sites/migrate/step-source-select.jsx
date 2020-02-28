@@ -149,6 +149,7 @@ class StepSourceSelect extends Component {
 					onUrlChange={ this.onUrlChange }
 					onSubmit={ this.handleContinue }
 					url={ this.props.url }
+					step="sourceSelect"
 				/>
 
 				<Card>

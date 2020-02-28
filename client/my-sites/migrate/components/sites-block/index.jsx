@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -87,14 +88,19 @@ class SitesBlock extends Component {
 	};
 
 	render() {
-		const { targetSite, translate } = this.props;
+		const { targetSite, step, translate } = this.props;
+		const isSourceSelectStep = step === 'sourceSelect';
+		const className = classNames( 'sites-block__sites', {
+			'is-step-source-select': isSourceSelectStep,
+		} );
+
 		return (
-			<div className="sites-block__sites">
-				<div className="sites-block__sites-item">{ this.getSourceSiteOrInput() }</div>
+			<div className={ className }>
+				<div className="sites-block__source-site">{ this.getSourceSiteOrInput() }</div>
 				<div className="sites-block__sites-arrow-wrapper">
 					<Gridicon className="sites-block__sites-arrow" icon="arrow-right" />
 				</div>
-				<div className="sites-block__sites-item">
+				<div className="sites-block__target-site">
 					<Site site={ targetSite } indicator={ false } />
 					<div className="sites-block__sites-labels-container">
 						<Badge type="info">{ translate( 'This Site' ) }</Badge>
@@ -112,6 +118,7 @@ SitesBlock.propTypes = {
 	targetSite: PropTypes.object.isRequired,
 	onUrlChange: PropTypes.func,
 	onSubmit: PropTypes.func,
+	step: PropTypes.string,
 };
 
 export default localize( SitesBlock );
