@@ -18,7 +18,6 @@ import { Disabled } from '@wordpress/components';
 // Therefore this component exists to simplify mocking out the Block Editor
 // when under test conditions.
 export default function( { blocks, settings, recomputeBlockListKey } ) {
-	// return <BlockPreview { ...props } />;
 	return (
 		<BlockEditorProvider value={ blocks } settings={ settings }>
 			<Disabled key={ recomputeBlockListKey }>
