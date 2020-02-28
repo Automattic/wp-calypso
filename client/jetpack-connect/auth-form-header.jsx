@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import urlModule from 'url';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -139,8 +138,8 @@ export class AuthFormHeader extends Component {
 		const safeIconUrl = siteIcon ? safeImageUrl( siteIcon ) : false;
 		const icon = safeIconUrl ? { img: safeIconUrl } : false;
 		const url = decodeEntities( homeUrl );
-		const parsedUrl = urlModule.parse( url );
-		const path = parsedUrl.path === '/' ? '' : parsedUrl.path;
+		const parsedUrl = new URL( url );
+		const path = parsedUrl.pathname === '/' ? '' : parsedUrl.pathname;
 		const site = {
 			admin_url: decodeEntities( siteUrl + '/wp-admin' ),
 			domain: parsedUrl.host + path,
