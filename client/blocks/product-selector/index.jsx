@@ -60,6 +60,7 @@ export class ProductSelector extends Component {
 			ratio: PropTypes.number,
 		} ),
 		siteId: PropTypes.number,
+		onUpgradeClick: PropTypes.func,
 
 		// Connected props
 		availableProducts: PropTypes.object,
@@ -262,7 +263,7 @@ export class ProductSelector extends Component {
 	}
 
 	handleCheckoutForProduct = productObject => {
-		const { currentPlanSlug, intervalType, selectedSiteSlug } = this.props;
+		const { currentPlanSlug, intervalType, selectedSiteSlug, onUpgradeClick } = this.props;
 
 		return () => {
 			this.props.recordTracksEvent( 'calypso_plan_features_upgrade_click', {
@@ -270,6 +271,10 @@ export class ProductSelector extends Component {
 				product_name: productObject.product_slug,
 				billing_cycle: intervalType,
 			} );
+			if ( onUpgradeClick ) {
+				onUpgradeClick( productObject );
+				return;
+			}
 			page( '/checkout/' + selectedSiteSlug + '/' + productObject.product_slug );
 		};
 	};
