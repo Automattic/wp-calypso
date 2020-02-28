@@ -10,6 +10,8 @@ import { AUTH_ATTEMPS_TTL } from './constants';
 import { getSiteByUrl } from 'state/sites/selectors';
 import { isStale } from './utils';
 
+import 'state/jetpack-connect/init';
+
 export const getJetpackSiteByUrl = ( state, url ) => {
 	const site = getSiteByUrl( state, url );
 	if ( site && ! site.jetpack ) {
