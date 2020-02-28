@@ -15,18 +15,22 @@ import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants'
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
+import { getPlansBySite } from 'state/sites/plans/selectors';
 
 const NonPrimaryDomainPlanUpsell = ( {
 	domain,
 	hasNonPrimaryDomainsFlag,
 	isDomainOnly,
 	isOnPaidPlan,
+	hasLoadedSitePlans,
 	selectedSite,
 	translate,
 	tracksImpressionName,
 	tracksClickName,
 } ) => {
 	if (
+		! hasLoadedSitePlans ||
+		! domain ||
 		! selectedSite ||
 		isOnPaidPlan ||
 		! hasNonPrimaryDomainsFlag ||
@@ -70,10 +74,12 @@ const NonPrimaryDomainPlanUpsell = ( {
 const mapStateToProps = state => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const selectedSite = getSelectedSite( state );
+	const sitePlans = selectedSite && getPlansBySite( state, selectedSite );
 
 	return {
 		isDomainOnly: selectedSiteId && isDomainOnlySite( state, selectedSiteId ),
 		isOnPaidPlan: isSiteOnPaidPlan( state, selectedSiteId ),
+		hasLoadedSitePlans: sitePlans && sitePlans.hasLoadedFromServer,
 		hasNonPrimaryDomainsFlag: getCurrentUser( state )
 			? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 			: false,
