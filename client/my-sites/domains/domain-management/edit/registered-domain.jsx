@@ -96,13 +96,13 @@ class RegisteredDomain extends React.Component {
 	}
 
 	planUpsellForNonPrimaryDomain() {
-		const { domain, isDomainOnly, selectedSite } = this.props;
+		const { domain } = this.props;
 
 		return (
 			<NonPrimaryDomainPlanUpsell
 				tracksImpressionName="calypso_non_primary_domain_settings_plan_upsell_impression"
 				tracksClickName="calypso_non_primary_domain_settings_plan_upsell_click"
-				{ ...{ domain, isDomainOnly, selectedSite } }
+				domain={ domain }
 			/>
 		);
 	}
