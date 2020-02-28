@@ -142,6 +142,7 @@ class StepSourceSelect extends Component {
 					onUrlChange={ this.onUrlChange }
 					onSubmit={ this.handleContinue }
 					url={ this.props.url }
+					step="sourceSelect"
 				/>
 				{ this.state.error && (
 					<Notice className="migrate__error" showDismiss={ false } status="is-error">
