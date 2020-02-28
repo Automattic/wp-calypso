@@ -436,6 +436,11 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	}
 
 	// Manual CSS Overrides. Remove after better solutions are in place.
+	
+	// Removes empty paragraph placeholders, i.e. "Write Title..."
+	[data-type='core/paragraph'] [data-rich-text-placeholder] {
+		display: none;
+	}
 
 	/*
 	* Fixes jetpack .wp-block-jetpack-slideshow styles, as the /wp-content/plugins/jetpack/_inc/blocks/vendors~swiper.[hash].css 
