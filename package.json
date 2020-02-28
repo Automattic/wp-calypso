@@ -51,6 +51,7 @@
 		"@wordpress/e2e-test-utils": "4.3.0",
 		"browserslist": "4.8.6",
 		"i18n-calypso": "file:packages/i18n-calypso",
+		"loader-utils": "1.2.3",
 		"photon": "file:packages/photon",
 		"wp-calypso": "file:client",
 		"wpcom": "file:packages/wpcom.js"
@@ -238,7 +239,6 @@
 		"jest-fetch-mock": "2.1.2",
 		"jest-junit": "9.0.0",
 		"lerna": "3.20.2",
-		"loader-utils": "1.2.3",
 		"lodash": "4.17.15",
 		"md5-file": "4.0.0",
 		"mixedindentlint": "1.2.0",
