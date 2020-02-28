@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { each, filter, get, castArray, debounce } from 'lodash';
+import { each, filter, get, castArray, debounce, noop } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -18,6 +18,7 @@ import {
 	useCallback,
 } from '@wordpress/element';
 import { withSelect } from '@wordpress/data';
+import { compose, withSafeTimeout } from '@wordpress/compose';
 import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
 import { Disabled } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -80,6 +81,7 @@ const BlockFramePreview = ( {
 	viewportWidth,
 	blocks,
 	settings,
+	setTimeout = noop,
 } ) => {
 	const frameContainerRef = useRef();
 	const renderedBlocksRef = useRef();
@@ -125,7 +127,7 @@ const BlockFramePreview = ( {
 			iframeRef.current.contentDocument.body.classList.add( 'editor-styles-wrapper' );
 			rescale();
 		}, 0 );
-	}, [ bodyClassName, rescale ] );
+	}, [ setTimeout, bodyClassName, rescale ] );
 
 	// Scroll the preview to the top when the blocks change.
 	useEffect( () => {
@@ -204,8 +206,11 @@ const BlockFramePreview = ( {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
-export default withSelect( select => {
-	return {
-		settings: select( 'core/block-editor' ).getSettings(),
-	};
-} )( BlockFramePreview );
+export default compose(
+	withSafeTimeout,
+	withSelect( select => {
+		return {
+			settings: select( 'core/block-editor' ).getSettings(),
+		};
+	} )
+)( BlockFramePreview );
