@@ -1,25 +1,14 @@
 /**
  * External dependencies
  */
-import { each, filter, get, castArray, debounce } from 'lodash';
+import { get, debounce } from 'lodash';
 import classnames from 'classnames';
 
 /**
  * WordPress dependencies
  */
 /* eslint-disable import/no-extraneous-dependencies */
-import {
-	useRef,
-	useEffect,
-	useState,
-	useMemo,
-	useReducer,
-	useLayoutEffect,
-	useCallback,
-} from '@wordpress/element';
-import { withSelect } from '@wordpress/data';
-import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
-import { Disabled } from '@wordpress/components';
+import { useRef, useEffect, useState, useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 /* eslint-enable import/no-extraneous-dependencies */
 
@@ -27,65 +16,18 @@ import { __ } from '@wordpress/i18n';
 const DEBOUNCE_TIMEOUT = 300;
 
 /**
- * Copies the styles from the provided src document
- * to the given iFrame head and body DOM references.
- *
- * @param {object} srcDocument the src document from which to copy the
- * `link` and `style` Nodes from the `head` and `body`
- * @param {object} targetiFrameDocument the target iframe's
- * `contentDocument` where the `link` and `style` Nodes from the `head` and
- * `body` will be copied
- */
-const copyStylesToIframe = ( srcDocument, targetiFrameDocument ) => {
-	const iFrameDomReferences = [ 'head', 'body' ];
-	each( iFrameDomReferences, domReference => {
-		return each(
-			filter( srcDocument[ domReference ].children, ( { localName } ) =>
-				[ 'link', 'style' ].includes( localName )
-			),
-			( { localName, attributes, innerHTML } ) => {
-				const node = document.createElement( localName );
-				each( attributes, ( { name, value } ) => ( node[ name ] = value ) );
-
-				if ( innerHTML ) {
-					node.innerHTML = innerHTML;
-				}
-
-				targetiFrameDocument[ domReference ].appendChild( node );
-			}
-		);
-	} );
-};
-
-/**
  * Performs a blocks preview using an iFrame.
  *
  * @param {object} props component's props
  * @param {object} props.className CSS class to apply to component
- * @param {string} props.bodyClassName CSS class to apply to the iframe's `<body>` tag
  * @param {number} props.viewportWidth pixel width of the viewable size of the preview
- * @param {Array}  props.blocks array of Gutenberg Block objects
- * @param {object} props.settings block Editor settings object
  */
-const BlockFramePreview = ( {
-	className = 'block-iframe-preview',
-	bodyClassName = 'block-iframe-preview-body',
-	viewportWidth,
-	blocks,
-	settings,
-} ) => {
+const BlockFramePreview = ( { className = 'block-iframe-preview', viewportWidth } ) => {
 	const frameContainerRef = useRef();
-	const renderedBlocksRef = useRef();
-
 	// Set the initial scale factor.
 	const [ style, setStyle ] = useState( {
 		transform: `scale( 1 )`,
 	} );
-
-	// Rendering blocks list.
-	const renderedBlocks = useMemo( () => castArray( blocks ), [ blocks ] );
-	const [ recomputeBlockListKey, triggerRecomputeBlockList ] = useReducer( state => state + 1, 0 );
-	useLayoutEffect( triggerRecomputeBlockList, [ blocks ] );
 
 	/**
 	 * This function re scales the viewport depending on
@@ -109,56 +51,7 @@ const BlockFramePreview = ( {
 		} );
 	}, [ viewportWidth ] );
 
-	// Populate iFrame styles.
-	useEffect( () => {
-		const targetIFrameDoc = get( frameContainerRef, [
-			'current',
-			'firstElementChild',
-			'contentDocument',
-		] );
-
-		const body = get( frameContainerRef, [
-			'current',
-			'firstElementChild',
-			'contentDocument',
-			'body',
-		] );
-		body.className = `${ bodyClassName } editor-styles-wrapper`;
-
-		copyStylesToIframe( window.document, targetIFrameDoc );
-		rescale();
-	}, [ bodyClassName, rescale ] );
-
-	// Scroll the preview to the top when the blocks change.
-	useEffect( () => {
-		const body = get( frameContainerRef, [
-			'current',
-			'firstElementChild',
-			'contentDocument',
-			'body',
-		] );
-		if ( ! body ) {
-			return;
-		}
-
-		// scroll to top when blocks changes.
-		body.scrollTop = 0;
-	}, [ recomputeBlockListKey ] );
-
-	// Append rendered Blocks to iFrame when changed
-	useEffect( () => {
-		const iFrameDocument = get( frameContainerRef, [
-			'current',
-			'firstElementChild',
-			'contentDocument',
-		] );
-
-		const renderedBlocksDOM = renderedBlocksRef && renderedBlocksRef.current;
-
-		if ( renderedBlocksDOM ) {
-			iFrameDocument.body.appendChild( renderedBlocksDOM );
-		}
-	}, [ recomputeBlockListKey ] );
+	useEffect( rescale, [] );
 
 	// Handling windows resize event.
 	useEffect( () => {
@@ -184,35 +77,15 @@ const BlockFramePreview = ( {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<div ref={ frameContainerRef }>
-			<iframe
-				title={ __( 'Preview' ) }
-				className={ classnames( 'editor-styles-wrapper', className ) }
-				style={ style }
-			/>
-
-			<div ref={ renderedBlocksRef } className="block-editor" id="rendered-blocks">
-				<div className="edit-post-visual-editor">
-					<div className="editor-styles-wrapper">
-						<div className="editor-writing-flow">
-							{ blocks && blocks.length ? (
-								<BlockEditorProvider value={ renderedBlocks } settings={ settings }>
-									<Disabled key={ recomputeBlockListKey }>
-										<BlockList />
-									</Disabled>
-								</BlockEditorProvider>
-							) : null }
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+		<iframe
+			src="#iframepreview=true"
+			title={ __( 'Preview' ) }
+			className={ classnames( 'editor-styles-wrapper', className ) }
+			style={ style }
+			ref={ frameContainerRef }
+		/>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
-export default withSelect( select => {
-	return {
-		settings: select( 'core/block-editor' ).getSettings(),
-	};
-} )( BlockFramePreview );
+export default BlockFramePreview;
