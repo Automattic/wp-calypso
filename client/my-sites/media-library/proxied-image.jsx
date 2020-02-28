@@ -8,7 +8,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { requestHttpData } from 'state/data-layer/http-data';
+import { requestHttpData, resetHttpData } from 'state/data-layer/http-data';
 
 const { Blob } = globalThis; // The linter complains if I don't do this...?
 
@@ -42,8 +42,11 @@ export default function ProxiedImage( {
 			}
 		);
 
-		// Make sure stored Blobs get cleared from memory when the component dismounts
-		return () => imageData && URL.revokeObjectURL( imageData );
+		return () => {
+			// Make sure stored Blobs get cleared from memory when the component dismounts
+			URL.revokeObjectURL( imageData );
+			resetHttpData( requestId );
+		};
 	}, [ imageData, mediaUrl, requestId, siteSlug ] );
 
 	return (
