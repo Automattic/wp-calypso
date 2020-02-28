@@ -45,9 +45,8 @@ const JetpackFAQ = ( { isChatAvailable, translate } ) => {
 			<FAQItem
 				question={ translate( 'Does this work with a multisite network?' ) }
 				answer={ translate(
-					'Yes, Jetpack and all of its premium features are compatible with WordPress Multisite' +
-						' networks. If you manage a Multisite network you will need to make sure you have a' +
-						' subscription for each site you wish to cover with premium features.'
+					"Yes, Jetpack and all of it's paid features are compatible with WordPress Multisite" +
+						' networks, except for Jetpack Backup.'
 				) }
 			/>
 
