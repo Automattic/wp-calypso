@@ -1117,6 +1117,24 @@ function getCheckoutEventHandler( dispatch ) {
 				return dispatch( recordTracksEvent( 'calypso_checkout_modal_authorization', {} ) );
 			}
 
+			case 'ADD_CART_ITEM': {
+				// Get the non-nested properties of the product item
+				const { extra, ...eventProperties } = action.payload;
+				dispatch( recordTracksEvent( 'calypso_cart_product_add', eventProperties ) );
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_cart_item_add', eventProperties )
+				);
+			}
+
+			case 'REMOVE_CART_ITEM': {
+				// Get the non-nested properties of the product item
+				const { extra, ...eventProperties } = action.payload;
+				dispatch( recordTracksEvent( 'calypso_cart_product_remove', eventProperties ) );
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_cart_item_remove', eventProperties )
+				);
+			}
+
 			default:
 				debug( 'unknown checkout event', action );
 				return dispatch(
