@@ -450,6 +450,10 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		display: none;
 	}
 
+	.swiper-pagination {
+		text-align: center;
+	}
+
 	.swiper-pagination-bullet {
 		border-radius: 100%;
 	}
