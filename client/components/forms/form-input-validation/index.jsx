@@ -40,6 +40,7 @@ export default class extends React.Component {
 				<span id={ this.props.id }>
 					<Gridicon size={ 24 } icon={ this.props.icon ? this.props.icon : icon } />{ ' ' }
 					{ this.props.text }
+					{ this.props.children }
 				</span>
 			</div>
 		);
