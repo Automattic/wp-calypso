@@ -38,18 +38,30 @@ const DEBOUNCE_TIMEOUT = 300;
  */
 const copyStylesToIframe = ( srcDocument, targetiFrameDocument ) => {
 	const styleNodes = [ 'link', 'style' ];
-	const iFrameDomReferences = [ 'head', 'body' ];
-	each( iFrameDomReferences, domReference => {
+
+	// See https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment
+	const targetDOMFragment = {
+		head: new DocumentFragment(), // eslint-disable-line no-undef
+		body: new DocumentFragment(), // eslint-disable-line no-undef
+	};
+
+	each( Object.keys( targetDOMFragment ), domReference => {
 		return each(
 			filter( srcDocument[ domReference ].children, ( { localName } ) =>
+				// Only return specific style-related Nodes
 				styleNodes.includes( localName )
 			),
 			targetNode => {
+				// Clone the original node and append to the appropriate Fragement
 				const deep = true;
-				targetiFrameDocument[ domReference ].appendChild( targetNode.cloneNode( deep ) );
+				targetDOMFragment[ domReference ].appendChild( targetNode.cloneNode( deep ) );
 			}
 		);
 	} );
+
+	// Consolidate updates to iframe DOM
+	targetiFrameDocument.head.appendChild( targetDOMFragment.head );
+	targetiFrameDocument.body.appendChild( targetDOMFragment.body );
 };
 
 /**
