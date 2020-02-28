@@ -31,6 +31,8 @@ import {
 	isDomainTransfer,
 	isConciergeSession,
 	isPlan,
+	isJetpackProductSlug,
+	isMonthlyFromSlug,
 } from 'lib/products-values';
 import { getPlan } from 'lib/plans';
 
@@ -90,6 +92,10 @@ class PurchaseMeta extends Component {
 				case TERM_MONTHLY:
 					period = translate( 'month' );
 					break;
+			}
+		} else if ( isJetpackProductSlug( productSlug ) ) {
+			if ( isMonthlyFromSlug( productSlug ) ) {
+				period = translate( 'month' );
 			}
 		}
 
