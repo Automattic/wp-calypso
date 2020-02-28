@@ -31,14 +31,15 @@
 
 .migrate__plan-upsell {
 	display: flex;
+	flex-direction: row-reverse;
+	flex-wrap: nowrap;
 	border-top: 1px solid var( --color-neutral-10 );
 	border-bottom: 1px solid var( --color-neutral-10 );
 	margin: 16px 0;
 	padding: 16px 0;
 }
 
-.migrate__plan-upsell-icon,
-.migrate__plan-upsell-info,
+.migrate__plan-upsell-container,
 .migrate__plan-upsell-themes,
 .migrate__plan-upsell-plugins {
 	display: flex;
@@ -46,21 +47,80 @@
 	margin-right: 16px;
 }
 
-.migrate__plan-upsell-icon {
-	min-width: 64px;
-	min-height: 64px;
-	max-width: 64px;
-	max-height: 64px;
-}
-
-.migrate__plan-upsell-info {
+.migrate__plan-upsell-container {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
 	flex-basis: 40%;
+
+	.migrate__plan-upsell-icon {
+		width: 64px;
+		height: 64px;
+		flex-grow: 0;
+		flex-shrink: 0;
+		margin-right: 16px;
+	}
+
+	.migrate__plan-upsell-info {
+		flex-grow: 1;
+		flex-shrink: 1;
+		max-width: 175px; /** To force the text to go on the next line in English */
+	}
 }
 
 .migrate__plan-upsell-themes,
 .migrate__plan-upsell-plugins {
 	flex-basis: 25%;
 }
+
+
+@include breakpoint('<800px') {
+	&.migrate__plan-upsell {
+		flex-wrap: wrap;
+		margin: 16px 0;
+		padding: 16px 0;
+		justify-content: space-between;
+		border-top: none;
+		border-bottom: none;
+
+	}
+
+	&.migrate__plan-upsell-container,
+	&.migrate__plan-upsell-themes,
+	&.migrate__plan-upsell-plugins {
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	&.migrate__plan-upsell-container {
+		display: flex;
+		border-top: 1px solid var( --color-neutral-10 );
+
+		margin: 24px 0 0;
+		padding: 16px 0 0;
+
+		flex-direction: row;
+		flex-wrap: nowrap;
+		flex-basis: 100%;
+
+		.migrate__plan-upsell-icon {
+			width: 64px;
+			height: 64px;
+			flex-grow: 0;
+			flex-shrink: 0;
+			margin-right: 16px;
+		}
+
+		.migrate__plan-upsell-info {
+			flex-grow: 1;
+			flex-shrink: 1;
+			max-width: none;
+		}
+	}
+
+
+}
+
 
 .migrate__plan-name,
 .migrate__plan-price,
