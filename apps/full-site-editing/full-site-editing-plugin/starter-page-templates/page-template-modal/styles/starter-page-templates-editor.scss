@@ -162,16 +162,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	position: relative;
 	transform: translateZ( 0 ); // Fix for Safari rounded border overflow (1/2).
 
-	.template-selector-item__template-title {
-		width: 100%;
-		position: absolute;
-		bottom: 0;
-		left: 0;
-		height: 40px;
-		line-height: 40px;
-		background-color: $template-selector-empty-background;
-	}
-
 	&:focus {
 		box-shadow: 0 0 0 1px $template-selector-empty-background,
 			0 0 0 3px $template-selector-border-color-active;
@@ -222,11 +212,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 	&.is-rendering {
 		opacity: 0.5;
-	}
-
-	.block-editor-block-list__layout,
-	.block-editor-block-list__block {
-		padding: inherit;
 	}
 }
 
@@ -291,9 +276,9 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	right: $preview-right-margin;
 	background: $template-selector-empty-background;
 	border-radius: 2px;
-	overflow-x: hidden;
-	overflow-y: auto;
-	box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ), 0 3px 1px -2px rgba( 0, 0, 0, 0.12 ),
+	overflow: hidden;
+	box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ),
+		0 3px 1px -2px rgba( 0, 0, 0, 0.12 ),
 		0 1px 5px 0 rgba( 0, 0, 0, 0.2 );
 
 	@media screen and ( min-width: $breakpoint-mobile ) {
@@ -331,100 +316,23 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		padding: 0;
 	}
 
-	.editor-styles-wrapper {
-		.template-selector-preview__offset-correction {
+	// not-selected template
+	&.not-selected {
+		.editor-styles-wrapper {
 			position: relative;
-			top: $template-large-preview-title-height;
-		}
-
-		.editor-post-title {
-			transform-origin: top center;
 			width: 100%;
-			display: block;
-			position: absolute;
-			top: 0;
-		}
+			height: 100%;
 
-		.editor-post-title,
-		.editor-post-title__block,
-		.editor-post-title__input {
-			padding-top: 0;
-			padding-bottom: 0;
-			margin-top: 0;
-			margin-bottom: 0;
-			.editor-post-title__input {
-				margin: 0;
-				padding: 0;
-				height: $template-large-preview-title-height;
-				line-height: $template-large-preview-title-height;
-				overflow: hidden;
-				resize: none;
+			.template-selector-preview__empty-state {
+				position: absolute;
+				width: 100%;
+				text-align: center;
+				height: 50px;
+				line-height: 50px;
+				top: 50%;
+				margin: -25px 0 0;
 			}
 		}
-	}
-}
-
-.template-selector-preview__placeholder {
-	color: var( --color-text-subtle );
-	font-size: 15px;
-	font-weight: 400;
-}
-
-// Preview adjustments.
-// Tweak styles which are inside of the preview container.
-.block-editor-block-preview__container.editor-styles-wrapper {
-	.wp-block {
-		width: 100%;
-	}
-
-	// `core/cover`
-	.wp-block[data-type='core/cover'][data-align='full'] {
-		margin: 0;
-		.wp-block-cover {
-			padding: 0;
-		}
-		.wp-block-cover.has-parallax {
-			background-attachment: scroll;
-		}
-	}
-
-	// `core/columns`
-	/* stylelint-disable selector-combinator-space-before */
-	.wp-block-columns
-		> .block-editor-inner-blocks
-		> .block-editor-block-list__layout
-		> [data-type='core/column']
-		> .block-editor-block-list__block-edit
-		> div
-		> .block-core-columns
-		> .block-editor-inner-blocks {
-		/* stylelint-enable */
-		margin-top: 0;
-		margin-bottom: 0;
-	}
-
-	.block-editor-block-list__block {
-		&[data-align='full'] {
-			margin: 0;
-		}
-
-		.block-editor-block-list__block-edit {
-			@media screen and ( min-width: 600px ) {
-				margin: 0;
-			}
-		}
-	}
-}
-
-// Set full height to preview container to inherits styles defined for themes.
-.template-selector-preview .components-disabled,
-.template-selector-preview .edit-post-visual-editor,
-.template-selector-item__preview-wrap .components-disabled,
-.template-selector-item__preview-wrap .edit-post-visual-editor {
-	height: 100%;
-
-	.editor-styles-wrapper {
-		height: 100%;
 	}
 }
 
@@ -450,10 +358,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 	.template-selector-item__label {
 		max-width: 300px;
-	}
-
-	.template-selector-item__template-title {
-		font-size: 1.2rem;
 	}
 }
 
@@ -481,4 +385,91 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	.components-button {
 		margin-left: 12px;
 	}
+}
+
+.block-iframe-preview {
+	position: absolute;
+	top: 0;
+	left: 0;
+	transform-origin: top left;
+	text-align: initial;
+	margin: 0;
+	overflow: visible;
+	min-height: auto;
+
+	// Fallback viewport width.
+	// Used when BlockFramePreview's viewportWidth prop is undefined.
+	// Can be overridden through more specific CSS.
+	width: 1440px;
+}
+
+.block-iframe-preview-body {
+	margin: 0;
+	padding: 0;
+	overflow-x: hidden;
+	overflow-y: auto;
+
+	> .block-editor,
+	> .block-editor > .edit-post-visual-editor {
+		padding: 0;
+		margin: 0;
+	}
+
+	// Hide inserter/appender.
+	.block-list-appender,
+	.block-editor-inserter {
+		display: none !important;
+		visibility: hidden;
+		position: absolute;
+		left: -9999vw;
+	}
+
+	// Preview adjustments.
+	.editor-styles-wrapper {
+		// core/cover.
+		.wp-block-cover {
+			height: auto;
+		}
+
+		// TODO: fix the embed iframe blocks properly.
+		.wp-block-embed__wrapper iframe {
+			height: auto;
+			min-height: 400px;
+		}
+	}
+
+	// Manual CSS Overrides. Remove after better solutions are in place.
+	
+	// Removes empty paragraph placeholders, i.e. "Write Title..."
+	[data-type='core/paragraph'] [data-rich-text-placeholder] {
+		display: none;
+	}
+
+	/*
+	* Fixes jetpack .wp-block-jetpack-slideshow styles, as the /wp-content/plugins/jetpack/_inc/blocks/vendors~swiper.[hash].css 
+	* file is loaded on block insert, not on page load. After the iframe is grabbing these styles, we can remove this code.
+	*/
+	.swiper-wrapper {
+		display: flex;
+	}
+
+	.swiper-button-prev,
+	.swiper-button-next {
+		display: none;
+	}
+
+	.swiper-pagination {
+		text-align: center;
+	}
+
+	.swiper-pagination-bullet {
+		border-radius: 100%;
+	}
+
+	// Fixes cover image spacing
+	.editor-styles-wrapper [data-block][data-type='core/cover'] {
+		margin-top: 0;
+		margin-bottom: 0;
+	}
+
 }
