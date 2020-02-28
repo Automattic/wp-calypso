@@ -34,6 +34,9 @@ export default function ProxiedImage( { alt, mediaUrl, onLoad = noop, siteSlug, 
 				},
 			}
 		);
+
+		// Make sure stored Blobs get cleared from memory when the component dismounts
+		return () => imageData && URL.revokeObjectURL( imageData );
 	}, [ imageData, mediaUrl, requestId, siteSlug ] );
 
 	return (
