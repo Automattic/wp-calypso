@@ -466,8 +466,9 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		border-radius: 100%;
 	}
 
-	// Fixes cover image spacing
-	.editor-styles-wrapper [data-block][data-type='core/cover'] {
+	// Fixes cover image spacing and full-width group spacing
+	.editor-styles-wrapper [data-block][data-type='core/group'],
+	.editor-styles-wrapper [data-block][data-type='core/cover'][data-align='full'] {
 		margin-top: 0;
 		margin-bottom: 0;
 	}
