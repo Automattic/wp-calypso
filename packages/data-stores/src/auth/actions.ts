@@ -44,13 +44,13 @@ export function* submitUsernameOrEmail( usernameOrEmail: string ) {
 	}
 }
 
-export const recieveWpLogin = ( response: WpLoginSuccessResponse ) =>
+export const receiveWpLogin = ( response: WpLoginSuccessResponse ) =>
 	( {
 		type: 'RECEIVE_WP_LOGIN',
 		response,
 	} as const );
 
-export const recieveWpLoginFailed = ( response: WpLoginErrorResponse ) =>
+export const receiveWpLoginFailed = ( response: WpLoginErrorResponse ) =>
 	( {
 		type: 'RECEIVE_WP_LOGIN_FAILED',
 		response,
@@ -69,9 +69,9 @@ export function* submitPassword( password: string ) {
 	try {
 		const loginResponse = yield wpLogin( 'login-endpoint', { username, password } );
 
-		yield recieveWpLogin( loginResponse );
+		yield receiveWpLogin( loginResponse );
 	} catch ( err ) {
-		yield recieveWpLoginFailed( err );
+		yield receiveWpLoginFailed( err );
 	}
 }
 
@@ -80,8 +80,8 @@ export type Action =
 			| typeof reset
 			| typeof receiveAuthOptions
 			| typeof receiveAuthOptionsFailed
-			| typeof recieveWpLogin
-			| typeof recieveWpLoginFailed
+			| typeof receiveWpLogin
+			| typeof receiveWpLoginFailed
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };
