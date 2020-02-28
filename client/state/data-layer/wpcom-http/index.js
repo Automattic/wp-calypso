@@ -47,7 +47,7 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 	}
 
 	const { body, formData, method: rawMethod, onProgress, options, path, query = {} } = action;
-	const { responseType } = options;
+	const { responseType } = options || {};
 
 	const method = rawMethod.toUpperCase();
 
