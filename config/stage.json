@@ -112,6 +112,7 @@
 		"signup/atomic-store-flow": true,
 		"signup/ecommerce-flow": false,
 		"signup/onboarding-flow": true,
+		"signup/siteless-checkout": false,
 		"signup/social": true,
 		"signup/social-management": true,
 		"signup/wpcc": true,

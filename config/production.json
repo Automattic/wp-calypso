@@ -109,6 +109,7 @@
 		"signup/social": true,
 		"signup/social-management": true,
 		"signup/atomic-store-flow": true,
+		"signup/siteless-checkout": false,
 		"signup/wpcc": true,
 		"memberships": true,
 		"ssr/sample-log-cache-misses": true,

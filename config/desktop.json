@@ -85,6 +85,7 @@
 		"sign-in-with-apple": false,
 		"signup/onboarding-flow": false,
 		"signup/ecommerce-flow": false,
+		"signup/siteless-checkout": false,
 		"signup/social": false,
 		"signup/social-management": true,
 		"signup/wpcc": true,

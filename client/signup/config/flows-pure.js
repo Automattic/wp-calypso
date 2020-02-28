@@ -28,22 +28,40 @@ export function generateFlows( {
 		},
 
 		business: {
-			steps: [ 'user', 'domains-siteless', 'plans-business' ],
-			destination: getThankYouNoSiteDestination,
+			steps: [
+				'user',
+				isEnabled( 'signup/siteless-checkout' ) ? 'domains-siteless' : 'domains-with-preview',
+				isEnabled( 'signup/siteless-checkout' ) ? 'plans-business-siteless' : 'plans-business',
+			],
+			destination: isEnabled( 'signup/siteless-checkout' )
+				? getThankYouNoSiteDestination
+				: getSignupDestination,
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
 			lastModified: '2020-03-03',
 		},
 
 		premium: {
-			steps: [ 'user', 'domains-siteless', 'plans-premium' ],
-			destination: getThankYouNoSiteDestination,
+			steps: [
+				'user',
+				isEnabled( 'signup/siteless-checkout' ) ? 'domains-siteless' : 'domains-with-preview',
+				isEnabled( 'signup/siteless-checkout' ) ? 'plans-premium-siteless' : 'plans-premium',
+			],
+			destination: isEnabled( 'signup/siteless-checkout' )
+				? getThankYouNoSiteDestination
+				: getSignupDestination,
 			description: 'Create an account and a blog and then add the premium plan to the users cart.',
 			lastModified: '2020-03-03',
 		},
 
 		personal: {
-			steps: [ 'user', 'domains-siteless', 'plans-personal' ],
-			destination: getThankYouNoSiteDestination,
+			steps: [
+				'user',
+				isEnabled( 'signup/siteless-checkout' ) ? 'domains-siteless' : 'domains-with-preview',
+				isEnabled( 'signup/siteless-checkout' ) ? 'plans-personal-siteless' : 'plans-personal',
+			],
+			destination: isEnabled( 'signup/siteless-checkout' )
+				? getThankYouNoSiteDestination
+				: getSignupDestination,
 			description: 'Create an account and a blog and then add the personal plan to the users cart.',
 			lastModified: '2020-03-03',
 		},
@@ -99,10 +117,12 @@ export function generateFlows( {
 				'site-type',
 				'site-topic-with-preview',
 				'site-title-with-preview',
-				'domains-siteless',
-				'plans-siteless',
+				isEnabled( 'signup/siteless-checkout' ) ? 'domains-siteless' : 'domains-with-preview',
+				isEnabled( 'signup/siteless-checkout' ) ? 'plans-siteless' : 'plans',
 			],
-			destination: getThankYouNoSiteDestination,
+			destination: isEnabled( 'signup/siteless-checkout' )
+				? getThankYouNoSiteDestination
+				: getSignupDestination,
 			description: 'The improved onboarding flow.',
 			lastModified: '2020-03-03',
 			showRecaptcha: true,

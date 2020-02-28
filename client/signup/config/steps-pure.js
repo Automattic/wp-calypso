@@ -22,8 +22,10 @@ import {
 
 export function generateSteps( {
 	addPlanToCart = noop,
+	addSitelessPlanToCart = noop,
 	createAccount = noop,
 	createSite = noop,
+	createSitelessCart = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
 	currentPage = noop,
@@ -34,8 +36,6 @@ export function generateSteps( {
 	isDomainFulfilled = noop,
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
-	createSitelessCart = noop,
-	addSitelessPlanToCart = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -201,6 +201,17 @@ export function generateSteps( {
 
 		'plans-personal': {
 			stepName: 'plans-personal',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_PERSONAL,
+			},
+		},
+
+		'plans-personal-siteless': {
+			stepName: 'plans-personal-siteless',
 			apiRequestFunction: addSitelessPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
@@ -212,6 +223,17 @@ export function generateSteps( {
 
 		'plans-premium': {
 			stepName: 'plans-premium',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_PREMIUM,
+			},
+		},
+
+		'plans-premium-sitelss': {
+			stepName: 'plans-premium',
 			apiRequestFunction: addSitelessPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
@@ -222,6 +244,17 @@ export function generateSteps( {
 		},
 
 		'plans-business': {
+			stepName: 'plans-business',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_BUSINESS,
+			},
+		},
+
+		'plans-business-sitelss': {
 			stepName: 'plans-business',
 			apiRequestFunction: addSitelessPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,

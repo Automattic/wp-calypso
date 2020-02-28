@@ -154,6 +154,7 @@
 		"signup/full-site-editing": true,
 		"signup/import": true,
 		"signup/onboarding-flow": true,
+		"signup/siteless-checkout": true,
 		"signup/social": true,
 		"signup/social-management": true,
 		"signup/wpcc": true,

@@ -127,6 +127,7 @@
 		"signup/social-management": true,
 		"signup/atomic-store-flow": true,
 		"signup/ecommerce-flow": false,
+		"signup/siteless-checkout": false,
 		"signup/wpcc": true,
 		"support-user": true,
 		"tools/migrate": true,
