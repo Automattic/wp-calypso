@@ -96,6 +96,7 @@ const SVG_APP_PATHS = [
 
 	// Plan icons
 	/^static\/images\/plans\//,
+	/^packages\/components\/src\/product-icon\/images\//,
 ];
 
 // The regular expression used to identify color values
@@ -259,7 +260,9 @@ function printReplacementRules( replacementObjects ) {
 	const count = replacementObjects.length;
 
 	if ( count <= 0 ) {
-		console.log( `All SVG illustrations seem to use correct color values. ✨` );
+		console.log(
+			`All the SVG illustration files in this repository seem to use correct color values. ✨`
+		);
 	} else {
 		console.log(
 			`Found ${ count } SVG images in this repository that use non-standard color values:`
