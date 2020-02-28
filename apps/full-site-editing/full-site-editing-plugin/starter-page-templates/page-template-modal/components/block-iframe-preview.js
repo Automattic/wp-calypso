@@ -74,6 +74,7 @@ const copyStylesToIframe = ( srcDocument, targetiFrameDocument ) => {
  * @param {number} props.viewportWidth pixel width of the viewable size of the preview
  * @param {Array}  props.blocks array of Gutenberg Block objects
  * @param {object} props.settings block Editor settings object
+ * @param {Function} props.setTimeout safe version of window.setTimeout via `withSafeTimeout`
  */
 const BlockFramePreview = ( {
 	className = 'block-iframe-preview',
