@@ -214,7 +214,7 @@ export default connect( state => {
 	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
 	const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
 	const isCheckoutFromGutenboarding =
-		'checkout' === sectionName && '1' === get( getCurrentQueryArguments( state ), 'preLaunch' );
+		'checkout' === sectionName && '1' === getCurrentQueryArguments( state )?.preLaunch;
 	const noMasterbarForRoute =
 		isJetpackLogin || isCheckoutFromGutenboarding || currentRoute === '/me/account/closed';
 	const noMasterbarForSection = 'signup' === sectionName || 'jetpack-connect' === sectionName;
