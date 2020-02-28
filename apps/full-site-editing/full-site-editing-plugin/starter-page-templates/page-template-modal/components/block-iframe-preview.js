@@ -206,8 +206,9 @@ const BlockFramePreview = ( {
 export default compose(
 	withSafeTimeout,
 	withSelect( select => {
+		const blockEditorStore = select( 'core/block-editor' );
 		return {
-			settings: select( 'core/block-editor' ).getSettings(),
+			settings: blockEditorStore ? blockEditorStore.getSettings() : {},
 		};
 	} )
 )( BlockFramePreview );
