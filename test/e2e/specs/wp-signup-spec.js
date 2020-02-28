@@ -34,7 +34,6 @@ import DomainDetailsPage from '../lib/pages/domain-details-page';
 import ManagePurchasePage from '../lib/pages/manage-purchase-page';
 import CancelPurchasePage from '../lib/pages/cancel-purchase-page';
 import CancelDomainPage from '../lib/pages/cancel-domain-page';
-import GSuiteUpsellPage from '../lib/pages/gsuite-upsell-page';
 import ThemesPage from '../lib/pages/themes-page';
 import ThemeDetailPage from '../lib/pages/theme-detail-page';
 import ImportPage from '../lib/pages/import-page';
@@ -1144,11 +1143,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			await securePaymentComponent.submitPaymentDetails();
 			await securePaymentComponent.waitForCreditCardPaymentProcessing();
 			return await securePaymentComponent.waitForPageToDisappear();
-		} );
-
-		step( 'Can see the gsuite upsell page', async function() {
-			const gSuiteUpsellPage = await GSuiteUpsellPage.Expect( driver );
-			return await gSuiteUpsellPage.declineEmail();
 		} );
 
 		sharedSteps.canSeeTheOnboardingChecklist();
