@@ -422,7 +422,7 @@ class PageTemplateModal extends Component {
 									) }
 							</form>
 							<TemplateSelectorPreview
-								blocks={ this.getBlocksForPreview( previewedTemplate ) }
+								slug={ previewedTemplate }
 								viewportWidth={ 1200 }
 								title={ this.getTitleByTemplateSlug( previewedTemplate ) }
 							/>

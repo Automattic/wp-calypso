@@ -38,6 +38,7 @@ $wp-org-admin-bar-full: 32px;
 $wp-org-admin-bar-mobile: 46px;
 
 // Modal Overlay
+.template-frame-preview-modal-screen-overlay,
 .page-template-modal-screen-overlay {
 	animation: none;
 	background-color: transparent; // hide the overlay visually
@@ -75,6 +76,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 }
 
 // Full screen modal
+.template-frame-preview-modal,
 .page-template-modal {
 	width: 100%;
 	height: 100vh;
@@ -311,11 +313,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		}
 	}
 
-	.edit-post-visual-editor {
-		margin: 0;
-		padding: 0;
-	}
-
 	// not-selected template
 	&.not-selected {
 		.editor-styles-wrapper {
@@ -400,38 +397,51 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	width: 1440px;
 }
 
-.block-iframe-preview-body {
+body.is-frame-preview {
 	margin: 0;
 	padding: 0;
 	overflow-x: hidden;
 	overflow-y: auto;
 
-	> .block-editor,
-	> .block-editor > .edit-post-visual-editor {
+	// Hide other elements
+	#wpwrap {
+		opacity: 0;
+		visibility: hidden;
+	}
+
+	// Adjust Modal
+	.template-frame-preview-modal {
+		display: block;
+	}
+
+	.template-frame-preview-modal-screen-overlay {
+		overflow-x: hidden;
+		overflow-y: auto;
+	}
+
+	// Adjust modal.
+	.components-modal__content {
 		padding: 0;
 		margin: 0;
 	}
-
-	// Hide inserter/appender.
-	.block-list-appender,
-	.block-editor-inserter {
-		display: none !important;
-		visibility: hidden;
-		position: absolute;
-		left: -9999vw;
+	.components-modal__header {
+		display: none;
 	}
 
-	// Preview adjustments.
-	.editor-styles-wrapper {
-		// core/cover.
-		.wp-block-cover {
-			height: auto;
+	.frame-template-preview {
+		&.block-editor,
+		&.block-editor > .edit-post-visual-editor {
+			padding: 0;
+			margin: 0;
 		}
 
-		// TODO: fix the embed iframe blocks properly.
-		.wp-block-embed__wrapper iframe {
-			height: auto;
-			min-height: 400px;
+		// Hide inserter/appender.
+		.block-list-appender,
+		.block-editor-inserter {
+			display: none !important;
+			visibility: hidden;
+			position: absolute;
+			left: -9999vw;
 		}
 	}
 }

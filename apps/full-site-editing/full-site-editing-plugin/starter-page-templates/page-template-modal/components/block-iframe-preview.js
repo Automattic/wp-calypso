@@ -22,7 +22,7 @@ const DEBOUNCE_TIMEOUT = 300;
  * @param {object} props.className CSS class to apply to component
  * @param {number} props.viewportWidth pixel width of the viewable size of the preview
  */
-const BlockFramePreview = ( { className = 'block-iframe-preview', viewportWidth } ) => {
+const BlockFramePreview = ( { className = 'block-iframe-preview', viewportWidth, slug } ) => {
 	const frameContainerRef = useRef();
 	// Set the initial scale factor.
 	const [ style, setStyle ] = useState( {
@@ -53,6 +53,14 @@ const BlockFramePreview = ( { className = 'block-iframe-preview', viewportWidth 
 
 	useEffect( rescale, [] );
 
+	// Send message to the FramePreview (iFrame).
+	useEffect( () => {
+		if ( ! frameContainerRef ) {
+			return;
+		}
+		frameContainerRef.current.contentWindow.postMessage( slug, "*" );
+	}, [ slug ] );
+
 	// Handling windows resize event.
 	useEffect( () => {
 		const refreshPreview = debounce( rescale, DEBOUNCE_TIMEOUT );
@@ -77,12 +85,10 @@ const BlockFramePreview = ( { className = 'block-iframe-preview', viewportWidth 
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<iframe
-			src="#iframepreview=true"
+		<iframe src="#iframepreview=true"
 			title={ __( 'Preview' ) }
 			className={ classnames( 'editor-styles-wrapper', className ) }
-			style={ style }
-			ref={ frameContainerRef }
+			style={ style } ref={ frameContainerRef }
 		/>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
