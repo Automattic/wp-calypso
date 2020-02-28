@@ -43,6 +43,8 @@ import {
 	SITE_REQUEST_SUCCESS,
 } from 'state/action-types';
 
+import 'state/jetpack-connect/init';
+
 /**
  * Module constants
  */
