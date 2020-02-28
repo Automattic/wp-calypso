@@ -754,7 +754,7 @@ export class Checkout extends React.Component {
 			return false;
 		}
 
-		const currentPlanSlug = this.props.selectedSite.plan.product_slug;
+		const currentPlanSlug = this.props.selectedSite?.plan.product_slug;
 		const chosenPlan = getPlan( planInCart.product_slug );
 
 		// Only render this for WP.com plans
@@ -770,7 +770,9 @@ export class Checkout extends React.Component {
 		const availableTerms = findPlansKeys( {
 			group: chosenPlan.group,
 			type: chosenPlan.type,
-		} ).filter( planSlug => getPlan( planSlug ).availableFor( currentPlanSlug ) );
+		} ).filter(
+			planSlug => ! currentPlanSlug || getPlan( planSlug ).availableFor( currentPlanSlug )
+		);
 
 		if ( availableTerms.length < 2 ) {
 			return false;
