@@ -370,7 +370,7 @@ class SectionMigrate extends Component {
 						{ translate(
 							'{{supportLink}}Contact us{{/supportLink}} so we can' +
 								' figure out exactly' +
-								' what needs adjusting and get your site imported.',
+								' what needs adjusting, or try again.',
 							{
 								components: {
 									supportLink: (
