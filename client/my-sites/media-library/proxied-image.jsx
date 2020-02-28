@@ -12,7 +12,14 @@ import { requestHttpData } from 'state/data-layer/http-data';
 
 const { Blob } = globalThis; // The linter complains if I don't do this...?
 
-export default function ProxiedImage( { alt, mediaUrl, onLoad = noop, siteSlug, style } ) {
+export default function ProxiedImage( {
+	alt,
+	className,
+	mediaUrl,
+	onLoad = noop,
+	siteSlug,
+	style,
+} ) {
 	const [ imageData, setImageData ] = useState( null );
 
 	const requestId = `media-library-proxied-image-${ siteSlug }${ mediaUrl }`;
@@ -45,7 +52,7 @@ export default function ProxiedImage( { alt, mediaUrl, onLoad = noop, siteSlug, 
 			onLoad={ onLoad }
 			alt={ alt }
 			style={ style }
-			className="media-library__list-item-centered"
+			className={ className }
 			draggable="false"
 		/>
 	);

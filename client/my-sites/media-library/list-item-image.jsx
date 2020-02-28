@@ -86,6 +86,8 @@ export class MediaLibraryListItemImage extends React.Component {
 		// Hard-coding for now so I can keep working...
 		const useProxy = true || !! ( isAtomic && isPrivate );
 
+		const className = 'media-library__list-item-centered';
+
 		if ( useProxy ) {
 			const { pathname, hostname } = getUrlParts( media?.URL );
 			if ( hostname === siteSlug && pathname.length ) {
@@ -97,6 +99,7 @@ export class MediaLibraryListItemImage extends React.Component {
 						onLoad={ this.setUnknownImageDimensions }
 						alt={ this.props.media.alt || this.props.media.title }
 						style={ this.getImageStyle() }
+						className={ className }
 					/>
 				);
 			}
@@ -122,7 +125,7 @@ export class MediaLibraryListItemImage extends React.Component {
 				onLoad={ this.setUnknownImageDimensions }
 				alt={ this.props.media.alt || this.props.media.title }
 				style={ this.getImageStyle() }
-				className="media-library__list-item-centered"
+				className={ className }
 				draggable="false"
 			/>
 		);
