@@ -375,7 +375,7 @@ class SectionMigrate extends Component {
 								components: {
 									supportLink: (
 										<a
-											href="https://support.wordpress.com"
+											href="https://wordpress.com/help/contact"
 											target="_blank"
 											rel="noopener noreferrer"
 										/>
