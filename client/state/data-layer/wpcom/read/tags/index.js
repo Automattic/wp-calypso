@@ -7,7 +7,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { READER_TAGS_REQUEST } from 'state/action-types';
+import { READER_TAGS_REQUEST } from 'state/reader/action-types';
 import { receiveTags } from 'state/reader/tags/items/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest, getHeaders } from 'state/data-layer/wpcom-http/utils';

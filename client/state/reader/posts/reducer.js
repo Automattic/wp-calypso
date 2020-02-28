@@ -7,7 +7,7 @@ import { keyBy, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'state/action-types';
+import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'state/reader/action-types';
 import { combineReducers } from 'state/utils';
 
 /**

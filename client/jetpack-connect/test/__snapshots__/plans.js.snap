@@ -3,6 +3,7 @@
 exports[`Plans should render placeholder when shouldShowPlaceholder is true 1`] = `
 <Fragment>
   <Connect(QueryPlans) />
+  <QueryProductsList />
   <PlansPlaceholder />
 </Fragment>
 `;

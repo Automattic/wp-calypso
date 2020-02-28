@@ -11,10 +11,10 @@ import FoldableCard from 'components/foldable-card';
 
 import './style.scss';
 
-interface Props {
+export interface Props {
 	children?: ReactNode;
 	header: string;
-	subheader?: string;
+	subheader?: string | ReactNode;
 	highlight?: 'info' | 'success' | 'warning' | 'error';
 	tag?: string;
 }

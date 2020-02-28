@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'state/action-types';
+import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'state/reader/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 

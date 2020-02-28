@@ -22,7 +22,7 @@ import {
 	READER_LISTS_UNFOLLOW,
 	READER_LISTS_UNFOLLOW_SUCCESS,
 	READER_LISTS_UNFOLLOW_FAILURE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 
 import 'state/reader/init';
 

@@ -89,7 +89,10 @@
 	.domain-types__expiration-row {
 		display: flex;
 		align-items: center;
-		> div:first-child {
+		.renew-button {
+			margin-left: 10px;
+		}
+		> div:nth-last-child( 2 ) {
 			margin-right: auto;
 		}
 	}

@@ -6,7 +6,7 @@ import { noop } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { READER_RECOMMENDED_SITES_REQUEST } from 'state/action-types';
+import { READER_RECOMMENDED_SITES_REQUEST } from 'state/reader/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { receiveRecommendedSites } from 'state/reader/recommended-sites/actions';

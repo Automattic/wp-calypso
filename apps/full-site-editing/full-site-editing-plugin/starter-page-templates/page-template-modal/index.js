@@ -71,6 +71,19 @@ class PageTemplateModal extends Component {
 		} );
 	} );
 
+	getBlocksForSelection = selectedTemplate => {
+		const blocks = this.getBlocksByTemplateSlug( selectedTemplate );
+		// Modify the existing blocks returning new block object references.
+		return mapBlocksRecursively( blocks, function modifyBlocksForSelection( block ) {
+			// Ensure that core/button doesn't link to external template site
+			if ( 'core/button' === block.name && undefined !== block.attributes.url ) {
+				block.attributes.url = '#';
+			}
+
+			return block;
+		} );
+	};
+
 	static getDerivedStateFromProps( props, state ) {
 		// The only time `state.previewedTemplate` isn't set is before `templates`
 		// are loaded. As soon as we have our `templates`, we set it using
@@ -148,7 +161,7 @@ class PageTemplateModal extends Component {
 		const isHomepageTemplate = find( this.props.templates, { slug, category: 'home' } );
 
 		// Load content.
-		const blocks = this.getBlocksByTemplateSlug( slug );
+		const blocks = this.getBlocksForSelection( slug );
 		// Only overwrite the page title if the template is not one of the Homepage Layouts
 		const title = isHomepageTemplate ? null : this.getTitleByTemplateSlug( slug );
 

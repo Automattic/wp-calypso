@@ -131,6 +131,10 @@
 /apps/full-site-editing/full-site-editing-plugin/starter-page-templates @Automattic/ajax
 /apps/full-site-editing/full-site-editing-plugin/global-styles @Automattic/cylon @nosolosw
 
+# FSE Workflow Files
+/.github/workflows/full-site-editing-plugin.yml @Automattic/cylon
+/.github/workflows/send-calypso-app-build-trigger.sh @Automattic/cylon
+
 # WPcom Block Editor
 /apps/wpcom-block-editor @Automattic/cylon @Automattic/ajax
 
