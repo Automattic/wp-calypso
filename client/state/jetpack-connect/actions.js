@@ -38,10 +38,8 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
-	SITE_REQUEST,
-	SITE_REQUEST_FAILURE,
-	SITE_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'state/jetpack-connect/action-types';
+import { SITE_REQUEST, SITE_REQUEST_FAILURE, SITE_REQUEST_SUCCESS } from 'state/action-types';
 
 import 'state/jetpack-connect/init';
 
