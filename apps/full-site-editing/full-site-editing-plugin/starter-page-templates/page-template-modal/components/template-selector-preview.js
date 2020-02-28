@@ -11,7 +11,7 @@ import { __ } from '@wordpress/i18n';
 import BlockFramePreview from './block-iframe-preview';
 
 const TemplateSelectorPreview = ( { blocks = [], viewportWidth } ) => {
-	const noBlocks = blocks.length <= 1;
+	const noBlocks = ! blocks.length;
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<div className={ `template-selector-preview ${ noBlocks ? 'not-selected' : '' }` }>
