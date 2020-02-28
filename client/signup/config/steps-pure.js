@@ -25,7 +25,6 @@ export function generateSteps( {
 	addSitelessPlanToCart = noop,
 	createAccount = noop,
 	createSite = noop,
-	createSitelessCart = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
 	currentPage = noop,
@@ -614,21 +613,13 @@ export function generateSteps( {
 
 		'domains-siteless': {
 			stepName: 'domains-siteless',
-			apiRequestFunction: createSitelessCart,
-			providesDependencies: [
-				'siteId',
-				'siteSlug',
-				'domainItem',
-				'themeItem',
-				'shouldHideFreePlan',
-			],
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'shouldHideFreePlan' ],
 			optionalDependencies: [ 'shouldHideFreePlan' ],
 			props: {
 				showSiteMockups: true,
 				isDomainOnly: false,
+				isSiteless: true,
 			},
-			dependencies: [ 'themeSlugWithRepo' ],
-			delayApiRequestUntilComplete: true,
 		},
 
 		'site-title-with-preview': {

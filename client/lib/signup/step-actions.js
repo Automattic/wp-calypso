@@ -2,18 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import {
-	assign,
-	compact,
-	defer,
-	difference,
-	get,
-	isEmpty,
-	isNull,
-	omitBy,
-	pick,
-	startsWith,
-} from 'lodash';
+import { assign, defer, difference, get, isEmpty, isNull, omitBy, pick, startsWith } from 'lodash';
 import { parse as parseURL } from 'url';
 
 /**
@@ -265,34 +254,6 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 			themeSlugWithRepo
 		);
 	} );
-}
-
-export function createSitelessCart( callback, dependencies, stepData, reduxStore ) {
-	const { cartItem, domainItem, googleAppsCartItem, themeItem, themeSlugWithRepo } = stepData;
-
-	const siteId = null;
-	const siteSlug = 'no-site';
-	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' ) && ! themeItem;
-
-	const cartItems = compact( [ cartItem, domainItem, googleAppsCartItem, themeItem ] );
-
-	const providedDependencies = {
-		siteId,
-		siteSlug,
-		domainItem,
-		themeItem,
-	};
-
-	processItemCart(
-		providedDependencies,
-		cartItems,
-		callback,
-		reduxStore,
-		siteSlug,
-		isFreeThemePreselected,
-		themeSlugWithRepo,
-		true
-	);
 }
 
 function fetchSitesUntilSiteAppears( siteSlug, reduxStore, callback ) {

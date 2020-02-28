@@ -64,6 +64,7 @@ class DomainsStep extends React.Component {
 		flowName: PropTypes.string.isRequired,
 		goToNextStep: PropTypes.func.isRequired,
 		isDomainOnly: PropTypes.bool.isRequired,
+		isSiteless: PropTypes.bool,
 		locale: PropTypes.string,
 		path: PropTypes.string.isRequired,
 		positionInFlow: PropTypes.number.isRequired,
@@ -252,18 +253,22 @@ class DomainsStep extends React.Component {
 			let domainItem, isPurchasingItem, siteUrl;
 
 			this.props.submitSignupStep(
-				Object.assign(
-					{
-						stepName: this.props.stepName,
-						domainItem,
-						googleAppsCartItem,
-						isPurchasingItem,
-						siteUrl,
-						stepSectionName: this.props.stepSectionName,
-					},
-					this.getThemeArgs()
-				),
-				Object.assign( { domainItem }, shouldHideFreePlanItem, useThemeHeadstartItem )
+				{
+					stepName: this.props.stepName,
+					domainItem,
+					googleAppsCartItem,
+					isPurchasingItem,
+					siteUrl,
+					stepSectionName: this.props.stepSectionName,
+					...this.getThemeArgs(),
+				},
+				{
+					domainItem,
+					...( this.props.isSiteless && { siteId: null } ),
+					...( this.props.isSiteless && { siteSlug: 'no-site' } ),
+					...shouldHideFreePlanItem,
+					...useThemeHeadstartItem,
+				}
 			);
 
 			this.props.goToNextStep();
@@ -291,18 +296,22 @@ class DomainsStep extends React.Component {
 		suggestion && this.props.submitDomainStepSelection( suggestion, this.getAnalyticsSection() );
 
 		this.props.submitSignupStep(
-			Object.assign(
-				{
-					stepName: this.props.stepName,
-					domainItem,
-					googleAppsCartItem,
-					isPurchasingItem,
-					siteUrl,
-					stepSectionName: this.props.stepSectionName,
-				},
-				this.getThemeArgs()
-			),
-			Object.assign( { domainItem }, shouldHideFreePlanItem, useThemeHeadstartItem )
+			{
+				stepName: this.props.stepName,
+				domainItem,
+				googleAppsCartItem,
+				isPurchasingItem,
+				siteUrl,
+				stepSectionName: this.props.stepSectionName,
+				...this.getThemeArgs(),
+			},
+			{
+				domainItem,
+				...( this.props.isSiteless && { siteId: null } ),
+				...( this.props.isSiteless && { siteSlug: 'no-site' } ),
+				...shouldHideFreePlanItem,
+				...useThemeHeadstartItem,
+			}
 		);
 
 		this.props.setDesignType( this.getDesignType() );
@@ -323,18 +332,21 @@ class DomainsStep extends React.Component {
 		this.props.recordAddDomainButtonClickInMapDomain( domain, this.getAnalyticsSection() );
 
 		this.props.submitSignupStep(
-			Object.assign(
-				{
-					stepName: this.props.stepName,
-					[ sectionName ]: state,
-					domainItem,
-					isPurchasingItem,
-					siteUrl: domain,
-					stepSectionName: this.props.stepSectionName,
-				},
-				this.getThemeArgs()
-			),
-			Object.assign( { domainItem }, useThemeHeadstartItem )
+			{
+				stepName: this.props.stepName,
+				[ sectionName ]: state,
+				domainItem,
+				isPurchasingItem,
+				siteUrl: domain,
+				stepSectionName: this.props.stepSectionName,
+				...this.getThemeArgs(),
+			},
+			{
+				domainItem,
+				...( this.props.isSiteless && { siteId: null } ),
+				...( this.props.isSiteless && { siteSlug: 'no-site' } ),
+				...useThemeHeadstartItem,
+			}
 		);
 
 		this.props.goToNextStep();
@@ -357,18 +369,21 @@ class DomainsStep extends React.Component {
 		this.props.recordAddDomainButtonClickInTransferDomain( domain, this.getAnalyticsSection() );
 
 		this.props.submitSignupStep(
-			Object.assign(
-				{
-					stepName: this.props.stepName,
-					transfer: {},
-					domainItem,
-					isPurchasingItem,
-					siteUrl: domain,
-					stepSectionName: this.props.stepSectionName,
-				},
-				this.getThemeArgs()
-			),
-			Object.assign( { domainItem }, useThemeHeadstartItem )
+			{
+				stepName: this.props.stepName,
+				transfer: {},
+				domainItem,
+				isPurchasingItem,
+				siteUrl: domain,
+				stepSectionName: this.props.stepSectionName,
+				...this.getThemeArgs(),
+			},
+			{
+				domainItem,
+				...( this.props.isSiteless && { siteId: null } ),
+				...( this.props.isSiteless && { siteSlug: 'no-site' } ),
+				...useThemeHeadstartItem,
+			}
 		);
 
 		this.props.goToNextStep();
