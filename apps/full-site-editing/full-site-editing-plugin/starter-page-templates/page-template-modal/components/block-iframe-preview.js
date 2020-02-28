@@ -131,12 +131,7 @@ const BlockFramePreview = ( {
 
 	// Scroll the preview to the top when the blocks change.
 	useEffect( () => {
-		const body = get( frameContainerRef, [
-			'current',
-			'firstElementChild',
-			'contentDocument',
-			'body',
-		] );
+		const body = get( iframeRef, [ 'current', 'contentDocument', 'body' ] );
 		if ( ! body ) {
 			return;
 		}
