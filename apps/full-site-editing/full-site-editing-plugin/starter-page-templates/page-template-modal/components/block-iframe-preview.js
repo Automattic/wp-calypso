@@ -19,10 +19,11 @@ import {
 } from '@wordpress/element';
 import { withSelect } from '@wordpress/data';
 import { compose, withSafeTimeout } from '@wordpress/compose';
-import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
-import { Disabled } from '@wordpress/components';
+
 import { __ } from '@wordpress/i18n';
 /* eslint-enable import/no-extraneous-dependencies */
+
+import CustomBlockPreview from './block-preview';
 
 // Debounce time applied to the on resize window event.
 const DEBOUNCE_TIMEOUT = 300;
@@ -187,11 +188,11 @@ const BlockFramePreview = ( {
 					<div className="editor-styles-wrapper">
 						<div className="editor-writing-flow">
 							{ blocks && blocks.length ? (
-								<BlockEditorProvider value={ renderedBlocks } settings={ settings }>
-									<Disabled key={ recomputeBlockListKey }>
-										<BlockList />
-									</Disabled>
-								</BlockEditorProvider>
+								<CustomBlockPreview
+									blocks={ renderedBlocks }
+									settings={ settings }
+									recomputeBlockListKey={ recomputeBlockListKey }
+								/>
 							) : null }
 						</div>
 					</div>

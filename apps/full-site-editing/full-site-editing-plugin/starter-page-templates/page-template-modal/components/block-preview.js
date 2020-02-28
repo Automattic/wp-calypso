@@ -9,19 +9,21 @@
 /**
  * WordPress dependencies
  */
-/* eslint-disable import/no-extraneous-dependencies */
-import { BlockPreview } from '@wordpress/block-editor';
-/* eslint-enable import/no-extraneous-dependencies */
+import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
+import { Disabled } from '@wordpress/components';
 
-// Exists as a pass through component to simplify testing
-// components which consume `BlockPreview` from
-// `@wordpress/block-editor`. This is because jest cannot mock
-// node modules that are not part of the root node modules.
-// Due to the way this project's dependencies are defined
-// `@wordpress/block-editor` does not exist within `node_modules`
-// and it is there impossible to mock it without providing a wrapping
-// component to act as a pass though.
-// See https://jestjs.io/docs/en/manual-mocks
-export default function( props ) {
-	return <BlockPreview { ...props } />;
+// Exists as a pass through component to simplify automatted testing of
+// components which need to `BlockEditorProvider`. Setting up JSDom to handle
+// and mock the entire Block Editor isn't useful and is difficult for testing.
+// Therefore this component exists to simplify mocking out the Block Editor
+// when under test conditions.
+export default function( { blocks, settings, recomputeBlockListKey } ) {
+	// return <BlockPreview { ...props } />;
+	return (
+		<BlockEditorProvider value={ blocks } settings={ settings }>
+			<Disabled key={ recomputeBlockListKey }>
+				<BlockList />
+			</Disabled>
+		</BlockEditorProvider>
+	);
 }
