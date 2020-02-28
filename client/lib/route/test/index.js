@@ -411,5 +411,13 @@ describe( 'route', function() {
 		test( 'converts internal slashes to dashes', function() {
 			expect( route.getMessagePathForJITM( 'test/path/to/site' ) ).to.equal( 'test-path-to-site' );
 		} );
+
+		test( 'should simplify stats paths', function() {
+			expect( route.getMessagePathForJITM( '/stats/day' ) ).to.equal( 'stats' );
+			expect( route.getMessagePathForJITM( '/stats/week' ) ).to.equal( 'stats' );
+			expect( route.getMessagePathForJITM( '/stats/month' ) ).to.equal( 'stats' );
+			expect( route.getMessagePathForJITM( '/stats/year' ) ).to.equal( 'stats' );
+			expect( route.getMessagePathForJITM( '/stats/insights' ) ).to.equal( 'stats' );
+		} );
 	} );
 } );
