@@ -51,7 +51,6 @@ class JetpackCloudSidebar extends Component {
 			<Sidebar>
 				<CurrentSite />
 				<SidebarRegion>
-					{ /* @todo: A profile info box needs to be created and added here; similar to <ProfileGravatar /> in client/me/sidebar/index.jsx */ }
 					<SidebarMenu>
 						<SidebarItem
 							link="/"
