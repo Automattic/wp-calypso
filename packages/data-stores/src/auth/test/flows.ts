@@ -10,6 +10,7 @@
  * External dependencies
  */
 import { dispatch, select } from '@wordpress/data';
+import { parse } from 'qs';
 
 /**
  * Internal dependencies
@@ -22,10 +23,18 @@ jest.mock( '../../utils', () => ( {
 } ) );
 
 const wpcomRequest: jest.Mock = wpcomRequestOriginal as any;
+const fetch = jest.fn();
+
+beforeAll( () => {
+	( global as any ).fetch = fetch;
+} );
 
 let store: ReturnType< typeof register >;
 beforeEach( () => {
 	store = register( { client_id: '', client_secret: '' } );
+
+	fetch.mockReset();
+	wpcomRequest.mockReset();
 } );
 
 describe( 'password login flow', () => {
@@ -47,21 +56,30 @@ describe( 'password login flow', () => {
 
 		expect( getLoginFlowState() ).toBe( 'ENTER_PASSWORD' );
 
-		wpcomRequest.mockResolvedValue( {
-			success: true,
-			data: { token_links: [] },
+		fetch.mockResolvedValue( {
+			json: () =>
+				Promise.resolve( {
+					success: true,
+					data: { token_links: [] },
+				} ),
 		} );
 
 		await submitPassword( 'passw0rd' );
 
-		expect( wpcomRequest ).toHaveBeenLastCalledWith(
+		expect( fetch ).toHaveBeenLastCalledWith(
+			'https://wordpress.com/wp-login.php?action=login-endpoint',
 			expect.objectContaining( {
-				path: '/wp-login.php?action=login-endpoint',
-				body: expect.objectContaining( {
-					username: 'user1',
-					password: 'passw0rd',
-					rememberme: true,
-				} ),
+				method: 'POST',
+				body: expect.any( String ),
+			} )
+		);
+
+		const requestBody = fetch.mock.calls[ 0 ][ 1 ].body;
+		expect( parse( requestBody ) ).toEqual(
+			expect.objectContaining( {
+				username: 'user1',
+				password: 'passw0rd',
+				remember_me: 'true',
 			} )
 		);
 
