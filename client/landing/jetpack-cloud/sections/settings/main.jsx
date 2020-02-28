@@ -13,6 +13,7 @@ import getRewindStateRequestStatus from 'state/selectors/get-rewind-state-reques
 
 import QueryRewindState from 'components/data/query-rewind-state';
 import ServerConnectionIndicator from '../../components/server-connection-indicator';
+import ServerConnectionIndicatorPlaceholder from '../../components/server-connection-indicator/placeholder';
 
 const SettingsPage = () => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
@@ -28,7 +29,7 @@ const SettingsPage = () => {
 			{ rewindStateRequestStatus === 'success' ? (
 				<ServerConnectionIndicator rewindState={ rewindState } />
 			) : (
-				<div />
+				<ServerConnectionIndicatorPlaceholder />
 			) }
 		</div>
 	);
