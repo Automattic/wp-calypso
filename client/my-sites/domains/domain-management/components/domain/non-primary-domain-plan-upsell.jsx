@@ -12,17 +12,20 @@ import { Banner } from 'components/banner';
 import { SETTING_PRIMARY_DOMAIN } from 'lib/url/support';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
+import { isPlan } from 'lib/products-values';
 
 const NonPrimaryDomainPlanUpsell = ( {
 	domain,
 	hasNonPrimaryDomainsFlag,
 	isDomainOnly,
+	isOnPaidPlan,
 	selectedSite,
 	translate,
 	tracksImpressionName,
 	tracksClickName,
 } ) => {
 	if (
+		isOnPaidPlan ||
 		! hasNonPrimaryDomainsFlag ||
 		isDomainOnly ||
 		! domain.pointsToWpcom ||
@@ -61,8 +64,9 @@ const NonPrimaryDomainPlanUpsell = ( {
 	);
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state, { selectedSite } ) => {
 	return {
+		isOnPaidPlan: selectedSite && isPlan( selectedSite.plan ),
 		hasNonPrimaryDomainsFlag: getCurrentUser( state )
 			? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 			: false,
