@@ -2462,25 +2462,4 @@ Undocumented.prototype.startMigration = function( sourceSiteId, targetSiteId ) {
 	} );
 };
 
-Undocumented.prototype.getAtomicSiteMediaViaProxy = function( siteIdOrSlug, mediaPath, fn ) {
-	return this.wpcom.req.get(
-		{
-			path: `/sites/${ siteIdOrSlug }/atomic-auth-proxy/file${ mediaPath }`,
-			apiNamespace: 'wpcom/v2',
-			responseType: 'blob',
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function( siteIdOrSlug, mediaPath, fn ) {
-	this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, function( err, data ) {
-		if ( err ) {
-			this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, fn );
-		} else {
-			fn( err, data );
-		}
-	} );
-};
-
 export default Undocumented;
