@@ -467,10 +467,11 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	}
 
 	// Fixes cover image spacing and full-width group spacing
-	.editor-styles-wrapper [data-block][data-type='core/group'],
-	.editor-styles-wrapper [data-block][data-type='core/cover'][data-align='full'] {
-		margin-top: 0;
-		margin-bottom: 0;
+	.editor-styles-wrapper [data-block] {
+		&[data-type='core/group'],
+		&[data-type='core/cover'][data-align='full'] {
+			margin-top: 0;
+			margin-bottom: 0;
+		}
 	}
-
 }
