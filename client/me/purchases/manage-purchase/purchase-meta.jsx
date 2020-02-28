@@ -259,7 +259,7 @@ class PurchaseMeta extends Component {
 				{ translate(
 					'You are the owner of %(purchaseName)s, but your site %(siteSlug)s is no longer connected to WordPress.com. ' +
 						'To renew %(purchaseName)s, you have to reconnect the site to your WordPress.com account first. ' +
-						'Please, check out this {{supportPageLink}}support page{{/supportPageLink}} to get more help.',
+						'Please, check out this {{supportPageLink}}support page{{/supportPageLink}} for information on how to reconnect.',
 					{
 						args: {
 							purchaseName: getName( purchase ),
