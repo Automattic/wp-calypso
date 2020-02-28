@@ -168,6 +168,15 @@ export function removeItemFromResponseCart(
 	};
 }
 
+export function getResponseItemByUuid(
+	cart: ResponseCart,
+	uuidToGet: string
+): ResponseCartProduct | null {
+	return cart.products.filter( product => {
+		return product.uuid === uuidToGet;
+	} )[ 0 ];
+}
+
 export function addCouponToResponseCart( cart: ResponseCart, couponToAdd: string ): ResponseCart {
 	return {
 		...cart,

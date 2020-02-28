@@ -13,6 +13,7 @@ import {
 	ResponseCartProduct,
 	emptyResponseCart,
 	removeItemFromResponseCart,
+	getResponseItemByUuid,
 	addItemToResponseCart,
 	replaceItemInResponseCart,
 	processRawResponse,
@@ -91,143 +92,149 @@ type ShoppingCartHookAction =
 type ShoppingCartHookError = 'GET_SERVER_CART_ERROR' | 'SET_SERVER_CART_ERROR';
 
 function shoppingCartHookReducer(
-	state: ShoppingCartHookState,
-	action: ShoppingCartHookAction
-): ShoppingCartHookState {
-	const couponStatus = state.couponStatus;
-	switch ( action.type ) {
-		case 'REMOVE_CART_ITEM': {
-			const uuidToRemove = action.uuidToRemove;
-			debug( 'removing item from cart with uuid', uuidToRemove );
-			return {
-				...state,
-				responseCart: removeItemFromResponseCart( state.responseCart, uuidToRemove ),
-				cacheStatus: 'invalid',
-			};
-		}
-		case 'ADD_CART_ITEM': {
-			const responseCartProductToAdd = action.responseCartProductToAdd;
-			debug( 'adding item to cart', responseCartProductToAdd );
-			return {
-				...state,
-				responseCart: addItemToResponseCart( state.responseCart, responseCartProductToAdd ),
-				cacheStatus: 'invalid',
-			};
-		}
-		case 'REPLACE_CART_ITEM': {
-			const uuidToReplace = action.uuidToReplace;
-			const newProductId = action.newProductId;
-			const newProductSlug = action.newProductSlug;
-			if ( state.variantRequestStatus === 'pending' ) {
-				debug(
-					`variant request status is '${ state.variantRequestStatus }'; not submitting again`
-				);
-				return state;
-			}
-			debug( `replacing item with uuid ${ uuidToReplace } by product slug`, newProductSlug );
-
-			return {
-				...state,
-				responseCart: replaceItemInResponseCart(
-					state.responseCart,
-					uuidToReplace,
-					newProductId,
-					newProductSlug
-				),
-				cacheStatus: 'invalid',
-				variantRequestStatus: 'pending',
-				variantSelectOverride: [
-					...state.variantSelectOverride.filter( item => item.uuid !== action.uuidToReplace ),
-					{ uuid: action.uuidToReplace, overrideSelectedProductSlug: action.newProductSlug },
-				],
-			};
-		}
-		case 'CLEAR_VARIANT_SELECT_OVERRIDE':
-			return {
-				...state,
-				variantSelectOverride: [],
-			};
-		case 'ADD_COUPON': {
-			const newCoupon = action.couponToAdd;
-
-			if ( couponStatus === 'applied' || couponStatus === 'pending' ) {
-				debug( `coupon status is '${ couponStatus }'; not submitting again` );
-				return state;
-			}
-
-			debug( 'adding coupon', newCoupon );
-
-			return {
-				...state,
-				responseCart: addCouponToResponseCart( state.responseCart, newCoupon ),
-				couponStatus: 'pending',
-				cacheStatus: 'invalid',
-			};
-		}
-		case 'RECEIVE_INITIAL_RESPONSE_CART': {
-			const response = action.initialResponseCart;
-			return {
-				...state,
-				responseCart: response,
-				couponStatus: getUpdatedCouponStatus( couponStatus, response ),
-				cacheStatus: 'valid',
-			};
-		}
-		case 'REQUEST_UPDATED_RESPONSE_CART':
-			return {
-				...state,
-				cacheStatus: 'pending',
-			};
-		case 'RECEIVE_UPDATED_RESPONSE_CART': {
-			const response = action.updatedResponseCart;
-			const newCouponStatus = getUpdatedCouponStatus( couponStatus, response );
-			const didAddCoupon = newCouponStatus === 'applied';
-
-			return {
-				...state,
-				responseCart: response,
-				couponStatus: newCouponStatus,
-				cacheStatus: 'valid',
-				variantRequestStatus: 'valid', // TODO: what if the variant doesn't actually change?
-				shouldShowNotification: {
-					...state.shouldShowNotification,
-					didAddCoupon,
-				},
-			};
-		}
-		case 'DID_SHOW_ADD_COUPON_SUCCESS_MESSAGE':
-			return {
-				...state,
-				shouldShowNotification: {
-					...state.shouldShowNotification,
-					didAddCoupon: false,
-				},
-			};
-		case 'RAISE_ERROR':
-			switch ( action.error ) {
-				case 'GET_SERVER_CART_ERROR':
-				case 'SET_SERVER_CART_ERROR':
-					return {
-						...state,
-						cacheStatus: 'error',
-					};
-				default:
-					return state;
-			}
-		case 'SET_LOCATION':
-			if ( doesCartLocationDifferFromResponseCartLocation( state.responseCart, action.location ) ) {
-				debug( 'setting location on cart', action.location );
+	onEvent?: ( ReactStandardAction ) => void
+): ( ShoppingCartHookState, ShoppingCartHookAction ) => ShoppingCartHookState {
+	return ( state: ShoppingCartHookState, action: ShoppingCartHookAction ) => {
+		const couponStatus = state.couponStatus;
+		switch ( action.type ) {
+			case 'REMOVE_CART_ITEM': {
+				const uuidToRemove = action.uuidToRemove;
+				const itemToRemove = getResponseItemByUuid( state.responseCart, uuidToRemove );
+				onEvent?.( { type: 'REMOVE_CART_ITEM', payload: itemToRemove } );
+				debug( 'removing item from cart with uuid', uuidToRemove );
 				return {
 					...state,
-					responseCart: addLocationToResponseCart( state.responseCart, action.location ),
+					responseCart: removeItemFromResponseCart( state.responseCart, uuidToRemove ),
 					cacheStatus: 'invalid',
 				};
 			}
-			debug( 'cart location is the same; not updating' );
-			return state;
-	}
+			case 'ADD_CART_ITEM': {
+				const responseCartProductToAdd = action.responseCartProductToAdd;
+				onEvent?.( { type: 'ADD_CART_ITEM', payload: responseCartProductToAdd } );
+				debug( 'adding item to cart', responseCartProductToAdd );
+				return {
+					...state,
+					responseCart: addItemToResponseCart( state.responseCart, responseCartProductToAdd ),
+					cacheStatus: 'invalid',
+				};
+			}
+			case 'REPLACE_CART_ITEM': {
+				const uuidToReplace = action.uuidToReplace;
+				const newProductId = action.newProductId;
+				const newProductSlug = action.newProductSlug;
+				if ( state.variantRequestStatus === 'pending' ) {
+					debug(
+						`variant request status is '${ state.variantRequestStatus }'; not submitting again`
+					);
+					return state;
+				}
+				debug( `replacing item with uuid ${ uuidToReplace } by product slug`, newProductSlug );
 
-	return state;
+				return {
+					...state,
+					responseCart: replaceItemInResponseCart(
+						state.responseCart,
+						uuidToReplace,
+						newProductId,
+						newProductSlug
+					),
+					cacheStatus: 'invalid',
+					variantRequestStatus: 'pending',
+					variantSelectOverride: [
+						...state.variantSelectOverride.filter( item => item.uuid !== action.uuidToReplace ),
+						{ uuid: action.uuidToReplace, overrideSelectedProductSlug: action.newProductSlug },
+					],
+				};
+			}
+			case 'CLEAR_VARIANT_SELECT_OVERRIDE':
+				return {
+					...state,
+					variantSelectOverride: [],
+				};
+			case 'ADD_COUPON': {
+				const newCoupon = action.couponToAdd;
+
+				if ( couponStatus === 'applied' || couponStatus === 'pending' ) {
+					debug( `coupon status is '${ couponStatus }'; not submitting again` );
+					return state;
+				}
+
+				debug( 'adding coupon', newCoupon );
+
+				return {
+					...state,
+					responseCart: addCouponToResponseCart( state.responseCart, newCoupon ),
+					couponStatus: 'pending',
+					cacheStatus: 'invalid',
+				};
+			}
+			case 'RECEIVE_INITIAL_RESPONSE_CART': {
+				const response = action.initialResponseCart;
+				return {
+					...state,
+					responseCart: response,
+					couponStatus: getUpdatedCouponStatus( couponStatus, response ),
+					cacheStatus: 'valid',
+				};
+			}
+			case 'REQUEST_UPDATED_RESPONSE_CART':
+				return {
+					...state,
+					cacheStatus: 'pending',
+				};
+			case 'RECEIVE_UPDATED_RESPONSE_CART': {
+				const response = action.updatedResponseCart;
+				const newCouponStatus = getUpdatedCouponStatus( couponStatus, response );
+				const didAddCoupon = newCouponStatus === 'applied';
+
+				return {
+					...state,
+					responseCart: response,
+					couponStatus: newCouponStatus,
+					cacheStatus: 'valid',
+					variantRequestStatus: 'valid', // TODO: what if the variant doesn't actually change?
+					shouldShowNotification: {
+						...state.shouldShowNotification,
+						didAddCoupon,
+					},
+				};
+			}
+			case 'DID_SHOW_ADD_COUPON_SUCCESS_MESSAGE':
+				return {
+					...state,
+					shouldShowNotification: {
+						...state.shouldShowNotification,
+						didAddCoupon: false,
+					},
+				};
+			case 'RAISE_ERROR':
+				switch ( action.error ) {
+					case 'GET_SERVER_CART_ERROR':
+					case 'SET_SERVER_CART_ERROR':
+						return {
+							...state,
+							cacheStatus: 'error',
+						};
+					default:
+						return state;
+				}
+			case 'SET_LOCATION':
+				if (
+					doesCartLocationDifferFromResponseCartLocation( state.responseCart, action.location )
+				) {
+					debug( 'setting location on cart', action.location );
+					return {
+						...state,
+						responseCart: addLocationToResponseCart( state.responseCart, action.location ),
+						cacheStatus: 'invalid',
+					};
+				}
+				debug( 'cart location is the same; not updating' );
+				return state;
+		}
+
+		return state;
+	};
 }
 
 function getUpdatedCouponStatus( currentCouponStatus: CouponStatus, responseCart: ResponseCart ) {
@@ -392,7 +399,7 @@ export function useShoppingCart(
 	const getServerCart = useCallback( () => getCart( cartKey ), [ cartKey, getCart ] );
 
 	const [ hookState, hookDispatch ] = useReducer(
-		shoppingCartHookReducer,
+		shoppingCartHookReducer( onEvent ),
 		getInitialShoppingCartHookState()
 	);
 
