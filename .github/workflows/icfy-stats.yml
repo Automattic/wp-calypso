@@ -38,10 +38,10 @@ jobs:
       run: |
         ANCESTOR_SHA1=$(git merge-base HEAD origin/master)
         CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-        curl -X POST --globoff                                                                    \
-          "http://api.iscalypsofastyet.com:5000/submit-stats?from=gh-action&secret=$ICFY_SECRET"  \
-          -H 'Cache-Control: no-cache'                                                            \
-          -H 'Content-Type: application/json'                                                     \
+        curl -X POST --globoff                                                                 \
+          "http://api.iscalypsofastyet.com:5000/submit-stats?from=github&secret=$ICFY_SECRET"  \
+          -H 'Cache-Control: no-cache'                                                         \
+          -H 'Content-Type: application/json'                                                  \
           -d '{
                 "payload": {
                   "branch": "'"$CURRENT_BRANCH"'",
