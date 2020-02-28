@@ -9,7 +9,7 @@ import {
 	THEME_SETUP_REQUEST,
 	THEME_SETUP_RESULT,
 	THEME_SETUP_TOGGLE_DIALOG,
-} from 'state/action-types';
+} from 'state/themes/action-types';
 
 const initialState = {
 	active: false,

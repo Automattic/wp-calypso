@@ -7,7 +7,7 @@ import {
 	THEME_UPLOAD_PROGRESS,
 	THEME_UPLOAD_START,
 	THEME_UPLOAD_SUCCESS,
-} from 'state/action-types';
+} from 'state/themes/action-types';
 import { receiveTheme } from 'state/themes/actions/receive-theme';
 
 import 'state/themes/init';

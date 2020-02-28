@@ -11,7 +11,7 @@ import {
 	ACTIVE_THEME_REQUEST_FAILURE,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST,
-} from 'state/action-types';
+} from 'state/themes/action-types';
 import { isJetpackSite } from 'state/sites/selectors';
 import { receiveTheme } from 'state/themes/actions/receive-theme';
 

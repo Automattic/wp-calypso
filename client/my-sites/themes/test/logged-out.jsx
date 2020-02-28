@@ -11,7 +11,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import LoggedOutShowcase from '../logged-out';
 import { createReduxStore } from 'state';
 import { setStore } from 'state/redux-store';
-import { THEMES_REQUEST_FAILURE } from 'state/action-types';
+import { THEMES_REQUEST_FAILURE } from 'state/themes/action-types';
 import { receiveThemes } from 'state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 

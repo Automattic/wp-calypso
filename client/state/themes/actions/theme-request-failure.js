@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { THEME_REQUEST_FAILURE } from 'state/action-types';
+import { THEME_REQUEST_FAILURE } from 'state/themes/action-types';
 
 import 'state/themes/init';
 

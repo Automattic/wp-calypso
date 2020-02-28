@@ -7,7 +7,7 @@ import { endsWith } from 'lodash';
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import { THEME_INSTALL, THEME_INSTALL_SUCCESS, THEME_INSTALL_FAILURE } from 'state/action-types';
+import { THEME_INSTALL, THEME_INSTALL_SUCCESS, THEME_INSTALL_FAILURE } from 'state/themes/action-types';
 import { receiveTheme } from 'state/themes/actions/receive-theme';
 import { getWpcomParentThemeId } from 'state/themes/selectors';
 

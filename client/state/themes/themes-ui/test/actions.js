@@ -2,7 +2,11 @@
  * Internal dependencies
  */
 import { hideThemesBanner, openThemesShowcase, setThemesBookmark } from '../actions';
-import { THEMES_BANNER_HIDE, THEMES_SHOWCASE_OPEN, THEMES_BOOKMARK_SET } from 'state/action-types';
+import {
+	THEMES_BANNER_HIDE,
+	THEMES_SHOWCASE_OPEN,
+	THEMES_BOOKMARK_SET,
+} from 'state/themes/action-types';
 
 describe( 'actions', () => {
 	describe( 'hideThemesBanner()', () => {

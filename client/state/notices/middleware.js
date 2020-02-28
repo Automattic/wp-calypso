@@ -54,10 +54,12 @@ import {
 	SITE_DELETE_RECEIVE,
 	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
 	SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
+} from 'state/action-types';
+import {
 	THEME_DELETE_FAILURE,
 	THEME_DELETE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
-} from 'state/action-types';
+} from 'state/themes/action-types';
 import { purchasesRoot, billingHistoryReceipt } from 'me/purchases/paths';
 
 import {

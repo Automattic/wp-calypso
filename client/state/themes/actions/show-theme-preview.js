@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { THEME_PREVIEW_STATE } from 'state/action-types';
+import { THEME_PREVIEW_STATE } from 'state/themes/action-types';
 
 import 'state/themes/init';
 
