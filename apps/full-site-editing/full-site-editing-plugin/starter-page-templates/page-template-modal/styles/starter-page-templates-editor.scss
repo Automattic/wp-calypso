@@ -434,4 +434,23 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 			min-height: 400px;
 		}
 	}
+
+	// Manual CSS Overrides. Remove after better solutions are in place.
+
+	/*
+	* Fixes jetpack .wp-block-jetpack-slideshow styles, as the /wp-content/plugins/jetpack/_inc/blocks/vendors~swiper.[hash].css 
+	* file is loaded on block insert, not on page load. After the iframe is grabbing these styles, we can remove this code.
+	*/
+	.swiper-wrapper {
+		display: flex;
+	}
+
+	.swiper-button-prev,
+	.swiper-button-next {
+		display: none;
+	}
+
+	.swiper-pagination-bullet {
+		border-radius: 100%;
+	}
 }
