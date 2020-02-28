@@ -587,13 +587,9 @@ export function trackCustomAdWordsRemarketingEvent( properties ) {
 }
 
 function splitWpcomJetpackCartInfo( cart ) {
-	// Note: reduce() requires a non 0-length array.
-	const jetpackCost =
-		0 === cart.products.length
-			? 0
-			: cart.products
-					.map( product => ( productsValues.isJetpackPlan( product ) ? product.cost : 0 ) )
-					.reduce( ( accumulator, cost ) => accumulator + cost );
+	const jetpackCost = cart.products
+		.map( product => ( productsValues.isJetpackPlan( product ) ? product.cost : 0 ) )
+		.reduce( ( accumulator, cost ) => accumulator + cost, 0 );
 	const wpcomCost = cart.total_cost - jetpackCost;
 	const wpcomProducts = cart.products.filter(
 		product => ! productsValues.isJetpackPlan( product )
@@ -1231,6 +1227,7 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 		u1: wpcomJetpackCartInfo.totalCostUSD,
 		u2: cart.products.map( product => product.product_name ).join( ', ' ),
 		u3: 'USD',
+		u8: orderId,
 		send_to: 'DC-6355556/wpsal0/wpsale+transactions',
 	} );
 
@@ -1243,6 +1240,7 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 			u1: wpcomJetpackCartInfo.wpcomCostUSD,
 			u2: wpcomJetpackCartInfo.wpcomProducts.map( product => product.product_name ).join( ', ' ),
 			u3: 'USD',
+			u8: orderId,
 			send_to: 'DC-6355556/wpsal0/purch0+transactions',
 		} );
 	}
@@ -1256,6 +1254,7 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 			u1: wpcomJetpackCartInfo.jetpackCostUSD,
 			u2: wpcomJetpackCartInfo.jetpackProducts.map( product => product.product_name ).join( ', ' ),
 			u3: 'USD',
+			u8: orderId,
 			send_to: 'DC-6355556/wpsal0/purch00+transactions',
 		} );
 	}
