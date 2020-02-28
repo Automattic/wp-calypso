@@ -71,6 +71,7 @@ const BlockFramePreview = ( {
 } ) => {
 	const frameContainerRef = useRef();
 	const renderedBlocksRef = useRef();
+	const iframeRef = useRef();
 
 	// Set the initial scale factor.
 	const [ style, setStyle ] = useState( {
@@ -106,12 +107,6 @@ const BlockFramePreview = ( {
 
 	// Populate iFrame styles.
 	useEffect( () => {
-		const targetIFrameDoc = get( frameContainerRef, [
-			'current',
-			'firstElementChild',
-			'contentDocument',
-		] );
-
 		const body = get( frameContainerRef, [
 			'current',
 			'firstElementChild',
@@ -120,8 +115,10 @@ const BlockFramePreview = ( {
 		] );
 		body.className = `${ bodyClassName } editor-styles-wrapper`;
 
-		copyStylesToIframe( window.document, targetIFrameDoc );
-		rescale();
+		setTimeout( () => {
+			copyStylesToIframe( window.document, iframeRef.current.contentDocument );
+			rescale();
+		}, 0 );
 	}, [ bodyClassName, rescale ] );
 
 	// Scroll the preview to the top when the blocks change.
@@ -181,6 +178,7 @@ const BlockFramePreview = ( {
 	return (
 		<div ref={ frameContainerRef }>
 			<iframe
+				ref={ iframeRef }
 				title={ __( 'Preview' ) }
 				className={ classnames( 'editor-styles-wrapper', className ) }
 				style={ style }
