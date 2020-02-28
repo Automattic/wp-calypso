@@ -8,7 +8,7 @@ import { stringify } from 'qs';
  * Internal dependencies
  */
 import { wpcomRequest, WpcomClientCredentials } from '../utils';
-import { wpLogin, FetchAuthOptionsAction } from './actions';
+import { FetchAuthOptionsAction, FetchWpLoginAction } from './actions';
 import { STORE_KEY } from './constants';
 
 export function createControls( clientCreds: WpcomClientCredentials ) {
@@ -24,10 +24,10 @@ export function createControls( clientCreds: WpcomClientCredentials ) {
 				apiVersion: '1.1',
 			} );
 		},
-		WP_LOGIN: async ( { action, params }: ReturnType< typeof wpLogin > ) => {
+		FETCH_WP_LOGIN: async ( { action, params }: FetchWpLoginAction ) => {
 			const response = await fetch(
 				// TODO Wrap this in `localizeUrl` from lib/i18n-utils
-				'https://wordpress.com/wp-login.php?action=' + action,
+				'https://wordpress.com/wp-login.php?action=' + encodeURIComponent( action ),
 				{
 					method: 'POST',
 					credentials: 'include',

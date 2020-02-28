@@ -61,9 +61,17 @@ export const receiveWpLoginFailed = ( response: WpLoginErrorResponse ) =>
 		response,
 	} as const );
 
-export const wpLogin = ( action: string, params: object ) =>
+type WpLoginAction = 'login-endpoint' | 'two-step-authentication-endpoint';
+
+export interface FetchWpLoginAction {
+	type: 'FETCH_WP_LOGIN';
+	action: WpLoginAction;
+	params: object;
+}
+
+const fetchWpLogin = ( action: WpLoginAction, params: object ): FetchWpLoginAction =>
 	( {
-		type: 'WP_LOGIN',
+		type: 'FETCH_WP_LOGIN',
 		action,
 		params,
 	} as const );
@@ -72,7 +80,7 @@ export function* submitPassword( password: string ) {
 	const username = yield { type: 'SELECT_USERNAME_OR_EMAIL' };
 
 	try {
-		const loginResponse = yield wpLogin( 'login-endpoint', { username, password } );
+		const loginResponse = yield fetchWpLogin( 'login-endpoint', { username, password } );
 
 		yield receiveWpLogin( loginResponse );
 	} catch ( err ) {
