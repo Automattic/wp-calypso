@@ -17,16 +17,27 @@ import './style.scss';
 
 interface Props {
 	isConnected: boolean;
+	/* @todo: figure out which type of backup we are */
 	// backupType: 'daily' | 'realtime';
 }
 
 const ServerConnectionIndicator = ( { isConnected }: Props ) => {
 	const translate = useTranslate();
 
-	const getStatus = () =>
-		isConnected
-			? translate( 'Server Status: Connected' )
-			: translate( 'Server Status: Not connected' );
+	const status = isConnected
+		? translate( 'Server Status: Connected' )
+		: translate( 'Server Status: Not connected' );
+
+	/* @todo: figure out which type of backup we are */
+	// const message = isConnected
+	// 	? translate( 'One-click restores are enabled.' )
+	// 	: translate(
+	// 			'Enter your server credentials to enable one-click restores for [Real-time] Backups.'
+	// 	  );
+
+	const message = isConnected
+		? translate( 'One-click restores are enabled.' )
+		: translate( 'Enter your server credentials to enable one-click restores.' );
 
 	const imgSrc = `/calypso/images/jetpack/jetpack-connection-${ isConnected ? 'good' : 'bad' }.svg`;
 
@@ -38,7 +49,8 @@ const ServerConnectionIndicator = ( { isConnected }: Props ) => {
 				</div>
 
 				<div className="server-connection-indicator__info">
-					<h4 className="server-connection-indicator__status">{ getStatus() }</h4>
+					<h4 className="server-connection-indicator__status">{ status }</h4>
+					<p className="server-connection-indicator__message">{ message }</p>
 				</div>
 			</div>
 		</Card>

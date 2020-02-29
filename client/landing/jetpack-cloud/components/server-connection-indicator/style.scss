@@ -24,11 +24,23 @@ svg.server-connection-indicator__placeholder-image {
 }
 
 .server-connection-indicator__status {
-	font-weight: bold;
+	font-weight: 600;
+	font-size: 16px;
+	line-height: 19px;
+}
+
+.server-connection-indicator__message {
+	font-weight: normal;
+	font-size: 16px;
+	line-height: 24px;
+	margin-bottom: 0;
+	margin-top: 10px;
 }
 
 .server-connection-indicator__image-wrapper {
 	display: flex;
 	height: 50px;
 	width: 50px;
+	// corresponds to the left padding from .server-connection-indicator
+	margin-right: 17px;
 }
