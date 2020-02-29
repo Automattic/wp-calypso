@@ -1,3 +1,34 @@
+.server-connection-indicator,
+.server-connection-indicator__placeholder {
+	border-radius: 4px;
+	padding: 20px 17px;
+}
+
 .server-connection-indicator__placeholder {
 	@include placeholder( --color-neutral-70 );
+}
+
+svg.server-connection-indicator__placeholder-image {
+	display: flex;
+	height: 50px;
+	width: 50px;
+	circle {
+		animation: loading-fade 1.6s ease-in-out infinite;
+		fill: var( --color-neutral-70 );
+	}
+}
+.server-connection-indicator__placeholder-body,
+.server-connection-indicator__body {
+	align-items: center;
+	display: flex;
+}
+
+.server-connection-indicator__status {
+	font-weight: bold;
+}
+
+.server-connection-indicator__image-wrapper {
+	display: flex;
+	height: 50px;
+	width: 50px;
 }

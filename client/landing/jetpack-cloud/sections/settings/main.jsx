@@ -22,12 +22,14 @@ const SettingsPage = () => {
 	);
 	const rewindState = useSelector( state => getRewindState( state, selectedSiteId ) );
 
+	const isConnected = rewindState && rewindState.state === 'active';
+
 	return (
 		<div>
 			{ selectedSiteId && <QueryRewindState siteId={ selectedSiteId } /> }
 			{ /* @todo: actual placeholder component here */ }
 			{ rewindStateRequestStatus === 'success' ? (
-				<ServerConnectionIndicator rewindState={ rewindState } />
+				<ServerConnectionIndicator isConnected={ isConnected } />
 			) : (
 				<ServerConnectionIndicatorPlaceholder />
 			) }
