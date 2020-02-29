@@ -8,6 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import FormSectionHeading from 'components/forms/form-section-heading';
+import HappinessEngineersTray from 'components/happiness-engineers-tray';
 
 /**
  * Style dependencies
@@ -28,6 +29,7 @@ function HelpHappinessEngineers( { translate } ) {
 					},
 				}
 			) }
+			<HappinessEngineersTray />
 		</div>
 	);
 }
