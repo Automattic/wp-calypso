@@ -18,6 +18,7 @@ import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import ExternalLink from 'components/external-link';
 import JetpackLogo from 'components/jetpack-logo';
+import MaterialIcon from 'components/material-icon';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarItem from 'layout/sidebar/item';
@@ -26,6 +27,7 @@ import SidebarRegion from 'layout/sidebar/region';
 import SiteMenu from './site-menu';
 import StatsSparkline from 'blocks/stats-sparkline';
 import ToolsMenu from './tools-menu';
+import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import { isFreeTrial, isPersonal, isPremium, isBusiness, isEcommerce } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -166,15 +168,31 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		const myHomeLink = '/home' + siteSuffix;
+
+		const linkClass = classNames( {
+			selected: itemLinkMatches( [ '/home' ], path ),
+		} );
+
+		const tipTarget = 'myhome';
+
 		return (
-			<SidebarItem
-				materialIcon="home"
-				tipTarget="myhome"
-				onNavigate={ this.trackCustomerHomeClick }
-				label={ translate( 'My Home' ) }
-				selected={ itemLinkMatches( [ '/home' ], path ) }
-				link={ '/home' + siteSuffix }
-			/>
+			<li className={ linkClass } data-tip-target={ tipTarget }>
+				<a
+					className="sidebar__menu-link"
+					onClick={ this.trackCustomerHomeClick }
+					href={ myHomeLink }
+				>
+					<MaterialIcon className="sidebar__menu-icon" icon="home" />
+					<span className="sidebar__menu-link-text" data-e2e-sidebar="My Home">
+						{ translate( 'My Home' ) }
+					</span>
+
+					<span className="sidebar__menu-link-secondary-text">
+						<WpcomChecklist viewMode="navigation" />
+					</span>
+				</a>
+			</li>
 		);
 	}
 
@@ -395,7 +413,7 @@ export class MySitesSidebar extends Component {
 			<li className={ linkClass } data-tip-target={ tipTarget }>
 				<a className="sidebar__menu-link" onClick={ this.trackPlanClick } href={ planLink }>
 					<JetpackLogo className="sidebar__menu-icon" size={ 24 } />
-					<span className="menu-link-text" data-e2e-sidebar="Plan">
+					<span className="sidebar__menu-link-text" data-e2e-sidebar="Plan">
 						{ translate( 'Plan', { context: 'noun' } ) }
 					</span>
 					{ displayPlanName && (
@@ -595,7 +613,9 @@ export class MySitesSidebar extends Component {
 							onClick={ this.trackWpadminClick }
 						>
 							<Gridicon className={ 'sidebar__menu-icon' } icon="my-sites" size={ 24 } />
-							<span className="menu-link-text">{ this.props.translate( 'WP Admin' ) }</span>
+							<span className="sidebar__menu-link-text">
+								{ this.props.translate( 'WP Admin' ) }
+							</span>
 						</ExternalLink>
 					</li>
 				</ul>

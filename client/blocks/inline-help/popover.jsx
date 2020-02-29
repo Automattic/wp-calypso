@@ -236,16 +236,7 @@ class InlineHelpPopover extends Component {
 	};
 
 	renderPrimaryView = () => {
-		const {
-			translate,
-			showNotification,
-			siteId,
-			setNotification,
-			setStoredTask,
-			showOptIn,
-			showOptOut,
-			onClose,
-		} = this.props;
+		const { translate, siteId, showOptIn, showOptOut } = this.props;
 
 		return (
 			<>
@@ -267,14 +258,6 @@ class InlineHelpPopover extends Component {
 						{ translate( 'Switch to Block Editor' ) }
 					</Button>
 				) }
-
-				<WpcomChecklist
-					viewMode="navigation"
-					closePopover={ onClose }
-					showNotification={ showNotification }
-					setNotification={ setNotification }
-					setStoredTask={ setStoredTask }
-				/>
 			</>
 		);
 	};
