@@ -27,7 +27,7 @@ references:
         "$CIRCLE_TEST_REPORTS/server"           \
         "$CIRCLE_TEST_REPORTS/e2ereports"       \
         "$HOME/jest-cache"                      \
-        "$HOME/.tsc-cache"                      \
+        "$HOME/wp-calypso/.tsc-cache"           \
         "$HOME/terser-cache"
 
   # Jest cache caching
@@ -65,15 +65,16 @@ references:
   restore-tsc-cache: &restore-tsc-cache
     name: Restore TypeScript cache
     keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-tsc-{{ .Branch }}-{{ .Revision }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-tsc-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-tsc-master
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-tsc
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-tsc-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-tsc-{{ .Branch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-tsc-master
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-tsc
   save-tsc-cache: &save-tsc-cache
     name: Save TypeScript cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-tsc-{{ .Branch }}-{{ .Revision }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-tsc-{{ .Branch }}-{{ .Revision }}
     paths:
-      - ~/.tsc-cache
+      - ~/wp-calypso/.tsc-cache
+      - ~/wp-calypso/packages/*/dist
 
   #
   # Terser cache caching
@@ -242,7 +243,7 @@ jobs:
       - prepare
       - run:
           name: TypeScript strict typecheck of individual subprojects
-          command: npm run typecheck -- --project client/landing/gutenboarding
+          command: npm run tsc -- --project client/landing/gutenboarding
 
   lint-and-translate:
     <<: *defaults

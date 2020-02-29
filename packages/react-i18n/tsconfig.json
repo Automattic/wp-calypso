@@ -10,6 +10,7 @@
 		"declaration": true,
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
+		"rootDir": "src",
 
 		"strict": true,
 		"noUnusedLocals": true,
@@ -25,8 +26,10 @@
 		"typeRoots": [ "../../node_modules/@types" ],
 		"types": [],
 
-		"importHelpers": true
+		"importHelpers": true,
+		"composite": true,
+		"tsBuildInfoFile": "../../.tsc-cache/packages__react-i18n"
 	},
-	"files": [ "./src/index.tsx" ],
+	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]
 }
