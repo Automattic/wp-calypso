@@ -99,8 +99,9 @@ function getSubscriptionEndDate( purchase ) {
  *
  * @param {object} purchase - the purchase to be renewed
  * @param {string} siteSlug - the site slug to renew the purchase for
+ * @param {object} tracksProps - where was the renew button clicked from
  */
-function handleRenewNowClick( purchase, siteSlug ) {
+function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
 	const renewItem = getRenewalItemFromProduct( purchase, {
 		domain: purchase.meta,
 	} );
@@ -109,6 +110,7 @@ function handleRenewNowClick( purchase, siteSlug ) {
 	// Track the renew now submit.
 	analytics.tracks.recordEvent( 'calypso_purchases_renew_now_click', {
 		product_slug: purchase.productSlug,
+		...tracksProps,
 	} );
 
 	addItems( renewItems );

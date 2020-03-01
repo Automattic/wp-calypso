@@ -166,6 +166,7 @@ class RegisteredDomainType extends React.Component {
 						primary={ true }
 						selectedSite={ this.props.selectedSite }
 						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
+						tracksProps={ { source: 'registered-domain-status', domain_status: 'expiring-soon' } }
 					/>
 				</div>
 			);
@@ -241,6 +242,7 @@ class RegisteredDomainType extends React.Component {
 						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
 						redemptionProduct={ domain.isRedeemable ? this.props.redemptionProduct : null }
 						reactivate={ ! domain.isRenewable && domain.isRedeemable }
+						tracksProps={ { source: 'registered-domain-status', domain_status: 'expired' } }
 					/>
 				) }
 			</div>
@@ -289,6 +291,7 @@ class RegisteredDomainType extends React.Component {
 					compact={ true }
 					selectedSite={ this.props.selectedSite }
 					subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
+					tracksProps={ { source: 'registered-domain-status', domain_status: 'active' } }
 				/>
 			</div>
 		);
