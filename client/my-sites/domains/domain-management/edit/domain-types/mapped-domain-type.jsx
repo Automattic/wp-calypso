@@ -27,6 +27,7 @@ import { WPCOM_DEFAULTS } from 'lib/domains/nameservers';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { isSubdomain } from 'lib/domains';
 import { MAP_EXISTING_DOMAIN, MAP_SUBDOMAIN } from 'lib/url/support';
+import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
 
 class MappedDomainType extends React.Component {
 	getVerticalNavigation() {
@@ -222,6 +223,24 @@ class MappedDomainType extends React.Component {
 		);
 	}
 
+	renderDefaultRenewButton() {
+		const { domain } = this.props;
+
+		if ( domain.expired || isExpiringSoon( domain, 30 ) ) {
+			return null;
+		}
+
+		return (
+			<div>
+				<RenewButton
+					compact={ true }
+					selectedSite={ this.props.selectedSite }
+					subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
+				/>
+			</div>
+		);
+	}
+
 	renderAutoRenew() {
 		return (
 			<Card compact={ true }>
@@ -267,6 +286,7 @@ class MappedDomainType extends React.Component {
 									},
 							  } ) }
 					</div>
+					{ this.renderDefaultRenewButton() }
 					{ ! newStatusDesignAutoRenew && (
 						<div>
 							<SubscriptionSettings
