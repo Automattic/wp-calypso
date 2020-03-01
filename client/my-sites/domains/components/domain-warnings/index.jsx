@@ -27,6 +27,7 @@ import {
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
 	MAP_EXISTING_DOMAIN_UPDATE_DNS,
 	MAP_SUBDOMAIN,
+	SETTING_PRIMARY_DOMAIN,
 } from 'lib/url/support';
 import {
 	domainManagementEdit,
@@ -44,7 +45,8 @@ import './style.scss';
 
 const debug = _debug( 'calypso:domain-warnings' );
 
-const domainsLink = <a href={ DOMAINS } target="_blank" rel="noopener noreferrer" />;
+const newWindowLink = linkUrl => <a href={ linkUrl } target="_blank" rel="noopener noreferrer" />;
+const domainsLink = newWindowLink( DOMAINS );
 const pNode = <p />;
 
 const expiredDomainsCanManageWarning = 'expired-domains-can-manage';
@@ -551,7 +553,7 @@ export class DomainWarnings extends React.PureComponent {
 						args: { primaryDomain: this.props.selectedSite.domain },
 						components: {
 							pNode,
-							domainsLink,
+							domainsLink: newWindowLink( SETTING_PRIMARY_DOMAIN ),
 						},
 					}
 				);
@@ -576,11 +578,9 @@ export class DomainWarnings extends React.PureComponent {
 					{
 						args: { domainName: domain.name },
 						components: {
-							domainsLink,
+							domainsLink: newWindowLink( SETTING_PRIMARY_DOMAIN ),
 							pNode,
-							tryNowLink: (
-								<a href={ `http://${ domain.name }` } target="_blank" rel="noopener noreferrer" />
-							),
+							tryNowLink: newWindowLink( `http://${ domain.name }` ),
 							strong: <strong />,
 						},
 					}
@@ -595,9 +595,7 @@ export class DomainWarnings extends React.PureComponent {
 						args: { domainName: domain.name },
 						components: {
 							domainsLink,
-							tryNowLink: (
-								<a href={ `http://${ domain.name }` } target="_blank" rel="noopener noreferrer" />
-							),
+							tryNowLink: newWindowLink( `http://${ domain.name }` ),
 							strong: <strong />,
 						},
 					}
