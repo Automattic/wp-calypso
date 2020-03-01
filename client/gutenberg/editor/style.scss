@@ -120,3 +120,44 @@ html.is-iframe {
 		max-width: 100%;
 	}
 }
+
+.pageNavigation {
+	max-width: 300px;
+	z-index: 99;
+	position: fixed;
+	top: 0;
+	left: 50%;
+    transform: translateX( -50% );
+	margin-top: 8px;
+	cursor: pointer;
+
+	@include breakpoint( '<1040px' ) {
+		display: block;
+		top: 64px;
+		left: 16px;
+		transform: none;
+	}
+}
+
+.pageNavigation svg {
+	color: #666;
+}
+
+.pageNavigation .select-dropdown__option,
+.pageNavigation .select-dropdown__item.is-selected {
+	background: white;
+	color: #333;
+}
+
+.pageNavigation__menu-item.hasSeparator {
+	border-top: 1px dotted #e1e1e1;
+}
+
+.pageNavigation .select-dropdown__header {
+	border: 0;
+	color: transparent;
+}
+
+.pageNavigation .select-dropdown__header-text {
+	color: #333;
+}

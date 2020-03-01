@@ -43,6 +43,7 @@ import { protectForm, ProtectedFormProps } from 'lib/protect-form';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ConvertToBlocksDialog from 'components/convert-to-blocks';
 import config from 'config';
+import PageNavigation from './pageNavigation';
 
 /**
  * Types
@@ -538,7 +539,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	};
 
 	render() {
-		const { iframeUrl, siteId, shouldLoadIframe } = this.props;
+		const { editedPostId, iframeUrl, postType, siteId, shouldLoadIframe } = this.props;
 		const {
 			classicBlockEditorId,
 			isMediaModalVisible,
@@ -567,6 +568,9 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 					showDialog={ isConversionPromptVisible }
 					handleResponse={ this.handleConversionResponse }
 				/>
+				{ isIframeLoaded && postType === 'page' && (
+					<PageNavigation siteId={ siteId } postId={ editedPostId } />
+				) }
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
