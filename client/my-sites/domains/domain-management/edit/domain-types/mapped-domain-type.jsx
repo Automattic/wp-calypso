@@ -26,7 +26,7 @@ import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { WPCOM_DEFAULTS } from 'lib/domains/nameservers';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { isSubdomain } from 'lib/domains';
-import { DOMAIN_HELPER_PREFIX, MAP_SUBDOMAIN } from 'lib/url/support';
+import { MAP_EXISTING_DOMAIN, MAP_SUBDOMAIN } from 'lib/url/support';
 
 class MappedDomainType extends React.Component {
 	getVerticalNavigation() {
@@ -165,38 +165,45 @@ class MappedDomainType extends React.Component {
 			return null;
 		}
 
+		const learnMoreLink = linksTo => (
+			<a href={ linksTo } target="_blank" rel="noopener noreferrer" />
+		);
 		let primaryMessage;
-		let learnMoreLink;
+		let secondaryMessage;
 
 		if ( isSubdomain( domain.name ) ) {
-			learnMoreLink = <a href={ MAP_SUBDOMAIN } target="_blank" rel="noopener noreferrer" />;
 			primaryMessage = translate(
-				'Your domain mapping has not been setup. You need to create the correct CNAME or NS records at your current DNS provider. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
+				'Your subdomain mapping has not been setup. You need to create the correct CNAME or NS records at your current DNS provider. {{learnMoreLink}}Learn how to do that in our support guide for mapping subdomains{{/learnMoreLink}}.',
 				{
-					components: { strong: <strong />, learnMoreLink },
+					components: {
+						strong: <strong />,
+						learnMoreLink: learnMoreLink( MAP_SUBDOMAIN ),
+					},
 					args: { domainName: domain.name },
 					context: 'Notice for mapped subdomain that has DNS records need to set up',
 				}
 			);
-		} else {
-			learnMoreLink = (
-				<a href={ DOMAIN_HELPER_PREFIX + domain.name } target="_blank" rel="noopener noreferrer" />
+			secondaryMessage = translate(
+				"Please note that it can take up to 72 hours for your changes to become available. If you're still not seeing your site loading at %(domainName)s, please wait a few more hours, clear your browser cache, and try again.",
+				{
+					args: { domainName: domain.name },
+				}
 			);
+		} else {
 			primaryMessage = translate(
 				'Your domain mapping has not been setup. You need to update your nameservers, at the company you purchased your domain, to:',
 				{
-					args: { domainName: domain.name },
 					context: 'Notice for mapped domain notice with NS records pointing to somewhere else',
 				}
 			);
+			secondaryMessage = translate(
+				"Please note that it can take up to 72 hours for your changes to become available. If you're still not seeing your site loading at %(domainName)s, please wait a few more hours, clear your browser cache, and try again. {{learnMoreLink}}Learn all about mapping existing domain in our support docs{{/learnMoreLink}}.",
+				{
+					components: { learnMoreLink: learnMoreLink( MAP_EXISTING_DOMAIN ) },
+					args: { domainName: domain.name },
+				}
+			);
 		}
-		const secondaryMessage = translate(
-			"Please note that it can take up to 72 hours for your changes to become available. If you're still not seeing your site loading at %(domainName)s, please wait a few more hours, clear your browser cache, and try again.",
-			{
-				components: { learnMoreLink },
-				args: { domainName: domain.name },
-			}
-		);
 
 		return (
 			<React.Fragment>
