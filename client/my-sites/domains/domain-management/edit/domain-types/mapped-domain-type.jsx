@@ -132,24 +132,24 @@ class MappedDomainType extends React.Component {
 		const { expiry } = domain;
 
 		if ( ! isExpiringSoon( domain, 30 ) ) {
-			return (
-				<div>
-					{ translate(
-						'Your domain will expire in {{strong}}%(days)s{{/strong}}. Please renew it before it expires or it will stop working.',
-						{
-							components: {
-								strong: <strong />,
-							},
-							args: {
-								days: moment.utc( expiry ).fromNow( true ),
-							},
-						}
-					) }
-				</div>
-			);
+			return null;
 		}
 
-		return null;
+		return (
+			<div>
+				{ translate(
+					'Your domain mapping will expire in {{strong}}%(days)s{{/strong}}. Please renew it before it expires or it will stop working.',
+					{
+						components: {
+							strong: <strong />,
+						},
+						args: {
+							days: moment.utc( expiry ).fromNow( true ),
+						},
+					}
+				) }
+			</div>
+		);
 	}
 
 	renderSettingUpNameservers() {
@@ -171,7 +171,7 @@ class MappedDomainType extends React.Component {
 		if ( isSubdomain( domain.name ) ) {
 			learnMoreLink = <a href={ MAP_SUBDOMAIN } target="_blank" rel="noopener noreferrer" />;
 			primaryMessage = translate(
-				'Your domain mapping has not been setup. You need to create the relevant CNAME or NS records at your current DNS provider. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
+				'Your domain mapping has not been setup. You need to create the correct CNAME or NS records at your current DNS provider. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
 				{
 					components: { strong: <strong />, learnMoreLink },
 					args: { domainName: domain.name },
