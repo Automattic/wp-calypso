@@ -10,6 +10,8 @@ import {
 	WORDADS_SETTINGS_UPDATE,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/wordads/settings';
+
 /**
  * Returns an action object, signalling that WordAds settings for a site have been requested.
  *
