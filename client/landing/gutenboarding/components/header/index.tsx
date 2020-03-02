@@ -8,6 +8,7 @@ import React, { FunctionComponent, useEffect, useCallback, useState } from 'reac
 import { useDebounce } from 'use-debounce';
 import classnames from 'classnames';
 import { DomainSuggestions } from '@automattic/data-stores';
+import { useHistory } from 'react-router-dom';
 
 /**
  * Internal dependencies
@@ -66,6 +67,17 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 	}, [ siteTitle, setDomain ] );
 
 	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
+
+	const {
+		location: { pathname },
+	} = useHistory();
+	useEffect( () => {
+		// Dialogs usually close naturally when the user clicks the browser's
+		// back/forward buttons because their parent is unmounted. However
+		// this header isn't unmounted on route changes so we need to
+		// explicitly hide the dialog.
+		setShowSignupDialog( false );
+	}, [ pathname, setShowSignupDialog ] );
 
 	const currentDomain = domain ?? freeDomainSuggestion;
 
