@@ -42,13 +42,13 @@ function getUrl( filename, hash ) {
 }
 
 const activeSections = config( 'sections' );
-const byDefaultDisableSection = config( 'disable_sections' );
+const byDefaultEbableSection = config( 'enable_all_sections' );
 
 function filterSections( section ) {
 	if ( activeSections && activeSections[ section.name ] ) {
 		return activeSections[ section.name ];
 	}
-	return ! byDefaultDisableSection;
+	return byDefaultEbableSection;
 }
 
 module.exports = {
