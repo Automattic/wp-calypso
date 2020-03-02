@@ -73,49 +73,6 @@ function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parent
 }
 
 /**
- * This helper function tracks the given blocks recursively
- * in order to be able to do it also for its inner ones.
- *
- * The event properties will be populated (optional)
- * propertiesHandler function. It acts as a callback
- * passing two arguments: the current block and
- * the parent block (if exists). Take this as
- * an advantage to add other custom properties to the event.
- *
- * Also, it adds as default `inner_block`,
- * and `parent_block_client_id` (if parent exists) properties.
- *
- * @param {Array}    blocks            Block instances object or an array of such objects
- * @param {string}   eventName         Event name used to track.
- * @param {Function} propertiesHandler Callback function to populate event properties
- * @param {object}   parentBlock       parent block. optional.
- * @returns {void}
- */
-function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parentBlock ) {
-	const castBlocks = castArray( blocks );
-	if ( ! castBlocks || ! castBlocks.length ) {
-		return;
-	}
-
-	castBlocks.forEach( block => {
-		const eventProperties = {
-			...propertiesHandler( block, parentBlock ),
-			inner_block: !! parentBlock,
-		};
-
-		if ( parentBlock ) {
-			eventProperties.parent_block_name = parentBlock.name;
-		}
-
-		tracksRecordEvent( eventName, eventProperties );
-
-		if ( block.innerBlocks && block.innerBlocks.length ) {
-			trackBlocksHandler( block.innerBlocks, eventName, propertiesHandler, block );
-		}
-	} );
-}
-
-/**
  * A lot of actions accept either string (block id)
  * or an array of multiple string when operating with multiple blocks selected.
  * This is a convenience method that processes the first argument of the action (blocks)
@@ -161,23 +118,6 @@ const trackBlockReplacement = ( originalBlockIds, blocks ) => {
 /**
  * Track inner blocks replacement.
  * Page Templates insert their content into the page replacing everything that was already there.
- *
- * @param {Array} rootClientId id of parent block
- * @param {object|Array} blocks block instance object or an array of such objects
- * @returns {void}
- */
-const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
-	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( { name } ) => ( {
-		block_name: name,
-		blocks_replaced: true,
-		// isInsertingPageTemplate filter is set by Starter Page Templates
-		from_template_selector: applyFilters( 'isInsertingPageTemplate', false ),
-	} ) );
-};
-
-/**
- * Track inner blocks replacement.
- * This is how Page Templates insert their content into page, by replacing everything that was already there.
  *
  * @param {Array} rootClientId id of parent block
  * @param {object|Array} blocks block instance object or an array of such objects
