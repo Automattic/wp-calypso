@@ -10,15 +10,15 @@ import page from 'page';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { makeLayout, render as clientRender } from 'controller';
 
-import { dashboard } from './sections/dashboard/controller';
+import { dashboard } from 'landing/jetpack-cloud/sections/dashboard/controller';
 import {
 	backups,
 	backupDetail,
 	backupDownload,
 	backupRestore,
-} from './sections/backups/controller';
-import { scan, scanHistory } from './sections/scan/controller';
-import { settings } from './sections/settings/controller';
+} from 'landing/jetpack-cloud/sections/backups/controller';
+import { scan, scanHistory } from 'landing/jetpack-cloud/sections/scan/controller';
+import { settings } from 'landing/jetpack-cloud/sections/settings/controller';
 
 export default function() {
 	page( '/', siteSelection, navigation, dashboard, makeLayout, clientRender );
