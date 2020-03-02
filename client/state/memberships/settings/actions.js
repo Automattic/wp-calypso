@@ -10,6 +10,7 @@ import {
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/sites/memberships';
+import wpcom from 'lib/wp';
 
 export const requestSettings = siteId => ( {
 	siteId,
