@@ -4,8 +4,6 @@
 const fs = require( 'fs' ); // eslint-disable-line import/no-nodejs-modules
 const path = require( 'path' ); // eslint-disable-line import/no-nodejs-modules
 
-const JETPACK_CLOUD_SECTION_DEFINITION = require( './landing/jetpack-cloud/sections.js' ); // eslint-disable-line import/no-nodejs-modules
-
 const sections = [
 	{
 		name: 'root',
@@ -474,6 +472,14 @@ const sections = [
 		secondary: true,
 		group: 'sites',
 	},
+	{
+		name: 'jetpack-cloud',
+		paths: [ '/', '/scan', '/backups', '/settings' ], // TODO: Split this up into its own sections
+		module: 'landing/jetpack-cloud',
+		secondary: true,
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+	},
 ];
 
 for ( const extension of require( './extensions' ) ) {
@@ -485,10 +491,6 @@ for ( const extension of require( './extensions' ) ) {
 			envId: pkg.env_id,
 		} );
 	} catch {}
-}
-
-for ( const jetpack_cloud_section of JETPACK_CLOUD_SECTION_DEFINITION ) {
-	sections.push( jetpack_cloud_section );
 }
 
 module.exports = sections;
