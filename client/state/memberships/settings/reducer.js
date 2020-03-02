@@ -7,7 +7,10 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { withoutPersistence } from 'state/utils';
-import { MEMBERSHIPS_SETTINGS_RECEIVE } from '../../action-types';
+import {
+	MEMBERSHIPS_SETTINGS_RECEIVE,
+	MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_DISCONNECT_SUCCESS,
+} from '../../action-types';
 
 export default withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -18,6 +21,15 @@ export default withoutPersistence( ( state = {}, action ) => {
 				[ action.siteId ]: {
 					connectedAccountId: get( action, 'data.connected_account_id', null ),
 					connectUrl: get( action, 'data.connect_url', null ),
+				},
+			};
+		case MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_DISCONNECT_SUCCESS:
+			return {
+				...state,
+
+				[ action.siteId ]: {
+					connectedAccountId: null,
+					connectUrl: null,
 				},
 			};
 	}

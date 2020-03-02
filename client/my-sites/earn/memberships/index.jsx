@@ -17,7 +17,7 @@ import { Card, Button, CompactCard, Dialog } from '@automattic/components';
 import InfiniteScroll from 'components/infinite-scroll';
 import QueryMembershipsEarnings from 'components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'components/data/query-memberships-settings';
-import { requestDisconnectStripeAccount } from 'state/memberships/connected-accounts/actions';
+import { requestDisconnectStripeAccount } from 'state/memberships/settings/actions';
 import { requestSubscribers } from 'state/memberships/subscribers/actions';
 import { decodeEntities } from 'lib/formatting';
 import Gravatar from 'components/gravatar';
@@ -130,6 +130,7 @@ class MembershipsSection extends Component {
 	onCloseDisconnectStripeAccount = reason => {
 		if ( reason === 'disconnect' ) {
 			this.props.requestDisconnectStripeAccount(
+				this.props.siteId,
 				this.props.connectedAccountId,
 				this.props.translate( 'Stripe account is disconnected.' )
 			);
@@ -268,7 +269,7 @@ class MembershipsSection extends Component {
 							action: 'cancel',
 						},
 						{
-							label: this.props.translate( 'Disconnect' ),
+							label: this.props.translate( 'Disconnect Recurring Payments from Stripe' ),
 							isPrimary: true,
 							action: 'disconnect',
 						},
@@ -276,10 +277,14 @@ class MembershipsSection extends Component {
 					onClose={ this.onCloseDisconnectStripeAccount }
 				>
 					<h1>{ this.props.translate( 'Confirmation' ) }</h1>
-					<p>{ this.props.translate( 'Do you want to disconnect your Stripe account?' ) }</p>
+					<p>
+						{ this.props.translate(
+							'Do you want to disconnect Recurring Payments from your Stripe account?'
+						) }
+					</p>
 					<Notice
 						text={ this.props.translate(
-							'Disconnecting your Stripe account will mean existing subscribers will no longer be charged.'
+							'Once you disconnect Recurring Payments from Stripe, new subscribers won’t be able to sign up and existing subscriptions will stop working.'
 						) }
 						showDismiss={ false }
 					/>
