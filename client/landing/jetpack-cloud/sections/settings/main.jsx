@@ -37,7 +37,7 @@ const SettingsPage = () => {
 				headerText={ translate( 'Server connection details' ) }
 				isSecondary
 			/>
-			{ rewindStateRequestStatus === 'success' ? (
+			{ jetpackBackupPlan !== null && rewindStateRequestStatus === 'success' ? (
 				<ServerConnectionIndicator backupType={ jetpackBackupPlan } isConnected={ isConnected } />
 			) : (
 				<ServerConnectionIndicatorPlaceholder />
