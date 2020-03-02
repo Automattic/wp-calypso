@@ -252,15 +252,21 @@ class MembershipsSection extends Component {
 							.join( ', ' ) }
 					</div>
 				</CompactCard>
-				<Card>
-					<Button
-						onClick={ () =>
-							this.setState( { disconnectedConnectedAccountId: this.props.connectedAccountId } )
-						}
-					>
-						{ this.props.translate( 'Disconnect Stripe Account' ) }
-					</Button>
-				</Card>
+				<CompactCard
+					onClick={ () =>
+						this.setState( { disconnectedConnectedAccountId: this.props.connectedAccountId } )
+					}
+					className="memberships__settings-link"
+				>
+					<div className="memberships__settings-content">
+						<p className="memberships__settings-section-title is-warning">
+							{ this.props.translate( 'Disconnect Stripe Account' ) }
+						</p>
+						<p className="memberships__settings-section-desc">
+							{ this.props.translate( 'Disconnect Recurring Payments from your Stripe account' ) }
+						</p>
+					</div>
+				</CompactCard>
 				<Dialog
 					isVisible={ !! this.state.disconnectedConnectedAccountId }
 					buttons={ [
