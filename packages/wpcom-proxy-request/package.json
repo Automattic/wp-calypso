@@ -39,7 +39,6 @@
 		"prepare": "transpile"
 	},
 	"dependencies": {
-		"component-event": "^0.1.4",
 		"debug": "^4.1.1",
 		"progress-event": "^1.0.0",
 		"uid": "^0.0.2",
