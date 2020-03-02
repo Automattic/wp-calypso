@@ -7,6 +7,7 @@ import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -61,7 +62,7 @@ class ListItem extends React.PureComponent {
 		} );
 
 		return (
-			<CompactCard className={ cardClass }>
+			<CompactCard className={ cardClass } onClick={ this.handleClick }>
 				{ this.selectionRadio() }
 				{ this.renderContent() }
 			</CompactCard>
@@ -84,7 +85,7 @@ class ListItem extends React.PureComponent {
 
 	content() {
 		return (
-			<button className="domain-management-list-item__link" onClick={ this.handleClick }>
+			<div className="domain-management-list-item__link">
 				{ this.icon() }
 				<div className="domain-management-list-item__title">{ this.props.domain.name }</div>
 				<span className="domain-management-list-item__meta">
@@ -96,7 +97,7 @@ class ListItem extends React.PureComponent {
 					<DomainTransferFlag domain={ this.props.domain } />
 				</span>
 				{ this.busyMessage() }
-			</button>
+			</div>
 		);
 	}
 
@@ -120,17 +121,14 @@ class ListItem extends React.PureComponent {
 	}
 
 	handleClick = () => {
-		if ( this.props.enableSelection ) {
-			return;
-		}
-		this.props.onClick( this.props.domain );
-	};
-
-	handleSelect = () => {
 		if ( this.props.shouldUpgradeToMakePrimary ) {
 			return;
 		}
-		this.props.onSelect( this.props.selectionIndex, this.props.domain );
+		if ( this.props.enableSelection ) {
+			this.props.onSelect( this.props.selectionIndex, this.props.domain );
+		} else {
+			this.props.onClick( this.props.domain );
+		}
 	};
 
 	getInputId() {
@@ -148,7 +146,7 @@ class ListItem extends React.PureComponent {
 				className="domain-management-list-item__radio"
 				type="radio"
 				checked={ this.props.isSelected }
-				onChange={ this.handleSelect }
+				onChange={ noop }
 			/>
 		);
 	}

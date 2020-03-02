@@ -202,6 +202,7 @@
 		"chalk": "3.0.0",
 		"check-node-version": "4.0.2",
 		"chokidar-cli": "2.1.0",
+		"chroma-js": "2.1.0",
 		"circular-dependency-plugin": "5.2.0",
 		"concurrently": "5.1.0",
 		"cross-env": "6.0.3",
