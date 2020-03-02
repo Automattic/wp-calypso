@@ -18,6 +18,7 @@ import Notice from 'components/notice';
 import { type as domainTypes, gdprConsentStatus } from 'lib/domains/constants';
 import Spinner from 'components/spinner';
 import { withLocalizedMoment } from 'components/localized-moment';
+import Button from '@automattic/components/src/button';
 
 class ListItem extends React.PureComponent {
 	static propTypes = {
@@ -28,22 +29,51 @@ class ListItem extends React.PureComponent {
 		onClick: PropTypes.func.isRequired,
 		onSelect: PropTypes.func.isRequired,
 		selectionIndex: PropTypes.number,
+		shouldUpgradeToMakePrimary: PropTypes.bool,
 		isSelected: PropTypes.bool,
 	};
 
+	renderContent() {
+		if ( this.props.enableSelection ) {
+			const content = <label htmlFor={ this.getInputId() }>{ this.content() }</label>;
+
+			if ( this.props.shouldUpgradeToMakePrimary ) {
+				return (
+					<div className="domain-management-list-item__content">
+						{ content }
+						{ this.upgradeToMakePrimary() }
+					</div>
+				);
+			}
+
+			return content;
+		}
+
+		return this.content();
+	}
+
 	render() {
+		const { busy, enableSelection, shouldUpgradeToMakePrimary } = this.props;
 		const cardClass = classNames( 'domain-management-list-item', {
-			busy: this.props.busy,
+			busy: busy || ( enableSelection && shouldUpgradeToMakePrimary ),
 		} );
 
 		return (
 			<CompactCard className={ cardClass }>
 				{ this.selectionRadio() }
-				{ ( this.props.enableSelection && (
-					<label htmlFor={ this.getInputId() }>{ this.content() }</label>
-				) ) ||
-					this.content() }
+				{ this.renderContent() }
 			</CompactCard>
+		);
+	}
+
+	upgradeToMakePrimary() {
+		const { translate } = this.props;
+
+		return (
+			<div className="domain-management-list-item__upsell">
+				<span>{ translate( 'Upgrade to a paid plan to make this your primary domain' ) }</span>
+				<Button primary>{ translate( 'Upgrade' ) }</Button>
+			</div>
 		);
 	}
 
@@ -92,6 +122,9 @@ class ListItem extends React.PureComponent {
 	};
 
 	handleSelect = () => {
+		if ( this.props.shouldUpgradeToMakePrimary ) {
+			return;
+		}
 		this.props.onSelect( this.props.selectionIndex, this.props.domain );
 	};
 

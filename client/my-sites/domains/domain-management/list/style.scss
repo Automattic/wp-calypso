@@ -87,6 +87,27 @@
 	}
 }
 
+.domain-management-list-item__upsell {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	span {
+		margin-right: 16px;
+		flex: 1;
+	}
+}
+
+.domain-management-list-item__content {
+	display: flex;
+	justify-content: space-between;
+
+	@include breakpoint( '<960px' ) {
+		justify-content: flex-start;
+		flex-direction: column;
+	}
+}
+
 input[type='radio'].domain-management-list-item__radio {
 	margin-left: -8px;
 	margin-right: 12px;

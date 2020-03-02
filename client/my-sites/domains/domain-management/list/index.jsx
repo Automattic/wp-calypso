@@ -33,7 +33,7 @@ import { setPrimaryDomain } from 'state/sites/domains/actions';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import EmptyContent from 'components/empty-content';
-import { hasDomainCredit } from 'state/sites/plans/selectors';
+import { getPlansBySite, hasDomainCredit } from 'state/sites/plans/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
@@ -49,6 +49,9 @@ import { successNotice, errorNotice } from 'state/notices/actions';
  * Style dependencies
  */
 import './style.scss';
+import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
+import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 
 export class List extends React.Component {
 	static propTypes = {
@@ -378,6 +381,20 @@ export class List extends React.Component {
 		);
 	};
 
+	shouldUpgradeToMakeDomainPrimary( domain ) {
+		const { isDomainOnly, isOnPaidPlan, hasNonPrimaryDomainsFlag } = this.props;
+
+		return (
+			hasNonPrimaryDomainsFlag &&
+			domain.type === type.REGISTERED &&
+			! isDomainOnly &&
+			! domain.isPrimary &&
+			! isOnPaidPlan &&
+			! domain.isWPCOMDomain &&
+			! domain.isWpcomStagingDomain
+		);
+	}
+
 	listItems() {
 		if ( this.isLoading() ) {
 			return times( 3, n => <ListItemPlaceholder key={ `item-${ n }` } /> );
@@ -402,6 +419,7 @@ export class List extends React.Component {
 					} ) }
 					onSelect={ this.handleUpdatePrimaryDomain }
 					onClick={ this.goToEditDomainRoot }
+					shouldUpgradeToMakePrimary={ this.shouldUpgradeToMakeDomainPrimary( domain ) }
 				/>
 			);
 		} );
@@ -454,11 +472,18 @@ export default connect(
 	( state, ownProps ) => {
 		const siteId = get( ownProps, 'selectedSite.ID', null );
 		const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+		const selectedSite = get( ownProps, 'selectedSite', null );
+		const sitePlans = selectedSite && getPlansBySite( state, selectedSite );
+		const hasLoadedPlans = get( sitePlans, 'hasLoadedFromServer', false );
 
 		return {
 			hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
+			isOnPaidPlan: hasLoadedPlans && isSiteOnPaidPlan( state, siteId ),
+			hasNonPrimaryDomainsFlag: getCurrentUser( state )
+				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+				: false,
 			userCanManageOptions,
 		};
 	},
