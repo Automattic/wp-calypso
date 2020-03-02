@@ -45,7 +45,7 @@ const activeSections = config( 'sections' );
 const byDefaultEnableSection = config( 'enable_all_sections' );
 
 function filterSections( section ) {
-	if ( activeSections && activeSections[ section.name ] ) {
+	if ( activeSections && typeof activeSections[ section.name ] !== 'undefined' ) {
 		return activeSections[ section.name ];
 	}
 	return byDefaultEnableSection;
