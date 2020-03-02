@@ -79,9 +79,8 @@ const loader = function() {
 			printSectionsAndPaths( allSections );
 		}
 	} else {
-		console.log(
-			`[sections-loader] Built ${ sections.map( section => section.name ).join( ', ' ) } sections`
-		);
+		console.log( `[sections-loader] used ${ sections.count } of section.` );
+		printSectionsAndPaths( sections );
 	}
 
 	return addModuleImportToSections( {
