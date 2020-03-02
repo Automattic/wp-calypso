@@ -147,8 +147,6 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
 	const siteTypeTheme = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
 
-	// console.log('siteType: ' + siteType + ' designType: ' + designType + ' siteVerticalId: ' + siteVerticalId + ' siteSegment: ' + siteSegment);
-
 	// The theme can be provided in this step's dependencies,
 	// the step object itself depending on if the theme is provided in a
 	// query (see `getThemeSlug` in `DomainsStep`),
