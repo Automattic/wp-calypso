@@ -5,7 +5,6 @@
 import {
 	MEMBERSHIPS_SETTINGS,
 	MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_DISCONNECT_SUCCESS,
-	MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_DISCONNECT_FAILURE,
 	NOTICE_CREATE,
 } from 'state/action-types';
 
@@ -23,12 +22,9 @@ export const requestDisconnectStripeAccount = ( siteId, connectedAccountId, noti
 			.get( `/me/connected_account/stripe/${ connectedAccountId }/disconnect` )
 			.then( () => {
 				dispatch( {
-					type: MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_DISCONNECT_SUCCESS,
-					connectedAccountId,
 					siteId,
+					type: MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_DISCONNECT_SUCCESS,
 				} );
-				//Get QueryMembershipsSettings to update its state
-				//requestSettings( siteId );
 				dispatch( {
 					type: NOTICE_CREATE,
 					notice: {
@@ -39,11 +35,6 @@ export const requestDisconnectStripeAccount = ( siteId, connectedAccountId, noti
 				} );
 			} )
 			.catch( error => {
-				dispatch( {
-					type: MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_DISCONNECT_FAILURE,
-					connectedAccountId,
-					error,
-				} );
 				dispatch( {
 					type: NOTICE_CREATE,
 					notice: {
