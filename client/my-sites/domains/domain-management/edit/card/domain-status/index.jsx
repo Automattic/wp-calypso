@@ -20,22 +20,12 @@ class DomainStatus extends React.Component {
 		children: PropTypes.any,
 	};
 
-	getHeaderFontSize( header ) {
-		const headerLength = header.length;
-
-		if ( headerLength > 60 ) {
-			return 16;
+	getBreakPoint( headerLength, breakPoints ) {
+		for ( const breakPoint of breakPoints ) {
+			if ( headerLength > breakPoint[ 0 ] ) {
+				return breakPoint[ 1 ];
+			}
 		}
-		if ( headerLength > 51 ) {
-			return 20;
-		}
-		if ( headerLength > 45 ) {
-			return 24;
-		}
-		if ( headerLength > 39 ) {
-			return 28;
-		}
-		return 32;
 	}
 
 	render() {
@@ -43,9 +33,29 @@ class DomainStatus extends React.Component {
 
 		const cardClasses = classNames( 'domain-status__card', statusClass );
 
+		const desktopBreakpoints = [
+			[ 60, 'xxl' ],
+			[ 51, 'xl' ],
+			[ 45, 'l' ],
+			[ 39, 'm' ],
+			[ 0, 's' ],
+		];
+		const mobileBreakpoints = [
+			[ 37, 'xxl' ],
+			[ 31, 'xl' ],
+			[ 26, 'l' ],
+			[ 22, 'm' ],
+			[ 0, 's' ],
+		];
+
+		const headerClasses = classNames(
+			'mobile-' + this.getBreakPoint( header.length, mobileBreakpoints ),
+			'desktop-' + this.getBreakPoint( header.length, desktopBreakpoints )
+		);
+
 		return (
 			<Card compact={ true } className={ cardClasses }>
-				<h2 className={ `font-size-${ this.getHeaderFontSize( header ) }` }>{ header }</h2>
+				<h2 className={ headerClasses }>{ header }</h2>
 				<div className="domain-status__icon">
 					<MaterialIcon icon={ icon } /> { statusText }
 				</div>

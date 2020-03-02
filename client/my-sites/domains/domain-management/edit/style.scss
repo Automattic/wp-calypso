@@ -68,17 +68,34 @@
 			font-size: 32px;
 			overflow: hidden;
 
-			&.font-size-28 {
-				font-size: 28px;
+			@include breakpoint( '<480px' ) {
+				&.mobile-m {
+					font-size: 28px;
+				}
+				&.mobile-l {
+					font-size: 24px;
+				}
+				&.mobile-xl {
+					font-size: 20px;
+				}
+				&.mobile-xxl {
+					font-size: 16px;
+				}
 			}
-			&.font-size-24 {
-				font-size: 24px;
-			}
-			&.font-size-20 {
-				font-size: 20px;
-			}
-			&.font-size-16 {
-				font-size: 16px;
+
+			@include breakpoint( '>480px' ) {
+				&.desktop-m {
+					font-size: 28px;
+				}
+				&.desktop-l {
+					font-size: 24px;
+				}
+				&.desktop-xl {
+					font-size: 20px;
+				}
+				&.desktop-xxl {
+					font-size: 16px;
+				}
 			}
 		}
 
