@@ -11,6 +11,7 @@ import { times } from 'lodash';
  * Internal Dependencies
  */
 import {
+	getName,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
@@ -29,6 +30,7 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isConciergeSession,
+	isJetpackPlan,
 	isPlan,
 } from 'lib/products-values';
 import { getPlan } from 'lib/plans';
@@ -39,7 +41,7 @@ import { getUser } from 'state/users/selectors';
 import { managePurchase } from '../paths';
 import AutoRenewToggle from './auto-renew-toggle';
 import PaymentLogo from 'components/payment-logo';
-import { JETPACK_SUPPORT } from 'lib/url/support';
+import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'lib/url/support';
 import UserItem from 'components/user';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
@@ -246,31 +248,52 @@ class PurchaseMeta extends Component {
 		);
 	}
 
-	renderReconnectToRenewMessage() {
-		const { translate } = this.props;
+	renderRenewErrorMessage() {
+		const { isJetpack, purchase, translate } = this.props;
 
 		if ( this.props.site ) {
 			return null;
 		}
 
+		if ( isJetpack ) {
+			return (
+				<div className="manage-purchase__footnotes">
+					{ translate(
+						'The Jetpack Plan for %(siteSlug)s is expired, and the site is no longer connected to WordPress.com. ' +
+							'To renew this plan, please reconnect %(siteSlug)s to your WordPress.com account, then complete your purchase. ' +
+							'Now sure how to reconnect? {{supportPageLink}}Here are the instructions{{/supportPageLink}}.',
+						{
+							args: {
+								siteSlug: this.props.purchase.domain,
+							},
+							components: {
+								supportPageLink: (
+									<a
+										href={
+											JETPACK_SUPPORT + 'reconnecting-reinstalling-jetpack/#reconnecting-jetpack'
+										}
+									/>
+								),
+							},
+						}
+					) }
+				</div>
+			);
+		}
+
 		return (
 			<div className="manage-purchase__footnotes">
 				{ translate(
-					'The Jetpack Plan for %(siteSlug)s is expired, and the site is no longer connected to WordPress.com. ' +
-						'To renew this plan, please reconnect %(siteSlug)s to your WordPress.com account, then complete your purchase. ' +
-						'Now sure how to reconnect? {{supportPageLink}}Here are the instructions{{/supportPageLink}}.',
+					'You are the owner of %(purchaseName)s but because you are no longer a user on %(siteSlug)s, ' +
+						'renewing it will require staff assistance. Please {{contactSupportLink}}contact support{{/contactSupportLink}}, ' +
+						'and consider transferring this purchase to another active user on %(siteSlug)s to avoid this issue in the future.',
 					{
 						args: {
+							purchaseName: getName( purchase ),
 							siteSlug: this.props.purchase.domain,
 						},
 						components: {
-							supportPageLink: (
-								<a
-									href={
-										JETPACK_SUPPORT + 'reconnecting-reinstalling-jetpack/#reconnecting-jetpack'
-									}
-								/>
-							),
+							contactSupportLink: <a href={ CALYPSO_CONTACT } />,
 						},
 					}
 				) }
@@ -385,7 +408,7 @@ class PurchaseMeta extends Component {
 					{ this.renderExpiration() }
 					{ this.renderPaymentDetails() }
 				</ul>
-				{ this.renderReconnectToRenewMessage() }
+				{ this.renderRenewErrorMessage() }
 			</>
 		);
 	}
@@ -401,5 +424,6 @@ export default connect( ( state, { purchaseId } ) => {
 		site: purchase ? getSite( state, purchase.siteId ) : null,
 		owner: purchase ? getUser( state, purchase.userId ) : null,
 		isAutorenewalEnabled: purchase ? ! isExpiring( purchase ) : null,
+		isJetpack: purchase && isJetpackPlan( purchase ),
 	};
 } )( localize( withLocalizedMoment( PurchaseMeta ) ) );
