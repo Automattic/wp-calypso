@@ -10,7 +10,12 @@ import { compose } from '@wordpress/compose';
 import { Button, Modal, Spinner, IconButton } from '@wordpress/components';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
-import { parse as parseBlocks, createBlock, registerBlockType } from '@wordpress/blocks';
+import {
+	parse as parseBlocks,
+	createBlock,
+	registerBlockType,
+	unregisterBlockType,
+} from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -165,6 +170,10 @@ class PageTemplateModal extends Component {
 		}
 	}
 
+	componentWillUnmount() {
+		unregisterBlockType( 'a8c/spt-template-post-title' );
+	}
+
 	static getDefaultSelectedTemplate = props => {
 		const blankTemplate = get( props.templates, [ 0, 'slug' ] );
 		let previouslyChosenTemplate = props._starter_page_template;
@@ -193,6 +202,8 @@ class PageTemplateModal extends Component {
 		// Track selection and mark post as using a template in its postmeta.
 		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
 		this.props.saveTemplateChoice( slug );
+
+		unregisterBlockType( 'a8c/spt-template-post-title' );
 
 		// Check to see if this is a blank template selection
 		// and reset the template if so.
@@ -279,6 +290,8 @@ class PageTemplateModal extends Component {
 	};
 
 	closeModal = event => {
+		unregisterBlockType( 'a8c/spt-template-post-title' );
+
 		// Check to see if the Blur event occurred on the buttons inside of the Modal.
 		// If it did then we don't want to dismiss the Modal for this type of Blur.
 		if ( event.target.matches( 'button.template-selector-item__label' ) ) {
