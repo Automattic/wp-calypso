@@ -420,6 +420,7 @@ export class List extends React.Component {
 					onSelect={ this.handleUpdatePrimaryDomain }
 					onClick={ this.goToEditDomainRoot }
 					shouldUpgradeToMakePrimary={ this.shouldUpgradeToMakeDomainPrimary( domain ) }
+					onUpgradeClick={ this.goToPlans }
 				/>
 			);
 		} );
@@ -431,6 +432,11 @@ export class List extends React.Component {
 		} else {
 			page( domainManagementTransferIn( this.props.selectedSite.slug, domain.name ) );
 		}
+	};
+
+	goToPlans = () => {
+		this.props.upsellUpgradeClick();
+		page( `/plans/${ this.props.selectedSite.slug }` );
 	};
 }
 
@@ -454,6 +460,9 @@ const disablePrimaryDomainMode = () =>
 		),
 		recordTracksEvent( 'calypso_domain_management_list_disable_primary_mode_click' )
 	);
+
+const upsellUpgradeClick = () =>
+	recordTracksEvent( 'calypso_domain_management_make_primary_plan_upgrade_click' );
 
 const changePrimary = domain =>
 	composeAnalytics(
@@ -502,6 +511,7 @@ export default connect(
 			changePrimary: domain => dispatch( changePrimary( domain ) ),
 			successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
+			upsellUpgradeClick: () => dispatch( upsellUpgradeClick() ),
 		};
 	}
 )( localize( withLocalizedMoment( List ) ) );

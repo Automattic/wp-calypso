@@ -19,6 +19,7 @@ import { type as domainTypes, gdprConsentStatus } from 'lib/domains/constants';
 import Spinner from 'components/spinner';
 import { withLocalizedMoment } from 'components/localized-moment';
 import Button from '@automattic/components/src/button';
+import TrackComponentView from 'lib/analytics/track-component-view';
 
 class ListItem extends React.PureComponent {
 	static propTypes = {
@@ -29,8 +30,9 @@ class ListItem extends React.PureComponent {
 		onClick: PropTypes.func.isRequired,
 		onSelect: PropTypes.func.isRequired,
 		selectionIndex: PropTypes.number,
-		shouldUpgradeToMakePrimary: PropTypes.bool,
 		isSelected: PropTypes.bool,
+		shouldUpgradeToMakePrimary: PropTypes.bool.isRequired,
+		onUpgradeClick: PropTypes.func.isRequired,
 	};
 
 	renderContent() {
@@ -72,7 +74,10 @@ class ListItem extends React.PureComponent {
 		return (
 			<div className="domain-management-list-item__upsell">
 				<span>{ translate( 'Upgrade to a paid plan to make this your primary domain' ) }</span>
-				<Button primary>{ translate( 'Upgrade' ) }</Button>
+				<Button primary onClick={ this.props.onUpgradeClick }>
+					{ translate( 'Upgrade' ) }
+				</Button>
+				<TrackComponentView eventName="calypso_domain_management_list_change_primary_upgrade_impression" />
 			</div>
 		);
 	}
