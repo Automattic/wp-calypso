@@ -28,16 +28,10 @@ const ServerConnectionIndicator = ( { isConnected }: Props ) => {
 		? translate( 'Server Status: Connected' )
 		: translate( 'Server Status: Not connected' );
 
-	/* @todo: figure out which type of backup we are */
-	// const message = isConnected
-	// 	? translate( 'One-click restores are enabled.' )
-	// 	: translate(
-	// 			'Enter your server credentials to enable one-click restores for [Real-time] Backups.'
-	// 	  );
-
 	const message = isConnected
 		? translate( 'One-click restores are enabled.' )
-		: translate( 'Enter your server credentials to enable one-click restores.' );
+		: // @todo: determine real-time vs daily backup
+		  translate( 'Enter your server credentials to enable one-click restores for Daily Backups.' );
 
 	const imgSrc = `/calypso/images/jetpack/jetpack-connection-${ isConnected ? 'good' : 'bad' }.svg`;
 
