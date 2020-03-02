@@ -68,11 +68,9 @@ describe( 'MediaUtils', () => {
 		} );
 
 		test( 'should simply return the URL if media is transient', () => {
-			let url;
-
 			media.transient = true;
 
-			url = MediaUtils.url( media, {
+			const url = MediaUtils.url( media, {
 				maxWidth: 450,
 			} );
 
@@ -355,8 +353,8 @@ describe( 'MediaUtils', () => {
 		} );
 
 		test( "should return false if the site doesn't support the item's extension", () => {
-			let item = { extension: 'avi' },
-				isSupported = MediaUtils.isSupportedFileTypeForSite( item, site );
+			const item = { extension: 'avi' };
+			const isSupported = MediaUtils.isSupportedFileTypeForSite( item, site );
 
 			expect( isSupported ).to.be.false;
 		} );
@@ -376,15 +374,15 @@ describe( 'MediaUtils', () => {
 		} );
 
 		test( "should return true if the site supports the item's extension", () => {
-			let item = { extension: 'pdf' },
-				isSupported = MediaUtils.isSupportedFileTypeForSite( item, site );
+			const item = { extension: 'pdf' };
+			const isSupported = MediaUtils.isSupportedFileTypeForSite( item, site );
 
 			expect( isSupported ).to.be.true;
 		} );
 
 		test( 'should return true despite even if different case', () => {
-			let item = { extension: 'PdF' },
-				isSupported = MediaUtils.isSupportedFileTypeForSite( item, site );
+			const item = { extension: 'PdF' };
+			const isSupported = MediaUtils.isSupportedFileTypeForSite( item, site );
 
 			expect( isSupported ).to.be.true;
 		} );
