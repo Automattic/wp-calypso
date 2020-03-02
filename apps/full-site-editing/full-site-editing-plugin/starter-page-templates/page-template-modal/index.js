@@ -10,7 +10,7 @@ import { compose } from '@wordpress/compose';
 import { Button, Modal, Spinner, IconButton } from '@wordpress/components';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
-import { parse as parseBlocks, createBlock } from '@wordpress/blocks';
+import { parse as parseBlocks, createBlock, registerBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -25,6 +25,40 @@ import mapBlocksRecursively from './utils/map-blocks-recursively';
 /* eslint-enable import/no-extraneous-dependencies */
 
 const DEFAULT_HOMEPAGE_TEMPLATE = 'maywood';
+
+/*
+ * Register a `a8c/spt-template-post-title` used only
+ * for the Large Preview of the template.
+ * This block will be unregistered once the template is inserted,
+ * the component unmounted, modal closed, etc...
+ */
+registerBlockType( 'a8c/spt-template-post-title', {
+	title: __( 'SPT Template post title' ),
+	description: __( 'Template post title.' ),
+	category: 'layout',
+	attributes: {
+		title: {
+			type: 'string',
+			default: '',
+		},
+	},
+	edit: ( { attributes } ) => {
+		const { title } = attributes;
+
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		return (
+			<div className="editor-post-title">
+				<div className="wp-block editor-post-title__block">
+					<div>
+						<textarea className="editor-post-title__input" defaultValue={ title } />
+					</div>
+				</div>
+			</div>
+		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
+	},
+	save: () => null,
+} );
 
 class PageTemplateModal extends Component {
 	state = {
@@ -51,10 +85,8 @@ class PageTemplateModal extends Component {
 							 * It will be remove when inserting the template
 							 * blocks into the editor.
 							 */
-							createBlock( 'core/heading', {
-								content: title,
-								align: 'center',
-								level: 1,
+							createBlock( 'a8c/spt-template-post-title', {
+								title,
 							} ),
 							...parseBlocks( replacePlaceholders( content, this.props.siteInformation ) ),
 					  ]
