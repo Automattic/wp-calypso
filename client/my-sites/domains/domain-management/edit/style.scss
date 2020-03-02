@@ -66,6 +66,20 @@
 	.domain-status__card {
 		h2 {
 			font-size: 32px;
+			overflow: hidden;
+
+			&.font-size-28 {
+				font-size: 28px;
+			}
+			&.font-size-24 {
+				font-size: 24px;
+			}
+			&.font-size-20 {
+				font-size: 20px;
+			}
+			&.font-size-16 {
+				font-size: 16px;
+			}
 		}
 
 		> .domain-status__icon {

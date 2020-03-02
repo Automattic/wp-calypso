@@ -20,6 +20,24 @@ class DomainStatus extends React.Component {
 		children: PropTypes.any,
 	};
 
+	getHeaderFontSize( header ) {
+		const headerLength = header.length;
+
+		if ( headerLength > 60 ) {
+			return 16;
+		}
+		if ( headerLength > 51 ) {
+			return 20;
+		}
+		if ( headerLength > 45 ) {
+			return 24;
+		}
+		if ( headerLength > 39 ) {
+			return 28;
+		}
+		return 32;
+	}
+
 	render() {
 		const { header, icon, statusText, statusClass, children } = this.props;
 
@@ -27,7 +45,7 @@ class DomainStatus extends React.Component {
 
 		return (
 			<Card compact={ true } className={ cardClasses }>
-				<h2>{ header }</h2>
+				<h2 className={ `font-size-${ this.getHeaderFontSize( header ) }` }>{ header }</h2>
 				<div className="domain-status__icon">
 					<MaterialIcon icon={ icon } /> { statusText }
 				</div>
