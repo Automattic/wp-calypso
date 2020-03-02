@@ -28,55 +28,28 @@ export function generateFlows( {
 		},
 
 		business: {
-			steps: [
-				'user',
-				'site-type',
-				'site-topic-with-preview',
-				'site-title-with-preview',
-				'domains-with-preview',
-				'plans-business',
-			],
+			steps: [ 'user', 'domains', 'plans-business' ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
 			lastModified: '2019-08-05',
 		},
 
 		premium: {
-			steps: [
-				'user',
-				'site-type',
-				'site-topic-with-preview',
-				'site-title-with-preview',
-				'domains-with-preview',
-				'plans-premium',
-			],
+			steps: [ 'user', 'domains', 'plans-premium' ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the premium plan to the users cart.',
 			lastModified: '2019-08-05',
 		},
 
 		personal: {
-			steps: [
-				'user',
-				'site-type',
-				'site-topic-with-preview',
-				'site-title-with-preview',
-				'domains-with-preview',
-				'plans-personal',
-			],
+			steps: [ 'user', 'domains', 'plans-personal' ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the personal plan to the users cart.',
-			lastModified: '2019-08-05',
+			lastModified: '2020-03-02',
 		},
 
 		free: {
-			steps: [
-				'user',
-				'site-type',
-				'site-topic-with-preview',
-				'site-title-with-preview',
-				'domains-with-preview',
-			],
+			steps: [ 'user', 'domains' ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and default to the free plan.',
 			lastModified: '2019-08-05',
