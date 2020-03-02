@@ -239,3 +239,37 @@
 .memberships__subscriber-actions {
 	float: right;
 }
+
+
+/**
+ * Delete Site Options
+ */
+
+.memberships__settings-section-title {
+	margin-bottom: 4px;
+	font-size: 14px;
+	line-height: 18px;
+	color: var( --color-neutral-70 );
+
+	&.is-warning {
+		color: var( --color-error );
+	}
+}
+
+.memberships__settings-section-desc {
+	margin-bottom: 0;
+	font-size: 13px;
+	color: var( --color-text-subtle );
+	font-style: italic;
+}
+
+.memberships__settings-content {
+	flex: 0 1 auto;
+}
+
+.memberships__settings-link,
+.memberships__settings-link:hover,
+.memberships__settings-link:active,
+.memberships__settings-link:visited {
+	color: inherit;
+}

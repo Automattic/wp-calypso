@@ -13,10 +13,11 @@ import { saveAs } from 'browser-filesaver';
  */
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { Card, Button, CompactCard } from '@automattic/components';
+import { Card, Button, CompactCard, Dialog } from '@automattic/components';
 import InfiniteScroll from 'components/infinite-scroll';
 import QueryMembershipsEarnings from 'components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'components/data/query-memberships-settings';
+import { requestDisconnectStripeAccount } from 'state/memberships/settings/actions';
 import { requestSubscribers } from 'state/memberships/subscribers/actions';
 import { decodeEntities } from 'lib/formatting';
 import Gravatar from 'components/gravatar';
@@ -44,6 +45,9 @@ class MembershipsSection extends Component {
 		super( props );
 		this.downloadSubscriberList = this.downloadSubscriberList.bind( this );
 	}
+	state = {
+		disconnectedConnectedAccountId: null,
+	};
 	componentDidMount() {
 		this.fetchNextSubscriberPage( false, true );
 	}
@@ -122,6 +126,18 @@ class MembershipsSection extends Component {
 			this.props.requestSubscribers( this.props.siteId, fetched );
 		}
 	}
+
+	onCloseDisconnectStripeAccount = reason => {
+		if ( reason === 'disconnect' ) {
+			this.props.requestDisconnectStripeAccount(
+				this.props.siteId,
+				this.props.connectedAccountId,
+				this.props.translate( 'Please wait, disconnecting Stripe\u2026' ),
+				this.props.translate( 'Stripe account is disconnected.' )
+			);
+		}
+		this.setState( { disconnectedConnectedAccountId: null } );
+	};
 
 	downloadSubscriberList( event ) {
 		event.preventDefault();
@@ -221,7 +237,7 @@ class MembershipsSection extends Component {
 		);
 	}
 
-	renderProducts() {
+	renderSettings() {
 		return (
 			<div>
 				<SectionHeader label={ this.props.translate( 'Settings' ) } />
@@ -237,6 +253,55 @@ class MembershipsSection extends Component {
 							.join( ', ' ) }
 					</div>
 				</CompactCard>
+				<CompactCard
+					onClick={ () =>
+						this.setState( { disconnectedConnectedAccountId: this.props.connectedAccountId } )
+					}
+					className="memberships__settings-link"
+				>
+					<div className="memberships__settings-content">
+						<p className="memberships__settings-section-title is-warning">
+							{ this.props.translate( 'Disconnect Stripe Account' ) }
+						</p>
+						<p className="memberships__settings-section-desc">
+							{ this.props.translate( 'Disconnect Recurring Payments from your Stripe account' ) }
+						</p>
+					</div>
+				</CompactCard>
+				<Dialog
+					isVisible={ !! this.state.disconnectedConnectedAccountId }
+					buttons={ [
+						{
+							label: this.props.translate( 'Cancel' ),
+							action: 'cancel',
+						},
+						{
+							label: this.props.translate( 'Disconnect Recurring Payments from Stripe' ),
+							isPrimary: true,
+							action: 'disconnect',
+						},
+					] }
+					onClose={ this.onCloseDisconnectStripeAccount }
+				>
+					<h1>{ this.props.translate( 'Confirmation' ) }</h1>
+					<p>
+						{ this.props.translate(
+							'Do you want to disconnect Recurring Payments from your Stripe account?'
+						) }
+					</p>
+					<Notice
+						text={ this.props.translate(
+							'Once you disconnect Recurring Payments from Stripe, new subscribers won’t be able to sign up and existing subscriptions will stop working.{{br/}}{{strong}}Disconnecting your Stripe account here will remove it from all your WordPress.com and Jetpack sites.{{/strong}}',
+							{
+								components: {
+									br: <br />,
+									strong: <strong />,
+								},
+							}
+						) }
+						showDismiss={ false }
+					/>
+				</Dialog>
 			</div>
 		);
 	}
@@ -343,7 +408,7 @@ class MembershipsSection extends Component {
 				) }
 				{ this.renderEarnings() }
 				{ this.renderSubscriberList() }
-				{ this.renderProducts() }
+				{ this.renderSettings() }
 			</div>
 		);
 	}
@@ -476,6 +541,6 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps, { requestSubscribers } )(
+export default connect( mapStateToProps, { requestSubscribers, requestDisconnectStripeAccount } )(
 	localize( withLocalizedMoment( MembershipsSection ) )
 );
