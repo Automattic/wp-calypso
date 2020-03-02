@@ -23,7 +23,6 @@ import PickAPlanPage from '../lib/pages/signup/pick-a-plan-page.js';
 import CreateYourAccountPage from '../lib/pages/signup/create-your-account-page.js';
 import CheckOutPage from '../lib/pages/signup/checkout-page';
 import ImportFromURLPage from '../lib/pages/signup/import-from-url-page';
-import SiteTypePage from '../lib/pages/signup/site-type-page';
 import LoginPage from '../lib/pages/login-page';
 import MagicLoginPage from '../lib/pages/magic-login-page';
 import ReaderPage from '../lib/pages/reader-page';
@@ -42,7 +41,6 @@ import SecurePaymentComponent from '../lib/components/secure-payment-component.j
 import NavBarComponent from '../lib/components/nav-bar-component';
 import SidebarComponent from '../lib/components/sidebar-component';
 import NoSitesComponent from '../lib/components/no-sites-component';
-import StepWrapperComponent from '../lib/components/step-wrapper-component';
 
 import * as SlackNotifier from '../lib/slack-notifier';
 
@@ -939,23 +937,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 				passwordForTestAccounts
 			);
 		} );
-
-		step(
-			'Can see the "Site Type" page, and select online store, and switch flows',
-			async function() {
-				const siteTypePage = await SiteTypePage.Expect( driver );
-				return await siteTypePage.selectOnlineStoreType();
-			}
-		);
-
-		step(
-			'Can see the domains page, and click the back navigation link, returning to original flow',
-			async function() {
-				await FindADomainComponent.Expect( driver );
-				const stepWrapperComponent = await StepWrapperComponent.Expect( driver );
-				await stepWrapperComponent.goBack();
-			}
-		);
 
 		step(
 			'Can then see the domains page, and can search for a blog name, can see and select a paid .live address in results ',
