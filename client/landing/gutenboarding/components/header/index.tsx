@@ -37,11 +37,11 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 
 	const newSite = useSelect( select => select( SITE_STORE ).getNewSite() );
 
-	const { domain, selectedDesign, siteTitle, siteVertical, shouldCreate } = useSelect( select =>
+	const { domain, selectedDesign, siteTitle, siteVertical } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
 	const hasSelectedDesign = !! selectedDesign;
-	const { setDomain, resetOnboardStore, setShouldCreate } = useDispatch( ONBOARD_STORE );
+	const { setDomain, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
 	const [ domainSearch ] = useDebounce( siteTitle, selectorDebounce );
 	const freeDomainSuggestion = useSelect(
@@ -108,16 +108,14 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 	);
 
 	const handleSignup = () => {
-		setShouldCreate( true );
 		setShowSignupDialog( true );
 	};
 
 	useEffect( () => {
-		if ( shouldCreate && newUser && newUser.bearerToken && newUser.username ) {
+		if ( newUser && newUser.bearerToken && newUser.username ) {
 			handleCreateSite( newUser.username, newUser.bearerToken );
-			setShouldCreate( false );
 		}
-	}, [ shouldCreate, newUser, handleCreateSite, setShouldCreate ] );
+	}, [ newUser, handleCreateSite ] );
 
 	useEffect( () => {
 		if ( newSite ) {
@@ -167,7 +165,6 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 							onClick={ () =>
 								currentUser ? handleCreateSite( currentUser.username ) : handleSignup()
 							}
-							disabled={ shouldCreate }
 						>
 							{ NO__( 'Create my site' ) }
 						</Button>

@@ -35,12 +35,9 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const { __: NO__, _x: NO_x } = useI18n();
 	const [ emailVal, setEmailVal ] = useState( '' );
 	const { createAccount } = useDispatch( USER_STORE );
-	const { setShouldCreate } = useDispatch( ONBOARD_STORE );
 	const isFetchingNewUser = useSelect( select => select( USER_STORE ).isFetchingNewUser() );
 	const newUserError = useSelect( select => select( USER_STORE ).getNewUserError() );
-	const { shouldCreate, siteTitle, siteVertical } = useSelect( select =>
-		select( ONBOARD_STORE )
-	).getState();
+	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ) ).getState();
 	const langParam = useLangRouteParam();
 
 	useEffect( () => {
@@ -67,14 +64,6 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		if ( success ) {
 			onRequestClose();
 		}
-	};
-
-	const handleClose = () => {
-		if ( shouldCreate ) {
-			setShouldCreate( false );
-		}
-
-		onRequestClose();
 	};
 
 	const tos = __experimentalCreateInterpolateElement(
@@ -105,8 +94,9 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		<Modal
 			className="signup-form"
 			title={ NO__( 'Sign up to save your changes' ) }
-			onRequestClose={ handleClose }
+			onRequestClose={ onRequestClose }
 			focusOnMount={ false }
+			isDismissible={ ! isFetchingNewUser }
 		>
 			<form onSubmit={ handleSignUp }>
 				<TextControl
