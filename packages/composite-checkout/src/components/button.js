@@ -152,29 +152,6 @@ function getRollOverColor( { buttonState, buttonType, theme } ) {
 	}
 }
 
-function getBackgroundAccentColor( { buttonState, buttonType, theme } ) {
-	const { colors } = theme;
-	switch ( buttonState ) {
-		case 'primary':
-			if ( buttonType === 'apple-pay' ) {
-				return colors.applePayButtonRollOverColor;
-			}
-			if ( buttonType === 'paypal' ) {
-				return colors.paypalGoldHover;
-			}
-			return colors.primaryOver;
-		case 'secondary':
-			return colors.highlightOver;
-		case 'disabled':
-			return colors.disabledButtons;
-		case 'text-button':
-		case 'borderless':
-			return 'none';
-		default:
-			return 'none';
-	}
-}
-
 function getRollOverBorderColor( { buttonState, buttonType, theme } ) {
 	const { colors } = theme;
 	switch ( buttonState ) {
@@ -226,6 +203,29 @@ function getBackgroundColor( { buttonType, buttonState, theme } ) {
 			return colors.disabledPaymentButtons;
 		case 'secondary':
 			return colors.highlight;
+		default:
+			return 'none';
+	}
+}
+
+function getBackgroundAccentColor( { buttonState, buttonType, theme } ) {
+	const { colors } = theme;
+	switch ( buttonState ) {
+		case 'primary':
+			if ( buttonType === 'apple-pay' ) {
+				return colors.applePayButtonRollOverColor;
+			}
+			if ( buttonType === 'paypal' ) {
+				return colors.paypalGoldHover;
+			}
+			return colors.primaryOver;
+		case 'secondary':
+			return colors.highlightOver;
+		case 'disabled':
+			return colors.disabledPaymentButtonsAccent;
+		case 'text-button':
+		case 'borderless':
+			return 'none';
 		default:
 			return 'none';
 	}

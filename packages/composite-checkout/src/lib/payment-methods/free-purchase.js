@@ -151,6 +151,7 @@ function FreePurchaseSubmitButton( { disabled } ) {
 			disabled={ disabled }
 			onClick={ onClick }
 			buttonState={ disabled ? 'disabled' : 'primary' }
+			isBusy={ 'submitting' === formStatus }
 			fullWidth
 		>
 			{ buttonString }
