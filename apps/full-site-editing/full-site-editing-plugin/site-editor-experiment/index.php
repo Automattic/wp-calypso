@@ -127,15 +127,6 @@ function fse_plugin_edit_site_init( $hook ) {
 	apply_filters( 'template_include', null );
 	$settings['templateId'] = $_wp_current_template_id;
 
-	// @DOTCOM_CUSTOMIZATION - set up apiFetch properly for dotcom.
-	// NOT currently calling the script we want.
-	wp_enqueue_script(
-		'gutenberg-wpcom-apifetch',
-		'/wp-content/plugins/gutenberg-wpcom/gutenberg-wpcom-apifetch.js',
-		array( 'gutenberg-wpcom-script', 'jquery.wpcom-proxy-request', 'lodash', 'wp-api-fetch', 'wp-polyfill', 'wp-url' ),
-		time()
-	);
-
 	// Initialize editor.
 	wp_add_inline_script(
 		'wp-edit-site',
@@ -153,6 +144,9 @@ function fse_plugin_edit_site_init( $hook ) {
 		'wp.blocks.unstable__bootstrapServerSideBlockDefinitions(' . wp_json_encode( get_block_editor_server_block_settings() ) . ');'
 	);
 
+	// @DOTCOM_CUSTOMIZATION - trigger enqueue_block_editor_assets to properly set apiFetch for dotcom etc.
+	do_action( 'enqueue_block_editor_assets' );
+
 	wp_enqueue_script( 'wp-edit-site' );
 	wp_enqueue_script( 'wp-format-library' );
 	wp_enqueue_style( 'wp-edit-site' );
@@ -160,7 +154,7 @@ function fse_plugin_edit_site_init( $hook ) {
 }
 
 /**
- * Override core's site editor init function.
+ * Override core's site editor init function with our own.
  */
 function override_site_editor_init() {
 	remove_action( 'admin_enqueue_scripts', 'gutenberg_edit_site_init' );
