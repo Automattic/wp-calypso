@@ -1,9 +1,2 @@
-module.exports = {
-	parserOptions: {
-		sourceType: 'script',
-	},
-	rules: {
-		'import/no-extraneous-dependencies': [ 'error', { packageDir: __dirname } ],
-		'import/no-nodejs-modules': 0,
-	},
-};
+const { generateForServer } = require( '../generate-eslintrc-for-packages' );
+module.exports = generateForServer( __dirname );
