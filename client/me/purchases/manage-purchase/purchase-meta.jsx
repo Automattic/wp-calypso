@@ -11,7 +11,6 @@ import { times } from 'lodash';
  * Internal Dependencies
  */
 import {
-	getName,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
@@ -248,7 +247,7 @@ class PurchaseMeta extends Component {
 	}
 
 	renderReconnectToRenewMessage() {
-		const { purchase, translate } = this.props;
+		const { translate } = this.props;
 
 		if ( this.props.site ) {
 			return null;
@@ -257,12 +256,11 @@ class PurchaseMeta extends Component {
 		return (
 			<div className="manage-purchase__footnotes">
 				{ translate(
-					'You are the owner of %(purchaseName)s, but your site %(siteSlug)s is no longer connected to WordPress.com. ' +
-						'To renew %(purchaseName)s, you have to reconnect the site to your WordPress.com account first. ' +
-						'Please, check out this {{supportPageLink}}support page{{/supportPageLink}} for information on how to reconnect.',
+					'The Jetpack Plan for %(siteSlug)s is expired, and the site is no longer connected to WordPress.com. ' +
+						'To renew this plan, please reconnect %(siteSlug)s to your WordPress.com account, then complete your purchase. ' +
+						'Now sure how to reconnect? {{supportPageLink}}Here are the instructions{{/supportPageLink}}.',
 					{
 						args: {
-							purchaseName: getName( purchase ),
 							siteSlug: this.props.purchase.domain,
 						},
 						components: {
