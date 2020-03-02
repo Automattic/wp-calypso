@@ -79,7 +79,7 @@ const loader = function() {
 			printSectionsAndPaths( allSections );
 		}
 	} else {
-		console.log( `[sections-loader] used ${ sections.count } of section.` );
+		console.log( `[sections-loader] used ${ sections.length } of section.` );
 		printSectionsAndPaths( sections );
 	}
 
