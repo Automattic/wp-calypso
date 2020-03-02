@@ -20,10 +20,9 @@
 	},
 	"files": [
 		"dist",
-		"types",
 		"src"
 	],
-	"types": "types",
+	"types": "dist/types",
 	"dependencies": {},
 	"scripts": {
 		"clean": "npx rimraf dist types",
