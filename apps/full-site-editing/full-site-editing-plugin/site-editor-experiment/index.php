@@ -67,7 +67,7 @@ function add_site_editor_plugin_page() {
  * Copy of core function from 7.3.0 - gutenberg_edit_site_init
  *
  * Currently overriding to change hook requirement to allow Site Editor at top level sidebar.
- * And to troubleshoot the wp.editSite.initialize CORS error.
+ * And to enqueue dotcom block editor assets before other scripts.
  *
  * Any changes will be prefixed with @DOTCOM_CUSTOMIZATION comment.
  *
