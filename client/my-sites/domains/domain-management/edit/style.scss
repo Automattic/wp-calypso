@@ -72,6 +72,8 @@
 			font-size: 16px;
 			display: flex;
 			align-items: center;
+			border-bottom: 0;
+			padding-bottom: 0;
 			> svg {
 				margin-right: 5px;
 			}
@@ -79,10 +81,14 @@
 
 		> div {
 			margin-bottom: 1.5em;
+			border-bottom: 1px solid #c3c4c7;
+			padding-bottom: 1.5em;
 		}
 
 		> div:last-child {
 			margin-bottom: 0;
+			border-bottom: 0;
+			padding-bottom: 0.5em;
 		}
 	}
 
