@@ -16,8 +16,22 @@ export const requestSettings = siteId => ( {
 	type: MEMBERSHIPS_SETTINGS,
 } );
 
-export const requestDisconnectStripeAccount = ( siteId, connectedAccountId, noticeText ) => {
+export const requestDisconnectStripeAccount = (
+	siteId,
+	connectedAccountId,
+	noticeTextOnProcessing,
+	noticeTextOnSuccess
+) => {
 	return dispatch => {
+		dispatch( {
+			type: NOTICE_CREATE,
+			notice: {
+				duration: 10000,
+				text: noticeTextOnProcessing,
+				status: 'is-warning',
+			},
+		} );
+
 		return wpcom.req
 			.get( `/me/connected_account/stripe/${ connectedAccountId }/disconnect` )
 			.then( () => {
@@ -29,7 +43,7 @@ export const requestDisconnectStripeAccount = ( siteId, connectedAccountId, noti
 					type: NOTICE_CREATE,
 					notice: {
 						duration: 5000,
-						text: noticeText,
+						text: noticeTextOnSuccess,
 						status: 'is-success',
 					},
 				} );

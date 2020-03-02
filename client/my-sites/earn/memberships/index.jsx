@@ -132,6 +132,7 @@ class MembershipsSection extends Component {
 			this.props.requestDisconnectStripeAccount(
 				this.props.siteId,
 				this.props.connectedAccountId,
+				this.props.translate( 'Please wait, disconnecting Stripe\u2026' ),
 				this.props.translate( 'Stripe account is disconnected.' )
 			);
 		}
@@ -290,7 +291,13 @@ class MembershipsSection extends Component {
 					</p>
 					<Notice
 						text={ this.props.translate(
-							'Once you disconnect Recurring Payments from Stripe, new subscribers won’t be able to sign up and existing subscriptions will stop working.'
+							'Once you disconnect Recurring Payments from Stripe, new subscribers won’t be able to sign up and existing subscriptions will stop working.{{br/}}{{strong}}Disconnecting your Stripe account here will remove it from all your WordPress.com and Jetpack sites.{{/strong}}',
+							{
+								components: {
+									br: <br />,
+									strong: <strong />,
+								},
+							}
 						) }
 						showDismiss={ false }
 					/>
