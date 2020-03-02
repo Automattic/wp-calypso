@@ -67,6 +67,7 @@
 		h2 {
 			font-size: 32px;
 			overflow: hidden;
+			text-overflow: ellipsis;
 
 			@include breakpoint( '<480px' ) {
 				&.mobile-m {
