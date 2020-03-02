@@ -61,7 +61,7 @@
 	},
 	"scripts": {
 		"analyze-bundles": "npm run build-client-stats && webpack-bundle-analyzer client/stats.json public/evergreen -h 127.0.0.1 -p 9898 -s gzip",
-		"analyze-icfy": "npm run build-client-stats && node --max-old-space-size=4096 bin/icfy-analyze.js && mv client/stats.json client/chart.json \"$CIRCLE_ARTIFACTS/icfy\"",
+		"analyze-icfy": "npm run build-client-stats && node --max-old-space-size=4096 bin/icfy-analyze.js",
 		"autoprefixer": "postcss -u autoprefixer -r --no-map --config packages/calypso-build/postcss.config.js",
 		"postcss": "postcss -r --config packages/calypso-build/postcss.config.js",
 		"prebuild": "npm run install-if-deps-outdated",
