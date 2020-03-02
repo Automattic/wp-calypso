@@ -1179,23 +1179,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			);
 		} );
 
-		step( 'Can see the "Site Type" page, and enter some site information', async function() {
-			const siteTypePage = await SiteTypePage.Expect( driver );
-			return await siteTypePage.selectBlogType();
-		} );
-
-		step( 'Can see the "Site Topic" page, and enter the site topic', async function() {
-			const siteTopicPage = await SiteTopicPage.Expect( driver );
-			await siteTopicPage.enterSiteTopic( 'Tech Blog' );
-			return await siteTopicPage.submitForm();
-		} );
-
-		step( 'Can see the "Site title" page, and enter the site title', async function() {
-			const siteTitlePage = await SiteTitlePage.Expect( driver );
-			await siteTitlePage.enterSiteTitle( blogName );
-			return await siteTitlePage.submitForm();
-		} );
-
 		step(
 			'Can then see the domains page, and Can search for a blog name, can see and select a free .wordpress address in the results',
 			async function() {
