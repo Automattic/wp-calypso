@@ -61,7 +61,7 @@ class TinyMCEDropZone extends React.Component {
 		// vital properties that were part of the original event.
 		//
 		// See: https://core.trac.wordpress.org/ticket/19845#comment:36
-		window.dispatchEvent( new CustomEvent( event.type, { detail: event } ) );
+		window.dispatchEvent( new window.CustomEvent( event.type, { detail: event } ) );
 		this.setState( {
 			isDragging: true,
 		} );
