@@ -480,6 +480,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		overflow: hidden;
 		overflow-wrap: break-word;
 		resize: none;
-		height: 135px;
+		max-height: 80px;
+		box-sizing: border-box;
 	}
 }
