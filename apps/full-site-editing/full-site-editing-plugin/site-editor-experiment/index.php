@@ -127,6 +127,15 @@ function fse_plugin_edit_site_init( $hook ) {
 	apply_filters( 'template_include', null );
 	$settings['templateId'] = $_wp_current_template_id;
 
+	// @DOTCOM_CUSTOMIZATION - set up apiFetch properly for dotcom.
+	// NOT currently calling the script we want.
+	wp_enqueue_script(
+		'gutenberg-wpcom-apifetch',
+		'/wp-content/plugins/gutenberg-wpcom/gutenberg-wpcom-apifetch.js',
+		array( 'gutenberg-wpcom-script', 'jquery.wpcom-proxy-request', 'lodash', 'wp-api-fetch', 'wp-polyfill', 'wp-url' ),
+		time()
+	);
+
 	// Initialize editor.
 	wp_add_inline_script(
 		'wp-edit-site',
