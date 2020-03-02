@@ -5,15 +5,46 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-export default function Button( { children, ...props } ) {
-	return <CallToAction { ...props }>{ children }</CallToAction>;
+/**
+ * Internal Classes
+ */
+import joinClasses from '../lib/join-classes';
+
+export default function Button( {
+	className,
+	buttonState,
+	buttonType,
+	isBusy,
+	children,
+	...props
+} ) {
+	const classNames = joinClasses( [
+		'checkout-button',
+		...( buttonState ? [ 'is-status-' + buttonState ] : [] ),
+		...( buttonType ? [ 'is-type-' + buttonType ] : [] ),
+		...( isBusy ? [ 'is-busy' ] : [] ),
+		...( className ? [ className ] : [] ),
+	] );
+
+	return (
+		<CallToAction
+			buttonState={ buttonState }
+			buttonType={ buttonType }
+			isBusy={ isBusy }
+			className={ classNames }
+			{ ...props }
+		>
+			{ children }
+		</CallToAction>
+	);
 }
 
 Button.propTypes = {
 	buttonState: PropTypes.string, // Either 'disabled', 'primary', 'secondary', 'text-button', 'borderless'.
 	buttonType: PropTypes.string, // Service type (i.e. 'paypal' or 'apple-pay').
-	onClick: PropTypes.func,
 	fullWidth: PropTypes.bool,
+	onClick: PropTypes.func,
+	isBusy: PropTypes.bool,
 };
 
 const CallToAction = styled.button`
@@ -39,8 +70,7 @@ const CallToAction = styled.button`
 		border-bottom-width: ${getBorderElevationWeight};
 		text-decoration: none;
 		color: ${getTextColor};
-		cursor: ${( { buttonState } ) =>
-			buttonState && buttonState.includes( 'disabled' ) ? 'not-allowed' : 'pointer'};
+		cursor: ${props => ( props.buttonState === 'disabled' ? 'not-allowed' : 'pointer' )};
 	}
 
 	:active {
@@ -58,6 +88,26 @@ const CallToAction = styled.button`
 		transform: translateY( 2px );
 		filter: ${getImageFilter};
 		opacity: ${getImageOpacity};
+	}
+
+	&.is-busy {
+		animation: components-button__busy-animation 2500ms infinite linear;
+		background-image: linear-gradient(
+			-45deg,
+			${getBackgroundColor} 28%,
+			${getBackgroundAccentColor} 28%,
+			${getBackgroundAccentColor} 72%,
+			${getBackgroundColor} 72%
+		);
+		background-size: 200px;
+		border-color: ${getRollOverBorderColor};
+		opacity: 1;
+	}
+
+	@keyframes components-button__busy-animation {
+		0% {
+			background-position: 200px 0;
+		}
 	}
 `;
 
@@ -94,6 +144,29 @@ function getRollOverColor( { buttonState, buttonType, theme } ) {
 			return colors.highlightOver;
 		case 'disabled':
 			return colors.disabledPaymentButtons;
+		case 'text-button':
+		case 'borderless':
+			return 'none';
+		default:
+			return 'none';
+	}
+}
+
+function getBackgroundAccentColor( { buttonState, buttonType, theme } ) {
+	const { colors } = theme;
+	switch ( buttonState ) {
+		case 'primary':
+			if ( buttonType === 'apple-pay' ) {
+				return colors.applePayButtonRollOverColor;
+			}
+			if ( buttonType === 'paypal' ) {
+				return colors.paypalGoldHover;
+			}
+			return colors.primaryOver;
+		case 'secondary':
+			return colors.highlightOver;
+		case 'disabled':
+			return colors.disabledButtons;
 		case 'text-button':
 		case 'borderless':
 			return 'none';

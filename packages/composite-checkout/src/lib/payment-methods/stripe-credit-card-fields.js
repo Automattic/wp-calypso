@@ -568,6 +568,7 @@ function StripePayButton( { disabled, stripe, stripeConfiguration } ) {
 		formStatus === 'submitting'
 			? localize( 'Processing...' )
 			: sprintf( localize( 'Pay %s' ), renderDisplayValueMarkdown( total.amount.displayValue ) );
+
 	return (
 		<Button
 			disabled={ disabled }
@@ -586,6 +587,7 @@ function StripePayButton( { disabled, stripe, stripeConfiguration } ) {
 				} )
 			}
 			buttonState={ disabled ? 'disabled' : 'primary' }
+			isBusy={ 'submitting' === formStatus }
 			fullWidth
 		>
 			{ buttonString }
