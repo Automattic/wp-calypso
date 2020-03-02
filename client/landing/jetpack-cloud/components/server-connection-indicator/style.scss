@@ -25,25 +25,47 @@ svg.server-connection-indicator__placeholder-image {
 }
 
 .server-connection-indicator__status {
-	font-weight: 600;
 	font-size: 16px;
+	font-weight: 600;
 	line-height: 19px;
 }
 
 .server-connection-indicator__message {
-	font-weight: normal;
+	align-items: baseline;
+	display: flex;
+	flex-direction: column;
 	font-size: 16px;
+	font-weight: normal;
 	line-height: 24px;
-	margin-bottom: 0;
-	margin-top: 10px;
+
+	svg {
+		// stroke: var( --color-link );
+		fill: var( --color-link );
+	}
+
+	p {
+		margin: 10px 10px 0 0;
+	}
+
+	.external-link {
+		margin-top: 10px;
+	}
+
+	@include breakpoint( '>1280px' ) {
+		flex-direction: row;
+
+		.external-link {
+			margin-top: 0;
+		}
+	}
 }
 
 .server-connection-indicator__image-wrapper {
 	display: flex;
-	width: 50px;
 	height: 50px;
-	min-width: 50px;
-	min-height: 50px;
 	// corresponds to the left padding from .server-connection-indicator
 	margin-right: 17px;
+	min-height: 50px;
+	min-width: 50px;
+	width: 50px;
 }

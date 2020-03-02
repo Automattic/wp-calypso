@@ -8,6 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
+import ExternalLink from 'components/external-link';
 import Image from 'components/image';
 
 /**
@@ -39,12 +40,24 @@ const ServerConnectionIndicator = ( { isConnected }: Props ) => {
 		<Card className="server-connection-indicator">
 			<div className="server-connection-indicator__body">
 				<div className="server-connection-indicator__image-wrapper">
-					<Image className="server-connection-indicator__image" src={ imgSrc } />
+					<Image src={ imgSrc } />
 				</div>
 
-				<div className="server-connection-indicator__info">
+				<div>
 					<h4 className="server-connection-indicator__status">{ status }</h4>
-					<p className="server-connection-indicator__message">{ message }</p>
+					<div className="server-connection-indicator__message">
+						<p>{ message }</p>
+						{ ! isConnected && (
+							<ExternalLink
+								href="https://jetpack.com/support/adding-credentials-to-jetpack/"
+								target="_blank"
+								rel="noopener noreferrer"
+								icon={ true }
+							>
+								{ translate( 'Find your server credentials' ) }
+							</ExternalLink>
+						) }
+					</div>
 				</div>
 			</div>
 		</Card>
