@@ -135,6 +135,14 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 
+		'quick-onboard': {
+			steps: [ 'user', 'domains', 'plans' ],
+			destination: getSignupDestination,
+			description: 'The improved onboarding flow.',
+			lastModified: '2020-02-05',
+			showRecaptcha: true,
+		},
+
 		desktop: {
 			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
 			destination: getSignupDestination,

@@ -22,6 +22,7 @@ import {
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'lib/cart-values/cart-items';
+import { getPlan, isBusinessPlan, isPersonalPlan, isPremiumPlan, isEcommercePlan } from 'lib/plans';
 
 // State actions and selectors
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
@@ -146,6 +147,8 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
 	const siteTypeTheme = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
 
+	// console.log('siteType: ' + siteType + ' designType: ' + designType + ' siteVerticalId: ' + siteVerticalId + ' siteSegment: ' + siteSegment);
+
 	// The theme can be provided in this step's dependencies,
 	// the step object itself depending on if the theme is provided in a
 	// query (see `getThemeSlug` in `DomainsStep`),
@@ -159,6 +162,9 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	// flowName isn't always passed in
 	const flowToCheck = flowName || lastKnownFlow;
 
+	const segment = siteSegment || getSegmentFromPlanItem( flowToCheck, signupDependencies );
+	const verticalId = siteVerticalId || getVerticalIdFromSegment( flowToCheck, segment );
+
 	const newSiteParams = {
 		blog_title: siteTitle,
 		options: {
@@ -167,8 +173,8 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 			use_theme_annotation: get( signupDependencies, 'useThemeHeadstart', false ),
 			siteGoals: siteGoals || undefined,
 			site_style: siteStyle || undefined,
-			site_segment: siteSegment || undefined,
-			site_vertical: siteVerticalId || undefined,
+			site_segment: segment || undefined,
+			site_vertical: verticalId || undefined,
 			site_vertical_name: siteVerticalName || undefined,
 			site_information: {
 				title: siteTitle,
@@ -249,6 +255,39 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 			themeSlugWithRepo
 		);
 	} );
+}
+
+function getSegmentFromPlanItem( flowToCheck, signupDependencies ) {
+	if ( 'quick-onboard' !== flowToCheck ) {
+		return;
+	}
+
+	const cartItem = signupDependencies.cartItem;
+	const planItem = cartItem && getPlan( cartItem.product_slug );
+
+	if ( ! planItem || isPersonalPlan( planItem ) ) {
+		return getSiteTypePropertyValue( 'slug', 'blog', 'id' );
+	}
+
+	if ( isPremiumPlan( planItem ) ) {
+		return getSiteTypePropertyValue( 'slug', 'professional', 'id' );
+	}
+
+	if ( isBusinessPlan( planItem ) ) {
+		return getSiteTypePropertyValue( 'slug', 'business', 'id' );
+	}
+
+	if ( isEcommercePlan( planItem ) ) {
+		return getSiteTypePropertyValue( 'slug', 'online-store', 'id' );
+	}
+}
+
+function getVerticalIdFromSegment( flowToCheck, siteSegment ) {
+	if ( 'quick-onboard' !== flowToCheck ) {
+		return;
+	}
+
+	return getSiteTypePropertyValue( 'slug', 'business', 'id' ) === siteSegment ? 'p1' : undefined;
 }
 
 function fetchSitesUntilSiteAppears( siteSlug, reduxStore, callback ) {
