@@ -18,21 +18,26 @@ import './style.scss';
 
 interface Props {
 	isConnected: boolean;
-	/* @todo: figure out which type of backup we are */
-	// backupType: 'daily' | 'realtime';
+	backupType: 'daily' | 'realtime';
 }
 
-const ServerConnectionIndicator = ( { isConnected }: Props ) => {
+const ServerConnectionIndicator = ( { isConnected, backupType }: Props ) => {
 	const translate = useTranslate();
 
 	const status = isConnected
 		? translate( 'Server Status: Connected' )
 		: translate( 'Server Status: Not connected' );
 
+	const notConnectedMessage =
+		backupType === 'daily'
+			? translate( 'Enter your server credentials to enable one-click restores for Daily Backups.' )
+			: translate(
+					'Enter your server credentials to enable one-click restores for Real-time Backups.'
+			  );
+
 	const message = isConnected
 		? translate( 'One-click restores are enabled.' )
-		: // @todo: determine real-time vs daily backup
-		  translate( 'Enter your server credentials to enable one-click restores for Daily Backups.' );
+		: notConnectedMessage;
 
 	const imgSrc = `/calypso/images/jetpack/jetpack-connection-${ isConnected ? 'good' : 'bad' }.svg`;
 

@@ -15,6 +15,7 @@ import getRewindStateRequestStatus from 'state/selectors/get-rewind-state-reques
 import QueryRewindState from 'components/data/query-rewind-state';
 import ServerConnectionIndicator from '../../components/server-connection-indicator';
 import ServerConnectionIndicatorPlaceholder from '../../components/server-connection-indicator/placeholder';
+import getJetpackBackupPlan from 'state/sites/selectors/get-jetpack-backup-plan';
 
 const SettingsPage = () => {
 	const translate = useTranslate();
@@ -23,6 +24,7 @@ const SettingsPage = () => {
 		getRewindStateRequestStatus( state, selectedSiteId )
 	);
 	const rewindState = useSelector( state => getRewindState( state, selectedSiteId ) );
+	const jetpackBackupPlan = useSelector( state => getJetpackBackupPlan( state, selectedSiteId ) );
 
 	const isConnected = rewindState && rewindState.state === 'active';
 
@@ -36,7 +38,7 @@ const SettingsPage = () => {
 				isSecondary
 			/>
 			{ rewindStateRequestStatus === 'success' ? (
-				<ServerConnectionIndicator isConnected={ isConnected } />
+				<ServerConnectionIndicator backupType={ jetpackBackupPlan } isConnected={ isConnected } />
 			) : (
 				<ServerConnectionIndicatorPlaceholder />
 			) }
