@@ -45,6 +45,7 @@ const transformApiRequest = ( { data: jitms } ) =>
 		action: jitm.action,
 		template: jitm.template,
 		id: jitm.id,
+		isDismissible: jitm.is_dismissible,
 	} ) );
 
 /**
