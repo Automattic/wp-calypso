@@ -171,7 +171,9 @@ class PageTemplateModal extends Component {
 	}
 
 	componentWillUnmount() {
-		unregisterBlockType( 'a8c/spt-template-post-title' );
+		if ( this.props.isPostTitleBlockRegistered ) {
+			unregisterBlockType( 'a8c/spt-template-post-title' );
+		}
 	}
 
 	static getDefaultSelectedTemplate = props => {
@@ -203,7 +205,9 @@ class PageTemplateModal extends Component {
 		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
 		this.props.saveTemplateChoice( slug );
 
-		unregisterBlockType( 'a8c/spt-template-post-title' );
+		if ( this.props.isPostTitleBlockRegistered ) {
+			unregisterBlockType( 'a8c/spt-template-post-title' );
+		}
 
 		// Check to see if this is a blank template selection
 		// and reset the template if so.
@@ -290,7 +294,9 @@ class PageTemplateModal extends Component {
 	};
 
 	closeModal = event => {
-		unregisterBlockType( 'a8c/spt-template-post-title' );
+		if ( this.props.isPostTitleBlockRegistered ) {
+			unregisterBlockType( 'a8c/spt-template-post-title' );
+		}
 
 		// Check to see if the Blur event occurred on the buttons inside of the Modal.
 		// If it did then we don't want to dismiss the Modal for this type of Blur.
@@ -508,6 +514,9 @@ export const PageTemplatesPlugin = compose(
 				.find( block => block.name === 'a8c/post-content' ),
 			isWelcomeGuideActive: select( 'core/edit-post' ).isFeatureActive( 'welcomeGuide' ), // Gutenberg 7.2.0 or higher
 			areTipsEnabled: select( 'core/nux' ) ? select( 'core/nux' ).areTipsEnabled() : false, // Gutenberg 7.1.0 or lower
+			isPostTitleBlockRegistered: !! select( 'core/blocks' ).getBlockType(
+				'a8c/spt-template-post-title'
+			),
 		};
 	} ),
 	withDispatch( ( dispatch, ownProps ) => {
