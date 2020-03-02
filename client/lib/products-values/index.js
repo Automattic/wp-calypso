@@ -10,11 +10,10 @@ import { isGSuiteOrExtraLicenseProductSlug } from 'lib/gsuite';
 import {
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
-	JETPACK_BACKUP_PRODUCTS_YEARLY,
-	JETPACK_BACKUP_PRODUCTS_MONTHLY,
 	getJetpackProductsDisplayNames,
 	getJetpackProductsTaglines,
 } from './constants';
+import { PRODUCTS_LIST } from './products-list';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
@@ -234,6 +233,13 @@ export function isJetpackProduct( product ) {
 	return isJetpackProductSlug( product.product_slug );
 }
 
+export function getProductFromSlug( productSlug ) {
+	if ( PRODUCTS_LIST[ productSlug ] ) {
+		return formatProduct( PRODUCTS_LIST[ productSlug ] );
+	}
+	return productSlug; // Consistent behavior with `getPlan`.
+}
+
 export function isMonthly( rawProduct ) {
 	const product = formatProduct( rawProduct );
 	assertValidProduct( product );
@@ -253,14 +259,6 @@ export function isBiennially( rawProduct ) {
 	assertValidProduct( product );
 
 	return parseInt( product.bill_period, 10 ) === PLAN_BIENNIAL_PERIOD;
-}
-
-export function isMonthlyFromSlug( productSlug ) {
-	return JETPACK_BACKUP_PRODUCTS_MONTHLY.includes( productSlug );
-}
-
-export function isYearlyFromSlug( productSlug ) {
-	return JETPACK_BACKUP_PRODUCTS_YEARLY.includes( productSlug );
 }
 
 export function isJpphpBundle( product ) {
