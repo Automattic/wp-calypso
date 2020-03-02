@@ -101,18 +101,22 @@ class Layout extends Component {
 		// intentionally don't remove these in unmount
 	}
 
-	renderMasterBar() {
+	renderMasterbar() {
 		if ( 'jetpack-cloud' === config( 'masterbar' ) ) {
-				return <JetpackCloudMasterbar
+			return (
+				<JetpackCloudMasterbar
 					section={ this.props.sectionGroup }
 					isCheckout={ this.props.sectionName === 'checkout' }
 				/>
+			);
 		}
 
-		return <MasterbarLoggedIn
-			section={ this.props.sectionGroup }
-			isCheckout={ this.props.sectionName === 'checkout' }
-		/>
+		return (
+			<MasterbarLoggedIn
+				section={ this.props.sectionGroup }
+				isCheckout={ this.props.sectionName === 'checkout' }
+			/>
+		);
 	}
 
 	render() {
@@ -165,7 +169,7 @@ class Layout extends Component {
 				<AsyncLoad require="layout/guided-tours" placeholder={ null } />
 				{ ! isE2ETest() && <AsyncLoad require="layout/nps-survey-notice" placeholder={ null } /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
-				{ this.renderMasterBar() }
+				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<LayoutLoader />
 				{ this.props.isOffline && <OfflineStatus /> }
