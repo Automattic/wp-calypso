@@ -112,7 +112,7 @@ export function generateFlows( {
 			steps: [ 'user', 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'The improved onboarding flow.',
-			lastModified: '2020-02-05',
+			lastModified: '2020-03-02',
 			showRecaptcha: true,
 		},
 
