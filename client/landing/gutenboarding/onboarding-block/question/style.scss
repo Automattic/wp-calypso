@@ -12,6 +12,10 @@
 		&.selected {
 		}
 
+		> span {
+			white-space: nowrap;
+		}
+
 		div > input.onboarding-block__question-input {
 			border: 0;
 			/*border-bottom: 3px solid $light-gray-500;*/
