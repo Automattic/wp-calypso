@@ -72,6 +72,11 @@ export function isCompleteAndValid( details: ManagedContactDetails ): boolean {
 	return result;
 }
 
+export function isTouched( details: ManagedContactDetails ): boolean {
+	const values = Object.values( details );
+	return values.length > 0 && values.every( value => value.isTouched );
+}
+
 /*
  * List of error messages for each field.
  */
