@@ -21,3 +21,4 @@ Dockerfile
 /apps/*/dist/
 /apps/*/types/
 /packages/*/dist/
+/packages/*/types/
