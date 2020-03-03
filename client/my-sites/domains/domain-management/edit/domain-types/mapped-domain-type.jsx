@@ -136,19 +136,51 @@ class MappedDomainType extends React.Component {
 			return null;
 		}
 
+		if ( domain.bundledPlanSubscriptionId ) {
+			return (
+				<div>
+					<p>
+						{ translate(
+							'Your domain mapping will expire with your plan in {{strong}}%(days)s{{/strong}}. Please renew your plan before it expires or it will stop working.',
+							{
+								components: {
+									strong: <strong />,
+								},
+								args: {
+									days: moment.utc( expiry ).fromNow( true ),
+								},
+							}
+						) }
+					</p>
+					<RenewButton
+						primary={ true }
+						selectedSite={ this.props.selectedSite }
+						subscriptionId={ parseInt( domain.bundledPlanSubscriptionId, 10 ) }
+						customLabel={ translate( 'Renew your plan ' ) }
+					/>
+				</div>
+			);
+		}
 		return (
 			<div>
-				{ translate(
-					'Your domain mapping will expire in {{strong}}%(days)s{{/strong}}. Please renew it before it expires or it will stop working.',
-					{
-						components: {
-							strong: <strong />,
-						},
-						args: {
-							days: moment.utc( expiry ).fromNow( true ),
-						},
-					}
-				) }
+				<p>
+					{ translate(
+						'Your domain mapping will expire in {{strong}}%(days)s{{/strong}}. Please renew it before it expires or it will stop working.',
+						{
+							components: {
+								strong: <strong />,
+							},
+							args: {
+								days: moment.utc( expiry ).fromNow( true ),
+							},
+						}
+					) }
+				</p>
+				<RenewButton
+					primary={ true }
+					selectedSite={ this.props.selectedSite }
+					subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
+				/>
 			</div>
 		);
 	}
@@ -213,7 +245,7 @@ class MappedDomainType extends React.Component {
 					{ ! isSubdomain( domain.name ) && (
 						<ul>
 							{ WPCOM_DEFAULTS.map( nameServer => {
-								return <li>{ nameServer }</li>;
+								return <li key={ nameServer }>{ nameServer }</li>;
 							} ) }
 						</ul>
 					) }
@@ -224,10 +256,23 @@ class MappedDomainType extends React.Component {
 	}
 
 	renderDefaultRenewButton() {
-		const { domain } = this.props;
+		const { domain, translate } = this.props;
 
 		if ( domain.expired || isExpiringSoon( domain, 30 ) ) {
 			return null;
+		}
+
+		if ( domain.bundledPlanSubscriptionId ) {
+			return (
+				<div>
+					<RenewButton
+						compact={ true }
+						selectedSite={ this.props.selectedSite }
+						subscriptionId={ parseInt( domain.bundledPlanSubscriptionId, 10 ) }
+						customLabel={ translate( 'Renew your plan' ) }
+					/>
+				</div>
+			);
 		}
 
 		return (
@@ -254,7 +299,7 @@ class MappedDomainType extends React.Component {
 	};
 
 	render() {
-		const { domain, moment } = this.props;
+		const { domain, moment, translate } = this.props;
 		const { name: domain_name } = domain;
 
 		const { statusText, statusClass, icon } = this.resolveStatus();
@@ -274,13 +319,13 @@ class MappedDomainType extends React.Component {
 				</DomainStatus>
 				<Card compact={ true } className="domain-types__expiration-row">
 					<div>
-						{ domain.expired
-							? this.props.translate( 'Expired: %(expiry_date)s', {
+						{ domain.bundledPlanSubscriptionId
+							? translate( 'Expires with your plan on %(expiry_date)s', {
 									args: {
 										expiry_date: moment( domain.expiry ).format( 'LL' ),
 									},
 							  } )
-							: this.props.translate( 'Expires: %(expiry_date)s', {
+							: translate( 'Expires: %(expiry_date)s', {
 									args: {
 										expiry_date: moment( domain.expiry ).format( 'LL' ),
 									},
