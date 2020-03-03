@@ -9,6 +9,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import { assignToExperiments } from 'state/experiments/actions';
 import config from 'config';
+import { getAnonIdFromCookie } from 'state/experiments/reducer';
 
 /**
  * Transform the result from the API into the action we can use
@@ -27,7 +28,7 @@ const transformApiRequest = ( data ) => ( {
  * @param action The EXPERIMENT_FETCH action
  * @returns object The http request action
  */
-export const fetchExperiments = ( action ) =>
+export const handleFetchExperiments = ( action ) =>
 	http(
 		{
 			apiNamespace: 'wpcom',
@@ -39,6 +40,16 @@ export const fetchExperiments = ( action ) =>
 		},
 		{ ...action }
 	);
+
+/**
+ * Inform the data-layer to request new experiments from the API
+ *
+ * @param anonId The anonymous identifier to send to the API
+ */
+export const fetchExperiments = anonId => ( {
+	type: EXPERIMENT_FETCH,
+	anonId: anonId == null ? getAnonIdFromCookie() : anonId,
+} );
 
 /**
  * Fires the action to update the state
@@ -56,7 +67,7 @@ if ( config.isEnabled( 'ive/use-external-assignment' ) ) {
 	registerHandlers( 'state/data-layer/wpcom/experiments/index.js', {
 		[ EXPERIMENT_FETCH ]: [
 			dispatchRequest( {
-				fetch: fetchExperiments,
+				fetch: handleFetchExperiments,
 				onSuccess: experimentUpdate,
 				fromApi: makeJsonSchemaParser( schema, transformApiRequest ),
 			} ),

@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import { fetchExperiments } from 'state/experiments/actions';
+import { fetchExperiments } from 'state/data-layer/wpcom/experiments';
 import { getAnonId, nextRefresh } from 'state/experiments/selectors';
 import { AppState } from 'types';
 
