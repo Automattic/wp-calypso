@@ -28,7 +28,6 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 
 	return (
 		<>
-			<VerticalBackground />
 			{ isCreatingSite && <Redirect push to={ makePath( Step.CreateSite ) } /> }
 			<Switch>
 				<Route exact path={ makePath( Step.IntentGathering ) }>

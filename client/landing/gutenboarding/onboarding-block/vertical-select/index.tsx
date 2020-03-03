@@ -16,7 +16,7 @@ import { SiteVertical } from '../../stores/onboard/types';
 import { StepProps } from '../stepper-wizard';
 import Question from '../question';
 import { __TodoAny__ } from '../../../../types';
-
+import AnimatedPlaceholder from './AnimatedPlaceholder';
 /**
  * Style dependencies
  */
@@ -129,7 +129,7 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 	};
 
 	const label = NO__( 'My site is about' );
-	const displayValue = siteVertical?.label ?? NO__( 'enter a topic' );
+	const displayValue = siteVertical?.label ?? '';
 
 	// Focus the input when we change to active
 	const inputRef = createRef< HTMLInputElement >();
@@ -139,30 +139,38 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 		}
 	}, [ isActive, inputRef ] );
 
+	const suggestionsTitle = ''; //<div className="vertical-select__sugestions-title">{ NO__("Suggestions" ) }</div>;
+
 	return (
 		<Question
 			label={ label }
 			displayValue={ displayValue }
-			isActive={ isActive }
+			isActive={ isActive || ! displayValue }
 			onExpand={ onExpand }
 		>
 			<div className="vertical-select">
+				{ ! inputValue && <AnimatedPlaceholder /> }
 				<input
 					ref={ inputRef }
 					className={ inputClass }
-					placeholder={ NO__( 'enter a topic' ) }
+					placeholder={ NO__( '' ) }
 					onChange={ handleSuggestionChangeEvent }
 					onBlur={ handleBlur }
 					onKeyDown={ handleSuggestionKeyDown }
 					autoComplete="off"
 					value={ inputValue }
 				/>
-				<Suggestions
-					ref={ suggestionRef }
-					query={ inputValue }
-					suggestions={ ! verticals.length ? loadingMessage : suggestions }
-					suggest={ handleSelect }
-				/>
+				<div className="vertical-select__suggestions">
+					{ inputValue && suggestionsTitle }
+					{ inputValue && (
+						<Suggestions
+							ref={ suggestionRef }
+							query={ inputValue }
+							suggestions={ ! verticals.length ? loadingMessage : suggestions }
+							suggest={ handleSelect }
+						/>
+					) }
+				</div>
 			</div>
 		</Question>
 	);

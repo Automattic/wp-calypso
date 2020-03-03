@@ -1,0 +1,95 @@
+.onboarding-block__acquire-intent {
+	--contrastColor: #FFF;;
+	--mainColor: var( --studio-blue-40 );
+	--highlightColor: var( --studio-blue-20 );
+}
+
+.onboarding-block__acquire-intent[data-vertical*=football] {
+	--contrastColor: var( --studio-green-40 );;
+	--mainColor: var( --studio-gray-0 );
+	--highlightColor: var( --studio-green-20 );
+}
+
+.onboarding-block__acquire-intent[data-vertical*=web] {
+	--contrastColor: var( --studio-blue-40 );;
+	--mainColor: var( --studio-blue-0 );
+	--highlightColor: var( --studio-blue-20 );
+}
+
+.onboarding-block__acquire-intent[data-vertical*=animals] {
+	--contrastColor: var( --studio-blue-40 );;
+	--mainColor: var( --studio-blue-0 );
+	--highlightColor: var( --studio-blue-20 );
+}
+
+.onboarding-block__acquire-intent[data-vertical*=coffee] {
+	--contrastColor: #4A2512;
+	--mainColor: #fff;
+	--highlightColor: var( --studio-blue-20 );
+}
+
+.onboarding-block__acquire-intent[data-vertical*=cats] {
+	--contrastColor: #1382D2;
+	--mainColor: #fff;
+	--highlightColor: var( --studio-blue-20 );
+}
+
+.onboarding-block__acquire-intent[data-vertical*="car"] {
+	--contrastColor: #C33939;
+	--mainColor: #fff;
+	--highlightColor: var( --studio-blue-20 );
+}
+
+.onboarding-block__acquire-intent[data-vertical*=doctor] {
+	--contrastColor: #1382D2;
+	--mainColor: #fff;
+	--highlightColor: var( --studio-blue-20 );
+}
+
+.onboarding-block__acquire-intent[data-vertical*=dogs] {
+	--contrastColor: #F3E4BE;
+	--mainColor: #A68B46;
+	--highlightColor: var( --studio-blue-20 );
+}
+
+.onboarding-block__acquire-intent[data-vertical*=food] {
+	--contrastColor: #E35F27;
+	--mainColor: #FFFFFF;
+	--highlightColor: var( --studio-blue-20 );
+}
+
+.onboarding-block__acquire-intent[data-vertical*=fashion] {
+	--contrastColor: #000;
+	--mainColor: #fff;
+	--highlightColor: var( --studio-blue-20 );
+}
+
+.onboarding-block__acquire-intent[data-vertical*=football] {
+	--contrastColor: #47B845;
+	--mainColor: #0E390D;
+	--highlightColor: var( --studio-blue-20 );
+}
+
+.onboarding-block__acquire-intent[data-vertical*=movies] {
+	--contrastColor: #1382D2;
+	--mainColor: #fff;
+	--highlightColor: var( --studio-blue-20 );
+}
+
+.onboarding-block__acquire-intent[data-vertical*=photo] {
+	--contrastColor: #1382D2;
+	--mainColor: #fff;
+	--highlightColor: var( --studio-blue-20 );
+}
+
+.onboarding-block__acquire-intent[data-vertical*=tv] {
+	--contrastColor: #1382D2;
+	--mainColor: #fff;
+	--highlightColor: var( --studio-blue-20 );
+}
+
+.onboarding-block__acquire-intent[data-vertical*=jersey] {
+	--contrastColor: #1382D2;
+	--mainColor: #fff;
+	--highlightColor: var( --studio-blue-20 );
+}
