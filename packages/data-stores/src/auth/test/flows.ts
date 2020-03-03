@@ -11,18 +11,19 @@
  */
 import { dispatch, select } from '@wordpress/data';
 import { parse } from 'qs';
+import wpcomRequest from 'wpcom-proxy-request';
 
 /**
  * Internal dependencies
  */
 import { register } from '..';
-import { wpcomRequest as wpcomRequestOriginal } from '../../utils';
 
-jest.mock( '../../utils', () => ( {
-	wpcomRequest: jest.fn(),
+jest.mock( 'wpcom-proxy-request', () => ( {
+	__esModule: true,
+	default: jest.fn(),
+	requestAllBlogsAccess: jest.fn( () => Promise.resolve() ),
 } ) );
 
-const wpcomRequest: jest.Mock = wpcomRequestOriginal as any;
 const fetch = jest.fn();
 
 beforeAll( () => {
@@ -34,7 +35,7 @@ beforeEach( () => {
 	store = register( { client_id: '', client_secret: '' } );
 
 	fetch.mockReset();
-	wpcomRequest.mockReset();
+	( wpcomRequest as jest.Mock ).mockReset();
 } );
 
 describe( 'password login flow', () => {
@@ -44,7 +45,10 @@ describe( 'password login flow', () => {
 
 		expect( getLoginFlowState() ).toBe( 'ENTER_USERNAME_OR_EMAIL' );
 
-		wpcomRequest.mockResolvedValue( { email_verified: true, passwordless: false } );
+		( wpcomRequest as jest.Mock ).mockResolvedValue( {
+			email_verified: true,
+			passwordless: false,
+		} );
 
 		await submitUsernameOrEmail( 'user1' );
 

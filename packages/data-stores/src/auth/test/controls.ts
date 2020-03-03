@@ -7,16 +7,20 @@
  */
 
 /**
+ * External dependencies
+ */
+import wpcomRequest from 'wpcom-proxy-request';
+
+/**
  * Internal dependencies
  */
-import { wpcomRequest as wpcomRequestOriginal } from '../../utils';
 import { createControls } from '../controls';
 
-jest.mock( '../../utils', () => ( {
-	wpcomRequest: jest.fn(),
+jest.mock( 'wpcom-proxy-request', () => ( {
+	__esModule: true,
+	default: jest.fn(),
+	requestAllBlogsAccess: jest.fn( () => Promise.resolve() ),
 } ) );
-
-const wpcomRequest: jest.Mock = wpcomRequestOriginal as any;
 
 const { FETCH_AUTH_OPTIONS } = createControls( { client_id: '', client_secret: '' } );
 
@@ -26,7 +30,7 @@ describe( 'FETCH_AUTH_OPTIONS', () => {
 			success: true,
 			data: { token_links: [] },
 		};
-		wpcomRequest.mockResolvedValue( apiResponse );
+		( wpcomRequest as jest.Mock ).mockResolvedValue( apiResponse );
 
 		const result = await FETCH_AUTH_OPTIONS( {
 			type: 'FETCH_AUTH_OPTIONS',
