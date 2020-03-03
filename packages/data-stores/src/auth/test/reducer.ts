@@ -9,8 +9,8 @@
 /**
  * Internal dependencies
  */
-import { loginFlowState, usernameOrEmail } from '../reducer';
-import { reset, receiveAuthOptions } from '../actions';
+import { errors, loginFlowState, usernameOrEmail } from '../reducer';
+import { reset, receiveAuthOptions, clearErrors } from '../actions';
 
 describe( 'login flow state', () => {
 	it( 'returns the correct default state', () => {
@@ -45,5 +45,24 @@ describe( 'usernameOrEmail', () => {
 			receiveAuthOptions( { passwordless: true, email_verified: true }, 'new username' )
 		);
 		expect( state ).toBe( 'new username' );
+	} );
+} );
+
+describe( 'errors', () => {
+	it( 'defaults to empty', () => {
+		const state = errors( undefined, { type: 'TEST_ACTION' } );
+		expect( state ).toEqual( [] );
+	} );
+
+	it( 'is returned to the default state by the reset action', () => {
+		const defaultState = errors( undefined, { type: 'TEST_ACTION' } );
+
+		const state = errors( [ { code: 'code', message: '' } ], reset() );
+		expect( state ).toEqual( defaultState );
+	} );
+
+	it( 'is emptied by the clearErrors action', () => {
+		const state = errors( [ { code: 'code', message: '' } ], clearErrors() );
+		expect( state ).toEqual( [] );
 	} );
 } );
