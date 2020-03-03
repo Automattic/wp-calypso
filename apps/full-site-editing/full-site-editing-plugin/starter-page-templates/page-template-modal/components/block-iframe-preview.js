@@ -67,6 +67,26 @@ const copyStylesToIframe = ( srcDocument, targetiFrameDocument ) => {
 };
 
 /**
+ * It tries to set the textarea value of the <PostTitle /> component,
+ * since it isn't possible to do it with the current implementation.
+ * So, in the meanwhile, it uses this DOM manipulation process.
+ *
+ * Here there is a core suggestion to be able to set post title explicitly:
+ * https://github.com/WordPress/gutenberg/pull/20609
+ *
+ * @param   {string}  title Template title.
+ * @param   {object}  body iFrame body DOM reference.
+ * @returns {boolean} True is the textarea value was applied. Otherwise, False.
+ */
+function setTemplateTitle( title, body ) {
+	const templateTitle = body.querySelector( '.editor-post-title .editor-post-title__input' );
+	if ( ! templateTitle ) {
+		return false;
+	}
+	templateTitle.value = title;
+	return true;
+}
+/**
  * Performs a blocks preview using an iFrame.
  *
  * @param {object} props component's props
@@ -128,13 +148,7 @@ const BlockFramePreview = ( {
 		if ( ! iframeBody ) {
 			return;
 		}
-
-		const templateTitle = iframeBody.querySelector(
-			'.editor-post-title .editor-post-title__input'
-		);
-		if ( templateTitle ) {
-			templateTitle.value = title;
-		}
+		setTemplateTitle( title, iframeBody );
 	}, [ recomputeBlockListKey, iframeRef, title ] );
 
 	// Populate iFrame styles.
