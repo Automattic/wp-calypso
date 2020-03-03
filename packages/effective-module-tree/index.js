@@ -15,7 +15,9 @@ const candidates = function*( packagePath ) {
 	const parts = packagePath.split( path.sep );
 	for ( let i = parts.length; i >= 0; i-- ) {
 		// This avoid generating .../node_modules/node_modules/...
-		if ( parts[ i - 1 ] === 'node_modules' ) continue;
+		if ( parts[ i - 1 ] === 'node_modules' ) {
+			continue;
+		}
 		yield path.join( ...parts.slice( 0, i ), 'node_modules' );
 	}
 };
@@ -25,14 +27,20 @@ const candidates = function*( packagePath ) {
 // with treeify so we can render it (https://www.npmjs.com/package/object-treeify)
 const simplify = ( packageDef, parents ) => {
 	// This means the dependency couldn't be found. Maybe a missing `npm install` ?
-	if ( ! packageDef ) return;
+	if ( ! packageDef ) {
+		return;
+	}
 
 	const name = `${ packageDef.name }@${ packageDef.version }`;
 
 	// Don't get caught in an infinite loop caused by circular dependencies
-	if ( parents.includes( name ) ) return { [ name ]: '[Circular]' };
+	if ( parents.includes( name ) ) {
+		return { [ name ]: '[Circular]' };
+	}
 
-	if ( ! packageDef.linkedDeps ) return { [ name ]: {} };
+	if ( ! packageDef.linkedDeps ) {
+		return { [ name ]: {} };
+	}
 
 	// Keep simplifying our deps recursively
 	const parentDeps = [ ...parents, name ];
@@ -79,8 +87,13 @@ const effectiveTree = async ( includePattern = [ '**/package.json' ], excludePat
 
 	// Link all packages
 	for ( const packageDef of packagesByPath.values() ) {
-		if ( ! packageDef.name ) continue;
-		if ( ! packageDef.deps ) continue;
+		if ( ! packageDef.name ) {
+			continue;
+		}
+		if ( ! packageDef.deps ) {
+			continue;
+		}
+
 		debug( `Linking ${ packageDef.name }, ${ packageDef.path }` );
 
 		// For each dep, search it in the main packages map and link it
