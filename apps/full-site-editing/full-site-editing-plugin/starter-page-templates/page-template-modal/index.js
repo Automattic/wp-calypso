@@ -328,7 +328,7 @@ class PageTemplateModal extends Component {
 						templatesList,
 						templatesWithoutMissingBlocks
 					) }
-					blocksByTemplates={ this.getBlocksByTemplateSlugs( this.props.templates ) }
+					blocksByTemplates={ blocksByTemplateSlug }
 					onTemplateSelect={ this.previewTemplate }
 					useDynamicPreview={ false }
 					siteInformation={ this.props.siteInformation }
