@@ -142,7 +142,6 @@ class RegisterDomainStep extends React.Component {
 		includeDotBlogSubdomain: PropTypes.bool,
 		showExampleSuggestions: PropTypes.bool,
 		showTestCopy: PropTypes.bool,
-		showDesignUpdate: PropTypes.bool,
 		onSave: PropTypes.func,
 		onAddMapping: PropTypes.func,
 		onAddDomain: PropTypes.func,
@@ -428,7 +427,6 @@ class RegisterDomainStep extends React.Component {
 
 		const searchBoxClassName = classNames( 'register-domain-step__search', {
 			'register-domain-step__search-domain-step-test': this.props.isEligibleVariantForDomainTest,
-			'register-domain-step__search-domain-step-design-updates': this.props.showDesignUpdate,
 		} );
 		return (
 			<div className="register-domain-step">
@@ -474,7 +472,6 @@ class RegisterDomainStep extends React.Component {
 				{ this.renderContent() }
 				{ this.renderFilterResetNotice() }
 				{ this.renderPaginationControls() }
-				{ this.props.showDesignUpdate && this.renderUseYourDomain() }
 				{ queryObject && <QueryDomainsSuggestions { ...queryObject } /> }
 				<QueryContactDetailsCache />
 			</div>
@@ -499,54 +496,9 @@ class RegisterDomainStep extends React.Component {
 					onChange={ this.onFiltersChange }
 					onReset={ this.onFiltersReset }
 					onSubmit={ this.onFiltersSubmit }
-					showDesignUpdate={ this.props.showDesignUpdate }
 				/>
 			)
 		);
-	}
-
-	renderUseYourDomain() {
-		const { translate } = this.props;
-
-		const { searchResults, lastDomainStatus } = this.state;
-
-		if ( searchResults === null ) {
-			return null;
-		}
-
-		const useYourDomainFunction =
-			domainAvailability.MAPPED === lastDomainStatus
-				? this.goToTransferDomainStep
-				: this.goToUseYourDomainStep;
-
-		/* eslint-disable jsx-a11y/click-events-have-key-events */
-		/* eslint-disable jsx-a11y/interactive-supports-focus */
-		return (
-			<div className="register-domain-step__use-your-domain">
-				<h3>
-					{ translate( 'Already own a domain?', {
-						context: 'Upgrades: Register domain header',
-						comment: 'Asks if you already own a domain name.',
-					} ) }{ ' ' }
-					{ translate( "You can use it as your site's address.", {
-						context: 'Upgrades: Register domain description',
-						comment: 'Explains how you could use an existing domain name with your site.',
-					} ) }
-				</h3>
-				<Button
-					borderless
-					className="register-domain-step__use-your-domain-action is-clickable"
-					onClick={ useYourDomainFunction }
-					data-tracks-button-click-source="initial-suggestions-bottom"
-				>
-					{ translate( 'Use a domain I own', {
-						context: 'Domain transfer or mapping suggestion button',
-					} ) }
-				</Button>
-			</div>
-		);
-		/* eslint-enable jsx-a11y/click-events-have-key-events */
-		/* eslint-enable jsx-a11y/interactive-supports-focus */
 	}
 
 	rejectTrademarkClaim = () => {
@@ -1144,7 +1096,6 @@ class RegisterDomainStep extends React.Component {
 						pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 						unavailableDomains={ this.state.unavailableDomains }
 						showTestCopy={ this.props.showTestCopy }
-						showDesignUpdate={ this.props.showDesignUpdate }
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 					/>
 				);
@@ -1300,7 +1251,6 @@ class RegisterDomainStep extends React.Component {
 				pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 				unavailableDomains={ this.state.unavailableDomains }
 				showTestCopy={ this.props.showTestCopy }
-				showDesignUpdate={ this.props.showDesignUpdate }
 				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 			>
 				{ this.props.isEligibleVariantForDomainTest &&
@@ -1317,7 +1267,6 @@ class RegisterDomainStep extends React.Component {
 						onReset={ this.onFiltersReset }
 						onSubmit={ this.onFiltersSubmit }
 						showPlaceholder={ this.state.loadingResults || ! this.getSuggestionsFromProps() }
-						showDesignUpdate={ this.props.showDesignUpdate }
 					/>
 				) }
 			</DomainSearchResults>
