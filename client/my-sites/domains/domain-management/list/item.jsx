@@ -19,6 +19,8 @@ import Notice from 'components/notice';
 import { type as domainTypes, gdprConsentStatus } from 'lib/domains/constants';
 import Spinner from 'components/spinner';
 import { withLocalizedMoment } from 'components/localized-moment';
+import Button from '@automattic/components/src/button';
+import TrackComponentView from 'lib/analytics/track-component-view';
 
 class ListItem extends React.PureComponent {
 	static propTypes = {
@@ -30,18 +32,55 @@ class ListItem extends React.PureComponent {
 		onSelect: PropTypes.func.isRequired,
 		selectionIndex: PropTypes.number,
 		isSelected: PropTypes.bool,
+		shouldUpgradeToMakePrimary: PropTypes.bool.isRequired,
+		onUpgradeClick: PropTypes.func.isRequired,
 	};
 
+	renderContent() {
+		if ( this.props.enableSelection ) {
+			const content = <label htmlFor={ this.getInputId() }>{ this.content() }</label>;
+
+			if ( this.props.shouldUpgradeToMakePrimary ) {
+				return (
+					<div className="domain-management-list-item__content">
+						{ content }
+						{ this.upgradeToMakePrimary() }
+					</div>
+				);
+			}
+
+			return content;
+		}
+
+		return this.content();
+	}
+
 	render() {
+		const { busy, enableSelection, shouldUpgradeToMakePrimary } = this.props;
 		const cardClass = classNames( 'domain-management-list-item', {
-			busy: this.props.busy,
+			busy: busy || ( enableSelection && shouldUpgradeToMakePrimary ),
 		} );
+		const onClick = enableSelection && shouldUpgradeToMakePrimary ? null : this.handleClick;
 
 		return (
-			<CompactCard className={ cardClass } onClick={ this.handleClick }>
+			<CompactCard className={ cardClass } onClick={ onClick }>
 				{ this.selectionRadio() }
-				{ this.content() }
+				{ this.renderContent() }
 			</CompactCard>
+		);
+	}
+
+	upgradeToMakePrimary() {
+		const { translate } = this.props;
+
+		return (
+			<div className="domain-management-list-item__upsell">
+				<span>{ translate( 'Upgrade to a paid plan to make this your primary domain' ) }</span>
+				<Button primary onClick={ this.props.onUpgradeClick }>
+					{ translate( 'Upgrade' ) }
+				</Button>
+				<TrackComponentView eventName="calypso_domain_management_list_change_primary_upgrade_impression" />
+			</div>
 		);
 	}
 
@@ -83,7 +122,9 @@ class ListItem extends React.PureComponent {
 	}
 
 	handleClick = () => {
-		if ( this.props.enableSelection ) {
+		if ( this.props.shouldUpgradeToMakePrimary && this.props.enableSelection ) {
+			return;
+		} else if ( this.props.enableSelection ) {
 			this.props.onSelect( this.props.selectionIndex, this.props.domain );
 		} else {
 			this.props.onClick( this.props.domain );
@@ -95,7 +136,7 @@ class ListItem extends React.PureComponent {
 	}
 
 	selectionRadio() {
-		if ( ! this.props.enableSelection ) {
+		if ( ! this.props.enableSelection || this.props.shouldUpgradeToMakePrimary ) {
 			return null;
 		}
 
