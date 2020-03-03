@@ -4,7 +4,8 @@
 	"description": "Proxied cookie-authenticated REST API requests to WordPress.com",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
-	"calypso:src": "src/index.js",
+	"calypso:src": "src/index.ts",
+	"types": "dist/types",
 	"sideEffects": false,
 	"keywords": [
 		"browser",
@@ -31,15 +32,14 @@
 	},
 	"files": [
 		"dist",
-		"types",
 		"History.md",
 		"README.md"
 	],
-	"types": "types",
 	"scripts": {
-		"clean": "npx rimraf dist",
-		"build": "transpile",
-		"prepack": "yarn run clean && yarn run build"
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"@babel/runtime": "^7.12.5",

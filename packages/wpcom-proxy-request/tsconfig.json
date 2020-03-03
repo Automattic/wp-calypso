@@ -1,7 +1,39 @@
 {
-	"extends": "@automattic/calypso-build/tsconfig",
-	"exclude": [ "node_modules" ],
 	"compilerOptions": {
-		"allowJs": true
-	}
+		"target": "ES5",
+		"lib": [ "ES2015", "DOM" ],
+		"module": "ESNEXT",
+		"allowJs": false,
+		"declaration": true,
+		"declarationMap": true,
+		"declarationDir": "dist/types",
+		"rootDir": "src",
+		"outDir": "dist/esm",
+
+		"strict": true,
+		/* TODO: Remove to increase strictness when types are improved */
+		"noImplicitAny": false,
+		/* /TODO */
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"downlevelIteration": true,
+
+		"forceConsistentCasingInFileNames": true,
+
+		"importsNotUsedAsValues": "error",
+
+		"typeRoots": [ "./types", "../../node_modules/@types" ],
+		"types": [ "progress-event", "wp-error" ],
+
+		"noEmitHelpers": true,
+		"importHelpers": true,
+
+		"composite": true
+	},
+	"files": [ "src/index.ts" ]
 }
