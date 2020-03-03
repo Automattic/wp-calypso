@@ -11,6 +11,7 @@
  */
 import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
 import { Disabled } from '@wordpress/components';
+import { PostTitle } from '@wordpress/editor';
 
 // Exists as a pass through component to simplify automatted testing of
 // components which need to `BlockEditorProvider`. Setting up JSDom to handle
@@ -21,6 +22,7 @@ export default function( { blocks, settings, recomputeBlockListKey } ) {
 	return (
 		<BlockEditorProvider value={ blocks } settings={ settings }>
 			<Disabled key={ recomputeBlockListKey }>
+				<PostTitle />
 				<BlockList />
 			</Disabled>
 		</BlockEditorProvider>

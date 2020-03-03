@@ -84,6 +84,7 @@ const BlockFramePreview = ( {
 	blocks,
 	settings,
 	setTimeout = noop,
+	title,
 } ) => {
 	const frameContainerRef = useRef();
 	const renderedBlocksRef = useRef();
@@ -120,6 +121,21 @@ const BlockFramePreview = ( {
 			transform: `scale( ${ scale } )`,
 		} );
 	}, [ viewportWidth ] );
+
+	// Set template title.
+	useEffect( () => {
+		const iframeBody = get( iframeRef, [ 'current', 'contentDocument', 'body' ] );
+		if ( ! iframeBody ) {
+			return;
+		}
+
+		const templateTitle = iframeBody.querySelector(
+			'.editor-post-title .editor-post-title__input'
+		);
+		if ( templateTitle ) {
+			templateTitle.value = title;
+		}
+	}, [ recomputeBlockListKey, iframeRef, title ] );
 
 	// Populate iFrame styles.
 	useEffect( () => {
