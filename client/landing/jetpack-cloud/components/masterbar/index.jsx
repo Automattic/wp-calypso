@@ -24,7 +24,9 @@ export default function() {
 	const user = useSelector( state => getCurrentUser( state ) );
 
 	return (
-		<Masterbar>
+		<Masterbar
+			className="is-jetpack-cloud-masterbar" // eslint-disable-line wpcalypso/jsx-classname-namespace
+		>
 			<Item
 				className="masterbar__item-home"
 				url="/"
