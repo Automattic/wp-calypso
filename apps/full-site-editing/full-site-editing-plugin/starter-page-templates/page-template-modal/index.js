@@ -10,7 +10,7 @@ import { compose } from '@wordpress/compose';
 import { Button, Modal, Spinner, IconButton } from '@wordpress/components';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
-import { parse as parseBlocks } from '@wordpress/blocks';
+import { parse as parseBlocks, createBlock } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -43,9 +43,21 @@ class PageTemplateModal extends Component {
 	getBlocksByTemplateSlugs = memoize( templates =>
 		reduce(
 			templates,
-			( prev, { slug, content } ) => {
+			( prev, { slug, content, title } ) => {
 				prev[ slug ] = content
-					? parseBlocks( replacePlaceholders( content, this.props.siteInformation ) )
+					? [
+							/*
+							 * Let's add the page title as a heading block.
+							 * It will be remove when inserting the template
+							 * blocks into the editor.
+							 */
+							createBlock( 'core/heading', {
+								content: title,
+								align: 'center',
+								level: 1,
+							} ),
+							...parseBlocks( replacePlaceholders( content, this.props.siteInformation ) ),
+					  ]
 					: [];
 				return prev;
 			},
@@ -162,6 +174,10 @@ class PageTemplateModal extends Component {
 
 		// Load content.
 		const blocks = this.getBlocksForSelection( slug );
+
+		// Let's pull the title before to insert blocks in the editor.
+		blocks.shift();
+
 		// Only overwrite the page title if the template is not one of the Homepage Layouts
 		const title = isHomepageTemplate ? null : this.getTitleByTemplateSlug( slug );
 
@@ -407,7 +423,7 @@ class PageTemplateModal extends Component {
 							</form>
 							<TemplateSelectorPreview
 								blocks={ this.getBlocksForPreview( previewedTemplate ) }
-								viewportWidth={ 960 }
+								viewportWidth={ 1200 }
 								title={ this.getTitleByTemplateSlug( previewedTemplate ) }
 							/>
 						</>

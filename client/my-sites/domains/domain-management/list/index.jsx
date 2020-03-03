@@ -49,6 +49,8 @@ import { successNotice, errorNotice } from 'state/notices/actions';
  * Style dependencies
  */
 import './style.scss';
+import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 
 export class List extends React.Component {
 	static propTypes = {
@@ -378,6 +380,20 @@ export class List extends React.Component {
 		);
 	};
 
+	shouldUpgradeToMakeDomainPrimary( domain ) {
+		const { isDomainOnly, isOnFreePlan, hasNonPrimaryDomainsFlag } = this.props;
+
+		return (
+			hasNonPrimaryDomainsFlag &&
+			isOnFreePlan &&
+			domain.type === type.REGISTERED &&
+			! isDomainOnly &&
+			! domain.isPrimary &&
+			! domain.isWPCOMDomain &&
+			! domain.isWpcomStagingDomain
+		);
+	}
+
 	listItems() {
 		if ( this.isLoading() ) {
 			return times( 3, n => <ListItemPlaceholder key={ `item-${ n }` } /> );
@@ -402,6 +418,8 @@ export class List extends React.Component {
 					} ) }
 					onSelect={ this.handleUpdatePrimaryDomain }
 					onClick={ this.goToEditDomainRoot }
+					shouldUpgradeToMakePrimary={ this.shouldUpgradeToMakeDomainPrimary( domain ) }
+					onUpgradeClick={ this.goToPlans }
 				/>
 			);
 		} );
@@ -413,6 +431,11 @@ export class List extends React.Component {
 		} else {
 			page( domainManagementTransferIn( this.props.selectedSite.slug, domain.name ) );
 		}
+	};
+
+	goToPlans = () => {
+		this.props.upsellUpgradeClick();
+		page( `/plans/${ this.props.selectedSite.slug }` );
 	};
 }
 
@@ -437,6 +460,9 @@ const disablePrimaryDomainMode = () =>
 		recordTracksEvent( 'calypso_domain_management_list_disable_primary_mode_click' )
 	);
 
+const upsellUpgradeClick = () =>
+	recordTracksEvent( 'calypso_domain_management_make_primary_plan_upgrade_click' );
+
 const changePrimary = domain =>
 	composeAnalytics(
 		recordGoogleEvent(
@@ -454,11 +480,17 @@ export default connect(
 	( state, ownProps ) => {
 		const siteId = get( ownProps, 'selectedSite.ID', null );
 		const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+		const selectedSite = get( ownProps, 'selectedSite', null );
+		const isOnFreePlan = get( selectedSite, 'plan.is_free', false );
 
 		return {
 			hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
+			hasNonPrimaryDomainsFlag: getCurrentUser( state )
+				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+				: false,
+			isOnFreePlan,
 			userCanManageOptions,
 		};
 	},
@@ -477,6 +509,7 @@ export default connect(
 			changePrimary: domain => dispatch( changePrimary( domain ) ),
 			successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
+			upsellUpgradeClick: () => dispatch( upsellUpgradeClick() ),
 		};
 	}
 )( localize( withLocalizedMoment( List ) ) );

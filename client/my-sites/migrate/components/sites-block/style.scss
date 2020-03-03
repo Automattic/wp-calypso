@@ -40,7 +40,8 @@
 		}
 	}
 
-	.sites-block__sites-item {
+	.sites-block__source-site,
+	.sites-block__target-site {
 		padding: 25px;
 		width: 50%;
 
@@ -49,11 +50,18 @@
 		}
 	}
 
+	@include breakpoint('<660px') {
+		&.is-step-source-select {
+			.sites-block__sites-arrow-wrapper,
+			.sites-block__target-site {
+				display: none;
+			}
+		}
+	}
+
 	.site__content {
 		padding: 0; /* Reduce spacing below the site component, so we can put labels under it */
 	}
-
-
 
 	.sites-block__faux-site-selector {
 		box-sizing: border-box;

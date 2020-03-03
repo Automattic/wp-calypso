@@ -161,17 +161,6 @@ class Home extends Component {
 		const { checklistMode, currentTheme, translate, user } = this.props;
 
 		switch ( checklistMode ) {
-			case 'gsuite':
-				return translate(
-					'We emailed %(email)s with instructions to complete your G Suite setup. ' +
-						'In the mean time, use this quick list of setup tasks to get your site ready to share.',
-					{
-						args: {
-							email: user.email,
-						},
-					}
-				);
-
 			case 'concierge':
 				return translate(
 					'We emailed %(email)s with instructions to schedule your Quick Start Session call with us. ' +

@@ -121,6 +121,13 @@ class StepSourceSelect extends Component {
 		return (
 			<>
 				<HeaderCake backHref={ backHref }>{ translate( 'Import from WordPress' ) }</HeaderCake>
+
+				{ this.state.error && (
+					<Notice className="migrate__error" showDismiss={ false } status="is-error">
+						{ this.state.error }
+					</Notice>
+				) }
+
 				<CompactCard>
 					<CardHeading>{ translate( 'What WordPress site do you want to import?' ) }</CardHeading>
 					<div className="migrate__explain">
@@ -142,12 +149,9 @@ class StepSourceSelect extends Component {
 					onUrlChange={ this.onUrlChange }
 					onSubmit={ this.handleContinue }
 					url={ this.props.url }
+					step="sourceSelect"
 				/>
-				{ this.state.error && (
-					<Notice className="migrate__error" showDismiss={ false } status="is-error">
-						{ this.state.error }
-					</Notice>
-				) }
+
 				<Card>
 					<Button busy={ this.state.isLoading } onClick={ this.handleContinue } primary={ true }>
 						{ translate( 'Continue' ) }
