@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import { Banner } from 'components/banner';
+import Banner from 'components/banner';
 import { SETTING_PRIMARY_DOMAIN } from 'lib/url/support';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
