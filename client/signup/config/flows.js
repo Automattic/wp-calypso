@@ -103,7 +103,7 @@ function filterDestination( destination, dependencies ) {
 }
 
 function getDefaultFlowName() {
-	return config.isEnabled( 'signup/onboarding-flow' ) ? 'quick-onboard' : 'main';
+	return config.isEnabled( 'signup/onboarding-flow' ) ? 'onboarding' : 'main';
 }
 
 const Flows = {
