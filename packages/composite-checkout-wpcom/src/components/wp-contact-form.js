@@ -4,41 +4,37 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import {
-	useSelect,
-	useDispatch,
-	useLineItems,
-	usePaymentMethodId,
-} from '@automattic/composite-checkout';
+import { useSelect, useDispatch } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { useHasDomainsInCart, isLineItemADomain } from '../hooks/has-domains';
+import { useHasDomainsInCart } from '../hooks/has-domains';
 import Field from './field';
 import { SummaryLine, SummaryDetails, SummarySpacerLine } from './summary-details';
 import { LeftColumn, RightColumn } from './ie-fallback';
-import { prepareDomainContactDetails, isValid } from '../types';
+import {
+	prepareDomainContactDetails,
+	prepareDomainContactDetailsErrors,
+	isCompleteAndValid,
+	isValid,
+} from '../types';
 
 export default function WPContactForm( {
-	siteUrl,
 	summary,
 	isComplete,
 	isActive,
 	CountrySelectMenu,
 	countriesList,
 	renderDomainContactFields,
+	updateContactDetails,
+	updateCountryCode,
+	updatePostalCode,
 } ) {
 	const translate = useTranslate();
 	const isDomainFieldsVisible = useHasDomainsInCart();
 	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
-	const setters = useDispatch( 'wpcom' );
-
-	const [ paymentMethodId ] = usePaymentMethodId();
-	const [ items ] = useLineItems();
-	const firstDomainItem = items.find( isLineItemADomain );
-	const domainName = firstDomainItem ? firstDomainItem.sublabel : siteUrl;
 
 	if ( summary && isComplete ) {
 		return <ContactFormSummary />;
@@ -51,18 +47,25 @@ export default function WPContactForm( {
 		<BillingFormFields>
 			{ renderContactDetails( {
 				translate,
-				domainName,
 				isDomainFieldsVisible,
 				contactInfo,
 				renderDomainContactFields,
-				setters,
+				updateContactDetails,
+				updateCountryCode,
+				updatePostalCode,
 				CountrySelectMenu,
 				countriesList,
-				paymentMethodId,
 			} ) }
+			{ ! isCompleteAndValid() && (
+				<FormFieldError>
+					{ translate( 'There are some errors in your contact details; see above for details' ) }
+				</FormFieldError>
+			) }
 		</BillingFormFields>
 	);
 }
+
+const FormFieldError = styled.span``;
 
 const BillingFormFields = styled.div`
 	margin-bottom: 16px;
@@ -117,10 +120,16 @@ function VatIdField() {
 	);
 }
 
-function TaxFields( { section, taxInfo, setters, CountrySelectMenu, countriesList } ) {
+function TaxFields( {
+	section,
+	taxInfo,
+	CountrySelectMenu,
+	countriesList,
+	updatePostalCode,
+	updateCountryCode,
+} ) {
 	const translate = useTranslate();
 	const { postalCode, countryCode } = taxInfo;
-	const { updatePostalCode, updateCountryCode } = setters;
 
 	const isZip = isZipOrPostal() === 'zip';
 	return (
@@ -160,10 +169,8 @@ function TaxFields( { section, taxInfo, setters, CountrySelectMenu, countriesLis
 TaxFields.propTypes = {
 	section: PropTypes.string.isRequired,
 	taxInfo: PropTypes.object.isRequired,
-	setters: PropTypes.shape( {
-		updatePostalCode: PropTypes.func.isRequired,
-		updateCountryCode: PropTypes.func.isRequired,
-	} ).isRequired,
+	updatePostalCode: PropTypes.func.isRequired,
+	updateCountryCode: PropTypes.func.isRequired,
 };
 
 function isZipOrPostal() {
@@ -245,14 +252,14 @@ function getContactDetailsFormat( isDomainFieldsVisible ) {
 
 function renderContactDetails( {
 	translate,
-	domainName,
 	isDomainFieldsVisible,
 	contactInfo,
 	renderDomainContactFields,
-	setters,
+	updateContactDetails,
+	updateCountryCode,
+	updatePostalCode,
 	CountrySelectMenu,
 	countriesList,
-	paymentMethodId,
 } ) {
 	const format = getContactDetailsFormat( isDomainFieldsVisible );
 	const requiresVatId = isEligibleForVat( contactInfo.countryCode.value );
@@ -266,11 +273,9 @@ function renderContactDetails( {
 						) }
 					</DomainContactFieldsDescription>
 					{ renderDomainContactFields(
-						[ domainName ],
 						prepareDomainContactDetails( contactInfo ),
-						setters.updateContactDetails,
-						setters.applyDomainContactValidationResults,
-						paymentMethodId
+						prepareDomainContactDetailsErrors( contactInfo ),
+						updateContactDetails
 					) }
 					{ requiresVatId && <VatIdField /> }
 				</React.Fragment>
@@ -281,7 +286,8 @@ function renderContactDetails( {
 					<TaxFields
 						section="contact"
 						taxInfo={ contactInfo }
-						setters={ setters }
+						updateCountryCode={ updateCountryCode }
+						updatePostalCode={ updatePostalCode }
 						CountrySelectMenu={ CountrySelectMenu }
 						countriesList={ countriesList }
 					/>
