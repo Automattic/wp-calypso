@@ -2,11 +2,11 @@
  * External dependencies
  */
 import page from 'page';
+import config from 'config';
 
 /**
  * Internal dependencies
  */
-
 import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { makeLayout, render as clientRender } from 'controller';
 
@@ -22,63 +22,71 @@ import { settings } from 'landing/jetpack-cloud/sections/settings/controller';
 
 export default function() {
 	page( '/', siteSelection, navigation, dashboard, makeLayout, clientRender );
-	page( '/backups', siteSelection, sites, navigation, makeLayout, clientRender );
 
-	page( '/backups/:site', siteSelection, navigation, backups, makeLayout, clientRender );
-	page(
-		'/backups/:site/detail/',
-		siteSelection,
-		navigation,
-		backupDetail,
-		makeLayout,
-		clientRender
-	);
-	page(
-		'/backups/:site/detail/:backupId',
-		siteSelection,
-		navigation,
-		backupDetail,
-		makeLayout,
-		clientRender
-	);
-	page(
-		'/backups/:site/download',
-		siteSelection,
-		navigation,
-		backupDownload,
-		makeLayout,
-		clientRender
-	);
-	page(
-		'/backups/:site/backups/download/:downloadId',
-		navigation,
-		backupDownload,
-		makeLayout,
-		clientRender
-	);
+	if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {
+		page( '/backups', siteSelection, sites, navigation, makeLayout, clientRender );
 
-	page( '/backups/restore', siteSelection, sites, navigation, makeLayout, clientRender );
-	page(
-		'/backups/:site/restore/',
-		siteSelection,
-		navigation,
-		backupRestore,
-		makeLayout,
-		clientRender
-	);
-	page(
-		'/backups/restore/:site/:restoreId',
-		siteSelection,
-		navigation,
-		backupRestore,
-		makeLayout,
-		clientRender
-	);
-
-	page( '/scan', siteSelection, sites, navigation, makeLayout, clientRender );
-	page( '/scan/:site', siteSelection, navigation, scan, makeLayout, clientRender );
-	page( '/scan/:site/history', siteSelection, navigation, scanHistory, makeLayout, clientRender );
-
-	page( '/settings', siteSelection, sites, navigation, makeLayout, clientRender );
-	page( '/settings/:site', siteSelection, navigation, settings, makeLayout, clientRender );
+		page( '/backups/:site', siteSelection, navigation, backups, makeLayout, clientRender );
+		page(
+			'/backups/:site/detail/',
+			siteSelection,
+			navigation,
+			backupDetail,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/backups/:site/detail/:backupId',
+			siteSelection,
+			navigation,
+			backupDetail,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/backups/:site/download',
+			siteSelection,
+			navigation,
+			backupDownload,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/backups/:site/backups/download/:downloadId',
+			navigation,
+			backupDownload,
+			makeLayout,
+			clientRender
+		);
+	}
+	if ( config.isEnabled( 'jetpack-cloud/backups-restore' ) ) {
+		page( '/backups/restore', siteSelection, sites, navigation, makeLayout, clientRender );
+		page(
+			'/backups/:site/restore/',
+			siteSelection,
+			navigation,
+			backupRestore,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/backups/restore/:site/:restoreId',
+			siteSelection,
+			navigation,
+			backupRestore,
+			makeLayout,
+			clientRender
+		);
+	}
+	if ( config.isEnabled( 'jetpack-cloud/scan' ) ) {
+		page( '/scan', siteSelection, sites, navigation, makeLayout, clientRender );
+		page( '/scan/:site', siteSelection, navigation, scan, makeLayout, clientRender );
+	}
+	if ( config.isEnabled( 'jetpack-cloud/scan-history' ) ) {
+		page( '/scan/:site/history', siteSelection, navigation, scanHistory, makeLayout, clientRender );
+	}
+	if ( config.isEnabled( 'jetpack-cloud/settings' ) ) {
+		page( '/settings', siteSelection, sites, navigation, makeLayout, clientRender );
+		page( '/settings/:site', siteSelection, navigation, settings, makeLayout, clientRender );
+	}
 }
