@@ -43,11 +43,6 @@ export const togglePageLayout = ( pageLayout: Template ) => ( {
 	pageLayout,
 } );
 
-export const setShouldCreate = ( shouldCreate: boolean ) => ( {
-	type: 'SET_SHOULD_CREATE' as const,
-	shouldCreate,
-} );
-
 export const resetOnboardStore = () => ( {
 	type: 'RESET_ONBOARD_STORE' as const,
 } );
@@ -59,6 +54,5 @@ export type OnboardAction = ReturnType<
 	| typeof resetSiteVertical
 	| typeof setSiteTitle
 	| typeof togglePageLayout
-	| typeof setShouldCreate
 	| typeof resetOnboardStore
 >;
