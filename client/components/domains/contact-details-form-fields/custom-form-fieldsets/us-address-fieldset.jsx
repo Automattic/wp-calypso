@@ -13,10 +13,14 @@ import { StateSelect, Input } from 'my-sites/domains/components/form';
 import { getStateLabelText, getPostCodeLabelText, STATE_SELECT_TEXT } from './utils.js';
 
 const UsAddressFieldset = props => {
-	const { getFieldProps, translate, countryCode } = props;
+	const { getFieldProps, translate, countryCode, contactDetailsErrors } = props;
 	return (
 		<div className="custom-form-fieldsets__address-fields us-address-fieldset">
-			<Input label={ translate( 'City' ) } { ...getFieldProps( 'city' ) } />
+			<Input
+				label={ translate( 'City' ) }
+				errorMessage={ contactDetailsErrors?.city }
+				{ ...getFieldProps( 'city' ) }
+			/>
 			<StateSelect
 				label={ getStateLabelText( countryCode ) }
 				countryCode={ countryCode }
@@ -32,12 +36,14 @@ UsAddressFieldset.propTypes = {
 	countryCode: PropTypes.string,
 	getFieldProps: PropTypes.func,
 	translate: PropTypes.func,
+	contactDetailsErrors: PropTypes.object,
 };
 
 UsAddressFieldset.defaultProps = {
 	countryCode: 'US',
 	getFieldProps: noop,
 	translate: identity,
+	contactDetailsErrors: {},
 };
 
 export default localize( UsAddressFieldset );
