@@ -45,7 +45,7 @@ require_once __DIR__ . '/dotcom-fse/helpers.php';
  */
 function load_full_site_editing() {
 	// Bail if FSE should not be active on the site. We do not
-	// want to load FSE functionality on non-supported sites!
+	// want to load FSE functionality on unsupported sites!
 	if ( ! is_full_site_editing_active() ) {
 		return;
 	}
