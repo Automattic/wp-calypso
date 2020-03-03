@@ -136,7 +136,7 @@ class ListItem extends React.PureComponent {
 	}
 
 	selectionRadio() {
-		if ( ! this.props.enableSelection ) {
+		if ( ! this.props.enableSelection || this.props.shouldUpgradeToMakePrimary ) {
 			return null;
 		}
 
@@ -144,7 +144,6 @@ class ListItem extends React.PureComponent {
 			<input
 				id={ this.getInputId() }
 				className="domain-management-list-item__radio"
-				disabled={ this.props.shouldUpgradeToMakePrimary }
 				type="radio"
 				checked={ this.props.isSelected }
 				onChange={ noop }
