@@ -4,13 +4,17 @@ const globby = require( 'globby' );
 const debug = require( 'debug' )( 'effective-module-tree' );
 const treeify = require( 'object-treeify' );
 
-// Generator that yields all places were node will look for modules
-// For a path like : a/node_modules/b/node_modules/c
-// It will generate the candidates:
-//		- a/node_modules/b/node_modules/c/node_modules
-// 		- a/node_modules/b/node_modules
-//		- a/node_modules
-//		- node_modules
+/**
+ * Generator that yields all places were node will look for modules
+ * For a path like : a/node_modules/b/node_modules/c
+ * It will generate the candidates:
+ *	- a/node_modules/b/node_modules/c/node_modules
+ *	- a/node_modules/b/node_modules
+ *	- a/node_modules
+ *	- node_modules
+ *
+ * @param {string} packagePath Package path used as seed for the traversal
+ */
 const candidates = function*( packagePath ) {
 	const parts = packagePath.split( path.sep );
 	for ( let i = parts.length; i >= 0; i-- ) {
@@ -22,9 +26,33 @@ const candidates = function*( packagePath ) {
 	}
 };
 
-// Simplify tree. Once the full tree has been discovered and linked, we need
-// to simplify it (i.e. remove unused properties) to generate a format compatible
-// with treeify so we can render it (https://www.npmjs.com/package/object-treeify)
+/**
+ * Simplify tree. Once the full tree has been discovered and linked, we need
+ * to simplify it to generate a format compatible with treeify (see https://www.npmjs.com/package/object-treeify)
+ *
+ * This transforms a tree like:
+ *
+ * {
+ * 		name: 'packageName',
+ * 		version: '1.2.3'.
+ * 		linkedDeps: [
+ * 			{ name: 'foo', version: '1.2.4', linkedDeps: [] },
+ * 			{ name: 'bar', version: '1.2.5', linkedDeps: [] }
+ * 		]
+ * }
+ *
+ * into
+ *
+ * {
+ * 		'packageName@1.2.3': {
+ * 			'foo@1.2.4': {},
+ * 			'bar@1.2.5': {}
+ * 		}
+ * }
+ *
+ * @param {object} packageDef Representation of a package
+ * @param {string[]} parents List of parents of the current package, used to avoid circular dependencies
+ */
 const simplify = ( packageDef, parents ) => {
 	// This means the dependency couldn't be found. Maybe a missing `npm install` ?
 	if ( ! packageDef ) {
@@ -53,6 +81,8 @@ const simplify = ( packageDef, parents ) => {
 };
 
 /**
+ * Finds the effective dependencies tree (aka the logical tree).
+ *
  * How this works:
  *
  * - Find all package.json files
@@ -62,8 +92,8 @@ const simplify = ( packageDef, parents ) => {
  * - Once everything is linked, produce a simplified map suited for treeify
  * - Print it
  *
- * @param includePattern string[] Globs to include in the search, defaults to ['**\/package.json']
- * @param excludePattern string[] Globs to exclude from the search, defaults to []
+ * @param {string[]} includePattern Globs to include in the search, defaults to ['**\/package.json']
+ * @param {string[]} excludePattern Globs to exclude from the search, defaults to []
  */
 const effectiveTree = async ( includePattern = [ '**/package.json' ], excludePattern = [] ) => {
 	// Find all package.json files
