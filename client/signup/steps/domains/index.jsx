@@ -49,6 +49,7 @@ import { isDomainStepSkippable } from 'signup/config/steps';
 import { fetchUsernameSuggestion } from 'state/signup/optional-dependencies/actions';
 import { isSitePreviewVisible } from 'state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
+import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import { abtest } from 'lib/abtest';
 
 /**
@@ -628,7 +629,7 @@ class DomainsStep extends React.Component {
 			return null;
 		}
 
-		const { flowName, translate, selectedSite } = this.props;
+		const { flowName, translate, hasInitializedSitesBackUrl } = this.props;
 		let backUrl, backLabelText;
 
 		if ( 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName ) {
@@ -640,9 +641,9 @@ class DomainsStep extends React.Component {
 			);
 		} else if ( this.props.stepSectionName ) {
 			backUrl = getStepUrl( this.props.flowName, this.props.stepName, undefined, getLocaleSlug() );
-		} else if ( 0 === this.props.positionInFlow && selectedSite ) {
-			backUrl = `/view/${ selectedSite.slug }`;
-			backLabelText = translate( 'Back to Site' );
+		} else if ( 0 === this.props.positionInFlow && hasInitializedSitesBackUrl ) {
+			backUrl = hasInitializedSitesBackUrl;
+			backLabelText = translate( 'Back to My Sites' );
 		}
 
 		const headerText = this.getHeaderText();
@@ -666,7 +667,7 @@ class DomainsStep extends React.Component {
 					</div>
 				}
 				showSiteMockups={ this.props.showSiteMockups }
-				allowBackFirstStep={ !! selectedSite }
+				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 				backLabelText={ backLabelText }
 				hideSkip={ ! showSkip }
 				isTopButtons={ showSkip }
@@ -729,6 +730,7 @@ export default connect(
 			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
 			isSitePreviewVisible: isSitePreviewVisible( state ),
 			isPlanStepFulfilled: get( ownProps.signupDependencies, 'cartItem', false ),
+			hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 		};
 	},
 	{
