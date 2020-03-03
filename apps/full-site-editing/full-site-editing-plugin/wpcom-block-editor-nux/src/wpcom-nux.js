@@ -46,13 +46,13 @@ function WpcomNux() {
 	return (
 		<Guide
 			className="edit-post-welcome-guide"
-			contentLabel={ __( 'Welcome to the block editor' ) }
+			contentLabel={ __( 'Welcome to the WordPress editor' ) }
 			finishButtonText={ __( 'Get started' ) }
 			onFinish={ dismissWpcomNux }
 		>
 			<GuidePage className="edit-post-welcome-guide__page">
 				<h1 className="edit-post-welcome-guide__heading">
-					{ __( 'Welcome to the block editor' ) }
+					{ __( 'Welcome to the WordPress editor' ) }
 				</h1>
 				<CanvasImage className="edit-post-welcome-guide__image" />
 				<p className="edit-post-welcome-guide__text">
@@ -93,11 +93,11 @@ function WpcomNux() {
 
 			<GuidePage className="edit-post-welcome-guide__page">
 				<h1 className="edit-post-welcome-guide__heading">
-					{ __( 'Learn how to use the block editor' ) }
+					{ __( 'Learn how to use the WordPress editor' ) }
 				</h1>
 				<DocumentationImage className="edit-post-welcome-guide__image" />
 				<p className="edit-post-welcome-guide__text">
-					{ __( 'New to the block editor? Want to learn more about using it? ' ) }
+					{ __( 'New to the WordPress editor? Want to learn more about using it? ' ) }
 					<ExternalLink href={ __( 'https://support.wordpress.com/wordpress-editor/' ) }>
 						{ __( "Here's a detailed guide." ) }
 					</ExternalLink>
