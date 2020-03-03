@@ -40,8 +40,8 @@ class PageTemplateModal extends Component {
 	);
 
 	// Parse templates blocks and memoize them.
-	getBlocksByTemplateSlugs = memoize( templates =>
-		reduce(
+	getBlocksByTemplateSlugs = memoize( templates => {
+		let rtn = reduce(
 			templates,
 			( prev, { slug, content, title } ) => {
 				prev[ slug ] = content
@@ -62,8 +62,29 @@ class PageTemplateModal extends Component {
 				return prev;
 			},
 			{}
-		)
-	);
+		);
+
+		const MISSING_BLOCK_NAME = 'core/spacer';
+
+		// Remove templates that include a missing block
+		rtn = reduce(
+			rtn,
+			( acc, templateBlocks, slug ) => {
+				// We will need to flatten the blocks by `innerBlocks` to ensure we
+				// catch nested Blocks
+				const hasMissingBlocks = templateBlocks.find( block => block.name === MISSING_BLOCK_NAME );
+
+				if ( ! hasMissingBlocks || slug === 'blank' ) {
+					acc[ slug ] = templateBlocks;
+				}
+
+				return acc;
+			},
+			{}
+		);
+
+		return rtn;
+	} );
 
 	getBlocksForPreview = memoize( previewedTemplate => {
 		const blocks = this.getBlocksByTemplateSlug( previewedTemplate );
