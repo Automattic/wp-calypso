@@ -3,15 +3,14 @@
  */
 import React, { useState } from 'react';
 import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
-import { useDispatch, useSelect, dispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
 /**
  * Internal dependencies
  */
-import { USER_STORE } from '../../stores/user';
+import { AUTH_STORE } from '../../stores/auth';
 import './style.scss';
-import { useHistory } from 'react-router-dom';
 
 // TODO: deploy this change to @types/wordpress__element
 declare module '@wordpress/element' {
@@ -26,24 +25,23 @@ const SignupForm = () => {
 	const { __: NO__, _x: NO_x } = useI18n();
 	const [ usernameOrEmailVal, setUsernameOrEmailVal ] = useState( '' );
 	const [ passwordVal, setPasswordVal ] = useState( '' );
+	const { submitUsernameOrEmail } = useDispatch( AUTH_STORE );
+	const { submitPassword } = useDispatch( AUTH_STORE );
+	const loginFlowState = useSelect( select => select( AUTH_STORE ).getLoginFlowState() );
 
-	// dispatch action for logging in
 	// some kind of loading state like isFetchingNewUser
-	// useSelect to get login errors from user store
-
-	const history = useHistory();
-
-	let hasAccountTypeLoaded = false;
+	// todo: useSelect to get login errors from auth store
 
 	const handleLogin = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 
-		// TODO: check if the account exists and what auth method it uses
-
 		// todo: record analytics.
-
-		// createAccount( { email: usernameOrEmailVal, is_passwordless: true, signup_flow_name: 'gutenboarding' } );
-		// Login dispatch here
+		if ( loginFlowState === 'ENTER_USERNAME_OR_EMAIL' ) {
+			submitUsernameOrEmail( usernameOrEmailVal );
+		} else if ( loginFlowState === 'ENTER_PASSWORD' ) {
+			submitPassword( passwordVal );
+			//todo: handle success?
+		}
 	};
 
 	const handleClose = () => {
@@ -63,7 +61,7 @@ const SignupForm = () => {
 
 	let errorMessage: string | undefined;
 
-	// handle error messages like this:
+	// todo: handle error messages like this:
 	// if ( newUserError ) {
 	// 	switch ( newUserError.error ) {
 	// 		case 'already_taken':
@@ -80,6 +78,9 @@ const SignupForm = () => {
 	// 	}
 	// }
 
+	// todo: may need to be updated as more states are handled
+	const shouldShowPasswordField = loginFlowState === 'ENTER_PASSWORD';
+
 	return (
 		<Modal
 			className="login-form"
@@ -92,7 +93,6 @@ const SignupForm = () => {
 					label={ NO__( 'Email Address or Username' ) }
 					value={ usernameOrEmailVal }
 					// todo: dissable when saving
-					// disabled={ isFetchingNewUser }
 					onChange={ setUsernameOrEmailVal }
 					placeholder={ NO_x(
 						'E.g., yourname@email.com',
@@ -100,15 +100,14 @@ const SignupForm = () => {
 					) }
 					required
 				/>
-
 				<div
 					className={ `login-form__password-section ${
-						! hasAccountTypeLoaded ? 'is-hidden' : ''
+						! shouldShowPasswordField ? 'is-hidden' : ''
 					}` }
 				>
 					<TextControl
 						label={ NO__( 'Password' ) }
-						// disabled={ isFormDisabled }
+						// todo: dissable when saving
 						type="password"
 						value={ passwordVal }
 						onChange={ setPasswordVal }
@@ -129,8 +128,7 @@ const SignupForm = () => {
 					<Button
 						type="submit"
 						className="login-form__submit"
-						// disabled={ isFetchingNewUser }
-						// isBusy={ isFetchingNewUser }
+						// todo: dissable and set `isBusy` when saving
 						isPrimary
 					>
 						{ NO__( 'Login' ) }
