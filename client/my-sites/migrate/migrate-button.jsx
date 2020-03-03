@@ -31,22 +31,24 @@ class MigrateButton extends Component {
 
 		const message = (
 			<>
-				<h1>
-					{ translate( 'Import and overwrite everything on %(targetDomain)s?', {
+				<h1>{ translate( 'Import and replace everything on this site?' ) }</h1>
+				<div>
+					{ translate( 'All posts, pages, comments and media will be lost on %(targetDomain)s.', {
 						args: {
 							targetDomain: this.props.targetSiteDomain,
 						},
 					} ) }
-				</h1>
-				<div>
-					{ translate(
-						'All posts, pages, comments and media will be lost on this WordPress.com site.'
-					) }
 				</div>
 			</>
 		);
 
-		accept( message, this.confirmCallback, translate( 'Import and overwrite' ) );
+		accept(
+			message,
+			this.confirmCallback,
+			translate( 'Import and overwrite' ),
+			translate( 'Cancel' ),
+			{ additionalClassNames: 'migrate-confirm-popup-dialog' }
+		);
 	};
 
 	render() {
