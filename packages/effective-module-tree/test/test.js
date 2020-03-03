@@ -89,7 +89,6 @@ describe( 'Effective tree generation', () => {
 			'node_modules/c/package.json': JSON.stringify( {
 				name: 'c',
 				version: '3.2.1',
-				dependencies: {},
 			} ),
 		} );
 	} );

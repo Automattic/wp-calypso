@@ -69,7 +69,7 @@ const effectiveTree = async () => {
 				name: json.name,
 				path: packagePath,
 				version: json.version,
-				deps: Object.keys( json.dependencies ),
+				deps: Object.keys( json.dependencies || [] ),
 			} );
 		} )
 	);
