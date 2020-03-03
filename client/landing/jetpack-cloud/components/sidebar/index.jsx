@@ -48,7 +48,7 @@ class JetpackCloudSidebar extends Component {
 		const { selectedSiteSlug, translate } = this.props;
 
 		return (
-			<Sidebar>
+			<Sidebar className="sidebar__jetpack-cloud-sidebar">
 				<SidebarRegion>
 					<CurrentSite />
 					<SidebarMenu>
