@@ -315,7 +315,7 @@ class PageTemplateModal extends Component {
 		const blocksByTemplateSlug = this.getBlocksByTemplateSlugs( this.props.templates );
 		const templatesWithoutMissingBlocks = Object.keys( blocksByTemplateSlug );
 
-		const removeTemplatesWithMissingBlocks = ( templatesToFilter, filterIn ) => {
+		const filterOutTemplatesWithMissingBlocks = ( templatesToFilter, filterIn ) => {
 			return templatesToFilter.filter( template => filterIn.includes( template.slug ) );
 		};
 
@@ -324,7 +324,7 @@ class PageTemplateModal extends Component {
 				<legend className="page-template-modal__form-title">{ legendLabel }</legend>
 				<TemplateSelectorControl
 					label={ __( 'Layout', 'full-site-editing' ) }
-					templates={ removeTemplatesWithMissingBlocks(
+					templates={ filterOutTemplatesWithMissingBlocks(
 						templatesList,
 						templatesWithoutMissingBlocks
 					) }
