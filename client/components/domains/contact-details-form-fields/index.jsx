@@ -385,6 +385,7 @@ export class ContactDetailsFormFields extends Component {
 				<div className="contact-details-form-fields__row">
 					{ this.createField( 'email', Input, {
 						label: translate( 'Email' ),
+                        errorMessage: this.props.contactDetailsErrors?.email,
 					} ) }
 
 					{ this.createField(
@@ -396,6 +397,7 @@ export class ContactDetailsFormFields extends Component {
 							countriesList: this.props.countriesList,
 							countryCode: this.state.phoneCountryCode,
 							enableStickyCountry: false,
+                            errorMessage: this.props.contactDetailsErrors?.phone,
 						},
 						true
 					) }
@@ -405,6 +407,7 @@ export class ContactDetailsFormFields extends Component {
 					{ needsFax &&
 						this.createField( 'fax', Input, {
 							label: translate( 'Fax' ),
+                            errorMessage: this.props.contactDetailsErrors?.fax,
 						} ) }
 				</div>
 
@@ -415,6 +418,7 @@ export class ContactDetailsFormFields extends Component {
 						{
 							label: translate( 'Country' ),
 							countriesList: this.props.countriesList,
+                            errorMessage: this.props.contactDetailsErrors?.countryCode,
 						},
 						true
 					) }
@@ -439,11 +443,13 @@ export class ContactDetailsFormFields extends Component {
 				<CountrySelect
 					label={ this.props.translate( 'Country' ) }
 					countriesList={ this.props.countriesList }
+                    errorMessage={ this.props.contactDetailsErrors?.countryCode }
 					{ ...this.getFieldProps( 'country-code', true ) }
 				/>
 
 				<Input
 					label={ getPostCodeLabelText( countryCode ) }
+                    errorMessage={ this.props.contactDetailsErrors?.postalCode }
 					{ ...this.getFieldProps( 'postal-code' ) }
 				/>
 			</div>
@@ -455,6 +461,7 @@ export class ContactDetailsFormFields extends Component {
 			<div className="contact-details-form-fields__row">
 				<Input
 					label={ this.props.translate( 'Alternate Email Address' ) }
+                    errorMessage={ this.props.contactDetailsErrors?.alternateEmail }
 					{ ...this.getFieldProps( 'alternate-email' ) }
 				/>
 			</div>
@@ -462,7 +469,7 @@ export class ContactDetailsFormFields extends Component {
 	}
 
 	render() {
-		const { translate, onCancel, disableSubmitButton, labelTexts } = this.props;
+		const { translate, onCancel, disableSubmitButton, labelTexts, contactDetailsErrors } = this.props;
 		const countryCode = this.getCountryCode();
 
 		const isFooterVisible = !! ( this.props.onSubmit || onCancel );
@@ -472,10 +479,12 @@ export class ContactDetailsFormFields extends Component {
 				<div className="contact-details-form-fields__row">
 					{ this.createField( 'first-name', Input, {
 						label: translate( 'First Name' ),
+                        errorMessage: contactDetailsErrors?.firstName,
 					} ) }
 
 					{ this.createField( 'last-name', Input, {
 						label: translate( 'Last Name' ),
+                        errorMessage: contactDetailsErrors?.lastName,
 					} ) }
 				</div>
 				{ this.props.needsAlternateEmailForGSuite && this.renderAlternateEmailFieldForGSuite() }
