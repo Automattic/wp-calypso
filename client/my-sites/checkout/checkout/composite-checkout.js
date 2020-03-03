@@ -612,6 +612,27 @@ export default function CompositeCheckout( {
 	const validateDomainContact =
 		validateDomainContactDetails || wpcomValidateDomainContactInformation;
 
+	const domainContactValidationCallback = ( paymentMethodId, contactDetails, domainNames, applyDomainContactValidationResults ) => {
+	    console.log( 'validation request sent' );
+	    return validateDomainContact( contactDetails, domainNames, ( httpErrors, data ) => {
+	        console.log( 'validation response received' );
+            recordEvent( {
+                type: 'VALIDATE_DOMAIN_CONTACT_INFO',
+                payload: {
+                    credits: null,
+                    payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod(
+                        paymentMethodId
+                    ),
+                },
+            } );
+            debug(
+                'Domain contact info validation ' + ( data.messages ? 'errors:' : 'successful' ),
+                data.messages
+            );
+            applyDomainContactValidationResults( { ...data.messages } );
+        } );
+    };
+
 	const renderDomainContactFields = (
 		domainNames,
 		contactDetails,
@@ -696,6 +717,7 @@ export default function CompositeCheckout( {
 					variantRequestStatus={ variantRequestStatus }
 					variantSelectOverride={ variantSelectOverride }
 					getItemVariants={ getItemVariants }
+                    domainContactValidationCallback={ domainContactValidationCallback }
 				/>
 			</CheckoutProvider>
 		</React.Fragment>

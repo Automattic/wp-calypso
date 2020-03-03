@@ -21,12 +21,12 @@ import {
 /**
  * Internal dependencies
  */
-import { areDomainsInLineItems } from '../hooks/has-domains';
+import { areDomainsInLineItems, isLineItemADomain } from '../hooks/has-domains';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary, { WPCheckoutOrderSummaryTitle } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
-import { isCompleteAndValid } from '../types';
+import { isCompleteAndValid, prepareDomainContactDetails } from '../types';
 
 const ContactFormTitle = () => {
 	const translate = useTranslate();
@@ -66,14 +66,31 @@ export default function WPCheckout( {
 	variantRequestStatus,
 	variantSelectOverride,
 	getItemVariants,
+    domainContactValidationCallback,
 } ) {
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( submitCoupon );
 	const total = useTotal();
 	const activePaymentMethod = usePaymentMethod();
 
+    const [ items ] = useLineItems();
+    const firstDomainItem = items.find( isLineItemADomain );
+    const domainName = firstDomainItem ? firstDomainItem.sublabel : siteUrl;
+
 	const contactInfo = useSelect( sel => sel( 'wpcom' ).getContactInfo() ) || {};
-	const { setSiteId, touchContactFields } = useDispatch( 'wpcom' );
+	const { setSiteId, touchContactFields, updateContactDetails, updateCountryCode, updatePostalCode, applyDomainContactValidationResults } = useDispatch( 'wpcom' );
+
+	const contactValidationCallback = async () => {
+        updateLocation( {
+            countryCode: contactInfo.countryCode.value,
+            postalCode: contactInfo.postalCode.value,
+            subdivisionCode: contactInfo.state.value,
+        } );
+        // Touch the fields so they display validation errors
+        touchContactFields();
+        await domainContactValidationCallback( activePaymentMethod.id, prepareDomainContactDetails( contactInfo ), [ domainName ], applyDomainContactValidationResults );
+        return isCompleteAndValid( contactInfo );
+    };
 
 	// Copy siteId to the store so it can be more easily accessed during payment submission
 	useEffect( () => {
@@ -118,16 +135,7 @@ export default function WPCheckout( {
 				{ total.amount.value !== 0 && (
 					<CheckoutStep
 						stepId={ 'contact-form' }
-						isCompleteCallback={ () => {
-							updateLocation( {
-								countryCode: contactInfo.countryCode.value,
-								postalCode: contactInfo.postalCode.value,
-								subdivisionCode: contactInfo.state.value,
-							} );
-							// Touch the fields so they display validation errors
-							touchContactFields();
-							return isCompleteAndValid( contactInfo );
-						} }
+						isCompleteCallback={ contactValidationCallback }
 						activeStepContent={
 							<WPContactForm
 								siteUrl={ siteUrl }
