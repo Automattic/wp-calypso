@@ -18,6 +18,7 @@ import {
 	prepareDomainContactDetails,
 	prepareDomainContactDetailsErrors,
 	isCompleteAndValid,
+	isTouched,
 	isValid,
 } from '../types';
 
@@ -56,7 +57,7 @@ export default function WPContactForm( {
 				CountrySelectMenu,
 				countriesList,
 			} ) }
-			{ ! isCompleteAndValid() && (
+			{ isTouched( contactInfo ) && ! isCompleteAndValid( contactInfo ) && (
 				<FormFieldError>
 					{ translate( 'There are some errors in your contact details; see above for details' ) }
 				</FormFieldError>
