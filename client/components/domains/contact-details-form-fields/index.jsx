@@ -61,6 +61,12 @@ export class ContactDetailsFormFields extends Component {
 				...CONTACT_DETAILS_FORM_FIELDS.map( field => ( { [ field ]: PropTypes.string } ) )
 			)
 		).isRequired,
+        contactDetailsErrors: PropTypes.shape(
+            Object.assign(
+                {},
+                ...CONTACT_DETAILS_FORM_FIELDS.map( field => ( { [ field ]: PropTypes.string } ) )
+            )
+        ),
 		countriesList: PropTypes.array.isRequired,
 		needsFax: PropTypes.bool,
 		getIsFieldDisabled: PropTypes.func,
@@ -84,6 +90,7 @@ export class ContactDetailsFormFields extends Component {
 			{},
 			...CONTACT_DETAILS_FORM_FIELDS.map( field => ( { [ field ]: '' } ) )
 		),
+        contactDetailsErrors: {},
 		needsFax: false,
 		getIsFieldDisabled: noop,
 		onContactDetailsChange: noop,
