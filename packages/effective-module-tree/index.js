@@ -53,10 +53,13 @@ const simplify = ( packageDef, parents ) => {
  * - For each dependency, try to find it looking at parent directories
  * - Once everything is linked, produce a simplified map suited for treeify
  * - Print it
+ *
+ * @param includePattern string[] Globs to include in the search, defaults to ['**\/package.json']
+ * @param excludePattern string[] Globs to exclude from the search, defaults to []
  */
-const effectiveTree = async () => {
+const effectiveTree = async ( includePattern = [ '**/package.json' ], excludePattern = [] ) => {
 	// Find all package.json files
-	const packageJsonPaths = await globby( '**/package.json' );
+	const packageJsonPaths = await globby( includePattern, { ignore: excludePattern } );
 
 	// Read all package.json files
 	const packagesByPath = new Map();

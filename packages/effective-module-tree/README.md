@@ -32,3 +32,15 @@ a file for better inspection (`effective-module-tree > packages`).
 If there are missing dependencies, they will be printed in `stderr` as a warning. This can be
 caused by missing packages in node_mdoules, or the script misdetecting `package.json` files as
 packages (eg. from test fixtures).
+
+You can select which `package.json` files are used for computing the tree using the flags `--exclude`
+and `--include`. For example:
+
+```bash
+# Uses any `package.json` found inside `./src` except those that have an `examples` directory
+# in their path.
+
+effective-module-tree --include "./src/**/package.json" --exclude "**/examples/**"
+```
+
+Both options accept [minimatch patterns](https://github.com/isaacs/minimatch#usage)
