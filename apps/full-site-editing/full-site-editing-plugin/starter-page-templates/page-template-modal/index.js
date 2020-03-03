@@ -64,7 +64,7 @@ class PageTemplateModal extends Component {
 			{}
 		);
 
-		const MISSING_BLOCK_NAME = 'core/spacer';
+		const MISSING_BLOCK_NAME = 'core/group';
 
 		// Remove templates that include a missing block
 		rtn = reduce(
@@ -74,7 +74,9 @@ class PageTemplateModal extends Component {
 				// catch nested Blocks
 				const hasMissingBlocks = templateBlocks.find( block => block.name === MISSING_BLOCK_NAME );
 
-				if ( ! hasMissingBlocks || slug === 'blank' ) {
+				// If we don't have any missing blocks, or there are no block at
+				// all then retain in collection.
+				if ( ! hasMissingBlocks || ! templateBlocks.length ) {
 					acc[ slug ] = templateBlocks;
 				}
 
@@ -158,7 +160,7 @@ class PageTemplateModal extends Component {
 		const blankTemplate = get( props.templates, [ 0, 'slug' ] );
 		let previouslyChosenTemplate = props._starter_page_template;
 
-		// Usally the "new page" case.
+		// Usally the "new page" case
 		if ( ! props.isFrontPage && ! previouslyChosenTemplate ) {
 			return blankTemplate;
 		}
@@ -310,12 +312,22 @@ class PageTemplateModal extends Component {
 			return null;
 		}
 
+		const blocksByTemplateSlug = this.getBlocksByTemplateSlugs( this.props.templates );
+		const templatesWithMissingBlocks = Object.keys( blocksByTemplateSlug );
+
+		const removeTemplatesWithMissingBlocks = ( templatesToFilter, filterIn ) => {
+			return templatesToFilter.filter( template => filterIn.includes( template.slug ) );
+		};
+
 		return (
 			<fieldset className="page-template-modal__list">
 				<legend className="page-template-modal__form-title">{ legendLabel }</legend>
 				<TemplateSelectorControl
 					label={ __( 'Layout', 'full-site-editing' ) }
-					templates={ templatesList }
+					templates={ removeTemplatesWithMissingBlocks(
+						templatesList,
+						templatesWithMissingBlocks
+					) }
 					blocksByTemplates={ this.getBlocksByTemplateSlugs( this.props.templates ) }
 					onTemplateSelect={ this.previewTemplate }
 					useDynamicPreview={ false }
