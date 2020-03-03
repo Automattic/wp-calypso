@@ -1272,6 +1272,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 				driver,
 				StartPage.getStartURL( {
 					culture: locale,
+					flow: 'onboarding-with-preview',
 					query: 'vertical=art',
 				} )
 			);

@@ -93,7 +93,7 @@ export function generateFlows( {
 			lastModified: '2019-06-20',
 		},
 
-		'onboarding-old': {
+		'onboarding-with-preview': {
 			steps: [
 				'user',
 				'site-type',
@@ -111,7 +111,7 @@ export function generateFlows( {
 		onboarding: {
 			steps: [ 'user', 'domains', 'plans' ],
 			destination: getSignupDestination,
-			description: 'The improved onboarding flow.',
+			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2020-03-03',
 			showRecaptcha: true,
 		},
