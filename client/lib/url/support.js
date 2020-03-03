@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -31,6 +29,9 @@ export const DOMAIN_REGISTRATION_AGREEMENTS = `${ root }/domain-registration-agr
 export const DOMAIN_WAITING = `${ root }/domains/register-domain/#waiting-for-domain-changes`;
 export const DOMAINS = `${ root }/domains`;
 export const DOMAIN_CONNECT = `${ root }/domain-connect`;
+export const DOMAIN_EXPIRATION = `${ root }/domains/domain-expiration/`;
+export const DOMAIN_EXPIRATION_REDEMPTION = `${ root }/domains/domain-expiration/#renewing-a-domain-in-the-redemption-period`;
+export const DOMAIN_RECENTLY_REGISTERED = `${ root }/domains/register-domain/#waiting-for-domain-changes`;
 export const DOMAIN_PRICING_AND_AVAILABLE_TLDS = `${ root }/domains/domain-pricing-and-available-tlds`;
 export const INCOMING_DOMAIN_TRANSFER_STATUSES_PENDING_CONFIRMATION = `${ root }/incoming-domain-transfer/status-and-failed-transfers/#confirmation`;
 export const INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS = `${ root }/incoming-domain-transfer/status-and-failed-transfers/#pending`;
@@ -71,6 +72,8 @@ export const MANAGE_PURCHASES_FAQ_CANCELLING = `${ root }/manage-purchases/#FAQ-
 export const MAP_EXISTING_DOMAIN = `${ root }/domains/map-existing-domain`;
 export const MAP_EXISTING_DOMAIN_UPDATE_DNS = `${ root }/domains/map-existing-domain#2-ask-your-domain-provider-to-update-your-dns-settings`;
 export const MAP_SUBDOMAIN = `${ root }/domains/map-subdomain`;
+export const MAP_DOMAIN_CHANGE_NAME_SERVERS = `${ root }/domains/map-existing-domain/#change-your-domains-name-servers`;
+export const MOVE_DOMAIN = `${ root }/domains/#move-a-domain-name`;
 export const MEDIA = `${ root }/media`;
 export const PUBLICIZE = `${ root }/publicize`;
 export const PUBLIC_VS_PRIVATE = `${ root }/domains/register-domain/#public-versus-private-registration-and-gdpr`;
@@ -90,6 +93,7 @@ export const STATS_TOP_POSTS_PAGES = `${ root }/stats/#top-posts-pages`;
 export const STATS_VIEWS_BY_COUNTRY = `${ root }/stats/#views-by-country`;
 export const SUPPORT_ROOT = `${ root }/`;
 export const TRANSFER_DOMAIN_REGISTRATION = `${ root }/transfer-domain-registration`;
+export const TRANSFER_DOMAIN_REGISTRATION_WITH_NEW_REGISTRAR = `${ root }/transfer-domain-registration#starting-the-transfer-with-your-new-registrar`;
 export const TWITTER_TIMELINE_WIDGET = `${ root }/widgets/twitter-timeline-widget`;
 export const UPDATE_CONTACT_INFORMATION = `${ root }/update-contact-information/`;
 export const UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES = `${ root }/update-contact-information/#email-or-name-changes`;

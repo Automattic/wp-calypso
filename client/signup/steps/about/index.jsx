@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -37,15 +36,13 @@ import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 
 //Form components
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button, ScreenReaderText } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
 import InfoPopover from 'components/info-popover';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInputCheckbox from 'components/forms/form-checkbox';
-import ScreenReaderText from 'components/screen-reader-text';
 import SegmentedControl from 'components/segmented-control';
 import SiteVerticalsSuggestionSearch from 'components/site-verticals-suggestion-search';
 

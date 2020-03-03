@@ -206,8 +206,8 @@ class Global_Styles {
 		add_filter( 'jetpack_global_styles_data_set_get_data', [ $this, 'maybe_filter_font_list' ] );
 		add_filter( 'jetpack_global_styles_data_set_save_data', [ $this, 'filter_and_validate_font_options' ] );
 
+		// Setup editor.
 		if ( $this->can_use_global_styles() ) {
-			// Setup editor.
 			add_action(
 				'enqueue_block_editor_assets',
 				[ $this, 'enqueue_block_editor_assets' ]
@@ -217,14 +217,14 @@ class Global_Styles {
 				[ $this, 'block_editor_settings' ],
 				PHP_INT_MAX // So it runs last and overrides any style provided by the theme.
 			);
-
-			// Setup front-end.
-			add_action(
-				'wp_enqueue_scripts',
-				[ $this, 'wp_enqueue_scripts' ],
-				PHP_INT_MAX // So it runs last and overrides any style provided by the theme.
-			);
 		}
+
+		// Setup front-end.
+		add_action(
+			'wp_enqueue_scripts',
+			[ $this, 'wp_enqueue_scripts' ],
+			PHP_INT_MAX // So it runs last and overrides any style provided by the theme.
+		);
 	}
 
 	/**
@@ -385,8 +385,9 @@ class Global_Styles {
 		 * - only the selected ones for the frontend
 		 */
 		$font_list = [];
-		// We want $font_list to only contain valid Google Font values, not things like 'unset'.
-		$font_values = array_diff( $this->get_font_values( $data['font_options'] ), [ 'unset' ] );
+		// We want $font_list to only contain valid Google Font values,
+		// so we filter out things like 'unset' on the system font.
+		$font_values = array_diff( $this->get_font_values( $data['font_options'] ), [ 'unset', self::SYSTEM_FONT ] );
 		if ( true === $only_selected_fonts ) {
 			foreach ( [ 'font_base', 'font_base_default', 'font_headings', 'font_headings_default' ] as $key ) {
 				if ( in_array( $data[ $key ], $font_values, true ) ) {
@@ -396,13 +397,16 @@ class Global_Styles {
 		} else {
 			$font_list = $font_values;
 		}
-		$font_list_str = '';
-		foreach ( $font_list as $font ) {
-			// Some fonts lack italic variants,
-			// the API will return only the regular and bold CSS for those.
-			$font_list_str = $font_list_str . $font . ':regular,bold,italic,bolditalic|';
+
+		if ( count( $font_list ) > 0 ) {
+			$font_list_str = '';
+			foreach ( $font_list as $font ) {
+				// Some fonts lack italic variants,
+				// the API will return only the regular and bold CSS for those.
+				$font_list_str = $font_list_str . $font . ':regular,bold,italic,bolditalic|';
+			}
+			$result = $result . "@import url('https://fonts.googleapis.com/css?family=" . $font_list_str . "');";
 		}
-		$result = $result . "@import url('https://fonts.googleapis.com/css?family=" . $font_list_str . "');";
 
 		/*
 		 * Add the CSS custom properties.

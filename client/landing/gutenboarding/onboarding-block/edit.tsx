@@ -1,57 +1,66 @@
 /**
  * External dependencies
  */
-import { __ as NO__ } from '@wordpress/i18n';
-import { SelectControl } from '@wordpress/components';
-import { useDispatch, useSelect } from '@wordpress/data';
-import React, { useCallback } from 'react';
+import { BlockEditProps } from '@wordpress/blocks';
+import { useSelect } from '@wordpress/data';
+import React, { FunctionComponent } from 'react';
+import { Redirect, Switch, Route } from 'react-router-dom';
 
 /**
  * Internal dependencies
  */
-import { SiteType } from '../store/types';
-import { STORE_KEY } from '../store';
+import { STORE_KEY } from '../stores/onboard';
+import { SITE_STORE } from '../stores/site';
+import DesignSelector from './design-selector';
+import SignupForm from './signup-form';
+import CreateSite from './create-site';
+import { Attributes } from './types';
+import { Step, usePath } from '../path';
 import './style.scss';
+import VerticalBackground from './vertical-background';
+import AcquireIntent from './acquire-intent';
 
-export default function OnboardingEdit() {
-	const { siteTitle, siteType } = useSelect( select => select( STORE_KEY ).getState() );
-	const { setSiteType, setSiteTitle } = useDispatch( STORE_KEY );
-	const handleTitleChange = useCallback(
-		( e: React.ChangeEvent< HTMLInputElement > ) => setSiteTitle( e.target.value ),
-		[ setSiteTitle ]
-	);
+const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
+	const { siteVertical, selectedDesign } = useSelect( select => select( STORE_KEY ).getState() );
+	const isCreatingSite = useSelect( select => select( SITE_STORE ).isFetchingSite() );
 
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	const makePath = usePath();
+
 	return (
-		<div className="onboarding__questions">
-			<h2 className="onboarding__questions-heading">
-				{ NO__( "Let's set up your website – it takes only a moment." ) }
-			</h2>
+		<>
+			<VerticalBackground />
+			{ isCreatingSite && <Redirect push to={ makePath( Step.CreateSite ) } /> }
+			<Switch>
+				<Route exact path={ makePath( Step.IntentGathering ) }>
+					<AcquireIntent />
+				</Route>
 
-			<label className="onboarding__question">
-				<span>{ NO__( 'I want to create a website ' ) }</span>
-				<SelectControl< SiteType >
-					onChange={ setSiteType }
-					options={ [
-						{ label: NO__( 'with a blog.' ), value: SiteType.BLOG },
-						{ label: NO__( 'for a store.' ), value: SiteType.STORE },
-						{ label: NO__( 'to write a story.' ), value: SiteType.STORY },
-					] }
-					value={ siteType }
-					className="onboarding__question-input"
-				/>
-			</label>
-			{ ( siteType || siteTitle ) && (
-				<label className="onboarding__question">
-					<span>{ NO__( "It's called" ) }</span>
-					<input
-						className="onboarding__question-input"
-						onChange={ handleTitleChange }
-						value={ siteTitle }
-					/>
-				</label>
-			) }
-		</div>
+				<Route path={ makePath( Step.DesignSelection ) }>
+					{ ! siteVertical ? (
+						<Redirect to={ makePath( Step.IntentGathering ) } />
+					) : (
+						<DesignSelector />
+					) }
+				</Route>
+
+				<Route path={ makePath( Step.PageSelection ) }>
+					{ ! selectedDesign ? (
+						<Redirect to={ makePath( Step.DesignSelection ) } />
+					) : (
+						<DesignSelector showPageSelector />
+					) }
+				</Route>
+
+				<Route path={ makePath( Step.Signup ) }>
+					<SignupForm />;
+				</Route>
+
+				<Route path={ makePath( Step.CreateSite ) }>
+					<CreateSite />
+				</Route>
+			</Switch>
+		</>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
-}
+};
+
+export default OnboardingEdit;

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,7 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import FormTextInput from 'components/forms/form-text-input';
-import ScreenReaderText from 'components/screen-reader-text';
+import { ScreenReaderText } from '@automattic/components';
 import MediaActions from 'lib/media/actions';
 
 /**

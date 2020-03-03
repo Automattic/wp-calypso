@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,8 +15,7 @@ import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import { decodeEntities } from 'lib/formatting';
 import scrollTo from 'lib/scroll-to';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInput from 'components/forms/form-text-input';

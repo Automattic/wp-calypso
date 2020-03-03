@@ -1,0 +1,34 @@
+{
+	"compilerOptions": {
+		"target": "ES5",
+		"lib": [ "DOM", "ES2015", "ScriptHost" ],
+		"module": "ESNEXT",
+		"allowJs": false,
+		"jsx": "react",
+		"declaration": true,
+		"declarationDir": "dist/types",
+		"outDir": "dist/esm",
+
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+
+		"forceConsistentCasingInFileNames": true,
+
+		"typeRoots": [ "../../node_modules/@types" ],
+		"types": [],
+
+		"noEmitHelpers": true,
+		"importHelpers": true,
+
+		"incremental": true,
+		"tsBuildInfoFile": "../../.tsc-cache/data-stores"
+	},
+	"files": [ "./src/index.ts" ],
+	"exclude": [ "**/docs/*", "**/test/*" ]
+}

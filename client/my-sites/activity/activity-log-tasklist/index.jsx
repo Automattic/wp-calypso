@@ -1,4 +1,3 @@
-/** @format */
 /* eslint-disable wpcalypso/i18n-mismatched-placeholders */
 /**
  * External dependencies
@@ -15,7 +14,7 @@ import page from 'page';
  */
 import ActivityLogTaskUpdate from './update';
 import WithItemsToUpdate from './to-update';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import PopoverMenuItem from 'components/popover/menu-item';
 import SplitButton from 'components/split-button';
 import TrackComponentView from 'lib/analytics/track-component-view';
@@ -47,7 +46,7 @@ const isItemUpdating = updatables =>
  * Checks if the plugin, theme or core update is enqueued to be updated, searching it in the list by its slug.
  *
  * @param {string} updateSlug  Plugin or theme slug, or 'wordpress' for core updates.
- * @param {array}  updateQueue Collection of plugins or themes currently queued to be updated.
+ * @param {Array}  updateQueue Collection of plugins or themes currently queued to be updated.
  *
  * @returns {boolean}   True if the plugin or theme is enqueued to be updated.
  */
@@ -476,7 +475,7 @@ const getStatusForTheme = ( siteId, themeId ) => {
  * Get data about the status of a core update.
  * @param {number} siteId      Site Id.
  * @param {string} coreVersion Version of core that the WP installation will be updated to.
- * @returns {boolean|Object}      False is update hasn't started. One of 'inProgress', 'error', 'completed', when
+ * @returns {boolean|object}      False is update hasn't started. One of 'inProgress', 'error', 'completed', when
  * the update is running, failed, or was successfully completed, respectively.
  */
 const getStatusForCore = ( siteId, coreVersion ) => {
@@ -498,11 +497,11 @@ const getStatusForCore = ( siteId, coreVersion ) => {
 		state: PropTypes.oneOf( [ 'uninitialized', 'failure', 'success', 'pending' ] ),
 		error: PropTypes.object,
 	} )
- * @param {array}  itemList Collection of plugins/themes that will be updated.
+ * @param {Array}  itemList Collection of plugins/themes that will be updated.
  * @param {number} siteId   ID of the site where the plugin/theme is installed.
  * @param {object} state    App state tree.
  *
- * @returns {array} List of plugins/themes to update with their status.
+ * @returns {Array} List of plugins/themes to update with their status.
  */
 const makeUpdatableList = ( itemList, siteId, state = null ) =>
 	itemList.map( item => ( {
@@ -519,7 +518,7 @@ const makeUpdatableList = ( itemList, siteId, state = null ) =>
  * @param {number} siteId  Site Id.
  * @param {string} themeId Theme slug.
  *
- * @return {*} Stored data container for request.
+ * @returns {*} Stored data container for request.
  */
 const updateTheme = ( siteId, themeId ) =>
 	requestHttpData(
@@ -540,7 +539,7 @@ const updateTheme = ( siteId, themeId ) =>
  *
  * @param {number} siteId  Site Id.
  *
- * @return {*} Stored data container for request.
+ * @returns {*} Stored data container for request.
  */
 const updateCore = siteId =>
 	requestHttpData(
@@ -620,8 +619,5 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 } );
 
 export default WithItemsToUpdate(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( localize( ActivityLogTasklist ) )
+	connect( mapStateToProps, mapDispatchToProps )( localize( ActivityLogTasklist ) )
 );

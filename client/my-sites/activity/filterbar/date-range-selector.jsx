@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +12,7 @@ import { DateUtils } from 'react-day-picker';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { updateFilter } from 'state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import DateRangePicker from 'components/date-range';
@@ -44,11 +43,17 @@ export class DateRangeSelector extends Component {
 			enteredToDate: null,
 		} );
 
-		const formattedFromDate = fromDate && moment( fromDate ).format( DATE_FORMAT );
+		const formattedFromDate =
+			fromDate &&
+			moment( fromDate )
+				.startOf( 'day' )
+				.utc()
+				.format( DATE_FORMAT );
 		const formattedToDate =
 			toDate &&
 			moment( toDate )
 				.endOf( 'day' )
+				.utc()
 				.format( DATE_FORMAT );
 		if ( formattedFromDate && formattedToDate && formattedFromDate !== formattedToDate ) {
 			selectDateRange( siteId, formattedFromDate, formattedToDate );
@@ -65,10 +70,16 @@ export class DateRangeSelector extends Component {
 
 	handleDateRangeCommit = ( startDate, endDate ) => {
 		const { moment, selectDateRange } = this.props;
-		const formattedStartDate = startDate ? moment( startDate ).format( DATE_FORMAT ) : null;
+		const formattedStartDate = startDate
+			? moment( startDate )
+					.startOf( 'day' )
+					.utc()
+					.format( DATE_FORMAT )
+			: null;
 		const formattedEndDate = endDate
 			? moment( endDate )
 					.endOf( 'day' )
+					.utc()
 					.format( DATE_FORMAT )
 			: null;
 
@@ -321,10 +332,7 @@ const mapDispatchToProps = dispatch => ( {
 } );
 
 export default compose(
-	connect(
-		null,
-		mapDispatchToProps
-	),
+	connect( null, mapDispatchToProps ),
 	localize,
 	withLocalizedMoment
 )( DateRangeSelector );

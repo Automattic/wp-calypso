@@ -3,7 +3,36 @@ State
 
 This directory contains all of the behavior describing the global application state. Folders within this directory reflect sub-trees of the global state tree, each with their own reducer, actions, and selectors.
 
-The root module exports a single function which, when invoked, returns an instance of a [Redux store](http://redux.js.org/docs/basics/Store.html). The store instance runs dispatched actions against all known reducers. To include a reducer in the global store, simply add the reducing function to the combined reducer in `index.js`.
+The root module exports a single function which, when invoked, returns an instance of a [Redux store](http://redux.js.org/docs/basics/Store.html). The store instance runs dispatched actions against all known reducers.
+
+## Modularized state
+
+Calypso started off with a monolithic state approach, following the guidelines of the Redux project. To include a reducer in the global store, you would simply add the reducing function to the combined reducer in `index.js`, which would effectively load all reducers ahead of time. However, Calypso state has reached a scale where there are significant benefits in breaking up state loading, making it take place as the user navigates the application, rather than entirely upfront.
+
+As such, Calypso now implements a modularized state approach, where reducers can be registered on demand. Each modularized portion of state has an `init` file that takes care of registration through a side effect. For example, for `reader`:
+
+```js
+import { registerReducer } from 'state/redux-store';
+import reducer from './reducer';
+
+registerReducer( [ 'reader' ], reducer );
+```
+
+This `init` file is then imported on every selector and action creator module that makes use of `reader` state:
+
+```js
+import 'state/reader/init';
+
+function getStream( state, streamKey ) {
+	return state.reader.streams[ streamKey ] || emptyStream;
+}
+```
+
+This way, registration happens automatically as part of resolving the dependency graph, and state gets distributed across chunks through the regular build process, without any manual input.
+
+In order to centralize state, it's recommended that all reducers, selectors and action creators for a given portion of state live under the corresponding directory in `client/state/<name>`. Selectors that access multiple parts of state should live under `client/state/selectors`.
+
+There is currently an ongoing migration effort in modularizing all of Calypso state, following the approach above. Over time, the number of statically loaded reducers in `index.js` will go down, until we reach an empty set and handle all state loading through the modularized approach.
 
 ## Usage
 

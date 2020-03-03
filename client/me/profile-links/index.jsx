@@ -13,7 +13,7 @@ import ProfileLink from 'me/profile-link';
 import QueryProfileLinks from 'components/data/query-profile-links';
 import AddProfileLinksButtons from 'me/profile-links/add-buttons';
 import SectionHeader from 'components/section-header';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import Notice from 'components/notice';
 import ProfileLinksAddWordPress from 'me/profile-links-add-wordpress';
 import ProfileLinksAddOther from 'me/profile-links-add-other';
@@ -29,7 +29,7 @@ import './style.scss';
 
 class ProfileLinks extends React.Component {
 	state = {
-		showingForm: false,
+		showingForm: null,
 		showPopoverMenu: false,
 	};
 
@@ -61,7 +61,7 @@ class ProfileLinks extends React.Component {
 
 	hideForms = () => {
 		this.setState( {
-			showingForm: false,
+			showingForm: null,
 		} );
 	};
 

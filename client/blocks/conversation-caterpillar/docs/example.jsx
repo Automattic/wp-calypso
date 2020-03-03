@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,7 +10,7 @@ import { size } from 'lodash';
 import { ConversationCaterpillar } from 'blocks/conversation-caterpillar';
 import { posts } from 'blocks/reader-post-card/docs/fixtures';
 import { comments, commentsTree } from 'blocks/conversation-caterpillar/docs/fixtures';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 
 const ConversationCaterpillarExample = () => {
 	return (

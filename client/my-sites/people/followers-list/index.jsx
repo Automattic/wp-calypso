@@ -1,13 +1,10 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
-import deterministicStringify from 'json-stable-stringify';
+import deterministicStringify from 'fast-json-stable-stringify';
 import { omit } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
@@ -16,7 +13,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import PeopleListItem from 'my-sites/people/people-list-item';
-import Card from 'components/card';
+import { Card, Button } from '@automattic/components';
 import classNames from 'classnames';
 import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
 import FollowersActions from 'lib/followers/actions';
@@ -30,14 +27,12 @@ import FollowersStore from 'lib/followers/store';
 import EmailFollowersStore from 'lib/email-followers/store';
 import accept from 'lib/accept';
 import analytics from 'lib/analytics';
-import Button from 'components/button';
 import ListEnd from 'components/list-end';
 import { preventWidows } from 'lib/formatting';
 
 /**
  * Stylesheet dependencies
  */
-
 import './style.scss';
 
 const maxFollowers = 1000;

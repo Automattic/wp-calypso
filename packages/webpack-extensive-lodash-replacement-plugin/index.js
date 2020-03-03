@@ -1,5 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable import/no-nodejs-modules */
 const path = require( 'path' );
 const semver = require( 'semver' );
 
@@ -169,6 +167,7 @@ class ExtensiveLodashReplacementPlugin {
 		// Replace plain 'lodash' with 'lodash-es'.
 		if ( /^lodash$/.test( request ) ) {
 			if ( await this.canBeReplaced( result.contextInfo.issuer, 'lodash' ) ) {
+				// eslint-disable-next-line require-atomic-updates
 				result.request = 'lodash-es';
 				return;
 			}
@@ -177,6 +176,7 @@ class ExtensiveLodashReplacementPlugin {
 		// Replace 'lodash/foo' with 'lodash-es/foo'.
 		if ( /^lodash\/(.*)$/.test( request ) ) {
 			if ( await this.canBeReplaced( result.contextInfo.issuer, 'lodash' ) ) {
+				// eslint-disable-next-line require-atomic-updates
 				result.request = request.replace( 'lodash/', 'lodash-es/' );
 				return;
 			}
@@ -197,6 +197,7 @@ class ExtensiveLodashReplacementPlugin {
 					}
 				} );
 
+				// eslint-disable-next-line require-atomic-updates
 				result.request = `lodash-es/${ subModule }`;
 				return;
 			}

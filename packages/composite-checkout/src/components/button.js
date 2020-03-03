@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 export default function Button( {
 	buttonState,
@@ -12,6 +12,7 @@ export default function Button( {
 	className,
 	fullWidth,
 	children,
+	...props
 } ) {
 	return (
 		<CallToAction
@@ -21,6 +22,7 @@ export default function Button( {
 			onClick={ onClick }
 			className={ className }
 			fullWidth={ fullWidth }
+			{ ...props }
 		>
 			{ children }
 		</CallToAction>
@@ -30,7 +32,7 @@ export default function Button( {
 Button.propTypes = {
 	buttonState: PropTypes.string,
 	buttonType: PropTypes.string,
-	onClick: PropTypes.func.isRequired,
+	onClick: PropTypes.func,
 	fullWidth: PropTypes.bool,
 };
 
@@ -45,7 +47,7 @@ const CallToAction = styled.button`
 	border-style: solid;
 	border-color: ${ getBorderColor };
 	color: ${ getTextColor };
-	box-shadow: ${ getBoxShadow }
+	border-bottom-width: ${ getBorderElevationWeight };
 	font-weight: ${ getFontWeight };
 	text-decoration: ${ getTextDecoration };
 
@@ -55,25 +57,24 @@ const CallToAction = styled.button`
 		border-width: ${ getBorderWeight };
 		border-style: solid;
 		border-color: ${ getRollOverBorderColor };
-		box-shadow: ${ getBoxShadowHover }
+		border-bottom-width: ${ getBorderElevationWeight };
 		text-decoration: none;
-		color: ${ props =>
-			props.buttonState === 'default' ? props.theme.color.surface : getTextColor( props ) }
+		color: ${ getTextColor };
 		cursor: ${ ( { buttonState } ) =>
-			buttonState && buttonState.includes( 'disabled' ) ? 'not-allowed' : 'pointer' }
+			buttonState && buttonState.includes( 'disabled' ) ? 'not-allowed' : 'pointer' };
 	}
 
 	:active {
-		background: ${ getBackgroundColor };
+		background: ${ getRollOverColor };
 		border-width: ${ getBorderWeight };
 		border-style: solid;
-		border-color: ${ getBorderColor };
-		box-shadow: ${ getBoxShadow }
+		border-color: ${ getRollOverBorderColor };
+		border-top-width: ${ getBorderElevationWeight };
 		text-decoration: ${ getTextDecoration };
 		color: ${ getTextColor };
 	}
 
-	img {
+	svg {
 		margin-bottom: -1px;
 		transform: translateY(2px);
 		filter: ${ getImageFilter }
@@ -91,16 +92,12 @@ function getImageOpacity( { buttonState } ) {
 	return buttonState && buttonState.includes( 'primary' ) ? 1 : '0.5';
 }
 
-function getBoxShadow( props ) {
-	return `0 ${ getBorderWeight( props ) } 0 ${ getBorderColor( props ) }`;
-}
-
-function getBoxShadowHover( props ) {
-	return `0 ${ getBorderWeight( props ) } 0 ${ getRollOverBorderColor( props ) }`;
-}
-
 function getBorderWeight( { buttonState } ) {
-	return buttonState === 'text-button' ? '0' : '1px';
+	return buttonState === 'text-button' || buttonState === 'borderless' ? '0' : '1px';
+}
+
+function getBorderElevationWeight( { buttonState } ) {
+	return buttonState === 'text-button' || buttonState === 'borderless' ? '0' : '2px';
 }
 
 function getRollOverColor( { buttonState, buttonType, theme } ) {
@@ -113,15 +110,17 @@ function getRollOverColor( { buttonState, buttonType, theme } ) {
 			if ( buttonType === 'paypal' ) {
 				return colors.paypalGoldHover;
 			}
-			return colors.highlight;
+			return colors.primaryOver;
 		case 'secondary':
-			return colors.primary;
+			return colors.highlightOver;
 		case 'disabled':
 			return colors.disabledPaymentButtons;
 		case 'text-button':
 			return 'none';
+		case 'borderless':
+			return 'none';
 		default:
-			return colors.highlight;
+			return 'none';
 	}
 }
 
@@ -135,16 +134,13 @@ function getRollOverBorderColor( { buttonState, buttonType, theme } ) {
 			if ( buttonType === 'paypal' ) {
 				return colors.paypalGoldHover;
 			}
-			return colors.highlightBorder;
-		case 'secondary':
 			return colors.primaryBorder;
+		case 'secondary':
+			return colors.highlightBorder;
 		case 'disabled':
-			if ( buttonType === 'paypal' ) {
-				return colors.disabledPaymentButtons;
-			}
 			return colors.disabledButtons;
 		default:
-			return colors.highlightBorder;
+			return colors.borderColorDark;
 	}
 }
 
@@ -155,10 +151,12 @@ function getTextColor( { buttonState, theme } ) {
 			return colors.surface;
 		case 'secondary':
 			return colors.surface;
+		case 'text-button':
+			return colors.highlight;
 		case 'disabled':
 			return colors.disabledButtons;
 		default:
-			return colors.highlight;
+			return colors.textColor;
 	}
 }
 
@@ -196,12 +194,9 @@ function getBorderColor( { buttonType, buttonState, theme } ) {
 		case 'secondary':
 			return colors.highlightBorder;
 		case 'disabled':
-			if ( buttonType === 'paypal' || buttonType === 'apple-pay' ) {
-				return colors.disabledPaymentButtons;
-			}
 			return colors.disabledButtons;
 		default:
-			return colors.highlight;
+			return colors.borderColor;
 	}
 }
 

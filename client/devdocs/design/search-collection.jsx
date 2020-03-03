@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -37,12 +35,21 @@ const shouldShowInstance = ( example, filter, component ) => {
 };
 
 const getReadmeFilePath = ( section, example ) => {
-	switch ( section ) {
-		case 'design':
-			return `/client/components/${ example.props.readmeFilePath }/README.md`;
-		default:
-			return `/client/${ section }/${ example.props.readmeFilePath }/README.md`;
+	let path = example.props.readmeFilePath;
+
+	if ( ! path ) {
+		return null;
 	}
+
+	if ( ! path.startsWith( '/' ) ) {
+		path = `/client/${ section === 'design' ? 'components' : section }/${ path }`;
+	}
+
+	if ( ! path.endsWith( 'README.md' ) ) {
+		path = `${ path }/README.md`;
+	}
+
+	return path;
 };
 
 const Collection = ( {

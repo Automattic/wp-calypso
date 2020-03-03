@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -34,9 +32,9 @@ import refunds from './refunds/reducer';
  * dispatched. The state reflects a mapping of order ID to a
  * boolean reflecting whether a request for that page is in progress.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function isDeleting( state = {}, action ) {
 	switch ( action.type ) {
@@ -56,9 +54,9 @@ export function isDeleting( state = {}, action ) {
  * dispatched. The state reflects a mapping of order ID to a
  * boolean reflecting whether a request for that page is in progress.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function isLoading( state = {}, action ) {
 	switch ( action.type ) {
@@ -78,9 +76,9 @@ export function isLoading( state = {}, action ) {
  * dispatched. The state reflects a mapping of query (page number) to a
  * boolean reflecting whether a request for that page is in progress.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function isQueryLoading( state = {}, action ) {
 	switch ( action.type ) {
@@ -99,9 +97,9 @@ export function isQueryLoading( state = {}, action ) {
  * dispatched. The state reflects a mapping of order ID to a
  * boolean reflecting whether there is a save in progress.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function isUpdating( state = {}, action ) {
 	const orderId = isFinite( action.orderId ) ? action.orderId : JSON.stringify( action.orderId );
@@ -120,9 +118,9 @@ export function isUpdating( state = {}, action ) {
 /**
  * Tracks all known order objects, indexed by post ID.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function items( state = {}, action ) {
 	let orders;
@@ -143,9 +141,9 @@ export function items( state = {}, action ) {
  * Tracks the orders which belong to a query, as a list of IDs
  * referencing items in `orders.items`.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function queries( state = {}, action ) {
 	switch ( action.type ) {
@@ -161,9 +159,9 @@ export function queries( state = {}, action ) {
 /**
  * Tracks the total number of pages of orders for the current site.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function total( state = 1, action ) {
 	switch ( action.type ) {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,6 @@ import * as dataHelper from '../lib/data-helper';
 
 import LoginFlow from '../lib/flows/login-flow.js';
 import PlansPage from '../lib/pages/plans-page.js';
-import StatsPage from '../lib/pages/stats-page.js';
 import SidebarComponent from '../lib/components/sidebar-component.js';
 import SecurePaymentComponent from '../lib/components/secure-payment-component';
 import NavBarComponent from '../lib/components/nav-bar-component';
@@ -34,18 +31,16 @@ before( async function() {
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Plans: (${ screenSize }) @parallel @jetpack`, function() {
+describe( `[${ host }] Plans: (${ screenSize })`, function() {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Comparing Plans:', function() {
+	describe( 'Comparing Plans:  @parallel @jetpack', function() {
 		step( 'Login and Select My Site', async function() {
 			const loginFlow = new LoginFlow( driver );
 			return await loginFlow.loginAndSelectMySite();
 		} );
 
 		step( 'Can Select Plans', async function() {
-			const statsPage = await StatsPage.Expect( driver );
-			await statsPage.waitForPage();
 			const sideBarComponent = await SidebarComponent.Expect( driver );
 			return await sideBarComponent.selectPlan();
 		} );
@@ -81,7 +76,7 @@ describe( `[${ host }] Plans: (${ screenSize }) @parallel @jetpack`, function() 
 		}
 	} );
 
-	describe( 'Viewing a specific plan with coupon:', function() {
+	describe( 'Viewing a specific plan with coupon:  @parallel @jetpack', function() {
 		let originalCartAmount, loginFlow;
 
 		before( async function() {
@@ -94,8 +89,6 @@ describe( `[${ host }] Plans: (${ screenSize }) @parallel @jetpack`, function() 
 		} );
 
 		step( 'Can Select Plans', async function() {
-			const statsPage = await StatsPage.Expect( driver );
-			await statsPage.waitForPage();
 			const sideBarComponent = await SidebarComponent.Expect( driver );
 			return await sideBarComponent.selectPlan();
 		} );
@@ -149,7 +142,7 @@ describe( `[${ host }] Plans: (${ screenSize }) @parallel @jetpack`, function() 
 		} );
 	} );
 
-	describe( 'Renew a plan:', function() {
+	describe( 'Renew a plan:  @parallel', function() {
 		before( async function() {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
@@ -182,7 +175,7 @@ describe( `[${ host }] Plans: (${ screenSize }) @parallel @jetpack`, function() 
 		} );
 	} );
 
-	describe( 'Upgrade a plan:', function() {
+	describe( 'Upgrade a plan:  @parallel @jetpack', function() {
 		before( async function() {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );

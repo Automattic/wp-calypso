@@ -1,0 +1,42 @@
+{
+	"name": "@automattic/react-i18n",
+	"version": "1.0.0-alpha.0",
+	"description": "React bindings for @wordpress/i18n",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"sideEffects": false,
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/react-i18n"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"types": "dist/types",
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
+		"prepublish": "npm run clean",
+		"watch": "tsc --project ./tsconfig.json --watch"
+	},
+	"dependencies": {
+		"tslib": "^1.10.0",
+		"@wordpress/compose": "1.x.x - 3.x.x"
+	},
+	"peerDependencies": {
+		"@wordpress/i18n": "<=3",
+		"react": "^16.8"
+	},
+	"private": true
+}

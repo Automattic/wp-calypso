@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -17,7 +15,7 @@ import 'state/data-layer/wpcom/sites/transfers/latest';
  * Query the atomic transfer for a given site.
  *
  * @param {number} siteId The id of the site to query.
- * @returns {Object} An action object
+ * @returns {object} An action object
  */
 export const fetchAtomicTransfer = siteId => ( {
 	type: ATOMIC_TRANSFER_REQUEST,
@@ -29,7 +27,7 @@ export const fetchAtomicTransfer = siteId => ( {
  * endpoint returns 404).
  *
  * @param {number} siteId The site id to which the status belongs
- * @returns {Object} An action object
+ * @returns {object} An action object
  */
 export const atomicTransferFetchingFailure = siteId => ( {
 	type: ATOMIC_TRANSFER_REQUEST_FAILURE,
@@ -46,8 +44,8 @@ export const atomicTransferComplete = siteId => ( {
  * @see state/automated-transfer/constants#transferStates
  *
  * @param {number} siteId The site id to which the status belongs
- * @param {Object} transfer atomic transfer object
- * @returns {Object} An action object
+ * @param {object} transfer atomic transfer object
+ * @returns {object} An action object
  */
 export const setAtomicTransfer = ( siteId, transfer ) => ( {
 	type: ATOMIC_TRANSFER_SET,

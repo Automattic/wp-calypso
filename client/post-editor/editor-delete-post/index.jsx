@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,7 +14,7 @@ import { get, isNull } from 'lodash';
  * Internal dependencies
  */
 import accept from 'lib/accept';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';

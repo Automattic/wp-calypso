@@ -3,12 +3,12 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 
 const SettingsSectionHeader = ( {
@@ -19,11 +19,11 @@ const SettingsSectionHeader = ( {
 	onButtonClick,
 	showButton,
 	title,
-	translate,
-	moment,
 	numberFormat,
 	...buttonProps
 } ) => {
+	const translate = useTranslate();
+
 	return (
 		<SectionHeader label={ title } id={ id }>
 			{ children }
@@ -48,4 +48,4 @@ SettingsSectionHeader.propTypes = {
 	translate: PropTypes.func,
 };
 
-export default localize( SettingsSectionHeader );
+export default SettingsSectionHeader;

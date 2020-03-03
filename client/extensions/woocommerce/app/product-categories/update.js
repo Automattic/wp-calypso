@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -172,7 +170,8 @@ class ProductCategoryUpdate extends React.Component {
 		const saveEnabled =
 			hasEdits &&
 			category &&
-			( category.name && category.name.length ) &&
+			category.name &&
+			category.name.length &&
 			! isNull( category.parent ) &&
 			! isUploading;
 
@@ -233,7 +232,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ProductCategoryUpdate ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ProductCategoryUpdate ) );

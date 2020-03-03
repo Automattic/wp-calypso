@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Banner from 'components/banner';
 import MultiCheckbox from 'components/forms/multi-checkbox';
 import SupportInfo from 'components/support-info';
 import { getPostTypes } from 'state/post-types/selectors';
@@ -21,7 +18,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import getSharingButtons from 'state/selectors/get-sharing-buttons';
-import { isJetpackSite, isJetpackMinimumVersion, getSiteAdminUrl } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
@@ -32,7 +29,6 @@ class SharingButtonsOptions extends Component {
 		buttons: PropTypes.array,
 		initialized: PropTypes.bool,
 		isJetpack: PropTypes.bool,
-		isTwitterButtonAllowed: PropTypes.bool,
 		onChange: PropTypes.func,
 		postTypes: PropTypes.array,
 		recordGoogleEvent: PropTypes.func,
@@ -155,8 +151,8 @@ class SharingButtonsOptions extends Component {
 	}
 
 	getTwitterViaOptionElement() {
-		const { isJetpack, initialized, isTwitterButtonAllowed, settings, translate } = this.props;
-		if ( ! this.isTwitterButtonEnabled() || ! isTwitterButtonAllowed ) {
+		const { isJetpack, initialized, settings, translate } = this.props;
+		if ( ! this.isTwitterButtonEnabled() ) {
 			return;
 		}
 
@@ -224,11 +220,7 @@ class SharingButtonsOptions extends Component {
 	}
 
 	getSharingShowOptionsElement = () => {
-		const { initialized, isSharingShowAllowed, settings, translate } = this.props;
-
-		if ( ! isSharingShowAllowed ) {
-			return;
-		}
+		const { initialized, settings, translate } = this.props;
 
 		const changeSharingPostTypes = partial( this.handleMultiCheckboxChange, 'sharing_show' );
 		return (
@@ -248,20 +240,6 @@ class SharingButtonsOptions extends Component {
 					disabled={ ! initialized }
 				/>
 			</fieldset>
-		);
-	};
-
-	getWpAdminBanner = () => {
-		const { isSharingShowAllowed, siteAdminUrl, translate } = this.props;
-		if ( isSharingShowAllowed ) {
-			return;
-		}
-		return (
-			<Banner
-				className="sharing-buttons__banner"
-				href={ `${ siteAdminUrl }options-general.php?page=sharing` }
-				title={ translate( 'Visit WP Admin for more sharing buttons options.' ) }
-			/>
 		);
 	};
 
@@ -287,7 +265,6 @@ class SharingButtonsOptions extends Component {
 						{ saving ? translate( 'Saving…' ) : translate( 'Save Changes' ) }
 					</button>
 				</div>
-				{ this.getWpAdminBanner() }
 			</Fragment>
 		);
 	}
@@ -296,10 +273,6 @@ class SharingButtonsOptions extends Component {
 const connectComponent = connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
-		const isJetpack = isJetpackSite( state, siteId );
-		const isTwitterButtonAllowed =
-			! isJetpack || isJetpackMinimumVersion( state, siteId, '3.4-dev' );
-		const isSharingShowAllowed = ! isJetpack || isJetpackMinimumVersion( state, siteId, '7.3' );
 		const path = getCurrentRouteParameterized( state, siteId );
 
 		const postTypes = filter( values( getPostTypes( state, siteId ) ), 'public' );
@@ -307,19 +280,13 @@ const connectComponent = connect(
 		return {
 			buttons: getSharingButtons( state, siteId ),
 			initialized: !! postTypes || !! getSiteSettings( state, siteId ),
-			isJetpack,
-			isSharingShowAllowed,
-			isTwitterButtonAllowed,
+			isJetpack: isJetpackSite( state, siteId ),
 			path,
 			postTypes,
-			siteAdminUrl: getSiteAdminUrl( state, siteId ),
 			siteId,
 		};
 	},
 	{ recordGoogleEvent, recordTracksEvent }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( SharingButtonsOptions );
+export default flowRight( connectComponent, localize )( SharingButtonsOptions );

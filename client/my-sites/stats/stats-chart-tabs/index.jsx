@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,7 +15,7 @@ import { DEFAULT_HEARTBEAT } from 'components/data/query-site-stats/constants';
 import Chart from 'components/chart';
 import Legend from 'components/chart/legend';
 import StatsModulePlaceholder from '../stats-module/placeholder';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { requestChartCounts } from 'state/stats/chart-tabs/actions';
 import { getCountRecords, getLoadingTabs } from 'state/stats/chart-tabs/selectors';
@@ -179,7 +177,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent, requestChartCounts }
 );
 
-export default flowRight(
-	localize,
-	connectComponent
-)( StatModuleChartTabs );
+export default flowRight( localize, connectComponent )( StatModuleChartTabs );

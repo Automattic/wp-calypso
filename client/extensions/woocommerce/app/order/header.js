@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +14,7 @@ import React, { Component } from 'react';
  */
 import accept from 'lib/accept';
 import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { clearOrderEdits, editOrder } from 'woocommerce/state/ui/orders/actions';
 import { deleteOrder, saveOrder } from 'woocommerce/state/sites/orders/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';

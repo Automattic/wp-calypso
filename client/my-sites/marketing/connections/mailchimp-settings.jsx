@@ -15,7 +15,7 @@ import QueryMailchimpSettings from 'components/data/query-mailchimp-settings';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import { isJetpackMinimumVersion, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import getJetpackConnectionStatus from 'state/selectors/get-jetpack-connection-status';
 
@@ -27,8 +27,6 @@ const MailchimpSettings = ( {
 	mailchimpListId,
 	isJetpack,
 	isJetpackConnectionBroken,
-	isJetpackTooOld,
-	siteSlug,
 	translate,
 } ) => {
 	const chooseMailchimpList = event => {
@@ -74,25 +72,6 @@ const MailchimpSettings = ( {
 			</div>
 		</div>
 	);
-	if ( isJetpackTooOld ) {
-		return (
-			<div>
-				<Notice
-					status="is-warning"
-					text={ translate(
-						'Please update Jetpack plugin to version 7.1 in order to use the Mailchimp block'
-					) }
-					showDismiss={ false }
-				>
-					<NoticeAction
-						href={ `https://wordpress.com/plugins/jetpack/${ siteSlug }` }
-						icon="external"
-					/>
-				</Notice>
-				{ common }
-			</div>
-		);
-	}
 
 	if ( isJetpackConnectionBroken ) {
 		return (
@@ -172,11 +151,10 @@ export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
+
 		return {
-			siteId: siteId,
-			siteSlug: getSiteSlug( state, siteId ),
-			isJetpackTooOld: isJetpackMinimumVersion( state, siteId, '7.1' ) === false,
-			isJetpack: isJetpack,
+			siteId,
+			isJetpack,
 			isJetpackConnectionBroken: isJetpack && getJetpackConnectionStatus( state, siteId ) === false,
 			mailchimpLists: get( state, [ 'mailchimp', 'lists', 'items', siteId ], null ),
 			mailchimpListId: get(

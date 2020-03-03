@@ -1,17 +1,18 @@
-/** @format */
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
-import { get, defer, isEqual } from 'lodash';
+import { get, defer, find, isEqual } from 'lodash';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
+import config from 'config';
+import notices from 'notices';
 import EmptyContent from 'components/empty-content';
 import CreditsPaymentBox from './credits-payment-box';
 import FreeTrialConfirmationBox from './free-trial-confirmation-box';
@@ -46,11 +47,10 @@ import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-
 import getCountries from 'state/selectors/get-countries';
 import QueryPaymentCountries from 'components/data/query-countries/payments';
 import { INPUT_VALIDATION, RECEIVED_WPCOM_RESPONSE } from 'lib/store-transactions/step-types';
-import { displayError, clear } from 'lib/upgrades/notices';
+import { displayError, clear } from './notices';
 import { isEbanxCreditCardProcessingEnabledForCountry } from 'lib/checkout/processor-specific';
-import { planHasFeature } from 'lib/plans';
-import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
-import { recordTransactionAnalytics } from 'lib/store-transactions/analytics';
+import { isWpComEcommercePlan } from 'lib/plans';
+import { recordTransactionAnalytics } from 'lib/analytics/store-transactions';
 
 /**
  * Module variables
@@ -72,7 +72,7 @@ export class SecurePaymentForm extends Component {
 		this.setInitialPaymentDetails();
 	}
 
-	componentDidUpdate( prevProps ) {
+	async componentDidUpdate( prevProps ) {
 		if ( this.getVisiblePaymentBox( prevProps ) !== this.getVisiblePaymentBox( this.props ) ) {
 			this.setInitialPaymentDetails();
 		}
@@ -82,7 +82,7 @@ export class SecurePaymentForm extends Component {
 			nextStep = this.props.transaction.step;
 
 		if ( ! isEqual( prevStep, nextStep ) ) {
-			this.handleTransactionStep( this.props );
+			await this.handleTransactionStep( this.props );
 		}
 	}
 
@@ -184,14 +184,6 @@ export class SecurePaymentForm extends Component {
 			transaction.payment.paymentMethod = 'WPCOM_Billing_Ebanx';
 		}
 
-		try {
-			await this.maybeSetSiteToPublic( { cart } );
-		} catch ( e ) {
-			debug( 'Error setting site to public', e );
-			displayError();
-			return;
-		}
-
 		submit(
 			{
 				cart,
@@ -216,36 +208,38 @@ export class SecurePaymentForm extends Component {
 			return;
 		}
 
-		const forcedAtomicProducts = get( cart, 'products', [] ).filter( ( { product_slug = '' } ) => {
-			return (
-				planHasFeature( product_slug, FEATURE_UPLOAD_PLUGINS ) ||
-				planHasFeature( product_slug, FEATURE_UPLOAD_THEMES )
-			);
-		} );
+		const productsInCart = get( cart, 'products', [] );
 
-		if ( ! forcedAtomicProducts.length ) {
+		if (
+			! find( productsInCart, ( { product_slug = '' } ) => {
+				return isWpComEcommercePlan( product_slug );
+			} )
+		) {
 			return;
 		}
 
-		// Until Atomic sites support being private / unlaunched, set them to public on upgrade
-		debug( 'Setting site to public because it is an Atomic plan' );
-		const response = await this.props.saveSiteSettings( selectedSiteId, {
-			blog_public: 1,
-		} );
-		if ( ! get( response, [ 'updated', 'blog_public' ] ) ) {
-			throw 'Invalid response';
+		if ( ! config.isEnabled( 'coming-soon' ) ) {
+			// Until Atomic sites support being private / unlaunched, set them to public on upgrade
+			debug( 'Setting site to public because it is an Atomic plan' );
+			const response = await this.props.saveSiteSettings( selectedSiteId, {
+				blog_public: 1,
+			} );
+
+			if ( ! get( response, [ 'updated', 'blog_public' ] ) ) {
+				throw 'Invalid response';
+			}
 		}
 	}
 
-	handleTransactionStep( { cart, selectedSite, transaction } ) {
+	async handleTransactionStep( { cart, selectedSite, transaction } ) {
 		const step = transaction.step;
 
 		debug( 'transaction step: ' + step.name );
 
 		this.displayNotices( cart, step );
-		recordTransactionAnalytics( cart, step, transaction.payment.paymentMethod );
+		recordTransactionAnalytics( cart, step, transaction?.payment?.paymentMethod );
 
-		this.finishIfLastStep( cart, selectedSite, step );
+		await this.finishIfLastStep( cart, selectedSite, step );
 	}
 
 	displayNotices( cart, step ) {
@@ -259,8 +253,26 @@ export class SecurePaymentForm extends Component {
 		}
 	}
 
-	finishIfLastStep( cart, selectedSite, step ) {
+	async finishIfLastStep( cart, selectedSite, step ) {
 		if ( ! step.last || step.error ) {
+			return;
+		}
+
+		try {
+			await this.maybeSetSiteToPublic( { cart } );
+		} catch ( e ) {
+			const message = this.props.translate(
+				'There was a problem completing the checkout. {{a}}Contact support{{/a}}.',
+				{
+					components: { a: <a href="/help/contact" /> },
+					comment:
+						"This is an error message that is shown when a user's purchase has failed at the checkout page",
+				}
+			);
+
+			debug( 'Error setting site to public', e );
+			notices.error( message );
+
 			return;
 		}
 

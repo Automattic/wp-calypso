@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,12 +20,11 @@ import {
 	getCurrentUser,
 	getCurrentUserCurrencyCode,
 } from 'state/current-user/selectors';
-import Card from 'components/card';
+import { Card, Button } from '@automattic/components';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import { CALYPSO_CONTACT, INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from 'lib/url/support';
 import HeaderCake from 'components/header-cake';
-import Button from 'components/button';
 import { errorNotice } from 'state/notices/actions';
 import QueryProducts from 'components/data/query-products-list';
 import { getDomainPrice, getDomainProductSlug, getDomainTransferSalePrice } from 'lib/domains';
@@ -133,7 +130,10 @@ class UseYourDomainStep extends React.Component {
 		buildTransferDomainUrl = `${ basePathForTransfer }/transfer`;
 
 		if ( selectedSite ) {
-			const query = stringify( { initialQuery: this.state.searchQuery.trim() } );
+			const query = stringify( {
+				initialQuery: this.state.searchQuery.trim(),
+				useStandardBack: true,
+			} );
 			buildTransferDomainUrl += `/${ selectedSite.slug }?${ query }`;
 		}
 

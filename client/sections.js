@@ -6,6 +6,14 @@ const path = require( 'path' ); // eslint-disable-line import/no-nodejs-modules
 
 const sections = [
 	{
+		name: 'root',
+		paths: [ '/' ],
+		module: 'root',
+		group: 'root',
+		secondary: true,
+		enableLoggedOut: true,
+	},
+	{
 		name: 'sites',
 		paths: [ '/sites' ],
 		module: 'my-sites',
@@ -35,7 +43,7 @@ const sections = [
 	},
 	{
 		name: 'account-close',
-		paths: [ '/me/account/close' ],
+		paths: [ '/me/account/close', '/me/account/closed' ],
 		module: 'me/account-close',
 		group: 'me',
 		secondary: true,
@@ -111,14 +119,14 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'posts-pages',
+		name: 'pages',
 		paths: [ '/pages' ],
 		module: 'my-sites/pages',
 		secondary: true,
 		group: 'sites',
 	},
 	{
-		name: 'posts-pages',
+		name: 'posts',
 		paths: [ '/posts' ],
 		module: 'my-sites/posts',
 		secondary: true,
@@ -170,13 +178,6 @@ const sections = [
 		name: 'jetpack-connect',
 		paths: [ '/jetpack' ],
 		module: 'jetpack-connect',
-		secondary: false,
-		enableLoggedOut: true,
-	},
-	{
-		name: 'jetpack-onboarding',
-		paths: [ '/jetpack/start' ],
-		module: 'jetpack-onboarding',
 		secondary: false,
 		enableLoggedOut: true,
 	},
@@ -277,7 +278,9 @@ const sections = [
 		name: 'mailing-lists',
 		paths: [ '/mailing-lists/unsubscribe' ],
 		module: 'mailing-lists',
+		secondary: false,
 		enableLoggedOut: true,
+		group: 'me',
 	},
 	{
 		name: 'feature-upsell',
@@ -296,7 +299,7 @@ const sections = [
 	// this MUST be the first section for /read paths so subsequent sections under /read can override settings
 	{
 		name: 'reader',
-		paths: [ '/', '/read' ],
+		paths: [ '/read' ],
 		module: 'reader',
 		secondary: true,
 		group: 'reader',
@@ -464,7 +467,7 @@ const sections = [
 	},
 	{
 		name: 'hosting',
-		paths: [ '/hosting' ],
+		paths: [ '/hosting-config' ],
 		module: 'my-sites/hosting',
 		secondary: true,
 		group: 'sites',

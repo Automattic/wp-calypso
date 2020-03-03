@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,8 +11,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { rewindClone } from 'state/activity-log/actions';
 import { submitSignupStep } from 'state/signup/progress/actions';

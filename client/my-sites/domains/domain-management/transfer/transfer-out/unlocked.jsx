@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,18 +8,16 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
+import { Card, Button } from '@automattic/components';
 import { getSelectedDomain } from 'lib/domains';
-import Button from 'components/button';
 import {
 	cancelTransferRequest,
 	fetchWapiDomainInfo,
 	requestTransferCode,
-} from 'lib/upgrades/actions';
+} from 'lib/domains/wapi-domain-info/actions';
 import notices from 'notices';
 import { displayRequestTransferCodeResponseNotice } from './shared';
-import { CALYPSO_CONTACT, TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
+import { CALYPSO_CONTACT, TRANSFER_DOMAIN_REGISTRATION_WITH_NEW_REGISTRAR } from 'lib/url/support';
 
 class Unlocked extends React.Component {
 	state = {
@@ -33,17 +29,17 @@ class Unlocked extends React.Component {
 		this.setStateIfMounted = noop;
 	}
 
-	/**
-	 * Wrap setState calls that might occur after unmounting.
-	 *
-	 * When we cancel a transfer, that might update locking or privacy,
-	 * but errors mean we can't know in time - the store gets the information
-	 * before we do.
-	 *
-	 * The recommended solution is cancellable promises, but we don't want to
-	 * cancel these requests if we navigate away, so that won't work for us here.
-	 */
 	setStateIfMounted( ...args ) {
+		/**
+		 * Wrap setState calls that might occur after unmounting.
+		 *
+		 * When we cancel a transfer, that might update locking or privacy,
+		 * but errors mean we can't know in time - the store gets the information
+		 * before we do.
+		 *
+		 * The recommended solution is cancellable promises, but we don't want to
+		 * cancel these requests if we navigate away, so that won't work for us here.
+		 */
 		this.setState( ...args );
 	}
 
@@ -150,9 +146,9 @@ class Unlocked extends React.Component {
 
 		return (
 			<Button
+				className="transfer-out__action-button"
 				onClick={ this.handleCancelTransferClick }
 				disabled={ this.state.submitting || ! this.state.sent }
-				compact
 			>
 				{ this.props.translate( 'Cancel Transfer' ) }
 			</Button>
@@ -169,9 +165,9 @@ class Unlocked extends React.Component {
 
 		return (
 			<Button
+				className="transfer-out__action-button"
 				onClick={ this.handleSendConfirmationCodeClick }
 				disabled={ this.state.submitting }
-				compact
 				primary
 			>
 				{ this.state.sent
@@ -216,7 +212,7 @@ class Unlocked extends React.Component {
 
 		return (
 			<p>
-				{ translate( 'The registry for your domain requires a special process for transfers. ' ) }{' '}
+				{ translate( 'The registry for your domain requires a special process for transfers. ' ) }{ ' ' }
 				{ sent
 					? translate(
 							'Our Happiness Engineers have been notified about ' +
@@ -282,23 +278,21 @@ class Unlocked extends React.Component {
 
 		return (
 			<div>
-				<SectionHeader
-					label={ translate( 'Transfer Domain' ) }
-					className="transfer-out__section-header"
-				>
-					{ this.renderCancelButton( domain ) }
-					{ this.renderSendButton( domain ) }
-				</SectionHeader>
-
 				<Card className="transfer-out__card">
 					<div>
 						{ submitting && <p>{ translate( 'Sending request…' ) }</p> }
 						{ domainStateMessage && <p>{ domainStateMessage }</p> }
 						{ this.renderBody( domain ) }
-						<a href={ TRANSFER_DOMAIN_REGISTRATION } target="_blank" rel="noopener noreferrer">
+						<a
+							href={ TRANSFER_DOMAIN_REGISTRATION_WITH_NEW_REGISTRAR }
+							target="_blank"
+							rel="noopener noreferrer"
+						>
 							{ translate( 'Learn More.' ) }
 						</a>
 					</div>
+					{ this.renderSendButton( domain ) }
+					{ this.renderCancelButton( domain ) }
 				</Card>
 			</div>
 		);

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +15,7 @@ import {
 	areSettingsProductsLoaded,
 	getProductsSettingValue,
 } from 'woocommerce/state/sites/settings/products/selectors';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';

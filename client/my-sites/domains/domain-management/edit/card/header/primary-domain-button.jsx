@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,12 +6,11 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { snakeCase } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { domainManagementPrimaryDomain } from 'my-sites/domains/paths';
 import { getDomainTypeText } from 'lib/domains';
@@ -47,7 +45,7 @@ const recordMakePrimaryClick = domain =>
 			domain.name
 		),
 		recordTracksEvent( 'calypso_domain_management_edit_make_primary_click', {
-			section: snakeCase( getDomainTypeText( domain ) ),
+			section: domain.type,
 		} )
 	);
 
@@ -58,7 +56,4 @@ PrimaryDomainButton.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default connect(
-	null,
-	{ recordMakePrimaryClick }
-)( localize( PrimaryDomainButton ) );
+export default connect( null, { recordMakePrimaryClick } )( localize( PrimaryDomainButton ) );

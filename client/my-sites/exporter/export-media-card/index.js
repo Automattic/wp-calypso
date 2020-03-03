@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FoldableCard from 'components/foldable-card';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import QueryMediaExport from 'components/data/query-media-export';
 import getMediaExportUrl from 'state/selectors/get-media-export-url';
 import { recordTracksEvent } from 'state/analytics/actions';

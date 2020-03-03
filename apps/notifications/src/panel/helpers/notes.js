@@ -19,7 +19,7 @@ export function getActions( note ) {
  * Returns an id for a type of reference in a note or null
  *
  * @param note
- * @param {String} type can be 'post', 'comment', 'site', etc...
+ * @param {string} type can be 'post', 'comment', 'site', etc...
  * @returns {number|null} null if no reference of type is found
  */
 export function getReferenceId( note, type ) {
@@ -37,7 +37,7 @@ export function getReferenceId( note, type ) {
  * It's a wp-admin link otherwise.
  *
  * @param note
- * @returns {String}
+ * @returns {string}
  */
 export function getEditCommentLink( note ) {
 	return getActionBlock( note.body ).edit_comment_link;

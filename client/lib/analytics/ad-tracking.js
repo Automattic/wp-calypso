@@ -11,22 +11,25 @@ import { v4 as uuid } from 'uuid';
  */
 import config from 'config';
 import productsValues from 'lib/products-values';
-import userModule from 'lib/user';
 import { loadScript } from '@automattic/load-script';
 import {
-	isAdTrackingAllowed,
-	hashPii,
+	isPiiUrl,
 	costToUSD,
-	getNormalizedHashedUserEmail,
+	isAdTrackingAllowed,
+	mayWeTrackCurrentUserGdpr,
 	refreshCountryCodeCookieGdpr,
 } from 'lib/analytics/utils';
-import { doNotTrack, isPiiUrl, mayWeTrackCurrentUserGdpr } from './utils';
+
+import {
+	getTracksAnonymousUserId,
+	getCurrentUser,
+	getDoNotTrack,
+} from '@automattic/calypso-analytics';
 
 /**
  * Module variables
  */
 const debug = debugFactory( 'calypso:analytics:ad-tracking' );
-const user = userModule();
 
 // Enable/disable ad-tracking
 // These should not be put in the json config as they must not differ across environments
@@ -39,14 +42,14 @@ const isWpcomGoogleAdsGtagEnabled = true;
 const isQuantcastEnabled = true;
 const isExperianEnabled = true;
 const isOutbrainEnabled = true;
-const isIconMediaEnabled = true;
 const isPinterestEnabled = true;
+const isIconMediaEnabled = false;
 const isTwitterEnabled = false;
 const isLinkedinEnabled = false;
 const isCriteoEnabled = false;
 const isPandoraEnabled = false;
 const isQuoraEnabled = false;
-const isAdRollEnabled = true;
+const isAdRollEnabled = false;
 
 // Retargeting events are fired once every `retargetingPeriod` seconds.
 const retargetingPeriod = 60 * 60 * 24;
@@ -57,61 +60,61 @@ let lastRetargetTime = 0;
 /**
  * Constants
  */
-const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevents.js',
-	GOOGLE_GTAG_SCRIPT_URL = 'https://www.googletagmanager.com/gtag/js?id=',
-	BING_TRACKING_SCRIPT_URL = 'https://bat.bing.com/bat.js',
-	CRITEO_TRACKING_SCRIPT_URL = 'https://static.criteo.net/js/ld/ld.js',
-	YAHOO_GEMINI_CONVERSION_PIXEL_URL =
-		'https://sp.analytics.yahoo.com/spp.pl?a=10000&.yp=10014088&ec=wordpresspurchase',
-	YAHOO_GEMINI_AUDIENCE_BUILDING_PIXEL_URL =
-		'https://sp.analytics.yahoo.com/spp.pl?a=10000&.yp=10014088',
-	PANDORA_CONVERSION_PIXEL_URL =
-		'https://data.adxcel-ec2.com/pixel/' +
-		'?ad_log=referer&action=purchase&pixid=7efc5994-458b-494f-94b3-31862eee9e26',
-	EXPERIAN_CONVERSION_PIXEL_URL =
-		'https://d.turn.com/r/dd/id/L21rdC84MTYvY2lkLzE3NDc0MzIzNDgvdC8yL2NhdC8zMjE4NzUwOQ',
-	ICON_MEDIA_RETARGETING_PIXEL_URL =
-		'https://tags.w55c.net/rs?id=cab35a3a79dc4173b8ce2c47adad2cea&t=marketing',
-	ICON_MEDIA_SIGNUP_PIXEL_URL =
-		'https://tags.w55c.net/rs?id=d239e9cb6d164f7299d2dbf7298f930a&t=marketing',
-	ICON_MEDIA_ORDER_PIXEL_URL =
-		'https://tags.w55c.net/rs?id=d299eef42f2d4135a96d0d40ace66f3a&t=checkout',
-	ADROLL_PAGEVIEW_PIXEL_URL_1 =
-		'https://d.adroll.com/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=ded132f8',
-	ADROLL_PAGEVIEW_PIXEL_URL_2 =
-		'https://d.adroll.com/fb/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=ded132f8',
-	ADROLL_PURCHASE_PIXEL_URL_1 =
-		'https://d.adroll.com/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=8eb337b5',
-	ADROLL_PURCHASE_PIXEL_URL_2 =
-		'https://d.adroll.com/fb/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=8eb337b5',
-	TWITTER_TRACKING_SCRIPT_URL = 'https://static.ads-twitter.com/uwt.js',
-	LINKED_IN_SCRIPT_URL = 'https://snap.licdn.com/li.lms-analytics/insight.min.js',
-	QUORA_SCRIPT_URL = 'https://a.quora.com/qevents.js',
-	OUTBRAIN_SCRIPT_URL = 'https://amplify.outbrain.com/cp/obtp.js',
-	PINTEREST_SCRIPT_URL = 'https://s.pinimg.com/ct/core.js',
-	TRACKING_IDS = {
-		bingInit: '4074038',
-		facebookInit: '823166884443641',
-		facebookJetpackInit: '919484458159593',
-		criteo: '31321',
-		quantcast: 'p-3Ma3jHaQMB_bS',
-		twitterPixelId: 'nvzbs',
-		dcmFloodlightAdvertiserId: '6355556',
-		linkedInPartnerId: '195308',
-		quoraPixelId: '420845cb70e444938cf0728887a74ca1',
-		outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e',
-		wpcomGoogleAnalyticsGtag: config( 'google_analytics_key' ),
-		wpcomFloodlightGtag: 'DC-6355556',
-		wpcomGoogleAdsGtag: 'AW-946162814',
-		wpcomGoogleAdsGtagRegistration: 'AW-946162814/_6cKCK6miZYBEP6YlcMD', // "WordPress.com Registration"
-		wpcomGoogleAdsGtagSignup: 'AW-946162814/5-NnCKy3xZQBEP6YlcMD', // "All Calypso Signups (WordPress.com)"
-		wpcomGoogleAdsGtagAddToCart: 'AW-946162814/MF4yCNi_kZYBEP6YlcMD', // "WordPress.com AddToCart"
-		wpcomGoogleAdsGtagPurchase: 'AW-946162814/taG8CPW8spQBEP6YlcMD', // "WordPress.com Purchase Gtag"
-		pinterestInit: '2613194105266',
-	},
-	// This name is something we created to store a session id for DCM Floodlight session tracking
-	DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid',
-	DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS = 1800;
+const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevents.js';
+const GOOGLE_GTAG_SCRIPT_URL = 'https://www.googletagmanager.com/gtag/js?id=';
+const BING_TRACKING_SCRIPT_URL = 'https://bat.bing.com/bat.js';
+const CRITEO_TRACKING_SCRIPT_URL = 'https://static.criteo.net/js/ld/ld.js';
+const YAHOO_GEMINI_CONVERSION_PIXEL_URL =
+	'https://sp.analytics.yahoo.com/spp.pl?a=10000&.yp=10014088&ec=wordpresspurchase';
+const YAHOO_GEMINI_AUDIENCE_BUILDING_PIXEL_URL =
+	'https://sp.analytics.yahoo.com/spp.pl?a=10000&.yp=10014088';
+const PANDORA_CONVERSION_PIXEL_URL =
+	'https://data.adxcel-ec2.com/pixel/?ad_log=referer&action=purchase&pixid=7efc5994-458b-494f-94b3-31862eee9e26';
+const EXPERIAN_CONVERSION_PIXEL_URL =
+	'https://d.turn.com/r/dd/id/L21rdC84MTYvY2lkLzE3NDc0MzIzNDgvdC8yL2NhdC8zMjE4NzUwOQ';
+const ICON_MEDIA_RETARGETING_PIXEL_URL =
+	'https://tags.w55c.net/rs?id=cab35a3a79dc4173b8ce2c47adad2cea&t=marketing';
+const ICON_MEDIA_SIGNUP_PIXEL_URL =
+	'https://tags.w55c.net/rs?id=d239e9cb6d164f7299d2dbf7298f930a&t=marketing';
+const ICON_MEDIA_ORDER_PIXEL_URL =
+	'https://tags.w55c.net/rs?id=d299eef42f2d4135a96d0d40ace66f3a&t=checkout';
+const ADROLL_PAGEVIEW_PIXEL_URL_1 =
+	'https://d.adroll.com/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=ded132f8';
+const ADROLL_PAGEVIEW_PIXEL_URL_2 =
+	'https://d.adroll.com/fb/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=ded132f8';
+const ADROLL_PURCHASE_PIXEL_URL_1 =
+	'https://d.adroll.com/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=8eb337b5';
+const ADROLL_PURCHASE_PIXEL_URL_2 =
+	'https://d.adroll.com/fb/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=8eb337b5';
+const TWITTER_TRACKING_SCRIPT_URL = 'https://static.ads-twitter.com/uwt.js';
+const LINKED_IN_SCRIPT_URL = 'https://snap.licdn.com/li.lms-analytics/insight.min.js';
+const QUORA_SCRIPT_URL = 'https://a.quora.com/qevents.js';
+const OUTBRAIN_SCRIPT_URL = 'https://amplify.outbrain.com/cp/obtp.js';
+const PINTEREST_SCRIPT_URL = 'https://s.pinimg.com/ct/core.js';
+const TRACKING_IDS = {
+	bingInit: '4074038',
+	facebookInit: '823166884443641',
+	facebookJetpackInit: '919484458159593',
+	criteo: '31321',
+	quantcast: 'p-3Ma3jHaQMB_bS',
+	twitterPixelId: 'nvzbs',
+	dcmFloodlightAdvertiserId: '6355556',
+	linkedInPartnerId: '195308',
+	quoraPixelId: '420845cb70e444938cf0728887a74ca1',
+	outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e',
+	wpcomGoogleAnalyticsGtag: config( 'google_analytics_key' ),
+	wpcomFloodlightGtag: 'DC-6355556',
+	wpcomGoogleAdsGtag: 'AW-946162814',
+	wpcomGoogleAdsGtagSignupStart: 'AW-946162814/baDICKzQiq4BEP6YlcMD', // "WordPress.com Signup Start"
+	wpcomGoogleAdsGtagRegistration: 'AW-946162814/_6cKCK6miZYBEP6YlcMD', // "WordPress.com Registration"
+	wpcomGoogleAdsGtagSignup: 'AW-946162814/5-NnCKy3xZQBEP6YlcMD', // "All Calypso Signups (WordPress.com)"
+	wpcomGoogleAdsGtagAddToCart: 'AW-946162814/MF4yCNi_kZYBEP6YlcMD', // "WordPress.com AddToCart"
+	wpcomGoogleAdsGtagPurchase: 'AW-946162814/taG8CPW8spQBEP6YlcMD', // "WordPress.com Purchase Gtag"
+	pinterestInit: '2613194105266',
+};
+// This name is something we created to store a session id for DCM Floodlight session tracking
+const DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid';
+const DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS = 1800;
 
 if ( typeof window !== 'undefined' ) {
 	// Facebook
@@ -278,12 +281,12 @@ function setupAdRollGlobal() {
 	if ( ! window.adRoll ) {
 		window.adRoll = {
 			trackPageview: function() {
-				new Image().src = ADROLL_PAGEVIEW_PIXEL_URL_1;
-				new Image().src = ADROLL_PAGEVIEW_PIXEL_URL_2;
+				new window.Image().src = ADROLL_PAGEVIEW_PIXEL_URL_1;
+				new window.Image().src = ADROLL_PAGEVIEW_PIXEL_URL_2;
 			},
 			trackPurchase: function() {
-				new Image().src = ADROLL_PURCHASE_PIXEL_URL_1;
-				new Image().src = ADROLL_PURCHASE_PIXEL_URL_2;
+				new window.Image().src = ADROLL_PURCHASE_PIXEL_URL_1;
+				new window.Image().src = ADROLL_PURCHASE_PIXEL_URL_2;
 			},
 		};
 	}
@@ -372,8 +375,8 @@ function initLoadedTrackingScripts() {
 
 	// init Pinterest
 	if ( isPinterestEnabled ) {
-		const normalizedHashedEmail = getNormalizedHashedUserEmail( user );
-		const params = normalizedHashedEmail ? { em: normalizedHashedEmail } : {};
+		const currentUser = getCurrentUser();
+		const params = currentUser ? { em: currentUser.hashedPii.email } : {};
 		window.pintrk( 'load', TRACKING_IDS.pinterestInit, params );
 	}
 
@@ -523,7 +526,7 @@ export async function retarget( urlPath ) {
 		if ( isIconMediaEnabled ) {
 			const params = ICON_MEDIA_RETARGETING_PIXEL_URL;
 			debug( 'retarget: [Icon Media] [rate limited]', params );
-			new Image().src = params;
+			new window.Image().src = params;
 		}
 
 		// Twitter
@@ -537,7 +540,7 @@ export async function retarget( urlPath ) {
 		if ( isGeminiEnabled ) {
 			const params = YAHOO_GEMINI_AUDIENCE_BUILDING_PIXEL_URL;
 			debug( 'retarget: [Yahoo Gemini] [rate limited]', params );
-			new Image().src = params;
+			new window.Image().src = params;
 		}
 
 		// Quora
@@ -555,8 +558,8 @@ export async function retarget( urlPath ) {
 /**
  * Fire custom facebook conversion tracking event.
  *
- * @param {String} name - The name of the custom event.
- * @param {Object} properties - The custom event attributes.
+ * @param {string} name - The name of the custom event.
+ * @param {object} properties - The custom event attributes.
  * @returns {void}
  */
 export function trackCustomFacebookConversionEvent( name, properties ) {
@@ -566,7 +569,7 @@ export function trackCustomFacebookConversionEvent( name, properties ) {
 /**
  * Fire custom adwords conversation tracking event.
  *
- * @param {Object} properties - The custom event attributes.
+ * @param {object} properties - The custom event attributes.
  * @returns {void}
  */
 export function trackCustomAdWordsRemarketingEvent( properties ) {
@@ -584,13 +587,9 @@ export function trackCustomAdWordsRemarketingEvent( properties ) {
 }
 
 function splitWpcomJetpackCartInfo( cart ) {
-	// Note: reduce() requires a non 0-length array.
-	const jetpackCost =
-		0 === cart.products.length
-			? 0
-			: cart.products
-					.map( product => ( productsValues.isJetpackPlan( product ) ? product.cost : 0 ) )
-					.reduce( ( accumulator, cost ) => accumulator + cost );
+	const jetpackCost = cart.products
+		.map( product => ( productsValues.isJetpackPlan( product ) ? product.cost : 0 ) )
+		.reduce( ( accumulator, cost ) => accumulator + cost, 0 );
 	const wpcomCost = cart.total_cost - jetpackCost;
 	const wpcomProducts = cart.products.filter(
 		product => ! productsValues.isJetpackPlan( product )
@@ -612,11 +611,52 @@ function splitWpcomJetpackCartInfo( cart ) {
 	};
 }
 
-export async function recordRegistration() {
+export async function adTrackSignupStart( flow ) {
 	await refreshCountryCodeCookieGdpr();
 
 	if ( ! isAdTrackingAllowed() ) {
-		debug( 'recordRegistration: [Skipping] ad tracking is not allowed' );
+		debug( 'adTrackSignupStart: [Skipping] ad tracking is not allowed' );
+		return;
+	}
+
+	await loadTrackingScripts();
+	const currentUser = getCurrentUser();
+
+	// Floodlight.
+
+	if ( isFloodlightEnabled ) {
+		debug( 'adTrackSignupStart: [Floodlight]' );
+		recordParamsInFloodlightGtag( {
+			send_to: 'DC-6355556/wordp0/pre-p0+unique',
+		} );
+	}
+	if ( isFloodlightEnabled && ! currentUser && 'onboarding' === flow ) {
+		debug( 'adTrackSignupStart: [Floodlight]' );
+		recordParamsInFloodlightGtag( {
+			send_to: 'DC-6355556/wordp0/landi00+unique',
+		} );
+	}
+
+	// Google Ads.
+
+	if ( isWpcomGoogleAdsGtagEnabled && ! currentUser && 'onboarding' === flow ) {
+		const params = [
+			'event',
+			'conversion',
+			{
+				send_to: TRACKING_IDS.wpcomGoogleAdsGtagSignupStart,
+			},
+		];
+		debug( 'adTrackSignupStart: [Google Ads Gtag]', params );
+		window.gtag( ...params );
+	}
+}
+
+export async function adTrackRegistration() {
+	await refreshCountryCodeCookieGdpr();
+
+	if ( ! isAdTrackingAllowed() ) {
+		debug( 'adTrackRegistration: [Skipping] ad tracking is not allowed' );
 		return;
 	}
 
@@ -632,7 +672,7 @@ export async function recordRegistration() {
 				send_to: TRACKING_IDS.wpcomGoogleAdsGtagRegistration,
 			},
 		];
-		debug( 'recordRegistration: [Google Ads Gtag]', params );
+		debug( 'adTrackRegistration: [Google Ads Gtag]', params );
 		window.gtag( ...params );
 	}
 
@@ -640,7 +680,7 @@ export async function recordRegistration() {
 
 	if ( isFacebookEnabled ) {
 		const params = [ 'trackSingle', TRACKING_IDS.facebookInit, 'Lead' ];
-		debug( 'recordRegistration: [Facebook]', params );
+		debug( 'adTrackRegistration: [Facebook]', params );
 		window.fbq( ...params );
 	}
 
@@ -650,14 +690,14 @@ export async function recordRegistration() {
 		const params = {
 			ec: 'registration',
 		};
-		debug( 'recordRegistration: [Bing]', params );
+		debug( 'adTrackRegistration: [Bing]', params );
 		window.uetq.push( params );
 	}
 
 	// DCM Floodlight
 
 	if ( isFloodlightEnabled ) {
-		debug( 'recordRegistration: [Floodlight]' );
+		debug( 'adTrackRegistration: [Floodlight]' );
 		recordParamsInFloodlightGtag( {
 			send_to: 'DC-6355556/wordp0/regis0+unique',
 		} );
@@ -667,31 +707,42 @@ export async function recordRegistration() {
 
 	if ( isPinterestEnabled ) {
 		const params = [ 'track', 'lead' ];
-		debug( 'recordRegistration: [Pinterest]', params );
+		debug( 'adTrackRegistration: [Pinterest]', params );
 		window.pintrk( ...params );
 	}
 
-	debug( 'recordRegistration: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
+	debug( 'adTrackRegistration: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
 }
 
 /**
- * Tracks a signup conversion by generating a
- * synthetic cart and then treating it like an order.
+ * Tracks a signup conversion
  *
- * @param {String} slug - Signup slug.
+ * @param {boolean} isNewUserSite Whether the signup is new user with a new site created
  * @returns {void}
  */
-export async function recordSignup( slug ) {
+export async function adTrackSignupComplete( { isNewUserSite } ) {
 	await refreshCountryCodeCookieGdpr();
 
 	if ( ! isAdTrackingAllowed() ) {
-		debug( 'recordSignup: [Skipping] ad tracking is disallowed' );
+		debug( 'adTrackSignupComplete: [Skipping] ad tracking is disallowed' );
 		return;
 	}
 
 	await loadTrackingScripts();
 
-	// Synthesize a cart object for signup tracking.
+	// Record all signups up in DCM Floodlight (deprecated Floodlight pixels)
+	if ( isFloodlightEnabled ) {
+		debug( 'adTrackSignupComplete: Floodlight:' );
+		recordParamsInFloodlightGtag( { send_to: 'DC-6355556/wordp0/signu0+unique' } );
+	}
+
+	// Track new user conversions by generating a synthetic cart and treating it like an order.
+
+	if ( ! isNewUserSite ) {
+		// only for new users with a new site created
+		return;
+	}
+
 	const syntheticCart = {
 		is_signup: true,
 		currency: 'USD',
@@ -699,9 +750,9 @@ export async function recordSignup( slug ) {
 		products: [
 			{
 				is_signup: true,
-				product_id: slug,
-				product_slug: slug,
-				product_name: slug,
+				product_id: 'new-user-site',
+				product_slug: 'new-user-site',
+				product_name: 'new-user-site',
 				currency: 'USD',
 				volume: 1,
 				cost: 0,
@@ -709,12 +760,10 @@ export async function recordSignup( slug ) {
 		],
 	};
 
-	// 35-byte signup tracking ID.
-	const syntheticOrderId = 's_' + uuid().replace( /-/g, '' );
+	// Prepare a few more variables.
 
-	const currentUser = user.get();
-	const userId = currentUser ? hashPii( currentUser.ID ) : 0;
-
+	const currentUser = getCurrentUser();
+	const syntheticOrderId = 's_' + uuid().replace( /-/g, '' ); // 35-byte signup tracking ID.
 	const usdCost = costToUSD( syntheticCart.total_cost, syntheticCart.currency );
 
 	// Google Ads Gtag
@@ -760,7 +809,7 @@ export async function recordSignup( slug ) {
 				product_slug: syntheticCart.products.map( product => product.product_slug ).join( ', ' ),
 				value: syntheticCart.total_cost,
 				currency: syntheticCart.currency,
-				user_id: userId,
+				user_id: currentUser ? currentUser.hashedPii.ID : 0,
 				order_id: syntheticOrderId,
 			},
 		];
@@ -797,7 +846,7 @@ export async function recordSignup( slug ) {
 
 	if ( isIconMediaEnabled ) {
 		debug( 'recordSignup: [Icon Media]', ICON_MEDIA_SIGNUP_PIXEL_URL );
-		new Image().src = ICON_MEDIA_SIGNUP_PIXEL_URL;
+		new window.Image().src = ICON_MEDIA_SIGNUP_PIXEL_URL;
 	}
 
 	// Pinterest
@@ -842,7 +891,7 @@ export function retargetViewPlans() {
 /**
  * Records that an item was added to the cart
  *
- * @param {Object} cartItem - The item added to the cart
+ * @param {object} cartItem - The item added to the cart
  * @returns {void}
  */
 export async function recordAddToCart( cartItem ) {
@@ -964,7 +1013,7 @@ export async function recordAddToCart( cartItem ) {
 /**
  * Records that a user viewed the checkout page
  *
- * @param {Object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `CartValue` object
  */
 export function recordViewCheckout( cart ) {
 	if ( isCriteoEnabled ) {
@@ -975,8 +1024,8 @@ export function recordViewCheckout( cart ) {
 /**
  * Tracks a purchase conversion
  *
- * @param {Object} cart - cart as `CartValue` object
- * @param {Number} orderId - the order id
+ * @param {object} cart - cart as `CartValue` object
+ * @param {number} orderId - the order id
  * @returns {void}
  */
 export async function recordOrder( cart, orderId ) {
@@ -1019,7 +1068,7 @@ export async function recordOrder( cart, orderId ) {
 	// Experian / One 2 One Media
 	if ( isExperianEnabled ) {
 		debug( 'recordOrder: [Experian]', EXPERIAN_CONVERSION_PIXEL_URL );
-		new Image().src = EXPERIAN_CONVERSION_PIXEL_URL;
+		new window.Image().src = EXPERIAN_CONVERSION_PIXEL_URL;
 	}
 
 	// Yahoo Gemini
@@ -1027,12 +1076,12 @@ export async function recordOrder( cart, orderId ) {
 		const params =
 			YAHOO_GEMINI_CONVERSION_PIXEL_URL + ( usdTotalCost !== null ? '&gv=' + usdTotalCost : '' );
 		debug( 'recordOrder: [Yahoo Gemini]', params );
-		new Image().src = params;
+		new window.Image().src = params;
 	}
 
 	if ( isPandoraEnabled ) {
 		debug( 'recordOrder: [Pandora]', PANDORA_CONVERSION_PIXEL_URL );
-		new Image().src = PANDORA_CONVERSION_PIXEL_URL;
+		new window.Image().src = PANDORA_CONVERSION_PIXEL_URL;
 	}
 
 	if ( isQuoraEnabled ) {
@@ -1046,7 +1095,7 @@ export async function recordOrder( cart, orderId ) {
 		const params =
 			ICON_MEDIA_ORDER_PIXEL_URL + `&tx=${ orderId }&sku=${ skus }&price=${ usdTotalCost }`;
 		debug( 'recordOrder: [Icon Media]', params );
-		new Image().src = params;
+		new window.Image().src = params;
 	}
 
 	// Twitter
@@ -1081,6 +1130,7 @@ export async function recordOrder( cart, orderId ) {
 					product_id: product.product_slug,
 					product_price: product.price,
 				} ) ),
+				order_id: orderId,
 			},
 		];
 		debug( 'recordOrder: [Pinterest]', params );
@@ -1102,9 +1152,9 @@ export async function recordOrder( cart, orderId ) {
 /**
  * Records an order in Quantcast
  *
- * @param {Object} cart - cart as `CartValue` object
- * @param {Number} orderId - the order id
- * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
+ * @param {object} cart - cart as `CartValue` object
+ * @param {number} orderId - the order id
+ * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
  * @returns {void}
  */
 function recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo ) {
@@ -1158,9 +1208,9 @@ function recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo ) {
 /**
  * Records an order in DCM Floodlight
  *
- * @param {Object} cart - cart as `CartValue` object
- * @param {Number} orderId - the order id
- * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
+ * @param {object} cart - cart as `CartValue` object
+ * @param {number} orderId - the order id
+ * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
  * @returns {void}
  */
 function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
@@ -1177,6 +1227,7 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 		u1: wpcomJetpackCartInfo.totalCostUSD,
 		u2: cart.products.map( product => product.product_name ).join( ', ' ),
 		u3: 'USD',
+		u8: orderId,
 		send_to: 'DC-6355556/wpsal0/wpsale+transactions',
 	} );
 
@@ -1189,6 +1240,7 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 			u1: wpcomJetpackCartInfo.wpcomCostUSD,
 			u2: wpcomJetpackCartInfo.wpcomProducts.map( product => product.product_name ).join( ', ' ),
 			u3: 'USD',
+			u8: orderId,
 			send_to: 'DC-6355556/wpsal0/purch0+transactions',
 		} );
 	}
@@ -1202,6 +1254,7 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 			u1: wpcomJetpackCartInfo.jetpackCostUSD,
 			u2: wpcomJetpackCartInfo.jetpackProducts.map( product => product.product_name ).join( ', ' ),
 			u3: 'USD',
+			u8: orderId,
 			send_to: 'DC-6355556/wpsal0/purch00+transactions',
 		} );
 	}
@@ -1210,9 +1263,8 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 /**
  * Records an order in Facebook (a single event for the entire order)
  *
- * @param {Object} cart - cart as `CartValue` object
- * @param {Number} orderId - the order id
- * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
+ * @param {object} cart - cart as `CartValue` object
+ * @param {number} orderId - the order id
  * @returns {void}
  */
 function recordOrderInFacebook( cart, orderId ) {
@@ -1229,8 +1281,7 @@ function recordOrderInFacebook( cart, orderId ) {
 		return;
 	}
 
-	const currentUser = user.get();
-	const userId = currentUser ? hashPii( currentUser.ID ) : 0;
+	const currentUser = getCurrentUser();
 
 	// Fire both WPCom and Jetpack pixels
 
@@ -1244,7 +1295,7 @@ function recordOrderInFacebook( cart, orderId ) {
 			product_slug: cart.products.map( product => product.product_slug ).join( ', ' ),
 			value: cart.total_cost,
 			currency: cart.currency,
-			user_id: userId,
+			user_id: currentUser ? currentUser.hashedPii.ID : 0,
 			order_id: orderId,
 		},
 	];
@@ -1261,7 +1312,7 @@ function recordOrderInFacebook( cart, orderId ) {
 			product_slug: cart.products.map( product => product.product_slug ).join( ', ' ),
 			value: cart.total_cost,
 			currency: cart.currency,
-			user_id: userId,
+			user_id: currentUser ? currentUser.hashedPii.ID : 0,
 			order_id: orderId,
 		},
 	];
@@ -1290,9 +1341,9 @@ export function recordAliasInFloodlight() {
 /**
  * Records a signup|purchase in Bing.
  *
- * @param {Object} cart - cart as `CartValue` object.
- * @param {Number} orderId - the order ID.
- * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
+ * @param {object} cart - cart as `CartValue` object.
+ * @param {number} orderId - the order ID.
+ * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
  * @returns {void}
  */
 function recordOrderInBing( cart, orderId, wpcomJetpackCartInfo ) {
@@ -1334,41 +1385,9 @@ function recordOrderInBing( cart, orderId, wpcomJetpackCartInfo ) {
 }
 
 /**
- * Record that a user started sign up in DCM Floodlight
- *
- * @returns {void}
- */
-export function recordSignupStartInFloodlight() {
-	if ( ! isAdTrackingAllowed() || ! isFloodlightEnabled ) {
-		return;
-	}
-
-	debug( 'recordSignupStartInFloodlight:' );
-	recordParamsInFloodlightGtag( {
-		send_to: 'DC-6355556/wordp0/pre-p0+unique',
-	} );
-}
-
-/**
- * Record that a user signed up in DCM Floodlight
- *
- * @returns {void}
- */
-export function recordSignupCompletionInFloodlight() {
-	if ( ! isAdTrackingAllowed() || ! isFloodlightEnabled ) {
-		return;
-	}
-
-	debug( 'recordSignupCompletionInFloodlight:' );
-	recordParamsInFloodlightGtag( {
-		send_to: 'DC-6355556/wordp0/signu0+unique',
-	} );
-}
-
-/**
  * Track a page view in DCM Floodlight
  *
- * @param {String} urlPath - The URL path
+ * @param {string} urlPath - The URL path
  * @returns {void}
  */
 export function recordPageViewInFloodlight( urlPath ) {
@@ -1402,7 +1421,7 @@ export function recordPageViewInFloodlight( urlPath ) {
 /**
  * Returns the DCM Floodlight session id, generating a new one if there's not already one
  *
- * @returns {String} The session id
+ * @returns {string} The session id
  */
 function floodlightSessionId() {
 	const cookies = cookie.parse( document.cookie );
@@ -1422,17 +1441,17 @@ function floodlightSessionId() {
 /**
  * Returns an object with DCM Floodlight user params
  *
- * @returns {Object} With the WordPress.com user id and/or the logged out Tracks id
+ * @returns {object} With the WordPress.com user id and/or the logged out Tracks id
  */
 function floodlightUserParams() {
 	const params = {};
+	const currentUser = getCurrentUser();
+	const anonymousUserId = getTracksAnonymousUserId();
 
-	const currentUser = user.get();
 	if ( currentUser ) {
-		params.u4 = hashPii( currentUser.ID );
+		params.u4 = currentUser.hashedPii.ID;
 	}
 
-	const anonymousUserId = tracksAnonymousUserId();
 	if ( anonymousUserId ) {
 		params.u5 = anonymousUserId;
 	}
@@ -1443,9 +1462,9 @@ function floodlightUserParams() {
 /**
  * Returns the anoymous id stored in the `tk_ai` cookie
  *
- * @returns {String} - The Tracks anonymous user id
+ * @returns {string} - The Tracks anonymous user id
  */
-function tracksAnonymousUserId() {
+export function tracksAnonymousUserId() {
 	const cookies = cookie.parse( document.cookie );
 	return cookies.tk_ai;
 }
@@ -1453,7 +1472,7 @@ function tracksAnonymousUserId() {
 /**
  * Records Floodlight events using Gtag and automatically adds `u4`, `u5`, and `allow_custom_scripts: true`.
  *
- * @param {Object} params An object of Floodlight params.
+ * @param {object} params An object of Floodlight params.
  */
 function recordParamsInFloodlightGtag( params ) {
 	if ( ! isAdTrackingAllowed() || ! isFloodlightEnabled ) {
@@ -1476,8 +1495,8 @@ function recordParamsInFloodlightGtag( params ) {
 /**
  * Records an order in Criteo
  *
- * @param {Object} cart - cart as `CartValue` object
- * @param {Number} orderId - the order id
+ * @param {object} cart - cart as `CartValue` object
+ * @param {number} orderId - the order id
  * @returns {void}
  */
 function recordOrderInCriteo( cart, orderId ) {
@@ -1500,7 +1519,7 @@ function recordOrderInCriteo( cart, orderId ) {
 /**
  * Records that a user viewed the checkout page
  *
- * @param {Object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `CartValue` object
  * @returns {void}
  */
 function recordViewCheckoutInCriteo( cart ) {
@@ -1527,7 +1546,7 @@ function recordViewCheckoutInCriteo( cart ) {
 /**
  * Converts the products in a cart to the format Criteo expects for its `items` property
  *
- * @param {Object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `CartValue` object
  * @returns {Array} - An array of items to include in the Criteo tracking call
  */
 function cartToCriteoItems( cart ) {
@@ -1561,8 +1580,8 @@ function recordPlansViewInCriteo() {
 /**
  * Records an event in Criteo
  *
- * @param {String} eventName - The name of the 'event' property such as 'viewItem' or 'viewBasket'
- * @param {Object} eventProps - Additional details about the event such as `{ item: '1' }`
+ * @param {string} eventName - The name of the 'event' property such as 'viewItem' or 'viewBasket'
+ * @param {object} eventProps - Additional details about the event such as `{ item: '1' }`
  *
  * @returns {void}
  */
@@ -1575,12 +1594,13 @@ async function recordInCriteo( eventName, eventProps ) {
 	await loadTrackingScripts();
 
 	const events = [];
+	const currentUser = getCurrentUser();
+
 	events.push( { event: 'setAccount', account: TRACKING_IDS.criteo } );
 	events.push( { event: 'setSiteType', type: criteoSiteType() } );
 
-	const normalizedHashedEmail = getNormalizedHashedUserEmail( user );
-	if ( normalizedHashedEmail ) {
-		events.push( { event: 'setEmail', email: [ normalizedHashedEmail ] } );
+	if ( currentUser ) {
+		events.push( { event: 'setEmail', email: [ currentUser.hashedPii.email ] } );
 	}
 
 	const conversionEvent = clone( eventProps );
@@ -1595,17 +1615,16 @@ async function recordInCriteo( eventName, eventProps ) {
 
 /**
  * Returns the site type value that Criteo expects
+ * Note: this logic was provided by Criteo and should not be modified
  *
- * @note This logic was provided by Criteo and should not be modified
- *
- * @returns {String} 't', 'm', or 'd' for tablet, mobile, or desktop
+ * @returns {string} 't', 'm', or 'd' for tablet, mobile, or desktop
  */
 function criteoSiteType() {
-	if ( /iPad/.test( navigator.userAgent ) ) {
+	if ( /iPad/.test( window.navigator.userAgent ) ) {
 		return 't';
 	}
 
-	if ( /Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Silk/.test( navigator.userAgent ) ) {
+	if ( /Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Silk/.test( window.navigator.userAgent ) ) {
 		return 'm';
 	}
 
@@ -1615,8 +1634,8 @@ function criteoSiteType() {
 /**
  * Records an order/sign_up in Google Ads Gtag
  *
- * @param {Object} cart - cart as `CartValue` object
- * @param {Number} orderId - the order id
+ * @param {object} cart - cart as `CartValue` object
+ * @param {number} orderId - the order id
  * @returns {void}
  */
 function recordOrderInGoogleAds( cart, orderId ) {
@@ -1646,7 +1665,7 @@ function recordOrderInGoogleAds( cart, orderId ) {
  *
  * @see https://www.quantcast.com/help/guides/using-the-quantcast-asynchronous-tag/
  *
- * @returns {String} The URL
+ * @returns {string} The URL
  */
 function quantcastAsynchronousTagURL() {
 	const protocolAndSubdomain =
@@ -1692,15 +1711,15 @@ function setupWpcomFloodlightGtag() {
  * 4. the current user could be in the GDPR zone and hasn't consented to tracking
  * 5. `document.location.href` may contain personally identifiable information
  *
- * Note that doNotTrack() and isPiiUrl() can change at any time which is why we do not cache them.
+ * Note that getDoNotTrack() and isPiiUrl() can change at any time which is why we do not cache them.
  *
- * @returns {Boolean} true if GA is allowed.
+ * @returns {boolean} true if GA is allowed.
  */
 export function isGoogleAnalyticsAllowed() {
 	return (
 		isGoogleAnalyticsEnabled &&
 		config.isEnabled( 'ad-tracking' ) &&
-		! doNotTrack() &&
+		! getDoNotTrack() &&
 		! isPiiUrl() &&
 		mayWeTrackCurrentUserGdpr()
 	);
@@ -1709,13 +1728,15 @@ export function isGoogleAnalyticsAllowed() {
 /**
  * Returns the default configuration for Google Analytics
  *
- * @return {Object} GA's default config
+ * @returns {object} GA's default config
  */
 export function getGoogleAnalyticsDefaultConfig() {
+	const currentUser = getCurrentUser();
+
 	return {
-		...( user.get() && { user_id: hashPii( user.get().ID ) } ),
+		...( currentUser && { user_id: currentUser.hashedPii.ID } ),
 		anonymize_ip: true,
-		transport_type: 'function' === typeof navigator.sendBeacon ? 'beacon' : 'xhr',
+		transport_type: 'function' === typeof window.navigator.sendBeacon ? 'beacon' : 'xhr',
 		use_amp_client_id: true,
 		custom_map: {
 			dimension3: 'client_id',
@@ -1726,8 +1747,8 @@ export function getGoogleAnalyticsDefaultConfig() {
 /**
  * Fires Google Analytics page view event
  *
- * @param {String} urlPath The path of the current page
- * @param {String} pageTitle The title of the current page
+ * @param {string} urlPath The path of the current page
+ * @param {string} pageTitle The title of the current page
  */
 export function fireGoogleAnalyticsPageView( urlPath, pageTitle ) {
 	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAnalyticsGtag, {
@@ -1740,10 +1761,10 @@ export function fireGoogleAnalyticsPageView( urlPath, pageTitle ) {
 /**
  * Fires a generic Google Analytics event
  *
- * @param {String} category Is the string that will appear as the event category.
- * @param {String} action Is the string that will appear as the event action in Google Analytics Event reports.
- * @param {String} label Is the string that will appear as the event label.
- * @param {Integer} value Is a non-negative integer that will appear as the event value.
+ * @param {string} category Is the string that will appear as the event category.
+ * @param {string} action Is the string that will appear as the event action in Google Analytics Event reports.
+ * @param {string} label Is the string that will appear as the event label.
+ * @param {number} value Is a non-negative integer that will appear as the event value.
  */
 export function fireGoogleAnalyticsEvent( category, action, label, value ) {
 	window.gtag( 'event', action, {
@@ -1756,10 +1777,10 @@ export function fireGoogleAnalyticsEvent( category, action, label, value ) {
 /**
  * Fires a generic Google Analytics timing
  *
- * @param {String} name A string to identify the variable being recorded (e.g. 'load').
- * @param {Integer} value The number of milliseconds in elapsed time to report to Google Analytics (e.g. 20).
- * @param {String} event_category A string for categorizing all user timing variables into logical groups (e.g. 'JS Dependencies').
- * @param {String} event_label A string that can be used to add flexibility in visualizing user timings in the reports (e.g. 'Google CDN').
+ * @param {string} name A string to identify the variable being recorded (e.g. 'load').
+ * @param {number} value The number of milliseconds in elapsed time to report to Google Analytics (e.g. 20).
+ * @param {string} event_category A string for categorizing all user timing variables into logical groups (e.g. 'JS Dependencies').
+ * @param {string} event_label A string that can be used to add flexibility in visualizing user timings in the reports (e.g. 'Google CDN').
  */
 export function fireGoogleAnalyticsTiming( name, value, event_category, event_label ) {
 	window.gtag( 'event', 'timing_complete', {
@@ -1778,9 +1799,10 @@ export function fireGoogleAnalyticsTiming( name, value, event_category, event_la
  */
 function initFacebook() {
 	let advancedMatching = {};
-	if ( user.get() ) {
-		const normalizedHashedEmail = getNormalizedHashedUserEmail( user );
-		advancedMatching = normalizedHashedEmail ? { em: normalizedHashedEmail } : {};
+	const currentUser = getCurrentUser();
+
+	if ( currentUser ) {
+		advancedMatching = { em: currentUser.hashedPii.email };
 	}
 
 	debug( 'initFacebook', advancedMatching );

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -23,8 +22,7 @@ import formBase from 'me/form-base';
 import config from 'config';
 import { languages } from 'languages';
 import { supportsCssCustomProperties } from 'lib/feature-detection';
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextValidation from 'components/forms/form-input-validation';
 import FormCheckbox from 'components/forms/form-checkbox';
@@ -255,7 +253,7 @@ const Account = createReactClass( {
 
 		return (
 			<FormSettingExplanation>
-				{' '}
+				{ ' ' }
 				{ translate(
 					'Thanks to {{a}}all our community members who helped translate to {{language/}}{{/a}}!',
 					{

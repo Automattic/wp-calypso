@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -56,7 +54,4 @@ const mapDispatchToProps = {
 	viewSplit: splitPostRevisionsDiffView,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( EditorRevisionsListViewButtons );
+export default connect( mapStateToProps, mapDispatchToProps )( EditorRevisionsListViewButtons );

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 import PropTypes from 'prop-types';
 import React, { Component, createElement } from 'react';
@@ -81,7 +80,7 @@ export class ContactDetailsFormFields extends Component {
 		needsFax: PropTypes.bool,
 		getIsFieldDisabled: PropTypes.func,
 		onContactDetailsChange: PropTypes.func,
-		onSubmit: PropTypes.func.isRequired,
+		onSubmit: PropTypes.func,
 		onValidate: PropTypes.func,
 		onSanitize: PropTypes.func,
 		labelTexts: PropTypes.object,
@@ -141,9 +140,9 @@ export class ContactDetailsFormFields extends Component {
 			! isEqual( nextProps.labelTexts, this.props.labelTexts ) ||
 			! isEqual( nextProps.countriesList, this.props.countriesList ) ||
 			! isEqual( nextProps.hasCountryStates, this.props.hasCountryStates ) ||
-			( nextProps.needsFax !== this.props.needsFax ||
-				nextProps.disableSubmitButton !== this.props.disableSubmitButton ||
-				nextProps.needsOnlyGoogleAppsDetails !== this.props.needsOnlyGoogleAppsDetails )
+			nextProps.needsFax !== this.props.needsFax ||
+			nextProps.disableSubmitButton !== this.props.disableSubmitButton ||
+			nextProps.needsOnlyGoogleAppsDetails !== this.props.needsOnlyGoogleAppsDetails
 		);
 	}
 
@@ -474,6 +473,8 @@ export class ContactDetailsFormFields extends Component {
 		const { translate, onCancel, disableSubmitButton, labelTexts } = this.props;
 		const countryCode = this.getCountryCode();
 
+		const isFooterVisible = !! ( this.props.onSubmit || onCancel );
+
 		return (
 			<FormFieldset className="contact-details-form-fields">
 				<div className="contact-details-form-fields__row">
@@ -493,25 +494,29 @@ export class ContactDetailsFormFields extends Component {
 
 				<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
 
-				<FormFooter>
-					<FormButton
-						className="contact-details-form-fields__submit-button"
-						disabled={ ! countryCode || disableSubmitButton }
-						onClick={ this.handleSubmitButtonClick }
-					>
-						{ labelTexts.submitButton || translate( 'Submit' ) }
-					</FormButton>
-					{ onCancel && (
-						<FormButton
-							className="contact-details-form-fields__cancel-button"
-							type="button"
-							isPrimary={ false }
-							onClick={ onCancel }
-						>
-							{ translate( 'Cancel' ) }
-						</FormButton>
-					) }
-				</FormFooter>
+				{ isFooterVisible && (
+					<FormFooter>
+						{ this.props.onSubmit && (
+							<FormButton
+								className="contact-details-form-fields__submit-button"
+								disabled={ ! countryCode || disableSubmitButton }
+								onClick={ this.handleSubmitButtonClick }
+							>
+								{ labelTexts.submitButton || translate( 'Submit' ) }
+							</FormButton>
+						) }
+						{ onCancel && (
+							<FormButton
+								className="contact-details-form-fields__cancel-button"
+								type="button"
+								isPrimary={ false }
+								onClick={ onCancel }
+							>
+								{ translate( 'Cancel' ) }
+							</FormButton>
+						) }
+					</FormFooter>
+				) }
 				<QueryDomainCountries />
 			</FormFieldset>
 		);

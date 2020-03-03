@@ -1,6 +1,5 @@
-/** @format */
 /**
- * @fileoverview Disallow creation of selectors bound to Redux state
+ * @file Disallow creation of selectors bound to Redux state
  * @author Automattic
  * @copyright 2017 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.

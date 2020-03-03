@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,6 +10,7 @@ import {
 	getKeyringConnections,
 	getKeyringConnectionById,
 	getKeyringConnectionsByName,
+	getBrokenKeyringConnectionsByName,
 	getUserConnections,
 	isKeyringConnectionsFetching,
 } from '../selectors';
@@ -130,6 +129,47 @@ describe( 'selectors', () => {
 			const isFetching = isKeyringConnectionsFetching( defaultState );
 
 			expect( isFetching ).to.be.false;
+		} );
+	} );
+
+	const brokenState = {
+		sharing: {
+			keyring: {
+				items: {
+					1: { ID: 1, service: 'twitter', sites: [ '2916284' ] },
+					2: { ID: 2, service: 'insta', sites: [ '77203074' ], keyring_connection_user_ID: 1 },
+					3: {
+						ID: 3,
+						service: 'facebook',
+						sites: [ '2916284', '77203074' ],
+						shared: true,
+						status: 'broken',
+					},
+				},
+				isFetching: true,
+			},
+		},
+	};
+
+	describe( 'getBrokenKeyringConnectionsByName()', () => {
+		test( 'should return null for a connection which has not yet been fetched', () => {
+			const connections = getBrokenKeyringConnectionsByName( brokenState, 'twitter' );
+
+			expect( connections ).to.be.empty;
+		} );
+
+		test( 'should return the connection object for the ID', () => {
+			const connections = getBrokenKeyringConnectionsByName( brokenState, 'facebook' );
+
+			expect( connections ).to.eql( [
+				{
+					ID: 3,
+					service: 'facebook',
+					sites: [ '2916284', '77203074' ],
+					shared: true,
+					status: 'broken',
+				},
+			] );
 		} );
 	} );
 } );

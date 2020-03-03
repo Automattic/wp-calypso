@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -41,7 +39,4 @@ QueryHelpLinks.propTypes = {
 	requestHelpLinks: PropTypes.func,
 };
 
-export default connect(
-	null,
-	{ requestHelpLinks }
-)( QueryHelpLinks );
+export default connect( null, { requestHelpLinks } )( QueryHelpLinks );

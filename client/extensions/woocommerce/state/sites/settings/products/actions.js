@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -53,9 +51,9 @@ export const fetchSettingsProducts = siteId => ( dispatch, getState ) => {
 /**
  * Updates change setting stored in Redux store
  *
- * @param {Number} siteId wpcom site id.
+ * @param {number} siteId wpcom site id.
  * @param {Mixed}  setting, single setting object { id: '', value: '' }
- * @return {Object} Action object
+ * @returns {object} Action object
  */
 export const changeSettingsProductsSetting = ( siteId, setting ) => dispatch => {
 	dispatch( {
@@ -70,11 +68,11 @@ export const changeSettingsProductsSetting = ( siteId, setting ) => dispatch => 
 /**
  * Updates settings/products via batch endpoint.
  *
- * @param {Number} siteId wpcom site id.
+ * @param {number} siteId wpcom site id.
  * @param {Mixed}  settingsData, either single object { id: '', value: '' }, or array of settings objects
  * @param {Mixed}  successAction, either action object or empty (null)
  * @param {Mixed}  failureAction, either action object or empty (null)
- * @return {Object} Action object
+ * @returns {object} Action object
  */
 export const updateSettingsProducts = (
 	siteId,
@@ -119,10 +117,10 @@ export const updateSettingsProducts = (
 /**
  * Updates settings/products via batch endpoint.
  *
- * @param {Number} siteId wpcom site id.
- * @param {Object}  successAction, success action object
- * @param {Object}  failureAction, failure action object
- * @return {Object} Action object
+ * @param {number} siteId wpcom site id.
+ * @param {object}  successAction, success action object
+ * @param {object}  failureAction, failure action object
+ * @returns {object} Action object
  */
 export const saveWeightAndDimensionsUnits = ( siteId, successAction, failureAction ) => (
 	dispatch,

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,7 +16,7 @@ import ElementChart from 'components/chart';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 import StatsModulePlaceholder from '../stats-module/placeholder';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class StatsSummaryChart extends Component {
@@ -108,12 +106,6 @@ class StatsSummaryChart extends Component {
 	}
 }
 
-const connectComponent = connect(
-	null,
-	{ recordGoogleEvent }
-);
+const connectComponent = connect( null, { recordGoogleEvent } );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsSummaryChart );
+export default flowRight( connectComponent, localize )( StatsSummaryChart );

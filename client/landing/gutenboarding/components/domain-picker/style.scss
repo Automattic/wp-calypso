@@ -1,0 +1,64 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+@import 'assets/stylesheets/shared/mixins/placeholder'; // Contains the placeholder mixin
+@import 'assets/stylesheets/shared/animation'; // Needed for the placeholder
+
+.domain-picker {
+	min-width: 22em;
+}
+
+.domain-picker__choose-domain-header {
+	font-weight: bold;
+	text-align: center;
+	margin-bottom: 20px;
+}
+.domain-picker__recommended-header {
+	font-weight: bold;
+}
+
+.domain-picker__panel-row {
+	// Increasing specificity because @wordpress/components stylesheets are loaded after gutenboarding stylesheets.
+	// See https://github.com/Automattic/wp-calypso/pull/38554/commits/e1f9673bcfd9eaa6469a0cfecda9b915a520961a
+	// See https://github.com/WordPress/gutenberg/pull/19535 
+	&.components-panel__row {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}
+
+.domain-picker__suggestion-item {
+	// Increasing specificity because @wordpress/components stylesheets are loaded after gutenboarding stylesheets.
+	// See https://github.com/Automattic/wp-calypso/pull/38554/commits/e1f9673bcfd9eaa6469a0cfecda9b915a520961a
+	// See https://github.com/WordPress/gutenberg/pull/19535 	
+	&.components-button {
+		display: flex;
+		justify-content: space-between;
+		margin-top: 18px;
+	}
+}
+
+.domain-picker__suggestion-item-name {
+	&.placeholder {
+		@include placeholder();
+	}
+}
+
+.domain-picker__suggestion-action {
+	color: var( --studio-blue-40 );
+	text-decoration: none;
+	margin-left: 20px;
+
+	&.placeholder {
+		@include placeholder( --studio-blue-30 );
+	}
+}
+
+.domain-picker__has-domain {
+	align-items: center;
+	.components-button {
+		color: var( --studio-blue-30 );
+	}
+}
+
+.domain-picker__divider {
+	margin-top: 20px;
+}

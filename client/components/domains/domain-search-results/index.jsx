@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,8 +17,7 @@ import DomainSuggestion from 'components/domains/domain-suggestion';
 import FeaturedDomainSuggestions from 'components/domains/featured-domain-suggestions';
 import { isDomainMappingFree, isNextDomainFree } from 'lib/cart-values/cart-items';
 import Notice from 'components/notice';
-import Card from 'components/card';
-import ScreenReaderText from 'components/screen-reader-text';
+import { Card, ScreenReaderText } from '@automattic/components';
 import { getTld } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
@@ -259,6 +256,9 @@ class DomainSearchResults extends React.Component {
 					selectedSite={ this.props.selectedSite }
 					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 					unavailableDomains={ this.props.unavailableDomains }
+					showTestCopy={ this.props.showTestCopy }
+					showDesignUpdate={ this.props.showDesignUpdate }
+					isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 				/>
 			);
 
@@ -283,6 +283,9 @@ class DomainSearchResults extends React.Component {
 						onButtonClick={ this.props.onClickResult }
 						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 						unavailableDomains={ this.props.unavailableDomains }
+						showTestCopy={ this.props.showTestCopy }
+						showDesignUpdate={ this.props.showDesignUpdate }
+						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 					/>
 				);
 			} );
@@ -292,6 +295,7 @@ class DomainSearchResults extends React.Component {
 					<DomainTransferSuggestion
 						onButtonClick={ this.props.onClickUseYourDomain }
 						tracksButtonClickSource="search-suggestions-bottom"
+						showDesignUpdate={ this.props.showDesignUpdate }
 					/>
 				);
 			}
@@ -329,7 +333,4 @@ const mapStateToProps = ( state, ownProps ) => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{ hideSitePreview }
-)( localize( DomainSearchResults ) );
+export default connect( mapStateToProps, { hideSitePreview } )( localize( DomainSearchResults ) );

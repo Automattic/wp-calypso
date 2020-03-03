@@ -26,7 +26,7 @@ const spawnSync = require( 'child_process' ).spawnSync;
  * @param  {string}  argv.'output-path'            Output path
  * @param  {string}  argv.'output-filename'        Output filename pattern
  * @param  {string}  argv.'output-library-target'  Output library target
- * @return {object}                                webpack config
+ * @returns {object}                                webpack config
  */
 function getWebpackConfig(
 	env = {},

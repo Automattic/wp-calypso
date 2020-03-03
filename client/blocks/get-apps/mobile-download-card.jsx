@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,12 +12,11 @@ import i18n, { localize } from 'i18n-calypso';
  */
 import AppsBadge from './apps-badge';
 import ReauthRequired from 'me/reauth-required';
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
 import QuerySmsCountries from 'components/data/query-countries/sms';
 import FormPhoneInput from 'components/forms/form-phone-input';
 import getCountries from 'state/selectors/get-countries';
-import { infoNotice, successNotice, errorNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'state/notices/actions';
 import { fetchUserSettings } from 'state/user-settings/actions';
 import { accountRecoverySettingsFetch } from 'state/account-recovery/settings/actions';
 import {
@@ -29,11 +26,11 @@ import {
 import getUserSettings from 'state/selectors/get-user-settings';
 import hasUserSettings from 'state/selectors/has-user-settings';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import wpcom from 'lib/wp';
 import phoneValidation from 'lib/phone-validation';
 import userAgent from 'lib/user-agent';
 import twoStepAuthorization from 'lib/two-step-authorization';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { sendEmailLogin } from 'state/auth/actions';
 
 function sendSMS( phone ) {
 	function onSuccess( dispatch ) {
@@ -54,30 +51,6 @@ function sendSMS( phone ) {
 		onSuccess,
 		onFailure,
 	} );
-}
-
-function sendMagicLink( email ) {
-	//Actions must be plain objects. Use custom middleware for async actions.
-	// https://stackoverflow.com/questions/46765896/react-redux-actions-must-be-plain-objects-use-custom-middleware-for-async-acti
-	return function( dispatch ) {
-		const duration = { duration: 4000 };
-		dispatch( infoNotice( i18n.translate( 'Sending email' ), duration ) );
-
-		return wpcom
-			.undocumented()
-			.requestMagicLoginEmail( {
-				email,
-				infer: true,
-				scheme: 'wordpress',
-			} )
-			.then( () => {
-				dispatch( successNotice( i18n.translate( 'Email Sent. Check your mail app!' ), duration ) );
-			} )
-			.catch( error => {
-				dispatch( errorNotice( i18n.translate( 'Sorry, we couldn’t send the email.' ), duration ) );
-				return Promise.reject( error );
-			} );
-	};
 }
 
 class MobileDownloadCard extends React.Component {
@@ -319,11 +292,16 @@ class MobileDownloadCard extends React.Component {
 	};
 
 	onSubmitLink = () => {
-		this.props.recordTracksEvent( 'calypso_get_apps_magic_link_button_click' );
 		const email = this.props.userSettings.user_email;
 		this.props.sendMagicLink( email );
 	};
 }
+
+const sendMagicLink = email =>
+	withAnalytics(
+		recordTracksEvent( 'calypso_get_apps_magic_link_button_click' ),
+		sendEmailLogin( email, { showGlobalNotices: true, isMobileAppLogin: true } )
+	);
 
 export default connect(
 	state => ( {

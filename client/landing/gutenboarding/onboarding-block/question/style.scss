@@ -1,0 +1,67 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+
+.onboarding-block__question {
+	display: flex;
+	font-size: 28px;
+	margin-bottom: 10px;
+	transition-property: 'font-size';
+	transition-duration: 0.25s;
+	transition-timing-function: 'linear';
+	transition-delay: 0;
+
+	&.selected {
+		font-size: 40px;
+		margin-top: 18px;
+		margin-bottom: 28px;
+
+		&:first-of-type {
+			margin-top: 0;
+		}
+
+		&:last-of-type {
+			margin-bottom: 0;
+		}
+	}
+
+	.onboarding-block__question-input {
+		border: 0;
+		border-bottom: 3px solid $light-gray-500;
+		display: inline-block;
+		font-size: inherit;
+		line-height: inherit;
+		margin: 0 0 0 0.2em;
+		padding: 0;
+		color: $blue-medium-900;
+
+		&:hover {
+			border-color: $blue-medium-highlight;
+		}
+
+		&:active,
+		&:focus {
+			border-color: $blue-medium-focus;
+			color: $black;
+			outline: 0; // @TODO: needs a11y considerations
+		}
+	}
+
+	.onboarding-block__question-answered {
+		color: $blue-medium-900;
+		border-bottom: 3px solid transparent;
+		cursor: text;
+		margin: 0 0 0 0.2em;
+		transition-property: border-color;
+		transition-duration: 0.3s;
+		transition-timing-function: 'linear';
+		transition-delay: 0;
+
+		&:hover {
+			border-color: $blue-medium-highlight;
+		}
+
+		&:active,
+		&:focus {
+			border-color: $blue-medium-focus;
+		}
+	}
+}

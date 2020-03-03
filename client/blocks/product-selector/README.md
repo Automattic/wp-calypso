@@ -39,6 +39,7 @@ export default class extends React.Component {
 
 The following props can be passed to the Product Selector block:
 
+* `basePlansPath`: ( string ) Plans page base path.
 * `intervalType`: ( string ) Billing interval - `monthly`, `yearly` or `2yearly`.
 * `products`: ( array ) Products to render, each with the following structure:
 	* `title`: ( string ) Product title.

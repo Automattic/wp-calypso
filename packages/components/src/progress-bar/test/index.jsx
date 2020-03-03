@@ -5,7 +5,7 @@
 /**
  * External dependencies
  */
-import { shallow } from 'enzyme'; // eslint-disable-line import/no-extraneous-dependencies
+import { shallow } from 'enzyme';
 import React from 'react';
 
 /**

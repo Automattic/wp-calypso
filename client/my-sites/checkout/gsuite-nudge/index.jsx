@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,6 +12,7 @@ import page from 'page';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
+import { GSUITE_BASIC_SLUG } from 'lib/gsuite/constants';
 import GSuiteUpsellCard from 'components/upgrades/gsuite/gsuite-upsell-card';
 import Main from 'components/main';
 import QuerySites from 'components/data/query-sites';
@@ -38,12 +37,7 @@ export class GSuiteNudge extends React.Component {
 	};
 
 	handleSkipClick = () => {
-		const { siteSlug, receiptId, isEligibleForChecklist } = this.props;
-		page(
-			isEligibleForChecklist
-				? `/checklist/${ siteSlug }`
-				: `/checkout/thank-you/${ siteSlug }/${ receiptId }`
-		);
+		this.props.handleCheckoutCompleteRedirect();
 	};
 
 	handleAddEmailClick = cartItems => {
@@ -88,7 +82,7 @@ export class GSuiteNudge extends React.Component {
 				<QuerySites siteId={ selectedSiteId } />
 				<GSuiteUpsellCard
 					domain={ this.props.domain }
-					gSuiteProductSlug={ 'gapps' }
+					productSlug={ GSUITE_BASIC_SLUG }
 					onSkipClick={ this.handleSkipClick }
 					onAddEmailClick={ this.handleAddEmailClick }
 				/>

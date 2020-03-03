@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -46,7 +44,13 @@ class SocialSignupForm extends Component {
 	};
 
 	handleGoogleResponse = ( response, triggeredByUser = true ) => {
-		if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
+		if ( ! response.getAuthResponse ) {
+			return;
+		}
+
+		const tokens = response.getAuthResponse();
+
+		if ( ! tokens || ! tokens.access_token || ! tokens.id_token ) {
 			return;
 		}
 
@@ -54,7 +58,7 @@ class SocialSignupForm extends Component {
 			return;
 		}
 
-		this.props.handleResponse( 'google', response.Zi.access_token, response.Zi.id_token );
+		this.props.handleResponse( 'google', tokens.access_token, tokens.id_token );
 	};
 
 	trackSocialLogin = service => {

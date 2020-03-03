@@ -12,7 +12,7 @@ import ActionPanelBody from 'components/action-panel/body';
 import ActionPanelFigure from 'components/action-panel/figure';
 import ActionPanelCta from 'components/action-panel/cta';
 import ActionPanelFooter from 'components/action-panel/footer';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 const ActionPanelExample = ( { translate }) => {
 	return (

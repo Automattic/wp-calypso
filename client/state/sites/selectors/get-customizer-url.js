@@ -15,10 +15,10 @@ import isJetpackSite from './is-jetpack-site';
 /**
  * Returns the customizer URL for a site, or null if it cannot be determined.
  *
- * @param  {Object} state  Global state tree
- * @param  {?Number} siteId Site ID
- * @param  {String} panel  Optional panel to autofocus
- * @return {String}        Customizer URL
+ * @param  {object} state  Global state tree
+ * @param  {?number} siteId Site ID
+ * @param  {string} panel  Optional panel to autofocus
+ * @returns {string}        Customizer URL
  */
 export default function getCustomizerUrl( state, siteId, panel ) {
 	if ( ! isJetpackSite( state, siteId ) ) {

@@ -10,7 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 const MIN_CELL_WIDTH = 240; // px
 const SIDE_PANE_RATIO = 0.12; // 12% of full width
@@ -186,7 +186,7 @@ export default class PlanFeaturesScroller extends PureComponent {
 			do {
 				visibleCount--;
 				cellWidth = ( vpw * ( 1 - SIDE_PANE_RATIO * 2 ) ) / visibleCount - borderSpacing;
-			} while ( cellWidth < MIN_CELL_WIDTH );
+			} while ( cellWidth < MIN_CELL_WIDTH && visibleCount > 1 );
 
 			paneWidth = SIDE_PANE_RATIO * vpw;
 			scrollerWidth = ( cellWidth + borderSpacing ) * planCount + borderSpacing;

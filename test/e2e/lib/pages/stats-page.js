@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,6 +14,15 @@ import * as driverManager from '../driver-manager';
 export default class StatsPage extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.stats-module' ) );
+	}
+
+	async openInsights() {
+		await this._expandNavIfMobile();
+		await driverHelper.clickWhenClickable( this.driver, By.css( '.stats-navigation__insights' ) );
+		return await driverHelper.waitTillPresentAndDisplayed(
+			this.driver,
+			By.css( '.stats__section-header' )
+		);
 	}
 
 	async _expandNavIfMobile() {

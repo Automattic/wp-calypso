@@ -35,9 +35,9 @@ import { whoisType } from '../../../lib/domains/whois/constants';
  * Returns the updated requests state after an action has been dispatched. The
  * state maps domain to whether a request is in progress.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const isRequestingContactDetailsCache = withoutPersistence( ( state = false, action ) => {
 	switch ( action.type ) {
@@ -72,9 +72,9 @@ export const isRequestingWhois = keyedReducer(
  * Returns the save request status after an action has been dispatched. The
  * state maps domain to the request status
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const isSaving = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -130,9 +130,9 @@ function mergeDomainRegistrantContactDetails( domainState, registrantContactDeta
  * Returns the updated items state after an action has been dispatched. The
  * state maps domain to the domain's whoisData object.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( domainWhoisSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -158,9 +158,12 @@ export const items = withSchemaValidation( domainWhoisSchema, ( state = {}, acti
 		}
 		case DOMAIN_MANAGEMENT_WHOIS_UPDATE: {
 			const { domain, whoisData } = action;
-			const domainState = get( state, [ `${ domain }` ], {} );
+			const domainState = state[ domain ];
 			return merge( {}, state, {
-				[ domain ]: mergeDomainRegistrantContactDetails( domainState, whoisData ),
+				[ domain ]: mergeDomainRegistrantContactDetails(
+					domainState !== undefined ? domainState : {},
+					whoisData
+				),
 			} );
 		}
 	}
@@ -193,8 +196,8 @@ export default combineReducers( {
  *   weird.map( v => v );
  *   // [1, 2, 3] (no foo for you!)
  *
- * @param  {Object} data   Potential contact details
- * @return {Object}        Sanitized contact details
+ * @param  {object} data   Potential contact details
+ * @returns {object}        Sanitized contact details
  */
 function sanitizeExtra( data ) {
 	const path = data._contactDetailsCache ? [ '_contactDetailsCache', 'extra' ] : 'extra';

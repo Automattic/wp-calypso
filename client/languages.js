@@ -659,12 +659,12 @@ export const languages = [
 		territories: [ '151' ],
 	},
 	{
-		"value": 486,
-		"langSlug": "skr",
-		"name": "سرائیکی",
-		"rtl": true,
-		"wpLocale": "skr",
-		"territories": [ "034" ]
+		value: 486,
+		langSlug: 'skr',
+		name: 'سرائیکی',
+		rtl: true,
+		wpLocale: 'skr',
+		territories: [ '034' ],
 	},
 	{
 		value: 65,

@@ -1,24 +1,23 @@
 /**
  * Internal dependencies
  */
-import { withSchemaValidation } from 'state/utils';
+import config from 'config';
 import { LOCALE_SET } from 'state/action-types';
-import { localeSchema } from './schema';
 
 const initialState = {
-	localeSlug: null,
+	localeSlug: config( 'i18n_default_locale_slug' ),
 	localeVariant: null,
 };
 
 /**
  * Tracks the state of the ui locale
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param {object} state  Current state
+ * @param {object} action Action payload
+ * @returns {object} Updated state
  *
  */
-export default withSchemaValidation( localeSchema, ( state = initialState, action ) => {
+export default function language( state = initialState, action ) {
 	switch ( action.type ) {
 		case LOCALE_SET:
 			return {
@@ -29,4 +28,4 @@ export default withSchemaValidation( localeSchema, ( state = initialState, actio
 		default:
 			return state;
 	}
-} );
+}

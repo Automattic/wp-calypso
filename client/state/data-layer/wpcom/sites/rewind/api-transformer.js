@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +7,7 @@ import { camelCase } from 'lodash';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { requestRewindState } from 'state/rewind/actions';
+import { requestRewindState } from 'state/rewind/state/actions';
 
 const transformCredential = data =>
 	Object.assign(

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,6 +14,7 @@ import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import PostTypeFilter from 'my-sites/post-type-filter';
 import PostTypeList from 'my-sites/post-type-list';
 import PostTypeUnsupported from './post-type-unsupported';
@@ -38,6 +37,11 @@ function Types( {
 			<DocumentHead title={ get( postType, 'label' ) } />
 			<PageViewTracker path={ siteId ? '/types/:site' : '/types' } title="Custom Post Type" />
 			<SidebarNavigation />
+			<FormattedHeader
+				className="types__page-heading"
+				headerText={ get( postType, 'label' ) }
+				align="left"
+			/>
 			{ false !== userCanEdit &&
 				false !== postTypeSupported && [
 					<PostTypeFilter

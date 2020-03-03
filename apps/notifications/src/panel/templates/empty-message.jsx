@@ -32,7 +32,12 @@ export class EmptyMessage extends Component {
 					<div className="wpnc__empty-notes">
 						<h2>{ emptyMessage }</h2>
 						<p>
-							<a href={ link } target="_blank" onClick={ this.handleClick }>
+							<a
+								href={ link }
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ this.handleClick }
+							>
 								{ linkMessage }
 							</a>
 						</p>

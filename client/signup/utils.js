@@ -1,4 +1,3 @@
-/** @format **/
 /**
  * Exernal dependencies
  */
@@ -9,7 +8,6 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getLanguage } from 'lib/i18n-utils';
 import steps from 'signup/config/steps-pure';
 import flows from 'signup/config/flows';
 import userFactory from 'lib/user';
@@ -41,18 +39,7 @@ export function getStepSectionName( parameters ) {
 }
 
 function isStepSectionName( pathFragment ) {
-	return ! isStepName( pathFragment ) && ! isLocale( pathFragment );
-}
-
-export function getLocale( parameters ) {
-	return find(
-		pick( parameters, [ 'flowName', 'stepName', 'stepSectionName', 'lang' ] ),
-		isLocale
-	);
-}
-
-function isLocale( pathFragment ) {
-	return ! isEmpty( getLanguage( pathFragment ) );
+	return ! isStepName( pathFragment );
 }
 
 export function getStepUrl( flowName, stepName, stepSectionName, localeSlug ) {
@@ -73,11 +60,11 @@ export function getStepUrl( flowName, stepName, stepSectionName, localeSlug ) {
 }
 
 export function getValidPath( parameters ) {
-	const locale = getLocale( parameters ),
-		flowName = getFlowName( parameters ),
-		currentFlowSteps = flows.getFlow( flowName ).steps,
-		stepName = getStepName( parameters ) || currentFlowSteps[ 0 ],
-		stepSectionName = getStepSectionName( parameters );
+	const locale = parameters.lang;
+	const flowName = getFlowName( parameters );
+	const currentFlowSteps = flows.getFlow( flowName ).steps;
+	const stepName = getStepName( parameters ) || currentFlowSteps[ 0 ];
+	const stepSectionName = getStepSectionName( parameters );
 
 	if ( currentFlowSteps.length === 0 ) {
 		return '/';

@@ -10,8 +10,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import isGoogleMyBusinessStatsNudgeDismissed from 'state/selectors/is-google-my-business-stats-nudge-dismissed';
 import QueryPreferences from 'components/data/query-preferences';
 import SectionHeader from 'components/section-header';
@@ -111,7 +110,7 @@ class GoogleMyBusinessStatsNudge extends Component {
 						<div className="google-my-business-stats-nudge__button-row">
 							<Button
 								href={ `/google-my-business/${ this.props.siteSlug }` }
-								primary
+								primary={ this.props.primaryButton }
 								onClick={ this.onStartNowClick }
 							>
 								{ this.props.translate( 'Start Now' ) }

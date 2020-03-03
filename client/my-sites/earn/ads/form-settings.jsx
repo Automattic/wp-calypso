@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,8 +12,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import StateSelector from 'components/forms/us-state-selector';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSectionHeading from 'components/forms/form-section-heading';
@@ -214,9 +211,10 @@ class AdsFormSettings extends Component {
 	}
 
 	jetpackPlacementControls() {
-		const linkHref = '/marketing/traffic/' + this.props.site.slug;
+		const { translate, site } = this.props;
+		const linkHref = '/marketing/traffic/' + site?.slug;
 
-		return <Card href={ linkHref }>Manage ad placements</Card>;
+		return <Card href={ linkHref }>{ translate( 'Manage ad placements' ) }</Card>;
 	}
 
 	showAdsToOptions() {

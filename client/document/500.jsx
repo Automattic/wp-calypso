@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import React from 'react';
@@ -13,11 +12,11 @@ import Head from 'components/head';
 import EmptyContent from 'components/empty-content';
 import { chunkCssLinks } from './utils';
 
-function ServerError( { faviconURL, entrypoint, isRTL } ) {
+function ServerError( { faviconURL, entrypoint } ) {
 	return (
 		<html lang="en">
 			<Head faviconURL={ faviconURL } cdn={ '//s1.wp.com' }>
-				{ chunkCssLinks( entrypoint, isRTL ) }
+				{ chunkCssLinks( entrypoint ) }
 			</Head>
 			<body>
 				{ /* eslint-disable wpcalypso/jsx-classname-namespace*/ }

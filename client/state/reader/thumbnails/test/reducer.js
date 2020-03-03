@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +13,7 @@ import {
 	READER_THUMBNAIL_REQUEST_SUCCESS,
 	READER_THUMBNAIL_REQUEST_FAILURE,
 	READER_THUMBNAIL_RECEIVE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 
 describe( 'reducer', () => {
 	const embedUrl = 'embedUrl';

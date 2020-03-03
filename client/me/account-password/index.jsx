@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -140,7 +138,9 @@ const AccountPassword = createReactClass( {
 		const failure = head( this.props.accountPasswordData.getValidationFailures() );
 
 		if ( this.props.accountPasswordData.passwordValidationSuccess() ) {
-			return <FormInputValidation text={ translate( 'Your password can be saved.' ) } />;
+			return (
+				<FormInputValidation text={ translate( 'Your password is strong enough to be saved.' ) } />
+			);
 		} else if ( ! isEmpty( failure ) ) {
 			return <FormInputValidation isError text={ failure.explanation } />;
 		}
@@ -201,9 +201,6 @@ const AccountPassword = createReactClass( {
 } );
 
 export default compose(
-	connect(
-		null,
-		{ errorNotice, recordGoogleEvent }
-	),
+	connect( null, { errorNotice, recordGoogleEvent } ),
 	localize
 )( AccountPassword );

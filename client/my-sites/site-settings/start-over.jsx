@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,7 +16,7 @@ import ActionPanelTitle from 'components/action-panel/title';
 import ActionPanelBody from 'components/action-panel/body';
 import ActionPanelFigure from 'components/action-panel/figure';
 import ActionPanelFooter from 'components/action-panel/footer';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { EMPTY_SITE } from 'lib/url/support';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 

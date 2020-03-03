@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,17 +13,15 @@ import AsyncBaseContainer from '../async-base-container';
 
 export default class ChecklistPage extends AsyncBaseContainer {
 	constructor( driver, url ) {
-		super( driver, By.css( '.checklist.main' ), url );
-		this.headerSelector = By.css( '.checklist.main .formatted-header__title' );
-		this.subheaderSelector = By.css( '.checklist.main .formatted-header__subtitle' );
+		super( driver, By.css( '.customer-home__layout .checklist' ), url );
+		this.headerSelector = By.css( '.customer-home__layout .customer-home__card-checklist-heading' );
+		this.updateHomeSelector = By.css(
+			'.customer-home__layout button[data-e2e-action="update-homepage"]'
+		);
 	}
 
 	async headerExists() {
 		return await driverHelper.isElementPresent( this.driver, this.headerSelector );
-	}
-
-	async subheaderExists() {
-		return await driverHelper.isElementPresent( this.driver, this.subheaderSelector );
 	}
 
 	async isEmailverified() {
@@ -37,5 +33,9 @@ export default class ChecklistPage extends AsyncBaseContainer {
 			emailVerifiedMessage === 'You validated your email address',
 			'Could not locate message that email is verified.'
 		);
+	}
+
+	async updateHomepage() {
+		await driverHelper.clickWhenClickable( this.driver, this.updateHomeSelector );
 	}
 }

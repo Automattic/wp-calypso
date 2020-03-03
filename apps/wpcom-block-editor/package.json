@@ -9,7 +9,7 @@
 		"directory": "apps/wpcom-block-editor"
 	},
 	"private": true,
-	"author": "Automattic, Inc.",
+	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
@@ -24,9 +24,6 @@
 		"prebuild": "npm run clean"
 	},
 	"dependencies": {
-		"debug": "3.2.6"
-	},
-	"devDependencies": {
-		"@automattic/calypso-build": "file:../../packages/calypso-build"
+		"debug": "4.1.1"
 	}
 }

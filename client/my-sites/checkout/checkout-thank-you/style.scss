@@ -114,7 +114,7 @@
 
 .checkout-thank-you__header-content {
 	margin: 0 auto;
-	max-width: 700px;
+	max-width: 750px;
 }
 
 .checkout-thank-you__header-icon {
@@ -129,13 +129,43 @@
 	width: 100%;
 }
 
+.checkout-thank-you__success-messages,
+.checkout-thank-you__success-message-item {
+	padding: 0;
+	margin: 0;
+	list-style-type: none;
+}
+
+.checkout-thank-you__success-messages {
+	margin-top: 25px;
+}
+
+.checkout-thank-you__success-message-item {
+	display: flex;
+	text-align: left;
+	margin-top: 15px;
+
+	.gridicons-checkmark-circle {
+		position: relative;
+		flex: 24px 0 0;
+		top: 1px;
+		fill: var( --color-success );
+		margin-right: 11px;
+	}
+}
+
 .checkout-thank-you__header-heading,
-.checkout-thank-you__header-text {
+.checkout-thank-you__header-text,
+.checkout-thank-you__success-message-item {
 	clear: none;
 }
 
 .checkout-thank-you__header-button {
 	margin: 2em 0;
+
+	button:nth-child( 2 ) {
+		margin-left: 10px;
+	}
 }
 
 .checkout-thank-you__header-heading {
@@ -144,7 +174,8 @@
 	margin: 24px 0 8px;
 }
 
-.checkout-thank-you__header-text {
+.checkout-thank-you__header-text,
+.checkout-thank-you__success-message-item {
 	font-size: 18px;
 	font-weight: 300;
 }
@@ -163,7 +194,8 @@
 	}
 
 	.checkout-thank-you__header-heading,
-	.checkout-thank-you__header-text {
+	.checkout-thank-you__header-text,
+	.checkout-thank-you__success-message-item {
 		@include placeholder( --color-neutral-10 );
 
 		display: block;
@@ -177,7 +209,8 @@
 		width: 50%;
 	}
 
-	.checkout-thank-you__header-text {
+	.checkout-thank-you__header-text,
+	.checkout-thank-you__success-message-item {
 		line-height: 2em;
 		margin-bottom: 8px;
 		margin-top: 15px;

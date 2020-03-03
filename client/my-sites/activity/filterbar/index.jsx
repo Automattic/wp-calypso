@@ -1,7 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
+import { isWithinBreakpoint } from '@automattic/viewport';
 import React, { Component } from 'react';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
@@ -11,12 +11,11 @@ import page from 'page';
  * Internal dependencies
  */
 import BackButton from 'components/back-button';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import DateRangeSelector from './date-range-selector';
 import ActionTypeSelector from './action-type-selector';
 import { updateFilter } from 'state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { isWithinBreakpoint } from 'lib/viewport';
 import getPreviousRoute from 'state/selectors/get-previous-route';
 
 /**
@@ -165,7 +164,4 @@ const mapDispatchToProps = dispatch => ( {
 		),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( Filterbar ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Filterbar ) );

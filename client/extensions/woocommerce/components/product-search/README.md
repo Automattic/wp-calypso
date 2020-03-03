@@ -8,7 +8,7 @@ This component is used to search through the products on a given site.
 To select multiple products:
 
 ```jsx
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import ProductSearch from 'woocommerce/components/product-search';
 
 render: function() {
@@ -27,7 +27,7 @@ render: function() {
 To select a single product:
 
 ```jsx
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import ProductSearch from 'woocommerce/components/product-search';
 
 render: function() {

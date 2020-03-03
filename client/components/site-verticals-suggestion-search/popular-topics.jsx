@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -28,7 +26,7 @@ const POPULAR_TOPICS = {
 		translate( 'Website Designer' ),
 		translate( 'Real Estate Agent' ),
 		translate( 'Cameras & Photography' ),
-		translate( 'Restaurants' ),
+		translate( 'Restaurant' ),
 	],
 	blog: [
 		translate( 'People' ),

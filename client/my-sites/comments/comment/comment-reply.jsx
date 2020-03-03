@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +12,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import AutoDirection from 'components/auto-direction';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { decodeEntities } from 'lib/formatting';
 import {
 	bumpStat,
@@ -23,7 +22,7 @@ import {
 } from 'state/analytics/actions';
 import { changeCommentStatus, replyComment } from 'state/comments/actions';
 import { removeNotice, successNotice } from 'state/notices/actions';
-import getSiteComment from 'state/selectors/get-site-comment';
+import { getSiteComment } from 'state/comments/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const TEXTAREA_HEIGHT_COLLAPSED = 47; // 1 line
@@ -228,7 +227,4 @@ const mapDispatchToProps = ( dispatch, { commentId, commentsListQuery } ) => ( {
 	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( CommentReply ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentReply ) );

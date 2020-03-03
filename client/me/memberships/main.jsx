@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -18,13 +17,19 @@ import DocumentHead from 'components/data/document-head';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryMembershipsSubscriptions from 'components/data/query-memberships-subscriptions';
 import SectionHeader from 'components/section-header';
-import CompactCard from 'components/card';
+import { CompactCard } from '@automattic/components';
 import EmptyContent from 'components/empty-content';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
  */
 import './main.scss';
+
+/**
+ * Image dependencies
+ */
+import noMembershipsImage from 'assets/images/illustrations/no-memberships.svg';
 
 const MembershipItem = ( { translate, subscription, moment } ) => (
 	<CompactCard key={ subscription.ID } href={ '/me/purchases/other/' + subscription.ID }>
@@ -77,7 +82,7 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 			<CompactCard className="memberships__no-content">
 				<EmptyContent
 					title={ translate( 'No Recurring Payments found.' ) }
-					illustration={ '/calypso/images/illustrations/illustration-nomemberships.svg' }
+					illustration={ noMembershipsImage }
 				/>
 			</CompactCard>
 		);
@@ -97,4 +102,4 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 
 export default connect( state => ( {
 	subscriptions: get( state, 'memberships.subscriptions.items', [] ),
-} ) )( localize( MembershipsHistory ) );
+} ) )( localize( withLocalizedMoment( MembershipsHistory ) ) );

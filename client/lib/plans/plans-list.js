@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,10 @@ import i18n from 'i18n-calypso';
 import { isEnabled } from 'config';
 import * as constants from './constants';
 
-const WPComGetBillingTimeframe = () => i18n.translate( 'per month, billed annually' );
+const WPComGetBillingTimeframe = annualPriceText =>
+	annualPriceText
+		? `Billed at ${ annualPriceText } per year`
+		: i18n.translate( 'per month, billed annually' );
 const WPComGetBiennialBillingTimeframe = () => i18n.translate( '/month, billed every two years' );
 
 const getPlanBloggerDetails = () => ( {
@@ -68,13 +69,18 @@ const getPlanBloggerDetails = () => ( {
 	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanPersonalDetails = () => ( {
 	group: constants.GROUP_WPCOM,
 	type: constants.TYPE_PERSONAL,
-	getTitle: () => i18n.translate( 'Personal' ),
-	getAudience: () => i18n.translate( 'Best for personal use' ),
+	getTitle: isEligibleForPlanStepUpdates =>
+		isEligibleForPlanStepUpdates ? 'Personal plan' : i18n.translate( 'Personal' ),
+	getAudience: isEligibleForPlanStepUpdates =>
+		isEligibleForPlanStepUpdates
+			? 'WordPress essentials for a basic site.'
+			: i18n.translate( 'Best for personal use' ),
 	getBlogAudience: () => i18n.translate( 'Best for personal use' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for personal use' ),
 	getStoreAudience: () => i18n.translate( 'Best for personal use' ),
@@ -91,16 +97,18 @@ const getPlanPersonalDetails = () => ( {
 				},
 			}
 		),
-	getShortDescription: () =>
-		i18n.translate(
-			'Boost your website with a custom domain name, and remove all WordPress.com advertising. ' +
-				'Get access to high-quality email and live chat support.'
-		),
+	getShortDescription: isEligibleForPlanStepUpdates =>
+		isEligibleForPlanStepUpdates
+			? 'Build your starter online home with basic site-editing tools, a custom domain name, and access to live chat support.'
+			: i18n.translate(
+					'Boost your website with a custom domain name, and remove all WordPress.com advertising. ' +
+						'Get access to high-quality email and live chat support.'
+			  ),
 	getPlanCompareFeatures: () => [
 		// pay attention to ordering, shared features should align on /plan page
 		constants.FEATURE_CUSTOM_DOMAIN,
 		constants.FEATURE_JETPACK_ESSENTIAL,
-		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 		constants.FEATURE_FREE_THEMES,
 		constants.FEATURE_BASIC_DESIGN,
 		constants.FEATURE_6GB_STORAGE,
@@ -123,13 +131,18 @@ const getPlanPersonalDetails = () => ( {
 	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanEcommerceDetails = () => ( {
 	group: constants.GROUP_WPCOM,
 	type: constants.TYPE_ECOMMERCE,
-	getTitle: () => i18n.translate( 'eCommerce' ),
-	getAudience: () => i18n.translate( 'Best for online stores' ),
+	getTitle: isEligibleForPlanStepUpdates =>
+		isEligibleForPlanStepUpdates ? 'eCommerce plan' : i18n.translate( 'eCommerce' ),
+	getAudience: isEligibleForPlanStepUpdates =>
+		isEligibleForPlanStepUpdates
+			? 'Build a professional online store.'
+			: i18n.translate( 'Best for online stores' ),
 	getBlogAudience: () => i18n.translate( 'Best for online stores' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for online stores' ),
 	getStoreAudience: () => i18n.translate( 'Best for online stores' ),
@@ -147,12 +160,14 @@ const getPlanEcommerceDetails = () => ( {
 			}
 		);
 	},
-	getShortDescription: () =>
-		i18n.translate(
-			'Sell products or services with this powerful, ' +
-				'all-in-one online store experience. This plan includes premium integrations and is extendable, ' +
-				'so it’ll grow with you as your business grows.'
-		),
+	getShortDescription: isEligibleForPlanStepUpdates =>
+		isEligibleForPlanStepUpdates
+			? 'Start selling in no time, and create the best shopping, payment, and delivery experience for your customers.'
+			: i18n.translate(
+					'Sell products or services with this powerful, ' +
+						'all-in-one online store experience. This plan includes premium integrations and is extendable, ' +
+						'so it’ll grow with you as your business grows.'
+			  ),
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with eCommerce and take advantage of its powerful marketplace features.'
@@ -162,7 +177,7 @@ const getPlanEcommerceDetails = () => ( {
 			// pay attention to ordering, shared features should align on /plan page
 			constants.FEATURE_CUSTOM_DOMAIN,
 			constants.FEATURE_JETPACK_ADVANCED,
-			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 			constants.FEATURE_ADVANCED_DESIGN,
 			constants.FEATURE_UNLIMITED_STORAGE,
@@ -211,14 +226,20 @@ const getPlanEcommerceDetails = () => ( {
 		constants.FEATURE_AUDIO_UPLOADS,
 		constants.FEATURE_GOOGLE_MY_BUSINESS,
 		constants.FEATURE_UPLOAD_THEMES_PLUGINS,
+		constants.FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 	],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanPremiumDetails = () => ( {
 	group: constants.GROUP_WPCOM,
 	type: constants.TYPE_PREMIUM,
-	getTitle: () => i18n.translate( 'Premium' ),
-	getAudience: () => i18n.translate( 'Best for freelancers' ),
+	getTitle: isEligibleForPlanStepUpdates =>
+		isEligibleForPlanStepUpdates ? 'Premium plan' : i18n.translate( 'Premium' ),
+	getAudience: isEligibleForPlanStepUpdates =>
+		isEligibleForPlanStepUpdates
+			? 'Powerful tools at a great value.'
+			: i18n.translate( 'Best for freelancers' ),
 	getBlogAudience: () => i18n.translate( 'Best for freelancers' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for freelancers' ),
 	getStoreAudience: () => i18n.translate( 'Best for freelancers' ),
@@ -236,18 +257,20 @@ const getPlanPremiumDetails = () => ( {
 				},
 			}
 		),
-	getShortDescription: () =>
-		i18n.translate(
-			'Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
-				' Google Analytics support,' +
-				' and the ability to monetize your site with ads.'
-		),
+	getShortDescription: isEligibleForPlanStepUpdates =>
+		isEligibleForPlanStepUpdates
+			? 'Build a sleek site with beautiful themes, robust design and monetization tools, custom CSS, and Google Analytics.'
+			: i18n.translate(
+					'Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
+						' Google Analytics support,' +
+						' and the ability to monetize your site with ads.'
+			  ),
 	getPlanCompareFeatures: () =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			constants.FEATURE_CUSTOM_DOMAIN,
 			constants.FEATURE_JETPACK_ESSENTIAL,
-			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 			constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 			constants.FEATURE_ADVANCED_DESIGN,
 			constants.FEATURE_13GB_STORAGE,
@@ -282,13 +305,18 @@ const getPlanPremiumDetails = () => ( {
 	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanBusinessDetails = () => ( {
 	group: constants.GROUP_WPCOM,
 	type: constants.TYPE_BUSINESS,
-	getTitle: () => i18n.translate( 'Business' ),
-	getAudience: () => i18n.translate( 'Best for small businesses' ),
+	getTitle: isEligibleForPlanStepUpdates =>
+		isEligibleForPlanStepUpdates ? 'Business plan' : i18n.translate( 'Business' ),
+	getAudience: isEligibleForPlanStepUpdates =>
+		isEligibleForPlanStepUpdates
+			? 'All you need for a growing business.'
+			: i18n.translate( 'Best for small businesses' ),
 	getBlogAudience: () => i18n.translate( 'Best for small businesses' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for small businesses' ),
 	getStoreAudience: () => i18n.translate( 'The plan for small businesses' ),
@@ -305,11 +333,13 @@ const getPlanBusinessDetails = () => ( {
 				},
 			}
 		),
-	getShortDescription: () =>
-		i18n.translate(
-			'Power your business website with custom plugins and themes, unlimited premium and business theme templates,' +
-				' 200 GB storage, and the ability to remove WordPress.com branding.'
-		),
+	getShortDescription: isEligibleForPlanStepUpdates =>
+		isEligibleForPlanStepUpdates
+			? 'The full power of WordPress, unlocked: from plugins and custom themes  to SFTP and phpMyAdmin, this plan has it all.'
+			: i18n.translate(
+					'Power your business website with custom plugins and themes, unlimited premium and business theme templates,' +
+						' 200 GB storage, and the ability to remove WordPress.com branding.'
+			  ),
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Business and take advantage of its professional features.'
@@ -319,7 +349,7 @@ const getPlanBusinessDetails = () => ( {
 			// pay attention to ordering, shared features should align on /plan page
 			constants.FEATURE_CUSTOM_DOMAIN,
 			constants.FEATURE_JETPACK_ADVANCED,
-			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 			constants.FEATURE_ADVANCED_DESIGN,
 			constants.FEATURE_UNLIMITED_STORAGE,
@@ -365,6 +395,7 @@ const getPlanBusinessDetails = () => ( {
 		constants.FEATURE_GOOGLE_MY_BUSINESS,
 		constants.FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 	],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
@@ -411,6 +442,8 @@ export const PLANS_LIST = {
 			constants.FEATURE_FREE_THEMES_SIGNUP,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' ),
+		getHiddenFeatures: () => [],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_BLOGGER ]: {
@@ -636,10 +669,24 @@ export const PLANS_LIST = {
 		getAudience: () => i18n.translate( 'Best for students' ),
 		getProductId: () => 2002,
 		getStoreSlug: () => constants.PLAN_JETPACK_FREE,
-		getTagline: () =>
-			i18n.translate(
-				'Upgrade your site to access additional features, including spam protection, backups, and priority support.'
-			),
+		getTagline: feature => {
+			switch ( feature ) {
+				case constants.FEATURE_JETPACK_BACKUP_DAILY:
+				case constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY:
+					return i18n.translate(
+						'Upgrade your site to access additional features, including spam protection, real-time backups, and priority support.'
+					);
+				case constants.FEATURE_JETPACK_BACKUP_REALTIME:
+				case constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY:
+					return i18n.translate(
+						'Upgrade your site to access additional features, including spam protection, and priority support.'
+					);
+				default:
+					return i18n.translate(
+						'Upgrade your site to access additional features, including spam protection, backups, and priority support.'
+					);
+			}
+		},
 		getDescription: () =>
 			i18n.translate(
 				'The features most needed by WordPress sites' +
@@ -661,6 +708,8 @@ export const PLANS_LIST = {
 		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'for life' ),
+		getHiddenFeatures: () => [],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_PREMIUM ]: {
@@ -721,7 +770,11 @@ export const PLANS_LIST = {
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
-		getHiddenFeatures: () => [ constants.FEATURE_JETPACK_BACKUP_DAILY ],
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_PREMIUM_MONTHLY ]: {
@@ -780,7 +833,11 @@ export const PLANS_LIST = {
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
-		getHiddenFeatures: () => [ constants.FEATURE_JETPACK_BACKUP_DAILY ],
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_PERSONAL ]: {
@@ -822,7 +879,11 @@ export const PLANS_LIST = {
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
-		getHiddenFeatures: () => [ constants.FEATURE_JETPACK_BACKUP_DAILY ],
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_PERSONAL_MONTHLY ]: {
@@ -863,7 +924,11 @@ export const PLANS_LIST = {
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
-		getHiddenFeatures: () => [ constants.FEATURE_JETPACK_BACKUP_DAILY ],
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_BUSINESS ]: {
@@ -924,7 +989,14 @@ export const PLANS_LIST = {
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
-		getHiddenFeatures: () => [ constants.FEATURE_JETPACK_BACKUP_REALTIME ],
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_REALTIME,
+			constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+		],
+		getInferiorHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		],
 	},
 
 	[ constants.PLAN_JETPACK_BUSINESS_MONTHLY ]: {
@@ -984,7 +1056,14 @@ export const PLANS_LIST = {
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
-		getHiddenFeatures: () => [ constants.FEATURE_JETPACK_BACKUP_REALTIME ],
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_REALTIME,
+			constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+		],
+		getInferiorHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		],
 	},
 };
 

@@ -48,7 +48,7 @@ export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );
  * Isomorphic routing helper, client side
  *
  * @param { string } route - A route path
- * @param { ...function } middlewares - Middleware to be invoked for route
+ * @param {...Function} middlewares - Middleware to be invoked for route
  *
  * This function is passed to individual sections' controllers via
  * `server/bundler/loader`. Sections are free to either ignore it, or use it

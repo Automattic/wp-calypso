@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card, Dialog } from '@automattic/components';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import notices from 'notices';
@@ -22,7 +21,6 @@ import { successNotice } from 'state/notices/actions';
 import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'lib/url/support';
 import { registrar as registrarNames } from 'lib/domains/constants';
 import DesignatedAgentNotice from 'my-sites/domains/domain-management/components/designated-agent-notice';
-import Dialog from 'components/dialog';
 import { getCurrentUser } from 'state/current-user/selectors';
 import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
 import { requestWhois, saveWhois } from 'state/domains/management/actions';
@@ -37,6 +35,8 @@ import { findRegistrantWhois } from 'lib/domains/whois/utils';
 
 const wpcom = wp.undocumented();
 
+import './style.scss';
+
 class EditContactInfoFormCard extends React.Component {
 	static propTypes = {
 		selectedDomain: PropTypes.object.isRequired,
@@ -47,6 +47,7 @@ class EditContactInfoFormCard extends React.Component {
 		whoisData: PropTypes.array,
 		whoisSaveError: PropTypes.object,
 		whoisSaveSuccess: PropTypes.bool,
+		showContactInfoNote: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -251,14 +252,6 @@ class EditContactInfoFormCard extends React.Component {
 
 	onTransferLockOptOutChange = event => this.setState( { transferLock: ! event.target.checked } );
 
-	goToContactsPrivacy = () =>
-		page(
-			domainManagementContactsPrivacy(
-				this.props.selectedSite.slug,
-				this.props.selectedDomain.name
-			)
-		);
-
 	showNonDaConfirmationDialog = () => this.setState( { showNonDaConfirmationDialog: true } );
 
 	handleContactDetailsChange = newContactDetails => {
@@ -305,7 +298,7 @@ class EditContactInfoFormCard extends React.Component {
 		} );
 
 		if ( ! this.state.requiresConfirmation ) {
-			this.props.successNotice(
+			this.showNoticeAndGoBack(
 				this.props.translate(
 					'The contact info has been updated. ' +
 						'There may be a short delay before the changes show up in the public records.'
@@ -339,7 +332,21 @@ class EditContactInfoFormCard extends React.Component {
 			);
 		}
 
-		this.props.successNotice( message );
+		this.showNoticeAndGoBack( message );
+	};
+
+	showNoticeAndGoBack = message => {
+		this.props.successNotice( message, {
+			showDismiss: true,
+			isPersistent: true,
+			duration: 5000,
+		} );
+		page(
+			domainManagementContactsPrivacy(
+				this.props.selectedSite.slug,
+				this.props.selectedDomain.name
+			)
+		);
 	};
 
 	onWhoisUpdateError = () => {
@@ -386,7 +393,7 @@ class EditContactInfoFormCard extends React.Component {
 	}
 
 	render() {
-		const { selectedDomain, translate } = this.props;
+		const { selectedDomain, showContactInfoNote, translate } = this.props;
 		const canUseDesignatedAgent = selectedDomain.transferLockOnWhoisUpdateOptional;
 		const whoisRegistrantData = this.getContactFormFieldValues();
 
@@ -396,6 +403,13 @@ class EditContactInfoFormCard extends React.Component {
 
 		return (
 			<Card>
+				{ showContactInfoNote && (
+					<p className="edit-contact-info__note">
+						<em>
+							{ translate( 'Domain owners are required to provide correct contact information.' ) }
+						</em>
+					</p>
+				) }
 				<form>
 					<ContactDetailsFormFields
 						eventFormName="Edit Contact Info"
@@ -406,7 +420,6 @@ class EditContactInfoFormCard extends React.Component {
 						onSubmit={ this.handleSubmitButtonClick }
 						onValidate={ this.validate }
 						labelTexts={ { submitButton: translate( 'Save Contact Info' ) } }
-						onCancel={ this.goToContactsPrivacy }
 						disableSubmitButton={ this.shouldDisableSubmitButton() }
 						isSubmitting={ this.state.formSubmitting }
 					>

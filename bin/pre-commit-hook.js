@@ -3,8 +3,14 @@
  */
 const execSync = require( 'child_process' ).execSync;
 const spawnSync = require( 'child_process' ).spawnSync;
+const existsSync = require( 'fs' ).existsSync;
 const chalk = require( 'chalk' );
 const _ = require( 'lodash' );
+const path = require( 'path' );
+
+const composerBinDir = path.join( __dirname, '..', 'vendor', 'bin' );
+const phpcsPath = path.join( composerBinDir, 'phpcs' );
+const phpcbfPath = path.join( composerBinDir, 'phpcbf' );
 
 console.log(
 	'\nBy contributing to this project, you license the materials you contribute ' +
@@ -13,12 +19,12 @@ console.log(
 );
 
 // Make quick pass over config files on every change
-require( '../server/config/validate-config-keys' );
+require( './validate-config-keys' );
 
 /**
  * Parses the output of a git diff command into file paths.
  *
- * @param   {String} command Command to run. Expects output like `git diff --name-only […]`
+ * @param   {string} command Command to run. Expects output like `git diff --name-only […]`
  * @returns {Array}          Paths output from git command
  */
 function parseGitDiffToPathArray( command ) {
@@ -38,14 +44,19 @@ function linterFailure() {
 	process.exit( 1 );
 }
 
+function printPhpcsDocs() {
+	console.log(
+		chalk.red( 'COMMIT ABORTED:' ),
+		'Working with PHP files in this repository requires the PHP Code Sniffer and its dependencies to be installed. Make sure you have composer installed on your machine and from the root of this repository, run `composer install`.'
+	);
+	process.exit( 1 );
+}
+
 function phpcsInstalled() {
-	try {
-		execSync( 'which -s phpcs phpcbf' );
+	if ( existsSync( phpcsPath ) && existsSync( phpcbfPath ) ) {
 		return true;
-	} catch ( error ) {
-		console.log( chalk.red( 'PHP files will not be processed because PHPCS was not found.' ) );
-		return false;
 	}
+	return false;
 }
 
 // determine if PHPCS is available
@@ -76,7 +87,7 @@ const { toPrettify = [], toStylelintfix = [], toPHPCBF = [] } = _.groupBy( toFor
 	switch ( true ) {
 		case file.endsWith( '.scss' ):
 			return 'toStylelintfix';
-		case file.endsWith( '.php' ) && phpcs:
+		case file.endsWith( '.php' ):
 			return 'toPHPCBF';
 		default:
 			return 'toPrettify';
@@ -86,10 +97,13 @@ const { toPrettify = [], toStylelintfix = [], toPHPCBF = [] } = _.groupBy( toFor
 // Format JavaScript and TypeScript files with prettier, then re-stage them. Swallow the output.
 toPrettify.forEach( file => console.log( `Prettier formatting staged file: ${ file }` ) );
 if ( toPrettify.length ) {
-	execSync(
-		`./node_modules/.bin/prettier --ignore-path .eslintignore --write ${ toPrettify.join( ' ' ) }`
-	);
-	execSync( `git add ${ toPrettify.join( ' ' ) }` );
+	// chunk this up into multiple runs if we have a lot of files to avoid E2BIG
+	_.forEach( _.chunk( toPrettify, 500 ), chunk => {
+		execSync(
+			`./node_modules/.bin/prettier --ignore-path .eslintignore --write ${ chunk.join( ' ' ) }`
+		);
+		execSync( `git add ${ chunk.join( ' ' ) }` );
+	} );
 }
 
 // Format the sass files with stylelint and then re-stage them. Swallow the output.
@@ -102,16 +116,20 @@ if ( toStylelintfix.length ) {
 // Format the PHP files with PHPCBF and then re-stage them. Swallow the output.
 toPHPCBF.forEach( file => console.log( `PHPCBF formatting staged file: ${ file }` ) );
 if ( toPHPCBF.length ) {
-	try {
-		execSync( `phpcbf --standard=apps/phpcs.xml ${ toPHPCBF.join( ' ' ) }` );
-	} catch ( error ) {
-		// PHPCBF returns a `0` or `1` exit code on success, and `2` on failures. ¯\_(ツ)_/¯
-		// https://github.com/squizlabs/PHP_CodeSniffer/blob/master/src/Runner.php#L210
-		if ( 2 === error.status ) {
-			linterFailure();
+	if ( phpcs ) {
+		try {
+			execSync( `${ phpcbfPath } --standard=apps/phpcs.xml ${ toPHPCBF.join( ' ' ) }` );
+		} catch ( error ) {
+			// PHPCBF returns a `0` or `1` exit code on success, and `2` on failures. ¯\_(ツ)_/¯
+			// https://github.com/squizlabs/PHP_CodeSniffer/blob/master/src/Runner.php#L210
+			if ( 2 === error.status ) {
+				linterFailure();
+			}
 		}
+		execSync( `git add ${ toPHPCBF.join( ' ' ) }` );
+	} else {
+		printPhpcsDocs();
 	}
-	execSync( `git add ${ toPHPCBF.join( ' ' ) }` );
 }
 
 // Now run the linters over everything staged to commit (excepting JSON), even if they are partially staged
@@ -121,7 +139,7 @@ const { toEslint = [], toStylelint = [], toPHPCS = [] } = _.groupBy(
 		switch ( true ) {
 			case file.endsWith( '.scss' ):
 				return 'toStylelint';
-			case file.endsWith( '.php' ) && phpcs:
+			case file.endsWith( '.php' ):
 				return 'toPHPCS';
 			default:
 				return 'toEslint';
@@ -155,12 +173,16 @@ if ( toEslint.length ) {
 
 // and finally PHPCS
 if ( toPHPCS.length ) {
-	const lintResult = spawnSync( 'phpcs', [ '--standard=apps/phpcs.xml', ...toPHPCS ], {
-		shell: true,
-		stdio: 'inherit',
-	} );
+	if ( phpcs ) {
+		const lintResult = spawnSync( phpcsPath, [ '--standard=apps/phpcs.xml', ...toPHPCS ], {
+			shell: true,
+			stdio: 'inherit',
+		} );
 
-	if ( lintResult.status ) {
-		linterFailure();
+		if ( lintResult.status ) {
+			linterFailure();
+		}
+	} else {
+		printPhpcsDocs();
 	}
 }

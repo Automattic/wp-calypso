@@ -9,6 +9,13 @@
 		padding-right: 48px;
 	}
 
+	&.is-compact {
+		border-left-width: 4px;
+		font-size: 12px;
+		margin-bottom: 8px;
+		padding: 8px 12px 8px 8px;
+	}
+
 	&[href] {
 		cursor: pointer;
 	}
@@ -51,10 +58,18 @@
 		}
 	}
 
+	&.is-jetpack {
+		@include banner-color( var( --color-jetpack ) );
+	}
+
 	.card__link-indicator {
 		align-items: center;
 		color: var( --color-neutral );
 		display: flex;
+	}
+
+	&.is-compact .card__link-indicator {
+		right: 8px;
 	}
 
 	&:hover {
@@ -73,6 +88,10 @@
 
 		&.is-dismissible {
 			padding-right: 16px;
+		}
+
+		&.is-compact.is-dismissible {
+			padding-right: 8px;
 		}
 	}
 
@@ -145,6 +164,10 @@
 	}
 }
 
+.is-compact .banner__content {
+	padding: 5px;
+}
+
 .banner__info {
 	flex-grow: 1;
 	line-height: 1.4;
@@ -190,6 +213,10 @@
 	}
 }
 
+.is-compact .banner__title {
+	font-size: 12px;
+}
+
 .banner__action {
 	align-self: center;
 	font-size: 12px;
@@ -224,9 +251,40 @@
 			margin-top: 40px;
 		}
 
+		.is-compact & {
+			margin-right: 0;
+		}
+
+		.is-horizontal & {
+			flex-shrink: 0;
+			margin-right: 0;
+		}
+
+		.is-dismissible.is-compact & {
+			margin-top: 0;
+			margin-right: 32px;
+		}
+
+		.is-dismissible.is-horizontal & {
+			margin-top: 0;
+			margin-right: 40px;
+		}
+
 		.banner__prices {
 			justify-content: flex-end;
 			text-align: right;
 		}
 	}
+}
+
+.is-compact .dismissible-card__close-icon {
+	width: 16px;
+	height: 16px;
+	top: 50%;
+	margin-top: -8px;
+}
+
+.is-horizontal .dismissible-card__close-icon {
+	top: 50%;
+	margin-top: -12px;
 }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,7 +18,7 @@ import { countFoundTermsForQuery, getTerm } from 'state/terms/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
 import { decodeEntities } from 'lib/formatting';
 import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import QueryTerms from 'components/data/query-terms';
 import QuerySiteSettings from 'components/data/query-site-settings';
 

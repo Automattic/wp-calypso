@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +12,7 @@ import { get, includes, isEqual, isUndefined, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import scrollTo from 'lib/scroll-to';
 import { getMinimumComment } from 'my-sites/comments/comment/utils';
 import {
@@ -29,7 +28,7 @@ import {
 	unlikeComment,
 } from 'state/comments/actions';
 import { removeNotice, successNotice } from 'state/notices/actions';
-import getSiteComment from 'state/selectors/get-site-comment';
+import { getSiteComment } from 'state/comments/selectors';
 
 const commentActions = {
 	unapproved: [ 'like', 'approve', 'edit', 'reply', 'spam', 'trash' ],
@@ -338,7 +337,4 @@ const mapDispatchToProps = ( dispatch, { siteId, postId, commentId, commentsList
 		),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( CommentActions ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentActions ) );

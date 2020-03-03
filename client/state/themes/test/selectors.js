@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -862,6 +860,9 @@ describe( 'themes selectors', () => {
 								},
 							} ),
 						},
+						recommendedThemes: {
+							themes: [],
+						},
 					},
 				},
 				2916284,
@@ -869,6 +870,34 @@ describe( 'themes selectors', () => {
 			);
 
 			expect( themes ).to.eql( [ twentyfifteen, twentysixteen ] );
+		} );
+
+		test( 'should remove recommendedThemes with no filter and no search in query', () => {
+			const themes = getThemesForQueryIgnoringPage(
+				{
+					themes: {
+						queries: {
+							2916284: new ThemeQueryManager( {
+								items: {
+									twentyfifteen,
+									twentysixteen,
+								},
+								queries: {
+									'[]': {
+										itemKeys: [ 'twentyfifteen', 'twentysixteen' ],
+									},
+								},
+							} ),
+						},
+						recommendedThemes: {
+							themes: [ { id: 'twentyfifteen' } ],
+						},
+					},
+				},
+				2916284,
+				{ search: '', number: 1 }
+			);
+			expect( themes ).to.eql( [ twentysixteen ] );
 		} );
 
 		test( "should omit found items for which the requested result hasn't been received", () => {
@@ -1357,6 +1386,7 @@ describe( 'themes selectors', () => {
 								items: { twentysixteen },
 							} ),
 						},
+						activeThemes: {},
 					},
 				},
 				'twentysixteen',
@@ -1414,6 +1444,7 @@ describe( 'themes selectors', () => {
 								items: { twentysixteen },
 							} ),
 						},
+						activeThemes: {},
 					},
 				};
 
@@ -1468,6 +1499,7 @@ describe( 'themes selectors', () => {
 								items: { twentysixteen },
 							} ),
 						},
+						activeThemes: {},
 					},
 				};
 
@@ -1749,7 +1781,7 @@ describe( 'themes selectors', () => {
 		test( 'given no site, should return null', () => {
 			const activeTheme = getActiveTheme( {
 				themes: {
-					activeTheme: {},
+					activeThemes: {},
 				},
 			} );
 

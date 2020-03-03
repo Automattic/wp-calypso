@@ -10,9 +10,12 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import { getSavedVariations } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
-import Button from 'components/button';
+import { recordPasswordlessRegistration } from 'lib/analytics/signup';
+import { recordGoogleRecaptchaAction } from 'lib/analytics/recaptcha';
+import { Button } from '@automattic/components';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import LoggedOutForm from 'components/logged-out-form';
@@ -21,6 +24,7 @@ import ValidationFieldset from 'signup/validation-fieldset';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
+import flows from 'signup/config/flows';
 
 class PasswordlessSignupForm extends Component {
 	static propTypes = {
@@ -46,7 +50,7 @@ class PasswordlessSignupForm extends Component {
 		} );
 	};
 
-	onFormSubmit = event => {
+	onFormSubmit = async event => {
 		event.preventDefault();
 
 		if ( ! this.state.email || ! emailValidator.validate( this.state.email ) ) {
@@ -76,17 +80,46 @@ class PasswordlessSignupForm extends Component {
 			form,
 		} );
 
-		wpcom
-			.undocumented()
-			.createUserAccountFromEmailAddress(
-				{ email: typeof this.state.email === 'string' ? this.state.email.trim() : '' },
+		const isRecaptchaLoaded = typeof this.props.recaptchaClientId === 'number';
+
+		let recaptchaToken = undefined;
+		let recaptchaError = undefined;
+
+		if ( flows.getFlow( this.props.flowName )?.showRecaptcha ) {
+			if ( isRecaptchaLoaded ) {
+				recaptchaToken = await recordGoogleRecaptchaAction(
+					this.props.recaptchaClientId,
+					'calypso/signup/formSubmit'
+				);
+
+				if ( ! recaptchaToken ) {
+					recaptchaError = 'recaptcha_failed';
+				}
+			} else {
+				recaptchaError = 'recaptcha_didnt_load';
+			}
+		}
+
+		try {
+			const response = await wpcom.undocumented().usersNew(
+				{
+					email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
+					'g-recaptcha-error': recaptchaError,
+					'g-recaptcha-response': recaptchaToken || undefined,
+					is_passwordless: true,
+					signup_flow_name: this.props.flowName,
+					validate: false,
+					ab_test_variations: getSavedVariations(),
+				},
 				null
-			)
-			.then( response => this.createUserAccountFromEmailAddressCallback( null, response ) )
-			.catch( err => this.createUserAccountFromEmailAddressCallback( err ) );
+			);
+			this.createAccountCallback( null, response );
+		} catch ( err ) {
+			this.createAccountCallback( err );
+		}
 	};
 
-	createUserAccountFromEmailAddressCallback = ( error, response ) => {
+	createAccountCallback = ( error, response ) => {
 		if ( error ) {
 			const errorMessage = this.getErrorMessage( error );
 			this.setState( {
@@ -108,12 +141,12 @@ class PasswordlessSignupForm extends Component {
 		const userId =
 			( response && response.signup_sandbox_user_id ) || ( response && response.user_id );
 
-		analytics.recordPasswordlessRegistration( { flow: this.props.flowName } );
-		analytics.identifyUser( username, userId );
+		recordPasswordlessRegistration( this.props.flowName );
+		analytics.identifyUser( { ID: userId, username, email: this.state.email } );
 
 		this.submitStep( {
-			username: response.username,
-			bearer_token: response.token.access_token,
+			username,
+			bearer_token: response.bearer_token,
 		} );
 	};
 
@@ -123,6 +156,7 @@ class PasswordlessSignupForm extends Component {
 		switch ( errorObj.error ) {
 			case 'already_taken':
 			case 'already_active':
+			case 'email_exists':
 				return (
 					<>
 						{ translate( 'An account with this email address already exists.' ) }
@@ -141,11 +175,8 @@ class PasswordlessSignupForm extends Component {
 					</>
 				);
 			default:
-				return (
-					errorObj.message ||
-					translate(
-						'Sorry, something went wrong when trying to create your account. Please try again.'
-					)
+				return translate(
+					'Sorry, something went wrong when trying to create your account. Please try again.'
 				);
 		}
 	}
@@ -208,7 +239,12 @@ class PasswordlessSignupForm extends Component {
 					type="submit"
 					primary
 					busy={ isSubmitting }
-					disabled={ isSubmitting || ! isEmailAddressValid || !! this.props.disabled }
+					disabled={
+						isSubmitting ||
+						! isEmailAddressValid ||
+						!! this.props.disabled ||
+						!! this.props.disableSubmitButton
+					}
 				>
 					{ submitButtonText }
 				</Button>
@@ -242,11 +278,8 @@ class PasswordlessSignupForm extends Component {
 		);
 	}
 }
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-		saveSignupStep,
-		submitCreateAccountStep: submitSignupStep,
-	}
-)( localize( PasswordlessSignupForm ) );
+export default connect( null, {
+	recordTracksEvent,
+	saveSignupStep,
+	submitCreateAccountStep: submitSignupStep,
+} )( localize( PasswordlessSignupForm ) );

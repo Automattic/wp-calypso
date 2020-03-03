@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import {
 	DIRECTLY_ASK_QUESTION,
 	DIRECTLY_INITIALIZATION_START,
@@ -24,7 +22,7 @@ export const questionAsked = ( state = null, action ) => {
 	return state;
 };
 
-export const status = withoutPersistence( ( state = STATUS_UNINITIALIZED, action ) => {
+export const status = ( state = STATUS_UNINITIALIZED, action ) => {
 	switch ( action.type ) {
 		case DIRECTLY_INITIALIZATION_START:
 			return STATUS_INITIALIZING;
@@ -35,7 +33,7 @@ export const status = withoutPersistence( ( state = STATUS_UNINITIALIZED, action
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	questionAsked,

@@ -15,9 +15,9 @@ import isJetpackSite from './is-jetpack-site';
  * This function checks if the given Jetpack site can update its files and if the automatic updater is enabled.
  * Returns null if the site is not known or is not a Jetpack site.
  *
- * @param {Object} state Global state tree
- * @param {Number} siteId Site ID
- * @return {?Boolean} true if the site can auto update
+ * @param {object} state Global state tree
+ * @param {number} siteId Site ID
+ * @returns {?boolean} true if the site can auto update
  */
 export default function canJetpackSiteAutoUpdateFiles( state, siteId ) {
 	if ( ! isJetpackSite( state, siteId ) ) {

@@ -14,7 +14,7 @@ import Gridicon from 'components/gridicon';
  */
 import { ALLOWED_FILE_EXTENSIONS } from './constants';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FilePicker from 'components/file-picker';
 import { getCurrentUser } from 'state/current-user/selectors';
 import Gravatar from 'components/gravatar';
@@ -187,9 +187,6 @@ export class EditGravatar extends Component {
 				) }
 			>
 				<div onClick={ this.handleUnverifiedUserClick }>
-					{ this.state.showEmailVerificationNotice && (
-						<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
-					) }
 					<FilePicker accept="image/*" onPick={ this.onReceiveFile }>
 						<div
 							data-tip-target="edit-gravatar"
@@ -214,6 +211,9 @@ export class EditGravatar extends Component {
 						</div>
 					</FilePicker>
 				</div>
+				{ this.state.showEmailVerificationNotice && (
+					<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
+				) }
 				{ this.renderImageEditor() }
 				<div>
 					<p className="edit-gravatar__explanation">

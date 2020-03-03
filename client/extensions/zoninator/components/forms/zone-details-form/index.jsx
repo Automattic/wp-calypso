@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { flowRight, mapValues, trim } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card';
+import { CompactCard } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
@@ -81,7 +79,4 @@ const createReduxForm = reduxForm( {
 	},
 } );
 
-export default flowRight(
-	localize,
-	createReduxForm
-)( ZoneDetailsForm );
+export default flowRight( localize, createReduxForm )( ZoneDetailsForm );

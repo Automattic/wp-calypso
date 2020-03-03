@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -33,9 +31,6 @@ import {
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
 	JETPACK_CONNECT_QUERY_SET,
 	JETPACK_CONNECT_RETRY_AUTH,
-	JETPACK_CONNECT_SAVE_SITE_TYPE,
-	JETPACK_CONNECT_SAVE_SITE_USER_TYPE,
-	JETPACK_CONNECT_SAVE_SITE_VERTICAL,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
@@ -47,10 +42,6 @@ import {
 	SITE_REQUEST_FAILURE,
 	SITE_REQUEST_SUCCESS,
 } from 'state/action-types';
-
-import 'state/data-layer/wpcom/sites/user-type';
-import 'state/data-layer/wpcom/sites/site-type';
-import 'state/data-layer/wpcom/sites/site-vertical';
 
 /**
  * Module constants
@@ -171,7 +162,7 @@ export function checkUrl( url, isUrlOnSites ) {
 	};
 }
 
-export function retryAuth( url, attemptNumber, fromParam ) {
+export function retryAuth( url, attemptNumber, fromParam, redirectAfterAuth ) {
 	return dispatch => {
 		debug( 'retrying auth', url, attemptNumber );
 		dispatch( {
@@ -193,6 +184,7 @@ export function retryAuth( url, attemptNumber, fromParam ) {
 					calypso_env: calypsoEnv,
 					auth_type: 'jetpack',
 					from: fromParam,
+					redirect_after_auth: redirectAfterAuth,
 				},
 				url + REMOTE_PATH_AUTH
 			)
@@ -205,12 +197,12 @@ export function retryAuth( url, attemptNumber, fromParam ) {
  *
  * !! Must have same return shape as createAccount !!
  *
- * @param  {Object}  socialInfo              …
+ * @param  {object}  socialInfo              …
  * @param  {string}  socialInfo.service      The name of the social service
  * @param  {string}  socialInfo.access_token An OAuth2 acccess token
  * @param  {?string} socialInfo.id_token     (Optional) a JWT id_token which contains the signed user info
  *
- * @return {Promise}                         Resolves to { username, bearerToken }
+ * @returns {Promise}                         Resolves to { username, bearerToken }
  */
 export function createSocialAccount( socialInfo ) {
 	return async dispatch => {
@@ -245,12 +237,12 @@ export function createSocialAccount( socialInfo ) {
  *
  * !! Must have same return shape as createSocialAccount !!
  *
- * @param  {Object} userData          …
+ * @param  {object} userData          …
  * @param  {string} userData.username Username
  * @param  {string} userData.password Password
  * @param  {string} userData.email    Email
  *
- * @return {Promise}                  Resolves to { username, bearerToken }
+ * @returns {Promise}                  Resolves to { username, bearerToken }
  */
 export function createAccount( userData ) {
 	return async dispatch => {
@@ -514,29 +506,5 @@ export function completeFlow( site ) {
 			type: JETPACK_CONNECT_COMPLETE_FLOW,
 			site,
 		} );
-	};
-}
-
-export function saveSiteUserType( siteId, siteUserType ) {
-	return {
-		type: JETPACK_CONNECT_SAVE_SITE_USER_TYPE,
-		siteId,
-		siteUserType,
-	};
-}
-
-export function saveSiteType( siteId, siteType ) {
-	return {
-		type: JETPACK_CONNECT_SAVE_SITE_TYPE,
-		siteId,
-		siteType,
-	};
-}
-
-export function saveSiteVertical( siteId, siteVertical ) {
-	return {
-		type: JETPACK_CONNECT_SAVE_SITE_VERTICAL,
-		siteId,
-		siteVertical,
 	};
 }

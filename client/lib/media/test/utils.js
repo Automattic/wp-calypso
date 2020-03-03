@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -257,7 +256,10 @@ describe( 'MediaUtils', () => {
 
 	describe( '#filterItemsByMimePrefix()', () => {
 		test( 'should return an array filtered to the matching mime prefix', () => {
-			const items = [ { ID: 100, mime_type: 'image/jpg' }, { ID: 200, mime_type: 'video/mp4' } ];
+			const items = [
+				{ ID: 100, mime_type: 'image/jpg' },
+				{ ID: 200, mime_type: 'video/mp4' },
+			];
 
 			expect( MediaUtils.filterItemsByMimePrefix( items, 'image' ) ).to.eql( [ items[ 0 ] ] );
 		} );

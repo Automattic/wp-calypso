@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import tinymce from 'tinymce/tinymce';
 /**
  * TinyMCE plugin tweaking Markdown behaviour.
  *
- * @param {Object} editor TinyMCE editor instance
+ * @param {object} editor TinyMCE editor instance
  */
 function markdown( editor ) {
 	function allowMarkdownAttribute( event ) {

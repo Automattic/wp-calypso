@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { isWithinBreakpoint } from '@automattic/viewport';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -22,7 +20,6 @@ import MediaActions from 'lib/media/actions';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import { getMimePrefix } from 'lib/media/utils';
 import MediaValidationStore from 'lib/media/validation-store';
-import { isWithinBreakpoint } from 'lib/viewport';
 import markup from 'post-editor/media-modal/markup';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
@@ -35,13 +32,14 @@ import {
 import { blockSave } from 'state/ui/editor/save-blockers/actions';
 import AddImageDialog from './add-image-dialog';
 import AddLinkDialog from './add-link-dialog';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import ContactFormDialog from 'components/tinymce/plugins/contact-form/dialog';
 import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
 import EditorMediaModal from 'post-editor/editor-media-modal';
 import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
 import config from 'config';
 import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dialog';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -727,4 +725,4 @@ const mapDispatchToProps = {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)( localize( EditorHtmlToolbar ) );
+)( localize( withLocalizedMoment( EditorHtmlToolbar ) ) );

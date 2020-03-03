@@ -11,9 +11,9 @@ import isSiteConflicting from './is-site-conflicting';
 /**
  * Returns the slug for a site, or null if the site is unknown.
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @return {?String}        Site slug
+ * @param  {object}  state  Global state tree
+ * @param  {number}  siteId Site ID
+ * @returns {?string}        Site slug
  */
 export default createSelector(
 	( state, siteId ) => {

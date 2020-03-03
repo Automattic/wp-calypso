@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,7 +18,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { hideActiveLikesPopover, toggleLikesPopover } from 'state/ui/post-type-list/actions';
 import { isLikesPopoverOpen } from 'state/ui/post-type-list/selectors';
 import { getRecentViewsForPost } from 'state/stats/recent-post-views/selectors';
-import ScreenReaderText from 'components/screen-reader-text';
+import { ScreenReaderText } from '@automattic/components';
 
 /**
  * Style dependencies

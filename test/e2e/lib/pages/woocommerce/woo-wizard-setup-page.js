@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -41,8 +39,9 @@ export default class WooWizardSetupPage extends AsyncBaseContainer {
 		const productTypeContainerSelector = By.id( 'select2-product_type-container' );
 		const productTypeSelector = By.css( `li[id$="${ productType }"]` );
 		const inPersonSelector = By.id( 'woocommerce_sell_in_person' );
-		const helpWooSelector = By.css( 'p.checkbox' );
+		const helpWooSelector = By.css( '#wc_tracker_checkbox_dialog' );
 		const submitButtonSelector = By.css( 'button[name="save_step"]' );
+		const continueButtonSelector = By.css( '#wc_tracker_submit' );
 
 		await driverHelper.clickWhenClickable( this.driver, countryContainerSelector );
 		await driverHelper.clickWhenClickable( this.driver, countrySelector );
@@ -63,10 +62,12 @@ export default class WooWizardSetupPage extends AsyncBaseContainer {
 			await driverHelper.unsetCheckbox( this.driver, inPersonSelector );
 		}
 
+		await driverHelper.clickWhenClickable( this.driver, submitButtonSelector );
+
 		if ( ! helpWoo ) {
 			await driverHelper.clickWhenClickable( this.driver, helpWooSelector );
 		}
 
-		return await driverHelper.clickWhenClickable( this.driver, submitButtonSelector );
+		return await driverHelper.clickWhenClickable( this.driver, continueButtonSelector );
 	}
 }

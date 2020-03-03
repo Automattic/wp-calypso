@@ -1,0 +1,93 @@
+.sftp-card__questions {
+	margin-bottom: 1.5em;
+}
+
+.sftp-card__enable-warning {
+	color: var( --color-text-subtle );
+}
+
+.sftp-card__copy-field {
+	@extend %form-field;
+	display: flex;
+	padding: 0;
+	margin-bottom: 16px;
+
+	&.is-focused {
+		border-color: var( --color-primary );
+		outline: none;
+		box-shadow: 0 0 0 2px var( --color-primary-10 );
+
+		&:hover {
+			box-shadow: 0 0 0 2px var( --color-primary-20 );
+		}
+
+		&.is-valid {
+			box-shadow: 0 0 0 2px var( --color-success-5 );
+		}
+
+		&.is-valid:hover {
+			box-shadow: 0 0 0 2px var( --color-success-5 );
+		}
+
+		&.is-error {
+			box-shadow: 0 0 0 2px var( --color-error-5 );
+		}
+
+		&.is-error:hover {
+			box-shadow: 0 0 0 2px var( --color-error-10 );
+		}
+	}
+
+	&.is-disabled {
+		background: var( --color-neutral-0 );
+		border-color: var( --color-neutral-0 );
+		color: var( --color-neutral-20 );
+		opacity: 1;
+		-webkit-text-fill-color: var( --color-neutral-20 );
+
+		&:hover {
+			cursor: default;
+		}
+
+		&::placeholder {
+			color: var( --color-neutral-20 );
+		}
+	}
+
+	&.is-valid {
+		border-color: var( --color-success );
+	}
+
+	&.is-valid:hover {
+		border-color: var( --color-success-40 );
+	}
+
+	&.is-error {
+		border-color: var( --color-error );
+	}
+
+	&.is-error:hover {
+		border-color: var( --color-error-50 );
+	}
+}
+
+.sftp-card__copy-button.is-compact {
+	flex: 0 0 auto;
+	margin: 4px;
+	text-transform: none;
+}
+
+input[type='text'].sftp-card__copy-input {
+	flex: 1 1 0;
+	border: none;
+	min-width: 0;
+}
+
+input[type='text'].sftp-card__copy-input:focus {
+	border: none;
+	box-shadow: none;
+}
+
+.sftp-card__password-explainer {
+	margin-bottom: 8px;
+}

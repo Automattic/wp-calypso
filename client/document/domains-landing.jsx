@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import React from 'react';
@@ -12,7 +11,7 @@ import classnames from 'classnames';
  */
 import Head from 'components/head';
 import { chunkCssLinks } from './utils';
-import { jsonStringifyForHtml } from '../../server/sanitize';
+import { jsonStringifyForHtml } from 'server/sanitize';
 
 function DomainsLanding( {
 	branchName,

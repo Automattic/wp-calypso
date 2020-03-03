@@ -2,19 +2,37 @@
 
 JavaScript library for the [WordPress.com][] [Photon][] image manipulation service.
 
+## Requirements
+
+Photon.js requires support for the standard URL and URLSearchParams APIs.
+Be sure to use a polyfill if you're targetting environments without support for them. This includes old browsers, such
+as Internet Explorer 11, and old versions of Node.js (5 or older).
+
 ## How to use
 
-Install for Node.js via `npm`:
+Install via `npm`:
 
 ```bash
 npm install photon
 ```
 
-Use `require( 'photon' );` in your module to generate build Photon URLs:
+Import the `photon` method into your module.
+
+For CommonJS:
 
 ```js
 const photon = require( 'photon' );
+```
 
+For ES Modules:
+
+```js
+import photon from 'photon';
+```
+
+Then use the imported method to generate Photon URLs:
+
+```js
 const url = photon( 'https://wordpress.org/style/images/wporg-logo.svg' );
 
 console.log( url );

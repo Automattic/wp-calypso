@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import ScreenReaderText from 'components/screen-reader-text';
+import { ScreenReaderText } from '@automattic/components';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';

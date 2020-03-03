@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import List from 'woocommerce/components/list/list';
 import ListItem from 'woocommerce/components/list/list-item';

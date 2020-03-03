@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,6 @@ import * as dataHelper from '../lib/data-helper.js';
 import DomainsPage from '../lib/pages/domains-page.js';
 import CheckOutPage from '../lib/pages/signup/checkout-page.js';
 import ReaderPage from '../lib/pages/reader-page.js';
-import StatsPage from '../lib/pages/stats-page.js';
 
 import FindADomainComponent from '../lib/components/find-a-domain-component.js';
 import RegistrationUnavailableComponent from '../lib/components/domain-registration-unavailable-component';
@@ -66,7 +63,7 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function() {
 		} );
 
 		step( 'Log In and Select Domains', async function() {
-			return await new LoginFlow( driver ).loginAndSelectDomains();
+			return await new LoginFlow( driver, 'gutenbergSimpleSiteUser' ).loginAndSelectDomains();
 		} );
 
 		step( 'Can see the Domains page and choose add a domain', async function() {
@@ -101,9 +98,8 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function() {
 			return await findADomainComponent.declineGoogleApps();
 		} );
 
-		step( 'Can see checkout page, choose privacy and enter registrar details', async function() {
+		step( 'Can see checkout page and enter registrar details', async function() {
 			const checkOutPage = await CheckOutPage.Expect( driver );
-			await checkOutPage.selectAddPrivacyProtectionCheckbox();
 			await checkOutPage.enterRegistarDetails( testDomainRegistarDetails );
 			return await checkOutPage.submitForm();
 		} );
@@ -116,7 +112,6 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function() {
 			await ReaderPage.Visit( driver );
 			const navBarComponent = await NavBarComponent.Expect( driver );
 			await navBarComponent.clickMySites();
-			await StatsPage.Expect( driver );
 			const sidebarComponent = await SidebarComponent.Expect( driver );
 			await sidebarComponent.selectDomains();
 			await DomainsPage.Expect( driver );
@@ -126,7 +121,7 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function() {
 	} );
 
 	describe( 'Map a domain to an existing site @parallel', function() {
-		const blogName = 'go.com';
+		const blogName = 'nature.com';
 
 		before( async function() {
 			if ( process.env.SKIP_DOMAIN_TESTS === 'true' ) {
@@ -199,7 +194,6 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function() {
 			await ReaderPage.Visit( driver );
 			const navBarComponent = await NavBarComponent.Expect( driver );
 			await navBarComponent.clickMySites();
-			await StatsPage.Expect( driver );
 			const sideBarComponent = await SidebarComponent.Expect( driver );
 			await sideBarComponent.selectDomains();
 			await DomainsPage.Expect( driver );

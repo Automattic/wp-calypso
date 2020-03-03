@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { memoize, includes } from 'lodash';
-import shallowEqual from 'react-pure-render/shallowEqual';
+import isShallowEqual from '@wordpress/is-shallow-equal';
 
 /**
  * Internal dependencies
@@ -28,9 +26,9 @@ const VALID_ARG_TYPES = [ 'number', 'boolean', 'string' ];
  * state, which is the basis upon which memoize cache is cleared. Should return
  * a value or array of values to be shallowly compared for strict equality.
  *
- * @type   {Function}
- * @param  {Object}    state Current state object
- * @return {(Array|*)}       Value(s) to be shallow compared
+ * @type    {Function}
+ * @param   {object}    state Current state object
+ * @returns {(Array|*)}       Value(s) to be shallow compared
  */
 const DEFAULT_GET_DEPENDANTS = state => state;
 
@@ -64,8 +62,8 @@ const DEFAULT_GET_CACHE_KEY = ( () => {
  * Given an array of getDependants functions, returns a single function which,
  * when called, returns an array of mapped results from those functions.
  *
- * @param  {Function[]} dependants Array of getDependants
- * @return {Function}              Function mapping getDependants results
+ * @param   {Function[]} dependants Array of getDependants
+ * @returns {Function}              Function mapping getDependants results
  */
 const makeSelectorFromArray = dependants => ( state, ...args ) =>
 	dependants.map( dependant => dependant( state, ...args ) );
@@ -77,8 +75,8 @@ const makeSelectorFromArray = dependants => ( state, ...args ) =>
  * @param  {Function|Function[]} getDependants Function(s) describing dependent
  *                                             state, or an array of dependent
  *                                             state selectors
- * @param  {Function}            getCacheKey   Function generating cache key
- * @return {Function}                          Memoized selector
+ * @param   {Function}            getCacheKey   Function generating cache key
+ * @returns {Function}                          Memoized selector
  */
 export default function createSelector(
 	selector,
@@ -99,7 +97,7 @@ export default function createSelector(
 				currentDependants = [ currentDependants ];
 			}
 
-			if ( lastDependants && ! shallowEqual( currentDependants, lastDependants ) ) {
+			if ( lastDependants && ! isShallowEqual( currentDependants, lastDependants ) ) {
 				memoizedSelector.cache.clear();
 			}
 

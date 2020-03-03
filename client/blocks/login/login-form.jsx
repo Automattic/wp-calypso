@@ -2,7 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { capitalize, defer, includes, get } from 'lodash';
+import { capitalize, defer, includes, get, startsWith } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
@@ -15,13 +15,11 @@ import { stringify } from 'qs';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button, Card } from '@automattic/components';
 import config from 'config';
 import FormsButton from 'components/forms/form-button';
 import FormInputValidation from 'components/forms/form-input-validation';
-import Card from 'components/card';
 import Divider from './divider';
-import { fetchMagicLoginRequestEmail } from 'state/login/magic-login/actions';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
@@ -53,12 +51,13 @@ import Notice from 'components/notice';
 import SocialLoginForm from './social';
 import { localizeUrl } from 'lib/i18n-utils';
 import TextControl from 'extensions/woocommerce/components/text-control';
+import { sendEmailLogin } from 'state/auth/actions';
 
 export class LoginForm extends Component {
 	static propTypes = {
 		accountType: PropTypes.string,
 		disableAutoFocus: PropTypes.bool,
-		fetchMagicLoginRequestEmail: PropTypes.func.isRequired,
+		sendEmailLogin: PropTypes.func.isRequired,
 		formUpdate: PropTypes.func.isRequired,
 		getAuthAccountType: PropTypes.func.isRequired,
 		hasAccountTypeLoaded: PropTypes.bool.isRequired,
@@ -132,19 +131,10 @@ export class LoginForm extends Component {
 		}
 
 		if ( ! this.props.hasAccountTypeLoaded && isPasswordlessAccount( nextProps.accountType ) ) {
-			this.props.recordTracksEvent( 'calypso_login_block_login_form_send_magic_link' );
-
-			this.props
-				.fetchMagicLoginRequestEmail( this.state.usernameOrEmail, nextProps.redirectTo )
-				.then( () => {
-					this.props.recordTracksEvent( 'calypso_login_block_login_form_send_magic_link_success' );
-				} )
-				.catch( error => {
-					this.props.recordTracksEvent( 'calypso_login_block_login_form_send_magic_link_failure', {
-						error_code: error.error,
-						error_message: error.message,
-					} );
-				} );
+			this.props.sendEmailLogin( this.state.usernameOrEmail, {
+				redirectTo: nextProps.redirectTo,
+				loginFormFlow: true,
+			} );
 
 			page( login( { isNative: true, twoFactorAuthType: 'link' } ) );
 		}
@@ -430,11 +420,40 @@ export class LoginForm extends Component {
 			socialAccountIsLinking: linkingSocialUser,
 			isJetpackWooCommerceFlow,
 			wccomFrom,
+			currentRoute,
+			currentQuery,
+			pathname,
 		} = this.props;
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 
 		let signupUrl = config( 'signup_url' );
+		const signupFlow = get( currentQuery, 'signup_flow' );
+
+		// copied from login-links.jsx
+		if (
+			// Match locales like `/log-in/jetpack/es`
+			startsWith( currentRoute, '/log-in/jetpack' )
+		) {
+			// Basic validation that we're in a valid Jetpack Authorization flow
+			if (
+				includes( get( currentQuery, 'redirect_to' ), '/jetpack/connect/authorize' ) &&
+				includes( get( currentQuery, 'redirect_to' ), '_wp_nonce' )
+			) {
+				/**
+				 * `log-in/jetpack/:locale` is reached as part of the Jetpack connection flow. In
+				 * this case, the redirect_to will handle signups as part of the flow. Use the
+				 * `redirect_to` parameter directly for signup.
+				 */
+				signupUrl = currentQuery.redirect_to;
+			} else {
+				signupUrl = '/jetpack/new';
+			}
+		} else if ( '/jetpack-connect' === pathname ) {
+			signupUrl = '/jetpack/new';
+		} else if ( signupFlow ) {
+			signupUrl += '/' + signupFlow;
+		}
 
 		if ( isOauthLogin && config.isEnabled( 'signup/wpcc' ) ) {
 			const oauth2Flow = isCrowdsignalOAuth2Client( oauth2Client ) ? 'crowdsignal' : 'wpcc';
@@ -519,7 +538,17 @@ export class LoginForm extends Component {
 						/>
 
 						{ requestError && requestError.field === 'usernameOrEmail' && (
-							<FormInputValidation isError text={ requestError.message } />
+							<FormInputValidation isError text={ requestError.message }>
+								{ 'unknown_user' === requestError.code &&
+									this.props.translate(
+										' Would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
+										{
+											components: {
+												newAccountLink: <a href={ signupUrl } />,
+											},
+										}
+									) }
+							</FormInputValidation>
 						) }
 
 						<div
@@ -555,28 +584,6 @@ export class LoginForm extends Component {
 							{ preventWidows(
 								this.props.translate(
 									// To make any changes to this copy please speak to the legal team
-									'By continuing, ' + 'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
-									{
-										components: {
-											tosLink: (
-												<a
-													href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
-											),
-										},
-									}
-								),
-								5
-							) }
-						</p>
-					) }
-
-					{ config.isEnabled( 'signup/social' ) && isCrowdsignalOAuth2Client( oauth2Client ) && (
-						<p className="login__form-terms login__form-terms-bottom">
-							{ preventWidows(
-								this.props.translate(
 									'By continuing, ' + 'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
 									{
 										components: {
@@ -648,7 +655,7 @@ export default connect(
 			isLoggedIn: Boolean( getCurrentUserId( state ) ),
 			oauth2Client: getCurrentOAuth2Client( state ),
 			isJetpackWooCommerceFlow:
-				'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' ),
+				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 			redirectTo: getRedirectToOriginal( state ),
 			requestError: getRequestError( state ),
 			socialAccountIsLinking: getSocialAccountIsLinking( state ),
@@ -658,10 +665,11 @@ export default connect(
 				getInitialQueryArguments( state ).email_address ||
 				getCurrentQueryArguments( state ).email_address,
 			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+			currentQuery: getCurrentQueryArguments( state ),
 		};
 	},
 	{
-		fetchMagicLoginRequestEmail,
+		sendEmailLogin,
 		formUpdate,
 		getAuthAccountType,
 		loginUser,

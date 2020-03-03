@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,6 +11,11 @@ import moment from 'moment';
 import { localize } from 'i18n-calypso';
 import { getTld } from 'lib/domains';
 import EmptyContent from 'components/empty-content';
+
+/**
+ * Image dependencies
+ */
+import whoopsImage from 'assets/images/illustrations/whoops.svg';
 
 const MaintenanceCard = ( { selectedDomainName, translate, tldMaintenanceEndTime } ) => {
 	const tld = getTld( selectedDomainName );
@@ -39,7 +42,7 @@ const MaintenanceCard = ( { selectedDomainName, translate, tldMaintenanceEndTime
 				args: { tld },
 			} ) }
 			line={ message }
-			illustration={ '/calypso/images/illustrations/whoops.svg' }
+			illustration={ whoopsImage }
 		/>
 	);
 };

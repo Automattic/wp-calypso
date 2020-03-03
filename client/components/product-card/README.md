@@ -11,6 +11,8 @@ In some cases, e.g. when a lower-tier product has been already purchased, an upg
 [`<ProductCardAction />`](#product-card-action) component. Like the `<ProductCardOptions />` component, it should be
 passed as a child to the `<ProductCard />`.
 
+The Product Card may contain a [`<ProductCardPromoNudge />`](#product-card-promo-nudge) consisting of a green star sticker badge and a promo copy.
+
 It's used e.g. on `my-plans` page near the bundle plans grid and is intended to render a product card (not a regular
 plan).
 
@@ -19,7 +21,7 @@ See p1HpG7-7ET-p2 for more details.
 ### How to use the `<ProductCard />`
 
 ```jsx
-import React from 'react';
+import React, { Fragment } from 'react';
 import ProductCard from 'components/product-card';
 
 export default class extends React.Component {
@@ -27,13 +29,13 @@ export default class extends React.Component {
 		return (
 			<ProductCard
 				title="Jetpack Scan"
-				billingTimeFrame={ 'per year' }
+				billingTimeFrame="per year"
 				fullPrice={ 25 }
 				description={
-					<p>
+					<Fragment>
 						Automatic scanning and one-click fixes keep your site one step ahead of security
 						threats. <a href="/plans">More info</a>
-					</p>
+					</Fragment>
 				}
 			/>
 		);
@@ -54,7 +56,7 @@ The following props can be passed to the Product Card component:
 
 * `billingTimeFrame`: ( string ) Billing time frame label
 * `currencyCode`: ( string ) Currency code
-* `description`: ( string | element ) Product description. It can be a string or a React element (e.g. `<Fragment>`)
+* `description`: ( string | element | node ) Product description. It can be a string, a node or a React element (e.g. `<Fragment>`)
 * `discountedPrice`: ( number | array ) Discounted price of the product. If an array of 2 numbers is passed, it will be
  displayed as a price range
 * `fullPrice`: ( number | array ) Full price of a product. If an array of 2 numbers is passed, it will be displayed as
@@ -63,9 +65,52 @@ The following props can be passed to the Product Card component:
   placeholder
 * `purchase`: ( object ) A purchase object, associated with the product. [Read more about the way this flag
  works](#how-purchase-prop-works)
-* `subtitle`: ( string | element ) Product subtitle. It's used if the product has already been purchased, but can be
- used also in other use-cases. It can be a string or a React element (e.g. `<Fragment>`)
+* `subtitle`: ( string | element | node ) Product subtitle. It's used if the product has already been purchased, but can be
+ used also in other use-cases. It can be a string, a node or a React element (e.g. `<Fragment>`)
 * `title`: ( string | element ) Product title. It can be a string or a React element (e.g. `<Fragment>`)
+
+<a name="product-card-promo-nudge"></a>Product Card Promo Nudge
+=======
+
+Product Card Promo Nudge is a Product Card's sub-component for rendering a promotion nudge. It consists of a badge label
+(a green star sticker to the left) and a promo text. Both props are optional. 
+
+### How to use the `<ProductCardPromoNudge />`
+
+```jsx
+import React, { Fragment } from 'react';
+import ProductCard from 'components/product-card';
+import ProductCardPromoNudge from 'components/product-card/promo-nudge';
+
+export default class extends React.Component {
+	render() {
+		return (
+			<ProductCard
+				title="Jetpack Backup Daily"
+				subtitle="Purchased 2019-09-13"
+				description="Looking for more? With Real-time backups we save as you edit and you’ll get unlimited backup archives"
+			>
+				<ProductCardPromoNudge
+					badgeText="Up to 70% off!"
+					text={
+						<Fragment>
+							Hurry, these are <strong>Limited time introductory prices!</strong>
+						</Fragment>
+					}
+				/>
+			</ProductCard>
+		);
+	}
+}
+```
+
+### `<ProductCardPromoNudge />` Props
+
+The following props can be passed to the Product Card Promo Nudge component:
+
+* `badgeText`: ( string ) Copy shown inside the promo badge (a green star sticker)
+* `text`: ( string | element | node ) Promo text. Looks best if a `<strong>` element is used inside. It can be a string,
+  a node or a React element (e.g. `<Fragment>`)
 
 <a name="product-card-options"></a>Product Card Options
 =======
@@ -78,7 +123,7 @@ be passed to the Product Card as a child component.
 ```jsx
 import React, { useState } from 'react';
 import ProductCard from 'components/product-card';
-import ProductCardOptions from 'components/product-card-options';
+import ProductCardOptions from 'components/product-card/options';
 
 export default class extends React.Component {
 	const [ selectedProductOption, selectProductOption ] = useState( 'jetpack_backup_realtime_monthly' );
@@ -87,15 +132,10 @@ export default class extends React.Component {
 		return (
 			<ProductCard
 				title="Jetpack Backup"
-				billingTimeFrame={ 'per month' }
+				billingTimeFrame="per month"
 				fullPrice={ [ 16, 25 ] }
 				discountedPrice={ [ 12, 16 ] }
-				description={
-					<p>
-						Always-on backups ensure you never lose your site. Choose from real-time or daily
-						backups. <a href="/plans">Which one do I need?</a>
-					</p>
-				}
+				description="Always-on backups ensure you never lose your site. Choose from real-time or daily backups."
 			>
 				<ProductCardOptions
 					optionsLabel="Backup options:"
@@ -154,24 +194,15 @@ text (optional) and a button.
 ```jsx
 import React from 'react';
 import ProductCard from 'components/product-card';
-import ProductCardAction from 'components/product-card-action';
+import ProductCardAction from 'components/product-card/action';
 
 export default class extends React.Component {
 	render() {
 		return (
 			<ProductCard
-				title={
-					<Fragment>
-						Jetpack Backup <strong>Daily</strong>
-					</Fragment>
-				}
+				title="Jetpack Backup Daily"
 				subtitle="Purchased 2019-09-13"
-				description={
-					<p>
-						<strong>Looking for more?</strong> With Real-time backups:, we save as you edit and
-						you’ll get unlimited backup archives
-					</p>
-				}
+				description="Looking for more? With Real-time backups we save as you edit and you’ll get unlimited backup archives"
 			>
 				<ProductCardAction
 					intro="Get Real-Time Backups $16 /year"
@@ -187,6 +218,8 @@ export default class extends React.Component {
 
 The following props can be passed to the Product Card Action component:
 
-* `intro`: ( string ) Intro text to be displayed above the action button
+* `intro`: ( string | element | node ) Intro text to be displayed above the action button. It can be a string, a node or a React element (e.g. `<Fragment>`)
 * `label`: ( string ) Action button text
 * `onClick`: ( func ) Action button click event handler
+* `href`: ( string ) Url that the button click will take you to
+* `primary`: ( bool ) If we the action should be primary (default true) 

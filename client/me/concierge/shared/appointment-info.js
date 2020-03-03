@@ -1,17 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Confirmation from './confirmation';
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import Site from 'blocks/site';
 import FormattedHeader from 'components/formatted-header';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -19,6 +17,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 class AppointmentInfo extends Component {
 	static propTypes = {
@@ -29,6 +28,7 @@ class AppointmentInfo extends Component {
 		const {
 			appointment: { beginTimestamp, endTimestamp, id, scheduleId, meta },
 			translate,
+			moment,
 			site,
 		} = this.props;
 
@@ -98,18 +98,22 @@ class AppointmentInfo extends Component {
 						<>
 							<br />
 							<FormSettingExplanation>
-								Note: You have two free sessions with your plan. If you are unable to attend a
-								session, you may cancel or reschedule it at least one hour in advance so that it
-								does not count towards your session total.
+								{ translate(
+									'Note: You have two free sessions with your plan. If you are unable to attend a ' +
+										'session, you may cancel or reschedule it at least one hour in advance so that it ' +
+										'does not count towards your session total.'
+								) }
 							</FormSettingExplanation>
 						</>
 					) : (
 						<>
 							<br />
 							<FormSettingExplanation>
-								Note: You have 30 days from the date of purchase to cancel an unused Quick Start
-								session and receive a refund. Please note, if you miss a scheduled session twice,
-								the purchase will be cancelled without a refund.
+								{ translate(
+									'Note: You have 30 days from the date of purchase to cancel an unused Quick Start ' +
+										'session and receive a refund. Please note, if you miss a scheduled session twice, ' +
+										'the purchase will be cancelled without a refund.'
+								) }
 							</FormSettingExplanation>
 						</>
 					) }
@@ -122,6 +126,7 @@ class AppointmentInfo extends Component {
 		const {
 			appointment: { beginTimestamp, endTimestamp },
 			translate,
+			moment,
 		} = this.props;
 
 		const beginTimeFormat = translate( 'LL [at] LT', {
@@ -152,4 +157,4 @@ class AppointmentInfo extends Component {
 	}
 }
 
-export default localize( AppointmentInfo );
+export default localize( withLocalizedMoment( AppointmentInfo ) );

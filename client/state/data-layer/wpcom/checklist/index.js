@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -25,9 +23,10 @@ export const fetchChecklist = action =>
 		{
 			path: `/sites/${ action.siteId }/checklist`,
 			method: 'GET',
-			apiNamespace: 'rest/v1.1',
+			apiNamespace: 'rest/v1.2',
 			query: {
 				http_envelope: 1,
+				with_domain_verification: action.isSiteEligibleForFSE ? 1 : 0,
 			},
 		},
 		action

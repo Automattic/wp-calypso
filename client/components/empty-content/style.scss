@@ -21,7 +21,6 @@
 .empty-content__title {
 	color: var( --color-neutral-70 );
 	font-size: 34px;
-	font-weight: 300;
 
 	@include breakpoint( '<660px' ) {
 		font-size: 24px;
@@ -31,7 +30,6 @@
 .empty-content__line {
 	color: var( --color-neutral-50 );
 	font-size: 22px;
-	font-weight: 300;
 	margin-bottom: 40px;
 
 	@include breakpoint( '<660px' ) {

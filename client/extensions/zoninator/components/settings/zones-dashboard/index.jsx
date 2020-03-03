@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { flowRight, times } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -60,7 +58,4 @@ const connectComponent = connect( state => {
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( ZonesDashboard );
+export default flowRight( connectComponent, localize )( ZonesDashboard );

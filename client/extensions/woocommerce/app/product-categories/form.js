@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,8 +11,7 @@ import { isNumber, head, isNull } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
@@ -271,7 +269,7 @@ class ProductCategoryForm extends Component {
 										{ translate( 'Top level category', {
 											context:
 												'Categories: New category being created is top level i.e. has no parent',
-										} ) }{' '}
+										} ) }{ ' ' }
 									</span>
 								</FormLabel>
 

@@ -39,6 +39,9 @@
 # Comments management
 /client/my-sites/comment* @Automattic/serenity
 
+# Customer Home
+/client/my-sites/customer-home @Automattic/manage
+
 # Developer guides
 /docs/coding-guidelines @Automattic/team-calypso
 /docs/guide @Automattic/team-calypso
@@ -70,7 +73,7 @@
 /client/state/gsuite-users @Automattic/larimar
 
 # Gutenberg editor (Gutenframe)
-/client/gutenberg @Automattic/serenity @Automattic/cylon @Automattic/ajax
+/client/gutenberg @Automattic/cylon @Automattic/ajax
 
 # Payments
 /client/blocks/credit-card-form/ @Automattic/payments
@@ -88,7 +91,6 @@
 /client/lib/store-transactions/ @Automattic/payments
 /client/lib/stripe/ @Automattic/payments
 /client/lib/transaction/ @Automattic/payments
-/client/lib/upgrades/ @Automattic/payments
 /client/me/billing-history/ @Automattic/payments
 /client/me/memberships/ @Automattic/payments
 /client/me/pending-payments/ @Automattic/payments
@@ -122,12 +124,22 @@
 /docs/coding-guidelines/typescript* @Automattic/type-review
 
 # FSE (Full Site Editing)
-/apps/full-site-editing/* @Automattic/serenity @Automattic/cylon @Automattic/ajax
-/apps/full-site-editing/full-site-editing-plugin/* @Automattic/serenity @Automattic/cylon @Automattic/ajax
-/apps/full-site-editing/full-site-editing-plugin/full-site-editing @Automattic/serenity @Automattic/cylon
+/apps/full-site-editing/* @Automattic/cylon @Automattic/ajax
+/apps/full-site-editing/full-site-editing-plugin/* @Automattic/cylon @Automattic/ajax
+/apps/full-site-editing/full-site-editing-plugin/full-site-editing @Automattic/cylon
 /apps/full-site-editing/full-site-editing-plugin/posts-list-block @Automattic/ajax
 /apps/full-site-editing/full-site-editing-plugin/starter-page-templates @Automattic/ajax
 /apps/full-site-editing/full-site-editing-plugin/global-styles @Automattic/cylon @nosolosw
 
+# FSE Workflow Files
+/.github/workflows/full-site-editing-plugin.yml @Automattic/cylon
+/.github/workflows/send-calypso-app-build-trigger.sh @Automattic/cylon
+
 # WPcom Block Editor
-/apps/wpcom-block-editor @Automattic/serenity @Automattic/cylon @Automattic/ajax
+/apps/wpcom-block-editor @Automattic/cylon @Automattic/ajax
+
+# Gutenboarding
+/client/landing/gutenboarding @Automattic/luna
+
+# @automattic/data-stores package
+/packages/data-stores @Automattic/luna

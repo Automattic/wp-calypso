@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -45,14 +44,21 @@ class ContactsPrivacy extends React.PureComponent {
 
 		const { translate } = this.props;
 		const domain = getSelectedDomain( this.props );
-		const { privateDomain, privacyAvailable } = domain;
+		const {
+			privateDomain,
+			privacyAvailable,
+			contactInfoDisclosed,
+			contactInfoDisclosureAvailable,
+			isPendingIcannVerification,
+		} = domain;
+
 		const canManageConsent =
 			config.isEnabled( 'domains/gdpr-consent-page' ) && domain.supportsGdprConsentManagement;
 
 		return (
 			<Main className="contacts-privacy">
 				<Header onClick={ this.goToEdit } selectedDomainName={ this.props.selectedDomainName }>
-					{ translate( 'Contacts' ) }
+					{ translate( 'Contacts and Privacy' ) }
 				</Header>
 
 				<VerticalNav>
@@ -61,6 +67,9 @@ class ContactsPrivacy extends React.PureComponent {
 						selectedSite={ this.props.selectedSite }
 						privateDomain={ privateDomain }
 						privacyAvailable={ privacyAvailable }
+						contactInfoDisclosed={ contactInfoDisclosed }
+						contactInfoDisclosureAvailable={ contactInfoDisclosureAvailable }
+						isPendingIcannVerification={ isPendingIcannVerification }
 					/>
 
 					<VerticalNavItem

@@ -1,19 +1,9 @@
 .site-importer__site-preview-overlay-container {
 	position: relative;
-	display: flex;
-	flex-direction: column;
 	margin-bottom: 24px;
 
 	.site-importer__site-preview-import-content {
-		flex-grow: 0;
-		flex-shrink: 1;
-
-		min-width: 30%;
-
-		padding-left: 30px;
+		clear: both;
+		font-size: 12px;
 	}
-}
-
-.site-importer__site-preview {
-	max-width: 60%;
 }

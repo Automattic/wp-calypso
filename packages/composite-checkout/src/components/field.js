@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 
 /**
@@ -25,6 +25,8 @@ export default function Field( {
 	tabIndex,
 	description,
 	errorMessage,
+	autoComplete,
+	disabled,
 } ) {
 	const fieldOnChange = event => {
 		if ( onChange ) {
@@ -40,7 +42,12 @@ export default function Field( {
 
 	return (
 		<div className={ className }>
-			<Label htmlFor={ id }>{ label }</Label>
+			{ label && (
+				<Label htmlFor={ id } disabled={ disabled }>
+					{ label }
+				</Label>
+			) }
+
 			<InputWrapper>
 				<Input
 					id={ id }
@@ -52,6 +59,8 @@ export default function Field( {
 					placeholder={ placeholder }
 					tabIndex={ tabIndex }
 					isError={ isError }
+					autoComplete={ autoComplete }
+					disabled={ disabled }
 				/>
 				<RenderedIcon icon={ icon } iconAction={ iconAction } isIconVisible={ isIconVisible } />
 			</InputWrapper>
@@ -70,7 +79,7 @@ Field.propTypes = {
 	className: PropTypes.string,
 	isError: PropTypes.bool,
 	onChange: PropTypes.func,
-	label: PropTypes.string.isRequired,
+	label: PropTypes.string,
 	value: PropTypes.string,
 	icon: PropTypes.node,
 	iconAction: PropTypes.func,
@@ -79,6 +88,8 @@ Field.propTypes = {
 	tabIndex: PropTypes.string,
 	description: PropTypes.string,
 	errorMessage: PropTypes.string,
+	autoComplete: PropTypes.string,
+	disabled: PropTypes.bool,
 };
 
 const Label = styled.label`
@@ -89,7 +100,7 @@ const Label = styled.label`
 	margin-bottom: 8px;
 
 	:hover {
-		cursor: pointer;
+		cursor: ${props => ( props.disabled ? 'default' : 'pointer' )};
 	}
 `;
 
@@ -98,13 +109,19 @@ const Input = styled.input`
 	width: 100%;
 	box-sizing: border-box;
 	font-size: 16px;
-	border: 1px solid
-		${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor )};
-	padding: 12px ${props => ( props.icon ? '40px' : '10px' )} 12px 10px;
+
+	//override leaky styles from Calypso
+	&[type='text'],
+	&[type='number'] {
+		border: 1px solid
+			${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor )};
+		padding: 13px ${props => ( props.icon ? '60px' : '10px' )} 11px 10px;
+		line-height: 1.2;
+	}
 
 	:focus {
 		outline: ${props => ( props.isError ? props.theme.colors.error : props.theme.colors.outline )}
-			auto 5px !important;
+			solid 2px !important;
 	}
 
 	::-webkit-inner-spin-button,
@@ -112,10 +129,21 @@ const Input = styled.input`
 		-webkit-appearance: none;
 	}
 
-	[type='number'],
-	[type='number'] {
+	&[type='number'],
+	&[type='number'] {
 		-moz-appearance: none;
 		appearance: none;
+	}
+
+	::placeholder {
+		color: ${props => props.theme.colors.placeHolderTextColor};
+	}
+
+	&[type='text']:disabled,
+	&[type='number']:disabled {
+		border: 1px solid
+			${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor )};
+		background: ${props => props.theme.colors.disabledField};
 	}
 `;
 

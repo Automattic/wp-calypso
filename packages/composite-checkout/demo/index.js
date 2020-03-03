@@ -1,12 +1,35 @@
-require( '@babel/polyfill' );
+// This is required to fix the "regeneratorRuntime is not defined" error
+import '@automattic/calypso-polyfills';
 
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import styled from '@emotion/styled';
 import ReactDOM from 'react-dom';
-import { Checkout, CheckoutProvider } from '../src/public-api';
-import { stripeKey } from './private';
+import {
+	Checkout,
+	CheckoutSteps,
+	CheckoutStep,
+	CheckoutStepBody,
+	CheckoutProvider,
+	createApplePayMethod,
+	createPayPalMethod,
+	createRegistry,
+	createStripeMethod,
+	getDefaultOrderReviewStep,
+	getDefaultOrderSummaryStep,
+	getDefaultPaymentMethodStep,
+	useIsStepActive,
+	useSelect,
+	useDispatch,
+	useMessages,
+	useFormStatus,
+	usePaymentMethod,
+} from '../src/public-api';
+import { StripeHookProvider, useStripe } from '../src/lib/stripe';
+
+const stripeKey = 'pk_test_zIh4nRbVgmaetTZqoG4XKxWT';
 
 const initialItems = [
 	{
@@ -24,77 +47,143 @@ const initialItems = [
 	},
 ];
 
-// These are used only for non-redirect payment methods
-const onSuccess = () => window.alert( 'Payment succeeded!' );
-const onFailure = error => window.alert( 'There was a problem with your payment: ' + error );
-
-// These are used only for redirect payment methods
-const successRedirectUrl = window.location.href;
-const failureRedirectUrl = window.location.href;
+const onPaymentComplete = () => {
+	const successRedirectUrl = '/complete.html';
+	window.location.href = successRedirectUrl;
+};
+const onEvent = event => window.console.log( 'Event', event );
+const showErrorMessage = error => {
+	console.log( 'Error:', error ); /* eslint-disable-line no-console */
+	window.alert( 'There was a problem with your payment: ' + error );
+};
+const showInfoMessage = message => {
+	console.log( 'Info:', message ); /* eslint-disable-line no-console */
+	window.alert( message );
+};
+const showSuccessMessage = message => {
+	console.log( 'Success:', message ); /* eslint-disable-line no-console */
+	window.alert( message );
+};
 
 async function fetchStripeConfiguration() {
-	// return await wpcom.req.get( '/me/stripe-configuration', query );
+	// This simulates the network request time
+	await asyncTimeout( 2000 );
 	return {
 		public_key: stripeKey,
 		js_url: 'https://js.stripe.com/v3/',
 	};
 }
 
-async function sendStripeTransaction() {
-	// return await wpcom.req.post( '/me/transactions', transaction );
+async function sendStripeTransaction( data ) {
+	window.console.log( 'Processing stripe transaction with data', data );
+	// This simulates the transaction and provisioning time
+	await asyncTimeout( 2000 );
 	return {
 		success: true,
 	};
 }
 
-function handleCheckoutEvent( { type, payload }, dispatch, next ) {
-	switch ( type ) {
-		case 'STRIPE_CONFIGURATION_FETCH':
-			fetchStripeConfiguration( payload )
-				.then( stripeConfiguration =>
-					dispatch( { type: 'STRIPE_CONFIGURATION_SET', payload: stripeConfiguration } )
-				)
-				.catch( error => dispatch( { type: 'STRIPE_TRANSACTION_ERROR', payload: error } ) );
-			return;
-		case 'STRIPE_TRANSACTION_BEGIN':
-			sendStripeTransaction( formatDataForStripeTransaction( payload ) )
-				.then( async response => {
-					dispatch( { type: 'STRIPE_TRANSACTION_RESPONSE', payload: response } );
-				} )
-				.catch( error => dispatch( { type: 'STRIPE_TRANSACTION_ERROR', payload: error } ) );
-			return;
-	}
-	next();
+async function makePayPalExpressRequest( data ) {
+	window.console.log( 'Processing paypal transaction with data', data );
+	// This simulates the transaction and provisioning time
+	await asyncTimeout( 2000 );
+	return window.location.href;
 }
 
-// This is the parent component which would be included on a host page
-function MyCheckout() {
-	const { items, total } = useShoppingCart();
+const registry = createRegistry();
+const { registerStore, select } = registry;
 
-	return (
-		<CheckoutProvider
-			locale={ 'US' }
-			items={ items }
-			total={ total }
-			onSuccess={ onSuccess }
-			onFailure={ onFailure }
-			successRedirectUrl={ successRedirectUrl }
-			failureRedirectUrl={ failureRedirectUrl }
-			eventHandler={ handleCheckoutEvent }
-		>
-			<Checkout />
-		</CheckoutProvider>
-	);
+registerStore( 'demo', {
+	actions: {
+		setCountry( payload ) {
+			return { type: 'set_country', payload };
+		},
+	},
+	selectors: {
+		getCountry( state ) {
+			return state.country;
+		},
+	},
+	reducer( state = {}, action ) {
+		if ( action.type === 'set_country' ) {
+			return { ...state, country: action.payload };
+		}
+		return state;
+	},
+} );
+
+export function useIsApplePayAvailable( stripe, stripeConfiguration, items ) {
+	const [ canMakePayment, setCanMakePayment ] = useState( 'loading' );
+
+	useEffect( () => {
+		let isSubscribed = true;
+		// Only calculate this once
+		if ( canMakePayment !== 'loading' ) {
+			return;
+		}
+
+		// We'll need the Stripe library so wait until it is loaded
+		if ( ! stripe || ! stripeConfiguration ) {
+			return;
+		}
+
+		// Our Apple Pay implementation uses the Payment Request API, so
+		// check that first.
+		if ( ! window.PaymentRequest ) {
+			setCanMakePayment( false );
+			return;
+		}
+
+		// Ask the browser if apple pay can be used. This can be very
+		// expensive on certain Safari versions due to a bug
+		// (https://trac.webkit.org/changeset/243447/webkit)
+		try {
+			const browserResponse = !! window.ApplePaySession?.canMakePayments();
+			if ( ! browserResponse ) {
+				setCanMakePayment( false );
+				return;
+			}
+		} catch ( error ) {
+			setCanMakePayment( false );
+			return;
+		}
+
+		// Ask Stripe if apple pay can be used. This is async.
+		const countryCode =
+			stripeConfiguration && stripeConfiguration.processor_id === 'stripe_ie' ? 'IE' : 'US';
+		const currency = items.reduce(
+			( firstCurrency, item ) => firstCurrency || item.amount.currency,
+			'usd'
+		);
+		const paymentRequestOptions = {
+			requestPayerName: true,
+			requestPayerPhone: false,
+			requestPayerEmail: false,
+			requestShipping: false,
+			country: countryCode,
+			currency: currency.toLowerCase(),
+			// This is just used here to determine if apple pay is available, not for the actual payment, so we leave this blank
+			displayItems: [],
+			total: {
+				label: 'Total',
+				amount: 0,
+			},
+		};
+		const request = stripe.paymentRequest( paymentRequestOptions );
+		request.canMakePayment().then( result => {
+			isSubscribed && setCanMakePayment( !! result?.applePay );
+		} );
+
+		return () => ( isSubscribed = false );
+	}, [ canMakePayment, stripe, items, stripeConfiguration ] );
+
+	return { canMakePayment: canMakePayment === true, isLoading: canMakePayment === 'loading' };
 }
 
-// This is a very simple shopping cart manager which can calculate totals
-function useShoppingCart() {
-	const [ items ] = useState( initialItems );
-
-	// The total must be calculated outside checkout and need not be related to line items
+const getTotal = items => {
 	const lineItemTotal = items.reduce( ( sum, item ) => sum + item.amount.value, 0 );
 	const currency = items.reduce( ( lastCurrency, item ) => item.amount.currency, 'USD' );
-	const total = {
+	return {
 		label: 'Total',
 		amount: {
 			currency,
@@ -102,8 +191,250 @@ function useShoppingCart() {
 			displayValue: formatValueForCurrency( currency, lineItemTotal ),
 		},
 	};
+};
 
-	return { items, total };
+const ContactFormTitle = () => {
+	const isActive = useIsStepActive();
+	return isActive ? 'Enter your contact details' : 'Contact details';
+};
+
+const Label = styled.label`
+	display: block;
+	color: ${props => props.theme.colors.textColor};
+	font-weight: ${props => props.theme.weights.bold};
+	font-size: 14px;
+	margin-bottom: 8px;
+
+	:hover {
+		cursor: ${props => ( props.disabled ? 'default' : 'pointer' )};
+	}
+`;
+
+const Input = styled.input`
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+	font-size: 16px;
+	border: 1px solid
+		${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor )};
+	padding: 13px 10px 12px 10px;
+
+	:focus {
+		outline: ${props => ( props.isError ? props.theme.colors.error : props.theme.colors.outline )}
+			solid 2px !important;
+	}
+`;
+
+const Form = styled.div`
+	margin-bottom: 0.5em;
+`;
+
+function ContactForm( { summary } ) {
+	const country = useSelect( storeSelect => storeSelect( 'demo' )?.getCountry() ?? '' );
+	const { setCountry } = useDispatch( 'demo' );
+	const onChangeCountry = event => setCountry( event.target.value );
+	const { formStatus } = useFormStatus();
+
+	if ( summary ) {
+		return (
+			<div>
+				<div>Country</div>
+				<span>{ country }</span>
+			</div>
+		);
+	}
+
+	return (
+		<Form>
+			<Label htmlFor="country">Country</Label>
+			<Input
+				id="country"
+				type="text"
+				value={ country }
+				onChange={ onChangeCountry }
+				disabled={ formStatus !== 'ready' }
+			/>
+		</Form>
+	);
+}
+
+const orderSummaryStep = getDefaultOrderSummaryStep();
+const paymentMethodStep = getDefaultPaymentMethodStep();
+const reviewOrderStep = getDefaultOrderReviewStep();
+const contactFormStep = {
+	id: 'contact-form',
+	className: 'checkout__billing-details-step',
+	titleContent: <ContactFormTitle />,
+	activeStepContent: <ContactForm />,
+	completeStepContent: <ContactForm summary />,
+};
+
+function HostPage() {
+	return (
+		<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+			<MyCheckout />
+		</StripeHookProvider>
+	);
+}
+
+function MyCheckout() {
+	const [ items ] = useState( initialItems );
+	const total = useMemo( () => getTotal( items ), [ items ] );
+	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
+	const {
+		canMakePayment: isApplePayAvailable,
+		isLoading: isApplePayLoading,
+	} = useIsApplePayAvailable( stripe, stripeConfiguration, items );
+
+	const [ isLoading, setIsLoading ] = useState( true );
+	useEffect( () => {
+		if ( isStripeLoading ) {
+			return;
+		}
+		if ( stripeLoadingError ) {
+			setIsLoading( false );
+			showErrorMessage( stripeLoadingError );
+			return;
+		}
+		if ( ! stripe || ! stripeConfiguration ) {
+			return;
+		}
+		if ( isApplePayLoading ) {
+			return;
+		}
+		// This simulates an additional loading delay
+		setTimeout( () => setIsLoading( false ), 1500 );
+	}, [ isStripeLoading, stripeLoadingError, stripe, stripeConfiguration, isApplePayLoading ] );
+
+	const stripeMethod = useMemo( () => {
+		if ( isStripeLoading || stripeLoadingError || ! stripe || ! stripeConfiguration ) {
+			return null;
+		}
+		return createStripeMethod( {
+			getCountry: () => select( 'demo' ).getCountry(),
+			getPostalCode: () => 90210,
+			getSubdivisionCode: () => 'CA',
+			registerStore,
+			stripe,
+			stripeConfiguration,
+			submitTransaction: sendStripeTransaction,
+		} );
+	}, [ stripe, stripeConfiguration, isStripeLoading, stripeLoadingError ] );
+
+	const applePayMethod = useMemo( () => {
+		if (
+			isStripeLoading ||
+			stripeLoadingError ||
+			! stripe ||
+			! stripeConfiguration ||
+			isApplePayLoading ||
+			! isApplePayAvailable
+		) {
+			return null;
+		}
+		return createApplePayMethod( {
+			getCountry: () => select( 'demo' ).getCountry(),
+			getPostalCode: () => 90210,
+			registerStore,
+			submitTransaction: sendStripeTransaction,
+			stripe,
+			stripeConfiguration,
+		} );
+	}, [
+		isApplePayLoading,
+		stripe,
+		stripeConfiguration,
+		isStripeLoading,
+		stripeLoadingError,
+		isApplePayAvailable,
+	] );
+
+	const paypalMethod = useMemo(
+		() =>
+			createPayPalMethod( {
+				registerStore,
+				getSuccessUrl: () => '#',
+				getCancelUrl: () => '#',
+			} ),
+		[]
+	);
+	paypalMethod.submitTransaction = makePayPalExpressRequest;
+
+	return (
+		<CheckoutProvider
+			locale={ 'en' }
+			items={ items }
+			total={ total }
+			onEvent={ onEvent }
+			onPaymentComplete={ onPaymentComplete }
+			showErrorMessage={ showErrorMessage }
+			showInfoMessage={ showInfoMessage }
+			showSuccessMessage={ showSuccessMessage }
+			registry={ registry }
+			isLoading={ isLoading }
+			paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }
+		>
+			<MyCheckoutBody />
+		</CheckoutProvider>
+	);
+}
+
+function MyCheckoutBody() {
+	const country = useSelect( storeSelect => storeSelect( 'demo' )?.getCountry() ?? '' );
+	const { showErrorMessage: showError } = useMessages();
+	const activePaymentMethod = usePaymentMethod();
+
+	return (
+		<Checkout>
+			<CheckoutStepBody
+				activeStepContent={ orderSummaryStep.activeStepContent }
+				completeStepContent={ orderSummaryStep.completeStepContent }
+				titleContent={ orderSummaryStep.titleContent }
+				errorMessage={ 'There was an error with this step.' }
+				isStepActive={ false }
+				isStepComplete={ true }
+				stepNumber={ 1 }
+				totalSteps={ 1 }
+				stepId={ 'order-summary' }
+			/>
+			<CheckoutSteps>
+				<CheckoutStep
+					stepId="payment-method-step"
+					isCompleteCallback={ () =>
+						paymentMethodStep.isCompleteCallback( { activePaymentMethod } )
+					}
+					activeStepContent={ paymentMethodStep.activeStepContent }
+					completeStepContent={ paymentMethodStep.completeStepContent }
+					titleContent={ paymentMethodStep.titleContent }
+				/>
+				<CheckoutStep
+					stepId={ contactFormStep.id }
+					isCompleteCallback={ () =>
+						new Promise( resolve =>
+							setTimeout( () => {
+								if ( country.length === 0 ) {
+									showError( 'The country field is required' );
+									resolve( false );
+									return;
+								}
+								resolve( true );
+							}, 1500 )
+						)
+					}
+					activeStepContent={ contactFormStep.activeStepContent }
+					completeStepContent={ contactFormStep.completeStepContent }
+					titleContent={ contactFormStep.titleContent }
+				/>
+				<CheckoutStep
+					stepId="review-order-step"
+					isCompleteCallback={ () => true }
+					activeStepContent={ reviewOrderStep.activeStepContent }
+					completeStepContent={ reviewOrderStep.completeStepContent }
+					titleContent={ reviewOrderStep.titleContent }
+				/>
+			</CheckoutSteps>
+		</Checkout>
+	);
 }
 
 function formatValueForCurrency( currency, value ) {
@@ -114,95 +445,9 @@ function formatValueForCurrency( currency, value ) {
 	return '$' + floatValue.toString();
 }
 
-function formatDataForStripeTransaction( {
-	items,
-	total,
-	country,
-	postalCode,
-	subdivisionCode,
-	paymentData,
-	stripePaymentMethod,
-	stripeConfiguration,
-	successUrl,
-	cancelUrl,
-} ) {
-	const siteId = ''; // TODO: get site id
-	const couponId = null; // TODO: get couponId
-	const payment = {
-		payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
-		payment_key: stripePaymentMethod.id,
-		payment_partner: stripeConfiguration.processor_id,
-		name,
-		zip: postalCode,
-		country,
-		successUrl,
-		cancelUrl,
-	};
-	return {
-		cart: createCartFromLineItems( {
-			siteId,
-			couponId,
-			items,
-			total,
-			country,
-			postalCode,
-			subdivisionCode,
-		} ),
-		domain_details: getDomainDetailsFromPaymentData( paymentData ),
-		payment,
-	};
+// Simulate network request time
+async function asyncTimeout( timeout ) {
+	return new Promise( resolve => setTimeout( resolve, timeout ) );
 }
 
-function createCartFromLineItems( {
-	siteId,
-	couponId,
-	items,
-	country,
-	postalCode,
-	subdivisionCode,
-} ) {
-	// TODO: use cart manager to create cart object needed for this transaction
-	const currency = items.reduce( ( value, item ) => value || item.amount.currency );
-	return {
-		blog_id: siteId,
-		coupon: couponId || '',
-		currency: currency || '',
-		temporary: false,
-		extra: [],
-		products: items.map( item => ( {
-			product_id: item.id,
-			meta: '', // TODO: get this for domains, etc
-			cost: item.amount.value, // TODO: how to convert this from 3500 to 35?
-			currency: item.amount.currency,
-			volume: 1,
-		} ) ),
-		tax: {
-			location: {
-				country_code: country,
-				postal_code: postalCode,
-				subdivision_code: subdivisionCode,
-			},
-		},
-	};
-}
-
-function getDomainDetailsFromPaymentData( paymentData ) {
-	const { billing = {}, domains = {}, isDomainContactSame = true } = paymentData;
-	return {
-		first_name: isDomainContactSame ? billing.name : domains.name || billing.name || '',
-		last_name: isDomainContactSame ? billing.name : domains.name || billing.name || '', // TODO: how do we split up first/last name?
-		address_1: isDomainContactSame ? billing.address : domains.address || billing.address || '',
-		city: isDomainContactSame ? billing.city : domains.city || billing.city || '',
-		state: isDomainContactSame
-			? billing.state || billing.province
-			: domains.state || domains.province || billing.state || billing.province || '',
-		postal_code: isDomainContactSame
-			? billing.postalCode || billing.zipCode
-			: domains.postalCode || domains.zipCode || billing.postalCode || billing.zipCode || '',
-		country_code: isDomainContactSame ? billing.country : domains.country || billing.country || '',
-		email: isDomainContactSame ? billing.email : domains.email || billing.email || '', // TODO: we need to get email address
-		phone: isDomainContactSame ? '' : domains.phoneNumber || '',
-	};
-}
-
-ReactDOM.render( <MyCheckout />, document.getElementById( 'root' ) );
+ReactDOM.render( <HostPage />, document.getElementById( 'root' ) );

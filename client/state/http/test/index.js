@@ -115,7 +115,10 @@ describe( '#httpHandler', () => {
 	} );
 
 	test( 'should set appropriate headers', () => {
-		const headers = [ [ 'Auth', 'something' ], [ 'Bearer', 'secret' ] ];
+		const headers = [
+			[ 'Auth', 'something' ],
+			[ 'Bearer', 'secret' ],
+		];
 		const data = {};
 
 		fetch.mockResponse( JSON.stringify( data ) );

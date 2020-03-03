@@ -8,7 +8,7 @@ import { find, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import { getCurrentUser } from 'state/current-user/selectors';
 import SocialLoginActionButton from './action-button';
 
@@ -16,6 +16,7 @@ const SocialLoginService = ( {
 	service,
 	icon,
 	isConnected,
+	redirectUri,
 	socialConnectionEmail,
 	socialServiceResponse,
 } ) => (
@@ -29,6 +30,7 @@ const SocialLoginService = ( {
 
 			<div className="social-login__header-action">
 				<SocialLoginActionButton
+					redirectUri={ redirectUri }
 					service={ service }
 					isConnected={ isConnected }
 					socialServiceResponse={ socialServiceResponse }

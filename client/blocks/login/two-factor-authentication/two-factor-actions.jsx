@@ -11,8 +11,7 @@ import page from 'page';
  * Internal dependencies
  */
 
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isTwoFactorAuthTypeSupported } from 'state/login/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';

@@ -29,7 +29,6 @@ import PluginsList from './plugins-list';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginsBrowser from './plugins-browser';
-import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
 import canCurrentUser from 'state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
@@ -42,7 +41,7 @@ import {
 	isRequestingSites,
 } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { isEnabled } from 'config';
 
 /**
@@ -85,7 +84,10 @@ export class PluginsMain extends Component {
 		const props = nextProps || this.props;
 		let plugins = null;
 		if ( ! props.selectedSiteSlug ) {
-			plugins = PluginsStore.getPlugins( sites.filter( site => site.visible ), props.filter );
+			plugins = PluginsStore.getPlugins(
+				sites.filter( site => site.visible ),
+				props.filter
+			);
 		} else {
 			plugins = PluginsStore.getPlugins( sites, props.filter );
 		}
@@ -503,7 +505,6 @@ export class PluginsMain extends Component {
 
 		return (
 			<Main wideLayout>
-				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
 				{ this.renderPageViewTracking() }
 				<SidebarNavigation />

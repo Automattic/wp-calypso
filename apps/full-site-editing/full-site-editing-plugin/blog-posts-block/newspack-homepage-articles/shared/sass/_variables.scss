@@ -1,0 +1,26 @@
+$mobile_width: 600px;
+$tablet_width: 782px;
+$desktop_width: 1168px;
+$wide_width: 1379px;
+
+$font__size_base: 20px;
+$font__size-ratio: 1.125;
+
+$font__size-xxxs: 1em * 0.5; // 10px
+$font__size-xxs: 1em * 0.6; // 12px
+$font__size-xs: 1em * 0.7; // 14px
+$font__size-sm: 1em * 0.8; // 16px
+// $font__size_base: 1em * 1; // 20px
+$font__size-md: 1em * 1.2; // 24px
+$font__size-lg: 1em * 1.4; // 28px
+$font__size-xl: 1em * 1.8; // 36px
+$font__size-xxl: 1em * 2.2; // 44px
+$font__size-xxxl: 1em * 2.8; // 56px
+$font__size-xxxxl: 1em * 3.2; // 64px
+
+$font__line-height-body: 1.6;
+$font__line-height-pre: 1.6;
+$font__line-height-heading: 1.2;
+$font__line-height-double: 2 * $font__line-height-heading;
+
+$color__border: #ccc;

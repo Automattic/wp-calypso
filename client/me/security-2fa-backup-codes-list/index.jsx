@@ -22,7 +22,7 @@ import FormLabel from 'components/forms/form-label';
 import config from 'config';
 import Notice from 'components/notice';
 import ButtonGroup from 'components/button-group';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import Tooltip from 'components/tooltip';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { getCurrentUserName } from 'state/current-user/selectors';
@@ -107,7 +107,7 @@ class Security2faBackupCodesList extends React.Component {
 		this.props.recordGoogleEvent( 'Me', 'Clicked On 2fa Save Backup Codes Button' );
 
 		const backupCodes = this.props.backupCodes.join( '\n' );
-		const toSave = new Blob( [ backupCodes ], { type: 'text/plain;charset=utf-8' } );
+		const toSave = new globalThis.Blob( [ backupCodes ], { type: 'text/plain;charset=utf-8' } );
 		saveAs( toSave, `${ this.props.username }-backup-codes.txt` );
 	};
 
@@ -146,14 +146,16 @@ class Security2faBackupCodesList extends React.Component {
 		let row;
 		let html = '<html><head><title>';
 
-		html += this.props.translate( 'Backup verification codes' );
+		html += this.props.translate( 'WordPress.com Backup Verification Codes' );
 		html += '</title></head>';
 		html += '<body style="font-family:sans-serif">';
 
 		html += '<div style="padding:10px; border:1px dashed black; display:inline-block">';
 		html +=
 			'<p style="margin-top:0"><strong>' +
-			this.props.translate( 'Backup verification codes' ) +
+			this.props.translate( 'WordPress.com backup verification codes for %s', {
+				args: this.props.username,
+			} ) +
 			'</strong></p>';
 
 		html += '<table style="border-spacing:30px 5px">';
@@ -302,15 +304,7 @@ class Security2faBackupCodesList extends React.Component {
 							ref={ this.copyCodesButtonRef }
 						>
 							<Gridicon icon="clipboard" />
-							<Tooltip
-								context={ this.copyCodesButtonRef.current }
-								isVisible={ this.state.copyCodesTooltip }
-								position="top"
-							>
-								{ this.props.translate( 'Copy Codes' ) }
-							</Tooltip>
 						</Button>
-
 						<Button
 							className="security-2fa-backup-codes-list__print"
 							disabled={ ! this.props.backupCodes.length }
@@ -320,15 +314,7 @@ class Security2faBackupCodesList extends React.Component {
 							ref={ this.printCodesButtonRef }
 						>
 							<Gridicon icon="print" />
-							<Tooltip
-								context={ this.printCodesButtonRef.current }
-								isVisible={ this.state.printCodesTooltip }
-								position="top"
-							>
-								{ this.props.translate( 'Print Codes' ) }
-							</Tooltip>
 						</Button>
-
 						<Button
 							className="security-2fa-backup-codes-list__download"
 							disabled={ ! this.props.backupCodes.length }
@@ -338,15 +324,29 @@ class Security2faBackupCodesList extends React.Component {
 							ref={ this.downloadCodesButtonRef }
 						>
 							<Gridicon icon="cloud-download" />
-							<Tooltip
-								context={ this.downloadCodesButtonRef.current }
-								isVisible={ this.state.downloadCodesTooltip }
-								position="top"
-							>
-								{ this.props.translate( 'Download Codes' ) }
-							</Tooltip>
 						</Button>
 					</ButtonGroup>
+					<Tooltip
+						context={ this.copyCodesButtonRef.current }
+						isVisible={ this.state.copyCodesTooltip }
+						position="top"
+					>
+						{ this.props.translate( 'Copy Codes' ) }
+					</Tooltip>
+					<Tooltip
+						context={ this.printCodesButtonRef.current }
+						isVisible={ this.state.printCodesTooltip }
+						position="top"
+					>
+						{ this.props.translate( 'Print Codes' ) }
+					</Tooltip>
+					<Tooltip
+						context={ this.downloadCodesButtonRef.current }
+						isVisible={ this.state.downloadCodesTooltip }
+						position="top"
+					>
+						{ this.props.translate( 'Download Codes' ) }
+					</Tooltip>
 				</FormButtonBar>
 			</div>
 		);
@@ -376,10 +376,7 @@ class Security2faBackupCodesList extends React.Component {
 }
 
 export default compose(
-	connect(
-		state => ( { username: getCurrentUserName( state ) } ),
-		{ recordGoogleEvent }
-	),
+	connect( state => ( { username: getCurrentUserName( state ) } ), { recordGoogleEvent } ),
 	localize,
 	withLocalizedMoment
 )( Security2faBackupCodesList );

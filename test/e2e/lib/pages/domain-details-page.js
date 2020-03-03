@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import AsyncBaseContainer from '../async-base-container';
 
 export default class DomainDetailsPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, By.css( 'main.domain-management-edit' ) );
+		super( driver, By.css( '.domain-management-header' ) );
 	}
 
 	async viewPaymentSettings() {

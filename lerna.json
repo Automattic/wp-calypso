@@ -1,5 +1,5 @@
 {
-	"packages": [ "packages/*", "apps/*" ],
+	"packages": [ "client", "packages/*", "apps/*" ],
 	"version": "independent",
 	"ignoreChanges": [ "**/*.md", "**/.eslintrc.{js,json,yaml,yml}", "**/package-lock.json" ]
 }

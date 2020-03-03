@@ -1,0 +1,36 @@
+@import '~@automattic/calypso-color-schemes/src/calypso-color-schemes';
+
+.signup-form.components-modal__frame {
+	border: none;
+	border-radius: 3px;
+
+	.components-modal__header {
+		.components-modal__header-heading {
+			font-size: 20px;
+			font-weight: normal;
+		}
+	}
+	.components-text-control__input {
+		padding: 7px 14px;
+		font-size: 16px;
+		line-height: 1.5;
+	}
+
+	.signup-form__terms-of-service-link {
+		text-align: center;
+		color: var( --color-text-subtle );
+		margin: 20px 0 40px;
+	}
+
+	.components-button.signup-form__submit {
+		display: block;
+		width: 100%;
+		text-align: center;
+		font-size: 16px;
+		height: 40px;
+	}
+
+	.signup-form__error-notice {
+		margin: 0;
+	}
+}

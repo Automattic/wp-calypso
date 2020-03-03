@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,7 +21,7 @@ import PluginsActions from 'lib/plugins/actions';
 import PluginsListHeader from 'my-sites/plugins/plugin-list-header';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginNotices from 'lib/plugins/notices';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';

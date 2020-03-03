@@ -33,6 +33,7 @@ function fetchWithTimeout( url, init, timeout = 0 ) {
 const NetworkConnectionApp = {
 	/**
 	 * Returns whether the network connection is enabled in config.
+	 *
 	 * @returns {boolean} whether the network connection is enabled in config
 	 */
 	isEnabled: function() {
@@ -41,6 +42,7 @@ const NetworkConnectionApp = {
 
 	/**
 	 * Bootstraps network connection status change handler.
+	 *
 	 * @param {Store} reduxStore The Redux store.
 	 */
 	init: function( reduxStore ) {
@@ -131,6 +133,7 @@ const NetworkConnectionApp = {
 
 	/**
 	 * Returns whether the connections is currently active.
+	 *
 	 * @returns {boolean} whether the connections is currently active.
 	 */
 	isConnected: function() {

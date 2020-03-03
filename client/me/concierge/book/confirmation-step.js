@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import Confirmation from '../shared/confirmation';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -39,7 +37,4 @@ class ConfirmationStep extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( localize( ConfirmationStep ) );
+export default connect( null, { recordTracksEvent } )( localize( ConfirmationStep ) );

@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -14,6 +11,7 @@ import { connect } from 'react-redux';
  */
 import Day from './day';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 class PostTrendsWeek extends Component {
 	static propTypes = {
@@ -76,5 +74,5 @@ class PostTrendsWeek extends Component {
 }
 
 export default connect( state => ( { userLocale: getCurrentUserLocale( state ) } ) )(
-	localize( PostTrendsWeek )
+	localize( withLocalizedMoment( PostTrendsWeek ) )
 );

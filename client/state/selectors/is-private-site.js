@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -10,9 +8,9 @@ import { getSiteSettings } from 'state/site-settings/selectors';
 /**
  * Returns true if the site is private
  *
- * @param {Object} state Global state tree
- * @param {Object} siteId Site ID
- * @return {Boolean} True if site is private
+ * @param {object} state Global state tree
+ * @param {object} siteId Site ID
+ * @returns {boolean} True if site is private
  */
 export default function isPrivateSite( state, siteId ) {
 	const site = getRawSite( state, siteId );

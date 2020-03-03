@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -34,7 +32,7 @@ function trackPaste( editor ) {
 	 * @see [types]{@link https://html.spec.whatwg.org/multipage/interaction.html#datatransfer}
 	 * @see [DOMStringList]{@link https://developer.mozilla.org/en-US/docs/Web/API/DOMStringList}
 	 *
-	 * @param {String} mode 'html-editor' or 'visual-editor', indicates which editor was in use on paste.
+	 * @param {string} mode 'html-editor' or 'visual-editor', indicates which editor was in use on paste.
 	 * @param {(Array|DOMStringList)} types The types the content is available to paste.
 	 */
 	const recordPasteEvent = ( mode, types ) => {

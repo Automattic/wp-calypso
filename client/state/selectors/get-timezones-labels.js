@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,8 +10,8 @@ import { get } from 'lodash';
  * The `value` is the timezone-value used to data processing,
  * and the `label` is the value used for the UI.
  *
- * @param  {Object} state - Global state tree
- * @return {Object} An object of timezones labels
+ * @param  {object} state - Global state tree
+ * @returns {object} An object of timezones labels
  */
 export default function getTimezonesLabels( state ) {
 	return get( state, 'timezones.labels', {} );

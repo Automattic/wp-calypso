@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isMonthly } from 'lib/plans/constants';
@@ -35,6 +33,7 @@ const PlanFeaturesActions = ( {
 	isPopular,
 	isInSignup,
 	isLaunchPage,
+	isEligibleForPlanStepTest,
 	onUpgradeClick = noop,
 	planName,
 	planType,
@@ -87,11 +86,13 @@ const PlanFeaturesActions = ( {
 				} );
 			}
 		} else if ( isInSignup ) {
-			buttonText = translate( 'Start with %(plan)s', {
-				args: {
-					plan: planName,
-				},
-			} );
+			buttonText = isEligibleForPlanStepTest
+				? 'Get started'
+				: translate( 'Start with %(plan)s', {
+						args: {
+							plan: planName,
+						},
+				  } );
 		}
 
 		if (

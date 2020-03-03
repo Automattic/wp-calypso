@@ -9,26 +9,16 @@ import PropTypes from 'prop-types';
  */
 import joinClasses from '../lib/join-classes';
 import { useLineItems, renderDisplayValueMarkdown } from '../public-api';
+import { useLocalize } from '../lib/localize';
 import {
 	OrderReviewLineItems,
 	OrderReviewTotal,
 	OrderReviewSection,
 } from './order-review-line-items';
 
-export default function CheckoutReviewOrder( { summary, className } ) {
+export default function CheckoutReviewOrder( { className } ) {
 	const [ items, total ] = useLineItems();
-	if ( summary ) {
-		return (
-			<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
-				<OrderReviewSection>
-					<OrderReviewLineItems isSummaryVisible={ summary } items={ items } />
-				</OrderReviewSection>
-				<OrderReviewSection>
-					<OrderReviewTotal total={ total } />
-				</OrderReviewSection>
-			</div>
-		);
-	}
+
 	return (
 		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
 			<OrderReviewSection>
@@ -41,9 +31,12 @@ export default function CheckoutReviewOrder( { summary, className } ) {
 	);
 }
 
+export function CheckoutReviewOrderTitle() {
+	const localize = useLocalize();
+	return localize( 'Review your order' );
+}
+
 CheckoutReviewOrder.propTypes = {
-	isActive: PropTypes.bool.isRequired,
-	summary: PropTypes.bool,
 	className: PropTypes.string,
 };
 

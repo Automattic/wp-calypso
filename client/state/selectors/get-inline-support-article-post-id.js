@@ -1,12 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { get } from 'lodash';
 
 /**
- * @param {Object} state Global app state
- * @return {Object} ...
+ * @param {object} state Global app state
+ * @returns {object} ...
  */
 export default state => get( state, 'inlineSupportArticle.postId' );

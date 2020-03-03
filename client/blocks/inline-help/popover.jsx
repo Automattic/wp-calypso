@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -25,7 +24,7 @@ import {
 	hideOnboardingWelcomePrompt,
 	hideChecklistPrompt,
 } from 'state/inline-help/actions';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import Popover from 'components/popover';
 import ChecklistOnboardingWelcome from 'my-sites/checklist/wpcom-checklist/checklist-onboarding-welcome';
 import InlineHelpSearchResults from './inline-help-search-results';
@@ -393,8 +392,5 @@ const mapDispatchToProps = {
 
 export default compose(
 	localize,
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)
+	connect( mapStateToProps, mapDispatchToProps )
 )( InlineHelpPopover );

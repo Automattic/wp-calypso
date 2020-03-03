@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import { isEqual } from 'lodash';
 
 class StoreConnection extends React.Component {
 	static propTypes = {
-		component: PropTypes.func,
+		component: PropTypes.elementType,
 		getStateFromStores: PropTypes.func.isRequired,
 		isDataLoading: PropTypes.func,
 		loadingPlaceholder: PropTypes.func,

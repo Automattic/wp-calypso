@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -14,9 +12,9 @@ import { combineReducers } from 'state/utils';
 /**
  * Tracks poster URL state.
  *
- * @param  {String} state Current poster URL
- * @param  {Object} action Action object
- * @return {String} Updated poster URL
+ * @param  {string} state Current poster URL
+ * @param  {object} action Action object
+ * @returns {string} Updated poster URL
  */
 export const url = ( state = null, { type, posterUrl } ) =>
 	VIDEO_EDITOR_SET_POSTER_URL === type ? posterUrl : state;
@@ -24,9 +22,9 @@ export const url = ( state = null, { type, posterUrl } ) =>
 /**
  * Tracks poster upload progress state.
  *
- * @param  {Number} state Current upload progress of the poster
- * @param  {Object} action Action object
- * @return {Number} Updated upload progress of the poster
+ * @param  {number} state Current upload progress of the poster
+ * @param  {object} action Action object
+ * @returns {number} Updated upload progress of the poster
  */
 export const uploadProgress = ( state = null, { type, percentage } ) => {
 	if ( VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS === type ) {
@@ -43,9 +41,9 @@ export const uploadProgress = ( state = null, { type, percentage } ) => {
 /**
  * Tracks whether or not an error should be shown.
  *
- * @param  {Boolean} state Whether or not an error was to be shown
- * @param  {Object} action Action object
- * @return {Boolean} Whether or not an error should now be shown
+ * @param  {boolean} state Whether or not an error was to be shown
+ * @param  {object} action Action object
+ * @returns {boolean} Whether or not an error should now be shown
  */
 export const showError = ( state, { type } ) => type === VIDEO_EDITOR_SHOW_ERROR;
 

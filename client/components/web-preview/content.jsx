@@ -1,7 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
+import { isWithinBreakpoint } from '@automattic/viewport';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -17,7 +17,6 @@ import { addQueryArgs } from 'lib/route';
  */
 import Toolbar from './toolbar';
 import { hasTouch } from 'lib/touch-detect';
-import { isWithinBreakpoint } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 import SpinnerLine from 'components/spinner-line';
 import SeoPreviewPane from 'components/seo-preview-pane';
@@ -277,6 +276,7 @@ export class WebPreviewContent extends Component {
 					{ ...this.props }
 					showExternal={ this.props.previewUrl ? this.props.showExternal : false }
 					showDeviceSwitcher={ this.props.showDeviceSwitcher && isWithinBreakpoint( '>660px' ) }
+					showUrl={ this.props.showUrl && isWithinBreakpoint( '>960px' ) }
 					selectSeoPreview={ this.selectSEO }
 					isLoading={ this.state.isLoadingSubpage }
 				/>
@@ -394,7 +394,4 @@ const mapState = state => ( {
 	isInlineHelpPopoverVisible: isInlineHelpPopoverVisible( state ),
 } );
 
-export default connect(
-	mapState,
-	{ recordTracksEvent }
-)( localize( WebPreviewContent ) );
+export default connect( mapState, { recordTracksEvent } )( localize( WebPreviewContent ) );

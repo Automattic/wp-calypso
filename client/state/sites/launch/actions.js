@@ -10,6 +10,12 @@ import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 export const launchSite = siteId => ( {
 	type: SITE_LAUNCH,
 	siteId,
+	meta: {
+		dataLayer: {
+			trackRequest: true,
+			requestKey: `${ SITE_LAUNCH }-${ siteId }`,
+		},
+	},
 } );
 
 export const launchSiteOrRedirectToLaunchSignupFlow = siteId => ( dispatch, getState ) => {
@@ -28,5 +34,5 @@ export const launchSiteOrRedirectToLaunchSignupFlow = siteId => ( dispatch, getS
 	const siteSlug = getSiteSlug( getState(), siteId );
 
 	// TODO: consider using the `page` library instead of calling using `location.href` here
-	location.href = `/start/launch-site?siteSlug=${ siteSlug }`;
+	window.location.href = `/start/launch-site?siteSlug=${ siteSlug }`;
 };

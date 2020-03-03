@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { connect } from 'react-redux';
 import { isEnabled } from 'config';
 import { localize } from 'i18n-calypso';
 import { getSelectedSite } from 'state/ui/selectors';
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import EmptyContent from 'components/empty-content';
 
 class JetpackImporter extends PureComponent {

@@ -1,9 +1,7 @@
-/** @format */
 /**
  * Internal dependencies
  */
 import {
-	DOMAIN_PRIVACY_TOGGLE,
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
@@ -26,6 +24,8 @@ export const DOMAIN_PRIMARY = {
 	adminEmail: null,
 	blogId: SITE_ID_FIRST,
 	canSetAsPrimary: true,
+	contactInfoDisclosed: false,
+	contactInfoDisclosureAvailable: false,
 	currentUserCanManage: true,
 	domain: 'retronevergiveup.me',
 	domainLockingAvailable: true,
@@ -47,6 +47,7 @@ export const DOMAIN_PRIMARY = {
 	isPendingIcannVerification: false,
 	isPendingWhoisUpdate: false,
 	isSubdomain: false,
+	isWpcomStagingDomain: false,
 	manualTransferRequired: false,
 	mustRemovePrivacyBeforeContactUpdate: false,
 	newRegistration: false,
@@ -57,9 +58,13 @@ export const DOMAIN_PRIMARY = {
 	pendingRegistrationTime: '',
 	pendingTransfer: false,
 	privateDomain: false,
+	redeemableUntil: '',
 	isPrimary: true,
+	isRedeemable: false,
+	isRenewable: false,
 	registrar: '',
 	registrationDate: '2016-03-09T00:00:00+00:00',
+	renewableUntil: '',
 	subscriptionId: SUBSCRIPTION_ID_FIRST,
 	supportsDomainConnect: false,
 	supportsGdprConsentManagement: true,
@@ -68,6 +73,7 @@ export const DOMAIN_PRIMARY = {
 	transferAwayEligibleAt: null,
 	transferStatus: null,
 	transferStartDate: null,
+	transferEndDate: null,
 	transferLockOnWhoisUpdateOptional: true,
 	whoisUpdateUnmodifiableFields: [],
 	isWPCOMDomain: false,
@@ -80,6 +86,8 @@ export const DOMAIN_NOT_PRIMARY = {
 	adminEmail: null,
 	blogId: SITE_ID_SECOND,
 	canSetAsPrimary: true,
+	contactInfoDisclosed: false,
+	contactInfoDisclosureAvailable: false,
 	currentUserCanManage: true,
 	domain: 'retronevergiveup.wordpress.me',
 	domainLockingAvailable: true,
@@ -101,6 +109,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	isPendingIcannVerification: false,
 	isPendingWhoisUpdate: false,
 	isSubdomain: true,
+	isWpcomStagingDomain: false,
 	manualTransferRequired: false,
 	mustRemovePrivacyBeforeContactUpdate: false,
 	newRegistration: false,
@@ -112,6 +121,10 @@ export const DOMAIN_NOT_PRIMARY = {
 	pendingTransfer: false,
 	privateDomain: false,
 	isPrimary: false,
+	isRedeemable: false,
+	isRenewable: false,
+	redeemableUntil: '',
+	renewableUntil: '',
 	registrar: '',
 	registrationDate: '',
 	subscriptionId: SUBSCRIPTION_ID_SECOND,
@@ -122,6 +135,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	transferAwayEligibleAt: null,
 	transferStatus: null,
 	transferStartDate: null,
+	transferEndDate: null,
 	transferLockOnWhoisUpdateOptional: false,
 	whoisUpdateUnmodifiableFields: [ 'first_name', 'last_name' ],
 	isWPCOMDomain: true,
@@ -154,9 +168,14 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	has_wpcom_nameservers: true,
 	has_zone: true,
 	current_user_can_manage: true,
+	is_redeemable: false,
+	is_renewable: false,
+	redeemable_until: '',
+	renewable_until: '',
 	is_eligible_for_inbound_transfer: true,
 	is_pending_icann_verification: false,
 	is_subdomain: false,
+	is_wpcom_staging_domain: false,
 	manual_transfer_required: false,
 	manual_whois: false,
 	new_registration: false,
@@ -203,9 +222,14 @@ export const REST_API_SITE_DOMAIN_SECOND = {
 	has_wpcom_nameservers: true,
 	has_zone: false,
 	current_user_can_manage: true,
+	is_redeemable: false,
+	is_renewable: false,
+	redeemable_until: '',
+	renewable_until: '',
 	is_eligible_for_inbound_transfer: false,
 	is_pending_icann_verification: false,
 	is_subdomain: true,
+	is_wpcom_staging_domain: false,
 	manual_transfer_required: false,
 	manual_whois: false,
 	new_registration: false,
@@ -271,15 +295,10 @@ export const ACTION_SITE_DOMAIN_REQUEST_FAILURE = {
 	error: ERROR_MESSAGE_RESPONSE,
 };
 
-export const ACTION_DOMAIN_PRIVACY_TOGGLE = {
-	type: DOMAIN_PRIVACY_TOGGLE,
-	siteId: SITE_ID_FIRST,
-	domain: REST_API_SITE_DOMAIN_FIRST.domain,
-};
-
 /**
  * Return a whole state with domains data structure
- * @return {Object} an state instance
+ *
+ * @returns {object} an state instance
  *
  * - first site-domians is not requesting
  * - second site-domians is requesting

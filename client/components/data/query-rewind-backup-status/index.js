@@ -43,7 +43,4 @@ class QueryRewindBackupStatus extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ getRewindBackupProgress }
-)( QueryRewindBackupStatus );
+export default connect( null, { getRewindBackupProgress } )( QueryRewindBackupStatus );

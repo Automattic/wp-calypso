@@ -1,30 +1,29 @@
-/** @format */
-
 /**
  * External dependencies
  */
+import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { flowRight } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
  */
-import AppsBadge from 'blocks/get-apps/apps-badge';
 import Banner from 'components/banner';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import CardHeading from 'components/card-heading';
 import EmptyContent from 'components/empty-content';
-import ChecklistWpcom from 'my-sites/checklist/main';
+import FoldableCard from 'components/foldable-card';
 import Main from 'components/main';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import { preventWidows } from 'lib/formatting';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import { SIDEBAR_SECTION_TOOLS } from 'my-sites/sidebar/constants';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
@@ -32,6 +31,7 @@ import {
 	getSiteFrontPage,
 	getCustomizerUrl,
 	getSiteOption,
+	isNewSite,
 } from 'state/sites/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -39,20 +39,49 @@ import DocumentHead from 'components/data/document-head';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
+import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { getGSuiteSupportedDomains } from 'lib/gsuite';
+import { localizeUrl } from 'lib/i18n-utils';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actions';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import isSiteRecentlyMigrated from 'state/selectors/is-site-recently-migrated';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import StatsBanners from 'my-sites/stats/stats-banners';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
+import { getActiveTheme, getCanonicalTheme } from 'state/themes/selectors';
+import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
+import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import QueryActiveTheme from 'components/data/query-active-theme';
+import QueryCanonicalTheme from 'components/data/query-canonical-theme';
+import GoMobileCard from 'my-sites/customer-home/go-mobile-card';
+import WelcomeBanner from './welcome-banner';
+import StatsCard from './stats-card';
+import FreePhotoLibraryCard from './free-photo-library-card';
+import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+/**
+ * Image dependencies
+ */
+import commentIcon from 'assets/images/customer-home/comment.svg';
+import customDomainIcon from 'assets/images/customer-home/custom-domain.svg';
+import customizeIcon from 'assets/images/customer-home/customize.svg';
+import fireworksIllustration from 'assets/images/illustrations/fireworks.svg';
+import gSuiteIcon from 'assets/images/customer-home/gsuite.svg';
+import happinessIllustration from 'assets/images/customer-home/happiness.png';
+import imagesIcon from 'assets/images/customer-home/images.svg';
+import logoIcon from 'assets/images/customer-home/logo.svg';
+import menuIcon from 'assets/images/customer-home/menus.svg';
+import pageIcon from 'assets/images/customer-home/page.svg';
+import postIcon from 'assets/images/customer-home/post.svg';
+import themeIcon from 'assets/images/customer-home/theme.svg';
 
 const ActionBox = ( { href, onClick, target, iconSrc, label } ) => {
 	const buttonAction = { href, onClick, target };
@@ -128,8 +157,164 @@ class Home extends Component {
 		this.props.launchSiteOrRedirectToLaunchSignupFlow( siteId );
 	};
 
+	getChecklistSubHeaderText = () => {
+		const { checklistMode, currentTheme, translate, user } = this.props;
+
+		switch ( checklistMode ) {
+			case 'concierge':
+				return translate(
+					'We emailed %(email)s with instructions to schedule your Quick Start Session call with us. ' +
+						'In the mean time, use this quick list of setup tasks to get your site ready to share.',
+					{
+						args: {
+							email: user.email,
+						},
+					}
+				);
+
+			case 'theme':
+				return translate(
+					'Your theme %(themeName)s by %(themeAuthor)s is now active on your site. ' +
+						'Next, use this quick list of setup tasks to get it ready to share.',
+					{
+						args: {
+							themeName: currentTheme && currentTheme.name,
+							themeAuthor: currentTheme && currentTheme.author,
+						},
+					}
+				);
+
+			case 'launched':
+				return translate( 'Make sure you share it with everyone and show it off.' );
+
+			case 'migrated':
+				return translate( 'Next, make sure everything looks the way you expected.' );
+
+			default:
+				return translate(
+					'Next, use this quick list of setup tasks to get your site ready to share.'
+				);
+		}
+	};
+
+	renderCustomerHomeHeader() {
+		const {
+			displayChecklist,
+			isNewlyCreatedSite,
+			isRecentlyMigratedSite,
+			translate,
+			checklistMode,
+			site,
+			siteId,
+			currentThemeId,
+			siteIsUnlaunched,
+			isAtomic,
+			trackAction,
+			displayWelcomeBanner,
+		} = this.props;
+
+		// Show a thank-you message 30 mins post site creation/purchase
+		if (
+			isNewlyCreatedSite &&
+			! isRecentlyMigratedSite &&
+			displayChecklist &&
+			'launched' !== checklistMode
+		) {
+			if ( siteIsUnlaunched || isAtomic ) {
+				//Only show pre-launch, or for Atomic sites
+				return (
+					<>
+						{ siteId && 'theme' === checklistMode && <QueryActiveTheme siteId={ siteId } /> }
+						{ currentThemeId && (
+							<QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } />
+						) }
+						<img
+							src="/calypso/images/signup/confetti.svg"
+							aria-hidden="true"
+							className="customer-home__confetti"
+							alt=""
+						/>
+						<FormattedHeader
+							headerText={
+								this.props.siteHasPaidPlan
+									? translate( 'Thank you for your purchase!' )
+									: translate( 'Your site has been created!' )
+							}
+							subHeaderText={ this.getChecklistSubHeaderText() }
+						/>
+					</>
+				);
+			}
+		}
+
+		// If launched, show a congratulatory message, else show the standard heading
+		return (
+			<>
+				<div className="customer-home__heading">
+					<FormattedHeader
+						headerText={ translate( 'My Home' ) }
+						subHeaderText={ translate(
+							'Your home base for all the posting, editing, and growing of your site'
+						) }
+						align="left"
+					/>
+					{ ! siteIsUnlaunched && (
+						<div className="customer-home__view-site-button">
+							<Button href={ site.URL } onClick={ () => trackAction( 'my_site', 'view_site' ) }>
+								{ translate( 'View Site' ) }
+							</Button>
+						</div>
+					) }
+				</div>
+				{ isRecentlyMigratedSite && (
+					<Card className="customer-home__migrate-card" highlight="info">
+						<img
+							src="/calypso/images/illustrations/fireworks.svg"
+							aria-hidden="true"
+							className="customer-home__migrate-fireworks"
+							alt=""
+						/>
+						<div className="customer-home__migrate-card-text">
+							<CardHeading>{ translate( 'Your site has been imported!' ) }</CardHeading>
+							<p className="customer-home__migrate-card-subtext">
+								{ this.getChecklistSubHeaderText() }
+							</p>
+						</div>
+					</Card>
+				) }
+				{ ! siteIsUnlaunched && 'launched' === checklistMode ? (
+					<Card className="customer-home__launch-card" highlight="info">
+						<img
+							src={ fireworksIllustration }
+							aria-hidden="true"
+							className="customer-home__launch-fireworks"
+							alt=""
+						/>
+						<div className="customer-home__launch-card-text">
+							<CardHeading>{ translate( 'You launched your site!' ) }</CardHeading>
+							<p className="customer-home__launch-card-subtext">
+								{ this.getChecklistSubHeaderText() }
+							</p>
+						</div>
+					</Card>
+				) : (
+					displayWelcomeBanner && <WelcomeBanner />
+				) }
+			</>
+		);
+	}
+
 	render() {
-		const { translate, canUserUseCustomerHome, siteSlug } = this.props;
+		const {
+			translate,
+			canUserUseCustomerHome,
+			siteSlug,
+			siteId,
+			isChecklistComplete,
+			siteIsUnlaunched,
+			isEstablishedSite,
+			displayWelcomeBanner,
+		} = this.props;
 
 		if ( ! canUserUseCustomerHome ) {
 			const title = translate( 'This page is not available on this site.' );
@@ -140,22 +325,25 @@ class Home extends Component {
 				/>
 			);
 		}
-
-		const {
-			siteId,
-			hasChecklistData,
-			isChecklistComplete,
-			checklistMode,
-			isAtomic,
-			siteIsUnlaunched,
-		} = this.props;
 		const renderChecklistCompleteBanner = 'render' === this.state.renderChecklistCompleteBanner;
 
 		return (
 			<Main className="customer-home__main is-wide-layout">
 				<PageViewTracker path={ `/home/:site` } title={ translate( 'Customer Home' ) } />
 				<DocumentHead title={ translate( 'Customer Home' ) } />
-				<StatsBanners siteId={ siteId } slug={ siteSlug } />
+				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
+				<SidebarNavigation />
+				<div className="customer-home__page-heading">{ this.renderCustomerHomeHeader() }</div>
+				{ //Only show upgrade nudges to sites > 2 days old
+				isEstablishedSite && ! displayWelcomeBanner && (
+					<div className="customer-home__upsells">
+						<StatsBanners
+							siteId={ siteId }
+							slug={ siteSlug }
+							primaryButton={ isChecklistComplete && ! siteIsUnlaunched ? true : false }
+						/>
+					</div>
+				) }
 				{ renderChecklistCompleteBanner && (
 					<Banner
 						dismissPreferenceName="checklist-complete"
@@ -166,216 +354,256 @@ class Home extends Component {
 						description={ translate( "You've completed each item in your checklist." ) }
 					/>
 				) }
-				{ hasChecklistData && isChecklistComplete && siteIsUnlaunched && (
-					<Banner
-						dismissPreferenceName="customer-home-unlaunched-reminder"
-						dismissTemporary={ true }
-						icon="info"
-						callToAction={ translate( 'Launch site' ) }
-						title={ translate( 'Your site is private' ) }
-						description={ translate(
-							'Only you and those you invite can view your site. Launch your site to make it visible to the public.'
-						) }
-						onClick={ this.onLaunchBannerClick }
-					/>
-				) }
-				{ siteId && ! hasChecklistData && <QuerySiteChecklist siteId={ siteId } /> }
-				{ /* For now we are hiding the checklist on Atomic sites see pb5gDS-7c-p2 for more information */
-
-				hasChecklistData &&
-					( isAtomic || isChecklistComplete ? (
-						this.renderCustomerHome()
-					) : (
-						<ChecklistWpcom displayMode={ checklistMode } />
-					) ) }
+				{ this.renderCustomerHome() }
 			</Main>
 		);
 	}
 
-	renderCustomerHome = () => {
+	renderQuickLinks() {
 		const {
+			displayChecklist,
 			translate,
 			customizeUrl,
 			menusUrl,
-			site,
 			siteSlug,
 			trackAction,
-			expandToolsAndTrack,
 			isStaticHomePage,
 			staticHomePageId,
 			showCustomizer,
 			hasCustomDomain,
 		} = this.props;
+
 		const editHomePageUrl =
 			isStaticHomePage && `/block-editor/page/${ siteSlug }/${ staticHomePageId }`;
+
+		const quickLinks = (
+			<div className="customer-home__boxes">
+				{ isStaticHomePage ? (
+					<ActionBox
+						onClick={ () => {
+							trackAction( 'my_site', 'edit_homepage' );
+							page( editHomePageUrl );
+						} }
+						label={ translate( 'Edit homepage' ) }
+						iconSrc={ imagesIcon }
+					/>
+				) : (
+					<ActionBox
+						onClick={ () => {
+							trackAction( 'my_site', 'write_post' );
+							page( `/post/${ siteSlug }` );
+						} }
+						label={ translate( 'Write blog post' ) }
+						iconSrc={ postIcon }
+					/>
+				) }
+				{ isStaticHomePage ? (
+					<ActionBox
+						onClick={ () => {
+							trackAction( 'my_site', 'add_page' );
+							page( `/page/${ siteSlug }` );
+						} }
+						label={ translate( 'Add a page' ) }
+						iconSrc={ pageIcon }
+					/>
+				) : (
+					<ActionBox
+						onClick={ () => {
+							trackAction( 'my_site', 'manage_comments' );
+							page( `/comments/${ siteSlug }` );
+						} }
+						label={ translate( 'Manage comments' ) }
+						iconSrc={ commentIcon }
+					/>
+				) }
+				{ isStaticHomePage ? (
+					<ActionBox
+						onClick={ () => {
+							trackAction( 'my_site', 'write_post' );
+							page( `/post/${ siteSlug }` );
+						} }
+						label={ translate( 'Write blog post' ) }
+						iconSrc={ postIcon }
+					/>
+				) : (
+					<ActionBox
+						onClick={ () => {
+							trackAction( 'my_site', 'add_page' );
+							page( `/page/${ siteSlug }` );
+						} }
+						label={ translate( 'Add a page' ) }
+						iconSrc={ pageIcon }
+					/>
+				) }
+				{ showCustomizer && (
+					<ActionBox
+						href={ menusUrl }
+						onClick={ () => trackAction( 'my_site', 'edit_menus' ) }
+						label={ translate( 'Edit menus' ) }
+						iconSrc={ menuIcon }
+					/>
+				) }
+				{ showCustomizer && (
+					<ActionBox
+						href={ customizeUrl }
+						onClick={ () => trackAction( 'my_site', 'customize_theme' ) }
+						label={ translate( 'Customize theme' ) }
+						iconSrc={ customizeIcon }
+					/>
+				) }
+				<ActionBox
+					onClick={ () => {
+						trackAction( 'my_site', 'change_theme' );
+						page( `/themes/${ siteSlug }` );
+					} }
+					label={ translate( 'Change theme' ) }
+					iconSrc={ themeIcon }
+				/>
+				<ActionBox
+					href="https://wp.me/logo-maker"
+					onClick={ () => trackAction( 'my_site', 'design_logo' ) }
+					target="_blank"
+					label={ translate( 'Design a logo' ) }
+					iconSrc={ logoIcon }
+				/>
+				{ hasCustomDomain ? (
+					<ActionBox
+						onClick={ () => {
+							trackAction( 'my_site', 'add_email' );
+							page( `/email/${ siteSlug }` );
+						} }
+						label={ translate( 'Add email' ) }
+						iconSrc={ gSuiteIcon }
+					/>
+				) : (
+					<ActionBox
+						onClick={ () => {
+							trackAction( 'my_site', 'add_domain' );
+							page( `/domains/add/${ siteSlug }` );
+						} }
+						label={ translate( 'Add a domain' ) }
+						iconSrc={ customDomainIcon }
+					/>
+				) }
+			</div>
+		);
+		if ( displayChecklist ) {
+			return null;
+		}
+		return (
+			<>
+				{ ! isMobile() ? (
+					<Card className="customer-home__card-boxes">
+						<CardHeading>{ translate( 'Quick Links' ) }</CardHeading>
+						{ quickLinks }
+					</Card>
+				) : (
+					<FoldableCard
+						className="customer-home__card-boxes card-heading-21"
+						header={ translate( 'Quick Links' ) }
+						expanded
+					>
+						{ quickLinks }
+					</FoldableCard>
+				) }
+			</>
+		);
+	}
+
+	renderCustomerHome = () => {
+		const {
+			displayChecklist,
+			isAtomic,
+			isChecklistComplete,
+			needsEmailVerification,
+			translate,
+			checklistMode,
+			siteSlug,
+			trackAction,
+			expandToolsAndTrack,
+			hasChecklistData,
+			siteIsUnlaunched,
+		} = this.props;
+
+		if ( ! hasChecklistData ) {
+			return <div className="customer-home__loading-placeholder"></div>;
+		}
+
+		const isPrimary = ! isAtomic && isChecklistComplete;
+
 		return (
 			<div className="customer-home__layout">
-				<SidebarNavigation />
 				<div className="customer-home__layout-col customer-home__layout-col-left">
-					<Card>
-						<CardHeading>{ translate( 'My Site' ) }</CardHeading>
-						<h6 className="customer-home__card-subheader">
-							{ translate( 'Review and update my site' ) }
-						</h6>
-						<div className="customer-home__card-col">
-							<div className="customer-home__card-col-left">
-								<Button
-									href={ site.URL }
-									primary
-									onClick={ () => trackAction( 'my_site', 'view_site' ) }
-								>
-									{ translate( 'View Site' ) }
-								</Button>
-							</div>
-							<div className="customer-home__card-col-right">
-								{ isStaticHomePage ? (
-									<Button
-										href={ editHomePageUrl }
-										onClick={ () => trackAction( 'my_site', 'edit_homepage' ) }
-									>
-										{ translate( 'Edit Homepage' ) }
-									</Button>
-								) : (
-									<Button
-										onClick={ () => {
-											trackAction( 'my_site', 'write_post' );
-											page( `/post/${ siteSlug }` );
-										} }
-									>
-										{ translate( 'Write Blog Post' ) }
-									</Button>
-								) }
-							</div>
-						</div>
-					</Card>
-					<Card className="customer-home__card-boxes">
-						<div className="customer-home__boxes">
-							<ActionBox
-								onClick={ () => {
-									trackAction( 'my_site', 'add_page' );
-									page( `/page/${ siteSlug }` );
-								} }
-								label={ translate( 'Add a page' ) }
-								iconSrc="/calypso/images/customer-home/page.svg"
-							/>
-							{ isStaticHomePage ? (
-								<ActionBox
-									onClick={ () => {
-										trackAction( 'my_site', 'write_post' );
-										page( `/post/${ siteSlug }` );
-									} }
-									label={ translate( 'Write blog post' ) }
-									iconSrc="/calypso/images/customer-home/post.svg"
-								/>
-							) : (
-								<ActionBox
-									onClick={ () => {
-										trackAction( 'my_site', 'manage_comments' );
-										page( `/comments/${ siteSlug }` );
-									} }
-									label={ translate( 'Manage comments' ) }
-									iconSrc="/calypso/images/customer-home/comment.svg"
-								/>
-							) }
-							{ showCustomizer && (
-								<ActionBox
-									href={ customizeUrl }
-									onClick={ () => trackAction( 'my_site', 'customize_theme' ) }
-									label={ translate( 'Customize theme' ) }
-									iconSrc="/calypso/images/customer-home/customize.svg"
-								/>
-							) }
-							<ActionBox
-								onClick={ () => {
-									trackAction( 'my_site', 'change_theme' );
-									page( `/themes/${ siteSlug }` );
-								} }
-								label={ translate( 'Change theme' ) }
-								iconSrc="/calypso/images/customer-home/theme.svg"
-							/>
-							{ showCustomizer && (
-								<ActionBox
-									href={ menusUrl }
-									onClick={ () => trackAction( 'my_site', 'edit_menus' ) }
-									label={ translate( 'Edit menus' ) }
-									iconSrc="/calypso/images/customer-home/menus.svg"
-								/>
-							) }
-							<ActionBox
-								href={ `/media/${ siteSlug }` }
-								onClick={ () => trackAction( 'my_site', 'change_images' ) }
-								label={ translate( 'Change images' ) }
-								iconSrc="/calypso/images/customer-home/images.svg"
-							/>
-							<ActionBox
-								href="https://wp.me/logo-maker"
-								onClick={ () => trackAction( 'my_site', 'design_logo' ) }
-								target="_blank"
-								label={ translate( 'Design a logo' ) }
-								iconSrc="/calypso/images/customer-home/logo.svg"
-							/>
-							{ hasCustomDomain ? (
-								<ActionBox
-									onClick={ () => {
-										trackAction( 'my_site', 'add_email' );
-										page( `/email/${ siteSlug }` );
-									} }
-									label={ translate( 'Add email' ) }
-									iconSrc="/calypso/images/customer-home/gsuite.svg"
-								/>
-							) : (
-								<ActionBox
-									onClick={ () => {
-										trackAction( 'my_site', 'add_domain' );
-										page( `/domains/add/${ siteSlug }` );
-									} }
-									label={ translate( 'Add a domain' ) }
-									iconSrc="/calypso/images/customer-home/custom-domain.svg"
-								/>
-							) }
-						</div>
-					</Card>
+					{ // "Go Mobile" has the highest priority placement when viewed in smaller viewports, so folks
+					// can see it on their phone without needing to scroll.
+					isMobile() && <GoMobileCard /> }
+					{ displayChecklist && (
+						<>
+							<Card className="customer-home__card-checklist-heading">
+								<CardHeading>{ translate( 'Site Setup List' ) }</CardHeading>
+							</Card>
+							<WpcomChecklist displayMode={ checklistMode } />
+						</>
+					) }
+					{ this.renderQuickLinks() }
 				</div>
 				<div className="customer-home__layout-col customer-home__layout-col-right">
-					<Card className="customer-home__grow-earn">
-						<CardHeading>{ translate( 'Grow & Earn' ) }</CardHeading>
-						<h6 className="customer-home__card-subheader">
-							{ translate( 'Grow my audience and earn money' ) }
-						</h6>
-						<VerticalNav className="customer-home__card-links">
-							<VerticalNavItem
-								path={ `/marketing/connections/${ siteSlug }` }
-								onClick={ () => expandToolsAndTrack( 'earn', 'share_site' ) }
-							>
-								{ translate( 'Share my site' ) }
-							</VerticalNavItem>
-							<VerticalNavItem
-								path={ `/marketing/tools/${ siteSlug }` }
-								onClick={ () => expandToolsAndTrack( 'earn', 'grow_audience' ) }
-							>
-								{ translate( 'Grow my audience' ) }
-							</VerticalNavItem>
-							<VerticalNavItem
-								path={ `/earn/${ siteSlug }` }
-								onClick={ () => expandToolsAndTrack( 'earn', 'money' ) }
-							>
-								{ translate( 'Earn money' ) }
-							</VerticalNavItem>
-						</VerticalNav>
-					</Card>
+					{ siteIsUnlaunched && ! needsEmailVerification && (
+						<Card className="customer-home__launch-button">
+							<CardHeading>{ translate( 'Site Privacy' ) }</CardHeading>
+							<h6 className="customer-home__card-subheader">
+								{ translate( 'Your site is private' ) }
+							</h6>
+							<p>
+								{ translate(
+									'Only you and those you invite can view your site. Launch your site to make it visible to the public.'
+								) }
+							</p>
+							<Button primary={ isPrimary } onClick={ this.onLaunchBannerClick }>
+								{ translate( 'Launch my site' ) }
+							</Button>
+						</Card>
+					) }
+					{ ! siteIsUnlaunched && <StatsCard /> }
+					{ <FreePhotoLibraryCard /> }
+					{ ! siteIsUnlaunched && isChecklistComplete && (
+						<Card className="customer-home__grow-earn">
+							<CardHeading>{ translate( 'Grow & Earn' ) }</CardHeading>
+							<h6 className="customer-home__card-subheader">
+								{ translate( 'Grow your audience and earn money' ) }
+							</h6>
+							<VerticalNav className="customer-home__card-links">
+								<VerticalNavItem
+									path={ `/marketing/connections/${ siteSlug }` }
+									onClick={ () => expandToolsAndTrack( 'earn', 'share_site' ) }
+								>
+									{ translate( 'Share my site' ) }
+								</VerticalNavItem>
+								<VerticalNavItem
+									path={ `/marketing/tools/${ siteSlug }` }
+									onClick={ () => expandToolsAndTrack( 'earn', 'grow_audience' ) }
+								>
+									{ translate( 'Grow my audience' ) }
+								</VerticalNavItem>
+								<VerticalNavItem
+									path={ `/earn/${ siteSlug }` }
+									onClick={ () => expandToolsAndTrack( 'earn', 'money' ) }
+								>
+									{ translate( 'Earn money' ) }
+								</VerticalNavItem>
+							</VerticalNav>
+						</Card>
+					) }
 					<Card>
 						<CardHeading>{ translate( 'Support' ) }</CardHeading>
 						<h6 className="customer-home__card-subheader">
-							{ translate( 'Get all of the help you need' ) }
+							{ translate( 'Get all the help you need' ) }
 						</h6>
 						<div className="customer-home__card-support">
-							<img
-								src="/calypso/images/customer-home/happiness.png"
-								alt={ translate( 'Support' ) }
-							/>
+							<img src={ happinessIllustration } alt={ translate( 'Support' ) } />
 							<VerticalNav className="customer-home__card-links">
 								<VerticalNavItem
-									path="https://en.support.wordpress.com/"
+									path={ localizeUrl( 'https://en.support.wordpress.com' ) }
 									external
 									onClick={ () => trackAction( 'support', 'docs' ) }
 								>
@@ -391,30 +619,8 @@ class Home extends Component {
 							</VerticalNav>
 						</div>
 					</Card>
-					<Card className="customer-home__go-mobile">
-						<CardHeading>{ translate( 'Go Mobile' ) }</CardHeading>
-						<h6 className="customer-home__card-subheader">
-							{ translate( 'Make updates on the go' ) }
-						</h6>
-						<div className="customer-home__card-button-pair customer-home__card-mobile">
-							<AppsBadge
-								storeLink="https://apps.apple.com/app/apple-store/id335703880?pt=299112&ct=calypso-customer-home&mt=8"
-								storeName={ 'ios' }
-								titleText={ translate( 'Download the WordPress iOS mobile app.' ) }
-								altText={ translate( 'Apple App Store download badge' ) }
-							>
-								<img src="/calypso/images/customer-home/apple-store.png" alt="" />
-							</AppsBadge>
-							<AppsBadge
-								storeLink="https://play.google.com/store/apps/details?id=org.wordpress.android&referrer=utm_source%3Dcalypso-customer-home%26utm_medium%3Dweb%26utm_campaign%3Dmobile-download-promo-pages"
-								storeName={ 'android' }
-								titleText={ translate( 'Download the WordPress Android mobile app.' ) }
-								altText={ translate( 'Google Play Store download badge' ) }
-							>
-								<img src="/calypso/images/customer-home/google-play.png" alt="" />
-							</AppsBadge>
-						</div>
-					</Card>
+					{ // "Go Mobile" has the lowest priority placement when viewed in bigger viewports.
+					! isMobile() && <GoMobileCard /> }
 				</div>
 			</div>
 		);
@@ -422,13 +628,29 @@ class Home extends Component {
 }
 
 const connectHome = connect(
-	state => {
+	( state, { checklistMode } ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteChecklist = getSiteChecklist( state, siteId );
 		const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
 		const domains = getDomainsBySiteId( state, siteId );
+		let themeInfo = {};
+		if ( 'theme' === checklistMode ) {
+			const currentThemeId = getActiveTheme( state, siteId );
+			const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
+			themeInfo = { currentTheme, currentThemeId };
+		}
+		const isNewlyCreatedSite = isNewSite( state, siteId );
+		const isAtomic = isAtomicSite( state, siteId );
+		const isChecklistComplete = isSiteChecklistComplete( state, siteId );
+		const createdAt = getSiteOption( state, siteId, 'created_at' );
+		const user = getCurrentUser( state );
+		const displayWelcomeBanner =
+			! isNewlyCreatedSite && user.date && new Date( user.date ) < new Date( '2019-08-06' );
 
 		return {
+			displayChecklist:
+				isEligibleForDotcomChecklist( state, siteId ) && hasChecklistData && ! isChecklistComplete,
+			displayWelcomeBanner,
 			site: getSelectedSite( state ),
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
@@ -436,13 +658,20 @@ const connectHome = connect(
 			menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
 			canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 			hasChecklistData,
-			isChecklistComplete: isSiteChecklistComplete( state, siteId ),
-			isAtomic: isAtomicSite( state, siteId ),
+			isChecklistComplete,
+			isAtomic,
+			needsEmailVerification: ! isCurrentUserEmailVerified( state ),
 			isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
+			siteHasPaidPlan: isSiteOnPaidPlan( state, siteId ),
+			isNewlyCreatedSite,
+			isEstablishedSite: moment().isAfter( moment( createdAt ).add( 2, 'days' ) ),
+			isRecentlyMigratedSite: isSiteRecentlyMigrated( state, siteId ),
 			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 			staticHomePageId: getSiteFrontPage( state, siteId ),
 			showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
 			hasCustomDomain: getGSuiteSupportedDomains( domains ).length > 0,
+			user,
+			...themeInfo,
 		};
 	},
 	dispatch => ( {
@@ -473,8 +702,4 @@ const connectHome = connect(
 	} )
 );
 
-export default flowRight(
-	connectHome,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( Home );
+export default flowRight( connectHome, localize, withTrackingTool( 'HotJar' ) )( Home );

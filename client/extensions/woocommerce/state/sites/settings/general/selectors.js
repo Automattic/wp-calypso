@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,27 +15,27 @@ const getRawGeneralSettings = ( state, siteId ) => {
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the general settings list has been successfully loaded from the server
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {boolean} Whether the general settings list has been successfully loaded from the server
  */
 export const areSettingsGeneralLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return isArray( getRawGeneralSettings( state, siteId ) );
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the general settings list is currently being retrieved from the server
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {boolean} Whether the general settings list is currently being retrieved from the server
  */
 export const areSettingsGeneralLoading = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return LOADING === getRawGeneralSettings( state, siteId );
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether there has been an error fetching the general settings list from the server
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {boolean} Whether there has been an error fetching the general settings list from the server
  */
 export const areSettingsGeneralLoadError = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return ERROR === getRawGeneralSettings( state, siteId );
@@ -46,9 +44,9 @@ export const areSettingsGeneralLoadError = ( state, siteId = getSelectedSiteId( 
 /**
  * Gets payment currency from API data.
  *
- * @param {Object} state Global state tree
- * @param {Number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
- * @return {Object} Payment Currency Settings
+ * @param {object} state Global state tree
+ * @param {number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
+ * @returns {object} Payment Currency Settings
  */
 export function getPaymentCurrencySettings( state, siteId = getSelectedSiteId( state ) ) {
 	const generalSettings = getRawGeneralSettings( state, siteId );
@@ -59,9 +57,9 @@ export function getPaymentCurrencySettings( state, siteId = getSelectedSiteId( s
 /**
  * Gets ship to country setting from API data.
  *
- * @param {Object} state Global state tree
- * @param {Number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
- * @return {Object} Value of the "Shipping location(s)" Setting
+ * @param {object} state Global state tree
+ * @param {number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
+ * @returns {object} Value of the "Shipping location(s)" Setting
  */
 export function getShipToCountrySetting( state, siteId = getSelectedSiteId( state ) ) {
 	const generalSettings = getRawGeneralSettings( state, siteId );

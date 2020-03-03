@@ -10,7 +10,7 @@ import React from 'react';
  * Internal dependencies
  */
 import FoldableCard from 'components/foldable-card';
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import AllSites from 'blocks/all-sites';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,6 +10,7 @@ import { parse, stringify } from 'lib/shortcode';
 
 /**
  * Serializes shortcode data (object with id property) to a Simple Payments shortcode.
+ *
  * @returns {string} Serialized shortcode, e.g., `[simple-payment id="1"]`
  */
 export function serialize( { id } ) {

@@ -1,13 +1,11 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import { HELP_COURSES_RECEIVE } from 'state/action-types';
 
-export const items = withoutPersistence( ( state = null, action ) => {
+export const items = ( state = null, action ) => {
 	switch ( action.type ) {
 		case HELP_COURSES_RECEIVE: {
 			const { courses } = action;
@@ -16,7 +14,7 @@ export const items = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	items,

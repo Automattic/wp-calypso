@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,11 +10,13 @@ import { parse as parseURL } from 'url';
  */
 
 // Libraries
+import config from 'config';
 import wpcom from 'lib/wp';
 /* eslint-enable no-restricted-imports */
 import userFactory from 'lib/user';
-import { abtest, getSavedVariations } from 'lib/abtest';
+import { getSavedVariations } from 'lib/abtest';
 import analytics from 'lib/analytics';
+import { recordRegistration, recordSocialRegistration } from 'lib/analytics/signup';
 import {
 	updatePrivacyForDomain,
 	supportsPrivacyProtectionPurchase,
@@ -38,6 +38,7 @@ import { requestSites } from 'state/sites/actions';
 import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
 import getNewSitePublicSetting from 'state/selectors/get-new-site-public-setting';
+import getNewSiteComingSoonSetting from 'state/selectors/get-new-site-coming-soon-setting';
 
 // Current directory dependencies
 import { isValidLandingPageVertical } from './verticals';
@@ -133,6 +134,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	} = stepData;
 
 	const state = reduxStore.getState();
+	const signupDependencies = getSignupDependencyStore( state );
 
 	const designType = getDesignType( state ).trim();
 	const siteTitle = getSiteTitle( state ).trim();
@@ -142,16 +144,27 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	const siteType = getSiteType( state ).trim();
 	const siteStyle = getSiteStyle( state ).trim();
 	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
-	const defaultSiteTypeTheme = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
+	const siteTypeTheme = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
+
+	// The theme can be provided in this step's dependencies,
+	// the step object itself depending on if the theme is provided in a
+	// query (see `getThemeSlug` in `DomainsStep`),
+	// or the Signup dependency store. Defaults to site type theme.
+	const theme =
+		dependencies.themeSlugWithRepo ||
+		themeSlugWithRepo ||
+		get( signupDependencies, 'themeSlugWithRepo', false ) ||
+		siteTypeTheme;
+
+	// flowName isn't always passed in
+	const flowToCheck = flowName || lastKnownFlow;
 
 	const newSiteParams = {
 		blog_title: siteTitle,
 		options: {
 			designType: designType || undefined,
-			// the theme can be provided in this step's dependencies or the
-			// step object itself depending on if the theme is provided in a
-			// query. See `getThemeSlug` in `DomainsStep`.
-			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
+			theme,
+			use_theme_annotation: get( signupDependencies, 'useThemeHeadstart', false ),
 			siteGoals: siteGoals || undefined,
 			site_style: siteStyle || undefined,
 			site_segment: siteSegment || undefined,
@@ -160,29 +173,23 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 			site_information: {
 				title: siteTitle,
 			},
+			site_creation_flow: flowToCheck,
 		},
 		public: getNewSitePublicSetting( state ),
 		validate: false,
 	};
 
-	// flowName isn't always passed in
-	const flowToCheck = flowName || lastKnownFlow;
-
-	if (
-		flowToCheck === 'onboarding' &&
-		siteSegment === 1 &&
-		newSiteParams.options.theme !== defaultSiteTypeTheme &&
-		abtest( 'verticalSuggestedThemes' ) === 'test'
-	) {
-		// Tell headstart to use the theme annotation, even though
-		// segment/vertical options are provided.
-		newSiteParams.options.use_theme_annotation = true;
+	if ( config.isEnabled( 'coming-soon' ) ) {
+		newSiteParams.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
 	}
 
-	if ( ! siteUrl && isDomainStepSkippable( flowToCheck ) ) {
+	const shouldSkipDomainStep = ! siteUrl && isDomainStepSkippable( flowToCheck );
+	const shouldHideFreePlan = get( signupDependencies, 'shouldHideFreePlan', false );
+
+	if ( shouldSkipDomainStep || shouldHideFreePlan ) {
 		newSiteParams.blog_name =
 			get( user.get(), 'username' ) ||
-			get( getSignupDependencyStore( state ), 'username' ) ||
+			get( signupDependencies, 'username' ) ||
 			siteTitle ||
 			siteType ||
 			getSiteVertical( state );
@@ -198,6 +205,11 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		newSiteParams.blog_title = siteTitle || siteUrl;
 		newSiteParams.options.nux_import_engine = getSelectedImportEngine( state );
 		newSiteParams.options.nux_import_from_url = getNuxUrlInputValue( state );
+	}
+
+	// Provide the default business starter content for the FSE user testing flow.
+	if ( 'test-fse' === lastKnownFlow ) {
+		newSiteParams.options.site_segment = 1;
 	}
 
 	if ( isEligibleForPageBuilder( siteSegment, flowToCheck ) && shouldEnterPageBuilder() ) {
@@ -370,7 +382,18 @@ export function launchSiteApi( callback, dependencies ) {
 export function createAccount(
 	callback,
 	dependencies,
-	{ userData, flowName, queryArgs, service, access_token, id_token, oauth2Signup },
+	{
+		userData,
+		flowName,
+		queryArgs,
+		service,
+		access_token,
+		id_token,
+		oauth2Signup,
+		recaptchaDidntLoad,
+		recaptchaFailed,
+		recaptchaToken,
+	},
 	reduxStore
 ) {
 	const state = reduxStore.getState();
@@ -410,7 +433,7 @@ export function createAccount(
 					);
 				}
 
-				analytics.recordSocialRegistration();
+				recordSocialRegistration();
 
 				callback( undefined, pick( response, [ 'username', 'bearer_token' ] ) );
 			}
@@ -437,7 +460,10 @@ export function createAccount(
 							// convert to legacy oauth2_redirect format: %s@https://public-api.wordpress.com/oauth2/authorize/...
 							oauth2_redirect: queryArgs.oauth2_redirect && '0@' + queryArgs.oauth2_redirect,
 					  }
-					: null
+					: null,
+				recaptchaDidntLoad ? { 'g-recaptcha-error': 'recaptcha_didnt_load' } : null,
+				recaptchaFailed ? { 'g-recaptcha-error': 'recaptcha_failed' } : null,
+				recaptchaToken ? { 'g-recaptcha-response': recaptchaToken } : null
 			),
 			( error, response ) => {
 				const errors =
@@ -473,8 +499,8 @@ export function createAccount(
 					userData.ID;
 
 				// Fire after a new user registers.
-				analytics.recordRegistration( { flow: flowName } );
-				analytics.identifyUser( username, userId );
+				recordRegistration( flowName );
+				analytics.identifyUser( { ID: userId, username, email: userData.email } );
 
 				const providedDependencies = assign( { username }, bearerToken );
 
@@ -503,6 +529,10 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 		options: { theme: themeSlugWithRepo },
 		validate: false,
 	};
+
+	if ( config.isEnabled( 'coming-soon' ) ) {
+		data.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
+	}
 
 	wpcom.undocumented().sitesNew( data, function( errors, response ) {
 		let providedDependencies, siteSlug;
@@ -667,28 +697,10 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 }
 
 /**
- * Creates a user account using an email only and logs them in immediately.
- * It differs from `createPasswordlessUser` in that we don't require a verification step before the user can continue with onboarding.
- * Returns the dependencies for the step.
- *
- * @param {function} callback API callback function
- * @param {object}   data     An object sent via POST to WPCOM API with the following values: `email`
- */
-export function createUserAccountFromEmailAddress( callback, { email } ) {
-	wpcom
-		.undocumented()
-		.createUserAccountFromEmailAddress( { email }, null )
-		.then( response =>
-			callback( null, { username: response.username, bearer_token: response.token.access_token } )
-		)
-		.catch( err => callback( err ) );
-}
-
-/**
  * Creates a user account and sends the user a verification code via email to confirm the account.
  * Returns the dependencies for the step.
  *
- * @param {function} callback Callback function
+ * @param {Function} callback Callback function
  * @param {object}   data     POST data object
  */
 export function createPasswordlessUser( callback, { email } ) {
@@ -702,7 +714,7 @@ export function createPasswordlessUser( callback, { email } ) {
 /**
  * Verifies a passwordless user code.
  *
- * @param {function} callback Callback function
+ * @param {Function} callback Callback function
  * @param {object}   data     POST data object
  */
 export function verifyPasswordlessUser( callback, { email, code } ) {

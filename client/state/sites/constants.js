@@ -1,5 +1,3 @@
-/** @format */
-
 export const SITE_REQUEST_FIELDS = [
 	'ID',
 	'URL',
@@ -7,6 +5,7 @@ export const SITE_REQUEST_FIELDS = [
 	'icon',
 	'is_multisite',
 	'is_private',
+	'is_coming_soon',
 	'is_vip',
 	'jetpack',
 	'jetpack_modules',
@@ -17,7 +16,9 @@ export const SITE_REQUEST_FIELDS = [
 	'visible',
 	'lang',
 	'launch_status',
+	'site_migration',
 	'is_fse_active',
+	'is_fse_eligible',
 ].join();
 
 export const SITE_REQUEST_OPTIONS = [

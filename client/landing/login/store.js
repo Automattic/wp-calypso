@@ -26,7 +26,8 @@ import currentUser from 'state/current-user/reducer';
 import preferences from 'state/preferences/reducer';
 import oauth2Clients from 'state/oauth2-clients/reducer';
 
-// Create Redux store
+// Legacy reducers
+// The reducers in this list are not modularized, and are always loaded on boot.
 const reducer = combineReducers( {
 	application,
 	documentHead,

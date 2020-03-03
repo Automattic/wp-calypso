@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import Popover from 'components/popover';
 
 class ContactFormDialogFieldRemoveButton extends React.PureComponent {

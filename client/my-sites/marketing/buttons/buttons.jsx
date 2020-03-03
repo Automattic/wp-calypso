@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -199,8 +197,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	protectForm,
-	localize
-)( SharingButtons );
+export default flowRight( connectComponent, protectForm, localize )( SharingButtons );

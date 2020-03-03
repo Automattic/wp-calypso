@@ -264,12 +264,9 @@ class Login extends Component {
 			}
 
 			if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-				headerText = translate( 'Howdy!{{br/}}Log in to %(clientTitle)s:', {
+				headerText = translate( 'Sign in to %(clientTitle)s', {
 					args: {
 						clientTitle: oauth2Client.title,
-					},
-					components: {
-						br: <br />,
 					},
 				} );
 			}
@@ -437,7 +434,7 @@ export default connect(
 		linkingSocialService: getSocialAccountLinkService( state ),
 		partnerSlug: getPartnerSlugFromQuery( state ),
 		isJetpackWooCommerceFlow:
-			'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' ),
+			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 	} ),
 	{ recordTracksEvent }

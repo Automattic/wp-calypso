@@ -1,5 +1,6 @@
 module.exports = {
+	preset: '@automattic/calypso-build',
 	rootDir: __dirname,
-	testMatch: [ '**/test/**/*.[jt]s?(x)' ],
-	modulePathIgnorePatterns: [ 'enzyme-adapter.js' ],
+	testEnvironment: 'jsdom',
+	globals: { window: { navigator: { userAgent: 'jest' } } },
 };

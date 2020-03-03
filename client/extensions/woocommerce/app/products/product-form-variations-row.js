@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +12,7 @@ import { head } from 'lodash';
  * Internal dependencies
  */
 import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
 import FormTextInput from 'components/forms/form-text-input';
 import FormWeightInput from 'woocommerce/components/form-weight-input';

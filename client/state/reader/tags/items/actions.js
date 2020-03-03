@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,17 +12,19 @@ import {
 	READER_UNFOLLOW_TAG_REQUEST,
 	READER_UNFOLLOW_TAG_RECEIVE,
 	READER_FOLLOW_TAG_REQUEST,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 
 import 'state/data-layer/wpcom/read/tags';
 import 'state/data-layer/wpcom/read/tags/mine/delete';
 import 'state/data-layer/wpcom/read/tags/mine/new';
 
+import 'state/reader/init';
+
 /**
  * Helper function. Turns a tag name into a tag "slug" for use with the API.
  *
- * @param  {String} tag  Tag name to parse into a slug
- * @return {String}      Tag slug
+ * @param  {string} tag  Tag name to parse into a slug
+ * @returns {string}      Tag slug
  */
 export const slugify = tag =>
 	encodeURIComponent(

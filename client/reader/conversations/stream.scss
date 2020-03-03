@@ -9,7 +9,6 @@
 }
 
 .conversations__stream .reader-post-card.card.is-compact {
-
 	.reader-post-card__post-details {
 		margin-top: -2px;
 	}
@@ -29,7 +28,7 @@
 	}
 
 	.reader-post-card__title {
-		line-height: 1.2;
+		line-height: 1.25;
 		max-height: 16px * 1.6;
 		margin-top: 2px;
 		overflow: hidden;
@@ -91,4 +90,3 @@
 		margin-top: 70px;
 	}
 }
-

@@ -12,8 +12,8 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
  * Internal Dependencies
  */
 import config from 'config';
-import { submitSurvey } from 'lib/upgrades/actions';
-import Dialog from 'components/dialog';
+import { submitSurvey } from 'lib/purchases/actions';
+import { Dialog, Button } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormLabel from 'components/forms/form-label';
@@ -25,7 +25,6 @@ import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happ
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precancellation-chat-available';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import Button from 'components/button';
 import HappychatButton from 'components/happychat/button';
 import * as steps from './steps';
 import initialSurveyState from './initial-survey-state';
@@ -78,13 +77,21 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	getAllSurveySteps = () => {
-		const { purchase, isChatAvailable, isChatActive, precancellationChatAvailable } = this.props;
+		const {
+			purchase,
+			isChatAvailable,
+			isChatActive,
+			precancellationChatAvailable,
+			downgradeClick,
+		} = this.props;
+		const downgradePossible = !! downgradeClick;
 
 		return stepsForProductAndSurvey(
 			this.state,
 			purchase,
 			isChatAvailable || isChatActive,
-			precancellationChatAvailable
+			precancellationChatAvailable,
+			downgradePossible
 		);
 	};
 
@@ -229,9 +236,9 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	onSubmit = () => {
-		const { purchase, selectedSite } = this.props;
+		const { purchase } = this.props;
 
-		if ( ! isGoogleApps( purchase ) && selectedSite ) {
+		if ( ! isGoogleApps( purchase ) ) {
 			this.setState( {
 				isSubmitting: true,
 			} );
@@ -252,8 +259,8 @@ class CancelPurchaseForm extends React.Component {
 
 			submitSurvey(
 				'calypso-remove-purchase',
-				selectedSite.ID,
-				enrichedSurveyData( surveyData, selectedSite, purchase )
+				purchase.siteId,
+				enrichedSurveyData( surveyData, purchase )
 			).then( () => {
 				this.setState( {
 					isSubmitting: false,
@@ -340,7 +347,7 @@ class CancelPurchaseForm extends React.Component {
 		appendRadioOption( 'anotherReasonOne', translate( 'Another reason…' ), ' ' );
 
 		return (
-			<div class="cancel-purchase-form__question">
+			<div className="cancel-purchase-form__question">
 				<FormLegend>{ translate( 'Please tell us why you are canceling:' ) }</FormLegend>
 				{ questionOneOrder.map( question => reasons[ question ] ) }
 			</div>
@@ -402,7 +409,7 @@ class CancelPurchaseForm extends React.Component {
 		appendRadioOption( 'anotherReasonTwo', translate( 'Another reason…' ), ' ' );
 
 		return (
-			<div class="cancel-purchase-form__question">
+			<div className="cancel-purchase-form__question">
 				<FormLegend>{ translate( 'Where is your next adventure taking you?' ) }</FormLegend>
 				{ questionTwoOrder.map( question => reasons[ question ] ) }
 			</div>
@@ -444,7 +451,7 @@ class CancelPurchaseForm extends React.Component {
 		);
 
 		return (
-			<div class="cancel-purchase-form__question">
+			<div className="cancel-purchase-form__question">
 				<FormLegend>
 					{ translate( 'You imported from another site. How did the import go?' ) }
 				</FormLegend>

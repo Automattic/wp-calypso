@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,6 +9,7 @@ import { http as rawHttp } from 'state/http/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { requestHttpData } from 'state/data-layer/http-data';
 import { filterStateToApiQuery } from 'state/activity-log/utils';
+import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import fromActivityLogApi from 'state/data-layer/wpcom/sites/activity/from-api';
 import fromActivityTypeApi from 'state/data-layer/wpcom/sites/activity-types/from-api';
 
@@ -25,7 +24,7 @@ import fromActivityTypeApi from 'state/data-layer/wpcom/sites/activity-types/fro
  * } );
  *
  * @param {string} url location from which to GET data
- * @return {object} HTTP data wrapped value
+ * @returns {object} HTTP data wrapped value
  */
 export const requestFromUrl = url =>
 	requestHttpData( `get-at-url-${ url }`, rawHttp( { method: 'GET', url } ), {
@@ -150,6 +149,28 @@ export const requestGeoLocation = () =>
 		{ fromApi: () => ( { body: { country_short } } ) => [ [ 'geo', country_short ] ] }
 	);
 
+export const requestFeedDiscovery = feedId => {
+	const requestId = `feed-discovery-${ feedId }`;
+
+	return requestHttpData(
+		requestId,
+		http(
+			{
+				method: 'GET',
+				path: '/read/feed',
+				query: {
+					url: feedId,
+				},
+				retryPolicy: noRetry(),
+			},
+			{}
+		),
+		{
+			fromApi: () => ( { feeds } ) => [ [ requestId, feeds ] ],
+		}
+	);
+};
+
 export const requestSiteAlerts = siteId => {
 	const id = `site-alerts-${ siteId }`;
 
@@ -209,62 +230,3 @@ export const requestSiteAlerts = siteId => {
 		}
 	);
 };
-
-export const requestAtomicSFTPDetails = siteId =>
-	requestHttpData(
-		`atomic-hosting-data-${ siteId }`,
-		http(
-			{
-				method: 'GET',
-				path: `/sites/${ siteId }/hosting/ssh-user`,
-				apiNamespace: 'wpcom/v2',
-			},
-			{}
-		),
-		{
-			freshness: 5 * 60 * 1000,
-			fromApi: () => ( { username } ) => [
-				[ `atomic-hosting-data-${ siteId }`, username ? { username } : {} ],
-			],
-		}
-	);
-
-export const resetAtomicSFTPUserPassword = siteId =>
-	requestHttpData(
-		`atomic-hosting-data-${ siteId }`,
-		http(
-			{
-				method: 'POST',
-				path: `/sites/${ siteId }/hosting/ssh-user/reset-password`,
-				apiNamespace: 'wpcom/v2',
-				body: {},
-			},
-			{}
-		),
-		{
-			fromApi: () => ( { username, password } ) => {
-				return [ [ `atomic-hosting-data-${ siteId }`, { username, password } ] ];
-			},
-			freshness: 0,
-		}
-	);
-
-export const createAtomicSFTPUser = siteId =>
-	requestHttpData(
-		`atomic-hosting-data-${ siteId }`,
-		http(
-			{
-				method: 'POST',
-				path: `/sites/${ siteId }/hosting/ssh-user`,
-				apiNamespace: 'wpcom/v2',
-				body: {},
-			},
-			{}
-		),
-		{
-			fromApi: () => ( { username, password } ) => {
-				return [ [ `atomic-hosting-data-${ siteId }`, { username, password } ] ];
-			},
-			freshness: 0,
-		}
-	);

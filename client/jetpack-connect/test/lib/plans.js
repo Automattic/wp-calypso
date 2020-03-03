@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -198,7 +197,6 @@ export const SELECTED_SITE = deepFreeze( {
 	is_previewable: false,
 	slug: SITE_SLUG,
 	title: 'Test Site',
-	hasMinimumJetpackVersion: true,
 	canAutoupdateFiles: true,
 	canUpdateFiles: true,
 	canManage: true,

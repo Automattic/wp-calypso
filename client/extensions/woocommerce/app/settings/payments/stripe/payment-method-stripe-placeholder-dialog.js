@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 
 const PaymentMethodStripePlaceholderDialog = ( { translate } ) => {
 	const buttons = [

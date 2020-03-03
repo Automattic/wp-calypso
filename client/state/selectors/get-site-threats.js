@@ -1,10 +1,3 @@
-/** @format */
-
-/**
- * External dependencies
- */
-import { get } from 'lodash';
-
 export default function getSiteThreats( state, siteId ) {
-	return get( state, [ 'rewind', siteId, 'alerts', 'threats' ], [] );
+	return state.rewind?.[ siteId ]?.state?.alerts?.threats ?? [];
 }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,8 +10,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import config from 'config';
 import CreditCard from 'components/credit-card';
 import CreditCardDelete from './credit-card-delete';

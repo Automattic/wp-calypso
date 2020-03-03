@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -8,12 +6,13 @@ import { getSerializedDomainsSuggestionsQuery } from './utils';
 
 /**
  * Returns domains suggestions information for a query.
- * @param   {Object}   state                                Global state tree
- * @param   {Object}   queryObject                          domain suggestions queryObject
- * @param   {String}   queryObject.query                    domainQuery
- * @param   {Number}   queryObject.quantity                 max results
- * @param   {String}   queryObject.vendor                   vendor
- * @param   {?Boolean} queryObject.includeSubdomain         adds wordpress subdomain suggestions when true
+ *
+ * @param   {object}   state                                Global state tree
+ * @param   {object}   queryObject                          domain suggestions queryObject
+ * @param   {string}   queryObject.query                    domainQuery
+ * @param   {number}   queryObject.quantity                 max results
+ * @param   {string}   queryObject.vendor                   vendor
+ * @param   {?boolean} queryObject.includeSubdomain         adds wordpress subdomain suggestions when true
  * @returns {?Array}   domain suggestions array
  */
 export function getDomainsSuggestions( state, queryObject ) {
@@ -26,13 +25,14 @@ export function getDomainsSuggestions( state, queryObject ) {
 
 /**
  * Returns true, if we're currently requesting domains suggestions.
- * @param   {Object}     state                                Global state tree
- * @param   {Object}     queryObject                          domain suggestions queryObject
- * @param   {String}     queryObject.query                    domainQuery
- * @param   {Number}     queryObject.quantity                 max results
- * @param   {String}     queryObject.vendor                   vendor
- * @param   {?Boolean}   queryObject.includeSubdomain  adds wordpress subdomain suggestions when true
- * @returns {Boolean}   true if requesting
+ *
+ * @param   {object}     state                                Global state tree
+ * @param   {object}     queryObject                          domain suggestions queryObject
+ * @param   {string}     queryObject.query                    domainQuery
+ * @param   {number}     queryObject.quantity                 max results
+ * @param   {string}     queryObject.vendor                   vendor
+ * @param   {?boolean}   queryObject.includeSubdomain  adds wordpress subdomain suggestions when true
+ * @returns {boolean}   true if requesting
  */
 export function isRequestingDomainsSuggestions( state, queryObject ) {
 	const serializedQuery = getSerializedDomainsSuggestionsQuery( queryObject );
@@ -44,13 +44,14 @@ export function isRequestingDomainsSuggestions( state, queryObject ) {
 
 /**
  * Returns an error for a given domains suggestions query.
- * @param   {Object}     state                                Global state tree
- * @param   {Object}     queryObject                          domain suggestions queryObject
- * @param   {String}     queryObject.query                    domainQuery
- * @param   {Number}     queryObject.quantity                 max results
- * @param   {String}     queryObject.vendor                   vendor
- * @param   {?Boolean}   queryObject.includeSubdomain  adds wordpress subdomain suggestions when true
- * @returns {?Object}    error or null
+ *
+ * @param   {object}     state                                Global state tree
+ * @param   {object}     queryObject                          domain suggestions queryObject
+ * @param   {string}     queryObject.query                    domainQuery
+ * @param   {number}     queryObject.quantity                 max results
+ * @param   {string}     queryObject.vendor                   vendor
+ * @param   {?boolean}   queryObject.includeSubdomain  adds wordpress subdomain suggestions when true
+ * @returns {?object}    error or null
  */
 export function getDomainsSuggestionsError( state, queryObject ) {
 	const serializedQuery = getSerializedDomainsSuggestionsQuery( queryObject );

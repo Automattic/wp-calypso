@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import getActiveDiscount from 'state/selectors/get-active-discount';
-import { isDiscountActive } from 'state/selectors/get-active-discount';
+import getActiveDiscount, { isDiscountActive } from 'state/selectors/get-active-discount';
 import { hasActivePromotion } from 'state/active-promotions/selectors';
 import { getSitePlanSlug } from 'state/sites/selectors';
 import { abtest } from 'lib/abtest';

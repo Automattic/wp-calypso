@@ -13,7 +13,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import QueryPlans from 'components/data/query-plans';
 import PlanCompareCard from 'my-sites/plan-compare-card';
 import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
@@ -162,7 +162,4 @@ const mapStateToProps = ( state, { plan = PLAN_PERSONAL } ) => ( {
 
 const mapDispatchToProps = dispatch => bindActionCreators( { recordTracksEvent }, dispatch );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( UpgradeNudgeExpanded ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( UpgradeNudgeExpanded ) );

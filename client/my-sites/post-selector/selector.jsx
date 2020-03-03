@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,9 +7,8 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import getScrollbarSize from 'dom-helpers/util/scrollbarSize';
-import List from 'react-virtualized/List';
-import AutoSizer from 'react-virtualized/AutoSizer';
+import scrollbarSize from 'dom-helpers/scrollbarSize';
+import { AutoSizer, List } from '@automattic/react-virtualized';
 import {
 	debounce,
 	memoize,
@@ -39,7 +36,6 @@ import {
 	getPostsLastPageForQuery,
 } from 'state/posts/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
-import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import QueryPosts from 'components/data/query-posts';
 
@@ -168,14 +164,12 @@ class PostSelectorPosts extends React.Component {
 
 	hasNoSearchResults = () => {
 		return (
-			! this.props.loading &&
-			( this.props.posts && ! this.props.posts.length ) &&
-			this.state.searchTerm
+			! this.props.loading && this.props.posts && ! this.props.posts.length && this.state.searchTerm
 		);
 	};
 
 	hasNoPosts = () => {
-		return ! this.props.loading && ( this.props.posts && ! this.props.posts.length );
+		return ! this.props.loading && this.props.posts && ! this.props.posts.length;
 	};
 
 	getItem = index => {
@@ -332,7 +326,7 @@ class PostSelectorPosts extends React.Component {
 							<span
 								className="post-selector__label-type"
 								style={ {
-									paddingRight: this.isCompact() ? 0 : getScrollbarSize(),
+									paddingRight: this.isCompact() ? 0 : scrollbarSize(),
 								} }
 							>
 								{ decodeEntities(
@@ -463,12 +457,7 @@ class PostSelectorPosts extends React.Component {
 
 export default connect( ( state, ownProps ) => {
 	const { siteId, query } = ownProps;
-
-	const apiVersion =
-		! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.0' )
-			? '1.2'
-			: undefined;
-	const queryWithVersion = { ...query, apiVersion };
+	const queryWithVersion = { ...query, apiVersion: '1.2' };
 
 	return {
 		posts: getPostsForQueryIgnoringPage( state, siteId, queryWithVersion ),

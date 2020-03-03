@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -19,7 +18,7 @@ import PublicizeServices from './publicize-services';
 import { publicizeConnections } from 'lib/paths';
 import PostMetadata from 'lib/post-metadata';
 import PopupMonitor from 'lib/popup-monitor';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';

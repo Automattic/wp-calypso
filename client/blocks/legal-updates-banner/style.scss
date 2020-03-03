@@ -1,0 +1,46 @@
+.legal-updates-banner {
+	position: fixed;
+	bottom: 0;
+	margin: 0;
+	width: 100%;
+	z-index: z-index( 'root', '.legal-updates-banner' );
+	padding: 1rem;
+	background-color: var( --color-neutral-80 );
+	color: var( --color-text-inverted );
+	display: flex;
+	flex-direction: column;
+
+	a {
+		color: var( --color-text-inverted );
+		text-decoration: underline;
+	}
+
+	.legal-updates-banner__content {
+		max-width: 800px;
+		margin-bottom: 1rem;
+	}
+
+	.legal-updates-banner__accept {
+		width: 100%;
+	}
+
+	@include breakpoint( '>660px' ) {
+		padding: 1rem 1.5rem;
+		flex-direction: row;
+		align-items: center;
+
+		.legal-updates-banner__content {
+			padding-right: 1.5rem;
+			margin-right: auto;
+			margin-bottom: 0;
+		}
+	}
+
+	@include breakpoint( '>960px' ) {
+		padding: 1rem 2rem;
+
+		.legal-updates-banner__content {
+			padding-right: 2rem;
+		}
+	}
+}

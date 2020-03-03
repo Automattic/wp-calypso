@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +15,7 @@ import Gridicon from 'components/gridicon';
 import StepWrapper from 'signup/step-wrapper';
 import analytics from 'lib/analytics';
 import verticals from './verticals';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getStepUrl } from 'signup/utils';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
 import { setSurvey } from 'state/signup/steps/survey/actions';

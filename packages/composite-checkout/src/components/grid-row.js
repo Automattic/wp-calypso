@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 
 export default function GridRow( { gap, columnWidths, className, children } ) {
@@ -20,8 +20,10 @@ GridRow.propTypes = {
 };
 
 const Row = styled.div`
+	display: -ms-grid;
 	display: grid;
 	width: 100%;
+	-ms-grid-columns: ${props => props.columnWidths.replace( ' ', ' ' + props.gap + ' ' )};
 	grid-template-columns: ${props => props.columnWidths};
 	grid-column-gap: ${props => props.gap};
 	justify-items: stretch;

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,19 +6,19 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { map, zipObject, fill, size, filter, get, compact, partition, min, noop } from 'lodash';
 
-/***
+/**
  * Internal dependencies
  */
-import getActiveReplyCommentId from 'state/selectors/get-active-reply-comment-id';
 import PostComment from 'blocks/comments/post-comment';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import {
 	commentsFetchingStatus,
+	getActiveReplyCommentId,
+	getCommentErrors,
 	getDateSortedPostComments,
 	getExpansionsForPost,
 	getHiddenCommentsForPost,
 	getPostCommentsTree,
-	getCommentErrors,
 } from 'state/comments/selectors';
 import ConversationCaterpillar from 'blocks/conversation-caterpillar';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';

@@ -29,7 +29,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * @format
  */
 
 /**
@@ -43,7 +42,7 @@ const { existsSync, mkdirSync, writeFileSync } = require( 'fs' );
 /**
  * Default output headers if none specified in plugin options.
  *
- * @type {Object}
+ * @type {object}
  */
 const DEFAULT_HEADERS = {
 	'content-type': 'text/plain; charset=UTF-8',
@@ -61,9 +60,9 @@ const DEFAULT_DIR = 'build/';
  * Given an argument node (or recursed node), attempts to return a string
  * represenation of that node's value.
  *
- * @param {Object} node AST node.
+ * @param {object} node AST node.
  *
- * @return {string} String value.
+ * @returns {string} String value.
  */
 function getNodeAsString( node ) {
 	if ( undefined === node ) {

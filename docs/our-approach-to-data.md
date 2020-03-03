@@ -9,7 +9,7 @@ There have been three major "eras" of data management throughout the lifetime of
 
 ### First Era: Emitter Objects (June 2014 - April 2015)
 
-Our original approach to managing data took an object-oriented approach, wherein an instance of the store would inherit the [`EventEmitter` interface](https://nodejs.org/api/events.html#events_inheriting_from_eventemitter). Typically, a single instance of each object store was shared across the entire application. The instance was responsible for storing data, but included conveniences to automatically fetch data upon the first request. Used in combination with the [`data-observe` mixin](../client/lib/mixins/data-observe), a developer could monitor an instance of the store passed as a prop to a React component to automatically re-render its contents if the store emitted a `change` event.
+Our original approach to managing data took an object-oriented approach, wherein an instance of the store would inherit the [`EventEmitter` interface](https://nodejs.org/api/events.html#events_class_eventemitter). Typically, a single instance of each object store was shared across the entire application. The instance was responsible for storing data, but included conveniences to automatically fetch data upon the first request. Used in combination with the [`data-observe` mixin](../client/lib/mixins/data-observe), a developer could monitor an instance of the store passed as a prop to a React component to automatically re-render its contents if the store emitted a `change` event.
 
 __Identifying characteristics:__
 
@@ -21,7 +21,7 @@ __Identifying characteristics:__
 
 ### Second Era: Facebook Flux (April 2015 - December 2015)
 
-Facebook's [Flux architecture](https://facebook.github.io/flux/) is a pattern that encourages a [unidirectional data flow](https://facebook.github.io/flux/img/flux-simple-f8-diagram-explained-1300w.png) in which stores can only be manipulated via actions dispatched by a global dispatcher object. The raw data is never exposed by the store module, and as such, data can only be accessed by using helper ("getter") methods from the exported object. Much like the event emitter object approach, a Flux store module inherits from the [`EventEmitter` interface](https://nodejs.org/api/events.html#events_inheriting_from_eventemitter), though a Flux store should only ever emit a `change` event (this was common but not as strictly enforced in our emitter objects). Stores subscribe to the dispatcher and listen for actions it is concerned with. Action creators are responsible for dispatching these actions. As an example, it is common to have an action creator that triggers a fetch for data - this action creator would dispatch a `FETCH_` prefixed "view" action upon the initial request, then subsequently a `RECEIVE_` prefixed "server" action upon receiving the data. Any store in the application could react to one or both of these action types.
+Facebook's [Flux architecture](https://facebook.github.io/flux/) is a pattern that encourages a [unidirectional data flow](https://facebook.github.io/flux/img/overview/flux-simple-f8-diagram-explained-1300w.png) in which stores can only be manipulated via actions dispatched by a global dispatcher object. The raw data is never exposed by the store module, and as such, data can only be accessed by using helper ("getter") methods from the exported object. Much like the event emitter object approach, a Flux store module inherits from the [`EventEmitter` interface](https://nodejs.org/api/events.html#events_class_eventemitter), though a Flux store should only ever emit a `change` event (this was common but not as strictly enforced in our emitter objects). Stores subscribe to the dispatcher and listen for actions it is concerned with. Action creators are responsible for dispatching these actions. As an example, it is common to have an action creator that triggers a fetch for data - this action creator would dispatch a `FETCH_` prefixed "view" action upon the initial request, then subsequently a `RECEIVE_` prefixed "server" action upon receiving the data. Any store in the application could react to one or both of these action types.
 
 __Identifying characteristics:__
 
@@ -44,9 +44,9 @@ __Advantages:__
 [Redux](http://redux.js.org/), described as a "predictable state container", is an evolution of the principles advocated in Flux. It is not a far departure from Flux, but is distinct in many ways:
 
 - There is typically a single store instance which maintains all state for the entire application
-- Action creators do not call to the global dispatcher directly, but rather return simple action objects which can be passed to the [store `dispatch` method](http://redux.js.org/docs/api/Store.html#dispatch)
+- Action creators do not call to the global dispatcher directly, but rather return simple action objects which can be passed to the [store `dispatch` method](https://redux.js.org/api/store#dispatchaction)
 - While Flux Stores are responsible for maintaining own state, Redux reducers are composable functions that manipulate specific parts of the global state "tree"
-- Since state is the [single source of truth](http://redux.js.org/docs/introduction/ThreePrinciples.html#single-source-of-truth) for the entire application, reducers tend to be much simpler and more transparent than Flux stores
+- Since state is the [single source of truth](https://redux.js.org/introduction/three-principles#single-source-of-truth) for the entire application, reducers tend to be much simpler and more transparent than Flux stores
 
 __Identifying characteristics:__
 
@@ -66,10 +66,10 @@ All new data requirements should be implemented as part of the global Redux stat
 
 ### Terminology
 
-The Redux documentation includes a [detailed glossary of terms](http://redux.js.org/docs/Glossary.html). Below is an abbreviated overview of a few of the most common terms:
+The Redux documentation includes a [detailed glossary of terms](https://redux.js.org/glossary). Below is an abbreviated overview of a few of the most common terms:
 
 - Global state (state tree): A deeply nested plain JavaScript object encapsulating the current state of the application, managed by a Redux store instance
-- Store instance: An object which manages the current state of the application, both in holding the current state value ([`getState`](http://redux.js.org/docs/api/Store.html#getState)), but also as an entry point to introducing new data ([`dispatch`](http://redux.js.org/docs/api/Store.html#dispatch))
+- Store instance: An object which manages the current state of the application, both in holding the current state value ([`getState`](https://redux.js.org/api/store#getstate)), but also as an entry point to introducing new data ([`dispatch`](https://redux.js.org/api/store#dispatchaction))
 - Action creators: A function that returns an action
 - Actions: An object describing an intended state mutation
 - Reducers: A function that, given the current state and an action, returns a new state
@@ -77,17 +77,17 @@ The Redux documentation includes a [detailed glossary of terms](http://redux.js.
 
 ### Folder Structure
 
-The root module of the `state` directory exports a single reducer function. We leverage [Redux's `combineReducers` function](http://redux.js.org/docs/api/combineReducers.html) to separate data concerns into their own piece of the overall state. These pieces are reflected by the folder structure of the `state` directory, as shown in the hierarchy below:
+The root module of the `state` directory exports a single reducer function. We leverage [Redux's `combineReducers` function](https://redux.js.org/api/combinereducers) to separate data concerns into their own piece of the overall state. These pieces are reflected by the folder structure of the `state` directory, as shown in the hierarchy below:
 
 ```text
 client/state/
 ├── index.js
 ├── action-types.js
-├── selectors/
 └── { subject }/
     ├── actions.js
     ├── reducer.js
     ├── schema.js
+    ├── selectors.js
     └── test/
         ├── actions.js
         └── reducer.js
@@ -97,7 +97,7 @@ For example, the reducer responsible for maintaining the `state.sites` key withi
 
 ### Actions
 
-An action describes an intent to change the state of the application. When an action object is [dispatched](http://redux.js.org/docs/api/Store.html#dispatch) to an instance of a Redux store, the reducer function for that store is called with the action. Given the structure of our application state, specific subtrees can maintain their own state in response to any actions for which they are concerned.
+An action describes an intent to change the state of the application. When an action object is [dispatched](https://redux.js.org/api/store#dispatchaction) to an instance of a Redux store, the reducer function for that store is called with the action. Given the structure of our application state, specific subtrees can maintain their own state in response to any actions for which they are concerned.
 
 An action object should contain a `type` key describing the action. All action types are defined in [`state/action-types.js`](https://github.com/Automattic/wp-calypso/blob/master/client/state/action-types.js). For example, to describe the intent of changing the state to include a few new post objects, you might create an action with the type `POSTS_RECEIVE`. Any other relevant properties can be included in this object if they are needed by the reducer function handler.
 
@@ -105,7 +105,7 @@ As mentioned above, new actions should be added to `action-types.js`. Action typ
 
 ### Data Normalization
 
-Because a Redux store is the [single source of truth](http://redux.js.org/docs/introduction/ThreePrinciples.html#single-source-of-truth) for the entire application state, it is important that all known data be tracked within the state tree and that it be well-structured. In your reducer functions, consider the data being manipulated in the tree and ensure that subjects are appropriately separated to minimize redundancy and to avoid synchronization concerns. When a subject needs to refer to another part of the tree, store a reference (likely an ID). Tracking an indexed set of items makes it easy to navigate the tree when needing to perform a lookup.
+Because a Redux store is the [single source of truth](https://redux.js.org/introduction/three-principles#single-source-of-truth) for the entire application state, it is important that all known data be tracked within the state tree and that it be well-structured. In your reducer functions, consider the data being manipulated in the tree and ensure that subjects are appropriately separated to minimize redundancy and to avoid synchronization concerns. When a subject needs to refer to another part of the tree, store a reference (likely an ID). Tracking an indexed set of items makes it easy to navigate the tree when needing to perform a lookup.
 
 As an example, consider that there are many variations of a "user" in the application. A user may be the current user, a subscriber to a site, or someone who has left a comment on a story in your Reader feed. Each of these display user data in different ways, and in some cases retrieve the data from different sources. However, they can all be classified as a user, and relations between the user and a display context can be established through references.
 
@@ -171,7 +171,7 @@ Framed this way, we can consider two types of data components: app components an
 
 An app component wraps a visual component, connecting it to the global application state. We use the [`react-redux` library](https://github.com/reactjs/react-redux) to assist in creating bindings between React components and the Redux store instance.
 
-Below is an example of an app component that retrieves an array of posts for a given site and renders them. (This example uses the stateless function syntax for declaring components: see the [React 0.14 upgrade guide](https://facebook.github.io/react/blog/2015/10/07/react-v0.14.html#stateless-functional-components) if you're unfamiliar with it.)
+Below is an example of an app component that retrieves an array of posts for a given site and renders them. (This example uses the stateless function syntax for declaring components: see the [React 0.14 upgrade guide](https://reactjs.org/blog/2015/10/07/react-v0.14.html#stateless-function-components) if you're unfamiliar with it.)
 
 ```jsx
 function PostsList( { posts } ) {
@@ -257,17 +257,11 @@ let posts = getSitePosts( state, siteId );
 let posts = state.sites.sitePosts[ siteId ].map( ( postId ) => state.posts.items[ postId ] );
 ```
 
-You'll note in this example that the entire `state` object is passed to the selector. We've chosen to standardize on always sending the entire state object to any selector as the first parameter. This consistency should alleviate uncertainty in calling selectors, as you can always assume that it'll have a similar argument signature. More importantly, it's not uncommon for selectors to need to traverse different parts of the global state, as in the example above where we pull from both the `sites` and `posts` top-level state keys.
+In addition, following our modularized state approach (see [`client/state/README.md`](https://github.com/Automattic/wp-calypso/blob/master/client/state/README.md) for more details), we make sure to initialize the relevant portion of state by importing its `init` module. This is best handled in a dedicated selector module, rather than in individual connected components.
 
-Much like action types, because selectors operate on the entire global state object, we've chosen to place them one-per-file under the `state/selectors` directory. Not only does this reflect their global nature, it removes uncertainty on where selectors are to be found or created by providing a single location for them to exist.
+You'll note in the example above that the entire `state` object is passed to the selector. We've chosen to standardize on always sending the entire state object to any selector as the first parameter. This consistency should alleviate uncertainty in calling selectors, as you can always assume that it'll have a similar argument signature. More importantly, it's not uncommon for selectors to need to traverse different parts of the global state, as in the example above where we pull from both the `sites` and `posts` top-level state keys.
 
-When using selectors, you can import directly from `state/selectors`. For example:
-
-```js
-import canCurrentUser from 'state/selectors/can-current-user';
-```
-
-In this example, the logic for the selector exists at the file `state/selectors/can-current-user.js`.
+Following the modularized state approach, we've defined that the best practice is to place selectors for a given portion of state under its `state/{ subject }` directory, in a `selectors` file or directory. This keeps everything related to a given portion of state colocated. Selectors that touch multiple parts of state should live under `state/selectors`, reflecting their global nature.
 
 It's important that selectors always be pure functions, meaning that the function should always return the same result when passed identical arguments in sequence. There should be no side-effects of calling a selector. For example, in a selector you should never trigger an AJAX request or assign values to variables defined outside the scope of the function.
 
@@ -276,11 +270,11 @@ What are a few common use-cases for selectors?
 - Resolving references: A [normalized state tree](#data-normalization) is ideal from the standpoint of minimizing redundancy and synchronization concerns, but is not as developer-friendly to use. Selectors can be helpful in restoring convenient access to useful objects.
 - Derived data: A normalized state tree avoids storing duplicated data. However, it can be useful to request a value which is calculated based on state data. For example, it might be valuable to retrieve the hostname for a site, which can be calculated based on its URL property.
 - Filtering data: You can use a selector to return a subset of a state tree value. For example, a `getJetpackSites` selector could return an array of all known sites filtered to only those which are Jetpack-enabled.
- - __Side-note:__ In this case, you could achieve a similar effect with a reducer function aggregating an array of Jetpack site IDs. If you were to take this route, you'd probably want a complementary selector anyways. Caching concerns on selectors can be overcome by using memoization techniques (for example, with a library like [`reselect`](https://github.com/reactjs/reselect)).
+ - __Side-note:__ In this case, you could achieve a similar effect with a reducer function aggregating an array of Jetpack site IDs. If you were to take this route, you'd probably want a complementary selector anyways. Caching concerns on selectors can be overcome by using memoization techniques (for example, with Calypso's `lib/create-selector` or `lib/tree-select`).
 
 ### UI State
 
-By now, you're hopefully convinced that a global application state can enable us to scale our application needs with regards to persisted data (sites, posts, comments, etc.). The store can also be used to track the state of the user interface, but it's important to distinguish when and why it's appropriate to use the Redux store over, say, a [React component's state](https://facebook.github.io/react/docs/tutorial.html#reactive-state).
+By now, you're hopefully convinced that a global application state can enable us to scale our application needs with regards to persisted data (sites, posts, comments, etc.). The store can also be used to track the state of the user interface, but it's important to distinguish when and why it's appropriate to use the Redux store over, say, a [React component's state](https://reactjs.org/docs/state-and-lifecycle.html).
 
 We recommend that you only use the state tree to store user interface state when you know that the data being stored should be persisted between page views, or when it's to be used by distinct areas of the application on the same page. As an example, consider the currently selected site. When navigating between pages in the [_My Sites_](https://wordpress.com/stats) section, I'd expect that the selected site should not change. Additionally, many parts of the rendered application make use of selected site. For these reasons, it makes sense that the currently selected site be saved in the global state. By contrast, when I navigate to the Sharing page and expand one of the available sharing services, I don't have the same expectation that this interaction be preserved when I later leave and return to the page. In these cases, it might be more appropriate to use React state to track the expanded status of the component, local only to the current rendering context. Use your best judgment when considering whether to add to the global state, but don't feel compelled to avoid React state altogether.
 
