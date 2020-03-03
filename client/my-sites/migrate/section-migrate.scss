@@ -320,6 +320,9 @@
 	}
 }
 
-.migrate-confirm-popup-dialog h1 {
-	line-height: 1.2em;
+@include breakpoint('<800px') {
+	/* Fix Confirm site overwrite dialog popup line spacing to be a bit smaller on a mobile screen */
+	.migrate-confirm-popup-dialog h1 {
+		line-height: 1.2em;
+	}
 }
