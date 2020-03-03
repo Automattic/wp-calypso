@@ -29,10 +29,19 @@ class RenewButton extends React.Component {
 		subscriptionId: PropTypes.number,
 		redemptionProduct: PropTypes.object,
 		reactivate: PropTypes.bool,
+		tracksProps: PropTypes.object,
+	};
+
+	static defaultProps = {
+		tracksProps: {},
 	};
 
 	handleRenew = () => {
-		handleRenewNowClick( this.props.purchase, this.props.selectedSite.slug );
+		handleRenewNowClick(
+			this.props.purchase,
+			this.props.selectedSite.slug,
+			this.props.tracksProps
+		);
 	};
 
 	render() {
