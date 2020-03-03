@@ -66,31 +66,43 @@ export default function WPCheckout( {
 	variantRequestStatus,
 	variantSelectOverride,
 	getItemVariants,
-    domainContactValidationCallback,
+	domainContactValidationCallback,
 } ) {
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( submitCoupon );
 	const total = useTotal();
 	const activePaymentMethod = usePaymentMethod();
 
-    const [ items ] = useLineItems();
-    const firstDomainItem = items.find( isLineItemADomain );
-    const domainName = firstDomainItem ? firstDomainItem.sublabel : siteUrl;
+	const [ items ] = useLineItems();
+	const firstDomainItem = items.find( isLineItemADomain );
+	const domainName = firstDomainItem ? firstDomainItem.sublabel : siteUrl;
 
 	const contactInfo = useSelect( sel => sel( 'wpcom' ).getContactInfo() ) || {};
-	const { setSiteId, touchContactFields, updateContactDetails, updateCountryCode, updatePostalCode, applyDomainContactValidationResults } = useDispatch( 'wpcom' );
+	const {
+		setSiteId,
+		touchContactFields,
+		updateContactDetails,
+		updateCountryCode,
+		updatePostalCode,
+		applyDomainContactValidationResults,
+	} = useDispatch( 'wpcom' );
 
 	const contactValidationCallback = async () => {
-        updateLocation( {
-            countryCode: contactInfo.countryCode.value,
-            postalCode: contactInfo.postalCode.value,
-            subdivisionCode: contactInfo.state.value,
-        } );
-        // Touch the fields so they display validation errors
-        touchContactFields();
-        await domainContactValidationCallback( activePaymentMethod.id, prepareDomainContactDetails( contactInfo ), [ domainName ], applyDomainContactValidationResults );
-        return isCompleteAndValid( contactInfo );
-    };
+		updateLocation( {
+			countryCode: contactInfo.countryCode.value,
+			postalCode: contactInfo.postalCode.value,
+			subdivisionCode: contactInfo.state.value,
+		} );
+		// Touch the fields so they display validation errors
+		touchContactFields();
+		await domainContactValidationCallback(
+			activePaymentMethod.id,
+			prepareDomainContactDetails( contactInfo ),
+			[ domainName ],
+			applyDomainContactValidationResults
+		);
+		return isCompleteAndValid( contactInfo );
+	};
 
 	// Copy siteId to the store so it can be more easily accessed during payment submission
 	useEffect( () => {
@@ -145,6 +157,9 @@ export default function WPCheckout( {
 								countriesList={ countriesList }
 								StateSelect={ StateSelect }
 								renderDomainContactFields={ renderDomainContactFields }
+								updateContactDetails={ updateContactDetails }
+								updateCountryCode={ updateCountryCode }
+								updatePostalCode={ updatePostalCode }
 							/>
 						}
 						completeStepContent={ <WPContactForm summary isComplete={ true } isActive={ false } /> }
