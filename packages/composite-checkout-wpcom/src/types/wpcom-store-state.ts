@@ -99,7 +99,7 @@ function setManagedContactDetailsErrors(
 ): ManagedContactDetails {
 	return {
 		firstName: setErrors( errors.firstName, details.firstName ),
-		lastName: setErrors( errors.firstName, details.lastName ),
+		lastName: setErrors( errors.lastName, details.lastName ),
 		organization: setErrors( errors.organization, details.organization ),
 		email: setErrors( errors.email, details.email ),
 		alternateEmail: setErrors( errors.alternateEmail, details.alternateEmail ),
