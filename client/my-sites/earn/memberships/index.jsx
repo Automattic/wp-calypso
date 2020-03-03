@@ -145,7 +145,11 @@ class MembershipsSection extends Component {
 			this.props.requestSubscriptionStop(
 				this.props.siteId,
 				this.state.cancelledSubscriber,
-				this.props.translate( 'Subscription cancelled' )
+				this.props.translate( 'Subscription cancelled for %(email)s', {
+					args: {
+						email: this.state.cancelledSubscriber.user.user_email,
+					},
+				} )
 			);
 		}
 		this.setState( { cancelledSubscriber: null } );
@@ -405,7 +409,12 @@ class MembershipsSection extends Component {
 					<p>{ this.props.translate( 'Do you want to cancel this subscription?' ) }</p>
 					<Notice
 						text={ this.props.translate(
-							'Canceling the subscription will mean the subscriber will no longer be charged.'
+							'Canceling the subscription will mean the subscriber %(email)s will no longer be charged.',
+							{
+								args: {
+									email: subscriber.user.user_email,
+								},
+							}
 						) }
 						showDismiss={ false }
 					/>

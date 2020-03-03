@@ -19,17 +19,17 @@ export const requestSubscribers = ( siteId, offset ) => ( {
 	offset,
 } );
 
-export const requestSubscriptionStop = ( siteId, subscription, noticeText ) => {
+export const requestSubscriptionStop = ( siteId, subscriber, noticeText ) => {
 	return dispatch => {
 		dispatch( {
 			siteId,
 			type: MEMBERSHIPS_SUBSCRIPTION_STOP,
-			subscriptionId: subscription.id,
+			subscriptionId: subscriber.id,
 		} );
 
 		return wpcom.req
-			.post( `/sites/${ siteId }/memberships/subscriptions/${ subscription.id }/cancel`, {
-				user_id: subscription.user.ID,
+			.post( `/sites/${ siteId }/memberships/subscriptions/${ subscriber.id }/cancel`, {
+				user_id: subscriber.user.ID,
 			} )
 			.then( result => {
 				const errorMsg = result.error || '';
@@ -37,7 +37,7 @@ export const requestSubscriptionStop = ( siteId, subscription, noticeText ) => {
 				if ( errorMsg.length > 0 ) {
 					dispatch( {
 						type: MEMBERSHIPS_SUBSCRIPTION_STOP_FAILURE,
-						subscriptionId: subscription.id,
+						subscriptionId: subscriber.id,
 						errorMsg,
 					} );
 
@@ -54,13 +54,12 @@ export const requestSubscriptionStop = ( siteId, subscription, noticeText ) => {
 				dispatch( {
 					siteId,
 					type: MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS,
-					subscriptionId: subscription.id,
+					subscriptionId: subscriber.id,
 				} );
 
 				dispatch( {
 					type: NOTICE_CREATE,
 					notice: {
-						duration: 5000,
 						text: noticeText,
 						status: 'is-success',
 					},
@@ -69,7 +68,7 @@ export const requestSubscriptionStop = ( siteId, subscription, noticeText ) => {
 			.catch( error => {
 				dispatch( {
 					type: MEMBERSHIPS_SUBSCRIPTION_STOP_FAILURE,
-					subscriptionId: subscription.id,
+					subscriptionId: subscriber.id,
 					error,
 				} );
 			} );
