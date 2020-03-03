@@ -64,7 +64,9 @@ class PageTemplateModal extends Component {
 			{}
 		);
 
-		const MISSING_BLOCK_NAME = 'core/group';
+		// Once parsed, missing Blocks have a name prop of `core/missing`.
+		// see: https://github.com/WordPress/gutenberg/tree/742dbf2ef0e37481a3c14c29f3688aa0cd3cf887/packages/block-library/src/missing
+		const MISSING_BLOCK_NAME = 'core/missing';
 
 		// Remove templates that include a missing block
 		rtn = reduce(
