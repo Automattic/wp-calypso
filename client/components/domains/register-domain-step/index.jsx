@@ -1191,12 +1191,7 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	renderFreeDomainExplainer() {
-		return (
-			<FreeDomainExplainer
-				onSkip={ this.props.hideFreePlan }
-				showDesignUpdate={ this.props.showDesignUpdate }
-			/>
-		);
+		return <FreeDomainExplainer onSkip={ this.props.hideFreePlan } />;
 	}
 
 	onAddDomain = suggestion => {
