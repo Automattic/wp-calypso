@@ -44,15 +44,15 @@ export function* createAccount( params: CreateAccountParams ) {
 				signup_flow_name: 'gutenboarding',
 				locale: 'en',
 				...body,
+
+				// Set to false because account validation should be a separate action
+				validate: false,
 			},
 			path: '/users/new',
 			apiVersion: '1.1',
 			method: 'post',
 
 			...restParams,
-
-			// Set to false because account validation should be a separate action
-			validate: false,
 		} );
 		return receiveNewUser( newUser );
 	} catch ( err ) {
@@ -63,7 +63,6 @@ export function* createAccount( params: CreateAccountParams ) {
 }
 
 export type Action = ReturnType<
-	| typeof fetchCurrentUser
 	| typeof receiveCurrentUser
 	| typeof receiveCurrentUserFailed
 	| typeof fetchNewUser
