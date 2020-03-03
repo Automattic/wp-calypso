@@ -535,6 +535,7 @@ class SectionMigrate extends Component {
 
 	render() {
 		const { step, sourceSite, targetSite, targetSiteSlug, translate } = this.props;
+		const sourceSiteSlug = get( sourceSite, 'slug' );
 
 		let migrationElement;
 
@@ -568,8 +569,10 @@ class SectionMigrate extends Component {
 							<StepUpgrade
 								plugins={ this.state.sourceSitePlugins }
 								sourceSite={ sourceSite }
+								sourceSiteSlug={ sourceSiteSlug }
 								startMigration={ this.startMigration }
 								targetSite={ targetSite }
+								targetSiteSlug={ targetSiteSlug }
 								themes={ this.state.sourceSiteThemes }
 							/>
 						);
