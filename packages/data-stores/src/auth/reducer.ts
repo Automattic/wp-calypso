@@ -53,6 +53,7 @@ export interface ErrorObject {
 export const errors: Reducer< ErrorObject[], Action > = ( state = [], action ) => {
 	switch ( action.type ) {
 		case 'RESET_LOGIN_FLOW':
+		case 'CLEAR_ERRORS':
 			return [];
 
 		case 'RECEIVE_WP_LOGIN_FAILED':

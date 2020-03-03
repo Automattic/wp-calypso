@@ -29,6 +29,11 @@ export const receiveAuthOptionsFailed = ( response: AuthOptionsErrorResponse ) =
 		response,
 	} as const );
 
+export const clearErrors = () =>
+	( {
+		type: 'CLEAR_ERRORS',
+	} as const );
+
 export interface FetchAuthOptionsAction {
 	type: 'FETCH_AUTH_OPTIONS';
 	usernameOrEmail: string;
@@ -40,6 +45,8 @@ const fetchAuthOptions = ( usernameOrEmail: string ): FetchAuthOptionsAction => 
 } );
 
 export function* submitUsernameOrEmail( usernameOrEmail: string ) {
+	yield clearErrors();
+
 	try {
 		const authOptions = yield fetchAuthOptions( usernameOrEmail );
 
@@ -77,6 +84,7 @@ const fetchWpLogin = ( action: WpLoginAction, params: object ): FetchWpLoginActi
 	} as const );
 
 export function* submitPassword( password: string ) {
+	yield clearErrors();
 	const username = yield { type: 'SELECT_USERNAME_OR_EMAIL' };
 
 	const loginResponse = yield fetchWpLogin( 'login-endpoint', { username, password } );
@@ -91,6 +99,7 @@ export function* submitPassword( password: string ) {
 export type Action =
 	| ReturnType<
 			| typeof reset
+			| typeof clearErrors
 			| typeof receiveAuthOptions
 			| typeof receiveAuthOptionsFailed
 			| typeof receiveWpLogin
