@@ -313,7 +313,7 @@ class PageTemplateModal extends Component {
 		}
 
 		const blocksByTemplateSlug = this.getBlocksByTemplateSlugs( this.props.templates );
-		const templatesWithMissingBlocks = Object.keys( blocksByTemplateSlug );
+		const templatesWithoutMissingBlocks = Object.keys( blocksByTemplateSlug );
 
 		const removeTemplatesWithMissingBlocks = ( templatesToFilter, filterIn ) => {
 			return templatesToFilter.filter( template => filterIn.includes( template.slug ) );
@@ -326,7 +326,7 @@ class PageTemplateModal extends Component {
 					label={ __( 'Layout', 'full-site-editing' ) }
 					templates={ removeTemplatesWithMissingBlocks(
 						templatesList,
-						templatesWithMissingBlocks
+						templatesWithoutMissingBlocks
 					) }
 					blocksByTemplates={ this.getBlocksByTemplateSlugs( this.props.templates ) }
 					onTemplateSelect={ this.previewTemplate }
