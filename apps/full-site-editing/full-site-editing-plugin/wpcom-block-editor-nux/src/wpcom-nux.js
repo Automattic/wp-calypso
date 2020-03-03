@@ -43,6 +43,10 @@ function WpcomNux() {
 
 	const dismissWpcomNux = () => setWpcomNuxStatus( { isNuxEnabled: false } );
 
+	/**
+	 * Currently, the Guide content is mostly copied from Gutenberg. This can be
+	 * updated if/as we have new designs for the NUX on wpcom.
+	 */
 	return (
 		<Guide
 			className="edit-post-welcome-guide"
