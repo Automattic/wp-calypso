@@ -27,6 +27,12 @@ export const loginFlowState: Reducer< LoginFlowState, Action > = (
 		case 'RECEIVE_WP_LOGIN':
 			return 'LOGGED_IN';
 
+		case 'RECEIVE_SEND_LOGIN_EMAIL':
+			if ( action.success ) {
+				return 'LOGIN_LINK_SENT';
+			}
+			return state;
+
 		default:
 			return state;
 	}

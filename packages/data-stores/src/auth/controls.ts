@@ -8,7 +8,7 @@ import wpcomRequest, { requestAllBlogsAccess } from 'wpcom-proxy-request';
 /**
  * Internal dependencies
  */
-import { FetchAuthOptionsAction, FetchWpLoginAction } from './actions';
+import { FetchAuthOptionsAction, FetchWpLoginAction, SendLoginEmailAction } from './actions';
 import { STORE_KEY } from './constants';
 import { WpcomClientCredentials } from '../shared-types';
 
@@ -51,6 +51,22 @@ export function createControls( clientCreds: WpcomClientCredentials ) {
 				ok: response.ok,
 				body: await response.json(),
 			};
+		},
+		SEND_LOGIN_EMAIL: async ( { email }: SendLoginEmailAction ) => {
+			return await wpcomRequest( {
+				path: `/auth/send-login-email`,
+				apiVersion: '1.2',
+				method: 'post',
+				body: {
+					email,
+
+					// TODO Send the correct locale
+					lang_id: 1,
+					locale: 'en',
+
+					...clientCreds,
+				},
+			} );
 		},
 	};
 }

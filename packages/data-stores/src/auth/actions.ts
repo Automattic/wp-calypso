@@ -29,6 +29,12 @@ export const receiveAuthOptionsFailed = ( response: AuthOptionsErrorResponse ) =
 		response,
 	} as const );
 
+export const receiveSendLoginEmail = ( success: boolean ) =>
+	( {
+		type: 'RECEIVE_SEND_LOGIN_EMAIL',
+		success,
+	} as const );
+
 export const clearErrors = () =>
 	( {
 		type: 'CLEAR_ERRORS',
@@ -44,13 +50,28 @@ const fetchAuthOptions = ( usernameOrEmail: string ): FetchAuthOptionsAction => 
 	usernameOrEmail,
 } );
 
+export interface SendLoginEmailAction {
+	type: 'SEND_LOGIN_EMAIL';
+	email: string;
+}
+
+const sendLoginEmail = ( email: string ): SendLoginEmailAction => ( {
+	type: 'SEND_LOGIN_EMAIL',
+	email,
+} );
+
 export function* submitUsernameOrEmail( usernameOrEmail: string ) {
 	yield clearErrors();
 
 	try {
-		const authOptions = yield fetchAuthOptions( usernameOrEmail );
+		const authOptions: AuthOptionsSuccessResponse = yield fetchAuthOptions( usernameOrEmail );
 
 		yield receiveAuthOptions( authOptions, usernameOrEmail );
+
+		if ( authOptions.passwordless ) {
+			const emailResponse = yield sendLoginEmail( usernameOrEmail );
+			yield receiveSendLoginEmail( emailResponse.success );
+		}
 	} catch ( err ) {
 		yield receiveAuthOptionsFailed( err );
 	}
@@ -116,6 +137,7 @@ export type Action =
 			| typeof receiveAuthOptionsFailed
 			| typeof receiveWpLogin
 			| typeof receiveWpLoginFailed
+			| typeof receiveSendLoginEmail
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };
