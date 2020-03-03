@@ -20,6 +20,11 @@ import {
 } from 'state/analytics/actions';
 import { navigate } from 'state/ui/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const SupportCard = ( { translate, navigateToContactSupport } ) => {
 	return (
 		<Card className="support-card">
