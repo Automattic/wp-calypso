@@ -16,6 +16,7 @@
 		"jetpack-cloud/backups-restore": true,
 		"jetpack-cloud/settings": true,
 		"jetpack-cloud/scan": true,
+		"jetpack-cloud/scan-scanner": true,
 		"jetpack-cloud/scan-history": true
 	}
 }

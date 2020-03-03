@@ -16,7 +16,7 @@ import {
 	backupDownload,
 	backupRestore,
 } from './sections/backups/controller';
-import { scan, scanHistory } from './sections/scan/controller';
+import { scan, scanner, scanHistory } from './sections/scan/controller';
 import { settings } from './sections/settings/controller';
 
 const router = () => {
@@ -85,7 +85,18 @@ const router = () => {
 		page( '/scan/:site', siteSelection, setupSidebar, scan, makeLayout, clientRender );
 
 		if ( config.isEnabled( 'jetpack-cloud/scan-history' ) ) {
-			page( '/scan/:site/history', siteSelection, setupSidebar, scanHistory, makeLayout, clientRender );
+			page(
+				'/scan/:site/history',
+				siteSelection,
+				setupSidebar,
+				scanHistory,
+				makeLayout,
+				clientRender
+			);
+		}
+
+		if ( config.isEnabled( 'jetpack-cloud/scan-scanner' ) ) {
+			page( '/scan/:site/scanner', siteSelection, setupSidebar, scanner, makeLayout, clientRender );
 		}
 	}
 
