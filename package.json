@@ -51,6 +51,7 @@
 		"@wordpress/e2e-test-utils": "4.3.0",
 		"browserslist": "4.8.6",
 		"i18n-calypso": "file:packages/i18n-calypso",
+		"mock-fs": "4.11.0",
 		"photon": "file:packages/photon",
 		"wp-calypso": "file:client",
 		"wpcom": "file:packages/wpcom.js"
@@ -208,6 +209,7 @@
 		"concurrently": "5.1.0",
 		"cross-env": "6.0.3",
 		"duplicate-package-checker-webpack-plugin": "3.0.0",
+		"effective-module-tree": "file:./packages/effective-module-tree",
 		"enzyme": "3.11.0",
 		"enzyme-adapter-react-16": "1.15.1",
 		"enzyme-to-json": "3.4.3",
