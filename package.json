@@ -39,7 +39,7 @@
 		"@automattic/composite-checkout": "file:packages/composite-checkout",
 		"@automattic/composite-checkout-wpcom": "file:packages/composite-checkout-wpcom",
 		"@automattic/data-stores": "file:packages/data-stores",
-		"@automattic/effective-module-tree": "file:./packages/effective-module-tree",
+		"@automattic/effective-module-tree": "file:packages/effective-module-tree",
 		"@automattic/format-currency": "file:packages/format-currency",
 		"@automattic/full-site-editing": "file:apps/full-site-editing",
 		"@automattic/load-script": "file:packages/load-script",
