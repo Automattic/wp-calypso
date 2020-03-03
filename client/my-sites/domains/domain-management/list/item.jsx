@@ -60,9 +60,10 @@ class ListItem extends React.PureComponent {
 		const cardClass = classNames( 'domain-management-list-item', {
 			busy: busy || ( enableSelection && shouldUpgradeToMakePrimary ),
 		} );
+		const onClick = enableSelection && shouldUpgradeToMakePrimary ? null : this.handleClick;
 
 		return (
-			<CompactCard className={ cardClass } onClick={ this.handleClick }>
+			<CompactCard className={ cardClass } onClick={ onClick }>
 				{ this.selectionRadio() }
 				{ this.renderContent() }
 			</CompactCard>
