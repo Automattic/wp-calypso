@@ -24,7 +24,11 @@ import {
 } from 'my-sites/domains/paths';
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification';
 import { isRecentlyRegistered, isExpiringSoon } from 'lib/domains/utils';
-import { DOMAINS } from 'lib/url/support';
+import {
+	DOMAIN_EXPIRATION,
+	DOMAIN_EXPIRATION_REDEMPTION,
+	DOMAIN_RECENTLY_REGISTERED,
+} from 'lib/url/support';
 import SubscriptionSettings from '../card/subscription-settings';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { getProductBySlug } from 'state/products-list/selectors';
@@ -176,7 +180,7 @@ class RegisteredDomainType extends React.Component {
 
 	renderExpired() {
 		const { domain, translate, moment } = this.props;
-		const domainsLink = <a href={ DOMAINS } target="_blank" rel="noopener noreferrer" />;
+		const domainsLink = link => <a href={ link } target="_blank" rel="noopener noreferrer" />;
 
 		if ( ! domain.expired ) {
 			return null;
@@ -197,7 +201,7 @@ class RegisteredDomainType extends React.Component {
 				'Your domain has expired and is no longer active. You have {{strong}}%(days)s{{/strong}} to renew it at the standard rate before an additional %(redemptionCost)s redemption fee is applied. {{domainsLink}}Learn more{{/domainsLink}}',
 				{
 					components: {
-						domainsLink,
+						domainsLink: domainsLink( DOMAIN_EXPIRATION ),
 						strong: <strong />,
 					},
 					args: {
@@ -211,7 +215,7 @@ class RegisteredDomainType extends React.Component {
 				'Your domain has expired and is no longer active. You have {{strong}}%(days)s{{/strong}} to reactivate it during this redemption period before someone else can register it. An additional redemption fee of {{strong}}%(redemptionCost)s{{/strong}} will be added to the price of the domain to reactivate it. {{domainsLink}}Learn more{{/domainsLink}}',
 				{
 					components: {
-						domainsLink,
+						domainsLink: domainsLink( DOMAIN_EXPIRATION_REDEMPTION ),
 						strong: <strong />,
 					},
 					args: {
@@ -225,7 +229,7 @@ class RegisteredDomainType extends React.Component {
 				'Your domain has expired and is no longer active. {{domainsLink}}Learn more{{/domainsLink}}',
 				{
 					components: {
-						domainsLink,
+						domainsLink: domainsLink( DOMAIN_EXPIRATION ),
 					},
 				}
 			);
@@ -250,7 +254,9 @@ class RegisteredDomainType extends React.Component {
 	renderRecentlyRegistered() {
 		const { domain, translate } = this.props;
 		const { registrationDate, name: domain_name } = domain;
-		const domainsLink = <a href={ DOMAINS } target="_blank" rel="noopener noreferrer" />;
+		const domainsLink = (
+			<a href={ DOMAIN_RECENTLY_REGISTERED } target="_blank" rel="noopener noreferrer" />
+		);
 
 		const recentlyRegistered = isRecentlyRegistered( registrationDate );
 
