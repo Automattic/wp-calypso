@@ -30,9 +30,17 @@ export const setupWpDataDebug = () => {
 				) ) {
 					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 					window.wp.auth[ actionName ] = async ( ...args: any[] ) => {
+						/* eslint-disable no-console */
 						await ( actionFn as any )( ...args ); // eslint-disable-line @typescript-eslint/no-explicit-any
 						const loginFlowState = window.wp?.data.select( AUTH_STORE ).getLoginFlowState();
-						console.log( 'New loginFlowState =', loginFlowState ); // eslint-disable-line no-console
+						const errors = window.wp?.data.select( AUTH_STORE ).getErrors();
+						console.log( 'New loginFlowState =', loginFlowState );
+						if ( errors.length ) {
+							console.log( 'Errors =', JSON.stringify( errors, null, 2 ) );
+						} else {
+							console.log( 'No Errors!' );
+						}
+						/* eslint-enable no-console */
 					};
 				}
 			}
