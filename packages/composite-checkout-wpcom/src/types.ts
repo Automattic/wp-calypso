@@ -43,6 +43,7 @@ import {
 	managedContactDetailsUpdaters,
 	DomainContactDetails,
 	prepareDomainContactDetails,
+	prepareDomainContactDetailsErrors,
 	isValid,
 } from './types/wpcom-store-state';
 
@@ -82,5 +83,6 @@ export {
 	managedContactDetailsUpdaters,
 	DomainContactDetails,
 	prepareDomainContactDetails,
+	prepareDomainContactDetailsErrors,
 	isValid,
 };

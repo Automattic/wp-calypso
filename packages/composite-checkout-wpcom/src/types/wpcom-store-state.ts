@@ -137,6 +137,22 @@ export type DomainContactDetails = {
 	fax: string;
 };
 
+export type DomainContactDetailsErrors = {
+	firstName?: string;
+	lastName?: string;
+	organization?: string;
+	email?: string;
+	alternateEmail?: string;
+	phone?: string;
+	address1?: string;
+	address2?: string;
+	city?: string;
+	state?: string;
+	postalCode?: string;
+	countryCode?: string;
+	fax?: string;
+};
+
 /*
  * Convert a ManagedContactDetails object (used internally by the
  * WPCOM store state hook) into a DomainContactDetails object (used by
@@ -159,6 +175,26 @@ export function prepareDomainContactDetails(
 		postalCode: details.postalCode.value,
 		countryCode: details.countryCode.value,
 		fax: details.fax.value,
+	};
+}
+
+export function prepareDomainContactDetailsErrors(
+	details: ManagedContactDetails
+): DomainContactDetailsErrors {
+	return {
+		firstName: details.firstName.errors[ 0 ],
+		lastName: details.lastName.errors[ 0 ],
+		organization: details.organization.errors[ 0 ],
+		email: details.email.errors[ 0 ],
+		alternateEmail: details.alternateEmail.errors[ 0 ],
+		phone: details.phone.errors[ 0 ],
+		address1: details.address1.errors[ 0 ],
+		address2: details.address2.errors[ 0 ],
+		city: details.city.errors[ 0 ],
+		state: details.state.errors[ 0 ],
+		postalCode: details.postalCode.errors[ 0 ],
+		countryCode: details.countryCode.errors[ 0 ],
+		fax: details.fax.errors[ 0 ],
 	};
 }
 
