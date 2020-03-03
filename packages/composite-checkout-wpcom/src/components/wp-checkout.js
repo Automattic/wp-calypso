@@ -55,6 +55,7 @@ export default function WPCheckout( {
 	removeItem,
 	updateLocation,
 	submitCoupon,
+	removeCoupon,
 	couponStatus,
 	changePlanLength,
 	siteId,
@@ -157,6 +158,7 @@ export default function WPCheckout( {
 							removeItem={ removeItem }
 							couponStatus={ couponStatus }
 							couponFieldStateProps={ couponFieldStateProps }
+							removeCoupon={ removeCoupon }
 							onChangePlanLength={ changePlanLength }
 							siteUrl={ siteUrl }
 							variantRequestStatus={ variantRequestStatus }

@@ -22,6 +22,7 @@ import {
 export default function WPCheckoutOrderReview( {
 	className,
 	removeItem,
+	removeCoupon,
 	couponStatus,
 	couponFieldStateProps,
 	siteUrl,
@@ -41,6 +42,7 @@ export default function WPCheckoutOrderReview( {
 				<WPOrderReviewLineItems
 					items={ items }
 					removeItem={ removeItem }
+					removeCoupon={ removeCoupon }
 					variantRequestStatus={ variantRequestStatus }
 					variantSelectOverride={ variantSelectOverride }
 					getItemVariants={ getItemVariants }
@@ -68,6 +70,7 @@ WPCheckoutOrderReview.propTypes = {
 	summary: PropTypes.bool,
 	className: PropTypes.string,
 	removeItem: PropTypes.func.isRequired,
+	removeCoupon: PropTypes.func.isRequired,
 	siteUrl: PropTypes.string,
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,

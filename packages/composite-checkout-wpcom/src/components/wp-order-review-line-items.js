@@ -196,6 +196,7 @@ export function WPOrderReviewLineItems( {
 	className,
 	isSummaryVisible,
 	removeItem,
+	removeCoupon,
 	variantRequestStatus,
 	variantSelectOverride,
 	getItemVariants,
@@ -209,7 +210,7 @@ export function WPOrderReviewLineItems( {
 						isSummaryVisible={ isSummaryVisible }
 						item={ item }
 						hasDeleteButton={ canItemBeDeleted( item ) }
-						removeItem={ removeItem }
+						removeItem={ item.type === 'coupon' ? removeCoupon : removeItem }
 						variantRequestStatus={ variantRequestStatus }
 						variantSelectOverride={ variantSelectOverride }
 						getItemVariants={ getItemVariants }
@@ -225,6 +226,7 @@ WPOrderReviewLineItems.propTypes = {
 	className: PropTypes.string,
 	isSummaryVisible: PropTypes.bool,
 	removeItem: PropTypes.func,
+	removeCoupon: PropTypes.func,
 	items: PropTypes.arrayOf(
 		PropTypes.shape( {
 			label: PropTypes.string,
@@ -291,6 +293,6 @@ function returnModalCopy( product, translate, hasDomainsInCart ) {
 }
 
 function canItemBeDeleted( item ) {
-	const itemTypesThatCannotBeDeleted = [ 'tax', 'coupon', 'credits', 'wordpress-com-credits' ];
+	const itemTypesThatCannotBeDeleted = [ 'tax', 'credits', 'wordpress-com-credits' ];
 	return ! itemTypesThatCannotBeDeleted.includes( item.type );
 }
