@@ -41,6 +41,7 @@ import { CALYPSO_CONTACT } from 'lib/url/support';
 import getCountries from 'state/selectors/get-countries';
 import QueryDomainCountries from 'components/data/query-countries/domains';
 import {
+    CONTACT_DETAILS_FORM_FIELDS,
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 } from './custom-form-fieldsets/constants';
@@ -50,22 +51,6 @@ import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
  * Style dependencies
  */
 import './style.scss';
-
-const CONTACT_DETAILS_FORM_FIELDS = [
-	'firstName',
-	'lastName',
-	'organization',
-	'email',
-	'alternateEmail',
-	'phone',
-	'address1',
-	'address2',
-	'city',
-	'state',
-	'postalCode',
-	'countryCode',
-	'fax',
-];
 
 export class ContactDetailsFormFields extends Component {
 	static propTypes = {
