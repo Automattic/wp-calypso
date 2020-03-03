@@ -47,7 +47,10 @@ export function createControls( clientCreds: WpcomClientCredentials ) {
 				}
 			);
 
-			return await response.json();
+			return {
+				ok: response.ok,
+				body: await response.json(),
+			};
 		},
 	};
 }

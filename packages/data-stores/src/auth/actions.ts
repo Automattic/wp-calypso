@@ -79,12 +79,12 @@ const fetchWpLogin = ( action: WpLoginAction, params: object ): FetchWpLoginActi
 export function* submitPassword( password: string ) {
 	const username = yield { type: 'SELECT_USERNAME_OR_EMAIL' };
 
-	try {
-		const loginResponse = yield fetchWpLogin( 'login-endpoint', { username, password } );
+	const loginResponse = yield fetchWpLogin( 'login-endpoint', { username, password } );
 
-		yield receiveWpLogin( loginResponse );
-	} catch ( err ) {
-		yield receiveWpLoginFailed( err );
+	if ( loginResponse.ok && loginResponse.body.success ) {
+		yield receiveWpLogin( loginResponse.body );
+	} else {
+		yield receiveWpLoginFailed( loginResponse.body );
 	}
 }
 

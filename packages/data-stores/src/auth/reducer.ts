@@ -45,7 +45,33 @@ export const usernameOrEmail: Reducer< string, Action > = ( state = '', action )
 	}
 };
 
-const reducer = combineReducers( { loginFlowState, usernameOrEmail } );
+export interface ErrorObject {
+	code: string;
+	message: string;
+}
+
+export const errors: Reducer< ErrorObject[], Action > = ( state = [], action ) => {
+	switch ( action.type ) {
+		case 'RESET_LOGIN_FLOW':
+			return [];
+
+		case 'RECEIVE_WP_LOGIN_FAILED':
+			return action.response.data.errors;
+
+		case 'RECEIVE_AUTH_OPTIONS_FAILED':
+			return [
+				{
+					code: action.response.error,
+					message: action.response.message,
+				},
+			];
+
+		default:
+			return state;
+	}
+};
+
+const reducer = combineReducers( { errors, loginFlowState, usernameOrEmail } );
 
 export type State = ReturnType< typeof reducer >;
 
