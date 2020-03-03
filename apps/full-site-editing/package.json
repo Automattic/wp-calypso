@@ -48,7 +48,7 @@
 		"test:js:help": "npx wp-scripts test-unit-js --config='bin/js-unit-config.js' --help --colors",
 		"test:js:watch": "npx wp-scripts test-unit-js --config='bin/js-unit-config.js' --watch --colors",
 		"test:js:update-snapshots": "npx wp-scripts test-unit-js -u --config='bin/js-unit-config.js' --colors",
-		"test:e2e": "npx wp-scripts test-e2e --wordpress-base-url='http://localhost:4013'",
+		"test:e2e": "npx wp-scripts test-e2e --wordpress-base-url='http://localhost:4013' --colors",
 		"test:e2e:watch": "npm run test-e2e -- --watch",
 		"clean": "npx rimraf dist full-site-editing-plugin/*/dist",
 		"prebuild": "npm run clean",
