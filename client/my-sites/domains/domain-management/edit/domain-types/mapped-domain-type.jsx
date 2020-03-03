@@ -157,6 +157,7 @@ class MappedDomainType extends React.Component {
 						selectedSite={ this.props.selectedSite }
 						subscriptionId={ parseInt( domain.bundledPlanSubscriptionId, 10 ) }
 						customLabel={ translate( 'Renew your plan ' ) }
+						tracksProps={ { source: 'mapped-domain-status', mapping_status: 'expiring-soon-plan' } }
 					/>
 				</div>
 			);
@@ -180,6 +181,7 @@ class MappedDomainType extends React.Component {
 					primary={ true }
 					selectedSite={ this.props.selectedSite }
 					subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
+					tracksProps={ { source: 'mapped-domain-status', mapping_status: 'expiring-soon' } }
 				/>
 			</div>
 		);
@@ -270,6 +272,7 @@ class MappedDomainType extends React.Component {
 						selectedSite={ this.props.selectedSite }
 						subscriptionId={ parseInt( domain.bundledPlanSubscriptionId, 10 ) }
 						customLabel={ translate( 'Renew your plan' ) }
+						tracksProps={ { source: 'mapped-domain-status', mapping_status: 'active-plan' } }
 					/>
 				</div>
 			);
@@ -281,6 +284,7 @@ class MappedDomainType extends React.Component {
 					compact={ true }
 					selectedSite={ this.props.selectedSite }
 					subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
+					tracksProps={ { source: 'mapped-domain-status', mapping_status: 'active' } }
 				/>
 			</div>
 		);
