@@ -107,3 +107,9 @@ export type Action =
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };
+
+export const publicActions = {
+	reset,
+	submitUsernameOrEmail,
+	submitPassword,
+};
