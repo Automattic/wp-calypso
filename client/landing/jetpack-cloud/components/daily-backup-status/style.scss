@@ -1,0 +1,17 @@
+.daily-backup-status .gridicon {
+	width: 150px !important;
+	height: 150px !important;
+	fill: green !important;
+}
+
+.daily-backup-status .gridicon.daily-backup-status__gridicon-error-state {
+	fill: red !important;
+}
+
+.daily-backup-status__label {
+	color: grey;
+}
+
+.daily-backup-status__date {
+	font-size: 1.5rem;
+}
