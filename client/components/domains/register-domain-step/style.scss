@@ -96,25 +96,3 @@
 		background: var( --color-neutral-0 );
 	}
 }
-
-.register-domain-step__use-your-domain {
-	padding: 16px 24px;
-	text-align: center;
-	color: var( --color-text-inverted );
-
-	.register-domain-step__use-your-domain-action {
-		color: var( --color-text-inverted );
-
-		&.is-clickable {
-			cursor: pointer;
-			text-decoration: underline;
-	
-			// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo
-			transition: box-shadow 0.25s cubic-bezier( 0.19, 1, 0.22, 1 );
-	
-			&:hover {
-				color: var( --color-text-inverted );
-			}
-		}
-	}
-}
