@@ -19,12 +19,16 @@ import { PostTitle } from '@wordpress/editor';
 // Therefore this component exists to simplify mocking out the Block Editor
 // when under test conditions.
 export default function( { blocks, settings, recomputeBlockListKey } ) {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<BlockEditorProvider value={ blocks } settings={ settings }>
 			<Disabled key={ recomputeBlockListKey }>
-				<PostTitle />
+				<div className="template-title">
+					<PostTitle />
+				</div>
 				<BlockList />
 			</Disabled>
 		</BlockEditorProvider>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
