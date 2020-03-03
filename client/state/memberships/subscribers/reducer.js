@@ -1,18 +1,21 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, filter } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { combineReducers, withoutPersistence } from 'state/utils';
-import { MEMBERSHIPS_SUBSCRIBERS_RECEIVE } from '../../action-types';
+import {
+	MEMBERSHIPS_SUBSCRIBERS_RECEIVE,
+	MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS,
+} from '../../action-types';
 
 const list = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
 		case MEMBERSHIPS_SUBSCRIBERS_RECEIVE:
-			return {
+			state = {
 				...state,
 
 				[ action.siteId ]: {
@@ -26,6 +29,21 @@ const list = withoutPersistence( ( state = {}, action ) => {
 					),
 				},
 			};
+			break;
+		case MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS: {
+			const ownerships = filter(
+				get( state, [ action.siteId, 'ownerships' ], {} ),
+				( { id } ) => id !== action.subscriptionId
+			);
+			state = {
+				...state,
+
+				[ action.siteId ]: {
+					total: ownerships.length,
+					ownerships: { ...ownerships },
+				},
+			};
+		}
 	}
 
 	return state;
