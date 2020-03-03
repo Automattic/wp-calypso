@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import {
+	CONTACT_DETAILS_FORM_FIELDS,
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 } from './constants';
@@ -27,6 +28,12 @@ export class RegionAddressFieldsets extends Component {
 		countryCode: PropTypes.string,
 		shouldAutoFocusAddressField: PropTypes.bool,
 		hasCountryStates: PropTypes.bool,
+		contactDetailsErrors: PropTypes.shape(
+			Object.assign(
+				{},
+				...CONTACT_DETAILS_FORM_FIELDS.map( field => ( { [ field ]: PropTypes.string } ) )
+			)
+		),
 	};
 
 	static defaultProps = {
@@ -35,6 +42,7 @@ export class RegionAddressFieldsets extends Component {
 		countryCode: 'US',
 		shouldAutoFocusAddressField: false,
 		hasCountryStates: false,
+		contactDetailsErrors: {},
 	};
 
 	inputRefCallback( input ) {
