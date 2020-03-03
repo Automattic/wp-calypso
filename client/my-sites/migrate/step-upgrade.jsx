@@ -42,17 +42,20 @@ class StepUpgrade extends Component {
 			planPrice,
 			plugins,
 			sourceSite,
+			sourceSiteSlug,
 			targetSite,
+			targetSiteSlug,
 			themes,
 			translate,
 		} = this.props;
 		const sourceSiteDomain = get( sourceSite, 'domain' );
 		const targetSiteDomain = get( targetSite, 'domain' );
+		const backHref = `/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }`;
 
 		return (
 			<>
 				<QueryPlans />
-				<HeaderCake>{ translate( 'Import Everything' ) }</HeaderCake>
+				<HeaderCake backHref={ backHref }>{ translate( 'Import Everything' ) }</HeaderCake>
 
 				<CompactCard>
 					<CardHeading>
