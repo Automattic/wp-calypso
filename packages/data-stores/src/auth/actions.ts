@@ -87,12 +87,24 @@ export function* submitPassword( password: string ) {
 	yield clearErrors();
 	const username = yield { type: 'SELECT_USERNAME_OR_EMAIL' };
 
-	const loginResponse = yield fetchWpLogin( 'login-endpoint', { username, password } );
+	try {
+		const loginResponse = yield fetchWpLogin( 'login-endpoint', { username, password } );
 
-	if ( loginResponse.ok && loginResponse.body.success ) {
-		yield receiveWpLogin( loginResponse.body );
-	} else {
-		yield receiveWpLoginFailed( loginResponse.body );
+		if ( loginResponse.ok && loginResponse.body.success ) {
+			yield receiveWpLogin( loginResponse.body );
+		} else {
+			yield receiveWpLoginFailed( loginResponse.body );
+		}
+	} catch ( e ) {
+		const error = {
+			code: e.name,
+			message: e.message,
+		};
+
+		yield receiveWpLoginFailed( {
+			success: false,
+			data: { errors: [ error ] },
+		} );
 	}
 }
 
