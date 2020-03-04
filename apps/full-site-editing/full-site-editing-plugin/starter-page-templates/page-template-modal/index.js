@@ -292,7 +292,7 @@ class PageTemplateModal extends Component {
 
 	render() {
 		const { previewedTemplate, isOpen, isLoading } = this.state;
-		const { isPromptedFromSidebar } = this.props;
+		const { isPromptedFromSidebar, hidePageTitle } = this.props;
 
 		if ( ! isOpen ) {
 			return null;
@@ -409,7 +409,7 @@ class PageTemplateModal extends Component {
 							<TemplateSelectorPreview
 								blocks={ this.getBlocksForPreview( previewedTemplate ) }
 								viewportWidth={ 1200 }
-								title={ this.getTitleByTemplateSlug( previewedTemplate ) }
+								title={ ! hidePageTitle && this.getTitleByTemplateSlug( previewedTemplate ) }
 							/>
 						</>
 					) }
