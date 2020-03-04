@@ -25,6 +25,7 @@ import {
 	isDomainTransfer,
 	isGoogleApps,
 	isJetpackPlan,
+	isJetpackProduct,
 	isPlan,
 } from 'lib/products-values';
 import notices from 'notices';
@@ -321,7 +322,7 @@ class RemovePurchase extends Component {
 
 export default connect(
 	( state, { purchase } ) => {
-		const isJetpack = purchase && isJetpackPlan( purchase );
+		const isJetpack = purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
 		return {
 			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
