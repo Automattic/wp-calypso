@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
  */
 import { BlockFramePreview } from './block-iframe-preview';
 
-const TemplateSelectorPreview = ( { blocks = [], viewportWidth } ) => {
+const TemplateSelectorPreview = ( { blocks = [], viewportWidth, blocksByTemplateSlug = {} } ) => {
 	const noBlocks = ! blocks.length;
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -23,7 +23,10 @@ const TemplateSelectorPreview = ( { blocks = [], viewportWidth } ) => {
 				</div>
 			) }
 
-			<BlockFramePreview viewportWidth={ viewportWidth } />
+			<BlockFramePreview
+				viewportWidth={ viewportWidth }
+				blocksByTemplateSlug={ blocksByTemplateSlug }
+			/>
 		</div>
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	);

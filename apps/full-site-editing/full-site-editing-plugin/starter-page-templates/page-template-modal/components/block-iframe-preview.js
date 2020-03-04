@@ -21,8 +21,13 @@ const DEBOUNCE_TIMEOUT = 300;
  * @param {object} props component's props
  * @param {object} props.className CSS class to apply to component
  * @param {number} props.viewportWidth pixel width of the viewable size of the preview
+ * @param {object} props.blocksByTemplateSlug Parsed blocks, order by template slug.
  */
-export const BlockFramePreview = ( { className = 'block-iframe-preview', viewportWidth } ) => {
+export const BlockFramePreview = ( {
+	className = 'block-iframe-preview',
+	viewportWidth,
+	blocksByTemplateSlug = {},
+} ) => {
 	const iframeRef = useRef();
 
 	// Set the initial scale factor.
@@ -52,8 +57,18 @@ export const BlockFramePreview = ( { className = 'block-iframe-preview', viewpor
 		} );
 	}, [ viewportWidth ] );
 
-	// Initial scaling.
-	useEffect( rescale, [] );
+	// Initial settings.
+	useEffect( () => {
+		// Populate iframe window object with blocks
+		// order by template slug.
+		const frameWindow = get( iframeRef, [ 'current', 'contentWindow' ] );
+		if ( frameWindow ) {
+			frameWindow.blocksByTemplateSlug = blocksByTemplateSlug;
+		}
+
+		// Set initial scale and dims.
+		rescale();
+	}, [] );
 
 	// Handling windows resize event.
 	useEffect( () => {
