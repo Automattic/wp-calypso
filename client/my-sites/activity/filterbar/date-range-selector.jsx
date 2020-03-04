@@ -250,7 +250,7 @@ export class DateRangeSelector extends Component {
 	};
 
 	render() {
-		const { isVisible } = this.props;
+		const { customLabel, isVisible } = this.props;
 		const from = this.getFromDate();
 		const to = this.getToDate();
 		const now = new Date();
@@ -275,7 +275,7 @@ export class DateRangeSelector extends Component {
 							onClick={ props.onTriggerClick }
 							ref={ props.buttonRef }
 						>
-							{ this.getFormattedDate( from, to ) }
+							{ customLabel ? customLabel : this.getFormattedDate( from, to ) }
 						</Button>
 						{ ( from || to ) && (
 							<Button
