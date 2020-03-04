@@ -1,19 +1,24 @@
 /**
  * External dependencies
  */
-import { get, debounce } from 'lodash';
+import { get, debounce, castArray } from 'lodash';
 import classnames from 'classnames';
 
 /**
  * WordPress dependencies
  */
 /* eslint-disable import/no-extraneous-dependencies */
-import { useRef, useEffect, useState, useCallback } from '@wordpress/element';
+import { useRef, useEffect, useState, useCallback, useLayoutEffect, useMemo, useReducer } from '@wordpress/element';
 import { withSelect } from '@wordpress/data';
 import { compose, withSafeTimeout } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Modal } from '@wordpress/components';
 /* eslint-enable import/no-extraneous-dependencies */
+
+/**
+ * Internal dependencies
+ */
+import CustomBlockPreview from './block-preview';
 
 // Debounce time applied to the on resize window event.
 const DEBOUNCE_TIMEOUT = 300;
@@ -33,6 +38,7 @@ export const BlockFramePreview = ( {
 	viewportWidth,
 	blocksByTemplateSlug = {},
 	slug,
+	title,
 } ) => {
 	const iframeRef = useRef();
 
@@ -87,7 +93,7 @@ export const BlockFramePreview = ( {
 			return;
 		}
 
-		frameWindow.postMessage( slug, "*" );
+		frameWindow.postMessage( { slug, title, isFramePreview: true }, "*" );
 	}, [ slug ] );
 
 	// Handling windows resize event.
@@ -125,15 +131,38 @@ export const BlockFramePreview = ( {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
-const _BlockFrameContent = () => {
+/**
+ * Giving the template slug, it will return the parsed blocks,
+ * or an empty array.
+ *
+ * @param {string} slug Template slug.
+ * @return {Array} Templates Blocks if template exists. Otherwise, an empty array.
+ */
+const getBlocksByTemplateSlug = ( slug ) => {
+	return get( window, [ 'blocksByTemplateSlug', slug ], [] );
+};
+
+const _BlockFrameContent = ( { settings } ) => {
 	const [ slug, setSlug ] = useState();
-	// Listening messages in order to get template slug.
+	const [ title, setTitle ] = useState();
+
+	/*
+	 * Listening messages in order to get template slug.
+	 * Check if the template exists.
+	 */
 	useEffect( () => {
-		const receiveMessage = ( { data: slug } ) => {
-			if ( ! slug || ! window.blocksByTemplateSlug || ! window.blocksByTemplateSlug[ slug ] ) {
+		const receiveMessage = ( { data } ) => {
+			const { slug, isFramePreview, title } = data;
+			if ( ! isFramePreview ) {
+				return;
+			}
+
+			const blocks = getBlocksByTemplateSlug( slug );
+			if ( ! blocks || ! blocks.length ) {
 				return;
 			}
 			setSlug( slug );
+			setTitle( title );
 		};
 
 		window.addEventListener( 'message', receiveMessage, false );
@@ -142,6 +171,10 @@ const _BlockFrameContent = () => {
 			window.removeEventListener( 'message', receiveMessage, false );
 		};
 	}, [] );
+
+	const blocks = useMemo( () => castArray( getBlocksByTemplateSlug( slug ) ), [ slug ] );
+	const [ recomputeBlockListKey, triggerRecomputeBlockList ] = useReducer( state => state + 1, 0 );
+	useLayoutEffect( triggerRecomputeBlockList, [ slug ] );
 
 	return (
 		<Modal
@@ -153,7 +186,16 @@ const _BlockFrameContent = () => {
 		>
 			<div className="block-editor block-frame-preview__container editor-styles-wrapper">
 				<div className="edit-post-visual-editor">
-					<div className="editor-writing-flow">Preview Content</div>
+					<div className="editor-styles-wrapper">
+						<div className="editor-writing-flow">
+							<CustomBlockPreview
+								blocks={ blocks }
+								settings={ settings }
+								hidePageTitle={ ! title }
+								recomputeBlockListKey={ recomputeBlockListKey }
+							/>
+						</div>
+					</div>
 				</div>
 			</div>
 		</Modal>
