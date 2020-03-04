@@ -136,52 +136,52 @@ class MappedDomainType extends React.Component {
 			return null;
 		}
 
+		let noticeText;
+		let subscriptionId;
+		let customLabel;
+		let tracksProps;
+
 		if ( domain.bundledPlanSubscriptionId ) {
-			return (
-				<div>
-					<p>
-						{ translate(
-							'Your domain mapping will expire with your plan in {{strong}}%(days)s{{/strong}}. Please renew your plan before it expires or it will stop working.',
-							{
-								components: {
-									strong: <strong />,
-								},
-								args: {
-									days: moment.utc( expiry ).fromNow( true ),
-								},
-							}
-						) }
-					</p>
-					<RenewButton
-						primary={ true }
-						selectedSite={ this.props.selectedSite }
-						subscriptionId={ parseInt( domain.bundledPlanSubscriptionId, 10 ) }
-						customLabel={ translate( 'Renew your plan ' ) }
-						tracksProps={ { source: 'mapped-domain-status', mapping_status: 'expiring-soon-plan' } }
-					/>
-				</div>
+			noticeText = translate(
+				'Your domain mapping will expire with your plan in {{strong}}%(days)s{{/strong}}. Please renew your plan before it expires or it will stop working.',
+				{
+					components: {
+						strong: <strong />,
+					},
+					args: {
+						days: moment.utc( expiry ).fromNow( true ),
+					},
+				}
 			);
+			subscriptionId = domain.bundledPlanSubscriptionId;
+			customLabel = translate( 'Renew your plan ' );
+			tracksProps = { source: 'mapped-domain-status', mapping_status: 'expiring-soon-plan' };
+		} else {
+			noticeText = translate(
+				'Your domain mapping will expire in {{strong}}%(days)s{{/strong}}. Please renew it before it expires or it will stop working.',
+				{
+					components: {
+						strong: <strong />,
+					},
+					args: {
+						days: moment.utc( expiry ).fromNow( true ),
+					},
+				}
+			);
+			subscriptionId = domain.subscriptionId;
+			customLabel = null;
+			tracksProps = { source: 'mapped-domain-status', mapping_status: 'expiring-soon' };
 		}
+
 		return (
 			<div>
-				<p>
-					{ translate(
-						'Your domain mapping will expire in {{strong}}%(days)s{{/strong}}. Please renew it before it expires or it will stop working.',
-						{
-							components: {
-								strong: <strong />,
-							},
-							args: {
-								days: moment.utc( expiry ).fromNow( true ),
-							},
-						}
-					) }
-				</p>
+				<p>{ noticeText }</p>
 				<RenewButton
 					primary={ true }
 					selectedSite={ this.props.selectedSite }
-					subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
-					tracksProps={ { source: 'mapped-domain-status', mapping_status: 'expiring-soon' } }
+					subscriptionId={ parseInt( subscriptionId, 10 ) }
+					customLabel={ customLabel }
+					tracksProps={ tracksProps }
 				/>
 			</div>
 		);
@@ -264,18 +264,18 @@ class MappedDomainType extends React.Component {
 			return null;
 		}
 
+		let subscriptionId;
+		let customLabel;
+		let tracksProps;
+
 		if ( domain.bundledPlanSubscriptionId ) {
-			return (
-				<div>
-					<RenewButton
-						compact={ true }
-						selectedSite={ this.props.selectedSite }
-						subscriptionId={ parseInt( domain.bundledPlanSubscriptionId, 10 ) }
-						customLabel={ translate( 'Renew your plan' ) }
-						tracksProps={ { source: 'mapped-domain-status', mapping_status: 'active-plan' } }
-					/>
-				</div>
-			);
+			subscriptionId = domain.bundledPlanSubscriptionId;
+			customLabel = translate( 'Renew your plan' );
+			tracksProps = { source: 'mapped-domain-status', mapping_status: 'active-plan' };
+		} else {
+			subscriptionId = domain.subscriptionId;
+			customLabel = null;
+			tracksProps = { source: 'mapped-domain-status', mapping_status: 'active' };
 		}
 
 		return (
@@ -283,8 +283,9 @@ class MappedDomainType extends React.Component {
 				<RenewButton
 					compact={ true }
 					selectedSite={ this.props.selectedSite }
-					subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
-					tracksProps={ { source: 'mapped-domain-status', mapping_status: 'active' } }
+					subscriptionId={ parseInt( subscriptionId, 10 ) }
+					customLabel={ customLabel }
+					tracksProps={ tracksProps }
 				/>
 			</div>
 		);
