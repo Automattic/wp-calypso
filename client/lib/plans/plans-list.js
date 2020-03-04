@@ -673,13 +673,10 @@ export const PLANS_LIST = {
 			switch ( feature ) {
 				case constants.FEATURE_JETPACK_BACKUP_DAILY:
 				case constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY:
-					return i18n.translate(
-						'Upgrade your site to access additional features, including spam protection, real-time backups, and priority support.'
-					);
 				case constants.FEATURE_JETPACK_BACKUP_REALTIME:
 				case constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY:
 					return i18n.translate(
-						'Upgrade your site to access additional features, including spam protection, and priority support.'
+						'Upgrade your site to access additional features, including spam protection and priority support.'
 					);
 				default:
 					return i18n.translate(
