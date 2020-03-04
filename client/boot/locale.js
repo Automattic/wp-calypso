@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { get } from 'lodash';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -21,6 +22,10 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 	} else if ( currentUser && currentUser.localeSlug ) {
 		// Use the current user's and load traslation data with a fetch request
 		reduxStore.dispatch( setLocale( currentUser.localeSlug, currentUser.localeVariant ) );
+	}
+
+	if ( ! ( '__i18n__' in window ) ) {
+		window.__i18n__ = i18n;
 	}
 
 	// If user is logged out and translations are not boostrapped, we assume default locale
