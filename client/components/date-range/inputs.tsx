@@ -3,7 +3,7 @@
  */
 import React, { FunctionComponent, useRef, useCallback } from 'react';
 import { noop } from 'lodash';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -41,6 +41,7 @@ const DateRangeInputs: FunctionComponent< Props > = ( {
 	/**
 	 * Handles input focus events with fixed arguments
 	 * for consistency via partial application
+	 *
 	 * @param  startOrEnd one of "Start" or "End"
 	 * @returns the partially applied function ready to receive event data
 	 */
@@ -55,6 +56,7 @@ const DateRangeInputs: FunctionComponent< Props > = ( {
 	/**
 	 * Handles input blur events with fixed arguments
 	 * for consistency via partial application
+	 *
 	 * @param  startOrEnd one of "Start" or "End"
 	 * @returns the partially applied function ready to receive event data
 	 */
@@ -69,6 +71,7 @@ const DateRangeInputs: FunctionComponent< Props > = ( {
 	/**
 	 * Handles input change events with fixed arguments
 	 * for consistency via partial application
+	 *
 	 * @param  startOrEnd one of "Start" or "End"
 	 * @returns the partially applied function ready to receive event data
 	 */
