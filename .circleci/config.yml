@@ -886,8 +886,8 @@ workflows:
       - icfy-stats:
           requires:
             - setup
-      - EXPERIMENTAL-translate
-      - lint-and-translate:
+      - translate
+      - lint:
           requires:
             - setup
       - test-client:
