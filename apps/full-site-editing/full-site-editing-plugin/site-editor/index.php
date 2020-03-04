@@ -32,7 +32,13 @@ function initialize_site_editor() {
 	);
 
 	add_action( 'admin_menu', 'gutenberg_menu' );
-	do_action( 'enqueue_block_editor_assets' );
+
+	add_action(
+		'admin_enqueue_scripts',
+		function() {
+			do_action( 'enqueue_block_editor_assets' );
+		}
+	);
 }
 
 /**
