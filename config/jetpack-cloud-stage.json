@@ -19,7 +19,5 @@
 	"enable_all_sections": false,
 	"sections": {
 		"jetpack-cloud": true
-	},
-	"masterbar": "jetpack-cloud",
-	"sidebar": "jetpack-cloud"
+	}
 }

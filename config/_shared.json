@@ -133,7 +133,5 @@
 	"enable_all_sections": true,
 	"sections": {
 		"jetpack-cloud": false
-	},
-	"masterbar": "default",
-	"sidebar": "default"
+	}
 }

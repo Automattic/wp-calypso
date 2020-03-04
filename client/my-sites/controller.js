@@ -89,7 +89,9 @@ function createNavigation( context ) {
 		basePath = sectionify( context.pathname );
 	}
 
-	const SidebarComponent = 'jetpack-cloud' === config( 'sidebar' ) ? JetpackCloudSidebar : Sidebar;
+	const SidebarComponent = config( 'env_id' ).startsWith( 'jetpack-cloud' )
+		? JetpackCloudSidebar
+		: Sidebar;
 
 	return (
 		<NavigationComponent
