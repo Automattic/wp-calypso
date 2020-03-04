@@ -133,7 +133,7 @@ module.exports = function() {
 	return {
 		visitor: {
 			ImportDeclaration( path ) {
-				// If `translate` from  `i18n-calypso`` is imported with an
+				// If `translate` from  `i18n-calypso` is imported with an
 				// alias, set the specified alias as a reference to translate.
 				if ( 'i18n-calypso' !== path.node.source.value ) {
 					return;
