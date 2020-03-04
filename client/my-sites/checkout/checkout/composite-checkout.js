@@ -631,6 +631,9 @@ export default function CompositeCheckout( {
                     'Domain contact info validation ' + ( data.messages ? 'errors:' : 'successful' ),
                     data.messages
                 );
+                if ( data.messages ) {
+                    showErrorMessage( translate( 'We could not validate your contact information. Please review and update all the highlighted fields.' ) );
+                }
                 applyDomainContactValidationResults({...data.messages});
                 resolve();
             });

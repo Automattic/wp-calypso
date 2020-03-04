@@ -17,8 +17,6 @@ import { LeftColumn, RightColumn } from './ie-fallback';
 import {
 	prepareDomainContactDetails,
 	prepareDomainContactDetailsErrors,
-	isCompleteAndValid,
-	isTouched,
 	isValid,
 } from '../types';
 
@@ -57,16 +55,9 @@ export default function WPContactForm( {
 				CountrySelectMenu,
 				countriesList,
 			} ) }
-			{ isTouched( contactInfo ) && ! isCompleteAndValid( contactInfo ) && (
-				<FormFieldError>
-					{ translate( 'There are some errors in your contact details; see above for details' ) }
-				</FormFieldError>
-			) }
 		</BillingFormFields>
 	);
 }
-
-const FormFieldError = styled.span``;
 
 const BillingFormFields = styled.div`
 	margin-bottom: 16px;
