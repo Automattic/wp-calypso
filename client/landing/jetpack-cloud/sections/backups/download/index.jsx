@@ -14,10 +14,8 @@ class BackupDownloadPage extends Component {
 		const { siteId, downloadId } = this.props;
 
 		return (
-			<div>
-				<div>Welcome to the download page</div>
-				<div>Site ID: { siteId }</div>
-				<div>Download ID: { downloadId }</div>
+			<div className="backup-restore-page">
+				You have chosen to restore site { siteId } to { restoreId }.
 			</div>
 		);
 	}
