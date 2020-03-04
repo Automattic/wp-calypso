@@ -102,17 +102,12 @@ class Layout extends Component {
 	}
 
 	renderMasterbar() {
-		if ( config.isEnabled( 'jetpack-cloud' ) ) {
-			return (
-				<JetpackCloudMasterbar
-					section={ this.props.sectionGroup }
-					isCheckout={ this.props.sectionName === 'checkout' }
-				/>
-			);
-		}
+		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
+			? JetpackCloudMasterbar
+			: MasterbarLoggedIn;
 
 		return (
-			<MasterbarLoggedIn
+			<MasterbarComponent
 				section={ this.props.sectionGroup }
 				isCheckout={ this.props.sectionName === 'checkout' }
 			/>
