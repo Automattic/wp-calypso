@@ -7,7 +7,8 @@ import { BlockEditorProvider, BlockList as OriginalBlockList } from '@wordpress/
 import { Popover, DropZoneProvider } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import '@wordpress/format-library';
-import React, { useRef, useEffect } from 'react';
+import { useSelect } from '@wordpress/data';
+import React, { useRef, useEffect, useState } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { recordTracksPageViewWithPageParams } from '@automattic/calypso-analytics';
 
@@ -19,9 +20,12 @@ import { recordTracksPageViewWithPageParams } from '@automattic/calypso-analytic
  * Internal dependencies
  */
 import Header from './components/header';
+import DuplicateSiteModal from './components/duplicate-site-modal';
 import { name, settings } from './onboarding-block';
 import { Step, usePath } from './path';
 import './style.scss';
+import { STORE_KEY as ONBOARD_STORE } from './stores/onboard';
+import { USER_STORE } from './stores/user';
 
 registerBlockType( name, settings );
 
@@ -57,13 +61,30 @@ export function Gutenboard() {
 	// (and would lead to weird mounting/unmounting behavior).
 	const onboardingBlock = useRef( createBlock( name, {} ) );
 
-	const {
-		location: { pathname },
-	} = useHistory();
+	const history = useHistory();
+	const { pathname } = history.location;
+
+	const lastCreatedSiteIsCurrent = useSelect( select =>
+		select( ONBOARD_STORE ).isLastCreatedSiteCurrent()
+	);
+	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
+
+	const [ showDuplicateSiteModal, setShowDuplicateSiteModal ] = useState( false );
 
 	useEffect( () => {
 		recordTracksPageViewWithPageParams( `/gutenboarding${ pathname }` );
 	}, [ pathname ] );
+
+	useEffect( () => {
+		if ( currentUser && lastCreatedSiteIsCurrent ) {
+			setShowDuplicateSiteModal( true );
+		}
+	}, [ currentUser, lastCreatedSiteIsCurrent ] );
+
+	const handleDuplicateSiteModalClose = () => {
+		setShowDuplicateSiteModal( false );
+		history.push( makePath() );
+	};
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -71,6 +92,9 @@ export function Gutenboard() {
 			<DropZoneProvider>
 				<div className="edit-post-layout">
 					<Header prev={ prev } />
+					{ showDuplicateSiteModal && (
+						<DuplicateSiteModal onRequestClose={ handleDuplicateSiteModalClose } />
+					) }
 					<BlockEditorProvider
 						useSubRegistry={ false }
 						value={ [ onboardingBlock.current ] }

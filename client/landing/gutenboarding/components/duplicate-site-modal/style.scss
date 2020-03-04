@@ -1,0 +1,31 @@
+@import '~@automattic/calypso-color-schemes/src/calypso-color-schemes';
+
+.duplicate-site-modal.components-modal__frame {
+	border: none;
+	border-radius: 3px;
+
+	.components-modal__header {
+		.components-modal__header-heading {
+			font-size: 20px;
+			font-weight: normal;
+		}
+	}
+
+	.duplicate-site-modal__description {
+		font-size: 16px;
+		line-height: 1.5;
+	}
+
+	.duplicate-site-modal__cta {
+		display: block;
+		width: 100%;
+		margin-top: 10px;
+		text-align: center;
+		font-size: 16px;
+		height: 40px;
+	}
+
+	.duplicate-site-modal__cta-link {
+		text-decoration: none;
+	}
+}

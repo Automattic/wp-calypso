@@ -15,3 +15,8 @@ export interface SiteVertical {
 	 */
 	id?: string;
 }
+
+export interface LastCreatedSite {
+	domain: string | undefined;
+	createdTimestamp: number;
+}

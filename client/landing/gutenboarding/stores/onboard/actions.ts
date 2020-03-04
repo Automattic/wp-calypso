@@ -6,7 +6,7 @@ import { VerticalsTemplates } from '@automattic/data-stores';
 /**
  * Internal dependencies
  */
-import { SiteVertical } from './types';
+import { SiteVertical, LastCreatedSite } from './types';
 
 type Template = VerticalsTemplates.Template;
 
@@ -43,8 +43,9 @@ export const togglePageLayout = ( pageLayout: Template ) => ( {
 	pageLayout,
 } );
 
-export const resetOnboardStore = () => ( {
+export const resetOnboardStore = ( lastCreatedSite?: LastCreatedSite ) => ( {
 	type: 'RESET_ONBOARD_STORE' as const,
+	lastCreatedSite,
 } );
 
 export type OnboardAction = ReturnType<
