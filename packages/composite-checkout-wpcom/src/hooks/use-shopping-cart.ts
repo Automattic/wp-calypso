@@ -160,7 +160,7 @@ function shoppingCartHookReducer(
 			return {
 				...state,
 				responseCart: removeCouponFromResponseCart( state.responseCart ),
-				couponStatus: 'pending',
+				couponStatus: 'fresh',
 				cacheStatus: 'invalid',
 			};
 		}
