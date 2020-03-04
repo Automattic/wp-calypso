@@ -95,6 +95,7 @@ export const BlockFramePreview = ( {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<iframe
+			src="#framePreview=true"
 			ref={ iframeRef }
 			title={ __( 'Frame Preview' ) }
 			className={ classnames( 'editor-styles-wrapper', className ) }
