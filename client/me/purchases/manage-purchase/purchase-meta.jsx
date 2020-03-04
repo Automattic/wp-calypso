@@ -31,6 +31,7 @@ import {
 	isDomainTransfer,
 	isConciergeSession,
 	isPlan,
+	getProductFromSlug,
 } from 'lib/products-values';
 import { getPlan } from 'lib/plans';
 
@@ -65,7 +66,7 @@ class PurchaseMeta extends Component {
 	renderPrice() {
 		const { purchase, translate } = this.props;
 		const { priceText, currencyCode, productSlug } = purchase;
-		const plan = getPlan( productSlug );
+		const plan = getPlan( productSlug ) || getProductFromSlug( productSlug );
 		let period = translate( 'year' );
 
 		if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {

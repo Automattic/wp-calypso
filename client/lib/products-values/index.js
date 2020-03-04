@@ -13,6 +13,7 @@ import {
 	getJetpackProductsDisplayNames,
 	getJetpackProductsTaglines,
 } from './constants';
+import { PRODUCTS_LIST } from './products-list';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
@@ -230,6 +231,13 @@ export function isJetpackProduct( product ) {
 	assertValidProduct( product );
 
 	return isJetpackProductSlug( product.product_slug );
+}
+
+export function getProductFromSlug( productSlug ) {
+	if ( PRODUCTS_LIST[ productSlug ] ) {
+		return formatProduct( PRODUCTS_LIST[ productSlug ] );
+	}
+	return productSlug; // Consistent behavior with `getPlan`.
 }
 
 export function isMonthly( rawProduct ) {
