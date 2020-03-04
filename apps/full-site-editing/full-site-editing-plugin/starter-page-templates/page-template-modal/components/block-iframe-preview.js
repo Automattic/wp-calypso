@@ -206,13 +206,11 @@ const BlockFramePreview = ( {
 				<div className="edit-post-visual-editor">
 					<div className="editor-styles-wrapper">
 						<div className="editor-writing-flow">
-							{ blocks && blocks.length ? (
-								<CustomBlockPreview
-									blocks={ renderedBlocks }
-									settings={ settings }
-									recomputeBlockListKey={ recomputeBlockListKey }
-								/>
-							) : null }
+							<CustomBlockPreview
+								blocks={ renderedBlocks }
+								settings={ settings }
+								recomputeBlockListKey={ recomputeBlockListKey }
+							/>
 						</div>
 					</div>
 				</div>
