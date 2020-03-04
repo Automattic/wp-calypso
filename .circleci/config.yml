@@ -274,7 +274,7 @@ jobs:
           paths:
             - wp-calypso
 
-  EXPERIMENTAL-translate:
+  translate:
     <<: *defaults
     steps:
       - checkout
@@ -291,14 +291,37 @@ jobs:
           name: Extract strings
           working_directory: wp-babel-makepot
           command: npm start "~/wp-calypso/{client,packages,apps}/**/*.{js,jsx,ts,tsx}" -- --ignore "**/node_modules/**,**/test/**,**/*.d.ts"
-      - run:
-          working_directory: wp-babel-makepot
-          command: npm run concat
-      - run:
-          working_directory: wp-babel-makepot
-          command: npm run sanitize-pot
       - run: mv ~/wp-calypso/wp-babel-makepot/build/bundle-strings.pot "$CIRCLE_ARTIFACTS/translate/calypso-strings.pot"
+      - run:
+          name: Build New Strings .pot
+          when: always
+          command: |
+            git clone --single-branch --depth=1 https://github.com/Automattic/gp-localci-client.git
+            bash gp-localci-client/generate-new-strings-pot.sh "$CIRCLE_BRANCH" "$CIRCLE_SHA1" "$CIRCLE_ARTIFACTS/translate"
+            rm -rf gp-localci-client
       - store-artifacts-and-test-results
+      - run:
+          name: Notify GlotPress translations are ready
+          when: always
+          command: |
+            curl -X POST https://translate.wordpress.com/api/localci/-relay-new-strings-to-gh \
+              -H 'Cache-Control: no-cache' \
+              -H 'Content-Type: application/json' \
+              -d '{
+                    "payload": {
+                      "branch": "'"$CIRCLE_BRANCH"'",
+                      "build_num": '"$CIRCLE_BUILD_NUM"',
+                      "pull_requests": [
+                        {
+                          "url": "'"$CIRCLE_PULL_REQUEST"'"
+                        }
+                      ],
+                      "reponame": "'"$CIRCLE_PROJECT_REPONAME"'",
+                      "username": "'"$CIRCLE_PROJECT_USERNAME"'",
+                      "vcs_revision": "'"$CIRCLE_SHA1"'",
+                      "vcs_type": "github"
+                    }
+                  }'
 
   typecheck-strict:
     <<: *defaults
@@ -309,7 +332,7 @@ jobs:
           name: TypeScript strict typecheck of individual subprojects
           command: yarn run tsc --project client/landing/gutenboarding
 
-  lint-and-translate:
+  lint:
     <<: *defaults
     parallelism: 1
     steps:
@@ -348,42 +371,6 @@ jobs:
                 --output-file "$CIRCLE_TEST_REPORTS/eslint/results.xml" \
                 $FILES_TO_LINT
             fi
-      - run:
-          name: Build calypso-strings.pot
-          when: always
-          command: |
-            yarn run translate
-            mv calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
-      - run:
-          name: Build New Strings .pot
-          when: always
-          command: |
-            git clone --single-branch --depth=1 https://github.com/Automattic/gp-localci-client.git
-            bash gp-localci-client/generate-new-strings-pot.sh "$CIRCLE_BRANCH" "$CIRCLE_SHA1" "$CIRCLE_ARTIFACTS/translate"
-            rm -rf gp-localci-client
-      - store-artifacts-and-test-results
-      - run:
-          name: Notify GlotPress translations are ready
-          when: always
-          command: |
-            curl -X POST https://translate.wordpress.com/api/localci/-relay-new-strings-to-gh \
-              -H 'Cache-Control: no-cache' \
-              -H 'Content-Type: application/json' \
-              -d '{
-                    "payload": {
-                      "branch": "'"$CIRCLE_BRANCH"'",
-                      "build_num": '"$CIRCLE_BUILD_NUM"',
-                      "pull_requests": [
-                        {
-                          "url": "'"$CIRCLE_PULL_REQUEST"'"
-                        }
-                      ],
-                      "reponame": "'"$CIRCLE_PROJECT_REPONAME"'",
-                      "username": "'"$CIRCLE_PROJECT_USERNAME"'",
-                      "vcs_revision": "'"$CIRCLE_SHA1"'",
-                      "vcs_type": "github"
-                    }
-                  }'
 
   build-notifications:
     <<: *defaults
