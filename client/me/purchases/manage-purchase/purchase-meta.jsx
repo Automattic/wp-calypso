@@ -31,6 +31,7 @@ import {
 	isDomainTransfer,
 	isConciergeSession,
 	isJetpackPlan,
+	isJetpackProduct,
 	isPlan,
 } from 'lib/products-values';
 import { getPlan } from 'lib/plans';
@@ -259,11 +260,12 @@ class PurchaseMeta extends Component {
 			return (
 				<div className="manage-purchase__footnotes">
 					{ translate(
-						'The Jetpack Plan for %(siteSlug)s is expired, and the site is no longer connected to WordPress.com. ' +
-							'To renew this plan, please reconnect %(siteSlug)s to your WordPress.com account, then complete your purchase. ' +
+						'%(purchaseName)s expired on %(siteSlug)s, and the site is no longer connected to WordPress.com. ' +
+							'To renew this purchase, please reconnect %(siteSlug)s to your WordPress.com account, then complete your purchase. ' +
 							'Now sure how to reconnect? {{supportPageLink}}Here are the instructions{{/supportPageLink}}.',
 						{
 							args: {
+								purchaseName: getName( purchase ),
 								siteSlug: this.props.purchase.domain,
 							},
 							components: {
@@ -424,6 +426,6 @@ export default connect( ( state, { purchaseId } ) => {
 		site: purchase ? getSite( state, purchase.siteId ) : null,
 		owner: purchase ? getUser( state, purchase.userId ) : null,
 		isAutorenewalEnabled: purchase ? ! isExpiring( purchase ) : null,
-		isJetpack: purchase && isJetpackPlan( purchase ),
+		isJetpack: purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) ),
 	};
 } )( localize( withLocalizedMoment( PurchaseMeta ) ) );
