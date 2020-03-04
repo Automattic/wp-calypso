@@ -1,16 +1,12 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
-import config from 'config';
 
 /**
  * Internal dependencies
  */
 import SitePicker from 'my-sites/picker';
-import Sidebar from 'my-sites/sidebar';
-import JetpackCloudSidebar from 'landing/jetpack-cloud/components/sidebar';
 
 class MySitesNavigation extends React.Component {
 	static displayName = 'MySitesNavigation';
@@ -20,15 +16,6 @@ class MySitesNavigation extends React.Component {
 		event.stopPropagation();
 	};
 
-	renderSidebar() {
-		if ( 'jetpack-cloud' === config( 'sidebar' ) ) {
-			return (
-				<JetpackCloudSidebar path={ this.props.path } siteBasePath={ this.props.siteBasePath } />
-			);
-		}
-		return <Sidebar path={ this.props.path } siteBasePath={ this.props.siteBasePath } />;
-	}
-
 	render() {
 		return (
 			<div>
@@ -37,7 +24,7 @@ class MySitesNavigation extends React.Component {
 					siteBasePath={ this.props.siteBasePath }
 					onClose={ this.preventPickerDefault }
 				/>
-				{ this.renderSidebar() }
+				{ this.props.sidebar }
 			</div>
 		);
 	}
