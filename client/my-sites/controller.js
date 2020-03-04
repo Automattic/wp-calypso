@@ -89,11 +89,11 @@ function createNavigation( context ) {
 		basePath = sectionify( context.pathname );
 	}
 
-	const NavigationSidebar = 'jetpack-cloud' === config( 'sidebar' ) ? JetpackCloudSidebar : Sidebar;
+	const SidebarComponent = 'jetpack-cloud' === config( 'sidebar' ) ? JetpackCloudSidebar : Sidebar;
 
 	return (
 		<NavigationComponent
-			sidebar={ <NavigationSidebar path={ context.path } siteBasePath={ basePath } /> }
+			sidebar={ <SidebarComponent path={ context.path } siteBasePath={ basePath } /> }
 			allSitesPath={ basePath }
 			siteBasePath={ basePath }
 		/>
