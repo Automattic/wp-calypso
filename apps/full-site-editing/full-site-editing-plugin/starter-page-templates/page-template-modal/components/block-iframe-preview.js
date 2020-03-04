@@ -67,12 +67,12 @@ const copyStylesToIframe = ( srcDocument, targetiFrameDocument ) => {
 };
 
 /**
- * It tries to set the textarea value of the <PostTitle /> component,
- * since it isn't possible to do it with the current implementation.
- * So, in the meanwhile, it uses this DOM manipulation process.
+ * Temporarily manually set the PostTitle from DOM.
+ * It isn't currently possible to manually force the `<PostTitle />` component 
+ * to render a title provided as a prop. A Core PR will rectify this (see below).
+ * Until then we use direct DOM manipulation to set the post title.
  *
- * Here there is a core suggestion to be able to set post title explicitly:
- * https://github.com/WordPress/gutenberg/pull/20609
+ * See: https://github.com/WordPress/gutenberg/pull/20609/
  *
  * @param   {string}  title Template title.
  * @param   {object}  body iFrame body DOM reference.
