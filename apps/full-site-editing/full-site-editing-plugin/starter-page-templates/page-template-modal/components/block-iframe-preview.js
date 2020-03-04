@@ -153,7 +153,7 @@ const BlockFramePreview = ( {
 		 * Set the template title.
 		 * The setTimeout() hack is needed for the first-rendering cycle,
 		 * since there is a race condition.
-		 * The next ones the title is updated without the delay.
+		 * The next one's the title is updated without the delay.
 		 */
 		if ( ! setTemplateTitle( title, iframeBody ) ) {
 			setTimeout( () => setTemplateTitle( title, iframeBody ), 0 );
