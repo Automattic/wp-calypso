@@ -122,7 +122,14 @@ const BlockFramePreview = ( {
 		} );
 	}, [ viewportWidth ] );
 
-	// Set template title.
+	/*
+	 * Temporarily manually set the PostTitle from DOM.
+	 * It isn't currently possible to manually force the `<PostTitle />` component
+	 * to render a title provided as a prop. A Core PR will rectify this (see below).
+	 * Until then we use direct DOM manipulation to set the post title.
+	 *
+	 * See: https://github.com/WordPress/gutenberg/pull/20609/
+	 */
 	useEffect( () => {
 		const iframeBody = get( iframeRef, [ 'current', 'contentDocument', 'body' ] );
 		if ( ! iframeBody ) {
