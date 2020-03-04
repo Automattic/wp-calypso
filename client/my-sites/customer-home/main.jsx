@@ -269,7 +269,7 @@ class Home extends Component {
 				{ isRecentlyMigratedSite && (
 					<Card className="customer-home__migrate-card" highlight="info">
 						<img
-							src="/calypso/images/illustrations/fireworks.svg"
+							src={ fireworksIllustration }
 							aria-hidden="true"
 							className="customer-home__migrate-fireworks"
 							alt=""
