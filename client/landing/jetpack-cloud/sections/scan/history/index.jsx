@@ -110,6 +110,12 @@ class ScanHistoryEntry extends Component {
 		);
 	}
 
+	renderEntryDetails() {
+		const { entry } = this.props;
+
+		return <pre>{ JSON.stringify( entry, null, 2 ) }</pre>;
+	}
+
 	render() {
 		const { entry } = this.props;
 
@@ -120,7 +126,7 @@ class ScanHistoryEntry extends Component {
 				screenReaderText="More"
 				key={ entry.id }
 			>
-				I'm highlighted!
+				{ this.renderEntryDetails() }
 			</FoldableCard>
 		);
 	}
