@@ -117,20 +117,22 @@ class SharingButtonsOptions extends Component {
 		switch ( postType.name ) {
 			case 'index':
 				label = this.props.translate( 'Front Page, Archive Pages, and Search Results', {
-					context: 'jetpack',
+					context: 'Show like and sharing buttons on',
 				} );
 				break;
 			case 'post':
-				label = this.props.translate( 'Posts' );
+				label = this.props.translate( 'Posts', { context: 'Show like and sharing buttons on' } );
 				break;
 			case 'page':
-				label = this.props.translate( 'Pages' );
+				label = this.props.translate( 'Pages', { context: 'Show like and sharing buttons on' } );
 				break;
 			case 'attachment':
-				label = this.props.translate( 'Media' );
+				label = this.props.translate( 'Media', { context: 'Show like and sharing buttons on' } );
 				break;
 			case 'portfolio':
-				label = this.props.translate( 'Portfolio Items' );
+				label = this.props.translate( 'Portfolio Items', {
+					context: 'Show like and sharing buttons on',
+				} );
 				break;
 			default:
 				label = postType.label;
