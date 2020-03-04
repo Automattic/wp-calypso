@@ -26,6 +26,8 @@ export default function Coupon( { id, className, disabled, couponStatus, couponF
 	} = couponFieldStateProps;
 
 	if ( couponStatus === 'applied' ) {
+		// Clear the field value when the coupon is applied
+		setCouponFieldValue( '' );
 		return null;
 	}
 
