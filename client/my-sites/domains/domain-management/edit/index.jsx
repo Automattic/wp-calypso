@@ -23,6 +23,7 @@ import Transfer from './transfer';
 import WpcomDomain from './wpcom-domain';
 import WpcomDomainType from './domain-types/wpcom-domain-type';
 import RegisteredDomainType from './domain-types/registered-domain-type';
+import MappedDomainType from './domain-types/mapped-domain-type';
 import config from 'config';
 
 /**
@@ -58,7 +59,7 @@ class Edit extends React.Component {
 
 		switch ( type ) {
 			case domainTypes.MAPPED:
-				return MappedDomain;
+				return newStatusDesign ? MappedDomainType : MappedDomain;
 
 			case domainTypes.REGISTERED:
 				return newStatusDesign ? RegisteredDomainType : RegisteredDomain;
