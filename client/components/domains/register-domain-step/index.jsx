@@ -141,7 +141,7 @@ class RegisterDomainStep extends React.Component {
 		includeWordPressDotCom: PropTypes.bool,
 		includeDotBlogSubdomain: PropTypes.bool,
 		showExampleSuggestions: PropTypes.bool,
-		showTestCopy: PropTypes.bool,
+		isEligibleVariantForDomainTest: PropTypes.func,
 		onSave: PropTypes.func,
 		onAddMapping: PropTypes.func,
 		onAddDomain: PropTypes.func,
@@ -1095,7 +1095,6 @@ class RegisterDomainStep extends React.Component {
 						onButtonClick={ this.onAddDomain }
 						pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 						unavailableDomains={ this.state.unavailableDomains }
-						showTestCopy={ this.props.showTestCopy }
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 					/>
 				);
@@ -1250,7 +1249,6 @@ class RegisterDomainStep extends React.Component {
 				cart={ this.props.cart }
 				pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 				unavailableDomains={ this.state.unavailableDomains }
-				showTestCopy={ this.props.showTestCopy }
 				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 			>
 				{ this.props.isEligibleVariantForDomainTest &&
