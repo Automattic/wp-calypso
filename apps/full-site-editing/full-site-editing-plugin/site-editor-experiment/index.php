@@ -16,6 +16,9 @@ function conditionally_enable_site_editor() {
 		return;
 	}
 
+	// Force enable required Gutenberg experiments if they are not already active.
+	add_filter( 'option_gutenberg-experiments', __NAMESPACE__ . '\enable_site_editor_experiment' );
+
 	add_action( 'admin_menu', 'gutenberg_menu' );
 
 	add_action(
@@ -61,7 +64,7 @@ function is_site_editor_active() {
 	}
 
 	// @TODO - refactor this to filter activation similar to dotcom FSE.
-	$is_active = has_blog_sticker( 'core_site_editor_enabled' );
+	$is_active = ! apply_filters( 'a8c_disable_core_site_editor', false );
 
 	if ( ! $is_active ) {
 		// Check if experiment is enabled: disable if needed.
@@ -81,4 +84,35 @@ function is_site_editor_active() {
 	}
 
 	return $is_active;
+}
+
+/**
+ * Used to filter corresponding Site Editor experiment options.
+ *
+ * These need to be toggled on for the Site Editor to work properly.
+ * Furthermore, it's not enough to set them just on a given site.
+ * In WP.com context this needs to be enabled in API context too,
+ * and since we want to have it selectively enabled for some subset of
+ * sites initially, we can't set this option for the whole API.
+ * Instead we'll intercept it with it options filter (option_gutenberg-experiments)
+ * and override its values for certain sites.
+ *
+ * @param array $experiments_option Default experiments option array.
+ *
+ * @return array Experiments option array with FSE values enabled.
+ */
+function enable_site_editor_experiment( $experiments_option ) {
+	if ( ! is_array( $experiments_option ) ) {
+		$experiments_option = array();
+	}
+
+	if ( empty( $experiments_option['gutenberg-full-site-editing'] ) ) {
+		$experiments_option['gutenberg-full-site-editing'] = 1;
+	}
+
+	if ( empty( $experiments_option['gutenberg-full-site-editing-demo'] ) ) {
+		$experiments_option['gutenberg-full-site-editing-demo'] = 1;
+	}
+
+	return $experiments_option;
 }
