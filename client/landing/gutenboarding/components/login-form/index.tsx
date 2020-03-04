@@ -116,6 +116,12 @@ const LoginForm = () => {
 					</Button>
 				</div>
 			</form>
+			<div className="login-form__signup-links">
+				<a href="signup">
+					{NO__( 'Create account.' )}
+				</a>
+				{/* todo: add a link to other login flow for social logins */}
+			</div>
 		</Modal>
 	);
 };

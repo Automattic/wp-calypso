@@ -131,6 +131,10 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 					</Button>
 				</div>
 			</form>
+			<div className="signup-form__login-links">
+				<a href="login">{ NO__( 'Log in to create a site for your existing account.' ) }</a>
+				{ /* todo: add a link to other signup flow for social logins */ }
+			</div>
 		</Modal>
 	);
 };
