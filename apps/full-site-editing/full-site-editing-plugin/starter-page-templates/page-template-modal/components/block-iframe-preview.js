@@ -68,7 +68,7 @@ const copyStylesToIframe = ( srcDocument, targetiFrameDocument ) => {
 
 /**
  * Temporarily manually set the PostTitle from DOM.
- * It isn't currently possible to manually force the `<PostTitle />` component 
+ * It isn't currently possible to manually force the `<PostTitle />` component
  * to render a title provided as a prop. A Core PR will rectify this (see below).
  * Until then we use direct DOM manipulation to set the post title.
  *
@@ -158,7 +158,7 @@ const BlockFramePreview = ( {
 		if ( ! setTemplateTitle( title, iframeBody ) ) {
 			setTimeout( () => setTemplateTitle( title, iframeBody ), 0 );
 		}
-	}, [ recomputeBlockListKey, iframeRef, title ] );
+	}, [ recomputeBlockListKey ] );
 
 	// Populate iFrame styles.
 	useEffect( () => {
