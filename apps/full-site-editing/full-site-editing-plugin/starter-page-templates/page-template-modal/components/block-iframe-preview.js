@@ -67,26 +67,6 @@ const copyStylesToIframe = ( srcDocument, targetiFrameDocument ) => {
 };
 
 /**
- * Temporarily manually set the PostTitle from DOM.
- * It isn't currently possible to manually force the `<PostTitle />` component
- * to render a title provided as a prop. A Core PR will rectify this (see below).
- * Until then we use direct DOM manipulation to set the post title.
- *
- * See: https://github.com/WordPress/gutenberg/pull/20609/
- *
- * @param   {string}  title Template title.
- * @param   {object}  body iFrame body DOM reference.
- * @returns {boolean} True is the textarea value was applied. Otherwise, False.
- */
-function setTemplateTitle( title, body ) {
-	const templateTitle = body.querySelector( '.editor-post-title .editor-post-title__input' );
-	if ( ! templateTitle ) {
-		return false;
-	}
-	templateTitle.value = title;
-	return true;
-}
-/**
  * Performs a blocks preview using an iFrame.
  *
  * @param {object} props component's props
@@ -149,15 +129,15 @@ const BlockFramePreview = ( {
 			return;
 		}
 
-		/*
-		 * Set the template title.
-		 * The setTimeout() hack is needed for the first-rendering cycle,
-		 * since there is a race condition.
-		 * The next one's the title is updated without the delay.
-		 */
-		if ( ! setTemplateTitle( title, iframeBody ) ) {
-			setTimeout( () => setTemplateTitle( title, iframeBody ), 0 );
+		const templateTitle = iframeBody.querySelector(
+			'.editor-post-title .editor-post-title__input'
+		);
+
+		if ( ! templateTitle ) {
+			return;
 		}
+
+		templateTitle.value = title;
 	}, [ recomputeBlockListKey ] );
 
 	// Populate iFrame styles.
