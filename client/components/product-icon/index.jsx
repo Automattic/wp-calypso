@@ -21,6 +21,7 @@ import {
 	getProductClass,
 	getProductsSlugs,
 	isJetpackBackupSlug,
+	isJetpackSearchSlug,
 	isJetpackPlanSlug,
 } from 'lib/products-values';
 
@@ -76,6 +77,10 @@ export default class ProductIcon extends Component {
 
 		if ( isJetpackBackupSlug( product ) ) {
 			return this.getProductIcon( 'backup' );
+		}
+
+		if ( isJetpackSearchSlug( product ) ) {
+			return this.getProductIcon( 'search' );
 		}
 
 		if ( isBloggerPlan( product ) ) {

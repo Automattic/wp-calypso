@@ -9,6 +9,7 @@ import { assign, difference, get, includes, isEmpty, pick } from 'lodash';
 import { isGSuiteOrExtraLicenseProductSlug } from 'lib/gsuite';
 import {
 	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_PRODUCT_DISPLAY_NAMES,
 	JETPACK_PRODUCT_TAGLINES,
@@ -219,6 +220,10 @@ export function isJetpackBackup( product ) {
 	assertValidProduct( product );
 
 	return isJetpackBackupSlug( product.product_slug );
+}
+
+export function isJetpackSearchSlug( productSlug ) {
+	return includes( JETPACK_SEARCH_PRODUCTS, productSlug );
 }
 
 export function isJetpackProductSlug( productSlug ) {

@@ -6,6 +6,7 @@ import jetpackFree from './images/jetpack-free.svg';
 import jetpackPersonal from './images/jetpack-personal.svg';
 import jetpackPremium from './images/jetpack-premium.svg';
 import jetpackProfessional from './images/jetpack-professional.svg';
+import jetpackSearch from './images/jetpack-search.svg';
 import wpcomBlogger from './images/wpcom-blogger.svg';
 import wpcomBusiness from './images/wpcom-business.svg';
 import wpcomEcommerce from './images/wpcom-ecommerce.svg';
@@ -20,6 +21,7 @@ export const paths = {
 	'jetpack-personal': jetpackPersonal,
 	'jetpack-premium': jetpackPremium,
 	'jetpack-professional': jetpackProfessional,
+	'jetpack-search': jetpackSearch,
 	'wpcom-blogger': wpcomBlogger,
 	'wpcom-business': wpcomBusiness,
 	'wpcom-ecommerce': wpcomEcommerce,
@@ -41,6 +43,13 @@ export const iconToProductSlugMap = {
 	'jetpack-professional': [ 'jetpack_business', 'jetpack_business_monthly' ],
 	'jetpack-backup-daily': [ 'jetpack_backup_daily', 'jetpack_backup_daily_monthly' ],
 	'jetpack-backup-realtime': [ 'jetpack_backup_realtime', 'jetpack_backup_realtime_monthly' ],
+	'jetpack-search': [
+		'jetpack_search',
+		'jetpack_search_monthly',
+		'jetpack_search_trial',
+		'wpcom-search',
+		'wpcom-search-2y',
+	],
 };
 
 export const supportedSlugs = [ ...Object.values( iconToProductSlugMap ) ].flat();

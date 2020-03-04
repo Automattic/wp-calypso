@@ -45,6 +45,8 @@ Plan or product slug. Can be one of the following:
 - `business-bundle`
 - `business-bundle-2y`
 - `business-bundle-monthly`
+- `wpcom-search`
+- `wpcom-search-2y`
 - `jetpack_free`
 - `jetpack_personal`
 - `jetpack_personal_monthly`
@@ -56,6 +58,9 @@ Plan or product slug. Can be one of the following:
 - `jetpack_backup_daily_monthly`
 - `jetpack_backup_realtime`
 - `jetpack_backup_realtime_monthly`
+- `jetpack_search`
+- `jetpack_search_monthly`
+- `jetpack_search_trial`
 
 ### `className`
 
