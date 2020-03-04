@@ -309,6 +309,23 @@ class MappedDomainType extends React.Component {
 		const { statusText, statusClass, icon } = this.resolveStatus();
 
 		const newStatusDesignAutoRenew = config.isEnabled( 'domains/new-status-design/auto-renew' );
+		let expiresText;
+
+		if ( ! domain.expiry ) {
+			expiresText = translate( 'Expires: Never' );
+		} else if ( domain.bundledPlanSubscriptionId ) {
+			expiresText = translate( 'Expires with your plan on %(expiry_date)s', {
+				args: {
+					expiry_date: moment.utc( domain.expiry ).format( 'LL' ),
+				},
+			} );
+		} else {
+			expiresText = translate( 'Expires: %(expiry_date)s', {
+				args: {
+					expiry_date: moment.utc( domain.expiry ).format( 'LL' ),
+				},
+			} );
+		}
 
 		return (
 			<div className="domain-types__container">
@@ -322,21 +339,9 @@ class MappedDomainType extends React.Component {
 					{ this.renderExpiringSoon() }
 				</DomainStatus>
 				<Card compact={ true } className="domain-types__expiration-row">
-					<div>
-						{ domain.bundledPlanSubscriptionId
-							? translate( 'Expires with your plan on %(expiry_date)s', {
-									args: {
-										expiry_date: moment( domain.expiry ).format( 'LL' ),
-									},
-							  } )
-							: translate( 'Expires: %(expiry_date)s', {
-									args: {
-										expiry_date: moment( domain.expiry ).format( 'LL' ),
-									},
-							  } ) }
-					</div>
+					<div>{ expiresText }</div>
 					{ this.renderDefaultRenewButton() }
-					{ ! newStatusDesignAutoRenew && (
+					{ ! newStatusDesignAutoRenew && domain.subscriptionId && (
 						<div>
 							<SubscriptionSettings
 								type={ domain.type }

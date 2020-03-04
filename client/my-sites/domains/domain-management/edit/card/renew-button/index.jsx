@@ -53,7 +53,12 @@ class RenewButton extends React.Component {
 			redemptionProduct,
 			reactivate,
 			customLabel,
+			subscriptionId,
 		} = this.props;
+
+		if ( ! subscriptionId ) {
+			return null;
+		}
 
 		let formattedPrice = '...';
 		let loading = true;
