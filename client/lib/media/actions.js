@@ -29,7 +29,7 @@ import {
 } from 'state/media/actions';
 
 /**
- * @typedef MediaActions
+ * @typedef IMediaActions
  *
  * TODO: Better method types
  *
@@ -38,7 +38,7 @@ import {
  */
 
 /**
- * @type {MediaActions} MediaActions
+ * @type {IMediaActions}
  */
 const MediaActions = {
 	_fetching: {},
