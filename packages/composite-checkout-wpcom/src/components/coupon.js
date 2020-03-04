@@ -38,8 +38,9 @@ export default function Coupon( { id, className, disabled, couponStatus, couponF
 		<CouponWrapper
 			className={ joinClasses( [ className, 'coupon' ] ) }
 			onSubmit={ event => {
+				event.preventDefault();
 				setIsFreshOrEdited( false );
-				handleCouponSubmit( event );
+				handleCouponSubmit();
 			} }
 		>
 			<Field
