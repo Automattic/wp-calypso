@@ -115,6 +115,15 @@ export function countrySpecificFieldRules( country ) {
 					description: i18n.translate( 'Your Name' ),
 					rules: [ 'required' ],
 				},
+				nik: {
+					description: i18n.translate( 'NIK - Indonesia Identity Card Number', {
+						comment:
+							'NIK - Indonesia Identity Card Number required ' + 'for Indonesian payment methods.',
+					} ),
+					//TODO: validate
+					rules: [ 'required' ],
+				},
+
 				pan: {
 					description: i18n.translate( 'PAN - Permanent account number' ),
 					rules: [ 'validIndiaPan' ],

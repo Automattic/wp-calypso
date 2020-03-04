@@ -152,6 +152,8 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
 			);
 		case 'brazil-tef':
 			return tefPaymentFieldRules();
+		case 'id_wallet':
+			return countrySpecificFieldRules( 'ID' );
 		case 'netbanking':
 			return countrySpecificFieldRules( 'IN' );
 		case 'token':

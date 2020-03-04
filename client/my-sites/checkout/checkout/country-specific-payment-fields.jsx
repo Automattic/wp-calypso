@@ -128,6 +128,13 @@ export class CountrySpecificPaymentFields extends Component {
 					} ),
 				} ) }
 
+				{ this.createField( 'nik', Input, {
+					label: translate( 'NIK - Indonesia Identity Card Number', {
+						comment:
+							'NIK - Indonesia Identity Card Number required ' + 'for Indonesian payment methods.',
+					} ),
+				} ) }
+
 				{ this.createField( 'pan', Input, {
 					placeholder: ' ',
 					label: translate( 'PAN Number {{panNumberPopover/}}', {

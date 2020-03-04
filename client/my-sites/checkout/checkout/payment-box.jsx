@@ -72,7 +72,15 @@ export class PaymentBox extends PureComponent {
 			case 'wechat':
 				labelAdditionalText = paymentMethodName( method );
 				break;
-
+			case 'id_wallet':
+				labelLogo = (
+					<img
+						src={ `/calypso/images/upgrades/ovo.svg` }
+						alt={ paymentMethodName( method ) }
+						className="checkout__ovo"
+					/>
+				);
+				break;
 			case 'netbanking':
 				labelLogo = <Gridicon icon="institution" className="checkout__institution" />;
 				labelAdditionalText = paymentMethodName( method );
