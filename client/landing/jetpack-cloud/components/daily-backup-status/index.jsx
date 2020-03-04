@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
  */
 import { withLocalizedMoment } from 'components/localized-moment';
 import Gridicon from 'components/gridicon';
+import Button from 'components/forms/form-button';
 
 /**
  * Style dependencies
@@ -30,6 +31,8 @@ class DailyBackupStatus extends Component {
 					{ translate( 'Latest backup completed:' ) }
 				</div>
 				<div className="daily-backup-status__date">{ displayDate }</div>
+				<Button className="daily-backup-status__download-button">Download backup</Button>
+				<Button className="daily-backup-status__restore-button">Restore to this point</Button>
 			</Fragment>
 		);
 	}

@@ -15,3 +15,9 @@
 .daily-backup-status__date {
 	font-size: 1.5rem;
 }
+
+.daily-backup-status .form-button.daily-backup-status__restore-button,
+.daily-backup-status .form-button.daily-backup-status__download-button {
+	float: none;
+	display: block;
+}
