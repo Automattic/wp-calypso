@@ -1,0 +1,32 @@
+.history {
+	padding: 0 10px;
+
+	&__title {
+		text-align: left;
+		margin-left: -10px;
+	}
+
+	&__filters {
+		margin: 25px 0;
+	}
+}
+
+.entry {
+	&.is-fixed {
+		border-left: 3px solid var( --studio-jetpack-green-40 );
+	}
+
+	&.is-ignored {
+		border-left: 3px solid var( --studio-gray-50 );
+	}
+
+	&__badge {
+		color: white;
+		background: var( --studio-jetpack-green-40 );
+		text-transform: uppercase;
+		width: 60px;
+		padding: 5px;
+		letter-spacing: 0.5px;
+		border-radius: 3px;
+	}
+}
