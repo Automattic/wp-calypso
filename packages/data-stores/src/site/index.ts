@@ -10,6 +10,7 @@ import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import * as actions from './actions';
 import * as selectors from './selectors';
+import * as resolvers from './resolvers';
 import createControls from './controls';
 import { DispatchFromMap, SelectFromMap } from '../mapped-types';
 import { WpcomClientCredentials } from '../shared-types';
@@ -26,7 +27,7 @@ export function register( clientCreds: WpcomClientCredentials ): typeof STORE_KE
 			actions,
 			controls: controls as any,
 			reducer: reducer as any,
-			resolvers: {},
+			resolvers,
 			selectors,
 		} );
 	}

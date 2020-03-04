@@ -1,7 +1,12 @@
 /**
  * Internal dependencies
  */
-import { CreateSiteParams, NewSiteErrorResponse, NewSiteSuccessResponse } from './types';
+import {
+	CreateSiteParams,
+	ExistingSiteDetails,
+	NewSiteErrorResponse,
+	NewSiteSuccessResponse,
+} from './types';
 
 export const fetchNewSite = () => ( {
 	type: 'FETCH_NEW_SITE' as const,
@@ -15,6 +20,11 @@ export const receiveNewSite = ( response: NewSiteSuccessResponse ) => ( {
 export const receiveNewSiteFailed = ( error: NewSiteErrorResponse ) => ( {
 	type: 'RECEIVE_NEW_SITE_FAILED' as const,
 	error,
+} );
+
+export const receiveExistingSite = ( response: ExistingSiteDetails | undefined ) => ( {
+	type: 'RECEIVE_EXISTING_SITE' as const,
+	response,
 } );
 
 export function* createSite( params: CreateSiteParams ) {
@@ -31,5 +41,8 @@ export function* createSite( params: CreateSiteParams ) {
 }
 
 export type Action = ReturnType<
-	typeof fetchNewSite | typeof receiveNewSite | typeof receiveNewSiteFailed
+	| typeof fetchNewSite
+	| typeof receiveNewSite
+	| typeof receiveNewSiteFailed
+	| typeof receiveExistingSite
 >;

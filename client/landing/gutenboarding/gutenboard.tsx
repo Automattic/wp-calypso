@@ -7,8 +7,8 @@ import { BlockEditorProvider, BlockList as OriginalBlockList } from '@wordpress/
 import { Popover, DropZoneProvider } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import '@wordpress/format-library';
-import { useSelect } from '@wordpress/data';
-import React, { useRef, useEffect, useState } from 'react';
+import { useDispatch, useSelect } from '@wordpress/data';
+import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { recordTracksPageViewWithPageParams } from '@automattic/calypso-analytics';
 
@@ -64,27 +64,49 @@ export function Gutenboard() {
 	const history = useHistory();
 	const { pathname } = history.location;
 
-	const lastCreatedSiteIsCurrent = useSelect( select =>
-		select( ONBOARD_STORE ).isLastCreatedSiteCurrent()
-	);
-	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
-
-	const [ showDuplicateSiteModal, setShowDuplicateSiteModal ] = useState( false );
-
 	useEffect( () => {
 		recordTracksPageViewWithPageParams( `/gutenboarding${ pathname }` );
 	}, [ pathname ] );
 
-	useEffect( () => {
-		if ( currentUser && lastCreatedSiteIsCurrent ) {
-			setShowDuplicateSiteModal( true );
-		}
-	}, [ currentUser, lastCreatedSiteIsCurrent ] );
+	const lastCreatedSiteIsCurrent = useSelect( select =>
+		select( ONBOARD_STORE ).isLastCreatedSiteCurrent()
+	);
+	const lastCreatedSite = useSelect( select => select( ONBOARD_STORE ).getLastCreatedSite() );
+	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
 
-	const handleDuplicateSiteModalClose = () => {
+	const [ showDuplicateSiteModal, setShowDuplicateSiteModal ] = useState< boolean | undefined >(
+		undefined
+	);
+
+	const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
+
+	const handleDuplicateSiteModalClose = useCallback( () => {
+		resetOnboardStore();
 		setShowDuplicateSiteModal( false );
 		history.push( makePath() );
-	};
+	}, [ resetOnboardStore, setShowDuplicateSiteModal, history, makePath ] );
+
+	useEffect( () => {
+		if ( currentUser && lastCreatedSiteIsCurrent && showDuplicateSiteModal === undefined ) {
+			// Show modal if last created site is current
+			setShowDuplicateSiteModal( true );
+		} else if (
+			currentUser &&
+			! lastCreatedSiteIsCurrent &&
+			lastCreatedSite &&
+			showDuplicateSiteModal === undefined
+		) {
+			// If last created site exists but is not current, clear store and redirect to
+			// the beginning of the flow.
+			handleDuplicateSiteModalClose();
+		}
+	}, [
+		currentUser,
+		lastCreatedSite,
+		lastCreatedSiteIsCurrent,
+		showDuplicateSiteModal,
+		handleDuplicateSiteModalClose,
+	] );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (

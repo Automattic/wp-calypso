@@ -53,3 +53,17 @@ export interface CreateSiteParams {
 export interface CreateSiteAction extends Action {
 	params: CreateSiteParams;
 }
+
+export interface ExistingSiteDetails {
+	ID: number;
+	name: string;
+	description: string;
+	URL: URL;
+}
+
+export interface ExistingSiteError {
+	error: string;
+	message: string;
+}
+
+export type ExistingSiteResponse = ExistingSiteDetails | ExistingSiteError;

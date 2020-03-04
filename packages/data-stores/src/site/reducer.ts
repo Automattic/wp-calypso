@@ -7,7 +7,7 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { NewSiteBlogDetails, NewSiteErrorResponse } from './types';
+import { ExistingSiteDetails, NewSiteBlogDetails, NewSiteErrorResponse } from './types';
 import { Action } from './actions';
 
 const newSiteData: Reducer< NewSiteBlogDetails | undefined, Action > = ( state, action ) => {
@@ -50,13 +50,20 @@ const isFetchingSite: Reducer< boolean | undefined, Action > = ( state = false, 
 	return state;
 };
 
+const existingSite: Reducer< ExistingSiteDetails | undefined, Action > = ( state, action ) => {
+	if ( action.type === 'RECEIVE_EXISTING_SITE' ) {
+		return action.response;
+	}
+	return state;
+};
+
 const newSite = combineReducers( {
 	data: newSiteData,
 	error: newSiteError,
 	isFetching: isFetchingSite,
 } );
 
-const reducer = combineReducers( { newSite } );
+const reducer = combineReducers( { newSite, existingSite } );
 
 export type State = ReturnType< typeof reducer >;
 
