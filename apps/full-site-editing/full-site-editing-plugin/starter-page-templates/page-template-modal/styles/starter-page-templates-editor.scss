@@ -479,10 +479,4 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	.block-iframe-preview__template-title {
 		padding-top: 20px;
 	}
-
-	// Fixes a rendering bug where the margins of the top/bottom blocks weren't contained in the iframe body
-	// For details see issue #39799
-	.block-editor-block-list__layout {
-		overflow: hidden;
-	}
 }

@@ -23,7 +23,7 @@ export default function( { blocks, settings, recomputeBlockListKey } ) {
 	return (
 		<BlockEditorProvider value={ blocks } settings={ settings }>
 			<Disabled key={ recomputeBlockListKey }>
-				<div className="template-title">
+				<div className="block-iframe-preview__template-title">
 					<PostTitle />
 				</div>
 				<BlockList />
