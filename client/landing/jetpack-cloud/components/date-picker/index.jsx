@@ -21,13 +21,9 @@ import './style.scss';
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 class DatePicker extends Component {
-	state = {
-		currentSetting: false,
-	};
-
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
-		initialDate: PropTypes.instanceOf( Date ).isRequired,
+		date: PropTypes.instanceOf( Date ).isRequired,
 		onChange: PropTypes.func.isRequired,
 	};
 
@@ -46,12 +42,12 @@ class DatePicker extends Component {
 	};
 
 	shuttleLeft = () => {
-		const { initialDate, moment } = this.props;
-		const currentSetting = moment(
-			this.state.currentSetting ? this.state.currentSetting : initialDate
-		).subtract( 1, 'days' );
-		this.setState( { currentSetting } );
-		this.props.onChange( currentSetting.format( DATE_FORMAT ) );
+		const { date, onChange, moment } = this.props;
+		const newDate = moment( date )
+			.subtract( 1, 'days' )
+			.toDate();
+
+		onChange( newDate );
 	};
 
 	shuttleRight = () => {
@@ -59,27 +55,20 @@ class DatePicker extends Component {
 			return false;
 		}
 
-		const { initialDate, moment } = this.props;
-		const currentSetting = moment(
-			this.state.currentSetting ? this.state.currentSetting : initialDate
-		).add( 1, 'days' );
-		this.setState( { currentSetting } );
-		this.props.onChange( currentSetting.format( DATE_FORMAT ) );
+		const { date, onChange, moment } = this.props;
+		const newDate = moment( date )
+			.add( 1, 'days' )
+			.toDate();
+
+		onChange( newDate );
 	};
 
-	canShuttleRight = () =>
-		this.props.moment().format( DATE_FORMAT ) !==
-		this.props
-			.moment( this.state.currentSetting ? this.state.currentSetting : this.props.initialDate )
-			.format( DATE_FORMAT );
+	canShuttleRight = () => ! this.props.moment().isSame( this.props.date, 'day' );
 
 	render() {
-		const { initialDate, siteId } = this.props;
-		const { currentSetting } = this.state;
+		const { date, siteId } = this.props;
 
-		const currentDisplayDate = currentSetting
-			? this.getDisplayDate( currentSetting )
-			: this.getDisplayDate( initialDate );
+		const currentDisplayDate = this.getDisplayDate( date );
 
 		return (
 			<div className="date-picker">

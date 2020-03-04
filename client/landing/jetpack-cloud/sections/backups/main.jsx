@@ -19,7 +19,7 @@ import { emptyFilter } from 'state/activity-log/reducer';
 
 class BackupsPage extends Component {
 	state = {
-		currentDateSetting: false,
+		currentDateSetting: new Date(),
 	};
 
 	dateChange = currentDateSetting => this.setState( { currentDateSetting } );
@@ -31,10 +31,7 @@ class BackupsPage extends Component {
 
 	render() {
 		const { logs, siteId } = this.props;
-		const initialDate = new Date();
-		const currentDateSetting = this.state.currentDateSetting
-			? this.state.currentDateSetting
-			: new Date().toISOString().split( 'T' )[ 0 ];
+		const { currentDateSetting } = this.state;
 
 		const hasRealtimeBackups = this.hasRealtimeBackups();
 
@@ -44,7 +41,8 @@ class BackupsPage extends Component {
 		return (
 			<div>
 				<QuerySitePurchases siteId={ siteId } />
-				<DatePicker siteId={ siteId } initialDate={ initialDate } onChange={ this.dateChange } />
+				<DatePicker siteId={ siteId } date={ currentDateSetting } onChange={ this.dateChange } />
+
 				<DailyBackupStatus date={ currentDateSetting } backupAttempts={ backupAttempts } />
 				<BackupDelta deltas={ deltas } backupAttempts={ backupAttempts } />
 				{ hasRealtimeBackups && <div>Real time backup points here</div> }
