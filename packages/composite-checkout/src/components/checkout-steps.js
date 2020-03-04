@@ -326,6 +326,7 @@ export function CheckoutStepBody( {
 							}
 							buttonState={ formStatus !== 'ready' ? 'disabled' : 'primary' }
 							disabled={ formStatus !== 'ready' }
+							isBusy={ formStatus === 'validating' }
 						/>
 					) }
 				</StepContentUI>
