@@ -18,7 +18,7 @@ import MediaListStore from './list-store';
 import MediaValidationStore from './validation-store';
 
 /**
- * @typedef MediaActions
+ * @typedef IMediaActions
  *
  * TODO: Better method types
  *
@@ -27,7 +27,7 @@ import MediaValidationStore from './validation-store';
  */
 
 /**
- * @type {MediaActions} MediaActions
+ * @type {IMediaActions}
  */
 const MediaActions = {
 	_fetching: {},
