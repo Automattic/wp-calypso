@@ -28,6 +28,8 @@ import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { isSubdomain } from 'lib/domains';
 import { MAP_EXISTING_DOMAIN, MAP_SUBDOMAIN } from 'lib/url/support';
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'state/sites/selectors';
 
 class MappedDomainType extends React.Component {
 	getVerticalNavigation() {
@@ -188,11 +190,8 @@ class MappedDomainType extends React.Component {
 	}
 
 	renderSettingUpNameservers() {
-		const { domain, selectedSite, translate } = this.props;
-		if (
-			selectedSite.jetpack ||
-			( selectedSite.options && selectedSite.options.is_automated_transfer )
-		) {
+		const { domain, translate } = this.props;
+		if ( this.props.isJetpackSite || this.props.isAutomatedTransferSite ) {
 			return null;
 		}
 
@@ -356,6 +355,14 @@ class MappedDomainType extends React.Component {
 	}
 }
 
-export default connect( null, {
-	recordPaymentSettingsClick,
-} )( withLocalizedMoment( localize( MappedDomainType ) ) );
+export default connect(
+	( state, ownProps ) => {
+		return {
+			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, ownProps.selectedSite.ID ),
+			isJetpackSite: isJetpackSite( state, ownProps.selectedSite.ID ),
+		};
+	},
+	{
+		recordPaymentSettingsClick,
+	}
+)( withLocalizedMoment( localize( MappedDomainType ) ) );
