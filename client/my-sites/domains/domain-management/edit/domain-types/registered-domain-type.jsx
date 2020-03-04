@@ -33,6 +33,7 @@ import SubscriptionSettings from '../card/subscription-settings';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { getProductBySlug } from 'state/products-list/selectors';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
+import NonPrimaryDomainPlanUpsell from '../../components/domain/non-primary-domain-plan-upsell';
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
 
 class RegisteredDomainType extends React.Component {
@@ -311,6 +312,18 @@ class RegisteredDomainType extends React.Component {
 		);
 	}
 
+	planUpsellForNonPrimaryDomain() {
+		const { domain } = this.props;
+
+		return (
+			<NonPrimaryDomainPlanUpsell
+				tracksImpressionName="calypso_non_primary_domain_settings_plan_upsell_impression"
+				tracksClickName="calypso_non_primary_domain_settings_plan_upsell_click"
+				domain={ domain }
+			/>
+		);
+	}
+
 	handlePaymentSettingsClick = () => {
 		this.props.recordPaymentSettingsClick( this.props.domain );
 	};
@@ -325,6 +338,7 @@ class RegisteredDomainType extends React.Component {
 
 		return (
 			<div className="domain-types__container">
+				{ this.planUpsellForNonPrimaryDomain() }
 				<DomainStatus
 					header={ domain_name }
 					statusText={ statusText }
