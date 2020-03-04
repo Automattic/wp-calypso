@@ -26,6 +26,33 @@ import mapBlocksRecursively from './utils/map-blocks-recursively';
 
 const DEFAULT_HOMEPAGE_TEMPLATE = 'maywood';
 
+/**
+ * Determines whether the provided collection of Blocks contains any "missing"
+ * blocks as determined by the presence of the `core/missing` block type.
+ *
+ * @param {Array} blocks the collection of block objects to check for "missing" block .
+ * @returns {boolean} whether the collection blocks contains any missing blocks.
+ */
+function containsMissingBlock( blocks ) {
+	// Once parsed, missing Blocks have a name prop of `core/missing`.
+	// see: https://github.com/WordPress/gutenberg/tree/742dbf2ef0e37481a3c14c29f3688aa0cd3cf887/packages/block-library/src/missing
+	const MISSING_BLOCK_NAME = 'core/missing';
+
+	return blocks.find( block => {
+		// If we found a missing block the bale out immediately
+		if ( block.name === MISSING_BLOCK_NAME ) {
+			return true;
+		}
+
+		// If there are innerblocks then recurse down into them...
+		if ( block.innerBlocks && block.innerBlocks.length ) {
+			return containsMissingBlock( block.innerBlocks );
+		}
+
+		return false;
+	} );
+}
+
 class PageTemplateModal extends Component {
 	state = {
 		isLoading: false,
@@ -64,21 +91,23 @@ class PageTemplateModal extends Component {
 			{}
 		);
 
-		// Once parsed, missing Blocks have a name prop of `core/missing`.
-		// see: https://github.com/WordPress/gutenberg/tree/742dbf2ef0e37481a3c14c29f3688aa0cd3cf887/packages/block-library/src/missing
-		const MISSING_BLOCK_NAME = 'core/missing';
-
 		// Remove templates that include a missing block
-		rtn = reduce(
-			rtn,
-			( acc, templateBlocks, slug ) => {
-				// We will need to flatten the blocks by `innerBlocks` to ensure we
-				// catch nested Blocks
-				const hasMissingBlocks = templateBlocks.find( block => block.name === MISSING_BLOCK_NAME );
+		rtn = this.filterTemplatesWithMissingBlocks( rtn );
 
-				// If we don't have any missing blocks, or there are no block at
-				// all then retain in collection.
-				if ( ! hasMissingBlocks || ! templateBlocks.length ) {
+		return rtn;
+	} );
+
+	filterTemplatesWithMissingBlocks( templates ) {
+		return reduce(
+			templates,
+			( acc, templateBlocks, slug ) => {
+				// Does the template contain any missing blocks?
+				const templateHasMissingBlocks = containsMissingBlock( templateBlocks );
+
+				// Only retain the template in the collection if:
+				// 1. It does not contain any missing blocks
+				// 2. There are no blocks at all (likely the "blank" template placeholder)
+				if ( ! templateHasMissingBlocks || ! templateBlocks.length ) {
 					acc[ slug ] = templateBlocks;
 				}
 
@@ -86,9 +115,7 @@ class PageTemplateModal extends Component {
 			},
 			{}
 		);
-
-		return rtn;
-	} );
+	}
 
 	getBlocksForPreview = memoize( previewedTemplate => {
 		const blocks = this.getBlocksByTemplateSlug( previewedTemplate );
