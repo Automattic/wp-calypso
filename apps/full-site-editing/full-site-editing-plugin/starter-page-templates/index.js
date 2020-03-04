@@ -25,27 +25,28 @@ const {
 	screenAction,
 	theme,
 	isFrontPage,
+	hideFrontPageTitle,
 } = window.starterPageTemplatesConfig;
 
 if ( tracksUserData ) {
 	initializeWithIdentity( tracksUserData );
 }
 
+const templatesPluginSharedProps = {
+	segment,
+	templates,
+	theme,
+	vertical,
+	isFrontPage,
+	hidePageTitle: Boolean( isFrontPage && hideFrontPageTitle ),
+};
+
 // Open plugin only if we are creating new page.
 if ( screenAction === 'add' ) {
 	registerPlugin( 'page-templates', {
-		render: () => {
-			return (
-				<PageTemplatesPlugin
-					isFrontPage={ isFrontPage }
-					segment={ segment }
-					shouldPrefetchAssets={ false }
-					templates={ templates }
-					theme={ theme }
-					vertical={ vertical }
-				/>
-			);
-		},
+		render: () => (
+			<PageTemplatesPlugin { ...templatesPluginSharedProps } shouldPrefetchAssets={ false } />
+		),
 	} );
 }
 
@@ -60,12 +61,8 @@ registerPlugin( 'page-templates-sidebar', {
 				icon="none"
 			>
 				<SidebarTemplatesPlugin
-					isFrontPage={ isFrontPage }
-					segment={ segment }
+					{ ...templatesPluginSharedProps }
 					siteInformation={ siteInformation }
-					templates={ templates }
-					theme={ theme }
-					vertical={ vertical }
 				/>
 			</PluginDocumentSettingPanel>
 		);

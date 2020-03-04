@@ -16,6 +16,7 @@ import {
 	MEMBERSHIPS_SUBSCRIBERS_LIST,
 	MEMBERSHIPS_SETTINGS,
 	MEMBERSHIPS_SETTINGS_RECEIVE,
+	MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_DISCONNECT_SUCCESS,
 } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
@@ -114,4 +115,5 @@ registerHandlers( 'state/data-layer/wpcom/sites/memberships/index.js', {
 	[ MEMBERSHIPS_EARNINGS_GET ]: [ handleMembershipGetEarnings ],
 	[ MEMBERSHIPS_SUBSCRIBERS_LIST ]: [ handleMembershipGetSubscribers ],
 	[ MEMBERSHIPS_SETTINGS ]: [ handleMembershipGetSettings ],
+	[ MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_DISCONNECT_SUCCESS ]: [ handleMembershipGetSettings ],
 } );

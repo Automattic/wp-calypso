@@ -381,7 +381,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 .sidebar-modal-opener__warning-options {
 	float: right;
 	margin-top: 20px;
-	
+
 	.components-button {
 		margin-left: 12px;
 	}
@@ -439,14 +439,14 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	}
 
 	// Manual CSS Overrides. Remove after better solutions are in place.
-	
+
 	// Removes empty paragraph placeholders, i.e. "Write Title..."
 	[data-type='core/paragraph'] [data-rich-text-placeholder] {
 		display: none;
 	}
 
 	/*
-	* Fixes jetpack .wp-block-jetpack-slideshow styles, as the /wp-content/plugins/jetpack/_inc/blocks/vendors~swiper.[hash].css 
+	* Fixes jetpack .wp-block-jetpack-slideshow styles, as the /wp-content/plugins/jetpack/_inc/blocks/vendors~swiper.[hash].css
 	* file is loaded on block insert, not on page load. After the iframe is grabbing these styles, we can remove this code.
 	*/
 	.swiper-wrapper {
@@ -466,10 +466,17 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		border-radius: 100%;
 	}
 
-	// Fixes cover image spacing
-	.editor-styles-wrapper [data-block][data-type='core/cover'] {
-		margin-top: 0;
-		margin-bottom: 0;
+	// Fixes cover image spacing and full-width group spacing
+	.editor-styles-wrapper [data-block] {
+		&[data-type='core/group'],
+		&[data-type='core/cover'][data-align='full'] {
+			margin-top: 0;
+			margin-bottom: 0;
+		}
 	}
 
+	// Tweak template title (post-title) component.
+	.block-iframe-preview__template-title {
+		padding-top: 20px;
+	}
 }

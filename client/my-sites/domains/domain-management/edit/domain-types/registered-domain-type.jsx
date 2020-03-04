@@ -24,11 +24,16 @@ import {
 } from 'my-sites/domains/paths';
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification';
 import { isRecentlyRegistered, isExpiringSoon } from 'lib/domains/utils';
-import { DOMAINS } from 'lib/url/support';
+import {
+	DOMAIN_EXPIRATION,
+	DOMAIN_EXPIRATION_REDEMPTION,
+	DOMAIN_RECENTLY_REGISTERED,
+} from 'lib/url/support';
 import SubscriptionSettings from '../card/subscription-settings';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { getProductBySlug } from 'state/products-list/selectors';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
+import NonPrimaryDomainPlanUpsell from '../../components/domain/non-primary-domain-plan-upsell';
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
 
 class RegisteredDomainType extends React.Component {
@@ -166,6 +171,7 @@ class RegisteredDomainType extends React.Component {
 						primary={ true }
 						selectedSite={ this.props.selectedSite }
 						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
+						tracksProps={ { source: 'registered-domain-status', domain_status: 'expiring-soon' } }
 					/>
 				</div>
 			);
@@ -176,7 +182,7 @@ class RegisteredDomainType extends React.Component {
 
 	renderExpired() {
 		const { domain, translate, moment } = this.props;
-		const domainsLink = <a href={ DOMAINS } target="_blank" rel="noopener noreferrer" />;
+		const domainsLink = link => <a href={ link } target="_blank" rel="noopener noreferrer" />;
 
 		if ( ! domain.expired ) {
 			return null;
@@ -197,7 +203,7 @@ class RegisteredDomainType extends React.Component {
 				'Your domain has expired and is no longer active. You have {{strong}}%(days)s{{/strong}} to renew it at the standard rate before an additional %(redemptionCost)s redemption fee is applied. {{domainsLink}}Learn more{{/domainsLink}}',
 				{
 					components: {
-						domainsLink,
+						domainsLink: domainsLink( DOMAIN_EXPIRATION ),
 						strong: <strong />,
 					},
 					args: {
@@ -211,7 +217,7 @@ class RegisteredDomainType extends React.Component {
 				'Your domain has expired and is no longer active. You have {{strong}}%(days)s{{/strong}} to reactivate it during this redemption period before someone else can register it. An additional redemption fee of {{strong}}%(redemptionCost)s{{/strong}} will be added to the price of the domain to reactivate it. {{domainsLink}}Learn more{{/domainsLink}}',
 				{
 					components: {
-						domainsLink,
+						domainsLink: domainsLink( DOMAIN_EXPIRATION_REDEMPTION ),
 						strong: <strong />,
 					},
 					args: {
@@ -225,7 +231,7 @@ class RegisteredDomainType extends React.Component {
 				'Your domain has expired and is no longer active. {{domainsLink}}Learn more{{/domainsLink}}',
 				{
 					components: {
-						domainsLink,
+						domainsLink: domainsLink( DOMAIN_EXPIRATION ),
 					},
 				}
 			);
@@ -241,6 +247,7 @@ class RegisteredDomainType extends React.Component {
 						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
 						redemptionProduct={ domain.isRedeemable ? this.props.redemptionProduct : null }
 						reactivate={ ! domain.isRenewable && domain.isRedeemable }
+						tracksProps={ { source: 'registered-domain-status', domain_status: 'expired' } }
 					/>
 				) }
 			</div>
@@ -250,7 +257,9 @@ class RegisteredDomainType extends React.Component {
 	renderRecentlyRegistered() {
 		const { domain, translate } = this.props;
 		const { registrationDate, name: domain_name } = domain;
-		const domainsLink = <a href={ DOMAINS } target="_blank" rel="noopener noreferrer" />;
+		const domainsLink = (
+			<a href={ DOMAIN_RECENTLY_REGISTERED } target="_blank" rel="noopener noreferrer" />
+		);
 
 		const recentlyRegistered = isRecentlyRegistered( registrationDate );
 
@@ -289,6 +298,7 @@ class RegisteredDomainType extends React.Component {
 					compact={ true }
 					selectedSite={ this.props.selectedSite }
 					subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
+					tracksProps={ { source: 'registered-domain-status', domain_status: 'active' } }
 				/>
 			</div>
 		);
@@ -299,6 +309,18 @@ class RegisteredDomainType extends React.Component {
 			<Card compact={ true }>
 				Auto Renew (on) <CompactFormToggle checked={ true } />
 			</Card>
+		);
+	}
+
+	planUpsellForNonPrimaryDomain() {
+		const { domain } = this.props;
+
+		return (
+			<NonPrimaryDomainPlanUpsell
+				tracksImpressionName="calypso_non_primary_domain_settings_plan_upsell_impression"
+				tracksClickName="calypso_non_primary_domain_settings_plan_upsell_click"
+				domain={ domain }
+			/>
 		);
 	}
 
@@ -316,6 +338,7 @@ class RegisteredDomainType extends React.Component {
 
 		return (
 			<div className="domain-types__container">
+				{ this.planUpsellForNonPrimaryDomain() }
 				<DomainStatus
 					header={ domain_name }
 					statusText={ statusText }

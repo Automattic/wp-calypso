@@ -12,6 +12,7 @@ import debugFactory from 'debug';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import { getTopJITM } from 'state/jitm/selectors';
 import { dismissJITM, setupDevTool } from 'state/jitm/actions';
 import AsyncLoad from 'components/async-load';
@@ -71,11 +72,11 @@ function useDevTool( { currentSite }, dispatch ) {
 		}
 
 		currentSite.ID && setupDevTool( currentSite.ID, dispatch );
-	}, [ currentSite && currentSite.ID ] );
+	}, [ currentSite?.ID ] );
 }
 
 export function JITM( props ) {
-	const { jitm, currentSite, messagePath } = props;
+	const { jitm, currentSite, messagePath, isJetpack } = props;
 	const dispatch = useDispatch();
 
 	useDevTool( props, dispatch );
@@ -85,6 +86,11 @@ export function JITM( props ) {
 	}
 
 	debug( `siteId: %d, messagePath: %s, message: `, currentSite.ID, messagePath, jitm );
+
+	// 'jetpack' icon is only allowed to Jetpack sites
+	if ( jitm?.content?.icon === 'jetpack' && ! isJetpack ) {
+		jitm.content.icon = '';
+	}
 
 	return (
 		<>
@@ -108,10 +114,15 @@ JITM.defaultProps = {
 	template: 'default',
 };
 
-const mapStateToProps = ( state, ownProps ) => ( {
-	currentSite: getSelectedSite( state ),
-	jitm: getTopJITM( state, ownProps.messagePath ),
-} );
+const mapStateToProps = ( state, ownProps ) => {
+	const currentSite = getSelectedSite( state );
+
+	return {
+		currentSite,
+		jitm: getTopJITM( state, ownProps.messagePath ),
+		isJetpack: currentSite && isJetpackSite( state, currentSite.ID ),
+	};
+};
 
 const mapDispatchToProps = {
 	recordTracksEvent,

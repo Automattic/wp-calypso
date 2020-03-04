@@ -84,6 +84,7 @@ const BlockFramePreview = ( {
 	blocks,
 	settings,
 	setTimeout = noop,
+	title,
 } ) => {
 	const frameContainerRef = useRef();
 	const renderedBlocksRef = useRef();
@@ -120,6 +121,33 @@ const BlockFramePreview = ( {
 			transform: `scale( ${ scale } )`,
 		} );
 	}, [ viewportWidth ] );
+
+	/*
+	 * Temporarily manually set the PostTitle from DOM.
+	 * It isn't currently possible to manually force the `<PostTitle />` component
+	 * to render a title provided as a prop. A Core PR will rectify this (see below).
+	 * Until then we use direct DOM manipulation to set the post title.
+	 *
+	 * See: https://github.com/WordPress/gutenberg/pull/20609/
+	 */
+	useEffect( () => {
+		if ( ! title ) return;
+
+		const iframeBody = get( iframeRef, [ 'current', 'contentDocument', 'body' ] );
+		if ( ! iframeBody ) {
+			return;
+		}
+
+		const templateTitle = iframeBody.querySelector(
+			'.editor-post-title .editor-post-title__input'
+		);
+
+		if ( ! templateTitle ) {
+			return;
+		}
+
+		templateTitle.value = title;
+	}, [ recomputeBlockListKey ] );
 
 	// Populate iFrame styles.
 	useEffect( () => {
@@ -183,17 +211,16 @@ const BlockFramePreview = ( {
 				style={ style }
 			/>
 
-			<div ref={ renderedBlocksRef } className="block-editor" id="rendered-blocks">
+			<div ref={ renderedBlocksRef } className="block-editor">
 				<div className="edit-post-visual-editor">
 					<div className="editor-styles-wrapper">
 						<div className="editor-writing-flow">
-							{ blocks && blocks.length ? (
-								<CustomBlockPreview
-									blocks={ renderedBlocks }
-									settings={ settings }
-									recomputeBlockListKey={ recomputeBlockListKey }
-								/>
-							) : null }
+							<CustomBlockPreview
+								blocks={ renderedBlocks }
+								settings={ settings }
+								hidePageTitle={ ! title }
+								recomputeBlockListKey={ recomputeBlockListKey }
+							/>
 						</div>
 					</div>
 				</div>

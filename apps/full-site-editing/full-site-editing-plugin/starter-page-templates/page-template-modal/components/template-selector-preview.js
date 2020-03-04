@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
  */
 import BlockIframePreview from './block-iframe-preview';
 
-const TemplateSelectorPreview = ( { blocks = [], viewportWidth } ) => {
+const TemplateSelectorPreview = ( { blocks = [], viewportWidth, title } ) => {
 	const noBlocks = ! blocks.length;
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -26,7 +26,7 @@ const TemplateSelectorPreview = ( { blocks = [], viewportWidth } ) => {
 			{ /* Always render preview iframe to ensure it's ready to populate with Blocks. */
 			/* Without this some browsers will experience a noticavle delay
 			/* before Blocks are populated into the iframe. */ }
-			<BlockIframePreview blocks={ blocks } viewportWidth={ viewportWidth } />
+			<BlockIframePreview blocks={ blocks } viewportWidth={ viewportWidth } title={ title } />
 		</div>
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	);

@@ -42,9 +42,13 @@ export function* createAccount( params: CreateAccountParams ) {
 			type: 'CREATE_ACCOUNT' as const,
 			params,
 		};
-		return receiveNewUser( newUser );
+		yield receiveNewUser( newUser );
+
+		return true;
 	} catch ( err ) {
-		return receiveNewUserFailed( err );
+		yield receiveNewUserFailed( err );
+
+		return false;
 	}
 }
 

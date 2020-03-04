@@ -106,6 +106,7 @@ export function PaypalSubmitButton( { disabled } ) {
 			onClick={ onClick }
 			buttonState={ disabled ? 'disabled' : 'primary' }
 			buttonType="paypal"
+			isBusy={ 'submitting' === formStatus }
 			fullWidth
 		>
 			{ formStatus === 'submitting' ? localize( 'Processing...' ) : <ButtonPayPalIcon /> }

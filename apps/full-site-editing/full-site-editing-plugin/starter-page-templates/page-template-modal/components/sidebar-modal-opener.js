@@ -53,7 +53,15 @@ class SidebarModalOpener extends Component {
 
 	render() {
 		const { slug, title, preview, previewAlt } = this.getLastTemplateUsed();
-		const { isFrontPage, templates, theme, vertical, segment, siteInformation } = this.props;
+		const {
+			templates,
+			theme,
+			vertical,
+			segment,
+			siteInformation,
+			hidePageTitle,
+			isFrontPage,
+		} = this.props;
 
 		return (
 			<div className="sidebar-modal-opener">
@@ -82,6 +90,7 @@ class SidebarModalOpener extends Component {
 						vertical={ vertical }
 						segment={ segment }
 						toggleTemplateModal={ this.toggleTemplateModal }
+						hidePageTitle={ hidePageTitle }
 						isFrontPage={ isFrontPage }
 						isPromptedFromSidebar
 					/>

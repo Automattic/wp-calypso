@@ -127,7 +127,7 @@ class Layout extends Component {
 		const optionalBodyProps = () => {
 			const optionalProps = {};
 
-			if ( this.props.isFrankenflow ) {
+			if ( this.props.isFrankenflow || this.props.isCheckoutFromGutenboarding ) {
 				optionalProps.bodyClass = 'is-frankenflow';
 			}
 
@@ -213,7 +213,10 @@ export default connect( state => {
 	const sectionJitmPath = getMessagePathForJITM( currentRoute );
 	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
 	const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
-	const noMasterbarForRoute = isJetpackLogin || currentRoute === '/me/account/closed';
+	const isCheckoutFromGutenboarding =
+		'checkout' === sectionName && '1' === getCurrentQueryArguments( state )?.preLaunch;
+	const noMasterbarForRoute =
+		isJetpackLogin || isCheckoutFromGutenboarding || currentRoute === '/me/account/closed';
 	const noMasterbarForSection = 'signup' === sectionName || 'jetpack-connect' === sectionName;
 	const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 	const isJetpackWooCommerceFlow =
@@ -252,5 +255,6 @@ export default connect( state => {
 		See https://github.com/Automattic/wp-calypso/pull/31277 for more details. */
 		shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 		isFrankenflow,
+		isCheckoutFromGutenboarding,
 	};
 } )( Layout );

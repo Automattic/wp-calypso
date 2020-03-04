@@ -23,6 +23,8 @@
 		"catch-js-errors": true,
 		"code-splitting": true,
 		"desktop-promo": true,
+		"dev/test-helper": true,
+		"dev/preferences-helper": true,
 		"domains/cctlds": true,
 		"domains/cctlds/ca": true,
 		"domains/cctlds/fr": true,

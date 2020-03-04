@@ -64,6 +64,7 @@ import Gravatar from 'components/gravatar/docs/example';
 import GravatarCaterpillar from 'components/gravatar-caterpillar/docs/example';
 import Gridicon from 'components/gridicon/docs/example';
 import GSuiteExamples from 'components/gsuite/docs/example';
+import HappinessEngineersTray from 'components/happiness-engineers-tray/docs/example';
 import HeaderButton from 'components/header-button/docs/example';
 import Headers from 'components/header-cake/docs/example';
 import ImagePreloader from 'components/image-preloader/docs/example';
@@ -219,6 +220,7 @@ export default class DesignAssets extends React.Component {
 					<GravatarCaterpillar readmeFilePath="gravatar-caterpillar" />
 					<Gridicon />
 					<GSuiteExamples readmeFilePath="gsuite" />
+					<HappinessEngineersTray readmeFilePath="happiness-engineers-tray" />
 					<HeaderButton readmeFilePath="header-button" />
 					<Headers readmeFilePath="header-cake" />
 					<ImagePreloader readmeFilePath="image-preloader" />

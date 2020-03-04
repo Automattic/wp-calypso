@@ -4,7 +4,7 @@
 import { useI18n } from '@automattic/react-i18n';
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import React, { FunctionComponent, useEffect, useCallback } from 'react';
+import React, { FunctionComponent, useEffect, useCallback, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import classnames from 'classnames';
 import { DomainSuggestions } from '@automattic/data-stores';
@@ -20,7 +20,7 @@ import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
 import { selectorDebounce } from '../../constants';
 import Link from '../link';
-import { Step, usePath } from '../../path';
+import SignupForm from '../../components/signup-form';
 
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
@@ -38,11 +38,11 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 
 	const newSite = useSelect( select => select( SITE_STORE ).getNewSite() );
 
-	const { domain, selectedDesign, siteTitle, siteVertical, shouldCreate } = useSelect( select =>
+	const { domain, selectedDesign, siteTitle, siteVertical } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
 	const hasSelectedDesign = !! selectedDesign;
-	const { setDomain, resetOnboardStore, setShouldCreate } = useDispatch( ONBOARD_STORE );
+	const { setDomain, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
 	const [ domainSearch ] = useDebounce( siteTitle, selectorDebounce );
 	const freeDomainSuggestion = useSelect(
@@ -66,8 +66,18 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		}
 	}, [ siteTitle, setDomain ] );
 
-	const history = useHistory();
-	const makePath = usePath();
+	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
+
+	const {
+		location: { pathname },
+	} = useHistory();
+	useEffect( () => {
+		// Dialogs usually close naturally when the user clicks the browser's
+		// back/forward buttons because their parent is unmounted. However
+		// this header isn't unmounted on route changes so we need to
+		// explicitly hide the dialog.
+		setShowSignupDialog( false );
+	}, [ pathname, setShowSignupDialog ] );
 
 	const currentDomain = domain ?? freeDomainSuggestion;
 
@@ -110,16 +120,14 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 	);
 
 	const handleSignup = () => {
-		setShouldCreate( true );
-		history.push( makePath( Step.Signup ) );
+		setShowSignupDialog( true );
 	};
 
 	useEffect( () => {
-		if ( shouldCreate && newUser && newUser.bearerToken && newUser.username ) {
+		if ( newUser && newUser.bearerToken && newUser.username ) {
 			handleCreateSite( newUser.username, newUser.bearerToken );
-			setShouldCreate( false );
 		}
-	}, [ shouldCreate, newUser, handleCreateSite, setShouldCreate ] );
+	}, [ newUser, handleCreateSite ] );
 
 	useEffect( () => {
 		if ( newSite ) {
@@ -169,13 +177,13 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 							onClick={ () =>
 								currentUser ? handleCreateSite( currentUser.username ) : handleSignup()
 							}
-							disabled={ shouldCreate }
 						>
 							{ NO__( 'Create my site' ) }
 						</Button>
 					) }
 				</div>
 			</div>
+			{ showSignupDialog && <SignupForm onRequestClose={ () => setShowSignupDialog( false ) } /> }
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
