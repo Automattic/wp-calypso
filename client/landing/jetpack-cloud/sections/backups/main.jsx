@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestActivityLogs } from 'state/data-getters';
-import ActivityList from '../../components/activity-list';
 import DatePicker from '../../components/date-picker';
 import DailyBackupStatus from '../../components/daily-backup-status';
 import { getBackupAttemptsForDate } from './utils';
@@ -34,7 +33,6 @@ class BackupsPage extends Component {
 			<div>
 				<DatePicker siteId={ siteId } initialDate={ initialDate } onChange={ this.dateChange } />
 				<DailyBackupStatus date={ currentDateSetting } backupAttempts={ backupAttempts } />
-				<ActivityList logs={ this.props.logs } />
 			</div>
 		);
 	}
