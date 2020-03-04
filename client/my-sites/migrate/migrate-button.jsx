@@ -42,13 +42,7 @@ class MigrateButton extends Component {
 			</>
 		);
 
-		accept(
-			message,
-			this.confirmCallback,
-			translate( 'Import and overwrite' ),
-			translate( 'Cancel' ),
-			{ additionalClassNames: 'migrate-confirm-popup-dialog' }
-		);
+		accept( message, this.confirmCallback, translate( 'Import and overwrite' ) );
 	};
 
 	render() {

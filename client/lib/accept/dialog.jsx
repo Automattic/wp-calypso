@@ -63,18 +63,11 @@ class AcceptDialog extends Component {
 			return null;
 		}
 
-		const additionalClassNames =
-			this.props.options && this.props.options.additionalClassNames
-				? this.props.options.additionalClassNames
-				: {};
-
-		const classNames = classnames( 'accept__dialog', additionalClassNames );
-
 		return (
 			<Dialog
 				buttons={ this.getActionButtons() }
 				onClose={ this.onClose }
-				className={ classNames }
+				className="accept__dialog"
 				isVisible
 			>
 				{ this.props.message }
