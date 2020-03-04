@@ -242,6 +242,37 @@ class MembershipsSection extends Component {
 								}
 							/>
 						</div>
+						<Dialog
+							isVisible={ !! this.state.cancelledSubscriber }
+							buttons={ [
+								{
+									label: this.props.translate( 'Back' ),
+									action: 'back',
+								},
+								{
+									label: this.props.translate( 'Cancel Subscription' ),
+									isPrimary: true,
+									action: 'cancel',
+								},
+							] }
+							onClose={ this.onCloseCancelSubscription }
+						>
+							<h1>{ this.props.translate( 'Confirmation' ) }</h1>
+							<p>{ this.props.translate( 'Do you want to cancel this subscription?' ) }</p>
+							<Notice
+								text={ this.props.translate(
+									'Canceling the subscription will mean the subscriber %(email)s will no longer be charged.',
+									{
+										args: {
+											email: this.state.cancelledSubscriber
+												? this.state.cancelledSubscriber.user.user_email
+												: '',
+										},
+									}
+								) }
+								showDismiss={ false }
+							/>
+						</Dialog>
 						<div className="memberships__module-footer">
 							<Button onClick={ this.downloadSubscriberList }>
 								{ this.props.translate( 'Download list as CSV' ) }
@@ -390,35 +421,6 @@ class MembershipsSection extends Component {
 						{ this.renderSubscriberSubscriptionSummary( subscriber ) }
 					</div>
 				</div>
-				<Dialog
-					isVisible={ !! this.state.cancelledSubscriber }
-					buttons={ [
-						{
-							label: this.props.translate( 'Back' ),
-							action: 'back',
-						},
-						{
-							label: this.props.translate( 'Cancel Subscription' ),
-							isPrimary: true,
-							action: 'cancel',
-						},
-					] }
-					onClose={ this.onCloseCancelSubscription }
-				>
-					<h1>{ this.props.translate( 'Confirmation' ) }</h1>
-					<p>{ this.props.translate( 'Do you want to cancel this subscription?' ) }</p>
-					<Notice
-						text={ this.props.translate(
-							'Canceling the subscription will mean the subscriber %(email)s will no longer be charged.',
-							{
-								args: {
-									email: subscriber.user.user_email,
-								},
-							}
-						) }
-						showDismiss={ false }
-					/>
-				</Dialog>
 			</Card>
 		);
 	}
