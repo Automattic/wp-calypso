@@ -131,6 +131,8 @@ const BlockFramePreview = ( {
 	 * See: https://github.com/WordPress/gutenberg/pull/20609/
 	 */
 	useEffect( () => {
+		if ( ! title ) return;
+
 		const iframeBody = get( iframeRef, [ 'current', 'contentDocument', 'body' ] );
 		if ( ! iframeBody ) {
 			return;
@@ -216,6 +218,7 @@ const BlockFramePreview = ( {
 							<CustomBlockPreview
 								blocks={ renderedBlocks }
 								settings={ settings }
+								hidePageTitle={ ! title }
 								recomputeBlockListKey={ recomputeBlockListKey }
 							/>
 						</div>

@@ -18,14 +18,16 @@ import { PostTitle } from '@wordpress/editor';
 // and mock the entire Block Editor isn't useful and is difficult for testing.
 // Therefore this component exists to simplify mocking out the Block Editor
 // when under test conditions.
-export default function( { blocks, settings, recomputeBlockListKey } ) {
+export default function( { blocks, settings, hidePageTitle, recomputeBlockListKey } ) {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<BlockEditorProvider value={ blocks } settings={ settings }>
 			<Disabled key={ recomputeBlockListKey }>
-				<div className="block-iframe-preview__template-title">
-					<PostTitle />
-				</div>
+				{ ! hidePageTitle && (
+					<div className="block-iframe-preview__template-title">
+						<PostTitle />
+					</div>
+				) }
 				<BlockList />
 			</Disabled>
 		</BlockEditorProvider>
