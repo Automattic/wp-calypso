@@ -102,7 +102,7 @@ class Layout extends Component {
 	}
 
 	renderMasterbar() {
-		if ( config( 'env_id' ).startsWith( 'jetpack-cloud' ) ) {
+		if ( config.isEnabled( 'jetpack-cloud' ) ) {
 			return (
 				<JetpackCloudMasterbar
 					section={ this.props.sectionGroup }

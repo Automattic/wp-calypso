@@ -656,12 +656,6 @@ function handleLocaleSubdomains( req, res, next ) {
 	next();
 }
 
-const jetpackCloudEnvs = [
-	'jetpack-cloud-development',
-	'jetpack-cloud-stage',
-	'jetpack-cloud-production',
-];
-
 module.exports = function() {
 	const app = express();
 
@@ -682,7 +676,7 @@ module.exports = function() {
 
 	// redirect homepage if the Reader is disabled
 	app.get( '/', function( request, response, next ) {
-		if ( ! config.isEnabled( 'reader' ) && ! jetpackCloudEnvs.includes( calypsoEnv ) ) {
+		if ( ! config.isEnabled( 'reader' ) && ! config.isEnabled( 'jetpack-cloud' ) ) {
 			response.redirect( '/stats' );
 		} else {
 			next();
