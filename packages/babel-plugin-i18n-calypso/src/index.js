@@ -107,7 +107,7 @@ function getNodeAsString( node ) {
  * @returns {boolean} Whether function name is valid translate function name.
  */
 function isValidFunctionName( name ) {
-	return -1 !== Object.keys( DEFAULT_FUNCTIONS_ARGUMENTS_ORDER ).indexOf( name );
+	return Object.keys( DEFAULT_FUNCTIONS_ARGUMENTS_ORDER ).includes( name );
 }
 
 /**
@@ -120,7 +120,7 @@ function isValidFunctionName( name ) {
  */
 function isValidTranslationKey( key ) {
 	return Object.values( DEFAULT_FUNCTIONS_ARGUMENTS_ORDER ).some(
-		args => -1 !== args.indexOf( key )
+		args => args.includes( key )
 	);
 }
 
