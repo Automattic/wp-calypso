@@ -136,7 +136,8 @@ function DefaultCheckoutSteps() {
 export function CheckoutSteps( { children } ) {
 	let stepNumber = 0;
 	let nextStepNumber = 1;
-	const totalSteps = React.Children.count( children );
+	const steps = React.Children.toArray( children ).filter( child => child );
+	const totalSteps = steps.length;
 	const { activeStepNumber, stepCompleteStatus, setTotalSteps } = useContext(
 		CheckoutStepDataContext
 	);
@@ -154,13 +155,14 @@ export function CheckoutSteps( { children } ) {
 		totalSteps
 	);
 
-	return React.Children.map( children, child => {
+	return steps.map( child => {
 		stepNumber = nextStepNumber;
 		nextStepNumber = stepNumber === totalSteps ? null : stepNumber + 1;
 		const isStepActive = activeStepNumber === stepNumber;
 		const isStepComplete = !! stepCompleteStatus[ stepNumber ];
 		return (
 			<CheckoutSingleStepDataContext.Provider
+				key={ 'checkout-step-' + stepNumber }
 				value={ {
 					stepNumber,
 					nextStepNumber,
