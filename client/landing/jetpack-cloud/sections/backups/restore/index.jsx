@@ -14,9 +14,9 @@ class BackupRestorePage extends Component {
 		const { restoreId, siteId } = this.props;
 
 		return (
-			restoreId
-				? <div>Welcome to the restore page { siteId }. Restoring backup ID { restoreId }.</div>
-				: <div>Welcome to the restore page for { siteId }. You'll choose a restore point here.</div>
+			<div className="backup-restore-page">
+				You have chosen to restore site { siteId } to { restoreId }.
+			</div>
 		);
 	}
 }
