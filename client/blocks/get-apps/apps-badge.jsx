@@ -37,7 +37,7 @@ const APP_STORE_BADGE_URLS = {
 	android: {
 		defaultSrc: '/calypso/images/me/get-apps-google-play.png',
 		src:
-			'http://play.google.com/intl/en_us/badges/images/generic/{localeSlug}_badge_web_generic.png',
+			'https://play.google.com/intl/en_us/badges/images/generic/{localeSlug}_badge_web_generic.png',
 		tracksEvent: 'calypso_app_download_android_click',
 		getLocaleSlug,
 	},

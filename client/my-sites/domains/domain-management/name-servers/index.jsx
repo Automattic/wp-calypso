@@ -35,6 +35,7 @@ import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/an
  * Style dependencies
  */
 import './style.scss';
+import NonPrimaryDomainPlanUpsell from 'my-sites/domains/domain-management/components/domain/non-primary-domain-plan-upsell';
 
 class NameServers extends React.Component {
 	static propTypes = {
@@ -135,6 +136,7 @@ class NameServers extends React.Component {
 					ruleWhiteList={ [ 'pendingTransfer' ] }
 				/>
 				{ this.warning() }
+				{ this.planUpsellForNonPrimaryDomain( domain ) }
 				<VerticalNav>
 					{ this.wpcomNameserversToggle() }
 					{ this.customNameservers() }
@@ -253,6 +255,16 @@ class NameServers extends React.Component {
 				onReset={ this.handleReset }
 				onSubmit={ this.handleSubmit }
 				submitDisabled={ this.state.formSubmitting }
+			/>
+		);
+	}
+
+	planUpsellForNonPrimaryDomain( domain ) {
+		return (
+			<NonPrimaryDomainPlanUpsell
+				tracksImpressionName="calypso_non_primary_domain_ns_plan_upsell_impression"
+				tracksClickName="calypso_non_primary_domain_ns_plan_upsell_click"
+				domain={ domain }
 			/>
 		);
 	}

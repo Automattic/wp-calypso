@@ -70,20 +70,12 @@ const pageLayouts: Reducer< string[], OnboardAction > = ( state = [], action ) =
 	return state;
 };
 
-const shouldCreate: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
-	if ( action.type === 'SET_SHOULD_CREATE' ) {
-		return action.shouldCreate;
-	}
-	return state;
-};
-
 const reducer = combineReducers( {
 	domain,
 	selectedDesign,
 	siteTitle,
 	siteVertical,
 	pageLayouts,
-	shouldCreate,
 } );
 
 export type State = ReturnType< typeof reducer >;

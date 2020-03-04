@@ -22,7 +22,6 @@ export const requestSubscriptionStop = subscriptionId => {
 			type: MEMBERSHIPS_SUBSCRIPTION_STOP,
 			subscriptionId,
 		} );
-
 		return wpcom.req
 			.post( `/me/memberships/subscriptions/${ subscriptionId }/cancel` )
 			.then( () => {

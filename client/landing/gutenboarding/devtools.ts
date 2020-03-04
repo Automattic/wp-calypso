@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 interface MagicWindow extends Window {
 	wp: undefined | Record< string, any >;
 }
@@ -32,7 +34,13 @@ export const setupWpDataDebug = () => {
 					window.wp.auth[ actionName ] = async ( ...args: any[] ) => {
 						await ( actionFn as any )( ...args ); // eslint-disable-line @typescript-eslint/no-explicit-any
 						const loginFlowState = window.wp?.data.select( AUTH_STORE ).getLoginFlowState();
-						console.log( 'New loginFlowState =', loginFlowState ); // eslint-disable-line no-console
+						const errors = window.wp?.data.select( AUTH_STORE ).getErrors();
+						console.log( 'New loginFlowState =', loginFlowState );
+						if ( errors.length ) {
+							console.log( 'Errors =', JSON.stringify( errors, null, 2 ) );
+						} else {
+							console.log( 'No Errors!' );
+						}
 					};
 				}
 			}

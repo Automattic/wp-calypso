@@ -18,7 +18,7 @@ import InfiniteScroll from 'components/infinite-scroll';
 import QueryMembershipsEarnings from 'components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'components/data/query-memberships-settings';
 import { requestDisconnectStripeAccount } from 'state/memberships/settings/actions';
-import { requestSubscribers } from 'state/memberships/subscribers/actions';
+import { requestSubscribers, requestSubscriptionStop } from 'state/memberships/subscribers/actions';
 import { decodeEntities } from 'lib/formatting';
 import Gravatar from 'components/gravatar';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
@@ -46,6 +46,7 @@ class MembershipsSection extends Component {
 		this.downloadSubscriberList = this.downloadSubscriberList.bind( this );
 	}
 	state = {
+		cancelledSubscriber: null,
 		disconnectedConnectedAccountId: null,
 	};
 	componentDidMount() {
@@ -139,6 +140,21 @@ class MembershipsSection extends Component {
 		this.setState( { disconnectedConnectedAccountId: null } );
 	};
 
+	onCloseCancelSubscription = reason => {
+		if ( reason === 'cancel' ) {
+			this.props.requestSubscriptionStop(
+				this.props.siteId,
+				this.state.cancelledSubscriber,
+				this.props.translate( 'Subscription cancelled for %(email)s', {
+					args: {
+						email: this.state.cancelledSubscriber.user.user_email,
+					},
+				} )
+			);
+		}
+		this.setState( { cancelledSubscriber: null } );
+	};
+
 	downloadSubscriberList( event ) {
 		event.preventDefault();
 		const fileName = [ this.props.siteSlug, 'memberships', 'subscribers' ].join( '_' ) + '.csv';
@@ -226,6 +242,37 @@ class MembershipsSection extends Component {
 								}
 							/>
 						</div>
+						<Dialog
+							isVisible={ !! this.state.cancelledSubscriber }
+							buttons={ [
+								{
+									label: this.props.translate( 'Back' ),
+									action: 'back',
+								},
+								{
+									label: this.props.translate( 'Cancel Subscription' ),
+									isPrimary: true,
+									action: 'cancel',
+								},
+							] }
+							onClose={ this.onCloseCancelSubscription }
+						>
+							<h1>{ this.props.translate( 'Confirmation' ) }</h1>
+							<p>{ this.props.translate( 'Do you want to cancel this subscription?' ) }</p>
+							<Notice
+								text={ this.props.translate(
+									'Canceling the subscription will mean the subscriber %(email)s will no longer be charged.',
+									{
+										args: {
+											email: this.state.cancelledSubscriber
+												? this.state.cancelledSubscriber.user.user_email
+												: '',
+										},
+									}
+								) }
+								showDismiss={ false }
+							/>
+						</Dialog>
 						<div className="memberships__module-footer">
 							<Button onClick={ this.downloadSubscriberList }>
 								{ this.props.translate( 'Download list as CSV' ) }
@@ -348,6 +395,10 @@ class MembershipsSection extends Component {
 				>
 					<Gridicon size={ 18 } icon={ 'external' } />
 					{ this.props.translate( 'See transactions in Stripe Dashboard' ) }
+				</PopoverMenuItem>
+				<PopoverMenuItem onClick={ () => this.setState( { cancelledSubscriber: subscriber } ) }>
+					<Gridicon size={ 18 } icon={ 'cross' } />
+					{ this.props.translate( 'Cancel Subscription' ) }
 				</PopoverMenuItem>
 			</EllipsisMenu>
 		);
@@ -541,6 +592,8 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps, { requestSubscribers, requestDisconnectStripeAccount } )(
-	localize( withLocalizedMoment( MembershipsSection ) )
-);
+export default connect( mapStateToProps, {
+	requestSubscribers,
+	requestDisconnectStripeAccount,
+	requestSubscriptionStop,
+} )( localize( withLocalizedMoment( MembershipsSection ) ) );

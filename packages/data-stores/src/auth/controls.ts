@@ -3,15 +3,19 @@
  */
 import { createRegistryControl } from '@wordpress/data';
 import { stringify } from 'qs';
+import wpcomRequest, { requestAllBlogsAccess } from 'wpcom-proxy-request';
 
 /**
  * Internal dependencies
  */
-import { wpcomRequest, WpcomClientCredentials } from '../utils';
 import { FetchAuthOptionsAction, FetchWpLoginAction } from './actions';
 import { STORE_KEY } from './constants';
+import { WpcomClientCredentials } from '../shared-types';
 
 export function createControls( clientCreds: WpcomClientCredentials ) {
+	requestAllBlogsAccess().catch( () => {
+		throw new Error( 'Could not get all blog access.' );
+	} );
 	return {
 		SELECT_USERNAME_OR_EMAIL: createRegistryControl( registry => () => {
 			return registry.select( STORE_KEY ).getUsernameOrEmail();
@@ -43,7 +47,10 @@ export function createControls( clientCreds: WpcomClientCredentials ) {
 				}
 			);
 
-			return await response.json();
+			return {
+				ok: response.ok,
+				body: await response.json(),
+			};
 		},
 	};
 }

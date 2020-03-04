@@ -6,7 +6,6 @@ import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/com
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
-import { useHistory } from 'react-router-dom';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 /**
@@ -28,32 +27,31 @@ declare module '@wordpress/element' {
 	): ReactNode;
 }
 
-const SignupForm = () => {
+interface Props {
+	onRequestClose: () => void;
+}
+
+const SignupForm = ( { onRequestClose }: Props ) => {
 	const { __: NO__, _x: NO_x } = useI18n();
 	const [ emailVal, setEmailVal ] = useState( '' );
 	const { createAccount } = useDispatch( USER_STORE );
-	const { setShouldCreate } = useDispatch( ONBOARD_STORE );
 	const isFetchingNewUser = useSelect( select => select( USER_STORE ).isFetchingNewUser() );
-	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
 	const newUserError = useSelect( select => select( USER_STORE ).getNewUserError() );
-	const { shouldCreate, siteTitle, siteVertical } = useSelect( select =>
-		select( ONBOARD_STORE )
-	).getState();
+	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ) ).getState();
 	const langParam = useLangRouteParam();
 
-	const history = useHistory();
 	useEffect( () => {
 		recordTracksEvent( 'calypso_gutenboarding_signup_start', {
 			flow: 'gutenboarding',
 		} );
 	}, [] );
 
-	const handleSignUp = ( event: React.FormEvent< HTMLFormElement > ) => {
+	const handleSignUp = async ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 
 		const username_hint = siteTitle || siteVertical?.label;
 
-		createAccount( {
+		const success = await createAccount( {
 			email: emailVal,
 			is_passwordless: true,
 			signup_flow_name: 'gutenboarding',
@@ -62,12 +60,9 @@ const SignupForm = () => {
 				extra: { username_hint },
 			} ),
 		} );
-	};
 
-	const handleClose = () => {
-		if ( shouldCreate ) {
-			setShouldCreate( false );
-			history.goBack();
+		if ( success ) {
+			onRequestClose();
 		}
 	};
 
@@ -98,10 +93,10 @@ const SignupForm = () => {
 	return (
 		<Modal
 			className="signup-form"
-			isDismissible={ false }
 			title={ NO__( 'Sign up to save your changes' ) }
-			onRequestClose={ handleClose }
+			onRequestClose={ onRequestClose }
 			focusOnMount={ false }
+			isDismissible={ ! isFetchingNewUser }
 		>
 			<form onSubmit={ handleSignUp }>
 				<TextControl
@@ -136,7 +131,6 @@ const SignupForm = () => {
 					</Button>
 				</div>
 			</form>
-			{ newUser && <pre>New user: { JSON.stringify( newUser, null, 2 ) }</pre> }
 		</Modal>
 	);
 };
