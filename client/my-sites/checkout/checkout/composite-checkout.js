@@ -618,20 +618,23 @@ export default function CompositeCheckout( {
 		domainNames,
 		applyDomainContactValidationResults
 	) => {
-		return validateDomainContact( contactDetails, domainNames, ( httpErrors, data ) => {
-			recordEvent( {
-				type: 'VALIDATE_DOMAIN_CONTACT_INFO',
-				payload: {
-					credits: null,
-					payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ),
-				},
-			} );
-			debug(
-				'Domain contact info validation ' + ( data.messages ? 'errors:' : 'successful' ),
-				data.messages
-			);
-			applyDomainContactValidationResults( { ...data.messages } );
-		} );
+		return new Promise( ( resolve ) => {
+            validateDomainContact(contactDetails, domainNames, (httpErrors, data) => {
+                recordEvent({
+                    type: 'VALIDATE_DOMAIN_CONTACT_INFO',
+                    payload: {
+                        credits: null,
+                        payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod(paymentMethodId),
+                    },
+                });
+                debug(
+                    'Domain contact info validation ' + ( data.messages ? 'errors:' : 'successful' ),
+                    data.messages
+                );
+                applyDomainContactValidationResults({...data.messages});
+                resolve();
+            });
+        } );
 	};
 
 	const renderDomainContactFields = (
