@@ -201,17 +201,17 @@ export function generateFlows( {
 		// Important: For any changes done to the ecommerce flow,
 		// please copy the same changes to ecommerce-onboarding flow too
 		flows.ecommerce = {
-			steps: [ 'user', 'about', 'domains', 'plans' ],
+			steps: [ 'user', 'domains', 'plans-ecommerce-fulfilled' ],
 			destination: getSignupDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2019-11-22',
+			lastModified: '2020-03-04',
 		};
 
 		flows[ 'ecommerce-onboarding' ] = {
-			steps: [ 'user', 'site-type', 'domains', 'plans-ecommerce' ],
+			steps: [ 'user', 'domains', 'plans-ecommerce' ],
 			destination: getSignupDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2019-11-22',
+			lastModified: '2020-03-04',
 		};
 
 		flows[ 'ecommerce-design-first' ] = {
