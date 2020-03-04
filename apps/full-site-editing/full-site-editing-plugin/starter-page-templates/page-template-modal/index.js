@@ -315,6 +315,11 @@ class PageTemplateModal extends Component {
 			return null;
 		}
 
+		// The raw `templates` prop is not filtered to remove Templates that
+		// contain missing Blocks. Therefore we compare with the keys of the
+		// filtered templates from `getBlocksByTemplateSlugs()` and filter this
+		// list to match. This ensures that the list of Template thumbnails is
+		// filtered so that it does not include Templates that have missing Blocks.
 		const blocksByTemplateSlug = this.getBlocksByTemplateSlugs( this.props.templates );
 		const templatesWithoutMissingBlocks = Object.keys( blocksByTemplateSlug );
 
