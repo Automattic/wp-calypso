@@ -16,7 +16,7 @@ import { SiteVertical } from '../../stores/onboard/types';
 import { StepProps } from '../stepper-wizard';
 import Question from '../question';
 import { __TodoAny__ } from '../../../../types';
-import AnimatedPlaceholder from './AnimatedPlaceholder';
+import AnimatedPlaceholder from '../animated-placeholder';
 /**
  * Style dependencies
  */
@@ -149,7 +149,17 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 			onExpand={ onExpand }
 		>
 			<div className="vertical-select">
-				{ ! inputValue && <AnimatedPlaceholder /> }
+				{ ! inputValue && (
+					<AnimatedPlaceholder
+						texts={ [
+							NO__( 'football' ),
+							NO__( 'shopping' ),
+							NO__( 'cars' ),
+							NO__( 'design' ),
+							NO__( 'travel' ),
+						] }
+					/>
+				) }
 				<input
 					ref={ inputRef }
 					className={ inputClass }

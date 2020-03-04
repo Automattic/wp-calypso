@@ -7,6 +7,8 @@ import { useI18n } from '@automattic/react-i18n';
 /**
  * Internal dependencies
  */
+
+import AnimatedPlaceholder from '../animated-placeholder';
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -35,7 +37,18 @@ const CreateSite: FunctionComponent< {} > = () => {
 				</div>
 				<div className="create-site__content">
 					<div className="create-site__placeholder create-site__placeholder-title">Placeholder</div>
-					<div className="create-site__text">{ NO__( 'Your site is being created...' ) }</div>
+					<div className="create-site__text">
+						<AnimatedPlaceholder
+							slow={ true }
+							texts={ [
+								NO__( 'We are creating your site.' ),
+								NO__( 'It will be ready in a moment.' ),
+								NO__( 'Almost there, hang on!' ),
+								NO__( 'Your site is almost ready!' ),
+								NO__( 'We are about to finish!' ),
+							] }
+						/>
+					</div>
 				</div>
 			</div>
 		</div>
