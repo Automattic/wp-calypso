@@ -37,7 +37,9 @@ export function Checkout( { children, className } ) {
 	const [ activeStepNumber, setActiveStepNumber ] = useState( 1 );
 	const [ stepCompleteStatus, setStepCompleteStatus ] = useState( {} );
 	const [ totalSteps, setTotalSteps ] = useState( 0 );
-	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
+	const actualActiveStepNumber =
+		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
+	const isThereAnotherNumberedStep = actualActiveStepNumber < totalSteps;
 
 	// Change the step if the url changes
 	useChangeStepNumberForUrl( setActiveStepNumber );
@@ -61,7 +63,7 @@ export function Checkout( { children, className } ) {
 		<ContainerUI className={ joinClasses( [ className, 'composite-checkout' ] ) }>
 			<CheckoutStepDataContext.Provider
 				value={ {
-					activeStepNumber,
+					activeStepNumber: actualActiveStepNumber,
 					stepCompleteStatus,
 					totalSteps,
 					setActiveStepNumber,
@@ -136,7 +138,8 @@ function DefaultCheckoutSteps() {
 export function CheckoutSteps( { children } ) {
 	let stepNumber = 0;
 	let nextStepNumber = 1;
-	const totalSteps = React.Children.count( children );
+	const steps = React.Children.toArray( children ).filter( child => child );
+	const totalSteps = steps.length;
 	const { activeStepNumber, stepCompleteStatus, setTotalSteps } = useContext(
 		CheckoutStepDataContext
 	);
@@ -154,13 +157,14 @@ export function CheckoutSteps( { children } ) {
 		totalSteps
 	);
 
-	return React.Children.map( children, child => {
+	return steps.map( child => {
 		stepNumber = nextStepNumber;
 		nextStepNumber = stepNumber === totalSteps ? null : stepNumber + 1;
 		const isStepActive = activeStepNumber === stepNumber;
 		const isStepComplete = !! stepCompleteStatus[ stepNumber ];
 		return (
 			<CheckoutSingleStepDataContext.Provider
+				key={ 'checkout-step-' + stepNumber }
 				value={ {
 					stepNumber,
 					nextStepNumber,

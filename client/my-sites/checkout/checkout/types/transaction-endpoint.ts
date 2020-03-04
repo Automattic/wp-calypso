@@ -155,7 +155,7 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 		cart: createTransactionEndpointCartFromLineItems( {
 			debug,
 			siteId,
-			couponId,
+			couponId: couponId || getCouponIdFromProducts( items ),
 			country,
 			postalCode,
 			subdivisionCode,
@@ -173,6 +173,11 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 			zip: postalCode, // TODO: do we need this in addition to postalCode?
 		},
 	};
+}
+
+function getCouponIdFromProducts( items: WPCOMCartItem[] ): string | undefined {
+	const couponItem = items.find( item => item.type === 'coupon' );
+	return couponItem?.wpcom_meta?.couponCode;
 }
 
 export type WPCOMTransactionEndpointResponse = {

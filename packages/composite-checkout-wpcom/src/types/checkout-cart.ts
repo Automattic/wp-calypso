@@ -38,6 +38,7 @@ export type WPCOMCartItem = CheckoutCartItem & {
 		extra: object;
 		volume?: number;
 		is_domain_registration?: boolean;
+		couponCode?: string;
 	};
 };
 
