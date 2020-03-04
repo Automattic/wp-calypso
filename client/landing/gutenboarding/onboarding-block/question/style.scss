@@ -18,14 +18,15 @@
 
 		div > input.onboarding-block__question-input {
 			border: 0;
-			/*border-bottom: 3px solid $light-gray-500;*/
 			display: inline-block;
 			font-size: inherit;
 			line-height: inherit;
 			margin: 0 0 0 0.2em;
 			padding: 0;
 			color: var( --mainColor );
-			border: 0;
+			min-width: 120px;
+			min-height: 1em;
+			
 			&:hover {
 				border-color: $blue-medium-highlight;
 			}
@@ -48,6 +49,8 @@
 			transition-duration: 0.3s;
 			transition-timing-function: 'linear';
 			transition-delay: 0;
+			min-width: 120px;
+			min-height: 1em;
 
 			&:hover {
 				border-color: var( --highlightColor );
