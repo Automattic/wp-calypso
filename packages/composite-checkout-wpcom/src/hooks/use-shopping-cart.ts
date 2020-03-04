@@ -357,6 +357,9 @@ type ReactStandardAction = { type: string; payload?: any }; // eslint-disable-li
  * @param productToAdd
  *     The product object to add to the cart immediately when the cart is
  *     initialized. Has no effect if it changes after initializing.
+ * @param couponToAdd
+ *     The coupon code to add to the cart immediately when the cart is
+ *     initialized. Has no effect if it changes after initializing.
  * @param setCart
  *     An asynchronous wrapper around the wpcom shopping cart POST
  *     endpoint. We pass this in to make testing easier.
@@ -378,6 +381,7 @@ export function useShoppingCart(
 	cartKey: string | null,
 	canInitializeCart: boolean,
 	productToAdd: ResponseCartProduct | null,
+	couponToAdd: string | null,
 	setCart: ( string, RequestCart ) => Promise< ResponseCart >,
 	getCart: ( string ) => Promise< ResponseCart >,
 	translate: ( string ) => string,
@@ -408,6 +412,7 @@ export function useShoppingCart(
 		cacheStatus,
 		canInitializeCart,
 		productToAdd,
+		couponToAdd,
 		getServerCart,
 		setServerCart,
 		hookDispatch,
@@ -450,8 +455,8 @@ export function useShoppingCart(
 		hookDispatch( { type: 'SET_LOCATION', location } );
 	}, [] );
 
-	const submitCoupon: ( string ) => void = useCallback( couponToAdd => {
-		hookDispatch( { type: 'ADD_COUPON', couponToAdd } );
+	const submitCoupon: ( string ) => void = useCallback( newCoupon => {
+		hookDispatch( { type: 'ADD_COUPON', couponToAdd: newCoupon } );
 	}, [] );
 
 	return {
@@ -481,6 +486,7 @@ function useInitializeCartFromServer(
 	cacheStatus: CacheStatus,
 	canInitializeCart: boolean,
 	productToAdd: ResponseCartProduct | null,
+	couponToAdd: string | null,
 	getServerCart: () => Promise< ResponseCart >,
 	setServerCart: ( RequestCart ) => Promise< ResponseCart >,
 	hookDispatch: ( ShoppingCartHookAction ) => void,
@@ -506,18 +512,31 @@ function useInitializeCartFromServer(
 
 		getServerCart()
 			.then( response => {
-				if ( productToAdd ) {
+				if ( productToAdd || couponToAdd ) {
 					debug(
 						'initialized cart is',
 						response,
-						'; proceeding to add initial product',
-						productToAdd
+						'; proceeding to add either initial product',
+						productToAdd,
+						' or coupon',
+						couponToAdd
 					);
-					const updatedResponseCart = addItemToResponseCart(
-						processRawResponse( response ),
-						productToAdd
-					);
-					return setServerCart( prepareRequestCart( updatedResponseCart ) );
+					let updatedResponseCart;
+					if ( productToAdd ) {
+						updatedResponseCart = addItemToResponseCart(
+							processRawResponse( response ),
+							productToAdd
+						);
+					}
+					if ( couponToAdd ) {
+						updatedResponseCart = addCouponToResponseCart(
+							processRawResponse( response ),
+							couponToAdd
+						);
+					}
+					if ( updatedResponseCart ) {
+						return setServerCart( prepareRequestCart( updatedResponseCart ) );
+					}
 				}
 				return response;
 			} )
@@ -544,6 +563,7 @@ function useInitializeCartFromServer(
 		onEvent,
 		getServerCart,
 		productToAdd,
+		couponToAdd,
 		setServerCart,
 	] );
 }
