@@ -16,6 +16,7 @@ import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
  * Internal dependencies
  */
 import { PageTemplatesPlugin } from './page-template-modal';
+import { BlockFrameContent } from './page-template-modal/components/block-iframe-preview';
 import SidebarTemplatesPlugin from './page-template-modal/components/sidebar-modal-opener';
 import { initializeWithIdentity } from './page-template-modal/utils/tracking';
 /* eslint-enable import/no-extraneous-dependencies */
@@ -93,5 +94,12 @@ if ( ! isFramePreview ) {
 			);
 		}
 		unsubscribe();
+	} );
+} else {
+	window.document.body.className += ' is-frame-preview';
+	registerPlugin( 'frame-preview', {
+		render: () => {
+			return <BlockFrameContent />;
+		},
 	} );
 }

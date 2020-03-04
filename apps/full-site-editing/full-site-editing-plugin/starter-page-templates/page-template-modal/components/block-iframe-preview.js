@@ -9,6 +9,8 @@ import classnames from 'classnames';
  */
 /* eslint-disable import/no-extraneous-dependencies */
 import { useRef, useEffect, useState, useCallback } from '@wordpress/element';
+import { withSelect } from '@wordpress/data';
+import { compose, withSafeTimeout } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 /* eslint-enable import/no-extraneous-dependencies */
 
@@ -16,7 +18,9 @@ import { __ } from '@wordpress/i18n';
 const DEBOUNCE_TIMEOUT = 300;
 
 /**
- * Performs a blocks preview using an iFrame.
+ * Render an iframe loading the same page but
+ * adding the 'framePreview=true' into the query string of the src value.
+ * It will acts as a key to select the content to render.
  *
  * @param {object} props component's props
  * @param {object} props.className CSS class to apply to component
@@ -104,3 +108,15 @@ export const BlockFramePreview = ( {
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
+
+const _BlockFrameContent = () => <div>Preview content</div>;
+
+export const BlockFrameContent = compose(
+	withSafeTimeout,
+	withSelect( select => {
+		const blockEditorStore = select( 'core/block-editor' );
+		return {
+			settings: blockEditorStore ? blockEditorStore.getSettings() : {},
+		};
+	} )
+)( _BlockFrameContent );
