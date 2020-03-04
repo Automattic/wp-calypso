@@ -23,7 +23,6 @@ const DEBOUNCE_TIMEOUT = 300;
  * @param {number} props.viewportWidth pixel width of the viewable size of the preview
  */
 export const BlockFramePreview = ( { className = 'block-iframe-preview', viewportWidth } ) => {
-	const frameContainerRef = useRef();
 	const iframeRef = useRef();
 
 	// Set the initial scale factor.
@@ -36,13 +35,13 @@ export const BlockFramePreview = ( { className = 'block-iframe-preview', viewpor
 	 * the wrapper and the iframe width.
 	 */
 	const rescale = useCallback( () => {
-		const parentNode = get( frameContainerRef, [ 'current', 'parentNode' ] );
+		const parentNode = get( iframeRef, [ 'current', 'parentNode' ] );
 		if ( ! parentNode ) {
 			return;
 		}
 
 		// Scaling iFrame.
-		const width = viewportWidth || frameContainerRef.current.offsetWidth;
+		const width = viewportWidth || iframeRef.current.offsetWidth;
 		const scale = parentNode.offsetWidth / viewportWidth;
 		const height = parentNode.offsetHeight / scale;
 
@@ -52,6 +51,9 @@ export const BlockFramePreview = ( { className = 'block-iframe-preview', viewpor
 			transform: `scale( ${ scale } )`,
 		} );
 	}, [ viewportWidth ] );
+
+	// Initial scaling.
+	useEffect( rescale, [] );
 
 	// Handling windows resize event.
 	useEffect( () => {
