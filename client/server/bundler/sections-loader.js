@@ -60,10 +60,7 @@ const loader = function() {
 	const options = getOptions( this ) || {};
 	const { forceRequire, onlyIsomorphic } = options;
 	let { include } = options;
-	let sections = require( this.resourcePath );
-	const allActiveSections = sections;
-
-	sections = allActiveSections.filter( utils.filterSections );
+	let sections = require( this.resourcePath ).filter( utils.filterSections );
 
 	if ( include ) {
 		if ( ! Array.isArray( include ) ) {
