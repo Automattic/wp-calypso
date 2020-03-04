@@ -30,6 +30,8 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isConciergeSession,
+	isJetpackPlan,
+	isJetpackProduct,
 	isPlan,
 	getProductFromSlug,
 } from 'lib/products-values';
@@ -41,7 +43,7 @@ import { getUser } from 'state/users/selectors';
 import { managePurchase } from '../paths';
 import AutoRenewToggle from './auto-renew-toggle';
 import PaymentLogo from 'components/payment-logo';
-import { CALYPSO_CONTACT } from 'lib/url/support';
+import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'lib/url/support';
 import UserItem from 'components/user';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
@@ -248,15 +250,42 @@ class PurchaseMeta extends Component {
 		);
 	}
 
-	renderContactSupportToRenewMessage() {
-		const { purchase, translate } = this.props;
+	renderRenewErrorMessage() {
+		const { isJetpack, purchase, translate } = this.props;
 
 		if ( this.props.site ) {
 			return null;
 		}
 
+		if ( isJetpack ) {
+			return (
+				<div className="manage-purchase__footnotes">
+					{ translate(
+						'%(purchaseName)s expired on %(siteSlug)s, and the site is no longer connected to WordPress.com. ' +
+							'To renew this purchase, please reconnect %(siteSlug)s to your WordPress.com account, then complete your purchase. ' +
+							'Now sure how to reconnect? {{supportPageLink}}Here are the instructions{{/supportPageLink}}.',
+						{
+							args: {
+								purchaseName: getName( purchase ),
+								siteSlug: this.props.purchase.domain,
+							},
+							components: {
+								supportPageLink: (
+									<a
+										href={
+											JETPACK_SUPPORT + 'reconnecting-reinstalling-jetpack/#reconnecting-jetpack'
+										}
+									/>
+								),
+							},
+						}
+					) }
+				</div>
+			);
+		}
+
 		return (
-			<div className="manage-purchase__contact-support">
+			<div className="manage-purchase__footnotes">
 				{ translate(
 					'You are the owner of %(purchaseName)s but because you are no longer a user on %(siteSlug)s, ' +
 						'renewing it will require staff assistance. Please {{contactSupportLink}}contact support{{/contactSupportLink}}, ' +
@@ -382,7 +411,7 @@ class PurchaseMeta extends Component {
 					{ this.renderExpiration() }
 					{ this.renderPaymentDetails() }
 				</ul>
-				{ this.renderContactSupportToRenewMessage() }
+				{ this.renderRenewErrorMessage() }
 			</>
 		);
 	}
@@ -398,5 +427,6 @@ export default connect( ( state, { purchaseId } ) => {
 		site: purchase ? getSite( state, purchase.siteId ) : null,
 		owner: purchase ? getUser( state, purchase.userId ) : null,
 		isAutorenewalEnabled: purchase ? ! isExpiring( purchase ) : null,
+		isJetpack: purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) ),
 	};
 } )( localize( withLocalizedMoment( PurchaseMeta ) ) );
