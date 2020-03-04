@@ -18,7 +18,7 @@
 
 .stats-footer__stat {
 	font-size: 20px;
-	margin-right: 24px;
+	margin: 0 24px 20px 0;
 	flex: 1;
 	max-width: 150px;
 }
@@ -35,7 +35,11 @@
 .stats-footer__notice {
 	position: relative;
 	padding-left: 40px;
-	flex: 1;
+	flex-basis: 100%;
+
+	@include breakpoint( '>660px' ) {
+		flex: 1;
+	}
 }
 
 .stats-footer__notice-icon {
