@@ -95,7 +95,7 @@ const FieldRow = styled( GridRow )`
 
 function isEligibleForVat( country ) {
 	//TODO: Detect whether people are in EU or AU and return true if they are
-	const countriesWithVAT = [ 'AU' ];
+	const countriesWithVAT = [];
 	return countriesWithVAT.includes( country );
 }
 
