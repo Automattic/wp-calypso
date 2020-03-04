@@ -32,6 +32,7 @@ export const BlockFramePreview = ( {
 	className = 'block-iframe-preview',
 	viewportWidth,
 	blocksByTemplateSlug = {},
+	slug,
 } ) => {
 	const iframeRef = useRef();
 
@@ -75,6 +76,20 @@ export const BlockFramePreview = ( {
 		rescale();
 	}, [] );
 
+	// Send slug to <BlockFrameContent />.
+	useEffect( () => {
+		if ( ! slug || ! blocksByTemplateSlug || ! blocksByTemplateSlug[ slug ] ) {
+			return;
+		}
+
+		const frameWindow = get( iframeRef, [ 'current', 'contentWindow' ] );
+		if ( ! frameWindow ) {
+			return;
+		}
+
+		frameWindow.postMessage( slug, "*" );
+	}, [ slug ] );
+
 	// Handling windows resize event.
 	useEffect( () => {
 		const refreshPreview = debounce( rescale, DEBOUNCE_TIMEOUT );
@@ -100,7 +115,7 @@ export const BlockFramePreview = ( {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<iframe
-			src="#framePreview=true"
+			src="#framepreview=true"
 			ref={ iframeRef }
 			title={ __( 'Frame Preview' ) }
 			className={ classnames( 'editor-styles-wrapper', className ) }
@@ -111,6 +126,23 @@ export const BlockFramePreview = ( {
 };
 
 const _BlockFrameContent = () => {
+	const [ slug, setSlug ] = useState();
+	// Listening messages in order to get template slug.
+	useEffect( () => {
+		const receiveMessage = ( { data: slug } ) => {
+			if ( ! slug || ! window.blocksByTemplateSlug || ! window.blocksByTemplateSlug[ slug ] ) {
+				return;
+			}
+			setSlug( slug );
+		};
+
+		window.addEventListener( 'message', receiveMessage, false );
+
+		return () => {
+			window.removeEventListener( 'message', receiveMessage, false );
+		};
+	}, [] );
+
 	return (
 		<Modal
 			className="frame-preview-modal"
