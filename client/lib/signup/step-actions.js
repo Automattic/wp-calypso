@@ -159,12 +159,17 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	// flowName isn't always passed in
 	const flowToCheck = flowName || lastKnownFlow;
 
+	// We will use the default annotation instead of theme annotation as fallback,
+	// when segment and vertical values are not sent. Check pbAok1-p2#comment-834.
+	const shouldUseDefaultAnnoationAsFallback = true;
+
 	const newSiteParams = {
 		blog_title: siteTitle,
 		options: {
 			designType: designType || undefined,
 			theme,
 			use_theme_annotation: get( signupDependencies, 'useThemeHeadstart', false ),
+			default_annotation_as_primary_fallback: shouldUseDefaultAnnoationAsFallback,
 			siteGoals: siteGoals || undefined,
 			site_style: siteStyle || undefined,
 			site_segment: siteSegment || undefined,
