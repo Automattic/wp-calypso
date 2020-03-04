@@ -12,6 +12,7 @@ import { useRef, useEffect, useState, useCallback } from '@wordpress/element';
 import { withSelect } from '@wordpress/data';
 import { compose, withSafeTimeout } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
+import { Modal } from '@wordpress/components';
 /* eslint-enable import/no-extraneous-dependencies */
 
 // Debounce time applied to the on resize window event.
@@ -109,7 +110,23 @@ export const BlockFramePreview = ( {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
-const _BlockFrameContent = () => <div>Preview content</div>;
+const _BlockFrameContent = () => {
+	return (
+		<Modal
+			className="frame-preview-modal"
+			overlayClassName="frame-preview-modal-screen-overlay"
+			shouldCloseOnClickOutside={ false }
+			isDismissable={ false }
+			isDismissible={ false }
+		>
+			<div className="block-editor block-frame-preview__container editor-styles-wrapper">
+				<div className="edit-post-visual-editor">
+					<div className="editor-writing-flow">Preview Content</div>
+				</div>
+			</div>
+		</Modal>
+	);
+};
 
 export const BlockFrameContent = compose(
 	withSafeTimeout,

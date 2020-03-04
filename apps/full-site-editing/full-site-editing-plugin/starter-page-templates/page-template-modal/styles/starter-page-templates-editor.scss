@@ -38,6 +38,7 @@ $wp-org-admin-bar-full: 32px;
 $wp-org-admin-bar-mobile: 46px;
 
 // Modal Overlay
+.frame-preview-modal-screen-overlay,
 .page-template-modal-screen-overlay {
 	animation: none;
 	background-color: transparent; // hide the overlay visually
@@ -75,6 +76,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 }
 
 // Full screen modal
+.frame-preview-modal,
 .page-template-modal {
 	width: 100%;
 	height: 100vh;
@@ -403,12 +405,37 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	width: 1440px;
 }
 
-.block-iframe-preview-body {
+body.is-frame-preview {
 	margin: 0;
 	padding: 0;
 	overflow-x: hidden;
 	overflow-y: auto;
 
+	// Hide other elements.
+	#wpwrap {
+		opacity: 0;
+	}
+
+	// Adjust Modal.
+	.frame-preview-modal {
+		display: block;
+	}
+
+	.frame-preview-modal-screen-overlay {
+		overflow-x: hidden;
+		overflow-y: auto;
+	}
+
+	.components-modal__header {
+		display: none;
+	}
+
+	.components-modal__content {
+		padding: 0;
+		margin: 0;
+	}
+
+	// Adjust blocks.
 	> .block-editor,
 	> .block-editor > .edit-post-visual-editor {
 		padding: 0;
@@ -424,59 +451,8 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		left: -9999vw;
 	}
 
-	// Preview adjustments.
-	.editor-styles-wrapper {
-		// core/cover.
-		.wp-block-cover {
-			height: auto;
-		}
-
-		// TODO: fix the embed iframe blocks properly.
-		.wp-block-embed__wrapper iframe {
-			height: auto;
-			min-height: 400px;
-		}
-	}
-
-	// Manual CSS Overrides. Remove after better solutions are in place.
-
-	// Removes empty paragraph placeholders, i.e. "Write Title..."
-	[data-type='core/paragraph'] [data-rich-text-placeholder] {
-		display: none;
-	}
-
-	/*
-	* Fixes jetpack .wp-block-jetpack-slideshow styles, as the /wp-content/plugins/jetpack/_inc/blocks/vendors~swiper.[hash].css
-	* file is loaded on block insert, not on page load. After the iframe is grabbing these styles, we can remove this code.
-	*/
-	.swiper-wrapper {
-		display: flex;
-	}
-
-	.swiper-button-prev,
-	.swiper-button-next {
-		display: none;
-	}
-
-	.swiper-pagination {
-		text-align: center;
-	}
-
-	.swiper-pagination-bullet {
-		border-radius: 100%;
-	}
-
-	// Fixes cover image spacing and full-width group spacing
-	.editor-styles-wrapper [data-block] {
-		&[data-type='core/group'],
-		&[data-type='core/cover'][data-align='full'] {
-			margin-top: 0;
-			margin-bottom: 0;
-		}
-	}
-
-	// Tweak template title (post-title) component.
-	.block-iframe-preview__template-title {
-		padding-top: 20px;
+	// Preview container.
+	.block-frame-preview__container {
+		height: 100%;
 	}
 }
