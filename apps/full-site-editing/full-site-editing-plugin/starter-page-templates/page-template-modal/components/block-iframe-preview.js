@@ -202,7 +202,7 @@ const BlockFramePreview = ( {
 				style={ style }
 			/>
 
-			<div ref={ renderedBlocksRef } className="block-editor" id="rendered-blocks">
+			<div ref={ renderedBlocksRef } className="block-editor">
 				<div className="edit-post-visual-editor">
 					<div className="editor-styles-wrapper">
 						<div className="editor-writing-flow">
