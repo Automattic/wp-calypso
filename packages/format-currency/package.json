@@ -24,7 +24,7 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"dependencies": {
-		"i18n-calypso": "^4.1.0"
+		"i18n-calypso": "5.0.0"
 	},
 	"scripts": {
 		"clean": "npx rimraf dist",
