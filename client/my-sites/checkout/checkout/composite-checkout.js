@@ -115,8 +115,7 @@ export default function CompositeCheckout( {
 	plan,
 	purchaseId,
 	cart,
-	// TODO: handle these also
-	// couponCode,
+	couponCode: couponCodeFromUrl,
 } ) {
 	const translate = useTranslate();
 	const planSlug = useSelector( state => getUpgradePlanSlugFromPath( state, siteId, product ) );
@@ -258,6 +257,7 @@ export default function CompositeCheckout( {
 		siteSlug,
 		canInitializeCart,
 		productForCart,
+		couponCodeFromUrl,
 		setCart || wpcomSetCart,
 		getCart || wpcomGetCart,
 		translate,
