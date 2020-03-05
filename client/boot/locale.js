@@ -25,6 +25,11 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 	}
 
 	if ( ! ( '__i18n__' in window ) ) {
+		// `localeSlug` is set after translation is fetched, which is causing
+		// initial chunks to request their translation chunks with the default
+		// language. As a temporary workaround, we are manually updating the slug.
+		i18n.state.localeSlug = currentUser.localeSlug;
+
 		window.__i18n__ = i18n;
 	}
 
