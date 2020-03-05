@@ -42,7 +42,7 @@ class PageTemplateModal extends Component {
 
 	// Parse templates blocks and memoize them.
 	getBlocksByTemplateSlugs = memoize( templates => {
-		let rtn = reduce(
+		const blocksByTemplateSlugs = reduce(
 			templates,
 			( prev, { slug, content, title } ) => {
 				prev[ slug ] = content
@@ -66,9 +66,7 @@ class PageTemplateModal extends Component {
 		);
 
 		// Remove templates that include a missing block
-		rtn = this.filterTemplatesWithMissingBlocks( rtn );
-
-		return rtn;
+		return this.filterTemplatesWithMissingBlocks( blocksByTemplateSlugs );
 	} );
 
 	filterTemplatesWithMissingBlocks( templates ) {
