@@ -38,7 +38,7 @@ import 'state/data-layer/wpcom/sites/rewind/restores';
  * Turn the 'rewind' feature on for a site.
  *
  * @param  {string|number} siteId      Site ID
- * @param  {bool}          isVpMigrate Whether this is a VaultPress migration.
+ * @param  {boolean}          isVpMigrate Whether this is a VaultPress migration.
  * @returns {object}        Action object
  */
 export function activateRewind( siteId, isVpMigrate ) {
