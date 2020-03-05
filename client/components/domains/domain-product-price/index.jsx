@@ -137,28 +137,24 @@ function FreeProductWithPlanPrice( {
 
 	return (
 		<div className={ className }>
-			{
-				<FreeWithPlanText
-					isMappingProduct={ isMappingProduct }
-					showDesignUpdate={ showDesignUpdate }
-					domain={ domain }
-					translate={ translate }
-					rule={ rule }
-					price={ price }
-					showTestCopy={ showTestCopy }
-					isFeatured={ isFeatured }
-				/>
-			}
-			{
-				<FreeWithPlanPrice
-					isMappingProduct={ isMappingProduct }
-					isFeatured={ isFeatured }
-					translate={ translate }
-					price={ price }
-					showDesignUpdate={ showDesignUpdate }
-					showTestCopy={ showTestCopy }
-				/>
-			}
+			<FreeWithPlanText
+				isMappingProduct={ isMappingProduct }
+				showDesignUpdate={ showDesignUpdate }
+				domain={ domain }
+				translate={ translate }
+				rule={ rule }
+				price={ price }
+				showTestCopy={ showTestCopy }
+				isFeatured={ isFeatured }
+			/>
+			<FreeWithPlanPrice
+				isMappingProduct={ isMappingProduct }
+				isFeatured={ isFeatured }
+				translate={ translate }
+				price={ price }
+				showDesignUpdate={ showDesignUpdate }
+				showTestCopy={ showTestCopy }
+			/>
 		</div>
 	);
 }
