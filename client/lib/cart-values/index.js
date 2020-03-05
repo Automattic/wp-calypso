@@ -102,9 +102,9 @@ export function preprocessCartForServer( {
  * For instance you may want to create a temporary this way:
  * `emptyCart( 123456, { temporary: true } )`
  *
- * @param {int} [siteId] The Site Id the cart will be associated with
+ * @param {number} [siteId] The Site Id the cart will be associated with
  * @param {object} [attributes] Additional attributes for the cart (optional)
- * @returns {cart} [emptyCart] The new empty cart created
+ * @returns {object} [emptyCart] The new empty cart created
  */
 export function emptyCart( siteId, attributes ) {
 	return Object.assign( { blog_id: siteId, products: [] }, attributes );
@@ -212,8 +212,8 @@ export function canRemoveFromCart( cart, cartItem ) {
  * It's possible that we're comparing two carts that have the same server header date.
  * This means the changes only happened locally and the messages returned will be [].
  *
- * @param {cartValue} [previousCartValue] - the previously loaded cart
- * @param {cartValue} [nextCartValue] - the new cart value
+ * @param {object} [previousCartValue] - the previously loaded cart
+ * @param {object} [nextCartValue] - the new cart value
  * @returns {Array} [nextCartMessages] - an array of messages about the state of the cart
  */
 export function getNewMessages( previousCartValue, nextCartValue ) {
