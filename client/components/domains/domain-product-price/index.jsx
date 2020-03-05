@@ -5,14 +5,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import InfoPopover from 'components/info-popover';
 import { getTld } from 'lib/domains';
 
@@ -24,7 +21,6 @@ import './style.scss';
 class DomainProductPrice extends React.Component {
 	static propTypes = {
 		domain: PropTypes.string,
-		domainsWithPlansOnly: PropTypes.bool.isRequired,
 		freeWithPlan: PropTypes.bool,
 		isEligibleVariantForDomainTest: PropTypes.bool,
 		isFeatured: PropTypes.bool,
@@ -325,8 +321,4 @@ class DomainProductPrice extends React.Component {
 	}
 }
 
-export default connect( state => ( {
-	domainsWithPlansOnly: getCurrentUser( state )
-		? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
-		: true,
-} ) )( localize( DomainProductPrice ) );
+export default localize( DomainProductPrice );
