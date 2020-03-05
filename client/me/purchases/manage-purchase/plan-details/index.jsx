@@ -31,6 +31,7 @@ import './style.scss';
 class PurchasePlanDetails extends Component {
 	static propTypes = {
 		purchaseId: PropTypes.number,
+		isPlaceholder: PropTypes.bool,
 
 		// Connected props
 		purchase: PropTypes.object,
@@ -74,7 +75,7 @@ class PurchasePlanDetails extends Component {
 			return null;
 		}
 
-		if ( isDataLoading( this.props ) ) {
+		if ( isDataLoading( this.props ) || this.props.isPlaceholder ) {
 			return this.renderPlaceholder();
 		}
 

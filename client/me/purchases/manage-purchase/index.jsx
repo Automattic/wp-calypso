@@ -83,7 +83,7 @@ import { currentUserHasFlag, getCurrentUser, getCurrentUserId } from 'state/curr
 import CartStore from 'lib/cart/store';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 import { hasCustomDomain } from 'lib/site/utils';
-import { getDomainsBySiteId } from 'state/sites/domains/selectors';
+import { getDomainsBySiteId, hasLoadedSiteDomains } from 'state/sites/domains/selectors';
 import { getRegisteredDomains } from 'lib/domains';
 import NonPrimaryDomainDialog from 'me/purchases/non-primary-domain-dialog';
 
@@ -94,6 +94,7 @@ import './style.scss';
 
 class ManagePurchase extends Component {
 	static propTypes = {
+		hasLoadedDomains: PropTypes.bool,
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		hasNonPrimaryDomainsFlag: PropTypes.bool,
@@ -450,7 +451,7 @@ class ManagePurchase extends Component {
 
 					<PurchaseMeta purchaseId={ false } siteSlug={ this.props.siteSlug } />
 				</Card>
-				<PurchasePlanDetails />
+				<PurchasePlanDetails isPlaceholder />
 				<VerticalNavItem isPlaceholder />
 				<VerticalNavItem isPlaceholder />
 			</Fragment>
@@ -458,7 +459,7 @@ class ManagePurchase extends Component {
 	}
 
 	renderPurchaseDetail() {
-		if ( isDataLoading( this.props ) ) {
+		if ( isDataLoading( this.props ) || ! this.props.hasLoadedDomains ) {
 			return this.renderPlaceholder();
 		}
 
@@ -573,7 +574,9 @@ export default connect( ( state, props ) => {
 	const hasLoadedSites = ! isRequestingSites( state );
 	const domains = getDomainsBySiteId( state, siteId );
 	const registeredDomains = getRegisteredDomains( domains );
+	const hasLoadedDomains = hasLoadedSiteDomains( state, siteId );
 	return {
+		hasLoadedDomains,
 		hasLoadedSites,
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		hasNonPrimaryDomainsFlag: getCurrentUser( state )
