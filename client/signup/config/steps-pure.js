@@ -12,6 +12,7 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
@@ -218,6 +219,17 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 			defaultDependencies: {
 				cartItem: PLAN_BUSINESS,
+			},
+		},
+
+		'plans-ecommerce-fulfilled': {
+			stepName: 'plans-ecommerce-fulfilled',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_ECOMMERCE,
 			},
 		},
 
