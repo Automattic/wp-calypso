@@ -396,9 +396,17 @@ const SubmitButtonWrapperUI = styled.div`
 	border-top-style: solid;
 	border-top-color: ${props => props.theme.colors.borderColorLight};
 
+	button {
+		width: ${props => ( props.isLastStepActive ? 'calc( 100% - 60px )' : '100%' )};
+	}
+
 	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
 		position: relative;
 		border: 0;
+
+		button {
+			width: 100%;
+		}
 	}
 `;
 
