@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
 import { emptyFilter } from 'state/activity-log/reducer';
-import { getBackupAttemptsForDate } from './utils';
 import { getBackupAttemptsForDate, getDailyBackupDeltas } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
@@ -47,8 +46,8 @@ class BackupsPage extends Component {
 
 		return (
 			<div>
-				<QuerySitePurchases siteId={ siteId } />
 				<QueryRewindState siteId={ siteId } />
+				<QuerySitePurchases siteId={ siteId } />
 				<DatePicker
 					onChange={ this.dateChange }
 					selectedDateString={ selectedDateString }
@@ -70,9 +69,9 @@ class BackupsPage extends Component {
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const logs = siteId && requestActivityLogs( siteId, emptyFilter );
+	const rewind = getRewindState( state, siteId );
 	const sitePurchases = siteId && getSitePurchases( state, siteId );
 
-	const rewind = getRewindState( state, siteId );
 	const restoreStatus = rewind.rewind && rewind.rewind.status;
 	const allowRestore =
 		'active' === rewind.state && ! ( 'queued' === restoreStatus || 'running' === restoreStatus );
