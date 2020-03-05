@@ -26,7 +26,19 @@ function triggerWpcomRequest( params: WpcomProxyRequestOptions ): Promise< unkno
 	} );
 }
 
-export const controls = {
-	WPCOM_REQUEST: ( { request }: ReturnType< typeof wpcomRequest > ) =>
-		triggerWpcomRequest( request ),
-} as const;
+export function createControls( clientCreds?: WpcomClientCredentials ) {
+	return {
+		WPCOM_REQUEST: ( { request }: ReturnType< typeof wpcomRequest > ) => {
+			const params = { ...request };
+
+			if ( clientCreds ) {
+				params.body = {
+					...( clientCreds || {} ),
+					...( params.body || {} ),
+				};
+			}
+
+			return triggerWpcomRequest( params );
+		},
+	} as const;
+}
