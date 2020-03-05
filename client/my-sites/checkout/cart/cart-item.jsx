@@ -90,58 +90,6 @@ export class CartItem extends React.Component {
 			},
 		} );
 	}
-
-	monthlyPrice() {
-		const { cartItem, translate } = this.props;
-		const { currency } = cartItem;
-
-		if ( ! this.monthlyPriceApplies() ) {
-			return null;
-		}
-
-		const { months, monthlyPrice } = this.calcMonthlyBillingDetails();
-		const price = getCurrencyObject( monthlyPrice, currency );
-
-		return translate( '(%(monthlyPrice)s %(currency)s x %(months)d months)', {
-			args: {
-				months,
-				currency,
-				monthlyPrice: `${ price.integer }${
-					monthlyPrice - price.integer > 0 ? price.fraction : ''
-				}`,
-			},
-		} );
-	}
-
-	monthlyPriceApplies() {
-		const { cartItem } = this.props;
-		const { cost } = cartItem;
-
-		if ( ! isPlan( cartItem ) ) {
-			return false;
-		}
-
-		if ( isMonthly( cartItem ) ) {
-			return false;
-		}
-
-		const hasValidPrice = typeof cost !== 'undefined' && cost > 0;
-		if ( ! hasValidPrice ) {
-			return false;
-		}
-
-		return true;
-	}
-
-	calcMonthlyBillingDetails() {
-		const { cartItem } = this.props;
-		const { cost, product_slug } = cartItem;
-		return {
-			monthlyPrice: calculateMonthlyPriceForPlan( product_slug, cost ),
-			months: getBillingMonthsForPlan( product_slug ),
-		};
-	}
-
 	getDomainPlanPrice( cartItem ) {
 		const { translate } = this.props;
 
@@ -247,7 +195,9 @@ export class CartItem extends React.Component {
 
 				<div className="secondary-details">
 					<span className="product-price">{ this.price() }</span>
-					<span className="product-monthly-price">{ this.monthlyPrice() }</span>
+					<span className="product-monthly-price">
+						<MonthlyPrice cartItem={ cartItem } translate={ translate } />
+					</span>
 					<RemoveButton
 						cart={ cart }
 						cartItem={ cartItem }
@@ -376,6 +326,52 @@ function RemoveButton( { cart, cartItem, translate, domainsWithPlansOnly } ) {
 			</button>
 		);
 	}
+}
+
+function MonthlyPrice( { cartItem, translate } ) {
+	const { currency } = cartItem;
+
+	if ( ! monthlyPriceApplies( cartItem ) ) {
+		return null;
+	}
+
+	const { months, monthlyPrice } = calcMonthlyBillingDetails( cartItem );
+	const price = getCurrencyObject( monthlyPrice, currency );
+
+	return translate( '(%(monthlyPrice)s %(currency)s x %(months)d months)', {
+		args: {
+			months,
+			currency,
+			monthlyPrice: `${ price.integer }${ monthlyPrice - price.integer > 0 ? price.fraction : '' }`,
+		},
+	} );
+}
+
+function monthlyPriceApplies( cartItem ) {
+	const { cost } = cartItem;
+
+	if ( ! isPlan( cartItem ) ) {
+		return false;
+	}
+
+	if ( isMonthly( cartItem ) ) {
+		return false;
+	}
+
+	const hasValidPrice = typeof cost !== 'undefined' && cost > 0;
+	if ( ! hasValidPrice ) {
+		return false;
+	}
+
+	return true;
+}
+
+function calcMonthlyBillingDetails( cartItem ) {
+	const { cost, product_slug } = cartItem;
+	return {
+		monthlyPrice: calculateMonthlyPriceForPlan( product_slug, cost ),
+		months: getBillingMonthsForPlan( product_slug ),
+	};
 }
 
 export default connect( state => ( {
