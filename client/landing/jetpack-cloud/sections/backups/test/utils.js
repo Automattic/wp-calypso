@@ -20,10 +20,7 @@ describe( 'getBackupAttemptsForDate', () => {
 			},
 		];
 
-		const filteredLogs = getBackupAttemptsForDate(
-			logs,
-			new Date( '2020-03-03T19:02:10.215+00:00' )
-		);
+		const filteredLogs = getBackupAttemptsForDate( logs, '2020-03-03T19:02:10.215+00:00' );
 
 		expect( filteredLogs.complete ).toHaveLength( 1 );
 	} );
@@ -36,10 +33,8 @@ describe( 'getBackupAttemptsForDate', () => {
 			},
 		];
 
-		const filteredLogs = getBackupAttemptsForDate(
-			logs,
-			new Date( '2020-03-03T19:02:10.215+10:00' )
-		);
+		// 2020-03-02T11:02:10 + 05:00 = 2020-03-02T16:02:10 and should not be considered on the same day
+		const filteredLogs = getBackupAttemptsForDate( logs, '2020-03-03T19:02:10.215+05:00' );
 
 		expect( filteredLogs.complete ).toHaveLength( 0 );
 	} );
@@ -52,10 +47,8 @@ describe( 'getBackupAttemptsForDate', () => {
 			},
 		];
 
-		const filteredLogs = getBackupAttemptsForDate(
-			logs,
-			new Date( '2020-03-03T19:02:10.215-08:00' )
-		);
+		// 2020-03-04T05:02:10 -10:00 = 2020-03-03T29:02:10 and should be considered on the same day
+		const filteredLogs = getBackupAttemptsForDate( logs, '2020-03-03T19:02:10.215-10:00' );
 
 		expect( filteredLogs.complete ).toHaveLength( 1 );
 	} );

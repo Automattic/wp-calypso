@@ -23,31 +23,32 @@ const DATE_FORMAT = 'YYYY-MM-DD';
 class DatePicker extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
-		date: PropTypes.instanceOf( Date ).isRequired,
+		selectedDateString: PropTypes.string.isRequired,
 		onChange: PropTypes.func.isRequired,
 	};
 
-	getFormattedDate = date => this.props.moment( date ).format( DATE_FORMAT );
+	getFormattedDate = dateString => this.props.moment.parseZone( dateString ).format( DATE_FORMAT );
 
-	getDisplayDate = date => {
-		const word = this.props
-			.moment( date )
+	getDisplayDate = dateString => {
+		const word = this.props.moment
+			.parseZone( dateString )
 			.calendar()
 			.split( ' ' )[ 0 ];
 		if ( 'Today' === word || 'Yesterday' === word ) {
 			return word;
 		}
 
-		return this.getFormattedDate( date );
+		return this.getFormattedDate( dateString );
 	};
 
 	shuttleLeft = () => {
-		const { date, onChange, moment } = this.props;
-		const newDate = moment( date )
+		const { moment, onChange, selectedDateString } = this.props;
+		const newDateString = moment
+			.parseZone( selectedDateString )
 			.subtract( 1, 'days' )
-			.toDate();
+			.toISOString( true );
 
-		onChange( newDate );
+		onChange( newDateString );
 	};
 
 	shuttleRight = () => {
@@ -55,20 +56,24 @@ class DatePicker extends Component {
 			return false;
 		}
 
-		const { date, onChange, moment } = this.props;
-		const newDate = moment( date )
+		const { moment, onChange, selectedDateString } = this.props;
+		const newDateString = moment
+			.parseZone( selectedDateString )
 			.add( 1, 'days' )
-			.toDate();
+			.toISOString( true );
 
-		onChange( newDate );
+		onChange( newDateString );
 	};
 
-	canShuttleRight = () => ! this.props.moment().isSame( this.props.date, 'day' );
+	canShuttleRight = () => {
+		const { moment, selectedDateString } = this.props;
+		return ! moment().isSame( moment.parseZone( selectedDateString ), 'day' );
+	};
 
 	render() {
-		const { date, siteId } = this.props;
+		const { selectedDateString, siteId } = this.props;
 
-		const currentDisplayDate = this.getDisplayDate( date );
+		const currentDisplayDate = this.getDisplayDate( selectedDateString );
 
 		return (
 			<div className="date-picker">

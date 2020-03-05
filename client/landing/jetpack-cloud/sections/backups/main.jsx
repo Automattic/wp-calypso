@@ -16,13 +16,17 @@ import { getSitePurchases } from 'state/purchases/selectors';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import BackupDelta from '../../components/backup-delta';
 import { emptyFilter } from 'state/activity-log/reducer';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 class BackupsPage extends Component {
-	state = {
-		currentDateSetting: new Date(),
-	};
+	constructor( props ) {
+		super( props );
+		this.state = {
+			selectedDateString: props.moment().toISOString( true ),
+		};
+	}
 
-	dateChange = currentDateSetting => this.setState( { currentDateSetting } );
+	dateChange = selectedDateString => this.setState( { selectedDateString } );
 
 	hasRealtimeBackups = () =>
 		!! this.props.sitePurchases.filter(
@@ -31,19 +35,25 @@ class BackupsPage extends Component {
 
 	render() {
 		const { logs, siteId } = this.props;
-		const { currentDateSetting } = this.state;
+		const { selectedDateString } = this.state;
 
 		const hasRealtimeBackups = this.hasRealtimeBackups();
 
-		const backupAttempts = getBackupAttemptsForDate( logs, currentDateSetting );
-		const deltas = getDailyBackupDeltas( logs, currentDateSetting );
+		const backupAttempts = getBackupAttemptsForDate( logs, selectedDateString );
+		const deltas = getDailyBackupDeltas( logs, selectedDateString );
 
 		return (
 			<div>
 				<QuerySitePurchases siteId={ siteId } />
-				<DatePicker siteId={ siteId } date={ currentDateSetting } onChange={ this.dateChange } />
-
-				<DailyBackupStatus date={ currentDateSetting } backupAttempts={ backupAttempts } />
+				<DatePicker
+					onChange={ this.dateChange }
+					selectedDateString={ selectedDateString }
+					siteId={ siteId }
+				/>
+				<DailyBackupStatus
+					backupAttempts={ backupAttempts }
+					selectedDateString={ selectedDateString }
+				/>
 				<BackupDelta deltas={ deltas } backupAttempts={ backupAttempts } />
 				{ hasRealtimeBackups && <div>Real time backup points here</div> }
 			</div>
@@ -61,4 +71,4 @@ export default connect( state => {
 		siteId,
 		logs: logs?.data ?? [],
 	};
-} )( BackupsPage );
+} )( withLocalizedMoment( BackupsPage ) );
