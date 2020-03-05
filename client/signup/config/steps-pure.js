@@ -616,7 +616,6 @@ export function generateSteps( {
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'shouldHideFreePlan' ],
 			optionalDependencies: [ 'shouldHideFreePlan' ],
 			props: {
-				showSiteMockups: true,
 				isDomainOnly: false,
 				isSiteless: true,
 			},
