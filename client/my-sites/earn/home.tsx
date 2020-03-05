@@ -262,7 +262,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 							components: {
 								a: (
 									<a
-										href="https://en.support.wordpress.com/peer-referral-tos/"
+										href="https://wordpress.com/refer-a-friend-program-terms-of-service/"
 										target="_blank"
 										rel="noopener noreferrer"
 									/>
