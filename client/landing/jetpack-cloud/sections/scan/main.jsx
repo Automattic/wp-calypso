@@ -19,12 +19,7 @@ import './style.scss';
 
 class ScanPage extends Component {
 	renderScanOkay() {
-		const { siteSlug, moment, lastScanTimestamp, nextScanTimestamp } = this.props;
-
-		let nextScanString = translate( 'tomorrow' );
-		if ( moment( nextScanTimestamp ).isSame( Date.now(), 'd' ) ) {
-			nextScanString = translate( 'later today' );
-		}
+		const { siteSlug, moment, lastScanTimestamp } = this.props;
 
 		return (
 			<>
@@ -33,17 +28,8 @@ class ScanPage extends Component {
 					{ translate( 'Don’t worry about a thing' ) }
 				</h1>
 				<p>
-					{ translate(
-						'The last Jetpack scan ran {{strong}}%(time)s{{/strong}} and everything looked great.' +
-							' Run a manual scan now or wait for Jetpack to scan your site %(nextScan)s.',
-						{
-							args: {
-								time: moment( lastScanTimestamp ).fromNow(),
-								nextScan: nextScanString,
-							},
-							components: { strong: <strong /> },
-						}
-					) }
+					The last Jetpack scan ran <strong>{ moment( lastScanTimestamp ).fromNow() }</strong>
+					and everything looked great.
 				</p>
 				{ isEnabled( 'jetpack-cloud/on-demand-scan' ) && (
 					<Button
