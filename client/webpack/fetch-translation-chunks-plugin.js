@@ -42,7 +42,7 @@ class FetchTranslationChunksPlugin {
 									'.then( response => response.json() )',
 									'.then( data => {',
 									Template.indent( [
-										'window.__i18n__.setLocale( data );',
+										'window.__i18n__.addTranslations( data );',
 										'installedTranslationChunks[ translationChunk ] = true;',
 										'resolve();',
 									] ),
