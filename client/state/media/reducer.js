@@ -75,13 +75,9 @@ export const errors = ( state = {}, action ) => {
 				return state;
 			}
 
-			let mediaErrors;
-
-			if ( Array.isArray( action.error.errors ) ) {
-				mediaErrors = action.error.errors;
-			} else {
-				mediaErrors = [ action.error ];
-			}
+			const mediaErrors = Array.isArray( action.error.errors )
+				? action.error.errors
+				: [ action.error ];
 
 			const sanitizedErrors = mediaErrors.map( error => {
 				switch ( error.error ) {
