@@ -370,6 +370,7 @@ function StripeCreditCardFields() {
 				<CreditCardField
 					id="cardholderName"
 					type="Text"
+					autoComplete="cc-name"
 					label={ localize( 'Cardholder name' ) }
 					description={ localize( "Enter your name as it's written on the card" ) }
 					value={ cardholderName?.value ?? '' }
