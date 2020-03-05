@@ -35,18 +35,6 @@ import { localize } from 'i18n-calypso';
 import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'lib/plans';
 
 export class CartItem extends React.Component {
-	removeFromCart = event => {
-		event.preventDefault();
-		const { cartItem, domainsWithPlansOnly } = this.props;
-		analytics.ga.recordEvent(
-			'Upgrades',
-			'Clicked Remove From Cart Icon',
-			'Product ID',
-			cartItem.product_id
-		);
-		removeItem( cartItem, domainsWithPlansOnly );
-	};
-
 	price() {
 		const { cart, cartItem, translate } = this.props;
 
@@ -234,7 +222,7 @@ export class CartItem extends React.Component {
 	}
 
 	render() {
-		const { cartItem, translate } = this.props;
+		const { cart, cartItem, translate, domainsWithPlansOnly } = this.props;
 
 		let name = this.getProductName();
 		const subscriptionLength = this.getSubscriptionLength();
@@ -260,7 +248,12 @@ export class CartItem extends React.Component {
 				<div className="secondary-details">
 					<span className="product-price">{ this.price() }</span>
 					<span className="product-monthly-price">{ this.monthlyPrice() }</span>
-					{ this.removeButton() }
+					<RemoveButton
+						cart={ cart }
+						cartItem={ cartItem }
+						translate={ translate }
+						domainsWithPlansOnly={ domainsWithPlansOnly }
+					/>
 				</div>
 			</li>
 		);
@@ -338,24 +331,6 @@ export class CartItem extends React.Component {
 			}
 		}
 	}
-
-	removeButton() {
-		const { cart, cartItem, translate } = this.props;
-		const labelText = translate( 'Remove item' );
-
-		if ( canRemoveFromCart( cart, cartItem ) ) {
-			return (
-				<button
-					className="cart__remove-item"
-					onClick={ this.removeFromCart }
-					aria-label={ labelText }
-					title={ labelText }
-				>
-					<Gridicon icon="trash" size={ 24 } />
-				</button>
-			);
-		}
-	}
 }
 
 CartItem.propTypes = {
@@ -375,6 +350,33 @@ CartItem.propTypes = {
 	selectedSite: PropTypes.object,
 	moment: PropTypes.func.isRequired,
 };
+
+function RemoveButton( { cart, cartItem, translate, domainsWithPlansOnly } ) {
+	const labelText = translate( 'Remove item' );
+	const removeFromCart = event => {
+		event.preventDefault();
+		analytics.ga.recordEvent(
+			'Upgrades',
+			'Clicked Remove From Cart Icon',
+			'Product ID',
+			cartItem.product_id
+		);
+		removeItem( cartItem, domainsWithPlansOnly );
+	};
+
+	if ( canRemoveFromCart( cart, cartItem ) ) {
+		return (
+			<button
+				className="cart__remove-item"
+				onClick={ removeFromCart }
+				aria-label={ labelText }
+				title={ labelText }
+			>
+				<Gridicon icon="trash" size={ 24 } />
+			</button>
+		);
+	}
+}
 
 export default connect( state => ( {
 	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
