@@ -25,7 +25,7 @@ class DomainProductPrice extends React.Component {
 		isFeatured: PropTypes.bool,
 		isLoading: PropTypes.bool,
 		isMappingProduct: PropTypes.bool,
-		price: PropTypes.string,
+		price: PropTypes.string.isRequired,
 		rule: PropTypes.string,
 		salePrice: PropTypes.string,
 		showDesignUpdate: PropTypes.bool,
