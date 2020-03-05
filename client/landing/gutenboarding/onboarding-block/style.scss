@@ -10,17 +10,6 @@ $onboarding-block-css-transition-duration: 750ms;
 		url('https://s1.wp.com/i/fonts/recoleta/400.ttf')  format('truetype'); /* Safari, Android, iOS */
 }
 
-.onboarding-block__acquire-intent,
-.onboarding-block__acquire-intent span,
-.onboarding-block__acquire-intent div,
-.onboarding-block__acquire-intent button,
-.onboarding-block__acquire-intent a {
-	transition-property: color background-color border-color;
-	transition-duration: 0.5s;
-	transition-delay: 1s;
-	transition-timing-function: ease-in-out;
-}
-
 .onboarding-block__acquire-intent {
 	display: flex;
 	justify-content: center;
@@ -36,6 +25,10 @@ $onboarding-block-css-transition-duration: 750ms;
 	font-size: 64px;
 	letter-spacing: -0.4px;
 	font-weight: 400;
+
+	transition: 
+		color 0.5s ease-in-out 1s,
+		background-color 0.5s ease-in-out 1s;
 
 	position: fixed;
 
@@ -74,6 +67,9 @@ $onboarding-block-css-transition-duration: 750ms;
 	position: relative;
 	border-radius: 4px;
 	font-size: 16px;
+	transition: 
+		color 0.5s ease-in-out 1s,
+		background-color 0.5s ease-in-out 1s; 
 
 	&:hover,
 	&:focus {

@@ -27,6 +27,7 @@ class Suggestions extends Component {
 		).isRequired,
 		suggest: PropTypes.func.isRequired,
 		railcar: PropTypes.object,
+		title: PropTypes.string,
 		className: PropTypes.string,
 	};
 
@@ -161,7 +162,7 @@ class Suggestions extends Component {
 	}
 
 	render() {
-		const { query, className } = this.props;
+		const { query, className, title } = this.props;
 		const containerClass = classnames( 'suggestions', className );
 
 		if ( ! this.getSuggestionsCount() ) {
@@ -169,38 +170,37 @@ class Suggestions extends Component {
 		}
 
 		return (
-			<div className={ containerClass } >
-				{ this.getCategories().map(
-					( { category, categoryKey, suggestions }, categoryIndex ) => (
-						<React.Fragment key={ categoryKey }>
-							{ ! categoryIndex ? null : (
-								<div className="suggestions__category-heading">{ category }</div>
-							) }
-							{ suggestions.map( ( { index, label, originalIndex } ) => (
-								// The parent component should handle key events and forward them to
-								// this component. See ./README.md for details.
-								// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
-								<Item
-									key={ originalIndex }
-									hasHighlight={ index === this.state.suggestionPosition }
-									query={ query }
-									onMount={ () =>
-										this.props.onSuggestionItemMount( {
-											suggestionIndex: originalIndex,
-											index,
-										} )
-									}
-									onMouseDown={ () => this.handleMouseDown( originalIndex ) }
-									onMouseOver={ () => this.handleMouseOver( index ) }
-									label={ label }
-									ref={ suggestion => {
-										this.refsCollection[ 'suggestion_' + index ] = suggestion;
-									} }
-								/>
-							) ) }
-						</React.Fragment>
-					)
-				) }
+			<div className={ containerClass }>
+				{ title ? <div className="suggestions__title">{ title }</div> : null }
+				{ this.getCategories().map( ( { category, categoryKey, suggestions }, categoryIndex ) => (
+					<React.Fragment key={ categoryKey }>
+						{ ! categoryIndex ? null : (
+							<div className="suggestions__category-heading">{ category }</div>
+						) }
+						{ suggestions.map( ( { index, label, originalIndex } ) => (
+							// The parent component should handle key events and forward them to
+							// this component. See ./README.md for details.
+							// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
+							<Item
+								key={ originalIndex }
+								hasHighlight={ index === this.state.suggestionPosition }
+								query={ query }
+								onMount={ () =>
+									this.props.onSuggestionItemMount( {
+										suggestionIndex: originalIndex,
+										index,
+									} )
+								}
+								onMouseDown={ () => this.handleMouseDown( originalIndex ) }
+								onMouseOver={ () => this.handleMouseOver( index ) }
+								label={ label }
+								ref={ suggestion => {
+									this.refsCollection[ 'suggestion_' + index ] = suggestion;
+								} }
+							/>
+						) ) }
+					</React.Fragment>
+				) ) }
 			</div>
 		);
 	}

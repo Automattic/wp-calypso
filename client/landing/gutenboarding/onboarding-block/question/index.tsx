@@ -40,17 +40,14 @@ const Question: FunctionComponent< Props > = ( {
 			} ) }
 		>
 			<span>{ label }</span>
-			<div>
-				{ isActive ? (
-					children
-				) : (
-					<>
-						<button className="onboarding-block__question-answered" onClick={ onExpand }>
-							{ displayValue }
-						</button>
-						<span>.</span>
-					</>
-				) }
+			<div className="onboarding-block__question-answered-container" data-active={ isActive }>
+				<div className="onboarding-block__active-question">{ children }</div>
+				<div className="onboarding-block__inactive-question">
+					<span className="onboarding-block__question-answered" onClick={ onExpand }>
+						{ displayValue }
+					</span>
+					<span>.</span>
+				</div>
 			</div>
 		</div>
 	);
