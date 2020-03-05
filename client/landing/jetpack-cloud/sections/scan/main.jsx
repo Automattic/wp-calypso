@@ -28,8 +28,8 @@ class ScanPage extends Component {
 					{ translate( 'Don’t worry about a thing' ) }
 				</h1>
 				<p>
-					The last Jetpack scan ran <strong>{ moment( lastScanTimestamp ).fromNow() }</strong>
-					and everything looked great.
+					The last Jetpack scan ran <strong>{ moment( lastScanTimestamp ).fromNow() }</strong> and
+					everything looked great.
 				</p>
 				{ isEnabled( 'jetpack-cloud/on-demand-scan' ) && (
 					<Button
