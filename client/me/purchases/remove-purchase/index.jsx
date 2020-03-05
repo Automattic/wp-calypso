@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
+import { get, find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -51,7 +51,6 @@ import './style.scss';
 import NonPrimaryDomainDialog from 'me/purchases/non-primary-domain-dialog';
 import { hasCustomDomain } from 'lib/site/utils';
 import { getRegisteredDomains } from 'lib/domains';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 
 class RemovePurchase extends Component {
@@ -381,7 +380,7 @@ class RemovePurchase extends Component {
 export default connect(
 	( state, { purchase, site } ) => {
 		const isJetpack = purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
-		const siteId = getSelectedSiteId( state );
+		const siteId = get( site, 'ID', null );
 		const domains = getDomainsBySiteId( state, siteId );
 		const registeredDomains = getRegisteredDomains( domains );
 
@@ -394,7 +393,7 @@ export default connect(
 			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack,
 			isPrimaryDomainRegistered:
-				hasCustomDomain( site ) && find( registeredDomains, [ 'name', site.domain ] ),
+				hasCustomDomain( site ) && !! find( registeredDomains, [ 'name', site.domain ] ),
 			purchasesError: getPurchasesError( state ),
 			userId: getCurrentUserId( state ),
 		};
