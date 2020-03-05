@@ -3,9 +3,16 @@
  */
 import React from 'react';
 
-const BackupRestoreFinished = () => (
+interface Props {
+	restoreId: string;
+	siteId: number;
+}
+
+const BackupRestoreFinished = ( { restoreId, siteId }: Props ) => (
 	<div>
-		<p>BackupRestoreFinished</p>
+		<p>
+			Restore Finished for site { siteId } to { restoreId }
+		</p>
 	</div>
 );
 

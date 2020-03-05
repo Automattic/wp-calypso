@@ -88,7 +88,7 @@ const BackupRestorePage = ( { restoreId }: Props ) => {
 					/>
 				);
 			case RestoreState.RestoreFinished:
-				return <Finished />;
+				return <Finished siteId={ siteId } restoreId={ restoreId } />;
 			case RestoreState.RestoreError:
 				return <Error />;
 		}
