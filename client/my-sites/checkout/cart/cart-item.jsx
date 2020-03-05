@@ -35,87 +35,6 @@ import { localize } from 'i18n-calypso';
 import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'lib/plans';
 
 export class CartItem extends React.Component {
-	price() {
-		const { cart, cartItem, translate } = this.props;
-
-		if ( typeof cartItem.cost === 'undefined' ) {
-			return translate( 'Loading price' );
-		}
-
-		if ( cartItem.free_trial ) {
-			return this.getFreeTrialPrice();
-		}
-
-		if ( isBundled( cartItem ) && cartItem.cost === 0 ) {
-			return this.getDomainPlanPrice( cartItem );
-		}
-
-		const cost = cartItem.cost * cartItem.volume;
-
-		if ( 0 === cost ) {
-			return <span className="cart__free-text">{ translate( 'Free' ) }</span>;
-		}
-
-		if ( isGSuiteProductSlug( cartItem.product_slug ) ) {
-			const {
-				cost_before_coupon: costBeforeCoupon,
-				is_sale_coupon_applied: isSaleCouponApplied,
-			} = cartItem;
-
-			if ( isSaleCouponApplied ) {
-				const { is_coupon_applied: isCouponApplied } = cart;
-
-				return (
-					<div className="cart__gsuite-discount">
-						<span className="cart__gsuite-discount-regular-price">{ costBeforeCoupon }</span>
-
-						<span className="cart__gsuite-discount-discounted-price">
-							{ cost } { cartItem.currency }
-						</span>
-
-						<span className="cart__gsuite-discount-text">
-							{ isCouponApplied
-								? translate( 'Discounts applied' )
-								: translate( 'Discount for first year' ) }
-						</span>
-					</div>
-				);
-			}
-		}
-
-		return translate( '%(cost)s %(currency)s', {
-			args: {
-				cost: cost,
-				currency: cartItem.currency,
-			},
-		} );
-	}
-	getDomainPlanPrice( cartItem ) {
-		const { translate } = this.props;
-
-		if ( cartItem && cartItem.product_cost ) {
-			return (
-				<span>
-					<span className="cart__free-with-plan">
-						{ cartItem.product_cost } { cartItem.currency }
-					</span>
-					<span className="cart__free-text">{ translate( 'First year free with your plan' ) }</span>
-				</span>
-			);
-		}
-
-		return <em>{ translate( 'First year free with your plan' ) }</em>;
-	}
-
-	getFreeTrialPrice() {
-		const { translate } = this.props;
-		const freeTrialText = translate( 'Free %(days)s Day Trial', {
-			args: { days: '14' },
-		} );
-
-		return <span>{ freeTrialText }</span>;
-	}
-
 	getProductInfo() {
 		const { cartItem, selectedSite } = this.props;
 		const domain =
@@ -194,7 +113,9 @@ export class CartItem extends React.Component {
 				</div>
 
 				<div className="secondary-details">
-					<span className="product-price">{ this.price() }</span>
+					<span className="product-price">
+						<ProductPrice cart={ cart } cartItem={ cartItem } translate={ translate } />
+					</span>
 					<span className="product-monthly-price">
 						<MonthlyPrice cartItem={ cartItem } translate={ translate } />
 					</span>
@@ -372,6 +293,83 @@ function calcMonthlyBillingDetails( cartItem ) {
 		monthlyPrice: calculateMonthlyPriceForPlan( product_slug, cost ),
 		months: getBillingMonthsForPlan( product_slug ),
 	};
+}
+
+function ProductPrice( { cart, cartItem, translate } ) {
+	if ( typeof cartItem.cost === 'undefined' ) {
+		return translate( 'Loading price' );
+	}
+
+	if ( cartItem.free_trial ) {
+		return <FreeTrialPrice translate={ translate } />;
+	}
+
+	if ( isBundled( cartItem ) && cartItem.cost === 0 ) {
+		return <DomainPlanPrice cartItem={ cartItem } translate={ translate } />;
+	}
+
+	const cost = cartItem.cost * cartItem.volume;
+
+	if ( 0 === cost ) {
+		return <span className="cart__free-text">{ translate( 'Free' ) }</span>;
+	}
+
+	if ( isGSuiteProductSlug( cartItem.product_slug ) ) {
+		const {
+			cost_before_coupon: costBeforeCoupon,
+			is_sale_coupon_applied: isSaleCouponApplied,
+		} = cartItem;
+
+		if ( isSaleCouponApplied ) {
+			const { is_coupon_applied: isCouponApplied } = cart;
+
+			return (
+				<div className="cart__gsuite-discount">
+					<span className="cart__gsuite-discount-regular-price">{ costBeforeCoupon }</span>
+
+					<span className="cart__gsuite-discount-discounted-price">
+						{ cost } { cartItem.currency }
+					</span>
+
+					<span className="cart__gsuite-discount-text">
+						{ isCouponApplied
+							? translate( 'Discounts applied' )
+							: translate( 'Discount for first year' ) }
+					</span>
+				</div>
+			);
+		}
+	}
+
+	return translate( '%(cost)s %(currency)s', {
+		args: {
+			cost: cost,
+			currency: cartItem.currency,
+		},
+	} );
+}
+
+function FreeTrialPrice( { translate } ) {
+	const freeTrialText = translate( 'Free %(days)s Day Trial', {
+		args: { days: '14' },
+	} );
+
+	return <span>{ freeTrialText }</span>;
+}
+
+function DomainPlanPrice( { cartItem, translate } ) {
+	if ( cartItem && cartItem.product_cost ) {
+		return (
+			<span>
+				<span className="cart__free-with-plan">
+					{ cartItem.product_cost } { cartItem.currency }
+				</span>
+				<span className="cart__free-text">{ translate( 'First year free with your plan' ) }</span>
+			</span>
+		);
+	}
+
+	return <em>{ translate( 'First year free with your plan' ) }</em>;
 }
 
 export default connect( state => ( {
