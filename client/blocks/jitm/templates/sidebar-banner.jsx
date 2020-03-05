@@ -9,6 +9,7 @@ import Gridicon from 'components/gridicon';
  */
 import UpsellNudge from 'blocks/upsell-nudge';
 import { abtest } from 'lib/abtest';
+import { preventWidows } from 'lib/formatting';
 
 /**
  * Style dependencies
@@ -44,7 +45,7 @@ export default function SidebarBannerTemplate( {
 				dismissPreferenceName={ dismissPreferenceName }
 				href={ CTA.link }
 				onDismissClick={ onDismissClick }
-				title={ message }
+				title={ preventWidows( message ) }
 				tracksClickName={ clickName }
 				tracksClickProperties={ { ...jitmProps, ...clickProps } }
 				tracksImpressionName={ displayName }
@@ -63,7 +64,7 @@ export default function SidebarBannerTemplate( {
 					<Gridicon className="sidebar-banner__icon" icon={ icon || 'info-outline' } size={ 18 } />
 				</span>
 				<span className="sidebar-banner__content">
-					<span className="sidebar-banner__text">{ message }</span>
+					<span className="sidebar-banner__text">{ preventWidows( message ) }</span>
 				</span>
 				<span className="sidebar-banner__cta">{ CTA.message }</span>
 			</a>

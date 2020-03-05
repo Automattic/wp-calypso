@@ -40,6 +40,7 @@ import { getTopJITM } from 'state/jitm/selectors';
 import AsyncLoad from 'components/async-load';
 import UpsellNudge from 'blocks/upsell-nudge';
 import { abtest } from 'lib/abtest';
+import { preventWidows } from 'lib/formatting';
 
 const DOMAIN_UPSELL_NUDGE_DISMISS_KEY = 'domain_upsell_nudge_dismiss';
 
@@ -85,16 +86,18 @@ export class SiteNotice extends React.Component {
 		const eventName = 'calypso_domain_credit_reminder_impression';
 		const eventProperties = { cta_name: 'current_site_domain_notice' };
 		const { translate } = this.props;
+		const noticeText = preventWidows( translate( 'Free domain available' ) );
+		const ctaText = translate( 'Claim' );
 
 		if ( abtest( 'sidebarUpsellNudgeUnification' ) === 'variantShowUnifiedUpsells' ) {
 			return (
 				<UpsellNudge
-					callToAction={ translate( 'Claim' ) }
+					callToAction={ ctaText }
 					compact
 					event={ eventName }
 					forceHref={ true }
 					href={ `/domains/add/${ this.props.site.slug }` }
-					title={ translate( 'Free domain available' ) }
+					title={ noticeText }
 					tracksClickName="calypso_domain_credit_reminder_click"
 					tracksClickProperties={ eventProperties }
 					tracksImpressionName={ eventName }
@@ -104,17 +107,12 @@ export class SiteNotice extends React.Component {
 		}
 
 		return (
-			<Notice
-				isCompact
-				status="is-success"
-				icon="info-outline"
-				text={ translate( 'Free domain available' ) }
-			>
+			<Notice isCompact status="is-success" icon="info-outline" text={ noticeText }>
 				<NoticeAction
 					onClick={ this.props.clickClaimDomainNotice }
 					href={ `/domains/add/${ this.props.site.slug }` }
 				>
-					{ translate( 'Claim' ) }
+					{ ctaText }
 					<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
 				</NoticeAction>
 			</Notice>
@@ -200,7 +198,7 @@ export class SiteNotice extends React.Component {
 					onDismissClick={ this.props.clickDomainUpsellDismiss }
 					dismissPreferenceName="calypso_upgrade_nudge_cta_click"
 					event="calypso_upgrade_nudge_impression"
-					title={ noticeText }
+					title={ preventWidows( noticeText ) }
 					tracksClickName="calypso_upgrade_nudge_cta_click"
 					tracksClickProperties={ { cta_name: 'domain-upsell-nudge' } }
 					tracksImpressionName="calypso_upgrade_nudge_impression"
