@@ -26,6 +26,7 @@ interface CtaAction {
 export interface CtaButton {
 	text: string;
 	action: URL | ClickCallback | CtaAction;
+	component?: JSX.Element;
 }
 
 export type Cta =

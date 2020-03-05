@@ -39,7 +39,7 @@ const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 	return (
 		<PromoCard isPrimary={ !! isPrimary } title={ title } image={ image } badge={ badge }>
 			<p>{ body }</p>
-			{ cta && <PromoCardCta cta={ cta } learnMoreLink={ learnMoreLink } /> }
+			{ cta && ( cta.component || <PromoCardCta cta={ cta } learnMoreLink={ learnMoreLink } /> ) }
 		</PromoCard>
 	);
 };
