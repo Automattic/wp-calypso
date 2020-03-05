@@ -4,7 +4,8 @@
 		.vertical-select {
 			width: 400px;
 			margin-left: 0.2em;
-			
+			border-bottom: 3px solid transparent;
+
 			& > input.onboarding-block__question-input {
 				width: inherit;
 				color: var( --mainColor );
