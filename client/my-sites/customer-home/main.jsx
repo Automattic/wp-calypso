@@ -18,6 +18,7 @@ import { Button, Card } from '@automattic/components';
 import CardHeading from 'components/card-heading';
 import EmptyContent from 'components/empty-content';
 import FoldableCard from 'components/foldable-card';
+import Gridicon from 'components/gridicon';
 import Main from 'components/main';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
@@ -77,19 +78,21 @@ import fireworksIllustration from 'assets/images/illustrations/fireworks.svg';
 import gSuiteIcon from 'assets/images/customer-home/gsuite.svg';
 import happinessIllustration from 'assets/images/customer-home/happiness.png';
 import imagesIcon from 'assets/images/customer-home/images.svg';
-import logoIcon from 'assets/images/customer-home/logo.svg';
+import logoIcon from 'assets/images/customer-home/looka-logo.svg';
 import menuIcon from 'assets/images/customer-home/menus.svg';
 import pageIcon from 'assets/images/customer-home/page.svg';
 import postIcon from 'assets/images/customer-home/post.svg';
 import themeIcon from 'assets/images/customer-home/theme.svg';
 
-const ActionBox = ( { href, onClick, target, iconSrc, label } ) => {
+const ActionBox = ( { external, href, onClick, target, iconSrc, label } ) => {
 	const buttonAction = { href, onClick, target };
 	return (
 		<div className="customer-home__box-action">
 			<Button { ...buttonAction }>
 				<img src={ iconSrc } alt="" />
-				<span>{ label }</span>
+				<span>
+					{ label } { external && <Gridicon icon="external" /> }
+				</span>
 			</Button>
 		</div>
 	);
@@ -463,7 +466,8 @@ class Home extends Component {
 					href="https://wp.me/logo-maker"
 					onClick={ () => trackAction( 'my_site', 'design_logo' ) }
 					target="_blank"
-					label={ translate( 'Design a logo' ) }
+					label={ translate( 'Design a logo with Looka' ) }
+					external
 					iconSrc={ logoIcon }
 				/>
 				{ hasCustomDomain ? (
