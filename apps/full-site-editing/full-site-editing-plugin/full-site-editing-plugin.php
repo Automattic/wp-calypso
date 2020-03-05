@@ -41,6 +41,15 @@ define( 'PLUGIN_VERSION', '0.21' );
 require_once __DIR__ . '/dotcom-fse/helpers.php';
 
 /**
+ * Load Core Site Editor.
+ */
+function load_core_site_editor() {
+	require_once __DIR__ . '/site-editor/index.php';
+	initialize_site_editor();
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_core_site_editor' );
+
+/**
  * Load Full Site Editing.
  */
 function load_full_site_editing() {

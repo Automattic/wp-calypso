@@ -28,58 +28,31 @@ export function generateFlows( {
 		},
 
 		business: {
-			steps: [
-				'user',
-				'site-type',
-				'site-topic-with-preview',
-				'site-title-with-preview',
-				'domains-with-preview',
-				'plans-business',
-			],
+			steps: [ 'user', 'domains', 'plans-business' ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
-			lastModified: '2019-08-05',
+			lastModified: '2020-03-03',
 		},
 
 		premium: {
-			steps: [
-				'user',
-				'site-type',
-				'site-topic-with-preview',
-				'site-title-with-preview',
-				'domains-with-preview',
-				'plans-premium',
-			],
+			steps: [ 'user', 'domains', 'plans-premium' ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the premium plan to the users cart.',
-			lastModified: '2019-08-05',
+			lastModified: '2020-03-03',
 		},
 
 		personal: {
-			steps: [
-				'user',
-				'site-type',
-				'site-topic-with-preview',
-				'site-title-with-preview',
-				'domains-with-preview',
-				'plans-personal',
-			],
+			steps: [ 'user', 'domains', 'plans-personal' ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the personal plan to the users cart.',
-			lastModified: '2019-08-05',
+			lastModified: '2020-03-03',
 		},
 
 		free: {
-			steps: [
-				'user',
-				'site-type',
-				'site-topic-with-preview',
-				'site-title-with-preview',
-				'domains-with-preview',
-			],
+			steps: [ 'user', 'domains' ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and default to the free plan.',
-			lastModified: '2019-08-05',
+			lastModified: '2020-03-03',
 		},
 
 		'rebrand-cities': {
@@ -120,7 +93,7 @@ export function generateFlows( {
 			lastModified: '2019-06-20',
 		},
 
-		onboarding: {
+		'onboarding-with-preview': {
 			steps: [
 				'user',
 				'site-type',
@@ -131,7 +104,15 @@ export function generateFlows( {
 			],
 			destination: getSignupDestination,
 			description: 'The improved onboarding flow.',
-			lastModified: '2020-02-05',
+			lastModified: '2020-03-03',
+			showRecaptcha: true,
+		},
+
+		onboarding: {
+			steps: [ 'user', 'domains', 'plans' ],
+			destination: getSignupDestination,
+			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
+			lastModified: '2020-03-03',
 			showRecaptcha: true,
 		},
 
@@ -220,17 +201,17 @@ export function generateFlows( {
 		// Important: For any changes done to the ecommerce flow,
 		// please copy the same changes to ecommerce-onboarding flow too
 		flows.ecommerce = {
-			steps: [ 'user', 'about', 'domains', 'plans' ],
+			steps: [ 'user', 'domains', 'plans-ecommerce-fulfilled' ],
 			destination: getSignupDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2019-11-22',
+			lastModified: '2020-03-04',
 		};
 
 		flows[ 'ecommerce-onboarding' ] = {
-			steps: [ 'user', 'site-type', 'domains', 'plans-ecommerce' ],
+			steps: [ 'user', 'domains', 'plans-ecommerce' ],
 			destination: getSignupDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2019-11-22',
+			lastModified: '2020-03-04',
 		};
 
 		flows[ 'ecommerce-design-first' ] = {
