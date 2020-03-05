@@ -216,6 +216,10 @@ class DomainsStep extends React.Component {
 		return `${ repo }/${ themeSlug }`;
 	};
 
+	shouldUseThemeAnnotation() {
+		return this.getThemeSlug() ? true : false;
+	}
+
 	handleSkip = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
 		const hideFreePlanTracksProp = this.isEligibleVariantForDomainTest()
 			? { should_hide_free_plan: shouldHideFreePlan }
@@ -255,7 +259,9 @@ class DomainsStep extends React.Component {
 					},
 					this.getThemeArgs()
 				),
-				Object.assign( { domainItem }, shouldHideFreePlanItem )
+				Object.assign( { domainItem }, shouldHideFreePlanItem, {
+					useThemeHeadstart: this.shouldUseThemeAnnotation(),
+				} )
 			);
 
 			this.props.goToNextStep();
@@ -294,7 +300,9 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			Object.assign( { domainItem }, shouldHideFreePlanItem )
+			Object.assign( { domainItem }, shouldHideFreePlanItem, {
+				useThemeHeadstart: this.shouldUseThemeAnnotation(),
+			} )
 		);
 
 		this.props.setDesignType( this.getDesignType() );
@@ -322,7 +330,7 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			{ domainItem }
+			Object.assign( { domainItem }, { useThemeHeadstart: this.shouldUseThemeAnnotation() } )
 		);
 
 		this.props.goToNextStep();
@@ -352,7 +360,7 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			{ domainItem }
+			Object.assign( { domainItem }, { useThemeHeadstart: this.shouldUseThemeAnnotation() } )
 		);
 
 		this.props.goToNextStep();
