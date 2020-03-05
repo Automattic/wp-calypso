@@ -31,12 +31,12 @@ interface Props {
 interface RewindState {
 	state: string;
 	rewind?: {
-		status: 'queued' | 'running' | 'finished';
+		status: 'queued' | 'running' | 'finished' | 'fail';
 	};
 }
 
 const getRestoreState = ( rewindState: RewindState ) => {
-	if ( rewindState.state === 'uninitialized' || rewindState?.rewind?.status === 'queued' ) {
+	if ( ! rewindState?.rewind || rewindState?.rewind?.status === 'queued' ) {
 		return RestoreState.RestoreConfirm;
 	} else if ( rewindState?.rewind?.status === 'running' ) {
 		return RestoreState.RestoreInProgress;
@@ -56,7 +56,6 @@ const BackupRestorePage = ( { restoreId }: Props ) => {
 		() => ( siteId && restoreId ? dispatch( rewindRestore( siteId, restoreId, {} ) ) : null ),
 		[ dispatch, siteId, restoreId ]
 	);
-
 	const restoreState = getRestoreState( rewindState );
 
 	return (
@@ -66,7 +65,10 @@ const BackupRestorePage = ( { restoreId }: Props ) => {
 				<Confirm siteId={ siteId } restoreId={ restoreId } onConfirm={ onConfirm } />
 			) }
 			{ restoreState === RestoreState.RestoreInProgress && (
-				<InProgress percent={ rewindState?.rewind?.progress ? rewindState?.rewind?.progress : 0 } />
+				<InProgress
+					percent={ rewindState?.rewind?.progress ? rewindState?.rewind?.progress : 0 }
+					siteId={ siteId }
+				/>
 			) }
 			{ restoreState === RestoreState.RestoreFinished && <Finished /> }
 			{ restoreState === RestoreState.RestoreError && <Error /> }

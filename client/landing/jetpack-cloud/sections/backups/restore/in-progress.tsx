@@ -3,13 +3,20 @@
  */
 import React from 'react';
 
+/**
+ * Internal dependencies
+ */
+import { ProgressBar } from '@automattic/components';
+
 interface Props {
-	percent?: number;
+	percent: number;
+	siteId: number;
 }
 
-const BackupRestoreInProgress = ( { percent }: Props ) => (
+const BackupRestoreInProgress = ( { percent, siteId }: Props ) => (
 	<div>
-		<p>BackupRestoreInProgress: { percent ? percent : 0 }% done...</p>
+		<p>BackupRestoreInProgress for { siteId }</p>
+		<ProgressBar value={ percent } total={ 100 } />
 	</div>
 );
 

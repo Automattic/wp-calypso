@@ -21,7 +21,6 @@ class DailyBackupStatus extends Component {
 	createRestoreUrl = restoreId => `/backups/${ this.props.siteSlug }/restore/${ restoreId }`;
 
 	triggerRestore = () => {
-		console.log( this.props.backupAttempts );
 		const restoreId = this.props.backupAttempts.complete[ 0 ].rewindId;
 		page.redirect( this.createRestoreUrl( restoreId ) );
 	};
@@ -33,8 +32,6 @@ class DailyBackupStatus extends Component {
 			'MMMM Do YYYY, h:mm:ss a'
 		);
 
-		const restoreUrl = this.createRestoreUrl( backupAttempts.complete[ 0 ].activityId );
-
 		return (
 			<Fragment>
 				<Gridicon icon="cloud-upload" />
@@ -45,7 +42,7 @@ class DailyBackupStatus extends Component {
 				<Button className="daily-backup-status__download-button">Download backup</Button>
 				<Button
 					className="daily-backup-status__restore-button"
-					disabled={ allowRestore }
+					disabled={ ! allowRestore }
 					onClick={ this.triggerRestore }
 				>
 					Restore to this point
