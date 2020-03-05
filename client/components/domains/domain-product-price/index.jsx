@@ -21,22 +21,16 @@ import './style.scss';
 class DomainProductPrice extends React.Component {
 	static propTypes = {
 		domain: PropTypes.string,
-		freeWithPlan: PropTypes.bool,
 		isEligibleVariantForDomainTest: PropTypes.bool,
 		isFeatured: PropTypes.bool,
 		isLoading: PropTypes.bool,
 		isMappingProduct: PropTypes.bool,
 		price: PropTypes.string,
-		requiresPlan: PropTypes.bool,
 		rule: PropTypes.string,
 		salePrice: PropTypes.string,
 		showDesignUpdate: PropTypes.bool,
 		showTestCopy: PropTypes.bool,
 		translate: PropTypes.func.isRequired,
-	};
-
-	static defaultProps = {
-		isMappingProduct: false,
 	};
 
 	getDomainPricePopoverElement() {
