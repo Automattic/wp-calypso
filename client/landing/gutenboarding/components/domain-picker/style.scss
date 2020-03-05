@@ -62,3 +62,11 @@
 .domain-picker__divider {
 	margin-top: 20px;
 }
+
+
+.domain-picker__price {
+	color: var( --studio-gray-20 );
+	size: 0.8em;
+	margin: 0.1em 1em;
+	white-space: nowrap;
+}

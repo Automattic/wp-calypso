@@ -26,6 +26,8 @@ const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 const Header: FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
 
+	const [ isDomainFlow, setDomainFlow ] = useState( false );
+
 	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
 	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
 
@@ -114,8 +116,37 @@ const Header: FunctionComponent = () => {
 		[ createSite, currentDomain, selectedDesign, siteTitle, siteVertical ]
 	);
 
+	const handleCreateSiteForDomains = useCallback(
+		( username: string, bearerToken?: string ) => {
+			setDomainFlow( true );
+			const siteUrl = currentDomain?.domain_name || siteTitle || username;
+			const themeSlug = 'twentytwenty';
+			createSite( {
+				blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
+				blog_title: siteTitle,
+				options: {
+					site_vertical: siteVertical?.id,
+					site_vertical_name: siteVertical?.label,
+					site_information: {
+						title: siteTitle,
+					},
+					site_creation_flow: 'gutenboarding',
+					theme: `pub/${ themeSlug }`,
+				},
+				...( bearerToken && { authToken: bearerToken } ),
+			} );
+		},
+		[ createSite, currentDomain, selectedDesign, siteTitle, siteVertical ]
+	);
+
 	const handleSignup = () => {
 		setShowSignupDialog( true );
+	};
+
+	const handleSignupForDomains = () => {
+		setDomainFlow( true );
+		setShouldCreate( true );
+		history.push( makePath( Step.Signup ) );
 	};
 
 	useEffect( () => {
@@ -126,8 +157,11 @@ const Header: FunctionComponent = () => {
 
 	useEffect( () => {
 		if ( newSite ) {
-			resetOnboardStore();
-			window.location.href = `/block-editor/page/${ newSite.blogid }/home?is-gutenboarding`;
+			! isDomainFlow && resetOnboardStore();
+			const location = isDomainFlow
+				? `/checkout/${ newSite.blogid }/personal?redirect_to=%2Fgutenboarding%2Fdesign` //%2F%3FsiteId%3D${ newSite.blogid }`
+				: `/block-editor/page/${ newSite.blogid }/home?is-gutenboarding`;
+			window.location.href = location;
 		}
 	}, [ newSite, resetOnboardStore ] );
 
@@ -148,8 +182,15 @@ const Header: FunctionComponent = () => {
 							className="gutenboarding__header-domain-picker-button"
 							defaultQuery={ siteTitle }
 							disabled={ ! currentDomain }
+							currentDomain={ currentDomain }
 							onDomainSelect={ setDomain }
+							onDomainPurchase={ () =>
+								currentUser
+									? handleCreateSiteForDomains( currentUser.username )
+									: handleSignupForDomains()
+							}
 							queryParameters={ { vertical: siteVertical?.id } }
+							currentUser={ currentUser }
 						>
 							{ siteTitleElement }
 							{ domainElement }
