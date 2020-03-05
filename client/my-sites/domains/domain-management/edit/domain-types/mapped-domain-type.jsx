@@ -225,7 +225,7 @@ class MappedDomainType extends React.Component {
 			);
 		} else {
 			primaryMessage = translate(
-				'You domain mapping has not been set up. You need to update your name servers at the company where you purchased the domain to:',
+				'Your domain mapping has not been set up. You need to update your name servers at the company where you purchased the domain to:',
 				{
 					context: 'Notice for mapped domain notice with NS records pointing to somewhere else',
 				}
