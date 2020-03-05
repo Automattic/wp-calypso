@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -39,18 +40,26 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import { receiveDeletedSite } from 'state/sites/actions';
 import { setAllSitesSelected } from 'state/ui/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import { currentUserHasFlag, getCurrentUser, getCurrentUserId } from 'state/current-user/selectors';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 import RemoveDomainDialog from './remove-domain-dialog';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import NonPrimaryDomainDialog from 'me/purchases/non-primary-domain-dialog';
+import { hasCustomDomain } from 'lib/site/utils';
+import { getRegisteredDomains } from 'lib/domains';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 
 class RemovePurchase extends Component {
 	static propTypes = {
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		hasNonPrimaryDomainsFlag: PropTypes.bool,
 		isDomainOnlySite: PropTypes.bool,
+		isPrimaryDomainRegistered: PropTypes.bool,
 		receiveDeletedSite: PropTypes.func.isRequired,
 		removePurchase: PropTypes.func.isRequired,
 		purchase: PropTypes.object,
@@ -62,19 +71,41 @@ class RemovePurchase extends Component {
 	state = {
 		isDialogVisible: false,
 		isRemoving: false,
+		isShowingNonPrimaryDomainWarning: false,
 		survey: {},
 	};
 
 	closeDialog = () => {
 		this.setState( {
 			isDialogVisible: false,
+			isShowingNonPrimaryDomainWarning: false,
+		} );
+	};
+
+	showRemovePlanDialog = () => {
+		this.setState( {
+			isShowingNonPrimaryDomainWarning: false,
+			isDialogVisible: true,
 		} );
 	};
 
 	openDialog = event => {
 		event.preventDefault();
 
-		this.setState( { isDialogVisible: true } );
+		if (
+			this.shouldShowNonPrimaryDomainWarning() &&
+			! this.state.isShowingNonPrimaryDomainWarning
+		) {
+			this.setState( {
+				isShowingNonPrimaryDomainWarning: true,
+				isDialogVisible: false,
+			} );
+		} else {
+			this.setState( {
+				isShowingNonPrimaryDomainWarning: false,
+				isDialogVisible: true,
+			} );
+		}
 	};
 
 	onClickChatButton = () => {
@@ -144,6 +175,32 @@ class RemovePurchase extends Component {
 			</Button>
 		);
 	};
+
+	shouldShowNonPrimaryDomainWarning() {
+		const {
+			hasNonPrimaryDomainsFlag,
+			isAtomicSite,
+			isPrimaryDomainRegistered,
+			purchase,
+		} = this.props;
+		return (
+			hasNonPrimaryDomainsFlag && isPlan( purchase ) && ! isAtomicSite && isPrimaryDomainRegistered
+		);
+	}
+
+	renderNonPrimaryDomainWarningDialog() {
+		const { purchase, site } = this.props;
+		return (
+			<NonPrimaryDomainDialog
+				isDialogVisible={ this.state.isShowingNonPrimaryDomainWarning }
+				closeDialog={ this.closeDialog }
+				removePlan={ this.showRemovePlanDialog }
+				planName={ getName( purchase ) }
+				oldDomainName={ site.domain }
+				newDomainName={ site.wpcom_url }
+			/>
+		);
+	}
 
 	renderDomainDialog() {
 		let chatButton = null;
@@ -314,6 +371,7 @@ class RemovePurchase extends Component {
 					<Gridicon icon="trash" />
 					{ translate( 'Remove %(productName)s', { args: { productName } } ) }
 				</CompactCard>
+				{ this.shouldShowNonPrimaryDomainWarning() && this.renderNonPrimaryDomainWarningDialog() }
 				{ this.renderDialog() }
 			</>
 		);
@@ -321,13 +379,22 @@ class RemovePurchase extends Component {
 }
 
 export default connect(
-	( state, { purchase } ) => {
+	( state, { purchase, site } ) => {
 		const isJetpack = purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
+		const siteId = getSelectedSiteId( state );
+		const domains = getDomainsBySiteId( state, siteId );
+		const registeredDomains = getRegisteredDomains( domains );
+
 		return {
+			hasNonPrimaryDomainsFlag: getCurrentUser( state )
+				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+				: false,
 			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack,
+			isPrimaryDomainRegistered:
+				hasCustomDomain( site ) && find( registeredDomains, [ 'name', site.domain ] ),
 			purchasesError: getPurchasesError( state ),
 			userId: getCurrentUserId( state ),
 		};
