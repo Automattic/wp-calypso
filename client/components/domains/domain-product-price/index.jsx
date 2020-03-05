@@ -23,13 +23,20 @@ import './style.scss';
 
 class DomainProductPrice extends React.Component {
 	static propTypes = {
-		isLoading: PropTypes.bool,
-		price: PropTypes.string,
-		freeWithPlan: PropTypes.bool,
-		requiresPlan: PropTypes.bool,
+		domain: PropTypes.string,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
+		freeWithPlan: PropTypes.bool,
+		isEligibleVariantForDomainTest: PropTypes.bool,
+		isFeatured: PropTypes.bool,
+		isLoading: PropTypes.bool,
 		isMappingProduct: PropTypes.bool,
+		price: PropTypes.string,
+		requiresPlan: PropTypes.bool,
+		rule: PropTypes.string,
 		salePrice: PropTypes.string,
+		showDesignUpdate: PropTypes.bool,
+		showTestCopy: PropTypes.bool,
+		translate: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -43,7 +50,7 @@ class DomainProductPrice extends React.Component {
 
 		switch ( rule ) {
 			case 'FREE_DOMAIN':
-				if ( getTld( domain ) === 'blog' ) {
+				if ( domain && getTld( domain ) === 'blog' ) {
 					popoverText = translate(
 						'Every WordPress.com blog comes with a free .blog address. {{a}}Learn more{{/a}}.',
 						{
@@ -123,10 +130,10 @@ class DomainProductPrice extends React.Component {
 	}
 
 	renderFreeWithPlanText() {
-		const { isMappingProduct, showDesignUpdate, translate } = this.props;
+		const { isMappingProduct, showDesignUpdate, translate, rule, price, showTestCopy } = this.props;
 
 		let message, popoverElement;
-		switch ( this.props.rule ) {
+		switch ( rule ) {
 			case 'FREE_WITH_PLAN':
 				message = translate( 'First year free with your plan' );
 				if ( isMappingProduct ) {
@@ -134,17 +141,17 @@ class DomainProductPrice extends React.Component {
 				}
 				break;
 			case 'INCLUDED_IN_HIGHER_PLAN':
-				if ( this.props.showTestCopy ) {
+				if ( showTestCopy ) {
 					message = translate( 'Registration fee: {{del}}%(cost)s{{/del}} {{span}}Free{{/span}}', {
-						args: { cost: this.props.price },
+						args: { cost: price },
 						components: {
 							del: <del />,
 							span: <span className="domain-product-price__free-price" />,
 						},
 					} );
-				} else if ( this.props.showDesignUpdate ) {
+				} else if ( showDesignUpdate ) {
 					message = translate( '{{del}}%(cost)s{{/del}} {{span}}Free with a paid plan{{/span}}', {
-						args: { cost: this.props.price },
+						args: { cost: price },
 						components: {
 							del: <del />,
 							span: <span className="domain-product-price__free-price" />,
@@ -177,19 +184,28 @@ class DomainProductPrice extends React.Component {
 	}
 
 	renderFreeWithPlanPrice() {
-		if ( this.props.isMappingProduct ) {
+		const {
+			isMappingProduct,
+			isFeatured,
+			translate,
+			price,
+			showDesignUpdate,
+			showTestCopy,
+		} = this.props;
+
+		if ( isMappingProduct ) {
 			return;
 		}
 
 		let priceText;
-		if ( this.props.showTestCopy ) {
-			priceText = this.props.translate( 'Renews at %(cost)s / year', {
-				args: { cost: this.props.price },
+		if ( showTestCopy ) {
+			priceText = translate( 'Renews at %(cost)s / year', {
+				args: { cost: price },
 			} );
-		} else if ( this.props.showDesignUpdate ) {
-			if ( this.props.isFeatured ) {
-				priceText = this.props.translate( 'Renews at %(cost)s / year. {{a}}Learn more{{/a}}.', {
-					args: { cost: this.props.price },
+		} else if ( showDesignUpdate ) {
+			if ( isFeatured ) {
+				priceText = translate( 'Renews at %(cost)s / year. {{a}}Learn more{{/a}}.', {
+					args: { cost: price },
 					components: {
 						a: (
 							<a
@@ -205,8 +221,8 @@ class DomainProductPrice extends React.Component {
 				} );
 			}
 		} else {
-			priceText = this.props.translate( 'Renewal: %(cost)s {{small}}/year{{/small}}', {
-				args: { cost: this.props.price },
+			priceText = translate( 'Renewal: %(cost)s {{small}}/year{{/small}}', {
+				args: { cost: price },
 				components: { small: <small /> },
 			} );
 		}
@@ -215,9 +231,11 @@ class DomainProductPrice extends React.Component {
 	}
 
 	renderFreeWithPlan() {
+		const { showTestCopy, showDesignUpdate } = this.props;
+
 		const className = classnames( 'domain-product-price', 'is-free-domain', {
-			'domain-product-price__domain-step-copy-updates': this.props.showTestCopy,
-			'domain-product-price__domain-step-design-updates': this.props.showDesignUpdate,
+			'domain-product-price__domain-step-copy-updates': showTestCopy,
+			'domain-product-price__domain-step-design-updates': showDesignUpdate,
 		} );
 
 		return (
@@ -268,15 +286,17 @@ class DomainProductPrice extends React.Component {
 	}
 
 	renderPrice() {
-		if ( this.props.salePrice ) {
+		const { salePrice, price, translate } = this.props;
+
+		if ( salePrice ) {
 			return this.renderSalePrice();
 		}
 
 		return (
 			<div className="domain-product-price">
 				<span className="domain-product-price__price">
-					{ this.props.translate( '%(cost)s {{small}}/year{{/small}}', {
-						args: { cost: this.props.price },
+					{ translate( '%(cost)s {{small}}/year{{/small}}', {
+						args: { cost: price },
 						components: { small: <small /> },
 					} ) }
 				</span>
@@ -285,15 +305,13 @@ class DomainProductPrice extends React.Component {
 	}
 
 	render() {
-		if ( this.props.isLoading ) {
-			return (
-				<div className="domain-product-price is-placeholder">
-					{ this.props.translate( 'Loading…' ) }
-				</div>
-			);
+		const { isLoading, translate, rule } = this.props;
+
+		if ( isLoading ) {
+			return <div className="domain-product-price is-placeholder">{ translate( 'Loading…' ) }</div>;
 		}
 
-		switch ( this.props.rule ) {
+		switch ( rule ) {
 			case 'FREE_DOMAIN':
 				return this.renderFree();
 			case 'FREE_WITH_PLAN':
