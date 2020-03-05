@@ -120,6 +120,9 @@
 			margin-bottom: 1.5em;
 			border-bottom: 1px solid var( --color-border-subtle );
 			padding-bottom: 1.5em;
+			> p:last-child {
+				margin-bottom: 0;
+			}
 		}
 
 		> div:last-child {
