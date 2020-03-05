@@ -9,7 +9,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import DomainPicker, { Props as DomainPickerProps } from '../domain-picker';
-import ConfirmPurchaseModal from '../confirmPurchaseModal';
+import ConfirmPurchaseModal from '../confirm-purchase-modal';
 
 /**
  * Style dependencies
