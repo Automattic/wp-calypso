@@ -139,9 +139,12 @@ export function getStatsPathForTab(
 }
 
 export function getMessagePathForJITM( path: URLString, siteFragment?: SiteSlug | SiteId ): string {
-	return sectionify( path, siteFragment )
-		.replace( /^\/+/, '' )
-		.replace( /\//g, '-' );
+	let messagePath = sectionify( path, siteFragment ).replace( /^\/+/, '' );
+
+	// simplify stats paths
+	messagePath = messagePath.replace( /^(stats)\/\w+/, '$1' );
+
+	return messagePath.replace( /\//g, '-' );
 }
 
 // TODO: Add status enum (see `client/my-sites/pages/main.jsx`).
