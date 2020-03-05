@@ -36,6 +36,7 @@ import {
 	isRenewing,
 	isSubscription,
 	purchaseType,
+	getName,
 } from 'lib/purchases';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
@@ -84,6 +85,7 @@ import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants'
 import { hasCustomDomain } from 'lib/site/utils';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getRegisteredDomains } from 'lib/domains';
+import NonPrimaryDomainDialog from 'me/purchases/non-primary-domain-dialog';
 
 /**
  * Style dependencies
@@ -101,6 +103,11 @@ class ManagePurchase extends Component {
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string.isRequired,
 		userId: PropTypes.number,
+	};
+
+	state = {
+		showNonPrimaryDomainWarningDialog: false,
+		cancelLink: null,
 	};
 
 	UNSAFE_componentWillMount() {
@@ -140,6 +147,11 @@ class ManagePurchase extends Component {
 	handleRenew = () => {
 		handleRenewNowClick( this.props.purchase, this.props.siteSlug );
 	};
+
+	shouldShowNonPrimaryDomainWarning() {
+		const { hasNonPrimaryDomainsFlag, isPrimaryDomainRegistered, purchase } = this.props;
+		return hasNonPrimaryDomainsFlag && isPlan( purchase ) && isPrimaryDomainRegistered;
+	}
 
 	renderRenewButton() {
 		const { purchase, translate } = this.props;
@@ -233,6 +245,41 @@ class ManagePurchase extends Component {
 		);
 	}
 
+	showNonPrimaryDomainWarningDialog( cancelLink ) {
+		this.setState( {
+			showNonPrimaryDomainWarningDialog: true,
+			cancelLink,
+		} );
+	}
+
+	closeDialog = () => {
+		this.setState( {
+			showNonPrimaryDomainWarningDialog: false,
+		} );
+	};
+
+	goToCancelLink = () => {
+		this.closeDialog();
+		page( this.state.cancelLink );
+	};
+
+	renderNonPrimaryDomainWarningDialog( site, purchase ) {
+		if ( this.state.showNonPrimaryDomainWarningDialog ) {
+			return (
+				<NonPrimaryDomainDialog
+					isDialogVisible={ this.state.showNonPrimaryDomainWarningDialog }
+					closeDialog={ this.closeDialog }
+					removePlan={ this.goToCancelLink }
+					planName={ getName( purchase ) }
+					oldDomainName={ site.domain }
+					newDomainName={ site.wpcom_url }
+				/>
+			);
+		}
+
+		return null;
+	}
+
 	renderCancelPurchaseNavItem() {
 		const { isAtomicSite, purchase, translate } = this.props;
 		const { id } = purchase;
@@ -279,6 +326,20 @@ class ManagePurchase extends Component {
 			if ( isSubscription( purchase ) ) {
 				text = translate( 'Cancel Subscription' );
 			}
+		}
+
+		if ( this.shouldShowNonPrimaryDomainWarning() ) {
+			const onClick = event => {
+				event.preventDefault();
+				trackNavItemClick( text );
+				this.showNonPrimaryDomainWarningDialog( link );
+			};
+
+			return (
+				<CompactCard href={ link } onClick={ onClick }>
+					{ text }
+				</CompactCard>
+			);
 		}
 
 		return (
@@ -496,6 +557,7 @@ class ManagePurchase extends Component {
 						siteId={ siteId }
 					/>
 					{ this.renderPurchaseDetail() }
+					{ site && this.renderNonPrimaryDomainWarningDialog( site, purchase ) }
 				</Main>
 			</Fragment>
 		);
