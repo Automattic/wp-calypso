@@ -123,7 +123,7 @@ export class RedirectPaymentBox extends PureComponent {
 	}
 
 	redirectToPayment = event => {
-		const origin = getLocationOrigin( location );
+		const origin = getLocationOrigin( window.location );
 		event.preventDefault();
 
 		const validation = validatePaymentDetails( this.state.paymentDetails, this.props.paymentType );
@@ -189,7 +189,7 @@ export class RedirectPaymentBox extends PureComponent {
 					analytics.tracks.recordEvent(
 						'calypso_checkout_with_redirect_' + snakeCase( this.props.paymentType )
 					);
-					location.href = result.redirect_url;
+					window.location.href = result.redirect_url;
 				}
 			} )
 			.catch( error => {
