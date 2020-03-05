@@ -81,7 +81,7 @@ const CustomDomainPurchaseDetail = ( {
 		return (
 			<PurchaseDetail
 				icon={ <img alt="" src={ customDomainIcon } /> }
-				title={ translate( 'Make your new domain your primary address' ) }
+				title={ translate( 'Make your domain your primary address' ) }
 				description={ translate(
 					'Make {{em}}%(domain)s{{/em}} the primary address that your visitors see when they come to your site.',
 					{
