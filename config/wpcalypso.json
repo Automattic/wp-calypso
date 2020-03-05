@@ -104,6 +104,7 @@
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
 		"post-editor/preview-scroll-to-content": true,
+		"post-editor/preview-with-unmapped-url": true,
 		"press-this": true,
 		"privacy-policy": true,
 		"publicize-preview": true,

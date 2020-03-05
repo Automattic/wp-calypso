@@ -440,22 +440,24 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		previewPort.onmessage = ( message: MessageEvent ) => {
 			previewPort.close();
 
-			const { frameNonce } = this.props;
+			const { frameNonce, unmappedSiteUrl } = this.props;
 			const { previewUrl, editedPost } = message.data;
-			const { host: unmappedSiteUrlHost } = url.parse( this.props.unmappedSiteUrl );
 			const parsedPreviewUrl = url.parse( previewUrl, true );
 
-            if ( frameNonce ) {
+			if ( frameNonce ) {
 				parsedPreviewUrl.query[ 'frame-nonce' ] = frameNonce;
 			}
-            
+
 			parsedPreviewUrl.query.iframe = 'true';
 			delete parsedPreviewUrl.search;
-			
-			if ( unmappedSiteUrlHost ) {
-                parsedPreviewUrl.host = unmappedSiteUrlHost;
-                parsedPreviewUrl.hostname = unmappedSiteUrlHost;
-            }
+
+			if ( config.isEnabled( 'post-editor/preview-with-unmapped-url' ) ) {
+				const { host: unmappedSiteUrlHost } = url.parse( unmappedSiteUrl );
+				if ( unmappedSiteUrlHost ) {
+					parsedPreviewUrl.host = unmappedSiteUrlHost;
+					parsedPreviewUrl.hostname = unmappedSiteUrlHost;
+				}
+			}
 
 			this.setState( {
 				previewUrl: url.format( parsedPreviewUrl ),
@@ -690,7 +692,7 @@ const mapStateToProps = (
 			partial.placeholder,
 			'wp_template_part'
 		),
-        unmappedSiteUrl: getSiteOption( state, siteId, 'unmapped_url' ),
+		unmappedSiteUrl: getSiteOption( state, siteId, 'unmapped_url' ),
 	};
 };
 
