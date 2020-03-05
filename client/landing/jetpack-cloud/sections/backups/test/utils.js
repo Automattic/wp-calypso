@@ -54,7 +54,7 @@ describe( 'getBackupAttemptsForDate', () => {
 
 		const filteredLogs = getBackupAttemptsForDate(
 			logs,
-			new Date( '2020-03-03T19:02:10.215+08:00' )
+			new Date( '2020-03-03T19:02:10.215-08:00' )
 		);
 
 		expect( filteredLogs.complete ).toHaveLength( 1 );
