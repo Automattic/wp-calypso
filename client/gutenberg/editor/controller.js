@@ -10,7 +10,7 @@ import { get, has, isInteger, noop } from 'lodash';
  */
 import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
 import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
-import { EDITOR_START } from 'state/action-types';
+import { EDITOR_START, POST_EDIT } from 'state/action-types';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import CalypsoifyIframe from './calypsoify-iframe';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
@@ -95,12 +95,12 @@ export const authenticate = ( context, next ) => {
 	const storageKey = `gutenframe_${ siteId }_is_authenticated`;
 
 	const isAuthenticated =
-		sessionStorage.getItem( storageKey ) || // Previously authenticated.
+		globalThis.sessionStorage.getItem( storageKey ) || // Previously authenticated.
 		! isSiteWpcomAtomic( state, siteId ) || // Simple sites users are always authenticated.
 		isEnabled( 'desktop' ) || // The desktop app can store third-party cookies.
 		context.query.authWpAdmin; // Redirect back from the WP Admin login page to Calypso.
 	if ( isAuthenticated ) {
-		sessionStorage.setItem( storageKey, 'true' );
+		globalThis.sessionStorage.setItem( storageKey, 'true' );
 		return next();
 	}
 
@@ -176,6 +176,9 @@ export const post = ( context, next ) => {
 
 	// Set postId on state.ui.editor.postId, so components like editor revisions can read from it.
 	context.store.dispatch( { type: EDITOR_START, siteId, postId } );
+
+	// Set post type on state.posts.[ id ].type, so components like document head can read from it.
+	context.store.dispatch( { type: POST_EDIT, post: { type: postType }, siteId, postId } );
 
 	context.primary = (
 		<CalypsoifyIframe
