@@ -243,6 +243,10 @@ class DomainsStep extends React.Component {
 		const shouldHideFreePlanItem = this.isEligibleVariantForDomainTest()
 			? { shouldHideFreePlan }
 			: {};
+		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
+		const useThemeHeadstartItem = shouldUseThemeAnnotation
+			? { useThemeHeadstart: shouldUseThemeAnnotation }
+			: {};
 
 		if ( shouldHideFreePlan ) {
 			let domainItem, isPurchasingItem, siteUrl;
@@ -259,9 +263,7 @@ class DomainsStep extends React.Component {
 					},
 					this.getThemeArgs()
 				),
-				Object.assign( { domainItem }, shouldHideFreePlanItem, {
-					useThemeHeadstart: this.shouldUseThemeAnnotation(),
-				} )
+				Object.assign( { domainItem }, shouldHideFreePlanItem, useThemeHeadstartItem )
 			);
 
 			this.props.goToNextStep();
@@ -300,9 +302,7 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			Object.assign( { domainItem }, shouldHideFreePlanItem, {
-				useThemeHeadstart: this.shouldUseThemeAnnotation(),
-			} )
+			Object.assign( { domainItem }, shouldHideFreePlanItem, useThemeHeadstartItem )
 		);
 
 		this.props.setDesignType( this.getDesignType() );
@@ -315,6 +315,10 @@ class DomainsStep extends React.Component {
 	handleAddMapping = ( sectionName, domain, state ) => {
 		const domainItem = domainMapping( { domain } );
 		const isPurchasingItem = true;
+		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
+		const useThemeHeadstartItem = shouldUseThemeAnnotation
+			? { useThemeHeadstart: shouldUseThemeAnnotation }
+			: {};
 
 		this.props.recordAddDomainButtonClickInMapDomain( domain, this.getAnalyticsSection() );
 
@@ -330,7 +334,7 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			Object.assign( { domainItem }, { useThemeHeadstart: this.shouldUseThemeAnnotation() } )
+			Object.assign( { domainItem }, useThemeHeadstartItem )
 		);
 
 		this.props.goToNextStep();
@@ -345,6 +349,10 @@ class DomainsStep extends React.Component {
 			},
 		} );
 		const isPurchasingItem = true;
+		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
+		const useThemeHeadstartItem = shouldUseThemeAnnotation
+			? { useThemeHeadstart: shouldUseThemeAnnotation }
+			: {};
 
 		this.props.recordAddDomainButtonClickInTransferDomain( domain, this.getAnalyticsSection() );
 
@@ -360,7 +368,7 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			Object.assign( { domainItem }, { useThemeHeadstart: this.shouldUseThemeAnnotation() } )
+			Object.assign( { domainItem }, useThemeHeadstartItem )
 		);
 
 		this.props.goToNextStep();
