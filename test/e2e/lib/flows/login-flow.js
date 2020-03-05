@@ -10,6 +10,7 @@ import LoginPage from '../pages/login-page.js';
 import EditorPage from '../pages/editor-page';
 import WPAdminLoginPage from '../pages/wp-admin/wp-admin-logon-page';
 import ReaderPage from '../pages/reader-page.js';
+import StatsPage from '../pages/stats-page';
 import StoreDashboardPage from '../pages/woocommerce/store-dashboard-page';
 import PluginsBrowserPage from '../pages/plugins-browser-page';
 import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
@@ -205,6 +206,9 @@ export default class LoginFlow {
 
 	async loginAndSelectAllSites() {
 		await this.loginAndSelectMySite();
+
+		// visit stats, as home does not have an all sites option
+		await StatsPage.Visit( this.driver );
 
 		const sideBarComponent = await SidebarComponent.Expect( this.driver );
 		await sideBarComponent.selectSiteSwitcher();
