@@ -218,7 +218,7 @@ class RegisteredDomainType extends React.Component {
 
 		if ( ! domain.currentUserCanManage ) {
 			message = translate(
-				'The domain has expired and is no longer active. Please contact the domain owner (%(owner)s) to restore it. {{domainsLink}}Learn more{{/domainsLink}}',
+				'{{strong}}The domain has expired{{/strong}} and is no longer active. Please contact the domain owner %(owner)s to restore it. {{domainsLink}}Learn more{{/domainsLink}}',
 				{
 					components: {
 						strong: <strong />,
