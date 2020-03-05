@@ -1,0 +1,78 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+
+
+@keyframes type {
+    0% { 
+        width: 0;
+        height: 0;
+        opacity: 0;
+    }
+    1% { 
+        width: 0;
+        height: 76px;
+        opacity: 1;
+    }
+    7% {
+    	width: 100%;
+    	height: 76px;
+        opacity: 1;
+    }
+    15% {
+        width: 0;
+        height: 76px;
+        opacity: 1;
+    }
+    20% {
+    	width: 0;
+    	height: 0;
+        opacity: 0;
+    }
+    100% {
+    	width: 0;
+    	height: 0;
+        opacity: 0;
+    }
+}
+
+.animated-input-placeholder {
+	z-index: -1;
+	position: fixed;
+	height: 64px;
+}
+
+
+.animated-input-placeholder__suggestion {
+	overflow: hidden;
+	height: 0px;
+	white-space: nowrap;
+	top: 72px;
+	display: block;
+    color: var( --studio-gray-5 );
+    animation: type 10s infinite;
+    
+    .slow-speed & {
+        animation: type 40s infinite;
+        color: var( --studio-gray-80 );
+    }
+}
+
+.animated-input-placeholder__suggestion:nth-child(2) {
+	animation-delay: 2s;
+    .slow-speed & { animation-delay: 8s; }
+}
+
+.animated-input-placeholder__suggestion:nth-child(3) {
+	animation-delay: 4s;
+    .slow-speed & { animation-delay: 16s; }
+}
+
+.animated-input-placeholder__suggestion:nth-child(4) {
+	animation-delay: 6s;
+    .slow-speed & { animation-delay: 24s; }
+}
+
+.animated-input-placeholder__suggestion:nth-child(5) {
+	animation-delay: 8s;
+    .slow-speed & { animation-delay: 32s; }
+}
+

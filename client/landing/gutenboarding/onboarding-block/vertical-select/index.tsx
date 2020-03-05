@@ -139,8 +139,6 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 		}
 	}, [ isActive, inputRef ] );
 
-	const suggestionsTitle = ''; //<div className="vertical-select__sugestions-title">{ NO__("Suggestions" ) }</div>;
-
 	return (
 		<Question
 			label={ label }
@@ -171,13 +169,13 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 					value={ inputValue }
 				/>
 				<div className="vertical-select__suggestions">
-					{ inputValue && suggestionsTitle }
 					{ inputValue && (
 						<Suggestions
 							ref={ suggestionRef }
 							query={ inputValue }
 							suggestions={ ! verticals.length ? loadingMessage : suggestions }
 							suggest={ handleSelect }
+							title={ NO__( 'Suggestions' ) }
 						/>
 					) }
 				</div>
