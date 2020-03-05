@@ -21,6 +21,12 @@ jobs:
       env:
         PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: true
       run: npm ci
+    - name: Capture npm logs
+      uses: actions/upload-artifact@v1
+      if: failure()
+      with:
+        name: npm-logs
+        path: /home/runner/.npm/_logs/
     - name: Build ICFY stats
       env:
         NODE_ENV: production
