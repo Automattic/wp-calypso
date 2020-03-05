@@ -9,7 +9,7 @@ import React from 'react';
 import { Button } from '@automattic/components';
 
 interface Props {
-	onConfirm: () => null;
+	onConfirm: () => void;
 	restoreId?: number | string;
 	siteId: number | null;
 }

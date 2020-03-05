@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 /**
@@ -10,14 +10,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { rewindRestore } from 'state/activity-log/actions';
 import Confirm from './confirm';
-import InProgress from './in-progress';
-import Finished from './finished';
 import Error from './error';
-import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
+import Finished from './finished';
 import getRewindState from 'state/selectors/get-rewind-state';
+import InProgress from './in-progress';
+import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
+import Queued from './queued';
 
 enum RestoreState {
 	RestoreConfirm,
+	RestoreQueued,
 	RestoreInProgress,
 	RestoreFinished,
 	RestoreError,
@@ -35,9 +37,14 @@ interface RewindState {
 	};
 }
 
-const getRestoreState = ( rewindState: RewindState ) => {
-	if ( ! rewindState?.rewind || rewindState?.rewind?.status === 'queued' ) {
+const getRestoreState = ( rewindState: RewindState, hasRequestedRestore: boolean ) => {
+	if ( ! rewindState?.rewind && ! hasRequestedRestore ) {
 		return RestoreState.RestoreConfirm;
+	} else if (
+		( ! rewindState?.rewind && hasRequestedRestore ) ||
+		rewindState?.rewind?.status === 'queued'
+	) {
+		return RestoreState.RestoreQueued;
 	} else if ( rewindState?.rewind?.status === 'running' ) {
 		return RestoreState.RestoreInProgress;
 	} else if ( rewindState?.rewind?.status === 'finished' ) {
@@ -52,26 +59,45 @@ const BackupRestorePage = ( { restoreId }: Props ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const rewindState = useSelector( state => getRewindState( state, siteId ) );
 
-	const onConfirm = useCallback(
-		() => ( siteId && restoreId ? dispatch( rewindRestore( siteId, restoreId, {} ) ) : null ),
-		[ dispatch, siteId, restoreId ]
-	);
-	const restoreState = getRestoreState( rewindState );
+	const [ hasRequestedRestore, setHasRequestedRestore ] = useState( false );
+
+	const requestRestore = useCallback( () => {
+		if ( siteId && restoreId ) {
+			dispatch( rewindRestore( siteId, restoreId, {} ) );
+		}
+	}, [ dispatch, siteId, restoreId ] );
+
+	const onConfirm = () => {
+		setHasRequestedRestore( true );
+		requestRestore();
+	};
+
+	const restoreState = getRestoreState( rewindState, hasRequestedRestore );
+
+	const render = () => {
+		switch ( restoreState ) {
+			case RestoreState.RestoreConfirm:
+				return <Confirm siteId={ siteId } restoreId={ restoreId } onConfirm={ onConfirm } />;
+			case RestoreState.RestoreQueued:
+				return <Queued />;
+			case RestoreState.RestoreInProgress:
+				return (
+					<InProgress
+						percent={ rewindState?.rewind?.progress ? rewindState?.rewind?.progress : 0 }
+						siteId={ siteId }
+					/>
+				);
+			case RestoreState.RestoreFinished:
+				return <Finished />;
+			case RestoreState.RestoreError:
+				return <Error />;
+		}
+	};
 
 	return (
 		<div>
 			{ siteId && <QueryRewindRestoreStatus siteId={ siteId } /> }
-			{ restoreState === RestoreState.RestoreConfirm && (
-				<Confirm siteId={ siteId } restoreId={ restoreId } onConfirm={ onConfirm } />
-			) }
-			{ restoreState === RestoreState.RestoreInProgress && (
-				<InProgress
-					percent={ rewindState?.rewind?.progress ? rewindState?.rewind?.progress : 0 }
-					siteId={ siteId }
-				/>
-			) }
-			{ restoreState === RestoreState.RestoreFinished && <Finished /> }
-			{ restoreState === RestoreState.RestoreError && <Error /> }
+			{ render() }
 		</div>
 	);
 };
