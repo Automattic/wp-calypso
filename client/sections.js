@@ -472,6 +472,14 @@ const sections = [
 		secondary: true,
 		group: 'sites',
 	},
+	{
+		name: 'jetpack-cloud',
+		paths: [ '/', '/scan', '/backups', '/settings' ], // TODO: Split this up into its own sections
+		module: 'landing/jetpack-cloud',
+		secondary: true,
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+	},
 ];
 
 for ( const extension of require( './extensions' ) ) {

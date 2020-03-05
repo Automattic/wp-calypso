@@ -54,6 +54,8 @@ import {
 	emailManagementNewGSuiteAccount,
 } from 'my-sites/email/paths';
 import SitesComponent from 'my-sites/sites';
+import Sidebar from 'my-sites/sidebar';
+import JetpackCloudSidebar from 'landing/jetpack-cloud/components/sidebar';
 import { warningNotice } from 'state/notices/actions';
 import { makeLayout, render as clientRender } from 'controller';
 import NoSitesMessage from 'components/empty-content/no-sites-message';
@@ -87,9 +89,11 @@ function createNavigation( context ) {
 		basePath = sectionify( context.pathname );
 	}
 
+	const SidebarComponent = config.isEnabled( 'jetpack-cloud' ) ? JetpackCloudSidebar : Sidebar;
+
 	return (
 		<NavigationComponent
-			path={ context.path }
+			sidebar={ <SidebarComponent path={ context.path } siteBasePath={ basePath } /> }
 			allSitesPath={ basePath }
 			siteBasePath={ basePath }
 		/>
