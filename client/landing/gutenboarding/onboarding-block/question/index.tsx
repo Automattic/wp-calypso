@@ -43,9 +43,9 @@ const Question: FunctionComponent< Props > = ( {
 			<div className="onboarding-block__question-answered-container" data-active={ isActive }>
 				<div className="onboarding-block__active-question">{ children }</div>
 				<div className="onboarding-block__inactive-question">
-					<span className="onboarding-block__question-answered" onClick={ onExpand }>
+					<button className="onboarding-block__question-answered" onClick={ onExpand }>
 						{ displayValue }
-					</span>
+					</button>
 					<span>.</span>
 				</div>
 			</div>
