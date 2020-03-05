@@ -31,6 +31,7 @@
 .page {
 	align-items: center;
 	display: flex;
+	margin-bottom: 0;
 
 	.site-icon {
 		display: none;
@@ -129,7 +130,7 @@
 	line-height: 1.2;
 
 	display: inline;
-	margin-right: 33px;
+	margin-right: 16px;
 
 	word-break: break-word;
 
@@ -196,4 +197,28 @@
 	margin-left: auto;
 	margin-right: 24px;
 	animation: shadow-notice-appear 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ); // http://easings.net/#easeOutBack
+}
+
+.page__actions-hover {
+	display: flex;
+	align-items: center;
+	opacity: 0;
+	transition: all 0.1s;
+
+	a {
+		display: flex;
+		align-items: center;
+		margin-left: 16px;
+		cursor: pointer;
+	}
+}
+
+.pages__page-list .page:hover {
+	.page__actions-hover {
+		opacity: 1;
+	}
+}
+
+.page__trash-item {
+	color: var( --color-error );
 }

@@ -12,7 +12,9 @@ import { flow, get, includes, noop, partial } from 'lodash';
 /**
  * Internal dependencies
  */
-import { CompactCard } from '@automattic/components';
+import { Card } from '@automattic/components';
+import { isMobile } from '@automattic/viewport';
+import MaterialIcon from 'components/material-icon';
 import Gridicon from 'components/gridicon';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
@@ -118,20 +120,18 @@ class Page extends Component {
 		}
 
 		if ( this.props.page.status !== 'publish' ) {
+			return <a onClick={ this.viewPage }>{ this.props.translate( 'Preview' ) }</a>;
+		}
+
+		if ( isMobile() ) {
 			return (
 				<PopoverMenuItem onClick={ this.viewPage }>
-					<Gridicon icon={ isPreviewable ? 'visible' : 'external' } size={ 18 } />
-					{ this.props.translate( 'Preview' ) }
+					{ this.props.translate( 'View' ) }
 				</PopoverMenuItem>
 			);
 		}
 
-		return (
-			<PopoverMenuItem onClick={ this.viewPage }>
-				<Gridicon icon={ isPreviewable ? 'visible' : 'external' } size={ 18 } />
-				{ this.props.translate( 'View Page' ) }
-			</PopoverMenuItem>
-		);
+		return <a onClick={ this.viewPage }>{ this.props.translate( 'View' ) }</a>;
 	}
 
 	childPageInfo() {
@@ -183,12 +183,15 @@ class Page extends Component {
 			return null;
 		}
 
-		return (
-			<PopoverMenuItem onClick={ this.updateStatusPublish }>
-				<Gridicon icon="checkmark" size={ 18 } />
-				{ this.props.translate( 'Publish' ) }
-			</PopoverMenuItem>
-		);
+		if ( isMobile() ) {
+			return (
+				<PopoverMenuItem onClick={ this.updateStatusPublish }>
+					{ this.props.translate( 'Publish' ) }
+				</PopoverMenuItem>
+			);
+		}
+
+		return <a onClick={ this.updateStatusPublish }>{ this.props.translate( 'Publish' ) }</a>;
 	}
 
 	getEditItem() {
@@ -209,15 +212,22 @@ class Page extends Component {
 			);
 		}
 
+		if ( isMobile() ) {
+			return (
+				<PopoverMenuItem
+					onClick={ this.editPage }
+					onMouseOver={ preloadEditor }
+					onFocus={ preloadEditor }
+				>
+					{ this.props.translate( 'Edit' ) }
+				</PopoverMenuItem>
+			);
+		}
+
 		return (
-			<PopoverMenuItem
-				onClick={ this.editPage }
-				onMouseOver={ preloadEditor }
-				onFocus={ preloadEditor }
-			>
-				<Gridicon icon="pencil" size={ 18 } />
+			<a onClick={ this.editPage } onMouseOver={ preloadEditor } onFocus={ preloadEditor }>
 				{ this.props.translate( 'Edit' ) }
-			</PopoverMenuItem>
+			</a>
 		);
 	}
 
@@ -293,14 +303,20 @@ class Page extends Component {
 			return null;
 		}
 
-		if ( this.props.page.status !== 'trash' ) {
-			return [
-				<MenuSeparator key="separator" />,
+		if ( this.props.page.status !== 'trash' && isMobile() ) {
+			return (
 				<PopoverMenuItem key="item" className="page__trash-item" onClick={ this.updateStatusTrash }>
-					<Gridicon icon="trash" size={ 18 } />
 					{ this.props.translate( 'Trash' ) }
-				</PopoverMenuItem>,
-			];
+				</PopoverMenuItem>
+			);
+		}
+
+		if ( this.props.page.status !== 'trash' ) {
+			return (
+				<a key="item" className="page__trash-item" onClick={ this.updateStatusTrash }>
+					{ this.props.translate( 'Trash' ) }
+				</a>
+			);
 		}
 
 		return [
@@ -321,11 +337,20 @@ class Page extends Component {
 		) {
 			return null;
 		}
+
+		if ( isMobile() ) {
+			return (
+				<PopoverMenuItem onClick={ this.copyPage } href={ duplicateUrl }>
+					<Gridicon icon="clipboard" size={ 18 } />
+					{ this.props.translate( 'Duplicate' ) }
+				</PopoverMenuItem>
+			);
+		}
+
 		return (
-			<PopoverMenuItem onClick={ this.copyPage } href={ duplicateUrl }>
-				<Gridicon icon="clipboard" size={ 18 } />
-				{ this.props.translate( 'Copy Page' ) }
-			</PopoverMenuItem>
+			<a onClick={ this.copyPage } href={ duplicateUrl }>
+				{ this.props.translate( 'Duplicate' ) }
+			</a>
 		);
 	}
 
@@ -450,25 +475,33 @@ class Page extends Component {
 			sendToTrashItem ||
 			moreInfoItem;
 
-		const ellipsisMenu = hasMenuItems && (
-			<EllipsisMenu
-				className="page__actions-toggle"
-				position="bottom left"
-				onToggle={ this.handleMenuToggle }
-			>
+		let ellipsisMenu = hasMenuItems && (
+			<div className="page__actions-hover">
 				{ editItem }
 				{ publishItem }
 				{ viewItem }
-				{ statsItem }
 				{ copyPageItem }
-				{ copyLinkItem }
 				{ restoreItem }
-				{ frontPageItem }
-				{ postsPageItem }
 				{ sendToTrashItem }
-				{ moreInfoItem }
-			</EllipsisMenu>
+			</div>
 		);
+
+		if ( isMobile() ) {
+			ellipsisMenu = hasMenuItems && (
+				<EllipsisMenu
+					className="page__actions-toggle"
+					position="bottom left"
+					onToggle={ this.handleMenuToggle }
+				>
+					{ editItem }
+					{ publishItem }
+					{ viewItem }
+					{ copyPageItem }
+					{ restoreItem }
+					{ sendToTrashItem }
+				</EllipsisMenu>
+			);
+		}
 
 		const shadowNotice = shadowStatus && (
 			<ShadowNotice shadowStatus={ shadowStatus } onUndoClick={ this.undoPostStatus } />
@@ -495,7 +528,7 @@ class Page extends Component {
 		);
 
 		return (
-			<CompactCard className={ classNames( cardClasses ) }>
+			<Card className={ classNames( cardClasses ) }>
 				{ hierarchyIndent }
 				{ this.props.multisite ? <SiteIcon siteId={ page.site_ID } size={ 34 } /> : null }
 				<div className="page__main">
@@ -522,15 +555,11 @@ class Page extends Component {
 							</InfoPopover>
 						) }
 					</a>
-					<PageCardInfo
-						page={ page }
-						showTimestamp
-						siteUrl={ this.props.multisite && this.getSiteDomain() }
-					/>
+					<PageCardInfo page={ page } siteUrl={ this.props.multisite && this.getSiteDomain() } />
 				</div>
 				{ ellipsisMenu }
 				{ shadowNotice }
-			</CompactCard>
+			</Card>
 		);
 	}
 

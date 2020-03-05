@@ -76,7 +76,7 @@ function PageCardInfo( {
 		<div className="page-card-info">
 			{ themeId && <QueryTheme siteId="wpcom" themeId={ themeId } /> }
 			{ siteUrl && <div className="page-card-info__site-url">{ siteUrl }</div> }
-			<div>
+			<>
 				{ showTimestamp && renderTimestamp() }
 				{ isFront && (
 					<span className="page-card-info__badge">
@@ -98,7 +98,7 @@ function PageCardInfo( {
 						</span>
 					</span>
 				) }
-			</div>
+			</>
 		</div>
 	);
 }
