@@ -156,7 +156,7 @@ class RegisteredDomainType extends React.Component {
 				<div>
 					<p>
 						{ translate(
-							'Your domain will expire in {{strong}}%(days)s{{/strong}}. Please renew it before it expires or it will stop working.',
+							'{{strong}}Your domain will expire{{/strong}} in {{strong}}%(days)s{{/strong}}. Please renew it before it expires or it will stop working.',
 							{
 								components: {
 									strong: <strong />,
@@ -200,7 +200,7 @@ class RegisteredDomainType extends React.Component {
 
 		if ( domain.isRenewable ) {
 			message = translate(
-				'Your domain has expired and is no longer active. You have {{strong}}%(days)s{{/strong}} to renew it at the standard rate before an additional %(redemptionCost)s redemption fee is applied. {{domainsLink}}Learn more{{/domainsLink}}',
+				'{{strong}}Your domain has expired{{/strong}} and is no longer active. You have {{strong}}%(days)s{{/strong}} to renew it at the standard rate before an additional %(redemptionCost)s redemption fee is applied. {{domainsLink}}Learn more{{/domainsLink}}',
 				{
 					components: {
 						domainsLink: domainsLink( DOMAIN_EXPIRATION ),
@@ -214,7 +214,7 @@ class RegisteredDomainType extends React.Component {
 			);
 		} else if ( domain.isRedeemable ) {
 			message = translate(
-				'Your domain has expired and is no longer active. You have {{strong}}%(days)s{{/strong}} to reactivate it during this redemption period before someone else can register it. An additional redemption fee of {{strong}}%(redemptionCost)s{{/strong}} will be added to the price of the domain to reactivate it. {{domainsLink}}Learn more{{/domainsLink}}',
+				'{{strong}}Your domain has expired{{/strong}} and is no longer active. You have {{strong}}%(days)s{{/strong}} to reactivate it during this redemption period before someone else can register it. An additional redemption fee of {{strong}}%(redemptionCost)s{{/strong}} will be added to the price of the domain to reactivate it. {{domainsLink}}Learn more{{/domainsLink}}',
 				{
 					components: {
 						domainsLink: domainsLink( DOMAIN_EXPIRATION_REDEMPTION ),
@@ -228,7 +228,7 @@ class RegisteredDomainType extends React.Component {
 			);
 		} else {
 			message = translate(
-				'Your domain has expired and is no longer active. {{domainsLink}}Learn more{{/domainsLink}}',
+				'{{strong}}Your domain has expired{{/strong}} and is no longer active. {{domainsLink}}Learn more{{/domainsLink}}',
 				{
 					components: {
 						domainsLink: domainsLink( DOMAIN_EXPIRATION ),

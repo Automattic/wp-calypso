@@ -207,7 +207,7 @@ class MappedDomainType extends React.Component {
 
 		if ( isSubdomain( domain.name ) ) {
 			primaryMessage = translate(
-				'Your subdomain mapping has not been setup. You need to create the correct CNAME or NS records at your current DNS provider. {{learnMoreLink}}Learn how to do that in our support guide for mapping subdomains{{/learnMoreLink}}.',
+				'Your subdomain mapping has not been set up. You need to create the correct CNAME or NS records at your current DNS provider. {{learnMoreLink}}Learn how to do that in our support guide for mapping subdomains{{/learnMoreLink}}.',
 				{
 					components: {
 						strong: <strong />,
@@ -225,13 +225,13 @@ class MappedDomainType extends React.Component {
 			);
 		} else {
 			primaryMessage = translate(
-				'Your domain mapping has not been setup. You need to update your nameservers, at the company you purchased your domain, to:',
+				'Your domain mapping has not been set up. You need to update your name servers at the company where you purchased the domain to:',
 				{
 					context: 'Notice for mapped domain notice with NS records pointing to somewhere else',
 				}
 			);
 			secondaryMessage = translate(
-				"Please note that it can take up to 72 hours for your changes to become available. If you're still not seeing your site loading at %(domainName)s, please wait a few more hours, clear your browser cache, and try again. {{learnMoreLink}}Learn all about mapping existing domain in our support docs{{/learnMoreLink}}.",
+				"Please note that it can take up to 72 hours for your changes to become available. If you're still not seeing your site loading at %(domainName)s, please wait a few more hours, clear your browser cache, and try again. {{learnMoreLink}}Learn all about mapping an existing domain in our support docs{{/learnMoreLink}}.",
 				{
 					components: { learnMoreLink: learnMoreLink( MAP_EXISTING_DOMAIN ) },
 					args: { domainName: domain.name },
@@ -251,7 +251,7 @@ class MappedDomainType extends React.Component {
 						</ul>
 					) }
 				</div>
-				<div>{ secondaryMessage }</div>
+				<div className="mapped-domain-type__small-message">{ secondaryMessage }</div>
 			</React.Fragment>
 		);
 	}
