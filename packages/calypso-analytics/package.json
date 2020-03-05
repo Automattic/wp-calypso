@@ -31,12 +31,8 @@
 		"watch": "tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
-<<<<<<< HEAD
 		"@automattic/load-script": "^1.0.0",
 		"cookie": "0.4.0",
-=======
-		"@automattic/load-script": "^1.0.0",
->>>>>>> drop the npm lockfile
 		"debug": "^4.1.1",
 		"hash.js": "^1.1.7",
 		"lodash": "^4.17.15",
