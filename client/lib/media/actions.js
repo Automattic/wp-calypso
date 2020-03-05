@@ -197,6 +197,9 @@ function uploadFiles( uploader, files, site ) {
 			return Promise.resolve();
 		}
 
+		// If there are no errors, dispatch the create media item action
+		reduxDispatch( createMediaItem( site, transientMedia ) );
+
 		return lastUpload.then( () => {
 			// Achieve series upload by waiting for the previous promise to
 			// resolve before starting this item's upload
