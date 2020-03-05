@@ -8,22 +8,19 @@ import { useDispatch, useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { rewindRestore, rewindBackup } from 'state/activity-log/actions';
+import { rewindBackup } from 'state/activity-log/actions';
 import Confirm from './confirm';
-import Error from './error';
-import Finished from './finished';
+// import Error from './error';
+// import Finished from './finished';
 import getRewindState from 'state/selectors/get-rewind-state';
-import InProgress from './in-progress';
+// import InProgress from './in-progress';
 import QueryRewindState from 'components/data/query-rewind-state';
 import Queued from './queued';
 
-// enum RestoreState {
-// 	RestoreConfirm,
-// 	RestoreQueued,
-// 	RestoreInProgress,
-// 	RestoreFinished,
-// 	RestoreError,
-// }
+enum DownloadState {
+	DownloadConfirm,
+	DownloadQueued,
+}
 
 interface Props {
 	downloadId?: string;
@@ -53,52 +50,44 @@ interface RewindState {
 // 	return RestoreState.RestoreError;
 // };
 
+const getDownloadState = ( rewindState: RewindState, hasRequestedDownload: boolean ) => {
+	return hasRequestedDownload ? DownloadState.DownloadQueued : DownloadState.DownloadConfirm;
+};
+
 const BackupRestorePage = ( { downloadId }: Props ) => {
-	// const dispatch = useDispatch();
+	const dispatch = useDispatch();
 
 	const siteId = useSelector( getSelectedSiteId );
 	const rewindState = useSelector( state => getRewindState( state, siteId ) );
 
-	const [ hasRequestedRestore, setHasRequestedRestore ] = useState( false );
+	const [ hasRequestedDownload, setHasRequestedDownload ] = useState( false );
 
-	// const requestRestore = useCallback( () => {
-	// 	if ( siteId && restoreId ) {
-	// 		dispatch( rewindRestore( siteId, restoreId, {} ) );
-	// 	}
-	// }, [ dispatch, siteId, restoreId ] );
+	const requestDownload = useCallback( () => {
+		if ( siteId && downloadId ) {
+			dispatch( rewindBackup( siteId, downloadId, {} ) );
+		}
+	}, [ dispatch, downloadId, siteId ] );
 
-	// const onConfirm = () => {
-	// 	setHasRequestedRestore( true );
-	// 	requestRestore();
-	// };
+	const onConfirm = () => {
+		setHasRequestedDownload( true );
+		requestDownload();
+	};
 
-	// const restoreState = getRestoreState( rewindState, hasRequestedRestore );
+	const downloadState = getDownloadState( rewindState, hasRequestedDownload );
 
-	// const render = () => {
-	// 	switch ( restoreState ) {
-	// 		case RestoreState.RestoreConfirm:
-	// 			return <Confirm siteId={ siteId } restoreId={ restoreId } onConfirm={ onConfirm } />;
-	// 		case RestoreState.RestoreQueued:
-	// 			return <Queued />;
-	// 		case RestoreState.RestoreInProgress:
-	// 			return (
-	// 				<InProgress
-	// 					percent={ rewindState?.rewind?.progress ? rewindState?.rewind?.progress : 0 }
-	// 					siteId={ siteId }
-	// 				/>
-	// 			);
-	// 		case RestoreState.RestoreFinished:
-	// 			return <Finished siteId={ siteId } restoreId={ restoreId } />;
-	// 		case RestoreState.RestoreError:
-	// 			return <Error />;
-	// 	}
-	// };
+	const render = () => {
+		switch ( downloadState ) {
+			case DownloadState.DownloadConfirm:
+				return <Confirm downloadId={ downloadId } siteId={ siteId } onConfirm={ onConfirm } />;
+			case DownloadState.DownloadQueued:
+				return <Queued />;
+		}
+	};
 
 	return (
 		<div>
 			{ siteId && <QueryRewindState siteId={ siteId } /> }
-			{ /* { render() } */ }
-			<p>Download backup for site { siteId }?</p>
+			{ render() }
 		</div>
 	);
 };
