@@ -4,7 +4,7 @@
 import { useI18n } from '@automattic/react-i18n';
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import React, { FunctionComponent, useEffect, useCallback } from 'react';
+import React, { FunctionComponent, useEffect, useCallback, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import classnames from 'classnames';
 import { DomainSuggestions } from '@automattic/data-stores';
@@ -30,6 +30,8 @@ interface Props {
 
 const Header: FunctionComponent< Props > = ( { prev } ) => {
 	const { __: NO__ } = useI18n();
+
+	const [ isDomainFlow, setDomainFlow ] = useState( false );
 
 	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
 	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
@@ -109,7 +111,36 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		[ createSite, currentDomain, selectedDesign, siteTitle, siteVertical ]
 	);
 
+	const handleCreateSiteForDomains = useCallback(
+		( username: string, bearerToken?: string ) => {
+			setDomainFlow( true );
+			const siteUrl = currentDomain?.domain_name || siteTitle || username;
+			const themeSlug = 'twentytwenty';
+			createSite( {
+				blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
+				blog_title: siteTitle,
+				options: {
+					site_vertical: siteVertical?.id,
+					site_vertical_name: siteVertical?.label,
+					site_information: {
+						title: siteTitle,
+					},
+					site_creation_flow: 'gutenboarding',
+					theme: `pub/${ themeSlug }`,
+				},
+				...( bearerToken && { authToken: bearerToken } ),
+			} );
+		},
+		[ createSite, currentDomain, selectedDesign, siteTitle, siteVertical ]
+	);
+
 	const handleSignup = () => {
+		setShouldCreate( true );
+		history.push( makePath( Step.Signup ) );
+	};
+
+	const handleSignupForDomains = () => {
+		setDomainFlow( true );
 		setShouldCreate( true );
 		history.push( makePath( Step.Signup ) );
 	};
@@ -123,8 +154,11 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 
 	useEffect( () => {
 		if ( newSite ) {
-			resetOnboardStore();
-			window.location.href = `/block-editor/page/${ newSite.blogid }/home?is-gutenboarding`;
+			! isDomainFlow && resetOnboardStore();
+			const location = isDomainFlow
+				? `/checkout/${ newSite.blogid }/personal?redirect_to=%2Fgutenboarding%2Fdesign` //%2F%3FsiteId%3D${ newSite.blogid }`
+				: `/block-editor/page/${ newSite.blogid }/home?is-gutenboarding`;
+			window.location.href = location;
 		}
 	}, [ newSite, resetOnboardStore ] );
 
@@ -148,8 +182,15 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 							className="gutenboarding__header-domain-picker-button"
 							defaultQuery={ siteTitle }
 							disabled={ ! currentDomain }
+							currentDomain={ currentDomain }
 							onDomainSelect={ setDomain }
+							onDomainPurchase={ () =>
+								currentUser
+									? handleCreateSiteForDomains( currentUser.username )
+									: handleSignupForDomains()
+							}
 							queryParameters={ { vertical: siteVertical?.id } }
+							currentUser={ currentUser }
 						>
 							{ siteTitleElement }
 							{ domainElement }

@@ -9,6 +9,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import DomainPicker, { Props as DomainPickerProps } from '../domain-picker';
+import ConfirmPurchaseModal from '../confirmPurchaseModal';
 
 /**
  * Style dependencies
@@ -23,13 +24,18 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 	children,
 	className,
 	onDomainSelect,
+	onDomainPurchase,
 	defaultQuery,
 	queryParameters,
+	currentUser,
+	currentDomain,
 	...buttonProps
 } ) => {
 	const buttonRef = createRef< HTMLButtonElement >();
 
 	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState( false );
+	const [ isPurchaseDomainVisible, setPurchaseDomainVisibility ] = useState( false );
+	const [ userSelectedDomain, setUserSelectedDomain ] = useState( '' );
 
 	const handleClose = ( e?: React.FocusEvent ) => {
 		// Don't collide with button toggling
@@ -42,6 +48,22 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 	const handleDomainSelect: typeof onDomainSelect = selectedDomain => {
 		setDomainPopoverVisibility( false );
 		onDomainSelect( selectedDomain );
+	};
+
+	const handlePaidDomainSelect: typeof onDomainPurchase = selectedDomain => {
+		setDomainPopoverVisibility( false );
+		setPurchaseDomainVisibility( true );
+		setUserSelectedDomain( selectedDomain );
+	};
+
+	const handlePurchaseCancel = () => {
+		setPurchaseDomainVisibility( false );
+		setUserSelectedDomain( '' );
+	};
+
+	const handleDomainPurchase = () => {
+		onDomainSelect( userSelectedDomain );
+		onDomainPurchase( userSelectedDomain );
 	};
 
 	return (
@@ -60,12 +82,22 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				<span>{ children }</span>
 				<Dashicon icon="arrow-down-alt2" />
 			</Button>
+			{ isPurchaseDomainVisible && (
+				<ConfirmPurchaseModal
+					onCancel={ handlePurchaseCancel }
+					onAccept={ handleDomainPurchase }
+					selectedDomain={ userSelectedDomain }
+					isLogged={ !! currentUser }
+				/>
+			) }
 			{ isDomainPopoverVisible && (
 				<Popover onClose={ handleClose } onFocusOutside={ handleClose }>
 					<DomainPicker
 						defaultQuery={ defaultQuery }
 						onDomainSelect={ handleDomainSelect }
+						onDomainPurchase={ handlePaidDomainSelect }
 						queryParameters={ queryParameters }
+						currentDomain={ currentDomain }
 					/>
 				</Popover>
 			) }

@@ -1,0 +1,60 @@
+.confirm-purchase-modal {
+	width: 100%;
+	height: 100%;
+	display: flex;
+		justify-content: center;
+		align-items: center;
+	position: fixed;
+		top: 0;
+		left: 0;
+}
+
+.confirm-purchase-modal__background {
+	width: 100%;
+	height: 100%;
+	background-color: 
+		var( --studio-gray-5 );
+	z-index: -1;
+	opacity: 0.8;
+	position: fixed;
+		top: 0;
+		left: 0;
+}
+
+.confirm-purchase-modal__content {
+	padding: 32px;
+	max-width: 560px;
+}
+
+.confirm-purchase-modal__header {
+	font-family: 'Recoleta-Regular', 'Recoleta', serif;
+	font-size: 40px;
+	color: var( --studio-blue-40 );
+	margin: 0 0 16px;
+	text-align: center;
+}
+
+.confirm-purchase-modal__items {
+	font-size: 16px;
+	color: 
+		var( --studio-gray-60 );
+	font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+	line-height: 1.5em;
+	padding: 32px;
+
+	ul {
+		list-style: circle;
+		margin-top: 16px;
+		margin-bottom: 32px;
+	}
+	li {
+		margin-left: 64px;
+	}
+}
+
+.confirm-purchase-modal__buttons {
+	width: 100%;
+	margin-top: 32px;
+	display: flex;
+		justify-content: space-between;
+}
