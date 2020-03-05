@@ -10,6 +10,7 @@ import { get, compact } from 'lodash';
  * Internal dependencies
  */
 import wp from 'lib/wp';
+import { abtest } from 'lib/abtest';
 import { useTranslate } from 'i18n-calypso';
 import { SiteSlug } from 'types';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
@@ -352,7 +353,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			getSimplePaymentsCard(),
 			getRecurringPaymentsCard(),
 			getAdsCard(),
-			getPeerReferralsCard(),
+			abtest( 'peerReferralEarnCard' ) === 'show' ? getPeerReferralsCard() : false,
 			getReferralsCard(),
 		] ),
 	};
