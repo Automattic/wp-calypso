@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'components/purchase-detail';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import adsRemovedImage from 'assets/images/illustrations/ads-removed.svg';
 

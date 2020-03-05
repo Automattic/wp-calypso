@@ -9,7 +9,7 @@ import React from 'react';
 import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import earnSectionImage from 'assets/images/earn/earn-section.svg';
 import recurringImage from 'assets/images/earn/recurring.svg';

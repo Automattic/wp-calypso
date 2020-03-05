@@ -42,7 +42,7 @@ import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import './style.scss';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import themesImage from 'assets/images/illustrations/themes.svg';
 import migratingHostImage from 'assets/images/illustrations/migrating-host-diy.svg';

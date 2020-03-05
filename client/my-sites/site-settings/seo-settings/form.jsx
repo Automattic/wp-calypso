@@ -64,7 +64,7 @@ import { getFirstConflictingPlugin } from 'lib/seo';
 import './style.scss';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import pageTitleImage from 'assets/images/illustrations/seo-page-title.svg';
 

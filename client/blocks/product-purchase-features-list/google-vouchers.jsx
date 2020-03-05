@@ -13,7 +13,7 @@ import PurchaseDetail from 'components/purchase-detail';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import googleAdwordsImage from 'assets/images/illustrations/google-adwords.svg';
 

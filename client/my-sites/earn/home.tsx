@@ -24,7 +24,7 @@ import { FEATURE_WORDADS_INSTANT, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/cons
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import earnSectionImage from 'assets/images/earn/earn-section.svg';
 import adsImage from 'assets/images/earn/ads.svg';

@@ -16,7 +16,7 @@ import GoogleAppsDetails from './google-apps-details';
 import PurchaseDetail from 'components/purchase-detail';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import adsRemovedImage from 'assets/images/illustrations/ads-removed.svg';
 

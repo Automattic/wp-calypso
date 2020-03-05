@@ -18,7 +18,7 @@ import { isBusiness, isGoogleApps } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import analyticsImage from 'assets/images/illustrations/google-analytics.svg';
 import conciergeImage from 'assets/images/illustrations/jetpack-concierge.svg';

@@ -33,7 +33,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import './style.scss';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import whoopsImage from 'assets/images/illustrations/whoops.svg';
 

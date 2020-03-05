@@ -18,7 +18,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import './style.scss';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import premiumThemesImage from 'assets/images/illustrations/themes.svg';
 

@@ -11,7 +11,7 @@ import EmptyContent from 'components/empty-content';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import welcomeImage from 'assets/images/reader/reader-welcome-illustration.svg';
 

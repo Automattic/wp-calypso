@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'components/purchase-detail';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import paymentsImage from 'assets/images/illustrations/payments.svg';
 

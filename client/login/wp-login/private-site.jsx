@@ -11,7 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 import { Button, Card } from '@automattic/components';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import privateImage from 'assets/images/illustrations/private.svg';
 

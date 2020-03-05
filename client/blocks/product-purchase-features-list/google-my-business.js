@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'components/purchase-detail';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import googleMyBusinessImage from 'assets/images/illustrations/google-my-business-feature.svg';
 

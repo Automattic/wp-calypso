@@ -20,7 +20,7 @@ import getUserSettings from 'state/selectors/get-user-settings';
 import { sendEmailLogin } from 'state/auth/actions';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import wordpressLogoImage from 'assets/images/illustrations/logo-jpc.svg';
 

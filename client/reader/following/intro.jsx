@@ -18,7 +18,7 @@ import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'state/ui/guided-tours/con
 import cssSafeUrl from 'lib/css-safe-url';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import readerImage from 'assets/images/reader/reader-intro-character.svg';
 import readerBackground from 'assets/images/reader/reader-intro-background.svg';

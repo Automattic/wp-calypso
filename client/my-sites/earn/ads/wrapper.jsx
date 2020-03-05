@@ -39,7 +39,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import ActionCard from 'components/action-card';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import wordAdsImage from 'assets/images/illustrations/dotcom-wordads.svg';
 

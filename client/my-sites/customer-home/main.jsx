@@ -68,7 +68,7 @@ import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom
 import './style.scss';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import commentIcon from 'assets/images/customer-home/comment.svg';
 import customDomainIcon from 'assets/images/customer-home/custom-domain.svg';

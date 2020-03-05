@@ -20,7 +20,7 @@ import DocumentHead from 'components/data/document-head';
 import TipInfo from '../../components/purchase-detail/tip-info';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import googleAdwordsImage from 'assets/images/illustrations/google-adwords.svg';
 import supportImage from 'assets/images/illustrations/dotcom-support.svg';

@@ -32,7 +32,7 @@ import { siteHasBackupProductPurchase } from 'state/purchases/selectors';
 import './intro-banner.scss';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import activityImage from 'assets/images/illustrations/site-activity.svg';
 

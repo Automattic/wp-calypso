@@ -47,7 +47,7 @@ import QuerySiteDomains from 'components/data/query-site-domains';
 import './style.scss';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import customDomainImage from 'assets/images/illustrations/custom-domain.svg';
 

@@ -19,7 +19,7 @@ import PurchaseDetail from 'components/purchase-detail';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import analyticsImage from 'assets/images/illustrations/google-analytics.svg';
 import googleAdwordsImage from 'assets/images/illustrations/google-adwords.svg';

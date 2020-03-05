@@ -12,7 +12,7 @@ import PurchaseDetail from 'components/purchase-detail';
 import { isEnabled } from 'config';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import customizeImage from 'assets/images/illustrations/dashboard.svg';
 

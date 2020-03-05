@@ -6,7 +6,7 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import getAppsImage from 'assets/images/illustrations/get-apps-banner.svg';
 

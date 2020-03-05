@@ -18,7 +18,7 @@ import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-produc
 import ThankYou from './thank-you';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import fireworksIllustration from 'assets/images/illustrations/fireworks.svg';
 

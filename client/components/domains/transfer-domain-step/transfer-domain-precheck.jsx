@@ -27,7 +27,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import { isSupportSession as hasEnteredSupportSession } from 'state/support/selectors';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import migratingHostImage from 'assets/images/illustrations/migrating-host-diy.svg';
 

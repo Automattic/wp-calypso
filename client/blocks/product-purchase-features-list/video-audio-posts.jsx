@@ -12,7 +12,7 @@ import { newPost } from 'lib/paths';
 import { isWpComBusinessPlan, isWpComEcommercePlan, isWpComPremiumPlan } from 'lib/plans';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import videoImage from 'assets/images/illustrations/video-hosting.svg';
 

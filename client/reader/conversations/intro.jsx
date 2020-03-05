@@ -16,7 +16,7 @@ import { getPreference } from 'state/preferences/selectors';
 import { recordTrack } from 'reader/stats';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import charactersImage from 'assets/images/reader/reader-conversations-characters.svg';
 

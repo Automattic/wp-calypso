@@ -12,7 +12,7 @@ import { noop } from 'lodash';
 import PurchaseDetail from 'components/purchase-detail';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import conciergeImage from 'assets/images/illustrations/jetpack-concierge.svg';
 

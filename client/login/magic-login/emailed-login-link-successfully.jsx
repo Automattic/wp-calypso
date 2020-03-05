@@ -25,7 +25,7 @@ import { getCurrentRoute } from 'state/selectors/get-current-route';
 import Gridicon from 'components/gridicon';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import checkEmailImage from 'assets/images/illustrations/check-email.svg';
 
@@ -75,11 +75,7 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 				<h1 className="magic-login__form-header">{ translate( 'Check your email!' ) }</h1>
 
 				<Card className="magic-login__form">
-					<img
-						alt=""
-						src={ checkEmailImage }
-						className="magic-login__check-email-image"
-					/>
+					<img alt="" src={ checkEmailImage } className="magic-login__check-email-image" />
 					<p>{ line }</p>
 				</Card>
 

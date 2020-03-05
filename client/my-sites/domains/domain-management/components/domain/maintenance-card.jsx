@@ -13,7 +13,7 @@ import { getTld } from 'lib/domains';
 import EmptyContent from 'components/empty-content';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import whoopsImage from 'assets/images/illustrations/whoops.svg';
 

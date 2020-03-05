@@ -14,7 +14,7 @@ import UploadButton from './upload-button';
 import { userCan } from 'lib/site/utils';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import mediaImage from 'assets/images/illustrations/media.svg';
 

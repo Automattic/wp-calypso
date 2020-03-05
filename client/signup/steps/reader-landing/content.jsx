@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 import { Card, Button } from '@automattic/components';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import conversationsImage from 'assets/images/reader/reader-conversations.png';
 import discoverImage from 'assets/images/reader/reader-discover.png';

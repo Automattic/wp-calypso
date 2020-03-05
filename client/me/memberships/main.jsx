@@ -27,7 +27,7 @@ import { withLocalizedMoment } from 'components/localized-moment';
 import './main.scss';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import noMembershipsImage from 'assets/images/illustrations/no-memberships.svg';
 

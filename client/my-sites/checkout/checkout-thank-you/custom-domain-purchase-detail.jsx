@@ -13,7 +13,7 @@ import PurchaseDetail from 'components/purchase-detail';
 import { hasCustomDomain } from 'lib/site/utils';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import customDomainImage from 'assets/images/illustrations/custom-domain.svg';
 import customDomainBloggerImage from 'assets/images/illustrations/custom-domain-blogger.svg';

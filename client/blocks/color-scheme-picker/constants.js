@@ -4,7 +4,7 @@
 import { compact } from 'lodash';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import classicBrightImg from 'assets/images/color-schemes/color-scheme-thumbnail-classic-bright.svg';
 import classicBlueImg from 'assets/images/color-schemes/color-scheme-thumbnail-classic-blue.svg';

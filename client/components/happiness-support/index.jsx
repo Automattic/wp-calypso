@@ -31,7 +31,7 @@ import { preventWidows } from 'lib/formatting';
 import './style.scss';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import supportImage from 'assets/images/illustrations/dotcom-support.svg';
 

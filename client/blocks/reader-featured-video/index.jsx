@@ -18,7 +18,7 @@ import { getThumbnailForIframe } from 'state/reader/thumbnails/selectors';
 import QueryReaderThumbnail from 'components/data/query-reader-thumbnails';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import playIconImage from 'assets/images/reader/play-icon.png';
 

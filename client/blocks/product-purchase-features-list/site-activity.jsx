@@ -12,7 +12,7 @@ import PurchaseDetail from 'components/purchase-detail';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import siteActivity from 'assets/images/illustrations/site-activity.svg';
 

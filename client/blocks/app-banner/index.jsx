@@ -47,7 +47,7 @@ import { shouldDisplayTosUpdateBanner } from 'state/selectors/should-display-tos
 import './style.scss';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import editorBannerImage from 'assets/images/illustrations/app-banner-editor.svg';
 import notificationsBannerImage from 'assets/images/illustrations/app-banner-notifications.svg';

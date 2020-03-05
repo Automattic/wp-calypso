@@ -13,7 +13,7 @@ import PurchaseDetail from 'components/purchase-detail';
 import { addQueryArgs } from 'lib/route';
 
 /**
- * Image dependencies
+ * Media dependencies
  */
 import appsImage from 'assets/images/illustrations/apps.svg';
 
