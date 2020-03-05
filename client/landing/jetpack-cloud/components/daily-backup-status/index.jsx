@@ -32,8 +32,6 @@ class DailyBackupStatus extends Component {
 			'MMMM Do YYYY, h:mm:ss a'
 		);
 
-		const restoreUrl = this.createRestoreUrl( backupAttempts.complete[ 0 ].activityId );
-
 		return (
 			<Fragment>
 				<Gridicon icon="cloud-upload" />
