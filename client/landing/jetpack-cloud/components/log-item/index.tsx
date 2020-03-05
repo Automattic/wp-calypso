@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { ReactNode } from 'react';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -13,6 +14,7 @@ import './style.scss';
 
 export interface Props {
 	children?: ReactNode;
+	className?: string;
 	header: string;
 	subheader?: string | ReactNode;
 	highlight?: 'info' | 'success' | 'warning' | 'error';
@@ -35,9 +37,13 @@ class LogItem extends React.PureComponent< Props > {
 	}
 
 	render() {
-		const { highlight, children } = this.props;
+		const { highlight, children, className } = this.props;
 		return (
-			<FoldableCard header={ this.renderHeader() } className="log-item" highlight={ highlight }>
+			<FoldableCard
+				header={ this.renderHeader() }
+				className={ classnames( 'log-item', className ) }
+				highlight={ highlight }
+			>
 				{ children }
 			</FoldableCard>
 		);

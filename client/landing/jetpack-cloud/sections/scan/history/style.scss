@@ -1,10 +1,4 @@
 .history {
-	/*
-		Overriding colors from Calypso components (Badge and ItemLog).
-	*/
-	--color-success: var( --studio-jetpack-green-40 );
-	--color-success-20: var( --studio-jetpack-green-40 );
-
 	padding: 0 10px;
 
 	&__title {
@@ -18,35 +12,5 @@
 
 	&__entries {
 		font-size: 16px;
-	}
-
-	&__entry-date {
-		display: inline-block;
-		width: 100%;
-
-		&.is-fixed {
-			color: var( --studio-jetpack-green-40 );
-		}
-
-		&.is-ignored {
-			color: var( --studio-gray-50 );
-		}
-	}
-
-	&__entry-badge {
-		width: 60px;
-		margin-top: 10px;
-		letter-spacing: 1px;
-		text-align: center;
-		text-transform: uppercase;
-		border-radius: 3px;
-	}
-
-	&__entry-details {
-		font-size: 15px;
-	}
-
-	.card-heading {
-		color: var( --studio-jetpack-green-40 );
 	}
 }

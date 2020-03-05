@@ -1,4 +1,3 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
@@ -9,9 +8,8 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Badge from 'components/badge';
 import FormattedHeader from 'components/formatted-header';
-import LogItem from '../../../components/log-item';
+import ScanHistoryItem from '../../../components/scan-history-item';
 import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
@@ -108,47 +106,29 @@ const scanEntries = [
 ];
 
 class ScanHistoryPage extends Component {
-	handleOnFilterChange( selection ) {
+	state = {
+		filter: filterOptions[ 0 ],
+	};
+
+	handleOnFilterChange = filter => {
 		// @todo: should we filter in the front end?
 		// eslint-disable-next-line no-console
-		console.log( selection );
-	}
+		this.setState( {
+			filter,
+		} );
+	};
 
-	renderEntryHeader( entry ) {
-		// React complains because we shouldn't wrap a <div> tag inside <p> tag. This happens
-		// because LogItem surrounds its content by a <p> tag, and the Badge is a <div> tag.
-		// Should we create our own Badge component?
-		return (
-			<>
-				<small className="history__entry-date">Threat found on { entry.detectionDate }</small>
-				<small className={ `history__entry-date is-${ entry.action }` }>
-					Threat { entry.action } on { entry.actionDate }
-				</small>
-				<Badge
-					className="history__entry-badge"
-					type={ entry.action === 'fixed' ? 'success' : 'info' }
-				>
-					<small>{ entry.action }</small>
-				</Badge>
-			</>
-		);
-	}
-
-	renderEntryDetails( entry ) {
-		return (
-			<div className="history__entry-details">
-				<strong>{ translate( 'What was the problem?' ) }</strong>
-				<p>{ entry.description.problem }</p>
-				<strong>{ translate( 'How did Jetpack fix it?' ) }</strong>
-				<p>{ entry.description.fix }</p>
-				<strong>{ translate( 'The technical details' ) }</strong>
-				<p>{ entry.description.details }</p>
-			</div>
-		);
+	filteredEntries() {
+		const { logEntries } = this.props;
+		const { value: filter } = this.state.filter;
+		if ( filter === 'all' ) {
+			return logEntries;
+		}
+		return logEntries.filter( entry => entry.action === filter );
 	}
 
 	render() {
-		const { logEntries } = this.props;
+		const logEntries = this.filteredEntries();
 		return (
 			<section className="history">
 				<FormattedHeader className="history__title" headerText="History" />
@@ -164,14 +144,7 @@ class ScanHistoryPage extends Component {
 				/>
 				<div className="history__entries">
 					{ logEntries.map( entry => (
-						<LogItem
-							header={ entry.title }
-							subheader={ this.renderEntryHeader( entry ) }
-							highlight="success"
-							key={ entry.id }
-						>
-							{ this.renderEntryDetails( entry ) }
-						</LogItem>
+						<ScanHistoryItem entry={ entry } key={ entry.id } />
 					) ) }
 				</div>
 			</section>
