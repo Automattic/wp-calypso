@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
-import { get, find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -40,18 +39,14 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import { receiveDeletedSite } from 'state/sites/actions';
 import { setAllSitesSelected } from 'state/ui/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { currentUserHasFlag, getCurrentUser, getCurrentUserId } from 'state/current-user/selectors';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import RemoveDomainDialog from './remove-domain-dialog';
+import NonPrimaryDomainDialog from 'me/purchases/non-primary-domain-dialog';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import NonPrimaryDomainDialog from 'me/purchases/non-primary-domain-dialog';
-import { hasCustomDomain } from 'lib/site/utils';
-import { getRegisteredDomains } from 'lib/domains';
-import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 
 class RemovePurchase extends Component {
 	static propTypes = {
@@ -378,22 +373,13 @@ class RemovePurchase extends Component {
 }
 
 export default connect(
-	( state, { purchase, site } ) => {
+	( state, { purchase } ) => {
 		const isJetpack = purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
-		const siteId = get( site, 'ID', null );
-		const domains = getDomainsBySiteId( state, siteId );
-		const registeredDomains = getRegisteredDomains( domains );
-
 		return {
-			hasNonPrimaryDomainsFlag: getCurrentUser( state )
-				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
-				: false,
 			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack,
-			isPrimaryDomainRegistered:
-				hasCustomDomain( site ) && !! find( registeredDomains, [ 'name', site.domain ] ),
 			purchasesError: getPurchasesError( state ),
 			userId: getCurrentUserId( state ),
 		};

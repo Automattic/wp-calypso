@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
+import { find } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -77,8 +78,12 @@ import { CALYPSO_CONTACT } from 'lib/url/support';
 import titles from 'me/purchases/titles';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import { currentUserHasFlag, getCurrentUser, getCurrentUserId } from 'state/current-user/selectors';
 import CartStore from 'lib/cart/store';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
+import { hasCustomDomain } from 'lib/site/utils';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
+import { getRegisteredDomains } from 'lib/domains';
 
 /**
  * Style dependencies
@@ -89,6 +94,7 @@ class ManagePurchase extends Component {
 	static propTypes = {
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		hasNonPrimaryDomainsFlag: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
 		purchase: PropTypes.object,
 		site: PropTypes.object,
@@ -219,6 +225,8 @@ class ManagePurchase extends Component {
 			<RemovePurchase
 				hasLoadedSites={ this.props.hasLoadedSites }
 				hasLoadedUserPurchasesFromServer={ this.props.hasLoadedUserPurchasesFromServer }
+				hasNonPrimaryDomainsFlag={ this.props.hasNonPrimaryDomainsFlag }
+				isPrimaryDomainRegistered={ this.props.isPrimaryDomainRegistered }
 				site={ this.props.site }
 				purchase={ this.props.purchase }
 			/>
@@ -501,9 +509,16 @@ export default connect( ( state, props ) => {
 	const isPurchaseTheme = purchase && isTheme( purchase );
 	const site = getSite( state, siteId );
 	const hasLoadedSites = ! isRequestingSites( state );
+	const domains = getDomainsBySiteId( state, siteId );
+	const registeredDomains = getRegisteredDomains( domains );
 	return {
 		hasLoadedSites,
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+		hasNonPrimaryDomainsFlag: getCurrentUser( state )
+			? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+			: false,
+		isPrimaryDomainRegistered:
+			hasCustomDomain( site ) && !! find( registeredDomains, [ 'name', site.domain ] ),
 		purchase,
 		siteId,
 		site,
