@@ -329,8 +329,8 @@ class Home extends Component {
 
 		return (
 			<Main className="customer-home__main is-wide-layout">
-				<PageViewTracker path={ `/home/:site` } title={ translate( 'Customer Home' ) } />
-				<DocumentHead title={ translate( 'Customer Home' ) } />
+				<PageViewTracker path={ `/home/:site` } title={ translate( 'My Home' ) } />
+				<DocumentHead title={ translate( 'My Home' ) } />
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				<SidebarNavigation />
 				<div className="customer-home__page-heading">{ this.renderCustomerHomeHeader() }</div>
