@@ -104,7 +104,7 @@ class PageTemplateModal extends Component {
 
 	componentDidMount() {
 		if ( this.state.isOpen ) {
-			trackView( this.props.segment.id, this.props.vertical.id );
+			this.trackCurrentView();
 		}
 	}
 
@@ -112,13 +112,21 @@ class PageTemplateModal extends Component {
 		// Only track when the modal is first displayed
 		// and if it didn't already happen during componentDidMount.
 		if ( ! prevState.isOpen && this.state.isOpen ) {
-			trackView( this.props.segment.id, this.props.vertical.id );
+			this.trackCurrentView();
 		}
 
 		// Disable welcome guide right away as it collides with the modal window.
 		if ( this.props.isWelcomeGuideActive || this.props.areTipsEnabled ) {
 			this.props.hideWelcomeGuide();
 		}
+	}
+
+	trackCurrentView() {
+		trackView(
+			this.props.segment.id,
+			this.props.vertical.id,
+			this.props.isPromptedFromSidebar ? 'sidebar' : 'add-page'
+		);
 	}
 
 	static getDefaultSelectedTemplate = props => {
