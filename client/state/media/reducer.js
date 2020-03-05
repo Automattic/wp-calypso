@@ -84,10 +84,10 @@ export const errors = ( state = {}, action ) => {
 					case 'http_404':
 						return MediaValidationErrors.UPLOAD_VIA_URL_404;
 					case 'upload_error':
-						if ( error.message.indexOf( 'Not enough space to upload' ) === 0 ) {
+						if ( error.message.startsWith( 'Not enough space to upload' ) ) {
 							return MediaValidationErrors.NOT_ENOUGH_SPACE;
 						}
-						if ( error.message.indexOf( 'You have used your space quota' ) === 0 ) {
+						if ( error.message.startsWith( 'You have used your space quota' ) ) {
 							return MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT;
 						}
 						return MediaValidationErrors.SERVER_ERROR;
