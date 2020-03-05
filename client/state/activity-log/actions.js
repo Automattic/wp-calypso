@@ -122,7 +122,7 @@ export function rewindRequestDismiss( siteId ) {
  * Restore a site to the given timestamp.
  *
  * @param {string|number} siteId the site ID
- * @param {number} timestamp Unix timestamp to restore site to
+ * @param {string|number} timestamp Unix timestamp to restore site to
  * @param {object} args Additional request params, such as `types`
  * @returns {object} action object
  */
