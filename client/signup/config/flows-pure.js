@@ -30,40 +30,40 @@ export function generateFlows( {
 		business: {
 			steps: [
 				'user',
-				isEnabled( 'signup/siteless-checkout' ) ? 'domains-siteless' : 'domains-with-preview',
+				isEnabled( 'signup/siteless-checkout' ) ? 'domains-siteless' : 'domains',
 				isEnabled( 'signup/siteless-checkout' ) ? 'plans-business-siteless' : 'plans-business',
 			],
 			destination: isEnabled( 'signup/siteless-checkout' )
 				? getThankYouNoSiteDestination
 				: getSignupDestination,
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
-			lastModified: '2020-03-03',
+			lastModified: '2020-03-05',
 		},
 
 		premium: {
 			steps: [
 				'user',
-				isEnabled( 'signup/siteless-checkout' ) ? 'domains-siteless' : 'domains-with-preview',
+				isEnabled( 'signup/siteless-checkout' ) ? 'domains-siteless' : 'domains',
 				isEnabled( 'signup/siteless-checkout' ) ? 'plans-premium-siteless' : 'plans-premium',
 			],
 			destination: isEnabled( 'signup/siteless-checkout' )
 				? getThankYouNoSiteDestination
 				: getSignupDestination,
 			description: 'Create an account and a blog and then add the premium plan to the users cart.',
-			lastModified: '2020-03-03',
+			lastModified: '2020-03-05',
 		},
 
 		personal: {
 			steps: [
 				'user',
-				isEnabled( 'signup/siteless-checkout' ) ? 'domains-siteless' : 'domains-with-preview',
+				isEnabled( 'signup/siteless-checkout' ) ? 'domains-siteless' : 'domains',
 				isEnabled( 'signup/siteless-checkout' ) ? 'plans-personal-siteless' : 'plans-personal',
 			],
 			destination: isEnabled( 'signup/siteless-checkout' )
 				? getThankYouNoSiteDestination
 				: getSignupDestination,
 			description: 'Create an account and a blog and then add the personal plan to the users cart.',
-			lastModified: '2020-03-03',
+			lastModified: '2020-03-05',
 		},
 
 		free: {
@@ -117,22 +117,26 @@ export function generateFlows( {
 				'site-type',
 				'site-topic-with-preview',
 				'site-title-with-preview',
-				isEnabled( 'signup/siteless-checkout' ) ? 'domains-siteless' : 'domains-with-preview',
-				isEnabled( 'signup/siteless-checkout' ) ? 'plans-siteless' : 'plans',
+				'domains-with-preview',
+				'plans',
 			],
-			destination: isEnabled( 'signup/siteless-checkout' )
-				? getThankYouNoSiteDestination
-				: getSignupDestination,
+			destination: getSignupDestination,
 			description: 'The improved onboarding flow.',
 			lastModified: '2020-03-03',
 			showRecaptcha: true,
 		},
 
 		onboarding: {
-			steps: [ 'user', 'domains', 'plans' ],
-			destination: getSignupDestination,
+			steps: [
+				'user',
+				isEnabled( 'signup/siteless-checkout' ) ? 'domains-siteless' : 'domains',
+				isEnabled( 'signup/siteless-checkout' ) ? 'plans-siteless' : 'plans',
+			],
+			destination: isEnabled( 'signup/siteless-checkout' )
+				? getThankYouNoSiteDestination
+				: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
-			lastModified: '2020-03-03',
+			lastModified: '2020-03-05',
 			showRecaptcha: true,
 		},
 
