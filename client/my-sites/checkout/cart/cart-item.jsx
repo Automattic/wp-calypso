@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Gridicon from 'components/gridicon';
 import { get } from 'lodash';
@@ -36,13 +37,14 @@ import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'lib/plans
 export class CartItem extends React.Component {
 	removeFromCart = event => {
 		event.preventDefault();
+		const { cartItem, domainsWithPlansOnly } = this.props;
 		analytics.ga.recordEvent(
 			'Upgrades',
 			'Clicked Remove From Cart Icon',
 			'Product ID',
-			this.props.cartItem.product_id
+			cartItem.product_id
 		);
-		removeItem( this.props.cartItem, this.props.domainsWithPlansOnly );
+		removeItem( cartItem, domainsWithPlansOnly );
 	};
 
 	price() {
@@ -144,7 +146,8 @@ export class CartItem extends React.Component {
 	}
 
 	calcMonthlyBillingDetails() {
-		const { cost, product_slug } = this.props.cartItem;
+		const { cartItem } = this.props;
+		const { cost, product_slug } = cartItem;
 		return {
 			monthlyPrice: calculateMonthlyPriceForPlan( product_slug, cost ),
 			months: getBillingMonthsForPlan( product_slug ),
@@ -169,7 +172,8 @@ export class CartItem extends React.Component {
 	}
 
 	getFreeTrialPrice() {
-		const freeTrialText = this.props.translate( 'Free %(days)s Day Trial', {
+		const { translate } = this.props;
+		const freeTrialText = translate( 'Free %(days)s Day Trial', {
 			args: { days: '14' },
 		} );
 
@@ -353,6 +357,24 @@ export class CartItem extends React.Component {
 		}
 	}
 }
+
+CartItem.propTypes = {
+	cartItem: PropTypes.shape( {
+		product_id: PropTypes.string.isRequired,
+		cost: PropTypes.number,
+		free_trial: PropTypes.bool,
+		volume: PropTypes.number,
+		currency: PropTypes.string.isRequired,
+		product_slug: PropTypes.string,
+		cost_before_coupon: PropTypes.number,
+		is_sale_coupon_applied: PropTypes.bool,
+	} ).isRequired,
+	domainsWithPlansOnly: PropTypes.bool,
+	translate: PropTypes.func.isRequired,
+	cart: PropTypes.object.isRequired,
+	selectedSite: PropTypes.object,
+	moment: PropTypes.func.isRequired,
+};
 
 export default connect( state => ( {
 	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
