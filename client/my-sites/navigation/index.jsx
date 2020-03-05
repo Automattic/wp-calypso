@@ -1,12 +1,14 @@
 /**
  * External dependencies
  */
+
 import React from 'react';
 
 /**
  * Internal dependencies
  */
 import SitePicker from 'my-sites/picker';
+import Sidebar from 'my-sites/sidebar';
 
 class MySitesNavigation extends React.Component {
 	static displayName = 'MySitesNavigation';
@@ -24,7 +26,7 @@ class MySitesNavigation extends React.Component {
 					siteBasePath={ this.props.siteBasePath }
 					onClose={ this.preventPickerDefault }
 				/>
-				{ this.props.sidebar }
+				<Sidebar path={ this.props.path } siteBasePath={ this.props.siteBasePath } />
 			</div>
 		);
 	}
