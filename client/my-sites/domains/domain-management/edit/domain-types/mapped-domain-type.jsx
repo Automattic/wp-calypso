@@ -156,7 +156,7 @@ class MappedDomainType extends React.Component {
 				}
 			);
 			subscriptionId = domain.bundledPlanSubscriptionId;
-			customLabel = translate( 'Renew your plan ' );
+			customLabel = translate( 'Renew your plan' );
 			tracksProps = { source: 'mapped-domain-status', mapping_status: 'expiring-soon-plan' };
 		} else {
 			noticeText = translate(
