@@ -13,6 +13,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { withLocalizedMoment } from 'components/localized-moment';
 import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
 import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
+import { isEnabled } from 'config';
 
 import './style.scss';
 
@@ -44,13 +45,15 @@ class ScanPage extends Component {
 						}
 					) }
 				</p>
-				<Button
-					primary
-					href={ `/scan/${ siteSlug }/?scan-state=scanning` }
-					className="scan__button"
-				>
-					{ translate( 'Scan now' ) }
-				</Button>
+				{ isEnabled( 'jetpack-cloud/on-demand-scan' ) && (
+					<Button
+						primary
+						href={ `/scan/${ siteSlug }/?scan-state=scanning` }
+						className="scan__button"
+					>
+						{ translate( 'Scan now' ) }
+					</Button>
+				) }
 			</>
 		);
 	}
