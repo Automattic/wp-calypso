@@ -18,11 +18,18 @@ import Button from 'components/forms/form-button';
 import './style.scss';
 
 class DailyBackupStatus extends Component {
+	// TODO: now that we are reusing URLs we should have a dedicated paths file
 	createRestoreUrl = restoreId => `/backups/${ this.props.siteSlug }/restore/${ restoreId }`;
+	createDownloadUrl = downloadId => `/backups/${ this.props.siteSlug }/download/${ downloadId }`;
 
 	triggerRestore = () => {
 		const restoreId = this.props.backupAttempts.complete[ 0 ].rewindId;
 		page.redirect( this.createRestoreUrl( restoreId ) );
+	};
+
+	triggerDownload = () => {
+		const downloadId = this.props.backupAttempts.complete[ 0 ].rewindId;
+		page.redirect( this.createDownloadUrl( downloadId ) );
 	};
 
 	renderGoodBackup() {
