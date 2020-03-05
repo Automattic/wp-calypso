@@ -115,7 +115,7 @@ export const errors = ( state = {}, action ) => {
 			}
 
 			return {
-				...omit( state, action.siteId ),
+				...state,
 				[ action.siteId ]: pickBy(
 					mapValues( state[ action.siteId ], mediaErrors =>
 						without( mediaErrors, action.errorType )
@@ -130,7 +130,7 @@ export const errors = ( state = {}, action ) => {
 			}
 
 			return {
-				...omit( state, action.siteId ),
+				...state,
 				[ action.siteId ]: {
 					...omit( state[ action.siteId ], [ [ action.siteId ], [ action.mediaId ] ] ),
 				},
