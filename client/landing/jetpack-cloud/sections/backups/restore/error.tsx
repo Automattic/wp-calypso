@@ -4,7 +4,7 @@
 import React from 'react';
 
 const BackupRestoreError = () => (
-	<div className="backup-restore-page__error">
+	<div>
 		<p>BackupRestoreError</p>
 	</div>
 );

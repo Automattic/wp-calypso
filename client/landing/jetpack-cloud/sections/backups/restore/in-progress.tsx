@@ -3,9 +3,13 @@
  */
 import React from 'react';
 
-const BackupRestoreInProgress = () => (
-	<div className="backup-restore-page__finished">
-		<p>BackupRestoreInProgress</p>
+interface Props {
+	percent?: number;
+}
+
+const BackupRestoreInProgress = ( { percent }: Props ) => (
+	<div>
+		<p>BackupRestoreInProgress: { percent ? percent : 0 }% done...</p>
 	</div>
 );
 

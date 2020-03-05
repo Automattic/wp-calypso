@@ -4,7 +4,7 @@
 import React from 'react';
 
 const BackupRestoreFinished = () => (
-	<div className="backup-restore-page__finished">
+	<div>
 		<p>BackupRestoreFinished</p>
 	</div>
 );

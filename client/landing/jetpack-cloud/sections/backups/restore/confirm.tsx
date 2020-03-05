@@ -9,15 +9,15 @@ import React from 'react';
 import { Button } from '@automattic/components';
 
 interface Props {
-	restoreId: number | string;
-	selectedSiteId: number;
 	onConfirm: () => null;
+	restoreId?: number | string;
+	siteId: number | null;
 }
 
-const BackupRestoreConfirm = ( { restoreId, selectedSiteId, onConfirm }: Props ) => (
-	<div className="backup-restore-page">
+const BackupRestoreConfirm = ( { restoreId, siteId, onConfirm }: Props ) => (
+	<div>
 		<p>
-			You have chosen to restore site { selectedSiteId } to { restoreId }.
+			You have chosen to restore site { siteId } to { restoreId }.
 		</p>
 		<Button onClick={ onConfirm }>{ 'Confirm Restore' }</Button>
 	</div>
