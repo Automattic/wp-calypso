@@ -521,22 +521,14 @@ function useInitializeCartFromServer(
 						' or coupon',
 						couponToAdd
 					);
-					let updatedResponseCart;
+					let updatedResponseCart = processRawResponse( response );
 					if ( productToAdd ) {
-						updatedResponseCart = addItemToResponseCart(
-							processRawResponse( response ),
-							productToAdd
-						);
+						updatedResponseCart = addItemToResponseCart( updatedResponseCart, productToAdd );
 					}
 					if ( couponToAdd ) {
-						updatedResponseCart = addCouponToResponseCart(
-							processRawResponse( response ),
-							couponToAdd
-						);
+						updatedResponseCart = addCouponToResponseCart( updatedResponseCart, couponToAdd );
 					}
-					if ( updatedResponseCart ) {
-						return setServerCart( prepareRequestCart( updatedResponseCart ) );
-					}
+					return setServerCart( prepareRequestCart( updatedResponseCart ) );
 				}
 				return response;
 			} )
