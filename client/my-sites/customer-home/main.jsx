@@ -466,7 +466,7 @@ class Home extends Component {
 					href="https://wp.me/logo-maker"
 					onClick={ () => trackAction( 'my_site', 'design_logo' ) }
 					target="_blank"
-					label={ translate( 'Design a logo with Looka' ) }
+					label={ translate( 'Create a logo with Looka' ) }
 					external
 					iconSrc={ logoIcon }
 				/>
