@@ -61,6 +61,10 @@ const makeRemoteLoginRequest = ( loginLink: string, requestTimeout = 25000 ) => 
 };
 
 export interface ControlsConfig extends WpcomClientCredentials {
+	/**
+	 * True if user needs immediate access to cookies after logging in.
+	 * See README.md for details.
+	 */
 	loadCookiesAfterLogin: boolean;
 }
 
