@@ -29,11 +29,16 @@ interface Props {
 
 const getDownloadState = (
 	backupProgress: BackupProgress | null,
+	rewindId: string,
 	hasRequestedDownload: boolean
 ) => {
 	if ( null === backupProgress ) {
 		return DownloadState.DownloadConfirm;
-	} else if ( backupProgress.validUntil && backupProgress.url ) {
+	} else if (
+		backupProgress.rewindId === rewindId &&
+		backupProgress.validUntil &&
+		backupProgress.url
+	) {
 		return DownloadState.DownloadReady;
 	}
 	return hasRequestedDownload ? DownloadState.DownloadQueued : DownloadState.DownloadConfirm;
@@ -63,7 +68,7 @@ const BackupRestorePage = ( { rewindId }: Props ) => {
 		requestDownload();
 	};
 
-	const downloadState = getDownloadState( backupProgress, hasRequestedDownload );
+	const downloadState = getDownloadState( backupProgress, rewindId, hasRequestedDownload );
 
 	const render = () => {
 		switch ( downloadState ) {
