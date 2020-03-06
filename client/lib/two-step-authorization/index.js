@@ -2,9 +2,8 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { replace } from 'lodash';
-
 import { get as webauthn_auth } from '@github/webauthn-json';
+import { replace } from 'lodash';
 
 const debug = debugFactory( 'calypso:two-step-authorization' );
 
@@ -12,13 +11,13 @@ const debug = debugFactory( 'calypso:two-step-authorization' );
  * Internal Dependencies
  */
 import analytics from 'lib/analytics';
+import config from 'config';
 import emitter from 'lib/mixins/emitter';
 import userSettings from 'lib/user-settings';
-import wp from 'lib/wp';
 import { reduxDispatch } from 'lib/redux-bridge';
 import { requestConnectedApplications } from 'state/connected-applications/actions';
 import { requestUserProfileLinks } from 'state/profile-links/actions';
-import config from 'config';
+import wp from 'lib/wp';
 
 const wpcom = wp.undocumented();
 
@@ -302,7 +301,7 @@ TwoStepAuthorization.prototype.isTwoStepSMSEnabled = function() {
 };
 
 TwoStepAuthorization.prototype.isSecurityKeyEnabled = function() {
-	return this.data ? this.data.two_step_webauthn_enabled : false;
+	return this.data?.two_step_webauthn_enabled ?? false;
 };
 
 TwoStepAuthorization.prototype.getTwoStepWebauthnNonce = function() {
