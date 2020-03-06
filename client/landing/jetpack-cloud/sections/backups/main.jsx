@@ -55,7 +55,7 @@ class BackupsPage extends Component {
 				/>
 				<DailyBackupStatus
 					allowRestore={ allowRestore }
-					date={ currentDateSetting }
+					date={ selectedDateString }
 					backupAttempts={ backupAttempts }
 					siteSlug={ siteSlug }
 				/>
