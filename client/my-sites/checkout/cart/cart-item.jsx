@@ -38,8 +38,8 @@ export class CartItem extends React.Component {
 	render() {
 		const { cart, cartItem, translate, domainsWithPlansOnly, selectedSite, moment } = this.props;
 
-		let name = this.getProductName();
-		const subscriptionLength = this.getSubscriptionLength();
+		let name = getProductName( cartItem, translate );
+		const subscriptionLength = getSubscriptionLength( cartItem, translate );
 		if ( subscriptionLength ) {
 			name += ' - ' + subscriptionLength;
 		}
@@ -82,78 +82,6 @@ export class CartItem extends React.Component {
 			</li>
 		);
 		/*eslint-enable wpcalypso/jsx-classname-namespace*/
-	}
-
-	getSubscriptionLength() {
-		const { cartItem, translate } = this.props;
-		if ( this.isDomainProductDiscountedTo0() ) {
-			return false;
-		}
-
-		const hasBillPeriod = cartItem.bill_period && parseInt( cartItem.bill_period ) !== -1;
-		if ( ! hasBillPeriod ) {
-			return false;
-		}
-
-		if ( isMonthly( cartItem ) ) {
-			return translate( 'monthly subscription' );
-		} else if ( isYearly( cartItem ) ) {
-			return translate( 'annual subscription' );
-		} else if ( isBiennially( cartItem ) ) {
-			return translate( 'two year subscription' );
-		}
-
-		return false;
-	}
-
-	isDomainProductDiscountedTo0() {
-		const { cartItem } = this.props;
-		return isDomainProduct( cartItem ) && isBundled( cartItem ) && cartItem.cost === 0;
-	}
-
-	getProductName() {
-		const { cartItem, translate } = this.props;
-		const options = {
-			count: cartItem.volume,
-			args: {
-				volume: cartItem.volume,
-				productName: cartItem.product_name,
-			},
-		};
-
-		if ( ! cartItem.volume ) {
-			return cartItem.product_name;
-		} else if ( cartItem.volume === 1 ) {
-			switch ( cartItem.product_slug ) {
-				case GSUITE_BASIC_SLUG:
-				case GSUITE_BUSINESS_SLUG:
-					return translate( '%(productName)s (1 User)', {
-						args: {
-							productName: cartItem.product_name,
-						},
-					} );
-
-				default:
-					return cartItem.product_name;
-			}
-		} else {
-			switch ( cartItem.product_slug ) {
-				case GSUITE_BASIC_SLUG:
-				case GSUITE_BUSINESS_SLUG:
-					return translate(
-						'%(productName)s (%(volume)s User)',
-						'%(productName)s (%(volume)s Users)',
-						options
-					);
-
-				default:
-					return translate(
-						'%(productName)s (%(volume)s Item)',
-						'%(productName)s (%(volume)s Items)',
-						options
-					);
-			}
-		}
 	}
 }
 
@@ -372,6 +300,75 @@ function ProductInfo( { cartItem, selectedSite } ) {
 		info = domain;
 	}
 	return info;
+}
+
+function getProductName( cartItem, translate ) {
+	const options = {
+		count: cartItem.volume,
+		args: {
+			volume: cartItem.volume,
+			productName: cartItem.product_name,
+		},
+	};
+
+	if ( ! cartItem.volume ) {
+		return cartItem.product_name;
+	} else if ( cartItem.volume === 1 ) {
+		switch ( cartItem.product_slug ) {
+			case GSUITE_BASIC_SLUG:
+			case GSUITE_BUSINESS_SLUG:
+				return translate( '%(productName)s (1 User)', {
+					args: {
+						productName: cartItem.product_name,
+					},
+				} );
+
+			default:
+				return cartItem.product_name;
+		}
+	} else {
+		switch ( cartItem.product_slug ) {
+			case GSUITE_BASIC_SLUG:
+			case GSUITE_BUSINESS_SLUG:
+				return translate(
+					'%(productName)s (%(volume)s User)',
+					'%(productName)s (%(volume)s Users)',
+					options
+				);
+
+			default:
+				return translate(
+					'%(productName)s (%(volume)s Item)',
+					'%(productName)s (%(volume)s Items)',
+					options
+				);
+		}
+	}
+}
+
+function getSubscriptionLength( cartItem, translate ) {
+	if ( isDomainProductDiscountedTo0( cartItem ) ) {
+		return false;
+	}
+
+	const hasBillPeriod = cartItem.bill_period && parseInt( cartItem.bill_period ) !== -1;
+	if ( ! hasBillPeriod ) {
+		return false;
+	}
+
+	if ( isMonthly( cartItem ) ) {
+		return translate( 'monthly subscription' );
+	} else if ( isYearly( cartItem ) ) {
+		return translate( 'annual subscription' );
+	} else if ( isBiennially( cartItem ) ) {
+		return translate( 'two year subscription' );
+	}
+
+	return false;
+}
+
+function isDomainProductDiscountedTo0( cartItem ) {
+	return isDomainProduct( cartItem ) && isBundled( cartItem ) && cartItem.cost === 0;
 }
 
 export default connect( state => ( {
