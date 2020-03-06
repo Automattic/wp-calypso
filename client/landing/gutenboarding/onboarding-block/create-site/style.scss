@@ -1,3 +1,4 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
 @import '../../mixins';
 
 .create-site__background {
@@ -15,7 +16,7 @@
 		align-items: center;
 		height: 56px;
 		padding: 8px;
-		background-color: white;
+		background-color: $white;
 
 		.create-site__toolbar,
 		.create-site__settings {
@@ -35,14 +36,14 @@
 			font-size: 32px;
 			color: var( --studio-blue-40 );
 			display: flex;
-				justify-content: center;
+			justify-content: center;
 
 			.animated-input-placeholder span {
 				color: var( --studio-blue-40 );
 			}
 		}
 	}
-	
+
 	.create-site__placeholder {
 		@include placeholder();
 		height: 16px;
