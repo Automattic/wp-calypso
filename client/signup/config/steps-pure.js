@@ -302,8 +302,9 @@ export function generateSteps( {
 				'domainItem',
 				'themeItem',
 				'shouldHideFreePlan',
+				'useThemeHeadstart',
 			],
-			optionalDependencies: [ 'shouldHideFreePlan' ],
+			optionalDependencies: [ 'shouldHideFreePlan', 'useThemeHeadstart' ],
 			props: {
 				isDomainOnly: false,
 			},
