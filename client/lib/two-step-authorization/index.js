@@ -75,11 +75,11 @@ TwoStepAuthorization.prototype.postLoginRequest = function( endpoint, data ) {
 	const url = 'https://wordpress.com/wp-login.php?action=' + endpoint;
 	const formData = new window.FormData();
 	const requestData = {
+		...data,
 		client_id: config( 'wpcom_signup_id' ),
 		client_secret: config( 'wpcom_signup_key' ),
 		auth_type: 'webauthn',
 		two_step_nonce: this.getTwoStepWebauthnNonce(),
-		...data,
 	};
 
 	for ( const key in requestData ) {
