@@ -36,14 +36,14 @@ export const receiveNewUserFailed = ( error: NewUserErrorResponse ) => ( {
 export function* createAccount( params: CreateAccountParams ) {
 	yield fetchNewUser();
 	try {
-		const { body, ...restParams } = params as { body?: object };
 		const newUser = yield wpcomRequest( {
-			// defaults
 			body: {
+				// defaults
 				is_passwordless: true,
 				signup_flow_name: 'gutenboarding',
 				locale: 'en',
-				...body,
+
+				...params,
 
 				// Set to false because account validation should be a separate action
 				validate: false,
@@ -51,8 +51,6 @@ export function* createAccount( params: CreateAccountParams ) {
 			path: '/users/new',
 			apiVersion: '1.1',
 			method: 'post',
-
-			...restParams,
 		} );
 		return receiveNewUser( newUser );
 	} catch ( err ) {
