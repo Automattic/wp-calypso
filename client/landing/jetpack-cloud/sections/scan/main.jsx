@@ -4,12 +4,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Button } from '@automattic/components';
-import { translate } from 'i18n-calypso';
+import { numberFormat, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { withLocalizedMoment } from 'components/localized-moment';
 import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
 import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
@@ -49,7 +49,35 @@ class ScanPage extends Component {
 	}
 
 	renderThreats() {
-		return <p>Threats found.</p>;
+		const { threats, site } = this.props;
+
+		return (
+			<>
+				<h1 className="scan__header">{ translate( 'Your site may be at risk' ) }</h1>
+				<p>
+					{ translate(
+						'The scan found {{strong}}%(threatCount)s{{/strong}} potential threats with {{strong}}%(siteName)s{{/strong}}.',
+						{
+							args: {
+								siteName: site.name,
+								threatCount: numberFormat( threats.length ),
+							},
+							components: { strong: <strong /> },
+							comment:
+								'%(threatCount)s represents the number of threats currently identified on the site, and $(siteName)s is the name of the site.',
+						}
+					) }
+					<br />
+					{ translate(
+						'Please review them below and take action. We are {{a}}here to help{{/a}} if you need us.',
+						{
+							components: { a: <a href="https://jetpack.com/contact-support/" /> },
+							comment: 'The {{a}} tag is a link that goes to a contact support page.',
+						}
+					) }
+				</p>
+			</>
+		);
 	}
 
 	renderScanError() {
@@ -89,21 +117,34 @@ class ScanPage extends Component {
 }
 
 export default connect( state => {
-	const siteId = getSelectedSiteId( state );
+	const site = getSelectedSite( state );
 	const siteSlug = getSelectedSiteSlug( state );
 
 	// TODO: Get state from actual API.
 	const params = new URL( document.location ).searchParams;
 	const scanState = params.get( 'scan-state' ) || 'okay';
 
+	// TODO: Get threats from actual API.
+	const threats = [
+		{
+			title: 'Infected core file: wp-config.php',
+			details: 'Unexpected string was found in: /htdocs/wp-admin/wp-config.php',
+		},
+		{
+			title: 'Unexpected core file: sx--a4bp.php',
+			details: 'Unexpected file sx--a4bp.php contains malicious code and is not part of WordPress.',
+		},
+	];
+
 	const lastScanTimestamp = Date.now() - 5700000; // 1h 35m.
 	const nextScanTimestamp = Date.now() + 5700000;
 
 	return {
-		siteId,
+		site,
 		siteSlug,
 		scanState,
 		lastScanTimestamp,
 		nextScanTimestamp,
+		threats,
 	};
 } )( withLocalizedMoment( ScanPage ) );
