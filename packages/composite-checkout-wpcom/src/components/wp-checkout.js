@@ -76,6 +76,7 @@ export default function WPCheckout( {
 	const [ items ] = useLineItems();
 	const firstDomainItem = items.find( isLineItemADomain );
 	const domainName = firstDomainItem ? firstDomainItem.sublabel : siteUrl;
+	const shouldUseDomainContactValidationEndpoint = !! firstDomainItem;
 
 	const contactInfo = useSelect( sel => sel( 'wpcom' ).getContactInfo() ) || {};
 	const {
@@ -95,13 +96,19 @@ export default function WPCheckout( {
 		} );
 		// Touch the fields so they display validation errors
 		touchContactFields();
-		await domainContactValidationCallback(
-			activePaymentMethod.id,
-			prepareDomainContactDetails( contactInfo ),
-			[ domainName ],
-			applyDomainContactValidationResults
-		);
-		return isCompleteAndValid( contactInfo );
+
+        if ( shouldUseDomainContactValidationEndpoint ) {
+            const hasValidationErrors = await domainContactValidationCallback(
+                activePaymentMethod.id,
+                prepareDomainContactDetails( contactInfo ),
+                [ domainName ],
+                applyDomainContactValidationResults,
+                contactInfo
+            );
+            return ! hasValidationErrors;
+        }
+
+        return isCompleteAndValid( contactInfo );
 	};
 
 	// Copy siteId to the store so it can be more easily accessed during payment submission
