@@ -24,11 +24,12 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 	__esModule: true,
 	default: jest.fn(),
 	requestAllBlogsAccess: jest.fn( () => Promise.resolve() ),
+	reloadProxy: jest.fn(),
 } ) );
 
 let store: ReturnType< typeof register >;
 beforeAll( () => {
-	store = register( { client_id: '', client_secret: '' } );
+	store = register( { client_id: '', client_secret: '', loadCookiesAfterLogin: true } );
 } );
 
 beforeEach( () => {

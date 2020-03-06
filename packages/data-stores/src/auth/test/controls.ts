@@ -9,7 +9,9 @@
 /**
  * External dependencies
  */
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest, { reloadProxy } from 'wpcom-proxy-request';
+import 'jest-fetch-mock';
+import nock from 'nock';
 
 /**
  * Internal dependencies
@@ -20,11 +22,20 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 	__esModule: true,
 	default: jest.fn(),
 	requestAllBlogsAccess: jest.fn( () => Promise.resolve() ),
+	reloadProxy: jest.fn(),
 } ) );
 
-const { FETCH_AUTH_OPTIONS } = createControls( { client_id: '', client_secret: '' } );
+beforeEach( () => {
+	( reloadProxy as jest.Mock ).mockReset();
+} );
 
 describe( 'FETCH_AUTH_OPTIONS', () => {
+	const { FETCH_AUTH_OPTIONS } = createControls( {
+		client_id: '',
+		client_secret: '',
+		loadCookiesAfterLogin: true,
+	} );
+
 	it( 'requests auth options for a username', async () => {
 		const apiResponse = {
 			success: true,
@@ -57,5 +68,76 @@ describe( 'FETCH_AUTH_OPTIONS', () => {
 				path: '/users/test%40email.com/auth-options',
 			} )
 		);
+	} );
+} );
+
+describe( 'FETCH_WP_LOGIN', () => {
+	it( 'reloads the proxy after a successful login (loadCookiesAfterLogin === true)', async () => {
+		const { FETCH_WP_LOGIN } = createControls( {
+			client_id: '',
+			client_secret: '',
+			loadCookiesAfterLogin: true,
+		} );
+
+		nock( 'https://wordpress.com' )
+			.post( '/wp-login.php?action=login-endpoint' )
+			.reply( 200, {
+				success: true,
+				data: { token_links: [] },
+			} );
+
+		await FETCH_WP_LOGIN( {
+			type: 'FETCH_WP_LOGIN',
+			action: 'login-endpoint',
+			params: {},
+		} );
+
+		expect( reloadProxy ).toHaveBeenCalled();
+	} );
+
+	it( "doesn't reload the proxy after an unsuccessful login (loadCookiesAfterLogin === true)", async () => {
+		const { FETCH_WP_LOGIN } = createControls( {
+			client_id: '',
+			client_secret: '',
+			loadCookiesAfterLogin: true,
+		} );
+
+		nock( 'https://wordpress.com' )
+			.post( '/wp-login.php?action=login-endpoint' )
+			.reply( 400, {
+				success: false,
+				data: { errors: [] },
+			} );
+
+		await FETCH_WP_LOGIN( {
+			type: 'FETCH_WP_LOGIN',
+			action: 'login-endpoint',
+			params: {},
+		} );
+
+		expect( reloadProxy ).not.toHaveBeenCalled();
+	} );
+
+	it( "doesn't reload the proxy after a successful login (loadCookiesAfterLogin === false)", async () => {
+		const { FETCH_WP_LOGIN } = createControls( {
+			client_id: '',
+			client_secret: '',
+			loadCookiesAfterLogin: false,
+		} );
+
+		nock( 'https://wordpress.com' )
+			.post( '/wp-login.php?action=login-endpoint' )
+			.reply( 200, {
+				success: true,
+				data: { token_links: [] },
+			} );
+
+		await FETCH_WP_LOGIN( {
+			type: 'FETCH_WP_LOGIN',
+			action: 'login-endpoint',
+			params: {},
+		} );
+
+		expect( reloadProxy ).not.toHaveBeenCalled();
 	} );
 } );

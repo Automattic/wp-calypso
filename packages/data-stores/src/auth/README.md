@@ -14,6 +14,7 @@ import { Auth } from '@automattic/data-stores';
 const AUTH_STORE = Auth.register( {
 	client_id: 'MY_CLIENT_ID', // ⚠️Replace with your app's ID
 	client_secret: 'MY_CLIENT_SECRET', // ⚠️Replace with your app's secret
+	loadCookiesAfterLogin: true, // Read more below
 } );
 ```
 
@@ -81,3 +82,15 @@ function MyComponent() {
 	}
 }
 ```
+
+### `loadCookiesAfterLogin` config
+
+After login is complete (`loginFlowState === 'LOGGED_IN'`) the user will have a session on the server, but the client won't have the cookies for that session yet.
+
+This could be fine under some circumstances. If, after a successful login, the browser navigates to another page then the cookies will be loaded as part of that page navigation. It would be a waste for the auth store to retrieve them. In this case use `loadCookiesAfterLogin = false`.
+
+If however the user will continue to work and make more requests on the same page after logging in, then we want the store to make the required request to get cookies. In this case use `loadCookiesAfterLogin = true`.
+
+This config flag doesn't have a default as it depends on your situation.
+
+*Implementation detail:* under the hood, if `loadCookiesAfterLogin === true` then the store will reload the iframe used by `wpcom-proxy-request` to send requests to `public-api.wordpress.com`. Because it's only the iframe that reloads the user won't see a browser refresh happen.
