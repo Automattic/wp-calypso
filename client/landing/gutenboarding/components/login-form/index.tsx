@@ -2,11 +2,12 @@
  * External dependencies
  */
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
+import Gridicon from 'components/gridicon';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,7 +39,6 @@ const LoginForm = ( { onRequestClose, onOpenSignup, onLogin }: Props ) => {
 	const loginFlowState = useSelect( select => select( AUTH_STORE ).getLoginFlowState() );
 	const errors = useSelect( select => select( AUTH_STORE ).getErrors() );
 	const { reset } = useDispatch( AUTH_STORE );
-	// todo: either reset the auth store state on load here or in the header/index.tsx
 	// todo: loading state like isFetchingNewUser
 
 	const handleLogin = ( event: React.FormEvent< HTMLFormElement > ) => {
@@ -48,9 +48,18 @@ const LoginForm = ( { onRequestClose, onOpenSignup, onLogin }: Props ) => {
 		if ( loginFlowState === 'ENTER_USERNAME_OR_EMAIL' ) {
 			submitUsernameOrEmail( usernameOrEmailVal );
 		} else if ( loginFlowState === 'ENTER_PASSWORD' ) {
-			submitUsernameOrEmail( usernameOrEmailVal );
 			submitPassword( passwordVal );
 		}
+	};
+
+	const openSignup = ( e: React.MouseEvent< HTMLElement > ) => {
+		onOpenSignup();
+		e.preventDefault();
+	};
+
+	const changeEmailAddress = ( e: React.MouseEvent< HTMLElement > ) => {
+		reset();
+		e.preventDefault;
 	};
 
 	const closeModal = () => {
@@ -75,7 +84,9 @@ const LoginForm = ( { onRequestClose, onOpenSignup, onLogin }: Props ) => {
 
 	// todo: may need to be updated as more states are handled
 	const shouldShowPasswordField = loginFlowState === 'ENTER_PASSWORD';
-
+	const changeEmailOrUsernameLinkText = includes( usernameOrEmailVal, '@' )
+		? NO__( 'Change Email Address' )
+		: NO__( 'Change Username' );
 	return (
 		<Modal
 			className="login-form"
@@ -84,10 +95,20 @@ const LoginForm = ( { onRequestClose, onOpenSignup, onLogin }: Props ) => {
 			onRequestClose={ closeModal }
 		>
 			<form onSubmit={ handleLogin }>
+				{ shouldShowPasswordField && (
+					<Button
+						className="login-form__change-username"
+						isLink={ true }
+						onClick={ changeEmailAddress }
+					>
+						<Gridicon icon="arrow-left" size={ 18 } />
+						{ changeEmailOrUsernameLinkText }
+					</Button>
+				) }
 				<TextControl
-					label={ NO__( 'Email Address or Username' ) }
+					label={ ! shouldShowPasswordField ? NO__( 'Email Address or Username' ) : '' }
 					value={ usernameOrEmailVal }
-					// disabled={ isLoading }
+					disabled={ shouldShowPasswordField }
 					onChange={ setUsernameOrEmailVal }
 					placeholder={ NO_x(
 						'E.g., yourname@email.com',
@@ -134,15 +155,9 @@ const LoginForm = ( { onRequestClose, onOpenSignup, onLogin }: Props ) => {
 				</div>
 			</form>
 			<div className="login-form__signup-links">
-				<Link
-					to=""
-					onClick={ e => {
-						onOpenSignup();
-						e.preventDefault();
-					} }
-				>
+				<Button isLink={ true } onClick={ openSignup }>
 					{ NO__( 'Create account.' ) }
-				</Link>
+				</Button>
 			</div>
 		</Modal>
 	);

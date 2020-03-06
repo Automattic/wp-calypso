@@ -3,7 +3,8 @@
 .login-form.components-modal__frame {
 	border: none;
 	border-radius: 3px;
-
+	min-width: 450px;
+	
 	.components-modal__header {
 		.components-modal__header-heading {
 			font-size: 20px;
@@ -45,5 +46,23 @@
 	.login-form__signup-links {
 		margin-top: 20px;
 		text-align: center;
+	}
+	.login-form__change-username {
+		color: var( --color-link );
+		font-weight: inherit;
+		text-decoration: none;
+		display: inline-block;
+		margin-bottom: 5px;
+		font-size: 14px;
+	
+		&:hover,
+		&:focus,
+		&:active {
+			color: var( --color-link-dark );
+		}
+		.gridicon {
+			margin-right: 3px;
+			vertical-align: text-bottom;
+		}
 	}
 }

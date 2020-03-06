@@ -34,3 +34,7 @@ $admin-sidebar-width-collapsed: 0;
 .wp-block {
 	max-width: 1100px; // Overrides default $content-width
 }
+
+.components-button.is-link {
+	text-decoration: none;
+}

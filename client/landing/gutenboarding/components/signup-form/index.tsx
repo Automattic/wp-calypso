@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
@@ -66,6 +65,11 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 		if ( success ) {
 			onRequestClose();
 		}
+	};
+
+	const openLogin = ( e: React.MouseEvent< HTMLElement > ) => {
+		onOpenLogin();
+		e.preventDefault();
 	};
 
 	const tos = __experimentalCreateInterpolateElement(
@@ -134,15 +138,9 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 				</div>
 			</form>
 			<div className="signup-form__login-links">
-				<Link
-					to=""
-					onClick={ e => {
-						onOpenLogin();
-						e.preventDefault();
-					} }
-				>
+				<Button isLink={ true } onClick={ openLogin }>
 					{ NO__( 'Log in to create a site for your existing account.' ) }
-				</Link>
+				</Button>
 			</div>
 		</Modal>
 	);
