@@ -2,7 +2,18 @@
 /**
  * External dependencies
  */
-import { find, isEmpty, reduce, get, keyBy, mapValues, memoize, filter, sortBy } from 'lodash';
+import {
+	find,
+	isEmpty,
+	reduce,
+	get,
+	keyBy,
+	mapValues,
+	memoize,
+	filter,
+	sortBy,
+	stubTrue,
+} from 'lodash';
 import classnames from 'classnames';
 import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
@@ -11,6 +22,7 @@ import { Button, Modal, Spinner, IconButton } from '@wordpress/components';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import { parse as parseBlocks } from '@wordpress/blocks';
+import { addFilter, removeFilter } from '@wordpress/hooks';
 
 /**
  * Internal dependencies
@@ -26,6 +38,8 @@ import containsMissingBlock from './utils/contains-missing-block';
 /* eslint-enable import/no-extraneous-dependencies */
 
 const DEFAULT_HOMEPAGE_TEMPLATE = 'maywood';
+const INSERTING_HOOK_NAME = 'isInsertingPageTemplate';
+const INSERTING_HOOK_NAMESPACE = 'automattic/full-site-editing/inserting-template';
 
 class PageTemplateModal extends Component {
 	state = {
@@ -517,6 +531,9 @@ export const PageTemplatesPlugin = compose(
 				} );
 			},
 			insertTemplate: ( title, blocks ) => {
+				// Add filter to let the tracking library know we are inserting a template.
+				addFilter( INSERTING_HOOK_NAME, INSERTING_HOOK_NAMESPACE, stubTrue );
+
 				// Set post title.
 				if ( title ) {
 					editorDispatcher.editPost( { title } );
@@ -529,6 +546,9 @@ export const PageTemplatesPlugin = compose(
 					blocks,
 					false
 				);
+
+				// Remove filter.
+				removeFilter( INSERTING_HOOK_NAME, INSERTING_HOOK_NAMESPACE );
 			},
 			hideWelcomeGuide: () => {
 				if ( ownProps.isWelcomeGuideActive ) {
