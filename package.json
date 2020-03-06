@@ -50,8 +50,10 @@
 		"@automattic/wpcom-block-editor": "file:apps/wpcom-block-editor",
 		"@wordpress/e2e-test-utils": "4.3.0",
 		"browserslist": "4.8.6",
+		"https": "1.0.0",
 		"i18n-calypso": "file:packages/i18n-calypso",
 		"photon": "file:packages/photon",
+		"simperium": "1.0.4",
 		"wp-calypso": "file:client",
 		"wpcom": "file:packages/wpcom.js"
 	},

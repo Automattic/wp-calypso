@@ -11,7 +11,6 @@ import ImagePreloader from './image-loader';
 
 import { html } from '../indices-to-html';
 
-var debug = require( 'debug' )( 'notifications:summary-in-list' );
 var { recordTracksEvent } = require( '../helpers/stats' );
 
 export class SummaryInList extends React.Component {

@@ -236,7 +236,6 @@ const CommentReplyInput = createReactClass( {
 			if ( component.props.note.meta.ids.comment ) {
 				// pre-emptively approve the comment if it wasn't already
 				component.props.approveNote( component.props.note.id, true );
-				component.props.global.client.getNote( component.props.note.id );
 			}
 
 			// remove focus from textarea so we can resume using keyboard

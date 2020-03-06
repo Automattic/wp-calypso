@@ -74,16 +74,6 @@ export class NoteList extends React.Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( this.noteList && ! this.props.isLoading ) {
-			const element = ReactDOM.findDOMNode( this.scrollableContainer );
-			if (
-				element.clientHeight > 0 &&
-				element.scrollTop + element.clientHeight >= this.noteList.clientHeight - 300
-			) {
-				this.props.client.loadMore();
-			}
-		}
-
 		if ( prevProps.selectedNoteId !== this.props.selectedNoteId ) {
 			this.ensureSelectedNoteVisibility();
 		}

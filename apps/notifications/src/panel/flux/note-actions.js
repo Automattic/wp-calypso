@@ -14,12 +14,6 @@ function bumpStat( name ) {
 	rawBumpStat( 'notes-click-action', name );
 }
 
-function updateNote( id ) {
-	const globalClient = store.get( 'global' ).client;
-
-	return () => globalClient.getNote( id );
-}
-
 export const setApproveStatus = function( noteId, siteId, commentId, isApproved, type ) {
 	const comment = wpcom()
 		.site( siteId )
