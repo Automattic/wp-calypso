@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 
 import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEventWithClientId } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -24,7 +24,7 @@ class TwoFactorActions extends Component {
 		isSecurityKeySupported: PropTypes.bool.isRequired,
 		isSmsSupported: PropTypes.bool.isRequired,
 		isSmsAllowed: PropTypes.bool.isRequired,
-		recordTracksEvent: PropTypes.func.isRequired,
+		recordTracksEventWithClientId: PropTypes.func.isRequired,
 		onChange: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string.isRequired,
@@ -32,8 +32,23 @@ class TwoFactorActions extends Component {
 
 	recordButtonClicked = event => {
 		event.preventDefault();
+		let tracksEvent;
 
-		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_to_sms_link_click' );
+		switch ( event.target.value ) {
+			case 'sms':
+				tracksEvent = 'calypso_2fa_reauth_sms_clicked';
+				break;
+			case 'authenticator':
+				tracksEvent = 'calypso_2fa_reauth_authenticator_clicked';
+				break;
+			case 'webauthn':
+				tracksEvent = 'calypso_2fa_reauth_webauthn_clicked';
+				break;
+		}
+
+		if ( tracksEvent ) {
+			this.props.recordTracksEventWithClientId( tracksEvent );
+		}
 
 		this.props.onChange( event.target.value );
 	};
@@ -94,5 +109,5 @@ class TwoFactorActions extends Component {
 }
 
 export default connect( null, {
-	recordTracksEvent,
+	recordTracksEventWithClientId,
 } )( localize( TwoFactorActions ) );
