@@ -16,6 +16,7 @@ import { getLanguage, getLocaleSlug } from 'lib/i18n-utils';
 import readerContentWidth from 'reader/lib/content-width';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
+const { Blob } = globalThis; // The linter complains if I don't do this...?
 
 /**
  * Some endpoints are restricted by OAuth client IDs and secrets
@@ -2459,6 +2460,32 @@ Undocumented.prototype.startMigration = function( sourceSiteId, targetSiteId ) {
 	return this.wpcom.req.post( {
 		path: `/sites/${ targetSiteId }/migrate-from/${ sourceSiteId }`,
 		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+Undocumented.prototype.getAtomicSiteMediaViaProxy = function( siteIdOrSlug, mediaPath, query, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/sites/${ siteIdOrSlug }/atomic-auth-proxy/file${ mediaPath }${ query }`,
+			apiNamespace: 'wpcom/v2',
+			responseType: 'blob',
+		},
+		fn
+	);
+};
+
+Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function(
+	siteIdOrSlug,
+	mediaPath,
+	query,
+	fn
+) {
+	this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, query, function( err, data ) {
+		if ( err || ! ( data instanceof Blob ) ) {
+			this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, fn );
+		} else {
+			fn( err, data );
+		}
 	} );
 };
 

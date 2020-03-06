@@ -2,32 +2,18 @@
  * External dependencies
  */
 import React, { useEffect, useState } from 'react';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import debugFactory from 'debug';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
-import { exponentialBackoff } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
+import wpcom from 'lib/wp';
 
 const debug = debugFactory( 'calypso:my-sites:media-library:proxied-image' );
 const { Blob } = globalThis; // The linter complains if I don't do this...?
 
 const getUrlFromBlob = ( blob: Blob ) =>
 	blob instanceof Blob ? URL.createObjectURL( blob ) : undefined;
-
-const fetchProxiedMediaFile = ( siteSlug: string, src: string, query: string ) =>
-	http( {
-		method: 'GET',
-		apiNamespace: 'wpcom/v2',
-		path: `/sites/${ siteSlug }/atomic-auth-proxy/file${ src }${ query }`,
-		responseType: 'blob',
-		retryPolicy: exponentialBackoff( { delay: 1, maxAttempts: 2 } ),
-		// To quiet down the warning:
-		onSuccess: noop,
-	} );
 
 interface Props {
 	query: string;
@@ -37,6 +23,8 @@ interface Props {
 	[ key: string ]: any;
 }
 
+const cache: { [ key: string ]: Blob } = {};
+
 const ProxiedImage: React.FC< Props > = function ProxiedImage( {
 	siteSlug,
 	filePath,
@@ -44,24 +32,24 @@ const ProxiedImage: React.FC< Props > = function ProxiedImage( {
 	...rest
 } ) {
 	const [ imageObjectUrl, setImageObjectUrl ] = useState( null );
-	const requestId = `media-library-proxied-image-${ siteSlug }${ filePath }`;
+	const requestId = `media-library-proxied-image-${ siteSlug }${ filePath }${ query }`;
 
 	useEffect( () => {
-		if ( imageObjectUrl === null ) {
-			const cachedImageBlob = getHttpData( requestId )?.data;
-			const url = getUrlFromBlob( cachedImageBlob );
+		if ( imageObjectUrl === null && cache[ requestId ] ) {
+			const url = getUrlFromBlob( cache[ requestId ] );
 			setImageObjectUrl( url );
 			debug( 'set image from cache', { url } );
+		} else {
+			wpcom
+				.undocumented()
+				.getAtomicSiteMediaViaProxyRetry( siteSlug, filePath, query, ( err, data ) => {
+					if ( data instanceof Blob ) {
+						cache[ requestId ] = data;
+						setImageObjectUrl( getUrlFromBlob( data ) );
+						debug( 'got image from API', { data } );
+					}
+				} );
 		}
-
-		requestHttpData( requestId, fetchProxiedMediaFile( siteSlug, filePath, query ), {
-			freshness: 30000,
-			fromApi: () => payload => {
-				setImageObjectUrl( getUrlFromBlob( payload ) );
-				debug( 'got image from API', { payload } );
-				return [ [ requestId, payload ] ];
-			},
-		} );
 
 		return () => {
 			if ( ! imageObjectUrl ) {
