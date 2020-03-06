@@ -248,6 +248,11 @@ const ReauthRequired = createReactClass( {
 		const method = this.props.twoStepAuthorization.isTwoStepSMSEnabled() ? 'sms' : 'authenticator';
 		const isSecurityKeySupported =
 			this.props.twoStepAuthorization.isSecurityKeyEnabled() && supported();
+		const { twoFactorAuthType } = this.state;
+		// This enables the SMS button on the security key form regardless if we can send SMS or not.
+		// Otherwise, there's no way to go back to the verification form if smsRequestsAllowed is false.
+		const shouldEnableSmsButton =
+			this.state.smsRequestsAllowed || ( method === 'sms' && twoFactorAuthType === 'webauthn' );
 
 		return (
 			<Dialog
@@ -256,19 +261,15 @@ const ReauthRequired = createReactClass( {
 				isFullScreen={ false }
 				isVisible={ this.props.twoStepAuthorization.isReauthRequired() }
 			>
-				{ isSecurityKeySupported &&
-					this.state.twoFactorAuthType === 'webauthn' &&
-					this.renderSecurityKey() }
-				{ this.state.twoFactorAuthType !== 'webauthn' && this.renderVerificationForm() }
+				{ isSecurityKeySupported && twoFactorAuthType === 'webauthn'
+					? this.renderSecurityKey()
+					: this.renderVerificationForm() }
 				<TwoFactorActions
 					twoFactorAuthType={ this.state.twoFactorAuthType }
 					onChange={ this.handleAuthSwitch }
 					isSmsSupported={ method === 'sms' || method === 'authenticator' }
 					isAuthenticatorSupported={ method !== 'sms' }
-					isSmsAllowed={
-						this.state.smsRequestsAllowed ||
-						( method === 'sms' && this.state.twoFactorAuthType === 'webauthn' )
-					}
+					isSmsAllowed={ shouldEnableSmsButton }
 					isSecurityKeySupported={ isSecurityKeySupported }
 				/>
 			</Dialog>
