@@ -23,7 +23,7 @@ export const setupWpDataDebug = () => {
 				};
 
 				const { Auth, Site } = require( '@automattic/data-stores' );
-				const AUTH_STORE = Auth.register( clientCreds );
+				const AUTH_STORE = Auth.register( { ...clientCreds, loadCookiesAfterLogin: true } );
 				Site.register( clientCreds );
 
 				window.wp.auth = {};
