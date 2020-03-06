@@ -68,33 +68,35 @@ TwoStepAuthorization.prototype.fetch = function( callback ) {
 	);
 };
 
+TwoStepAuthorization.prototype.postLoginRequest = function( endpoint, data ) {
+	const url = 'https://wordpress.com/wp-login.php?action=' + endpoint;
+	// eslint-disable-next-line no-undef
+	const formData = new FormData();
+	const _data = {
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
+		auth_type: 'webauthn',
+		two_step_nonce: this.getTwoStepWebauthnNonce(),
+		...data,
+	};
+	if ( ! _data.two_step_nonce ) {
+		return Promise.reject( 'Invalid nonce' );
+	}
+	for ( const key in _data ) {
+		formData.set( key, _data[ key ] );
+	}
+	// eslint-disable-next-line no-undef
+	return fetch( url, {
+		method: 'POST',
+		body: formData,
+		credentials: 'include',
+	} ).then( response => response.json() );
+};
+
 TwoStepAuthorization.prototype.loginUserWithSecurityKey = function( args ) {
-	const postLoginRequest = function( endpoint, data ) {
-		const url = 'https://wordpress.com/wp-login.php?action=' + endpoint;
-		// eslint-disable-next-line no-undef
-		const formData = new FormData();
-		const _data = {
-			client_id: config( 'wpcom_signup_id' ),
-			client_secret: config( 'wpcom_signup_key' ),
-			user_id: args.user_id,
-			auth_type: 'webauthn',
-			two_step_nonce: this.getTwoStepWebauthnNonce(),
-			...data,
-		};
-		if ( ! _data.two_step_nonce ) {
-			return Promise.reject( 'Invalid nonce' );
-		}
-		for ( const key in _data ) {
-			formData.set( key, _data[ key ] );
-		}
-		// eslint-disable-next-line no-undef
-		return fetch( url, {
-			method: 'POST',
-			body: formData,
-			credentials: 'include',
-		} ).then( response => response.json() );
-	}.bind( this );
-	return postLoginRequest( 'webauthn-challenge-endpoint', {} )
+	return this.postLoginRequest( 'webauthn-challenge-endpoint', {
+		user_id: args.user_id,
+	} )
 		.then( response => {
 			const parameters = response.data || [];
 			this.data.two_step_webauthn_nonce = parameters.two_step_nonce;
@@ -104,7 +106,8 @@ TwoStepAuthorization.prototype.loginUserWithSecurityKey = function( args ) {
 			return webauthn_auth( { publicKey: parameters } );
 		} )
 		.then( assertion => {
-			return postLoginRequest( 'webauthn-authentication-endpoint', {
+			return this.postLoginRequest( 'webauthn-authentication-endpoint', {
+				user_id: args.user_id,
 				client_data: JSON.stringify( assertion ),
 				create_2fa_cookies_only: 1,
 			} );
