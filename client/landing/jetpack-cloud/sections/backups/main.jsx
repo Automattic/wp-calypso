@@ -1,22 +1,25 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { requestActivityLogs } from 'state/data-getters';
-import DatePicker from '../../components/date-picker';
-import DailyBackupStatus from '../../components/daily-backup-status';
-import { getBackupAttemptsForDate, getDailyBackupDeltas } from './utils';
-import { getSitePurchases } from 'state/purchases/selectors';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import BackupDelta from '../../components/backup-delta';
 import { emptyFilter } from 'state/activity-log/reducer';
+import { getBackupAttemptsForDate, getDailyBackupDeltas } from './utils';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSitePurchases } from 'state/purchases/selectors';
+import { requestActivityLogs } from 'state/data-getters';
 import { withLocalizedMoment } from 'components/localized-moment';
+import BackupDelta from '../../components/backup-delta';
+import DailyBackupStatus from '../../components/daily-backup-status';
+import DatePicker from '../../components/date-picker';
+import getRewindState from 'state/selectors/get-rewind-state';
+import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
+import QueryRewindState from 'components/data/query-rewind-state';
+import QuerySitePurchases from 'components/data/query-site-purchases';
 
 class BackupsPage extends Component {
 	constructor( props ) {
@@ -34,16 +37,16 @@ class BackupsPage extends Component {
 		).length;
 
 	render() {
-		const { logs, siteId } = this.props;
+		const { allowRestore, logs, siteId, siteSlug } = this.props;
 		const { selectedDateString } = this.state;
 
 		const hasRealtimeBackups = this.hasRealtimeBackups();
-
 		const backupAttempts = getBackupAttemptsForDate( logs, selectedDateString );
 		const deltas = getDailyBackupDeltas( logs, selectedDateString );
 
 		return (
 			<div>
+				<QueryRewindState siteId={ siteId } />
 				<QuerySitePurchases siteId={ siteId } />
 				<DatePicker
 					onChange={ this.dateChange }
@@ -51,8 +54,10 @@ class BackupsPage extends Component {
 					siteId={ siteId }
 				/>
 				<DailyBackupStatus
+					allowRestore={ allowRestore }
+					date={ selectedDateString }
 					backupAttempts={ backupAttempts }
-					selectedDateString={ selectedDateString }
+					siteSlug={ siteSlug }
 				/>
 				<BackupDelta deltas={ deltas } backupAttempts={ backupAttempts } />
 				{ hasRealtimeBackups && <div>Real time backup points here</div> }
@@ -64,11 +69,19 @@ class BackupsPage extends Component {
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const logs = siteId && requestActivityLogs( siteId, emptyFilter );
+	const rewind = getRewindState( state, siteId );
 	const sitePurchases = siteId && getSitePurchases( state, siteId );
 
+	const restoreStatus = rewind.rewind && rewind.rewind.status;
+	const allowRestore =
+		'active' === rewind.state && ! ( 'queued' === restoreStatus || 'running' === restoreStatus );
+
 	return {
-		sitePurchases,
-		siteId,
+		allowRestore,
 		logs: logs?.data ?? [],
+		rewind,
+		siteId,
+		sitePurchases,
+		siteSlug: getSelectedSiteSlug( state ),
 	};
 } )( withLocalizedMoment( BackupsPage ) );
