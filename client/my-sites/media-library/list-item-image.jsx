@@ -74,7 +74,6 @@ export default class MediaLibraryListItemImage extends React.Component {
 			( 1 / this.props.maxScale ) * this.state.maxSeenScale * this.props.maxImageWidth
 		);
 
-		const className = 'media-library__list-item-centered';
 		const url = mediaUrl( this.props.media, {
 			resize: `${ width },${ width }`,
 			size: this.props.thumbnailType === MEDIA_IMAGE_THUMBNAIL ? 'medium' : false,
@@ -96,8 +95,8 @@ export default class MediaLibraryListItemImage extends React.Component {
 				onLoad={ this.setUnknownImageDimensions }
 				alt={ this.props.media.alt || this.props.media.title }
 				style={ this.getImageStyle() }
-				className={ className }
-				draggable={ false }
+				className={ 'media-library__list-item-centered' }
+				draggable="false"
 			/>
 		);
 	}
