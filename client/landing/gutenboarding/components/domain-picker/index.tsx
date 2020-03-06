@@ -95,7 +95,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 			numberOfFreeDomains++;
 			return suggestion;
 		}
-		if ( suggestion.is_free && numberOfPaidDomains < 5 ) {
+		if ( ! suggestion.is_free && numberOfPaidDomains < 5 ) {
 			numberOfPaidDomains++;
 			return suggestion;
 		}
