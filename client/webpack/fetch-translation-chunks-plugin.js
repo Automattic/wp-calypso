@@ -18,43 +18,49 @@ class FetchTranslationChunksPlugin {
 			const { mainTemplate } = compilation;
 
 			mainTemplate.hooks.localVars.tap( PLUGIN_NAME, source => {
-				return Template.asString( [ source, '', 'var installedTranslationChunks = {}' ] );
+				return Template.asString( [
+					source,
+					'',
+					`
+						function RequireChunkCallback() {
+							this.callbacks = [];
+						}
+
+						RequireChunkCallback.prototype.add = function( callback ) {
+							this.callbacks.push( callback );
+
+							return this;
+						};
+
+						RequireChunkCallback.prototype.remove = function( callback ) {
+							this.callbacks = this.callbacks.filter( function( _callback ) {
+								return callback !== _callback;
+							} );
+
+							return this;
+						};
+
+						RequireChunkCallback.prototype.trigger = function( chunkId, promises, publicPath ) {
+							for ( var i = 0; i < this.callbacks.length; i++ ) {
+								this.callbacks[ i ]( chunkId, promises, publicPath );
+							}
+
+							return this;
+						};
+
+						var installedTranslationChunks = {};
+						var requireChunkCallback = new RequireChunkCallback();
+
+						window.__requireChunkCallback__ = requireChunkCallback;
+					`,
+				] );
 			} );
 
 			mainTemplate.hooks.requireEnsure.tap( PLUGIN_NAME, source => {
 				return Template.asString( [
 					source,
 					'',
-					'if ( window.__i18n__ ) {',
-					Template.indent( [
-						'promises.push(',
-						Template.indent( [
-							'new Promise( ( resolve, reject ) => {',
-							Template.indent( [
-								"var translationChunk = window.__i18n__.getLocaleSlug() + '-' + chunkId;",
-								'',
-								'if ( installedTranslationChunks[ translationChunk ] ) {',
-								Template.indent( [ 'resolve();', 'return;' ] ),
-								'}',
-								'',
-								"fetch( __webpack_require__.p + 'languages/' + translationChunk + '.json' )", // @todo replace with actual languages path
-								Template.indent( [
-									'.then( response => response.json() )',
-									'.then( data => {',
-									Template.indent( [
-										'window.__i18n__.addTranslations( data );',
-										'installedTranslationChunks[ translationChunk ] = true;',
-										'resolve();',
-									] ),
-									'} )',
-									'.catch( resolve );',
-								] ),
-							] ),
-							'} )',
-						] ),
-						');',
-					] ),
-					'}',
+					'requireChunkCallback.trigger( chunkId, promises, __webpack_require__.p )',
 				] );
 			} );
 		} );

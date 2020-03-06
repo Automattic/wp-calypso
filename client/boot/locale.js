@@ -24,13 +24,25 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		reduxStore.dispatch( setLocale( currentUser.localeSlug, currentUser.localeVariant ) );
 	}
 
-	if ( ! ( '__i18n__' in window ) ) {
-		// `localeSlug` is set after translation is fetched, which is causing
-		// initial chunks to request their translation chunks with the default
-		// language. As a temporary workaround, we are manually updating the slug.
-		i18n.state.localeSlug = currentUser.localeSlug;
+	if ( '__requireChunkCallback__' in window ) {
+		window.__requireChunkCallback__.add( ( chunkId, promises, publicPath ) => {
+			const translationChunkName = `${ currentUser.localeSlug }-${ chunkId }`;
 
-		window.__i18n__ = i18n;
+			promises.push(
+				new Promise( resolve => {
+					const translationChunkPath = `${ publicPath }languages/${ translationChunkName }.json`; // @todo replace with actual translation path
+
+					return window
+						.fetch( translationChunkPath )
+						.then( response => response.json() )
+						.then( data => {
+							i18n.addTranslations( data );
+							resolve();
+						} )
+						.catch( error => resolve( error ) );
+				} )
+			);
+		} );
 	}
 
 	// If user is logged out and translations are not boostrapped, we assume default locale
