@@ -24,7 +24,7 @@ class Editor_Layout_Preview {
 	 *
 	 * @var string Script handler name
 	 */
-	private static $script_handler = 'editor-layout-preview-scripts';
+	private static $script_handler = 'editor-layout-preview';
 
 	/**
 	 * Editor_Layout_Preview constructor.
@@ -71,8 +71,8 @@ class Editor_Layout_Preview {
 			return;
 		}
 
-		$script_path       = 'dist/editor-layout-preview.js';
-		$script_asset_path = dirname( __FILE__ ) . '/dist/editor-layout-preview.asset.php';
+		$script_path       = 'dist/' . self::$script_handler . '.js';
+		$script_asset_path = dirname( __FILE__ ) . '/dist/' . self::$script_handler . '.asset.php';
 		$script_asset      = file_exists( $script_asset_path )
 			? require $script_asset_path
 			: array(
@@ -87,6 +87,20 @@ class Editor_Layout_Preview {
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/editor-layout-preview.js' ),
 			true
 		);
+
+		// Inline the Editor Settings.
+		$settings = $this->get_editor_layout_preview_settings();
+		wp_add_inline_script( self::$script_handler, 'window.getdaveSbeSettings = ' . wp_json_encode( $settings ) . ';' );
+
+		// Editor default styles.
+		wp_enqueue_style( 'wp-format-library' );
+
+		wp_enqueue_style(
+			self::$script_handler,
+			plugins_url( 'dist/' . self::$script_handler . '.css', __FILE__ ),
+			array( 'wp-edit-blocks' ),
+			filemtime( dirname( __FILE__ ) . '/dist/' . self::$script_handler . '.css' )
+		);
 	}
 
 	/**
@@ -98,6 +112,29 @@ class Editor_Layout_Preview {
 			Loading Editor...
 		</div>
 		<?php
+	}
+
+	/**
+	 * Set the plugin settings.
+	 *
+	 * @return array Settings array.
+	 */
+	public function get_editor_layout_preview_settings() {
+		$settings               = array(
+			'disableCustomColors'    => get_theme_support( 'disable-custom-colors' ),
+			'disableCustomFontSizes' => get_theme_support( 'disable-custom-font-sizes' ),
+			'isRTL'                  => is_rtl(),
+		);
+		list( $color_palette, ) = (array) get_theme_support( 'editor-color-palette' );
+		list( $font_sizes, )    = (array) get_theme_support( 'editor-font-sizes' );
+		if ( false !== $color_palette ) {
+			$settings['colors'] = $color_palette;
+		}
+		if ( false !== $font_sizes ) {
+			$settings['fontSizes'] = $font_sizes;
+		}
+
+		return $settings;
 	}
 
 }
