@@ -279,7 +279,7 @@ const ReauthRequired = createReactClass( {
 
 	refreshNonceOnFailure( error ) {
 		const errors = [].slice.call( error?.data?.errors ?? [] );
-		if ( errors.findIndex( e => e.code === 'invalid_two_step_nonce' ) >= 0 ) {
+		if ( errors.some( e => e.code === 'invalid_two_step_nonce' ) ) {
 			this.props.twoStepAuthorization.fetch();
 		}
 	},
