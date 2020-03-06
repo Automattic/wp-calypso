@@ -37,6 +37,11 @@
 	z-index: -1;
 	position: fixed;
 	height: 64px;
+
+	@media ( prefers-reduced-motion: reduce ) {
+		// Without animation, we need alternative indication of an input field
+		border-bottom: 3px solid var( --studio-blue-40 );
+	}
 }
 
 .animated-placeholder__suggestion {
@@ -48,36 +53,43 @@
 	top: 72px;
 	white-space: nowrap;
 
-	.slow-speed & {
+	.is-slow-speed & {
 		animation: gutenboarding_animated_placeholder 40s infinite;
 		color: var( --studio-gray-80 );
+	}
+
+	@media ( prefers-reduced-motion: reduce ) {
+		animation: none;
 	}
 }
 
 .animated-placeholder__suggestion:nth-child( 2 ) {
 	animation-delay: 2s;
-    .slow-speed & {
-        animation-delay: 8s;
-    }
+	.is-slow-speed & {
+		animation-delay: 8s;
+	}
 }
 
 .animated-placeholder__suggestion:nth-child( 3 ) {
 	animation-delay: 4s;
-    .slow-speed & {
-        animation-delay: 16s;
-    }
+
+	.is-slow-speed & {
+		animation-delay: 16s;
+	}
 }
 
 .animated-placeholder__suggestion:nth-child( 4 ) {
 	animation-delay: 6s;
-    .slow-speed & {
-        animation-delay: 24s;
-    }
+
+	.is-slow-speed & {
+		animation-delay: 24s;
+	}
 }
 
 .animated-placeholder__suggestion:nth-child( 5 ) {
 	animation-delay: 8s;
-    .slow-speed & {
-        animation-delay: 32s;
-    }
+
+	.is-slow-speed & {
+		animation-delay: 32s;
+	}
 }

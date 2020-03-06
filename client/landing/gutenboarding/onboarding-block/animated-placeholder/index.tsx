@@ -9,13 +9,17 @@ import classnames from 'classnames';
  */
 import './style.scss';
 
-const AnimatedPlaceholder: FunctionComponent = props => {
-	const classes = classnames( 'animated-placeholder', props.slow ? 'slow-speed' : null );
+const AnimatedPlaceholder: FunctionComponent = ( { isSlow, texts } ) => {
 	return (
-		<div className={ classes }>
+		<div
+			aria-hidden
+			className={ classnames( 'animated-placeholder', {
+				'is-slow-speed': isSlow,
+			} ) }
+		>
 			<div className="animated-placeholder__content">
-				{ props.texts.map( ( suggestion, index ) => (
-					<span className="animated-placeholder__suggestion" key={ index }>
+				{ texts.map( suggestion => (
+					<span className="animated-placeholder__suggestion" key={ suggestion }>
 						{ suggestion }
 					</span>
 				) ) }

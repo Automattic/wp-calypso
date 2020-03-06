@@ -7,7 +7,6 @@ import { useI18n } from '@automattic/react-i18n';
 /**
  * Internal dependencies
  */
-
 import AnimatedPlaceholder from '../animated-placeholder';
 import './style.scss';
 
@@ -39,7 +38,7 @@ const CreateSite: FunctionComponent< {} > = () => {
 					<div className="create-site__placeholder create-site__placeholder-title">Placeholder</div>
 					<div className="create-site__text">
 						<AnimatedPlaceholder
-							slow={ true }
+							is-slow
 							texts={ [
 								NO__( 'We are creating your site.' ),
 								NO__( 'It will be ready in a moment.' ),
