@@ -18,16 +18,21 @@ const UsAddressFieldset = props => {
 		<div className="custom-form-fieldsets__address-fields us-address-fieldset">
 			<Input
 				label={ translate( 'City' ) }
-				errorMessage={ contactDetailsErrors?.city }
 				{ ...getFieldProps( 'city' ) }
+				errorMessage={ contactDetailsErrors?.city }
 			/>
 			<StateSelect
 				label={ getStateLabelText( countryCode ) }
 				countryCode={ countryCode }
 				selectText={ STATE_SELECT_TEXT[ countryCode ] }
 				{ ...getFieldProps( 'state', true ) }
+				errorMessage={ contactDetailsErrors?.state }
 			/>
-			<Input label={ getPostCodeLabelText( countryCode ) } { ...getFieldProps( 'postal-code' ) } />
+			<Input
+				label={ getPostCodeLabelText( countryCode ) }
+				{ ...getFieldProps( 'postal-code' ) }
+				errorMessage={ contactDetailsErrors?.postalCode }
+			/>
 		</div>
 	);
 };

@@ -17,13 +17,13 @@ const EuAddressFieldset = props => {
 		<div className="custom-form-fieldsets__address-fields eu-address-fieldset">
 			<Input
 				label={ translate( 'Postal Code' ) }
-				errorMessage={ contactDetailsErrors?.postalCode }
 				{ ...getFieldProps( 'postal-code' ) }
+				errorMessage={ contactDetailsErrors?.postalCode }
 			/>
 			<Input
 				label={ translate( 'City' ) }
-				errorMessage={ contactDetailsErrors?.city }
 				{ ...getFieldProps( 'city' ) }
+				errorMessage={ contactDetailsErrors?.city }
 			/>
 		</div>
 	);

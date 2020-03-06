@@ -17,13 +17,13 @@ const UkAddressFieldset = props => {
 		<div className="custom-form-fieldsets__address-fields uk-address-fieldset">
 			<Input
 				label={ translate( 'City' ) }
-				errorMessage={ contactDetailsErrors?.city }
 				{ ...getFieldProps( 'city' ) }
+				errorMessage={ contactDetailsErrors?.city }
 			/>
 			<Input
 				label={ translate( 'Postal Code' ) }
-				errorMessage={ contactDetailsErrors?.postalCode }
 				{ ...getFieldProps( 'postal-code' ) }
+				errorMessage={ contactDetailsErrors?.postalCode }
 			/>
 		</div>
 	);

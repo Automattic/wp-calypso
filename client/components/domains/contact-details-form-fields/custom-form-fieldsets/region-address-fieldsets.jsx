@@ -76,6 +76,7 @@ export class RegionAddressFieldsets extends Component {
 						label={ translate( 'Address' ) }
 						maxLength={ 40 }
 						{ ...getFieldProps( 'address-1' ) }
+						errorMessage={ this.props.contactDetailsErrors?.address1 }
 					/>
 
 					<HiddenInput
@@ -83,6 +84,7 @@ export class RegionAddressFieldsets extends Component {
 						text={ translate( '+ Add Address Line 2' ) }
 						maxLength={ 40 }
 						{ ...getFieldProps( 'address-2', true ) }
+						errorMessage={ this.props.contactDetailsErrors?.address2 }
 					/>
 				</div>
 				{ this.getRegionAddressFieldset() }
