@@ -3,6 +3,20 @@
 @import '~@wordpress/components/build-style/style';
 @import 'assets/stylesheets/gutenberg-base-styles';
 
+// Typography
+$onboarding-brand-font-family: Recoleta, Georgia, 'Times New Roman', Times, serif;
+
+@font-face {
+	font-weight: 400;
+	font-display: swap;
+	font-family: 'Recoleta';
+	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.eot' );
+	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.eot?#iefix' ) format( 'embedded-opentype' ),
+		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff2' ) format( 'woff2' ),
+		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff' ) format( 'woff' ),
+		url( 'https://s1.wp.com/i/fonts/recoleta/400.ttf' ) format( 'truetype' );
+}
+
 // Override core variables: we don't have wp-admin header and sidebar in Calypso
 // Targetting styles from `@wordpress/edit-post`
 $admin-bar-height: 0;
