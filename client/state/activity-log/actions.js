@@ -225,6 +225,11 @@ export function getRewindBackupProgress( siteId ) {
 	return {
 		type: REWIND_BACKUP_PROGRESS_REQUEST,
 		siteId,
+		meta: {
+			dataLayer: {
+				trackRequest: true,
+			},
+		},
 	};
 }
 
