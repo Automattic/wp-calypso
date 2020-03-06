@@ -240,10 +240,6 @@ const ReauthRequired = createReactClass( {
 		);
 	},
 
-	renderSecurityKey() {
-		return <SecurityKeyForm loginUserWithSecurityKey={ this.loginUserWithSecurityKey } />;
-	},
-
 	render: function() {
 		const method = this.props.twoStepAuthorization.isTwoStepSMSEnabled() ? 'sms' : 'authenticator';
 		const isSecurityKeySupported =
@@ -261,9 +257,11 @@ const ReauthRequired = createReactClass( {
 				isFullScreen={ false }
 				isVisible={ this.props.twoStepAuthorization.isReauthRequired() }
 			>
-				{ isSecurityKeySupported && twoFactorAuthType === 'webauthn'
-					? this.renderSecurityKey()
-					: this.renderVerificationForm() }
+				{ isSecurityKeySupported && twoFactorAuthType === 'webauthn' ? (
+					<SecurityKeyForm loginUserWithSecurityKey={ this.loginUserWithSecurityKey } />
+				) : (
+					this.renderVerificationForm()
+				) }
 				<TwoFactorActions
 					twoFactorAuthType={ twoFactorAuthType }
 					onChange={ this.handleAuthSwitch }
