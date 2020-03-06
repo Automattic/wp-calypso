@@ -67,7 +67,7 @@ function getEventHandlers( props, dispatch ) {
 function useDevTool( { currentSite }, dispatch ) {
 	useEffect( () => {
 		// Do not setup the tool in production
-		if ( process.env.NODE_ENV === 'production' || ! currentSite ) {
+		if ( ! currentSite ) {
 			return;
 		}
 
