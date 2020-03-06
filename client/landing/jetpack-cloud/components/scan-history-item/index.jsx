@@ -38,7 +38,7 @@ class ScanHistoryItem extends Component {
 				<div className="scan-history-item__subheader">
 					<span className="scan-history-item__date">Threat found on { entry.detectionDate }</span>
 					<span className="scan-history-item__date-separator"></span>
-					<span className={ `scan-history-item__date is-${ entry.action }` }>
+					<span className={ classnames( 'scan-history-item__date', this.entryActionClassNames() ) }>
 						Threat { entry.action } on { entry.actionDate }
 					</span>
 				</div>
