@@ -34,55 +34,54 @@ import { removeItem } from 'lib/cart/actions';
 import { localize } from 'i18n-calypso';
 import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'lib/plans';
 
-export class CartItem extends React.Component {
-	render() {
-		const { cart, cartItem, translate, domainsWithPlansOnly, selectedSite, moment } = this.props;
-
-		let name = getProductName( cartItem, translate );
-		const subscriptionLength = getSubscriptionLength( cartItem, translate );
-		if ( subscriptionLength ) {
-			name += ' - ' + subscriptionLength;
-		}
-
-		if ( isTheme( cartItem ) ) {
-			name += ' - ' + translate( 'never expires' );
-		}
-
-		/*eslint-disable wpcalypso/jsx-classname-namespace*/
-		return (
-			<li className="cart-item">
-				<div className="primary-details">
-					<span className="product-name" data-e2e-product-slug={ cartItem.product_slug }>
-						{ name || translate( 'Loading…' ) }
-					</span>
-					<span className="product-domain">
-						<ProductInfo cartItem={ cartItem } selectedSite={ selectedSite } />
-					</span>
-					<DomainRenewalExpiryDate
-						moment={ moment }
-						translate={ translate }
-						cartItem={ cartItem }
-					/>
-				</div>
-
-				<div className="secondary-details">
-					<span className="product-price">
-						<ProductPrice cart={ cart } cartItem={ cartItem } translate={ translate } />
-					</span>
-					<span className="product-monthly-price">
-						<MonthlyPrice cartItem={ cartItem } translate={ translate } />
-					</span>
-					<RemoveButton
-						cart={ cart }
-						cartItem={ cartItem }
-						translate={ translate }
-						domainsWithPlansOnly={ domainsWithPlansOnly }
-					/>
-				</div>
-			</li>
-		);
-		/*eslint-enable wpcalypso/jsx-classname-namespace*/
+export function CartItem( {
+	cart,
+	cartItem,
+	translate,
+	domainsWithPlansOnly,
+	selectedSite,
+	moment,
+} ) {
+	let name = getProductName( cartItem, translate );
+	const subscriptionLength = getSubscriptionLength( cartItem, translate );
+	if ( subscriptionLength ) {
+		name += ' - ' + subscriptionLength;
 	}
+
+	if ( isTheme( cartItem ) ) {
+		name += ' - ' + translate( 'never expires' );
+	}
+
+	/*eslint-disable wpcalypso/jsx-classname-namespace*/
+	return (
+		<li className="cart-item">
+			<div className="primary-details">
+				<span className="product-name" data-e2e-product-slug={ cartItem.product_slug }>
+					{ name || translate( 'Loading…' ) }
+				</span>
+				<span className="product-domain">
+					<ProductInfo cartItem={ cartItem } selectedSite={ selectedSite } />
+				</span>
+				<DomainRenewalExpiryDate moment={ moment } translate={ translate } cartItem={ cartItem } />
+			</div>
+
+			<div className="secondary-details">
+				<span className="product-price">
+					<ProductPrice cart={ cart } cartItem={ cartItem } translate={ translate } />
+				</span>
+				<span className="product-monthly-price">
+					<MonthlyPrice cartItem={ cartItem } translate={ translate } />
+				</span>
+				<RemoveButton
+					cart={ cart }
+					cartItem={ cartItem }
+					translate={ translate }
+					domainsWithPlansOnly={ domainsWithPlansOnly }
+				/>
+			</div>
+		</li>
+	);
+	/*eslint-enable wpcalypso/jsx-classname-namespace*/
 }
 
 CartItem.propTypes = {
