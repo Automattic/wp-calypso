@@ -8,8 +8,8 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import Spinner from 'components/spinner';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
