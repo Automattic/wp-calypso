@@ -931,6 +931,31 @@ const contextLinksForSection = {
 			),
 		},
 	],
+	checkout: [
+		{
+			link: localizeUrl( 'https://en.support.wordpress.com/plan-features/' ),
+			post_id: 140323,
+			title: translate( 'WordPress.com Plan Details' ),
+			description: translate( "We'll help you pick the best fit for your needs and goals." ),
+		},
+		{
+			link: localizeUrl( 'https://en.support.wordpress.com/manage-purchases/#refund-policy' ),
+			post_id: 111349,
+			title: translate( 'Refund Policy' ),
+			description: translate(
+				'Have a question or need to change something about a purchase you have made? Learn how.'
+			),
+		},
+		{
+			link: localizeUrl( 'https://en.support.wordpress.com/auto-renewal/' ),
+			post_id: 110924,
+			title: translate( 'Subscriptions for Plans and Domains' ),
+			description: translate(
+				'Your WordPress.com plans and any domains you add to your sites are based ' +
+					'on a yearly subscription that renews automatically.'
+			),
+		},
+	],
 };
 
 /*
