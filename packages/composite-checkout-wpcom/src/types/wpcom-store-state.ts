@@ -36,7 +36,9 @@ function touchField( oldData: ManagedValue ): ManagedValue {
 }
 
 function touchIfDifferent( newValue: string, oldData: ManagedValue ): ManagedValue {
-	return newValue === oldData.value ? oldData : { ...oldData, value: newValue, isTouched: true, errors: [] };
+	return newValue === oldData.value
+		? oldData
+		: { ...oldData, value: newValue, isTouched: true, errors: [] };
 }
 
 function setErrors( errors: string[] | undefined, oldData: ManagedValue ): ManagedValue {
@@ -75,6 +77,11 @@ export function isCompleteAndValid( details: ManagedContactDetails ): boolean {
 export function isTouched( details: ManagedContactDetails ): boolean {
 	const values = Object.values( details );
 	return values.length > 0 && values.every( value => value.isTouched );
+}
+
+export function areRequiredFieldsNotEmpty( details: ManagedContactDetails ): boolean {
+	const values = Object.values( details );
+	return values.length > 0 && values.every( value => value.value.length > 0 || ! value.isRequired );
 }
 
 /*
