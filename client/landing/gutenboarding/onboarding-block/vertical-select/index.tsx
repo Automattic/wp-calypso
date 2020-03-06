@@ -17,6 +17,7 @@ import { StepProps } from '../stepper-wizard';
 import Question from '../question';
 import { __TodoAny__ } from '../../../../types';
 import AnimatedPlaceholder from '../animated-placeholder';
+
 /**
  * Style dependencies
  */
@@ -159,13 +160,14 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 					/>
 				) }
 				<input
-					ref={ inputRef }
-					className={ inputClass }
-					placeholder={ NO__( '' ) }
-					onChange={ handleSuggestionChangeEvent }
-					onBlur={ handleBlur }
-					onKeyDown={ handleSuggestionKeyDown }
+					aria-label={ label }
 					autoComplete="off"
+					className={ inputClass }
+					onBlur={ handleBlur }
+					onChange={ handleSuggestionChangeEvent }
+					onKeyDown={ handleSuggestionKeyDown }
+					placeholder=""
+					ref={ inputRef }
 					value={ inputValue }
 				/>
 				<div className="vertical-select__suggestions">
