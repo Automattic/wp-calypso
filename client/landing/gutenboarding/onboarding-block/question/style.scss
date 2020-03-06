@@ -1,67 +1,79 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
+.onboarding-block__questions {
+	.onboarding-block__question {
+		display: flex;
+		font-size: 64px;
+		margin-bottom: 10px;
 
-.onboarding-block__question {
-	display: flex;
-	font-size: 28px;
-	margin-bottom: 10px;
-	transition-property: 'font-size';
-	transition-duration: 0.25s;
-	transition-timing-function: 'linear';
-	transition-delay: 0;
-
-	&.selected {
-		font-size: 40px;
-		margin-top: 18px;
-		margin-bottom: 28px;
-
-		&:first-of-type {
-			margin-top: 0;
+		.onboarding-block__active-question {
+			visibility: hidden;
+			height: 0;
+		}
+		.onboarding-block__inactive-question {
+			visibility: visible;
+			height: 100%;
 		}
 
-		&:last-of-type {
-			margin-bottom: 0;
-		}
-	}
-
-	.onboarding-block__question-input {
-		border: 0;
-		border-bottom: 3px solid $light-gray-500;
-		display: inline-block;
-		font-size: inherit;
-		line-height: inherit;
-		margin: 0 0 0 0.2em;
-		padding: 0;
-		color: $blue-medium-900;
-
-		&:hover {
-			border-color: $blue-medium-highlight;
+		.onboarding-block__question-answered-container[data-active=true] {
+			.onboarding-block__active-question {
+				visibility: visible;
+				height: 100%;
+			}
+			.onboarding-block__inactive-question {
+				visibility: hidden;
+				height: 0;
+			}
 		}
 
-		&:active,
-		&:focus {
-			border-color: $blue-medium-focus;
-			color: $black;
-			outline: 0; // @TODO: needs a11y considerations
-		}
-	}
-
-	.onboarding-block__question-answered {
-		color: $blue-medium-900;
-		border-bottom: 3px solid transparent;
-		cursor: text;
-		margin: 0 0 0 0.2em;
-		transition-property: border-color;
-		transition-duration: 0.3s;
-		transition-timing-function: 'linear';
-		transition-delay: 0;
-
-		&:hover {
-			border-color: $blue-medium-highlight;
+		> span {
+			white-space: nowrap;
 		}
 
-		&:active,
-		&:focus {
-			border-color: $blue-medium-focus;
+		div > input.onboarding-block__question-input {
+			border: 0;
+			display: inline-block;
+			font-size: inherit;
+			line-height: inherit;
+			margin: 0 0 3px 0.2em;
+			padding: 0;
+			color: var( --mainColor );
+			min-width: 60px;
+			min-height: 1em;
+			transition: color 0.5s ease-in-out 1s,
+				border-color 0.5s ease-in-out 1s;
+
+			&:hover {
+				border-color: var( --highlightColor );
+			}
+
+			&:active,
+			&:focus {
+				padding: 0;
+				border-color: var( --highlightColor );
+				outline: 0; // @TODO: needs a11y considerations
+			}
+		}
+
+		.onboarding-block__question-answered {
+			color: var( --mainColor );
+			border-bottom: 3px solid var( --mainColor );
+			font-family: 'Recoleta-Regular', 'Recoleta', serif;
+			text-align: left;
+			cursor: text;
+			margin: 0 0 0 0.2em;
+			min-width: 60px;
+			min-height: 1em;
+			transition: color 0.5s ease-in-out 1s,
+				border-color 0.5s ease-in-out 1s;
+
+			&:hover {
+				border-color: var( --highlightColor );
+			}
+
+			&:active,
+			&:focus {
+				border-color:var( --highlightColor );
+			}
 		}
 	}
 }

@@ -3,57 +3,90 @@
 // This should match the timeout used in the component.
 $onboarding-block-css-transition-duration: 750ms;
 
+@font-face {
+	font-family: 'Recoleta';
+	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.woff2' ) format( 'woff2' ), /* Super Modern Browsers */
+		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff' ) format( 'woff' ), /* Pretty Modern Browsers */
+		url( 'https://s1.wp.com/i/fonts/recoleta/400.ttf' )  format( 'truetype' ); /* Safari, Android, iOS */
+}
+
 .onboarding-block__acquire-intent {
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	margin-top: 40px;
+	font-family: 'Recoleta-Regular', 'Recoleta', serif;
+
+
+
+	tab-size: 4;
+	color: var( --mainColor );
+	background-color: var( --contrastColor );
+	font-size: 64px;
+	letter-spacing: -0.4px;
+	font-weight: 400;
+
+	transition: 
+		color 0.5s ease-in-out 1s,
+		background-color 0.5s ease-in-out 1s;
+
 	position: fixed;
 
-	top: 20%;
+	top: 0;
 	left: 0%;
 	width: 100%;
+	height: 100%;
 }
 
 .onboarding-block__questions {
 	display: inline-block;
 	min-width: 800px;
+	font-size: 64px;
+	width: 70%;
+	height: 300px;
 }
 
 .onboarding-block__questions-heading {
 	margin-bottom: 10px;
 	text-align: left;
-	font-size: 20px;
+	font-size: 64px;
 }
 
 .onboarding-block__footer {
-	text-align: right;
+	text-align: left;
 }
 
 .components-button.is-link.onboarding-block__question-skip {
-	color: $dark-gray-500;
-	font-size: 20px;
+	
+	background-color: var( --mainColor );
+	color: var( --contrastColor );
 	line-height: 2em;
+	padding: 8px 32px;
 	margin: 10px 0;
 	text-decoration: none;
 	position: relative;
+	border-radius: 4px;
+	font-size: 16px;
+	transition: 
+		color 0.5s ease-in-out 1s,
+		background-color 0.5s ease-in-out 1s;
 
-	&:hover,
 	&:focus {
-		background: none;
-		border: none;
-		color: $blue-medium-focus;
 		outline: none;
 		box-shadow: none;
+		background-color: var( --highlightColor );
+		color: var( --studio-gray-20 );
+
 	}
 
 	&:focus {
-		border-bottom: 2px solid $blue-medium-focus;
+		/*border-bottom: 2px solid $blue-medium-focus;*/
 	}
 }
 
 .onboarding-block__question input {
 	background: transparent;
+	font-family: 'Recoleta-Regular', 'Recoleta', serif;
 }
 
 .onboarding-block__background {
@@ -94,3 +127,7 @@ $onboarding-block-css-transition-duration: 750ms;
 .onboarding-block__background-fade-enter-done {
 	transition: opacity $onboarding-block-css-transition-duration linear;
 }
+
+
+
+

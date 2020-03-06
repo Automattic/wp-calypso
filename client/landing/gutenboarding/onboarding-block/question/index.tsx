@@ -33,6 +33,11 @@ const Question: FunctionComponent< Props > = ( {
 		setHasActivated( true );
 	}, [] );
 
+	const handleClick = event => {
+		onExpand();
+		event.preventDefault(); // we don't want the parent form to be submitted
+	};
+
 	return (
 		<div
 			className={ classNames( 'onboarding-block__question', className, {
@@ -40,17 +45,14 @@ const Question: FunctionComponent< Props > = ( {
 			} ) }
 		>
 			<span>{ label }</span>
-			<div>
-				{ isActive ? (
-					children
-				) : (
-					<>
-						<button className="onboarding-block__question-answered" onClick={ onExpand }>
-							{ displayValue }
-						</button>
-						<span>.</span>
-					</>
-				) }
+			<div className="onboarding-block__question-answered-container" data-active={ isActive }>
+				<div className="onboarding-block__active-question">{ children }</div>
+				<div className="onboarding-block__inactive-question">
+					<button className="onboarding-block__question-answered" onClick={ handleClick }>
+						{ displayValue }
+					</button>
+					<span>.</span>
+				</div>
 			</div>
 		</div>
 	);
