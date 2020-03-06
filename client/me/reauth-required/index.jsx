@@ -21,20 +21,20 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormVerificationCodeInput from 'components/forms/form-verification-code-input';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import Notice from 'components/notice';
 /* eslint-disable no-restricted-imports */
 import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
 import { recordGoogleEvent } from 'state/analytics/actions';
-import userUtilities from 'lib/user/utils';
 import SecurityKeyForm from 'me/reauth-required/security-key-form';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import TwoFactorActions from 'me/reauth-required/two-factor-actions';
+import userUtilities from 'lib/user/utils';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import TwoFactorActions from 'me/reauth-required/two-factor-actions';
 
 // autofocus is used for tracking purposes, not an a11y issue
 /* eslint-disable jsx-a11y/no-autofocus, react/prefer-es6-class, jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/anchor-is-valid */
