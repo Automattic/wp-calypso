@@ -112,7 +112,6 @@ class ScanHistoryPage extends Component {
 
 	handleOnFilterChange = filter => {
 		// @todo: should we filter in the front end?
-		// eslint-disable-next-line no-console
 		this.setState( {
 			filter,
 		} );
