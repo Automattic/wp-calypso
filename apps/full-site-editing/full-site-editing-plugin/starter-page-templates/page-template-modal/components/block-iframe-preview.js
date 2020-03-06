@@ -8,7 +8,15 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 /* eslint-disable import/no-extraneous-dependencies */
-import { useRef, useEffect, useState, useCallback, useLayoutEffect, useMemo, useReducer } from '@wordpress/element';
+import {
+	useRef,
+	useEffect,
+	useState,
+	useCallback,
+	useLayoutEffect,
+	useMemo,
+	useReducer,
+} from '@wordpress/element';
 import { withSelect } from '@wordpress/data';
 import { compose, withSafeTimeout } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -93,7 +101,7 @@ export const BlockFramePreview = ( {
 			return;
 		}
 
-		frameWindow.postMessage( { slug, title, isFramePreview: true }, "*" );
+		frameWindow.postMessage( { slug, title, isFramePreview: true }, '*' );
 	}, [ slug ] );
 
 	// Handling windows resize event.
@@ -118,10 +126,12 @@ export const BlockFramePreview = ( {
 		};
 	}, [ rescale ] );
 
+	const joinSymbol = window.document.location.href.match( /\?/ ) ? '&' : '?';
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<iframe
-			src="#framepreview=true"
+			src={ `${ window.document.location.href }${ joinSymbol }framepreview=true` }
 			ref={ iframeRef }
 			title={ __( 'Frame Preview' ) }
 			className={ classnames( 'editor-styles-wrapper', className ) }
@@ -138,7 +148,7 @@ export const BlockFramePreview = ( {
  * @param {string} slug Template slug.
  * @return {Array} Templates Blocks if template exists. Otherwise, an empty array.
  */
-const getBlocksByTemplateSlug = ( slug ) => {
+const getBlocksByTemplateSlug = slug => {
 	return get( window, [ 'blocksByTemplateSlug', slug ], [] );
 };
 
@@ -161,6 +171,7 @@ const _BlockFrameContent = ( { settings } ) => {
 			if ( ! blocks || ! blocks.length ) {
 				return;
 			}
+
 			setSlug( slug );
 			setTitle( title );
 		};

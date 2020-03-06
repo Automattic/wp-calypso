@@ -39,7 +39,7 @@ if ( tracksUserData ) {
 }
 
 // Detect is the content needs to be "iframed".
-const isFramePreview = !! get( window, [ 'document', 'location', 'hash' ] ).match(
+const isFramePreview = !! get( window, [ 'document', 'location', 'href' ] ).match(
 	/framepreview=true/
 );
 
