@@ -11,7 +11,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestActivityLogs } from 'state/data-getters';
 import DatePicker from '../../components/date-picker';
 import DailyBackupStatus from '../../components/daily-backup-status';
-import { getBackupAttemptsForDate } from './utils';
+import { getBackupAttemptsForDate, getDailyBackupDeltas } from './utils';
+import { getSitePurchases } from 'state/purchases/selectors';
+import QuerySitePurchases from 'components/data/query-site-purchases';
+import BackupDelta from '../../components/backup-delta';
+import { emptyFilter } from 'state/activity-log/reducer';
 
 class BackupsPage extends Component {
 	state = {
@@ -20,6 +24,11 @@ class BackupsPage extends Component {
 
 	dateChange = currentDateSetting => this.setState( { currentDateSetting } );
 
+	hasRealtimeBackups = () =>
+		!! this.props.sitePurchases.filter(
+			purchase => 'jetpack_backup_realtime' === purchase.productSlug
+		).length;
+
 	render() {
 		const { logs, siteId } = this.props;
 		const initialDate = new Date();
@@ -27,12 +36,18 @@ class BackupsPage extends Component {
 			? this.state.currentDateSetting
 			: new Date().toISOString().split( 'T' )[ 0 ];
 
+		const hasRealtimeBackups = this.hasRealtimeBackups();
+
 		const backupAttempts = getBackupAttemptsForDate( logs, currentDateSetting );
+		const deltas = getDailyBackupDeltas( logs, currentDateSetting );
 
 		return (
 			<div>
+				<QuerySitePurchases siteId={ siteId } />
 				<DatePicker siteId={ siteId } initialDate={ initialDate } onChange={ this.dateChange } />
 				<DailyBackupStatus date={ currentDateSetting } backupAttempts={ backupAttempts } />
+				<BackupDelta deltas={ deltas } backupAttempts={ backupAttempts } />
+				{ hasRealtimeBackups && <div>Real time backup points here</div> }
 			</div>
 		);
 	}
@@ -40,9 +55,11 @@ class BackupsPage extends Component {
 
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
-	const logs = siteId && requestActivityLogs( siteId, { group: 'rewind' } );
+	const logs = siteId && requestActivityLogs( siteId, emptyFilter );
+	const sitePurchases = siteId && getSitePurchases( state, siteId );
 
 	return {
+		sitePurchases,
 		siteId,
 		logs: logs?.data ?? [],
 	};

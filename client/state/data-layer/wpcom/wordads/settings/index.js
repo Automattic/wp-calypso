@@ -60,6 +60,9 @@ export const saveWordadsSettings = action => ( dispatch, getState ) => {
 	const { settings, siteId } = action;
 	const previousSettings = getWordadsSettings( getState(), siteId );
 
+	// Optimistically update settings to the new ones
+	dispatch( updateWordadsSettings( siteId, settings ) );
+
 	dispatch( removeNotice( `wordads-notice-success-${ siteId }` ) );
 	dispatch( removeNotice( `wordads-notice-error-${ siteId }` ) );
 

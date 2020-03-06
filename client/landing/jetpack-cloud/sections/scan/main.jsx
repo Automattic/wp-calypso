@@ -3,18 +3,76 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Button } from '@automattic/components';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { withLocalizedMoment } from 'components/localized-moment';
+import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
 import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { isEnabled } from 'config';
+
+import './style.scss';
 
 class ScanPage extends Component {
+	renderScanOkay() {
+		const { siteSlug, moment, lastScanTimestamp } = this.props;
+
+		return (
+			<>
+				<SecurityIcon className="scan__icon" />
+				<h1 className="scan__header scan__header--okay">
+					{ translate( 'Don’t worry about a thing' ) }
+				</h1>
+				<p>
+					The last Jetpack scan ran <strong>{ moment( lastScanTimestamp ).fromNow() }</strong> and
+					everything looked great.
+				</p>
+				{ isEnabled( 'jetpack-cloud/on-demand-scan' ) && (
+					<Button
+						primary
+						href={ `/scan/${ siteSlug }/?scan-state=scanning` }
+						className="scan__button"
+					>
+						{ translate( 'Scan now' ) }
+					</Button>
+				) }
+			</>
+		);
+	}
+
+	renderScanning() {
+		return <p>Scanning!</p>;
+	}
+
+	renderThreats() {
+		return <p>Threats found.</p>;
+	}
+
+	renderScanError() {
+		return <p>There is an error with the scan.</p>;
+	}
+
+	renderScanState() {
+		switch ( this.props.scanState ) {
+			case 'okay':
+				return this.renderScanOkay();
+			case 'scanning':
+				return this.renderScanning();
+			case 'threats':
+				return this.renderThreats();
+			case 'error':
+				return this.renderScanError();
+		}
+	}
+
 	render() {
 		return (
 			<div>
-				Welcome to the scan page for site { this.props.siteId }
+				{ this.renderScanState() }
 				<StatsFooter
 					header="Scan Summary"
 					stats={ [
@@ -32,8 +90,20 @@ class ScanPage extends Component {
 
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSelectedSiteSlug( state );
+
+	// TODO: Get state from actual API.
+	const params = new URL( document.location ).searchParams;
+	const scanState = params.get( 'scan-state' ) || 'okay';
+
+	const lastScanTimestamp = Date.now() - 5700000; // 1h 35m.
+	const nextScanTimestamp = Date.now() + 5700000;
 
 	return {
 		siteId,
+		siteSlug,
+		scanState,
+		lastScanTimestamp,
+		nextScanTimestamp,
 	};
-} )( ScanPage );
+} )( withLocalizedMoment( ScanPage ) );

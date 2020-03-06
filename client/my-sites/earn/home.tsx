@@ -2,13 +2,15 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import React, { FunctionComponent, Fragment } from 'react';
+import React, { FunctionComponent, Fragment, useState, useEffect } from 'react';
 import page from 'page';
 import { get, compact } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import wp from 'lib/wp';
+import { abtest } from 'lib/abtest';
 import { useTranslate } from 'i18n-calypso';
 import { SiteSlug } from 'types';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
@@ -22,6 +24,8 @@ import QueryMembershipsSettings from 'components/data/query-memberships-settings
 import QueryWordadsStatus from 'components/data/query-wordads-status';
 import { FEATURE_WORDADS_INSTANT, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import ClipboardButtonInput from 'components/clipboard-button-input';
+import { CtaButton } from 'components/promo-section/promo-card/cta';
 
 /**
  * Image dependencies
@@ -47,6 +51,8 @@ interface ConnectedProps {
 	trackCtaButton: ( feature: string ) => void;
 }
 
+const wpcom = wp.undocumented();
+
 const Home: FunctionComponent< ConnectedProps > = ( {
 	siteId,
 	selectedSiteSlug,
@@ -62,6 +68,21 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	trackCtaButton,
 } ) => {
 	const translate = useTranslate();
+	const [ peerReferralLink, setPeerReferralLink ] = useState( '' );
+
+	useEffect( () => {
+		if ( peerReferralLink ) return;
+		wpcom.me().getPeerReferralLink( ( error: string, data: string ) => {
+			setPeerReferralLink( ! error && data ? data : '' );
+		} );
+	}, [ peerReferralLink ] );
+
+	const onPeerReferralCtaClick = () => {
+		if ( peerReferralLink ) return;
+		wpcom.me().setPeerReferralLinkEnable( true, ( error: string, data: string ) => {
+			setPeerReferralLink( ! error && data ? data : '' );
+		} );
+	};
 
 	/**
 	 * Return the content to display in the Simple Payments card based on the current plan.
@@ -209,6 +230,65 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	};
 
 	/**
+	 * Return the content to display in the Peer Referrals card.
+	 *
+	 * @returns {object} Object with props to render a PromoCard.
+	 */
+	const getPeerReferralsCard = () => {
+		const isJetpackNotAtomic = isJetpack && ! isAtomicSite;
+
+		if ( isJetpackNotAtomic ) {
+			return;
+		}
+
+		const cta: CtaButton = {
+			text: translate( 'Earn Free Credits' ) as string,
+			action: () => {
+				trackCtaButton( 'peer-referral-wpcom' );
+				onPeerReferralCtaClick();
+			},
+		};
+
+		if ( peerReferralLink ) {
+			cta.component = <ClipboardButtonInput value={ peerReferralLink } />;
+		}
+
+		return {
+			title: translate( 'Refer a friend, you’ll both earn credits' ),
+			body: peerReferralLink
+				? translate(
+						'To earn free credits, share the link below with your friends, family, and website visitors. ' +
+							'By doing so you agree to the WordPress.com Peer Referral Program {{a}}Terms and Conditions.{{/a}}',
+						{
+							components: {
+								a: (
+									<a
+										href="https://wordpress.com/refer-a-friend-program-terms-of-service/"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						}
+				  )
+				: translate(
+						'Share WordPress.com with friends, family, and website visitors. For every paying customer you send our way, you’ll both earn US$25 in free credits. {{em}}Available with every plan{{/em}}.',
+						{
+							components: {
+								em: <em />,
+							},
+						}
+				  ),
+			image: {
+				path: referralImage,
+			},
+			actions: {
+				cta,
+			},
+		};
+	};
+
+	/**
 	 * Return the content to display in the Ads card based on the current plan.
 	 *
 	 * @returns {object} Object with props to render a PromoCard.
@@ -273,6 +353,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			getSimplePaymentsCard(),
 			getRecurringPaymentsCard(),
 			getAdsCard(),
+			abtest( 'peerReferralEarnCard' ) === 'show' ? getPeerReferralsCard() : false,
 			getReferralsCard(),
 		] ),
 	};

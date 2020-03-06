@@ -30,7 +30,7 @@ export interface Props {
 	image?: Image;
 	title: string | TranslateResult;
 	isPrimary?: boolean;
-	badge: string;
+	badge?: string;
 }
 
 const PromoCard: FunctionComponent< Props > = ( { title, image, isPrimary, children, badge } ) => {

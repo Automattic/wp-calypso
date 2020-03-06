@@ -128,6 +128,27 @@ UndocumentedMe.prototype.changeUsername = function( username, action, callback )
 	return this.wpcom.req.post( args, callback );
 };
 
+UndocumentedMe.prototype.getPeerReferralLink = function( callback ) {
+	const args = {
+		apiVersion: '1.1',
+		path: '/me/peer-referral-link',
+	};
+
+	return this.wpcom.req.get( args, callback );
+};
+
+UndocumentedMe.prototype.setPeerReferralLinkEnable = function( enable, callback ) {
+	const args = {
+		apiVersion: '1.1',
+		path: '/me/peer-referral-link-enable',
+		body: {
+			enable,
+		},
+	};
+
+	return this.wpcom.req.post( args, callback );
+};
+
 /**
  * Get a list of the user's stored cards
  *
