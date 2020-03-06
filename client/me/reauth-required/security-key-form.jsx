@@ -8,23 +8,22 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import FormButton from 'components/forms/form-button';
 import { Card } from '@automattic/components';
+import FormButton from 'components/forms/form-button';
+import FormInputValidation from 'components/forms/form-input-validation';
 import { localize } from 'i18n-calypso';
 import Spinner from 'components/spinner';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
  */
 import './security-key-form.scss';
-import FormInputValidation from 'components/forms/form-input-validation';
 
 class SecurityKeyForm extends Component {
 	static propTypes = {
 		loginUserWithSecurityKey: PropTypes.func.isRequired,
 		onComplete: PropTypes.func,
-		recordTracksEvent: PropTypes.func.isRequired,
+
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -54,11 +53,12 @@ class SecurityKeyForm extends Component {
 
 	render() {
 		const { translate } = this.props;
+		const { isAuthenticating } = this.state;
 
 		return (
 			<form onSubmit={ this.initiateSecurityKeyAuthentication }>
 				<Card compact className="security-key-form__verification-code-form">
-					{ ! this.state.isAuthenticating && (
+					{ ! isAuthenticating ? (
 						<div>
 							<p>
 								{ translate( '{{strong}}Use your security key to finish logging in.{{/strong}}', {
@@ -73,8 +73,7 @@ class SecurityKeyForm extends Component {
 								) }
 							</p>
 						</div>
-					) }
-					{ this.state.isAuthenticating && (
+					) : (
 						<div className="security-key-form__add-wait-for-key">
 							<Spinner />
 							<p className="security-key-form__add-wait-for-key-heading">
@@ -94,7 +93,7 @@ class SecurityKeyForm extends Component {
 					<FormButton
 						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 						primary
-						disabled={ this.state.isAuthenticating }
+						disabled={ isAuthenticating }
 					>
 						{ translate( 'Continue with security key' ) }
 					</FormButton>
@@ -104,6 +103,4 @@ class SecurityKeyForm extends Component {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent,
-} )( localize( SecurityKeyForm ) );
+export default connect( null, null )( localize( SecurityKeyForm ) );
