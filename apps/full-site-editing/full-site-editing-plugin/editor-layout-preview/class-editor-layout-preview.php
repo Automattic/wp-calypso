@@ -90,7 +90,7 @@ class Editor_Layout_Preview {
 
 		// Inline the Editor Settings.
 		$settings = $this->get_editor_layout_preview_settings();
-		wp_add_inline_script( self::$script_handler, 'window.getdaveSbeSettings = ' . wp_json_encode( $settings ) . ';' );
+		wp_add_inline_script( self::$script_handler, 'window.editor_layout_preview = ' . wp_json_encode( $settings ) . ';' );
 
 		// Editor default styles.
 		wp_enqueue_style( 'wp-format-library' );
