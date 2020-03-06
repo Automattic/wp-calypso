@@ -2,12 +2,17 @@
 
 // This should match the timeout used in the component.
 $onboarding-block-css-transition-duration: 750ms;
+$onboarding-brand-font-family: Recoleta, Georgia, 'Times New Roman', Times, serif;
 
 @font-face {
+	font-weight: 400;
+	font-display: swap;
 	font-family: 'Recoleta';
-	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.woff2' ) format( 'woff2' ), /* Super Modern Browsers */
-		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff' ) format( 'woff' ), /* Pretty Modern Browsers */
-		url( 'https://s1.wp.com/i/fonts/recoleta/400.ttf' )  format( 'truetype' ); /* Safari, Android, iOS */
+	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.eot' );
+	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.eot?#iefix' ) format( 'embedded-opentype' ),
+		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff2' ) format( 'woff2' ),
+		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff' ) format( 'woff' ),
+		url( 'https://s1.wp.com/i/fonts/recoleta/400.ttf' ) format( 'truetype' );
 }
 
 .onboarding-block__acquire-intent {
@@ -15,13 +20,11 @@ $onboarding-block-css-transition-duration: 750ms;
 	justify-content: center;
 	align-items: center;
 	margin-top: 40px;
-	font-family: 'Recoleta-Regular', 'Recoleta', serif;
-
-
 
 	tab-size: 4;
 	color: var( --mainColor );
 	background-color: var( --contrastColor );
+	font-family: $onboarding-brand-font-family;
 	font-size: 64px;
 	letter-spacing: -0.4px;
 	font-weight: 400;
@@ -86,7 +89,8 @@ $onboarding-block-css-transition-duration: 750ms;
 
 .onboarding-block__question input {
 	background: transparent;
-	font-family: 'Recoleta-Regular', 'Recoleta', serif;
+	font-family: $onboarding-brand-font-family;
+	font-weight: 400;
 }
 
 .onboarding-block__background {
