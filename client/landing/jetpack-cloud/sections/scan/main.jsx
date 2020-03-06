@@ -56,6 +56,7 @@ class ScanPage extends Component {
 				<h1 className="scan__header">{ translate( 'Your site may be at risk' ) }</h1>
 				<p>
 					{ translate(
+						'The scan found {{strong}}%(threatCount)s{{/strong}} potential threat with {{strong}}%(siteName)s{{/strong}}.',
 						'The scan found {{strong}}%(threatCount)s{{/strong}} potential threats with {{strong}}%(siteName)s{{/strong}}.',
 						{
 							args: {
@@ -65,6 +66,7 @@ class ScanPage extends Component {
 							components: { strong: <strong /> },
 							comment:
 								'%(threatCount)s represents the number of threats currently identified on the site, and $(siteName)s is the name of the site.',
+							count: threats.length,
 						}
 					) }
 					<br />
