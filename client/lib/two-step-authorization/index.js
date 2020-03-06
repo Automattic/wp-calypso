@@ -29,7 +29,7 @@ function TwoStepAuthorization() {
 		return new TwoStepAuthorization();
 	}
 
-	this.data = null;
+	this.data = {};
 	this.initialized = false;
 	this.smsResendThrottled = false;
 
@@ -73,8 +73,7 @@ TwoStepAuthorization.prototype.postLoginRequest = function( endpoint, data ) {
 	}
 
 	const url = 'https://wordpress.com/wp-login.php?action=' + endpoint;
-	// eslint-disable-next-line no-undef
-	const formData = new FormData();
+	const formData = new window.FormData();
 	const requestData = {
 		client_id: config( 'wpcom_signup_id' ),
 		client_secret: config( 'wpcom_signup_key' ),
@@ -86,12 +85,14 @@ TwoStepAuthorization.prototype.postLoginRequest = function( endpoint, data ) {
 	for ( const key in requestData ) {
 		formData.set( key, requestData[ key ] );
 	}
-	// eslint-disable-next-line no-undef
-	return fetch( url, {
-		method: 'POST',
-		body: formData,
-		credentials: 'include',
-	} ).then( response => response.json() );
+
+	return window
+		.fetch( url, {
+			method: 'POST',
+			body: formData,
+			credentials: 'include',
+		} )
+		.then( response => response.json() );
 };
 
 TwoStepAuthorization.prototype.loginUserWithSecurityKey = function( args ) {
@@ -289,27 +290,27 @@ TwoStepAuthorization.prototype.isSMSResendThrottled = function() {
 };
 
 TwoStepAuthorization.prototype.isReauthRequired = function() {
-	return this.data ? this.data.two_step_reauthorization_required : false;
+	return this.data.two_step_reauthorization_required ?? false;
 };
 
 TwoStepAuthorization.prototype.authExpiresSoon = function() {
-	return this.data ? this.data.two_step_authorization_expires_soon : false;
+	return this.data.two_step_authorization_expires_soon ?? false;
 };
 
 TwoStepAuthorization.prototype.isTwoStepSMSEnabled = function() {
-	return this.data ? this.data.two_step_sms_enabled : false;
+	return this.data.two_step_sms_enabled ?? false;
 };
 
 TwoStepAuthorization.prototype.isSecurityKeyEnabled = function() {
-	return this.data?.two_step_webauthn_enabled ?? false;
+	return this.data.two_step_webauthn_enabled ?? false;
 };
 
 TwoStepAuthorization.prototype.getTwoStepWebauthnNonce = function() {
-	return this.data?.two_step_webauthn_nonce ?? false;
+	return this.data.two_step_webauthn_nonce ?? false;
 };
 
 TwoStepAuthorization.prototype.getSMSLastFour = function() {
-	return this.data ? this.data.two_step_sms_last_four : null;
+	return this.data.two_step_sms_last_four ?? null;
 };
 
 emitter( TwoStepAuthorization.prototype );
