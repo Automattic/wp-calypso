@@ -37,7 +37,7 @@ const LoginForm = ( { onRequestClose, onOpenSignup, onLogin }: Props ) => {
 	const { submitPassword } = useDispatch( AUTH_STORE );
 	const loginFlowState = useSelect( select => select( AUTH_STORE ).getLoginFlowState() );
 	const errors = useSelect( select => select( AUTH_STORE ).getErrors() );
-
+	const { reset } = useDispatch( AUTH_STORE );
 	// todo: either reset the auth store state on load here or in the header/index.tsx
 	// todo: loading state like isFetchingNewUser
 
@@ -48,15 +48,20 @@ const LoginForm = ( { onRequestClose, onOpenSignup, onLogin }: Props ) => {
 		if ( loginFlowState === 'ENTER_USERNAME_OR_EMAIL' ) {
 			submitUsernameOrEmail( usernameOrEmailVal );
 		} else if ( loginFlowState === 'ENTER_PASSWORD' ) {
+			submitUsernameOrEmail( usernameOrEmailVal );
 			submitPassword( passwordVal );
 		}
+	};
+
+	const closeModal = () => {
+		reset();
+		onRequestClose();
 	};
 
 	useEffect( () => {
 		// this is triggered on successful submitPassword
 		if ( loginFlowState === 'LOGGED_IN' ) {
-			onRequestClose();
-			// todo: use value from store
+			closeModal();
 			onLogin( usernameOrEmailVal );
 		}
 	}, [ loginFlowState ] );
@@ -76,7 +81,7 @@ const LoginForm = ( { onRequestClose, onOpenSignup, onLogin }: Props ) => {
 			className="login-form"
 			isDismissible={ false }
 			title={ NO__( 'Log in to save your changes' ) }
-			onRequestClose={ onRequestClose }
+			onRequestClose={ closeModal }
 		>
 			<form onSubmit={ handleLogin }>
 				<TextControl
