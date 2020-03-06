@@ -258,7 +258,10 @@ const ReauthRequired = createReactClass( {
 				isVisible={ this.props.twoStepAuthorization.isReauthRequired() }
 			>
 				{ isSecurityKeySupported && twoFactorAuthType === 'webauthn' ? (
-					<SecurityKeyForm loginUserWithSecurityKey={ this.loginUserWithSecurityKey } />
+					<SecurityKeyForm
+						loginUserWithSecurityKey={ this.loginUserWithSecurityKey }
+						onComplete={ this.refreshNonceOnFailure }
+					/>
 				) : (
 					this.renderVerificationForm()
 				) }
@@ -272,6 +275,13 @@ const ReauthRequired = createReactClass( {
 				/>
 			</Dialog>
 		);
+	},
+
+	refreshNonceOnFailure( error ) {
+		const errors = [].slice.call( error?.data?.errors ?? [] );
+		if ( errors.findIndex( e => e.code === 'invalid_two_step_nonce' ) >= 0 ) {
+			this.props.twoStepAuthorization.fetch();
+		}
 	},
 
 	handleAuthSwitch( authType ) {
