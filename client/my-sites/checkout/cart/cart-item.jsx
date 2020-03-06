@@ -35,6 +35,7 @@ import { localize } from 'i18n-calypso';
 import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'lib/plans';
 
 export function CartItem( {
+	removeItemFromCart,
 	cart,
 	cartItem,
 	translate,
@@ -72,12 +73,15 @@ export function CartItem( {
 				<span className="product-monthly-price">
 					<MonthlyPrice cartItem={ cartItem } translate={ translate } />
 				</span>
-				<RemoveButton
-					cart={ cart }
-					cartItem={ cartItem }
-					translate={ translate }
-					domainsWithPlansOnly={ domainsWithPlansOnly }
-				/>
+				{ removeItemFromCart && (
+					<RemoveButton
+						removeItemFromCart={ removeItemFromCart }
+						cart={ cart }
+						cartItem={ cartItem }
+						translate={ translate }
+						domainsWithPlansOnly={ domainsWithPlansOnly }
+					/>
+				) }
 			</div>
 		</li>
 	);
@@ -85,6 +89,7 @@ export function CartItem( {
 }
 
 CartItem.propTypes = {
+	removeItemFromCart: PropTypes.func,
 	cartItem: PropTypes.shape( {
 		product_id: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
 		cost: PropTypes.number,
@@ -102,7 +107,7 @@ CartItem.propTypes = {
 	moment: PropTypes.func.isRequired,
 };
 
-function RemoveButton( { cart, cartItem, translate, domainsWithPlansOnly } ) {
+function RemoveButton( { removeItemFromCart, cart, cartItem, translate, domainsWithPlansOnly } ) {
 	const labelText = translate( 'Remove item' );
 	const removeFromCart = event => {
 		event.preventDefault();
@@ -112,7 +117,7 @@ function RemoveButton( { cart, cartItem, translate, domainsWithPlansOnly } ) {
 			'Product ID',
 			cartItem.product_id
 		);
-		removeItem( cartItem, domainsWithPlansOnly );
+		removeItemFromCart( cartItem, domainsWithPlansOnly );
 	};
 
 	if ( canRemoveFromCart( cart, cartItem ) ) {
@@ -127,6 +132,7 @@ function RemoveButton( { cart, cartItem, translate, domainsWithPlansOnly } ) {
 			</button>
 		);
 	}
+	return null;
 }
 
 function MonthlyPrice( { cartItem, translate } ) {
@@ -372,4 +378,5 @@ function isDomainProductDiscountedTo0( cartItem ) {
 
 export default connect( state => ( {
 	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
+	removeItemFromCart: removeItem,
 } ) )( localize( withLocalizedMoment( CartItem ) ) );
