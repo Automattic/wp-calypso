@@ -61,7 +61,7 @@ function WPLineItem( {
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
 			<ProductTitle id={ itemSpanId }>{ item.label }</ProductTitle>
 			<span aria-labelledby={ itemSpanId }>
-				{ renderDisplayValueMarkdown( item.amount.displayValue ) }
+				<LineItemPrice lineItem={ item } />
 			</span>
 			{ hasDeleteButton && formStatus === 'ready' && (
 				<React.Fragment>
@@ -129,6 +129,20 @@ WPLineItem.propTypes = {
 	onChangePlanLength: PropTypes.func,
 };
 
+function LineItemPrice( { lineItem } ) {
+	if ( lineItem.amount.value < lineItem.wpcom_meta?.product_cost_integer ) {
+		return (
+			<span>
+				<DiscountOriginalPriceUI>
+					{ lineItem.wpcom_meta.product_cost_display }
+				</DiscountOriginalPriceUI>{ ' ' }
+				{ lineItem.amount.displayValue }
+			</span>
+		);
+	}
+	return renderDisplayValueMarkdown( lineItem.amount.displayValue );
+}
+
 const LineItemUI = styled( WPLineItem )`
 	display: flex;
 	flex-wrap: wrap;
@@ -141,6 +155,10 @@ const LineItemUI = styled( WPLineItem )`
 		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight};
 	position: relative;
 	margin-right: 30px;
+`;
+
+const DiscountOriginalPriceUI = styled.s`
+	color: ${props => props.theme.colors.success};
 `;
 
 const ProductTitle = styled.span`
