@@ -48,7 +48,7 @@ This plugin is experimental, so we don't provide any support for it outside of w
 * Starter Page Templates: Hide templates using unavailable blocks
 * Starter Page Templates: Track template insertion on Dotcom sites
 * Site Editor: initialize core FSE on Dotcom sites
-* Enable Gutenberg NUX with Gutenberg copy (#39846)
+* Enable Gutenberg NUX with Gutenberg copy
 * Improved unit testing commands
 
 = 0.21 =
