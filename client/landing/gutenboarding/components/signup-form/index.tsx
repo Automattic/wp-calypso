@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
@@ -29,9 +30,10 @@ declare module '@wordpress/element' {
 
 interface Props {
 	onRequestClose: () => void;
+	onOpenLogin: () => void;
 }
 
-const SignupForm = ( { onRequestClose }: Props ) => {
+const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 	const { __: NO__, _x: NO_x } = useI18n();
 	const [ emailVal, setEmailVal ] = useState( '' );
 	const { createAccount } = useDispatch( USER_STORE );
@@ -132,8 +134,15 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 				</div>
 			</form>
 			<div className="signup-form__login-links">
-				<a href="login">{ NO__( 'Log in to create a site for your existing account.' ) }</a>
-				{ /* todo: add a link to other signup flow for social logins */ }
+				<Link
+					to=""
+					onClick={ e => {
+						onOpenLogin();
+						e.preventDefault();
+					} }
+				>
+					{ NO__( 'Log in to create a site for your existing account.' ) }
+				</Link>
 			</div>
 		</Modal>
 	);

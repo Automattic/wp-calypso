@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
@@ -22,7 +23,13 @@ declare module '@wordpress/element' {
 	): ReactNode;
 }
 
-const LoginForm = () => {
+interface Props {
+	onRequestClose: () => void;
+	onOpenSignup: () => void;
+	onLogin: ( username: string ) => void;
+}
+
+const LoginForm = ( { onRequestClose, onOpenSignup, onLogin }: Props ) => {
 	const { __: NO__, _x: NO_x } = useI18n();
 	const [ usernameOrEmailVal, setUsernameOrEmailVal ] = useState( '' );
 	const [ passwordVal, setPasswordVal ] = useState( '' );
@@ -31,6 +38,7 @@ const LoginForm = () => {
 	const loginFlowState = useSelect( select => select( AUTH_STORE ).getLoginFlowState() );
 	const errors = useSelect( select => select( AUTH_STORE ).getErrors() );
 
+	// todo: either reset the auth store state on load here or in the header/index.tsx
 	// todo: loading state like isFetchingNewUser
 
 	const handleLogin = ( event: React.FormEvent< HTMLFormElement > ) => {
@@ -41,13 +49,17 @@ const LoginForm = () => {
 			submitUsernameOrEmail( usernameOrEmailVal );
 		} else if ( loginFlowState === 'ENTER_PASSWORD' ) {
 			submitPassword( passwordVal );
-			//todo: handle success
 		}
 	};
 
-	const handleClose = () => {
-		// todo
-	};
+	useEffect( () => {
+		// this is triggered on successful submitPassword
+		if ( loginFlowState === 'LOGGED_IN' ) {
+			onRequestClose();
+			// todo: use value from store
+			onLogin( usernameOrEmailVal );
+		}
+	}, [ loginFlowState ] );
 
 	const tos = __experimentalCreateInterpolateElement(
 		NO__( 'By continuing you agree to our <link_to_tos>Terms of Service</link_to_tos>.' ),
@@ -64,7 +76,7 @@ const LoginForm = () => {
 			className="login-form"
 			isDismissible={ false }
 			title={ NO__( 'Log in to save your changes' ) }
-			onRequestClose={ handleClose }
+			onRequestClose={ onRequestClose }
 		>
 			<form onSubmit={ handleLogin }>
 				<TextControl
@@ -117,10 +129,15 @@ const LoginForm = () => {
 				</div>
 			</form>
 			<div className="login-form__signup-links">
-				<a href="signup">
-					{NO__( 'Create account.' )}
-				</a>
-				{/* todo: add a link to other login flow for social logins */}
+				<Link
+					to=""
+					onClick={ e => {
+						onOpenSignup();
+						e.preventDefault();
+					} }
+				>
+					{ NO__( 'Create account.' ) }
+				</Link>
 			</div>
 		</Modal>
 	);
