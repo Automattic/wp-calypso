@@ -11,15 +11,15 @@ import { Button } from '@automattic/components';
 
 interface Props {
 	onConfirm: () => void;
-	downloadId: string;
+	rewindId: string;
 	siteId: number | null;
 }
 
-const BackupDownloadConfirm = ( { downloadId, siteId, onConfirm }: Props ) => (
+const BackupDownloadConfirm = ( { rewindId, siteId, onConfirm }: Props ) => (
 	<div>
 		<h3>{ 'Create downloadable backup' }</h3>
 		<p>
-			<strong>{ moment.unix( parseInt( downloadId ) ).format( 'LLL' ) }</strong>
+			<strong>{ moment.unix( parseInt( rewindId ) ).format( 'LLL' ) }</strong>
 			{ ` is the selected point to create  a download backup of ${ siteId }.` }
 		</p>
 		<Button onClick={ onConfirm }>{ 'Create downloadable backup' }</Button>
