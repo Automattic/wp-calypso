@@ -265,7 +265,7 @@ const ReauthRequired = createReactClass( {
 					? this.renderSecurityKey()
 					: this.renderVerificationForm() }
 				<TwoFactorActions
-					twoFactorAuthType={ this.state.twoFactorAuthType }
+					twoFactorAuthType={ twoFactorAuthType }
 					onChange={ this.handleAuthSwitch }
 					isSmsSupported={ method === 'sms' || method === 'authenticator' }
 					isAuthenticatorSupported={ method !== 'sms' }
