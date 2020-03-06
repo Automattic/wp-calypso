@@ -64,7 +64,7 @@ export interface ControlsConfig extends WpcomClientCredentials {
 	loadCookiesAfterLogin: boolean;
 }
 
-export function createControls( clientCreds: ControlsConfig ) {
+export function createControls( config: ControlsConfig ) {
 	requestAllBlogsAccess().catch( () => {
 		throw new Error( 'Could not get all blog access.' );
 	} );
@@ -81,7 +81,7 @@ export function createControls( clientCreds: ControlsConfig ) {
 			} );
 		},
 		FETCH_WP_LOGIN: async ( { action, params }: FetchWpLoginAction ) => {
-			const { client_id, client_secret, loadCookiesAfterLogin } = clientCreds;
+			const { client_id, client_secret, loadCookiesAfterLogin } = config;
 
 			const response = await fetch(
 				// TODO Wrap this in `localizeUrl` from lib/i18n-utils
