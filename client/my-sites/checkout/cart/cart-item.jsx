@@ -35,32 +35,8 @@ import { localize } from 'i18n-calypso';
 import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'lib/plans';
 
 export class CartItem extends React.Component {
-	getProductInfo() {
-		const { cartItem, selectedSite } = this.props;
-		const domain =
-			cartItem.meta ||
-			get( cartItem, 'extra.domain_to_bundle' ) ||
-			( selectedSite && selectedSite.domain );
-		let info = null;
-
-		if ( isGoogleApps( cartItem ) && cartItem.extra.google_apps_users ) {
-			info = cartItem.extra.google_apps_users.map( user => (
-				<div key={ `user-${ user.email }` }>{ user.email }</div>
-			) );
-		} else if ( isCredits( cartItem ) ) {
-			info = null;
-		} else if ( getIncludedDomain( cartItem ) ) {
-			info = getIncludedDomain( cartItem );
-		} else if ( isTheme( cartItem ) ) {
-			info = selectedSite && selectedSite.domain;
-		} else {
-			info = domain;
-		}
-		return info;
-	}
-
 	render() {
-		const { cart, cartItem, translate, domainsWithPlansOnly, moment } = this.props;
+		const { cart, cartItem, translate, domainsWithPlansOnly, selectedSite, moment } = this.props;
 
 		let name = this.getProductName();
 		const subscriptionLength = this.getSubscriptionLength();
@@ -79,7 +55,9 @@ export class CartItem extends React.Component {
 					<span className="product-name" data-e2e-product-slug={ cartItem.product_slug }>
 						{ name || translate( 'Loading…' ) }
 					</span>
-					<span className="product-domain">{ this.getProductInfo() }</span>
+					<span className="product-domain">
+						<ProductInfo cartItem={ cartItem } selectedSite={ selectedSite } />
+					</span>
 					<DomainRenewalExpiryDate
 						moment={ moment }
 						translate={ translate }
@@ -371,6 +349,29 @@ function getDomainRenewalExpiryDate( cartItem ) {
 		get( cartItem, 'is_renewal' ) &&
 		get( cartItem, 'domain_post_renewal_expiration_date' )
 	);
+}
+
+function ProductInfo( { cartItem, selectedSite } ) {
+	const domain =
+		cartItem.meta ||
+		get( cartItem, 'extra.domain_to_bundle' ) ||
+		( selectedSite && selectedSite.domain );
+	let info = null;
+
+	if ( isGoogleApps( cartItem ) && cartItem.extra.google_apps_users ) {
+		info = cartItem.extra.google_apps_users.map( user => (
+			<div key={ `user-${ user.email }` }>{ user.email }</div>
+		) );
+	} else if ( isCredits( cartItem ) ) {
+		info = null;
+	} else if ( getIncludedDomain( cartItem ) ) {
+		info = getIncludedDomain( cartItem );
+	} else if ( isTheme( cartItem ) ) {
+		info = selectedSite && selectedSite.domain;
+	} else {
+		info = domain;
+	}
+	return info;
 }
 
 export default connect( state => ( {
