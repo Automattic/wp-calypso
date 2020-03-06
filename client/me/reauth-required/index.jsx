@@ -145,6 +145,12 @@ const ReauthRequired = createReactClass( {
 		return this.state.code.length && this.state.code.length > 5;
 	},
 
+	loginUserWithSecurityKey: function() {
+		return this.props.twoStepAuthorization.loginUserWithSecurityKey( {
+			user_id: this.props.currentUserId,
+		} );
+	},
+
 	renderFailedValidationMsg: function() {
 		if ( ! this.props.twoStepAuthorization.codeValidationFailed() ) {
 			return null;
@@ -235,15 +241,7 @@ const ReauthRequired = createReactClass( {
 	},
 
 	renderSecurityKey() {
-		return (
-			<SecurityKeyForm
-				loginUserWithSecurityKey={ () => {
-					return this.props.twoStepAuthorization.loginUserWithSecurityKey( {
-						user_id: this.props.currentUserId,
-					} );
-				} }
-			/>
-		);
+		return <SecurityKeyForm loginUserWithSecurityKey={ this.loginUserWithSecurityKey } />;
 	},
 
 	render: function() {
@@ -257,8 +255,6 @@ const ReauthRequired = createReactClass( {
 				className="reauth-required__dialog"
 				isFullScreen={ false }
 				isVisible={ this.props.twoStepAuthorization.isReauthRequired() }
-				buttons={ null }
-				onClose={ null }
 			>
 				{ isSecurityKeySupported &&
 					this.state.twoFactorAuthType === 'webauthn' &&
