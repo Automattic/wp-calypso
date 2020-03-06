@@ -231,6 +231,7 @@ class RegisteredDomainType extends React.Component {
 				'{{strong}}Your domain has expired{{/strong}} and is no longer active. {{domainsLink}}Learn more{{/domainsLink}}',
 				{
 					components: {
+						strong: <strong />,
 						domainsLink: domainsLink( DOMAIN_EXPIRATION ),
 					},
 				}
