@@ -14,11 +14,7 @@ import { useHasDomainsInCart } from '../hooks/has-domains';
 import Field from './field';
 import { SummaryLine, SummaryDetails, SummarySpacerLine } from './summary-details';
 import { LeftColumn, RightColumn } from './ie-fallback';
-import {
-	prepareDomainContactDetails,
-	prepareDomainContactDetailsErrors,
-	isValid,
-} from '../types';
+import { prepareDomainContactDetails, prepareDomainContactDetailsErrors, isValid } from '../types';
 
 export default function WPContactForm( {
 	summary,
@@ -30,6 +26,7 @@ export default function WPContactForm( {
 	updateContactDetails,
 	updateCountryCode,
 	updatePostalCode,
+	shouldShowContactDetailsValidationErrors,
 } ) {
 	const translate = useTranslate();
 	const isDomainFieldsVisible = useHasDomainsInCart();
@@ -54,6 +51,7 @@ export default function WPContactForm( {
 				updatePostalCode,
 				CountrySelectMenu,
 				countriesList,
+				shouldShowContactDetailsValidationErrors,
 			} ) }
 		</BillingFormFields>
 	);
@@ -252,6 +250,7 @@ function renderContactDetails( {
 	updatePostalCode,
 	CountrySelectMenu,
 	countriesList,
+	shouldShowContactDetailsValidationErrors,
 } ) {
 	const format = getContactDetailsFormat( isDomainFieldsVisible );
 	const requiresVatId = isEligibleForVat( contactInfo.countryCode.value );
@@ -267,7 +266,8 @@ function renderContactDetails( {
 					{ renderDomainContactFields(
 						prepareDomainContactDetails( contactInfo ),
 						prepareDomainContactDetailsErrors( contactInfo ),
-						updateContactDetails
+						updateContactDetails,
+						shouldShowContactDetailsValidationErrors
 					) }
 					{ requiresVatId && <VatIdField /> }
 				</React.Fragment>
