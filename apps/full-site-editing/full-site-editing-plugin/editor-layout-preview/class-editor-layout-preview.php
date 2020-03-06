@@ -52,8 +52,8 @@ class Editor_Layout_Preview {
 	 */
 	public function add_editor_layout_preview_page() {
 		add_options_page(
-			'Editor Large Preview',
-			'Editor Large Preview',
+			'Editor Layout Preview',
+			'Editor Layout Preview',
 			'manage_options',
 			'editor-layout-preview',
 			array( $this, 'render_editor_layout_preview_content' )
@@ -80,10 +80,12 @@ class Editor_Layout_Preview {
 				'version'      => filemtime( $script_path ),
 			);
 
+		$dependencies = array_merge( $script_asset['dependencies'], $this->get_handler_dependencies() );
+
 		wp_enqueue_script(
 			self::$script_handler,
 			plugins_url( $script_path, __FILE__ ),
-			$script_asset['dependencies'],
+			$dependencies,
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/editor-layout-preview.js' ),
 			true
 		);
@@ -137,4 +139,19 @@ class Editor_Layout_Preview {
 		return $settings;
 	}
 
+	/**
+	 * Return script handler dependencies.
+	 *
+	 * @return array handler dependencies array.
+	 */
+	public function get_handler_dependencies() {
+		return array(
+			'coblocks-slick',
+			'editor',
+			'coblocks-editor',
+			'jetpack-event-countdown',
+			'jetpack-timeline',
+		);
+	}
 }
+
