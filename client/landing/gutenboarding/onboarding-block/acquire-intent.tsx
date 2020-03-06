@@ -30,9 +30,9 @@ const AcquireIntent: FunctionComponent = () => {
 				{ siteVertical && (
 					<div className="onboarding-block__footer">
 						<Link
-							to={ makePath( Step.DesignSelection ) }
 							className="onboarding-block__question-skip"
-							isLink
+							isPrimary
+							to={ makePath( Step.DesignSelection ) }
 						>
 							{ /* @TODO: add transitions and correct action */ }
 							{ siteTitle ? NO__( 'Choose a design' ) : NO__( "Don't know yet" ) }
