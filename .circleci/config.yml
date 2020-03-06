@@ -883,9 +883,6 @@ workflows:
       - build-wpcom-block-editor:
           requires:
             - setup
-      - icfy-stats:
-          requires:
-            - setup
       - translate
       - lint:
           requires:
