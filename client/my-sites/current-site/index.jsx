@@ -82,13 +82,13 @@ class CurrentSite extends Component {
 				) : (
 					<AllSites />
 				) }
+				<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
+				<AsyncLoad require="my-sites/current-site/stale-cart-items-notice" placeholder={ null } />
 				<AsyncLoad
 					require="my-sites/current-site/notice"
 					placeholder={ null }
 					site={ selectedSite }
 				/>
-				<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
-				<AsyncLoad require="my-sites/current-site/stale-cart-items-notice" placeholder={ null } />
 			</Card>
 		);
 	}

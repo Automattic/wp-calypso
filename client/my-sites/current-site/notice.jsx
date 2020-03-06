@@ -295,6 +295,7 @@ export class SiteNotice extends React.Component {
 			<div className="current-site__notices">
 				<QueryProductsList />
 				<QueryActivePromotions />
+				{ siteRedirectNotice }
 				{ discountOrFreeToPaid ||
 					( config.isEnabled( 'jitms' ) && (
 						<AsyncLoad
@@ -303,7 +304,6 @@ export class SiteNotice extends React.Component {
 							template="sidebar-banner"
 						/>
 					) ) }
-				{ siteRedirectNotice }
 				<QuerySitePlans siteId={ site.ID } />
 				{ ! hasJITM && domainCreditNotice }
 				{ ! ( hasJITM || discountOrFreeToPaid || domainCreditNotice ) && this.domainUpsellNudge() }
