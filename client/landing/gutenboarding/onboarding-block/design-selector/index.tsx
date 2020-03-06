@@ -48,10 +48,12 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 			select( VERTICALS_TEMPLATES_STORE ).getTemplates( siteVertical?.id ?? 'm1' )
 		) ?? [];
 
-	const [ designs, otherTemplates ] = partition(
+	let [ designs, otherTemplates ] = partition(
 		templates,
 		( { category } ) => category === 'home'
 	);
+
+	designs = designs.slice( 0, 4 );
 
 	const headingContainer = useRef< HTMLDivElement >( null );
 	const selectionTransitionShift = useRef< number >( 0 );
@@ -95,41 +97,22 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 	const makePath = usePath();
 
 	return (
-		<animated.div style={ designSelectorSpring }>
-			<div
-				className="design-selector__header-container"
-				aria-hidden={ showPageSelector ? 'true' : undefined }
-				ref={ headingContainer }
-			>
+		<div className="design-selector gutenboarding-color-coded" data-vertical={ siteVertical?.label }>
+			<div className="design-selector__header">
 				<h1 className="design-selector__title">
-					{ NO__( 'Choose a starting design for your site' ) }
+					{ NO__( 'Choose a starting design' ) }
 				</h1>
 				<h2 className="design-selector__subtitle">
-					{ NO__( "You'll be able to customize your new site in hundreds of ways." ) }
+					{ NO__( "Get started with one of our top website layouts. You can always change it later" ) }
 				</h2>
 			</div>
-			<div
-				className={ classnames( 'design-selector__grid-container', {
-					'is-page-selector-open': showPageSelector,
-				} ) }
-				tabIndex={ -1 }
-			>
+			<div className="design-selector__design-grid">
 				<div className="design-selector__grid">
 					{ designs.map( design => (
 						<DesignCard
 							key={ design.slug }
 							dialogId={ dialogId }
 							design={ design }
-							style={
-								selectedDesign?.slug === design.slug
-									? {
-											gridRow: 1,
-											gridColumn: descriptionOnRight ? 1 : 2,
-									  }
-									: {
-											visibility: showPageSelector ? 'hidden' : undefined,
-									  }
-							}
 							tabIndex={ showPageSelector ? -1 : 0 }
 							onClick={ () => {
 								if ( showPageSelector ) return;
@@ -141,42 +124,7 @@ const DesignSelector: FunctionComponent< Props > = ( { showPageSelector = false 
 					) ) }
 				</div>
 			</div>
-
-			<animated.div
-				className={ classnames( 'design-selector__description-container', {
-					'on-right-side': descriptionOnRight,
-				} ) }
-				style={ descriptionContainerSpring }
-			>
-				<div className="design-selector__description-title">{ selectedDesign?.title }</div>
-				<div className="design-selector__description-description">
-					{ /* @TODO: Real description? */ }
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-					ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-					ullamco laboris nisi ut aliquip ex ea commodo consequat.
-				</div>
-			</animated.div>
-
-			<animated.div
-				className={ classnames( 'design-selector__page-layout-container', {
-					'is-open': showPageSelector,
-				} ) }
-				style={ pageSelectorSpring }
-			>
-				<Dialog
-					{ ...dialog }
-					modal={ false }
-					hide={ () => {
-						history.push( makePath( Step.DesignSelection ) );
-					} }
-					aria-labelledby="page-layout-selector__title"
-					hideOnClickOutside={ false }
-					hideOnEsc
-				>
-					<PageLayoutSelector templates={ otherTemplates } />
-				</Dialog>
-			</animated.div>
-		</animated.div>
+		</div>
 	);
 };
 
