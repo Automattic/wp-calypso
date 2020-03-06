@@ -49,7 +49,6 @@ const ReauthRequired = createReactClass( {
 			smsRequestsAllowed: true, // Can the user request another SMS code?
 			smsCodeSent: false,
 			twoFactorAuthType: 'authenticator',
-			webauthnError: false,
 		};
 	},
 
