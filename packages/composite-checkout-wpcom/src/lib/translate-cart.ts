@@ -154,6 +154,8 @@ function translateWpcomCartItemToCheckoutCartItem(
 			extra,
 			volume,
 			uuid,
+			product_cost_integer,
+			product_cost_display,
 		} = serverCartItem;
 
 		// Sublabel is the domain name for registrations
@@ -183,6 +185,8 @@ function translateWpcomCartItemToCheckoutCartItem(
 				extra,
 				volume,
 				is_domain_registration,
+				product_cost_integer,
+				product_cost_display,
 			},
 		};
 	};

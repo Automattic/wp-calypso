@@ -109,6 +109,8 @@ export interface ResponseCartProduct {
 	product_slug: string;
 	product_id: number;
 	currency: string;
+	product_cost_integer: number;
+	product_cost_display: string;
 	item_subtotal_integer: number;
 	item_subtotal_display: string;
 	is_domain_registration: boolean;
