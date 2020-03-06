@@ -47,8 +47,8 @@ describe( 'getBackupAttemptsForDate', () => {
 			},
 		];
 
-		// 2020-03-04T05:02:10 -10:00 = 2020-03-03T29:02:10 and should be considered on the same day
-		const filteredLogs = getBackupAttemptsForDate( logs, '2020-03-03T19:02:10.215-10:00' );
+		// 2020-03-04T05:02:10 -06:00 = 2020-03-03T23:02:10 and should be considered on the same day
+		const filteredLogs = getBackupAttemptsForDate( logs, '2020-03-03T19:02:10.215-06:00' );
 
 		expect( filteredLogs.complete ).toHaveLength( 1 );
 	} );
