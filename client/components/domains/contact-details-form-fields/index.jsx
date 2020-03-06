@@ -82,6 +82,7 @@ export class ContactDetailsFormFields extends Component {
 		needsOnlyGoogleAppsDetails: PropTypes.bool,
 		needsAlternateEmailForGSuite: PropTypes.bool,
 		hasCountryStates: PropTypes.bool,
+		shouldForceRenderOnPropChange: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -105,6 +106,7 @@ export class ContactDetailsFormFields extends Component {
 		hasCountryStates: false,
 		translate: identity,
 		userCountryCode: 'US',
+		shouldForceRenderOnPropChange: false,
 	};
 
 	constructor( props ) {
@@ -125,6 +127,7 @@ export class ContactDetailsFormFields extends Component {
 	// This is an attempt limit the redraws to only what we need.
 	shouldComponentUpdate( nextProps, nextState ) {
 		return (
+			nextProps.shouldForceRenderOnPropChange === true ||
 			( nextProps.isSubmitting === false && this.props.isSubmitting === true ) ||
 			nextState.phoneCountryCode !== this.state.phoneCountryCode ||
 			! isEqual( nextProps.contactDetails, this.props.contactDetails ) ||
