@@ -43,7 +43,13 @@ This plugin is experimental, so we don't provide any support for it outside of w
 == Changelog ==
 
 = 0.22 =
-* TODO!
+* Starter Page Templates: Improved previews with many visual glitches fixed
+* Starter Page Templates: Make page title visibility depend on theme setting
+* Starter Page Templates: Hide templates using unavailable blocks
+* Starter Page Templates: Track template insertion on Dotcom sites
+* Site Editor: initialize core FSE on Dotcom sites
+* Enable Gutenberg NUX with Gutenberg copy (#39846)
+* Improved unit testing commands
 
 = 0.21 =
 * Linting fixes and page layout selector improvements.
