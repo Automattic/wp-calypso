@@ -24,7 +24,7 @@ import LayoutPreview from './components/layout-preview';
 import './style.scss';
 
 // Load testing template.
-import testingTemplate from './util/testing_template';
+import testingLayout from './util/testing_layout';
 
 const debug = debugFactory( 'editor-layout-preview' );
 debug( 'init' );
@@ -37,8 +37,8 @@ domReady( function() {
 
 	registerCoreBlocks();
 
-	debug( 'testing template: %o', testingTemplate );
-	const blocks = parseBlocks( testingTemplate );
+	debug( 'testing template: %o', testingLayout );
+	const blocks = parseBlocks( testingLayout );
 	debug( 'blocks: %o', blocks );
 
 	render( <LayoutPreview blocks={ blocks } />, document.getElementById( 'editor-large-preview' ) );
