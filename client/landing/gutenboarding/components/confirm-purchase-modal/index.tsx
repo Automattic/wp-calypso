@@ -4,7 +4,7 @@
 import React, { FunctionComponent } from 'react';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
-import { Button } from '@wordpress/components';
+import { Button, Modal } from '@wordpress/components';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 
 /**
@@ -17,31 +17,22 @@ import { Card } from '@automattic/components';
  */
 import './style.scss';
 
-const ConfirmPurchaseModal: FunctionComponent = props => {
+interface Props {
+	onCancel: () => void;
+	onAccept: () => void;
+	isLogged: boolean;
+	selectedDomain: import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
+}
+const ConfirmPurchaseModal: FunctionComponent< Props > = props => {
 	const { __: NO__ } = useI18n();
 
-	const handleCancel = () => {
-		props.onCancel();
-	};
-
-	const handlePurchase = () => {
-		props.onAccept();
-	};
-
-	const handleESC = event => {
-		if ( event.keyCode === 27 ) {
-			props.onCancel();
-		}
-	};
-
 	return (
-		<div className="confirm-purchase-modal">
-			<div
-				className="confirm-purchase-modal__background"
-				onClick={ handleCancel }
-				onKeyPress={ handleESC }
-				role="dialog"
-			/>
+		<Modal
+			title={ NO__( 'You are about to register your new domain!' ) }
+			className="confirm-purchase-modal"
+			isDismissible={ false }
+			onRequestClose={ props.onCancel }
+		>
 			<Card className="confirm-purchase-modal__content">
 				<div className="confirm-purchase-modal__header">
 					{ NO__( 'You are about to register your new domain!' ) }
@@ -62,7 +53,7 @@ const ConfirmPurchaseModal: FunctionComponent = props => {
 						<li>{ NO__( 'Purchase a paid plan' ) }</li>
 					</ul>
 					{ NO__(
-						'Every paid plan include a domain registration. Once you have completed the purchase of your new plan, we will continue with the set up of your site.'
+						'Every paid plan includes a domain registration. Once you have completed the purchase of your new plan, we will continue with the set up of your site.'
 					) }
 				</div>
 				<div className="confirm-purchase-modal__buttons">
@@ -70,7 +61,7 @@ const ConfirmPurchaseModal: FunctionComponent = props => {
 						isLarge
 						type="button"
 						className="confirm-purchase-modal__buttons-cancel"
-						onClick={ handleCancel }
+						onClick={ props.onCancel }
 					>
 						{ NO__( 'Do it later' ) }
 					</Button>
@@ -79,13 +70,13 @@ const ConfirmPurchaseModal: FunctionComponent = props => {
 						isPrimary
 						type="button"
 						className="confirm-purchase-modal__buttons-accept"
-						onClick={ handlePurchase }
+						onClick={ props.onAccept }
 					>
 						{ NO__( 'Create your site and register your new domain' ) }
 					</Button>
 				</div>
 			</Card>
-		</div>
+		</Modal>
 	);
 };
 
