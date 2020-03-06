@@ -14,6 +14,8 @@ import {
 	incompleteUrlRedirects,
 	initAbTests,
 	legacyRedirects,
+	p2,
+	p2Sidebar,
 	preloadReaderBundle,
 	prettyRedirects,
 	readA8C,
@@ -92,4 +94,7 @@ export default function() {
 
 	// Automattic Employee Posts
 	page( '/read/a8c', updateLastRoute, sidebar, forceTeamA8C, readA8C, makeLayout, clientRender );
+
+	// P2
+	page( '/read/p2', updateLastRoute, p2Sidebar, forceTeamA8C, p2, makeLayout, clientRender );
 }

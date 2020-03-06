@@ -457,6 +457,7 @@ class ReaderStream extends React.Component {
 
 export default connect(
 	( state, { streamKey, recsStreamKey, shouldCombineCards = true } ) => {
+		console.log( streamKey );
 		const stream = getStream( state, streamKey );
 
 		return {

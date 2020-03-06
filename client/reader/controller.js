@@ -284,6 +284,50 @@ const exported = {
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 		next();
 	},
+
+	p2( context, next ) {
+		const basePath = sectionify( context.path );
+		const fullAnalyticsPageTitle = analyticsPageTitle + ' > A8C';
+		const mcKey = 'p2';
+		const streamKey = 'feed:8384527';
+		const startDate = getStartDate( context );
+
+		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+
+		setPageTitle( context, 'Automattic' );
+
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		context.primary = (
+			<AsyncLoad
+				require="reader/team/main"
+				key="read-a8c"
+				className="is-a8c"
+				listName="Automattic"
+				streamKey={ streamKey }
+				startDate={ startDate }
+				trackScrollPage={ trackScrollPage.bind(
+					null,
+					basePath,
+					fullAnalyticsPageTitle,
+					analyticsPageTitle,
+					mcKey
+				) }
+				showPrimaryFollowButtonOnCards={ false }
+				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
+				placeholder={ null }
+			/>
+		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
+		next();
+	},
+
+	p2Sidebar( context, next ) {
+		context.secondary = (
+			<AsyncLoad require="reader/p2-sidebar" path={ context.path } placeholder={ null } />
+		);
+
+		next();
+	},
 };
 
 export const {
@@ -300,4 +344,6 @@ export const {
 	feedListing,
 	blogListing,
 	readA8C,
+	p2,
+	p2Sidebar,
 } = exported;
