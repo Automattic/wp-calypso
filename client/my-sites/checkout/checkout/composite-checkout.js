@@ -643,14 +643,15 @@ export default function CompositeCheckout( {
 	const renderDomainContactFields = (
 		contactDetails,
 		contactDetailsErrors,
-		updateContactDetails
+		updateContactDetails,
+        shouldShowContactDetailsValidationErrors
 	) => {
 		return (
 			<WPCheckoutErrorBoundary>
 				<ContactDetailsFormFields
 					countriesList={ countriesList }
 					contactDetails={ contactDetails }
-					contactDetailsErrors={ contactDetailsErrors }
+					contactDetailsErrors={ shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {} }
 					onContactDetailsChange={ updateContactDetails }
 				/>
 			</WPCheckoutErrorBoundary>

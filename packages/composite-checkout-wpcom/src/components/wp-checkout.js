@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import {
 	Checkout,
@@ -88,6 +88,11 @@ export default function WPCheckout( {
 		applyDomainContactValidationResults,
 	} = useDispatch( 'wpcom' );
 
+	const [
+		shouldShowContactDetailsValidationErrors,
+		setShouldShowContactDetailsValidationErrors,
+	] = useState( false );
+
 	const contactValidationCallback = async () => {
 		updateLocation( {
 			countryCode: contactInfo.countryCode.value,
@@ -97,18 +102,18 @@ export default function WPCheckout( {
 		// Touch the fields so they display validation errors
 		touchContactFields();
 
-        if ( shouldUseDomainContactValidationEndpoint ) {
-            const hasValidationErrors = await domainContactValidationCallback(
-                activePaymentMethod.id,
-                prepareDomainContactDetails( contactInfo ),
-                [ domainName ],
-                applyDomainContactValidationResults,
-                contactInfo
-            );
-            return ! hasValidationErrors;
-        }
+		if ( shouldUseDomainContactValidationEndpoint ) {
+			const hasValidationErrors = await domainContactValidationCallback(
+				activePaymentMethod.id,
+				prepareDomainContactDetails( contactInfo ),
+				[ domainName ],
+				applyDomainContactValidationResults,
+				contactInfo
+			);
+			return ! hasValidationErrors;
+		}
 
-        return isCompleteAndValid( contactInfo );
+		return isCompleteAndValid( contactInfo );
 	};
 
 	// Copy siteId to the store so it can be more easily accessed during payment submission
@@ -154,7 +159,10 @@ export default function WPCheckout( {
 				{ total.amount.value !== 0 && (
 					<CheckoutStep
 						stepId={ 'contact-form' }
-						isCompleteCallback={ contactValidationCallback }
+						isCompleteCallback={ () => {
+							setShouldShowContactDetailsValidationErrors( true );
+							return contactValidationCallback();
+						} }
 						activeStepContent={
 							<WPContactForm
 								siteUrl={ siteUrl }
@@ -167,6 +175,9 @@ export default function WPCheckout( {
 								updateContactDetails={ updateContactDetails }
 								updateCountryCode={ updateCountryCode }
 								updatePostalCode={ updatePostalCode }
+								shouldShowContactDetailsValidationErrors={
+									shouldShowContactDetailsValidationErrors
+								}
 							/>
 						}
 						completeStepContent={ <WPContactForm summary isComplete={ true } isActive={ false } /> }
