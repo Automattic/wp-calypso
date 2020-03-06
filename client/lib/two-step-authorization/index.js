@@ -95,6 +95,21 @@ TwoStepAuthorization.prototype.postLoginRequest = function( endpoint, data ) {
 		.then( response => response.json() );
 };
 
+TwoStepAuthorization.prototype.refreshDataOnSuccessfulAuth = function() {
+	// If the validation was successful AND re-auth was required, fetch
+	// data from the following modules.
+	if ( this.isReauthRequired() ) {
+		userSettings.fetchSettings();
+		reduxDispatch( requestConnectedApplications() );
+		reduxDispatch( requestUserProfileLinks() );
+	}
+	this.data.two_step_reauthorization_required = false;
+	this.data.two_step_authorization_expires_soon = false;
+	this.invalidCode = false;
+
+	this.emit( 'change' );
+};
+
 TwoStepAuthorization.prototype.loginUserWithSecurityKey = function( args ) {
 	return this.postLoginRequest( 'webauthn-challenge-endpoint', {
 		user_id: args.user_id,
@@ -118,16 +133,7 @@ TwoStepAuthorization.prototype.loginUserWithSecurityKey = function( args ) {
 			if ( typeof response.success === 'undefined' || ! response.success ) {
 				return Promise.reject( response );
 			}
-			if ( this.isReauthRequired() ) {
-				userSettings.fetchSettings();
-				reduxDispatch( requestConnectedApplications() );
-				reduxDispatch( requestUserProfileLinks() );
-			}
-			this.data.two_step_reauthorization_required = false;
-			this.data.two_step_authorization_expires_soon = false;
-			this.invalidCode = false;
-
-			this.emit( 'change' );
+			this.refreshDataOnSuccessfulAuth();
 			return response;
 		} );
 };
@@ -143,18 +149,6 @@ TwoStepAuthorization.prototype.validateCode = function( args, callback ) {
 		},
 		function( error, data ) {
 			if ( ! error && data.success ) {
-				// If the validation was successful AND reauth was required, fetch
-				// data from the following modules.
-				if ( this.isReauthRequired() ) {
-					userSettings.fetchSettings();
-					reduxDispatch( requestConnectedApplications() );
-					reduxDispatch( requestUserProfileLinks() );
-				}
-
-				this.data.two_step_reauthorization_required = false;
-				this.data.two_step_authorization_expires_soon = false;
-				this.invalidCode = false;
-
 				if ( args.action ) {
 					this.bumpMCStat(
 						'enable-two-step' === args.action ? 'enable-2fa-successful' : 'disable-2fa-successful'
@@ -163,7 +157,7 @@ TwoStepAuthorization.prototype.validateCode = function( args, callback ) {
 					this.bumpMCStat( 'reauth-successful' );
 				}
 
-				this.emit( 'change' );
+				this.refreshDataOnSuccessfulAuth();
 			} else if ( ! error ) {
 				// If code was invalid but API did not error
 				this.invalidCode = true;
