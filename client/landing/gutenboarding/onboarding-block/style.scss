@@ -42,25 +42,29 @@ $onboarding-block-css-transition-duration: 750ms;
 	text-align: left;
 }
 
-.components-button.is-link.onboarding-block__question-skip {
-	background-color: var( --mainColor );
-	border-radius: 4px;
+// Themed core button component
+.components-button.is-primary.onboarding-block__question-skip:not( :disabled ):not( [aria-disabled='true'] ) {
+	background: var( --mainColor );
+	border-color: var( --mainColor );
+	box-shadow: none;
 	color: var( --contrastColor );
 	font-size: 16px;
-	line-height: 2em;
-	margin: 10px 0;
-	padding: 8px 32px;
-	position: relative;
-	text-decoration: none;
+	line-height: 16px;
+	padding: 20px 32px;
+	// @TODO: work out hover-state animations
 	transition:
-		color 0.5s ease-in-out 1s,
-		background-color 0.5s ease-in-out 1s;
+		background 0.5s ease-in-out 1s,
+		border-color 0.5s ease-in-out 1s,
+		color 0.5s ease-in-out 1s;
 
+	&:active,
+	&:hover,
 	&:focus {
-		background-color: var( --highlightColor );
+		background: var( --highlightColor );
+		border-color: var( --highlightColor );
+		color: var( --contrastColor );
+		outline-color: transparent;
 		box-shadow: none;
-		color: var( --studio-gray-20 );
-		outline: none;
 	}
 }
 
