@@ -104,10 +104,6 @@ TwoStepAuthorization.prototype.loginUserWithSecurityKey = function( args ) {
 			return webauthn_auth( { publicKey: parameters } );
 		} )
 		.then( assertion => {
-			const response = assertion.response;
-			if ( typeof response.userHandle !== 'undefined' && null === response.userHandle ) {
-				delete response.userHandle;
-			}
 			return postLoginRequest( 'webauthn-authentication-endpoint', {
 				client_data: JSON.stringify( assertion ),
 				create_2fa_cookies_only: 1,
