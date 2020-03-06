@@ -24,10 +24,12 @@ class TwoFactorActions extends Component {
 		isSecurityKeySupported: PropTypes.bool.isRequired,
 		isSmsSupported: PropTypes.bool.isRequired,
 		isSmsAllowed: PropTypes.bool.isRequired,
-		recordTracksEventWithClientId: PropTypes.func.isRequired,
 		onChange: PropTypes.func.isRequired,
-		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string.isRequired,
+
+		recordTracksEventWithClientId: PropTypes.func.isRequired,
+
+		translate: PropTypes.func.isRequired,
 	};
 
 	recordButtonClicked = event => {
