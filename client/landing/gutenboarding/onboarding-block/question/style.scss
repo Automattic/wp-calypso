@@ -1,4 +1,5 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
+
 .onboarding-block__questions {
 	.onboarding-block__question {
 		display: flex;
@@ -9,6 +10,7 @@
 			visibility: hidden;
 			height: 0;
 		}
+
 		.onboarding-block__inactive-question {
 			visibility: visible;
 			height: 100%;
@@ -19,6 +21,7 @@
 				visibility: visible;
 				height: 100%;
 			}
+
 			.onboarding-block__inactive-question {
 				visibility: hidden;
 				height: 0;
@@ -55,16 +58,15 @@
 		}
 
 		.onboarding-block__question-answered {
-			color: var( --mainColor );
 			border-bottom: 3px solid var( --mainColor );
-			font-family: 'Recoleta-Regular', 'Recoleta', serif;
-			text-align: left;
+			color: var( --mainColor );
 			cursor: text;
+			font-family: $onboarding-brand-font-family;
+			font-weight: 400;
 			margin: 0 0 0 0.2em;
-			min-width: 60px;
 			min-height: 1em;
-			transition: color 0.5s ease-in-out 1s,
-				border-color 0.5s ease-in-out 1s;
+			min-width: 60px;
+			transition: color 0.5s ease-in-out 1s, border-color 0.5s ease-in-out 1s;
 
 			&:hover {
 				border-color: var( --highlightColor );

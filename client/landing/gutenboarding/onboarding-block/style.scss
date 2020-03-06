@@ -4,29 +4,25 @@
 $onboarding-block-css-transition-duration: 750ms;
 
 .onboarding-block__acquire-intent {
-	display: flex;
-	justify-content: center;
 	align-items: center;
-	margin-top: 40px;
-
-	tab-size: 4;
-	color: var( --mainColor );
 	background-color: var( --contrastColor );
+	color: var( --mainColor );
+	display: flex;
 	font-family: $onboarding-brand-font-family;
 	font-size: 64px;
-	letter-spacing: -0.4px;
 	font-weight: 400;
-
-	transition: 
+	height: 100%;
+	justify-content: center;
+	left: 0%;
+	letter-spacing: -0.4px;
+	margin-top: 40px;
+	position: fixed;
+	tab-size: 4;
+	top: 0;
+	transition:
 		color 0.5s ease-in-out 1s,
 		background-color 0.5s ease-in-out 1s;
-
-	position: fixed;
-
-	top: 0;
-	left: 0%;
 	width: 100%;
-	height: 100%;
 }
 
 .onboarding-block__questions {
@@ -48,30 +44,24 @@ $onboarding-block-css-transition-duration: 750ms;
 }
 
 .components-button.is-link.onboarding-block__question-skip {
-	
 	background-color: var( --mainColor );
-	color: var( --contrastColor );
-	line-height: 2em;
-	padding: 8px 32px;
-	margin: 10px 0;
-	text-decoration: none;
-	position: relative;
 	border-radius: 4px;
+	color: var( --contrastColor );
 	font-size: 16px;
-	transition: 
+	line-height: 2em;
+	margin: 10px 0;
+	padding: 8px 32px;
+	position: relative;
+	text-decoration: none;
+	transition:
 		color 0.5s ease-in-out 1s,
 		background-color 0.5s ease-in-out 1s;
 
 	&:focus {
-		outline: none;
-		box-shadow: none;
 		background-color: var( --highlightColor );
+		box-shadow: none;
 		color: var( --studio-gray-20 );
-
-	}
-
-	&:focus {
-		/*border-bottom: 2px solid $blue-medium-focus;*/
+		outline: none;
 	}
 }
 
@@ -108,6 +98,7 @@ $onboarding-block-css-transition-duration: 750ms;
 		opacity: 0.8;
 	}
 }
+
 .onboarding-block__background-fade-enter,
 .onboarding-block__background-fade-exit,
 .onboarding-block__background-fade-exit-done {
@@ -119,7 +110,3 @@ $onboarding-block-css-transition-duration: 750ms;
 .onboarding-block__background-fade-enter-done {
 	transition: opacity $onboarding-block-css-transition-duration linear;
 }
-
-
-
-
