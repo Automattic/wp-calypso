@@ -1,3 +1,5 @@
+@import '../../mixins';
+
 .create-site__background {
 	position: fixed;
 	top: 0;
@@ -27,10 +29,10 @@
 		padding-top: 40px;
 
 		.create-site__text {
+			@include onboarding-font-recoleta;
 			margin-top: 60px;
 			text-align: center;
 			font-size: 32px;
-			font-family: 'Recoleta-Regular', 'Recoleta', serif;
 			color: var( --studio-blue-40 );
 			display: flex;
 				justify-content: center;
