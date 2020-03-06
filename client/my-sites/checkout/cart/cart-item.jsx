@@ -86,11 +86,11 @@ export function CartItem( {
 
 CartItem.propTypes = {
 	cartItem: PropTypes.shape( {
-		product_id: PropTypes.string.isRequired,
+		product_id: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
 		cost: PropTypes.number,
 		free_trial: PropTypes.bool,
 		volume: PropTypes.number,
-		currency: PropTypes.string.isRequired,
+		currency: PropTypes.string,
 		product_slug: PropTypes.string,
 		cost_before_coupon: PropTypes.number,
 		is_sale_coupon_applied: PropTypes.bool,
@@ -130,7 +130,7 @@ function RemoveButton( { cart, cartItem, translate, domainsWithPlansOnly } ) {
 }
 
 function MonthlyPrice( { cartItem, translate } ) {
-	const { currency } = cartItem;
+	const { currency = 'USD' } = cartItem;
 
 	if ( ! monthlyPriceApplies( cartItem ) ) {
 		return null;
@@ -208,7 +208,7 @@ function ProductPrice( { cart, cartItem, translate } ) {
 					<span className="cart__gsuite-discount-regular-price">{ costBeforeCoupon }</span>
 
 					<span className="cart__gsuite-discount-discounted-price">
-						{ cost } { cartItem.currency }
+						{ cost } { cartItem.currency || 'USD' }
 					</span>
 
 					<span className="cart__gsuite-discount-text">
@@ -224,7 +224,7 @@ function ProductPrice( { cart, cartItem, translate } ) {
 	return translate( '%(cost)s %(currency)s', {
 		args: {
 			cost: cost,
-			currency: cartItem.currency,
+			currency: cartItem.currency || 'USD',
 		},
 	} );
 }
@@ -242,7 +242,7 @@ function DomainPlanPrice( { cartItem, translate } ) {
 		return (
 			<span>
 				<span className="cart__free-with-plan">
-					{ cartItem.product_cost } { cartItem.currency }
+					{ cartItem.product_cost } { cartItem.currency || 'USD' }
 				</span>
 				<span className="cart__free-text">{ translate( 'First year free with your plan' ) }</span>
 			</span>
