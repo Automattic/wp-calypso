@@ -1,4 +1,5 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
+
 .onboarding-block__questions {
 	.onboarding-block__question {
 		.vertical-select {
@@ -35,10 +36,11 @@
 				font-weight: bold;
 				border-color: transparent;
 				color: var( --studio-gray-20 );
+
 				.suggestions__label.is-emphasized {
-					
 					color: var( --studio-gray-80 );
 				}
+
 				&:focus,
 				&:active {
 					.suggestions__label.is-emphasized {
