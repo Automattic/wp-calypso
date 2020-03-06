@@ -19,6 +19,7 @@ import {
 	areDomainsInLineItems,
 	domainManagedContactDetails,
 	taxManagedContactDetails,
+	areRequiredFieldsNotEmpty,
 } from '@automattic/composite-checkout-wpcom';
 import {
 	CheckoutProvider,
@@ -616,43 +617,51 @@ export default function CompositeCheckout( {
 		paymentMethodId,
 		contactDetails,
 		domainNames,
-		applyDomainContactValidationResults
+		applyDomainContactValidationResults,
+		decoratedContactDetails
 	) => {
-		return new Promise( ( resolve ) => {
-            validateDomainContact(contactDetails, domainNames, (httpErrors, data) => {
-                recordEvent({
-                    type: 'VALIDATE_DOMAIN_CONTACT_INFO',
-                    payload: {
-                        credits: null,
-                        payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod(paymentMethodId),
-                    },
-                });
-                debug(
-                    'Domain contact info validation ' + ( data.messages ? 'errors:' : 'successful' ),
-                    data.messages
-                );
-                if ( data.messages ) {
-                    showErrorMessage( translate( 'We could not validate your contact information. Please review and update all the highlighted fields.' ) );
-                }
-                applyDomainContactValidationResults({...data.messages});
-                resolve();
-            });
-        } );
+		return new Promise( resolve => {
+			validateDomainContact( contactDetails, domainNames, ( httpErrors, data ) => {
+				recordEvent( {
+					type: 'VALIDATE_DOMAIN_CONTACT_INFO',
+					payload: {
+						credits: null,
+						payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ),
+					},
+				} );
+				debug(
+					'Domain contact info validation ' + ( data.messages ? 'errors:' : 'successful' ),
+					data.messages
+				);
+				if ( data.messages ) {
+					showErrorMessage(
+						translate(
+							'We could not validate your contact information. Please review and update all the highlighted fields.'
+						)
+					);
+				}
+				applyDomainContactValidationResults( { ...data.messages } );
+				resolve( ! ( data.success && areRequiredFieldsNotEmpty( decoratedContactDetails ) ) );
+			} );
+		} );
 	};
 
 	const renderDomainContactFields = (
 		contactDetails,
 		contactDetailsErrors,
 		updateContactDetails,
-        shouldShowContactDetailsValidationErrors
+		shouldShowContactDetailsValidationErrors
 	) => {
 		return (
 			<WPCheckoutErrorBoundary>
 				<ContactDetailsFormFields
 					countriesList={ countriesList }
 					contactDetails={ contactDetails }
-					contactDetailsErrors={ shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {} }
+					contactDetailsErrors={
+						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
+					}
 					onContactDetailsChange={ updateContactDetails }
+					shouldForceRenderOnPropChange={ true }
 				/>
 			</WPCheckoutErrorBoundary>
 		);
