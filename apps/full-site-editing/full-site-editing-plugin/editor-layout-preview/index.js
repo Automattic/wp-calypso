@@ -15,6 +15,11 @@ import { registerCoreBlocks } from '@wordpress/block-library';
 import { parse as parseBlocks } from '@wordpress/blocks';
 /* eslint-enable import/no-extraneous-dependencies */
 
+/**
+ * Internal dependencies
+ */
+import LayoutPreview from './components/layout-preview';
+
 // Load plugin styles.
 import './style.scss';
 
@@ -36,5 +41,5 @@ domReady( function() {
 	const blocks = parseBlocks( testingTemplate );
 	debug( 'blocks: %o', blocks );
 
-	render( <h1>Hi!</h1>, document.getElementById( 'editor-large-preview' ) );
+	render( <LayoutPreview blocks={ blocks } />, document.getElementById( 'editor-large-preview' ) );
 } );
