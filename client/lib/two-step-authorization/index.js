@@ -69,21 +69,23 @@ TwoStepAuthorization.prototype.fetch = function( callback ) {
 };
 
 TwoStepAuthorization.prototype.postLoginRequest = function( endpoint, data ) {
+	if ( ! this.getTwoStepWebauthnNonce() ) {
+		return Promise.reject( 'Invalid nonce' );
+	}
+
 	const url = 'https://wordpress.com/wp-login.php?action=' + endpoint;
 	// eslint-disable-next-line no-undef
 	const formData = new FormData();
-	const _data = {
+	const requestData = {
 		client_id: config( 'wpcom_signup_id' ),
 		client_secret: config( 'wpcom_signup_key' ),
 		auth_type: 'webauthn',
 		two_step_nonce: this.getTwoStepWebauthnNonce(),
 		...data,
 	};
-	if ( ! _data.two_step_nonce ) {
-		return Promise.reject( 'Invalid nonce' );
-	}
-	for ( const key in _data ) {
-		formData.set( key, _data[ key ] );
+
+	for ( const key in requestData ) {
+		formData.set( key, requestData[ key ] );
 	}
 	// eslint-disable-next-line no-undef
 	return fetch( url, {
