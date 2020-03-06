@@ -3,12 +3,11 @@
  */
 
 import React from 'react';
-import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
-import { getUrlParts } from 'lib/url/url-parts';
 import { url as mediaUrl } from 'lib/media/utils';
 import MediaLibraryListItemFileDetails from './list-item-file-details';
 import MediaImage from './media-image';
@@ -71,8 +70,6 @@ export default class MediaLibraryListItemImage extends React.Component {
 	};
 
 	render() {
-		const { media } = this.props;
-
 		const width = Math.round(
 			( 1 / this.props.maxScale ) * this.state.maxSeenScale * this.props.maxImageWidth
 		);
@@ -93,11 +90,9 @@ export default class MediaLibraryListItemImage extends React.Component {
 			);
 		}
 
-		const { pathname } = getUrlParts( media?.URL );
 		return (
 			<MediaImage
-				siteSlug={ siteSlug }
-				src={ pathname }
+				src={ url }
 				onLoad={ this.setUnknownImageDimensions }
 				alt={ this.props.media.alt || this.props.media.title }
 				style={ this.getImageStyle() }
