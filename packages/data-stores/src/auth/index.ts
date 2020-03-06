@@ -12,14 +12,9 @@ import { publicActions } from './actions';
 import { createControls, ControlsConfig } from './controls';
 import * as selectors from './selectors';
 import { DispatchFromMap, SelectFromMap } from '../mapped-types';
-import { WpcomClientCredentials } from '../shared-types';
 
 export * from './types';
 export { State };
-
-export interface StoreConfig extends WpcomClientCredentials {
-	loadCookiesAfterLogin: boolean;
-}
 
 let isRegistered = false;
 export function register( config: ControlsConfig ): typeof STORE_KEY {
