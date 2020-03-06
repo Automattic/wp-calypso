@@ -301,7 +301,7 @@ TwoStepAuthorization.prototype.isSecurityKeyEnabled = function() {
 };
 
 TwoStepAuthorization.prototype.getTwoStepWebauthnNonce = function() {
-	return this.data ? this.data.two_step_webauthn_nonce : false;
+	return this.data?.two_step_webauthn_nonce ?? false;
 };
 
 TwoStepAuthorization.prototype.getSMSLastFour = function() {
