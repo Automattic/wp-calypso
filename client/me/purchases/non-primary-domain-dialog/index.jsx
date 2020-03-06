@@ -76,7 +76,7 @@ class NonPrimaryDomainDialog extends Component {
 						) }
 						<br />
 						{ translate(
-							'{{strong}}%(newDomain)s{{/strong}} will be the address that users see when they visit ' +
+							'{{strong}}%(newDomain)s{{/strong}} will be the address that people see when they visit ' +
 								'your site. Would you still like to downgrade your plan?',
 							{
 								args: {
