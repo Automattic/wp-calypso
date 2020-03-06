@@ -29,7 +29,7 @@ class Editor_Layout_Preview {
 	/**
 	 * Editor_Layout_Preview constructor.
 	 */
-	private function __construct() {
+	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'add_editor_layout_preview_page' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'editor_layout_preview_assets' ) );
 	}
@@ -50,7 +50,7 @@ class Editor_Layout_Preview {
 	/**
 	 * Adds the Editor Layout Preview page to the admin.
 	 */
-	private function add_editor_layout_preview_page() {
+	public function add_editor_layout_preview_page() {
 		add_options_page(
 			'Editor Large Preview',
 			'Editor Large Preview',
@@ -65,7 +65,7 @@ class Editor_Layout_Preview {
 	 *
 	 * @param @string $hook Page hook.
 	 */
-	private function editor_layout_preview_assets( $hook ) {
+	public function editor_layout_preview_assets( $hook ) {
 		// Exit if not the correct page.
 		if ( 'settings_page_editor-layout-preview' !== $hook ) {
 			return;
@@ -92,7 +92,7 @@ class Editor_Layout_Preview {
 	/**
 	 * Render basic HTML markup.
 	 */
-	private function render_editor_layout_preview_content() {
+	public function render_editor_layout_preview_content() {
 		?>
 		<div id="editor-large-preview" class="editor-large-preview">
 			Loading Editor...
