@@ -85,7 +85,7 @@ function MyComponent() {
 
 ### `loadCookiesAfterLogin` config
 
-After login is complete (`loginFlowState === 'LOGGED_IN'`) the user will have a session on the server, but the client won't have the cookies for that session yet.
+After login is complete (`loginFlowState === 'LOGGED_IN'`) the user will have a session on the server, but the client won't have all the cookies for that session yet. In particular it won't have the cookies needed by `wpcom-proxy-request` to talk to `public-api.wordpress.com`.
 
 This could be fine under some circumstances. If, after a successful login, the browser navigates to another page then the cookies will be loaded as part of that page navigation. It would be a waste for the auth store to retrieve them. In this case use `loadCookiesAfterLogin = false`.
 
