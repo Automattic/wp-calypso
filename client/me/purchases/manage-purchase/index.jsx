@@ -291,14 +291,6 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
-		const trackNavItemClick = linkText => () => {
-			analytics.tracks.recordEvent( 'calypso_purchases_manage_purchase_cancel_click', {
-				product_slug: purchase.productSlug,
-				is_atomic: isAtomicSite,
-				link_text: linkText,
-			} );
-		};
-
 		let text,
 			link = cancelPurchase( this.props.siteSlug, id );
 
@@ -332,7 +324,11 @@ class ManagePurchase extends Component {
 		}
 
 		const onClick = event => {
-			trackNavItemClick( text );
+			analytics.tracks.recordEvent( 'calypso_purchases_manage_purchase_cancel_click', {
+				product_slug: purchase.productSlug,
+				is_atomic: isAtomicSite,
+				link_text: text,
+			} );
 
 			if ( this.shouldShowNonPrimaryDomainWarning() ) {
 				event.preventDefault();
