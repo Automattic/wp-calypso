@@ -309,7 +309,7 @@ class PageTemplateModal extends Component {
 	};
 
 	renderTemplatesList = ( templatesList, legendLabel ) => {
-		if ( 0 === templatesList.length ) {
+		if ( ! templatesList.length ) {
 			return null;
 		}
 
@@ -325,15 +325,21 @@ class PageTemplateModal extends Component {
 			return templatesToFilter.filter( template => filterIn.includes( template.slug ) );
 		};
 
+		const filteredTemplatesList = filterOutTemplatesWithMissingBlocks(
+			templatesList,
+			templatesWithoutMissingBlocks
+		);
+
+		if ( ! filteredTemplatesList.length ) {
+			return null;
+		}
+
 		return (
 			<fieldset className="page-template-modal__list">
 				<legend className="page-template-modal__form-title">{ legendLabel }</legend>
 				<TemplateSelectorControl
 					label={ __( 'Layout', 'full-site-editing' ) }
-					templates={ filterOutTemplatesWithMissingBlocks(
-						templatesList,
-						templatesWithoutMissingBlocks
-					) }
+					templates={ filteredTemplatesList }
 					blocksByTemplates={ blocksByTemplateSlug }
 					onTemplateSelect={ this.previewTemplate }
 					useDynamicPreview={ false }
