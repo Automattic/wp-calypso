@@ -256,12 +256,14 @@ class ManagePurchase extends Component {
 	closeDialog = () => {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: false,
+			cancelLink: null,
 		} );
 	};
 
 	goToCancelLink = () => {
+		const cancelLink = this.state.cancelLink;
 		this.closeDialog();
-		page( this.state.cancelLink );
+		page( cancelLink );
 	};
 
 	renderNonPrimaryDomainWarningDialog( site, purchase ) {
@@ -329,22 +331,17 @@ class ManagePurchase extends Component {
 			}
 		}
 
-		if ( this.shouldShowNonPrimaryDomainWarning() ) {
-			const onClick = event => {
-				event.preventDefault();
-				trackNavItemClick( text );
-				this.showNonPrimaryDomainWarningDialog( link );
-			};
+		const onClick = event => {
+			trackNavItemClick( text );
 
-			return (
-				<CompactCard href={ link } onClick={ onClick }>
-					{ text }
-				</CompactCard>
-			);
-		}
+			if ( this.shouldShowNonPrimaryDomainWarning() ) {
+				event.preventDefault();
+				this.showNonPrimaryDomainWarningDialog( link );
+			}
+		};
 
 		return (
-			<CompactCard href={ link } onClick={ trackNavItemClick( text ) }>
+			<CompactCard href={ link } onClick={ onClick }>
 				{ text }
 			</CompactCard>
 		);
