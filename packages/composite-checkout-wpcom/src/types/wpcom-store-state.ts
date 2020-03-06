@@ -36,7 +36,7 @@ function touchField( oldData: ManagedValue ): ManagedValue {
 }
 
 function touchIfDifferent( newValue: string, oldData: ManagedValue ): ManagedValue {
-	return newValue === oldData.value ? oldData : { ...oldData, value: newValue, isTouched: true };
+	return newValue === oldData.value ? oldData : { ...oldData, value: newValue, isTouched: true, errors: [] };
 }
 
 function setErrors( errors: string[] | undefined, oldData: ManagedValue ): ManagedValue {
