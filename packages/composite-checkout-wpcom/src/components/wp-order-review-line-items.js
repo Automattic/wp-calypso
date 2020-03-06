@@ -8,6 +8,7 @@ import {
 	renderDisplayValueMarkdown,
 	CheckoutModal,
 	useFormStatus,
+	useEvents,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
@@ -52,6 +53,7 @@ function WPLineItem( {
 	const deleteButtonId = `checkout-delete-button-${ item.id }`;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const modalCopy = returnModalCopy( item.type, translate, hasDomainsInCart );
+	const onEvent = useEvents();
 
 	const shouldShowVariantSelector = item.wpcom_meta && item.wpcom_meta.extra?.context === 'signup';
 
@@ -67,6 +69,12 @@ function WPLineItem( {
 						buttonState="borderless"
 						onClick={ () => {
 							setIsModalVisible( true );
+							onEvent( {
+								type: 'a8c_checkout_delete_product_press',
+								payload: {
+									product_name: item.label,
+								},
+							} );
 						} }
 					>
 						<DeleteIcon uniqueID={ deleteButtonId } product={ item.label } />
@@ -79,6 +87,12 @@ function WPLineItem( {
 						} }
 						primaryAction={ () => {
 							removeItem( item.wpcom_meta.uuid );
+							onEvent( {
+								type: 'a8c_checkout_delete_product',
+								payload: {
+									product_name: item.label,
+								},
+							} );
 						} }
 						title={ modalCopy.title }
 						copy={ modalCopy.description }
