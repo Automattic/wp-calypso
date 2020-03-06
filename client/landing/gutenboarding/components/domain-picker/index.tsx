@@ -88,14 +88,14 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	let numberOfPaidDomains = 0;
 	const suggestions = allSuggestions?.filter( suggestion => {
 		if (
-			suggestion.cost === 'Free' &&
+			suggestion.is_free &&
 			! numberOfFreeDomains &&
 			suggestion.domain_name !== currentDomain.domain_name
 		) {
 			numberOfFreeDomains++;
 			return suggestion;
 		}
-		if ( suggestion.cost !== 'Free' && numberOfPaidDomains < 5 ) {
+		if ( suggestion.is_free && numberOfPaidDomains < 5 ) {
 			numberOfPaidDomains++;
 			return suggestion;
 		}
