@@ -34,15 +34,17 @@
 		}
 
 		div > input.onboarding-block__question-input {
+			@include onboarding-font-recoleta;
+			background: transparent;
 			border: 0;
+			color: var( --mainColor );
 			display: inline-block;
 			font-size: inherit;
 			line-height: inherit;
 			margin: 0 0 3px 0.2em;
-			padding: 0;
-			color: var( --mainColor );
-			min-width: 60px;
 			min-height: 1em;
+			min-width: 60px;
+			padding: 0;
 			transition: color 0.5s ease-in-out 1s,
 				border-color 0.5s ease-in-out 1s;
 

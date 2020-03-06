@@ -64,10 +64,6 @@ $onboarding-block-css-transition-duration: 750ms;
 	}
 }
 
-.onboarding-block__question input {
-	@include onboarding-font-recoleta;
-	background: transparent;
-}
 
 .onboarding-block__background {
 	position: fixed;
