@@ -36,13 +36,13 @@ class TwoFactorActions extends Component {
 
 		switch ( event.target.value ) {
 			case 'sms':
-				tracksEvent = 'calypso_2fa_reauth_sms_clicked';
+				tracksEvent = 'calypso_twostep_reauth_sms_clicked';
 				break;
 			case 'authenticator':
-				tracksEvent = 'calypso_2fa_reauth_authenticator_clicked';
+				tracksEvent = 'calypso_twostep_reauth_authenticator_clicked';
 				break;
 			case 'webauthn':
-				tracksEvent = 'calypso_2fa_reauth_webauthn_clicked';
+				tracksEvent = 'calypso_twostep_reauth_webauthn_clicked';
 				break;
 		}
 
