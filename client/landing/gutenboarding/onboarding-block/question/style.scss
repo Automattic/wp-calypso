@@ -1,4 +1,5 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
+@import '../../mixins';
 
 .onboarding-block__questions {
 	.onboarding-block__question {
@@ -58,11 +59,10 @@
 		}
 
 		.onboarding-block__question-answered {
+			@include onboarding-font-recoleta;
 			border-bottom: 3px solid var( --mainColor );
 			color: var( --mainColor );
 			cursor: text;
-			font-family: $onboarding-brand-font-family;
-			font-weight: 400;
 			margin: 0 0 0 0.2em;
 			min-height: 1em;
 			min-width: 60px;
