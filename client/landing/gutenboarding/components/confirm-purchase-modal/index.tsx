@@ -2,8 +2,10 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
 import { Button } from '@wordpress/components';
+import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -45,9 +47,14 @@ const ConfirmPurchaseModal: FunctionComponent = props => {
 					{ NO__( 'You are about to register your new domain!' ) }
 				</div>
 				<div className="confirm-purchase-modal__items">
-					{ NO__(
-						'To be able to complete the registration of %s, you need to take some extra steps: ',
-						props.selectedDomain
+					{ __experimentalCreateInterpolateElement(
+						sprintf(
+							NO__(
+								'To be able to complete the registration of <DomainName>%s</DomainName>, you need to take some extra steps: '
+							),
+							props.selectedDomain.domain_name
+						),
+						{ DomainName: <em /> }
 					) }
 					<ul>
 						{ ! props.isLogged && <li>{ NO__( 'Create an account' ) }</li> }
