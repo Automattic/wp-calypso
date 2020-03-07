@@ -17,7 +17,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import joinClasses from './join-classes';
 import Button from './button';
-import { useHasDomainsInCart } from '../hooks/has-domains';
+import { useHasDomainsInCart, isLineItemADomain } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
 
 export function WPOrderReviewSection( { children, className } ) {
@@ -59,7 +59,7 @@ function WPLineItem( {
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
-			<ProductTitle id={ itemSpanId }>{ item.label }</ProductTitle>
+			<LineItemTitle id={ itemSpanId } item={ item } />
 			<span aria-labelledby={ itemSpanId }>
 				<LineItemPrice lineItem={ item } />
 			</span>
@@ -129,6 +129,19 @@ WPLineItem.propTypes = {
 	onChangePlanLength: PropTypes.func,
 };
 
+function LineItemTitle( { item, id } ) {
+	const translate = useTranslate();
+	return (
+		<LineItemTitleUI>
+			<ProductTitleUI id={ id }>{ item.label }</ProductTitleUI>
+			{ isLineItemADomain( item ) && <ProductDomainUI>{ item.sublabel }</ProductDomainUI> }
+			{ isLineItemADomain( item ) && item.amount.value === 0 && (
+				<BundledDomainFreeUI>{ translate( 'First year free with your plan' ) }</BundledDomainFreeUI>
+			) }
+		</LineItemTitleUI>
+	);
+}
+
 function LineItemPrice( { lineItem } ) {
 	if ( lineItem.amount.value < lineItem.wpcom_meta?.product_cost_integer ) {
 		return (
@@ -157,11 +170,23 @@ const LineItemUI = styled( WPLineItem )`
 	margin-right: 30px;
 `;
 
+const LineItemTitleUI = styled.div`
+	flex: 1;
+`;
+
+const ProductDomainUI = styled.div`
+	font-size: 1.2em;
+`;
+
+const BundledDomainFreeUI = styled.div`
+	color: ${props => props.theme.colors.success};
+`;
+
 const DiscountOriginalPriceUI = styled.s`
 	color: ${props => props.theme.colors.success};
 `;
 
-const ProductTitle = styled.span`
+const ProductTitleUI = styled.div`
 	flex: 1;
 `;
 
