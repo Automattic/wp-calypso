@@ -5,28 +5,12 @@ import getNote from '../state/selectors/get-note';
 import getAllNotes from '../state/selectors/get-all-notes';
 import simperium from '../simperium';
 
-const safely = f => {
-	try {
-		return f();
-	} catch ( e ) {
-		return null;
-	}
-};
-
-const load = key => safely( () => localStorage.getItem( key ) );
-const save = ( key, value ) => safely( () => localStorage.setItem( key, value ) );
-
 export function Client() {
 	this.isVisible = false;
 	this.isShowing = false;
 	this.lastSeenTime = null;
 	this.hasIndexed = false;
 	this.initialAnnouncement = null;
-
-	const initialLastSeenTime = load( 'wpnotes_last_seen_time' );
-	if ( null !== initialLastSeenTime ) {
-		this.lastSeenTime = parseInt( initialLastSeenTime, 10 );
-	}
 
 	store.dispatch( actions.ui.loadNotes() );
 	simperium().then( ( { meta, notifications } ) => {
@@ -41,12 +25,10 @@ export function Client() {
 			}
 
 			this.lastSeenTime = data[ 0 ].last_seen;
-			save( 'wpnotes_last_seen_time', this.lastSeenTime );
 		} );
 
 		meta.on( 'update', ( id, data ) => {
 			this.lastSeenTime = data.last_seen;
-			save( 'wpnotes_last_seen_time', this.lastSeenTime );
 
 			this.ready();
 		} );
