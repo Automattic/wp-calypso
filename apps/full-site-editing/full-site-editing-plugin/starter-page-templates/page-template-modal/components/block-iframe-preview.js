@@ -153,8 +153,11 @@ const BlockFramePreview = ( {
 	useEffect( () => {
 		setTimeout( () => {
 			copyStylesToIframe( window.document, iframeRef.current.contentDocument );
-			iframeRef.current.contentDocument.body.classList.add( bodyClassName );
-			iframeRef.current.contentDocument.body.classList.add( 'editor-styles-wrapper' );
+			iframeRef.current.contentDocument.body.classList.add(
+				bodyClassName,
+				'editor-styles-wrapper',
+				'block-editor__container'
+			);
 			rescale();
 		}, 0 );
 	}, [ setTimeout, bodyClassName, rescale ] );
