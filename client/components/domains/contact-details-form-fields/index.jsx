@@ -91,7 +91,6 @@ export class ContactDetailsFormFields extends Component {
 			{},
 			...CONTACT_DETAILS_FORM_FIELDS.map( field => ( { [ field ]: '' } ) )
 		),
-		contactDetailsErrors: {},
 		needsFax: false,
 		getIsFieldDisabled: noop,
 		onContactDetailsChange: noop,
