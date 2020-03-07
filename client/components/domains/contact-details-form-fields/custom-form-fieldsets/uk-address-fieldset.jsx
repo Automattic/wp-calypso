@@ -17,13 +17,13 @@ const UkAddressFieldset = props => {
 		<div className="custom-form-fieldsets__address-fields uk-address-fieldset">
 			<Input
 				label={ translate( 'City' ) }
-				{ ...getFieldProps( 'city' ) }
-				errorMessage={ contactDetailsErrors?.city }
+				{ ...getFieldProps( 'city', { customErrorMessage: contactDetailsErrors?.city } ) }
 			/>
 			<Input
 				label={ translate( 'Postal Code' ) }
-				{ ...getFieldProps( 'postal-code' ) }
-				errorMessage={ contactDetailsErrors?.postalCode }
+				{ ...getFieldProps( 'postal-code', {
+					customErrorMessage: contactDetailsErrors?.postalCode,
+				} ) }
 			/>
 		</div>
 	);
@@ -38,6 +38,5 @@ UkAddressFieldset.propTypes = {
 UkAddressFieldset.defaultProps = {
 	getFieldProps: noop,
 	translate: identity,
-	contactDetailsErrors: {},
 };
 export default localize( UkAddressFieldset );

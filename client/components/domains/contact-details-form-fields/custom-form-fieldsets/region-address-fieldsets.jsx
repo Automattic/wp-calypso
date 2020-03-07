@@ -42,7 +42,6 @@ export class RegionAddressFieldsets extends Component {
 		countryCode: 'US',
 		shouldAutoFocusAddressField: false,
 		hasCountryStates: false,
-		contactDetailsErrors: {},
 	};
 
 	inputRefCallback( input ) {
@@ -75,16 +74,19 @@ export class RegionAddressFieldsets extends Component {
 						ref={ shouldAutoFocusAddressField ? this.inputRefCallback : noop }
 						label={ translate( 'Address' ) }
 						maxLength={ 40 }
-						{ ...getFieldProps( 'address-1' ) }
-						errorMessage={ this.props.contactDetailsErrors?.address1 }
+						{ ...getFieldProps( 'address-1', {
+							customErrorMessage: this.props.contactDetailsErrors?.address1,
+						} ) }
 					/>
 
 					<HiddenInput
 						label={ translate( 'Address Line 2' ) }
 						text={ translate( '+ Add Address Line 2' ) }
 						maxLength={ 40 }
-						{ ...getFieldProps( 'address-2', true ) }
-						errorMessage={ this.props.contactDetailsErrors?.address2 }
+						{ ...getFieldProps( 'address-2', {
+							needsChildRef: true,
+							customErrorMessage: this.props.contactDetailsErrors?.address2,
+						} ) }
 					/>
 				</div>
 				{ this.getRegionAddressFieldset() }

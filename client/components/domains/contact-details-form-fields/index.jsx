@@ -358,7 +358,7 @@ export class ContactDetailsFormFields extends Component {
 
 	createField = ( name, componentClass, additionalProps, needsChildRef ) => {
 		return createElement( componentClass, {
-			...this.getFieldProps( name, needsChildRef ),
+			...this.getFieldProps( name, { needsChildRef } ),
 			...additionalProps,
 		} );
 	};
@@ -447,14 +447,17 @@ export class ContactDetailsFormFields extends Component {
 				<CountrySelect
 					label={ this.props.translate( 'Country' ) }
 					countriesList={ this.props.countriesList }
-					errorMessage={ this.props.contactDetailsErrors?.countryCode }
-					{ ...this.getFieldProps( 'country-code', true ) }
+					{ ...this.getFieldProps( 'country-code', {
+						customErrorMessage: this.props.contactDetailsErrors?.countryCode,
+						needsChildRef: true,
+					} ) }
 				/>
 
 				<Input
 					label={ getPostCodeLabelText( countryCode ) }
-					errorMessage={ this.props.contactDetailsErrors?.postalCode }
-					{ ...this.getFieldProps( 'postal-code' ) }
+					{ ...this.getFieldProps( 'postal-code', {
+						customErrorMessage: this.props.contactDetailsErrors?.postalCode,
+					} ) }
 				/>
 			</div>
 		);
@@ -465,8 +468,9 @@ export class ContactDetailsFormFields extends Component {
 			<div className="contact-details-form-fields__row">
 				<Input
 					label={ this.props.translate( 'Alternate Email Address' ) }
-					errorMessage={ this.props.contactDetailsErrors?.alternateEmail }
-					{ ...this.getFieldProps( 'alternate-email' ) }
+					{ ...this.getFieldProps( 'alternate-email', {
+						customErrorMessage: this.props.contactDetailsErrors?.alternateEmail,
+					} ) }
 				/>
 			</div>
 		);
