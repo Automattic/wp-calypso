@@ -169,8 +169,8 @@ export class Notifications extends Component {
 
 		const customMiddleware = {
 			APP_RENDER_NOTES: [
-				( store, { newNoteCount } ) => {
-					this.props.setIndicator( newNoteCount );
+				( store, { newNoteCount, hasNewNote } ) => {
+					this.props.setIndicator( newNoteCount, hasNewNote );
 					this.props.setUnseenCount( newNoteCount );
 				},
 			],

@@ -5,10 +5,28 @@ import getNote from '../state/selectors/get-note';
 import getAllNotes from '../state/selectors/get-all-notes';
 import simperium from '../simperium';
 
+const safely = f => {
+	try {
+		return f();
+	} catch ( e ) {
+		return null;
+	}
+};
+
+const load = key => safely( () => localStorage.getItem( key ) );
+const save = ( key, value ) => safely( () => localStorage.setItem( key, value ) );
+
 export function Client() {
 	this.isVisible = false;
 	this.isShowing = false;
-	this.lastSeenTime = 0;
+	this.lastSeenTime = null;
+	this.hasIndexed = false;
+	this.initialAnnouncement = null;
+
+	const initialLastSeenTime = load( 'wpnotes_last_seen_time' );
+	if ( null !== initialLastSeenTime ) {
+		this.lastSeenTime = parseInt( initialLastSeenTime, 10 );
+	}
 
 	store.dispatch( actions.ui.loadNotes() );
 	simperium().then( ( { meta, notifications } ) => {
@@ -23,39 +41,42 @@ export function Client() {
 			}
 
 			this.lastSeenTime = data[ 0 ].last_seen;
+			save( 'wpnotes_last_seen_time', this.lastSeenTime );
 		} );
 
 		meta.on( 'update', ( id, data ) => {
 			this.lastSeenTime = data.last_seen;
+			save( 'wpnotes_last_seen_time', this.lastSeenTime );
+
+			this.ready();
 		} );
 
 		notifications.on( 'index', async () => {
+			this.hasIndexed = true;
 			store.dispatch( actions.ui.loadedNotes() );
 
 			const notes = await notifications.find();
 			store.dispatch( actions.notes.addNotes( notes.map( note => note.data ) ) );
 
-			ready.call( this );
+			this.ready();
 		} );
 
 		notifications.on( 'update', ( id, notification ) => {
 			store.dispatch( actions.notes.addNotes( [ notification ] ) );
 
-			ready.call( this );
+			this.ready( true );
 		} );
 
 		notifications.on( 'remove', id => {
 			store.dispatch( actions.notes.removeNotes( [ id ] ) );
 
-			ready.call( this );
+			this.ready();
 		} );
 	} );
 }
 
 Client.prototype.readNote = function( noteId ) {
 	const note = getNote( store.getState(), noteId );
-
-	console.log( note );
 
 	if ( ! note ) {
 		return;
@@ -71,13 +92,24 @@ Client.prototype.readNote = function( noteId ) {
  * have a note with a timestamp newer than we
  * did the last time we called this function.
  */
-function ready() {
+Client.prototype.ready = function ready( hasNewNote = false ) {
+	if ( null === this.lastSeenTime || ! this.hasIndexed ) {
+		clearTimeout( this.initialAnnouncement );
+		this.initialAnnouncement = setTimeout( () => this.ready(), 50 );
+		return;
+	}
+
 	const notes = getAllNotes( store.getState() );
 	const timestamps = notes.map( note => Date.parse( note.timestamp ) / 1000 );
 	const newNoteCount = timestamps.filter( time => time > this.lastSeenTime ).length;
 	const latestType = notes.length ? notes.slice( -1 )[ 0 ].type : null;
 
-	store.dispatch( { type: 'APP_RENDER_NOTES', newNoteCount, latestType } );
-}
+	store.dispatch( {
+		type: 'APP_RENDER_NOTES',
+		hasNewNote: this.hasIndexed && hasNewNote,
+		newNoteCount,
+		latestType,
+	} );
+};
 
 export default Client;
