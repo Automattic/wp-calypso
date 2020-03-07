@@ -394,7 +394,7 @@ export class ContactDetailsFormFields extends Component {
 							label: translate( 'Email' ),
 						},
 						{
-							errorMessage: this.props.contactDetailsErrors?.email,
+							customErrorMessage: this.props.contactDetailsErrors?.email,
 						}
 					) }
 
@@ -410,7 +410,7 @@ export class ContactDetailsFormFields extends Component {
 						},
 						{
 							needsChildRef: true,
-							errorMessage: this.props.contactDetailsErrors?.phone,
+							customErrorMessage: this.props.contactDetailsErrors?.phone,
 						}
 					) }
 				</div>
@@ -424,7 +424,7 @@ export class ContactDetailsFormFields extends Component {
 								label: translate( 'Fax' ),
 							},
 							{
-								errorMessage: this.props.contactDetailsErrors?.fax,
+								customErrorMessage: this.props.contactDetailsErrors?.fax,
 							}
 						) }
 				</div>
@@ -438,7 +438,7 @@ export class ContactDetailsFormFields extends Component {
 							countriesList: this.props.countriesList,
 						},
 						{
-							errorMessage: this.props.contactDetailsErrors?.countryCode,
+							customErrorMessage: this.props.contactDetailsErrors?.countryCode,
 							needsChildRef: true,
 						}
 					) }
@@ -515,7 +515,7 @@ export class ContactDetailsFormFields extends Component {
 							label: translate( 'First Name' ),
 						},
 						{
-							errorMessage: contactDetailsErrors?.firstName,
+							customErrorMessage: contactDetailsErrors?.firstName,
 						}
 					) }
 
@@ -526,7 +526,7 @@ export class ContactDetailsFormFields extends Component {
 							label: translate( 'Last Name' ),
 						},
 						{
-							errorMessage: contactDetailsErrors?.lastName,
+							customErrorMessage: contactDetailsErrors?.lastName,
 						}
 					) }
 				</div>
