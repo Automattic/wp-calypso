@@ -135,7 +135,7 @@ function LineItemTitle( { item, id } ) {
 		<LineItemTitleUI>
 			<ProductTitleUI id={ id }>{ item.label }</ProductTitleUI>
 			{ isLineItemADomain( item ) && <ProductDomainUI>{ item.sublabel }</ProductDomainUI> }
-			{ isLineItemADomain( item ) && item.amount.value === 0 && (
+			{ isLineItemADomain( item ) && item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
 				<BundledDomainFreeUI>{ translate( 'First year free with your plan' ) }</BundledDomainFreeUI>
 			) }
 		</LineItemTitleUI>
