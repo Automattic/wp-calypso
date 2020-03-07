@@ -114,6 +114,7 @@ export interface ResponseCartProduct {
 	item_subtotal_integer: number;
 	item_subtotal_display: string;
 	is_domain_registration: boolean;
+	is_bundled: boolean;
 	meta: string;
 	volume: number;
 	extra: object;
