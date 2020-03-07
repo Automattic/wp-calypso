@@ -355,9 +355,9 @@ export class ContactDetailsFormFields extends Component {
 		};
 	};
 
-	createField = ( name, componentClass, additionalProps, needsChildRef ) => {
+	createField = ( name, componentClass, additionalProps, fieldPropOptions = {} ) => {
 		return createElement( componentClass, {
-			...this.getFieldProps( name, { needsChildRef } ),
+			...this.getFieldProps( name, { ...fieldPropOptions } ),
 			...additionalProps,
 		} );
 	};
@@ -380,15 +380,23 @@ export class ContactDetailsFormFields extends Component {
 							label: translate( 'Organization' ),
 							text: labelTexts.organization || translate( '+ Add organization name' ),
 						},
-						true
+						{
+							needsChildRef: true,
+						}
 					) }
 				</div>
 
 				<div className="contact-details-form-fields__row">
-					{ this.createField( 'email', Input, {
-						label: translate( 'Email' ),
-						errorMessage: this.props.contactDetailsErrors?.email,
-					} ) }
+					{ this.createField(
+						'email',
+						Input,
+						{
+							label: translate( 'Email' ),
+						},
+						{
+							errorMessage: this.props.contactDetailsErrors?.email,
+						}
+					) }
 
 					{ this.createField(
 						'phone',
@@ -399,18 +407,26 @@ export class ContactDetailsFormFields extends Component {
 							countriesList: this.props.countriesList,
 							countryCode: this.state.phoneCountryCode,
 							enableStickyCountry: false,
-							errorMessage: this.props.contactDetailsErrors?.phone,
 						},
-						true
+						{
+							needsChildRef: true,
+							errorMessage: this.props.contactDetailsErrors?.phone,
+						}
 					) }
 				</div>
 
 				<div className="contact-details-form-fields__row">
 					{ needsFax &&
-						this.createField( 'fax', Input, {
-							label: translate( 'Fax' ),
-							errorMessage: this.props.contactDetailsErrors?.fax,
-						} ) }
+						this.createField(
+							'fax',
+							Input,
+							{
+								label: translate( 'Fax' ),
+							},
+							{
+								errorMessage: this.props.contactDetailsErrors?.fax,
+							}
+						) }
 				</div>
 
 				<div className="contact-details-form-fields__row">
@@ -420,9 +436,11 @@ export class ContactDetailsFormFields extends Component {
 						{
 							label: translate( 'Country' ),
 							countriesList: this.props.countriesList,
-							errorMessage: this.props.contactDetailsErrors?.countryCode,
 						},
-						true
+						{
+							errorMessage: this.props.contactDetailsErrors?.countryCode,
+							needsChildRef: true,
+						}
 					) }
 				</div>
 
@@ -490,15 +508,27 @@ export class ContactDetailsFormFields extends Component {
 		return (
 			<FormFieldset className="contact-details-form-fields">
 				<div className="contact-details-form-fields__row">
-					{ this.createField( 'first-name', Input, {
-						label: translate( 'First Name' ),
-						errorMessage: contactDetailsErrors?.firstName,
-					} ) }
+					{ this.createField(
+						'first-name',
+						Input,
+						{
+							label: translate( 'First Name' ),
+						},
+						{
+							errorMessage: contactDetailsErrors?.firstName,
+						}
+					) }
 
-					{ this.createField( 'last-name', Input, {
-						label: translate( 'Last Name' ),
-						errorMessage: contactDetailsErrors?.lastName,
-					} ) }
+					{ this.createField(
+						'last-name',
+						Input,
+						{
+							label: translate( 'Last Name' ),
+						},
+						{
+							errorMessage: contactDetailsErrors?.lastName,
+						}
+					) }
 				</div>
 				{ this.props.needsAlternateEmailForGSuite && this.renderAlternateEmailFieldForGSuite() }
 
