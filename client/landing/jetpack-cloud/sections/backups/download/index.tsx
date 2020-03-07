@@ -1,72 +1,46 @@
 /**
  * External dependencies
  */
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { rewindBackup } from 'state/activity-log/actions';
-import Confirm from './confirm';
-import getBackupProgress from 'state/selectors/get-backup-progress';
-import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
-import QueryRewindState from 'components/data/query-rewind-state';
-import Queued from './queued';
-import Ready from './ready';
 import { BackupProgress } from './types';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteTitle } from 'state/sites/selectors';
+import { rewindBackup } from 'state/activity-log/actions';
+import { useLocalizedMoment } from 'components/localized-moment';
+import Confirm from './confirm';
+import getBackupProgressForRewindId from 'state/selectors/get-backup-progress-for-rewind-id';
 import getRewindBackupProgressRequestStatus from 'state/selectors/get-rewind-backup-progress-request-status';
-
-enum DownloadState {
-	DownloadInfoLoading,
-	DownloadConfirm,
-	DownloadQueued,
-	DownloadReady,
-}
-
+import InProgress from './in-progress';
+import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
+import Ready from './ready';
+import Placeholder from './placeholder';
 interface Props {
 	rewindId: string;
 }
 
-const getDownloadState = (
-	backupProgress: BackupProgress | null,
-	backupProgressRequestStatus: undefined | 'pending' | 'success',
-	rewindId: string,
-	hasRequestedDownload: boolean
-) => {
-	if ( undefined === backupProgressRequestStatus || 'pending' === backupProgressRequestStatus ) {
-		return DownloadState.DownloadInfoLoading;
-	} else if ( null === backupProgress ) {
-		return DownloadState.DownloadConfirm;
-	} else if (
-		backupProgress.rewindId === rewindId &&
-		backupProgress.validUntil &&
-		backupProgress.url
-	) {
-		return DownloadState.DownloadReady;
-	}
-	return hasRequestedDownload ? DownloadState.DownloadQueued : DownloadState.DownloadConfirm;
-};
-
 const BackupRestorePage = ( { rewindId }: Props ) => {
 	const dispatch = useDispatch();
 
+	const moment = useLocalizedMoment();
+	const backupDateString: string = moment.unix( rewindId ).format( 'LLL' );
+	const longBackupDateString: string = moment.unix( rewindId ).format( 'LLLL' );
 	const siteId = useSelector( getSelectedSiteId );
-	// const rewindState = useSelector( state => getRewindState( state, siteId ) );
-	const backupProgress: BackupProgress | null = useSelector( state =>
-		getBackupProgress( state, siteId )
-	);
+	const siteTitle = useSelector( state => getSiteTitle( state, siteId ) );
 
-	const backupProgressRequestStatus: undefined | 'pending' | 'success' = useSelector( state =>
+	const backupProgressRequestStatus: string | null = useSelector( state =>
 		getRewindBackupProgressRequestStatus( state, siteId )
 	);
 
-	// The QueryRewindBackupStatus component will poll whenever there is a download id, so only retrieve it if the download is in progress
-	const downloadId = backupProgress?.rewindId === rewindId ? backupProgress?.downloadId : null;
+	const backupProgress: BackupProgress | null = useSelector( state =>
+		getBackupProgressForRewindId( state, siteId, rewindId )
+	);
 
-	const [ hasRequestedDownload, setHasRequestedDownload ] = useState( false );
-
+	const downloadUrl = backupProgress?.url;
 	const requestDownload = useCallback( () => {
 		if ( siteId && rewindId ) {
 			dispatch( rewindBackup( siteId, rewindId, {} ) );
@@ -74,35 +48,54 @@ const BackupRestorePage = ( { rewindId }: Props ) => {
 	}, [ dispatch, rewindId, siteId ] );
 
 	const onConfirm = () => {
-		setHasRequestedDownload( true );
 		requestDownload();
 	};
 
-	const downloadState = getDownloadState(
-		backupProgress,
-		backupProgressRequestStatus,
-		rewindId,
-		hasRequestedDownload
-	);
+	// The QueryRewindBackupStatus component will poll whenever there is a download id, so only retrieve it if the download is in progress
+	const downloadId =
+		backupProgress && ! isNaN( backupProgress.progress ) ? backupProgress.downloadId : null;
 
 	const render = () => {
-		switch ( downloadState ) {
-			case DownloadState.DownloadConfirm:
-				return <Confirm rewindId={ rewindId } siteId={ siteId } onConfirm={ onConfirm } />;
-			case DownloadState.DownloadQueued:
-				return <Queued />;
-			// case DownloadState.DownloadConfirm:
-			// 	return <p>...</p>;
-			case DownloadState.DownloadReady:
-				return <Ready backupProgress={ backupProgress } siteId={ siteId } />;
-			case DownloadState.DownloadInfoLoading:
-				return <p>...</p>;
+		// there is no backup download creation info
+		if ( null === backupProgress ) {
+			// and that is because it hasn't been loaded yet
+			if ( ! backupProgressRequestStatus || backupProgressRequestStatus !== 'success' ) {
+				return <Placeholder />;
+			}
+			// or because there is no download or one being made
+			return (
+				<Confirm
+					backupDateString={ backupDateString }
+					onConfirm={ onConfirm }
+					siteTitle={ siteTitle }
+				/>
+			);
+			// the user has confirmed they want to download
+		} else if ( null !== downloadId ) {
+			return (
+				<InProgress
+					backupDateString={ backupDateString }
+					precent={ backupProgress?.progress }
+					siteTitle={ siteTitle }
+				/>
+			);
+			// NaN progress means the backup finished
+		} else if ( isNaN( backupProgress.progress ) ) {
+			return (
+				<Ready
+					downloadUrl={ downloadUrl }
+					longBackupDateString={ longBackupDateString }
+					siteTitle={ siteTitle }
+				/>
+			);
 		}
+
+		// todo: make error state, make sure it is actually an error
+		return <p>...</p>;
 	};
 
 	return (
 		<div>
-			{ siteId && <QueryRewindState siteId={ siteId } /> }
 			{ siteId && <QueryRewindBackupStatus downloadId={ downloadId } siteId={ siteId } /> }
 			{ render() }
 		</div>

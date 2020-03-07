@@ -31,8 +31,6 @@ export function backupRestore( context, next ) {
 }
 
 export function backupDownload( context, next ) {
-	const rewindId = context.params.rewindId;
-
-	context.primary = <BackupDownloadPage rewindId={ context.params.rewindId ? rewindId : null } />;
+	context.primary = <BackupDownloadPage rewindId={ context.params.rewindId } />;
 	next();
 }

@@ -2,27 +2,28 @@
  * External dependencies
  */
 import React from 'react';
-import moment from 'moment';
 
 /**
  * Internal dependencies
  */
-import { BackupProgress } from './types';
 import { Button } from '@automattic/components';
 
 interface Props {
-	backupProgress: BackupProgress;
-	siteId: number;
+	downloadUrl?: string;
+	longBackupDateString: string;
+	siteTitle: string | null;
 }
 
-const BackupDownloadReady = ( { backupProgress: { backupPoint, url }, siteId }: Props ) => (
+const BackupDownloadReady = ( { downloadUrl, longBackupDateString, siteTitle }: Props ) => (
 	<div>
 		<h3>{ 'Your backup is now available for download.' }</h3>
 		<p>
-			{ `We successfully created a backup of your site ${ siteId } from ` }
-			<strong>{ moment( backupPoint ).format( 'LLL' ) }</strong>
+			{ `We successfully created a backup of your site ${
+				siteTitle ? siteTitle : 'your site'
+			} from ` }
+			<strong>{ longBackupDateString }</strong>
 		</p>
-		<Button href={ url } primary>
+		<Button href={ downloadUrl } primary>
 			{ 'Download file' }
 		</Button>
 	</div>

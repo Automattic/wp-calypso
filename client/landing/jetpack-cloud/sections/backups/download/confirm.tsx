@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -10,17 +9,19 @@ import moment from 'moment';
 import { Button } from '@automattic/components';
 
 interface Props {
+	backupDateString: string;
 	onConfirm: () => void;
-	rewindId: string;
-	siteId: number | null;
+	siteTitle: string | null;
 }
 
-const BackupDownloadConfirm = ( { rewindId, siteId, onConfirm }: Props ) => (
+const BackupDownloadConfirm = ( { backupDateString, onConfirm, siteTitle }: Props ) => (
 	<div>
 		<h3>{ 'Create downloadable backup' }</h3>
 		<p>
-			<strong>{ moment.unix( parseInt( rewindId ) ).format( 'LLL' ) }</strong>
-			{ ` is the selected point to create  a download backup of ${ siteId }.` }
+			<strong>{ backupDateString }</strong>
+			{ ` is the selected point to create a download backup of ${
+				siteTitle ? siteTitle : 'your site'
+			}.` }
 		</p>
 		<Button onClick={ onConfirm }>{ 'Create downloadable backup' }</Button>
 	</div>
