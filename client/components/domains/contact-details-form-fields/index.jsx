@@ -332,7 +332,7 @@ export class ContactDetailsFormFields extends Component {
 		} );
 	};
 
-	getFieldProps = ( name, needsChildRef = false ) => {
+	getFieldProps = ( name, { customErrorMessage = null, needsChildRef = false } ) => {
 		const ref = needsChildRef
 			? { inputRef: this.getRefCallback( name ) }
 			: { ref: this.getRefCallback( name ) };
@@ -344,9 +344,9 @@ export class ContactDetailsFormFields extends Component {
 			additionalClasses: 'contact-details-form-fields__field',
 			disabled: getIsFieldDisabled( name ) || formState.isFieldDisabled( form, name ),
 			isError: formState.isFieldInvalid( form, name ),
-			errorMessage: ( formState.getFieldErrorMessages( form, camelCase( name ) ) || [] ).join(
-				'\n'
-			),
+			errorMessage:
+				customErrorMessage ||
+				( formState.getFieldErrorMessages( form, camelCase( name ) ) || [] ).join( '\n' ),
 			onChange: this.handleFieldChange,
 			onBlur: this.handleBlur,
 			value: formState.getFieldValue( form, name ) || '',
