@@ -36,7 +36,11 @@ describe( 'ProductExpiration', () => {
 	it( 'should return the renewal date in when the date is in the future', () => {
 		const date = moment( new Date( 2100, 10, 10 ) );
 		const wrapper = shallow(
-			<ProductExpiration renewDateMoment={ date } translate={ translate } />
+			<ProductExpiration
+				expiryDateMoment={ date }
+				renewDateMoment={ date }
+				translate={ translate }
+			/>
 		);
 		expect( wrapper.text() ).toEqual( 'Renews on November 10, 2100' );
 	} );
