@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { noop, flow } from 'lodash';
 import Gridicon from 'components/gridicon';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -23,6 +24,8 @@ import { getPreference, hasReceivedRemotePreferences } from 'state/preferences/s
 import './style.scss';
 
 const PREFERENCE_PREFIX = 'dismissible-card-';
+
+const debug = debugFactory( 'calypso:dismissible-card' );
 
 class DismissibleCard extends Component {
 	static propTypes = {
@@ -42,6 +45,9 @@ class DismissibleCard extends Component {
 		const { className, isDismissed, onClick, dismissCard, hasReceivedPreferences } = this.props;
 
 		if ( isDismissed || ! hasReceivedPreferences ) {
+			if ( hasReceivedPreferences && isDismissed ) {
+				debug( `${ this.props.preferenceName } won't be display becaused it has been dismissed` );
+			}
 			return null;
 		}
 
