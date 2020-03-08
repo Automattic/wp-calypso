@@ -1,21 +1,15 @@
 /**
  * External dependencies
  */
-import { createRegistryControl } from '@wordpress/data';
 import { stringify } from 'qs';
 import wpcomRequest, { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
 
 /**
  * Internal dependencies
  */
-import {
-	FetchAuthOptionsAction,
-	FetchWpLoginAction,
-	RemoteLoginUserAction,
-	SendLoginEmailAction,
-} from './actions';
-import { STORE_KEY } from './constants';
+import { FetchWpLoginAction, SendLoginEmailAction, RemoteLoginUserAction } from './actions';
 import { WpcomClientCredentials } from '../shared-types';
+import { createControls as createCommonControls } from '../wpcom-request-controls';
 
 /**
  * Creates a promise that will be rejected after a given timeout
@@ -73,20 +67,13 @@ export function createControls( config: ControlsConfig ) {
 	requestAllBlogsAccess().catch( () => {
 		throw new Error( 'Could not get all blog access.' );
 	} );
-	return {
-		SELECT_USERNAME_OR_EMAIL: createRegistryControl( registry => () => {
-			return registry.select( STORE_KEY ).getUsernameOrEmail();
-		} ),
-		FETCH_AUTH_OPTIONS: async ( { usernameOrEmail }: FetchAuthOptionsAction ) => {
-			const escaped = encodeURIComponent( usernameOrEmail );
 
-			return await wpcomRequest( {
-				path: `/users/${ escaped }/auth-options`,
-				apiVersion: '1.1',
-			} );
-		},
+	const { client_id, client_secret } = config;
+
+	return {
+		...createCommonControls( { client_id, client_secret } ),
 		FETCH_WP_LOGIN: async ( { action, params }: FetchWpLoginAction ) => {
-			const { client_id, client_secret, loadCookiesAfterLogin = true } = config;
+			const { loadCookiesAfterLogin = true } = config;
 
 			const response = await fetch(
 				// TODO Wrap this in `localizeUrl` from lib/i18n-utils
@@ -117,8 +104,6 @@ export function createControls( config: ControlsConfig ) {
 			};
 		},
 		SEND_LOGIN_EMAIL: async ( { email }: SendLoginEmailAction ) => {
-			const { client_id, client_secret } = config;
-
 			return await wpcomRequest( {
 				path: `/auth/send-login-email`,
 				apiVersion: '1.2',

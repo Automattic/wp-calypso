@@ -1,7 +1,56 @@
+/*
+ * These tests shouldn't require the jsdom environment,
+ * but we're waiting for this PR to merge:
+ * https://github.com/WordPress/gutenberg/pull/20486
+ *
+ * @jest-environment jsdom
+ */
+
 /**
  * Internal dependencies
  */
-import { submitPassword } from '../actions';
+import { submitPassword, submitUsernameOrEmail } from '../actions';
+import { STORE_KEY } from '../constants';
+
+describe( 'submitUsernameOrEmail', () => {
+	it( 'requests auth options for a username', () => {
+		const username = 'user1';
+		const generator = submitUsernameOrEmail( username );
+
+		expect( generator.next().value ).toEqual( { type: 'CLEAR_ERRORS' } );
+
+		const apiResponse = {
+			success: true,
+			data: { token_links: [] as string[] },
+		};
+
+		expect( generator.next().value ).toEqual( {
+			type: 'WPCOM_REQUEST',
+			request: expect.objectContaining( {
+				path: `/users/${ username }/auth-options`,
+			} ),
+		} );
+
+		expect( generator.next( apiResponse ).value ).toEqual( {
+			type: 'RECEIVE_AUTH_OPTIONS',
+			response: apiResponse,
+			usernameOrEmail: username,
+		} );
+	} );
+
+	it( 'escapes email addresses', () => {
+		const generator = submitUsernameOrEmail( 'test@email.com' );
+
+		expect( generator.next().value ).toEqual( { type: 'CLEAR_ERRORS' } );
+
+		expect( generator.next().value ).toEqual( {
+			type: 'WPCOM_REQUEST',
+			request: expect.objectContaining( {
+				path: '/users/test%40email.com/auth-options',
+			} ),
+		} );
+	} );
+} );
 
 describe( 'submitPassword', () => {
 	it( 'logins in to remote services on successful login', async () => {
@@ -41,8 +90,10 @@ describe( 'submitPassword', () => {
 			type: 'CLEAR_ERRORS',
 		} );
 
-		expect( generator.next().value ).toEqual( {
-			type: 'SELECT_USERNAME_OR_EMAIL',
+		// Implementation detail; needs to select username from store
+		expect( generator.next().value ).toMatchObject( {
+			type: 'SELECT',
+			storeKey: STORE_KEY,
 		} );
 
 		const username = 'user1';
