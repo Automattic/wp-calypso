@@ -14,7 +14,7 @@ This controls the formatting of the date format, which is passed to a localized 
 This is the expiration date as a `moment` instance, and is required for display.
 
 #### `renewDateMoment { moment }`
-This is the date on which the product will be renewed, as a `moment` instance, and is required for display.
+This is the date on which the product will be renewed, as a `moment` instance, used only when provided.
 
 #### `isRefundable { boolean } - default false`
 Controls whether the product is currently in the refund window, which changes the display to the purchase date, if provided.
