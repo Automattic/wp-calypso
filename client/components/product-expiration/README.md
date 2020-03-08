@@ -13,6 +13,9 @@ This controls the formatting of the date format, which is passed to a localized 
 #### `expiryDateMoment { moment }`
 This is the expiration date as a `moment` instance, and is required for display.
 
+#### `renewDateMoment { moment }`
+This is the date on which the product will be renewed, as a `moment` instance, and is required for display.
+
 #### `isRefundable { boolean } - default false`
 Controls whether the product is currently in the refund window, which changes the display to the purchase date, if provided.
 
@@ -25,6 +28,7 @@ Optional purchase date, used only when `isRefundable` provided.
 const expiryDateMoment = moment( product.expiry );
 <ProductExpiration
 	expiryDateMoment={ expiryDateMoment }
+	renewDateMoment={ renewDateMoment }
 	isRefundable={ product.isRefundable }
 />
 ```

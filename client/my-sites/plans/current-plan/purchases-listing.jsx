@@ -136,9 +136,14 @@ class PurchasesListing extends Component {
 
 		const expiryMoment = purchase.expiryDate ? this.props.moment( purchase.expiryDate ) : null;
 
+		// Pass auto-renew information if it is enabled.
+		const renewMoment =
+			purchase.autoRenew && purchase.autoRenewDateMoment ? purchase.autoRenewDateMoment : null;
+
 		return (
 			<ProductExpiration
 				expiryDateMoment={ expiryMoment }
+				renewDateMoment={ renewMoment }
 				purchaseDateMoment={ subscribedMoment }
 				isRefundable={ purchase.isRefundable }
 			/>
