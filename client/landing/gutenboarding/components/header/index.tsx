@@ -151,6 +151,9 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 					</Link>
 				</div>
 				<div className="gutenboarding__header-group">
+					<Icon icon="wordpress-alt" color="#066188" />
+				</div>
+				<div className="gutenboarding__header-group">
 					{ siteTitle ? (
 						<DomainPickerButton
 							className="gutenboarding__header-domain-picker-button"
