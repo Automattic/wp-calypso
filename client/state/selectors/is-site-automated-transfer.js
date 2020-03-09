@@ -1,8 +1,13 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal deependencies
+ */
+import 'state/sites/init';
+
 /**
  * Returns true if site is a Automated Transfer site, false if not and null if unknown
  *

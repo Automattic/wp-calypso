@@ -3,6 +3,12 @@
  */
 
 import { get } from 'lodash';
+
+/**
+ * Internal deependencies
+ */
+import 'state/sites/init';
+
 /**
  * Returns The name of the import engine used for importing the site, null if no import has occurred.
  *

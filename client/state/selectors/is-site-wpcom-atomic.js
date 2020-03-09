@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal deependencies
+ */
+import 'state/sites/init';
+
+/**
  * Retruns true if the questioned site is a WPCOM Atomic site.
  *
  * @param {object} state the global state tree

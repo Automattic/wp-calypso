@@ -5,6 +5,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal deependencies
+ */
+import 'state/sites/init';
+
+/**
  * Returns the site monitor settings of a site.
  * Returns null if the site is unknown, or monitor settings haven't been received yet.
  *

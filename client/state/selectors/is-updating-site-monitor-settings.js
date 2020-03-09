@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal deependencies
+ */
+import 'state/sites/init';
 
 /**
  * Returns true if we are currently updating the site monitor settings.

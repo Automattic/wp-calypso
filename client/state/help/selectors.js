@@ -9,6 +9,8 @@ import { get } from 'lodash';
 import getSelectedOrPrimarySiteId from 'state/selectors/get-selected-or-primary-site-id';
 import { getSite } from 'state/sites/selectors';
 
+import 'state/sites/init';
+
 export const getHelpSiteId = state => state.help.selectedSiteId;
 
 /*

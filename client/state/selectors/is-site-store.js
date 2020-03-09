@@ -7,6 +7,9 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { isJetpackSite } from 'state/sites/selectors';
+
+import 'state/sites/init';
+
 /**
  * Returns true if site is Jetpack and has WooCommerce plugin set to active. Otherwise false
  *
