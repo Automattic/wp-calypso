@@ -41,6 +41,7 @@ import { setAllSitesSelected } from 'state/ui/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import RemoveDomainDialog from './remove-domain-dialog';
+import NonPrimaryDomainDialog from 'me/purchases/non-primary-domain-dialog';
 
 /**
  * Style dependencies
@@ -50,7 +51,9 @@ import './style.scss';
 class RemovePurchase extends Component {
 	static propTypes = {
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		hasNonPrimaryDomainsFlag: PropTypes.bool,
 		isDomainOnlySite: PropTypes.bool,
+		isPrimaryDomainRegistered: PropTypes.bool,
 		receiveDeletedSite: PropTypes.func.isRequired,
 		removePurchase: PropTypes.func.isRequired,
 		purchase: PropTypes.object,
@@ -62,19 +65,41 @@ class RemovePurchase extends Component {
 	state = {
 		isDialogVisible: false,
 		isRemoving: false,
+		isShowingNonPrimaryDomainWarning: false,
 		survey: {},
 	};
 
 	closeDialog = () => {
 		this.setState( {
 			isDialogVisible: false,
+			isShowingNonPrimaryDomainWarning: false,
+		} );
+	};
+
+	showRemovePlanDialog = () => {
+		this.setState( {
+			isShowingNonPrimaryDomainWarning: false,
+			isDialogVisible: true,
 		} );
 	};
 
 	openDialog = event => {
 		event.preventDefault();
 
-		this.setState( { isDialogVisible: true } );
+		if (
+			this.shouldShowNonPrimaryDomainWarning() &&
+			! this.state.isShowingNonPrimaryDomainWarning
+		) {
+			this.setState( {
+				isShowingNonPrimaryDomainWarning: true,
+				isDialogVisible: false,
+			} );
+		} else {
+			this.setState( {
+				isShowingNonPrimaryDomainWarning: false,
+				isDialogVisible: true,
+			} );
+		}
 	};
 
 	onClickChatButton = () => {
@@ -144,6 +169,32 @@ class RemovePurchase extends Component {
 			</Button>
 		);
 	};
+
+	shouldShowNonPrimaryDomainWarning() {
+		const {
+			hasNonPrimaryDomainsFlag,
+			isAtomicSite,
+			isPrimaryDomainRegistered,
+			purchase,
+		} = this.props;
+		return (
+			hasNonPrimaryDomainsFlag && isPlan( purchase ) && ! isAtomicSite && isPrimaryDomainRegistered
+		);
+	}
+
+	renderNonPrimaryDomainWarningDialog() {
+		const { purchase, site } = this.props;
+		return (
+			<NonPrimaryDomainDialog
+				isDialogVisible={ this.state.isShowingNonPrimaryDomainWarning }
+				closeDialog={ this.closeDialog }
+				removePlan={ this.showRemovePlanDialog }
+				planName={ getName( purchase ) }
+				oldDomainName={ site.domain }
+				newDomainName={ site.wpcom_url }
+			/>
+		);
+	}
 
 	renderDomainDialog() {
 		let chatButton = null;
@@ -314,6 +365,7 @@ class RemovePurchase extends Component {
 					<Gridicon icon="trash" />
 					{ translate( 'Remove %(productName)s', { args: { productName } } ) }
 				</CompactCard>
+				{ this.shouldShowNonPrimaryDomainWarning() && this.renderNonPrimaryDomainWarningDialog() }
 				{ this.renderDialog() }
 			</>
 		);
