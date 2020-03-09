@@ -144,9 +144,8 @@ const Header: FunctionComponent = () => {
 	};
 
 	const handleSignupForDomains = () => {
+		setShowSignupDialog( true );
 		setDomainFlow( true );
-		setShouldCreate( true );
-		history.push( makePath( Step.Signup ) );
 	};
 
 	useEffect( () => {
@@ -163,7 +162,7 @@ const Header: FunctionComponent = () => {
 				: `/block-editor/page/${ newSite.blogid }/home?is-gutenboarding`;
 			window.location.href = location;
 		}
-	}, [ newSite, resetOnboardStore ] );
+	}, [ isDomainFlow, newSite, resetOnboardStore ] );
 
 	return (
 		<div
