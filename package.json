@@ -218,7 +218,7 @@
 		"eslint-plugin-jest": "23.6.0",
 		"eslint-plugin-jsdoc": "18.11.0",
 		"eslint-plugin-jsx-a11y": "6.2.3",
-		"eslint-plugin-react": "7.17.0",
+		"eslint-plugin-react": "7.18.3",
 		"eslint-plugin-wpcalypso": "file:./packages/eslint-plugin-wpcalypso",
 		"exports-loader": "0.7.0",
 		"fake-indexeddb": "3.0.0",
