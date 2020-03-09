@@ -403,10 +403,10 @@ const boot = ( currentUser, registerRoutes ) => {
 	} );
 };
 
-export const bootApp = ( appName, router ) => {
+export const bootApp = ( appName, registerRoutes ) => {
 	const user = userFactory();
 	user.initialize().then( () => {
 		debug( `Starting ${ appName }. Let's do this.` );
-		boot( user, router );
+		boot( user, registerRoutes );
 	} );
 };
