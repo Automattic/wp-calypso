@@ -108,7 +108,7 @@ const Header: FunctionComponent = () => {
 						title: siteTitle,
 					},
 					site_creation_flow: 'gutenboarding',
-					theme: `pub/${ selectedDesign?.slug }`,
+					...( selectedDesign && { theme: `pub/${ selectedDesign?.slug }` } ),
 				},
 				...( bearerToken && { authToken: bearerToken } ),
 			} );
