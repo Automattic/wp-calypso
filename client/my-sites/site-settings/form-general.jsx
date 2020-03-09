@@ -19,6 +19,7 @@ import LanguagePicker from 'components/language-picker';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import config from 'config';
 import { languages } from 'languages';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import FormInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -309,7 +310,6 @@ export class SiteSettingsFormGeneral extends Component {
 					</FormLabel>
 				) }
 
-				
 				<FormSettingExplanation isIndented>
 					{ translate( 'Your site is visible to everyone.' ) }
 				</FormSettingExplanation>
@@ -357,6 +357,7 @@ export class SiteSettingsFormGeneral extends Component {
 			fields,
 			isRequestingSettings,
 			eventTracker,
+			selectedEditor,
 			siteIsJetpack,
 			siteIsAtomic,
 			translate,
@@ -364,11 +365,17 @@ export class SiteSettingsFormGeneral extends Component {
 		const blogPublic = parseInt( fields.blog_public, 10 );
 		const wpcomComingSoon = parseInt( fields.wpcom_coming_soon, 10 );
 
-		const isNonAtomicJetpackSite = siteIsJetpack && ! siteIsAtomic;
+		const siteIsSimple = ! siteIsJetpack;
+		const siteIsGutenbergAtomic = siteIsAtomic && selectedEditor && selectedEditor !== 'classic';
+		const siteIsClassicAtomic = siteIsAtomic && selectedEditor === 'classic';
+		const siteIsAlreadyPrivate = blogPublic === -1;
+
+		const mayGoPrivate =
+			siteIsSimple || siteIsGutenbergAtomic || ( siteIsClassicAtomic && siteIsAlreadyPrivate );
 
 		return (
 			<FormFieldset>
-				{ ! isNonAtomicJetpackSite && (
+				{ mayGoPrivate && (
 					<>
 						<FormLabel className="site-settings__visibility-label is-coming-soon">
 							<FormRadio
@@ -391,7 +398,7 @@ export class SiteSettingsFormGeneral extends Component {
 						</FormSettingExplanation>
 					</>
 				) }
-				{ ! isNonAtomicJetpackSite && (
+				{ mayGoPrivate && (
 					<FormLabel className="site-settings__visibility-label is-public">
 						<FormRadio
 							name="blog_public"
@@ -428,7 +435,7 @@ export class SiteSettingsFormGeneral extends Component {
 					/>
 					<span>{ translate( 'Do not allow search engines to index my site' ) }</span>
 				</FormLabel>
-				{ ! isNonAtomicJetpackSite && (
+				{ mayGoPrivate && (
 					<>
 						<FormLabel className="site-settings__visibility-label is-private">
 							<FormRadio
@@ -695,6 +702,7 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 		const siteIsJetpack = isJetpackSite( state, siteId );
 		const selectedSite = getSelectedSite( state );
+		const selectedEditor = getSelectedEditor( state, siteId );
 
 		return {
 			withComingSoonOption: ownProps.hasOwnProperty( 'withComingSoonOption' )
@@ -702,6 +710,7 @@ const connectComponent = connect(
 				: config.isEnabled( 'coming-soon' ),
 			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
 			needsVerification: ! isCurrentUserEmailVerified( state ),
+			selectedEditor,
 			siteIsJetpack,
 			siteIsVip: isVipSite( state, siteId ),
 			siteSlug: getSelectedSiteSlug( state ),
