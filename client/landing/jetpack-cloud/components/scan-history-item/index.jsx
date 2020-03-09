@@ -36,7 +36,9 @@ class ScanHistoryItem extends Component {
 		return (
 			<>
 				<div className="scan-history-item__subheader">
-					<span className="scan-history-item__date">Threat found on { entry.detectionDate }</span>
+					<span className="scan-history-item__date">
+						{ translate( 'Threat found on %s', { args: entry.detectionDate } ) }
+					</span>
 					<span className="scan-history-item__date-separator"></span>
 					<span
 						className={ classnames(
@@ -44,7 +46,9 @@ class ScanHistoryItem extends Component {
 							this.entryActionClassNames( entry )
 						) }
 					>
-						Threat { entry.action } on { entry.actionDate }
+						{ translate( 'Threat %(action)s on %(actionDate)s', {
+							args: { action: entry.action, actionDate: entry.actionDate },
+						} ) }
 					</span>
 				</div>
 				<Badge
