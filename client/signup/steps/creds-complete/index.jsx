@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
  */
 import StepWrapper from 'signup/step-wrapper';
 import { Card, Button } from '@automattic/components';
+import { getBlogUrl } from 'state/sites/selectors';
 
 /**
  * Style dependencies
@@ -74,7 +75,7 @@ class CredsCompleteStep extends Component {
 
 export default connect( ( state, ownProps ) => {
 	const blogId = get( ownProps, [ 'initialContext', 'query', 'blogid' ], 0 );
-	const blogUrl = get( state, [ 'sites', 'items', blogId, 'URL' ], false );
+	const blogUrl = getBlogUrl( state, blogId );
 
 	return {
 		wpAdminUrl: blogUrl ? blogUrl + '/wp-admin/' : false,

@@ -7,6 +7,7 @@ export { default as canCurrentUserUseStore } from 'state/sites/selectors/can-cur
 export { default as canJetpackSiteAutoUpdateCore } from 'state/sites/selectors/can-jetpack-site-auto-update-core';
 export { default as canJetpackSiteAutoUpdateFiles } from 'state/sites/selectors/can-jetpack-site-auto-update-files';
 export { default as canJetpackSiteUpdateFiles } from 'state/sites/selectors/can-jetpack-site-update-files';
+export { default as getBlogUrl } from 'state/sites/selectors/get-blog-url';
 export { default as getCustomizerUrl } from 'state/sites/selectors/get-customizer-url';
 export { default as getJetpackComputedAttributes } from 'state/sites/selectors/get-jetpack-computed-attributes';
 export { default as getJetpackSiteUpdateFilesDisabledReasons } from 'state/sites/selectors/get-jetpack-site-update-files-disabled-reasons';
