@@ -8,7 +8,7 @@ import { Popover, DropZoneProvider } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import '@wordpress/format-library';
 import React, { useRef, useEffect } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { recordTracksPageViewWithPageParams } from '@automattic/calypso-analytics';
 
 // Uncomment and remove the redundant sass import from `./style.css` when a release after @wordpress/components@8.5.0 is published.
@@ -20,7 +20,6 @@ import { recordTracksPageViewWithPageParams } from '@automattic/calypso-analytic
  */
 import Header from './components/header';
 import { name, settings } from './onboarding-block';
-import { Step, usePath } from './path';
 import './style.scss';
 
 registerBlockType( name, settings );
@@ -40,17 +39,6 @@ export function Gutenboard() {
 	// @TODO: This is currently needed in addition to the routing (inside the Onboarding Block)
 	// for the 'Back' and 'Next' buttons in the header. If we remove those (and move navigation
 	// entirely into the block), we'll be able to remove this code.
-	const { step } = useParams();
-	const makePath = usePath();
-	let prev: undefined | string;
-	switch ( step ) {
-		case Step.DesignSelection:
-			prev = makePath( Step.IntentGathering );
-			break;
-		case Step.PageSelection:
-			prev = makePath( Step.DesignSelection );
-			break;
-	}
 
 	// We're persisting the block via `useRef` in order to prevent re-renders
 	// which would collide with the routing done inside of the block
@@ -70,7 +58,7 @@ export function Gutenboard() {
 		<div className="block-editor__container">
 			<DropZoneProvider>
 				<div className="edit-post-layout">
-					<Header prev={ prev } />
+					<Header />
 					<BlockEditorProvider
 						useSubRegistry={ false }
 						value={ [ onboardingBlock.current ] }
