@@ -207,7 +207,7 @@ function setupErrorLogger( reduxStore ) {
 	// Save errorLogger to a singleton for use in arbitrary logging.
 	require( 'lib/catch-js-errors/log' ).registerLogger( errorLogger );
 
-	//Save data to JS error logger
+	// Save data to JS error logger
 	errorLogger.saveDiagnosticData( {
 		user_id: getCurrentUserId( reduxStore.getState() ),
 		calypso_env: config( 'env_id' ),
