@@ -8,7 +8,6 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormattedHeader from 'components/formatted-header';
 import ScanHistoryItem from '../../../components/scan-history-item';
 import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -130,7 +129,7 @@ class ScanHistoryPage extends Component {
 		const logEntries = this.filteredEntries();
 		return (
 			<section className="history">
-				<FormattedHeader className="history__title" headerText="History" />
+				<h1 className="history__header">{ translate( 'History' ) }</h1>
 				<p>
 					{ translate(
 						'The scanning history contains a record of all previously active threats on your site.'

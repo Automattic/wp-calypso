@@ -1,8 +1,14 @@
 .history {
 	padding: 0 10px;
 
-	&__title {
-		text-align: left;
+	&__header {
+		font-size: 28px;
+		line-height: 1;
+		margin: 30px 0;
+
+		@include breakpoint( '>660px' ) {
+			font-size: 48px;
+		}
 	}
 
 	&__filters {
