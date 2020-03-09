@@ -2,7 +2,7 @@
  * External dependencies
  */
 import creditcards from 'creditcards';
-import { capitalize, compact, isArray, isEmpty, mergeWith, union } from 'lodash';
+import { capitalize, compact, isArray, isEmpty, mergeWith, union, isString } from 'lodash';
 import i18n from 'i18n-calypso';
 import { isValidPostalCode } from 'lib/postal-code';
 
@@ -267,6 +267,18 @@ validators.validIndiaPan = {
 			return false;
 		}
 		return panRegex.test( value );
+	},
+	error: function( description ) {
+		return i18n.translate( '%(description)s is invalid', {
+			args: { description: capitalize( description ) },
+		} );
+	},
+};
+
+validators.validIndonesiaNik = {
+	isValid( value ) {
+		const digitsOnly = isString( value ) ? value.replace( /[^0-9]/g, '' ) : '';
+		return digitsOnly.length === 16;
 	},
 	error: function( description ) {
 		return i18n.translate( '%(description)s is invalid', {

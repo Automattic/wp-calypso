@@ -120,8 +120,7 @@ export function countrySpecificFieldRules( country ) {
 						comment:
 							'NIK - Indonesia Identity Card Number required ' + 'for Indonesian payment methods.',
 					} ),
-					//TODO: validate
-					rules: [ 'required' ],
+					rules: [ 'validIndonesiaNik' ],
 				},
 
 				pan: {
