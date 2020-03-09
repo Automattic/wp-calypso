@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import { THEME_ACTIVATE, THEME_ACTIVATE_FAILURE } from 'state/action-types';
+import { THEME_ACTIVATE, THEME_ACTIVATE_FAILURE } from 'state/themes/action-types';
 import { themeActivated } from 'state/themes/actions/theme-activated';
 
 import 'state/themes/init';

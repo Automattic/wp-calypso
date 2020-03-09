@@ -17,8 +17,6 @@ import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
-	DESERIALIZE,
-	SERIALIZE,
 	RECOMMENDED_THEMES_FAIL,
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
@@ -42,7 +40,8 @@ import {
 	THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
-} from 'state/action-types';
+} from 'state/themes/action-types';
+import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { getSerializedThemesQuery, getThemeIdFromStylesheet } from './utils';
 import {
 	queriesSchema,

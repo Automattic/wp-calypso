@@ -14,7 +14,7 @@ import {
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
-} from 'state/action-types';
+} from 'state/themes/action-types';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 import 'state/themes/init';

@@ -6,7 +6,7 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import { THEMES_REQUEST_SUCCESS } from 'state/action-types';
+import { THEMES_REQUEST_SUCCESS } from 'state/themes/action-types';
 import { isJetpackSite } from 'state/sites/selectors';
 import { shouldFilterWpcomThemes } from 'state/themes/selectors';
 import { isThemeFromWpcom, isThemeMatchingQuery } from 'state/themes/utils';

@@ -10,10 +10,12 @@ import {
 	AUTOMATED_TRANSFER_STATUS_SET as SET_STATUS,
 	AUTOMATED_TRANSFER_STATUS_REQUEST as REQUEST_STATUS,
 	AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE as REQUEST_STATUS_FAILURE,
+} from 'state/action-types';
+import {
 	THEME_TRANSFER_INITIATE_REQUEST as INITIATE,
 	THEME_TRANSFER_INITIATE_FAILURE as INITIATE_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE as TRANSFER_UPDATE,
-} from 'state/action-types';
+} from 'state/themes/action-types';
 
 export const status = ( state = null, action ) => {
 	switch ( action.type ) {

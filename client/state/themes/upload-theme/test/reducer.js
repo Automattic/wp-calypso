@@ -24,7 +24,7 @@ import {
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_INITIATE_PROGRESS,
 	THEME_TRANSFER_INITIATE_REQUEST,
-} from 'state/action-types';
+} from 'state/themes/action-types';
 
 const themeId = 'twentysixteen';
 

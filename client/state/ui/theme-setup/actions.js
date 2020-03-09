@@ -7,7 +7,7 @@ import {
 	THEME_SETUP_TOGGLE_DIALOG,
 	THEME_SETUP_REQUEST,
 	THEME_SETUP_RESULT,
-} from 'state/action-types';
+} from 'state/themes/action-types';
 
 export function toggleDialog() {
 	return {

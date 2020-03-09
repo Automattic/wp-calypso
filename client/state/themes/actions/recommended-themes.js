@@ -6,7 +6,7 @@ import {
 	RECOMMENDED_THEMES_FAIL,
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
-} from 'state/action-types';
+} from 'state/themes/action-types';
 
 import 'state/themes/init';
 

@@ -32,12 +32,12 @@ import {
 	SITES_REQUEST,
 	SITES_REQUEST_FAILURE,
 	SITES_REQUEST_SUCCESS,
-	THEME_ACTIVATE_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	SITE_PLUGIN_UPDATED,
 	SITE_FRONT_PAGE_UPDATE,
 	SITE_MIGRATION_STATUS_UPDATE,
 } from 'state/action-types';
+import { THEME_ACTIVATE_SUCCESS } from 'state/themes/action-types';
 import { sitesSchema, hasAllSitesListSchema } from './schema';
 import {
 	combineReducers,
