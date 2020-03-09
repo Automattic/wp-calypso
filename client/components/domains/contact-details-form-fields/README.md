@@ -13,6 +13,7 @@ Its primary purpose for existing is to ensure consistency between the domain che
     <ContactDetailsFormFields
         eventFormName="Edit Contact Info"
         contactDetails={ contactDetailsObject }
+        contactDetailsErrors={ contactDetailsErrorsObject }
         disableSubmitButton={ false }
         getIsFieldDisabled={ customFieldDisabledCheck }
         labelTexts={ labelTextOverridesObjects }
@@ -46,6 +47,28 @@ The form model, consisting of key/value pairs. Keys must be **camelCase**.
     postalCode: '12345',
     countryCode: 'IT',
     fax: '+3398067382',
+},
+
+```
+
+### contactDetailsErrors {object} (optional)
+
+Error messages for each field consisting of key/value pairs. Keys must be **camelCase**.
+
+```js
+{
+    firstName: 'This field is required.',
+    lastName: null,
+    organization: null,
+    email: null,
+    phone: 'This phone number is too short; please include an area code.',
+    address1: null,
+    address2: null,
+    city: null,
+    state: null,
+    postalCode: null,
+    countryCode: 'This country code is invalid.',
+    fax: null,
 },
 
 ```

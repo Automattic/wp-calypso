@@ -41,6 +41,7 @@ import { CALYPSO_CONTACT } from 'lib/url/support';
 import getCountries from 'state/selectors/get-countries';
 import QueryDomainCountries from 'components/data/query-countries/domains';
 import {
+	CONTACT_DETAILS_FORM_FIELDS,
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 } from './custom-form-fieldsets/constants';
@@ -51,22 +52,6 @@ import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
  */
 import './style.scss';
 
-const CONTACT_DETAILS_FORM_FIELDS = [
-	'firstName',
-	'lastName',
-	'organization',
-	'email',
-	'alternateEmail',
-	'phone',
-	'address1',
-	'address2',
-	'city',
-	'state',
-	'postalCode',
-	'countryCode',
-	'fax',
-];
-
 export class ContactDetailsFormFields extends Component {
 	static propTypes = {
 		eventFormName: PropTypes.string,
@@ -76,6 +61,12 @@ export class ContactDetailsFormFields extends Component {
 				...CONTACT_DETAILS_FORM_FIELDS.map( field => ( { [ field ]: PropTypes.string } ) )
 			)
 		).isRequired,
+		contactDetailsErrors: PropTypes.shape(
+			Object.assign(
+				{},
+				...CONTACT_DETAILS_FORM_FIELDS.map( field => ( { [ field ]: PropTypes.string } ) )
+			)
+		),
 		countriesList: PropTypes.array.isRequired,
 		needsFax: PropTypes.bool,
 		getIsFieldDisabled: PropTypes.func,
@@ -91,6 +82,7 @@ export class ContactDetailsFormFields extends Component {
 		needsOnlyGoogleAppsDetails: PropTypes.bool,
 		needsAlternateEmailForGSuite: PropTypes.bool,
 		hasCountryStates: PropTypes.bool,
+		shouldForceRenderOnPropChange: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -113,6 +105,7 @@ export class ContactDetailsFormFields extends Component {
 		hasCountryStates: false,
 		translate: identity,
 		userCountryCode: 'US',
+		shouldForceRenderOnPropChange: false,
 	};
 
 	constructor( props ) {
@@ -133,6 +126,7 @@ export class ContactDetailsFormFields extends Component {
 	// This is an attempt limit the redraws to only what we need.
 	shouldComponentUpdate( nextProps, nextState ) {
 		return (
+			nextProps.shouldForceRenderOnPropChange === true ||
 			( nextProps.isSubmitting === false && this.props.isSubmitting === true ) ||
 			nextState.phoneCountryCode !== this.state.phoneCountryCode ||
 			! isEqual( nextProps.contactDetails, this.props.contactDetails ) ||
@@ -337,7 +331,7 @@ export class ContactDetailsFormFields extends Component {
 		} );
 	};
 
-	getFieldProps = ( name, needsChildRef = false ) => {
+	getFieldProps = ( name, { customErrorMessage = null, needsChildRef = false } ) => {
 		const ref = needsChildRef
 			? { inputRef: this.getRefCallback( name ) }
 			: { ref: this.getRefCallback( name ) };
@@ -349,9 +343,9 @@ export class ContactDetailsFormFields extends Component {
 			additionalClasses: 'contact-details-form-fields__field',
 			disabled: getIsFieldDisabled( name ) || formState.isFieldDisabled( form, name ),
 			isError: formState.isFieldInvalid( form, name ),
-			errorMessage: ( formState.getFieldErrorMessages( form, camelCase( name ) ) || [] ).join(
-				'\n'
-			),
+			errorMessage:
+				customErrorMessage ||
+				( formState.getFieldErrorMessages( form, camelCase( name ) ) || [] ).join( '\n' ),
 			onChange: this.handleFieldChange,
 			onBlur: this.handleBlur,
 			value: formState.getFieldValue( form, name ) || '',
@@ -361,9 +355,9 @@ export class ContactDetailsFormFields extends Component {
 		};
 	};
 
-	createField = ( name, componentClass, additionalProps, needsChildRef ) => {
+	createField = ( name, componentClass, additionalProps, fieldPropOptions = {} ) => {
 		return createElement( componentClass, {
-			...this.getFieldProps( name, needsChildRef ),
+			...this.getFieldProps( name, { ...fieldPropOptions } ),
 			...additionalProps,
 		} );
 	};
@@ -386,14 +380,23 @@ export class ContactDetailsFormFields extends Component {
 							label: translate( 'Organization' ),
 							text: labelTexts.organization || translate( '+ Add organization name' ),
 						},
-						true
+						{
+							needsChildRef: true,
+						}
 					) }
 				</div>
 
 				<div className="contact-details-form-fields__row">
-					{ this.createField( 'email', Input, {
-						label: translate( 'Email' ),
-					} ) }
+					{ this.createField(
+						'email',
+						Input,
+						{
+							label: translate( 'Email' ),
+						},
+						{
+							customErrorMessage: this.props.contactDetailsErrors?.email,
+						}
+					) }
 
 					{ this.createField(
 						'phone',
@@ -405,15 +408,25 @@ export class ContactDetailsFormFields extends Component {
 							countryCode: this.state.phoneCountryCode,
 							enableStickyCountry: false,
 						},
-						true
+						{
+							needsChildRef: true,
+							customErrorMessage: this.props.contactDetailsErrors?.phone,
+						}
 					) }
 				</div>
 
 				<div className="contact-details-form-fields__row">
 					{ needsFax &&
-						this.createField( 'fax', Input, {
-							label: translate( 'Fax' ),
-						} ) }
+						this.createField(
+							'fax',
+							Input,
+							{
+								label: translate( 'Fax' ),
+							},
+							{
+								customErrorMessage: this.props.contactDetailsErrors?.fax,
+							}
+						) }
 				</div>
 
 				<div className="contact-details-form-fields__row">
@@ -424,7 +437,10 @@ export class ContactDetailsFormFields extends Component {
 							label: translate( 'Country' ),
 							countriesList: this.props.countriesList,
 						},
-						true
+						{
+							customErrorMessage: this.props.contactDetailsErrors?.countryCode,
+							needsChildRef: true,
+						}
 					) }
 				</div>
 
@@ -434,6 +450,7 @@ export class ContactDetailsFormFields extends Component {
 						countryCode={ countryCode }
 						hasCountryStates={ hasCountryStates }
 						shouldAutoFocusAddressField={ this.shouldAutoFocusAddressField }
+						contactDetailsErrors={ this.props.contactDetailsErrors }
 					/>
 				) }
 			</div>
@@ -447,12 +464,17 @@ export class ContactDetailsFormFields extends Component {
 				<CountrySelect
 					label={ this.props.translate( 'Country' ) }
 					countriesList={ this.props.countriesList }
-					{ ...this.getFieldProps( 'country-code', true ) }
+					{ ...this.getFieldProps( 'country-code', {
+						customErrorMessage: this.props.contactDetailsErrors?.countryCode,
+						needsChildRef: true,
+					} ) }
 				/>
 
 				<Input
 					label={ getPostCodeLabelText( countryCode ) }
-					{ ...this.getFieldProps( 'postal-code' ) }
+					{ ...this.getFieldProps( 'postal-code', {
+						customErrorMessage: this.props.contactDetailsErrors?.postalCode,
+					} ) }
 				/>
 			</div>
 		);
@@ -463,14 +485,22 @@ export class ContactDetailsFormFields extends Component {
 			<div className="contact-details-form-fields__row">
 				<Input
 					label={ this.props.translate( 'Alternate Email Address' ) }
-					{ ...this.getFieldProps( 'alternate-email' ) }
+					{ ...this.getFieldProps( 'alternate-email', {
+						customErrorMessage: this.props.contactDetailsErrors?.alternateEmail,
+					} ) }
 				/>
 			</div>
 		);
 	}
 
 	render() {
-		const { translate, onCancel, disableSubmitButton, labelTexts } = this.props;
+		const {
+			translate,
+			onCancel,
+			disableSubmitButton,
+			labelTexts,
+			contactDetailsErrors,
+		} = this.props;
 		const countryCode = this.getCountryCode();
 
 		const isFooterVisible = !! ( this.props.onSubmit || onCancel );
@@ -478,13 +508,27 @@ export class ContactDetailsFormFields extends Component {
 		return (
 			<FormFieldset className="contact-details-form-fields">
 				<div className="contact-details-form-fields__row">
-					{ this.createField( 'first-name', Input, {
-						label: translate( 'First Name' ),
-					} ) }
+					{ this.createField(
+						'first-name',
+						Input,
+						{
+							label: translate( 'First Name' ),
+						},
+						{
+							customErrorMessage: contactDetailsErrors?.firstName,
+						}
+					) }
 
-					{ this.createField( 'last-name', Input, {
-						label: translate( 'Last Name' ),
-					} ) }
+					{ this.createField(
+						'last-name',
+						Input,
+						{
+							label: translate( 'Last Name' ),
+						},
+						{
+							customErrorMessage: contactDetailsErrors?.lastName,
+						}
+					) }
 				</div>
 				{ this.props.needsAlternateEmailForGSuite && this.renderAlternateEmailFieldForGSuite() }
 
