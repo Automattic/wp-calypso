@@ -249,12 +249,6 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	// The analytics module requires user (when logged in) and superProps objects. Inject these here.
 	analytics.initialize( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
 
-	// Render Layout only for non-isomorphic sections.
-	// Isomorphic sections will take care of rendering their Layout last themselves.
-	if ( ! document.getElementById( 'primary' ) ) {
-		renderLayout( reduxStore );
-	}
-
 	setupErrorLogger( reduxStore );
 
 	// If `?sb` or `?sp` are present on the path set the focus of layout
@@ -398,6 +392,13 @@ const boot = ( currentUser, router ) => {
 		if ( router ) {
 			router();
 		}
+
+		// Render initial `<Layout>` for non-isomorphic sections.
+		// Isomorphic sections will take care of rendering their `<Layout>` themselves.
+		if ( ! document.getElementById( 'primary' ) ) {
+			renderLayout( reduxStore );
+		}
+
 		page.start( { decodeURLComponents: false } );
 	} );
 };
