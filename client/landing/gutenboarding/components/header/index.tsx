@@ -158,7 +158,7 @@ const Header: FunctionComponent = () => {
 		if ( newSite ) {
 			! isDomainFlow && resetOnboardStore();
 			const location = isDomainFlow
-				? `/checkout/${ newSite.blogid }/personal?redirect_to=%2Fgutenboarding%2Fdesign` //%2F%3FsiteId%3D${ newSite.blogid }`
+				? `/checkout/${ newSite.blogid }/personal?redirect_to=%2Fgutenboarding%2Fdesign`
 				: `/block-editor/page/${ newSite.blogid }/home?is-gutenboarding`;
 			window.location.href = location;
 		}
