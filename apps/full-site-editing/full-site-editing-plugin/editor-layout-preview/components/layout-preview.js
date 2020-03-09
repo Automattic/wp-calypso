@@ -10,12 +10,17 @@ import debugFactory from 'debug';
  * WordPress dependencies
  */
 /* eslint-disable import/no-extraneous-dependencies */
+import '@wordpress/editor'; // This shouldn't be necessary
+import '@wordpress/format-library';
+
 import { withSelect } from '@wordpress/data';
 import { compose, withSafeTimeout } from '@wordpress/compose';
 import { useMemo, useEffect, useState } from '@wordpress/element';
 import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
+
 import { Disabled } from '@wordpress/components';
 import { parse as parseBlocks } from '@wordpress/blocks';
+
 /* eslint-enable import/no-extraneous-dependencies */
 
 const debug = debugFactory( 'editor-layout-preview:render' );
