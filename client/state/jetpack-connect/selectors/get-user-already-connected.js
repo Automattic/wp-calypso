@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getAuthorizationData } from 'state/jetpack-connect/selectors';
+import { getAuthorizationData } from 'state/jetpack-connect/selectors/get-authorization-data';
 
 import 'state/jetpack-connect/init';
 

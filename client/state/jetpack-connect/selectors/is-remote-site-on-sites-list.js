@@ -1,7 +1,8 @@
 /**
  * Internal dependencies
  */
-import { getAuthorizationData, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
+import { getAuthorizationData } from 'state/jetpack-connect/selectors/get-authorization-data';
+import { getJetpackSiteByUrl } from 'state/jetpack-connect/selectors/get-jetpack-site-by-url';
 
 import 'state/jetpack-connect/init';
 
