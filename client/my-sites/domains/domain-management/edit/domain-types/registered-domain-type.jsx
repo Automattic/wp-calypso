@@ -33,9 +33,12 @@ import {
 import SubscriptionSettings from '../card/subscription-settings';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { getProductBySlug } from 'state/products-list/selectors';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
+import { getByPurchaseId } from 'state/purchases/selectors';
 import NonPrimaryDomainPlanUpsell from '../../components/domain/non-primary-domain-plan-upsell';
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
+import AutoRenewToggle from 'me/purchases/manage-purchase/auto-renew-toggle';
+import QuerySitePurchases from 'components/data/query-site-purchases';
+import { isExpired, isRechargeable } from 'lib/purchases';
 
 class RegisteredDomainType extends React.Component {
 	getVerticalNavigation() {
@@ -340,12 +343,31 @@ class RegisteredDomainType extends React.Component {
 		);
 	}
 
-	renderAutoRenew() {
+	renderAutoRenewToggle() {
+		const { selectedSite, purchase } = this.props;
+
+		if ( ! isRechargeable( purchase ) || isExpired( purchase ) ) {
+			return null;
+		}
+
 		return (
-			<Card compact={ true }>
-				Auto Renew (on) <CompactFormToggle checked={ true } />
-			</Card>
+			<AutoRenewToggle
+				planName={ selectedSite.plan.product_name_short }
+				siteDomain={ selectedSite.domain }
+				purchase={ purchase }
+				compact={ true }
+			/>
 		);
+	}
+
+	renderAutoRenew() {
+		const { selectedSite, purchase } = this.props;
+
+		if ( ! purchase ) {
+			return <QuerySitePurchases siteId={ selectedSite.ID } />;
+		}
+
+		return <Card compact={ true }>{ this.renderAutoRenewToggle() }</Card>;
 	}
 
 	planUpsellForNonPrimaryDomain() {
@@ -445,8 +467,11 @@ class RegisteredDomainType extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state, ownProps ) => {
+		const { subscriptionId } = ownProps.domain;
+
 		return {
+			purchase: subscriptionId ? getByPurchaseId( state, parseInt( subscriptionId, 10 ) ) : null,
 			redemptionProduct: getProductBySlug( state, 'domain_redemption' ),
 		};
 	},
