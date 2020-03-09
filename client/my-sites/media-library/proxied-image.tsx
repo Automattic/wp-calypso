@@ -34,32 +34,36 @@ const ProxiedImage: React.FC< Props > = function ProxiedImage( {
 	query,
 	...rest
 } ) {
-	const [ imageObjectUrl, setImageObjectUrl ] = useState<string>( "" );
+	const [ imageObjectUrl, setImageObjectUrl ] = useState< string >( '' );
 	const requestId = `media-library-proxied-image-${ siteSlug }${ filePath }${ query }`;
 
 	useEffect( () => {
-		if ( imageObjectUrl === "" && cache[ requestId ] ) {
+		if ( imageObjectUrl === '' && cache[ requestId ] ) {
 			const url = URL.createObjectURL( cache[ requestId ] );
 			setImageObjectUrl( url );
 			debug( 'set image from cache', { url } );
 		} else {
 			wpcom
 				.undocumented()
-				.getAtomicSiteMediaViaProxyRetry( siteSlug, filePath, query, ( err : Error, data : Blob | null ) => {
-					if ( data instanceof Blob ) {
-						cacheResponse( requestId, data );
-						setImageObjectUrl( URL.createObjectURL( data ) );
-						debug( 'got image from API', { data } );
+				.getAtomicSiteMediaViaProxyRetry(
+					siteSlug,
+					filePath,
+					query,
+					( err: Error, data: Blob | null ) => {
+						if ( data instanceof Blob ) {
+							cacheResponse( requestId, data );
+							setImageObjectUrl( URL.createObjectURL( data ) );
+							debug( 'got image from API', { data } );
+						}
 					}
-				} );
+				);
 		}
 
 		return () => {
-			if ( ! imageObjectUrl ) {
-				return;
+			if ( imageObjectUrl ) {
+				debug( 'Cleared blob from memory on dismount: ' + imageObjectUrl );
+				URL.revokeObjectURL( imageObjectUrl );
 			}
-			debug( 'Cleared blob from memory on dismount: ' + imageObjectUrl );
-			URL.revokeObjectURL( imageObjectUrl );
 		};
 	}, [ imageObjectUrl, filePath, requestId, siteSlug ] );
 
