@@ -33,7 +33,8 @@ type WpcomStoreAction =
 export function useWpcomStore(
 	registerStore,
 	onEvent,
-	managedContactDetails: ManagedContactDetails
+	managedContactDetails: ManagedContactDetails,
+	updateContactDetailsCache: ( DomainContactDetails ) => void
 ) {
 	// Only register once
 	const registerIsComplete = useRef< boolean >( false );
@@ -47,8 +48,10 @@ export function useWpcomStore(
 		action: WpcomStoreAction
 	): ManagedContactDetails {
 		switch ( action.type ) {
-			case 'UPDATE_CONTACT_DETAILS':
+			case 'UPDATE_CONTACT_DETAILS': {
+				updateContactDetailsCache( action.payload );
 				return updaters.updateDomainFields( state, action.payload );
+			}
 			case 'UPDATE_VAT_ID':
 				return updaters.updateVatId( state, action.payload );
 			case 'UPDATE_PHONE':
