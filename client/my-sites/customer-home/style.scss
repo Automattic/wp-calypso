@@ -147,18 +147,20 @@
 
 	&__box-action {
 		margin-bottom: 16px;
-		width: 100%;
+		width: 48%;
+
+		@include breakpoint( '>480px' ) {
+			margin-bottom: 24px;
+		}
 
 		.button {
 			border-width: 1px;
-			display: flex;
 			height: 100%;
 			min-width: 100%;
 			padding: 16px;
 			text-align: center;
 
 			@include breakpoint( '>480px' ) {
-				display: block;
 				min-height: 85px;
 				padding: 24px;
 			}
@@ -171,25 +173,8 @@
 			display: block;
 
 			@include breakpoint( '<480px' ) {
-				margin: auto 14px;
+				margin: 0;
 			}
-		}
-
-		@mixin box-action-two-col {
-			margin-bottom: 24px;
-			width: 48%;
-
-			.button {
-				flex: 1;
-				margin: 0 auto;
-				padding: 30px 24px;
-			}
-		}
-		@include breakpoint( '>1280px' ) {
-			@include box-action-two-col;
-		}
-		@include breakpoint( '800px-960px' ) {
-			@include box-action-two-col;
 		}
 	}
 	&__card-checklist-heading {
