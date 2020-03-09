@@ -71,7 +71,7 @@ export default connect( ( state, { src }: Pick< Props, 'src' > ) => {
 	const isAtomic = !! isSiteAutomatedTransfer( state, siteId as number );
 	const isPrivate = !! isPrivateSite( state, siteId );
 	const { filePath, query, isRelativeToSiteRoot } = parseMediaURL( src, siteSlug );
-	const useProxy = isAtomic && isPrivate && filePath && ( isRelativeToSiteRoot as boolean );
+	const useProxy = ( isAtomic && isPrivate && filePath && isRelativeToSiteRoot ) as boolean;
 
 	return {
 		query,
