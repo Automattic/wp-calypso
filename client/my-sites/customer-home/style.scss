@@ -147,20 +147,23 @@
 
 	&__box-action {
 		margin-bottom: 16px;
-		width: 48%;
+		width: 100%;
 
 		@include breakpoint( '>480px' ) {
+			width: 48%;
 			margin-bottom: 24px;
 		}
 
 		.button {
 			border-width: 1px;
+			display: flex;
 			height: 100%;
 			min-width: 100%;
 			padding: 16px;
 			text-align: center;
 
 			@include breakpoint( '>480px' ) {
+				display: block;
 				min-height: 85px;
 				padding: 24px;
 			}
@@ -173,7 +176,7 @@
 			display: block;
 
 			@include breakpoint( '<480px' ) {
-				margin: 0;
+				margin: auto 14px;
 			}
 		}
 	}
