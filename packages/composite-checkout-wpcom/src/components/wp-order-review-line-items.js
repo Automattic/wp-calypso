@@ -282,6 +282,12 @@ function returnModalCopy( product, translate, hasDomainsInCart ) {
 				'When you press Continue, we will remove your domain from the cart and you will have no claim for the domain name you picked.'
 			);
 			break;
+		case 'coupon':
+			modalCopy.title = translate( 'You are about to remove your coupon from the cart' );
+			modalCopy.description = translate(
+				'When you press Continue, we will need you to confirm your payment details.'
+			);
+			break;
 		default:
 			modalCopy.title = translate( 'You are about to remove your product from the cart' );
 			modalCopy.description = translate(
