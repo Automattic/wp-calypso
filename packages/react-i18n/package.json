@@ -25,7 +25,7 @@
 	],
 	"types": "dist/types",
 	"scripts": {
-		"clean": "npx rimraf dist",
+		"clean": "npx rimraf dist ../../.tsc-cache/packages__react-i18n*",
 		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
 		"prepublish": "npm run clean",
 		"watch": "tsc --project ./tsconfig.json --watch"
