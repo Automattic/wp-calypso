@@ -2,9 +2,9 @@
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import { normalizePost } from 'state/posts/actions/normalize-post';
 import { receivePost } from 'state/posts/actions/receive-post';
 import { getEditedPost } from 'state/posts/selectors';
+import { normalizePostForActions } from 'state/posts/utils';
 import isPreviousRouteGutenberg from 'state/selectors/is-previous-route-gutenberg';
 import { editorReset, editorSetLoadingError, startEditingPost } from 'state/ui/editor/actions';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -35,7 +35,7 @@ export const startEditingExistingPost = ( siteId, postId ) => ( dispatch, getSta
 		.post( postId )
 		.get( { context: 'edit', meta: 'autosave' } )
 		.then( post => {
-			post = normalizePost( post );
+			post = normalizePostForActions( post );
 			dispatch( receivePost( post ) );
 			dispatch( editorReset() );
 			return post;

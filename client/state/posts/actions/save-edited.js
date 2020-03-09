@@ -9,10 +9,14 @@ import { assign, clone, get, isEmpty } from 'lodash';
 import wpcom from 'lib/wp';
 import { receivePost } from 'state/posts/actions/receive-post';
 import { savePostSuccess } from 'state/posts/actions/save-post-success';
-import { normalizePost } from 'state/posts/actions/normalize-post';
 import { getEditedPost, getPostEdits } from 'state/posts/selectors';
 import { recordSaveEvent } from 'state/posts/stats';
-import { isBackDated, isFutureDated, normalizeTermsForApi } from 'state/posts/utils';
+import {
+	isBackDated,
+	isFutureDated,
+	normalizePostForActions,
+	normalizeTermsForApi,
+} from 'state/posts/utils';
 import editedPostHasContent from 'state/selectors/edited-post-has-content';
 import {
 	editorAutosaveReset,
@@ -137,7 +141,7 @@ export const saveEdited = options => async ( dispatch, getState ) => {
 	dispatch( editorLoadingErrorReset() );
 
 	// Retrieve the normalized post and use it to update Redux store
-	const receivedPost = normalizePost( data );
+	const receivedPost = normalizePostForActions( data );
 
 	if ( receivedPost.status === 'draft' ) {
 		// If a draft was successfully saved, set it as "last edited draft"

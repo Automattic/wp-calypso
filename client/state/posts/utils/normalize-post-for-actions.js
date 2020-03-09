@@ -22,7 +22,7 @@ function getPageTemplate( post ) {
 	return post.page_template;
 }
 
-export function normalizePost( post ) {
+export function normalizePostForActions( post ) {
 	post.parent_id = getParentId( post );
 	if ( post.type === 'page' ) {
 		post.page_template = getPageTemplate( post );
