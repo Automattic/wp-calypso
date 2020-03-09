@@ -378,7 +378,7 @@ function renderLayout( reduxStore ) {
 	debug( 'Main layout rendered.' );
 }
 
-const boot = ( currentUser, router ) => {
+const boot = ( currentUser, registerRoutes ) => {
 	utils();
 	loadAllState().then( () => {
 		const initialState = getInitialState( initialReducer );
@@ -389,8 +389,8 @@ const boot = ( currentUser, router ) => {
 		configureReduxStore( currentUser, reduxStore );
 		setupMiddlewares( currentUser, reduxStore );
 		detectHistoryNavigation.start();
-		if ( router ) {
-			router();
+		if ( registerRoutes ) {
+			registerRoutes();
 		}
 
 		// Render initial `<Layout>` for non-isomorphic sections.
