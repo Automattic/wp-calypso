@@ -30,9 +30,6 @@ class ScanHistoryItem extends Component {
 	}
 
 	renderEntryHeader( entry ) {
-		// React complains because we shouldn't wrap a <div> tag inside <p> tag. This happens
-		// because LogItem surrounds its content by a <p> tag, and the Badge is a <div> tag.
-		// Should we create our own Badge component?
 		return (
 			<>
 				<div className="scan-history-item__subheader">
