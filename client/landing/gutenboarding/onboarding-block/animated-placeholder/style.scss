@@ -45,7 +45,7 @@
 }
 
 .animated-placeholder__suggestion {
-	animation: gutenboarding_animated_placeholder 10s infinite;
+	animation: gutenboarding_animated_placeholder 15s infinite;
 	color: var( --studio-gray-5 );
 	display: block;
 	height: 0;
@@ -64,32 +64,32 @@
 }
 
 .animated-placeholder__suggestion:nth-child( 2 ) {
-	animation-delay: 2s;
+	animation-delay: 3s;
 	.is-slow-speed & {
-		animation-delay: 8s;
+		animation-delay: 18s;
 	}
 }
 
 .animated-placeholder__suggestion:nth-child( 3 ) {
-	animation-delay: 4s;
+	animation-delay: 6s;
 
 	.is-slow-speed & {
-		animation-delay: 16s;
+		animation-delay: 26s;
 	}
 }
 
 .animated-placeholder__suggestion:nth-child( 4 ) {
-	animation-delay: 6s;
+	animation-delay: 9s;
 
 	.is-slow-speed & {
-		animation-delay: 24s;
+		animation-delay: 34s;
 	}
 }
 
 .animated-placeholder__suggestion:nth-child( 5 ) {
-	animation-delay: 8s;
+	animation-delay: 12s;
 
 	.is-slow-speed & {
-		animation-delay: 32s;
+		animation-delay: 42s;
 	}
 }
