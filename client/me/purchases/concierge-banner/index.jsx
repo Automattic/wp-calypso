@@ -119,9 +119,9 @@ class ConciergeBanner extends Component {
 	}
 
 	render() {
-		const { bannerType } = this.props;
+		const { bannerType, showPlaceholder } = this.props;
 
-		if ( 'placeholder' === bannerType ) {
+		if ( showPlaceholder ) {
 			return this.placeholder();
 		}
 
