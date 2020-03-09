@@ -1,4 +1,3 @@
-const fs = require( 'fs' ).promises;
 const path = require( 'path' );
 const globby = require( 'globby' );
 const debug = require( 'debug' )( 'effective-module-tree' );
@@ -91,29 +90,26 @@ const simplify = ( packageDef, parents ) => {
  * - For each dependency, try to find it looking at parent directories
  * - Once everything is linked, produce a simplified map suited for treeify
  * - Print it
- *
- * @param {string[]} includePattern Globs to include in the search, defaults to ['**\/package.json']
- * @param {string[]} excludePattern Globs to exclude from the search, defaults to []
  */
-const effectiveTree = async ( includePattern = [ '**/package.json' ], excludePattern = [] ) => {
+const effectiveTree = async ( { root, exclude = [] } ) => {
+	// Use absolute paths everywhere
+	root = path.resolve( root );
+
 	// Find all package.json files
-	const packageJsonPaths = await globby( includePattern, { ignore: excludePattern } );
+	const packageJsonPaths = await globby( '**/package.json', { cwd: root, ignore: exclude } );
 
 	// Read all package.json files
 	const packagesByPath = new Map();
-	await Promise.all(
-		packageJsonPaths.map( async packageJsonPath => {
-			const content = await fs.readFile( packageJsonPath, 'utf8' );
-			const json = JSON.parse( content );
-			const packagePath = path.dirname( packageJsonPath );
-			packagesByPath.set( packagePath, {
-				name: json.name,
-				path: packagePath,
-				version: json.version,
-				deps: Object.keys( json.dependencies || [] ),
-			} );
-		} )
-	);
+	packageJsonPaths.map( packageJsonPath => {
+		const json = require( path.join( root, packageJsonPath ) );
+		const packagePath = path.dirname( packageJsonPath );
+		packagesByPath.set( packagePath, {
+			name: json.name,
+			path: packagePath,
+			version: json.version,
+			deps: Object.keys( json.dependencies || [] ),
+		} );
+	} );
 
 	// Link all packages
 	for ( const packageDef of packagesByPath.values() ) {

@@ -33,14 +33,26 @@ If there are missing dependencies, they will be printed in `stderr` as a warning
 caused by missing packages in node_mdoules, or the script misdetecting `package.json` files as
 packages (eg. from test fixtures).
 
-You can select which `package.json` files are used for computing the tree using the flags `--exclude`
-and `--include`. For example:
+By default, `effective-module-tree` will output the tree of the project in the current directory.
+To change this, use `effective-module-tree --root <dir>`. Please provide an absolute path. That
+path should contain a `package.json` and `node_modules`. Note that this tool won't look for
+dependencies in parent directories of the root you specified, so it may not work in subpackages
+of a monorepo if the dependencies are hoisted.
+
+If you have `package.json` files in your project that don't define a package (eg. they are examples),
+you can exclude them with `effective-module-tree --exclude <glob>`. You can use
+[minimatch patterns](https://github.com/isaacs/minimatch#usage).
+
+Full example:
 
 ```bash
-# Uses any `package.json` found inside `./src` except those that have an `examples` directory
+# Uses `package.json` found inside `./src`, ignoring those that have an `examples` directory
 # in their path.
 
-effective-module-tree --include "./src/**/package.json" --exclude "**/examples/**"
+effective-module-tree --root "./src/package.json" --exclude "**/examples/**"
 ```
 
-Both options accept [minimatch patterns](https://github.com/isaacs/minimatch#usage)
+## Troubleshooting
+
+Invoke the command with `DEBUG=effective-module-tree ./effective-module-tree` to get a verbose
+log of what is going on.

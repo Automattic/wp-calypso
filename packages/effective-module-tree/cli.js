@@ -8,26 +8,26 @@ const args = yargs
 		exclude: {
 			alias: 'e',
 			array: true,
-			describe: 'globs to exclude from the search',
+			describe: 'glob with package.json files to exclude from the search',
 		},
-		include: {
-			alias: 'i',
-			array: true,
-			describe: 'globs to include in the search (defaults to `**/package.json`)',
+		root: {
+			alias: 'r',
+			describe: 'Path of the root package.json. Defaults to current directory',
 		},
 	} )
-	.example( '$0 --include "src/**/package.json"', 'use package.json files inside ./src' )
+	.example( '$0', 'generate the tree for the project in the current directory' )
 	.example(
 		'$0 --exclude "test" --exclude "examples"',
-		'use all package.json, except those inside ./test or ./examples'
+		'same, but ignore package.json files inside, ./test or ./examples'
 	)
+	.example( '$0 --root "./src"', 'generate the tree for the project inside ./src' )
 	.help( 'h' )
 	.alias( 'h', 'help' )
 	.epilogue(
-		"It is highly recommended to use quotes to pass globs to --include and --exclude, so they don't get expanded by the shell"
+		"It is highly recommended to use quotes to pass globs to --exclude, so they don't get expanded by the shell"
 	).argv;
 
-effectiveTree( args.include || [ '**/package.json' ], args.exclude )
+effectiveTree( { root: args.root || process.cwd(), exclude: args.exclude || [] } )
 	.then( tree => {
 		// eslint-disable-next-line no-console
 		console.log( tree );

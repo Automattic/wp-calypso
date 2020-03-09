@@ -245,6 +245,7 @@
 		"loader-utils": "1.2.3",
 		"lodash": "4.17.15",
 		"md5-file": "4.0.0",
+		"micromatch": "4.0.2",
 		"mixedindentlint": "1.2.0",
 		"mkdirp": "0.5.1",
 		"mockdate": "2.0.5",

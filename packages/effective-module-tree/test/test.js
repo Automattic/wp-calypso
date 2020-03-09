@@ -1,4 +1,44 @@
-const mockFs = require( 'mock-fs' );
+const path = require( 'path' );
+const micromatch = require( 'micromatch' );
+
+const mockedFiles = {
+	'package.json': {
+		name: 'root',
+		version: '1.0.0',
+		dependencies: {
+			a: '^1.0.0',
+			b: '^2.0.0',
+		},
+	},
+	'node_modules/a/package.json': {
+		name: 'a',
+		version: '1.1.1',
+		dependencies: {},
+	},
+	'node_modules/b/package.json': {
+		name: 'b',
+		version: '2.2.2',
+		dependencies: {
+			c: '3.2.1',
+		},
+	},
+	'node_modules/c/package.json': {
+		name: 'c',
+		version: '3.2.1',
+	},
+};
+
+Object.entries( mockedFiles ).forEach( ( [ file, content ] ) => {
+	jest.mock( path.join( '/project/root', file ), () => content, { virtual: true } );
+} );
+
+jest.mock( 'globby', () => ( pattern, { ignore = [] } = {} ) => {
+	const files = Object.keys( mockedFiles ).filter(
+		file => micromatch.isMatch( file, pattern ) && ! micromatch.isMatch( file, ignore )
+	);
+	return Promise.resolve( files );
+} );
+
 const { candidates, simplify, effectiveTree } = require( '../index' );
 
 describe( 'Candidate generation', () => {
@@ -65,36 +105,14 @@ describe( 'Simplify tree', () => {
 
 describe( 'Effective tree generation', () => {
 	beforeEach( () => {
-		mockFs( {
-			'package.json': JSON.stringify( {
-				name: 'root',
-				version: '1.0.0',
-				dependencies: {
-					a: '^1.0.0',
-					b: '^2.0.0',
-				},
-			} ),
-			'node_modules/a/package.json': JSON.stringify( {
-				name: 'a',
-				version: '1.1.1',
-				dependencies: {},
-			} ),
-			'node_modules/b/package.json': JSON.stringify( {
-				name: 'b',
-				version: '2.2.2',
-				dependencies: {
-					c: '3.2.1',
-				},
-			} ),
-			'node_modules/c/package.json': JSON.stringify( {
-				name: 'c',
-				version: '3.2.1',
-			} ),
-		} );
+		jest.spyOn( console, 'warn' ).mockImplementation();
 	} );
 
 	it( 'Generates the simplified tree', async () => {
-		const tree = await effectiveTree();
+		const tree = await effectiveTree( {
+			root: '/project/root',
+			exclude: [],
+		} );
 		//prettier-ignore
 		expect( tree ).toEqual([
 			'└─ root@1.0.0',
@@ -104,7 +122,26 @@ describe( 'Effective tree generation', () => {
 		].join( '\n' ));
 	} );
 
+	it( 'Excludes items from the tree', async () => {
+		const tree = await effectiveTree( {
+			root: '/project/root',
+			exclude: [ 'node_modules/c/**' ],
+		} );
+		//prettier-ignore
+		expect( tree ).toEqual([
+			'└─ root@1.0.0',
+			'   ├─ a@1.1.1',
+			'   └─ b@2.2.2'
+		].join( '\n' ));
+
+		//eslint-disable-next-line no-console
+		expect( console.warn.mock.calls ).toEqual( [
+			[ "Can't find a candidate for c in node_modules/b" ],
+		] );
+	} );
+
 	afterEach( () => {
-		mockFs.restore();
+		//eslint-disable-next-line no-console
+		console.warn.mockRestore();
 	} );
 } );
