@@ -213,8 +213,16 @@ jobs:
       - prepare
       - run:
           name: TypeScript typecheck
-          # Report but don't fail the build (`|| exit 0`)
-          command: npm run typecheck || exit 0
+          # Check for type errors
+          #   Relax some rules to allow for easier gradual typing without failing the job:
+          #     --noImplicitAny false
+          #
+          # Run but don't fail the build -- @TODO When job passes, remove so job reports failure
+          #   || exit 0
+          command: |
+            npm run typecheck --    \
+              --noImplicitAny false \
+            || exit 0
 
   typecheck-strict:
     <<: *defaults
