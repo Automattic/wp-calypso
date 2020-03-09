@@ -118,6 +118,16 @@ const fetchWpLogin = ( action: WpLoginAction, params: object ): FetchWpLoginActi
 		params,
 	} as const );
 
+export interface RemoteLoginUserAction {
+	type: 'REMOTE_LOGIN_USER';
+	loginLinks: string[];
+}
+
+const remoteLoginUser = ( loginLinks: string[] ): RemoteLoginUserAction => ( {
+	type: 'REMOTE_LOGIN_USER',
+	loginLinks,
+} );
+
 export function* submitPassword( password: string ) {
 	yield clearErrors();
 	const username = yield { type: 'SELECT_USERNAME_OR_EMAIL' };
@@ -126,6 +136,7 @@ export function* submitPassword( password: string ) {
 		const loginResponse = yield fetchWpLogin( 'login-endpoint', { username, password } );
 
 		if ( loginResponse.ok && loginResponse.body.success ) {
+			yield remoteLoginUser( loginResponse.body.data.token_links );
 			yield receiveWpLogin( loginResponse.body );
 		} else {
 			yield receiveWpLoginFailed( loginResponse.body );
