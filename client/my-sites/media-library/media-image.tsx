@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import ImagePreloader from 'components/image-preloader';
 
 /**
  * Internal dependencies
@@ -44,6 +45,7 @@ interface Props {
 	query: string;
 	siteSlug: string;
 	onLoad: () => any;
+	placeholder: React.ReactNode | null;
 	useProxy: boolean;
 	dispatch: any;
 }
@@ -54,15 +56,32 @@ const MediaImage: React.FC< Props > = function MediaImage( {
 	filePath,
 	siteSlug,
 	useProxy = false,
+	placeholder = null,
 	dispatch,
 	...rest
 } ) {
 	if ( useProxy ) {
-		return <ProxiedImage siteSlug={ siteSlug } filePath={ filePath } query={ query } { ...rest } />;
+		return (
+			<ProxiedImage
+				siteSlug={ siteSlug }
+				filePath={ filePath }
+				query={ query }
+				placeholder={ placeholder }
+				{ ...rest }
+			/>
+		);
+	}
+
+	if ( placeholder ) {
+		return <ImagePreloader placeholder={ placeholder } src={ src } { ...rest } />;
 	}
 
 	/* eslint-disable-next-line jsx-a11y/alt-text */
 	return <img src={ src } { ...rest } />;
+};
+
+MediaImage.defaultProps = {
+	placeholder: null,
 };
 
 export default connect( ( state, { src }: Pick< Props, 'src' > ) => {
