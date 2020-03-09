@@ -6,6 +6,8 @@ import {
 	AuthOptionsErrorResponse,
 	WpLoginSuccessResponse,
 	WpLoginErrorResponse,
+	SendLoginEmailSuccessResponse,
+	SendLoginEmailErrorResponse,
 } from './types';
 
 export const reset = () =>
@@ -29,10 +31,16 @@ export const receiveAuthOptionsFailed = ( response: AuthOptionsErrorResponse ) =
 		response,
 	} as const );
 
-export const receiveSendLoginEmail = ( success: boolean ) =>
+export const receiveSendLoginEmail = ( response: SendLoginEmailSuccessResponse ) =>
 	( {
 		type: 'RECEIVE_SEND_LOGIN_EMAIL',
-		success,
+		response,
+	} as const );
+
+export const receiveSendLoginEmailFailed = ( response: SendLoginEmailErrorResponse ) =>
+	( {
+		type: 'RECEIVE_SEND_LOGIN_EMAIL_FAILED',
+		response,
 	} as const );
 
 export const clearErrors = () =>
@@ -69,8 +77,14 @@ export function* submitUsernameOrEmail( usernameOrEmail: string ) {
 		yield receiveAuthOptions( authOptions, usernameOrEmail );
 
 		if ( authOptions.passwordless ) {
-			const emailResponse = yield sendLoginEmail( usernameOrEmail );
-			yield receiveSendLoginEmail( emailResponse.success );
+			try {
+				const emailResponse: SendLoginEmailSuccessResponse = yield sendLoginEmail(
+					usernameOrEmail
+				);
+				yield receiveSendLoginEmail( emailResponse );
+			} catch ( err ) {
+				yield receiveSendLoginEmailFailed( err );
+			}
 		}
 	} catch ( err ) {
 		yield receiveAuthOptionsFailed( err );
@@ -138,6 +152,7 @@ export type Action =
 			| typeof receiveWpLogin
 			| typeof receiveWpLoginFailed
 			| typeof receiveSendLoginEmail
+			| typeof receiveSendLoginEmailFailed
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };

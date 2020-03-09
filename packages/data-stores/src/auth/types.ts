@@ -36,3 +36,14 @@ export interface WpLoginErrorResponse {
 }
 
 export type WpLoginResponse = WpLoginSuccessResponse | WpLoginErrorResponse;
+
+export interface SendLoginEmailSuccessResponse {
+	success: true;
+}
+
+export interface SendLoginEmailErrorResponse {
+	error: string;
+	message: string;
+}
+
+export type SendLoginEmailResponse = SendLoginEmailSuccessResponse | SendLoginEmailErrorResponse;

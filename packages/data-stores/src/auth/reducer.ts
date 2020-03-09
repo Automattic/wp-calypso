@@ -28,7 +28,7 @@ export const loginFlowState: Reducer< LoginFlowState, Action > = (
 			return 'LOGGED_IN';
 
 		case 'RECEIVE_SEND_LOGIN_EMAIL':
-			if ( action.success ) {
+			if ( action.response.success ) {
 				return 'LOGIN_LINK_SENT';
 			}
 			return state;
@@ -66,6 +66,7 @@ export const errors: Reducer< ErrorObject[], Action > = ( state = [], action ) =
 			return action.response.data.errors;
 
 		case 'RECEIVE_AUTH_OPTIONS_FAILED':
+		case 'RECEIVE_SEND_LOGIN_EMAIL_FAILED':
 			return [
 				{
 					code: action.response.error,

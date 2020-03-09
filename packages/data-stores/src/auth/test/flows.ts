@@ -158,7 +158,7 @@ describe( 'passwordless login flow', () => {
 
 		expect( getLoginFlowState() ).toBe( 'ENTER_USERNAME_OR_EMAIL' );
 
-		wpcomRequest
+		( wpcomRequest as jest.Mock )
 			.mockResolvedValueOnce( { email_verified: true, passwordless: true } )
 			.mockResolvedValueOnce( { success: true } );
 
@@ -186,5 +186,29 @@ describe( 'passwordless login flow', () => {
 		);
 
 		expect( getLoginFlowState() ).toBe( 'LOGIN_LINK_SENT' );
+	} );
+
+	it( 'reports error if login email fails to send', async () => {
+		const { getFirstError, getLoginFlowState } = select( store );
+		const { submitUsernameOrEmail } = dispatch( store );
+
+		expect( getLoginFlowState() ).toBe( 'ENTER_USERNAME_OR_EMAIL' );
+
+		( wpcomRequest as jest.Mock )
+			.mockResolvedValueOnce( { email_verified: true, passwordless: true } )
+			.mockRejectedValueOnce( {
+				error: 'unauthorized',
+				message: "You're not allowed to request a login link for this account.",
+			} );
+
+		await submitUsernameOrEmail( 'test@example.com' );
+
+		expect( wpcomRequest ).toHaveBeenCalledTimes( 2 );
+
+		expect( getLoginFlowState() ).toBe( 'ENTER_USERNAME_OR_EMAIL' );
+		expect( getFirstError() ).toEqual( {
+			code: 'unauthorized',
+			message: "You're not allowed to request a login link for this account.",
+		} );
 	} );
 } );
