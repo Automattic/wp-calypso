@@ -36,6 +36,7 @@ const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
 const getAliasesForExtensions = require( './webpack/extensions' );
 const FetchTranslationChunksPlugin = require( './webpack/fetch-translation-chunks-plugin' );
+const GenerateChunksMapPlugin = require( './webpack/generate-chunks-map-plugin' );
 
 /**
  * Internal variables
@@ -288,6 +289,7 @@ const webpackConfig = {
 			flags: { desktop: config.isEnabled( 'desktop' ) },
 		} ),
 		isCalypsoClient && new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
+		isCalypsoClient && new GenerateChunksMapPlugin(),
 		isCalypsoClient && new FetchTranslationChunksPlugin(),
 		isDevelopment && new webpack.HotModuleReplacementPlugin(),
 	].filter( Boolean ),
