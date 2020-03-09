@@ -19,6 +19,8 @@ import InProgress from './in-progress';
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 import Ready from './ready';
 import Placeholder from './placeholder';
+import Error from './error';
+
 interface Props {
 	rewindId: string;
 }
@@ -91,7 +93,7 @@ const BackupRestorePage = ( { rewindId }: Props ) => {
 		}
 
 		// todo: make error state, make sure it is actually an error
-		return <p>...</p>;
+		return <Error siteTitle={ siteTitle } error={ backupProgress?.error } />;
 	};
 
 	return (

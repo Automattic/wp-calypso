@@ -7,4 +7,5 @@ export interface BackupProgress {
 	downloadCount: number;
 	validUntil?: string;
 	url?: string;
+	error?: string;
 }
