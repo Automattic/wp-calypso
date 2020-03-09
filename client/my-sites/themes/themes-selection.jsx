@@ -13,7 +13,6 @@ import { compact, includes, isEqual, property, snakeCase } from 'lodash';
 import { trackClick } from './helpers';
 import QueryThemes from 'components/data/query-themes';
 import ThemesList from 'components/themes-list';
-import ThemesSelectionHeader from './themes-selection-header';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -158,16 +157,11 @@ class ThemesSelection extends Component {
 	};
 
 	render() {
-		const { source, query, listLabel, themesCount, upsellUrl } = this.props;
+		const { source, query, upsellUrl } = this.props;
 
 		return (
 			<div className="themes__selection">
-				{ ! this.props.recommendedThemes && (
-					<>
-						<QueryThemes query={ query } siteId={ source } />
-						<ThemesSelectionHeader label={ listLabel } count={ themesCount } />
-					</>
-				) }
+				<QueryThemes query={ query } siteId={ source } />
 				<ThemesList
 					upsellUrl={ upsellUrl }
 					themes={ this.props.recommendedThemes || this.props.themes }
