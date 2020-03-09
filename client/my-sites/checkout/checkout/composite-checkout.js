@@ -840,6 +840,20 @@ function getCheckoutEventHandler( dispatch ) {
 					} )
 				);
 
+			case 'a8c_checkout_delete_product':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_delete_product', {
+						product_name: action.payload.product_name,
+					} )
+				);
+
+			case 'a8c_checkout_delete_product_press':
+				return dispatch(
+					recordTracksEvent( 'calypso_checkout_composite_delete_product_press', {
+						product_name: action.payload.product_name,
+					} )
+				);
+
 			case 'a8c_checkout_add_coupon_error':
 				return dispatch(
 					recordTracksEvent( 'calypso_checkout_composite_coupon_add_error', {

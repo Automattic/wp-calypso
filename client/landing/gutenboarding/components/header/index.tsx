@@ -19,16 +19,11 @@ import { SITE_STORE } from '../../stores/site';
 import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
 import { selectorDebounce } from '../../constants';
-import Link from '../link';
 import SignupForm from '../../components/signup-form';
 
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
-interface Props {
-	prev?: string;
-}
-
-const Header: FunctionComponent< Props > = ( { prev } ) => {
+const Header: FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
 
 	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
@@ -145,10 +140,7 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		>
 			<div className="gutenboarding__header-section">
 				<div className="gutenboarding__header-group">
-					<Link className="gutenboarding__header-back-button" to={ prev }>
-						<Icon icon="arrow-left-alt" />
-						{ NO__( 'Back' ) }
-					</Link>
+					<Icon icon="wordpress-alt" className="gutenboarding__header-wp-icon" />
 				</div>
 				<div className="gutenboarding__header-group">
 					{ siteTitle ? (

@@ -8,6 +8,9 @@ import page from 'page';
  */
 import config from 'config';
 import userFactory from 'lib/user';
+import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import { getSiteSlug } from 'state/sites/selectors';
 
 export default function() {
 	const user = userFactory();
@@ -37,7 +40,11 @@ function setupLoggedOut() {
 
 function setupLoggedIn() {
 	page( '/', context => {
-		let redirectPath = '/read';
+		const state = context.store.getState();
+		const primarySiteId = getPrimarySiteId( state );
+		const isCustomerHomeEnabled = canCurrentUserUseCustomerHome( state, primarySiteId );
+		const siteSlug = getSiteSlug( state, primarySiteId );
+		let redirectPath = siteSlug && isCustomerHomeEnabled ? `/home/${ siteSlug }` : '/read';
 
 		if ( context.querystring ) {
 			redirectPath += `?${ context.querystring }`;

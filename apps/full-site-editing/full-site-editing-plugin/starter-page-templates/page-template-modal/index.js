@@ -2,7 +2,18 @@
 /**
  * External dependencies
  */
-import { find, isEmpty, reduce, get, keyBy, mapValues, memoize, filter, sortBy } from 'lodash';
+import {
+	find,
+	isEmpty,
+	reduce,
+	get,
+	keyBy,
+	mapValues,
+	memoize,
+	filter,
+	sortBy,
+	stubTrue,
+} from 'lodash';
 import classnames from 'classnames';
 import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
@@ -11,6 +22,7 @@ import { Button, Modal, Spinner, IconButton } from '@wordpress/components';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import { parse as parseBlocks } from '@wordpress/blocks';
+import { addFilter, removeFilter } from '@wordpress/hooks';
 
 /**
  * Internal dependencies
@@ -22,9 +34,12 @@ import { trackDismiss, trackSelection, trackView } from './utils/tracking';
 import replacePlaceholders from './utils/replace-placeholders';
 import ensureAssets from './utils/ensure-assets';
 import mapBlocksRecursively from './utils/map-blocks-recursively';
+import containsMissingBlock from './utils/contains-missing-block';
 /* eslint-enable import/no-extraneous-dependencies */
 
 const DEFAULT_HOMEPAGE_TEMPLATE = 'maywood';
+const INSERTING_HOOK_NAME = 'isInsertingPageTemplate';
+const INSERTING_HOOK_NAMESPACE = 'automattic/full-site-editing/inserting-template';
 
 class PageTemplateModal extends Component {
 	state = {
@@ -40,8 +55,8 @@ class PageTemplateModal extends Component {
 	);
 
 	// Parse templates blocks and memoize them.
-	getBlocksByTemplateSlugs = memoize( templates =>
-		reduce(
+	getBlocksByTemplateSlugs = memoize( templates => {
+		const blocksByTemplateSlugs = reduce(
 			templates,
 			( prev, { slug, content } ) => {
 				prev[ slug ] = content
@@ -50,8 +65,31 @@ class PageTemplateModal extends Component {
 				return prev;
 			},
 			{}
-		)
-	);
+		);
+
+		// Remove templates that include a missing block
+		return this.filterTemplatesWithMissingBlocks( blocksByTemplateSlugs );
+	} );
+
+	filterTemplatesWithMissingBlocks( templates ) {
+		return reduce(
+			templates,
+			( acc, templateBlocks, slug ) => {
+				// Does the template contain any missing blocks?
+				const templateHasMissingBlocks = containsMissingBlock( templateBlocks );
+
+				// Only retain the template in the collection if:
+				// 1. It does not contain any missing blocks
+				// 2. There are no blocks at all (likely the "blank" template placeholder)
+				if ( ! templateHasMissingBlocks || ! templateBlocks.length ) {
+					acc[ slug ] = templateBlocks;
+				}
+
+				return acc;
+			},
+			{}
+		);
+	}
 
 	getBlocksForPreview = memoize( previewedTemplate => {
 		const blocks = this.getBlocksByTemplateSlug( previewedTemplate );
@@ -133,7 +171,7 @@ class PageTemplateModal extends Component {
 		const blankTemplate = get( props.templates, [ 0, 'slug' ] );
 		let previouslyChosenTemplate = props._starter_page_template;
 
-		// Usally the "new page" case.
+		// Usally the "new page" case
 		if ( ! props.isFrontPage && ! previouslyChosenTemplate ) {
 			return blankTemplate;
 		}
@@ -278,7 +316,28 @@ class PageTemplateModal extends Component {
 	};
 
 	renderTemplatesList = ( templatesList, legendLabel ) => {
-		if ( 0 === templatesList.length ) {
+		if ( ! templatesList.length ) {
+			return null;
+		}
+
+		// The raw `templates` prop is not filtered to remove Templates that
+		// contain missing Blocks. Therefore we compare with the keys of the
+		// filtered templates from `getBlocksByTemplateSlugs()` and filter this
+		// list to match. This ensures that the list of Template thumbnails is
+		// filtered so that it does not include Templates that have missing Blocks.
+		const blocksByTemplateSlug = this.getBlocksByTemplateSlugs( this.props.templates );
+		const templatesWithoutMissingBlocks = Object.keys( blocksByTemplateSlug );
+
+		const filterOutTemplatesWithMissingBlocks = ( templatesToFilter, filterIn ) => {
+			return templatesToFilter.filter( template => filterIn.includes( template.slug ) );
+		};
+
+		const filteredTemplatesList = filterOutTemplatesWithMissingBlocks(
+			templatesList,
+			templatesWithoutMissingBlocks
+		);
+
+		if ( ! filteredTemplatesList.length ) {
 			return null;
 		}
 
@@ -287,8 +346,8 @@ class PageTemplateModal extends Component {
 				<legend className="page-template-modal__form-title">{ legendLabel }</legend>
 				<TemplateSelectorControl
 					label={ __( 'Layout', 'full-site-editing' ) }
-					templates={ templatesList }
-					blocksByTemplates={ this.getBlocksByTemplateSlugs( this.props.templates ) }
+					templates={ filteredTemplatesList }
+					blocksByTemplates={ blocksByTemplateSlug }
 					onTemplateSelect={ this.previewTemplate }
 					useDynamicPreview={ false }
 					siteInformation={ this.props.siteInformation }
@@ -472,6 +531,9 @@ export const PageTemplatesPlugin = compose(
 				} );
 			},
 			insertTemplate: ( title, blocks ) => {
+				// Add filter to let the tracking library know we are inserting a template.
+				addFilter( INSERTING_HOOK_NAME, INSERTING_HOOK_NAMESPACE, stubTrue );
+
 				// Set post title.
 				if ( title ) {
 					editorDispatcher.editPost( { title } );
@@ -484,6 +546,9 @@ export const PageTemplatesPlugin = compose(
 					blocks,
 					false
 				);
+
+				// Remove filter.
+				removeFilter( INSERTING_HOOK_NAME, INSERTING_HOOK_NAMESPACE );
 			},
 			hideWelcomeGuide: () => {
 				if ( ownProps.isWelcomeGuideActive ) {

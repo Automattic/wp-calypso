@@ -24,7 +24,7 @@ export function backups( context, next ) {
 }
 
 export function backupRestore( context, next ) {
-	const restoreId = parseInt( context.params.restoreId );
+	const restoreId = context.params.restoreId;
 
 	context.primary = <BackupRestorePage restoreId={ context.params.restoreId ? restoreId : null } />;
 	next();

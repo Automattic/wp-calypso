@@ -19,7 +19,6 @@ import {
 /**
  * Returns the credit card validation rule set
  *
- * @param {object} additionalFieldRules custom validation rules depending on jurisdiction or other variable
  * @returns {object} the ruleset
  */
 export function getCreditCardFieldRules() {
@@ -168,7 +167,7 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
  * Returns arguments deep-merged into one object with any array values
  * concatentated and deduped
  *
- * @param {object}* rulesets Objects describing the rulesets to be combined
+ * @param {object} rulesets Objects describing the rulesets to be combined
  * @returns {object} The aggregated ruleset
  */
 export function mergeValidationRules( ...rulesets ) {
@@ -355,7 +354,7 @@ export function getCreditCardType( number ) {
 /**
  *
  * @param {string} field the name of the field
- * @param {value} value the value of the field
+ * @param {*} value the value of the field
  * @param {object} paymentDetails object containing fieldname/value keypairs
  * @returns {Array} array of errors found, if any
  */

@@ -15,6 +15,7 @@ import VerticalNav from 'components/vertical-nav';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import { withLocalizedMoment } from 'components/localized-moment';
 import DomainStatus from '../card/domain-status';
+import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import VerticalNavItem from 'components/vertical-nav/item';
 import { emailManagement } from 'my-sites/email/paths';
 import {
@@ -152,27 +153,45 @@ class RegisteredDomainType extends React.Component {
 		const { expiry } = domain;
 
 		if ( isExpiringSoon( domain, 30 ) ) {
+			let message;
+			if ( domain.currentUserCanManage ) {
+				message = translate(
+					'{{strong}}Your domain will expire{{/strong}} in {{strong}}%(days)s{{/strong}}. Please renew it before it expires or it will stop working.',
+					{
+						components: {
+							strong: <strong />,
+						},
+						args: {
+							days: moment.utc( expiry ).fromNow( true ),
+						},
+					}
+				);
+			} else {
+				message = translate(
+					'{{strong}}The domain will expire{{/strong}} in {{strong}}%(days)s{{/strong}}. Please contact the domain owner %(owner)s to renew it.',
+					{
+						components: {
+							strong: <strong />,
+						},
+						args: {
+							days: moment.utc( expiry ).fromNow( true ),
+							owner: domain.owner,
+						},
+					}
+				);
+			}
+
 			return (
 				<div>
-					<p>
-						{ translate(
-							'{{strong}}Your domain will expire{{/strong}} in {{strong}}%(days)s{{/strong}}. Please renew it before it expires or it will stop working.',
-							{
-								components: {
-									strong: <strong />,
-								},
-								args: {
-									days: moment.utc( expiry ).fromNow( true ),
-								},
-							}
-						) }
-					</p>
-					<RenewButton
-						primary={ true }
-						selectedSite={ this.props.selectedSite }
-						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
-						tracksProps={ { source: 'registered-domain-status', domain_status: 'expiring-soon' } }
-					/>
+					<p>{ message }</p>
+					{ domain.currentUserCanManage && (
+						<RenewButton
+							primary={ true }
+							selectedSite={ this.props.selectedSite }
+							subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
+							tracksProps={ { source: 'registered-domain-status', domain_status: 'expiring-soon' } }
+						/>
+					) }
 				</div>
 			);
 		}
@@ -198,7 +217,20 @@ class RegisteredDomainType extends React.Component {
 			  )
 			: null;
 
-		if ( domain.isRenewable ) {
+		if ( ! domain.currentUserCanManage ) {
+			message = translate(
+				'{{strong}}The domain has expired{{/strong}} and is no longer active. Please contact the domain owner %(owner)s to restore it. {{domainsLink}}Learn more{{/domainsLink}}',
+				{
+					components: {
+						strong: <strong />,
+						domainsLink: domainsLink( DOMAIN_EXPIRATION ),
+					},
+					args: {
+						owner: domain.owner,
+					},
+				}
+			);
+		} else if ( domain.isRenewable ) {
 			message = translate(
 				'{{strong}}Your domain has expired{{/strong}} and is no longer active. You have {{strong}}%(days)s{{/strong}} to renew it at the standard rate before an additional %(redemptionCost)s redemption fee is applied. {{domainsLink}}Learn more{{/domainsLink}}',
 				{
@@ -240,7 +272,7 @@ class RegisteredDomainType extends React.Component {
 		return (
 			<div>
 				<p>{ message }</p>
-				{ ( domain.isRenewable || domain.isRedeemable ) && (
+				{ domain.currentUserCanManage && ( domain.isRenewable || domain.isRedeemable ) && (
 					<RenewButton
 						primary={ true }
 						selectedSite={ this.props.selectedSite }
@@ -288,6 +320,10 @@ class RegisteredDomainType extends React.Component {
 	renderDefaultRenewButton() {
 		const { domain } = this.props;
 
+		if ( ! domain.currentUserCanManage ) {
+			return null;
+		}
+
 		if ( domain.expired || isExpiringSoon( domain, 30 ) ) {
 			return null;
 		}
@@ -324,6 +360,22 @@ class RegisteredDomainType extends React.Component {
 		);
 	}
 
+	domainWarnings() {
+		return (
+			<DomainWarnings
+				domain={ this.props.domain }
+				position="registered-domain"
+				selectedSite={ this.props.selectedSite }
+				ruleWhiteList={ [
+					'pendingGSuiteTosAcceptanceDomains',
+					'pendingTransfer',
+					'newTransfersWrongNS',
+					'pendingConsent',
+				] }
+			/>
+		);
+	}
+
 	handlePaymentSettingsClick = () => {
 		this.props.recordPaymentSettingsClick( this.props.domain );
 	};
@@ -339,6 +391,7 @@ class RegisteredDomainType extends React.Component {
 		return (
 			<div className="domain-types__container">
 				{ this.planUpsellForNonPrimaryDomain() }
+				{ this.domainWarnings() }
 				<DomainStatus
 					header={ domain_name }
 					statusText={ statusText }
@@ -372,7 +425,7 @@ class RegisteredDomainType extends React.Component {
 							  } ) }
 					</div>
 					{ this.renderDefaultRenewButton() }
-					{ ! newStatusDesignAutoRenew && (
+					{ ! newStatusDesignAutoRenew && domain.currentUserCanManage && (
 						<div>
 							<SubscriptionSettings
 								type={ domain.type }

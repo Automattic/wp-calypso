@@ -21,37 +21,34 @@ import './style.scss';
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 class DatePicker extends Component {
-	state = {
-		currentSetting: false,
-	};
-
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
-		initialDate: PropTypes.instanceOf( Date ).isRequired,
+		selectedDateString: PropTypes.string.isRequired,
 		onChange: PropTypes.func.isRequired,
 	};
 
-	getFormattedDate = date => this.props.moment( date ).format( DATE_FORMAT );
+	getFormattedDate = dateString => this.props.moment.parseZone( dateString ).format( DATE_FORMAT );
 
-	getDisplayDate = date => {
-		const word = this.props
-			.moment( date )
+	getDisplayDate = dateString => {
+		const word = this.props.moment
+			.parseZone( dateString )
 			.calendar()
 			.split( ' ' )[ 0 ];
 		if ( 'Today' === word || 'Yesterday' === word ) {
 			return word;
 		}
 
-		return this.getFormattedDate( date );
+		return this.getFormattedDate( dateString );
 	};
 
 	shuttleLeft = () => {
-		const { initialDate, moment } = this.props;
-		const currentSetting = moment(
-			this.state.currentSetting ? this.state.currentSetting : initialDate
-		).subtract( 1, 'days' );
-		this.setState( { currentSetting } );
-		this.props.onChange( currentSetting.format( DATE_FORMAT ) );
+		const { moment, onChange, selectedDateString } = this.props;
+		const newDateString = moment
+			.parseZone( selectedDateString )
+			.subtract( 1, 'days' )
+			.toISOString( true );
+
+		onChange( newDateString );
 	};
 
 	shuttleRight = () => {
@@ -59,27 +56,24 @@ class DatePicker extends Component {
 			return false;
 		}
 
-		const { initialDate, moment } = this.props;
-		const currentSetting = moment(
-			this.state.currentSetting ? this.state.currentSetting : initialDate
-		).add( 1, 'days' );
-		this.setState( { currentSetting } );
-		this.props.onChange( currentSetting.format( DATE_FORMAT ) );
+		const { moment, onChange, selectedDateString } = this.props;
+		const newDateString = moment
+			.parseZone( selectedDateString )
+			.add( 1, 'days' )
+			.toISOString( true );
+
+		onChange( newDateString );
 	};
 
-	canShuttleRight = () =>
-		this.props.moment().format( DATE_FORMAT ) !==
-		this.props
-			.moment( this.state.currentSetting ? this.state.currentSetting : this.props.initialDate )
-			.format( DATE_FORMAT );
+	canShuttleRight = () => {
+		const { moment, selectedDateString } = this.props;
+		return ! moment().isSame( moment.parseZone( selectedDateString ), 'day' );
+	};
 
 	render() {
-		const { initialDate, siteId } = this.props;
-		const { currentSetting } = this.state;
+		const { selectedDateString, siteId } = this.props;
 
-		const currentDisplayDate = currentSetting
-			? this.getDisplayDate( currentSetting )
-			: this.getDisplayDate( initialDate );
+		const currentDisplayDate = this.getDisplayDate( selectedDateString );
 
 		return (
 			<div className="date-picker">

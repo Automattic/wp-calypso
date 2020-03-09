@@ -3,6 +3,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -17,8 +18,15 @@ import Button from 'components/forms/form-button';
 import './style.scss';
 
 class DailyBackupStatus extends Component {
+	createRestoreUrl = restoreId => `/backups/${ this.props.siteSlug }/restore/${ restoreId }`;
+
+	triggerRestore = () => {
+		const restoreId = this.props.backupAttempts.complete[ 0 ].rewindId;
+		page.redirect( this.createRestoreUrl( restoreId ) );
+	};
+
 	renderGoodBackup() {
-		const { backupAttempts, moment, translate } = this.props;
+		const { allowRestore, backupAttempts, moment, translate } = this.props;
 
 		const displayDate = moment( backupAttempts.complete[ 0 ].activityDate ).format(
 			'MMMM Do YYYY, h:mm:ss a'
@@ -32,7 +40,13 @@ class DailyBackupStatus extends Component {
 				</div>
 				<div className="daily-backup-status__date">{ displayDate }</div>
 				<Button className="daily-backup-status__download-button">Download backup</Button>
-				<Button className="daily-backup-status__restore-button">Restore to this point</Button>
+				<Button
+					className="daily-backup-status__restore-button"
+					disabled={ ! allowRestore }
+					onClick={ this.triggerRestore }
+				>
+					Restore to this point
+				</Button>
 			</Fragment>
 		);
 	}
