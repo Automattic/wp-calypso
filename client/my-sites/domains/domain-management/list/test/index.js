@@ -16,12 +16,19 @@ import { noop } from 'lodash';
  */
 import { List as DomainList } from '..';
 import { createReduxStore } from 'state';
+import { setStore } from 'state/redux-store';
 
 jest.mock( 'lib/wp', () => ( {
 	undocumented: () => ( {
 		getProducts: () => {},
 	} ),
 } ) );
+
+function getStore() {
+	const store = createReduxStore();
+	setStore( store );
+	return store;
+}
 
 describe( 'index', () => {
 	let component;
@@ -58,7 +65,7 @@ describe( 'index', () => {
 	function renderWithProps( props = defaultProps ) {
 		return mount( <DomainList { ...props } />, {
 			wrappingComponent: Provider,
-			wrappingComponentProps: { store: createReduxStore() },
+			wrappingComponentProps: { store: getStore() },
 		} );
 	}
 
