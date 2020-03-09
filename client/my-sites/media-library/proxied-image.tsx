@@ -16,6 +16,7 @@ interface Props {
 	query: string;
 	filePath: string;
 	siteSlug: string;
+	placeholder: React.ReactNode | null;
 
 	[ key: string ]: any;
 }
@@ -40,6 +41,7 @@ const ProxiedImage: React.FC< Props > = function ProxiedImage( {
 	siteSlug,
 	filePath,
 	query,
+	placeholder,
 	...rest
 } ) {
 	const [ imageObjectUrl, setImageObjectUrl ] = useState< string >( '' );
@@ -79,11 +81,15 @@ const ProxiedImage: React.FC< Props > = function ProxiedImage( {
 	}, [ imageObjectUrl, filePath, requestId, siteSlug ] );
 
 	if ( ! imageObjectUrl ) {
-		return null;
+		return placeholder as React.ReactElement;
 	}
 
 	/* eslint-disable-next-line jsx-a11y/alt-text */
 	return <img src={ imageObjectUrl } { ...rest } />;
+};
+
+ProxiedImage.defaultProps = {
+	placeholder: null,
 };
 
 export default ProxiedImage;
