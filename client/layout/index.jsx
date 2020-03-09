@@ -206,7 +206,12 @@ class Layout extends Component {
 							sectionName={ this.props.sectionName }
 						/>
 					) }
-					<AsyncLoad require="components/global-notices" id="notices" notices={ notices.list } />
+					<AsyncLoad
+						require="components/global-notices"
+						placeholder={ null }
+						id="notices"
+						notices={ notices.list }
+					/>
 					<div id="secondary" className="layout__secondary" role="navigation">
 						{ this.props.secondary }
 					</div>

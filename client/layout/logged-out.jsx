@@ -111,7 +111,12 @@ const LayoutLoggedOut = ( {
 			<BodySectionCssClass group={ sectionGroup } section={ sectionName } />
 			{ masterbar }
 			<div id="content" className="layout__content">
-				<AsyncLoad require="components/global-notices" id="notices" notices={ notices.list } />
+				<AsyncLoad
+					require="components/global-notices"
+					placeholder={ null }
+					id="notices"
+					notices={ notices.list }
+				/>
 				<div id="primary" className="layout__primary">
 					{ primary }
 				</div>
