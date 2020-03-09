@@ -190,8 +190,6 @@ function uploadFiles( uploader, files, site ) {
 			site,
 		} );
 
-		reduxDispatch( createMediaItem( site, transientMedia ) );
-
 		// Abort upload if file fails to pass validation.
 		if ( getMediaItemErrors( reduxGetState(), siteId, transientMedia.ID ).length ) {
 			return Promise.resolve();
