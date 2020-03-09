@@ -39,11 +39,14 @@ import {
 	domainManagedContactDetails,
 	taxManagedContactDetails,
 	isCompleteAndValid,
+	isTouched,
 	ManagedContactDetailsErrors,
 	managedContactDetailsUpdaters,
 	DomainContactDetails,
 	prepareDomainContactDetails,
+	prepareDomainContactDetailsErrors,
 	isValid,
+	areRequiredFieldsNotEmpty,
 } from './types/wpcom-store-state';
 
 export {
@@ -78,9 +81,12 @@ export {
 	domainManagedContactDetails,
 	taxManagedContactDetails,
 	isCompleteAndValid,
+	isTouched,
 	ManagedContactDetailsErrors,
 	managedContactDetailsUpdaters,
 	DomainContactDetails,
 	prepareDomainContactDetails,
+	prepareDomainContactDetailsErrors,
 	isValid,
+	areRequiredFieldsNotEmpty,
 };
