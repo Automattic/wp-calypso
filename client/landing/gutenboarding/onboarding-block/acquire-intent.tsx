@@ -21,11 +21,10 @@ const AcquireIntent: FunctionComponent = () => {
 	const { siteVertical, siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
 	const makePath = usePath();
 	return (
-<<<<<<< Updated upstream
-		<div className="onboarding-block__acquire-intent">
-=======
-		<div className="onboarding-block__acquire-intent gutenboarding-color-coded" data-vertical={ siteVertical?.label }>
->>>>>>> Stashed changes
+		<div
+			className="onboarding-block__acquire-intent gutenboarding-color-coded"
+			data-vertical={ siteVertical?.label }
+		>
 			<div className="onboarding-block__questions">
 				<h2 className="onboarding-block__questions-heading">
 					{ ! siteVertical &&

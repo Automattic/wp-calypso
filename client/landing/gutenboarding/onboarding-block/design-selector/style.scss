@@ -1,6 +1,17 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 @import '~@wordpress/base-styles/colors';
 
+@font-face {
+	font-display: swap;
+	font-family: 'Recoleta';
+	font-weight: 400;
+	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.eot' );
+	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.eot?#iefix' ) format( 'embedded-opentype' ),
+		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff2' ) format( 'woff2' ),
+		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff' ) format( 'woff' ),
+		url( 'https://s1.wp.com/i/fonts/recoleta/400.ttf' ) format( 'truetype' );
+}
+
 .design-selector {
 	width: 90%;
 	height: 90%;
@@ -13,8 +24,8 @@
 
 	.design-selector__header {
 		width: 100%;
-		margin: 5% 0% 5%;
-		font-family: "Recoleta-Regular", "Recoleta", serif; 
+		margin: 5% 0%;
+		font-family: 'Recoleta-Regular', 'Recoleta', serif;
 
 		h1 {
 			color: var( --mainColor );
@@ -28,13 +39,55 @@
 	}
 
 	.design-selector__grid {
-
-
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
 	}
 
 	.design-selector__design-option {
-		width: 45%;
-		margin-right: 5%;
-		margin-bottom: 5%;
+		width: 48%;
+		margin-bottom: 24px;
+
+		&.selected .design-selector__image-frame {
+			border: 2px solid var( --studio-green-20 );
+		}
+	}
+
+	.design-selector__image-frame {
+		display: block;
+		height: 406px;
+		border: 1px solid var( --studio-gray-5 );
+		border-radius: 4px;
+		overflow: hidden;
+		margin: 8px;
+		transition: transform 0.2s;
+		box-shadow: rgba( 0, 0, 0, 0.2 ) 0 0 0;
+
+		&:hover {
+			transform: scale( 1.03 );
+			box-shadow: rgba( 0, 0, 0, 0.2 ) 0 0 15px;
+		}
+
+
+		@include breakpoint( '<1400px' ) {
+			height: 326px;
+		}
+
+		@include breakpoint( '<1280px' ) {
+			height: 243px;
+		}
+
+		@include breakpoint( '<660px' ) {
+			height: 163px;
+		}
+	}
+
+	.design-selector__option-name {
+		margin-top: 16px;
+		display: block;
+		text-align: center;
+		width: 100%;
+		font-size: 24px;
+		font-family: Recoleta, Georgia, 'Times New Roman', Times, serif;
 	}
 }
