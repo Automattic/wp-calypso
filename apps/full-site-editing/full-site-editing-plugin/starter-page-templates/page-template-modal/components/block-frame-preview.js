@@ -25,7 +25,7 @@ const DEBOUNCE_TIMEOUT = 300;
  * @param {number} props.viewportWidth Pixel width of the viewable size of the preview
  * @param {object} props.template      Raw template content.
  */
-export default ( { className = 'block-iframe-preview', viewportWidth, template, slug, title } ) => {
+export default ( { className = 'block-frame-preview', viewportWidth, template, slug, title } ) => {
 	const iframeRef = useRef();
 
 	// Set the initial scale factor.

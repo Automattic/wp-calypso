@@ -38,7 +38,6 @@ $wp-org-admin-bar-full: 32px;
 $wp-org-admin-bar-mobile: 46px;
 
 // Modal Overlay
-.frame-preview-modal-screen-overlay,
 .page-template-modal-screen-overlay {
 	animation: none;
 	background-color: transparent; // hide the overlay visually
@@ -76,7 +75,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 }
 
 // Full screen modal
-.frame-preview-modal,
 .page-template-modal {
 	width: 100%;
 	height: 100vh;
@@ -389,7 +387,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	}
 }
 
-.block-iframe-preview {
+.block-frame-preview {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -403,56 +401,4 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	// Used when BlockFramePreview's viewportWidth prop is undefined.
 	// Can be overridden through more specific CSS.
 	width: 1440px;
-}
-
-body.is-frame-preview {
-	margin: 0;
-	padding: 0;
-	overflow-x: hidden;
-	overflow-y: auto;
-
-	// Hide other elements.
-	#wpwrap {
-		opacity: 0;
-	}
-
-	// Adjust Modal.
-	.frame-preview-modal {
-		display: block;
-	}
-
-	.frame-preview-modal-screen-overlay {
-		overflow-x: hidden;
-		overflow-y: auto;
-	}
-
-	.components-modal__header {
-		display: none;
-	}
-
-	.components-modal__content {
-		padding: 0;
-		margin: 0;
-	}
-
-	// Adjust blocks.
-	> .block-editor,
-	> .block-editor > .edit-post-visual-editor {
-		padding: 0;
-		margin: 0;
-	}
-
-	// Hide inserter/appender.
-	.block-list-appender,
-	.block-editor-inserter {
-		display: none !important;
-		visibility: hidden;
-		position: absolute;
-		left: -9999vw;
-	}
-
-	// Preview container.
-	.block-frame-preview__container {
-		height: 100%;
-	}
 }

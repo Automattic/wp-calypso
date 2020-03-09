@@ -13,7 +13,7 @@ import { TemplateSelectorControl } from '../template-selector-control';
 // `BlockPreview` component is available as default export.
 // Once available, swap this mock to mocking out `BlockPreview`
 // directly as it causes too many knock on effects when rendering
-jest.mock( '../block-iframe-preview', () => () => {
+jest.mock( '../block-frame-preview', () => () => {
 	return <div data-testid="block-template-preview">MockedBlockPreview</div>;
 } );
 

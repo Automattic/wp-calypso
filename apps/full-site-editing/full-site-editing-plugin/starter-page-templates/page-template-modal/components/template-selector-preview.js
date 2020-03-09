@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import BlockFramePreview from './block-iframe-preview';
+import BlockFramePreview from './block-frame-preview';
 
 const TemplateSelectorPreview = ( { template, viewportWidth, slug, title } ) => {
 	const isBlankTemplate = slug === 'blank';
