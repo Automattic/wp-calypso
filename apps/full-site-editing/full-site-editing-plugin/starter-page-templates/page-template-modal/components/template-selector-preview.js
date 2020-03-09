@@ -8,14 +8,14 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { BlockFramePreview } from './block-iframe-preview';
+import BlockFramePreview from './block-iframe-preview';
 
-const TemplateSelectorPreview = ( { blocks = [], viewportWidth, blocksByTemplateSlug = {}, slug, title } ) => {
-	const noBlocks = ! blocks.length;
+const TemplateSelectorPreview = ( { template, viewportWidth, slug, title } ) => {
+	const isBlankTemplate = slug === 'blank';
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		<div className={ `template-selector-preview ${ noBlocks ? 'not-selected' : '' }` }>
-			{ noBlocks && (
+		<div className={ `template-selector-preview ${ isBlankTemplate ? 'not-selected' : '' }` }>
+			{ isBlankTemplate && (
 				<div className="editor-styles-wrapper">
 					<div className="template-selector-preview__empty-state">
 						{ __( 'Select a layout to preview.', 'full-site-editing' ) }
@@ -25,7 +25,7 @@ const TemplateSelectorPreview = ( { blocks = [], viewportWidth, blocksByTemplate
 
 			<BlockFramePreview
 				viewportWidth={ viewportWidth }
-				blocksByTemplateSlug={ blocksByTemplateSlug }
+				template={ template }
 				slug={ slug }
 				title={ title }
 			/>

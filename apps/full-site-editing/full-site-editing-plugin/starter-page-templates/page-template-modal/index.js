@@ -162,7 +162,6 @@ class PageTemplateModal extends Component {
 
 		// Load content.
 		const blocks = this.getBlocksForSelection( slug );
-
 		// Only overwrite the page title if the template is not one of the Homepage Layouts
 		const title = isHomepageTemplate ? null : this.getTitleByTemplateSlug( slug );
 
@@ -247,6 +246,10 @@ class PageTemplateModal extends Component {
 
 	getBlocksByTemplateSlug( slug ) {
 		return get( this.getBlocksByTemplateSlugs( this.props.templates ), [ slug ], [] );
+	}
+
+	getTemplateBySlug( slug ) {
+		return get( mapValues( keyBy( this.props.templates, 'slug' ), 'content' ), [ slug ] );
 	}
 
 	getTitleByTemplateSlug( slug ) {
@@ -407,10 +410,9 @@ class PageTemplateModal extends Component {
 									) }
 							</form>
 							<TemplateSelectorPreview
-								blocks={ this.getBlocksForPreview( previewedTemplate ) }
+								template={ this.getTemplateBySlug( previewedTemplate ) }
 								viewportWidth={ 1200 }
 								title={ ! hidePageTitle && this.getTitleByTemplateSlug( previewedTemplate ) }
-								blocksByTemplateSlug={ this.getBlocksByTemplateSlugs( this.props.templates ) }
 								slug={ previewedTemplate }
 							/>
 						</>
