@@ -156,7 +156,7 @@ const onPostRestoreSuccess = () => successNotice( translate( 'Post successfully 
 
 export const onPostSaveSuccess = ( { post, savedPost } ) => dispatch => {
 	switch ( post.status ) {
-		case 'trash':
+		case 'trash': {
 			const noticeId = 'trash_' + savedPost.global_ID;
 			dispatch(
 				successNotice( translate( 'Post successfully moved to trash.' ), {
@@ -169,10 +169,12 @@ export const onPostSaveSuccess = ( { post, savedPost } ) => dispatch => {
 				} )
 			);
 			break;
+		}
 
-		case 'publish':
+		case 'publish': {
 			dispatch( successNotice( translate( 'Post successfully published' ) ) );
 			break;
+		}
 	}
 };
 
