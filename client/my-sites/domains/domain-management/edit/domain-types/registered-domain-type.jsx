@@ -356,6 +356,7 @@ class RegisteredDomainType extends React.Component {
 				siteDomain={ selectedSite.domain }
 				purchase={ purchase }
 				compact={ true }
+				withTextStatus={ true }
 			/>
 		);
 	}
@@ -364,10 +365,14 @@ class RegisteredDomainType extends React.Component {
 		const { selectedSite, purchase } = this.props;
 
 		if ( ! purchase ) {
-			return <QuerySitePurchases siteId={ selectedSite.ID } />;
+			return (
+				<div>
+					<QuerySitePurchases siteId={ selectedSite.ID } />
+				</div>
+			);
 		}
 
-		return <Card compact={ true }>{ this.renderAutoRenewToggle() }</Card>;
+		return <div>{ this.renderAutoRenewToggle() }</div>;
 	}
 
 	planUpsellForNonPrimaryDomain() {
@@ -458,8 +463,9 @@ class RegisteredDomainType extends React.Component {
 							/>
 						</div>
 					) }
+					{ newStatusDesignAutoRenew && domain.currentUserCanManage && this.renderAutoRenew() }
 				</Card>
-				{ newStatusDesignAutoRenew && this.renderAutoRenew() }
+
 				{ this.getVerticalNavigation() }
 			</div>
 		);
