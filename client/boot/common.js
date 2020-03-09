@@ -103,9 +103,6 @@ const setupContextMiddleware = reduxStore => {
 	} );
 };
 
-// We need to require sections to load React with i18n mixin
-const loadSectionsMiddleware = () => setupRoutes();
-
 const oauthTokenMiddleware = () => {
 	if ( config.isEnabled( 'oauth' ) ) {
 		const loggedOutRoutes = [
@@ -205,7 +202,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	installPerfmonPageHandlers();
 	setupContextMiddleware( reduxStore );
 	oauthTokenMiddleware();
-	loadSectionsMiddleware();
+	setupRoutes();
 	setRouteMiddleware();
 	clearNoticesMiddleware();
 	unsavedFormsMiddleware();
