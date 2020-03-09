@@ -463,6 +463,16 @@
 		}
 	}
 
+	// Redirect Payment Box
+	// -----------------------------------
+	.redirect-payment-box, .wechat-payment-box {
+		 .checkout__payment-box-section {
+			 .checkout__checkout-field {
+				 padding: 0 15px 15px;
+			 }
+		 }
+	}
+
 	// Credits Payment Box
 	// -----------------------------------
 	.credits-payment-box {
