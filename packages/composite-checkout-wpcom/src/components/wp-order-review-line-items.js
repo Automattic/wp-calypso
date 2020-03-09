@@ -133,7 +133,7 @@ function LineItemTitle( { item, id } ) {
 	const translate = useTranslate();
 	return (
 		<LineItemTitleUI id={ id }>
-			{ isLineItemADomain( item ) ? (
+			{ isLineItemADomain( item ) && item.sublabel ? (
 				<ProductTitleUI>{ item.sublabel }</ProductTitleUI>
 			) : (
 				<ProductTitleUI>{ item.label }</ProductTitleUI>
