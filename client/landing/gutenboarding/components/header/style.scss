@@ -25,17 +25,13 @@
 	}
 }
 
-.gutenboarding__header-section,
-.gutenboarding__header-back-button {
-	display: flex;
-	align-items: center;
+.gutenboarding__header-wp-icon {
+	color: var( --studio-blue-90 );
 }
 
-.gutenboarding__header-back-button {
-	color: inherit;
-	.dashicons-arrow-left-alt {
-		margin-right: 5px;
-	}
+.gutenboarding__header-section {
+	display: flex;
+	align-items: center;
 }
 
 .gutenboarding__header-group {
