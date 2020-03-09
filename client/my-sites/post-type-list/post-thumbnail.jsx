@@ -17,6 +17,7 @@ import { getNormalizedPost } from 'state/posts/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import canCurrentUserEditPost from 'state/selectors/can-current-user-edit-post';
 import { isMultiSelectEnabled } from 'state/ui/post-type-list/selectors';
+import MediaImage from 'my-sites/media-library/media-image';
 
 function PostTypeListPostThumbnail( { onClick, thumbnail, postLink } ) {
 	const classes = classnames( 'post-type-list__post-thumbnail-wrapper', {
@@ -27,7 +28,7 @@ function PostTypeListPostThumbnail( { onClick, thumbnail, postLink } ) {
 		<div className={ classes }>
 			{ thumbnail && (
 				<a href={ postLink } className="post-type-list__post-thumbnail-link">
-					<img //eslint-disable-line
+					<MediaImage //eslint-disable-line
 						src={ resizeImageUrl( safeImageUrl( thumbnail ), { h: 80 } ) }
 						className="post-type-list__post-thumbnail"
 						onClick={ onClick }
