@@ -3,6 +3,8 @@
  */
 import canJetpackSiteAutoUpdateFiles from './can-jetpack-site-auto-update-files';
 
+import 'state/sites/init';
+
 /**
  * Determines if a Jetpack site can auto update WordPress core.
  * This function is currently identical to canJetpackSiteAutoUpdateFiles.

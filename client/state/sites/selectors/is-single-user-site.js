@@ -6,7 +6,9 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import getSite from './get-site';
+import getSite from 'state/sites/selectors/get-site';
+
+import 'state/sites/init';
 
 /**
  * Returns true if site has only a single user, false if the site not a single

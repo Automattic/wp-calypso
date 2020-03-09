@@ -9,6 +9,8 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
+import 'state/sites/init';
+
 /**
  * Returns true if current user can see and use Store option in menu
  *

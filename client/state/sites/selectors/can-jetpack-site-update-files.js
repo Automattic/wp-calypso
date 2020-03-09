@@ -6,9 +6,11 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import getSiteOption from './get-site-option';
-import isJetpackSite from './is-jetpack-site';
-import isJetpackSiteSecondaryNetworkSite from './is-jetpack-site-secondary-network-site';
+import getSiteOption from 'state/sites/selectors/get-site-option';
+import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
+import isJetpackSiteSecondaryNetworkSite from 'state/sites/selectors/is-jetpack-site-secondary-network-site';
+
+import 'state/sites/init';
 
 /**
  * Determines if a Jetpack site can update its files.

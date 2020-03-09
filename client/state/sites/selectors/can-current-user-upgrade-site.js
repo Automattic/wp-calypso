@@ -4,7 +4,9 @@
 import { isCurrentUserCurrentPlanOwner } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
-import isCurrentPlanPaid from './is-current-plan-paid';
+import isCurrentPlanPaid from 'state/sites/selectors/is-current-plan-paid';
+
+import 'state/sites/init';
 
 /**
  * Returns true if current user can purchase upgrades for this site

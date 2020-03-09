@@ -5,13 +5,15 @@ import { withoutHttp } from 'lib/url';
 import canCurrentUser from 'state/selectors/can-current-user';
 import getRawSite from 'state/selectors/get-raw-site';
 import getSiteOptions from 'state/selectors/get-site-options';
-import getSiteDomain from './get-site-domain';
-import getSiteOption from './get-site-option';
-import getSiteSlug from './get-site-slug';
-import getSiteTitle from './get-site-title';
-import isJetpackSite from './is-jetpack-site';
-import isSiteConflicting from './is-site-conflicting';
-import isSitePreviewable from './is-site-previewable';
+import getSiteDomain from 'state/sites/selectors/get-site-domain';
+import getSiteOption from 'state/sites/selectors/get-site-option';
+import getSiteSlug from 'state/sites/selectors/get-site-slug';
+import getSiteTitle from 'state/sites/selectors/get-site-title';
+import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
+import isSiteConflicting from 'state/sites/selectors/is-site-conflicting';
+import isSitePreviewable from 'state/sites/selectors/is-site-previewable';
+
+import 'state/sites/init';
 
 /**
  * Returns computed properties of the site object.

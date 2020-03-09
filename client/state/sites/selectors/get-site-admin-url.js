@@ -1,7 +1,9 @@
 /**
  * Internal dependencies
  */
-import getSiteOption from './get-site-option';
+import getSiteOption from 'state/sites/selectors/get-site-option';
+
+import 'state/sites/init';
 
 /**
  * Returns the url to the wp-admin area for a site, or null if the admin URL

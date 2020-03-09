@@ -6,7 +6,9 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import getSiteCollisions from './get-site-collisions';
+import getSiteCollisions from 'state/sites/selectors/get-site-collisions';
+
+import 'state/sites/init';
 
 /**
  * Returns true if a collision exists for the specified WordPress.com site ID.

@@ -1,9 +1,12 @@
 /**
  * Internal dependencies
  */
-import { canCurrentUserUseCustomerHome, getSiteSlug } from 'state/sites/selectors';
+import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
+import getSiteSlug from 'state/sites/selectors/get-site-slug';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getStatsDefaultSitePage } from 'lib/route/path';
+
+import 'state/sites/init';
 
 /**
  * Determine the default section to show for the specified site.

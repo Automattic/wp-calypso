@@ -3,8 +3,10 @@
  */
 import { withoutHttp } from 'lib/url';
 import getRawSite from 'state/selectors/get-raw-site';
-import getSiteOption from './get-site-option';
-import isJetpackSite from './is-jetpack-site';
+import getSiteOption from 'state/sites/selectors/get-site-option';
+import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
+
+import 'state/sites/init';
 
 /**
  * Determines if a Jetpack site is a secondary network site.

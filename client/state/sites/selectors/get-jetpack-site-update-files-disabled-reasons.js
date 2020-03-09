@@ -7,8 +7,10 @@ import { compact } from 'lodash';
 /**
  * Internal dependencies
  */
-import getSiteOption from './get-site-option';
-import isJetpackSite from './is-jetpack-site';
+import getSiteOption from 'state/sites/selectors/get-site-option';
+import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
+
+import 'state/sites/init';
 
 /**
  * Returns an explanation on why updates are disabled on a Jetpack Site.

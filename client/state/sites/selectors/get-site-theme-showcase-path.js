@@ -7,8 +7,10 @@ import { includes, split } from 'lodash';
  * Internal dependencies
  */
 import getRawSite from 'state/selectors/get-raw-site';
-import getSiteOption from './get-site-option';
-import getSiteSlug from './get-site-slug';
+import getSiteOption from 'state/sites/selectors/get-site-option';
+import getSiteSlug from 'state/sites/selectors/get-site-slug';
+
+import 'state/sites/init';
 
 /**
  * Returns a site's theme showcase path.

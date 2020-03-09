@@ -5,8 +5,10 @@ import createSelector from 'lib/create-selector';
 import { withoutHttp, urlToSlug } from 'lib/url';
 import getSitesItems from 'state/selectors/get-sites-items';
 import getRawSite from 'state/selectors/get-raw-site';
-import getSiteOption from './get-site-option';
-import isSiteConflicting from './is-site-conflicting';
+import getSiteOption from 'state/sites/selectors/get-site-option';
+import isSiteConflicting from 'state/sites/selectors/is-site-conflicting';
+
+import 'state/sites/init';
 
 /**
  * Returns the slug for a site, or null if the site is unknown.

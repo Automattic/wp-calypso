@@ -2,11 +2,11 @@
  * Internal dependencies
  */
 import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
-import canJetpackSiteAutoUpdateFiles from './can-jetpack-site-auto-update-files';
-import canJetpackSiteUpdateFiles from './can-jetpack-site-update-files';
-import isJetpackSite from './is-jetpack-site';
-import isJetpackSiteMainNetworkSite from './is-jetpack-site-main-network-site';
-import isJetpackSiteSecondaryNetworkSite from './is-jetpack-site-secondary-network-site';
+import canJetpackSiteAutoUpdateFiles from 'state/sites/selectors/can-jetpack-site-auto-update-files';
+import canJetpackSiteUpdateFiles from 'state/sites/selectors/can-jetpack-site-update-files';
+import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
+import isJetpackSiteMainNetworkSite from 'state/sites/selectors/is-jetpack-site-main-network-site';
+import isJetpackSiteSecondaryNetworkSite from 'state/sites/selectors/is-jetpack-site-secondary-network-site';
 
 export default function getJetpackComputedAttributes( state, siteId ) {
 	if ( ! isJetpackSite( state, siteId ) ) {

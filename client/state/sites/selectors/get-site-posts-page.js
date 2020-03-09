@@ -1,7 +1,9 @@
 /**
  * Internal dependencies
  */
-import { getSiteOption } from 'state/sites/selectors';
+import getSiteOption from 'state/sites/selectors/get-site-option';
+
+import 'state/sites/init';
 
 /**
  * Returns the ID of the static page set as the page for posts, or 0 if a static page is not set.

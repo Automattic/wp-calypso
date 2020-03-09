@@ -2,7 +2,9 @@
  * Internal dependencies
  */
 import { urlToSlug } from 'lib/url';
-import getSiteBySlug from './get-site-by-slug';
+import getSiteBySlug from 'state/sites/selectors/get-site-by-slug';
+
+import 'state/sites/init';
 
 /**
  * Returns a site object by its URL.

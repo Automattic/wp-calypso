@@ -1,3 +1,6 @@
+/**
+ * External dependencies
+ */
 import { filter, map, some } from 'lodash';
 
 /**
@@ -6,6 +9,8 @@ import { filter, map, some } from 'lodash';
 import createSelector from 'lib/create-selector';
 import { withoutHttp } from 'lib/url';
 import getSitesItems from 'state/selectors/get-sites-items';
+
+import 'state/sites/init';
 
 /**
  * Returns a filtered array of WordPress.com site IDs where a Jetpack site

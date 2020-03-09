@@ -8,6 +8,8 @@ import { get } from 'lodash';
  */
 import getSiteOptions from 'state/selectors/get-site-options';
 
+import 'state/sites/init';
+
 /**
  * Returns a site option for a site
  *

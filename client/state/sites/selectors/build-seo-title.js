@@ -3,6 +3,11 @@
  */
 import { get } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
+import 'state/sites/init';
+
 export default ( titleFormats, type, { site, post = {}, tag = '', date = '' } ) => {
 	const processPiece = ( piece = {}, data ) =>
 		'string' === piece.type ? piece.value : get( data, piece.type, '' );

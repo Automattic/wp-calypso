@@ -8,7 +8,9 @@ import { find } from 'lodash';
  */
 import createSelector from 'lib/create-selector';
 import getSitesItems from 'state/selectors/get-sites-items';
-import getSiteSlug from './get-site-slug';
+import getSiteSlug from 'state/sites/selectors/get-site-slug';
+
+import 'state/sites/init';
 
 /**
  * Returns a site object by its slug.

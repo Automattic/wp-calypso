@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'state/sites/init';
+
+/**
  * Returns true if a network request is in progress to fetch the specified, or
  * false otherwise.
  *

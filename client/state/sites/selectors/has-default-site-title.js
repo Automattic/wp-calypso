@@ -8,7 +8,9 @@ import { startsWith } from 'lodash';
  * Internal dependencies
  */
 import getRawSite from 'state/selectors/get-raw-site';
-import getSiteSlug from './get-site-slug';
+import getSiteSlug from 'state/sites/selectors/get-site-slug';
+
+import 'state/sites/init';
 
 /**
  * Returns true if the site has unchanged site title

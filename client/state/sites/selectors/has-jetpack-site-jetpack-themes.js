@@ -2,8 +2,11 @@
  * Internal dependencies
  */
 import versionCompare from 'lib/version-compare';
-import getSiteOption from './get-site-option';
-import isJetpackSite from './is-jetpack-site';
+import getSiteOption from 'state/sites/selectors/get-site-option';
+import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
+
+import 'state/sites/init';
+
 /**
  * Determines if the Jetpack plugin of a Jetpack Site has themes.
  * Returns null if the site is not known or is not a Jetpack site.

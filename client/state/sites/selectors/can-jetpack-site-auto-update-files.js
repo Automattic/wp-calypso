@@ -6,9 +6,11 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import canJetpackSiteUpdateFiles from './can-jetpack-site-update-files';
-import getSiteOption from './get-site-option';
-import isJetpackSite from './is-jetpack-site';
+import canJetpackSiteUpdateFiles from 'state/sites/selectors/can-jetpack-site-update-files';
+import getSiteOption from 'state/sites/selectors/get-site-option';
+import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
+
+import 'state/sites/init';
 
 /**
  * Determines if a Jetpack site can auto update its files.

@@ -8,6 +8,8 @@ import { get } from 'lodash';
  */
 import getRawSite from 'state/selectors/get-raw-site';
 
+import 'state/sites/init';
+
 /**
  * Returns the updates object for a site
  *

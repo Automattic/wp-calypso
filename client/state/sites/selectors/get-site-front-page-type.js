@@ -1,7 +1,9 @@
 /**
  * Internal dependencies
  */
-import { getSiteOption } from 'state/sites/selectors';
+import getSiteOption from 'state/sites/selectors/get-site-option';
+
+import 'state/sites/init';
 
 /**
  * Returns the front page type.

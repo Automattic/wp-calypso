@@ -2,9 +2,11 @@
  * Internal dependencies
  */
 import getRawSite from 'state/selectors/get-raw-site';
-import getSiteBySlug from './get-site-by-slug';
-import getJetpackComputedAttributes from './get-jetpack-computed-attributes';
-import getSiteComputedAttributes from './get-site-computed-attributes';
+import getSiteBySlug from 'state/sites/selectors/get-site-by-slug';
+import getJetpackComputedAttributes from 'state/sites/selectors/get-jetpack-computed-attributes';
+import getSiteComputedAttributes from 'state/sites/selectors/get-site-computed-attributes';
+
+import 'state/sites/init';
 
 /**
  * Memoization cache for the `getSite` selector

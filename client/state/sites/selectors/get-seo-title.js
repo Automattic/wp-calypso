@@ -6,8 +6,10 @@ import { has } from 'lodash';
 /**
  * Internal dependencies
  */
-import getSeoTitleFormats from './get-seo-title-formats';
-import buildSeoTitle from './build-seo-title';
+import getSeoTitleFormats from 'state/sites/selectors/get-seo-title-formats';
+import buildSeoTitle from 'state/sites/selectors/build-seo-title';
+
+import 'state/sites/init';
 
 export default ( state, type, data ) => {
 	if ( ! has( data, 'site.ID' ) ) {

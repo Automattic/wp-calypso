@@ -2,8 +2,10 @@
  * Internal dependencies
  */
 import versionCompare from 'lib/version-compare';
-import isJetpackSite from './is-jetpack-site';
-import getSiteOption from './get-site-option';
+import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
+import getSiteOption from 'state/sites/selectors/get-site-option';
+
+import 'state/sites/init';
 
 /**
  * Returns true if the Jetpack site is running a version meeting the specified

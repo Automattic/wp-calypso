@@ -2,9 +2,11 @@
  * Internal dependencies
  */
 import { withoutHttp } from 'lib/url';
-import getSiteDomain from './get-site-domain';
-import getSiteOption from './get-site-option';
-import isJetpackSite from './is-jetpack-site';
+import getSiteDomain from 'state/sites/selectors/get-site-domain';
+import getSiteOption from 'state/sites/selectors/get-site-option';
+import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
+
+import 'state/sites/init';
 
 /**
  * Checks whether a Jetpack site has a custom mapped URL.

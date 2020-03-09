@@ -8,6 +8,8 @@ import { flowRight as compose, get, partialRight } from 'lodash';
  */
 import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/mappings';
 
+import 'state/sites/init';
+
 /**
  * Returns object describing custom title format
  * strings for SEO given a site object.

@@ -2,7 +2,9 @@
  * Internal dependencies
  */
 import getRawSite from 'state/selectors/get-raw-site';
-import getSiteDomain from './get-site-domain';
+import getSiteDomain from 'state/sites/selectors/get-site-domain';
+
+import 'state/sites/init';
 
 /**
  * Returns a title by which the site can be canonically referenced. Uses the

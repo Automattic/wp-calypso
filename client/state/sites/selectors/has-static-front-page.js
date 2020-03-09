@@ -1,8 +1,10 @@
 /**
  * Internal dependencies
  */
-import getSiteFrontPage from './get-site-front-page';
-import getSiteFrontPageType from './get-site-front-page-type';
+import getSiteFrontPage from 'state/sites/selectors/get-site-front-page';
+import getSiteFrontPageType from 'state/sites/selectors/get-site-front-page-type';
+
+import 'state/sites/init';
 
 /**
  * Returns true if the site is using a static front page

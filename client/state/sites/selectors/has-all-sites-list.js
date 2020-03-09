@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'state/sites/init';
+
+/**
  * Returns whether all sites have been fetched.
  *
  * @param {object}    state  Global state tree

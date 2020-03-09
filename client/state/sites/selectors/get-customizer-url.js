@@ -8,9 +8,11 @@ import { compact } from 'lodash';
  */
 import { getCustomizerFocus } from 'my-sites/customize/panels';
 import { addQueryArgs } from 'lib/url';
-import getSiteAdminUrl from './get-site-admin-url';
-import getSiteSlug from './get-site-slug';
-import isJetpackSite from './is-jetpack-site';
+import getSiteAdminUrl from 'state/sites/selectors/get-site-admin-url';
+import getSiteSlug from 'state/sites/selectors/get-site-slug';
+import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
+
+import 'state/sites/init';
 
 /**
  * Returns the customizer URL for a site, or null if it cannot be determined.

@@ -3,7 +3,9 @@
  */
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import getSite from './get-site';
+import getSite from 'state/sites/selectors/get-site';
+
+import 'state/sites/init';
 
 /**
  * Returns true if current user can see the Earn option in menu and corresponding page.

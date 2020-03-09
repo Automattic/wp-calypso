@@ -1,7 +1,9 @@
 /**
  * Internal dependencies
  */
-import getSiteOption from './get-site-option';
+import getSiteOption from 'state/sites/selectors/get-site-option';
+
+import 'state/sites/init';
 
 const MINUTE_IN_MS = 60 * 1000;
 

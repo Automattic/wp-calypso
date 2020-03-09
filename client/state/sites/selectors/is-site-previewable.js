@@ -3,7 +3,9 @@
  */
 import { isHttps } from 'lib/url';
 import getRawSite from 'state/selectors/get-raw-site';
-import getSiteOption from './get-site-option';
+import getSiteOption from 'state/sites/selectors/get-site-option';
+
+import 'state/sites/init';
 
 /**
  * Returns true if the site can be previewed, false if the site cannot be

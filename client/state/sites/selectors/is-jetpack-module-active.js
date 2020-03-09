@@ -6,7 +6,9 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import getSiteOption from './get-site-option';
+import getSiteOption from 'state/sites/selectors/get-site-option';
+
+import 'state/sites/init';
 
 /**
  * Returns true if the site is a Jetpack site with the specified module active,

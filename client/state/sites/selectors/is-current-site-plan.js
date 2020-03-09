@@ -1,7 +1,9 @@
 /**
  * Internal dependencies
  */
-import getSitePlan from './get-site-plan';
+import getSitePlan from 'state/sites/selectors/get-site-plan';
+
+import 'state/sites/init';
 
 /**
  * Returns true if site is currently subscribed to supplied plan and false otherwise.

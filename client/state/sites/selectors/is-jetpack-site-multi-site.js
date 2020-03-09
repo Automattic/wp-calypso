@@ -2,7 +2,9 @@
  * Internal dependencies
  */
 import getRawSite from 'state/selectors/get-raw-site';
-import isJetpackSite from './is-jetpack-site';
+import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
+
+import 'state/sites/init';
 
 /**
  * Determines if the Jetpack site is part of multi-site.

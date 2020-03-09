@@ -3,9 +3,11 @@
  */
 import { withoutHttp } from 'lib/url';
 import getRawSite from 'state/selectors/get-raw-site';
-import getSiteOption from './get-site-option';
-import getSiteSlug from './get-site-slug';
-import isSiteConflicting from './is-site-conflicting';
+import getSiteOption from 'state/sites/selectors/get-site-option';
+import getSiteSlug from 'state/sites/selectors/get-site-slug';
+import isSiteConflicting from 'state/sites/selectors/is-site-conflicting';
+
+import 'state/sites/init';
 
 /**
  * Returns the domain for a site, or null if the site is unknown.

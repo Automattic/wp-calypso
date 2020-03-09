@@ -7,7 +7,9 @@ import { flowRight as compose } from 'lodash';
  * Internal dependencies
  */
 import getRawSite from 'state/selectors/get-raw-site';
-import getSeoTitleFormatsForSite from './get-seo-title-formats-for-site';
+import getSeoTitleFormatsForSite from 'state/sites/selectors/get-seo-title-formats-for-site';
+
+import 'state/sites/init';
 
 /**
  * Returns object describing custom title format

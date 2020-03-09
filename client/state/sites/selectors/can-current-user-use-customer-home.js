@@ -6,7 +6,9 @@ import { isJetpackSite } from 'state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import getSite from './get-site';
+import getSite from 'state/sites/selectors/get-site';
+
+import 'state/sites/init';
 
 /**
  * Returns true if the current user should be able to use the customer home screen

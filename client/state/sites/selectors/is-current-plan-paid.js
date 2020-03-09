@@ -1,7 +1,9 @@
 /**
  * Internal dependencies
  */
-import getSitePlan from './get-site-plan';
+import getSitePlan from 'state/sites/selectors/get-site-plan';
+
+import 'state/sites/init';
 
 /**
  * Returns true if the current site plan is a paid one
