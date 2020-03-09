@@ -29,6 +29,7 @@
 		"domains/gdpr-consent-page": true,
 		"domains/kracken-ui/exact-match-filter": true,
 		"domains/kracken-ui/pagination": true,
+		"domains/new-status-design": true,
 		"external-media": true,
 		"external-media/google-photos": true,
 		"external-media/free-photo-library": true,
