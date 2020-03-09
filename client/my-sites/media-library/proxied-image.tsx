@@ -21,8 +21,16 @@ interface Props {
 }
 
 const cache: { [ key: string ]: Blob } = {};
-const cacheResponse = ( requestId: string, blob: Blob, freshness = 30000 ) => {
+const cacheResponse = ( requestId: string, blob: Blob, freshness = 60000 ) => {
+	// Cache at most 100 items
+	const cacheKeys = Object.keys( cache );
+	if ( cacheKeys.length > 100 ) {
+		delete cache[ cacheKeys[ 0 ] ];
+	}
+
 	cache[ requestId ] = blob;
+
+	// Self-remove this entry after `freshness` ms
 	setTimeout( () => {
 		delete cache[ requestId ];
 	}, freshness );
@@ -38,25 +46,28 @@ const ProxiedImage: React.FC< Props > = function ProxiedImage( {
 	const requestId = `media-library-proxied-image-${ siteSlug }${ filePath }${ query }`;
 
 	useEffect( () => {
-		if ( imageObjectUrl === '' && cache[ requestId ] ) {
-			const url = URL.createObjectURL( cache[ requestId ] );
-			setImageObjectUrl( url );
-			debug( 'set image from cache', { url } );
-		} else {
-			wpcom
-				.undocumented()
-				.getAtomicSiteMediaViaProxyRetry(
-					siteSlug,
-					filePath,
-					query,
-					( err: Error, data: Blob | null ) => {
-						if ( data instanceof Blob ) {
-							cacheResponse( requestId, data );
-							setImageObjectUrl( URL.createObjectURL( data ) );
-							debug( 'got image from API', { data } );
+		if ( ! imageObjectUrl ) {
+			if ( cache[ requestId ] ) {
+				const url = URL.createObjectURL( cache[ requestId ] );
+				setImageObjectUrl( url );
+				debug( 'set image from cache', { url } );
+			} else {
+				debug( 'requesting image from API', { requestId, imageObjectUrl } );
+				wpcom
+					.undocumented()
+					.getAtomicSiteMediaViaProxyRetry(
+						siteSlug,
+						filePath,
+						query,
+						( err: Error, data: Blob | null ) => {
+							if ( data instanceof Blob ) {
+								cacheResponse( requestId, data );
+								setImageObjectUrl( URL.createObjectURL( data ) );
+								debug( 'got image from API', { requestId, imageObjectUrl, data } );
+							}
 						}
-					}
-				);
+					);
+			}
 		}
 
 		return () => {
@@ -68,7 +79,7 @@ const ProxiedImage: React.FC< Props > = function ProxiedImage( {
 	}, [ imageObjectUrl, filePath, requestId, siteSlug ] );
 
 	if ( ! imageObjectUrl ) {
-		return false;
+		return null;
 	}
 
 	/* eslint-disable-next-line jsx-a11y/alt-text */
