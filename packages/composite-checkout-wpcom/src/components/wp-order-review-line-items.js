@@ -146,10 +146,7 @@ function LineItemPrice( { lineItem } ) {
 	if ( lineItem.amount.value < lineItem.wpcom_meta?.product_cost_integer ) {
 		return (
 			<span>
-				<DiscountOriginalPriceUI>
-					{ lineItem.wpcom_meta.product_cost_display }
-				</DiscountOriginalPriceUI>{ ' ' }
-				{ lineItem.amount.displayValue }
+				<s>{ lineItem.wpcom_meta.product_cost_display }</s> { lineItem.amount.displayValue }
 			</span>
 		);
 	}
@@ -179,10 +176,6 @@ const ProductDomainUI = styled.div`
 `;
 
 const BundledDomainFreeUI = styled.div`
-	color: ${props => props.theme.colors.success};
-`;
-
-const DiscountOriginalPriceUI = styled.s`
 	color: ${props => props.theme.colors.success};
 `;
 
