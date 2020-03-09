@@ -204,7 +204,7 @@ function setupErrorLogger( reduxStore ) {
 
 	const errorLogger = new Logger();
 
-	//Save errorLogger to a singleton for use in arbitrary logging.
+	// Save errorLogger to a singleton for use in arbitrary logging.
 	require( 'lib/catch-js-errors/log' ).registerLogger( errorLogger );
 
 	//Save data to JS error logger
