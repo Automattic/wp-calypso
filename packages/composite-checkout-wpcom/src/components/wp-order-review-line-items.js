@@ -132,9 +132,12 @@ WPLineItem.propTypes = {
 function LineItemTitle( { item, id } ) {
 	const translate = useTranslate();
 	return (
-		<LineItemTitleUI>
-			<ProductTitleUI id={ id }>{ item.label }</ProductTitleUI>
-			{ isLineItemADomain( item ) && <ProductDomainUI>{ item.sublabel }</ProductDomainUI> }
+		<LineItemTitleUI id={ id }>
+			{ isLineItemADomain( item ) ? (
+				<ProductTitleUI>{ item.sublabel }</ProductTitleUI>
+			) : (
+				<ProductTitleUI>{ item.label }</ProductTitleUI>
+			) }
 			{ isLineItemADomain( item ) && item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
 				<BundledDomainFreeUI>{ translate( 'First year free with your plan' ) }</BundledDomainFreeUI>
 			) }
@@ -169,10 +172,6 @@ const LineItemUI = styled( WPLineItem )`
 
 const LineItemTitleUI = styled.div`
 	flex: 1;
-`;
-
-const ProductDomainUI = styled.div`
-	font-size: 1.2em;
 `;
 
 const BundledDomainFreeUI = styled.div`
