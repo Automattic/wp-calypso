@@ -1,9 +1,9 @@
 === Full Site Editing ===
-Contributors: alexislloyd, allancole, automattic, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, Joen, kwight, marekhrabe, mattwiebe, mkaz, mmtr86, mppfeiffer, nrqsnchz, obenland, okenobi, vindl, noahtallen, owolski, nosolosw
+Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, jeryj, Joen, kwight, marekhrabe, mattwiebe, mkaz, mmtr86, mppfeiffer, nrqsnchz, obenland, okenobi, vindl, noahtallen, owolski, nosolosw
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.3
-Stable tag: 0.21
+Stable tag: 0.22
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -41,6 +41,15 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 0.22 =
+* Starter Page Templates: Improved previews with many visual glitches fixed
+* Starter Page Templates: Make page title visibility depend on theme setting
+* Starter Page Templates: Hide templates using unavailable blocks
+* Starter Page Templates: Track template insertion on Dotcom sites
+* Site Editor: initialize core FSE on Dotcom sites
+* Enable Gutenberg NUX with Gutenberg copy
+* Improved unit testing commands
 
 = 0.21 =
 * Linting fixes and page layout selector improvements.
