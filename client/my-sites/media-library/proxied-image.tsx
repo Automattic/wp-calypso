@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { useEffect, useState } from 'react';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -42,6 +43,7 @@ const ProxiedImage: React.FC< Props > = function ProxiedImage( {
 	filePath,
 	query,
 	placeholder,
+	setSpinner = noop,
 	...rest
 } ) {
 	const [ imageObjectUrl, setImageObjectUrl ] = useState< string >( '' );
@@ -55,6 +57,7 @@ const ProxiedImage: React.FC< Props > = function ProxiedImage( {
 				debug( 'set image from cache', { url } );
 			} else {
 				debug( 'requesting image from API', { requestId, imageObjectUrl } );
+				setSpinner( true );
 				wpcom
 					.undocumented()
 					.getAtomicSiteMediaViaProxyRetry(
@@ -66,6 +69,7 @@ const ProxiedImage: React.FC< Props > = function ProxiedImage( {
 								cacheResponse( requestId, data );
 								setImageObjectUrl( URL.createObjectURL( data ) );
 								debug( 'got image from API', { requestId, imageObjectUrl, data } );
+								setSpinner( false );
 							}
 						}
 					);

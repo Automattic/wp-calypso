@@ -29,7 +29,7 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 		super( props );
 
 		this.onImagePreloaderLoad = this.onImagePreloaderLoad.bind( this );
-		this.state = { loading: false };
+		this.state = { loading: false, spin: false };
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -44,6 +44,8 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 		this.setState( { loading: false } );
 		this.props.onLoad();
 	}
+
+	setSpinner = spinner => this.setState( { spin: !! spinner } );
 
 	render() {
 		const src = url( this.props.item, {
@@ -90,6 +92,7 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 					height={ this.props.item.height }
 					alt={ this.props.item.alt || this.props.item.title }
 					className={ fakeClasses }
+					setSpinner={ this.setSpinner }
 				/>
 
 				<MediaImage
@@ -102,7 +105,7 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 					className={ classes }
 				/>
 
-				{ ( uploading || loading ) && <Spinner /> }
+				{ ( uploading || loading || this.state.spin ) && <Spinner /> }
 			</div>
 		);
 	}
