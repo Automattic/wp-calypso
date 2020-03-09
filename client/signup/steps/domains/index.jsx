@@ -249,7 +249,7 @@ class DomainsStep extends React.Component {
 	};
 
 	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
-		const shouldHideFreePlanItem = this.isEligibleVariantForDomainTest() && shouldHideFreePlan
+		const shouldHideFreePlanItem = this.isEligibleVariantForDomainTest()
 			? { shouldHideFreePlan }
 			: {};
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
