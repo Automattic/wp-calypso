@@ -2480,9 +2480,9 @@ Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function(
 	query,
 	fn
 ) {
-	return this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, query, function( err, data ) {
+	return this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, query, ( err, data ) => {
 		if ( err || ! ( data instanceof Blob ) ) {
-			return this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, fn );
+			return this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, query, fn );
 		}
 
 		fn( err, data );
