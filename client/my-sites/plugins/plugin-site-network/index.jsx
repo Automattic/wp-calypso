@@ -94,6 +94,7 @@ class PluginSiteNetwork extends React.Component {
 	};
 
 	renderPluginSite = () => {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<FoldableCard
 				compact
@@ -125,6 +126,7 @@ class PluginSiteNetwork extends React.Component {
 				</div>
 			</FoldableCard>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	};
 
 	renderSecondarySite = site => {

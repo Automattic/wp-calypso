@@ -45,6 +45,7 @@ function checkPropsChange( nextProps, propArr ) {
 	return false;
 }
 
+// eslint-disable-next-line react/prefer-es6-class
 export const PluginsList = createReactClass( {
 	displayName: 'PluginsList',
 	mixins: [ PluginNotices ],
