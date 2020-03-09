@@ -34,6 +34,7 @@ import getSuperProps from 'lib/analytics/super-props';
 import { getSiteFragment, normalize } from 'lib/route';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
 import { setCurrentUser } from 'state/current-user/actions';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { initConnection as initHappychatConnection } from 'state/happychat/connection/actions';
 import { requestHappychatEligibility } from 'state/happychat/user/actions';
 import { getHappychatAuth } from 'state/happychat/utils';
@@ -196,6 +197,44 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 };
 
+function setupErrorLogger( reduxStore ) {
+	if ( ! config.isEnabled( 'catch-js-errors' ) ) {
+		return;
+	}
+
+	const errorLogger = new Logger();
+
+	//Save errorLogger to a singleton for use in arbitrary logging.
+	require( 'lib/catch-js-errors/log' ).registerLogger( errorLogger );
+
+	//Save data to JS error logger
+	errorLogger.saveDiagnosticData( {
+		user_id: getCurrentUserId( reduxStore.getState() ),
+		calypso_env: config( 'env_id' ),
+	} );
+
+	errorLogger.saveDiagnosticReducer( function() {
+		const state = reduxStore.getState();
+		return {
+			blog_id: getSelectedSiteId( state ),
+			calypso_section: getSectionName( state ),
+		};
+	} );
+
+	errorLogger.saveDiagnosticReducer( () => ( { tests: getSavedVariations() } ) );
+
+	analytics.on( 'record-event', ( eventName, lastTracksEvent ) =>
+		errorLogger.saveExtraData( { lastTracksEvent } )
+	);
+
+	page( '*', function( context, next ) {
+		errorLogger.saveNewPath(
+			context.canonicalPath.replace( getSiteFragment( context.canonicalPath ), ':siteId' )
+		);
+		next();
+	} );
+}
+
 const setupMiddlewares = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso setup middlewares.' );
 
@@ -214,35 +253,9 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	// Isomorphic sections will take care of rendering their Layout last themselves.
 	if ( ! document.getElementById( 'primary' ) ) {
 		renderLayout( reduxStore );
-
-		if ( config.isEnabled( 'catch-js-errors' ) ) {
-			const errorLogger = new Logger();
-			//Save errorLogger to a singleton for use in arbitrary logging.
-			require( 'lib/catch-js-errors/log' ).registerLogger( errorLogger );
-			//Save data to JS error logger
-			errorLogger.saveDiagnosticData( {
-				user_id: currentUser.get().ID,
-				calypso_env: config( 'env_id' ),
-			} );
-			errorLogger.saveDiagnosticReducer( function() {
-				const state = reduxStore.getState();
-				return {
-					blog_id: getSelectedSiteId( state ),
-					calypso_section: getSectionName( state ),
-				};
-			} );
-			errorLogger.saveDiagnosticReducer( () => ( { tests: getSavedVariations() } ) );
-			analytics.on( 'record-event', ( eventName, eventProperties ) =>
-				errorLogger.saveExtraData( { lastTracksEvent: eventProperties } )
-			);
-			page( '*', function( context, next ) {
-				errorLogger.saveNewPath(
-					context.canonicalPath.replace( getSiteFragment( context.canonicalPath ), ':siteId' )
-				);
-				next();
-			} );
-		}
 	}
+
+	setupErrorLogger( reduxStore );
 
 	// If `?sb` or `?sp` are present on the path set the focus of layout
 	// This can be removed when the legacy version is retired.
