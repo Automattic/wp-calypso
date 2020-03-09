@@ -61,6 +61,7 @@ export default function WPCheckout( {
 	siteId,
 	siteUrl,
 	CountrySelectMenu,
+	CheckoutTerms,
 	countriesList,
 	StateSelect,
 	renderDomainContactFields,
@@ -68,6 +69,7 @@ export default function WPCheckout( {
 	variantSelectOverride,
 	getItemVariants,
 	domainContactValidationCallback,
+	responseCart,
 } ) {
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( submitCoupon );
@@ -207,10 +209,11 @@ export default function WPCheckout( {
 							couponFieldStateProps={ couponFieldStateProps }
 							removeCoupon={ removeCouponAndResetActiveStep }
 							onChangePlanLength={ changePlanLength }
-							siteUrl={ siteUrl }
 							variantRequestStatus={ variantRequestStatus }
 							variantSelectOverride={ variantSelectOverride }
 							getItemVariants={ getItemVariants }
+							responseCart={ responseCart }
+							CheckoutTerms={ CheckoutTerms }
 						/>
 					}
 					titleContent={ <OrderReviewTitle /> }

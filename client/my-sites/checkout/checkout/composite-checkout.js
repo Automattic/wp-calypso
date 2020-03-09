@@ -84,6 +84,7 @@ import { requestProductsList } from 'state/products-list/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import analytics from 'lib/analytics';
 import { useStripe } from 'lib/stripe';
+import CheckoutTerms from './checkout-terms.jsx';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -716,6 +717,8 @@ export default function CompositeCheckout( {
 					variantSelectOverride={ variantSelectOverride }
 					getItemVariants={ getItemVariants }
 					domainContactValidationCallback={ domainContactValidationCallback }
+					responseCart={ responseCart }
+					CheckoutTerms={ CheckoutTerms }
 				/>
 			</CheckoutProvider>
 		</React.Fragment>
