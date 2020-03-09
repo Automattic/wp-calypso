@@ -25,6 +25,9 @@ import { selectorDebounce } from '../../constants';
  */
 import './style.scss';
 
+type DomainSuggestion = DomainSuggestions.DomainSuggestion;
+0;
+
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
 export interface Props {
@@ -38,19 +41,21 @@ export interface Props {
 	 *
 	 * @param domainSuggestion The selected domain.
 	 */
-	onDomainSelect: ( domainSuggestion: DomainSuggestions.DomainSuggestion ) => void;
+	onDomainSelect: ( domainSuggestion: DomainSuggestion ) => void;
 
 	/**
 	 * Callback that will be invoked when a paid domain is selected.
 	 *
 	 * @param domainSuggestion The selected domain.
 	 */
-	onDomainPurchase: ( domainSuggestion: DomainSuggestions.DomainSuggestion ) => void;
+	onDomainPurchase: ( domainSuggestion: DomainSuggestion ) => void;
 
 	/**
 	 * Additional parameters for the domain suggestions query.
 	 */
 	queryParameters?: Partial< DomainSuggestions.DomainSuggestionQuery >;
+
+	currentDomain?: DomainSuggestion;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
@@ -90,7 +95,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		if (
 			suggestion.is_free &&
 			! numberOfFreeDomains &&
-			suggestion.domain_name !== currentDomain.domain_name
+			suggestion.domain_name !== currentDomain?.domain_name
 		) {
 			numberOfFreeDomains++;
 			return suggestion;
@@ -101,7 +106,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		}
 	} );
 
-	const handleDomainClick = suggestion => {
+	const handleDomainClick = ( suggestion: DomainSuggestion ) => {
 		if ( suggestion.is_free ) {
 			onDomainSelect( suggestion );
 		} else {

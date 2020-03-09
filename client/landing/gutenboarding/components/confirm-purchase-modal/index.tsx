@@ -6,25 +6,29 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
 import { Button, Modal } from '@wordpress/components';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
+import { USER_STORE } from '../../stores/user';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
+type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
+
 interface Props {
 	onCancel: () => void;
 	onAccept: () => void;
-	isLogged: boolean;
-	selectedDomain: import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
+	selectedDomain: DomainSuggestion;
 }
 const ConfirmPurchaseModal: FunctionComponent< Props > = props => {
 	const { __: NO__ } = useI18n();
+	const isLoggedIn = useSelect( select => select( USER_STORE ).isCurrentUserLoggedIn() );
 
 	return (
 		<Modal
@@ -48,7 +52,7 @@ const ConfirmPurchaseModal: FunctionComponent< Props > = props => {
 						{ DomainName: <em /> }
 					) }
 					<ul>
-						{ ! props.isLogged && <li>{ NO__( 'Create an account' ) }</li> }
+						{ isLoggedIn && <li>{ NO__( 'Create an account' ) }</li> }
 						<li>{ NO__( 'Create your site' ) }</li>
 						<li>{ NO__( 'Purchase a paid plan' ) }</li>
 					</ul>

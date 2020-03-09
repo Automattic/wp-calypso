@@ -189,7 +189,6 @@ const Header: FunctionComponent = () => {
 									: handleSignupForDomains()
 							}
 							queryParameters={ { vertical: siteVertical?.id } }
-							currentUser={ currentUser }
 						>
 							{ siteTitleElement }
 							{ domainElement }

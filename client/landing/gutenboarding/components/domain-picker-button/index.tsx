@@ -16,8 +16,11 @@ import ConfirmPurchaseModal from '../confirm-purchase-modal';
  */
 import './style.scss';
 
+type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
+
 interface Props extends DomainPickerProps, Button.BaseProps {
 	className?: string;
+	currentDomain?: DomainSuggestion;
 }
 
 const DomainPickerButton: FunctionComponent< Props > = ( {
@@ -27,15 +30,16 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 	onDomainPurchase,
 	defaultQuery,
 	queryParameters,
-	currentUser,
 	currentDomain,
 	...buttonProps
 } ) => {
 	const buttonRef = createRef< HTMLButtonElement >();
 
 	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState( false );
-	const [ isPurchaseDomainVisible, setPurchaseDomainVisibility ] = useState( false );
-	const [ userSelectedDomain, setUserSelectedDomain ] = useState( '' );
+	const [
+		userSelectedDomainSuggestion,
+		setUserSelectedDomainSuggestion,
+	] = useState< DomainSuggestion | null >( null );
 
 	const handleClose = ( e?: React.FocusEvent ) => {
 		// Don't collide with button toggling
@@ -50,20 +54,13 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 		onDomainSelect( selectedDomain );
 	};
 
-	const handlePaidDomainSelect: typeof onDomainPurchase = selectedDomain => {
+	const handlePaidDomainSelect = ( selectedDomain: DomainSuggestion ) => {
 		setDomainPopoverVisibility( false );
-		setPurchaseDomainVisibility( true );
-		setUserSelectedDomain( selectedDomain );
+		setUserSelectedDomainSuggestion( selectedDomain );
 	};
 
 	const handlePurchaseCancel = () => {
-		setPurchaseDomainVisibility( false );
-		setUserSelectedDomain( '' );
-	};
-
-	const handleDomainPurchase = () => {
-		onDomainSelect( userSelectedDomain );
-		onDomainPurchase( userSelectedDomain );
+		setUserSelectedDomainSuggestion( null );
 	};
 
 	return (
@@ -82,12 +79,15 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				<span>{ children }</span>
 				<Dashicon icon="arrow-down-alt2" />
 			</Button>
-			{ isPurchaseDomainVisible && (
+			{ userSelectedDomainSuggestion && (
 				<ConfirmPurchaseModal
 					onCancel={ handlePurchaseCancel }
-					onAccept={ handleDomainPurchase }
-					selectedDomain={ userSelectedDomain }
-					isLogged={ !! currentUser }
+					onAccept={ () => {
+						onDomainSelect( userSelectedDomainSuggestion );
+						onDomainPurchase( userSelectedDomainSuggestion );
+						setUserSelectedDomainSuggestion( null );
+					} }
+					selectedDomain={ userSelectedDomainSuggestion }
 				/>
 			) }
 			{ isDomainPopoverVisible && (
