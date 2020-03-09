@@ -71,12 +71,7 @@ export default connect( ( state, { src }: Pick< Props, 'src' > ) => {
 	const isAtomic = !! isSiteAutomatedTransfer( state, siteId as number );
 	const isPrivate = !! isPrivateSite( state, siteId );
 	const { filePath, query, isRelativeToSiteRoot } = parseMediaURL( src, siteSlug );
-
-	const useProxy =
-		// Site privacy / coming soon are getting clobbered when the media lib loads
-		// Should be fixed when D39264-code lands
-		// Hard-coding for now so I can keep working...
-		( true || ( isAtomic && isPrivate ) ) && filePath && isRelativeToSiteRoot;
+	const useProxy = isAtomic && isPrivate && filePath && ( isRelativeToSiteRoot as boolean );
 
 	return {
 		query,
