@@ -95,7 +95,7 @@ export default class MediaLibraryListItemImage extends React.Component {
 				onLoad={ this.setUnknownImageDimensions }
 				alt={ this.props.media.alt || this.props.media.title }
 				style={ this.getImageStyle() }
-				className={ 'media-library__list-item-centered' }
+				className="media-library__list-item-centered"
 				draggable="false"
 			/>
 		);
