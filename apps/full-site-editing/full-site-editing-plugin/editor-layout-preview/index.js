@@ -12,7 +12,6 @@ import debugFactory from 'debug';
 import domReady from '@wordpress/dom-ready';
 import { render } from '@wordpress/element';
 import { registerCoreBlocks } from '@wordpress/block-library';
-import { parse as parseBlocks } from '@wordpress/blocks';
 /* eslint-enable import/no-extraneous-dependencies */
 
 /**
@@ -22,9 +21,6 @@ import LayoutPreview from './components/layout-preview';
 
 // Load plugin styles.
 import './style.scss';
-
-// Load testing template.
-import testingLayout from './util/testing_layout';
 
 const debug = debugFactory( 'editor-layout-preview' );
 debug( 'init' );
@@ -37,9 +33,5 @@ domReady( function() {
 
 	registerCoreBlocks();
 
-	debug( 'testing template: %o', testingLayout );
-	const blocks = parseBlocks( testingLayout );
-	debug( 'blocks: %o', blocks );
-
-	render( <LayoutPreview blocks={ blocks } />, document.getElementById( 'editor-large-preview' ) );
+	render( <LayoutPreview />, document.getElementById( 'editor-large-preview' ) );
 } );
