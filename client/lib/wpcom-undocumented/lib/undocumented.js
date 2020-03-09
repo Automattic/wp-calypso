@@ -2480,12 +2480,12 @@ Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function(
 	query,
 	fn
 ) {
-	this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, query, function( err, data ) {
+	return this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, query, function( err, data ) {
 		if ( err || ! ( data instanceof Blob ) ) {
-			this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, fn );
-		} else {
-			fn( err, data );
+			return this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, fn );
 		}
+
+		fn( err, data );
 	} );
 };
 
