@@ -15,6 +15,7 @@ import VerticalNav from 'components/vertical-nav';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import { withLocalizedMoment } from 'components/localized-moment';
 import DomainStatus from '../card/domain-status';
+import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import VerticalNavItem from 'components/vertical-nav/item';
 import { emailManagement } from 'my-sites/email/paths';
 import {
@@ -324,6 +325,22 @@ class RegisteredDomainType extends React.Component {
 		);
 	}
 
+	domainWarnings() {
+		return (
+			<DomainWarnings
+				domain={ this.props.domain }
+				position="registered-domain"
+				selectedSite={ this.props.selectedSite }
+				ruleWhiteList={ [
+					'pendingGSuiteTosAcceptanceDomains',
+					'pendingTransfer',
+					'newTransfersWrongNS',
+					'pendingConsent',
+				] }
+			/>
+		);
+	}
+
 	handlePaymentSettingsClick = () => {
 		this.props.recordPaymentSettingsClick( this.props.domain );
 	};
@@ -339,6 +356,7 @@ class RegisteredDomainType extends React.Component {
 		return (
 			<div className="domain-types__container">
 				{ this.planUpsellForNonPrimaryDomain() }
+				{ this.domainWarnings() }
 				<DomainStatus
 					header={ domain_name }
 					statusText={ statusText }
