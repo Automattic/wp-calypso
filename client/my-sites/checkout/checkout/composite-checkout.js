@@ -244,6 +244,7 @@ export default function CompositeCheckout( {
 		credits,
 		removeItem,
 		submitCoupon,
+		removeCoupon,
 		updateLocation,
 		couponStatus,
 		changeItemVariant,
@@ -702,6 +703,7 @@ export default function CompositeCheckout( {
 					removeItem={ removeItem }
 					updateLocation={ updateLocation }
 					submitCoupon={ submitCoupon }
+					removeCoupon={ removeCoupon }
 					couponStatus={ couponStatus }
 					changePlanLength={ changeItemVariant }
 					siteId={ siteId }

@@ -10,7 +10,7 @@ export type CouponFieldStateProps = {
 	isApplyButtonActive: boolean;
 	isFreshOrEdited: boolean;
 	setIsFreshOrEdited: ( boolean ) => void;
-	handleCouponSubmit: ( any ) => void; // TODO: fix this type
+	handleCouponSubmit: () => void;
 };
 
 export default function useCouponFieldState( submitCoupon ): CouponFieldStateProps {
@@ -31,27 +31,23 @@ export default function useCouponFieldState( submitCoupon ): CouponFieldStatePro
 		setIsApplyButtonActive( false );
 	}, [ couponFieldValue ] );
 
-	const handleCouponSubmit = useCallback(
-		event => {
-			event.preventDefault();
-			if ( isCouponValid( couponFieldValue ) ) {
-				onEvent( {
-					type: 'a8c_checkout_add_coupon',
-					payload: { coupon: couponFieldValue },
-				} );
-
-				submitCoupon( couponFieldValue );
-
-				return;
-			}
-
+	const handleCouponSubmit = useCallback( () => {
+		if ( isCouponValid( couponFieldValue ) ) {
 			onEvent( {
-				type: 'a8c_checkout_add_coupon_error',
-				payload: { type: 'Invalid code' },
+				type: 'a8c_checkout_add_coupon',
+				payload: { coupon: couponFieldValue },
 			} );
-		},
-		[ couponFieldValue, onEvent, submitCoupon ]
-	);
+
+			submitCoupon( couponFieldValue );
+
+			return;
+		}
+
+		onEvent( {
+			type: 'a8c_checkout_add_coupon_error',
+			payload: { type: 'Invalid code' },
+		} );
+	}, [ couponFieldValue, onEvent, submitCoupon ] );
 
 	return {
 		couponFieldValue,

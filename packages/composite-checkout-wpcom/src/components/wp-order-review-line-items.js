@@ -245,6 +245,7 @@ export function WPOrderReviewLineItems( {
 	className,
 	isSummaryVisible,
 	removeItem,
+	removeCoupon,
 	variantRequestStatus,
 	variantSelectOverride,
 	getItemVariants,
@@ -258,7 +259,7 @@ export function WPOrderReviewLineItems( {
 						isSummaryVisible={ isSummaryVisible }
 						item={ item }
 						hasDeleteButton={ canItemBeDeleted( item ) }
-						removeItem={ removeItem }
+						removeItem={ item.type === 'coupon' ? removeCoupon : removeItem }
 						variantRequestStatus={ variantRequestStatus }
 						variantSelectOverride={ variantSelectOverride }
 						getItemVariants={ getItemVariants }
@@ -274,6 +275,7 @@ WPOrderReviewLineItems.propTypes = {
 	className: PropTypes.string,
 	isSummaryVisible: PropTypes.bool,
 	removeItem: PropTypes.func,
+	removeCoupon: PropTypes.func,
 	items: PropTypes.arrayOf(
 		PropTypes.shape( {
 			label: PropTypes.string,
@@ -329,6 +331,12 @@ function returnModalCopy( product, translate, hasDomainsInCart ) {
 				'When you press Continue, we will remove your domain from the cart and you will have no claim for the domain name you picked.'
 			);
 			break;
+		case 'coupon':
+			modalCopy.title = translate( 'You are about to remove your coupon from the cart' );
+			modalCopy.description = translate(
+				'When you press Continue, we will need you to confirm your payment details.'
+			);
+			break;
 		default:
 			modalCopy.title = translate( 'You are about to remove your product from the cart' );
 			modalCopy.description = translate(
@@ -340,6 +348,6 @@ function returnModalCopy( product, translate, hasDomainsInCart ) {
 }
 
 function canItemBeDeleted( item ) {
-	const itemTypesThatCannotBeDeleted = [ 'tax', 'coupon', 'credits', 'wordpress-com-credits' ];
+	const itemTypesThatCannotBeDeleted = [ 'tax', 'credits', 'wordpress-com-credits' ];
 	return ! itemTypesThatCannotBeDeleted.includes( item.type );
 }

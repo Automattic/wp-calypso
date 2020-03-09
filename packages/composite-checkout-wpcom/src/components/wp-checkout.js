@@ -55,6 +55,7 @@ export default function WPCheckout( {
 	removeItem,
 	updateLocation,
 	submitCoupon,
+	removeCoupon,
 	couponStatus,
 	changePlanLength,
 	siteId,
@@ -120,6 +121,12 @@ export default function WPCheckout( {
 	useEffect( () => {
 		setSiteId( siteId );
 	}, [ siteId, setSiteId ] );
+
+	const removeCouponAndResetActiveStep = () => {
+		removeCoupon();
+		// Since the first step may now be invalid (eg: newly empty CC fields) we need to go back.
+		setActiveStepNumber( 1 );
+	};
 
 	return (
 		<Checkout>
@@ -198,6 +205,7 @@ export default function WPCheckout( {
 							removeItem={ removeItem }
 							couponStatus={ couponStatus }
 							couponFieldStateProps={ couponFieldStateProps }
+							removeCoupon={ removeCouponAndResetActiveStep }
 							onChangePlanLength={ changePlanLength }
 							siteUrl={ siteUrl }
 							variantRequestStatus={ variantRequestStatus }
@@ -216,4 +224,8 @@ export default function WPCheckout( {
 			</CheckoutSteps>
 		</Checkout>
 	);
+}
+
+function setActiveStepNumber( stepNumber ) {
+	window.location.hash = '#step' + stepNumber;
 }
