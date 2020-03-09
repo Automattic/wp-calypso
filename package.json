@@ -43,6 +43,9 @@
 		"@automattic/full-site-editing": "file:apps/full-site-editing",
 		"@automattic/load-script": "file:packages/load-script",
 		"@automattic/material-design-icons": "file:packages/material-design-icons",
+		"@automattic/media-library": "file:packages/media-library",
+		"@automattic/notifications": "file:apps/notifications",
+		"@automattic/o2-blocks": "file:apps/o2-blocks",
 		"@automattic/react-i18n": "file:packages/react-i18n",
 		"@automattic/tree-select": "file:packages/tree-select",
 		"@automattic/viewport": "file:packages/viewport",
@@ -53,7 +56,8 @@
 		"i18n-calypso": "file:packages/i18n-calypso",
 		"photon": "file:packages/photon",
 		"wp-calypso": "file:client",
-		"wpcom": "file:packages/wpcom.js"
+		"wpcom": "file:packages/wpcom.js",
+		"wpcom-proxy-request": "file:packages/wpcom-proxy-request"
 	},
 	"engines": {
 		"node": "^12.13.1",
