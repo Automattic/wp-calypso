@@ -31,7 +31,7 @@ class LogItem extends React.PureComponent< Props > {
 				<CardHeading tagName="h2" size={ 18 }>
 					{ header }
 				</CardHeading>
-				{ subheader && <p className="log-item__subheader">{ subheader }</p> }
+				{ subheader && <div className="log-item__subheader">{ subheader }</div> }
 			</div>
 		);
 	}
