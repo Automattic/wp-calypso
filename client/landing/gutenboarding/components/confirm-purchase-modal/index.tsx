@@ -63,7 +63,6 @@ const ConfirmPurchaseModal: FunctionComponent< Props > = props => {
 				<div className="confirm-purchase-modal__buttons">
 					<Button
 						isLarge
-						type="button"
 						className="confirm-purchase-modal__buttons-cancel"
 						onClick={ props.onCancel }
 					>
@@ -72,7 +71,6 @@ const ConfirmPurchaseModal: FunctionComponent< Props > = props => {
 					<Button
 						isLarge
 						isPrimary
-						type="button"
 						className="confirm-purchase-modal__buttons-accept"
 						onClick={ props.onAccept }
 					>
