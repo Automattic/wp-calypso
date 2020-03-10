@@ -10,7 +10,7 @@ import classnames from 'classnames';
 import './style.scss';
 
 interface Props {
-	isSlow?: boolean;
+	isSlow?: true;
 	texts: Array< string >;
 }
 
