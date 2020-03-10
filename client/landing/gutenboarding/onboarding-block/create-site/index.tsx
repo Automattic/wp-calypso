@@ -38,7 +38,7 @@ const CreateSite: FunctionComponent< {} > = () => {
 					<div className="create-site__placeholder create-site__placeholder-title">Placeholder</div>
 					<div className="create-site__text">
 						<AnimatedPlaceholder
-							is-slow
+							isSlow
 							texts={ [
 								NO__( 'We are creating your site.' ),
 								NO__( 'It will be ready in a moment.' ),

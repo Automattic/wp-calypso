@@ -9,7 +9,12 @@ import classnames from 'classnames';
  */
 import './style.scss';
 
-const AnimatedPlaceholder: FunctionComponent = ( { isSlow, texts } ) => {
+interface Props {
+	isSlow?: boolean;
+	texts: Array< string >;
+}
+
+const AnimatedPlaceholder: FunctionComponent< Props > = ( { isSlow, texts } ) => {
 	return (
 		<div
 			aria-hidden

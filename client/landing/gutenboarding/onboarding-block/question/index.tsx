@@ -33,7 +33,7 @@ const Question: FunctionComponent< Props > = ( {
 		setHasActivated( true );
 	}, [] );
 
-	const handleClick = event => {
+	const handleClick = ( event: React.MouseEvent< HTMLButtonElement > ) => {
 		onExpand();
 		event.preventDefault(); // we don't want the parent form to be submitted
 	};
