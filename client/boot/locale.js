@@ -27,20 +27,17 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 	if ( '__requireChunkCallback__' in window ) {
 		window.__requireChunkCallback__.add( ( chunkId, promises, publicPath ) => {
 			const translationChunkName = `${ currentUser.localeSlug }-${ chunkId }`;
+			const translationChunkPath = `${ publicPath }languages/${ translationChunkName }.json`; // @todo replace with actual translation path
 
 			promises.push(
-				new Promise( resolve => {
-					const translationChunkPath = `${ publicPath }languages/${ translationChunkName }.json`; // @todo replace with actual translation path
-
-					return window
-						.fetch( translationChunkPath )
-						.then( response => response.json() )
-						.then( data => {
-							i18n.addTranslations( data );
-							resolve();
-						} )
-						.catch( error => resolve( error ) );
-				} )
+				window
+					.fetch( translationChunkPath )
+					.then( response => response.json() )
+					.then( data => {
+						i18n.addTranslations( data );
+						return;
+					} )
+					.catch( error => error )
 			);
 		} );
 	}
