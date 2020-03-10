@@ -11,7 +11,6 @@ import { useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
 import { USER_STORE } from '../../stores/user';
 
 /**
@@ -32,43 +31,41 @@ const ConfirmPurchaseModal: FunctionComponent< Props > = props => {
 
 	return (
 		<Modal
-			title={ NO__( 'You are about to register your new domain!' ) }
+			title={ NO__( "You're about to register your new domain!" ) }
 			className="confirm-purchase-modal"
 			isDismissible={ false }
 			onRequestClose={ props.onCancel }
 		>
-			<Card className="confirm-purchase-modal__content">
-				<div className="confirm-purchase-modal__header">
-					{ NO__( 'You are about to register your new domain!' ) }
-				</div>
-				<div className="confirm-purchase-modal__items">
-					{ __experimentalCreateInterpolateElement(
-						sprintf(
-							NO__(
-								'To be able to complete the registration of <DomainName>%s</DomainName>, you need to take some extra steps:'
-							),
-							props.selectedDomain.domain_name
+			<div className="confirm-purchase-modal__header">
+				{ NO__( "You're about to register your new domain!" ) }
+			</div>
+			<div className="confirm-purchase-modal__items">
+				{ __experimentalCreateInterpolateElement(
+					sprintf(
+						NO__(
+							'To be able to complete the registration of <DomainName>%s</DomainName>, you need to take some extra steps:'
 						),
-						{ DomainName: <em /> }
-					) }
-					<ul>
-						{ isLoggedIn && <li>{ NO__( 'Create an account' ) }</li> }
-						<li>{ NO__( 'Create your site' ) }</li>
-						<li>{ NO__( 'Purchase a paid plan' ) }</li>
-					</ul>
-					{ NO__(
-						'Every paid plan includes a domain registration. Once you have completed the purchase of your new plan, we will continue with the set up of your site.'
-					) }
-				</div>
-				<div className="confirm-purchase-modal__buttons">
-					<Button isLarge onClick={ props.onCancel }>
-						{ NO__( 'Do it later' ) }
-					</Button>
-					<Button isLarge isPrimary onClick={ props.onAccept }>
-						{ NO__( 'Create your site and register your new domain' ) }
-					</Button>
-				</div>
-			</Card>
+						props.selectedDomain.domain_name
+					),
+					{ DomainName: <em /> }
+				) }
+				<ul>
+					{ isLoggedIn && <li>{ NO__( 'Create an account' ) }</li> }
+					<li>{ NO__( 'Create your site' ) }</li>
+					<li>{ NO__( 'Purchase a paid plan' ) }</li>
+				</ul>
+				{ NO__(
+					'Every paid plan includes a domain registration. Once you have completed the purchase of your new plan, we will continue with the set up of your site.'
+				) }
+			</div>
+			<div className="confirm-purchase-modal__buttons">
+				<Button isLarge onClick={ props.onCancel }>
+					{ NO__( 'Do it later' ) }
+				</Button>
+				<Button isLarge isPrimary onClick={ props.onAccept }>
+					{ NO__( 'Create your site and register your new domain' ) }
+				</Button>
+			</div>
 		</Modal>
 	);
 };

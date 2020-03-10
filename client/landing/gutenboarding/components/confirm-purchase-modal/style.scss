@@ -1,10 +1,5 @@
 @import '../../mixins';
 
-.confirm-purchase-modal__content {
-	padding: 32px;
-	max-width: 560px;
-}
-
 .confirm-purchase-modal__header {
 	@include onboarding-font-recoleta;
 	font-size: 40px;
@@ -32,8 +27,10 @@
 }
 
 .confirm-purchase-modal__buttons {
-	width: 100%;
-	margin-top: 32px;
+	margin-top: 0.8em;
 	display: flex;
-	justify-content: space-between;
+	justify-content: flex-end;
+	.components-button + .components-button {
+		margin-left: 0.4em;
+	}
 }
