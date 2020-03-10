@@ -2,3 +2,12 @@
     display: block;
     float: none;
 }
+
+.backup-delta__realtime .activity-log-item__actor {
+    margin-left: 0;
+}
+
+.backup-delta__realtime .button.is-borderless.is-primary {
+    float: none;
+    display: inline-block;
+}
