@@ -136,11 +136,17 @@ class PurchasesListing extends Component {
 
 		const expiryMoment = purchase.expiryDate ? this.props.moment( purchase.expiryDate ) : null;
 
+		let renewMoment = null;
+
 		// Pass auto-renew information if it is enabled.
-		const renewMoment =
-			purchase.autoRenew && purchase.autoRenewDate
-				? this.props.moment( purchase.autoRenewDate )
-				: null;
+		if ( 'renewDate' in purchase ) {
+			renewMoment = purchase.renewDate ? this.props.moment( purchase.renewDate ) : null;
+		} else if ( 'autoRenewDate' in purchase ) {
+			renewMoment =
+				purchase.autoRenew && purchase.autoRenewDate
+					? this.props.moment( purchase.autoRenewDate )
+					: null;
+		}
 
 		return (
 			<ProductExpiration

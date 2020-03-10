@@ -192,9 +192,12 @@ export class ProductSelector extends Component {
 
 		const expiryMoment = purchase.expiryDate ? moment( purchase.expiryDate ) : null;
 
+		const renewDateMoment = purchase.renewDate ? moment( purchase.renewDate ) : null;
+
 		return (
 			<ProductExpiration
 				expiryDateMoment={ expiryMoment }
+				renewDateMoment={ renewDateMoment }
 				purchaseDateMoment={ subscribedMoment }
 				isRefundable={ purchase.isRefundable }
 			/>
