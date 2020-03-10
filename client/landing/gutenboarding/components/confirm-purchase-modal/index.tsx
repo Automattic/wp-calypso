@@ -45,7 +45,7 @@ const ConfirmPurchaseModal: FunctionComponent< Props > = props => {
 					{ __experimentalCreateInterpolateElement(
 						sprintf(
 							NO__(
-								'To be able to complete the registration of <DomainName>%s</DomainName>, you need to take some extra steps: '
+								'To be able to complete the registration of <DomainName>%s</DomainName>, you need to take some extra steps:'
 							),
 							props.selectedDomain.domain_name
 						),
