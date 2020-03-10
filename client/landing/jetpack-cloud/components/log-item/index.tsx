@@ -19,7 +19,6 @@ export interface Props {
 	subheader?: string | ReactNode;
 	highlight?: 'info' | 'success' | 'warning' | 'error';
 	tag?: string;
-	className?: string;
 	summary?: string | ReactNode;
 	expandedSummary?: string | ReactNode;
 }

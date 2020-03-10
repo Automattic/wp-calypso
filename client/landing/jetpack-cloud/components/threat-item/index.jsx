@@ -11,6 +11,7 @@ import { Button } from '@automattic/components';
  * Internal dependencies
  */
 import LogItem from '../log-item';
+import ThreatDescription from '../threat-description';
 
 /**
  * Style dependencies
@@ -28,22 +29,13 @@ class ThreatItem extends Component {
 		alert( `Fixing threat ${ threat.id }` );
 	};
 
-	// This is almost equal to the details of a fixed/ignored threat event,
-	// so we may have to abstract it into its own component
-	renderEntryDetails( threat ) {
-		return (
-			<div className="threat-item__details">
-				<strong>{ translate( 'What was the problem?' ) }</strong>
-				<p>{ threat.description.problem }</p>
-				<strong>{ translate( 'How we will fix it?' ) }</strong>
-				<p>{ threat.description.fix }</p>
-				<strong>{ translate( 'The technical details' ) }</strong>
-				<p>{ threat.description.details }</p>
-				{ this.renderFixThreatCTA( 'is-details' ) }
-			</div>
-		);
-	}
-
+	/**
+	 * Render a CTA button. Currently, this button is rendered three
+	 * times: in the details section, and in the `summary` and `extendSummary`
+	 * sections of the header.
+	 *
+	 * @param {string} className A class for the button
+	 */
 	renderFixThreatCTA( className ) {
 		return (
 			<Button
@@ -70,7 +62,9 @@ class ThreatItem extends Component {
 				key={ threat.id }
 				highlight="error"
 			>
-				{ this.renderEntryDetails( threat ) }
+				<ThreatDescription threat={ threat }>
+					{ this.renderFixThreatCTA( 'is-details' ) }
+				</ThreatDescription>
 			</LogItem>
 		);
 	}
