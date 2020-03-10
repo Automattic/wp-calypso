@@ -377,6 +377,8 @@ jobs:
               --config=test/client/jest.config.js \
               > ~/jest-tests
 
+            circleci tests split < ~/jest-tests
+
             # Run jest on the CircleCI split for parallelization across containers
             # Avoid using `--split-by=timings` here so that per-node Jest caches
             # receive a stable sub-set of tests for optimal cache usage.
