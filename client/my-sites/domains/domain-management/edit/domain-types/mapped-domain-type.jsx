@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import { Card } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
 import VerticalNav from 'components/vertical-nav';
 import { withLocalizedMoment } from 'components/localized-moment';
 import DomainStatus from '../card/domain-status';
@@ -24,12 +24,16 @@ import { isExpiringSoon } from 'lib/domains/utils';
 import SubscriptionSettings from '../card/subscription-settings';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { WPCOM_DEFAULTS } from 'lib/domains/nameservers';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
+import AutoRenewToggle from 'me/purchases/manage-purchase/auto-renew-toggle';
+import QuerySitePurchases from 'components/data/query-site-purchases';
 import { isSubdomain } from 'lib/domains';
 import { MAP_EXISTING_DOMAIN, MAP_SUBDOMAIN } from 'lib/url/support';
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'state/sites/selectors';
+import { getByPurchaseId } from 'state/purchases/selectors';
+import { isRechargeable, isExpired, shouldRenderExpiringCreditCard } from 'lib/purchases';
+import { getEditCardDetailsPath } from 'me/purchases/utils';
 
 class MappedDomainType extends React.Component {
 	getVerticalNavigation() {
@@ -131,7 +135,7 @@ class MappedDomainType extends React.Component {
 	}
 
 	renderExpiringSoon() {
-		const { domain, translate, moment } = this.props;
+		const { domain, translate, purchase, moment } = this.props;
 		const { expiry } = domain;
 
 		if ( ! isExpiringSoon( domain, 30 ) ) {
@@ -180,6 +184,7 @@ class MappedDomainType extends React.Component {
 				<p>{ noticeText }</p>
 				<RenewButton
 					primary={ true }
+					purchase={ purchase }
 					selectedSite={ this.props.selectedSite }
 					subscriptionId={ parseInt( subscriptionId, 10 ) }
 					customLabel={ customLabel }
@@ -256,8 +261,40 @@ class MappedDomainType extends React.Component {
 		);
 	}
 
+	renderExpiringCreditCard() {
+		const { selectedSite, purchase, translate } = this.props;
+
+		if ( ! selectedSite || ! purchase ) {
+			return null;
+		}
+
+		if ( ! shouldRenderExpiringCreditCard( purchase ) ) {
+			return null;
+		}
+
+		const editCardDetailsPath = getEditCardDetailsPath( selectedSite.slug, purchase );
+
+		return (
+			<div>
+				<p>
+					{ translate(
+						'Your credit card is {{strong}}set to expire before your domain mapping renewal date{{/strong}}. Please update your payment information on your account to avoid any disruptions to your service. Turn off auto-renew if you don’t want to see this message anymore.',
+						{
+							components: {
+								strong: <strong />,
+							},
+						}
+					) }
+				</p>
+				<Button primary={ true } href={ editCardDetailsPath }>
+					{ translate( 'Update your payment information' ) }
+				</Button>
+			</div>
+		);
+	}
+
 	renderDefaultRenewButton() {
-		const { domain, translate } = this.props;
+		const { domain, purchase, translate } = this.props;
 
 		if ( domain.expired || isExpiringSoon( domain, 30 ) ) {
 			return null;
@@ -281,6 +318,7 @@ class MappedDomainType extends React.Component {
 			<div>
 				<RenewButton
 					compact={ true }
+					purchase={ purchase }
 					selectedSite={ this.props.selectedSite }
 					subscriptionId={ parseInt( subscriptionId, 10 ) }
 					customLabel={ customLabel }
@@ -290,12 +328,33 @@ class MappedDomainType extends React.Component {
 		);
 	}
 
-	renderAutoRenew() {
+	renderAutoRenewToggle() {
+		const { selectedSite, domain, purchase } = this.props;
+
+		if ( ! isRechargeable( purchase ) || isExpired( purchase ) ) {
+			return null;
+		}
+
 		return (
-			<Card compact={ true }>
-				Auto Renew (on) <CompactFormToggle checked={ true } />
-			</Card>
+			<AutoRenewToggle
+				planName={ selectedSite.plan.product_name_short }
+				siteDomain={ selectedSite.domain }
+				purchase={ purchase }
+				compact={ true }
+				withTextStatus={ true }
+				withPlan={ !! domain.bundledPlanSubscriptionId }
+			/>
 		);
+	}
+
+	renderAutoRenew() {
+		const { purchase } = this.props;
+
+		if ( ! purchase ) {
+			return <div />;
+		}
+
+		return <div>{ this.renderAutoRenewToggle() }</div>;
 	}
 
 	handlePaymentSettingsClick = () => {
@@ -303,7 +362,7 @@ class MappedDomainType extends React.Component {
 	};
 
 	render() {
-		const { domain, moment, translate } = this.props;
+		const { domain, selectedSite, purchase, moment, translate } = this.props;
 		const { name: domain_name } = domain;
 
 		const { statusText, statusClass, icon } = this.resolveStatus();
@@ -329,12 +388,14 @@ class MappedDomainType extends React.Component {
 
 		return (
 			<div className="domain-types__container">
+				{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DomainStatus
 					header={ domain_name }
 					statusText={ statusText }
 					statusClass={ statusClass }
 					icon={ icon }
 				>
+					{ this.renderExpiringCreditCard() }
 					{ this.renderSettingUpNameservers() }
 					{ this.renderExpiringSoon() }
 				</DomainStatus>
@@ -352,8 +413,8 @@ class MappedDomainType extends React.Component {
 							/>
 						</div>
 					) }
+					{ newStatusDesignAutoRenew && this.renderAutoRenew() }
 				</Card>
-				{ newStatusDesignAutoRenew && this.renderAutoRenew() }
 				{ this.getVerticalNavigation() }
 			</div>
 		);
@@ -362,7 +423,14 @@ class MappedDomainType extends React.Component {
 
 export default connect(
 	( state, ownProps ) => {
+		const { subscriptionId, bundledPlanSubscriptionId } = ownProps.domain;
+		const purchaseSubscriptionId = bundledPlanSubscriptionId
+			? bundledPlanSubscriptionId
+			: subscriptionId;
 		return {
+			purchase: purchaseSubscriptionId
+				? getByPurchaseId( state, parseInt( purchaseSubscriptionId, 10 ) )
+				: null,
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, ownProps.selectedSite.ID ),
 			isJetpackSite: isJetpackSite( state, ownProps.selectedSite.ID ),
 		};
