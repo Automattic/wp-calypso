@@ -68,6 +68,8 @@ import notices from 'notices';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import { isJetpackSite, isNewSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
+import { updateContactDetailsCache } from 'state/domains/management/actions';
 import { FormCountrySelect } from 'components/forms/form-country-select';
 import getCountries from 'state/selectors/get-countries';
 import { fetchPaymentCountries } from 'state/countries/actions';
@@ -281,6 +283,7 @@ export default function CompositeCheckout( {
 		[ recordEvent, getThankYouUrl, total, couponItem, responseCart ]
 	);
 
+	const cachedDomainContactDetails = useCachedDomainContactDetails();
 	const { registerStore, dispatch } = registry;
 	useWpcomStore(
 		registerStore,
@@ -1381,6 +1384,11 @@ function useVariantWpcomPlanProductSlugs( productSlug ) {
 		group: chosenPlan.group,
 		type: chosenPlan.type,
 	} );
+}
+
+function useCachedDomainContactDetails() {
+	const cachedDomainContactDetails = useSelector( getContactDetailsCache );
+	return cachedDomainContactDetails;
 }
 
 function getPlanProductSlugs(
