@@ -288,7 +288,8 @@ export default function CompositeCheckout( {
 	useWpcomStore(
 		registerStore,
 		recordEvent,
-		areDomainsInLineItems( items ) ? domainManagedContactDetails : taxManagedContactDetails
+		areDomainsInLineItems( items ) ? domainManagedContactDetails : taxManagedContactDetails,
+		updateContactDetailsCache
 	);
 
 	useDisplayErrors( errors, showErrorMessage );
