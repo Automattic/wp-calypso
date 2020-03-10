@@ -152,6 +152,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 											</span>
 										) : (
 											<span>
+												{ /* FIXME: What value do we show here? */ }
 												<span className="domain-picker__price">{ NO__( 'from €4/month' ) }</span>
 												{ NO__( 'Upgrade' ) }
 											</span>
