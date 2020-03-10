@@ -34,6 +34,13 @@
 		}
 	}
 
+	// Static menu items.
+	.sidebar__menu-content {
+		.sidebar__menu-link-text {
+			margin-left: 35px; // 24px for SVG, 11px margin.
+		}
+	}
+
 	// Footer
 	.sidebar__footer {
 		margin-top: auto;
