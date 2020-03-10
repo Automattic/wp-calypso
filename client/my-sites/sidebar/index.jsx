@@ -58,6 +58,7 @@ import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import isSiteUsingCoreSiteEditor from 'state/selectors/is-site-using-core-site-editor';
+import getSiteEditorUrl from 'state/selectors/get-site-editor-url';
 import {
 	SIDEBAR_SECTION_SITE,
 	SIDEBAR_SECTION_DESIGN,
@@ -306,10 +307,10 @@ export class MySitesSidebar extends Component {
 					<SidebarItem
 						label={ translate( 'Site Editor (beta)' ) }
 						// selected={ itemLinkMatches( '/customize', path ) }
-						// link={ this.props.customizeUrl }
+						link={ this.props.siteEditorUrl }
 						// onNavigate={ this.trackCustomizeClick }
-						// preloadSectionName="customize"
-						// forceInternalLink
+						preloadSectionName="site editor"
+						forceInternalLink
 						// expandSection={ this.expandDesignSection }
 					/>
 				) }
@@ -802,6 +803,7 @@ function mapStateToProps( state ) {
 			isSiteUsingCoreSiteEditor( state, selectedSiteId )
 		),
 		showSiteEditor: isSiteUsingCoreSiteEditor( state, selectedSiteId ),
+		siteEditorUrl: getSiteEditorUrl( state, selectedSiteId ),
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
