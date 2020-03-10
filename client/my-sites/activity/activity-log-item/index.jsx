@@ -244,6 +244,7 @@ class ActivityLogItem extends Component {
 			disableBackup,
 			siteId,
 			siteSlug,
+			trackAddCreds,
 			translate,
 		} = this.props;
 
@@ -266,6 +267,7 @@ class ActivityLogItem extends Component {
 									? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
 									: `/settings/security/${ siteSlug }`
 							}
+							onClick={ trackAddCreds }
 						>
 							{ translate( 'Add server credentials to enable restoring' ) }
 						</PopoverMenuItem>
@@ -487,6 +489,7 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 		dispatch(
 			recordTracksEvent( 'calypso_activitylog_event_get_help', { activity_name: activityName } )
 		),
+	trackAddCreds: () => dispatch( recordTracksEvent( 'calypso_activitylog_event_add_credentials' ) ),
 	trackFixCreds: () => dispatch( recordTracksEvent( 'calypso_activitylog_event_fix_credentials' ) ),
 } );
 
