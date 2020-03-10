@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import { Card } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import VerticalNav from 'components/vertical-nav';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
@@ -38,7 +38,15 @@ import NonPrimaryDomainPlanUpsell from '../../components/domain/non-primary-doma
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
 import AutoRenewToggle from 'me/purchases/manage-purchase/auto-renew-toggle';
 import QuerySitePurchases from 'components/data/query-site-purchases';
-import { isExpired, isRechargeable } from 'lib/purchases';
+import {
+	isExpired,
+	isExpiring,
+	isRechargeable,
+	creditCardExpiresBeforeSubscription,
+	isOneTimePurchase,
+	isIncludedWithPlan,
+} from 'lib/purchases';
+import { getEditCardDetailsPath } from 'me/purchases/utils';
 
 class RegisteredDomainType extends React.Component {
 	getVerticalNavigation() {
@@ -95,8 +103,16 @@ class RegisteredDomainType extends React.Component {
 	}
 
 	resolveStatus() {
-		const { domain, translate, moment } = this.props;
+		const { domain, translate, purchase, moment } = this.props;
 		const { registrationDate, expiry } = domain;
+
+		if ( purchase && this.shouldRenderExpiringCreditCard( purchase ) ) {
+			return {
+				statusText: translate( 'Action required' ),
+				statusClass: 'status-error',
+				icon: 'info',
+			};
+		}
 
 		if ( domain.isPendingIcannVerification && domain.currentUserCanManage ) {
 			return {
@@ -346,6 +362,48 @@ class RegisteredDomainType extends React.Component {
 		);
 	}
 
+	shouldRenderExpiringCreditCard( purchase ) {
+		return (
+			! isExpired( purchase ) &&
+			! isExpiring( purchase ) &&
+			! isOneTimePurchase( purchase ) &&
+			! isIncludedWithPlan( purchase ) &&
+			creditCardExpiresBeforeSubscription( purchase )
+		);
+	}
+
+	renderExpiringCreditCard() {
+		const { selectedSite, purchase, translate } = this.props;
+
+		if ( ! selectedSite || ! purchase ) {
+			return null;
+		}
+
+		if ( ! this.shouldRenderExpiringCreditCard( purchase ) ) {
+			return null;
+		}
+
+		const editCardDetailsPath = getEditCardDetailsPath( selectedSite.slug, purchase );
+
+		return (
+			<div>
+				<p>
+					{ translate(
+						'Your credit card is {{strong}}set to expire before your domain renewal date{{/strong}}. Please update your payment information on your account to avoid any disruptions to your service. Turn off auto-renew if you don’t want to see this message anymore.',
+						{
+							components: {
+								strong: <strong />,
+							},
+						}
+					) }
+				</p>
+				<Button primary={ true } href={ editCardDetailsPath }>
+					{ translate( 'Update your payment information' ) }
+				</Button>
+			</div>
+		);
+	}
+
 	renderAutoRenewToggle() {
 		const { selectedSite, purchase } = this.props;
 
@@ -433,6 +491,7 @@ class RegisteredDomainType extends React.Component {
 							compact={ true }
 						/>
 					) }
+					{ this.renderExpiringCreditCard() }
 					{ this.renderExpiringSoon() }
 					{ this.renderExpired() }
 					{ this.renderRecentlyRegistered() }
