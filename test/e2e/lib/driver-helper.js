@@ -244,7 +244,8 @@ export function waitForFieldClearable( driver, selector ) {
 		function() {
 			return driver.findElement( selector ).then(
 				element => {
-					return element.sendKeys( Key.chord( Key.CONTROL, 'a' ), Key.BACK_SPACE ).then(
+					element.sendKeys( Key.chord( Key.CONTROL, 'a' ), Key.BACK_SPACE );
+					return element.clear().then(
 						function() {
 							return element.getAttribute( 'value' ).then( value => {
 								return value === '';
