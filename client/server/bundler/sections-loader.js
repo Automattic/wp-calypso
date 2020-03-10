@@ -60,7 +60,11 @@ const loader = function() {
 	const options = getOptions( this ) || {};
 	const { forceRequire, onlyIsomorphic } = options;
 	let { include } = options;
-	let sections = require( this.resourcePath ).filter( utils.filterSections );
+
+	// Build all the sections during the build step.
+	let sections = forceRequire
+		? require( this.resourcePath )
+		: require( this.resourcePath ).filter( utils.filterSections );
 
 	if ( include ) {
 		if ( ! Array.isArray( include ) ) {
@@ -76,7 +80,7 @@ const loader = function() {
 			printSectionsAndPaths( allSections );
 		}
 	} else {
-		console.log( `[sections-loader] created ${ sections.length } of section.` );
+		console.log( `[sections-loader] created ${ sections.length } section(s).` );
 		printSectionsAndPaths( sections );
 	}
 
