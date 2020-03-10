@@ -8,7 +8,7 @@
 	}
 
 	&__subheader {
-		color: var( --color-ignored-threat );
+		color: var( --color-threat-ignored );
 		font-size: 13px;
 		display: flex;
 		flex-direction: column;
@@ -24,7 +24,7 @@
 		white-space: nowrap;
 
 		&.is-fixed {
-			color: var( --color-fixed-threat );
+			color: var( --color-threat-fixed );
 		}
 	}
 
@@ -33,7 +33,7 @@
 
 		@include breakpoint( '>960px' ) {
 			display: inline-block;
-			background: var( --color-ignored-threat );
+			background: var( --color-threat-ignored );
 			margin: 0 20px;
 			width: 4px;
 			height: 4px;
@@ -51,11 +51,11 @@
 		color: #fff;
 
 		&.is-fixed {
-			background-color: var( --color-fixed-threat );
+			background-color: var( --color-threat-fixed );
 		}
 
 		&.is-ignored {
-			background-color: var( --color-ignored-threat );
+			background-color: var( --color-threat-ignored );
 		}
 	}
 
