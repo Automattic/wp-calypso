@@ -99,4 +99,12 @@ const CheckoutTermsUI = styled.div`
 		font-size: 12px;
 		margin: 0;
 	}
+
+	& > * > p a {
+		text-decoration: underline;
+	}
+
+	& > * > p a:hover {
+		text-decoration: none;
+	}
 `;
