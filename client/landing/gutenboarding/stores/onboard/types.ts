@@ -17,6 +17,6 @@ export interface SiteVertical {
 }
 
 export interface LastCreatedSite {
-	domain: string | undefined;
+	slug: string | undefined;
 	createdTimestamp: number;
 }

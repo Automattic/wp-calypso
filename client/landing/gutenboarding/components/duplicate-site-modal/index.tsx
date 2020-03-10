@@ -25,7 +25,7 @@ const DuplicateSiteModal = ( { onRequestClose }: Props ) => {
 
 	const lastCreatedSite = useSelect( select => select( ONBOARD_STORE ).getLastCreatedSite() );
 	const existingSite = useSelect( select => {
-		return select( SITE_STORE ).getExistingSite( lastCreatedSite?.domain );
+		return select( SITE_STORE ).getExistingSite( lastCreatedSite?.slug );
 	} );
 
 	useEffect( () => {
@@ -57,7 +57,7 @@ const DuplicateSiteModal = ( { onRequestClose }: Props ) => {
 					{ NO__( 'Create new site' ) }
 				</Button>
 
-				<a className="duplicate-site-modal__cta-link" href={ `/home/${ lastCreatedSite?.domain }` }>
+				<a className="duplicate-site-modal__cta-link" href={ `/home/${ lastCreatedSite?.slug }` }>
 					<Button className="duplicate-site-modal__cta" isPrimary isLarge>
 						{ NO__( 'Edit existing site' ) }
 					</Button>

@@ -132,7 +132,7 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 	useEffect( () => {
 		if ( newSite ) {
 			resetOnboardStore( {
-				domain: newSite.site_slug,
+				slug: newSite.site_slug,
 				createdTimestamp: Date.now(),
 			} );
 			window.location.href = `/block-editor/page/${ newSite.blogid }/home?is-gutenboarding`;
