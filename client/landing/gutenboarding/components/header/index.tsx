@@ -108,7 +108,7 @@ const Header: FunctionComponent = () => {
 						title: siteTitle,
 					},
 					site_creation_flow: 'gutenboarding',
-					...( selectedDesign && { theme: `pub/${ selectedDesign?.slug }` } ),
+					theme: `pub/${ selectedDesign?.slug || 'twentytwenty' }`,
 				},
 				...( bearerToken && { authToken: bearerToken } ),
 			} );
@@ -116,28 +116,10 @@ const Header: FunctionComponent = () => {
 		[ createSite, currentDomain, selectedDesign, siteTitle, siteVertical ]
 	);
 
-	const handleCreateSiteForDomains = useCallback(
-		( username: string, bearerToken?: string ) => {
-			setDomainFlow( true );
-			const siteUrl = currentDomain?.domain_name || siteTitle || username;
-			const themeSlug = 'twentytwenty';
-			createSite( {
-				blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
-				blog_title: siteTitle,
-				options: {
-					site_vertical: siteVertical?.id,
-					site_vertical_name: siteVertical?.label,
-					site_information: {
-						title: siteTitle,
-					},
-					site_creation_flow: 'gutenboarding',
-					theme: `pub/${ themeSlug }`,
-				},
-				...( bearerToken && { authToken: bearerToken } ),
-			} );
-		},
-		[ createSite, currentDomain, siteTitle, siteVertical ]
-	);
+	const handleCreateSiteForDomains: typeof handleCreateSite = ( ...args ) => {
+		setDomainFlow( true );
+		handleCreateSite( ...args );
+	};
 
 	const handleSignup = () => {
 		setShowSignupDialog( true );
