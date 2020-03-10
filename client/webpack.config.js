@@ -52,6 +52,7 @@ const shouldShowProgress = process.env.PROGRESS && process.env.PROGRESS !== 'fal
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const shouldConcatenateModules = process.env.CONCATENATE_MODULES !== 'false';
+const shouldOutputChunksMap = process.env.CHUNKS_MAP && process.env.CHUNKS_MAP !== 'false';
 const isCalypsoClient = process.env.BROWSERSLIST_ENV !== 'server';
 const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
 
@@ -289,7 +290,10 @@ const webpackConfig = {
 			flags: { desktop: config.isEnabled( 'desktop' ) },
 		} ),
 		isCalypsoClient && new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
-		isCalypsoClient && new GenerateChunksMapPlugin(),
+		shouldOutputChunksMap &&
+			new GenerateChunksMapPlugin( {
+				output: path.resolve( '.', 'chunks-map.json' ),
+			} ),
 		isCalypsoClient && new FetchTranslationChunksPlugin(),
 		isDevelopment && new webpack.HotModuleReplacementPlugin(),
 	].filter( Boolean ),
