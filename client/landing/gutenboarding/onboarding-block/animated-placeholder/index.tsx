@@ -11,7 +11,7 @@ import './style.scss';
 
 interface Props {
 	isSlow?: true;
-	texts: Array< string >;
+	texts: string[];
 }
 
 const AnimatedPlaceholder: FunctionComponent< Props > = ( { isSlow, texts } ) => {
