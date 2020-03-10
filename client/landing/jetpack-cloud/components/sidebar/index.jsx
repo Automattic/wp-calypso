@@ -23,11 +23,14 @@ import StaticSidebarMenu from './menu';
  * Style dependencies
  */
 import './style.scss';
+import Badge from 'components/badge';
 
 class JetpackCloudSidebar extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
 		selectedSiteSlug: PropTypes.string,
+		badgeText: PropTypes.string,
+		badgeType: PropTypes.oneOf( [ 'success', 'error' ] ),
 	};
 
 	/**
@@ -46,7 +49,12 @@ class JetpackCloudSidebar extends Component {
 	};
 
 	scanMenu = () => {
-		const { selectedSiteSlug, translate } = this.props;
+		const {
+			selectedSiteSlug,
+			translate,
+			badgeText, // TODO: Get from state.
+			badgeType,
+		} = this.props;
 
 		const isHistory = this.isSelected( `/scan/${ selectedSiteSlug }/history` );
 		return (
@@ -58,8 +66,9 @@ class JetpackCloudSidebar extends Component {
 					} ) }
 					onNavigate={ this.onNavigate }
 					selected={ ! isHistory }
-					showAsExternal
-				/>
+				>
+					{ badgeText && <Badge type={ badgeType }>{ badgeText }</Badge> }
+				</SidebarItem>
 				{ config.isEnabled( 'jetpack-cloud/scan-history' ) && selectedSiteSlug && (
 					<SidebarItem
 						link={ `/scan/${ selectedSiteSlug }/history` }
