@@ -19,6 +19,7 @@ import {
 	areDomainsInLineItems,
 	domainManagedContactDetails,
 	taxManagedContactDetails,
+	areRequiredFieldsNotEmpty,
 } from '@automattic/composite-checkout-wpcom';
 import {
 	CheckoutProvider,
@@ -243,6 +244,7 @@ export default function CompositeCheckout( {
 		credits,
 		removeItem,
 		submitCoupon,
+		removeCoupon,
 		updateLocation,
 		couponStatus,
 		changeItemVariant,
@@ -612,39 +614,55 @@ export default function CompositeCheckout( {
 	const validateDomainContact =
 		validateDomainContactDetails || wpcomValidateDomainContactInformation;
 
-	const renderDomainContactFields = (
-		domainNames,
+	const domainContactValidationCallback = (
+		paymentMethodId,
 		contactDetails,
-		updateContactDetails,
+		domainNames,
 		applyDomainContactValidationResults,
-		paymentMethodId
+		decoratedContactDetails
+	) => {
+		return new Promise( resolve => {
+			validateDomainContact( contactDetails, domainNames, ( httpErrors, data ) => {
+				recordEvent( {
+					type: 'VALIDATE_DOMAIN_CONTACT_INFO',
+					payload: {
+						credits: null,
+						payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ),
+					},
+				} );
+				debug(
+					'Domain contact info validation ' + ( data.messages ? 'errors:' : 'successful' ),
+					data.messages
+				);
+				if ( data.messages ) {
+					showErrorMessage(
+						translate(
+							'We could not validate your contact information. Please review and update all the highlighted fields.'
+						)
+					);
+				}
+				applyDomainContactValidationResults( { ...data.messages } );
+				resolve( ! ( data.success && areRequiredFieldsNotEmpty( decoratedContactDetails ) ) );
+			} );
+		} );
+	};
+
+	const renderDomainContactFields = (
+		contactDetails,
+		contactDetailsErrors,
+		updateContactDetails,
+		shouldShowContactDetailsValidationErrors
 	) => {
 		return (
 			<WPCheckoutErrorBoundary>
 				<ContactDetailsFormFields
 					countriesList={ countriesList }
 					contactDetails={ contactDetails }
+					contactDetailsErrors={
+						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
+					}
 					onContactDetailsChange={ updateContactDetails }
-					onValidate={ ( values, onComplete ) => {
-						// TODO: Should probably handle HTTP errors here
-						validateDomainContact( values, domainNames, ( httpErrors, data ) => {
-							recordEvent( {
-								type: 'VALIDATE_DOMAIN_CONTACT_INFO',
-								payload: {
-									credits: null,
-									payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod(
-										paymentMethodId
-									),
-								},
-							} );
-							debug(
-								'Domain contact info validation ' + ( data.messages ? 'errors:' : 'successful' ),
-								data.messages
-							);
-							applyDomainContactValidationResults( { ...data.messages } );
-							onComplete( httpErrors, data );
-						} );
-					} }
+					shouldForceRenderOnPropChange={ true }
 				/>
 			</WPCheckoutErrorBoundary>
 		);
@@ -685,6 +703,7 @@ export default function CompositeCheckout( {
 					removeItem={ removeItem }
 					updateLocation={ updateLocation }
 					submitCoupon={ submitCoupon }
+					removeCoupon={ removeCoupon }
 					couponStatus={ couponStatus }
 					changePlanLength={ changeItemVariant }
 					siteId={ siteId }
@@ -696,6 +715,7 @@ export default function CompositeCheckout( {
 					variantRequestStatus={ variantRequestStatus }
 					variantSelectOverride={ variantSelectOverride }
 					getItemVariants={ getItemVariants }
+					domainContactValidationCallback={ domainContactValidationCallback }
 				/>
 			</CheckoutProvider>
 		</React.Fragment>

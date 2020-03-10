@@ -149,6 +149,11 @@
 		margin-bottom: 16px;
 		width: 100%;
 
+		@include breakpoint( '>480px' ) {
+			width: 48%;
+			margin-bottom: 24px;
+		}
+
 		.button {
 			border-width: 1px;
 			display: flex;
@@ -173,23 +178,6 @@
 			@include breakpoint( '<480px' ) {
 				margin: auto 14px;
 			}
-		}
-
-		@mixin box-action-two-col {
-			margin-bottom: 24px;
-			width: 48%;
-
-			.button {
-				flex: 1;
-				margin: 0 auto;
-				padding: 30px 24px;
-			}
-		}
-		@include breakpoint( '>1280px' ) {
-			@include box-action-two-col;
-		}
-		@include breakpoint( '800px-960px' ) {
-			@include box-action-two-col;
 		}
 	}
 	&__card-checklist-heading {

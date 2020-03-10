@@ -12,13 +12,13 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Content from './content';
+import getMediaErrors from 'state/selectors/get-media-errors';
 import MediaActions from 'lib/media/actions';
 import MediaLibraryDropZone from './drop-zone';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import { filterItemsByMimePrefix } from 'lib/media/utils';
 import filterToMimePrefix from './filter-to-mime-prefix';
 import FilterBar from './filter-bar';
-import MediaValidationData from 'components/data/media-validation-data';
 import QueryPreferences from 'components/data/query-preferences';
 import searchUrl from 'lib/search-url';
 import {
@@ -160,37 +160,6 @@ class MediaLibrary extends Component {
 	}
 
 	render() {
-		let content;
-
-		content = (
-			<Content
-				site={ this.props.site }
-				filter={ this.props.filter }
-				filterRequiresUpgrade={ this.filterRequiresUpgrade() }
-				search={ this.props.search }
-				source={ this.props.source }
-				isConnected={ this.props.isConnected }
-				containerWidth={ this.props.containerWidth }
-				single={ this.props.single }
-				scrollable={ this.props.scrollable }
-				onAddMedia={ this.onAddMedia }
-				onAddAndEditImage={ this.props.onAddAndEditImage }
-				onMediaScaleChange={ this.props.onScaleChange }
-				onSourceChange={ this.props.onSourceChange }
-				selectedItems={ this.props.mediaLibrarySelectedItems }
-				onDeleteItem={ this.props.onDeleteItem }
-				onEditItem={ this.props.onEditItem }
-				onViewDetails={ this.props.onViewDetails }
-				postId={ this.props.postId }
-			/>
-		);
-
-		if ( this.props.site ) {
-			content = (
-				<MediaValidationData siteId={ this.props.site.ID }>{ content }</MediaValidationData>
-			);
-		}
-
 		const classes = classNames(
 			'media-library',
 			{ 'is-single': this.props.single },
@@ -216,15 +185,36 @@ class MediaLibrary extends Component {
 					disableLargeImageSources={ this.props.disableLargeImageSources }
 					disabledDataSources={ this.props.disabledDataSources }
 				/>
-				{ content }
+				<Content
+					site={ this.props.site }
+					filter={ this.props.filter }
+					filterRequiresUpgrade={ this.filterRequiresUpgrade() }
+					search={ this.props.search }
+					source={ this.props.source }
+					isConnected={ this.props.isConnected }
+					containerWidth={ this.props.containerWidth }
+					single={ this.props.single }
+					scrollable={ this.props.scrollable }
+					onAddMedia={ this.onAddMedia }
+					onAddAndEditImage={ this.props.onAddAndEditImage }
+					onMediaScaleChange={ this.props.onScaleChange }
+					onSourceChange={ this.props.onSourceChange }
+					selectedItems={ this.props.mediaLibrarySelectedItems }
+					onDeleteItem={ this.props.onDeleteItem }
+					onEditItem={ this.props.onEditItem }
+					onViewDetails={ this.props.onViewDetails }
+					postId={ this.props.postId }
+					mediaValidationErrors={ this.props.site ? this.props.mediaValidationErrors : undefined }
+				/>
 			</div>
 		);
 	}
 }
 
 export default connect(
-	( state, { source = '' } ) => ( {
+	( state, { source = '', site } ) => ( {
 		isConnected: isConnected( state, source ),
+		mediaValidationErrors: getMediaErrors( state, site?.ID ),
 		needsKeyring: needsKeyring( state, source ),
 	} ),
 	{

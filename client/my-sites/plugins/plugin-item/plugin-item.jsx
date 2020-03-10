@@ -58,7 +58,6 @@ class PluginItem extends Component {
 			errors: PropTypes.array,
 			inProgress: PropTypes.array,
 		} ),
-		hasAllNoManageSites: PropTypes.bool,
 		hasUpdate: PropTypes.func,
 	};
 
@@ -82,10 +81,6 @@ class PluginItem extends Component {
 			'isSelected',
 		];
 		if ( checkPropsChange.call( this, nextProps, propsToCheck ) ) {
-			return true;
-		}
-
-		if ( this.props.hasAllNoManageSites !== nextProps.hasAllNoManageSites ) {
 			return true;
 		}
 
@@ -250,15 +245,6 @@ class PluginItem extends Component {
 		return null;
 	}
 
-	showNoManageNotice() {
-		this.props.errorNotice(
-			this.props.translate(
-				'Jetpack Manage is disabled for all the sites where this plugin is installed'
-			),
-			{ id: 'plugin-no-manage-error' } // Display the notice only once on repeated clicks
-		);
-	}
-
 	renderActions() {
 		const {
 			activation: canToggleActivation,
@@ -318,10 +304,7 @@ class PluginItem extends Component {
 	}
 
 	onItemClick = event => {
-		if ( this.props.hasAllNoManageSites ) {
-			event.preventDefault();
-			this.showNoManageNotice();
-		} else if ( this.props.isSelectable ) {
+		if ( this.props.isSelectable ) {
 			event.preventDefault();
 			this.props.onClick( this );
 		}
@@ -334,24 +317,20 @@ class PluginItem extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const disabled = this.props.hasAllNoManageSites;
-
 		const pluginTitle = <div className="plugin-item__title">{ plugin.name }</div>;
 
 		let pluginActions = null;
 		if ( ! this.props.selectedSite ) {
 			pluginActions = this.renderSiteCount();
-		} else if ( ! disabled ) {
+		} else {
 			pluginActions = this.renderActions();
 		}
 
-		const pluginItemClasses = classNames( 'plugin-item', 'plugin-item-' + plugin.slug, {
-			disabled,
-		} );
+		const pluginItemClasses = classNames( 'plugin-item', 'plugin-item-' + plugin.slug );
 
 		return (
 			<CompactCard className={ pluginItemClasses }>
-				{ disabled || ! this.props.isSelectable ? null : (
+				{ ! this.props.isSelectable ? null : (
 					<input
 						className="plugin-item__checkbox"
 						id={ plugin.slug }

@@ -26,6 +26,8 @@ export default function Coupon( { id, className, disabled, couponStatus, couponF
 	} = couponFieldStateProps;
 
 	if ( couponStatus === 'applied' ) {
+		// Clear the field value when the coupon is applied
+		setCouponFieldValue( '' );
 		return null;
 	}
 
@@ -38,8 +40,9 @@ export default function Coupon( { id, className, disabled, couponStatus, couponF
 		<CouponWrapper
 			className={ joinClasses( [ className, 'coupon' ] ) }
 			onSubmit={ event => {
+				event.preventDefault();
 				setIsFreshOrEdited( false );
-				handleCouponSubmit( event );
+				handleCouponSubmit();
 			} }
 		>
 			<Field

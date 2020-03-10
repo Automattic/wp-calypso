@@ -6,6 +6,8 @@ import {
 	AuthOptionsErrorResponse,
 	WpLoginSuccessResponse,
 	WpLoginErrorResponse,
+	SendLoginEmailSuccessResponse,
+	SendLoginEmailErrorResponse,
 } from './types';
 
 export const reset = () =>
@@ -29,6 +31,18 @@ export const receiveAuthOptionsFailed = ( response: AuthOptionsErrorResponse ) =
 		response,
 	} as const );
 
+export const receiveSendLoginEmail = ( response: SendLoginEmailSuccessResponse ) =>
+	( {
+		type: 'RECEIVE_SEND_LOGIN_EMAIL',
+		response,
+	} as const );
+
+export const receiveSendLoginEmailFailed = ( response: SendLoginEmailErrorResponse ) =>
+	( {
+		type: 'RECEIVE_SEND_LOGIN_EMAIL_FAILED',
+		response,
+	} as const );
+
 export const clearErrors = () =>
 	( {
 		type: 'CLEAR_ERRORS',
@@ -44,13 +58,34 @@ const fetchAuthOptions = ( usernameOrEmail: string ): FetchAuthOptionsAction => 
 	usernameOrEmail,
 } );
 
+export interface SendLoginEmailAction {
+	type: 'SEND_LOGIN_EMAIL';
+	email: string;
+}
+
+const sendLoginEmail = ( email: string ): SendLoginEmailAction => ( {
+	type: 'SEND_LOGIN_EMAIL',
+	email,
+} );
+
 export function* submitUsernameOrEmail( usernameOrEmail: string ) {
 	yield clearErrors();
 
 	try {
-		const authOptions = yield fetchAuthOptions( usernameOrEmail );
+		const authOptions: AuthOptionsSuccessResponse = yield fetchAuthOptions( usernameOrEmail );
 
 		yield receiveAuthOptions( authOptions, usernameOrEmail );
+
+		if ( authOptions.passwordless ) {
+			try {
+				const emailResponse: SendLoginEmailSuccessResponse = yield sendLoginEmail(
+					usernameOrEmail
+				);
+				yield receiveSendLoginEmail( emailResponse );
+			} catch ( err ) {
+				yield receiveSendLoginEmailFailed( err );
+			}
+		}
 	} catch ( err ) {
 		yield receiveAuthOptionsFailed( err );
 	}
@@ -116,6 +151,8 @@ export type Action =
 			| typeof receiveAuthOptionsFailed
 			| typeof receiveWpLogin
 			| typeof receiveWpLoginFailed
+			| typeof receiveSendLoginEmail
+			| typeof receiveSendLoginEmailFailed
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };

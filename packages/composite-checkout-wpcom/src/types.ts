@@ -19,6 +19,7 @@ import {
 	addItemToResponseCart,
 	replaceItemInResponseCart,
 	addCouponToResponseCart,
+	removeCouponFromResponseCart,
 	addLocationToResponseCart,
 	doesCartLocationDifferFromResponseCartLocation,
 	CartLocation,
@@ -39,11 +40,14 @@ import {
 	domainManagedContactDetails,
 	taxManagedContactDetails,
 	isCompleteAndValid,
+	isTouched,
 	ManagedContactDetailsErrors,
 	managedContactDetailsUpdaters,
 	DomainContactDetails,
 	prepareDomainContactDetails,
+	prepareDomainContactDetailsErrors,
 	isValid,
+	areRequiredFieldsNotEmpty,
 } from './types/wpcom-store-state';
 
 export {
@@ -62,6 +66,7 @@ export {
 	addItemToResponseCart,
 	replaceItemInResponseCart,
 	addCouponToResponseCart,
+	removeCouponFromResponseCart,
 	addLocationToResponseCart,
 	doesCartLocationDifferFromResponseCartLocation,
 	CartLocation,
@@ -78,9 +83,12 @@ export {
 	domainManagedContactDetails,
 	taxManagedContactDetails,
 	isCompleteAndValid,
+	isTouched,
 	ManagedContactDetailsErrors,
 	managedContactDetailsUpdaters,
 	DomainContactDetails,
 	prepareDomainContactDetails,
+	prepareDomainContactDetailsErrors,
 	isValid,
+	areRequiredFieldsNotEmpty,
 };

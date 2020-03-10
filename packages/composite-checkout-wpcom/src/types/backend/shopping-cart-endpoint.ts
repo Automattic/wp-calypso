@@ -179,6 +179,14 @@ export function addCouponToResponseCart( cart: ResponseCart, couponToAdd: string
 	};
 }
 
+export function removeCouponFromResponseCart( cart: ResponseCart ): ResponseCart {
+	return {
+		...cart,
+		coupon: '',
+		is_coupon_applied: false,
+	};
+}
+
 export function addLocationToResponseCart(
 	cart: ResponseCart,
 	location: CartLocation

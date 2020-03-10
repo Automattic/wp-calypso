@@ -39,6 +39,7 @@
 		"@automattic/composite-checkout": "file:packages/composite-checkout",
 		"@automattic/composite-checkout-wpcom": "file:packages/composite-checkout-wpcom",
 		"@automattic/data-stores": "file:packages/data-stores",
+		"@automattic/effective-module-tree": "file:packages/effective-module-tree",
 		"@automattic/format-currency": "file:packages/format-currency",
 		"@automattic/full-site-editing": "file:apps/full-site-editing",
 		"@automattic/load-script": "file:packages/load-script",
@@ -51,6 +52,7 @@
 		"@wordpress/e2e-test-utils": "4.3.0",
 		"browserslist": "4.8.6",
 		"i18n-calypso": "file:packages/i18n-calypso",
+		"mock-fs": "4.11.0",
 		"photon": "file:packages/photon",
 		"wp-calypso": "file:client",
 		"wpcom": "file:packages/wpcom.js"
@@ -244,6 +246,7 @@
 		"loader-utils": "1.2.3",
 		"lodash": "4.17.15",
 		"md5-file": "4.0.0",
+		"micromatch": "4.0.2",
 		"mixedindentlint": "1.2.0",
 		"mkdirp": "0.5.1",
 		"mockdate": "2.0.5",
