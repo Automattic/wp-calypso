@@ -19,7 +19,7 @@ import { isEnabled } from 'config';
 jest.mock( 'lib/transaction/actions', () => ( {
 	resetTransaction: jest.fn(),
 } ) );
-jest.mock( 'lib/signup/step-actions', () => ( {} ) );
+jest.mock( 'lib/signup/step-actions/fetch-sites-and-user', () => ( {} ) );
 jest.mock( 'lib/analytics', () => ( {
 	tracks: {
 		recordEvent: jest.fn(),
