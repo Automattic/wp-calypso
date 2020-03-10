@@ -13,6 +13,7 @@ import { STORE_KEY } from '../stores/onboard';
 import { SITE_STORE } from '../stores/site';
 import DesignSelector from './design-selector';
 import SignupForm from '../components/signup-form';
+import LoginForm from './login-form';
 import CreateSite from './create-site';
 import { Attributes } from './types';
 import { Step, usePath } from '../path';
@@ -53,6 +54,10 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 
 				<Route path={ makePath( Step.Signup ) }>
 					<SignupForm onRequestClose={ () => undefined } />;
+				</Route>
+
+				<Route path={ makePath( Step.Login ) }>
+					<LoginForm />;
 				</Route>
 
 				<Route path={ makePath( Step.CreateSite ) }>
