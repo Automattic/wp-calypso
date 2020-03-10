@@ -43,11 +43,22 @@ export default class SidebarItem extends React.Component {
 		}
 	};
 
-	componentDidMount() {
+	expandSectionIfSelected = () => {
 		const { expandSection, selected } = this.props;
 
-		if ( isFunction( expandSection ) && selected ) {
+		if ( selected && isFunction( expandSection ) ) {
 			expandSection();
+		}
+	};
+
+	componentDidMount() {
+		this.expandSectionIfSelected();
+	}
+
+	componentDidUpdate( prevProps ) {
+		// Expand section if selected state changes from false to true
+		if ( ! prevProps.selected ) {
+			this.expandSectionIfSelected();
 		}
 	}
 
