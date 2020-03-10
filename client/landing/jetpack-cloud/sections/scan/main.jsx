@@ -101,8 +101,8 @@ class ScanPage extends Component {
 
 	render() {
 		return (
-			<div>
-				{ this.renderScanState() }
+			<div className="scan__main">
+				<div className="scan__content">{ this.renderScanState() }</div>
 				<StatsFooter
 					header="Scan Summary"
 					stats={ [
