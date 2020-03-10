@@ -1,10 +1,12 @@
+@import '../../mixins';
+
 .confirm-purchase-modal__content {
 	padding: 32px;
 	max-width: 560px;
 }
 
 .confirm-purchase-modal__header {
-	font-family: 'Recoleta-Regular', 'Recoleta', serif;
+	@include onboarding-font-recoleta;
 	font-size: 40px;
 	color: var( --studio-blue-40 );
 	margin: 0 0 16px;
