@@ -84,7 +84,6 @@ const CouponField = styled( Coupon )`
 
 const CheckoutTermsUI = styled.div`
 	& > * {
-		display: flex;
 		margin: 16px 0;
 	}
 
@@ -93,6 +92,7 @@ const CheckoutTermsUI = styled.div`
 		width: 18px;
 		height: 18px;
 		margin-right: 6px;
+		float: left;
 	}
 
 	& > * > p {
