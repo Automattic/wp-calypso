@@ -69,7 +69,10 @@ import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-fr
 import { isJetpackSite, isNewSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
-import { updateContactDetailsCache } from 'state/domains/management/actions';
+import {
+	requestContactDetailsCache,
+	updateContactDetailsCache,
+} from 'state/domains/management/actions';
 import { FormCountrySelect } from 'components/forms/form-country-select';
 import getCountries from 'state/selectors/get-countries';
 import { fetchPaymentCountries } from 'state/countries/actions';
@@ -283,7 +286,6 @@ export default function CompositeCheckout( {
 		[ recordEvent, getThankYouUrl, total, couponItem, responseCart ]
 	);
 
-	const cachedDomainContactDetails = useCachedDomainContactDetails();
 	const { registerStore, dispatch } = registry;
 	useWpcomStore(
 		registerStore,
@@ -291,6 +293,8 @@ export default function CompositeCheckout( {
 		areDomainsInLineItems( items ) ? domainManagedContactDetails : taxManagedContactDetails,
 		updateContactDetailsCache
 	);
+
+	useCachedDomainContactDetails( dispatch );
 
 	useDisplayErrors( errors, showErrorMessage );
 
@@ -1387,9 +1391,21 @@ function useVariantWpcomPlanProductSlugs( productSlug ) {
 	} );
 }
 
-function useCachedDomainContactDetails() {
-	const cachedDomainContactDetails = useSelector( getContactDetailsCache );
-	return cachedDomainContactDetails;
+function useCachedDomainContactDetails( dispatch ) {
+	const reduxDispatch = useDispatch();
+	const [ haveRequestedCachedDetails, setHaveRequestedCachedDetails ] = useState( false );
+
+	useEffect( () => {
+		// Dispatch exactly once
+		if ( ! haveRequestedCachedDetails ) {
+			debug( 'requesting cached domain contact details' );
+			reduxDispatch( requestContactDetailsCache() );
+			setHaveRequestedCachedDetails( true );
+		}
+	}, [ haveRequestedCachedDetails ] );
+
+	const cachedContactDetails = useSelector( getContactDetailsCache );
+	dispatch( 'wpcom' ).loadDomainContactDetailsFromCache( cachedContactDetails );
 }
 
 function getPlanProductSlugs(
