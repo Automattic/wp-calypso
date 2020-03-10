@@ -152,7 +152,7 @@ class RegisteredDomainType extends React.Component {
 	}
 
 	renderExpiringSoon() {
-		const { domain, translate, moment } = this.props;
+		const { domain, purchase, translate, moment } = this.props;
 		const { expiry } = domain;
 
 		if ( isExpiringSoon( domain, 30 ) ) {
@@ -190,6 +190,7 @@ class RegisteredDomainType extends React.Component {
 					{ domain.currentUserCanManage && (
 						<RenewButton
 							primary={ true }
+							purchase={ purchase }
 							selectedSite={ this.props.selectedSite }
 							subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
 							tracksProps={ { source: 'registered-domain-status', domain_status: 'expiring-soon' } }
@@ -203,7 +204,7 @@ class RegisteredDomainType extends React.Component {
 	}
 
 	renderExpired() {
-		const { domain, translate, moment } = this.props;
+		const { domain, purchase, translate, moment } = this.props;
 		const domainsLink = link => <a href={ link } target="_blank" rel="noopener noreferrer" />;
 
 		if ( ! domain.expired ) {
@@ -278,6 +279,7 @@ class RegisteredDomainType extends React.Component {
 				{ domain.currentUserCanManage && ( domain.isRenewable || domain.isRedeemable ) && (
 					<RenewButton
 						primary={ true }
+						purchase={ purchase }
 						selectedSite={ this.props.selectedSite }
 						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
 						redemptionProduct={ domain.isRedeemable ? this.props.redemptionProduct : null }
@@ -321,7 +323,7 @@ class RegisteredDomainType extends React.Component {
 	}
 
 	renderDefaultRenewButton() {
-		const { domain } = this.props;
+		const { domain, purchase } = this.props;
 
 		if ( ! domain.currentUserCanManage ) {
 			return null;
@@ -335,6 +337,7 @@ class RegisteredDomainType extends React.Component {
 			<div>
 				<RenewButton
 					compact={ true }
+					purchase={ purchase }
 					selectedSite={ this.props.selectedSite }
 					subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
 					tracksProps={ { source: 'registered-domain-status', domain_status: 'active' } }
@@ -362,14 +365,10 @@ class RegisteredDomainType extends React.Component {
 	}
 
 	renderAutoRenew() {
-		const { selectedSite, purchase } = this.props;
+		const { purchase } = this.props;
 
 		if ( ! purchase ) {
-			return (
-				<div>
-					<QuerySitePurchases siteId={ selectedSite.ID } />
-				</div>
-			);
+			return <div />;
 		}
 
 		return <div>{ this.renderAutoRenewToggle() }</div>;
@@ -408,7 +407,7 @@ class RegisteredDomainType extends React.Component {
 	};
 
 	render() {
-		const { domain, moment } = this.props;
+		const { domain, selectedSite, purchase, moment } = this.props;
 		const { name: domain_name } = domain;
 
 		const { statusText, statusClass, icon } = this.resolveStatus();
@@ -417,6 +416,7 @@ class RegisteredDomainType extends React.Component {
 
 		return (
 			<div className="domain-types__container">
+				{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				{ this.planUpsellForNonPrimaryDomain() }
 				{ this.domainWarnings() }
 				<DomainStatus
