@@ -13,6 +13,7 @@ import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { withLocalizedMoment } from 'components/localized-moment';
 import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
 import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
+import ThreatItem from '../../components/threat-item';
 import { isEnabled } from 'config';
 
 import './style.scss';
@@ -78,6 +79,11 @@ class ScanPage extends Component {
 						}
 					) }
 				</p>
+				<div className="scan__threats">
+					{ threats.map( threat => (
+						<ThreatItem key={ threat.id } threat={ threat } />
+					) ) }
+				</div>
 			</>
 		);
 	}
@@ -129,12 +135,35 @@ export default connect( state => {
 	// TODO: Get threats from actual API.
 	const threats = [
 		{
-			title: 'Infected core file: wp-config.php',
-			details: 'Unexpected string was found in: /htdocs/wp-admin/wp-config.php',
+			id: 1,
+			title: 'Infected core file: index.php',
+			action: null,
+			detectionDate: '23 September, 2019',
+			actionDate: null,
+			description: {
+				title: 'Unexpected string was found in: /htdocs/wp-admin/index.php',
+				problem:
+					'Jetpack has detected code that is often used in web-based "shell" programs. If you believe the file(s) have been infected they need to be cleaned.',
+				fix:
+					'To fix this threat, Jetpack will be deleting the file, since it’s not a part of the original WordPress.',
+				details: 'This threat was found in the file: /htdocs/index.php',
+			},
 		},
 		{
-			title: 'Unexpected core file: sx--a4bp.php',
-			details: 'Unexpected file sx--a4bp.php contains malicious code and is not part of WordPress.',
+			id: 2,
+			title: 'Infected Plugin: Contact Form 7',
+			action: null,
+			detectionDate: '17 September, 2019',
+			actionDate: null,
+			description: {
+				title:
+					'Unexpected file baaaaaad--file.php contains malicious code and is not part of the Plugin',
+				problem:
+					'Jetpack has detected code that is often used in web-based "shell" programs. If you believe the file(s) have been infected they need to be cleaned.',
+				fix:
+					'To fix this threat, Jetpack will be deleting the file, since it’s not a part of the original WordPress.',
+				details: 'This threat was found in the file: /htdocs/sx--a4bp.php',
+			},
 		},
 	];
 
