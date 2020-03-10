@@ -95,7 +95,7 @@ class PlansNavigation extends React.Component {
 						{ canManageDomain && (
 							<NavItem
 								path={ `/domains/manage/${ site.slug }` }
-								onClick={ this.expandManageSection }
+								onClick={ () => this.props.dispatch( expandSection( SIDEBAR_SECTION_MANAGE ) ) }
 								selected={ path === '/domains/manage' || path === '/domains/add' }
 							>
 								{ translate( 'Domains' ) }
@@ -104,7 +104,7 @@ class PlansNavigation extends React.Component {
 						{ canManageDomain && (
 							<NavItem
 								path={ `/email/${ site.slug }` }
-								onClick={ this.expandManageSection }
+								onClick={ () => this.props.dispatch( expandSection( SIDEBAR_SECTION_MANAGE ) ) }
 								selected={ path === '/email' }
 							>
 								{ translate( 'Email' ) }
@@ -116,10 +116,6 @@ class PlansNavigation extends React.Component {
 			)
 		);
 	}
-
-	expandManageSection = () => {
-		this.props.expandSection( SIDEBAR_SECTION_MANAGE );
-	};
 
 	toggleCartVisibility = () => {
 		this.setState( { cartVisible: ! this.state.cartVisible } );
@@ -147,7 +143,7 @@ class PlansNavigation extends React.Component {
 	}
 }
 
-const mapStateToProps = state => {
+export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const site = getSite( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
@@ -157,6 +153,4 @@ const mapStateToProps = state => {
 		shouldShowMyPlan: ! isOnFreePlan || isJetpack,
 		site,
 	};
-};
-
-export default connect( mapStateToProps, { expandSection } )( localize( PlansNavigation ) );
+} )( localize( PlansNavigation ) );
