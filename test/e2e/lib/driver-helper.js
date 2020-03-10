@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import webdriver, { until } from 'selenium-webdriver';
+import webdriver, { until, Key } from 'selenium-webdriver';
 import config from 'config';
 import { forEach } from 'lodash';
 
@@ -244,7 +244,7 @@ export function waitForFieldClearable( driver, selector ) {
 		function() {
 			return driver.findElement( selector ).then(
 				element => {
-					return element.clear().then(
+					return element.sendKeys( Key.chord( Key.CONTROL, 'a' ), Key.BACK_SPACE ).then(
 						function() {
 							return element.getAttribute( 'value' ).then( value => {
 								return value === '';
