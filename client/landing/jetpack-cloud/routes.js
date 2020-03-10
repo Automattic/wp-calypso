@@ -85,7 +85,14 @@ const router = () => {
 		page( '/scan/:site', siteSelection, setupSidebar, scan, makeLayout, clientRender );
 
 		if ( config.isEnabled( 'jetpack-cloud/scan-history' ) ) {
-			page( '/scan/:site/history', siteSelection, setupSidebar, scanHistory, makeLayout, clientRender );
+			page(
+				'/scan/:site/history',
+				siteSelection,
+				setupSidebar,
+				scanHistory,
+				makeLayout,
+				clientRender
+			);
 		}
 	}
 
