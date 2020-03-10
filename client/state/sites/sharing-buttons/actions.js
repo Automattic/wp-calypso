@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import wpcom from 'lib/wp';
 import {
 	SHARING_BUTTONS_RECEIVE,
@@ -13,6 +12,8 @@ import {
 	SHARING_BUTTONS_SAVE_SUCCESS,
 	SHARING_BUTTONS_UPDATE,
 } from 'state/action-types';
+
+import 'state/sites/init';
 
 /**
  * Returns an action object to be used in signalling that sharing buttons have been received.

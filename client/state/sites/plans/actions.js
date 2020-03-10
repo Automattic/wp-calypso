@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import { map } from 'lodash';
 import i18n from 'i18n-calypso';
@@ -25,6 +24,8 @@ import {
 import wpcom from 'lib/wp';
 
 import 'state/data-layer/wpcom/sites/plan-transfer';
+
+import 'state/sites/init';
 
 /**
  * Cancels the specified plan trial for the given site.

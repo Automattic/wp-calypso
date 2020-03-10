@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import {
 	SITES_BLOG_STICKER_ADD,
 	SITES_BLOG_STICKER_REMOVE,
@@ -12,6 +11,8 @@ import {
 import 'state/data-layer/wpcom/sites/blog-stickers';
 import 'state/data-layer/wpcom/sites/blog-stickers/add';
 import 'state/data-layer/wpcom/sites/blog-stickers/remove';
+
+import 'state/sites/init';
 
 export function addBlogSticker( blogId, stickerName ) {
 	return {

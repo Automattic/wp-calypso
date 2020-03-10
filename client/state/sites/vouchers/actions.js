@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import wpcomBase from 'lib/wp';
 import { injectHandler } from 'lib/wp/handlers/http-envelope-normalizer';
 import {
@@ -14,6 +13,8 @@ import {
 	SITE_VOUCHERS_REQUEST_SUCCESS,
 	SITE_VOUCHERS_REQUEST_FAILURE,
 } from 'state/action-types';
+
+import 'state/sites/init';
 
 // Inject httpEnvelopeNormalizer handler to wpcom
 const wpcom = injectHandler( wpcomBase );

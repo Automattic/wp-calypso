@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import {
 	SITE_MONITOR_SETTINGS_RECEIVE,
 	SITE_MONITOR_SETTINGS_REQUEST,
@@ -13,10 +12,12 @@ import {
 } from 'state/action-types';
 import wp from 'lib/wp';
 
+import 'state/sites/init';
+
 /**
  * Request the Jetpack monitor settings for a certain site.
  *
- * @param  {Int}       siteId  ID of the site.
+ * @param  {number}       siteId  ID of the site.
  * @returns {Function}          Action thunk to request the Jetpack monitor settings when called.
  */
 export const requestSiteMonitorSettings = siteId => {
@@ -54,7 +55,7 @@ export const requestSiteMonitorSettings = siteId => {
 /**
  * Update the Jetpack monitor settings for a certain site.
  *
- * @param  {Int}       siteId    ID of the site.
+ * @param  {number}       siteId    ID of the site.
  * @param  {object}    settings  Monitor settings.
  * @returns {Function}            Action thunk to update the Jetpack monitor settings when called.
  */

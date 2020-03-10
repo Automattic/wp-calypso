@@ -7,6 +7,8 @@ import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { getSiteSlug, isCurrentPlanPaid } from 'state/sites/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 
+import 'state/sites/init';
+
 export const launchSite = siteId => ( {
 	type: SITE_LAUNCH,
 	siteId,

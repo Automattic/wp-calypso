@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import {
 	SITE_CONNECTION_STATUS_RECEIVE,
 	SITE_CONNECTION_STATUS_REQUEST,
@@ -10,10 +9,12 @@ import {
 } from 'state/action-types';
 import wp from 'lib/wp';
 
+import 'state/sites/init';
+
 /**
  * Request the Jetpack connection status for a certain site.
  *
- * @param  {Int}       siteId  ID of the site.
+ * @param  {number}       siteId  ID of the site.
  * @returns {Function}          Action thunk to request the Jetpack connection status when called.
  */
 export const requestConnectionStatus = siteId => {

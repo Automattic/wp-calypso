@@ -24,6 +24,8 @@ import { requestSite } from 'state/sites/actions';
 
 import 'state/data-layer/wpcom/domains/privacy/index.js';
 
+import 'state/sites/init';
+
 /**
  * Module vars
  */
