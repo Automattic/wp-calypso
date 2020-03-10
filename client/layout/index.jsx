@@ -13,7 +13,6 @@ import classnames from 'classnames';
  */
 import AsyncLoad from 'components/async-load';
 import MasterbarLoggedIn from 'layout/masterbar/logged-in';
-import JetpackCloudMasterbar from 'landing/jetpack-cloud/components/masterbar';
 import GlobalNotices from 'components/global-notices';
 import HtmlIsIframeClassname from 'layout/html-is-iframe-classname';
 import notices from 'notices';
@@ -101,19 +100,6 @@ class Layout extends Component {
 		// intentionally don't remove these in unmount
 	}
 
-	renderMasterbar() {
-		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
-			? JetpackCloudMasterbar
-			: MasterbarLoggedIn;
-
-		return (
-			<MasterbarComponent
-				section={ this.props.sectionGroup }
-				isCheckout={ this.props.sectionName === 'checkout' }
-			/>
-		);
-	}
-
 	render() {
 		const sectionClass = classnames(
 			'layout',
@@ -164,7 +150,10 @@ class Layout extends Component {
 				<AsyncLoad require="layout/guided-tours" placeholder={ null } />
 				{ ! isE2ETest() && <AsyncLoad require="layout/nps-survey-notice" placeholder={ null } /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
-				{ this.renderMasterbar() }
+				<MasterbarLoggedIn
+					section={ this.props.sectionGroup }
+					isCheckout={ this.props.sectionName === 'checkout' }
+				/>
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<LayoutLoader />
 				{ this.props.isOffline && <OfflineStatus /> }
