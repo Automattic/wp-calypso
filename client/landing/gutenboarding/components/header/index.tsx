@@ -136,7 +136,7 @@ const Header: FunctionComponent = () => {
 				...( bearerToken && { authToken: bearerToken } ),
 			} );
 		},
-		[ createSite, currentDomain, selectedDesign, siteTitle, siteVertical ]
+		[ createSite, currentDomain, siteTitle, siteVertical ]
 	);
 
 	const handleSignup = () => {
