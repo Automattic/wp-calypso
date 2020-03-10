@@ -75,7 +75,7 @@ const lastCreatedSite: Reducer< LastCreatedSite | undefined, OnboardAction > = (
 	action
 ) => {
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return action.lastCreatedSite || undefined;
+		return action.lastCreatedSite;
 	}
 	return state;
 };
