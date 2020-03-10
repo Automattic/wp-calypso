@@ -236,11 +236,14 @@ class ActivityLogItem extends Component {
 
 	renderRewindAction() {
 		const {
+			activity,
+			canAutoconfigure,
 			createBackup,
 			createRewind,
 			disableRestore,
 			disableBackup,
-			activity,
+			siteId,
+			siteSlug,
 			translate,
 		} = this.props;
 
@@ -254,6 +257,19 @@ class ActivityLogItem extends Component {
 					<PopoverMenuItem disabled={ disableRestore } icon="history" onClick={ createRewind }>
 						{ translate( 'Restore to this point' ) }
 					</PopoverMenuItem>
+
+					{ disableRestore && (
+						<PopoverMenuItem
+							icon="plus"
+							href={
+								canAutoconfigure
+									? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
+									: `/settings/security/${ siteSlug }`
+							}
+						>
+							{ translate( 'Add server credentials in order to restore your site' ) }
+						</PopoverMenuItem>
+					) }
 
 					<PopoverMenuSeparator />
 
