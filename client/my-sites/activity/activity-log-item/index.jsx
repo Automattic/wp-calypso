@@ -265,7 +265,7 @@ class ActivityLogItem extends Component {
 							href={
 								canAutoconfigure
 									? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
-									: `/settings/security/${ siteSlug }`
+									: `/settings/security/${ siteSlug }#credentials`
 							}
 							onClick={ trackAddCreds }
 						>
