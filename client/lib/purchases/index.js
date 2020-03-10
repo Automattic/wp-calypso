@@ -390,6 +390,16 @@ function creditCardExpiresBeforeSubscription( purchase ) {
 	);
 }
 
+function shouldRenderExpiringCreditCard( purchase ) {
+	return (
+		! isExpired( purchase ) &&
+		! isExpiring( purchase ) &&
+		! isOneTimePurchase( purchase ) &&
+		! isIncludedWithPlan( purchase ) &&
+		creditCardExpiresBeforeSubscription( purchase )
+	);
+}
+
 function monthsUntilCardExpires( purchase ) {
 	const creditCard = purchase.payment.creditCard;
 	const expiry = moment( creditCard.expiryDate, 'MM/YY' );
@@ -506,4 +516,5 @@ export {
 	showCreditCardExpiringWarning,
 	subscribedWithinPastWeek,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
+	shouldRenderExpiringCreditCard,
 };

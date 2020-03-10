@@ -38,14 +38,7 @@ import NonPrimaryDomainPlanUpsell from '../../components/domain/non-primary-doma
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
 import AutoRenewToggle from 'me/purchases/manage-purchase/auto-renew-toggle';
 import QuerySitePurchases from 'components/data/query-site-purchases';
-import {
-	isExpired,
-	isExpiring,
-	isRechargeable,
-	creditCardExpiresBeforeSubscription,
-	isOneTimePurchase,
-	isIncludedWithPlan,
-} from 'lib/purchases';
+import { isExpired, shouldRenderExpiringCreditCard, isRechargeable } from 'lib/purchases';
 import { getEditCardDetailsPath } from 'me/purchases/utils';
 
 class RegisteredDomainType extends React.Component {
@@ -106,7 +99,7 @@ class RegisteredDomainType extends React.Component {
 		const { domain, translate, purchase, moment } = this.props;
 		const { registrationDate, expiry } = domain;
 
-		if ( purchase && this.shouldRenderExpiringCreditCard( purchase ) ) {
+		if ( purchase && shouldRenderExpiringCreditCard( purchase ) ) {
 			return {
 				statusText: translate( 'Action required' ),
 				statusClass: 'status-error',
@@ -362,16 +355,6 @@ class RegisteredDomainType extends React.Component {
 		);
 	}
 
-	shouldRenderExpiringCreditCard( purchase ) {
-		return (
-			! isExpired( purchase ) &&
-			! isExpiring( purchase ) &&
-			! isOneTimePurchase( purchase ) &&
-			! isIncludedWithPlan( purchase ) &&
-			creditCardExpiresBeforeSubscription( purchase )
-		);
-	}
-
 	renderExpiringCreditCard() {
 		const { selectedSite, purchase, translate } = this.props;
 
@@ -379,7 +362,7 @@ class RegisteredDomainType extends React.Component {
 			return null;
 		}
 
-		if ( ! this.shouldRenderExpiringCreditCard( purchase ) ) {
+		if ( ! shouldRenderExpiringCreditCard( purchase ) ) {
 			return null;
 		}
 
