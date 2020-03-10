@@ -145,6 +145,21 @@ const trackGlobalStyles = eventName => options => {
 };
 
 /**
+ * Logs any error notice which is shown to the user so we can determine how often
+ * folks see different errors and what types of sites they occur on.
+ *
+ * @param {string} content The error message. Like "Update failed."
+ * @param {object} options Optional. Extra data logged with the error in Gutenberg.
+ */
+const trackErrorNotices = ( content, options ) => {
+	const logInfo = {
+		errorText: content,
+		errorOptions: options,
+	};
+	tracksRecordEvent( 'wpcom_gutenberg_error_notice', logInfo );
+};
+
+/**
  * Tracker can be
  * - string - which means it is an event name and should be tracked as such automatically
  * - function - in case you need to load additional properties from the action.
@@ -173,6 +188,9 @@ const REDUX_TRACKING = {
 		replaceBlock: trackBlockReplacement,
 		replaceBlocks: trackBlockReplacement,
 		replaceInnerBlocks: trackInnerBlocksReplacement,
+	},
+	'core/notices': {
+		createErrorNotice: trackErrorNotices,
 	},
 };
 
