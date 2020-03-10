@@ -178,7 +178,7 @@ function ContactFormSummary() {
 	const translate = useTranslate();
 	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
 
-	//Check if paymentData is empty
+	// Check if paymentData is empty
 	if ( Object.entries( contactInfo ).length === 0 ) {
 		return null;
 	}
@@ -201,11 +201,11 @@ function ContactFormSummary() {
 				<SummaryDetails>
 					{ fullName && <SummaryLine>{ fullName }</SummaryLine> }
 
-					{ contactInfo.email.value.length > 0 && (
+					{ contactInfo.email.value?.length > 0 && (
 						<SummarySpacerLine>{ contactInfo.email.value }</SummarySpacerLine>
 					) }
 
-					{ contactInfo.address1.value.length > 0 && (
+					{ contactInfo.address1.value?.length > 0 && (
 						<SummaryLine>{ contactInfo.address1.value } </SummaryLine>
 					) }
 
@@ -214,9 +214,9 @@ function ContactFormSummary() {
 					{ postalAndCountry && <SummaryLine>{ postalAndCountry }</SummaryLine> }
 				</SummaryDetails>
 
-				{ contactInfo.vatId.value.length > 0 && (
+				{ contactInfo.vatId.value?.length > 0 && (
 					<SummaryDetails>
-						{ contactInfo.vatId.value.length > 0 && (
+						{ contactInfo.vatId.value?.length > 0 && (
 							<SummaryLine>
 								{ translate( 'VAT indentification number:' ) }
 								{ contactInfo.vatId.value }
@@ -230,7 +230,7 @@ function ContactFormSummary() {
 }
 
 function joinNonEmptyValues( joinString, ...values ) {
-	return values.filter( value => value.length > 0 ).join( joinString );
+	return values.filter( value => value?.length > 0 ).join( joinString );
 }
 
 function getContactDetailsFormat( isDomainFieldsVisible ) {
