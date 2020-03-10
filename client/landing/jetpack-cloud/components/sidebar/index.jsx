@@ -17,6 +17,7 @@ import SidebarFooter from 'layout/sidebar/footer';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
+import StaticSidebarMenu from './menu';
 
 /**
  * Style dependencies
@@ -42,6 +43,35 @@ class JetpackCloudSidebar extends Component {
 
 	onNavigate = () => {
 		window.scrollTo( 0, 0 );
+	};
+
+	scanMenu = () => {
+		const { selectedSiteSlug, translate } = this.props;
+
+		const isHistory = this.isSelected( `/scan/${ selectedSiteSlug }/history` );
+		return (
+			<ul>
+				<SidebarItem
+					link={ selectedSiteSlug ? `/scan/${ selectedSiteSlug }` : '/scan' }
+					label={ translate( 'Scanner', {
+						comment: 'Jetpack Cloud / Scan sidebar navigation item',
+					} ) }
+					onNavigate={ this.onNavigate }
+					selected={ ! isHistory }
+					showAsExternal
+				/>
+				{ config.isEnabled( 'jetpack-cloud/scan-history' ) && selectedSiteSlug && (
+					<SidebarItem
+						link={ `/scan/${ selectedSiteSlug }/history` }
+						label={ translate( 'History', {
+							comment: 'Jetpack Cloud / Scan sidebar navigation item',
+						} ) }
+						onNavigate={ this.onNavigate }
+						selected={ isHistory }
+					/>
+				) }
+			</ul>
+		);
 	};
 
 	render() {
@@ -75,7 +105,7 @@ class JetpackCloudSidebar extends Component {
 						/>
 					) }
 					{ config.isEnabled( 'jetpack-cloud/scan' ) && (
-						<SidebarItem
+						<StaticSidebarMenu
 							label={ translate( 'Scan', {
 								comment: 'Jetpack Cloud / Scan sidebar navigation item',
 							} ) }
@@ -83,8 +113,10 @@ class JetpackCloudSidebar extends Component {
 							onNavigate={ this.onNavigate }
 							materialIcon="security" // @todo: The Scan logo differs from the Material Icon used here
 							materialIconStyle="filled"
-							selected={ this.isSelected( '/scan' ) }
-						/>
+							expanded={ this.isSelected( '/scan' ) }
+						>
+							{ this.scanMenu() }
+						</StaticSidebarMenu>
 					) }
 					{ config.isEnabled( 'jetpack-cloud/settings' ) && (
 						<SidebarItem
