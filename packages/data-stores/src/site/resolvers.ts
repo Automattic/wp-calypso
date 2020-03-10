@@ -15,12 +15,12 @@ import { ExistingSiteResponse } from './types';
  * existing site. This could be extended in the future by retrieving the `error` and
  * `message` strings returned by the API.
  *
- * @param domain {string}	The domain to search for
+ * @param slug {string}	The domain to search for
  */
-export async function getExistingSite( domain: string ) {
+export async function getExistingSite( slug: string ) {
 	try {
 		const existingSite = await wpcomRequest< ExistingSiteResponse >( {
-			path: '/sites/' + encodeURIComponent( domain ),
+			path: '/sites/' + encodeURIComponent( slug ),
 			apiVersion: '1.1',
 		} );
 
