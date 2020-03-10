@@ -1,9 +1,10 @@
 /**
  * Internal dependencies
  */
-
 import { getCurrentUser } from 'state/current-user/selectors';
 import getSites from 'state/selectors/get-sites';
+
+import 'state/sites/init';
 
 /**
  * Returns true if we are requesting sites we don't have yet.

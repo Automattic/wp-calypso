@@ -1,4 +1,12 @@
+/**
+ * External dependencies
+ */
 import { find, matches, some } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'state/sites/init';
 
 export function getGuidedTransferError( state, siteId ) {
 	return state.sites.guidedTransfer.error[ siteId ];
@@ -23,7 +31,7 @@ export function isGuidedTransferInProgress( state, siteId ) {
  *
  * @param {object} state The Redux state object
  * @param {number} siteId The siteId to check
- * @returns {bool} true if guided transfer is awaiting purchase
+ * @returns {boolean} true if guided transfer is awaiting purchase
  */
 export function isGuidedTransferAwaitingPurchase( state, siteId ) {
 	const status = state.sites.guidedTransfer.status[ siteId ];
@@ -49,7 +57,7 @@ export function getGuidedTransferIssues( state, siteId ) {
  *
  * @param {any} state   The Redux store state
  * @param {any} siteId  The site ID to check
- * @returns {bool} true if the site is confirmed eligible for transfer, false otherwise
+ * @returns {boolean} true if the site is confirmed eligible for transfer, false otherwise
  */
 export function isEligibleForGuidedTransfer( state, siteId ) {
 	const issues = getGuidedTransferIssues( state, siteId );
@@ -79,7 +87,7 @@ export function getGuidedTransferIssue( state, siteId, options = {} ) {
  *
  * @param {any} state   The Redux store state
  * @param {any} siteId  The site ID to check
- * @returns {bool} true if the site is confirmed eligible for transfer, false otherwise
+ * @returns {boolean} true if the site is confirmed eligible for transfer, false otherwise
  */
 export function isGuidedTransferAvailableForAllSites( state, siteId ) {
 	const issues = getGuidedTransferIssues( state, siteId );

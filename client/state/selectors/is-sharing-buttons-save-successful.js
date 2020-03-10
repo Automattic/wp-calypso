@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'state/sites/init';
 
 /**
  * Returns true if the save sharing buttons requests is successful

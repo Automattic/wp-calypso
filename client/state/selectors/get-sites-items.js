@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'state/sites/init';
+
+/**
  * Frozen empty object
  *
  * @type {object}

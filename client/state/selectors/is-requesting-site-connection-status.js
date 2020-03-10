@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'state/sites/init';
 
 /**
  * Returns true if we are currently performing a request to fetch the site connection status.

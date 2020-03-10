@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { find, get } from 'lodash';
 import debugFactory from 'debug';
 import moment from 'moment';
@@ -14,6 +13,8 @@ import { getSite } from 'state/sites/selectors';
 import { createSitePlanObject } from './assembler';
 import createSelector from 'lib/create-selector';
 import { calculateMonthlyPriceForPlan, planHasFeature } from 'lib/plans';
+
+import 'state/sites/init';
 
 /**
  * Module dependencies

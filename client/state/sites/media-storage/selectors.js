@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'state/sites/init';
+
+/**
  * Returns media storage information for a given site.
  *
  * @param {number}  siteId Site ID

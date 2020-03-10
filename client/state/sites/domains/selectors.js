@@ -1,3 +1,8 @@
+/**
+ * Internal dependencies
+ */
+import 'state/sites/init';
+
 // static empty array to ensure that empty return values from selectors are
 // identical to each other ( rv1 === rv2 )
 const EMPTY_SITE_DOMAINS = Object.freeze( [] );

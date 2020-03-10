@@ -12,6 +12,11 @@ import { getSiteSlug } from 'state/sites/selectors';
 import getUpcomingBillingTransactions from 'state/selectors/get-upcoming-billing-transactions';
 
 /**
+ * Internal dependencies
+ */
+import 'state/sites/init';
+
+/**
  * Returns the slugs of all sites that are included in upcoming transactions, indexed by the site IDs.
  * Sites that are not loaded yet are intentionally skipped.
  *

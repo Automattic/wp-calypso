@@ -4,6 +4,8 @@
 import { get } from 'lodash';
 import isPrivateSite from 'state/selectors/is-private-site';
 
+import 'state/sites/init';
+
 /**
  * Returns the Podcasting category ID for a given site ID.
  *

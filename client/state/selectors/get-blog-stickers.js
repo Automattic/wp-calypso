@@ -4,6 +4,8 @@
 
 import { get } from 'lodash';
 
+import 'state/sites/init';
+
 /**
  * Returns the blog stickers for a certain site.
  *

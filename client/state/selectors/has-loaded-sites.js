@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'state/sites/init';
+
+/**
  * Returns true if sites have been loaded in the state
  *
  * @param  {object}  state Global state tree

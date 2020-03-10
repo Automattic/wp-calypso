@@ -1,8 +1,9 @@
 /**
  * Internal dependencies
  */
-
 import { GOOGLE_CREDITS } from './service-types';
+
+import 'state/sites/init';
 
 /**
  * Return site vouchers getting from state object and

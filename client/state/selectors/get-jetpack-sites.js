@@ -1,10 +1,11 @@
 /**
  * Internal dependencies
  */
-
 import createSelector from 'lib/create-selector';
 import getSites from 'state/selectors/get-sites';
 import { isJetpackSite } from 'state/sites/selectors';
+
+import 'state/sites/init';
 
 /**
  * Get all Jetpack sites
