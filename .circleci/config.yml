@@ -49,13 +49,13 @@ references:
   restore-jest-cache: &restore-jest-cache
     name: Restore Jest cache
     keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-master
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v9-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v9-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v9-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-master
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v9-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}
   save-jest-cache: &save-jest-cache
     name: Save Jest cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v9-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
     paths:
       - ~/jest-cache
 
@@ -136,7 +136,7 @@ references:
 
   yarn-install: &yarn-install
     environment:
-      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
     name: Install dependencies
     command: yarn install --frozen-lockfile
 
@@ -643,10 +643,10 @@ workflows:
                 - master
                 # Do not spin up calypso.live for fork pull requests. Calypso.live will not build them.
                 - /pull\/[0-9]+/
-#      - test-e2e-canary:
-#          requires:
-#            - wait-calypso-live
-#          test-flags: '-C -S $CIRCLE_SHA1'
+      #      - test-e2e-canary:
+      #          requires:
+      #            - wait-calypso-live
+      #          test-flags: '-C -S $CIRCLE_SHA1'
       - test-e2e-canary:
           name: test-e2e-canary-ie
           requires:
