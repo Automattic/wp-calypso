@@ -16,7 +16,6 @@ import MediaLibrary from '..';
 import { requestKeyringConnections as requestStub } from 'state/sharing/keyring/actions';
 
 jest.mock( 'components/data/query-preferences', () => require( 'components/empty-component' ) );
-jest.mock( 'components/data/media-validation-data', () => require( 'components/empty-component' ) );
 jest.mock( 'lib/media/library-selected-store', () => () => null );
 jest.mock( 'lib/media/actions', () => () => null );
 jest.mock( 'my-sites/media-library/content', () => require( 'components/empty-component' ) );
@@ -32,7 +31,14 @@ jest.mock( 'state/sharing/keyring/selectors', () => ( {
 
 describe( 'MediaLibrary', () => {
 	const store = {
-		getState: () => ( {} ),
+		getState: () => ( {
+			media: {
+				errors: {},
+				queries: {},
+				queryRequests: {},
+				mediaItemRequests: {},
+			},
+		} ),
 		dispatch: () => false,
 		subscribe: () => false,
 	};
