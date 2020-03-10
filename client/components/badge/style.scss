@@ -26,3 +26,8 @@
 	background-color: var( --color-primary );
 	color: var( --color-text-inverted );
 }
+
+.badge--error {
+	background-color: var( --color-error );
+	color: var( --color-text-inverted );
+}
