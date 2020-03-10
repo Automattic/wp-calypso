@@ -3,9 +3,13 @@
 	color: var( --color-neutral-80 );
 	display: flex;
 	padding-top: 10px;
-	margin-top: 40px;
+	margin: 40px 0;
 	flex-shrink: 0;
 	flex-wrap: wrap;
+
+	@include breakpoint( '>660px' ) {
+		margin-bottom: 0;
+	}
 }
 
 .stats-footer__header {
