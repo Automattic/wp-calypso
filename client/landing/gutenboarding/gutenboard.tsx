@@ -68,8 +68,8 @@ export function Gutenboard() {
 		recordTracksPageViewWithPageParams( `/gutenboarding${ pathname }` );
 	}, [ pathname ] );
 
-	const lastCreatedSiteIsCurrent = useSelect( select =>
-		select( ONBOARD_STORE ).isLastCreatedSiteCurrent()
+	const lastSiteWasCreatedRecently = useSelect( select =>
+		select( ONBOARD_STORE ).wasLastSiteCreatedRecently()
 	);
 	const lastCreatedSite = useSelect( select => select( ONBOARD_STORE ).getLastCreatedSite() );
 	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
@@ -87,12 +87,12 @@ export function Gutenboard() {
 	}, [ resetOnboardStore, setShowDuplicateSiteModal, history, makePath ] );
 
 	useEffect( () => {
-		if ( currentUser && lastCreatedSiteIsCurrent && showDuplicateSiteModal === undefined ) {
+		if ( currentUser && lastSiteWasCreatedRecently && showDuplicateSiteModal === undefined ) {
 			// Show modal if last created site is current
 			setShowDuplicateSiteModal( true );
 		} else if (
 			currentUser &&
-			! lastCreatedSiteIsCurrent &&
+			! lastSiteWasCreatedRecently &&
 			lastCreatedSite &&
 			showDuplicateSiteModal === undefined
 		) {
@@ -103,7 +103,7 @@ export function Gutenboard() {
 	}, [
 		currentUser,
 		lastCreatedSite,
-		lastCreatedSiteIsCurrent,
+		lastSiteWasCreatedRecently,
 		showDuplicateSiteModal,
 		handleDuplicateSiteModalClose,
 	] );

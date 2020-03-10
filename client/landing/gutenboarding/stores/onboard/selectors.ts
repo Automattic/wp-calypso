@@ -14,9 +14,9 @@ export const getLastCreatedSite = ( state: State ) => state.lastCreatedSite;
  * @param {State} state		Global state tree
  * @returns {boolean}		true if activity is in progress
  */
-export const isLastCreatedSiteCurrent = ( state: State ): boolean => {
+export const wasLastSiteCreatedRecently = ( state: State ): boolean => {
 	if ( state.lastCreatedSite?.createdTimestamp ) {
-		return Date.now() - state.lastCreatedSite.createdTimestamp < 1000 * 600; // 10 minutes.
+		return Date.now() - state.lastCreatedSite.createdTimestamp < 1000 * 60 * 60; // 60 minutes.
 	}
 	return false;
 };
