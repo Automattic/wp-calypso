@@ -1,5 +1,6 @@
 /**
- * Extract i18n-calypso `translate` calls into a POT file.
+ * Extract i18n-calypso `translate` and @wordpress/i18n `__`, `_n`, `_x`, `_nx`
+ * calls into a POT file.
  *
  * Credits:
  *
@@ -119,9 +120,7 @@ function isValidFunctionName( name ) {
  * @returns {boolean} Whether key is valid for assignment.
  */
 function isValidTranslationKey( key ) {
-	return Object.values( DEFAULT_FUNCTIONS_ARGUMENTS_ORDER ).some(
-		args => args.includes( key )
-	);
+	return Object.values( DEFAULT_FUNCTIONS_ARGUMENTS_ORDER ).some( args => args.includes( key ) );
 }
 
 module.exports = function() {
