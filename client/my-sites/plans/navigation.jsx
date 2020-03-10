@@ -21,8 +21,6 @@ import { isATEnabled } from 'lib/automated-transfer';
 import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite, isJetpackSite } from 'state/sites/selectors';
-import { SIDEBAR_SECTION_MANAGE } from '../sidebar/constants';
-import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
 
 class PlansNavigation extends React.Component {
 	static propTypes = {
@@ -95,18 +93,13 @@ class PlansNavigation extends React.Component {
 						{ canManageDomain && (
 							<NavItem
 								path={ `/domains/manage/${ site.slug }` }
-								onClick={ () => this.props.dispatch( expandSection( SIDEBAR_SECTION_MANAGE ) ) }
 								selected={ path === '/domains/manage' || path === '/domains/add' }
 							>
 								{ translate( 'Domains' ) }
 							</NavItem>
 						) }
 						{ canManageDomain && (
-							<NavItem
-								path={ `/email/${ site.slug }` }
-								onClick={ () => this.props.dispatch( expandSection( SIDEBAR_SECTION_MANAGE ) ) }
-								selected={ path === '/email' }
-							>
+							<NavItem path={ `/email/${ site.slug }` } selected={ path === '/email' }>
 								{ translate( 'Email' ) }
 							</NavItem>
 						) }
