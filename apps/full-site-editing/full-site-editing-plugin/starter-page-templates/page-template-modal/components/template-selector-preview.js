@@ -8,14 +8,14 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import BlockIframePreview from './block-iframe-preview';
+import BlockFramePreview from './block-frame-preview';
 
-const TemplateSelectorPreview = ( { blocks = [], viewportWidth, title } ) => {
-	const noBlocks = ! blocks.length;
+const TemplateSelectorPreview = ( { template, viewportWidth, slug, title } ) => {
+	const isBlankTemplate = slug === 'blank';
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		<div className={ `template-selector-preview ${ noBlocks ? 'not-selected' : '' }` }>
-			{ noBlocks && (
+		<div className={ `template-selector-preview ${ isBlankTemplate ? 'not-selected' : '' }` }>
+			{ isBlankTemplate && (
 				<div className="editor-styles-wrapper">
 					<div className="template-selector-preview__empty-state">
 						{ __( 'Select a layout to preview.', 'full-site-editing' ) }
@@ -23,10 +23,12 @@ const TemplateSelectorPreview = ( { blocks = [], viewportWidth, title } ) => {
 				</div>
 			) }
 
-			{ /* Always render preview iframe to ensure it's ready to populate with Blocks. */
-			/* Without this some browsers will experience a noticavle delay
-			/* before Blocks are populated into the iframe. */ }
-			<BlockIframePreview blocks={ blocks } viewportWidth={ viewportWidth } title={ title } />
+			<BlockFramePreview
+				viewportWidth={ viewportWidth }
+				template={ template }
+				slug={ slug }
+				title={ title }
+			/>
 		</div>
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	);

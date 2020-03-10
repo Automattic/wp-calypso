@@ -118,6 +118,15 @@ function load_starter_page_templates() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_starter_page_templates' );
 
 /**
+ * Load Editor Layout Preview plugin
+ */
+function load_editor_layout_preview() {
+	require_once __DIR__ . '/editor-layout-preview/class-editor-layout-preview.php';
+	Editor_Layout_Preview::get_instance();
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_editor_layout_preview' );
+
+/**
  * Load Global Styles plugin.
  */
 function load_global_styles() {

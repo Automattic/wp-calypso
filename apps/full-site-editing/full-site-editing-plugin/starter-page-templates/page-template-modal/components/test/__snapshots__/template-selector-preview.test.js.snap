@@ -7,7 +7,7 @@ exports[`TemplateSelectorPreview Basic rendering renders the preview and no plac
   >
     <div>
       <iframe
-        class="editor-styles-wrapper block-iframe-preview"
+        class="editor-styles-wrapper block-frame-preview"
         style="transform: scale( 1 );"
         title="Preview"
       />
