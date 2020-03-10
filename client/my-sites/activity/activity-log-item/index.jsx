@@ -267,7 +267,7 @@ class ActivityLogItem extends Component {
 									: `/settings/security/${ siteSlug }`
 							}
 						>
-							{ translate( 'Add server credentials in order to restore your site' ) }
+							{ translate( 'Add server credentials to enable restoring' ) }
 						</PopoverMenuItem>
 					) }
 
