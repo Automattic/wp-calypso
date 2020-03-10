@@ -77,6 +77,7 @@ export class LoginForm extends Component {
 		socialServiceResponse: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 		userEmail: PropTypes.string,
+		isJetpack: PropTypes.bool,
 	};
 
 	state = {
@@ -110,7 +111,7 @@ export class LoginForm extends Component {
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { disableAutoFocus } = this.props;
+		const { disableAutoFocus, isJetpack } = this.props;
 
 		if (
 			this.props.socialAccountIsLinking !== nextProps.socialAccountIsLinking &&
@@ -136,7 +137,7 @@ export class LoginForm extends Component {
 				loginFormFlow: true,
 			} );
 
-			page( login( { isNative: true, twoFactorAuthType: 'link' } ) );
+			page( login( { isNative: true, twoFactorAuthType: 'link', isJetpack } ) );
 		}
 	}
 
