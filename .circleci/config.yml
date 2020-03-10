@@ -20,6 +20,7 @@ references:
         "$CIRCLE_ARTIFACTS/screenshots"         \
         "$CIRCLE_ARTIFACTS/full-site-editing"   \
         "$CIRCLE_ARTIFACTS/wpcom-block-editor"  \
+        "$CIRCLE_ARTIFACTS/chunks-map"          \
         "$CIRCLE_TEST_REPORTS/client"           \
         "$CIRCLE_TEST_REPORTS/eslint"           \
         "$CIRCLE_TEST_REPORTS/integration"      \
@@ -298,7 +299,7 @@ jobs:
           name: Generate chunks map
           command: |
             npm run chunks-map
-            mv chunks-map.json "$CIRCLE_ARTIFACTS/chunks-map/"
+            mv chunks-map.json "$CIRCLE_ARTIFACTS/chunks-map"
       - store-artifacts-and-test-results
 
   build-notifications:
