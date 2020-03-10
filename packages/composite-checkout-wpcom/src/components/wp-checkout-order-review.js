@@ -10,9 +10,7 @@ import { useLineItems, useFormStatus } from '@automattic/composite-checkout';
  * Internal dependencies
  */
 import joinClasses from './join-classes';
-import { isLineItemADomain } from '../hooks/has-domains';
 import Coupon from './coupon';
-import WPTermsAndConditions from './wp-terms-and-conditions';
 import {
 	WPOrderReviewLineItems,
 	WPOrderReviewTotal,
@@ -25,16 +23,15 @@ export default function WPCheckoutOrderReview( {
 	removeCoupon,
 	couponStatus,
 	couponFieldStateProps,
-	siteUrl,
 	variantRequestStatus,
 	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
+	responseCart,
+	CheckoutTerms,
 } ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
-	const firstDomainItem = items.find( isLineItemADomain );
-	const domainName = firstDomainItem ? firstDomainItem.sublabel : siteUrl;
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
@@ -61,7 +58,9 @@ export default function WPCheckoutOrderReview( {
 				<WPOrderReviewTotal total={ total } />
 			</WPOrderReviewSection>
 
-			<WPTermsAndConditions domainName={ domainName } />
+			<CheckoutTermsUI>
+				<CheckoutTerms cart={ responseCart } />
+			</CheckoutTermsUI>
 		</div>
 	);
 }
@@ -71,13 +70,47 @@ WPCheckoutOrderReview.propTypes = {
 	className: PropTypes.string,
 	removeItem: PropTypes.func.isRequired,
 	removeCoupon: PropTypes.func.isRequired,
-	siteUrl: PropTypes.string,
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
+	responseCart: PropTypes.object.isRequired,
+	CheckoutTerms: PropTypes.elementType.isRequired,
 };
 
 const CouponField = styled( Coupon )`
 	margin: 24px 30px 24px 0;
 	padding-bottom: 24px;
 	border-bottom: 1px solid ${props => props.theme.colors.borderColorLight};
+`;
+
+const CheckoutTermsUI = styled.div`
+	& > * {
+		margin: 16px 0;
+		padding-left: 26px;
+		position: relative;
+	}
+
+	& div:first-child {
+		padding-left: 0;
+	}
+
+	& > * > svg {
+		width: 18px;
+		height: 18px;
+		position: absolute;
+		top: 2px;
+		left: 0;
+	}
+
+	& > * > p {
+		font-size: 12px;
+		margin: 0;
+	}
+
+	& > * > p a {
+		text-decoration: underline;
+	}
+
+	& > * > p a:hover {
+		text-decoration: none;
+	}
 `;
