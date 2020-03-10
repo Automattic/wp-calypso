@@ -106,15 +106,6 @@ export default {
 		defaultVariation: 'variantShowUpdates',
 		allowExistingUsers: true,
 	},
-	sidebarUpsellNudgeUnification: {
-		datestamp: '20200221',
-		variations: {
-			variantShowUnifiedUpsells: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	domainStepDesignUpdates: {
 		datestamp: '20201220',
 		variations: {
