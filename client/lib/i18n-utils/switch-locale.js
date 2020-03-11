@@ -2,16 +2,16 @@
  * External dependencies
  */
 import i18n from 'i18n-calypso';
-import debugFactory from 'debug';
+// import debugFactory from 'debug';
 import { forEach, includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isDefaultLocale, getLanguage } from './utils';
+import { /*isDefaultLocale,*/ getLanguage } from './utils';
 import { getUrlFromParts } from 'lib/url/url-parts';
 
-const debug = debugFactory( 'calypso:i18n' );
+// const debug = debugFactory( 'calypso:i18n' );
 
 const getPromises = {};
 
@@ -107,7 +107,7 @@ export async function getLanguageFile( targetLocaleSlug ) {
 	throw new Error();
 }
 
-let lastRequestedLocale = null;
+// let lastRequestedLocale = null;
 export default function switchLocale( localeSlug ) {
 	// check if the language exists in config.languages
 	const language = getLanguage( localeSlug );
@@ -122,35 +122,40 @@ export default function switchLocale( localeSlug ) {
 		return;
 	}
 
-	lastRequestedLocale = localeSlug;
+	// lastRequestedLocale = localeSlug;
 
-	if ( isDefaultLocale( localeSlug ) ) {
-		i18n.configure( { defaultLocaleSlug: localeSlug } );
-		setLocaleInDOM();
-	} else {
-		getLanguageFile( localeSlug ).then(
-			// Success.
-			body => {
-				if ( body ) {
-					// Handle race condition when we're requested to switch to a different
-					// locale while we're in the middle of request, we should abandon result
-					if ( localeSlug !== lastRequestedLocale ) {
-						return;
-					}
+	i18n.configure( { defaultLocaleSlug: localeSlug } );
+	setLocaleInDOM();
 
-					i18n.setLocale( body );
-					setLocaleInDOM();
-					loadUserUndeployedTranslations( localeSlug );
-				}
-			},
-			// Failure.
-			() => {
-				debug(
-					`Encountered an error loading locale file for ${ localeSlug }. Falling back to English.`
-				);
-			}
-		);
-	}
+	return;
+
+	// if ( isDefaultLocale( localeSlug ) ) {
+	// 	i18n.configure( { defaultLocaleSlug: localeSlug } );
+	// 	setLocaleInDOM();
+	// } else {
+	// 	getLanguageFile( localeSlug ).then(
+	// 		// Success.
+	// 		body => {
+	// 			if ( body ) {
+	// 				// Handle race condition when we're requested to switch to a different
+	// 				// locale while we're in the middle of request, we should abandon result
+	// 				if ( localeSlug !== lastRequestedLocale ) {
+	// 					return;
+	// 				}
+
+	// 				i18n.setLocale( body );
+	// 				setLocaleInDOM();
+	// 				loadUserUndeployedTranslations( localeSlug );
+	// 			}
+	// 		},
+	// 		// Failure.
+	// 		() => {
+	// 			debug(
+	// 				`Encountered an error loading locale file for ${ localeSlug }. Falling back to English.`
+	// 			);
+	// 		}
+	// 	);
+	// }
 }
 
 export function loadUserUndeployedTranslations( currentLocaleSlug ) {

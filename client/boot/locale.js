@@ -24,21 +24,49 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		reduxStore.dispatch( setLocale( currentUser.localeSlug, currentUser.localeVariant ) );
 	}
 
+	const fetchTranslationChunk = translationChunkPath => {
+		return window
+			.fetch( translationChunkPath )
+			.then( response => response.json() )
+			.then( data => {
+				i18n.addTranslations( data );
+				return;
+			} )
+			.catch( error => error );
+	};
+
+	const translationChunksQueue = [];
+	let translatedChunks;
+	window
+		.fetch( `/calypso/evergreen/translated-chunks.json` )
+		.then( response => response.json() )
+		.then( data => {
+			translatedChunks = data;
+
+			translationChunksQueue.forEach( ( { id, path } ) => {
+				if ( translatedChunks.includes( id ) ) {
+					fetchTranslationChunk( path );
+				}
+			} );
+		} );
+
 	if ( '__requireChunkCallback__' in window ) {
 		window.__requireChunkCallback__.add( ( chunkId, promises, publicPath ) => {
-			const translationChunkName = `${ currentUser.localeSlug }-${ chunkId }`;
+			const translationChunkName = `${ chunkId }`;
 			const translationChunkPath = `${ publicPath }languages/${ translationChunkName }.json`; // @todo replace with actual translation path
 
-			promises.push(
-				window
-					.fetch( translationChunkPath )
-					.then( response => response.json() )
-					.then( data => {
-						i18n.addTranslations( data );
-						return;
-					} )
-					.catch( error => error )
-			);
+			if ( ! translatedChunks ) {
+				translationChunksQueue.push( {
+					id: chunkId,
+					path: translationChunkPath,
+				} );
+
+				return;
+			}
+
+			if ( translatedChunks.includes( chunkId ) ) {
+				promises.push( fetchTranslationChunk( translationChunkPath ) );
+			}
 		} );
 	}
 
