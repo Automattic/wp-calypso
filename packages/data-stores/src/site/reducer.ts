@@ -50,9 +50,12 @@ const isFetchingSite: Reducer< boolean | undefined, Action > = ( state = false, 
 	return state;
 };
 
-const existingSite: Reducer< ExistingSiteDetails | undefined, Action > = ( state, action ) => {
+const existingSite: Reducer< { [ key: string ]: ExistingSiteDetails | undefined }, Action > = (
+	state = {},
+	action
+) => {
 	if ( action.type === 'RECEIVE_EXISTING_SITE' ) {
-		return action.response;
+		return { ...state, [ action.slug ]: action.response };
 	}
 	return state;
 };

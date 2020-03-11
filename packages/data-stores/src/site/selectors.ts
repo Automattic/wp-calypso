@@ -12,13 +12,11 @@ export const isNewSite = ( state: State ) => !! state.newSite.data;
 
 /**
  * Get an existing site matched by domain string. This selector has a matching
- * resolver that uses the `domain` parameter. The parameter is included here
- * even though it is not used, to ensure consuming code doesn't error out.
+ * resolver that uses the `slug` parameter to fetch an existing site.
  *
  * @param state {State}		state object
- * @param _domain {string}	unused variable, exists here only to match the resolver
+ * @param slug {string}		domain string
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getExistingSite = ( state: State, _domain: string ) => {
-	return state.existingSite;
+export const getSite = ( state: State, slug: string ) => {
+	return state.existingSite[ slug ];
 };

@@ -25,7 +25,7 @@ const DuplicateSiteModal = ( { onRequestClose }: Props ) => {
 
 	const lastCreatedSite = useSelect( select => select( ONBOARD_STORE ).getLastCreatedSite() );
 	const existingSite = useSelect( select => {
-		return select( SITE_STORE ).getExistingSite( lastCreatedSite?.slug );
+		return select( SITE_STORE ).getSite( lastCreatedSite?.slug );
 	} );
 
 	useEffect( () => {

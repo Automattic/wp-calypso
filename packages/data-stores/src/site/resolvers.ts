@@ -17,7 +17,7 @@ import { ExistingSiteResponse } from './types';
  *
  * @param slug {string}	The domain to search for
  */
-export async function getExistingSite( slug: string ) {
+export async function getSite( slug: string ) {
 	try {
 		const existingSite = await wpcomRequest< ExistingSiteResponse >( {
 			path: '/sites/' + encodeURIComponent( slug ),
@@ -25,10 +25,10 @@ export async function getExistingSite( slug: string ) {
 		} );
 
 		if ( 'error' in existingSite ) {
-			return receiveExistingSite( undefined );
+			return receiveExistingSite( slug, undefined );
 		}
-		return receiveExistingSite( existingSite );
+		return receiveExistingSite( slug, existingSite );
 	} catch ( err ) {
-		return receiveExistingSite( undefined );
+		return receiveExistingSite( slug, undefined );
 	}
 }

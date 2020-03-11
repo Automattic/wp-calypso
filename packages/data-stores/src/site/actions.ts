@@ -22,8 +22,12 @@ export const receiveNewSiteFailed = ( error: NewSiteErrorResponse ) => ( {
 	error,
 } );
 
-export const receiveExistingSite = ( response: ExistingSiteDetails | undefined ) => ( {
+export const receiveExistingSite = (
+	slug: string,
+	response: ExistingSiteDetails | undefined
+) => ( {
 	type: 'RECEIVE_EXISTING_SITE' as const,
+	slug,
 	response,
 } );
 
