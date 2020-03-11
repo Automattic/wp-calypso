@@ -83,10 +83,10 @@ export class UserStep extends Component {
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
-	setSubHeaderText( props ) {
-		const { flowName, oauth2Client, positionInFlow, translate, wccomFrom } = props;
+	setSubHeaderText() {
+		const { flowName, oauth2Client, positionInFlow, translate, wccomFrom } = this.props;
 
-		let subHeaderText = props.subHeaderText;
+		let subHeaderText;
 
 		if ( includes( [ 'wpcc', 'crowdsignal' ], flowName ) && oauth2Client ) {
 			if (
@@ -147,7 +147,7 @@ export class UserStep extends Component {
 			subHeaderText = translate( 'First, create your WordPress.com account.' );
 		}
 
-		this.setState( { subHeaderText } );
+		return subHeaderText;
 	}
 
 	initGoogleRecaptcha() {
@@ -402,7 +402,7 @@ export class UserStep extends Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				headerText={ this.getHeaderText() }
-				subHeaderText={ this.state.subHeaderText }
+				subHeaderText={ this.setSubHeaderText() }
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
 				stepContent={ this.renderSignupForm() }
