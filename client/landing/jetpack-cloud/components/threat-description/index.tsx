@@ -1,34 +1,41 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { ReactNode } from 'react';
 import { translate } from 'i18n-calypso';
 
-class ThreatDescription extends Component {
-	static propTypes = {
-		action: PropTypes.string,
-		details: PropTypes.string,
-		fix: PropTypes.string,
-		problem: PropTypes.string,
-		children: PropTypes.node,
-	};
+export interface Props {
+	children?: ReactNode;
+	action?: 'ignored' | 'fixed';
+	details: string | ReactNode;
+	fix: string | ReactNode;
+	problem: string | ReactNode;
+}
+
+class ThreatDescription extends React.PureComponent< Props > {
+	renderTextOrNode( content: string | ReactNode ) {
+		if ( typeof content === 'string' ) {
+			return <p>{ content }</p>;
+		}
+		return content;
+	}
 
 	render() {
 		const { children, action, details, problem, fix } = this.props;
 		const isThreatFixedOrIgnored = !! action;
+
 		return (
 			<div className="threat-description">
 				<strong>{ translate( 'What was the problem?' ) }</strong>
-				<p>{ problem }</p>
+				{ this.renderTextOrNode( problem ) }
 				<strong>
 					{ ! isThreatFixedOrIgnored
 						? translate( 'How we will fix it?' )
 						: translate( 'How did Jetpack fix it?' ) }
 				</strong>
-				<p>{ fix }</p>
+				{ this.renderTextOrNode( fix ) }
 				<strong>{ translate( 'The technical details' ) }</strong>
-				<p>{ details }</p>
+				{ this.renderTextOrNode( details ) }
 				{ children }
 			</div>
 		);
