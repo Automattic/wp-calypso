@@ -105,18 +105,22 @@ export const receiveWpLoginFailed = ( response: WpLoginErrorResponse ) =>
 
 type WpLoginAction = 'login-endpoint' | 'two-step-authentication-endpoint';
 
-export interface FetchWpLoginAction {
-	type: 'FETCH_WP_LOGIN';
-	action: WpLoginAction;
-	params: object;
-}
-
-const fetchWpLogin = ( action: WpLoginAction, params: object ): FetchWpLoginAction =>
+const fetchWpLogin = ( action: WpLoginAction, params: object ) =>
 	( {
 		type: 'FETCH_WP_LOGIN',
 		action,
 		params,
 	} as const );
+
+export type FetchWpLoginAction = ReturnType< typeof fetchWpLogin >;
+
+const remoteLoginUser = ( loginLinks: string[] ) =>
+	( {
+		type: 'REMOTE_LOGIN_USER',
+		loginLinks,
+	} as const );
+
+export type RemoteLoginUserAction = ReturnType< typeof remoteLoginUser >;
 
 export function* submitPassword( password: string ) {
 	yield clearErrors();
@@ -126,6 +130,7 @@ export function* submitPassword( password: string ) {
 		const loginResponse = yield fetchWpLogin( 'login-endpoint', { username, password } );
 
 		if ( loginResponse.ok && loginResponse.body.success ) {
+			yield remoteLoginUser( loginResponse.body.data.token_links );
 			yield receiveWpLogin( loginResponse.body );
 		} else {
 			yield receiveWpLoginFailed( loginResponse.body );
