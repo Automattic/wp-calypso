@@ -37,7 +37,7 @@ import Gridicon from 'components/gridicon';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { managePurchase } from '../paths';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { getPlanTermLabel } from 'lib/plans';
+import { getPlanClass, getPlanTermLabel } from 'lib/plans';
 
 /**
  * Style dependencies
@@ -161,7 +161,10 @@ class PurchaseItem extends Component {
 		if ( isPlan( purchase ) || isJetpackBackup( purchase ) ) {
 			return (
 				<div className="purchase-item__plan-icon">
-					<ProductIcon slug={ purchase.productSlug } />
+					<ProductIcon
+						slug={ purchase.productSlug }
+						className={ getPlanClass( purchase.productSlug ) }
+					/>
 				</div>
 			);
 		}
