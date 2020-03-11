@@ -91,6 +91,6 @@ This could be fine under some circumstances. If, after a successful login, the b
 
 If however the user will continue to work and make more requests on the same page after logging in, then we want the store to make the required request to get cookies. In this case use `loadCookiesAfterLogin = true`.
 
-This config flag doesn't have a default as it depends on your situation.
+The flag defaults to `true`.
 
 *Implementation detail:* under the hood, if `loadCookiesAfterLogin === true` then the store will reload the iframe used by `wpcom-proxy-request` to send requests to `public-api.wordpress.com`. Because it's only the iframe that reloads the user won't see a browser refresh happen.

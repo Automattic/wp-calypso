@@ -64,8 +64,9 @@ export interface ControlsConfig extends WpcomClientCredentials {
 	/**
 	 * True if user needs immediate access to cookies after logging in.
 	 * See README.md for details.
+	 * Default: true
 	 */
-	loadCookiesAfterLogin: boolean;
+	loadCookiesAfterLogin?: boolean;
 }
 
 export function createControls( config: ControlsConfig ) {
@@ -85,7 +86,7 @@ export function createControls( config: ControlsConfig ) {
 			} );
 		},
 		FETCH_WP_LOGIN: async ( { action, params }: FetchWpLoginAction ) => {
-			const { client_id, client_secret, loadCookiesAfterLogin } = config;
+			const { client_id, client_secret, loadCookiesAfterLogin = true } = config;
 
 			const response = await fetch(
 				// TODO Wrap this in `localizeUrl` from lib/i18n-utils
