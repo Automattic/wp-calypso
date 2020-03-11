@@ -62,7 +62,12 @@ class ThreatItem extends Component {
 				key={ threat.id }
 				highlight="error"
 			>
-				<ThreatDescription threat={ threat }>
+				<ThreatDescription
+					action={ threat.action }
+					details={ threat.description.details }
+					fix={ threat.description.fix }
+					problem={ threat.description.problem }
+				>
 					{ this.renderFixThreatCTA( 'is-details' ) }
 				</ThreatDescription>
 			</LogItem>

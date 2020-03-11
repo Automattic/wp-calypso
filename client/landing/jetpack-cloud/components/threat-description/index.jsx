@@ -5,31 +5,30 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { translate } from 'i18n-calypso';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 class ThreatDescription extends Component {
 	static propTypes = {
-		threat: PropTypes.object,
+		action: PropTypes.string,
+		details: PropTypes.string,
+		fix: PropTypes.string,
+		problem: PropTypes.string,
+		children: PropTypes.node,
 	};
 
 	render() {
-		const { children, threat } = this.props;
-		const isThreatFixedOrIgnored = !! threat.action;
+		const { children, action, details, problem, fix } = this.props;
+		const isThreatFixedOrIgnored = !! action;
 		return (
 			<div className="threat-description">
 				<strong>{ translate( 'What was the problem?' ) }</strong>
-				<p>{ threat.description.problem }</p>
+				<p>{ problem }</p>
 				<strong>
 					{ ! isThreatFixedOrIgnored
 						? translate( 'How we will fix it?' )
 						: translate( 'How did Jetpack fix it?' ) }
 				</strong>
-				<p>{ threat.description.fix }</p>
+				<p>{ fix }</p>
 				<strong>{ translate( 'The technical details' ) }</strong>
-				<p>{ threat.description.details }</p>
+				<p>{ details }</p>
 				{ children }
 			</div>
 		);
