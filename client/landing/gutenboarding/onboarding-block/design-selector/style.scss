@@ -1,5 +1,6 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 @import '~@wordpress/base-styles/colors';
+@import '../../mixins';
 
 @font-face {
 	font-display: swap;
@@ -25,7 +26,7 @@
 	.design-selector__header {
 		width: 100%;
 		margin: 5% 0%;
-		font-family: 'Recoleta-Regular', 'Recoleta', serif;
+		@include onboarding-font-recoleta;
 
 		h1 {
 			color: var( --mainColor );
@@ -88,6 +89,6 @@
 		text-align: center;
 		width: 100%;
 		font-size: 24px;
-		font-family: Recoleta, Georgia, 'Times New Roman', Times, serif;
+		@include onboarding-font-recoleta;
 	}
 }
