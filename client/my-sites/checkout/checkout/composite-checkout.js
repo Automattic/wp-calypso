@@ -68,6 +68,11 @@ import notices from 'notices';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import { isJetpackSite, isNewSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
+import {
+	requestContactDetailsCache,
+	updateContactDetailsCache,
+} from 'state/domains/management/actions';
 import { FormCountrySelect } from 'components/forms/form-country-select';
 import getCountries from 'state/selectors/get-countries';
 import { fetchPaymentCountries } from 'state/countries/actions';
@@ -285,8 +290,11 @@ export default function CompositeCheckout( {
 	useWpcomStore(
 		registerStore,
 		recordEvent,
-		areDomainsInLineItems( items ) ? domainManagedContactDetails : taxManagedContactDetails
+		areDomainsInLineItems( items ) ? domainManagedContactDetails : taxManagedContactDetails,
+		updateContactDetailsCache
 	);
+
+	useCachedDomainContactDetails( dispatch );
 
 	useDisplayErrors( errors, showErrorMessage );
 
@@ -1381,6 +1389,25 @@ function useVariantWpcomPlanProductSlugs( productSlug ) {
 		group: chosenPlan.group,
 		type: chosenPlan.type,
 	} );
+}
+
+function useCachedDomainContactDetails( dispatch ) {
+	const reduxDispatch = useDispatch();
+	const [ haveRequestedCachedDetails, setHaveRequestedCachedDetails ] = useState( false );
+
+	useEffect( () => {
+		// Dispatch exactly once
+		if ( ! haveRequestedCachedDetails ) {
+			debug( 'requesting cached domain contact details' );
+			reduxDispatch( requestContactDetailsCache() );
+			setHaveRequestedCachedDetails( true );
+		}
+	}, [ haveRequestedCachedDetails ] );
+
+	const cachedContactDetails = useSelector( getContactDetailsCache );
+	if ( cachedContactDetails ) {
+		dispatch( 'wpcom' ).loadDomainContactDetailsFromCache( cachedContactDetails );
+	}
 }
 
 function getPlanProductSlugs(

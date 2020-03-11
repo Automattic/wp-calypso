@@ -33,7 +33,7 @@ export default function WPContactForm( {
 	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
 
 	if ( summary && isComplete ) {
-		return <ContactFormSummary />;
+		return <ContactFormSummary isDomainFieldsVisible={ isDomainFieldsVisible } />;
 	}
 	if ( ! isActive ) {
 		return null;
@@ -174,11 +174,13 @@ const DomainContactFieldsDescription = styled.p`
 	margin: 0 0 16px;
 `;
 
-function ContactFormSummary() {
+function ContactFormSummary( { isDomainFieldsVisible } ) {
 	const translate = useTranslate();
 	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
 
-	//Check if paymentData is empty
+	const showDomainContactSummary = isDomainFieldsVisible;
+
+	// Check if paymentData is empty
 	if ( Object.entries( contactInfo ).length === 0 ) {
 		return null;
 	}
@@ -199,24 +201,26 @@ function ContactFormSummary() {
 		<GridRow>
 			<div>
 				<SummaryDetails>
-					{ fullName && <SummaryLine>{ fullName }</SummaryLine> }
+					{ showDomainContactSummary && fullName && <SummaryLine>{ fullName }</SummaryLine> }
 
-					{ contactInfo.email.value.length > 0 && (
+					{ showDomainContactSummary && contactInfo.email.value?.length > 0 && (
 						<SummarySpacerLine>{ contactInfo.email.value }</SummarySpacerLine>
 					) }
 
-					{ contactInfo.address1.value.length > 0 && (
+					{ showDomainContactSummary && contactInfo.address1.value?.length > 0 && (
 						<SummaryLine>{ contactInfo.address1.value } </SummaryLine>
 					) }
 
-					{ cityAndState && <SummaryLine>{ cityAndState }</SummaryLine> }
+					{ showDomainContactSummary && cityAndState && (
+						<SummaryLine>{ cityAndState }</SummaryLine>
+					) }
 
 					{ postalAndCountry && <SummaryLine>{ postalAndCountry }</SummaryLine> }
 				</SummaryDetails>
 
-				{ contactInfo.vatId.value.length > 0 && (
+				{ contactInfo.vatId.value?.length > 0 && (
 					<SummaryDetails>
-						{ contactInfo.vatId.value.length > 0 && (
+						{ contactInfo.vatId.value?.length > 0 && (
 							<SummaryLine>
 								{ translate( 'VAT indentification number:' ) }
 								{ contactInfo.vatId.value }
@@ -230,7 +234,7 @@ function ContactFormSummary() {
 }
 
 function joinNonEmptyValues( joinString, ...values ) {
-	return values.filter( value => value.length > 0 ).join( joinString );
+	return values.filter( value => value?.length > 0 ).join( joinString );
 }
 
 function getContactDetailsFormat( isDomainFieldsVisible ) {
