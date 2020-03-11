@@ -60,7 +60,6 @@ const loader = function() {
 	const { forceRequire, onlyIsomorphic } = options;
 	let { include } = options;
 
-	// Build all the sections during the build step.
 	let sections = require( this.resourcePath );
 
 	if ( include ) {
@@ -76,9 +75,6 @@ const loader = function() {
 			console.warn( `[sections-loader] Available sections are:` );
 			printSectionsAndPaths( allSections );
 		}
-	} else {
-		console.log( `[sections-loader] created ${ sections.length } section(s).` );
-		printSectionsAndPaths( sections );
 	}
 
 	return addModuleImportToSections( {
