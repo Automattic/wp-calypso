@@ -42,6 +42,7 @@ class SectionMigrate extends Component {
 	_startedMigrationFromCart = false;
 
 	state = {
+		errorDeferralCount: 0,
 		errorMessage: '',
 		isJetpackConnected: false,
 		migrationStatus: 'unknown',
@@ -144,7 +145,8 @@ class SectionMigrate extends Component {
 		// A response from the status endpoint may come in after the
 		// migrate/from endpoint has returned an error. This avoids that
 		// response accidentally clearing the error state.
-		if ( 'error' === this.state.migrationStatus ) {
+		if ( 'error' === this.state.migrationStatus && this.state.errorDeferralCount < 2 ) {
+			this.setState( { errorDeferralCount: this.state.errorDeferralCount + 1 } );
 			return;
 		}
 
@@ -167,7 +169,7 @@ class SectionMigrate extends Component {
 				state.lastModified
 			);
 		}
-		this.setState( state );
+		this.setState( { ...state, errorDeferralCount: 0 } );
 	};
 
 	setSiteInfo = ( siteInfo, callback ) => {
@@ -357,40 +359,43 @@ class SectionMigrate extends Component {
 		const { translate } = this.props;
 
 		return (
-			<Card className="migrate__pane migrate__error">
-				<FormattedHeader
-					className="migrate__section-header"
-					headerText={ translate( 'Import failed' ) }
-					align="center"
-				/>
-				<div className="migrate__status">
-					{ translate( 'There was an error with your import.' ) }
-					<br />
-					{ this.state.errorMessage }
+			<>
+				<Interval onTick={ this.updateFromAPI } period={ EVERY_TEN_SECONDS } />
+				<Card className="migrate__pane migrate__error">
+					<FormattedHeader
+						className="migrate__section-header"
+						headerText={ translate( 'Import failed' ) }
+						align="center"
+					/>
+					<div className="migrate__status">
+						{ translate( 'There was an error with your import.' ) }
+						<br />
+						{ this.state.errorMessage }
 
-					<p className="migrate__info">
-						{ translate(
-							'{{supportLink}}Contact us{{/supportLink}} so we can' +
-								' figure out exactly' +
-								' what needs adjusting, or try again.',
-							{
-								components: {
-									supportLink: (
-										<a
-											href="https://wordpress.com/help/contact"
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							}
-						) }
-					</p>
-				</div>
-				<Button primary onClick={ this.resetMigration }>
-					{ translate( 'Try again' ) }
-				</Button>
-			</Card>
+						<p className="migrate__info">
+							{ translate(
+								'{{supportLink}}Contact us{{/supportLink}} so we can' +
+									' figure out exactly' +
+									' what needs adjusting, or try again.',
+								{
+									components: {
+										supportLink: (
+											<a
+												href="https://wordpress.com/help/contact"
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								}
+							) }
+						</p>
+					</div>
+					<Button primary onClick={ this.resetMigration }>
+						{ translate( 'Try again' ) }
+					</Button>
+				</Card>
+			</>
 		);
 	}
 
