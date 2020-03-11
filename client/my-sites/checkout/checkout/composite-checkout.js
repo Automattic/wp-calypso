@@ -1405,7 +1405,9 @@ function useCachedDomainContactDetails( dispatch ) {
 	}, [ haveRequestedCachedDetails ] );
 
 	const cachedContactDetails = useSelector( getContactDetailsCache );
-	dispatch( 'wpcom' ).loadDomainContactDetailsFromCache( cachedContactDetails );
+	if ( cachedContactDetails ) {
+		dispatch( 'wpcom' ).loadDomainContactDetailsFromCache( cachedContactDetails );
+	}
 }
 
 function getPlanProductSlugs(
