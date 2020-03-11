@@ -106,8 +106,8 @@ class JetpackCloudSidebar extends Component {
 								comment: 'Jetpack Cloud sidebar navigation item ',
 							} ) }
 							link="/animations"
-							materialIcon="dashboard"
-							materialIconStyle="filled"
+							materialIcon="offline_bolt"
+							materialIconStyle="outline"
 							onNavigate={ this.onNavigate }
 							selected={ this.isSelected( '/animations' ) }
 						/>
