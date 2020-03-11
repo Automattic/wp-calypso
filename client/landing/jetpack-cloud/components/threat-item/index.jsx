@@ -36,7 +36,7 @@ class ThreatItem extends Component {
 	 *
 	 * @param {string} className A class for the button
 	 */
-	renderFixThreatCTA( className ) {
+	renderFixThreatButton( className ) {
 		return (
 			<Button
 				className={ classnames( 'threat-item__fix-cta', className ) }
@@ -50,7 +50,7 @@ class ThreatItem extends Component {
 
 	render() {
 		const { threat } = this.props;
-		const fixThreatCTA = this.renderFixThreatCTA( 'is-summary' );
+		const fixThreatCTA = this.renderFixThreatButton( 'is-summary' );
 
 		return (
 			<LogItem
@@ -68,7 +68,7 @@ class ThreatItem extends Component {
 					fix={ threat.description.fix }
 					problem={ threat.description.problem }
 				>
-					{ this.renderFixThreatCTA( 'is-details' ) }
+					{ this.renderFixThreatButton( 'is-details' ) }
 				</ThreatDescription>
 			</LogItem>
 		);
