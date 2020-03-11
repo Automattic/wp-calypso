@@ -4,6 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import MediaImage from 'my-sites/media-library/media-image';
 
 const ImageThumb = ( { width, height, src, alt, placeholder, ...props } ) => {
 	const style = {
@@ -30,7 +31,7 @@ const ImageThumb = ( { width, height, src, alt, placeholder, ...props } ) => {
 
 	return (
 		<div className={ imageClasses } style={ style }>
-			<img src={ src } alt={ alt } { ...props } />
+			<MediaImage src={ src } alt={ alt } { ...props } />
 		</div>
 	);
 };
