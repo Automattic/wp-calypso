@@ -400,6 +400,7 @@ class Login extends Component {
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
+				isJetpack={ isJetpack }
 			/>
 		);
 	}
