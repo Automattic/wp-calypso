@@ -470,6 +470,13 @@
 			 .checkout__checkout-field {
 				 padding: 0 15px 15px;
 			 }
+
+			 .checkout__country-payment-fields {
+				 .checkout__checkout-field {
+					 padding-left: 0;
+					 flex-basis: calc( 100% - 30px );
+				 }
+			 }
 		 }
 	}
 
@@ -1045,13 +1052,13 @@
 	}
 }
 
-// Ebanx checkout fields
+// country-specific checkout fields
 // -----------------------------------
 .checkout__country-payment-fields {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	margin: 15px 0 0 -15px;
+	margin-top: 15px;
 	.checkout__checkout-field,
 	.checkout__form-state-field {
 		flex-basis: calc( 100% - 15px );
