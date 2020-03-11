@@ -193,7 +193,6 @@ function getFallbackDestination( {
 }
 
 function getRedirectUrlForConciergeNudge( { pendingOrReceiptId, cart, siteSlug, previousRoute } ) {
-	// For a user purchasing a qualifying plan, show either a plan upgrade upsell or concierge upsell.
 	// If the user has upgraded a plan from seeing our upsell(we find this by checking the previous route is /offer-plan-upgrade),
 	// then skip this section so that we do not show further upsells.
 	if (
@@ -203,10 +202,6 @@ function getRedirectUrlForConciergeNudge( { pendingOrReceiptId, cart, siteSlug, 
 		( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) ) &&
 		! previousRoute?.includes( `/checkout/${ siteSlug }/offer-plan-upgrade` )
 	) {
-		if ( hasPersonalPlan( cart ) ) {
-			return `/checkout/${ siteSlug }/offer-plan-upgrade/premium/${ pendingOrReceiptId }`;
-		}
-
 		// A user just purchased one of the qualifying plans
 		// Show them the concierge session upsell page
 
