@@ -20,12 +20,12 @@ import { recordTracksPageViewWithPageParams } from '@automattic/calypso-analytic
  * Internal dependencies
  */
 import Header from './components/header';
-import DuplicateSiteModal from './components/duplicate-site-modal';
 import { name, settings } from './onboarding-block';
 import { Step, usePath } from './path';
 import './style.scss';
 import { STORE_KEY as ONBOARD_STORE } from './stores/onboard';
 import { USER_STORE } from './stores/user';
+import { SITE_STORE } from './stores/site';
 
 registerBlockType( name, settings );
 
@@ -68,44 +68,63 @@ export function Gutenboard() {
 		recordTracksPageViewWithPageParams( `/gutenboarding${ pathname }` );
 	}, [ pathname ] );
 
+	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
+	const lastCreatedSite = useSelect( select => select( ONBOARD_STORE ).getLastCreatedSite() );
 	const lastSiteWasCreatedRecently = useSelect( select =>
 		select( ONBOARD_STORE ).wasLastSiteCreatedRecently()
 	);
-	const lastCreatedSite = useSelect( select => select( ONBOARD_STORE ).getLastCreatedSite() );
-	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
-
-	const [ showDuplicateSiteModal, setShowDuplicateSiteModal ] = useState< boolean | undefined >(
-		undefined
+	const existingSite = useSelect( select => {
+		// Check that there really is an existing site that matches the lastCreatedSite slug
+		if ( lastCreatedSite?.slug ) {
+			return select( SITE_STORE ).getSite( lastCreatedSite.slug );
+		}
+	} );
+	const [ checkedForPotentialDuplicateSite, setCheckedForPotentialDuplicateSite ] = useState(
+		false
 	);
-
 	const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
-
-	const handleDuplicateSiteModalClose = useCallback( () => {
+	const resetStoreAndRedirect = useCallback( () => {
 		resetOnboardStore();
-		setShowDuplicateSiteModal( false );
 		history.push( makePath() );
-	}, [ resetOnboardStore, setShowDuplicateSiteModal, history, makePath ] );
+	}, [ resetOnboardStore, history, makePath ] );
 
 	useEffect( () => {
-		if ( currentUser && lastSiteWasCreatedRecently && showDuplicateSiteModal === undefined ) {
-			// Show modal if last created site is current
-			setShowDuplicateSiteModal( true );
+		if (
+			! checkedForPotentialDuplicateSite &&
+			currentUser &&
+			lastSiteWasCreatedRecently &&
+			lastCreatedSite &&
+			existingSite
+		) {
+			if ( step !== Step.IntentGathering ) {
+				// Redirect to Customer Home if user isn't on the first step in the flow
+				const redirectUrl = `/home/${ lastCreatedSite.slug }`;
+				setCheckedForPotentialDuplicateSite( true );
+				window.location.href = redirectUrl;
+			} else {
+				setCheckedForPotentialDuplicateSite( true );
+				resetStoreAndRedirect();
+			}
 		} else if (
+			! checkedForPotentialDuplicateSite &&
 			currentUser &&
 			! lastSiteWasCreatedRecently &&
 			lastCreatedSite &&
-			showDuplicateSiteModal === undefined
+			existingSite
 		) {
 			// If last created site exists but is not current, clear store and redirect to
 			// the beginning of the flow.
-			handleDuplicateSiteModalClose();
+			setCheckedForPotentialDuplicateSite( true );
+			resetStoreAndRedirect();
 		}
 	}, [
 		currentUser,
+		existingSite,
 		lastCreatedSite,
 		lastSiteWasCreatedRecently,
-		showDuplicateSiteModal,
-		handleDuplicateSiteModalClose,
+		checkedForPotentialDuplicateSite,
+		resetStoreAndRedirect,
+		step,
 	] );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -114,9 +133,6 @@ export function Gutenboard() {
 			<DropZoneProvider>
 				<div className="edit-post-layout">
 					<Header prev={ prev } />
-					{ showDuplicateSiteModal && (
-						<DuplicateSiteModal onRequestClose={ handleDuplicateSiteModalClose } />
-					) }
 					<BlockEditorProvider
 						useSubRegistry={ false }
 						value={ [ onboardingBlock.current ] }
