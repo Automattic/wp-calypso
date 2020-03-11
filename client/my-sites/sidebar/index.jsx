@@ -306,12 +306,9 @@ export class MySitesSidebar extends Component {
 				{ showSiteEditor && (
 					<SidebarItem
 						label={ translate( 'Site Editor (beta)' ) }
-						// selected={ itemLinkMatches( '/customize', path ) }
 						link={ this.props.siteEditorUrl }
-						// onNavigate={ this.trackCustomizeClick }
 						preloadSectionName="site editor"
 						forceInternalLink
-						// expandSection={ this.expandDesignSection }
 					/>
 				) }
 				<SidebarItem
