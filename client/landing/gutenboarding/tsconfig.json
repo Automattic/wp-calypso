@@ -2,9 +2,10 @@
 	"extends": "../../tsconfig.json",
 	"compilerOptions": {
 		"composite": false,
-		"incremental": true,
+		"noEmit": true,
+		"emitDeclarationOnly": false,
 		"rootDir": ".",
-		"tsBuildInfoFile": "../../../.tsc-cache/client__landing__gutenboarding"
+		"tsBuildInfoFile": null
 	},
 	"files": [ "index.tsx" ],
 	"include": []
