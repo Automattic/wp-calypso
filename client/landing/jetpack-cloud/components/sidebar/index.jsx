@@ -102,6 +102,16 @@ class JetpackCloudSidebar extends Component {
 				<SidebarFooter>
 					<SidebarMenu>
 						<SidebarItem
+							label={ translate( 'Animations', {
+								comment: 'Jetpack Cloud sidebar navigation item ',
+							} ) }
+							link="/animations"
+							materialIcon="dashboard"
+							materialIconStyle="filled"
+							onNavigate={ this.onNavigate }
+							selected={ this.isSelected( '/animations' ) }
+						/>
+						<SidebarItem
 							label={ translate( 'Support', { comment: 'Jetpack Cloud sidebar navigation item' } ) }
 							link="#" // @todo: Add /support route or change link to other destination
 							materialIcon="help"

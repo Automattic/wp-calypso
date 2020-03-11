@@ -9,6 +9,7 @@ import page from 'page';
 import config from 'config';
 import { normalize } from 'lib/route';
 import { clientRender, makeLayout, setupSidebar, sites, siteSelection } from './controller';
+import { animations } from './sections/animations/controller';
 import { dashboard } from './sections/dashboard/controller';
 import {
 	backups,
@@ -99,6 +100,10 @@ const router = () => {
 	if ( config.isEnabled( 'jetpack-cloud/settings' ) ) {
 		page( '/settings', siteSelection, sites, setupSidebar, makeLayout, clientRender );
 		page( '/settings/:site', siteSelection, setupSidebar, settings, makeLayout, clientRender );
+	}
+
+	if ( config.isEnabled( 'jetpack-cloud/animations' ) ) {
+		page( '/animations', setupSidebar, animations, makeLayout, clientRender );
 	}
 };
 
