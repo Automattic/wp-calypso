@@ -20,11 +20,13 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import { DomainSuggestions } from '@automattic/data-stores';
 import { selectorDebounce } from '../../constants';
-
 /**
  * Style dependencies
  */
 import './style.scss';
+
+type DomainSuggestion = DomainSuggestions.DomainSuggestion;
+0;
 
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
@@ -39,33 +41,46 @@ export interface Props {
 	 *
 	 * @param domainSuggestion The selected domain.
 	 */
-	onDomainSelect: ( domainSuggestion: DomainSuggestions.DomainSuggestion ) => void;
+	onDomainSelect: ( domainSuggestion: DomainSuggestion ) => void;
+
+	/**
+	 * Callback that will be invoked when a paid domain is selected.
+	 *
+	 * @param domainSuggestion The selected domain.
+	 */
+	onDomainPurchase: ( domainSuggestion: DomainSuggestion ) => void;
 
 	/**
 	 * Additional parameters for the domain suggestions query.
 	 */
 	queryParameters?: Partial< DomainSuggestions.DomainSuggestionQuery >;
+
+	currentDomain?: DomainSuggestion;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
 	defaultQuery,
 	onDomainSelect,
+	onDomainPurchase,
 	queryParameters,
+	currentDomain,
 } ) => {
 	const { __: NO__ } = useI18n();
 	const label = NO__( 'Search for a domain' );
 
 	const [ domainSearch, setDomainSearch ] = useState( '' );
 
+	const placeholderAmount = 5;
+
 	const [ search ] = useDebounce( domainSearch.trim() || defaultQuery || '', selectorDebounce );
 	const searchOptions = {
 		include_wordpressdotcom: true,
 		include_dotblogsubdomain: true,
-		quantity: 4,
+		quantity: 15,
 		...queryParameters,
 	};
 
-	const suggestions = useSelect(
+	const allSuggestions = useSelect(
 		select => {
 			if ( search ) {
 				return select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( search, searchOptions );
@@ -74,9 +89,29 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		[ search, queryParameters ]
 	);
 
-	const handleHasDomain = () => {
-		// eslint-disable-next-line no-console
-		console.log( 'Already has a domain.' );
+	let numberOfFreeDomains = 0;
+	let numberOfPaidDomains = 0;
+	const suggestions = allSuggestions?.filter( suggestion => {
+		if (
+			suggestion.is_free &&
+			! numberOfFreeDomains &&
+			suggestion.domain_name !== currentDomain?.domain_name
+		) {
+			numberOfFreeDomains++;
+			return suggestion;
+		}
+		if ( ! suggestion.is_free && numberOfPaidDomains < 5 ) {
+			numberOfPaidDomains++;
+			return suggestion;
+		}
+	} );
+
+	const handleDomainClick = ( suggestion: DomainSuggestion ) => {
+		if ( suggestion.is_free ) {
+			onDomainSelect( suggestion );
+		} else {
+			onDomainPurchase( suggestion );
+		}
 	};
 
 	return (
@@ -102,28 +137,30 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					{ suggestions?.length
 						? suggestions.map( suggestion => (
 								<Button
-									onClick={ () => onDomainSelect( suggestion ) }
+									onClick={ () => handleDomainClick( suggestion ) }
 									className="domain-picker__suggestion-item"
 									key={ suggestion.domain_name }
 								>
 									<span className="domain-picker__suggestion-item-name">
 										{ suggestion.domain_name }
 									</span>
-									{ suggestion.is_free ? (
-										<span className="domain-picker__suggestion-action">{ NO__( 'Select' ) }</span>
-									) : (
-										<a
-											className="domain-picker__suggestion-action"
-											href={ `http://wordpress.com/start/domain?new=${ suggestion.domain_name }` }
-											target="_blank"
-											rel="noopener noreferrer"
-										>
-											{ NO__( 'Upgrade' ) }
-										</a>
-									) }
+									<span className="domain-picker__suggestion-action">
+										{ suggestion.is_free ? (
+											<span>
+												<span className="domain-picker__price">{ NO__( 'Free' ) }</span>
+												{ NO__( 'Select' ) }
+											</span>
+										) : (
+											<span>
+												{ /* FIXME: What value do we show here? */ }
+												<span className="domain-picker__price">{ NO__( 'from €4/month' ) }</span>
+												{ NO__( 'Upgrade' ) }
+											</span>
+										) }
+									</span>
 								</Button>
 						  ) )
-						: times( searchOptions.quantity, i => (
+						: times( placeholderAmount, i => (
 								<Button className="domain-picker__suggestion-item" key={ i }>
 									<span className="domain-picker__suggestion-item-name placeholder">
 										example.wordpress.com
@@ -133,10 +170,6 @@ const DomainPicker: FunctionComponent< Props > = ( {
 									</span>
 								</Button>
 						  ) ) }
-				</PanelRow>
-
-				<PanelRow className="domain-picker__has-domain domain-picker__panel-row">
-					<Button onClick={ handleHasDomain }>{ NO__( 'I already have a domain' ) }</Button>
 				</PanelRow>
 			</PanelBody>
 		</Panel>

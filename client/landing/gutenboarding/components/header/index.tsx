@@ -26,6 +26,8 @@ const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 const Header: FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
 
+	const [ isDomainFlow, setDomainFlow ] = useState( false );
+
 	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
 	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
 
@@ -106,7 +108,7 @@ const Header: FunctionComponent = () => {
 						title: siteTitle,
 					},
 					site_creation_flow: 'gutenboarding',
-					theme: `pub/${ selectedDesign?.slug }`,
+					theme: `pub/${ selectedDesign?.slug || 'twentytwenty' }`,
 				},
 				...( bearerToken && { authToken: bearerToken } ),
 			} );
@@ -114,8 +116,18 @@ const Header: FunctionComponent = () => {
 		[ createSite, currentDomain, selectedDesign, siteTitle, siteVertical ]
 	);
 
+	const handleCreateSiteForDomains: typeof handleCreateSite = ( ...args ) => {
+		setDomainFlow( true );
+		handleCreateSite( ...args );
+	};
+
 	const handleSignup = () => {
 		setShowSignupDialog( true );
+	};
+
+	const handleSignupForDomains = () => {
+		setShowSignupDialog( true );
+		setDomainFlow( true );
 	};
 
 	useEffect( () => {
@@ -126,10 +138,13 @@ const Header: FunctionComponent = () => {
 
 	useEffect( () => {
 		if ( newSite ) {
-			resetOnboardStore();
-			window.location.href = `/block-editor/page/${ newSite.blogid }/home?is-gutenboarding`;
+			! isDomainFlow && resetOnboardStore();
+			const location = isDomainFlow
+				? `/checkout/${ newSite.blogid }/personal?redirect_to=%2Fgutenboarding%2Fdesign`
+				: `/block-editor/page/${ newSite.blogid }/home?is-gutenboarding`;
+			window.location.href = location;
 		}
-	}, [ newSite, resetOnboardStore ] );
+	}, [ isDomainFlow, newSite, resetOnboardStore ] );
 
 	return (
 		<div
@@ -148,7 +163,13 @@ const Header: FunctionComponent = () => {
 							className="gutenboarding__header-domain-picker-button"
 							defaultQuery={ siteTitle }
 							disabled={ ! currentDomain }
+							currentDomain={ currentDomain }
 							onDomainSelect={ setDomain }
+							onDomainPurchase={ () =>
+								currentUser
+									? handleCreateSiteForDomains( currentUser.username )
+									: handleSignupForDomains()
+							}
 							queryParameters={ { vertical: siteVertical?.id } }
 						>
 							{ siteTitleElement }

@@ -8,10 +8,10 @@ import { assign, difference, get, includes, isEmpty, pick } from 'lodash';
  */
 import { isGSuiteOrExtraLicenseProductSlug } from 'lib/gsuite';
 import {
-	JETPACK_BACKUP_PRODUCTS,
-	JETPACK_PRODUCTS_LIST,
 	getJetpackProductsDisplayNames,
 	getJetpackProductsTaglines,
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_PRODUCTS_LIST,
 } from './constants';
 import { PRODUCTS_LIST } from './products-list';
 import {

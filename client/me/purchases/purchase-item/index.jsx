@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { CompactCard } from '@automattic/components';
+import { CompactCard, ProductIcon } from '@automattic/components';
 import {
 	getDisplayName,
 	isExpired,
@@ -33,12 +33,11 @@ import {
 	isConciergeSession,
 } from 'lib/products-values';
 import Notice from 'components/notice';
-import PlanIcon from 'components/plans/plan-icon';
 import Gridicon from 'components/gridicon';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { managePurchase } from '../paths';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { getPlanTermLabel } from 'lib/plans';
+import { getPlanClass, getPlanTermLabel } from 'lib/plans';
 
 /**
  * Style dependencies
@@ -159,10 +158,13 @@ class PurchaseItem extends Component {
 			return null;
 		}
 
-		if ( isPlan( purchase ) ) {
+		if ( isPlan( purchase ) || isJetpackBackup( purchase ) ) {
 			return (
 				<div className="purchase-item__plan-icon">
-					<PlanIcon plan={ purchase.productSlug } />
+					<ProductIcon
+						slug={ purchase.productSlug }
+						className={ getPlanClass( purchase.productSlug ) }
+					/>
 				</div>
 			);
 		}
@@ -174,8 +176,6 @@ class PurchaseItem extends Component {
 			icon = 'themes';
 		} else if ( isGoogleApps( purchase ) ) {
 			icon = 'mail';
-		} else if ( isJetpackBackup( purchase ) ) {
-			icon = 'cloud-upload';
 		}
 
 		if ( ! icon ) {

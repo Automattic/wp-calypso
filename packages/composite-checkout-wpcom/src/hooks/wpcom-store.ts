@@ -28,12 +28,17 @@ type WpcomStoreAction =
 	| { type: 'UPDATE_PHONE_NUMBER_COUNTRY'; payload: string }
 	| { type: 'UPDATE_POSTAL_CODE'; payload: string }
 	| { type: 'TOUCH_CONTACT_DETAILS' }
-	| { type: 'UPDATE_COUNTRY_CODE'; payload: string };
+	| { type: 'UPDATE_COUNTRY_CODE'; payload: string }
+	| {
+			type: 'LOAD_DOMAIN_CONTACT_DETAILS_FROM_CACHE';
+			payload: DomainContactDetails;
+	  };
 
 export function useWpcomStore(
 	registerStore,
 	onEvent,
-	managedContactDetails: ManagedContactDetails
+	managedContactDetails: ManagedContactDetails,
+	updateContactDetailsCache: ( DomainContactDetails ) => void
 ) {
 	// Only register once
 	const registerIsComplete = useRef< boolean >( false );
@@ -47,8 +52,10 @@ export function useWpcomStore(
 		action: WpcomStoreAction
 	): ManagedContactDetails {
 		switch ( action.type ) {
-			case 'UPDATE_CONTACT_DETAILS':
+			case 'UPDATE_CONTACT_DETAILS': {
+				updateContactDetailsCache( action.payload );
 				return updaters.updateDomainFields( state, action.payload );
+			}
 			case 'UPDATE_VAT_ID':
 				return updaters.updateVatId( state, action.payload );
 			case 'UPDATE_PHONE':
@@ -63,6 +70,8 @@ export function useWpcomStore(
 				return updaters.setErrorMessages( state, action.payload );
 			case 'TOUCH_CONTACT_DETAILS':
 				return updaters.touchContactFields( state );
+			case 'LOAD_DOMAIN_CONTACT_DETAILS_FROM_CACHE':
+				return updaters.populateDomainFieldsFromCache( state, action.payload );
 			default:
 				return state;
 		}
@@ -152,6 +161,10 @@ export function useWpcomStore(
 
 			updateVatId( payload: string ): WpcomStoreAction {
 				return { type: 'UPDATE_VAT_ID', payload: payload };
+			},
+
+			loadDomainContactDetailsFromCache( payload: DomainContactDetails ): WpcomStoreAction {
+				return { type: 'LOAD_DOMAIN_CONTACT_DETAILS_FROM_CACHE', payload };
 			},
 		},
 

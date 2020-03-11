@@ -445,7 +445,6 @@ export class Checkout extends React.Component {
 
 		const { cart, selectedSiteSlug, previousRoute } = this.props;
 
-		// For a user purchasing a qualifying plan, show either a plan upgrade upsell or concierge upsell.
 		// If the user has upgraded a plan from seeing our upsell (we find this by checking the previous route is /offer-plan-upgrade),
 		// then skip this section so that we do not show further upsells.
 		if (
@@ -455,10 +454,6 @@ export class Checkout extends React.Component {
 			( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) ) &&
 			! previousRoute.includes( `/checkout/${ selectedSiteSlug }/offer-plan-upgrade` )
 		) {
-			if ( hasPersonalPlan( cart ) ) {
-				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ pendingOrReceiptId }`;
-			}
-
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
 

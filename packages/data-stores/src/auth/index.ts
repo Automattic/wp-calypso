@@ -9,21 +9,20 @@ import { registerStore } from '@wordpress/data';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import { publicActions } from './actions';
-import { createControls } from './controls';
+import { createControls, ControlsConfig } from './controls';
 import * as selectors from './selectors';
 import { DispatchFromMap, SelectFromMap } from '../mapped-types';
-import { WpcomClientCredentials } from '../shared-types';
 
 export * from './types';
 export { State };
 
 let isRegistered = false;
-export function register( clientCreds: WpcomClientCredentials ): typeof STORE_KEY {
+export function register( config: ControlsConfig ): typeof STORE_KEY {
 	if ( ! isRegistered ) {
 		isRegistered = true;
 		registerStore< State >( STORE_KEY, {
 			actions: publicActions,
-			controls: createControls( clientCreds ) as any,
+			controls: createControls( config ) as any,
 			reducer,
 			selectors,
 		} );

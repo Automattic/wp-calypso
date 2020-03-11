@@ -8,7 +8,7 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import { emptyFilter } from 'state/activity-log/reducer';
-import { getBackupAttemptsForDate, getDailyBackupDeltas } from './utils';
+import { getBackupAttemptsForDate, getDailyBackupDeltas, getEventsInDailyBackup } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
 import { requestActivityLogs } from 'state/data-getters';
@@ -32,17 +32,19 @@ class BackupsPage extends Component {
 	dateChange = selectedDateString => this.setState( { selectedDateString } );
 
 	hasRealtimeBackups = () =>
+		this.props.sitePurchases &&
 		!! this.props.sitePurchases.filter(
 			purchase => 'jetpack_backup_realtime' === purchase.productSlug
 		).length;
 
 	render() {
-		const { allowRestore, logs, siteId, siteSlug } = this.props;
+		const { allowRestore, logs, moment, siteId, siteSlug } = this.props;
 		const { selectedDateString } = this.state;
 
 		const hasRealtimeBackups = this.hasRealtimeBackups();
 		const backupAttempts = getBackupAttemptsForDate( logs, selectedDateString );
 		const deltas = getDailyBackupDeltas( logs, selectedDateString );
+		const realtimeEvents = getEventsInDailyBackup( logs, selectedDateString );
 
 		return (
 			<div>
@@ -59,8 +61,16 @@ class BackupsPage extends Component {
 					backupAttempts={ backupAttempts }
 					siteSlug={ siteSlug }
 				/>
-				<BackupDelta deltas={ deltas } backupAttempts={ backupAttempts } />
-				{ hasRealtimeBackups && <div>Real time backup points here</div> }
+				<BackupDelta
+					{ ...{
+						deltas,
+						backupAttempts,
+						hasRealtimeBackups,
+						realtimeEvents,
+						allowRestore,
+						moment,
+					} }
+				/>
 			</div>
 		);
 	}
