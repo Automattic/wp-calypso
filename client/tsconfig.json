@@ -8,7 +8,8 @@
 		"baseUrl": ".",
 		"rootDir": ".",
 		"tsBuildInfoFile": "../.tsc-cache/client",
-		"noEmit": true,
+		"noEmit": false,
+		"emitDeclarationOnly": true,
 		"composite": true,
 		"typeRoots": [ "../packages/calypso-build/typings", "../node_modules/@types" ]
 	},
