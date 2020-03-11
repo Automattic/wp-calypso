@@ -10,10 +10,8 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import QuerySitePlans from 'components/data/query-site-plans';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import isEligibleForFreeToPaidUpsell from 'state/selectors/is-eligible-for-free-to-paid-upsell';
-import { isJetpackSite } from 'state/sites/selectors';
 import getSites from 'state/selectors/get-sites';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import getPrimarySiteSlug from 'state/selectors/get-primary-site-slug';
@@ -73,8 +71,6 @@ function mapStateToProps( state ) {
 		siteSlug,
 		isEligibleForFreeToPaidUpsellNudge:
 			siteCount === 1 && // available when a user owns one site only
-			! isJetpackSite( state, siteId ) && // not for Jetpack sites
-			! isDomainOnlySite( state, siteId ) && // not for domain only sites
 			isEligibleForFreeToPaidUpsell( state, siteId ) &&
 			// This nudge only shows up to US EN users.
 			isEnglish &&
