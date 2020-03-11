@@ -10,7 +10,6 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import QuerySitePlans from 'components/data/query-site-plans';
-import SidebarBanner from 'my-sites/current-site/sidebar-banner';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import isEligibleForFreeToPaidUpsell from 'state/selectors/is-eligible-for-free-to-paid-upsell';
@@ -20,35 +19,21 @@ import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import getPrimarySiteSlug from 'state/selectors/get-primary-site-slug';
 import { clickUpgradeNudge } from 'state/marketing/actions';
 import UpsellNudge from 'blocks/upsell-nudge';
-import { abtest } from 'lib/abtest';
 
 const debug = debugFactory( 'calypso:reader:sidebar-nudges' );
 
 function renderFreeToPaidPlanNudge( { siteId, siteSlug, translate }, dispatch ) {
-	if ( abtest( 'sidebarUpsellNudgeUnification' ) === 'variantShowUnifiedUpsells' ) {
-		return (
-			<UpsellNudge
-				event={ 'free-to-paid-sidebar-reader' }
-				forceHref={ true }
-				callToAction={ translate( 'Upgrade' ) }
-				compact
-				href={ '/plans/' + siteSlug }
-				title={ translate( 'Free domain with a plan' ) }
-				onClick={ () => dispatch( clickUpgradeNudge( siteId ) ) }
-				tracksClickName={ 'calypso_upgrade_nudge_cta_click' }
-				tracksImpressionName={ 'calypso_upgrade_nudge_impression' }
-			/>
-		);
-	}
-
 	return (
-		<SidebarBanner
-			ctaName={ 'free-to-paid-sidebar-reader' }
-			ctaText={ translate( 'Upgrade' ) }
+		<UpsellNudge
+			event={ 'free-to-paid-sidebar-reader' }
+			forceHref={ true }
+			callToAction={ translate( 'Upgrade' ) }
+			compact
 			href={ '/plans/' + siteSlug }
-			icon="info-outline"
-			text={ translate( 'Free domain with a plan' ) }
+			title={ translate( 'Free domain with a plan' ) }
 			onClick={ () => dispatch( clickUpgradeNudge( siteId ) ) }
+			tracksClickName={ 'calypso_upgrade_nudge_cta_click' }
+			tracksImpressionName={ 'calypso_upgrade_nudge_impression' }
 		/>
 	);
 }
