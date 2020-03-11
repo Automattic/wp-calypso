@@ -12,11 +12,18 @@ import wpcom from 'lib/wp';
 const debug = debugFactory( 'calypso:my-sites:media-library:proxied-image' );
 const { Blob } = globalThis; // The linter complains if I don't do this...?
 
+type RenderedComponentProps = {
+	src: string;
+	[ key: string ]: any;
+};
+export type RenderedComponent = string | React.ComponentType< RenderedComponentProps >;
+
 interface Props {
 	query: string;
 	filePath: string;
 	siteSlug: string;
 	placeholder: React.ReactNode | null;
+	component: RenderedComponent;
 
 	[ key: string ]: any;
 }
@@ -42,6 +49,7 @@ const ProxiedImage: React.FC< Props > = function ProxiedImage( {
 	filePath,
 	query,
 	placeholder,
+	component: Component,
 	...rest
 } ) {
 	const [ imageObjectUrl, setImageObjectUrl ] = useState< string >( '' );
@@ -85,7 +93,7 @@ const ProxiedImage: React.FC< Props > = function ProxiedImage( {
 	}
 
 	/* eslint-disable-next-line jsx-a11y/alt-text */
-	return <img src={ imageObjectUrl } { ...rest } />;
+	return <Component src={ imageObjectUrl } { ...rest } />;
 };
 
 ProxiedImage.defaultProps = {
