@@ -125,6 +125,10 @@ export interface ResponseCartProduct {
 	included_domain_purchase_amount: number;
 }
 
+interface RequestCartOptions {
+	is_update?: boolean;
+}
+
 export const prepareRequestCartProduct: ( ResponseCartProduct ) => RequestCartProduct = ( {
 	product_slug,
 	meta,
@@ -139,14 +143,10 @@ export const prepareRequestCartProduct: ( ResponseCartProduct ) => RequestCartPr
 	} as RequestCartProduct;
 };
 
-export const prepareRequestCart: ( ResponseCart ) => RequestCart = ( {
-	products,
-	currency,
-	locale,
-	coupon,
-	is_coupon_applied,
-	tax,
-}: ResponseCart ) => {
+export const prepareRequestCart: ( ResponseCart, RequestCartOptions ) => RequestCart = (
+	{ products, currency, locale, coupon, is_coupon_applied, tax }: ResponseCart,
+	{ is_update = false }: RequestCartOptions
+) => {
 	return {
 		products: products.map( prepareRequestCartProduct ),
 		currency,
@@ -155,6 +155,7 @@ export const prepareRequestCart: ( ResponseCart ) => RequestCart = ( {
 		is_coupon_applied,
 		temporary: false,
 		tax,
+		is_update,
 		extra: '', // TODO: fix this
 	} as RequestCart;
 };
