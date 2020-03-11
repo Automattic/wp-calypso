@@ -493,13 +493,13 @@ class SectionMigrate extends Component {
 			case 'backing-up':
 				progressItemText = (
 					<span>
-						Backed up from <span className="migrate__domain">{ sourceSiteDomain }</span>
+						Backup of <span className="migrate__domain">{ sourceSiteDomain } completed</span>
 					</span>
 				);
 				if ( migrationStatus === 'backing-up' ) {
 					progressItemText = (
 						<span>
-							Backing up from <span className="migrate__domain">{ sourceSiteDomain }</span>
+							Backing up <span className="migrate__domain">{ sourceSiteDomain }</span>
 						</span>
 					);
 				}
