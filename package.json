@@ -39,7 +39,7 @@
 		]
 	},
 	"dependencies": {
-		"@automattic/calypso-analytics": "1.0.0-alpha.0",
+		"@automattic/calypso-analytics": "1.0.0-alpha.1",
 		"@automattic/calypso-polyfills": "1.0.0",
 		"@automattic/components": "1.0.0-alpha.1",
 		"@automattic/composite-checkout": "1.0.0",
