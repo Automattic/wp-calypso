@@ -116,6 +116,8 @@ export function createControls( config: ControlsConfig ) {
 			};
 		},
 		SEND_LOGIN_EMAIL: async ( { email }: SendLoginEmailAction ) => {
+			const { client_id, client_secret } = config;
+
 			return await wpcomRequest( {
 				path: `/auth/send-login-email`,
 				apiVersion: '1.2',
@@ -127,7 +129,8 @@ export function createControls( config: ControlsConfig ) {
 					lang_id: 1,
 					locale: 'en',
 
-					...clientCreds,
+					client_id,
+					client_secret,
 				},
 			} );
 		},
