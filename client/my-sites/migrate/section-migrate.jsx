@@ -320,9 +320,11 @@ class SectionMigrate extends Component {
 	};
 
 	renderLoading() {
+		const { translate } = this.props;
+
 		return (
 			<CompactCard>
-				<span className="migrate__placeholder">Loading...</span>
+				<span className="migrate__placeholder">{ translate( 'Loading…' ) }</span>
 			</CompactCard>
 		);
 	}
@@ -484,7 +486,7 @@ class SectionMigrate extends Component {
 
 	renderProgressItem( progressState ) {
 		const { migrationStatus } = this.state;
-		const { sourceSite, targetSite } = this.props;
+		const { sourceSite, targetSite, translate } = this.props;
 		const sourceSiteDomain = get( sourceSite, 'domain' );
 		const targetSiteDomain = get( targetSite, 'domain' );
 
@@ -493,13 +495,27 @@ class SectionMigrate extends Component {
 			case 'backing-up':
 				progressItemText = (
 					<span>
-						Backup of <span className="migrate__domain">{ sourceSiteDomain } completed</span>
+						{ translate( 'Backup of {{sp}}%(sourceSiteDomain)s{{/sp}} completed', {
+							args: {
+								sourceSiteDomain,
+							},
+							components: {
+								sp: <span className="migrate__domain" />,
+							},
+						} ) }
 					</span>
 				);
 				if ( migrationStatus === 'backing-up' ) {
 					progressItemText = (
 						<span>
-							Backing up <span className="migrate__domain">{ sourceSiteDomain }</span>
+							{ translate( 'Backing up {{sp}}%(sourceSiteDomain)s{{/sp}}', {
+								args: {
+									sourceSiteDomain,
+								},
+								components: {
+									sp: <span className="migrate__domain" />,
+								},
+							} ) }
 						</span>
 					);
 				}
@@ -507,7 +523,14 @@ class SectionMigrate extends Component {
 			case 'restoring':
 				progressItemText = (
 					<span>
-						Restoring to <span className="migrate__domain">{ targetSiteDomain }</span>
+						{ translate( 'Restoring to {{sp}}%(targetSiteDomain)s{{/sp}}', {
+							args: {
+								targetSiteDomain,
+							},
+							components: {
+								sp: <span className="migrate__domain" />,
+							},
+						} ) }
 					</span>
 				);
 				break;
