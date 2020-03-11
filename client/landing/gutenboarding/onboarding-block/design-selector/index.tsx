@@ -14,7 +14,7 @@ import designs from './available-designs.json';
 
 import './style.scss';
 interface Props {
-	showPageSelector?: true
+	showPageSelector?: true;
 }
 
 const DesignSelector: FunctionComponent< Props > = () => {

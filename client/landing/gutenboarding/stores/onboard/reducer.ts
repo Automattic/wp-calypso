@@ -7,7 +7,7 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { SiteVertical } from './types';
+import { SiteVertical, Design } from './types';
 import { OnboardAction } from './actions';
 
 const domain: Reducer<
@@ -23,10 +23,7 @@ const domain: Reducer<
 	return state;
 };
 
-const selectedDesign: Reducer<
-	import('@automattic/data-stores').VerticalsTemplates.Template | undefined,
-	OnboardAction
-> = ( state, action ) => {
+const selectedDesign: Reducer< Design | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_SELECTED_DESIGN' ) {
 		return action.selectedDesign;
 	}
