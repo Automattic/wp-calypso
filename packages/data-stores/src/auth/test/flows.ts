@@ -28,7 +28,7 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 
 let store: ReturnType< typeof register >;
 beforeAll( () => {
-	store = register( { client_id: '', client_secret: '' } );
+	store = register( { client_id: '', client_secret: '', loadCookiesAfterLogin: false } );
 } );
 
 beforeEach( () => {

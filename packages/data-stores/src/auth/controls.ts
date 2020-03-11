@@ -3,7 +3,7 @@
  */
 import { createRegistryControl } from '@wordpress/data';
 import { stringify } from 'qs';
-import wpcomRequest, { requestAllBlogsAccess } from 'wpcom-proxy-request';
+import wpcomRequest, { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
 
 /**
  * Internal dependencies
@@ -60,7 +60,16 @@ const makeRemoteLoginRequest = ( loginLink: string, requestTimeout = 25000 ) => 
 	);
 };
 
-export function createControls( clientCreds: WpcomClientCredentials ) {
+export interface ControlsConfig extends WpcomClientCredentials {
+	/**
+	 * True if user needs immediate access to cookies after logging in.
+	 * See README.md for details.
+	 * Default: true
+	 */
+	loadCookiesAfterLogin?: boolean;
+}
+
+export function createControls( config: ControlsConfig ) {
 	requestAllBlogsAccess().catch( () => {
 		throw new Error( 'Could not get all blog access.' );
 	} );
@@ -77,6 +86,8 @@ export function createControls( clientCreds: WpcomClientCredentials ) {
 			} );
 		},
 		FETCH_WP_LOGIN: async ( { action, params }: FetchWpLoginAction ) => {
+			const { client_id, client_secret, loadCookiesAfterLogin = true } = config;
+
 			const response = await fetch(
 				// TODO Wrap this in `localizeUrl` from lib/i18n-utils
 				'https://wordpress.com/wp-login.php?action=' + encodeURIComponent( action ),
@@ -89,11 +100,16 @@ export function createControls( clientCreds: WpcomClientCredentials ) {
 					},
 					body: stringify( {
 						remember_me: true,
-						...clientCreds,
+						client_id,
+						client_secret,
 						...params,
 					} ),
 				}
 			);
+
+			if ( loadCookiesAfterLogin && response.ok ) {
+				reloadProxy();
+			}
 
 			return {
 				ok: response.ok,
@@ -101,6 +117,8 @@ export function createControls( clientCreds: WpcomClientCredentials ) {
 			};
 		},
 		SEND_LOGIN_EMAIL: async ( { email }: SendLoginEmailAction ) => {
+			const { client_id, client_secret } = config;
+
 			return await wpcomRequest( {
 				path: `/auth/send-login-email`,
 				apiVersion: '1.2',
@@ -112,7 +130,8 @@ export function createControls( clientCreds: WpcomClientCredentials ) {
 					lang_id: 1,
 					locale: 'en',
 
-					...clientCreds,
+					client_id,
+					client_secret,
 				},
 			} );
 		},
