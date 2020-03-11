@@ -43,7 +43,6 @@ const LoginForm = ( { onRequestClose, onOpenSignup, onLogin }: Props ) => {
 
 	const handleLogin = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
-
 		// todo: record analytics.
 		if ( loginFlowState === 'ENTER_USERNAME_OR_EMAIL' ) {
 			submitUsernameOrEmail( usernameOrEmailVal );
@@ -53,6 +52,7 @@ const LoginForm = ( { onRequestClose, onOpenSignup, onLogin }: Props ) => {
 	};
 
 	const openSignup = ( e: React.MouseEvent< HTMLElement > ) => {
+		reset();
 		onOpenSignup();
 		e.preventDefault();
 	};
@@ -73,6 +73,7 @@ const LoginForm = ( { onRequestClose, onOpenSignup, onLogin }: Props ) => {
 			closeModal();
 			onLogin( usernameOrEmailVal );
 		}
+		// todo: handle users with passwordless login.
 	}, [ loginFlowState ] );
 
 	const tos = __experimentalCreateInterpolateElement(
@@ -84,9 +85,11 @@ const LoginForm = ( { onRequestClose, onOpenSignup, onLogin }: Props ) => {
 
 	// todo: may need to be updated as more states are handled
 	const shouldShowPasswordField = loginFlowState === 'ENTER_PASSWORD';
+
 	const changeEmailOrUsernameLinkText = includes( usernameOrEmailVal, '@' )
 		? NO__( 'Change Email Address' )
 		: NO__( 'Change Username' );
+
 	return (
 		<Modal
 			className="login-form"

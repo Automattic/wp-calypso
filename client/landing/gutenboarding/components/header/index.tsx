@@ -9,7 +9,6 @@ import { useDebounce } from 'use-debounce';
 import classnames from 'classnames';
 import { DomainSuggestions } from '@automattic/data-stores';
 import { useHistory } from 'react-router-dom';
-import { reloadProxy } from 'wpcom-proxy-request';
 
 /**
  * Internal dependencies
@@ -101,11 +100,6 @@ const Header: FunctionComponent = () => {
 
 	const handleCreateSite = useCallback(
 		( username: string, bearerToken?: string ) => {
-			// If bearer token wasn't passed, reload the proxy
-			// so that the user's logged in authentication cookie will be used
-			if ( ! bearerToken ) {
-				reloadProxy();
-			}
 			const siteUrl = currentDomain?.domain_name || siteTitle || username;
 
 			createSite( {
