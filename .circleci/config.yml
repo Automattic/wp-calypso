@@ -223,7 +223,9 @@ jobs:
       - prepare
       - run:
           name: TypeScript strict typecheck of individual subprojects
-          command: npm run tsc -- --project client/landing/gutenboarding
+          command: |
+            npm run tsc -- --project client/landing/gutenboarding &&
+            npm run tsc -- --project packages/data-stores
 
   lint-and-translate:
     <<: *defaults
