@@ -59,6 +59,7 @@ export default function CheckoutSystemDecider( {
 					redirectTo={ redirectTo }
 					feature={ selectedFeature }
 					plan={ plan }
+					cart={ cart }
 				/>
 			</StripeHookProvider>
 		);
