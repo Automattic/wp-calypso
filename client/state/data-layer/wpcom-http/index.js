@@ -46,13 +46,14 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 		return;
 	}
 
-	const { body, formData, method: rawMethod, onProgress, path, query = {} } = action;
+	const { body, formData, method: rawMethod, onProgress, options, path, query = {} } = action;
+	const { responseType } = options || {};
 
 	const method = rawMethod.toUpperCase();
 
 	const request = fetcherMap( method )(
 		...compact( [
-			{ path, formData },
+			{ path, formData, responseType },
 			{ ...query }, // wpcom mutates the query so hand it a copy
 			method === 'POST' && body,
 			( error, data, headers ) => {
@@ -69,7 +70,7 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 					return null;
 				}
 
-				return !! nextError
+				return nextError
 					? failures.forEach( handler =>
 							dispatch( extendAction( handler, failureMeta( nextError, nextHeaders ) ) )
 					  )
