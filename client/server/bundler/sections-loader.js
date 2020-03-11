@@ -7,7 +7,6 @@ const { getOptions } = require( 'loader-utils' ); // eslint-disable-line import/
  * Internal dependecies
  */
 const config = require( '../config' );
-const utils = require( './utils.js' );
 
 /*
  * This sections-loader has one responsibility: adding import statements for the section modules.
@@ -62,9 +61,7 @@ const loader = function() {
 	let { include } = options;
 
 	// Build all the sections during the build step.
-	let sections = forceRequire
-		? require( this.resourcePath )
-		: require( this.resourcePath ).filter( utils.filterSections );
+	let sections = require( this.resourcePath );
 
 	if ( include ) {
 		if ( ! Array.isArray( include ) ) {

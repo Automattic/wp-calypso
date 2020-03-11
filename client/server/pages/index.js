@@ -34,6 +34,7 @@ import sanitize from 'server/sanitize';
 import utils from 'server/bundler/utils';
 import { pathToRegExp } from 'utils';
 import sections from 'sections';
+import isSectionEnabled from 'sections-filter';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'login';
 import { serverRouter, getNormalizedPath } from 'server/isomorphic-routing';
 import {
@@ -822,7 +823,7 @@ module.exports = function() {
 
 	sections
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
-		.filter( utils.filterSections )
+		.filter( isSectionEnabled )
 		.forEach( section => {
 			section.paths.forEach( sectionPath => handleSectionPath( section, sectionPath ) );
 
