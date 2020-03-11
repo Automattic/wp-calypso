@@ -21,6 +21,40 @@ import DomainPickerButton from '../domain-picker-button';
 import { selectorDebounce } from '../../constants';
 import SignupForm from '../../components/signup-form';
 
+import wp from '../../../../lib/wp';
+const wpcom = wp.undocumented();
+
+interface Cart {
+	blog_id: number;
+	cart_key: number;
+	coupon: string;
+	coupon_discounts: unknown[];
+	coupon_discounts_integer: unknown[];
+	is_coupon_applied: boolean;
+	has_bundle_credit: boolean;
+	next_domain_is_free: boolean;
+	next_domain_condition: string;
+	products: unknown[];
+	total_cost: number;
+	currency: string;
+	total_cost_display: string;
+	total_cost_integer: number;
+	temporary: boolean;
+	tax: unknown;
+	sub_total: number;
+	sub_total_display: string;
+	sub_total_integer: number;
+	total_tax: number;
+	total_tax_display: string;
+	total_tax_integer: number;
+	credits: number;
+	credits_display: string;
+	credits_integer: number;
+	allowed_payment_methods: unknown[];
+	create_new_blog: boolean;
+	messages: Record< 'errors' | 'success', unknown >;
+}
+
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
 const Header: FunctionComponent = () => {
@@ -137,14 +171,43 @@ const Header: FunctionComponent = () => {
 	}, [ newUser, handleCreateSite ] );
 
 	useEffect( () => {
+		// TODO: Cancellable?
+		// let cancel = () => undefined;
+
 		if ( newSite ) {
-			! isDomainFlow && resetOnboardStore();
-			const location = isDomainFlow
-				? `/checkout/${ newSite.blogid }/personal?redirect_to=%2Fgutenboarding%2Fdesign`
-				: `/block-editor/page/${ newSite.blogid }/home?is-gutenboarding`;
-			window.location.href = location;
+			if ( isDomainFlow ) {
+				// I'd rather not make my own product, but this works.
+				// lib/cart-items helpers did not perform well.
+				const domainProduct = {
+					meta: domain?.domain_name,
+					product_id: domain?.product_id,
+					extra: {
+						privacy_available: domain?.supports_privacy,
+						privacy: domain?.supports_privacy,
+						source: 'gutenboarding',
+					},
+				};
+
+				const go = async () => {
+					const cart: Cart = await wpcom.getCart( newSite.site_slug );
+					await wpcom.setCart( newSite.blogid, {
+						...cart,
+						products: [ ...cart.products, domainProduct ],
+					} );
+
+					resetOnboardStore();
+					window.location.href = `/checkout/${ newSite.site_slug }?redirect_to=%2Fgutenboarding%2Fdesign`;
+				};
+				go();
+				return;
+			}
+			resetOnboardStore();
+			window.location.href = `/block-editor/page/${ newSite.site_slug }/home?is-gutenboarding`;
 		}
-	}, [ isDomainFlow, newSite, resetOnboardStore ] );
+
+		// TODO: Cancellable?
+		// return cancel;
+	}, [ domain, isDomainFlow, newSite, resetOnboardStore ] );
 
 	return (
 		<div
