@@ -71,14 +71,12 @@ export function getErrorFromHTTPError( httpError ) {
 			return {
 				code,
 				message: (
-					<div>
-						<p>
-							{ translate(
-								'Your account has been blocked as a security precaution. To continue, you must {{a}}reset your password{{/a}}.',
-								{ components: { a: <a href={ url } rel="external" /> } }
-							) }
-						</p>
-					</div>
+					<p>
+						{ translate(
+							'Your account has been blocked as a security precaution. To continue, you must {{a}}reset your password{{/a}}.',
+							{ components: { a: <a href={ url } rel="external" /> } }
+						) }
+					</p>
 				),
 				field,
 			};
