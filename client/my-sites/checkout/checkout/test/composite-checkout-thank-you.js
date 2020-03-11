@@ -396,7 +396,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
 
-	it( 'redirects to premium upgrade nudge if concierge and jetpack are not in the cart, personal is in the cart, and the previous route is not the nudge', () => {
+	it.skip( 'redirects to premium upgrade nudge if concierge and jetpack are not in the cart, personal is in the cart, and the previous route is not the nudge', () => {
 		isEnabled.mockImplementation( flag => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
