@@ -48,9 +48,7 @@ class JetpackCloudSidebar extends Component {
 		const { selectedSiteSlug, translate } = this.props;
 
 		return (
-			<Sidebar
-				className="is-jetpack-cloud-sidebar" // eslint-disable-line wpcalypso/jsx-classname-namespace
-			>
+			<Sidebar>
 				<CurrentSite />
 				<SidebarRegion>
 					<SidebarMenu>
