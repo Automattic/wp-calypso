@@ -13,7 +13,7 @@ import isPrivateSite from 'state/selectors/is-private-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
-import ProxiedImage from './proxied-image';
+import ProxiedImage, { RenderedComponent } from './proxied-image';
 
 const parseMediaURL = ( url: string, siteSlug: string ) => {
 	const { pathname, search: query, hostname } = getUrlParts( url );
@@ -41,6 +41,7 @@ const parseMediaURL = ( url: string, siteSlug: string ) => {
 interface Props {
 	src: string;
 
+	component: RenderedComponent;
 	filePath: string;
 	query: string;
 	siteSlug: string;
@@ -58,6 +59,7 @@ const MediaImage: React.FC< Props > = function MediaImage( {
 	useProxy = false,
 	placeholder = null,
 	dispatch,
+	component: Component,
 	...rest
 } ) {
 	if ( useProxy ) {
@@ -66,6 +68,7 @@ const MediaImage: React.FC< Props > = function MediaImage( {
 				siteSlug={ siteSlug }
 				filePath={ filePath }
 				query={ query }
+				component={ Component }
 				placeholder={ placeholder }
 				{ ...rest }
 			/>
@@ -77,11 +80,12 @@ const MediaImage: React.FC< Props > = function MediaImage( {
 	}
 
 	/* eslint-disable-next-line jsx-a11y/alt-text */
-	return <img src={ src } { ...rest } />;
+	return <Component src={ src } { ...rest } />;
 };
 
 MediaImage.defaultProps = {
 	placeholder: null,
+	component: 'img',
 };
 
 export default connect( ( state, { src }: Pick< Props, 'src' > ) => {
