@@ -2,11 +2,10 @@
  * External dependencies
  */
 import React, { useState, useEffect } from 'react';
-import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
+import { Button, ExternalLink, TextControl, Modal, Notice, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
-import Gridicon from 'components/gridicon';
 import { includes } from 'lodash';
 
 /**
@@ -104,7 +103,7 @@ const LoginForm = ( { onRequestClose, onOpenSignup, onLogin }: Props ) => {
 						isLink={ true }
 						onClick={ changeEmailAddress }
 					>
-						<Gridicon icon="arrow-left" size={ 18 } />
+						<Icon icon="arrow-left-alt" size={ 18 } />
 						{ changeEmailOrUsernameLinkText }
 					</Button>
 				) }
