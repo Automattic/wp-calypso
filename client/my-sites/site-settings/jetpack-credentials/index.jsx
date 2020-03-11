@@ -28,7 +28,7 @@ import './style.scss';
 class JetpackCredentials extends Component {
 	isSectionHighlighted() {
 		if ( ! window.location.hash ) {
-			return null;
+			return false;
 		}
 
 		const hash = window.location.hash.substring( 1 );
