@@ -437,6 +437,9 @@ function onprogress( data ) {
 	const xhr = requests[ data.callbackId ];
 	if ( xhr ) {
 		const prog = new ProgressEvent( 'progress', data );
+		if ( data.chunk ) {
+			prog.chunk = data.chunk;
+		}
 		const target = data.upload ? xhr.upload : xhr;
 		target.dispatchEvent( prog );
 	}

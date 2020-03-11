@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 /**
  * Internal dependencies
@@ -54,6 +54,7 @@ const ProxiedImage: React.FC< Props > = function ProxiedImage( {
 } ) {
 	const [ imageObjectUrl, setImageObjectUrl ] = useState< string >( '' );
 	const requestId = `media-library-proxied-image-${ siteSlug }${ filePath }${ query }`;
+	const refContainer = useRef(null);
 
 	useEffect( () => {
 		if ( ! imageObjectUrl ) {
@@ -63,20 +64,123 @@ const ProxiedImage: React.FC< Props > = function ProxiedImage( {
 				debug( 'set image from cache', { url } );
 			} else {
 				debug( 'requesting image from API', { requestId, imageObjectUrl } );
-				wpcom
+				let streamingFinished = false;
+				const xhr = wpcom
 					.undocumented()
-					.getAtomicSiteMediaViaProxyRetry(
+					.getAtomicSiteMediaViaProxy(
 						siteSlug,
 						filePath,
 						query,
 						( err: Error, data: Blob | null ) => {
-							if ( data instanceof Blob ) {
+							streamingFinished = true;
+							if ( ! filePath.includes("mp4") && data instanceof Blob ) {
 								cacheResponse( requestId, data );
 								setImageObjectUrl( URL.createObjectURL( data ) );
 								debug( 'got image from API', { requestId, imageObjectUrl, data } );
 							}
 						}
 					);
+
+				if(filePath.includes("mp4"))
+				{
+					const chunks = [];
+					xhr.addEventListener( "progress", function(e) {
+						chunks.push(e.chunk);
+					}, false );
+
+					const getNextChunk = function() {
+						if(chunks.length) {
+							return chunks.shift();
+						}
+						// return new Promise(function(resolve) {
+						// 	const onProgress = function ( e ) {
+						// 		xhr.removeEventListener( "progress", onProgress );
+						// 		resolve( chunks.shift() );
+						// 	};
+						// 	xhr.addEventListener( "progress", onProgress, false );
+						// });
+					};
+
+					function onSourceOpen(mediaSource, e) {
+						console.log(e);
+
+						const videoTag = refContainer.current;
+						if (mediaSource.sourceBuffers.length > 0) {
+							console.log('no source buffers');
+							return;
+						}
+
+						console.log('adding source buffer ', mediaSource.readyState);
+						let mimeCodec = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
+						let sourceBuffer = mediaSource.addSourceBuffer(mimeCodec);
+
+						videoTag.addEventListener('progress', onProgress.bind(videoTag, mediaSource));
+
+						const initSegment = getNextChunk();
+						if (initSegment == null) {
+							// Error fetching the initialization segment. Signal end of stream with an error.
+							mediaSource.endOfStream("network");
+							console.log('init segment bye bye, end of stream!');
+							return;
+						}
+
+						// Append the initialization segment.
+						var firstAppendHandler = function(e) {
+							const sourceBuffer = e.target;
+							sourceBuffer.removeEventListener('updateend', firstAppendHandler);
+
+							// Append some initial media data.
+							appendNextMediaSegment(mediaSource);
+						};
+						sourceBuffer.addEventListener('updateend', firstAppendHandler);
+						sourceBuffer.appendBuffer(initSegment);
+					}
+
+					function appendNextMediaSegment(mediaSource) {
+						if (mediaSource.readyState === "closed") {
+							console.log('media source ready state is closed!');
+							return;
+						}
+
+						// if (streamingFinished) {
+							// Error fetching the next media segment.
+							// mediaSource.endOfStream("network");
+							// return;
+						// }
+
+						const segment = getNextChunk();
+
+						// If we have run out of stream data, then signal end of stream.
+						if (!segment && streamingFinished) {
+							console.log('streaming finished!');
+							//mediaSource.endOfStream();
+							return;
+						}
+
+						// Make sure the previous append is not still pending.
+						if (mediaSource.sourceBuffers[0].updating) {
+							console.log('updating');
+							return;
+						}
+
+						// NOTE: If mediaSource.readyState == “ended”, this appendBuffer() call will
+						// cause mediaSource.readyState to transition to "open". The web application
+						// should be prepared to handle multiple “sourceopen” events.
+						console.log('append next media segment', segment);
+						mediaSource.sourceBuffers[0].appendBuffer(segment);
+						appendNextMediaSegment(mediaSource);
+					}
+
+					function onProgress( mediaSource, e ) {
+						appendNextMediaSegment( mediaSource );
+					}
+
+					setTimeout(function() {
+						let mediaSource = new MediaSource();
+						mediaSource.addEventListener('sourceopen', e => onSourceOpen(mediaSource, e));
+						setImageObjectUrl( URL.createObjectURL( mediaSource ) );
+					}, 5000);
+				}
 			}
 		}
 
@@ -93,7 +197,7 @@ const ProxiedImage: React.FC< Props > = function ProxiedImage( {
 	}
 
 	/* eslint-disable-next-line jsx-a11y/alt-text */
-	return <Component src={ imageObjectUrl } { ...rest } />;
+	return <Component src={ imageObjectUrl } { ...rest } ref={refContainer} autoplay />;
 };
 
 ProxiedImage.defaultProps = {
