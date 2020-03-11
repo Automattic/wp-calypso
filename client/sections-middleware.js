@@ -14,7 +14,7 @@ import * as LoadingError from 'layout/error';
 import * as controller from './controller/index.web';
 import { pathToRegExp } from './utils';
 import { receiveSections, load } from './sections-helper';
-import isSectionEnabled from './section-filter';
+import isSectionEnabled from './sections-filter';
 import { addReducerToStore } from 'state/add-reducer';
 
 import sections from './sections';
