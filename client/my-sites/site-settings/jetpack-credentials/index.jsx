@@ -35,6 +35,7 @@ class JetpackCredentials extends Component {
 		if ( 'credentials' === hash ) {
 			return true;
 		}
+		return false;
 	}
 
 	render() {
