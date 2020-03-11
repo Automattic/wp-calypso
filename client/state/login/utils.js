@@ -66,6 +66,20 @@ export function getErrorFromHTTPError( httpError ) {
 	if ( code ) {
 		if ( code in errorFields ) {
 			field = errorFields[ code ];
+		} else if ( code === 'compromisable_account' ) {
+			const url = localizeUrl( 'https://wordpress.com/wp-login.php?action=lostpassword' );
+			return {
+				code,
+				message: (
+					<p>
+						{ translate(
+							'Your account has been blocked as a security precaution. To continue, you must {{a}}reset your password{{/a}}.',
+							{ components: { a: <a href={ url } rel="external" /> } }
+						) }
+					</p>
+				),
+				field,
+			};
 		} else if ( code === 'admin_login_attempt' ) {
 			const url = localizeUrl( 'https://wordpress.com/wp-login.php?action=lostpassword' );
 
@@ -150,7 +164,7 @@ export const isRegularAccount = authAccountType => authAccountType === 'regular'
 export const isPasswordlessAccount = authAccountType => authAccountType === 'passwordless';
 
 export async function postLoginRequest( action, bodyObj ) {
-	const response = await fetch(
+	const response = await window.fetch(
 		localizeUrl( `https://wordpress.com/wp-login.php?action=${ action }` ),
 		{
 			method: 'POST',
