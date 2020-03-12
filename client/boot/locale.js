@@ -24,12 +24,14 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		reduxStore.dispatch( setLocale( currentUser.localeSlug, currentUser.localeVariant ) );
 	}
 
+	const loadedTranslationChunks = {};
 	const fetchTranslationChunk = translationChunkPath => {
 		return window
 			.fetch( translationChunkPath )
 			.then( response => response.json() )
 			.then( data => {
 				i18n.addTranslations( data );
+				loadedTranslationChunks[ translationChunkPath ] = true;
 				return;
 			} )
 			.catch( error => error );
@@ -44,7 +46,7 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 			translatedChunks = data;
 
 			translationChunksQueue.forEach( ( { id, path } ) => {
-				if ( translatedChunks.includes( id ) ) {
+				if ( translatedChunks.includes( id ) && ! loadedTranslationChunks[ path ] ) {
 					fetchTranslationChunk( path );
 				}
 			} );
@@ -64,7 +66,10 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 				return;
 			}
 
-			if ( translatedChunks.includes( chunkId ) ) {
+			if (
+				translatedChunks.includes( chunkId ) &&
+				! loadedTranslationChunks[ translationChunkPath ]
+			) {
 				promises.push( fetchTranslationChunk( translationChunkPath ) );
 			}
 		} );
