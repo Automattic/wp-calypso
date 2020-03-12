@@ -115,6 +115,14 @@ cp -R $CODE/src/components $TARGET/
 find $TARGET/blocks/ -name \*.js -exec sed -i '' "s/, 'newspack-blocks' )/, 'full-site-editing' )/g" "{}" \;
 sed -i '' "s/'newspack-blocks',/'full-site-editing',/g" $TARGET/class-newspack-blocks.php
 
+if [ "$MODE" = "npm" ] ; then
+	# Finds and prints the version of newspack from package.json
+	NEW_VERSION=`sed -En 's|.*"newspack-blocks": "github:Automattic/newspack-blocks#?(.*)".*|\1|p' package.json`
+	# Replaces the line containing the version definition with the new version.
+	sed -i '' -e "s|define( 'NEWSPACK_BLOCKS__VERSION', '\(.*\)' );|define( 'NEWSPACK_BLOCKS__VERSION', '$NEW_VERSION' );|" $ENTRY
+	echo "Updated Newspack version '$NEW_VERSION'";
+fi
+
 echo Sync done.
 
 if [ "$MODE" = "release" ]
