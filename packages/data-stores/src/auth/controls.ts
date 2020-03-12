@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { stringify } from 'qs';
-import wpcomRequest, { reloadProxy as triggerReloadProxy } from 'wpcom-proxy-request';
+import { reloadProxy as triggerReloadProxy } from 'wpcom-proxy-request';
 
 /**
  * Creates a promise that will be rejected after a given timeout
@@ -62,14 +62,6 @@ export const remoteLoginUser = ( loginLinks: string[] ) =>
 		loginLinks,
 	} as const );
 
-export const sendLoginEmail = ( email: string, client_id: string, client_secret: string ) =>
-	( {
-		type: 'SEND_LOGIN_EMAIL',
-		email,
-		client_id,
-		client_secret,
-	} as const );
-
 export const reloadProxy = () =>
 	( {
 		type: 'RELOAD_PROXY',
@@ -98,27 +90,6 @@ export const controls = {
 			ok: response.ok,
 			body: await response.json(),
 		};
-	},
-	SEND_LOGIN_EMAIL: async ( {
-		email,
-		client_id,
-		client_secret,
-	}: ReturnType< typeof sendLoginEmail > ) => {
-		return await wpcomRequest( {
-			path: `/auth/send-login-email`,
-			apiVersion: '1.2',
-			method: 'post',
-			body: {
-				email,
-
-				// TODO Send the correct locale
-				lang_id: 1,
-				locale: 'en',
-
-				client_id,
-				client_secret,
-			},
-		} );
 	},
 	REMOTE_LOGIN_USER: ( { loginLinks }: ReturnType< typeof remoteLoginUser > ) =>
 		Promise.all(

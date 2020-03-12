@@ -16,7 +16,7 @@ import {
 } from './types';
 import { STORE_KEY } from './constants';
 import { wpcomRequest } from '../wpcom-request-controls';
-import { fetchWpLogin, reloadProxy, remoteLoginUser, sendLoginEmail } from './controls';
+import { fetchWpLogin, reloadProxy, remoteLoginUser } from './controls';
 import { WpcomClientCredentials } from '../shared-types';
 
 export interface ActionsConfig extends WpcomClientCredentials {
@@ -82,11 +82,22 @@ export function createActions( {
 
 			if ( authOptions.passwordless ) {
 				try {
-					const emailResponse: SendLoginEmailSuccessResponse = yield sendLoginEmail(
-						usernameOrEmail,
-						client_id,
-						client_secret
-					);
+					const emailResponse = yield wpcomRequest( {
+						path: `/auth/send-login-email`,
+						apiVersion: '1.2',
+						method: 'post',
+						body: {
+							email: usernameOrEmail,
+
+							// TODO Send the correct locale
+							lang_id: 1,
+							locale: 'en',
+
+							client_id,
+							client_secret,
+						},
+					} );
+
 					yield receiveSendLoginEmail( emailResponse );
 				} catch ( err ) {
 					yield receiveSendLoginEmailFailed( err );
