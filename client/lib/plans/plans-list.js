@@ -666,7 +666,7 @@ export const PLANS_LIST = {
 		group: constants.GROUP_JETPACK,
 		type: constants.TYPE_FREE,
 		getTitle: () => i18n.translate( 'Free' ),
-		getAudience: () => i18n.translate( 'Best for students' ),
+		getAudience: () => i18n.translate( 'Best for Students' ),
 		getProductId: () => 2002,
 		getStoreSlug: () => constants.PLAN_JETPACK_FREE,
 		getTagline: feature => {
@@ -714,7 +714,7 @@ export const PLANS_LIST = {
 		type: constants.TYPE_PREMIUM,
 		term: constants.TERM_ANNUALLY,
 		getTitle: () => i18n.translate( 'Premium' ),
-		getAudience: () => i18n.translate( 'Best for small businesses' ),
+		getAudience: () => i18n.translate( 'Best for Small Businesses' ),
 		getSubtitle: () => i18n.translate( 'Protection, speed, and revenue.' ),
 		getProductId: () => 2000,
 		getStoreSlug: () => constants.PLAN_JETPACK_PREMIUM,
@@ -731,8 +731,16 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'premium',
 		getDescription: () =>
 			i18n.translate(
-				'Comprehensive, automated scanning for security vulnerabilities, ' +
-					'fast video hosting, and marketing automation.'
+				'{{strong}}Best for Small Businesses:{{/strong}}' +
+					'Comprehensive, automated scanning for security vulnerabilities, ' +
+					'fast video hosting, and marketing automation.',
+				{
+					components: {
+						strong: (
+							<strong className="plans__features plan-features__targeted-description-heading" />
+						),
+					},
+				}
 			),
 		getTagline: () =>
 			i18n.translate(
@@ -779,7 +787,7 @@ export const PLANS_LIST = {
 		type: constants.TYPE_PREMIUM,
 		term: constants.TERM_MONTHLY,
 		getTitle: () => i18n.translate( 'Premium' ),
-		getAudience: () => i18n.translate( 'Best for small businesses' ),
+		getAudience: () => i18n.translate( 'Best for Small Businesses' ),
 		getProductId: () => 2003,
 		getStoreSlug: () => constants.PLAN_JETPACK_PREMIUM_MONTHLY,
 		getPathSlug: () => 'premium-monthly',
@@ -794,8 +802,16 @@ export const PLANS_LIST = {
 			),
 		getDescription: () =>
 			i18n.translate(
-				'Comprehensive, automated scanning for security vulnerabilities, ' +
-					'fast video hosting, and marketing automation.'
+				'{{strong}}Best for Small Businesses:{{/strong}}' +
+					'Comprehensive, automated scanning for security vulnerabilities, ' +
+					'fast video hosting, and marketing automation.',
+				{
+					components: {
+						strong: (
+							<strong className="plans__features plan-features__targeted-description-heading" />
+						),
+					},
+				}
 			),
 		getTagline: () =>
 			i18n.translate(
@@ -842,7 +858,7 @@ export const PLANS_LIST = {
 		type: constants.TYPE_PERSONAL,
 		term: constants.TERM_ANNUALLY,
 		getTitle: () => i18n.translate( 'Personal' ),
-		getAudience: () => i18n.translate( 'Best for hobbyists' ),
+		getAudience: () => i18n.translate( 'Best for Hobbyists' ),
 		getProductId: () => 2005,
 		getStoreSlug: () => constants.PLAN_JETPACK_PERSONAL,
 		availableFor: plan =>
@@ -850,8 +866,16 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'jetpack-personal',
 		getDescription: () =>
 			i18n.translate(
-				'Security essentials for your WordPress site, including ' +
-					'automated backups and priority support.'
+				'{{strong}}Best for Hobbyists:{{/strong}}' +
+					'Security essentials for your WordPress site, including ' +
+					'automated backups and priority support.',
+				{
+					components: {
+						strong: (
+							<strong className="plans__features plan-features__targeted-description-heading" />
+						),
+					},
+				}
 			),
 		getTagline: () =>
 			i18n.translate(
@@ -888,15 +912,23 @@ export const PLANS_LIST = {
 		type: constants.TYPE_PERSONAL,
 		term: constants.TERM_MONTHLY,
 		getTitle: () => i18n.translate( 'Personal' ),
-		getAudience: () => i18n.translate( 'Best for hobbyists' ),
+		getAudience: () => i18n.translate( 'Best for Hobbyists' ),
 		getStoreSlug: () => constants.PLAN_JETPACK_PERSONAL_MONTHLY,
 		getProductId: () => 2006,
 		getPathSlug: () => 'jetpack-personal-monthly',
 		availableFor: plan => includes( [ constants.PLAN_JETPACK_FREE ], plan ),
 		getDescription: () =>
 			i18n.translate(
-				'Security essentials for your WordPress site, including ' +
-					'automated backups and priority support.'
+				'{{strong}}Best for Hobbyists:{{/strong}}' +
+					'Security essentials for your WordPress site, including ' +
+					'automated backups and priority support.',
+				{
+					components: {
+						strong: (
+							<strong className="plans__features plan-features__targeted-description-heading" />
+						),
+					},
+				}
 			),
 		getTagline: () =>
 			i18n.translate(
@@ -933,7 +965,7 @@ export const PLANS_LIST = {
 		type: constants.TYPE_BUSINESS,
 		term: constants.TERM_ANNUALLY,
 		getTitle: () => i18n.translate( 'Professional' ),
-		getAudience: () => i18n.translate( 'Best for organizations' ),
+		getAudience: () => i18n.translate( 'Best for Organizations' ),
 		getStoreSlug: () => constants.PLAN_JETPACK_BUSINESS,
 		getProductId: () => 2001,
 		availableFor: plan =>
@@ -951,8 +983,16 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'professional',
 		getDescription: () =>
 			i18n.translate(
-				'The most powerful WordPress sites: real-time backups, ' +
-					'enhanced search, and unlimited premium themes.'
+				'{{strong}}Best for Organizations:{{/strong}}' +
+					'The most powerful WordPress sites: real-time backups, ' +
+					'enhanced search, and unlimited premium themes.',
+				{
+					components: {
+						strong: (
+							<strong className="plans__features plan-features__targeted-description-heading" />
+						),
+					},
+				}
 			),
 		getTagline: () =>
 			i18n.translate( 'You have the full suite of security and performance tools.' ),
@@ -1001,7 +1041,7 @@ export const PLANS_LIST = {
 		type: constants.TYPE_BUSINESS,
 		term: constants.TERM_MONTHLY,
 		getTitle: () => i18n.translate( 'Professional' ),
-		getAudience: () => i18n.translate( 'Best for organizations' ),
+		getAudience: () => i18n.translate( 'Best for Organizations' ),
 		getSubtitle: () => i18n.translate( 'Ultimate security and traffic tools.' ),
 		getProductId: () => 2004,
 		getStoreSlug: () => constants.PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -1019,8 +1059,16 @@ export const PLANS_LIST = {
 			),
 		getDescription: () =>
 			i18n.translate(
-				'The most powerful WordPress sites: real-time backups, ' +
-					'enhanced search, and unlimited premium themes.'
+				'{{strong}}Best for Organizations:{{/strong}}' +
+					'The most powerful WordPress sites: real-time backups, ' +
+					'enhanced search, and unlimited premium themes.',
+				{
+					components: {
+						strong: (
+							<strong className="plans__features plan-features__targeted-description-heading" />
+						),
+					},
+				}
 			),
 		getTagline: () =>
 			i18n.translate( 'You have the full suite of security and performance tools.' ),
