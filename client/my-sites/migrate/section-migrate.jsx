@@ -257,7 +257,7 @@ class SectionMigrate extends Component {
 	};
 
 	updateFromAPI = () => {
-		const { targetSiteId, targetSiteSlug } = this.props;
+		const { targetSiteId, targetSite } = this.props;
 		wpcom
 			.undocumented()
 			.getMigrationStatus( targetSiteId )
@@ -304,7 +304,7 @@ class SectionMigrate extends Component {
 					/**
 					 * Request the site information until the site upgrades to Atomic
 					 */
-					if ( targetSiteSlug.indexOf( 'wpcomstaging' ) === -1 ) {
+					if ( ! get( targetSite, 'options.is_wpcom_atomic', false ) ) {
 						this.props.requestSite( targetSiteId );
 					}
 
