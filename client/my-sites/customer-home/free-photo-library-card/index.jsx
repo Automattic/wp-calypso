@@ -20,7 +20,6 @@ import './style.scss';
 /**
  * Image dependencies
  */
-import freePhotoLibraryThumbnail from 'assets/images/customer-home/free-photo-library-thumbnail.png';
 import freePhotoLibraryVideoPrompt from 'assets/images/customer-home/free-photo-library-video-prompt.png';
 
 const FreePhotoLibraryCard = () => {
@@ -32,18 +31,17 @@ const FreePhotoLibraryCard = () => {
 	return (
 		<Fragment>
 			<Dialog additionalClassNames="free-photo-library-card__dialog" isVisible={ showDialog }>
-				<video
-					className="free-photo-library-card__demonstration-video"
-					controls
-					muted
-					autoPlay
-					poster={ freePhotoLibraryThumbnail }
-				>
-					<source
-						src="https://wpcom.files.wordpress.com/2020/02/free-photo-library-demonstration.mp4"
-						type="video/mp4"
+				<div className="free-photo-library-card__demonstration-video">
+					<iframe
+						title="Photo Library"
+						width="100%"
+						height="100%"
+						className="free-photo-library-card__video-frame"
+						src="https://videopress.com/embed/k5Td6RTn"
+						frameBorder="0"
+						allowFullScreen={ true }
 					/>
-				</video>
+				</div>
 				<div className="free-photo-library-card__dialog-close">
 					<Button onClick={ toggleDialog }>{ translate( 'Close' ) }</Button>
 				</div>
