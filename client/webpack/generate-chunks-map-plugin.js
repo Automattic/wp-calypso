@@ -23,10 +23,11 @@ class GenerateChunksMapPlugin {
 			const chunksMap = chunks.reduce( ( map, chunk ) => {
 				const files = chunk.files || [];
 				const name = files.find( file => /\.js$/.test( file ) ) || files[ 0 ];
-
-				map[ name ] = [ ...chunk.modulesIterable ]
+				const modules = [ ...chunk.modulesIterable ]
 					.map( ( { userRequest } ) => userRequest && path.relative( '.', userRequest ) )
 					.filter( module => !! module );
+
+				map[ name ] = modules;
 
 				return map;
 			}, {} );
