@@ -33,14 +33,14 @@ const FreePhotoLibraryCard = () => {
 			<Dialog additionalClassNames="free-photo-library-card__dialog" isVisible={ showDialog }>
 				<div className="free-photo-library-card__demonstration-video">
 					<iframe
-						title="Photo Library"
-						width="100%"
-						height="100%"
-						className="free-photo-library-card__video-frame"
-						src="https://videopress.com/embed/k5Td6RTn"
+						title={ translate( 'Get Started: Photo Library' ) }
+						width="960"
+						height="540"
+						src="https://videopress.com/embed/VdmkTSTw?autoPlay=1"
 						frameBorder="0"
 						allowFullScreen={ true }
-					/>
+					></iframe>
+					<script src="https://videopress.com/videopress-iframe.js"></script>
 				</div>
 				<div className="free-photo-library-card__dialog-close">
 					<Button onClick={ toggleDialog }>{ translate( 'Close' ) }</Button>
