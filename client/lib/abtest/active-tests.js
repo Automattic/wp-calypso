@@ -116,7 +116,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	planStepCopyUpdates: {
-		datestamp: '20200227',
+		datestamp: '20200312',
 		variations: {
 			variantCopyUpdates: 50,
 			control: 50,
