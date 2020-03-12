@@ -90,6 +90,7 @@ const CheckoutSummaryTotal = styled.span`
 
 const DomainURL = styled.div`
 	margin-top: -12px;
+	word-break: break-word;
 `;
 
 const SummaryContent = styled.div`
