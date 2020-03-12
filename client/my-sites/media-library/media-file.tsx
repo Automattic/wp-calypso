@@ -7,35 +7,12 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getUrlParts } from 'lib/url/url-parts';
 import isPrivateSite from 'state/selectors/is-private-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
 import ProxiedImage, { RenderedComponent } from './proxied-image';
-
-const parseMediaURL = ( url: string, siteSlug: string ) => {
-	const { pathname, search: query, hostname } = getUrlParts( url );
-	let filePath = pathname;
-	let isRelativeToSiteRoot = true;
-	if (
-		hostname !== siteSlug &&
-		( hostname.endsWith( 'wp.com' ) || hostname.endsWith( 'wordpress.com' ) )
-	) {
-		const [ first, ...rest ] = filePath.substr( 1 ).split( '/' );
-		filePath = '/' + rest.join( '/' );
-
-		if ( first !== siteSlug ) {
-			isRelativeToSiteRoot = false;
-		}
-	}
-
-	return {
-		query,
-		filePath,
-		isRelativeToSiteRoot,
-	};
-};
+import { mediaURLToProxyConfig } from 'lib/media/utils';
 
 export interface MediaFileProps {
 	src: string;
@@ -90,7 +67,7 @@ export default connect( ( state, { src }: Pick< MediaFileProps, 'src' > ) => {
 	const siteSlug = getSelectedSiteSlug( state ) as string;
 	const isAtomic = !! isSiteAutomatedTransfer( state, siteId as number );
 	const isPrivate = !! isPrivateSite( state, siteId );
-	const { filePath, query, isRelativeToSiteRoot } = parseMediaURL( src, siteSlug );
+	const { filePath, query, isRelativeToSiteRoot } = mediaURLToProxyConfig( src, siteSlug );
 	const useProxy = ( isAtomic && isPrivate && filePath && isRelativeToSiteRoot ) as boolean;
 
 	return {
