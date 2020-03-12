@@ -57,6 +57,8 @@ import {
 import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
+import isSiteUsingCoreSiteEditor from 'state/selectors/is-site-using-core-site-editor';
+import getSiteEditorUrl from 'state/selectors/get-site-editor-url';
 import {
 	SIDEBAR_SECTION_SITE,
 	SIDEBAR_SECTION_DESIGN,
@@ -265,7 +267,14 @@ export class MySitesSidebar extends Component {
 	}
 
 	design() {
-		const { path, site, translate, canUserEditThemeOptions, showCustomizerLink } = this.props,
+		const {
+				path,
+				site,
+				translate,
+				canUserEditThemeOptions,
+				showCustomizerLink,
+				showSiteEditor,
+			} = this.props,
 			jetpackEnabled = isEnabled( 'manage/themes-jetpack' );
 		let themesLink;
 
@@ -292,6 +301,14 @@ export class MySitesSidebar extends Component {
 						preloadSectionName="customize"
 						forceInternalLink
 						expandSection={ this.expandDesignSection }
+					/>
+				) }
+				{ showSiteEditor && (
+					<SidebarItem
+						label={ translate( 'Site Editor (beta)' ) }
+						link={ this.props.siteEditorUrl }
+						preloadSectionName="site editor"
+						forceInternalLink
 					/>
 				) }
 				<SidebarItem
@@ -778,7 +795,12 @@ function mapStateToProps( state ) {
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		isMigrationInProgress: !! isSiteMigrationInProgress( state, selectedSiteId ),
 		isVip: isVipSite( state, selectedSiteId ),
-		showCustomizerLink: ! isSiteUsingFullSiteEditing( state, selectedSiteId ),
+		showCustomizerLink: ! (
+			isSiteUsingFullSiteEditing( state, selectedSiteId ) ||
+			isSiteUsingCoreSiteEditor( state, selectedSiteId )
+		),
+		showSiteEditor: isSiteUsingCoreSiteEditor( state, selectedSiteId ),
+		siteEditorUrl: getSiteEditorUrl( state, selectedSiteId ),
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
