@@ -858,7 +858,7 @@ export const PLANS_LIST = {
 		type: constants.TYPE_PERSONAL,
 		term: constants.TERM_ANNUALLY,
 		getTitle: () => i18n.translate( 'Personal' ),
-		getAudience: () => i18n.translate( 'Best for Hobbyists' ),
+		getAudience: () => i18n.translate( 'Best for Personal Use' ),
 		getProductId: () => 2005,
 		getStoreSlug: () => constants.PLAN_JETPACK_PERSONAL,
 		availableFor: plan =>
@@ -866,7 +866,7 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'jetpack-personal',
 		getDescription: () =>
 			i18n.translate(
-				'{{strong}}Best for Hobbyists:{{/strong}}' +
+				'{{strong}}Best for Personal Use:{{/strong}}' +
 					'Security essentials for your WordPress site, including ' +
 					'automated backups and priority support.',
 				{
@@ -912,14 +912,14 @@ export const PLANS_LIST = {
 		type: constants.TYPE_PERSONAL,
 		term: constants.TERM_MONTHLY,
 		getTitle: () => i18n.translate( 'Personal' ),
-		getAudience: () => i18n.translate( 'Best for Hobbyists' ),
+		getAudience: () => i18n.translate( 'Best for Personal Use' ),
 		getStoreSlug: () => constants.PLAN_JETPACK_PERSONAL_MONTHLY,
 		getProductId: () => 2006,
 		getPathSlug: () => 'jetpack-personal-monthly',
 		availableFor: plan => includes( [ constants.PLAN_JETPACK_FREE ], plan ),
 		getDescription: () =>
 			i18n.translate(
-				'{{strong}}Best for Hobbyists:{{/strong}}' +
+				'{{strong}}Best for Personal Use:{{/strong}}' +
 					'Security essentials for your WordPress site, including ' +
 					'automated backups and priority support.',
 				{
