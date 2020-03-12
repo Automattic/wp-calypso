@@ -9,10 +9,18 @@
 /**
  * Internal dependencies
  */
-import { submitPassword, submitUsernameOrEmail } from '../actions';
+import { createActions } from '../actions';
 import { STORE_KEY } from '../constants';
 
+const client_id = 'magic_client_id';
+const client_secret = 'magic_client_secret';
+
 describe( 'submitUsernameOrEmail', () => {
+	const { submitUsernameOrEmail } = createActions( {
+		client_id,
+		client_secret,
+	} );
+
 	it( 'requests auth options for a username', () => {
 		const username = 'user1';
 		const generator = submitUsernameOrEmail( username );
@@ -53,7 +61,13 @@ describe( 'submitUsernameOrEmail', () => {
 } );
 
 describe( 'submitPassword', () => {
-	it( 'logins in to remote services on successful login', async () => {
+	const { submitPassword } = createActions( {
+		client_id,
+		client_secret,
+		loadCookiesAfterLogin: false,
+	} );
+
+	it( 'logs in to remote services on successful login', async () => {
 		const password = 'passw0rd';
 		const generator = submitPassword( password );
 
@@ -61,15 +75,17 @@ describe( 'submitPassword', () => {
 			type: 'CLEAR_ERRORS',
 		} );
 
-		expect( generator.next().value ).toEqual( {
-			type: 'SELECT_USERNAME_OR_EMAIL',
+		// Implementation detail; needs to select username from store
+		expect( generator.next().value ).toMatchObject( {
+			type: 'SELECT',
+			storeKey: STORE_KEY,
 		} );
 
 		const username = 'user1';
 		expect( generator.next( username ).value ).toEqual( {
 			type: 'FETCH_WP_LOGIN',
 			action: 'login-endpoint',
-			params: { username, password },
+			params: { username, password, client_id, client_secret },
 		} );
 
 		const token_links = [ 'https://gravator.com?login-url', 'https://jetpack.com?login-url' ];
@@ -100,7 +116,7 @@ describe( 'submitPassword', () => {
 		expect( generator.next( username ).value ).toEqual( {
 			type: 'FETCH_WP_LOGIN',
 			action: 'login-endpoint',
-			params: { username, password },
+			params: { username, password, client_id, client_secret },
 		} );
 
 		const errorMessage = 'Error!!1';

@@ -2,14 +2,7 @@
  * External dependencies
  */
 import { stringify } from 'qs';
-import wpcomRequest, { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
-
-/**
- * Internal dependencies
- */
-import { FetchWpLoginAction, SendLoginEmailAction, RemoteLoginUserAction } from './actions';
-import { WpcomClientCredentials } from '../shared-types';
-import { createControls as createCommonControls } from '../wpcom-request-controls';
+import wpcomRequest, { reloadProxy as triggerReloadProxy } from 'wpcom-proxy-request';
 
 /**
  * Creates a promise that will be rejected after a given timeout
@@ -54,78 +47,87 @@ const makeRemoteLoginRequest = ( loginLink: string, requestTimeout = 25000 ) => 
 	);
 };
 
-export interface ControlsConfig extends WpcomClientCredentials {
-	/**
-	 * True if user needs immediate access to cookies after logging in.
-	 * See README.md for details.
-	 * Default: true
-	 */
-	loadCookiesAfterLogin?: boolean;
-}
+type WpLoginAction = 'login-endpoint' | 'two-step-authentication-endpoint';
 
-export function createControls( config: ControlsConfig ) {
-	requestAllBlogsAccess().catch( () => {
-		throw new Error( 'Could not get all blog access.' );
-	} );
+export const fetchWpLogin = ( action: WpLoginAction, params: object ) =>
+	( {
+		type: 'FETCH_WP_LOGIN',
+		action,
+		params,
+	} as const );
 
-	const { client_id, client_secret } = config;
+export const remoteLoginUser = ( loginLinks: string[] ) =>
+	( {
+		type: 'REMOTE_LOGIN_USER',
+		loginLinks,
+	} as const );
 
-	return {
-		...createCommonControls( { client_id, client_secret } ),
-		FETCH_WP_LOGIN: async ( { action, params }: FetchWpLoginAction ) => {
-			const { loadCookiesAfterLogin = true } = config;
+export const sendLoginEmail = ( email: string, client_id: string, client_secret: string ) =>
+	( {
+		type: 'SEND_LOGIN_EMAIL',
+		email,
+		client_id,
+		client_secret,
+	} as const );
 
-			const response = await fetch(
-				// TODO Wrap this in `localizeUrl` from lib/i18n-utils
-				'https://wordpress.com/wp-login.php?action=' + encodeURIComponent( action ),
-				{
-					method: 'POST',
-					credentials: 'include',
-					headers: {
-						Accept: 'application/json',
-						'Content-Type': 'application/x-www-form-urlencoded',
-					},
-					body: stringify( {
-						remember_me: true,
-						client_id,
-						client_secret,
-						...params,
-					} ),
-				}
-			);
+export const reloadProxy = () =>
+	( {
+		type: 'RELOAD_PROXY',
+	} as const );
 
-			if ( loadCookiesAfterLogin && response.ok ) {
-				reloadProxy();
-			}
-
-			return {
-				ok: response.ok,
-				body: await response.json(),
-			};
-		},
-		SEND_LOGIN_EMAIL: async ( { email }: SendLoginEmailAction ) => {
-			return await wpcomRequest( {
-				path: `/auth/send-login-email`,
-				apiVersion: '1.2',
-				method: 'post',
-				body: {
-					email,
-
-					// TODO Send the correct locale
-					lang_id: 1,
-					locale: 'en',
-
-					client_id,
-					client_secret,
+export const controls = {
+	FETCH_WP_LOGIN: async ( { action, params }: ReturnType< typeof fetchWpLogin > ) => {
+		const response = await fetch(
+			// TODO Wrap this in `localizeUrl` from lib/i18n-utils
+			'https://wordpress.com/wp-login.php?action=' + encodeURIComponent( action ),
+			{
+				method: 'POST',
+				credentials: 'include',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/x-www-form-urlencoded',
 				},
-			} );
-		},
-		REMOTE_LOGIN_USER: ( { loginLinks }: RemoteLoginUserAction ) =>
-			Promise.all(
-				loginLinks
-					.map( loginLink => makeRemoteLoginRequest( loginLink ) )
-					// make sure we continue even when a remote login fails
-					.map( promise => promise.catch( () => undefined ) )
-			),
-	};
-}
+				body: stringify( {
+					remember_me: true,
+					...params,
+				} ),
+			}
+		);
+
+		return {
+			ok: response.ok,
+			body: await response.json(),
+		};
+	},
+	SEND_LOGIN_EMAIL: async ( {
+		email,
+		client_id,
+		client_secret,
+	}: ReturnType< typeof sendLoginEmail > ) => {
+		return await wpcomRequest( {
+			path: `/auth/send-login-email`,
+			apiVersion: '1.2',
+			method: 'post',
+			body: {
+				email,
+
+				// TODO Send the correct locale
+				lang_id: 1,
+				locale: 'en',
+
+				client_id,
+				client_secret,
+			},
+		} );
+	},
+	REMOTE_LOGIN_USER: ( { loginLinks }: ReturnType< typeof remoteLoginUser > ) =>
+		Promise.all(
+			loginLinks
+				.map( loginLink => makeRemoteLoginRequest( loginLink ) )
+				// make sure we continue even when a remote login fails
+				.map( promise => promise.catch( () => undefined ) )
+		),
+	RELOAD_PROXY: () => {
+		triggerReloadProxy();
+	},
+};
