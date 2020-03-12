@@ -188,6 +188,7 @@ class Layout extends Component {
 				{ ( 'jetpack-connect' !== this.props.sectionName ||
 					this.props.currentRoute === '/jetpack/new' ) &&
 					this.props.currentRoute !== '/log-in/jetpack' &&
+					'devdocs' !== this.props.sectionName &&
 					this.props.currentRoute !== '/me/account/closed' &&
 					'happychat' !== this.props.sectionName && (
 						<AsyncLoad require="blocks/inline-help" placeholder={ null } />
