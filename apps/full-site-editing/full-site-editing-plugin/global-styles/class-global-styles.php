@@ -103,6 +103,7 @@ class Global_Styles {
 		'Open Sans',
 		'Playfair Display',
 		'Poppins',
+		'Raleway',
 		'Roboto',
 		'Roboto Slab',
 		'Rubik',
