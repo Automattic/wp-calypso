@@ -28,7 +28,7 @@ const EditorMediaModalDetailPreviewMediaFile: React.FC< Props & LocalizeProps > 
 	if ( tooLargeToDisplay ) {
 		// User may or may not be authenticated against their remote site - we need to go through the login page
 		// to trigger SSO when available
-		const fileUrl = `${ site.URL }/wp-login.php?${ item.URL }`;
+		const fileUrl = `${ site.URL }/wp-login.php?redirect_to=${ item.URL }`;
 		return (
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<div className="editor-media-modal-detail__preview is-too-large">
