@@ -280,7 +280,7 @@
 		"ts-loader": "6.2.1",
 		"typescript": "3.8.3",
 		"webpack": "4.42.0",
-		"webpack-bundle-analyzer": "3.6.0",
+		"webpack-bundle-analyzer": "3.6.1",
 		"webpack-cli": "3.3.10",
 		"webpack-dev-middleware": "3.7.2",
 		"webpack-dev-server": "3.10.3",
