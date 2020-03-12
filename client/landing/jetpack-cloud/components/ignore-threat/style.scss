@@ -1,0 +1,35 @@
+.dialog__content {
+	max-width: 676px;
+
+	.ignore-threat {
+		&__header {
+			padding-bottom: 16px;
+			color: var( --color-threat-found );
+			border-bottom: 1px solid #dcdcde;
+		}
+
+		&__threat-title {
+			font-weight: bold;
+			margin: 8px 0;
+		}
+
+		&__threat-description {
+			color: var( --color-text-subtle );
+			font-size: 14px;
+		}
+
+		&__warning {
+			display: flex;
+		}
+
+		&__warning-icon {
+			fill: var( --color-threat-found );
+			margin-right: 8px;
+		}
+
+		&__warning-message {
+			color: var( --color-text-subtle );
+			font-size: 14px;
+		}
+	}
+}

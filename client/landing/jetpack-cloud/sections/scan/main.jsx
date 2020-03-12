@@ -15,10 +15,15 @@ import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
 import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
 import ThreatItem from '../../components/threat-item';
 import { isEnabled } from 'config';
+import IgnoreThreatDialog from '../../components/ignore-threat';
 
 import './style.scss';
 
 class ScanPage extends Component {
+	state = {
+		showIgnoreThreatDialog: true,
+	};
+
 	renderScanOkay() {
 		const { siteSlug, moment, lastScanTimestamp } = this.props;
 
@@ -105,10 +110,34 @@ class ScanPage extends Component {
 		}
 	}
 
+	openDialog = () => {
+		this.setState( {
+			showIgnoreThreatDialog: true,
+		} );
+	};
+
+	closeDialog = () => {
+		// console.log( 'closing the dialog' );
+		this.setState( {
+			showIgnoreThreatDialog: false,
+		} );
+	};
+
 	render() {
 		return (
 			<div className="scan__main">
-				<div className="scan__content">{ this.renderScanState() }</div>
+				<div className="scan__content">
+					{ this.renderScanState() }
+					<button primary onClick={ this.openDialog }>
+						Open Dialog
+					</button>
+					<IgnoreThreatDialog
+						showDialog={ this.state.showIgnoreThreatDialog }
+						onCloseDialog={ this.closeDialog }
+						threatTitle="Unexpected core file: sx--a4bp.php"
+						threatDescription="Unexpected file sx--a4fb.php contains malicious code and is not part of WordPress"
+					/>
+				</div>
 				<StatsFooter
 					header="Scan Summary"
 					stats={ [
