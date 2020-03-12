@@ -72,7 +72,6 @@ class ScanHistoryItem extends Component {
 				key={ entry.id }
 			>
 				<ThreatDescription
-					className="scan-history-item__details"
 					action={ entry.action }
 					details={ entry.description.details }
 					fix={ entry.description.fix }
