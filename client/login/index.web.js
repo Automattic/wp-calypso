@@ -70,7 +70,7 @@ export default router => {
 				`/log-in/:flow(social-connect|private-site)/${ lang }`,
 				`/log-in/:socialService(google|apple)/callback/${ lang }`,
 				`/log-in/:isJetpack(jetpack)/${ lang }`,
-				`/log-in/:isJetpack(jetpack)/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
+				`/log-in/:isJetpack(jetpack)/:twoFactorAuthType(webauthn|authenticator|backup|sms|push)/${ lang }`,
 				`/log-in/${ lang }`,
 			],
 			redirectJetpack,
