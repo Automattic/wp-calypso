@@ -611,7 +611,9 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	}
 
 	.plan-features .plan-price.is-discounted {
+		display: block;
 		margin-right: 0;
+		font-size: 24px;
 	}
 
 	.plan-pill {
@@ -676,10 +678,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 		.plan-features__graphic {
 			display: none;
-		}
-
-		.plan-features__pricing {
-			padding-top: 16px;
 		}
 	}
 }
