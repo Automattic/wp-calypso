@@ -1,5 +1,12 @@
+/**
+ * External dependecies
+ */
+const { getOptions } = require( 'loader-utils' ); // eslint-disable-line import/no-extraneous-dependencies
+
+/**
+ * Internal dependecies
+ */
 const config = require( '../config' );
-const { getOptions } = require( 'loader-utils' );
 
 /*
  * This sections-loader has one responsibility: adding import statements for the section modules.
@@ -52,6 +59,7 @@ const loader = function() {
 	const options = getOptions( this ) || {};
 	const { forceRequire, onlyIsomorphic } = options;
 	let { include } = options;
+
 	let sections = require( this.resourcePath );
 
 	if ( include ) {
