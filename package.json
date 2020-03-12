@@ -91,7 +91,7 @@
 		"build-client-stats": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=true PROGRESS=true npm run build-client-evergreen",
 		"build-packages": "npx lerna run prepare --stream",
 		"build-packages:watch": "chokidar \"./packages/**\" -i \"./packages/*/dist/**\" -i \"**.css\" -i \"**.d.ts\" --debounce 1000 --throttle 10000 -c \"npm run build-packages\"",
-		"chunks-map": "CHUNKS_MAP=true npm run build-client",
+		"build-chunks-map": "CHUNKS_MAP=true npm run build-client",
 		"clean": "npm run clean:packages && npm run clean:build && npm run clean:public",
 		"clean:build": "npx rimraf build client/server/bundler/*.json client/server/devdocs/search-index.js",
 		"clean:packages": "npx lerna run clean --stream",

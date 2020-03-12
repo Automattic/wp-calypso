@@ -298,7 +298,7 @@ jobs:
       - run:
           name: Generate chunks map
           command: |
-            npm run chunks-map
+            npm run build-chunks-map
             mv chunks-map.json "$CIRCLE_ARTIFACTS/chunks-map"
       - store-artifacts-and-test-results
 
