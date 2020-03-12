@@ -165,6 +165,10 @@
 .manage-purchase__description {
 	color: var( --color-text-subtle );
 	display: block;
+
+	.plan-features__targeted-description-heading {
+		display: inline;
+	}
 }
 
 .manage-purchase__settings-link {
