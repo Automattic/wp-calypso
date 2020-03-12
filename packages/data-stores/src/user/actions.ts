@@ -7,8 +7,8 @@ import {
 	NewUserErrorResponse,
 	NewUserSuccessResponse,
 } from './types';
-
-import { wpcomRequest, WpcomClientCredentials } from '../wpcom-request-controls';
+import { wpcomRequest } from '../wpcom-request-controls';
+import { WpcomClientCredentials } from '../shared-types';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
 	const receiveCurrentUser = ( currentUser: CurrentUser ) => ( {
