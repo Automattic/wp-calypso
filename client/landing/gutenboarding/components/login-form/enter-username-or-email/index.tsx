@@ -15,7 +15,7 @@ interface Props {
 }
 
 const EnterUsernameOrEmailForm = ( props: Props ) => {
-	const { __: NO__, _x: NO_x } = useI18n();
+	const { __: NO__ } = useI18n();
 
 	const [ usernameOrEmailVal, setUsernameOrEmailVal ] = useState( '' );
 	const { submitUsernameOrEmail } = useDispatch( AUTH_STORE );
@@ -32,10 +32,6 @@ const EnterUsernameOrEmailForm = ( props: Props ) => {
 				value={ usernameOrEmailVal }
 				// todo loading state
 				onChange={ setUsernameOrEmailVal }
-				placeholder={ NO_x(
-					'E.g., yourname@email.com',
-					"An example of a person's email, use something appropriate for the locale"
-				) }
 				required
 			/>
 			{ props.errorNotifications }

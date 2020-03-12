@@ -146,9 +146,6 @@ const Header: FunctionComponent = () => {
 	};
 
 	useEffect( () => {
-		// make login a part of this
-		// we need to add something to determine if the user exists I think, and then just redirect.
-		// the user was logged in with cookies so it's fine
 		if ( newUser && newUser.bearerToken && newUser.username ) {
 			handleCreateSite( newUser.username, newUser.bearerToken );
 		}
