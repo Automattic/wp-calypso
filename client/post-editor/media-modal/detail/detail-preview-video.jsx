@@ -11,6 +11,7 @@ import classNames from 'classnames';
  */
 import { isVideoPressItem, url } from 'lib/media/utils';
 import EditorMediaModalDetailItemVideoPress from './detail-preview-videopress';
+import MediaFile from 'my-sites/media-library/media-file';
 
 export default class extends React.Component {
 	static displayName = 'EditorMediaModalDetailPreviewVideo';
@@ -27,6 +28,8 @@ export default class extends React.Component {
 
 		const classes = classNames( this.props.className, 'is-video' );
 
-		return <video src={ url( this.props.item ) } controls className={ classes } />;
+		return (
+			<MediaFile component="video" src={ url( this.props.item ) } controls className={ classes } />
+		);
 	}
 }

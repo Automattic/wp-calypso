@@ -618,3 +618,38 @@ export function validateMediaItem( site, item ) {
 
 	return itemErrors;
 }
+
+/**
+ * Given a media file URL (possibly served through photon) and site slug, returns information
+ * required to correctly proxy the asset through the media proxy. Specifically, it returns
+ * an object with the following keys:
+ * - query: query string extracted from url
+ * - filePath: path of the file on remote site, even if url is photon url
+ * - isRelativeToSiteRoot: true if the file come from remote site identified by siteSlug, false otherwise
+ *
+ * @param {string} mediaUrl Media file URL.
+ * @param {string} siteSlug Slug of the site this file belongs to.
+ * @returns {object}	Dictionary
+ */
+export function mediaURLToProxyConfig( mediaUrl, siteSlug ) {
+	const { pathname, search: query, hostname } = getUrlParts( mediaUrl );
+	let filePath = pathname;
+	let isRelativeToSiteRoot = true;
+	if (
+		hostname !== siteSlug &&
+		( hostname.endsWith( 'wp.com' ) || hostname.endsWith( 'wordpress.com' ) )
+	) {
+		const [ first, ...rest ] = filePath.substr( 1 ).split( '/' );
+		filePath = '/' + rest.join( '/' );
+
+		if ( first !== siteSlug ) {
+			isRelativeToSiteRoot = false;
+		}
+	}
+
+	return {
+		query,
+		filePath,
+		isRelativeToSiteRoot,
+	};
+}

@@ -10,6 +10,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { url } from 'lib/media/utils';
+import MediaFile from 'my-sites/media-library/media-file';
 
 export default class extends React.Component {
 	static displayName = 'EditorMediaModalDetailPreviewAudio';
@@ -22,6 +23,8 @@ export default class extends React.Component {
 	render() {
 		const classes = classNames( this.props.className, 'is-audio' );
 
-		return <audio src={ url( this.props.item ) } controls className={ classes } />;
+		return (
+			<MediaFile component="audio" src={ url( this.props.item ) } controls className={ classes } />
+		);
 	}
 }
