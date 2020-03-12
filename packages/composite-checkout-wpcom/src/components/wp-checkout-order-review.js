@@ -5,6 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { useLineItems, useFormStatus } from '@automattic/composite-checkout';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -16,6 +17,7 @@ import {
 	WPOrderReviewTotal,
 	WPOrderReviewSection,
 } from './wp-order-review-line-items';
+import { isLineItemADomain } from '../hooks/has-domains';
 
 export default function WPCheckoutOrderReview( {
 	className,
@@ -30,14 +32,21 @@ export default function WPCheckoutOrderReview( {
 	responseCart,
 	CheckoutTerms,
 } ) {
+	const translate = useTranslate();
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
+	const domainRegistrationItems = items.filter( isLineItemADomain );
+	const taxItems = items.filter( item => item.type === 'tax' );
+	const couponItems = items.filter( item => item.type === 'coupon' );
+	const otherItems = items.filter(
+		item => item.type !== 'tax' && item.type !== 'coupon' && ! isLineItemADomain( item )
+	);
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
 			<WPOrderReviewSection>
 				<WPOrderReviewLineItems
-					items={ items }
+					items={ otherItems }
 					removeItem={ removeItem }
 					removeCoupon={ removeCoupon }
 					variantRequestStatus={ variantRequestStatus }
@@ -46,6 +55,49 @@ export default function WPCheckoutOrderReview( {
 					onChangePlanLength={ onChangePlanLength }
 				/>
 			</WPOrderReviewSection>
+
+			{ domainRegistrationItems.length > 0 && (
+				<WPOrderReviewSection>
+					<OrderReviewSectionTitle>{ translate( 'Domain registration' ) }</OrderReviewSectionTitle>
+					<WPOrderReviewLineItems
+						items={ domainRegistrationItems }
+						removeItem={ removeItem }
+						removeCoupon={ removeCoupon }
+						variantRequestStatus={ variantRequestStatus }
+						variantSelectOverride={ variantSelectOverride }
+						getItemVariants={ getItemVariants }
+						onChangePlanLength={ onChangePlanLength }
+					/>
+				</WPOrderReviewSection>
+			) }
+
+			{ taxItems.length > 0 && (
+				<WPOrderReviewSection>
+					<WPOrderReviewLineItems
+						items={ taxItems }
+						removeItem={ removeItem }
+						removeCoupon={ removeCoupon }
+						variantRequestStatus={ variantRequestStatus }
+						variantSelectOverride={ variantSelectOverride }
+						getItemVariants={ getItemVariants }
+						onChangePlanLength={ onChangePlanLength }
+					/>
+				</WPOrderReviewSection>
+			) }
+
+			{ couponItems.length > 0 && (
+				<WPOrderReviewSection>
+					<WPOrderReviewLineItems
+						items={ couponItems }
+						removeItem={ removeItem }
+						removeCoupon={ removeCoupon }
+						variantRequestStatus={ variantRequestStatus }
+						variantSelectOverride={ variantSelectOverride }
+						getItemVariants={ getItemVariants }
+						onChangePlanLength={ onChangePlanLength }
+					/>
+				</WPOrderReviewSection>
+			) }
 
 			<CouponField
 				id="order-review-coupon"
@@ -75,6 +127,11 @@ WPCheckoutOrderReview.propTypes = {
 	responseCart: PropTypes.object.isRequired,
 	CheckoutTerms: PropTypes.elementType.isRequired,
 };
+
+const OrderReviewSectionTitle = styled.h2`
+	font-size: 0.9em;
+	padding-bottom: 0.5em;
+`;
 
 const CouponField = styled( Coupon )`
 	margin: 24px 30px 24px 0;
