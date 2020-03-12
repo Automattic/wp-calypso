@@ -1,0 +1,12 @@
+.style-preview__viewport-select {
+	display: flex;
+	justify-content: center;
+
+	.components-button {
+		height: auto;
+
+		svg {
+			fill: none;
+		}
+	}
+}
