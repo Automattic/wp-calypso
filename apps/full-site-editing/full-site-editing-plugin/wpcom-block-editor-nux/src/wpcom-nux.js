@@ -111,7 +111,7 @@ function WpcomNux() {
 	);
 }
 
-if ( __experimentalCreateInterpolateElement ) {
+if ( __experimentalCreateInterpolateElement && Guide && GuidePage ) {
 	registerPlugin( 'wpcom-block-editor-nux', {
 		render: () => <WpcomNux />,
 	} );
