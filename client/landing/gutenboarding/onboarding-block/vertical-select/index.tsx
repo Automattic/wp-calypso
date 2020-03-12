@@ -15,7 +15,6 @@ import { Verticals } from '@automattic/data-stores';
 import { SiteVertical } from '../../stores/onboard/types';
 import { StepProps } from '../stepper-wizard';
 import Question from '../question';
-import { __TodoAny__ } from '../../../../types';
 import AnimatedPlaceholder from '../animated-placeholder';
 
 /**
@@ -53,7 +52,7 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 	 *
 	 * Using `Suggestions` here would effectively be `any`.
 	 */
-	const suggestionRef = createRef< __TodoAny__ >();
+	const suggestionRef = createRef< any >();
 
 	const verticals = useSelect( select =>
 		select( VERTICALS_STORE )

@@ -13,11 +13,8 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import designs from './available-designs.json';
 
 import './style.scss';
-interface Props {
-	showPageSelector?: true;
-}
 
-const DesignSelector: FunctionComponent< Props > = () => {
+const DesignSelector: FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
 	const { selectedDesign, siteVertical } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
