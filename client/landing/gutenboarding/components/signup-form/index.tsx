@@ -15,6 +15,7 @@ import { USER_STORE } from '../../stores/user';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { useLangRouteParam } from '../../path';
 import './style.scss';
+import ModalSubmitButton from '../modal-submit-button';
 
 type NewUserErrorResponse = import('@automattic/data-stores').User.NewUserErrorResponse;
 
@@ -103,6 +104,8 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 			onRequestClose={ onRequestClose }
 			focusOnMount={ false }
 			isDismissible={ ! isFetchingNewUser }
+			// set to false so that 1password's autofill doesn't automatically close the modal
+			shouldCloseOnClickOutside={ false }
 		>
 			<form onSubmit={ handleSignUp }>
 				<TextControl
@@ -126,15 +129,9 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 				<div className="signup-form__footer">
 					<p className="signup-form__terms-of-service-link">{ tos }</p>
 
-					<Button
-						type="submit"
-						className="signup-form__submit"
-						disabled={ isFetchingNewUser }
-						isBusy={ isFetchingNewUser }
-						isPrimary
-					>
+					<ModalSubmitButton disabled={ isFetchingNewUser } isBusy={ isFetchingNewUser }>
 						{ NO__( 'Create your account' ) }
-					</Button>
+					</ModalSubmitButton>
 				</div>
 			</form>
 			<div className="signup-form__login-links">
