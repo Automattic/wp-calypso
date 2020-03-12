@@ -26,7 +26,6 @@ import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { abtest } from 'lib/abtest';
-import config from 'config';
 
 /**
  * Style dependencies
@@ -100,11 +99,7 @@ export class PlansStep extends Component {
 	};
 
 	isEligibleForPlanStepTest() {
-		return (
-			config.isEnabled( 'plans-step-copy-updates' ) &&
-			! this.props.isLaunchPage &&
-			'variantCopyUpdates' === abtest( 'planStepCopyUpdates' )
-		);
+		return ! this.props.isLaunchPage && 'variantCopyUpdates' === abtest( 'planStepCopyUpdates' );
 	}
 
 	plansFeaturesList() {
