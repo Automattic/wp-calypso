@@ -12,8 +12,8 @@ $markup = '
 <!-- /wp:jetpack/layout-grid-column -->
 
 <!-- wp:jetpack/layout-grid-column -->
-<div class="wp-block-jetpack-layout-grid-column wp-block-jetpack-layout-grid__padding-none"><!-- wp:image {"id":9604,"sizeSlug":"full"} -->
-<figure class="wp-block-image size-full"><img src="%2$s" alt="" class="wp-image-9604"/></figure>
+<div class="wp-block-jetpack-layout-grid-column wp-block-jetpack-layout-grid__padding-none"><!-- wp:image {"sizeSlug":"full"} -->
+<figure class="wp-block-image size-full"><img src="%2$s" alt=""/></figure>
 <!-- /wp:image --></div>
 <!-- /wp:jetpack/layout-grid-column --></div>
 <!-- /wp:jetpack/layout-grid -->
@@ -25,6 +25,6 @@ return [
 	'content' => sprintf(
 		$markup,
 		esc_html__( 'With its timeless design, this padding offers comfort for the whole day, while the fabric and leather on the upper combine breathability with durability.', 'full-site-editing' ),
-		esc_url( 'https://iamtakashi.files.wordpress.com/2020/02/malvestida-magazine-dml5gg0ywwy-unsplash.jpg' )
+		esc_url( 'https://s.w.org/images/core/5.3/Glacial_lakes,_Bhutan.jpg' )
 	),
 ];
