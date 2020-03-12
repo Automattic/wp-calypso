@@ -13,7 +13,7 @@ import icon from './icon';
 
 export function registerBlock() {
 	registerBlockType( 'a8c/project-status', {
-		title: __( 'Task' ),
+		title: __( 'Project status' ),
 		description: __( 'Display a task overview of the status of a project.' ),
 		icon,
 		category: 'a8c',
