@@ -35,7 +35,7 @@ const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-iden
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
 const getAliasesForExtensions = require( './webpack/extensions' );
-const FetchTranslationChunksPlugin = require( './webpack/fetch-translation-chunks-plugin' );
+const RequireChunkCallbackPlugin = require( './webpack/require-chunk-callback-plugin' );
 const GenerateChunksMapPlugin = require( './webpack/generate-chunks-map-plugin' );
 
 /**
@@ -294,7 +294,7 @@ const webpackConfig = {
 			new GenerateChunksMapPlugin( {
 				output: path.resolve( '.', 'chunks-map.json' ),
 			} ),
-		isCalypsoClient && new FetchTranslationChunksPlugin(),
+		isCalypsoClient && new RequireChunkCallbackPlugin(),
 		isDevelopment && new webpack.HotModuleReplacementPlugin(),
 	].filter( Boolean ),
 	externals: [ 'electron' ],

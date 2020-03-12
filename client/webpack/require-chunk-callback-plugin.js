@@ -10,9 +10,9 @@ const { Template } = webpack;
  *
  * @type {string}
  */
-const PLUGIN_NAME = 'FetchTranslationChunks';
+const PLUGIN_NAME = 'RequireChunkCallback';
 
-class FetchTranslationChunksPlugin {
+class RequireChunkCallbackPlugin {
 	apply( compiler ) {
 		compiler.hooks.thisCompilation.tap( PLUGIN_NAME, compilation => {
 			const { mainTemplate } = compilation;
@@ -67,4 +67,4 @@ class FetchTranslationChunksPlugin {
 	}
 }
 
-module.exports = FetchTranslationChunksPlugin;
+module.exports = RequireChunkCallbackPlugin;
