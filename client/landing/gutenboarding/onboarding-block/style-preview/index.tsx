@@ -4,11 +4,15 @@
 import * as React from 'react';
 import { useSelect } from '@wordpress/data';
 
-import './style.scss';
+/**
+ * Internal dependencies
+ */
 import Link from '../../components/link';
 import { usePath, Step } from '../../path';
 import { useI18n } from '@automattic/react-i18n';
 import { STORE_KEY } from '../../stores/onboard';
+
+import './style.scss';
 
 const StylePreview: React.FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
