@@ -110,6 +110,12 @@ class SectionMigrate extends Component {
 	finishMigration = () => {
 		const { targetSiteId, targetSiteSlug } = this.props;
 
+		/**
+		 * Request another update after the migration is finishes to update the site title and information
+		 * that will come when the migration is completed.
+		 */
+		this.props.requestSite( targetSiteId );
+
 		wpcom
 			.undocumented()
 			.resetMigration( targetSiteId )
