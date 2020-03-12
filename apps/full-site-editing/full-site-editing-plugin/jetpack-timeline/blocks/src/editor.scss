@@ -1,0 +1,57 @@
+$timeline-gutter: 24px;
+
+// Editor-only styles.
+[data-type='jetpack/timeline'] ul.wp-block-jetpack-timeline {
+	padding-left: 8px;
+}
+
+[data-type='jetpack/timeline-item'] {
+
+	// Nullify the intrinsic block margin every block gets, including nesting containers.
+	> .block-editor-block-list__block-edit > [data-block] {
+		margin-top: 0;
+		margin-bottom: 0;
+	}
+
+	// This needs extra specificity in the editor.
+	> .block-editor-block-list__block-edit > [data-block] > li {
+		margin-bottom: $timeline-gutter;
+	}
+
+	// Add special timeline starting point and end point.
+	// Note, style.scss has separate code for this.
+
+	// First instance.
+	&:first-child .timeline-item::after {
+		top: 50%;
+	}
+
+	// Last instance.
+	&:nth-last-child( 2 ) {
+		.timeline-item::after {
+			bottom: 50%;
+		}
+	}
+}
+
+// We replicate the appender look here.
+// @todo: once https://github.com/WordPress/gutenberg/issues/16659 we should replace the button with the actual appender.
+.timeline-item-appender {
+	color: #4e5764;
+	font-size: 13px;
+	border-radius: 4px;
+	padding: 6px;
+
+	&:hover {
+		color: #191e22;
+	}
+
+	&:focus {
+		box-shadow: 0 0 0 1px #6c7781;
+	}
+
+	svg {
+		fill: currentColor;
+		margin-right: 8px;
+	}
+}
