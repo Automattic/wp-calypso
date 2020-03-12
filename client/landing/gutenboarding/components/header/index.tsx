@@ -171,9 +171,6 @@ const Header: FunctionComponent = () => {
 	}, [ newUser, handleCreateSite ] );
 
 	useEffect( () => {
-		// TODO: Cancellable?
-		// let cancel = () => undefined;
-
 		if ( newSite ) {
 			if ( isDomainFlow ) {
 				// I'd rather not make my own product, but this works.
@@ -204,9 +201,6 @@ const Header: FunctionComponent = () => {
 			resetOnboardStore();
 			window.location.href = `/block-editor/page/${ newSite.site_slug }/home?is-gutenboarding`;
 		}
-
-		// TODO: Cancellable?
-		// return cancel;
 	}, [ domain, isDomainFlow, newSite, resetOnboardStore ] );
 
 	return (
