@@ -5,17 +5,21 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import React, { FunctionComponent } from 'react';
 import classnames from 'classnames';
 import { useI18n } from '@automattic/react-i18n';
+import { useHistory } from 'react-router-dom';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import designs from './available-designs.json';
-
+import { usePath, Step } from '../../path';
+import { isEnabled } from '../../../../config';
 import './style.scss';
 
 const DesignSelector: FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
+	const { push } = useHistory();
+	const makePath = usePath();
 	const { selectedDesign, siteVertical } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
@@ -45,6 +49,9 @@ const DesignSelector: FunctionComponent = () => {
 							) }
 							onClick={ () => {
 								setSelectedDesign( design );
+								if ( isEnabled( 'gutenboarding/style-preview' ) ) {
+									push( makePath( Step.Style ) );
+								}
 							} }
 						>
 							<div className="design-selector__image-frame">

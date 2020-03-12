@@ -63,6 +63,7 @@
 		"google-my-business": true,
 		"google-drive": true,
 		"gutenboarding": true,
+		"gutenboarding/style-preview": true,
 		"help": true,
 		"help/courses": true,
 		"i18n/community-translator": false,

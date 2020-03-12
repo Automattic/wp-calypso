@@ -17,11 +17,14 @@ import LoginForm from './login-form';
 import CreateSite from './create-site';
 import { Attributes } from './types';
 import { Step, usePath } from '../path';
-import './style.scss';
 import AcquireIntent from './acquire-intent';
+import StylePreview from './style-preview';
+import { isEnabled } from '../../../config';
+
+import './style.scss';
 
 const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
-	const { siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
+	const { siteVertical, selectedDesign } = useSelect( select => select( STORE_KEY ).getState() );
 	const isCreatingSite = useSelect( select => select( SITE_STORE ).isFetchingSite() );
 
 	const makePath = usePath();
@@ -39,6 +42,18 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 						<Redirect to={ makePath( Step.IntentGathering ) } />
 					) : (
 						<DesignSelector />
+					) }
+				</Route>
+
+				<Route path={ makePath( Step.Style ) }>
+					{ // Disable reason: Leave me alone, my nested ternaries are amazing ✨
+					// eslint-disable-next-line no-nested-ternary
+					! selectedDesign ? (
+						<Redirect to={ makePath( Step.DesignSelection ) } />
+					) : isEnabled( 'gutenboarding/style-preview' ) ? (
+						<StylePreview />
+					) : (
+						<Redirect to={ makePath( Step.DesignSelection ) } />
 					) }
 				</Route>
 
