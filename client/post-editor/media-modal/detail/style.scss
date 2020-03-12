@@ -59,6 +59,10 @@
 	&.is-loading {
 		opacity: 0.5;
 	}
+
+	&.is-too-large {
+		font-size: 2em;
+	}
 }
 
 .editor-media-modal-detail__previous,
