@@ -24,6 +24,10 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		reduxStore.dispatch( setLocale( currentUser.localeSlug, currentUser.localeVariant ) );
 	}
 
+	const getTranslationChunkPath = chunkId => {
+		return `/calypso/evergreen/languages/${ chunkId }.json`; // @todo replace with actual translation path
+	};
+
 	const loadedTranslationChunks = {};
 	const fetchTranslationChunk = translationChunkPath => {
 		return window
@@ -37,32 +41,32 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 			.catch( error => error );
 	};
 
-	const translationChunksQueue = [];
-	let translatedChunks;
-	window
-		.fetch( `/calypso/evergreen/translated-chunks.json` )
-		.then( response => response.json() )
-		.then( data => {
-			translatedChunks = data;
-
-			translationChunksQueue.forEach( ( { id, path } ) => {
-				if ( translatedChunks.includes( id ) && ! loadedTranslationChunks[ path ] ) {
-					fetchTranslationChunk( path );
-				}
-			} );
-		} );
-
 	if ( '__requireChunkCallback__' in window ) {
-		window.__requireChunkCallback__.add( ( chunkId, promises, publicPath ) => {
-			const translationChunkName = `${ chunkId }`;
-			const translationChunkPath = `${ publicPath }languages/${ translationChunkName }.json`; // @todo replace with actual translation path
+		let translatedChunks; // should we get these bootstrapped on page load, similarly to `languageRevisions`?
+
+		window
+			.fetch( `/calypso/evergreen/translated-chunks.json` )
+			.then( response => response.json() )
+			.then( data => {
+				translatedChunks = data;
+				const installedChunks = Object.keys( window.__requireChunkCallback__.getInstalledChunks() );
+
+				installedChunks.forEach( chunkId => {
+					const translationChunkPath = getTranslationChunkPath( chunkId );
+
+					if (
+						translatedChunks.includes( chunkId ) &&
+						! loadedTranslationChunks[ translationChunkPath ]
+					) {
+						fetchTranslationChunk( translationChunkPath );
+					}
+				} );
+			} );
+
+		window.__requireChunkCallback__.add( ( chunkId, promises ) => {
+			const translationChunkPath = getTranslationChunkPath( chunkId );
 
 			if ( ! translatedChunks ) {
-				translationChunksQueue.push( {
-					id: chunkId,
-					path: translationChunkPath,
-				} );
-
 				return;
 			}
 

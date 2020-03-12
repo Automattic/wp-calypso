@@ -48,7 +48,10 @@ class RequireChunkCallbackPlugin {
 							return this;
 						};
 
-						var installedTranslationChunks = {};
+						RequireChunkCallback.prototype.getInstalledChunks = function( ) {
+							return installedChunks;
+						};
+
 						var requireChunkCallback = new RequireChunkCallback();
 
 						window.__requireChunkCallback__ = requireChunkCallback;
