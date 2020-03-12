@@ -34,6 +34,7 @@ import { domainManagementList } from 'my-sites/domains/paths';
 import WordPressWordmark from 'components/wordpress-wordmark';
 
 import getSiteMigrationStatus from 'state/selectors/get-site-migration-status';
+import { updateSiteMigrationMeta } from 'state/sites/actions';
 import wpcom from 'lib/wp';
 
 class MasterbarLoggedIn extends React.Component {
@@ -64,6 +65,7 @@ class MasterbarLoggedIn extends React.Component {
 
 			if ( currentSelectedSiteId && migrationStatus === 'error' ) {
 				wpcom.undocumented().resetMigration( currentSelectedSiteId );
+				this.props.updateSiteMigrationMeta( currentSelectedSiteId, 'inactive', null );
 			}
 		}
 	};
@@ -226,5 +228,5 @@ export default connect(
 			currentSelectedSiteId,
 		};
 	},
-	{ setNextLayoutFocus, recordTracksEvent }
+	{ setNextLayoutFocus, recordTracksEvent, updateSiteMigrationMeta }
 )( localize( MasterbarLoggedIn ) );
