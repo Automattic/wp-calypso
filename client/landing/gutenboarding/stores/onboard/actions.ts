@@ -6,7 +6,7 @@ import { VerticalsTemplates } from '@automattic/data-stores';
 /**
  * Internal dependencies
  */
-import { SiteVertical } from './types';
+import { Design, SiteVertical } from './types';
 
 type Template = VerticalsTemplates.Template;
 
@@ -17,9 +17,7 @@ export const setDomain = (
 	domain,
 } );
 
-export const setSelectedDesign = (
-	selectedDesign: import('@automattic/data-stores').VerticalsTemplates.Template | undefined
-) => ( {
+export const setSelectedDesign = ( selectedDesign: Design | undefined ) => ( {
 	type: 'SET_SELECTED_DESIGN' as const,
 	selectedDesign,
 } );
