@@ -229,16 +229,6 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_blog_posts_block' );
  * Load WPCOM Block Editor NUX
  */
 function load_wpcom_block_editor_nux() {
-	/**
-	 * Can be used to enable Dotcom editor guide.
-	 *
-	 * @since 0.23
-	 *
-	 * @param bool true if Dotcom editor nux should be enabled, false otherwise.
-	 */
-	if ( ! apply_filters( 'a8c_enable_dotcom_editor_nux', false ) ) {
-		return;
-	}
 
 	require_once __DIR__ . '/wpcom-block-editor-nux/class-wpcom-block-editor-nux.php';
 }

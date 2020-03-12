@@ -111,6 +111,8 @@ function WpcomNux() {
 	);
 }
 
-registerPlugin( 'wpcom-block-editor-nux', {
-	render: () => <WpcomNux />,
-} );
+if ( __experimentalCreateInterpolateElement ) {
+	registerPlugin( 'wpcom-block-editor-nux', {
+		render: () => <WpcomNux />,
+	} );
+}
