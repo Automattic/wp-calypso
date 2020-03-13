@@ -32,7 +32,6 @@ import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-use
 import { getStatsPathForTab } from 'lib/route';
 import { domainManagementList } from 'my-sites/domains/paths';
 import WordPressWordmark from 'components/wordpress-wordmark';
-
 import getSiteMigrationStatus from 'state/selectors/get-site-migration-status';
 import { updateSiteMigrationMeta } from 'state/sites/actions';
 import wpcom from 'lib/wp';
