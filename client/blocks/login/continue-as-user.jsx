@@ -72,7 +72,7 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } 
 					components: {
 						link: (
 							<a
-								href="/"
+								href="#/"
 								className="continue-as-user__change-user wp-block-button__link"
 								onClick={ handleChangeAccount }
 							/>
