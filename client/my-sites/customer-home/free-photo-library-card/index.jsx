@@ -36,7 +36,7 @@ const FreePhotoLibraryCard = () => {
 						title={ translate( 'Free Photo Library demonstration' ) }
 						width="560"
 						height="315"
-						src="https://www.youtube.com/embed/RHG_yfd1SVw?rel=0"
+						src="https://www.youtube.com/embed/RHG_yfd1SVw?rel=0&autoplay=1"
 						frameBorder="0"
 						allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
 						allowFullScreen={ true }
