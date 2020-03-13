@@ -23,7 +23,9 @@ export default localize( ( { isBusinessPlan, selectedSite, translate } ) => {
 				title={ translate( 'Advertising removed' ) }
 				description={
 					isBusinessPlan
-						? translate( 'All WordPress.com advertising has been removed from your site.' )
+						? translate(
+								'All WordPress.com advertising has been removed from your site so your brand can stand out without distractions.'
+						  )
 						: translate(
 								'All WordPress.com advertising has been removed from your site. Upgrade to Business ' +
 									'to remove the WordPress.com footer credit.'
