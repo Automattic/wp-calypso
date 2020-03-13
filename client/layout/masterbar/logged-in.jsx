@@ -35,7 +35,8 @@ import WordPressWordmark from 'components/wordpress-wordmark';
 
 import getSiteMigrationStatus from 'state/selectors/get-site-migration-status';
 import { updateSiteMigrationMeta } from 'state/sites/actions';
-import wpcom from 'lib/wp';
+import { requestHttpData } from 'state/data-layer/http-data';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
 class MasterbarLoggedIn extends React.Component {
 	static propTypes = {
@@ -64,8 +65,20 @@ class MasterbarLoggedIn extends React.Component {
 			const { migrationStatus, currentSelectedSiteId } = this.props;
 
 			if ( currentSelectedSiteId && migrationStatus === 'error' ) {
-				wpcom.undocumented().resetMigration( currentSelectedSiteId );
-				this.props.updateSiteMigrationMeta( currentSelectedSiteId, 'inactive', null );
+				requestHttpData(
+					'site-migration',
+					http( {
+						apiNamespace: 'wpcom/v2',
+						method: 'POST',
+						path: `/sites/${ currentSelectedSiteId }/reset-migration`,
+						body: {},
+						onSuccess: () => {},
+					} ),
+					{
+						fromApi: () => {},
+						freshness: -Infinity,
+					}
+				);
 			}
 		}
 	};
