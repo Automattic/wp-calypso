@@ -111,6 +111,11 @@ function WpcomNux() {
 	);
 }
 
-registerPlugin( 'wpcom-block-editor-nux', {
-	render: () => <WpcomNux />,
-} );
+// Only register plugin if these features are available.
+// If registered without this check, atomic sites without gutenberg enabled will error when loading the editor.
+// These seem to be the only dependencies here that are not supported there.
+if ( __experimentalCreateInterpolateElement && Guide && GuidePage ) {
+	registerPlugin( 'wpcom-block-editor-nux', {
+		render: () => <WpcomNux />,
+	} );
+}
