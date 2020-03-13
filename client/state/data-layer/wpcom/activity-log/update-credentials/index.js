@@ -57,6 +57,7 @@ export const request = action => {
 
 	const tracksEvent = recordTracksEvent( 'calypso_rewind_creds_update_attempt', {
 		site_id: action.siteId,
+		protocol: action.credentials.protocol,
 	} );
 
 	return [
@@ -93,6 +94,7 @@ export const success = ( action, { rewind_state } ) => [
 	} ),
 	recordTracksEvent( 'calypso_rewind_creds_update_success', {
 		site_id: action.siteId,
+		protocol: action.credentials.protocol,
 	} ),
 	// the API transform could fail and the rewind data might
 	// be unavailable so if that's the case just let it go
