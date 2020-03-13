@@ -141,7 +141,10 @@ function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, is
 		return false;
 	}
 
-	if ( abtest( 'showCompositeCheckout' ) === 'composite' ) {
+	if (
+		config.isEnabled( 'composite-checkout-testing' ) ||
+		abtest( 'showCompositeCheckout' ) === 'composite'
+	) {
 		debug( 'shouldShowCompositeCheckout true because user is in abtest' );
 		return true;
 	}
