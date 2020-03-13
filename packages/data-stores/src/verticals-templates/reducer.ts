@@ -9,6 +9,7 @@ import { combineReducers } from '@wordpress/data';
  */
 import { Template } from './types';
 import { Action } from './actions';
+import { getVerticalTemplateKey } from './utils';
 
 const templates: Reducer< Record< string, Template[] | undefined >, Action > = (
 	state = {},
@@ -23,7 +24,20 @@ const templates: Reducer< Record< string, Template[] | undefined >, Action > = (
 	return state;
 };
 
-const reducer = combineReducers( { templates } );
+const verticalTemplates: Reducer< Record< string, Template | undefined >, Action > = (
+	state = {},
+	action
+) => {
+	if ( action.type === 'RECEIVE_VERTICAL_TEMPLATE' ) {
+		return {
+			...state,
+			[ getVerticalTemplateKey( action.verticalId, action.templateSlug ) ]: action.template,
+		};
+	}
+	return state;
+};
+
+const reducer = combineReducers( { templates, verticalTemplates } );
 
 export type State = ReturnType< typeof reducer >;
 
