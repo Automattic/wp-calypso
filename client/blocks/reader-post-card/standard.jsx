@@ -11,6 +11,7 @@ import { get, partial } from 'lodash';
 import AutoDirection from 'components/auto-direction';
 import Emojify from 'components/emojify';
 import ReaderExcerpt from 'blocks/reader-excerpt';
+import ReaderFullPost from 'blocks/reader-full-post';
 import FeaturedAsset from './featured-asset';
 
 const StandardPost = ( { post, children, isDiscover, expandCard, postKey, isExpanded, site } ) => {
@@ -18,6 +19,7 @@ const StandardPost = ( { post, children, isDiscover, expandCard, postKey, isExpa
 	if ( get( post, 'canonical_media.mediaType' ) === 'video' ) {
 		onVideoThumbnailClick = partial( expandCard, { postKey, post, site } );
 	}
+	console.log( post );
 	return (
 		<div className="reader-post-card__post">
 			<FeaturedAsset
@@ -34,7 +36,7 @@ const StandardPost = ( { post, children, isDiscover, expandCard, postKey, isExpa
 						</a>
 					</h1>
 				</AutoDirection>
-				<ReaderExcerpt post={ post } isDiscover={ isDiscover } />
+				<ReaderFullPost post_id={ post.ID } blog_id={ post.site_ID } onClose={ () => {} } />
 				{ children }
 			</div>
 		</div>

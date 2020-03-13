@@ -64,7 +64,7 @@ export default function() {
 			'/read/feeds/:feed_id',
 			updateLastRoute,
 			prettyRedirects,
-			sidebar,
+			p2Sidebar,
 			feedDiscovery,
 			feedListing,
 			makeLayout,

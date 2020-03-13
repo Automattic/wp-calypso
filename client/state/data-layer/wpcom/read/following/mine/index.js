@@ -53,7 +53,7 @@ export function requestPage( action ) {
 			method: 'GET',
 			path: '/read/following/mine',
 			apiVersion: '1.2',
-			query: { page, number, meta },
+			query: { page, number, meta, filter: 'a8c' },
 		},
 		action
 	);
