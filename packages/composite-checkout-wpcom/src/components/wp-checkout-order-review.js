@@ -84,8 +84,8 @@ const CouponField = styled( Coupon )`
 
 const CheckoutTermsUI = styled.div`
 	& > * {
-		margin: 16px 16px 16px -26px;
-		padding-left: 26px;
+		margin: 16px 16px 16px -24px;
+		padding-left: 24px;
 		position: relative;
 	}
 
@@ -95,10 +95,10 @@ const CheckoutTermsUI = styled.div`
 	}
 
 	& > * > svg {
-		width: 18px;
-		height: 18px;
+		width: 16px;
+		height: 16px;
 		position: absolute;
-		top: 2px;
+		top: 0;
 		left: 0;
 	}
 
