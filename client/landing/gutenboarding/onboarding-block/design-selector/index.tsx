@@ -37,7 +37,7 @@ const DesignSelector: FunctionComponent = () => {
 			data-vertical={ siteVertical?.label }
 		>
 			<div className="design-selector__header">
-				<div className="design-selector__header-section design-selector__header-section--title">
+				<div className="design-selector__heading">
 					<Title>{ NO__( 'Choose a starting design' ) }</Title>
 					<SubTitle>
 						{ NO__(
@@ -45,16 +45,14 @@ const DesignSelector: FunctionComponent = () => {
 						) }
 					</SubTitle>
 				</div>
-				<div className="design-selector__header-section">
-					<Link
-						className="design-selector__start-over-button"
-						onClick={ handleStartOverButtonClick }
-						to={ makePath( Step.IntentGathering ) }
-						isLink
-					>
-						{ NO__( 'Start over' ) }
-					</Link>
-				</div>
+				<Link
+					className="design-selector__start-over-button"
+					onClick={ handleStartOverButtonClick }
+					to={ makePath( Step.IntentGathering ) }
+					isLink
+				>
+					{ NO__( 'Start over' ) }
+				</Link>
 			</div>
 			<div className="design-selector__design-grid">
 				<div className="design-selector__grid">
