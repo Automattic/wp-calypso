@@ -25,7 +25,7 @@ interface Props {
 	onCloseDialog: Function;
 }
 
-class IgnoreThreatDialog extends React.PureComponent< Props > {
+class ThreatDialog extends React.PureComponent< Props > {
 	performAction = () => {
 		window.alert( `We are going to ${ this.props.action } the threat!` );
 		this.props.onCloseDialog();
@@ -34,11 +34,11 @@ class IgnoreThreatDialog extends React.PureComponent< Props > {
 	render() {
 		const { action, onCloseDialog, showDialog, threatDescription, threatTitle } = this.props;
 		const buttons = [
-			<Button className="ignore-threat__btn ignore-threat__btn--cancel" onClick={ onCloseDialog }>
+			<Button className="threat-dialog__btn threat-dialog__btn--cancel" onClick={ onCloseDialog }>
 				{ translate( 'Go Back' ) }
 			</Button>,
 			<Button
-				className={ classnames( 'ignore-threat__btn', `ignore-threat__btn--${ action }-threat` ) }
+				className={ classnames( 'threat-dialog__btn', `threat-dialog__btn--${ action }-threat` ) }
 				onClick={ this.performAction }
 			>
 				{ action === 'fix' ? translate( 'Fix threat' ) : translate( 'Ignore Threat' ) }
@@ -47,33 +47,33 @@ class IgnoreThreatDialog extends React.PureComponent< Props > {
 
 		return (
 			<Dialog
-				additionalClassNames="ignore-threat"
+				additionalClassNames="threat-dialog"
 				isVisible={ showDialog }
 				onClose={ onCloseDialog }
 				buttons={ buttons }
 			>
 				<h1
 					className={ classnames(
-						'ignore-threat__header',
-						`ignore-threat__header--${ action }-threat`
+						'threat-dialog__header',
+						`threat-dialog__header--${ action }-threat`
 					) }
 				>
 					{ action === 'fix'
 						? translate( 'Fix threat' )
 						: translate( 'Do you really want to ignore this threat?' ) }
 				</h1>
-				<h3 className="ignore-threat__threat-title">{ threatTitle }</h3>
-				<p className="ignore-threat__threat-description">{ threatDescription }</p>
-				<div className="ignore-threat__warning">
+				<h3 className="threat-dialog__threat-title">{ threatTitle }</h3>
+				<p className="threat-dialog__threat-description">{ threatDescription }</p>
+				<div className="threat-dialog__warning">
 					<Gridicon
 						className={ classnames(
-							'ignore-threat__warning-icon',
-							`ignore-threat__warning-icon--${ action }-threat`
+							'threat-dialog__warning-icon',
+							`threat-dialog__warning-icon--${ action }-threat`
 						) }
 						icon="info"
 						size={ 36 }
 					/>
-					<p className="ignore-threat__warning-message">
+					<p className="threat-dialog__warning-message">
 						{ action === 'fix'
 							? translate(
 									'To fix this threat, Jetpack will be deleting the file, since it’s not a part of the original WordPress.'
@@ -88,4 +88,4 @@ class IgnoreThreatDialog extends React.PureComponent< Props > {
 	}
 }
 
-export default IgnoreThreatDialog;
+export default ThreatDialog;

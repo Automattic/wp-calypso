@@ -15,7 +15,7 @@ import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
 import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
 import ThreatItem from '../../components/threat-item';
 import { isEnabled } from 'config';
-import IgnoreThreatDialog from '../../components/ignore-threat';
+import ThreatDialog from '../../components/threat-dialog';
 
 import './style.scss';
 
@@ -24,24 +24,24 @@ import './style.scss';
 // In the end, this dialog is going to be rendered inside the ThreatItem
 // component (PR still open), not here.
 const ComponentToTestDialogs = () => {
-	const [ showIgnoreThreatDialog, setShowIgnoreThreatDialog ] = React.useState( false );
+	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
 	const [ actionToPerform, setActionToPerform ] = React.useState();
 
 	const openDialog = action => {
 		setActionToPerform( action );
-		setShowIgnoreThreatDialog( true );
+		setShowThreatDialog( true );
 	};
 
 	const closeDialog = () => {
-		setShowIgnoreThreatDialog( false );
+		setShowThreatDialog( false );
 	};
 
 	return (
 		<>
 			<Button onClick={ () => openDialog( 'fix' ) }>Open Fix Dialog</Button>
 			<Button onClick={ () => openDialog( 'ignore' ) }>Open Ignore Dialog</Button>
-			<IgnoreThreatDialog
-				showDialog={ showIgnoreThreatDialog }
+			<ThreatDialog
+				showDialog={ showThreatDialog }
 				onCloseDialog={ closeDialog }
 				threatTitle="Unexpected core file: sx--a4bp.php"
 				threatDescription="Unexpected file sx--a4fb.php contains malicious code and is not part of WordPress"
