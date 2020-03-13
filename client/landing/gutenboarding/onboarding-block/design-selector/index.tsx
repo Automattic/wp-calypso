@@ -14,6 +14,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import designs from './available-designs.json';
 import { usePath, Step } from '../../path';
 import { isEnabled } from '../../../../config';
+import Link from '../../components/link';
 import './style.scss';
 import { SubTitle, Title } from 'landing/gutenboarding/components/titles';
 
@@ -24,7 +25,11 @@ const DesignSelector: FunctionComponent = () => {
 	const { selectedDesign, siteVertical } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
-	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
+	const { setSelectedDesign, resetOnboardStore } = useDispatch( ONBOARD_STORE );
+
+	const handleStartOverButtonClick = () => {
+		resetOnboardStore();
+	};
 
 	return (
 		<div
@@ -32,12 +37,22 @@ const DesignSelector: FunctionComponent = () => {
 			data-vertical={ siteVertical?.label }
 		>
 			<div className="design-selector__header">
-				<Title>{ NO__( 'Choose a starting design' ) }</Title>
-				<SubTitle>
-					{ NO__(
-						'Get started with one of our top website layouts. You can always change it later'
-					) }
-				</SubTitle>
+				<div className="design-selector__heading">
+					<Title>{ NO__( 'Choose a starting design' ) }</Title>
+					<SubTitle>
+						{ NO__(
+							'Get started with one of our top website layouts. You can always change it later'
+						) }
+					</SubTitle>
+				</div>
+				<Link
+					className="design-selector__start-over-button"
+					onClick={ handleStartOverButtonClick }
+					to={ makePath( Step.IntentGathering ) }
+					isLink
+				>
+					{ NO__( 'Start over' ) }
+				</Link>
 			</div>
 			<div className="design-selector__design-grid">
 				<div className="design-selector__grid">

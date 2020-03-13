@@ -13,8 +13,19 @@
 	left: 0;
 
 	.design-selector__header {
-		width: 100%;
+		display: flex;
+		align-items: center;
 		margin: 5% 0%;
+	}
+
+	.design-selector__heading {
+		flex-grow: 1;
+	}
+
+	.design-selector__start-over-button {
+		&.is-link {
+			color: var( --color-text-subtle );
+		}
 	}
 
 	.design-selector__grid {
