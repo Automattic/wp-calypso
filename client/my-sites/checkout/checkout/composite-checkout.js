@@ -1402,7 +1402,7 @@ function useCachedDomainContactDetails( dispatch ) {
 			reduxDispatch( requestContactDetailsCache() );
 			setHaveRequestedCachedDetails( true );
 		}
-	}, [ haveRequestedCachedDetails ] );
+	}, [ haveRequestedCachedDetails, reduxDispatch ] );
 
 	const cachedContactDetails = useSelector( getContactDetailsCache );
 	if ( cachedContactDetails ) {

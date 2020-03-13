@@ -551,7 +551,7 @@ function useInitializeCartFromServer(
 					if ( couponToAdd ) {
 						updatedResponseCart = addCouponToResponseCart( updatedResponseCart, couponToAdd );
 					}
-					return setServerCart( prepareRequestCart( updatedResponseCart ) );
+					return setServerCart( prepareRequestCart( updatedResponseCart, {} ) );
 				}
 				return response;
 			} )
@@ -599,7 +599,7 @@ function useCartUpdateAndRevalidate(
 
 		hookDispatch( { type: 'REQUEST_UPDATED_RESPONSE_CART' } );
 
-		setServerCart( prepareRequestCart( responseCart ) )
+		setServerCart( prepareRequestCart( responseCart, { is_update: true } ) )
 			.then( response => {
 				debug( 'updated cart is', response );
 				hookDispatch( {
