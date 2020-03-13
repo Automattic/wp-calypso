@@ -354,7 +354,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			getRecurringPaymentsCard(),
 			getAdsCard(),
 			abtest( 'peerReferralEarnCard' ) === 'show' ? getPeerReferralsCard() : false,
-			getReferralsCard(),
+			abtest( 'peerReferralEarnCard' ) === 'show' ? false : getReferralsCard(),
 		] ),
 	};
 
