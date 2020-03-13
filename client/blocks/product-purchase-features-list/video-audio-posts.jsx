@@ -19,7 +19,7 @@ import videoImage from 'assets/images/illustrations/video-hosting.svg';
 function getDescription( plan, translate ) {
 	if ( isWpComBusinessPlan( plan ) ) {
 		return translate(
-			'Enrich your site and boost engagement with video and audio. Your plan includes 200GB ' +
+			'Enrich your site and boost engagement with video and audio. Your Business Plan includes 200GB ' +
 				'of storage, giving you plenty of room for all types of media.'
 		);
 	}
