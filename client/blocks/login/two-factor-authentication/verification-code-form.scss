@@ -4,8 +4,17 @@
 	padding: 1em 0;
 }
 
+.woo .two-factor-authentication__verification-code-form {
+	text-align: center;
+}
+
 .two-factor-authentication__verification-code-form .button {
 	width: 100%;
+}
+
+.woo .two-factor-authentication__verification-code-form .form-button {
+	float: none;
+	margin: 0;
 }
 
 .security-key-form__add-wait-for-key {
