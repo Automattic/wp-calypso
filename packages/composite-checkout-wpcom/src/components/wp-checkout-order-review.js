@@ -94,7 +94,7 @@ const CheckoutTermsUI = styled.div`
 		margin-left: 0;
 	}
 
-	& > * > svg {
+	svg {
 		width: 16px;
 		height: 16px;
 		position: absolute;
@@ -102,17 +102,17 @@ const CheckoutTermsUI = styled.div`
 		left: 0;
 	}
 
-	& > * > p {
+	p {
 		font-size: 12px;
 		margin: 0;
 		word-break: break-word;
 	}
 
-	& > * > p a {
+	a {
 		text-decoration: underline;
 	}
 
-	& > * > p a:hover {
+	a:hover {
 		text-decoration: none;
 	}
 `;
