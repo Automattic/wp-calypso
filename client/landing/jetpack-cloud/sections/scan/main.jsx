@@ -19,11 +19,39 @@ import IgnoreThreatDialog from '../../components/ignore-threat';
 
 import './style.scss';
 
-class ScanPage extends Component {
-	state = {
-		showIgnoreThreatDialog: true,
+// The only reason for this is to test the dialog that gets
+// displayed when the user clicks the fix threat or ignore threat button.
+// In the end, this dialog is going to be rendered inside the ThreatItem
+// component (PR still open), not here.
+const ComponentToTestDialogs = () => {
+	const [ showIgnoreThreatDialog, setShowIgnoreThreatDialog ] = React.useState( false );
+	const [ actionToPerform, setActionToPerform ] = React.useState();
+
+	const openDialog = action => {
+		setActionToPerform( action );
+		setShowIgnoreThreatDialog( true );
 	};
 
+	const closeDialog = () => {
+		setShowIgnoreThreatDialog( false );
+	};
+
+	return (
+		<>
+			<Button onClick={ () => openDialog( 'fix' ) }>Open Fix Dialog</Button>
+			<Button onClick={ () => openDialog( 'ignore' ) }>Open Ignore Dialog</Button>
+			<IgnoreThreatDialog
+				showDialog={ showIgnoreThreatDialog }
+				onCloseDialog={ closeDialog }
+				threatTitle="Unexpected core file: sx--a4bp.php"
+				threatDescription="Unexpected file sx--a4fb.php contains malicious code and is not part of WordPress"
+				action={ actionToPerform }
+			/>
+		</>
+	);
+};
+
+class ScanPage extends Component {
 	renderScanOkay() {
 		const { siteSlug, moment, lastScanTimestamp } = this.props;
 
@@ -110,33 +138,12 @@ class ScanPage extends Component {
 		}
 	}
 
-	openDialog = () => {
-		this.setState( {
-			showIgnoreThreatDialog: true,
-		} );
-	};
-
-	closeDialog = () => {
-		// console.log( 'closing the dialog' );
-		this.setState( {
-			showIgnoreThreatDialog: false,
-		} );
-	};
-
 	render() {
 		return (
 			<div className="scan__main">
 				<div className="scan__content">
 					{ this.renderScanState() }
-					<button primary onClick={ this.openDialog }>
-						Open Dialog
-					</button>
-					<IgnoreThreatDialog
-						showDialog={ this.state.showIgnoreThreatDialog }
-						onCloseDialog={ this.closeDialog }
-						threatTitle="Unexpected core file: sx--a4bp.php"
-						threatDescription="Unexpected file sx--a4fb.php contains malicious code and is not part of WordPress"
-					/>
+					<ComponentToTestDialogs />
 				</div>
 				<StatsFooter
 					header="Scan Summary"
