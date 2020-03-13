@@ -111,8 +111,8 @@ class SectionMigrate extends Component {
 		const { targetSiteId, targetSiteSlug } = this.props;
 
 		/**
-		 * Request another update after the migration is finishes to update the site title and information
-		 * that will come when the migration is completed.
+		 * Request another update after the migration is finished to
+		 * update the site title and other info that may have changed.
 		 */
 		this.props.requestSite( targetSiteId );
 
