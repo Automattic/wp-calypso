@@ -54,7 +54,8 @@
 		"prebuild": "npm run clean",
 		"predev": "npm run clean",
 		"sync:blog-posts-block": "./bin/sync-blog-posts-block.sh",
-		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh"
+		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh",
+		"prepare": "npm run sync:blog-posts-block --nodemodules"
 	},
 	"dependencies": {
 		"@wordpress/api-fetch": "*",
@@ -76,6 +77,7 @@
 		"@wordpress/url": "*",
 		"classnames": "2.2.6",
 		"lodash": "*",
-		"moment": "*"
+		"moment": "*",
+		"newspack-blocks": "github:Automattic/newspack-blocks#1.0.0-alpha.26"
 	}
 }
