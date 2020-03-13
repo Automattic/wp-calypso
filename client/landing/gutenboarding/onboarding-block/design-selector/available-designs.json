@@ -2,7 +2,7 @@
 	"featured": [
 		{
 			"title": "Twenty twenty",
-			"slug": "twentytwenty",
+			"slug": "twenty-twenty",
 			"src": "https://s.wordpress.com/mshots/v1/https%3A%2F%2Ftwentytwentydemo.wordpress.com%2F%3Ftheme_preview%3Dtrue?h=332&amp;vpw=960&amp;wph=960",
 			"srcset": "https://s.wordpress.com/mshots/v1/https%3A%2F%2Ftwentytwentydemo.wordpress.com%2F%3Ftheme_preview%3Dtrue?w=480&amp;h=332&amp;vpw=960&amp;wph=960 480w, https://s.wordpress.com/mshots/v1/https%3A%2F%2Ftwentytwentydemo.wordpress.com%2F%3Ftheme_preview%3Dtrue?w=240&amp;h=332&amp;vpw=960&amp;wph=960 240w"
 		},
