@@ -11,6 +11,7 @@ import { ValuesType } from 'utility-types';
 export const Step = {
 	IntentGathering: undefined,
 	DesignSelection: 'design',
+	Style: 'style',
 	Signup: 'signup',
 	Login: 'login',
 	CreateSite: 'create-site',
