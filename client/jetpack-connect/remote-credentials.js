@@ -140,7 +140,7 @@ export class OrgCredentialsForm extends Component {
 	getSubHeaderText() {
 		const { translate } = this.props;
 		const subheader = translate(
-			'Your log in credentials are used for the purpose of securely auto-installing Jetpack and will not be stored.'
+			'Your login credentials are used for the purpose of securely auto-installing Jetpack and will not be stored.'
 		);
 		return <span>{ subheader }</span>;
 	}
