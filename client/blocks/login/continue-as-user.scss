@@ -2,17 +2,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	flex-direction: column;
 	color: var( --color-text-subtle );
 	font-size: 14px;
-
-	> a {
-		display: inline-flex;
-		align-items: center;
-		// Match avatar height.
-		height: 16px;
-	}
-
-	.gravatar {
-		margin: 0 4px;
-	}
 }

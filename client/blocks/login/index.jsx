@@ -76,6 +76,7 @@ class Login extends Component {
 
 	state = {
 		isBrowserSupported: isWebAuthnSupported(),
+		continueAsAnotherUser: false,
 	};
 
 	static defaultProps = { isJetpack: false, isJetpackWooCommerceFlow: false };
@@ -97,6 +98,33 @@ class Login extends Component {
 			window.scrollTo( 0, 0 );
 		}
 	}
+
+	showContinueAsUser = () => {
+		const {
+			isJetpack,
+			isJetpackWooCommerceFlow,
+			oauth2Client,
+			privateSite,
+			socialConnect,
+			twoStepNonce,
+			fromSite,
+			currentUser,
+			twoFactorEnabled,
+		} = this.props;
+
+		return (
+			! twoStepNonce &&
+			! socialConnect &&
+			! privateSite &&
+			! oauth2Client &&
+			! ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) &&
+			! isJetpack &&
+			! fromSite &&
+			! twoFactorEnabled &&
+			currentUser &&
+			! this.state.continueAsAnotherUser
+		);
+	};
 
 	handleValidLogin = () => {
 		if ( this.props.twoFactorEnabled ) {
@@ -175,8 +203,6 @@ class Login extends Component {
 			translate,
 			twoStepNonce,
 			fromSite,
-			currentUser,
-			twoFactorEnabled,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
@@ -306,9 +332,6 @@ class Login extends Component {
 		} else if ( fromSite ) {
 			// if redirected from Calypso URL with a site slug, offer a link to that site's frontend
 			postHeader = <VisitSite siteSlug={ fromSite } />;
-		} else if ( currentUser && ! twoFactorEnabled ) {
-			// someone is already logged in, offer to proceed to the app without a new login
-			postHeader = <ContinueAsUser />;
 		}
 
 		return (
@@ -392,6 +415,17 @@ class Login extends Component {
 			);
 		}
 
+		if ( this.showContinueAsUser() ) {
+			// someone is already logged in, offer to proceed to the app without a new login
+			return (
+				<ContinueAsUser
+					onChangeAccount={ () => {
+						this.setState( { continueAsAnotherUser: true } );
+					} }
+				/>
+			);
+		}
+
 		return (
 			<LoginForm
 				disableAutoFocus={ disableAutoFocus }
@@ -405,6 +439,10 @@ class Login extends Component {
 		);
 	}
 
+	renderFooter() {
+		return ! this.showContinueAsUser() && this.props.footer;
+	}
+
 	render() {
 		const { isJetpack } = this.props;
 		return (
@@ -416,6 +454,7 @@ class Login extends Component {
 				{ this.renderNotice() }
 
 				{ this.renderContent() }
+				{ this.renderFooter() }
 			</div>
 		);
 	}
