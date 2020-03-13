@@ -27,7 +27,7 @@ import {
 	MAP_EXISTING_DOMAIN_UPDATE_DNS,
 	MAP_SUBDOMAIN,
 	SETTING_PRIMARY_DOMAIN,
-	MAP_DOMAIN_CHANGE_NAME_SERVERS
+	MAP_DOMAIN_CHANGE_NAME_SERVERS,
 } from 'lib/url/support';
 import {
 	domainManagementEdit,
@@ -185,11 +185,10 @@ export class DomainWarnings extends React.PureComponent {
 				learnMoreUrl = MAP_SUBDOMAIN;
 			} else {
 				text = translate(
-					"ACTION REQUIRED: Please contact your domain registrar to point {{strong}}%(domainName)s's{{/strong}} name server records to WordPress.com.",
+					"Action required: Please contact your domain registrar to point {{strong}}%(domainName)s's{{/strong}} name server records to WordPress.com.",
 					{
 						components: { strong: <strong /> },
 						args: { domainName: domain.name },
-						context: 'Notice for mapped domain notice with NS records pointing to somewhere else',
 					}
 				);
 				learnMoreUrl = MAP_DOMAIN_CHANGE_NAME_SERVERS;
