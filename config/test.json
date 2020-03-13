@@ -30,7 +30,6 @@
 		"blogger-plan": false,
 		"calypsoify/plugins": true,
 		"catch-js-errors": false,
-		"code-splitting": true,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
 		"current-site/stale-cart-notice": true,
