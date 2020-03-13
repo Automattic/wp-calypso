@@ -9,7 +9,7 @@ Before you get started we encourage you to get familiar with our [development va
 [development values]: https://wpcalypso.wordpress.com/devdocs/docs/guide/0-values.md
 [data approach]: https://wpcalypso.wordpress.com/devdocs/docs/our-approach-to-data.md
 [docs]: https://wpcalypso.wordpress.com/devdocs
-[prs]: https://wpcalypso.wordpress.com/devdocs/.github/CONTRIBUTING.md#pull-requests
+[prs]: https://wpcalypso.wordpress.com/devdocs/docs/CONTRIBUTING.md#pull-requests
 
 ## Defining a new section
 
