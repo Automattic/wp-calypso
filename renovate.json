@@ -48,12 +48,6 @@
 		{
 			"extends": "monorepo:storybook",
 			"prPriority": 1
-		},
-		{
-			"paths": [ "apps/full-site-editing/package.json" ],
-			"packageName": "newspack-blocks",
-			"reviewers": [ "team:@Automattic/create", "team:@Automattic/ajax" ],
-			"groupName": "Newspack Blog Posts Block Update"
 		}
 	],
 	"statusCheckVerify": true,
