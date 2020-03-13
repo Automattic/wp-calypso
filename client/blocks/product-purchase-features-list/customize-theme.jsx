@@ -36,7 +36,7 @@ export default localize( ( { selectedSite, translate } ) => {
 				title={ translate( 'Advanced customization' ) }
 				description={ translate(
 					"Change your site's appearance in a few clicks, with an expanded " +
-						'selection of fonts and colors, and access to custom CSS.'
+						'selection of fonts and colors.'
 				) }
 				buttonText={ translate( 'Start customizing' ) }
 				href={ getCustomizeLink( selectedSite ) }

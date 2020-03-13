@@ -19,8 +19,8 @@ import videoImage from 'assets/images/illustrations/video-hosting.svg';
 function getDescription( plan, translate ) {
 	if ( isWpComBusinessPlan( plan ) ) {
 		return translate(
-			'Enrich your posts and pages with video or audio. Upload as much media as you want, ' +
-				'directly to your site — the Business Plan has unlimited storage.'
+			'Enrich your site and boost engagement with video and audio. Your plan includes 200GB ' +
+				'of storage, giving you plenty of room for all types of media.'
 		);
 	}
 	if ( isWpComEcommercePlan( plan ) ) {
