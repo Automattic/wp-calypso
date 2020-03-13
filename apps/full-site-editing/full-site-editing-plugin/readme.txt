@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons,
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.3
-Stable tag: 0.23
+Stable tag: 0.24
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -41,6 +41,11 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 0.24 =
+
+* Starter Page Templates: fix overflow issue with feature image in blog posts.
+* Global Styles: add new font (Raleway).
 
 = 0.23 =
 * Dotcom Block Editor NUX: disable by default
