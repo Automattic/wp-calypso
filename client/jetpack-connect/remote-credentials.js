@@ -253,7 +253,7 @@ export class OrgCredentialsForm extends Component {
 				</div>
 				<div className="jetpack-connect__note">
 					{ translate(
-						'Note: Your WordPress credentials can be different than your WordPress.com credentials.'
+						'Note: Your WordPress credentials are different than your WordPress.com credentials.'
 					) }
 				</div>
 			</Fragment>
