@@ -21,7 +21,7 @@ import './style.scss';
 import AcquireIntent from './acquire-intent';
 
 const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
-	const { siteVertical, selectedDesign } = useSelect( select => select( STORE_KEY ).getState() );
+	const { siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
 	const isCreatingSite = useSelect( select => select( SITE_STORE ).isFetchingSite() );
 
 	const makePath = usePath();
@@ -39,14 +39,6 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 						<Redirect to={ makePath( Step.IntentGathering ) } />
 					) : (
 						<DesignSelector />
-					) }
-				</Route>
-
-				<Route path={ makePath( Step.PageSelection ) }>
-					{ ! selectedDesign ? (
-						<Redirect to={ makePath( Step.DesignSelection ) } />
-					) : (
-						<DesignSelector showPageSelector />
 					) }
 				</Route>
 
