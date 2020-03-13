@@ -7,13 +7,9 @@ import page from 'page';
  * Internal dependencies
  */
 import config from 'config';
-import {
-	clientRender,
-	makeLayout,
-	setupSidebar,
-	sites,
-	siteSelection,
-} from 'landing/jetpack-cloud/controller';
+
+import { navigation, siteSelection, sites } from 'my-sites/controller';
+import { makeLayout, render as clientRender } from 'controller';
 import { dashboard } from 'landing/jetpack-cloud/sections/dashboard/controller';
 import {
 	backups,
@@ -25,15 +21,15 @@ import { scan, scanHistory } from 'landing/jetpack-cloud/sections/scan/controlle
 import { settings } from 'landing/jetpack-cloud/sections/settings/controller';
 
 export default function() {
-	page( '/', siteSelection, setupSidebar, dashboard, makeLayout, clientRender );
+	page( '/', siteSelection, navigation, dashboard, makeLayout, clientRender );
 
 	if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {
-		page( '/backups', siteSelection, sites, setupSidebar, makeLayout, clientRender );
-		page( '/backups/:site', siteSelection, setupSidebar, backups, makeLayout, clientRender );
+		page( '/backups', siteSelection, sites, navigation, makeLayout, clientRender );
+		page( '/backups/:site', siteSelection, navigation, backups, makeLayout, clientRender );
 		page(
 			'/backups/:site/detail',
 			siteSelection,
-			setupSidebar,
+			navigation,
 			backupDetail,
 			makeLayout,
 			clientRender
@@ -41,7 +37,7 @@ export default function() {
 		page(
 			'/backups/:site/detail/:backupId',
 			siteSelection,
-			setupSidebar,
+			navigation,
 			backupDetail,
 			makeLayout,
 			clientRender
@@ -49,25 +45,25 @@ export default function() {
 		page(
 			'/backups/:site/download',
 			siteSelection,
-			setupSidebar,
+			navigation,
 			backupDownload,
 			makeLayout,
 			clientRender
 		);
 		page(
 			'/site/:site/backups/backups/download/:downloadId',
-			setupSidebar,
+			navigation,
 			backupDownload,
 			makeLayout,
 			clientRender
 		);
 
 		if ( config.isEnabled( 'jetpack-cloud/backups-restore' ) ) {
-			page( '/backups/restore', siteSelection, sites, setupSidebar, makeLayout, clientRender );
+			page( '/backups/restore', siteSelection, sites, navigation, makeLayout, clientRender );
 			page(
 				'/backups/:site/restore',
 				siteSelection,
-				setupSidebar,
+				navigation,
 				backupRestore,
 				makeLayout,
 				clientRender
@@ -75,7 +71,7 @@ export default function() {
 			page(
 				'/backups/:site/restore/:restoreId',
 				siteSelection,
-				setupSidebar,
+				navigation,
 				backupRestore,
 				makeLayout,
 				clientRender
@@ -84,14 +80,14 @@ export default function() {
 	}
 
 	if ( config.isEnabled( 'jetpack-cloud/scan' ) ) {
-		page( '/scan', siteSelection, sites, setupSidebar, makeLayout, clientRender );
-		page( '/scan/:site', siteSelection, setupSidebar, scan, makeLayout, clientRender );
+		page( '/scan', siteSelection, sites, navigation, makeLayout, clientRender );
+		page( '/scan/:site', siteSelection, navigation, scan, makeLayout, clientRender );
 
 		if ( config.isEnabled( 'jetpack-cloud/scan-history' ) ) {
 			page(
 				'/scan/:site/history',
 				siteSelection,
-				setupSidebar,
+				navigation,
 				scanHistory,
 				makeLayout,
 				clientRender
@@ -100,7 +96,7 @@ export default function() {
 	}
 
 	if ( config.isEnabled( 'jetpack-cloud/settings' ) ) {
-		page( '/settings', siteSelection, sites, setupSidebar, makeLayout, clientRender );
-		page( '/settings/:site', siteSelection, setupSidebar, settings, makeLayout, clientRender );
+		page( '/settings', siteSelection, sites, navigation, makeLayout, clientRender );
+		page( '/settings/:site', siteSelection, navigation, settings, makeLayout, clientRender );
 	}
 }

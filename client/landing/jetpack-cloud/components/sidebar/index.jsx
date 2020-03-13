@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import config from 'config';
-import CurrentSite from '../current-site';
+import CurrentSite from 'my-sites/current-site';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarItem from 'layout/sidebar/item';
@@ -48,9 +48,9 @@ class JetpackCloudSidebar extends Component {
 		const { selectedSiteSlug, translate } = this.props;
 
 		return (
-			<Sidebar>
-				<CurrentSite />
+			<Sidebar className="sidebar__jetpack-cloud">
 				<SidebarRegion>
+					<CurrentSite />
 					<SidebarMenu>
 						<SidebarItem
 							link="/"
