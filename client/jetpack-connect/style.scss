@@ -201,7 +201,8 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	text-align: center;
 
 	.wordpress-logo {
-			fill: var( --color-neutral );
+		margin: 0;
+		fill: var( --color-neutral );
 	}
 }
 
