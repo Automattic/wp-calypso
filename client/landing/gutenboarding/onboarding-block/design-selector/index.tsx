@@ -50,6 +50,7 @@ const DesignSelector: FunctionComponent = () => {
 						className="design-selector__start-over-button"
 						onClick={ handleStartOverButtonClick }
 						to={ makePath( Step.IntentGathering ) }
+						isLink
 					>
 						{ NO__( 'Start Over' ) }
 					</Link>

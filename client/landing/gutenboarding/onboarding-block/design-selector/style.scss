@@ -23,10 +23,8 @@
 	}
 
 	.design-selector__start-over-button {
-		text-decoration: underline;
-
-		&:hover {
-			box-shadow: none !important;
+		&.is-link {
+			color: var( --color-text-subtle );
 		}
 	}
 
