@@ -10,7 +10,6 @@ import { get, compact } from 'lodash';
  * Internal dependencies
  */
 import wp from 'lib/wp';
-import { abtest } from 'lib/abtest';
 import { useTranslate } from 'i18n-calypso';
 import { SiteSlug } from 'types';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
@@ -184,52 +183,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	};
 
 	/**
-	 * Return the content to display in the Referrals card based on the current plan.
-	 *
-	 * @returns {object} Object with props to render a PromoCard.
-	 */
-	const getReferralsCard = () => {
-		const isJetpackNotAtomic = isJetpack && ! isAtomicSite;
-		const cta = {
-			text: translate( 'Earn cash from referrals' ),
-			action: isJetpackNotAtomic
-				? {
-						url: 'https://jetpack.com/for/affiliates/',
-						onClick: () => trackCtaButton( 'referral-jetpack' ),
-				  }
-				: {
-						url:
-							'https://refer.wordpress.com/?utm_source=calypso&utm_campaign=calypso_earn&utm_medium=automattic_referred&atk=341b381c971a0631a88f080f598faafb25c344db',
-						onClick: () => trackCtaButton( 'referral-wpcom' ),
-				  },
-		};
-		const components = {
-			components: {
-				em: <em />,
-			},
-		};
-
-		return {
-			title: translate( 'Earn cash from referrals' ),
-			body: isJetpackNotAtomic
-				? translate(
-						"Promote Jetpack to friends, family, and website visitors and you'll earn a referral payment for every paying customer you send our way. {{em}}Available on every plan{{/em}}.",
-						components
-				  )
-				: translate(
-						"Promote WordPress.com to friends, family, and website visitors and you'll earn a referral payment for every paying customer you send our way. {{em}}Available on every plan{{/em}}.",
-						components
-				  ),
-			image: {
-				path: referralImage,
-			},
-			actions: {
-				cta,
-			},
-		};
-	};
-
-	/**
 	 * Return the content to display in the Peer Referrals card.
 	 *
 	 * @returns {object} Object with props to render a PromoCard.
@@ -353,8 +306,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			getSimplePaymentsCard(),
 			getRecurringPaymentsCard(),
 			getAdsCard(),
-			abtest( 'peerReferralEarnCard' ) === 'show' ? getPeerReferralsCard() : false,
-			abtest( 'peerReferralEarnCard' ) === 'show' ? false : getReferralsCard(),
+			getPeerReferralsCard(),
 		] ),
 	};
 
