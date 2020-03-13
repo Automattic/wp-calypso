@@ -82,10 +82,18 @@ describe( 'submitPassword', () => {
 		} );
 
 		const username = 'user1';
-		expect( generator.next( username ).value ).toEqual( {
-			type: 'FETCH_WP_LOGIN',
-			action: 'login-endpoint',
-			params: { username, password, client_id, client_secret },
+		const fetchAction = generator.next( username ).value;
+		expect( fetchAction ).toEqual( {
+			type: 'FETCH_AND_PARSE',
+			resource: 'https://wordpress.com/wp-login.php?action=login-endpoint',
+			options: expect.objectContaining( {
+				method: 'POST',
+				body: expect.stringMatching(
+					RegExp(
+						`^(?=.*username=${ username })(?=.*password=${ password })(?=.*client_id=${ client_id })(?=.*client_secret=${ client_secret }).*$`
+					)
+				),
+			} ),
 		} );
 
 		const token_links = [ 'https://gravator.com?login-url', 'https://jetpack.com?login-url' ];
@@ -113,10 +121,18 @@ describe( 'submitPassword', () => {
 		} );
 
 		const username = 'user1';
-		expect( generator.next( username ).value ).toEqual( {
-			type: 'FETCH_WP_LOGIN',
-			action: 'login-endpoint',
-			params: { username, password, client_id, client_secret },
+		const fetchAction = generator.next( username ).value;
+		expect( fetchAction ).toEqual( {
+			type: 'FETCH_AND_PARSE',
+			resource: 'https://wordpress.com/wp-login.php?action=login-endpoint',
+			options: expect.objectContaining( {
+				method: 'POST',
+				body: expect.stringMatching(
+					RegExp(
+						`^(?=.*username=${ username })(?=.*password=${ password })(?=.*client_id=${ client_id })(?=.*client_secret=${ client_secret }).*$`
+					)
+				),
+			} ),
 		} );
 
 		const errorMessage = 'Error!!1';

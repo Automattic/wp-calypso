@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { select } from '@wordpress/data-controls';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -15,8 +16,8 @@ import {
 	SendLoginEmailErrorResponse,
 } from './types';
 import { STORE_KEY } from './constants';
-import { wpcomRequest } from '../wpcom-request-controls';
-import { fetchWpLogin, reloadProxy, remoteLoginUser } from './controls';
+import { wpcomRequest, fetchAndParse } from '../wpcom-request-controls';
+import { reloadProxy, remoteLoginUser } from './controls';
 import { WpcomClientCredentials } from '../shared-types';
 
 export interface ActionsConfig extends WpcomClientCredentials {
@@ -125,12 +126,25 @@ export function createActions( {
 		const username = yield select( STORE_KEY, 'getUsernameOrEmail' );
 
 		try {
-			const loginResponse = yield fetchWpLogin( 'login-endpoint', {
-				username,
-				password,
-				client_id,
-				client_secret,
-			} );
+			const loginResponse = yield fetchAndParse(
+				// TODO Wrap this in `localizeUrl` from lib/i18n-utils
+				'https://wordpress.com/wp-login.php?action=login-endpoint',
+				{
+					credentials: 'include',
+					method: 'POST',
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/x-www-form-urlencoded',
+					},
+					body: stringify( {
+						remember_me: true,
+						username,
+						password,
+						client_id,
+						client_secret,
+					} ),
+				}
+			);
 
 			if ( loginResponse.ok && loginResponse.body.success ) {
 				if ( loadCookiesAfterLogin ) {
