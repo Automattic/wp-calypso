@@ -211,7 +211,7 @@ export class OrgCredentialsForm extends Component {
 				<div className="jetpack-connect__wordpress-logo">
 					<WordPressLogo size="72" />
 				</div>
-				<FormLabel htmlFor="username">{ translate( 'WordPress username or esmail' ) }</FormLabel>
+				<FormLabel htmlFor="username">{ translate( 'WordPress username or email' ) }</FormLabel>
 				<div className="jetpack-connect__site-address-container">
 					<Gridicon size={ 24 } icon="user" />
 					<FormTextInput
