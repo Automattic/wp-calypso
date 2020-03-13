@@ -6,6 +6,6 @@ exports[`PrimaryDomainButton it renders PrimaryDomainButton with basic plan 1`] 
   onClick={[Function]}
   type="button"
 >
-  Make Primary
+  Make primary
 </button>
 `;

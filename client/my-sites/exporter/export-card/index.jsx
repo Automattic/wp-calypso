@@ -42,7 +42,7 @@ class ExportCard extends Component {
 				loading={ this.props.shouldShowProgress }
 				isPrimary={ false }
 				onClick={ this.props.exportAll }
-				text={ translate( 'Export All' ) }
+				text={ translate( 'Export all' ) }
 				loadingText={ translate( 'Exporting…' ) }
 			/>
 		);

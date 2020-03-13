@@ -94,11 +94,11 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			'https://en.support.wordpress.com/wordpress-editor/blocks/simple-payments-block/';
 		const cta = hasSimplePayments
 			? {
-					text: translate( 'Collect One-time Payments' ),
+					text: translate( 'Collect one-time payments' ),
 					action: { url: supportLink, onClick: () => trackCtaButton( 'simple-payments' ) },
 			  }
 			: {
-					text: translate( 'Upgrade to a Premium Plan' ),
+					text: translate( 'Upgrade to Premium' ),
 					action: () => {
 						trackUpgrade( 'premium', 'simple-payments' );
 						page( `/checkout/${ selectedSiteSlug }/premium/` );
@@ -135,14 +135,14 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	const getRecurringPaymentsCard = () => {
 		const cta = isFreePlan
 			? {
-					text: translate( 'Upgrade to a Paid Plan' ),
+					text: translate( 'Upgrade' ),
 					action: () => {
 						trackUpgrade( 'any-paid-plan', 'recurring-payments' );
 						page( `/plans/${ selectedSiteSlug }` );
 					},
 			  }
 			: {
-					text: translate( 'Collect Recurring Payments' ),
+					text: translate( 'Collect recurring payments' ),
 					action: () => {
 						trackCtaButton( 'recurring-payments' );
 						page( `/earn/payments/${ selectedSiteSlug }` );
@@ -191,7 +191,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	const getReferralsCard = () => {
 		const isJetpackNotAtomic = isJetpack && ! isAtomicSite;
 		const cta = {
-			text: translate( 'Earn Cash from Referrals' ),
+			text: translate( 'Earn cash from referrals' ),
 			action: isJetpackNotAtomic
 				? {
 						url: 'https://jetpack.com/for/affiliates/',
@@ -297,7 +297,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const cta =
 			hasWordAds || hasSetupAds
 				? {
-						text: hasSetupAds ? translate( 'View Ad Dashboard' ) : translate( 'Earn Ad Revenue' ),
+						text: hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' ),
 						action: () => {
 							trackCtaButton( 'ads' );
 							page(
@@ -306,7 +306,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						},
 				  }
 				: {
-						text: translate( 'Upgrade to a Premium Plan' ),
+						text: translate( 'Upgrade to Premium' ),
 						action: () => {
 							trackUpgrade( 'premium', 'ads' );
 							page( `/checkout/${ selectedSiteSlug }/premium/` );
