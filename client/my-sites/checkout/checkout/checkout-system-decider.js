@@ -135,6 +135,14 @@ function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, is
 		debug( 'shouldShowCompositeCheckout false because country is not US' );
 		return false;
 	}
+	// Disable for ccTLDs that have special contact forms
+	if ( cart.products?.find( product => !! product.product_slug.match( /dot(fr|ca|uk)_domain/ ) ) ) {
+		debug(
+			'shouldShowCompositeCheckout false because cart contains ccTLD with special contact form'
+		);
+		return false;
+	}
+
 	if ( config.isEnabled( 'composite-checkout-testing' ) ) {
 		debug( 'shouldShowCompositeCheckout true because testing config is enabled' );
 		return true;
