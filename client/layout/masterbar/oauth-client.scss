@@ -648,7 +648,7 @@
 	.two-factor-authentication__actions {
 		border-top: 1px solid #e6e6e6;
 		padding-top: 44px;
-		text-align: left;
+		text-align: center;
 
 		@include breakpoint( '>480px' ) {
 			margin: 0 -24px;
