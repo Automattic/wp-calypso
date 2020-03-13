@@ -52,7 +52,7 @@ const DesignSelector: FunctionComponent = () => {
 						to={ makePath( Step.IntentGathering ) }
 						isLink
 					>
-						{ NO__( 'Start Over' ) }
+						{ NO__( 'Start over' ) }
 					</Link>
 				</div>
 			</div>
