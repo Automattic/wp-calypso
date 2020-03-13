@@ -130,7 +130,7 @@ describe( 'index', () => {
 				textContent = domNode.textContent,
 				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
-			expect( textContent ).toContain( 'name server records need to be configured' );
+			expect( textContent ).toContain( 'contact your domain registrar' );
 			expect(
 				links.some(
 					link => link.href === 'https://en.support.wordpress.com/domain-helper/?host=1.com'
