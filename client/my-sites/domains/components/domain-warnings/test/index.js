@@ -133,7 +133,9 @@ describe( 'index', () => {
 			expect( textContent ).toContain( 'contact your domain registrar' );
 			expect(
 				links.some(
-					link => link.href === 'https://en.support.wordpress.com/domain-helper/?host=1.com'
+					link =>
+						link.href ===
+						'https://en.support.wordpress.com/domains/map-existing-domain/#change-your-domains-name-servers'
 				)
 			).toBeTruthy();
 		} );
