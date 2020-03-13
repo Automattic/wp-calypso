@@ -134,7 +134,7 @@ export class OrgCredentialsForm extends Component {
 	getHeaderText() {
 		const { translate } = this.props;
 
-		return translate( 'Add your self-hosted WordPress credentials' );
+		return translate( 'Add your self-hosted WordPress credentials (wp-admin)' );
 	}
 
 	getSubHeaderText() {
