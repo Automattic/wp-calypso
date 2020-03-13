@@ -196,7 +196,22 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		const activityLink = '/activity-log' + siteSuffix;
+		let activityLink = '/activity-log' + siteSuffix;
+
+		if ( this.props.isJetpack && isEnabled( 'manage/themes-jetpack' ) ) {
+			activityLink = '/activity-log' + siteSuffix + '?group=rewind';
+			return (
+				<SidebarItem
+					tipTarget="activity"
+					label={ translate( 'Activity & Backups' ) }
+					selected={ itemLinkMatches( activityLink, path ) }
+					link={ activityLink }
+					onNavigate={ this.trackActivityClick }
+					expandSection={ this.expandToolsSection }
+				/>
+			);
+		}
+
 		return (
 			<SidebarItem
 				tipTarget="activity"
