@@ -55,8 +55,20 @@ export const request = action => {
 	const { path, ...otherCredentials } = action.credentials;
 	const credentials = { ...otherCredentials, abspath: path };
 
+	const tracksEvent = recordTracksEvent( 'calypso_rewind_creds_update_attempt', {
+		site_id: action.siteId,
+		host: action.credentials.host,
+		kpri: action.credentials.krpi ? 'provided but [omitted here]' : 'not provided',
+		pass: action.credentials.pass ? 'provided but [omitted here]' : 'not provided',
+		path: action.credentials.path,
+		port: action.credentials.port,
+		protocol: action.credentials.protocol,
+		user: action.credentials.user,
+	} );
+
 	return [
 		notice,
+		tracksEvent,
 		http(
 			{
 				apiNamespace: 'wpcom/v2',
