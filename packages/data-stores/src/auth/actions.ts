@@ -151,28 +151,64 @@ export function createActions( {
 				}
 			);
 
-			if ( loginResponse.ok && loginResponse.body.success ) {
-				if ( loadCookiesAfterLogin ) {
-					yield reloadProxy();
-					// Need to rerequest access after the proxy is reloaded
-					yield requestAllBlogsAccess();
-				}
-				yield remoteLoginUser( loginResponse.body.data.token_links );
-				yield receiveWpLogin( loginResponse.body );
-			} else {
-				yield receiveWpLoginFailed( loginResponse.body );
+			if ( ! loginResponse.ok || ! loginResponse.body.success ) {
+				return receiveWpLoginFailed( loginResponse.body );
 			}
+
+			if ( loginResponse.body.two_step_notification_sent === 'push' ) {
+				yield* handlePush2fa( loginResponse.body );
+			}
+
+			yield* handleSuccessfulLogin( loginResponse.body );
+
+			return;
 		} catch ( e ) {
 			const error = {
 				code: e.name,
 				message: e.message,
 			};
 
-			yield receiveWpLoginFailed( {
+			return receiveWpLoginFailed( {
 				success: false,
 				data: { errors: [ error ] },
 			} );
 		}
+	}
+
+	function* handleSuccessfulLogin( response: WpLoginSuccessResponse ) {
+		if ( loadCookiesAfterLogin ) {
+			yield reloadProxy();
+			// Need to rerequest access after the proxy is reloaded
+			yield requestAllBlogsAccess();
+		}
+		yield remoteLoginUser( response.data.token_links || [] );
+		yield receiveWpLogin( response );
+	}
+
+	function* handlePush2fa( response: WpLoginSuccessResponse ) {
+		const { user_id, two_step_nonce_push, push_web_token } = response.data;
+
+		yield fetchAndParse(
+			// TODO Wrap this in `localizeUrl` from lib/i18n-utils
+			'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint',
+			{
+				credentials: 'include',
+				method: 'POST',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				body: stringify( {
+					remember_me: true,
+					auth_type: 'push',
+					user_id,
+					two_step_nonce: two_step_nonce_push,
+					two_step_push_token: push_web_token,
+					client_id,
+					client_secret,
+				} ),
+			}
+		);
 	}
 
 	return {

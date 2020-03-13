@@ -21,7 +21,14 @@ export type AuthOptionsResponse = AuthOptionsSuccessResponse | AuthOptionsErrorR
 export interface WpLoginSuccessResponse {
 	success: true;
 	data: {
-		token_links: string[];
+		token_links?: string[];
+		user_id?: number;
+		two_step_supported_auth_types?: string[];
+		two_step_nonce_backup?: string;
+		two_step_nonce_authenticator?: string;
+		two_step_nonce_push?: string;
+		push_web_token?: string;
+		two_step_notification_sent?: string;
 	};
 }
 
