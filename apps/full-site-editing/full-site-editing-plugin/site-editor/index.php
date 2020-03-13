@@ -40,9 +40,6 @@ function initialize_site_editor() {
  * Add top level Site Editor menu item.
  */
 function add_site_editor_menu_item() {
-	// Allow Site Editor to be loaded on top level menu page.
-	add_filter( 'site_editor_allowed_hooks', __NAMESPACE__ . '\override_allowed_paths' );
-
 	add_menu_page(
 		__( 'Site Editor (beta)', 'full-site-editing' ),
 		__( 'Site Editor (beta)', 'full-site-editing' ),
@@ -51,20 +48,6 @@ function add_site_editor_menu_item() {
 		'gutenberg_edit_site_page',
 		'dashicons-edit'
 	);
-}
-
-/**
- * Overrides Site Editor allowed paths so that it can be loaded as top level page.
- *
- * @see https://github.com/WordPress/gutenberg/blob/a38de905717f5fd3bd57b0a71fb27826b819eb91/lib/edit-site-page.php#L41
- *
- * @param array $allowed_paths Array of currently allowed paths.
- *
- * @return array Array of currently allowed paths with top level page path appended.
- */
-function override_allowed_paths( $allowed_paths ) {
-	$allowed_paths[] = 'toplevel_page_gutenberg-edit-site';
-	return $allowed_paths;
 }
 
 /**
