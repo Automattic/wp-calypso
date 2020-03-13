@@ -199,7 +199,7 @@ export class MySitesSidebar extends Component {
 		let activityLink = '/activity-log' + siteSuffix;
 
 		if ( this.props.isJetpack && isEnabled( 'manage/themes-jetpack' ) ) {
-			activityLink = '/activity-log' + siteSuffix + '?group=rewind';
+			activityLink += '?group=rewind';
 			return (
 				<SidebarItem
 					tipTarget="activity"
