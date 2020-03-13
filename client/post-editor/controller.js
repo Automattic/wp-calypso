@@ -8,7 +8,7 @@ import i18n from 'i18n-calypso';
 import page from 'page';
 import { stringify } from 'qs';
 import { isWebUri as isValidUrl } from 'valid-url';
-import { get, has, pickBy, startsWith } from 'lodash';
+import { get, has, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,12 +16,11 @@ import { get, has, pickBy, startsWith } from 'lodash';
 import { recordPlaceholdersTiming } from 'lib/perfmon';
 import { startEditingPostCopy, startEditingExistingPost } from 'state/posts/actions';
 import { addQueryArgs, addSiteFragment } from 'lib/route';
-import wpcom from 'lib/wp';
 import PostEditor from './post-editor';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { startEditingNewPost, stopEditingPost } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite, getSiteAdminUrl } from 'state/sites/selectors';
+import { getSite } from 'state/sites/selectors';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { getEditURL } from 'state/posts/utils';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
@@ -29,8 +28,6 @@ import { requestSelectedEditor, setSelectedEditor } from 'state/selected-editor/
 import { getGutenbergEditorUrl } from 'state/selectors/get-gutenberg-editor-url';
 import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
 import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import isPrivateSite from 'state/selectors/is-private-site';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -57,7 +54,7 @@ function renderEditor( context, props ) {
 	context.primary = React.createElement( PostEditor, props );
 }
 
-async function maybeRedirect( context ) {
+function maybeRedirect( context ) {
 	const postType = determinePostType( context );
 	const postId = getPostID( context );
 
@@ -71,39 +68,6 @@ async function maybeRedirect( context ) {
 				path += `?${ context.querystring }`;
 			}
 			page.redirect( path );
-			return true;
-		}
-	}
-
-	const isAtomic = isSiteAutomatedTransfer( state, siteId );
-	const isPrivate = isPrivateSite( state, siteId );
-	if ( isAtomic && isPrivate ) {
-		let currentEditor = get( context.query, 'set-editor', null );
-		if ( ! currentEditor ) {
-			currentEditor = getSelectedEditor( state, siteId );
-		}
-		if ( ! currentEditor ) {
-			await waitForSiteIdAndSelectedEditor( context );
-			currentEditor = getSelectedEditor( state, siteId );
-		}
-
-		if ( currentEditor === 'classic' ) {
-			let queryArgs = pickBy( {
-				post: postId,
-				action: postId && 'edit', // If postId is set, open edit view.
-				post_type: postType !== 'post' && postType, // Use postType if it's different than post.
-				'classic-editor': 1,
-			} );
-
-			// needed for loading the editor in SU sessions
-			if ( wpcom.addSupportParams ) {
-				queryArgs = wpcom.addSupportParams( queryArgs );
-			}
-
-			const siteAdminUrl = getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
-			const wpAdminUrl = addQueryArgs( queryArgs, siteAdminUrl );
-
-			window.location.href = wpAdminUrl;
 			return true;
 		}
 	}
@@ -243,8 +207,8 @@ export default {
 
 		recordPlaceholdersTiming();
 
-		async function startEditing( siteId ) {
-			if ( await maybeRedirect( context ) ) {
+		function startEditing( siteId ) {
+			if ( maybeRedirect( context ) ) {
 				return;
 			}
 
