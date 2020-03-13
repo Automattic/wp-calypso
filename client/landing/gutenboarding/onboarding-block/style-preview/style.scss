@@ -1,0 +1,40 @@
+.style-preview__header {
+	display: grid;
+	grid-template-areas: 'title viewport-select actions';
+	column-gap: 1em;
+}
+
+.style-preview__content {
+	display: grid;
+	grid-template-areas: 'fonts preview';
+	grid-template-columns: 200px auto;
+	column-gap: 80px;
+}
+.style-preview__titles {
+	grid-area: title;
+}
+.style-preview__viewport-select {
+	grid-area: viewport-select;
+}
+.style-preview__actions {
+	grid-area: actions;
+}
+.style-preview__font-options {
+	grid-area: fonts;
+}
+.style-preview__preview {
+	grid-area: preview;
+}
+
+.style-preview__viewport-select {
+	display: flex;
+	justify-content: center;
+
+	.components-button {
+		height: auto;
+
+		svg {
+			fill: none;
+		}
+	}
+}

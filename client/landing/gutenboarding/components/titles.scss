@@ -1,0 +1,16 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+@import '../mixins';
+
+.gutenboarding-title,
+.gutenboarding-subtitle {
+	color: var( --mainColor );
+}
+.gutenboarding-title {
+	@include onboarding-font-recoleta;
+	font-size: 42px;
+}
+
+.gutenboarding-subtitle {
+	font-size: 16px;
+	font-family: $default-font;
+}

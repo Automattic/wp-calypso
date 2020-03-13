@@ -2,17 +2,6 @@
 @import '~@wordpress/base-styles/colors';
 @import '../../mixins';
 
-@font-face {
-	font-display: swap;
-	font-family: 'Recoleta';
-	font-weight: 400;
-	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.eot' );
-	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.eot?#iefix' ) format( 'embedded-opentype' ),
-		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff2' ) format( 'woff2' ),
-		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff' ) format( 'woff' ),
-		url( 'https://s1.wp.com/i/fonts/recoleta/400.ttf' ) format( 'truetype' );
-}
-
 .design-selector {
 	width: 90%;
 	height: 90%;
@@ -20,23 +9,12 @@
 	color: var( --mainColor );
 	padding: 5% 5% 0;
 	position: fixed;
-		top: 0;
-		left: 0;
+	top: 0;
+	left: 0;
 
 	.design-selector__header {
 		width: 100%;
 		margin: 5% 0%;
-		@include onboarding-font-recoleta;
-
-		h1 {
-			color: var( --mainColor );
-			font-size: 42px;
-		}
-		h2 {
-			color: var( --mainColor );
-			font-size: 16px;
-			font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-		}
 	}
 
 	.design-selector__grid {
@@ -68,7 +46,6 @@
 			transform: scale( 1.03 );
 			box-shadow: rgba( 0, 0, 0, 0.2 ) 0 0 15px;
 		}
-
 
 		@include breakpoint( '<1400px' ) {
 			height: 326px;
