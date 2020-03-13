@@ -29,11 +29,42 @@ function initialize_site_editor() {
 	// Force enable required Gutenberg experiments if they are not already active.
 	add_filter( 'option_gutenberg-experiments', __NAMESPACE__ . '\enable_site_editor_experiment' );
 
-	// TODO: Currently this action is removed on Dotcom. Circle back and find a cleaner way to deal with this.
-	add_action( 'admin_menu', 'gutenberg_menu' );
-
 	// Dotcom-specific overrides for API requests and similar.
 	add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\enqueue_override_scripts' );
+
+	// Add top level Site Editor menu item.
+	add_action( 'admin_menu', __NAMESPACE__ . '\add_site_editor_menu_item' );
+}
+
+/**
+ * Add top level Site Editor menu item.
+ */
+function add_site_editor_menu_item() {
+	// Allow Site Editor to be loaded on top level menu page.
+	add_filter( 'site_editor_allowed_hooks', __NAMESPACE__ . '\override_allowed_paths' );
+
+	add_menu_page(
+		__( 'Site Editor (beta)', 'full-site-editing' ),
+		__( 'Site Editor (beta)', 'full-site-editing' ),
+		'edit_theme_options',
+		'gutenberg-edit-site',
+		'gutenberg_edit_site_page',
+		'dashicons-edit'
+	);
+}
+
+/**
+ * Overrides Site Editor allowed paths so that it can be loaded as top level page.
+ *
+ * @see https://github.com/WordPress/gutenberg/blob/a38de905717f5fd3bd57b0a71fb27826b819eb91/lib/edit-site-page.php#L41
+ *
+ * @param array $allowed_paths Array of currently allowed paths.
+ *
+ * @return array Array of currently allowed paths with top level page path appended.
+ */
+function override_allowed_paths( $allowed_paths ) {
+	$allowed_paths[] = 'toplevel_page_gutenberg-edit-site';
+	return $allowed_paths;
 }
 
 /**
