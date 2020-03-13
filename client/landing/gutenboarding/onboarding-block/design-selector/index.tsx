@@ -15,6 +15,7 @@ import designs from './available-designs.json';
 import { usePath, Step } from '../../path';
 import { isEnabled } from '../../../../config';
 import './style.scss';
+import { SubTitle, Title } from 'landing/gutenboarding/components/titles';
 
 const DesignSelector: FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
@@ -31,12 +32,12 @@ const DesignSelector: FunctionComponent = () => {
 			data-vertical={ siteVertical?.label }
 		>
 			<div className="design-selector__header">
-				<h1 className="design-selector__title">{ NO__( 'Choose a starting design' ) }</h1>
-				<h2 className="design-selector__subtitle">
+				<Title>{ NO__( 'Choose a starting design' ) }</Title>
+				<SubTitle>
 					{ NO__(
 						'Get started with one of our top website layouts. You can always change it later'
 					) }
-				</h2>
+				</SubTitle>
 			</div>
 			<div className="design-selector__design-grid">
 				<div className="design-selector__grid">
