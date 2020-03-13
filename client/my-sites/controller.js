@@ -93,7 +93,6 @@ function createNavigation( context ) {
 
 	return (
 		<NavigationComponent
-			path={ context.path }
 			sidebar={ <SidebarComponent path={ context.path } siteBasePath={ basePath } /> }
 			allSitesPath={ basePath }
 			siteBasePath={ basePath }
