@@ -15,12 +15,14 @@ interface Props {
 	viewport: T.Viewport;
 	fonts: ValuesType< typeof import('./font-select').fontPairings >;
 }
-const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
+const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 	const { selectedDesign } = useSelect( select => select( STORE_KEY ).getState() );
 	return (
 		<div className="style-preview__preview">
-			Preview to be implemented. You picked { selectedDesign?.title ?? 'unknown' } design. Showing{ ' ' }
-			{ viewport } display.
+			<p>Preview to be implemented.</p>
+			<p>You picked { selectedDesign?.title ?? 'unknown' } design.</p>
+			<p>Showing { viewport } display.</p>
+			<p>With { fonts.join( ' / ' ) } display.</p>
 		</div>
 	);
 };

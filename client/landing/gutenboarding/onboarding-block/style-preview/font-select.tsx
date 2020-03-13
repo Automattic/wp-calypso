@@ -28,10 +28,10 @@ const FontSelect: React.FunctionComponent< Props > = ( { onSelect, selected } ) 
 				const [ a, b ] = fonts;
 				const isSelected = fonts === selected;
 				return (
-					<li key={ fonts.join() }>
+					<li key={ a + b }>
 						<Button onClick={ () => onSelect( fonts ) }>
-							{ a } / { b }
-							{ isSelected && '*' }
+							<b>{ a }</b>&nbsp;/&nbsp;{ b }
+							{ isSelected && ' *' }
 						</Button>
 					</li>
 				);
