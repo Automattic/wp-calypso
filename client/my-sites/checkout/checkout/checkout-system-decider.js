@@ -84,7 +84,7 @@ export default function CheckoutSystemDecider( {
 }
 
 function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, isJetpack ) {
-	if ( config.isEnabled( 'composite-checkout-wpcom' ) ) {
+	if ( config.isEnabled( 'composite-checkout-force' ) ) {
 		debug( 'shouldShowCompositeCheckout true because config is enabled' );
 		return true;
 	}
