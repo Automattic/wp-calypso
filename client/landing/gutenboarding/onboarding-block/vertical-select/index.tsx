@@ -111,6 +111,15 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 			// User-supplied verticals don't have IDs.
 			suggestions.unshift( { label: inputValue.trim() } );
 		}
+
+		// If there is only one suggestion and that suggestion matches the user input value,
+		// do not show any suggestions.
+		if (
+			suggestions.length === 1 &&
+			suggestions[ 0 ].label.toLowerCase() === normalizedInputValue
+		) {
+			suggestions = [];
+		}
 	}
 
 	const handleSelect = ( vertical: SiteVertical ) => {
