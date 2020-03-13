@@ -50,7 +50,7 @@
 		"test:js:update-snapshots": "npx wp-scripts test-unit-js -u --config='bin/js-unit-config.js' --colors",
 		"test:e2e": "npx wp-scripts test-e2e --wordpress-base-url='http://localhost:4013' --colors",
 		"test:e2e:watch": "npm run test-e2e -- --watch",
-		"clean": "npx rimraf dist full-site-editing-plugin/*/dist full-site-editing-plugin/blog-posts-block/newspack-homepage-articles",
+		"clean": "npx rimraf dist full-site-editing-plugin/*/dist",
 		"prebuild": "npm run clean",
 		"predev": "npm run clean",
 		"sync:blog-posts-block": "./bin/sync-blog-posts-block.sh",

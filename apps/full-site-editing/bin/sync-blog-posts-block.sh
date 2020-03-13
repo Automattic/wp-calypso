@@ -99,6 +99,9 @@ fi
 
 echo Syncing files to FSE…
 
+# Remove the target dir so that we start on a clean slate.
+rm -rf "$TARGET"
+
 # ensure target dirs exist
 mkdir -p $TARGET/blocks
 mkdir -p $TARGET/components
