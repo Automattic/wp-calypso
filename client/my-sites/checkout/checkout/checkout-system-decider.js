@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import debugFactory from 'debug';
 import wp from 'lib/wp';
 
@@ -17,6 +17,7 @@ import config from 'config';
 import { getCurrentUserLocale, getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { abtest } from 'lib/abtest';
+import { logToLogstash } from 'state/logstash/actions';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
 const wpcom = wp.undocumented();
@@ -40,6 +41,20 @@ export default function CheckoutSystemDecider( {
 	const isJetpack = useSelector( state => isJetpackSite( state, selectedSite?.ID ) );
 	const countryCode = useSelector( state => getCurrentUserCountryCode( state ) );
 	const locale = useSelector( state => getCurrentUserLocale( state ) );
+	const reduxDispatch = useDispatch();
+	useEffect( () => {
+		if ( product ) {
+			reduxDispatch(
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'CheckoutSystemDecider saw productSlug to add',
+					extra: {
+						productSlug: product,
+					},
+				} )
+			);
+		}
+	}, [ reduxDispatch, product ] );
 
 	// TODO: fetch the current cart, ideally without using CartData, and use that to pass to shouldShowCompositeCheckout
 
@@ -47,6 +62,7 @@ export default function CheckoutSystemDecider( {
 		debug( 'not deciding yet; cart has not loaded' );
 		return null; // TODO: replace with loading page
 	}
+
 	if ( shouldShowCompositeCheckout( cart, countryCode, locale, product, isJetpack ) ) {
 		return (
 			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
@@ -88,6 +104,7 @@ function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, is
 		debug( 'shouldShowCompositeCheckout true because force config is enabled' );
 		return true;
 	}
+
 	// Disable if this is a jetpack site
 	if ( isJetpack ) {
 		debug( 'shouldShowCompositeCheckout false because jetpack site' );
