@@ -85,7 +85,7 @@ export default function CheckoutSystemDecider( {
 
 function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, isJetpack ) {
 	if ( config.isEnabled( 'composite-checkout-force' ) ) {
-		debug( 'shouldShowCompositeCheckout true because config is enabled' );
+		debug( 'shouldShowCompositeCheckout true because force config is enabled' );
 		return true;
 	}
 	// Disable if this is a jetpack site
@@ -93,31 +93,9 @@ function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, is
 		debug( 'shouldShowCompositeCheckout false because jetpack site' );
 		return false;
 	}
-	// If the URL is adding a product, only allow wpcom plans
-	const slugFragmentsToAllow = [ 'personal', 'premium', 'blogger', 'ecommerce', 'business' ];
-	if (
-		productSlug &&
-		! slugFragmentsToAllow.find( fragment => productSlug.includes( fragment ) )
-	) {
-		debug(
-			'shouldShowCompositeCheckout false because product does not match whitelist',
-			productSlug
-		);
-		return false;
-	}
 	// Disable for non-USD
 	if ( cart.currency !== 'USD' ) {
 		debug( 'shouldShowCompositeCheckout false because currency is not USD' );
-		return false;
-	}
-	// Disable for domains in the cart
-	if ( cart.products?.find( product => product.is_domain_registration ) ) {
-		debug( 'shouldShowCompositeCheckout false because cart contains domain registration' );
-		return false;
-	}
-	// Disable for domain mapping
-	if ( cart.products?.find( product => product.product_slug.includes( 'domain' ) ) ) {
-		debug( 'shouldShowCompositeCheckout false because cart contains domain item' );
 		return false;
 	}
 	// Disable for GSuite plans
@@ -140,11 +118,34 @@ function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, is
 		debug( 'shouldShowCompositeCheckout false because country is not US' );
 		return false;
 	}
-
+	if ( config.isEnabled( 'composite-checkout-testing' ) ) {
+		debug( 'shouldShowCompositeCheckout true because testing config is enabled' );
+		return true;
+	}
+	// If the URL is adding a product, only allow wpcom plans
+	const slugFragmentsToAllow = [ 'personal', 'premium', 'blogger', 'ecommerce', 'business' ];
 	if (
-		config.isEnabled( 'composite-checkout-testing' ) ||
-		abtest( 'showCompositeCheckout' ) === 'composite'
+		productSlug &&
+		! slugFragmentsToAllow.find( fragment => productSlug.includes( fragment ) )
 	) {
+		debug(
+			'shouldShowCompositeCheckout false because product does not match whitelist',
+			productSlug
+		);
+		return false;
+	}
+	// Disable for domains in the cart
+	if ( cart.products?.find( product => product.is_domain_registration ) ) {
+		debug( 'shouldShowCompositeCheckout false because cart contains domain registration' );
+		return false;
+	}
+	// Disable for domain mapping
+	if ( cart.products?.find( product => product.product_slug.includes( 'domain' ) ) ) {
+		debug( 'shouldShowCompositeCheckout false because cart contains domain item' );
+		return false;
+	}
+
+	if ( abtest( 'showCompositeCheckout' ) === 'composite' ) {
 		debug( 'shouldShowCompositeCheckout true because user is in abtest' );
 		return true;
 	}
