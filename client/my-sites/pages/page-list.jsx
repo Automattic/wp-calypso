@@ -35,6 +35,8 @@ import SectionHeader from 'components/section-header';
 import { Button } from '@automattic/components';
 import { withLocalizedMoment } from 'components/localized-moment';
 
+const PAGES_STATUSES = [ 'publish', 'draft', 'pending', 'private', 'future', 'trash' ];
+
 function preloadEditor() {
 	preload( 'post-editor' );
 }
@@ -75,7 +77,7 @@ export default class PageList extends Component {
 			page: this.state.page,
 			number: 20, // all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
 			search,
-			status: mapStatus( status ),
+			status: search ? PAGES_STATUSES.join( ',' ) : mapStatus( status ),
 			type: 'page',
 		};
 
