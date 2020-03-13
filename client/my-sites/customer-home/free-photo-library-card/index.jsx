@@ -5,12 +5,14 @@ import React, { Fragment, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { Button, Card, Dialog } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import CardHeading from 'components/card-heading';
 import { localizeUrl } from 'lib/i18n-utils';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -22,11 +24,16 @@ import './style.scss';
  */
 import freePhotoLibraryVideoPrompt from 'assets/images/customer-home/free-photo-library-video-prompt.png';
 
-const FreePhotoLibraryCard = () => {
+const FreePhotoLibraryCard = ( { recordTracksEvent: tracks } ) => {
 	const [ showDialog, setShowDialog ] = useState( false );
 	const translate = useTranslate();
 
-	const toggleDialog = () => setShowDialog( ! showDialog );
+	const toggleDialog = () => {
+		if ( ! showDialog ) {
+			tracks( 'calypso_customer_home_free_photo_library_video_dialog_view' );
+		}
+		return setShowDialog( ! showDialog );
+	};
 
 	return (
 		<Fragment>
@@ -64,7 +71,12 @@ const FreePhotoLibraryCard = () => {
 							'create stunning designs.'
 					) }
 				</p>
-				<Button href={ localizeUrl( 'https://support.wordpress.com/free-photo-library/' ) }>
+				<Button
+					onClick={ () => {
+						tracks( 'calypso_customer_home_free_photo_library_video_support_page_view' );
+					} }
+					href={ localizeUrl( 'https://support.wordpress.com/free-photo-library/' ) }
+				>
 					{ translate( 'Learn more' ) }
 				</Button>
 			</Card>
@@ -72,4 +84,4 @@ const FreePhotoLibraryCard = () => {
 	);
 };
 
-export default FreePhotoLibraryCard;
+export default connect( null, { recordTracksEvent } )( FreePhotoLibraryCard );
