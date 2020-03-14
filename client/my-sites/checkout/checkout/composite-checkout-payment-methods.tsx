@@ -23,7 +23,17 @@ import {
 
 const debug = debugFactory( 'calypso:composite-checkout-payment-methods' );
 
-export function useStoredCards( getStoredCards ) {
+type StoredCard = {
+	stored_details_id: string;
+	name: string;
+	expiry: string;
+	card_type: string;
+	card: string;
+	mp_ref: string;
+	payment_partner: string;
+};
+
+export function useStoredCards( getStoredCards: () => StoredCard[] ) {
 	const [ state, dispatch ] = useReducer( storedCardsReducer, {
 		storedCards: [],
 		isLoading: true,
@@ -41,12 +51,27 @@ export function useStoredCards( getStoredCards ) {
 			isSubscribed && dispatch( { type: 'FETCH_END', payload: cards } );
 		} );
 
-		return () => ( isSubscribed = false );
+		return () => {
+			isSubscribed = false;
+		};
 	}, [ getStoredCards ] );
 	return state;
 }
 
-function storedCardsReducer( state, action ) {
+type StoredCardsReducerState = {
+	storedCards: StoredCard[];
+	isLoading: boolean;
+};
+
+type StoredCardsReducerAction = {
+	type: 'FETCH_END';
+	payload: StoredCard[];
+};
+
+function storedCardsReducer(
+	state: StoredCardsReducerState,
+	action: StoredCardsReducerAction
+): StoredCardsReducerState {
 	switch ( action.type ) {
 		case 'FETCH_END':
 			return { ...state, storedCards: action.payload, isLoading: false };
