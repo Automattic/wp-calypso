@@ -58,7 +58,6 @@ import {
 	TldFilterBar,
 } from 'components/domains/search-filters';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
 import { hasDomainInCart } from 'lib/cart-values/cart-items';
@@ -1441,7 +1440,6 @@ export default connect(
 		return {
 			isSitePreviewVisible: isSitePreviewVisible( state ),
 			currentUser: getCurrentUser( state ),
-			selectedSite: getSelectedSite( state ),
 			defaultSuggestions: getDomainsSuggestions( state, queryObject ),
 			defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject ),
 		};
