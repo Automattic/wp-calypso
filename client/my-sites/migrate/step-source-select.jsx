@@ -75,7 +75,7 @@ class StepSourceSelect extends Component {
 						case 'wordpress':
 							if ( result.site_meta.wpcom_site ) {
 								return this.setState( {
-									error: translate( 'This is site is already hosted on WordPress.com' ),
+									error: translate( 'This site is already hosted on WordPress.com' ),
 									isLoading: false,
 								} );
 							}
