@@ -100,7 +100,7 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 					plan={ PLAN_JETPACK_BUSINESS }
 					title={ translate( 'Access all our premium themes with our Professional plan!' ) }
 					description={ translate(
-						'In addition to more than 100 premium themes, ' +
+						'In addition to our collection of premium themes, ' +
 							'get Elasticsearch-powered site search, real-time offsite backups, ' +
 							'and security scanning.'
 					) }
