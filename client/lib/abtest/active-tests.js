@@ -124,13 +124,4 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	peerReferralEarnCard: {
-		datestamp: '20200305',
-		variations: {
-			show: 50,
-			holdout: 50,
-		},
-		defaultVariation: 'holdout',
-		allowExistingUsers: true,
-	},
 };
