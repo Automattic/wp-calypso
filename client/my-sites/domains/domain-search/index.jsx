@@ -190,6 +190,7 @@ class DomainSearch extends Component {
 								onAddTransfer={ this.handleAddTransfer }
 								cart={ this.props.cart }
 								offerUnavailableOption
+								selectedSite={ selectedSite }
 								basePath={ this.props.basePath }
 								products={ this.props.productsList }
 								vendor={ getSuggestionsVendor() }
