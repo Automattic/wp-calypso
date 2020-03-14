@@ -2,8 +2,9 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import React, { Component } from 'react';
 import { isMobile } from '@automattic/viewport';
+import page from 'page';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
@@ -39,12 +40,19 @@ const PAGE_SIZE = 10;
 class BackupsPage extends Component {
 	constructor( props ) {
 		super( props );
+
 		this.state = {
-			selectedDateString: props.moment().toISOString( true ),
+			selectedDate: new Date(),
 		};
 	}
 
-	dateChange = selectedDateString => this.setState( { selectedDateString } );
+	onDateChange = date => {
+		this.setState( { selectedDate: date } );
+	};
+
+	onDateRangeSelection = () => {
+		//todo: go to the log activity view
+	};
 
 	isEmptyFilter = filter => {
 		if ( ! filter ) {
@@ -59,9 +67,16 @@ class BackupsPage extends Component {
 		return true;
 	};
 
+	TO_REMOVE_getSelectedDateString = () => {
+		const { moment } = this.props;
+		const { selectedDate } = this.state;
+		return moment.parseZone( selectedDate ).toISOString( true );
+	};
+
 	renderMain() {
 		const { allowRestore, hasRealtimeBackups, logs, moment, siteId, siteSlug } = this.props;
-		const { selectedDateString } = this.state;
+		const { selectedDate } = this.state;
+		const selectedDateString = this.TO_REMOVE_getSelectedDateString();
 
 		const backupAttempts = getBackupAttemptsForDate( logs, selectedDateString );
 		const deltas = getDailyBackupDeltas( logs, selectedDateString );
@@ -73,9 +88,11 @@ class BackupsPage extends Component {
 				<SidebarNavigation />
 				<QueryRewindState siteId={ siteId } />
 				<QuerySitePurchases siteId={ siteId } />
+
 				<DatePicker
-					onChange={ this.dateChange }
-					selectedDateString={ selectedDateString }
+					onDateChange={ this.onDateChange }
+					onDateRangeSelection={ this.onDateRangeSelection }
+					selectedDate={ selectedDate }
 					siteId={ siteId }
 				/>
 				<DailyBackupStatus
@@ -180,6 +197,12 @@ class BackupsPage extends Component {
 
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
+
+	//The section require a valid site, if not, redirect to backups
+	if ( false === !! siteId ) {
+		return page.redirect( '/backups' );
+	}
+
 	const filter = getActivityLogFilter( state, siteId );
 	const logs = siteId && requestActivityLogs( siteId, filter );
 	const rewind = getRewindState( state, siteId );
