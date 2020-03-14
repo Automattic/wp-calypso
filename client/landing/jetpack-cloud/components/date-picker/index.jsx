@@ -49,7 +49,7 @@ class DatePicker extends Component {
 			}
 		}
 
-		return date.format( dateFormat );
+		return moment( date ).format( dateFormat );
 	};
 
 	shuttleLeft = () => {
@@ -57,7 +57,7 @@ class DatePicker extends Component {
 
 		const newSelectedDate = moment( selectedDate ).subtract( 1, 'days' );
 
-		onDateChange( newSelectedDate.getDate() );
+		onDateChange( newSelectedDate.toDate() );
 	};
 
 	shuttleRight = () => {
@@ -69,7 +69,7 @@ class DatePicker extends Component {
 
 		const newSelectedDate = moment( selectedDate ).add( 1, 'days' );
 
-		onDateChange( newSelectedDate.getDate() );
+		onDateChange( newSelectedDate.toDate() );
 	};
 
 	canShuttleRight = () => {
