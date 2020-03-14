@@ -110,7 +110,6 @@ export async function sendStripeTransaction(
 	submit: WPCOMTransactionEndpoint
 ): Promise< WPCOMTransactionEndpointResponse > {
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
-		debug,
 		...transactionData,
 		paymentMethodToken: transactionData.paymentMethodToken.id,
 		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
@@ -126,7 +125,6 @@ export function submitCreditsTransaction(
 ): Promise< WPCOMTransactionEndpointResponse > {
 	debug( 'formatting full credits transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
-		debug,
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_WPCOM',
 	} );
@@ -140,7 +138,6 @@ export function submitFreePurchaseTransaction(
 ): Promise< WPCOMTransactionEndpointResponse > {
 	debug( 'formatting free transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
-		debug,
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_WPCOM',
 	} );
