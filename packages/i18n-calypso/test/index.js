@@ -247,6 +247,10 @@ describe( 'I18n', function() {
 					} )
 				).toBe( '2*500@330' );
 			} );
+			it( 'should allow empty separators ', function() {
+				expect( numberFormat( 9999 ) ).not.toBe( '9999' );
+				expect( numberFormat( 9999, { thousandsSep: '' } ) ).toBe( '9999' );
+			} );
 		} );
 	} );
 

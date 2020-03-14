@@ -186,7 +186,10 @@ I18N.prototype.emit = function( ...args ) {
 I18N.prototype.numberFormat = function( number, options = {} ) {
 	const decimals = typeof options === 'number' ? options : options.decimals || 0;
 	const decPoint = options.decPoint || this.state.numberFormatSettings.decimal_point || '.';
-	const thousandsSep = options.thousandsSep || this.state.numberFormatSettings.thousands_sep || ',';
+	const thousandsSep =
+		typeof options.thousandsSep === 'string'
+			? options.thousandsSep
+			: this.state.numberFormatSettings.thousands_sep || ',';
 
 	return numberFormat( number, decimals, decPoint, thousandsSep );
 };
