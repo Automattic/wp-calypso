@@ -1,10 +1,10 @@
 .date-picker .button,
-.date-picker__current-display-date,
+.date-picker__display-date,
 .date-picker .date-range {
-    display: inline-block;
-    float: none;
+	display: inline-block;
+	float: none;
 }
 
 .date-picker .button .gridicon.disabled {
-    fill: #dcdcde;
+	fill: #dcdcde;
 }
