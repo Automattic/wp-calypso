@@ -117,7 +117,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 						</p>
 						<p>
 							{ translate(
-								"That's exactly why we've partnered with some of the world's greatest designers to offer over 250 high-end designs that you can use to make your site look incredible."
+								"That's exactly why we've partnered with some of the world's greatest designers to offer high-end designs that you can use to make your site look incredible."
 							) }
 						</p>
 						<p>
@@ -148,7 +148,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 						</p>
 						<p>
 							{ translate(
-								'But if you upgrade to a Premium plan with this special offer, you will get our full collection of over 250 premium themes for just an additional %(discountPrice)s!',
+								'But if you upgrade to a Premium plan with this special offer, you will get our full collection premium themes for just an additional %(discountPrice)s!',
 								{
 									args: {
 										discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
@@ -214,7 +214,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 						<p>
 							<b>
 								{ translate(
-									'Upgrade to the Premium plan and access over 250 premium themes for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more.',
+									'Upgrade to the Premium plan and access our full collection of premium themes for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more.',
 									{
 										components: { del: <del /> },
 										args: {
