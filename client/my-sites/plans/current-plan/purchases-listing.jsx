@@ -138,7 +138,8 @@ class PurchasesListing extends Component {
 
 		let renewMoment = null;
 
-		// Pass auto-renew information if it is enabled.
+		// If a purchase object has been passed into this function, it will contain the `renewDate` property.
+		// Otherwise, if a plan object has been passed into this function, it will contain the `autoRenew` and `autoRenewDate` properties.
 		if ( 'renewDate' in purchase ) {
 			renewMoment = purchase.renewDate ? this.props.moment( purchase.renewDate ) : null;
 		} else if ( 'autoRenewDate' in purchase ) {
