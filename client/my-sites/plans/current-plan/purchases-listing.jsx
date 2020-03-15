@@ -124,7 +124,52 @@ class PurchasesListing extends Component {
 		return null;
 	}
 
-	getExpirationInfo( purchase ) {
+	getPurchaseByCurrentPlan() {
+		const { currentPlanSlug, purchases } = this.props;
+
+		if ( ! currentPlanSlug ) {
+			return null;
+		}
+
+		return find(
+			purchases,
+			purchase => purchase.active && purchase.productSlug === currentPlanSlug
+		);
+	}
+
+	getExpirationInfoForPlan( plan ) {
+		// No expiration date for free plan or partner site.
+		if ( this.isFreePlan( plan ) || isPartnerPurchase( plan ) ) {
+			return null;
+		}
+
+		const subscribedMoment = plan.subscribedDate ? this.props.moment( plan.subscribedDate ) : null;
+
+		const expiryMoment = plan.expiryDate ? this.props.moment( plan.expiryDate ) : null;
+
+		const renewMoment =
+			plan.autoRenew && plan.autoRenewDate ? this.props.moment( plan.autoRenewDate ) : null;
+
+		let isRefundable = false;
+
+		// we need to find the purchase linked to the current plan to find out if it's refundable or not
+		const purchaseForCurrentPlan = this.getPurchaseByCurrentPlan();
+
+		if ( purchaseForCurrentPlan ) {
+			isRefundable = purchaseForCurrentPlan.isRefundable;
+		}
+
+		return (
+			<ProductExpiration
+				expiryDateMoment={ expiryMoment }
+				renewDateMoment={ renewMoment }
+				purchaseDateMoment={ subscribedMoment }
+				isRefundable={ isRefundable }
+			/>
+		);
+	}
+
+	getExpirationInfoForPurchase( purchase ) {
 		// No expiration date for free plan or partner site.
 		if ( this.isFreePlan( purchase ) || isPartnerPurchase( purchase ) ) {
 			return null;
@@ -136,18 +181,7 @@ class PurchasesListing extends Component {
 
 		const expiryMoment = purchase.expiryDate ? this.props.moment( purchase.expiryDate ) : null;
 
-		let renewMoment = null;
-
-		// If a purchase object has been passed into this function, the `renewDate` will contain information of renewal.
-		// Otherwise, if a plan object has been passed into this function, the `autoRenew` and `autoRenewDate` properties will contain information of renewals.
-		if ( 'renewDate' in purchase ) {
-			renewMoment = purchase.renewDate ? this.props.moment( purchase.renewDate ) : null;
-		} else if ( 'autoRenewDate' in purchase ) {
-			renewMoment =
-				purchase.autoRenew && purchase.autoRenewDate
-					? this.props.moment( purchase.autoRenewDate )
-					: null;
-		}
+		const renewMoment = purchase.renewDate ? this.props.moment( purchase.renewDate ) : null;
 
 		return (
 			<ProductExpiration
@@ -214,7 +248,7 @@ class PurchasesListing extends Component {
 				) : (
 					<MyPlanCard
 						action={ this.getActionButton( currentPlan ) }
-						details={ this.getExpirationInfo( currentPlan ) }
+						details={ this.getExpirationInfoForPlan( currentPlan ) }
 						isError={ isPlanExpiring }
 						product={ currentPlanSlug }
 						tagline={ this.getTagline( currentPlan ) }
@@ -244,7 +278,7 @@ class PurchasesListing extends Component {
 					<MyPlanCard
 						key={ purchase.id }
 						action={ this.getActionButton( purchase ) }
-						details={ this.getExpirationInfo( purchase ) }
+						details={ this.getExpirationInfoForPurchase( purchase ) }
 						isError={ this.isProductExpiring( purchase ) }
 						isPlaceholder={ this.isLoading() }
 						product={ purchase?.productSlug }
