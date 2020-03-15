@@ -27,20 +27,6 @@ const appleClientUrl =
 const connectUrlPopupFLow =
 	'https://public-api.wordpress.com/connect/?magic=keyring&service=apple&action=request&for=connect';
 
-// polyfill for CustomEvent otherwise Apple login breaks on IE 11
-// see: https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Polyfill
-( function() {
-	if ( typeof window === 'undefined' || typeof window.CustomEvent === 'function' ) return false;
-	function CustomEvent( event, params ) {
-		params = params || { bubbles: false, cancelable: false, detail: null };
-		const evt = document.createEvent( 'CustomEvent' );
-		evt.initCustomEvent( event, params.bubbles, params.cancelable, params.detail );
-		return evt;
-	}
-
-	window.CustomEvent = CustomEvent;
-} )();
-
 class AppleLoginButton extends Component {
 	static propTypes = {
 		clientId: PropTypes.string.isRequired,
