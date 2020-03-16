@@ -19,11 +19,10 @@ import ThreatDialog from '../../components/threat-dialog';
 
 import './style.scss';
 
-// The only reason for this is to test the dialog that gets
-// displayed when the user clicks the fix threat or ignore threat button.
-// In the end, this dialog is going to be rendered inside the ThreatItem
-// component (PR still open), not here.
-const ComponentToTestDialogs = () => {
+// This is here for testing purposes only. Once the ThreatItem component
+// is merged into master, we would be able to connect this two pieces of
+// UI.
+const ComponentToTestDialogs = ( { threat } ) => {
 	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
 	const [ actionToPerform, setActionToPerform ] = React.useState();
 
@@ -43,8 +42,8 @@ const ComponentToTestDialogs = () => {
 			<ThreatDialog
 				showDialog={ showThreatDialog }
 				onCloseDialog={ closeDialog }
-				threatTitle="Unexpected core file: sx--a4bp.php"
-				threatDescription="Unexpected file sx--a4fb.php contains malicious code and is not part of WordPress"
+				threatTitle={ threat.title }
+				threatDescription={ threat.details }
 				action={ actionToPerform }
 			/>
 		</>
@@ -143,7 +142,7 @@ class ScanPage extends Component {
 			<div className="scan__main">
 				<div className="scan__content">
 					{ this.renderScanState() }
-					<ComponentToTestDialogs />
+					<ComponentToTestDialogs threat={ this.props.threats[ 0 ] } />
 				</div>
 				<StatsFooter
 					header="Scan Summary"
