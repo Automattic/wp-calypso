@@ -23,6 +23,7 @@ class DatePicker extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		selectedDate: PropTypes.instanceOf( Date ).isRequired,
+		oldestDateAvailable: PropTypes.instanceOf( Date ).isRequired,
 		onDateChange: PropTypes.func.isRequired,
 		onDateRangeSelection: PropTypes.func.isRequired,
 	};
@@ -53,6 +54,10 @@ class DatePicker extends Component {
 	};
 
 	shuttleLeft = () => {
+		if ( ! this.canShuttleLeft() ) {
+			return false;
+		}
+
 		const { moment, onDateChange, selectedDate } = this.props;
 
 		const newSelectedDate = moment( selectedDate ).subtract( 1, 'days' );
@@ -70,6 +75,12 @@ class DatePicker extends Component {
 		const newSelectedDate = moment( selectedDate ).add( 1, 'days' );
 
 		onDateChange( newSelectedDate.toDate() );
+	};
+
+	canShuttleLeft = () => {
+		const { moment, selectedDate, oldestDateAvailable } = this.props;
+
+		return !! oldestDateAvailable && ! moment( selectedDate ).isSame( oldestDateAvailable, 'day' );
 	};
 
 	canShuttleRight = () => {
@@ -90,7 +101,7 @@ class DatePicker extends Component {
 		return (
 			<div className="date-picker">
 				<Button compact borderless onClick={ this.shuttleLeft }>
-					<Gridicon icon="chevron-left" />
+					<Gridicon icon="chevron-left" className={ ! this.canShuttleLeft() && 'disabled' } />
 				</Button>
 
 				<div className="date-picker__display-date">{ previousDisplayDate }</div>
