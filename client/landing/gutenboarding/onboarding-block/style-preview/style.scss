@@ -28,6 +28,7 @@
 // Extra specificity to override core component border
 .style-preview__font-option.components-button {
 	border: 1px solid var( --studio-gray-10 );
+	justify-content: center;
 
 	&.is-selected {
 		border-color: var( --contrastColor );
