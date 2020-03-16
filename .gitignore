@@ -55,6 +55,7 @@ lerna-debug.log
 *.db
 
 /calypso-strings.pot
+/chunks-map.json
 cover.html
 .test.log
 
