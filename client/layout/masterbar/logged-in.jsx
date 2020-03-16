@@ -64,6 +64,14 @@ class MasterbarLoggedIn extends React.Component {
 			const { migrationStatus, currentSelectedSiteId } = this.props;
 
 			if ( currentSelectedSiteId && migrationStatus === 'error' ) {
+				/**
+				 * Reset the in-memory site lock for the currently selected site
+				 */
+				this.props.updateSiteMigrationMeta( currentSelectedSiteId, 'inactive', null );
+
+				/**
+				 * Reset the migration on the backend
+				 */
 				requestHttpData(
 					'site-migration',
 					http( {
