@@ -7,6 +7,7 @@ import { useTheme } from 'emotion-theming';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 import { LeftColumn, RightColumn } from '../styled-components/ie-fallback';
 import debugFactory from 'debug';
+import { registerStore, useSelect, useDispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -19,8 +20,6 @@ import Button from '../../components/button';
 import PaymentLogo from './payment-logo';
 import { createStripePaymentMethod, showStripeModalAuth } from '../stripe';
 import {
-	useSelect,
-	useDispatch,
 	useMessages,
 	useLineItems,
 	renderDisplayValueMarkdown,
