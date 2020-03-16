@@ -534,10 +534,10 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	};
 
 	onIframeLoaded = ( iframeUrl: string ) => {
-		if ( ! this.successfulIframeLoad ) {
-			window.location.replace( iframeUrl );
-			return;
-		}
+		// if ( ! this.successfulIframeLoad ) {
+		// 	window.location.replace( iframeUrl );
+		// 	return;
+		// }
 		this.setState( { isIframeLoaded: true, currentIFrameUrl: iframeUrl } );
 	};
 
@@ -640,14 +640,28 @@ const mapStateToProps = (
 		'new-homepage': creatingNewHomepage,
 	} );
 
+	let siteEditorQueryArgs = pickBy( {
+		calypsoify: 1,
+		'block-editor': 1,
+		'frame-nonce': getSiteOption( state, siteId, siteOption ) || '',
+		'environment-id': config( 'env_id' ),
+	} );
+
 	// needed for loading the editor in SU sessions
 	if ( wpcom.addSupportParams ) {
 		queryArgs = wpcom.addSupportParams( queryArgs );
+		siteEditorQueryArgs = wpcom.addSupportParams( siteEditorQueryArgs );
 	}
 
-	const siteAdminUrl = getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
+	const siteAdminUrl =
+		postType === 'site'
+			? getSiteAdminUrl( state, siteId, 'admin.php?page=gutenberg-edit-site' )
+			: getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
 
-	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
+	const iframeUrl =
+		postType === 'site'
+			? addQueryArgs( siteEditorQueryArgs, siteAdminUrl )
+			: addQueryArgs( queryArgs, siteAdminUrl );
 
 	// Prevents the iframe from loading using a cached frame nonce.
 	const shouldLoadIframe = ! isRequestingSites( state ) && ! isRequestingSite( state, siteId );

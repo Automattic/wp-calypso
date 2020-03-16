@@ -194,3 +194,19 @@ export const post = ( context, next ) => {
 
 	return next();
 };
+
+export const siteEditor = ( context, next ) => {
+	context.primary = (
+		<CalypsoifyIframe
+			key={ 'site-editor' }
+			postId={ null }
+			postType={ 'site' }
+			// duplicatePostId={ null }
+			// pressThis={ pressThis }
+			// fseParentPageId={ fseParentPageId }
+			// creatingNewHomepage={ postType === 'page' && has( context, 'query.new-homepage' ) }
+		/>
+	);
+
+	return next();
+};

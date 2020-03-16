@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
-import { getSiteAdminUrl } from 'state/sites/selectors';
+import { getSiteAdminUrl, getSiteSlug } from 'state/sites/selectors';
 
 /**
  * Retrieves url for site editor.
@@ -18,8 +18,10 @@ export const getSiteEditorUrl = ( state, siteId ) => {
 		return `${ siteAdminUrl }admin.php?page=gutenberg-edit-site`;
 	}
 
+	const siteSlug = getSiteSlug( state, siteId );
+
 	// @TODO Update this to be URL for the iframe route.
-	return `${ siteAdminUrl }admin.php?page=gutenberg-edit-site`;
+	return `/site-editor/${ siteSlug }`;
 };
 
 export default getSiteEditorUrl;
