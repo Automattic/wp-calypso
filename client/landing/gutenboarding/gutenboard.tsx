@@ -45,9 +45,9 @@ export function Gutenboard() {
 				( { title, fontFamily }: { title: string; fontFamily: string }, index: number ) => {
 					const isPrimary = index === 0;
 					const l = document.createElement( 'link' );
-					l.href = `https://fonts.googleapis.com/css?family=${ encodeURI( fontFamily ) }${
-						isPrimary ? ':bold' : ''
-					}&text=${ encodeURI( title ) }&display=swap`;
+					l.href = `https://fonts.googleapis.com/css2?family=${ encodeURI(
+						`${ fontFamily }${ isPrimary ? ':wght@700' : '' }`
+					) }&text=${ encodeURI( title ) }&display=swap`;
 					l.rel = 'stylesheet';
 					l.type = 'text/css';
 					document.head.appendChild( l );
