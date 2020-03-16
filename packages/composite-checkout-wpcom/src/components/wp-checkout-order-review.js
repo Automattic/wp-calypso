@@ -84,33 +84,35 @@ const CouponField = styled( Coupon )`
 
 const CheckoutTermsUI = styled.div`
 	& > * {
-		margin: 16px 0;
-		padding-left: 26px;
+		margin: 16px 16px 16px -24px;
+		padding-left: 24px;
 		position: relative;
 	}
 
-	& div:first-child {
+	& div:first-of-type {
 		padding-left: 0;
+		margin-left: 0;
 	}
 
-	& > * > svg {
-		width: 18px;
-		height: 18px;
+	svg {
+		width: 16px;
+		height: 16px;
 		position: absolute;
-		top: 2px;
+		top: 0;
 		left: 0;
 	}
 
-	& > * > p {
+	p {
 		font-size: 12px;
 		margin: 0;
+		word-break: break-word;
 	}
 
-	& > * > p a {
+	a {
 		text-decoration: underline;
 	}
 
-	& > * > p a:hover {
+	a:hover {
 		text-decoration: none;
 	}
 `;
