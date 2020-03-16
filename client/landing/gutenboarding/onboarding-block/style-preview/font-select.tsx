@@ -27,8 +27,9 @@ const FontSelect: React.FunctionComponent< Props > = ( { onSelect, selected } ) 
 				return (
 					<li key={ a + b }>
 						<Button onClick={ () => onSelect( fonts ) }>
-							<span style={ { fontFamily: fontFamilyA, fontWeight: 700 } }>{ a }&nbsp;/</span>
-							<span style={ { fontFamily: fontFamilyB } }>&nbsp;{ b }</span>
+							<span style={ { fontFamily: fontFamilyA, fontWeight: 700 } }>{ a }</span>
+							&nbsp;/&nbsp;
+							<span style={ { fontFamily: fontFamilyB } }>{ b }</span>
 							{ isSelected && '\u00a0*' }
 						</Button>
 					</li>

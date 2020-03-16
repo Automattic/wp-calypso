@@ -47,7 +47,7 @@ export function Gutenboard() {
 					const l = document.createElement( 'link' );
 					l.href = `https://fonts.googleapis.com/css?family=${ encodeURI( fontFamily ) }${
 						isPrimary ? ':bold' : ''
-					}&text=${ encodeURI( title + '\u00a0/' ) }&display=swap`;
+					}&text=${ encodeURI( title ) }&display=swap`;
 					l.rel = 'stylesheet';
 					l.type = 'text/css';
 					document.head.appendChild( l );
