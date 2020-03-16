@@ -162,6 +162,16 @@ function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, is
 		debug( 'shouldShowCompositeCheckout true because testing config is enabled' );
 		return true;
 	}
+	// Disable for domains in the cart
+	if ( cart.products?.find( product => product.is_domain_registration ) ) {
+		debug( 'shouldShowCompositeCheckout false because cart contains domain registration' );
+		return false;
+	}
+	// Disable for domain mapping
+	if ( cart.products?.find( product => product.product_slug.includes( 'domain' ) ) ) {
+		debug( 'shouldShowCompositeCheckout false because cart contains domain item' );
+		return false;
+	}
 	if ( abtest( 'showCompositeCheckout' ) === 'composite' ) {
 		debug( 'shouldShowCompositeCheckout true because user is in abtest' );
 		return true;
