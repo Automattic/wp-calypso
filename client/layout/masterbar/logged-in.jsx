@@ -79,11 +79,9 @@ class MasterbarLoggedIn extends React.Component {
 						method: 'POST',
 						path: `/sites/${ currentSelectedSiteId }/reset-migration`,
 						body: {},
-						onSuccess: () => {},
 					} ),
 					{
-						fromApi: () => {},
-						freshness: -Infinity,
+						freshness: 0,
 					}
 				);
 			}
