@@ -51,6 +51,7 @@
 		"@automattic/wpcom-block-editor": "file:apps/wpcom-block-editor",
 		"@wordpress/e2e-test-utils": "4.3.0",
 		"browserslist": "4.8.6",
+		"eslint-plugin-react-hooks": "0.0.0-235a6c4af",
 		"i18n-calypso": "file:packages/i18n-calypso",
 		"mock-fs": "4.11.0",
 		"photon": "file:packages/photon",

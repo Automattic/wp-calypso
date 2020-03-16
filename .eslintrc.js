@@ -82,7 +82,7 @@ module.exports = {
 		// this is when Webpack last built the bundle
 		BUILD_TIMESTAMP: true,
 	},
-	plugins: [ 'jest', 'jsx-a11y', 'import' ],
+	plugins: [ 'jest', 'jsx-a11y', 'import', 'react-hooks' ],
 	settings: {
 		react: {
 			version: reactVersion,
@@ -154,6 +154,9 @@ module.exports = {
 
 		// Allows Chai `expect` expressions. Now that we're on jest, hopefully we can remove this one.
 		'no-unused-expressions': 'off',
+
+		'react-hooks/rules-of-hooks': 'error',
+		'react-hooks/exhaustive-deps': 'warn',
 
 		'react/forbid-foreign-prop-types': 'error',
 
