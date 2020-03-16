@@ -47,5 +47,10 @@
 		svg {
 			fill: none;
 		}
+
+		color: var( --studio-gray-10 );
+		&.is-selected {
+			color: #000;
+		}
 	}
 }
