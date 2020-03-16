@@ -80,7 +80,7 @@ class Locked extends React.Component {
 						primary
 						disabled={ this.state.submitting }
 					>
-						{ translate( 'Update Settings And Continue' ) }
+						{ translate( 'Update settings and continue' ) }
 					</Button>
 				</Card>
 			</div>
