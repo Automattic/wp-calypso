@@ -13,7 +13,7 @@ import { ValuesType } from 'utility-types';
 
 interface Props {
 	viewport: T.Viewport;
-	fonts: ValuesType< typeof import('./font-select').fontPairings >;
+	fonts: ValuesType< typeof import('../../constants').fontPairings >;
 }
 const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 	const { selectedDesign } = useSelect( select => select( STORE_KEY ).getState() );

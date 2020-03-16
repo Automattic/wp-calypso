@@ -3,19 +3,12 @@
  */
 import * as React from 'react';
 import { Button } from '@wordpress/components';
+import { ValuesType } from 'utility-types';
 
 /**
  * Internal dependencies
  */
-import { ValuesType } from 'utility-types';
-
-export const fontPairings = [
-	[ 'Cabin', 'Raleway' ],
-	[ 'Chivo', 'OpenSans' ],
-	[ 'Playfair', 'FiraSans' ],
-	[ 'Arvo', 'Montserrat' ],
-	[ 'SpaceMono', 'Roboto' ],
-] as const;
+import { fontPairings } from '../../constants';
 
 interface Props {
 	onSelect: ( selection: ValuesType< typeof fontPairings > ) => void;
@@ -25,13 +18,18 @@ const FontSelect: React.FunctionComponent< Props > = ( { onSelect, selected } ) 
 	<div className="style-preview__font-options">
 		<ul>
 			{ fontPairings.map( fonts => {
-				const [ a, b ] = fonts;
+				const [
+					{ title: a, fontFamily: fontFamilyA },
+					{ title: b, fontFamily: fontFamilyB },
+				] = fonts;
 				const isSelected = fonts === selected;
+
 				return (
 					<li key={ a + b }>
 						<Button onClick={ () => onSelect( fonts ) }>
-							<b>{ a }</b>&nbsp;/&nbsp;{ b }
-							{ isSelected && ' *' }
+							<span style={ { fontFamily: fontFamilyA, fontWeight: 700 } }>{ a }&nbsp;/</span>
+							<span style={ { fontFamily: fontFamilyB } }>&nbsp;{ b }</span>
+							{ isSelected && '\u00a0*' }
 						</Button>
 					</li>
 				);
