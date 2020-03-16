@@ -212,11 +212,11 @@ const Header: FunctionComponent = () => {
 				</div>
 			</div>
 			{ showSignupDialog && (
-				<SignupForm onRequestClose={ () => closeAuthDialog() } onOpenLogin={ handleLogin } />
+				<SignupForm onRequestClose={ closeAuthDialog } onOpenLogin={ handleLogin } />
 			) }
 			{ showLoginDialog && (
 				<LoginForm
-					onRequestClose={ () => closeAuthDialog() }
+					onRequestClose={ closeAuthDialog }
 					onOpenSignup={ handleSignup }
 					onLogin={ handleCreateSite }
 				/>
