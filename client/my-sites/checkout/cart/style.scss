@@ -70,6 +70,7 @@
 		}
 
 		.cart__gsuite-discount {
+
 			.cart__gsuite-discount-regular-price {
 				text-decoration: line-through;
 			}
@@ -119,6 +120,7 @@
 	}
 
 	.cart-item__loading-placeholder {
+
 		.cart__remove-item {
 			@include placeholder( --color-neutral-10 );
 			border-radius: 0;
@@ -237,6 +239,7 @@
 }
 
 .cart-buttons {
+
 	.button {
 		width: 100%;
 		margin-bottom: 10px;
@@ -252,9 +255,18 @@
 	display: inline-block;
 
 	button {
-		box-sizing: border-box;
+		border: 0;
 		min-width: auto;
 		padding: 0 15px 0 10px;
+
+		&:hover {
+			background-color: inherit;
+			color: var( --color-sidebar-menu-hover-text );
+
+			.gridicons-cart {
+				fill: var( --color-sidebar-menu-hover-text );
+			}
+		}
 
 		@include breakpoint( '>480px' ) {
 			padding: 14px 20px 12px;
@@ -420,6 +432,7 @@ div.popover-cart__popover {
 }
 
 .secondary-cart {
+
 	@include breakpoint( '<660px' ) {
 		left: 0;
 		margin-left: 0;
@@ -446,13 +459,15 @@ div.popover-cart__popover {
 	margin-top: 0;
 }
 
-@include breakpoint( '<660px' ) {
-	.secondary-cart__hidden {
+.secondary-cart__hidden {
+
+	@include breakpoint( '<660px' ) {
 		display: none;
 	}
 }
 
 .cart-item__loading-placeholder {
+
 	span {
 		@include placeholder( --color-neutral-10 );
 		margin-bottom: 1px;
