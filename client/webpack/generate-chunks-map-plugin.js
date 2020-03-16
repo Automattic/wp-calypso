@@ -18,6 +18,7 @@ class GenerateChunksMapPlugin {
 
 	apply( compiler ) {
 		compiler.hooks.done.tap( PLUGIN_NAME, ( { compilation } ) => {
+			// Generate chunks map
 			const { chunks } = compilation;
 
 			const chunksMap = chunks.reduce( ( map, chunk ) => {
@@ -32,6 +33,7 @@ class GenerateChunksMapPlugin {
 				return map;
 			}, {} );
 
+			// Write chunks map
 			fs.writeFileSync( this.output, JSON.stringify( chunksMap ) );
 		} );
 	}
