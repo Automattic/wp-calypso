@@ -36,10 +36,10 @@
 
 .gutenboarding__header-group {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
 	margin: 10px;
 	font-size: 14px;
-	align-items: flex-start;
+	align-items: center;
 }
 
 $padding--gutenboarding__header-domain-picker-button: 0.3em 0.5em;

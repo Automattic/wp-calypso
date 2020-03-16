@@ -215,7 +215,8 @@ const Header: FunctionComponent = () => {
 					<Icon icon="wordpress-alt" className="gutenboarding__header-wp-icon" />
 				</div>
 				<div className="gutenboarding__header-group">
-					{ siteTitle ? (
+					{ siteTitleElement }
+					{ siteTitle && (
 						<DomainPickerButton
 							className="gutenboarding__header-domain-picker-button"
 							defaultQuery={ siteTitle }
@@ -229,11 +230,8 @@ const Header: FunctionComponent = () => {
 							}
 							queryParameters={ { vertical: siteVertical?.id } }
 						>
-							{ siteTitleElement }
 							{ domainElement }
 						</DomainPickerButton>
-					) : (
-						siteTitleElement
 					) }
 				</div>
 			</div>
