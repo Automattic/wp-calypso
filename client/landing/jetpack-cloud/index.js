@@ -42,16 +42,17 @@ export default function() {
 			makeLayout,
 			clientRender
 		);
+		// page(
+		// 	'/backups/:site/download',
+		// 	siteSelection,
+		// 	navigation,
+		// 	backupDownload,
+		// 	makeLayout,
+		// 	clientRender
+		// );
 		page(
-			'/backups/:site/download',
+			'/backups/:site/download/:downloadId',
 			siteSelection,
-			navigation,
-			backupDownload,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/site/:site/backups/backups/download/:downloadId',
 			navigation,
 			backupDownload,
 			makeLayout,
