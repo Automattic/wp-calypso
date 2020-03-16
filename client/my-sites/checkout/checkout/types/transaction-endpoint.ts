@@ -123,6 +123,35 @@ export function createTransactionEndpointCartFromLineItems( {
 	};
 }
 
+export type PartialTransactionEndpointData = {
+	siteId: string;
+	couponId?: string;
+	country: string;
+	postalCode: string;
+	subdivisionCode?: string;
+	domainDetails?: WPCOMTransactionEndpointDomainDetails;
+	items: WPCOMCartItem[];
+	paymentMethodToken?: string;
+	paymentPartnerProcessorId?: string;
+	storedDetailsId?: string;
+	name: string;
+};
+
+export type TransactionEndpointData = {
+	siteId: string;
+	couponId?: string;
+	country: string;
+	postalCode: string;
+	subdivisionCode?: string;
+	domainDetails?: WPCOMTransactionEndpointDomainDetails;
+	items: WPCOMCartItem[];
+	paymentMethodType: string;
+	paymentMethodToken: string;
+	paymentPartnerProcessorId: string;
+	storedDetailsId: string;
+	name: string;
+};
+
 export function createTransactionEndpointRequestPayloadFromLineItems( {
 	siteId,
 	couponId,
