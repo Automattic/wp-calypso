@@ -46,6 +46,7 @@ import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import QuickLinks from 'my-sites/customer-home/quick-links';
 import Notices from 'my-sites/customer-home/notices';
+import { requestHomeData } from 'state/home/actions';
 
 /**
  * Style dependencies
@@ -78,6 +79,16 @@ class Home extends Component {
 		trackAction: PropTypes.func.isRequired,
 		isStaticHomePage: PropTypes.bool.isRequired,
 	};
+
+	componentDidMount() {
+		this.props.fetchHomeData();
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.siteId !== this.props.siteId ) {
+			this.props.fetchHomeData();
+		}
+	}
 
 	onLaunchBannerClick = e => {
 		const { siteId } = this.props;
@@ -315,6 +326,7 @@ const connectHome = connect(
 		expandToolsSection: () => dispatch( expandSection( SIDEBAR_SECTION_TOOLS ) ),
 		launchSiteOrRedirectToLaunchSignupFlow: siteId =>
 			dispatch( launchSiteOrRedirectToLaunchSignupFlow( siteId ) ),
+		fetchHomeData: siteId => dispatch( requestHomeData( siteId ) ),
 	} ),
 	( stateProps, dispatchProps, ownProps ) => ( {
 		...stateProps,
@@ -327,6 +339,7 @@ const connectHome = connect(
 		},
 		trackAction: ( section, action ) =>
 			dispatchProps.trackAction( section, action, stateProps.isStaticHomePage ),
+		fetchHomeData: () => dispatchProps.fetchHomeData( stateProps.siteId ),
 	} )
 );
 
