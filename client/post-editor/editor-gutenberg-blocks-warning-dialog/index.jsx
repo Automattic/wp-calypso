@@ -94,29 +94,34 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 
 	useClassicEditor = () => {
 		this.props.useClassic();
-		this.redirectToWpAdmin();
+		const { isAtomic, isPrivate } = this.props;
+		if ( isAtomic && isPrivate ) {
+			this.redirectToWpAdmin();
+		} else {
+			this.setState( {
+				forceClassic: true,
+			} );
+		}
 	};
 
 	redirectToWpAdmin = () => {
-		const { isAtomic, isPrivate, postId, postType, buildSiteAdminUrl } = this.props;
-		if ( isAtomic && isPrivate ) {
-			let queryArgs = pickBy( {
-				post: postId,
-				action: postId && 'edit', // If postId is set, open edit view.
-				post_type: postType !== 'post' && postType, // Use postType if it's different than post.
-				'classic-editor': 1,
-			} );
+		const { postId, postType, buildSiteAdminUrl } = this.props;
+		let queryArgs = pickBy( {
+			post: postId,
+			action: postId && 'edit', // If postId is set, open edit view.
+			post_type: postType !== 'post' && postType, // Use postType if it's different than post.
+			'classic-editor': 1,
+		} );
 
-			// needed for loading the editor in SU sessions
-			if ( wpcom.addSupportParams ) {
-				queryArgs = wpcom.addSupportParams( queryArgs );
-			}
-
-			const siteAdminUrl = buildSiteAdminUrl( postId ? 'post.php' : 'post-new.php' );
-			const wpAdminUrl = addQueryArgs( queryArgs, siteAdminUrl );
-
-			window.location.href = wpAdminUrl;
+		// needed for loading the editor in SU sessions
+		if ( wpcom.addSupportParams ) {
+			queryArgs = wpcom.addSupportParams( queryArgs );
 		}
+
+		const siteAdminUrl = buildSiteAdminUrl( postId ? 'post.php' : 'post-new.php' );
+		const wpAdminUrl = addQueryArgs( queryArgs, siteAdminUrl );
+
+		window.location.href = wpAdminUrl;
 	};
 
 	switchToGutenberg = () => {
