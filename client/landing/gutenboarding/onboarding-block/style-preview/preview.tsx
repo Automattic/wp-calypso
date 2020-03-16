@@ -17,12 +17,15 @@ interface Props {
 }
 const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 	const { selectedDesign } = useSelect( select => select( STORE_KEY ).getState() );
+	const [ { title: fontA }, { title: fontB } ] = fonts;
 	return (
 		<div className="style-preview__preview">
 			<p>Preview to be implemented.</p>
 			<p>You picked { selectedDesign?.title ?? 'unknown' } design.</p>
 			<p>Showing { viewport } display.</p>
-			<p>With { fonts.join( ' / ' ) } display.</p>
+			<p>
+				With { fontA }&nbsp;/&nbsp;{ fontB } display.
+			</p>
 		</div>
 	);
 };
