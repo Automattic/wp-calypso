@@ -86,7 +86,7 @@ class StepImportOrMigrate extends Component {
 						'You need to have Jetpack installed on your site to' +
 							' be able to import everything.' +
 							' {{jetpackInstallLink}}Install' +
-							' Jetpack{{/jetpackInstallLink}}',
+							' Jetpack{{/jetpackInstallLink}}.',
 						{
 							components: {
 								jetpackInstallLink: (
