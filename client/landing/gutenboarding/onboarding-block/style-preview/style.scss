@@ -21,7 +21,18 @@
 }
 .style-preview__font-options {
 	grid-area: fonts;
+	display: grid;
+	grid-template-columns: 100%;
 }
+
+// Extra specificity to override core component border
+.style-preview__font-option.components-button {
+	border: 1px solid gray;
+	&.is-selected {
+		border-color: var( --mainColor );
+	}
+}
+
 .style-preview__preview {
 	grid-area: preview;
 }

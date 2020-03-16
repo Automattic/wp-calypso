@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { Button } from '@wordpress/components';
 import { ValuesType } from 'utility-types';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -16,26 +17,26 @@ interface Props {
 }
 const FontSelect: React.FunctionComponent< Props > = ( { onSelect, selected } ) => (
 	<div className="style-preview__font-options">
-		<ul>
-			{ fontPairings.map( fonts => {
-				const [
-					{ title: a, fontFamily: fontFamilyA },
-					{ title: b, fontFamily: fontFamilyB },
-				] = fonts;
-				const isSelected = fonts === selected;
+		{ fontPairings.map( fonts => {
+			const isSelected = fonts === selected;
+			const [
+				{ title: a, fontFamily: fontFamilyA },
+				{ title: b, fontFamily: fontFamilyB },
+			] = fonts;
 
-				return (
-					<li key={ a + b }>
-						<Button onClick={ () => onSelect( fonts ) }>
-							<span style={ { fontFamily: fontFamilyA, fontWeight: 700 } }>{ a }</span>
-							&nbsp;/&nbsp;
-							<span style={ { fontFamily: fontFamilyB } }>{ b }</span>
-							{ isSelected && '\u00a0*' }
-						</Button>
-					</li>
-				);
-			} ) }
-		</ul>
+			return (
+				<Button
+					className={ classnames( 'style-preview__font-option', { 'is-selected': isSelected } ) }
+					onClick={ () => onSelect( fonts ) }
+					key={ a + b }
+				>
+					<span style={ { fontFamily: fontFamilyA, fontWeight: 700 } }>{ a }</span>
+					&nbsp;/&nbsp;
+					<span style={ { fontFamily: fontFamilyB } }>{ b }</span>
+					{ isSelected && '\u00a0*' }
+				</Button>
+			);
+		} ) }
 	</div>
 );
 
