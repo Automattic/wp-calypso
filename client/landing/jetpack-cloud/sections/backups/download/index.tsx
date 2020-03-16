@@ -34,6 +34,7 @@ const BackupDownloadPage = ( { rewindId }: Props ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteTitle = useSelector( state => getSiteTitle( state, siteId ) );
 
+	// note: this is the status of the request for download progress, not the status of the creation of the download
 	const backupProgressRequestStatus: string | null = useSelector( state =>
 		getRewindBackupProgressRequestStatus( state, siteId )
 	);
@@ -61,17 +62,19 @@ const BackupDownloadPage = ( { rewindId }: Props ) => {
 		// there is no backup download creation info
 		if ( null === backupProgress ) {
 			// and that is because it hasn't been loaded yet
-			if ( ! backupProgressRequestStatus || backupProgressRequestStatus !== 'success' ) {
+			if ( ! backupProgressRequestStatus || backupProgressRequestStatus === 'pending' ) {
 				return <Placeholder />;
+			} else if ( backupProgressRequestStatus === 'success' ) {
+				// or because there is no download or one being made
+				// in other words our request for the backup progress has finished and it found no info on any backup for this site
+				return (
+					<Confirm
+						backupDateString={ backupDateString }
+						onConfirm={ onConfirm }
+						siteTitle={ siteTitle }
+					/>
+				);
 			}
-			// or because there is no download or one being made
-			return (
-				<Confirm
-					backupDateString={ backupDateString }
-					onConfirm={ onConfirm }
-					siteTitle={ siteTitle }
-				/>
-			);
 			// the user has confirmed they want to download
 		} else if ( null !== downloadId ) {
 			return (
