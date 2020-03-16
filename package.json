@@ -193,7 +193,7 @@
 		"@wordpress/jest-preset-default": "5.4.0",
 		"@wordpress/npm-package-json-lint-config": "2.2.0",
 		"@wordpress/scripts": "7.1.0",
-		"acorn": "6.4.0",
+		"acorn": "6.4.1",
 		"babel-eslint": "10.0.3",
 		"babel-jest": "25.1.0",
 		"babel-plugin-add-module-exports": "1.0.2",
