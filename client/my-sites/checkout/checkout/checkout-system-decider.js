@@ -158,6 +158,10 @@ function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, is
 		return false;
 	}
 
+	if ( config.isEnabled( 'composite-checkout-testing' ) ) {
+		debug( 'shouldShowCompositeCheckout true because testing config is enabled' );
+		return true;
+	}
 	if ( abtest( 'showCompositeCheckout' ) === 'composite' ) {
 		debug( 'shouldShowCompositeCheckout true because user is in abtest' );
 		return true;
