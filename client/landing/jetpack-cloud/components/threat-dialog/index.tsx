@@ -35,13 +35,13 @@ class ThreatDialog extends React.PureComponent< Props > {
 		const { action, onCloseDialog, showDialog, threatDescription, threatTitle } = this.props;
 		const buttons = [
 			<Button className="threat-dialog__btn threat-dialog__btn--cancel" onClick={ onCloseDialog }>
-				{ translate( 'Go Back' ) }
+				{ translate( 'Go back' ) }
 			</Button>,
 			<Button
 				className={ classnames( 'threat-dialog__btn', `threat-dialog__btn--${ action }-threat` ) }
 				onClick={ this.performAction }
 			>
-				{ action === 'fix' ? translate( 'Fix threat' ) : translate( 'Ignore Threat' ) }
+				{ action === 'fix' ? translate( 'Fix threat' ) : translate( 'Ignore threat' ) }
 			</Button>,
 		];
 
@@ -79,7 +79,12 @@ class ThreatDialog extends React.PureComponent< Props > {
 									'To fix this threat, Jetpack will be deleting the file, since it’s not a part of the original WordPress.'
 							  )
 							: translate(
-									'You shouldn’t ignore a security unless you are absolute sure it’s harmless. If you choose to ignore this threat, it will remain on your site: My Jetpack Site.'
+									'You shouldn’t ignore a security unless you are absolute sure it’s harmless. If you choose to ignore this threat, it will remain on your site: {{strong}}My Jetpack Site{{/strong}}.',
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
 							  ) }
 					</p>
 				</div>

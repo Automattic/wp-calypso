@@ -3,8 +3,9 @@
 
 	.threat-dialog {
 		&__header {
+			font-size: 18px;
 			border-bottom: 1px solid #dcdcde;
-			margin: 0 -24px;
+			margin: -8px -24px 16px;
 			padding: 0 24px 16px;
 		}
 
@@ -53,7 +54,7 @@
 			width: 100%;
 
 			@include breakpoint( '>480px' ) {
-				width: 120px;
+				width: 140px;
 			}
 		}
 
