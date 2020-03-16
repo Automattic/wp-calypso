@@ -14,6 +14,7 @@ import {
 	WPCOMTransactionEndpoint,
 	WPCOMTransactionEndpointRequestPayload,
 	WPCOMTransactionEndpointResponse,
+	PartialTransactionEndpointData,
 	createTransactionEndpointRequestPayloadFromLineItems,
 	PayPalExpressEndpoint,
 	PayPalExpressEndpointRequestPayload,
@@ -81,7 +82,7 @@ function storedCardsReducer(
 }
 
 export async function submitExistingCardPayment(
-	transactionData,
+	transactionData: PartialTransactionEndpointData,
 	submit: WPCOMTransactionEndpoint
 ): Promise< WPCOMTransactionEndpointResponse > {
 	debug( 'formatting existing card transaction', transactionData );
@@ -94,7 +95,7 @@ export async function submitExistingCardPayment(
 }
 
 export async function submitApplePayPayment(
-	transactionData,
+	transactionData: PartialTransactionEndpointData,
 	submit: WPCOMTransactionEndpoint
 ): Promise< WPCOMTransactionEndpointResponse > {
 	debug( 'formatting apple-pay transaction', transactionData );
