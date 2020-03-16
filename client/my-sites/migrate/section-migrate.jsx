@@ -27,7 +27,7 @@ import StepUpgrade from './step-upgrade';
 import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'state/sites/selectors';
-import { receiveSite, updateSiteMigrationMeta } from 'state/sites/actions';
+import { receiveSite, updateSiteMigrationMeta, requestSite } from 'state/sites/actions';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { urlToSlug } from 'lib/url';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
@@ -109,6 +109,12 @@ class SectionMigrate extends Component {
 
 	finishMigration = () => {
 		const { targetSiteId, targetSiteSlug } = this.props;
+
+		/**
+		 * Request another update after the migration is finished to
+		 * update the site title and other info that may have changed.
+		 */
+		this.props.requestSite( targetSiteId );
 
 		wpcom
 			.undocumented()
@@ -251,7 +257,7 @@ class SectionMigrate extends Component {
 	};
 
 	updateFromAPI = () => {
-		const { targetSiteId } = this.props;
+		const { targetSiteId, targetSite } = this.props;
 		wpcom
 			.undocumented()
 			.getMigrationStatus( targetSiteId )
@@ -293,6 +299,13 @@ class SectionMigrate extends Component {
 							lastModified,
 						} );
 						return;
+					}
+
+					/**
+					 * Request the site information until the site upgrades to Atomic
+					 */
+					if ( ! get( targetSite, 'options.is_wpcom_atomic', false ) ) {
+						this.props.requestSite( targetSiteId );
 					}
 
 					this.setMigrationState( {
@@ -667,5 +680,5 @@ export default connect(
 			targetSiteSlug: getSelectedSiteSlug( state ),
 		};
 	},
-	{ navigateToSelectedSourceSite, receiveSite, updateSiteMigrationMeta }
+	{ navigateToSelectedSourceSite, receiveSite, updateSiteMigrationMeta, requestSite }
 )( localize( SectionMigrate ) );

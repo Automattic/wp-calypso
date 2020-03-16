@@ -146,14 +146,17 @@ function LineItemTitle( { item, id } ) {
 }
 
 function LineItemPrice( { lineItem } ) {
-	if ( lineItem.amount.value < lineItem.wpcom_meta?.product_cost_integer ) {
-		return (
-			<span>
-				<s>{ lineItem.wpcom_meta.product_cost_display }</s> { lineItem.amount.displayValue }
-			</span>
-		);
-	}
-	return renderDisplayValueMarkdown( lineItem.amount.displayValue );
+	return (
+		<LineItemPriceUI>
+			{ lineItem.amount.value < lineItem.wpcom_meta?.product_cost_integer ? (
+				<>
+					<s>{ lineItem.wpcom_meta.product_cost_display }</s> { lineItem.amount.displayValue }
+				</>
+			) : (
+				renderDisplayValueMarkdown( lineItem.amount.displayValue )
+			) }
+		</LineItemPriceUI>
+	);
 }
 
 const LineItemUI = styled( WPLineItem )`
@@ -172,6 +175,11 @@ const LineItemUI = styled( WPLineItem )`
 
 const LineItemTitleUI = styled.div`
 	flex: 1;
+	word-break: break-word;
+`;
+
+const LineItemPriceUI = styled.span`
+	margin-left: 12px;
 `;
 
 const BundledDomainFreeUI = styled.div`
