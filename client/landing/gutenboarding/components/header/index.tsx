@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -125,7 +126,9 @@ const Header: FunctionComponent = () => {
 				placeholder: ! currentDomain,
 			} ) }
 		>
-			{ currentDomain ? currentDomain.domain_name : 'example.wordpress.com' }
+			{ currentDomain
+				? sprintf( NO__( '%s is available' ), currentDomain.domain_name )
+				: 'example.wordpress.com' }
 		</span>
 	);
 
