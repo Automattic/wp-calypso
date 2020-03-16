@@ -840,6 +840,10 @@ function getCheckoutEventHandler( dispatch ) {
 						coupon_code: action.payload.couponItem?.wpcom_meta.couponCode ?? '',
 						total: action.payload.total.amount.value,
 						currency: action.payload.total.amount.currency,
+						product_slugs: action.payload.responseCart.products
+							.map( product => product.product_slug )
+							.join( ',' ),
+						receipt_id: transactionResult.receipt_id,
 						payment_method:
 							translateCheckoutPaymentMethodToWpcomPaymentMethod( action.payload.paymentMethodId )
 								?.name || '',
