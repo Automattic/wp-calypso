@@ -14,7 +14,7 @@
 	"dependencies": {
 		"@automattic/calypso-analytics": "file:../packages/calypso-analytics",
 		"@automattic/calypso-polyfills": "file:../packages/calypso-polyfills",
-		"@automattic/color-studio": "2.2.0",
+		"@automattic/color-studio": "2.2.1",
 		"@automattic/components": "file:../packages/components",
 		"@automattic/composite-checkout": "file:../packages/composite-checkout",
 		"@automattic/composite-checkout-wpcom": "file:../packages/composite-checkout-wpcom",
