@@ -18,6 +18,8 @@ import { getCurrentUserLocale, getCurrentUserCountryCode } from 'state/current-u
 import { isJetpackSite } from 'state/sites/selectors';
 import { abtest } from 'lib/abtest';
 import { logToLogstash } from 'state/logstash/actions';
+import { getTlds } from 'lib/cart-values/cart-items';
+import { tldsWithAdditionalDetailsForms } from 'components/domains/registrant-extra-info';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
 const wpcom = wp.undocumented();
@@ -135,10 +137,10 @@ function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, is
 		debug( 'shouldShowCompositeCheckout false because country is not US' );
 		return false;
 	}
-	// Disable for ccTLDs that have special contact forms
-	if ( cart.products?.find( product => !! product.product_slug.match( /dot(fr|ca|uk)_domain/ ) ) ) {
+	// Disable for TLDs that have special contact forms
+	if ( getTlds( cart ).find( tld => tldsWithAdditionalDetailsForms.includes( tld ) ) ) {
 		debug(
-			'shouldShowCompositeCheckout false because cart contains ccTLD with special contact form'
+			'shouldShowCompositeCheckout false because cart contains TLD with special contact form'
 		);
 		return false;
 	}
