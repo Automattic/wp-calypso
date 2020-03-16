@@ -115,7 +115,7 @@ const Header: FunctionComponent = () => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	const siteTitleElement = (
 		<span className="gutenboarding__site-title">
-			{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
+			{ siteTitle ? siteTitle : NO__( 'Start your website' ) }
 		</span>
 	);
 
