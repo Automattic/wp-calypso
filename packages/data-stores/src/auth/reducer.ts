@@ -28,6 +28,9 @@ export const loginFlowState: Reducer< LoginFlowState, Action > = (
 			return state;
 
 		case 'RECEIVE_WP_LOGIN':
+			if ( action.response.data.two_step_notification_sent ) {
+				return 'WAITING_FOR_2FA_APP';
+			}
 			return 'LOGGED_IN';
 
 		case 'RECEIVE_SEND_LOGIN_EMAIL':

@@ -14,13 +14,15 @@ import {
 	WpLoginErrorResponse,
 	SendLoginEmailSuccessResponse,
 	SendLoginEmailErrorResponse,
+	WpLoginResponse,
 } from './types';
-import { STORE_KEY } from './constants';
+import { STORE_KEY, POLL_APP_PUSH_INTERVAL_SECONDS } from './constants';
 import {
 	wpcomRequest,
 	fetchAndParse,
 	requestAllBlogsAccess,
 	reloadProxy,
+	wait,
 } from '../wpcom-request-controls';
 import { remoteLoginUser } from './controls';
 import { WpcomClientCredentials } from '../shared-types';
@@ -131,35 +133,25 @@ export function createActions( {
 		const username = yield select( STORE_KEY, 'getUsernameOrEmail' );
 
 		try {
-			const loginResponse = yield fetchAndParse(
-				// TODO Wrap this in `localizeUrl` from lib/i18n-utils
-				'https://wordpress.com/wp-login.php?action=login-endpoint',
-				{
-					credentials: 'include',
-					method: 'POST',
-					headers: {
-						Accept: 'application/json',
-						'Content-Type': 'application/x-www-form-urlencoded',
-					},
-					body: stringify( {
-						remember_me: true,
-						username,
-						password,
-						client_id,
-						client_secret,
-					} ),
+			let loginResponse = yield* wpLogin( 'login-endpoint', {
+				remember_me: true,
+				username,
+				password,
+			} );
+
+			if ( ! loginResponse.success ) {
+				return receiveWpLoginFailed( loginResponse );
+			}
+
+			if ( loginResponse.data.two_step_notification_sent ) {
+				yield receiveWpLogin( loginResponse );
+
+				if ( loginResponse.data.two_step_notification_sent === 'push' ) {
+					loginResponse = yield* handlePush2fa( loginResponse );
 				}
-			);
-
-			if ( ! loginResponse.ok || ! loginResponse.body.success ) {
-				return receiveWpLoginFailed( loginResponse.body );
 			}
 
-			if ( loginResponse.body.two_step_notification_sent === 'push' ) {
-				yield* handlePush2fa( loginResponse.body );
-			}
-
-			yield* handleSuccessfulLogin( loginResponse.body );
+			yield* handleSuccessfulLogin( loginResponse );
 
 			return;
 		} catch ( e ) {
@@ -186,11 +178,33 @@ export function createActions( {
 	}
 
 	function* handlePush2fa( response: WpLoginSuccessResponse ) {
-		const { user_id, two_step_nonce_push, push_web_token } = response.data;
+		const { user_id, push_web_token } = response.data;
+		let { two_step_nonce_push: two_step_nonce } = response.data;
 
-		yield fetchAndParse(
+		while ( ! response.data.token_links ) {
+			response = yield wpLogin( 'two-step-authentication-endpoint', {
+				remember_me: true,
+				auth_type: 'push',
+				user_id,
+				two_step_nonce,
+				two_step_push_token: push_web_token,
+			} );
+
+			if ( ! response.success ) {
+				two_step_nonce = response.data.two_step_nonce;
+				yield wait( POLL_APP_PUSH_INTERVAL_SECONDS * 1000 );
+			}
+		}
+
+		return response;
+	}
+
+	type WpLoginAction = 'two-step-authentication-endpoint' | 'login-endpoint';
+
+	function* wpLogin( action: WpLoginAction, body: object ) {
+		const response = yield fetchAndParse(
 			// TODO Wrap this in `localizeUrl` from lib/i18n-utils
-			'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint',
+			'https://wordpress.com/wp-login.php?action=' + encodeURIComponent( action ),
 			{
 				credentials: 'include',
 				method: 'POST',
@@ -199,16 +213,14 @@ export function createActions( {
 					'Content-Type': 'application/x-www-form-urlencoded',
 				},
 				body: stringify( {
-					remember_me: true,
-					auth_type: 'push',
-					user_id,
-					two_step_nonce: two_step_nonce_push,
-					two_step_push_token: push_web_token,
 					client_id,
 					client_secret,
+					...body,
 				} ),
 			}
 		);
+
+		return response.body as WpLoginResponse;
 	}
 
 	return {

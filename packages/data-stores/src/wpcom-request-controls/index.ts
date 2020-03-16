@@ -39,6 +39,8 @@ export const requestAllBlogsAccess = () =>
 		type: 'REQUEST_ALL_BLOGS_ACCESS',
 	} as const );
 
+export const wait = ( ms: number ) => ( { type: 'WAIT', ms } as const );
+
 export const controls = {
 	WPCOM_REQUEST: ( { request }: ReturnType< typeof wpcomRequest > ) => wpcomProxyRequest( request ),
 	FETCH_AND_PARSE: async ( { resource, options }: ReturnType< typeof fetchAndParse > ) => {
@@ -53,4 +55,6 @@ export const controls = {
 		triggerReloadProxy();
 	},
 	REQUEST_ALL_BLOGS_ACCESS: () => triggerRequestAllBlogsAccess(),
+	WAIT: ( { ms }: ReturnType< typeof wait > ) =>
+		new Promise( resolve => setTimeout( resolve, ms ) ),
 } as const;

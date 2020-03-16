@@ -24,6 +24,7 @@ export interface WpLoginSuccessResponse {
 		token_links?: string[];
 		user_id?: number;
 		two_step_supported_auth_types?: string[];
+		two_step_nonce?: string;
 		two_step_nonce_backup?: string;
 		two_step_nonce_authenticator?: string;
 		two_step_nonce_push?: string;

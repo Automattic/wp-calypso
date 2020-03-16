@@ -14,11 +14,17 @@ import { parse } from 'qs';
 import wpcomRequest from 'wpcom-proxy-request';
 import 'jest-fetch-mock';
 import nock from 'nock';
+import { wait } from '@testing-library/react';
 
 /**
  * Internal dependencies
  */
 import { register } from '..';
+
+jest.mock( '../constants', () => ( {
+	STORE_KEY: 'automattic/auth',
+	POLL_APP_PUSH_INTERVAL_SECONDS: 0, // Shorten 2fa polling time for quick tests
+} ) );
 
 jest.mock( 'wpcom-proxy-request', () => ( {
 	__esModule: true,
@@ -175,7 +181,10 @@ describe( 'password login flow', () => {
 		const two_step_nonce = 'secretnonce';
 		const two_step_push_token = 'push:token';
 
+		let userHandledPushNotification = false;
+
 		nock( 'https://wordpress.com' )
+			.persist()
 			.post( '/wp-login.php?action=login-endpoint', body => {
 				expect( parse( body ) ).toEqual(
 					expect.objectContaining( {
@@ -207,41 +216,32 @@ describe( 'password login flow', () => {
 				);
 				return true;
 			} )
-			.reply( 403, {
-				success: false,
-				data: {
-					two_step_nonce,
-					errors: [
-						{
-							code: 'invalid_two_step_code',
-							message: 'Double check the app and try again',
-						},
-					],
+			.reply( () => [
+				userHandledPushNotification ? 200 : 403,
+				{
+					success: userHandledPushNotification,
+					data: userHandledPushNotification
+						? { token_links: [] }
+						: {
+								two_step_nonce,
+								errors: [
+									{
+										code: 'invalid_two_step_code',
+										message: 'Double check the app and try again',
+									},
+								],
+						  },
 				},
-			} );
+			] );
 
-		await submitPassword( 'passw0rd' );
+		// Don't await the promise, it doesn't resolve until login flow is complete
+		submitPassword( 'passw0rd' );
 
-		expect( getLoginFlowState() ).toBe( 'WAITING_FOR_2FA_APP' );
+		await wait( () => expect( getLoginFlowState() ).toBe( 'WAITING_FOR_2FA_APP' ) );
 
-		nock( 'https://wordpress.com' )
-			.post( '/wp-login.php?action=two-step-authentication-endpoint', body => {
-				expect( parse( body ) ).toEqual(
-					expect.objectContaining( {
-						user_id: user_id.toString( 10 ),
-						auth_type: 'push',
-						two_step_nonce,
-						two_step_push_token,
-					} )
-				);
-				return true;
-			} )
-			.reply( 200, {
-				success: true,
-				data: { token_links: [] },
-			} );
+		userHandledPushNotification = true;
 
-		expect( getLoginFlowState() ).toBe( 'LOGGED_IN' );
+		await wait( () => expect( getLoginFlowState() ).toBe( 'LOGGED_IN' ) );
 	} );
 } );
 
