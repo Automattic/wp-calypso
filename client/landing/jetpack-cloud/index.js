@@ -42,14 +42,6 @@ export default function() {
 			makeLayout,
 			clientRender
 		);
-		// page(
-		// 	'/backups/:site/download',
-		// 	siteSelection,
-		// 	navigation,
-		// 	backupDownload,
-		// 	makeLayout,
-		// 	clientRender
-		// );
 		page(
 			'/backups/:site/download/:rewindId',
 			siteSelection,
