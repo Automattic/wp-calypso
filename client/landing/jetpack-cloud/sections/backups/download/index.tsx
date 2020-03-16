@@ -25,7 +25,7 @@ interface Props {
 	rewindId: string;
 }
 
-const BackupRestorePage = ( { rewindId }: Props ) => {
+const BackupDownloadPage = ( { rewindId }: Props ) => {
 	const dispatch = useDispatch();
 
 	const moment = useLocalizedMoment();
@@ -104,4 +104,4 @@ const BackupRestorePage = ( { rewindId }: Props ) => {
 	);
 };
 
-export default BackupRestorePage;
+export default BackupDownloadPage;
