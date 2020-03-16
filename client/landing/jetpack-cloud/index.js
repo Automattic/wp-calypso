@@ -51,7 +51,7 @@ export default function() {
 		// 	clientRender
 		// );
 		page(
-			'/backups/:site/download/:downloadId',
+			'/backups/:site/download/:rewindId',
 			siteSelection,
 			navigation,
 			backupDownload,
