@@ -133,7 +133,8 @@ class StepSourceSelect extends Component {
 					<div className="migrate__explain">
 						{ translate(
 							"Enter a URL and we'll help you move your site to WordPress.com. If you already have a " +
-								'backup file, you can {{uploadFileLink}}upload it to import content{{/uploadFileLink}}.',
+								'WordPress export file, you can' +
+								' {{uploadFileLink}}upload it to import content{{/uploadFileLink}}.',
 							{
 								components: {
 									uploadFileLink: <a className="migrate__import-link" href={ uploadFileLink } />,
