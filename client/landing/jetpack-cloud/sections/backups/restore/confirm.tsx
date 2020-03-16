@@ -19,7 +19,9 @@ const BackupRestoreConfirm = ( { restoreId, siteId, onConfirm }: Props ) => (
 		<p>
 			You have chosen to restore site { siteId } to { restoreId }.
 		</p>
-		<Button onClick={ onConfirm }>{ 'Confirm Restore' }</Button>
+		<Button primary onClick={ onConfirm }>
+			{ 'Confirm Restore' }
+		</Button>
 	</div>
 );
 

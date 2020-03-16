@@ -8,17 +8,24 @@ import { useDispatch, useSelector } from 'react-redux';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
+// import { Card } from '@automattic/components';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { rewindRestore } from 'state/activity-log/actions';
 import Confirm from './confirm';
 import Error from './error';
 import Finished from './finished';
 import getRewindState from 'state/selectors/get-rewind-state';
+import Gridicon from 'components/gridicon';
 import InProgress from './in-progress';
 import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
 import Queued from './queued';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 enum RestoreState {
 	RestoreConfirm,
@@ -102,6 +109,9 @@ const BackupRestorePage = ( { restoreId }: Props ) => {
 			<DocumentHead title="Restore" />
 			<SidebarNavigation />
 			{ siteId && <QueryRewindRestoreStatus siteId={ siteId } /> }
+			<div>
+				<Gridicon className="restore__header-icon" icon="history" size={ 48 } />
+			</div>
 			{ render() }
 		</Main>
 	);
