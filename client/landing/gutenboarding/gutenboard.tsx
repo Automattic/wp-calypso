@@ -21,6 +21,7 @@ import { recordTracksPageViewWithPageParams } from '@automattic/calypso-analytic
 import Header from './components/header';
 import { name, settings } from './onboarding-block';
 import './style.scss';
+import { fontPairings } from './constants';
 
 registerBlockType( name, settings );
 
@@ -39,12 +40,20 @@ export function Gutenboard() {
 	// TODO: Explore alternatives for loading fonts and optimizations
 	// TODO: Don't load like this
 	useEffect( () => {
-		const l = document.createElement( 'link' );
-		l.href =
-			'https://fonts.googleapis.com/css?family=Arvo|Cabin|Chivo|Fira+Sans|Montserrat|Open+Sans|Playfair+Display|Raleway|Roboto|Space+Mono&display=swap';
-		l.rel = 'stylesheet';
-		l.type = 'text/css';
-		document.head.appendChild( l );
+		fontPairings.forEach( pair =>
+			pair.forEach(
+				( { title, fontFamily }: { title: string; fontFamily: string }, index: number ) => {
+					const isPrimary = index === 0;
+					const l = document.createElement( 'link' );
+					l.href = `https://fonts.googleapis.com/css?family=${ encodeURI( fontFamily ) }${
+						isPrimary ? ':bold' : ''
+					}&text=${ encodeURI( title + '\u00a0/' ) }&display=swap`;
+					l.rel = 'stylesheet';
+					l.type = 'text/css';
+					document.head.appendChild( l );
+				}
+			)
+		);
 	}, [] );
 
 	// @TODO: This is currently needed in addition to the routing (inside the Onboarding Block)
