@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import CardHeading from 'components/card-heading';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -43,7 +44,7 @@ const FreePhotoLibraryCard = ( {
 			recordTracksEvent( 'calypso_customer_home_free_photo_library_video_support_page_view' ),
 			supportArticleDialog( {
 				postId: 145498,
-				postUrl: 'https://support.wordpress.com/free-photo-library/',
+				postUrl: localizeUrl( 'https://support.wordpress.com/free-photo-library/' ),
 			} )
 		);
 	};
