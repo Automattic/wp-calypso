@@ -8,7 +8,7 @@
 	align-items: center;
 	justify-content: space-between;
 	border-bottom: 1px solid $light-gray-500;
-	height: $header-height;
+	height: 64px;
 	background: $white;
 	z-index: z-index( '.block-editor-editor-skeleton__header' );
 
@@ -27,6 +27,9 @@
 
 .gutenboarding__header-wp-icon {
 	color: var( --studio-blue-90 );
+	height: 24px;
+	width: 24px;
+	margin-left: 6px;
 }
 
 .gutenboarding__header-section {
@@ -81,6 +84,5 @@ $padding--gutenboarding__header-domain-picker-button: 0.3em 0.5em;
 }
 
 .gutenboarding__site-title {
-	padding: $padding--gutenboarding__header-domain-picker-button;
-	font-weight: bold;
+	font-weight: 500;
 }
