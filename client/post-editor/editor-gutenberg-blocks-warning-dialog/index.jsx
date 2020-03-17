@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getEditorRawContent, getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorRawContent, getEditorPostId, isEditorLoading } from 'state/ui/editor/selectors';
 import { Dialog } from '@automattic/components';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -38,8 +38,7 @@ import './style.scss';
 
 class EditorGutenbergBlocksWarningDialog extends Component {
 	static propTypes = {
-		isAtomic: PropTypes.bool,
-		isPrivate: PropTypes.bool,
+		isAtomicPrivate: PropTypes.bool,
 		translate: PropTypes.func,
 		postContent: PropTypes.string,
 		siteId: PropTypes.number,
@@ -69,33 +68,27 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 		forceClassic: false,
 	};
 
-	componentDidMount() {
-		if ( ! this.props.optInEnabled ) {
-			this.redirectToWpAdmin();
-		}
-	}
-
 	shouldComponentUpdate( nextProps, nextState ) {
 		return this.state.isDialogVisible !== nextState.isDialogVisible;
 	}
 
 	static getDerivedStateFromProps( props, state ) {
-		const { postContent } = props;
+		const { postContent, isPostContentLoaded, isAtomicPrivate } = props;
 		const { forceClassic } = state;
 
-		const hasGutenbergBlocks = content => !! content && content.indexOf( '<!-- wp:' ) !== -1;
-
-		const isDialogVisible = ! forceClassic && hasGutenbergBlocks( postContent );
+		const hasGutenbergBlocks = ( postContent || '' ).indexOf( '<!-- wp:' ) !== -1;
+		const isDialogVisible =
+			! forceClassic && isPostContentLoaded && ( hasGutenbergBlocks || isAtomicPrivate );
 
 		return {
 			isDialogVisible,
+			hasGutenbergBlocks,
 		};
 	}
 
 	useClassicEditor = () => {
 		this.props.useClassic();
-		const { isAtomic, isPrivate } = this.props;
-		if ( isAtomic && isPrivate ) {
+		if ( this.props.isAtomicPrivate ) {
 			this.redirectToWpAdmin();
 		} else {
 			this.setState( {
@@ -142,7 +135,7 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 			return null;
 		}
 
-		const { isDialogVisible } = this.state;
+		const { isDialogVisible, hasGutenbergBlocks } = this.state;
 		const buttons = [
 			{
 				action: 'gutenberg',
@@ -156,6 +149,7 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 				onClick: this.useClassicEditor,
 			},
 		];
+
 		return (
 			<Dialog
 				additionalClassNames="editor-gutenberg-blocks-warning-dialog"
@@ -163,19 +157,33 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 				buttons={ buttons }
 				onClose={ this.useClassicEditor }
 			>
-				<h1>{ translate( 'This post uses blocks from the new editor' ) }</h1>
+				{ hasGutenbergBlocks ? (
+					<>
+						<h1>{ translate( 'This post uses blocks from the new editor' ) }</h1>
 
-				<p>
-					{ translate(
-						'You can continue to edit this post in the Classic Editor, but you may lose some data and formatting. You can also check the {{a}}document history{{/a}} and restore a version of the page from earlier.',
-						{
-							components: {
-								//eslint-disable-next-line jsx-a11y/anchor-is-valid
-								a: <a href="#" onClick={ this.showDocumentHistory } />,
-							},
-						}
-					) }
-				</p>
+						<p>
+							{ translate(
+								'You can continue to edit this post in the Classic Editor, but you may lose some data and formatting. You can also check the {{a}}document history{{/a}} and restore a version of the page from earlier.',
+								{
+									components: {
+										//eslint-disable-next-line jsx-a11y/anchor-is-valid
+										a: <a href="#" onClick={ this.showDocumentHistory } />,
+									},
+								}
+							) }
+						</p>
+					</>
+				) : (
+					<>
+						<h1>{ translate( 'Try out our new editor' ) }</h1>
+
+						<p>
+							{ translate(
+								'You are about to edit this post in the Classic Editor. You can continue, but we encourage you to try out our new block editor for improved editing experience.'
+							) }
+						</p>
+					</>
+				) }
 			</Dialog>
 		);
 	}
@@ -221,24 +229,25 @@ const mapDispatchToProps = dispatch => ( {
 } );
 
 export default connect( state => {
-	const postContent = getEditorRawContent( state );
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
+	const postContent = getEditorRawContent( state );
 	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
 	const optInEnabled = isGutenbergOptInEnabled( state, siteId );
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	const isPrivate = isPrivateSite( state, siteId );
+	const isPostContentLoaded = ! isEditorLoading( state ) && postContent !== null;
 
 	return {
-		isAtomic,
-		isPrivate,
 		postContent,
 		siteId,
 		postId,
 		postType,
 		gutenbergUrl,
 		optInEnabled,
+		isPostContentLoaded,
+		isAtomicPrivate: isAtomic && isPrivate,
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 		buildSiteAdminUrl: path => getSiteAdminUrl( state, siteId, path ),
 	};
