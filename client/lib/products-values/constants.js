@@ -17,7 +17,6 @@ export const PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY = 'jetpack_backup_daily_monthl
 export const PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY = 'jetpack_backup_realtime_monthly';
 export const PRODUCT_JETPACK_SEARCH = 'jetpack_search';
 export const PRODUCT_JETPACK_SEARCH_MONTHLY = 'jetpack_search_monthly';
-export const PRODUCT_JETPACK_SEARCH_TRIAL = 'jetpack_search_trial';
 
 export const JETPACK_BACKUP_PRODUCTS_YEARLY = [
 	PRODUCT_JETPACK_BACKUP_DAILY,
@@ -32,11 +31,7 @@ export const JETPACK_BACKUP_PRODUCTS = [
 	...JETPACK_BACKUP_PRODUCTS_MONTHLY,
 ];
 
-export const JETPACK_SEARCH_PRODUCTS = [
-	PRODUCT_JETPACK_SEARCH,
-	PRODUCT_JETPACK_SEARCH_MONTHLY,
-	PRODUCT_JETPACK_SEARCH_TRIAL,
-];
+export const JETPACK_SEARCH_PRODUCTS = [ PRODUCT_JETPACK_SEARCH, PRODUCT_JETPACK_SEARCH_MONTHLY ];
 
 export const JETPACK_PRODUCTS_LIST = [
 	...JETPACK_BACKUP_PRODUCTS,
@@ -69,7 +64,6 @@ export const getJetpackProductsShortNames = () => {
 		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate( 'Real-Time Backups' ),
 		[ PRODUCT_JETPACK_SEARCH ]: translate( 'Search' ),
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Search' ),
-		[ PRODUCT_JETPACK_SEARCH_TRIAL ]: translate( 'Search (Trial)' ),
 	};
 };
 
@@ -113,7 +107,6 @@ export const getJetpackProductsDisplayNames = () => {
 		),
 		[ PRODUCT_JETPACK_SEARCH ]: translate( 'Jetpack Search' ),
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Jetpack Search' ),
-		[ PRODUCT_JETPACK_SEARCH_TRIAL ]: translate( 'Jetpack Search (Trial)' ),
 	};
 };
 
@@ -134,7 +127,6 @@ export const getJetpackProductsTaglines = () => {
 		),
 		[ PRODUCT_JETPACK_SEARCH ]: searchTagline,
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchTagline,
-		[ PRODUCT_JETPACK_SEARCH_TRIAL ]: searchTagline,
 	};
 };
 
@@ -155,7 +147,6 @@ export const getJetpackProductsDescriptions = () => {
 		),
 		[ PRODUCT_JETPACK_SEARCH ]: searchDescription,
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchDescription,
-		[ PRODUCT_JETPACK_SEARCH_TRIAL ]: searchDescription,
 	};
 };
 
@@ -189,7 +180,6 @@ export const getJetpackProducts = () => {
 			options: {
 				yearly: [ PRODUCT_JETPACK_SEARCH ],
 				monthly: [ PRODUCT_JETPACK_SEARCH_MONTHLY ],
-				trial: [ PRODUCT_JETPACK_SEARCH_TRIAL ],
 			},
 			optionShortNames: getJetpackProductsShortNames(),
 			optionDisplayNames: getJetpackProductsDisplayNames(),
