@@ -13,9 +13,9 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
  */
 import { USER_STORE } from '../../stores/user';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { useLangRouteParam } from '../../path';
-import './style.scss';
+import { useLangRouteParam, usePath, Step } from '../../path';
 import ModalSubmitButton from '../modal-submit-button';
+import './style.scss';
 
 type NewUserErrorResponse = import('@automattic/data-stores').User.NewUserErrorResponse;
 
@@ -41,6 +41,7 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 	const newUserError = useSelect( select => select( USER_STORE ).getNewUserError() );
 	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ) ).getState();
 	const langParam = useLangRouteParam();
+	const makePath = usePath();
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_gutenboarding_signup_start', {
@@ -135,12 +136,32 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 				</div>
 			</form>
 			<div className="signup-form__login-links">
-				<Button isLink={ true } onClick={ openLogin }>
+				<Button
+					isLink
+					href={ `/log-in?redirect_to=${ originUrl() }/gutenboarding${ makePath(
+						Step.CreateSite
+					) }` }
+				>
 					{ NO__( 'Log in to create a site for your existing account.' ) }
+				</Button>
+			</div>
+			<div className="signup-form__login-links">
+				<Button isLink={ true } onClick={ openLogin }>
+					{ /* Removing before shipping, no need to translate */ }
+					(experimental login)
 				</Button>
 			</div>
 		</Modal>
 	);
 };
+
+function originUrl() {
+	return (
+		window.location.protocol +
+		'//' +
+		window.location.hostname +
+		( window.location.port ? ':' + window.location.port : '' )
+	);
+}
 
 export default SignupForm;
