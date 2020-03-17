@@ -129,14 +129,13 @@ function TaxFields( {
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== 'ready';
 
-	const isZip = isZipOrPostal() === 'zip';
 	return (
 		<FieldRow>
 			<LeftColumn>
 				<Field
 					id={ section + '-postal-code' }
 					type="text"
-					label={ isZip ? translate( 'Zip code' ) : translate( 'Postal code' ) }
+					label={ translate( 'Postal code' ) }
 					value={ postalCode.value }
 					disabled={ isDisabled }
 					onChange={ value => {
@@ -171,11 +170,6 @@ TaxFields.propTypes = {
 	updatePostalCode: PropTypes.func.isRequired,
 	updateCountryCode: PropTypes.func.isRequired,
 };
-
-function isZipOrPostal() {
-	//TODO: Add location detection to return "zip" or "postal"
-	return 'postal';
-}
 
 const DomainContactFieldsDescription = styled.p`
 	font-size: 14px;
