@@ -3,14 +3,8 @@
 @import '../../mixins';
 
 .design-selector {
-	width: 90%;
-	height: 90%;
 	background-color: var( --contrastColor );
 	color: var( --mainColor );
-	padding: 5% 5% 0;
-	position: fixed;
-	top: 0;
-	left: 0;
 
 	.design-selector__header {
 		display: flex;
