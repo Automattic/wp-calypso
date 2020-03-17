@@ -4,14 +4,12 @@
 import React, { ReactNode } from 'react';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { Button, Dialog } from '@automattic/components';
 import Gridicon from 'components/gridicon';
-import { getSelectedSite } from 'state/ui/selectors';
 
 /**
  * Style dependencies
@@ -26,18 +24,15 @@ interface Props {
 	siteName: string;
 	showDialog: boolean;
 	onCloseDialog: Function;
+	onConfirmation: Function;
 }
 
 class ThreatDialog extends React.PureComponent< Props > {
-	performAction = () => {
-		window.alert( `We are going to ${ this.props.action } the threat!` );
-		this.props.onCloseDialog();
-	};
-
 	render() {
 		const {
 			action,
 			onCloseDialog,
+			onConfirmation,
 			siteName,
 			showDialog,
 			threatDescription,
@@ -49,7 +44,7 @@ class ThreatDialog extends React.PureComponent< Props > {
 			</Button>,
 			<Button
 				className={ classnames( 'threat-dialog__btn', `threat-dialog__btn--${ action }-threat` ) }
-				onClick={ this.performAction }
+				onClick={ onConfirmation }
 			>
 				{ action === 'fix' ? translate( 'Fix threat' ) : translate( 'Ignore threat' ) }
 			</Button>,
@@ -104,9 +99,4 @@ class ThreatDialog extends React.PureComponent< Props > {
 	}
 }
 
-export default connect( state => {
-	const { name } = getSelectedSite( state );
-	return {
-		siteName: name,
-	};
-} )( ThreatDialog );
+export default ThreatDialog;
