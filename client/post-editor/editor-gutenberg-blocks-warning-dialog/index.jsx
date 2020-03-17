@@ -112,7 +112,6 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 		}
 
 		const { isDialogVisible } = this.state;
-
 		const buttons = [
 			{
 				action: 'gutenberg',
