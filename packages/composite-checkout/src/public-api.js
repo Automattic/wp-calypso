@@ -22,6 +22,8 @@ import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './li
 import { useLineItems, useTotal } from './lib/line-items';
 import {
 	createRegistry,
+	defaultRegistry,
+	registerStore,
 	useDispatch,
 	useRegisterStore,
 	useRegistry,
@@ -64,9 +66,11 @@ export {
 	createPayPalMethod,
 	createRegistry,
 	createStripeMethod,
+	defaultRegistry,
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
+	registerStore,
 	renderDisplayValueMarkdown,
 	useAllPaymentMethods,
 	useDispatch,
