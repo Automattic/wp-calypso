@@ -89,7 +89,25 @@ class ScanPage extends Component {
 	}
 
 	renderScanError() {
-		return <p>There is an error with the scan.</p>;
+		const { siteSlug } = this.props;
+
+		return (
+			<>
+				<SecurityIcon className="scan__icon" icon="scan-error" />
+				<h1 className="scan__header">{ translate( 'Something went wrong' ) }</h1>
+				<p>
+					The scan did not complete successfully. In order to complete the scan you need to contact
+					support.
+				</p>
+				<Button
+					primary
+					href={ `/contact-us/${ siteSlug }/?scan-state=error` }
+					className="scan__button"
+				>
+					{ translate( 'Contact Support' ) }
+				</Button>
+			</>
+		);
 	}
 
 	renderScanState() {
