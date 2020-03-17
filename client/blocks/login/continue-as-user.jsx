@@ -68,6 +68,7 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } 
 						link: (
 							<button
 								type="button"
+								id="loginAsAnotherUser"
 								className="continue-as-user__change-user-link"
 								onClick={ onChangeAccount }
 							/>
