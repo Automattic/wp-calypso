@@ -51,11 +51,6 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } 
 
 	const userName = currentUser.display_name || currentUser.username;
 
-	const handleChangeAccount = e => {
-		e.preventDefault();
-		onChangeAccount();
-	};
-
 	// Render ContinueAsUser straight away, even before validation.
 	// This helps avoid jarring layout shifts. It's not ideal that the link URL changes transparently
 	// like that, but it is better than the alternative, and in practice it should happen quicker than
@@ -74,7 +69,7 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } 
 							<button
 								type="button"
 								className="continue-as-user__change-user-link"
-								onClick={ handleChangeAccount }
+								onClick={ onChangeAccount }
 							/>
 						),
 					},

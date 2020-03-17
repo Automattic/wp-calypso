@@ -171,6 +171,10 @@ class Login extends Component {
 		}
 	};
 
+	handleContinueAsAnotherUser = () => {
+		this.setState( { continueAsAnotherUser: true } );
+	};
+
 	rebootAfterLogin = async () => {
 		this.props.recordTracksEvent( 'calypso_login_success', {
 			two_factor_enabled: this.props.twoFactorEnabled,
@@ -417,13 +421,7 @@ class Login extends Component {
 
 		if ( this.showContinueAsUser() ) {
 			// someone is already logged in, offer to proceed to the app without a new login
-			return (
-				<ContinueAsUser
-					onChangeAccount={ () => {
-						this.setState( { continueAsAnotherUser: true } );
-					} }
-				/>
-			);
+			return <ContinueAsUser onChangeAccount={ this.handleContinueAsAnotherUser } />;
 		}
 
 		return (
