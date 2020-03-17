@@ -4,20 +4,22 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { identity, noop, pickBy } from 'lodash';
+import { identity, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { getEditorRawContent, getEditorPostId, isEditorLoading } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
 import { Dialog } from '@automattic/components';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
-import { getSiteAdminUrl } from 'state/sites/selectors';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isPrivateSite from 'state/selectors/is-private-site';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
+import getWpAdminClassicEditorRedirectionUrl from 'state/selectors/get-wp-admin-classic-editor-redirection-url';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -26,10 +28,6 @@ import {
 	bumpStat,
 } from 'state/analytics/actions';
 import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import isPrivateSite from 'state/selectors/is-private-site';
-import { addQueryArgs } from 'lib/route';
-import wpcom from 'lib/wp';
 
 /**
  * Style dependencies
@@ -38,9 +36,8 @@ import './style.scss';
 
 class EditorGutenbergBlocksWarningDialog extends Component {
 	static propTypes = {
-		isAtomicPrivate: PropTypes.bool,
+		isPrivateAtomic: PropTypes.bool,
 		translate: PropTypes.func,
-		postContent: PropTypes.string,
 		siteId: PropTypes.number,
 		postId: PropTypes.number,
 		postType: PropTypes.string,
@@ -50,11 +47,11 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 		optInEnabled: PropTypes.bool,
 		useClassic: PropTypes.func,
 		buildSiteAdminUrl: PropTypes.func,
+		wpAdminRedirectionUrl: PropTypes.string,
 	};
 
 	static defaultProps = {
 		translate: identity,
-		postContent: null,
 		siteId: null,
 		gutenbergUrl: null,
 		switchToGutenberg: noop,
@@ -73,48 +70,28 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 	}
 
 	static getDerivedStateFromProps( props, state ) {
-		const { postContent, isPostContentLoaded, isAtomicPrivate } = props;
+		const { hasGutenbergBlocks } = props;
 		const { forceClassic } = state;
 
-		const hasGutenbergBlocks = ( postContent || '' ).indexOf( '<!-- wp:' ) !== -1;
-		const isDialogVisible =
-			! forceClassic && isPostContentLoaded && ( hasGutenbergBlocks || isAtomicPrivate );
-
 		return {
-			isDialogVisible,
-			hasGutenbergBlocks,
+			isDialogVisible: ! forceClassic && hasGutenbergBlocks,
 		};
 	}
 
 	useClassicEditor = () => {
-		this.props.useClassic();
-		if ( this.props.isAtomicPrivate ) {
-			this.redirectToWpAdmin();
+		const { useClassic, isPrivateAtomic, wpAdminRedirectionUrl } = this.props;
+		useClassic();
+		if ( isPrivateAtomic ) {
+			window.location.href = wpAdminRedirectionUrl;
 		} else {
-			this.setState( {
-				forceClassic: true,
-			} );
+			this.hideDialog();
 		}
 	};
 
-	redirectToWpAdmin = () => {
-		const { postId, postType, buildSiteAdminUrl } = this.props;
-		let queryArgs = pickBy( {
-			post: postId,
-			action: postId && 'edit', // If postId is set, open edit view.
-			post_type: postType !== 'post' && postType, // Use postType if it's different than post.
-			'classic-editor': 1,
+	hideDialog = () => {
+		this.setState( {
+			forceClassic: true,
 		} );
-
-		// needed for loading the editor in SU sessions
-		if ( wpcom.addSupportParams ) {
-			queryArgs = wpcom.addSupportParams( queryArgs );
-		}
-
-		const siteAdminUrl = buildSiteAdminUrl( postId ? 'post.php' : 'post-new.php' );
-		const wpAdminUrl = addQueryArgs( queryArgs, siteAdminUrl );
-
-		window.location.href = wpAdminUrl;
 	};
 
 	switchToGutenberg = () => {
@@ -135,7 +112,8 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 			return null;
 		}
 
-		const { isDialogVisible, hasGutenbergBlocks } = this.state;
+		const { isDialogVisible } = this.state;
+
 		const buttons = [
 			{
 				action: 'gutenberg',
@@ -157,33 +135,21 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 				buttons={ buttons }
 				onClose={ this.useClassicEditor }
 			>
-				{ hasGutenbergBlocks ? (
-					<>
-						<h1>{ translate( 'This post uses blocks from the new editor' ) }</h1>
+				<>
+					<h1>{ translate( 'This post uses blocks from the new editor' ) }</h1>
 
-						<p>
-							{ translate(
-								'You can continue to edit this post in the Classic Editor, but you may lose some data and formatting. You can also check the {{a}}document history{{/a}} and restore a version of the page from earlier.',
-								{
-									components: {
-										//eslint-disable-next-line jsx-a11y/anchor-is-valid
-										a: <a href="#" onClick={ this.showDocumentHistory } />,
-									},
-								}
-							) }
-						</p>
-					</>
-				) : (
-					<>
-						<h1>{ translate( 'Try out our new editor' ) }</h1>
-
-						<p>
-							{ translate(
-								'You are about to edit this post in the Classic Editor. You can continue, but we encourage you to try out our new block editor for improved editing experience.'
-							) }
-						</p>
-					</>
-				) }
+					<p>
+						{ translate(
+							'You can continue to edit this post in the Classic Editor, but you may lose some data and formatting. You can also check the {{a}}document history{{/a}} and restore a version of the page from earlier.',
+							{
+								components: {
+									//eslint-disable-next-line jsx-a11y/anchor-is-valid
+									a: <a href="#" onClick={ this.showDocumentHistory } />,
+								},
+							}
+						) }
+					</p>
+				</>
 			</Dialog>
 		);
 	}
@@ -232,23 +198,19 @@ export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
-	const postContent = getEditorRawContent( state );
 	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
 	const optInEnabled = isGutenbergOptInEnabled( state, siteId );
-	const isAtomic = isSiteAutomatedTransfer( state, siteId );
-	const isPrivate = isPrivateSite( state, siteId );
-	const isPostContentLoaded = ! isEditorLoading( state ) && postContent !== null;
+	const isPrivateAtomic =
+		isSiteAutomatedTransfer( state, siteId ) && isPrivateSite( state, siteId );
+	const wpAdminRedirectionUrl = getWpAdminClassicEditorRedirectionUrl( state, siteId );
 
 	return {
-		postContent,
 		siteId,
 		postId,
 		postType,
 		gutenbergUrl,
 		optInEnabled,
-		isPostContentLoaded,
-		isAtomicPrivate: isAtomic && isPrivate,
-		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-		buildSiteAdminUrl: path => getSiteAdminUrl( state, siteId, path ),
+		isPrivateAtomic,
+		wpAdminRedirectionUrl,
 	};
 }, mapDispatchToProps )( localize( EditorGutenbergBlocksWarningDialog ) );

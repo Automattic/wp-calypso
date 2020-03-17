@@ -13,6 +13,7 @@ import Gridicon from 'components/gridicon';
 import isGutenbergOptInDialogShowing from 'state/selectors/is-gutenberg-opt-in-dialog-showing';
 import { hideGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import getWpAdminClassicEditorRedirectionUrl from 'state/selectors/get-wp-admin-classic-editor-redirection-url';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import { localize } from 'i18n-calypso';
 import { Button, Dialog } from '@automattic/components';
@@ -26,6 +27,8 @@ import {
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isPrivateSite from 'state/selectors/is-private-site';
 
 /**
  * Style dependencies
@@ -42,10 +45,16 @@ class EditorGutenbergOptInDialog extends Component {
 		optIn: PropTypes.func,
 		useClassic: PropTypes.func,
 		siteId: PropTypes.number,
+		wpAdminRedirectionUrl: PropTypes.string,
 	};
 
 	onCloseDialog = () => {
-		this.props.hideDialog();
+		const { isPrivateAtomic, wpAdminRedirectionUrl } = this.props;
+		if ( isPrivateAtomic ) {
+			window.location.href = wpAdminRedirectionUrl;
+		} else {
+			this.props.hideDialog();
+		}
 	};
 
 	optInToGutenberg = () => {
@@ -138,12 +147,15 @@ export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
-
 	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
+	const isPrivateAtomic =
+		isSiteAutomatedTransfer( state, siteId ) && isPrivateSite( state, siteId );
+	const wpAdminRedirectionUrl = getWpAdminClassicEditorRedirectionUrl( state, siteId );
 
 	return {
 		gutenbergUrl,
 		isDialogVisible,
-		siteId,
+		isPrivateAtomic,
+		wpAdminRedirectionUrl,
 	};
 }, mapDispatchToProps )( localize( EditorGutenbergOptInDialog ) );
