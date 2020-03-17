@@ -8,11 +8,21 @@
 		margin-top: 20px;
 	}
 
-	&.is-narrow {
-		@include breakpoint( '>960px' ) {
-			max-width: 520px;
-			margin-left: auto;
-			margin-right: auto;
+	&.is-jetpack-products {
+		> .product-selector {
+			display: flex;
+			flex-flow: row wrap;
+
+			.product-card {
+				flex-basis: calc( 50% - 1em );
+				&:first-child:last-child {
+					@include breakpoint( '>960px' ) {
+						margin-left: auto;
+						margin-right: auto;
+						flex-basis: 520px;
+					}
+				}
+			}
 		}
 	}
 }
@@ -40,7 +50,7 @@
 	background: var( --color-surface );
 	border-radius: 3px;
 	padding: 2px 12px;
-	@include elevation ( 2dp );
+	@include elevation( 2dp );
 
 	button.is-borderless {
 		color: var( --color-accent );
@@ -79,7 +89,6 @@
 		font-size: 24px;
 		font-weight: 400;
 	}
-
 }
 
 .plans-features-main__subhead {
