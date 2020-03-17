@@ -19,7 +19,8 @@
 	},
 	"enable_all_sections": false,
 	"sections": {
-		"jetpack-cloud": true
+		"jetpack-cloud": true,
+		"scan": true
 	},
 	"theme": "jetpack-cloud"
 }
