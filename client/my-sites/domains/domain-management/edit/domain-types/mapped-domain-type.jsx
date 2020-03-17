@@ -31,7 +31,11 @@ import { MAP_EXISTING_DOMAIN, MAP_SUBDOMAIN } from 'lib/url/support';
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'state/sites/selectors';
-import { getByPurchaseId } from 'state/purchases/selectors';
+import {
+	getByPurchaseId,
+	isFetchingSitePurchases,
+	hasLoadedSitePurchasesFromServer,
+} from 'state/purchases/selectors';
 import { isRechargeable, isExpired } from 'lib/purchases';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
@@ -244,6 +248,10 @@ class MappedDomainType extends React.Component {
 	renderAutoRenewToggle() {
 		const { selectedSite, domain, purchase } = this.props;
 
+		if ( ! purchase ) {
+			return null;
+		}
+
 		if ( ! isRechargeable( purchase ) || isExpired( purchase ) ) {
 			return null;
 		}
@@ -261,10 +269,14 @@ class MappedDomainType extends React.Component {
 	}
 
 	renderAutoRenew() {
-		const { purchase } = this.props;
+		const { isLoadingPurchase } = this.props;
 
-		if ( ! purchase ) {
-			return <div />;
+		if ( isLoadingPurchase ) {
+			return (
+				<div className="domain-types__auto-renew-placeholder">
+					<p />
+				</div>
+			);
 		}
 
 		return <div>{ this.renderAutoRenewToggle() }</div>;
@@ -348,6 +360,8 @@ export default connect(
 			purchase: purchaseSubscriptionId
 				? getByPurchaseId( state, parseInt( purchaseSubscriptionId, 10 ) )
 				: null,
+			isLoadingPurchase:
+				isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, ownProps.selectedSite.ID ),
 			isJetpackSite: isJetpackSite( state, ownProps.selectedSite.ID ),
 		};

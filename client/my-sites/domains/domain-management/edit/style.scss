@@ -146,4 +146,12 @@
 	.subscription-settings {
 		margin-top: 0;
 	}
+
+	.domain-types__auto-renew-placeholder {
+		width: 20%;
+		p {
+			@include placeholder( --color-neutral-5 );
+			margin: 0 auto;
+		}
+	}
 }

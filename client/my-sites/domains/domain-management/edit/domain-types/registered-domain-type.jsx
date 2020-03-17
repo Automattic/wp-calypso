@@ -33,7 +33,11 @@ import {
 import SubscriptionSettings from '../card/subscription-settings';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { getProductBySlug } from 'state/products-list/selectors';
-import { getByPurchaseId } from 'state/purchases/selectors';
+import {
+	getByPurchaseId,
+	isFetchingSitePurchases,
+	hasLoadedSitePurchasesFromServer,
+} from 'state/purchases/selectors';
 import NonPrimaryDomainPlanUpsell from '../../components/domain/non-primary-domain-plan-upsell';
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
 import AutoRenewToggle from 'me/purchases/manage-purchase/auto-renew-toggle';
@@ -307,6 +311,10 @@ class RegisteredDomainType extends React.Component {
 	renderAutoRenewToggle() {
 		const { selectedSite, purchase } = this.props;
 
+		if ( ! purchase ) {
+			return null;
+		}
+
 		if ( ! isRechargeable( purchase ) || isExpired( purchase ) ) {
 			return null;
 		}
@@ -323,10 +331,14 @@ class RegisteredDomainType extends React.Component {
 	}
 
 	renderAutoRenew() {
-		const { purchase } = this.props;
+		const { isLoadingPurchase } = this.props;
 
-		if ( ! purchase ) {
-			return <div />;
+		if ( isLoadingPurchase ) {
+			return (
+				<div className="domain-types__auto-renew-placeholder">
+					<p />
+				</div>
+			);
 		}
 
 		return <div>{ this.renderAutoRenewToggle() }</div>;
@@ -441,6 +453,8 @@ export default connect(
 
 		return {
 			purchase: subscriptionId ? getByPurchaseId( state, parseInt( subscriptionId, 10 ) ) : null,
+			isLoadingPurchase:
+				isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
 			redemptionProduct: getProductBySlug( state, 'domain_redemption' ),
 		};
 	},
