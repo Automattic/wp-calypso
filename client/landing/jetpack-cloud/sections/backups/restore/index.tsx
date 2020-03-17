@@ -8,13 +8,15 @@ import { useDispatch, useSelector } from 'react-redux';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-// import { Card } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { rewindRestore } from 'state/activity-log/actions';
+import { useLocalizedMoment } from 'components/localized-moment';
 import Confirm from './confirm';
 import Error from './error';
 import Finished from './finished';
 import getRewindState from 'state/selectors/get-rewind-state';
+import getSiteTitle from 'state/sites/selectors/get-site-title';
 import Gridicon from 'components/gridicon';
 import InProgress from './in-progress';
 import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
@@ -68,6 +70,10 @@ const BackupRestorePage = ( { restoreId }: Props ) => {
 
 	const siteId = useSelector( getSelectedSiteId );
 	const rewindState = useSelector( state => getRewindState( state, siteId ) );
+	const siteTitle = useSelector( state => ( siteId ? getSiteTitle( state, siteId ) : null ) );
+
+	const moment = useLocalizedMoment();
+	const restoreTimestamp: string = moment.unix( restoreId ).format( 'LLL' );
 
 	const [ hasRequestedRestore, setHasRequestedRestore ] = useState( false );
 
@@ -87,7 +93,13 @@ const BackupRestorePage = ( { restoreId }: Props ) => {
 	const render = () => {
 		switch ( restoreState ) {
 			case RestoreState.RestoreConfirm:
-				return <Confirm siteId={ siteId } restoreId={ restoreId } onConfirm={ onConfirm } />;
+				return (
+					<Confirm
+						onConfirm={ onConfirm }
+						restoreTimestamp={ restoreTimestamp }
+						siteTitle={ siteTitle }
+					/>
+				);
 			case RestoreState.RestoreQueued:
 				return <Queued />;
 			case RestoreState.RestoreInProgress:
@@ -109,10 +121,10 @@ const BackupRestorePage = ( { restoreId }: Props ) => {
 			<DocumentHead title="Restore" />
 			<SidebarNavigation />
 			{ siteId && <QueryRewindRestoreStatus siteId={ siteId } /> }
-			<div>
+			<Card>
 				<Gridicon className="restore__header-icon" icon="history" size={ 48 } />
-			</div>
-			{ render() }
+				{ render() }
+			</Card>
 		</Main>
 	);
 };
