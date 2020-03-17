@@ -35,11 +35,7 @@ class DatePicker extends Component {
 		const yearToday = moment().format( 'YYYY' );
 		const yearDate = moment( date ).format( 'YYYY' );
 
-		let dateFormat = 'MMM D';
-
-		if ( yearToday !== yearDate ) {
-			dateFormat = 'MMM D, YYYY';
-		}
+		const dateFormat = yearToday === yearDate ? 'MMM D' : 'MMM D, YYYY';
 
 		if ( showTodayYesterday ) {
 			switch ( daysDiff ) {
