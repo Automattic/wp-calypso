@@ -128,10 +128,12 @@ export default function switchLocale( localeSlug ) {
 
 	lastRequestedLocale = localeSlug;
 
-	// i18n.configure( { defaultLocaleSlug: localeSlug } );
-	// setLocaleInDOM();
+	if ( config.isEnabled( 'use-translation-chunks' ) ) {
+		i18n.configure( { defaultLocaleSlug: localeSlug } );
+		setLocaleInDOM();
 
-	// return;
+		return;
+	}
 
 	if ( isDefaultLocale( localeSlug ) ) {
 		i18n.configure( { defaultLocaleSlug: localeSlug } );

@@ -7,6 +7,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { loadUserUndeployedTranslations } from 'lib/i18n-utils/switch-locale';
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
 
@@ -24,8 +25,8 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		reduxStore.dispatch( setLocale( currentUser.localeSlug, currentUser.localeVariant ) );
 	}
 
-	const getTranslationChunkPath = chunkId => {
-		return `/calypso/evergreen/languages/${ chunkId }.json`; // @todo replace with actual translation path
+	const getTranslationChunkPath = ( chunkId, langSlug = currentUser.localeSlug ) => {
+		return `/calypso/evergreen/languages/${ langSlug }/${ chunkId }.json`;
 	};
 
 	const loadedTranslationChunks = {};
@@ -41,11 +42,11 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 			.catch( error => error );
 	};
 
-	if ( '__requireChunkCallback__' in window ) {
+	if ( config.isEnabled( 'use-translation-chunks' ) && '__requireChunkCallback__' in window ) {
 		let translatedChunks; // should we get these bootstrapped on page load, similarly to `languageRevisions`?
 
 		window
-			.fetch( `/calypso/evergreen/translated-chunks.json` )
+			.fetch( `/calypso/evergreen/languages/${ currentUser.localeSlug }/translated-chunks.json` )
 			.then( response => response.json() )
 			.then( data => {
 				translatedChunks = data;

@@ -174,11 +174,13 @@ languagesRequests.then( downloadedLanguages => {
 
 			// Write language translated chunks map
 			const languageChunksDir = path.join( LANGUAGES_DIR, langSlug );
-
+			const translatedChunksKeys = Object.keys( languageChunks ).map(
+				chunk => path.parse( chunk ).name
+			);
 			mkdirp.sync( languageChunksDir );
 			fs.writeFileSync(
 				path.join( languageChunksDir, TRANSLATED_CHUNKS_FILENAME ),
-				JSON.stringify( Object.keys( languageChunks ) )
+				JSON.stringify( translatedChunksKeys )
 			);
 
 			// Write laguage translation chunks
