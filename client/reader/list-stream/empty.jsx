@@ -36,7 +36,7 @@ class ListEmptyContent extends React.Component {
 					onClick={ this.recordAction }
 					href="/read"
 				>
-					{ this.props.translate( 'Back to Following' ) }
+					{ this.props.translate( 'Back to following' ) }
 				</a>
 			),
 			secondaryAction = isDiscoverEnabled() ? (

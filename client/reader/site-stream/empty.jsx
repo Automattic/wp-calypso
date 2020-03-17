@@ -45,7 +45,7 @@ const SiteEmptyContent = ( { translate } ) => {
 			onClick={ recordSecondaryAction }
 			href="/read/search"
 		>
-			{ translate( 'Find Sites to Follow' ) }
+			{ translate( 'Find sites to follow' ) }
 		</a>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
