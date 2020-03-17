@@ -56,7 +56,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	siteId,
 	selectedSiteSlug,
 	isFreePlan,
-	sitePlan,
 	isJetpack,
 	isAtomicSite,
 	hasSimplePayments,
@@ -159,18 +158,15 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			? translate(
 					"Manage your subscribers, or your current subscription options and review the total revenue that you've made from recurring payments."
 			  )
-			: isFreePlan
-			? translate(
+			: translate(
 					'Charge for and automate recurring service payments, membership dues, or donations. {{em}}Available with a subscription to any paid plan{{/em}}.',
 					{
 						components: {
 							em: <em />,
 						},
 					}
-			  )
-			: translate(
-					'Charge for and automate recurring service payments, membership dues, or donations.'
 			  );
+
 		const learnMoreLink = isFreePlan
 			? {
 					url: 'https://wordpress.com/support/recurring-payments/',
@@ -278,10 +274,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const body = hasSetupAds
 			? translate(
 					"Check out your ad earnings history, including total earnings, total paid to date, and the amount that you've still yet to be paid."
-			  )
-			: hasWordAds
-			? translate(
-					'Make money each time someone visits your site by displaying advertisements on all your posts and pages.'
 			  )
 			: translate(
 					'Make money each time someone visits your site by displaying advertisements on all your posts and pages. {{em}}Available only with a Premium, Business, or eCommerce plan{{/em}}.',
