@@ -17,8 +17,6 @@ import { useLangRouteParam, usePath, Step } from '../../path';
 import ModalSubmitButton from '../modal-submit-button';
 import './style.scss';
 
-type NewUserErrorResponse = import('@automattic/data-stores').User.NewUserErrorResponse;
-
 // TODO: deploy this change to @types/wordpress__element
 declare module '@wordpress/element' {
 	// eslint-disable-next-line no-shadow
