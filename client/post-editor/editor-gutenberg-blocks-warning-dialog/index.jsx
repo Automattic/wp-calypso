@@ -134,21 +134,19 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 				buttons={ buttons }
 				onClose={ this.useClassicEditor }
 			>
-				<>
-					<h1>{ translate( 'This post uses blocks from the new editor' ) }</h1>
+				<h1>{ translate( 'This post uses blocks from the new editor' ) }</h1>
 
-					<p>
-						{ translate(
-							'You can continue to edit this post in the Classic Editor, but you may lose some data and formatting. You can also check the {{a}}document history{{/a}} and restore a version of the page from earlier.',
-							{
-								components: {
-									//eslint-disable-next-line jsx-a11y/anchor-is-valid
-									a: <a href="#" onClick={ this.showDocumentHistory } />,
-								},
-							}
-						) }
-					</p>
-				</>
+				<p>
+					{ translate(
+						'You can continue to edit this post in the Classic Editor, but you may lose some data and formatting. You can also check the {{a}}document history{{/a}} and restore a version of the page from earlier.',
+						{
+							components: {
+								//eslint-disable-next-line jsx-a11y/anchor-is-valid
+								a: <a href="#" onClick={ this.showDocumentHistory } />,
+							},
+						}
+					) }
+				</p>
 			</Dialog>
 		);
 	}
