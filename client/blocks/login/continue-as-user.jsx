@@ -63,7 +63,7 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } 
 
 	return (
 		<div className="continue-as-user">
-			<Gravatar user={ currentUser } imgSize={ 200 } size={ 200 } />
+			<Gravatar user={ currentUser } imgSize={ 400 } size={ 200 } />
 			<Button primary href={ validatedRedirectUrl || '/' }>
 				{ translate( 'Continue as %(userName)s', { args: { userName } } ) }
 			</Button>
