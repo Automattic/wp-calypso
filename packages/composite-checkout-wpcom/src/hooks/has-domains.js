@@ -16,5 +16,5 @@ export function areDomainsInLineItems( items ) {
 }
 
 export function isLineItemADomain( item ) {
-	return item.wpcom_meta?.is_domain_registration;
+	return item.wpcom_meta?.is_domain_registration || item.type === 'domain_transfer';
 }
