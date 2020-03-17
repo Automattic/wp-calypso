@@ -8,9 +8,9 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Button, Dialog } from '@automattic/components';
+import { Dialog } from '@automattic/components';
 import Gridicon from 'components/gridicon';
-import RewindCredentialsForm from 'components/rewind-credentials-form';
+import ServerCredentialsForm from '../server-credentials-form';
 
 /**
  * Style dependencies
@@ -30,22 +30,12 @@ class FixAllThreatsDialog extends React.PureComponent< Props > {
 
 	render() {
 		const { onCloseDialog, showDialog } = this.props;
-		const buttons = [
-			<Button
-				className="fix-all-threats-dialog__btn fix-all-threats-dialog__btn--fix"
-				onClick={ onCloseDialog }
-			>
-				{ translate( 'Go back' ) }
-			</Button>,
-			<Button onClick={ this.fixAll }>{ translate( 'Save credentials and fix' ) }</Button>,
-		];
 
 		return (
 			<Dialog
 				additionalClassNames="fix-all-threats-dialog"
 				isVisible={ showDialog }
 				onClose={ onCloseDialog }
-				buttons={ buttons }
 			>
 				<h1 className="fix-all-threats-dialog__header">Fix all threats</h1>
 				<h3 className="fix-all-threats-dialog__threat-title">
@@ -64,13 +54,16 @@ class FixAllThreatsDialog extends React.PureComponent< Props > {
 						) }
 					</p>
 				</div>
-				<RewindCredentialsForm
-					allowCancel={ false }
-					allowDelete={ false }
+				<ServerCredentialsForm
+					className="fix-all-threats-dialog__form"
 					onCancel={ () => console.log( 'Canceled' ) }
 					onComplete={ () => console.log( 'Completed' ) }
 					role="main"
 					siteId={ 28393212 }
+					labels={ {
+						cancel: translate( 'Go back' ),
+						save: translate( 'Save credentials and fix' ),
+					} }
 				/>
 			</Dialog>
 		);
