@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * External dependencies
  */
@@ -9,6 +10,7 @@ import { translate } from 'i18n-calypso';
  */
 import { Button, Dialog } from '@automattic/components';
 import Gridicon from 'components/gridicon';
+import RewindCredentialsForm from 'components/rewind-credentials-form';
 
 /**
  * Style dependencies
@@ -62,6 +64,14 @@ class FixAllThreatsDialog extends React.PureComponent< Props > {
 						) }
 					</p>
 				</div>
+				<RewindCredentialsForm
+					allowCancel={ false }
+					allowDelete={ false }
+					onCancel={ () => console.log( 'Canceled' ) }
+					onComplete={ () => console.log( 'Completed' ) }
+					role="main"
+					siteId={ 28393212 }
+				/>
 			</Dialog>
 		);
 	}
