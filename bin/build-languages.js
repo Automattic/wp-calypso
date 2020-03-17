@@ -151,7 +151,7 @@ languagesRequests.then( downloadedLanguages => {
 	// Split language translations into chunks
 	const CALYPSO_STRINGS = './calypso-strings.pot';
 	const CHUNKS_MAP = './chunks-map.json';
-	const TRANSLATED_CHUNKS_FILENAME = 'translated-chunks.json';
+	const LANGUAGE_MANIFEST_FILENAME = 'language-manifest.json';
 
 	if ( fs.existsSync( CALYPSO_STRINGS ) && fs.existsSync( CHUNKS_MAP ) ) {
 		const chunksMap = require( '../chunks-map.json' );
@@ -179,8 +179,11 @@ languagesRequests.then( downloadedLanguages => {
 			);
 			mkdirp.sync( languageChunksDir );
 			fs.writeFileSync(
-				path.join( languageChunksDir, TRANSLATED_CHUNKS_FILENAME ),
-				JSON.stringify( translatedChunksKeys )
+				path.join( languageChunksDir, LANGUAGE_MANIFEST_FILENAME ),
+				JSON.stringify( {
+					locale: _.pick( languageTranslations, [ '' ] ),
+					translatedChunks: translatedChunksKeys,
+				} )
 			);
 
 			// Write laguage translation chunks

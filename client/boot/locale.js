@@ -46,10 +46,11 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		let translatedChunks; // should we get these bootstrapped on page load, similarly to `languageRevisions`?
 
 		window
-			.fetch( `/calypso/evergreen/languages/${ currentUser.localeSlug }/translated-chunks.json` )
+			.fetch( `/calypso/evergreen/languages/${ currentUser.localeSlug }/language-manifest.json` )
 			.then( response => response.json() )
 			.then( data => {
-				translatedChunks = data;
+				translatedChunks = data.translatedChunks;
+				i18n.setLocale( data.locale );
 				const installedChunks = Object.keys( window.__requireChunkCallback__.getInstalledChunks() );
 
 				installedChunks.forEach( chunkId => {
