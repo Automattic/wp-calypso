@@ -317,6 +317,7 @@ class Home extends Component {
 			isChecklistComplete,
 			siteIsUnlaunched,
 			isEstablishedSite,
+			isRecentlyMigratedSite,
 			displayWelcomeBanner,
 		} = this.props;
 
@@ -329,7 +330,9 @@ class Home extends Component {
 				/>
 			);
 		}
-		const renderChecklistCompleteBanner = 'render' === this.state.renderChecklistCompleteBanner;
+
+		const renderChecklistCompleteBanner =
+			'render' === this.state.renderChecklistCompleteBanner && ! isRecentlyMigratedSite;
 
 		return (
 			<Main className="customer-home__main is-wide-layout">
