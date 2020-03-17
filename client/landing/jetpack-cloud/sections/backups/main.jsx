@@ -53,9 +53,13 @@ class BackupsPage extends Component {
 		oldestDateAvailable: new Date(),
 	};
 
+	componentDidMount() {
+		this.createIndexedLog();
+	}
+
 	componentDidUpdate( prevProps ) {
 		if ( prevProps.logs !== this.props.logs ) {
-			this.createIndexedLog( this.props.logs );
+			this.createIndexedLog();
 		}
 		if ( prevProps.siteId !== this.props.siteId ) {
 			this.resetState();
@@ -73,17 +77,15 @@ class BackupsPage extends Component {
 
 	/**
 	 * Create an indexed log of backups based on the date of the backup and in the site time zone
-	 *
-	 * @param {Array} logs The logs provided by the store.
 	 */
-	createIndexedLog( logs ) {
-		if ( 'success' === logs.state ) {
+	createIndexedLog() {
+		if ( 'success' === this.props.logs.state ) {
 			const { siteTimezone, siteGmtOffset } = this.props;
 
 			const indexedLog = {};
 			let oldestDateAvailable = new Date();
 
-			logs.data.forEach( log => {
+			this.props.logs.data.forEach( log => {
 				const backupDate = applySiteOffset( moment( log.activityTs ), {
 					siteTimezone,
 					siteGmtOffset,
@@ -169,7 +171,9 @@ class BackupsPage extends Component {
 				</div>
 				<ul>
 					{ ! loading &&
-						this.state.backupsOnSelectedDate.map( log => <li>{ log.activityTitle }</li> ) }
+						this.state.backupsOnSelectedDate.map( log => (
+							<li key={ log.activityId }>{ log.activityTitle }</li>
+						) ) }
 				</ul>
 
 				{ /*<DailyBackupStatus*/ }
