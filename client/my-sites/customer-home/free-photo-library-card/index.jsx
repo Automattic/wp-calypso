@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import CardHeading from 'components/card-heading';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 
 /**
@@ -36,6 +36,16 @@ const FreePhotoLibraryCard = ( {
 			tracks( 'calypso_customer_home_free_photo_library_video_dialog_view' );
 		}
 		return setShowDialog( ! showDialog );
+	};
+
+	const openSupportAndTrack = () => {
+		withAnalytics(
+			recordTracksEvent( 'calypso_customer_home_free_photo_library_video_support_page_view' ),
+			supportArticleDialog( {
+				postId: 145498,
+				postUrl: 'https://support.wordpress.com/free-photo-library/',
+			} )
+		);
 	};
 
 	return (
@@ -74,17 +84,7 @@ const FreePhotoLibraryCard = ( {
 							'create stunning designs.'
 					) }
 				</p>
-				<Button
-					onClick={ () => {
-						tracks( 'calypso_customer_home_free_photo_library_video_support_page_view' );
-						supportArticleDialog( {
-							postId: 145498,
-							postUrl: 'https://support.wordpress.com/free-photo-library/',
-						} );
-					} }
-				>
-					{ translate( 'Learn more' ) }
-				</Button>
+				<Button onClick={ openSupportAndTrack }>{ translate( 'Learn more' ) }</Button>
 			</Card>
 		</Fragment>
 	);
