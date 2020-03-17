@@ -23,7 +23,6 @@ import {
 } from '@automattic/composite-checkout-wpcom';
 import {
 	CheckoutProvider,
-	createRegistry,
 	createPayPalMethod,
 	createStripeMethod,
 	createStripePaymentMethodStore,
@@ -31,6 +30,7 @@ import {
 	createFreePaymentMethod,
 	createApplePayMethod,
 	createExistingCardMethod,
+	defaultRegistry,
 } from '@automattic/composite-checkout';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { format as formatUrl, parse as parseUrl } from 'url';
@@ -94,8 +94,7 @@ import CheckoutTerms from './checkout-terms.jsx';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
-const registry = createRegistry();
-const { select, dispatch } = registry;
+const { select, dispatch, registerStore } = defaultRegistry;
 
 const wpcom = wp.undocumented();
 
@@ -287,7 +286,6 @@ export default function CompositeCheckout( {
 		[ recordEvent, getThankYouUrl, total, couponItem, responseCart ]
 	);
 
-	const { registerStore } = registry;
 	useWpcomStore(
 		registerStore,
 		recordEvent,
@@ -316,7 +314,7 @@ export default function CompositeCheckout( {
 			return null;
 		}
 		return createPayPalMethod( { registerStore } );
-	}, [ registerStore, shouldLoadPayPalMethod ] );
+	}, [ shouldLoadPayPalMethod ] );
 	if ( paypalMethod ) {
 		paypalMethod.id = 'paypal';
 		// This is defined afterward so that getThankYouUrl can be dynamic without having to re-create payment method
@@ -421,7 +419,7 @@ export default function CompositeCheckout( {
 				return pending;
 			},
 		} );
-	}, [ registerStore, shouldLoadFullCreditsMethod ] );
+	}, [ shouldLoadFullCreditsMethod ] );
 	if ( fullCreditsPaymentMethod ) {
 		fullCreditsPaymentMethod.label = <WordPressCreditsLabel credits={ credits } />;
 		fullCreditsPaymentMethod.inactiveContent = <WordPressCreditsSummary />;
@@ -456,7 +454,7 @@ export default function CompositeCheckout( {
 				return pending;
 			},
 		} );
-	}, [ registerStore, shouldLoadFreePaymentMethod ] );
+	}, [ shouldLoadFreePaymentMethod ] );
 	if ( freePaymentMethod ) {
 		freePaymentMethod.label = <WordPressFreePurchaseLabel />;
 		freePaymentMethod.inactiveContent = <WordPressFreePurchaseSummary />;
@@ -507,7 +505,6 @@ export default function CompositeCheckout( {
 	}, [
 		shouldLoadApplePay,
 		isApplePayLoading,
-		registerStore,
 		stripe,
 		stripeConfiguration,
 		isStripeLoading,
@@ -555,7 +552,7 @@ export default function CompositeCheckout( {
 				getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 			} )
 		);
-	}, [ registerStore, stripeConfiguration, storedCards, shouldLoadExistingCardsMethods ] );
+	}, [ stripeConfiguration, storedCards, shouldLoadExistingCardsMethods ] );
 
 	const isPurchaseFree = ! isLoadingCart && total.amount.value === 0;
 	debug( 'is purchase free?', isPurchaseFree );
@@ -687,7 +684,7 @@ export default function CompositeCheckout( {
 				showSuccessMessage={ showSuccessMessage }
 				onEvent={ recordEvent }
 				paymentMethods={ paymentMethods }
-				registry={ registry }
+				registry={ defaultRegistry }
 				isLoading={
 					isLoadingCart || isLoadingStoredCards || paymentMethods.length < 1 || items.length < 1
 				}
