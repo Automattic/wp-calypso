@@ -34,3 +34,23 @@ $admin-sidebar-width-collapsed: 0;
 .wp-block {
 	max-width: 1100px; // Overrides default $content-width
 }
+
+.components-button.is-link {
+	text-decoration: none;
+}
+
+input:disabled {
+	background: var( --color-neutral-0 );
+	border-color: var( --color-neutral-0 );
+	color: var( --color-neutral-20 );
+	opacity: 1;
+	-webkit-text-fill-color: var( --color-neutral-20 );
+
+	&:hover {
+		cursor: default;
+	}
+
+	&::placeholder {
+		color: var( --color-neutral-20 );
+	}
+}
