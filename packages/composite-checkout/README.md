@@ -87,7 +87,7 @@ Each Payment Method or component can create a Redux-like data store by using the
 
 In addition to the features of that package, we provide a `useRegisterStore` hook which takes the same arguments as `registerStore` and will allow creating a new store just before a component first renders.
 
-The registry used for these stores is created by default in `CheckoutProvider` but you can use a custom one by including the `registry` prop on that component.
+The registry used for these stores is created by default but you can use a custom one by including the `registry` prop on `CheckoutProvider`. If you want to use the default registry, you can import it directly from this package using [#defaultRegistry](defaultRegistry), and for convenience, [#registerStore](registerStore).
 
 ## API
 
@@ -115,7 +115,7 @@ It has the following props.
 - `showSuccessMessage: (string) => null`. A function that will display a message with a "success" type.
 - `onEvent?: (action) => null`. A function called for all sorts of events in the code. The callback will be called with a [Flux Standard Action](https://github.com/redux-utilities/flux-standard-action).
 - `paymentMethods: object[]`: An array of [Payment Method objects](#payment-methods).
-- `registry?: object`. An object returned by [createRegistry](#createRegistry). If not provided, a default registry will be created.
+- `registry?: object`. An object returned by [createRegistry](#createRegistry). If not provided, the default registry will be used.
 - `isLoading?: boolean`. If set and true, the form will be replaced with a loading placeholder.
 
 The line items are for display purposes only. They should also include subtotals, discounts, and taxes. No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `total`, which is another line item.
@@ -251,6 +251,10 @@ Creates a [Payment Method](#payment-methods) object. Requires passing an object 
 - `stripe: object`. The configured stripe object.
 - `stripeConfiguration: object`. The stripe configuration object.
 
+### defaultRegistry
+
+The default registry. See [#data-stores](Data Stores) for more details.
+
 ### getDefaultOrderReviewStep
 
 Returns a step object whose properties can be added to a [CheckoutStep](CheckoutStep) (and customized) to display an itemized order review.
@@ -262,6 +266,10 @@ Returns a step object whose properties can be added to a [CheckoutStep](Checkout
 ### getDefaultPaymentMethodStep
 
 Returns a step object whose properties can be added to a [CheckoutStep](CheckoutStep) (and customized) to display a way to select a payment method. The payment methods displayed are those provided to the [CheckoutProvider](#checkoutprovider).
+
+### registerStore
+
+The `registerStore` function on the [#defaultRegistry](default registry). Don't use this if you create a custom registry.
 
 ### formatValueForCurrency
 
@@ -326,7 +334,7 @@ A React Hook that can be used to create a @wordpress/data store. This is the sam
 
 ### useRegistry
 
-A React Hook that returns the @wordpress/data registry. Only works within [CheckoutProvider](#CheckoutProvider).
+A React Hook that returns the `@wordpress/data` registry being used. Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### useSelect
 
