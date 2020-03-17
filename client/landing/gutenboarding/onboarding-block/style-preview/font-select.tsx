@@ -33,7 +33,6 @@ const FontSelect: React.FunctionComponent< Props > = ( { onSelect, selected } ) 
 					<span style={ { fontFamily: fontFamilyA, fontWeight: 700 } }>{ a }</span>
 					&nbsp;/&nbsp;
 					<span style={ { fontFamily: fontFamilyB } }>{ b }</span>
-					{ isSelected && '\u00a0*' }
 				</Button>
 			);
 		} ) }

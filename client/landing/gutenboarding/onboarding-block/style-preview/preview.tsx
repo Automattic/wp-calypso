@@ -20,6 +20,11 @@ const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 	const [ { title: fontA }, { title: fontB } ] = fonts;
 	return (
 		<div className="style-preview__preview">
+			<div role="presentation" className="style-preview__preview-bar">
+				<div role="presentation" className="style-preview__preview-bar-dot" />
+				<div role="presentation" className="style-preview__preview-bar-dot" />
+				<div role="presentation" className="style-preview__preview-bar-dot" />
+			</div>
 			<p>Preview to be implemented.</p>
 			<p>You picked { selectedDesign?.title ?? 'unknown' } design.</p>
 			<p>Showing { viewport } display.</p>
