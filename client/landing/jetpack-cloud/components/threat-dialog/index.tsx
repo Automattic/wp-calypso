@@ -4,12 +4,14 @@
 import React from 'react';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { Button, Dialog } from '@automattic/components';
 import Gridicon from 'components/gridicon';
+import { getSelectedSite } from 'state/ui/selectors';
 
 /**
  * Style dependencies
@@ -21,6 +23,7 @@ interface Props {
 	threatTitle: string;
 	threatDescription: string;
 	action: 'fix' | 'ignore';
+	siteName: string;
 	showDialog: boolean;
 	onCloseDialog: Function;
 }
@@ -32,7 +35,14 @@ class ThreatDialog extends React.PureComponent< Props > {
 	};
 
 	render() {
-		const { action, onCloseDialog, showDialog, threatDescription, threatTitle } = this.props;
+		const {
+			action,
+			onCloseDialog,
+			siteName,
+			showDialog,
+			threatDescription,
+			threatTitle,
+		} = this.props;
 		const buttons = [
 			<Button className="threat-dialog__btn threat-dialog__btn--cancel" onClick={ onCloseDialog }>
 				{ translate( 'Go back' ) }
@@ -79,8 +89,9 @@ class ThreatDialog extends React.PureComponent< Props > {
 									'To fix this threat, Jetpack will be deleting the file, since it’s not a part of the original WordPress.'
 							  )
 							: translate(
-									'You shouldn’t ignore a security unless you are absolute sure it’s harmless. If you choose to ignore this threat, it will remain on your site: {{strong}}My Jetpack Site{{/strong}}.',
+									'You shouldn’t ignore a security unless you are absolute sure it’s harmless. If you choose to ignore this threat, it will remain on your site: {{strong}}%s{{/strong}}.',
 									{
+										args: [ siteName ],
 										components: {
 											strong: <strong />,
 										},
@@ -93,4 +104,9 @@ class ThreatDialog extends React.PureComponent< Props > {
 	}
 }
 
-export default ThreatDialog;
+export default connect( state => {
+	const { name } = getSelectedSite( state );
+	return {
+		siteName: name,
+	};
+} )( ThreatDialog );
