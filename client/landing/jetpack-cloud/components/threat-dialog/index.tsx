@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { ReactNode } from 'react';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -21,7 +21,7 @@ import './style.scss';
 interface Props {
 	threatId: number;
 	threatTitle: string;
-	threatDescription: string;
+	threatDescription: string | ReactNode;
 	action: 'fix' | 'ignore';
 	siteName: string;
 	showDialog: boolean;
@@ -73,7 +73,7 @@ class ThreatDialog extends React.PureComponent< Props > {
 						: translate( 'Do you really want to ignore this threat?' ) }
 				</h1>
 				<h3 className="threat-dialog__threat-title">{ threatTitle }</h3>
-				<p className="threat-dialog__threat-description">{ threatDescription }</p>
+				<div className="threat-dialog__threat-description">{ threatDescription }</div>
 				<div className="threat-dialog__warning">
 					<Gridicon
 						className={ classnames(
