@@ -1,18 +1,21 @@
 /**
  * External dependencies
  */
-import { VerticalsTemplates } from '@automattic/data-stores';
+import { DomainSuggestions, VerticalsTemplates } from '@automattic/data-stores';
+import { dispatch, select } from '@wordpress/data-controls';
 
 /**
  * Internal dependencies
  */
 import { Design, SiteVertical } from './types';
+import { STORE_KEY as ONBOARD_STORE } from './constants';
+import { SITE_STORE } from '../site';
+import { DOMAIN_SUGGESTIONS_STORE } from '../domain-suggestions';
 
+type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 type Template = VerticalsTemplates.Template;
 
-export const setDomain = (
-	domain: import('@automattic/data-stores').DomainSuggestions.DomainSuggestion | undefined
-) => ( {
+export const setDomain = ( domain: DomainSuggestion | undefined ) => ( {
 	type: 'SET_DOMAIN' as const,
 	domain,
 } );
@@ -44,6 +47,46 @@ export const togglePageLayout = ( pageLayout: Template ) => ( {
 export const resetOnboardStore = () => ( {
 	type: 'RESET_ONBOARD_STORE' as const,
 } );
+
+export function* createSite(
+	username: string,
+	freeDomainSuggestion: DomainSuggestion | undefined,
+	bearerToken?: string
+) {
+	const { domain, selectedDesign, siteTitle, siteVertical } = yield select(
+		ONBOARD_STORE,
+		'getState'
+	);
+
+	let currentDomain = domain ?? freeDomainSuggestion;
+	if ( ! currentDomain && siteTitle ) {
+		const suggestion = yield select( DOMAIN_SUGGESTIONS_STORE, 'getDomainSuggestions', siteTitle, {
+			// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
+			include_wordpressdotcom: true,
+			quantity: 1,
+			...{ vertical: siteVertical?.id },
+		} );
+
+		currentDomain = suggestion?.[ 0 ];
+	}
+
+	const siteUrl = currentDomain?.domain_name || siteTitle || username;
+
+	yield dispatch( SITE_STORE, 'createSite', {
+		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
+		blog_title: siteTitle,
+		options: {
+			site_vertical: siteVertical?.id,
+			site_vertical_name: siteVertical?.label,
+			site_information: {
+				title: siteTitle,
+			},
+			site_creation_flow: 'gutenboarding',
+			theme: `pub/${ selectedDesign?.slug || 'twentytwenty' }`,
+		},
+		...( bearerToken && { authToken: bearerToken } ),
+	} );
+}
 
 export type OnboardAction = ReturnType<
 	| typeof setDomain
