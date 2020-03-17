@@ -73,6 +73,8 @@ function blog_posts_block_args( $args, $name ) {
 	$args['script']        = 'blog-posts-block-view';
 	$args['style']         = 'blog-posts-block-view';
 
+	wp_set_script_translations( 'blog-posts-block-editor', 'full-site-editing' );
+
 	return $args;
 }
 add_filter( 'newspack_blocks_block_args', __NAMESPACE__ . '\blog_posts_block_args', 10, 2 );
