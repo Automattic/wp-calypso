@@ -4,7 +4,6 @@
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import page from 'page';
 import moment from 'moment';
 
 /**
@@ -39,7 +38,7 @@ const backupActivityNames = [
 class BackupsPage extends Component {
 	//todo: add the rest of the expected propTypes
 	static propTypes = {
-		logs: PropTypes.array,
+		logs: PropTypes.object,
 		loading: PropTypes.bool,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
@@ -58,6 +57,18 @@ class BackupsPage extends Component {
 		if ( prevProps.logs !== this.props.logs ) {
 			this.createIndexedLog( this.props.logs );
 		}
+		if ( prevProps.siteId !== this.props.siteId ) {
+			this.resetState();
+		}
+	}
+
+	resetState() {
+		this.setState( {
+			selectedDate: new Date(),
+			backupsOnSelectedDate: [],
+			indexedLog: {},
+			oldestDateAvailable: new Date(),
+		} );
 	}
 
 	/**
@@ -151,7 +162,15 @@ class BackupsPage extends Component {
 					siteId={ siteId }
 				/>
 
+				{ /* The following code is for testing purposes: */ }
 				<div>{ loading && 'Loading backups...' }</div>
+				<div>
+					{ ! loading && 'Backups on this date: ' + this.state.backupsOnSelectedDate.length }
+				</div>
+				<ul>
+					{ ! loading &&
+						this.state.backupsOnSelectedDate.map( log => <li>{ log.activityTitle }</li> ) }
+				</ul>
 
 				{ /*<DailyBackupStatus*/ }
 				{ /*allowRestore={ allowRestore }*/ }
@@ -179,12 +198,6 @@ class BackupsPage extends Component {
 
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
-
-	//The section require a valid site, if not, redirect to backups
-	if ( false === !! siteId ) {
-		return page.redirect( '/backups' );
-	}
-
 	const siteSlug = getSelectedSiteSlug( state );
 	const siteGmtOffset = getSiteGmtOffset( state, siteId );
 	const siteTimezone = getSiteTimezoneValue( state, siteId );
