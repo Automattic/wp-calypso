@@ -7,7 +7,6 @@ import { useTheme } from 'emotion-theming';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 import { LeftColumn, RightColumn } from '../styled-components/ie-fallback';
 import debugFactory from 'debug';
-import { registerStore, useSelect, useDispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -24,6 +23,7 @@ import { sprintf, useLocalize } from '../localize';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import Spinner from '../../components/spinner';
 import { useFormStatus } from '../form-status';
+import { registerStore, useSelect, useDispatch } from '../../lib/registry';
 
 const debug = debugFactory( 'composite-checkout:stripe-payment-method' );
 
