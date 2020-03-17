@@ -215,7 +215,7 @@ const Header: FunctionComponent = () => {
 		>
 			<div className="gutenboarding__header-section">
 				<div className="gutenboarding__header-group">
-					<Icon icon="wordpress-alt" className="gutenboarding__header-wp-icon" />
+					<Icon icon="wordpress-alt" size={ 24 } className="gutenboarding__header-wp-icon" />
 				</div>
 				<div className="gutenboarding__header-group">
 					{ siteTitleElement }
