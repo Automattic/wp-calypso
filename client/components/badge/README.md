@@ -19,3 +19,9 @@ class MyComponent extends React.Component {
 	}
 }
 ```
+
+## Props
+
+The following props are available to customize the Badge:
+
+- `type`: `'warning'`, `'success'`, `'info'`, `'info-blue'`, `'error'`
