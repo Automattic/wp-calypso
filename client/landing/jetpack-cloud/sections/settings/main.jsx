@@ -24,13 +24,13 @@ class SettingsPage extends Component {
 	render() {
 		const { rewind, siteId, translate } = this.props;
 
-		const connected = 'active' === rewind.state;
+		const isConnected = 'active' === rewind.state;
 
 		return (
 			<div className="settings">
 				<QueryRewindState siteId={ siteId } />
 				<div className="settings__page-title">{ translate( 'Server connection details' ) }</div>
-				{ connected && (
+				{ isConnected && (
 					<Card compact={ true } className="settings__connected">
 						<Gridicon icon="checkmark-circle" />
 						<div className="settings__details">
@@ -41,7 +41,7 @@ class SettingsPage extends Component {
 						</div>
 					</Card>
 				) }
-				{ ! connected && (
+				{ ! isConnected && (
 					<Card compact={ true } className="settings__disconnected">
 						<Gridicon icon="cross-circle" />
 						<div className="settings__details">
@@ -61,7 +61,7 @@ class SettingsPage extends Component {
 						allowCancel: false,
 						role: 'main',
 						siteId,
-						notices: false,
+						showNotices: false,
 					} }
 				/>
 			</div>

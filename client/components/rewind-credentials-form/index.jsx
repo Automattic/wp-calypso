@@ -43,13 +43,13 @@ export class RewindCredentialsForm extends Component {
 		siteUrl: PropTypes.string,
 		labels: PropTypes.object,
 		requirePath: PropTypes.bool,
-		notices: PropTypes.bool,
+		showNotices: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		labels: {},
 		requirePath: false,
-		notices: true,
+		showNotices: true,
 	};
 
 	state = {
@@ -151,7 +151,7 @@ export class RewindCredentialsForm extends Component {
 		const {
 			formIsSubmitting,
 			labels,
-			notices,
+			showNotices,
 			onCancel,
 			requirePath,
 			siteId,
@@ -162,7 +162,7 @@ export class RewindCredentialsForm extends Component {
 		return (
 			<div className="rewind-credentials-form">
 				<QueryRewindState siteId={ siteId } />
-				{ notices && (
+				{ showNotices && (
 					<div className="rewind-credentials-form__instructions">
 						{ translate(
 							'Your server credentials can be found with your hosting provider. Their website should explain how to get the credentials you need. {{link}}Check out our handy guide for more info{{/link}}.',
@@ -318,7 +318,7 @@ export class RewindCredentialsForm extends Component {
 					) }
 				</FormFieldset>
 
-				{ notices && (
+				{ showNotices && (
 					<div className="rewind-credentials-form__tos">
 						{ translate(
 							'By adding credentials, you are providing us with access to your server to perform automatic actions (such as backing up or restoring your site), manually access your site in case of an emergency, and troubleshoot your support requests.'
