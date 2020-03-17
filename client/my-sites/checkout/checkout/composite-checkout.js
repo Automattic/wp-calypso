@@ -25,7 +25,6 @@ import {
 	CheckoutProvider,
 	createPayPalMethod,
 	createStripeMethod,
-	createStripePaymentMethodStore,
 	createFullCreditsMethod,
 	createFreePaymentMethod,
 	createApplePayMethod,
@@ -350,42 +349,44 @@ export default function CompositeCheckout( {
 		};
 	}
 
-	// If this PM is allowed by props, allowed by the cart, stripe is not loading, and there is no stripe error, then create the PM.
-	const isStripeMethodAllowed = onlyLoadPaymentMethods
+	const shouldLoadStripeMethod = onlyLoadPaymentMethods
 		? onlyLoadPaymentMethods.includes( 'card' )
-		: isPaymentMethodEnabled( 'card', allowedPaymentMethods || serverAllowedPaymentMethods );
-	const shouldLoadStripeMethod = isStripeMethodAllowed && ! isStripeLoading && ! stripeLoadingError;
-	const stripePaymentMethodStore = useMemo(
-		() =>
-			createStripePaymentMethodStore( {
-				getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-				getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-				getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-				getSiteId: select( 'wpcom' )?.getSiteId?.(),
-				getDomainDetails: () => getDomainDetails( select ),
-				submitTransaction: submitData => {
-					const pending = sendStripeTransaction( submitData, wpcomTransaction );
-					// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-					pending.then( result => {
-						debug( 'saving transaction response', result );
-						dispatch( 'wpcom' ).setTransactionResponse( result );
-					} );
-					return pending;
-				},
-			} ),
-		[]
-	);
-	const stripeMethod = useMemo(
-		() =>
-			shouldLoadStripeMethod
-				? createStripeMethod( {
-						store: stripePaymentMethodStore,
-						stripe,
-						stripeConfiguration,
-				  } )
-				: null,
-		[ shouldLoadStripeMethod, stripePaymentMethodStore, stripe, stripeConfiguration ]
-	);
+		: true;
+	const stripeMethod = useMemo( () => {
+		if (
+			isStripeLoading ||
+			stripeLoadingError ||
+			! stripe ||
+			! stripeConfiguration ||
+			! shouldLoadStripeMethod
+		) {
+			return null;
+		}
+		return createStripeMethod( {
+			getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+			getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+			getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+			registerStore,
+			stripe,
+			stripeConfiguration,
+			submitTransaction: submitData => {
+				const pending = sendStripeTransaction(
+					{
+						...submitData,
+						siteId: select( 'wpcom' )?.getSiteId?.(),
+						domainDetails: getDomainDetails( select ),
+					},
+					wpcomTransaction
+				);
+				// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+				pending.then( result => {
+					debug( 'saving transaction response', result );
+					dispatch( 'wpcom' ).setTransactionResponse( result );
+				} );
+				return pending;
+			},
+		} );
+	}, [ shouldLoadStripeMethod, stripe, stripeConfiguration, isStripeLoading, stripeLoadingError ] );
 	if ( stripeMethod ) {
 		stripeMethod.id = 'card';
 	}
