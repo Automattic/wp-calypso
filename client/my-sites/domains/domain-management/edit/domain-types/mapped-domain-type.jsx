@@ -120,7 +120,11 @@ class MappedDomainType extends React.Component {
 			};
 		}
 
-		if ( ! domain.pointsToWpcom ) {
+		if (
+			! this.props.isJetpackSite &&
+			! this.props.isAutomatedTransferSite &&
+			! domain.pointsToWpcom
+		) {
 			return {
 				statusText: translate( 'Action required' ),
 				statusClass: 'status-error',
