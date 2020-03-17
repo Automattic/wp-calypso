@@ -390,6 +390,16 @@ function creditCardExpiresBeforeSubscription( purchase ) {
 	);
 }
 
+function creditCardHasAlreadyExpired( purchase ) {
+	const creditCard = purchase?.payment?.creditCard;
+
+	return (
+		isPaidWithCreditCard( purchase ) &&
+		hasCreditCardData( purchase ) &&
+		moment( creditCard.expiryDate, 'MM/YY' ).isBefore( moment.now(), 'months' )
+	);
+}
+
 function shouldRenderExpiringCreditCard( purchase ) {
 	return (
 		! isExpired( purchase ) &&
@@ -480,6 +490,7 @@ function getDomainRegistrationAgreementUrl( purchase ) {
 export {
 	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
+	creditCardHasAlreadyExpired,
 	getDomainRegistrationAgreementUrl,
 	getIncludedDomain,
 	getName,

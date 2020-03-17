@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import { Card, Button } from '@automattic/components';
+import { Card } from '@automattic/components';
 import VerticalNav from 'components/vertical-nav';
 import { withLocalizedMoment } from 'components/localized-moment';
 import DomainStatus from '../card/domain-status';
@@ -32,8 +32,8 @@ import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-butt
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getByPurchaseId } from 'state/purchases/selectors';
-import { isRechargeable, isExpired, shouldRenderExpiringCreditCard } from 'lib/purchases';
-import { getEditCardDetailsPath } from 'me/purchases/utils';
+import { isRechargeable, isExpired } from 'lib/purchases';
+import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 
 class MappedDomainType extends React.Component {
 	getVerticalNavigation() {
@@ -261,38 +261,6 @@ class MappedDomainType extends React.Component {
 		);
 	}
 
-	renderExpiringCreditCard() {
-		const { selectedSite, purchase, translate } = this.props;
-
-		if ( ! selectedSite || ! purchase ) {
-			return null;
-		}
-
-		if ( ! shouldRenderExpiringCreditCard( purchase ) ) {
-			return null;
-		}
-
-		const editCardDetailsPath = getEditCardDetailsPath( selectedSite.slug, purchase );
-
-		return (
-			<div>
-				<p>
-					{ translate(
-						'Your credit card is {{strong}}set to expire before your domain mapping renewal date{{/strong}}. Please update your payment information on your account to avoid any disruptions to your service. Turn off auto-renew if you don’t want to see this message anymore.',
-						{
-							components: {
-								strong: <strong />,
-							},
-						}
-					) }
-				</p>
-				<Button primary={ true } href={ editCardDetailsPath }>
-					{ translate( 'Update your payment information' ) }
-				</Button>
-			</div>
-		);
-	}
-
 	renderDefaultRenewButton() {
 		const { domain, purchase, translate } = this.props;
 
@@ -395,7 +363,11 @@ class MappedDomainType extends React.Component {
 					statusClass={ statusClass }
 					icon={ icon }
 				>
-					{ this.renderExpiringCreditCard() }
+					<ExpiringCreditCard
+						selectedSite={ selectedSite }
+						purchase={ purchase }
+						domain={ domain }
+					/>
 					{ this.renderSettingUpNameservers() }
 					{ this.renderExpiringSoon() }
 				</DomainStatus>

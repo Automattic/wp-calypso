@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import { Card, Button } from '@automattic/components';
+import { Card } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import VerticalNav from 'components/vertical-nav';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
@@ -39,7 +39,7 @@ import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-butt
 import AutoRenewToggle from 'me/purchases/manage-purchase/auto-renew-toggle';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import { isExpired, shouldRenderExpiringCreditCard, isRechargeable } from 'lib/purchases';
-import { getEditCardDetailsPath } from 'me/purchases/utils';
+import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 
 class RegisteredDomainType extends React.Component {
 	getVerticalNavigation() {
@@ -355,38 +355,6 @@ class RegisteredDomainType extends React.Component {
 		);
 	}
 
-	renderExpiringCreditCard() {
-		const { selectedSite, purchase, translate } = this.props;
-
-		if ( ! selectedSite || ! purchase ) {
-			return null;
-		}
-
-		if ( ! shouldRenderExpiringCreditCard( purchase ) ) {
-			return null;
-		}
-
-		const editCardDetailsPath = getEditCardDetailsPath( selectedSite.slug, purchase );
-
-		return (
-			<div>
-				<p>
-					{ translate(
-						'Your credit card is {{strong}}set to expire before your domain renewal date{{/strong}}. Please update your payment information on your account to avoid any disruptions to your service. Turn off auto-renew if you don’t want to see this message anymore.',
-						{
-							components: {
-								strong: <strong />,
-							},
-						}
-					) }
-				</p>
-				<Button primary={ true } href={ editCardDetailsPath }>
-					{ translate( 'Update your payment information' ) }
-				</Button>
-			</div>
-		);
-	}
-
 	renderAutoRenewToggle() {
 		const { selectedSite, purchase } = this.props;
 
@@ -474,7 +442,11 @@ class RegisteredDomainType extends React.Component {
 							compact={ true }
 						/>
 					) }
-					{ this.renderExpiringCreditCard() }
+					<ExpiringCreditCard
+						selectedSite={ selectedSite }
+						purchase={ purchase }
+						domain={ domain }
+					/>
 					{ this.renderExpiringSoon() }
 					{ this.renderExpired() }
 					{ this.renderRecentlyRegistered() }
