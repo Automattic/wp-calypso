@@ -9,4 +9,15 @@
 	& > a.button {
 		margin: 20px 0;
 	}
+
+	.continue-as-user__change-user-link {
+		color: var( --color-link );
+		cursor: pointer;
+
+		&:hover,
+		&:focus,
+		&:active {
+			color: var( --color-link-dark );
+		}
+	}
 }

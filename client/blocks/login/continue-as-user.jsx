@@ -71,9 +71,9 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } 
 				{ translate( 'Not %(userName)s? Log in with {{link}}another account{{/link}}', {
 					components: {
 						link: (
-							<a
-								href="#/"
-								className="continue-as-user__change-user wp-block-button__link"
+							<button
+								type="button"
+								className="continue-as-user__change-user-link"
 								onClick={ handleChangeAccount }
 							/>
 						),
