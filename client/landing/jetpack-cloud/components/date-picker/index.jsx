@@ -49,11 +49,10 @@ class DatePicker extends Component {
 		return moment( date ).format( dateFormat );
 	};
 
-	shuttleLeft = () => {
-		if ( ! this.canShuttleLeft() ) {
+	goToPreviousDay = () => {
+		if ( ! this.canGoToPreviousDay() ) {
 			return false;
 		}
-
 		const { moment, onDateChange, selectedDate } = this.props;
 
 		const newSelectedDate = moment( selectedDate ).subtract( 1, 'days' );
@@ -61,11 +60,10 @@ class DatePicker extends Component {
 		onDateChange( newSelectedDate.toDate() );
 	};
 
-	shuttleRight = () => {
-		if ( ! this.canShuttleRight() ) {
+	goToNextDay = () => {
+		if ( ! this.canGoToNextDay() ) {
 			return false;
 		}
-
 		const { moment, onDateChange, selectedDate } = this.props;
 
 		const newSelectedDate = moment( selectedDate ).add( 1, 'days' );
@@ -73,13 +71,13 @@ class DatePicker extends Component {
 		onDateChange( newSelectedDate.toDate() );
 	};
 
-	canShuttleLeft = () => {
+	canGoToPreviousDay = () => {
 		const { moment, selectedDate, oldestDateAvailable } = this.props;
 
 		return !! oldestDateAvailable && ! moment( selectedDate ).isSame( oldestDateAvailable, 'day' );
 	};
 
-	canShuttleRight = () => {
+	canGoToNextDay = () => {
 		const { moment, selectedDate } = this.props;
 
 		return ! moment( selectedDate ).isSame( moment(), 'day' );
@@ -96,8 +94,8 @@ class DatePicker extends Component {
 
 		return (
 			<div className="date-picker">
-				<Button compact borderless onClick={ this.shuttleLeft }>
-					<Gridicon icon="chevron-left" className={ ! this.canShuttleLeft() && 'disabled' } />
+				<Button compact borderless onClick={ this.goToPreviousDay }>
+					<Gridicon icon="chevron-left" className={ ! this.canGoToPreviousDay() && 'disabled' } />
 				</Button>
 
 				<div className="date-picker__display-date">{ previousDisplayDate }</div>
@@ -110,14 +108,14 @@ class DatePicker extends Component {
 
 				<div
 					className={ classNames( 'date-picker__display-date', {
-						disabled: ! this.canShuttleRight(),
+						disabled: ! this.canGoToNextDay(),
 					} ) }
 				>
 					{ nextDisplayDate }
 				</div>
 
-				<Button compact borderless onClick={ this.shuttleRight }>
-					<Gridicon icon="chevron-right" className={ ! this.canShuttleRight() && 'disabled' } />
+				<Button compact borderless onClick={ this.goToNextDay }>
+					<Gridicon icon="chevron-right" className={ ! this.canGoToNextDay() && 'disabled' } />
 				</Button>
 				<div>Date selected: { this.getDisplayDate( selectedDate ) }</div>
 			</div>
