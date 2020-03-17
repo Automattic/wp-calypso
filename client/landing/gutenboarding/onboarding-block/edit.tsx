@@ -12,7 +12,7 @@ import { Redirect, Switch, Route } from 'react-router-dom';
 import { STORE_KEY } from '../stores/onboard';
 import { SITE_STORE } from '../stores/site';
 import DesignSelector from './design-selector';
-import CreateSite from './create-site';
+import CreateSite, { CreateAndRedirect } from './create-site';
 import { Attributes } from './types';
 import { Step, usePath } from '../path';
 import AcquireIntent from './acquire-intent';
@@ -53,6 +53,11 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 					) : (
 						<Redirect to={ makePath( Step.DesignSelection ) } />
 					) }
+				</Route>
+
+				<Route path={ makePath( Step.DoCreateSite ) }>
+					<CreateAndRedirect to={ makePath( Step.CreateSite ) } />
+					<CreateSite />
 				</Route>
 
 				<Route path={ makePath( Step.CreateSite ) }>

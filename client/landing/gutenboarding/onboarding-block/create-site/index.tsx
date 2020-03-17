@@ -55,3 +55,4 @@ const CreateSite: FunctionComponent< {} > = () => {
 };
 
 export default CreateSite;
+export { default as CreateAndRedirect } from './create-and-redirect';

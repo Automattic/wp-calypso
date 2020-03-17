@@ -137,7 +137,7 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 				<Button
 					isLink
 					href={ `/log-in?redirect_to=${ originUrl() }/gutenboarding${ makePath(
-						Step.CreateSite
+						Step.DoCreateSite
 					) }` }
 				>
 					{ NO__( 'Log in to create a site for your existing account.' ) }

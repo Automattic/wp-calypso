@@ -14,6 +14,7 @@ export const Step = {
 	Style: 'style',
 	Signup: 'signup',
 	Login: 'login',
+	DoCreateSite: 'do-create-site',
 	CreateSite: 'create-site',
 } as const;
 
