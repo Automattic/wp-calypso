@@ -24,13 +24,13 @@ class Block_Patterns {
 	 * Starter_Page_Templates constructor.
 	 */
 	private function __construct() {
-		add_filter( 'block_editor_settings', [ $this, 'register_patterns' ], 11 );
+		add_filter( 'block_editor_settings', array( $this, 'register_patterns' ), 11 );
 	}
 
 	/**
 	 * Creates instance.
 	 *
-	 * @return \A8C\FSE\Starter_Page_Templates
+	 * @return \A8C\FSE\Block_Patterns
 	 */
 	public static function get_instance() {
 		if ( null === self::$instance ) {
@@ -47,6 +47,13 @@ class Block_Patterns {
 	 * @return array Filtered editor settings.
 	 */
 	public function register_patterns( $settings ) {
+		$settings['__experimentalBlockPatterns'] = wp_list_filter(
+			$settings['__experimentalBlockPatterns'],
+			array(
+				'title' => 'Two Columns of Text',
+			)
+		);
+
 		$settings['__experimentalBlockPatterns'] = array_merge(
 			$this->get_patterns(),
 			$settings['__experimentalBlockPatterns']
@@ -55,9 +62,14 @@ class Block_Patterns {
 		return $settings;
 	}
 
+	/**
+	 * Returns a list of patterns.
+	 *
+	 * @return array
+	 */
 	public function get_patterns() {
 		$patterns_dir = __DIR__ . '/patterns/';
-		$patterns     = [];
+		$patterns     = array();
 
 		if ( ! is_dir( $patterns_dir ) ) {
 			return $patterns;
@@ -67,18 +79,24 @@ class Block_Patterns {
 		if ( ! $directory_handle ) {
 			return $patterns;
 		}
-		while ( ( $pattern = readdir( $directory_handle ) ) !== false ) {
-			if ( substr( $pattern, -5 ) == '.json' ) {
+
+		$pattern = readdir( $directory_handle );
+		while ( false !== $pattern ) {
+			if ( substr( $pattern, -5 ) === '.json' ) {
 				$patterns[] = json_decode(
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 					file_get_contents( $patterns_dir . '/' . $pattern ),
 					true
 				);
 			}
 
-			if ( substr( $pattern, -4 ) == '.php' ) {
+			if ( substr( $pattern, -4 ) === '.php' ) {
 				$patterns[] = include_once $patterns_dir . '/' . $pattern;
 			}
+
+			$pattern = readdir( $directory_handle );
 		}
+
 		closedir( $directory_handle );
 		sort( $patterns );
 
