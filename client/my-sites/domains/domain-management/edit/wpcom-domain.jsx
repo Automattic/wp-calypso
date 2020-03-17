@@ -114,8 +114,8 @@ class WpcomDomain extends React.Component {
 				}
 			>
 				{ isWpcomDomain
-					? this.props.translate( 'Change Site Address' )
-					: this.props.translate( 'Edit Site Address' ) }
+					? this.props.translate( 'Change site address' )
+					: this.props.translate( 'Edit site address' ) }
 			</VerticalNavItem>
 		);
 	}
