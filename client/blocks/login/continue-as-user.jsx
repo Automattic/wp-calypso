@@ -79,7 +79,7 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } 
 						),
 					},
 					args: { userName },
-					comment: 'Link to continue login as different user ',
+					comment: 'Link to continue login as different user',
 				} ) }
 			</p>
 		</div>
