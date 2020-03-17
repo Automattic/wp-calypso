@@ -1,6 +1,10 @@
 .dialog.threat-dialog {
 	max-width: 676px;
 
+	.dialog__content {
+		overflow-x: hidden;
+	}
+
 	.threat-dialog {
 		&__header {
 			font-size: 18px;
