@@ -4,7 +4,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { useSelect, useDispatch } from '@automattic/composite-checkout';
+import {
+	useSelect,
+	useDispatch,
+	useFormStatus,
+	useIsStepActive,
+} from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -120,6 +125,9 @@ function TaxFields( {
 } ) {
 	const translate = useTranslate();
 	const { postalCode, countryCode } = taxInfo;
+	const { formStatus } = useFormStatus();
+	const isStepActive = useIsStepActive();
+	const isDisabled = ! isStepActive || formStatus !== 'ready';
 
 	const isZip = isZipOrPostal() === 'zip';
 	return (
@@ -130,6 +138,7 @@ function TaxFields( {
 					type="text"
 					label={ isZip ? translate( 'Zip code' ) : translate( 'Postal code' ) }
 					value={ postalCode.value }
+					disabled={ isDisabled }
 					onChange={ value => {
 						updatePostalCode( value );
 					} }
@@ -146,7 +155,7 @@ function TaxFields( {
 						updateCountryCode( event.target.value );
 					} }
 					isError={ countryCode.isTouched && ! isValid( countryCode ) }
-					isDisabled={ false } // TODO
+					isDisabled={ isDisabled }
 					errorMessage={ translate( 'This field is required.' ) }
 					currentValue={ countryCode.value }
 					countriesList={ countriesList }
