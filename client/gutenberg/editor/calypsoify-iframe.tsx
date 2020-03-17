@@ -640,17 +640,9 @@ const mapStateToProps = (
 		'new-homepage': creatingNewHomepage,
 	} );
 
-	let siteEditorQueryArgs = pickBy( {
-		calypsoify: 1,
-		'block-editor': 1,
-		'frame-nonce': getSiteOption( state, siteId, siteOption ) || '',
-		'environment-id': config( 'env_id' ),
-	} );
-
 	// needed for loading the editor in SU sessions
 	if ( wpcom.addSupportParams ) {
 		queryArgs = wpcom.addSupportParams( queryArgs );
-		siteEditorQueryArgs = wpcom.addSupportParams( siteEditorQueryArgs );
 	}
 
 	const siteAdminUrl =
@@ -658,10 +650,7 @@ const mapStateToProps = (
 			? getSiteAdminUrl( state, siteId, 'admin.php?page=gutenberg-edit-site' )
 			: getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
 
-	const iframeUrl =
-		postType === 'site'
-			? addQueryArgs( siteEditorQueryArgs, siteAdminUrl )
-			: addQueryArgs( queryArgs, siteAdminUrl );
+	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
 
 	// Prevents the iframe from loading using a cached frame nonce.
 	const shouldLoadIframe = ! isRequestingSites( state ) && ! isRequestingSite( state, siteId );
