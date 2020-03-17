@@ -18,15 +18,19 @@
 .scan__content {
 	flex: 1 0 auto;
 	max-width: 680px;
-}
 
 .scan__icon {
 	display: block;
 	margin: 0 auto;
 	width: 70px;
 
-	@include breakpoint( '>660px' ) {
-		margin: 0;
+		@include breakpoint( '>660px' ) {
+			margin: 0;
+		}
+	}
+
+	.progress-bar {
+			margin-bottom: 24px;
 	}
 }
 

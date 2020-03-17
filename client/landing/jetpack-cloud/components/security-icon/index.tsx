@@ -10,6 +10,8 @@ import classnames from 'classnames';
 import errorIcon from './images/error.svg';
 import okayIcon from './images/security-okay.svg';
 import scanErrorIcon from './images/security-error.svg';
+import errorIcon from './images/security-error.svg';
+import inProgressIcon from './images/in-progress.svg';
 
 interface Props {
 	icon: string;
@@ -24,6 +26,9 @@ function SecurityIcon( props: Props ) {
 		case 'error':
 			iconPath = scanErrorIcon;
 			break;
+		case 'in-progress':
+			iconPath = inProgressIcon;
+			break;
 		case 'scan-error':
 			iconPath = errorIcon;
 			break;
@@ -32,7 +37,7 @@ function SecurityIcon( props: Props ) {
 	return (
 		<img
 			src={ iconPath }
-			className={ classnames( 'security-icon', `security-icon-${ icon }`, className ) }
+			className={ classnames( 'security-icon', `security-icon__${ icon }`, className ) }
 			role="presentation"
 			alt=""
 		/>
