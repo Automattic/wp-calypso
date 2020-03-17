@@ -22,7 +22,7 @@ const AcquireIntent: FunctionComponent = () => {
 	const { siteVertical, siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
 	const makePath = usePath();
 	return (
-		<div className="onboarding-block__acquire-intent" data-vertical={ siteVertical?.label }>
+		<div className="onboarding-block__acquire-intent">
 			<div className="onboarding-block__questions">
 				<StepperWizard
 					stepComponents={ [ VerticalSelect, ( siteVertical || siteTitle ) && SiteTitle ] }

@@ -28,7 +28,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 	const makePath = usePath();
 
 	return (
-		<>
+		<div className="onboarding-block" data-vertical={ siteVertical?.label }>
 			{ isCreatingSite && <Redirect push to={ makePath( Step.CreateSite ) } /> }
 			<Switch>
 				<Route exact path={ makePath( Step.IntentGathering ) }>
@@ -59,7 +59,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 					<CreateSite />
 				</Route>
 			</Switch>
-		</>
+		</div>
 	);
 };
 

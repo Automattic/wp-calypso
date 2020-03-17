@@ -22,9 +22,7 @@ const DesignSelector: FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
 	const { push } = useHistory();
 	const makePath = usePath();
-	const { selectedDesign, siteVertical } = useSelect( select =>
-		select( ONBOARD_STORE ).getState()
-	);
+	const { selectedDesign } = useSelect( select => select( ONBOARD_STORE ).getState() );
 	const { setSelectedDesign, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
 	const handleStartOverButtonClick = () => {
@@ -32,10 +30,7 @@ const DesignSelector: FunctionComponent = () => {
 	};
 
 	return (
-		<div
-			className="design-selector gutenboarding-color-coded"
-			data-vertical={ siteVertical?.label }
-		>
+		<div className="design-selector">
 			<div className="design-selector__header">
 				<div className="design-selector__heading">
 					<Title>{ NO__( 'Choose a starting design' ) }</Title>
