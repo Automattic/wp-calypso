@@ -18,7 +18,7 @@ export default class AsyncLoad extends Component {
 	};
 
 	static defaultProps = {
-		placeholder: <div className="async-load__placeholder" />,
+		placeholder: null,
 	};
 
 	constructor() {
@@ -72,4 +72,8 @@ export default class AsyncLoad extends Component {
 
 		return this.props.placeholder;
 	}
+}
+
+export function BasicPlaceholder() {
+	return <div className="async-load__placeholder" />;
 }
