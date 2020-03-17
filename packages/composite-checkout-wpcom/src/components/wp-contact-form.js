@@ -36,6 +36,9 @@ export default function WPContactForm( {
 	const translate = useTranslate();
 	const isDomainFieldsVisible = useHasDomainsInCart();
 	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
+	const { formStatus } = useFormStatus();
+	const isStepActive = useIsStepActive();
+	const isDisabled = ! isStepActive || formStatus !== 'ready';
 
 	if ( summary && isComplete ) {
 		return <ContactFormSummary isDomainFieldsVisible={ isDomainFieldsVisible } />;
@@ -57,6 +60,7 @@ export default function WPContactForm( {
 				CountrySelectMenu,
 				countriesList,
 				shouldShowContactDetailsValidationErrors,
+				isDisabled,
 			} ) }
 		</BillingFormFields>
 	);
@@ -122,12 +126,10 @@ function TaxFields( {
 	countriesList,
 	updatePostalCode,
 	updateCountryCode,
+	isDisabled,
 } ) {
 	const translate = useTranslate();
 	const { postalCode, countryCode } = taxInfo;
-	const { formStatus } = useFormStatus();
-	const isStepActive = useIsStepActive();
-	const isDisabled = ! isStepActive || formStatus !== 'ready';
 
 	return (
 		<FieldRow>
@@ -169,6 +171,7 @@ TaxFields.propTypes = {
 	taxInfo: PropTypes.object.isRequired,
 	updatePostalCode: PropTypes.func.isRequired,
 	updateCountryCode: PropTypes.func.isRequired,
+	isDisabled: PropTypes.bool,
 };
 
 const DomainContactFieldsDescription = styled.p`
@@ -258,6 +261,7 @@ function renderContactDetails( {
 	CountrySelectMenu,
 	countriesList,
 	shouldShowContactDetailsValidationErrors,
+	isDisabled,
 } ) {
 	const format = getContactDetailsFormat( isDomainFieldsVisible );
 	const requiresVatId = isEligibleForVat( contactInfo.countryCode.value );
@@ -274,7 +278,8 @@ function renderContactDetails( {
 						prepareDomainContactDetails( contactInfo ),
 						prepareDomainContactDetailsErrors( contactInfo ),
 						updateContactDetails,
-						shouldShowContactDetailsValidationErrors
+						shouldShowContactDetailsValidationErrors,
+						isDisabled
 					) }
 					{ requiresVatId && <VatIdField /> }
 				</React.Fragment>
@@ -289,6 +294,7 @@ function renderContactDetails( {
 						updatePostalCode={ updatePostalCode }
 						CountrySelectMenu={ CountrySelectMenu }
 						countriesList={ countriesList }
+						isDisabled={ isDisabled }
 					/>
 					{ requiresVatId && <VatIdField /> }
 				</React.Fragment>
