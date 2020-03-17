@@ -246,7 +246,7 @@ class MappedDomainType extends React.Component {
 	}
 
 	renderAutoRenewToggle() {
-		const { selectedSite, domain, purchase } = this.props;
+		const { selectedSite, purchase } = this.props;
 
 		if ( ! purchase ) {
 			return null;
@@ -263,13 +263,16 @@ class MappedDomainType extends React.Component {
 				purchase={ purchase }
 				compact={ true }
 				withTextStatus={ true }
-				withPlan={ !! domain.bundledPlanSubscriptionId }
 			/>
 		);
 	}
 
 	renderAutoRenew() {
-		const { isLoadingPurchase } = this.props;
+		const { isLoadingPurchase, domain } = this.props;
+
+		if ( domain && domain.bundledPlanSubscriptionId ) {
+			return <div />;
+		}
 
 		if ( isLoadingPurchase ) {
 			return (

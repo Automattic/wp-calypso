@@ -32,7 +32,6 @@ class AutoRenewToggle extends Component {
 		recordTracksEvent: PropTypes.func.isRequired,
 		compact: PropTypes.bool,
 		withTextStatus: PropTypes.bool,
-		withPlan: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -144,11 +143,7 @@ class AutoRenewToggle extends Component {
 	}
 
 	renderTextStatus() {
-		const { translate, isEnabled, withPlan } = this.props;
-
-		if ( withPlan ) {
-			return isEnabled ? translate( 'Plan auto-renew (on)' ) : translate( 'Plan auto-renew (off)' );
-		}
+		const { translate, isEnabled } = this.props;
 
 		return isEnabled ? translate( 'Auto-renew (on)' ) : translate( 'Auto-renew (off)' );
 	}
