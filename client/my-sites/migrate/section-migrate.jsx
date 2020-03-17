@@ -56,6 +56,10 @@ class SectionMigrate extends Component {
 	};
 
 	componentDidMount() {
+		if ( this.isNonAtomicJetpack() ) {
+			return page( `/import/${ this.props.targetSiteSlug }` );
+		}
+
 		if ( true === this.props.startMigration ) {
 			this._startedMigrationFromCart = true;
 			this.setMigrationState( { migrationStatus: 'backing-up' } );
@@ -67,6 +71,10 @@ class SectionMigrate extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+		if ( this.isNonAtomicJetpack() ) {
+			return page( `/import/${ this.props.targetSiteSlug }` );
+		}
+
 		if ( this.props.sourceSiteId !== prevProps.sourceSiteId ) {
 			this.fetchSourceSitePluginsAndThemes();
 		}
@@ -330,6 +338,10 @@ class SectionMigrate extends Component {
 
 	isFinished = () => {
 		return includes( [ 'done', 'error', 'unknown' ], this.state.migrationStatus );
+	};
+
+	isNonAtomicJetpack = () => {
+		return ! this.props.isTargetSiteAtomic && this.props.isTargetSiteJetpack;
 	};
 
 	renderLoading() {

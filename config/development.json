@@ -92,7 +92,6 @@
 		"manage/custom-post-types": true,
 		"manage/edit-user": true,
 		"manage/export/guided-transfer": true,
-		"manage/import-to-jetpack": true,
 		"manage/import/site-importer-endpoints": true,
 		"manage/payment-methods": true,
 		"manage/plugins": true,
