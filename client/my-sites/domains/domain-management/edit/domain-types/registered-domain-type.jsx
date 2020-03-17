@@ -40,6 +40,7 @@ import AutoRenewToggle from 'me/purchases/manage-purchase/auto-renew-toggle';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import { isExpired, shouldRenderExpiringCreditCard, isRechargeable } from 'lib/purchases';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
+import ExpiringSoon from '../card/notices/expiring-soon';
 
 class RegisteredDomainType extends React.Component {
 	getVerticalNavigation() {
@@ -158,58 +159,6 @@ class RegisteredDomainType extends React.Component {
 			statusClass: 'status-success',
 			icon: 'check_circle',
 		};
-	}
-
-	renderExpiringSoon() {
-		const { domain, purchase, translate, moment } = this.props;
-		const { expiry } = domain;
-
-		if ( isExpiringSoon( domain, 30 ) ) {
-			let message;
-			if ( domain.currentUserCanManage ) {
-				message = translate(
-					'{{strong}}Your domain will expire{{/strong}} in {{strong}}%(days)s{{/strong}}. Please renew it before it expires or it will stop working.',
-					{
-						components: {
-							strong: <strong />,
-						},
-						args: {
-							days: moment.utc( expiry ).fromNow( true ),
-						},
-					}
-				);
-			} else {
-				message = translate(
-					'{{strong}}The domain will expire{{/strong}} in {{strong}}%(days)s{{/strong}}. Please contact the domain owner %(owner)s to renew it.',
-					{
-						components: {
-							strong: <strong />,
-						},
-						args: {
-							days: moment.utc( expiry ).fromNow( true ),
-							owner: domain.owner,
-						},
-					}
-				);
-			}
-
-			return (
-				<div>
-					<p>{ message }</p>
-					{ domain.currentUserCanManage && (
-						<RenewButton
-							primary={ true }
-							purchase={ purchase }
-							selectedSite={ this.props.selectedSite }
-							subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
-							tracksProps={ { source: 'registered-domain-status', domain_status: 'expiring-soon' } }
-						/>
-					) }
-				</div>
-			);
-		}
-
-		return null;
 	}
 
 	renderExpired() {
@@ -447,7 +396,7 @@ class RegisteredDomainType extends React.Component {
 						purchase={ purchase }
 						domain={ domain }
 					/>
-					{ this.renderExpiringSoon() }
+					<ExpiringSoon selectedSite={ selectedSite } purchase={ purchase } domain={ domain } />
 					{ this.renderExpired() }
 					{ this.renderRecentlyRegistered() }
 				</DomainStatus>

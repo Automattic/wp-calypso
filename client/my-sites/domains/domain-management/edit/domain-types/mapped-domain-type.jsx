@@ -34,6 +34,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import { getByPurchaseId } from 'state/purchases/selectors';
 import { isRechargeable, isExpired } from 'lib/purchases';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
+import ExpiringSoon from '../card/notices/expiring-soon';
 
 class MappedDomainType extends React.Component {
 	getVerticalNavigation() {
@@ -132,66 +133,6 @@ class MappedDomainType extends React.Component {
 			statusClass: 'status-success',
 			icon: 'check_circle',
 		};
-	}
-
-	renderExpiringSoon() {
-		const { domain, translate, purchase, moment } = this.props;
-		const { expiry } = domain;
-
-		if ( ! isExpiringSoon( domain, 30 ) ) {
-			return null;
-		}
-
-		let noticeText;
-		let subscriptionId;
-		let customLabel;
-		let tracksProps;
-
-		if ( domain.bundledPlanSubscriptionId ) {
-			noticeText = translate(
-				'Your domain mapping will expire with your plan in {{strong}}%(days)s{{/strong}}. Please renew your plan before it expires or it will stop working.',
-				{
-					components: {
-						strong: <strong />,
-					},
-					args: {
-						days: moment.utc( expiry ).fromNow( true ),
-					},
-				}
-			);
-			subscriptionId = domain.bundledPlanSubscriptionId;
-			customLabel = translate( 'Renew your plan' );
-			tracksProps = { source: 'mapped-domain-status', mapping_status: 'expiring-soon-plan' };
-		} else {
-			noticeText = translate(
-				'Your domain mapping will expire in {{strong}}%(days)s{{/strong}}. Please renew it before it expires or it will stop working.',
-				{
-					components: {
-						strong: <strong />,
-					},
-					args: {
-						days: moment.utc( expiry ).fromNow( true ),
-					},
-				}
-			);
-			subscriptionId = domain.subscriptionId;
-			customLabel = null;
-			tracksProps = { source: 'mapped-domain-status', mapping_status: 'expiring-soon' };
-		}
-
-		return (
-			<div>
-				<p>{ noticeText }</p>
-				<RenewButton
-					primary={ true }
-					purchase={ purchase }
-					selectedSite={ this.props.selectedSite }
-					subscriptionId={ parseInt( subscriptionId, 10 ) }
-					customLabel={ customLabel }
-					tracksProps={ tracksProps }
-				/>
-			</div>
-		);
 	}
 
 	renderSettingUpNameservers() {
@@ -369,7 +310,7 @@ class MappedDomainType extends React.Component {
 						domain={ domain }
 					/>
 					{ this.renderSettingUpNameservers() }
-					{ this.renderExpiringSoon() }
+					<ExpiringSoon selectedSite={ selectedSite } purchase={ purchase } domain={ domain } />
 				</DomainStatus>
 				<Card compact={ true } className="domain-types__expiration-row">
 					<div>{ expiresText }</div>
