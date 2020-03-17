@@ -20,6 +20,8 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import { DomainSuggestions } from '@automattic/data-stores';
 import { selectorDebounce } from '../../constants';
+import { STORE_KEY } from '../../stores/onboard';
+
 /**
  * Style dependencies
  */
@@ -68,7 +70,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	const { __: NO__ } = useI18n();
 	const label = NO__( 'Search for a domain' );
 
-	const [ domainSearch, setDomainSearch ] = useState( '' );
+	const { siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
+
+	const [ domainSearch, setDomainSearch ] = useState( siteTitle );
 
 	const placeholderAmount = 5;
 
