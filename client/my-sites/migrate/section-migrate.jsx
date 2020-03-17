@@ -38,8 +38,11 @@ import wpcom from 'lib/wp';
  */
 import './section-migrate.scss';
 
+const THIRTY_SECONDS = 30 * 1000;
+
 class SectionMigrate extends Component {
 	_startedMigrationFromCart = false;
+	_timeStartedMigrationFromCart = false;
 
 	state = {
 		errorMessage: '',
@@ -62,6 +65,7 @@ class SectionMigrate extends Component {
 
 		if ( true === this.props.startMigration ) {
 			this._startedMigrationFromCart = true;
+			this._timeStartedMigrationFromCart = new Date().getTime();
 			this.setMigrationState( { migrationStatus: 'backing-up' } );
 			this.startMigration();
 		}
@@ -166,10 +170,13 @@ class SectionMigrate extends Component {
 		// and start migration straight away. This condition prevents a response
 		// from the status endpoint accidentally changing the local state
 		// before the server's properly registered that we're backing up.
+		// After 30 seconds, responses from the server are no longer ignored,
+		// this prevents migrations reset from the server from being locked.
 		if (
 			this._startedMigrationFromCart &&
 			'backing-up' === this.state.migrationStatus &&
-			state.migrationStatus === 'inactive'
+			state.migrationStatus === 'inactive' &&
+			new Date().getTime() - this._timeStartedMigrationFromCart < THIRTY_SECONDS
 		) {
 			return;
 		}
