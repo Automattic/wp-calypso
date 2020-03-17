@@ -48,7 +48,6 @@ import inlineHelp from './inline-help/reducer';
 import inlineSupportArticle from './inline-support-article/reducer';
 import invites from './invites/reducer';
 import jetpack from './jetpack/reducer';
-import jetpackConnect from './jetpack-connect/reducer';
 import jetpackProductInstall from './jetpack-product-install/reducer';
 import jetpackRemoteInstall from './jetpack-remote-install/reducer';
 import jetpackSync from './jetpack-sync/reducer';
@@ -137,7 +136,6 @@ const reducers = {
 	inlineSupportArticle,
 	invites,
 	jetpack,
-	jetpackConnect,
 	jetpackProductInstall,
 	jetpackRemoteInstall,
 	jetpackSync,
