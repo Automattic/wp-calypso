@@ -1,10 +1,14 @@
 .onboarding-block {
 	// Basics and "opted-out" steps
-	&,
+	--contrastColor: var( --studio-white );
+	--mainColor: var( --studio-blue-40 );
+	--highlightColor: var( --studio-blue-20 );
+
 	.design-selector,
 	.style-preview {
 		--contrastColor: var( --studio-white );
-		--mainColor: var( --studio-blue-40 );
+		// TODO: This should be Gutenberg's main color
+		--mainColor: var( --studio-gray-100 );
 		--highlightColor: var( --studio-blue-20 );
 	}
 
