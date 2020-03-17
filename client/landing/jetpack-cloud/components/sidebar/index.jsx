@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { memoize } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,11 +13,21 @@ import { localize } from 'i18n-calypso';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import config from 'config';
 import CurrentSite from 'my-sites/current-site';
+import ExpandableSidebarMenu from 'layout/sidebar/expandable';
+import { itemLinkMatches } from 'my-sites/sidebar/utils';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
+import { isSidebarSectionOpen } from 'state/my-sites/sidebar/selectors';
+import {
+	expandMySitesSidebarSection as expandSection,
+	toggleMySitesSidebarSection as toggleSection,
+} from 'state/my-sites/sidebar/actions';
+
+// Lowercase because these are used as keys for sidebar state.
+export const SIDEBAR_SECTION_SCAN = 'scan';
 
 /**
  * Style dependencies
@@ -39,6 +50,10 @@ class JetpackCloudSidebar extends Component {
 	isSelected( path, allowStartsWith = true ) {
 		return this.props.path === path || ( allowStartsWith && this.props.path.startsWith( path ) );
 	}
+
+	expandScanSection = () => this.props.expandSection( SIDEBAR_SECTION_SCAN );
+
+	toggleSection = memoize( id => () => this.props.toggleSection( id ) );
 
 	onNavigate = () => {
 		window.scrollTo( 0, 0 );
@@ -75,16 +90,39 @@ class JetpackCloudSidebar extends Component {
 						/>
 					) }
 					{ config.isEnabled( 'jetpack-cloud/scan' ) && (
-						<SidebarItem
-							label={ translate( 'Scan', {
+						<ExpandableSidebarMenu
+							onClick={ this.toggleSection( SIDEBAR_SECTION_SCAN ) }
+							expanded={ this.props.isScanSectionOpen }
+							title={ this.props.translate( 'Scan', {
 								comment: 'Jetpack Cloud / Scan sidebar navigation item',
 							} ) }
-							link={ selectedSiteSlug ? `/scan/${ selectedSiteSlug }` : '/scan' }
-							onNavigate={ this.onNavigate }
 							materialIcon="security" // @todo: The Scan logo differs from the Material Icon used here
 							materialIconStyle="filled"
-							selected={ this.isSelected( '/scan' ) }
-						/>
+						>
+							<ul>
+								<SidebarItem
+									label={ translate( 'Scanner', {
+										comment: 'Jetpack Cloud / Scanner sidebar navigation item',
+									} ) }
+									link={ selectedSiteSlug ? `/scan/${ selectedSiteSlug }` : '/scan' }
+									onNavigate={ this.onNavigate }
+									selected={
+										itemLinkMatches( '/scan', this.props.path ) &&
+										! itemLinkMatches( '/scan/history', this.props.path )
+									}
+								/>
+								<SidebarItem
+									label={ translate( 'History', {
+										comment: 'Jetpack Cloud / Scan History sidebar navigation item',
+									} ) }
+									link={
+										selectedSiteSlug ? `/scan/history/${ selectedSiteSlug }` : '/scan/history'
+									}
+									onNavigate={ this.onNavigate }
+									selected={ itemLinkMatches( '/scan/history', this.props.path ) }
+								/>
+							</ul>
+						</ExpandableSidebarMenu>
 					) }
 					{ config.isEnabled( 'jetpack-cloud/settings' ) && (
 						<SidebarItem
@@ -125,6 +163,16 @@ class JetpackCloudSidebar extends Component {
 	}
 }
 
-export default connect( state => ( { selectedSiteSlug: getSelectedSiteSlug( state ) } ) )(
-	localize( JetpackCloudSidebar )
-);
+export default connect(
+	state => {
+		const isScanSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_SCAN );
+		return {
+			isScanSectionOpen,
+			selectedSiteSlug: getSelectedSiteSlug( state ),
+		};
+	},
+	{
+		expandSection,
+		toggleSection,
+	}
+)( localize( JetpackCloudSidebar ) );

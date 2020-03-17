@@ -85,7 +85,7 @@ export default function() {
 
 		if ( config.isEnabled( 'jetpack-cloud/scan-history' ) ) {
 			page(
-				'/scan/:site/history',
+				'/scan/history/:site/',
 				siteSelection,
 				navigation,
 				scanHistory,
