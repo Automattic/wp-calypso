@@ -587,6 +587,18 @@ export const FEATURES_LIST = {
 			i18n.translate( 'Upload more images, videos, audio, and documents to your website.' ),
 	},
 
+	[ constants.FEATURE_200GB_STORAGE ]: {
+		getSlug: () => constants.FEATURE_200GB_STORAGE,
+		getTitle: () =>
+			i18n.translate( '{{strong}}200 GB{{/strong}} Storage Space', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
+		getDescription: () =>
+			i18n.translate( 'Upload more images, videos, audio, and documents to your website.' ),
+	},
+
 	[ constants.FEATURE_COMMUNITY_SUPPORT ]: {
 		getSlug: () => constants.FEATURE_COMMUNITY_SUPPORT,
 		getTitle: () => i18n.translate( 'Community support' ),
