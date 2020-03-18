@@ -13,8 +13,8 @@ import MediaFile from 'my-sites/media-library/media-file';
 interface Props {
 	className: string;
 	component: string;
-	item: any;
-	site: any;
+	item: { URL: string };
+	site: { URL: string };
 }
 
 const EditorMediaModalDetailPreviewMediaFile: React.FC< Props & LocalizeProps > = ( {
