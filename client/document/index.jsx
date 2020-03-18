@@ -124,7 +124,7 @@ class Document extends React.Component {
 							} }
 						/>
 					) : (
-						<div className="wpcom-site">
+						<div id="wpcom" className="wpcom-site">
 							<div
 								className={ classNames( 'layout', {
 									[ 'is-group-' + sectionGroup ]: sectionGroup,
