@@ -135,7 +135,7 @@ class Document extends React.Component {
 							>
 								<div className="masterbar" />
 								<div className="layout__content">
-									{ 'jetpack-cloud' === sectionName ? (
+									{ config.isEnabled( 'jetpack-cloud' ) ? (
 										<div className="wpcom-site__loader">
 											<JetpackLogo size={ 72 } className="wpcom-site__logo" />
 											{ translate( 'Loading' ) }
