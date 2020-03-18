@@ -21,7 +21,6 @@ import {
 	isTheme,
 	isConciergeSession,
 } from 'lib/products-values';
-import { addItems } from 'lib/cart/actions';
 import { getJetpackProductsDisplayNames } from 'lib/products-values/constants';
 
 function getIncludedDomain( purchase ) {
@@ -105,7 +104,6 @@ function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
 	const renewItem = getRenewalItemFromProduct( purchase, {
 		domain: purchase.meta,
 	} );
-	const renewItems = [ renewItem ];
 
 	// Track the renew now submit.
 	analytics.tracks.recordEvent( 'calypso_purchases_renew_now_click', {
@@ -113,9 +111,10 @@ function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
 		...tracksProps,
 	} );
 
-	addItems( renewItems );
-
-	page( '/checkout/' + siteSlug );
+	const { product_slug, extra, meta } = renewItem;
+	const { purchaseId, purchaseDomain } = extra;
+	const productList = meta ? `${ product_slug }:${ meta }` : product_slug;
+	page( `/checkout/${ productList }/renew/${ purchaseId }/${ purchaseDomain }` );
 }
 
 function hasIncludedDomain( purchase ) {
