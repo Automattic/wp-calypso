@@ -5,32 +5,12 @@
 	left: 50%;
 	transform: translate( -50%, -50% );
 
+	path {
+		fill: var( --color-neutral-10 );
+	}
+
 	@include breakpoint( '>960px' ) {
 		width: 100px;
 		height: 100px;
 	}
-}
-
-.wpcom-site__loader {
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate( -50%, -50% );
-	color: var( --color-text-subtle );
-	text-align: center;
-	animation: loading-fade 1.6s ease-in-out infinite;
-
-	.wpcom-site__logo {
-		display: block;
-		margin-bottom: 10px;
-		position: relative;
-		top:0;
-		left:0;
-		transform: none;
-
-		path {
-			fill: var( --color-text-subtle );
-		}
-	}
-
 }
