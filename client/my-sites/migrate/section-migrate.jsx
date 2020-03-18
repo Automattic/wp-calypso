@@ -525,7 +525,7 @@ class SectionMigrate extends Component {
 		let progressItemText;
 		switch ( progressState ) {
 			case 'backing-up':
-				if ( migrationStatus === 'backing-up' ) {
+				if ( 'backing-up' === migrationStatus || 'new' === migrationStatus ) {
 					progressItemText = (
 						<span>
 							{ translate( 'Backing up {{sp}}%(sourceSiteDomain)s{{/sp}}', {
