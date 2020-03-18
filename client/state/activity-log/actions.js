@@ -202,7 +202,7 @@ export function rewindBackupDismiss( siteId ) {
  * Create a backup of the site up the given rewind id.
  *
  * @param  {string|number} siteId   The site ID
- * @param  {number|string}        rewindId Id of activity up to the one the backup will be created.
+ * @param  {number}        rewindId Id of activity up to the one the backup will be created.
  * @param  {object}        args     Additional request params, such as `types`
  * @returns {object}                 Action object
  */
@@ -225,11 +225,6 @@ export function getRewindBackupProgress( siteId ) {
 	return {
 		type: REWIND_BACKUP_PROGRESS_REQUEST,
 		siteId,
-		meta: {
-			dataLayer: {
-				trackRequest: true,
-			},
-		},
 	};
 }
 

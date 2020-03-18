@@ -14,11 +14,9 @@ import { rewindBackup } from 'state/activity-log/actions';
 import { useLocalizedMoment } from 'components/localized-moment';
 import Confirm from './confirm';
 import getBackupProgressForRewindId from 'state/selectors/get-backup-progress-for-rewind-id';
-import getRewindBackupProgressRequestStatus from 'state/selectors/get-rewind-backup-progress-request-status';
 import InProgress from './in-progress';
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 import Ready from './ready';
-import Placeholder from './placeholder';
 import Error from './error';
 
 interface Props {
@@ -33,11 +31,6 @@ const BackupDownloadPage = ( { rewindId }: Props ) => {
 	const longBackupDateString: string = moment.unix( rewindId ).format( 'LLLL' );
 	const siteId = useSelector( getSelectedSiteId );
 	const siteTitle = useSelector( state => getSiteTitle( state, siteId ) );
-
-	// note: this is the status of the request for download progress, not the status of the creation of the download
-	const backupProgressRequestStatus: string | null = useSelector( state =>
-		getRewindBackupProgressRequestStatus( state, siteId )
-	);
 
 	const backupProgress: BackupProgress | null = useSelector( state =>
 		getBackupProgressForRewindId( state, siteId, rewindId )
@@ -61,20 +54,13 @@ const BackupDownloadPage = ( { rewindId }: Props ) => {
 	const render = () => {
 		// there is no backup download creation info
 		if ( null === backupProgress ) {
-			// and that is because it hasn't been loaded yet
-			if ( ! backupProgressRequestStatus || backupProgressRequestStatus === 'pending' ) {
-				return <Placeholder />;
-			} else if ( backupProgressRequestStatus === 'success' ) {
-				// or because there is no download or one being made
-				// in other words our request for the backup progress has finished and it found no info on any backup for this site
-				return (
-					<Confirm
-						backupDateString={ backupDateString }
-						onConfirm={ onConfirm }
-						siteTitle={ siteTitle }
-					/>
-				);
-			}
+			return (
+				<Confirm
+					backupDateString={ backupDateString }
+					onConfirm={ onConfirm }
+					siteTitle={ siteTitle }
+				/>
+			);
 			// the user has confirmed they want to download
 		} else if ( null !== downloadId ) {
 			return (
