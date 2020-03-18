@@ -620,7 +620,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 const mapStateToProps = (
 	state: T.AppState,
-	{ postId, postType, duplicatePostId, fseParentPageId, creatingNewHomepage, editorType }: Props
+	{ postId, postType, duplicatePostId, fseParentPageId, creatingNewHomepage, editorType = 'post' }: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
