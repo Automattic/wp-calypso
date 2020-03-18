@@ -45,7 +45,7 @@ const EditorMediaModalDetailPreviewMediaFile: React.FC< Props & LocalizeProps > 
 		<MediaFile
 			component={ component }
 			src={ url( item, {} ) }
-			maxSize={ 20000 }
+			maxSize={ 20 * 1024 * 1024 }
 			onMaxSizeExceeded={ () => setTooLargeToDisplay( true ) }
 			controls
 			className={ className }
