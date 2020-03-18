@@ -25,7 +25,6 @@ import Gridicon from 'components/gridicon';
 import InProgress from './in-progress';
 import Main from 'components/main';
 import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
-import Queued from './queued';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 /**
@@ -58,10 +57,8 @@ const getRestoreState = ( rewindState: RewindState, hasRequestedRestore: boolean
 		return RestoreState.RestoreConfirm;
 	} else if (
 		( ! rewindState?.rewind && hasRequestedRestore ) ||
-		rewindState?.rewind?.status === 'queued'
+		[ 'queued', 'running' ].includes( rewindState?.rewind?.status )
 	) {
-		return RestoreState.RestoreQueued;
-	} else if ( rewindState?.rewind?.status === 'running' ) {
 		return RestoreState.RestoreInProgress;
 	} else if ( rewindState?.rewind?.status === 'finished' ) {
 		return RestoreState.RestoreFinished;
@@ -108,8 +105,6 @@ const BackupRestorePage = ( { restoreId }: Props ) => {
 						onRestoreSettingsChange={ setRestoreSettings }
 					/>
 				);
-			case RestoreState.RestoreQueued:
-				return <Queued />;
 			case RestoreState.RestoreInProgress:
 				return (
 					<InProgress
