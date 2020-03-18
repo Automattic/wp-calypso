@@ -15,8 +15,47 @@ import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
 import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
 import ThreatItem from '../../components/threat-item';
 import { isEnabled } from 'config';
+import ThreatDialog from '../../components/threat-dialog';
 
 import './style.scss';
+
+// This is here for testing purposes only. Once the ThreatItem component
+// is merged into master, we would be able to connect this two pieces of
+// UI.
+const ComponentToTestDialogs = ( { siteName, threat } ) => {
+	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
+	const [ actionToPerform, setActionToPerform ] = React.useState();
+
+	const openDialog = action => {
+		setActionToPerform( action );
+		setShowThreatDialog( true );
+	};
+
+	const closeDialog = () => {
+		setShowThreatDialog( false );
+	};
+
+	const confirmAction = () => {
+		window.alert( `Fixing site: ${ siteName }` );
+		closeDialog();
+	};
+
+	return (
+		<>
+			<Button onClick={ () => openDialog( 'fix' ) }>Open Fix Dialog</Button>
+			<Button onClick={ () => openDialog( 'ignore' ) }>Open Ignore Dialog</Button>
+			<ThreatDialog
+				showDialog={ showThreatDialog }
+				onCloseDialog={ closeDialog }
+				onConfirmation={ confirmAction }
+				siteName={ siteName }
+				threatTitle={ threat.title }
+				threatDescription={ threat.details }
+				action={ actionToPerform }
+			/>
+		</>
+	);
+};
 
 class ScanPage extends Component {
 	renderScanOkay() {
@@ -106,9 +145,14 @@ class ScanPage extends Component {
 	}
 
 	render() {
+		const { threats, site } = this.props;
+
 		return (
 			<div className="scan__main">
-				<div className="scan__content">{ this.renderScanState() }</div>
+				<div className="scan__content">
+					{ this.renderScanState() }
+					<ComponentToTestDialogs threat={ threats[ 0 ] } siteName={ site.name } />
+				</div>
 				<StatsFooter
 					header="Scan Summary"
 					stats={ [
