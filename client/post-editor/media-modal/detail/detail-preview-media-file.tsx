@@ -34,7 +34,7 @@ const EditorMediaModalDetailPreviewMediaFile: React.FC< Props & LocalizeProps > 
 			<div className="editor-media-modal-detail__preview is-too-large">
 				{ translate( 'Preview unavailable, {{a}}click here to open the file directly{{/a}}.', {
 					components: {
-						a: <a href={ fileUrl } />,
+						a: <a target="_blank" href={ fileUrl } />,
 					},
 				} ) }
 			</div>
