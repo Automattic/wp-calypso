@@ -39,13 +39,15 @@ class DailyBackupStatus extends Component {
 					{ translate( 'Latest backup completed:' ) }
 				</div>
 				<div className="daily-backup-status__date">{ displayDate }</div>
-				<Button className="daily-backup-status__download-button">Download backup</Button>
+				<Button className="daily-backup-status__download-button">
+					{ translate( 'Download backup' ) }
+				</Button>
 				<Button
 					className="daily-backup-status__restore-button"
 					disabled={ ! allowRestore }
 					onClick={ this.triggerRestore }
 				>
-					Restore to this point
+					{ translate( 'Restore to this point' ) }
 				</Button>
 			</Fragment>
 		);
