@@ -22,6 +22,8 @@ import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
 import { isEnabled } from 'config';
 import { Placeholder } from './placeholder';
 import { makeLayout, render } from 'controller';
+import isSiteUsingCoreSiteEditor from 'state/selectors/is-site-using-core-site-editor';
+import getSiteEditorUrl from 'state/selectors/get-site-editor-url';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {
@@ -142,7 +144,11 @@ export const redirect = async ( context, next ) => {
 	if ( shouldRedirectGutenberg( state, siteId ) ) {
 		const postType = determinePostType( context );
 		const postId = getPostID( context );
-		const url = getGutenbergEditorUrl( state, siteId, postId, postType );
+
+		const url =
+			postId || ! isSiteUsingCoreSiteEditor( state, siteId )
+				? getGutenbergEditorUrl( state, siteId, postId, postType )
+				: getSiteEditorUrl( state, siteId );
 		// pass along parameters, for example press-this
 		return window.location.replace( addQueryArgs( context.query, url ) );
 	}

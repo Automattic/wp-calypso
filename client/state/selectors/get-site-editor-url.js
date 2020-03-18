@@ -20,7 +20,6 @@ export const getSiteEditorUrl = ( state, siteId ) => {
 
 	const siteSlug = getSiteSlug( state, siteId );
 
-	// @TODO Update this to be URL for the iframe route.
 	return `/site-editor/${ siteSlug }`;
 };
 
