@@ -65,9 +65,7 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
 		},
 		SITE_NOT_PUBLIC: {
 			title: translate( 'Make your site public' ),
-			description: translate(
-				'Only you and those you invite can view your site. Make your site visible public.'
-			),
+			description: translate( 'Only you and those you invite can view your site.' ),
 			supportUrl: null,
 		},
 		NON_ADMIN_USER: {
