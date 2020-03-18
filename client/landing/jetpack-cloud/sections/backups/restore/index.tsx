@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import React, { useCallback, useState } from 'react';
+import React, { FunctionComponent, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	defaultRewindConfig,
 	RewindConfig,
 } from 'landing/jetpack-cloud/components/rewind-config/types';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { rewindRestore } from 'state/activity-log/actions';
 import { useLocalizedMoment } from 'components/localized-moment';
 import Confirm from './confirm';
@@ -31,15 +31,6 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
  * Style dependencies
  */
 import './style.scss';
-
-enum RestoreState {
-	RestoreConfirm,
-	RestoreQueued,
-	RestoreInProgress,
-	RestoreFinished,
-	RestoreError,
-}
-
 interface Props {
 	restoreId?: string;
 }
@@ -52,27 +43,15 @@ interface RewindState {
 	};
 }
 
-const getRestoreState = ( rewindState: RewindState, hasRequestedRestore: boolean ) => {
-	if ( ! rewindState?.rewind && ! hasRequestedRestore ) {
-		return RestoreState.RestoreConfirm;
-	} else if (
-		( ! rewindState?.rewind && hasRequestedRestore ) ||
-		[ 'queued', 'running' ].includes( rewindState?.rewind?.status )
-	) {
-		return RestoreState.RestoreInProgress;
-	} else if ( rewindState?.rewind?.status === 'finished' ) {
-		return RestoreState.RestoreFinished;
-	}
-	return RestoreState.RestoreError;
-};
-
-const BackupRestorePage = ( { restoreId }: Props ) => {
+const BackupRestorePage: FunctionComponent< Props > = ( { restoreId } ) => {
 	const dispatch = useDispatch();
 
 	const [ restoreSettings, setRestoreSettings ] = useState< RewindConfig >( defaultRewindConfig );
 
 	const siteId = useSelector( getSelectedSiteId );
-	const rewindState = useSelector( state => getRewindState( state, siteId ) );
+	const rewindState = useSelector< object, RewindState >( state =>
+		getRewindState( state, siteId )
+	);
 	const siteTitle = useSelector( state => ( siteId ? getSiteTitle( state, siteId ) : null ) );
 
 	const moment = useLocalizedMoment();
@@ -91,32 +70,31 @@ const BackupRestorePage = ( { restoreId }: Props ) => {
 		requestRestore();
 	};
 
-	const restoreState = getRestoreState( rewindState, hasRequestedRestore );
-
 	const render = () => {
-		switch ( restoreState ) {
-			case RestoreState.RestoreConfirm:
-				return (
-					<Confirm
-						onConfirm={ onConfirm }
-						restoreTimestamp={ restoreTimestamp }
-						siteTitle={ siteTitle }
-						restoreSettings={ restoreSettings }
-						onRestoreSettingsChange={ setRestoreSettings }
-					/>
-				);
-			case RestoreState.RestoreInProgress:
-				return (
-					<InProgress
-						percent={ rewindState?.rewind?.progress ? rewindState?.rewind?.progress : 0 }
-						siteId={ siteId }
-					/>
-				);
-			case RestoreState.RestoreFinished:
-				return <Finished siteId={ siteId } restoreId={ restoreId } />;
-			case RestoreState.RestoreError:
-				return <Error />;
+		if ( ! rewindState?.rewind && ! hasRequestedRestore ) {
+			return (
+				<Confirm
+					onConfirm={ onConfirm }
+					restoreTimestamp={ restoreTimestamp }
+					siteTitle={ siteTitle }
+					restoreSettings={ restoreSettings }
+					onRestoreSettingsChange={ setRestoreSettings }
+				/>
+			);
+		} else if (
+			( ! rewindState?.rewind && hasRequestedRestore ) ||
+			[ 'queued', 'running' ].includes( rewindState?.rewind?.status )
+		) {
+			return (
+				<InProgress
+					percent={ rewindState?.rewind?.progress ? rewindState?.rewind?.progress : 0 }
+					siteId={ siteId }
+				/>
+			);
+		} else if ( rewindState?.rewind?.status === 'finished' ) {
+			return <Finished siteId={ siteId } restoreId={ restoreId } />;
 		}
+		return <Error />;
 	};
 
 	return (
