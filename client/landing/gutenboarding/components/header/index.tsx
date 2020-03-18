@@ -6,7 +6,6 @@ import { useI18n } from '@automattic/react-i18n';
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { FunctionComponent, useEffect, useCallback, useState } from 'react';
-import { useDebounce } from 'use-debounce';
 import classnames from 'classnames';
 import { useHistory } from 'react-router-dom';
 
@@ -16,12 +15,11 @@ import { useHistory } from 'react-router-dom';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { USER_STORE } from '../../stores/user';
 import { SITE_STORE } from '../../stores/site';
-import { DOMAIN_SUGGESTIONS_STORE } from '../../stores/domain-suggestions';
 import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
-import { selectorDebounce } from '../../constants';
 import SignupForm from '../../components/signup-form';
 import LoginForm from '../../components/login-form';
+import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 
 import wp from '../../../../lib/wp';
 const wpcom = wp.undocumented();
@@ -73,21 +71,7 @@ const Header: FunctionComponent = () => {
 	const hasSelectedDesign = !! selectedDesign;
 	const { createSite, setDomain, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
-	const [ domainSearch ] = useDebounce( siteTitle, selectorDebounce );
-	const freeDomainSuggestion = useSelect(
-		select => {
-			if ( ! domainSearch ) {
-				return;
-			}
-			return select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( domainSearch, {
-				// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
-				include_wordpressdotcom: true,
-				quantity: 1,
-				...{ vertical: siteVertical?.id },
-			} )?.[ 0 ];
-		},
-		[ domainSearch, siteVertical ]
-	);
+	const freeDomainSuggestion = useFreeDomainSuggestion();
 
 	useEffect( () => {
 		if ( ! siteTitle ) {

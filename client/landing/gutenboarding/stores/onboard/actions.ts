@@ -10,7 +10,6 @@ import { dispatch, select } from '@wordpress/data-controls';
 import { Design, SiteVertical } from './types';
 import { STORE_KEY as ONBOARD_STORE } from './constants';
 import { SITE_STORE } from '../site';
-import { DOMAIN_SUGGESTIONS_STORE } from '../domain-suggestions';
 
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 type Template = VerticalsTemplates.Template;
@@ -50,7 +49,7 @@ export const resetOnboardStore = () => ( {
 
 export function* createSite(
 	username: string,
-	freeDomainSuggestion: DomainSuggestion | undefined,
+	freeDomainSuggestion?: DomainSuggestion,
 	bearerToken?: string
 ) {
 	const { domain, selectedDesign, siteTitle, siteVertical } = yield select(
@@ -58,18 +57,7 @@ export function* createSite(
 		'getState'
 	);
 
-	let currentDomain = domain ?? freeDomainSuggestion;
-	if ( ! currentDomain && siteTitle ) {
-		const suggestion = yield select( DOMAIN_SUGGESTIONS_STORE, 'getDomainSuggestions', siteTitle, {
-			// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
-			include_wordpressdotcom: true,
-			quantity: 1,
-			...{ vertical: siteVertical?.id },
-		} );
-
-		currentDomain = suggestion?.[ 0 ];
-	}
-
+	const currentDomain = domain ?? freeDomainSuggestion;
 	const siteUrl = currentDomain?.domain_name || siteTitle || username;
 
 	yield dispatch( SITE_STORE, 'createSite', {

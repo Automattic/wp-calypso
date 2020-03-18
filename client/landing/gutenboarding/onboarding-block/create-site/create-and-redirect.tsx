@@ -10,6 +10,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
  */
 import { STORE_KEY } from '../../stores/onboard';
 import { USER_STORE } from '../../stores/user';
+import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 
 interface Props {
 	to: string;
@@ -20,13 +21,15 @@ const CreateAndRedirect = ( { to }: Props ) => {
 	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
 	const { createSite } = useDispatch( STORE_KEY );
 
+	const freeDomainSuggestion = useFreeDomainSuggestion();
+
 	useEffect( () => {
-		if ( currentUser ) {
-			createSite( currentUser.username, undefined ).then( () => {
+		if ( currentUser && freeDomainSuggestion ) {
+			createSite( currentUser.username, freeDomainSuggestion ).then( () => {
 				setRedirect( true );
 			} );
 		}
-	}, [ createSite, currentUser, setRedirect ] );
+	}, [ createSite, currentUser, freeDomainSuggestion, setRedirect ] );
 
 	return redirect ? <Redirect to={ to } /> : null;
 };
