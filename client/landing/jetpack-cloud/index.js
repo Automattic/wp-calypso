@@ -43,15 +43,8 @@ export default function() {
 			clientRender
 		);
 		page(
-			'/backups/:site/download',
+			'/backups/:site/download/:rewindId',
 			siteSelection,
-			navigation,
-			backupDownload,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/site/:site/backups/backups/download/:downloadId',
 			navigation,
 			backupDownload,
 			makeLayout,
