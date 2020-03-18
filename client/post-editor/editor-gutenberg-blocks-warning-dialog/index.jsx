@@ -39,7 +39,6 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 		isPrivateAtomic: PropTypes.bool,
 		translate: PropTypes.func,
 		siteId: PropTypes.number,
-		postType: PropTypes.string,
 		gutenbergUrl: PropTypes.string,
 		switchToGutenberg: PropTypes.func,
 		openPostRevisionsDialog: PropTypes.func,
