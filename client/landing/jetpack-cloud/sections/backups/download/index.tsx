@@ -1,24 +1,30 @@
 /**
  * External dependencies
  */
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
 import { BackupProgress } from './types';
+import { Card } from '@automattic/components';
+import {
+	defaultRewindConfig,
+	RewindConfig,
+} from 'landing/jetpack-cloud/components/rewind-config/types';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { rewindBackup } from 'state/activity-log/actions';
 import { useLocalizedMoment } from 'components/localized-moment';
 import Confirm from './confirm';
+import DocumentHead from 'components/data/document-head';
+import Error from './error';
 import getBackupProgressForRewindId from 'state/selectors/get-backup-progress-for-rewind-id';
+import Gridicon from 'components/gridicon';
 import InProgress from './in-progress';
+import Main from 'components/main';
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 import Ready from './ready';
-import Error from './error';
-import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 interface Props {
@@ -27,6 +33,8 @@ interface Props {
 
 const BackupDownloadPage = ( { rewindId }: Props ) => {
 	const dispatch = useDispatch();
+
+	const [ downloadSettings, setDownloadSettings ] = useState< RewindConfig >( defaultRewindConfig );
 
 	const moment = useLocalizedMoment();
 
@@ -57,7 +65,14 @@ const BackupDownloadPage = ( { rewindId }: Props ) => {
 	const render = () => {
 		// there is no backup download creation info
 		if ( null === backupProgress ) {
-			return <Confirm downloadTimestamp={ downloadTimestamp } onConfirm={ onConfirm } />;
+			return (
+				<Confirm
+					downloadTimestamp={ downloadTimestamp }
+					onConfirm={ onConfirm }
+					downloadSettings={ downloadSettings }
+					onDownloadSettingsChange={ setDownloadSettings }
+				/>
+			);
 			// the user has confirmed they want to download
 		} else if ( null !== downloadId ) {
 			return (

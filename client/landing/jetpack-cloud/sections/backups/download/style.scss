@@ -1,0 +1,41 @@
+.download__header {
+	display: flex;
+	justify-content: center;
+	padding-top: 32px;
+	padding-bottom: 32px;
+	.gridicon {
+		fill: var( --color-primary );
+	}
+}
+
+.download__title {
+	font-style: normal;
+	font-weight: 600;
+	font-size: 22px;
+	line-height: 32px;
+	padding-bottom: 32px;
+}
+
+.download__info {
+	font-style: normal;
+	font-weight: normal;
+	font-size: 16px;
+	line-height: 23px;
+}
+
+.download__cta {
+	font-style: normal;
+	font-weight: bold;
+	font-size: 16px;
+	line-height: 23px;
+}
+
+.download__primary-button {
+	width: 100%;
+	text-align: center;
+
+	@include breakpoint( '>660px' ) {
+		width: auto;
+		text-align: auto;
+	}
+}
