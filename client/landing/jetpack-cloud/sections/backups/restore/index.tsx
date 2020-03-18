@@ -21,6 +21,7 @@ import Error from './error';
 import Finished from './finished';
 import getRewindState from 'state/selectors/get-rewind-state';
 import getSiteTitle from 'state/sites/selectors/get-site-title';
+import getSiteUrl from 'state/selectors/get-site-url';
 import Gridicon from 'components/gridicon';
 import InProgress from './in-progress';
 import Main from 'components/main';
@@ -49,9 +50,12 @@ const BackupRestorePage: FunctionComponent< Props > = ( { restoreId } ) => {
 	const [ restoreSettings, setRestoreSettings ] = useState< RewindConfig >( defaultRewindConfig );
 
 	const siteId = useSelector( getSelectedSiteId );
+
 	const rewindState = useSelector< object, RewindState >( state =>
 		getRewindState( state, siteId )
 	);
+
+	const siteUrl = useSelector( state => ( siteId ? getSiteUrl( state, siteId ) : null ) );
 	const siteTitle = useSelector( state => ( siteId ? getSiteTitle( state, siteId ) : null ) );
 
 	const moment = useLocalizedMoment();
@@ -88,11 +92,11 @@ const BackupRestorePage: FunctionComponent< Props > = ( { restoreId } ) => {
 			return (
 				<InProgress
 					percent={ rewindState?.rewind?.progress ? rewindState?.rewind?.progress : 0 }
-					siteId={ siteId }
+					restoreTimestamp={ restoreTimestamp }
 				/>
 			);
 		} else if ( rewindState?.rewind?.status === 'finished' ) {
-			return <Finished siteId={ siteId } restoreId={ restoreId } />;
+			return <Finished restoreTimestamp={ restoreTimestamp } siteUrl={ siteUrl } />;
 		}
 		return <Error />;
 	};

@@ -66,7 +66,7 @@ const BackupRestoreConfirm: FunctionComponent< Props > = ( {
 				onClick={ onConfirm }
 				primary
 			>
-				{ 'Confirm Restore' }
+				{ translate( 'Confirm restore' ) }
 			</Button>
 		</div>
 	);

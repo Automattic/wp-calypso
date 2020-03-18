@@ -32,8 +32,11 @@
 
 .restore__primary-button {
 	width: 100%;
+	text-align: center;
+
 	@include breakpoint( '>660px' ) {
 		width: auto;
+		text-align: auto;
 	}
 }
 
@@ -48,6 +51,23 @@
 	align-items: center;
 	.gridicon {
 		fill: var( --color-error );
+		margin-right: 5px;
+	}
+	// this allows the gridicon and text to align on their centers
+	p {
+		margin: 0;
+	}
+}
+
+.restore__in-progress-notice {
+	display: flex;
+	flex-direction: row;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: bold;
+	line-height: 23px;
+	margin-bottom: 16px;
+	.gridicon {
 		margin-right: 5px;
 	}
 	// this allows the gridicon and text to align on their centers
