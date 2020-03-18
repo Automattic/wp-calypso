@@ -110,10 +110,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async enterText( text ) {
 		const appenderSelector = By.css( '.block-editor-default-block-appender' );
-		const textSelector = By.css( 'p.block-editor-rich-text__editable:first-of-type' );
+		const paragraphSelector = By.css( 'p.block-editor-rich-text__editable:first-of-type' );
 		await driverHelper.clickWhenClickable( this.driver, appenderSelector );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, textSelector );
-		return await this.driver.findElement( textSelector ).sendKeys( text );
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, paragraphSelector );
+		return await this.driver.findElement( paragraphSelector ).sendKeys( text );
 	}
 
 	async getContent() {
@@ -121,9 +121,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async replaceTextOnLastParagraph( text ) {
-		const paragraph = By.css( '.wp-block-paragraph' );
-		await driverHelper.clearTextArea( this.driver, paragraph );
-		return await this.driver.findElement( paragraph ).sendKeys( text );
+		const paragraphSelector = By.css( 'p.block-editor-rich-text__editable:first-of-type' );
+		await driverHelper.clearTextArea( this.driver, paragraphSelector );
+		return await this.driver.findElement( paragraphSelector ).sendKeys( text );
 	}
 
 	async insertShortcode( shortcode ) {
