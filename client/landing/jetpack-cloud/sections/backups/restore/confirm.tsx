@@ -28,6 +28,8 @@ const BackupRestoreConfirm: FunctionComponent< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 
+	const disableConfirmButton = Object.values( restoreSettings ).every( setting => ! setting );
+
 	return (
 		<div>
 			<h3 className="restore__title">
@@ -53,7 +55,12 @@ const BackupRestoreConfirm: FunctionComponent< Props > = ( {
 				currentConfig={ restoreSettings }
 				onConfigChange={ onRestoreSettingsChange }
 			/>
-			<Button className="restore__primary-button" primary onClick={ onConfirm }>
+			<Button
+				className="restore__primary-button"
+				disabled={ disableConfirmButton }
+				onClick={ onConfirm }
+				primary
+			>
 				{ 'Confirm Restore' }
 			</Button>
 		</div>

@@ -26,6 +26,12 @@ const JetpackCloudRewindConfig: FunctionComponent< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 
+	const onChange = ( { target: { name, checked } }: ChangeEvent< HTMLInputElement > ) =>
+		onConfigChange( {
+			...currentConfig,
+			[ name ]: checked,
+		} );
+
 	const checkboxes = [
 		{
 			name: 'themes',
@@ -34,12 +40,6 @@ const JetpackCloudRewindConfig: FunctionComponent< Props > = ( {
 					strong: <strong />,
 				},
 			} ),
-			checked: ( { themes }: RewindConfig ) => themes,
-			onChange: ( { target: { checked } }: ChangeEvent< HTMLInputElement > ) =>
-				onConfigChange( {
-					...currentConfig,
-					themes: checked,
-				} ),
 		},
 		{
 			name: 'plugins',
@@ -48,12 +48,6 @@ const JetpackCloudRewindConfig: FunctionComponent< Props > = ( {
 					strong: <strong />,
 				},
 			} ),
-			checked: ( { plugins }: RewindConfig ) => plugins,
-			onChange: ( { target: { checked } }: ChangeEvent< HTMLInputElement > ) =>
-				onConfigChange( {
-					...currentConfig,
-					plugins: checked,
-				} ),
 		},
 		{
 			name: 'uploads',
@@ -62,12 +56,6 @@ const JetpackCloudRewindConfig: FunctionComponent< Props > = ( {
 					strong: <strong />,
 				},
 			} ),
-			checked: ( { uploads }: RewindConfig ) => uploads,
-			onChange: ( { target: { checked } }: ChangeEvent< HTMLInputElement > ) =>
-				onConfigChange( {
-					...currentConfig,
-					uploads: checked,
-				} ),
 		},
 		{
 			name: 'roots',
@@ -79,12 +67,6 @@ const JetpackCloudRewindConfig: FunctionComponent< Props > = ( {
 					},
 				}
 			),
-			checked: ( { roots }: RewindConfig ) => roots,
-			onChange: ( { target: { checked } }: ChangeEvent< HTMLInputElement > ) =>
-				onConfigChange( {
-					...currentConfig,
-					roots: checked,
-				} ),
 		},
 		{
 			name: 'contents',
@@ -96,12 +78,6 @@ const JetpackCloudRewindConfig: FunctionComponent< Props > = ( {
 					},
 				}
 			),
-			checked: ( { contents }: RewindConfig ) => contents,
-			onChange: ( { target: { checked } }: ChangeEvent< HTMLInputElement > ) =>
-				onConfigChange( {
-					...currentConfig,
-					contents: checked,
-				} ),
 		},
 		{
 			name: 'sqls',
@@ -110,21 +86,15 @@ const JetpackCloudRewindConfig: FunctionComponent< Props > = ( {
 					strong: <strong />,
 				},
 			} ),
-			checked: ( { sqls }: RewindConfig ) => sqls,
-			onChange: ( { target: { checked } }: ChangeEvent< HTMLInputElement > ) =>
-				onConfigChange( {
-					...currentConfig,
-					sqls: checked,
-				} ),
 		},
 	];
 
 	return (
 		<div className="rewind-config">
-			{ checkboxes.map( ( { name, label, checked, onChange } ) => (
+			{ checkboxes.map( ( { name, label } ) => (
 				<FormLabel className="rewind-config__label" required={ false } optional={ false }>
 					<FormCheckbox
-						checked={ checked( currentConfig ) }
+						checked={ currentConfig[ name ] }
 						className="rewind-config__checkbox"
 						name={ name }
 						onChange={ onChange }
