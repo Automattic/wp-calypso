@@ -10,6 +10,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import notices from 'notices';
 import analytics from 'lib/analytics';
 import { getRenewalItemFromProduct } from 'lib/cart-values/cart-items';
 import {
@@ -114,9 +115,11 @@ function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
 	const { product_slug, extra, meta } = renewItem;
 	const { purchaseId, purchaseDomain } = extra;
 	if ( ! purchaseId ) {
+		notices.error( 'Could not find purchase id for renewal.' );
 		throw new Error( 'Could not find purchase id for renewal.' );
 	}
 	if ( ! product_slug ) {
+		notices.error( 'Could not find product slug for renewal.' );
 		throw new Error( 'Could not find product slug for renewal.' );
 	}
 	const productList = meta ? `${ product_slug }:${ meta }` : product_slug;
