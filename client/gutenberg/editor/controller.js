@@ -202,7 +202,17 @@ export const post = ( context, next ) => {
 };
 
 export const siteEditor = ( context, next ) => {
-	context.primary = <CalypsoifyIframe editorType={ 'site' } />;
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+
+	context.primary = (
+		<CalypsoifyIframe
+			// This key is added as a precaution due to it's oberserved necessity in the above post editor.
+			// It will force the component to remount completely when the Id changes.
+			key={ siteId }
+			editorType={ 'site' }
+		/>
+	);
 
 	return next();
 };
