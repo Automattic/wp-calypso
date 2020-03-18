@@ -24,8 +24,8 @@ const EditorMediaModalDetailPreviewMediaFile: React.FC< Props & LocalizeProps > 
 	site,
 	translate,
 } ) => {
-	const [ tooLargeToDisplay, setTooLargeToDisplay ] = useState( false );
-	if ( tooLargeToDisplay ) {
+	const [ previewUnavailable, setPreviewUnavailable ] = useState( false );
+	if ( previewUnavailable ) {
 		// User may or may not be authenticated against their remote site - we need to go through the login page
 		// to trigger SSO when available
 		const fileUrl = `${ site.URL }/wp-login.php?redirect_to=${ item.URL }`;
@@ -46,7 +46,7 @@ const EditorMediaModalDetailPreviewMediaFile: React.FC< Props & LocalizeProps > 
 			component={ component }
 			src={ url( item, {} ) }
 			maxSize={ 20 * 1024 * 1024 }
-			onMaxSizeExceeded={ () => setTooLargeToDisplay( true ) }
+			onError={ () => setPreviewUnavailable( true ) }
 			controls
 			className={ className }
 		/>

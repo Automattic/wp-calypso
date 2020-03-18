@@ -25,7 +25,7 @@ export interface ProxiedImageProps {
 	placeholder: React.ReactNode | null;
 	component: RenderedComponent;
 	maxSize: number | null;
-	onMaxSizeExceeded: () => any;
+	onError?: ( err: Error ) => any;
 
 	[ key: string ]: any;
 }
@@ -52,7 +52,7 @@ const ProxiedImage: React.FC< ProxiedImageProps > = function ProxiedImage( {
 	query,
 	placeholder,
 	maxSize,
-	onMaxSizeExceeded,
+	onError,
 	component: Component,
 	...rest
 } ) {
@@ -82,8 +82,8 @@ const ProxiedImage: React.FC< ProxiedImageProps > = function ProxiedImage( {
 								cacheResponse( requestId, data );
 								setImageObjectUrl( URL.createObjectURL( data ) );
 								debug( 'got image from API', { requestId, imageObjectUrl, data } );
-							} else if ( err.message === 'exceeded_max_size' ) {
-								onMaxSizeExceeded();
+							} else if ( onError ) {
+								onError( err );
 							}
 						}
 					);
