@@ -10,7 +10,6 @@ import classnames from 'classnames';
 import errorIcon from './images/error.svg';
 import okayIcon from './images/security-okay.svg';
 import scanErrorIcon from './images/security-error.svg';
-import errorIcon from './images/security-error.svg';
 import inProgressIcon from './images/in-progress.svg';
 
 interface Props {
