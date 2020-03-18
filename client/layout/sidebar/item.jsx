@@ -20,7 +20,7 @@ export default function SidebarItem( props ) {
 	const isExternalLink = isExternal( props.link );
 	const showAsExternal = isExternalLink && ! props.forceInternalLink;
 	const classes = classnames( props.className, { selected: props.selected } );
-	const { materialIcon, materialIconStyle, icon, customIcon } = props;
+	const { materialIcon, materialIconStyle, icon, customIcon, showNotificationDot } = props;
 
 	let _preloaded = false;
 
@@ -69,6 +69,7 @@ export default function SidebarItem( props ) {
 				</span>
 				{ showAsExternal && <Gridicon icon="external" size={ 24 } /> }
 				{ props.children }
+				{ showNotificationDot && <div className="sidebar__menu-notification-dot"></div> }
 			</a>
 		</li>
 	);
@@ -86,6 +87,7 @@ SidebarItem.propTypes = {
 	selected: PropTypes.bool,
 	expandSection: PropTypes.func,
 	preloadSectionName: PropTypes.string,
+	showNotificationDot: PropTypes.bool,
 	forceInternalLink: PropTypes.bool,
 	testTarget: PropTypes.string,
 	tipTarget: PropTypes.string,
