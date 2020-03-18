@@ -136,6 +136,7 @@ $y-axis-padding: 0 20px 0 10px;
 
 // Individual bar
 // 1: Needs to be relative so that the contained graphic bar has boundaries
+// 2: Animate the bar on mounting to make it consistent with the transition later when values change
 
 .chart__bar {
 	text-align: center;
@@ -146,6 +147,15 @@ $y-axis-padding: 0 20px 0 10px;
 	flex-grow: 1;
 	-ms-flex-shrink: 1;
 	flex-shrink: 1;
+	transform: scaleY( 0 );
+	transform-origin: 0% 100%;
+	animation: growUpOnMounting 0.2s ease-in forwards;
+
+	@keyframes growUpOnMounting {
+		100% {
+			transform: scaleY( 1 );
+		}
+	}
 
 	&.is-weekend {
 		background-color: rgba( var( --color-neutral-0-rgb ), 0.5 );
