@@ -25,6 +25,10 @@
 			display: none;
 		}
 	}
+
+	.foldable-card__action.foldable-card__expand {
+		border: none;
+	}
 }
 
 .button.threat-item__fix-cta.is-compact {
