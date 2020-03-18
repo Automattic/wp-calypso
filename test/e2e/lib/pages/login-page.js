@@ -34,7 +34,6 @@ export default class LoginPage extends AsyncBaseContainer {
 			await driverHelper.setWhenSettable( driver, userNameSelector, username );
 		} catch {
 			// In order to display login form, the link to login with another account should be clicked first
-			await driverHelper.waitTillPresentAndDisplayed( driver, changeAccountSelector );
 			await driverHelper.clickWhenClickable( driver, changeAccountSelector );
 			await driverHelper.setWhenSettable( driver, userNameSelector, username );
 		}
