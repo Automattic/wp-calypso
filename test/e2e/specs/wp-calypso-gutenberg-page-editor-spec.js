@@ -95,7 +95,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		} );
 
 		step( 'Can see correct page title in preview', async function() {
-			this.pagePreviewComponent = await PagePreviewExternalComponent.Expect( driver );
+			this.pagePreviewComponent = new PagePreviewExternalComponent( driver );
 			await this.pagePreviewComponent.isDisplayed();
 			const actualPageTitle = await this.pagePreviewComponent.pageTitle();
 			assert.strictEqual(

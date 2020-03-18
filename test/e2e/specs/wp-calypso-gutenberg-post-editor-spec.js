@@ -129,7 +129,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 
 		step( 'Can see correct post title in preview', async function() {
-			this.postPreviewComponent = await PostPreviewExternalComponent.Expect( driver );
+			this.postPreviewComponent = new PostPreviewExternalComponent( driver );
 			const postTitle = await this.postPreviewComponent.postTitle();
 			assert.strictEqual(
 				postTitle.toLowerCase(),
