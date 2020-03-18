@@ -60,7 +60,7 @@ export function* createSite(
 	const currentDomain = domain ?? freeDomainSuggestion;
 	const siteUrl = currentDomain?.domain_name || siteTitle || username;
 
-	yield dispatch( SITE_STORE, 'createSite', {
+	const success = yield dispatch( SITE_STORE, 'createSite', {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
 		blog_title: siteTitle,
 		options: {
@@ -74,6 +74,8 @@ export function* createSite(
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	} );
+
+	return success;
 }
 
 export type OnboardAction = ReturnType<

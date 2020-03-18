@@ -49,9 +49,11 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				token: authToken,
 			} );
 
-			return receiveNewSite( newSite );
+			yield receiveNewSite( newSite );
+			return true;
 		} catch ( err ) {
-			return receiveNewSiteFailed( err );
+			yield receiveNewSiteFailed( err );
+			return false;
 		}
 	}
 
