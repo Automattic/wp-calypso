@@ -16,7 +16,7 @@ import { Step, usePath } from '../../path';
 type Status = 'INIT' | 'SUCCESS' | 'ERROR' | 'MISSING_SITE_DATA';
 
 const CreateAndRedirect = () => {
-	const { siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
+	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
 	const [ status, setStatus ] = useState< Status >( siteVertical ? 'INIT' : 'MISSING_SITE_DATA' );
 
 	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
@@ -26,12 +26,13 @@ const CreateAndRedirect = () => {
 	const freeDomainSuggestion = useFreeDomainSuggestion();
 
 	useEffect( () => {
-		if ( currentUser && freeDomainSuggestion ) {
+		// If there's no site title don't wait for a free domain suggestion, there won't be one
+		if ( currentUser && ( ! siteTitle || freeDomainSuggestion ) ) {
 			createSite( currentUser.username, freeDomainSuggestion ).then( success => {
 				setStatus( success ? 'SUCCESS' : 'ERROR' );
 			} );
 		}
-	}, [ createSite, currentUser, freeDomainSuggestion, setStatus ] );
+	}, [ createSite, currentUser, freeDomainSuggestion, siteTitle, setStatus ] );
 
 	switch ( status ) {
 		case 'INIT':
