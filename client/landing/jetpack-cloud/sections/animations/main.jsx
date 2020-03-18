@@ -26,10 +26,10 @@ export default function() {
 	} );
 
 	const animScanIconHead = useSpring( {
-		from: { y: 0 },
+		from: { transform: 'translateY(0px)' },
 		to: async next => {
 			for (;;) {
-				await next( { y: 260 } );
+				await next( { transform: 'translateY(260px)' } );
 			}
 		},
 		config: { duration: 1800 },
@@ -61,10 +61,11 @@ export default function() {
 						fill="#D0E6B8"
 					/>
 					<animated.line
+						style={ animScanIconHead }
 						x1="0"
 						x2="124"
-						y1={ animScanIconHead.y }
-						y2={ animScanIconHead.y }
+						y1="0"
+						y2="0"
 						stroke="#069E08"
 						strokeWidth="7"
 					/>
