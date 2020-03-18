@@ -34,7 +34,7 @@ const SiteEmptyContent = ( { translate } ) => {
 				onClick={ recordAction }
 				href="/discover"
 			>
-				{ translate( 'Explore Discover' ) }
+				{ translate( 'Explore' ) }
 			</a>
 		);
 	}

@@ -40,7 +40,7 @@ class FeedEmptyContent extends React.PureComponent {
 					onClick={ this.recordSecondaryAction }
 					href="/discover"
 				>
-					{ translate( 'Explore Discover' ) }
+					{ translate( 'Explore' ) }
 				</a>
 			);
 
