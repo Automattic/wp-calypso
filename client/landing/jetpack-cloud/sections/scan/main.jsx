@@ -107,6 +107,7 @@ class ScanPage extends Component {
 
 		return (
 			<>
+				<SecurityIcon icon="error" />
 				<h1 className="scan__header">{ translate( 'Your site may be at risk' ) }</h1>
 				<p>
 					{ translate(
@@ -146,7 +147,7 @@ class ScanPage extends Component {
 
 		return (
 			<>
-				<SecurityIcon className="scan__icon" icon="scan-error" />
+				<SecurityIcon icon="scan-error" />
 				<h1 className="scan__header">{ translate( 'Something went wrong' ) }</h1>
 				<p>
 					The scan did not complete successfully. In order to complete the scan you need to contact
