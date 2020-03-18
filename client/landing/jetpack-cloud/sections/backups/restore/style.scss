@@ -1,3 +1,23 @@
-.restore__header-icon {
-	fill: var();
+.restore__header {
+	display: flex;
+	justify-content: center;
+	padding-top: 32px;
+	padding-bottom: 32px;
+	.gridicon {
+		fill: var( --color-primary );
+	}
+}
+
+.restore__title {
+	font-style: normal;
+	font-weight: 600;
+	font-size: 22px;
+	line-height: 32px;
+}
+
+.restore__primary-button {
+	width: 100%;
+	@include breakpoint( '>660px' ) {
+		width: auto;
+	}
 }

@@ -21,15 +21,20 @@ interface Props {
 
 const BackupRestoreConfirm: FunctionComponent< Props > = ( {
 	onConfirm,
-	restoreSettings,
 	onRestoreSettingsChange,
+	restoreSettings,
 	restoreTimestamp,
+	siteTitle,
 } ) => {
 	const translate = useTranslate();
 
 	return (
 		<div>
-			<h3>{ translate( 'Restore site' ) }</h3>
+			<h3 className="restore__title">
+				{ siteTitle
+					? translate( 'Restore site %(siteTitle)s', { args: { siteTitle } } )
+					: translate( 'Restore site' ) }
+			</h3>
 			<p>
 				{ translate(
 					'{{strong}}%(restoreTimestamp)s{{/strong}} is the selected point for your restore',
@@ -48,7 +53,7 @@ const BackupRestoreConfirm: FunctionComponent< Props > = ( {
 				currentConfig={ restoreSettings }
 				onConfigChange={ onRestoreSettingsChange }
 			/>
-			<Button primary onClick={ onConfirm }>
+			<Button className="restore__primary-button" primary onClick={ onConfirm }>
 				{ 'Confirm Restore' }
 			</Button>
 		</div>

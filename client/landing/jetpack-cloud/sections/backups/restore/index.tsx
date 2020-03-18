@@ -7,22 +7,22 @@ import { useDispatch, useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
 import { Card } from '@automattic/components';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { RewindConfig } from 'landing/jetpack-cloud/components/rewind-config/types';
 import { rewindRestore } from 'state/activity-log/actions';
 import { useLocalizedMoment } from 'components/localized-moment';
 import Confirm from './confirm';
+import DocumentHead from 'components/data/document-head';
 import Error from './error';
 import Finished from './finished';
 import getRewindState from 'state/selectors/get-rewind-state';
 import getSiteTitle from 'state/sites/selectors/get-site-title';
 import Gridicon from 'components/gridicon';
 import InProgress from './in-progress';
+import Main from 'components/main';
 import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
 import Queued from './queued';
-import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 /**
@@ -89,9 +89,9 @@ const BackupRestorePage = ( { restoreId }: Props ) => {
 
 	const requestRestore = useCallback( () => {
 		if ( siteId && restoreId ) {
-			dispatch( rewindRestore( siteId, restoreId, {} ) );
+			dispatch( rewindRestore( siteId, restoreId, restoreSettings ) );
 		}
-	}, [ dispatch, siteId, restoreId ] );
+	}, [ dispatch, siteId, restoreId, restoreSettings ] );
 
 	const onConfirm = () => {
 		setHasRequestedRestore( true );
@@ -129,12 +129,14 @@ const BackupRestorePage = ( { restoreId }: Props ) => {
 	};
 
 	return (
-		<Main>
+		<Main className="restore">
 			<DocumentHead title="Restore" />
 			<SidebarNavigation />
 			{ siteId && <QueryRewindRestoreStatus siteId={ siteId } /> }
 			<Card>
-				<Gridicon className="restore__header-icon" icon="history" size={ 48 } />
+				<div className="restore__header">
+					<Gridicon className="restore__header-icon" icon="history" size={ 48 } />
+				</div>
 				{ render() }
 			</Card>
 		</Main>
