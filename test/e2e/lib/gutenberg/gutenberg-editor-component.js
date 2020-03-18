@@ -336,11 +336,14 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async launchPreview() {
-		return await driverHelper.clickWhenClickable(
+		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.editor-post-preview' ),
+			By.css( '.editor-post-preview__dropdown' ),
 			this.explicitWaitMS
 		);
+		const editorPostPreviewSelector = By.css( '.editor-post-preview__button-external' );
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, editorPostPreviewSelector );
+		return await driverHelper.clickWhenClickable( this.driver, editorPostPreviewSelector );
 	}
 
 	async revertToDraft() {
@@ -398,7 +401,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async closeScheduledPanel() {
-		await driverHelper.clickWhenClickable( this.driver, By.css( '.dashicons-no-alt' ) );
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.editor-post-publish-panel__header-publish-button + .components-button.has-icon' )
+		);
 	}
 
 	async submitForReview() {
