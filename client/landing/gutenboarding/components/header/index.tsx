@@ -213,12 +213,12 @@ const Header: FunctionComponent = () => {
 			aria-label={ NO__( 'Top bar' ) }
 			tabIndex={ -1 }
 		>
-			<div className="gutenboarding__header-section">
-				<div className="gutenboarding__header-group">
+			<section className="gutenboarding__header-section">
+				<div className="gutenboarding__header-section-item">
 					<Icon icon="wordpress-alt" size={ 24 } className="gutenboarding__header-wp-icon" />
 				</div>
-				<div className="gutenboarding__header-group">
-					{ siteTitleElement }
+				<div className="gutenboarding__header-section-item">{ siteTitleElement }</div>
+				<div className="gutenboarding__header-section-item">
 					{ siteTitle && (
 						<DomainPickerButton
 							className="gutenboarding__header-domain-picker-button"
@@ -237,9 +237,9 @@ const Header: FunctionComponent = () => {
 						</DomainPickerButton>
 					) }
 				</div>
-			</div>
-			<div className="gutenboarding__header-section">
-				<div className="gutenboarding__header-group">
+			</section>
+			<section className="gutenboarding__header-section">
+				<div className="gutenboarding__header-section-item">
 					{ hasSelectedDesign && (
 						<Button
 							className="gutenboarding__header-next-button"
@@ -253,7 +253,7 @@ const Header: FunctionComponent = () => {
 						</Button>
 					) }
 				</div>
-			</div>
+			</section>
 			{ showSignupDialog && <SignupForm onRequestClose={ () => setShowSignupDialog( false ) } /> }
 		</div>
 	);

@@ -32,14 +32,12 @@
 .gutenboarding__header-section {
 	display: flex;
 	align-items: center;
+	font-size: 14px;
+	padding: 10px;
 }
 
-.gutenboarding__header-group {
-	display: flex;
-	flex-direction: row;
-	margin: 10px;
-	font-size: 14px;
-	align-items: center;
+.gutenboarding__header-section-item {
+	margin-left: 10px;
 }
 
 $padding--gutenboarding__header-domain-picker-button: 0.3em 0.5em;
