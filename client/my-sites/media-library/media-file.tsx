@@ -32,6 +32,7 @@ const MediaFile: React.FC< MediaFileProps > = function MediaFile( {
 	siteSlug,
 	useProxy = false,
 	placeholder = null,
+	maxSize,
 	dispatch,
 	component: Component,
 	proxiedComponent,
@@ -45,6 +46,7 @@ const MediaFile: React.FC< MediaFileProps > = function MediaFile( {
 				query={ query }
 				component={ proxiedComponent || Component }
 				placeholder={ placeholder }
+				maxSize={ maxSize }
 				{ ...rest }
 			/>
 		);
