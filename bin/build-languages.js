@@ -155,15 +155,28 @@ languagesRequests.then( downloadedLanguages => {
 
 	if ( fs.existsSync( CALYPSO_STRINGS ) && fs.existsSync( CHUNKS_MAP ) ) {
 		const chunksMap = require( '../chunks-map.json' );
-		const translations = parse( fs.readFileSync( CALYPSO_STRINGS ) ).translations[ '' ];
-		const translationsValues = Object.values( translations );
+		const { translations } = parse( fs.readFileSync( CALYPSO_STRINGS ) );
+		const translationsFlatten = _.reduce(
+			translations,
+			( result, contextTranslations, context ) => {
+				const mappedTranslations = context
+					? _.mapKeys(
+							contextTranslations,
+							( value, key ) => context + String.fromCharCode( 4 ) + key
+					  )
+					: contextTranslations;
 
+				return _.merge( result, mappedTranslations );
+			},
+			{}
+		);
 		const chunks = _.mapValues( chunksMap, modules => {
-			return translationsValues
-				.filter( ( { comments } ) =>
+			return _.chain( translationsFlatten )
+				.pickBy( ( { comments } ) =>
 					modules.some( module => ( comments.reference || '' ).includes( module ) )
 				)
-				.map( ( { msgid } ) => msgid );
+				.keys()
+				.value();
 		} );
 
 		downloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
