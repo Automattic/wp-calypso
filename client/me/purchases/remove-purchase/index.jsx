@@ -60,6 +60,7 @@ class RemovePurchase extends Component {
 		site: PropTypes.object,
 		setAllSitesSelected: PropTypes.func.isRequired,
 		userId: PropTypes.number.isRequired,
+		title: PropTypes.string,
 	};
 
 	state = {
@@ -363,7 +364,7 @@ class RemovePurchase extends Component {
 			<>
 				<CompactCard tagName="button" className="remove-purchase__card" onClick={ this.openDialog }>
 					<Gridicon icon="trash" />
-					{ translate( 'Remove %(productName)s', { args: { productName } } ) }
+					{ this.props.title || translate( 'Remove %(productName)s', { args: { productName } } ) }
 				</CompactCard>
 				{ this.shouldShowNonPrimaryDomainWarning() && this.renderNonPrimaryDomainWarningDialog() }
 				{ this.renderDialog() }

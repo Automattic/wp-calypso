@@ -4,12 +4,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import { Card } from '@automattic/components';
+import { Card, CompactCard } from '@automattic/components';
 import VerticalNav from 'components/vertical-nav';
 import { withLocalizedMoment } from 'components/localized-moment';
 import DomainStatus from '../card/domain-status';
@@ -36,7 +37,9 @@ import {
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 } from 'state/purchases/selectors';
-import { isRechargeable, isExpired } from 'lib/purchases';
+import { isRechargeable, isExpired, isCancelable } from 'lib/purchases';
+import { cancelPurchase } from 'me/purchases/paths';
+import RemovePurchase from 'me/purchases/remove-purchase';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
 
@@ -48,7 +51,47 @@ class MappedDomainType extends React.Component {
 				{ this.dnsRecordsNavItem() }
 				{ this.domainConnectMappingNavItem() }
 				{ this.transferMappedDomainNavItem() }
+				{ this.deleteMappingNavItem() }
 			</VerticalNav>
+		);
+	}
+
+	deleteMappingNavItem() {
+		const { domain, isLoadingPurchase, purchase, selectedSite, translate } = this.props;
+
+		if ( ! domain.currentUserCanManage ) {
+			return null;
+		}
+
+		if ( isLoadingPurchase ) {
+			return <VerticalNavItem isPlaceholder />;
+		}
+
+		if ( ! selectedSite || ! purchase ) {
+			return null;
+		}
+
+		const title = translate( 'Delete your domain mapping' );
+
+		if ( isCancelable( purchase ) ) {
+			const link = cancelPurchase( selectedSite.slug, purchase.id );
+
+			return (
+				<CompactCard href={ link }>
+					<Gridicon icon="trash" />
+					{ title }
+				</CompactCard>
+			);
+		}
+
+		return (
+			<RemovePurchase
+				hasLoadedSites={ true }
+				hasLoadedUserPurchasesFromServer={ true }
+				site={ selectedSite }
+				purchase={ purchase }
+				title={ title }
+			/>
 		);
 	}
 
