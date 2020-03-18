@@ -1,16 +1,16 @@
 /**
  * Internal dependencies
  */
-import { HOME_REQUEST, HOME_SET } from 'state/action-types';
-import 'state/data-layer/wpcom/sites/home';
+import { HOME_CARDS_REQUEST, HOME_CARDS_SET } from 'state/action-types';
+import 'state/data-layer/wpcom/sites/home/cards';
 
-export const requestHomeData = siteId => ( {
-	type: HOME_REQUEST,
+export const requestHomeCards = siteId => ( {
+	type: HOME_CARDS_REQUEST,
 	siteId,
 } );
 
-export const setHomeData = ( siteId, homeData ) => ( {
-	type: HOME_SET,
-	homeData,
+export const setHomeCards = ( siteId, cards ) => ( {
+	type: HOME_CARDS_SET,
 	siteId,
+	cards,
 } );

@@ -1,9 +1,15 @@
 /**
  * Internal dependencies
  */
-import { HOME_SET } from 'state/action-types';
-import { keyedReducer } from 'state/utils';
+import { HOME_CARDS_SET } from 'state/action-types';
+import { keyedReducer, combineReducers } from 'state/utils';
 
-export const home = ( state = {}, { type, homeData } ) => ( type === HOME_SET ? homeData : state );
+export const cards = ( state = {}, action ) =>
+	action.type === HOME_CARDS_SET ? action.cards : state;
 
-export default keyedReducer( 'siteId', home );
+export default keyedReducer(
+	'siteId',
+	combineReducers( {
+		cards,
+	} )
+);
