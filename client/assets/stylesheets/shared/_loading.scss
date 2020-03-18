@@ -23,6 +23,10 @@
 	.wpcom-site__logo {
 		display: block;
 		margin-bottom: 10px;
+		position: relative;
+		top:0;
+		left:0;
+		transform: none;
 
 		path {
 			fill: var( --color-text-subtle );
