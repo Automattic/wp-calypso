@@ -336,6 +336,13 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async launchPreview() {
+		if ( driverManager.currentScreenSize() === 'mobile' ) {
+			return await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.components-button.editor-post-preview' ),
+				this.explicitWaitMS
+			);
+		}
 		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.editor-post-preview__dropdown' ),

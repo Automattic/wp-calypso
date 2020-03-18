@@ -15,7 +15,7 @@ import NotFoundPage from '../lib/pages/not-found-page.js';
 import PaypalCheckoutPage from '../lib/pages/external/paypal-checkout-page';
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 import GutenbergEditorSidebarComponent from '../lib/gutenberg/gutenberg-editor-sidebar-component';
-import PagePreviewComponent from '../lib/components/page-preview-component';
+import PagePreviewExternalComponent from '../lib/components/page-preview-external-component';
 import SimplePaymentsBlockComponent from '../lib/gutenberg/blocks/payment-block-component';
 
 import * as driverManager from '../lib/driver-manager.js';
@@ -95,8 +95,8 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		} );
 
 		step( 'Can see correct page title in preview', async function() {
-			const pagePreviewComponent = await PagePreviewComponent.Expect( driver );
-			await pagePreviewComponent.displayed();
+			const pagePreviewComponent = await PagePreviewExternalComponent.Expect( driver );
+			await pagePreviewComponent.isDisplayed();
 			const actualPageTitle = await pagePreviewComponent.pageTitle();
 			assert.strictEqual(
 				actualPageTitle.toUpperCase(),
@@ -106,7 +106,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		} );
 
 		step( 'Can see correct page content in preview', async function() {
-			const pagePreviewComponent = await PagePreviewComponent.Expect( driver );
+			const pagePreviewComponent = await PagePreviewExternalComponent.Expect( driver );
 			const content = await pagePreviewComponent.pageContent();
 			assert.strictEqual(
 				content.indexOf( pageQuote ) > -1,
@@ -120,7 +120,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		} );
 
 		step( 'Can see the image uploaded in the preview', async function() {
-			const pagePreviewComponent = await PagePreviewComponent.Expect( driver );
+			const pagePreviewComponent = await PagePreviewExternalComponent.Expect( driver );
 			const imageDisplayed = await pagePreviewComponent.imageDisplayed( fileDetails );
 			return assert.strictEqual(
 				imageDisplayed,
@@ -130,7 +130,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		} );
 
 		step( 'Can close page preview', async function() {
-			const pagePreviewComponent = await PagePreviewComponent.Expect( driver );
+			const pagePreviewComponent = await PagePreviewExternalComponent.Expect( driver );
 			await pagePreviewComponent.close();
 		} );
 
