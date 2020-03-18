@@ -113,8 +113,14 @@ function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
 
 	const { product_slug, extra, meta } = renewItem;
 	const { purchaseId, purchaseDomain } = extra;
+	if ( ! purchaseId ) {
+		throw new Error( 'Could not find purchase id for renewal.' );
+	}
+	if ( ! product_slug ) {
+		throw new Error( 'Could not find product slug for renewal.' );
+	}
 	const productList = meta ? `${ product_slug }:${ meta }` : product_slug;
-	page( `/checkout/${ productList }/renew/${ purchaseId }/${ purchaseDomain }` );
+	page( `/checkout/${ productList }/renew/${ purchaseId }/${ purchaseDomain || siteSlug || '' }` );
 }
 
 function hasIncludedDomain( purchase ) {
