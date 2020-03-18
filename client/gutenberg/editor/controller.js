@@ -146,7 +146,7 @@ export const redirect = async ( context, next ) => {
 		const postId = getPostID( context );
 
 		const url =
-			postId || ! isSiteUsingCoreSiteEditor( state, siteId )
+			postType || ! isSiteUsingCoreSiteEditor( state, siteId )
 				? getGutenbergEditorUrl( state, siteId, postId, postType )
 				: getSiteEditorUrl( state, siteId );
 		// pass along parameters, for example press-this
