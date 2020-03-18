@@ -60,7 +60,7 @@ interface Props {
 	duplicatePostId: T.PostId;
 	postId: T.PostId;
 	postType: T.PostType;
-	editorType: string;
+	editorType: 'site' | 'post'; // Note: a page or other CPT is a type of post.
 	pressThis: any;
 	siteAdminUrl: T.URL | null;
 	fseParentPageId: T.PostId;
