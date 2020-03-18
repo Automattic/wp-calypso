@@ -56,15 +56,6 @@ const JetpackCloudRewindConfig: FunctionComponent< Props > = ( {
 					strong: <strong />,
 				},
 			} ),
-		},
-		{
-			name: 'roots',
-			label: translate(
-				'{{strong}}WordPress root{{/strong}} (includes wp-config.php and any non-WordPress files)',
-				{
-					components: {
-						strong: <strong />,
-					},
 				}
 			),
 		},
