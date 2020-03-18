@@ -34,7 +34,7 @@ export default function() {
 					comment: 'Jetpack Cloud top navigation bar item',
 				} ) }
 			>
-				<JetpackLogo size={ 28 } full monochrome />
+				<JetpackLogo size={ 28 } full />
 			</Item>
 			<Item
 				tipTarget="me"
