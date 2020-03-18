@@ -7,7 +7,13 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import reducer, { errors, queries, queryRequests, mediaItemRequests } from '../reducer';
+import reducer, {
+	errors,
+	queries,
+	queryRequests,
+	mediaItemRequests,
+	selectedItems,
+} from '../reducer';
 import MediaQueryManager from 'lib/query-manager/media';
 import {
 	DESERIALIZE,
@@ -26,8 +32,12 @@ import {
 	clearMediaErrors,
 	clearMediaItemErrors,
 	createMediaItem,
+	deleteMedia,
 	failMediaItemRequest,
 	failMediaRequest,
+	receiveMedia,
+	setMediaLibrarySelectedItems,
+	successMediaItemRequest,
 } from '../actions';
 import { ValidationErrors as MediaValidationErrors } from 'lib/media/constants';
 
@@ -42,6 +52,7 @@ describe( 'reducer', () => {
 			'queries',
 			'queryRequests',
 			'mediaItemRequests',
+			'selectedItems',
 		] );
 	} );
 
@@ -559,6 +570,115 @@ describe( 'reducer', () => {
 
 		test( 'should never load persisted state', () => {
 			const state = mediaItemRequests( deepFreeze( state1 ), { type: DESERIALIZE } );
+
+			expect( state ).to.eql( {} );
+		} );
+	} );
+
+	describe( 'selectedItems()', () => {
+		const siteId = 2916284;
+		const site = {
+			ID: siteId,
+		};
+		const anotherSiteId = 87654321;
+		const mediaId = 42;
+		const mediaItem = {
+			ID: [ mediaId ],
+		};
+		const baseState = deepFreeze( {
+			[ siteId ]: [ mediaId ],
+		} );
+
+		test( 'should default to an empty object', () => {
+			const state = selectedItems( undefined, {} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		test( 'should reset selected items when media source is changed', () => {
+			const state = {
+				[ siteId ]: [ 1, 2, 3 ],
+				[ anotherSiteId ]: [ 1, 2, 3 ],
+			};
+			const result = selectedItems( deepFreeze( state ), changeMediaSource( siteId ) );
+
+			expect( result ).to.deep.eql( {
+				[ siteId ]: [],
+				[ anotherSiteId ]: [ 1, 2, 3 ],
+			} );
+		} );
+
+		test( 'should set selected items, overriding the previous ones for that site', () => {
+			const state = {
+				[ siteId ]: [ 1, 2, 3 ],
+				[ anotherSiteId ]: [ 1, 2, 3 ],
+			};
+			const result = selectedItems(
+				deepFreeze( state ),
+				setMediaLibrarySelectedItems( siteId, [ mediaItem ] )
+			);
+
+			expect( result ).to.deep.eql( {
+				[ siteId ]: [ mediaItem.ID ],
+				[ anotherSiteId ]: [ 1, 2, 3 ],
+			} );
+		} );
+
+		test( 'should autoselect transient media item during creation', () => {
+			const state = {
+				[ site.ID ]: [ 1, 2 ],
+			};
+			const result = selectedItems( deepFreeze( state ), createMediaItem( site, mediaItem ) );
+
+			expect( result ).to.deep.eql( {
+				[ site.ID ]: [ 1, 2, mediaItem.ID ],
+			} );
+		} );
+
+		test( 'should add any newly uploaded media items after successful upload', () => {
+			const state = {
+				[ site.ID ]: [ 1, 2 ],
+			};
+			const result = selectedItems( deepFreeze( state ), receiveMedia( siteId, [ mediaItem ] ) );
+
+			expect( result ).to.deep.eql( {
+				[ site.ID ]: [ 1, 2, mediaItem.ID ],
+			} );
+		} );
+
+		test( 'should deselect any transient media item after its corresponding media was successfully uploaded', () => {
+			const state = {
+				[ site.ID ]: [ 1, mediaId, 2 ],
+			};
+			const result = selectedItems(
+				deepFreeze( state ),
+				successMediaItemRequest( siteId, mediaId )
+			);
+
+			expect( result ).to.deep.eql( {
+				[ site.ID ]: [ 1, 2 ],
+			} );
+		} );
+
+		test( 'should deselect any media items that are being removed', () => {
+			const state = {
+				[ site.ID ]: [ 1, mediaId, 2 ],
+			};
+			const result = selectedItems( deepFreeze( state ), deleteMedia( siteId, [ 1, 2 ] ) );
+
+			expect( result ).to.deep.eql( {
+				[ site.ID ]: [ mediaId ],
+			} );
+		} );
+
+		test( 'should never persist state', () => {
+			const state = selectedItems( baseState, { type: SERIALIZE } );
+
+			expect( state ).to.be.undefined;
+		} );
+
+		test( 'should never load persisted state', () => {
+			const state = selectedItems( baseState, { type: DESERIALIZE } );
 
 			expect( state ).to.eql( {} );
 		} );
