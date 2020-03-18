@@ -1,21 +1,30 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
+import JetpackCloudRewindConfig from 'landing/jetpack-cloud/components/rewind-config';
+import { RewindConfig } from 'landing/jetpack-cloud/components/rewind-config/types';
 
 interface Props {
 	onConfirm: () => void;
 	siteTitle: string | null;
 	restoreTimestamp: string;
+	restoreSettings: RewindConfig;
+	onRestoreSettingsChange: ( config: RewindConfig ) => void;
 }
 
-const BackupRestoreConfirm = ( { onConfirm, restoreTimestamp }: Props ) => {
+const BackupRestoreConfirm: FunctionComponent< Props > = ( {
+	onConfirm,
+	restoreSettings,
+	onRestoreSettingsChange,
+	restoreTimestamp,
+} ) => {
 	const translate = useTranslate();
 
 	return (
@@ -34,6 +43,11 @@ const BackupRestoreConfirm = ( { onConfirm, restoreTimestamp }: Props ) => {
 					}
 				) }
 			</p>
+			<h4>{ translate( 'Choose the items you wish to restore:' ) }</h4>
+			<JetpackCloudRewindConfig
+				currentConfig={ restoreSettings }
+				onConfigChange={ onRestoreSettingsChange }
+			/>
 			<Button primary onClick={ onConfirm }>
 				{ 'Confirm Restore' }
 			</Button>
