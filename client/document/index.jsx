@@ -81,6 +81,8 @@ class Document extends React.Component {
 			'jetpack-connect' === sectionName &&
 			'woocommerce-onboarding' === requestFrom;
 
+		const theme = config( 'theme' );
+
 		return (
 			<html
 				lang={ lang }
@@ -107,6 +109,7 @@ class Document extends React.Component {
 					className={ classNames( {
 						rtl: isRTL,
 						'color-scheme': config.isEnabled( 'me/account/color-scheme-picker' ),
+						[ 'theme-' + theme ]: theme,
 						[ 'is-group-' + sectionGroup ]: sectionGroup,
 						[ 'is-section-' + sectionName ]: sectionName,
 					} ) }
