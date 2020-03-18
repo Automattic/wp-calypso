@@ -16,6 +16,7 @@ import PaypalCheckoutPage from '../lib/pages/external/paypal-checkout-page';
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 import GutenbergEditorSidebarComponent from '../lib/gutenberg/gutenberg-editor-sidebar-component';
 import PagePreviewExternalComponent from '../lib/components/page-preview-external-component';
+import PagePreviewComponent from '../lib/components/page-preview-component';
 import SimplePaymentsBlockComponent from '../lib/gutenberg/blocks/payment-block-component';
 
 import * as driverManager from '../lib/driver-manager.js';
@@ -95,8 +96,12 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		} );
 
 		step( 'Can see correct page title in preview', async function() {
-			this.pagePreviewComponent = new PagePreviewExternalComponent( driver );
-			await this.pagePreviewComponent.isDisplayed();
+			if ( driverManager.currentScreenSize() === 'mobile' ) {
+				this.pagePreviewComponent = await PagePreviewComponent.Expect( driver );
+				await this.pagePreviewComponent.displayed();
+			} else {
+				this.pagePreviewComponent = new PagePreviewExternalComponent( driver );
+			}
 			const actualPageTitle = await this.pagePreviewComponent.pageTitle();
 			assert.strictEqual(
 				actualPageTitle.toUpperCase(),

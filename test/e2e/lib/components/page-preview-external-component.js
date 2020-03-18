@@ -52,5 +52,10 @@ export default class PagePreviewExternalComponent extends AsyncBaseContainer {
 	static async switchToWindow( driver ) {
 		const handles = await driver.getAllWindowHandles();
 		await driver.switchTo().window( handles[ 1 ] );
+		return await driverHelper.waitTillPresentAndDisplayed(
+			this.driver,
+			previewWindowMainSelector,
+			explicitWaitMS
+		);
 	}
 }
