@@ -56,7 +56,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 				</Route>
 
 				<Route path={ makePath( Step.DoCreateSite ) }>
-					<CreateAndRedirect to={ makePath( Step.CreateSite ) } />
+					<CreateAndRedirect />
 					<CreateSite />
 				</Route>
 
