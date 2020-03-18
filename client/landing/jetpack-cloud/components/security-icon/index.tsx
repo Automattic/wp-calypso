@@ -7,8 +7,9 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
+import errorIcon from './images/error.svg';
 import okayIcon from './images/security-okay.svg';
-import errorIcon from './images/security-error.svg';
+import scanErrorIcon from './images/security-error.svg';
 
 interface Props {
 	icon: string;
@@ -19,8 +20,13 @@ function SecurityIcon( props: Props ) {
 	const { icon, className } = props;
 
 	let iconPath = okayIcon;
-	if ( 'error' === icon ) {
-		iconPath = errorIcon;
+	switch ( icon ) {
+		case 'error':
+			iconPath = scanErrorIcon;
+			break;
+		case 'scan-error':
+			iconPath = errorIcon;
+			break;
 	}
 
 	return (
