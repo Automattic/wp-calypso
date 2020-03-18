@@ -27,8 +27,10 @@ const BackupDownloadPage = ( { rewindId }: Props ) => {
 	const dispatch = useDispatch();
 
 	const moment = useLocalizedMoment();
-	const backupDateString: string = moment.unix( rewindId ).format( 'LLL' );
+
+	const downloadTimestamp: string = moment.unix( rewindId ).format( 'LLL' );
 	const longBackupDateString: string = moment.unix( rewindId ).format( 'LLLL' );
+
 	const siteId = useSelector( getSelectedSiteId );
 	const siteTitle = useSelector( state => getSiteTitle( state, siteId ) );
 
@@ -54,18 +56,12 @@ const BackupDownloadPage = ( { rewindId }: Props ) => {
 	const render = () => {
 		// there is no backup download creation info
 		if ( null === backupProgress ) {
-			return (
-				<Confirm
-					backupDateString={ backupDateString }
-					onConfirm={ onConfirm }
-					siteTitle={ siteTitle }
-				/>
-			);
+			return <Confirm downloadTimestamp={ downloadTimestamp } onConfirm={ onConfirm } />;
 			// the user has confirmed they want to download
 		} else if ( null !== downloadId ) {
 			return (
 				<InProgress
-					backupDateString={ backupDateString }
+					backupDateString={ longBackupDateString }
 					precent={ backupProgress?.progress }
 					siteTitle={ siteTitle }
 				/>
