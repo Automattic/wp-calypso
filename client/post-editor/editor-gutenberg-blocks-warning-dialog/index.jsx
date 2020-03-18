@@ -43,7 +43,7 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 		switchToGutenberg: PropTypes.func,
 		openPostRevisionsDialog: PropTypes.func,
 		optInEnabled: PropTypes.bool,
-		useClassic: PropTypes.func,
+		logClassicEditorUsed: PropTypes.func,
 		buildSiteAdminUrl: PropTypes.func,
 		wpAdminRedirectionUrl: PropTypes.string,
 	};
@@ -55,7 +55,7 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 		switchToGutenberg: noop,
 		openPostRevisionsDialog: noop,
 		optInEnabled: false,
-		useClassic: noop,
+		logClassicEditorUsed: noop,
 	};
 
 	state = {
@@ -77,12 +77,11 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 	}
 
 	useClassicEditor = () => {
-		const { useClassic, isPrivateAtomic, wpAdminRedirectionUrl } = this.props;
-		useClassic();
+		const { logClassicEditorUsed, isPrivateAtomic, wpAdminRedirectionUrl } = this.props;
+		logClassicEditorUsed();
+		this.hideDialog();
 		if ( isPrivateAtomic ) {
 			window.location.href = wpAdminRedirectionUrl;
-		} else {
-			this.hideDialog();
 		}
 	};
 
@@ -170,7 +169,7 @@ const mapDispatchToProps = dispatch => ( {
 			)
 		);
 	},
-	useClassic: () => {
+	logClassicEditorUsed: () => {
 		dispatch(
 			withAnalytics(
 				composeAnalytics(

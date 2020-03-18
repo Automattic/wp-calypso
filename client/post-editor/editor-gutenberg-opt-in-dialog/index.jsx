@@ -43,17 +43,17 @@ class EditorGutenbergOptInDialog extends Component {
 		isDialogVisible: PropTypes.bool,
 		hideDialog: PropTypes.func,
 		optIn: PropTypes.func,
-		useClassic: PropTypes.func,
+		logClassicEditorUsed: PropTypes.func,
 		siteId: PropTypes.number,
 		wpAdminRedirectionUrl: PropTypes.string,
 	};
 
-	onCloseDialog = () => {
-		const { isPrivateAtomic, wpAdminRedirectionUrl } = this.props;
+	useClassicEditor = () => {
+		const { logClassicEditorUsed, hideDialog, isPrivateAtomic, wpAdminRedirectionUrl } = this.props;
+		logClassicEditorUsed();
+		hideDialog();
 		if ( isPrivateAtomic ) {
 			window.location.href = wpAdminRedirectionUrl;
-		} else {
-			this.props.hideDialog();
 		}
 	};
 
@@ -64,7 +64,7 @@ class EditorGutenbergOptInDialog extends Component {
 	};
 
 	render() {
-		const { translate, isDialogVisible, useClassic } = this.props;
+		const { translate, isDialogVisible } = this.props;
 		const buttons = [
 			<Button key="gutenberg" onClick={ this.optInToGutenberg } primary>
 				{ translate( 'Try the block editor' ) }
@@ -72,7 +72,7 @@ class EditorGutenbergOptInDialog extends Component {
 			{
 				action: 'cancel',
 				label: translate( 'Use the current editor' ),
-				onClick: useClassic,
+				onClick: this.useClassicEditor,
 			},
 		];
 		return (
@@ -80,12 +80,15 @@ class EditorGutenbergOptInDialog extends Component {
 				additionalClassNames="editor-gutenberg-opt-in-dialog"
 				isVisible={ isDialogVisible }
 				buttons={ buttons }
-				onClose={ this.onCloseDialog }
+				onClose={ this.useClassicEditor }
 			>
 				<div className="editor-gutenberg-opt-in-dialog__illustration" />
 
 				<header>
-					<button onClick={ this.onCloseDialog } className="editor-gutenberg-opt-in-dialog__close">
+					<button
+						onClick={ this.useClassicEditor }
+						className="editor-gutenberg-opt-in-dialog__close"
+					>
 						<Gridicon icon="cross" />
 					</button>
 				</header>
@@ -122,7 +125,7 @@ const mapDispatchToProps = dispatch => ( {
 			)
 		);
 	},
-	useClassic: () => {
+	logClassicEditorUsed: () => {
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
@@ -134,8 +137,7 @@ const mapDispatchToProps = dispatch => ( {
 					),
 					recordTracksEvent( 'calypso_gutenberg_use_classic_editor' ),
 					bumpStat( 'selected-editor', 'calypso-gutenberg-use-classic-editor' )
-				),
-				hideGutenbergOptInDialog()
+				)
 			)
 		);
 	},
