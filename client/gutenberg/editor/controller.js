@@ -202,7 +202,7 @@ export const post = ( context, next ) => {
 };
 
 export const siteEditor = ( context, next ) => {
-	context.primary = <CalypsoifyIframe postType={ 'site' } />;
+	context.primary = <CalypsoifyIframe editorType={ 'site' } />;
 
 	return next();
 };

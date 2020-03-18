@@ -60,6 +60,7 @@ interface Props {
 	duplicatePostId: T.PostId;
 	postId: T.PostId;
 	postType: T.PostType;
+	editorType: string;
 	pressThis: any;
 	siteAdminUrl: T.URL | null;
 	fseParentPageId: T.PostId;
@@ -619,7 +620,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 const mapStateToProps = (
 	state: T.AppState,
-	{ postId, postType, duplicatePostId, fseParentPageId, creatingNewHomepage }: Props
+	{ postId, postType, duplicatePostId, fseParentPageId, creatingNewHomepage, editorType }: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
@@ -646,7 +647,7 @@ const mapStateToProps = (
 	}
 
 	const siteAdminUrl =
-		postType === 'site'
+		editorType === 'site'
 			? getSiteAdminUrl( state, siteId, 'admin.php?page=gutenberg-edit-site' )
 			: getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
 
