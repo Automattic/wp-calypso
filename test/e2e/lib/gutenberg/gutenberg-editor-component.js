@@ -110,7 +110,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async enterText( text ) {
 		const appenderSelector = By.css( '.block-editor-default-block-appender' );
-		const textSelector = By.css( '.wp-block-paragraph' );
+		const textSelector = By.css( 'p.block-editor-rich-text__editable:first-of-type' );
 		await driverHelper.clickWhenClickable( this.driver, appenderSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, textSelector );
 		return await this.driver.findElement( textSelector ).sendKeys( text );
