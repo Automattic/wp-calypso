@@ -525,18 +525,6 @@ class SectionMigrate extends Component {
 		let progressItemText;
 		switch ( progressState ) {
 			case 'backing-up':
-				progressItemText = (
-					<span>
-						{ translate( 'Backup of {{sp}}%(sourceSiteDomain)s{{/sp}} completed', {
-							args: {
-								sourceSiteDomain,
-							},
-							components: {
-								sp: <span className="migrate__domain" />,
-							},
-						} ) }
-					</span>
-				);
 				if ( migrationStatus === 'backing-up' ) {
 					progressItemText = (
 						<span>
@@ -550,7 +538,20 @@ class SectionMigrate extends Component {
 							} ) }
 						</span>
 					);
+					break;
 				}
+				progressItemText = (
+					<span>
+						{ translate( 'Backup of {{sp}}%(sourceSiteDomain)s{{/sp}} completed', {
+							args: {
+								sourceSiteDomain,
+							},
+							components: {
+								sp: <span className="migrate__domain" />,
+							},
+						} ) }
+					</span>
+				);
 				break;
 			case 'restoring':
 				progressItemText = (
