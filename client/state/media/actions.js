@@ -16,6 +16,7 @@ import {
 	MEDIA_ITEM_REQUEST_FAILURE,
 	MEDIA_ITEM_REQUEST_SUCCESS,
 	MEDIA_ITEM_REQUESTING,
+	MEDIA_LIBRARY_SELECTED_ITEMS_UPDATE,
 	MEDIA_RECEIVE,
 	MEDIA_REQUEST,
 	MEDIA_REQUEST_FAILURE,
@@ -254,5 +255,21 @@ export function clearMediaItemErrors( siteId, mediaId ) {
 		type: MEDIA_ITEM_ERRORS_CLEAR,
 		siteId,
 		mediaId,
+	};
+}
+
+/**
+ * Returns an action object used in signalling that new selected media item(s)
+ * are being set for the site's media library.
+ *
+ * @param  {number}  siteId Site ID
+ * @param  {Array}   media  Array of media objects
+ * @returns {object}        Action object
+ */
+export function setMediaLibrarySelectedItems( siteId, media ) {
+	return {
+		type: MEDIA_LIBRARY_SELECTED_ITEMS_UPDATE,
+		media,
+		siteId,
 	};
 }
