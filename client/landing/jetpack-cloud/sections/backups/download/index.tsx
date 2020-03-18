@@ -9,7 +9,6 @@ import { useDispatch, useSelector } from 'react-redux';
  */
 import { BackupProgress } from './types';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteTitle } from 'state/sites/selectors';
 import { rewindBackup } from 'state/activity-log/actions';
 import { useLocalizedMoment } from 'components/localized-moment';
 import Confirm from './confirm';
@@ -29,10 +28,9 @@ const BackupDownloadPage = ( { rewindId }: Props ) => {
 	const moment = useLocalizedMoment();
 
 	const downloadTimestamp: string = moment.unix( rewindId ).format( 'LLL' );
-	const longBackupDateString: string = moment.unix( rewindId ).format( 'LLLL' );
+	const longDownloadTimestamp: string = moment.unix( rewindId ).format( 'LLLL' );
 
 	const siteId = useSelector( getSelectedSiteId );
-	const siteTitle = useSelector( state => getSiteTitle( state, siteId ) );
 
 	const backupProgress: BackupProgress | null = useSelector( state =>
 		getBackupProgressForRewindId( state, siteId, rewindId )
@@ -61,24 +59,17 @@ const BackupDownloadPage = ( { rewindId }: Props ) => {
 		} else if ( null !== downloadId ) {
 			return (
 				<InProgress
-					backupDateString={ longBackupDateString }
+					longDownloadTimestamp={ longDownloadTimestamp }
 					precent={ backupProgress?.progress }
-					siteTitle={ siteTitle }
 				/>
 			);
 			// NaN progress means the backup finished
 		} else if ( isNaN( backupProgress.progress ) ) {
-			return (
-				<Ready
-					downloadUrl={ downloadUrl }
-					longBackupDateString={ longBackupDateString }
-					siteTitle={ siteTitle }
-				/>
-			);
+			return <Ready downloadUrl={ downloadUrl } longDownloadTimestamp={ longDownloadTimestamp } />;
 		}
 
 		// todo: make error state, make sure it is actually an error
-		return <Error siteTitle={ siteTitle } error={ backupProgress?.error } />;
+		return <Error error={ backupProgress?.error } />;
 	};
 
 	return (
