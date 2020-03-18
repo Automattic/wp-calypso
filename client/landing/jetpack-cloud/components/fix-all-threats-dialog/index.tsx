@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -11,6 +12,7 @@ import { translate } from 'i18n-calypso';
 import { Dialog } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 import ServerCredentialsForm from '../server-credentials-form';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Style dependencies
@@ -18,8 +20,9 @@ import ServerCredentialsForm from '../server-credentials-form';
 import './style.scss';
 
 interface Props {
-	showDialog: boolean;
 	onCloseDialog: Function;
+	showDialog: boolean;
+	siteId: number | null;
 }
 
 class FixAllThreatsDialog extends React.PureComponent< Props > {
@@ -29,7 +32,7 @@ class FixAllThreatsDialog extends React.PureComponent< Props > {
 	};
 
 	render() {
-		const { onCloseDialog, showDialog } = this.props;
+		const { onCloseDialog, showDialog, siteId } = this.props;
 
 		return (
 			<Dialog
@@ -56,10 +59,10 @@ class FixAllThreatsDialog extends React.PureComponent< Props > {
 				</div>
 				<ServerCredentialsForm
 					className="fix-all-threats-dialog__form"
-					onCancel={ () => console.log( 'Canceled' ) }
+					onCancel={ onCloseDialog }
 					onComplete={ () => console.log( 'Completed' ) }
 					role="main"
-					siteId={ 28393212 }
+					siteId={ siteId }
 					labels={ {
 						cancel: translate( 'Go back' ),
 						save: translate( 'Save credentials and fix' ),
@@ -70,4 +73,11 @@ class FixAllThreatsDialog extends React.PureComponent< Props > {
 	}
 }
 
-export default FixAllThreatsDialog;
+const mapStateToProps = ( state: object ) => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		siteId,
+	};
+};
+
+export default connect( mapStateToProps )( FixAllThreatsDialog );
