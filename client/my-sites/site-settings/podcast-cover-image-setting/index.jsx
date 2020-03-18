@@ -16,9 +16,8 @@ import { Button } from '@automattic/components';
 import EditorMediaModalDialog from 'post-editor/media-modal/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
+import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
 import Image from 'components/image';
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import MediaStore from 'lib/media/store';
 import { isItemBeingUploaded } from 'lib/media/utils';
 import MediaActions from 'lib/media/actions';
@@ -146,8 +145,8 @@ class PodcastCoverImageSetting extends PureComponent {
 			return;
 		}
 
-		const { siteId } = this.props;
-		const selectedItem = head( MediaLibrarySelectedStore.getAll( siteId ) );
+		const { selectedItems } = this.props;
+		const selectedItem = head( selectedItems );
 		if ( ! selectedItem ) {
 			return;
 		}
@@ -254,31 +253,29 @@ class PodcastCoverImageSetting extends PureComponent {
 
 		return (
 			hasToggledModal && (
-				<MediaLibrarySelectedData siteId={ siteId }>
-					<AsyncLoad
-						require="post-editor/media-modal"
-						placeholder={ <EditorMediaModalDialog isVisible /> }
-						siteId={ siteId }
-						onClose={ this.editSelectedMedia }
-						isParentReady={ this.isParentReady }
-						enabledFilters={ [ 'images' ] }
-						{ ...( isEditingCoverImage
-							? {
-									imageEditorProps: {
-										allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
-										onDone: this.setCoverImage,
-										onCancel: this.cancelEditingCoverImage,
-									},
-							  }
-							: {} ) }
-						visible={ isModalVisible }
-						labels={ {
-							confirm: translate( 'Continue' ),
-						} }
-						disableLargeImageSources={ true }
-						single
-					/>
-				</MediaLibrarySelectedData>
+				<AsyncLoad
+					require="post-editor/media-modal"
+					placeholder={ <EditorMediaModalDialog isVisible /> }
+					siteId={ siteId }
+					onClose={ this.editSelectedMedia }
+					isParentReady={ this.isParentReady }
+					enabledFilters={ [ 'images' ] }
+					{ ...( isEditingCoverImage
+						? {
+								imageEditorProps: {
+									allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
+									onDone: this.setCoverImage,
+									onCancel: this.cancelEditingCoverImage,
+								},
+						  }
+						: {} ) }
+					visible={ isModalVisible }
+					labels={ {
+						confirm: translate( 'Continue' ),
+					} }
+					disableLargeImageSources={ true }
+					single
+				/>
 			)
 		);
 	}
@@ -327,6 +324,7 @@ export default connect(
 			site: getSelectedSite( state ),
 			crop: getImageEditorCrop( state ),
 			transform: getImageEditorTransform( state ),
+			selectedItems: getMediaLibrarySelectedItems( state, siteId ),
 		};
 	},
 	{
