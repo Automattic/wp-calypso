@@ -19,7 +19,7 @@ import PaypalCheckoutPage from '../lib/pages/external/paypal-checkout-page';
 import SidebarComponent from '../lib/components/sidebar-component.js';
 import NoticesComponent from '../lib/components/notices-component.js';
 import NavBarComponent from '../lib/components/nav-bar-component.js';
-import PostPreviewComponent from '../lib/components/post-preview-component';
+import PostPreviewExternalComponent from '../lib/components/post-preview-external-component';
 import RevisionsModalComponent from '../lib/components/revisions-modal-component';
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 import GutenbergEditorSidebarComponent from '../lib/gutenberg/gutenberg-editor-sidebar-component';
@@ -129,7 +129,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 
 		step( 'Can see correct post title in preview', async function() {
-			this.postPreviewComponent = await PostPreviewComponent.Expect( driver );
+			this.postPreviewComponent = await PostPreviewExternalComponent.Expect( driver );
 			const postTitle = await this.postPreviewComponent.postTitle();
 			assert.strictEqual(
 				postTitle.toLowerCase(),

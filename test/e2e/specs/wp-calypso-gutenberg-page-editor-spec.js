@@ -95,9 +95,9 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		} );
 
 		step( 'Can see correct page title in preview', async function() {
-			const pagePreviewComponent = await PagePreviewExternalComponent.Expect( driver );
-			await pagePreviewComponent.isDisplayed();
-			const actualPageTitle = await pagePreviewComponent.pageTitle();
+			this.pagePreviewComponent = await PagePreviewExternalComponent.Expect( driver );
+			await this.pagePreviewComponent.isDisplayed();
+			const actualPageTitle = await this.pagePreviewComponent.pageTitle();
 			assert.strictEqual(
 				actualPageTitle.toUpperCase(),
 				pageTitle.toUpperCase(),
@@ -106,8 +106,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		} );
 
 		step( 'Can see correct page content in preview', async function() {
-			const pagePreviewComponent = await PagePreviewExternalComponent.Expect( driver );
-			const content = await pagePreviewComponent.pageContent();
+			const content = await this.pagePreviewComponent.pageContent();
 			assert.strictEqual(
 				content.indexOf( pageQuote ) > -1,
 				true,
@@ -120,8 +119,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		} );
 
 		step( 'Can see the image uploaded in the preview', async function() {
-			const pagePreviewComponent = await PagePreviewExternalComponent.Expect( driver );
-			const imageDisplayed = await pagePreviewComponent.imageDisplayed( fileDetails );
+			const imageDisplayed = await this.pagePreviewComponent.imageDisplayed( fileDetails );
 			return assert.strictEqual(
 				imageDisplayed,
 				true,
@@ -130,8 +128,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		} );
 
 		step( 'Can close page preview', async function() {
-			const pagePreviewComponent = await PagePreviewExternalComponent.Expect( driver );
-			await pagePreviewComponent.close();
+			await this.pagePreviewComponent.close();
 		} );
 
 		step( 'Can publish and preview published content', async function() {
