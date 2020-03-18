@@ -86,7 +86,7 @@ const ProxiedImage: React.FC< Props > = function ProxiedImage( {
 				URL.revokeObjectURL( imageObjectUrl );
 			}
 		};
-	}, [ imageObjectUrl, filePath, requestId, siteSlug ] );
+	}, [ filePath, requestId, siteSlug ] );
 
 	if ( ! imageObjectUrl ) {
 		return placeholder as React.ReactElement;
