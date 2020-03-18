@@ -197,10 +197,14 @@ class PostTypeList extends Component {
 			return null;
 		}
 
+		//Temporary workaround to Sentence case label from core API
+		const addNewLabel =
+			postLabels.add_new_item[ 0 ].toUpperCase() + postLabels.add_new_item.slice( 1 ).toLowerCase();
+
 		return (
 			<SectionHeader label={ postLabels.name }>
 				<Button primary compact className="post-type-list__add-post" href={ editorUrl }>
-					{ postLabels.add_new_item }
+					{ addNewLabel }
 				</Button>
 			</SectionHeader>
 		);
