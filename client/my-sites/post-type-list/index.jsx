@@ -199,7 +199,7 @@ class PostTypeList extends Component {
 
 		let addNewLabel = postLabels.add_new_item;
 
-		if ( 'en' === localeSlug ) {
+		if ( 'en' === localeSlug || 'en-gb' === localeSlug ) {
 			// Temporary workaround to Sentence case label from core API for EN lang
 			addNewLabel =
 				postLabels.add_new_item[ 0 ].toUpperCase() +
