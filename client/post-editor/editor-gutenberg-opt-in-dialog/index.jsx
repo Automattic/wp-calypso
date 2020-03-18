@@ -162,6 +162,7 @@ export default connect( state => {
 	const wpAdminRedirectionUrl = getWpAdminClassicEditorRedirectionUrl( state, siteId );
 
 	return {
+		siteId,
 		gutenbergUrl,
 		optInEnabled,
 		isDialogVisible,
