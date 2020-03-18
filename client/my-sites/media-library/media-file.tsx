@@ -11,7 +11,7 @@ import isPrivateSite from 'state/selectors/is-private-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
-import ProxiedImage, { RenderedComponent } from './proxied-image';
+import ProxiedFile, { RenderedComponent } from './proxied-file';
 import { mediaURLToProxyConfig } from 'lib/media/utils';
 
 export interface MediaFileProps {
@@ -42,7 +42,7 @@ const MediaFile: React.FC< MediaFileProps > = function MediaFile( {
 } ) {
 	if ( useProxy ) {
 		return (
-			<ProxiedImage
+			<ProxiedFile
 				siteSlug={ siteSlug }
 				filePath={ filePath }
 				query={ query }

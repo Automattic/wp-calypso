@@ -1,32 +1,17 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+
+const { Blob } = globalThis; // The linter complains if I don't do this...?
 
 /**
  * Internal dependencies
  */
-import debugFactory from 'debug';
 import wpcom from 'lib/wp';
+import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:my-sites:media-library:proxied-image' );
-const { Blob } = globalThis; // The linter complains if I don't do this...?
-
-type RenderedComponentProps = {
-	src: string;
-	[ key: string ]: any;
-};
-export type RenderedComponent = string | React.ComponentType< RenderedComponentProps >;
-
-interface Props {
-	query: string;
-	filePath: string;
-	siteSlug: string;
-	placeholder: React.ReactNode | null;
-	component: RenderedComponent;
-
-	[ key: string ]: any;
-}
 
 const cache: { [ key: string ]: Blob } = {};
 const cacheResponse = ( requestId: string, blob: Blob, freshness = 60000 ) => {
@@ -44,23 +29,19 @@ const cacheResponse = ( requestId: string, blob: Blob, freshness = 60000 ) => {
 	}, freshness );
 };
 
-const ProxiedImage: React.FC< Props > = function ProxiedImage( {
-	siteSlug,
-	filePath,
-	query,
-	placeholder,
-	component: Component,
-	...rest
-} ) {
-	const [ imageObjectUrl, setImageObjectUrl ] = useState< string >( '' );
-	const requestId = `media-library-proxied-image-${ siteSlug }${ filePath }${ query }`;
+export function useProxiedFileUrl ( filePath: string, siteSlug: string, query = "" ) {
+	const [error, setError] = useState<Error | null>( null );
+	const [loading, setLoading] = useState<boolean>( true );
+	const [imageObjectUrl, setImageObjectUrl] = useState<string>( '' );
+	const requestId = `media-library-proxied-file-${siteSlug}${filePath}${query}`;
 
 	useEffect( () => {
-		if ( ! imageObjectUrl ) {
+		if ( !imageObjectUrl ) {
 			if ( cache[ requestId ] ) {
 				const url = URL.createObjectURL( cache[ requestId ] );
 				setImageObjectUrl( url );
 				debug( 'set image from cache', { url } );
+				setLoading( false );
 			} else {
 				debug( 'requesting image from API', { requestId, imageObjectUrl } );
 				wpcom
@@ -74,8 +55,11 @@ const ProxiedImage: React.FC< Props > = function ProxiedImage( {
 								cacheResponse( requestId, data );
 								setImageObjectUrl( URL.createObjectURL( data ) );
 								debug( 'got image from API', { requestId, imageObjectUrl, data } );
+							} else {
+								setError( err );
 							}
-						}
+							setLoading( false );
+						},
 					);
 			}
 		}
@@ -84,20 +68,11 @@ const ProxiedImage: React.FC< Props > = function ProxiedImage( {
 			if ( imageObjectUrl ) {
 				debug( 'Cleared blob from memory on dismount: ' + imageObjectUrl );
 				URL.revokeObjectURL( imageObjectUrl );
+				setImageObjectUrl( "" );
 			}
 		};
-	}, [ imageObjectUrl, filePath, requestId, siteSlug ] );
+	}, [filePath, requestId, siteSlug] );
 
-	if ( ! imageObjectUrl ) {
-		return placeholder as React.ReactElement;
-	}
+	return [imageObjectUrl, loading, error];
+}
 
-	/* eslint-disable-next-line jsx-a11y/alt-text */
-	return <Component src={ imageObjectUrl } { ...rest } />;
-};
-
-ProxiedImage.defaultProps = {
-	placeholder: null,
-};
-
-export default ProxiedImage;
