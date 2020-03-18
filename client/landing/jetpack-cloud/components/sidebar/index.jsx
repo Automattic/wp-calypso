@@ -15,6 +15,7 @@ import config from 'config';
 import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import { itemLinkMatches } from 'my-sites/sidebar/utils';
+import Badge from 'components/badge';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarItem from 'layout/sidebar/item';
@@ -39,6 +40,7 @@ class JetpackCloudSidebar extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
 		selectedSiteSlug: PropTypes.string,
+		threats: PropTypes.array,
 	};
 
 	/**
@@ -62,7 +64,8 @@ class JetpackCloudSidebar extends Component {
 	};
 
 	render() {
-		const { selectedSiteSlug, translate } = this.props;
+		const { selectedSiteSlug, translate, threats } = this.props;
+		const numberOfThreatsFound = threats.length;
 
 		return (
 			<Sidebar className="sidebar__jetpack-cloud">
@@ -130,7 +133,18 @@ class JetpackCloudSidebar extends Component {
 										itemLinkMatches( '/scan', this.props.path ) &&
 										! itemLinkMatches( '/scan/history', this.props.path )
 									}
-								/>
+								>
+									{ numberOfThreatsFound > 0 && (
+										<Badge type="scan-threat">
+											{ translate( '%(number)d threat', '%(number)d threats', {
+												count: numberOfThreatsFound,
+												args: {
+													number: numberOfThreatsFound,
+												},
+											} ) }
+										</Badge>
+									) }
+								</SidebarItem>
 								<SidebarItem
 									label={ translate( 'History', {
 										comment: 'Jetpack Cloud / Scan History sidebar navigation item',
@@ -185,15 +199,23 @@ class JetpackCloudSidebar extends Component {
 	}
 }
 
+// This has to be replaced for a real selector once we load the
+// threats information into our Redux store.
+const getSiteThreats = () => {
+	return [ {}, {} ];
+};
+
 export default connect(
 	state => {
 		const isBackupSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_BACKUP );
 		const isScanSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_SCAN );
+		const threats = getSiteThreats( state );
 
 		return {
 			isBackupSectionOpen,
 			isScanSectionOpen,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
+			threats,
 		};
 	},
 	{
