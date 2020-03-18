@@ -164,18 +164,21 @@ $y-axis-padding: 0 20px 0 10px;
 
 // Individual bar wrapper & misc
 // 1: Positions the bar in the space as defined by .bar
-// 2: Default value for top so bars grow when they get a new value
-//    (doesn't function correctly for period switching right now, not sure why)
-//    (also doesn't work because updating the DOM is so heavy it stalls all animations)
+// 2: use `transform` (as opposed to top or height) for better transition performance, see: https://www.paulirish.com/2012/why-moving-elements-with-translate-is-better-than-posabs-topleft/
+// 3: add a transition to make switching between periods nicer
+// 4: set `transform-origin` to the bottom so scalling takes the bar up ↑
 
 .chart__bar-section {
 	display: inline-block;
 	background-color: var( --color-primary-40 );
 	position: absolute;
-	top: 0; // 2
 	right: 16%; // 1
 	bottom: 0; // 1
 	left: 16%; // 1
+	height: 100%;
+	transform: scaleY( 0 ); // 2
+	transition: transform 0.3s ease-in-out; // 3
+	transform-origin: 0% 100%; //4 
 	z-index: z-index( 'root', '.chart__bar-section' );
 
 	.chart__bar:hover &.is-bar {
@@ -184,11 +187,6 @@ $y-axis-padding: 0 20px 0 10px;
 
 	.chart__bar.is-selected &.is-bar {
 		background-color: var( --color-accent-40 );
-	}
-
-	&.is-spacer {
-		z-index: z-index( 'root', '.chart__bar-section.is-spacer' );
-		background-color: rgba( var( --color-surface-rgb ), 0 );
 	}
 
 	&.is-ghost::after {
