@@ -96,6 +96,8 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 		}
 	}
 
+	const loginRedirectUrl = `${ originUrl() }/gutenboarding${ makePath( Step.CreateSite ) }?new`;
+
 	return (
 		<Modal
 			className="signup-form"
@@ -134,12 +136,7 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 				</div>
 			</form>
 			<div className="signup-form__login-links">
-				<Button
-					isLink
-					href={ `/log-in?redirect_to=${ originUrl() }/gutenboarding${ makePath(
-						Step.DoCreateSite
-					) }` }
-				>
+				<Button isLink href={ '/log-in?redirect_to=' + encodeURIComponent( loginRedirectUrl ) }>
 					{ NO__( 'Log in to create a site for your existing account.' ) }
 				</Button>
 			</div>
