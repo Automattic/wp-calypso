@@ -11,9 +11,9 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import CardHeading from 'components/card-heading';
-import { recordTracksEvent } from 'state/analytics/actions';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 import { localizeUrl } from 'lib/i18n-utils';
+import { withAnalytics, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -27,7 +27,7 @@ import freePhotoLibraryVideoPrompt from 'assets/images/customer-home/free-photo-
 
 const FreePhotoLibraryCard = ( {
 	recordTracksEvent: tracks,
-	openSupportArticleDialog: supportArticleDialog,
+	openSupportArticleDialogAndTrack,
 } ) => {
 	const [ showDialog, setShowDialog ] = useState( false );
 	const translate = useTranslate();
@@ -75,22 +75,23 @@ const FreePhotoLibraryCard = ( {
 							'create stunning designs.'
 					) }
 				</p>
-				<Button
-					onClick={ () => {
-						tracks( 'calypso_customer_home_free_photo_library_video_support_page_view' );
-						supportArticleDialog( {
-							postId: 145498,
-							postUrl: localizeUrl( 'https://support.wordpress.com/free-photo-library/' ),
-						} );
-					} }
-				>
-					{ translate( 'Learn more' ) }
-				</Button>
+				<Button onClick={ openSupportArticleDialogAndTrack }>{ translate( 'Learn more' ) }</Button>
 			</Card>
 		</Fragment>
 	);
 };
 
-export default connect( null, { openSupportArticleDialog, recordTracksEvent } )(
+const openSupportArticleDialogAndTrack = () =>
+	withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_customer_home_free_photo_library_video_support_page_view' )
+		),
+		openSupportArticleDialog( {
+			postId: 145498,
+			postUrl: localizeUrl( 'https://support.wordpress.com/free-photo-library/' ),
+		} )
+	);
+
+export default connect( null, { openSupportArticleDialogAndTrack, recordTracksEvent } )(
 	FreePhotoLibraryCard
 );
