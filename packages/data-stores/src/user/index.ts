@@ -8,10 +8,10 @@ import { registerStore } from '@wordpress/data';
  */
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
-import * as actions from './actions';
-import * as resolvers from './resolvers';
+import { createActions } from './actions';
+import { createResolvers } from './resolvers';
 import * as selectors from './selectors';
-import createControls from './controls';
+import { controls } from '../wpcom-request-controls';
 import { DispatchFromMap, SelectFromMap } from '../mapped-types';
 import { WpcomClientCredentials } from '../shared-types';
 
@@ -21,13 +21,12 @@ export { State };
 let isRegistered = false;
 export function register( clientCreds: WpcomClientCredentials ): typeof STORE_KEY {
 	if ( ! isRegistered ) {
-		const controls = createControls( clientCreds );
 		isRegistered = true;
 		registerStore< State >( STORE_KEY, {
-			actions,
-			controls,
-			reducer: reducer as any,
-			resolvers,
+			actions: createActions( clientCreds ),
+			controls: controls as any,
+			reducer,
+			resolvers: createResolvers( clientCreds ),
 			selectors,
 		} );
 	}
@@ -35,6 +34,6 @@ export function register( clientCreds: WpcomClientCredentials ): typeof STORE_KE
 }
 
 declare module '@wordpress/data' {
-	function dispatch( key: typeof STORE_KEY ): DispatchFromMap< typeof actions >;
+	function dispatch( key: typeof STORE_KEY ): DispatchFromMap< ReturnType< typeof createActions > >;
 	function select( key: typeof STORE_KEY ): SelectFromMap< typeof selectors >;
 }

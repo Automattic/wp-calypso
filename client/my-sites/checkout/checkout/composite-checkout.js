@@ -660,8 +660,10 @@ export default function CompositeCheckout( {
 		contactDetails,
 		contactDetailsErrors,
 		updateContactDetails,
-		shouldShowContactDetailsValidationErrors
+		shouldShowContactDetailsValidationErrors,
+		isDisabled
 	) => {
+		const getIsFieldDisabled = () => isDisabled;
 		return (
 			<WPCheckoutErrorBoundary>
 				<ContactDetailsFormFields
@@ -672,6 +674,7 @@ export default function CompositeCheckout( {
 					}
 					onContactDetailsChange={ updateContactDetails }
 					shouldForceRenderOnPropChange={ true }
+					getIsFieldDisabled={ getIsFieldDisabled }
 				/>
 			</WPCheckoutErrorBoundary>
 		);

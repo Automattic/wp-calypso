@@ -250,6 +250,7 @@ export class SiteNotice extends React.Component {
 							require="blocks/jitm"
 							messagePath={ messagePath }
 							template="sidebar-banner"
+							placeholder={ null }
 						/>
 					) ) }
 				<QuerySitePlans siteId={ site.ID } />

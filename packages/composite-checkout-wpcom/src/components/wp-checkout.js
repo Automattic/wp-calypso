@@ -79,7 +79,8 @@ export default function WPCheckout( {
 	const [ items ] = useLineItems();
 	const firstDomainItem = items.find( isLineItemADomain );
 	const domainName = firstDomainItem ? firstDomainItem.sublabel : siteUrl;
-	const shouldUseDomainContactValidationEndpoint = !! firstDomainItem;
+	const isDomainFieldsVisible = !! firstDomainItem;
+	const shouldShowContactStep = isDomainFieldsVisible || total.amount.value > 0;
 
 	const contactInfo = useSelect( sel => sel( 'wpcom' ).getContactInfo() ) || {};
 	const {
@@ -105,7 +106,7 @@ export default function WPCheckout( {
 		// Touch the fields so they display validation errors
 		touchContactFields();
 
-		if ( shouldUseDomainContactValidationEndpoint ) {
+		if ( isDomainFieldsVisible ) {
 			const hasValidationErrors = await domainContactValidationCallback(
 				activePaymentMethod.id,
 				prepareDomainContactDetails( contactInfo ),
@@ -165,7 +166,7 @@ export default function WPCheckout( {
 					validatingButtonText={ translate( 'Please wait…' ) }
 					validatingButtonAriaLabel={ translate( 'Please wait…' ) }
 				/>
-				{ total.amount.value !== 0 && (
+				{ shouldShowContactStep && (
 					<CheckoutStep
 						stepId={ 'contact-form' }
 						isCompleteCallback={ () => {

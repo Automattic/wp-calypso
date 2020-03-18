@@ -15,6 +15,7 @@ import { USER_STORE } from '../../stores/user';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { useLangRouteParam } from '../../path';
 import './style.scss';
+import ModalSubmitButton from '../modal-submit-button';
 
 type NewUserErrorResponse = import('@automattic/data-stores').User.NewUserErrorResponse;
 
@@ -29,9 +30,10 @@ declare module '@wordpress/element' {
 
 interface Props {
 	onRequestClose: () => void;
+	onOpenLogin: () => void;
 }
 
-const SignupForm = ( { onRequestClose }: Props ) => {
+const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 	const { __: NO__, _x: NO_x } = useI18n();
 	const [ emailVal, setEmailVal ] = useState( '' );
 	const { createAccount } = useDispatch( USER_STORE );
@@ -66,6 +68,11 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		}
 	};
 
+	const openLogin = ( e: React.MouseEvent< HTMLElement > ) => {
+		onOpenLogin();
+		e.preventDefault();
+	};
+
 	const tos = __experimentalCreateInterpolateElement(
 		NO__( 'By creating an account you agree to our <link_to_tos>Terms of Service</link_to_tos>.' ),
 		{
@@ -97,6 +104,8 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 			onRequestClose={ onRequestClose }
 			focusOnMount={ false }
 			isDismissible={ ! isFetchingNewUser }
+			// set to false so that 1password's autofill doesn't automatically close the modal
+			shouldCloseOnClickOutside={ false }
 		>
 			<form onSubmit={ handleSignUp }>
 				<TextControl
@@ -120,17 +129,16 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 				<div className="signup-form__footer">
 					<p className="signup-form__terms-of-service-link">{ tos }</p>
 
-					<Button
-						type="submit"
-						className="signup-form__submit"
-						disabled={ isFetchingNewUser }
-						isBusy={ isFetchingNewUser }
-						isPrimary
-					>
+					<ModalSubmitButton disabled={ isFetchingNewUser } isBusy={ isFetchingNewUser }>
 						{ NO__( 'Create your account' ) }
-					</Button>
+					</ModalSubmitButton>
 				</div>
 			</form>
+			<div className="signup-form__login-links">
+				<Button isLink={ true } onClick={ openLogin }>
+					{ NO__( 'Log in to create a site for your existing account.' ) }
+				</Button>
+			</div>
 		</Modal>
 	);
 };

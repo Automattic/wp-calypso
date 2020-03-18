@@ -27,7 +27,7 @@ import StepUpgrade from './step-upgrade';
 import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'state/sites/selectors';
-import { receiveSite, updateSiteMigrationMeta } from 'state/sites/actions';
+import { receiveSite, updateSiteMigrationMeta, requestSite } from 'state/sites/actions';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { urlToSlug } from 'lib/url';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
@@ -38,8 +38,11 @@ import wpcom from 'lib/wp';
  */
 import './section-migrate.scss';
 
+const THIRTY_SECONDS = 30 * 1000;
+
 class SectionMigrate extends Component {
 	_startedMigrationFromCart = false;
+	_timeStartedMigrationFromCart = false;
 
 	state = {
 		errorMessage: '',
@@ -56,8 +59,13 @@ class SectionMigrate extends Component {
 	};
 
 	componentDidMount() {
+		if ( this.isNonAtomicJetpack() ) {
+			return page( `/import/${ this.props.targetSiteSlug }` );
+		}
+
 		if ( true === this.props.startMigration ) {
 			this._startedMigrationFromCart = true;
+			this._timeStartedMigrationFromCart = new Date().getTime();
 			this.setMigrationState( { migrationStatus: 'backing-up' } );
 			this.startMigration();
 		}
@@ -67,6 +75,10 @@ class SectionMigrate extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+		if ( this.isNonAtomicJetpack() ) {
+			return page( `/import/${ this.props.targetSiteSlug }` );
+		}
+
 		if ( this.props.sourceSiteId !== prevProps.sourceSiteId ) {
 			this.fetchSourceSitePluginsAndThemes();
 		}
@@ -110,6 +122,12 @@ class SectionMigrate extends Component {
 	finishMigration = () => {
 		const { targetSiteId, targetSiteSlug } = this.props;
 
+		/**
+		 * Request another update after the migration is finished to
+		 * update the site title and other info that may have changed.
+		 */
+		this.props.requestSite( targetSiteId );
+
 		wpcom
 			.undocumented()
 			.resetMigration( targetSiteId )
@@ -152,10 +170,13 @@ class SectionMigrate extends Component {
 		// and start migration straight away. This condition prevents a response
 		// from the status endpoint accidentally changing the local state
 		// before the server's properly registered that we're backing up.
+		// After 30 seconds, responses from the server are no longer ignored,
+		// this prevents migrations reset from the server from being locked.
 		if (
 			this._startedMigrationFromCart &&
 			'backing-up' === this.state.migrationStatus &&
-			state.migrationStatus === 'inactive'
+			state.migrationStatus === 'inactive' &&
+			new Date().getTime() - this._timeStartedMigrationFromCart < THIRTY_SECONDS
 		) {
 			return;
 		}
@@ -251,7 +272,7 @@ class SectionMigrate extends Component {
 	};
 
 	updateFromAPI = () => {
-		const { targetSiteId } = this.props;
+		const { targetSiteId, targetSite } = this.props;
 		wpcom
 			.undocumented()
 			.getMigrationStatus( targetSiteId )
@@ -295,6 +316,13 @@ class SectionMigrate extends Component {
 						return;
 					}
 
+					/**
+					 * Request the site information until the site upgrades to Atomic
+					 */
+					if ( ! get( targetSite, 'options.is_wpcom_atomic', false ) ) {
+						this.props.requestSite( targetSiteId );
+					}
+
 					this.setMigrationState( {
 						migrationStatus,
 						percent,
@@ -317,6 +345,10 @@ class SectionMigrate extends Component {
 
 	isFinished = () => {
 		return includes( [ 'done', 'error', 'unknown' ], this.state.migrationStatus );
+	};
+
+	isNonAtomicJetpack = () => {
+		return ! this.props.isTargetSiteAtomic && this.props.isTargetSiteJetpack;
 	};
 
 	renderLoading() {
@@ -667,5 +699,5 @@ export default connect(
 			targetSiteSlug: getSelectedSiteSlug( state ),
 		};
 	},
-	{ navigateToSelectedSourceSite, receiveSite, updateSiteMigrationMeta }
+	{ navigateToSelectedSourceSite, receiveSite, updateSiteMigrationMeta, requestSite }
 )( localize( SectionMigrate ) );

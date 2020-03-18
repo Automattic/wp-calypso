@@ -21,6 +21,7 @@ import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
 import { selectorDebounce } from '../../constants';
 import SignupForm from '../../components/signup-form';
+import LoginForm from '../../components/login-form';
 
 import wp from '../../../../lib/wp';
 const wpcom = wp.undocumented();
@@ -99,6 +100,7 @@ const Header: FunctionComponent = () => {
 	}, [ siteTitle, setDomain ] );
 
 	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
+	const [ showLoginDialog, setShowLoginDialog ] = useState( false );
 
 	const {
 		location: { pathname },
@@ -109,7 +111,8 @@ const Header: FunctionComponent = () => {
 		// this header isn't unmounted on route changes so we need to
 		// explicitly hide the dialog.
 		setShowSignupDialog( false );
-	}, [ pathname, setShowSignupDialog ] );
+		setShowLoginDialog( false );
+	}, [ pathname, setShowSignupDialog, setShowLoginDialog ] );
 
 	const currentDomain = domain ?? freeDomainSuggestion;
 
@@ -135,6 +138,7 @@ const Header: FunctionComponent = () => {
 	const handleCreateSite = useCallback(
 		( username: string, bearerToken?: string ) => {
 			const siteUrl = currentDomain?.domain_name || siteTitle || username;
+
 			createSite( {
 				blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
 				blog_title: siteTitle,
@@ -160,6 +164,17 @@ const Header: FunctionComponent = () => {
 
 	const handleSignup = () => {
 		setShowSignupDialog( true );
+		setShowLoginDialog( false );
+	};
+
+	const handleLogin = () => {
+		setShowSignupDialog( false );
+		setShowLoginDialog( true );
+	};
+
+	const closeAuthDialog = () => {
+		setShowSignupDialog( false );
+		setShowLoginDialog( false );
 	};
 
 	const handleSignupForDomains = () => {
@@ -254,7 +269,16 @@ const Header: FunctionComponent = () => {
 					) }
 				</div>
 			</section>
-			{ showSignupDialog && <SignupForm onRequestClose={ () => setShowSignupDialog( false ) } /> }
+			{ showSignupDialog && (
+				<SignupForm onRequestClose={ closeAuthDialog } onOpenLogin={ handleLogin } />
+			) }
+			{ showLoginDialog && (
+				<LoginForm
+					onRequestClose={ closeAuthDialog }
+					onOpenSignup={ handleSignup }
+					onLogin={ handleCreateSite }
+				/>
+			) }
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */

@@ -62,6 +62,7 @@ import WelcomeBanner from './welcome-banner';
 import StatsCard from './stats-card';
 import FreePhotoLibraryCard from './free-photo-library-card';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 
 /**
  * Style dependencies
@@ -316,6 +317,7 @@ class Home extends Component {
 			isChecklistComplete,
 			siteIsUnlaunched,
 			isEstablishedSite,
+			isRecentlyMigratedSite,
 			displayWelcomeBanner,
 		} = this.props;
 
@@ -328,7 +330,9 @@ class Home extends Component {
 				/>
 			);
 		}
-		const renderChecklistCompleteBanner = 'render' === this.state.renderChecklistCompleteBanner;
+
+		const renderChecklistCompleteBanner =
+			'render' === this.state.renderChecklistCompleteBanner && ! isRecentlyMigratedSite;
 
 		return (
 			<Main className="customer-home__main is-wide-layout">
@@ -650,6 +654,7 @@ const connectHome = connect(
 		const user = getCurrentUser( state );
 		const displayWelcomeBanner =
 			! isNewlyCreatedSite && user.date && new Date( user.date ) < new Date( '2019-08-06' );
+		const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
 
 		return {
 			displayChecklist:
@@ -665,7 +670,8 @@ const connectHome = connect(
 			isChecklistComplete,
 			isAtomic,
 			needsEmailVerification: ! isCurrentUserEmailVerified( state ),
-			isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
+			isStaticHomePage:
+				! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 			siteHasPaidPlan: isSiteOnPaidPlan( state, siteId ),
 			isNewlyCreatedSite,
 			isEstablishedSite: moment().isAfter( moment( createdAt ).add( 2, 'days' ) ),

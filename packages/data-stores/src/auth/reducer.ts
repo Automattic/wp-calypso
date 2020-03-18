@@ -18,6 +18,9 @@ export const loginFlowState: Reducer< LoginFlowState, Action > = (
 		case 'RESET_LOGIN_FLOW':
 			return 'ENTER_USERNAME_OR_EMAIL';
 
+		case 'RECEIVE_AUTH_OPTIONS_FAILED':
+			return 'ENTER_USERNAME_OR_EMAIL';
+
 		case 'RECEIVE_AUTH_OPTIONS':
 			if ( ! action.response.passwordless ) {
 				return 'ENTER_PASSWORD';

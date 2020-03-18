@@ -196,11 +196,18 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		const activityLink = '/activity-log' + siteSuffix;
+		let activityLink = '/activity-log' + siteSuffix,
+			activityLabel = translate( 'Activity' );
+
+		if ( this.props.isJetpack && isEnabled( 'manage/themes-jetpack' ) ) {
+			activityLink += '?group=rewind';
+			activityLabel = translate( 'Activity & Backups' );
+		}
+
 		return (
 			<SidebarItem
 				tipTarget="activity"
-				label={ translate( 'Activity' ) }
+				label={ activityLabel }
 				selected={ itemLinkMatches( [ '/activity-log' ], path ) }
 				link={ activityLink }
 				onNavigate={ this.trackActivityClick }

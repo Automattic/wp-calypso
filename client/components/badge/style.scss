@@ -23,6 +23,11 @@
 }
 
 .badge--info-blue {
-	background-color: var( --color-primary );
+	background-color: var( --studio-blue-50 );
+	color: var( --color-text-inverted );
+}
+
+.badge--error {
+	background-color: var( --color-error );
 	color: var( --color-text-inverted );
 }

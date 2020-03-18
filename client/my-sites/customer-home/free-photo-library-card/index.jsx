@@ -5,11 +5,14 @@ import React, { Fragment, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { Button, Card, Dialog } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import CardHeading from 'components/card-heading';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 import { localizeUrl } from 'lib/i18n-utils';
 
 /**
@@ -20,30 +23,36 @@ import './style.scss';
 /**
  * Image dependencies
  */
-import freePhotoLibraryThumbnail from 'assets/images/customer-home/free-photo-library-thumbnail.png';
 import freePhotoLibraryVideoPrompt from 'assets/images/customer-home/free-photo-library-video-prompt.png';
 
-const FreePhotoLibraryCard = () => {
+const FreePhotoLibraryCard = ( {
+	recordTracksEvent: tracks,
+	openSupportArticleDialog: supportArticleDialog,
+} ) => {
 	const [ showDialog, setShowDialog ] = useState( false );
 	const translate = useTranslate();
 
-	const toggleDialog = () => setShowDialog( ! showDialog );
+	const toggleDialog = () => {
+		if ( ! showDialog ) {
+			tracks( 'calypso_customer_home_free_photo_library_video_dialog_view' );
+		}
+		return setShowDialog( ! showDialog );
+	};
 
 	return (
 		<Fragment>
 			<Dialog additionalClassNames="free-photo-library-card__dialog" isVisible={ showDialog }>
-				<video
-					className="free-photo-library-card__demonstration-video"
-					controls
-					muted
-					autoPlay
-					poster={ freePhotoLibraryThumbnail }
-				>
-					<source
-						src="https://wpcom.files.wordpress.com/2020/02/free-photo-library-demonstration.mp4"
-						type="video/mp4"
+				<div className="free-photo-library-card__demonstration-video">
+					<iframe
+						title={ translate( 'Free Photo Library demonstration' ) }
+						width="560"
+						height="315"
+						src="https://www.youtube.com/embed/RHG_yfd1SVw?rel=0&autoplay=1"
+						frameBorder="0"
+						allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+						allowFullScreen={ true }
 					/>
-				</video>
+				</div>
 				<div className="free-photo-library-card__dialog-close">
 					<Button onClick={ toggleDialog }>{ translate( 'Close' ) }</Button>
 				</div>
@@ -66,7 +75,15 @@ const FreePhotoLibraryCard = () => {
 							'create stunning designs.'
 					) }
 				</p>
-				<Button href={ localizeUrl( 'https://support.wordpress.com/free-photo-library/' ) }>
+				<Button
+					onClick={ () => {
+						tracks( 'calypso_customer_home_free_photo_library_video_support_page_view' );
+						supportArticleDialog( {
+							postId: 145498,
+							postUrl: localizeUrl( 'https://support.wordpress.com/free-photo-library/' ),
+						} );
+					} }
+				>
 					{ translate( 'Learn more' ) }
 				</Button>
 			</Card>
@@ -74,4 +91,6 @@ const FreePhotoLibraryCard = () => {
 	);
 };
 
-export default FreePhotoLibraryCard;
+export default connect( null, { openSupportArticleDialog, recordTracksEvent } )(
+	FreePhotoLibraryCard
+);

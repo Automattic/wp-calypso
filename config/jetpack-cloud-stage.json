@@ -19,5 +19,6 @@
 	"enable_all_sections": false,
 	"sections": {
 		"jetpack-cloud": true
-	}
+	},
+	"theme": "jetpack-cloud"
 }

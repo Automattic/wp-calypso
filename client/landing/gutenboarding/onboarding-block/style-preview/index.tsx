@@ -13,8 +13,9 @@ import Preview from './preview';
 import Link from '../../components/link';
 import { usePath, Step } from '../../path';
 import ViewportSelect from './viewport-select';
-import FontSelect, { fontPairings } from './font-select';
+import FontSelect from './font-select';
 import { Title, SubTitle } from '../../components/titles';
+import { fontPairings } from '../../constants';
 import * as T from './types';
 
 import './style.scss';
@@ -57,7 +58,3 @@ const StylePreview: React.FunctionComponent = () => {
 };
 
 export default StylePreview;
-
-interface ViewProps {
-	isSelected: boolean;
-}

@@ -11,6 +11,7 @@ import { translate } from 'i18n-calypso';
  */
 import Badge from 'components/badge';
 import LogItem from '../log-item';
+import ThreatDescription from '../threat-description';
 
 /**
  * Style dependencies
@@ -60,19 +61,6 @@ class ScanHistoryItem extends Component {
 		);
 	}
 
-	renderEntryDetails( entry ) {
-		return (
-			<div className="scan-history-item__details">
-				<strong>{ translate( 'What was the problem?' ) }</strong>
-				<p>{ entry.description.problem }</p>
-				<strong>{ translate( 'How did Jetpack fix it?' ) }</strong>
-				<p>{ entry.description.fix }</p>
-				<strong>{ translate( 'The technical details' ) }</strong>
-				<p>{ entry.description.details }</p>
-			</div>
-		);
-	}
-
 	render() {
 		const { entry } = this.props;
 
@@ -83,7 +71,12 @@ class ScanHistoryItem extends Component {
 				subheader={ this.renderEntryHeader( entry ) }
 				key={ entry.id }
 			>
-				{ this.renderEntryDetails( entry ) }
+				<ThreatDescription
+					action={ entry.action }
+					details={ entry.description.details }
+					fix={ entry.description.fix }
+					problem={ entry.description.problem }
+				/>
 			</LogItem>
 		);
 	}

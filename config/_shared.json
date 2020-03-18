@@ -132,5 +132,6 @@
 	"enable_all_sections": true,
 	"sections": {
 		"jetpack-cloud": false
-	}
+	},
+	"theme": "default"
 }

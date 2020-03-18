@@ -32,6 +32,10 @@ import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-use
 import { getStatsPathForTab } from 'lib/route';
 import { domainManagementList } from 'my-sites/domains/paths';
 import WordPressWordmark from 'components/wordpress-wordmark';
+import getSiteMigrationStatus from 'state/selectors/get-site-migration-status';
+import { updateSiteMigrationMeta } from 'state/sites/actions';
+import { requestHttpData } from 'state/data-layer/http-data';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
 class MasterbarLoggedIn extends React.Component {
 	static propTypes = {
@@ -47,6 +51,41 @@ class MasterbarLoggedIn extends React.Component {
 	clickMySites = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_my_sites_clicked' );
 		this.props.setNextLayoutFocus( 'sidebar' );
+
+		/**
+		 * Site Migration: Reset a failed migration when clicking on My Sites
+		 *
+		 * If the site migration has failed, clicking on My Sites sends the customer in a loop
+		 * until they click the Try Again button on the migration screen.
+		 *
+		 * This code makes it possible to reset the failed migration state when clicking My Sites too.
+		 */
+		if ( config.isEnabled( 'tools/migrate' ) ) {
+			const { migrationStatus, currentSelectedSiteId } = this.props;
+
+			if ( currentSelectedSiteId && migrationStatus === 'error' ) {
+				/**
+				 * Reset the in-memory site lock for the currently selected site
+				 */
+				this.props.updateSiteMigrationMeta( currentSelectedSiteId, 'inactive', null );
+
+				/**
+				 * Reset the migration on the backend
+				 */
+				requestHttpData(
+					'site-migration',
+					http( {
+						apiNamespace: 'wpcom/v2',
+						method: 'POST',
+						path: `/sites/${ currentSelectedSiteId }/reset-migration`,
+						body: {},
+					} ),
+					{
+						freshness: 0,
+					}
+				);
+			}
+		}
 	};
 
 	clickReader = () => {
@@ -191,7 +230,8 @@ export default connect(
 	state => {
 		// Falls back to using the user's primary site if no site has been selected
 		// by the user yet
-		const siteId = getSelectedSiteId( state ) || getPrimarySiteId( state );
+		const currentSelectedSiteId = getSelectedSiteId( state );
+		const siteId = currentSelectedSiteId || getPrimarySiteId( state );
 
 		return {
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
@@ -201,8 +241,10 @@ export default connect(
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
 			user: getCurrentUser( state ),
 			isSupportSession: isSupportSession( state ),
-			isMigrationInProgress: !! isSiteMigrationInProgress( state, siteId ),
+			isMigrationInProgress: !! isSiteMigrationInProgress( state, currentSelectedSiteId ),
+			migrationStatus: getSiteMigrationStatus( state, currentSelectedSiteId ),
+			currentSelectedSiteId,
 		};
 	},
-	{ setNextLayoutFocus, recordTracksEvent }
+	{ setNextLayoutFocus, recordTracksEvent, updateSiteMigrationMeta }
 )( localize( MasterbarLoggedIn ) );
