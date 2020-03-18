@@ -29,6 +29,7 @@ import { getEditedPostValue } from 'state/posts/selectors';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isPrivateSite from 'state/selectors/is-private-site';
+import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
 
 /**
  * Style dependencies
@@ -43,6 +44,7 @@ class EditorGutenbergOptInDialog extends Component {
 		isDialogVisible: PropTypes.bool,
 		hideDialog: PropTypes.func,
 		optIn: PropTypes.func,
+		optInEnabled: PropTypes.bool,
 		logClassicEditorUsed: PropTypes.func,
 		siteId: PropTypes.number,
 		wpAdminRedirectionUrl: PropTypes.string,
@@ -64,7 +66,11 @@ class EditorGutenbergOptInDialog extends Component {
 	};
 
 	render() {
-		const { translate, isDialogVisible } = this.props;
+		const { translate, isDialogVisible, optInEnabled } = this.props;
+		if ( ! optInEnabled ) {
+			return null;
+		}
+
 		const buttons = [
 			<Button key="gutenberg" onClick={ this.optInToGutenberg } primary>
 				{ translate( 'Try the block editor' ) }
@@ -150,12 +156,14 @@ export default connect( state => {
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
 	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
+	const optInEnabled = isGutenbergOptInEnabled( state, siteId );
 	const isPrivateAtomic =
 		isSiteAutomatedTransfer( state, siteId ) && isPrivateSite( state, siteId );
 	const wpAdminRedirectionUrl = getWpAdminClassicEditorRedirectionUrl( state, siteId );
 
 	return {
 		gutenbergUrl,
+		optInEnabled,
 		isDialogVisible,
 		isPrivateAtomic,
 		wpAdminRedirectionUrl,
