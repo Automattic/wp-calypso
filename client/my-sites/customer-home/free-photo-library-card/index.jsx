@@ -31,8 +31,12 @@ const FreePhotoLibraryCard = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const displayDialog = () => {
-		tracks( 'calypso_customer_home_free_photo_library_video_support_page_view' );
+	const displayDialog = clickSource => {
+		if ( clickSource === 'prompt' ) {
+			tracks( 'calypso_customer_home_free_photo_library_video_dialog_view' );
+		} else {
+			tracks( 'calypso_customer_home_free_photo_library_video_support_page_view' );
+		}
 		supportArticleDialog( {
 			postId: 145498,
 			postUrl: localizeUrl( 'https://support.wordpress.com/free-photo-library/' ),
@@ -42,7 +46,7 @@ const FreePhotoLibraryCard = ( {
 	return (
 		<Card className="free-photo-library-card">
 			{ isDesktop() && (
-				<button onClick={ displayDialog }>
+				<button onClick={ openSupportArticleDialogAndTrack.bind( this, 'prompt' ) }>
 					<img
 						className="free-photo-library-card__demonstration-image"
 						src={ freePhotoLibraryVideoPrompt }
@@ -58,7 +62,9 @@ const FreePhotoLibraryCard = ( {
 						'create stunning designs.'
 				) }
 			</p>
-			<Button onClick={ openSupportArticleDialogAndTrack }>{ translate( 'Learn more' ) }</Button>
+			<Button onClick={ openSupportArticleDialogAndTrack.bind( this, 'button' ) }>
+				{ translate( 'Learn more' ) }
+			</Button>
 		</Card>
 	);
 };
