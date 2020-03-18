@@ -8,8 +8,9 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import JetpackCloudRewindConfig from 'landing/jetpack-cloud/components/rewind-config';
 import { RewindConfig } from 'landing/jetpack-cloud/components/rewind-config/types';
+import Gridicon from 'components/gridicon';
+import JetpackCloudRewindConfig from 'landing/jetpack-cloud/components/rewind-config';
 
 interface Props {
 	onConfirm: () => void;
@@ -55,6 +56,10 @@ const BackupRestoreConfirm: FunctionComponent< Props > = ( {
 				currentConfig={ restoreSettings }
 				onConfigChange={ onRestoreSettingsChange }
 			/>
+			<div className="restore__confirm-warning">
+				<Gridicon icon="notice" />
+				<p>{ translate( 'This will override and remove all content after this point' ) }</p>
+			</div>
 			<Button
 				className="restore__primary-button"
 				disabled={ disableConfirmButton }

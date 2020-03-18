@@ -131,7 +131,7 @@ const BackupRestorePage = ( { restoreId }: Props ) => {
 			{ siteId && <QueryRewindRestoreStatus siteId={ siteId } /> }
 			<Card>
 				<div className="restore__header">
-					<Gridicon className="restore__header-icon" icon="history" size={ 48 } />
+					<Gridicon icon="history" size={ 48 } />
 				</div>
 				{ render() }
 			</Card>

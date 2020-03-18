@@ -36,3 +36,22 @@
 		width: auto;
 	}
 }
+
+.restore__confirm-warning {
+	flex-direction: row;
+	display: flex;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 19px;
+	margin: 32px 0;
+	align-items: center;
+	.gridicon {
+		fill: var( --color-error );
+		margin-right: 5px;
+	}
+	// this allows the gridicon and text to align on their centers
+	p {
+		margin: 0;
+	}
+}
