@@ -160,7 +160,7 @@ function translateWpcomCartItemToCheckoutCartItem(
 		} = serverCartItem;
 
 		// Sublabel is the domain name for registrations
-		const sublabel = is_domain_registration ? meta : undefined;
+		const sublabel = meta;
 
 		// TODO: watch out for this when localizing
 		const value = is_coupon_applied

@@ -640,9 +640,22 @@ export default function CompositeCheckout( {
 					},
 				} );
 				debug(
-					'Domain contact info validation ' + ( data.messages ? 'errors:' : 'successful' ),
-					data.messages
+					'Domain contact info validation for domains',
+					domainNames,
+					'and contact info',
+					contactDetails,
+					'result:',
+					data
 				);
+				if ( ! data ) {
+					showErrorMessage(
+						translate(
+							'There was an error validating your contact information. Please contact support.'
+						)
+					);
+					resolve( false );
+					return;
+				}
 				if ( data.messages ) {
 					showErrorMessage(
 						translate(
