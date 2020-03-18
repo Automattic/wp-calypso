@@ -9,7 +9,10 @@ import { useDispatch, useSelector } from 'react-redux';
  */
 import { Card } from '@automattic/components';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { RewindConfig } from 'landing/jetpack-cloud/components/rewind-config/types';
+import {
+	defaultRewindConfig,
+	RewindConfig,
+} from 'landing/jetpack-cloud/components/rewind-config/types';
 import { rewindRestore } from 'state/activity-log/actions';
 import { useLocalizedMoment } from 'components/localized-moment';
 import Confirm from './confirm';
@@ -69,14 +72,7 @@ const getRestoreState = ( rewindState: RewindState, hasRequestedRestore: boolean
 const BackupRestorePage = ( { restoreId }: Props ) => {
 	const dispatch = useDispatch();
 
-	const [ restoreSettings, setRestoreSettings ] = useState< RewindConfig >( {
-		themes: true,
-		plugins: true,
-		uploads: true,
-		sqls: true,
-		roots: true,
-		contents: true,
-	} );
+	const [ restoreSettings, setRestoreSettings ] = useState< RewindConfig >( defaultRewindConfig );
 
 	const siteId = useSelector( getSelectedSiteId );
 	const rewindState = useSelector( state => getRewindState( state, siteId ) );

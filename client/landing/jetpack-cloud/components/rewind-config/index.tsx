@@ -120,10 +120,15 @@ const JetpackCloudRewindConfig: FunctionComponent< Props > = ( {
 	];
 
 	return (
-		<div>
+		<div className="rewind-config">
 			{ checkboxes.map( ( { name, label, checked, onChange } ) => (
-				<FormLabel required={ false } optional={ false }>
-					<FormCheckbox name={ name } onChange={ onChange } checked={ checked( currentConfig ) } />
+				<FormLabel className="rewind-config__label" required={ false } optional={ false }>
+					<FormCheckbox
+						checked={ checked( currentConfig ) }
+						className="rewind-config__checkbox"
+						name={ name }
+						onChange={ onChange }
+					/>
 					{ label }
 				</FormLabel>
 			) ) }

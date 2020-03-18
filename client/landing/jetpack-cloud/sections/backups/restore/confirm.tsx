@@ -35,7 +35,7 @@ const BackupRestoreConfirm: FunctionComponent< Props > = ( {
 					? translate( 'Restore site %(siteTitle)s', { args: { siteTitle } } )
 					: translate( 'Restore site' ) }
 			</h3>
-			<p>
+			<p className="restore__info">
 				{ translate(
 					'{{strong}}%(restoreTimestamp)s{{/strong}} is the selected point for your restore',
 					{
@@ -48,7 +48,7 @@ const BackupRestoreConfirm: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			<h4>{ translate( 'Choose the items you wish to restore:' ) }</h4>
+			<h4 className="restore__cta">{ translate( 'Choose the items you wish to restore:' ) }</h4>
 			<JetpackCloudRewindConfig
 				currentConfig={ restoreSettings }
 				onConfigChange={ onRestoreSettingsChange }

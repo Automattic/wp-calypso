@@ -6,3 +6,12 @@ export interface RewindConfig {
 	roots: boolean;
 	contents: boolean;
 }
+
+export const defaultRewindConfig: RewindConfig = {
+	themes: true,
+	plugins: true,
+	uploads: true,
+	sqls: true,
+	roots: true,
+	contents: true,
+};
