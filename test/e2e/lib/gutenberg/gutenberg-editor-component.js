@@ -401,10 +401,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async closeScheduledPanel() {
-		await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '.editor-post-publish-panel__header-publish-button + .components-button.has-icon' )
+		const publishCloseButtonSelector = By.css(
+			'.editor-post-publish-panel__header > .components-button'
 		);
+		return await driverHelper.clickWhenClickable( this.driver, publishCloseButtonSelector );
 	}
 
 	async submitForReview() {
