@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Main from 'components/main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 class BackupDetailPage extends Component {
 	render() {
@@ -18,6 +19,7 @@ class BackupDetailPage extends Component {
 		return (
 			<Main>
 				<DocumentHead title="Backup Details" />
+				<SidebarNavigation />
 				<div>Welcome to the backup detail page</div>
 				<div>Site ID: { siteId }</div>
 				<div>Backup ID: { backupId }</div>

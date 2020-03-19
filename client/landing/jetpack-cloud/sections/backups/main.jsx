@@ -22,6 +22,7 @@ import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import Main from 'components/main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 class BackupsPage extends Component {
 	constructor( props ) {
@@ -51,6 +52,7 @@ class BackupsPage extends Component {
 		return (
 			<Main>
 				<DocumentHead title="Backups" />
+				<SidebarNavigation />
 				<QueryRewindState siteId={ siteId } />
 				<QuerySitePurchases siteId={ siteId } />
 				<DatePicker

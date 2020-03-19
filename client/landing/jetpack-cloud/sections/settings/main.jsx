@@ -16,6 +16,7 @@ import getRewindState from 'state/selectors/get-rewind-state';
 import QueryRewindState from 'components/data/query-rewind-state';
 import Gridicon from 'components/gridicon';
 import Main from 'components/main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 /**
  * Style dependencies
@@ -31,6 +32,7 @@ class SettingsPage extends Component {
 		return (
 			<Main className="settings">
 				<DocumentHead title={ translate( 'Settings' ) } />
+				<SidebarNavigation />
 				<QueryRewindState siteId={ siteId } />
 				<div className="settings__page-title">{ translate( 'Server connection details' ) }</div>
 				{ isConnected && (

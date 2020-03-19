@@ -19,6 +19,7 @@ import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status'
 import Ready from './ready';
 import Error from './error';
 import Main from 'components/main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 interface Props {
 	rewindId: string;
@@ -77,6 +78,7 @@ const BackupDownloadPage = ( { rewindId }: Props ) => {
 	return (
 		<Main>
 			<DocumentHead title="Download" />
+			<SidebarNavigation />
 			{ siteId && <QueryRewindBackupStatus downloadId={ downloadId } siteId={ siteId } /> }
 			{ render() }
 		</Main>

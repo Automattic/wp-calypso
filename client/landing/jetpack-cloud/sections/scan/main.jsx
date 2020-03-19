@@ -18,6 +18,7 @@ import ThreatItem from '../../components/threat-item';
 import { isEnabled } from 'config';
 import ThreatDialog from '../../components/threat-dialog';
 import Main from 'components/main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 import './style.scss';
 
@@ -185,6 +186,7 @@ class ScanPage extends Component {
 		return (
 			<Main className="scan__main">
 				<DocumentHead title="Scanner" />
+				<SidebarNavigation />
 				<div className="scan__content">
 					{ this.renderScanState() }
 					<ComponentToTestDialogs threat={ threats[ 0 ] } siteName={ site.name } />

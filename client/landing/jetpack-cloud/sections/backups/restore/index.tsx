@@ -18,6 +18,7 @@ import InProgress from './in-progress';
 import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
 import Queued from './queued';
 import Main from 'components/main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 enum RestoreState {
 	RestoreConfirm,
@@ -99,6 +100,7 @@ const BackupRestorePage = ( { restoreId }: Props ) => {
 	return (
 		<Main>
 			<DocumentHead title="Restore" />
+			<SidebarNavigation />
 			{ siteId && <QueryRewindRestoreStatus siteId={ siteId } /> }
 			{ render() }
 		</Main>

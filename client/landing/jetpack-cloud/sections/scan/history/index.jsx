@@ -13,6 +13,7 @@ import ScanHistoryItem from '../../../components/scan-history-item';
 import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Main from 'components/main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 /**
  * Style dependencies
@@ -132,6 +133,7 @@ class ScanHistoryPage extends Component {
 		return (
 			<Main className="history">
 				<DocumentHead title={ translate( 'History' ) } />
+				<SidebarNavigation />
 				<h1 className="history__header">{ translate( 'History' ) }</h1>
 				<p>
 					{ translate(
