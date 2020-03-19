@@ -19,12 +19,14 @@ const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 	const { selectedDesign } = useSelect( select => select( STORE_KEY ).getState() );
 	const [ { title: fontA }, { title: fontB } ] = fonts;
 	return (
-		<div className="style-preview__preview">
-			<div role="presentation" className="style-preview__preview-bar">
-				<div role="presentation" className="style-preview__preview-bar-dot" />
-				<div role="presentation" className="style-preview__preview-bar-dot" />
-				<div role="presentation" className="style-preview__preview-bar-dot" />
-			</div>
+		<div className={ `style-preview__preview is-viewport-${ viewport }` }>
+			{ viewport === 'desktop' && (
+				<div role="presentation" className="style-preview__preview-bar">
+					<div role="presentation" className="style-preview__preview-bar-dot" />
+					<div role="presentation" className="style-preview__preview-bar-dot" />
+					<div role="presentation" className="style-preview__preview-bar-dot" />
+				</div>
+			) }
 			<div style={ { width: '100%', height: '100%', background: 'var(--studio-gray-5)' } }>
 				<p>Preview to be implemented.</p>
 				<p>You picked { selectedDesign?.title ?? 'unknown' } design.</p>
