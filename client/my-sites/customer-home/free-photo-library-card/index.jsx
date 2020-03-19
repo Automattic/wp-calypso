@@ -23,7 +23,7 @@ import './style.scss';
 /**
  * Image dependencies
  */
-import freePhotoLibraryVideoPrompt from 'assets/images/customer-home/free-photo-library-video-prompt.png';
+import freePhotoLibraryVideoPrompt from 'assets/images/customer-home/illustration--free-photo-library.svg';
 
 const FreePhotoLibraryCard = ( {
 	recordTracksEvent: tracks,
