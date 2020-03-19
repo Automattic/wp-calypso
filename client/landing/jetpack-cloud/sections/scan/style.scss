@@ -53,6 +53,41 @@
 	color: var( --color-primary-40 );
 }
 
+.scan__threats {
+	margin: 40px 0;
+}
+
+.scan__threats-buttons {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 16px;
+
+	@include breakpoint( '>800px' ) {
+		justify-content: flex-end;
+	}
+}
+
+.scan__fix-all-threats-button {
+	flex: 1 1 75%;
+	padding: 10px 30px;
+	background: var( --color-primary-40 );
+	color: #fff;
+	border-color: var( --color-primary-40 );
+
+	@include breakpoint( '>800px' ) {
+		flex: 0 0 170px;
+	}
+}
+
+.scan__options-button {
+	flex: 0 0 50px;
+	padding: 10px 0;
+	margin-left: 16px;
+	color: var( --color-primary-40 );
+	background: #fff;
+	border-color: var( --color-primary-40 );
+}
+
 .scan__button {
 	margin: 30px 0;
 	width: 100%;
