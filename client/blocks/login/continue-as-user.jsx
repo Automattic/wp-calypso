@@ -71,7 +71,7 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } 
 				className="continue-as-user__change-user-link"
 				onClick={ onChangeAccount }
 			>
-				{ translate( 'Change Account' ) }
+				{ translate( 'Log in with a different account' ) }
 			</button>
 		</div>
 	);
