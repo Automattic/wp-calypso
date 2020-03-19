@@ -122,12 +122,12 @@ describe( 'PlanStorageBar basic tests', () => {
 		assert.lengthOf( bar.find( '.plan-storage__bar' ), 0 );
 	} );
 
-	test( 'should include upgrade links when displayUpgradeLink is true', () => {
+	test( 'should include upgrade link when displayUpgradeLink is true', () => {
 		const bar = shallow( <PlanStorageBar { ...props } displayUpgradeLink={ true } /> );
 		assert.lengthOf( bar.find( '.plan-storage__storage-link' ), 1 );
 	} );
 
-	test( 'should not include upgrade links when displayUpgradeLink is false', () => {
+	test( 'should not include upgrade link when displayUpgradeLink is false', () => {
 		const bar = shallow( <PlanStorageBar { ...props } displayUpgradeLink={ false } /> );
 		assert.lengthOf( bar.find( '.plan-storage__storage-link' ), 0 );
 	} );
