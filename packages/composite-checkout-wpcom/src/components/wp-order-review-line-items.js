@@ -84,6 +84,9 @@ function WPLineItem( {
 						isVisible={ isModalVisible }
 						closeModal={ () => {
 							setIsModalVisible( false );
+							onEvent( {
+								type: 'a8c_checkout_cancel_delete_product',
+							} );
 						} }
 						primaryAction={ () => {
 							removeItem( item.wpcom_meta.uuid );
