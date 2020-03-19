@@ -44,6 +44,7 @@ const EditorGutenbergDialogs: React.FC< {} > = () => {
 				dispatch( showGutenbergOptInDialog() );
 			}
 		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ dispatch, isPrivateAtomic, isPostContentLoaded, postContent ]
 	);
 
