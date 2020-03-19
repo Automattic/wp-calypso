@@ -283,6 +283,7 @@ class SectionMigrate extends Component {
 					source_blog_id: sourceSiteId,
 					created: startTime,
 					last_modified: lastModified,
+					is_atomic: isBackendAtomic,
 				} = response;
 
 				if ( sourceSiteId && sourceSiteId !== this.props.sourceSiteId ) {
@@ -317,9 +318,9 @@ class SectionMigrate extends Component {
 					}
 
 					/**
-					 * Request the site information until the site upgrades to Atomic
+					 * Renew the site if the backend upgraded do Atomic, but Calypso still has old data
 					 */
-					if ( ! get( targetSite, 'options.is_wpcom_atomic', false ) ) {
+					if ( isBackendAtomic && ! get( targetSite, 'options.is_wpcom_atomic', false ) ) {
 						this.props.requestSite( targetSiteId );
 					}
 
