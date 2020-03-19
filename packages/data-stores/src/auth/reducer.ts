@@ -34,6 +34,12 @@ export const loginFlowState: Reducer< LoginFlowState, Action > = (
 			}
 			return 'LOGGED_IN';
 
+		case 'RECEIVE_WP_LOGIN_FAILED':
+			if ( state === 'WAITING_FOR_2FA_APP' ) {
+				return 'ENTER_PASSWORD';
+			}
+			return state;
+
 		case 'RECEIVE_SEND_LOGIN_EMAIL':
 			if ( action.response.success ) {
 				return 'LOGIN_LINK_SENT';
