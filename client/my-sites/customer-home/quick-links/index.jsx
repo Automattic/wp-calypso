@@ -1,0 +1,317 @@
+/**
+ * External dependencies
+ */
+import React from 'react';
+import { connect } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
+import { Card } from '@automattic/components';
+import { isMobile } from '@automattic/viewport';
+
+/**
+ * Internal dependencies
+ */
+import CardHeading from 'components/card-heading';
+import ActionBox from 'my-sites/customer-home/quick-links/action-box';
+import FoldableCard from 'components/foldable-card';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import {
+	getSiteFrontPage,
+	getCustomizerUrl,
+	getSiteOption,
+	isNewSite,
+} from 'state/sites/selectors';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
+import { getGSuiteSupportedDomains } from 'lib/gsuite';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
+import { navigate } from 'state/ui/actions';
+import {
+	bumpStat,
+	composeAnalytics,
+	recordTracksEvent,
+	withAnalytics,
+} from 'state/analytics/actions';
+
+/**
+ * Image dependencies
+ */
+import commentIcon from 'assets/images/customer-home/comment.svg';
+import customDomainIcon from 'assets/images/customer-home/custom-domain.svg';
+import customizeIcon from 'assets/images/customer-home/customize.svg';
+import gSuiteIcon from 'assets/images/customer-home/gsuite.svg';
+import imagesIcon from 'assets/images/customer-home/images.svg';
+import logoIcon from 'assets/images/customer-home/looka-logo.svg';
+import menuIcon from 'assets/images/customer-home/menus.svg';
+import pageIcon from 'assets/images/customer-home/page.svg';
+import postIcon from 'assets/images/customer-home/post.svg';
+import themeIcon from 'assets/images/customer-home/theme.svg';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+export const QuickLinks = ( {
+	customizeUrl,
+	isStaticHomePage,
+	showCustomizer,
+	hasCustomDomain,
+	menusUrl,
+	editHomepageAction,
+	writePostAction,
+	addPageAction,
+	manageCommentsAction,
+	trackEditMenusAction,
+	trackCustomizeThemeAction,
+	changeThemeAction,
+	trackDesignLogoAction,
+	addEmailAction,
+	addDomainAction,
+} ) => {
+	const translate = useTranslate();
+
+	const quickLinks = (
+		<div className="quick-links__boxes">
+			{ isStaticHomePage ? (
+				<ActionBox
+					onClick={ editHomepageAction }
+					label={ translate( 'Edit homepage' ) }
+					iconSrc={ imagesIcon }
+				/>
+			) : (
+				<ActionBox
+					onClick={ writePostAction }
+					label={ translate( 'Write blog post' ) }
+					iconSrc={ postIcon }
+				/>
+			) }
+			{ isStaticHomePage ? (
+				<ActionBox
+					onClick={ addPageAction }
+					label={ translate( 'Add a page' ) }
+					iconSrc={ pageIcon }
+				/>
+			) : (
+				<ActionBox
+					onClick={ manageCommentsAction }
+					label={ translate( 'Manage comments' ) }
+					iconSrc={ commentIcon }
+				/>
+			) }
+			{ isStaticHomePage ? (
+				<ActionBox
+					onClick={ writePostAction }
+					label={ translate( 'Write blog post' ) }
+					iconSrc={ postIcon }
+				/>
+			) : (
+				<ActionBox
+					onClick={ addPageAction }
+					label={ translate( 'Add a page' ) }
+					iconSrc={ pageIcon }
+				/>
+			) }
+			{ showCustomizer && (
+				<ActionBox
+					href={ menusUrl }
+					onClick={ trackEditMenusAction }
+					label={ translate( 'Edit menus' ) }
+					iconSrc={ menuIcon }
+				/>
+			) }
+			{ showCustomizer && (
+				<ActionBox
+					href={ customizeUrl }
+					onClick={ trackCustomizeThemeAction }
+					label={ translate( 'Customize theme' ) }
+					iconSrc={ customizeIcon }
+				/>
+			) }
+			<ActionBox
+				onClick={ changeThemeAction }
+				label={ translate( 'Change theme' ) }
+				iconSrc={ themeIcon }
+			/>
+			<ActionBox
+				href="https://wp.me/logo-maker"
+				onClick={ trackDesignLogoAction }
+				target="_blank"
+				label={ translate( 'Create a logo with Looka' ) }
+				external
+				iconSrc={ logoIcon }
+			/>
+			{ hasCustomDomain ? (
+				<ActionBox
+					onClick={ addEmailAction }
+					label={ translate( 'Add email' ) }
+					iconSrc={ gSuiteIcon }
+				/>
+			) : (
+				<ActionBox
+					onClick={ addDomainAction }
+					label={ translate( 'Add a domain' ) }
+					iconSrc={ customDomainIcon }
+				/>
+			) }
+		</div>
+	);
+
+	if ( ! isMobile() ) {
+		return (
+			<Card className="quick-links">
+				<CardHeading>{ translate( 'Quick Links' ) }</CardHeading>
+				{ quickLinks }
+			</Card>
+		);
+	}
+	return (
+		<FoldableCard
+			className="quick-links card-heading-21"
+			header={ translate( 'Quick Links' ) }
+			expanded
+		>
+			{ quickLinks }
+		</FoldableCard>
+	);
+};
+
+const mapStateToProps = state => {
+	const siteId = getSelectedSiteId( state );
+	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
+	const domains = getDomainsBySiteId( state, siteId );
+	const isStaticHomePage =
+		! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' );
+	const siteSlug = getSelectedSiteSlug( state );
+	const staticHomePageId = getSiteFrontPage( state, siteId );
+	const editHomePageUrl =
+		isStaticHomePage && `/block-editor/page/${ siteSlug }/${ staticHomePageId }`;
+
+	return {
+		customizeUrl: getCustomizerUrl( state, siteId ),
+		menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
+		isNewlyCreatedSite: isNewSite( state, siteId ),
+		showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
+		hasCustomDomain: getGSuiteSupportedDomains( domains ).length > 0,
+		siteSlug,
+		isStaticHomePage,
+		editHomePageUrl,
+	};
+};
+
+const mapDispatchToProps = ( dispatch, { isStaticHomePage, editHomePageUrl, siteSlug } ) => {
+	return {
+		editHomepageAction: () =>
+			dispatch(
+				withAnalytics(
+					composeAnalytics(
+						recordTracksEvent( `calypso_customer_home_my_site_edit_homepage_click`, {
+							is_static_home_page: isStaticHomePage,
+						} ),
+						bumpStat( 'calypso_customer_home', `my_site_edit_homepage` )
+					),
+					navigate( editHomePageUrl )
+				)
+			),
+		writePostAction: () =>
+			dispatch(
+				withAnalytics(
+					composeAnalytics(
+						recordTracksEvent( `calypso_customer_home_my_site_write_post_click`, {
+							is_static_home_page: isStaticHomePage,
+						} ),
+						bumpStat( 'calypso_customer_home', `my_site_write_post` )
+					),
+					navigate( `/post/${ siteSlug }` )
+				)
+			),
+		addPageAction: () =>
+			dispatch(
+				withAnalytics(
+					composeAnalytics(
+						recordTracksEvent( `calypso_customer_home_my_site_add_page_click`, {
+							is_static_home_page: isStaticHomePage,
+						} ),
+						bumpStat( 'calypso_customer_home', `my_site_add_page` )
+					),
+					navigate( `/page/${ siteSlug }` )
+				)
+			),
+		manageCommentsAction: () =>
+			dispatch(
+				withAnalytics(
+					composeAnalytics(
+						recordTracksEvent( `calypso_customer_home_my_site_manage_comments_click`, {
+							is_static_home_page: isStaticHomePage,
+						} ),
+						bumpStat( 'calypso_customer_home', `my_site_manage_comments` )
+					),
+					navigate( `/comments/${ siteSlug }` )
+				)
+			),
+		trackEditMenusAction: () =>
+			dispatch(
+				composeAnalytics(
+					recordTracksEvent( `calypso_customer_home_my_site_edit_menus_click`, {
+						is_static_home_page: isStaticHomePage,
+					} ),
+					bumpStat( 'calypso_customer_home', `my_site_edit_menus` )
+				)
+			),
+		trackCustomizeThemeAction: () =>
+			dispatch(
+				composeAnalytics(
+					recordTracksEvent( `calypso_customer_home_my_site_customize_theme_click`, {
+						is_static_home_page: isStaticHomePage,
+					} ),
+					bumpStat( 'calypso_customer_home', `my_site_customize_theme` )
+				)
+			),
+		changeThemeAction: () =>
+			dispatch(
+				withAnalytics(
+					composeAnalytics(
+						recordTracksEvent( `calypso_customer_home_my_site_change_theme_click`, {
+							is_static_home_page: isStaticHomePage,
+						} ),
+						bumpStat( 'calypso_customer_home', `my_site_change_theme` )
+					),
+					navigate( `/themes/${ siteSlug }` )
+				)
+			),
+		trackDesignLogoAction: () =>
+			dispatch(
+				composeAnalytics(
+					recordTracksEvent( `calypso_customer_home_my_site_design_logo_click`, {
+						is_static_home_page: isStaticHomePage,
+					} ),
+					bumpStat( 'calypso_customer_home', `my_site_design_logo` )
+				)
+			),
+		addEmailAction: () =>
+			dispatch(
+				withAnalytics(
+					composeAnalytics(
+						recordTracksEvent( `calypso_customer_home_my_site_add_email_click`, {
+							is_static_home_page: isStaticHomePage,
+						} ),
+						bumpStat( 'calypso_customer_home', `my_site_add_email` )
+					),
+					navigate( `/email/${ siteSlug }` )
+				)
+			),
+		addDomainAction: () =>
+			dispatch(
+				withAnalytics(
+					composeAnalytics(
+						recordTracksEvent( `calypso_customer_home_my_site_add_domain_click`, {
+							is_static_home_page: isStaticHomePage,
+						} ),
+						bumpStat( 'calypso_customer_home', `my_site_add_domain` )
+					),
+					navigate( `/domains/add/${ siteSlug }` )
+				)
+			),
+	};
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( QuickLinks );
