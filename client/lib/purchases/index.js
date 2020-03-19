@@ -6,6 +6,7 @@ import { find, includes } from 'lodash';
 import moment from 'moment';
 import page from 'page';
 import i18n from 'i18n-calypso';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -23,6 +24,8 @@ import {
 	isConciergeSession,
 } from 'lib/products-values';
 import { getJetpackProductsDisplayNames } from 'lib/products-values/constants';
+
+const debug = debugFactory( 'calypso:purchases' );
 
 function getIncludedDomain( purchase ) {
 	return purchase.includedDomain;
@@ -123,7 +126,12 @@ function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
 		throw new Error( 'Could not find product slug for renewal.' );
 	}
 	const productList = meta ? `${ product_slug }:${ meta }` : product_slug;
-	page( `/checkout/${ productList }/renew/${ purchaseId }/${ purchaseDomain || siteSlug || '' }` );
+	const renewalUrl = `/checkout/${ productList }/renew/${ purchaseId }/${ purchaseDomain ||
+		siteSlug ||
+		'' }`;
+	debug( 'handling renewal click', purchase, siteSlug, renewItem, renewalUrl );
+
+	page( renewalUrl );
 }
 
 function hasIncludedDomain( purchase ) {
