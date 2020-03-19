@@ -15,21 +15,34 @@ import ThreatItem from 'landing/jetpack-cloud/components/threat-item';
  */
 import './style.scss';
 
+type ThreatAction = 'fix' | 'ignore';
+
+type Threat = {
+	id: number;
+	title: string;
+	details: string;
+};
+
 interface Props {
-	site: object;
-	threats: Array< object >;
+	site: {
+		name: string;
+	};
+	threats: Array< Threat >;
 }
 
 const ScanThreats = ( { site, threats }: Props ) => {
+	const [ selectedThreat, setSelectedThreat ] = React.useState< Threat | undefined >();
 	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
-	const [ actionToPerform, setActionToPerform ] = React.useState( '' );
+	const [ actionToPerform, setActionToPerform ] = React.useState< ThreatAction >( 'fix' );
 
-	const openDialog = ( action: string ) => {
+	const openDialog = ( action: ThreatAction, threat: Threat ) => {
+		setSelectedThreat( threat );
 		setActionToPerform( action );
 		setShowThreatDialog( true );
 	};
 
 	const closeDialog = () => {
+		setSelectedThreat( undefined );
 		setShowThreatDialog( false );
 	};
 
@@ -70,20 +83,22 @@ const ScanThreats = ( { site, threats }: Props ) => {
 					<ThreatItem
 						key={ threat.id }
 						threat={ threat }
-						onFixThreat={ () => openDialog( 'fix' ) }
-						onIgnoreThreat={ () => openDialog( 'ignore' ) }
+						onFixThreat={ () => openDialog( 'fix', threat ) }
+						onIgnoreThreat={ () => openDialog( 'ignore', threat ) }
 					/>
 				) ) }
 			</div>
-			<ThreatDialog
-				showDialog={ showThreatDialog }
-				onCloseDialog={ closeDialog }
-				onConfirmation={ confirmAction }
-				siteName={ site.name }
-				threatTitle={ threats[ 0 ].title }
-				threatDescription={ threats[ 0 ].details }
-				action={ actionToPerform }
-			/>
+			{ selectedThreat && (
+				<ThreatDialog
+					showDialog={ showThreatDialog }
+					onCloseDialog={ closeDialog }
+					onConfirmation={ confirmAction }
+					siteName={ site.name }
+					threatTitle={ selectedThreat.title }
+					threatDescription={ selectedThreat.details }
+					action={ actionToPerform }
+				/>
+			) }
 		</>
 	);
 };
