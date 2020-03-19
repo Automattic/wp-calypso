@@ -236,7 +236,16 @@ class DomainsStep extends React.Component {
 
 		this.props.recordTracksEvent( 'calypso_signup_skip_step', tracksProperties );
 
-		this.submitWithDomain( googleAppsCartItem, shouldHideFreePlan );
+		const stepData = {
+			stepName: this.props.stepName,
+			suggestion: undefined,
+		};
+
+		this.props.saveSignupStep( stepData );
+
+		defer( () => {
+			this.submitWithDomain( googleAppsCartItem, shouldHideFreePlan );
+		} );
 	};
 
 	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
@@ -247,29 +256,6 @@ class DomainsStep extends React.Component {
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
 			: {};
-
-		if ( shouldHideFreePlan ) {
-			let domainItem, isPurchasingItem, siteUrl;
-
-			this.props.submitSignupStep(
-				Object.assign(
-					{
-						stepName: this.props.stepName,
-						domainItem,
-						googleAppsCartItem,
-						isPurchasingItem,
-						siteUrl,
-						stepSectionName: this.props.stepSectionName,
-					},
-					this.getThemeArgs()
-				),
-				Object.assign( { domainItem }, shouldHideFreePlanItem, useThemeHeadstartItem )
-			);
-
-			this.props.goToNextStep();
-
-			return;
-		}
 
 		const suggestion = this.props.step.suggestion;
 

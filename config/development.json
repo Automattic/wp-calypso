@@ -123,7 +123,7 @@
 		"oauth": false,
 		"perfmon": false,
 		"persist-redux": true,
-		"plans-step-copy-updates": true,
+		"plans/personal-plan": true,
 		"post-editor-github-link": false,
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
