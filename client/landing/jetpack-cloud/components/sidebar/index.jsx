@@ -163,7 +163,7 @@ class JetpackCloudSidebar extends Component {
 							label={ translate( 'Get help', {
 								comment: 'Jetpack Cloud sidebar navigation item',
 							} ) }
-							link="#" // @todo: Add /support route or change link to other destination
+							link="https://jetpack.com/support"
 							materialIcon="help"
 							materialIconStyle="filled"
 							onNavigate={ this.onNavigate }
