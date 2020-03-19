@@ -20,7 +20,6 @@ references:
         "$CIRCLE_ARTIFACTS/screenshots"         \
         "$CIRCLE_ARTIFACTS/full-site-editing"   \
         "$CIRCLE_ARTIFACTS/wpcom-block-editor"  \
-        "$CIRCLE_ARTIFACTS/chunks-map"          \
         "$CIRCLE_TEST_REPORTS/client"           \
         "$CIRCLE_TEST_REPORTS/eslint"           \
         "$CIRCLE_TEST_REPORTS/integration"      \
@@ -120,7 +119,7 @@ references:
 
   npm-install: &npm-install
     environment:
-      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
     name: Install npm dependencies
     command: npm ci
 
@@ -289,18 +288,6 @@ jobs:
                       "vcs_type": "github"
                     }
                   }'
-
-  chunks-map:
-    <<: *defaults
-    parallelism: 1
-    steps:
-      - prepare
-      - run:
-          name: Generate chunks map
-          command: |
-            npm run build-chunks-map
-            mv chunks-map.json "$CIRCLE_ARTIFACTS/chunks-map"
-      - store-artifacts-and-test-results
 
   build-notifications:
     <<: *defaults
@@ -611,9 +598,6 @@ workflows:
       - lint-and-translate:
           requires:
             - setup
-      - chunks-map:
-          requires:
-            - setup
       - test-client:
           requires:
             - setup
@@ -640,10 +624,10 @@ workflows:
                 - master
                 # Do not spin up calypso.live for fork pull requests. Calypso.live will not build them.
                 - /pull\/[0-9]+/
-      #      - test-e2e-canary:
-      #          requires:
-      #            - wait-calypso-live
-      #          test-flags: '-C -S $CIRCLE_SHA1'
+#      - test-e2e-canary:
+#          requires:
+#            - wait-calypso-live
+#          test-flags: '-C -S $CIRCLE_SHA1'
       - test-e2e-canary:
           name: test-e2e-canary-ie
           requires:
