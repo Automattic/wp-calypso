@@ -25,23 +25,8 @@ import './style.scss';
  */
 import freePhotoLibraryVideoPrompt from 'assets/images/customer-home/illustration--free-photo-library.svg';
 
-const FreePhotoLibraryCard = ( {
-	recordTracksEvent: tracks,
-	openSupportArticleDialogAndTrack,
-} ) => {
+const FreePhotoLibraryCard = ( { openSupportArticleDialogAndTrack } ) => {
 	const translate = useTranslate();
-
-	const displayDialog = clickSource => {
-		if ( clickSource === 'prompt' ) {
-			tracks( 'calypso_customer_home_free_photo_library_video_dialog_view' );
-		} else {
-			tracks( 'calypso_customer_home_free_photo_library_video_support_page_view' );
-		}
-		supportArticleDialog( {
-			postId: 145498,
-			postUrl: localizeUrl( 'https://support.wordpress.com/free-photo-library/' ),
-		} );
-	};
 
 	return (
 		<Card className="free-photo-library-card">
@@ -69,10 +54,12 @@ const FreePhotoLibraryCard = ( {
 	);
 };
 
-const openSupportArticleDialogAndTrack = () =>
+const openSupportArticleDialogAndTrack = clickSource =>
 	withAnalytics(
 		composeAnalytics(
-			recordTracksEvent( 'calypso_customer_home_free_photo_library_video_support_page_view' )
+			clickSource === 'prompt'
+				? recordTracksEvent( 'calypso_customer_home_free_photo_library_video_dialog_view' )
+				: recordTracksEvent( 'calypso_customer_home_free_photo_library_video_support_page_view' )
 		),
 		openSupportArticleDialog( {
 			postId: 145498,
@@ -80,6 +67,4 @@ const openSupportArticleDialogAndTrack = () =>
 		} )
 	);
 
-export default connect( null, { openSupportArticleDialogAndTrack, recordTracksEvent } )(
-	FreePhotoLibraryCard
-);
+export default connect( null, { openSupportArticleDialogAndTrack } )( FreePhotoLibraryCard );
