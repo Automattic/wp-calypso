@@ -9,6 +9,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { Button } from '@automattic/components';
 import { RewindConfig } from 'landing/jetpack-cloud/components/rewind-config/types';
+import Gridicon from 'components/gridicon';
 import JetpackCloudRewindConfig from 'landing/jetpack-cloud/components/rewind-config';
 
 interface Props {
@@ -47,6 +48,10 @@ const BackupDownloadConfirm: FunctionComponent< Props > = ( {
 				currentConfig={ downloadSettings }
 				onConfigChange={ onDownloadSettingsChange }
 			/>
+			<div className="download__confirm-notice">
+				<Gridicon icon="notice-outline" />
+				<p>{ translate( 'More info' ) }</p>
+			</div>
 			<Button
 				className="download__primary-button"
 				primary
