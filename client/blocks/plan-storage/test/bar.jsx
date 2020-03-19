@@ -79,22 +79,18 @@ describe( 'PlanStorageBar basic tests', () => {
 
 		bar = shallow( <PlanStorageBar { ...props } sitePlanSlug={ PLAN_FREE } /> );
 		assert.lengthOf( bar.find( '.plan-storage__bar' ), 1 );
-	} );
-
-	test( 'should not render when storage is unlimited', () => {
-		let bar;
 
 		bar = shallow( <PlanStorageBar { ...props } sitePlanSlug={ PLAN_BUSINESS } /> );
-		assert.lengthOf( bar.find( '.plan-storage__bar' ), 0 );
+		assert.lengthOf( bar.find( '.plan-storage__bar' ), 1 );
 
 		bar = shallow( <PlanStorageBar { ...props } sitePlanSlug={ PLAN_BUSINESS_2_YEARS } /> );
-		assert.lengthOf( bar.find( '.plan-storage__bar' ), 0 );
+		assert.lengthOf( bar.find( '.plan-storage__bar' ), 1 );
 
 		bar = shallow( <PlanStorageBar { ...props } sitePlanSlug={ PLAN_ECOMMERCE } /> );
-		assert.lengthOf( bar.find( '.plan-storage__bar' ), 0 );
+		assert.lengthOf( bar.find( '.plan-storage__bar' ), 1 );
 
 		bar = shallow( <PlanStorageBar { ...props } sitePlanSlug={ PLAN_ECOMMERCE_2_YEARS } /> );
-		assert.lengthOf( bar.find( '.plan-storage__bar' ), 0 );
+		assert.lengthOf( bar.find( '.plan-storage__bar' ), 1 );
 	} );
 
 	test( 'should not render when storage has valid max_storage_bytes', () => {
