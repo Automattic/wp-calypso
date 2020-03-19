@@ -76,8 +76,8 @@ class AppointmentInfo extends Component {
 						<FormLabel>{ translate( 'When?' ) }</FormLabel>
 						<FormSettingExplanation>
 							{ moment( beginTimestamp ).format( 'llll - ' ) }
-							{ moment.tz( endTimestamp, guessedTimezone ).format( 'LT z' ) }
-							{ ` (${ guessedTimezone })` }
+							{ moment.tz( endTimestamp, guessedTimezone ).format( 'LT z' ) }{ ' ' }
+							{ `(${ guessedTimezone })` }
 						</FormSettingExplanation>
 					</FormFieldset>
 
