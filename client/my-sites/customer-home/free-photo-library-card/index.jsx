@@ -13,8 +13,12 @@ import { connect } from 'react-redux';
 import CardHeading from 'components/card-heading';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 import { localizeUrl } from 'lib/i18n-utils';
-import { withAnalytics, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import { bumpStat } from '../rest-client/bump-stat';
+import {
+	withAnalytics,
+	composeAnalytics,
+	recordTracksEvent,
+	bumpStat,
+} from 'state/analytics/actions';
 
 /**
  * Style dependencies
