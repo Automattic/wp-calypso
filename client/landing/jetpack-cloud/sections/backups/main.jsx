@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
+import DocumentHead from 'components/data/document-head';
 import { emptyFilter } from 'state/activity-log/reducer';
 import { getBackupAttemptsForDate, getDailyBackupDeltas, getEventsInDailyBackup } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -49,6 +50,7 @@ class BackupsPage extends Component {
 
 		return (
 			<Main>
+				<DocumentHead title="Backups" />
 				<QueryRewindState siteId={ siteId } />
 				<QuerySitePurchases siteId={ siteId } />
 				<DatePicker

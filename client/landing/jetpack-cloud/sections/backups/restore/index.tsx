@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
+import DocumentHead from 'components/data/document-head';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { rewindRestore } from 'state/activity-log/actions';
 import Confirm from './confirm';
@@ -97,6 +98,7 @@ const BackupRestorePage = ( { restoreId }: Props ) => {
 
 	return (
 		<Main>
+			<DocumentHead title="Restore" />
 			{ siteId && <QueryRewindRestoreStatus siteId={ siteId } /> }
 			{ render() }
 		</Main>

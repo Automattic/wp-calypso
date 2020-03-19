@@ -9,6 +9,7 @@ import { numberFormat, translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import DocumentHead from 'components/data/document-head';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { withLocalizedMoment } from 'components/localized-moment';
 import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
@@ -183,6 +184,7 @@ class ScanPage extends Component {
 
 		return (
 			<Main className="scan__main">
+				<DocumentHead title="Scanner" />
 				<div className="scan__content">
 					{ this.renderScanState() }
 					<ComponentToTestDialogs threat={ threats[ 0 ] } siteName={ site.name } />

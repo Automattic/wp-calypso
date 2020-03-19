@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
+import DocumentHead from 'components/data/document-head';
 import { BackupProgress } from './types';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { rewindBackup } from 'state/activity-log/actions';
@@ -75,6 +76,7 @@ const BackupDownloadPage = ( { rewindId }: Props ) => {
 
 	return (
 		<Main>
+			<DocumentHead title="Download" />
 			{ siteId && <QueryRewindBackupStatus downloadId={ downloadId } siteId={ siteId } /> }
 			{ render() }
 		</Main>

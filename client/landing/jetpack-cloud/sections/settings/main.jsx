@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import DocumentHead from 'components/data/document-head';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
 import { Card } from '@automattic/components';
@@ -29,6 +30,7 @@ class SettingsPage extends Component {
 
 		return (
 			<Main className="settings">
+				<DocumentHead title={ translate( 'Settings' ) } />
 				<QueryRewindState siteId={ siteId } />
 				<div className="settings__page-title">{ translate( 'Server connection details' ) }</div>
 				{ isConnected && (

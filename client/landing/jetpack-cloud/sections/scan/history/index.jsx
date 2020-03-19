@@ -8,6 +8,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import DocumentHead from 'components/data/document-head';
 import ScanHistoryItem from '../../../components/scan-history-item';
 import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -130,6 +131,7 @@ class ScanHistoryPage extends Component {
 		const logEntries = this.filteredEntries();
 		return (
 			<Main className="history">
+				<DocumentHead title={ translate( 'History' ) } />
 				<h1 className="history__header">{ translate( 'History' ) }</h1>
 				<p>
 					{ translate(
