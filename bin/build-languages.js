@@ -117,6 +117,12 @@ const languages = [
 	'tr',
 ]; // todo: can we use `../client/languages`?
 
+function logUpdate( text ) {
+	process.stdout.clearLine();
+	process.stdout.cursorTo( 0 );
+	process.stdout.write( text );
+}
+
 // Create languages directory
 function createLanguagesDir() {
 	return mkdirp.sync( LANGUAGES_DIR );
@@ -125,16 +131,24 @@ function createLanguagesDir() {
 // Download languages revisions
 function downloadLanguagesRevions() {
 	return new Promise( resolve => {
+		function log( status ) {
+			logUpdate(
+				`Downloading ${ LANGUAGES_REVISIONS_FILENAME }${ status ? ` ${ status }.` : '...' }`
+			);
+		}
+
 		const file = fs.createWriteStream( `${ LANGUAGES_DIR }/${ LANGUAGES_REVISIONS_FILENAME }` );
 
 		https.get( `${ LANGUAGES_BASE_URL }/${ LANGUAGES_REVISIONS_FILENAME }`, response => {
 			response.pipe( file );
 			response.on( 'end', () => {
 				if ( response.statusCode !== 200 ) {
+					log( 'failed' );
 					resolve( false );
 					return;
 				}
 
+				log( 'completed' );
 				resolve( true );
 			} );
 		} );
@@ -142,8 +156,19 @@ function downloadLanguagesRevions() {
 }
 
 // Request and write language files
-function downloadLanguages() {
-	return Promise.all(
+async function downloadLanguages() {
+	let downloadedLanguagesCount = 0;
+
+	function log( status ) {
+		logUpdate(
+			`Downloading languages${ status ? ` ${ status }.` : '...' } ` +
+				`(${ downloadedLanguagesCount }/${ languages.length })`
+		);
+	}
+
+	log();
+
+	const downloadedLanguages = await Promise.all(
 		languages.map(
 			langSlug =>
 				new Promise( resolve => {
@@ -157,8 +182,9 @@ function downloadLanguages() {
 						response.pipe( file );
 						response.on( 'data', chunk => ( body += chunk ) );
 						response.on( 'end', () => {
-							if ( response.statusCode !== 200 ) {
-								console.log( `failed to download: ${ translationUrl }` );
+							if ( response.statusCode === 200 ) {
+								downloadedLanguagesCount++;
+								log();
 							}
 
 							resolve( {
@@ -170,11 +196,15 @@ function downloadLanguages() {
 				} )
 		)
 	);
+
+	log( 'completed' );
+
+	return downloadedLanguages;
 }
 
 // Split language translations into chunks
 function buildLanguageChunks( downloadedLanguages ) {
-	console.log( 'Downloading translations completed.' );
+	logUpdate( 'Building language chunks...' );
 
 	if ( fs.existsSync( CALYPSO_STRINGS ) && fs.existsSync( CHUNKS_MAP ) ) {
 		const chunksMap = require( '../chunks-map.json' );
@@ -232,7 +262,7 @@ function buildLanguageChunks( downloadedLanguages ) {
 		} );
 	}
 
-	console.log( 'Write language chunks completed.' );
+	logUpdate( 'Building language chunks completed.\n' );
 }
 
 async function run() {
@@ -242,4 +272,4 @@ async function run() {
 	buildLanguageChunks( downloadedLanguages );
 }
 
-run().then( () => console.log( 'Finished!' ) );
+run();
