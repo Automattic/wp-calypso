@@ -25,12 +25,13 @@ const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 				<div role="presentation" className="style-preview__preview-bar-dot" />
 				<div role="presentation" className="style-preview__preview-bar-dot" />
 			</div>
-			<p>Preview to be implemented.</p>
-			<p>You picked { selectedDesign?.title ?? 'unknown' } design.</p>
-			<p>Showing { viewport } display.</p>
-			<p>
-				With { fontA }&nbsp;/&nbsp;{ fontB } display.
-			</p>
+			<div style={ { width: '100%', height: '100%', background: 'var(--studio-gray-5)' } }>
+				<p>Preview to be implemented.</p>
+				<p>You picked { selectedDesign?.title ?? 'unknown' } design.</p>
+				<p>
+					Showing { viewport } display with { fontA }&nbsp;/&nbsp;{ fontB } fonts.
+				</p>
+			</div>
 		</div>
 	);
 };

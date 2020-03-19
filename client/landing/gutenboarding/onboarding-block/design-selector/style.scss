@@ -9,7 +9,7 @@
 	.design-selector__header {
 		display: flex;
 		align-items: center;
-		margin: 5% 0%;
+		margin-top: 53px;
 	}
 
 	.design-selector__heading {
@@ -24,6 +24,7 @@
 
 	.design-selector__grid {
 		display: flex;
+		margin-top: 40px;
 		flex-wrap: wrap;
 		justify-content: space-between;
 	}
