@@ -7,6 +7,10 @@ const parse = require( 'gettext-parser' ).po.parse;
 
 const LANGUAGES_BASE_URL = 'https://widgets.wp.com/languages/calypso';
 const LANGUAGES_DIR = './public/evergreen/languages';
+const LANGUAGES_REVISIONS_FILENAME = 'lang-revisions.json';
+const CALYPSO_STRINGS = './calypso-strings.pot';
+const CHUNKS_MAP = './chunks-map.json';
+const LANGUAGE_MANIFEST_FILENAME = 'language-manifest.json';
 
 const languages = [
 	'am',
@@ -114,44 +118,63 @@ const languages = [
 ]; // todo: can we use `../client/languages`?
 
 // Create languages directory
-mkdirp.sync( LANGUAGES_DIR );
+function createLanguagesDir() {
+	return mkdirp.sync( LANGUAGES_DIR );
+}
+
+// Download languages revisions
+function downloadLanguagesRevions() {
+	return new Promise( resolve => {
+		const file = fs.createWriteStream( `${ LANGUAGES_DIR }/${ LANGUAGES_REVISIONS_FILENAME }` );
+
+		https.get( `${ LANGUAGES_BASE_URL }/${ LANGUAGES_REVISIONS_FILENAME }`, response => {
+			response.pipe( file );
+			response.on( 'end', () => {
+				if ( response.statusCode !== 200 ) {
+					resolve( false );
+					return;
+				}
+
+				resolve( true );
+			} );
+		} );
+	} );
+}
 
 // Request and write language files
-const languagesRequests = Promise.all(
-	languages.map(
-		langSlug =>
-			new Promise( resolve => {
-				const filename = `${ langSlug }-v1.1.json`;
-				const file = fs.createWriteStream( `${ LANGUAGES_DIR }/${ filename }` );
-				const translationUrl = `${ LANGUAGES_BASE_URL }/${ filename }`;
+function downloadLanguages() {
+	return Promise.all(
+		languages.map(
+			langSlug =>
+				new Promise( resolve => {
+					const filename = `${ langSlug }-v1.1.json`;
+					const file = fs.createWriteStream( `${ LANGUAGES_DIR }/${ filename }` );
+					const translationUrl = `${ LANGUAGES_BASE_URL }/${ filename }`;
 
-				https.get( translationUrl, response => {
-					let body = '';
+					https.get( translationUrl, response => {
+						let body = '';
 
-					response.pipe( file );
-					response.on( 'data', chunk => ( body += chunk ) );
-					response.on( 'end', () => {
-						if ( response.statusCode !== 200 ) {
-							console.log( `failed to download: ${ translationUrl }` );
-						}
+						response.pipe( file );
+						response.on( 'data', chunk => ( body += chunk ) );
+						response.on( 'end', () => {
+							if ( response.statusCode !== 200 ) {
+								console.log( `failed to download: ${ translationUrl }` );
+							}
 
-						resolve( {
-							langSlug,
-							languageTranslations: JSON.parse( body ),
+							resolve( {
+								langSlug,
+								languageTranslations: JSON.parse( body ),
+							} );
 						} );
 					} );
-				} );
-			} )
-	)
-);
+				} )
+		)
+	);
+}
 
-languagesRequests.then( downloadedLanguages => {
+// Split language translations into chunks
+function buildLanguageChunks( downloadedLanguages ) {
 	console.log( 'Downloading translations completed.' );
-
-	// Split language translations into chunks
-	const CALYPSO_STRINGS = './calypso-strings.pot';
-	const CHUNKS_MAP = './chunks-map.json';
-	const LANGUAGE_MANIFEST_FILENAME = 'language-manifest.json';
 
 	if ( fs.existsSync( CALYPSO_STRINGS ) && fs.existsSync( CHUNKS_MAP ) ) {
 		const chunksMap = require( '../chunks-map.json' );
@@ -210,4 +233,13 @@ languagesRequests.then( downloadedLanguages => {
 	}
 
 	console.log( 'Write language chunks completed.' );
-} );
+}
+
+async function run() {
+	createLanguagesDir();
+	await downloadLanguagesRevions();
+	const downloadedLanguages = await downloadLanguages();
+	buildLanguageChunks( downloadedLanguages );
+}
+
+run().then( () => console.log( 'Finished!' ) );
