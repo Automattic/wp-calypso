@@ -15,6 +15,8 @@ import {
 	SendLoginEmailSuccessResponse,
 	SendLoginEmailErrorResponse,
 	WpLoginResponse,
+	PushNotificationSentData,
+	LoginCompleteData,
 } from './types';
 import { STORE_KEY, POLL_APP_PUSH_INTERVAL_SECONDS } from './constants';
 import {
@@ -26,6 +28,7 @@ import {
 } from '../wpcom-request-controls';
 import { remoteLoginUser } from './controls';
 import { WpcomClientCredentials } from '../shared-types';
+import { getNextTaskId } from './utils';
 
 export interface ActionsConfig extends WpcomClientCredentials {
 	/**
@@ -74,6 +77,12 @@ export function createActions( {
 	const clearErrors = () =>
 		( {
 			type: 'CLEAR_ERRORS',
+		} as const );
+
+	const startPollingTask = ( pollingTaskId: number ) =>
+		( {
+			type: 'START_POLLING_TASK',
+			pollingTaskId,
 		} as const );
 
 	function* submitUsernameOrEmail( usernameOrEmail: string ) {
@@ -133,34 +142,35 @@ export function createActions( {
 		const username = yield select( STORE_KEY, 'getUsernameOrEmail' );
 
 		try {
-			let loginResponse = yield* wpLogin( 'login-endpoint', {
+			const loginResponse = yield* wpLogin( 'login-endpoint', {
 				remember_me: true,
 				username,
 				password,
 			} );
 
 			if ( ! loginResponse.success ) {
-				return receiveWpLoginFailed( loginResponse );
-			}
-
-			if ( loginResponse.data.two_step_notification_sent ) {
+				yield receiveWpLoginFailed( loginResponse );
+			} else if ( loginResponse.data.two_step_notification_sent ) {
 				yield receiveWpLogin( loginResponse );
 
-				if ( loginResponse.data.two_step_notification_sent === 'push' ) {
-					loginResponse = yield* handlePush2fa( loginResponse );
+				const twoFactorResonse = yield* handle2fa( loginResponse.data );
+				if ( twoFactorResonse.success ) {
+					yield* handleSuccessfulLogin( twoFactorResonse );
+				} else if ( twoFactorResonse.success === false ) {
+					yield receiveWpLoginFailed( twoFactorResonse );
+				} else {
+					// If success is undefined then 2fa polling was canceled
 				}
+			} else {
+				yield* handleSuccessfulLogin( loginResponse );
 			}
-
-			yield* handleSuccessfulLogin( loginResponse );
-
-			return;
 		} catch ( e ) {
 			const error = {
 				code: e.name,
 				message: e.message,
 			};
 
-			return receiveWpLoginFailed( {
+			yield receiveWpLoginFailed( {
 				success: false,
 				data: { errors: [ error ] },
 			} );
@@ -173,30 +183,61 @@ export function createActions( {
 			// Need to rerequest access after the proxy is reloaded
 			yield requestAllBlogsAccess();
 		}
-		yield remoteLoginUser( response.data.token_links || [] );
+
+		if ( response.data.two_step_notification_sent === undefined ) {
+			yield remoteLoginUser( response.data.token_links );
+		}
+
 		yield receiveWpLogin( response );
 	}
 
-	function* handlePush2fa( response: WpLoginSuccessResponse ) {
-		const { user_id, push_web_token } = response.data;
-		let { two_step_nonce_push: two_step_nonce } = response.data;
-
-		while ( ! response.data.token_links ) {
-			response = yield wpLogin( 'two-step-authentication-endpoint', {
-				remember_me: true,
-				auth_type: 'push',
-				user_id,
-				two_step_nonce,
-				two_step_push_token: push_web_token,
-			} );
-
-			if ( ! response.success ) {
-				two_step_nonce = response.data.two_step_nonce;
-				yield wait( POLL_APP_PUSH_INTERVAL_SECONDS * 1000 );
-			}
+	function* handle2fa(
+		loginResonseData: Exclude< WpLoginSuccessResponse[ 'data' ], LoginCompleteData >
+	) {
+		switch ( loginResonseData.two_step_notification_sent ) {
+			case 'push':
+				return yield* handlePush2fa( loginResonseData );
 		}
+	}
 
-		return response;
+	function* handlePush2fa( {
+		user_id,
+		push_web_token,
+		two_step_nonce_push,
+	}: PushNotificationSentData ) {
+		let two_step_nonce = two_step_nonce_push;
+
+		const pollingTaskId = getNextTaskId();
+		yield startPollingTask( pollingTaskId );
+
+		while ( true ) {
+			const currentPollingTaskId = yield select( STORE_KEY, 'getPollingTaskId' );
+
+			if ( currentPollingTaskId !== pollingTaskId ) {
+				// Polling has been canceled, either by `reset()` or by a subsequent call to log in
+				return { success: undefined, canceled: true };
+			}
+
+			try {
+				const response: WpLoginResponse = yield wpLogin( 'two-step-authentication-endpoint', {
+					remember_me: true,
+					auth_type: 'push',
+					user_id,
+					two_step_nonce,
+					two_step_push_token: push_web_token,
+				} );
+
+				if ( response.success || ! response.data.two_step_nonce ) {
+					return response;
+				}
+
+				two_step_nonce = response.data.two_step_nonce;
+			} catch ( e ) {
+				// Ignore network errors, they may continue
+			}
+
+			yield wait( POLL_APP_PUSH_INTERVAL_SECONDS * 1000 );
+		}
 	}
 
 	type WpLoginAction = 'two-step-authentication-endpoint' | 'login-endpoint';
@@ -234,6 +275,7 @@ export function createActions( {
 		receiveSendLoginEmailFailed,
 		submitPassword,
 		submitUsernameOrEmail,
+		startPollingTask,
 	};
 }
 
@@ -249,6 +291,7 @@ export type Action =
 			| ActionCreators[ 'receiveWpLoginFailed' ]
 			| ActionCreators[ 'receiveSendLoginEmail' ]
 			| ActionCreators[ 'receiveSendLoginEmailFailed' ]
+			| ActionCreators[ 'startPollingTask' ]
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };

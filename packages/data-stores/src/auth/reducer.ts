@@ -9,6 +9,7 @@ import { combineReducers } from '@wordpress/data';
  */
 import { LoginFlowState } from './types';
 import { Action } from './actions';
+import { getNextTaskId } from './utils';
 
 export const loginFlowState: Reducer< LoginFlowState, Action > = (
 	state = 'ENTER_USERNAME_OR_EMAIL',
@@ -85,7 +86,18 @@ export const errors: Reducer< ErrorObject[], Action > = ( state = [], action ) =
 	}
 };
 
-const reducer = combineReducers( { errors, loginFlowState, usernameOrEmail } );
+const pollingTaskId: Reducer< number, Action > = ( state = getNextTaskId(), action ) => {
+	switch ( action.type ) {
+		case 'RESET_LOGIN_FLOW':
+			return getNextTaskId();
+		case 'START_POLLING_TASK':
+			return action.pollingTaskId;
+		default:
+			return state;
+	}
+};
+
+const reducer = combineReducers( { errors, loginFlowState, usernameOrEmail, pollingTaskId } );
 
 export type State = ReturnType< typeof reducer >;
 
