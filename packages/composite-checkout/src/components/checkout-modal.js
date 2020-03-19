@@ -18,7 +18,7 @@ export default function CheckoutModal( {
 	title,
 	copy,
 	primaryAction,
-	secondaryAction = () => {},
+	cancelAction = () => {},
 	closeModal,
 	isVisible,
 	buttonCTA,
@@ -34,7 +34,7 @@ export default function CheckoutModal( {
 	return (
 		<CheckoutModalWrapper
 			className={ joinClasses( [ className, 'checkout-modal' ] ) }
-			onClick={ closeModal }
+			onClick={ () => handleCancelAction( cancelAction, closeModal ) }
 		>
 			<CheckoutModalContent className="checkout-modal__content" onClick={ preventClose }>
 				<CheckoutModalTitle className="checkout-modal__title">{ title }</CheckoutModalTitle>
@@ -43,9 +43,7 @@ export default function CheckoutModal( {
 				<CheckoutModalActions>
 					<Button
 						buttonState="default"
-						onClick={ () => {
-							handleSecondaryAction( secondaryAction, closeModal );
-						} }
+						onClick={ () => handleCancelAction( cancelAction, closeModal ) }
 					>
 						{ cancelButtonCTA || localize( 'Cancel' ) }
 					</Button>
@@ -67,7 +65,7 @@ CheckoutModal.propTypes = {
 	closeModal: PropTypes.func.isRequired,
 	title: PropTypes.string.isRequired,
 	copy: PropTypes.string.isRequired,
-	primaryAction: PropTypes.func.isRequired,
+	cancelAction: PropTypes.func.isRequired,
 	secondaryAction: PropTypes.func,
 	isVisible: PropTypes.bool.isRequired,
 	className: PropTypes.string,
@@ -153,8 +151,8 @@ function handlePrimaryAction( primaryAction, closeModal ) {
 	closeModal();
 }
 
-function handleSecondaryAction( secondaryAction, closeModal ) {
-	secondaryAction();
+function handleCancelAction( cancelAction, closeModal ) {
+	cancelAction();
 	closeModal();
 }
 

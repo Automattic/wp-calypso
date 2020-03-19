@@ -94,7 +94,7 @@ function WPLineItem( {
 								},
 							} );
 						} }
-						secondaryAction={ () => {
+						cancelAction={ () => {
 							onEvent( {
 								type: 'a8c_checkout_cancel_delete_product',
 							} );
