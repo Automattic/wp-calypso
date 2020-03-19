@@ -41,7 +41,7 @@ class BackupDelta extends Component {
 	}
 
 	renderDaily() {
-		const { backupAttempts, deltas, translate } = this.props;
+		const { backupAttempts, deltas, siteSlug, translate } = this.props;
 		const mainBackup = backupAttempts.complete && backupAttempts.complete[ 0 ];
 		const meta = mainBackup && mainBackup.activityDescription[ 2 ].children[ 0 ];
 
@@ -87,9 +87,14 @@ class BackupDelta extends Component {
 					</Fragment>
 				) }
 				<div>{ meta }</div>
-				<Button className="backup-delta__view-all-button">
-					{ translate( 'View all backup details' ) }
-				</Button>
+				{ mainBackup && (
+					<Button
+						className="backup-delta__view-all-button"
+						href={ `/backups/${ siteSlug }/detail/${ mainBackup.rewindId }` }
+					>
+						View all backup details
+					</Button>
+				) }
 			</div>
 		);
 	}

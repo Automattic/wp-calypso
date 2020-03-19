@@ -12,7 +12,7 @@ import BackupsPage from './main';
 import BackupRestorePage from './restore';
 
 export function backupDetail( context, next ) {
-	const backupId = parseInt( context.params.backupId );
+	const backupId = context.params.backupId;
 
 	context.primary = <BackupDetailPage backupId={ backupId } />;
 	next();
