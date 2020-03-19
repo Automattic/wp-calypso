@@ -8,12 +8,15 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import DocumentHead from 'components/data/document-head';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
 import { Card } from '@automattic/components';
 import getRewindState from 'state/selectors/get-rewind-state';
 import QueryRewindState from 'components/data/query-rewind-state';
 import Gridicon from 'components/gridicon';
+import Main from 'components/main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 /**
  * Style dependencies
@@ -27,7 +30,9 @@ class SettingsPage extends Component {
 		const isConnected = 'active' === rewind.state;
 
 		return (
-			<div className="settings">
+			<Main className="settings">
+				<DocumentHead title={ translate( 'Settings' ) } />
+				<SidebarNavigation />
 				<QueryRewindState siteId={ siteId } />
 				<div className="settings__page-title">{ translate( 'Server connection details' ) }</div>
 				{ isConnected && (
@@ -64,7 +69,7 @@ class SettingsPage extends Component {
 						showNotices: false,
 					} }
 				/>
-			</div>
+			</Main>
 		);
 	}
 }

@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
+import DocumentHead from 'components/data/document-head';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { rewindRestore } from 'state/activity-log/actions';
 import Confirm from './confirm';
@@ -16,6 +17,8 @@ import getRewindState from 'state/selectors/get-rewind-state';
 import InProgress from './in-progress';
 import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
 import Queued from './queued';
+import Main from 'components/main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 enum RestoreState {
 	RestoreConfirm,
@@ -95,10 +98,12 @@ const BackupRestorePage = ( { restoreId }: Props ) => {
 	};
 
 	return (
-		<div>
+		<Main>
+			<DocumentHead title="Restore" />
+			<SidebarNavigation />
 			{ siteId && <QueryRewindRestoreStatus siteId={ siteId } /> }
 			{ render() }
-		</div>
+		</Main>
 	);
 };
 

@@ -1,23 +1,7 @@
-.scan__main {
-	box-sizing: border-box;
-	display: flex;
-	flex-direction: column;
-	min-height: calc( 100vh - 47px ); // Padding of .layout__content.
-	padding: 40px 16px 0;
-
-	@include breakpoint ( '>660px' ) {
-		min-height: calc( 100vh - 95px ); // 71px top + 24px bottom padding. 
-		padding: 0;
-	}
-
-	@include breakpoint ( '>960px' ) {
-		min-height: calc( 100vh - 111px ); // 79px top + 32px bottom padding.
-	}
-}
-
 .scan__content {
 	flex: 1 0 auto;
 	max-width: 680px;
+	padding: 0 16px;
 
 	.security-icon {
 		display: block;
@@ -26,6 +10,7 @@
 
 		@include breakpoint( '>660px' ) {
 			margin: 0;
+			padding: 0;
 		}
 	}
 

@@ -9,6 +9,7 @@ import { numberFormat, translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import DocumentHead from 'components/data/document-head';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { withLocalizedMoment } from 'components/localized-moment';
 import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
@@ -16,6 +17,8 @@ import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
 import ThreatItem from '../../components/threat-item';
 import { isEnabled } from 'config';
 import ThreatDialog from '../../components/threat-dialog';
+import Main from 'components/main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 import './style.scss';
 
@@ -181,7 +184,9 @@ class ScanPage extends Component {
 		const { threats, site } = this.props;
 
 		return (
-			<div className="scan__main">
+			<Main className="scan__main">
+				<DocumentHead title="Scanner" />
+				<SidebarNavigation />
 				<div className="scan__content">
 					{ this.renderScanState() }
 					<ComponentToTestDialogs threat={ threats[ 0 ] } siteName={ site.name } />
@@ -196,7 +201,7 @@ class ScanPage extends Component {
 					noticeText="Failing to plan is planning to fail. Regular backups ensure that should the worst happen, you are prepared. Jetpack Backups has you covered."
 					noticeLink="https://jetpack/upgrade/backups"
 				/>
-			</div>
+			</Main>
 		);
 	}
 }

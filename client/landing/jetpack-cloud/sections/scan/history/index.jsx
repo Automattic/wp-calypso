@@ -8,9 +8,12 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import DocumentHead from 'components/data/document-head';
 import ScanHistoryItem from '../../../components/scan-history-item';
 import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import Main from 'components/main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 /**
  * Style dependencies
@@ -128,7 +131,9 @@ class ScanHistoryPage extends Component {
 	render() {
 		const logEntries = this.filteredEntries();
 		return (
-			<section className="history">
+			<Main className="history">
+				<DocumentHead title={ translate( 'History' ) } />
+				<SidebarNavigation />
 				<h1 className="history__header">{ translate( 'History' ) }</h1>
 				<p>
 					{ translate(
@@ -145,7 +150,7 @@ class ScanHistoryPage extends Component {
 						<ScanHistoryItem entry={ entry } key={ entry.id } />
 					) ) }
 				</div>
-			</section>
+			</Main>
 		);
 	}
 }
