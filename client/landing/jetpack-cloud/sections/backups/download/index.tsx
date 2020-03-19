@@ -17,6 +17,7 @@ import InProgress from './in-progress';
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 import Ready from './ready';
 import Error from './error';
+import Main from 'components/main';
 
 interface Props {
 	rewindId: string;
@@ -73,10 +74,10 @@ const BackupDownloadPage = ( { rewindId }: Props ) => {
 	};
 
 	return (
-		<div>
+		<Main>
 			{ siteId && <QueryRewindBackupStatus downloadId={ downloadId } siteId={ siteId } /> }
 			{ render() }
-		</div>
+		</Main>
 	);
 };
 

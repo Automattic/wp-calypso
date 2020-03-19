@@ -20,6 +20,7 @@ import getRewindState from 'state/selectors/get-rewind-state';
 import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySitePurchases from 'components/data/query-site-purchases';
+import Main from 'components/main';
 
 class BackupsPage extends Component {
 	constructor( props ) {
@@ -47,7 +48,7 @@ class BackupsPage extends Component {
 		const realtimeEvents = getEventsInDailyBackup( logs, selectedDateString );
 
 		return (
-			<div>
+			<Main>
 				<QueryRewindState siteId={ siteId } />
 				<QuerySitePurchases siteId={ siteId } />
 				<DatePicker
@@ -71,7 +72,7 @@ class BackupsPage extends Component {
 						moment,
 					} }
 				/>
-			</div>
+			</Main>
 		);
 	}
 }

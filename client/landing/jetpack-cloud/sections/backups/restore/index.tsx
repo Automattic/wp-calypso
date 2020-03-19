@@ -16,6 +16,7 @@ import getRewindState from 'state/selectors/get-rewind-state';
 import InProgress from './in-progress';
 import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
 import Queued from './queued';
+import Main from 'components/main';
 
 enum RestoreState {
 	RestoreConfirm,
@@ -95,10 +96,10 @@ const BackupRestorePage = ( { restoreId }: Props ) => {
 	};
 
 	return (
-		<div>
+		<Main>
 			{ siteId && <QueryRewindRestoreStatus siteId={ siteId } /> }
 			{ render() }
-		</div>
+		</Main>
 	);
 };
 

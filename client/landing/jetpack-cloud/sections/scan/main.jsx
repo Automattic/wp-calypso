@@ -16,6 +16,7 @@ import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
 import ThreatItem from '../../components/threat-item';
 import { isEnabled } from 'config';
 import ThreatDialog from '../../components/threat-dialog';
+import Main from 'components/main';
 
 import './style.scss';
 
@@ -181,7 +182,7 @@ class ScanPage extends Component {
 		const { threats, site } = this.props;
 
 		return (
-			<div className="scan__main">
+			<Main className="scan__main">
 				<div className="scan__content">
 					{ this.renderScanState() }
 					<ComponentToTestDialogs threat={ threats[ 0 ] } siteName={ site.name } />
@@ -196,7 +197,7 @@ class ScanPage extends Component {
 					noticeText="Failing to plan is planning to fail. Regular backups ensure that should the worst happen, you are prepared. Jetpack Backups has you covered."
 					noticeLink="https://jetpack/upgrade/backups"
 				/>
-			</div>
+			</Main>
 		);
 	}
 }

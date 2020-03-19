@@ -14,6 +14,7 @@ import { Card } from '@automattic/components';
 import getRewindState from 'state/selectors/get-rewind-state';
 import QueryRewindState from 'components/data/query-rewind-state';
 import Gridicon from 'components/gridicon';
+import Main from 'components/main';
 
 /**
  * Style dependencies
@@ -27,7 +28,7 @@ class SettingsPage extends Component {
 		const isConnected = 'active' === rewind.state;
 
 		return (
-			<div className="settings">
+			<Main className="settings">
 				<QueryRewindState siteId={ siteId } />
 				<div className="settings__page-title">{ translate( 'Server connection details' ) }</div>
 				{ isConnected && (
@@ -64,7 +65,7 @@ class SettingsPage extends Component {
 						showNotices: false,
 					} }
 				/>
-			</div>
+			</Main>
 		);
 	}
 }

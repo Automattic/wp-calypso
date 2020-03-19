@@ -8,17 +8,18 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
+import Main from 'components/main';
 
 class BackupDetailPage extends Component {
 	render() {
 		const { siteId, backupId } = this.props;
 
 		return (
-			<div>
+			<Main>
 				<div>Welcome to the backup detail page</div>
 				<div>Site ID: { siteId }</div>
 				<div>Backup ID: { backupId }</div>
-			</div>
+			</Main>
 		);
 	}
 }
