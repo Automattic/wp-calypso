@@ -29,14 +29,21 @@
 	align-self: start;
 }
 
-// Extra specificity to override core component border
-.style-preview__font-option.components-button {
-	border: 1px solid var( --studio-gray-10 );
+.style-preview__font-option {
+	// Extra specificity to override core style
+	.components-button {
+		height: auto;
+	}
+	min-height: 3.4em;
+	box-shadow: 0 0 0 1px var( --studio-gray-10 );
 	justify-content: center;
-	height: 3.2em;
+
+	span {
+		align-self: baseline;
+	}
 
 	&.is-selected {
-		border-color: var( --highlightColor );
+		box-shadow: 0 0 0 1px var( --highlightColor );
 		color: var( --highlightColor );
 	}
 }
