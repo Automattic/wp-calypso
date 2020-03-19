@@ -36,7 +36,9 @@ ARG        commit_sha="(unknown)"
 ENV        COMMIT_SHA $commit_sha
 
 ARG        workers
-RUN        WORKERS=$workers CALYPSO_ENV=production npm run build
+RUN        WORKERS=$workers CALYPSO_ENV=production CHUNKS_MAP=true npm run build
+RUN        npm run translate
+RUN        npm run build-languages
 
 USER       nobody
 CMD        NODE_ENV=production node build/bundle.js
