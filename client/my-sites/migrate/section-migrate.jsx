@@ -341,7 +341,7 @@ class SectionMigrate extends Component {
 	};
 
 	isInProgress = () => {
-		return includes( [ 'backing-up', 'restoring' ], this.state.migrationStatus );
+		return includes( [ 'new', 'backing-up', 'restoring' ], this.state.migrationStatus );
 	};
 
 	isFinished = () => {
@@ -505,6 +505,9 @@ class SectionMigrate extends Component {
 		}
 
 		if ( 'backing-up' === progressState ) {
+			if ( 'new' === migrationStatus ) {
+				return <Spinner />;
+			}
 			return <Gridicon className="migrate__progress-item-icon-success" icon="checkmark-circle" />;
 		}
 
