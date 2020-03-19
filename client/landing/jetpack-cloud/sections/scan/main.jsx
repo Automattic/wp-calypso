@@ -139,7 +139,14 @@ class ScanPage extends Component {
 				</p>
 				<div className="scan__threats">
 					{ threats.map( threat => (
-						<ThreatItem key={ threat.id } threat={ threat } />
+						<ThreatItem
+							key={ threat.id }
+							threat={ threat }
+							// eslint-disable-next-line no-console
+							onFixThreat={ () => console.log( 'Fixing threat' ) }
+							// eslint-disable-next-line no-console
+							onIgnoreThreat={ () => console.log( 'Ignoring threat' ) }
+						/>
 					) ) }
 				</div>
 			</>
