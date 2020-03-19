@@ -779,7 +779,7 @@ function mapStateToProps( state ) {
 	const isManageSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_MANAGE );
 
 	const isMigrationInProgress =
-		!! isSiteMigrationInProgress( state, selectedSiteId ) || isSiteMigrationActiveRoute( state );
+		isSiteMigrationInProgress( state, selectedSiteId ) || isSiteMigrationActiveRoute( state );
 
 	return {
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),

@@ -235,7 +235,7 @@ export default connect(
 		const siteId = currentSelectedSiteId || getPrimarySiteId( state );
 
 		const isMigrationInProgress =
-			!! isSiteMigrationInProgress( state, currentSelectedSiteId ) ||
+			isSiteMigrationInProgress( state, currentSelectedSiteId ) ||
 			isSiteMigrationActiveRoute( state );
 
 		return {

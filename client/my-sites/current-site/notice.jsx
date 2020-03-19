@@ -269,7 +269,7 @@ export default connect(
 		const messagePath = `calypso:${ sectionName }:sidebar_notice`;
 
 		const isMigrationInProgress =
-			!! isSiteMigrationInProgress( state, siteId ) || isSiteMigrationActiveRoute( state );
+			isSiteMigrationInProgress( state, siteId ) || isSiteMigrationActiveRoute( state );
 
 		return {
 			isDomainOnly: isDomainOnlySite( state, siteId ),
