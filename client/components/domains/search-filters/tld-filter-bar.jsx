@@ -8,7 +8,6 @@ import React, { Component } from 'react';
 import { includes, isEqual, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { isWithinBreakpoint } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -135,27 +134,6 @@ export class TldFilterBar extends Component {
 					.{ tld }
 				</Button>
 			) );
-	}
-
-	getNumberOfTldsShownInViewport() {
-		// The number of TLDs shown for each breakpoint should match the CSS rule.
-		// e.g. .search-filters__tld-checkbox:nth-child( n + 5 ) is defined as display: none for screen size <800px,
-		// so we return 4 for isWithinBreakpoint( '<800px' ).
-		if ( isWithinBreakpoint( '<480px' ) ) {
-			return 1;
-		}
-
-		if ( isWithinBreakpoint( '<660px' ) ) {
-			return 2;
-		}
-
-		if ( isWithinBreakpoint( '<800px' ) ) {
-			return 4;
-		}
-
-		if ( isWithinBreakpoint( '>800px' ) ) {
-			return this.props.numberOfTldsShown;
-		}
 	}
 
 	renderPopoverButton() {

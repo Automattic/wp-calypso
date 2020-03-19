@@ -80,9 +80,7 @@ class DomainSuggestion extends React.Component {
 							price={ price }
 							salePrice={ salePrice }
 							rule={ priceRule }
-							isFeatured={ isFeatured }
 							isEligibleVariantForDomainTest={ isEligibleVariantForDomainTest }
-							domain={ this.props.domain }
 						/>
 					) }
 				</div>

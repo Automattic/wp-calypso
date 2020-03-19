@@ -20,15 +20,10 @@
 		}
 	}
 
-	.is-section-signup & {
+	.is-section-signup &:not( .domain-product-price__domain-step-copy-updates ) {
 		@include breakpoint( '>660px' ) {
 			padding-left: 1em;
 			padding-right: 2em;
-
-			&.domain-product-price__domain-step-copy-updates {
-				padding-left: 0;
-				padding-right: 0;
-			}
 		}
 	}
 
@@ -63,14 +58,6 @@
 	&.no-price .domain-product-price__sale-price {
 		@include breakpoint( '>660px' ) {
 			margin-left: 0;
-		}
-	}
-
-	.domain-product-price__free-text-tooltip {
-		display: flex;
-
-		body.is-section-signup .layout & {
-			padding: 0;
 		}
 	}
 
