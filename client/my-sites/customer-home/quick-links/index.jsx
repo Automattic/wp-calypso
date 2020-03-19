@@ -178,10 +178,10 @@ export const QuickLinks = ( {
 const editHomepageAction = ( editHomePageUrl, isStaticHomePage ) =>
 	withAnalytics(
 		composeAnalytics(
-			recordTracksEvent( `calypso_customer_home_my_site_edit_homepage_click`, {
+			recordTracksEvent( 'calypso_customer_home_my_site_edit_homepage_click', {
 				is_static_home_page: isStaticHomePage,
 			} ),
-			bumpStat( 'calypso_customer_home', `my_site_edit_homepage` )
+			bumpStat( 'calypso_customer_home', 'my_site_edit_homepage' )
 		),
 		navigate( editHomePageUrl )
 	);
@@ -189,10 +189,10 @@ const editHomepageAction = ( editHomePageUrl, isStaticHomePage ) =>
 const writePostAction = ( siteSlug, isStaticHomePage ) =>
 	withAnalytics(
 		composeAnalytics(
-			recordTracksEvent( `calypso_customer_home_my_site_write_post_click`, {
+			recordTracksEvent( 'calypso_customer_home_my_site_write_post_click', {
 				is_static_home_page: isStaticHomePage,
 			} ),
-			bumpStat( 'calypso_customer_home', `my_site_write_post` )
+			bumpStat( 'calypso_customer_home', 'my_site_write_post' )
 		),
 		navigate( `/post/${ siteSlug }` )
 	);
@@ -200,10 +200,10 @@ const writePostAction = ( siteSlug, isStaticHomePage ) =>
 const addPageAction = ( siteSlug, isStaticHomePage ) =>
 	withAnalytics(
 		composeAnalytics(
-			recordTracksEvent( `calypso_customer_home_my_site_add_page_click`, {
+			recordTracksEvent( 'calypso_customer_home_my_site_add_page_click', {
 				is_static_home_page: isStaticHomePage,
 			} ),
-			bumpStat( 'calypso_customer_home', `my_site_add_page` )
+			bumpStat( 'calypso_customer_home', 'my_site_add_page' )
 		),
 		navigate( `/page/${ siteSlug }` )
 	);
@@ -211,56 +211,56 @@ const addPageAction = ( siteSlug, isStaticHomePage ) =>
 const manageCommentsAction = ( siteSlug, isStaticHomePage ) =>
 	withAnalytics(
 		composeAnalytics(
-			recordTracksEvent( `calypso_customer_home_my_site_manage_comments_click`, {
+			recordTracksEvent( 'calypso_customer_home_my_site_manage_comments_click', {
 				is_static_home_page: isStaticHomePage,
 			} ),
-			bumpStat( 'calypso_customer_home', `my_site_manage_comments` )
+			bumpStat( 'calypso_customer_home', 'my_site_manage_comments' )
 		),
 		navigate( `/comments/${ siteSlug }` )
 	);
 
 const trackEditMenusAction = isStaticHomePage =>
 	composeAnalytics(
-		recordTracksEvent( `calypso_customer_home_my_site_edit_menus_click`, {
+		recordTracksEvent( 'calypso_customer_home_my_site_edit_menus_click', {
 			is_static_home_page: isStaticHomePage,
 		} ),
-		bumpStat( 'calypso_customer_home', `my_site_edit_menus` )
+		bumpStat( 'calypso_customer_home', 'my_site_edit_menus' )
 	);
 
 const trackCustomizeThemeAction = isStaticHomePage =>
 	composeAnalytics(
-		recordTracksEvent( `calypso_customer_home_my_site_customize_theme_click`, {
+		recordTracksEvent( 'calypso_customer_home_my_site_customize_theme_click', {
 			is_static_home_page: isStaticHomePage,
 		} ),
-		bumpStat( 'calypso_customer_home', `my_site_customize_theme` )
+		bumpStat( 'calypso_customer_home', 'my_site_customize_theme' )
 	);
 
 const changeThemeAction = ( siteSlug, isStaticHomePage ) =>
 	withAnalytics(
 		composeAnalytics(
-			recordTracksEvent( `calypso_customer_home_my_site_change_theme_click`, {
+			recordTracksEvent( 'calypso_customer_home_my_site_change_theme_click', {
 				is_static_home_page: isStaticHomePage,
 			} ),
-			bumpStat( 'calypso_customer_home', `my_site_change_theme` )
+			bumpStat( 'calypso_customer_home', 'my_site_change_theme' )
 		),
 		navigate( `/themes/${ siteSlug }` )
 	);
 
 const trackDesignLogoAction = isStaticHomePage =>
 	composeAnalytics(
-		recordTracksEvent( `calypso_customer_home_my_site_design_logo_click`, {
+		recordTracksEvent( 'calypso_customer_home_my_site_design_logo_click', {
 			is_static_home_page: isStaticHomePage,
 		} ),
-		bumpStat( 'calypso_customer_home', `my_site_design_logo` )
+		bumpStat( 'calypso_customer_home', 'my_site_design_logo' )
 	);
 
 const addEmailAction = ( siteSlug, isStaticHomePage ) =>
 	withAnalytics(
 		composeAnalytics(
-			recordTracksEvent( `calypso_customer_home_my_site_add_email_click`, {
+			recordTracksEvent( 'calypso_customer_home_my_site_add_email_click', {
 				is_static_home_page: isStaticHomePage,
 			} ),
-			bumpStat( 'calypso_customer_home', `my_site_add_email` )
+			bumpStat( 'calypso_customer_home', 'my_site_add_email' )
 		),
 		navigate( `/email/${ siteSlug }` )
 	);
@@ -268,10 +268,10 @@ const addEmailAction = ( siteSlug, isStaticHomePage ) =>
 const addDomainAction = ( siteSlug, isStaticHomePage ) =>
 	withAnalytics(
 		composeAnalytics(
-			recordTracksEvent( `calypso_customer_home_my_site_add_domain_click`, {
+			recordTracksEvent( 'calypso_customer_home_my_site_add_domain_click', {
 				is_static_home_page: isStaticHomePage,
 			} ),
-			bumpStat( 'calypso_customer_home', `my_site_add_domain` )
+			bumpStat( 'calypso_customer_home', 'my_site_add_domain' )
 		),
 		navigate( `/domains/add/${ siteSlug }` )
 	);
