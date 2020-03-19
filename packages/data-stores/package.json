@@ -34,7 +34,6 @@
 	"dependencies": {
 		"@wordpress/data-controls": "^1.4.0",
 		"@wordpress/url": "^2.8.2",
-		"debug": "^4.1.1",
 		"fast-json-stable-stringify": "^2.1.0",
 		"qs": "^6.9.1",
 		"redux": "^4.0.4",
