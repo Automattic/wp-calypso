@@ -20,29 +20,7 @@
 		cursor: pointer;
 	}
 
-	@include banner-color( var( --color-primary-40 ) );
-
-	&.is-wpcom-plan {
-		&.is-upgrade-blogger {
-			@include banner-color( var( --color-plan-blogger ) );
-		}
-
-		&.is-upgrade-personal {
-			@include banner-color( var( --color-plan-personal ) );
-		}
-
-		&.is-upgrade-premium {
-			@include banner-color( var( --color-plan-premium ) );
-		}
-
-		&.is-upgrade-business {
-			@include banner-color( var( --color-plan-business ) );
-		}
-
-		&.is-upgrade-ecommerce {
-			@include banner-color( var( --color-plan-ecommerce ) );
-		}
-	}
+	@include banner-color( var( --studio-blue-50 ) );
 
 	&.is-jetpack-plan {
 		&.is-upgrade-personal {
@@ -223,6 +201,11 @@
 	margin: 8px 0 0;
 	text-align: left;
 	width: 100%;
+
+	.button.is-primary {
+		background-color: var( --studio-blue-50 );
+		border-color: var( --studio-blue-60 );
+	}
 
 	.banner__prices {
 		display: flex;
