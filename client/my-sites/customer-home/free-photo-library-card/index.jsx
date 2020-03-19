@@ -14,6 +14,7 @@ import CardHeading from 'components/card-heading';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 import { localizeUrl } from 'lib/i18n-utils';
 import { withAnalytics, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import { bumpStat } from '../rest-client/bump-stat';
 
 /**
  * Style dependencies
@@ -59,7 +60,10 @@ const openSupportArticleDialogAndTrack = clickSource =>
 		composeAnalytics(
 			clickSource === 'prompt'
 				? recordTracksEvent( 'calypso_customer_home_free_photo_library_video_dialog_view' )
-				: recordTracksEvent( 'calypso_customer_home_free_photo_library_video_support_page_view' )
+				: recordTracksEvent( 'calypso_customer_home_free_photo_library_video_support_page_view' ),
+			clickSource === 'prompt'
+				? bumpStat( 'calypso_customer_home', 'view_free_photo_library_video' )
+				: bumpStat( 'calypso_customer_home', 'view_free_photo_library_learn_more' )
 		),
 		openSupportArticleDialog( {
 			postId: 145498,
