@@ -19,7 +19,7 @@ import { applySiteOffset } from 'lib/site/timezone';
 import { requestActivityLogs } from 'state/data-getters';
 import { withLocalizedMoment } from 'components/localized-moment';
 //import BackupDelta from '../../components/backup-delta';
-//import DailyBackupStatus from '../../components/daily-backup-status';
+import DailyBackupStatus from '../../components/daily-backup-status';
 import DatePicker from '../../components/date-picker';
 import getRewindState from 'state/selectors/get-rewind-state';
 import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
@@ -143,7 +143,7 @@ class BackupsPage extends Component {
 
 	render() {
 		// const { allowRestore, logs, moment, siteId, siteSlug } = this.props;
-		const { siteId, loading } = this.props;
+		const { siteId, siteSlug, loading, siteGmtOffset, siteTimezone } = this.props;
 
 		// const hasRealtimeBackups = this.hasRealtimeBackups();
 		// const backupAttempts = getBackupAttemptsForDate( logs, selectedDateString );
@@ -176,13 +176,13 @@ class BackupsPage extends Component {
 						) ) }
 				</ul>
 
-				{ /*<DailyBackupStatus*/ }
-				{ /*allowRestore={ allowRestore }*/ }
-				{ /*date={ this.state.selectedDate }*/ }
-				{ /*backups={ this.state.selectedDateBackups }*/ }
-				{ /*backupAttempts={ backupAttempts }*/ }
-				{ /*siteSlug={ siteSlug }*/ }
-				{ /*/>*/ }
+				<DailyBackupStatus
+					selectedDate={ this.state.selectedDate }
+					backups={ this.state.backupsOnSelectedDate }
+					siteSlug={ siteSlug }
+					siteGmtOffset={ siteGmtOffset }
+					siteTimezone={ siteTimezone }
+				/>
 
 				{ /* Temporaly commented. PR in progress */ }
 				{ /*<BackupDelta*/ }
