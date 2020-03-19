@@ -44,7 +44,7 @@ const EditorGutenbergDialogs: React.FC< {} > = () => {
 				dispatch( showGutenbergOptInDialog() );
 			}
 		},
-		[ isPrivateAtomic, isPostContentLoaded, postContent ]
+		[ dispatch, isPrivateAtomic, isPostContentLoaded, postContent ]
 	);
 
 	return (
