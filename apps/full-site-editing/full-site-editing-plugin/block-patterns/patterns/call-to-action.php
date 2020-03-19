@@ -41,7 +41,7 @@ $markup = '
 
 return array(
 	'__file'  => 'wp_block',
-	'title'   => __( 'Call to action', 'full-site-editing' ),
+	'title'   => esc_html__( 'Call to action', 'full-site-editing' ),
 	'content' => sprintf(
 		$markup,
 		esc_url( 'https://iamtakashiblockpatterns.files.wordpress.com/2020/03/david-pennington-t-gjuwpw-oi-unsplash.jpg?w=682' ),

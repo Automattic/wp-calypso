@@ -43,6 +43,6 @@ $markup = '
 
 return array(
 	'__file'  => 'wp_block',
-	'title'   => __( 'Three images side-by-side', 'full-site-editing' ),
+	'title'   => esc_html__( 'Three images side-by-side', 'full-site-editing' ),
 	'content' => $markup,
 );

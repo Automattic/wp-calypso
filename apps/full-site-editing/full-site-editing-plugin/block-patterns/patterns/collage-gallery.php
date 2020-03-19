@@ -13,7 +13,7 @@ $markup = '
 
 return array(
 	'__file'  => 'wp_block',
-	'title'   => __( 'Collage gallery', 'full-site-editing' ),
+	'title'   => esc_html__( 'Collage gallery', 'full-site-editing' ),
 	'content' => $markup,
 );
 

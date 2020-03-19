@@ -31,7 +31,7 @@ $markup = '
 
 return array(
 	'__file'  => 'wp_block',
-	'title'   => __( 'Image and Description', 'full-site-editing' ),
+	'title'   => esc_html__( 'Image and Description', 'full-site-editing' ),
 	'content' => sprintf(
 		$markup,
 		esc_url( 'https://iamtakashiblockpatterns.files.wordpress.com/2020/03/mae-mu-_c5zsv_p-yi-unsplash.jpg' ),

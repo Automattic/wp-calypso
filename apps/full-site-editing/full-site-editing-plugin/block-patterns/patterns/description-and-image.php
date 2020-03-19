@@ -31,7 +31,7 @@ $markup = '
 
 return array(
 	'__file'  => 'wp_block',
-	'title'   => __( 'Description and Image', 'full-site-editing' ),
+	'title'   => esc_html__( 'Description and Image', 'full-site-editing' ),
 	'content' => sprintf(
 		$markup,
 		esc_html__( 'The artist is the creator of beautiful things. To reveal art and conceal the artist is art&#8217;s aim. The critic is he who can translate into another manner or a new material his impression of beautiful things.', 'full-site-editing' ),
