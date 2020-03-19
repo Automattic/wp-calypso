@@ -131,9 +131,11 @@ const ReferAFriendSection: FunctionComponent< ConnectedProps > = ( {
 	};
 
 	return (
-		<Fragment>
-			<PromoSection { ...promos } />
-		</Fragment>
+		<div className="refer-a-friend__earn-page">
+			<Fragment>
+				<PromoSection { ...promos } />
+			</Fragment>
+		</div>
 	);
 };
 
