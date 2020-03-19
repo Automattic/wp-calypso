@@ -356,6 +356,11 @@ function returnModalCopy( product, translate, hasDomainsInCart ) {
 }
 
 function canItemBeDeleted( item ) {
-	const itemTypesThatCannotBeDeleted = [ 'tax', 'credits', 'wordpress-com-credits' ];
+	const itemTypesThatCannotBeDeleted = [
+		'domain_redemption',
+		'tax',
+		'credits',
+		'wordpress-com-credits',
+	];
 	return ! itemTypesThatCannotBeDeleted.includes( item.type );
 }
