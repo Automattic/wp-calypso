@@ -25,6 +25,13 @@
 
 		svg {
 			fill: var( --color-black );
+			// Ensures the logo is centered by balancing out the avatar item on the right:
+			// ( 15px padding left + 24px avatar + 15px padding right ) / 2 = 27px
+			transform: translateX( 27px );
+
+			@include breakpoint( '>660px' ) {
+				transform: none;
+			}
 		}
 	}
 }
