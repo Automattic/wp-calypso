@@ -44,6 +44,8 @@ const EditorGutenbergDialogs: React.FC< {} > = () => {
 				dispatch( showGutenbergOptInDialog() );
 			}
 		},
+		// Disabling eslint check because hasGutenbergContent is only set inside this effect
+		// and we don't want to rerun it once it's updated
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ dispatch, isPrivateAtomic, isPostContentLoaded, postContent ]
 	);
