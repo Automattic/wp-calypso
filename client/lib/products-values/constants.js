@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Fragment } from 'react';
-import { translate } from 'i18n-calypso';
+import { numberFormat, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -42,6 +42,14 @@ export const JETPACK_PRODUCTS_LIST = [
 	...( isEnabled( 'jetpack/search-product' ) ? JETPACK_SEARCH_PRODUCTS : [] ),
 	...( isEnabled( 'jetpack/scan-product' ) ? JETPACK_SCAN_PRODUCTS : [] ),
 ];
+
+// Jetpack Search tiers
+export const JETPACK_SEARCH_TIER_UP_TO_100_RECORDS = 'up_to_100_records';
+export const JETPACK_SEARCH_TIER_UP_TO_1K_RECORDS = 'up_to_1k_records';
+export const JETPACK_SEARCH_TIER_UP_TO_10K_RECORDS = 'up_to_10k_records';
+export const JETPACK_SEARCH_TIER_UP_TO_100K_RECORDS = 'up_to_100k_records';
+export const JETPACK_SEARCH_TIER_UP_TO_1M_RECORDS = 'up_to_1m_records';
+export const JETPACK_SEARCH_TIER_MORE_THAN_1M_RECORDS = 'more_than_1m_records';
 
 export const JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/backup/';
 
@@ -216,10 +224,55 @@ export const getJetpackProducts = () => {
 				yearly: [ PRODUCT_JETPACK_SEARCH ],
 				monthly: [ PRODUCT_JETPACK_SEARCH_MONTHLY ],
 			},
-			optionShortNames: getJetpackProductsShortNames(),
+			optionShortNamesCallback: productObject => {
+				const numberOfDefinedTiers = 5;
+				switch ( productObject.price_tier_slug ) {
+					case JETPACK_SEARCH_TIER_UP_TO_100_RECORDS:
+						return translate( 'Tier 1: Up to 100 records' );
+					case JETPACK_SEARCH_TIER_UP_TO_1K_RECORDS:
+						return translate( 'Tier 2: Up to 1,000 records' );
+					case JETPACK_SEARCH_TIER_UP_TO_10K_RECORDS:
+						return translate( 'Tier 3: Up to 10,000 records' );
+					case JETPACK_SEARCH_TIER_UP_TO_100K_RECORDS:
+						return translate( 'Tier 4: Up to 100,000 records' );
+					case JETPACK_SEARCH_TIER_UP_TO_1M_RECORDS:
+						return translate( 'Tier 5: Up to 1,000,000 records' );
+					case JETPACK_SEARCH_TIER_MORE_THAN_1M_RECORDS: {
+						// This is a catch-all tier with prices increasing
+						// proportionally per million records, so define fake
+						// tiers here to show the user what they will actually
+						// pay and why.
+						const tierNumber =
+							numberOfDefinedTiers +
+							Math.floor( productObject.price_tier_usage_quantity / 1000000 );
+						const tierMaximumRecords =
+							1000000 * Math.ceil( productObject.price_tier_usage_quantity / 1000000 );
+						return translate( 'Tier %(tierNumber)d: Up to %(tierMaximumRecords)s records', {
+							args: {
+								tierNumber: tierNumber,
+								tierMaximumRecords: numberFormat( tierMaximumRecords ),
+							},
+						} );
+					}
+					default:
+						return null;
+				}
+			},
+			optionActionButtonNames: getJetpackProductsShortNames(),
 			optionDisplayNames: getJetpackProductsDisplayNames(),
 			optionDescriptions: getJetpackProductsDescriptions(),
-			optionsLabel: translate( 'Select a product option:' ),
+			optionsLabelCallback: productObject => {
+				return translate(
+					'Your current site record size: %(numberOfRecords)s record',
+					'Your current site record size: %(numberOfRecords)s records',
+					{
+						count: productObject.price_tier_usage_quantity,
+						args: {
+							numberOfRecords: numberFormat( productObject.price_tier_usage_quantity ),
+						},
+					}
+				);
+			},
 			slugs: JETPACK_SEARCH_PRODUCTS,
 		} );
 
