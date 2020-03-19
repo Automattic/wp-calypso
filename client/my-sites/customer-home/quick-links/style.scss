@@ -5,7 +5,7 @@
 	align-items: stretch;
 }
 
-.quick-links__card-boxes.foldable-card {
+.quick-links.foldable-card {
 	&.is-expanded .foldable-card__header {
 		padding-bottom: 0;
 	}
@@ -23,7 +23,7 @@
 	}
 }
 @include breakpoint( '>480px' ) {
-	.quick-links__card-boxes.card.foldable-card {
+	.quick-links.card.foldable-card {
 		margin-top: 0;
 		padding-bottom: 0;
 
