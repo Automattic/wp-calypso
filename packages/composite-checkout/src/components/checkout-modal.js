@@ -18,6 +18,7 @@ export default function CheckoutModal( {
 	title,
 	copy,
 	primaryAction,
+	secondaryAction = () => {},
 	closeModal,
 	isVisible,
 	buttonCTA,
@@ -40,7 +41,12 @@ export default function CheckoutModal( {
 				<CheckoutModalCopy className="checkout-modal__copy">{ copy }</CheckoutModalCopy>
 
 				<CheckoutModalActions>
-					<Button buttonState="default" onClick={ closeModal }>
+					<Button
+						buttonState="default"
+						onClick={ () => {
+							handleSecondaryAction( secondaryAction, closeModal );
+						} }
+					>
 						{ cancelButtonCTA || localize( 'Cancel' ) }
 					</Button>
 					<Button
@@ -62,6 +68,7 @@ CheckoutModal.propTypes = {
 	title: PropTypes.string.isRequired,
 	copy: PropTypes.string.isRequired,
 	primaryAction: PropTypes.func.isRequired,
+	secondaryAction: PropTypes.func,
 	isVisible: PropTypes.bool.isRequired,
 	className: PropTypes.string,
 	buttonCTA: PropTypes.string,
@@ -143,6 +150,11 @@ const CheckoutModalActions = styled.div`
 
 function handlePrimaryAction( primaryAction, closeModal ) {
 	primaryAction();
+	closeModal();
+}
+
+function handleSecondaryAction( secondaryAction, closeModal ) {
+	secondaryAction();
 	closeModal();
 }
 

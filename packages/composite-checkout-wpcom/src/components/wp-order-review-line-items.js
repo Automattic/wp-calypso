@@ -84,9 +84,6 @@ function WPLineItem( {
 						isVisible={ isModalVisible }
 						closeModal={ () => {
 							setIsModalVisible( false );
-							onEvent( {
-								type: 'a8c_checkout_cancel_delete_product',
-							} );
 						} }
 						primaryAction={ () => {
 							removeItem( item.wpcom_meta.uuid );
@@ -95,6 +92,11 @@ function WPLineItem( {
 								payload: {
 									product_name: item.label,
 								},
+							} );
+						} }
+						secondaryAction={ () => {
+							onEvent( {
+								type: 'a8c_checkout_cancel_delete_product',
 							} );
 						} }
 						title={ modalCopy.title }
