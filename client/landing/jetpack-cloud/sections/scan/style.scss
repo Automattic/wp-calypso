@@ -18,16 +18,26 @@
 .scan__content {
 	flex: 1 0 auto;
 	max-width: 680px;
-}
 
-.scan__icon {
-	display: block;
-	margin: 0 auto;
-	width: 70px;
+	.security-icon {
+		display: block;
+		margin: 0 auto;
+		width: 70px;
 
-	@include breakpoint( '>660px' ) {
-		margin: 0;
+		@include breakpoint( '>660px' ) {
+			margin: 0;
+		}
 	}
+
+	.progress-bar {
+			margin-bottom: 24px;
+	}
+
+	.progress-bar__progress {
+		background-color:  var( --color-primary );
+		box-shadow: 0 2px 6px rgba( var( --color-primary-rgb ), 0.25 );
+	}
+
 }
 
 .scan__header {

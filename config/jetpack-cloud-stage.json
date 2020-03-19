@@ -14,7 +14,8 @@
 		"jetpack-cloud/backups-restore": true,
 		"jetpack-cloud/settings": true,
 		"jetpack-cloud/scan": true,
-		"jetpack-cloud/scan-history": true
+		"jetpack-cloud/scan-history": true,
+		"jetpack-cloud/on-demand-scan": true
 	},
 	"enable_all_sections": false,
 	"sections": {
