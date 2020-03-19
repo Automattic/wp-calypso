@@ -9,19 +9,12 @@ import { numberFormat, translate } from 'i18n-calypso';
  */
 import ThreatDialog from 'landing/jetpack-cloud/components/threat-dialog';
 import ThreatItem from 'landing/jetpack-cloud/components/threat-item';
+import { Threat, ThreatAction } from 'landing/jetpack-cloud/components/threat-item/types';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-type ThreatAction = 'fix' | 'ignore';
-
-type Threat = {
-	id: number;
-	title: string;
-	details: string;
-};
 
 interface Props {
 	site: {
@@ -47,7 +40,9 @@ const ScanThreats = ( { site, threats }: Props ) => {
 	};
 
 	const confirmAction = () => {
-		window.alert( `Fixing site: ${ site.name }` );
+		window.alert(
+			`We are going to ${ actionToPerform } threat ${ selectedThreat?.id } on site ${ site.name }`
+		);
 		closeDialog();
 	};
 
@@ -78,7 +73,7 @@ const ScanThreats = ( { site, threats }: Props ) => {
 					}
 				) }
 			</p>
-			<div className="scan-threats scan__threats">
+			<div className="scan-threats__threats">
 				{ threats.map( threat => (
 					<ThreatItem
 						key={ threat.id }

@@ -17,7 +17,6 @@ import Gridicon from 'components/gridicon';
 import './style.scss';
 
 interface Props {
-	threatId: number;
 	threatTitle: string;
 	threatDescription: string | ReactNode;
 	action: 'fix' | 'ignore';

@@ -15,14 +15,13 @@
 	}
 
 	.progress-bar {
-			margin-bottom: 24px;
+		margin-bottom: 24px;
 	}
 
 	.progress-bar__progress {
-		background-color:  var( --color-primary );
+		background-color: var( --color-primary );
 		box-shadow: 0 2px 6px rgba( var( --color-primary-rgb ), 0.25 );
 	}
-
 }
 
 .scan__header {
@@ -38,10 +37,6 @@
 
 .scan__header--okay {
 	color: var( --color-primary-40 );
-}
-
-.scan__threats {
-	margin: 40px 0;
 }
 
 .scan__button {

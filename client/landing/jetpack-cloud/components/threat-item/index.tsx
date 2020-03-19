@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { translate } from 'i18n-calypso';
 import classnames from 'classnames';
 import { Button } from '@automattic/components';
@@ -12,19 +11,20 @@ import { Button } from '@automattic/components';
  */
 import LogItem from '../log-item';
 import ThreatDescription from '../threat-description';
+import { Threat } from 'landing/jetpack-cloud/components/threat-item/types';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-class ThreatItem extends Component {
-	static propTypes = {
-		threat: PropTypes.object,
-		onFixThreat: PropTypes.func,
-		onIgnoreThreat: PropTypes.func,
-	};
+interface Props {
+	threat: Threat;
+	onFixThreat: Function;
+	onIgnoreThreat: Function;
+}
 
+class ThreatItem extends Component< Props > {
 	/**
 	 * Render a CTA button. Currently, this button is rendered three
 	 * times: in the details section, and in the `summary` and `extendSummary`
