@@ -14,7 +14,7 @@ import { getMediaStorage } from 'state/sites/media-storage/selectors';
 import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import canCurrentUser from 'state/selectors/can-current-user';
-import { planHasFeature } from 'lib/plans';
+import { planHasFeature, isBusinessPlan, isEcommercePlan } from 'lib/plans';
 import { FEATURE_UNLIMITED_STORAGE } from 'lib/plans/constants';
 import PlanStorageBar from './bar';
 
@@ -52,6 +52,9 @@ export class PlanStorage extends Component {
 			return null;
 		}
 
+		const planHasTopStorageSpace =
+			isBusinessPlan( sitePlanSlug ) || isEcommercePlan( sitePlanSlug );
+
 		return (
 			<div className={ classNames( className, 'plan-storage' ) }>
 				<QueryMediaStorage siteId={ siteId } />
@@ -59,7 +62,7 @@ export class PlanStorage extends Component {
 					siteSlug={ siteSlug }
 					sitePlanSlug={ sitePlanSlug }
 					mediaStorage={ this.props.mediaStorage }
-					displayUpgradeLink={ canUserUpgrade }
+					displayUpgradeLink={ canUserUpgrade && ! planHasTopStorageSpace }
 				>
 					{ this.props.children }
 				</PlanStorageBar>
