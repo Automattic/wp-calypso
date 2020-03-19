@@ -35,7 +35,7 @@ export const handleFetchExperiments = ( action ) =>
 			method: 'GET',
 			path: '/v2/experiments/calypso',
 			query: {
-				anonId: action.anonId,
+				anon_id: action.anonId,
 			},
 		},
 		{ ...action }
