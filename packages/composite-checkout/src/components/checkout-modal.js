@@ -152,12 +152,15 @@ function preventClose( event ) {
 
 function useModalScreen( isVisible, closeModal ) {
 	useEffect( () => {
-		document.body.style.cssText = isVisible ? 'overflow: hidden' : 'overflow: scroll';
+		document.body.style.cssText = isVisible ? 'overflow: hidden' : '';
 		const keyPressHandler = makeHandleKeyPress( closeModal );
 		if ( isVisible ) {
 			document.addEventListener( 'keydown', keyPressHandler, false );
 		}
-		return () => document.removeEventListener( 'keydown', keyPressHandler, false );
+		return () => {
+			document.body.style.cssText = '';
+			document.removeEventListener( 'keydown', keyPressHandler, false );
+		};
 	}, [ isVisible, closeModal ] );
 }
 
