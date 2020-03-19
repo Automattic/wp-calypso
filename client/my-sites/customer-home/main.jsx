@@ -265,7 +265,7 @@ class Home extends Component {
 					{ ! siteIsUnlaunched && (
 						<div className="customer-home__view-site-button">
 							<Button href={ site.URL } onClick={ () => trackAction( 'my_site', 'view_site' ) }>
-								{ translate( 'View Site' ) }
+								{ translate( 'View site' ) }
 							</Button>
 						</div>
 					) }

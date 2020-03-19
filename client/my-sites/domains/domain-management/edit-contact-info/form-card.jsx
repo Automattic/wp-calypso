@@ -168,7 +168,7 @@ class EditContactInfoFormCard extends React.Component {
 				</FormLabel>
 				<DesignatedAgentNotice
 					domainRegistrationAgreementUrl={ domainRegistrationAgreementUrl }
-					saveButtonLabel={ translate( 'Save Contact Info' ) }
+					saveButtonLabel={ translate( 'Save contact info' ) }
 				/>
 			</div>
 		);
@@ -419,7 +419,7 @@ class EditContactInfoFormCard extends React.Component {
 						onContactDetailsChange={ this.handleContactDetailsChange }
 						onSubmit={ this.handleSubmitButtonClick }
 						onValidate={ this.validate }
-						labelTexts={ { submitButton: translate( 'Save Contact Info' ) } }
+						labelTexts={ { submitButton: translate( 'Save contact info' ) } }
 						disableSubmitButton={ this.shouldDisableSubmitButton() }
 						isSubmitting={ this.state.formSubmitting }
 					>

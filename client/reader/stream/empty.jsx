@@ -34,7 +34,7 @@ class FollowingEmptyContent extends React.Component {
 					onClick={ this.recordAction }
 					href="/read/search"
 				>
-					{ this.props.translate( 'Find Sites to Follow' ) }
+					{ this.props.translate( 'Find sites to follow' ) }
 				</a>
 			),
 			secondaryAction = null;
