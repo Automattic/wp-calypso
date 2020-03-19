@@ -3,6 +3,7 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const https = require( 'https' );
 const mkdirp = require( 'mkdirp' );
+const readline = require( 'readline' );
 const parse = require( 'gettext-parser' ).po.parse;
 
 const LANGUAGES_BASE_URL = 'https://widgets.wp.com/languages/calypso';
@@ -118,8 +119,8 @@ const languages = [
 ]; // todo: can we use `../client/languages`?
 
 function logUpdate( text ) {
-	process.stdout.clearLine();
-	process.stdout.cursorTo( 0 );
+	readline.clearLine( process.stdout, 0 );
+	readline.cursorTo( process.stdout, 0 );
 	process.stdout.write( text );
 }
 
