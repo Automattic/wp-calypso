@@ -4,62 +4,25 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Button, ProgressBar } from '@automattic/components';
-import { numberFormat, translate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
-import { withLocalizedMoment } from 'components/localized-moment';
+import Main from 'components/main';
 import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
-import ThreatItem from '../../components/threat-item';
+import ScanThreats from 'landing/jetpack-cloud/components/scan-threats';
 import { isEnabled } from 'config';
-import ThreatDialog from '../../components/threat-dialog';
 import Gridicon from 'components/gridicon';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 import './style.scss';
-
-// This is here for testing purposes only. Once the ThreatItem component
-// is merged into master, we would be able to connect this two pieces of
-// UI.
-const ComponentToTestDialogs = ( { siteName, threat } ) => {
-	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
-	const [ actionToPerform, setActionToPerform ] = React.useState();
-
-	const openDialog = action => {
-		setActionToPerform( action );
-		setShowThreatDialog( true );
-	};
-
-	const closeDialog = () => {
-		setShowThreatDialog( false );
-	};
-
-	const confirmAction = () => {
-		window.alert( `Fixing site: ${ siteName }` );
-		closeDialog();
-	};
-
-	return (
-		<>
-			<Button onClick={ () => openDialog( 'fix' ) }>Open Fix Dialog</Button>
-			<Button onClick={ () => openDialog( 'ignore' ) }>Open Ignore Dialog</Button>
-			<ThreatDialog
-				showDialog={ showThreatDialog }
-				onCloseDialog={ closeDialog }
-				onConfirmation={ confirmAction }
-				siteName={ siteName }
-				threatTitle={ threat.title }
-				threatDescription={ threat.details }
-				action={ actionToPerform }
-			/>
-		</>
-	);
-};
 
 class ScanPage extends Component {
 	renderScanOkay() {
@@ -108,49 +71,7 @@ class ScanPage extends Component {
 
 	renderThreats() {
 		const { threats, site } = this.props;
-
-		return (
-			<>
-				<SecurityIcon icon="error" />
-				<h1 className="scan__header">{ translate( 'Your site may be at risk' ) }</h1>
-				<p>
-					{ translate(
-						'The scan found {{strong}}%(threatCount)s{{/strong}} potential threat with {{strong}}%(siteName)s{{/strong}}.',
-						'The scan found {{strong}}%(threatCount)s{{/strong}} potential threats with {{strong}}%(siteName)s{{/strong}}.',
-						{
-							args: {
-								siteName: site.name,
-								threatCount: numberFormat( threats.length ),
-							},
-							components: { strong: <strong /> },
-							comment:
-								'%(threatCount)s represents the number of threats currently identified on the site, and $(siteName)s is the name of the site.',
-							count: threats.length,
-						}
-					) }
-					<br />
-					{ translate(
-						'Please review them below and take action. We are {{a}}here to help{{/a}} if you need us.',
-						{
-							components: { a: <a href="https://jetpack.com/contact-support/" /> },
-							comment: 'The {{a}} tag is a link that goes to a contact support page.',
-						}
-					) }
-				</p>
-				<div className="scan__threats">
-					{ threats.map( threat => (
-						<ThreatItem
-							key={ threat.id }
-							threat={ threat }
-							// eslint-disable-next-line no-console
-							onFixThreat={ () => console.log( 'Fixing threat' ) }
-							// eslint-disable-next-line no-console
-							onIgnoreThreat={ () => console.log( 'Ignoring threat' ) }
-						/>
-					) ) }
-				</div>
-			</>
-		);
+		return <ScanThreats threats={ threats } site={ site } />;
 	}
 
 	renderScanError() {
@@ -193,16 +114,11 @@ class ScanPage extends Component {
 	}
 
 	render() {
-		const { threats, site } = this.props;
-
 		return (
 			<Main className="scan__main">
 				<DocumentHead title="Scanner" />
 				<SidebarNavigation />
-				<div className="scan__content">
-					{ this.renderScanState() }
-					<ComponentToTestDialogs threat={ threats[ 0 ] } siteName={ site.name } />
-				</div>
+				<div className="scan__content">{ this.renderScanState() }</div>
 				<StatsFooter
 					header="Scan Summary"
 					stats={ [
