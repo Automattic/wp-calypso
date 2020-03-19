@@ -77,7 +77,7 @@ function enqueue_override_scripts() {
 	 * TODO: clean up this workaround later if possible.
 	 * Currently this works because the required Dotcom overrides are hooked to this action.
 	 */
-	do_action( 'enqueue_block_editor_assets' );
+	do_action( 'enqueue_core_site_editor_assets' );
 }
 
 /**
