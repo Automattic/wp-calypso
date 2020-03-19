@@ -197,10 +197,14 @@ class PostTypeList extends Component {
 			return null;
 		}
 
+		/*
+		 * Temporary workaround to Sentence case label from core API for EN langs
+		 * @TODO: Remove when https://core.trac.wordpress.org/ticket/49616 is merged
+		 */
+
 		let addNewLabel = postLabels.add_new_item;
 
 		if ( 'en' === localeSlug || 'en-gb' === localeSlug ) {
-			// Temporary workaround to Sentence case label from core API for EN lang
 			addNewLabel =
 				postLabels.add_new_item[ 0 ].toUpperCase() +
 				postLabels.add_new_item.slice( 1 ).toLowerCase();
