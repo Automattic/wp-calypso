@@ -159,6 +159,8 @@ class ScanPage extends Component {
 				</p>
 				<Button
 					primary
+					target="_blank"
+					rel="noopener noreferrer"
 					href={ `https://jetpack.com/contact-support/?scan-state=error&site-slug=${ siteSlug }` }
 					className="scan__button"
 				>
