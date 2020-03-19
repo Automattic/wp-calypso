@@ -219,7 +219,7 @@ export function createActions( {
 			}
 
 			try {
-				const response: WpLoginResponse = yield wpLogin( 'two-step-authentication-endpoint', {
+				const response: WpLoginResponse = yield* wpLogin( 'two-step-authentication-endpoint', {
 					remember_me: true,
 					auth_type: 'push',
 					user_id,
