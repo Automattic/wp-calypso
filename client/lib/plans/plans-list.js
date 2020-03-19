@@ -17,6 +17,12 @@ const WPComGetBillingTimeframe = annualPriceText =>
 		: i18n.translate( 'per month, billed annually' );
 const WPComGetBiennialBillingTimeframe = () => i18n.translate( '/month, billed every two years' );
 
+const plansDescriptionHeadingComponent = {
+	components: {
+		strong: <strong className="plans__features plan-features__targeted-description-heading" />,
+	},
+};
+
 const getPlanBloggerDetails = () => ( {
 	group: constants.GROUP_WPCOM,
 	type: constants.TYPE_BLOGGER,
@@ -29,13 +35,7 @@ const getPlanBloggerDetails = () => ( {
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for Bloggers:{{/strong}} Brand your blog with a custom .blog domain name, and remove all WordPress.com advertising. Receive additional storage space and email support.',
-			{
-				components: {
-					strong: (
-						<strong className="plans__features plan-features__targeted-description-heading" />
-					),
-				},
-			}
+			plansDescriptionHeadingComponent
 		),
 	getShortDescription: () =>
 		i18n.translate(
@@ -89,13 +89,7 @@ const getPlanPersonalDetails = () => ( {
 			'{{strong}}Best for Personal Use:{{/strong}} Boost your' +
 				' website with a custom domain name, and remove all WordPress.com advertising. ' +
 				'Get access to high-quality email and live chat support.',
-			{
-				components: {
-					strong: (
-						<strong className="plans__features plan-features__targeted-description-heading" />
-					),
-				},
-			}
+			plansDescriptionHeadingComponent
 		),
 	getShortDescription: isEligibleForPlanStepUpdates =>
 		isEligibleForPlanStepUpdates
@@ -151,13 +145,7 @@ const getPlanEcommerceDetails = () => ( {
 			'{{strong}}Best for Online Stores:{{/strong}} Sell products or services with this powerful, ' +
 				'all-in-one online store experience. This plan includes premium integrations and is extendable, ' +
 				'so it’ll grow with you as your business grows.',
-			{
-				components: {
-					strong: (
-						<strong className="plans__features plan-features__targeted-description-heading" />
-					),
-				},
-			}
+			plansDescriptionHeadingComponent
 		);
 	},
 	getShortDescription: isEligibleForPlanStepUpdates =>
@@ -249,13 +237,7 @@ const getPlanPremiumDetails = () => ( {
 				' Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
 				' Google Analytics support,' +
 				' and the ability to monetize your site with ads.',
-			{
-				components: {
-					strong: (
-						<strong className="plans__features plan-features__targeted-description-heading" />
-					),
-				},
-			}
+			plansDescriptionHeadingComponent
 		),
 	getShortDescription: isEligibleForPlanStepUpdates =>
 		isEligibleForPlanStepUpdates
@@ -325,13 +307,7 @@ const getPlanBusinessDetails = () => ( {
 			'{{strong}}Best for Small Businesses:{{/strong}} Power your' +
 				' business website with custom plugins and themes, unlimited premium and business theme templates,' +
 				' 200 GB storage, and the ability to remove WordPress.com branding.',
-			{
-				components: {
-					strong: (
-						<strong className="plans__features plan-features__targeted-description-heading" />
-					),
-				},
-			}
+			plansDescriptionHeadingComponent
 		),
 	getShortDescription: isEligibleForPlanStepUpdates =>
 		isEligibleForPlanStepUpdates
@@ -734,13 +710,7 @@ export const PLANS_LIST = {
 				'{{strong}}Best for Small Businesses:{{/strong}}' +
 					'Comprehensive, automated scanning for security vulnerabilities, ' +
 					'fast video hosting, and marketing automation.',
-				{
-					components: {
-						strong: (
-							<strong className="plans__features plan-features__targeted-description-heading" />
-						),
-					},
-				}
+				plansDescriptionHeadingComponent
 			),
 		getTagline: () =>
 			i18n.translate(
@@ -805,13 +775,7 @@ export const PLANS_LIST = {
 				'{{strong}}Best for Small Businesses:{{/strong}}' +
 					'Comprehensive, automated scanning for security vulnerabilities, ' +
 					'fast video hosting, and marketing automation.',
-				{
-					components: {
-						strong: (
-							<strong className="plans__features plan-features__targeted-description-heading" />
-						),
-					},
-				}
+				plansDescriptionHeadingComponent
 			),
 		getTagline: () =>
 			i18n.translate(
@@ -869,13 +833,7 @@ export const PLANS_LIST = {
 				'{{strong}}Best for Personal Use:{{/strong}}' +
 					'Security essentials for your WordPress site, including ' +
 					'automated backups and priority support.',
-				{
-					components: {
-						strong: (
-							<strong className="plans__features plan-features__targeted-description-heading" />
-						),
-					},
-				}
+				plansDescriptionHeadingComponent
 			),
 		getTagline: () =>
 			i18n.translate(
@@ -922,13 +880,7 @@ export const PLANS_LIST = {
 				'{{strong}}Best for Personal Use:{{/strong}}' +
 					'Security essentials for your WordPress site, including ' +
 					'automated backups and priority support.',
-				{
-					components: {
-						strong: (
-							<strong className="plans__features plan-features__targeted-description-heading" />
-						),
-					},
-				}
+				plansDescriptionHeadingComponent
 			),
 		getTagline: () =>
 			i18n.translate(
@@ -986,13 +938,7 @@ export const PLANS_LIST = {
 				'{{strong}}Best for Organizations:{{/strong}}' +
 					'The most powerful WordPress sites: real-time backups, ' +
 					'enhanced search, and unlimited premium themes.',
-				{
-					components: {
-						strong: (
-							<strong className="plans__features plan-features__targeted-description-heading" />
-						),
-					},
-				}
+				plansDescriptionHeadingComponent
 			),
 		getTagline: () =>
 			i18n.translate( 'You have the full suite of security and performance tools.' ),
@@ -1062,13 +1008,7 @@ export const PLANS_LIST = {
 				'{{strong}}Best for Organizations:{{/strong}}' +
 					'The most powerful WordPress sites: real-time backups, ' +
 					'enhanced search, and unlimited premium themes.',
-				{
-					components: {
-						strong: (
-							<strong className="plans__features plan-features__targeted-description-heading" />
-						),
-					},
-				}
+				plansDescriptionHeadingComponent
 			),
 		getTagline: () =>
 			i18n.translate( 'You have the full suite of security and performance tools.' ),
