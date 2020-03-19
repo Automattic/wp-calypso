@@ -21,12 +21,8 @@ import './style.scss';
 class ThreatItem extends Component {
 	static propTypes = {
 		threat: PropTypes.object,
-	};
-
-	handleFixThreat = () => {
-		const { threat } = this.props;
-		// eslint-disable-next-line no-undef
-		alert( `Fixing threat ${ threat.id }` );
+		onFixThreat: PropTypes.func,
+		onIgnoreThreat: PropTypes.func,
 	};
 
 	/**
@@ -39,9 +35,9 @@ class ThreatItem extends Component {
 	renderFixThreatButton( className ) {
 		return (
 			<Button
-				className={ classnames( 'threat-item__fix-cta', className ) }
+				className={ classnames( 'threat-item__fix-button', className ) }
 				compact
-				onClick={ this.handleFixThreat }
+				onClick={ this.props.onFixThreat }
 			>
 				{ translate( 'Fix threat' ) }
 			</Button>
@@ -49,7 +45,7 @@ class ThreatItem extends Component {
 	}
 
 	render() {
-		const { threat } = this.props;
+		const { threat, onIgnoreThreat } = this.props;
 		const fixThreatCTA = this.renderFixThreatButton( 'is-summary' );
 
 		return (
@@ -67,9 +63,14 @@ class ThreatItem extends Component {
 					details={ threat.description.details }
 					fix={ threat.description.fix }
 					problem={ threat.description.problem }
-				>
+				/>
+
+				<div className="threat-item__buttons">
 					{ this.renderFixThreatButton( 'is-details' ) }
-				</ThreatDescription>
+					<Button className="threat-item__ignore-button" compact onClick={ onIgnoreThreat }>
+						{ translate( 'Ignore threat' ) }
+					</Button>
+				</div>
 			</LogItem>
 		);
 	}
