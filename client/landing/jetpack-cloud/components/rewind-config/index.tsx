@@ -56,8 +56,6 @@ const JetpackCloudRewindConfig: FunctionComponent< Props > = ( {
 					strong: <strong />,
 				},
 			} ),
-				}
-			),
 		},
 		{
 			name: 'contents',

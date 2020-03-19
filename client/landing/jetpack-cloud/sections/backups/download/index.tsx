@@ -27,6 +27,11 @@ import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status'
 import Ready from './ready';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 
+/**
+ * Internal dependencies
+ */
+import './style.scss';
+
 interface Props {
 	rewindId: string;
 }
@@ -91,11 +96,16 @@ const BackupDownloadPage = ( { rewindId }: Props ) => {
 	};
 
 	return (
-		<Main>
+		<Main className="download">
 			<DocumentHead title="Download" />
 			<SidebarNavigation />
 			{ siteId && <QueryRewindBackupStatus downloadId={ downloadId } siteId={ siteId } /> }
-			{ render() }
+			<Card>
+				<div className="download__header">
+					<Gridicon icon="cloud-download" size={ 48 } />
+				</div>
+				{ render() }
+			</Card>
 		</Main>
 	);
 };
