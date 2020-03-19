@@ -21,7 +21,7 @@ class Block_Patterns {
 
 
 	/**
-	 * Starter_Page_Templates constructor.
+	 * Block_Patterns constructor.
 	 */
 	private function __construct() {
 		add_filter( 'block_editor_settings', array( $this, 'register_patterns' ), 11 );
@@ -47,6 +47,7 @@ class Block_Patterns {
 	 * @return array Filtered editor settings.
 	 */
 	public function register_patterns( $settings ) {
+		// Remove core patterns except 'Two Columns of Text'.
 		$settings['__experimentalBlockPatterns'] = wp_list_filter(
 			$settings['__experimentalBlockPatterns'],
 			array(
@@ -54,6 +55,7 @@ class Block_Patterns {
 			)
 		);
 
+		// Add our patterns.
 		$settings['__experimentalBlockPatterns'] = array_merge(
 			$this->get_patterns(),
 			$settings['__experimentalBlockPatterns']
